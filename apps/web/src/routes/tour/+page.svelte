@@ -18,6 +18,7 @@
   import { placeOf, type Naming } from '$lib/tour/search'
   import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
   import { playTourReportSound } from '$lib/tour/reportSound'
+  import { playTourReachSound } from '$lib/tour/reachSound'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
@@ -292,9 +293,7 @@
     goToSpace,
     vowRules: (subjectId) => {
       const subjectName =
-        subjectId === 'self'
-          ? $t.tour.hatsu.vow.self
-          : nameOf(ship.spaces.get(subjectId)!)
+        subjectId === 'self' ? $t.tour.hatsu.vow.self : nameOf(ship.spaces.get(subjectId)!)
       return [$t.tour.hatsu.vow.ruleA(subjectName), $t.tour.hatsu.vow.ruleB(subjectName)]
     },
   })
@@ -548,6 +547,7 @@
     report: (reach) => {
       const line = noteFor(reach, bodyWords, bodyNameOf)
       if (line) note = { line, until: Date.now() + NOTE_MS }
+      playTourReachSound(reach)
     },
     wear: (characterId) => (world = wearTheMask(world, characterId)),
     // The book holds what a technique *does* rather than whose it was, so the
@@ -588,6 +588,22 @@
   $effect(() => {
     const held = Boolean($activeHatsu) && hatsuSession.nen.mode !== 'zetsu'
     if (!held) untrack(() => bodyView.release())
+  })
+
+  /**
+   * The far end of the filament when it is stuck to a person rather than a thing.
+   *
+   * Resolved here because this is the one place holding both halves: the hold
+   * lives in `bodyView` and the position lives in `castView`. The scene is
+   * handed a point rather than an identity, so it never has to look anybody up.
+   * Somebody the projection has stopped drawing takes the strand with them,
+   * which is the honest answer — the walk cannot draw a line to a body it is
+   * not drawing.
+   */
+  const strandOn = $derived.by(() => {
+    if (!bodyView.strandOn) return null
+    const post = castView.posts.find((each) => each.member.characterId === bodyView.strandOn)
+    return post ? { spaceId: post.spaceId, at: post.at } : null
   })
 
   const locationReadout = $derived(overlayView.location)
@@ -638,6 +654,8 @@
         orders,
         onOrder: () => technique && turn(technique.kind),
         swings: technique?.kind === 'stitch',
+        propels: technique?.kind === 'elastic',
+        gumOn: strandOn,
         touchUseLabel,
         touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },
         soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },

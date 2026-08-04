@@ -139,6 +139,19 @@ export class TourBodyView {
     Object.fromEntries(this.bodies.holds.map((hold) => [hold.characterId, hold.mark])),
   )
 
+  /**
+   * Who has a filament of Bungee Gum on them, if anybody.
+   *
+   * Its own reading rather than another user of `marks`, because a mark is what
+   * a hold *looks* like and three techniques leave a body bound: the strand is
+   * drawn between the visitor's wrist and this person, and a chain drawn as gum
+   * would be the walk showing the wrong aura. It goes when the hold does — the
+   * filament comes off with it, which is what `bodies.ts` is counting down.
+   */
+  strandOn = $derived<string | null>(
+    this.bodies.holds.find((hold) => hold.kind === 'elastic')?.characterId ?? null,
+  )
+
   /** Who the visitor has their aura levelled at, when it is levelled at all. */
   aimedId = $derived(this.aimed?.member.characterId ?? null)
 

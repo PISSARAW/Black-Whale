@@ -471,6 +471,26 @@
      */
     swings?: boolean
     /**
+     * Whether the technique in hand pulls its own user along the strand.
+     *
+     * Bungee Gum's propulsion, and the reason it is not `swings`: the gum aimed
+     * at a thing brings the *thing* in, and only the gum aimed at nothing turns
+     * round and brings the visitor. So this rides the same arc Machi's thread
+     * rides — the ship has one way of carrying a body across a gap and there is
+     * no reason to draw a second — but only on the cast with the reticle empty,
+     * which is the one the rules answer with `gum-propulsion`.
+     */
+    propels?: boolean
+    /**
+     * The body the visitor has a filament on, and where it is standing.
+     *
+     * Bungee Gum on a person is a hold in `cast/` rather than `TourWorld.gum` —
+     * the walk keeps what is done to people apart from what is done to the ship
+     * on purpose — so the far end of the strand is handed in rather than looked
+     * up. `null` while nobody is stuck, which is most of the walk.
+     */
+    gumOn?: { spaceId: string; at: Vec2 } | null
+    /**
      * Asked, on the same arrival, where Fugetsu's tunnel comes out — or `null`
      * when the visitor did not step into either of its ends.
      */
@@ -549,6 +569,8 @@
     onBeast,
     onCoin,
     swings = false,
+    propels = false,
+    gumOn = null,
     hour = NO_HOUR,
   }: Props = $props()
 
@@ -2481,6 +2503,18 @@
             continue
           }
 
+          if (held.kind === 'gum') {
+            // A trip-line under tension, and the tension is the point: a strand
+            // strung across a coursing and left perfectly still reads as a rod
+            // laid on the floor. So it breathes along its own length and
+            // shivers a centimetre, which is the whole of what a drawn elastic
+            // does while it waits. Small on purpose — In is hiding it, and only
+            // Gyo is looking at it at all.
+            held.root.scale.x = 1 + Math.sin(phase * 1.7) * 0.015
+            held.root.position.y = held.y + Math.sin(phase * 5.5) * 0.012
+            continue
+          }
+
           if (held.kind === 'chain') {
             swingTheChain(held, phase)
             continue
@@ -3271,16 +3305,30 @@
       gum.renderOrder = 3
       scene.add(gum)
 
-      /** Draws the gum where it is stuck, or takes it off the screen. */
+      /**
+       * Draws the gum where it is stuck, or takes it off the screen.
+       *
+       * Two far ends and one strand, because there is one strand: the filament
+       * out of the wrist is stuck to a thing or to a person, never both, and
+       * ch. 39 draws the same pink line either way. The person wins when both
+       * are somehow set, because a body is the one of the two that walks off —
+       * a strand left drawn to the cabinet while Machi carried the other end
+       * away would be drawing the wrong end of the ability.
+       */
       function syncGum(seconds: number) {
-        const stuck = world.gum ? solidById(ship, world, world.gum.solidId) : null
+        const solid = world.gum ? solidById(ship, world, world.gum.solidId) : null
+        const stuck =
+          gumOn ??
+          (solid
+            ? { spaceId: solid.spaceId, at: solidNow(solid, world.solids[solid.id]).at }
+            : null)
         const room = stuck ? ship.spaces.get(stuck.spaceId) : null
         const plan = room ? ship.plans.get(room.tierId) : null
         if (!stuck || !room || !plan) {
           gum.visible = false
           return
         }
-        const at = solidNow(stuck, world.solids[stuck.id]).at
+        const at = stuck.at
         const end = new THREE.Vector3(at[0], floorOf(room, plan.tier) + 0.9, at[1])
         // Out of the hand rather than out of the eye: thirty centimetres down
         // and to the right, the way the night-light is worn.
@@ -3457,7 +3505,9 @@
           self ? null : (facingSolid()?.id ?? null),
           hand,
         )
-        if (swings) throwThread()
+        // The gum turned on its own user is the one cast that moves the visitor
+        // rather than the room, so the arc is thrown here and not in `cast`.
+        if (swings || (propels && self)) throwThread()
       }
 
       const variantHand = (index: number): 'first' | 'second' | 'third' =>

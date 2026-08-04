@@ -76,6 +76,7 @@ import {
   type TourBook,
   type TourWorld,
 } from './hatsu'
+import type { Vec2 } from './types'
 import { apparitionsOn } from './apparitions'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { pointInPolygon } from './geometry'
@@ -972,10 +973,7 @@ const door = (
     at: [0, 0],
     rules:
       kind === 'heart-vow'
-        ? [
-            `do not enter ${targetId ?? 'self'}`,
-            `do not lay a hand on ${targetId ?? 'self'}`,
-          ]
+        ? [`do not enter ${targetId ?? 'self'}`, `do not lay a hand on ${targetId ?? 'self'}`]
         : undefined,
   })
 
@@ -2083,8 +2081,31 @@ describe('taking a technique off the ship', () => {
         standingIn: roomA.id,
         at: [0, 0],
       })
-      expect(cast.report).toMatchObject({ kind: 'gum-propulsion' })
+      expect(cast.report).toMatchObject({ kind: 'gum-propulsion', tension: 0 })
       expect(cast.world.body.enhance).toBeGreaterThan(0)
+    })
+
+    // Propulsion is the contraction turned on its own user, so it reads the
+    // same gauge: pulled towards an anchor nine metres off, the gum is holding
+    // more than at rest against it, and it has to shove harder. A propulsion
+    // that gave the same push from one metre and from nine would be a winch.
+    it('pulls the visitor harder the further they have backed off the anchor', () => {
+      const propel = (from: TourWorld, at: Vec2) =>
+        castInTour(from, 'elastic', {
+          ship,
+          targetSolidId: null,
+          targetId: null,
+          standingIn: roomA.id,
+          at,
+        })
+      const anchor = solidNow(solidA, undefined).at
+      const stuck = hit(EMPTY_WORLD, 'elastic', solidA.id, { at: anchor }).world
+      const close = propel(stuck, [anchor[0] + 1, anchor[1]])
+      const far = propel(stuck, [anchor[0] + 9, anchor[1]])
+      const tensionOf = (cast: typeof close) =>
+        cast.report.kind === 'gum-propulsion' ? cast.report.tension : -1
+      expect(tensionOf(far)).toBeGreaterThan(tensionOf(close))
+      expect(far.world.body.enhance).toBeGreaterThan(close.world.body.enhance)
     })
 
     it('heals damage when cast on the body if pain packer has packed damage', () => {

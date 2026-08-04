@@ -85,9 +85,26 @@ export class TourWorldTicker {
     this.apply(stepCopies(this.options.read().world), true)
   }
 
-  /** One second of Emperor Time, and the hour of life it costs. */
+  /**
+   * One second of Emperor Time, and the hour of life it costs.
+   *
+   * The hour is spent every second and said nowhere: the ledger is already on
+   * the panel, counted against the year, for as long as the eyes are red. Put
+   * on the read-out as well it did something much worse than repeat itself —
+   * the walk has one line for what just happened, and a technique that rewrites
+   * it every second wipes the answer of every other cast made under it. Emperor
+   * Time is the one ability meant to be *held while you work*, so it was the
+   * one ability that made everything cast under it look like it had done
+   * nothing at all.
+   *
+   * The three that are not a tick still speak: the year running out, the five
+   * minutes counting down, and the Nen coming back are events, and an event is
+   * exactly what that line is for.
+   */
   scarletSecond = () => {
-    this.apply(stepScarlet(this.options.read().world))
+    const step = stepScarlet(this.options.read().world)
+    if (!step) return
+    this.apply(step.report?.kind === 'eyes-held' ? { ...step, report: null } : step)
   }
 
   crossWorm = (spaceId: string | null, arrivedFrom: string | null) => {

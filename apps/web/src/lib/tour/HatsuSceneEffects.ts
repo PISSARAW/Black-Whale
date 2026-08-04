@@ -2,9 +2,16 @@ import type * as Three from 'three'
 import type { Vec2 } from './types'
 import type { TourFlash } from './apparitions'
 import { HatsuRewindEffect, type RewindFrame } from './HatsuRewindEffect'
+import { HatsuWindingEffect, type WindingFrame } from './HatsuWindingEffect'
 
 const GUST_SECONDS = 1.1
 const PUNCH_SECONDS = 1
+/**
+ * Shorter than the fist out of the deck, and for the reason the ability is
+ * named for: the wind-up is the long part and it has already happened by the
+ * time this is drawn. What is left is one turn of the arm arriving.
+ */
+const SWING_SECONDS = 0.55
 const SUN_SECONDS = 2.4
 const ARROW_SECONDS = 0.9
 const BLAST_SECONDS = 0.9
@@ -63,6 +70,7 @@ export class HatsuSceneEffects {
   readonly #seamMaterial: Three.LineBasicMaterial
   readonly #fistMaterial: Three.MeshBasicMaterial
   readonly #rewind: HatsuRewindEffect
+  readonly #winding: HatsuWindingEffect
   #playing = 0
   #playedSeq = -1
   #played: SequencedFlash | null = null
@@ -195,6 +203,7 @@ export class HatsuSceneEffects {
     this.#seam.frustumCulled = false
     this.#seam.renderOrder = 3
     this.#rewind = new HatsuRewindEffect(THREE, scene)
+    this.#winding = new HatsuWindingEffect(THREE, scene)
     scene.add(
       this.#chassis,
       this.#headlamp,
@@ -239,6 +248,11 @@ export class HatsuSceneEffects {
     this.#rewind.start()
   }
 
+  /** The arm still turning, worn by whoever wound it. See `HatsuWindingEffect`. */
+  syncWinding(frame: WindingFrame): void {
+    this.#winding.update(frame)
+  }
+
   tickFlash(frame: FlashFrame): void {
     const played = this.#played
     if (!played || played.kind === 'rewind' || played.kind === 'lash') return
@@ -262,7 +276,38 @@ export class HatsuSceneEffects {
     if (played.kind === 'blast') return this.animateBlast(played, through, frame)
     if (played.kind === 'sun') return this.animateSun(played, through, frame)
     if (played.kind === 'gust') return this.animateGust(played, through)
+    if (played.kind === 'swing') return this.animateSwing(played, through)
     this.animatePunch(played, through, frame)
+  }
+
+  /**
+   * Ripper Cyclotron, landing.
+   *
+   * The same fist as Remote Punch, thrown rather than raised: it comes in from
+   * where the visitor is standing, on the level, spinning about its own arm —
+   * the rotations are the ability, so they are the one thing the picture must
+   * carry — and stops dead on the thing. Nothing lingers and nothing rings; the
+   * whole charge went in at once, which is why guessing the number wrong costs
+   * all of it.
+   */
+  private animateSwing(played: SequencedFlash, through: number): void {
+    const from = played.from ?? played.at
+    // Most of the travel in the first third: an arm at speed covers the room
+    // and then stops, rather than drifting across it at a constant rate.
+    const thrown = Math.min(1, through * 3)
+    const arrived = Math.max(0, (through - 0.34) / 0.66)
+    this.#fist.visible = true
+    this.#fist.position.set(
+      from[0] + (played.at[0] - from[0]) * thrown,
+      // A hand's height under the point it lands on, because the forearm is
+      // drawn below the knuckles and the knuckles are what meets the thing.
+      played.y - 1.2,
+      from[1] + (played.at[1] - from[1]) * thrown,
+    )
+    this.#fist.rotation.y = this.#playedSeq + thrown * Math.PI * 3
+    this.#fistMaterial.color.setHex(played.colour)
+    this.#fistMaterial.opacity = 0.85 * (1 - arrived)
+    this.#seam.visible = false
   }
 
   private animateArrow(played: SequencedFlash, through: number): void {
@@ -314,6 +359,10 @@ export class HatsuSceneEffects {
     this.#fist.visible = true
     this.#fist.position.set(played.at[0], played.y - 2 + rise * 3.1, played.at[1])
     this.#fist.rotation.y = this.#playedSeq
+    // The one group, two techniques: the fist is shared with Ripper Cyclotron,
+    // which is gold, so each cast says its own colour rather than trusting what
+    // the last one left on the material.
+    this.#fistMaterial.color.setHex(played.colour)
     this.#fistMaterial.opacity = 0.72 * (1 - through * 0.6)
     this.drawSeam({ through: played.through ?? [], y: played.y, played: through, gyo: frame.gyo })
   }
@@ -427,6 +476,7 @@ export class HatsuSceneEffects {
     this.#fist.traverse((part: Three.Object3D) => (part as Three.Mesh).geometry?.dispose())
     this.#fistMaterial.dispose()
     this.#rewind.dispose()
+    this.#winding.dispose()
   }
 }
 
@@ -435,5 +485,6 @@ function flashDuration(kind: TourFlash['kind']): number {
   if (kind === 'sun') return SUN_SECONDS
   if (kind === 'arrow') return ARROW_SECONDS
   if (kind === 'blast') return BLAST_SECONDS
+  if (kind === 'swing') return SWING_SECONDS
   return PUNCH_SECONDS
 }

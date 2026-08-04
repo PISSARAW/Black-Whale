@@ -106,7 +106,11 @@ export function playTourReportSound(report: TourReport): void {
     // confetti keeps its silence — paper finishing a cut is the one of the
     // three the archive gives no sound for.
     case 'shattered':
-      return report.by === 'barrage' ? fireABurst(3) : report.by === 'windup' ? landAPunch() : void 0
+      return report.by === 'barrage'
+        ? fireABurst(3)
+        : report.by === 'windup'
+          ? landAPunch()
+          : void 0
     case 'wound-up':
       return windTheArm(report.turns)
     case 'sealed':

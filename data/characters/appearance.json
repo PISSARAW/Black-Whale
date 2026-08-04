@@ -125,6 +125,300 @@
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
       "note": "La huitième et la plus jeune : fine, cheveux sombres mi-longs et raides, frange, grands yeux inquiets. Woble contre elle — les deux silhouettes vont ensemble, ce qui est la raison du gabarit `infant`."
+    },
+    {
+      "id": "prince-benjamin",
+      "body": { "build": "broad", "height": 1.12, "frame": "adult", "shoulders": 1.3 },
+      "head": { "face": "square", "hairStyle": "military", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 348, 349, 358 ; kaki d'uniforme de l'armée royale kakine, choix éditorial stable",
+        "skin": "0xc99473",
+        "hair": "0x1a1816",
+        "attire": {
+          "jacket": "0x4a4b39",
+          "shirt": "0xdcd8c8",
+          "trousers": "0x34352a",
+          "accent": "0xc0a244"
+        }
+      },
+      "attire": "uniform",
+      "signatures": ["mutton-chops"],
+      "verified": { "chapterIds": ["ch-348", "ch-349", "ch-358"], "status": "confirmed" },
+      "note": "Le colosse de la fratrie : le cou est dessiné plus large que le crâne, ce que le gabarit `broad` ne rend pas seul — d'où `shoulders` 1,3, l'une des deux seules épaules déclarées à bord."
+    },
+    {
+      "id": "prince-camilla",
+      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "hime", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 350, 358 ; robe de cour sombre à col montant, palette froide",
+        "skin": "0xf0dfc9",
+        "hair": "0x1d1a22",
+        "attire": {
+          "jacket": "0x2a2436",
+          "shirt": "0xe9e4dc",
+          "trousers": "0x1d1926",
+          "accent": "0xc9b26a"
+        }
+      },
+      "attire": "gown",
+      "signatures": ["tiara"],
+      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-358"], "status": "partial" },
+      "note": "La moue est le visage : hautaine au repos, folle dans la colère. Le diadème suffit à la nommer de loin, ce qui est exactement le travail qu'une signature doit faire. Coiffure exacte à confirmer."
+    },
+    {
+      "id": "prince-zhanglei",
+      "body": { "build": "broad", "height": 1.05, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 362 ; tunique chinoise à col droit, bleu profond",
+        "skin": "0xdbb492",
+        "hair": "0x191715",
+        "attire": {
+          "jacket": "0x24374b",
+          "shirt": "0xe7e2d6",
+          "trousers": "0x1a2836",
+          "accent": "0xcfae55"
+        }
+      },
+      "attire": "changshan",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
+      "note": "Corpulence tranquille, petit sourire permanent de négociant. Le changshan est déclaré ici plutôt que dérivé du rôle : `wardrobe.ts` l'habillerait en costume occidental, et c'est précisément la sorte d'erreur muette que la priorité §2.5 existe pour empêcher."
+    },
+    {
+      "id": "prince-tserriednich",
+      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 343, 345, 348 ; élégance sombre sans décoration, palette resserrée",
+        "skin": "0xecd9c2",
+        "hair": "0x1c1a1f",
+        "attire": {
+          "jacket": "0x22232b",
+          "shirt": "0xf2efe8",
+          "trousers": "0x1b1c23",
+          "accent": "0x7c1f2c"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-343", "ch-345", "ch-348"], "status": "confirmed" },
+      "note": "Deux ou trois mèches retombent sur le front, ce que `slicked-back` doit rendre plutôt qu'un casque lisse. Le même visage doit pouvoir porter « séduisant » et « abject » — l'écart entre les deux est le personnage, et c'est pourquoi l'expression déclarée est `neutral` : la scène la charge, pas la fiche."
+    },
+    {
+      "id": "prince-tubeppa",
+      "body": { "build": "slim", "height": 1.0, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "hime", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 362 ; tenue stricte de laboratoire, palette froide",
+        "skin": "0xe3c6a8",
+        "hair": "0x252029",
+        "attire": {
+          "jacket": "0x2f3b42",
+          "shirt": "0xeceae2",
+          "trousers": "0x212a30",
+          "accent": "0x8fa6ad"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "partial" },
+      "note": "Visage fermé de chimiste, cernes, frange irrégulière. Les gants restent à confirmer et ne sont donc pas déclarés : une pièce dont on n'est pas sûr est une pièce qu'on ne dessine pas."
+    },
+    {
+      "id": "prince-tyson",
+      "body": { "build": "broad", "height": 0.98, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "curly", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 362 ; tenue de scène à froufrous et cœurs, palette claire",
+        "skin": "0xf0dcc4",
+        "hair": "0x4a2f22",
+        "attire": {
+          "jacket": "0xe4b7c4",
+          "shirt": "0xf7f1e8",
+          "trousers": "0xc98fa4",
+          "accent": "0xd9527a"
+        }
+      },
+      "attire": "gown",
+      "signatures": ["frills"],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
+      "note": "Ronde et rayonnante : boucles volumineuses, cils dessinés, mouche. Le Livre de Tyson est aussi son style graphique, ce qui est la raison pour laquelle les froufrous sont une signature et pas une décoration."
+    },
+    {
+      "id": "prince-luzurus",
+      "body": { "build": "average", "height": 1.06, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "swept", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 362 ; tenue décontractée, palette tiède",
+        "skin": "0xdcb896",
+        "hair": "0x33291f",
+        "attire": {
+          "jacket": "0x6b6250",
+          "shirt": "0xeee7d6",
+          "trousers": "0x464034",
+          "accent": "0xa89268"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
+      "note": "Détendu jusqu'à l'avachissement : les paupières tombantes sont ce que porte `tired`, et la coupe rideau encadre le visage sans le dégager."
+    },
+    {
+      "id": "prince-salesale",
+      "body": { "build": "broad", "height": 1.02, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 366 ; chemise ouverte de bon vivant, palette chaude",
+        "skin": "0xd3a17c",
+        "hair": "0x201b18",
+        "attire": {
+          "jacket": "0x5c4a3c",
+          "shirt": "0xf1e9d8",
+          "trousers": "0x3b3029",
+          "accent": "0xc7883f"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["lips-full"],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-366"], "status": "confirmed" },
+      "note": "Les lèvres énormes sont la signature absolue du personnage : `lips-full` est le seul renflement de bouche du vaisseau, et c'est ce qui le nomme avant tout le reste."
+    },
+    {
+      "id": "prince-halkenburg",
+      "body": { "build": "slim", "height": 1.07, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 361 ; châtain clair choisi, costume sobre sans décorations",
+        "skin": "0xecd6bd",
+        "hair": "0x9a7444",
+        "attire": {
+          "jacket": "0x2c3138",
+          "shirt": "0xf1efe8",
+          "trousers": "0x232830",
+          "accent": "0x6f7f8c"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-thin"],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
+      "note": "Le refus du faste est son costume : pas de décorations, ce qui le distingue de Benjamin d'un seul coup d'œil. `attire: suit` prime ici sur le `ritual` que `wardrobe.ts` tire de son rôle prêcheur — §2.5."
+    },
+    {
+      "id": "prince-kacho",
+      "body": { "build": "slim", "height": 0.96, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "hime", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 350, 359 ; tenue glamour, palette partagée avec sa jumelle",
+        "skin": "0xf2e0ca",
+        "hair": "0x231f28",
+        "attire": {
+          "jacket": "0x8c3a52",
+          "shirt": "0xf4efe6",
+          "trousers": "0x5f2739",
+          "accent": "0xd8a2b4"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
+      "note": "L'expression publique est un masque : le rendu ne montre que le masque, et la provenance raconte le reste. C'est la règle générale ici — l'apparence ne dit jamais ce que fait la personne."
+    },
+    {
+      "id": "prince-fugetsu",
+      "body": { "build": "slim", "height": 0.96, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "hime", "expression": "anxious" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 359 ; palette identique à Kacho, la paire est le fait",
+        "skin": "0xf2e0ca",
+        "hair": "0x231f28",
+        "attire": {
+          "jacket": "0x8c3a52",
+          "shirt": "0xf4efe6",
+          "trousers": "0x5f2739",
+          "accent": "0xd8a2b4"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359"], "status": "confirmed" },
+      "note": "Jumelle de Kacho : mêmes traits, mêmes cheveux, même palette — la seule différence déclarée est l'expression. La paire doit être manifestement une paire, donc tout le reste est copié champ pour champ et non redessiné."
+    },
+    {
+      "id": "prince-momoze",
+      "body": { "build": "slim", "height": 0.9, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "anxious" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 350, 359 ; robe sage et claire d'adolescente",
+        "skin": "0xf0dfcb",
+        "hair": "0x2b2622",
+        "attire": {
+          "jacket": "0xa8b0b8",
+          "shirt": "0xf4f0e7",
+          "trousers": "0x77808a",
+          "accent": "0xc7ced4"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "partial" },
+      "note": "Menue, l'air de s'excuser d'être là — `adult` avec une hauteur basse plutôt que `child` : le gabarit enfant change les proportions, et une adolescente n'a pas la tête d'un enfant. Le serre-tête reste à confirmer, donc non déclaré."
+    },
+    {
+      "id": "prince-marayam",
+      "body": { "build": "average", "height": 0.62, "frame": "child" },
+      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 350, 359 ; tenue princière miniature, palette de cour",
+        "skin": "0xf0dfcb",
+        "hair": "0x211d1a",
+        "attire": {
+          "jacket": "0x39456b",
+          "shirt": "0xf2eee5",
+          "trousers": "0x28304e",
+          "accent": "0xc9ab58"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
+      "note": "Petit garçon, toujours près de Sevanti. Premier porteur du gabarit `child` : jusqu'ici il était un adulte réduit, ce qui est la définition même de ce que ce gabarit existe pour ne plus faire."
+    },
+    {
+      "id": "prince-woble",
+      "body": { "build": "average", "height": 0.42, "frame": "infant" },
+      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planche n&b ch. 358 ; lange clair, touffe de cheveux clairs",
+        "skin": "0xf6e6d3",
+        "hair": "0xd8bd8e",
+        "attire": {
+          "jacket": "0xeae2d4",
+          "shirt": "0xf6f2ea",
+          "trousers": "0xd6cec0",
+          "accent": "0xc3d3d8"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
+      "note": "Nourrisson : dans les bras d'Oito, jamais une silhouette debout. Le gabarit `infant` est ce qui rend cette phrase vraie dans le rendu au lieu de la laisser dans une note."
     }
   ],
   "deferred": [

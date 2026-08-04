@@ -116,7 +116,7 @@
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
   import { applySkyPool } from '$lib/tour/skyPool'
-  import { refractionAmount } from '$lib/tour/auraRefraction'
+  import { refractionAmount, type AuraGlass } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
     createSceneRuntime,
@@ -1785,15 +1785,14 @@
        */
       const glassMaterials: Record<string, import('three').Material | undefined> = {}
       const glass = quality.auraDistortion
-        ? (worn: { ior: number; thickness: number; roughness: number }) => {
+        ? (worn: AuraGlass) => {
             const key = `${worn.ior}|${worn.thickness}|${worn.roughness}`
             const held = glassMaterials[key]
             if (held) return held
+            // Spread whole: `depthWrite: false` is load-bearing and belongs to
+            // the shell rather than to this file. See `AuraGlass`.
             const made = new THREE.MeshPhysicalMaterial({
-              transmission: 1,
-              ior: worn.ior,
-              thickness: worn.thickness,
-              roughness: worn.roughness,
+              ...worn,
               transparent: true,
               opacity: 1,
               side: THREE.DoubleSide,

@@ -75,6 +75,24 @@ describe('the shell an aura is seen as from outside', () => {
    * The claim this number is allowed to make. Glass is 1.5 and water is 1.33;
    * anything near either would be a statement about what aura is made of.
    */
+  /**
+   * The regression this file exists to prevent. three.js draws transmissive
+   * meshes before transparent ones, and every mesh of a figure is transparent:
+   * a shell that writes depth puts a sphere of `z` in front of a body that has
+   * not been drawn yet, and the body fails the depth test everywhere. The walk
+   * then bends the corridor correctly around a person who is not there.
+   */
+  it('never writes depth, whatever the state, or the body inside it is deleted', () => {
+    for (const worn of [
+      auraGlassFor(state({ mode: 'ten' })),
+      auraGlassFor(state({ mode: 'ren' })),
+      auraGlassFor(state({ mode: 'ren', ken: true })),
+      auraGlassFor(state({ mode: 'ten', on: true, ko: 'hands' })),
+    ]) {
+      expect(worn!.depthWrite).toBe(false)
+    }
+  })
+
   it('never approaches an index of refraction that would read as a substance', () => {
     const hardest = auraGlassFor(state({ mode: 'ren', on: true, ko: 'torso' }))!
     expect(hardest.ior).toBeLessThan(1.2)

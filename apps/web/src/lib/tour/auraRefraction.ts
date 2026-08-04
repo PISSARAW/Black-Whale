@@ -86,11 +86,31 @@ export function refractionAmount(state: NenTechniqueState | null): number {
  */
 export const AURA_GLASS_IOR_SPAN = 0.12
 
-/** What a figure's shell is made of at one state, or nothing to wear. */
+/**
+ * What a figure's shell is made of at one state, or nothing to wear.
+ *
+ * The material parameters are named here rather than at the call site because
+ * one of them is not a taste: **the shell must not write depth**, and getting
+ * that wrong deletes the person wearing it.
+ *
+ * three.js renders in three passes — opaque, then transmissive, then
+ * transparent — and every mesh of a figure comes out of the `glow` factory,
+ * which makes them transparent whatever their opacity. So the shell is drawn
+ * *before* the body it is wrapped around. Writing depth, it lays a sphere of
+ * `z` in front of a body that has not been drawn yet, and every part of that
+ * body then fails the depth test: the room bends correctly around a silhouette
+ * that is no longer there. Writing none, the body paints over the shell in the
+ * pass that follows, and what is left of the shell is the ring of it the body
+ * does not cover — which is the rim of bent corridor this was drawn for.
+ */
 export interface AuraGlass {
   ior: number
   thickness: number
   roughness: number
+  /** Fully transmissive: the shell is air under strain, not a tinted skin. */
+  transmission: 1
+  /** Never. See above — this is the difference between a body and a hole. */
+  depthWrite: false
 }
 
 /**
@@ -105,7 +125,13 @@ export interface AuraGlass {
 export function auraGlassFor(state: NenTechniqueState | null): AuraGlass | null {
   const amount = refractionAmount(state)
   if (amount <= 0) return null
-  return { ior: 1 + amount * AURA_GLASS_IOR_SPAN, thickness: 0.25 + amount * 0.6, roughness: 0.1 }
+  return {
+    ior: 1 + amount * AURA_GLASS_IOR_SPAN,
+    thickness: 0.25 + amount * 0.6,
+    roughness: 0.1,
+    transmission: 1,
+    depthWrite: false,
+  }
 }
 
 const vertexShader = /* glsl */ `

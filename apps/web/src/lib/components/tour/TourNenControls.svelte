@@ -8,7 +8,17 @@
     aimedObjectId?: string | null
     availability?: Partial<Record<NenTechnique | 'hatsu' | 'action', Availability>>
     hatsuAllowedInZetsu?: boolean
+    /**
+     * Whether a Ten held and used for nothing is being shown to its owner.
+     *
+     * The button reads it so that pressing Ten twice looks like what it does —
+     * lit while the skin is up, unlit once it has been put down — and so that
+     * the panel and the T key never disagree about which press comes next.
+     */
+    restingAuraShown?: boolean
     onAction: (action: NenTechniqueAction) => void
+    /** Ten as a toggle. Falls back to the plain transition where none is given. */
+    onTen?: () => void
     onSelectZone?: (zone: NenBodyZone) => void
     onInteract?: () => void
     onHatsu?: () => void
@@ -19,7 +29,9 @@
     aimedObjectId = null,
     availability = {},
     hatsuAllowedInZetsu = false,
+    restingAuraShown = true,
     onAction,
+    onTen,
     onSelectZone,
     onInteract,
     onHatsu,
@@ -53,9 +65,12 @@
     >
       <button
         disabled={!enabled('ten')}
-        title={reason('ten')}
-        class:active={nenState.mode === 'ten'}
-        onclick={() => onAction({ type: 'TEN' })}>Ten</button
+        title={reason('ten') ??
+          (nenState.mode === 'ten' && restingAuraShown
+            ? 'Reposer le Ten : l’aura reste levée, elle cesse de se voir.'
+            : undefined)}
+        class:active={nenState.mode === 'ten' && restingAuraShown}
+        onclick={() => (onTen ? onTen() : onAction({ type: 'TEN' }))}>Ten</button
       >
       <button
         disabled={!enabled('ren')}

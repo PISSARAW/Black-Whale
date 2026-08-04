@@ -4947,7 +4947,9 @@
         aimedObjectId={aimedSolidAt?.id ?? null}
         availability={nenAvailability}
         {hatsuAllowedInZetsu}
+        restingAuraShown={$comfort.restingAura}
         onAction={useNen}
+        onTen={toggleTen}
         onInteract={() => interactWithNen?.()}
         onHatsu={openOrCastHatsu}
       />

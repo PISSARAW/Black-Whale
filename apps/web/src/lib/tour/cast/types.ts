@@ -993,6 +993,15 @@ export type TourReport =
   | { kind: 'watching'; spaceId: string }
   | { kind: 'isolated'; spaceId: string; occupant: boolean }
   | { kind: 'stripped'; spaceId: string; count: number }
+  /**
+   * Air Blow, held on a thing to chain the gusts, and refused.
+   *
+   * The archive gives this ability no rate and no reach — its own entry says
+   * the precise functioning remains unknown — so a walk that let a reader hold
+   * the key down and watch a bar fill would be inventing the one number the
+   * catalogue is explicit about not having.
+   */
+  | { kind: 'blast-solid-refused'; solidId: string }
   | { kind: 'laid-open'; spaces: number; decks: number }
   | { kind: 'emptied'; spaceId: string; structures: number }
   | { kind: 'swallowed'; solidId: string; held: number }

@@ -3715,6 +3715,25 @@ function runCast(
     return castOnSolid(world, kind, input)
   }
 
+  /**
+   * Air Blow held on a thing, which is the one thing it is *not* recorded doing.
+   *
+   * The catalogue's entry is four sentences long and three of them say the same
+   * thing: it comes out of the left palm, contact does not appear to be
+   * required, and its precise functioning remains unknown. Nothing about a
+   * rate, nothing about a reach, nothing about what a second gust adds to the
+   * first. So the walk offers the sustained fire and refuses it with its
+   * reason, which is more honest than inventing a cadence and quieter than
+   * hiding the key: a reader who tries it learns what the archive does not say.
+   *
+   * Decided here rather than in the room table, because what it is refusing is
+   * the *reticle* — a thing rather than a room — and the room table never sees
+   * one: aimed at the deck the same key still sweeps the compartment.
+   */
+  if (kind === 'blast' && input.targetSolidId) {
+    return { world, report: { kind: 'blast-solid-refused', solidId: input.targetSolidId } }
+  }
+
   const untargeted = castWithoutARoom(world, kind, input)
   if (untargeted) return untargeted
 

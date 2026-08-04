@@ -37,6 +37,9 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   teleported: skipThroughTime,
   watching: foldPaper,
   stripped: blowAGust,
+  // The refusal keeps the gust: the palm came up and the air moved, and what
+  // the walk declines is the second one, not the first.
+  'blast-solid-refused': blowAGust,
   puppeted: unspoolWire,
   'puppet-released': unspoolWire,
   'autopilot-started': unspoolWire,

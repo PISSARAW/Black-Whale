@@ -230,7 +230,7 @@
   let flash = $state<(TourFlash & { seq: number }) | null>(null)
   let flashes = 0
   function show(shown: TourReport) {
-    const seen = flashFor({ report: shown, from: position }, ship, world)
+    const seen = flashFor({ report: shown, from: position, heading }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
     playTourReportSound(shown)
   }

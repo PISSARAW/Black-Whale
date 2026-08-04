@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { BODY_KINDS, PERSON_HATSU_KINDS, reachesABody } from '../bodyKinds'
-import { CHAIN_JAIL_FACTION, FLOCK_ADDRESSEES, reachBody, type ReachInput } from './reach'
-import type { CastDossier } from './dossier'
-import type { CastMember, Post } from './types'
+import { BODY_KINDS, PERSON_HATSU_KINDS, reachesABody } from '../bodyKinds.js'
+import { CHAIN_JAIL_FACTION, FLOCK_ADDRESSEES, reachBody, type ReachInput } from './reach.js'
+import type { CastDossier } from './dossier.js'
+import type { CastMember, Post } from './types.js'
 
 const ROOM = 'tier-1-royal-residential-sector-room-1014'
 const NOW = 1_000_000
@@ -54,8 +54,11 @@ describe('the list of what reaches a body is closed', () => {
   })
 
   it('refuses a technique that has nothing to say to a person, out loud', () => {
-    const answer = reach({ kind: 'blast' })
-    expect(answer).toEqual({ outcome: 'refused', kind: 'blast', reason: 'not-a-body' })
+    // Air Blow used to be the example here, and is not any more: it reaches a
+    // body now, in order to refuse it out loud. A room technique is one that
+    // has genuinely nothing to say to a person.
+    const answer = reach({ kind: 'teleport' })
+    expect(answer).toEqual({ outcome: 'refused', kind: 'teleport', reason: 'not-a-body' })
     expect(reachesABody(null)).toBe(false)
   })
 
@@ -258,6 +261,20 @@ describe('what a hold looks like', () => {
         kind: 'remote-strike',
         reason: 'no-matter',
       })
+    })
+  })
+
+  /**
+   * Air Blow aimed at a person, which the archive does not follow that far.
+   * Vincent raises his left palm to break a guard and the entry stops there —
+   * no reach, no rate, nothing about the man behind the guard. So the walk
+   * emits from the palm, because that much is conceded, and refuses the rest.
+   */
+  it('refuses the sentry rather than inventing what a gust does to a man', () => {
+    expect(reach({ kind: 'blast' })).toEqual({
+      outcome: 'refused',
+      kind: 'blast',
+      reason: 'palm-only',
     })
   })
 

@@ -685,6 +685,8 @@ export const en = {
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
         'thumb-occupied': 'The thumb is already holding an ability.',
         'no-target-ability': 'They have no ability to steal.',
+        'palm-only':
+          'The emission leaves the left palm towards what it is aimed at; the catalogue says no more. What it does to the person standing there is not recorded, and the walk will not invent it.',
         'no-matter':
           'Nothing but air between you and them. The blow travels in a surface; it does not cross a well.',
         'only-birds':
@@ -844,6 +846,8 @@ export const en = {
           `${room} is isolated around you · you may leave, and you will not get back in`,
         isolatedOutside: (room: string) =>
           `${room} is isolated · from out here you can only reach an empty copy of it`,
+        blastSolidRefused: (solid: string) =>
+          `You hold the palm on ${solid} and nothing follows. Air Blow's rate and reach are not given: the catalogue concedes an emission from the left palm and says the precise functioning remains unknown, so the walk will not draw you a second gust it has no authority for.`,
         stripped: (room: string, count: number) =>
           count
             ? `${count} hold${count > 1 ? 's' : ''} blown off ${room} · nothing was moved`

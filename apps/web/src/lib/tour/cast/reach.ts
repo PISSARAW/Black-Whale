@@ -76,6 +76,16 @@ export type ReachRefusal =
    * only thing here that holds both the geometry and the person.
    */
   | 'no-matter'
+  /**
+   * Air Blow, aimed at a person, which the archive does not follow that far.
+   *
+   * Vincent raises his left palm to break a guard and the entry stops there:
+   * no reach, no rate, no effect on the man behind the guard. The walk emits
+   * from the palm because that much is conceded, and refuses the rest because
+   * the alternative is inventing a Nen attack and attributing it to a real
+   * character's ability.
+   */
+  | 'palm-only'
 
 /** What a technique told the visitor about the body, without holding it. */
 export type ReachTell =
@@ -183,6 +193,15 @@ const ASKS = ['dowsing', 'truth-punch', 'training-shot', 'melody'] as const
  */
 const WORN = 'disguise' as const
 
+/**
+ * The technique that only ever refuses a person. See `CONDITIONS.blast`.
+ *
+ * Named rather than branched on inline so `MARKS` below cannot acquire an
+ * entry for it: a mark laid by Air Blow would be the walk deciding what a gust
+ * does to a man, which is the one thing its catalogue entry declines to say.
+ */
+const PALM = 'blast' as const
+
 /** The technique that delivers rather than holds. See `FLOCK_ADDRESSEES`. */
 const CARRIES = 'flock' as const
 
@@ -200,7 +219,7 @@ const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
  * the ship which the manga aims at a person first.
  */
 const MARKS: Record<
-  Exclude<BodyKind, AskKind | typeof WORN | typeof CARRIES | 'chain-rule'>,
+  Exclude<BodyKind, AskKind | typeof WORN | typeof CARRIES | typeof PALM | 'chain-rule'>,
   BodyMark
 > = {
   // The five that had nowhere to land until the walk had people in it, less the
@@ -263,6 +282,12 @@ const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal |
   // Leorio never sees the man he hits in ch. 385 — the blow crosses a bulkhead
   // to reach him. What it will not cross is nothing at all.
   'remote-strike': (input) => (input.throughMatter ? null : 'no-matter'),
+
+  // Not a condition on the body at all — it refuses whoever is standing there,
+  // which is why it reads as a constant. Kept here with the others rather than
+  // in `REFUSED` because what it refuses is a *target*, not the technique: the
+  // gust still leaves the palm, and the room still hears it.
+  [PALM]: () => 'palm-only',
 
   'chain-rule': (input) => {
     if (input.book?.open) return 'thumb-occupied'
@@ -358,11 +383,17 @@ export function reachBody(input: ReachInput): Reach {
     }
   }
 
+  // Everything with no mark of its own has already returned: the four that ask,
+  // the one that is worn, the one that carries, the one that steals and the one
+  // that only ever refuses. `MARKS` is exactly the remainder, and a kind added
+  // to `BODY_KINDS` without either an entry there or a branch above will not
+  // compile — which is the closure this module claims in its own doc.
+  const mark = MARKS[kind as keyof typeof MARKS]
   return {
     outcome: 'held',
     kind,
     characterId,
-    hold: holdFor(characterId, { kind, mark: MARKS[kind] }, input.now),
+    hold: holdFor(characterId, { kind, mark }, input.now),
   }
 }
 

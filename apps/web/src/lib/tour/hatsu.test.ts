@@ -2716,3 +2716,39 @@ describe('Remote Punch, which travels in a surface and not through air', () => {
     expect(struck.report).toMatchObject({ kind: 'came-up-under', throughDoor: true })
   })
 })
+/**
+ * Air Blow, whose fiche is mostly made of what the archive declines to say.
+ *
+ * Its catalogue entry runs four sentences and three of them say the same thing:
+ * the emission comes out of the left palm, contact does not appear to be
+ * required, and the precise functioning remains unknown. So the walk performs
+ * the one conceded fact and refuses the rest out loud — which is more honest
+ * than inventing a cadence and quieter than hiding the key.
+ */
+describe('Air Blow, which the catalogue follows exactly one sentence', () => {
+  const blow = (targetSolidId: string | null) =>
+    castInTour(EMPTY_WORLD, 'blast', {
+      ship,
+      targetId: busiest.space.id,
+      targetSolidId,
+      standingIn: busiest.space.id,
+      at: centroid(busiest.space),
+      heading: 0,
+    })
+
+  // The gust still sweeps a room: that much the walk has always done, and the
+  // count it reports is its own bookkeeping of aura let go of, not a measure of
+  // force — the archive gives none and the walk asserts none.
+  it('still sweeps the room it is aimed at', () => {
+    expect(blow(null).report).toMatchObject({ kind: 'stripped', spaceId: busiest.space.id })
+  })
+
+  // Held on a thing to chain the gusts: refused, with its reason. A bar filling
+  // under a held key would be inventing the one number the entry is explicit
+  // about not having.
+  it('refuses the sustained fire, because no rate and no reach are given', () => {
+    const held = blow(solidA.id)
+    expect(held.report).toEqual({ kind: 'blast-solid-refused', solidId: solidA.id })
+    expect(held.world).toBe(EMPTY_WORLD)
+  })
+})

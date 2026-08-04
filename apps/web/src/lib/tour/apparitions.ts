@@ -619,7 +619,32 @@ export interface Walk {
 export interface Cast {
   report: TourReport | null
   from: Vec2
+  /**
+   * Which way the visitor is facing, for the one flash that leaves a hand.
+   *
+   * Air Blow, and the reason it is worth a field: the catalogue's entry on it
+   * says almost nothing, and the one thing it does say is that the emission
+   * comes out of the **left palm**. A gust drawn out of the middle of the
+   * visitor would be dropping the single fact the archive gives.
+   */
+  heading?: number
 }
+
+/**
+ * Where the left palm is, in metres from where the visitor is standing.
+ *
+ * Half a metre out and a little forward, which is a hand held up rather than
+ * a hand at the side: `air-blow`'s own entry has Vincent raising it to break a
+ * guard. Not a measurement of anything — the archive gives no reach, no rate
+ * and no force — it is only the place the one attested fact happens at.
+ */
+export const LEFT_PALM = 0.5
+
+/** That palm, as a point on the deck. */
+export const leftPalmOf = (at: Vec2, heading: number): Vec2 => [
+  at[0] - Math.cos(heading) * LEFT_PALM,
+  at[1] + Math.sin(heading) * LEFT_PALM,
+]
 
 /** How one apparition is drawn, over and above where it stands. */
 type Drawn = Partial<Apparition> & {
@@ -1804,6 +1829,11 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
   const { report, from } = cast
   if (!report) return null
 
+  // Air Blow. The gust leaves the left palm and not the middle of the visitor,
+  // because the emission coming out of the left palm is the whole of what the
+  // catalogue concedes about this ability — everything else about it, the
+  // entry says outright, remains unknown. So the walk draws the one fact it
+  // has and asserts nothing over it: no reach, no rate, no measure.
   if (report.kind === 'stripped') {
     const space = ship.spaces.get(report.spaceId)
     const measured = space ? room(ship, space) : null
@@ -1813,7 +1843,7 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       tierId: space.tierId,
       at: world.landed[space.id] ?? measured.at,
       y: Math.min(measured.floor + 1.4, measured.ceiling - 0.3),
-      from,
+      from: cast.heading === undefined ? from : leftPalmOf(from, cast.heading),
       colour: GUST,
     }
   }

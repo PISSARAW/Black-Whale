@@ -233,6 +233,8 @@
           : say.isolatedOutside(roomName(report.spaceId))
       case 'stripped':
         return say.stripped(roomName(report.spaceId), report.count)
+      case 'blast-solid-refused':
+        return say.blastSolidRefused(solidName(report.solidId))
       case 'laid-open':
         return say.laidOpen(report.spaces, report.decks)
       case 'swallowed':

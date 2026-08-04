@@ -74,6 +74,11 @@ export const BODY_KINDS = [
   // hits. The blow crosses the bulkhead and catches somebody in the next room,
   // which makes a body the thing it is aimed at rather than a thing it passes.
   'remote-strike',
+  // Air Blow, and the one entry on this list that is here only in order to
+  // refuse. Its catalogue entry concedes an emission from the left palm and
+  // says the rest is unknown; aimed at a sentry the walk says exactly that,
+  // which is more instructive than a key that appears to do nothing.
+  'blast',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 export type BodyKind = (typeof BODY_KINDS)[number]

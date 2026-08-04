@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
 import { pointInPolygon } from './geometry'
 import {
+  LEFT_PALM,
   PORTAL_REACH,
   SHOAL,
   apparitionsOn,
   coinSpot,
   flashFor,
+  leftPalmOf,
   wormMouthAt,
   wormMouths,
   type Apparition,
@@ -325,9 +327,35 @@ describe('the two that happen rather than stand', () => {
       EMPTY_WORLD,
     )!
     expect(seen.kind).toBe('gust')
+    // With no heading to place a hand by, the gust leaves the visitor whole.
     expect(seen.from).toEqual(from)
     expect(seen.at).toEqual(centroid(elsewhere))
     expect(seen.tierId).toBe(elsewhere.tierId)
+  })
+
+  /**
+   * Air Blow's entry in the catalogue is four sentences and concedes one fact:
+   * the emission comes out of the **left palm**. A gust drawn out of the middle
+   * of the visitor would be dropping the only thing the archive gives.
+   */
+  it('emits from the left palm rather than from the middle of the visitor', () => {
+    const from: [number, number] = [12, 34]
+    const gust = (heading: number) =>
+      flashFor(
+        { report: { kind: 'stripped', spaceId: elsewhere.id, count: 0 }, from, heading },
+        ship,
+        EMPTY_WORLD,
+      )!
+    const facingNorth = gust(0)
+    expect(facingNorth.from).not.toEqual(from)
+    expect(facingNorth.from).toEqual(leftPalmOf(from, 0))
+    // Half a metre out, and always on the same side: it is a hand, not a halo.
+    expect(Math.hypot(facingNorth.from![0] - from[0], facingNorth.from![1] - from[1])).toBeCloseTo(
+      LEFT_PALM,
+      6,
+    )
+    // Turn the visitor and the palm goes round with them.
+    expect(gust(Math.PI / 2).from).not.toEqual(facingNorth.from)
   })
 
   it('rises as a sun on the visitor rather than on a room', () => {

@@ -576,6 +576,8 @@ export const fr: Messages = {
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
         'thumb-occupied': 'Le pouce tient déjà une capacité.',
         'no-target-ability': 'Il n’a aucune capacité à voler.',
+        'palm-only':
+          'L’émission part de la paume vers ce qu’elle vise ; le canon n’en dit pas plus. Ce qu’elle fait à la personne qui s’y tient n’est pas consigné, et la visite ne l’inventera pas.',
         'no-matter':
           'Rien que de l’air entre vous et lui. Le coup circule dans une surface ; il ne traverse pas un vide.',
         'only-birds':
@@ -714,6 +716,8 @@ export const fr: Messages = {
         isolatedInside: (room) =>
           `${room} est isolée autour de vous · vous pouvez sortir, et vous ne pourrez plus rentrer`,
         isolatedOutside: (room) => `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
+        blastSolidRefused: (solid) =>
+          `Vous tenez la paume sur ${solid} et rien ne suit. La cadence et la portée d'Air Blow ne sont pas données : le catalogue concède une émission depuis la paume gauche et dit que le fonctionnement précis reste inconnu, alors la visite ne vous dessinera pas une seconde bourrasque dont elle n'a pas le titre.`,
         stripped: (room, count) =>
           count
             ? `${count} emprise${count > 1 ? 's' : ''} soufflée${count > 1 ? 's' : ''} sur ${room} · rien n'a été déplacé`

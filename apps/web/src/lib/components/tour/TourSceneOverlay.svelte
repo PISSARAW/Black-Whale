@@ -66,6 +66,23 @@
      * `null` when nothing is projected.
      */
     hour: string | null
+    /**
+     * Emperor Time, which is the one technique you look *through* rather than at.
+     *
+     * A walk in the first person cannot show the visitor their own eyes, and the
+     * walk had nothing else for it: the ability turned on, the ship opened, and
+     * the screen said nothing — which read, correctly, as a key that had done
+     * nothing. What the eyes change is what is seen through them, so what goes
+     * over the picture is the colour, deepening with the ledger: `share` is how
+     * much of the year has gone, from 0 to 1, and `label` says the same thing as
+     * a quantity. Both, because a tint is a feeling and a year is a number, and
+     * this is the one ability whose whole argument is the number.
+     *
+     * The same wash the card table already puts over Morena's office, in the
+     * same red the dock publishes the technique in — one ability spending one
+     * year, drawn the same way on both surfaces.
+     */
+    scarlet: { share: number; label: string } | null
   }
 
   let {
@@ -81,10 +98,23 @@
     linkPrompt,
     examine,
     hour,
+    scarlet,
   }: Props = $props()
 </script>
 
 {#if autopilot}<div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>{/if}
+
+{#if scarlet}
+  <!-- First in the layer, and with no z of its own, so every read-out over the
+       scene goes on painting above it: the eyes colour the ship, not the panel
+       that describes it. -->
+  <div
+    class="pointer-events-none absolute inset-0"
+    style:background="radial-gradient(ellipse at center, rgba(239,51,64,{scarlet.share *
+      0.16}) 0%, rgba(239,51,64,{0.1 + scarlet.share * 0.6}) 100%)"
+    style:mix-blend-mode="screen"
+  ></div>
+{/if}
 
 <div
   class="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -110,6 +140,18 @@
         {location.source}
       </p>{/if}
   </div>
+{/if}
+
+{#if scarlet}
+  <!-- The quantity, said as well as shown, and over the scene rather than only
+       on the panel: in immersive mode the panel can be shut, and a price nobody
+       is being told is not a price. -->
+  <p
+    class="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded border border-[#ef3340]/60 bg-[#050505]/85 px-3 py-1 text-center text-[11px] uppercase tracking-widest text-[#ef8a90]"
+    aria-live="polite"
+  >
+    {scarlet.label}
+  </p>
 {/if}
 
 {#if penalty}

@@ -23,6 +23,7 @@
   import { hearTheRoom } from '$lib/tour/cast/hearing'
   import { punchRuns } from '$lib/tour/punch'
   import { daysLeft } from '$lib/tour/decipher'
+  import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
@@ -522,6 +523,23 @@
   let note = $state<{ line: string; until: number } | null>(null)
   const bodyNote = $derived(note && note.until > now ? note.line : null)
 
+  /**
+   * Emperor Time over the scene, deepening with what it has spent.
+   *
+   * The walk's own ledger rather than the global store `/nen` keeps: the hours
+   * are counted in `TourWorld` on the page's own beat — see `emperor.ts` — and a
+   * wash driven by anything else would be the picture and the panel quoting two
+   * different years.
+   */
+  const scarletWash = $derived(
+    world.scarlet
+      ? {
+          share: Math.min(1, world.scarlet.hours / HOURS_IN_A_YEAR),
+          label: $t.nen.lifeConsumed(world.scarlet.hours.toLocaleString($locale)),
+        }
+      : null,
+  )
+
   const castView: TourCastView = new TourCastView({
     ship,
     read: () => ({
@@ -784,6 +802,7 @@
         // The provenance card of the light, beside the deck: the visitor can
         // see why the bay is black at chapter 374 and a drawn noon elsewhere.
         hour: hour.label,
+        scarlet: scarletWash,
         // Hidden while the card is up: the same gesture puts it back, and the
         // card carries its own way out.
         examine:

@@ -113,7 +113,7 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
-  import { shaftAnchors, shaftStrength, type ShaftAnchor } from '$lib/tour/godRays'
+  import { createShaftDecks, shaftStrength } from '$lib/tour/shaftDecks'
   import { REFERENCE_HOUR, shipTimeOfDay, skyOf } from '$lib/tour/sky'
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
@@ -4170,18 +4170,8 @@
         ground: number
       } | null = null
 
-      /**
-       * The light shafts, pointed at whichever window the visitor is near.
-       *
-       * Two rooms on the ship have one — see `$lib/tour/godRays` — so this is a
-       * `uStrength` of zero on 312 of the 314, which the pass answers with a
-       * single branch. The gate is the room and its neighbours rather than the
-       * projection alone: a window across a hundred metres of Tier 3, behind
-       * four bulkheads, is off screen to the eye and still on screen to the
-       * projection matrix, and marching twenty-four taps a pixel towards it
-       * would buy nothing at all.
-       */
-      const shaftDecks = new Map<string, { anchor: ShaftAnchor; rooms: Set<string> }[]>()
+      /** The light shafts, pointed at whichever window the visitor is near. */
+      const shaftDecks = createShaftDecks()
       const shaftPoint = new THREE.Vector3()
 
       /**
@@ -4220,17 +4210,7 @@
       const aimShafts = (plan: TierPlan, standingId: string | null) => {
         const uniforms = shafts?.uniforms
         if (!uniforms) return
-        let windows = shaftDecks.get(plan.tier.id)
-        if (!windows) {
-          windows = shaftAnchors(plan).map((anchor) => ({
-            anchor,
-            // Depth one: the room the window is in, and the rooms that open onto
-            // it. Two would put a shaft in a corridor with a room between it and
-            // any glass, which is the decorative version this refuses to be.
-            rooms: visibleSpaces(plan, anchor.spaceId, 1),
-          }))
-          shaftDecks.set(plan.tier.id, windows)
-        }
+        const windows = shaftDecks(plan)
 
         let strongest = 0
         for (const { anchor, rooms } of windows) {

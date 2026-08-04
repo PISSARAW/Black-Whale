@@ -47,6 +47,33 @@ function gpuName(renderer: Three.WebGLRenderer): string | null {
   return (gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) as string | null) ?? null
 }
 
+/**
+ * The half-float target, and the depth texture the aura reads.
+ *
+ * Only on `high`: it is twice the bytes per pixel of the composer's default,
+ * and what it buys — emissive values above 1 surviving the bloom, and a depth
+ * buffer for `NenSceneAura` to intersect against — are both `high`-only
+ * effects. On `low` the composer allocates its own and nothing asks it for
+ * depth.
+ */
+function createHighTierTarget(
+  THREE: typeof Three,
+  renderer: Three.WebGLRenderer,
+): Three.WebGLRenderTarget {
+  const size = renderer.getSize(new THREE.Vector2())
+  const width = size.width || 1024
+  const height = size.height || 1024
+  const target = new THREE.WebGLRenderTarget(width, height, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    format: THREE.RGBAFormat,
+    type: THREE.HalfFloatType,
+  })
+  target.depthTexture = new THREE.DepthTexture(width, height)
+  target.depthTexture.type = THREE.UnsignedIntType
+  return target
+}
+
 export async function createSceneRuntime(
   THREE: typeof Three,
   canvas: HTMLCanvasElement,
@@ -87,27 +114,8 @@ export async function createSceneRuntime(
   const { EffectComposer } = await import('three/examples/jsm/postprocessing/EffectComposer.js')
   const { RenderPass } = await import('three/examples/jsm/postprocessing/RenderPass.js')
 
-  /**
-   * The half-float target, and the depth texture the aura reads.
-   *
-   * Only on `high`: it is twice the bytes per pixel of the composer's default,
-   * and what it buys — emissive values above 1 surviving the bloom, and a depth
-   * buffer for `NenSceneAura` to intersect against — are both `high`-only
-   * effects. On `low` the composer allocates its own and nothing asks it for
-   * depth.
-   */
   let renderTarget: Three.WebGLRenderTarget | undefined
-  if (quality.tier === 'high') {
-    const size = renderer.getSize(new THREE.Vector2())
-    renderTarget = new THREE.WebGLRenderTarget(size.width || 1024, size.height || 1024, {
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
-      format: THREE.RGBAFormat,
-      type: THREE.HalfFloatType,
-    })
-    renderTarget.depthTexture = new THREE.DepthTexture(size.width || 1024, size.height || 1024)
-    renderTarget.depthTexture.type = THREE.UnsignedIntType
-  }
+  if (quality.tier === 'high') renderTarget = createHighTierTarget(THREE, renderer)
 
   const composer = new EffectComposer(renderer, renderTarget)
   composer.addPass(new RenderPass(scene, camera))

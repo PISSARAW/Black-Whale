@@ -1,30 +1,20 @@
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import type { Ship } from '$lib/tour/blueprint'
 import { turnTheBook, type TourReport, type TourWorld } from '$lib/tour/hatsu'
 import {
   advanceCastHand,
   performPageCast,
   performTourCast,
   type CastHand,
-  type NenHand,
 } from '$lib/tour/pageCasting'
-import type { Space, Structure, Vec2 } from '$lib/tour/types'
-
-type Pages = readonly [HatsuInteractionKind, HatsuInteractionKind] | null
-type Hands = Record<CastHand, NenHand>
-
-interface CastContext {
-  world: TourWorld
-  ship: Ship
-  activeKind: HatsuInteractionKind | null
-  pages: Pages
-  hands: Hands
-  currentSpace: Space | null
-  aimedAt: Space | null
-  aimedSolidAt: Structure | null
-  position: Vec2
-  heading: number
-}
+import type { Space, Vec2 } from '$lib/tour/types'
+import {
+  aimedSolidId,
+  aimedTargetId,
+  standingInId,
+  vowRulesFor,
+  type CastContext,
+  type Hands,
+} from '$lib/tour/castAim'
 
 interface CastOptions {
   read: () => CastContext
@@ -42,8 +32,6 @@ export class TourCastController {
 
   castOn = (spaceId: string | null, solidId: string | null = null, hand: CastHand = 'first') => {
     const context = this.options.read()
-    const rules =
-      context.activeKind === 'heart-vow' ? this.options.vowRules(spaceId ?? 'self') : undefined
     const cast = performTourCast({
       world: context.world,
       ship: context.ship,
@@ -53,10 +41,10 @@ export class TourCastController {
       hand,
       targetId: spaceId,
       targetSolidId: solidId,
-      standingIn: context.currentSpace?.id ?? null,
+      standingIn: standingInId(context),
       at: context.position,
       heading: context.heading,
-      rules,
+      rules: vowRulesFor(context.activeKind, spaceId, this.options.vowRules),
     })
     if (!cast) return
     const { result, mark } = cast
@@ -76,18 +64,17 @@ export class TourCastController {
 
   castPage = (kind: HatsuInteractionKind) => {
     const context = this.options.read()
-    const targetId = context.aimedAt?.id ?? context.currentSpace?.id ?? null
-    const rules = kind === 'heart-vow' ? this.options.vowRules(targetId ?? 'self') : undefined
+    const targetId = aimedTargetId(context)
     const result = performPageCast({
       world: context.world,
       kind,
       ship: context.ship,
       targetId,
-      targetSolidId: context.aimedSolidAt?.id ?? null,
-      standingIn: context.currentSpace?.id ?? null,
+      targetSolidId: aimedSolidId(context),
+      standingIn: standingInId(context),
       at: context.position,
       heading: context.heading,
-      rules,
+      rules: vowRulesFor(kind, targetId, this.options.vowRules),
     })
     this.finish(result.world, result.report)
     if (result.travelTo) this.options.goToSpace(context.ship.spaces.get(result.travelTo)!)
@@ -95,11 +82,7 @@ export class TourCastController {
 
   castHand = (hand: CastHand) => {
     const context = this.options.read()
-    this.castOn(
-      context.aimedAt?.id ?? context.currentSpace?.id ?? null,
-      context.aimedSolidAt?.id ?? null,
-      hand,
-    )
+    this.castOn(aimedTargetId(context), aimedSolidId(context), hand)
   }
 
   turnRibbon = () => {

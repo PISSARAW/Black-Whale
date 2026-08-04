@@ -336,10 +336,15 @@ export function disturbDust(dust: Dust, impulse: DustImpulse): void {
     // straight up rather than in a direction chosen by a division by zero.
     const near = 1 - distance / impulse.radius
     const force = impulse.strength * near * near
-    const unit = distance > 1e-4 ? 1 / distance : 0
-    const ux = distance > 1e-4 ? dx * unit : 0
-    const uy = distance > 1e-4 ? dy * unit : 1
-    const uz = distance > 1e-4 ? dz * unit : 0
+    let ux = 0
+    let uy = 1
+    let uz = 0
+    if (distance > 1e-4) {
+      const unit = 1 / distance
+      ux = dx * unit
+      uy = dy * unit
+      uz = dz * unit
+    }
 
     const mote = i / 3
     const allowance = dust.room[mote]

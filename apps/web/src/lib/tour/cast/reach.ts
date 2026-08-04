@@ -22,22 +22,14 @@
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { reachesABody, type BodyKind } from '../bodyKinds'
 import { holdFor, type BodyHold, type BodyMark } from './bodies'
+import { theFlock, theThumb } from './reachBranches'
 import type { CastDossier } from './dossier'
 import type { Post } from './types'
 
 /** The vow: Chain Jail closes on the Phantom Troupe and on nobody else. */
 export const CHAIN_JAIL_FACTION = 'phantom-troupe'
 
-/**
- * Who a bird will carry something to.
- *
- * Ch. 320 is Cluck's flock delivering ballots to the Zodiacs, and that is the
- * only errand the archive draws it running: a pigeon put into the hand of a
- * colleague. So the walk carries the delivery exactly that far — a Zodiac
- * aboard, which on this ship is Cheadle in the medical zone and Mizaistom in
- * the political one — and a bird sent to a sentry is a bird with no addressee.
- */
-export const FLOCK_ADDRESSEES = 'zodiacs'
+export { FLOCK_ADDRESSEES } from './reachBranches'
 
 /** Why a technique did not do what it does. Each one is a canon condition. */
 export type ReachRefusal =
@@ -428,25 +420,6 @@ const tellsFor = (kind: AskKind, input: ReachInput): ReachTell[] => TELLS[kind](
  * which is what keeps ADR-004 §2.3's promise mechanical rather than
  * conscientious.
  */
-/**
- * Steal Chain's finger, which does two opposite things with one gesture: aimed
- * at somebody new it tears an ability out, aimed back at whoever it emptied it
- * gives both back. One condition read from two sides, so they are decided
- * together — and kept out of `reachBody`, which stays a dispatch.
- */
-function theThumb(kind: BodyKind, characterId: string, input: ReachInput): Reach {
-  if (input.book?.stolenFrom === characterId) {
-    return { outcome: 'returned', kind, characterId, technique: input.book.open ?? '' }
-  }
-  return {
-    outcome: 'stolen',
-    kind,
-    characterId,
-    technique: input.target!.member.hatsu[0]!,
-    hold: holdFor(characterId, { kind, mark: 'drained' }, input.now),
-  }
-}
-
 export function reachBody(input: ReachInput): Reach {
   if (!reachesABody(input.kind))
     return { outcome: 'refused', kind: input.kind, reason: 'not-a-body' }
@@ -459,21 +432,13 @@ export function reachBody(input: ReachInput): Reach {
   const characterId = input.target.member.characterId
   if (kind === WORN) return { outcome: 'worn', kind, characterId }
 
-  // The flock, which has one errand and one kind of addressee. Both answers are
-  // true statements about the ability, and the refusal is the more informative
-  // of the two: it is the walk saying out loud that this manipulation takes
-  // birds and takes nothing else.
   // The console. Nothing is laid on them and nothing is read off their entry:
   // the reading is a duration, and the duration is the rules' to count.
   if (kind === READS) {
     return { outcome: 'reading', kind, characterId, days: input.decipherDays }
   }
 
-  if (kind === CARRIES) {
-    return input.dossier?.factionId === FLOCK_ADDRESSEES
-      ? { outcome: 'delivered', kind, characterId }
-      : { outcome: 'refused', kind, reason: 'only-birds' }
-  }
+  if (kind === CARRIES) return theFlock(kind, characterId, input)
 
   if (isAsking(kind)) return { outcome: 'told', kind, characterId, tells: tellsFor(kind, input) }
 

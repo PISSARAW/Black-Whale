@@ -972,6 +972,25 @@ export interface SolidHold {
    * about not having — ch. 61 works precisely because there is nothing to see.
    */
   forged?: boolean
+  /**
+   * Whether Fun Fun Cloth has this thing folded away.
+   *
+   * A pocketed solid is in nobody's room: it left with whoever wrapped it, and
+   * `standingIn` skips it for that reason rather than because it was destroyed.
+   * `spaceId` below is where it comes back out — not where it went in.
+   */
+  pocketed?: boolean
+  /**
+   * The room this solid is in *now*, when that is not the room the blueprint
+   * drew it in.
+   *
+   * The one hold that moves a thing between rooms rather than within one. The
+   * walk could push a coffin across a chamber and never out of it, because a
+   * solid's room was the blueprint's and nothing could say otherwise — which
+   * made ch. 372's whole gesture, carrying furniture out and setting it down
+   * elsewhere, undrawable.
+   */
+  spaceId?: string
   /** Aura color applied by a hatsu, such as pink for Texture Surprise */
   aura?: string
 }
@@ -1170,7 +1189,7 @@ export type TourReport =
   /** A guard who would have put the visitor out, looking at somebody else's face. */
   | { kind: 'unrecognised'; spaceId: string; asId: string }
   | { kind: 'wrapped'; solidId: string }
-  | { kind: 'unwrapped'; solidId: string }
+  | { kind: 'unwrapped'; solidId: string; spaceId: string }
   | { kind: 'pushed'; solidId: string; metres: number }
   // Order Stamp, which is three states rather than one: stamped, locked, told.
   | { kind: 'stamped'; solidId: string; puppets: number }
@@ -1209,6 +1228,8 @@ export type TourReport =
   | { kind: 'fingers-intact-refused' }
   /** Rising Sun raised with no wrapping on: the two abilities go together. */
   | { kind: 'no-packet' }
+  /** A blow aimed at something folded away. Everything comes out of the cloth whole. */
+  | { kind: 'in-the-cloth'; solidId: string }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
   /** The ball on the end of the Dowsing Chain, brought down on a thing. */

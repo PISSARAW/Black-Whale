@@ -2817,3 +2817,51 @@ describe('the barrage, aimed and swept', () => {
     })
   })
 })
+
+/**
+ * Ch. 372 draws furniture leaving the room in Chrollo's hand and coming out
+ * again somewhere else, the size it was. The walk shrank things where they
+ * stood, which is the one thing the chapter does not draw.
+ */
+describe('the cloth, which carries rather than shrinks', () => {
+  const wrap = (world: TourWorld, extra = {}) =>
+    castInTour(world, 'pocket', {
+      ship,
+      targetId: null,
+      targetSolidId: solidA.id,
+      standingIn: solidA.spaceId,
+      at: solidA.at,
+      ...extra,
+    })
+
+  it('takes the thing out of the room it was standing in', () => {
+    const before = standingIn(ship, EMPTY_WORLD, solidA.spaceId).map((solid) => solid.id)
+    expect(before).toContain(solidA.id)
+    const packed = wrap(EMPTY_WORLD).world
+    expect(packed.solids[solidA.id]?.pocketed).toBe(true)
+    expect(standingIn(ship, packed, solidA.spaceId).map((s) => s.id)).not.toContain(solidA.id)
+  })
+
+  // Not destroyed and not damaged: it comes back whole, exactly where opened.
+  it('puts it down where the visitor is, at the size it was', () => {
+    const packed = wrap(EMPTY_WORLD).world
+    const opened = wrap(packed, { standingIn: elsewhere.id, at: [3, 4] })
+    expect(opened.report).toMatchObject({ kind: 'unwrapped', spaceId: elsewhere.id })
+    expect(opened.world.solids[solidA.id]?.scale).toBe(1)
+    expect(standingIn(ship, opened.world, elsewhere.id).map((s) => s.id)).toContain(solidA.id)
+    expect(standingIn(ship, opened.world, solidA.spaceId).map((s) => s.id)).not.toContain(solidA.id)
+  })
+
+  it('refuses every blow aimed at a package, with the cloth’s own rule', () => {
+    const packed = wrap(EMPTY_WORLD).world
+    const struck = castInTour(packed, 'impact', {
+      ship,
+      targetId: null,
+      targetSolidId: solidA.id,
+      standingIn: solidA.spaceId,
+      at: solidA.at,
+    })
+    expect(struck.report).toEqual({ kind: 'in-the-cloth', solidId: solidA.id })
+    expect(struck.world.solids[solidA.id]?.squash).toBe(0.25)
+  })
+})

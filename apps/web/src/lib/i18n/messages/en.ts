@@ -1154,8 +1154,12 @@ export const en = {
         signForged: (room: string, as: string) =>
           `The door of ${room} now reads ${as} · only the plate changed, and the card still knows`,
         signRestored: (room: string) => `The plate on ${room} is its own again`,
-        wrapped: (solid: string) => `${solid} wrapped small · nothing about it is damaged`,
-        unwrapped: (solid: string) => `${solid} is out of the cloth, the size it was`,
+        wrapped: (solid: string) =>
+          `${solid} folded into the cloth · it leaves the room with you, and nothing about it is damaged`,
+        unwrapped: (solid: string, room: string) =>
+          `${solid} out of the cloth in ${room}, the size it was and exactly where you opened it`,
+        inTheCloth: (solid: string) =>
+          `${solid} is folded away · everything comes out of the cloth whole, which is the rule`,
         pushed: (solid: string, metres: number) =>
           metres
             ? `${solid} pushed ${metres} m · it is a thing, so it moves like one`

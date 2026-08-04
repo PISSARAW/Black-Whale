@@ -1012,8 +1012,12 @@ export const fr: Messages = {
         signForged: (room, as) =>
           `La porte de ${room} affiche ${as} · seule la plaque a changé, la fiche sait encore`,
         signRestored: (room) => `La plaque de ${room} porte de nouveau son propre numéro`,
-        wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
-        unwrapped: (solid) => `${solid} ressort du tissu, à sa taille`,
+        wrapped: (solid) =>
+          `${solid} plié dans le tissu · il quitte la salle avec vous, et rien n'y est abîmé`,
+        unwrapped: (solid, room) =>
+          `${solid} ressort du tissu dans ${room}, à sa taille et là où vous l'ouvrez`,
+        inTheCloth: (solid) =>
+          `${solid} est plié dans le tissu · tout en ressort indemne, c'est la règle`,
         pushed: (solid, metres) =>
           metres
             ? `${solid} poussé de ${metres} m · c'est une chose, elle se déplace comme telle`

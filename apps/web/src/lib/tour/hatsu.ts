@@ -365,9 +365,21 @@ const calledUp = (spaceId: string | null, at: Vec2, heading = 0) =>
  * has already been swallowed, shredded or transformed out of existence.
  */
 export const standingIn = (ship: Ship, world: TourWorld, spaceId: string): Structure[] =>
-  [...ship.structures, ...world.copies].filter(
-    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
-  )
+  [...ship.structures, ...world.copies]
+    .filter((solid) => {
+      const hold = world.solids[solid.id]
+      if (hold?.gone) return false
+      // In the cloth is in nobody's room. It is not destroyed — it left with
+      // whoever wrapped it, and it comes back whole. See `SolidHold.pocketed`.
+      if (hold?.pocketed) return false
+      return (hold?.spaceId ?? solid.spaceId) === spaceId
+    })
+    // Set down somewhere the blueprint never drew it, the solid still has to
+    // answer as a thing standing in *this* room.
+    .map((solid) => {
+      const moved = world.solids[solid.id]?.spaceId
+      return moved && moved !== solid.spaceId ? { ...solid, spaceId: moved } : solid
+    })
 
 /**
  * A room the jellyfish has let go of: everything in it back on its own floor.
@@ -890,16 +902,40 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     }
   },
 
-  pocket: ({ world, hold, id }) =>
-    (hold?.scale ?? 1) < 0.5
-      ? {
-          world: withHold(world, id, { scale: 1, squash: 1 }),
-          report: { kind: 'unwrapped', solidId: id },
-        }
-      : {
-          world: withHold(world, id, { scale: 0.25, squash: 0.25 }),
-          report: { kind: 'wrapped', solidId: id },
-        },
+  /**
+   * Fun Fun Cloth: the thing goes into the cloth, and the cloth goes with you.
+   *
+   * The walk used to shrink a solid where it stood, which is the one thing
+   * ch. 372 does not draw: what it draws is furniture *leaving the room* in
+   * Chrollo's hand and coming out again somewhere else, the size it was. So the
+   * wrap takes it out of the room it was in, and the unwrap puts it down where
+   * the visitor is standing — not where it started.
+   *
+   * Nothing is ever damaged by any of it. That is the cloth's own rule, and it
+   * is kept here by there being no code that could do otherwise: the wrap
+   * changes `pocketed` and `scale`, and the unwrap changes them back and moves
+   * the thing. Nothing touches `hits`, `gone`, `squash` or anything else a
+   * technique uses to hurt a solid.
+   */
+  pocket: ({ world, hold, id, at, standingIn }) => {
+    if (hold?.pocketed) {
+      if (!standingIn) return { world, report: { kind: 'no-target' } }
+      return {
+        world: withHold(world, id, {
+          pocketed: false,
+          scale: 1,
+          squash: 1,
+          at,
+          spaceId: standingIn,
+        }),
+        report: { kind: 'unwrapped', solidId: id, spaceId: standingIn },
+      }
+    }
+    return {
+      world: withHold(world, id, { pocketed: true, scale: 0.25, squash: 0.25 }),
+      report: { kind: 'wrapped', solidId: id },
+    }
+  },
 
   // The stamp is not a push: it is a 人 put on a head, and the thing wearing it
   // does what it is told afterwards. Three clicks, three states — stamp a solid
@@ -1500,6 +1536,14 @@ function castOnSolid(
     return { world, report: { kind: 'bound-fast', solidId: id } }
   }
   if (hold?.gone && kind !== 'stitch') return { world, report: { kind: 'no-solid' } }
+
+  // In the cloth, and nothing reaches it there. Everything comes out of Fun Fun
+  // Cloth unharmed — that is the rule ch. 372 states — so a blow aimed at a
+  // package is refused with the rule rather than being allowed to mark it. Only
+  // the cloth itself answers, which is how the thing gets out again.
+  if (hold?.pocketed && kind !== 'pocket') {
+    return { world, report: { kind: 'in-the-cloth', solidId: id } }
+  }
 
   const away = (metres: number): Vec2 => {
     const now = solidNow(structure, hold)

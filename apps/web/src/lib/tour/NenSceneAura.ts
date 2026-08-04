@@ -1,4 +1,4 @@
-import { NEN_PRESENTATION, type NenTechniqueState } from '@black-whale/nen-engine'
+import { NEN_PRESENTATION, isAuraAtRest, type NenTechniqueState } from '@black-whale/nen-engine'
 import type * as Three from 'three'
 import {
   buildInteractionMarker,
@@ -27,6 +27,15 @@ export interface NenAuraFrame {
   ground: number
   seconds: number
   depthTexture?: Three.DepthTexture
+  /**
+   * Draw nothing for an aura that is merely up.
+   *
+   * The visitor's setting, carried on the frame rather than taken as a fourth
+   * argument. It stops at the skin: En still opens its disc and Shu still wraps
+   * what it was given, because those are things the visitor did and the walk
+   * owes them the answer. See `Comfort.restingAura`.
+   */
+  hideResting?: boolean
 }
 
 export class NenSceneAura {
@@ -40,9 +49,7 @@ export class NenSceneAura {
 
   readonly #ten: Three.Mesh
   readonly #ren: Three.Mesh
-  readonly #renTen: Three.Mesh
   readonly #on: Three.Mesh
-  readonly #onTen: Three.Mesh
   readonly #zetsu: Three.Mesh
   readonly #flux: Three.Mesh
   readonly #en: Three.Mesh
@@ -51,10 +58,6 @@ export class NenSceneAura {
   readonly #enUniforms: any
 
   #seconds = 0
-  #onStartTime = 0
-  #wasOn = false
-  #renStartTime = 0
-  #wasRen = false
 
   constructor(THREE: ThreeModule, scene: Three.Scene) {
     this.#THREE = THREE
@@ -108,30 +111,6 @@ export class NenSceneAura {
     )
     this.#ren.position.y = -1.2
 
-    // REN (Settled into Ten state)
-    this.#renTen = new THREE.Mesh(
-      this.#auraGeom,
-      new THREE.ShaderMaterial({
-        vertexShader: tenVertexShader,
-        fragmentShader: tenFragmentShader,
-        uniforms: {
-          u_time: { value: 0 },
-          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.ren.colours[0]) },
-          u_colorEdge: {
-            value: new THREE.Color(
-              NEN_PRESENTATION.ren.colours[1] || NEN_PRESENTATION.ren.colours[0],
-            ),
-          },
-          u_opacity: { value: 0.0 },
-        },
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        side: THREE.DoubleSide,
-      }),
-    )
-    this.#renTen.position.y = -1.2
-
     // ON
     this.#on = new THREE.Mesh(
       this.#auraGeom,
@@ -156,30 +135,6 @@ export class NenSceneAura {
       }),
     )
     this.#on.position.y = -1.2
-
-    // ON (Settled into Ten state)
-    this.#onTen = new THREE.Mesh(
-      this.#auraGeom,
-      new THREE.ShaderMaterial({
-        vertexShader: tenVertexShader,
-        fragmentShader: tenFragmentShader,
-        uniforms: {
-          u_time: { value: 0 },
-          u_colorCore: { value: new THREE.Color(NEN_PRESENTATION.on.colours[0]) },
-          u_colorEdge: {
-            value: new THREE.Color(
-              NEN_PRESENTATION.on.colours[1] || NEN_PRESENTATION.on.colours[0],
-            ),
-          },
-          u_opacity: { value: 0.0 },
-        },
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        side: THREE.DoubleSide,
-      }),
-    )
-    this.#onTen.position.y = -1.2
 
     // ZETSU (Refraction via MeshPhysicalMaterial)
     this.#zetsu = new THREE.Mesh(
@@ -244,9 +199,7 @@ export class NenSceneAura {
 
     this.#root.add(this.#ten)
     this.#root.add(this.#ren)
-    this.#root.add(this.#renTen)
     this.#root.add(this.#on)
-    this.#root.add(this.#onTen)
     this.#root.add(this.#zetsu)
     this.#root.add(this.#flux)
     this.#root.add(this.#en)
@@ -311,14 +264,16 @@ export class NenSceneAura {
     // Hide all by default
     this.#ten.visible = false
     this.#ren.visible = false
-    this.#renTen.visible = false
     this.#on.visible = false
-    this.#onTen.visible = false
     this.#zetsu.visible = false
     this.#flux.visible = false
     this.#en.visible = false
 
     const active = state.mode !== 'zetsu'
+    // The resting skin, put away at the visitor's request. Only the last branch
+    // below can reach it — a Ten carrying a Ko or a Ryu is a flux, and On and
+    // Ken are both Ren — so this one flag is the whole of what is hidden.
+    const restingHidden = frame.hideResting === true && isAuraAtRest(state)
     const isFlux =
       active && (state.ko !== null || Object.values(state.ryu).some((v) => (v || 0) > 0))
 
@@ -328,25 +283,9 @@ export class NenSceneAura {
       const mat = this.#zetsu.material as Three.MeshPhysicalMaterial
       mat.ior = 1.02 + Math.sin(seconds * 2.0) * 0.02
     } else if (state.on) {
-      if (!this.#wasOn) {
-        this.#wasOn = true
-        this.#onStartTime = seconds
-      }
-      const elapsed = seconds - this.#onStartTime
-      const progress = Math.min(elapsed / 30.0, 1.0) // transition over 30s
-
-      if (progress < 1.0) {
-        this.#on.visible = true
-        ;(this.#on.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
-        ;(this.#on.material as Three.ShaderMaterial).uniforms.u_opacity.value =
-          (1.0 - progress) * 0.8
-      }
-
-      if (progress > 0.0) {
-        this.#onTen.visible = true
-        ;(this.#onTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
-        ;(this.#onTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8
-      }
+      this.#on.visible = true
+      ;(this.#on.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+      ;(this.#on.material as Three.ShaderMaterial).uniforms.u_opacity.value = 0.8
     } else if (isFlux) {
       this.#flux.visible = true
       this.#fluxUniforms.u_time.value = seconds
@@ -398,26 +337,17 @@ export class NenSceneAura {
       this.#fluxUniforms.u_nodes.value = nodes
       this.#fluxUniforms.u_intensities.value = ints
     } else if (state.mode === 'ren' && !state.ken) {
-      if (!this.#wasRen) {
-        this.#wasRen = true
-        this.#renStartTime = seconds
-      }
-      const elapsed = seconds - this.#renStartTime
-      const progress = Math.min(elapsed / 30.0, 1.0) // transition over 30s
-
-      if (progress < 1.0) {
-        this.#ren.visible = true
-        ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
-        ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_opacity.value =
-          (1.0 - progress) * 0.8
-      }
-
-      if (progress > 0.0) {
-        this.#renTen.visible = true
-        ;(this.#renTen.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
-        ;(this.#renTen.material as Three.ShaderMaterial).uniforms.u_opacity.value = progress * 0.8
-      }
-    } else {
+      // Ren holds for as long as it is held, and it looks like Ren the whole
+      // time. It used to fade into a Ten-coloured shell over thirty seconds,
+      // which was the presentation deciding on its own that an aura the visitor
+      // never lowered had come down — the engine's state said `ren` throughout,
+      // and everybody else aboard kept seeing Ren. On is the same case, and gets
+      // the same answer above: `transitionNen` is the only thing that ends
+      // either of them.
+      this.#ren.visible = true
+      ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
+      ;(this.#ren.material as Three.ShaderMaterial).uniforms.u_opacity.value = 0.8
+    } else if (!restingHidden) {
       this.#ten.visible = true
       ;(this.#ten.material as Three.ShaderMaterial).uniforms.u_time.value = seconds
       // Ken can just be a slightly scaled Ten for now
@@ -426,14 +356,6 @@ export class NenSceneAura {
       } else {
         this.#ten.scale.set(1.0, 1.0, 1.0)
       }
-    }
-
-    if (!state.on) {
-      this.#wasOn = false
-    }
-
-    if (state.mode !== 'ren' || state.ken || !active) {
-      this.#wasRen = false
     }
 
     if (active && state.en !== null) {

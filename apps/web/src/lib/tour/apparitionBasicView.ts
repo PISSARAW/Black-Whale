@@ -205,7 +205,7 @@ export const BIRD_TETHER = 'bird-tether'
  * part of it a reconstruction can actually show: the birds are ordinary, the
  * bundle of threads is not.
  */
-function bird(seen: Apparition, { THREE, glow, root, skin, observerGyo }: BasicApparitionContext) {
+function bird(seen: Apparition, { THREE, root, skin, observerGyo }: BasicApparitionContext) {
   const body = new THREE.Mesh(
     new THREE.CapsuleGeometry(seen.size * 0.34, seen.size * 0.75, 4, 8),
     skin,

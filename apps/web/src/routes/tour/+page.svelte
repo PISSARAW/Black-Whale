@@ -263,6 +263,13 @@
     updateHands: (next) => (nextHand = next),
     show,
     goToSpace,
+    vowRules: (subjectId) => {
+      const subjectName =
+        subjectId === 'self'
+          ? $t.tour.hatsu.vow.self
+          : nameOf(ship.spaces.get(subjectId)!)
+      return [$t.tour.hatsu.vow.ruleA(subjectName), $t.tour.hatsu.vow.ruleB(subjectName)]
+    },
   })
   const hatsuSession = new TourHatsuSession({
     readActivation: () => ({
@@ -289,7 +296,10 @@
       if (space) goToSpace(space)
     },
     reboundText: () => $t.tour.hatsu.reports.snakesRebound,
-    vowText: (spaceId) => $t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(spaceId)!)),
+    vowText: (subjectId) =>
+      subjectId === 'self'
+        ? $t.tour.hatsu.reports.vowBroken($t.tour.hatsu.vow.self)
+        : $t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(subjectId)!)),
   })
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()

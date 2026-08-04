@@ -674,6 +674,22 @@ export const en = {
         bloom: 'The soft air',
         scatter: 'The sharp air',
       },
+      vow: {
+        self: 'self',
+        rules: (subject: string, ruleA: string, ruleB: string) =>
+          `The chain is in ${subject}'s heart · ${ruleA} · ${ruleB}`,
+        ruleA: (subject: string) =>
+          subject === 'self'
+            ? 'while the rule holds, Chain Jail is certain'
+            : `do not enter ${subject}`,
+        ruleB: (subject: string) =>
+          subject === 'self'
+            ? 'to break the oath is to pierce your own heart'
+            : `do not lay a hand on ${subject}`,
+        dormant: 'DORMANT',
+        triggered: 'TRIGGERED',
+        locked: 'The contract is spoken once, at activation, and never touched again',
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,
@@ -895,9 +911,10 @@ export const en = {
         cardBlue: (room: string) => `Blue: ${room} is admitted, and warned`,
         cardYellow: (room: string) => `Yellow: ${room} holds you where you stand`,
         cardRed: (room: string) => `Red: ${room} is dismissed and shut behind you`,
-        vowDeclared: (room: string) => `The rule is set: you will not enter ${room}`,
-        vowBroken: (room: string) =>
-          `You entered ${room} knowing · the chain takes the aura for it`,
+        vowDeclared: (subject: string, rules: string[]) =>
+          `The rule is set on ${subject}: ${rules.join(' · ')}`,
+        vowBroken: (subject: string) =>
+          `The rule on ${subject} is broken · the chain takes the aura for it`,
         pactTaken: (room: string) => `The terms are taken: reach ${room}`,
         pactMet: (room: string, released: number) =>
           released

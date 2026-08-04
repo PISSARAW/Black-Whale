@@ -19,6 +19,8 @@ interface CastOptions {
   standingIn: string | null
   at: Vec2
   heading: number
+  /** The two rules spoken aloud by Judgment Chain, when that is what is cast. */
+  rules?: string[]
 }
 
 const castKind = (options: CastOptions): HatsuInteractionKind | null => {
@@ -46,6 +48,7 @@ export function performTourCast(options: CastOptions) {
     heading: options.heading,
     mark,
     tune: kind === 'melody' ? AIR_KEYS[options.hand] : undefined,
+    rules: options.rules,
   })
   return { result, mark }
 }
@@ -69,6 +72,8 @@ export function performPageCast(options: {
   standingIn: string | null
   at: Vec2
   heading: number
+  /** The two rules spoken aloud by Judgment Chain, when that is what is cast. */
+  rules?: string[]
 }) {
   const result = castInTour(options.world, options.kind, {
     ship: options.ship,
@@ -77,6 +82,7 @@ export function performPageCast(options: {
     standingIn: options.standingIn,
     at: options.at,
     heading: options.heading,
+    rules: options.rules,
   })
   return { ...result, world: spendPage(result.world, options.kind) }
 }

@@ -130,6 +130,9 @@
     return space ? nameOf(identityOf(ship, world, space)) : id
   }
 
+  const subjectName = (id: string) =>
+    id === 'self' ? $t.tour.hatsu.vow.self : roomName(id)
+
   /**
    * A stolen technique under the name of whoever it was taken from.
    *
@@ -334,9 +337,11 @@
       case 'card-red':
         return say.cardRed(roomName(report.spaceId))
       case 'vow-declared':
-        return say.vowDeclared(roomName(report.spaceId))
+        return say.vowDeclared(subjectName(report.subjectId), report.rules)
       case 'vow-broken':
-        return say.vowBroken(roomName(report.spaceId))
+        return say.vowBroken(subjectName(report.subjectId))
+      case 'vow-locked':
+        return $t.tour.hatsu.vow.locked
       case 'pact-taken':
         return say.pactTaken(roomName(report.spaceId))
       case 'pact-met':
@@ -665,7 +670,9 @@
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
     if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })
-    if (world.vow) rows.push({ label: held.vow, value: roomName(world.vow) })
+    for (const vow of Object.values(world.vows)) {
+      rows.push({ label: held.vow, value: subjectName(vow.subjectId) })
+    }
     if (world.pact) rows.push({ label: held.pact, value: roomName(world.pact) })
     for (const id of world.devouring) rows.push({ label: held.devouring, value: roomName(id) })
     for (const [id, card] of Object.entries(world.cards)) {

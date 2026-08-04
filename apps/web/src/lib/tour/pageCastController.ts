@@ -33,6 +33,8 @@ interface CastOptions {
   updateHands: (hands: Hands) => void
   show: (report: TourReport) => void
   goToSpace: (space: Space, landing?: Vec2 | null) => void
+  /** The two rules spoken aloud by Judgment Chain for the given subject. */
+  vowRules: (subjectId: string) => string[]
 }
 
 export class TourCastController {
@@ -40,6 +42,10 @@ export class TourCastController {
 
   castOn = (spaceId: string | null, solidId: string | null = null, hand: CastHand = 'first') => {
     const context = this.options.read()
+    const rules =
+      context.activeKind === 'heart-vow'
+        ? this.options.vowRules(spaceId ?? 'self')
+        : undefined
     const cast = performTourCast({
       world: context.world,
       ship: context.ship,
@@ -52,6 +58,7 @@ export class TourCastController {
       standingIn: context.currentSpace?.id ?? null,
       at: context.position,
       heading: context.heading,
+      rules,
     })
     if (!cast) return
     const { result, mark } = cast
@@ -71,15 +78,18 @@ export class TourCastController {
 
   castPage = (kind: HatsuInteractionKind) => {
     const context = this.options.read()
+    const targetId = context.aimedAt?.id ?? context.currentSpace?.id ?? null
+    const rules = kind === 'heart-vow' ? this.options.vowRules(targetId ?? 'self') : undefined
     const result = performPageCast({
       world: context.world,
       kind,
       ship: context.ship,
-      targetId: context.aimedAt?.id ?? context.currentSpace?.id ?? null,
+      targetId,
       targetSolidId: context.aimedSolidAt?.id ?? null,
       standingIn: context.currentSpace?.id ?? null,
       at: context.position,
       heading: context.heading,
+      rules,
     })
     this.finish(result.world, result.report)
     if (result.travelTo) this.options.goToSpace(context.ship.spaces.get(result.travelTo)!)

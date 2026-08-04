@@ -107,7 +107,7 @@ describe('the Little Eye sequence (ch. 369)', () => {
     expect(secondTheft.allowed).toBe(false)
   })
 
-  it('moves the ability from the victim to Kurapika and then to Oito', () => {
+  it("la chaîne Little Eye → vol → prêt à Oito tracée dans la timeline : quatre types d'événements sur une seule séquence canonique, lisibles dans le film de la visite. (montré, ch. 369)", () => {
     const branches = new InMemoryBranchEngine()
     const base = world()
     branches.createBranch({

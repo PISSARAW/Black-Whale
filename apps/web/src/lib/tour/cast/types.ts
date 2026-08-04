@@ -1259,6 +1259,8 @@ export type TourReport =
   | { kind: 'no-packet' }
   /** A blow aimed at something folded away. Everything comes out of the cloth whole. */
   | { kind: 'in-the-cloth'; solidId: string }
+  /** The cloth opened with nothing folded into it. */
+  | { kind: 'nothing-in-the-cloth' }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
   /** The ball on the end of the Dowsing Chain, brought down on a thing. */

@@ -1020,6 +1020,7 @@ export const fr: Messages = {
           `${solid} ressort du tissu dans ${room}, à sa taille et là où vous l'ouvrez`,
         copiesFaded: (solids) =>
           `${solids} copie${solids === 1 ? '' : 's'} disparue${solids === 1 ? '' : 's'} · un jour était tout ce qu'elles avaient, et rien ne reste où elles se tenaient`,
+        nothingInTheCloth: 'Le tissu est vide · rien n’y est plié',
         inTheCloth: (solid) =>
           `${solid} est plié dans le tissu · tout en ressort indemne, c'est la règle`,
         pushed: (solid, metres) =>

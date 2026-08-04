@@ -74,6 +74,27 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   // nothing in it still went round, which is exactly what the refusal is about.
   launched: landAPunch,
   'not-wound': landAPunch,
+  // Fun Fun Cloth, which the walk played silently throughout: a thing going
+  // into the cloth, coming out of it, and a blow that found a package instead
+  // of a thing. All three are the same fold of fabric.
+  wrapped: foldPaper,
+  unwrapped: foldPaper,
+  'in-the-cloth': foldPaper,
+  'nothing-in-the-cloth': foldPaper,
+  // Emperor Time. The eyes turning and the eyes going out are the two loudest
+  // events the walk has — a year of a life either side of them — and both were
+  // mute. The gong's three stages carry the escalation: turning, spent, and the
+  // five minutes with no Nen at all.
+  'eyes-turned': () => strikeAGong(1),
+  'eyes-out': () => strikeAGong(2),
+  'zetsu-forced': () => strikeAGong(3),
+  // The day running out on a copy, which is the archive taking something back.
+  'copies-faded': () => skipThroughTime(),
+  // Padaille's arm, which is a body being rebuilt into a machine and back.
+  'limb-armed': grindThroughSpace,
+  // The shot refused for want of the mutilation: the fingers are there, and
+  // that is exactly why nothing comes out of them.
+  'fingers-intact-refused': () => fireABurst(1),
   'souls-swapped': loostAnArrow,
   'arrow-drawn': loostAnArrow,
   stitched: unspoolWire,
@@ -115,6 +136,17 @@ export function playTourReportSound(report: TourReport): void {
       return raiseTheSun(report.metres)
     case 'volley':
       return fireABurst(report.hits)
+    // The other half of ch. 353, which the walk had rules for and no voice: ten
+    // barrels across a sector rather than at one thing. Longer than the aimed
+    // burst because it is wider — the rounds are spread over everything standing
+    // there — and `fireABurst` caps itself, so a crowded room does not turn into
+    // a drum roll. The empty sweep sounds the same and for the same reason the
+    // fist into bare deck does: the barrels fired, and finding nothing standing
+    // in the arc is the answer, not the absence of one.
+    case 'swept':
+      return fireABurst(2 + report.solids * 2)
+    case 'nothing-there':
+      return fireABurst(4)
     // Three techniques arrive at the same word and none of them was played.
     // What is heard is the blow that was thrown, not the breaking: the third
     // burst of ten barrels, or the fist with fifteen rotations behind it. The
@@ -134,6 +166,12 @@ export function playTourReportSound(report: TourReport): void {
       return grindThroughSpace(report.on)
     case 'tune-played':
       return playATune(report.tune)
+    // `fingers-intact-refused` is deliberately not here. Every other refusal in
+    // this file keeps the sound of the gesture that did happen — the palm came
+    // up, the fist went into the deck — and this one is the case where nothing
+    // is fired at all: the restriction is not a price paid for the ability, it
+    // *is* the ability. The silence is the report, and the panel carries the
+    // reason.
     default:
       return
   }

@@ -1162,6 +1162,7 @@ export const en = {
           `${solid} out of the cloth in ${room}, the size it was and exactly where you opened it`,
         copiesFaded: (solids: number) =>
           `${solids} cop${solids === 1 ? 'y is' : 'ies are'} gone · a day was all they had, and nothing is left where they stood`,
+        nothingInTheCloth: 'The cloth is empty · nothing is folded away',
         inTheCloth: (solid: string) =>
           `${solid} is folded away · everything comes out of the cloth whole, which is the rule`,
         pushed: (solid: string, metres: number) =>

@@ -226,6 +226,16 @@ export const EITHER_TARGET = new Set<HatsuInteractionKind>([
   // about to start a fight. Ch. 349 draws both, and the second is the one the
   // walk had no way to perform.
   'staff',
+  // Texture Surprise. A solid under the reticle takes the mask; nothing under
+  // it means the door of the room being looked at, whose plaque is a flat
+  // limited surface with writing on it. Without this the plaque was
+  // unreachable: `castOnSolid` answered "no solid" and the branch never ran.
+  'disguise',
+  // Fun Fun Cloth. A solid under the reticle goes into the cloth; nothing under
+  // it takes out whatever is already in there. It has to be that way round: a
+  // folded thing is standing in no room, so there is nothing left to aim at,
+  // and without this the package could be put in and never taken out.
+  'pocket',
 ])
 
 /**

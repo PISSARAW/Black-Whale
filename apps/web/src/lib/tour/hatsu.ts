@@ -626,9 +626,16 @@ export function detachedOn(
 
   for (const [id, hold] of Object.entries(world.solids)) {
     if (hold.gone) continue
+    // Folded into Fun Fun Cloth, so it is not standing anywhere: it left with
+    // whoever wrapped it. Skipped here as well as in `standingIn`, or the scene
+    // would go on drawing a package in the room it was taken out of — which is
+    // the one thing ch. 372 does not draw.
+    if (hold.pocketed) continue
     const original = solidById(ship, world, id)
     if (!original) continue
-    const room = ship.spaces.get(original.spaceId)
+    // Set down somewhere the blueprint never put it. The room the scene draws
+    // it in has to be the room it is *in*, not the room it came from.
+    const room = ship.spaces.get(hold.spaceId ?? original.spaceId)
     if (!room || room.tierId !== tierId || emptied.has(room.id)) continue
 
     let structure = solidNow(original, hold)
@@ -3668,6 +3675,26 @@ function runCast(
   // gust above is: the room table would have to be told that a room aimed at
   // and a room stood in are different, and here they already are.
   if (kind === 'disguise') return forgeTheSign(world, input)
+
+  // The cloth opened with nothing under the reticle: whatever is folded away
+  // comes out here. The only way out there can be — a package is standing in no
+  // room, so the reticle has nothing to find — and it is also the gesture
+  // ch. 372 draws, which is a thing being set down somewhere else.
+  if (kind === 'pocket') {
+    const packed = Object.entries(world.solids).find(([, hold]) => hold.pocketed)
+    if (!packed) return { world, report: { kind: 'nothing-in-the-cloth' } }
+    if (!input.standingIn) return { world, report: { kind: 'no-target' } }
+    return {
+      world: withHold(world, packed[0], {
+        pocketed: false,
+        scale: 1,
+        squash: 1,
+        at: input.at,
+        spaceId: input.standingIn,
+      }),
+      report: { kind: 'unwrapped', solidId: packed[0], spaceId: input.standingIn },
+    }
+  }
 
   // Double Machine Gun aimed at neither a thing nor a room — over the rail, out
   // of the deck — is the ungated shot, and the walk refuses it with its reason.

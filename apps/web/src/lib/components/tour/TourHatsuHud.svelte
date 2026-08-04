@@ -320,6 +320,8 @@
         return say.unwrapped(solidName(report.solidId), roomName(report.spaceId))
       case 'copies-faded':
         return say.copiesFaded(report.solids)
+      case 'nothing-in-the-cloth':
+        return say.nothingInTheCloth
       case 'in-the-cloth':
         return say.inTheCloth(solidName(report.solidId))
       case 'pushed':

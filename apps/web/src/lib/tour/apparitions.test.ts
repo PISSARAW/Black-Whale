@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
 import { pointInPolygon } from './geometry'
 import {
+  CYCLOTRON,
   LEFT_PALM,
   PORTAL_REACH,
   SHOAL,
@@ -20,6 +21,7 @@ import {
   fishBite,
   openTheBook,
   turnTheBook,
+  type TourReport,
   type TourWorld,
 } from './hatsu'
 
@@ -389,6 +391,44 @@ describe('the two that happen rather than stand', () => {
     expect(seen.kind).toBe('punch')
     expect(seen.at).toEqual(struck.at)
     expect(seen.y).toBe(floorOf(furnished, tier))
+  })
+
+  /**
+   * The three reports that are Ripper Cyclotron's alone, which the walk drew
+   * nothing at all for: the thing was moved or gone and no fist was ever seen
+   * to do it. A blow with no picture is a key that appears not to work.
+   */
+  it('throws the fist from the visitor at the thing Ripper Cyclotron hit', () => {
+    const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
+    const from: [number, number] = [1, 2]
+    const swing = (report: TourReport) => flashFor({ report, from }, ship, EMPTY_WORLD)!
+    for (const report of [
+      { kind: 'launched', solidId: struck.id, metres: 7 },
+      { kind: 'not-wound', solidId: struck.id },
+      { kind: 'shattered', solidId: struck.id, by: 'windup' },
+    ] as const) {
+      const seen = swing(report)
+      expect(seen.kind).toBe('swing')
+      // Thrown, not raised: it comes from where the visitor is standing, and it
+      // arrives on the body of the thing rather than at its feet.
+      expect(seen.from).toEqual(from)
+      expect(seen.at).toEqual(struck.at)
+      expect(seen.colour).toBe(CYCLOTRON)
+    }
+  })
+
+  // The same word from three techniques, and only one of them is a fist.
+  it('leaves the other two ways of breaking a thing to their own pictures', () => {
+    const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
+    for (const by of ['barrage', 'shred'] as const) {
+      expect(
+        flashFor(
+          { report: { kind: 'shattered', solidId: struck.id, by }, from: [0, 0] },
+          ship,
+          EMPTY_WORLD,
+        ),
+      ).toBeNull()
+    }
   })
 
   it('says nothing for a report that is neither', () => {

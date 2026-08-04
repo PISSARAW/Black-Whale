@@ -4593,6 +4593,10 @@
         // Kurton is worn rather than stood in: the chassis goes where the
         // visitor is, facing where they face, every frame.
         hatsuEffects.syncVehicle({ riding: world.body.riding, at: pointer, eye, yaw })
+        // And so is the arm, for as long as it is still turning: Ripper
+        // Cyclotron's wind-up is the whole of its stated cost, and a cost the
+        // ship does not show is a key that appears to do nothing.
+        hatsuEffects.syncWinding({ turns: world.windup, at: pointer, eye, yaw, delta })
 
         // One pace, one footstep, on the same counter the head is dipping to — so
         // the sound lands with the foot at every speed and never drifts off it.

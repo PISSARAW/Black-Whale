@@ -470,6 +470,8 @@ const LOOSE_DOLLS = 5
 /** Air Blow is a palm blast of pale air; Remote Punch is a fist of blue aura. */
 export const GUST = 0xc6f1ff
 export const PUNCH = 0x55a7ff
+/** Ripper Cyclotron's own gold, as the dock publishes the technique. */
+export const CYCLOTRON = 0xf2c34f
 
 /** How wide a mouth of the tunnel stands, in metres. A door, not a gate. */
 export const PORTAL_RADIUS = 1.15
@@ -1798,7 +1800,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, standing: Footing): st
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast' | 'swing'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -1819,11 +1821,22 @@ export interface TourFlash {
 }
 
 /**
+ * A thing broken by the arm rather than by the barrels or by the paper.
+ *
+ * Three techniques report the same word and the scene owes each of them a
+ * different picture, which is what `by` is on the report for: this is the only
+ * one of the three that is a fist.
+ */
+const windupShatter = (report: TourReport): report is Extract<TourReport, { kind: 'shattered' }> =>
+  report.kind === 'shattered' && report.by === 'windup'
+
+/**
  * What the walk should show for what just happened, or nothing.
  *
- * Only the two techniques whose whole substance is the moment of the cast: Air
- * Blow, which strips a room from across the ship and moves nothing, and Remote
- * Punch, whose aura runs along the floor and comes up under something else.
+ * Only the techniques whose whole substance is the moment of the cast: Air
+ * Blow, which strips a room from across the ship and moves nothing, Remote
+ * Punch, whose aura runs along the floor and comes up under something else, and
+ * Ripper Cyclotron, which is one blow and then an empty arm.
  */
 export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | null {
   const { report, from } = cast
@@ -1942,6 +1955,29 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       y: Math.min(measured.floor + now.base + now.height * 0.6, measured.ceiling - 0.2),
       from,
       colour: CHAIN,
+    }
+  }
+
+  // Ripper Cyclotron, arriving. The blow, the blow that broke what it hit, and
+  // the swing that had nothing in it are one gesture drawn three ways — the arm
+  // goes round either way, and the refusal is about what was *in* it — so all
+  // three are the same fist, thrown from where the visitor is standing at the
+  // thing they aimed at. Read after the cast, so a thing that was launched is
+  // already where it was launched to, which is where the fist met it.
+  if (report.kind === 'launched' || report.kind === 'not-wound' || windupShatter(report)) {
+    const struck = solidById(ship, world, report.solidId)
+    const space = struck ? ship.spaces.get(struck.spaceId) : null
+    const measured = space ? room(ship, space) : null
+    if (!struck || !space || !measured) return null
+    const now = solidNow(struck, world.solids[struck.id])
+    return {
+      kind: 'swing',
+      tierId: space.tierId,
+      // Halfway up whatever was hit: a fist lands on the body of a thing.
+      at: now.at,
+      y: Math.min(measured.floor + now.base + now.height * 0.5, measured.ceiling - 0.3),
+      from,
+      colour: CYCLOTRON,
     }
   }
 

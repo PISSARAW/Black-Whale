@@ -251,4 +251,23 @@ describe('Holy Chain', () => {
     const state = branches.append('chain-et', healing.events ?? []).state
     expect(state.bodyStates['kurapika_body']).toBe('ALIVE')
   })
+
+  it('refuse de ranimer un mort (affirmé)', () => {
+    const base = world()
+    base.entities['vincent_body'] = { id: 'vincent_body', kind: 'BODY', label: 'Vincent (corps)' }
+    base.bodyStates['vincent_body'] = 'DEAD'
+
+    const ctx = context({
+      abilityId: 'holy-chain',
+      worldState: base,
+      targets: ['vincent_body'],
+      targetRefs: [{ id: 'vincent_body', kind: 'BODY' }],
+    })
+
+    const entry = holyChain.getActionWheel(ctx).find(item => item.id === 'revive')
+    expect(entry?.visibility).toBe('locked')
+    expect(entry?.hint).toContain('ne ramène personne')
+    
+    expect(holyChain.execute({ ...ctx, actionId: 'revive' }).allowed).toBe(false)
+  })
 })

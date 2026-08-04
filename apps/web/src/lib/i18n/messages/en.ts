@@ -694,6 +694,9 @@ export const en = {
         'holds-sealed': 'The chain swings: their entry holds something the archive does not date.',
         'holds-plain': 'The chain hangs still.',
         unsealed: 'The body answered in place of the person.',
+        'heart-skips': 'Their heart misses a beat under what they just said.',
+        'heart-steady': 'Their heart keeps time under it.',
+        'not-speaking': 'Nothing is being said. A heart under no question is only a heart.',
       },
     },
 
@@ -779,6 +782,18 @@ export const en = {
         dance: 'The lively air',
         bloom: 'The soft air',
         scatter: 'The sharp air',
+      },
+      /**
+       * Absolute hearing, worded as a sense and never as a census. The count
+       * goes in because a heart you cannot count is not something you heard.
+       */
+      hearing: {
+        playing: (_: number) => 'covered by your own flute',
+        alone: (_: number) => 'no heart in this room but yours',
+        hearts: (count: number) => `${count} heart${count === 1 ? '' : 's'}`,
+        ren: (_: number) => 'one of them has their aura up',
+        ten: (_: number) => 'one is holding theirs in',
+        still: (_: number) => 'one gives you nothing but the beat',
       },
       vow: {
         self: 'self',
@@ -931,6 +946,10 @@ export const en = {
         unmimicked: 'Your own shape again',
         soothed: (opened: boolean): string =>
           opened ? 'The three open again, and the music holds them open' : 'The music plays on',
+        fluteLowered: (air: string, room: string) =>
+          `${air} stops · the flute comes down, ${room} is as it was, and the ship closes over again`,
+        earRefused: (room: string) =>
+          `The ear turns on ${room} and the walk stops it there. She hears through a bulkhead — that much is attested — but a room you are not standing in is one the reconstruction cannot check, and it will not source one off a sense nobody can.`,
         tunePlayed: (air: string, room: string, on: boolean, solids: number): string => {
           if (!on) return `${air} ends · ${room} is as it was`
           return solids
@@ -1224,6 +1243,7 @@ export const en = {
         mimic: 'Wearing',
         masked: 'Face worn',
         soothed: 'The music holds',
+        hearing: 'The ear',
         playing: 'The flute is playing',
         flowered: 'In flower',
         scattered: 'Notes hanging in',

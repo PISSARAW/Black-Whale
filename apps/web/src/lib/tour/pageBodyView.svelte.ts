@@ -172,6 +172,9 @@ export class TourBodyView {
       dossier: this.dossier,
       aura: context.auraFor(person),
       book: context.book,
+      // Melody hears a lie in a heart that is answering. The exchange being
+      // open is the walk's own record of somebody talking.
+      speaking: this.talk !== null,
       now,
     })
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false

@@ -83,6 +83,19 @@ export type ReachTell =
   | 'holds-plain'
   /** Body and Soul: what was sealed is now readable. See `address.unseal`. */
   | 'unsealed'
+  /**
+   * Melody, listening to a heart while its owner talks: it does not keep time.
+   *
+   * The reading ch. 45 is built on, and the walk projects it off the one thing
+   * it can check — the archive is withholding something this person's own entry
+   * would otherwise date. What the ear reports is the skip; that the skip means
+   * a lie is Melody's inference and the panel's wording, not a field.
+   */
+  | 'heart-skips'
+  /** The same listening, and the heart keeps time. */
+  | 'heart-steady'
+  /** Nobody is saying anything. A heart under no question tells you nothing. */
+  | 'not-speaking'
 
 /** What a cast at a body came to. */
 export type Reach =
@@ -122,6 +135,14 @@ export interface ReachInput {
   aura: 'ten' | 'ren' | 'zetsu' | null
   /** The visitor's book, for checking if a stolen ability is held. */
   book: { open: string | null; pages: string[] } | null
+  /**
+   * Whether this body is currently answering the visitor.
+   *
+   * Only Melody reads it, and only because ch. 45 is specific: the heart gives
+   * a lie away *while the lie is being told*. A heart listened to across a
+   * silent room is a heart, and the walk will not turn one into a verdict.
+   */
+  speaking: boolean
   /** The page's clock, so a hold knows when it lifts. */
   now: number
 }
@@ -132,7 +153,7 @@ export interface ReachInput {
  * Their whole output is what the visitor now knows, so laying a thread for them
  * would be the walk drawing a binding where the manga draws a question.
  */
-const ASKS = ['dowsing', 'truth-punch', 'training-shot'] as const
+const ASKS = ['dowsing', 'truth-punch', 'training-shot', 'melody'] as const
 
 /**
  * The technique that takes rather than holds.
@@ -176,7 +197,6 @@ const MARKS: Record<
   stitch: 'bound',
   command: 'controlled',
   puppet: 'controlled',
-  melody: 'soothed',
   healing: 'soothed',
   'heart-vow': 'marked',
   curse: 'marked',
@@ -227,18 +247,47 @@ function refusalFor(kind: BodyKind, input: ReachInput): ReachRefusal | null {
   return null
 }
 
-/** What an asking technique found. */
-function tellsFor(kind: AskKind, input: ReachInput): ReachTell[] {
-  if (kind === 'training-shot') return input.aura === 'zetsu' ? ['holds-zetsu'] : ['declares-aura']
-  if (kind === 'truth-punch') return input.dossier?.sealed ? ['unsealed'] : ['holds-plain']
-  // The dowsing chain swings towards what is not being said. What the archive
-  // holds without a date is exactly that, and a capped reader was never sent
-  // it — so the chain hangs still for them, which is the correct answer.
-  return [
-    input.dossier?.sealed ? 'holds-sealed' : 'holds-plain',
-    input.target?.member.nen ? 'declares-aura' : 'declares-nothing',
-  ]
+/**
+ * The heart Melody is listening to, while its owner answers.
+ *
+ * Its own function because it is its own sense: what the skip is projected off
+ * is the archive withholding something this entry would otherwise date — the
+ * same evidence the dowsing chain swings on, heard rather than felt, which is
+ * the whole difference between the two techniques. A heart under no question
+ * is a heart, so the exchange has to be open for any of it to mean anything.
+ */
+function heartOf(input: ReachInput): ReachTell[] {
+  if (!input.speaking) return ['not-speaking']
+  const keeping = Boolean(input.dossier?.sealed) || (input.dossier?.withheld ?? 0) > 0
+  return [keeping ? 'heart-skips' : 'heart-steady']
 }
+
+/**
+ * The dowsing chain swings towards what is not being said. What the archive
+ * holds without a date is exactly that, and a capped reader was never sent it
+ * — so the chain hangs still for them, which is the correct answer.
+ */
+const chainOf = (input: ReachInput): ReachTell[] => [
+  input.dossier?.sealed ? 'holds-sealed' : 'holds-plain',
+  input.target?.member.nen ? 'declares-aura' : 'declares-nothing',
+]
+
+/**
+ * What each asking technique found, one entry per kind.
+ *
+ * A table rather than a chain of ifs, for the reason `SOLID_CASTS` is one:
+ * these four share a shape and nothing else, and there is no order between
+ * them to read.
+ */
+const TELLS: Record<AskKind, (input: ReachInput) => ReachTell[]> = {
+  'training-shot': (input) => (input.aura === 'zetsu' ? ['holds-zetsu'] : ['declares-aura']),
+  'truth-punch': (input) => (input.dossier?.sealed ? ['unsealed'] : ['holds-plain']),
+  melody: heartOf,
+  dowsing: chainOf,
+}
+
+/** What an asking technique found. */
+const tellsFor = (kind: AskKind, input: ReachInput): ReachTell[] => TELLS[kind](input)
 
 /**
  * Aim what you are holding at the person in front of you.

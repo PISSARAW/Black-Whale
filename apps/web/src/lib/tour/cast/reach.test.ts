@@ -42,6 +42,7 @@ const reach = (overrides: Partial<ReachInput> = {}) =>
     dossier: dossier(),
     aura: 'ten',
     book: null,
+    speaking: false,
     now: NOW,
     ...overrides,
   })
@@ -156,7 +157,6 @@ describe('what a hold looks like', () => {
   it('draws the thread, the order and the mark by what they do', () => {
     expect(reach({ kind: 'elastic' })).toMatchObject({ outcome: 'held', hold: { mark: 'bound' } })
     expect(reach({ kind: 'needle' })).toMatchObject({ hold: { mark: 'controlled' } })
-    expect(reach({ kind: 'melody' })).toMatchObject({ hold: { mark: 'soothed' } })
     expect(reach({ kind: 'damage-transfer' })).toMatchObject({ hold: { mark: 'linked' } })
     expect(reach({ kind: 'curse' })).toMatchObject({ hold: { mark: 'marked' } })
   })
@@ -191,6 +191,45 @@ describe('what a hold looks like', () => {
 
     it('refuses just as plainly when the archive gives them no faction at all', () => {
       expect(reach({ kind: 'flock', dossier: null })).toMatchObject({ reason: 'only-birds' })
+    })
+  })
+
+  /**
+   * Ch. 45 is a heart heard while its owner talks, and that is the whole of the
+   * condition: a heart under no question is a heart. What the skip is projected
+   * off is the archive withholding something this entry would otherwise date —
+   * the same evidence the dowsing chain swings on, heard rather than felt.
+   */
+  describe('the ear on a heart, which asks rather than holds', () => {
+    const listen = (over: Partial<ReachInput> = {}) => reach({ kind: 'melody', ...over })
+
+    it('hears nothing worth reporting while nobody is saying anything', () => {
+      expect(listen({ speaking: false })).toMatchObject({
+        outcome: 'told',
+        tells: ['not-speaking'],
+      })
+    })
+
+    it('hears the beat skip under an answer the archive is withholding', () => {
+      expect(
+        listen({
+          speaking: true,
+          dossier: dossier({ sealed: { allegiance: 'heil-ly', identity: null } }),
+        }),
+      ).toMatchObject({ outcome: 'told', tells: ['heart-skips'] })
+      expect(listen({ speaking: true, dossier: dossier({ withheld: 2 }) })).toMatchObject({
+        tells: ['heart-skips'],
+      })
+    })
+
+    it('hears it keep time when there is nothing being kept back', () => {
+      expect(listen({ speaking: true })).toMatchObject({ tells: ['heart-steady'] })
+    })
+
+    // Asking is not holding: the music soothes a room and the visitor, and the
+    // ear on one person leaves them exactly as it found them.
+    it('lays no hold on the person it listened to', () => {
+      expect(listen({ speaking: true }).outcome).not.toBe('held')
     })
   })
 

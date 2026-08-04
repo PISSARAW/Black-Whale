@@ -586,6 +586,9 @@ export const fr: Messages = {
           'La chaîne oscille : son entrée porte quelque chose que l’archive ne date pas.',
         'holds-plain': 'La chaîne reste immobile.',
         unsealed: 'Le corps a répondu à la place de la personne.',
+        'heart-skips': 'Son cœur manque un battement sous ce qu’il vient de dire.',
+        'heart-steady': 'Son cœur garde la mesure dessous.',
+        'not-speaking': 'Rien ne se dit. Un cœur sans question n’est qu’un cœur.',
       },
     },
 
@@ -652,6 +655,14 @@ export const fr: Messages = {
         dance: 'L’air vif',
         bloom: 'L’air doux',
         scatter: 'L’air aigu',
+      },
+      hearing: {
+        playing: () => 'couvert par votre propre flûte',
+        alone: () => 'aucun cœur dans cette pièce hormis le vôtre',
+        hearts: (count) => `${count} cœur${count === 1 ? '' : 's'}`,
+        ren: () => 'l’un d’eux a l’aura levée',
+        ten: () => 'l’un la tient rentrée',
+        still: () => 'l’un ne vous donne que le battement',
       },
       vow: {
         self: 'soi',
@@ -798,6 +809,10 @@ export const fr: Messages = {
         unmimicked: 'Votre propre forme à nouveau',
         soothed: (opened) =>
           opened ? 'Les trois se rouvrent, et la musique les tient ouverts' : 'La musique continue',
+        fluteLowered: (air, room) =>
+          `${air} s'arrête · la flûte redescend, ${room} redevient ce qu'elle était, et le vaisseau se referme`,
+        earRefused: (room) =>
+          `L'oreille se tourne vers ${room} et la visite l'arrête là. Elle entend à travers une cloison — c'est attesté — mais une pièce où vous ne vous tenez pas est une pièce que la reconstruction ne peut pas vérifier, et elle ne sourcera rien sur un sens que personne ne contrôle.`,
         tunePlayed: (air, room, on, solids) => {
           if (!on) return `${air} s'achève · ${room} redevient ce qu'elle était`
           return solids
@@ -1076,6 +1091,7 @@ export const fr: Messages = {
         mimic: 'Sous la forme de',
         masked: 'Visage porté',
         soothed: 'La musique tient',
+        hearing: 'L’oreille',
         playing: 'La flûte joue',
         flowered: 'En fleurs',
         scattered: 'Notes en suspens dans',

@@ -26,6 +26,7 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import { gumStretch, gumTension } from '$lib/tour/gum'
+  import type { Heard } from '$lib/tour/cast/hearing'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -70,6 +71,12 @@
      * resolver the page already built for the body read-out.
      */
     personName: (characterId: string) => string
+    /**
+     * What the ear picks up in this room, or `null` for a technique that has no
+     * ear. Melody's, and computed by the page for the reason `personName` is:
+     * the panel has no cast of its own and is not being given one.
+     */
+    heard?: Heard | null
     onRelease: () => void
     /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
@@ -104,6 +111,7 @@
     nameOf,
     sourceOf,
     personName,
+    heard = null,
     onRelease,
     onCycleDouble,
     onCycleOwl,
@@ -435,6 +443,10 @@
           report.on,
           report.solids,
         )
+      case 'flute-lowered':
+        return say.fluteLowered($t.tour.hatsu.tunes[report.tune], roomName(report.spaceId))
+      case 'ear-refused':
+        return say.earRefused(roomName(report.spaceId))
       // The Guardian Spirit Beasts. Every one of them says what it did to the
       // room rather than that it is there: the visitor can see that it is there.
       case 'beast-raised':
@@ -703,6 +715,16 @@
     // that is the technique — so the panel is where it is legible at all.
     if (body.masked) rows.push({ label: held.masked, value: personName(body.masked) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
+    // Absolute hearing, which is the one reading in the walk that is about a
+    // room rather than about a body: how many hearts are in here, and what
+    // their aura is doing. Only with the flute down — playing into a room is
+    // not listening to it — and `hearing.ts` is what decides that.
+    if (heard) {
+      rows.push({
+        label: held.hearing,
+        value: heard.tells.map((tell) => $t.tour.hatsu.hearing[tell](heard.hearts)).join(' · '),
+      })
+    }
     // What the flute has left behind: which air last came out of it, the rooms
     // still holding a piece, and how much of the ship is dancing to one.
     if (body.playing) {

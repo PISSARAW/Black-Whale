@@ -1149,6 +1149,23 @@ export type TourReport =
    * `solids` is what the lively one got moving — nought for the other two.
    */
   | { kind: 'tune-played'; tune: TourTune; spaceId: string; on: boolean; solids: number }
+  /**
+   * The flute comes down and the piece stops where it stood.
+   *
+   * Its own word rather than `tune-played` with `on: false`, because what it
+   * reports is not that an air ended: it is that Melody stopped playing, and
+   * the senses the music was holding open close over again with it.
+   */
+  | { kind: 'flute-lowered'; tune: TourTune; spaceId: string }
+  /**
+   * The ear turned on the next compartment, and told no.
+   *
+   * Attested that it reaches further than this — she hears through walls, and
+   * that is why the answer is a refusal rather than silence — but a room the
+   * visitor is not standing in is a room the walk would be sourcing off a sense
+   * nobody can check.
+   */
+  | { kind: 'ear-refused'; spaceId: string }
   | { kind: 'deduced'; what: string; strength: number }
   | { kind: 'nothing-to-deduce' }
   | { kind: 'armour-worn' }

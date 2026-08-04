@@ -1403,12 +1403,26 @@ describe('the music, the chain and the deduction', () => {
     expect(on(worn.world, 'mimicry').world.body.mimic).toBeNull()
   })
 
-  it('opens the three senses the monkeys sealed, and holds them open', () => {
+  // Held open, not opened. The seal is another technique's hold and Melody does
+  // not undo it — she plays over it — so `sealed` survives the piece and what
+  // the ship's muffle actually reads is `soothed`. Put the flute down and the
+  // ship closes over again, which is the ending of ch. 45.
+  it('holds the three senses the monkeys sealed open, without lifting the seal', () => {
     const sealed = { ...EMPTY_WORLD, sealed: 2 }
     const soothed = on(sealed, 'melody')
-    expect(soothed.world.sealed).toBe(0)
+    expect(soothed.world.sealed).toBe(2)
     expect(soothed.world.body.soothed).toBe(true)
     expect(soothed.report).toEqual({ kind: 'soothed', opened: true })
+  })
+
+  // Her ear reaches further than the walk draws — that is why this is worded as
+  // a refusal and not as silence — but a room the visitor is not standing in is
+  // a room the reconstruction cannot check.
+  it('refuses to listen through a bulkhead, and says why', () => {
+    const next = [...ship.spaces.values()].find((space) => space.id !== busiest.space.id)!
+    const listened = on(EMPTY_WORLD, 'melody', { tune: 'bloom', targetId: next.id })
+    expect(listened.report).toEqual({ kind: 'ear-refused', spaceId: next.id })
+    expect(listened.world).toBe(EMPTY_WORLD)
   })
 
   it('puts the room the soft air was played into in flower, and takes it back', () => {
@@ -1419,10 +1433,13 @@ describe('the music, the chain and the deduction', () => {
     expect(played.world.body.soothed).toBe(true)
     expect(played.report).toMatchObject({ kind: 'tune-played', tune: 'bloom', on: true })
 
+    // The flute comes down with the piece, and the senses it was holding open
+    // come down with the flute: that is the ship closing over again.
     const ended = on(played.world, 'melody', { tune: 'bloom' })
     expect(ended.world.flowered).toEqual([])
     expect(ended.world.body.playing).toBeNull()
-    expect(ended.report).toMatchObject({ kind: 'tune-played', on: false })
+    expect(ended.world.body.soothed).toBe(false)
+    expect(ended.report).toMatchObject({ kind: 'flute-lowered', tune: 'bloom' })
   })
 
   it('leaves the sharp air’s notes hanging without disturbing the flowers', () => {

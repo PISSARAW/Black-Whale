@@ -2028,8 +2028,14 @@ function playTheTune(world: TourWorld, ship: Ship, played: Played): TourCastResu
       else delete solids[solid.id]
     }
     return {
-      world: { ...world, solids, body: { ...world.body, playing: already ? null : tune } },
-      report: { kind: 'tune-played', tune, spaceId, on: !already, solids: inRoom.length },
+      world: {
+        ...world,
+        solids,
+        body: { ...world.body, playing: already ? null : tune, soothed: !already },
+      },
+      report: already
+        ? { kind: 'flute-lowered', tune, spaceId }
+        : { kind: 'tune-played', tune, spaceId, on: true, solids: inRoom.length },
     }
   }
 
@@ -2041,9 +2047,13 @@ function playTheTune(world: TourWorld, ship: Ship, played: Played): TourCastResu
       ...world,
       flowered: tune === 'bloom' ? next : world.flowered,
       scattered: tune === 'scatter' ? next : world.scattered,
-      body: { ...world.body, playing: on ? tune : null },
+      // The flute goes up with the piece and comes down with it, and the senses
+      // it was holding open come down with the flute. See `soothed`.
+      body: { ...world.body, playing: on ? tune : null, soothed: on },
     },
-    report: { kind: 'tune-played', tune, spaceId, on, solids: 0 },
+    report: on
+      ? { kind: 'tune-played', tune, spaceId, on, solids: 0 }
+      : { kind: 'flute-lowered', tune, spaceId },
   }
 }
 
@@ -2131,21 +2141,35 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     }
   },
 
-  // Music carried straight into the listener. What it soothes is the only
-  // thing in the walk that can be done to a sense: it opens the three the
-  // monkeys sealed, and holds them open. That much happens whatever is played,
-  // and it is all that happens when nothing is — a cast off the book, where
-  // there is no flute in the hand and no key to choose an air with.
+  /**
+   * Music carried straight into the listener.
+   *
+   * What it soothes is the only thing in the walk that can be done to a sense:
+   * it holds open the three the monkeys sealed. **Held open, not opened** — the
+   * seal is another technique's hold and Melody does not undo it, she plays
+   * over it, which is why `sealed` survives the piece and `soothed` is what the
+   * muffle actually reads. Put the flute down and the ship closes over again,
+   * and that difference is the whole of ch. 45's ending.
+   *
+   * The refusal first, because it is the one thing about her that a
+   * reconstruction has to be careful with. Her ear reaches further than the
+   * walk draws — that is attested and it is why the refusal is worded as a
+   * refusal rather than as a failure — but a room the visitor is not standing
+   * in has a bulkhead in front of it, and a walk that started reporting the
+   * contents of the next compartment would be sourcing rooms off a sense
+   * nobody can check.
+   */
   melody: ({ world, ship, body, input }) => {
-    const opened = world.sealed > 0
-    const heard: TourWorld = {
-      ...world,
-      sealed: 0,
-      body: { ...body, soothed: !body.soothed || opened },
+    if (input.targetId && input.standingIn && input.targetId !== input.standingIn) {
+      return { world, report: { kind: 'ear-refused', spaceId: input.targetId } }
     }
+    // Off the book there is no flute in the hand and no key to choose an air
+    // with: the music is still hers, and it is still what holds a sense open.
+    const opened = world.sealed > 0
+    const heard: TourWorld = { ...world, body: { ...body, soothed: true } }
     if (!input.tune) return { world: heard, report: { kind: 'soothed', opened } }
-    // A flute is heard where it is played: the reticle is never consulted, and
-    // a piece with nowhere to land is a piece nobody was in the room for.
+    // A flute is heard where it is played: the reticle is never consulted for
+    // *which* room, and a piece with nowhere to land is one nobody was in for.
     if (!input.standingIn) return { world: heard, report: { kind: 'no-target' } }
     return playTheTune(heard, ship, { tune: input.tune, spaceId: input.standingIn })
   },

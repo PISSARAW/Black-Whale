@@ -19,6 +19,7 @@
   import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
   import { playTourReportSound } from '$lib/tour/reportSound'
   import { playTourReachSound } from '$lib/tour/reachSound'
+  import { hearTheRoom } from '$lib/tour/cast/hearing'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
@@ -607,6 +608,26 @@
     return post ? { spaceId: post.spaceId, at: post.at } : null
   })
 
+  /**
+   * What Melody's ear picks up in the room, or null when she is not the one
+   * being held.
+   *
+   * Continuous rather than cast, because that is what absolute hearing is: she
+   * is not doing anything, she is in the room. So it follows the technique in
+   * hand and the flute — put the flute up and the listening stops, which is
+   * `hearing.ts`'s own first answer.
+   */
+  const heard = $derived(
+    technique?.kind === 'melody'
+      ? hearTheRoom({
+          posts: castView.posts,
+          spaceId: currentSpace?.id ?? null,
+          auraFor: castView.auraOf,
+          playing: world.body.playing !== null,
+        })
+      : null,
+  )
+
   const locationReadout = $derived(overlayView.location)
   const aimReadout = $derived(overlayView.aim)
   const overlayControls = $derived(overlayView.controls)
@@ -776,6 +797,7 @@
             nameOf,
             sourceOf,
             personName: bodyNameOf,
+            heard,
             onRelease: release,
             onCycleDouble: cycleDouble,
             onCycleOwl: cycleOwl,

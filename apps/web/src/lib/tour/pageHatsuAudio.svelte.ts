@@ -16,7 +16,14 @@ type WorldReader = () => TourWorld
 
 export class TourHatsuAudio {
   watch(readWorld: WorldReader) {
-    $effect(() => setAmbientMuffled(readWorld().sealed >= 2))
+    // Sight and hearing sealed muffles the ship — unless a flute is up. Melody
+    // does not lift the seal, she plays over it, so the muffle follows the
+    // playing: it lifts while the piece runs and drops back the moment the
+    // flute comes down. See `melody` in `hatsu.ts`.
+    $effect(() => {
+      const world = readWorld()
+      setAmbientMuffled(world.sealed >= 2 && !world.body.soothed)
+    })
     $effect(() => {
       if (readWorld().holding === 'vacuum') startVacuum()
       else stopVacuum()

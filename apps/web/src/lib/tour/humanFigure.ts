@@ -1,17 +1,12 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
-import {
-  createNenTechniqueState,
-  isAuraVisibleTo,
-  transitionNen,
-  type NenTechniqueState,
-} from '@black-whale/nen-engine'
+import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { addHumanSignatures } from './humanSignature'
-import { buildHumanAura, type Glass, type HumanZone } from './humanAura'
+import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 
 type Three = typeof import('three')
@@ -89,6 +84,59 @@ function outlineMaterial(THREE: Three, source: MeshBasicMaterial): MeshBasicMate
   return made
 }
 
+/**
+ * The second tone, baked per vertex — ADR-005 §4-P4.
+ *
+ * A manga panel has two values and a hard edge between them, not a gradient:
+ * the flat, and the shade under it. The walk had the flat and one plane of ink
+ * under the jaw, which reads as a sticker rather than as a lit body. This puts
+ * the second value where a bake belongs — in the geometry — by writing a colour
+ * attribute on the shared buffer: the lower half of every mass is the shade,
+ * the upper half is the flat, and the boundary is abrupt because that is the
+ * whole point.
+ *
+ * Written onto the cached geometry, so it is paid once for the whole ship
+ * rather than once per body, and it is idempotent: a buffer that already
+ * carries the attribute is handed straight back.
+ */
+const SHADE = 0.76
+
+function shaded(THREE: Three, source: BufferGeometry): BufferGeometry {
+  if (source.getAttribute('color')) return source
+  const position = source.getAttribute('position')
+  source.computeBoundingBox()
+  const box = source.boundingBox
+  if (!box) return source
+  const span = Math.max(box.max.y - box.min.y, 1e-6)
+  const tones = new Float32Array(position.count * 3)
+  for (let i = 0; i < position.count; i += 1) {
+    const tone = (position.getY(i) - box.min.y) / span > 0.46 ? 1 : SHADE
+    tones[i * 3] = tone
+    tones[i * 3 + 1] = tone
+    tones[i * 3 + 2] = tone
+  }
+  source.setAttribute('color', new THREE.BufferAttribute(tones, 3))
+  return source
+}
+
+/**
+ * The same flat colour, told to read the tone off the vertices.
+ *
+ * Keyed on the shared material rather than cloned per body: `glow` hands out
+ * one material per colour for the whole scene, so this adds one more per
+ * colour and not one per passenger. §5 keeps `renderer.info` as the rule.
+ */
+const tonedMaterials = new WeakMap<Material, Material>()
+
+function toned(source: Material): Material {
+  const held = tonedMaterials.get(source)
+  if (held) return held
+  const made = (source as MeshBasicMaterial).clone()
+  made.vertexColors = true
+  tonedMaterials.set(source, made)
+  return made
+}
+
 interface OutlinedShape {
   THREE: Three
   geometry: BufferGeometry
@@ -97,11 +145,20 @@ interface OutlinedShape {
   scale?: number
 }
 
-function outlined({ THREE, geometry, material, ink, scale = 1.045 }: OutlinedShape): Group {
+/**
+ * A mass and its ink.
+ *
+ * The default thickened from 1,045 to 1,062 in ADR-005 §4-P4: the walk draws
+ * these at conversational range far more often than it did when the only
+ * bodies aboard were supplied by a game, and a hairline contour at two metres
+ * is a contour that has stopped being ink. The far LOD does not go through
+ * here, so nothing at twenty-four metres gets a heavier line.
+ */
+function outlined({ THREE, geometry, material, ink, scale = 1.062 }: OutlinedShape): Group {
   const group = new THREE.Group()
   const edge = new THREE.Mesh(geometry, outlineMaterial(THREE, ink as MeshBasicMaterial))
   edge.scale.setScalar(scale)
-  group.add(edge, new THREE.Mesh(geometry, material))
+  group.add(edge, new THREE.Mesh(shaded(THREE, geometry), toned(material)))
   return group
 }
 
@@ -121,7 +178,7 @@ function limb({ THREE, glow, radius, length, colour }: LimbShape): Group {
     ),
     material: glow(colour, 1),
     ink: glow(INK, 1),
-    scale: 1.055,
+    scale: 1.072,
   })
 }
 
@@ -137,20 +194,6 @@ function legacyPose(seen: HumanLook): NonNullable<Apparition['human']>['pose'] {
         : pose === 4
           ? 'attack'
           : 'idle'
-}
-
-function legacyAura(seen: HumanLook): NonNullable<Apparition['human']>['aura'] {
-  if (seen.human?.aura) return seen.human.aura
-  if (seen.kind !== 'combatant') return 'none'
-  return (['ten', 'ren', 'zetsu'] as const)[seen.stage % 3]
-}
-
-function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
-  if (seen.human?.nen) return seen.human.nen
-  const state = createNenTechniqueState<HumanZone>()
-  const aura = legacyAura(seen)
-  state.mode = aura === 'none' || !aura ? 'zetsu' : aura
-  return state
 }
 
 export function buildHumanFigure({

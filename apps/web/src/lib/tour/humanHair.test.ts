@@ -123,3 +123,38 @@ describe('the three gabarits', () => {
     expect(frameShape(woble.frame).width).toBeGreaterThan(frameShape(oito.frame).width)
   })
 })
+
+/**
+ * ADR-005 §4-P4. Two values and a hard edge, which is what a panel has — not a
+ * gradient, and not one flat with a sticker of shadow under the jaw.
+ */
+describe('the second tone', () => {
+  it('bakes exactly two values into every mass, in the geometry', () => {
+    const rig = build(person('kurapika'))
+    const tones = new Set<number>()
+    let shadedMeshes = 0
+    rig.root.traverse((child) => {
+      const colour = (child as THREE.Mesh).geometry?.getAttribute?.('color')
+      if (!colour) return
+      shadedMeshes += 1
+      for (let i = 0; i < colour.count; i += 1) tones.add(Number(colour.getX(i).toFixed(3)))
+    })
+    expect(shadedMeshes).toBeGreaterThan(0)
+    expect([...tones].sort()).toHaveLength(2)
+    expect(Math.max(...tones)).toBe(1)
+    expect(Math.min(...tones)).toBeLessThan(1)
+  })
+
+  it('leaves the ink of the contour out of it, or the outline would be lit too', () => {
+    const rig = build(person('kurapika'))
+    let outlines = 0
+    rig.root.traverse((child) => {
+      const material = (child as THREE.Mesh).material as THREE.MeshBasicMaterial | undefined
+      if (material?.side === THREE.BackSide) {
+        outlines += 1
+        expect(material.vertexColors).toBe(false)
+      }
+    })
+    expect(outlines).toBeGreaterThan(0)
+  })
+})

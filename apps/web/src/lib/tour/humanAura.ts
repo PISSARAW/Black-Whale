@@ -1,7 +1,8 @@
 import type { Group, Material, Mesh, MeshBasicMaterial } from 'three'
-import { type NenTechniqueState } from '@black-whale/nen-engine'
+import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/nen-engine'
 import type { BufferGeometry } from 'three'
 import { auraGlassFor, type AuraGlass } from './auraRefraction'
+import type { Apparition } from './apparitions'
 import type { HumanLook } from './humanFigure'
 
 type Three = typeof import('three')
@@ -53,6 +54,28 @@ const zonePositions: Record<HumanZone, [number, number, number]> = {
   torso: [0, 1.08, 0],
   hands: [0, 1.02, 0.24],
   feet: [0, 0.14, 0.08],
+}
+
+/**
+ * What aura a body is carrying, for the shapes that predate the declaration.
+ *
+ * Two functions rather than one because they answer different questions: the
+ * first is a guess made from a card's stage number, and the second is the
+ * engine state every human figure consumes. They moved here out of the figure
+ * builder — the subject is the aura, and this is the aura's file.
+ */
+function legacyAura(seen: HumanLook): NonNullable<Apparition['human']>['aura'] {
+  if (seen.human?.aura) return seen.human.aura
+  if (seen.kind !== 'combatant') return 'none'
+  return (['ten', 'ren', 'zetsu'] as const)[seen.stage % 3]
+}
+
+export function nenState(seen: HumanLook): NenTechniqueState<HumanZone> {
+  if (seen.human?.nen) return seen.human.nen
+  const state = createNenTechniqueState<HumanZone>()
+  const aura = legacyAura(seen)
+  state.mode = aura === 'none' || !aura ? 'zetsu' : aura
+  return state
 }
 
 export function buildHumanAura({

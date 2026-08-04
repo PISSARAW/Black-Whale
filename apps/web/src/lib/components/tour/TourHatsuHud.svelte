@@ -130,6 +130,9 @@
     return space ? nameOf(identityOf(ship, world, space)) : id
   }
 
+  const subjectName = (id: string) =>
+    id === 'self' ? $t.tour.hatsu.vow.self : roomName(id)
+
   /**
    * A stolen technique under the name of whoever it was taken from.
    *
@@ -167,6 +170,7 @@
       : nameOf(solid)
   }
 
+  const locked = $derived(report?.kind === 'vow-locked')
   const line = $derived.by(() => {
     const say = $t.tour.hatsu.reports
     if (!report) return null
@@ -334,9 +338,11 @@
       case 'card-red':
         return say.cardRed(roomName(report.spaceId))
       case 'vow-declared':
-        return say.vowDeclared(roomName(report.spaceId))
+        return say.vowDeclared(subjectName(report.subjectId), report.rules)
       case 'vow-broken':
-        return say.vowBroken(roomName(report.spaceId))
+        return say.vowBroken(subjectName(report.subjectId))
+      case 'vow-locked':
+        return $t.tour.hatsu.vow.locked
       case 'pact-taken':
         return say.pactTaken(roomName(report.spaceId))
       case 'pact-met':
@@ -665,7 +671,12 @@
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
     if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })
-    if (world.vow) rows.push({ label: held.vow, value: roomName(world.vow) })
+    for (const vow of Object.values(world.vows)) {
+      const subject = subjectName(vow.subjectId)
+      const sentence = $t.tour.hatsu.vow.rules(subject, vow.rules[0], vow.rules[1])
+      const state = vow.violated ? $t.tour.hatsu.vow.triggered : $t.tour.hatsu.vow.dormant
+      rows.push({ label: held.vow, value: `${sentence} · ${state}` })
+    }
     if (world.pact) rows.push({ label: held.pact, value: roomName(world.pact) })
     for (const id of world.devouring) rows.push({ label: held.devouring, value: roomName(id) })
     for (const [id, card] of Object.entries(world.cards)) {
@@ -806,8 +817,10 @@
 
   {#if line && castable}
     <p
-      class="mt-2 border-l-2 pl-2 text-xs leading-snug text-[#FFFFF0]"
-      style:border-color={profile.color}
+      class={locked
+        ? 'mt-2 pl-2 text-xs leading-snug text-[#FFFFF0]/40'
+        : 'mt-2 border-l-2 pl-2 text-xs leading-snug text-[#FFFFF0]'}
+      style:border-color={locked ? undefined : profile.color}
     >
       {line}
     </p>

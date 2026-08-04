@@ -170,6 +170,7 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   // dark to know it is in it.
   'aura-levy',
   'elastic', // Cast without target acts as Propulsion or Faux Tissu
+  'heart-vow', // Cast on another person, or on the visitor themselves.
 ])
 
 export const worksOnTheBody = (profile: HatsuProfile | null) =>
@@ -495,8 +496,12 @@ export interface TourWorld {
   guarded: string[]
   /** The room the visitor may not leave. */
   pinned: string | null
-  /** The rule the visitor declared, which only punishes when it is broken. */
-  vow: string | null
+  /**
+   * The Judgment Chain vows sworn on hearts: keyed by subject id ('self' or a
+   * character id). Each carries its rules and whether the sentence has been
+   * triggered.
+   */
+  vows: Record<string, VowState>
   /** The terms the visitor took on, which close when they are met. */
   pact: string | null
   /** Rooms the fish are in. Nothing shows until the visitor walks out. */
@@ -766,6 +771,22 @@ export interface TourWorld {
   summoned: { spaceId: string; at: Vec2; heading: number } | null
 }
 
+/**
+ * A Judgment Chain vow sworn on a heart.
+ *
+ * The subject is either the visitor ('self') or a character id. The rules are
+ * spoken aloud at activation; the sentence stays dormant until one of them is
+ * broken, then it becomes triggered.
+ */
+export interface VowState {
+  /** Whose heart the chain is in: 'self' or a character id. */
+  subjectId: string
+  /** The rules declared at activation, shown in the registry. */
+  rules: string[]
+  /** Whether the sentence has been triggered. */
+  violated: boolean
+}
+
 export interface TourBook {
   /** Techniques taken and kept. Only an open page can be cast. */
   pages: HatsuInteractionKind[]
@@ -832,6 +853,8 @@ export interface TourBody {
    * The timestamp when the automatic pilot (Black Voice self-cast) ends, or null if not active.
    */
   autopilotUntil: number | null
+  /** The Judgment Chain vow sworn on the visitor's own heart, dormant or triggered. */
+  vowed?: VowState
 
   /**
    * What the visitor has taken off Zhang Lei's wheel, as one number.
@@ -998,7 +1021,7 @@ export const EMPTY_WORLD: TourWorld = {
   shut: [],
   guarded: [],
   pinned: null,
-  vow: null,
+  vows: {},
   pact: null,
   devouring: [],
   cards: {},
@@ -1060,7 +1083,8 @@ export const bodyIsRested = (body: TourBody): boolean =>
   !body.deduced.length &&
   body.packed === null &&
   !body.gilded &&
-  !body.halo
+  !body.halo &&
+  !body.vowed
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
@@ -1083,7 +1107,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.shut.length &&
   !world.guarded.length &&
   !world.pinned &&
-  !world.vow &&
+  !Object.keys(world.vows).length &&
   !world.pact &&
   !world.devouring.length &&
   !Object.keys(world.cards).length &&
@@ -1212,8 +1236,9 @@ export type TourReport =
   | { kind: 'card-blue'; spaceId: string }
   | { kind: 'card-yellow'; spaceId: string }
   | { kind: 'card-red'; spaceId: string }
-  | { kind: 'vow-declared'; spaceId: string }
-  | { kind: 'vow-broken'; spaceId: string }
+  | { kind: 'vow-declared'; subjectId: string; rules: string[] }
+  | { kind: 'vow-broken'; subjectId: string }
+  | { kind: 'vow-locked'; subjectId: string }
   | { kind: 'pact-taken'; spaceId: string }
   | { kind: 'pact-met'; spaceId: string; released: number }
   | { kind: 'bait-set'; spaceId: string }
@@ -1358,6 +1383,11 @@ export interface TourCastInput {
    * before it had one — it soothes.
    */
   tune?: TourTune
+  /**
+   * The two rules spoken aloud by Judgment Chain. Kept in the world so the
+   * registry can show them exactly as they were declared.
+   */
+  rules?: string[]
   /** Deterministic in tests; Chrollo's teleport is the only caller. */
   random?: () => number
 }
@@ -2691,7 +2721,7 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...world.shut.map((id) => `shut:${id}`),
     ...world.guarded.map((id) => `guarded:${id}`),
     ...(world.pinned ? [`pinned:${world.pinned}`] : []),
-    ...(world.vow ? [`vow:${world.vow}`] : []),
+    ...Object.keys(world.vows).map((id) => `vow:${id}`),
     ...(world.pact ? [`pact:${world.pact}`] : []),
     ...world.devouring.map((id) => `fish:${id}`),
     ...Object.keys(world.cards).map((id) => `card:${id}`),
@@ -3048,6 +3078,36 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
       : { world, report: { kind: 'armour-holding', packed: body.packed } },
 
   'sun-flare': raiseTheSun,
+
+  // Judgment Chain plants a rule in a heart. Cast on a room, the heart is the
+  // person standing there; cast with no target, the heart is the visitor's own.
+  // The rules are spoken aloud at activation and never amended afterwards.
+  'heart-vow': ({ world, ship, input }) => {
+    const subjectId = input.targetId ?? 'self'
+    if (subjectId !== 'self' && !ship.spaces.has(subjectId)) {
+      return { world, report: { kind: 'no-target' } }
+    }
+    if (world.vows[subjectId]) {
+      return { world, report: { kind: 'vow-locked', subjectId } }
+    }
+    const rules = input.rules ?? [
+      subjectId === 'self'
+        ? 'while the rule holds, Chain Jail is certain'
+        : `do not enter ${subjectId}`,
+      subjectId === 'self'
+        ? 'to break the oath is to pierce your own heart'
+        : `do not lay a hand on ${subjectId}`,
+    ]
+    const vow: VowState = { subjectId, rules, violated: false }
+    return {
+      world: {
+        ...world,
+        vows: { ...world.vows, [subjectId]: vow },
+        body: subjectId === 'self' ? { ...world.body, vowed: vow } : world.body,
+      },
+      report: { kind: 'vow-declared', subjectId, rules },
+    }
+  },
 
   // Bungee Gum on the body (no target):
   // Faux Tissu heals the punishment if any is packed.
@@ -3438,9 +3498,10 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
             : 'insectOrders',
       click: false,
     })
-  } else if (worksOnTheBody(profile) && aimsAtSolids(profile)) {
-    // The ones on both sides of the line: the reticle decides, and R is how the
-    // visitor says *me* rather than what is in front of them.
+  } else if (worksOnTheBody(profile) && (aimsAtSolids(profile) || profile.kind === 'heart-vow')) {
+    // The ones on both sides of the line, and Judgment Chain: the reticle
+    // decides, and R is how the visitor says *me* rather than what is in front
+    // of them. A vow on the self needs no solid to land on.
     keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
   }
   return keys
@@ -3990,13 +4051,6 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
       report: { kind: 'card-red', spaceId: target.id },
     }
   },
-
-  // The chain through the heart does nothing at all until the rule it names
-  // is knowingly broken. Declaring it is the whole of the cast.
-  'heart-vow': ({ world, target }) => ({
-    world: { ...world, vow: target.id },
-    report: { kind: 'vow-declared', spaceId: target.id },
-  }),
 
   contract: ({ world, target }) => ({
     world: { ...world, pact: target.id },
@@ -4955,6 +5009,28 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
     report = { kind: 'pact-met', spaceId, released }
   }
 
+  // A Judgment Chain vow sleeps until its rule is broken. Walking into the room
+  // the vow was sworn on is the break, and the heart is pierced unless another
+  // punishment takes the blow first.
+  for (const vow of Object.values(next.vows)) {
+    if (vow.subjectId === 'self' || vow.violated || spaceId !== vow.subjectId) continue
+    if (!absorb(spaceId)) {
+      const violated = { ...vow, violated: true }
+      next = {
+        ...next,
+        vows: { ...next.vows, [vow.subjectId]: violated },
+      }
+      report = { kind: 'vow-broken', subjectId: vow.subjectId }
+      punished = true
+    } else {
+      next = {
+        ...next,
+        vows: { ...next.vows, [vow.subjectId]: { ...vow, violated: true } },
+      }
+    }
+    break
+  }
+
   if (next.snakes && !next.snakes.fed && next.snakes.rooms.includes(spaceId)) {
     next = { ...next, snakes: { ...next.snakes, fed: true } }
     report = { kind: 'snakes-fed', spaceId }
@@ -4980,14 +5056,6 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
         travelTo: leaving,
         report: { kind: 'expelled', spaceId, toId: leaving },
       }
-    }
-  }
-
-  // The chain only ever punishes a rule that was knowingly broken.
-  if (next.vow === spaceId) {
-    if (!absorb(spaceId)) {
-      punished = true
-      report = { kind: 'vow-broken', spaceId }
     }
   }
 

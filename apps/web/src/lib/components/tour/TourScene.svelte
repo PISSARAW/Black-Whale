@@ -2433,17 +2433,23 @@
           }
 
           if (held.kind === 'vow-heart') {
-            // Worn at the sternum, a little to the left of it, the way the organ
-            // is. Nothing about it is aimed and nothing about it swings: it is
-            // carried the way the book and the ball are, and it is the only one
-            // of the three that is not in a hand.
-            const sin = Math.sin(yaw)
-            const cos = Math.cos(yaw)
-            held.root.position.set(
-              camera.position.x - cos * 0.26 - sin * 0.34,
-              camera.position.y - 0.4,
-              camera.position.z + sin * 0.26 - cos * 0.34,
-            )
+            if (held.key === 'vow:self') {
+              // Worn at the sternum, a little to the left of it, the way the organ
+              // is. Nothing about it is aimed and nothing about it swings: it is
+              // carried the way the book and the ball are, and it is the only one
+              // of the three that is not in a hand.
+              const sin = Math.sin(yaw)
+              const cos = Math.cos(yaw)
+              held.root.position.set(
+                camera.position.x - cos * 0.26 - sin * 0.34,
+                camera.position.y - 0.4,
+                camera.position.z + sin * 0.26 - cos * 0.34,
+              )
+            } else {
+              // Planted in another person's chest: it stays where the cast
+              // landed, at chest height, and faces the visitor.
+              held.root.position.set(held.at[0], held.y, held.at[1])
+            }
             // Tipped back towards the face, for the same reason the open book
             // is: a thing worn on the chest is looked at from above, and a
             // heart seen from directly overhead is a shape nobody recognises.

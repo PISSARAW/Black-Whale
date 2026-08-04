@@ -12,6 +12,8 @@
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { playTourReportSound } from '$lib/tour/reportSound'
   import { playHatsuActivationSignature } from '$lib/audio/hatsuSounds'
+  import { t } from '$lib/i18n'
+  import { displayName } from '$lib/utils/displayNames'
   import type { Space, Structure, Vec2 } from '$lib/tour/types'
 
   interface Props {
@@ -83,6 +85,13 @@
     updateHands: (next) => (hands = next),
     show,
     goToSpace,
+    vowRules: (subjectId) => {
+      const subjectName =
+        subjectId === 'self'
+          ? $t.tour.hatsu.vow.self
+          : displayName(ship.spaces.get(subjectId)?.name)
+      return [$t.tour.hatsu.vow.ruleA(subjectName), $t.tour.hatsu.vow.ruleB(subjectName)]
+    },
   })
 
   const session = new TourHatsuSession({

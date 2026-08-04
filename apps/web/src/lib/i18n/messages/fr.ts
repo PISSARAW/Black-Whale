@@ -562,6 +562,22 @@ export const fr: Messages = {
         bloom: 'L’air doux',
         scatter: 'L’air aigu',
       },
+      vow: {
+        self: 'soi',
+        rules: (subject, ruleA, ruleB) =>
+          `La chaîne est dans le cœur de ${subject} · ${ruleA} · ${ruleB}`,
+        ruleA: (subject) =>
+          subject === 'soi'
+            ? "tant que la règle tient, Chain Jail est sûr"
+            : `ne pas entrer dans ${subject}`,
+        ruleB: (subject) =>
+          subject === 'soi'
+            ? "rompre le serment, c’est se transpercer le cœur"
+            : `ne pas porter la main sur ${subject}`,
+        dormant: 'DORMANT',
+        triggered: 'TRIGGERED',
+        locked: 'Le contrat est énoncé une fois, à l’activation, et jamais retouché',
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,
@@ -774,9 +790,10 @@ export const fr: Messages = {
         cardBlue: (room) => `Bleu : ${room} est admise, et avertie`,
         cardYellow: (room) => `Jaune : ${room} vous retient où vous êtes`,
         cardRed: (room) => `Rouge : ${room} est congédiée et close derrière vous`,
-        vowDeclared: (room) => `La règle est posée : vous n'entrerez pas dans ${room}`,
-        vowBroken: (room) =>
-          `Vous êtes entré dans ${room} en le sachant · la chaîne prend l'aura pour cela`,
+        vowDeclared: (subject, rules) =>
+          `La règle est posée sur ${subject} : ${rules.join(' · ')}`,
+        vowBroken: (subject) =>
+          `La règle sur ${subject} est brisée · la chaîne prend l'aura pour cela`,
         pactTaken: (room) => `Les termes sont pris : atteindre ${room}`,
         pactMet: (room, released) =>
           released

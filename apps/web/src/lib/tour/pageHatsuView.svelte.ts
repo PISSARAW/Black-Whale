@@ -59,7 +59,9 @@ export class TourHatsuView {
   }
 
   get selfCastable() {
-    return worksOnTheBody(this.technique) && aimsAtSolids(this.technique)
+    const profile = this.technique
+    if (!profile || !worksOnTheBody(profile)) return false
+    return aimsAtSolids(profile) || profile.kind === 'heart-vow'
   }
 
   private pageName(kind: HatsuInteractionKind) {

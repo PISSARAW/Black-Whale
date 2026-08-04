@@ -148,6 +148,13 @@
     updateHands: (next) => (nextHand = next),
     show: showHatsuReport,
     goToSpace: goToHatsuSpace,
+    vowRules: (subjectId) => {
+      const subjectName =
+        subjectId === 'self'
+          ? $t.tour.hatsu.vow.self
+          : displayName(ship.spaces.get(subjectId)?.name)
+      return [$t.tour.hatsu.vow.ruleA(subjectName), $t.tour.hatsu.vow.ruleB(subjectName)]
+    },
   })
 
   const hatsuSession = new TourHatsuSession({

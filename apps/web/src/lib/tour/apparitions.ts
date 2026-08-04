@@ -976,6 +976,45 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     })
   }
 
+  // Judgment Chain, planted in every heart a vow was sworn on. The visitor's own
+  // is worn at the sternum; every other is fixed to the chest of whoever stands
+  // in the room the rule was laid on.
+  for (const vow of Object.values(world.vows)) {
+    const violated = vow.violated ? 2 : 1
+    if (vow.subjectId === 'self') {
+      if (!visitor) continue
+      found.push({
+        id: 'vow:self',
+        kind: 'vow-heart',
+        spaceId: visitor.spaceId ?? world.cameFrom ?? '',
+        tierId: visitor.tierId,
+        at: [visitor.at[0], visitor.at[1]],
+        y: 0,
+        size: 0.055,
+        colour: HEART,
+        stage: violated,
+        hidden: false,
+      })
+    } else {
+      const space = spaceOf(vow.subjectId)
+      if (!space) continue
+      const measured = room(ship, space)
+      if (!measured) continue
+      found.push({
+        id: `vow:${vow.subjectId}`,
+        kind: 'vow-heart',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: landing(space),
+        y: measured.floor + 1.1,
+        size: 0.11,
+        colour: HEART,
+        stage: violated,
+        hidden: false,
+      })
+    }
+  }
+
   // Skill Hunter, held open in front of whoever is carrying the bookmark. Two
   // pages, and a ribbon lying across one of them — which one is the whole of
   // what Double Face is, so it is what `stage` carries: 0 for the left page,

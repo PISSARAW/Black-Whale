@@ -148,6 +148,10 @@ describe('the keys a technique answers to', () => {
     ])
     expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
     expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('heart-vow')).toEqual([
+      { key: 'F', action: 'castSelf', click: true },
+      { key: 'R', action: 'castOnSelfInstead', click: false },
+    ])
   })
 
   it('gives the flute three, because three airs need three keys', () => {
@@ -948,7 +952,20 @@ const door = (
   kind: Parameters<typeof castInTour>[1],
   targetId: string | null,
   standingIn: string | null = null,
-) => castInTour(world, kind, { ship, targetId, standingIn, at: [0, 0] })
+) =>
+  castInTour(world, kind, {
+    ship,
+    targetId,
+    standingIn,
+    at: [0, 0],
+    rules:
+      kind === 'heart-vow'
+        ? [
+            `do not enter ${targetId ?? 'self'}`,
+            `do not lay a hand on ${targetId ?? 'self'}`,
+          ]
+        : undefined,
+  })
 
 describe('shutting a room', () => {
   it('takes the doorway out of the geometry rather than drawing a lock on it', () => {
@@ -1025,6 +1042,23 @@ describe('what waits at a threshold', () => {
     const broken = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
     expect(broken.punished).toBe(true)
     expect(broken.report).toMatchObject({ kind: 'vow-broken' })
+  })
+
+  it('lets the vow be sworn on the visitor own heart', () => {
+    const sworn = door(EMPTY_WORLD, 'heart-vow', null)
+    expect(sworn.report).toMatchObject({ kind: 'vow-declared', subjectId: 'self' })
+    expect(sworn.world.body.vowed).toEqual({
+      subjectId: 'self',
+      rules: ['do not enter self', 'do not lay a hand on self'],
+      violated: false,
+    })
+  })
+
+  it('refuses to amend a contract once it has been spoken', () => {
+    const first = door(EMPTY_WORLD, 'heart-vow', roomA.id)
+    const second = door(first.world, 'heart-vow', roomA.id)
+    expect(second.report).toMatchObject({ kind: 'vow-locked', subjectId: roomA.id })
+    expect(second.world.vows).toEqual(first.world.vows)
   })
 
   it('closes the contract on its terms, and releases what was shut', () => {

@@ -346,6 +346,41 @@ export function hasLikeness(identity: string | null | undefined): boolean {
   return identity !== null && identity !== undefined && LIKENESSES.has(identity)
 }
 
+/**
+ * What a gabarit does to the shared rig — ADR-005 §4-P2.
+ *
+ * The walk had one body plan and a height multiplier, which is a way of saying
+ * it had one body plan: Marayam came out as a short man and Woble as a very
+ * short man. What actually separates the three is proportion. A newborn's head
+ * is roughly a quarter of its length and an adult's a seventh, the limbs go the
+ * other way, and the neck all but disappears — get those three right and the
+ * silhouette reads correctly before any face is drawn, which is §2.2's whole
+ * claim about what recognition is made of.
+ *
+ * `adult` is all ones on purpose. Everyone the role profiles ever produced is
+ * an adult, so this table cannot move a body nobody declared.
+ */
+export interface FrameShape {
+  /** Multiplier on the head, which is what carries the whole read. */
+  head: number
+  /** Where the head and the shoulders sit, as a share of the adult height. */
+  neck: number
+  /** Multiplier on arm and leg length. Shorter limbs, rounder body. */
+  limb: number
+  /** Multiplier on the trunk's width: babies are barrels, children are not. */
+  width: number
+}
+
+const FRAME_SHAPES: Record<Frame, FrameShape> = {
+  adult: { head: 1, neck: 1, limb: 1, width: 1 },
+  child: { head: 1.18, neck: 0.94, limb: 0.86, width: 1.04 },
+  infant: { head: 1.42, neck: 0.84, limb: 0.66, width: 1.16 },
+}
+
+export function frameShape(frame: Frame): FrameShape {
+  return FRAME_SHAPES[frame]
+}
+
 function identityHash(value: string): number {
   let hash = 2166136261
   for (const char of value) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619)

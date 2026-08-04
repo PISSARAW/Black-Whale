@@ -1,5 +1,6 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial } from 'three'
 import { addSilentMajorityMask } from './humanCostume'
+import { addHumanHair } from './humanHair'
 import type { HumanLook } from './humanFigure'
 
 /** Ink, the one colour the head shares with the rest of the figure. */
@@ -131,68 +132,13 @@ export function buildHumanHead({
   jawShade.rotation.x = -0.5
   head.add(jawShade)
 
-  if (profile.hairStyle !== 'shaved') {
-    const hair = outlined({
-      THREE,
-      geometry: geometry(
-        THREE,
-        'hair',
-        () => new THREE.SphereGeometry(0.196, 9, 5, 0, Math.PI * 2, 0, 1.18),
-      ),
-      material: hairInk,
-      ink,
-      scale: 1.025,
-    })
-    hair.scale.set(0.94, profile.hairStyle === 'military' ? 0.86 : 1.08, 0.98)
-    hair.position.y = profile.hairStyle === 'military' ? 0.035 : 0.015
-    head.add(hair)
-
-    if (profile.hairStyle === 'spiked') {
-      for (let i = -2; i <= 2; i++) {
-        const spike = new THREE.Mesh(
-          geometry(THREE, 'hair:spike', () => new THREE.ConeGeometry(0.045, 0.18, 4)),
-          hairInk,
-        )
-        spike.position.set(i * 0.065, 0.2 + Math.abs(i) * -0.015, -0.01)
-        spike.rotation.z = i * -0.13
-        head.add(spike)
-      }
-    } else if (profile.hairStyle === 'long' || profile.hairStyle === 'ponytail') {
-      const fall = new THREE.Mesh(
-        geometry(THREE, 'hair:fall', () => new THREE.CylinderGeometry(0.12, 0.09, 0.48, 6)),
-        hairInk,
-      )
-      fall.position.set(0, -0.16, -0.13)
-      head.add(fall)
-      if (profile.hairStyle === 'ponytail') {
-        const tail = new THREE.Mesh(
-          geometry(THREE, 'hair:tail', () => new THREE.ConeGeometry(0.075, 0.42, 6)),
-          hairInk,
-        )
-        tail.position.set(0, -0.18, -0.25)
-        tail.rotation.x = -0.35
-        head.add(tail)
-      }
-    } else if (profile.hairStyle === 'swept') {
-      const fringe = new THREE.Mesh(
-        geometry(THREE, 'hair:fringe', () => new THREE.ConeGeometry(0.075, 0.3, 4)),
-        hairInk,
-      )
-      fringe.position.set(-0.09, 0.08, 0.14)
-      fringe.rotation.z = -0.55
-      head.add(fringe)
-    } else if (profile.hairStyle === 'bob') {
-      for (const side of [-1, 1]) {
-        const sideHair = new THREE.Mesh(
-          geometry(THREE, 'hair:bob-side', () => new THREE.BoxGeometry(0.13, 0.38, 0.18)),
-          hairInk,
-        )
-        sideHair.position.set(side * 0.145, -0.04, -0.005)
-        sideHair.rotation.z = side * -0.08
-        head.add(sideHair)
-      }
-    }
-  }
+  addHumanHair({
+    THREE,
+    geometry,
+    outlined,
+    head: { group: head, hairInk, ink },
+    style: profile.hairStyle,
+  })
 
   if (seen.human?.role === 'silent-majority') {
     addSilentMajorityMask({ THREE, geometry, glow, ink, head })

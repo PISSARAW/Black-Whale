@@ -8,7 +8,7 @@ import {
 import type { Apparition } from './apparitions'
 import { humanAnimation } from './humanAnimation'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
-import { hasLikeness, humanProfile, isMorena } from './humanProfiles'
+import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { buildHumanAura, type Glass, type HumanZone } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
@@ -176,6 +176,8 @@ export function buildHumanFigure({
   const hairInk = glow(profile.hair, 1)
   const accent = glow(profile.accent, 1)
   const pose = legacyPose(seen)
+  // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
+  const frame = frameShape(profile.frame)
   const arms: Group[] = []
   const legs: Group[] = []
 
@@ -185,9 +187,10 @@ export function buildHumanFigure({
     material: cloth,
     ink,
   })
-  const buildWidth = profile.build === 'slim' ? 0.92 : profile.build === 'broad' ? 1.12 : 1
+  const buildWidth =
+    (profile.build === 'slim' ? 0.92 : profile.build === 'broad' ? 1.12 : 1) * frame.width
   pelvis.scale.set(1.08 * buildWidth, 0.7, 0.76)
-  pelvis.position.y = 0.76
+  pelvis.position.y = 0.76 * frame.neck
   figure.add(pelvis)
 
   const torso = outlined({
@@ -197,21 +200,21 @@ export function buildHumanFigure({
     ink,
   })
   torso.scale.set(profile.shoulders * buildWidth, 1, 0.72)
-  torso.position.y = 1.12
+  torso.position.y = 1.12 * frame.neck
   figure.add(torso)
 
   const collar = new THREE.Mesh(
     geometry(THREE, 'collar', () => new THREE.CylinderGeometry(0.13, 0.17, 0.1, 7)),
     glow(profile.shirt || SHIRT, 1),
   )
-  collar.position.y = 1.43
+  collar.position.y = 1.43 * frame.neck
   figure.add(collar)
 
   const neck = new THREE.Mesh(
     geometry(THREE, 'neck', () => new THREE.CylinderGeometry(0.075, 0.09, 0.14, 7)),
     skin,
   )
-  neck.position.y = 1.51
+  neck.position.y = 1.51 * frame.neck
   figure.add(neck)
 
   const head = buildHumanHead({
@@ -223,6 +226,8 @@ export function buildHumanFigure({
     seen,
     materials: { ink, skin, hairInk },
   })
+  head.scale.setScalar(frame.head)
+  head.position.y *= frame.neck
   figure.add(head)
 
   const shirtFront = new THREE.Mesh(
@@ -244,7 +249,7 @@ export function buildHumanFigure({
     geometry(THREE, 'clothes:belt', () => new THREE.BoxGeometry(0.39, 0.045, 0.24)),
     dark,
   )
-  belt.position.y = 0.82
+  belt.position.y = 0.82 * frame.neck
   belt.scale.x = buildWidth
   figure.add(belt)
   if (profile.clothing === 'suit') {
@@ -335,7 +340,8 @@ export function buildHumanFigure({
     })
     shoe.position.set(0, -0.32, 0.055)
     knee.add(shoe)
-    leg.position.set(side * 0.13, 0.77, 0)
+    leg.scale.y = frame.limb
+    leg.position.set(side * 0.13, 0.77 * frame.neck, 0)
     figure.add(leg)
     legs.push(leg)
 
@@ -357,7 +363,8 @@ export function buildHumanFigure({
     )
     hand.position.y = -0.25
     elbow.add(hand)
-    arm.position.set(side * 0.3 * profile.shoulders, 1.34, 0)
+    arm.scale.y = frame.limb
+    arm.position.set(side * 0.3 * profile.shoulders, 1.34 * frame.neck, 0)
     arm.rotation.z = side * -0.1
     figure.add(arm)
     arms.push(arm)
@@ -459,28 +466,19 @@ export function buildHumanFigure({
     root,
   })
 
-  const farBody = new THREE.Mesh(
-    geometry(THREE, 'far:body', () => new THREE.CylinderGeometry(0.2, 0.14, 1.2, 5)),
-    cloth,
-  )
-  farBody.position.y = 0.72
-  far.add(farBody)
-  const farHead = new THREE.Mesh(
-    geometry(THREE, 'far:head', () => new THREE.SphereGeometry(0.18, 6, 4)),
-    skin,
-  )
-  farHead.position.y = 1.52
-  far.add(farHead)
-  const farHair = new THREE.Mesh(
-    geometry(
-      THREE,
-      'far:hair',
-      () => new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2),
-    ),
-    hairInk,
-  )
-  farHair.position.y = 1.54
-  far.add(farHair)
+  // Three shapes past twenty-four metres, listed rather than spelled out: at
+  // that distance a body is a mass, a face and a hair colour, and the loop is
+  // the honest length of that statement.
+  const FAR: ReadonlyArray<readonly [string, () => BufferGeometry, Material, number]> = [
+    ['far:body', () => new THREE.CylinderGeometry(0.2, 0.14, 1.2, 5), cloth, 0.72],
+    ['far:head', () => new THREE.SphereGeometry(0.18, 6, 4), skin, 1.52],
+    ['far:hair', () => new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2), hairInk, 1.54],
+  ]
+  for (const [key, make, material, y] of FAR) {
+    const shape = new THREE.Mesh(geometry(THREE, key, make), material)
+    shape.position.y = y * frame.neck
+    far.add(shape)
+  }
   far.scale.setScalar(unit)
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)

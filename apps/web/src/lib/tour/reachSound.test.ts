@@ -11,6 +11,7 @@ vi.mock('$lib/audio/hatsuSounds', () => {
   return {
     chirpTheFlock: voice('birds'),
     crackAWhip: voice('whip'),
+    foldPaper: voice('paper'),
     hissLikeASnake: voice('snake'),
     landAPunch: voice('punch'),
     loostAnArrow: voice('arrow'),
@@ -57,6 +58,13 @@ describe('what a cast at a person sounds like', () => {
   it('wakes the console when it is pointed at somebody', () => {
     playTourReachSound({ outcome: 'reading', kind: 'decipher', characterId: 'benjamin', days: 10 })
     expect(played).toEqual(['machine'])
+  })
+
+  // The mask is the one cast here whose effect is entirely on the caster, and
+  // it still sounds: the gesture happened, and the visitor made it.
+  it('lays the mask down audibly, on the face it was copied from', () => {
+    playTourReachSound({ outcome: 'worn', kind: 'disguise', characterId: 'machi' })
+    expect(played).toEqual(['paper'])
   })
 
   it('is silent when nothing left the visitor', () => {

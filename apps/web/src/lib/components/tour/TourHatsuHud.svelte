@@ -296,6 +296,12 @@
         return say.gumHealed(report.healed)
       case 'forged':
         return say.forged(solidName(report.solidId))
+      case 'mask-refused':
+        return say.maskRefused(solidName(report.solidId))
+      case 'sign-forged':
+        return say.signForged(roomName(report.spaceId), roomName(report.asId))
+      case 'sign-restored':
+        return say.signRestored(roomName(report.spaceId))
       case 'wrapped':
         return say.wrapped(solidName(report.solidId))
       case 'unwrapped':
@@ -384,6 +390,8 @@
         return say.guardsPosted(roomName(report.spaceId))
       case 'expelled':
         return say.expelled(roomName(report.spaceId), roomName(report.toId))
+      case 'unrecognised':
+        return say.unrecognised(roomName(report.spaceId), personName(report.asId))
       case 'card-blue':
         return say.cardBlue(roomName(report.spaceId))
       case 'card-yellow':

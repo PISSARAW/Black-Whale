@@ -1073,6 +1073,8 @@ export const en = {
           `${solid} was not there when you looked back into ${room}`,
         guardsPosted: (room: string) => `Guards on ${room} · an intruder is put out, not hurt`,
         expelled: (room: string, back: string) => `Put out of ${room}, back into ${back}`,
+        unrecognised: (room: string, face: string) =>
+          `The guards of ${room} look straight at you and see ${face} · the mask holds`,
         cardBlue: (room: string) => `Blue: ${room} is admitted, and warned`,
         cardYellow: (room: string) => `Yellow: ${room} holds you where you stand`,
         cardRed: (room: string) => `Red: ${room} is dismissed and shut behind you`,
@@ -1129,6 +1131,11 @@ export const en = {
           `The gum closes what was open · ${healed} blow${healed === 1 ? '' : 's'} out of the armour`,
         forged: (solid: string) =>
           `${solid} is wearing another surface · what it is, and what it stops, are unchanged`,
+        maskRefused: (solid: string) =>
+          `${solid} is round · the mask takes a flat surface, and a limited one`,
+        signForged: (room: string, as: string) =>
+          `The door of ${room} now reads ${as} · only the plate changed, and the card still knows`,
+        signRestored: (room: string) => `The plate on ${room} is its own again`,
         wrapped: (solid: string) => `${solid} wrapped small · nothing about it is damaged`,
         unwrapped: (solid: string) => `${solid} is out of the cloth, the size it was`,
         pushed: (solid: string, metres: number) =>

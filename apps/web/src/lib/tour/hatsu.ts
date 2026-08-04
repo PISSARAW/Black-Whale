@@ -77,7 +77,7 @@ import {
 import { aimGum, gumLanding, gumTension } from './gum'
 import { punchRuns } from './punch'
 import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
-import { nextForgery } from './texture'
+import { nextForgery, nextSign, takesAMask } from './texture'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -875,7 +875,13 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // no aura for it. What gives it away is the touch, which here is the solid
   // going on measuring, blocking and citing exactly what it always did.
   disguise: ({ world, structure, hold, id }) => {
-    const next = nextForgery(hold?.kind ?? structure.kind)
+    // The limit stated in the same breath as the technique: a flat surface, and
+    // a limited one. A pillar has no flat face and a rail is a bent bar, so the
+    // key comes back with the condition rather than doing nothing — the refusal
+    // is a fact about Texture Surprise and the silence was not.
+    const face = hold?.kind ?? structure.kind
+    if (!takesAMask(face)) return { world, report: { kind: 'mask-refused', solidId: id } }
+    const next = nextForgery(face)
     return {
       world: withHold(world, id, { kind: next, forged: true }),
       report: { kind: 'forged', solidId: id, as: next },
@@ -2097,6 +2103,16 @@ export function identityOf(ship: Ship, world: TourWorld, space: Space): Space {
       sourceFr: soul.sourceFr,
     }
   }
+
+  // The plaque, which is the shallower of the two. The arrow above exchanged
+  // what two rooms *are*; this repaints a plate, so only the writing travels
+  // and the card the archive keeps is untouched. A reader in Gyo sees nothing
+  // either way — see `texture.ts`, where that is argued — and the one thing
+  // that gives it away is walking in.
+  const sign = world.signs[space.id]
+  const plate = sign ? ship.spaces.get(sign) : null
+  if (plate) return { ...space, name: plate.name, nameFr: plate.nameFr }
+
   return space
 }
 
@@ -3378,6 +3394,36 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
   }),
 }
 
+/**
+ * Texture Surprise laid on a door rather than on a thing.
+ *
+ * The room aimed at, or the one being stood in when the reticle is on nothing —
+ * a plaque is read from the corridor as readily as from inside. What it writes
+ * is a room id and nothing else: `identityOf` copies the name across and leaves
+ * the category, the provenance and the source where they were, so the panel
+ * reads the lie and the card reads the room.
+ */
+function forgeTheSign(world: TourWorld, input: TourCastInput): TourCastResult {
+  const spaceId = input.targetId ?? input.standingIn
+  const space = spaceId ? input.ship.spaces.get(spaceId) : null
+  if (!space) return { world, report: { kind: 'no-target' } }
+
+  const siblings = [...input.ship.spaces.values()]
+    .filter((other) => other.tierId === space.tierId)
+    .map((other) => other.id)
+  const next = nextSign(siblings, space.id, world.signs[space.id] ?? null)
+  const signs = { ...world.signs }
+  if (next) signs[space.id] = next
+  else delete signs[space.id]
+
+  return {
+    world: { ...world, signs },
+    report: next
+      ? { kind: 'sign-forged', spaceId: space.id, asId: next }
+      : { kind: 'sign-restored', spaceId: space.id },
+  }
+}
+
 function runCast(
   world: TourWorld,
   kind: HatsuInteractionKind,
@@ -3431,6 +3477,14 @@ function runCast(
   if (kind === 'blast' && input.targetSolidId) {
     return { world, report: { kind: 'blast-solid-refused', solidId: input.targetSolidId } }
   }
+
+  // The plaque. A cabin number is a flat, limited surface with writing on it,
+  // which is the technique's own description of what it takes — so with nothing
+  // under the reticle the mask goes on the door of the room being looked at,
+  // and repaints the one thing a door carries. Decided here for the reason the
+  // gust above is: the room table would have to be told that a room aimed at
+  // and a room stood in are different, and here they already are.
+  if (kind === 'disguise') return forgeTheSign(world, input)
 
   const untargeted = castWithoutARoom(world, kind, input)
   if (untargeted) return untargeted
@@ -4029,6 +4083,21 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   // The guards expel an intruder without injuring them: back where they came
   // from, and no further.
   if (next.guarded.includes(spaceId) && leaving && leaving !== spaceId) {
+    // Unless they are looking at somebody else's face.
+    //
+    // The mask was a line in the panel and nothing in the ship: the visitor
+    // could wear Machi's face through a corridor full of guards and be thrown
+    // out of every room in it. What ch. 357 draws is the opposite — a man
+    // walking past the people hunting him — so the one place the walk decides
+    // that somebody has recognised the visitor is the one place the mask has
+    // to answer. It is not a key that opens the room: the guards are still
+    // there, and they let this face through.
+    if (next.body.masked) {
+      return {
+        world: { ...next, cameFrom: leaving },
+        report: { kind: 'unrecognised', spaceId, asId: next.body.masked },
+      }
+    }
     if (!absorb(spaceId)) {
       return {
         world: { ...next, cameFrom: leaving },

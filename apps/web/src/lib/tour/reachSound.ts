@@ -20,6 +20,7 @@
 import {
   chirpTheFlock,
   crackAWhip,
+  foldPaper,
   hissLikeASnake,
   landAPunch,
   loostAnArrow,
@@ -44,6 +45,11 @@ const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
   // The console coming out and finding its subject: the same machine voice the
   // walk already gives an animated thing, because that is what it is.
   decipher: wakeTheMachine,
+  // The mask going on: a flat layer laid over a face, which is the one sound
+  // the walk already has for a flat thing being put down. Nothing is laid on
+  // the person it was copied from — the layer is on the visitor — and the sound
+  // is the visitor's own gesture rather than anything happening to them.
+  disguise: foldPaper,
   'chain-bind': hissLikeASnake,
   'chain-rule': hissLikeASnake,
   stitch: unspoolWire,

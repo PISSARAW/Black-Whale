@@ -531,6 +531,18 @@ export interface TourWorld {
   souls: [string, string][]
 
   /**
+   * The doors whose plaque has been made to read another room's number.
+   *
+   * Keyed by the room whose sign it is, valued by the room whose number it now
+   * shows. A mask and nothing more: what the room *is* does not change, its
+   * card does not change, and the archive goes on knowing which room this is —
+   * `identityOf` copies the name across and leaves the category, the provenance
+   * and the source alone. That asymmetry is the ability. The arrow above swaps
+   * two rooms' identities; this only ever repaints a plate.
+   */
+  signs: Record<string, string>
+
+  /**
    * Rooms the soft air put in flower, and rooms the sharp one left its notes
    * loose in.
    *
@@ -989,6 +1001,7 @@ export const EMPTY_WORLD: TourWorld = {
   ninelives: [],
   curse: null,
   souls: [],
+  signs: {},
   flowered: [],
   scattered: [],
   book: CLOSED_BOOK,
@@ -1102,6 +1115,17 @@ export type TourReport =
   | { kind: 'gum-set'; solidId: string; metres: number }
   | { kind: 'gum-pulled'; solidId: string; otherId: string }
   | { kind: 'forged'; solidId: string; as: StructureKind }
+  /**
+   * The mask tried on something round, and refused with the limit that refuses
+   * it. Carried as a report rather than swallowed, because the condition is
+   * half of what the catalogue says about the technique.
+   */
+  | { kind: 'mask-refused'; solidId: string }
+  /** A door's plaque made to read another room's number, or given back its own. */
+  | { kind: 'sign-forged'; spaceId: string; asId: string }
+  | { kind: 'sign-restored'; spaceId: string }
+  /** A guard who would have put the visitor out, looking at somebody else's face. */
+  | { kind: 'unrecognised'; spaceId: string; asId: string }
   | { kind: 'wrapped'; solidId: string }
   | { kind: 'unwrapped'; solidId: string }
   | { kind: 'pushed'; solidId: string; metres: number }

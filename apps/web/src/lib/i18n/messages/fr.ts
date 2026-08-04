@@ -933,6 +933,8 @@ export const fr: Messages = {
           `${solid} n'était plus là quand vous avez regardé ${room} en repartant`,
         guardsPosted: (room) => `Gardes sur ${room} · un intrus est mis dehors, pas blessé`,
         expelled: (room, back) => `Mis dehors de ${room}, renvoyé dans ${back}`,
+        unrecognised: (room, face) =>
+          `Les gardes de ${room} vous regardent en face et voient ${face} · le masque tient`,
         cardBlue: (room) => `Bleu : ${room} est admise, et avertie`,
         cardYellow: (room) => `Jaune : ${room} vous retient où vous êtes`,
         cardRed: (room) => `Rouge : ${room} est congédiée et close derrière vous`,
@@ -987,6 +989,11 @@ export const fr: Messages = {
           `La gomme referme ce qui était ouvert · ${healed} coup${healed === 1 ? '' : 's'} sorti${healed === 1 ? '' : 's'} de l'armure`,
         forged: (solid) =>
           `${solid} porte une autre surface · ce qu'il est, et ce qu'il arrête, n'ont pas changé`,
+        maskRefused: (solid) =>
+          `${solid} est courbe · le masque prend une surface plane, et de taille limitée`,
+        signForged: (room, as) =>
+          `La porte de ${room} affiche ${as} · seule la plaque a changé, la fiche sait encore`,
+        signRestored: (room) => `La plaque de ${room} porte de nouveau son propre numéro`,
         wrapped: (solid) => `${solid} emballé, réduit · rien n'y est abîmé`,
         unwrapped: (solid) => `${solid} ressort du tissu, à sa taille`,
         pushed: (solid, metres) =>

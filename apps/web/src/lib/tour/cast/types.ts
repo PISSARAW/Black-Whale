@@ -410,6 +410,17 @@ export interface TourWorld {
   swings: number
 
   /**
+   * How many turns each posted body has wound into its own arm, by character id.
+   *
+   * `windup` above is the visitor's. This is everybody else's, and it exists
+   * because the conduct casts through the same door the visitor does: Phinks
+   * walking the lower decks towards the hunt with his arm already turning was
+   * winding up the *reader's* arm, since there was one counter for the whole
+   * ship. A gauge on his card is a gauge that has to be his.
+   */
+  winding: Record<string, number>
+
+  /**
    * Rooms whose doorways are shut.
    *
    * Not a flag on the renderer: the doorways of a deck are derived from the
@@ -993,6 +1004,7 @@ export const EMPTY_WORLD: TourWorld = {
   wound: null,
   windup: 0,
   swings: 0,
+  winding: {},
   shut: [],
   guarded: [],
   pinned: null,
@@ -1169,7 +1181,9 @@ export type TourReport =
   | { kind: 'crushed'; solidId: string }
   | { kind: 'volley'; solidId: string; hits: number }
   | { kind: 'shattered'; solidId: string }
-  | { kind: 'wound-up'; turns: number }
+  | { kind: 'wound-up'; turns: number; by: string | null }
+  /** The arm released with nothing in it. Calibration is the stated weak point. */
+  | { kind: 'not-wound'; solidId: string }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
   /** The ball on the end of the Dowsing Chain, brought down on a thing. */

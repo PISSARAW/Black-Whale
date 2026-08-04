@@ -27,6 +27,7 @@
   } from '$lib/tour/hatsu'
   import { gumStretch, gumTension } from '$lib/tour/gum'
   import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
+  import { RIPPER_ANT_TURNS } from '$lib/tour/ripper'
   import type { Heard } from '$lib/tour/cast/hearing'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
@@ -336,7 +337,9 @@
       case 'shattered':
         return say.shattered(solidName(report.solidId))
       case 'wound-up':
-        return say.woundUp(report.turns)
+        return say.woundUp(report.turns, report.by ? personName(report.by) : null)
+      case 'not-wound':
+        return say.notWound(solidName(report.solidId))
       case 'launched':
         return say.launched(solidName(report.solidId), report.metres)
       case 'struck':
@@ -763,6 +766,13 @@
       const plate = ship.spaces.get(sign)
       if (room && plate) rows.push({ label: held.sign, value: `${nameOf(room)} → ${nameOf(plate)}` })
     }
+    // Everybody else's arm. Phinks walking towards the hunt with his already
+    // turning is a gauge on his card rather than on the reader's — see
+    // `TourWorld.winding`, which exists because the conduct casts through the
+    // same door the visitor does.
+    for (const [id, turns] of Object.entries(world.winding)) {
+      rows.push({ label: held.arm, value: `${personName(id)} · ${turns} / ${RIPPER_ANT_TURNS}` })
+    }
     const body = world.body
     if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })
     if (body.riding) {
@@ -879,7 +889,12 @@
       })
     }
     if (world.wound) rows.push({ label: held.wound, value: solidName(world.wound) })
-    if (world.windup) rows.push({ label: held.solid, value: held.windup(world.windup) })
+    if (world.windup) {
+      rows.push({
+        label: held.solid,
+        value: `${held.windup(world.windup)} / ${RIPPER_ANT_TURNS}`,
+      })
+    }
     for (const id of Object.keys(world.solids)) {
       if (id === world.pairing) continue
       rows.push({ label: held.solid, value: solidName(id) })

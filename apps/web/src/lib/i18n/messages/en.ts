@@ -1175,8 +1175,12 @@ export const en = {
         crushed: (solid: string) => `${solid} is flat under the weight`,
         volley: (solid: string, hits: number) => `${solid} driven back · volley ${hits} of 3`,
         shattered: (solid: string) => `${solid} does not stand any more`,
-        woundUp: (turns: number) =>
-          `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
+        woundUp: (turns: number, who: string | null) =>
+          who
+            ? `${who} winds their arm · ${turns} rotation${turns > 1 ? 's' : ''}`
+            : `${turns} rotation${turns > 1 ? 's' : ''} wound into the next punch`,
+        notWound: (solid: string) =>
+          `The arm has nothing in it · wind it first, and it all goes into ${solid} at once`,
         launched: (solid: string, metres: number) =>
           metres ? `${solid} sent ${metres} m across the room` : `${solid} had nowhere to go`,
         struck: (solid: string) => `The staff comes down on ${solid} and turns it`,
@@ -1306,6 +1310,7 @@ export const en = {
         dance: 'The prologue',
         mimic: 'Wearing',
         masked: 'Face worn',
+        arm: 'Arm turning',
         sign: 'Plate reads',
         scarlet: 'Life spent',
         forcedZetsu: 'No Nen at all',

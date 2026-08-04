@@ -1033,8 +1033,12 @@ export const fr: Messages = {
         crushed: (solid) => `${solid} est aplati sous la masse`,
         volley: (solid, hits) => `${solid} repoussé · rafale ${hits} sur 3`,
         shattered: (solid) => `${solid} ne tient plus debout`,
-        woundUp: (turns) =>
-          `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        woundUp: (turns, who) =>
+          who
+            ? `${who} fait tourner son bras · ${turns} rotation${turns > 1 ? 's' : ''}`
+            : `${turns} rotation${turns > 1 ? 's' : ''} enroulée${turns > 1 ? 's' : ''} dans le prochain coup`,
+        notWound: (solid) =>
+          `Le bras n'a rien dedans · enroulez d'abord, et tout part d'un coup dans ${solid}`,
         launched: (solid, metres) =>
           metres ? `${solid} projeté à ${metres} m` : `${solid} n'avait nulle part où aller`,
         struck: (solid) => `Le bâton s'abat sur ${solid} et le fait pivoter`,
@@ -1153,6 +1157,7 @@ export const fr: Messages = {
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
         masked: 'Visage porté',
+        arm: 'Bras en rotation',
         sign: 'La plaque affiche',
         scarlet: 'Vie consommée',
         forcedZetsu: 'Plus aucun Nen',

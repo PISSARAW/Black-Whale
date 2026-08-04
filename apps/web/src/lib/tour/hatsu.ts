@@ -79,6 +79,7 @@ import { punchRuns } from './punch'
 import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
 import { nextForgery, nextSign, takesAMask } from './texture'
 import { eyesTurn } from './emperor'
+import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -992,8 +993,29 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   },
 
   windup: ({ world, ship, structure, hold, id, away }) => {
-    const metres = 3 + world.windup * 4
+    // The refusal its own bearer names: calibration is the weak point, and an
+    // arm that has not been turned has nothing in it to let go of. Shown with
+    // its condition rather than swallowed — see `ripper.ts`.
+    if (!ripperIsCharged(world.windup)) {
+      return { world, report: { kind: 'not-wound', solidId: id } }
+    }
+
+    const turns = world.windup
+    const metres = ripperReach(turns)
     const landing = shove(ship, { structure, hold }, away(metres))
+
+    // Ch. 92's one figure: fifteen turns, and what fifteen turns did to a body
+    // that was not going to be moved by being pushed. At or over it the thing
+    // is broken rather than relocated, and the arm is empty either way — the
+    // charge does not divide, which is the whole reason guessing wrong is
+    // expensive.
+    if (ripperShatters(turns)) {
+      return {
+        world: { ...withHold(world, id, { gone: true }), windup: 0 },
+        report: { kind: 'shattered', solidId: id },
+      }
+    }
+
     return {
       world: { ...withHold(world, id, landing ? { at: landing } : {}), windup: 0 },
       report: { kind: 'launched', solidId: id, metres: landing ? metres : 0 },
@@ -1315,8 +1337,20 @@ function castPastTheTarget(
   const { ship } = input
 
   if (kind === 'windup' && !structure) {
+    // Whose arm is turning. Phinks walking the lower decks towards the hunt
+    // with his arm already going used to wind up the *visitor's*, because the
+    // conduct casts through this same door and there was one counter for the
+    // whole ship. His gauge is his; the visitor's is `windup`.
+    const by = input.caster
+    if (by) {
+      const turns = (world.winding[by] ?? 0) + 1
+      return {
+        world: { ...world, winding: { ...world.winding, [by]: turns } },
+        report: { kind: 'wound-up', turns, by },
+      }
+    }
     const turns = world.windup + 1
-    return { world: { ...world, windup: turns }, report: { kind: 'wound-up', turns } }
+    return { world: { ...world, windup: turns }, report: { kind: 'wound-up', turns, by: null } }
   }
 
   if (kind === 'shred' && world.wound) return shredTheWound(world, ship, world.wound)

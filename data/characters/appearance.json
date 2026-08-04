@@ -671,6 +671,363 @@
       "signatures": ["beard-full"],
       "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
       "note": "Vieillard hors gabarit, et le sourire du père. En cellule — mais la cellule se visite, ce qui est la seule raison pour laquelle il a besoin d'une apparence."
+    },
+    {
+      "id": "bill",
+      "body": { "build": "average", "height": 1.03, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "short", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 358, 359 ; uniforme de garde royal, palette de la maison Woble",
+        "skin": "0xd8b49a",
+        "hair": "0x36302a",
+        "attire": {
+          "jacket": "0x3f4a58",
+          "shirt": "0xe4e6e6",
+          "trousers": "0x2a333e",
+          "accent": "0xb59a4d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "partial" },
+      "note": "Premier compagnon de poste de Kurapika : visage long, l'air fiable et fatigué. Il doit être distinct de Kurapika à côté de lui — la scène d'acceptation du couloir du 1014 est exactement ce test. Détails à confirmer."
+    },
+    {
+      "id": "melody",
+      "body": { "build": "slim", "height": 0.72, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 350, 359 ; tenue sombre et sobre, palette éteinte",
+        "skin": "0xd6b39a",
+        "hair": "0x2f2a26",
+        "attire": {
+          "jacket": "0x3a3540",
+          "shirt": "0xe6e1d8",
+          "trousers": "0x2a262f",
+          "accent": "0x8e7fa0"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["flute"],
+      "verified": { "chapterIds": ["ch-350", "ch-359"], "status": "confirmed" },
+      "note": "L'apparence est la cicatrice de la Sonate, et la dessiner est un acte de tendresse ou une faute : le manga la porte avec douceur, jamais en monstre, et ce rendu doit faire pareil. `bald-crown` est le style le plus proche des deux touffes latérales ; `adult` avec une hauteur très basse plutôt que `child`, parce qu'elle n'est pas une enfant."
+    },
+    {
+      "id": "biscuit-krueger",
+      "body": { "build": "slim", "height": 0.62, "frame": "child" },
+      "head": { "face": "round", "hairStyle": "drills", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; anglaises blondes et robe rose constantes sur le matériel officiel",
+        "skin": "0xf3e2ce",
+        "hair": "0xe6c96a",
+        "attire": {
+          "jacket": "0xe8a2bc",
+          "shirt": "0xf8f2ea",
+          "trousers": "0xc9758f",
+          "accent": "0xf3d7e0"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-350", "ch-366"], "status": "confirmed" },
+      "note": "Gabarit `child` pour la forme montrée, et rien d'autre : la vraie forme est un fait d'ability, pas d'appearance, et la déclarer ici serait spoiler par le rendu ce que le cap du lecteur tient."
+    },
+    {
+      "id": "hanzo",
+      "body": { "build": "average", "height": 1.02, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; tenue sombre de shinobi, constante",
+        "skin": "0xd3a17c",
+        "hair": "0x1a1817",
+        "attire": {
+          "jacket": "0x24262b",
+          "shirt": "0xdad6cc",
+          "trousers": "0x1b1d21",
+          "accent": "0x9b3c3c"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-350", "ch-361"], "status": "confirmed" },
+      "note": "Crâne rasé, sourcils fins, sourire commercial sur une carrure sèche : le sourire est ce qui le rend lisible, et c'est pourquoi l'expression est `neutral` plutôt que `hostile`."
+    },
+    {
+      "id": "basho",
+      "body": { "build": "broad", "height": 1.08, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "pompadour", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 350, 362 ; veste de garde du corps, palette tiède",
+        "skin": "0xc99473",
+        "hair": "0x241f1c",
+        "attire": {
+          "jacket": "0x5a4a3a",
+          "shirt": "0xeae3d2",
+          "trousers": "0x372f26",
+          "accent": "0xbf8f43"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["mutton-chops", "goatee"],
+      "verified": { "chapterIds": ["ch-350", "ch-362"], "status": "confirmed" },
+      "note": "L'air du garde du corps qui écrit des senryū : la banane courte et les rouflaquettes sont le personnage entier, et il n'y a personne d'autre à bord qui porte les deux."
+    },
+    {
+      "id": "izunavi",
+      "body": { "build": "average", "height": 1.04, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "swept", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 350, 362 ; nonchalance de maître en congé, palette sourde",
+        "skin": "0xd8b49a",
+        "hair": "0x3c332a",
+        "attire": {
+          "jacket": "0x4f5348",
+          "shirt": "0xe6e2d5",
+          "trousers": "0x353930",
+          "accent": "0x8b8a6a"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-350", "ch-362"], "status": "partial" },
+      "note": "Cheveux mi-longs ondulés, barbe de trois jours. À confirmer — la barbe naissante n'est pas une pièce de l'annexe B et n'est donc pas déclarée."
+    },
+    {
+      "id": "theta",
+      "body": { "build": "average", "height": 0.98, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 348, 362 ; tailleur de service, carré clair ondulé",
+        "skin": "0xecd6bd",
+        "hair": "0xa88a56",
+        "attire": {
+          "jacket": "0x39424f",
+          "shirt": "0xf0eee7",
+          "trousers": "0x272e38",
+          "accent": "0x7f8d9c"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-348", "ch-362"], "status": "confirmed" },
+      "note": "Athlétique, visage rond et décidé. La peur de Tserriednich se joue dans ses yeux — ce qui appartient à la scène, pas à la fiche : l'expression déclarée reste celle du poste."
+    },
+    {
+      "id": "salkov",
+      "body": { "build": "slim", "height": 1.0, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 348, 362 ; l'employé de maison parfait, palette neutre",
+        "skin": "0xdfbb9b",
+        "hair": "0x282320",
+        "attire": {
+          "jacket": "0x2f333a",
+          "shirt": "0xf0eee7",
+          "trousers": "0x23262c",
+          "accent": "0x6d757e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-348", "ch-362"], "status": "partial" },
+      "note": "Mince, cheveux plaqués à raie nette. À confirmer."
+    },
+    {
+      "id": "babimyna",
+      "body": { "build": "broad", "height": 1.02, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 363, 415 ; uniforme de l'armée royale kakine",
+        "skin": "0xc08160",
+        "hair": "0x1e1b19",
+        "attire": {
+          "jacket": "0x474835",
+          "shirt": "0xdad6c6",
+          "trousers": "0x323327",
+          "accent": "0xb99b42"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-363", "ch-415"], "status": "confirmed" },
+      "note": "Trapu, paupières lourdes : le regard qui pèse. `severe` porte les paupières, ce qui est le seul endroit du visage où ce personnage se lit."
+    },
+    {
+      "id": "balsamilco-might",
+      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bald-crown", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 358, 363 ; état-major de Benjamin, palette d'uniforme assombrie",
+        "skin": "0xd0a98d",
+        "hair": "0x8d8880",
+        "attire": {
+          "jacket": "0x3d4034",
+          "shirt": "0xe4e0d2",
+          "trousers": "0x2b2e26",
+          "accent": "0xa88f42"
+        }
+      },
+      "attire": "uniform",
+      "signatures": ["moustache"],
+      "verified": { "chapterIds": ["ch-358", "ch-363"], "status": "confirmed" },
+      "note": "Sec, âgé, crâne dégarni : l'état-major de Benjamin tient dans ce visage. Ce que Cross Game fait plus tard de ce corps est un fait d'ability et de dossier ; l'apparence reste celle de l'homme."
+    },
+    {
+      "id": "vincent",
+      "body": { "build": "average", "height": 1.04, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "short", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planche n&b ch. 358 ; uniforme de garde, palette sombre",
+        "skin": "0xc08160",
+        "hair": "0x1f1c1a",
+        "attire": {
+          "jacket": "0x39404b",
+          "shirt": "0xdfe1e0",
+          "trousers": "0x272d36",
+          "accent": "0x9c3b3b"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
+      "note": "Carrure sèche, mâchoire serrée : l'exécuteur. Mort tôt dans l'arc — l'apparence sert la timeline d'avant, ce qui est la seule raison pour laquelle elle existe."
+    },
+    {
+      "id": "furykov",
+      "body": { "build": "slim", "height": 0.96, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 363, 415 ; uniforme, cheveux gris peignés",
+        "skin": "0xd8b49a",
+        "hair": "0x9a958d",
+        "attire": {
+          "jacket": "0x424a3a",
+          "shirt": "0xe2ded0",
+          "trousers": "0x2e3429",
+          "accent": "0xa89044"
+        }
+      },
+      "attire": "uniform",
+      "signatures": ["glasses-round"],
+      "verified": { "chapterIds": ["ch-363", "ch-415"], "status": "partial" },
+      "note": "L'œil qui identifie les emprunteurs. Les petites lunettes rondes sont ce qui reste quand on l'a vu une fois ; le reste est à confirmer."
+    },
+    {
+      "id": "musse",
+      "body": { "build": "slim", "height": 0.99, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "swept", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 363, 366 ; uniforme, mèche basse sur l'œil",
+        "skin": "0xe4c3a5",
+        "hair": "0x2c2721",
+        "attire": {
+          "jacket": "0x414a3b",
+          "shirt": "0xe2ded0",
+          "trousers": "0x2d3429",
+          "accent": "0xa89044"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-363", "ch-366"], "status": "partial" },
+      "note": "Jeune, mèche basse sur l'œil. À confirmer."
+    },
+    {
+      "id": "rihan",
+      "body": { "build": "average", "height": 1.02, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 363, 372 ; uniforme, calme de préparateur",
+        "skin": "0xd3a17c",
+        "hair": "0x231f24",
+        "attire": {
+          "jacket": "0x3e463c",
+          "shirt": "0xe2ded0",
+          "trousers": "0x2b312a",
+          "accent": "0x9d8a48"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-363", "ch-372"], "status": "confirmed" },
+      "note": "Cheveux mi-longs sombres, le calme d'un préparateur. Predator est son ability ; rien de ce que fait cette technique n'entre ici."
+    },
+    {
+      "id": "coventoba",
+      "body": { "build": "broad", "height": 0.99, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 358, 415 ; uniforme, silhouette ronde",
+        "skin": "0xd8b49a",
+        "hair": "0x2a2521",
+        "attire": {
+          "jacket": "0x404a3c",
+          "shirt": "0xe2ded0",
+          "trousers": "0x2d332a",
+          "accent": "0xa08a46"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358", "ch-415"], "status": "confirmed" },
+      "note": "Rond, petits yeux, la suffisance d'un agent double. La suffisance est dans le visage rond et les petits yeux ; l'allégeance est un fait de dossier et reste scellée là où elle l'est."
+    },
+    {
+      "id": "vergei",
+      "body": { "build": "broad", "height": 1.0, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "bald-crown", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 361, 415 ; uniforme du poste de Marayam",
+        "skin": "0xc99473",
+        "hair": "0x4a453f",
+        "attire": {
+          "jacket": "0x444c3c",
+          "shirt": "0xe2ded0",
+          "trousers": "0x30362b",
+          "accent": "0xa89044"
+        }
+      },
+      "attire": "uniform",
+      "signatures": ["moustache"],
+      "verified": { "chapterIds": ["ch-361", "ch-415"], "status": "confirmed" },
+      "note": "Chauve à couronne de cheveux et grosse moustache : la colère bureaucratique du poste de Marayam a un visage, et c'est celui-là."
+    },
+    {
+      "id": "sayird",
+      "body": { "build": "average", "height": 1.0, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "short", "expression": "anxious" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 358, 359 ; uniforme de garde royal",
+        "skin": "0xdfbb9b",
+        "hair": "0x2f2823",
+        "attire": {
+          "jacket": "0x3f4a58",
+          "shirt": "0xe4e6e6",
+          "trousers": "0x2a333e",
+          "accent": "0xb59a4d"
+        }
+      },
+      "attire": "uniform",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "confirmed" },
+      "note": "Jeune homme brun net : le manieur de Little Eye, retiré tôt du jeu par Steal Chain. `anxious` est ce que le couloir du 1014 lui fait, et c'est là qu'on le rencontre."
     }
   ],
   "deferred": [

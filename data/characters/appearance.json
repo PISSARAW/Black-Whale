@@ -1,5 +1,132 @@
 {
-  "declared": [],
+  "declared": [
+    {
+      "id": "nasubi-hui-guo-rou",
+      "body": { "build": "broad", "height": 1.04, "frame": "adult", "shoulders": 1.18 },
+      "head": { "face": "square", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358 ; pourpre et or comme couleurs de cour kakine, tenues stables sur toute la famille royale",
+        "skin": "0xd8b49a",
+        "hair": "0x1b1714",
+        "attire": {
+          "jacket": "0x5a2740",
+          "shirt": "0xefe6d2",
+          "trousers": "0x43202f",
+          "accent": "0xd6b352"
+        }
+      },
+      "attire": "gown",
+      "signatures": ["beard-full", "crown"],
+      "verified": { "chapterIds": ["ch-349", "ch-358"], "status": "confirmed" },
+      "note": "Massif sans être un combattant : le poitrail est celui d'un patriarche, pas d'un homme qui frappe. La barbe encadre toute la mâchoire et les yeux sont petits et satisfaits."
+    },
+    {
+      "id": "unma-hui-guo-rou",
+      "body": { "build": "broad", "height": 0.98, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "bun", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 374 ; palette de cour assombrie pour l'aînée",
+        "skin": "0xd0a98d",
+        "hair": "0x2c2724",
+        "attire": {
+          "jacket": "0x3c3550",
+          "shirt": "0xe6e0d4",
+          "trousers": "0x2a2539",
+          "accent": "0xb99a4e"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
+      "note": "Première épouse : le port est massif et droit, le visage lourd et immobile. La coiffure exacte reste à confirmer ; le chignon strict est ce que les planches recensées laissent lire."
+    },
+    {
+      "id": "duazul-hui-guo-rou",
+      "body": { "build": "average", "height": 1.0, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 366, 374 ; bleu de cour, choix éditorial stable",
+        "skin": "0xd8b49a",
+        "hair": "0x241f26",
+        "attire": {
+          "jacket": "0x27364e",
+          "shirt": "0xe8e4da",
+          "trousers": "0x1c2739",
+          "accent": "0xc0a558"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-366", "ch-374"], "status": "partial" },
+      "note": "Mère de quatre prétendants sérieux : mûre, altière, le regard dur d'une stratège. Les détails sous la silhouette restent à confirmer."
+    },
+    {
+      "id": "tang-zhao-li-hui-guo-rou",
+      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bun", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 374 ; tenue traditionnelle sobre, palette éteinte",
+        "skin": "0xdfbb9b",
+        "hair": "0x231e1c",
+        "attire": {
+          "jacket": "0x3f4740",
+          "shirt": "0xe9e3d5",
+          "trousers": "0x2b312c",
+          "accent": "0xa8974f"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-374"], "status": "partial" },
+      "note": "Réservée, chignon serré : la mère effacée d'un fils calme. À confirmer sous la silhouette."
+    },
+    {
+      "id": "sevanti-hui-guo-rou",
+      "body": { "build": "broad", "height": 0.96, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "curly", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 359, 366, 367 ; rouge domestique, choix éditorial stable",
+        "skin": "0xd8b49a",
+        "hair": "0x2e2320",
+        "attire": {
+          "jacket": "0x6a3238",
+          "shirt": "0xefe7d9",
+          "trousers": "0x4a2429",
+          "accent": "0xc9a24e"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-359", "ch-366"], "status": "confirmed" },
+      "note": "Ronde, sourcils froncés en permanence, boucles courtes et serrées : l'autorité domestique faite reine. Les scènes avec Momoze et Marayam sont où elle se lit le mieux."
+    },
+    {
+      "id": "queen-oito",
+      "body": { "build": "slim", "height": 0.95, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "hime", "expression": "anxious" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 349, 358, 359, 361 ; robe simple et claire, loin du faste des aînées",
+        "skin": "0xf0dfc9",
+        "hair": "0x2a2530",
+        "attire": {
+          "jacket": "0x9aa6b2",
+          "shirt": "0xf2eee5",
+          "trousers": "0x6e7987",
+          "accent": "0xb9c4cd"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
+      "note": "La huitième et la plus jeune : fine, cheveux sombres mi-longs et raides, frange, grands yeux inquiets. Woble contre elle — les deux silhouettes vont ensemble, ce qui est la raison du gabarit `infant`."
+    }
+  ],
   "deferred": [
     {
       "id": "katrono-hui-guo-rou",

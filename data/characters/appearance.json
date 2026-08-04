@@ -1,4 +1,29 @@
 {
   "declared": [],
-  "deferred": []
+  "deferred": [
+    {
+      "id": "katrono-hui-guo-rou",
+      "reason": "Quatrième reine. Le catalogue la tient par ses fils et par l'espionne qu'elle poste ; aucune planche recensée ne la montre. Ne pas inventer un visage est le même geste que ne pas inventer un passager — à rouvrir avec un numéro de page, pas avec une intuition."
+    },
+    {
+      "id": "swinko-swinko-hui-guo-rou",
+      "reason": "Cinquième reine. Idem : nommée par ses fils et par ses agents, jamais dessinée sur une planche recensée."
+    },
+    {
+      "id": "seiko-hui-guo-rou",
+      "reason": "Sixième reine. Idem. Sa présence dans l'arc passe entièrement par un garde qui espionne pour elle."
+    },
+    {
+      "id": "keni-wang",
+      "reason": "Heil-Ly. Le catalogue le tient comme nom dans l'organigramme ; aucune planche recensée ne lui donne de silhouette."
+    },
+    {
+      "id": "pyon",
+      "reason": "Statué en phase 0 : pyon et piyon ne sont pas un doublon. Le catalogue porte deux zodiaques distincts, deux premières apparitions, deux postes, deux salles. L'annexe A d'ADR-005 ne rédige de notice pour ni l'un ni l'autre — sa liste des douze Hunters à bord ne les nomme pas — donc aucun des deux n'est déclaré, et le motif est l'absence de notice plutôt que l'absence de planche."
+    },
+    {
+      "id": "piyon",
+      "reason": "Voir pyon : deux personnes, pas un doublon. Réserve à lever séparément — les alias que `characters.json` leur donne (Rabbit à pyon, Boar à piyon) sont l'inverse de l'attribution habituelle des douze signes, et ADR-005 n'a pas autorité pour corriger un fait de `characters.json`."
+    }
+  ]
 }

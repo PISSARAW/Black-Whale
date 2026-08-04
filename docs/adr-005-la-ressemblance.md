@@ -1,6 +1,6 @@
 # ADR-005 : La ressemblance — dessiner les nommés comme le canon les dessine
 
-**Statut :** Proposé — 2026-08-04
+**Statut :** Accepté — 2026-08-04, mis en œuvre 2026-08-04 (P0 à P4 ; voir §7)
 **Date :** 2026-08-04
 **Décideur :** mainteneur unique du dépôt
 **Dépend de :** ADR-001 (« le canon compile ») — s'y conforme ; ADR-002 (découpage 500) —
@@ -421,3 +421,54 @@ Les coiffures nouvelles (`slicked-back`, `pompadour`, `drills`, `chonmage`,
 `hime`, `curly`, `afro`, `wild`, `bald-crown`) relèvent de `humanHair.ts`
 (§4-P2), pas de cette table : une coiffure n'est pas une pièce, c'est le
 premier trait du personnage.
+
+---
+
+## Annexe C — amendements
+
+Le vocabulaire est fermé, donc l'étendre se fait ici et nulle part ailleurs.
+
+- **`bun` (coiffure), 2026-08-04, phase 0.** Trois des reines — Unma, Tang Zhao
+  Li, et le chignon strict que l'annexe A leur donne — portent un chignon, et
+  aucun des dix-sept styles ne le rendait. Le classer sous `ponytail` aurait été
+  l'archive mentant dans le seul champ où elle dit ne pas mentir, ce qui est
+  précisément ce que la fermeture du vocabulaire doit produire : un amendement
+  visible plutôt qu'une valeur approchée invisible. Dix-huit styles.
+- **`changshan` et `kimono` (attire), 2026-08-04, phase 0.** Zhang Lei et Onior
+  Longbao portent une tunique chinoise, Nobunaga et Kalluto un kimono, et aucun
+  des six costumes de `wardrobe.ts` n'en est un. Sans eux, la priorité §2.5
+  n'aurait rien à dire dans les deux cas où elle a le plus à dire.
+
+---
+
+## §7 — ce qui a été fait, et ce qui ne l'a pas été
+
+**Fait.** P0 à P4, plus la fiche de provenance de §6. Soixante-sept
+ressemblances déclarées, quatre différées, `pyon`/`piyon` statué (deux personnes,
+pas un doublon). Schéma zod et deux invariants dans `packages/contracts` ;
+`humanHair.ts` et `humanSignature.ts` créés, tous deux sous 500 lignes ; aucun
+fichier existant au-dessus de 500 ; aucun ajout aux exemptions d'ADR-002.
+
+**Écarts assumés, à statuer.**
+
+1. **La grille de portraits est une grille de *rigs*, pas de pixels.** Une
+   planche-contact des soixante-sept corps construits — meshes, échelle, pièces
+   nommées — en snapshot vitest. Elle attrape ce qu'une grille d'images
+   attraperait (une signature qui tombe, une géométrie partagée réutilisée) et
+   échoue avec un nom dessus plutôt qu'avec un diff de deux PNG ; elle ne dira
+   jamais qu'un visage est raté. `scripts/tour-shots.mjs` reste le seul moyen de
+   regarder la visite pour de vrai.
+2. **P4 bouge le rendu de tout le monde.** Le second ton et le contour épaissi
+   sont des phases de rendu global. La garantie de §5 porte sur la projection de
+   l'apparence — un corps sans entrée ne change pas de visage — et pas sur
+   celles-là.
+3. **Une robe non déclarée garde les cicatrices de Morena.** `gown` voulait dire
+   Morena ; `addCourtGown` sépare le vêtement de la personne, mais seulement pour
+   un corps déclaré, exactement pour tenir §5 au mot. Le résultat est qu'un rôle
+   du vestiaire qui met une inconnue en robe la met toujours dans celle de
+   Morena. C'est laid et c'est délibéré ; le lever demande d'accepter un diff de
+   capture sur des corps anonymes.
+4. **Les alias de `pyon` et `piyon` restent en l'état.** `characters.json` donne
+   Rabbit à `pyon` et Boar à `piyon`, l'inverse de l'attribution habituelle des
+   douze signes. Cet ADR n'a pas autorité pour corriger un fait de
+   `characters.json` ; la réserve est écrite dans leurs motifs de différé.

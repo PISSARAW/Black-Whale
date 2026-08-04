@@ -121,9 +121,9 @@ export const stealChain = defineAbility({
     },
 
     'steal-second': {
-      label: 'Voler une deuxième capacité',
+      label: 'Le pouce occupé (refus)',
       refusal:
-        'Le pouce ne tient qu’une capacité à la fois : il faut d’abord libérer celle qu’il détient',
+        "tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)",
     },
   },
 

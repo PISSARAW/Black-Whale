@@ -92,6 +92,21 @@ describe('the Little Eye sequence (ch. 369)', () => {
     expect(forcedZetsu).toBeDefined()
   })
 
+  it("tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)", () => {
+    const base = world()
+    
+    const secondTheft = stealChain.execute(
+      context({
+        worldState: base,
+        targets: ['sayird'],
+        targetRefs: [{ id: 'sayird', kind: 'CHARACTER' }],
+        actionId: 'steal-second',
+        parameters: { targetAbilityId: 'some-other' },
+      }),
+    )
+    expect(secondTheft.allowed).toBe(false)
+  })
+
   it('moves the ability from the victim to Kurapika and then to Oito', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()

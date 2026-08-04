@@ -291,6 +291,10 @@ const MARKS: Record<
   // And the twelve the ship already knew.
   elastic: 'bound',
   'chain-bind': 'bound',
+  // Held back rather than tied: the staff goes across the corridor and the man
+  // does not get past it. `bound` is the walk's word for a body that is not
+  // going anywhere, and ch. 349 is careful that nobody is hurt by it.
+  staff: 'bound',
   'remote-strike': 'struck',
   stitch: 'bound',
   command: 'controlled',

@@ -75,6 +75,11 @@ export const BODY_KINDS = [
   // Aimed at a guard the walk says that rather than quietly copying a person,
   // which is a use the archive never records and a death it should not undo.
   'clone',
+  // Saiyu's staff, for the use ch. 349 actually draws it in: it lengthens
+  // across a corridor to hold Kanzai back when he loses his temper. Restraint
+  // without injury, aimed at a colleague — which is why it belongs on a body
+  // rather than only on the things a corridor has standing in it.
+  'staff',
   // Bird Manipulation belongs here for the reason the list exists: aiming it at
   // a person is not a no-op. It either puts a note in a Zodiac's hand or it
   // refuses out loud, and the refusal — that the manipulation takes birds and

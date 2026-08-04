@@ -222,6 +222,10 @@ export const EITHER_TARGET = new Set<HatsuInteractionKind>([
   // transformation itself, which is what ch. 383 is actually about — the arm
   // becoming the tool, rather than a tool appearing beside the man.
   'weapon-body',
+  // The staff, which is aimed at a thing across the room or at a colleague
+  // about to start a fight. Ch. 349 draws both, and the second is the one the
+  // walk had no way to perform.
+  'staff',
 ])
 
 /**

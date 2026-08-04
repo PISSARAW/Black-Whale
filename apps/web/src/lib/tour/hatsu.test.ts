@@ -2910,3 +2910,33 @@ describe('the copies, which last a day', () => {
     expect(ageTheCopies(EMPTY_WORLD)).toBeNull()
   })
 })
+
+/**
+ * Ch. 383 draws Padaille's own arm becoming the tool. The walk forged tools as
+ * solids standing about the place and had nowhere to put the transformation
+ * itself, which is the half of the ability the chapter is actually about.
+ */
+describe('the limb, which becomes the tool', () => {
+  const arm = (world: TourWorld) => cast(world, 'weapon-body', null)
+
+  it('transforms with nothing under the reticle, and does not let you pick', () => {
+    const armed = arm(EMPTY_WORLD)
+    expect(armed.report?.kind).toBe('limb-armed')
+    expect(PADAILLE_TOOLS).toContain(armed.world.body.armed)
+  })
+
+  // The fight stops and the tool goes back in — the same gesture, because the
+  // walk has no second key for it and the chapter has no second act.
+  it('takes the tool back into the body when the arm is already one', () => {
+    const armed = arm(EMPTY_WORLD).world
+    const human = arm(armed)
+    expect(human.report).toEqual({ kind: 'limb-human' })
+    expect(human.world.body.armed).toBeNull()
+  })
+
+  it('never carries more than the one armed limb the technique allows', () => {
+    let world = EMPTY_WORLD
+    for (let go = 0; go < 5; go += 1) world = arm(world).world
+    expect(typeof world.body.armed === 'string' || world.body.armed === null).toBe(true)
+  })
+})

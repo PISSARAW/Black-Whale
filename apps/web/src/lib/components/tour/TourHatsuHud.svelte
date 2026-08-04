@@ -350,6 +350,10 @@
         return say.noPacket
       case 'fingers-intact-refused':
         return say.fingersIntact
+      case 'limb-armed':
+        return say.limbArmed(report.tool)
+      case 'limb-human':
+        return say.limbHuman
       case 'not-wound':
         return say.notWound(solidName(report.solidId))
       case 'launched':
@@ -679,7 +683,7 @@
         label: held.doors,
         value:
           world.doors.length === 1
-            ? `${roomName(world.doors[0])} · ${held.armed}`
+            ? `${roomName(world.doors[0])} · ${held.armedLimb}`
             : world.doors.map(roomName).join(' ⇄ '),
       })
     }
@@ -786,6 +790,7 @@
       rows.push({ label: held.arm, value: `${personName(id)} · ${turns} / ${RIPPER_ANT_TURNS}` })
     }
     const body = world.body
+    if (body.armed) rows.push({ label: held.armed, value: body.armed })
     if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })
     if (body.riding) {
       rows.push({

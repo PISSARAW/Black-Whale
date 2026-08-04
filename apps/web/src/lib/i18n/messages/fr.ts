@@ -1056,6 +1056,9 @@ export const fr: Messages = {
           'Rien à lever · Pain Packer et Rising Sun vont ensemble, l’une paie l’autre',
         fingersIntact:
           'Pas sans les doigts · la restriction n’est pas le prix de cette capacité, elle est la capacité — voir Restrictions & serments',
+        limbArmed: (tool) =>
+          `Votre bras est un ${tool} · lequel répond ne se choisit pas, et il est tiré à chaque fois`,
+        limbHuman: 'L’outil se résorbe dans le corps · le bras redevient un bras',
         notWound: (solid) =>
           `Le bras n'a rien dedans · enroulez d'abord, et tout part d'un coup dans ${solid}`,
         launched: (solid, metres) =>
@@ -1176,6 +1179,7 @@ export const fr: Messages = {
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
         masked: 'Visage porté',
+        armedLimb: 'Le bras est un',
         arm: 'Bras en rotation',
         sign: 'La plaque affiche',
         scarlet: 'Vie consommée',

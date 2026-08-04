@@ -218,6 +218,10 @@ export const EITHER_TARGET = new Set<HatsuInteractionKind>([
   // could only be pointed at a single solid would be the walk keeping the
   // first panel and dropping the second.
   'barrage',
+  // Padaille. A solid under the reticle is the blow; nothing under it is the
+  // transformation itself, which is what ch. 383 is actually about — the arm
+  // becoming the tool, rather than a tool appearing beside the man.
+  'weapon-body',
 ])
 
 /**

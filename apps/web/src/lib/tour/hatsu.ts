@@ -3674,6 +3674,26 @@ function runCast(
   // The restriction is not a price paid for this ability, it *is* the ability,
   // and Franklin is the archive's own worked example of a vow: a key that
   // simply did nothing would have taught the reader nothing at all.
+  // Padaille's own body, which is what ch. 383 draws and the walk had no room
+  // for: it forged tools as solids standing about the place, when the chapter
+  // has the man's arm becoming one. With nothing under the reticle the limb
+  // transforms — which tool is drawn, never chosen — and with the limb already
+  // armed the same gesture is the fight ending: the tool goes back in.
+  if (kind === 'weapon-body' && !input.targetSolidId) {
+    const body = world.body
+    if (body.armed) {
+      return {
+        world: { ...world, body: { ...body, armed: null } },
+        report: { kind: 'limb-human' },
+      }
+    }
+    const tool = toolFor(input.standingIn ?? 'padaille', world.swings)
+    return {
+      world: { ...world, swings: world.swings + 1, body: { ...body, armed: tool } },
+      report: { kind: 'limb-armed', tool },
+    }
+  }
+
   if (kind === 'barrage' && !input.targetSolidId && !input.targetId) {
     return { world, report: { kind: 'fingers-intact-refused' } }
   }

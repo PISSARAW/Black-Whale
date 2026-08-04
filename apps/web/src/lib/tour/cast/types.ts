@@ -784,6 +784,16 @@ export interface TourBody {
   dance: number
   /** The solid Metamorphosen has taken the shape of. */
   mimic: string | null
+  /**
+   * Which tool the visitor's arm currently is, or `null` for a human one.
+   *
+   * The half of ch. 383 the walk had no room for: it forged tools as solids
+   * standing in the room, when what the chapter draws is Padaille's own body
+   * becoming one. Which tool is not chosen — `toolFor` draws it, and the draw
+   * is the ability — and there is only ever one, because a limb at a time is
+   * the limit stated with the technique.
+   */
+  armed: string | null
   /** Music holding the senses open against anything that would seal them. */
   soothed: boolean
   /**
@@ -853,6 +863,7 @@ export const RESTING_BODY: TourBody = {
   projected: null,
   dance: 0,
   mimic: null,
+  armed: null,
   soothed: false,
   masked: null,
   playing: null,
@@ -1227,6 +1238,10 @@ export type TourReport =
   | { kind: 'wound-up'; turns: number; by: string | null }
   /** The arm released with nothing in it. Calibration is the stated weak point. */
   | { kind: 'not-wound'; solidId: string }
+  /** A limb became a tool. Which one answered was drawn, not chosen. */
+  | { kind: 'limb-armed'; tool: string }
+  /** The fight is over: the tool goes back into the body of its own accord. */
+  | { kind: 'limb-human' }
   /** The barrage swept across a room: how many things stood in it, how many fell. */
   | { kind: 'swept'; spaceId: string; solids: number; broken: number }
   /** A sweep across a room with nothing standing in it. */

@@ -1198,6 +1198,9 @@ export const en = {
           'Nothing to raise · Pain Packer and Rising Sun go together, and one pays for the other',
         fingersIntact:
           'Not without the fingers · the restriction is not the price of this ability, it is the ability — see Restrictions & vows',
+        limbArmed: (tool: string) =>
+          `Your arm is a ${tool} · which one answers is not yours to pick, and it is drawn again each time`,
+        limbHuman: 'The tool goes back into the body · the arm is an arm again',
         notWound: (solid: string) =>
           `The arm has nothing in it · wind it first, and it all goes into ${solid} at once`,
         launched: (solid: string, metres: number) =>
@@ -1329,6 +1332,7 @@ export const en = {
         dance: 'The prologue',
         mimic: 'Wearing',
         masked: 'Face worn',
+        armedLimb: 'Arm is a',
         arm: 'Arm turning',
         sign: 'Plate reads',
         scarlet: 'Life spent',

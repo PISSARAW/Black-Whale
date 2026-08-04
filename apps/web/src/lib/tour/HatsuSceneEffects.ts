@@ -2,16 +2,19 @@ import type * as Three from 'three'
 import type { Vec2 } from './types'
 import type { TourFlash } from './apparitions'
 import { HatsuRewindEffect, type RewindFrame } from './HatsuRewindEffect'
+import { HatsuVolleyEffect } from './HatsuVolleyEffect'
 import { HatsuWindingEffect, type WindingFrame } from './HatsuWindingEffect'
 
 const GUST_SECONDS = 1.1
 const PUNCH_SECONDS = 1
 /**
- * Shorter than the fist out of the deck, and for the reason the ability is
- * named for: the wind-up is the long part and it has already happened by the
- * time this is drawn. What is left is one turn of the arm arriving.
+ * Shorter than the fist out of the deck, for the reason the ability is named
+ * for: the wind-up is the long part and has already happened by the time this
+ * is drawn. What is left is one turn of the arm arriving.
  */
 const SWING_SECONDS = 0.55
+/** Long enough for ten barrels to open in turn and be done. See `fireABurst`. */
+const VOLLEY_SECONDS = 0.7
 const SUN_SECONDS = 2.4
 const ARROW_SECONDS = 0.9
 const BLAST_SECONDS = 0.9
@@ -71,6 +74,7 @@ export class HatsuSceneEffects {
   readonly #fistMaterial: Three.MeshBasicMaterial
   readonly #rewind: HatsuRewindEffect
   readonly #winding: HatsuWindingEffect
+  readonly #volley: HatsuVolleyEffect
   #playing = 0
   #playedSeq = -1
   #played: SequencedFlash | null = null
@@ -204,6 +208,7 @@ export class HatsuSceneEffects {
     this.#seam.renderOrder = 3
     this.#rewind = new HatsuRewindEffect(THREE, scene)
     this.#winding = new HatsuWindingEffect(THREE, scene)
+    this.#volley = new HatsuVolleyEffect(THREE, scene)
     scene.add(
       this.#chassis,
       this.#headlamp,
@@ -277,18 +282,15 @@ export class HatsuSceneEffects {
     if (played.kind === 'sun') return this.animateSun(played, through, frame)
     if (played.kind === 'gust') return this.animateGust(played, through)
     if (played.kind === 'swing') return this.animateSwing(played, through)
+    if (played.kind === 'volley') return this.#volley.play(played, through)
     this.animatePunch(played, through, frame)
   }
 
   /**
-   * Ripper Cyclotron, landing.
-   *
-   * The same fist as Remote Punch, thrown rather than raised: it comes in from
-   * where the visitor is standing, on the level, spinning about its own arm —
-   * the rotations are the ability, so they are the one thing the picture must
-   * carry — and stops dead on the thing. Nothing lingers and nothing rings; the
-   * whole charge went in at once, which is why guessing the number wrong costs
-   * all of it.
+   * Ripper Cyclotron, landing: the same fist as Remote Punch, thrown rather
+   * than raised. It comes in from where the visitor stands, spinning about its
+   * own arm — the rotations are the ability, so the picture must carry them —
+   * and stops dead. Nothing lingers: the whole charge went in at once.
    */
   private animateSwing(played: SequencedFlash, through: number): void {
     const from = played.from ?? played.at
@@ -430,6 +432,7 @@ export class HatsuSceneEffects {
   }
 
   private hideFlashes(): void {
+    this.#volley.hide()
     this.#seam.visible = false
     this.#gust.visible = false
     this.#gustRing.visible = false
@@ -477,6 +480,7 @@ export class HatsuSceneEffects {
     this.#fistMaterial.dispose()
     this.#rewind.dispose()
     this.#winding.dispose()
+    this.#volley.dispose()
   }
 }
 
@@ -486,5 +490,6 @@ function flashDuration(kind: TourFlash['kind']): number {
   if (kind === 'arrow') return ARROW_SECONDS
   if (kind === 'blast') return BLAST_SECONDS
   if (kind === 'swing') return SWING_SECONDS
+  if (kind === 'volley') return VOLLEY_SECONDS
   return PUNCH_SECONDS
 }

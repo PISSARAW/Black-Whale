@@ -5,6 +5,7 @@ import {
   CYCLOTRON,
   LEFT_PALM,
   PORTAL_REACH,
+  VOLLEY,
   SHOAL,
   apparitionsOn,
   coinSpot,
@@ -449,17 +450,53 @@ describe('the two that happen rather than stand', () => {
   })
 
   // The same word from three techniques, and only one of them is a fist.
-  it('leaves the other two ways of breaking a thing to their own pictures', () => {
+  /**
+   * Both halves of ch. 353, which the walk had rules for and no picture: the
+   * struck thing was shoved back on its own and the swept ones stopped being
+   * there, so the only evidence of a shot was furniture moving by itself.
+   */
+  it('fires the tracers from the visitor at what Double Machine Gun was aimed at', () => {
     const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
-    for (const by of ['barrage', 'shred'] as const) {
-      expect(
-        flashFor(
-          { report: { kind: 'shattered', solidId: struck.id, by }, from: [0, 0] },
-          ship,
-          EMPTY_WORLD,
-        ),
-      ).toBeNull()
+    const from: [number, number] = [3, 4]
+    for (const report of [
+      { kind: 'volley', solidId: struck.id, hits: 1 },
+      { kind: 'shattered', solidId: struck.id, by: 'barrage' },
+    ] as const) {
+      const seen = flashFor({ report, from }, ship, EMPTY_WORLD)!
+      expect(seen.kind).toBe('volley')
+      expect(seen.from).toEqual(from)
+      expect(seen.at).toEqual(struck.at)
+      expect(seen.colour).toBe(VOLLEY)
     }
+  })
+
+  // The sweep is the same burst aimed at a compartment, so it goes to the room
+  // rather than to any one thing — and the empty one is drawn too: the barrels
+  // fired, and finding nothing standing there is an answer, not an absence.
+  it('sweeps the room rather than a thing, and draws the empty sweep as well', () => {
+    for (const report of [
+      { kind: 'swept', spaceId: elsewhere.id, solids: 2, broken: 1 },
+      { kind: 'nothing-there', spaceId: elsewhere.id },
+    ] as const) {
+      const seen = flashFor({ report, from: [3, 4] }, ship, EMPTY_WORLD)!
+      expect(seen.kind).toBe('volley')
+      expect(seen.tierId).toBe(elsewhere.tierId)
+      expect(seen.at).toEqual(centroid(elsewhere))
+    }
+  })
+
+  // The same word from three techniques, each now with its own picture — and
+  // the confetti with none, because paper finishing a cut is neither a shot
+  // nor a blow, and the walk has nothing true to draw for it.
+  it('leaves the paper finishing its cut to no picture at all', () => {
+    const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
+    expect(
+      flashFor(
+        { report: { kind: 'shattered', solidId: struck.id, by: 'shred' }, from: [0, 0] },
+        ship,
+        EMPTY_WORLD,
+      ),
+    ).toBeNull()
   })
 
   it('says nothing for a report that is neither', () => {

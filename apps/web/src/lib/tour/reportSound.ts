@@ -115,6 +115,17 @@ export function playTourReportSound(report: TourReport): void {
       return raiseTheSun(report.metres)
     case 'volley':
       return fireABurst(report.hits)
+    // The other half of ch. 353, which the walk had rules for and no voice: ten
+    // barrels across a sector rather than at one thing. Longer than the aimed
+    // burst because it is wider — the rounds are spread over everything standing
+    // there — and `fireABurst` caps itself, so a crowded room does not turn into
+    // a drum roll. The empty sweep sounds, and for the reason the fist into bare
+    // deck sounds: the barrels fired, and finding nothing standing in the arc is
+    // an answer rather than the absence of one.
+    case 'swept':
+      return fireABurst(2 + report.solids * 2)
+    case 'nothing-there':
+      return fireABurst(4)
     // Three techniques arrive at the same word and none of them was played.
     // What is heard is the blow that was thrown, not the breaking: the third
     // burst of ten barrels, or the fist with fifteen rotations behind it. The
@@ -134,6 +145,11 @@ export function playTourReportSound(report: TourReport): void {
       return grindThroughSpace(report.on)
     case 'tune-played':
       return playATune(report.tune)
+    // `fingers-intact-refused` is deliberately not here. Every other refusal in
+    // this file keeps the sound of the gesture that did happen — the palm came
+    // up, the fist went into the deck — and this is the one where nothing is
+    // fired at all: the restriction is not a price paid for the ability, it *is*
+    // the ability. The silence is the report, and the panel carries the reason.
     default:
       return
   }

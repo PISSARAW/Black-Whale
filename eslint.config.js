@@ -258,9 +258,7 @@ export default tseslint.config(
       'apps/web/src/lib/tour/apparitions.ts', // 1827
       'apps/web/src/lib/tour/blueprint.ts', // 758
       'apps/web/src/lib/tour/geometry.ts', // 942
-      'apps/web/src/lib/tour/hatsu.ts',
-      'apps/web/src/lib/tour/cast/techniques.ts', // 705
-      'apps/web/src/lib/tour/cast/types.ts', // 1309 // 4130
+      'apps/web/src/lib/tour/hatsu.ts', // 5364
       'apps/web/src/lib/tour/mesh.ts', // 1603
       'apps/web/src/lib/tour/morena.ts', // 1034
       'apps/web/src/routes/+layout.svelte', // 859
@@ -346,8 +344,7 @@ export default tseslint.config(
       'apps/web/src/lib/tour/comfort.ts', // 12
       'apps/web/src/lib/tour/dealer.ts', // 12
       'apps/web/src/lib/tour/geometry.ts', // 16
-      'apps/web/src/lib/tour/hatsu.ts',
-      'apps/web/src/lib/tour/cast/techniques.ts', // 33, // 53
+      'apps/web/src/lib/tour/hatsu.ts', // 53
       'apps/web/src/lib/tour/humanAura.ts', // 32
       'apps/web/src/lib/tour/humanCostume.ts', // 22
       'apps/web/src/lib/tour/humanFigure.ts', // 33

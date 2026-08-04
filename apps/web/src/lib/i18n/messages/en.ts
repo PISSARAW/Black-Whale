@@ -287,7 +287,7 @@ export const en = {
       find: 'Find a room',
       findKeys: '⌘K, or Ctrl K',
       reveal: 'Show the evidence',
-      revealKeys: 'G',
+      revealKeys: 'L',
       fullscreen: 'Full screen, panel and all',
       fullscreenKeys: 'V',
       release: 'Give the pointer back to the page',
@@ -295,11 +295,11 @@ export const en = {
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       nenSelf: 'Turn the active Hatsu on yourself',
-      nenSelfKeys: 'R, wherever you are looking',
+      nenSelfKeys: 'Hold H, then 2 — wherever you are looking',
       nenSecond: 'Cast the second page',
-      nenSecondKeys: (name: string) => `R casts ${name}, the one under the ribbon`,
+      nenSecondKeys: (name: string) => `Hold H, then 2, to cast ${name}, the one under the ribbon`,
       nenMoon: 'Put the moon on rather than the sun',
-      nenMoonKeys: 'R marks with the moon, F with the sun',
+      nenMoonKeys: 'Hold H, then 2, marks with the moon; F with the sun',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -677,7 +677,7 @@ export const en = {
       // why each has a key of its own.
       tunes: {
         title: 'The flute plays',
-        hint: 'F, R and C · each air is heard by the room you are standing in',
+        hint: 'F, then hold H for 2 and 3 · each air is heard by the room you are standing in',
         dance: 'The lively air',
         bloom: 'The soft air',
         scatter: 'The sharp air',

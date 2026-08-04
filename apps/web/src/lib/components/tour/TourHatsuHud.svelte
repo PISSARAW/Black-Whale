@@ -61,11 +61,11 @@
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
     onRelease: () => void
-    /** Walks the double on to her next watch — the same thing R does. */
+    /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
-    /** Walks Secret Window on to its next bird — R again, under that aura. */
+    /** Walks Secret Window on to its next bird — the same place, that aura. */
     onCycleOwl: () => void
-    /** Walks Little Eye's insect on to its next order — R, under that aura. */
+    /** Walks Little Eye's insect on to its next order — the same place. */
     onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
@@ -73,7 +73,7 @@
      * The cast the keys make, for a visitor working the panel instead.
      *
      * Two of them under Double Face, and three under the flute — where the
-     * third is C, and the hand is which air is played rather than which page.
+     * hand is which air is played rather than which page.
      */
     onCastHand: (hand: 'first' | 'second' | 'third') => void
     /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
@@ -769,10 +769,11 @@
       {/if}
     </p>
     <!-- Every key this technique answers to, whether or not it has been cast
-         yet. Which keys a technique uses is not something the visitor can see
-         from the dock — one has three, most have one, and R means a different
-         thing under each of the ones that have two — so taking an aura up is
-         the moment to say all of them. -->
+         yet. What a technique has in it is not something the visitor can see
+         from the dock — one has three things, most have one, and the second
+         means something different under each of the ones that have two — so
+         taking an aura up is the moment to say all of them. H holds the wheel
+         open and the number picks; only the first has a key to itself. -->
     <p class="mt-2 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.keys.title}
     </p>
@@ -859,7 +860,7 @@
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.bothHint}</p>
     <div class="mt-1 flex flex-wrap gap-1">
-      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'R', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
+      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'H 2', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
         <button
           type="button"
           onclick={() => onCastHand(live.hand)}
@@ -908,20 +909,20 @@
       <span
         >{$t.tour.hatsu.double.watch} · {$t.tour.hatsu.double[world.doubleMode ?? 'follow']}</span
       >
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 
   <!-- The flute's three airs. Not a cycle like the three above: an instrument
-       is played, so each piece has a key of its own and pressing it is the
-       playing. The row is the same either way — the panel is where a visitor
-       finds out that a technique has more than one thing in it. -->
+       is played, so each piece has a place of its own on the wheel and landing
+       on it is the playing. The row is the same either way — the panel is
+       where a visitor finds out a technique has more than one thing in it. -->
   {#if profile.kind === 'melody'}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.tunes.title}
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.tunes.hint}</p>
-    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'R' }, { hand: 'third' as const, air: 'scatter' as const, key: 'C' }] as piece (piece.air)}
+    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'H 2' }, { hand: 'third' as const, air: 'scatter' as const, key: 'H 3' }] as piece (piece.air)}
       <button
         type="button"
         onclick={() => onCastHand(piece.hand)}
@@ -946,7 +947,7 @@
       class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
     >
       <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 
@@ -961,7 +962,7 @@
       class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
     >
       <span>{$t.tour.hatsu.insect.orders} · {$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}</span>
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 

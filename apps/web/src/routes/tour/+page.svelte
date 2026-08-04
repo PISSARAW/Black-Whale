@@ -124,7 +124,6 @@
   }
   const keyboard = new TourKeyboardController({
     read: () => ({
-      takesOrders: Boolean(technique && TAKES_ORDERS.has(technique.kind)),
       immersive: chrome.immersive,
       nativeFullscreen: chrome.nativeFullscreen,
       engaged,
@@ -132,7 +131,6 @@
       finderOpen: chrome.findOpen,
     }),
     toggleReveal: () => (chrome.reveal = !chrome.reveal),
-    turnTechnique: () => technique && turn(technique.kind),
     toggleFullscreen: () => chrome.toggleFullscreen(),
     togglePlan: () => (chrome.planOpen = !chrome.planOpen),
     examine: () => (asking ? close() : ask()),
@@ -240,6 +238,24 @@
   const tunes = $derived(hatsuView.tunes)
   const twoHanded = $derived(hatsuView.twoHanded)
   const selfCastable = $derived(hatsuView.selfCastable)
+  /**
+   * The word the wheel offers to whatever this technique has already sent out.
+   *
+   * Only the three that leave something standing in a room have one — the
+   * double, the owl, the insect — and for them the second place on the wheel
+   * changes its orders rather than casting again. `null` everywhere else,
+   * which is what keeps the wheel from opening on a technique that is only
+   * ever cast.
+   */
+  const orders = $derived(
+    !technique || !TAKES_ORDERS.has(technique.kind)
+      ? null
+      : technique.kind === 'guardian'
+        ? $t.tour.hatsu.double.watch
+        : technique.kind === 'surveillance'
+          ? $t.tour.hatsu.owl.watch
+          : $t.tour.hatsu.insect.orders,
+  )
   let nextHand = $state<Record<CastHand, 'sun' | 'moon'>>({
     first: 'sun',
     second: 'sun',
@@ -471,6 +487,8 @@
         hands,
         tunes,
         twoHanded,
+        orders,
+        onOrder: () => technique && turn(technique.kind),
         swings: technique?.kind === 'stitch',
         touchUseLabel,
         touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },

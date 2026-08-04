@@ -136,22 +136,22 @@ describe('the keys a technique answers to', () => {
     expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
   })
 
-  it('spends R on the second key wherever the walk has one', () => {
+  it('spends the wheel\'s second place wherever the walk has one', () => {
     // The three that take orders, the two hands, and the ones the reticle
     // decides for — every technique with more than one key, and no other.
-    expect(under('guardian')[1]).toEqual({ key: 'R', action: 'doubleWatch', click: false })
-    expect(under('surveillance')[1]).toEqual({ key: 'R', action: 'owlFlight', click: false })
-    expect(under('scout')[1]).toEqual({ key: 'R', action: 'insectOrders', click: false })
+    expect(under('guardian')[1]).toEqual({ key: 'H 2', action: 'doubleWatch', click: false })
+    expect(under('surveillance')[1]).toEqual({ key: 'H 2', action: 'owlFlight', click: false })
+    expect(under('scout')[1]).toEqual({ key: 'H 2', action: 'insectOrders', click: false })
     expect(under('polarity')).toEqual([
       { key: 'F', action: 'sun', click: true },
-      { key: 'R', action: 'moon', click: false },
+      { key: 'H 2', action: 'moon', click: false },
     ])
-    expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
-    expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('puppet')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
+    expect(under('elastic')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
   })
 
-  it('gives the flute three, because three airs need three keys', () => {
-    expect(under('melody').map((control) => control.key)).toEqual(['F', 'R', 'C'])
+  it('gives the flute three places, because three airs need three', () => {
+    expect(under('melody').map((control) => control.key)).toEqual(['F', 'H 2', 'H 3'])
     expect(under('melody').map((control) => control.action)).toEqual([
       'airDance',
       'airBloom',
@@ -168,13 +168,13 @@ describe('the keys a technique answers to', () => {
     }
     expect(under('bookmark', book)).toEqual([
       { key: 'F', action: 'openPage', click: true },
-      { key: 'R', action: 'alternate', click: false },
+      { key: 'H 2', action: 'alternate', click: false },
     ])
     // Turned the other way, the alternating page is the one under F.
     const turned: TourBook = { ...book, open: 'polarity', bookmark: 'teleport' }
     expect(under('bookmark', turned)).toEqual([
       { key: 'F', action: 'alternate', click: true },
-      { key: 'R', action: 'markedPage', click: false },
+      { key: 'H 2', action: 'markedPage', click: false },
     ])
   })
 

@@ -3376,7 +3376,7 @@ export type HatsuKeyAction =
 
 export interface HatsuKey {
   /** The key as it is printed on a keyboard. */
-  key: 'F' | 'R' | 'C'
+  key: 'F' | 'H 2' | 'H 3'
   action: HatsuKeyAction
   /** Whether a click does the same thing, which only the casting hand has. */
   click: boolean
@@ -3385,13 +3385,15 @@ export interface HatsuKey {
 /**
  * Every key the technique in hand answers to, and what each one does.
  *
- * The walk casts with three keys at most and no technique uses all three, but
- * which ones it uses — and what R means when it has one — changes from aura to
- * aura: a page, an air, an order to a double, or the cast turned on the visitor
- * themselves. A visitor who has just picked a technique out of the dock has no
- * way of knowing which of those they are holding, so the panel says it, and
- * this is the one place that decides. It mirrors the key handler in
- * `TourScene`, and the tests hold the two together.
+ * A technique has one cast and, sometimes, a second or a third thing in it —
+ * a page, an air, an order to a double, or the cast turned on the visitor
+ * themselves. The first is F. The rest are held H, which opens the wheel, and
+ * then the number of the one wanted: R and C are not free to be spent here,
+ * because R is Ren and C is Ko everywhere in the ship and a key cannot mean
+ * two things at once. A visitor who has just picked a technique out of the
+ * dock has no way of knowing which of those they are holding, so the panel
+ * says it, and this is the one place that decides. It mirrors the wheel in
+ * `TourScene`, whose order is the same, and the tests hold the two together.
  */
 export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKey[] {
   if (!worksInTour(profile)) return []
@@ -3401,22 +3403,24 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   if (pages) {
     return [
       { key: 'F', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
-      { key: 'R', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
+      { key: 'H 2', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
     ]
   }
   if (TWO_HANDED_KINDS.has(profile.kind)) {
     return [
       { key: 'F', action: 'sun', click: true },
-      { key: 'R', action: 'moon', click: false },
+      { key: 'H 2', action: 'moon', click: false },
     ]
   }
-  // The one instrument aboard: three airs, so three keys, and the key is the
-  // playing rather than a choice made before it.
+  // The one instrument aboard, and the only thing with three of anything: the
+  // lively air is the cast, and the other two are the second and third of the
+  // wheel. Which piece is played is still chosen at the moment of playing —
+  // holding H is the breath before the note.
   if (profile.kind === 'melody') {
     return [
       { key: 'F', action: 'airDance', click: true },
-      { key: 'R', action: 'airBloom', click: false },
-      { key: 'C', action: 'airScatter', click: false },
+      { key: 'H 2', action: 'airBloom', click: false },
+      { key: 'H 3', action: 'airScatter', click: false },
     ]
   }
   const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
@@ -3429,7 +3433,7 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   ]
   if (TAKES_ORDERS.has(profile.kind)) {
     keys.push({
-      key: 'R',
+      key: 'H 2',
       action:
         profile.kind === 'guardian'
           ? 'doubleWatch'
@@ -3439,9 +3443,9 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
       click: false,
     })
   } else if (worksOnTheBody(profile) && aimsAtSolids(profile)) {
-    // The ones on both sides of the line: the reticle decides, and R is how the
-    // visitor says *me* rather than what is in front of them.
-    keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
+    // The ones on both sides of the line: the reticle decides, and the second
+    // of the wheel is how the visitor says *me* rather than what is in front.
+    keys.push({ key: 'H 2', action: 'castOnSelfInstead', click: false })
   }
   return keys
 }

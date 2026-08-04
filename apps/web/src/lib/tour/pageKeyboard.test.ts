@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { tourShortcut } from './pageKeyboard'
 
 const state = {
-  takesOrders: false,
   immersive: false,
   nativeFullscreen: false,
   engaged: false,
@@ -15,14 +14,20 @@ const key = (value: string, modified = false) =>
 
 describe('tour shortcuts', () => {
   it('maps unmodified navigation keys', () => {
-    expect(tourShortcut(key('g'), state)).toBe('toggle-reveal')
+    expect(tourShortcut(key('l'), state)).toBe('toggle-reveal')
     expect(tourShortcut(key('m'), state)).toBe('toggle-plan')
     expect(tourShortcut(key('v'), state)).toBe('toggle-fullscreen')
   })
 
-  it('reserves R for techniques that take orders', () => {
+  it('leaves the whole Nen alphabet to the walk', () => {
+    // Both listeners sit on `window`, so a letter shared with the walk is not
+    // a choice between two meanings — it is both of them, on the one press.
+    expect(tourShortcut(key('g'), state)).toBeNull()
     expect(tourShortcut(key('r'), state)).toBeNull()
-    expect(tourShortcut(key('r'), { ...state, takesOrders: true })).toBe('turn-technique')
+    expect(tourShortcut(key('c'), state)).toBeNull()
+    expect(tourShortcut(key('t'), state)).toBeNull()
+    expect(tourShortcut(key('h'), state)).toBeNull()
+    expect(tourShortcut(key('f'), state)).toBeNull()
   })
 
   it('lets escape leave only an unclaimed immersive view', () => {
@@ -39,6 +44,6 @@ describe('tour shortcuts', () => {
   })
 
   it('ignores modified shortcuts', () => {
-    expect(tourShortcut(key('g', true), state)).toBeNull()
+    expect(tourShortcut(key('l', true), state)).toBeNull()
   })
 })

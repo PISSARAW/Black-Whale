@@ -7,8 +7,8 @@ import {
 } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation } from './humanAnimation'
-import { addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
-import { humanProfile } from './humanProfiles'
+import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
+import { hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { buildHumanAura, type Glass, type HumanZone } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
@@ -35,14 +35,25 @@ export interface HumanFigure {
 export const HUMAN_INSTANCE_THRESHOLD = 20
 export const HUMAN_LOD_DISTANCE = 24
 
-/** Geometry-affecting state only; combat motion must not rebuild a full rig. */
+/**
+ * Geometry-affecting state only; combat motion must not rebuild a full rig.
+ *
+ * The likeness rides along explicitly rather than implicitly — ADR-005 §4-P1.
+ * `identity` was already in both branches, so a declared face was already
+ * keyed correctly by accident; naming it makes the dependency legible, and
+ * makes the fact that a likeness changes the *rig* — a gabarit, a hairstyle
+ * built from cones, signature pieces hung on the skeleton — rather than only a
+ * colour, something a later edit cannot quietly forget.
+ */
 export function humanStateKey(seen: Apparition): string {
   if (!seen.human) return String(seen.stage)
-  if (seen.kind !== 'combatant') return JSON.stringify(seen.human)
+  const likeness = hasLikeness(seen.human.identity)
+  if (seen.kind !== 'combatant') return JSON.stringify({ ...seen.human, likeness })
   return JSON.stringify({
     role: seen.human.role,
     identity: seen.human.identity,
     aura: seen.human.aura,
+    likeness,
   })
 }
 
@@ -292,19 +303,15 @@ export function buildHumanFigure({
     })
   }
   if (profile.clothing === 'gown') {
-    addMorenaDetails({
-      THREE,
-      geometry,
-      outlined,
-      figure,
-      head,
-      cloth,
-      ink,
-      accent,
-      dark,
-      skin,
-      seated: pose === 'seated',
-    })
+    // Her marks belong to her. Anyone else the archive has actually drawn gets
+    // the garment and not the person; anyone it has not drawn keeps exactly
+    // what they had, which is ADR-005 §5's promise about diffs.
+    const dressed = { THREE, geometry, outlined, figure, cloth, ink, accent, dark, skin }
+    if (isMorena(profile) || !profile.likeness) {
+      addMorenaDetails({ ...dressed, head, seated: pose === 'seated' })
+    } else {
+      addCourtGown(dressed)
+    }
   }
 
   for (const side of [-1, 1]) {

@@ -116,6 +116,50 @@ export function addSilentMajorityCostume(build: CostumeBuild): void {
   }
 }
 
+/**
+ * A gown that is nobody in particular — ADR-005 §4-P1.
+ *
+ * `gown` used to mean Morena: the value existed because she was the only
+ * person aboard wearing one, so every body the wardrobe put in a gown got her
+ * scars, her neckline and her sutured seam. That was invisible for as long as
+ * nobody named was drawn; the moment eight queens and four princesses are
+ * declared it becomes a room full of Morenas.
+ *
+ * So the garment is separated from the person. This is the garment — a floor
+ * length skirt, a sash and a high collar, nothing that says who is inside it —
+ * and `addMorenaDetails` keeps everything that does. It is drawn only for a
+ * body with a declared likeness, which is what keeps the promise that an
+ * undeclared one renders exactly as it did before.
+ */
+export function addCourtGown(build: CostumeBuild): void {
+  const { THREE, geometry, outlined, figure, cloth, ink, accent } = build
+  const skirt = outlined({
+    THREE,
+    geometry: geometry(THREE, 'court:gown', () => new THREE.CylinderGeometry(0.24, 0.4, 1.0, 8)),
+    material: cloth,
+    ink,
+  })
+  skirt.name = 'court-gown'
+  skirt.position.y = 0.62
+  figure.add(skirt)
+
+  const sash = new THREE.Mesh(
+    geometry(THREE, 'court:sash', () => new THREE.CylinderGeometry(0.25, 0.25, 0.09, 8)),
+    accent,
+  )
+  sash.position.y = 1.06
+  figure.add(sash)
+
+  // The high collar is what separates a court gown from a nightdress at
+  // twenty-four metres, which is the distance the LOD hands over at.
+  const collar = new THREE.Mesh(
+    geometry(THREE, 'court:collar', () => new THREE.CylinderGeometry(0.14, 0.17, 0.16, 8, 1, true)),
+    cloth,
+  )
+  collar.position.y = 1.5
+  figure.add(collar)
+}
+
 interface MorenaBuild extends CostumeBuild {
   head: Group
   seated: boolean

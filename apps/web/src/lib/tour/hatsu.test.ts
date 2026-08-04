@@ -531,6 +531,18 @@ describe('what a technique does to a solid', () => {
     expect(forged.name).toBe(solidA.name)
   })
 
+  // Ch. 61: the crate is an armchair to the room, and there is nothing on it
+  // for a Hunter to find. A layer that tinted the solid would be the walk
+  // handing out the detector the manga says nobody has — Gyo included, since
+  // Gyo shows aura and the whole claim is that there is none to show.
+  it('leaves no aura on a forged surface, and nothing for Gyo to find', () => {
+    const result = hit(EMPTY_WORLD, 'disguise', solidA.id)
+    const hold = result.world.solids[solidA.id]!
+    expect(hold.forged).toBe(true)
+    expect(hold.aura).toBeUndefined()
+    expect(solidNow(solidA, hold).aura).toBeUndefined()
+  })
+
   it('stamps twenty heads and no more', () => {
     let world = EMPTY_WORLD
     const heads = ship.structures.slice(0, STAMP_LIMIT)

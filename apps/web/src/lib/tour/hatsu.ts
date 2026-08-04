@@ -34,6 +34,8 @@ import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
 import { BODY_KINDS } from './bodyKinds'
+import { aimGum, type GumStrand } from './gum'
+import { nextForgery } from './texture'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -411,6 +413,15 @@ export interface TourWorld {
   /** Every room on every deck held open at once — Emperor Time. */
   laidOpen: boolean
   /**
+   * Whose eyes are scarlet, and what it has cost them so far.
+   *
+   * Kept beside `laidOpen` rather than folded into it because the two say
+   * different things: the ship being open is a fact about the ship, and this is
+   * a fact about whoever is holding it open — which of them it is, and how much
+   * of a life the hold has burnt. `null` whenever nobody's eyes are red.
+   */
+  scarlet: ScarletEyes | null
+  /**
    * The protected room, and whether the visitor was standing in it when the
    * boundary went up. An occupant keeps the real room and may walk out of it;
    * anyone arriving from outside gets the empty copy.
@@ -479,6 +490,17 @@ export interface TourWorld {
   copies: Structure[]
   /** The first of two solids a paired technique is waiting to join. */
   pairing: string | null
+  /**
+   * The filament out of the visitor's wrist, and what it is stuck to.
+   *
+   * Its own field rather than another user of `pairing`, because it is not a
+   * pairing: the far end is a thing and the near end is the visitor, which is
+   * what Bungee Gum has been since the first time it was drawn. The length it
+   * stuck at rides along with it — see `gum.ts`, where the tension is worked
+   * out — so that backing away from what you stuck is a thing the walk can
+   * measure rather than a thing it has to be told.
+   */
+  gum: GumStrand | null
   /** Where the paper confetti stuck, which every later volley converges on. */
   wound: string | null
   /** Rotations wound into the next punch. */
@@ -982,6 +1004,15 @@ export interface SolidHold {
   hits?: number
   /** A Gallery Fake copy, and the solid it is a copy of. */
   copyOf?: string
+  /**
+   * Texture Surprise is over this face.
+   *
+   * A record and not a tell: the walk keeps it so that Nen Stitches has
+   * something to undo and so a test can ask, and the scene draws nothing for
+   * it. An aura the layer left behind would be a detector the manga is explicit
+   * about not having — ch. 61 works precisely because there is nothing to see.
+   */
+  forged?: boolean
   /** Aura color applied by a hatsu, such as pink for Texture Surprise */
   aura?: string
 }
@@ -1004,6 +1035,7 @@ export const EMPTY_WORLD: TourWorld = {
   solids: {},
   copies: [],
   pairing: null,
+  gum: null,
   wound: null,
   windup: 0,
   swings: 0,
@@ -1090,6 +1122,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !Object.keys(world.solids).length &&
   !world.copies.length &&
   !world.pairing &&
+  !world.gum &&
   !world.wound &&
   !world.windup &&
   !world.shut.length &&
@@ -1392,28 +1425,6 @@ export function nenHeld(world: TourWorld): string[] {
 // the thing standing in the room, as opposed to the room. It is deliberately
 // the same shape as the first — a value in `TourWorld`, a pure reducer, and a
 // renderer that knows nothing but how to draw what it is handed.
-
-/** Appearances Texture Surprise cycles a surface through. */
-const FORGERIES: StructureKind[] = [
-  'painting',
-  'cabinet',
-  'bars',
-  'basin',
-  'casket',
-  'bed',
-  'seat',
-  'table',
-  'spring',
-  'platform',
-  'counter',
-  'window',
-  'pillar',
-  'manacle',
-  'camera',
-  'telephone',
-  'duct',
-  'vent',
-]
 
 /** The blueprint's record for a solid, or the Gallery Fake copy standing in for one. */
 export function solidById(ship: Ship, world: TourWorld, id: string | null): Structure | null {
@@ -2076,11 +2087,16 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
 
   // Only the look changes; the thing underneath goes on being what it was,
   // and goes on stopping you exactly where it did.
+  //
+  // And the change leaves nothing to find. The crate that becomes an armchair
+  // in ch. 61 is an armchair to the room and to Gyo alike — see `texture.ts` —
+  // so the hold carries the fact that this face is forged and the scene draws
+  // no aura for it. What gives it away is the touch, which here is the solid
+  // going on measuring, blocking and citing exactly what it always did.
   disguise: ({ world, structure, hold, id }) => {
-    const current = hold?.kind ?? structure.kind
-    const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
+    const next = nextForgery(hold?.kind ?? structure.kind)
     return {
-      world: withHold(world, id, { kind: next, aura: 'pink' }),
+      world: withHold(world, id, { kind: next, forged: true }),
       report: { kind: 'forged', solidId: id, as: next },
     }
   },
@@ -2712,6 +2728,8 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.snakes ? ['snakes'] : []),
     ...(world.trap ? [`trap:${world.trap}`] : []),
     ...world.gumTraps.map((id) => `gum:${id}`),
+    ...(world.gum ? [`strand:${world.gum.solidId}`] : []),
+    ...(world.gum ? [`strand:${world.gum.solidId}`] : []),
     ...world.flowered.map((id) => `flowered:${id}`),
     ...world.scattered.map((id) => `scattered:${id}`),
     // The Guardian Spirit Beasts. Each is a hold like any other: something the

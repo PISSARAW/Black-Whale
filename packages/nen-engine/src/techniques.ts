@@ -202,6 +202,25 @@ function transitionWithAura<Zone extends string>(
   return { state: { ...state, shu }, accepted: true }
 }
 
+/**
+ * Aura up and doing nothing with it.
+ *
+ * Ten is the resting state — the one nobody chooses, because it is what a body
+ * that has learned Nen does when it is not doing anything else. So it is the
+ * one state whose presentation a surface may legitimately want to put away:
+ * everything else on the list is something the user has just done and has to be
+ * told about, and this is the background hum of being alive.
+ *
+ * Written as a predicate here rather than as `mode === 'ten'` at the call site
+ * because Ten is not only the mode: a Ryu distribution or a Ko zone can be held
+ * while the mode still reads `ten`, and those are deliberate. Ken and On cannot
+ * — both force the mode to `ren` — which is why neither is tested for.
+ */
+export const isAuraAtRest = (state: NenTechniqueState) =>
+  state.mode === 'ten' &&
+  state.ko === null &&
+  !Object.values(state.ryu).some((share) => Number(share) > 0)
+
 export const canUseHatsu = (state: NenTechniqueState) => state.mode !== 'zetsu'
 export const canSeeIn = (state: NenTechniqueState) => state.gyo
 export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqueState) =>

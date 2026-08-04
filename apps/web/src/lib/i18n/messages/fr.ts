@@ -409,6 +409,9 @@ export const fr: Messages = {
       walkPace: 'Allure de marche',
       headBob: 'Mouvement de la tête',
       headBobOff: 'Aucun — l’œil reste de niveau',
+      restingAura: 'Montrer sa propre aura au repos',
+      restingAuraHelp:
+        'Seulement le Ten tenu sans rien en faire. Un Ren, un Ko, un En ou un Shu se voit toujours — et votre aura est levée dans les deux cas.',
       quality: 'Image',
       qualityAuto: 'S’adapter à cette machine',
       qualityLow: 'Allégée',

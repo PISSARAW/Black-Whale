@@ -14,6 +14,7 @@
   import { onMount, untrack } from 'svelte'
   import {
     createNenTechniqueState,
+    isAuraAtRest,
     transitionNen,
     type NenTechnique,
     type NenTechniqueAction,
@@ -63,7 +64,7 @@
     type Apparition,
     type TourFlash,
   } from '$lib/tour/apparitions'
-  import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
+  import { comfort, prefersReducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
@@ -560,11 +561,51 @@
     onNenChange?.(action)
   }
 
+  /**
+   * The aura the visitor is *shown*, which is not always the aura they have.
+   *
+   * Null is "there is nothing to present": a Ten held and used for nothing,
+   * from a visitor who has turned the resting aura off. Everything downstream
+   * of the senses reads this — the shell around the camera, the swim over the
+   * frame, the dust it shoves, the held tone — while everything that decides
+   * what is *true* keeps reading `effectiveNen`. The body is still holding Ten:
+   * it defends, it is visible to a Gyo across the room, and Zetsu remains the
+   * only way to actually put it away. See `Comfort.restingAura`.
+   */
+  const shownNen = $derived(
+    $comfort.restingAura || !isAuraAtRest(effectiveNen) ? effectiveNen : null,
+  )
+
+  /**
+   * T, twice: raise the Ten, then put it back down.
+   *
+   * The key used to be one-way — from a Ren or a Zetsu it dropped you into Ten,
+   * and from a Ten it did nothing at all, which is a key that stops answering
+   * once you have pressed it. So the second press is the way out, and what it
+   * puts down is the *showing* of the skin rather than the skin: the visitor
+   * goes on holding Ten, because a body that stops holding it is in Zetsu and
+   * Zetsu is X. See `Comfort.restingAura` for why that is the honest half to
+   * hand a key.
+   *
+   * Raising always shows again, so the two presses are a true toggle from
+   * wherever the aura was. Otherwise a T out of Ren would land on a skin the
+   * visitor had put down an hour ago and the next press would do nothing —
+   * the same dead key, one state further along.
+   */
+  function toggleTen() {
+    if (isAuraAtRest(effectiveNen) && $comfort.restingAura) {
+      setComfort({ restingAura: false })
+      return
+    }
+    setComfort({ restingAura: true })
+    useNen({ type: 'TEN' })
+  }
+
   $effect(() => {
     setStepsAuraQuiet(effectiveNen.mode === 'zetsu')
   })
 
-  $effect(() => sustainNenSound(effectiveNen))
+  $effect(() => (shownNen ? sustainNenSound(shownNen) : undefined))
 
   /**
    * How high the visitor's eye is off the floor.
@@ -1627,7 +1668,7 @@
         // touched anything. See `refractionAmount` for what "out" means here.
         const speed = delta > 0 ? travelled / delta : 0
         const wake = Math.min(0.22, speed * 0.1)
-        const aura = calmWalk ? 0 : refractionAmount(effectiveNen)
+        const aura = calmWalk ? 0 : refractionAmount(shownNen)
         const at: [number, number, number] = [here.x, here.y, here.z]
 
         for (const dust of clouds) {
@@ -3462,7 +3503,7 @@
           const selected = zones[zoneIndex]
           selectedNenZone = selected
           useNen({ type: 'RYU', distribution: ryuDistribution(selected, 0.55) })
-        } else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
+        } else if (event.code === NEN_KEYS.ten) toggleTen()
         else if (event.code === NEN_KEYS.on)
           useNen({
             type: 'ON',
@@ -4391,6 +4432,7 @@
             ground,
             seconds: now / 1000,
             depthTexture: renderTarget?.depthTexture ?? undefined,
+            hideResting: !$comfort.restingAura,
           })
           nenAura.syncShu(
             effectiveNen.shu.flatMap((id) => {
@@ -4636,7 +4678,7 @@
         // zero outright for a visitor whose system asks for less movement: a
         // swimming picture is movement, whatever it is a picture of.
         if (refraction) {
-          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(effectiveNen)
+          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(shownNen)
           refraction.uniforms.uTime.value = clock
         }
 

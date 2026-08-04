@@ -472,6 +472,14 @@ export const en = {
       headBob: 'Head movement',
       headBobOff: 'None — the eye stays level',
       /**
+       * Ten is the one state nobody chooses, so its picture and its hum are
+       * permanent — and a permanent effect stops being information. Off, the
+       * body is still holding Ten; only the visitor stops being shown it.
+       */
+      restingAura: 'Show your own aura at rest',
+      restingAuraHelp:
+        'Only Ten held and used for nothing. A Ren, a Ko, an En or a Shu still shows — and your aura is up either way.',
+      /**
        * The tier, said as what it costs rather than as a number of stars. The
        * detection only picks the default: a laptop that reports a discrete card
        * and then throttles, or one whose driver string the browser has masked,

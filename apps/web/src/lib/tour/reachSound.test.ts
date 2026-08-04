@@ -17,6 +17,7 @@ vi.mock('$lib/audio/hatsuSounds', () => {
     playATune: (tune: string) => void played.push(`tune:${tune}`),
     stretchTheGum: voice('gum'),
     unspoolWire: voice('wire'),
+    wakeTheMachine: voice('machine'),
   }
 })
 
@@ -49,6 +50,13 @@ describe('what a cast at a person sounds like', () => {
   it('sounds the birds when one of them puts a note in a hand', () => {
     playTourReachSound({ outcome: 'delivered', kind: 'flock', characterId: 'cheadle-yorkshire' })
     expect(played).toEqual(['birds'])
+  })
+
+  // The console coming out and finding its subject. Nothing is laid on them —
+  // the outcome holds nobody — and it still sounds, because something happened.
+  it('wakes the console when it is pointed at somebody', () => {
+    playTourReachSound({ outcome: 'reading', kind: 'decipher', characterId: 'benjamin', days: 10 })
+    expect(played).toEqual(['machine'])
   })
 
   it('is silent when nothing left the visitor', () => {

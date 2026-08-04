@@ -233,6 +233,22 @@
           : say.isolatedOutside(roomName(report.spaceId))
       case 'stripped':
         return say.stripped(roomName(report.spaceId), report.count)
+      case 'decipher-opened':
+        return say.decipherOpened(personName(report.characterId), report.left)
+      case 'decipher-advanced':
+        return say.decipherAdvanced(personName(report.characterId), report.left)
+      case 'deciphered':
+        return say.deciphered(personName(report.characterId), report.days)
+      case 'fabrication-started':
+        return say.fabricationStarted(report.slot, report.days)
+      case 'fabrication-lost':
+        return say.fabricationLost(report.slot, report.days)
+      case 'fabricated':
+        return say.fabricated(report.slot)
+      case 'console-locked':
+        return say.consoleLocked(report.left)
+      case 'affected-users':
+        return say.affectedUsers(report.attack, report.affected, report.unreadable)
       case 'blast-solid-refused':
         return say.blastSolidRefused(solidName(report.solidId))
       case 'laid-open':

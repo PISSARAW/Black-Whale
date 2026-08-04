@@ -140,6 +140,15 @@ export type Reach =
    * restrain a Zodiac.
    */
   | { outcome: 'delivered'; kind: BodyKind; characterId: string }
+  /**
+   * The console is pointed at this person and has started counting.
+   *
+   * Its own outcome, and the second one that holds nobody: what it changes is
+   * `TourWorld.decipher`, not the body. `days` is what the screen reads — the
+   * days still to go — because a console that showed nothing would be the one
+   * part of this ability the manga actually draws, left out.
+   */
+  | { outcome: 'reading'; kind: BodyKind; characterId: string; days: number }
   | { outcome: 'refused'; kind: HatsuInteractionKind | null; reason: ReachRefusal }
 
 /** Everything the decision reads. Nothing is fetched, nothing is global. */
@@ -170,6 +179,14 @@ export interface ReachInput {
    * not that question.
    */
   throughMatter: boolean
+  /**
+   * Days still to go on the console, for the one outcome that reports a number.
+   *
+   * Handed in for the reason `throughMatter` is: `reach.ts` decides what a
+   * technique does to a person, and how many days of co-presence have been
+   * banked is not that question — it is `decipher.ts`'s, counted by the walk.
+   */
+  decipherDays: number
   /** The page's clock, so a hold knows when it lifts. */
   now: number
 }
@@ -205,6 +222,17 @@ const PALM = 'blast' as const
 /** The technique that delivers rather than holds. See `FLOCK_ADDRESSEES`. */
 const CARRIES = 'flock' as const
 
+/**
+ * The technique that reads rather than holds.
+ *
+ * Combo Master pointed at a person lays nothing on them: it starts counting the
+ * days it spends in the room with them, and the person never learns of it. A
+ * mark would have the walk claiming Furykov's console restrains the prince it
+ * is reading, which is the opposite of what ch. 413 draws — it draws a man
+ * standing near somebody for ten days.
+ */
+const READS = 'decipher' as const
+
 type AskKind = (typeof ASKS)[number]
 
 const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
@@ -219,7 +247,10 @@ const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
  * the ship which the manga aims at a person first.
  */
 const MARKS: Record<
-  Exclude<BodyKind, AskKind | typeof WORN | typeof CARRIES | typeof PALM | 'chain-rule'>,
+  Exclude<
+    BodyKind,
+    AskKind | typeof WORN | typeof CARRIES | typeof PALM | typeof READS | 'chain-rule'
+  >,
   BodyMark
 > = {
   // The five that had nowhere to land until the walk had people in it, less the
@@ -365,6 +396,12 @@ export function reachBody(input: ReachInput): Reach {
   // true statements about the ability, and the refusal is the more informative
   // of the two: it is the walk saying out loud that this manipulation takes
   // birds and takes nothing else.
+  // The console. Nothing is laid on them and nothing is read off their entry:
+  // the reading is a duration, and the duration is the rules' to count.
+  if (kind === READS) {
+    return { outcome: 'reading', kind, characterId, days: input.decipherDays }
+  }
+
   if (kind === CARRIES) {
     return input.dossier?.factionId === FLOCK_ADDRESSEES
       ? { outcome: 'delivered', kind, characterId }

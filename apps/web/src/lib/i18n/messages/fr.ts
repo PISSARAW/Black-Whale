@@ -554,6 +554,8 @@ export const fr: Messages = {
       stolen: (name, technique) => `${name} — capacité arrachée (${technique})`,
       delivered: (name) =>
         `Un oiseau se pose, met ce qu’il portait dans la main de ${name}, et repart`,
+      consoleOn: (name, days) =>
+        `Le portable est sur ${name} · ${days} jour${days === 1 ? '' : 's'} à rester près de lui`,
       marks: {
         bound: 'retenu',
         controlled: 'agit sur un ordre qui n’est pas le sien',
@@ -716,6 +718,21 @@ export const fr: Messages = {
         isolatedInside: (room) =>
           `${room} est isolée autour de vous · vous pouvez sortir, et vous ne pourrez plus rentrer`,
         isolatedOutside: (room) => `${room} est isolée · d'ici vous n'atteindrez qu'une copie vide`,
+        decipherOpened: (name, days) => `SELECT · le portable lit ${name} · ${days} jours`,
+        decipherAdvanced: (name, days) => `Un jour de plus près de ${name} · ${days} restants`,
+        deciphered: (name, days) =>
+          `La capacité de ${name} est décodée après ${days} jours · SELECT pour fabriquer contre`,
+        fabricationStarted: (slot, days) =>
+          `${slot} sur l'établi · ${days} jours, et chacun d'eux dans cette pièce`,
+        fabricationLost: (slot, days) =>
+          `Le ${slot} est perdu · ${days} jour${days === 1 ? '' : 's'} de travail, et vous êtes sorti`,
+        fabricated: (slot) => `Le ${slot} sort de l'établi, taillé contre ce qui a été décodé`,
+        consoleLocked: (days) =>
+          days
+            ? `Le portable prend tout · ${days} jours encore, et rien d'autre ne sort d'ici là`
+            : 'Le portable prend tout · rien d’autre ne sort pendant qu’il travaille',
+        affectedUsers: (attack, affected, unreadable) =>
+          `⚠ ${attack} · ${affected} utilisateur${affected === 1 ? '' : 's'} affecté${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} illisible${unreadable === 1 ? '' : 's'}` : ''}`,
         blastSolidRefused: (solid) =>
           `Vous tenez la paume sur ${solid} et rien ne suit. La cadence et la portée d'Air Blow ne sont pas données : le catalogue concède une émission depuis la paume gauche et dit que le fonctionnement précis reste inconnu, alors la visite ne vous dessinera pas une seconde bourrasque dont elle n'a pas le titre.`,
         stripped: (room, count) =>

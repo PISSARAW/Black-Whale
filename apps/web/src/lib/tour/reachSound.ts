@@ -26,6 +26,7 @@ import {
   playATune,
   stretchTheGum,
   unspoolWire,
+  wakeTheMachine,
 } from '$lib/audio/hatsuSounds'
 import type { BodyKind } from './bodyKinds'
 import type { Reach } from './cast'
@@ -40,6 +41,9 @@ const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
   // The fist out of the deck, which the room already hears when it comes up
   // under a coffin: a body is not a quieter thing to hit.
   'remote-strike': landAPunch,
+  // The console coming out and finding its subject: the same machine voice the
+  // walk already gives an animated thing, because that is what it is.
+  decipher: wakeTheMachine,
   'chain-bind': hissLikeASnake,
   'chain-rule': hissLikeASnake,
   stitch: unspoolWire,

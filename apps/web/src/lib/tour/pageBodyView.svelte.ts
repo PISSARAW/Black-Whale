@@ -63,6 +63,8 @@ interface BodyContext {
    * and this class holds the people, and neither is going to grow the other.
    */
   throughMatter: (to: Vec2) => boolean
+  /** Days still to go on the console, from `decipher.ts` via the world. */
+  decipherDays: number
 }
 
 interface BodyViewOptions {
@@ -73,6 +75,14 @@ interface BodyViewOptions {
   placeOf: (location: string) => string | null
   /** Announce what a cast at a body came to, for the read-out over the scene. */
   report: (reach: Reach) => void
+  /**
+   * Point the console at the body in front of you and start counting.
+   *
+   * Handed back to the world for the same reason the mask is: what a reading
+   * changes is the visitor's console, and the console is `TourWorld`. Nothing
+   * is written about the person being read — they never learn of it.
+   */
+  startReading: (characterId: string) => void
   /**
    * Put on the face of the body in front of you, or take it off again.
    *
@@ -185,6 +195,7 @@ export class TourBodyView {
       // The blow goes through matter, not through air — and the bulkhead
       // between the visitor and this body is matter. See `punch.ts`.
       throughMatter: context.throughMatter(person.at),
+      decipherDays: context.decipherDays,
       now,
     })
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false
@@ -194,6 +205,7 @@ export class TourBodyView {
       this.options.steal(result.characterId, result.technique)
     }
     if (result.outcome === 'worn') this.options.wear(result.characterId)
+    if (result.outcome === 'reading') this.options.startReading(result.characterId)
     if (result.outcome === 'told' && result.tells.includes('unsealed')) this.unsealAt(person)
     this.options.report(result)
     return true

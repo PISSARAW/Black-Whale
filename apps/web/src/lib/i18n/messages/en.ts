@@ -663,6 +663,8 @@ export const en = {
         `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
       stolen: (name: string, technique: string) => `${name} — ability torn out (${technique})`,
       delivered: (name: string) => `A bird lands, puts what it carried in ${name}’s hand, and goes`,
+      consoleOn: (name: string, days: number) =>
+        `The console is on ${name} · ${days} day${days === 1 ? '' : 's'} of standing beside them left`,
       marks: {
         bound: 'held',
         controlled: 'acting on an order that is not theirs',
@@ -846,6 +848,24 @@ export const en = {
           `${room} is isolated around you · you may leave, and you will not get back in`,
         isolatedOutside: (room: string) =>
           `${room} is isolated · from out here you can only reach an empty copy of it`,
+        decipherOpened: (name: string, days: number) =>
+          `SELECT · the console is reading ${name} · ${days} days`,
+        decipherAdvanced: (name: string, days: number) =>
+          `Another day beside ${name} · ${days} left`,
+        deciphered: (name: string, days: number) =>
+          `${name}'s ability is decoded after ${days} days · SELECT to build against it`,
+        fabricationStarted: (slot: string, days: number) =>
+          `${slot} on the bench · ${days} days, and every one of them in this room`,
+        fabricationLost: (slot: string, days: number) =>
+          `The ${slot} is gone · ${days} day${days === 1 ? '' : 's'} of work, and you walked out of the room`,
+        fabricated: (slot: string) =>
+          `The ${slot} comes off the bench, cut against what was decoded`,
+        consoleLocked: (days: number) =>
+          days
+            ? `The console has all of it · ${days} days to go, and nothing else goes out until then`
+            : 'The console has all of it · nothing else goes out while it works',
+        affectedUsers: (attack: string, affected: number, unreadable: number) =>
+          `⚠ ${attack} · ${affected} affected user${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} it cannot read` : ''}`,
         blastSolidRefused: (solid: string) =>
           `You hold the palm on ${solid} and nothing follows. Air Blow's rate and reach are not given: the catalogue concedes an emission from the left palm and says the precise functioning remains unknown, so the walk will not draw you a second gust it has no authority for.`,
         stripped: (room: string, count: number) =>

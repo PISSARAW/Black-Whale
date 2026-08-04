@@ -27,6 +27,8 @@ export interface BodyReadoutWords {
   stolen: (name: string, technique: string) => string
   /** "A bird puts the note in Cheadle's hand" */
   delivered: (name: string) => string
+  /** "The console is on Benjamin — 10 days" */
+  consoleOn: (name: string, days: number) => string
 }
 
 /** The one line to show, or null when there is nothing worth saying. */
@@ -48,5 +50,8 @@ export function noteFor(
   // Nothing was done to them, which is why this is not a mark: a bird landed,
   // let go of what it carried, and left.
   if (reach.outcome === 'delivered') return words.delivered(nameOf(reach.characterId))
+  // Nothing is laid on them either, and they never learn of it: what the line
+  // reports is a duration on the visitor's own screen.
+  if (reach.outcome === 'reading') return words.consoleOn(nameOf(reach.characterId), reach.days)
   return words.held(nameOf(reach.characterId), words.mark(reach.hold.mark))
 }

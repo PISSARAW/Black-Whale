@@ -76,6 +76,7 @@ import {
 } from './cast/kinds'
 import { aimGum, gumLanding, gumTension } from './gum'
 import { punchRuns } from './punch'
+import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
 import { nextForgery } from './texture'
 
 /**
@@ -100,7 +101,6 @@ export function nenHeld(world: TourWorld): string[] {
     ...(world.eye ? [world.eye] : []),
   ]
 }
-
 
 // ── The solids ────────────────────────────────────────────────────────────
 //
@@ -1939,6 +1939,44 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
   'sun-flare': raiseTheSun,
 
   /**
+   * The console with the reticle empty: SELECT, and then the menu.
+   *
+   * Nothing is read here — a reading needs somebody to be beside — so what an
+   * untargeted cast does is load the bench against whatever the console last
+   * decoded, and take it off again when it is done. Which slot is the visitor's
+   * own choice; the walk offers TOOL, because that is the one ch. 415 draws
+   * being used and the other two are named on the screen and never opened.
+   */
+  decipher: ({ world, input }) => {
+    if (world.fabrication) {
+      const built = world.fabrication
+      return {
+        world: { ...world, fabrication: null },
+        report: isBuilt(built)
+          ? { kind: 'fabricated', slot: built.slot }
+          : { kind: 'fabrication-lost', slot: built.slot, days: built.days },
+      }
+    }
+    if (!world.decipher || !isDeciphered(world.decipher)) {
+      return {
+        world,
+        report: { kind: 'console-locked', left: world.decipher ? daysLeft(world.decipher) : 0 },
+      }
+    }
+    if (!input.standingIn) return { world, report: { kind: 'no-target' } }
+    // As long as the reading it answers, which is the archive's own phrasing
+    // and the reason no second number is invented for the bench.
+    const needs = daysNeeded(world.decipher.reading)
+    return {
+      world: {
+        ...world,
+        fabrication: { slot: 'TOOL', days: 0, spaceId: input.standingIn, needs },
+      },
+      report: { kind: 'fabrication-started', slot: 'TOOL', days: needs },
+    }
+  },
+
+  /**
    * Bird Manipulation with the reticle empty: have the flock survey the ship
    * and file what it sees. The walk will not.
    *
@@ -3349,6 +3387,17 @@ function runCast(
 
   const pulledBack = pullBackTheBody(world)
   if (pulledBack) return pulledBack
+
+  // Combo Master's lock, ahead of everything: while the console is reading or
+  // building it has the whole of its user's aura, and nothing else goes out.
+  // The panel greys the wheel off this same answer and quotes the condition —
+  // a refusal a reader can see is worth more than a key that does nothing.
+  if (kind !== 'decipher' && isLocked(world)) {
+    return {
+      world,
+      report: { kind: 'console-locked', left: world.decipher ? daysLeft(world.decipher) : 0 },
+    }
+  }
 
   // The body goes first, because most of what is worn is only ever worn. The
   // ones in `EITHER_TARGET` are the exception: a thing under the reticle takes

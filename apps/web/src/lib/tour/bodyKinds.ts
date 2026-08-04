@@ -79,6 +79,10 @@ export const BODY_KINDS = [
   // says the rest is unknown; aimed at a sentry the walk says exactly that,
   // which is more instructive than a key that appears to do nothing.
   'blast',
+  // Combo Master reads an *ability*, and an ability aboard this ship is
+  // somebody carrying one: the console is pointed at a person and counts the
+  // days it spends beside them.
+  'decipher',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 export type BodyKind = (typeof BODY_KINDS)[number]

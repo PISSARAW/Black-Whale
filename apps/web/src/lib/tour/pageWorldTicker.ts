@@ -5,6 +5,7 @@ import {
   stepCoin,
   stepFish,
   stepOwl,
+  stepConsole,
   stepOwlAge,
   stepPolarity,
   stepScout,
@@ -16,6 +17,8 @@ interface TickerContext {
   world: TourWorld
   ship: Ship
   position: Vec2
+  /** The room the visitor is standing in, which the console measures against. */
+  standingIn: string | null
 }
 
 interface TickerOptions {
@@ -63,6 +66,12 @@ export class TourWorldTicker {
   scoutFlight = () => {
     const { world, ship } = this.options.read()
     this.apply(stepScout({ world, ship }))
+  }
+
+  /** One day of the walk on the console. See `stepConsole`. */
+  consoleDay = () => {
+    const { world, standingIn } = this.options.read()
+    this.apply(stepConsole({ world, standingIn }), true)
   }
 
   owlSecond = () => {

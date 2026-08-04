@@ -32,6 +32,10 @@ export const TOUR_HATSU_KINDS = [
   'paper-spy',
   'room-isolation',
   'blast',
+  // Combo Master. On a room because that is where the co-presence is measured:
+  // the console counts the days the visitor spends in the same compartment as
+  // whatever it is reading.
+  'decipher',
   'scarlet',
   'vacuum',
   'flock',
@@ -148,6 +152,7 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'elastic', // Cast without target acts as Propulsion or Faux Tissu
   'heart-vow', // Cast on another person, or on the visitor themselves.
   'flock', // Cast without target asks the birds to survey, and is refused.
+  'decipher', // Cast without target opens the console: SELECT, then the menu.
 ])
 
 export const worksOnTheBody = (profile: HatsuProfile | null) =>
@@ -203,7 +208,12 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
  * blind for ten seconds. Everything else in `SOLID_HATSU_KINDS` takes a thing
  * and only a thing.
  */
-export const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing', 'puppet', 'flock'])
+export const EITHER_TARGET = new Set<HatsuInteractionKind>([
+  'elastic',
+  'dowsing',
+  'puppet',
+  'flock',
+])
 
 /**
  * The two of `EITHER_TARGET` whose other target is a *room* rather than a solid.

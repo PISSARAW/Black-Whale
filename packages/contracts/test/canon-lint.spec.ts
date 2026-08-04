@@ -307,11 +307,15 @@ describe('likeness-names-somebody-real', () => {
     expect(found).toEqual([expect.objectContaining({ rule: 'likeness-names-somebody-real' })])
   })
 
-  it('refuses the same person twice, whichever list the second one is in', () => {
+  // Across the two lists rather than within one: a face declared *and*
+  // deferred is the contradiction that reads as a deferral in the ledger and
+  // draws anyway in the walk, which is the worst of the two failures.
+  it('refuses the same person declared and deferred at once', () => {
     const found = run('likeness-names-somebody-real', (copy) => {
-      copy.appearance.deferred.push({ id: 'kurapika', reason: 'first' })
-      copy.appearance.deferred.push({ id: 'kurapika', reason: 'second' })
+      copy.appearance.deferred.push({ id: 'kurapika', reason: 'no usable panel' })
     })
-    expect(found).toEqual([expect.objectContaining({ where: 'appearance#kurapika' })])
+    expect(found).toEqual([
+      expect.objectContaining({ where: 'appearance#kurapika', message: 'declared more than once' }),
+    ])
   })
 })

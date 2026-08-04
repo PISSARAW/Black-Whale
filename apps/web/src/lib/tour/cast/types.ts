@@ -19,6 +19,7 @@ import type { CastDossier } from './dossier'
 import type { Ship } from '../blueprint'
 import type { Structure, StructureKind } from '../types'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+import type { Decipher, Fabrication } from '../decipher'
 import type { GumStrand } from '../gum'
 import type { ScarletEyes } from '../emperor'
 
@@ -310,6 +311,26 @@ export interface TourWorld {
   watched: { spaceId: string; visits: number }[]
   /** What the flock has carried back, newest first. */
   dispatches: string[]
+  /**
+   * What Furykov's console is reading, and what it is building.
+   *
+   * Two fields rather than one record with a flag, because the two halves of
+   * the menu behave in opposite ways and `decipher.ts` is where that is argued:
+   * the reading banks co-presence and survives being walked away from, and the
+   * build is destroyed by the same walk. Keeping them apart is what stops a
+   * later change from accidentally giving the build the reading's memory.
+   */
+  decipher: Decipher | null
+  fabrication: Fabrication | null
+  /**
+   * What the console's alert triangle is showing, or `null` when it is quiet.
+   *
+   * Every concealed Nen attack aimed at the visitor raises it at once — the
+   * curse and the mark are the two the walk carries — and it lists whoever else
+   * is carrying the same thing. An aura signature it cannot read is a `null`
+   * inside the list rather than a guess, which the panel draws as a `?`.
+   */
+  alarm: { attack: string; affected: (string | null)[] } | null
   /**
    * Where Cluck's birds are gathered, and how many of them came.
    *
@@ -914,6 +935,9 @@ export const EMPTY_WORLD: TourWorld = {
   phasing: false,
   watched: [],
   dispatches: [],
+  decipher: null,
+  fabrication: null,
+  alarm: null,
   flock: null,
   dowsing: null,
   solids: {},
@@ -1002,6 +1026,29 @@ export type TourReport =
    * catalogue is explicit about not having.
    */
   | { kind: 'blast-solid-refused'; solidId: string }
+  // ── Combo Master ─────────────────────────────
+  /** The console is out, and pointed at somebody. `left` is what the screen says. */
+  | { kind: 'decipher-opened'; characterId: string; reading: string; left: number }
+  /** Another day banked beside them, and what the screen reads now. */
+  | { kind: 'decipher-advanced'; characterId: string; left: number }
+  /** The reading is finished: what it decoded is on the console. */
+  | { kind: 'deciphered'; characterId: string; days: number }
+  /** SELECT, then one of the three slots. The bench is loaded. */
+  | { kind: 'fabrication-started'; slot: string; days: number }
+  /** And the walk out of the door, which costs every day of it. */
+  | { kind: 'fabrication-lost'; slot: string; days: number }
+  /** The tool comes off the bench, against what the reading decoded. */
+  | { kind: 'fabricated'; slot: string }
+  /**
+   * The console has the whole of his aura, so nothing else may be cast.
+   *
+   * A permanent refusal for as long as the work runs, and the last arc's own
+   * picture of the man rather than a gap in the walk: he is three hundred and
+   * sixty-five days into somebody else's curse and casting nothing.
+   */
+  | { kind: 'console-locked'; left: number }
+  /** The alert triangle: a concealed attack, and whoever else carries it. */
+  | { kind: 'affected-users'; attack: string; affected: number; unreadable: number }
   | { kind: 'laid-open'; spaces: number; decks: number }
   | { kind: 'emptied'; spaceId: string; structures: number }
   | { kind: 'swallowed'; solidId: string; held: number }

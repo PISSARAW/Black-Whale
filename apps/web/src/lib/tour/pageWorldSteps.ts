@@ -13,6 +13,7 @@ import {
   type TourReport,
   type TourWorld,
 } from './hatsu'
+import { daysLeft, isDeciphered, oneDayBeside, oneDayBuilding } from './decipher'
 import type { Vec2 } from './types'
 
 export interface WorldStep {
@@ -74,6 +75,60 @@ export const stepOwl = (options: { world: TourWorld; ship: Ship }): WorldStep | 
 
 export const stepScout = (options: { world: TourWorld; ship: Ship }): WorldStep | null =>
   flyTheEye(options.world, options.ship)
+
+/**
+ * One day of the walk on Furykov's console: the reading, then the bench.
+ *
+ * Both halves are advanced on the same beat and answer it in opposite ways —
+ * the reading banks the day only when the visitor is in the room with whoever
+ * it is on, and the bench is destroyed outright by any other room. That is the
+ * asymmetry `decipher.ts` argues, and this is the one place the walk applies
+ * it: nothing else in the tour reads the two together.
+ *
+ * A day of the walk, and never of the reader's clock — the beat is the page's
+ * own second, the same one the holds expire on.
+ */
+export function stepConsole(scene: {
+  world: TourWorld
+  standingIn: string | null
+}): WorldStep | null {
+  const { world, standingIn } = scene
+  let next = world
+  let report: TourReport | null = null
+
+  if (world.decipher && !isDeciphered(world.decipher)) {
+    const beside = standingIn !== null && world.decipher.characterId === standingIn
+    const worked = oneDayBeside(world.decipher, beside)
+    if (worked !== world.decipher) {
+      next = { ...next, decipher: worked }
+      report = isDeciphered(worked)
+        ? { kind: 'deciphered', characterId: worked.characterId, days: worked.days }
+        : {
+            kind: 'decipher-advanced',
+            characterId: worked.characterId,
+            left: daysLeft(worked),
+          }
+    }
+  }
+
+  if (world.fabrication) {
+    const bench = oneDayBuilding(world.fabrication, standingIn)
+    if (bench === null) {
+      // Leaving costs every day of it, which is the half of the menu that the
+      // walk out of the door punishes.
+      next = { ...next, fabrication: null }
+      report = {
+        kind: 'fabrication-lost',
+        slot: world.fabrication.slot,
+        days: world.fabrication.days,
+      }
+    } else if (bench !== world.fabrication) {
+      next = { ...next, fabrication: bench }
+    }
+  }
+
+  return next === world ? null : { world: next, report }
+}
 
 export function stepOwlAge(world: TourWorld): WorldStep | null {
   const step = ageTheOwl(world)

@@ -419,6 +419,258 @@
       "signatures": [],
       "verified": { "chapterIds": ["ch-358"], "status": "confirmed" },
       "note": "Nourrisson : dans les bras d'Oito, jamais une silhouette debout. Le gabarit `infant` est ce qui rend cette phrase vraie dans le rendu au lieu de la laisser dans une note."
+    },
+    {
+      "id": "kurapika",
+      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bob", "expression": "severe" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; couvertures de volumes 34–37",
+        "skin": "0xf0e0cc",
+        "hair": "0xe8c860",
+        "attire": {
+          "jacket": "0x232430",
+          "shirt": "0xf2efe8",
+          "trousers": "0x232430",
+          "accent": "0xb01e2e"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["chain-right-hand"],
+      "verified": { "chapterIds": ["ch-343", "ch-358"], "status": "confirmed" },
+      "note": "Les yeux écarlates sont un état — EFFECT_STATE_CHANGED via Emperor Time — et pas un fait d'appearance. Ce qui est déclaré ici est le carré blond, le costume sombre et la cravate d'employé de la famille ; la chaîne n'apparaît qu'au cast."
+    },
+    {
+      "id": "leorio-paradinight",
+      "body": { "build": "average", "height": 1.08, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "military", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; costume bleu et cravate rouge constants sur tout le matériel officiel",
+        "skin": "0xd8b49a",
+        "hair": "0x1d1a18",
+        "attire": {
+          "jacket": "0x2f3f63",
+          "shirt": "0xf1eee6",
+          "trousers": "0x24314c",
+          "accent": "0xb0333a"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-round", "goatee"],
+      "verified": { "chapterIds": ["ch-343", "ch-346"], "status": "confirmed" },
+      "note": "Les petites lunettes teintées rondes et le bouc naissant font le visage à eux deux ; la mallette n'est pas une pièce de l'annexe B et n'est donc pas déclarée."
+    },
+    {
+      "id": "cheadle-yorkshire",
+      "body": { "build": "slim", "height": 0.9, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bob", "expression": "tired" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; cheveux verts constants sur tout le matériel officiel",
+        "skin": "0xecd6bd",
+        "hair": "0x4f8f5e",
+        "attire": {
+          "jacket": "0xeceae2",
+          "shirt": "0xf5f3ee",
+          "trousers": "0x39424a",
+          "accent": "0x6f9b7a"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["glasses-thin"],
+      "verified": { "chapterIds": ["ch-340", "ch-343"], "status": "confirmed" },
+      "note": "Petite, blouse sur tailleur, l'air d'un médecin qui n'a pas dormi — d'où `tired`, qui est ici un trait et non une humeur du jour."
+    },
+    {
+      "id": "mizaistom-nana",
+      "body": { "build": "broad", "height": 1.1, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; veste à motif pie noir et blanc, constante",
+        "skin": "0x8f5d45",
+        "hair": "0x141312",
+        "attire": {
+          "jacket": "0x1c1c1e",
+          "shirt": "0xf2f0ea",
+          "trousers": "0x1a1a1c",
+          "accent": "0xf2f0ea"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-343"], "status": "confirmed" },
+      "note": "La Vache. Le motif pie est porté par la palette — noir et blanc en jacket et accent — plutôt que par une pièce : l'annexe B ne compte aucun motif, et une texture serait la première du vaisseau."
+    },
+    {
+      "id": "botobai-gigante",
+      "body": { "build": "broad", "height": 1.12, "frame": "adult", "shoulders": 1.22 },
+      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; costume sombre de sexagénaire monumental",
+        "skin": "0xc99473",
+        "hair": "0x3a3733",
+        "attire": {
+          "jacket": "0x2b2c31",
+          "shirt": "0xeeece5",
+          "trousers": "0x212227",
+          "accent": "0x7a6b52"
+        }
+      },
+      "attire": "suit",
+      "signatures": ["moustache"],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
+      "note": "Le Dragon, et le plus massif des zodiaques : la moustache est ce qui le sépare de Mizaistom à distance de marche, les deux étant de grands hommes en costume sombre."
+    },
+    {
+      "id": "kanzai",
+      "body": { "build": "average", "height": 1.02, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "spiked", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; mèches bicolores du Tigre, teintes non attestées",
+        "skin": "0xd3a17c",
+        "hair": "0x2a2320",
+        "attire": {
+          "jacket": "0x6d5a2f",
+          "shirt": "0xe9e2d0",
+          "trousers": "0x3b3223",
+          "accent": "0xd0a13c"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
+      "note": "Jeune, l'impatience au visage. Les teintes exactes des mèches bicolores restent à confirmer : la palette est `chosen` et le dit."
+    },
+    {
+      "id": "saiyu",
+      "body": { "build": "slim", "height": 1.08, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "ponytail", "expression": "tired" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; silhouette dégingandée, palette terne",
+        "skin": "0xc99473",
+        "hair": "0x201d1f",
+        "attire": {
+          "jacket": "0x4c4a44",
+          "shirt": "0xe4e0d4",
+          "trousers": "0x33322e",
+          "accent": "0x8f8a76"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
+      "note": "Le Singe : yeux mi-clos, d'où `tired`. Le bâton et la cigarette ne sont pas des pièces de l'annexe B et ne sont pas déclarés."
+    },
+    {
+      "id": "saccho-kobayakawa",
+      "body": { "build": "broad", "height": 1.06, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; costume, carrure posée",
+        "skin": "0xd8b49a",
+        "hair": "0x272321",
+        "attire": {
+          "jacket": "0x3b4048",
+          "shirt": "0xeeebe3",
+          "trousers": "0x2a2e35",
+          "accent": "0x8b7d5e"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
+      "note": "Le Cheval. La silhouette exacte reste à confirmer ; ce qui est tenu est le costume et la carrure."
+    },
+    {
+      "id": "cluck",
+      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "swept", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 320, 340, 345 ; crête souple, palette claire",
+        "skin": "0xe4c3a5",
+        "hair": "0x8a5f33",
+        "attire": {
+          "jacket": "0xb9884e",
+          "shirt": "0xf1ead8",
+          "trousers": "0x6b5230",
+          "accent": "0xdcb45f"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-320", "ch-340"], "status": "partial" },
+      "note": "La Poule : cheveux relevés en crête souple, à confirmer. Les oiseaux sont une ability et n'ont rien à faire dans une apparence."
+    },
+    {
+      "id": "ginta",
+      "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.24 },
+      "head": { "face": "square", "hairStyle": "wild", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; colosse hirsute, palette sourde",
+        "skin": "0xb8795d",
+        "hair": "0x2c2521",
+        "attire": {
+          "jacket": "0x4a4038",
+          "shirt": "0xdedac9",
+          "trousers": "0x322c27",
+          "accent": "0x9c7b48"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
+      "note": "Le Mouton : colosse hirsute, détails à confirmer."
+    },
+    {
+      "id": "gel",
+      "body": { "build": "slim", "height": 1.02, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; longiligne, cheveux lisses, palette froide",
+        "skin": "0xdfbb9b",
+        "hair": "0x2c2833",
+        "attire": {
+          "jacket": "0x3a4450",
+          "shirt": "0xe9e6de",
+          "trousers": "0x272e37",
+          "accent": "0x7f8f7a"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
+      "note": "Le Serpent : femme longiligne aux cheveux lisses, à confirmer."
+    },
+    {
+      "id": "beyond-netero",
+      "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.26 },
+      "head": { "face": "square", "hairStyle": "wild", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 340, 345 ; masse de vieux chêne, crinière et barbe grises",
+        "skin": "0xc99473",
+        "hair": "0x6a6259",
+        "attire": {
+          "jacket": "0x4b4640",
+          "shirt": "0xe6e1d5",
+          "trousers": "0x35312c",
+          "accent": "0x8e7c55"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["beard-full"],
+      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
+      "note": "Vieillard hors gabarit, et le sourire du père. En cellule — mais la cellule se visite, ce qui est la seule raison pour laquelle il a besoin d'une apparence."
     }
   ],
   "deferred": [

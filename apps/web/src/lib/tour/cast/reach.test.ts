@@ -44,6 +44,7 @@ const reach = (overrides: Partial<ReachInput> = {}) =>
     book: null,
     speaking: false,
     throughMatter: true,
+    decipherDays: 10,
     now: NOW,
     ...overrides,
   })

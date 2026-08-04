@@ -21,6 +21,7 @@
   import { playTourReachSound } from '$lib/tour/reachSound'
   import { hearTheRoom } from '$lib/tour/cast/hearing'
   import { punchRuns } from '$lib/tour/punch'
+  import { daysLeft } from '$lib/tour/decipher'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
@@ -235,7 +236,7 @@
     playTourReportSound(shown)
   }
   const ticker = new TourWorldTicker({
-    read: () => ({ world, ship, position }),
+    read: () => ({ world, ship, position, standingIn: currentSpace?.id ?? null }),
     updateWorld: (next) => (world = next),
     updateReport: (next) => (report = next),
     show,
@@ -491,6 +492,7 @@
     worn: $t.tour.body.worn,
     stolen: $t.tour.body.stolen,
     delivered: $t.tour.body.delivered,
+    consoleOn: $t.tour.body.consoleOn,
   })
   const bodyNameOf = (characterId: string) =>
     cast.members.find((member) => member.characterId === characterId)?.name ?? ''
@@ -542,6 +544,7 @@
       beastFor: castView.beastFor,
       auraFor: castView.auraOf,
       book: world.book,
+      decipherDays: world.decipher ? daysLeft(world.decipher) : 0,
       throughMatter: (to) =>
         punchRuns({ from: position, to, onFloor: onFloorOf(ship, tierId) }) !== null,
     }),
@@ -554,6 +557,21 @@
       const line = noteFor(reach, bodyWords, bodyNameOf)
       if (line) note = { line, until: Date.now() + NOTE_MS }
       playTourReachSound(reach)
+    },
+    // The console goes on somebody and starts counting. Which of the three
+    // attested readings it is follows from who they are: Beyond's curse is the
+    // one the archive puts a year on, and everything else the walk can read is
+    // a Guardian Spirit Beast at ten days. There is no fourth duration to pick.
+    startReading: (characterId) => {
+      const cursed = world.curse?.victim === characterId || world.curse?.sacrifice === characterId
+      world = {
+        ...world,
+        decipher: {
+          characterId,
+          reading: cursed ? 'decodeCurse' : 'guardianBeast',
+          days: 0,
+        },
+      }
     },
     wear: (characterId) => (world = wearTheMask(world, characterId)),
     // The book holds what a technique *does* rather than whose it was, so the
@@ -581,6 +599,8 @@
     const beat = setInterval(() => {
       castView.step(Math.floor(Date.now() / 1000))
       bodyView.step(Date.now())
+      // The console counts on the walk's own beat, never on the reader's clock.
+      ticker.consoleDay()
     }, 1000)
     return () => clearInterval(beat)
   })

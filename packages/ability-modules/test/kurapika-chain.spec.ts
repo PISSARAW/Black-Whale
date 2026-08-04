@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { AbilityContext } from '@black-whale/nen-engine'
 import { createEmptyWorld, InMemoryBranchEngine, type WorldState } from '@black-whale/canon-engine'
-import { emperorTime, stealChain, stealthDolphin } from '../src/index.js'
+import { emperorTime, stealChain, stealthDolphin, holyChain } from '../src/index.js'
 
 const CURSOR = {
   branchId: 'canon',
@@ -21,7 +21,7 @@ function world(): WorldState {
   ] as const) {
     state.entities[id] = { id, kind: 'CHARACTER', label, metadata: { mentalState: 'ACTIVE' } }
   }
-  state.abilitiesByOwner['kurapika'] = ['steal-chain', 'stealth-dolphin', 'emperor-time']
+  state.abilitiesByOwner['kurapika'] = ['steal-chain', 'stealth-dolphin', 'emperor-time', 'holy-chain']
   state.abilitiesByOwner['sayird'] = ['little-eye']
   return state
 }
@@ -154,5 +154,34 @@ describe('Emperor Time', () => {
       type: 'EFFECT_ATTRIBUTE_CHANGED',
       payload: { increments: { activeSeconds: 30, lifespanSpentHours: 30 } },
     })
+  })
+})
+
+describe('Holy Chain', () => {
+  it('soigne un garde blessé (ch. 380)', () => {
+    const branches = new InMemoryBranchEngine()
+    const base = world()
+    base.entities['sayird_body'] = { id: 'sayird_body', kind: 'BODY', label: 'Sayird (corps)', originalCharacterId: 'sayird' }
+    base.bodyStates['sayird_body'] = 'INJURED'
+    branches.createBranch({
+      id: 'chain-380',
+      name: 'ch. 380',
+      rulePolicy: 'STRICT_CANON',
+      baseState: base,
+    })
+
+    const healing = holyChain.execute(
+      context({
+        abilityId: 'holy-chain',
+        worldState: base,
+        targets: ['sayird_body'],
+        targetRefs: [{ id: 'sayird_body', kind: 'BODY' }],
+        actionId: 'heal',
+      })
+    )
+
+    expect(healing.allowed).toBe(true)
+    const state = branches.append('chain-380', healing.events ?? []).state
+    expect(state.bodyStates['sayird_body']).toBe('ALIVE')
   })
 })

@@ -489,6 +489,8 @@ export const GUST = 0xc6f1ff
 export const PUNCH = 0x55a7ff
 /** Ripper Cyclotron's own gold, as the dock publishes the technique. */
 export const CYCLOTRON = 0xf2c34f
+/** Double Machine Gun's own amber, as the dock publishes the technique. */
+export const VOLLEY = 0xe6ad57
 
 /** How wide a mouth of the tunnel stands, in metres. A door, not a gate. */
 export const PORTAL_RADIUS = 1.15
@@ -1826,7 +1828,7 @@ export function wormMouthAt(ship: Ship, world: TourWorld, standing: Footing): st
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast' | 'swing'
+  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast' | 'swing' | 'volley'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -1855,6 +1857,10 @@ export interface TourFlash {
  */
 const windupShatter = (report: TourReport): report is Extract<TourReport, { kind: 'shattered' }> =>
   report.kind === 'shattered' && report.by === 'windup'
+
+/** And the one of the three that is ten barrels. See `windupShatter`. */
+const barrageShatter = (report: TourReport): report is Extract<TourReport, { kind: 'shattered' }> =>
+  report.kind === 'shattered' && report.by === 'barrage'
 
 /**
  * What the walk should show for what just happened, or nothing.
@@ -2004,6 +2010,48 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       y: Math.min(measured.floor + now.base + now.height * 0.5, measured.ceiling - 0.3),
       from,
       colour: CYCLOTRON,
+    }
+  }
+
+  // Double Machine Gun, on one thing. The rounds went out and nothing was ever
+  // seen to go out: the struck thing was shoved back on its own, and on the
+  // third burst it simply stopped being there. Ten tracers from the hip to what
+  // was aimed at — see `HatsuVolleyEffect` for why ten — and nothing drawn where
+  // they land, because the technique's own claim is that constructs do not stop
+  // them: there is no impact to draw, only a thing that was hit.
+  if (report.kind === 'volley' || barrageShatter(report)) {
+    const struck = solidById(ship, world, report.solidId)
+    const space = struck ? ship.spaces.get(struck.spaceId) : null
+    const measured = space ? room(ship, space) : null
+    if (!struck || !space || !measured) return null
+    const now = solidNow(struck, world.solids[struck.id])
+    return {
+      kind: 'volley',
+      tierId: space.tierId,
+      at: now.at,
+      // Halfway up the body of the thing: rounds go into it, not under it.
+      y: Math.min(measured.floor + now.base + now.height * 0.5, measured.ceiling - 0.3),
+      from,
+      colour: VOLLEY,
+    }
+  }
+
+  // And across a sector, which is the same burst aimed at a room: it goes where
+  // the aura came down rather than at any one thing, because what the sweep is
+  // aimed at is the compartment. The empty sweep is drawn too — the barrels
+  // fired, and a reader who watches the tracers cross an empty room has been
+  // told something the panel then names.
+  if (report.kind === 'swept' || report.kind === 'nothing-there') {
+    const space = ship.spaces.get(report.spaceId)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) return null
+    return {
+      kind: 'volley',
+      tierId: space.tierId,
+      at: world.landed[space.id] ?? measured.at,
+      y: Math.min(measured.floor + 1.2, measured.ceiling - 0.3),
+      from,
+      colour: VOLLEY,
     }
   }
 

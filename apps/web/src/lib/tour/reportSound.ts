@@ -92,9 +92,6 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'copies-faded': () => skipThroughTime(),
   // Padaille's arm, which is a body being rebuilt into a machine and back.
   'limb-armed': grindThroughSpace,
-  // The shot refused for want of the mutilation: the fingers are there, and
-  // that is exactly why nothing comes out of them.
-  'fingers-intact-refused': () => fireABurst(1),
   'souls-swapped': loostAnArrow,
   'arrow-drawn': loostAnArrow,
   stitched: unspoolWire,
@@ -140,9 +137,9 @@ export function playTourReportSound(report: TourReport): void {
     // barrels across a sector rather than at one thing. Longer than the aimed
     // burst because it is wider — the rounds are spread over everything standing
     // there — and `fireABurst` caps itself, so a crowded room does not turn into
-    // a drum roll. The empty sweep sounds the same and for the same reason the
-    // fist into bare deck does: the barrels fired, and finding nothing standing
-    // in the arc is the answer, not the absence of one.
+    // a drum roll. The empty sweep sounds, and for the reason the fist into bare
+    // deck sounds: the barrels fired, and finding nothing standing in the arc is
+    // an answer rather than the absence of one.
     case 'swept':
       return fireABurst(2 + report.solids * 2)
     case 'nothing-there':
@@ -168,10 +165,9 @@ export function playTourReportSound(report: TourReport): void {
       return playATune(report.tune)
     // `fingers-intact-refused` is deliberately not here. Every other refusal in
     // this file keeps the sound of the gesture that did happen — the palm came
-    // up, the fist went into the deck — and this one is the case where nothing
-    // is fired at all: the restriction is not a price paid for the ability, it
-    // *is* the ability. The silence is the report, and the panel carries the
-    // reason.
+    // up, the fist went into the deck — and this is the one where nothing is
+    // fired at all: the restriction is not a price paid for the ability, it *is*
+    // the ability. The silence is the report, and the panel carries the reason.
     default:
       return
   }

@@ -1259,6 +1259,153 @@
       "signatures": ["face-paint-star-tear"],
       "verified": { "chapterIds": ["ch-351", "ch-353"], "status": "confirmed" },
       "note": "À bord il avance masqué — Texture Surprise. L'appearance déclare le vrai visage, et le masque reste un fait d'événement : c'est la même séparation que pour les yeux écarlates de Kurapika, et elle vaut dans les deux sens."
+    },
+    {
+      "id": "morena-prudo",
+      "body": { "build": "slim", "height": 1.0, "frame": "adult", "shoulders": 0.96 },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "profil `morena` de humanProfiles.ts, écrit contre les planches ch. 378, 391 ; valeurs reprises champ pour champ",
+        "skin": "0xf0dfe2",
+        "hair": "0xd9b978",
+        "attire": {
+          "jacket": "0x181318",
+          "shirt": "0x181318",
+          "trousers": "0x181318",
+          "accent": "0xd9b978"
+        }
+      },
+      "attire": "gown",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-378", "ch-391"], "status": "confirmed" },
+      "note": "Le profil en dur du code devient cette entrée, et le code devient sa projection : une déclaration par fait. Les valeurs sont reprises à l'identique, donc la migration doit rendre un diff de capture nul — c'est le test que §4-P1 se donne."
+    },
+    {
+      "id": "hinrigh-biganduffno",
+      "body": { "build": "average", "height": 1.05, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 378, 390 ; costume de lieutenant Xi-Yu, palette sombre",
+        "skin": "0xc99473",
+        "hair": "0x201d21",
+        "attire": {
+          "jacket": "0x2b2c33",
+          "shirt": "0xece9e1",
+          "trousers": "0x1f2027",
+          "accent": "0x7a6a4a"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-378", "ch-390"], "status": "partial" },
+      "note": "Quadragénaire anguleux : le lieutenant qui fait le vrai travail. À confirmer."
+    },
+    {
+      "id": "zakuro-custard",
+      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "wild", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planche n&b ch. 390 ; veste courte, palette sourde",
+        "skin": "0xdfbb9b",
+        "hair": "0x2b2622",
+        "attire": {
+          "jacket": "0x4a3f47",
+          "shirt": "0xe6e0d6",
+          "trousers": "0x312a30",
+          "accent": "0xa4536a"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-390"], "status": "confirmed" },
+      "note": "Cheveux en bataille, canines apparentes. Les canines ne sont pas une pièce de l'annexe B ; ce qui les remplace est `hostile` et rien de plus."
+    },
+    {
+      "id": "lynch-fullbokko",
+      "body": { "build": "average", "height": 1.0, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "short", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 390, 393 ; tenue utilitaire, palette sourde",
+        "skin": "0xd3a17c",
+        "hair": "0x2e2724",
+        "attire": {
+          "jacket": "0x46483f",
+          "shirt": "0xe0dbcd",
+          "trousers": "0x30322c",
+          "accent": "0x8f6f3c"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-390", "ch-393"], "status": "partial" },
+      "note": "Frappe d'abord, pose les questions après. À confirmer."
+    },
+    {
+      "id": "onior-longbao",
+      "body": { "build": "broad", "height": 1.02, "frame": "adult", "shoulders": 1.16 },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 378, 384 ; robe chinoise du padrone Xi-Yu",
+        "skin": "0xc99473",
+        "hair": "0x3a352f",
+        "attire": {
+          "jacket": "0x3d2a35",
+          "shirt": "0xeae3d4",
+          "trousers": "0x2a1d25",
+          "accent": "0xc5a253"
+        }
+      },
+      "attire": "changshan",
+      "signatures": ["moustache"],
+      "verified": { "chapterIds": ["ch-378", "ch-384"], "status": "confirmed" },
+      "note": "Vieux boss massif, crâne chauve, moustache tombante : le padrone Xi-Yu. Deuxième porteur de `changshan` avec Zhang Lei, et les deux le portent pour la même raison — aucun rôle du catalogue ne le produirait."
+    },
+    {
+      "id": "brocco-li",
+      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bald-crown", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 378, 384 ; costume de boss Cha-R, palette éteinte",
+        "skin": "0xd0a98d",
+        "hair": "0x8a857d",
+        "attire": {
+          "jacket": "0x33353c",
+          "shirt": "0xe9e6de",
+          "trousers": "0x24262c",
+          "accent": "0x6f6a58"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-378", "ch-384"], "status": "partial" },
+      "note": "Vieux, long visage étroit, crâne dégarni : le boss Cha-R. À confirmer."
+    },
+    {
+      "id": "luini",
+      "body": { "build": "average", "height": 1.0, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 378, 392 ; tenue quelconque, palette volontairement banale",
+        "skin": "0xdfbb9b",
+        "hair": "0x2d2823",
+        "attire": {
+          "jacket": "0x4b4f55",
+          "shirt": "0xe8e5dd",
+          "trousers": "0x33373c",
+          "accent": "0x8a8f95"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-378", "ch-392"], "status": "partial" },
+      "note": "Jeune homme quelconque au sourire tranquille : l'anonymat est son arme. La palette est banale exprès — c'est la seule entrée du fichier où être oubliable est le fait déclaré, et non un défaut de source. À confirmer."
     }
   ],
   "deferred": [

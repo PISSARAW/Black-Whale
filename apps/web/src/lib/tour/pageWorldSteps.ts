@@ -14,6 +14,7 @@ import {
   type TourWorld,
 } from './hatsu'
 import { daysLeft, isDeciphered, oneDayBeside, oneDayBuilding } from './decipher'
+import { isSpent, oneSecondOn, untilSpent, ZETSU_SECONDS } from './emperor'
 import type { Vec2 } from './types'
 
 export interface WorldStep {
@@ -128,6 +129,40 @@ export function stepConsole(scene: {
   }
 
   return next === world ? null : { world: next, report }
+}
+
+/**
+ * One second of Emperor Time, and the hour it costs.
+ *
+ * The one technique in the walk that goes on spending while nobody touches
+ * anything, and the reason it is on the page's beat rather than on a cast: a
+ * price that only moved when you pressed a key would be a price you could
+ * stand still and avoid. Held, it burns an hour a second; at the year it lets
+ * go of itself and the five minutes without Nen begin; and those five minutes
+ * run down here too, because nothing can be cast to end them.
+ */
+export function stepScarlet(world: TourWorld): WorldStep | null {
+  if (world.forcedZetsu > 0) {
+    const left = world.forcedZetsu - 1
+    return {
+      world: { ...world, forcedZetsu: left },
+      report: left > 0 ? { kind: 'in-forced-zetsu', left } : { kind: 'eyes-out', hours: 0 },
+    }
+  }
+
+  if (!world.scarlet) return null
+
+  const eyes = oneSecondOn(world.scarlet)
+  if (isSpent(eyes)) {
+    return {
+      world: { ...world, scarlet: null, laidOpen: false, forcedZetsu: ZETSU_SECONDS },
+      report: { kind: 'zetsu-forced', seconds: ZETSU_SECONDS },
+    }
+  }
+  return {
+    world: { ...world, scarlet: eyes },
+    report: { kind: 'eyes-held', hours: eyes.hours, until: untilSpent(eyes) },
+  }
 }
 
 export function stepOwlAge(world: TourWorld): WorldStep | null {

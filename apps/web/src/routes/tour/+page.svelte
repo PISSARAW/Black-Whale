@@ -610,6 +610,9 @@
       bodyView.step(Date.now())
       // The console counts on the walk's own beat, never on the reader's clock.
       ticker.consoleDay()
+      // And Emperor Time spends on it: an hour of life a second, held or not
+      // touched, which is the only way a price can be one.
+      ticker.scarletSecond()
     }, 1000)
     return () => clearInterval(beat)
   })

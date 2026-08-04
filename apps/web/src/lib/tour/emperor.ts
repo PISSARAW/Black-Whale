@@ -61,6 +61,37 @@ export const oneSecondOn = (eyes: ScarletEyes): ScarletEyes => ({
 })
 
 /**
+ * A year of life, in hours. The figure ch. 380 puts on what was burnt.
+ *
+ * Eight thousand seven hundred and sixty seconds of holding, at the rate above
+ * — two and a half hours of walking, and nobody will do it. That is not a
+ * problem to be solved by making the walk's second worth more than an hour: it
+ * is the size of the thing, and a reader who watches the counter climb for
+ * thirty seconds and reads how far off the year still is has been told the
+ * truth about the price. Shortening it would be inventing a rate for the one
+ * ability whose rate the arc states outright.
+ */
+export const HOURS_IN_A_YEAR = 8760
+
+/**
+ * How long the Nen stays gone once the year is spent, in seconds of the walk.
+ *
+ * The other half of ch. 380's own pairing, and the reason the two constants sit
+ * together: the arc states a year consumed *and* five minutes without Nen, as
+ * one sentence. The walk carries the sentence rather than either half of it, so
+ * there is no reading of this file in which the price is paid and the Zetsu
+ * does not follow.
+ */
+export const ZETSU_SECONDS = 300
+
+/** Whether the ledger has reached the year, which is when the eyes go out. */
+export const isSpent = (eyes: ScarletEyes): boolean => eyes.hours >= HOURS_IN_A_YEAR
+
+/** Hours still to go before the year is gone — what the banner counts down. */
+export const untilSpent = (eyes: ScarletEyes): number =>
+  Math.max(0, HOURS_IN_A_YEAR - eyes.hours)
+
+/**
  * Everything in the walk that is deliberately not shown, by apparition id.
  *
  * Two things, and both of them are In: the Bungee Gum strung across a doorway

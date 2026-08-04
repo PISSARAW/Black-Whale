@@ -884,6 +884,20 @@ export const en = {
             : `Nothing was holding ${room}`,
         laidOpen: (spaces: number, decks: number) =>
           `Every category at 100% · ${spaces} rooms across ${decks} levels held open at once`,
+        eyesTurned: (who: string | null) =>
+          who
+            ? `${who}’s eyes go scarlet · under the emotion of the moment, and at their own cost`
+            : 'Your eyes go scarlet · every category at 100%, and an hour of life a second',
+        eyesHeld: (hours: number, until: number) =>
+          `${hours} h of life spent · ${until} h before the year is gone`,
+        eyesOut: (hours: number) =>
+          hours
+            ? `The scarlet goes out · ${hours} h of life spent, and none of it comes back`
+            : 'The Nen comes back',
+        zetsuForced: (seconds: number) =>
+          `The year is gone · ${seconds / 60} minutes with no Nen at all, which is what it cost`,
+        inForcedZetsu: (left: number) =>
+          `Nothing goes out · ${left} s of forced Zetsu, Emperor Time included`,
         emptied: (room: string, structures: number) =>
           structures
             ? `${structures} solid${structures > 1 ? 's' : ''} swallowed out of ${room}`
@@ -1290,6 +1304,9 @@ export const en = {
         dance: 'The prologue',
         mimic: 'Wearing',
         masked: 'Face worn',
+        sign: 'Plate reads',
+        scarlet: 'Life spent',
+        forcedZetsu: 'No Nen at all',
         soothed: 'The music holds',
         hearing: 'The ear',
         playing: 'The flute is playing',

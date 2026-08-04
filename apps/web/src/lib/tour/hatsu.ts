@@ -78,6 +78,7 @@ import { aimGum, gumLanding, gumTension } from './gum'
 import { punchRuns } from './punch'
 import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
 import { nextForgery, nextSign, takesAMask } from './texture'
+import { eyesTurn } from './emperor'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -2639,9 +2640,21 @@ function castWithoutARoom(
   const { ship, standingIn } = input
 
   if (kind === 'scarlet') {
+    // A toggle, and a ledger. The walk used to hold the ship open for free and
+    // never close it again, which is the one thing about Emperor Time nobody
+    // who has read the arc would accept: the ability *is* its price. Letting go
+    // gives nothing back — the hours are spent — and that is why the eyes going
+    // out is a report with a figure on it rather than a quiet flag.
+    if (world.scarlet) {
+      return {
+        world: { ...world, laidOpen: false, scarlet: null },
+        report: { kind: 'eyes-out', hours: world.scarlet.hours },
+      }
+    }
+    const by = input.caster ?? null
     return {
-      world: { ...world, laidOpen: true },
-      report: { kind: 'laid-open', spaces: ship.spaces.size, decks: ship.tiers.length },
+      world: { ...world, laidOpen: true, scarlet: eyesTurn(by) },
+      report: { kind: 'eyes-turned', by },
     }
   }
 
@@ -3433,6 +3446,15 @@ function runCast(
 
   const pulledBack = pullBackTheBody(world)
   if (pulledBack) return pulledBack
+
+  // The five minutes ch. 380 pairs with the year, ahead of everything else
+  // including the console's lock: a body with no Nen at all is not a body that
+  // is busy, it is a body that has none. Emperor Time itself is refused here
+  // too, which is the point — the price cannot be paid a second time to escape
+  // the first.
+  if (world.forcedZetsu > 0) {
+    return { world, report: { kind: 'in-forced-zetsu', left: world.forcedZetsu } }
+  }
 
   // Combo Master's lock, ahead of everything: while the console is reading or
   // building it has the whole of its user's aura, and nothing else goes out.

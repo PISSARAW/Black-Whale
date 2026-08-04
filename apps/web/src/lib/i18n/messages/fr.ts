@@ -753,6 +753,20 @@ export const fr: Messages = {
             : `Rien ne retenait ${room}`,
         laidOpen: (spaces, decks) =>
           `Toutes les catégories à 100 % · ${spaces} pièces sur ${decks} niveaux ouvertes d'un coup`,
+        eyesTurned: (who) =>
+          who
+            ? `Les yeux de ${who} virent à l'écarlate · sous le coup de l'émotion, et à ses frais`
+            : 'Vos yeux virent à l’écarlate · toutes les catégories à 100 %, une heure de vie par seconde',
+        eyesHeld: (hours, until) =>
+          `${hours} h de vie consommées · ${until} h avant que l'année n'y passe`,
+        eyesOut: (hours) =>
+          hours
+            ? `L'écarlate s'éteint · ${hours} h de vie consommées, et rien n'en revient`
+            : 'Le Nen revient',
+        zetsuForced: (seconds) =>
+          `L'année y est passée · ${seconds / 60} minutes sans aucun Nen, c'est ce qu'elle coûtait`,
+        inForcedZetsu: (left) =>
+          `Rien ne sort · ${left} s de Zetsu forcé, Emperor Time compris`,
         emptied: (room, structures) =>
           structures
             ? `${structures} volume${structures > 1 ? 's' : ''} aspiré${structures > 1 ? 's' : ''} hors de ${room}`
@@ -1137,6 +1151,9 @@ export const fr: Messages = {
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
         masked: 'Visage porté',
+        sign: 'La plaque affiche',
+        scarlet: 'Vie consommée',
+        forcedZetsu: 'Plus aucun Nen',
         soothed: 'La musique tient',
         hearing: 'L’oreille',
         playing: 'La flûte joue',

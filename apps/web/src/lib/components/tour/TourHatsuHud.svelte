@@ -26,6 +26,7 @@
     type TourWorld,
   } from '$lib/tour/hatsu'
   import { gumStretch, gumTension } from '$lib/tour/gum'
+  import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
   import type { Heard } from '$lib/tour/cast/hearing'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
@@ -253,6 +254,16 @@
         return say.blastSolidRefused(solidName(report.solidId))
       case 'laid-open':
         return say.laidOpen(report.spaces, report.decks)
+      case 'eyes-turned':
+        return say.eyesTurned(report.by ? personName(report.by) : null)
+      case 'eyes-held':
+        return say.eyesHeld(report.hours, report.until)
+      case 'eyes-out':
+        return say.eyesOut(report.hours)
+      case 'zetsu-forced':
+        return say.zetsuForced(report.seconds)
+      case 'in-forced-zetsu':
+        return say.inForcedZetsu(report.left)
       case 'swallowed':
         return say.swallowed(solidName(report.solidId), report.held)
       case 'coughed-up':
@@ -729,6 +740,28 @@
     if (world.curse) rows.push({ label: held.curse, value: roomName(world.curse.victim) })
     for (const [a, b] of world.souls) {
       rows.push({ label: held.souls, value: `${roomName(a)} ⇄ ${roomName(b)}` })
+    }
+    // The ledger, which is the ability. It reads while the eyes are red and it
+    // goes on reading through the five minutes that follow, because those are
+    // part of what was paid rather than a separate event.
+    if (world.scarlet) {
+      rows.push({
+        label: held.scarlet,
+        value: `${world.scarlet.hours} h / ${HOURS_IN_A_YEAR} h${
+          world.scarlet.by ? ` · ${personName(world.scarlet.by)}` : ''
+        }`,
+      })
+    }
+    if (world.forcedZetsu) {
+      rows.push({ label: held.forcedZetsu, value: `${world.forcedZetsu} s` })
+    }
+    // The true room on the left and what its plate now reads on the right —
+    // `roomName` would give the lie on both sides, which is exactly what the
+    // corridor sees and exactly what this row is not for.
+    for (const [id, sign] of Object.entries(world.signs)) {
+      const room = ship.spaces.get(id)
+      const plate = ship.spaces.get(sign)
+      if (room && plate) rows.push({ label: held.sign, value: `${nameOf(room)} → ${nameOf(plate)}` })
     }
     const body = world.body
     if (body.enhance) rows.push({ label: held.enhance, value: `${body.enhance} / 6` })

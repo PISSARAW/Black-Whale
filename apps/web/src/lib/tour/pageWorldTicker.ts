@@ -8,6 +8,7 @@ import {
   stepConsole,
   stepOwlAge,
   stepPolarity,
+  stepScarlet,
   stepScout,
   type WorldStep,
 } from '$lib/tour/pageWorldSteps'
@@ -76,6 +77,11 @@ export class TourWorldTicker {
 
   owlSecond = () => {
     this.apply(stepOwlAge(this.options.read().world), true)
+  }
+
+  /** One second of Emperor Time, and the hour of life it costs. */
+  scarletSecond = () => {
+    this.apply(stepScarlet(this.options.read().world))
   }
 
   crossWorm = (spaceId: string | null, arrivedFrom: string | null) => {

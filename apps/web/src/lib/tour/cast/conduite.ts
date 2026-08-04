@@ -158,6 +158,11 @@ export function runConduct(
       targetId: intent.targetId,
       standingIn: intent.from.spaceId,
       at: intent.from.at,
+      // Whose cast this is, which is not bookkeeping for every technique but is
+      // for one: a Kurapika who goes scarlet in the Woble quarters under the
+      // emotion of the moment is spending his own years, and the read-out has
+      // to say so rather than charging the reader for them.
+      caster: intent.characterId,
       ...(intent.from.heading === undefined ? {} : { heading: intent.from.heading }),
     })
     current = result.world

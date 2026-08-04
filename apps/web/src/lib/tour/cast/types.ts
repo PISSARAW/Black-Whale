@@ -272,6 +272,16 @@ export interface TourWorld {
    */
   scarlet: ScarletEyes | null
   /**
+   * Seconds of forced Zetsu still to run, or nought.
+   *
+   * The second half of ch. 380's own sentence — a year consumed, five minutes
+   * without Nen — and the only refusal in the walk that nothing can be cast
+   * through, including the technique that caused it. Counted down by the page's
+   * second, like the owl's life, because the walk is the only thing aboard with
+   * a clock.
+   */
+  forcedZetsu: number
+  /**
    * The protected room, and whether the visitor was standing in it when the
    * boundary went up. An occupant keeps the real room and may walk out of it;
    * anyone arriving from outside gets the empty copy.
@@ -949,6 +959,7 @@ export const EMPTY_WORLD: TourWorld = {
   laidOpen: false,
   isolated: null,
   scarlet: null,
+  forcedZetsu: 0,
   doors: [],
   emptied: [],
   puppet: null,
@@ -1121,6 +1132,16 @@ export type TourReport =
    * half of what the catalogue says about the technique.
    */
   | { kind: 'mask-refused'; solidId: string }
+  /** The eyes turning, and whose they are: `null` for the visitor's own. */
+  | { kind: 'eyes-turned'; by: string | null }
+  /** The eyes let go, and the hours it cost — never given back. */
+  | { kind: 'eyes-out'; hours: number }
+  /** One more second held: the hour it took, and the hours still to the year. */
+  | { kind: 'eyes-held'; hours: number; until: number }
+  /** The year gone, and the five minutes without Nen that ch. 380 pairs with it. */
+  | { kind: 'zetsu-forced'; seconds: number }
+  /** A cast attempted during those five minutes. Nothing goes out, including this. */
+  | { kind: 'in-forced-zetsu'; left: number }
   /** A door's plaque made to read another room's number, or given back its own. */
   | { kind: 'sign-forged'; spaceId: string; asId: string }
   | { kind: 'sign-restored'; spaceId: string }
@@ -1358,6 +1379,16 @@ export interface TourCastInput {
   at: Vec2
   /** Which way they face: a push goes where they are looking. */
   heading?: number
+  /**
+   * Whose cast this is, or `null`/absent for the visitor's own.
+   *
+   * The conduct casts through this same door, so a technique whose cost falls
+   * on its user has to know which user. Emperor Time is the one that makes it
+   * matter: a Kurapika who goes scarlet in the Woble quarters under the emotion
+   * of the moment is spending *his* years, and charging them to the reader
+   * would be the walk making somebody else's price the visitor's.
+   */
+  caster?: string | null
   /**
    * Which of The Sun and Moon's two hands is casting.
    *

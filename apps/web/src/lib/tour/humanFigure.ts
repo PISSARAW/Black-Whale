@@ -6,10 +6,11 @@ import {
   type NenTechniqueState,
 } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
-import { humanAnimation } from './humanAnimation'
+import { humanAnimation, poseHuman } from './humanAnimation'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
+import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, type Glass, type HumanZone } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
 
@@ -361,6 +362,7 @@ export function buildHumanFigure({
       geometry(THREE, 'hand', () => new THREE.SphereGeometry(0.062, 7, 5)),
       skin,
     )
+    hand.name = side < 0 ? 'hand-left' : 'hand-right'
     hand.position.y = -0.25
     elbow.add(hand)
     arm.scale.y = frame.limb
@@ -377,58 +379,18 @@ export function buildHumanFigure({
     (leg) => leg.children.find((child) => child.name.startsWith('knee')) as Group,
   )
 
-  if (pose === 'guard') {
-    arms.forEach((arm, index) => {
-      const side = index === 0 ? -1 : 1
-      arm.position.set(side * 0.22, 1.31, 0.08)
-      arm.rotation.set(-0.78, 0, side * -0.64)
-      elbows[index].rotation.x = -1.05
-    })
-    legs[0].rotation.z = -0.08
-    legs[1].rotation.z = 0.08
-  } else if (pose === 'attack') {
-    arms[1].position.set(0.18, 1.3, 0.15)
-    arms[1].rotation.set(-1.35, 0, -0.08)
-    elbows[1].rotation.x = -0.35
-  } else if (pose === 'listen') {
-    arms[1].rotation.set(0, 0, -2.15)
-  } else if (pose === 'search') {
-    figure.rotation.x = -0.12
-    head.rotation.x = 0.22
-    knees.forEach((knee) => (knee.rotation.x = 0.18))
-  } else if (pose === 'held') {
-    figure.rotation.z = -0.24
-    figure.position.x = 0.12
-  } else if (pose === 'fallen') {
-    figure.rotation.z = 1.3
-    figure.position.y = 0.25
-    arms[0].rotation.z = 0.7
-    arms[1].rotation.z = -0.9
-    elbows[0].rotation.x = -0.55
-    knees[1].rotation.x = 0.65
-  } else if (pose === 'walk') {
-    arms[0].rotation.x = -0.32
-    arms[1].rotation.x = 0.32
-    legs[0].rotation.x = 0.2
-    legs[1].rotation.x = -0.2
-  } else if (pose === 'seated') {
-    figure.position.y = -0.3
-    arms.forEach((arm, index) => {
-      const side = index === 0 ? -1 : 1
-      // Shoulder, elbow and hand form one continuous reach onto the tabletop.
-      // The old angles left the upper arms hanging beside an upright gown,
-      // which read as a standing figure layered over bent legs.
-      arm.position.set(side * 0.27, 1.34, 0.02)
-      arm.rotation.set(-0.72, 0, side * -0.12)
-      elbows[index].rotation.x = -1.12
-    })
-    legs.forEach((leg, index) => {
-      const side = index === 0 ? -1 : 1
-      leg.position.x = side * 0.14
-      leg.rotation.x = -Math.PI / 2
-      knees[index].rotation.x = Math.PI / 2
-    })
-  }
+  poseHuman({ pose, figure, head, arms, legs, elbows, knees })
+
+  // Annexe B, last, because §2.2 says so: the gabarit, the hair and the palette
+  // have already named this person at walking distance, and a diadem or a pair
+  // of round glasses is what closes it up close. Empty for everyone undeclared.
+  addHumanSignatures({
+    THREE,
+    geometry,
+    parts: { figure, head, rightHand: elbows[1].getObjectByName('hand-right') ?? elbows[1] },
+    materials: { ink, skin, accent, cloth, dark },
+    worn: { signatures: profile.signatures, attire: profile.clothing },
+  })
 
   const groundShadow = new THREE.Mesh(
     geometry(THREE, 'ground-shadow', () => new THREE.CircleGeometry(0.42, 12)),

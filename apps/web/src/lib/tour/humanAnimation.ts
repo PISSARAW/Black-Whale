@@ -3,6 +3,16 @@ import type { Apparition } from './apparitions'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
 
+interface PosedHuman {
+  pose: HumanPose
+  figure: Group
+  head: Object3D
+  arms: Group[]
+  legs: Group[]
+  elbows: Group[]
+  knees: Group[]
+}
+
 interface AnimatedHuman {
   pose: HumanPose
   figure: Group
@@ -13,6 +23,70 @@ interface AnimatedHuman {
   legs: Group[]
   knees: Group[]
 }
+
+/**
+ * The pose a body is *built* in, as opposed to the one it is animated through.
+ *
+ * It lives here rather than in the figure builder because it is the same
+ * subject as everything else in this file — where the limbs go — and because
+ * `humanAnimation` clones its rest transforms straight off the rig this
+ * function has just set. The two are one idea read twice: this puts the body
+ * in its pose, that returns it there after every frame.
+ */
+export function poseHuman(rig: PosedHuman): void {
+  const { pose, figure, head, arms, legs, elbows, knees } = rig
+  if (pose === 'guard') {
+    arms.forEach((arm, index) => {
+      const side = index === 0 ? -1 : 1
+      arm.position.set(side * 0.22, 1.31, 0.08)
+      arm.rotation.set(-0.78, 0, side * -0.64)
+      elbows[index].rotation.x = -1.05
+    })
+    legs[0].rotation.z = -0.08
+    legs[1].rotation.z = 0.08
+  } else if (pose === 'attack') {
+    arms[1].position.set(0.18, 1.3, 0.15)
+    arms[1].rotation.set(-1.35, 0, -0.08)
+    elbows[1].rotation.x = -0.35
+  } else if (pose === 'listen') {
+    arms[1].rotation.set(0, 0, -2.15)
+  } else if (pose === 'search') {
+    figure.rotation.x = -0.12
+    head.rotation.x = 0.22
+    knees.forEach((knee) => (knee.rotation.x = 0.18))
+  } else if (pose === 'held') {
+    figure.rotation.z = -0.24
+    figure.position.x = 0.12
+  } else if (pose === 'fallen') {
+    figure.rotation.z = 1.3
+    figure.position.y = 0.25
+    arms[0].rotation.z = 0.7
+    arms[1].rotation.z = -0.9
+    elbows[0].rotation.x = -0.55
+    knees[1].rotation.x = 0.65
+  } else if (pose === 'walk') {
+    arms[0].rotation.x = -0.32
+    arms[1].rotation.x = 0.32
+    legs[0].rotation.x = 0.2
+    legs[1].rotation.x = -0.2
+  } else if (pose === 'seated') {
+    figure.position.y = -0.3
+    arms.forEach((arm, index) => {
+      const side = index === 0 ? -1 : 1
+      // Shoulder, elbow and hand form one continuous reach onto the tabletop.
+      // The old angles left the upper arms hanging beside an upright gown,
+      // which read as a standing figure layered over bent legs.
+      arm.position.set(side * 0.27, 1.34, 0.02)
+      arm.rotation.set(-0.72, 0, side * -0.12)
+      elbows[index].rotation.x = -1.12
+    })
+    legs.forEach((leg, index) => {
+      const side = index === 0 ? -1 : 1
+      leg.position.x = side * 0.14
+      leg.rotation.x = -Math.PI / 2
+      knees[index].rotation.x = Math.PI / 2
+    })
+  }}
 
 export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
   const figureBasePosition = rig.figure.position.clone()

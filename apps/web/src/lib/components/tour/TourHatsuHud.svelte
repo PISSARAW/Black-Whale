@@ -342,6 +342,8 @@
         return say.swept(roomName(report.spaceId), report.solids, report.broken)
       case 'nothing-there':
         return say.nothingThere(roomName(report.spaceId))
+      case 'no-packet':
+        return say.noPacket
       case 'fingers-intact-refused':
         return say.fingersIntact
       case 'not-wound':

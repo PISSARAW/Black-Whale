@@ -82,6 +82,7 @@ import type { Vec2 } from './types'
 import { apparitionsOn } from './apparitions'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { pointInPolygon } from './geometry'
+import { RIPPER_ANT_TURNS } from './ripper'
 
 const ship = buildShip()
 
@@ -643,7 +644,7 @@ describe('what a technique does to a solid', () => {
     })
     expect(hits).toHaveLength(2)
     const last = hit(world, 'barrage', solidA.id)
-    expect(last.report).toEqual({ kind: 'shattered', solidId: solidA.id })
+    expect(last.report).toEqual({ kind: 'shattered', solidId: solidA.id, by: 'barrage' })
     expect(last.world.solids[solidA.id].gone).toBe(true)
   })
 
@@ -655,6 +656,24 @@ describe('what a technique does to a solid', () => {
     const punch = hit(world, 'windup', solidA.id)
     if (punch.report.kind !== 'launched') throw new Error('unreachable')
     expect(punch.world.windup).toBe(0)
+  })
+
+  /**
+   * Three techniques break a thing and report the same word, and the scene and
+   * the speaker owe each of them a different blow: ten barrels, a fist with
+   * fifteen rotations behind it, and paper finishing a cut. Without `by` they
+   * all got the same answer, which in practice meant none of them got one.
+   */
+  it('says which blow broke the thing, not only that it broke', () => {
+    let world = EMPTY_WORLD
+    for (let turn = 0; turn < RIPPER_ANT_TURNS; turn++) {
+      world = hit(world, 'windup', null).world
+    }
+    expect(world.windup).toBe(RIPPER_ANT_TURNS)
+    const blow = hit(world, 'windup', solidA.id)
+    expect(blow.report).toEqual({ kind: 'shattered', solidId: solidA.id, by: 'windup' })
+    // And the arm is empty either way: the charge does not divide.
+    expect(blow.world.windup).toBe(0)
   })
 
   it('copies a solid as something no page supports', () => {
@@ -1319,12 +1338,21 @@ describe('the wrapping and the sun', () => {
     expect(broken.world.body.packed).toBe(1)
   })
 
-  it('rises on an empty wrapping at its own least radius', () => {
-    // What Pain Packer buys is reach. Without it the sun is still a sun, or
-    // Feitan could never raise one in a walk that gives out a single aura.
-    const bare = on(EMPTY_WORLD, 'sun-flare').report
-    expect(bare).toMatchObject({ kind: 'sun-risen', metres: SUN_FLARE_METRES_PER_HIT })
+  it('rises on an empty wrapping at its own least radius, and not on none', () => {
+    // The two abilities go together and one pays for the other, which ch. 258
+    // states outright — so with no wrapping on at all there is nothing for the
+    // sun to be made of, and the walk says so.
+    expect(on(EMPTY_WORLD, 'sun-flare').report).toEqual({ kind: 'no-packet' })
+
+    // The condition is the wrapping, not its contents. Refusing on an empty
+    // packet would make the pair uncastable in a walk that gives out a single
+    // aura at a time: put Pain Packer on, and the sun is there to be raised.
+    // What the packet buys is the reach.
     const worn = on(EMPTY_WORLD, 'pain-armour').world
+    expect(on(worn, 'sun-flare').report).toMatchObject({
+      kind: 'sun-risen',
+      metres: SUN_FLARE_METRES_PER_HIT,
+    })
     expect(on(worn, 'pain-armour').report).toEqual({ kind: 'armour-holding', packed: 0 })
   })
 
@@ -1341,10 +1369,14 @@ describe('the wrapping and the sun', () => {
     expect(risen.report.metres).toBe(2 * SUN_FLARE_METRES_PER_HIT)
     expect(risen.report.solids).toBeGreaterThan(0)
     expect(risen.world.solids[solidA.id]?.gone).toBe(true)
-    // The armour is opened by it, so the same damage is never spent twice: the
-    // next sun is the least one again.
+    // The wrapping goes with it, so the same damage is never spent twice — and
+    // with the wrapping gone there is nothing to raise a second sun out of.
+    // Putting Pain Packer back on is what makes another one possible, which is
+    // the pairing rather than a cooldown.
     expect(risen.world.body.packed).toBeNull()
-    expect(on(risen.world, 'sun-flare').report).toMatchObject({
+    expect(on(risen.world, 'sun-flare').report).toEqual({ kind: 'no-packet' })
+    const rewrapped = on(risen.world, 'pain-armour').world
+    expect(on(rewrapped, 'sun-flare').report).toMatchObject({
       kind: 'sun-risen',
       metres: SUN_FLARE_METRES_PER_HIT,
     })

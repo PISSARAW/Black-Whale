@@ -6,7 +6,8 @@
   import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
   import { activeHatsu } from '$lib/nen/hatsuState'
-  import { hatsuById } from '$lib/nen/hatsuRegistry'
+  import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
@@ -43,6 +44,7 @@
     identityOf,
     onFloorOf,
     TAKES_ORDERS,
+    TOUR_KINDS,
     wearTheMask,
     type TourReport,
     type TourWorld,
@@ -487,14 +489,24 @@
     silent: $t.tour.address.silent,
     capped: $t.tour.address.capped,
   })
+  /**
+   * The name a visitor knows a technique by, from the kind the walk files it
+   * under. Same lookup the HUD makes for the pages of the book, and for the same
+   * reason: what the chain took is an ability, not somebody's copy of one — so
+   * the line has to say "Little Eye" where the engine says `scout`.
+   */
+  const techniqueName = (kind: string) => {
+    const profile = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
+    return profile ? localizeHatsu(profile, $locale).name : kind
+  }
   const bodyWords = $derived<BodyReadoutWords>({
     refusal: (reason) => $t.tour.body.refusals[reason],
     tell: (tell) => $t.tour.body.tells[tell],
     mark: (mark) => $t.tour.body.marks[mark],
     held: $t.tour.body.held,
     worn: $t.tour.body.worn,
-    stolen: $t.tour.body.stolen,
-    returned: $t.tour.body.returned,
+    stolen: (name, technique) => $t.tour.body.stolen(name, techniqueName(technique)),
+    returned: (name, technique) => $t.tour.body.returned(name, techniqueName(technique)),
     delivered: $t.tour.body.delivered,
     consoleOn: $t.tour.body.consoleOn,
   })
@@ -587,12 +599,18 @@
       }
     },
     wear: (characterId) => (world = wearTheMask(world, characterId)),
-    // The book holds what a technique *does* rather than whose it was, so the
-    // ability lifted off the body is looked up in the registry and filed under
-    // its interaction. One the walk cannot perform is not filed at all: a page
-    // the visitor could turn to and get nothing from would be worse than none.
+    // The book holds what a technique *does* rather than whose it was, and a
+    // cast member's repertoire is already in that vocabulary: the server builds
+    // it from the catalogue's `kind`, filtered to what the walk performs. Asking
+    // the registry to turn it into a kind a second time — by *ability id* — was
+    // the whole of why Steal Chain took nothing: the lookup never matched, the
+    // page returned early, and the finger went in and came out empty.
+    // One the walk cannot perform is still not filed: a page the visitor could
+    // turn to and get nothing from would be worse than none.
     steal: (characterId, technique) => {
-      const kind = hatsuById(technique)?.kind ?? null
+      const kind = TOUR_KINDS.has(technique as HatsuInteractionKind)
+        ? (technique as HatsuInteractionKind)
+        : null
       if (!kind) return
       world = {
         ...world,

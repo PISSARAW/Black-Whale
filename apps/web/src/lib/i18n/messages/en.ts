@@ -699,6 +699,8 @@ export const en = {
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
         'thumb-occupied': 'The thumb is already holding an ability.',
         'no-target-ability': 'They have no ability to steal.',
+        'spares-nobody':
+          'The heat does not pick what it catches. Ch. 258 has its own user shouting at his companions to get clear, which is the whole of what the ability says about who it spares: nobody.',
         'palm-only':
           'The emission leaves the left palm towards what it is aimed at; the catalogue says no more. What it does to the person standing there is not recorded, and the walk will not invent it.',
         'no-matter':
@@ -1184,6 +1186,8 @@ export const en = {
             ? `${room} swept · ${solids} thing${solids === 1 ? '' : 's'} in the arc, ${broken} down`
             : `${room} swept · ${solids} thing${solids === 1 ? '' : 's'} in the arc, all still standing`,
         nothingThere: (room: string) => `The arc crosses ${room} and finds nothing standing in it`,
+        noPacket:
+          'Nothing to raise · Pain Packer and Rising Sun go together, and one pays for the other',
         fingersIntact:
           'Not without the fingers · the restriction is not the price of this ability, it is the ability — see Restrictions & vows',
         notWound: (solid: string) =>

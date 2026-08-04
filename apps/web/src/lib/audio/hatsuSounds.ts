@@ -45,5 +45,6 @@ export {
   stretchTheGum,
   crackAWhip,
 } from './hatsu/impacts'
+export { windTheArm } from './hatsu/charges'
 export { grindThroughSpace, wakeTheMachine } from './hatsu/machines'
 export { hissLikeASnake, roarLikeADragon, chirpTheFlock, crushLikeACat } from './hatsu/creatures'

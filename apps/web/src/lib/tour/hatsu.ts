@@ -982,7 +982,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     if (hits >= 3) {
       return {
         world: withHold(world, id, { hits, gone: true }),
-        report: { kind: 'shattered', solidId: id },
+        report: { kind: 'shattered', solidId: id, by: 'barrage' },
       }
     }
     const landing = shove(ship, { structure, hold }, away(2))
@@ -1012,7 +1012,7 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     if (ripperShatters(turns)) {
       return {
         world: { ...withHold(world, id, { gone: true }), windup: 0 },
-        report: { kind: 'shattered', solidId: id },
+        report: { kind: 'shattered', solidId: id, by: 'windup' },
       }
     }
 
@@ -1462,7 +1462,7 @@ function shredTheWound(world: TourWorld, ship: Ship, woundId: string): TourCastR
   if (left < 0.2) {
     return {
       world: { ...withHold(world, woundId, { gone: true }), wound: null },
-      report: { kind: 'shattered', solidId: woundId },
+      report: { kind: 'shattered', solidId: woundId, by: 'shred' },
     }
   }
   return {
@@ -1721,10 +1721,16 @@ function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastRes
   const room = input.standingIn ? ship.spaces.get(input.standingIn) : null
   if (!room) return { world, report: { kind: 'no-target' } }
 
-  // The sun rises whether or not the wrapping had anything in it. What Pain
-  // Packer buys is how far it reaches — the technique used to refuse outright
-  // without it, which in a walk that hands out one aura at a time meant Feitan
-  // could never raise it at all.
+  // The two abilities go together, and one pays for the other: with no
+  // wrapping on at all there is nothing for the sun to be made of, and the
+  // walk says so rather than raising a sun out of nothing.
+  //
+  // The condition is the *wrapping*, not its contents. Refusing on an empty
+  // packet would make the pair uncastable in a walk that hands out one aura at
+  // a time — put Pain Packer on, and Rising Sun is there to be raised, which
+  // is the arrangement ch. 258 draws. What the packet buys is the reach.
+  if (body.packed === null) return { world, report: { kind: 'no-packet' } }
+
   const metres = Math.max(SUN_FLARE_METRES_PER_HIT, packed * SUN_FLARE_METRES_PER_HIT)
   const solids = { ...world.solids }
   let burnt = 0

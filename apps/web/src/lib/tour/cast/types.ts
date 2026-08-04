@@ -1180,7 +1180,17 @@ export type TourReport =
   | { kind: 'copied'; solidId: string }
   | { kind: 'crushed'; solidId: string }
   | { kind: 'volley'; solidId: string; hits: number }
-  | { kind: 'shattered'; solidId: string }
+  /**
+   * A thing come apart, and what came apart on it.
+   *
+   * Three techniques arrive at this one word and they do not sound or look
+   * alike: a third burst of ten barrels, a fist with fifteen rotations behind
+   * it, and paper confetti finishing what it started. The report used to say
+   * only that the thing was gone, so the walk had one answer for all three and
+   * therefore gave none of them — `by` is what lets the scene and the speaker
+   * play the blow that was actually thrown.
+   */
+  | { kind: 'shattered'; solidId: string; by: 'barrage' | 'windup' | 'shred' }
   | { kind: 'wound-up'; turns: number; by: string | null }
   /** The arm released with nothing in it. Calibration is the stated weak point. */
   | { kind: 'not-wound'; solidId: string }
@@ -1197,6 +1207,8 @@ export type TourReport =
    * rule; hiding the key would only have hidden the rule with it.
    */
   | { kind: 'fingers-intact-refused' }
+  /** Rising Sun raised with no wrapping on: the two abilities go together. */
+  | { kind: 'no-packet' }
   | { kind: 'launched'; solidId: string; metres: number }
   | { kind: 'struck'; solidId: string }
   /** The ball on the end of the Dowsing Chain, brought down on a thing. */

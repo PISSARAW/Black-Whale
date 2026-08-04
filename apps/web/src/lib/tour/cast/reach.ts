@@ -59,6 +59,8 @@ export type ReachRefusal =
   | 'thumb-occupied'
   /** The target has no ability to steal. */
   | 'no-target-ability'
+  /** Rising Sun does not pick what it catches, and cannot be told to. */
+  | 'spares-nobody'
   /**
    * Bird Manipulation takes birds.
    *
@@ -228,6 +230,16 @@ const WORN = 'disguise' as const
  */
 const PALM = 'blast' as const
 
+/**
+ * The technique that refuses a person because it cannot choose.
+ *
+ * Ch. 258 draws Feitan warning his own companions to take cover, which is the
+ * ability's only statement about who it catches: everybody. So a mark laid on
+ * somebody by Rising Sun would be the walk claiming the heat can be aimed, and
+ * the refusal is the more accurate of the two answers by a distance.
+ */
+const NO_MERCY = 'sun-flare' as const
+
 /** The technique that delivers rather than holds. See `FLOCK_ADDRESSEES`. */
 const CARRIES = 'flock' as const
 
@@ -258,7 +270,13 @@ const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
 const MARKS: Record<
   Exclude<
     BodyKind,
-    AskKind | typeof WORN | typeof CARRIES | typeof PALM | typeof READS | 'chain-rule'
+    | AskKind
+    | typeof WORN
+    | typeof CARRIES
+    | typeof PALM
+    | typeof READS
+    | typeof NO_MERCY
+    | 'chain-rule'
   >,
   BodyMark
 > = {
@@ -328,6 +346,11 @@ const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal |
   // in `REFUSED` because what it refuses is a *target*, not the technique: the
   // gust still leaves the palm, and the room still hears it.
   [PALM]: () => 'palm-only',
+
+  // The sun catches whoever is in the room, companions included. Kept beside
+  // the gust for the same reason: what it refuses is a *target*, not the
+  // technique — the sun still rises, and the room still burns.
+  [NO_MERCY]: () => 'spares-nobody',
 
   'chain-rule': (input) => {
     // Aimed back at the person it was taken from, the same finger gives it

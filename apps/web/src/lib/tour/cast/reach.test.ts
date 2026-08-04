@@ -294,7 +294,11 @@ describe('what a hold looks like', () => {
  * explicitly a thing that unwinds.
  */
 describe('the thumb, which takes one ability and gives it back', () => {
-  const sayird = post({ characterId: 'sayird', hatsu: ['little-eye'] })
+  // Little Eye, in the vocabulary a repertoire is actually written in: the
+  // roster files a body's techniques by the walk's *kind*, never by the
+  // catalogue's ability id, and what the chain hands the book has to be a kind
+  // or the book has no page to file it under.
+  const sayird = post({ characterId: 'sayird', hatsu: ['scout'] })
   const steal = (book: ReachInput['book']) =>
     reach({ kind: 'chain-rule', target: sayird, book })
 
@@ -302,7 +306,7 @@ describe('the thumb, which takes one ability and gives it back', () => {
     expect(steal(null)).toMatchObject({
       outcome: 'stolen',
       characterId: 'sayird',
-      technique: 'little-eye',
+      technique: 'scout',
       hold: { mark: 'drained' },
     })
   })

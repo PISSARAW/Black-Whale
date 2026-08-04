@@ -20,6 +20,7 @@ import {
   strikeAGong,
   unspoolWire,
   wakeTheMachine,
+  windTheArm,
 } from '$lib/audio/hatsuSounds'
 import type { TourReport } from './hatsu'
 
@@ -52,6 +53,12 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   // The refusal sounds too: the fist went into the deck and found nothing to
   // run through, which is a thing the visitor did and not a key that did nothing.
   'punch-refused': landAPunch,
+  // Ripper Cyclotron, which the walk carried in complete silence: the arm
+  // turned, the blow landed, and the refusal was made without a sound between
+  // them. The blow and the empty swing are the same fist — an arm that had
+  // nothing in it still went round, which is exactly what the refusal is about.
+  launched: landAPunch,
+  'not-wound': landAPunch,
   'souls-swapped': loostAnArrow,
   'arrow-drawn': loostAnArrow,
   stitched: unspoolWire,
@@ -93,12 +100,15 @@ export function playTourReportSound(report: TourReport): void {
       return raiseTheSun(report.metres)
     case 'volley':
       return fireABurst(report.hits)
-    // The third burst, which was the one moment of this ability the walk played
-    // in silence: the first two cracked and the one that actually broke the
-    // thing said nothing. Ripper Cyclotron's blow arrives at the same report,
-    // and a thing coming apart sounds like a thing coming apart either way.
+    // Three techniques arrive at the same word and none of them was played.
+    // What is heard is the blow that was thrown, not the breaking: the third
+    // burst of ten barrels, or the fist with fifteen rotations behind it. The
+    // confetti keeps its silence — paper finishing a cut is the one of the
+    // three the archive gives no sound for.
     case 'shattered':
-      return fireABurst(3)
+      return report.by === 'barrage' ? fireABurst(3) : report.by === 'windup' ? landAPunch() : void 0
+    case 'wound-up':
+      return windTheArm(report.turns)
     case 'sealed':
       return strikeAGong(report.stage)
     case 'phasing':

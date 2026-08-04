@@ -592,6 +592,8 @@ export const fr: Messages = {
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
         'thumb-occupied': 'Le pouce tient déjà une capacité.',
         'no-target-ability': 'Il n’a aucune capacité à voler.',
+        'spares-nobody':
+          'La chaleur ne trie pas ce qu’elle prend. Ch. 258 montre son propre porteur criant à ses compagnons de se mettre à couvert, et c’est tout ce que la capacité dit de qui elle épargne : personne.',
         'palm-only':
           'L’émission part de la paume vers ce qu’elle vise ; le canon n’en dit pas plus. Ce qu’elle fait à la personne qui s’y tient n’est pas consigné, et la visite ne l’inventera pas.',
         'no-matter':
@@ -1042,6 +1044,8 @@ export const fr: Messages = {
             ? `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, ${broken} à terre`
             : `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, tous debout`,
         nothingThere: (room) => `L'arc traverse ${room} et n'y trouve rien debout`,
+        noPacket:
+          'Rien à lever · Pain Packer et Rising Sun vont ensemble, l’une paie l’autre',
         fingersIntact:
           'Pas sans les doigts · la restriction n’est pas le prix de cette capacité, elle est la capacité — voir Restrictions & serments',
         notWound: (solid) =>

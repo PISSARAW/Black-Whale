@@ -243,6 +243,7 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
 function underHold(held: BodyMark): CastLook {
   if (held === 'soothed') return { aura: 'ten', nen: stateFor({ mode: 'ten' }) }
   if (held === 'controlled') return { aura: 'ten', nen: stateFor({ mode: 'ten' }) }
+  if (held === 'drained') return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
   return {
     aura: 'ren',
     nen: stateFor({ mode: 'ren', gyo: true, ryu: GUARDED }),

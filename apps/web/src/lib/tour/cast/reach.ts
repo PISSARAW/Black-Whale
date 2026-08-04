@@ -44,6 +44,10 @@ export type ReachRefusal =
   | 'suicide'
   /** Holy Chain closes wounds, and the walk records none. */
   | 'unhurt'
+  /** The thumb is already holding a stolen ability. */
+  | 'thumb-occupied'
+  /** The target has no ability to steal. */
+  | 'no-target-ability'
 
 /** What a technique told the visitor about the body, without holding it. */
 export type ReachTell =
@@ -63,7 +67,18 @@ export type ReachTell =
 /** What a cast at a body came to. */
 export type Reach =
   | { outcome: 'held'; kind: BodyKind; characterId: string; hold: BodyHold }
+  /**
+   * Texture Surprise: the visitor is now wearing this person's face.
+   *
+   * The one outcome that does nothing to the body it was aimed at, and that is
+   * the technique. Hisoka rebuilds his own face in ch. 357 and walks the lower
+   * decks under it; nobody he passes is held, marked or altered — the layer is
+   * on him. So the person down the reticle is read as a face and given back
+   * unchanged, and what changed is the visitor (`TourBody.masked`).
+   */
+  | { outcome: 'worn'; kind: BodyKind; characterId: string }
   | { outcome: 'told'; kind: BodyKind; characterId: string; tells: ReachTell[] }
+  | { outcome: 'stolen'; kind: BodyKind; characterId: string; technique: string; hold: BodyHold }
   | { outcome: 'refused'; kind: HatsuInteractionKind | null; reason: ReachRefusal }
 
 /** Everything the decision reads. Nothing is fetched, nothing is global. */
@@ -75,6 +90,8 @@ export interface ReachInput {
   dossier: CastDossier | null
   /** The aura it is currently carrying, from `cast/nen.ts`. */
   aura: 'ten' | 'ren' | 'zetsu' | null
+  /** The visitor's book, for checking if a stolen ability is held. */
+  book: { open: string | null; pages: string[] } | null
   /** The page's clock, so a hold knows when it lifts. */
   now: number
 }
@@ -86,6 +103,17 @@ export interface ReachInput {
  * would be the walk drawing a binding where the manga draws a question.
  */
 const ASKS = ['dowsing', 'truth-punch', 'training-shot'] as const
+
+/**
+ * The technique that takes rather than holds.
+ *
+ * A face is copied off the body in front of you, and the body is not touched.
+ * Listed rather than branched on inline so `MARKS` below cannot silently
+ * acquire an entry for it again: a mask laid *on* a guard would be the walk
+ * saying Texture Surprise disguises other people, which is not what ch. 357
+ * draws — it draws Hisoka wearing a face that is not his.
+ */
+const WORN = 'disguise' as const
 
 type AskKind = (typeof ASKS)[number]
 
@@ -100,7 +128,7 @@ const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
  * lines, and the twelve after them are techniques the walk already performed on
  * the ship which the manga aims at a person first.
  */
-const MARKS: Record<Exclude<BodyKind, AskKind>, BodyMark> = {
+const MARKS: Record<Exclude<BodyKind, AskKind | typeof WORN | 'chain-rule'>, BodyMark> = {
   // The five that had nowhere to land until the walk had people in it, less the
   // two of them that ask.
   needle: 'controlled',
@@ -112,7 +140,6 @@ const MARKS: Record<Exclude<BodyKind, AskKind>, BodyMark> = {
   stitch: 'bound',
   command: 'controlled',
   puppet: 'controlled',
-  disguise: 'masked',
   melody: 'soothed',
   healing: 'soothed',
   'heart-vow': 'marked',
@@ -155,6 +182,12 @@ function refusalFor(kind: BodyKind, input: ReachInput): ReachRefusal | null {
   // case the walk will not claim it overwrites.
   if (kind === 'needle' && input.aura === 'ren') return 'resisted'
 
+  if (kind === 'chain-rule') {
+    if (input.book?.open) return 'thumb-occupied'
+    if (!input.target?.member.hatsu || input.target.member.hatsu.length === 0)
+      return 'no-target-ability'
+  }
+
   return null
 }
 
@@ -188,7 +221,19 @@ export function reachBody(input: ReachInput): Reach {
   if (refusal) return { outcome: 'refused', kind, reason: refusal }
 
   const characterId = input.target.member.characterId
+  if (kind === WORN) return { outcome: 'worn', kind, characterId }
   if (isAsking(kind)) return { outcome: 'told', kind, characterId, tells: tellsFor(kind, input) }
+
+  if (kind === 'chain-rule') {
+    return {
+      outcome: 'stolen',
+      kind,
+      characterId,
+      technique: input.target.member.hatsu[0]!,
+      hold: holdFor(characterId, { kind, mark: 'drained' }, input.now),
+    }
+  }
+
   return {
     outcome: 'held',
     kind,

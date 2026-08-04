@@ -661,13 +661,15 @@ export const en = {
       held: (name: string, what: string) => `${name} — ${what}`,
       worn: (name: string) =>
         `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
+      stolen: (name: string, technique: string) => `${name} — ability torn out (${technique})`,
       marks: {
         bound: 'held',
         controlled: 'acting on an order that is not theirs',
         masked: 'not wearing their own face',
-        marked: 'carrying a mark waiting on its condition',
-        soothed: 'settled',
+        marked: 'carrying a mark',
+        soothed: 'relieved',
         linked: 'linked to you',
+        drained: 'forced into Zetsu',
       },
       ephemeral: 'None of this survives the room you walk out of.',
       refusals: {
@@ -679,6 +681,8 @@ export const en = {
         suicide:
           'The fifth rite is the death of whoever performs it. The walk will not: it shows you the preparation and stops there.',
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
+        'thumb-occupied': 'The thumb is already holding an ability.',
+        'no-target-ability': 'They have no ability to steal.',
       },
       tells: {
         'declares-aura': 'The catalogue makes them a Nen user.',

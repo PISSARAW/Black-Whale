@@ -3267,10 +3267,7 @@
 
       /** Draws the gum where it is stuck, or takes it off the screen. */
       function syncGum(seconds: number) {
-        const stuck =
-          world.holding === 'elastic' && world.pairing
-            ? solidById(ship, world, world.pairing)
-            : null
+        const stuck = world.gum ? solidById(ship, world, world.gum.solidId) : null
         const room = stuck ? ship.spaces.get(stuck.spaceId) : null
         const plan = room ? ship.plans.get(room.tierId) : null
         if (!stuck || !room || !plan) {

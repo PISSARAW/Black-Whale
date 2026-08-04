@@ -41,6 +41,7 @@ const reach = (overrides: Partial<ReachInput> = {}) =>
     target: post(),
     dossier: dossier(),
     aura: 'ten',
+    book: null,
     now: NOW,
     ...overrides,
   })
@@ -155,10 +156,17 @@ describe('what a hold looks like', () => {
   it('draws the thread, the order and the mark by what they do', () => {
     expect(reach({ kind: 'elastic' })).toMatchObject({ outcome: 'held', hold: { mark: 'bound' } })
     expect(reach({ kind: 'needle' })).toMatchObject({ hold: { mark: 'controlled' } })
-    expect(reach({ kind: 'disguise' })).toMatchObject({ hold: { mark: 'masked' } })
     expect(reach({ kind: 'melody' })).toMatchObject({ hold: { mark: 'soothed' } })
     expect(reach({ kind: 'damage-transfer' })).toMatchObject({ hold: { mark: 'linked' } })
     expect(reach({ kind: 'curse' })).toMatchObject({ hold: { mark: 'marked' } })
+  })
+
+  /** Ch. 357 draws Hisoka wearing a face that is not his — not a guard wearing
+   * one. So the body aimed at is read and given back, and the layer is on the
+   * visitor: nothing is laid, and nothing expires off anybody. */
+  it('takes a face off the body in front of it, and holds nobody', () => {
+    const answer = reach({ kind: 'disguise' })
+    expect(answer).toEqual({ outcome: 'worn', kind: 'disguise', characterId: 'sakata' })
   })
 
   it('dates every hold it lays from the walk’s own clock', () => {

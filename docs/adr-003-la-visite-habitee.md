@@ -27,15 +27,15 @@ Deux décisions antérieures encadrent ce constat, et dans les deux sens :
 - ADR-001, principe 1 : une déclaration par fait, tout le reste est projection.
   Or la donnée existe déjà, complète et jamais consommée par le tour :
 
-| Fait vérifié le 2026-08-03 | Valeur |
-| --- | --- |
-| Personnages dans `data/characters/characters.json` | 224, tous avec `shipLocation` |
-| … dont avec `mapTrajectory` (position par chapitre) | 223 |
-| Étapes de trajectoire au total | 374 |
-| Étapes résolues **directement** vers ≥ 1 espace du blueprint via `space.locationId` | 363 (**97 %**) |
-| Ids de lieu non résolus | 2 seulement : `tier-3-political-ward` (×7), `black-whale-1` (×4) — tous deux présents dans `locations.json` au niveau secteur |
-| Primitives de rendu déjà en place | kind `avatar` (« a canonical character represented in the living reconstruction »), 9 rôles dans `humanProfiles.ts` (dont `guard`, `nen-guard`, `steward`), `humanFigure`/`humanAura` consommant `NenTechniqueState`, poses, identité stable |
-| Chemin de cast déjà en place | `castInTour(world, kind, input)` + `TOUR_HATSU_KINDS` (78 kinds portés) |
+| Fait vérifié le 2026-08-03                                                          | Valeur                                                                                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Personnages dans `data/characters/characters.json`                                  | 224, tous avec `shipLocation`                                                                                                                                                                                                                |
+| … dont avec `mapTrajectory` (position par chapitre)                                 | 223                                                                                                                                                                                                                                          |
+| Étapes de trajectoire au total                                                      | 374                                                                                                                                                                                                                                          |
+| Étapes résolues **directement** vers ≥ 1 espace du blueprint via `space.locationId` | 363 (**97 %**)                                                                                                                                                                                                                               |
+| Ids de lieu non résolus                                                             | 2 seulement : `tier-3-political-ward` (×7), `black-whale-1` (×4) — tous deux présents dans `locations.json` au niveau secteur                                                                                                                |
+| Primitives de rendu déjà en place                                                   | kind `avatar` (« a canonical character represented in the living reconstruction »), 9 rôles dans `humanProfiles.ts` (dont `guard`, `nen-guard`, `steward`), `humanFigure`/`humanAura` consommant `NenTechniqueState`, poses, identité stable |
+| Chemin de cast déjà en place                                                        | `castInTour(world, kind, input)` + `TOUR_HATSU_KINDS` (78 kinds portés)                                                                                                                                                                      |
 
 Le chantier n'est donc pas d'inventer une population : c'est de **brancher une
 projection** — exactement le geste que l'ADR-001 prescrit.
@@ -115,7 +115,7 @@ implémentation de technique :
   aucune aura pour qui n'a canoniquement pas de Nen **ou dont la maîtrise est
   inconnue** — l'absence du champ couvre les deux cas, et l'ambiguïté se résout
   dans la donnée, jamais par inférence dans le code (un garde n'a pas d'aura
-  *parce que garde*). État vérifié le 2026-08-03 : 50/224 personnages ont le
+  _parce que garde_). État vérifié le 2026-08-03 : 50/224 personnages ont le
   champ, et il est **incomplet** — Babimyna et Furykov, utilisateurs confirmés,
   ne l'ont pas. La complétion est un chantier de `data/` (phase 0), sourcé
   chapitre par chapitre. L'état de base est une **conduite de poste** : Ten en
@@ -128,7 +128,7 @@ implémentation de technique :
   `castInTour` — mêmes règles, mêmes coûts, mêmes refus (« inert », « no
   target ») que le visiteur ; l'origine est la position du personnage, la cible
   est choisie dans sa pièce. La couche nouvelle — la **conduite** — décide
-  uniquement *quand* et *où*, jamais *quoi ni comment* : zéro
+  uniquement _quand_ et _où_, jamais _quoi ni comment_ : zéro
   `cost`/`condition`/`rule` écrit en dur dans `apps/web` (cible mesurable de
   l'ADR-001, principe 3). Elle est **seedée** (`characterId × chapitre × tick`,
   jamais d'aléa non reproductible) et **budgétée** (K effets PNJ simultanés,
@@ -180,12 +180,12 @@ son quand le visiteur interagit avec elle. Rien d'autre.
 
 ## 3. Options considérées
 
-| Option | Verdict |
-| --- | --- |
-| A. Figurants procéduraux (foule générée par pont, gardes génériques) | ⛔ contredit frontalement `tour-immersion.md` et « le canon compile » : la plus grosse invention possible du site |
-| B. **Personnages nommés projetés depuis `data/`, Nen et hatsu par le moteur** | ✅ retenue — zéro déclaration nouvelle, 97 % du placement déjà résolu par la donnée, primitives de rendu et de cast déjà en place |
-| C. Scripter des scènes (cutscenes posées à la main dans le tour) | ⛔ recrée `arenaDefinition` en pire : des faits de mise en scène en dur dans `apps/web`, non dérivés, non lintés ; et fige ce qui doit rester une projection du chapitre courant |
-| D. Attendre la fin complète de l'ADR-001 avant toute présence | ⛔ inutilement conservateur : les phases 1-2 ne touchent à aucun fait de catalogue hatsu ; seule la phase 3 frôle le gel du chantier 3, et elle n'ajoute **aucune technique nouvelle** (voir §5) |
+| Option                                                                        | Verdict                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A. Figurants procéduraux (foule générée par pont, gardes génériques)          | ⛔ contredit frontalement `tour-immersion.md` et « le canon compile » : la plus grosse invention possible du site                                                                                |
+| B. **Personnages nommés projetés depuis `data/`, Nen et hatsu par le moteur** | ✅ retenue — zéro déclaration nouvelle, 97 % du placement déjà résolu par la donnée, primitives de rendu et de cast déjà en place                                                                |
+| C. Scripter des scènes (cutscenes posées à la main dans le tour)              | ⛔ recrée `arenaDefinition` en pire : des faits de mise en scène en dur dans `apps/web`, non dérivés, non lintés ; et fige ce qui doit rester une projection du chapitre courant                 |
+| D. Attendre la fin complète de l'ADR-001 avant toute présence                 | ⛔ inutilement conservateur : les phases 1-2 ne touchent à aucun fait de catalogue hatsu ; seule la phase 3 frôle le gel du chantier 3, et elle n'ajoute **aucune technique nouvelle** (voir §5) |
 
 ---
 
@@ -209,28 +209,28 @@ son quand le visiteur interagit avec elle. Rien d'autre.
 
 Modules cibles (indicatifs — noms ajustables, principes non) :
 
-| Module | Responsabilité |
-| --- | --- |
-| `cast/distribution.ts` | pure : (world state du dernier événement, blueprint) → postes `{characterId, spaceId, tierId, at, role}` |
-| `cast/stations.ts` | pure : choix déterministe d'un poste dans un espace ou un secteur (seed = characterId) |
-| `cast/wardrobe.ts` | table fermée rôle canonique → profil `humanProfiles` + tenue (`gown` reines, `suit` roi…) |
-| `cast/presence.ts` | bornes temporelles lues depuis la projection : `mapPresenceFromChapterId`, identités gérées, cap de spoiler |
-| `cast/beasts.ts` | pure : déclarations `guardianBeast` → apparitions dormantes (silhouette, `spread`, son au viseur) |
-| `cast/nen.ts` (phase 2) | conduite d'aura : poste → Ten/Zetsu ; événements → Ren ; émet des `NenTechniqueState` |
-| `cast/conduite.ts` (phase 3) | quand/où caster : seed, budget K, cooldowns → appels `castInTour` |
-| `cast/index.ts` | façade |
+| Module                       | Responsabilité                                                                                              |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `cast/distribution.ts`       | pure : (world state du dernier événement, blueprint) → postes `{characterId, spaceId, tierId, at, role}`    |
+| `cast/stations.ts`           | pure : choix déterministe d'un poste dans un espace ou un secteur (seed = characterId)                      |
+| `cast/wardrobe.ts`           | table fermée rôle canonique → profil `humanProfiles` + tenue (`gown` reines, `suit` roi…)                   |
+| `cast/presence.ts`           | bornes temporelles lues depuis la projection : `mapPresenceFromChapterId`, identités gérées, cap de spoiler |
+| `cast/beasts.ts`             | pure : déclarations `guardianBeast` → apparitions dormantes (silhouette, `spread`, son au viseur)           |
+| `cast/nen.ts` (phase 2)      | conduite d'aura : poste → Ten/Zetsu ; événements → Ren ; émet des `NenTechniqueState`                       |
+| `cast/conduite.ts` (phase 3) | quand/où caster : seed, budget K, cooldowns → appels `castInTour`                                           |
+| `cast/index.ts`              | façade                                                                                                      |
 
 ---
 
 ## 5. Plan par phases (chacune livrable seule)
 
-| # | Phase | Contenu | Effort | Risque |
-| --- | --- | --- | --- | --- |
-| 0 | **Donnée & contrats** | Résoudre les 2 ids de lieu (11 étapes) dans `data/` ; compléter la 224ᵉ `mapTrajectory` ; **compléter le champ `nen`** des utilisateurs confirmés (50/224 aujourd'hui ; Babimyna, Furykov… manquants), sourcé chapitre par chapitre ; **déclarer `guardianBeast`** sur chaque prince qui en montre une (chapitre source, silhouette) ; invariants zod dans `packages/contracts` (trajectoires ↔ blueprint, rôles ↔ garde-robe, chapitres existants, bêtes sourcées) ; canon-lint vert | ~1-2 j | nul |
-| 1 | **La distribution** | Load serveur du tour : `selectEvent` (dernier événement ≤ cap) + `getWorldState` — la même projection que `/ship` ; `cast/{distribution,stations,wardrobe,presence}` ; rendu en apparitions `avatar` (identité stable = characterId) ; viser → provenance (nom, « ici depuis ch. N », source) ; perf : figures animées dans la pièce du visiteur et ses voisines seulement (patron `silentRooms` existant), postes statiques ailleurs | ~3-4 j | faible |
-| 1b | **Les bêtes gardiennes** | `cast/beasts.ts` : une apparition dormante par déclaration `guardianBeast`, dans l'espace du prince ; silhouettes `nenCreatureFigure` réutilisées ; déambulation par `spread` ; son au viseur (`lib/audio/hatsu/guardians`) ; aucune compétence activée | ~2 j | faible |
-| 2 | **Le Nen porté** | `cast/nen.ts` : aura si et seulement si `nen` renseigné dans characters.json — Ten en faction, Zetsu pour les identités cachées, Ren en alerte (cast du visiteur à portée, apparition hostile dans la pièce) ; pas d'aura pour les non-utilisateurs et les cas inconnus ; rendu par `humanAura` existant ; Gyo du visiteur révèle ce que `appearsAs`/`hidden` masquent, comme pour le reste de la marche | ~2-3 j | faible |
-| 3 | **Les hatsu d'office** | `cast/conduite.ts` : cast automatique, seedé, budgété, via `castInTour`, restreint aux techniques du porteur dont le `kind` est **déjà** dans `TOUR_HATSU_KINDS` — **zéro technique nouvelle, zéro kind nouveau** : le gel du chantier 3 de l'ADR-001 est respecté à la lettre. Le read-out attribue chaque cast à son auteur | ~1 sem | moyen — c'est la phase à ne pas commencer si le chantier 3 (unification Nen) est en vol sur les mêmes profils |
+| #   | Phase                    | Contenu                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Effort | Risque                                                                                                        |
+| --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| 0   | **Donnée & contrats**    | Résoudre les 2 ids de lieu (11 étapes) dans `data/` ; compléter la 224ᵉ `mapTrajectory` ; **compléter le champ `nen`** des utilisateurs confirmés (50/224 aujourd'hui ; Babimyna, Furykov… manquants), sourcé chapitre par chapitre ; **déclarer `guardianBeast`** sur chaque prince qui en montre une (chapitre source, silhouette) ; invariants zod dans `packages/contracts` (trajectoires ↔ blueprint, rôles ↔ garde-robe, chapitres existants, bêtes sourcées) ; canon-lint vert | ~1-2 j | nul                                                                                                           |
+| 1   | **La distribution**      | Load serveur du tour : `selectEvent` (dernier événement ≤ cap) + `getWorldState` — la même projection que `/ship` ; `cast/{distribution,stations,wardrobe,presence}` ; rendu en apparitions `avatar` (identité stable = characterId) ; viser → provenance (nom, « ici depuis ch. N », source) ; perf : figures animées dans la pièce du visiteur et ses voisines seulement (patron `silentRooms` existant), postes statiques ailleurs                                                 | ~3-4 j | faible                                                                                                        |
+| 1b  | **Les bêtes gardiennes** | `cast/beasts.ts` : une apparition dormante par déclaration `guardianBeast`, dans l'espace du prince ; silhouettes `nenCreatureFigure` réutilisées ; déambulation par `spread` ; son au viseur (`lib/audio/hatsu/guardians`) ; aucune compétence activée                                                                                                                                                                                                                               | ~2 j   | faible                                                                                                        |
+| 2   | **Le Nen porté**         | `cast/nen.ts` : aura si et seulement si `nen` renseigné dans characters.json — Ten en faction, Zetsu pour les identités cachées, Ren en alerte (cast du visiteur à portée, apparition hostile dans la pièce) ; pas d'aura pour les non-utilisateurs et les cas inconnus ; rendu par `humanAura` existant ; Gyo du visiteur révèle ce que `appearsAs`/`hidden` masquent, comme pour le reste de la marche                                                                              | ~2-3 j | faible                                                                                                        |
+| 3   | **Les hatsu d'office**   | `cast/conduite.ts` : cast automatique, seedé, budgété, via `castInTour`, restreint aux techniques du porteur dont le `kind` est **déjà** dans `TOUR_HATSU_KINDS` — **zéro technique nouvelle, zéro kind nouveau** : le gel du chantier 3 de l'ADR-001 est respecté à la lettre. Le read-out attribue chaque cast à son auteur                                                                                                                                                         | ~1 sem | moyen — c'est la phase à ne pas commencer si le chantier 3 (unification Nen) est en vol sur les mêmes profils |
 
 **Scène d'acceptation canon** (le patron des 8 vagues de `hatsu-potentiel.md` :
 une scène rejouable comme test) : au dernier événement sous cap ch. 361, la
@@ -332,7 +332,7 @@ Cinq écarts, tous dans le sens de l'ADR plutôt que contre lui.
    désormais un bloc `nen` qui n'en dirait ni l'un ni l'autre.
 4. **L'exhaustivité de la garde-robe est un test, pas un invariant zod.** La
    table vit dans `apps/web` et `packages/contracts` ne lit jamais le site :
-   `wardrobe.test.ts` échoue sur un rôle non habillé *et* sur un costume que
+   `wardrobe.test.ts` échoue sur un rôle non habillé _et_ sur un costume que
    plus personne ne porte, et le contrat garde la moitié qui le regarde (un
    corps placé déclare un rôle). Même logique pour les silhouettes de bêtes, où
    `scripts/silhouettes.test.ts` tient les deux listes ensemble.

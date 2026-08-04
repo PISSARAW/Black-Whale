@@ -67,8 +67,20 @@ describe('the Little Eye sequence (ch. 369)', () => {
   })
 
   it("l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)", () => {
-    const branches = new InMemoryBranchEngine()
     const base = world()
+    base.effects['bind-sayird'] = {
+      id: 'bind-sayird',
+      kind: 'CONSTRAINT',
+      state: 'ACTIVE',
+      attributes: {},
+      abilityId: 'steal-chain',
+      source: { id: 'kurapika', kind: 'CHARACTER' },
+      targets: [{ id: 'sayird', kind: 'CHARACTER' }],
+      anchors: [],
+      startedAt: CURSOR,
+    }
+
+    const branches = new InMemoryBranchEngine()
     branches.createBranch({
       id: 'chain-drain',
       name: 'drain',
@@ -81,13 +93,14 @@ describe('the Little Eye sequence (ch. 369)', () => {
         targets: ['sayird'],
         targetRefs: [{ id: 'sayird', kind: 'CHARACTER' }],
         actionId: 'drain-into-zetsu',
+        parameters: { effectId: 'bind-sayird', targetAbilityId: 'little-eye' },
       }),
     )
     expect(drain.allowed).toBe(true)
     const state = branches.append('chain-drain', drain.events ?? []).state
 
     const forcedZetsu = Object.values(state.effects).find(
-      (effect) => effect.kind === 'EFFECT_STATE' && effect.attributes['forcedZetsu'] === true,
+      (effect) => effect.id === 'bind-sayird' && effect.attributes['forcedZetsu'] === true,
     )
     expect(forcedZetsu).toBeDefined()
   })

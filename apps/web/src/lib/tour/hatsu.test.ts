@@ -997,7 +997,12 @@ describe('shutting a room', () => {
     // We now use tribunal to test shutting a room
     const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
     const jailed = door(watched, 'tribunal', roomA.id, roomA.id)
-    const red = door(door(jailed.world, 'tribunal', roomA.id, roomA.id).world, 'tribunal', roomA.id, roomA.id)
+    const red = door(
+      door(jailed.world, 'tribunal', roomA.id, roomA.id).world,
+      'tribunal',
+      roomA.id,
+      roomA.id,
+    )
     expect(red.world.shut).toEqual([roomA.id])
   })
 
@@ -1042,7 +1047,12 @@ describe('what waits at a threshold', () => {
   it('closes the contract on its terms, and releases what was shut', () => {
     let world = door(EMPTY_WORLD, 'legal-defense', roomB.id).world
     world = door(world, 'paper-spy', roomB.id).world
-    world = door(door(door(world, 'tribunal', roomB.id, roomB.id).world, 'tribunal', roomB.id, roomB.id).world, 'tribunal', roomB.id, roomB.id).world
+    world = door(
+      door(door(world, 'tribunal', roomB.id, roomB.id).world, 'tribunal', roomB.id, roomB.id).world,
+      'tribunal',
+      roomB.id,
+      roomB.id,
+    ).world
     world = door(world, 'contract', roomA.id).world
 
     const met = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
@@ -1078,7 +1088,17 @@ describe('what waits at a threshold', () => {
 
   it('lets the fish take one thing each time the room is walked out of', () => {
     let world = door(EMPTY_WORLD, 'paper-spy', busiest.space.id).world
-    world = door(door(door(world, 'tribunal', busiest.space.id, busiest.space.id).world, 'tribunal', busiest.space.id, busiest.space.id).world, 'tribunal', busiest.space.id, busiest.space.id).world
+    world = door(
+      door(
+        door(world, 'tribunal', busiest.space.id, busiest.space.id).world,
+        'tribunal',
+        busiest.space.id,
+        busiest.space.id,
+      ).world,
+      'tribunal',
+      busiest.space.id,
+      busiest.space.id,
+    ).world
     const loosed = door(world, 'devour', busiest.space.id)
     expect(loosed.report).toMatchObject({ kind: 'fish-loosed' })
 
@@ -2000,7 +2020,7 @@ describe('taking a technique off the ship', () => {
         const stuck = stick().world
         const elsewhere = [...ship.spaces.values()].find((space) => space.id !== solidA.spaceId)!
         const taut = hit(stuck, 'elastic', solidA.id, { standingIn: elsewhere.id })
-        expect(taut.report).toEqual({ kind: 'gum-taut', solidId: solidA.id })
+        expect(taut.report).toMatchObject({ kind: 'gum-taut', solidId: solidA.id })
         // Still attached: saying so is the point of not doing nothing.
         expect(taut.world.gum).toMatchObject({ solidId: solidA.id })
       })

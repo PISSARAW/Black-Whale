@@ -42,6 +42,8 @@ export type BodyMark =
   | 'soothed'
   /** Joined to the visitor: Damage: Sweet Home. */
   | 'linked'
+  /** Aura forcibly extracted, victim placed in Zetsu: Steal Chain. */
+  | 'drained'
 
 /** One thing being done to one body, with its end already written. */
 export interface BodyHold {
@@ -78,6 +80,8 @@ export const HOLD_SECONDS: Record<BodyMark, number> = {
   marked: 30,
   soothed: 18,
   linked: 25,
+  // Steal Chain empties a body and puts it in Zetsu; it comes back on its own.
+  drained: 25,
 }
 
 /** What is being held on this body, or null. One at a time, newest wins. */

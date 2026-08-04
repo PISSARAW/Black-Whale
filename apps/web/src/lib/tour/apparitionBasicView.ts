@@ -80,7 +80,10 @@ function owl(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionConte
   return { turns: head }
 }
 
-function human(seen: Apparition, { THREE, glow, glass, root, observerGyo }: BasicApparitionContext) {
+function human(
+  seen: Apparition,
+  { THREE, glow, glass, root, observerGyo }: BasicApparitionContext,
+) {
   const figure = buildHumanFigure({
     THREE,
     glow,

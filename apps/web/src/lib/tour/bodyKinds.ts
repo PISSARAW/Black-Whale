@@ -64,6 +64,7 @@ export const BODY_KINDS = [
   'heart-vow',
   'curse',
   'identity-swap',
+  'chain-rule',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 export type BodyKind = (typeof BODY_KINDS)[number]

@@ -855,7 +855,7 @@ apparié à `beyond-sacrificial-curse` (P1) dont il est le contrechamp au ch. 41
     achèvement → `KNOWLEDGE_GRANTED(KNOWN)` à Furykov sur la mécanique complète de la
     cible. Déchiffrer, c'est écrire dans le knowledge-engine.
   - Fabrication : effet `CONSTRUCT` en cours, `attributes.{type: weapon|armor|tool,
-    targetAbilityId, progress, required}` ; interruption → remise à zéro de `progress`
+targetAbilityId, progress, required}` ; interruption → remise à zéro de `progress`
     (l'asymétrie canon avec le déchiffrage) ; achèvement → entité `CONSTRUCT`
     (l'équipement).
   - Application : détruire → `ABILITY_REVOKED`, ou `EFFECT_ENDED` sur la `CURSE` (la
@@ -910,7 +910,7 @@ apparié à `beyond-sacrificial-curse` (P1) dont il est le contrechamp au ch. 41
 > souvent pour plusieurs capacités groupées) mais un seul geste effectif, sans variantes
 > de cible ni couplages. Un hatsu « au max » au sens du §1 ne l'est pas si on ne peut
 > s'en servir que d'une seule façon : Bungee Gum n'est pas « attacher » — c'est attacher
-> *à quoi*, *depuis où*, *caché ou pas*.
+> _à quoi_, _depuis où_, _caché ou pas_.
 
 ### 8.1 La grammaire d'emploi
 
@@ -919,25 +919,25 @@ Chaque emploi d'un hatsu est le produit de deux axes, et chaque case cochée dev
 
 **Axe 1 — la cible** (le `TargetType` du SDK, déjà typé) :
 
-| Cible | Exemple canon (Bungee Gum) |
-| --- | --- |
-| `self` | propulsion, course sur les murs (la description d'`abilities.json` les liste) |
-| `object` | cartes projetées, projectiles renvoyés, rocher attiré |
-| `person` | filament attaché à distance, cible attirée (vs Gon, Heavens Arena) |
-| `surface` | piège posé au sol, attendu d'être marché dedans |
-| `zone` / `aura` / `body` | selon la capacité (zones à règles, vols d'aura, marques) |
+| Cible                    | Exemple canon (Bungee Gum)                                                    |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `self`                   | propulsion, course sur les murs (la description d'`abilities.json` les liste) |
+| `object`                 | cartes projetées, projectiles renvoyés, rocher attiré                         |
+| `person`                 | filament attaché à distance, cible attirée (vs Gon, Heavens Arena)            |
+| `surface`                | piège posé au sol, attendu d'être marché dedans                               |
+| `zone` / `aura` / `body` | selon la capacité (zones à règles, vols d'aura, marques)                      |
 
 **Axe 2 — le voile ou le renfort** (les techniques de base, mappées sur des primitives
 qui existent toutes) :
 
-| Technique | Primitive moteur | Effet sur l'emploi |
-| --- | --- | --- |
-| **In** | `masked: true` (§ effects) | l'emploi devient invisible hors Gyo/omniscient — le piège de Bungee Gum |
-| **Gyo** | toggle de perspective existant | contre-emploi : *voir* les effets masqués d'autrui ; chaque module masqué doit dire ce que Gyo révèle |
-| **Shu** | extension de l'effet à l'objet tenu | l'arme enduite, la carte durcie |
-| **Ko / Ken / Ryu** | `attributes` d'intensité sur l'effet | même geste, coût et puissance différents — affichés au « Pourquoi ? » |
-| **En** | rayon de perception (`SpatialEstimate`) | emploi de détection pour qui le canon le montre |
-| **Ten / Zetsu** | états d'aura (cf. ADR-003 phase 2) | conditions d'entrée : tel emploi exige Zetsu (approche furtive), tel autre le rompt |
+| Technique          | Primitive moteur                        | Effet sur l'emploi                                                                                    |
+| ------------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **In**             | `masked: true` (§ effects)              | l'emploi devient invisible hors Gyo/omniscient — le piège de Bungee Gum                               |
+| **Gyo**            | toggle de perspective existant          | contre-emploi : _voir_ les effets masqués d'autrui ; chaque module masqué doit dire ce que Gyo révèle |
+| **Shu**            | extension de l'effet à l'objet tenu     | l'arme enduite, la carte durcie                                                                       |
+| **Ko / Ken / Ryu** | `attributes` d'intensité sur l'effet    | même geste, coût et puissance différents — affichés au « Pourquoi ? »                                 |
+| **En**             | rayon de perception (`SpatialEstimate`) | emploi de détection pour qui le canon le montre                                                       |
+| **Ten / Zetsu**    | états d'aura (cf. ADR-003 phase 2)      | conditions d'entrée : tel emploi exige Zetsu (approche furtive), tel autre le rompt                   |
 
 ### 8.2 La règle des trois vérités — le garde-fou du §5 étendu
 
@@ -959,7 +959,7 @@ citée ici est **montrée** au manga :
 
 - **Chaînes (A)** : chaque chaîne est déjà plusieurs emplois — Dowsing seule cumule
   localiser (personne, objet), détecter le mensonge (les interrogatoires du pont 1),
-  parer et frapper (vs Uvogin) ; Chain Jail n'a *pas* d'emploi `self` et son emploi
+  parer et frapper (vs Uvogin) ; Chain Jail n'a _pas_ d'emploi `self` et son emploi
   `person` porte la condition-serment (Brigade seulement) — une grille sert aussi à
   dire ce qu'un hatsu **refuse**. Emperor Time est transversal : il ne s'emploie pas,
   il multiplie les emplois des autres chaînes, à coût vital compté.
@@ -971,7 +971,7 @@ citée ici est **montrée** au manga :
   de marionnette — ce que le stamp accepte est une grille de cibles en soi) ; les
   poupées de Kalluto en pose (espionnage) et en nuée (lame) ; Blinky en aspiration
   d'objets et en usage médical (le sang de Gon) — deux emplois, deux contextes canon.
-- **Zones et pièges (J)** : l'emploi est le *placement* — Indoor Fish exige la pièce
+- **Zones et pièges (J)** : l'emploi est le _placement_ — Indoor Fish exige la pièce
   close (invariant déjà noté), Desire Trap se choisit un appât : la grille de cible est
   la règle du piège.
 - **Malédictions (H)** : peu d'axes de cible, beaucoup d'états — DORMANT/TRIGGERED font

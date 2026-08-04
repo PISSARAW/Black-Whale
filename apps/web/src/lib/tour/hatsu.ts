@@ -35,7 +35,40 @@ import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
 import { BODY_KINDS } from './bodyKinds'
-import { aimGum, type GumStrand } from './gum'
+// The shapes the walk casts on live in `cast/types.ts`; line 1 re-exports them
+// for everyone who reads them off `hatsu`, and this brings them into scope for
+// the reducers below, which is a different thing and needs saying separately.
+import {
+  CLOSED_BOOK,
+  DOUBLE_MODES,
+  EMPTY_WORLD,
+  EYE_MODES,
+  OWL_MODES,
+  type Aim,
+  type DeckMoment,
+  type Doors,
+  type DoorOptions,
+  type Heading,
+  type HeldSolid,
+  type LoadedDeck,
+  type Mark,
+  type Perch,
+  type Played,
+  type Ray,
+  type Scene,
+  type SolidHold,
+  type Stood,
+  type TourBody,
+  type TourBook,
+  type TourCastInput,
+  type TourCastResult,
+  type TourDoubleMode,
+  type TourEyeMode,
+  type TourOwlMode,
+  type TourReport,
+  type TourWorld,
+} from './cast/types'
+import { aimGum, gumLanding, gumTension, type GumStrand } from './gum'
 import { nextForgery } from './texture'
 
 /**
@@ -49,6 +82,18 @@ import { nextForgery } from './texture'
  * and say so, which is honest: a technique that quietly did nothing would be
  * worse than one that tells you the walk is the wrong ground for it.
  */
+const without = <T>(list: T[], predicate: (item: T) => boolean) => list.filter((i) => !predicate(i))
+
+/** Rooms whose contents the aura is holding, which Blinky will not swallow. */
+export function nenHeld(world: TourWorld): string[] {
+  return [
+    ...(world.isolated ? [world.isolated.spaceId] : []),
+    ...world.doors,
+    ...world.watched.map((doll) => doll.spaceId),
+    ...(world.eye ? [world.eye] : []),
+  ]
+}
+
 export const TOUR_HATSU_KINDS = [
   // On the rooms.
   'teleport',
@@ -269,9 +314,6 @@ export type TourAim = 'reticle' | 'index'
  * scouting, or told to film — and they are the whole of the ability: the aura
  * costs nothing and does nothing except carry what the insect sees back.
  */
-export const OWL_MODES = ['wander', 'shoulder', 'random'] as const
-export const DOUBLE_MODES = ['follow', 'wander', 'scout'] as const
-export const EYE_MODES = ['pilot', 'scout', 'film'] as const
 
 /**
  * The three airs Enchanting Music has, in the order the three keys play them.
@@ -284,15 +326,10 @@ export const EYE_MODES = ['pilot', 'scout', 'film'] as const
  * one. Each is heard by the room the visitor is standing in and by nothing
  * else, because that is how far a flute carries.
  */
-export const TUNES = ['bloom', 'scatter', 'dance'] as const
 
 /** Which air is being played, or was last played. */
-export type TourTune = (typeof TUNES)[number]
 
 /** Which bird was sent, which watch the double is under, what the insect is told. */
-export type TourOwlMode = (typeof OWL_MODES)[number]
-export type TourDoubleMode = (typeof DOUBLE_MODES)[number]
-export type TourEyeMode = (typeof EYE_MODES)[number]
 
 /** The next of each, wrapping — which is all R has to decide. */
 export const nextOwlMode = (mode: TourOwlMode | null): TourOwlMode =>
@@ -313,20 +350,6 @@ export const nextEyeMode = (mode: TourEyeMode | null): TourEyeMode =>
 export const OWL_SECONDS = 20
 export const OWL_FILM_SECONDS = 10
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /** Nothing taken, nothing open, nothing drained. */
 export const bookIsShut = (book: TourBook): boolean =>
   !book.pages.length && !book.cards.length && !book.zetsu.length && !book.loan
@@ -345,7 +368,8 @@ export const bodyIsRested = (body: TourBody): boolean =>
   !body.deduced.length &&
   body.packed === null &&
   !body.gilded &&
-  !body.halo
+  !body.halo &&
+  !body.vowed
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
@@ -401,9 +425,41 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.dragon &&
   !world.cat &&
   !world.summoned &&
+  !Object.values(world.solids).some((hold) => hold.vowed) &&
   bookIsShut(world.book) &&
   bodyIsRested(world.body)
 
+// ── The solids ────────────────────────────────────────────────────────────
+//
+// Everything from here to `castInTour` is the second noun the walk learned:
+// the thing standing in the room, as opposed to the room. It is deliberately
+// the same shape as the first — a value in `TourWorld`, a pure reducer, and a
+// renderer that knows nothing but how to draw what it is handed.
+
+/** The blueprint's record for a solid, or the Gallery Fake copy standing in for one. */
+export function solidById(ship: Ship, world: TourWorld, id: string | null): Structure | null {
+  if (!id) return null
+  return (
+    ship.structures.find((structure) => structure.id === id) ??
+    world.copies.find((copy) => copy.id === id) ??
+    null
+  )
+}
+
+/**
+ * What the strand out of the wrist is holding right now, from 0 to 1.
+ *
+ * Nought when there is nothing stuck, which is not a refusal: the gum still
+ * has the body it came out of to contract against. `gum.ts` owns the reading;
+ * this only finds the far end of the filament in the ship and hands it over.
+ */
+function strandTension(world: TourWorld, ship: Ship, at: Vec2): number {
+  if (!world.gum) return 0
+  const anchor = solidById(ship, world, world.gum.solidId)
+  if (!anchor) return 0
+  const now = solidNow(anchor, world.solids[world.gum.solidId])
+  return gumTension(world.gum, Math.hypot(now.at[0] - at[0], now.at[1] - at[1]))
+}
 
 /**
  * The solid as the aura currently leaves it.
@@ -915,6 +971,15 @@ const dropHold = (world: TourWorld, id: string): TourWorld => {
 const clearanceOf = (structure: Structure) => Math.hypot(structure.size[0], structure.size[1]) / 2
 
 /**
+ * The metres a standing body takes up, for anything reeled in towards one.
+ *
+ * The same half-metre `footing.ts` gives the visitor: a wardrobe that finished
+ * its trip inside the person who pulled it would be a collision the walk has no
+ * way to resolve, so the contraction stops one body's width short.
+ */
+const VISITOR_CLEARANCE = 0.5
+
+/**
  * Moves a solid, but never out through the wall of the room it stands in.
  *
  * A bed shoved through the party wall would be a claim about the ship rather
@@ -1025,32 +1090,72 @@ type SolidCast = (ctx: SolidCastContext) => TourCastResult
  * from one to the next. A kind with no entry here is inert on a solid.
  */
 const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
-  // Bungee Gum: the first cast sets the strand, the second brings the other
-  // end to it. Tension is what the technique is, so the pull is towards the
-  // thing already stuck rather than towards the visitor.
-  elastic: ({ world, ship, structure, hold, id }) => {
-    if (!world.pairing || world.pairing === id) {
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-    }
-    const anchor = solidById(ship, world, world.pairing)
-    if (!anchor)
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-    const anchorNow = solidNow(anchor, world.solids[world.pairing])
+  // Bungee Gum on a solid. The filament goes out of the wrist and takes hold;
+  // cast at the same thing again it contracts and the thing crosses the room,
+  // because that is the gesture ch. 39 draws first. The arithmetic — where a
+  // thing comes to rest, and how much the strand is holding — is `gum.ts`'s;
+  // all that happens here is the ship's own objection, which is that a cabinet
+  // cannot be dragged through a bulkhead.
+  elastic: ({ world, ship, structure, hold, id, at, standingIn }) => {
     const now = solidNow(structure, hold)
-    const dx = now.at[0] - anchorNow.at[0]
-    const dz = now.at[1] - anchorNow.at[1]
-    const length = Math.hypot(dx, dz) || 1
-    const gap = clearanceOf(anchorNow) + clearanceOf(now)
-    const landing: Vec2 = [
-      anchorNow.at[0] + (dx / length) * gap,
-      anchorNow.at[1] + (dz / length) * gap,
-    ]
+    const act = aimGum({
+      strand: world.gum,
+      solidId: id,
+      at,
+      anchorAt: now.at,
+      clearance: clearanceOf(now) + VISITOR_CLEARANCE,
+      together: standingIn === structure.spaceId,
+    })
+    if (act.act === 'stick') {
+      return {
+        world: { ...world, gum: { solidId: id, rest: act.rest } },
+        report: { kind: 'gum-set', solidId: id, metres: act.rest },
+      }
+    }
+    if (act.act === 'taut') {
+      return {
+        world,
+        report: { kind: 'gum-taut', solidId: id, tension: gumTension(world.gum!, act.metres) },
+      }
+    }
+    if (act.act === 'reel') {
+      const room = ship.spaces.get(structure.spaceId)
+      const outline = structureFootprint({ ...now, at: act.landing })
+      const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
+      const drawn = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+      return {
+        world: { ...withHold(world, id, fits ? { at: act.landing } : {}), gum: null },
+        report: {
+          kind: 'gum-reeled',
+          solidId: id,
+          metres: fits ? act.metres : 0,
+          tension: gumTension(world.gum!, drawn),
+        },
+      }
+    }
+    // A second solid with the first still stuck: the strand joins the two and
+    // lets go of the wrist, which is the other half of what ch. 39 draws.
+    const anchorId = world.gum!.solidId
+    const anchor = solidById(ship, world, anchorId)
+    const reached = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+    if (!anchor) {
+      return {
+        world: { ...world, gum: { solidId: id, rest: reached } },
+        report: { kind: 'gum-set', solidId: id, metres: reached },
+      }
+    }
+    const anchorNow = solidNow(anchor, world.solids[anchorId])
+    const landing = gumLanding({
+      at: anchorNow.at,
+      anchorAt: now.at,
+      clearance: clearanceOf(anchorNow) + clearanceOf(now),
+    })
     const room = ship.spaces.get(structure.spaceId)
     const outline = structureFootprint({ ...now, at: landing })
     const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
     return {
-      world: { ...withHold(world, id, fits ? { at: landing } : {}), pairing: null },
-      report: { kind: 'gum-pulled', solidId: id, otherId: world.pairing },
+      world: { ...withHold(world, id, fits ? { at: landing } : {}), gum: null },
+      report: { kind: 'gum-pulled', solidId: id, otherId: anchorId },
     }
   },
 
@@ -1411,11 +1516,11 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // and stays what it is.
   'identity-swap': ({ world, ship, structure, hold, id }) => {
     if (!world.pairing || world.pairing === id) {
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      return { world: { ...world, pairing: id }, report: { kind: 'solid-paired', solidId: id } }
     }
     const other = solidById(ship, world, world.pairing)
     if (!other)
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      return { world: { ...world, pairing: id }, report: { kind: 'solid-paired', solidId: id } }
     const mine = solidNow(structure, hold)
     const theirs = solidNow(other, world.solids[other.id])
     return {
@@ -1718,7 +1823,6 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.snakes ? ['snakes'] : []),
     ...(world.trap ? [`trap:${world.trap}`] : []),
     ...world.gumTraps.map((id) => `gum:${id}`),
-    ...(world.gum ? [`strand:${world.gum.solidId}`] : []),
     ...(world.gum ? [`strand:${world.gum.solidId}`] : []),
     ...world.flowered.map((id) => `flowered:${id}`),
     ...world.scattered.map((id) => `scattered:${id}`),
@@ -2069,18 +2173,27 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
 
   'sun-flare': raiseTheSun,
 
-  // Bungee Gum on the body (no target):
-  // Faux Tissu heals the punishment if any is packed.
-  // Otherwise, Propulsion increases the walking pace.
-  elastic: ({ body, withBody }) => {
+  /**
+   * Bungee Gum turned on its own user, which the manga does two ways.
+   *
+   * With a punishment packed away, it is Faux Tissu closing what was opened.
+   * With nothing packed, it is the propulsion of ch. 39: the strand is anchored
+   * and the visitor is pulled towards the anchor rather than the anchor towards
+   * them. What that is worth rises with the stretch, because the force does —
+   * a propulsion that gave the same shove from one metre and from nine would be
+   * a winch, and this aura is not one. With nothing stuck, the gum still has
+   * the visitor's own frame to contract against, and that is the floor.
+   */
+  elastic: ({ world, ship, body, input, withBody }) => {
     if (body.packed !== null && body.packed > 0) {
       return {
         world: withBody({ packed: body.packed - 1 }),
         report: { kind: 'gum-healed', healed: 1 },
       }
     }
-    const committed = Math.min(6, body.enhance + 1)
-    return { world: withBody({ enhance: committed }), report: { kind: 'gum-propulsion' } }
+    const tension = strandTension(world, ship, input.at)
+    const committed = Math.min(6, body.enhance + 1 + Math.round(tension * 2))
+    return { world: withBody({ enhance: committed }), report: { kind: 'gum-propulsion', tension } }
   },
 }
 
@@ -4386,3 +4499,17 @@ export const TOUR_CAST_KINDS: Record<'solid' | 'body' | 'room', Set<HatsuInterac
   body: new Set(Object.keys(BODY_CASTS) as HatsuInteractionKind[]),
   room: new Set(Object.keys(ROOM_CASTS) as HatsuInteractionKind[]),
 }
+
+/**
+ * Put on the face of the body down the reticle, or take it off again.
+ *
+ * Cast at the same person twice and the layer comes off, because the walk has
+ * no other gesture for taking it off and a mask that could only ever go on
+ * would be a claim the manga does not make. Nothing is written about the person
+ * the face was copied from: `cast/reach.ts` gives them back unchanged, and this
+ * is the whole of what the technique does to the world.
+ */
+export const wearTheMask = (world: TourWorld, characterId: string): TourWorld => ({
+  ...world,
+  body: { ...world.body, masked: world.body.masked === characterId ? null : characterId },
+})

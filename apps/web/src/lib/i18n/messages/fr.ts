@@ -551,6 +551,7 @@ export const fr: Messages = {
       held: (name, what) => `${name} — ${what}`,
       worn: (name) =>
         `Vous portez le visage de ${name}. Aucune aura ne le montre ; seul le toucher le trahit.`,
+      stolen: (name, technique) => `${name} — capacité arrachée (${technique})`,
       marks: {
         bound: 'retenu',
         controlled: 'agit sur un ordre qui n’est pas le sien',
@@ -558,6 +559,7 @@ export const fr: Messages = {
         marked: 'porte une marque qui attend sa condition',
         soothed: 'apaisé',
         linked: 'lié à vous',
+        drained: 'forcé au Zetsu',
       },
       ephemeral: 'Rien de ceci ne survit à la pièce que vous quittez.',
       refusals: {
@@ -569,6 +571,8 @@ export const fr: Messages = {
         suicide:
           'Le cinquième rite est la mort de celui qui le lance. La visite ne le fera pas : elle vous montre la préparation et s’arrête là.',
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
+        'thumb-occupied': 'Le pouce tient déjà une capacité.',
+        'no-target-ability': 'Il n’a aucune capacité à voler.',
       },
       tells: {
         'declares-aura': 'Le catalogue en fait un utilisateur de Nen.',

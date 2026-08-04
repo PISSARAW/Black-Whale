@@ -21,6 +21,10 @@ export interface BodyReadoutWords {
   mark: (mark: BodyMark) => string
   /** "Sakata — held" */
   held: (name: string, what: string) => string
+  /** "You are wearing Machi's face" */
+  worn: (name: string) => string
+  /** "Sayird — stolen (little-eye)" */
+  stolen: (name: string, technique: string) => string
 }
 
 /** The one line to show, or null when there is nothing worth saying. */
@@ -35,5 +39,9 @@ export function noteFor(
   if (reach.outcome === 'refused')
     return reach.reason === 'not-a-body' ? null : words.refusal(reach.reason)
   if (reach.outcome === 'told') return reach.tells.map((tell) => words.tell(tell)).join(' ')
+  // The one line that is about the visitor rather than about the body: the
+  // face was copied, and the person it was copied from is unchanged.
+  if (reach.outcome === 'worn') return words.worn(nameOf(reach.characterId))
+  if (reach.outcome === 'stolen') return words.stolen(nameOf(reach.characterId), reach.technique)
   return words.held(nameOf(reach.characterId), words.mark(reach.hold.mark))
 }

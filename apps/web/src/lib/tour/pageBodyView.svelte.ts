@@ -54,6 +54,8 @@ interface BodyContext {
   beastFor: (characterId: string) => Parameters<typeof readBody>[0]['beast']
   /** The aura each body is carrying, as the conduct decided it. */
   auraFor: (post: Post) => 'ten' | 'ren' | 'zetsu' | null
+  /** The visitor's book, for checking if a stolen ability is held. */
+  book: { open: string | null; pages: string[] } | null
 }
 
 interface BodyViewOptions {
@@ -64,6 +66,18 @@ interface BodyViewOptions {
   placeOf: (location: string) => string | null
   /** Announce what a cast at a body came to, for the read-out over the scene. */
   report: (reach: Reach) => void
+  /**
+   * Put on the face of the body in front of you, or take it off again.
+   *
+   * The one thing this class hands back to the world rather than keeping: the
+   * mask is worn by the visitor, and the visitor is `TourWorld.body`. Nothing
+   * is written about the person the face was copied from.
+   */
+  wear: (characterId: string) => void
+  /**
+   * Persist a stolen technique to the visitor's book.
+   */
+  steal: (characterId: string, technique: string) => void
 }
 
 export class TourBodyView {
@@ -144,10 +158,16 @@ export class TourBodyView {
       target: person,
       dossier: this.dossier,
       aura: context.auraFor(person),
+      book: context.book,
       now,
     })
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false
     if (result.outcome === 'held') this.bodies = lay(this.bodies, result.hold)
+    if (result.outcome === 'stolen') {
+      this.bodies = lay(this.bodies, result.hold)
+      this.options.steal(result.characterId, result.technique)
+    }
+    if (result.outcome === 'worn') this.options.wear(result.characterId)
     if (result.outcome === 'told' && result.tells.includes('unsealed')) this.unsealAt(person)
     this.options.report(result)
     return true

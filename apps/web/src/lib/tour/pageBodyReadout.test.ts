@@ -7,6 +7,8 @@ const WORDS: BodyReadoutWords = {
   tell: (tell) => `tell:${tell}`,
   mark: (mark) => `mark:${mark}`,
   held: (name, what) => `${name} — ${what}`,
+  worn: (name) => `worn:${name}`,
+  stolen: (name, technique) => `stolen:${name}:${technique}`,
 }
 
 const nameOf = (characterId: string) => (characterId === 'sakata' ? 'Sakata' : '')
@@ -37,6 +39,13 @@ describe('the one line a cast at a body comes back with', () => {
       tells: ['holds-sealed', 'declares-aura'],
     }
     expect(noteFor(told, WORDS, nameOf)).toBe('tell:holds-sealed tell:declares-aura')
+  })
+
+  /** Ch. 357: the face is copied off the body in front of you, and that body
+   * is given back untouched — so the line is about the visitor, not about them. */
+  it('says whose face the visitor is now wearing', () => {
+    const worn: Reach = { outcome: 'worn', kind: 'disguise', characterId: 'sakata' }
+    expect(noteFor(worn, WORDS, nameOf)).toBe('worn:Sakata')
   })
 
   /** A refusal is a condition of the technique, which is the most instructive

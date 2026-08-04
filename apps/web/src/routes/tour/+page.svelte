@@ -6,6 +6,7 @@
   import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
   import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
   import { activeHatsu } from '$lib/nen/hatsuState'
+  import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { link, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
@@ -37,6 +38,7 @@
     EMPTY_WORLD,
     identityOf,
     TAKES_ORDERS,
+    wearTheMask,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
@@ -474,6 +476,8 @@
     tell: (tell) => $t.tour.body.tells[tell],
     mark: (mark) => $t.tour.body.marks[mark],
     held: $t.tour.body.held,
+    worn: $t.tour.body.worn,
+    stolen: $t.tour.body.stolen,
   })
   const bodyNameOf = (characterId: string) =>
     cast.members.find((member) => member.characterId === characterId)?.name ?? ''
@@ -524,6 +528,7 @@
       activeKind: technique?.kind ?? null,
       beastFor: castView.beastFor,
       auraFor: castView.auraOf,
+      book: world.book,
     }),
     words: () => addressWords,
     placeOf: (location) => {
@@ -533,6 +538,24 @@
     report: (reach) => {
       const line = noteFor(reach, bodyWords, bodyNameOf)
       if (line) note = { line, until: Date.now() + NOTE_MS }
+    },
+    wear: (characterId) => (world = wearTheMask(world, characterId)),
+    // The book holds what a technique *does* rather than whose it was, so the
+    // ability lifted off the body is looked up in the registry and filed under
+    // its interaction. One the walk cannot perform is not filed at all: a page
+    // the visitor could turn to and get nothing from would be worse than none.
+    steal: (characterId, technique) => {
+      const kind = hatsuById(technique)?.kind ?? null
+      if (!kind) return
+      world = {
+        ...world,
+        book: {
+          ...world.book,
+          pages: [...new Set([...world.book.pages, kind])],
+          open: kind,
+          zetsu: [...new Set([...world.book.zetsu, characterId])],
+        },
+      }
     },
   })
   // The conduct runs on the walk's own clock, a second at a time: the page
@@ -723,6 +746,7 @@
             touch,
             nameOf,
             sourceOf,
+            personName: bodyNameOf,
             onRelease: release,
             onCycleDouble: cycleDouble,
             onCycleOwl: cycleOwl,

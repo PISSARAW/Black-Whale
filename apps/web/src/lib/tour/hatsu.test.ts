@@ -1054,6 +1054,13 @@ describe('what waits at a threshold', () => {
     })
   })
 
+  it('refuses to amend a contract once it has been spoken', () => {
+    const first = door(EMPTY_WORLD, 'heart-vow', roomA.id)
+    const second = door(first.world, 'heart-vow', roomA.id)
+    expect(second.report).toMatchObject({ kind: 'vow-locked', subjectId: roomA.id })
+    expect(second.world.vows).toEqual(first.world.vows)
+  })
+
   it('closes the contract on its terms, and releases what was shut', () => {
     let world = door(EMPTY_WORLD, 'legal-defense', roomB.id).world
     world = door(world, 'paper-spy', roomB.id).world

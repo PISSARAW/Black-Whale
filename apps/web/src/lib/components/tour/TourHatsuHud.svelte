@@ -170,6 +170,7 @@
       : nameOf(solid)
   }
 
+  const locked = $derived(report?.kind === 'vow-locked')
   const line = $derived.by(() => {
     const say = $t.tour.hatsu.reports
     if (!report) return null
@@ -816,8 +817,10 @@
 
   {#if line && castable}
     <p
-      class="mt-2 border-l-2 pl-2 text-xs leading-snug text-[#FFFFF0]"
-      style:border-color={profile.color}
+      class={locked
+        ? 'mt-2 pl-2 text-xs leading-snug text-[#FFFFF0]/40'
+        : 'mt-2 border-l-2 pl-2 text-xs leading-snug text-[#FFFFF0]'}
+      style:border-color={locked ? undefined : profile.color}
     >
       {line}
     </p>

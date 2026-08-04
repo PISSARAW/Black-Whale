@@ -100,6 +100,16 @@ jobs:
       # correct locally and absent in production until something 500ed. This
       # answers non-zero when the migration folder no longer replays into the
       # schema.
+      # `migrate diff` replays the folder into a scratch database and drops it
+      # again, but it will not create that database itself: the postgres service
+      # makes only POSTGRES_DB, so the step above answered P1003 — "does not
+      # exist" — rather than anything about the migrations. It had never once
+      # compared them.
+      - name: Create the shadow database
+        run: psql "$ADMIN_DATABASE_URL" -c 'CREATE DATABASE ${{ env.POSTGRES_DB }}_shadow'
+        env:
+          ADMIN_DATABASE_URL: postgresql://${{ env.POSTGRES_USER }}:${{ env.POSTGRES_PASSWORD }}@localhost:5432/${{ env.POSTGRES_DB }}
+
       - name: Migrations replay into the schema
         run: pnpm --filter "@black-whale/database" migrate:check
         env:

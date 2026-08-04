@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { appearanceFileSchema } from './appearance.js'
+import { chapterRef, slug } from './primitives.js'
 
 /**
  * The shape of every file in `data/`.
@@ -10,8 +12,14 @@ import { z } from 'zod'
  * depends on, and it is checked exactly.
  */
 
-/** Kebab-case, the one identifier form `data/CONVENTIONS.md` allows. */
-export const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'must be a kebab-case slug')
+/**
+ * The identifier forms, re-exported from `primitives.ts`.
+ *
+ * They moved down a file so `appearance.ts` could use them without importing
+ * back into this one — see the head of `primitives.ts`. Everything that ever
+ * imported them from here still can.
+ */
+export { chapterRef, slug }
 
 /**
  * How well a fact is sourced, best first.
@@ -31,22 +39,6 @@ export function provenanceRank(value: Provenance): number {
 }
 
 export const canonStatus = z.enum(['canon', 'semi-canon', 'non-canon', 'databook', 'inferred'])
-
-/**
- * A chapter reference: `ch-<number>`, optionally pinned to one event of that
- * chapter with `ch-<number>.<sequence>`.
- *
- * The dotted form is finer than a chapter and the map needs it — a chapter
- * holds several events and a victim rarely falls in the first one. `ch-unknown`
- * is the explicit "no chapter names this", and it is spelled out rather than
- * left to `null` so the difference between undated and never-dated survives.
- */
-export const chapterRef = z
-  .string()
-  .regex(
-    /^ch-(?:unknown|\d+(?:\.\d+)?)$/,
-    'must be ch-<number>, ch-<number>.<sequence> or ch-unknown',
-  )
 
 /**
  * How the map may draw a position.
@@ -407,6 +399,7 @@ export const blueprintSchema = z
 export const CATALOGUE_FILES = {
   'chapters/chapters.json': z.array(chapterSchema).min(1),
   'characters/characters.json': z.array(characterSchema).min(1),
+  'characters/appearance.json': appearanceFileSchema,
   'abilities/abilities.json': z.array(abilitySchema).min(1),
   'factions/factions.json': z.array(factionSchema).min(1),
   'locations/locations.json': z.array(locationSchema).min(1),

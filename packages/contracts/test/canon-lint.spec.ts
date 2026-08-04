@@ -298,3 +298,20 @@ describe('what the schemas are allowed to drop', () => {
     expect(woody?.occurredAt).toMatchObject({ hours: 0.25, hoursUntil: 0.5 })
   })
 })
+
+describe('likeness-names-somebody-real', () => {
+  it('refuses a likeness for somebody the catalogue has never heard of', () => {
+    const found = run('likeness-names-somebody-real', (copy) => {
+      copy.appearance.deferred.push({ id: 'a-guard-nobody-drew', reason: 'invented' })
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'likeness-names-somebody-real' })])
+  })
+
+  it('refuses the same person twice, whichever list the second one is in', () => {
+    const found = run('likeness-names-somebody-real', (copy) => {
+      copy.appearance.deferred.push({ id: 'kurapika', reason: 'first' })
+      copy.appearance.deferred.push({ id: 'kurapika', reason: 'second' })
+    })
+    expect(found).toEqual([expect.objectContaining({ where: 'appearance#kurapika' })])
+  })
+})

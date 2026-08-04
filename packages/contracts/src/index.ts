@@ -1,4 +1,5 @@
 export * from './schemas.js'
+export * from './appearance.js'
 export * from './types.js'
 export { INVARIANTS } from './invariants.js'
 export { INHABITANT_INVARIANTS } from './inhabitants.js'

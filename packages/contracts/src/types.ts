@@ -8,11 +8,14 @@ import type {
   Location,
   Prophecy,
 } from './schemas.js'
+import type { AppearanceFile } from './appearance.js'
 
 /** The whole of `data/`, parsed and validated, in one value. */
 export interface Catalogue {
   chapters: Chapter[]
   characters: Character[]
+  /** What the named ones look like — ADR-005. Empty of nobody by default. */
+  appearance: AppearanceFile
   abilities: Ability[]
   factions: Faction[]
   locations: Location[]

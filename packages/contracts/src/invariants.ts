@@ -1,4 +1,5 @@
 import { INHABITANT_INVARIANTS } from './inhabitants.js'
+import { LIKENESS_INVARIANTS } from './likeness.js'
 import type { Blueprint } from './schemas.js'
 import type { Catalogue, Finding } from './types.js'
 
@@ -434,6 +435,8 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   // one stays under the 500 lines ADR-002 allows, and appended here so there is
   // still one list canon-lint runs.
   ...INHABITANT_INVARIANTS,
+  // And the rules the drawn walk rests on — ADR-005, same arrangement.
+  ...LIKENESS_INVARIANTS,
 ]
 
 export type { Blueprint }

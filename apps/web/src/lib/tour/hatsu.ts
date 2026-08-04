@@ -3498,9 +3498,10 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
             : 'insectOrders',
       click: false,
     })
-  } else if (worksOnTheBody(profile) && aimsAtSolids(profile)) {
-    // The ones on both sides of the line: the reticle decides, and R is how the
-    // visitor says *me* rather than what is in front of them.
+  } else if (worksOnTheBody(profile) && (aimsAtSolids(profile) || profile.kind === 'heart-vow')) {
+    // The ones on both sides of the line, and Judgment Chain: the reticle
+    // decides, and R is how the visitor says *me* rather than what is in front
+    // of them. A vow on the self needs no solid to land on.
     keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
   }
   return keys

@@ -148,6 +148,10 @@ describe('the keys a technique answers to', () => {
     ])
     expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
     expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('heart-vow')).toEqual([
+      { key: 'F', action: 'castSelf', click: true },
+      { key: 'R', action: 'castOnSelfInstead', click: false },
+    ])
   })
 
   it('gives the flute three, because three airs need three keys', () => {
@@ -1038,6 +1042,16 @@ describe('what waits at a threshold', () => {
     const broken = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
     expect(broken.punished).toBe(true)
     expect(broken.report).toMatchObject({ kind: 'vow-broken' })
+  })
+
+  it('lets the vow be sworn on the visitor own heart', () => {
+    const sworn = door(EMPTY_WORLD, 'heart-vow', null)
+    expect(sworn.report).toMatchObject({ kind: 'vow-declared', subjectId: 'self' })
+    expect(sworn.world.body.vowed).toEqual({
+      subjectId: 'self',
+      rules: ['do not enter self', 'do not lay a hand on self'],
+      violated: false,
+    })
   })
 
   it('closes the contract on its terms, and releases what was shut', () => {

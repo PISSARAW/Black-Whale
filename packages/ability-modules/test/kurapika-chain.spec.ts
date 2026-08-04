@@ -184,4 +184,31 @@ describe('Holy Chain', () => {
     const state = branches.append('chain-380', healing.events ?? []).state
     expect(state.bodyStates['sayird_body']).toBe('ALIVE')
   })
+
+  it('se soigne lui-même (affirmé)', () => {
+    const branches = new InMemoryBranchEngine()
+    const base = world()
+    base.entities['kurapika_body'] = { id: 'kurapika_body', kind: 'BODY', label: 'Kurapika (corps)', originalCharacterId: 'kurapika' }
+    base.bodyStates['kurapika_body'] = 'INJURED'
+    branches.createBranch({
+      id: 'chain-self',
+      name: 'self-heal',
+      rulePolicy: 'STRICT_CANON',
+      baseState: base,
+    })
+
+    const healing = holyChain.execute(
+      context({
+        abilityId: 'holy-chain',
+        worldState: base,
+        targets: ['kurapika_body'],
+        targetRefs: [{ id: 'kurapika_body', kind: 'BODY' }],
+        actionId: 'heal-self',
+      })
+    )
+
+    expect(healing.allowed).toBe(true)
+    const state = branches.append('chain-self', healing.events ?? []).state
+    expect(state.bodyStates['kurapika_body']).toBe('ALIVE')
+  })
 })

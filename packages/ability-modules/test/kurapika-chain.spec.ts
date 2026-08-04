@@ -40,6 +40,32 @@ function context(overrides: Partial<AbilityContext>): AbilityContext {
 }
 
 describe('the Little Eye sequence (ch. 369)', () => {
+  it("dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)", () => {
+    const branches = new InMemoryBranchEngine()
+    const base = world()
+    branches.createBranch({
+      id: 'chain-vol',
+      name: 'vol',
+      rulePolicy: 'STRICT_CANON',
+      baseState: base,
+    })
+
+    const theft = stealChain.execute(
+      context({
+        targets: ['sayird'],
+        targetRefs: [{ id: 'sayird', kind: 'CHARACTER' }],
+        actionId: 'steal',
+        parameters: { targetAbilityId: 'little-eye' },
+      }),
+    )
+    expect(theft.allowed).toBe(true)
+    const state = branches.append('chain-vol', theft.events ?? []).state
+
+    // The victim lost it; Kurapika holds it, and an effect records where it sits.
+    expect(state.abilitiesByOwner['sayird']).toEqual([])
+    expect(state.abilitiesByOwner['kurapika']).toContain('little-eye')
+  })
+
   it('moves the ability from the victim to Kurapika and then to Oito', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()

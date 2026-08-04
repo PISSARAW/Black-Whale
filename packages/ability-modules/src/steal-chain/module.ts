@@ -18,11 +18,9 @@ import {
 } from '@black-whale/ability-sdk'
 
 /**
- * Steal Chain — Kurapika, thumb
+ * Steal Chain — Kurapika steal-chain
  *
- * The theft of Little Eye (ch. 369) in four events: the victim loses the
- * ability, an ABILITY_GRANT effect holds it, and Kurapika gains it. Without
- * `ABILITY_REVOKED` the victim would keep a power the manga took away.
+ * Fidélité /tour : absente — état seul (drainage) posé sur les techniques, aucune chaîne dans la scène, et la cible canon — une personne — n'existe pas encore pour ce doigt.
  */
 export const stealChain = defineAbility({
   id: 'steal-chain',
@@ -81,8 +79,10 @@ export const stealChain = defineAbility({
    */
   actions: {
     steal: {
-      label: 'Voler une capacité',
-      evidence: shown('ch. 369 — Little Eye pris à Sayird'),
+      label: 'Voler la capacité',
+      evidence: shown(
+        "dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)"
+      ),
       conditions: [
         requiresTarget('Une victime est enchaînée'),
         requiresParameter('targetAbilityId', 'La capacité à voler est identifiée'),

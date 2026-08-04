@@ -1,6 +1,7 @@
 import type { Object3D } from 'three'
 import { BOOKMARK_RIBBON, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { buildChainTip } from './chainTips'
 import { buildDealer } from './dealer'
 import { FORGED_AURA } from './morena'
 
@@ -150,9 +151,19 @@ function hoover(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return null
 }
 
+/**
+ * Whichever of Kurapika's five chains is in the hand: the tip first, then the
+ * links.
+ *
+ * The order is load-bearing — the scene reads the first child as the end of the
+ * chain and strings everything after it between there and the wrist — so the tip
+ * goes on as one group rather than as its own meshes. Which tip it is comes off
+ * `stage`; see `chainTips.ts`, where the five ends are the only thing that
+ * differs between five abilities that are otherwise one chain.
+ */
 function chain(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   const steel = glow(seen.colour, 1)
-  root.add(new THREE.Mesh(new THREE.SphereGeometry(seen.size, 12, 10), steel))
+  root.add(buildChainTip(seen.stage, { THREE, steel, size: seen.size }))
   for (let index = 0; index < CHAIN_LINKS; index++) {
     root.add(
       new THREE.Mesh(new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8), steel),

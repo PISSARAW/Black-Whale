@@ -112,6 +112,37 @@ describe('the book', () => {
   })
 })
 
+/**
+ * One hand, five chains. The walk drew the pendulum and nothing else, so a
+ * visitor holding Steal Chain or Chain Jail had empty hands and every reason to
+ * think the key had done nothing at all.
+ */
+describe('the chains', () => {
+  const walking = { at: [0, 0] as [number, number], tierId: furnished.tierId }
+  const CHAINS = ['dowsing', 'chain-rule', 'chain-bind', 'healing', 'heart-vow'] as const
+
+  it('puts one on the hand for every one of the five, each with its own end', () => {
+    const tips = new Set<number>()
+    for (const holding of CHAINS) {
+      const [chain] = apparitionsOn(ship, { ...EMPTY_WORLD, holding }, { visitor: walking }).filter(
+        (seen) => seen.kind === 'chain',
+      )
+      expect(chain, holding).toBeDefined()
+      expect(chain.tierId).toBe(furnished.tierId)
+      expect(chain.at).toEqual(walking.at)
+      tips.add(chain.stage)
+    }
+    // Five abilities, five ends: a shared tip would be two techniques drawn as
+    // one, which is the thing this whole apparition exists to avoid.
+    expect(tips.size).toBe(CHAINS.length)
+  })
+
+  it('takes it off the hand when nothing is being held', () => {
+    expect(of({ ...EMPTY_WORLD, holding: null }, 'chain')).toEqual([])
+    expect(of({ ...EMPTY_WORLD, holding: 'vacuum' }, 'chain')).toEqual([])
+  })
+})
+
 describe('the owl', () => {
   it('perches in the room Secret Window was cast on, and nowhere else', () => {
     const world = cast(EMPTY_WORLD, 'surveillance', elsewhere.id).world

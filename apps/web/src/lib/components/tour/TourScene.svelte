@@ -2378,6 +2378,10 @@
         run.normalize()
         if (!Number.isFinite(run.x) || run.lengthSq() < 0.5) run.set(0, -1, 0)
         const turn = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), run)
+        // And the tip lies along it too. The pendulum is a sphere and cannot
+        // tell, but the other four have a point on them: a syringe hanging
+        // sideways off a chain is a syringe nobody could drive into anything.
+        weight.quaternion.copy(turn)
         // A chain thrown across a room is nearly straight; one hanging off a
         // hand is not, so the sag is taken off however far out it has gone.
         const sag = Math.min(0.45, Math.hypot(ball.x, ball.z) * 0.16)

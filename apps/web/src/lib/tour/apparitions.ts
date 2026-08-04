@@ -321,6 +321,23 @@ export const INSECT = 0x55c2ff
 /** The Dowsing Chain is steel: the pale blue the dock already publishes it in. */
 const CHAIN = 0x8ecae6
 /**
+ * Which of the five chains is in the hand, by the technique being held.
+ *
+ * One hand, five fingers, five chains — and the walk knows the difference
+ * between them by the tip alone, which is how the source distinguishes them
+ * too: the archive's own entries name the cross on the thumb chain and the
+ * blade on the judgment one, and the dock names the syringe on the index and
+ * the shackle on the middle. The number is the tip `apparitionObjectView`
+ * builds, and it is the whole of the vocabulary the two modules share.
+ */
+const CHAIN_TIPS: Record<string, number> = {
+  dowsing: 0, // the pendulum ball
+  'chain-rule': 1, // Steal Chain's syringe
+  'chain-bind': 2, // Chain Jail's shackle
+  healing: 3, // Holy Chain's cross
+  'heart-vow': 4, // Judgment Chain's blade
+}
+/**
  * The heart the vow is sworn on, and the links wound round it.
  *
  * Two colours rather than one, because the whole of this manifestation is the
@@ -992,12 +1009,20 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     })
   }
 
-  // The Dowsing Chain, which is worn rather than placed: it is fixed to the
-  // visitor's hand for as long as the aura is up, and hangs there swinging
-  // until something is struck with it. Like Blinky, it is carried — the scene
-  // puts it at the hand every frame, so the room and the height here are only
+  // The chains, which are worn rather than placed: one is fixed to the visitor's
+  // hand for as long as that aura is up, and hangs there swinging until
+  // something is done with it. Like Blinky, they are carried — the scene puts
+  // the chain at the hand every frame, so the room and the height here are only
   // what deck it belongs to.
-  if (world.holding === 'dowsing' && visitor) {
+  //
+  // All five, and not the pendulum alone. Kurapika's abilities are one hand with
+  // a chain on every finger, and the walk drew exactly one of them: a visitor
+  // holding Steal Chain or Chain Jail had bare hands, and a technique that
+  // materializes nothing reads as a technique that is not working — which is
+  // what it was taken for. What differs between them is the tip, which is the
+  // only thing that differs between them on the page either.
+  const chain = CHAIN_TIPS[world.holding ?? ''] ?? null
+  if (chain !== null && visitor) {
     found.push({
       id: 'chain',
       kind: 'chain',
@@ -1005,10 +1030,11 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       tierId: visitor.tierId,
       at: [visitor.at[0], visitor.at[1]],
       y: 0,
-      // The ball, in metres across. The links are drawn to scale off it.
+      // The pendulum ball, in metres across. Every link and every other tip is
+      // drawn to scale off it, so the five are one chain with five ends.
       size: 0.13,
       colour: CHAIN,
-      stage: 0,
+      stage: chain,
       hidden: false,
     })
   }

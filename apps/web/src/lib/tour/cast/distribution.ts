@@ -48,6 +48,20 @@ function spacesFor(ship: Ship, locations: readonly string[]): Space[] {
   return onDeck.length > 0 ? onDeck : found
 }
 
+/**
+ * The spaces one catalogue location slug names, for whoever needs to name it
+ * back.
+ *
+ * An interview reads a route out of `mapTrajectory`, and a route is a list of
+ * these slugs. Resolving them here rather than in the page is what keeps the
+ * answer honest: the route says "room 1003" only where the walk could take you
+ * to room 1003, because it is the same lookup that decided where to stand the
+ * body in the first place.
+ */
+export function spacesForLocation(ship: Ship, location: string): Space[] {
+  return spacesFor(ship, [location])
+}
+
 /** How a posted body holds itself. Nothing here is a state of mind. */
 function poseOf(role: Post['costume']['role']): NonNullable<Apparition['human']>['pose'] {
   if (role === 'guard' || role === 'nen-guard') return 'guard'

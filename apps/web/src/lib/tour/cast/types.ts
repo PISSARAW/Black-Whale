@@ -14,6 +14,7 @@
  */
 import type { Apparition } from '../apparitions'
 import type { Vec2 } from '../types'
+import type { CastDossier } from './dossier'
 
 /** The nine looks `humanProfiles.ts` draws. */
 export type HumanRole = NonNullable<Apparition['human']>['role']
@@ -87,6 +88,16 @@ export interface CastPayload {
   members: CastMember[]
   /** Beasts whose owner has no position and stands with somebody who has. */
   beasts: StandingBeast[]
+  /**
+   * What each body can be asked, by character id (ADR-004 §2.4).
+   *
+   * Built on the server and cut to the reader's chapter there, which is what
+   * makes the cut enforceable: the browser cannot show what it was never sent,
+   * so no amount of clicking — and no technique, Body and Soul included —
+   * reaches past the cap. One entry per member, and members are already the
+   * people the walk is allowed to draw.
+   */
+  dossiers: Record<string, CastDossier>
 }
 
 /** A beast that keeps another body's position, resolved to that body. */
@@ -118,4 +129,5 @@ export const NO_CAST: CastPayload = {
   spoilerLimit: null,
   members: [],
   beasts: [],
+  dossiers: {},
 }

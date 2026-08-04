@@ -600,6 +600,95 @@ export const en = {
     },
 
     /**
+     * Addressing a body. Every line the panel shows is a value out of `data/`,
+     * framed by one of these sentences and never written as dialogue — see
+     * ADR-004 §2.4, which is why the questions are the visitor's and the
+     * answers are the catalogue's.
+     */
+    address: {
+      open: 'Address',
+      close: 'Say nothing',
+      title: 'What this body can answer',
+      nobody: 'Nobody in front of you.',
+      lead: (name: string) => `You address ${name}.`,
+      sourced:
+        'None of these lines is dialogue: each is a value from the catalogue, with the chapter it is dated at.',
+      questions: {
+        who: 'Who are you?',
+        allegiance: 'Who are you aboard for?',
+        since: 'How long have you been here?',
+        route: 'Where have you been?',
+        nen: 'And your Nen?',
+        techniques: 'Which techniques?',
+        'allegiance-sealed': 'Who, really?',
+        'identity-sealed': 'And who are you, really?',
+      },
+      role: (role: string) => `Aboard as: ${role}.`,
+      faction: (faction: string) => `Answers to ${faction}.`,
+      since: (chapter: string) => `Here since ch. ${chapter}.`,
+      step: (chapter: string, place: string) => `ch. ${chapter} — ${place}`,
+      route: (steps: string[]) => steps.join(' · '),
+      category: (label: string) => `The catalogue declares them ${label}.`,
+      techniques: (names: string[]) => `The catalogue gives them: ${names.join(', ')}.`,
+      silent: 'The archive says nothing about that.',
+      capped: 'The rest is past your chapter.',
+      withheld: (count: number) =>
+        `${count} step${count === 1 ? '' : 's'} of their route ${count === 1 ? 'is' : 'are'} past your chapter.`,
+      unsealed: 'The body answered in their place',
+    },
+
+    /**
+     * What the visitor does to a body, and what their own aura tells them of
+     * it. Nothing here outlives the room: the copy says so out loud, because a
+     * held technique that looked permanent would be the walk claiming a
+     * consequence the manga never gave.
+     */
+    body: {
+      title: 'What you are doing to this body',
+      aiming: (name: string) => `Aiming at ${name}`,
+      aimingNobody: 'Nobody in the line',
+      readingTitle: 'What your aura tells you',
+      reading: {
+        blind: 'With no aura out, you sense nothing of them.',
+        ren: 'Their aura is up: you feel it from here.',
+        ten: 'They are holding their aura close.',
+        still:
+          'Nothing comes off them. Zetsu and no aura at all look alike — Gyo tells them apart.',
+        zetsu: 'Under Gyo: they are holding themselves unfindable.',
+        en: 'They are inside your En.',
+        beast: 'Under Gyo: an animal stands with them.',
+      },
+      held: (name: string, what: string) => `${name} — ${what}`,
+      marks: {
+        bound: 'held',
+        controlled: 'acting on an order that is not theirs',
+        masked: 'not wearing their own face',
+        marked: 'carrying a mark waiting on its condition',
+        soothed: 'settled',
+        linked: 'linked to you',
+      },
+      ephemeral: 'None of this survives the room you walk out of.',
+      refusals: {
+        'not-a-body': 'This technique has nothing to say to a person.',
+        'no-target': 'Nobody in front of you.',
+        oath: 'The vow holds: this chain closes on the Phantom Troupe and on nobody else.',
+        'no-aura': 'Nothing to test: the archive declares no Nen on them.',
+        resisted: 'Their aura is up — the walk will not claim the needle goes in.',
+        suicide:
+          'The fifth rite is the death of whoever performs it. The walk will not: it shows you the preparation and stops there.',
+        unhurt: 'The chain closes what is open, and the walk wounds nobody.',
+      },
+      tells: {
+        'declares-aura': 'The catalogue makes them a Nen user.',
+        'declares-nothing': 'The catalogue declares nothing of their Nen.',
+        'holds-zetsu': 'The Zetsu held under the shot.',
+        'holds-sealed': 'The chain swings: their entry holds something the archive does not date.',
+        'holds-plain': 'The chain hangs still.',
+        unsealed: 'The body answered in place of the person.',
+      },
+    },
+
+    /**
      * Nen in the walk. The archive's other pages let a technique work on what is
      * written; here it works on the ship, and nothing else — so the copy talks
      * about rooms and decks throughout, never about sections or controls.

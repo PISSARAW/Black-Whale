@@ -136,7 +136,7 @@ describe('the keys a technique answers to', () => {
     expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
   })
 
-  it('spends the wheel\'s second place wherever the walk has one', () => {
+  it("spends the wheel's second place wherever the walk has one", () => {
     // The three that take orders, the two hands, and the ones the reticle
     // decides for — every technique with more than one key, and no other.
     expect(under('guardian')[1]).toEqual({ key: 'H 2', action: 'doubleWatch', click: false })

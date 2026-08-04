@@ -501,6 +501,84 @@ export const fr: Messages = {
       },
     },
 
+    address: {
+      open: 'Adresser',
+      close: 'Se taire',
+      title: 'Ce que ce corps peut répondre',
+      nobody: 'Personne devant vous.',
+      lead: (name) => `Vous vous adressez à ${name}.`,
+      sourced:
+        'Aucune de ces lignes n’est une réplique : chacune est une valeur du catalogue, avec son chapitre.',
+      questions: {
+        who: 'Qui êtes-vous ?',
+        allegiance: 'Pour qui êtes-vous à bord ?',
+        since: 'Depuis quand êtes-vous ici ?',
+        route: 'Par où êtes-vous passé ?',
+        nen: 'Et votre Nen ?',
+        techniques: 'Quelles techniques ?',
+        'allegiance-sealed': 'Pour qui, vraiment ?',
+        'identity-sealed': 'Et qui êtes-vous, vraiment ?',
+      },
+      role: (role) => `À bord comme : ${role}.`,
+      faction: (faction) => `Rattaché à ${faction}.`,
+      since: (chapter) => `Ici depuis le ch. ${chapter}.`,
+      step: (chapter, place) => `ch. ${chapter} — ${place}`,
+      route: (steps) => steps.join(' · '),
+      category: (label) => `Le catalogue le déclare de la catégorie ${label}.`,
+      techniques: (names) => `Le catalogue lui donne : ${names.join(', ')}.`,
+      silent: 'L’archive ne dit rien là-dessus.',
+      capped: 'La suite est postérieure à votre chapitre.',
+      withheld: (count) =>
+        `${count} étape${count === 1 ? '' : 's'} de sa trajectoire ${count === 1 ? 'est' : 'sont'} au-delà de votre chapitre.`,
+      unsealed: 'Le corps a répondu à sa place',
+    },
+
+    body: {
+      title: 'Ce que vous faites de ce corps',
+      aiming: (name) => `Vous visez ${name}`,
+      aimingNobody: 'Personne dans l’axe',
+      readingTitle: 'Ce que votre aura en dit',
+      reading: {
+        blind: 'Sans aura, vous n’en sentez rien.',
+        ren: 'Son aura est levée : vous la sentez d’ici.',
+        ten: 'Il tient son aura contre lui.',
+        still:
+          'Rien ne vient de lui. Un Zetsu et une absence d’aura se ressemblent — le Gyo tranche.',
+        zetsu: 'Sous le Gyo : il se tient volontairement introuvable.',
+        en: 'Il est dans votre En.',
+        beast: 'Sous le Gyo : une bête se tient avec lui.',
+      },
+      held: (name, what) => `${name} — ${what}`,
+      marks: {
+        bound: 'retenu',
+        controlled: 'agit sur un ordre qui n’est pas le sien',
+        masked: 'ne porte pas son propre visage',
+        marked: 'porte une marque qui attend sa condition',
+        soothed: 'apaisé',
+        linked: 'lié à vous',
+      },
+      ephemeral: 'Rien de ceci ne survit à la pièce que vous quittez.',
+      refusals: {
+        'not-a-body': 'Cette technique ne s’adresse pas à un corps.',
+        'no-target': 'Personne devant vous.',
+        oath: 'Le serment tient : cette chaîne ne se referme que sur la Brigade fantôme.',
+        'no-aura': 'Rien à éprouver : l’archive ne déclare aucun Nen chez lui.',
+        resisted: 'Son aura est levée — la visite n’affirmera pas que l’aiguille passe.',
+        suicide:
+          'Le cinquième rite est la mort de celui qui le lance. La visite ne le fera pas : elle vous montre la préparation et s’arrête là.',
+        unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
+      },
+      tells: {
+        'declares-aura': 'Le catalogue en fait un utilisateur de Nen.',
+        'declares-nothing': 'Le catalogue ne déclare rien de son Nen.',
+        'holds-zetsu': 'Le Zetsu a tenu sous le tir.',
+        'holds-sealed':
+          'La chaîne oscille : son entrée porte quelque chose que l’archive ne date pas.',
+        'holds-plain': 'La chaîne reste immobile.',
+        unsealed: 'Le corps a répondu à la place de la personne.',
+      },
+    },
+
     hatsu: {
       title: 'Le Nen dans la visite',
       reach: "N'importe quelle pièce du vaisseau, depuis n'importe où dans le vaisseau",

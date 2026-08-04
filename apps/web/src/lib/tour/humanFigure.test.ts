@@ -3,7 +3,7 @@ import { MeshBasicMaterial, MeshPhysicalMaterial } from 'three'
 import * as THREE from 'three'
 import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
-import { auraFor } from './cast/nen'
+import { auraFor, CALM } from './cast/nen'
 import type { CastMember, Post } from './cast/types'
 
 const glow = (colour: number, opacity: number) =>
@@ -93,8 +93,8 @@ describe('the aura a passenger of the walk is wearing', () => {
     return buildHumanFigure({ THREE, glow, ...(refracts ? { glass } : {}), seen })
   }
 
-  const CALM_ROOM = { visitorIn: null, visitorCasting: false, hostileRooms: [] }
-  const CASTING = { visitorIn: 'room', visitorCasting: true, hostileRooms: [] }
+  const CALM_ROOM = CALM
+  const CASTING = { ...CALM, visitorIn: 'room', visitorCasting: true }
 
   it('lays the standing En of a guard on the floor', () => {
     const guard = figureOf('Royal Bodyguard for Prince Woble', CALM_ROOM)

@@ -4,11 +4,22 @@ import { timeline } from '$lib/server/timeline'
 import { selectEvent } from '@black-whale/canon-engine'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
-import { inSlugSpace, rosterFrom, type RosterAbility, type RosterCharacter } from '$lib/tour/cast'
-import type { CastPayload } from '$lib/tour/cast'
+import { BODY_KINDS } from '$lib/tour/bodyKinds'
+import {
+  dossierFor,
+  inSlugSpace,
+  rosterFrom,
+  type CastDossier,
+  type DossierAbility,
+  type DossierCharacter,
+  type RosterAbility,
+  type RosterCharacter,
+} from '$lib/tour/cast'
+import type { CastMember, CastPayload } from '$lib/tour/cast'
 import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
 import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
+import factionCatalog from '../../../../../data/factions/factions.json'
 import type { PageServerLoad } from './$types'
 
 /**
@@ -43,7 +54,61 @@ const abilities: RosterAbility[] = (
   }
 })
 
+/**
+ * The same catalogue, read for what a body can be *asked* rather than for what
+ * it can do of its own accord.
+ *
+ * A wider notion of "carried" than the one above: the conduct may only choose a
+ * technique `castInTour` performs, while an interview is only saying which of
+ * somebody's techniques the visitor could try on them — and ADR-004 opened the
+ * seventeen of `BODY_KINDS` for exactly that. Two questions, two sets, kept
+ * apart on purpose.
+ */
+const PERFORMABLE = new Set<string>([...TOUR_HATSU_KINDS, ...BODY_KINDS])
+
+const dossierAbilities: DossierAbility[] = (
+  abilityCatalog as Array<{ id: string; ownerId?: string | null; name: string }>
+).map((ability) => {
+  const kind = KINDS_BY_ABILITY.get(ability.id as never)
+  return {
+    ownerId: ability.ownerId ?? null,
+    name: ability.name,
+    carried: Boolean(kind && PERFORMABLE.has(kind)),
+  }
+})
+
+const factionNames = new Map(
+  (factionCatalog as Array<{ id: string; name: string }>).map((faction) => [
+    faction.id,
+    faction.name,
+  ]),
+)
+
 const catalogue = characterCatalog as unknown as RosterCharacter[]
+const dossierCatalogue = new Map(
+  (characterCatalog as unknown as DossierCharacter[]).map((character) => [character.id, character]),
+)
+
+/**
+ * A dossier per body the walk will draw, cut at the reader's chapter.
+ *
+ * Built here and nowhere else, so the cut is made once on the server. A member
+ * whose entry has vanished from the catalogue simply has no dossier: the panel
+ * shows what it has, which is the same thing the fiche has always done.
+ */
+function dossiersFor(members: readonly CastMember[], cap: number | null) {
+  const found: Record<string, CastDossier> = {}
+  for (const member of members) {
+    const character = dossierCatalogue.get(member.characterId)
+    if (!character) continue
+    found[member.characterId] = dossierFor(character, {
+      cap,
+      factions: factionNames,
+      abilities: dossierAbilities,
+    })
+  }
+  return found
+}
 
 /**
  * The walk is a reconstruction of a ship, and it was one before it had anybody
@@ -73,8 +138,25 @@ interface Aboard {
   hour: ShipHour
 }
 
+/**
+ * The characters the reader has met, or null when they have set no cap.
+ *
+ * The same cut `/ship` makes: a body whose owner the reader has not met yet is
+ * not in the walk either. Applied to characters rather than to presences,
+ * because a presence names a body and a body is not a reveal.
+ */
+async function metBy(cap: number | null): Promise<Set<string> | null> {
+  if (cap === null) return null
+  const met = await prisma.character.findMany({
+    where: { firstVisibleEvent: { chapter: { number: { lte: cap } } } },
+    select: { slug: true },
+  })
+  return new Set(met.map((character) => character.slug))
+}
+
 const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promise<Aboard> => {
   const spoilerProfile = readSpoilerProfile(cookies)
+  const cap = spoilerProfile?.maxChapter ?? null
   const events = await prisma.narrativeEvent.findMany({
     where: {
       occursOnBlackWhale: true,
@@ -84,25 +166,10 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
     include: { chapter: true },
   })
   const { event } = selectEvent(events, { eventId: url.searchParams.get('eventId') })
-  if (!event) return { cast: empty(spoilerProfile?.maxChapter ?? null), hour: NO_HOUR }
+  if (!event) return { cast: empty(cap), hour: NO_HOUR }
 
   const world = await timeline.getWorldState({ eventId: event.id })
-
-  // The same cut `/ship` makes: a body whose owner the reader has not met yet
-  // is not in the walk either. Applied to characters rather than to presences,
-  // because a presence names a body and a body is not a reveal.
-  const allowed = spoilerProfile
-    ? new Set(
-        (
-          await prisma.character.findMany({
-            where: {
-              firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } },
-            },
-            select: { slug: true },
-          })
-        ).map((character) => character.slug),
-      )
-    : null
+  const allowed = await metBy(cap)
 
   const locations = await prisma.location.findMany({
     select: { id: true, slug: true, parentLocationId: true },
@@ -115,13 +182,16 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
     abilities,
   })
 
+  const aboard = allowed ? members.filter((member) => allowed.has(member.characterId)) : members
+
   return {
     cast: {
       eventId: event.id,
       chapterNumber: event.chapter.number,
-      spoilerLimit: spoilerProfile?.maxChapter ?? null,
-      members: allowed ? members.filter((member) => allowed.has(member.characterId)) : members,
+      spoilerLimit: cap,
+      members: aboard,
       beasts,
+      dossiers: dossiersFor(aboard, cap),
     },
     // Read off the event rather than recomputed: the voyage clock runs once, at
     // compile time, and both the walk and `/ship` read what it stamped.
@@ -131,5 +201,12 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
 
 /** No event under the cap: an empty ship, which is a true answer. */
 function empty(spoilerLimit: number | null): CastPayload {
-  return { eventId: null, chapterNumber: null, spoilerLimit, members: [], beasts: [] }
+  return {
+    eventId: null,
+    chapterNumber: null,
+    spoilerLimit,
+    members: [],
+    beasts: [],
+    dossiers: {},
+  }
 }

@@ -33,6 +33,7 @@ import {
 import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
+import { BODY_KINDS } from './bodyKinds'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -232,7 +233,18 @@ export const aimsAtSolids = (profile: HatsuProfile | null) =>
 
 export type TourHatsuKind = (typeof TOUR_HATSU_KINDS)[number]
 
-const TOUR_KINDS = new Set<HatsuInteractionKind>(TOUR_HATSU_KINDS)
+/**
+ * Everything the walk performs: what acts on the ship, and what acts on the
+ * people standing in it.
+ *
+ * The second list arrives from a leaf module rather than being written out
+ * again here (ADR-004 §2.5): five of its kinds are techniques the walk could
+ * not carry until it had bodies to aim them at, and the dock has to offer them
+ * or they would remain unreachable from the one surface that can now perform
+ * them. What they do to a body is decided in `cast/reach.ts`; this line only
+ * says that they are no longer inert.
+ */
+const TOUR_KINDS = new Set<HatsuInteractionKind>([...TOUR_HATSU_KINDS, ...BODY_KINDS])
 
 export function worksInTour(profile: HatsuProfile | null): profile is HatsuProfile {
   return Boolean(profile) && TOUR_KINDS.has(profile!.kind)

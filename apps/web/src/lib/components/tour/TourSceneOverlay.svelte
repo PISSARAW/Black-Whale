@@ -42,6 +42,15 @@
     spoken: string
     location: LocationReadout | null
     penalty: string | null
+    /**
+     * What a technique aimed at a person came to, in one line.
+     *
+     * Kept apart from `penalty` — which is red, and is the walk telling you
+     * that you broke your own vow — because most of what comes back from a body
+     * is a refusal with a reason, and a canon condition being honoured is not a
+     * punishment. See ADR-004 §2.2.
+     */
+    note: string | null
     aim: AimReadout | null
     controls: ControlHint[]
     statusHint: string
@@ -65,6 +74,7 @@
     spoken,
     location,
     penalty,
+    note,
     aim,
     controls,
     statusHint,
@@ -108,6 +118,15 @@
     aria-live="polite"
   >
     {penalty}
+  </p>
+{/if}
+
+{#if note}
+  <p
+    class="pointer-events-none absolute bottom-32 left-1/2 max-w-md -translate-x-1/2 rounded border border-[#FFD700]/40 bg-[#050505]/90 px-3 py-1.5 text-center text-xs leading-snug text-[#FFFFF0]/80"
+    aria-live="polite"
+  >
+    {note}
   </p>
 {/if}
 

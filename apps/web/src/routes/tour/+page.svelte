@@ -42,8 +42,11 @@
   } from '$lib/tour/hatsu'
   import type { Provenance, Space } from '$lib/tour/types'
   import { TourCastView } from '$lib/tour/pageCastView.svelte'
+  import { TourBodyView } from '$lib/tour/pageBodyView.svelte'
+  import { noteFor } from '$lib/tour/pageBodyReadout'
   import { aimedPerson, personExhibit } from '$lib/tour/cast/provenance'
-  import { NO_CAST } from '$lib/tour/cast'
+  import { NO_CAST, readingIsFelt, spacesForLocation, type AddressWords } from '$lib/tour/cast'
+  import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
   import { NO_HOUR } from '$lib/tour/hour'
   import type { PageData } from './$types'
 
@@ -133,7 +136,13 @@
     toggleReveal: () => (chrome.reveal = !chrome.reveal),
     toggleFullscreen: () => chrome.toggleFullscreen(),
     togglePlan: () => (chrome.planOpen = !chrome.planOpen),
-    examine: () => (asking ? close() : ask()),
+    // One key for the cards, and it puts back whichever is up: the exchange
+    // first, since it is the one the visitor opened from the other.
+    examine: () => {
+      if (bodyView.talk) bodyView.close()
+      else if (asking) close()
+      else ask()
+    },
   })
 
   /**
@@ -330,7 +339,24 @@
   const turnTheRibbon = casting.turnRibbon
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
+    // Walking out ends everything the walk was holding on anybody, and closes
+    // the exchange with them: ADR-004 §2.3, kept by the mechanism rather than
+    // by discipline.
+    bodyView.release()
   }
+  /**
+   * A cast, offered to the body in front of you before it is offered to the room.
+   *
+   * The order is the gesture's own: a visitor with a technique up and a person
+   * down the reticle meant the person. A technique that has nothing to say to
+   * anybody falls straight through and does to the ship what it always did —
+   * `reach` returns false for exactly that case, and for nobody being there.
+   */
+  const castAt = (
+    spaceId: string | null,
+    solidId: string | null = null,
+    hand: CastHand = 'first',
+  ) => (bodyView.reach(Date.now()) ? undefined : castOn(spaceId, solidId, hand))
   const fishEat = ticker.fishEat
   const beastStep = ticker.beastStep
   const takeCoin = ticker.takeCoin
@@ -424,7 +450,44 @@
    * `lib/tour/cast/`. The page carries four lines of it because that was the
    * deal ADR-003 §4 made with ADR-002.
    */
-  const castView = new TourCastView({
+  /**
+   * The words the exchange and the read-out are worded in.
+   *
+   * Both packs are handed to pure modules as parameters — `cast/address.ts` and
+   * `pageBodyReadout.ts` never touch i18n — and both are derived, so a visitor
+   * who changes language mid-walk sees the next answer in it.
+   */
+  const addressWords = $derived<AddressWords>({
+    question: (topic) => $t.tour.address.questions[topic],
+    role: $t.tour.address.role,
+    faction: $t.tour.address.faction,
+    since: $t.tour.address.since,
+    step: $t.tour.address.step,
+    route: $t.tour.address.route,
+    category: $t.tour.address.category,
+    techniques: $t.tour.address.techniques,
+    silent: $t.tour.address.silent,
+    capped: $t.tour.address.capped,
+  })
+  const bodyWords = $derived<BodyReadoutWords>({
+    refusal: (reason) => $t.tour.body.refusals[reason],
+    tell: (tell) => $t.tour.body.tells[tell],
+    mark: (mark) => $t.tour.body.marks[mark],
+    held: $t.tour.body.held,
+  })
+  const bodyNameOf = (characterId: string) =>
+    cast.members.find((member) => member.characterId === characterId)?.name ?? ''
+  /**
+   * What the last cast at a body came to, and until when.
+   *
+   * Dated rather than cleared by a timer: the page already ticks `now`, and a
+   * line that outlived the gesture it reports would sit over the next room.
+   */
+  const NOTE_MS = 6000
+  let note = $state<{ line: string; until: number } | null>(null)
+  const bodyNote = $derived(note && note.until > now ? note.line : null)
+
+  const castView: TourCastView = new TourCastView({
     ship,
     read: () => ({
       cast,
@@ -433,13 +496,65 @@
       visitorIn: currentSpace?.id ?? null,
       casting: Boolean(technique),
     }),
+    // What the visitor is doing to one body in particular (ADR-004): the
+    // conduct answers being aimed at personally, and being held, differently
+    // from a technique merely going off in the room. Only a raised aura is
+    // felt — `readingIsFelt` — so looking hard through Gyo alarms nobody.
+    readBodies: () => ({
+      aimedAt: readingIsFelt(hatsuSession.nen) ? bodyView.aimedId : null,
+      holds: bodyView.marks,
+    }),
     updateWorld: (next) => (world = next),
   })
+  /**
+   * The people, as things one can read, reach and address (ADR-004).
+   *
+   * It reads the distribution the cast view already computed rather than
+   * aiming a second time, which is §2.1: the body one interrogates is the body
+   * whose fiche is already on screen.
+   */
+  const bodyView: TourBodyView = new TourBodyView({
+    read: () => ({
+      cast,
+      posts: castView.posts,
+      spaceId: currentSpace?.id ?? null,
+      position,
+      heading,
+      nen: hatsuSession.nen,
+      activeKind: technique?.kind ?? null,
+      beastFor: castView.beastFor,
+      auraFor: castView.auraOf,
+    }),
+    words: () => addressWords,
+    placeOf: (location) => {
+      const space = spacesForLocation(ship, location)[0]
+      return space ? nameOf(named(space)) : null
+    },
+    report: (reach) => {
+      const line = noteFor(reach, bodyWords, bodyNameOf)
+      if (line) note = { line, until: Date.now() + NOTE_MS }
+    },
+  })
   // The conduct runs on the walk's own clock, a second at a time: the page
-  // already keeps one, and the walk is only ever allowed one.
+  // already keeps one, and the walk is only ever allowed one. The holds expire
+  // on the same beat, for the same reason.
   $effect(() => {
-    const beat = setInterval(() => castView.step(Math.floor(Date.now() / 1000)), 1000)
+    const beat = setInterval(() => {
+      castView.step(Math.floor(Date.now() / 1000))
+      bodyView.step(Date.now())
+    }, 1000)
     return () => clearInterval(beat)
+  })
+  /**
+   * Everybody is let go of when the aura comes down.
+   *
+   * The other half of §2.3 — walking out of the room — is `arrived`. Between
+   * the two there is no way to keep a hold on somebody the visitor is not
+   * standing in front of with their aura up.
+   */
+  $effect(() => {
+    const held = Boolean($activeHatsu) && hatsuSession.nen.mode !== 'zetsu'
+    if (!held) untrack(() => bodyView.release())
   })
 
   const locationReadout = $derived(overlayView.location)
@@ -473,8 +588,8 @@
         aiming: Boolean(technique),
         selfCastable,
         reveal: chrome.reveal,
-        onCast: castOn,
-        onHatsu: castOn,
+        onCast: castAt,
+        onHatsu: castAt,
         onArrive: arrived,
         onWorm: crossWorm,
         onFish: fishEat,
@@ -507,6 +622,7 @@
         spoken,
         location: locationReadout,
         penalty: hatsuSession.penalty,
+        note: bodyNote,
         aim: aimReadout,
         controls: overlayControls,
         statusHint,
@@ -516,15 +632,35 @@
         hour: hour.label,
         // Hidden while the card is up: the same gesture puts it back, and the
         // card carries its own way out.
-        examine: asking
-          ? null
-          : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
+        examine:
+          asking || bodyView.talk
+            ? null
+            : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
       }}
       examine={{
         open: asking,
         exhibit,
         sourcesHref: $link('/tour/sources'),
         onClose: close,
+        // The way on to the exchange, only in front of somebody the server
+        // sent a dossier for. The evidence card steps aside for it: both are
+        // the same card in the same place, about the same body.
+        address: bodyView.dossier
+          ? {
+              label: $t.tour.address.open,
+              onOpen: () => {
+                close()
+                bodyView.address()
+              },
+            }
+          : null,
+      }}
+      address={{
+        talk: bodyView.talk,
+        extracted: bodyView.extracted,
+        reading: bodyView.reading,
+        held: bodyView.heldMark,
+        onClose: bodyView.close,
       }}
     />
 

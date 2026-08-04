@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { canonLint, findDataRoot, formatFindings } from '../src/lint'
 import { INVARIANTS } from '../src/invariants'
+import { appearanceSchema } from '../src/appearance'
 import type { Catalogue } from '../src/types'
 
 /**
@@ -317,5 +318,60 @@ describe('likeness-names-somebody-real', () => {
     expect(found).toEqual([
       expect.objectContaining({ where: 'appearance#kurapika', message: 'declared more than once' }),
     ])
+  })
+})
+
+describe('likeness-covers-the-roster', () => {
+  it('refuses an annexe A id that is neither declared nor deferred', () => {
+    const found = run('likeness-covers-the-roster', (copy) => {
+      copy.appearance.declared = copy.appearance.declared.filter((entry) => entry.id !== 'kurapika')
+    })
+    expect(found).toEqual([expect.objectContaining({ where: 'appearance#kurapika' })])
+  })
+
+  it('accepts a deferral in place of a likeness', () => {
+    const found = run('likeness-covers-the-roster', (copy) => {
+      copy.appearance.declared = copy.appearance.declared.filter((entry) => entry.id !== 'kurapika')
+      copy.appearance.deferred.push({ id: 'kurapika', reason: 'no usable panel' })
+    })
+    expect(found).toEqual([])
+  })
+})
+
+describe('what a likeness may and may not say', () => {
+  // The vocabularies are closed, and the closure is the whole mechanism: a
+  // hairstyle outside the list has to be an amendment to annexe B rather than
+  // a string somebody typed, or the archive quietly grows a second way of
+  // describing hair and nothing can be compared to anything.
+  it('refuses a hairstyle nobody can draw', () => {
+    const entry = catalogue!.appearance.declared.find((row) => row.id === 'kurapika')!
+    const parsed = appearanceSchema.safeParse({
+      ...entry,
+      head: { ...entry.head, hairStyle: 'undercut' },
+    })
+    expect(parsed.success).toBe(false)
+  })
+
+  it('refuses a signature that is not in annexe B', () => {
+    const entry = catalogue!.appearance.declared.find((row) => row.id === 'kurapika')!
+    const parsed = appearanceSchema.safeParse({ ...entry, signatures: ['monocle'] })
+    expect(parsed.success).toBe(false)
+  })
+
+  // A basis with no source is a claim, which is exactly what the date
+  // convention this mirrors refuses to let `occurredAt` be.
+  it('refuses a colour block that cites nothing', () => {
+    const entry = catalogue!.appearance.declared.find((row) => row.id === 'kurapika')!
+    const { source: _dropped, ...rest } = entry.colours
+    const parsed = appearanceSchema.safeParse({ ...entry, colours: rest })
+    expect(parsed.success).toBe(false)
+  })
+
+  it('holds every attested palette to a named source', () => {
+    const attested = catalogue!.appearance.declared.filter(
+      (row) => row.colours.basis === 'attested',
+    )
+    expect(attested.length).toBeGreaterThan(0)
+    for (const row of attested) expect(row.colours.source.length).toBeGreaterThan(10)
   })
 })

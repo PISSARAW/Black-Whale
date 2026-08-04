@@ -13,6 +13,8 @@ const WORDS = {
   claim: 'A named character of the canon.',
   standingIn: (room: string) => `Stands in ${room}`,
   role: (role: string) => `Aboard as: ${role}.`,
+  drawnFrom: (chapters: string, partial: boolean) =>
+    partial ? `drawn from ch. ${chapters}, silhouette only` : `drawn from ch. ${chapters}`,
 }
 
 function member(overrides: Partial<CastMember> & { characterId: string }): CastMember {
@@ -36,7 +38,9 @@ describe('the provenance of a body', () => {
       id: 'cast:kurapika',
       title: 'Kurapika',
       provenance: 'panel',
-      source: 'Here since ch. 358',
+      // ADR-005 §6: the presence's chapters, and beside them the panels the
+      // face was written against. Two claims, two sources, one line.
+      source: 'Here since ch. 358 — drawn from ch. 343, 358',
       standingIn: 'Stands in Room 1014',
       measured: null,
     })
@@ -45,7 +49,14 @@ describe('the provenance of a body', () => {
 
   it('says so when the catalogue dates the position to no chapter', () => {
     const [post] = distribute(ship, [member({ characterId: 'kurapika', since: null })])
-    expect(personExhibit(post!, null, WORDS).source).toBe('No chapter dates this position.')
+    expect(personExhibit(post!, null, WORDS).source).toBe(
+      'No chapter dates this position. — drawn from ch. 343, 358',
+    )
+  })
+
+  it('cites no likeness for a body the archive has not drawn', () => {
+    const [post] = distribute(ship, [member({ characterId: 'a-guard-nobody-drew' })])
+    expect(personExhibit(post!, null, WORDS).source).toBe('Here since ch. 358')
   })
 })
 

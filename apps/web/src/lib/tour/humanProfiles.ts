@@ -418,3 +418,29 @@ export function humanProfile(seen: Apparition): HumanProfile {
     clothing: seen.human?.dress ?? base.clothing,
   }
 }
+
+/**
+ * The panels a face was written against — ADR-005 §6.
+ *
+ * The provenance card already answers "why is this body here" with the chapter
+ * the catalogue dates their position to. It has to answer "why does this body
+ * look like this" the same way, or the likeness becomes the one claim in the
+ * walk that cites nothing: everything else a visitor can aim at hands back a
+ * page number, and a face drawn from a declaration nobody can check is exactly
+ * the thing ADR-001 exists to make impossible.
+ *
+ * `null` for anyone undeclared, which is the honest answer — there is no
+ * likeness to source.
+ */
+export function likenessSource(identity: string | null | undefined): {
+  chapterIds: string[]
+  status: 'confirmed' | 'partial'
+} | null {
+  if (!identity) return null
+  const entry = (appearanceFile.declared as ReadonlyArray<{ id: string; verified?: unknown }>).find(
+    (row) => row.id === identity,
+  )
+  const verified = entry?.verified as
+    { chapterIds: string[]; status: 'confirmed' | 'partial' } | undefined
+  return verified ? { chapterIds: verified.chapterIds, status: verified.status } : null
+}

@@ -193,6 +193,7 @@
         claim: $t.tour.examine.person.claim,
         standingIn: $t.tour.examine.standingIn,
         role: $t.tour.examine.person.role,
+        drawnFrom: $t.tour.examine.person.drawnFrom,
       })
     return examine(
       ship,

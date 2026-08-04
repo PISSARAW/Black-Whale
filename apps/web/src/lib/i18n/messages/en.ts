@@ -567,6 +567,10 @@ export const en = {
         claim:
           'A named character of the canon, standing where the archive puts them at this chapter.',
         role: (role: string) => `Aboard as: ${role}.`,
+        // Two separate claims about one body: that the archive puts them here,
+        // and that the archive knows what they look like.
+        drawnFrom: (chapters: string, partial: boolean) =>
+          partial ? `drawn from ch. ${chapters}, silhouette only` : `drawn from ch. ${chapters}`,
       },
       beast: {
         claim:

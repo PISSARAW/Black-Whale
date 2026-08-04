@@ -474,10 +474,11 @@ export function buildHumanFigure({
   // Three shapes past twenty-four metres, listed rather than spelled out: at
   // that distance a body is a mass, a face and a hair colour, and the loop is
   // the honest length of that statement.
+  const farHair = () => new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2)
   const FAR: ReadonlyArray<readonly [string, () => BufferGeometry, Material, number]> = [
     ['far:body', () => new THREE.CylinderGeometry(0.2, 0.14, 1.2, 5), cloth, 0.72],
     ['far:head', () => new THREE.SphereGeometry(0.18, 6, 4), skin, 1.52],
-    ['far:hair', () => new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2), hairInk, 1.54],
+    ['far:hair', farHair, hairInk, 1.54],
   ]
   for (const [key, make, material, y] of FAR) {
     const shape = new THREE.Mesh(geometry(THREE, key, make), material)

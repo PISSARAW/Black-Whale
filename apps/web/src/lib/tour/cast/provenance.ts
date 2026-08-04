@@ -14,6 +14,7 @@
  * answers the same `Exhibit` shape, so the overlay that draws one draws both.
  */
 import type { Exhibit } from '../exhibit'
+import { likenessSource } from '../humanProfiles'
 import type { Post } from './types'
 
 /** How a person's card is worded, in the language being read. */
@@ -30,6 +31,16 @@ export interface PersonWords {
   standingIn: (room: string) => string
   /** The role, as the catalogue words it, under a heading of its own. */
   role: (role: string) => string
+  /**
+   * "Drawn from ch. 343, 358" — ADR-005 §6.
+   *
+   * Beside the chapters of the presence rather than instead of them, because
+   * they are two different claims about the same body: one says the archive
+   * puts them here, the other says the archive knows what they look like. A
+   * card that ran the two together would let the second borrow the first's
+   * evidence.
+   */
+  drawnFrom: (chapters: string, partial: boolean) => string
 }
 
 /**
@@ -42,12 +53,19 @@ export interface PersonWords {
  */
 export function personExhibit(post: Post, roomName: string | null, words: PersonWords): Exhibit {
   const { member } = post
+  const drawn = likenessSource(member.characterId)
+  const position = member.since ? words.since(member.since.replace(/^ch-/, '')) : words.sinceUnknown
   return {
     id: `cast:${member.characterId}`,
     title: member.name,
     provenance: 'panel',
     badge: words.badge('panel'),
-    source: member.since ? words.since(member.since.replace(/^ch-/, '')) : words.sinceUnknown,
+    source: drawn
+      ? `${position} — ${words.drawnFrom(
+          drawn.chapterIds.map((id) => id.replace(/^ch-/, '')).join(', '),
+          drawn.status === 'partial',
+        )}`
+      : position,
     claim: `${words.claim} ${words.role(member.role)}`,
     // A person has no measured extent, and inventing one would be the walk
     // claiming a height off a panel that never gave one.

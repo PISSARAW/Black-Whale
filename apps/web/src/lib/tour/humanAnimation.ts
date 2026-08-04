@@ -86,7 +86,8 @@ export function poseHuman(rig: PosedHuman): void {
       leg.rotation.x = -Math.PI / 2
       knees[index].rotation.x = Math.PI / 2
     })
-  }}
+  }
+}
 
 export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
   const figureBasePosition = rig.figure.position.clone()

@@ -467,6 +467,12 @@ export const fr: Messages = {
         sinceUnknown: 'Le catalogue ne date cette position d’aucun chapitre.',
         claim: 'Un personnage nommé du canon, là où l’archive le place à ce chapitre.',
         role: (role) => `À bord comme : ${role}.`,
+        // Deux affirmations distinctes sur le même corps : l'une dit que
+        // l'archive l'y place, l'autre qu'elle sait à quoi il ressemble.
+        drawnFrom: (chapters, partial) =>
+          partial
+            ? `dessiné d'après le ch. ${chapters}, silhouette seule`
+            : `dessiné d'après le ch. ${chapters}`,
       },
       beast: {
         claim:

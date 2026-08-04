@@ -13,12 +13,17 @@ RUN pnpm --filter @black-whale/database generate
 # pass dies on a missing module *after* `migrate:deploy` has moved the
 # schema, which leaves the deploy half-applied and the site behind a gate that
 # never opens.
-RUN pnpm --filter @black-whale/domain build
-# canon-lint runs from the same image, against the same `data/` the compiler
-# is about to read. The compiler itself is built here too: it is the only
-# thing that puts the catalogue into the database.
-RUN pnpm --filter @black-whale/contracts build
-RUN pnpm --filter @black-whale/canon-compiler build
+#
+# canon-lint runs from the same image, against the same `data/` the compiler is
+# about to read, and contracts is a dependency of the compiler — so building the
+# compiler builds it. `turbo build --filter` rather than one `RUN` per package,
+# the same way Dockerfile.web and Dockerfile.admin do it: the hand-written list
+# this replaces named domain, contracts and the compiler, and went on naming
+# only those after nen-engine and ability-modules became dependencies. The build
+# then died on the two it had never been told about. A dependency added to
+# canon-compiler is now built because it is a dependency, not because someone
+# remembered to come back here.
+RUN pnpm turbo build --filter=@black-whale/canon-compiler
 ENV NODE_ENV=production
 USER node
 # `migrate:deploy` only moves the schema. Everything the archive actually shows —

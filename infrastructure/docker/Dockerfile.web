@@ -26,6 +26,14 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps/web/build ./apps/web/build
 COPY --from=builder /app/apps/web/package.json ./apps/web/package.json
+# pnpm does not hoist: a dependency declared by apps/web resolves through
+# apps/web/node_modules, a farm of symlinks into the root .pnpm store, and
+# nowhere else. Leaving it out is why the first deploy of the slimmed image
+# answered 500 on every page that touches the database — `@prisma/client` is
+# declared here, not at the root, so Node walked up from apps/web/build, found
+# no apps/web/node_modules, reached the root one, and did not find it there
+# either. The store it points into is the node_modules copied above.
+COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
 # Read from disk at request time by `lib/server/data-files.ts`, which walks up
 # from the working directory looking for it — hence /app, not /app/apps/web.
 COPY --from=builder /app/data ./data

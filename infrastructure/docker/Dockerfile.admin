@@ -19,6 +19,9 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps/admin/build ./apps/admin/build
 COPY --from=builder /app/apps/admin/package.json ./apps/admin/package.json
+# See Dockerfile.web: pnpm resolves an app's own dependencies through the app's
+# node_modules, so the runtime image needs it to find @prisma/client.
+COPY --from=builder /app/apps/admin/node_modules ./apps/admin/node_modules
 
 ENV NODE_ENV=production
 ENV PORT=3002

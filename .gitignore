@@ -26,3 +26,9 @@ playwright-report/
 
 # Coverage reports
 coverage/
+
+# Written by infrastructure/hetzner/deploy.sh, one line per release. It
+# describes the host it was deployed on, not the code, and deploy.sh refuses a
+# checkout that git reports as dirty — so leaving it tracked makes the second
+# deploy on any host impossible.
+.deploy-history

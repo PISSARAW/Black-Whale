@@ -103,8 +103,10 @@ export const stealChain = defineAbility({
     },
 
     'drain-into-zetsu': {
-      label: 'Vider l’aura de la victime',
-      evidence: shown('ch. 369 — la victime tombe en Zetsu forcé'),
+      label: 'Vider la victime',
+      evidence: shown(
+        "l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)"
+      ),
       conditions: [requiresTarget('Une victime est enchaînée')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { forcedZetsu: true } })],
     },

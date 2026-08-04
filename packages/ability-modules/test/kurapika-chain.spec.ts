@@ -66,6 +66,32 @@ describe('the Little Eye sequence (ch. 369)', () => {
     expect(state.abilitiesByOwner['kurapika']).toContain('little-eye')
   })
 
+  it("l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)", () => {
+    const branches = new InMemoryBranchEngine()
+    const base = world()
+    branches.createBranch({
+      id: 'chain-drain',
+      name: 'drain',
+      rulePolicy: 'STRICT_CANON',
+      baseState: base,
+    })
+
+    const drain = stealChain.execute(
+      context({
+        targets: ['sayird'],
+        targetRefs: [{ id: 'sayird', kind: 'CHARACTER' }],
+        actionId: 'drain-into-zetsu',
+      }),
+    )
+    expect(drain.allowed).toBe(true)
+    const state = branches.append('chain-drain', drain.events ?? []).state
+
+    const forcedZetsu = Object.values(state.effects).find(
+      (effect) => effect.kind === 'EFFECT_STATE' && effect.attributes['forcedZetsu'] === true,
+    )
+    expect(forcedZetsu).toBeDefined()
+  })
+
   it('moves the ability from the victim to Kurapika and then to Oito', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()

@@ -549,6 +549,8 @@ export const fr: Messages = {
         beast: 'Sous le Gyo : une bête se tient avec lui.',
       },
       held: (name, what) => `${name} — ${what}`,
+      worn: (name) =>
+        `Vous portez le visage de ${name}. Aucune aura ne le montre ; seul le toucher le trahit.`,
       marks: {
         bound: 'retenu',
         controlled: 'agit sur un ordre qui n’est pas le sien',
@@ -843,9 +845,8 @@ export const fr: Messages = {
           `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
         sunRisen: (metres, solids) =>
           `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
-        jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
-        jailRefused: (room) =>
-          `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
+        jailSelfRefused: () =>
+          "Chain Jail s'est refusée · Judgment Chain est ce qui garantit le serment sur vous-même, pas ce qui l'exécute",
         fishLoosed: (room) =>
           `Les poissons sont dans ${room} · rien ne se verra tant que vous y êtes`,
         fishFed: (room, solid) =>
@@ -889,7 +890,13 @@ export const fr: Messages = {
           `Le hibou s'est dématérialisé · ses dix dernières secondes, sur ${rooms} pièce${rooms === 1 ? '' : 's'}, passent dans le coin`,
         noSolid: 'Rien de solide dans le réticule',
         boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
-        gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
+        solidPaired: (solid) => `${solid} est saisi · saisissez un second volume pour les joindre`,
+        gumSet: (solid, metres) =>
+          `Gomme sur ${solid} à ${metres.toFixed(1)} m · relancez pour l'attirer, ou saisissez un second volume pour les rapprocher`,
+        gumReeled: (solid, metres) =>
+          `${solid} a traversé ${metres.toFixed(1)} m d'un coup sec · le fil a lâché où il s'est arrêté`,
+        gumTaut: (solid) =>
+          `Le fil se tend sur ${solid} · une cloison sépare, et la gomme ne traîne pas un meuble à travers l'acier`,
         gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
         gumTrapSet: (room) =>
           `Gomme tendue en travers de ${room} · rien ne la montre hors du Gyo, et elle y reste`,
@@ -1038,6 +1045,7 @@ export const fr: Messages = {
         projected: 'Le corps est dans',
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
+        masked: 'Visage porté',
         soothed: 'La musique tient',
         playing: 'La flûte joue',
         flowered: 'En fleurs',
@@ -1070,6 +1078,8 @@ export const fr: Messages = {
         snakes: 'Serpents lâchés dans',
         trap: "L'appât est dans",
         gumTrap: 'Gomme tendue en travers de',
+        gumStrand: 'Gomme collée à',
+        gumStretch: 'Étirement du fil',
         crossings: (n) => `${n} passages sur 3`,
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',

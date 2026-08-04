@@ -659,6 +659,8 @@ export const en = {
         beast: 'Under Gyo: an animal stands with them.',
       },
       held: (name: string, what: string) => `${name} — ${what}`,
+      worn: (name: string) =>
+        `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
       marks: {
         bound: 'held',
         controlled: 'acting on an order that is not theirs',
@@ -980,10 +982,8 @@ export const en = {
           `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
         sunRisen: (metres: number, solids: number) =>
           `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
-        jailed: (room: string, doors: number) =>
-          `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
-        jailRefused: (room: string) =>
-          `Nothing is holding ${room} · the chain is for what Nen is already in`,
+        jailSelfRefused: () =>
+          'Chain Jail refused · Judgment Chain guarantees the vow on yourself, rather than executing it',
         fishLoosed: (room: string) => `The fish are in ${room} · nothing will show while you are`,
         fishFed: (room: string, solid: string) =>
           `${solid} was not there when you looked back into ${room}`,
@@ -1026,8 +1026,14 @@ export const en = {
           `The owl is gone · the last ten seconds of it, over ${rooms} room${rooms === 1 ? '' : 's'}, are playing in the corner`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
-        gumSet: (solid: string) =>
-          `Gum on ${solid} · take hold of a second thing to pull them together`,
+        solidPaired: (solid: string) =>
+          `${solid} is held · take hold of a second thing to join them`,
+        gumSet: (solid: string, metres: number) =>
+          `Gum on ${solid} at ${metres.toFixed(1)} m · cast again to bring it in, or take hold of a second thing to pull them together`,
+        gumReeled: (solid: string, metres: number) =>
+          `${solid} crossed ${metres.toFixed(1)} m in one snap · the strand let go where it stopped`,
+        gumTaut: (solid: string) =>
+          `The strand goes taut on ${solid} · it is through a bulkhead, and gum does not drag furniture through steel`,
         gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
         gumTrapSet: (room: string) =>
           `Gum strung across ${room} · nothing shows it but Gyo, and it is still there`,
@@ -1187,6 +1193,7 @@ export const en = {
         projected: 'The body is in',
         dance: 'The prologue',
         mimic: 'Wearing',
+        masked: 'Face worn',
         soothed: 'The music holds',
         playing: 'The flute is playing',
         flowered: 'In flower',
@@ -1222,6 +1229,8 @@ export const en = {
         snakes: 'Snakes loose in',
         trap: 'The bait is in',
         gumTrap: 'Gum strung across',
+        gumStrand: 'Gum stuck to',
+        gumStretch: 'Stretch on the strand',
         crossings: (n: number) => `${n} of 3 crossings`,
         solid: 'Solids held',
         wound: 'The confetti is in',

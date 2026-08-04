@@ -19,11 +19,13 @@
     dialReading,
     identityOf,
     solidById,
+    solidNow,
     twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
+  import { gumStretch, gumTension } from '$lib/tour/gum'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -60,6 +62,14 @@
     nameOf: (entity: { name: string; nameFr: string }) => string
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
+    /**
+     * A body of the cast under its own name, by character id.
+     *
+     * One line of the panel needs it: the face the visitor is wearing. The HUD
+     * has no cast of its own and is not being given one — it is handed the
+     * resolver the page already built for the body read-out.
+     */
+    personName: (characterId: string) => string
     onRelease: () => void
     /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
@@ -93,6 +103,7 @@
     touch = false,
     nameOf,
     sourceOf,
+    personName,
     onRelease,
     onCycleDouble,
     onCycleOwl,
@@ -230,8 +241,14 @@
         return say.noSolid
       case 'bound-fast':
         return say.boundFast(solidName(report.solidId))
+      case 'solid-paired':
+        return say.solidPaired(solidName(report.solidId))
       case 'gum-set':
-        return say.gumSet(solidName(report.solidId))
+        return say.gumSet(solidName(report.solidId), report.metres)
+      case 'gum-reeled':
+        return say.gumReeled(solidName(report.solidId), report.metres)
+      case 'gum-taut':
+        return say.gumTaut(solidName(report.solidId))
       case 'gum-pulled':
         return say.gumPulled(solidName(report.solidId), solidName(report.otherId))
       case 'gum-trap-set':
@@ -315,10 +332,8 @@
       case 'cargo-landed':
         return say.cargoLanded(solidName(report.solidId), roomName(report.spaceId))
 
-      case 'jailed':
-        return say.jailed(roomName(report.spaceId), report.doors)
-      case 'jail-refused':
-        return say.jailRefused(roomName(report.spaceId))
+      case 'jail-self-refused':
+        return say.jailSelfRefused()
       case 'fish-loosed':
         return say.fishLoosed(roomName(report.spaceId))
       case 'fish-fed':
@@ -541,6 +556,31 @@
     }
   })
 
+  /** How many notches the tension gauge is drawn in. */
+  const GAUGE_NOTCHES = 5
+
+  /**
+   * The filament out of the wrist, measured from where the visitor is standing
+   * *now*.
+   *
+   * Derived rather than stored, because the whole of Bungee Gum is that the
+   * force rises with the stretch: a strand that read the same after the visitor
+   * had backed four metres off what they stuck would be a rope with a pink
+   * colour on it. The gauge is the reading `gum.ts` works out, drawn in notches.
+   */
+  const strand = $derived.by(() => {
+    if (!world.gum) return null
+    const solid = solidById(ship, world, world.gum.solidId)
+    if (!solid) return null
+    const now = solidNow(solid, world.solids[world.gum.solidId])
+    const metres = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+    const filled = Math.round(gumTension(world.gum, metres) * GAUGE_NOTCHES)
+    return {
+      solidId: world.gum.solidId,
+      gauge: `${gumStretch(world.gum, metres).toFixed(1)} m ${'▰'.repeat(filled)}${'▱'.repeat(GAUGE_NOTCHES - filled)}`,
+    }
+  })
+
   /** Everything the aura is holding, as one list the visitor can read down. */
   const holds = $derived.by(() => {
     const held = $t.tour.hatsu.holds
@@ -647,6 +687,10 @@
       rows.push({ label: held.projected, value: roomName(body.projected.spaceId) })
     if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
+    // The skin mask, which is the only thing the visitor wears that other
+    // people were meant to read. Nothing is drawn for it anywhere in the ship —
+    // that is the technique — so the panel is where it is legible at all.
+    if (body.masked) rows.push({ label: held.masked, value: personName(body.masked) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
     // What the flute has left behind: which air last came out of it, the rooms
     // still holding a piece, and how much of the ship is dancing to one.
@@ -717,6 +761,12 @@
         label: held.snakes,
         value: `${world.snakes.rooms.length} · ${world.snakes.fed ? '✓' : '—'}`,
       })
+    }
+    // The filament, and how much of it is drawn out: a gauge rather than a
+    // flag, because an elastic that is not measured is drawn as a rope.
+    if (strand) {
+      rows.push({ label: held.gumStrand, value: solidName(strand.solidId) })
+      rows.push({ label: held.gumStretch, value: strand.gauge })
     }
     if (world.pairing) {
       rows.push({

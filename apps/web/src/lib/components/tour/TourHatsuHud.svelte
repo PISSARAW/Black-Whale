@@ -318,6 +318,8 @@
         return say.wrapped(solidName(report.solidId))
       case 'unwrapped':
         return say.unwrapped(solidName(report.solidId), roomName(report.spaceId))
+      case 'copies-faded':
+        return say.copiesFaded(report.solids)
       case 'in-the-cloth':
         return say.inTheCloth(solidName(report.solidId))
       case 'pushed':
@@ -331,7 +333,7 @@
       case 'no-lock':
         return say.noLock(report.stamped)
       case 'copied':
-        return say.copied(solidName(report.solidId))
+        return say.copied(solidName(report.solidId), report.hours)
       case 'crushed':
         return say.crushed(solidName(report.solidId))
       case 'volley':

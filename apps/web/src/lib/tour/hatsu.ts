@@ -987,9 +987,9 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
       world: {
         ...world,
         copies: [...world.copies, copy],
-        solids: { ...world.solids, [copyId]: { copyOf: id } },
+        solids: { ...world.solids, [copyId]: { copyOf: id, life: FAKE_HOURS } },
       },
-      report: { kind: 'copied', solidId: id },
+      report: { kind: 'copied', solidId: id, hours: FAKE_HOURS },
     }
   },
 
@@ -1599,6 +1599,56 @@ export const reachOf = (body: TourBody): number => 90 * (1 + body.enhance * 0.4)
 
 /** The five things Kurton can carry, taken from the room he was boarded in. */
 export const CAPACITY = 5
+
+/**
+ * How long a Gallery Fake copy lasts, in hours.
+ *
+ * A day, which is the one limit the technique states — and the walk had none of
+ * it: a copy made in the first minute of a visit was still standing in the
+ * banquet hall an hour later, which turns a technique whose whole character is
+ * that it is temporary into a way of furnishing the ship. Counted in seconds of
+ * the walk, because the second of the walk is worth an hour (`emperor.ts`), and
+ * a second exchange rate for the same clock would be two different days.
+ */
+export const FAKE_HOURS = 24
+
+/**
+ * One hour of the walk on everything Kortopi's left hand made.
+ *
+ * On the page's beat rather than on a cast, like the gas and the fish: a copy
+ * that only aged while you pressed a key would be a copy that never expired.
+ * What is left behind is nothing — the copy is gone from `copies` and from the
+ * solids alike, because a fake that leaves a hold behind is a fake that left
+ * something real.
+ */
+export function ageTheCopies(
+  world: TourWorld,
+): { world: TourWorld; report: TourReport | null } | null {
+  const ageing = world.copies.filter((copy) => world.solids[copy.id]?.life !== undefined)
+  if (!ageing.length) return null
+
+  const solids = { ...world.solids }
+  const expired: string[] = []
+  for (const copy of ageing) {
+    const left = (solids[copy.id]!.life ?? 0) - 1
+    if (left > 0) {
+      solids[copy.id] = { ...solids[copy.id], life: left }
+      continue
+    }
+    expired.push(copy.id)
+    delete solids[copy.id]
+  }
+  if (!expired.length) return { world: { ...world, solids }, report: null }
+
+  return {
+    world: {
+      ...world,
+      solids,
+      copies: world.copies.filter((copy) => !expired.includes(copy.id)),
+    },
+    report: { kind: 'copies-faded', solids: expired.length },
+  }
+}
 
 /**
  * How far the sun reaches per punishment packed away.

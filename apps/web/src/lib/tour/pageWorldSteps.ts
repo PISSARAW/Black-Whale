@@ -1,5 +1,6 @@
 import type { Ship } from './blueprint'
 import {
+  ageTheCopies,
   ageTheOwl,
   catStep,
   fishBite,
@@ -163,6 +164,12 @@ export function stepScarlet(world: TourWorld): WorldStep | null {
     world: { ...world, scarlet: eyes },
     report: { kind: 'eyes-held', hours: eyes.hours, until: untilSpent(eyes) },
   }
+}
+
+/** One hour of the walk on Kortopi's copies. See `ageTheCopies`. */
+export function stepCopies(world: TourWorld): WorldStep | null {
+  const step = ageTheCopies(world)
+  return step ? { world: step.world, report: step.report ?? null } : null
 }
 
 export function stepOwlAge(world: TourWorld): WorldStep | null {

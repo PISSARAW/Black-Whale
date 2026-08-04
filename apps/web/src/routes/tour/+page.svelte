@@ -655,6 +655,9 @@
       // And Emperor Time spends on it: an hour of life a second, held or not
       // touched, which is the only way a price can be one.
       ticker.scarletSecond()
+      // And a copy lasts a day, on the same exchange: the second of the walk
+      // is worth an hour, so twenty-four of them and the fake is gone.
+      ticker.copyHour()
     }, 1000)
     return () => clearInterval(beat)
   })

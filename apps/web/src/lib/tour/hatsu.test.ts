@@ -12,6 +12,8 @@ import {
   SUN_FLARE_METRES_PER_HIT,
   TOUR_HATSU_KINDS,
   TWO_HANDED_KINDS,
+  FAKE_HOURS,
+  ageTheCopies,
   aimedSolid,
   aimedSpace,
   arriveInTour,
@@ -2863,5 +2865,48 @@ describe('the cloth, which carries rather than shrinks', () => {
     })
     expect(struck.report).toEqual({ kind: 'in-the-cloth', solidId: solidA.id })
     expect(struck.world.solids[solidA.id]?.squash).toBe(0.25)
+  })
+})
+
+/**
+ * Ch. 371 closes Gallery Fake twice over: the copies last a day, and the page
+ * went out with Kortopi along with everything it had made. The walk had neither
+ * — a copy made in the first minute of a visit was still standing an hour
+ * later, which turns a technique whose whole character is that it is temporary
+ * into a way of furnishing the ship.
+ */
+describe('the copies, which last a day', () => {
+  const copy = (world: TourWorld) =>
+    castInTour(world, 'clone', {
+      ship,
+      targetId: null,
+      targetSolidId: solidA.id,
+      standingIn: solidA.spaceId,
+      at: solidA.at,
+    })
+
+  it('gives each copy the one duration the archive puts on it', () => {
+    const made = copy(EMPTY_WORLD)
+    expect(made.report).toMatchObject({ kind: 'copied', hours: FAKE_HOURS })
+    expect(made.world.copies).toHaveLength(1)
+    expect(made.world.solids[made.world.copies[0]!.id]?.life).toBe(FAKE_HOURS)
+  })
+
+  it('ages them on the walk’s own beat and takes them back at the day', () => {
+    let world = copy(EMPTY_WORLD).world
+    const id = world.copies[0]!.id
+    for (let hour = 0; hour < FAKE_HOURS - 1; hour += 1) {
+      world = ageTheCopies(world)!.world
+      expect(world.copies).toHaveLength(1)
+    }
+    const last = ageTheCopies(world)!
+    expect(last.report).toEqual({ kind: 'copies-faded', solids: 1 })
+    expect(last.world.copies).toHaveLength(0)
+    // Nothing left behind: a fake that left a hold behind left something real.
+    expect(last.world.solids[id]).toBeUndefined()
+  })
+
+  it('has nothing to age before anything has been copied', () => {
+    expect(ageTheCopies(EMPTY_WORLD)).toBeNull()
   })
 })

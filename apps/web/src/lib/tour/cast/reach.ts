@@ -61,6 +61,8 @@ export type ReachRefusal =
   | 'no-target-ability'
   /** Rising Sun does not pick what it catches, and cannot be told to. */
   | 'spares-nobody'
+  /** Gallery Fake copies things, and its page went out with Kortopi. */
+  | 'objects-only'
   /**
    * Bird Manipulation takes birds.
    *
@@ -230,15 +232,15 @@ const WORN = 'disguise' as const
  */
 const PALM = 'blast' as const
 
-/**
- * The technique that refuses a person because it cannot choose.
- *
- * Ch. 258 draws Feitan warning his own companions to take cover, which is the
- * ability's only statement about who it catches: everybody. So a mark laid on
- * somebody by Rising Sun would be the walk claiming the heat can be aimed, and
- * the refusal is the more accurate of the two answers by a distance.
- */
+/** The technique that refuses a person because it cannot choose. Ch. 258 has
+ * Feitan warning his own companions to take cover, which is the ability's only
+ * statement about who it catches: everybody. */
 const NO_MERCY = 'sun-flare' as const
+
+/** The technique that refuses a person because its page is closed. Ch. 371
+ * takes Kortopi and everything his left hand had made: no record of a person
+ * copied, and no hand left to do it. */
+const PAGE_IS_DEAD = 'clone' as const
 
 /** The technique that delivers rather than holds. See `FLOCK_ADDRESSEES`. */
 const CARRIES = 'flock' as const
@@ -276,6 +278,7 @@ const MARKS: Record<
     | typeof PALM
     | typeof READS
     | typeof NO_MERCY
+    | typeof PAGE_IS_DEAD
     | 'chain-rule'
   >,
   BodyMark
@@ -352,6 +355,9 @@ const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal |
   // technique — the sun still rises, and the room still burns.
   [NO_MERCY]: () => 'spares-nobody',
 
+  // The left hand copies things, and the hand is gone. See `PAGE_IS_DEAD`.
+  [PAGE_IS_DEAD]: () => 'objects-only',
+
   'chain-rule': (input) => {
     // Aimed back at the person it was taken from, the same finger gives it
     // back — see `reachBody` — so the refusal is only for a *second* theft.
@@ -419,13 +425,10 @@ const tellsFor = (kind: AskKind, input: ReachInput): ReachTell[] => TELLS[kind](
  * conscientious.
  */
 /**
- * Steal Chain's finger, which does two opposite things with one gesture.
- *
- * Aimed at somebody new it tears an ability out and empties them; aimed back at
- * whoever it emptied it gives both back. Neither answer lays a mark — the first
- * lays a hold, the second takes one off — so both are outcomes of their own,
- * and they are decided together because they are one condition read from two
- * sides. Its own function so `reachBody` stays a dispatch rather than a rule.
+ * Steal Chain's finger, which does two opposite things with one gesture: aimed
+ * at somebody new it tears an ability out, aimed back at whoever it emptied it
+ * gives both back. One condition read from two sides, so they are decided
+ * together — and kept out of `reachBody`, which stays a dispatch.
  */
 function theThumb(kind: BodyKind, characterId: string, input: ReachInput): Reach {
   if (input.book?.stolenFrom === characterId) {

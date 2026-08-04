@@ -592,6 +592,8 @@ export const fr: Messages = {
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
         'thumb-occupied': 'Le pouce tient déjà une capacité.',
         'no-target-ability': 'Il n’a aucune capacité à voler.',
+        'objects-only':
+          'La main gauche copie des choses. Ch. 371 a fermé la page avec Kortopi et emporté tout ce qu’elle avait fait : l’archive ne consigne aucune personne copiée, ni aucune main pour le faire.',
         'spares-nobody':
           'La chaleur ne trie pas ce qu’elle prend. Ch. 258 montre son propre porteur criant à ses compagnons de se mettre à couvert, et c’est tout ce que la capacité dit de qui elle épargne : personne.',
         'palm-only':
@@ -1016,6 +1018,8 @@ export const fr: Messages = {
           `${solid} plié dans le tissu · il quitte la salle avec vous, et rien n'y est abîmé`,
         unwrapped: (solid, room) =>
           `${solid} ressort du tissu dans ${room}, à sa taille et là où vous l'ouvrez`,
+        copiesFaded: (solids) =>
+          `${solids} copie${solids === 1 ? '' : 's'} disparue${solids === 1 ? '' : 's'} · un jour était tout ce qu'elles avaient, et rien ne reste où elles se tenaient`,
         inTheCloth: (solid) =>
           `${solid} est plié dans le tissu · tout en ressort indemne, c'est la règle`,
         pushed: (solid, metres) =>
@@ -1034,8 +1038,8 @@ export const fr: Messages = {
           stamped
             ? `Aucun des ${stamped} pantins n'est verrouillé · l'ordre n'est adressé à personne`
             : `Rien n'est marqué · l'ordre n'est adressé à personne`,
-        copied: (solid) =>
-          `Une copie de ${solid} se dresse à côté · elle est froide, car aucune planche ne la soutient`,
+        copied: (solid, hours) =>
+          `Une copie de ${solid} se dresse à côté · ${hours} h avant qu'elle ne parte, et elle est froide car aucune planche ne la soutient`,
         crushed: (solid) => `${solid} est aplati sous la masse`,
         volley: (solid, hits) => `${solid} repoussé · rafale ${hits} sur 3`,
         shattered: (solid) => `${solid} ne tient plus debout`,

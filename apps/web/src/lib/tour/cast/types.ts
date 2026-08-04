@@ -964,6 +964,17 @@ export interface SolidHold {
   /** A Gallery Fake copy, and the solid it is a copy of. */
   copyOf?: string
   /**
+   * Seconds of the walk a Gallery Fake copy has left, or absent for a real
+   * thing.
+   *
+   * The one canon limit on the technique and the one the walk had none of: a
+   * copy lasts a day, and the day is up whether or not anybody is looking. The
+   * second of the walk is worth an hour — `emperor.ts` states the exchange and
+   * this is the second user of it — so twenty-four of them are a day, and a
+   * reader who makes a copy can watch the archive take it back.
+   */
+  life?: number
+  /**
    * Texture Surprise is over this face.
    *
    * A record and not a tell: the walk keeps it so that Nen Stitches has
@@ -1196,7 +1207,10 @@ export type TourReport =
   | { kind: 'stamp-locked'; solidId: string; locked: boolean; locks: number }
   | { kind: 'ordered'; spaceId: string; puppets: number }
   | { kind: 'no-lock'; stamped: number }
-  | { kind: 'copied'; solidId: string }
+  | { kind: 'copied'; solidId: string; hours: number }
+  /** Copies whose day was up. Nothing is left behind: a fake that left something
+   * behind would have left something real. */
+  | { kind: 'copies-faded'; solids: number }
   | { kind: 'crushed'; solidId: string }
   | { kind: 'volley'; solidId: string; hits: number }
   /**

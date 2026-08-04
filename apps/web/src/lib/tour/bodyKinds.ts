@@ -70,11 +70,11 @@ export const BODY_KINDS = [
   // at a person is not a no-op: it is the walk saying out loud that there is no
   // way to spare one. Silence would have read as the sun being selective.
   'sun-flare',
-  // Rising Sun, for the refusal alone. The heat does not pick what it catches
-  // — ch. 258 has Feitan shout at his own companions to get clear — so aiming
-  // it at a person is not a no-op, it is the walk saying out loud that there is
-  // no way to spare one. Silence would have read as the sun being selective.
-  'sun-flare',
+  // Gallery Fake, for the refusal alone. The left hand copied objects and the
+  // page went out with Kortopi in ch. 371 — along with everything it had made.
+  // Aimed at a guard the walk says that rather than quietly copying a person,
+  // which is a use the archive never records and a death it should not undo.
+  'clone',
   // Bird Manipulation belongs here for the reason the list exists: aiming it at
   // a person is not a no-op. It either puts a note in a Zodiac's hand or it
   // refuses out loud, and the refusal — that the manipulation takes birds and

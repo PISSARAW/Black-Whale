@@ -699,6 +699,8 @@ export const en = {
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
         'thumb-occupied': 'The thumb is already holding an ability.',
         'no-target-ability': 'They have no ability to steal.',
+        'objects-only':
+          'The left hand copies things. Ch. 371 closed the page with Kortopi and took everything it had made with it: the archive records no person copied, and no hand left to do it.',
         'spares-nobody':
           'The heat does not pick what it catches. Ch. 258 has its own user shouting at his companions to get clear, which is the whole of what the ability says about who it spares: nobody.',
         'palm-only':
@@ -1158,6 +1160,8 @@ export const en = {
           `${solid} folded into the cloth · it leaves the room with you, and nothing about it is damaged`,
         unwrapped: (solid: string, room: string) =>
           `${solid} out of the cloth in ${room}, the size it was and exactly where you opened it`,
+        copiesFaded: (solids: number) =>
+          `${solids} cop${solids === 1 ? 'y is' : 'ies are'} gone · a day was all they had, and nothing is left where they stood`,
         inTheCloth: (solid: string) =>
           `${solid} is folded away · everything comes out of the cloth whole, which is the rule`,
         pushed: (solid: string, metres: number) =>
@@ -1176,8 +1180,8 @@ export const en = {
           stamped
             ? `None of the ${stamped} puppets is locked · the order is spoken to nobody`
             : `Nothing is stamped · the order is spoken to nobody`,
-        copied: (solid: string) =>
-          `A copy of ${solid} stands beside it · it is drawn cold, because no page supports it`,
+        copied: (solid: string, hours: number) =>
+          `A copy of ${solid} stands beside it · ${hours} h before it goes, and it is drawn cold because no page supports it`,
         crushed: (solid: string) => `${solid} is flat under the weight`,
         volley: (solid: string, hits: number) => `${solid} driven back · volley ${hits} of 3`,
         shattered: (solid: string) => `${solid} does not stand any more`,

@@ -7,6 +7,7 @@ import {
   stepOwl,
   stepConsole,
   stepOwlAge,
+  stepCopies,
   stepPolarity,
   stepScarlet,
   stepScout,
@@ -77,6 +78,11 @@ export class TourWorldTicker {
 
   owlSecond = () => {
     this.apply(stepOwlAge(this.options.read().world), true)
+  }
+
+  /** One hour of the walk on the copies, which last a day. */
+  copyHour = () => {
+    this.apply(stepCopies(this.options.read().world), true)
   }
 
   /** One second of Emperor Time, and the hour of life it costs. */

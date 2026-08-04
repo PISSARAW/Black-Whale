@@ -4,7 +4,11 @@ build/
 .svelte-kit/
 .turbo/
 .pnpm-store/
+# .claude/ est partagé : settings.json et hooks/ sont versionnés (le cliquet ADR-002
+# doit valoir pour tout le monde). Le reste est personnel ou volatil.
 .claude/worktrees/
+.claude/settings.local.json
+.claude/plan.md
 *.tsbuildinfo
 .env
 .env.local

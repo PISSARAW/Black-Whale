@@ -70,11 +70,42 @@ describe('the roster', () => {
   })
 
   /** Aboard is not a place: a position no finer than a deck is left to the map. */
-  it('refuses a position that is not a room', () => {
-    const vague = input({
+  it('refuses a position that is not a place', () => {
+    const onADeck = input({
       presences: [{ entityId: 'body-kurapika', locationId: 'loc-1', precision: 'TIER' }],
     })
-    expect(rosterFrom(vague).members).toEqual([])
+    expect(rosterFrom(onADeck).members).toEqual([])
+    const lost = input({
+      presences: [{ entityId: 'body-kurapika', locationId: 'loc-1', precision: 'UNKNOWN' }],
+    })
+    expect(rosterFrom(lost).members).toEqual([])
+  })
+
+  /**
+   * A suite is a place. `ZONE` says the catalogue named a room rather than
+   * numbered one — the family offices, the hospital, the cabins — and refusing
+   * those emptied every deck but the first while the same bodies stood on the
+   * map.
+   */
+  it('stands a body in a place the catalogue names rather than numbers', () => {
+    const inTheWard = input({
+      presences: [
+        {
+          entityId: 'body-kurapika',
+          locationId: 'loc-court',
+          precision: 'ZONE',
+          fromEvent: { chapterId: 'ch-358' },
+        },
+      ],
+    })
+    const [member] = rosterFrom(inTheWard).members
+    expect(member).toMatchObject({ characterId: 'kurapika', approximate: true })
+    expect(member!.locations).toContain('tier-3-central-courthouse')
+  })
+
+  /** A room number is not approximate, and the card must be able to tell. */
+  it('leaves a numbered room unmarked', () => {
+    expect(rosterFrom(input()).members[0]).not.toHaveProperty('approximate')
   })
 
   it('hands a sector its rooms as well as itself', () => {

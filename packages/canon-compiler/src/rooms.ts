@@ -173,6 +173,11 @@ const LOCATION_TYPE_BY_ZONE: Readonly<Record<string, LocationKind>> = {
   corridor: 'CORRIDOR',
   zone: 'ZONE',
   room: 'ROOM',
+  // The hangar entrance is the one place the catalogue types `service`, and an
+  // absent key means `UNKNOWN` — which reads as "the archive has lost them"
+  // rather than "a place on deck 5", and takes the body off the map's own
+  // marker as well as out of the walk.
+  service: 'ZONE',
   storage: 'ZONE',
   evacuation: 'ZONE',
   ceremonial: 'ZONE',

@@ -461,11 +461,17 @@ export const fr: Messages = {
       sourceHeading: 'D’où cela vient',
       measured: (long, wide, height) => `${long} × ${wide} m, ${height} m de haut`,
       standingIn: (room) => `Se tient dans ${room}`,
+      standingAbout: (room) => `Quelque part dans ${room}`,
       room: 'Une pièce que les plans de pont dessinent, arpentée à la taille qu’ils lui donnent.',
       person: {
         since: (chapter) => `Ici depuis le ch. ${chapter}`,
         sinceUnknown: 'Le catalogue ne date cette position d’aucun chapitre.',
         claim: 'Un personnage nommé du canon, là où l’archive le place à ce chapitre.',
+        // Le lieu est aussi attesté que dans l'autre cas ; c'est le coin de la
+        // pièce qui est de la promenade, et la carte le dit plutôt que de le
+        // laisser passer pour une position relevée.
+        approximateClaim:
+          'Un personnage nommé du canon, dans le lieu où l’archive le place à ce chapitre. Le catalogue nomme le lieu et non la pièce : l’endroit exact est celui que la reconstruction lui a donné.',
         role: (role) => `À bord comme : ${role}.`,
         // Deux affirmations distinctes sur le même corps : l'une dit que
         // l'archive l'y place, l'autre qu'elle sait à quoi il ressemble.

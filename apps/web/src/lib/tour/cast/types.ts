@@ -85,6 +85,19 @@ export interface CastMember {
   hatsu: string[]
   /** The beast declared on this character, if any. See `beasts.ts`. */
   beast: CastBeast | null
+  /**
+   * Whether the catalogue names a place rather than a room, so the exact spot
+   * is the walk's own.
+   *
+   * Absent is the strong case: a room number, and the body is where the archive
+   * puts it. Present, the archive is just as sure of the *place* — the family
+   * office, the ward, the cabins — and it is the walk that chose which corner of
+   * it to stand them in, deterministically, from their own id. Carried this far
+   * so the provenance card can say which of the two it is; nothing draws
+   * differently for it, because an approximate spot in the right room is still
+   * the right room.
+   */
+  approximate?: boolean
 }
 
 /** A Guardian Spirit Beast, as declared in `data/` and placed by the walk. */

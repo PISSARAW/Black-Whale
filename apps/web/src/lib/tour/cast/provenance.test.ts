@@ -11,7 +11,9 @@ const WORDS = {
   since: (chapter: string) => `Here since ch. ${chapter}`,
   sinceUnknown: 'No chapter dates this position.',
   claim: 'A named character of the canon.',
+  approximateClaim: 'A named character of the canon, in a place the catalogue names.',
   standingIn: (room: string) => `Stands in ${room}`,
+  standingAbout: (room: string) => `Somewhere in ${room}`,
   role: (role: string) => `Aboard as: ${role}.`,
   drawnFrom: (chapters: string, partial: boolean) =>
     partial ? `drawn from ch. ${chapters}, silhouette only` : `drawn from ch. ${chapters}`,
@@ -52,6 +54,17 @@ describe('the provenance of a body', () => {
     expect(personExhibit(post!, null, WORDS).source).toBe(
       'No chapter dates this position. — drawn from ch. 343, 358',
     )
+  })
+
+  /**
+   * The spot inside a suite is the walk's, and the card is where that is
+   * admitted — otherwise a chosen corner reads as a surveyed one.
+   */
+  it('says the spot is its own where the catalogue names the place, not the room', () => {
+    const [post] = distribute(ship, [member({ characterId: 'kurapika', approximate: true })])
+    const card = personExhibit(post!, 'the Heil-Ly office', WORDS)
+    expect(card.standingIn).toBe('Somewhere in the Heil-Ly office')
+    expect(card.claim).toContain('a place the catalogue names')
   })
 
   it('cites no likeness for a body the archive has not drawn', () => {

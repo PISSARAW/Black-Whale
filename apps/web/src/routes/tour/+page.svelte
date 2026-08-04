@@ -191,7 +191,9 @@
         since: $t.tour.examine.person.since,
         sinceUnknown: $t.tour.examine.person.sinceUnknown,
         claim: $t.tour.examine.person.claim,
+        approximateClaim: $t.tour.examine.person.approximateClaim,
         standingIn: $t.tour.examine.standingIn,
+        standingAbout: $t.tour.examine.standingAbout,
         role: $t.tour.examine.person.role,
         drawnFrom: $t.tour.examine.person.drawnFrom,
       })
@@ -563,12 +565,18 @@
     // attested readings it is follows from who they are: Beyond's curse is the
     // one the archive puts a year on, and everything else the walk can read is
     // a Guardian Spirit Beast at ten days. There is no fourth duration to pick.
+    // The room is taken with them, because the days are counted against the
+    // compartment rather than against the person: outside one there is nothing
+    // to be beside, and a reading opened there could never bank a day.
     startReading: (characterId) => {
+      const spaceId = currentSpace?.id
+      if (!spaceId) return
       const cursed = world.curse?.victim === characterId || world.curse?.sacrifice === characterId
       world = {
         ...world,
         decipher: {
           characterId,
+          spaceId,
           reading: cursed ? 'decodeCurse' : 'guardianBeast',
           days: 0,
         },

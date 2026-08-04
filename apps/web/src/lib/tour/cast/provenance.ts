@@ -27,8 +27,20 @@ export interface PersonWords {
   sinceUnknown: string
   /** What a named body standing in a room asserts about the ship. */
   claim: string
+  /**
+   * The same claim, for a body the catalogue places by the room's name rather
+   * than by a number — the family office, the ward, the cabins.
+   *
+   * A second sentence rather than a caveat appended to the first, because it is
+   * a different assertion: the archive is as sure of the place as ever, and the
+   * spot within it is the walk's. Running the two together would let the chosen
+   * corner borrow the catalogue's authority.
+   */
+  approximateClaim: string
   /** "Stands in Room 1014" */
   standingIn: (room: string) => string
+  /** "Somewhere in the Heil-Ly office" */
+  standingAbout: (room: string) => string
   /** The role, as the catalogue words it, under a heading of its own. */
   role: (role: string) => string
   /**
@@ -55,6 +67,7 @@ export function personExhibit(post: Post, roomName: string | null, words: Person
   const { member } = post
   const drawn = likenessSource(member.characterId)
   const position = member.since ? words.since(member.since.replace(/^ch-/, '')) : words.sinceUnknown
+  const stands = member.approximate ? words.standingAbout : words.standingIn
   return {
     id: `cast:${member.characterId}`,
     title: member.name,
@@ -66,11 +79,11 @@ export function personExhibit(post: Post, roomName: string | null, words: Person
           drawn.status === 'partial',
         )}`
       : position,
-    claim: `${words.claim} ${words.role(member.role)}`,
+    claim: `${member.approximate ? words.approximateClaim : words.claim} ${words.role(member.role)}`,
     // A person has no measured extent, and inventing one would be the walk
     // claiming a height off a panel that never gave one.
     measured: null,
-    standingIn: roomName ? words.standingIn(roomName) : null,
+    standingIn: roomName ? stands(roomName) : null,
   }
 }
 

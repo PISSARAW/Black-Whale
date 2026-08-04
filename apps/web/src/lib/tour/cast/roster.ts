@@ -71,15 +71,23 @@ export interface RosterInput {
 
 /**
  * How precisely a position has to be known before the walk will stand somebody
- * in a room.
+ * in it.
  *
- * The map can draw a marker over a whole deck and say so with a badge. A
- * corridor cannot: a body is either in the room with you or it is not, and
- * there is no way to stand in a place approximately. So anything short of a
- * room is left out — the person is still on the map, still in the archive, and
- * simply not in the walk.
+ * The line is drawn at *a place the blueprint draws*, not at a room. The
+ * catalogue names where a body is — the Heil-Ly office, the central hospital,
+ * the standard cabins — and `precision` says what kind of place that is, not
+ * how sure the archive is of it: a family office is `ZONE` because it is a
+ * suite rather than a cabin, and the position is exactly as attested as a
+ * prince's room number. Refusing those left decks 2 to 5 empty while the same
+ * bodies stood on `/ship`, which is the divergence this folder exists to
+ * prevent.
+ *
+ * What stays out is what has no place to stand in: `TIER` is a deck and a deck
+ * is not a room, and `UNKNOWN` is the archive saying it has lost them. Those
+ * are still on the map with their badge, and still not in the walk.
  */
 const EXACT = 'EXACT_ROOM'
+const PLACEABLE: ReadonlySet<string> = new Set([EXACT, 'ZONE'])
 
 /** A location and everything under it, by slug. */
 function slugsUnder(locations: readonly RosterLocation[]): Map<string, string[]> {
@@ -164,6 +172,9 @@ function describe(
     nen: Boolean(character.nen),
     hatsu: indexes.repertoires.get(character.id) ?? [],
     beast: beastOf(character),
+    // Carried rather than recomputed downstream: the spot inside a suite is
+    // the walk's, and the card has to be able to say so.
+    ...(presence.precision === EXACT ? {} : { approximate: true }),
   }
 }
 
@@ -178,7 +189,7 @@ function memberFrom(
   presence: RosterPresence,
   indexes: ReturnType<typeof indexesOf>,
 ): CastMember | null {
-  if (presence.precision !== EXACT || !presence.locationId) return null
+  if (!PLACEABLE.has(presence.precision) || !presence.locationId) return null
   const characterId = identityOf(presence.entityId, indexes)
   const character = characterId ? indexes.catalogue.get(characterId) : undefined
   return character ? describe(character, presence, indexes) : null

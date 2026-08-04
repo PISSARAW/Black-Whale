@@ -553,6 +553,7 @@ export const en = {
       measured: (long: number, wide: number, height: number) =>
         `${long} × ${wide} m, ${height} m tall`,
       standingIn: (room: string) => `Stands in ${room}`,
+      standingAbout: (room: string) => `Somewhere in ${room}`,
       room: 'A room the deck plans draw, walked at the size they give it.',
       /**
        * The card for a person, which the walk owed the moment it had any.
@@ -566,6 +567,11 @@ export const en = {
         sinceUnknown: 'The catalogue dates this position to no chapter.',
         claim:
           'A named character of the canon, standing where the archive puts them at this chapter.',
+        // The place is as attested as any room number; the corner of it is the
+        // walk's, and the card says so rather than letting a chosen spot pass
+        // for a surveyed one.
+        approximateClaim:
+          'A named character of the canon, in the place the archive puts them at this chapter. The catalogue names the place rather than the room: the exact spot is the reconstruction’s own.',
         role: (role: string) => `Aboard as: ${role}.`,
         // Two separate claims about one body: that the archive puts them here,
         // and that the archive knows what they look like.

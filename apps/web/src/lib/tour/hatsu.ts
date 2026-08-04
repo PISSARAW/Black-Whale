@@ -70,6 +70,7 @@ import {
   type VowState,
 } from './cast/types'
 import { aimGum, gumLanding, gumTension } from './gum'
+import { punchRuns } from './punch'
 import { nextForgery } from './texture'
 
 /**
@@ -369,80 +370,88 @@ export const bookIsShut = (book: TourBook): boolean =>
   !book.pages.length && !book.cards.length && !book.zetsu.length && !book.loan
 
 /** The visitor as the walk was built for: their own legs, their own eyes. */
+const BODY_REST_PREDICATES: ((body: TourBody) => boolean)[] = [
+  (b) => !b.enhance,
+  (b) => !b.riding,
+  (b) => !b.passengers.length,
+  (b) => b.eyes === null,
+  (b) => !b.projected,
+  (b) => !b.dance,
+  (b) => !b.mimic,
+  (b) => !b.soothed,
+  (b) => !b.playing,
+  (b) => !b.deduced.length,
+  (b) => b.packed === null,
+  (b) => !b.gilded,
+  (b) => !b.halo,
+  (b) => !b.vowed,
+]
+
 export const bodyIsRested = (body: TourBody): boolean =>
-  !body.enhance &&
-  !body.riding &&
-  !body.passengers.length &&
-  body.eyes === null &&
-  !body.projected &&
-  !body.dance &&
-  !body.mimic &&
-  !body.soothed &&
-  !body.playing &&
-  !body.deduced.length &&
-  body.packed === null &&
-  !body.gilded &&
-  !body.halo &&
-  !body.vowed
+  BODY_REST_PREDICATES.every((pred) => pred(body))
+
+const WORLD_QUIET_PREDICATES: ((world: TourWorld) => boolean)[] = [
+  (w) => !w.laidOpen,
+  (w) => !w.isolated,
+  (w) => !w.doors.length,
+  (w) => !w.emptied.length,
+  (w) => !w.hoover.length,
+  (w) => !w.eye,
+  (w) => !w.sealed,
+  (w) => !w.phasing,
+  (w) => !w.watched.length,
+  (w) => !w.dispatches.length,
+  (w) => !w.flock,
+  (w) => !w.dowsing,
+  (w) => !Object.keys(w.solids).length,
+  (w) => !w.copies.length,
+  (w) => !w.pairing,
+  (w) => !w.gum,
+  (w) => !w.wound,
+  (w) => !w.windup,
+  (w) => !w.shut.length,
+  (w) => !w.guarded.length,
+  (w) => !w.pinned,
+  (w) => !Object.keys(w.vows).length,
+  (w) => !w.pact,
+  (w) => !w.devouring.length,
+  (w) => !Object.keys(w.cards).length,
+  (w) => !w.double,
+  (w) => !w.worm,
+  (w) => !w.snakes,
+  (w) => !w.trap,
+  (w) => !w.owl,
+  (w) => !w.stars.length,
+  (w) => !w.foreseen,
+  (w) => !w.verses.length,
+  (w) => !w.poem.length,
+  (w) => !w.dial,
+  (w) => !w.droplets.length,
+  (w) => !w.ninelives.length,
+  (w) => !w.curse,
+  (w) => !w.souls.length,
+  (w) => !w.gumTraps.length,
+  (w) => !w.flowered.length,
+  (w) => !w.scattered.length,
+  (w) => !w.medusa,
+  (w) => !w.chimera,
+  (w) => !w.wheel,
+  (w) => !w.toad,
+  (w) => !w.lit.length,
+  (w) => !w.centipede,
+  (w) => !w.smoke,
+  (w) => !w.menagerie.length,
+  (w) => !w.dragon,
+  (w) => !w.cat,
+  (w) => !w.summoned,
+  (w) => !Object.values(w.solids).some((hold) => hold.vowed),
+  (w) => bookIsShut(w.book),
+  (w) => bodyIsRested(w.body),
+]
 
 /** Nothing in the world is being held by aura. */
 export const worldIsQuiet = (world: TourWorld): boolean =>
-  !world.laidOpen &&
-  !world.isolated &&
-  !world.doors.length &&
-  !world.emptied.length &&
-  !world.hoover.length &&
-  !world.eye &&
-  !world.sealed &&
-  !world.phasing &&
-  !world.watched.length &&
-  !world.dispatches.length &&
-  !world.flock &&
-  !world.dowsing &&
-  !Object.keys(world.solids).length &&
-  !world.copies.length &&
-  !world.pairing &&
-  !world.gum &&
-  !world.wound &&
-  !world.windup &&
-  !world.shut.length &&
-  !world.guarded.length &&
-  !world.pinned &&
-  !Object.keys(world.vows).length &&
-  !world.pact &&
-  !world.devouring.length &&
-  !Object.keys(world.cards).length &&
-  !world.double &&
-  !world.worm &&
-  !world.snakes &&
-  !world.trap &&
-  !world.owl &&
-  !world.stars.length &&
-  !world.foreseen &&
-  !world.verses.length &&
-  !world.poem.length &&
-  !world.dial &&
-  !world.droplets.length &&
-  !world.ninelives.length &&
-  !world.curse &&
-  !world.souls.length &&
-  !world.gumTraps.length &&
-  !world.flowered.length &&
-  !world.scattered.length &&
-  !world.medusa &&
-  !world.chimera &&
-  !world.wheel &&
-  !world.toad &&
-  !world.lit.length &&
-  !world.centipede &&
-  !world.smoke &&
-  !world.menagerie.length &&
-  !world.dragon &&
-  !world.cat &&
-  !world.summoned &&
-  !Object.values(world.solids).some((hold) => hold.vowed) &&
-  bookIsShut(world.book) &&
-  bodyIsRested(world.body)
+  WORLD_QUIET_PREDICATES.every((pred) => pred(world))
 
 // ── The solids ────────────────────────────────────────────────────────────
 //
@@ -459,6 +468,27 @@ export function solidById(ship: Ship, world: TourWorld, id: string | null): Stru
     world.copies.find((copy) => copy.id === id) ??
     null
   )
+}
+
+/**
+ * Whether there is anything under this point on this deck to strike through.
+ *
+ * The same question the footing asks and the thread asks, put once so that
+ * Remote Punch's one rule — the blow goes through matter, not through air — is
+ * decided by the ship's own plan rather than by a number. A point inside any
+ * room's outline has deck under it; a point inside none is the open well over
+ * the promenade, and that is what the aura will not cross.
+ *
+ * Note what this deliberately does *not* consult: walls. A bulkhead is matter,
+ * and ch. 385 draws the fist coming out of the leaf of a closed door — a model
+ * in which steel stopped the aura would refuse the panel the ability is drawn
+ * in. See `punch.ts`.
+ */
+export function onFloorOf(ship: Ship, tierId: string): (at: Vec2) => boolean {
+  const outlines = [...ship.spaces.values()]
+    .filter((space) => space.tierId === tierId)
+    .map((space) => space.footprint)
+  return (at) => outlines.some((outline) => pointInPolygon(at, outline))
 }
 
 /**
@@ -1382,14 +1412,27 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     return { world: withHold(world, id, { bound: true }), report: { kind: 'bound', solidId: id } }
   },
 
-  // The aura runs along the floor and comes up under something else in the
-  // same room: you strike here and the room is hit there.
-  // The aura goes into the floor somewhere else in the room and comes up under
-  // what the reticle is on — that way round, because the fist has to appear
-  // where the visitor is looking. Where it went *in* is the flavour; where it
-  // comes *out* is the technique. A room with one thing in it is a room where
-  // it went in under the same thing, rather than a cast refused.
-  'remote-strike': ({ world, ship, structure, hold, id, away }) => {
+  /**
+   * Leorio strikes the deck under his own feet and the fist comes out where he
+   * chose. Between the two, the aura runs in the surface — and only in it.
+   *
+   * The line is worked out first and everything else waits on it: a strike that
+   * would have to cross an open well is refused with its rule rather than
+   * quietly landing, which is the one thing about this ability that ch. 385 is
+   * unambiguous about. A bulkhead in the way is not in the way — the panel is
+   * a fist coming out of a closed door — so the run is stopped by the absence
+   * of matter and by nothing else. See `punch.ts` and `onFloorOf`.
+   *
+   * Where it went *in* stays the visitor's own feet, which is what makes the
+   * exit a decision rather than an accident: they choose the point, and the
+   * ship decides whether there is anything joining the two.
+   */
+  'remote-strike': ({ world, ship, structure, hold, id, away, at }) => {
+    const now = solidNow(structure, hold)
+    const room = ship.spaces.get(structure.spaceId)
+    if (!room) return { world, report: { kind: 'no-target' } }
+    const through = punchRuns({ from: at, to: now.at, onFloor: onFloorOf(ship, room.tierId) })
+    if (!through) return { world, report: { kind: 'punch-refused', spaceId: structure.spaceId } }
     const source =
       [...ship.structures, ...world.copies].find(
         (candidate) =>
@@ -1400,7 +1443,13 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
     const landing = shove(ship, { structure, hold }, away(2.5))
     return {
       world: withHold(world, id, landing ? { at: landing } : { hits: (hold?.hits ?? 0) + 1 }),
-      report: { kind: 'came-up-under', solidId: source.id, otherId: id },
+      report: {
+        kind: 'came-up-under',
+        solidId: source.id,
+        otherId: id,
+        through,
+        throughDoor: world.shut.includes(structure.spaceId),
+      },
     }
   },
 
@@ -1674,10 +1723,21 @@ function castPastTheTarget(
     )
   }
 
+  // The same blow with nothing under the reticle but deck: the exit is the
+  // point the aura came down at in the room aimed at, and the rule is the same
+  // rule — a room across an open well is a room the fist cannot reach.
   if (kind === 'remote-strike' && !structure) {
     const room = input.targetId ? ship.spaces.get(input.targetId) : null
     if (!room) return { world, report: { kind: 'no-target' } }
-    return { world, report: { kind: 'came-up-empty', spaceId: room.id } }
+    const exit =
+      landingIn(room, { at: input.at, heading: input.heading })[room.id] ?? centroid(room)
+    const through = punchRuns({
+      from: input.at,
+      to: exit,
+      onFloor: onFloorOf(ship, room.tierId),
+    })
+    if (!through) return { world, report: { kind: 'punch-refused', spaceId: room.id } }
+    return { world, report: { kind: 'came-up-empty', spaceId: room.id, through } }
   }
 
   if (kind === 'relay' && world.pairing) {

@@ -671,7 +671,10 @@
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
     if (world.pinned) rows.push({ label: held.pinned, value: roomName(world.pinned) })
     for (const vow of Object.values(world.vows)) {
-      rows.push({ label: held.vow, value: subjectName(vow.subjectId) })
+      const subject = subjectName(vow.subjectId)
+      const sentence = $t.tour.hatsu.vow.rules(subject, vow.rules[0], vow.rules[1])
+      const state = vow.violated ? $t.tour.hatsu.vow.triggered : $t.tour.hatsu.vow.dormant
+      rows.push({ label: held.vow, value: `${sentence} · ${state}` })
     }
     if (world.pact) rows.push({ label: held.pact, value: roomName(world.pact) })
     for (const id of world.devouring) rows.push({ label: held.devouring, value: roomName(id) })

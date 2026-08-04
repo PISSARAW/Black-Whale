@@ -14,6 +14,7 @@ import {
 
 const reading = (over: Partial<Decipher> = {}): Decipher => ({
   characterId: 'prince-benjamin',
+  spaceId: 'tier-1-room-1004',
   reading: 'guardianBeast',
   days: 0,
   ...over,

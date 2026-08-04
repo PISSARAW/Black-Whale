@@ -97,7 +97,7 @@ export function stepConsole(scene: {
   let report: TourReport | null = null
 
   if (world.decipher && !isDeciphered(world.decipher)) {
-    const beside = standingIn !== null && world.decipher.characterId === standingIn
+    const beside = standingIn !== null && world.decipher.spaceId === standingIn
     const worked = oneDayBeside(world.decipher, beside)
     if (worked !== world.decipher) {
       next = { ...next, decipher: worked }

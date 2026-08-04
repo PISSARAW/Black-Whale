@@ -42,6 +42,16 @@ export interface Decipher {
   characterId: string
   reading: DecipherReading
   /**
+   * The room the reading was opened in, which is where co-presence is measured.
+   *
+   * Kept for the reason the bench keeps its own: the record has to know which
+   * room counts as standing beside them. Whose ability is being read and which
+   * compartment that is are two different identifiers, and the day is banked
+   * against the second — a counter that compared the walk's room to a character
+   * would never move, and the console would hold the aura for ever.
+   */
+  spaceId: string
+  /**
    * Story-days banked. Never falls: that is what "survives interruption" means,
    * and it is the half of the menu that walking away does not punish.
    */

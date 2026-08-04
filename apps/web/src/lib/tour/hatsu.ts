@@ -1198,16 +1198,37 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // is knocked back and spun by the blow, and the chain lets go again. Nothing
   // is held afterwards — a lash is over the moment it lands, and the count is
   // only so the read-out can say this is the fourth time you have hit it.
-  dowsing: ({ world, ship, structure, hold, id, away }) => {
-    const now = solidNow(structure, hold)
-    const landing = shove(ship, { structure, hold }, away(2))
+  dowsing: ({ world, ship, structure, hold, id, away, at, standingIn }) => {
+    // Parer et frapper (ch. 76) : la chaîne pare le coup qui arrive puis claque
+    // en retour. On ne pare que ce qui est dans la même pièce.
+    if (standingIn === structure.spaceId) {
+      const now = solidNow(structure, hold)
+      const landing = shove(ship, { structure, hold }, away(2))
+      return {
+        world: withHold(world, id, {
+          hits: (hold?.hits ?? 0) + 1,
+          rotation: now.rotation + 40,
+          ...(landing ? { at: landing } : {}),
+        }),
+        report: { kind: 'lashed', solidId: id, hits: (hold?.hits ?? 0) + 1 },
+      }
+    }
+
+    // Sonder un objet perdu (ch. 369) : le solide perdu de vue est marqué
+    // « probable » sur la carte, sans qu'on l'ait revu. La position devient
+    // la salle dowsée, comme pour une salle.
+    const targetRoom = ship.spaces.get(structure.spaceId)
+    if (!targetRoom) return { world, report: { kind: 'no-target' } }
+
+    const distance = distanceTo(ship, targetRoom, { at, standingIn })
     return {
-      world: withHold(world, id, {
-        hits: (hold?.hits ?? 0) + 1,
-        rotation: now.rotation + 40,
-        ...(landing ? { at: landing } : {}),
-      }),
-      report: { kind: 'lashed', solidId: id, hits: (hold?.hits ?? 0) + 1 },
+      world: { ...world, dowsing: structure.spaceId },
+      report: {
+        kind: 'dowsed',
+        spaceId: structure.spaceId,
+        distance: distance.metres,
+        decks: distance.decks,
+      },
     }
   },
 

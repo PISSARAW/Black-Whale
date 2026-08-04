@@ -662,6 +662,7 @@ export const en = {
       worn: (name: string) =>
         `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
       stolen: (name: string, technique: string) => `${name} — ability torn out (${technique})`,
+      delivered: (name: string) => `A bird lands, puts what it carried in ${name}’s hand, and goes`,
       marks: {
         bound: 'held',
         controlled: 'acting on an order that is not theirs',
@@ -683,6 +684,8 @@ export const en = {
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
         'thumb-occupied': 'The thumb is already holding an ability.',
         'no-target-ability': 'They have no ability to steal.',
+        'only-birds':
+          'The manipulation takes birds. Aimed at a person it holds nothing — and a bird has nothing to deliver to somebody who is not expecting a Zodiac’s post.',
       },
       tells: {
         'declares-aura': 'The catalogue makes them a Nen user.',
@@ -840,6 +843,11 @@ export const en = {
         refused: (room: string) =>
           `Blinky refuses ${room} · Nen is holding it, which is how the trap shows`,
         dispatched: (room: string) => `A bird is back from ${room} with what the room rests on`,
+        flockGathered: (room: string, birds: number) =>
+          `The flock closes on you in ${room} · ${birds} birds, ${birds} threads · Gyo counts them`,
+        flockDispersed: (room: string) => `The flock breaks off ${room} and goes back out`,
+        flockSurveyRefused:
+          'The birds will not be made to look. Every panel of this ability is a bird carrying something to somebody — none is a bird reporting what it saw, and the walk will not source a room from a survey nobody drew.',
 
         // On the solids. A room is a place and a solid is a thing: these all
         // say what happened to a thing, and never what happened to a page.
@@ -1271,6 +1279,8 @@ export const en = {
         sealedSenses: (count: number) =>
           ['', 'sight', 'sight · hearing', 'sight · hearing · speech'][count] ?? '',
         dispatches: 'Dispatches',
+        flock: 'Flock',
+        flockThreads: (birds: number) => `${birds} birds · ${birds} threads`,
         visits: (count: number) => `${count} arrival${count === 1 ? '' : 's'}`,
         armed: 'armed',
       },

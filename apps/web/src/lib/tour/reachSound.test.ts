@@ -9,6 +9,7 @@ const { played } = vi.hoisted(() => ({ played: [] as string[] }))
 vi.mock('$lib/audio/hatsuSounds', () => {
   const voice = (name: string) => () => void played.push(name)
   return {
+    chirpTheFlock: voice('birds'),
     crackAWhip: voice('whip'),
     hissLikeASnake: voice('snake'),
     landAPunch: voice('punch'),
@@ -41,6 +42,13 @@ describe('what a cast at a person sounds like', () => {
   it('does not give the chain the gum’s voice', () => {
     playTourReachSound(held('chain-bind'))
     expect(played).toEqual(['snake'])
+  })
+
+  // The delivery is the one outcome that holds nobody, and it still sounds:
+  // something arrived, and the visitor watched it arrive.
+  it('sounds the birds when one of them puts a note in a hand', () => {
+    playTourReachSound({ outcome: 'delivered', kind: 'flock', characterId: 'cheadle-yorkshire' })
+    expect(played).toEqual(['birds'])
   })
 
   it('is silent when nothing left the visitor', () => {

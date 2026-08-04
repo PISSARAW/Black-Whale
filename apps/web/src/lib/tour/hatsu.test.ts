@@ -29,6 +29,7 @@ import {
   settleTheRoom,
   MELT_STAGES,
   SMOKE_FULL,
+  FLOCK_BIRDS,
   FLOCK_ROOMS,
   danceOffset,
   dancingSolidIds,
@@ -2483,6 +2484,67 @@ describe('the Guardian Spirit Beasts', () => {
       expect(new Set(flock.map((one) => one.colour)).size).toBeGreaterThan(1)
       // And they leave the rooms they belong to, which nothing else aboard does.
       for (const one of flock) expect(one.spread ?? 0).toBeGreaterThan(2)
+    })
+  })
+
+  describe("Cluck's, which is the other crowd and does not behave like the first", () => {
+    const call = (from: TourWorld, targetId: string, standingIn: string) =>
+      castInTour(from, 'flock', { ship, targetId, standingIn, at: [0, 0] })
+
+    // Ch. 320's own picture: the birds converge on the woman who called them.
+    // Anywhere else and the ability is what the walk already did — an errand.
+    it('gathers the birds where the visitor stands, and runs errands elsewhere', () => {
+      const gathered = call(EMPTY_WORLD, furnished.id, furnished.id)
+      expect(gathered.report).toMatchObject({ kind: 'flock-gathered', spaceId: furnished.id })
+      expect(gathered.world.flock).toEqual({ spaceId: furnished.id, birds: FLOCK_BIRDS })
+
+      const elsewhere = [...ship.spaces.values()].find((space) => space.id !== furnished.id)!
+      const errand = call(EMPTY_WORLD, furnished.id, elsewhere.id)
+      expect(errand.report).toMatchObject({ kind: 'dispatched', spaceId: furnished.id })
+      expect(errand.world.flock).toBeNull()
+    })
+
+    // A count that climbed on every press would be the walk saying how many
+    // birds Cluck has, and the archive never says.
+    it('sends them off again rather than doubling them', () => {
+      const gathered = call(EMPTY_WORLD, furnished.id, furnished.id).world
+      const again = call(gathered, furnished.id, furnished.id)
+      expect(again.report).toMatchObject({ kind: 'flock-dispersed' })
+      expect(again.world.flock).toBeNull()
+      expect(worldIsQuiet(again.world)).toBe(true)
+    })
+
+    // A flock is aura still being spent, so the panel and Predator count it.
+    it('counts a gathered flock among what the aura is holding', () => {
+      const gathered = call(EMPTY_WORLD, furnished.id, furnished.id).world
+      expect(worldIsQuiet(gathered)).toBe(false)
+      expect(holdsInWorld(gathered)).toContain(`birds:${furnished.id}`)
+    })
+
+    // One bird is one thread, and the ring has to be drawable: twelve of them,
+    // each with its own place in it.
+    it('draws one bird per thread, each on its own place in the ring', () => {
+      const gathered = call(EMPTY_WORLD, furnished.id, furnished.id).world
+      const birds = apparitionsOn(ship, gathered).filter((seen) => seen.kind === 'bird')
+      expect(birds.length).toBe(FLOCK_BIRDS)
+      expect(new Set(birds.map((one) => one.stage)).size).toBe(FLOCK_BIRDS)
+      // Nothing hides them: the birds are ordinary and only the threads are In.
+      for (const one of birds) expect(one.hidden).toBe(false)
+    })
+
+    // The refusal the walk shows itself making. Ch. 320 draws birds carrying;
+    // it never draws one reporting, and a room sourced off a survey nobody
+    // drew would be evidence invented under a real person's name.
+    it('refuses to file what the flock sees', () => {
+      const survey = castInTour(EMPTY_WORLD, 'flock', {
+        ship,
+        targetId: null,
+        targetSolidId: null,
+        standingIn: furnished.id,
+        at: [0, 0],
+      })
+      expect(survey.report).toEqual({ kind: 'flock-survey-refused' })
+      expect(worldIsQuiet(survey.world)).toBe(true)
     })
   })
 

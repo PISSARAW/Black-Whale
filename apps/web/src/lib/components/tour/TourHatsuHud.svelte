@@ -141,8 +141,7 @@
     return space ? nameOf(identityOf(ship, world, space)) : id
   }
 
-  const subjectName = (id: string) =>
-    id === 'self' ? $t.tour.hatsu.vow.self : roomName(id)
+  const subjectName = (id: string) => (id === 'self' ? $t.tour.hatsu.vow.self : roomName(id))
 
   /**
    * A stolen technique under the name of whoever it was taken from.
@@ -240,6 +239,12 @@
         return say.refused(roomName(report.spaceId))
       case 'dispatched':
         return say.dispatched(roomName(report.spaceId))
+      case 'flock-gathered':
+        return say.flockGathered(roomName(report.spaceId), report.birds)
+      case 'flock-dispersed':
+        return say.flockDispersed(roomName(report.spaceId))
+      case 'flock-survey-refused':
+        return say.flockSurveyRefused
 
       case 'no-solid':
         return say.noSolid
@@ -797,6 +802,13 @@
         label: held.dispatches,
         value: space ? `${nameOf(space)} — ${sourceOf(space)}` : id,
       })
+    }
+    // The flock, as a room and a count. The count is the point: one thread of
+    // aura per bird is what Gyo shows, so what is being held here is countable
+    // and the panel says how many rather than saying "birds".
+    if (world.flock) {
+      rows.push({ label: held.flock, value: roomName(world.flock.spaceId) })
+      rows.push({ label: held.flockThreads(world.flock.birds), value: '' })
     }
     return rows
   })

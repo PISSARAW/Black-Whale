@@ -110,6 +110,8 @@ export type ApparitionKind =
   | 'fume'
   /** One of Momoze's, wherever it has got to. */
   | 'sprite'
+  /** One of Cluck's, circling whoever called the flock in. */
+  | 'bird'
   /** Marayam's, filling the doorway of the room it shut you into. */
   | 'dragon'
   /** Camilla's other one, taking apart the room that wears her name. */
@@ -274,6 +276,14 @@ export interface Apparition {
  * two techniques rather than as one technique in two rooms.
  */
 export const OWL = 0xa8b7d8
+/**
+ * Cluck's pigeons, in the grey the birds are drawn in.
+ *
+ * Deliberately not the owl's blue and not Momoze's colour wheel: this flock is
+ * ordinary birds under somebody's control, and the thing that marks them as
+ * Nen is the thread each one is on rather than a colour no pigeon has.
+ */
+export const BIRDS = 0xb9bec6
 export const AVATAR = 0x888888
 const CARDS = [0x4d8ff0, 0xf0c94d, 0xe5484d]
 const CURSE = 0x9d65d0
@@ -1502,6 +1512,42 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         // Wider than the water on purpose: through the wall and back.
         spread: 2.6 + (seed % 4),
       })
+    }
+  }
+
+  // Cluck's flock, called in and circling the person who called it.
+  //
+  // The one crowd in the walk that keeps no place of its own. Momoze's beasts
+  // are put in rooms and wander from where they were put; these converge on
+  // whoever whistled — ch. 320 is a nuée closing on Cheadle, and a flock that
+  // sat in a corner of the room would be birds, not a flock being *manipulated*.
+  // So the point below is only where they belong for the purpose of deciding
+  // which deck to draw them on: the scene puts each one on its own orbit round
+  // the visitor, every frame, and the thread back to the wrist with it.
+  //
+  // `stage` is the bird's place in the ring, and it is the whole of what makes
+  // twelve orbits a flock rather than twelve birds flying the same circle.
+  if (world.flock) {
+    const space = spaceOf(world.flock.spaceId)
+    const measured = space ? room(ship, space) : null
+    if (space && measured) {
+      for (let index = 0; index < world.flock.birds; index++) {
+        found.push({
+          id: `bird:${world.flock.spaceId}:${index}`,
+          kind: 'bird',
+          spaceId: space.id,
+          tierId: space.tierId,
+          at: visitor?.at ?? landing(space),
+          y: Math.min(measured.floor + 1.8, measured.ceiling - 0.4),
+          size: 0.26,
+          colour: BIRDS,
+          stage: index,
+          hidden: false,
+          // How wide the ring is. One number for all of them: a flock keeping
+          // formation is what being controlled looks like.
+          spread: 1.9,
+        })
+      }
     }
   }
 

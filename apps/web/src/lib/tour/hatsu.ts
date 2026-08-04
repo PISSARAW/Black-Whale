@@ -31,7 +31,7 @@ import {
   structureWalls,
   wallSegments,
 } from './geometry'
-import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from './types'
+import type { Polygon, Space, Structure, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
 import { BODY_KINDS } from './bodyKinds'
@@ -69,7 +69,7 @@ import {
   type TourWorld,
   type VowState,
 } from './cast/types'
-import { aimGum, gumLanding, gumTension, type GumStrand } from './gum'
+import { aimGum, gumLanding, gumTension } from './gum'
 import { nextForgery } from './texture'
 
 /**
@@ -221,6 +221,7 @@ export const BODY_HATSU_KINDS = new Set<HatsuInteractionKind>([
   'aura-levy',
   'elastic', // Cast without target acts as Propulsion or Faux Tissu
   'heart-vow', // Cast on another person, or on the visitor themselves.
+  'flock', // Cast without target asks the birds to survey, and is refused.
 ])
 
 export const worksOnTheBody = (profile: HatsuProfile | null) =>
@@ -276,7 +277,18 @@ export const SOLID_HATSU_KINDS = new Set<HatsuInteractionKind>([
  * blind for ten seconds. Everything else in `SOLID_HATSU_KINDS` takes a thing
  * and only a thing.
  */
-const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing', 'puppet'])
+const EITHER_TARGET = new Set<HatsuInteractionKind>(['elastic', 'dowsing', 'puppet', 'flock'])
+
+/**
+ * The two of `EITHER_TARGET` whose other target is a *room* rather than a solid.
+ *
+ * Dowsing and the puppet strings are aimed at a thing under the reticle, so an
+ * empty solid is enough to send them to the body. Bungee Gum is aimed at either
+ * and Bird Manipulation only ever at a room — so for these, an aimed room has
+ * to count as aimed too, or the self-cast would swallow every cast made while
+ * standing anywhere.
+ */
+const ROOM_OR_BODY = new Set<HatsuInteractionKind>(['elastic', 'flock'])
 
 export const aimsAtSolids = (profile: HatsuProfile | null) =>
   Boolean(profile) && SOLID_HATSU_KINDS.has(profile!.kind)
@@ -385,6 +397,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.phasing &&
   !world.watched.length &&
   !world.dispatches.length &&
+  !world.flock &&
   !world.dowsing &&
   !Object.keys(world.solids).length &&
   !world.copies.length &&
@@ -758,6 +771,19 @@ export const SMOKE_FULL = 6
  */
 export const FLOCK_ROOMS = 10
 export const FLOCK_PER_ROOM = 4
+
+/**
+ * How many of Cluck's birds come when she calls them into one room.
+ *
+ * Not Momoze's number and not a count of the ability: the catalogue puts this
+ * flock in the hundreds — six hundred ballots delivered — and six hundred
+ * pigeons in a cabin is a room nobody can see across. Twelve is how many a
+ * reconstruction can draw circling a person and still have each one be a bird
+ * rather than a texture, which is the whole point of drawing them: under Gyo
+ * each is a separate thread of aura, and a bundle you cannot count is not what
+ * Gyo shows you. Staging, and named so it reads as staging.
+ */
+export const FLOCK_BIRDS = 12
 
 /**
  * One step of the smoke, on the walk's clock rather than on a cast.
@@ -1812,6 +1838,10 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.phasing ? ['phasing'] : []),
     ...world.watched.map((doll) => `doll:${doll.spaceId}`),
     ...(world.dowsing ? [`dowsing:${world.dowsing}`] : []),
+    // A gathered flock is a bird's worth of aura times however many came, all
+    // of it still being spent — which is exactly what Predator names one at a
+    // time and what the panel has to count.
+    ...(world.flock ? [`birds:${world.flock.spaceId}`] : []),
     ...Object.keys(world.solids).map((id) => `solid:${id}`),
     ...world.shut.map((id) => `shut:${id}`),
     ...world.guarded.map((id) => `guarded:${id}`),
@@ -2174,6 +2204,20 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
       : { world, report: { kind: 'armour-holding', packed: body.packed } },
 
   'sun-flare': raiseTheSun,
+
+  /**
+   * Bird Manipulation with the reticle empty: have the flock survey the ship
+   * and file what it sees. The walk will not.
+   *
+   * Every panel of this ability is a bird carrying something to somebody. Not
+   * one of them is a bird looking, and a reconstruction that started sourcing
+   * rooms from a survey no chapter draws would be manufacturing evidence under
+   * the name of a real character — the exact thing `/tour/sources` exists to
+   * make impossible. So the use is offered, refused, and the refusal says why:
+   * that is a fact about the technique, and hiding the key would have hidden
+   * the fact.
+   */
+  flock: ({ world }) => ({ world, report: { kind: 'flock-survey-refused' } }),
 
   // Judgment Chain plants a rule in a heart. Cast on a room, the heart is the
   // person standing there; cast with no target, the heart is the visitor's own.
@@ -3525,7 +3569,31 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  flock: ({ world, target }) => {
+  /**
+   * Bird Manipulation, which is two gestures with one key and the reticle
+   * decides which.
+   *
+   * Aimed across the ship, it is what the walk already did: a bird goes to that
+   * room and comes back with what the room rests on. Aimed at the room the
+   * visitor is standing in, it is ch. 320 — the birds converge on the person
+   * who called them, and go on circling her until she sends them off again. So
+   * a second call in the same room disperses rather than doubling the flock: a
+   * count that climbed every time the key was pressed would be a claim about
+   * how many birds Cluck has, and the archive does not give one.
+   */
+  flock: ({ world, target, standingIn }) => {
+    if (standingIn === target.id) {
+      if (world.flock?.spaceId === target.id) {
+        return {
+          world: { ...world, flock: null },
+          report: { kind: 'flock-dispersed', spaceId: target.id },
+        }
+      }
+      return {
+        world: { ...world, flock: { spaceId: target.id, birds: FLOCK_BIRDS } },
+        report: { kind: 'flock-gathered', spaceId: target.id, birds: FLOCK_BIRDS },
+      }
+    }
     const dispatches = [target.id, ...without(world.dispatches, (id) => id === target.id)].slice(
       0,
       8,
@@ -3554,7 +3622,8 @@ function runCast(
   // the cast instead, and the body only gets it when the reticle is empty.
   if (
     BODY_HATSU_KINDS.has(kind) &&
-    (!EITHER_TARGET.has(kind) || (!input.targetSolidId && (kind !== 'elastic' || !input.targetId)))
+    (!EITHER_TARGET.has(kind) ||
+      (!input.targetSolidId && (!ROOM_OR_BODY.has(kind) || !input.targetId)))
   ) {
     return castOnBody(world, kind, input)
   }

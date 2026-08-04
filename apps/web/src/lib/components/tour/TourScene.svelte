@@ -41,6 +41,7 @@
     doorExit,
     emptiedOn,
     eyeHeightIn,
+    FLOCK_BIRDS,
     heldSolidIds,
     eyesOf,
     linkIsOpen,
@@ -134,7 +135,7 @@
     TourAtmosphereView,
   } from '$lib/tour/TourAtmosphereView'
   import { ApparitionView } from '$lib/tour/ApparitionView'
-  import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
+  import { buildBasicApparition, BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
   import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
   import { buildEmbellishmentApparition } from '$lib/tour/apparitionEmbellishmentView'
   import { buildInsectApparition } from '$lib/tour/apparitionInsectView'
@@ -2265,6 +2266,71 @@
       }
 
       /**
+       * How many birds the ring is spaced for, and one vector to convert in.
+       *
+       * The count matches `FLOCK_BIRDS` because the ring is what that number is
+       * for; kept as its own constant so the spacing here cannot silently stop
+       * agreeing with the flock the rules gathered. The vector is reused across
+       * every bird and every frame: twelve allocations a frame, for the life of
+       * a walk, to say the same three numbers.
+       */
+      const BIRD_RING = FLOCK_BIRDS
+      const BIRD_WRIST = new THREE.Vector3()
+
+      /**
+       * One of Cluck's birds, on its own place in the ring round the visitor.
+       *
+       * The flock does not stay where it was called: it stays *with* whoever
+       * called it, which is the difference between a room full of pigeons and a
+       * flock under manipulation. So the ring is worked out from the camera
+       * every frame rather than from the point the apparition was placed at,
+       * and `stage` — the bird's index — is what keeps twelve orbits from being
+       * one orbit drawn twelve times: it sets where in the ring the bird is,
+       * how high it flies, and where its wingbeat is in the stroke.
+       *
+       * The thread is the ability. Its far end is the visitor's wrist, and it is
+       * rewritten here because this is the only place both ends are known — but
+       * it is only ever *drawn* under Gyo, which is the claim ch. 320 makes:
+       * the birds are ordinary and the bundle of threads is not. Twelve birds
+       * is twelve threads, and being able to count them is the point.
+       */
+      function flyTheBird(held: Shown, seconds: number) {
+        const index = held.stage
+        const radius = held.spread || 1.9
+        // The ring turns as one, a revolution every eight seconds or so: what a
+        // flock being flown looks like from underneath.
+        const around = (index / BIRD_RING) * Math.PI * 2 + seconds * 0.8
+        const rise = Math.sin(seconds * 1.3 + index) * 0.22
+        held.root.position.set(
+          camera.position.x + Math.cos(around) * radius,
+          camera.position.y + 0.55 + rise,
+          camera.position.z + Math.sin(around) * radius,
+        )
+        // Facing along the orbit rather than at the visitor: a bird flies the
+        // way it is going.
+        held.root.rotation.y = -around + Math.PI / 2
+
+        const wings = held.root.getObjectByName(BIRD_WINGS)
+        if (wings) wings.rotation.z = Math.sin(seconds * 9 + index * 1.7) * 0.5
+
+        const tether = held.root.getObjectByName(BIRD_TETHER) as import('three').Line | undefined
+        if (!tether) return
+        tether.visible = effectiveNen.gyo
+        if (!tether.visible) return
+        // The wrist, brought back through the bird's own turn: the thread is a
+        // child of a group that is rotating, and a far end left in world metres
+        // would swing round the room once every revolution.
+        held.root.updateMatrixWorld()
+        const wrist = held.root.worldToLocal(
+          BIRD_WRIST.set(camera.position.x, camera.position.y - 0.45, camera.position.z),
+        )
+        const line = tether.geometry.attributes.position as import('three').BufferAttribute
+        line.setXYZ(0, 0, 0, 0)
+        line.setXYZ(1, wrist.x, wrist.y, wrist.z)
+        line.needsUpdate = true
+      }
+
+      /**
        * The Dowsing Chain, hanging off the hand or out at what it just hit.
        *
        * The chain is fixed to the visitor: the group sits at their hand and is
@@ -2512,6 +2578,11 @@
             // Gyo is looking at it at all.
             held.root.scale.x = 1 + Math.sin(phase * 1.7) * 0.015
             held.root.position.y = held.y + Math.sin(phase * 5.5) * 0.012
+            continue
+          }
+
+          if (held.kind === 'bird') {
+            flyTheBird(held, seconds)
             continue
           }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BODY_KINDS, PERSON_HATSU_KINDS, reachesABody } from '../bodyKinds'
-import { CHAIN_JAIL_FACTION, reachBody, type ReachInput } from './reach'
+import { CHAIN_JAIL_FACTION, FLOCK_ADDRESSEES, reachBody, type ReachInput } from './reach'
 import type { CastDossier } from './dossier'
 import type { CastMember, Post } from './types'
 
@@ -167,6 +167,31 @@ describe('what a hold looks like', () => {
   it('takes a face off the body in front of it, and holds nobody', () => {
     const answer = reach({ kind: 'disguise' })
     expect(answer).toEqual({ outcome: 'worn', kind: 'disguise', characterId: 'sakata' })
+  })
+
+  /**
+   * Ch. 320 is a pigeon putting a ballot in a Zodiac's hand, and it is the only
+   * errand the archive draws this flock running. Both answers below are true
+   * statements about the ability; the refusal is the more instructive of them,
+   * because it is the walk saying out loud what the manipulation takes.
+   */
+  describe('the flock, which carries rather than holds', () => {
+    it('puts what a bird carried into a Zodiac’s hand, and holds nobody', () => {
+      const answer = reach({
+        kind: 'flock',
+        dossier: dossier({ factionId: FLOCK_ADDRESSEES }),
+      })
+      expect(answer).toEqual({ outcome: 'delivered', kind: 'flock', characterId: 'sakata' })
+    })
+
+    it('refuses the sentry in the corridor: the manipulation takes birds', () => {
+      const answer = reach({ kind: 'flock', dossier: dossier({ factionId: 'kakin-royal-guard' }) })
+      expect(answer).toEqual({ outcome: 'refused', kind: 'flock', reason: 'only-birds' })
+    })
+
+    it('refuses just as plainly when the archive gives them no faction at all', () => {
+      expect(reach({ kind: 'flock', dossier: null })).toMatchObject({ reason: 'only-birds' })
+    })
   })
 
   it('dates every hold it lays from the walk’s own clock', () => {

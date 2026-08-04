@@ -487,6 +487,7 @@
     held: $t.tour.body.held,
     worn: $t.tour.body.worn,
     stolen: $t.tour.body.stolen,
+    delivered: $t.tour.body.delivered,
   })
   const bodyNameOf = (characterId: string) =>
     cast.members.find((member) => member.characterId === characterId)?.name ?? ''

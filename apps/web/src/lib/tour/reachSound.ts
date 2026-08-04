@@ -18,6 +18,7 @@
  * with nothing that fits stays silent rather than borrowing.
  */
 import {
+  chirpTheFlock,
   crackAWhip,
   hissLikeASnake,
   landAPunch,
@@ -33,6 +34,9 @@ const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
   // Hisoka's, and the reason this module exists: the filament goes out, takes
   // hold of somebody walking past, and nothing they do detaches it.
   elastic: stretchTheGum,
+  // The bird that lands, lets go of what it carried and leaves again. The same
+  // voice the flock has when it is called into a room: it is the same birds.
+  flock: chirpTheFlock,
   'chain-bind': hissLikeASnake,
   'chain-rule': hissLikeASnake,
   stitch: unspoolWire,

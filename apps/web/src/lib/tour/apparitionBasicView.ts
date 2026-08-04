@@ -183,7 +183,77 @@ function star(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   return { turns: mesh }
 }
 
+/**
+ * The name the scene finds a bird's wings and its thread by.
+ *
+ * A bird beats and a thread is re-aimed at the visitor every frame, and both
+ * are jobs for the render loop rather than for the builder — but the builder is
+ * the only thing that knows which child is which. A name is the cheapest handle
+ * three.js offers, and it keeps `BasicApparitionParts` from growing a field
+ * that only one apparition in the walk would ever fill.
+ */
+export const BIRD_WINGS = 'bird-wings'
+export const BIRD_TETHER = 'bird-tether'
+
+/**
+ * One of Cluck's, and the thread it is being flown on.
+ *
+ * The bird is a bird: a body, a head, a tail and two wings that beat. What
+ * makes it this ability rather than a pigeon is the second half — a filament
+ * running back to the hand that called it, one per bird, drawn only to an eye
+ * with aura on it. That is ch. 320's own claim about the flock and the only
+ * part of it a reconstruction can actually show: the birds are ordinary, the
+ * bundle of threads is not.
+ */
+function bird(seen: Apparition, { THREE, glow, root, skin, observerGyo }: BasicApparitionContext) {
+  const body = new THREE.Mesh(
+    new THREE.CapsuleGeometry(seen.size * 0.34, seen.size * 0.75, 4, 8),
+    skin,
+  )
+  body.rotation.x = Math.PI / 2
+  root.add(body)
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.3, 8, 6), skin)
+  head.position.z = -seen.size * 0.72
+  head.position.y = seen.size * 0.12
+  root.add(head)
+
+  const tail = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.26, seen.size * 0.6, 4), skin)
+  tail.rotation.x = -Math.PI / 2
+  tail.position.z = seen.size * 0.82
+  root.add(tail)
+
+  // Held in a group of their own so the loop can beat both with one rotation
+  // each and never touch the body it is beating them against.
+  const wings = new THREE.Group()
+  wings.name = BIRD_WINGS
+  for (const side of [-1, 1]) {
+    const wing = new THREE.Mesh(
+      new THREE.BoxGeometry(seen.size * 1.15, seen.size * 0.05, seen.size * 0.5),
+      skin,
+    )
+    wing.position.set(side * seen.size * 0.62, 0, 0)
+    wings.add(wing)
+  }
+  root.add(wings)
+
+  // Two vertices and the far one is rewritten every frame: the near end is the
+  // bird and the far end is the wrist, which walks off while the bird circles.
+  const thread = new THREE.BufferGeometry()
+  thread.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3))
+  const tether = new THREE.Line(thread, new THREE.LineBasicMaterial({ color: seen.colour }))
+  tether.name = BIRD_TETHER
+  tether.frustumCulled = false
+  tether.visible = Boolean(observerGyo)
+  root.add(tether)
+
+  // No `turns`: the whole bird is aimed along its own orbit by the loop, which
+  // is the only thing that knows where the ring's centre got to this frame.
+  return { turns: null }
+}
+
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
+  bird,
   owl,
   avatar: human,
   combatant: human,

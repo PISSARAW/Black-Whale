@@ -552,6 +552,8 @@ export const fr: Messages = {
       worn: (name) =>
         `Vous portez le visage de ${name}. Aucune aura ne le montre ; seul le toucher le trahit.`,
       stolen: (name, technique) => `${name} — capacité arrachée (${technique})`,
+      delivered: (name) =>
+        `Un oiseau se pose, met ce qu’il portait dans la main de ${name}, et repart`,
       marks: {
         bound: 'retenu',
         controlled: 'agit sur un ordre qui n’est pas le sien',
@@ -573,6 +575,8 @@ export const fr: Messages = {
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
         'thumb-occupied': 'Le pouce tient déjà une capacité.',
         'no-target-ability': 'Il n’a aucune capacité à voler.',
+        'only-birds':
+          'La manipulation ne prend que les oiseaux. Visant une personne, elle ne tient rien — et un oiseau n’a rien à remettre à quelqu’un qui n’attend pas le courrier d’un Zodiaque.',
       },
       tells: {
         'declares-aura': 'Le catalogue en fait un utilisateur de Nen.',
@@ -655,11 +659,11 @@ export const fr: Messages = {
           `La chaîne est dans le cœur de ${subject} · ${ruleA} · ${ruleB}`,
         ruleA: (subject) =>
           subject === 'soi'
-            ? "tant que la règle tient, Chain Jail est sûr"
+            ? 'tant que la règle tient, Chain Jail est sûr'
             : `ne pas entrer dans ${subject}`,
         ruleB: (subject) =>
           subject === 'soi'
-            ? "rompre le serment, c’est se transpercer le cœur"
+            ? 'rompre le serment, c’est se transpercer le cœur'
             : `ne pas porter la main sur ${subject}`,
         dormant: 'DORMANT',
         triggered: 'TRIGGERED',
@@ -714,6 +718,11 @@ export const fr: Messages = {
         refused: (room) =>
           `Blinky refuse ${room} · du Nen la retient, et c'est ainsi que le piège se voit`,
         dispatched: (room) => `Un oiseau revient de ${room} avec ce sur quoi la pièce repose`,
+        flockGathered: (room, birds) =>
+          `La volée se referme sur vous dans ${room} · ${birds} oiseaux, ${birds} fils · le Gyo les compte`,
+        flockDispersed: (room) => `La volée quitte ${room} et repart`,
+        flockSurveyRefused:
+          'On ne fera pas regarder les oiseaux. Toutes les planches de cette capacité montrent un oiseau qui porte quelque chose à quelqu’un — aucune ne montre un oiseau qui rapporte ce qu’il a vu, et la visite ne sourcera pas une pièce sur un relevé que personne n’a dessiné.',
 
         nothingToSteal: (room) => `Rien ne retient ${room} : il n'y a rien à y prendre`,
         takenIntoTheBook: (room, technique) =>
@@ -876,8 +885,7 @@ export const fr: Messages = {
         cardBlue: (room) => `Bleu : ${room} est admise, et avertie`,
         cardYellow: (room) => `Jaune : ${room} vous retient où vous êtes`,
         cardRed: (room) => `Rouge : ${room} est congédiée et close derrière vous`,
-        vowDeclared: (subject, rules) =>
-          `La règle est posée sur ${subject} : ${rules.join(' · ')}`,
+        vowDeclared: (subject, rules) => `La règle est posée sur ${subject} : ${rules.join(' · ')}`,
         vowBroken: (subject) =>
           `La règle sur ${subject} est brisée · la chaîne prend l'aura pour cela`,
         pactTaken: (room) => `Les termes sont pris : atteindre ${room}`,
@@ -1118,6 +1126,8 @@ export const fr: Messages = {
         sealed: 'Sens scellés',
         sealedSenses: (count) => ['', 'vue', 'vue · ouïe', 'vue · ouïe · voix'][count] ?? '',
         dispatches: 'Dépêches',
+        flock: 'Volée',
+        flockThreads: (birds) => `${birds} oiseaux · ${birds} fils`,
         visits: (count) => `${count} arrivée${count === 1 ? '' : 's'}`,
         armed: 'armé',
       },

@@ -43,9 +43,7 @@ export class TourCastController {
   castOn = (spaceId: string | null, solidId: string | null = null, hand: CastHand = 'first') => {
     const context = this.options.read()
     const rules =
-      context.activeKind === 'heart-vow'
-        ? this.options.vowRules(spaceId ?? 'self')
-        : undefined
+      context.activeKind === 'heart-vow' ? this.options.vowRules(spaceId ?? 'self') : undefined
     const cast = performTourCast({
       world: context.world,
       ship: context.ship,

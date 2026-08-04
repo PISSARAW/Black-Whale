@@ -17,7 +17,7 @@ import type { Vec2 } from '../types'
 import type { CastDossier } from './dossier'
 
 import type { Ship } from '../blueprint'
-import type { Space, Structure, StructureKind } from '../types'
+import type { Structure, StructureKind } from '../types'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import type { GumStrand } from '../gum'
 import type { ScarletEyes } from '../emperor'
@@ -310,6 +310,19 @@ export interface TourWorld {
   watched: { spaceId: string; visits: number }[]
   /** What the flock has carried back, newest first. */
   dispatches: string[]
+  /**
+   * Where Cluck's birds are gathered, and how many of them came.
+   *
+   * The walk carried this ability as a list of errands and nothing else: the
+   * birds existed in the read-out and nowhere in the room. What ch. 320 draws
+   * is the opposite — a flock converging on the woman who called it, thick
+   * enough to be a weather event — so the gathering is its own state, held as
+   * a room rather than as a count of rooms. `null` while they are out.
+   *
+   * The count rides along because every bird is a thread of aura back to its
+   * user, and a bundle you cannot count is not what Gyo shows you.
+   */
+  flock: { spaceId: string; birds: number } | null
   /** The room the chain is swinging towards. */
   dowsing: string | null
 
@@ -901,6 +914,7 @@ export const EMPTY_WORLD: TourWorld = {
   phasing: false,
   watched: [],
   dispatches: [],
+  flock: null,
   dowsing: null,
   solids: {},
   copies: [],
@@ -986,6 +1000,20 @@ export type TourReport =
   | { kind: 'bag-empty' }
   | { kind: 'refused'; spaceId: string }
   | { kind: 'dispatched'; spaceId: string }
+  /** The birds converge on the room the visitor is standing in. */
+  | { kind: 'flock-gathered'; spaceId: string; birds: number }
+  /** They were already here: the flock is told to disperse instead. */
+  | { kind: 'flock-dispersed'; spaceId: string }
+  /**
+   * What the flock sees below it is not filed.
+   *
+   * The one use of this ability the walk shows itself refusing. Cluck's birds
+   * carry — that is every panel there is of them — and a reconstruction that
+   * quietly began sourcing rooms from a survey nobody drew would be inventing
+   * evidence under a real person's name. So the refusal is shown, which is the
+   * only honest form the use can take here.
+   */
+  | { kind: 'flock-survey-refused' }
   | { kind: 'double-mode-changed'; mode: TourDoubleMode }
   | { kind: 'owl-mode-changed'; mode: TourOwlMode }
   | { kind: 'owl-flown'; spaceId: string }

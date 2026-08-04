@@ -28,6 +28,17 @@ import type { Post } from './types'
 /** The vow: Chain Jail closes on the Phantom Troupe and on nobody else. */
 export const CHAIN_JAIL_FACTION = 'phantom-troupe'
 
+/**
+ * Who a bird will carry something to.
+ *
+ * Ch. 320 is Cluck's flock delivering ballots to the Zodiacs, and that is the
+ * only errand the archive draws it running: a pigeon put into the hand of a
+ * colleague. So the walk carries the delivery exactly that far — a Zodiac
+ * aboard, which on this ship is Cheadle in the medical zone and Mizaistom in
+ * the political one — and a bird sent to a sentry is a bird with no addressee.
+ */
+export const FLOCK_ADDRESSEES = 'zodiacs'
+
 /** Why a technique did not do what it does. Each one is a canon condition. */
 export type ReachRefusal =
   /** This technique has nothing to say to a person. */
@@ -48,6 +59,15 @@ export type ReachRefusal =
   | 'thumb-occupied'
   /** The target has no ability to steal. */
   | 'no-target-ability'
+  /**
+   * Bird Manipulation takes birds.
+   *
+   * The refusal ch. 320 makes by omission: everything the ability does, it does
+   * through an animal. Aimed at a person it neither holds them nor controls
+   * them, and the walk says so rather than quietly doing nothing — a technique
+   * that produced silence would read as the walk being broken.
+   */
+  | 'only-birds'
 
 /** What a technique told the visitor about the body, without holding it. */
 export type ReachTell =
@@ -79,6 +99,16 @@ export type Reach =
   | { outcome: 'worn'; kind: BodyKind; characterId: string }
   | { outcome: 'told'; kind: BodyKind; characterId: string; tells: ReachTell[] }
   | { outcome: 'stolen'; kind: BodyKind; characterId: string; technique: string; hold: BodyHold }
+  /**
+   * A bird put something in this person's hand and left again.
+   *
+   * Its own outcome because it is the only one that touches nobody: no hold is
+   * laid, nothing is read off them, and the person is exactly as they were a
+   * moment before — what happened is that they are now holding a note. A
+   * delivery filed as a `held` would have the walk claiming Cluck's pigeons
+   * restrain a Zodiac.
+   */
+  | { outcome: 'delivered'; kind: BodyKind; characterId: string }
   | { outcome: 'refused'; kind: HatsuInteractionKind | null; reason: ReachRefusal }
 
 /** Everything the decision reads. Nothing is fetched, nothing is global. */
@@ -115,6 +145,9 @@ const ASKS = ['dowsing', 'truth-punch', 'training-shot'] as const
  */
 const WORN = 'disguise' as const
 
+/** The technique that delivers rather than holds. See `FLOCK_ADDRESSEES`. */
+const CARRIES = 'flock' as const
+
 type AskKind = (typeof ASKS)[number]
 
 const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
@@ -128,7 +161,10 @@ const ASKING: ReadonlySet<BodyKind> = new Set(ASKS)
  * lines, and the twelve after them are techniques the walk already performed on
  * the ship which the manga aims at a person first.
  */
-const MARKS: Record<Exclude<BodyKind, AskKind | typeof WORN | 'chain-rule'>, BodyMark> = {
+const MARKS: Record<
+  Exclude<BodyKind, AskKind | typeof WORN | typeof CARRIES | 'chain-rule'>,
+  BodyMark
+> = {
   // The five that had nowhere to land until the walk had people in it, less the
   // two of them that ask.
   needle: 'controlled',
@@ -222,6 +258,17 @@ export function reachBody(input: ReachInput): Reach {
 
   const characterId = input.target.member.characterId
   if (kind === WORN) return { outcome: 'worn', kind, characterId }
+
+  // The flock, which has one errand and one kind of addressee. Both answers are
+  // true statements about the ability, and the refusal is the more informative
+  // of the two: it is the walk saying out loud that this manipulation takes
+  // birds and takes nothing else.
+  if (kind === CARRIES) {
+    return input.dossier?.factionId === FLOCK_ADDRESSEES
+      ? { outcome: 'delivered', kind, characterId }
+      : { outcome: 'refused', kind, reason: 'only-birds' }
+  }
+
   if (isAsking(kind)) return { outcome: 'told', kind, characterId, tells: tellsFor(kind, input) }
 
   if (kind === 'chain-rule') {

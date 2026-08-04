@@ -62,6 +62,11 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   animated: wakeTheMachine,
   'crushed-one': crushLikeACat,
   'flock-loosed': chirpTheFlock,
+  // Cluck's, which the walk carried in silence: the birds converging, the birds
+  // sent off again, and the bird that goes and comes back with an answer.
+  'flock-gathered': chirpTheFlock,
+  'flock-dispersed': chirpTheFlock,
+  dispatched: chirpTheFlock,
   isolated: roarLikeADragon,
 }
 

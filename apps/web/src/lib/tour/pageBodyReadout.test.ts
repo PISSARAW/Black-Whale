@@ -9,6 +9,7 @@ const WORDS: BodyReadoutWords = {
   held: (name, what) => `${name} — ${what}`,
   worn: (name) => `worn:${name}`,
   stolen: (name, technique) => `stolen:${name}:${technique}`,
+  delivered: (name) => `delivered:${name}`,
 }
 
 const nameOf = (characterId: string) => (characterId === 'sakata' ? 'Sakata' : '')

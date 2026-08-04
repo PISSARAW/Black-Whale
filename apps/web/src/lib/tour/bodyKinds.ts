@@ -65,6 +65,11 @@ export const BODY_KINDS = [
   'curse',
   'identity-swap',
   'chain-rule',
+  // Bird Manipulation belongs here for the reason the list exists: aiming it at
+  // a person is not a no-op. It either puts a note in a Zodiac's hand or it
+  // refuses out loud, and the refusal — that the manipulation takes birds and
+  // nothing else — is a fact about the ability nobody reads off a room.
+  'flock',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 export type BodyKind = (typeof BODY_KINDS)[number]

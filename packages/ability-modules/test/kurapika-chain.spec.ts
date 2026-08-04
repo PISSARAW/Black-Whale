@@ -211,4 +211,44 @@ describe('Holy Chain', () => {
     const state = branches.append('chain-self', healing.events ?? []).state
     expect(state.bodyStates['kurapika_body']).toBe('ALIVE')
   })
+
+  it('se soigne instantanément sous Emperor Time (ch. 373)', () => {
+    const branches = new InMemoryBranchEngine()
+    const base = world()
+    base.entities['kurapika_body'] = { id: 'kurapika_body', kind: 'BODY', label: 'Kurapika (corps)', originalCharacterId: 'kurapika' }
+    base.bodyStates['kurapika_body'] = 'INJURED'
+    
+    base.effects['emperor-time'] = {
+      id: 'emperor-time',
+      kind: 'AURA_MODIFIER',
+      abilityId: 'emperor-time',
+      source: { id: 'kurapika', kind: 'CHARACTER' },
+      targets: [],
+      state: 'ACTIVE',
+      attributes: {},
+      startedAt: CURSOR,
+    }
+
+    branches.createBranch({
+      id: 'chain-et',
+      name: 'emperor-time-heal',
+      rulePolicy: 'STRICT_CANON',
+      baseState: base,
+    })
+
+    const healing = holyChain.execute(
+      context({
+        abilityId: 'holy-chain',
+        worldState: base,
+        targets: ['kurapika_body'],
+        targetRefs: [{ id: 'kurapika_body', kind: 'BODY' }],
+        actionId: 'heal-instantly',
+        parameters: { emperorTimeEffectId: 'emperor-time' }
+      })
+    )
+
+    expect(healing.allowed).toBe(true)
+    const state = branches.append('chain-et', healing.events ?? []).state
+    expect(state.bodyStates['kurapika_body']).toBe('ALIVE')
+  })
 })

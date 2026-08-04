@@ -19,13 +19,13 @@ expressions animées au-delà des cinq existantes, bêtes gardiennes
 L'ADR-003 a peuplé la visite, l'ADR-004 lui a donné la parole — et personne n'y
 ressemble à personne. Mesures du 2026-08-04 :
 
-| Fait vérifié                                     | Valeur                                                                                                                                                     |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ressemblance individuelle à bord                 | **2 sur 224** : `morena` (profil dédié) et `silent-majority` (masque), via `addMorenaDetails` / `addSilentMajorityCostume`                                 |
-| Tout le reste                                    | 9 profils de **rôle** (`ROLE_PROFILES`) + variation par `identityHash` : taille ×0,96–1,04, 5 peaux, 6 coiffures tirées au hash                            |
-| Tête                                             | `SphereGeometry(0.19, 10, 8)` écrasée en 3 visages ; yeux = 2 plans de 5,5 cm ; 8 coiffures génériques ; 5 expressions                                     |
-| Kurapika au poste 1014                           | dessiné comme n'importe quel `hunter` : couleurs de rôle, coiffure au hash                                                                                  |
-| Grammaire de rendu                               | aplats `MeshBasic` + contour en coque inversée (×1,045/1,055) — déjà celle d'une planche                                                                   |
+| Fait vérifié                     | Valeur                                                                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Ressemblance individuelle à bord | **2 sur 224** : `morena` (profil dédié) et `silent-majority` (masque), via `addMorenaDetails` / `addSilentMajorityCostume`      |
+| Tout le reste                    | 9 profils de **rôle** (`ROLE_PROFILES`) + variation par `identityHash` : taille ×0,96–1,04, 5 peaux, 6 coiffures tirées au hash |
+| Tête                             | `SphereGeometry(0.19, 10, 8)` écrasée en 3 visages ; yeux = 2 plans de 5,5 cm ; 8 coiffures génériques ; 5 expressions          |
+| Kurapika au poste 1014           | dessiné comme n'importe quel `hunter` : couleurs de rôle, coiffure au hash                                                      |
+| Grammaire de rendu               | aplats `MeshBasic` + contour en coque inversée (×1,045/1,055) — déjà celle d'une planche                                        |
 
 Le constat tient en une phrase : **le renderer sait déjà « faire manga »**
 (aplats et encre), ce qui manque n'est pas une technique mais une donnée —
@@ -92,7 +92,12 @@ dates interdit déjà.
     "source": "anime 2011 ; couvertures vol. 34–37",
     "skin": "0xf0e0cc",
     "hair": "0xe8c860",
-    "attire": { "jacket": "0x232430", "shirt": "0xf2efe8", "trousers": "0x232430", "accent": "0xb01e2e" }
+    "attire": {
+      "jacket": "0x232430",
+      "shirt": "0xf2efe8",
+      "trousers": "0x232430",
+      "accent": "0xb01e2e"
+    }
   },
   "attire": "suit",
   "signatures": ["chain-right-hand"],
@@ -132,13 +137,13 @@ personne — seulement de quoi elle a l'air.
 
 ## 4. Rendu — cinq phases
 
-| Phase | Contenu                                                                                                                                                                                                                      | Durée   |
-| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| P0    | Schéma zod ; `appearance.json` pour l'annexe A ; chaque « à confirmer » tranché planche en main, chaque « différée » statuée ; doublon `pyon`/`piyon` du catalogue résolu ; tests couverture + anti-invention                  | ~1-2 j  |
-| P1    | `humanProfile()` lit `appearance` avant le rôle ; `humanStateKey` l'intègre (rebuild du rig au changement) ; **migration Morena** : le profil en dur devient la projection de son entrée — une déclaration par fait            | ~1 j    |
-| P2    | Gabarits `adult`/`child`/`infant` ; proportions de planche par `build` ; **`humanHair.ts`** (nouveau, ≤500 l) : mèches par style en primitives (cônes, lathe, extrusion) ; styles nouveaux fermés : `slicked-back`, `pompadour`, `drills`, `chonmage`, `hime`, `curly`, `afro`, `wild`, `bald-crown` | ~2-3 j  |
-| P3    | **`humanSignature.ts`** (nouveau, ≤500 l) : pièces de l'annexe B ; `humanCostume.ts` (424 l) n'est pas grossi                                                                                                                  | ~2-3 j  |
-| P4    | Second ton d'ombre baké **par sommet** (pipeline de bake existant) ; contour de silhouette épaissi au premier plan ; grille de portraits en captures de référence CI                                                           | ~1-2 j  |
+| Phase | Contenu                                                                                                                                                                                                                                                                                              | Durée  |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| P0    | Schéma zod ; `appearance.json` pour l'annexe A ; chaque « à confirmer » tranché planche en main, chaque « différée » statuée ; doublon `pyon`/`piyon` du catalogue résolu ; tests couverture + anti-invention                                                                                        | ~1-2 j |
+| P1    | `humanProfile()` lit `appearance` avant le rôle ; `humanStateKey` l'intègre (rebuild du rig au changement) ; **migration Morena** : le profil en dur devient la projection de son entrée — une déclaration par fait                                                                                  | ~1 j   |
+| P2    | Gabarits `adult`/`child`/`infant` ; proportions de planche par `build` ; **`humanHair.ts`** (nouveau, ≤500 l) : mèches par style en primitives (cônes, lathe, extrusion) ; styles nouveaux fermés : `slicked-back`, `pompadour`, `drills`, `chonmage`, `hime`, `curly`, `afro`, `wild`, `bald-crown` | ~2-3 j |
+| P3    | **`humanSignature.ts`** (nouveau, ≤500 l) : pièces de l'annexe B ; `humanCostume.ts` (424 l) n'est pas grossi                                                                                                                                                                                        | ~2-3 j |
+| P4    | Second ton d'ombre baké **par sommet** (pipeline de bake existant) ; contour de silhouette épaissi au premier plan ; grille de portraits en captures de référence CI                                                                                                                                 | ~1-2 j |
 
 La coiffure passe en premier (P2 avant P3) parce qu'elle est le premier
 porteur d'identité d'un dessin de Togashi — avant le visage, avant le costume.
@@ -177,7 +182,7 @@ Couloir du 1014, dernier événement sous cap ch. 361 :
 
 71 ids, dont 4 différées. Chaque entrée est un brouillon sourcé de mémoire de
 lecture : la phase 0 relit **chaque** entrée planche en main avant de l'écrire
-dans `appearance.json`, et les mentions *(à confirmer)* sont tranchées là.
+dans `appearance.json`, et les mentions _(à confirmer)_ sont tranchées là.
 L'ordre de chaque notice suit §2.2 : gabarit, coiffure, palette, signatures,
 visage.
 
@@ -188,12 +193,12 @@ visage.
   cheveux gominés en arrière, petits yeux satisfaits. Robe d'apparat et
   couronne kakine. Signatures : `beard-full`, `crown`. Couleurs : chosen.
 - **`unma-hui-guo-rou`** — Première épouse : âgée, port massif et droit,
-  visage lourd et immobile, chignon strict. Robe de cour *(coiffure exacte à
-  confirmer)*.
+  visage lourd et immobile, chignon strict. Robe de cour _(coiffure exacte à
+  confirmer)_.
 - **`duazul-hui-guo-rou`** — Mère de quatre prétendants sérieux : mûre,
-  altière, longs cheveux sombres, regard dur de stratège *(à confirmer)*.
+  altière, longs cheveux sombres, regard dur de stratège _(à confirmer)_.
 - **`tang-zhao-li-hui-guo-rou`** — Réservée, chignon serré, tenue
-  traditionnelle sobre ; la mère effacée d'un fils calme *(à confirmer)*.
+  traditionnelle sobre ; la mère effacée d'un fils calme _(à confirmer)_.
 - **`katrono-hui-guo-rou`** — **différée** : pas de planche exploitable
   recensée — à statuer en phase 0.
 - **`swinko-swinko-hui-guo-rou`** — **différée** : idem.
@@ -216,8 +221,8 @@ visage.
   (`shoulders` ≈ 1,3).
 - **`prince-camilla`** — Jeune femme fine au port méprisant : longs cheveux
   noirs et lisses, frange, **diadème**, robe de cour sombre à col montant. La
-  moue est le visage — hautaine au repos, folle dans la colère *(coiffure
-  exacte à confirmer)*. Signatures : `tiara`.
+  moue est le visage — hautaine au repos, folle dans la colère _(coiffure
+  exacte à confirmer)_. Signatures : `tiara`.
 - **`prince-zhanglei`** — Corpulence tranquille, visage plein, cheveux noirs
   très courts plaqués, petit sourire permanent de négociant. **Tunique
   chinoise à col droit** plutôt que costume occidental. Signatures : `attire`
@@ -228,8 +233,8 @@ visage.
   Élégance parfaite. Le même visage doit pouvoir porter « séduisant » et
   « abject » — l'écart entre les deux est le personnage.
 - **`prince-tubeppa`** — Visage fermé de chimiste, cernes, cheveux sombres
-  mi-longs et raides, frange irrégulière ; tenue stricte, gants *(gants à
-  confirmer)*. Expression : `severe`.
+  mi-longs et raides, frange irrégulière ; tenue stricte, gants _(gants à
+  confirmer)_. Expression : `severe`.
 - **`prince-tyson`** — Ronde et rayonnante : boucles volumineuses, cils
   dessinés, mouche, tenue de scène à froufrous et cœurs — le Livre de Tyson
   est aussi son style graphique. Signatures : `curly` en volume, `frills`.
@@ -251,7 +256,7 @@ visage.
   l'assurance en moins : mêmes cheveux longs, regard ailleurs. La paire doit
   être manifestement une paire — **même profil, deux expressions**.
 - **`prince-momoze`** — Adolescente menue, cheveux mi-longs sages, serre-tête
-  *(à confirmer)*, l'air de s'excuser d'être là. Expression : `anxious`.
+  _(à confirmer)_, l'air de s'excuser d'être là. Expression : `anxious`.
 - **`prince-marayam`** — Petit garçon, **gabarit `child`** (nouveau), cheveux
   noirs sages, tenue princière miniature ; toujours près de Sevanti.
 - **`prince-woble`** — Nourrisson, **gabarit `infant`** (nouveau) : dans les
@@ -275,25 +280,25 @@ visage.
 - **`botobai-gigante`** — Le plus massif des zodiaques : sexagénaire
   monumental, moustache, costume — le Dragon.
 - **`kanzai`** — Jeune, cheveux hérissés à mèches bicolores (le Tigre), veste
-  courte, l'impatience au visage *(teintes à confirmer)*.
+  courte, l'impatience au visage _(teintes à confirmer)_.
 - **`saiyu`** — Grand, dégingandé, bâton, cigarette, yeux mi-clos — le Singe.
-- **`saccho-kobayakawa`** — Le Cheval : costume, carrure posée *(silhouette à
-  confirmer)*.
-- **`cluck`** — La Poule : femme aux cheveux relevés en crête souple *(à
-  confirmer)*.
-- **`ginta`** — Le Mouton : colosse hirsute *(à confirmer)*.
-- **`gel`** — Le Serpent : femme longiligne aux cheveux lisses *(à
-  confirmer)*.
+- **`saccho-kobayakawa`** — Le Cheval : costume, carrure posée _(silhouette à
+  confirmer)_.
+- **`cluck`** — La Poule : femme aux cheveux relevés en crête souple _(à
+  confirmer)_.
+- **`ginta`** — Le Mouton : colosse hirsute _(à confirmer)_.
+- **`gel`** — Le Serpent : femme longiligne aux cheveux lisses _(à
+  confirmer)_.
 - **`beyond-netero`** — Vieillard hors gabarit : masse de vieux chêne, longue
   crinière et barbe, sourire du père — en cellule, mais la cellule se visite.
-- *Note de catalogue :* `pyon` **et** `piyon` existent tous deux dans
+- _Note de catalogue :_ `pyon` **et** `piyon` existent tous deux dans
   `characters.json` — doublon probable (la Lapine), à statuer en phase 0 avant
   toute entrée.
 
 ### A.4 Gardes importants (17)
 
 - **`bill`** — Jeune, visage long, cheveux courts, l'air fiable et fatigué ;
-  premier compagnon de poste de Kurapika *(détails à confirmer)*.
+  premier compagnon de poste de Kurapika _(détails à confirmer)_.
 - **`melody`** — Minuscule, ronde, crâne presque nu à deux touffes latérales,
   grandes oreilles, dents proéminentes, petits yeux doux ; flûte à la
   ceinture. L'apparence est la cicatrice de la Sonate : la dessiner avec la
@@ -307,12 +312,12 @@ visage.
 - **`basho`** — Grand gabarit, rouflaquettes et bouc, banane courte, veste ;
   l'air du garde du corps qui écrit des senryū.
 - **`izunavi`** — Cheveux mi-longs ondulés, barbe de trois jours, nonchalance
-  de maître en congé *(à confirmer)*.
+  de maître en congé _(à confirmer)_.
 - **`theta`** — Jeune femme athlétique en tailleur de service, carré clair
   ondulé, visage rond et décidé — la peur de Tserriednich se joue dans ses
   yeux.
 - **`salkov`** — Mince, cheveux plaqués à raie nette ; l'employé de maison
-  parfait *(à confirmer)*.
+  parfait _(à confirmer)_.
 - **`babimyna`** — Trapu, cheveux courts, paupières lourdes, le regard qui
   pèse ; uniforme de l'armée royale.
 - **`balsamilco-might`** — Sec, âgé, crâne dégarni, moustache : l'état-major
@@ -320,8 +325,8 @@ visage.
 - **`vincent`** — Carrure sèche, cheveux courts, mâchoire serrée :
   l'exécuteur. (Mort tôt dans l'arc — l'appearance sert la timeline d'avant.)
 - **`furykov`** — Âgé, petites lunettes rondes, cheveux gris peignés ; l'œil
-  qui identifie les emprunteurs *(à confirmer)*.
-- **`musse`** — Jeune, mèche basse sur l'œil *(à confirmer)*.
+  qui identifie les emprunteurs _(à confirmer)_.
+- **`musse`** — Jeune, mèche basse sur l'œil _(à confirmer)_.
 - **`rihan`** — Cheveux mi-longs sombres, calme de préparateur (Predator).
 - **`coventoba`** — Rond, petits yeux, suffisance d'agent double.
 - **`vergei`** — Chauve à couronne de cheveux (`bald-crown`), grosse
@@ -370,19 +375,19 @@ visage.
   tient déjà (0xd9b978, `gown`) : son entrée reprend ces valeurs et le profil
   en dur devient projection (§4-P1).
 - **`hinrigh-biganduffno`** — Quadragénaire anguleux, cheveux sombres plaqués
-  en arrière, costume : le lieutenant Xi-Yu qui fait le vrai travail *(à
-  confirmer)*.
+  en arrière, costume : le lieutenant Xi-Yu qui fait le vrai travail _(à
+  confirmer)_.
 - **`zakuro-custard`** — Jeune, cheveux en bataille, canines apparentes,
   veste courte.
 - **`lynch-fullbokko`** — Jeune femme, cheveux courts, tenue utilitaire ;
-  frappe d'abord, pose les questions après *(à confirmer)*.
+  frappe d'abord, pose les questions après _(à confirmer)_.
 - **`onior-longbao`** — Vieux boss massif, crâne chauve, **moustache
   tombante**, robe chinoise : le padrone Xi-Yu.
 - **`brocco-li`** — Vieux, long visage étroit, crâne dégarni : le boss Cha-R
-  *(à confirmer)*.
+  _(à confirmer)_.
 - **`keni-wang`** — **différée** : pas de planche exploitable recensée.
 - **`luini`** — Jeune homme quelconque au sourire tranquille — l'anonymat est
-  son arme (Rêveur Éveillé) *(à confirmer)*.
+  son arme (Rêveur Éveillé) _(à confirmer)_.
 
 ---
 
@@ -393,29 +398,29 @@ et extrusions, zéro asset, zéro texture — attachée au rig existant (tête,
 torse, main). Le vocabulaire est fermé : une pièce nouvelle passe par un
 amendement de cette annexe.
 
-| Pièce                  | Construction                                          | Porteurs (annexe A)                          |
-| ---------------------- | ----------------------------------------------------- | -------------------------------------------- |
-| `glasses-round`        | 2 tores fins + pont                                   | Leorio, Shizuku, Furykov                     |
-| `glasses-thin`         | 2 cadres plats + branches                             | Halkenburg, Cheadle                          |
-| `tiara`                | arc de tore + pointes                                 | Camilla                                      |
-| `crown`                | cylindre crénelé bas                                  | Nasubi                                       |
-| `beard-full`           | coque extrudée sous la mâchoire                       | Nasubi, Beyond                               |
-| `moustache`            | 2 quarts de tore                                      | Balsamilco, Onior, Vergei, Botobai           |
-| `mutton-chops`         | 2 coques latérales de mâchoire                        | Benjamin, Basho                              |
-| `goatee`               | cône court au menton                                  | Basho, Leorio, Nobunaga                      |
-| `forehead-cross`       | mesh plat (comme les yeux)                            | Chrollo                                      |
-| `face-paint-star-tear` | 2 meshes plats (joues)                                | Hisoka                                       |
-| `earrings`             | petites sphères pendantes                             | Chrollo                                      |
-| `chain-right-hand`     | chaînette basse résolution à la main droite (au cast) | Kurapika                                     |
-| `fur-collar`           | tore bosselé au col                                   | Chrollo                                      |
-| `katana`               | fourreau + garde à la ceinture                        | Nobunaga                                     |
-| `umbrella`             | canne + coupole fermée                                | Feitan                                       |
-| `fan`                  | éventail plié en main                                 | Kalluto                                      |
-| `flute`                | cylindre court à la ceinture                          | Melody                                       |
-| `bandages-full`        | anneaux de bandelettes sur les membres                | Bonolenov                                    |
-| `stitches`             | segments d'encre aux commissures                      | Franklin                                     |
-| `lips-full`            | renflement du mesh de bouche                          | Salé-salé                                    |
-| `frills`               | collerettes en anneaux ondulés                        | Tyson                                        |
+| Pièce                  | Construction                                          | Porteurs (annexe A)                |
+| ---------------------- | ----------------------------------------------------- | ---------------------------------- |
+| `glasses-round`        | 2 tores fins + pont                                   | Leorio, Shizuku, Furykov           |
+| `glasses-thin`         | 2 cadres plats + branches                             | Halkenburg, Cheadle                |
+| `tiara`                | arc de tore + pointes                                 | Camilla                            |
+| `crown`                | cylindre crénelé bas                                  | Nasubi                             |
+| `beard-full`           | coque extrudée sous la mâchoire                       | Nasubi, Beyond                     |
+| `moustache`            | 2 quarts de tore                                      | Balsamilco, Onior, Vergei, Botobai |
+| `mutton-chops`         | 2 coques latérales de mâchoire                        | Benjamin, Basho                    |
+| `goatee`               | cône court au menton                                  | Basho, Leorio, Nobunaga            |
+| `forehead-cross`       | mesh plat (comme les yeux)                            | Chrollo                            |
+| `face-paint-star-tear` | 2 meshes plats (joues)                                | Hisoka                             |
+| `earrings`             | petites sphères pendantes                             | Chrollo                            |
+| `chain-right-hand`     | chaînette basse résolution à la main droite (au cast) | Kurapika                           |
+| `fur-collar`           | tore bosselé au col                                   | Chrollo                            |
+| `katana`               | fourreau + garde à la ceinture                        | Nobunaga                           |
+| `umbrella`             | canne + coupole fermée                                | Feitan                             |
+| `fan`                  | éventail plié en main                                 | Kalluto                            |
+| `flute`                | cylindre court à la ceinture                          | Melody                             |
+| `bandages-full`        | anneaux de bandelettes sur les membres                | Bonolenov                          |
+| `stitches`             | segments d'encre aux commissures                      | Franklin                           |
+| `lips-full`            | renflement du mesh de bouche                          | Salé-salé                          |
+| `frills`               | collerettes en anneaux ondulés                        | Tyson                              |
 
 Les coiffures nouvelles (`slicked-back`, `pompadour`, `drills`, `chonmage`,
 `hime`, `curly`, `afro`, `wild`, `bald-crown`) relèvent de `humanHair.ts`
@@ -451,7 +456,7 @@ fichier existant au-dessus de 500 ; aucun ajout aux exemptions d'ADR-002.
 
 **Écarts assumés, à statuer.**
 
-1. **La grille de portraits est une grille de *rigs*, pas de pixels.** Une
+1. **La grille de portraits est une grille de _rigs_, pas de pixels.** Une
    planche-contact des soixante-sept corps construits — meshes, échelle, pièces
    nommées — en snapshot vitest. Elle attrape ce qu'une grille d'images
    attraperait (une signature qui tombe, une géométrie partagée réutilisée) et

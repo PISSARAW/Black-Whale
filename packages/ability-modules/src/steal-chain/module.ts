@@ -81,7 +81,7 @@ export const stealChain = defineAbility({
     steal: {
       label: 'Voler la capacité',
       evidence: shown(
-        "dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)"
+        "dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)",
       ),
       conditions: [
         requiresTarget('Une victime est enchaînée'),
@@ -105,7 +105,7 @@ export const stealChain = defineAbility({
     'drain-into-zetsu': {
       label: 'Vider la victime',
       evidence: shown(
-        "l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)"
+        "l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)",
       ),
       conditions: [requiresTarget('Une victime est enchaînée')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { forcedZetsu: true } })],
@@ -123,7 +123,7 @@ export const stealChain = defineAbility({
     'steal-second': {
       label: 'Le pouce occupé (refus)',
       refusal:
-        "tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)",
+        'tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)',
     },
   },
 

@@ -21,7 +21,12 @@ function world(): WorldState {
   ] as const) {
     state.entities[id] = { id, kind: 'CHARACTER', label, metadata: { mentalState: 'ACTIVE' } }
   }
-  state.abilitiesByOwner['kurapika'] = ['steal-chain', 'stealth-dolphin', 'emperor-time', 'holy-chain']
+  state.abilitiesByOwner['kurapika'] = [
+    'steal-chain',
+    'stealth-dolphin',
+    'emperor-time',
+    'holy-chain',
+  ]
   state.abilitiesByOwner['sayird'] = ['little-eye']
   return state
 }
@@ -105,9 +110,9 @@ describe('the Little Eye sequence (ch. 369)', () => {
     expect(forcedZetsu).toBeDefined()
   })
 
-  it("tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)", () => {
+  it('tant que la capacité volée est détenue, le doigt reste pris : la roue grise « rendre » comme « voler une deuxième capacité », conditions affichées. (affirmé)', () => {
     const base = world()
-    
+
     const secondTheft = stealChain.execute(
       context({
         worldState: base,
@@ -241,7 +246,12 @@ describe('Holy Chain', () => {
   it('soigne un garde blessé (ch. 380)', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()
-    base.entities['sayird_body'] = { id: 'sayird_body', kind: 'BODY', label: 'Sayird (corps)', originalCharacterId: 'sayird' }
+    base.entities['sayird_body'] = {
+      id: 'sayird_body',
+      kind: 'BODY',
+      label: 'Sayird (corps)',
+      originalCharacterId: 'sayird',
+    }
     base.bodyStates['sayird_body'] = 'INJURED'
     branches.createBranch({
       id: 'chain-380',
@@ -257,7 +267,7 @@ describe('Holy Chain', () => {
         targets: ['sayird_body'],
         targetRefs: [{ id: 'sayird_body', kind: 'BODY' }],
         actionId: 'heal',
-      })
+      }),
     )
 
     expect(healing.allowed).toBe(true)
@@ -268,7 +278,12 @@ describe('Holy Chain', () => {
   it('se soigne lui-même (affirmé)', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()
-    base.entities['kurapika_body'] = { id: 'kurapika_body', kind: 'BODY', label: 'Kurapika (corps)', originalCharacterId: 'kurapika' }
+    base.entities['kurapika_body'] = {
+      id: 'kurapika_body',
+      kind: 'BODY',
+      label: 'Kurapika (corps)',
+      originalCharacterId: 'kurapika',
+    }
     base.bodyStates['kurapika_body'] = 'INJURED'
     branches.createBranch({
       id: 'chain-self',
@@ -284,7 +299,7 @@ describe('Holy Chain', () => {
         targets: ['kurapika_body'],
         targetRefs: [{ id: 'kurapika_body', kind: 'BODY' }],
         actionId: 'heal-self',
-      })
+      }),
     )
 
     expect(healing.allowed).toBe(true)
@@ -295,9 +310,14 @@ describe('Holy Chain', () => {
   it('se soigne instantanément sous Emperor Time (ch. 373)', () => {
     const branches = new InMemoryBranchEngine()
     const base = world()
-    base.entities['kurapika_body'] = { id: 'kurapika_body', kind: 'BODY', label: 'Kurapika (corps)', originalCharacterId: 'kurapika' }
+    base.entities['kurapika_body'] = {
+      id: 'kurapika_body',
+      kind: 'BODY',
+      label: 'Kurapika (corps)',
+      originalCharacterId: 'kurapika',
+    }
     base.bodyStates['kurapika_body'] = 'INJURED'
-    
+
     base.effects['emperor-time'] = {
       id: 'emperor-time',
       kind: 'AURA_MODIFIER',
@@ -323,8 +343,8 @@ describe('Holy Chain', () => {
         targets: ['kurapika_body'],
         targetRefs: [{ id: 'kurapika_body', kind: 'BODY' }],
         actionId: 'heal-instantly',
-        parameters: { emperorTimeEffectId: 'emperor-time' }
-      })
+        parameters: { emperorTimeEffectId: 'emperor-time' },
+      }),
     )
 
     expect(healing.allowed).toBe(true)
@@ -344,10 +364,10 @@ describe('Holy Chain', () => {
       targetRefs: [{ id: 'vincent_body', kind: 'BODY' }],
     })
 
-    const entry = holyChain.getActionWheel(ctx).find(item => item.id === 'revive')
+    const entry = holyChain.getActionWheel(ctx).find((item) => item.id === 'revive')
     expect(entry?.visibility).toBe('locked')
     expect(entry?.hint).toContain('ne ramène personne')
-    
+
     expect(holyChain.execute({ ...ctx, actionId: 'revive' }).allowed).toBe(false)
   })
 })

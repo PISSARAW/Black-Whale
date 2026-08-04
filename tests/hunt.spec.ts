@@ -1,4 +1,10 @@
-import { expect, test } from 'playwright/test'
+import { expect, test, type Page } from 'playwright/test'
+
+/** Leaves the briefing, and waits for the actions the hunt is played with. */
+async function enterTheApartment(page: Page) {
+  await page.getByRole('button', { name: 'Enter the apartment' }).click()
+  await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
+}
 
 test.describe('Hunt V3 critical path', () => {
   // These have been failing on the phone viewport, unnoticed: nothing in CI ran
@@ -28,16 +34,14 @@ test.describe('Hunt V3 critical path', () => {
       'true',
     )
     await expect(page.getByRole('button', { name: /Bungee Gum/i })).toBeVisible()
-    await page.getByRole('button', { name: 'Enter the apartment' }).click()
-    await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
+    await enterTheApartment(page)
   })
 
   test('exposes sound and gameplay controls to assistive technology', async ({ page }) => {
     const sound = page.getByRole('button', { name: 'Enable sound' })
     await expect(sound).toHaveAttribute('aria-pressed', 'false')
-    await page.getByRole('button', { name: 'Enter the apartment' }).click()
+    await enterTheApartment(page)
     await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
-    await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
   })
 
   // `AdvancedNenActions.svelte` exists and has no importer: the Ren/Shu bar the
@@ -69,8 +73,10 @@ test.describe('Hunt V3 critical path', () => {
       page.waitForURL(/contract=/, { timeout: 20_000 }),
       page.getByRole('link', { name: /Play and share this contract/i }).click(),
     ])
-    await page.waitForTimeout(1_000)
-
+    // The shared contract is read back off the query string once the client has
+    // taken over, so this button is what proves the round trip. Waited for
+    // rather than slept past: the fixed second that used to stand here was a
+    // guess at how long that takes, and a guess is what a locator is for.
     const shared = page.getByRole('button', { name: /Silent Meridian/i })
     await expect(shared).toBeVisible()
     await expect(shared).toHaveAttribute('aria-pressed', 'true')

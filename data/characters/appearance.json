@@ -1028,6 +1028,237 @@
       "signatures": [],
       "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "confirmed" },
       "note": "Jeune homme brun net : le manieur de Little Eye, retiré tôt du jeu par Steal Chain. `anxious` est ce que le couloir du 1014 lui fait, et c'est là qu'on le rencontre."
+    },
+    {
+      "id": "chrollo-lucilfer",
+      "body": { "build": "slim", "height": 1.05, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; manteau sombre à col de fourrure, constant sur le matériel officiel",
+        "skin": "0xecd6bd",
+        "hair": "0x18171b",
+        "attire": {
+          "jacket": "0x1f1e24",
+          "shirt": "0xe8e4dc",
+          "trousers": "0x1a191f",
+          "accent": "0x6b6a72"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["forehead-cross", "fur-collar", "earrings"],
+      "verified": { "chapterIds": ["ch-351", "ch-353"], "status": "confirmed" },
+      "note": "La croix inversée est un mesh plat, comme les yeux le sont déjà — §3 : zéro texture. Les cheveux sont plaqués en arrière quand il travaille et lâchés sur le front sinon ; l'apparence déclare l'état de travail, qui est celui où le vaisseau le rencontre."
+    },
+    {
+      "id": "nobunaga-hazama",
+      "body": { "build": "broad", "height": 1.06, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "chonmage", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 371, 377 ; kimono sombre, palette sourde",
+        "skin": "0xd3a17c",
+        "hair": "0x1d1a18",
+        "attire": {
+          "jacket": "0x36302c",
+          "shirt": "0xe0dacb",
+          "trousers": "0x262220",
+          "accent": "0x8b6f3f"
+        }
+      },
+      "attire": "kimono",
+      "signatures": ["goatee", "katana"],
+      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
+      "note": "Le seul à bord qui porte son arme en évidence, ce qui est à soi seul une reconnaissance à distance de marche. Le chonmage et le kimono sont déclarés parce qu'aucun rôle du catalogue ne les produirait."
+    },
+    {
+      "id": "feitan-portor",
+      "body": { "build": "slim", "height": 0.88, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "bob", "expression": "hostile" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 371, 395 ; tenue sombre à col remonté",
+        "skin": "0xecd6bd",
+        "hair": "0x1a181c",
+        "attire": {
+          "jacket": "0x232228",
+          "shirt": "0x2b2a31",
+          "trousers": "0x1c1b20",
+          "accent": "0x6e6b74"
+        }
+      },
+      "attire": "combat",
+      "signatures": ["umbrella"],
+      "verified": { "chapterIds": ["ch-371", "ch-395"], "status": "confirmed" },
+      "note": "La silhouette la plus compacte et la plus dangereuse du groupe : le col remonté jusqu'au nez fait presque tout le visage, et le parapluie fait le reste."
+    },
+    {
+      "id": "phinks-magcub",
+      "body": { "build": "broad", "height": 1.07, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "slicked-back", "expression": "hostile" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; survêtement et cheveux blonds constants",
+        "skin": "0xd8b49a",
+        "hair": "0xd8bb6a",
+        "attire": {
+          "jacket": "0x3a4c63",
+          "shirt": "0xe6e9ec",
+          "trousers": "0x2a3949",
+          "accent": "0xd5dde4"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
+      "note": "Les sourcils quasi absents sont le trait : le visage se lit par ce qui manque au-dessus des yeux, ce qu'`expression` porte en laissant les arcs presque plats."
+    },
+    {
+      "id": "machi-komacine",
+      "body": { "build": "slim", "height": 0.99, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "ponytail", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; cheveux roses constants sur le matériel officiel",
+        "skin": "0xf0dfc9",
+        "hair": "0xdd8ca0",
+        "attire": {
+          "jacket": "0x59264a",
+          "shirt": "0xeee6ea",
+          "trousers": "0x3c1a33",
+          "accent": "0xc06a90"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-357", "ch-371"], "status": "confirmed" },
+      "note": "Kunoichi au visage fermé : les cheveux roses relevés en arrière la nomment de loin, ce qui est la seule chose que la silhouette doit faire."
+    },
+    {
+      "id": "shizuku-murasaki",
+      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
+      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; carré noir, lunettes rondes, robe sombre constants",
+        "skin": "0xf0dfc9",
+        "hair": "0x1c1b1f",
+        "attire": {
+          "jacket": "0x2a2830",
+          "shirt": "0xeee9e1",
+          "trousers": "0x1f1e25",
+          "accent": "0x8f8b97"
+        }
+      },
+      "attire": "gown",
+      "signatures": ["glasses-round"],
+      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
+      "note": "La panoplie tient en trois pièces : carré, lunettes rondes, robe sage. Deme-chan est un fait d'ability et n'entre pas ici."
+    },
+    {
+      "id": "franklin-bordeau",
+      "body": { "build": "broad", "height": 1.15, "frame": "adult", "shoulders": 1.28 },
+      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 371, 377 ; colosse cousu, palette sourde",
+        "skin": "0xb8795d",
+        "hair": "0x1c1a18",
+        "attire": {
+          "jacket": "0x36393a",
+          "shirt": "0xd9d5cb",
+          "trousers": "0x25282a",
+          "accent": "0x76736a"
+        }
+      },
+      "attire": "combat",
+      "signatures": ["stitches"],
+      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
+      "note": "La deuxième et dernière épaule déclarée à bord, avec Benjamin. Les coutures aux commissures sont des segments d'encre : le visage de créature de Frankenstein tient à ces deux traits, et à rien d'autre."
+    },
+    {
+      "id": "bonolenov-ndongo",
+      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "shaved", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 377, 392 ; bandages clairs sur tout le corps",
+        "skin": "0xe8e2d4",
+        "hair": "0xe8e2d4",
+        "attire": {
+          "jacket": "0xe4ddcd",
+          "shirt": "0xf0ebe0",
+          "trousers": "0xd6cfbe",
+          "accent": "0x9c8f76"
+        }
+      },
+      "attire": "combat",
+      "signatures": ["bandages-full"],
+      "verified": { "chapterIds": ["ch-377", "ch-392"], "status": "confirmed" },
+      "note": "Le boxeur bandé : silhouette de danseur poids plume sous des anneaux de bandelettes. Le crâne est déclaré `shaved` parce que ce qu'on voit de sa tête est du bandage, pas des cheveux."
+    },
+    {
+      "id": "kalluto-zoldyck",
+      "body": { "build": "slim", "height": 0.68, "frame": "child" },
+      "head": { "face": "narrow", "hairStyle": "bob", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 377, 380 ; kimono sombre, carré noir",
+        "skin": "0xf2e2ce",
+        "hair": "0x1b1a1e",
+        "attire": {
+          "jacket": "0x2b2933",
+          "shirt": "0xefe9df",
+          "trousers": "0x1f1d26",
+          "accent": "0x9a5f74"
+        }
+      },
+      "attire": "kimono",
+      "signatures": ["fan"],
+      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
+      "note": "Enfant androgyne : le gabarit `child` et l'éventail font la silhouette, et le carré impeccable la ferme."
+    },
+    {
+      "id": "illumi",
+      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; très longs cheveux noirs et tenue sombre, constants",
+        "skin": "0xf2e2ce",
+        "hair": "0x141317",
+        "attire": {
+          "jacket": "0x22212a",
+          "shirt": "0xe9e5dd",
+          "trousers": "0x1b1a22",
+          "accent": "0x5f5d68"
+        }
+      },
+      "attire": "combat",
+      "signatures": [],
+      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
+      "note": "Visage de poupée sans expression, grands yeux fixes : `neutral` est ici un fait et pas un défaut. Les épingles de Gittarackur sont un état, pas un visage."
+    },
+    {
+      "id": "hisoka",
+      "body": { "build": "average", "height": 1.09, "frame": "adult" },
+      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "colours": {
+        "basis": "attested",
+        "source": "anime 2011 ; cheveux roux-magenta et tenue de bouffon constants sur le matériel officiel",
+        "skin": "0xf3e3cf",
+        "hair": "0xd0503f",
+        "attire": {
+          "jacket": "0xb0384c",
+          "shirt": "0xf2eee6",
+          "trousers": "0x8d2a3c",
+          "accent": "0xe8c24c"
+        }
+      },
+      "attire": "combat",
+      "signatures": ["face-paint-star-tear"],
+      "verified": { "chapterIds": ["ch-351", "ch-353"], "status": "confirmed" },
+      "note": "À bord il avance masqué — Texture Surprise. L'appearance déclare le vrai visage, et le masque reste un fait d'événement : c'est la même séparation que pour les yeux écarlates de Kurapika, et elle vaut dans les deux sens."
     }
   ],
   "deferred": [

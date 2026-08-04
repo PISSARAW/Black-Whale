@@ -37,6 +37,21 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'worm-crossed': openAWormhole,
   teleported: skipThroughTime,
   watching: foldPaper,
+  // Texture Surprise, which the walk played on a body and nowhere else. The
+  // layer laid over a crate and the writing repainted on a plate are the same
+  // gesture as the mask going onto a face — `reachSound.ts` already picked the
+  // sound of a flat thing being put down for exactly this ability — and a walk
+  // that made a noise for the face and none for the room was saying the lie
+  // only counted when it was worn. The plate coming off says it too: taking the
+  // layer back is a thing the visitor did, and the same layer is moving.
+  forged: foldPaper,
+  'sign-forged': foldPaper,
+  'sign-restored': foldPaper,
+  // And the refusal, on the pillar and the rail, for the reason the gust and
+  // the fist below keep theirs: the hand came up and the aura went out. What is
+  // declined is the surface, and a key that simply did nothing would have hidden
+  // the one limit the technique states about itself.
+  'mask-refused': foldPaper,
   stripped: blowAGust,
   // The refusal keeps the gust: the palm came up and the air moved, and what
   // the walk declines is the second one, not the first.

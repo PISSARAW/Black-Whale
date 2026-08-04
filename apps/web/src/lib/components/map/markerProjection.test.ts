@@ -575,6 +575,83 @@ describe('packMarkersForZoom', () => {
     expect(danjin.spotLabel).toMatch(/not depicted/)
   })
 
+  it('stages every chapter 416 event inside VIP detention and room 1004', () => {
+    const vipJail = 'tier-1-vip-jail'
+    const room1004 = 'tier-1-royal-residential-sector-room-1004'
+    const scenarios = [
+      {
+        title: 'Benjamin confronts Camilla under special martial law',
+        room: vipJail,
+        slugs: ['prince-camilla', 'prince-benjamin', 'furykov', 'butch', 'mozbe', 'fukataki'],
+      },
+      {
+        title: 'Moswana sacrifices herself and curses Benjamin',
+        room: vipJail,
+        slugs: [
+          'prince-camilla',
+          'moswana',
+          'prince-benjamin',
+          'furykov',
+          'butch',
+          'mozbe',
+          'fukataki',
+        ],
+      },
+      {
+        title: 'Tserriednich prepares Salkov to witness his false death',
+        room: room1004,
+        slugs: ['prince-tserriednich', 'salkov', 'danjin'],
+      },
+      {
+        title: 'Benjamin breaches room 1004 and shoots Tserriednich',
+        room: room1004,
+        slugs: ['prince-benjamin', 'prince-tserriednich', 'furykov', 'butch', 'salkov', 'danjin'],
+      },
+    ]
+
+    for (const scenario of scenarios) {
+      const placed = packMarkersForZoom(
+        scenario.slugs.map(
+          (characterSlug) =>
+            ({
+              ...markers[0],
+              id: characterSlug,
+              locationId: scenario.room,
+              characterSlug,
+              currentEventTitle: scenario.title,
+            }) as MapMarker,
+        ),
+        'LOCAL',
+      )
+      expect(new Set(placed.map(({ x, y }) => `${x},${y}`)).size).toBe(placed.length)
+      expect(placed.every((marker) => marker.spotLabel === undefined)).toBe(true)
+    }
+  })
+
+  it('places Benjamin and Tserriednich face-to-face for the chapter 416 shot', () => {
+    const title = 'Benjamin breaches room 1004 and shoots Tserriednich'
+    const [benjamin, tserriednich] = packMarkersForZoom(
+      [
+        ['prince-benjamin', 'prince-benjamin'],
+        ['prince-tserriednich', 'prince-tserriednich'],
+      ].map(
+        ([id, characterSlug]) =>
+          ({
+            ...markers[0],
+            id,
+            locationId: 'tier-1-royal-residential-sector-room-1004',
+            characterSlug,
+            currentEventTitle: title,
+          }) as MapMarker,
+      ),
+      'LOCAL',
+    )
+
+    expect(benjamin.y).toBeCloseTo(tserriednich.y)
+    expect(benjamin.x).toBeLessThan(tserriednich.x)
+    expect(tserriednich.x - benjamin.x).toBeCloseTo(9)
+  })
+
   it('does not caveat positions outside a local map', () => {
     for (const zoom of ['TIER', 'OVERVIEW'] as const) {
       const [packed] = packMarkersForZoom([markers[0]], zoom)

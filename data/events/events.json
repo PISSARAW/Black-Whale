@@ -1366,5 +1366,58 @@
       "source": "community"
     },
     "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 416,
+    "chapterTitle": "Proclamation",
+    "sequence": 1,
+    "title": "Benjamin confronts Camilla under special martial law",
+    "summary": "Benjamin forces his way into Camilla's VIP detention area, returns her fire and kills two attendants while refusing to kill Camilla directly and trigger Cat's Name.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Benjamin proclaims martial law",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 416,
+    "chapterTitle": "Proclamation",
+    "sequence": 2,
+    "title": "Moswana sacrifices herself and curses Benjamin",
+    "summary": "Moswana kills herself in Benjamin's presence to complete the long-prepared Yomotsu Hegui curse, which immediately manifests on him.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 416,
+    "chapterTitle": "Proclamation",
+    "sequence": 3,
+    "title": "Tserriednich prepares Salkov to witness his false death",
+    "summary": "Before Benjamin arrives, Tserriednich tells Salkov that his coming death will be false, orders him to report what he sees and forbids him from revealing the ability behind it.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 416,
+    "chapterTitle": "Proclamation",
+    "sequence": 4,
+    "title": "Benjamin breaches room 1004 and shoots Tserriednich",
+    "summary": "Benjamin's team forces entry into room 1004, orders Nen student Danjin taken for questioning and shoots Tserriednich while the Fourth Prince is in Zetsu.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   }
 ]

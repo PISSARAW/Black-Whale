@@ -130,14 +130,19 @@
   let commandAnimationSeq = $state(0)
   let hatsuAnimationSeq = $state(0)
   let lesson = $state(0)
-  let opponentDoctrine = $state<OpponentDoctrine>(data.doctrine)
-  let difficulty = $state<ArenaDifficulty>(data.difficulty)
-  let recorder = new ArenaRecorder(combatSetup(), opponentDoctrine, difficulty)
+  
+  const initialDoctrine = data.doctrine
+  const initialDifficulty = data.difficulty
+  const initialChallengeId = data.challengeId
+  
+  let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
+  let difficulty = $state<ArenaDifficulty>(initialDifficulty)
+  let recorder = new ArenaRecorder(combatSetup(), initialDoctrine, initialDifficulty)
   let lastReplay = $state<ArenaReplay | null>(null)
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
-  let selectedChallengeId = $state<string | null>(data.challengeId)
+  let selectedChallengeId = $state<string | null>(initialChallengeId)
   const motionTimers = new Set<number>()
 
   let reading = $derived(readAura(game.player, game.opponent))

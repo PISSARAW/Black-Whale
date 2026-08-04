@@ -6,6 +6,7 @@ import type {
   WorldState,
 } from '@black-whale/world-engine'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
+import { get } from 'svelte/store'
 import { locale } from '$lib/i18n'
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'
@@ -295,22 +296,22 @@ export function createSimulationStore() {
         order.type !== 'GUARD' &&
         order.type !== 'HATSU'
       ) {
-        throw new StrategyInputError(strategyMsg($locale).errors.unknownAction)
+        throw new StrategyInputError(strategyMsg(get(locale)).errors.unknownAction)
       }
       if (!allowedCharacters.has(order.characterId)) {
-        throw new StrategyInputError(strategyMsg($locale).errors.orderTargetsNonOwnedUnit)
+        throw new StrategyInputError(strategyMsg(get(locale)).errors.orderTargetsNonOwnedUnit)
       }
       if (orderedCharacters.has(order.characterId)) {
-        throw new StrategyInputError(strategyMsg($locale).errors.oneOrderPerTurn)
+        throw new StrategyInputError(strategyMsg(get(locale)).errors.oneOrderPerTurn)
       }
       const destination = destinations.get(order.locationId)
       if (!destination || !currentState.entities[destination.id]) {
-        throw new StrategyInputError(strategyMsg($locale).errors.unknownDestination)
+        throw new StrategyInputError(strategyMsg(get(locale)).errors.unknownDestination)
       }
       const entity = resolveControlledEntity(currentState, order.characterId)
-      if (!entity) throw new StrategyInputError(strategyMsg($locale).errors.unitDoesNotExist)
+      if (!entity) throw new StrategyInputError(strategyMsg(get(locale)).errors.unitDoesNotExist)
       if (unitConditions[entity.id] === 'ELIMINATED') {
-        throw new StrategyInputError(strategyMsg($locale).errors.eliminatedUnitCannotReceiveOrders)
+        throw new StrategyInputError(strategyMsg(get(locale)).errors.eliminatedUnitCannotReceiveOrders)
       }
 
       orderedCharacters.add(order.characterId)
@@ -353,9 +354,9 @@ export function createSimulationStore() {
               sighting.certainty === 'CONFIRMED' &&
               spiderIds.has(sighting.entityId),
           ),
-        }, $locale)
+        }, get(locale))
         if (adapted && !adapted.accepted)
-          throw new StrategyInputError(adapted.error ?? strategyMsg($locale).errors.hatsuCannotBeActivated)
+          throw new StrategyInputError(adapted.error ?? strategyMsg(get(locale)).errors.hatsuCannotBeActivated)
         const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
         if (effects.includes('RECON')) scoutedLocations.push(destination.id)
         if (effects.includes('DENIAL')) deniedLocations.push(destination.id)

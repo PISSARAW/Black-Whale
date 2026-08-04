@@ -858,7 +858,34 @@
         "status": "absent"
       }
     ],
-    "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"]
+    "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377",
+        "note": "Recherche par l'Araignée et la Mafia"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392",
+        "note": "Promenade dans le Secteur Passager du Pont 3"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-392",
+        "note": "Séance de cinéma, rencontre avec Zakuro et Lynch"
+      },
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-393",
+        "note": "Discussion avec Hinrigh Biganduffno"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-393",
+        "note": "Accepte de monter au Pont 1 à la demande de Hinrigh"
+      }
+    ]
   },
   {
     "id": "illumi",
@@ -1268,8 +1295,19 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-observation-deck",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-380",
+        "note": "Confrontation avec Mizaistom sur le Pont 3"
+      },
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-381",
+        "note": "Placé sous surveillance dans une chambre VIP"
       }
     ]
   },
@@ -1707,8 +1745,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
-      "status": "actif",
+      "room": "1004",
+      "status": "actif — infecté par TSK-17 et maudit",
       "role": "chef militaire / loi martiale"
     },
     "biography": [
@@ -2135,6 +2173,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "mentioned"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -2591,6 +2634,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -2628,6 +2681,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-363.2"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-373"
       },
       {
         "location": "tier-1-vip-jail",
@@ -3078,12 +3135,24 @@
         "fromChapterId": "ch-359.4"
       },
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-royal-residential-sector-room-1003",
         "fromChapterId": "ch-363"
       },
       {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-369"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1003",
-        "fromChapterId": "ch-363.2"
+        "fromChapterId": "ch-370"
+      },
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-390"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-390.2"
       }
     ]
   },
@@ -3523,6 +3592,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "mentioned"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -4417,7 +4491,21 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-363"
+      }
+    ]
   },
   {
     "id": "prince-luzurus",
@@ -4848,6 +4936,20 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-363"
+      }
     ]
   },
   {
@@ -5266,6 +5368,25 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-382",
+        "untilChapterId": "ch-382.2"
       }
     ]
   },
@@ -5734,6 +5855,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-388"
       }
     ]
   },
@@ -7097,6 +7222,10 @@
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-361",
         "untilChapterId": "ch-368"
+      },
+      {
+        "location": "tier-1-princes-burial-chamber",
+        "fromChapterId": "ch-371"
       }
     ]
   },
@@ -7546,12 +7675,12 @@
         "fromChapterId": "ch-359.4"
       },
       {
-        "location": "tier-1-royal-residential-sector-room-1012",
+        "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-361"
       },
       {
         "location": "tier-1-royal-residential-sector-room-1013",
-        "fromChapterId": "ch-372"
+        "fromChapterId": "ch-374"
       }
     ]
   },
@@ -8900,6 +9029,12 @@
         "status": "appears",
         "context": "flashback"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-prison-beyond",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -9308,28 +9443,18 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-central-police-station",
+        "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-359"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-380",
+        "note": "Intercepte Illumi et Kalluto"
       },
       {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-360"
-      },
-      {
-        "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-380.2"
-      },
-      {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-381"
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-381",
+        "note": "Installe les Zoldyck en salle VIP et enquête"
       }
     ]
   },
@@ -9730,21 +9855,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-central-courthouse",
-        "fromChapterId": "ch-358"
-      },
-      {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-4-royal-army-conference-room",
-        "fromChapterId": "ch-380.2",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-central-courthouse",
-        "fromChapterId": "ch-381"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -10152,7 +10264,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -10993,7 +11105,18 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-374",
+        "note": "Isolée dans l'espace de Nen"
+      }
+    ]
   },
   {
     "id": "hanzo",
@@ -11401,7 +11524,26 @@
         "status": "absent"
       }
     ],
-    "battles": ["Hanzo vs. Momoze's murderer"]
+    "battles": ["Hanzo vs. Momoze's murderer"],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-371",
+        "note": "A la poursuite de l'assassin de Momoze"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-373"
+      }
+    ]
   },
   {
     "id": "balsamilco-might",
@@ -11814,7 +11956,13 @@
         "status": "absent"
       }
     ],
-    "battles": ["Balsamilco Might vs. Halkenburg and his followers"]
+    "battles": ["Balsamilco Might vs. Halkenburg and his followers"],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "musse",
@@ -12228,8 +12376,12 @@
       },
       {
         "location": "tier-1-royal-residential-sector-room-1002",
-        "fromChapterId": "ch-366",
-        "untilChapterId": "ch-373"
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-373",
+        "note": "Couloir devant la 1001"
       }
     ]
   },
@@ -12645,7 +12797,21 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-383"
+      }
+    ]
   },
   {
     "id": "theta",
@@ -13073,7 +13239,13 @@
       }
     ],
     "battles": ["Theta vs. Tserriednich Hui Guo Rou"],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "hinrigh-biganduffno",
@@ -13084,10 +13256,10 @@
     "firstAppearanceChapterId": "ch-377",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 4,
-      "room": "Xi-Yu Family Office",
+      "tier": 3,
+      "room": "Unknown",
       "status": "actif",
-      "role": "sous-chef mafia"
+      "role": "Mafioso"
     },
     "biography": [
       "Hinrigh serves as Xi-Yu underboss and searches Tiers 4 and 3 for Hisoka while monitoring Morena's revolt. When three Heil-Ly members ambush him, he turns handcuffs into pigeons, traps Padaille and kills him.",
@@ -13488,25 +13660,25 @@
     "mapTrajectory": [
       {
         "location": "tier-4-xi-yu-family-office",
-        "fromChapterId": "ch-377",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-4-xi-yu-family-office",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       },
       {
         "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-390",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Recherche de la base Heil-Ly et Hisoka"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-393",
+        "note": "Infiltration de la base Heil-Ly"
       },
       {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-394"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-406"
       }
     ],
     "positionProvenance": "inferred",
@@ -13949,7 +14121,7 @@
     },
     "biography": [
       "Morena embarks with at least twenty-two members of the Heil-Ly. She kisses each of them to activate Contagion, explains that killing earns levels, and releases her group onto the ship with the goal of destroying Kakin and then the entire world.",
-   "She took the head of the clan by ordering its members to kill one another, and the twenty-three she addresses in room 302 are the ones who chose to stay with her through it. She thanks them for that, calls herself young and inexperienced for the position, and says she cares nothing for this world any more than for herself — which is the reason she gives for destroying it.",
+      "She took the head of the clan by ordering its members to kill one another, and the twenty-three she addresses in room 302 are the ones who chose to stay with her through it. She thanks them for that, calls herself young and inexperienced for the position, and says she cares nothing for this world any more than for herself — which is the reason she gives for destroying it.",
       "Its recruits massacre passengers in order to reach level 21 and develop their own abilities. Their offensive causes hundreds of disappearances, upsets the balance of the three mafias and pushes the Xi-Yu as well as the Cha-R to consider its elimination.",
       "Morena personally advises her members on their future powers. Facing Tevelares, Quorolle and Gelato, she explains that experience, technique, aura and ingenuity determine a Nen fight, then proposes transforming their clashes into systems comparable to games.",
       "When her affair with Tserriednich falls silent, Morena understands that he suspects her betrayal. She abandons the decoy of room 3101, organizes several access doors to her real cache and wants to infect a soldier from Tserriednich in order to follow the movements of her former protector.",
@@ -14355,6 +14527,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -14769,25 +14947,17 @@
     "battles": ["Luini vs. Nobunaga Hazama"],
     "mapTrajectory": [
       {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-371"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377",
+        "note": "Provoque le Cha-R"
+      },
+      {
+        "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-378"
-      },
-      {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
-      },
-      {
-        "location": "tier-4-ei-i-family-office",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-384",
-        "untilChapterId": "ch-393"
       }
     ]
   },
@@ -14801,9 +14971,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
-      "room": "Central Hospital",
+      "room": "Unknown",
       "status": "actif",
-      "role": "head of the Brigade / search for a capacity and regalia"
+      "role": "Phantom Troupe"
     },
     "mapLocationCorrection": true,
     "biography": [
@@ -15234,25 +15404,22 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade, donne ses ordres"
       },
       {
-        "location": "tier-5-area-37564",
-        "fromChapterId": "ch-366"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-378",
+        "note": "Exploration solo du Pont 5"
       },
       {
         "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-380",
+        "note": "Accompagné de Shizuku et Bonolenov"
       },
       {
-        "location": "tier-1-princes-burial-chamber",
-        "fromChapterId": "ch-405.3"
-      },
-      {
-        "location": "tier-1-banquet-hall",
-        "fromChapterId": "ch-406",
-        "certainty": "PROBABLE"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-406"
       }
     ]
   },
@@ -15265,10 +15432,10 @@
     "firstAppearanceChapterId": "ch-71",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 5,
-      "room": "Tier 5 Standard Cabins",
+      "tier": 4,
+      "room": "Recycling & Sewage Facilities",
       "status": "actif",
-      "role": "combattant / premiere ligne"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "Nobunaga boards the Black Whale with the Phantom Troupe to rob Kakin and hunt Hisoka. On Tier 5 he, Phinks, Feitan and Franklin overpower Buor Family thugs and collect information about the mafia routes.",
@@ -15671,24 +15838,32 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
         "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
+      },
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
+      },
+      {
+        "location": "tier-4-recycling-sewage-facilities",
+        "fromChapterId": "ch-406"
       }
     ],
     "positionProvenance": "inferred",
@@ -16087,6 +16262,12 @@
     ],
     "biography": [
       "Gantai is a Black Whale crew member shown during the voyage's emergency operations and evacuation procedures on the lower tiers."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-1",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -16482,6 +16663,12 @@
     ],
     "biography": [
       "Tamazo is a Black Whale crew member involved in shipboard operations during the emergencies depicted on the fifth and sixth days of the voyage."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-1",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -16500,6 +16687,12 @@
     },
     "biography": [
       "The venue announcer presents Chrollo and Hisoka's death match at Heavens Arena, introducing the rules and addressing the audience before the fight turns the spectators into part of Chrollo's strategy."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-cineplex",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -16900,7 +17093,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17311,7 +17504,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17714,7 +17907,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -17735,7 +17928,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-political-ward",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -18136,12 +18329,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-first-class",
-        "fromChapterId": "ch-340"
-      },
-      {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-359"
+        "fromChapterId": "ch-358"
       }
     ],
     "mapLocationCorrection": true
@@ -18554,7 +18743,7 @@
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -18954,7 +19143,13 @@
       "At the departure she sits a meeting of seven in the Tier 3 first-class compartment: the Zodiacs Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one more Hunter the chapter leaves unnamed. They work through the expedition's logistics — supply distribution, and the transport arrangements Tokarine's ability cannot carry alone. It is the room the Association contingent works from, and the only panel that fixes it.",
       "She announces to the Zodiacs that she has been folding Ancient Language data into their software in case the expedition meets a Dark Continent civilisation, and that reconstruction comes first once the passenger list is retrieved. On the twelfth day Kurapika is still waiting on her sweep of the passengers under two years old for Prince Woble."
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "saccho-kobayakawa",
@@ -19353,12 +19548,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-first-class",
-        "fromChapterId": "ch-340"
-      },
-      {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-359"
+        "fromChapterId": "ch-358"
       }
     ],
     "mapLocationCorrection": true
@@ -19770,12 +19961,8 @@
     },
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-first-class",
-        "fromChapterId": "ch-340"
-      },
-      {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-359"
+        "fromChapterId": "ch-358"
       }
     ],
     "mapLocationCorrection": true
@@ -20183,6 +20370,12 @@
         "title": "Friends",
         "status": "appears"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -20588,7 +20781,22 @@
       "overview": "As a Pro Hunter, Belerainte can use Nen. His natural category and personal ability have not been revealed.",
       "techniques": ["Nen perception"],
       "abilityIds": []
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-373",
+        "note": "Couloir en direction de la 1014"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-374"
+      }
+    ]
   },
   {
     "id": "bill",
@@ -21020,7 +21228,13 @@
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "giuliano",
@@ -21415,6 +21629,12 @@
     ],
     "biography": [
       "Giuliano serves as one of Tyson's bodyguards. He reads the Book of Tyson, observes its emotional influence and remains in the prince's quarters while Izunavi evaluates the Guardian Spirit Beast's conditions."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -21819,6 +22039,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -22218,14 +22444,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-1-lifeboats",
-        "fromChapterId": "ch-383",
-        "untilChapterId": "ch-383.3"
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -22643,7 +22863,13 @@
     ],
     "mapLocationCorrection": true,
     "mapPresenceFromChapterId": "ch-358",
-    "mapPresenceUntilChapterId": "ch-360.2"
+    "mapPresenceUntilChapterId": "ch-360.2",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ridge",
@@ -23045,7 +23271,13 @@
       "Ridge is a Hunter attached to a royal guard detail. He participates in the inter-prince information network and remains active during the later days of the succession contest."
     ],
     "mapPresenceFromChapterId": "ch-415",
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sanbica-norton",
@@ -23441,6 +23673,12 @@
     "biography": [
       "Sanbica joins the Hunter Association's medical personnel aboard the Black Whale and works with the scientific team on Tier 3.",
       "At the departure she is one of the seven in the first-class compartment where Pyon meets Gel, Cluck, Ginta, Tokarine and one unnamed Hunter — the panel that first puts her somewhere on the ship rather than merely aboard it."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-hospital",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -23865,7 +24103,13 @@
     ],
     "mapLocationCorrection": true,
     "mapPresenceFromChapterId": "ch-358",
-    "mapPresenceUntilChapterId": "ch-361"
+    "mapPresenceUntilChapterId": "ch-361",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "scairt",
@@ -24260,6 +24504,12 @@
     ],
     "biography": [
       "Scairt is a Hunter serving a royal faction aboard the Black Whale. He is among the professional guards whose presence and Nen knowledge become relevant to the princes' security arrangements."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -24665,7 +24915,13 @@
       "techniques": ["Hatsu"],
       "abilityIds": ["transport-portals"]
     },
-    "mapPresenceFromChapterId": "ch-359"
+    "mapPresenceFromChapterId": "ch-359",
+    "mapTrajectory": [
+      {
+        "location": "tier-3-political-ward",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "borksen",
@@ -24677,9 +24933,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 2,
-      "room": "Heil-Ly Secret Hideout",
+      "room": "Heil-Ly Hideout",
       "status": "actif",
-      "role": "captive recruited / Specialist level 0"
+      "role": "Heil-Ly"
     },
     "suspectedAllegiance": "Heil-Ly — Contagion, niveau 0",
     "mapLocationCorrection": true,
@@ -25092,13 +25348,17 @@
     "competitions": ["Borksen vs. Morena Prudo — negotiation game"],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
+        "location": "black-whale-1",
         "fromChapterId": "ch-394",
         "certainty": "PROBABLE"
       },
       {
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-405"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -25491,6 +25751,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -25502,7 +25772,13 @@
       "overview": "Danjin had his aura nodes opened during Kurapika's class by receiving and using Bill's Erigeron through Stealth Dolphin. Erigeron was returned to Bill after that single use.",
       "techniques": ["Borrowed Hatsu"],
       "abilityIds": ["erigeron"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "erikkusu",
@@ -25522,7 +25798,13 @@
       "Erikkusu is one of Tserriednich's soldiers who qualify as provisional Hunters before departure. No individual action or Nen ability has yet been shown in the published chapters."
     ],
     "mapPresenceFromChapterId": null,
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gidal",
@@ -25924,7 +26206,13 @@
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
       "techniques": ["Hatsu", "Post-mortem Nen"],
       "abilityIds": ["yomotsu-hegui"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "lisamsetta",
@@ -26326,7 +26614,13 @@
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
       "techniques": ["Hatsu", "Post-mortem Nen"],
       "abilityIds": ["yomotsu-hegui"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "meshush",
@@ -26728,7 +27022,13 @@
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
       "techniques": ["Hatsu", "Post-mortem Nen"],
       "abilityIds": ["yomotsu-hegui"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mozbe",
@@ -26740,7 +27040,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "VIP Jail",
       "status": "actif",
       "role": "Private Guard of Prince Camilla ; Provisional Hunter"
     },
@@ -27119,6 +27419,16 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -27130,7 +27440,13 @@
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
       "techniques": ["Hatsu", "Post-mortem Nen"],
       "abilityIds": ["yomotsu-hegui"]
-    }
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "muhahahasare",
@@ -27150,7 +27466,13 @@
       "Muhahahasare qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
     ],
     "mapPresenceFromChapterId": null,
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "myuhan",
@@ -27170,11 +27492,6 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-369",
-        "untilChapterId": "ch-370"
       }
     ],
     "mangaAppearances": [
@@ -27966,9 +28283,20 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "appears"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "zomeesa",
@@ -27988,7 +28316,13 @@
       "Zomeesa qualifies as a provisional Hunter before the Black Whale's departure. No separate appearance record or personal Nen ability is currently documented by Hunterpedia."
     ],
     "mapPresenceFromChapterId": null,
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "unma-hui-guo-rou",
@@ -28383,6 +28717,12 @@
     ],
     "biography": [
       "Unma is Kakin's first queen and the mother of Benjamin and Tserriednich. She remains part of the royal household while both sons pursue competing strategies in the succession war."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-01",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -28778,6 +29118,20 @@
     ],
     "biography": [
       "Duazul is Kakin's second queen and mother of Camilla, Tubeppa, Luzurus and Halkenburg. Her guards and children become entangled in several competing alliances and assassination plans."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-02",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-373"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-382"
+      }
     ]
   },
   {
@@ -29173,6 +29527,12 @@
     ],
     "biography": [
       "Tang Zhao Li is Kakin's third queen and mother of Zhang Lei. Her relationship with the Xi-Yu-backed third prince places her household within the succession contest's mafia balance."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-03",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -29568,6 +29928,12 @@
     ],
     "biography": [
       "Katrono is Kakin's fourth queen and mother of Tserriednich. She appears as part of the royal family records surrounding the fourteen princes."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-04",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -30369,6 +30735,16 @@
     "biography": [
       "Seiko is Kakin's sixth queen and mother of Kacho and Fugetsu. She is outwardly severe with Fugetsu after Kacho's death while trying to maneuver within the royal hierarchy.",
       "Her true intentions remain ambiguous as Melody and Kaiser work to protect Fugetsu from curses and political pressure."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters-room-06",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-359"
+      }
     ]
   },
   {
@@ -30782,6 +31158,11 @@
       {
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-372"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-374",
+        "note": "Isolated in Nen space"
       }
     ],
     "positionProvenance": "inferred",
@@ -31182,7 +31563,13 @@
       "Gipper is a Kakin Royal Army soldier involved in the security operations that intensify during special martial law."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "maizan",
@@ -31579,7 +31966,13 @@
       "Maizan is a Kakin Royal Army officer who appears during the search for Hisoka and is later referenced in the military response to the mafia conflict."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mizuri",
@@ -32385,7 +32778,13 @@
       "Momolly is a Kakin Royal Army member assigned to lower-tier security during the Heil-Ly investigation and the period preceding special martial law."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-soldiers-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "otocin",
@@ -32793,6 +33192,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -33211,9 +33616,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 2,
-      "room": "Justice Bureau Office",
+      "room": "Justice Bureau",
       "status": "actif",
-      "role": "officier de justice"
+      "role": "Ministry of Justice"
     },
     "mapPresenceFromChapterId": "ch-372",
     "biography": [
@@ -33597,6 +34002,20 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-402"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-402"
       }
     ]
   },
@@ -33996,7 +34415,13 @@
       "He is in fact one of the IPA members lent to the Bureau's Investigation Department alongside Steiner, and he debuts in their Tier 1 quarters at the departure: when Steiner says one of them will succeed him as Deputy Secretary if he dies, Peuckert is the one who answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter does not name him — that waits twenty-five chapters, until 384."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "steiner",
@@ -34395,7 +34820,13 @@
       "At the departure he is in his Tier 1 quarters with three other IPA members, reading Journey to the New World and telling them to at least get through the chapter on the labyrinthine city — if he dies, one of them becomes Deputy Secretary. Peuckert answers that the Hunter Association is there to protect them and that the current IPA Director is one of the unofficial sole survivors. The chapter gives the tier and the room's function, never its number: the VVIP quarters are where Tier 1 lodges dignitaries, so the position stays an inference."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "worio-bay",
@@ -34792,7 +35223,13 @@
       "Worio Bay is an Office of Justice official introduced during the legal and medical response to Halkenburg's collapse."
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-3-central-courthouse",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nugui",
@@ -35187,6 +35624,12 @@
     ],
     "biography": [
       "Nugui is a Black Whale passenger who appears repeatedly during shipboard crowd scenes and the emergencies affecting the public tiers."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -35582,6 +36025,12 @@
     ],
     "biography": [
       "Mandam is a Black Whale passenger pictured during the opening days of the succession contest."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -35979,7 +36428,13 @@
         "status": "absent"
       }
     ],
-    "mapPresenceUntilChapterId": "ch-363.4"
+    "mapPresenceUntilChapterId": "ch-363.4",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "shimanu",
@@ -36382,6 +36837,12 @@
         "title": "Friends",
         "status": "appears"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -36781,7 +37242,13 @@
         "status": "flashback"
       }
     ],
-    "mapPresenceUntilChapterId": "ch-359.3"
+    "mapPresenceUntilChapterId": "ch-359.3",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "onior-longbao",
@@ -37180,6 +37647,12 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -37587,6 +38060,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -37982,6 +38461,12 @@
     ],
     "biography": [
       "Morrissey is a Black Whale passenger mentioned during the first round of Kurapika's Nen classes."
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-king-living-quarters",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -38381,8 +38866,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-392"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
       }
     ],
     "positionProvenance": "inferred",
@@ -38797,6 +39282,12 @@
         "title": "Friends",
         "status": "absent"
       }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-358"
+      }
     ]
   },
   {
@@ -38809,9 +39300,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Casino VIP",
+      "room": "VIP Casino",
       "status": "actif",
-      "role": "scout transformed into Owl / search for Hisoka"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "Bonolenov boards the Black Whale with the Phantom Troupe and begins the search for Hisoka in Tier 5. On the fourth day, the Spiders gather in the central mess hall. After the group leaves, Bonolenov and Shizuku ask to team up with Chrollo, while accepting that their leader claims the right to kill Hisoka.",
@@ -39214,21 +39705,13 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
         "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
-      },
-      {
-        "location": "tier-3-cineplex",
-        "fromChapterId": "ch-392"
-      },
-      {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-394",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-380",
+        "note": "Forme un trio avec Chrollo et Shizuku"
       },
       {
         "location": "tier-1-vip-casino",
@@ -39647,12 +40130,13 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
         "location": "tier-4-central-passage",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-380",
+        "note": "Forme un trio avec Chrollo et Bonolenov"
       }
     ]
   },
@@ -40071,8 +40555,14 @@
     ],
     "mapTrajectory": [
       {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
         "location": "tier-5-central-dining-hall",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-378",
+        "note": "Reste à la cafétéria du Pont 5 pour servir d'appât"
       }
     ]
   },
@@ -40088,7 +40578,7 @@
       "tier": 4,
       "room": "Recycling & Sewage Facilities",
       "status": "actif",
-      "role": "fighter / assault against the Heil-Ly"
+      "role": "Phantom Troupe"
     },
     "biography": [
       "On the second day of the trip, Phinks, Feitan, Franklin and Nobunaga subdue three men from the Buor family at Tier 5. During the interrogation, Phinks understands that a middleman collects the profits between the leaders and their men. He then orders the prisoners to take down the cabin numbers of all passengers taller than 1.88 meters in order to find Hisoka.",
@@ -40494,20 +40984,28 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
         "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
+      },
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
       },
       {
         "location": "tier-4-recycling-sewage-facilities",
@@ -40932,8 +41430,19 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-3-observation-deck",
-        "fromChapterId": "ch-380"
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-380",
+        "note": "Confrontation avec Mizaistom sur le Pont 3"
+      },
+      {
+        "location": "tier-3-residential-first-class",
+        "fromChapterId": "ch-381",
+        "note": "Placé sous surveillance dans une chambre VIP avec Illumi"
       }
     ]
   },
@@ -41352,7 +41861,13 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-378",
+        "note": "Exploration du Pont 5 en solo"
       }
     ]
   },
@@ -41372,7 +41887,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "anzel",
@@ -41390,7 +41911,13 @@
     },
     "mapPresenceFromChapterId": "ch-400",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "babimyna",
@@ -41421,8 +41948,13 @@
         "fromChapterId": "ch-358"
       },
       {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-361",
+        "note": "Devant la porte de la chambre 1014"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-364.2"
+        "fromChapterId": "ch-363"
       }
     ]
   },
@@ -41442,7 +41974,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "barrigen",
@@ -41463,12 +42001,7 @@
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1013",
-        "fromChapterId": "ch-368"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-369",
-        "untilChapterId": "ch-369.2"
+        "fromChapterId": "ch-358"
       }
     ],
     "mangaAppearances": [
@@ -41495,7 +42028,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "bharate",
@@ -41513,7 +42052,13 @@
     },
     "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "bille",
@@ -41531,7 +42076,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "bladge",
@@ -41553,12 +42104,8 @@
     "mapLocationCorrection": true,
     "mapTrajectory": [
       {
-        "location": "tier-1-queens-living-quarters",
-        "fromChapterId": "ch-361"
-      },
-      {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-366"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -41578,7 +42125,13 @@
     },
     "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "burvena",
@@ -41596,7 +42149,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "butch",
@@ -41608,21 +42167,23 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
+      "room": "1004",
       "status": "actif",
       "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": [],
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
+      }
+    ],
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector-room-1001",
+        "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1005",
-        "fromChapterId": "ch-366"
       }
     ]
   },
@@ -41645,17 +42206,13 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-379"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       },
       {
         "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-380"
+        "fromChapterId": "ch-378",
+        "note": "Chasse"
       }
     ]
   },
@@ -41675,7 +42232,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "chiffon-toto",
@@ -41693,7 +42256,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "chiyamasi",
@@ -41711,7 +42280,13 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "connelly",
@@ -41731,7 +42306,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "coventoba",
@@ -41756,7 +42337,21 @@
         "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-383"
+      }
+    ]
   },
   {
     "id": "daemon",
@@ -41774,7 +42369,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "deruboro",
@@ -41792,7 +42393,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "dogman",
@@ -41813,17 +42420,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-1-princes-burial-chamber",
-        "fromChapterId": "ch-405"
-      },
-      {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-407"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -41843,7 +42441,13 @@
     },
     "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "feitan-portor",
@@ -41890,24 +42494,28 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-359",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-5-warehouse",
-        "fromChapterId": "ch-378.2"
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-378",
+        "note": "Visite du QG Cha-R au Pont 5"
       },
       {
-        "location": "tier-5-hangar-entrance",
-        "fromChapterId": "ch-380"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-390",
+        "note": "Exploration du Pont 3 à la recherche de la planque Heil-Ly"
       },
       {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-395"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-393",
+        "note": "Découverte de l'entrée secrète du repaire Heil-Ly"
       },
       {
-        "location": "tier-4-recycling-sewage-facilities",
-        "fromChapterId": "ch-406"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-398",
+        "note": "Infiltration de la base Heil-Ly"
       }
     ],
     "positionProvenance": "inferred",
@@ -41923,13 +42531,25 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
-      "status": "actif",
+      "room": "VIP Jail",
+      "status": "décédée",
       "role": "Majordomo of Prince Camilla"
     },
     "mapPresenceFromChapterId": "ch-389",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-416",
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "death"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "furichosefu",
@@ -41947,7 +42567,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "furykov",
@@ -41964,8 +42590,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
-      "status": "actif — position actuelle inconnue",
+      "room": "1004",
+      "status": "actif",
       "role": "soldat privé de Benjamin / analyste Nen"
     },
     "mapPresenceFromChapterId": "ch-363",
@@ -41976,9 +42602,29 @@
         "title": "Truth or Falsehood",
         "status": "appears",
         "context": "flashback"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-365",
+        "note": "Devant la porte de la chambre 1014"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-368"
+      }
+    ]
   },
   {
     "id": "gadeau",
@@ -41996,7 +42642,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gateaume",
@@ -42014,7 +42666,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gelato",
@@ -42032,7 +42690,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "gihoruto",
@@ -42050,7 +42714,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "guerimori",
@@ -42068,7 +42738,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "hashito",
@@ -42089,12 +42765,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector-room-1003",
-        "fromChapterId": "ch-358"
-      },
-      {
         "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-367"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -42114,7 +42786,13 @@
     },
     "mapPresenceFromChapterId": "ch-388",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "hignori",
@@ -42132,7 +42810,13 @@
     },
     "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "himonce",
@@ -42150,7 +42834,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "hyuga",
@@ -42168,7 +42858,13 @@
     },
     "mapPresenceFromChapterId": "ch-400",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "illardia",
@@ -42186,7 +42882,13 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ittoku",
@@ -42206,7 +42908,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "javietti",
@@ -42224,7 +42932,13 @@
     },
     "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kakin-announcer",
@@ -42242,7 +42956,13 @@
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "black-whale-1",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kako",
@@ -42260,7 +42980,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kanjidol",
@@ -42272,9 +42998,9 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "Secteur résidentiel royal",
-      "status": "blessé et détenu",
-      "role": "soldat privé de Benjamin"
+      "room": "1007",
+      "status": "actif",
+      "role": "Guard"
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
@@ -42285,7 +43011,17 @@
         "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-414"
+      }
+    ]
   },
   {
     "id": "kitokattamu",
@@ -42304,7 +43040,13 @@
     "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kobihi",
@@ -42322,7 +43064,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "komiya",
@@ -42340,7 +43088,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "konattsu",
@@ -42358,7 +43112,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "kontasutin",
@@ -42376,7 +43136,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "koroabde",
@@ -42396,7 +43162,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-queens-living-quarters",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ladiolus",
@@ -42414,7 +43186,13 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "laroc",
@@ -42461,7 +43239,13 @@
     },
     "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "loberry",
@@ -42479,7 +43263,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "longhi",
@@ -42500,16 +43290,7 @@
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1005",
-        "fromChapterId": "ch-369"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-401"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1005",
-        "fromChapterId": "ch-402",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-358"
       }
     ],
     "mangaAppearances": []
@@ -42523,13 +43304,13 @@
     "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
+      "tier": 3,
+      "room": "Unknown",
       "status": "mort",
       "role": "Mafioso"
     },
     "mapPresenceFromChapterId": "ch-390",
-    "mapPresenceUntilChapterId": "ch-393",
+    "mapPresenceUntilChapterId": "ch-406",
     "mangaAppearances": [
       {
         "chapter": 393,
@@ -42539,14 +43320,28 @@
     ],
     "mapTrajectory": [
       {
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
+      },
+      {
         "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-392",
-        "certainty": "PROBABLE"
+        "fromChapterId": "ch-377",
+        "note": "Recherche de Hisoka"
       },
       {
         "location": "tier-3-cineplex",
-        "fromChapterId": "ch-392.2",
-        "untilChapterId": "ch-393"
+        "fromChapterId": "ch-392",
+        "note": "Rencontre Hisoka, mise KO"
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-405",
+        "note": "Killed by Bonolenov"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-406",
+        "note": "Dead body discovered"
       }
     ]
   },
@@ -42566,7 +43361,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "madwig",
@@ -42584,7 +43385,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "maor",
@@ -42609,7 +43416,13 @@
         "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "matvere",
@@ -42627,7 +43440,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "misha-hao",
@@ -42645,7 +43464,13 @@
     },
     "mapPresenceFromChapterId": "ch-392",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mizaurouno",
@@ -42663,7 +43488,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "momiita",
@@ -42681,7 +43512,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "montblanc-toto",
@@ -42699,7 +43536,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "moswana",
@@ -42711,13 +43554,36 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
-      "status": "actif",
+      "room": "VIP Jail",
+      "status": "décédée",
       "role": "Private Guard of Prince Camilla"
     },
     "mapPresenceFromChapterId": "ch-363",
-    "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mapPresenceUntilChapterId": "ch-416",
+    "mangaAppearances": [
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "death"
+      }
+    ],
+    "biography": [
+      "Moswana is one of Camilla's Have-Nots. Under special martial law, she completes a curse prepared against Benjamin for more than ten years, kills herself in his presence and manifests Yomotsu Hegui on him."
+    ],
+    "abilitiesAndPowers": "Moswana uses the Have-Nots' post-mortem curse Yomotsu Hegui. Years of preparation, proximity and eye contact strengthen its aura-draining effect.",
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "overview": "As one of Camilla's Have-Nots, Moswana is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. Her natural aura category remains unknown.",
+      "techniques": ["Hatsu", "Post-mortem Nen"],
+      "abilityIds": ["yomotsu-hegui"]
+    },
+    "mapTrajectory": [
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "mushaho",
@@ -42735,7 +43601,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nadaasu",
@@ -42754,7 +43626,13 @@
     "mapPresenceFromChapterId": null,
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
-    "positionProvenance": "databook"
+    "positionProvenance": "databook",
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nagmum",
@@ -42776,12 +43654,8 @@
     "mapLocationCorrection": true,
     "mapTrajectory": [
       {
-        "location": "tier-1-queens-living-quarters",
-        "fromChapterId": "ch-366"
-      },
-      {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-366"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -42801,7 +43675,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "naipei",
@@ -42819,7 +43699,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nikoraurusu",
@@ -42837,7 +43723,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vict",
@@ -42855,7 +43747,13 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nipaper",
@@ -42877,12 +43775,8 @@
     "mapLocationCorrection": true,
     "mapTrajectory": [
       {
-        "location": "tier-1-queens-living-quarters",
-        "fromChapterId": "ch-361"
-      },
-      {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-366"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -42902,7 +43796,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "nukuocon",
@@ -42920,7 +43820,13 @@
     },
     "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "odessa",
@@ -42938,7 +43844,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "orarge",
@@ -42956,7 +43868,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "orau",
@@ -42974,7 +43892,13 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "orzny",
@@ -42992,7 +43916,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "padaille",
@@ -43010,7 +43940,18 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-392",
+        "note": "Combat contre Hinrigh"
+      }
+    ]
   },
   {
     "id": "perigord",
@@ -43028,7 +43969,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "pitakusu",
@@ -43046,7 +43993,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "quorolle",
@@ -43064,7 +44017,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "reuen",
@@ -43082,7 +44041,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "rice",
@@ -43100,7 +44065,13 @@
     },
     "mapPresenceFromChapterId": "ch-386",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "roccoli",
@@ -43118,7 +44089,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ryoji",
@@ -43136,7 +44113,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "ryubihhi",
@@ -43154,7 +44137,13 @@
     },
     "mapPresenceFromChapterId": "ch-415",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1005",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sakata",
@@ -43175,12 +44164,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector-room-1003",
-        "fromChapterId": "ch-358"
-      },
-      {
         "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-367"
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -43200,7 +44185,13 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sarahell",
@@ -43212,13 +44203,23 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1002",
+      "room": "1014",
       "status": "actif",
-      "role": "Captain of the Private Guards of Prince Camilla"
+      "role": "Guard"
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411"
+      }
+    ]
   },
   {
     "id": "satobi",
@@ -43236,7 +44237,13 @@
     },
     "mapPresenceFromChapterId": "ch-369",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "shedule",
@@ -43254,7 +44261,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "shikaku",
@@ -43272,7 +44285,17 @@
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-361"
+      }
+    ]
   },
   {
     "id": "slakka",
@@ -43290,7 +44313,13 @@
     },
     "mapPresenceFromChapterId": "ch-365",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sodom",
@@ -43308,7 +44337,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "souffle",
@@ -43326,7 +44361,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sumidori",
@@ -43344,7 +44385,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "sun-bin",
@@ -43364,7 +44411,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tagenpaku",
@@ -43382,7 +44435,13 @@
     },
     "mapPresenceFromChapterId": "ch-375",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tajao",
@@ -43402,7 +44461,13 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "taler",
@@ -43420,7 +44485,13 @@
     },
     "mapPresenceFromChapterId": "ch-389",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tassi",
@@ -43447,14 +44518,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-3-residential-room-3101",
-        "fromChapterId": "ch-394",
-        "untilChapterId": "ch-394"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -43474,7 +44539,13 @@
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "terebellum",
@@ -43492,7 +44563,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tevelares",
@@ -43510,7 +44587,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "toneaster",
@@ -43528,7 +44611,13 @@
     },
     "mapPresenceFromChapterId": "ch-411",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1011",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "tsudonke",
@@ -43548,7 +44637,17 @@
     "mapPresenceUntilChapterId": null,
     "mangaAppearances": [],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377"
+      }
+    ]
   },
   {
     "id": "tuffdy",
@@ -43566,7 +44665,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1012",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "umanma",
@@ -43584,7 +44689,13 @@
     },
     "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1002",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vantine",
@@ -43602,7 +44713,13 @@
     },
     "mapPresenceFromChapterId": "ch-363",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vergei",
@@ -43627,7 +44744,13 @@
         "status": "appears"
       }
     ],
-    "temporalIdentityManaged": true
+    "temporalIdentityManaged": true,
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1013",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vic",
@@ -43645,7 +44768,13 @@
     },
     "mapPresenceFromChapterId": "ch-380",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-5-cha-r-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "vincent",
@@ -43663,7 +44792,22 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": "ch-364",
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-360",
+        "note": "Devant la porte de la chambre 1014"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-361"
+      }
+    ]
   },
   {
     "id": "voconte",
@@ -43681,7 +44825,13 @@
     },
     "mapPresenceFromChapterId": "ch-378",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "wolfe",
@@ -43699,7 +44849,13 @@
     },
     "mapPresenceFromChapterId": "ch-373",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "yokotani",
@@ -43720,13 +44876,8 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
-      },
-      {
-        "location": "tier-2-heilly-secret-hideout",
-        "fromChapterId": "ch-399"
+        "location": "tier-3-heilly-family-office",
+        "fromChapterId": "ch-358"
       }
     ]
   },
@@ -43746,7 +44897,13 @@
     },
     "mapPresenceFromChapterId": "ch-362",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "yuri",
@@ -43764,7 +44921,13 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-358"
+      }
+    ]
   },
   {
     "id": "yushohi",
@@ -43782,7 +44945,21 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1008",
+        "fromChapterId": "ch-361"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1006",
+        "fromChapterId": "ch-383"
+      }
+    ]
   },
   {
     "id": "zakuro-custard",
@@ -43793,9 +44970,9 @@
     "firstAppearanceChapterId": "ch-390",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 3,
+      "room": "Unknown",
+      "status": "actif",
       "role": "Mafioso"
     },
     "mapPresenceFromChapterId": "ch-390",
@@ -43803,18 +44980,22 @@
     "mangaAppearances": [],
     "mapTrajectory": [
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-358",
-        "certainty": "PROBABLE"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-377",
+        "note": "Recherche de Hisoka"
       },
       {
         "location": "tier-3-cineplex",
-        "fromChapterId": "ch-393"
+        "fromChapterId": "ch-392",
+        "note": "Rencontre Hisoka"
       },
       {
-        "location": "black-whale-unknown",
-        "fromChapterId": "ch-394",
-        "certainty": "PROBABLE"
+        "location": "tier-3-residential-standard",
+        "fromChapterId": "ch-406"
       }
     ]
   }

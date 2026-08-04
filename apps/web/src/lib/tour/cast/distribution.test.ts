@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from '../blueprint'
 import { castApparitions, distribute, postsIn } from './distribution'
-import { auraReader } from './nen'
+import { auraReader, CALM } from './nen'
 import { beastApparitions } from './beasts'
 import type { CastMember, StandingBeast } from './types'
 
@@ -152,9 +152,9 @@ describe('what the scene is handed', () => {
       member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: true }),
     ])
     const alarmed = auraReader({
+      ...CALM,
       visitorIn: posts[0]!.spaceId,
       visitorCasting: true,
-      hostileRooms: [],
     })
     expect(castApparitions(ship, posts, alarmed)[0]!.human!.aura).toBe('ren')
   })

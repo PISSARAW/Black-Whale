@@ -146,6 +146,21 @@ describe('readComfort', () => {
     expect(readComfort(JSON.stringify({ shipHour: 3 }), false).shipHour).toBe('canon')
   })
 
+  /**
+   * The visitor's own Ten is shown until they say otherwise — including to a
+   * visitor who asked for less movement, whose request is answered by the
+   * refraction pass being zeroed and not by the aura being taken away.
+   */
+  it('starts with the resting aura shown, in both presets', () => {
+    expect(comfortDefaults(false).restingAura).toBe(true)
+    expect(comfortDefaults(true).restingAura).toBe(true)
+  })
+
+  it('reads a stored resting aura back and ignores a stored non-flag', () => {
+    expect(readComfort(JSON.stringify({ restingAura: false }), false).restingAura).toBe(false)
+    expect(readComfort(JSON.stringify({ restingAura: 'no' }), false).restingAura).toBe(true)
+  })
+
   it('keeps the exposure inside what the filmic curve can still hold', () => {
     expect(readComfort(JSON.stringify({ exposure: 0 }), false).exposure).toBe(EXPOSURE_RANGE[0])
     expect(readComfort(JSON.stringify({ exposure: 40 }), false).exposure).toBe(EXPOSURE_RANGE[1])

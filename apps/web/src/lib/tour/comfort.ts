@@ -131,6 +131,23 @@ export interface Comfort {
    * lit or unlit by this setting.
    */
   shipHour: ShipHourChoice
+  /**
+   * Whether the visitor's own Ten is shown to them.
+   *
+   * Ten is the one state nobody chooses: aura up, doing nothing, permanently.
+   * So its presentation is permanent too — a shell drawn around the camera, a
+   * swim over the whole frame, and a held tone under everything — and a
+   * permanent effect is exactly the kind that stops being information and
+   * becomes a thing between the visitor and the ship. Someone who came for the
+   * deck and not for the aura is entitled to look at the deck.
+   *
+   * It hides nothing but the resting skin: raise a Ren, gather a Ko, spread a
+   * Ryu, open an En, mark an object with Shu, and all of it shows and sounds
+   * exactly as before. The state itself never changes — see `isAuraAtRest` —
+   * so Zetsu remains the only way to actually put the aura away, and a visitor
+   * with this off is still, to everyone aboard, a body holding Ten.
+   */
+  restingAura: boolean
 }
 
 export const FOV_RANGE = [55, 100] as const
@@ -174,6 +191,10 @@ const LIVELY: Comfort = {
   // The projection's own hour. A default of `noon` would be the walk quietly
   // refusing the clock it already reads.
   shipHour: 'canon',
+  // Shown. A walk that started with the visitor's own aura hidden would be
+  // teaching Nen by leaving it out: the resting skin is how anyone finds out
+  // they are carrying one.
+  restingAura: true,
 }
 
 const CALM: Comfort = {
@@ -204,6 +225,11 @@ const CALM: Comfort = {
   // Nor about the hour: the light behind the bay is a fact of the timeline, and
   // a visitor who asked for less movement did not ask for a different voyage.
   shipHour: 'canon',
+  // Left on, like the night-light: the movement in the resting aura is the
+  // refraction swim, and `prefersReducedMotion` already zeroes that pass
+  // wholesale. Hiding the shell as well would be answering a question about
+  // movement with an answer about Nen.
+  restingAura: true,
 }
 
 /** Whether the system has been asked for less movement. */
@@ -268,6 +294,7 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
     exposure: readNumber(stored.exposure, EXPOSURE_RANGE, defaults.exposure),
     quality: readQuality(stored.quality, defaults.quality),
     shipHour: readShipHour(stored.shipHour, defaults.shipHour),
+    restingAura: readFlag(stored.restingAura, defaults.restingAura),
   }
 }
 

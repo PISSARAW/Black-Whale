@@ -4,10 +4,12 @@
   import TourScene from './TourScene.svelte'
   import TourSceneOverlay from './TourSceneOverlay.svelte'
   import TourExamineCard from './TourExamineCard.svelte'
+  import TourAddressCard from './TourAddressCard.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
   type ExamineProps = ComponentProps<typeof TourExamineCard>
+  type AddressProps = ComponentProps<typeof TourAddressCard>
 
   interface Props {
     immersive: boolean
@@ -33,9 +35,14 @@
      * would mean looking away from the thing it is about.
      */
     examine: ExamineProps
+    /**
+     * And the exchange, in the same place and for the same reason: what a body
+     * answers is about the body you are standing in front of.
+     */
+    address: AddressProps
   }
 
-  let { immersive, navigation, scene, overlay, examine }: Props = $props()
+  let { immersive, navigation, scene, overlay, examine, address }: Props = $props()
 </script>
 
 <section
@@ -59,4 +66,5 @@
   />
   <TourSceneOverlay {...overlay} />
   <TourExamineCard {...examine} />
+  <TourAddressCard {...address} />
 </section>

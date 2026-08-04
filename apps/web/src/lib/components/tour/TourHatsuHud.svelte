@@ -19,11 +19,13 @@
     dialReading,
     identityOf,
     solidById,
+    solidNow,
     twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
+  import { gumStretch, gumTension } from '$lib/tour/gum'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -60,12 +62,20 @@
     nameOf: (entity: { name: string; nameFr: string }) => string
     /** What a room rests on, in the visitor's language: the flock brings it back. */
     sourceOf: (entity: { source: string; sourceFr: string }) => string
+    /**
+     * A body of the cast under its own name, by character id.
+     *
+     * One line of the panel needs it: the face the visitor is wearing. The HUD
+     * has no cast of its own and is not being given one — it is handed the
+     * resolver the page already built for the body read-out.
+     */
+    personName: (characterId: string) => string
     onRelease: () => void
-    /** Walks the double on to her next watch — the same thing R does. */
+    /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
-    /** Walks Secret Window on to its next bird — R again, under that aura. */
+    /** Walks Secret Window on to its next bird — the same place, that aura. */
     onCycleOwl: () => void
-    /** Walks Little Eye's insect on to its next order — R, under that aura. */
+    /** Walks Little Eye's insect on to its next order — the same place. */
     onCycleEye: () => void
     /** Casts a page of the book at whatever the visitor is aiming at. */
     onCastPage: (kind: HatsuInteractionKind) => void
@@ -73,7 +83,7 @@
      * The cast the keys make, for a visitor working the panel instead.
      *
      * Two of them under Double Face, and three under the flute — where the
-     * third is C, and the hand is which air is played rather than which page.
+     * hand is which air is played rather than which page.
      */
     onCastHand: (hand: 'first' | 'second' | 'third') => void
     /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
@@ -93,6 +103,7 @@
     touch = false,
     nameOf,
     sourceOf,
+    personName,
     onRelease,
     onCycleDouble,
     onCycleOwl,
@@ -234,8 +245,14 @@
         return say.noSolid
       case 'bound-fast':
         return say.boundFast(solidName(report.solidId))
+      case 'solid-paired':
+        return say.solidPaired(solidName(report.solidId))
       case 'gum-set':
-        return say.gumSet(solidName(report.solidId))
+        return say.gumSet(solidName(report.solidId), report.metres)
+      case 'gum-reeled':
+        return say.gumReeled(solidName(report.solidId), report.metres)
+      case 'gum-taut':
+        return say.gumTaut(solidName(report.solidId))
       case 'gum-pulled':
         return say.gumPulled(solidName(report.solidId), solidName(report.otherId))
       case 'gum-trap-set':
@@ -319,10 +336,8 @@
       case 'cargo-landed':
         return say.cargoLanded(solidName(report.solidId), roomName(report.spaceId))
 
-      case 'jailed':
-        return say.jailed(roomName(report.spaceId), report.doors)
-      case 'jail-refused':
-        return say.jailRefused(roomName(report.spaceId))
+      case 'jail-self-refused':
+        return say.jailSelfRefused()
       case 'fish-loosed':
         return say.fishLoosed(roomName(report.spaceId))
       case 'fish-fed':
@@ -547,6 +562,31 @@
     }
   })
 
+  /** How many notches the tension gauge is drawn in. */
+  const GAUGE_NOTCHES = 5
+
+  /**
+   * The filament out of the wrist, measured from where the visitor is standing
+   * *now*.
+   *
+   * Derived rather than stored, because the whole of Bungee Gum is that the
+   * force rises with the stretch: a strand that read the same after the visitor
+   * had backed four metres off what they stuck would be a rope with a pink
+   * colour on it. The gauge is the reading `gum.ts` works out, drawn in notches.
+   */
+  const strand = $derived.by(() => {
+    if (!world.gum) return null
+    const solid = solidById(ship, world, world.gum.solidId)
+    if (!solid) return null
+    const now = solidNow(solid, world.solids[world.gum.solidId])
+    const metres = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+    const filled = Math.round(gumTension(world.gum, metres) * GAUGE_NOTCHES)
+    return {
+      solidId: world.gum.solidId,
+      gauge: `${gumStretch(world.gum, metres).toFixed(1)} m ${'▰'.repeat(filled)}${'▱'.repeat(GAUGE_NOTCHES - filled)}`,
+    }
+  })
+
   /** Everything the aura is holding, as one list the visitor can read down. */
   const holds = $derived.by(() => {
     const held = $t.tour.hatsu.holds
@@ -653,6 +693,10 @@
       rows.push({ label: held.projected, value: roomName(body.projected.spaceId) })
     if (body.dance) rows.push({ label: held.dance, value: `${body.dance}` })
     if (body.mimic) rows.push({ label: held.mimic, value: solidName(body.mimic) })
+    // The skin mask, which is the only thing the visitor wears that other
+    // people were meant to read. Nothing is drawn for it anywhere in the ship —
+    // that is the technique — so the panel is where it is legible at all.
+    if (body.masked) rows.push({ label: held.masked, value: personName(body.masked) })
     if (body.soothed) rows.push({ label: held.soothed, value: '♪' })
     // What the flute has left behind: which air last came out of it, the rooms
     // still holding a piece, and how much of the ship is dancing to one.
@@ -729,6 +773,12 @@
         value: `${world.snakes.rooms.length} · ${world.snakes.fed ? '✓' : '—'}`,
       })
     }
+    // The filament, and how much of it is drawn out: a gauge rather than a
+    // flag, because an elastic that is not measured is drawn as a rope.
+    if (strand) {
+      rows.push({ label: held.gumStrand, value: solidName(strand.solidId) })
+      rows.push({ label: held.gumStretch, value: strand.gauge })
+    }
     if (world.pairing) {
       rows.push({
         label: held.solid,
@@ -780,10 +830,11 @@
       {/if}
     </p>
     <!-- Every key this technique answers to, whether or not it has been cast
-         yet. Which keys a technique uses is not something the visitor can see
-         from the dock — one has three, most have one, and R means a different
-         thing under each of the ones that have two — so taking an aura up is
-         the moment to say all of them. -->
+         yet. What a technique has in it is not something the visitor can see
+         from the dock — one has three things, most have one, and the second
+         means something different under each of the ones that have two — so
+         taking an aura up is the moment to say all of them. H holds the wheel
+         open and the number picks; only the first has a key to itself. -->
     <p class="mt-2 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.keys.title}
     </p>
@@ -872,7 +923,7 @@
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.bothHint}</p>
     <div class="mt-1 flex flex-wrap gap-1">
-      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'R', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
+      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'H 2', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
         <button
           type="button"
           onclick={() => onCastHand(live.hand)}
@@ -921,20 +972,20 @@
       <span
         >{$t.tour.hatsu.double.watch} · {$t.tour.hatsu.double[world.doubleMode ?? 'follow']}</span
       >
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 
   <!-- The flute's three airs. Not a cycle like the three above: an instrument
-       is played, so each piece has a key of its own and pressing it is the
-       playing. The row is the same either way — the panel is where a visitor
-       finds out that a technique has more than one thing in it. -->
+       is played, so each piece has a place of its own on the wheel and landing
+       on it is the playing. The row is the same either way — the panel is
+       where a visitor finds out a technique has more than one thing in it. -->
   {#if profile.kind === 'melody'}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.tunes.title}
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.tunes.hint}</p>
-    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'R' }, { hand: 'third' as const, air: 'scatter' as const, key: 'C' }] as piece (piece.air)}
+    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'H 2' }, { hand: 'third' as const, air: 'scatter' as const, key: 'H 3' }] as piece (piece.air)}
       <button
         type="button"
         onclick={() => onCastHand(piece.hand)}
@@ -959,7 +1010,7 @@
       class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
     >
       <span>{$t.tour.hatsu.owl.watch} · {$t.tour.hatsu.owl[world.owlMode ?? 'wander']}</span>
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 
@@ -974,7 +1025,7 @@
       class="mt-3 flex w-full items-center justify-between rounded border border-[#444] px-2 py-1 text-[11px] text-[#FFFFF0]/80 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFFFF0]"
     >
       <span>{$t.tour.hatsu.insect.orders} · {$t.tour.hatsu.insect[world.eyeMode ?? 'pilot']}</span>
-      <kbd class="text-[10px] text-[#FFD700]/70">R</kbd>
+      <kbd class="text-[10px] text-[#FFD700]/70">H 2</kbd>
     </button>
   {/if}
 

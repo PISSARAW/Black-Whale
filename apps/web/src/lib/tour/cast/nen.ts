@@ -43,6 +43,7 @@ import {
   type NenTechniqueAction,
   type NenTechniqueState,
 } from '@black-whale/nen-engine'
+import type { BodyMark } from './bodies'
 import type { CastLook } from './distribution'
 import type { Post } from './types'
 
@@ -81,10 +82,34 @@ export interface Situation {
   visitorCasting: boolean
   /** Rooms something hostile is standing in — the walk's own apparitions. */
   hostileRooms: readonly string[]
+  /**
+   * Who the visitor has their aura levelled at, personally.
+   *
+   * The room already knew that somebody was casting in it; ADR-004 adds that a
+   * technique can be pointed at *you*, and being pointed at is not the same
+   * event as being nearby when something happens. Only a raised aura carries —
+   * `readingIsFelt` decides that, not this module — so a visitor merely looking
+   * hard at a guard through Gyo does not put the corridor on edge.
+   */
+  aimedAt: string | null
+  /**
+   * What is currently held on which body, by character id.
+   *
+   * The walk's own doing, from `bodies.ts`, and read here rather than there
+   * because how a person carries themselves under a thread is a fact about
+   * conduct and this file is the conduct.
+   */
+  holds: Readonly<Record<string, BodyMark>>
 }
 
 /** Nothing has happened: the state most of the ship is in, most of the time. */
-export const CALM: Situation = { visitorIn: null, visitorCasting: false, hostileRooms: [] }
+export const CALM: Situation = {
+  visitorIn: null,
+  visitorCasting: false,
+  hostileRooms: [],
+  aimedAt: null,
+  holds: {},
+}
 
 /** The conduct one body is holding, before the engine has had its say. */
 interface Conduct {
@@ -160,6 +185,20 @@ function isWatching(post: Post): boolean {
 }
 
 /**
+ * How far the visitor's own doing has reached this body.
+ *
+ * Two answers rather than one, and the difference is the whole of the Gyo rule
+ * below: `felt` is aura at *you* — levelled at you personally, or raised in the
+ * room you are standing in — and `alarmed` adds what is merely visible in it. A
+ * body looks harder only at what it felt and cannot see.
+ */
+function alarmOf(post: Post, situation: Situation): { felt: boolean; alarmed: boolean } {
+  const aimed = situation.aimedAt === post.member.characterId
+  const felt = aimed || (situation.visitorCasting && situation.visitorIn === post.spaceId)
+  return { felt, alarmed: felt || situation.hostileRooms.includes(post.spaceId) }
+}
+
+/**
  * The aura one body is carrying, given what the room has just done.
  *
  * Ren is a reaction and not a temper: aura goes up when the visitor casts
@@ -172,8 +211,9 @@ function isWatching(post: Post): boolean {
 export function auraFor(post: Post, situation: Situation = CALM): CastLook {
   if (!post.member.nen) return {}
   if (isHiding(post)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
-  const felt = situation.visitorCasting && situation.visitorIn === post.spaceId
-  const alarmed = felt || situation.hostileRooms.includes(post.spaceId)
+  const held = situation.holds[post.member.characterId] ?? null
+  if (held) return underHold(held)
+  const { felt, alarmed } = alarmOf(post, situation)
   const aura = alarmed ? 'ren' : 'ten'
   const nen = stateFor({
     mode: aura,
@@ -182,6 +222,33 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
     ...(alarmed ? { ryu: GUARDED } : {}),
   })
   return { aura, nen, ...(alarmed ? { alert: true } : {}) }
+}
+
+/**
+ * How a body carries itself while the walk is holding it.
+ *
+ * Three answers, and the third is the one that matters. A body under a thread
+ * or a mark is a body that has just been made to notice: aura up, put where a
+ * blow would land, exactly as if a technique had gone off beside it. A body
+ * under music or a closing chain settles instead — that is what those two
+ * techniques *are*, and drawing Melody's flute as an alarm would be the walk
+ * contradicting the ability it just performed.
+ *
+ * And a controlled body drops to Ten with nothing distributed: it is not
+ * defending itself, because it is not the one deciding. The walk stops short of
+ * saying more than that. Whether a needled sentry is aware of it is a question
+ * the manga answers per case, and this file has no business answering it in
+ * general — so it draws the difference and makes no claim about the mind.
+ */
+function underHold(held: BodyMark): CastLook {
+  if (held === 'soothed') return { aura: 'ten', nen: stateFor({ mode: 'ten' }) }
+  if (held === 'controlled') return { aura: 'ten', nen: stateFor({ mode: 'ten' }) }
+  if (held === 'drained') return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
+  return {
+    aura: 'ren',
+    nen: stateFor({ mode: 'ren', gyo: true, ryu: GUARDED }),
+    alert: true,
+  }
 }
 
 /** The look for a whole distribution, as `castApparitions` wants it. */

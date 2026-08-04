@@ -35,7 +35,7 @@ pont × catégorie × provenance) :
 `mesh.ts` (`LIGHT.inferredLamps: 0.22`) : « les plans ne mettent pas de lampe dans
 un couloir que personne n'a dessiné. »
 
-Les deux ne peuvent pas être vrais : les plans ne mettent de lampe *nulle part* —
+Les deux ne peuvent pas être vrais : les plans ne mettent de lampe _nulle part_ —
 la lampe est toujours une dérivation, pour une pièce inférée comme pour une
 dessinée. Numériquement c'est le ×0.22 qui gagne, et il casse la seule affirmation
 que les ponts sont construits pour faire : on voit, en descendant l'escalier,
@@ -44,7 +44,7 @@ qu'on change de monde.
 ## 3. La décision
 
 **Supprimer `inferredLamps`.** La provenance reste visible là où elle est une
-affirmation sur les *surfaces* : la teinte froide de `colourFor` et le fill un peu
+affirmation sur les _surfaces_ : la teinte froide de `colourFor` et le fill un peu
 plus mince (`inferredFill: 0.86`, conservé). Elle ne touche plus la grille de
 lampes, qui appartient au pont et à la catégorie.
 
@@ -60,7 +60,7 @@ Dans `apps/web/src/lib/tour/mesh.ts` :
    du bloc inféré — garder trace de l'argument : la pénalité a existé, pourquoi
    elle est partie (l'argument `columnPositions`, l'inversion Tier 1/Tier 5).
 2. `RoomLight`, constructeur : `this.lamps = (inferred ? LIGHT.inferredLamps : 1) *
-   lamplight.power` → `this.lamps = lamplight.power`.
+lamplight.power` → `this.lamps = lamplight.power`.
 3. Le pass des luminaires (`if (!reveal)`) : supprimer
    `const burn = space.provenance === 'inferred' ? LIGHT.inferredLamps : 1` et le
    ×burn sur `glow` — le quad brûle à `lamplight.glow` tel quel.
@@ -91,7 +91,7 @@ espace sans lampe reste sans lampe, la correction ne change que la force de
 celles qui existent.
 
 Après correction, médianes attendues : 1.265 / 0.840 / 0.999 / 0.560 / 0.488.
-Le résidu Tier 2 < Tier 3 est un fait de *catégories* (la Tier 3 porte le
+Le résidu Tier 2 < Tier 3 est un fait de _catégories_ (la Tier 3 porte le
 cineplex, l'hôpital, le casino — du `public`/`medical` sourcé qui brûle fort) :
 c'est une affirmation voulue, pas une inversion de classe.
 

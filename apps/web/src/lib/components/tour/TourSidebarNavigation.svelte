@@ -107,7 +107,7 @@
     class="rounded border px-2.5 py-1 text-xs transition-colors {props.reveal
       ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
       : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
-    >{$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">G</kbd></button
+    >{$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">L</kbd></button
   >
   <button
     type="button"

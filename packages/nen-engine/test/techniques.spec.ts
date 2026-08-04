@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   createNenTechniqueState,
   detectWithEn,
+  isAuraAtRest,
   isAuraVisibleTo,
   nenDefenceFactor,
   transitionNen,
@@ -91,6 +92,21 @@ describe('standard Nen techniques', () => {
     expect(isAuraVisibleTo(source, transitionNen(observer, { type: 'GYO', on: true }).state)).toBe(
       true,
     )
+  })
+
+  it('calls Ten at rest only while nothing is being done with the aura', () => {
+    const ten = createNenTechniqueState<Zone>()
+    expect(isAuraAtRest(ten)).toBe(true)
+    expect(isAuraAtRest(transitionNen(ten, { type: 'ZETSU' }).state)).toBe(false)
+    expect(isAuraAtRest(transitionNen(ten, { type: 'REN' }).state)).toBe(false)
+    expect(isAuraAtRest(transitionNen(ten, { type: 'KO', zone: 'arms' }).state)).toBe(false)
+    expect(isAuraAtRest(transitionNen(ten, { type: 'RYU', distribution: { arms: 1 } }).state)).toBe(
+      false,
+    )
+    // Gyo, In, En and Shu are read on the world rather than worn on the body:
+    // none of them raises the aura the resting skin is made of.
+    expect(isAuraAtRest(transitionNen(ten, { type: 'GYO', on: true }).state)).toBe(true)
+    expect(isAuraAtRest(transitionNen(ten, { type: 'EN', radius: 8 }).state)).toBe(true)
   })
 
   it('raises On as dark Ren and locks its forced Ryu', () => {

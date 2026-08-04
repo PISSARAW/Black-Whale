@@ -197,6 +197,23 @@
       />
       <span>{$t.tour.comfort.jumpOnly}</span>
     </label>
+    <!--
+      Next to the jump, because it answers the same complaint: a visitor who
+      came for the deck should not have to keep the walk's own effects between
+      them and it. The aura is still up — only its picture and its hum stop.
+    -->
+    <label class="flex items-center gap-2">
+      <input
+        type="checkbox"
+        checked={$comfort.restingAura}
+        onchange={(event) => setComfort({ restingAura: event.currentTarget.checked })}
+        class="accent-[#FFD700]"
+      />
+      <span>{$t.tour.comfort.restingAura}</span>
+    </label>
+    <p class="-mt-1.5 text-[11px] leading-snug text-[#FFFFF0]/40">
+      {$t.tour.comfort.restingAuraHelp}
+    </p>
     <div>
       <span class="block">{$t.tour.comfort.shipHour}</span>
       <div class="mt-1 flex flex-wrap gap-1">

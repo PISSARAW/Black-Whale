@@ -1,3 +1,4 @@
+export * from './cast/types'
 /**
  * Nen inside the walk: what a Hatsu does to the ship rather than to the page.
  *
@@ -33,6 +34,43 @@ import {
 import type { Polygon, Space, Structure, StructureKind, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
+import { BODY_KINDS } from './bodyKinds'
+// The shapes the walk casts on live in `cast/types.ts`; line 1 re-exports them
+// for everyone who reads them off `hatsu`, and this brings them into scope for
+// the reducers below, which is a different thing and needs saying separately.
+import {
+  CLOSED_BOOK,
+  DOUBLE_MODES,
+  EMPTY_WORLD,
+  EYE_MODES,
+  OWL_MODES,
+  type Aim,
+  type DeckMoment,
+  type Doors,
+  type DoorOptions,
+  type Heading,
+  type HeldSolid,
+  type LoadedDeck,
+  type Mark,
+  type Perch,
+  type Played,
+  type Ray,
+  type Scene,
+  type SolidHold,
+  type Stood,
+  type TourBody,
+  type TourBook,
+  type TourCastInput,
+  type TourCastResult,
+  type TourDoubleMode,
+  type TourEyeMode,
+  type TourOwlMode,
+  type TourReport,
+  type TourWorld,
+  type VowState,
+} from './cast/types'
+import { aimGum, gumLanding, gumTension, type GumStrand } from './gum'
+import { nextForgery } from './texture'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -45,6 +83,18 @@ import { acceptsFamily } from '$lib/nen/targeting'
  * and say so, which is honest: a technique that quietly did nothing would be
  * worse than one that tells you the walk is the wrong ground for it.
  */
+const without = <T>(list: T[], predicate: (item: T) => boolean) => list.filter((i) => !predicate(i))
+
+/** Rooms whose contents the aura is holding, which Blinky will not swallow. */
+export function nenHeld(world: TourWorld): string[] {
+  return [
+    ...(world.isolated ? [world.isolated.spaceId] : []),
+    ...world.doors,
+    ...world.watched.map((doll) => doll.spaceId),
+    ...(world.eye ? [world.eye] : []),
+  ]
+}
+
 export const TOUR_HATSU_KINDS = [
   // On the rooms.
   'teleport',
@@ -233,7 +283,18 @@ export const aimsAtSolids = (profile: HatsuProfile | null) =>
 
 export type TourHatsuKind = (typeof TOUR_HATSU_KINDS)[number]
 
-const TOUR_KINDS = new Set<HatsuInteractionKind>(TOUR_HATSU_KINDS)
+/**
+ * Everything the walk performs: what acts on the ship, and what acts on the
+ * people standing in it.
+ *
+ * The second list arrives from a leaf module rather than being written out
+ * again here (ADR-004 §2.5): five of its kinds are techniques the walk could
+ * not carry until it had bodies to aim them at, and the dock has to offer them
+ * or they would remain unreachable from the one surface that can now perform
+ * them. What they do to a body is decided in `cast/reach.ts`; this line only
+ * says that they are no longer inert.
+ */
+const TOUR_KINDS = new Set<HatsuInteractionKind>([...TOUR_HATSU_KINDS, ...BODY_KINDS])
 
 export function worksInTour(profile: HatsuProfile | null): profile is HatsuProfile {
   return Boolean(profile) && TOUR_KINDS.has(profile!.kind)
@@ -255,9 +316,6 @@ export type TourAim = 'reticle' | 'index'
  * scouting, or told to film — and they are the whole of the ability: the aura
  * costs nothing and does nothing except carry what the insect sees back.
  */
-export const OWL_MODES = ['wander', 'shoulder', 'random'] as const
-export const DOUBLE_MODES = ['follow', 'wander', 'scout'] as const
-export const EYE_MODES = ['pilot', 'scout', 'film'] as const
 
 /**
  * The three airs Enchanting Music has, in the order the three keys play them.
@@ -270,15 +328,10 @@ export const EYE_MODES = ['pilot', 'scout', 'film'] as const
  * one. Each is heard by the room the visitor is standing in and by nothing
  * else, because that is how far a flute carries.
  */
-export const TUNES = ['bloom', 'scatter', 'dance'] as const
 
 /** Which air is being played, or was last played. */
-export type TourTune = (typeof TUNES)[number]
 
 /** Which bird was sent, which watch the double is under, what the insect is told. */
-export type TourOwlMode = (typeof OWL_MODES)[number]
-export type TourDoubleMode = (typeof DOUBLE_MODES)[number]
-export type TourEyeMode = (typeof EYE_MODES)[number]
 
 /** The next of each, wrapping — which is all R has to decide. */
 export const nextOwlMode = (mode: TourOwlMode | null): TourOwlMode =>
@@ -298,772 +351,6 @@ export const nextEyeMode = (mode: TourEyeMode | null): TourEyeMode =>
  */
 export const OWL_SECONDS = 20
 export const OWL_FILM_SECONDS = 10
-
-/**
- * Where the visitor is standing: the point, and the room that point falls in.
- *
- * The pair is named because nothing here can use one without the other — a
- * distance needs the point, and the deck it is measured across needs the room —
- * and because passing them apart is how they get passed the wrong way round.
- */
-export interface Stood {
-  at: Vec2
-  standingIn: string | null
-}
-
-/** Where the visitor is standing and what they are pointing at from there. */
-export interface Aim {
-  at: Vec2
-  /** Bearing in radians, as the walk's own movement code has it. */
-  heading: number
-  /** How far down the line to look, in metres. Each caller has its own reach. */
-  range?: number
-}
-
-/** A deck at a moment of the walk's clock. */
-export interface DeckMoment {
-  tierId: string
-  seconds?: number
-}
-
-/** That same deck, plus the visitor, so anything carried rides along. */
-export interface LoadedDeck extends DeckMoment {
-  /** Where the visitor is, so anything Kurton is carrying moves with them. */
-  carrier?: Vec2
-}
-
-/** A deck, a point on it, and the way the visitor is facing. */
-export interface Heading {
-  tierId: string
-  at: Vec2
-  heading: number
-}
-
-/** The reconstruction, and what the techniques have done to it. */
-export interface Scene {
-  ship: Ship
-  world: TourWorld
-}
-
-/** One solid and the hold a technique currently has on it. */
-export interface HeldSolid {
-  structure: Structure
-  hold: SolidHold | undefined
-}
-
-/** A ray cast across a deck: where it starts, and the way it runs. */
-export interface Ray {
-  at: Vec2
-  dx: number
-  dz: number
-}
-
-/** A tune, and the room it is played in. */
-export interface Played {
-  tune: TourTune
-  spaceId: string
-}
-
-/** The pair of doors a step is taken between. */
-export interface Doors {
-  spaceId: string | null
-  arrivedFrom: string | null
-}
-
-/** What the paired doors need beyond themselves, when they need anything. */
-export interface DoorOptions {
-  ship?: Ship
-  random?: () => number
-}
-
-/** Which room the owl is sent to, and how one is picked when it is at random. */
-export interface Perch {
-  targetId: string
-  standingIn: string | null
-  random: () => number
-}
-
-/** One marked solid, read at a moment of the walk's clock. */
-export interface Mark {
-  id: string
-  hold: SolidHold
-  seconds: number
-}
-
-/**
- * What Nen is currently doing to the ship.
- *
- * One flat value rather than a store per technique: the scene rebuilds from it,
- * the tests assert on it, and releasing the aura is `EMPTY_WORLD` again.
- */
-export interface TourWorld {
-  /** Every room on every deck held open at once — Emperor Time. */
-  laidOpen: boolean
-  /**
-   * The protected room, and whether the visitor was standing in it when the
-   * boundary went up. An occupant keeps the real room and may walk out of it;
-   * anyone arriving from outside gets the empty copy.
-   */
-  isolated: { spaceId: string; occupant: boolean } | null
-  /** The frames Voconte's doors join: one armed, or the pair. */
-  doors: string[]
-  /** Rooms Blinky has swallowed the contents of. */
-  emptied: string[]
-  /** The solid Black Voice is currently controlling. */
-  puppet: string | null
-  /**
-   * What Blinky is holding, newest last.
-   *
-   * The vacuum is the one technique in the walk that gives anything back: what
-   * goes into it comes out of it, and it comes out in the order a bag empties —
-   * the last thing swallowed first. A stack, therefore, and not a set: the
-   * order is the ability.
-   */
-  hoover: string[]
-  /** Where the remote eye is parked, or `null` while it rides the visitor. */
-  eye: string | null
-  /**
-   * What Sayird's insect is currently told to do.
-   *
-   * The eye used to be one switch: a room had it or it did not, and a second
-   * cast on the same room took it home. That is the sphere posted and the
-   * sphere recalled, which is two of the module's five verbs — so the other
-   * three are here. Piloted, it goes where it is sent and stays. Scouting, it
-   * takes a door on its own every few seconds, which is the ability's own
-   * `scout`. Filming, it holds where it is and a cast on its own room records
-   * that room instead of calling the insect in.
-   */
-  eyeMode: TourEyeMode
-  /**
-   * What the feed has recorded, in the order it recorded it.
-   *
-   * The corner already shows the room the insect is in; this is what it has
-   * been through, which is what makes the technique an account of the ship
-   * rather than a second window onto one room of it. Each frame carries what
-   * was standing there when the insect passed, because a room filmed empty and
-   * a room filmed full are not the same intelligence.
-   */
-  eyeFilm: { spaceId: string; seen: number }[]
-  /** 0 nothing · 1 sight · 2 sight and hearing · 3 all three. */
-  sealed: number
-  /** Whether the visitor is passing through walls. */
-  phasing: boolean
-  /** Rooms a paper doll is counting arrivals in. */
-  watched: { spaceId: string; visits: number }[]
-  /** What the flock has carried back, newest first. */
-  dispatches: string[]
-  /** The room the chain is swinging towards. */
-  dowsing: string | null
-
-  /**
-   * What has been done to the solids, by structure id.
-   *
-   * A solid the aura has touched is lifted out of its deck: the baked mesh
-   * stops drawing it and the walk draws it on its own, so a coffin pushed
-   * across the burial chamber does not cost a re-extrusion of the chamber. The
-   * override is the whole of what was done to it, so releasing is deleting.
-   */
-  solids: Record<string, SolidHold>
-  /** Solids that were not in the blueprint: Gallery Fake's copies. */
-  copies: Structure[]
-  /** The first of two solids a paired technique is waiting to join. */
-  pairing: string | null
-  /** Where the paper confetti stuck, which every later volley converges on. */
-  wound: string | null
-  /** Rotations wound into the next punch. */
-  windup: number
-  /**
-   * How many times Padaille's arm has come down.
-   *
-   * A tally rather than a hold — nothing is being held, the count is only what
-   * the next draw is read off — so `worldIsQuiet` does not consult it and Nen
-   * Stitches has nothing here to put back. It exists because a technique whose
-   * whole character is that you do not know what you will get has to give a
-   * different answer to the same target twice.
-   */
-  swings: number
-
-  /**
-   * Rooms whose doorways are shut.
-   *
-   * Not a flag on the renderer: the doorways of a deck are derived from the
-   * walls its rooms share, so a shut room is one the derivation is told to
-   * treat as sealed, and the opening stops being drawn and stops being
-   * walkable in the same pass. What you cannot see through, you cannot cross.
-   */
-  shut: string[]
-  /** Rooms whose guards put an intruder back where they came from. */
-  guarded: string[]
-  /** The room the visitor may not leave. */
-  pinned: string | null
-  /**
-   * The Judgment Chain vows sworn on hearts: keyed by subject id ('self' or a
-   * character id). Each carries its rules and whether the sentence has been
-   * triggered.
-   */
-  vows: Record<string, VowState>
-  /** The terms the visitor took on, which close when they are met. */
-  pact: string | null
-  /** Rooms the fish are in. Nothing shows until the visitor walks out. */
-  devouring: string[]
-  /** Cards laid on a room: 1 admitted, 2 restrained, 3 dismissed. */
-  cards: Record<string, number>
-  /** The double standing in a room, which takes one punishment and is spent. */
-  double: string | null
-  /** The mode the double is operating in */
-  doubleMode: TourDoubleMode
-  /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
-  worm: { a: string; b: string; crossings: number } | null
-  /** The rooms the snakes are loose in, and whether they have had a victim. */
-  snakes: { rooms: string[]; fed: boolean } | null
-  /** The room the bait was materialized in, which closes once it is taken. */
-  trap: string | null
-  /** Where the visitor was standing before the room they are in now. */
-  cameFrom: string | null
-  /**
-   * Where the aura came down in each room it was cast on.
-   *
-   * Not a hold and not spent: it is the walk remembering that a card laid on
-   * the promenade was laid *there*, twelve metres down the reticle, rather than
-   * at the point a hundred-and-forty-metre room happens to average out to.
-   */
-  landed: Record<string, Vec2>
-
-  /**
-   * The technique the visitor currently has up, or `null` in Zetsu.
-   *
-   * Every other field here is something a cast *did*. This one is what is
-   * being held, and it exists for the abilities that are passive: Voconte's
-   * doors do not have to be aimed at anything to send someone somewhere — the
-   * hideout is wired, and walking through a frame is the whole of the
-   * activation. Without this the walk would have to ask the page what aura is
-   * up, and the page would have to keep a rule of its own.
-   */
-  holding: HatsuInteractionKind | null
-
-  /**
-   * The walk's record of itself: every room set foot in, in order.
-   *
-   * The last noun, and the only one that is not in the ship at all. The walk
-   * has always known where the visitor is; this is what it remembers of where
-   * they have been, and what the techniques of the fourth wave read, write and
-   * predict. It is kept whether or not anything is watching, because half of
-   * them are about being able to look back.
-   */
-  trail: string[]
-  /**
-   * The room the owl is perched in, which keeps what the trail would otherwise
-   * let go.
-   *
-   * A bird has to be somewhere. It was a flag when all it did was hold the
-   * record open; now that the walk draws it, the technique has to say where it
-   * was attached, and the answer is the room it was cast on.
-   */
-  owl: string | null
-  /**
-   * Which of Secret Window's three birds was sent, which is what decides where
-   * "where it was cast" actually is.
-   *
-   * One owl, three ways of sending it: the free bird perches on the room down
-   * the reticle and works its way through the ship on its own, the shoulder
-   * bird stays on the visitor and moves room for room with them, and the third
-   * is let go blind and lands wherever it lands. The mode is kept rather than
-   * the cast because the difference outlives the cast: the room the bird is in
-   * a minute later is a function of which bird it is.
-   */
-  owlMode: TourOwlMode
-  /**
-   * How much of its twenty seconds the bird has left, in seconds.
-   *
-   * The owl is materialized rather than attached: it holds for twenty seconds
-   * and then it is not there any more. Counted down by the walk's own clock a
-   * second at a time, because the scene is the only thing aboard that has one
-   * — everything else in this world is a function of what was cast.
-   */
-  owlLife: number
-  /**
-   * What the bird brings back: where it was, second by second of its flight.
-   *
-   * Recorded whole while it is up and cut to the last ten seconds when it
-   * goes, which is the whole of the technique's promise — not everything it
-   * saw, the end of it. `second` is how far into the flight the bird arrived
-   * there, so the walk can play the film back at the speed it happened.
-   */
-  owlFilm: { spaceId: string; second: number }[]
-  /**
-   * Rooms whose Hatsu Benjamin's baton has taken, which wear his palm star.
-   *
-   * The book already holds what was inherited; this is where it was inherited
-   * from, which is the only part of it there is anything to see.
-   */
-  stars: string[]
-  /** Where the ten-second vision says the visitor will be. It does not update. */
-  foreseen: { spaceId: string; at: Vec2 } | null
-  /** What the automatic writing has set down, newest first. */
-  verses: { spaceId: string; lines: number[] }[]
-  /** The three rooms of the poem, and how well they read as one. */
-  poem: string[]
-  /** The room the dial is set to, which it reads a distance off continuously. */
-  dial: string | null
-  /** Droplets out searching, and how many more arrivals they have left. */
-  droplets: { spaceId: string; life: number }[]
-  /** Rooms under Cat's Name: kill one and the counterattack answers. */
-  ninelives: string[]
-  /** The intended victim, and the sacrifice chosen among its own and hidden. */
-  curse: { victim: string; sacrifice: string } | null
-  /** Pairs of rooms whose identities the arrow exchanged. */
-  souls: [string, string][]
-
-  /**
-   * Rooms the soft air put in flower, and rooms the sharp one left its notes
-   * loose in.
-   *
-   * Two lists rather than one field with a value in it, because the airs do not
-   * replace each other: a room can be in flower with the notes of the last
-   * piece still hanging in it, which is what an instrument played twice into
-   * the same room actually leaves behind. The lively air is not here — what it
-   * takes hold of is the things standing in the room, so it is written on them.
-   */
-  flowered: string[]
-  scattered: string[]
-
-  /** The book, and what is in it. */
-  book: TourBook
-
-  /** What the techniques have made of the visitor themselves. */
-  body: TourBody
-
-  /** Rooms where a Bungee Gum trap is set. */
-  gumTraps: string[]
-
-  /**
-   * The room Camilla's Guardian Spirit Beast is hanging in, or `null`.
-   *
-   * One room and one beast: the ability is a single animal, so raising it
-   * somewhere else is that same animal moving rather than a second one. What it
-   * does to the room it is in is written on the solids — see `adrift` — because
-   * the beast is a body and the levitation is a hold, and the walk has always
-   * kept those two apart.
-   */
-  medusa: string | null
-
-  /**
-   * The room Tserriednich's Guardian Spirit Beast is standing in, or `null`.
-   *
-   * It goes where it was last asked to touch something: the beast is what
-   * delivers each of the three contacts, so it has to be beside the thing it is
-   * marking. What the contacts did is on the solids themselves — see `lies` —
-   * and this is only where the animal is.
-   */
-  chimera: string | null
-
-  /**
-   * Zhang Lei's Guardian Spirit Beast: where it hangs, and what is in its mouth.
-   *
-   * `coin` is the value of the coin currently hanging at the wheel's mouth,
-   * which is the whole of the ability — one is produced, it is worth ten times
-   * the last, and it is worth nothing to anyone until somebody takes it. There
-   * is always one: the wheel mints the next the instant the last is taken, so
-   * this is a number rather than a number-or-nothing.
-   */
-  wheel: { spaceId: string; coin: number } | null
-
-  /**
-   * The room Tubeppa's Guardian Spirit Beast is squatting in, or `null`.
-   *
-   * What it is doing there is on the solids — see `melting` — and it goes on
-   * doing it after the cast: the gas is the one technique in the walk that
-   * keeps working while nobody touches anything, so the scene ticks it the way
-   * it ticks the fish. Move the beast and the room it left stops melting where
-   * it had got to, which is what a gas that has stopped being made does.
-   */
-  toad: string | null
-
-  /**
-   * Rooms Tyson's eye-wogs have lit, which had no daylight of their own.
-   *
-   * The levy gives back in proportion to what it took, and what the walk has to
-   * give back with is light: a room the blueprint put no window in is a room
-   * lit by whatever the reconstruction hangs in it, and this is the list of the
-   * ones an eye-wog has improved on. The bubble the visitor carries is the
-   * other half of the same answer — see `TourBody.halo`.
-   */
-  lit: string[]
-
-  /**
-   * The room Luzurus's Guardian Spirit Beast is coiled in, or `null`.
-   *
-   * The bait was always the visible half of Desire Trap — see `trap` — and this
-   * is the half that closes: the beast is what secretes over everything in the
-   * room, what reels in what the secretion caught, and what eats it when it
-   * arrives. The reeling is on the walk's clock rather than on a cast, like the
-   * gas, because a trap that only worked while you kept pressing a key would be
-   * a trap you could stand still and win.
-   */
-  centipede: string | null
-
-  /**
-   * Salé-salé's Guardian Spirit Beast: the room it is filling, and how full.
-   *
-   * `filled` is a count of the steps it has taken rather than a fraction,
-   * because the walk has no continuous quantity in it anywhere — see the melt,
-   * which keeps the same rule. It counts up to `SMOKE_FULL` on the walk's clock
-   * and stops there, and stopping is the visible part: a beast whose mouths are
-   * still open is a room that is still filling, and a room that is full is a
-   * beast that has shut them.
-   */
-  smoke: { spaceId: string; filled: number } | null
-
-  /**
-   * The rooms Momoze's Guardian Spirit Beasts are loose in.
-   *
-   * The only one of the eight that is a crowd rather than an animal: what the
-   * ability puts in the ship is a great many of them, of every size and shape,
-   * and they do not keep to the room they were called into — they go through
-   * the walls and carry on. So this is a list of rooms rather than one, and
-   * what it means is "the flock is somewhere in here", which is as precise as
-   * the ability ever gets.
-   */
-  menagerie: string[]
-
-  /**
-   * The room Marayam's Guardian Spirit Beast is standing in the doorway of.
-   *
-   * The isolation is already carried by `isolated` and the refusal to let
-   * anyone out by `pinned`; this is the animal that is doing both, and it is
-   * kept separately because it is a thing in the room rather than a rule about
-   * one — the walk has to know where to draw it, and what to make roar at
-   * somebody trying the door.
-   */
-  dragon: string | null
-
-  /**
-   * The room Camilla's other beast is in, breaking it up.
-   *
-   * Cat's Name was the one ability in the walk that was entirely a promise: a
-   * room wore the name, and unless somebody killed it nothing was ever seen.
-   * The cat is what makes the promise visible — it comes when the name is put
-   * on a room and it takes that room apart while it waits, one thing at a time,
-   * on the same clock the other beasts work on.
-   */
-  cat: string | null
-
-  /**
-   * Where the visitor was standing when a Guardian Spirit Beast was called up.
-   *
-   * Six of the ten are a body that turns up *with* you rather than one that
-   * appears wherever you happened to be looking: the wheel puts a coin out
-   * where you can reach it, the cat comes to the room you are in, the jellyfish
-   * hangs over your head. Drawn at the reticle instead, they came up in the far
-   * end of a hundred-and-forty-metre promenade, or in a bulkhead — which is a
-   * beast nobody ever sees and a beast standing in the steel.
-   *
-   * So the walk remembers the caster's own spot, once, at the moment of the
-   * cast. Not the visitor's live position: a beast that walked around after you
-   * would be a familiar, and none of these is one. One field rather than one
-   * per beast, because the walk hands out one aura at a time.
-   *
-   * The way they were facing is kept with the spot, because a point on its own
-   * is not enough to put a beast where they can see it: stepped off along the
-   * ship's own axes it came up behind the visitor as often as in front, and a
-   * beast at your back is a beast that never appeared.
-   */
-  summoned: { spaceId: string; at: Vec2; heading: number } | null
-}
-
-/**
- * A Judgment Chain vow sworn on a heart.
- *
- * The subject is either the visitor ('self') or a character id. The rules are
- * spoken aloud at activation; the sentence stays dormant until one of them is
- * broken, then it becomes triggered.
- */
-export interface VowState {
-  /** Whose heart the chain is in: 'self' or a character id. */
-  subjectId: string
-  /** The rules declared at activation, shown in the registry. */
-  rules: string[]
-  /** Whether the sentence has been triggered. */
-  violated: boolean
-}
-
-export interface TourBook {
-  /** Techniques taken and kept. Only an open page can be cast. */
-  pages: HatsuInteractionKind[]
-  /** The page Skill Hunter has the book open on. */
-  open: HatsuInteractionKind | null
-  /** The second page Double Face keeps live beside it. */
-  bookmark: HatsuInteractionKind | null
-  /** Culdcept's cards: acquired without taking, and spent on use. */
-  cards: HatsuInteractionKind[]
-  /** Rooms Steal Chain has drained: no technique reaches them until it returns. */
-  zetsu: string[]
-  /** The page the dolphin has lent out, which the next cast consumes. */
-  loan: HatsuInteractionKind | null
-}
-
-export const CLOSED_BOOK: TourBook = {
-  pages: [],
-  open: null,
-  bookmark: null,
-  cards: [],
-  zetsu: [],
-  loan: null,
-}
-
-export interface TourBody {
-  /** Aura committed to reinforcement: it buys speed and reach. */
-  enhance: number
-  /** Riding Kurton, and the solids riding with him. Capacity is five. */
-  riding: boolean
-  passengers: string[]
-  /** Eye height in metres, or `null` for the walk's own. */
-  eyes: number | null
-  /** The sleeping body, left behind while the double goes on. */
-  projected: { spaceId: string; at: Vec2 } | null
-  /** Bars of the prologue played, which is what the other two pieces run on. */
-  dance: number
-  /** The solid Metamorphosen has taken the shape of. */
-  mimic: string | null
-  /** Music holding the senses open against anything that would seal them. */
-  soothed: boolean
-  /**
-   * The air currently coming out of the flute, or `null` while it is down.
-   *
-   * What it is for is the flute itself: an instrument held at the lips is being
-   * played and one held at the side is not, and that is the difference a
-   * visitor can see. It is the last air played rather than a count of them,
-   * because the pieces do not stack — see `flowered`.
-   */
-  playing: TourTune | null
-  /** The holds Predator has correctly named, which is what makes it stronger. */
-  deduced: string[]
-
-  /**
-   * What Pain Packer has packed away, or `null` while the wrapping is off.
-   *
-   * The walk cannot injure anyone, but it does punish: a guard puts an intruder
-   * back, a room refuses to let go, a declared rule is broken. Those are the
-   * only blows it deals, so they are what the wrapping takes — and it takes
-   * them by keeping them rather than by cancelling them, which is why the count
-   * matters and nothing is given back until the sun rises on it.
-   */
-  packed: number | null
-  /**
-   * The timestamp when the automatic pilot (Black Voice self-cast) ends, or null if not active.
-   */
-  autopilotUntil: number | null
-  /** The Judgment Chain vow sworn on the visitor's own heart, dormant or triggered. */
-  vowed?: VowState
-
-  /**
-   * What the visitor has taken off Zhang Lei's wheel, as one number.
-   *
-   * The coin accumulates Nen and the Nen is the whole of what it is worth, so
-   * what a coin in the pocket looks like is aura: nought while nothing has been
-   * taken, and the value of everything taken once something has. The scene
-   * reads it as a light around the visitor and the panel reads it as a figure;
-   * neither of them has to know that a coin was involved.
-   */
-  gilded: number
-
-  /**
-   * How bright the bubble Tyson's eye-wog left round the visitor is.
-   *
-   * Nought while there is none. It goes up when the levy has nowhere dark to
-   * spend itself — a room with daylight in it, or one an eye-wog has already
-   * been through — because the happiness is returned either way, and if it
-   * cannot go into the room it goes onto the reader.
-   */
-  halo: number
-}
-
-export const RESTING_BODY: TourBody = {
-  enhance: 0,
-  riding: false,
-  passengers: [],
-  eyes: null,
-  projected: null,
-  dance: 0,
-  mimic: null,
-  soothed: false,
-  playing: null,
-  deduced: [],
-  packed: null,
-  autopilotUntil: null,
-  gilded: 0,
-  halo: 0,
-}
-
-/**
- * What a technique has done to one solid.
- *
- * Everything here is a modifier on the blueprint's own record rather than a
- * rewrite of it: the ship on disk is never the thing that changed, and Nen
- * Stitches undoes any of it by deleting the entry.
- */
-export interface SolidHold {
-  /** Moved, in the coordinates of the level it stands on. */
-  at?: Vec2
-  /** Turned about its own centre, in degrees, replacing its own rotation. */
-  rotation?: number
-  /** Multiplier on the footprint. */
-  scale?: number
-  /** Multiplier on the height. */
-  squash?: number
-  /** What it looks like. Texture Surprise changes this and nothing else. */
-  kind?: StructureKind
-  /** Swallowed, blown apart, or shredded down to nothing. */
-  gone?: boolean
-  /** Snake Arm has it: no other technique moves it until it is released. */
-  bound?: boolean
-  /** Biohazard: it wanders its room, still as solid as it was. */
-  alive?: boolean
-  /**
-   * Padaille's drill went through it.
-   *
-   * The walk bakes a solid as a box and has nowhere to put a hole in one, so
-   * what it draws is not the bore but the consequence of it: a thing with a
-   * hole through it stops being a thing you have to walk around. It stands
-   * exactly where it stood and the visitor goes straight through where the
-   * drill was, which is the only part of a bore the ship can actually feel.
-   */
-  bored?: boolean
-  /** The Sun and Moon's two marks. */
-  mark?: 'sun' | 'moon'
-  /**
-   * The lively air has it: it is dancing where it stands.
-   *
-   * A hold like any other, so a dancing coffin is lifted out of the baked deck
-   * and drawn by the walk — but the only one that changes nothing about the
-   * thing. It stands where it stood, it stops the visitor where it stopped
-   * them, and every other technique still finds it exactly where it was.
-   */
-  dancing?: boolean
-  /**
-   * Camilla's beast has it: it is off the deck, turning over in the air.
-   *
-   * Unlike the lively air's hold, this one changes something — a thing in the
-   * air is not a thing you walk into, so `solidWalls` drops it and the room's
-   * floor is clear for as long as the beast is up. That is the difference
-   * between a table dancing on the spot and a table two metres over your head.
-   */
-  adrift?: boolean
-  /**
-   * How many times Tserriednich's beast has touched this one: 1, 2 or 3.
-   *
-   * The escalation is the ability, so it is a count rather than three flags:
-   * the first contact shoves the thing, the second leaves the green on it, and
-   * the third is the one there is no fourth after — the solid is `gone` and a
-   * `monster` stands where it was.
-   */
-  lies?: number
-  /** The third contact landed: what is here now is not what was here. */
-  monster?: boolean
-  /**
-   * How far Tubeppa's gas has got through this one: 1, 2, 3, and then nothing.
-   *
-   * A stage rather than a rate, because the walk has no continuous quantity in
-   * it anywhere else: each tick of the gas takes every solid in the room one
-   * step further down, `squash` carries what that looks like, and the fourth
-   * step is `gone`. Nothing is given back — a thing that has melted has melted,
-   * and only Nen Stitches argues with that.
-   */
-  melting?: number
-  /**
-   * Luzurus's secretion is on this one: it is being reeled in, and then eaten.
-   *
-   * The number is how many steps it has taken towards whoever set the trap, and
-   * the reason it is a count rather than a flag is that it is the only hold in
-   * the walk that has somewhere to arrive: at the end of it the thing is not
-   * moved, it is `gone`, because the beast has closed on it.
-   */
-  glued?: number
-  /** Order Stamp has put its 人 on this one: it is a puppet now. */
-  stamped?: boolean
-  /**
-   * The puppet is locked, and locked is what an order is addressed to.
-   *
-   * Twenty can wear the stamp at once, which is far too many to speak to as a
-   * crowd, so the stamp keeps a second state on top of it: an order goes to the
-   * locked ones only, and an order given with none locked is spoken to nobody.
-   */
-  locked?: boolean
-  /** Volleys landed, for the techniques that reward commitment. */
-  hits?: number
-  /** A Gallery Fake copy, and the solid it is a copy of. */
-  copyOf?: string
-  /** Aura color applied by a hatsu, such as pink for Texture Surprise */
-  aura?: string
-}
-
-export const EMPTY_WORLD: TourWorld = {
-  laidOpen: false,
-  isolated: null,
-  doors: [],
-  emptied: [],
-  puppet: null,
-  hoover: [],
-  eye: null,
-  eyeMode: 'pilot',
-  eyeFilm: [],
-  sealed: 0,
-  phasing: false,
-  watched: [],
-  dispatches: [],
-  dowsing: null,
-  solids: {},
-  copies: [],
-  pairing: null,
-  wound: null,
-  windup: 0,
-  swings: 0,
-  shut: [],
-  guarded: [],
-  pinned: null,
-  vows: {},
-  pact: null,
-  devouring: [],
-  cards: {},
-  double: null,
-  doubleMode: 'follow',
-  worm: null,
-  snakes: null,
-  trap: null,
-  cameFrom: null,
-  landed: {},
-  holding: null,
-  trail: [],
-  owl: null,
-  owlMode: 'wander',
-  owlLife: 0,
-  owlFilm: [],
-  stars: [],
-  foreseen: null,
-  verses: [],
-  poem: [],
-  dial: null,
-  droplets: [],
-  ninelives: [],
-  curse: null,
-  souls: [],
-  flowered: [],
-  scattered: [],
-  book: CLOSED_BOOK,
-  body: RESTING_BODY,
-  gumTraps: [],
-  medusa: null,
-  chimera: null,
-  wheel: null,
-  toad: null,
-  lit: [],
-  centipede: null,
-  smoke: null,
-  menagerie: [],
-  dragon: null,
-  cat: null,
-  summoned: null,
-}
 
 /** Nothing taken, nothing open, nothing drained. */
 export const bookIsShut = (book: TourBook): boolean =>
@@ -1102,6 +389,7 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !Object.keys(world.solids).length &&
   !world.copies.length &&
   !world.pairing &&
+  !world.gum &&
   !world.wound &&
   !world.windup &&
   !world.shut.length &&
@@ -1139,270 +427,9 @@ export const worldIsQuiet = (world: TourWorld): boolean =>
   !world.dragon &&
   !world.cat &&
   !world.summoned &&
+  !Object.values(world.solids).some((hold) => hold.vowed) &&
   bookIsShut(world.book) &&
   bodyIsRested(world.body)
-
-/**
- * What the technique did, as data. The component turns it into a sentence in
- * the visitor's language; nothing here knows English from French.
- */
-export type TourReport =
-  | { kind: 'no-target' }
-  | { kind: 'inert' }
-  | { kind: 'teleported'; spaceId: string }
-  | { kind: 'door-armed'; spaceId: string }
-  | { kind: 'doors-paired'; spaceId: string; otherId: string }
-  | { kind: 'doors-rearmed'; spaceId: string }
-  | { kind: 'phasing'; on: boolean }
-  | { kind: 'eye-sent'; spaceId: string }
-  | { kind: 'eye-recalled'; rooms: number }
-  | { kind: 'eye-mode-changed'; mode: TourEyeMode }
-  | { kind: 'eye-piloted'; spaceId: string }
-  | { kind: 'eye-flown'; spaceId: string }
-  | { kind: 'eye-filmed'; spaceId: string; seen: number }
-  | { kind: 'sealed'; stage: number }
-  | { kind: 'dowsed'; spaceId: string; distance: number; decks: number }
-  | { kind: 'watching'; spaceId: string }
-  | { kind: 'isolated'; spaceId: string; occupant: boolean }
-  | { kind: 'stripped'; spaceId: string; count: number }
-  | { kind: 'laid-open'; spaces: number; decks: number }
-  | { kind: 'emptied'; spaceId: string; structures: number }
-  | { kind: 'swallowed'; solidId: string; held: number }
-  | { kind: 'coughed-up'; solidId: string; spaceId: string; held: number }
-  | { kind: 'bag-empty' }
-  | { kind: 'refused'; spaceId: string }
-  | { kind: 'dispatched'; spaceId: string }
-  | { kind: 'double-mode-changed'; mode: TourDoubleMode }
-  | { kind: 'owl-mode-changed'; mode: TourOwlMode }
-  | { kind: 'owl-flown'; spaceId: string }
-  | { kind: 'owl-expired'; rooms: number }
-  // On the solids.
-  | { kind: 'no-solid' }
-  | { kind: 'bound-fast'; solidId: string }
-  | { kind: 'gum-set'; solidId: string }
-  | { kind: 'gum-pulled'; solidId: string; otherId: string }
-  | { kind: 'forged'; solidId: string; as: StructureKind }
-  | { kind: 'wrapped'; solidId: string }
-  | { kind: 'unwrapped'; solidId: string }
-  | { kind: 'pushed'; solidId: string; metres: number }
-  // Order Stamp, which is three states rather than one: stamped, locked, told.
-  | { kind: 'stamped'; solidId: string; puppets: number }
-  | { kind: 'stamp-locked'; solidId: string; locked: boolean; locks: number }
-  | { kind: 'ordered'; spaceId: string; puppets: number }
-  | { kind: 'no-lock'; stamped: number }
-  | { kind: 'copied'; solidId: string }
-  | { kind: 'crushed'; solidId: string }
-  | { kind: 'volley'; solidId: string; hits: number }
-  | { kind: 'shattered'; solidId: string }
-  | { kind: 'wound-up'; turns: number }
-  | { kind: 'launched'; solidId: string; metres: number }
-  | { kind: 'struck'; solidId: string }
-  /** The ball on the end of the Dowsing Chain, brought down on a thing. */
-  | { kind: 'lashed'; solidId: string; hits: number }
-  | { kind: 'bound'; solidId: string }
-  | { kind: 'released'; solidId: string }
-  /** Both arms are already round something, so there is nothing to catch with. */
-  | { kind: 'arms-full'; solidIds: string[] }
-  | { kind: 'came-up-under'; solidId: string; otherId: string }
-  | { kind: 'came-up-empty'; spaceId: string }
-  | { kind: 'stitched'; solidId: string }
-  | { kind: 'nothing-to-stitch'; solidId: string }
-  | { kind: 'animated'; solidId: string }
-  | { kind: 'shred-stuck'; solidId: string }
-  | { kind: 'shred-cut'; solidId: string; left: number }
-  // Padaille's three, which are three reports rather than one with a tool on
-  // it: what the visitor wants to read is what happened, and finding out which
-  // tool it was is the same sentence.
-  | { kind: 'hammered'; solidId: string }
-  | { kind: 'bored'; solidId: string }
-  | { kind: 'halved'; solidId: string; apart: boolean }
-  | { kind: 'grown'; solidId: string }
-  | { kind: 'growth-refused'; solidId: string }
-  | { kind: 'marked'; solidId: string; mark: 'sun' | 'moon' }
-  | { kind: 'detonated'; solidId: string; otherId: string }
-  | { kind: 'swapped'; solidId: string; otherId: string }
-  | { kind: 'cargo-taken'; solidId: string }
-  | { kind: 'cargo-landed'; solidId: string; spaceId: string }
-  | { kind: 'puppeted'; solidId: string }
-  | { kind: 'puppet-released'; solidId: string }
-  | { kind: 'autopilot-started' }
-  // On the doors.
-  | { kind: 'jailed'; spaceId: string; doors: number }
-  | { kind: 'jail-refused'; spaceId: string }
-  | { kind: 'fish-loosed'; spaceId: string }
-  | { kind: 'fish-fed'; spaceId: string; solidId: string }
-  | { kind: 'guards-posted'; spaceId: string }
-  | { kind: 'expelled'; spaceId: string; toId: string }
-  | { kind: 'card-blue'; spaceId: string }
-  | { kind: 'card-yellow'; spaceId: string }
-  | { kind: 'card-red'; spaceId: string }
-  | { kind: 'vow-declared'; subjectId: string; rules: string[] }
-  | { kind: 'vow-broken'; subjectId: string }
-  | { kind: 'vow-locked'; subjectId: string }
-  | { kind: 'pact-taken'; spaceId: string }
-  | { kind: 'pact-met'; spaceId: string; released: number }
-  | { kind: 'bait-set'; spaceId: string }
-  | { kind: 'trapped'; spaceId: string }
-  | { kind: 'held-fast'; spaceId: string }
-  | { kind: 'snakes-loosed'; rooms: number }
-  | { kind: 'snakes-fed'; spaceId: string }
-  | { kind: 'snakes-rebound' }
-  | { kind: 'worm-set'; spaceId: string }
-  | { kind: 'worm-open'; a: string; b: string }
-  | { kind: 'worm-crossed'; spaceId: string; crossings: number }
-  | { kind: 'worm-spent' }
-  | { kind: 'double-posted'; spaceId: string }
-  | { kind: 'double-spent'; spaceId: string }
-  // The Guardian Spirit Beasts.
-  | { kind: 'beast-raised'; spaceId: string; solids: number }
-  | { kind: 'beast-dismissed'; spaceId: string; solids: number }
-  | { kind: 'wheel-raised'; spaceId: string; coin: number }
-  | { kind: 'wheel-dismissed'; spaceId: string }
-  | { kind: 'coin-taken'; spaceId: string; value: number; gilded: number }
-  | { kind: 'lie-pushed'; solidId: string; metres: number }
-  | { kind: 'lie-greened'; solidId: string }
-  | { kind: 'lie-transformed'; solidId: string }
-  | { kind: 'gas-loosed'; spaceId: string; solids: number }
-  | { kind: 'gas-lifted'; spaceId: string }
-  | { kind: 'melted'; spaceId: string; melting: number; gone: number }
-  | { kind: 'room-brightened'; spaceId: string; levied: number }
-  | { kind: 'halo-raised'; spaceId: string; levied: number; halo: number }
-  | { kind: 'reeled'; spaceId: string; pulled: number; eaten: number }
-  | { kind: 'smoke-loosed'; spaceId: string }
-  | { kind: 'smoke-lifted'; spaceId: string; filled: number }
-  | { kind: 'smoke-spread'; spaceId: string; filled: number; full: boolean }
-  | { kind: 'flock-loosed'; rooms: number; beasts: number }
-  | { kind: 'flock-called-in'; rooms: number }
-  | { kind: 'isolation-lifted'; spaceId: string }
-  | { kind: 'crushed-one'; spaceId: string; solidId: string; left: number }
-  // On the visitor.
-  | { kind: 'reinforced'; committed: number }
-  | { kind: 'boarded'; passengers: number }
-  | { kind: 'alighted'; spaceId: string | null; passengers: number }
-  | { kind: 'loaded'; solidId: string; passengers: number }
-  | { kind: 'hold-full' }
-  | { kind: 'projected'; spaceId: string }
-  | { kind: 'returned'; spaceId: string }
-  | { kind: 'body-disturbed'; spaceId: string }
-  | { kind: 'reshaped'; metres: number }
-  | { kind: 'rested'; hours: number }
-  | { kind: 'mended'; spaceId: string | null; solids: number }
-  | { kind: 'dance-played'; bars: number }
-  | { kind: 'dance-needed' }
-  | { kind: 'mimicked'; solidId: string }
-  | { kind: 'unmimicked' }
-  | { kind: 'soothed'; opened: boolean }
-  /**
-   * One air played into one room. `on` is false when the same air was played
-   * into the same room again, which is what takes the piece back off it, and
-   * `solids` is what the lively one got moving — nought for the other two.
-   */
-  | { kind: 'tune-played'; tune: TourTune; spaceId: string; on: boolean; solids: number }
-  | { kind: 'deduced'; what: string; strength: number }
-  | { kind: 'nothing-to-deduce' }
-  | { kind: 'armour-worn' }
-  | { kind: 'armour-holding'; packed: number }
-  | { kind: 'packed-away'; spaceId: string; packed: number }
-  | { kind: 'sun-risen'; metres: number; solids: number }
-  // On the record.
-  | { kind: 'owl-attached'; rooms: number }
-  | { kind: 'owl-recalled'; rooms: number }
-  | { kind: 'foreseen'; spaceId: string }
-  | { kind: 'vision-ended' }
-  | { kind: 'diverged'; spaceId: string; wentTo: string }
-  | { kind: 'written'; spaceId: string }
-  | { kind: 'line-taken'; spaceId: string; lines: number }
-  | { kind: 'poem-read'; strength: number }
-  | { kind: 'dial-set'; spaceId: string }
-  | { kind: 'dial-read'; spaceId: string; reading: number }
-  | { kind: 'droplet-sent'; spaceId: string; left: number }
-  | { kind: 'droplets-dry' }
-  | { kind: 'droplet-expired'; spaceId: string }
-  | { kind: 'name-taken'; spaceId: string }
-  | { kind: 'counterattack'; spaceId: string; released: number }
-  | { kind: 'marked-victim'; spaceId: string }
-  | { kind: 'sacrifice-found'; spaceId: string }
-  | { kind: 'curse-fell'; victim: string; sacrifice: string }
-  | { kind: 'souls-swapped'; a: string; b: string }
-  | { kind: 'arrow-drawn'; spaceId: string }
-  // On the techniques.
-  | { kind: 'nothing-to-steal'; spaceId: string }
-  | { kind: 'taken-into-the-book'; spaceId: string; technique: HatsuInteractionKind }
-  | { kind: 'needs-two-pages' }
-  | { kind: 'bookmarked'; technique: HatsuInteractionKind }
-  | { kind: 'acquisition-failed'; spaceId: string }
-  | { kind: 'carded'; spaceId: string; technique: HatsuInteractionKind }
-  | { kind: 'not-eligible'; spaceId: string }
-  | { kind: 'inherited'; spaceId: string; technique: HatsuInteractionKind }
-  | { kind: 'drained'; spaceId: string; technique: HatsuInteractionKind }
-  | { kind: 'needs-emperor-time' }
-  | { kind: 'nothing-to-lend' }
-  | { kind: 'lent'; technique: HatsuInteractionKind }
-  | { kind: 'page-spent'; technique: HatsuInteractionKind }
-  | { kind: 'in-zetsu'; spaceId: string }
-  // Bungee Gum
-  | { kind: 'gum-trap-set'; spaceId: string }
-  | { kind: 'gum-rebound'; spaceId: string }
-  | { kind: 'gum-propulsion' }
-  | { kind: 'gum-healed'; healed: number }
-
-export interface TourCastResult {
-  world: TourWorld
-  report: TourReport
-  /** A space the visitor is moved to, if the technique moves them. */
-  travelTo?: string
-}
-
-export interface TourCastInput {
-  ship: Ship
-  /** The room the technique is aimed at, or `null` when it is aimed at nothing. */
-  targetId: string | null
-  /** The solid down the reticle, for the techniques that work on solids. */
-  targetSolidId?: string | null
-  /** The room the visitor is standing in. */
-  standingIn: string | null
-  /** Where they stand, on their own deck. */
-  at: Vec2
-  /** Which way they face: a push goes where they are looking. */
-  heading?: number
-  /**
-   * Which of The Sun and Moon's two hands is casting.
-   *
-   * Genthru puts the sun on with one hand and the moon with the other, and
-   * which one he uses is his own decision rather than a turn taken — so the
-   * walk gives the two marks two keys, and this is which of them was pressed.
-   * Nothing else in the roster reads it.
-   */
-  mark?: 'sun' | 'moon'
-  /**
-   * Which of Enchanting Music's three airs is being played.
-   *
-   * The same shape as the hand above and for the same reason: three keys, and
-   * which one was pressed is the whole of what the walk has to carry across.
-   * Absent, the flute is not raised at all and the technique does what it did
-   * before it had one — it soothes.
-   */
-  tune?: TourTune
-  /**
-   * The two rules spoken aloud by Judgment Chain. Kept in the world so the
-   * registry can show them exactly as they were declared.
-   */
-  rules?: string[]
-  /** Deterministic in tests; Chrollo's teleport is the only caller. */
-  random?: () => number
-}
-
-const without = <T>(list: T[], predicate: (item: T) => boolean) => list.filter((i) => !predicate(i))
-
-/** Rooms whose contents the aura is holding, which Blinky will not swallow. */
-export function nenHeld(world: TourWorld): string[] {
-  return [
-    ...(world.isolated ? [world.isolated.spaceId] : []),
-    ...world.doors,
-    ...world.watched.map((doll) => doll.spaceId),
-    ...(world.eye ? [world.eye] : []),
-  ]
-}
 
 // ── The solids ────────────────────────────────────────────────────────────
 //
@@ -1410,28 +437,6 @@ export function nenHeld(world: TourWorld): string[] {
 // the thing standing in the room, as opposed to the room. It is deliberately
 // the same shape as the first — a value in `TourWorld`, a pure reducer, and a
 // renderer that knows nothing but how to draw what it is handed.
-
-/** Appearances Texture Surprise cycles a surface through. */
-const FORGERIES: StructureKind[] = [
-  'painting',
-  'cabinet',
-  'bars',
-  'basin',
-  'casket',
-  'bed',
-  'seat',
-  'table',
-  'spring',
-  'platform',
-  'counter',
-  'window',
-  'pillar',
-  'manacle',
-  'camera',
-  'telephone',
-  'duct',
-  'vent',
-]
 
 /** The blueprint's record for a solid, or the Gallery Fake copy standing in for one. */
 export function solidById(ship: Ship, world: TourWorld, id: string | null): Structure | null {
@@ -1441,6 +446,21 @@ export function solidById(ship: Ship, world: TourWorld, id: string | null): Stru
     world.copies.find((copy) => copy.id === id) ??
     null
   )
+}
+
+/**
+ * What the strand out of the wrist is holding right now, from 0 to 1.
+ *
+ * Nought when there is nothing stuck, which is not a refusal: the gum still
+ * has the body it came out of to contract against. `gum.ts` owns the reading;
+ * this only finds the far end of the filament in the ship and hands it over.
+ */
+function strandTension(world: TourWorld, ship: Ship, at: Vec2): number {
+  if (!world.gum) return 0
+  const anchor = solidById(ship, world, world.gum.solidId)
+  if (!anchor) return 0
+  const now = solidNow(anchor, world.solids[world.gum.solidId])
+  return gumTension(world.gum, Math.hypot(now.at[0] - at[0], now.at[1] - at[1]))
 }
 
 /**
@@ -1953,6 +973,15 @@ const dropHold = (world: TourWorld, id: string): TourWorld => {
 const clearanceOf = (structure: Structure) => Math.hypot(structure.size[0], structure.size[1]) / 2
 
 /**
+ * The metres a standing body takes up, for anything reeled in towards one.
+ *
+ * The same half-metre `footing.ts` gives the visitor: a wardrobe that finished
+ * its trip inside the person who pulled it would be a collision the walk has no
+ * way to resolve, so the contraction stops one body's width short.
+ */
+const VISITOR_CLEARANCE = 0.5
+
+/**
  * Moves a solid, but never out through the wall of the room it stands in.
  *
  * A bed shoved through the party wall would be a claim about the ship rather
@@ -2063,42 +1092,87 @@ type SolidCast = (ctx: SolidCastContext) => TourCastResult
  * from one to the next. A kind with no entry here is inert on a solid.
  */
 const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
-  // Bungee Gum: the first cast sets the strand, the second brings the other
-  // end to it. Tension is what the technique is, so the pull is towards the
-  // thing already stuck rather than towards the visitor.
-  elastic: ({ world, ship, structure, hold, id }) => {
-    if (!world.pairing || world.pairing === id) {
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-    }
-    const anchor = solidById(ship, world, world.pairing)
-    if (!anchor)
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
-    const anchorNow = solidNow(anchor, world.solids[world.pairing])
+  // Bungee Gum on a solid. The filament goes out of the wrist and takes hold;
+  // cast at the same thing again it contracts and the thing crosses the room,
+  // because that is the gesture ch. 39 draws first. The arithmetic — where a
+  // thing comes to rest, and how much the strand is holding — is `gum.ts`'s;
+  // all that happens here is the ship's own objection, which is that a cabinet
+  // cannot be dragged through a bulkhead.
+  elastic: ({ world, ship, structure, hold, id, at, standingIn }) => {
     const now = solidNow(structure, hold)
-    const dx = now.at[0] - anchorNow.at[0]
-    const dz = now.at[1] - anchorNow.at[1]
-    const length = Math.hypot(dx, dz) || 1
-    const gap = clearanceOf(anchorNow) + clearanceOf(now)
-    const landing: Vec2 = [
-      anchorNow.at[0] + (dx / length) * gap,
-      anchorNow.at[1] + (dz / length) * gap,
-    ]
+    const act = aimGum({
+      strand: world.gum,
+      solidId: id,
+      at,
+      anchorAt: now.at,
+      clearance: clearanceOf(now) + VISITOR_CLEARANCE,
+      together: standingIn === structure.spaceId,
+    })
+    if (act.act === 'stick') {
+      return {
+        world: { ...world, gum: { solidId: id, rest: act.rest } },
+        report: { kind: 'gum-set', solidId: id, metres: act.rest },
+      }
+    }
+    if (act.act === 'taut') {
+      return {
+        world,
+        report: { kind: 'gum-taut', solidId: id, tension: gumTension(world.gum!, act.metres) },
+      }
+    }
+    if (act.act === 'reel') {
+      const room = ship.spaces.get(structure.spaceId)
+      const outline = structureFootprint({ ...now, at: act.landing })
+      const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
+      const drawn = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+      return {
+        world: { ...withHold(world, id, fits ? { at: act.landing } : {}), gum: null },
+        report: {
+          kind: 'gum-reeled',
+          solidId: id,
+          metres: fits ? act.metres : 0,
+          tension: gumTension(world.gum!, drawn),
+        },
+      }
+    }
+    // A second solid with the first still stuck: the strand joins the two and
+    // lets go of the wrist, which is the other half of what ch. 39 draws.
+    const anchorId = world.gum!.solidId
+    const anchor = solidById(ship, world, anchorId)
+    const reached = Math.hypot(now.at[0] - at[0], now.at[1] - at[1])
+    if (!anchor) {
+      return {
+        world: { ...world, gum: { solidId: id, rest: reached } },
+        report: { kind: 'gum-set', solidId: id, metres: reached },
+      }
+    }
+    const anchorNow = solidNow(anchor, world.solids[anchorId])
+    const landing = gumLanding({
+      at: anchorNow.at,
+      anchorAt: now.at,
+      clearance: clearanceOf(anchorNow) + clearanceOf(now),
+    })
     const room = ship.spaces.get(structure.spaceId)
     const outline = structureFootprint({ ...now, at: landing })
     const fits = room && outline.every((corner) => pointInPolygon(corner, room.footprint))
     return {
-      world: { ...withHold(world, id, fits ? { at: landing } : {}), pairing: null },
-      report: { kind: 'gum-pulled', solidId: id, otherId: world.pairing },
+      world: { ...withHold(world, id, fits ? { at: landing } : {}), gum: null },
+      report: { kind: 'gum-pulled', solidId: id, otherId: anchorId },
     }
   },
 
   // Only the look changes; the thing underneath goes on being what it was,
   // and goes on stopping you exactly where it did.
+  //
+  // And the change leaves nothing to find. The crate that becomes an armchair
+  // in ch. 61 is an armchair to the room and to Gyo alike — see `texture.ts` —
+  // so the hold carries the fact that this face is forged and the scene draws
+  // no aura for it. What gives it away is the touch, which here is the solid
+  // going on measuring, blocking and citing exactly what it always did.
   disguise: ({ world, structure, hold, id }) => {
-    const current = hold?.kind ?? structure.kind
-    const next = FORGERIES[(FORGERIES.indexOf(current) + 1) % FORGERIES.length]
+    const next = nextForgery(hold?.kind ?? structure.kind)
     return {
-      world: withHold(world, id, { kind: next, aura: 'pink' }),
+      world: withHold(world, id, { kind: next, forged: true }),
       report: { kind: 'forged', solidId: id, as: next },
     }
   },
@@ -2231,16 +1305,37 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // is knocked back and spun by the blow, and the chain lets go again. Nothing
   // is held afterwards — a lash is over the moment it lands, and the count is
   // only so the read-out can say this is the fourth time you have hit it.
-  dowsing: ({ world, ship, structure, hold, id, away }) => {
-    const now = solidNow(structure, hold)
-    const landing = shove(ship, { structure, hold }, away(2))
+  dowsing: ({ world, ship, structure, hold, id, away, at, standingIn }) => {
+    // Parer et frapper (ch. 76) : la chaîne pare le coup qui arrive puis claque
+    // en retour. On ne pare que ce qui est dans la même pièce.
+    if (standingIn === structure.spaceId) {
+      const now = solidNow(structure, hold)
+      const landing = shove(ship, { structure, hold }, away(2))
+      return {
+        world: withHold(world, id, {
+          hits: (hold?.hits ?? 0) + 1,
+          rotation: now.rotation + 40,
+          ...(landing ? { at: landing } : {}),
+        }),
+        report: { kind: 'lashed', solidId: id, hits: (hold?.hits ?? 0) + 1 },
+      }
+    }
+
+    // Sonder un objet perdu (ch. 369) : le solide perdu de vue est marqué
+    // « probable » sur la carte, sans qu'on l'ait revu. La position devient
+    // la salle dowsée, comme pour une salle.
+    const targetRoom = ship.spaces.get(structure.spaceId)
+    if (!targetRoom) return { world, report: { kind: 'no-target' } }
+
+    const distance = distanceTo(ship, targetRoom, { at, standingIn })
     return {
-      world: withHold(world, id, {
-        hits: (hold?.hits ?? 0) + 1,
-        rotation: now.rotation + 40,
-        ...(landing ? { at: landing } : {}),
-      }),
-      report: { kind: 'lashed', solidId: id, hits: (hold?.hits ?? 0) + 1 },
+      world: { ...world, dowsing: structure.spaceId },
+      report: {
+        kind: 'dowsed',
+        spaceId: structure.spaceId,
+        distance: distance.metres,
+        decks: distance.decks,
+      },
     }
   },
 
@@ -2423,11 +1518,11 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
   // and stays what it is.
   'identity-swap': ({ world, ship, structure, hold, id }) => {
     if (!world.pairing || world.pairing === id) {
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      return { world: { ...world, pairing: id }, report: { kind: 'solid-paired', solidId: id } }
     }
     const other = solidById(ship, world, world.pairing)
     if (!other)
-      return { world: { ...world, pairing: id }, report: { kind: 'gum-set', solidId: id } }
+      return { world: { ...world, pairing: id }, report: { kind: 'solid-paired', solidId: id } }
     const mine = solidNow(structure, hold)
     const theirs = solidNow(other, world.solids[other.id])
     return {
@@ -2730,6 +1825,7 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...(world.snakes ? ['snakes'] : []),
     ...(world.trap ? [`trap:${world.trap}`] : []),
     ...world.gumTraps.map((id) => `gum:${id}`),
+    ...(world.gum ? [`strand:${world.gum.solidId}`] : []),
     ...world.flowered.map((id) => `flowered:${id}`),
     ...world.scattered.map((id) => `scattered:${id}`),
     // The Guardian Spirit Beasts. Each is a hold like any other: something the
@@ -3109,18 +2205,27 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     }
   },
 
-  // Bungee Gum on the body (no target):
-  // Faux Tissu heals the punishment if any is packed.
-  // Otherwise, Propulsion increases the walking pace.
-  elastic: ({ body, withBody }) => {
+  /**
+   * Bungee Gum turned on its own user, which the manga does two ways.
+   *
+   * With a punishment packed away, it is Faux Tissu closing what was opened.
+   * With nothing packed, it is the propulsion of ch. 39: the strand is anchored
+   * and the visitor is pulled towards the anchor rather than the anchor towards
+   * them. What that is worth rises with the stretch, because the force does —
+   * a propulsion that gave the same shove from one metre and from nine would be
+   * a winch, and this aura is not one. With nothing stuck, the gum still has
+   * the visitor's own frame to contract against, and that is the floor.
+   */
+  elastic: ({ world, ship, body, input, withBody }) => {
     if (body.packed !== null && body.packed > 0) {
       return {
         world: withBody({ packed: body.packed - 1 }),
         report: { kind: 'gum-healed', healed: 1 },
       }
     }
-    const committed = Math.min(6, body.enhance + 1)
-    return { world: withBody({ enhance: committed }), report: { kind: 'gum-propulsion' } }
+    const tension = strandTension(world, ship, input.at)
+    const committed = Math.min(6, body.enhance + 1 + Math.round(tension * 2))
+    return { world: withBody({ enhance: committed }), report: { kind: 'gum-propulsion', tension } }
   },
 }
 
@@ -3436,7 +2541,7 @@ export type HatsuKeyAction =
 
 export interface HatsuKey {
   /** The key as it is printed on a keyboard. */
-  key: 'F' | 'R' | 'C'
+  key: 'F' | 'H 2' | 'H 3'
   action: HatsuKeyAction
   /** Whether a click does the same thing, which only the casting hand has. */
   click: boolean
@@ -3445,13 +2550,15 @@ export interface HatsuKey {
 /**
  * Every key the technique in hand answers to, and what each one does.
  *
- * The walk casts with three keys at most and no technique uses all three, but
- * which ones it uses — and what R means when it has one — changes from aura to
- * aura: a page, an air, an order to a double, or the cast turned on the visitor
- * themselves. A visitor who has just picked a technique out of the dock has no
- * way of knowing which of those they are holding, so the panel says it, and
- * this is the one place that decides. It mirrors the key handler in
- * `TourScene`, and the tests hold the two together.
+ * A technique has one cast and, sometimes, a second or a third thing in it —
+ * a page, an air, an order to a double, or the cast turned on the visitor
+ * themselves. The first is F. The rest are held H, which opens the wheel, and
+ * then the number of the one wanted: R and C are not free to be spent here,
+ * because R is Ren and C is Ko everywhere in the ship and a key cannot mean
+ * two things at once. A visitor who has just picked a technique out of the
+ * dock has no way of knowing which of those they are holding, so the panel
+ * says it, and this is the one place that decides. It mirrors the wheel in
+ * `TourScene`, whose order is the same, and the tests hold the two together.
  */
 export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKey[] {
   if (!worksInTour(profile)) return []
@@ -3461,22 +2568,24 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   if (pages) {
     return [
       { key: 'F', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
-      { key: 'R', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
+      { key: 'H 2', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
     ]
   }
   if (TWO_HANDED_KINDS.has(profile.kind)) {
     return [
       { key: 'F', action: 'sun', click: true },
-      { key: 'R', action: 'moon', click: false },
+      { key: 'H 2', action: 'moon', click: false },
     ]
   }
-  // The one instrument aboard: three airs, so three keys, and the key is the
-  // playing rather than a choice made before it.
+  // The one instrument aboard, and the only thing with three of anything: the
+  // lively air is the cast, and the other two are the second and third of the
+  // wheel. Which piece is played is still chosen at the moment of playing —
+  // holding H is the breath before the note.
   if (profile.kind === 'melody') {
     return [
       { key: 'F', action: 'airDance', click: true },
-      { key: 'R', action: 'airBloom', click: false },
-      { key: 'C', action: 'airScatter', click: false },
+      { key: 'H 2', action: 'airBloom', click: false },
+      { key: 'H 3', action: 'airScatter', click: false },
     ]
   }
   const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
@@ -3489,7 +2598,7 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   ]
   if (TAKES_ORDERS.has(profile.kind)) {
     keys.push({
-      key: 'R',
+      key: 'H 2',
       action:
         profile.kind === 'guardian'
           ? 'doubleWatch'
@@ -3500,9 +2609,9 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
     })
   } else if (worksOnTheBody(profile) && (aimsAtSolids(profile) || profile.kind === 'heart-vow')) {
     // The ones on both sides of the line, and Judgment Chain: the reticle
-    // decides, and R is how the visitor says *me* rather than what is in front
-    // of them. A vow on the self needs no solid to land on.
-    keys.push({ key: 'R', action: 'castOnSelfInstead', click: false })
+    // decides, and the second of the wheel is how the visitor says *me* rather
+    // than what is in front. A vow on the self needs no solid to land on.
+    keys.push({ key: 'H 2', action: 'castOnSelfInstead', click: false })
   }
   return keys
 }
@@ -5430,3 +4539,17 @@ export const TOUR_CAST_KINDS: Record<'solid' | 'body' | 'room', Set<HatsuInterac
   body: new Set(Object.keys(BODY_CASTS) as HatsuInteractionKind[]),
   room: new Set(Object.keys(ROOM_CASTS) as HatsuInteractionKind[]),
 }
+
+/**
+ * Put on the face of the body down the reticle, or take it off again.
+ *
+ * Cast at the same person twice and the layer comes off, because the walk has
+ * no other gesture for taking it off and a mask that could only ever go on
+ * would be a claim the manga does not make. Nothing is written about the person
+ * the face was copied from: `cast/reach.ts` gives them back unchanged, and this
+ * is the whole of what the technique does to the world.
+ */
+export const wearTheMask = (world: TourWorld, characterId: string): TourWorld => ({
+  ...world,
+  body: { ...world.body, masked: world.body.masked === characterId ? null : characterId },
+})

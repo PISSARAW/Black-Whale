@@ -8,6 +8,7 @@ import type { Ship } from '$lib/tour/blueprint'
 import type { Apparition } from '$lib/tour/apparitions'
 import type { TourWorld } from '$lib/tour/hatsu'
 import {
+  auraFor,
   auraReader,
   beastApparitions,
   beastBehind,
@@ -18,9 +19,11 @@ import {
   intentsFor,
   runConduct,
   type BeastVoice,
+  type BodyMark,
   type CastBeast,
   type CastPayload,
   type Post,
+  type Situation,
 } from '$lib/tour/cast'
 
 /** What the page knows that the distribution needs. */
@@ -35,9 +38,31 @@ interface CastContext {
   casting: boolean
 }
 
+/**
+ * What the visitor is doing to one body in particular (ADR-004).
+ *
+ * Read through a closure of its own rather than folded into `CastContext`, and
+ * that is not tidiness: the body view works out who is aimed at from the very
+ * posts this class distributes, so a distribution that read the aim would be a
+ * distribution that depends on itself. Two closures, and the cycle cannot form.
+ */
+interface BodiesContext {
+  /**
+   * Who the visitor has their aura levelled at, if anyone.
+   *
+   * Distinct from `casting`, which is about the room: being aimed at is a thing
+   * that happens to you personally, and the conduct answers it personally.
+   */
+  aimedAt: string | null
+  /** What the walk is currently holding on which body, from `bodies.ts`. */
+  holds: Readonly<Record<string, BodyMark>>
+}
+
 interface CastViewOptions {
   ship: Ship
   read: () => CastContext
+  /** What is being done to the people, from the body view. See above. */
+  readBodies: () => BodiesContext
   updateWorld: (world: TourWorld) => void
 }
 
@@ -60,6 +85,25 @@ export class TourCastView {
   })
 
   /**
+   * What the room has just done, as a body standing in it can tell.
+   *
+   * Derived rather than rebuilt at each use: the apparitions and the reading of
+   * a single body have to agree about whether a guard is alarmed, and two
+   * constructions of the same situation is exactly how they would stop agreeing.
+   */
+  situation = $derived.by<Situation>(() => {
+    const { world, visitorIn, casting } = this.options.read()
+    const { aimedAt, holds } = this.options.readBodies()
+    return {
+      visitorIn,
+      visitorCasting: casting,
+      hostileRooms: hostileRooms(this.options.ship, world),
+      aimedAt,
+      holds,
+    }
+  })
+
+  /**
    * The people and the beasts, as the scene draws them.
    *
    * One list, because the scene takes one: a room with a prince, his detail and
@@ -67,17 +111,25 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast, world, visitorIn, casting } = this.options.read()
-    const situation = {
-      visitorIn,
-      visitorCasting: casting,
-      hostileRooms: hostileRooms(this.options.ship, world),
-    }
+    const { cast } = this.options.read()
     return [
-      ...castApparitions(this.options.ship, this.posts, auraReader(situation)),
+      ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
       ...beastApparitions(this.options.ship, this.posts, cast.beasts),
     ]
   })
+
+  /**
+   * The aura one body is carrying right now, for what a visitor reads off it.
+   *
+   * `none` and absent come back as the same `null`: the scene distinguishes the
+   * two because it has a shell to draw or not draw, and a visitor reading a
+   * body cannot — nothing coming off somebody reads as nothing either way,
+   * which is the silence `reading.ts` calls `still`.
+   */
+  auraOf = (post: Post): 'ten' | 'ren' | 'zetsu' | null => {
+    const aura = auraFor(post, this.situation).aura ?? null
+    return aura === 'none' ? null : aura
+  }
 
   /** Who is standing in the room the visitor is in, for the readouts. */
   here = $derived.by<Post[]>(() => {
@@ -88,6 +140,16 @@ export class TourCastView {
   /** The beast under an apparition the reticle has taken hold of, if any. */
   beastAt = (id: string): CastBeast | null =>
     beastBehind(id, this.posts, this.options.read().cast.beasts)
+
+  /**
+   * The beast standing with one person, by character id.
+   *
+   * What a visitor in Gyo can tell about the body they are aiming at: the
+   * animal belongs to somebody, and that somebody is not always the body it
+   * keeps the position of — which is why this asks the same resolver the
+   * apparitions do rather than reading the member's own declaration.
+   */
+  beastFor = (characterId: string): CastBeast | null => this.beastAt(`cast-beast:${characterId}`)
 
   /** What that beast says. A sound, and nothing else: see ADR-003 §2.4. */
   voiceAt = (id: string): BeastVoice | null => guardianVoice(this.beastAt(id))

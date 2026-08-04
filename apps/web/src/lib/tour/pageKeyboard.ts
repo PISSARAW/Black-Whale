@@ -1,8 +1,6 @@
-export type TourShortcut =
-  'toggle-reveal' | 'turn-technique' | 'toggle-fullscreen' | 'toggle-plan' | 'examine'
+export type TourShortcut = 'toggle-reveal' | 'toggle-fullscreen' | 'toggle-plan' | 'examine'
 
 interface ShortcutState {
-  takesOrders: boolean
   immersive: boolean
   nativeFullscreen: boolean
   engaged: boolean
@@ -13,7 +11,6 @@ interface ShortcutState {
 interface ShortcutActions {
   read: () => ShortcutState
   toggleReveal: () => void
-  turnTechnique: () => void
   toggleFullscreen: () => void
   togglePlan: () => void
   /** Hand over the evidence for whatever is down the reticle. */
@@ -35,8 +32,10 @@ const escapeIsAvailable = (state: ShortcutState): boolean =>
 export function tourShortcut(event: KeyboardEvent, state: ShortcutState): TourShortcut | null {
   if (event.metaKey || event.ctrlKey || event.altKey || isEditable(event.target)) return null
   const key = event.key.toLowerCase()
-  if (key === 'g') return 'toggle-reveal'
-  if (key === 'r') return state.takesOrders ? 'turn-technique' : null
+  // L lifts the veil. Deliberately not G: G is Gyo, and this listener and the
+  // walk's both sit on `window`, so a shared letter is not a choice between
+  // two meanings — it is both of them at once, every press.
+  if (key === 'l') return 'toggle-reveal'
   if (key === 'v') return 'toggle-fullscreen'
   if (key === 'escape') return escapeIsAvailable(state) ? 'toggle-fullscreen' : null
   if (key === 'm') return 'toggle-plan'
@@ -55,7 +54,6 @@ export class TourKeyboardController {
     if (!action) return
     event.preventDefault()
     if (action === 'toggle-reveal') this.actions.toggleReveal()
-    else if (action === 'turn-technique') this.actions.turnTechnique()
     else if (action === 'toggle-fullscreen') this.actions.toggleFullscreen()
     else if (action === 'examine') this.actions.examine()
     else this.actions.togglePlan()

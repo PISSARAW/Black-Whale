@@ -42,9 +42,18 @@
     exhibit: Exhibit | null
     sourcesHref: string
     onClose: () => void
+    /**
+     * The way on to the exchange, when the thing in front of you is a person.
+     *
+     * Offered from here rather than from a key of its own: addressing somebody
+     * is the second half of the same gesture as asking who they are, and the
+     * card is where the visitor already is when the question occurs to them. A
+     * pillar gets `null`, and there is no button.
+     */
+    address: { label: string; onOpen: () => void } | null
   }
 
-  let { open, exhibit, sourcesHref, onClose }: Props = $props()
+  let { open, exhibit, sourcesHref, onClose, address }: Props = $props()
 
   /** The same four colours the legend and the reveal already use. */
   const badgeClass: Record<Provenance, string> = {
@@ -106,6 +115,17 @@
       {#if exhibit.measured || exhibit.standingIn}
         <p class="mt-3 border-t border-[#333] pt-2 text-[11px] text-[#FFFFF0]/45">
           {[exhibit.standingIn, exhibit.measured].filter(Boolean).join(' · ')}
+        </p>
+      {/if}
+
+      {#if address}
+        <p class="mt-3">
+          <button
+            type="button"
+            onclick={address.onOpen}
+            class="rounded border border-[#FFD700]/40 px-2 py-1 text-[11px] text-[#FFD700]/90 transition-colors hover:border-[#FFD700] hover:text-[#FFD700]"
+            >{address.label}</button
+          >
         </p>
       {/if}
 

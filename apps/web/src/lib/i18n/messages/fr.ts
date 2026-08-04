@@ -284,7 +284,7 @@ export const fr: Messages = {
       find: 'Chercher une pièce',
       findKeys: '⌘K, ou Ctrl K',
       reveal: 'Montrer les preuves',
-      revealKeys: 'G',
+      revealKeys: 'L',
       fullscreen: 'Plein écran, panneau compris',
       fullscreenKeys: 'V',
       release: 'Rendre le pointeur à la page',
@@ -292,11 +292,11 @@ export const fr: Messages = {
       nen: 'Lancer le Hatsu actif',
       nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
       nenSelf: 'Retourner le Hatsu actif sur soi',
-      nenSelfKeys: 'R, où que porte le regard',
+      nenSelfKeys: 'H maintenu, puis 2 — où que porte le regard',
       nenSecond: 'Lancer la seconde page',
-      nenSecondKeys: (name) => `R lance ${name}, celle que tient le marque-page`,
+      nenSecondKeys: (name) => `H maintenu, puis 2, lance ${name}, celle que tient le marque-page`,
       nenMoon: 'Poser la lune plutôt que le soleil',
-      nenMoonKeys: 'R marque de la lune, F du soleil',
+      nenMoonKeys: 'H maintenu, puis 2, marque de la lune ; F du soleil',
       touch: 'Sur écran tactile',
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
@@ -409,6 +409,9 @@ export const fr: Messages = {
       walkPace: 'Allure de marche',
       headBob: 'Mouvement de la tête',
       headBobOff: 'Aucun — l’œil reste de niveau',
+      restingAura: 'Montrer sa propre aura au repos',
+      restingAuraHelp:
+        'Seulement le Ten tenu sans rien en faire. Un Ren, un Ko, un En ou un Shu se voit toujours — et votre aura est levée dans les deux cas.',
       quality: 'Image',
       qualityAuto: 'S’adapter à cette machine',
       qualityLow: 'Allégée',
@@ -498,6 +501,90 @@ export const fr: Messages = {
       },
     },
 
+    address: {
+      open: 'Adresser',
+      close: 'Se taire',
+      title: 'Ce que ce corps peut répondre',
+      nobody: 'Personne devant vous.',
+      lead: (name) => `Vous vous adressez à ${name}.`,
+      sourced:
+        'Aucune de ces lignes n’est une réplique : chacune est une valeur du catalogue, avec son chapitre.',
+      questions: {
+        who: 'Qui êtes-vous ?',
+        allegiance: 'Pour qui êtes-vous à bord ?',
+        since: 'Depuis quand êtes-vous ici ?',
+        route: 'Par où êtes-vous passé ?',
+        nen: 'Et votre Nen ?',
+        techniques: 'Quelles techniques ?',
+        'allegiance-sealed': 'Pour qui, vraiment ?',
+        'identity-sealed': 'Et qui êtes-vous, vraiment ?',
+      },
+      role: (role) => `À bord comme : ${role}.`,
+      faction: (faction) => `Rattaché à ${faction}.`,
+      since: (chapter) => `Ici depuis le ch. ${chapter}.`,
+      step: (chapter, place) => `ch. ${chapter} — ${place}`,
+      route: (steps) => steps.join(' · '),
+      category: (label) => `Le catalogue le déclare de la catégorie ${label}.`,
+      techniques: (names) => `Le catalogue lui donne : ${names.join(', ')}.`,
+      silent: 'L’archive ne dit rien là-dessus.',
+      capped: 'La suite est postérieure à votre chapitre.',
+      withheld: (count) =>
+        `${count} étape${count === 1 ? '' : 's'} de sa trajectoire ${count === 1 ? 'est' : 'sont'} au-delà de votre chapitre.`,
+      unsealed: 'Le corps a répondu à sa place',
+    },
+
+    body: {
+      title: 'Ce que vous faites de ce corps',
+      aiming: (name) => `Vous visez ${name}`,
+      aimingNobody: 'Personne dans l’axe',
+      readingTitle: 'Ce que votre aura en dit',
+      reading: {
+        blind: 'Sans aura, vous n’en sentez rien.',
+        ren: 'Son aura est levée : vous la sentez d’ici.',
+        ten: 'Il tient son aura contre lui.',
+        still:
+          'Rien ne vient de lui. Un Zetsu et une absence d’aura se ressemblent — le Gyo tranche.',
+        zetsu: 'Sous le Gyo : il se tient volontairement introuvable.',
+        en: 'Il est dans votre En.',
+        beast: 'Sous le Gyo : une bête se tient avec lui.',
+      },
+      held: (name, what) => `${name} — ${what}`,
+      worn: (name) =>
+        `Vous portez le visage de ${name}. Aucune aura ne le montre ; seul le toucher le trahit.`,
+      stolen: (name, technique) => `${name} — capacité arrachée (${technique})`,
+      marks: {
+        bound: 'retenu',
+        controlled: 'agit sur un ordre qui n’est pas le sien',
+        masked: 'ne porte pas son propre visage',
+        marked: 'porte une marque qui attend sa condition',
+        soothed: 'apaisé',
+        linked: 'lié à vous',
+        drained: 'forcé au Zetsu',
+      },
+      ephemeral: 'Rien de ceci ne survit à la pièce que vous quittez.',
+      refusals: {
+        'not-a-body': 'Cette technique ne s’adresse pas à un corps.',
+        'no-target': 'Personne devant vous.',
+        oath: 'Le serment tient : cette chaîne ne se referme que sur la Brigade fantôme.',
+        'no-aura': 'Rien à éprouver : l’archive ne déclare aucun Nen chez lui.',
+        resisted: 'Son aura est levée — la visite n’affirmera pas que l’aiguille passe.',
+        suicide:
+          'Le cinquième rite est la mort de celui qui le lance. La visite ne le fera pas : elle vous montre la préparation et s’arrête là.',
+        unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
+        'thumb-occupied': 'Le pouce tient déjà une capacité.',
+        'no-target-ability': 'Il n’a aucune capacité à voler.',
+      },
+      tells: {
+        'declares-aura': 'Le catalogue en fait un utilisateur de Nen.',
+        'declares-nothing': 'Le catalogue ne déclare rien de son Nen.',
+        'holds-zetsu': 'Le Zetsu a tenu sous le tir.',
+        'holds-sealed':
+          'La chaîne oscille : son entrée porte quelque chose que l’archive ne date pas.',
+        'holds-plain': 'La chaîne reste immobile.',
+        unsealed: 'Le corps a répondu à la place de la personne.',
+      },
+    },
+
     hatsu: {
       title: 'Le Nen dans la visite',
       reach: "N'importe quelle pièce du vaisseau, depuis n'importe où dans le vaisseau",
@@ -557,7 +644,7 @@ export const fr: Messages = {
       },
       tunes: {
         title: 'La flûte joue',
-        hint: 'F, R et C · chaque air n’est entendu que par la pièce où vous êtes',
+        hint: 'F, puis H maintenu 2 et 3 · chaque air n’est entendu que par la pièce où vous êtes',
         dance: 'L’air vif',
         bloom: 'L’air doux',
         scatter: 'L’air aigu',
@@ -778,9 +865,8 @@ export const fr: Messages = {
           `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
         sunRisen: (metres, solids) =>
           `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
-        jailed: (room, doors) => `${room} est enchaînée · ${doors} accès, et aucun qui s'ouvre`,
-        jailRefused: (room) =>
-          `Rien ne retient ${room} · la chaîne est pour ce que le Nen habite déjà`,
+        jailSelfRefused: () =>
+          "Chain Jail s'est refusée · Judgment Chain est ce qui garantit le serment sur vous-même, pas ce qui l'exécute",
         fishLoosed: (room) =>
           `Les poissons sont dans ${room} · rien ne se verra tant que vous y êtes`,
         fishFed: (room, solid) =>
@@ -825,7 +911,13 @@ export const fr: Messages = {
           `Le hibou s'est dématérialisé · ses dix dernières secondes, sur ${rooms} pièce${rooms === 1 ? '' : 's'}, passent dans le coin`,
         noSolid: 'Rien de solide dans le réticule',
         boundFast: (solid) => `${solid} est tenu ferme · seule la couture le rend`,
-        gumSet: (solid) => `Gomme sur ${solid} · saisissez un second volume pour les rapprocher`,
+        solidPaired: (solid) => `${solid} est saisi · saisissez un second volume pour les joindre`,
+        gumSet: (solid, metres) =>
+          `Gomme sur ${solid} à ${metres.toFixed(1)} m · relancez pour l'attirer, ou saisissez un second volume pour les rapprocher`,
+        gumReeled: (solid, metres) =>
+          `${solid} a traversé ${metres.toFixed(1)} m d'un coup sec · le fil a lâché où il s'est arrêté`,
+        gumTaut: (solid) =>
+          `Le fil se tend sur ${solid} · une cloison sépare, et la gomme ne traîne pas un meuble à travers l'acier`,
         gumPulled: (solid, other) => `${solid} a claqué jusqu'à ${other}`,
         gumTrapSet: (room) =>
           `Gomme tendue en travers de ${room} · rien ne la montre hors du Gyo, et elle y reste`,
@@ -974,6 +1066,7 @@ export const fr: Messages = {
         projected: 'Le corps est dans',
         dance: 'Le prologue',
         mimic: 'Sous la forme de',
+        masked: 'Visage porté',
         soothed: 'La musique tient',
         playing: 'La flûte joue',
         flowered: 'En fleurs',
@@ -1006,6 +1099,8 @@ export const fr: Messages = {
         snakes: 'Serpents lâchés dans',
         trap: "L'appât est dans",
         gumTrap: 'Gomme tendue en travers de',
+        gumStrand: 'Gomme collée à',
+        gumStretch: 'Étirement du fil',
         crossings: (n) => `${n} passages sur 3`,
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',

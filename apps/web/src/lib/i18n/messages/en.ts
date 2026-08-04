@@ -287,7 +287,7 @@ export const en = {
       find: 'Find a room',
       findKeys: '⌘K, or Ctrl K',
       reveal: 'Show the evidence',
-      revealKeys: 'G',
+      revealKeys: 'L',
       fullscreen: 'Full screen, panel and all',
       fullscreenKeys: 'V',
       release: 'Give the pointer back to the page',
@@ -295,11 +295,11 @@ export const en = {
       nen: 'Cast the active Hatsu',
       nenKeys: 'F, or click, on the room or the solid you are facing',
       nenSelf: 'Turn the active Hatsu on yourself',
-      nenSelfKeys: 'R, wherever you are looking',
+      nenSelfKeys: 'Hold H, then 2 — wherever you are looking',
       nenSecond: 'Cast the second page',
-      nenSecondKeys: (name: string) => `R casts ${name}, the one under the ribbon`,
+      nenSecondKeys: (name: string) => `Hold H, then 2, to cast ${name}, the one under the ribbon`,
       nenMoon: 'Put the moon on rather than the sun',
-      nenMoonKeys: 'R marks with the moon, F with the sun',
+      nenMoonKeys: 'Hold H, then 2, marks with the moon; F with the sun',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -472,6 +472,14 @@ export const en = {
       headBob: 'Head movement',
       headBobOff: 'None — the eye stays level',
       /**
+       * Ten is the one state nobody chooses, so its picture and its hum are
+       * permanent — and a permanent effect stops being information. Off, the
+       * body is still holding Ten; only the visitor stops being shown it.
+       */
+      restingAura: 'Show your own aura at rest',
+      restingAuraHelp:
+        'Only Ten held and used for nothing. A Ren, a Ko, an En or a Shu still shows — and your aura is up either way.',
+      /**
        * The tier, said as what it costs rather than as a number of stars. The
        * detection only picks the default: a laptop that reports a discrete card
        * and then throttles, or one whose driver string the browser has masked,
@@ -592,6 +600,101 @@ export const en = {
     },
 
     /**
+     * Addressing a body. Every line the panel shows is a value out of `data/`,
+     * framed by one of these sentences and never written as dialogue — see
+     * ADR-004 §2.4, which is why the questions are the visitor's and the
+     * answers are the catalogue's.
+     */
+    address: {
+      open: 'Address',
+      close: 'Say nothing',
+      title: 'What this body can answer',
+      nobody: 'Nobody in front of you.',
+      lead: (name: string) => `You address ${name}.`,
+      sourced:
+        'None of these lines is dialogue: each is a value from the catalogue, with the chapter it is dated at.',
+      questions: {
+        who: 'Who are you?',
+        allegiance: 'Who are you aboard for?',
+        since: 'How long have you been here?',
+        route: 'Where have you been?',
+        nen: 'And your Nen?',
+        techniques: 'Which techniques?',
+        'allegiance-sealed': 'Who, really?',
+        'identity-sealed': 'And who are you, really?',
+      },
+      role: (role: string) => `Aboard as: ${role}.`,
+      faction: (faction: string) => `Answers to ${faction}.`,
+      since: (chapter: string) => `Here since ch. ${chapter}.`,
+      step: (chapter: string, place: string) => `ch. ${chapter} — ${place}`,
+      route: (steps: string[]) => steps.join(' · '),
+      category: (label: string) => `The catalogue declares them ${label}.`,
+      techniques: (names: string[]) => `The catalogue gives them: ${names.join(', ')}.`,
+      silent: 'The archive says nothing about that.',
+      capped: 'The rest is past your chapter.',
+      withheld: (count: number) =>
+        `${count} step${count === 1 ? '' : 's'} of their route ${count === 1 ? 'is' : 'are'} past your chapter.`,
+      unsealed: 'The body answered in their place',
+    },
+
+    /**
+     * What the visitor does to a body, and what their own aura tells them of
+     * it. Nothing here outlives the room: the copy says so out loud, because a
+     * held technique that looked permanent would be the walk claiming a
+     * consequence the manga never gave.
+     */
+    body: {
+      title: 'What you are doing to this body',
+      aiming: (name: string) => `Aiming at ${name}`,
+      aimingNobody: 'Nobody in the line',
+      readingTitle: 'What your aura tells you',
+      reading: {
+        blind: 'With no aura out, you sense nothing of them.',
+        ren: 'Their aura is up: you feel it from here.',
+        ten: 'They are holding their aura close.',
+        still:
+          'Nothing comes off them. Zetsu and no aura at all look alike — Gyo tells them apart.',
+        zetsu: 'Under Gyo: they are holding themselves unfindable.',
+        en: 'They are inside your En.',
+        beast: 'Under Gyo: an animal stands with them.',
+      },
+      held: (name: string, what: string) => `${name} — ${what}`,
+      worn: (name: string) =>
+        `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
+      stolen: (name: string, technique: string) => `${name} — ability torn out (${technique})`,
+      marks: {
+        bound: 'held',
+        controlled: 'acting on an order that is not theirs',
+        masked: 'not wearing their own face',
+        marked: 'carrying a mark',
+        soothed: 'relieved',
+        linked: 'linked to you',
+        drained: 'forced into Zetsu',
+      },
+      ephemeral: 'None of this survives the room you walk out of.',
+      refusals: {
+        'not-a-body': 'This technique has nothing to say to a person.',
+        'no-target': 'Nobody in front of you.',
+        oath: 'The vow holds: this chain closes on the Phantom Troupe and on nobody else.',
+        'no-aura': 'Nothing to test: the archive declares no Nen on them.',
+        resisted: 'Their aura is up — the walk will not claim the needle goes in.',
+        suicide:
+          'The fifth rite is the death of whoever performs it. The walk will not: it shows you the preparation and stops there.',
+        unhurt: 'The chain closes what is open, and the walk wounds nobody.',
+        'thumb-occupied': 'The thumb is already holding an ability.',
+        'no-target-ability': 'They have no ability to steal.',
+      },
+      tells: {
+        'declares-aura': 'The catalogue makes them a Nen user.',
+        'declares-nothing': 'The catalogue declares nothing of their Nen.',
+        'holds-zetsu': 'The Zetsu held under the shot.',
+        'holds-sealed': 'The chain swings: their entry holds something the archive does not date.',
+        'holds-plain': 'The chain hangs still.',
+        unsealed: 'The body answered in place of the person.',
+      },
+    },
+
+    /**
      * Nen in the walk. The archive's other pages let a technique work on what is
      * written; here it works on the ship, and nothing else — so the copy talks
      * about rooms and decks throughout, never about sections or controls.
@@ -669,7 +772,7 @@ export const en = {
       // why each has a key of its own.
       tunes: {
         title: 'The flute plays',
-        hint: 'F, R and C · each air is heard by the room you are standing in',
+        hint: 'F, then hold H for 2 and 3 · each air is heard by the room you are standing in',
         dance: 'The lively air',
         bloom: 'The soft air',
         scatter: 'The sharp air',
@@ -899,10 +1002,8 @@ export const en = {
           `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
         sunRisen: (metres: number, solids: number) =>
           `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
-        jailed: (room: string, doors: number) =>
-          `${room} is chained shut · ${doors} way${doors === 1 ? '' : 's'} in, and none of them open`,
-        jailRefused: (room: string) =>
-          `Nothing is holding ${room} · the chain is for what Nen is already in`,
+        jailSelfRefused: () =>
+          'Chain Jail refused · Judgment Chain guarantees the vow on yourself, rather than executing it',
         fishLoosed: (room: string) => `The fish are in ${room} · nothing will show while you are`,
         fishFed: (room: string, solid: string) =>
           `${solid} was not there when you looked back into ${room}`,
@@ -946,8 +1047,14 @@ export const en = {
           `The owl is gone · the last ten seconds of it, over ${rooms} room${rooms === 1 ? '' : 's'}, are playing in the corner`,
         noSolid: 'Nothing solid down the reticle',
         boundFast: (solid: string) => `${solid} is held fast · nothing but the chain gets it back`,
-        gumSet: (solid: string) =>
-          `Gum on ${solid} · take hold of a second thing to pull them together`,
+        solidPaired: (solid: string) =>
+          `${solid} is held · take hold of a second thing to join them`,
+        gumSet: (solid: string, metres: number) =>
+          `Gum on ${solid} at ${metres.toFixed(1)} m · cast again to bring it in, or take hold of a second thing to pull them together`,
+        gumReeled: (solid: string, metres: number) =>
+          `${solid} crossed ${metres.toFixed(1)} m in one snap · the strand let go where it stopped`,
+        gumTaut: (solid: string) =>
+          `The strand goes taut on ${solid} · it is through a bulkhead, and gum does not drag furniture through steel`,
         gumPulled: (solid: string, other: string) => `${solid} snapped across to ${other}`,
         gumTrapSet: (room: string) =>
           `Gum strung across ${room} · nothing shows it but Gyo, and it is still there`,
@@ -1107,6 +1214,7 @@ export const en = {
         projected: 'The body is in',
         dance: 'The prologue',
         mimic: 'Wearing',
+        masked: 'Face worn',
         soothed: 'The music holds',
         playing: 'The flute is playing',
         flowered: 'In flower',
@@ -1142,6 +1250,8 @@ export const en = {
         snakes: 'Snakes loose in',
         trap: 'The bait is in',
         gumTrap: 'Gum strung across',
+        gumStrand: 'Gum stuck to',
+        gumStretch: 'Stretch on the strand',
         crossings: (n: number) => `${n} of 3 crossings`,
         solid: 'Solids held',
         wound: 'The confetti is in',

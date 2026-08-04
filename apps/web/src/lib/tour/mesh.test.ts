@@ -1522,4 +1522,3 @@ describe('the two windows', () => {
     expect(WINDOW_REACH).toBeGreaterThan(9)
   })
 })
-

@@ -136,26 +136,26 @@ describe('the keys a technique answers to', () => {
     expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
   })
 
-  it('spends R on the second key wherever the walk has one', () => {
+  it("spends the wheel's second place wherever the walk has one", () => {
     // The three that take orders, the two hands, and the ones the reticle
     // decides for — every technique with more than one key, and no other.
-    expect(under('guardian')[1]).toEqual({ key: 'R', action: 'doubleWatch', click: false })
-    expect(under('surveillance')[1]).toEqual({ key: 'R', action: 'owlFlight', click: false })
-    expect(under('scout')[1]).toEqual({ key: 'R', action: 'insectOrders', click: false })
+    expect(under('guardian')[1]).toEqual({ key: 'H 2', action: 'doubleWatch', click: false })
+    expect(under('surveillance')[1]).toEqual({ key: 'H 2', action: 'owlFlight', click: false })
+    expect(under('scout')[1]).toEqual({ key: 'H 2', action: 'insectOrders', click: false })
     expect(under('polarity')).toEqual([
       { key: 'F', action: 'sun', click: true },
-      { key: 'R', action: 'moon', click: false },
+      { key: 'H 2', action: 'moon', click: false },
     ])
-    expect(under('puppet')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
-    expect(under('elastic')[1]).toEqual({ key: 'R', action: 'castOnSelfInstead', click: false })
+    expect(under('puppet')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
+    expect(under('elastic')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
     expect(under('heart-vow')).toEqual([
       { key: 'F', action: 'castSelf', click: true },
-      { key: 'R', action: 'castOnSelfInstead', click: false },
+      { key: 'H 2', action: 'castOnSelfInstead', click: false },
     ])
   })
 
-  it('gives the flute three, because three airs need three keys', () => {
-    expect(under('melody').map((control) => control.key)).toEqual(['F', 'R', 'C'])
+  it('gives the flute three places, because three airs need three', () => {
+    expect(under('melody').map((control) => control.key)).toEqual(['F', 'H 2', 'H 3'])
     expect(under('melody').map((control) => control.action)).toEqual([
       'airDance',
       'airBloom',
@@ -172,13 +172,13 @@ describe('the keys a technique answers to', () => {
     }
     expect(under('bookmark', book)).toEqual([
       { key: 'F', action: 'openPage', click: true },
-      { key: 'R', action: 'alternate', click: false },
+      { key: 'H 2', action: 'alternate', click: false },
     ])
     // Turned the other way, the alternating page is the one under F.
     const turned: TourBook = { ...book, open: 'polarity', bookmark: 'teleport' }
     expect(under('bookmark', turned)).toEqual([
       { key: 'F', action: 'alternate', click: true },
-      { key: 'R', action: 'markedPage', click: false },
+      { key: 'H 2', action: 'markedPage', click: false },
     ])
   })
 
@@ -533,6 +533,18 @@ describe('what a technique does to a solid', () => {
     expect(forged.kind).not.toBe(solidA.kind)
     expect(forged.size).toEqual(solidA.size)
     expect(forged.name).toBe(solidA.name)
+  })
+
+  // Ch. 61: the crate is an armchair to the room, and there is nothing on it
+  // for a Hunter to find. A layer that tinted the solid would be the walk
+  // handing out the detector the manga says nobody has — Gyo included, since
+  // Gyo shows aura and the whole claim is that there is none to show.
+  it('leaves no aura on a forged surface, and nothing for Gyo to find', () => {
+    const result = hit(EMPTY_WORLD, 'disguise', solidA.id)
+    const hold = result.world.solids[solidA.id]!
+    expect(hold.forged).toBe(true)
+    expect(hold.aura).toBeUndefined()
+    expect(solidNow(solidA, hold).aura).toBeUndefined()
   })
 
   it('stamps twenty heads and no more', () => {
@@ -999,11 +1011,16 @@ describe('shutting a room', () => {
   })
 
   it('refuses to chain a room no technique is holding, and takes one that is', () => {
-    expect(door(EMPTY_WORLD, 'chain-bind', roomA.id).report).toMatchObject({ kind: 'jail-refused' })
+    // We now use tribunal to test shutting a room
     const watched = door(EMPTY_WORLD, 'paper-spy', roomA.id).world
-    const jailed = door(watched, 'chain-bind', roomA.id)
-    expect(jailed.report).toMatchObject({ kind: 'jailed', spaceId: roomA.id })
-    expect(jailed.world.shut).toEqual([roomA.id])
+    const jailed = door(watched, 'tribunal', roomA.id, roomA.id)
+    const red = door(
+      door(jailed.world, 'tribunal', roomA.id, roomA.id).world,
+      'tribunal',
+      roomA.id,
+      roomA.id,
+    )
+    expect(red.world.shut).toEqual([roomA.id])
   })
 
   it('refuses the stair out of a shut room as well as the door', () => {
@@ -1064,7 +1081,12 @@ describe('what waits at a threshold', () => {
   it('closes the contract on its terms, and releases what was shut', () => {
     let world = door(EMPTY_WORLD, 'legal-defense', roomB.id).world
     world = door(world, 'paper-spy', roomB.id).world
-    world = door(world, 'chain-bind', roomB.id).world
+    world = door(
+      door(door(world, 'tribunal', roomB.id, roomB.id).world, 'tribunal', roomB.id, roomB.id).world,
+      'tribunal',
+      roomB.id,
+      roomB.id,
+    ).world
     world = door(world, 'contract', roomA.id).world
 
     const met = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
@@ -1100,7 +1122,17 @@ describe('what waits at a threshold', () => {
 
   it('lets the fish take one thing each time the room is walked out of', () => {
     let world = door(EMPTY_WORLD, 'paper-spy', busiest.space.id).world
-    world = door(world, 'chain-bind', busiest.space.id).world
+    world = door(
+      door(
+        door(world, 'tribunal', busiest.space.id, busiest.space.id).world,
+        'tribunal',
+        busiest.space.id,
+        busiest.space.id,
+      ).world,
+      'tribunal',
+      busiest.space.id,
+      busiest.space.id,
+    ).world
     const loosed = door(world, 'devour', busiest.space.id)
     expect(loosed.report).toMatchObject({ kind: 'fish-loosed' })
 
@@ -1997,6 +2029,52 @@ describe('taking a technique off the ship', () => {
   })
 
   describe('Bungee Gum (elastic)', () => {
+    // The use the manga draws first: the filament leaves the wrist, takes hold
+    // at a distance, and what it is stuck to crosses the room when it contracts.
+    describe('the filament on a solid', () => {
+      const stick = (world = EMPTY_WORLD) =>
+        hit(world, 'elastic', solidA.id, { at: solidNow(solidA, undefined).at })
+
+      it('goes out of the wrist and remembers how far it reached', () => {
+        const set = stick()
+        expect(set.report).toMatchObject({ kind: 'gum-set', solidId: solidA.id })
+        expect(set.world.gum).toMatchObject({ solidId: solidA.id })
+        expect(set.world.gum!.rest).toBeCloseTo(0, 5)
+      })
+
+      it('brings the thing across the room when the same anchor is cast at again', () => {
+        const stuck = stick().world
+        const pulled = hit(stuck, 'elastic', solidA.id, { at: [solidA.at[0] + 3, solidA.at[1]] })
+        expect(pulled.report).toMatchObject({ kind: 'gum-reeled', solidId: solidA.id })
+        expect(pulled.world.gum).toBeNull()
+        expect(pulled.world.solids[solidA.id]).toBeTruthy()
+      })
+
+      it('goes taut rather than dragging a thing through a bulkhead', () => {
+        const stuck = stick().world
+        const elsewhere = [...ship.spaces.values()].find((space) => space.id !== solidA.spaceId)!
+        const taut = hit(stuck, 'elastic', solidA.id, { standingIn: elsewhere.id })
+        expect(taut.report).toMatchObject({ kind: 'gum-taut', solidId: solidA.id })
+        // Still attached: saying so is the point of not doing nothing.
+        expect(taut.world.gum).toMatchObject({ solidId: solidA.id })
+      })
+
+      it('joins the two when a second thing is aimed at, and lets go of both', () => {
+        const stuck = stick().world
+        const joined = hit(stuck, 'elastic', solidB.id)
+        expect(joined.report).toMatchObject({ kind: 'gum-pulled', otherId: solidA.id })
+        expect(joined.world.gum).toBeNull()
+      })
+
+      // A strand out is aura still being spent, so everything that asks "is
+      // anything up?" has to count it.
+      it('counts a strand among what the aura is holding', () => {
+        const stuck = stick().world
+        expect(worldIsQuiet(stuck)).toBe(false)
+        expect(holdsInWorld(stuck)).toContain(`strand:${solidA.id}`)
+      })
+    })
+
     it('increases walking pace when cast on the body without damage', () => {
       const cast = castInTour(EMPTY_WORLD, 'elastic', {
         ship,

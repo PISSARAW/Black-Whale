@@ -14,6 +14,7 @@
   import { onMount, untrack } from 'svelte'
   import {
     createNenTechniqueState,
+    isAuraAtRest,
     transitionNen,
     type NenTechnique,
     type NenTechniqueAction,
@@ -63,7 +64,7 @@
     type Apparition,
     type TourFlash,
   } from '$lib/tour/apparitions'
-  import { comfort, prefersReducedMotion, type Comfort } from '$lib/tour/comfort'
+  import { comfort, prefersReducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
@@ -116,7 +117,7 @@
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
   import { applySkyPool } from '$lib/tour/skyPool'
-  import { refractionAmount } from '$lib/tour/auraRefraction'
+  import { refractionAmount, type AuraGlass } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
     createSceneRuntime,
@@ -230,8 +231,9 @@
      *
      * Black Voice is the reason this exists: the needle goes into a thing or
      * into the visitor, and the reticle is nearly always on something, so
-     * aiming at nothing is not a gesture a walk can reliably make. R is that
-     * gesture — cast with an empty reticle, whatever is actually in front.
+     * aiming at nothing is not a gesture a walk can reliably make. The second
+     * place on the wheel is that gesture — cast with an empty reticle,
+     * whatever is actually in front.
      */
     selfCastable?: boolean
     /**
@@ -239,23 +241,20 @@
      *
      * Double Face is what this is for: the book is open on one page and a
      * ribbon is holding a second, and both are live. F plays the open page and
-     * R plays the bookmarked one — so R stops meaning *cast on me* and starts
-     * meaning *the other page*, which is the only thing the scene has to know
-     * about it. Named, because a phone has no F and no R and the two buttons it
-     * gets instead have to say which is which. `null` under everything else.
+     * the second of the wheel plays the bookmarked one — which is the only
+     * thing the scene has to know about it. Named, because a phone has no keys
+     * and the wheel says which place is which. `null` under everything else.
      */
     hands?: { first: string; second: string } | null
     /**
-     * The three airs the three keys play, when what is in hand is an
-     * instrument rather than a technique to be aimed.
+     * The three airs the wheel plays, when what is in hand is an instrument
+     * rather than a technique to be aimed.
      *
      * Enchanting Music is the whole of it: the flute is materialized for as
      * long as the aura is up, and which piece is played is chosen at the moment
-     * of playing — F for the lively one, R for the soft one, C for the sharp
-     * one. So R stops meaning *cast on me* and C, which the walk has never used
-     * for anything, becomes a third cast. Named, for the same reason the two
-     * hands are: a phone has no keys, and the buttons it gets instead have to
-     * say which piece each one plays. `null` under everything else.
+     * of playing — F for the lively one, and the wheel for the soft and the
+     * sharp. Named, for the same reason the two pages are: a phone has no keys,
+     * and the wheel has to say which piece each place plays. `null` elsewhere.
      */
     tunes?: { first: string; second: string; third: string } | null
     /**
@@ -263,11 +262,24 @@
      *
      * The Sun and Moon is the whole of it: one hand puts the sun on and the
      * other the moon, and which of the two a thing wears decides what it does
-     * when it meets another. So R stops meaning *cast on me* here as well — it
-     * is the second hand. Unnamed, unlike the book's two pages and the flute's
-     * three airs, because the buttons a phone gets instead are the marks.
+     * when it meets another. So the second place on the wheel is the second
+     * hand here as well. Unnamed, unlike the book's two pages and the flute's
+     * three airs, because the marks themselves are the labels.
      */
     twoHanded?: boolean
+    /**
+     * What the thing already cast is to be told to do next, named.
+     *
+     * A double, an owl and an insect are sent out once and then keep taking
+     * orders — watch, follow, wander, film — and the order is not a second
+     * cast, it is a word to something already standing there. It rides the
+     * same wheel all the same: two things in one technique means two places
+     * on it, whichever kind of thing the second one is. `null` under
+     * everything that is only ever cast.
+     */
+    orders?: string | null
+    /** Give that order. Called instead of a cast when the wheel lands on it. */
+    onOrder?: () => void
     /**
      * Paint the deck in what it is worth as evidence rather than in what its
      * rooms are for: the reveal. It changes nothing about the ship — the same
@@ -510,6 +522,8 @@
     hands = null,
     tunes = null,
     twoHanded = false,
+    orders = null,
+    onOrder,
     reveal = false,
     seated = null,
     extras = [],
@@ -549,6 +563,7 @@
     if (hands) return [hands.first, hands.second]
     if (twoHanded) return ['☀', '☾']
     if (selfCastable) return ['Cible', 'Soi']
+    if (orders) return [touchLabels.cast, orders]
     return [touchLabels.cast]
   })
   const effectiveNen = $derived(nen ?? localNen)
@@ -560,11 +575,51 @@
     onNenChange?.(action)
   }
 
+  /**
+   * The aura the visitor is *shown*, which is not always the aura they have.
+   *
+   * Null is "there is nothing to present": a Ten held and used for nothing,
+   * from a visitor who has turned the resting aura off. Everything downstream
+   * of the senses reads this — the shell around the camera, the swim over the
+   * frame, the dust it shoves, the held tone — while everything that decides
+   * what is *true* keeps reading `effectiveNen`. The body is still holding Ten:
+   * it defends, it is visible to a Gyo across the room, and Zetsu remains the
+   * only way to actually put it away. See `Comfort.restingAura`.
+   */
+  const shownNen = $derived(
+    $comfort.restingAura || !isAuraAtRest(effectiveNen) ? effectiveNen : null,
+  )
+
+  /**
+   * T, twice: raise the Ten, then put it back down.
+   *
+   * The key used to be one-way — from a Ren or a Zetsu it dropped you into Ten,
+   * and from a Ten it did nothing at all, which is a key that stops answering
+   * once you have pressed it. So the second press is the way out, and what it
+   * puts down is the *showing* of the skin rather than the skin: the visitor
+   * goes on holding Ten, because a body that stops holding it is in Zetsu and
+   * Zetsu is X. See `Comfort.restingAura` for why that is the honest half to
+   * hand a key.
+   *
+   * Raising always shows again, so the two presses are a true toggle from
+   * wherever the aura was. Otherwise a T out of Ren would land on a skin the
+   * visitor had put down an hour ago and the next press would do nothing —
+   * the same dead key, one state further along.
+   */
+  function toggleTen() {
+    if (isAuraAtRest(effectiveNen) && $comfort.restingAura) {
+      setComfort({ restingAura: false })
+      return
+    }
+    setComfort({ restingAura: true })
+    useNen({ type: 'TEN' })
+  }
+
   $effect(() => {
     setStepsAuraQuiet(effectiveNen.mode === 'zetsu')
   })
 
-  $effect(() => sustainNenSound(effectiveNen))
+  $effect(() => (shownNen ? sustainNenSound(shownNen) : undefined))
 
   /**
    * How high the visitor's eye is off the floor.
@@ -1627,7 +1682,7 @@
         // touched anything. See `refractionAmount` for what "out" means here.
         const speed = delta > 0 ? travelled / delta : 0
         const wake = Math.min(0.22, speed * 0.1)
-        const aura = calmWalk ? 0 : refractionAmount(effectiveNen)
+        const aura = calmWalk ? 0 : refractionAmount(shownNen)
         const at: [number, number, number] = [here.x, here.y, here.z]
 
         for (const dust of clouds) {
@@ -1785,15 +1840,14 @@
        */
       const glassMaterials: Record<string, import('three').Material | undefined> = {}
       const glass = quality.auraDistortion
-        ? (worn: { ior: number; thickness: number; roughness: number }) => {
+        ? (worn: AuraGlass) => {
             const key = `${worn.ior}|${worn.thickness}|${worn.roughness}`
             const held = glassMaterials[key]
             if (held) return held
+            // Spread whole: `depthWrite: false` is load-bearing and belongs to
+            // the shell rather than to this file. See `AuraGlass`.
             const made = new THREE.MeshPhysicalMaterial({
-              transmission: 1,
-              ior: worn.ior,
-              thickness: worn.thickness,
-              roughness: worn.roughness,
+              ...worn,
               transparent: true,
               opacity: 1,
               side: THREE.DoubleSide,
@@ -3219,10 +3273,7 @@
 
       /** Draws the gum where it is stuck, or takes it off the screen. */
       function syncGum(seconds: number) {
-        const stuck =
-          world.holding === 'elastic' && world.pairing
-            ? solidById(ship, world, world.pairing)
-            : null
+        const stuck = world.gum ? solidById(ship, world, world.gum.solidId) : null
         const room = stuck ? ship.spaces.get(stuck.spaceId) : null
         const plan = room ? ship.plans.get(room.tierId) : null
         if (!stuck || !room || !plan) {
@@ -3390,9 +3441,15 @@
        *
        * Neither the room nor the solid in front goes with it: the walk already
        * tells the rules which room the visitor is standing in, so an empty
-       * reticle costs nothing and says the one thing R is for.
+       * reticle costs nothing and says the one thing the second hand is for.
        */
       function useHatsu(hand: 'first' | 'second' | 'third') {
+        // The second place on the wheel is a word rather than a cast, under the
+        // ones that have something already standing out there to be told.
+        if (orders && hand === 'second') {
+          onOrder?.()
+          return
+        }
         if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu)) return
         const self = hand === 'second' && selfCastable && !hands && !tunes && !twoHanded
         onHatsu(
@@ -3469,7 +3526,7 @@
           const selected = zones[zoneIndex]
           selectedNenZone = selected
           useNen({ type: 'RYU', distribution: ryuDistribution(selected, 0.55) })
-        } else if (event.code === NEN_KEYS.ten) useNen({ type: 'TEN' })
+        } else if (event.code === NEN_KEYS.ten) toggleTen()
         else if (event.code === NEN_KEYS.on)
           useNen({
             type: 'ON',
@@ -3555,17 +3612,12 @@
           yaw += event.code === 'ArrowLeft' ? snapStep() : -snapStep()
         }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
-        // F is the cast. R is the second of whatever there are two of — a second
-        // page, a second air — and the cast turned on the visitor where there is
-        // only one; the cases never arise together, so the key never means two
-        // things at once. A technique cast with two hands spends no key on the
-        // second: its own key alternates, which the page works out.
-        // F is reserved for physical/Nen interaction; R is always Ren.
-        // C is the third, and only an instrument has one: three airs need three
-        // keys, and it is the one letter within reach of the hand already on
-        // WASD that the walk has never spent on anything. D is not free — it is
-        // the sidestep — so a flute played on it would walk you across the room.
-        // C is reserved for Ko. H owns every Hatsu variant.
+        // The Nen vocabulary is one alphabet across the whole ship — the same
+        // letters in the walk, in the arena and in the hunt — and every letter
+        // in it is spoken for: R is Ren, C is Ko, G is Gyo, F is the physical
+        // interaction. So a technique's second and third things do not get
+        // letters of their own; H owns every Hatsu variant, held to open the
+        // wheel and 1–4 to pick. One key, one meaning, whatever is in hand.
       }
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
@@ -4398,6 +4450,7 @@
             ground,
             seconds: now / 1000,
             depthTexture: renderTarget?.depthTexture ?? undefined,
+            hideResting: !$comfort.restingAura,
           })
           nenAura.syncShu(
             effectiveNen.shu.flatMap((id) => {
@@ -4643,7 +4696,7 @@
         // zero outright for a visitor whose system asks for less movement: a
         // swimming picture is movement, whatever it is a picture of.
         if (refraction) {
-          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(effectiveNen)
+          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(shownNen)
           refraction.uniforms.uTime.value = clock
         }
 
@@ -4912,7 +4965,9 @@
         aimedObjectId={aimedSolidAt?.id ?? null}
         availability={nenAvailability}
         {hatsuAllowedInZetsu}
+        restingAuraShown={$comfort.restingAura}
         onAction={useNen}
+        onTen={toggleTen}
         onInteract={() => interactWithNen?.()}
         onHatsu={openOrCastHatsu}
       />

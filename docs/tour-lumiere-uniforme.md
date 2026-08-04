@@ -31,15 +31,15 @@ version asymétrique n'était juste que parce que la phase des lampes était con
 
 ## 2. La décroissance courait encore sur la diagonale
 
-La correction précédente de `lampFalloff` avait déplacé la *coupure* sur le plan
-mais laissé la *forme* sur la ligne oblique. Le tirant lampe-plancher vaut ~4,65 m
+La correction précédente de `lampFalloff` avait déplacé la _coupure_ sur le plan
+mais laissé la _forme_ sur la ligne oblique. Le tirant lampe-plancher vaut ~4,65 m
 sur tous les ponts, la portée passe de 18 m en cale à 7,9 m au Tier 1 : le tirant
 mangeait 23 % de la plage en bas et 59 % en haut.
 
-| | portée | tirant | valeur sous la lampe |
-|---|---|---|---|
-| Tier 1 | 7,88 | 4,65 | 0,242 |
-| Tier 5 | 18,00 | 4,15 | 0,601 |
+|        | portée | tirant | valeur sous la lampe |
+| ------ | ------ | ------ | -------------------- |
+| Tier 1 | 7,88   | 4,65   | 0,242                |
+| Tier 5 | 18,00  | 4,15   | 0,601                |
 
 L'échelle à l'envers, 2,5×, pour la vieille raison à un nouvel endroit : le Tier 1
 suspend ses lampes au plus près, et une lampe proche avait le moins de plage à
@@ -57,12 +57,12 @@ elle n'est plus d'une autre classe.
 
 `LAMP_THROW = 0.55` remet l'exposition d'ensemble où elle était : moyenne pondérée
 par l'aire sur les 318 espaces, **0,773 après contre 0,777 avant**. Seule
-l'*égalité* bouge.
+l'_égalité_ bouge.
 
 ## 3. L'occlusion facturait la largeur du couloir
 
 `openReach = 2.4 m` avait été choisi dans un hall puis appliqué à tout le navire.
-Un couloir de quatre mètres n'est jamais à plus de deux d'une cloison : *tout* son
+Un couloir de quatre mètres n'est jamais à plus de deux d'une cloison : _tout_ son
 sol prenait la remise de coin. L'obscurité d'un coin devenait l'obscurité d'être
 dans un couloir, ce que l'occlusion ambiante n'a pas à dire.
 
@@ -75,13 +75,13 @@ milieu.
 
 Couloirs, éclairement moyen au sol :
 
-| | avant | après |
-|---|---|---|
-| Tier 1 (> 200 m²) | 0,67 | **0,77** |
-| Tier 2 | 0,69 | 0,75 |
-| Tier 3 | 0,72 | 0,68 |
-| Tier 4 | 0,70 | 0,71 |
-| Tier 5 | 0,66 | 0,65 |
+|                   | avant | après    |
+| ----------------- | ----- | -------- |
+| Tier 1 (> 200 m²) | 0,67  | **0,77** |
+| Tier 2            | 0,69  | 0,75     |
+| Tier 3            | 0,72  | 0,68     |
+| Tier 4            | 0,70  | 0,71     |
+| Tier 5            | 0,66  | 0,65     |
 
 Écart entre couloirs d'un même pont (Tier 1) : 0,42–0,77 avant, **0,57–0,85** après,
 et ce qui reste s'explique — une petite coursive inférée contre une promenade

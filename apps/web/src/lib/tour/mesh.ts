@@ -273,7 +273,6 @@ const WALL_ALBEDO = lifted(WALL_COLOUR)
 const CEILING_ALBEDO = lifted(CEILING_COLOUR)
 const COLUMN_ALBEDO = lifted(COLUMN_COLOUR)
 
-
 /**
  * The reveal: the ship painted in what it is worth as evidence, and nothing
  * else.
@@ -1101,9 +1100,12 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
   // rendering decision made where the rendering happens, and the outline the
   // visitor bumps into is still the outline that gets drawn.
   const outline = toClockwise(structureFootprint(structure))
-  const baseColour = hex(STRUCTURE_COLOURS[structure.kind])
-  const auralised = structure.aura === 'pink' ? blend(baseColour, [1, 0.4, 0.7], 0.5) : baseColour
-  const colour = lifted(auralised)
+  // The colour is the kind's own, and a forged kind is drawn in the colour of
+  // the thing it is pretending to be — with nothing added. Texture Surprise
+  // used to blend a pink into it, which meant a forged surface announced itself
+  // to anybody with eyes: the one thing ch. 61 is explicit that it does not do.
+  // See `texture.ts`.
+  const colour = lifted(hex(STRUCTURE_COLOURS[structure.kind]))
   const bottom = floorOf(room, tier) + structure.base
   const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 
@@ -1492,9 +1494,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const floorColour = reveal
       ? revealed(space.provenance, 0.62)
       : lifted(hex(CATEGORY_COLOURS[space.category]))
-    const ceilingColour = reveal
-      ? revealed(space.provenance, 0.82)
-      : CEILING_ALBEDO
+    const ceilingColour = reveal ? revealed(space.provenance, 0.82) : CEILING_ALBEDO
     const top = heightOf(space)
     const indices = triangulate(space.footprint)
     // Every surface of this room is shaded by this one object: the fittings of
@@ -1689,9 +1689,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
     // Columns get a cap so you are not looking up an open shaft, and a brighter
     // face than the walls so they read as structure at a distance.
-    const colour = reveal
-      ? revealed(space.provenance, 0.3)
-      : COLUMN_ALBEDO
+    const colour = reveal ? revealed(space.provenance, 0.3) : COLUMN_ALBEDO
     const h = COLUMN_HALF_WIDTH
     for (const centre of plan.columns.get(space.id) ?? []) {
       const corners: Vec2[] = [

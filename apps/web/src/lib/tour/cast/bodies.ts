@@ -44,6 +44,14 @@ export type BodyMark =
   | 'linked'
   /** Aura forcibly extracted, victim placed in Zetsu: Steal Chain. */
   | 'drained'
+  /**
+   * Taken off their feet: Remote Punch.
+   *
+   * A blow and not a wound. §2.3 keeps the walk from recording injuries on
+   * anybody, and this is what is left when that is honoured — the man is on the
+   * deck, he gets up, and the archive is not asked to say he was hurt.
+   */
+  | 'struck'
 
 /** One thing being done to one body, with its end already written. */
 export interface BodyHold {
@@ -82,6 +90,8 @@ export const HOLD_SECONDS: Record<BodyMark, number> = {
   linked: 25,
   // Steal Chain empties a body and puts it in Zetsu; it comes back on its own.
   drained: 25,
+  // Long enough to be a thing that happened, short enough to be a man getting up.
+  struck: 8,
 }
 
 /** What is being held on this body, or null. One at a time, newest wins. */

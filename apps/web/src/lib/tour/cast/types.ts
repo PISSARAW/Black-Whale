@@ -1054,8 +1054,33 @@ export type TourReport =
   | { kind: 'released'; solidId: string }
   /** Both arms are already round something, so there is nothing to catch with. */
   | { kind: 'arms-full'; solidIds: string[] }
-  | { kind: 'came-up-under'; solidId: string; otherId: string }
-  | { kind: 'came-up-empty'; spaceId: string }
+  /**
+   * The fist came out under what was aimed at, and the line it took to get there.
+   *
+   * `through` is the ability rather than decoration: ch. 385's whole substance
+   * is aura running *in* a surface from the impact to the exit, and Gyo is what
+   * shows it. A report that only said where the fist arrived would be reporting
+   * a projectile. `throughDoor` is the exit chosen on a leaf that is shut — the
+   * panel the technique is drawn in — which the walk names rather than lets
+   * pass as an ordinary strike.
+   */
+  | {
+      kind: 'came-up-under'
+      solidId: string
+      otherId: string
+      through: Vec2[]
+      throughDoor: boolean
+    }
+  | { kind: 'came-up-empty'; spaceId: string; through: Vec2[] }
+  /**
+   * There was nothing between here and there to run through.
+   *
+   * The refusal ch. 385 makes by construction: the blow passes through matter,
+   * and an open well over the promenade is not matter. Shown with its rule,
+   * because a cast that silently did nothing would read as the walk being
+   * broken when it is the technique being itself.
+   */
+  | { kind: 'punch-refused'; spaceId: string }
   | { kind: 'stitched'; solidId: string }
   | { kind: 'nothing-to-stitch'; solidId: string }
   | { kind: 'animated'; solidId: string }

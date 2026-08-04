@@ -43,6 +43,7 @@ const reach = (overrides: Partial<ReachInput> = {}) =>
     aura: 'ten',
     book: null,
     speaking: false,
+    throughMatter: true,
     now: NOW,
     ...overrides,
   })
@@ -230,6 +231,33 @@ describe('what a hold looks like', () => {
     // ear on one person leaves them exactly as it found them.
     it('lays no hold on the person it listened to', () => {
       expect(listen({ speaking: true }).outcome).not.toBe('held')
+    })
+  })
+
+  /**
+   * Ch. 385 is Leorio hitting a man he cannot see: the blow crosses a bulkhead
+   * from the sick bay and catches somebody in the next compartment. What it
+   * will not cross is an open well, and that rule follows it onto a body.
+   */
+  describe('the blow that comes out of the deck, aimed at a person', () => {
+    it('takes a man off his feet through the bulkhead between you', () => {
+      const answer = reach({ kind: 'remote-strike', throughMatter: true })
+      expect(answer).toMatchObject({ outcome: 'held', hold: { mark: 'struck' } })
+    })
+
+    // A blow and not a wound: §2.3 keeps the walk from recording injuries, and
+    // what is left is a man on the deck who gets up.
+    it('lays a hold that lifts on its own, and records no injury', () => {
+      const answer = reach({ kind: 'remote-strike', throughMatter: true })
+      expect(answer.outcome === 'held' && answer.hold.until > NOW).toBe(true)
+    })
+
+    it('refuses across a well, with the same rule the ship makes for a solid', () => {
+      expect(reach({ kind: 'remote-strike', throughMatter: false })).toEqual({
+        outcome: 'refused',
+        kind: 'remote-strike',
+        reason: 'no-matter',
+      })
     })
   })
 

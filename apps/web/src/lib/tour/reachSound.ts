@@ -37,6 +37,9 @@ const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
   // The bird that lands, lets go of what it carried and leaves again. The same
   // voice the flock has when it is called into a room: it is the same birds.
   flock: chirpTheFlock,
+  // The fist out of the deck, which the room already hears when it comes up
+  // under a coffin: a body is not a quieter thing to hit.
+  'remote-strike': landAPunch,
   'chain-bind': hissLikeASnake,
   'chain-rule': hissLikeASnake,
   stitch: unspoolWire,

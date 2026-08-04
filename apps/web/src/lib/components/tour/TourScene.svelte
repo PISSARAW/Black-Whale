@@ -4321,6 +4321,7 @@
           fog,
           baseFog,
           renderer,
+          gyo: effectiveNen.gyo,
         })
         runLash(delta)
         syncGum(clock)

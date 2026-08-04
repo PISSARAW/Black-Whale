@@ -70,6 +70,10 @@ export const BODY_KINDS = [
   // refuses out loud, and the refusal — that the manipulation takes birds and
   // nothing else — is a fact about the ability nobody reads off a room.
   'flock',
+  // Remote Punch, for the panel it is drawn in: Leorio never sees the man he
+  // hits. The blow crosses the bulkhead and catches somebody in the next room,
+  // which makes a body the thing it is aimed at rather than a thing it passes.
+  'remote-strike',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 export type BodyKind = (typeof BODY_KINDS)[number]

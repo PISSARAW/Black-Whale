@@ -19,6 +19,7 @@ import {
   castablePages,
   hatsuKeys,
   adriftSolidIds,
+  centroid,
   catStep,
   driftOffset,
   gasStep,
@@ -2650,3 +2651,68 @@ function centreOf(space: { footprint: readonly (readonly [number, number])[] }):
   const sum = space.footprint.reduce<[number, number]>((t, p) => [t[0] + p[0], t[1] + p[1]], [0, 0])
   return [sum[0] / space.footprint.length, sum[1] / space.footprint.length]
 }
+
+describe('Remote Punch, which travels in a surface and not through air', () => {
+  const standing = centroid(busiest.space)
+  const strike = (
+    targetSolidId: string | null,
+    over: Partial<Parameters<typeof castInTour>[2]> = {},
+  ) =>
+    castInTour(EMPTY_WORLD, 'remote-strike', {
+      ship,
+      targetId: busiest.space.id,
+      targetSolidId,
+      standingIn: busiest.space.id,
+      at: standing,
+      heading: 0,
+      ...over,
+    })
+
+  // The whole substance of ch. 385: aura running *in* the surface from the
+  // impact to the exit. A report that only said where the fist arrived would
+  // be reporting a projectile.
+  it('hands back the line the aura took, not just where the fist arrived', () => {
+    const struck = strike(solidA.id)
+    expect(struck.report).toMatchObject({ kind: 'came-up-under', otherId: solidA.id })
+    const through = struck.report.kind === 'came-up-under' ? struck.report.through : []
+    expect(through.length).toBeGreaterThan(1)
+    expect(through[0]).toEqual(standing)
+    expect(through[through.length - 1]).toEqual(solidNow(solidA, undefined).at)
+  })
+
+  // The refusal the ability makes by construction. A visitor standing on
+  // nothing has nothing to strike, which is the same rule from the other end.
+  it('refuses when nothing joins the visitor to the exit', () => {
+    const overTheSide = strike(solidA.id, { at: [-10_000, -10_000] })
+    expect(overTheSide.report).toEqual({ kind: 'punch-refused', spaceId: busiest.space.id })
+    expect(overTheSide.world).toBe(EMPTY_WORLD)
+  })
+
+  // Aimed at bare deck the exit is where the aura came down, and it is held to
+  // exactly the same rule.
+  it('runs the line for a strike into open deck too', () => {
+    const bare = strike(null)
+    expect(bare.report).toMatchObject({ kind: 'came-up-empty', spaceId: busiest.space.id })
+    const through = bare.report.kind === 'came-up-empty' ? bare.report.through : []
+    expect(through.length).toBeGreaterThan(0)
+    expect(strike(null, { at: [-10_000, -10_000] }).report).toMatchObject({
+      kind: 'punch-refused',
+    })
+  })
+
+  // A bulkhead conducts, and a shut leaf is a bulkhead: the panel the ability
+  // is drawn in is a fist coming out of a closed door, so the walk names that
+  // exit rather than refusing it.
+  it('names the exit when it was chosen on a door the chain had shut', () => {
+    const shut = { ...EMPTY_WORLD, shut: [busiest.space.id] }
+    const struck = castInTour(shut, 'remote-strike', {
+      ship,
+      targetId: busiest.space.id,
+      targetSolidId: solidA.id,
+      standingIn: busiest.space.id,
+      at: standing,
+      heading: 0,
+    })
+    expect(struck.report).toMatchObject({ kind: 'came-up-under', throughDoor: true })
+  })
+})

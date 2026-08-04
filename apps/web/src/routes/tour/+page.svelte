@@ -20,6 +20,7 @@
   import { playTourReportSound } from '$lib/tour/reportSound'
   import { playTourReachSound } from '$lib/tour/reachSound'
   import { hearTheRoom } from '$lib/tour/cast/hearing'
+  import { punchRuns } from '$lib/tour/punch'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
@@ -39,6 +40,7 @@
   import {
     EMPTY_WORLD,
     identityOf,
+    onFloorOf,
     TAKES_ORDERS,
     wearTheMask,
     type TourReport,
@@ -540,6 +542,8 @@
       beastFor: castView.beastFor,
       auraFor: castView.auraOf,
       book: world.book,
+      throughMatter: (to) =>
+        punchRuns({ from: position, to, onFloor: onFloorOf(ship, tierId) }) !== null,
     }),
     words: () => addressWords,
     placeOf: (location) => {

@@ -315,7 +315,14 @@
       case 'arms-full':
         return say.armsFull(report.solidIds.map(solidName).join(', '))
       case 'came-up-under':
-        return say.cameUpUnder(solidName(report.solidId), solidName(report.otherId))
+        // The panel ch. 385 is drawn in gets its own sentence: the exit was
+        // chosen on a leaf that is shut, and a shut leaf is a surface like any
+        // other. Saying "came up under" for that would lose the whole point.
+        return report.throughDoor
+          ? say.punchThroughDoor(solidName(report.otherId), solidName(report.solidId))
+          : say.cameUpUnder(solidName(report.solidId), solidName(report.otherId))
+      case 'punch-refused':
+        return say.punchRefused(roomName(report.spaceId))
       case 'came-up-empty':
         return say.cameUpEmpty(roomName(report.spaceId))
       case 'stitched':

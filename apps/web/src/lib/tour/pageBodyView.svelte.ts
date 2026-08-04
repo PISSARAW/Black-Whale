@@ -56,6 +56,13 @@ interface BodyContext {
   auraFor: (post: Post) => 'ten' | 'ren' | 'zetsu' | null
   /** The visitor's book, for checking if a stolen ability is held. */
   book: { open: string | null; pages: string[] } | null
+  /**
+   * Whether continuous matter joins the visitor to a point on this deck.
+   *
+   * Remote Punch's one rule, handed in as a predicate: the page holds the ship
+   * and this class holds the people, and neither is going to grow the other.
+   */
+  throughMatter: (to: Vec2) => boolean
 }
 
 interface BodyViewOptions {
@@ -175,6 +182,9 @@ export class TourBodyView {
       // Melody hears a lie in a heart that is answering. The exchange being
       // open is the walk's own record of somebody talking.
       speaking: this.talk !== null,
+      // The blow goes through matter, not through air — and the bulkhead
+      // between the visitor and this body is matter. See `punch.ts`.
+      throughMatter: context.throughMatter(person.at),
       now,
     })
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false

@@ -1782,6 +1782,15 @@ export interface TourFlash {
   colour: number
   /** How far it reaches: the sun's radius, in metres. */
   metres?: number
+  /**
+   * The line the aura took through the matter, for Remote Punch.
+   *
+   * Handed over rather than re-derived because the rules already walked it and
+   * refused the cast if it was broken: what Gyo draws is exactly the run the
+   * blow was allowed on, and a second answer worked out in the renderer could
+   * disagree with the first.
+   */
+  through?: Vec2[]
 }
 
 /**
@@ -1881,6 +1890,7 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       at: world.landed[space.id] ?? measured.at,
       y: measured.floor,
       colour: PUNCH,
+      through: report.through,
     }
   }
 
@@ -1916,6 +1926,7 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       at: solidNow(struck, world.solids[struck.id]).at,
       y: measured.floor,
       colour: PUNCH,
+      through: report.through,
     }
   }
 

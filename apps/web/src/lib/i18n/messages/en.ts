@@ -671,6 +671,7 @@ export const en = {
         soothed: 'relieved',
         linked: 'linked to you',
         drained: 'forced into Zetsu',
+        struck: 'off their feet',
       },
       ephemeral: 'None of this survives the room you walk out of.',
       refusals: {
@@ -684,6 +685,8 @@ export const en = {
         unhurt: 'The chain closes what is open, and the walk wounds nobody.',
         'thumb-occupied': 'The thumb is already holding an ability.',
         'no-target-ability': 'They have no ability to steal.',
+        'no-matter':
+          'Nothing but air between you and them. The blow travels in a surface; it does not cross a well.',
         'only-birds':
           'The manipulation takes birds. Aimed at a person it holds nothing — and a bird has nothing to deliver to somebody who is not expecting a Zodiac’s post.',
       },
@@ -1128,6 +1131,10 @@ export const en = {
         released: (solid: string) => `${solid} is let go`,
         armsFull: (solids: string) =>
           `Both snakes are out · they have ${solids}, and you have two arms`,
+        punchRefused: (room: string) =>
+          `Nothing joins you to ${room} but air. The blow goes through matter — a deck, a bulkhead, the leaf of a shut door — and it will not cross an open well. Get onto something that touches it.`,
+        punchThroughDoor: (solid: string, room: string) =>
+          `The aura runs into the shut door of ${room} and the fist comes out of the leaf, under ${solid}`,
         cameUpUnder: (solid: string, other: string) =>
           `The aura ran out of ${solid} along the floor and came up under ${other}`,
         cameUpEmpty: (room: string) =>

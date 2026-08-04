@@ -46,6 +46,9 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   detonated: () => strikeAGong(3),
   'came-up-under': landAPunch,
   'came-up-empty': landAPunch,
+  // The refusal sounds too: the fist went into the deck and found nothing to
+  // run through, which is a thing the visitor did and not a key that did nothing.
+  'punch-refused': landAPunch,
   'souls-swapped': loostAnArrow,
   'arrow-drawn': loostAnArrow,
   stitched: unspoolWire,

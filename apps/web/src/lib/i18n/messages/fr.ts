@@ -562,6 +562,7 @@ export const fr: Messages = {
         soothed: 'apaisé',
         linked: 'lié à vous',
         drained: 'forcé au Zetsu',
+        struck: 'à terre',
       },
       ephemeral: 'Rien de ceci ne survit à la pièce que vous quittez.',
       refusals: {
@@ -575,6 +576,8 @@ export const fr: Messages = {
         unhurt: 'La chaîne referme ce qui est ouvert, et la visite ne blesse personne.',
         'thumb-occupied': 'Le pouce tient déjà une capacité.',
         'no-target-ability': 'Il n’a aucune capacité à voler.',
+        'no-matter':
+          'Rien que de l’air entre vous et lui. Le coup circule dans une surface ; il ne traverse pas un vide.',
         'only-birds':
           'La manipulation ne prend que les oiseaux. Visant une personne, elle ne tient rien — et un oiseau n’a rien à remettre à quelqu’un qui n’attend pas le courrier d’un Zodiaque.',
       },
@@ -987,6 +990,10 @@ export const fr: Messages = {
         released: (solid) => `${solid} est relâché`,
         armsFull: (solids) =>
           `Les deux serpents sont sortis · ils tiennent ${solids}, et vous n'avez que deux bras`,
+        punchRefused: (room) =>
+          `Rien que de l'air vous relie à ${room}. Le coup passe par la matière — un pont, une cloison, le battant d'une porte close — et ne traverse pas un vide. Reposez-vous sur quelque chose qui la touche.`,
+        punchThroughDoor: (solid, room) =>
+          `L'aura entre dans la porte close de ${room} et le poing ressort du battant, sous ${solid}`,
         cameUpUnder: (solid, other) =>
           `L'aura a couru depuis ${solid} le long du sol et a resurgi sous ${other}`,
         cameUpEmpty: (room) => `L'aura a couru le long du sol et a jailli du pont dans ${room}`,

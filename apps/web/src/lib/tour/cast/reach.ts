@@ -68,6 +68,14 @@ export type ReachRefusal =
    * that produced silence would read as the walk being broken.
    */
   | 'only-birds'
+  /**
+   * Remote Punch, aimed where there is nothing to run through.
+   *
+   * The same rule the ship makes for a solid — the blow goes through matter,
+   * not through air — arriving at a body. Worked out by the page, which is the
+   * only thing here that holds both the geometry and the person.
+   */
+  | 'no-matter'
 
 /** What a technique told the visitor about the body, without holding it. */
 export type ReachTell =
@@ -143,6 +151,15 @@ export interface ReachInput {
    * silent room is a heart, and the walk will not turn one into a verdict.
    */
   speaking: boolean
+  /**
+   * Whether continuous matter joins the visitor to this body.
+   *
+   * Only Remote Punch reads it. Decided by `punch.ts` off the ship's own plan
+   * and handed in, because `reach.ts` has no geometry and is not getting any:
+   * it decides what a technique does to a person, and where the deck stops is
+   * not that question.
+   */
+  throughMatter: boolean
   /** The page's clock, so a hold knows when it lifts. */
   now: number
 }
@@ -194,6 +211,7 @@ const MARKS: Record<
   // And the twelve the ship already knew.
   elastic: 'bound',
   'chain-bind': 'bound',
+  'remote-strike': 'struck',
   stitch: 'bound',
   command: 'controlled',
   puppet: 'controlled',
@@ -220,31 +238,41 @@ const REFUSED: Partial<Record<BodyKind, ReachRefusal>> = {
   healing: 'unhurt',
 }
 
-/** The canon condition that stops a technique before it starts, if any. */
-function refusalFor(kind: BodyKind, input: ReachInput): ReachRefusal | null {
-  const always = REFUSED[kind]
-  if (always) return always
-
+/**
+ * The conditions that depend on the body, or on where the visitor is standing.
+ *
+ * One entry per technique that has one, for the reason `REFUSED` above is a
+ * table: these look at different things and at no point at each other, so there
+ * is no order between them to read and nothing is carried from one to the next.
+ * Each returns its refusal or `null` for "this one may proceed".
+ */
+const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal | null>> = {
   // The vow. Kurapika's chain closes on the Troupe and, if he turned it on
   // anyone else, on his own heart — so the walk refuses rather than performs.
-  if (kind === 'chain-bind' && input.dossier?.factionId !== CHAIN_JAIL_FACTION) return 'oath'
+  'chain-bind': (input) => (input.dossier?.factionId === CHAIN_JAIL_FACTION ? null : 'oath'),
 
   // Theta fires to see whether a student can hold Zetsu under pressure. There
   // is nothing to test on somebody the archive gives no aura to, and inventing
   // an aura to test would be inventing a Nen user.
-  if (kind === 'training-shot' && !input.target?.member.nen) return 'no-aura'
+  'training-shot': (input) => (input.target?.member.nen ? null : 'no-aura'),
 
   // A needle overwrites autonomy. A body already holding its aura up is the one
   // case the walk will not claim it overwrites.
-  if (kind === 'needle' && input.aura === 'ren') return 'resisted'
+  needle: (input) => (input.aura === 'ren' ? 'resisted' : null),
 
-  if (kind === 'chain-rule') {
+  // Leorio never sees the man he hits in ch. 385 — the blow crosses a bulkhead
+  // to reach him. What it will not cross is nothing at all.
+  'remote-strike': (input) => (input.throughMatter ? null : 'no-matter'),
+
+  'chain-rule': (input) => {
     if (input.book?.open) return 'thumb-occupied'
-    if (!input.target?.member.hatsu || input.target.member.hatsu.length === 0)
-      return 'no-target-ability'
-  }
+    return input.target?.member.hatsu.length ? null : 'no-target-ability'
+  },
+}
 
-  return null
+/** The canon condition that stops a technique before it starts, if any. */
+function refusalFor(kind: BodyKind, input: ReachInput): ReachRefusal | null {
+  return REFUSED[kind] ?? CONDITIONS[kind]?.(input) ?? null
 }
 
 /**

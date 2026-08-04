@@ -345,7 +345,16 @@ describe('the two that happen rather than stand', () => {
     const struck = ship.structures.find((structure) => structure.spaceId === furnished.id)!
     const tier = ship.tiers.find((candidate) => candidate.id === furnished.tierId)!
     const seen = flashFor(
-      { report: { kind: 'came-up-under', solidId: 'whoever', otherId: struck.id }, from: [0, 0] },
+      {
+        report: {
+          kind: 'came-up-under',
+          solidId: 'whoever',
+          otherId: struck.id,
+          through: [[0, 0], struck.at],
+          throughDoor: false,
+        },
+        from: [0, 0],
+      },
       ship,
       EMPTY_WORLD,
     )!

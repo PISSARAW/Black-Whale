@@ -9,6 +9,16 @@ const SUN_SECONDS = 2.4
 const ARROW_SECONDS = 0.9
 const BLAST_SECONDS = 0.9
 
+/**
+ * How many points the seam is drawn with.
+ *
+ * Fixed, because the buffer is allocated once and a run is however long the
+ * ship made it: a shorter line repeats its last point, which draws nothing and
+ * costs nothing. Sixty-four at half a metre a step is thirty metres of deck,
+ * which is further than the blow has anywhere to go on this ship.
+ */
+const SEAM_POINTS = 64
+
 type SequencedFlash = TourFlash & { seq: number }
 export interface FlashFrame {
   delta: number
@@ -18,6 +28,8 @@ export interface FlashFrame {
   fog: Three.FogExp2
   baseFog: Three.Color
   renderer: Three.WebGLRenderer
+  /** Whether the eye has aura on it, which is what shows the punch its line. */
+  gyo: boolean
 }
 export interface VehicleFrame {
   riding: boolean
@@ -46,6 +58,9 @@ export class HatsuSceneEffects {
   readonly #arrowMaterial: Three.MeshBasicMaterial
   readonly #shaft: Three.Group
   readonly #fist: Three.Group
+  readonly #seam: Three.Line
+  readonly #seamGeometry: Three.BufferGeometry
+  readonly #seamMaterial: Three.LineBasicMaterial
   readonly #fistMaterial: Three.MeshBasicMaterial
   readonly #rewind: HatsuRewindEffect
   #playing = 0
@@ -159,6 +174,26 @@ export class HatsuSceneEffects {
     forearm.position.y = 0.2
     this.#fist.add(knuckles, thumb, forearm)
     this.#fist.visible = false
+    // The run itself: the emitted aura travelling in the surface from where the
+    // fist went in to where it came out. Only ever drawn under Gyo, because
+    // that is the claim ch. 385 makes about it — the strike is felt by anyone
+    // and the line in the steel is seen by an eye with aura on it.
+    this.#seamMaterial = new THREE.LineBasicMaterial({
+      color: 0x55a7ff,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    })
+    this.#seamGeometry = new THREE.BufferGeometry()
+    this.#seamGeometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(new Float32Array(SEAM_POINTS * 3), 3),
+    )
+    this.#seam = new THREE.Line(this.#seamGeometry, this.#seamMaterial)
+    this.#seam.visible = false
+    this.#seam.frustumCulled = false
+    this.#seam.renderOrder = 3
     this.#rewind = new HatsuRewindEffect(THREE, scene)
     scene.add(
       this.#chassis,
@@ -171,6 +206,7 @@ export class HatsuSceneEffects {
       this.#blastLight,
       this.#shaft,
       this.#fist,
+      this.#seam,
     )
   }
 
@@ -226,7 +262,7 @@ export class HatsuSceneEffects {
     if (played.kind === 'blast') return this.animateBlast(played, through, frame)
     if (played.kind === 'sun') return this.animateSun(played, through, frame)
     if (played.kind === 'gust') return this.animateGust(played, through)
-    this.animatePunch(played, through)
+    this.animatePunch(played, through, frame)
   }
 
   private animateArrow(played: SequencedFlash, through: number): void {
@@ -272,13 +308,39 @@ export class HatsuSceneEffects {
     frame.fog.color.setHex(0xf2a63b)
   }
 
-  private animatePunch(played: SequencedFlash, through: number): void {
+  private animatePunch(played: SequencedFlash, through: number, frame: FlashFrame): void {
     if (played.kind !== 'punch') return
     const rise = through < 0.25 ? through / 0.25 : Math.max(0, 1 - (through - 0.25) / 0.75)
     this.#fist.visible = true
     this.#fist.position.set(played.at[0], played.y - 2 + rise * 3.1, played.at[1])
     this.#fist.rotation.y = this.#playedSeq
     this.#fistMaterial.opacity = 0.72 * (1 - through * 0.6)
+    this.drawSeam({ through: played.through ?? [], y: played.y, played: through, gyo: frame.gyo })
+  }
+
+  /**
+   * The line in the surface, run through and then let go of.
+   *
+   * Drawn as far along as the blow has got — the aura arrives at the exit, it
+   * does not appear along the whole run at once — and a hair off the deck so it
+   * reads as being *in* the surface rather than laid on it. Nothing is drawn
+   * without Gyo: the fist is felt by anybody and the seam is not.
+   */
+  private drawSeam(seam: { through: Vec2[]; y: number; played: number; gyo: boolean }): void {
+    const { through, y, played, gyo } = seam
+    if (!gyo || through.length < 2) {
+      this.#seam.visible = false
+      return
+    }
+    const line = this.#seamGeometry.attributes.position as Three.BufferAttribute
+    const reached = Math.max(1, Math.ceil(Math.min(1, played * 4) * (through.length - 1)))
+    for (let index = 0; index < SEAM_POINTS; index++) {
+      const point = through[Math.min(index, reached)]
+      line.setXYZ(index, point[0], y + 0.06, point[1])
+    }
+    line.needsUpdate = true
+    this.#seamMaterial.opacity = 0.9 * (1 - played)
+    this.#seam.visible = true
   }
 
   syncVehicle(frame: VehicleFrame): void {
@@ -319,6 +381,7 @@ export class HatsuSceneEffects {
   }
 
   private hideFlashes(): void {
+    this.#seam.visible = false
     this.#gust.visible = false
     this.#gustRing.visible = false
     this.#fist.visible = false

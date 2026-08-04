@@ -20,6 +20,7 @@ import {
   holdOn,
   interview,
   lay,
+  letGoOf,
   NO_BODIES,
   readBody,
   reachBody,
@@ -55,7 +56,7 @@ interface BodyContext {
   /** The aura each body is carrying, as the conduct decided it. */
   auraFor: (post: Post) => 'ten' | 'ren' | 'zetsu' | null
   /** The visitor's book, for checking if a stolen ability is held. */
-  book: { open: string | null; pages: string[] } | null
+  book: { open: string | null; pages: string[]; stolenFrom?: string | null } | null
   /**
    * Whether continuous matter joins the visitor to a point on this deck.
    *
@@ -95,6 +96,8 @@ interface BodyViewOptions {
    * Persist a stolen technique to the visitor's book.
    */
   steal: (characterId: string, technique: string) => void
+  /** Give a stolen ability back, and the aura that went with it. */
+  giveBack: (characterId: string) => void
 }
 
 export class TourBodyView {
@@ -199,16 +202,34 @@ export class TourBodyView {
       now,
     })
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false
+    this.settle(result, person)
+    this.options.report(result)
+    return true
+  }
+
+  /**
+   * What each outcome leaves behind: a hold laid, a hold taken off, or a fact
+   * handed back to the world.
+   *
+   * Split out of `reach` so that method stays the aim and this stays the
+   * consequence — and because the two of these that hand something back are the
+   * ones ADR-004 §2.3 is about, and they read better beside each other.
+   */
+  private settle(result: Reach, person: Post) {
     if (result.outcome === 'held') this.bodies = lay(this.bodies, result.hold)
     if (result.outcome === 'stolen') {
       this.bodies = lay(this.bodies, result.hold)
       this.options.steal(result.characterId, result.technique)
     }
+    // The one outcome that takes a hold *off*: the chain unwinds, the ability
+    // goes back, and the body has its aura for the first time since ch. 369.
+    if (result.outcome === 'returned') {
+      this.bodies = letGoOf(this.bodies, result.characterId)
+      this.options.giveBack(result.characterId)
+    }
     if (result.outcome === 'worn') this.options.wear(result.characterId)
     if (result.outcome === 'reading') this.options.startReading(result.characterId)
     if (result.outcome === 'told' && result.tells.includes('unsealed')) this.unsealAt(person)
-    this.options.report(result)
-    return true
   }
 
   /** Open the exchange with the body in front of you. */

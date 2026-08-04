@@ -131,6 +131,15 @@ export type Reach =
   | { outcome: 'told'; kind: BodyKind; characterId: string; tells: ReachTell[] }
   | { outcome: 'stolen'; kind: BodyKind; characterId: string; technique: string; hold: BodyHold }
   /**
+   * The stolen ability given back, and the Zetsu with it.
+   *
+   * The counterpart the walk did not have. A theft with no return is not the
+   * ability ch. 369 draws — it is a permanent maiming, and the chain is
+   * explicitly a thing Kurapika lets go of. The third of the outcomes that hold
+   * nobody: what it does is take a hold *off*.
+   */
+  | { outcome: 'returned'; kind: BodyKind; characterId: string; technique: string }
+  /**
    * A bird put something in this person's hand and left again.
    *
    * Its own outcome because it is the only one that touches nobody: no hold is
@@ -161,7 +170,7 @@ export interface ReachInput {
   /** The aura it is currently carrying, from `cast/nen.ts`. */
   aura: 'ten' | 'ren' | 'zetsu' | null
   /** The visitor's book, for checking if a stolen ability is held. */
-  book: { open: string | null; pages: string[] } | null
+  book: { open: string | null; pages: string[]; stolenFrom?: string | null } | null
   /**
    * Whether this body is currently answering the visitor.
    *
@@ -321,6 +330,12 @@ const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal |
   [PALM]: () => 'palm-only',
 
   'chain-rule': (input) => {
+    // Aimed back at the person it was taken from, the same finger gives it
+    // back — see `reachBody` — so the refusal is only for a *second* theft.
+    // Without that exception the thumb would be occupied for ever: the walk had
+    // a way to take an ability and no way to return one, which made the one
+    // condition the ability states into a dead end rather than a condition.
+    if (input.book?.stolenFrom === input.target?.member.characterId) return null
     if (input.book?.open) return 'thumb-occupied'
     return input.target?.member.hatsu.length ? null : 'no-target-ability'
   },
@@ -380,6 +395,28 @@ const tellsFor = (kind: AskKind, input: ReachInput): ReachTell[] => TELLS[kind](
  * which is what keeps ADR-004 §2.3's promise mechanical rather than
  * conscientious.
  */
+/**
+ * Steal Chain's finger, which does two opposite things with one gesture.
+ *
+ * Aimed at somebody new it tears an ability out and empties them; aimed back at
+ * whoever it emptied it gives both back. Neither answer lays a mark — the first
+ * lays a hold, the second takes one off — so both are outcomes of their own,
+ * and they are decided together because they are one condition read from two
+ * sides. Its own function so `reachBody` stays a dispatch rather than a rule.
+ */
+function theThumb(kind: BodyKind, characterId: string, input: ReachInput): Reach {
+  if (input.book?.stolenFrom === characterId) {
+    return { outcome: 'returned', kind, characterId, technique: input.book.open ?? '' }
+  }
+  return {
+    outcome: 'stolen',
+    kind,
+    characterId,
+    technique: input.target!.member.hatsu[0]!,
+    hold: holdFor(characterId, { kind, mark: 'drained' }, input.now),
+  }
+}
+
 export function reachBody(input: ReachInput): Reach {
   if (!reachesABody(input.kind))
     return { outcome: 'refused', kind: input.kind, reason: 'not-a-body' }
@@ -410,15 +447,7 @@ export function reachBody(input: ReachInput): Reach {
 
   if (isAsking(kind)) return { outcome: 'told', kind, characterId, tells: tellsFor(kind, input) }
 
-  if (kind === 'chain-rule') {
-    return {
-      outcome: 'stolen',
-      kind,
-      characterId,
-      technique: input.target.member.hatsu[0]!,
-      hold: holdFor(characterId, { kind, mark: 'drained' }, input.now),
-    }
-  }
+  if (kind === 'chain-rule') return theThumb(kind, characterId, input)
 
   // Everything with no mark of its own has already returned: the four that ask,
   // the one that is worn, the one that carries, the one that steals and the one

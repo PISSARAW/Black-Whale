@@ -56,6 +56,8 @@ interface BodiesContext {
   aimedAt: string | null
   /** What the walk is currently holding on which body, from `bodies.ts`. */
   holds: Readonly<Record<string, BodyMark>>
+  /** Who Steal Chain has emptied and not given back to. Not a hold: see `nen.ts`. */
+  drained: readonly string[]
 }
 
 interface CastViewOptions {
@@ -93,13 +95,14 @@ export class TourCastView {
    */
   situation = $derived.by<Situation>(() => {
     const { world, visitorIn, casting } = this.options.read()
-    const { aimedAt, holds } = this.options.readBodies()
+    const { aimedAt, holds, drained } = this.options.readBodies()
     return {
       visitorIn,
       visitorCasting: casting,
       hostileRooms: hostileRooms(this.options.ship, world),
       aimedAt,
       holds,
+      drained,
     }
   })
 

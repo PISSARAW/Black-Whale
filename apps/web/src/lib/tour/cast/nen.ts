@@ -100,6 +100,19 @@ export interface Situation {
    * conduct and this file is the conduct.
    */
   holds: Readonly<Record<string, BodyMark>>
+  /**
+   * Whoever Steal Chain has emptied and not given back to, by character id.
+   *
+   * Kept apart from `holds` because it is not a hold and does not behave like
+   * one. Every mark above is staged and short — "until the scene moves on",
+   * which is what `HOLD_SECONDS` says out loud — and the emptiness ch. 369
+   * draws is neither: Sayird has no aura for as long as Kurapika has his
+   * ability, and getting it back is an event rather than a timer running out.
+   * On the timer the drain expired after twenty-five seconds while the
+   * technique it took was still open in the book, which had the walk saying
+   * that a stolen ability grows back.
+   */
+  drained: readonly string[]
 }
 
 /** Nothing has happened: the state most of the ship is in, most of the time. */
@@ -109,6 +122,7 @@ export const CALM: Situation = {
   hostileRooms: [],
   aimedAt: null,
   holds: {},
+  drained: [],
 }
 
 /** The conduct one body is holding, before the engine has had its say. */
@@ -208,9 +222,22 @@ function alarmOf(post: Post, situation: Situation): { felt: boolean; alarmed: bo
  * exactly the question Gyo is for, where an apparition standing in the room is
  * already visible and looking harder at it buys nothing.
  */
+/**
+ * The two ways a body has no envelope to find, which from outside are one.
+ *
+ * Zetsu of one's own choosing and Steal Chain's emptiness look identical under
+ * Gyo, and the walk does not distinguish them because the page does not: what a
+ * reader sees in ch. 369 is a guard with nothing on him. They are kept in one
+ * predicate rather than two branches so the answer cannot drift apart, and so
+ * the emptiness is decided *before* the holds — it outlasts every one of them.
+ */
+function showsNothing(post: Post, situation: Situation): boolean {
+  return isHiding(post) || situation.drained.includes(post.member.characterId)
+}
+
 export function auraFor(post: Post, situation: Situation = CALM): CastLook {
   if (!post.member.nen) return {}
-  if (isHiding(post)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
+  if (showsNothing(post, situation)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
   const held = situation.holds[post.member.characterId] ?? null
   if (held) return underHold(held)
   const { felt, alarmed } = alarmOf(post, situation)

@@ -286,3 +286,50 @@ describe('what a hold looks like', () => {
     expect(answer.outcome === 'held' && answer.hold.characterId).toBe('sakata')
   })
 })
+
+/**
+ * Ch. 369 is the thumb chain on Sayird, Little Eye leaving its bearer, and — the
+ * half the walk did not have — Kurapika letting go of it again. A theft with no
+ * return is not this ability; it is a permanent maiming, and the chain is
+ * explicitly a thing that unwinds.
+ */
+describe('the thumb, which takes one ability and gives it back', () => {
+  const sayird = post({ characterId: 'sayird', hatsu: ['little-eye'] })
+  const steal = (book: ReachInput['book']) =>
+    reach({ kind: 'chain-rule', target: sayird, book })
+
+  it('tears the ability out of whoever has one', () => {
+    expect(steal(null)).toMatchObject({
+      outcome: 'stolen',
+      characterId: 'sayird',
+      technique: 'little-eye',
+      hold: { mark: 'drained' },
+    })
+  })
+
+  it('refuses a second theft while the finger is taken', () => {
+    expect(steal({ open: 'scout', pages: ['scout'], stolenFrom: 'someone-else' })).toEqual({
+      outcome: 'refused',
+      kind: 'chain-rule',
+      reason: 'thumb-occupied',
+    })
+  })
+
+  // The exception that makes the condition a condition rather than a dead end.
+  it('gives it back when aimed at the person it was taken from', () => {
+    expect(steal({ open: 'scout', pages: ['scout'], stolenFrom: 'sayird' })).toEqual({
+      outcome: 'returned',
+      kind: 'chain-rule',
+      characterId: 'sayird',
+      technique: 'scout',
+    })
+  })
+
+  it('has nothing to take off somebody the archive gives no ability', () => {
+    expect(reach({ kind: 'chain-rule', book: null })).toEqual({
+      outcome: 'refused',
+      kind: 'chain-rule',
+      reason: 'no-target-ability',
+    })
+  })
+})

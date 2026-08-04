@@ -25,6 +25,8 @@ export interface BodyReadoutWords {
   worn: (name: string) => string
   /** "Sayird — stolen (little-eye)" */
   stolen: (name: string, technique: string) => string
+  /** "Sayird — given back (little-eye)" */
+  returned: (name: string, technique: string) => string
   /** "A bird puts the note in Cheadle's hand" */
   delivered: (name: string) => string
   /** "The console is on Benjamin — 10 days" */
@@ -47,6 +49,10 @@ export function noteFor(
   // face was copied, and the person it was copied from is unchanged.
   if (reach.outcome === 'worn') return words.worn(nameOf(reach.characterId))
   if (reach.outcome === 'stolen') return words.stolen(nameOf(reach.characterId), reach.technique)
+  // The chain unwinding. Also not a mark, and for the strongest reason of the
+  // four: what happened is that a mark came off.
+  if (reach.outcome === 'returned')
+    return words.returned(nameOf(reach.characterId), reach.technique)
   // Nothing was done to them, which is why this is not a mark: a bird landed,
   // let go of what it carried, and left.
   if (reach.outcome === 'delivered') return words.delivered(nameOf(reach.characterId))

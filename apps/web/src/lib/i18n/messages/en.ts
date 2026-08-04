@@ -672,6 +672,8 @@ export const en = {
       worn: (name: string) =>
         `You are wearing ${name}’s face. No aura shows it; only a touch gives it away.`,
       stolen: (name: string, technique: string) => `${name} — ability torn out (${technique})`,
+      returned: (name: string, technique: string) =>
+        `${name} — the chain unwinds, ${technique} goes back, and the aura with it`,
       delivered: (name: string) => `A bird lands, puts what it carried in ${name}’s hand, and goes`,
       consoleOn: (name: string, days: number) =>
         `The console is on ${name} · ${days} day${days === 1 ? '' : 's'} of standing beside them left`,

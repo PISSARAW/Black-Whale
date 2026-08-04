@@ -170,3 +170,27 @@ describe('a body that is hiding', () => {
     expect(look.alert).toBeUndefined()
   })
 })
+
+/**
+ * Ch. 369: Sayird has no aura for as long as Kurapika has his ability. Not a
+ * hold, and it must not behave like one — on the twenty-five-second timer the
+ * drain expired while the technique it took was still open in the book, which
+ * had the walk saying that a stolen ability grows back.
+ */
+describe('the body Steal Chain emptied', () => {
+  const sayird = post({ characterId: 'sayird', role: 'Royal Bodyguard for Prince Woble' })
+  const drained = (who: string[]): Situation => ({ ...CALM, drained: who })
+
+  it('has nothing at all to see, which is what Gyo finds', () => {
+    expect(auraFor(sayird, drained(['sayird'])).aura).toBe('zetsu')
+  })
+
+  it('outlasts every hold, because it is not one', () => {
+    const alsoHeld: Situation = { ...drained(['sayird']), holds: { sayird: 'struck' } }
+    expect(auraFor(sayird, alsoHeld).aura).toBe('zetsu')
+  })
+
+  it('empties nobody else', () => {
+    expect(auraFor(sayird, drained(['someone-else'])).aura).not.toBe('zetsu')
+  })
+})

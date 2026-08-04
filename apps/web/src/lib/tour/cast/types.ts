@@ -736,6 +736,15 @@ export interface TourBook {
   cards: HatsuInteractionKind[]
   /** Rooms Steal Chain has drained: no technique reaches them until it returns. */
   zetsu: string[]
+  /**
+   * The person the thumb took an ability off, and has not given it back to.
+   *
+   * One at a time — the finger is taken while it holds one, which is the
+   * condition the ability states — so this is a name rather than a list. It is
+   * what keeps that body in Zetsu (`Situation.drained`) and what turns a second
+   * cast at the same person into the return rather than a refusal.
+   */
+  stolenFrom: string | null
   /** The page the dolphin has lent out, which the next cast consumes. */
   loan: HatsuInteractionKind | null
 }
@@ -746,6 +755,7 @@ export const CLOSED_BOOK: TourBook = {
   bookmark: null,
   cards: [],
   zetsu: [],
+  stolenFrom: null,
   loan: null,
 }
 

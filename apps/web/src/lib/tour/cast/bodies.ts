@@ -134,6 +134,19 @@ export function holdFor(
   }
 }
 
+/**
+ * Let go of one body, by name.
+ *
+ * `releaseBodies` empties the whole record when the aura comes down, and expiry
+ * takes holds off when their time is up. Neither is what a technique *undoing
+ * itself* looks like: Steal Chain giving an ability back is one body being let
+ * go of while everything else the visitor is holding stays held.
+ */
+export function letGoOf(world: BodiesWorld, characterId: string): BodiesWorld {
+  const standing = world.holds.filter((hold) => hold.characterId !== characterId)
+  return standing.length === world.holds.length ? world : { holds: standing }
+}
+
 /** Everything still standing at this moment, and nothing that is not. */
 export function expire(world: BodiesWorld, now: number): BodiesWorld {
   const standing = world.holds.filter((hold) => hold.until > now)

@@ -9,6 +9,7 @@ const WORDS: BodyReadoutWords = {
   held: (name, what) => `${name} — ${what}`,
   worn: (name) => `worn:${name}`,
   stolen: (name, technique) => `stolen:${name}:${technique}`,
+  returned: (name, technique) => `returned:${name}:${technique}`,
   delivered: (name) => `delivered:${name}`,
   consoleOn: (name, days) => `console:${name}:${days}`,
 }

@@ -32,6 +32,7 @@ export {
   expire,
   HOLD_SECONDS,
   holdFor,
+  letGoOf,
   holdOn,
   holdProgress,
   isHeld,

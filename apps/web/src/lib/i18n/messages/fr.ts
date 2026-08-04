@@ -564,6 +564,8 @@ export const fr: Messages = {
       worn: (name) =>
         `Vous portez le visage de ${name}. Aucune aura ne le montre ; seul le toucher le trahit.`,
       stolen: (name, technique) => `${name} — capacité arrachée (${technique})`,
+      returned: (name, technique) =>
+        `${name} — la chaîne se déroule, ${technique} lui revient, et l'aura avec`,
       delivered: (name) =>
         `Un oiseau se pose, met ce qu’il portait dans la main de ${name}, et repart`,
       consoleOn: (name, days) =>

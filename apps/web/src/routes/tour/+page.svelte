@@ -494,6 +494,7 @@
     held: $t.tour.body.held,
     worn: $t.tour.body.worn,
     stolen: $t.tour.body.stolen,
+    returned: $t.tour.body.returned,
     delivered: $t.tour.body.delivered,
     consoleOn: $t.tour.body.consoleOn,
   })
@@ -525,6 +526,9 @@
     readBodies: () => ({
       aimedAt: readingIsFelt(hatsuSession.nen) ? bodyView.aimedId : null,
       holds: bodyView.marks,
+      // Not a hold, and it outlasts every one of them: a body Steal Chain has
+      // emptied has no aura for as long as the book has its ability.
+      drained: world.book.stolenFrom ? [world.book.stolenFrom] : [],
     }),
     updateWorld: (next) => (world = next),
   })
@@ -596,7 +600,27 @@
           ...world.book,
           pages: [...new Set([...world.book.pages, kind])],
           open: kind,
-          zetsu: [...new Set([...world.book.zetsu, characterId])],
+          // The person, in `stolenFrom`. `zetsu` is a list of *rooms* — the
+          // engine tests it with `ship.spaces.get(target.id)` — and pushing a
+          // character id into it put the two vocabularies in one array, where
+          // a drained guard read as a drained compartment.
+          stolenFrom: characterId,
+        },
+      }
+    },
+    // The thumb aimed back at whoever it emptied. The page comes out of the
+    // book with the ability, because a technique the visitor can still cast
+    // after giving it back is a technique that was never given back.
+    giveBack: (characterId) => {
+      if (world.book.stolenFrom !== characterId) return
+      const gone = world.book.open
+      world = {
+        ...world,
+        book: {
+          ...world.book,
+          pages: world.book.pages.filter((page) => page !== gone),
+          open: null,
+          stolenFrom: null,
         },
       }
     },

@@ -169,6 +169,13 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter "@black-whale/database" generate
 
+      # Jobs do not share a filesystem, so `Build & Test` building the packages
+      # buys this one nothing: without it `canon-compiler` imports
+      # `@black-whale/contracts/dist` and finds no such file. This job was red
+      # on that alone, under a suite that never got to run.
+      - name: Build packages
+        run: pnpm build --filter "./packages/*"
+
       # The pages the smoke suite opens read the database, so the schema and
       # the catalogue both have to be there — the same two steps the deploy
       # runs, in the same order.

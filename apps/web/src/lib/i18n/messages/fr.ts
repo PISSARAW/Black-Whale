@@ -405,7 +405,8 @@ export const fr: Messages = {
       hourNoon: 'Midi',
       hourEvening: 'Soir',
       hourNight: 'Nuit',
-      shipHourHelp: 'Seules les deux fenêtres ont un dehors. Rien d’autre ne change.',
+      shipHourHelp:
+        'Seules les deux fenêtres ont un dehors. Partout ailleurs c’est le régime du bord : au quart de nuit le vaisseau baisse ses feux et les réchauffe.',
       walkPace: 'Allure de marche',
       headBob: 'Mouvement de la tête',
       headBobOff: 'Aucun — l’œil reste de niveau',

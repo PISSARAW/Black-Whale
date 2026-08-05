@@ -456,7 +456,8 @@ export const en = {
       hourNoon: 'Noon',
       hourEvening: 'Evening',
       hourNight: 'Night',
-      shipHourHelp: 'Only the two windows show an outside. Nothing else changes.',
+      shipHourHelp:
+        'Only the two windows show an outside. Everywhere else it is the ship’s own routine: on the night watch it puts its lights down and shifts them warm.',
       /**
        * The walk is slow because the ship is enormous and nothing else on screen
        * can say so. But that is an argument about the ship rather than about

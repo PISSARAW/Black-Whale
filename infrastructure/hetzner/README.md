@@ -1,4 +1,20 @@
-# Production deployment on Hetzner
+---
+titre: hetzner
+etage: 2
+couvre:
+  - infrastructure/hetzner/**
+depend-de: [12-l-exploitation]
+revu-le: 2026-08-05
+empreinte: 06cafe7
+decisions: [adr-006]
+---
+
+# `infrastructure/hetzner` — déploiement production
+
+**Promet :** provisionner et maintenir le serveur de production sur Hetzner avec Docker, backups et rollback.
+**Refuse :** de contenir du code applicatif ou des secrets committés.
+**Entrées publiques :** `infrastructure/hetzner/deploy.sh`, `infrastructure/hetzner/rollback.sh`, `infrastructure/hetzner/backup-now.sh`, `infrastructure/hetzner/verify-restore.sh`.
+**Carte :** [12 l'exploitation](../../docs/carte/12-l-exploitation.md)
 
 This deployment targets a Debian 12 or Ubuntu 24.04 Hetzner Cloud server with Docker Engine and the Compose plugin. Only SSH, HTTP, and HTTPS need to be reachable from the internet.
 

@@ -1,4 +1,20 @@
-# `@black-whale/ability-modules`
+---
+titre: ability-modules
+etage: 2
+couvre:
+  - packages/ability-modules/**
+depend-de: [04-le-nen, 11-les-donnees]
+revu-le: 2026-08-05
+empreinte: 9eea243
+decisions: [adr-001, adr-006]
+---
+
+# `packages/ability-modules` — les quatre-vingt-deux Hatsu
+
+**Promet :** implémenter chaque Hatsu canonique comme un module indépendant, vérifiable par `canon-lint`.
+**Refuse :** de décider du canon (il vient de `data/`) ou de l'affichage (il vit dans `apps/web/src/lib/nen/`).
+**Entrées publiques :** `packages/ability-modules/src/index.ts`, `packages/ability-modules/src/bungee-gum/module.ts` (exemple canonique).
+**Carte :** [04 le nen](../../docs/carte/04-le-nen.md)
 
 Les quatre-vingt-deux hatsu, une fois chacun.
 
@@ -10,7 +26,7 @@ Deux éditions, et rien d'autre :
    `id`, `name`, `ownerId`, `category`, `description`, `canonStatus`, et
    `moduleKey` égal à l'`id`. C'est la déclaration à laquelle tout le reste
    obéit ; `canon-lint` la vérifie.
-2. **Un module ici**, `src/<id>/module.ts`, exporté depuis `src/index.ts` et
+2. **Un module ici**, `packages/ability-modules/src/bungee-gum/module.ts`, exporté depuis `packages/ability-modules/src/index.ts` et
    ajouté à `abilityModules`. Il porte le _comment_ : conditions, effets,
    actions, `interactionManifest` — et le bloc `site`.
 
@@ -39,7 +55,7 @@ lisent le sélecteur, le HUD du tour, l'arène et la traque. Il est commité pou
 rester lisible en diff, et la CI (`check:hatsu`) refuse un dépôt où il n'est
 plus ce que le compilateur écrirait.
 
-La traduction suit : `hatsu-fr.ts` est typé `Record<HatsuId, …>`, donc un hatsu
+La traduction suit : `apps/web/src/lib/i18n/messages/hatsu-fr.ts` est typé `Record<HatsuId, …>`, donc un hatsu
 sans texte français ne compile pas. Pour obtenir l'entrée à coller et traduire :
 
 ```sh
@@ -64,4 +80,4 @@ trou que TypeScript signale — il n'y a pas de repli silencieux.
   répond.
 
 Chacun de ces cas est un échec de build, pas une divergence découverte en
-production : c'est l'objet du chantier 3 de `docs/adr-001-le-canon-compile.md`.
+production : c'est l'objet du chantier 3 de `docs/decision/adr-001-le-canon-compile.md`.

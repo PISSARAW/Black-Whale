@@ -115,6 +115,7 @@ function extractCodePaths(source: string): string[] {
     const text = match[1].trim()
     if (!text.includes('/') && !text.includes('\\')) continue
     if (/^https?:\/\//.test(text)) continue
+    if (/^\//.test(text)) continue
     if (/\s/.test(text)) continue
     if (text.length < 3) continue
     paths.add(text.replace(/^\.\//, ''))
@@ -268,6 +269,101 @@ function checkSeals(files: string[], coverage: CoverageFile | null): string[] {
   return warnings
 }
 
+function extractCoveredDirs(coverage: CoverageFile): string[] {
+  const dirs = new Set<string>()
+  for (const pattern of coverage.coveredPaths) {
+    if (pattern.endsWith('/**')) {
+      dirs.add(pattern.slice(0, -3))
+    } else if (pattern.endsWith('/')) {
+      dirs.add(pattern.slice(0, -1))
+    }
+  }
+  return [...dirs].sort()
+}
+
+function checkCoveredReadmes(coverage: CoverageFile): { errors: string[]; warnings: string[] } {
+  const errors: string[] = []
+  const warnings: string[] = []
+  for (const dir of extractCoveredDirs(coverage)) {
+    const readme = join(ROOT, dir, 'README.md')
+    if (!existsSync(readme)) {
+      warnings.push(`dossier couvert sans README : ${dir}/`)
+      continue
+    }
+    const source = readFileSync(readme, 'utf8')
+    const fm = parseFrontMatter(source)
+    if (!fm || fm.etage !== 2) {
+      errors.push(`${dir}/README.md n'est pas une fiche étage 2`)
+    }
+  }
+  return { errors, warnings }
+}
+
+function computeCoveredPaths(files: string[]): string[] {
+  const paths = new Set<string>()
+  for (const file of files) {
+    const source = readFileSync(file, 'utf8')
+    const fm = parseFrontMatter(source)
+    if (!fm || !fm.couvre) continue
+    for (const pattern of fm.couvre) paths.add(pattern)
+  }
+  return [...paths].sort()
+}
+
+function checkCoverageRatchet(coverage: CoverageFile | null, currentPaths: string[]): string[] {
+  const errors: string[] = []
+  if (!coverage) {
+    errors.push('docs/.couverture.json manquant — lancer pnpm doc-lint --seal')
+    return errors
+  }
+  const previous = new Set(coverage.coveredPaths)
+  for (const path of previous) {
+    if (!currentPaths.includes(path)) {
+      errors.push(`la couverture a rétréci : ${path} n'est plus couvert`)
+    }
+  }
+  return errors
+}
+
+const LARGE_DIR_THRESHOLD = 8
+
+function countFilesRecursively(dir: string): number {
+  let count = 0
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      if (IGNORED_DIRS.has(entry.name)) continue
+      count += countFilesRecursively(path)
+    } else if (entry.isFile()) {
+      count++
+    }
+  }
+  return count
+}
+
+function findLargeUndocumentedDirs(): string[] {
+  const warnings: string[] = []
+  const roots = [join(ROOT, 'apps/web/src/lib'), join(ROOT, 'packages')]
+  for (const root of roots) {
+    if (!existsSync(root)) continue
+    for (const entry of readdirSync(root, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue
+      const dir = join(root, entry.name)
+      if (IGNORED_DIRS.has(entry.name)) continue
+      const readme = join(dir, 'README.md')
+      if (existsSync(readme)) {
+        const source = readFileSync(readme, 'utf8')
+        const fm = parseFrontMatter(source)
+        if (fm && fm.etage === 2) continue
+      }
+      if (countFilesRecursively(dir) > LARGE_DIR_THRESHOLD) {
+        warnings.push(`${relative(ROOT, dir)}/ a plus de ${LARGE_DIR_THRESHOLD} fichiers sans fiche étage 2`)
+      }
+    }
+  }
+  return warnings
+}
+
 async function main() {
   const sealMode = process.argv.includes('--seal')
   const errors: string[] = []
@@ -285,6 +381,13 @@ async function main() {
 
   const coverage = loadCoverage()
   warnings.push(...checkSeals(stageFiles, coverage))
+  errors.push(...checkCoverageRatchet(coverage, computeCoveredPaths(stageFiles)))
+  if (coverage) {
+    const readmeChecks = checkCoveredReadmes(coverage)
+    errors.push(...readmeChecks.errors)
+    warnings.push(...readmeChecks.warnings)
+  }
+  warnings.push(...findLargeUndocumentedDirs())
 
   for (const file of allFiles) {
     const rel = relative(ROOT, file)

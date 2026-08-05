@@ -2,8 +2,8 @@
 
 **Date :** 2026-08-03 · **Statut :** Livré (A-E, 2026-08-03) · **S'inscrit dans :**
 `docs/tour-2.0.md`
-(post-phases 0-4), `docs/adr-003-la-visite-habitee.md` (phase 1 livrée) et le
-chantier 4 de `docs/adr-001-le-canon-compile.md`. Répond à la remarque « le tour
+(post-phases 0-4), `docs/decision/adr-003-la-visite-habitee.md` (phase 1 livrée) et le
+chantier 4 de `docs/decision/adr-001-le-canon-compile.md`. Répond à la remarque « le tour
 est devenu vraiment beau, mais vraiment sombre aussi ».
 
 ---

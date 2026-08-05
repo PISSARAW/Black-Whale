@@ -3,7 +3,7 @@
 **Date :** 2026-08-03 · **Statut :** Livré (phases 0-4) · **Remplace :** les deux proposals externes
 (« Amélioration Graphique de la Tour » et « Visite 2.0 »), filtrés contre le code réel
 et la doctrine du dépôt. **S'inscrit dans :** le chantier 4 de
-`docs/adr-001-le-canon-compile.md` ; s'appuie sur l'audit `/tour` du 2026-07-30 et
+`docs/decision/adr-001-le-canon-compile.md` ; s'appuie sur l'audit `/tour` du 2026-07-30 et
 sur `docs/tour-immersion.md`.
 
 ---

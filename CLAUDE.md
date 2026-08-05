@@ -4,6 +4,9 @@ Ces trois normes s'appliquent à **tout code applicatif** (`apps/*/src/**`, `pac
 et sont des `error` ESLint, pas des préférences. Elles valent pour l'agent principal comme
 pour chaque sous-agent.
 
+**Le routeur de documentation est `docs/README.md`.** Avant d'ouvrir un dossier inconnu,
+lis le routeur puis la fiche `README.md` du dossier visé. ADR-006 décrit la structure.
+
 Elles ne dépendent pas de la lecture de ce fichier : un hook `PreToolUse`
 (`.claude/hooks/enforce-limits.mjs`, câblé dans `.claude/settings.json`) **refuse** toute
 écriture qui ferait grossir un fichier applicatif déjà à la borne, quel que soit l'agent.

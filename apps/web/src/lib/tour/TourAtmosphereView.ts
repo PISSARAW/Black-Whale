@@ -21,29 +21,29 @@ export class TourAtmosphereView {
     private readonly scene: Three.Scene,
     nightLightDistance: number,
   ) {
-    this.ambient = new THREE.AmbientLight(0xffffff, 2.2)
+    this.ambient = new THREE.AmbientLight(0xf6e5c1, 2.2)
     this.nightLight = new THREE.PointLight(
-      0xffd9a0,
+      0xffe0a8,
       nightLightDistance > 0 ? NIGHT_LIGHT_INTENSITY : 0,
       nightLightDistance,
       2,
     )
-    this.auraLight = new THREE.PointLight(0xffffff, 0, 14, 2)
-    this.gildLight = new THREE.PointLight(0xffd98a, 0, 9, 2)
-    this.haloLight = new THREE.PointLight(0xfff1d8, 0, 12, 2)
+    this.auraLight = new THREE.PointLight(0xfff1d8, 0, 14, 2)
+    this.gildLight = new THREE.PointLight(0xffd8a7, 0, 9, 2)
+    this.haloLight = new THREE.PointLight(0xfff4d8, 0, 12, 2)
     this.haloBubble = new THREE.Mesh(
       new THREE.SphereGeometry(1, 16, 12),
       new THREE.MeshBasicMaterial({
-        color: 0xfff1d8,
+        color: 0xfff2de,
         transparent: true,
-        opacity: 0.06,
+        opacity: 0.08,
         side: THREE.BackSide,
         depthWrite: false,
       }),
     )
     this.haloBubble.visible = false
     this.white = new THREE.Color(0xffffff)
-    this.baseFog = new THREE.Color(0x050505)
+    this.baseFog = new THREE.Color(0x0b1118)
     scene.add(
       this.ambient,
       this.nightLight,

@@ -4,6 +4,7 @@ import {
   chirpTheFlock,
   crackAWhip,
   crushLikeACat,
+  decline,
   fireABurst,
   foldPaper,
   grindThroughSpace,
@@ -25,6 +26,9 @@ import {
   wakeTheMachine,
   windTheArm,
 } from '$lib/audio/hatsuSounds'
+
+const playDance = () => playATune('dance')
+const playBloom = () => playATune('bloom')
 import type { TourReport } from './hatsu'
 
 const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
@@ -134,6 +138,40 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'page-spent': tearAPage,
   'nothing-to-steal': tearAPage,
   'not-eligible': tearAPage,
+  // The body casts that were silent: reinforcement, transformation, departure
+  // and return. Each borrows the sound of what the gesture is.
+  reinforced: landAPunch,
+  projected: skipThroughTime,
+  reshaped: grindThroughSpace,
+  rested: skipThroughTime,
+  returned: skipThroughTime,
+  'dance-played': playDance,
+  mimicked: foldPaper,
+  unmimicked: foldPaper,
+  soothed: playBloom,
+  deduced: wakeTheMachine,
+  'armour-worn': () => strikeAGong(1),
+  'armour-holding': () => strikeAGong(1),
+  mended: playBloom,
+  // Refusals and limits that keep the gesture rather than silence it.
+  refused: decline,
+  'growth-refused': stretchTheGum,
+  'jail-refused': decline,
+  'in-zetsu': decline,
+  'in-forced-zetsu': decline,
+  'ear-refused': decline,
+  'no-target': decline,
+  'no-solid': decline,
+  'no-lock': decline,
+  'no-packet': decline,
+  'arms-full': decline,
+  'hold-full': decline,
+  'console-locked': decline,
+  'needs-emperor-time': decline,
+  'needs-two-pages': decline,
+  'nothing-to-deduce': decline,
+  'nothing-to-lend': decline,
+  unrecognised: decline,
 }
 
 /** Plays only the sounds attested by the result of a cast. */

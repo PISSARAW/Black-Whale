@@ -1,6 +1,8 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { generateSymbols } from './symbols.ts'
+import { generateDependencies } from './dependencies.ts'
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url))
 const DOCS_GEN = join(ROOT, 'docs', '.gen')
@@ -28,7 +30,6 @@ export function generateRoutes(): string {
         const parts = rel.split(sep)
         const file = parts.pop()!
         const route = parts.length ? parts.join('/') : '(root)'
-        const key = `${app}/src/routes/${parts.length ? parts.join('/') : ''}`
         if (!routes.has(route)) routes.set(route, [])
         routes.get(route)!.push(file)
       }
@@ -103,4 +104,6 @@ export function generateTests(): string {
 
 writeFileSync(join(DOCS_GEN, 'routes.md'), HEADER + generateRoutes())
 writeFileSync(join(DOCS_GEN, 'tests.md'), HEADER + generateTests())
-console.log('docs/.gen/{routes,tests}.md written')
+writeFileSync(join(DOCS_GEN, 'symboles.md'), HEADER + generateSymbols())
+writeFileSync(join(DOCS_GEN, 'dependances.md'), HEADER + generateDependencies())
+console.log('docs/.gen/{routes,tests,symboles,dependances}.md written')

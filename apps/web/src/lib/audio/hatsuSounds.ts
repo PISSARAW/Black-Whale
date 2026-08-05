@@ -48,3 +48,4 @@ export {
 export { windTheArm } from './hatsu/charges'
 export { grindThroughSpace, wakeTheMachine } from './hatsu/machines'
 export { hissLikeASnake, roarLikeADragon, chirpTheFlock, crushLikeACat } from './hatsu/creatures'
+export { chainRings, judgeByHeart, tearAPage } from './hatsu/chains'

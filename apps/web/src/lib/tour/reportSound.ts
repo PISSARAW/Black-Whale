@@ -1,5 +1,6 @@
 import {
   blowAGust,
+  chainRings,
   chirpTheFlock,
   crackAWhip,
   crushLikeACat,
@@ -8,6 +9,7 @@ import {
   grindThroughSpace,
   hissLikeASnake,
   hootAnOwl,
+  judgeByHeart,
   landAPunch,
   loostAnArrow,
   openAWormhole,
@@ -18,6 +20,7 @@ import {
   skipThroughTime,
   stretchTheGum,
   strikeAGong,
+  tearAPage,
   unspoolWire,
   wakeTheMachine,
   windTheArm,
@@ -114,6 +117,23 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'flock-dispersed': chirpTheFlock,
   dispatched: chirpTheFlock,
   isolated: roarLikeADragon,
+  // Chain Jail, which the walk had been drawing in silence: five rings snapping
+  // shut around the doorways of a room.
+  jailed: chainRings,
+  // Judgment Chain, the blade going in and the rule being set. The refusal is
+  // the same material: the chain was ready, the heart was already spoken for.
+  'vow-declared': judgeByHeart,
+  'vow-broken': judgeByHeart,
+  'vow-locked': judgeByHeart,
+  // Skill Hunter and Steal Chain both turn pages. A page taken, a page lent,
+  // a page returned, and a page that cannot be taken are the same rough sound.
+  'taken-into-the-book': tearAPage,
+  bookmarked: tearAPage,
+  inherited: tearAPage,
+  drained: tearAPage,
+  'page-spent': tearAPage,
+  'nothing-to-steal': tearAPage,
+  'not-eligible': tearAPage,
 }
 
 /** Plays only the sounds attested by the result of a cast. */
@@ -163,6 +183,10 @@ export function playTourReportSound(report: TourReport): void {
       return grindThroughSpace(report.on)
     case 'tune-played':
       return playATune(report.tune)
+    case 'dowsed':
+      // Dowsing on a room or a body has no lash flash, but the chain still
+      // swings; give it a single ring rather than the full jail.
+      return chainRings()
     // `fingers-intact-refused` is deliberately not here. Every other refusal in
     // this file keeps the sound of the gesture that did happen — the palm came
     // up, the fist went into the deck — and this is the one where nothing is

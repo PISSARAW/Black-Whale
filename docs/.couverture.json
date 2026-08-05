@@ -37,8 +37,14 @@
     "apps/web/src/lib/tour/hour.ts",
     "apps/web/src/lib/tour/reportSound.ts",
     "apps/web/src/routes/**",
+    "apps/web/src/routes/arena/**",
+    "apps/web/src/routes/hunt/**",
+    "apps/web/src/routes/infiltration/**",
+    "apps/web/src/routes/investigation/**",
+    "apps/web/src/routes/reconstruction/**",
     "apps/web/src/routes/ship/**",
     "apps/web/src/routes/spoiler-limit/**",
+    "apps/web/src/routes/strategy/**",
     "data/**",
     "data/**/*.json",
     "data/CONVENTIONS.md",
@@ -55,6 +61,7 @@
     "packages/canon-engine/src/identity/**",
     "packages/canon-engine/src/spoiler/**",
     "packages/canon-engine/src/timeline/**",
+    "packages/canon-engine/src/world/**",
     "packages/contracts/**",
     "packages/database/**",
     "packages/database/prisma/**",
@@ -73,7 +80,7 @@
     "apps/web/src/lib/tour/README.md": {
       "revuLe": "2026-08-05",
       "empreinte": "7df285c",
-      "codeLines": 57975
+      "codeLines": 58342
     },
     "data/README.md": {
       "revuLe": "2026-08-05",
@@ -82,8 +89,8 @@
     },
     "docs/carte/01-le-canon.md": {
       "revuLe": "2026-08-05",
-      "empreinte": "7ff0104",
-      "codeLines": 91160
+      "empreinte": "cc875a3",
+      "codeLines": 87796
     },
     "docs/carte/02-le-temps.md": {
       "revuLe": "2026-08-05",
@@ -103,7 +110,7 @@
     "docs/carte/05-la-visite.md": {
       "revuLe": "2026-08-05",
       "empreinte": "56eb2f8",
-      "codeLines": 86476
+      "codeLines": 86843
     },
     "docs/carte/06-le-navire.md": {
       "revuLe": "2026-08-05",
@@ -112,8 +119,8 @@
     },
     "docs/carte/07-les-modes.md": {
       "revuLe": "2026-08-05",
-      "empreinte": "1de99bb",
-      "codeLines": 23718
+      "empreinte": "c3d9574",
+      "codeLines": 32507
     },
     "docs/carte/08-le-spoiler.md": {
       "revuLe": "2026-08-05",

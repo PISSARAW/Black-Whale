@@ -33,6 +33,7 @@ import {
 
 const playDance = () => playATune('dance')
 const playBloom = () => playATune('bloom')
+const playScatter = () => playATune('scatter')
 import type { TourReport } from './hatsu'
 
 const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
@@ -202,6 +203,100 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'lie-pushed': gnash,
   'lie-greened': gnash,
   'lie-transformed': gnash,
+  // The remaining solid holds and their refusals: each borrows the sound of
+  // what the gesture does to a thing.
+  copied: foldPaper,
+  swapped: foldPaper,
+  crushed: crushLikeACat,
+  halved: landAPunch,
+  hammered: landAPunch,
+  struck: landAPunch,
+  'held-fast': hissLikeASnake,
+  'bound-fast': hissLikeASnake,
+  released: unspoolWire,
+  grown: stretchTheGum,
+  'shred-cut': crackAWhip,
+  'shred-stuck': crackAWhip,
+  reeled: stretchTheGum,
+  loaded: skipThroughTime,
+  boarded: skipThroughTime,
+  alighted: skipThroughTime,
+  'cargo-taken': stretchTheGum,
+  'cargo-landed': stretchTheGum,
+  'packed-away': foldPaper,
+  // The eye is an owl in a different shape: sent, recalled, flown, filming.
+  'eye-sent': hootAnOwl,
+  'eye-recalled': hootAnOwl,
+  'eye-flown': hootAnOwl,
+  'eye-filmed': hootAnOwl,
+  'eye-piloted': hootAnOwl,
+  'owl-flown': hootAnOwl,
+  // The vacuum and its emptying: a single mechanical gulp.
+  swallowed: wakeTheMachine,
+  'coughed-up': wakeTheMachine,
+  emptied: wakeTheMachine,
+  'bag-empty': wakeTheMachine,
+  // Doors and portals: the same mouth opening or changing its mind.
+  'door-armed': openAWormhole,
+  'doors-paired': openAWormhole,
+  'doors-rearmed': openAWormhole,
+  'isolation-lifted': openAWormhole,
+  'worm-spent': openAWormhole,
+  // Contracts and pacts: a declaration struck once.
+  'pact-met': () => strikeAGong(1),
+  'pact-taken': () => strikeAGong(1),
+  counterattack: () => strikeAGong(3),
+  'double-spent': () => strikeAGong(2),
+  // Skill Hunter family: pages taken, lent, spent, or refused.
+  lent: tearAPage,
+  // Fabrications: paper becoming a thing and a thing becoming paper.
+  fabricated: foldPaper,
+  'fabrication-started': foldPaper,
+  'fabrication-lost': foldPaper,
+  // The divination tools: a card, a droplet, a coin, a dial.
+  'dial-set': () => selectACard(1),
+  'dial-read': () => selectACard(2),
+  'droplet-sent': () => selectACard(1),
+  'droplet-expired': () => selectACard(1),
+  'droplets-dry': () => selectACard(1),
+  'coin-taken': () => selectACard(2),
+  // The written and spoken futures: the scatter air of the flute.
+  foreseen: skipThroughTime,
+  'poem-read': playScatter,
+  written: playScatter,
+  'line-taken': playScatter,
+  'flute-lowered': playScatter,
+  // Smaller beasts and swarms that did not fit above.
+  'fish-fed': chirpTheFlock,
+  'fish-loosed': chirpTheFlock,
+  'flock-survey-refused': decline,
+  'smoke-spread': gnash,
+  melted: gnash,
+  // Refusals and limits without a dedicated gesture.
+  inert: decline,
+  expelled: decline,
+  'body-disturbed': skipThroughTime,
+  bored: grindThroughSpace,
+  'limb-human': landAPunch,
+  'dance-needed': decline,
+  'jail-self-refused': decline,
+  'affected-users': decline,
+  // Mode changes and small state shifts: a brief selection blip.
+  'double-mode-changed': () => selectACard(1),
+  'eye-mode-changed': () => selectACard(1),
+  'owl-mode-changed': () => selectACard(1),
+  'laid-open': () => strikeAGong(1),
+  'eyes-held': () => strikeAGong(1),
+  // The few remaining one-offs.
+  deciphered: wakeTheMachine,
+  'decipher-opened': wakeTheMachine,
+  'decipher-advanced': wakeTheMachine,
+  diverged: skipThroughTime,
+  'vision-ended': skipThroughTime,
+  pushed: landAPunch,
+  'gum-stuck-on': stretchTheGum,
+  'sacrifice-found': curseSet,
+  'snakes-rebound': coil,
 }
 
 /** Plays only the sounds attested by the result of a cast. */

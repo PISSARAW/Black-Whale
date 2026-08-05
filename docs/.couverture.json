@@ -1,0 +1,179 @@
+{
+  "sealedAt": "2026-08-05",
+  "coveredPaths": [
+    ".claude/hooks/enforce-limits.mjs",
+    ".github/workflows/**",
+    "apps/admin/**",
+    "apps/admin/src/routes/**",
+    "apps/web/src/lib/arena/**",
+    "apps/web/src/lib/assets/maps/**",
+    "apps/web/src/lib/audio/**",
+    "apps/web/src/lib/audio/hatsu/**",
+    "apps/web/src/lib/combat/**",
+    "apps/web/src/lib/components/tour/**",
+    "apps/web/src/lib/config/features.ts",
+    "apps/web/src/lib/hunt/**",
+    "apps/web/src/lib/i18n/**",
+    "apps/web/src/lib/identity/**",
+    "apps/web/src/lib/infiltration/**",
+    "apps/web/src/lib/investigation/**",
+    "apps/web/src/lib/map/**",
+    "apps/web/src/lib/nen/**",
+    "apps/web/src/lib/reconstruction/**",
+    "apps/web/src/lib/seo/**",
+    "apps/web/src/lib/server/**",
+    "apps/web/src/lib/server/ability-visibility.ts",
+    "apps/web/src/lib/server/httpCache.ts",
+    "apps/web/src/lib/server/identity-records.ts",
+    "apps/web/src/lib/server/mapPayload.ts",
+    "apps/web/src/lib/server/spoiler.ts",
+    "apps/web/src/lib/state/mapState.svelte.ts",
+    "apps/web/src/lib/strategy/**",
+    "apps/web/src/lib/tour/**",
+    "apps/web/src/lib/tour/blueprint.ts",
+    "apps/web/src/lib/tour/cast/**",
+    "apps/web/src/lib/tour/cast/report.ts",
+    "apps/web/src/lib/tour/geometry.ts",
+    "apps/web/src/lib/tour/hour.ts",
+    "apps/web/src/lib/tour/reportSound.ts",
+    "apps/web/src/routes/**",
+    "apps/web/src/routes/ship/**",
+    "apps/web/src/routes/spoiler-limit/**",
+    "data/**",
+    "data/**/*.json",
+    "data/CONVENTIONS.md",
+    "data/chapters/**",
+    "data/events/**",
+    "data/ship/blueprint.json",
+    "eslint.config.js",
+    "infrastructure/docker/**",
+    "infrastructure/hetzner/**",
+    "packages/ability-modules/**",
+    "packages/ability-sdk/**",
+    "packages/canon-compiler/**",
+    "packages/canon-engine/**",
+    "packages/canon-engine/src/identity/**",
+    "packages/canon-engine/src/spoiler/**",
+    "packages/canon-engine/src/timeline/**",
+    "packages/contracts/**",
+    "packages/database/**",
+    "packages/database/prisma/**",
+    "packages/domain/src/identity.ts",
+    "packages/domain/src/ordering.ts",
+    "packages/domain/src/temporal.ts",
+    "packages/nen-engine/**",
+    "scripts/check-ratchet.test.ts"
+  ],
+  "snapshots": {
+    "apps/web/src/lib/audio/README.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "f798985",
+      "codeLines": 3985
+    },
+    "apps/web/src/lib/tour/README.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "7df285c",
+      "codeLines": 57975
+    },
+    "data/README.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "713340f",
+      "codeLines": 77839
+    },
+    "docs/carte/01-le-canon.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "7ff0104",
+      "codeLines": 91160
+    },
+    "docs/carte/02-le-temps.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "6f589fe",
+      "codeLines": 1349
+    },
+    "docs/carte/03-l-identite.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "a3c5d2c",
+      "codeLines": 620
+    },
+    "docs/carte/04-le-nen.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "065b440",
+      "codeLines": 36390
+    },
+    "docs/carte/05-la-visite.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "56eb2f8",
+      "codeLines": 86476
+    },
+    "docs/carte/06-le-navire.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "94750ee",
+      "codeLines": 15083
+    },
+    "docs/carte/07-les-modes.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "1de99bb",
+      "codeLines": 23718
+    },
+    "docs/carte/08-le-spoiler.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "f84b7c5",
+      "codeLines": 440
+    },
+    "docs/carte/09-la-facade-web.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "b129b37",
+      "codeLines": 36731
+    },
+    "docs/carte/10-l-admin.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "588f913",
+      "codeLines": 18450
+    },
+    "docs/carte/11-les-donnees.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "8f3f6c3",
+      "codeLines": 79018
+    },
+    "docs/carte/12-l-exploitation.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "5a33bf8",
+      "codeLines": 1554
+    },
+    "docs/carte/13-les-bornes.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "3985e10",
+      "codeLines": 642
+    },
+    "docs/geste/un-evenement.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "eb1bb54",
+      "codeLines": 6722
+    },
+    "docs/geste/un-hatsu.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "3561571",
+      "codeLines": 17829
+    },
+    "docs/geste/un-mode-jouable.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "e7a68da",
+      "codeLines": 38516
+    },
+    "docs/geste/une-migration.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "5f1c222",
+      "codeLines": 2947
+    },
+    "docs/geste/une-route.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "c4e1098",
+      "codeLines": 24230
+    },
+    "docs/geste/une-salle.md": {
+      "revuLe": "2026-08-05",
+      "empreinte": "4c4f798",
+      "codeLines": 26249
+    }
+  }
+}

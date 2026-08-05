@@ -8,7 +8,7 @@ couvre:
   - apps/web/src/lib/server/identity-records.ts
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: a3c5d2c
 decisions: []
 ---
 

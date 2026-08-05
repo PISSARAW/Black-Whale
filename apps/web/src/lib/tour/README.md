@@ -6,7 +6,7 @@ couvre:
   - apps/web/src/lib/components/tour/**
 depend-de: [05-la-visite]
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 7df285c
 decisions: [adr-003, adr-005, adr-006]
 ---
 
@@ -15,7 +15,7 @@ decisions: [adr-003, adr-005, adr-006]
 **Promet :** transformer `data/ship/blueprint.json` en une scène 3D traversable, avec ses lumières, ses sons et les effets des Hatsu.
 **Refuse :** de décider du canon ou des règles de jeu. Le canon vient de `data/`, les règles des modules Hatsu.
 **Entrées publiques :** `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/cast/index.ts`, `apps/web/src/lib/tour/reportSound.ts`.
-**Carte :** [05 la visite](../../../../docs/carte/05-la-visite.md)
+**Carte :** [05 la visite](../../../../../docs/carte/05-la-visite.md)
 
 ## Découpage
 
@@ -26,7 +26,7 @@ decisions: [adr-003, adr-005, adr-006]
 | Ambiance | `apps/web/src/lib/tour/light.ts`, `apps/web/src/lib/tour/atmosphere.ts`, `apps/web/src/lib/tour/dust.ts`, `apps/web/src/lib/tour/sky.ts`, `apps/web/src/lib/tour/hour.ts` | Lumières, brume, ciel, heure du chapitre |
 | Audio | `apps/web/src/lib/tour/reportSound.ts`, `apps/web/src/lib/tour/pageHatsuAudio.svelte.ts` | Sons one-shot Hatsu et boucles d'ambiance |
 | Casts | `apps/web/src/lib/tour/cast/*.ts` | Traduction des effets Hatsu en animations / sons |
-| État page | `apps/web/src/lib/tour/page*.svelte.ts` | État et contrôleurs de la route `/tour` |
+| État page | `apps/web/src/lib/tour/page*.svelte.ts` | État et contrôleurs de la route /tour |
 | Apparitions | `apps/web/src/lib/tour/apparitions.ts`, `apps/web/src/lib/tour/apparition*View.ts` | Entités 3D instanciées dans la scène |
 | Composants | `apps/web/src/lib/components/tour/*` | Surface Svelte de la visite |
 

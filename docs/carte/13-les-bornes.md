@@ -7,7 +7,7 @@ couvre:
   - scripts/check-ratchet.test.ts
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 3985e10
 decisions: []
 ---
 

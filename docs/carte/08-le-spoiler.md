@@ -9,7 +9,7 @@ couvre:
   - apps/web/src/routes/spoiler-limit/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: f84b7c5
 decisions: []
 ---
 

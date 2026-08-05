@@ -8,7 +8,7 @@ couvre:
   - apps/web/src/lib/tour/hour.ts
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 6f589fe
 decisions: []
 ---
 

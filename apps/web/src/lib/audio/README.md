@@ -5,7 +5,7 @@ couvre:
   - apps/web/src/lib/audio/**
 depend-de: [05-la-visite]
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: f798985
 decisions: [adr-006]
 ---
 
@@ -14,13 +14,13 @@ decisions: [adr-006]
 **Promet :** fournir tous les sons du site via Web Audio API, sans fichier audio externe.
 **Refuse :** de charger des samples ou de déléguer à un moteur audio tiers.
 **Entrées publiques :** `apps/web/src/lib/audio/hatsuSounds.ts`, `apps/web/src/lib/audio/nenSounds.ts`, `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/ambient.ts`.
-**Carte :** [05 la visite](../../../../docs/carte/05-la-visite.md)
+**Carte :** [05 la visite](../../../../../docs/carte/05-la-visite.md)
 
 ## Découpage
 
 | Groupe | Fichiers | Responsabilité |
 | ------ | -------- | -------------- |
-| Synthèse | `apps/web/src/lib/audio/synth.ts`, `apps/web/src/lib/audio/hatsu/synth.ts` | Helpers de bruit filtré, d'oscillateurs et d'enveloppes |
+| Synthèse | `apps/web/src/lib/audio/hatsu/synth.ts` | Helpers de bruit filtré, d'oscillateurs et d'enveloppes |
 | Hatsu one-shot | `apps/web/src/lib/audio/hatsu/*.ts`, `apps/web/src/lib/audio/hatsuSounds.ts` | Sons des techniques (impact, chaîne, bête, refus…) |
 | Ambiance | `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/ambient/**` | Boucles de fond, musique du site, atmosphère du navire |
 | Pas | `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/steps/**` | Son des pas selon le matériau |

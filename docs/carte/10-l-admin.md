@@ -5,7 +5,7 @@ couvre:
   - apps/admin/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 588f913
 decisions: []
 ---
 

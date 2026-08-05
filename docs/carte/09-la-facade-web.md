@@ -9,7 +9,7 @@ couvre:
   - apps/web/src/lib/config/features.ts
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: b129b37
 decisions: []
 ---
 

@@ -8,7 +8,7 @@ couvre:
   - apps/web/src/lib/tour/cast/report.ts
 depend-de: [04-le-nen, 05-la-visite]
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 3561571
 decisions: [adr-006]
 ---
 

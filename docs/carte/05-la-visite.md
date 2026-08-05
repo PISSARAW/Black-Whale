@@ -8,7 +8,7 @@ couvre:
   - data/ship/blueprint.json
 depend-de: [04-le-nen, 11-les-donnees]
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 56eb2f8
 decisions: [adr-003, adr-004, adr-005, adr-006]
 ---
 

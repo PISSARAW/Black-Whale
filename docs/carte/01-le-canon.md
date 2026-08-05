@@ -8,7 +8,7 @@ couvre:
   - packages/database/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 7ff0104
 decisions: []
 ---
 

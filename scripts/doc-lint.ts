@@ -1,6 +1,7 @@
-import { readFileSync, existsSync, readdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
 import { globSync } from 'fast-glob'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -50,6 +51,14 @@ function parseFrontMatter(source: string): FrontMatter | null {
       result[currentKey] = arr
     }
   }
+  if (result.etage !== undefined && typeof result.etage !== 'number') {
+    result.etage = Number((result.etage as string[])[0])
+  }
+  for (const scalar of ['titre', 'revu-le', 'empreinte'] as const) {
+    if (result[scalar] !== undefined && Array.isArray(result[scalar])) {
+      result[scalar] = (result[scalar] as string[])[0]
+    }
+  }
   return result
 }
 
@@ -63,6 +72,24 @@ function listDocs(dir: string): string[] {
   return out
 }
 
+const IGNORED_DIRS = new Set(['node_modules', '.svelte-kit', '.gen', 'coverage', 'archive', 'dist'])
+
+function findStagePages(dir: string): string[] {
+  const out: string[] = []
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      if (IGNORED_DIRS.has(entry.name)) continue
+      out.push(...findStagePages(path))
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      const source = readFileSync(path, 'utf8')
+      const fm = parseFrontMatter(source)
+      if (fm && (fm.etage === 1 || fm.etage === 2)) out.push(path)
+    }
+  }
+  return out
+}
+
 function globExists(pattern: string): boolean {
   if (!pattern.includes('*')) return existsSync(join(ROOT, pattern))
   const matches = globSync(pattern, { cwd: ROOT, dot: true })
@@ -71,10 +98,14 @@ function globExists(pattern: string): boolean {
 
 function pathExists(rawPath: string, baseDir: string): boolean {
   if (rawPath.startsWith('/')) return existsSync(rawPath)
-  if (existsSync(join(ROOT, rawPath))) return true
-  if (existsSync(resolve(baseDir, rawPath))) return true
-  if (rawPath.includes('*')) return globExists(rawPath)
-  return false
+  const isRelativeToFile = rawPath.startsWith('./') || rawPath.startsWith('../')
+  if (!isRelativeToFile) {
+    if (!rawPath.includes('*')) return existsSync(join(ROOT, rawPath))
+    return globExists(rawPath)
+  }
+  const fromBase = resolve(baseDir, rawPath)
+  if (!rawPath.includes('*')) return existsSync(fromBase)
+  return globExists(relative(ROOT, fromBase))
 }
 
 function extractCodePaths(source: string): string[] {
@@ -135,11 +166,127 @@ async function checkGenFiles(): Promise<string[]> {
   return errors
 }
 
-async function main() {
-  const errors: string[] = []
-  const files = listDocs(DOCS)
+const COVERAGE_FILE = join(DOCS, '.couverture.json')
+const DRIFT_THRESHOLD = 0.15
 
+interface CoverageFile {
+  sealedAt: string
+  coveredPaths: string[]
+  snapshots: Record<string, { revuLe: string; empreinte: string; codeLines: number }>
+}
+
+function computeEmpreinte(patterns: string[]): string {
+  const sorted = [...patterns].sort()
+  return createHash('sha256').update(sorted.join('\n')).digest('hex').slice(0, 7)
+}
+
+function countCodeLines(patterns: string[]): number {
+  let total = 0
+  const seen = new Set<string>()
+  for (const pattern of patterns) {
+    const files = globSync(pattern, {
+      cwd: ROOT,
+      dot: true,
+      onlyFiles: true,
+      ignore: ['**/node_modules/**', '**/.svelte-kit/**', '**/.gen/**', '**/coverage/**', '**/dist/**'],
+    })
+    for (const file of files) {
+      if (seen.has(file)) continue
+      seen.add(file)
+      const content = readFileSync(join(ROOT, file), 'utf8')
+      total += content.split('\n').length
+    }
+  }
+  return total
+}
+
+function loadCoverage(): CoverageFile | null {
+  if (!existsSync(COVERAGE_FILE)) return null
+  return JSON.parse(readFileSync(COVERAGE_FILE, 'utf8')) as CoverageFile
+}
+
+function saveCoverage(coverage: CoverageFile): void {
+  writeFileSync(COVERAGE_FILE, JSON.stringify(coverage, null, 2) + '\n')
+}
+
+function today(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function updateFrontMatter(source: string, values: { 'revu-le': string; empreinte: string }): string {
+  return source
+    .replace(/^revu-le:\s*[^\n]+/m, `revu-le: ${values['revu-le']}`)
+    .replace(/^empreinte:\s*[^\n]+/m, `empreinte: ${values.empreinte}`)
+}
+
+function sealPages(files: string[]): CoverageFile {
+  const coverage: CoverageFile = { sealedAt: today(), coveredPaths: [], snapshots: {} }
   for (const file of files) {
+    const rel = relative(ROOT, file)
+    const source = readFileSync(file, 'utf8')
+    const fm = parseFrontMatter(source)
+    if (!fm || (fm.etage !== 1 && fm.etage !== 2)) continue
+    if (!fm.couvre || fm.couvre.length === 0) continue
+
+    const empreinte = computeEmpreinte(fm.couvre)
+    const codeLines = countCodeLines(fm.couvre)
+    const revuLe = today()
+
+    writeFileSync(file, updateFrontMatter(source, { 'revu-le': revuLe, empreinte }))
+
+    coverage.snapshots[rel] = { revuLe, empreinte, codeLines }
+    for (const pattern of fm.couvre) coverage.coveredPaths.push(pattern)
+  }
+  coverage.coveredPaths = [...new Set(coverage.coveredPaths)].sort()
+  return coverage
+}
+
+function checkSeals(files: string[], coverage: CoverageFile | null): string[] {
+  const warnings: string[] = []
+  if (!coverage) return warnings
+  for (const file of files) {
+    const rel = relative(ROOT, file)
+    const snapshot = coverage.snapshots[rel]
+    if (!snapshot) continue
+    const source = readFileSync(file, 'utf8')
+    const fm = parseFrontMatter(source)
+    if (!fm || !fm.couvre) continue
+
+    const currentEmpreinte = computeEmpreinte(fm.couvre)
+    if (fm.empreinte !== snapshot.empreinte || currentEmpreinte !== snapshot.empreinte) {
+      warnings.push(`${rel}: couvre ou empreinte a changé depuis le dernier sceau (${snapshot.revuLe})`)
+    }
+
+    const currentLines = countCodeLines(fm.couvre)
+    const drift = Math.abs(currentLines - snapshot.codeLines) / Math.max(1, snapshot.codeLines)
+    if (drift > DRIFT_THRESHOLD) {
+      warnings.push(
+        `${rel}: le code sous couvre a dérivé de ${Math.round(drift * 100)}% depuis ${snapshot.revuLe} (${snapshot.codeLines} → ${currentLines})`,
+      )
+    }
+  }
+  return warnings
+}
+
+async function main() {
+  const sealMode = process.argv.includes('--seal')
+  const errors: string[] = []
+  const warnings: string[] = []
+  const docsFiles = listDocs(DOCS)
+  const stageFiles = findStagePages(ROOT)
+  const allFiles = [...new Set([...docsFiles, ...stageFiles])]
+
+  if (sealMode) {
+    const coverage = sealPages(stageFiles)
+    saveCoverage(coverage)
+    console.log(`doc-lint --seal: ${Object.keys(coverage.snapshots).length} pages scellées, ${coverage.coveredPaths.length} chemins couverts`)
+    return
+  }
+
+  const coverage = loadCoverage()
+  warnings.push(...checkSeals(stageFiles, coverage))
+
+  for (const file of allFiles) {
     const rel = relative(ROOT, file)
     if (rel.startsWith('docs/.gen/')) continue
     const source = readFileSync(file, 'utf8')
@@ -183,6 +330,10 @@ async function main() {
 
   // Rule 5: .gen.md is reproducible
   errors.push(...(await checkGenFiles()))
+
+  if (warnings.length) {
+    for (const w of warnings) console.warn(`doc-lint (avertissement): ${w}`)
+  }
 
   if (errors.length) {
     for (const e of errors) console.error(`doc-lint: ${e}`)

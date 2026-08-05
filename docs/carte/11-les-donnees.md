@@ -7,7 +7,7 @@ couvre:
   - data/**/*.json
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 8f3f6c3
 decisions: []
 ---
 

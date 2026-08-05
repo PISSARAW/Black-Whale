@@ -7,7 +7,7 @@ couvre:
   - apps/web/src/lib/tour/geometry.ts
 depend-de: [05-la-visite, 11-les-donnees]
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 4c4f798
 decisions: [adr-006]
 ---
 

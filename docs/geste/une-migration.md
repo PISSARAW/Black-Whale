@@ -5,7 +5,7 @@ couvre:
   - packages/database/prisma/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 5f1c222
 decisions: []
 ---
 

@@ -6,7 +6,7 @@ couvre:
   - apps/admin/src/routes/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: c4e1098
 decisions: []
 ---
 

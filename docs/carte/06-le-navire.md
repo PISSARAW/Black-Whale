@@ -9,7 +9,7 @@ couvre:
   - apps/web/src/routes/ship/**
 depend-de: []
 revu-le: 2026-08-05
-empreinte: 000000
+empreinte: 94750ee
 decisions: []
 ---
 

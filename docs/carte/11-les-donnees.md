@@ -1,7 +1,10 @@
 ---
 titre: Les données
 etage: 1
-couvre: []
+couvre:
+  - data/CONVENTIONS.md
+  - packages/contracts/**
+  - data/**/*.json
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

@@ -1,7 +1,8 @@
 ---
 titre: L'admin
 etage: 1
-couvre: []
+couvre:
+  - apps/admin/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

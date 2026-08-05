@@ -25,4 +25,4 @@ decisions: [adr-006]
    ```
    pnpm --filter @black-whale/web test tour/blueprint.test.ts
    ```
-6. **Vérifier le rendu.** Lancer `pnpm --filter @black-whale/web dev` et visiter `/tour`.
+6. **Vérifier le rendu.** Lancer `pnpm --filter @black-whale/web dev` et visiter /tour.

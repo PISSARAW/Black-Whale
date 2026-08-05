@@ -1,6 +1,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { globSync } from 'fast-glob'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const DOCS = join(ROOT, 'docs')
@@ -64,22 +65,41 @@ function listDocs(dir: string): string[] {
 
 function globExists(pattern: string): boolean {
   if (!pattern.includes('*')) return existsSync(join(ROOT, pattern))
-  const parts = pattern.split('/')
-  const hasDouble = pattern.includes('**')
-  if (hasDouble) {
-    // Very rough check: at least one file exists under the prefix
-    const prefix = parts.slice(0, parts.findIndex((p) => p.includes('*'))).join('/')
-    return existsSync(join(ROOT, prefix))
-  }
-  const prefix = parts.slice(0, parts.findIndex((p) => p.includes('*'))).join('/')
-  if (!existsSync(join(ROOT, prefix))) return false
-  const suffix = parts.slice(parts.findIndex((p) => p.includes('*')) + 1).join('/')
-  if (!suffix) return true
-  const fullPrefix = join(ROOT, prefix)
-  for (const entry of readdirSync(fullPrefix, { withFileTypes: true })) {
-    if (entry.isDirectory() && existsSync(join(fullPrefix, entry.name, suffix))) return true
-  }
+  const matches = globSync(pattern, { cwd: ROOT, dot: true })
+  return matches.length > 0
+}
+
+function pathExists(rawPath: string, baseDir: string): boolean {
+  if (rawPath.startsWith('/')) return existsSync(rawPath)
+  if (existsSync(join(ROOT, rawPath))) return true
+  if (existsSync(resolve(baseDir, rawPath))) return true
+  if (rawPath.includes('*')) return globExists(rawPath)
   return false
+}
+
+function extractCodePaths(source: string): string[] {
+  const paths = new Set<string>()
+  const body = source.replace(/^---\n[\s\S]*?\n---/, '')
+  for (const match of body.matchAll(/`([^`\n]+)`/g)) {
+    const text = match[1].trim()
+    if (!text.includes('/') && !text.includes('\\')) continue
+    if (/^https?:\/\//.test(text)) continue
+    if (/\s/.test(text)) continue
+    if (text.length < 3) continue
+    paths.add(text.replace(/^\.\//, ''))
+  }
+  return [...paths]
+}
+
+function checkCodePaths(source: string, filePath: string): string[] {
+  const errors: string[] = []
+  const baseDir = dirname(filePath)
+  for (const rawPath of extractCodePaths(source)) {
+    if (!pathExists(rawPath, baseDir)) {
+      errors.push(`chemin de code introuvable dans ${relative(ROOT, filePath)} : \`${rawPath}\``)
+    }
+  }
+  return errors
 }
 
 function checkLinks(source: string, filePath: string): string[] {
@@ -143,7 +163,11 @@ async function main() {
       }
     }
 
-    // Rule 1: couvre paths exist
+    // Rule 1: couvre paths exist and non-empty for stage 1/2
+    if ((fm.etage === 1 || fm.etage === 2) && (!fm.couvre || fm.couvre.length === 0)) {
+      errors.push(`${rel} a un couvre: vide`)
+    }
+
     for (const pattern of fm.couvre || []) {
       if (!globExists(pattern)) {
         errors.push(`${rel} couvre un chemin inexistant : ${pattern}`)
@@ -152,6 +176,9 @@ async function main() {
 
     // Rule 2: internal links resolve
     errors.push(...checkLinks(source, file))
+
+    // Code paths cited in the body must exist
+    errors.push(...checkCodePaths(source, file))
   }
 
   // Rule 5: .gen.md is reproducible

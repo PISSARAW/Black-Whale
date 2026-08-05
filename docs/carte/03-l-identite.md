@@ -1,7 +1,11 @@
 ---
 titre: L'identité
 etage: 1
-couvre: []
+couvre:
+  - packages/domain/src/identity.ts
+  - packages/canon-engine/src/identity/**
+  - apps/web/src/lib/identity/**
+  - apps/web/src/lib/server/identity-records.ts
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

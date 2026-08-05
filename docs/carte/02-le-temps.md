@@ -1,7 +1,11 @@
 ---
 titre: Le temps
 etage: 1
-couvre: []
+couvre:
+  - packages/domain/src/temporal.ts
+  - packages/domain/src/ordering.ts
+  - packages/canon-engine/src/timeline/**
+  - apps/web/src/lib/tour/hour.ts
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

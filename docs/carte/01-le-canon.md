@@ -1,7 +1,11 @@
 ---
 titre: Le canon
 etage: 1
-couvre: []
+couvre:
+  - data/**
+  - packages/canon-compiler/**
+  - packages/canon-engine/**
+  - packages/database/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

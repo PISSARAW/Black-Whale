@@ -22,7 +22,7 @@ decisions: [adr-001, adr-006]
 ## Le trajet
 
 ```
-data/abilities.json
+data/abilities/abilities.json
         ↓
 packages/ability-sdk         ← contrat de base d'une ability
         ↓

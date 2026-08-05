@@ -14,7 +14,7 @@ decisions: [adr-006]
 
 # Ajouter un son à un Hatsu de la visite
 
-Cette recette couche un son sur un Hatsu qui apparaît déjà dans `/tour`.
+Cette recette couche un son sur un Hatsu qui apparaît déjà dans la route /tour.
 
 1. **Identifier le rapport.** Ouvrir `apps/web/src/lib/tour/cast/report.ts` et trouver le
    `TourReport` kind émis par le Hatsu.

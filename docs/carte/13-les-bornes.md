@@ -1,7 +1,10 @@
 ---
 titre: Les bornes
 etage: 1
-couvre: []
+couvre:
+  - eslint.config.js
+  - .claude/hooks/enforce-limits.mjs
+  - scripts/check-ratchet.test.ts
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

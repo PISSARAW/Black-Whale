@@ -1,7 +1,10 @@
 ---
 titre: Ajouter un événement
 etage: 1
-couvre: []
+couvre:
+  - data/events/**
+  - data/chapters/**
+  - packages/canon-engine/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

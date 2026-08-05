@@ -679,7 +679,7 @@ Fichiers : 264
 
 ## `apps/web/src/lib/tour/TourAtmosphereView.test.ts`
 
-- TourAtmosphereView > uses a warmer cinematic palette for the ship
+- TourAtmosphereView > starts on the reference hour the palette holds, and not on a copy of it
 
 ## `apps/web/src/lib/tour/apparitions.test.ts`
 
@@ -1020,7 +1020,7 @@ Fichiers : 264
 
 ## `apps/web/src/lib/tour/regime.test.ts`
 
-- regimeOf > is the identity at the hour ch. 380 draws
+- regimeOf > lands exactly on the four hours the panel offers
 
 ## `apps/web/src/lib/tour/ripper.test.ts`
 

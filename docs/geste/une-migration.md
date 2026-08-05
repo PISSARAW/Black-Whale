@@ -1,7 +1,8 @@
 ---
 titre: Ajouter une migration
 etage: 1
-couvre: []
+couvre:
+  - packages/database/prisma/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

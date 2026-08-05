@@ -1,7 +1,12 @@
 ---
 titre: Le navire
 etage: 1
-couvre: []
+couvre:
+  - apps/web/src/lib/assets/maps/**
+  - apps/web/src/lib/map/**
+  - apps/web/src/lib/server/mapPayload.ts
+  - apps/web/src/lib/state/mapState.svelte.ts
+  - apps/web/src/routes/ship/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 000000

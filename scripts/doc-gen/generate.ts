@@ -15,7 +15,7 @@ function* walk(dir: string): Generator<string> {
   }
 }
 
-function generateRoutes(): string {
+export function generateRoutes(): string {
   const apps = ['apps/web', 'apps/admin']
   const byApp = new Map<string, Map<string, string[]>>()
 
@@ -70,7 +70,7 @@ function extractTests(source: string): string[] {
   return results
 }
 
-function generateTests(): string {
+export function generateTests(): string {
   const testFiles: string[] = []
   for (const pattern of ['apps', 'packages', 'scripts']) {
     const dir = join(ROOT, pattern)

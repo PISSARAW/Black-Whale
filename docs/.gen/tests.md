@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 263
+Fichiers : 264
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1302,6 +1302,10 @@ Fichiers : 263
 - parseCreateSimulationInput > accepts a canonical fork request
 - parseSimulationActionInput > rejects an unsupported action type
 - SimulationStore.applyAction > rejects a move targeting an entity absent from the branch
+
+## `scripts/doc-lint.test.ts`
+
+- doc-lint > passes on the real docs tree
 
 ## `scripts/likeness.test.ts`
 

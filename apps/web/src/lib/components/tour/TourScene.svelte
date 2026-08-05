@@ -113,11 +113,11 @@
   import { playNenObjectSound, playNenTechniqueSound, sustainNenSound } from '$lib/audio/nenSounds'
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
-  import { createShaftDecks, shaftStrength } from '$lib/tour/shaftDecks'
-  import { REFERENCE_HOUR, shipTimeOfDay, skyOf } from '$lib/tour/sky'
+  import { createShaftDecks } from '$lib/tour/shaftDecks'
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
-  import { applySurfaceDetail } from '$lib/tour/surfaceDetail'
-  import { applySkyPool } from '$lib/tour/skyPool'
+  import { TourHourView } from '$lib/tour/hourView'
+  import { createDeckMaterials } from '$lib/tour/deckMaterials'
+  import { LENS_DEFAULTS, LENS_OFF, applyGrade } from '$lib/tour/postGrade'
   import { refractionAmount, type AuraGlass } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
@@ -803,7 +803,7 @@
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
       // what `syncSight` closes when the monkeys take sight.
-      const { renderer, scene, fog, camera, composer, renderTarget, quality, shafts, refraction } =
+      const { renderer, scene, fog, camera, composer, renderTarget, quality, shafts, refraction, grade } =
         runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -873,9 +873,7 @@
       const { ambient, nightLight, auraLight, gildLight, haloLight, haloBubble, litLights } =
         atmosphere
       const NIGHT_LIGHT = NIGHT_LIGHT_INTENSITY
-      /** The tint in force, and the clear colour the air is closing to. */
-      let tinted: number | null = atmosphere.tinted
-      const WHITE = atmosphere.white
+      /** The clear colour the air is closing to. Written by `hourView`. */
       const baseFog = atmosphere.baseFog
       // Its reach is the visitor's to set, down to nothing: see `nightLight` in
       // `$lib/tour/comfort` for why that is a setting and not a constant.
@@ -922,144 +920,42 @@
        */
 
       /**
-       * One face per surface, and it is the face that looks at the room.
+       * The seven materials the deck is drawn with.
        *
-       * `DoubleSide` was hiding a real defect and paying for it twice. Eight
-       * hundred and three pairs of walls on this ship are coplanar — 8 489 of the
-       * 29 333 metres of partition, 28,9 % — because `wallSegments` runs per room
-       * and two rooms either side of a bulkhead each emit their own face on the
-       * same line at the same depth. Drawn both ways round, those two faces fight
-       * for the depth buffer, which is the shimmer you get walking a corridor.
-       * Culled to the front, the far room's face is simply not drawn: the shimmer
-       * cannot happen, and every stretch of partition still has a face on each
-       * side, each one lit by its own room. That is the whole reason the bake can
-       * make a corridor and the cabin behind it two different places.
-       *
-       * It also halves the fragments, and it makes an inside-out surface visible
-       * as a hole instead of leaving it to pass as ordinary steel — see
-       * `MeshBuilder.quad` in `$lib/tour/mesh` for what has to hold for that.
+       * Every argument behind them — why the structure is front-culled, why the
+       * two glazed rooms need a material of their own, why a fitting must not be
+       * lit — is in `$lib/tour/deckMaterials`, beside the call it belongs to.
+       * What is left here is the fact that this closure owns them and disposes
+       * of them.
        */
-      const material = new THREE.MeshLambertMaterial({
-        vertexColors: true,
-        side: THREE.FrontSide,
-      })
-
-      // The grain of the steel — see `$lib/tour/surfaceDetail` for why this is
-      // procedural and world-space rather than a texture set. On the structural
-      // material only: the fittings and the window panes are lights, and a lamp
-      // with the tooth of a bulkhead on it is a painted panel, not a lamp.
-      if (quality.surfaceDetail) applySurfaceDetail(material)
+      const paint = createDeckMaterials(THREE, quality)
+      const { surface: material, skylit: skylitMaterial, pool: skyPool } = paint
+      const { edge: edgeMaterial, seam: seamMaterial, fitting: fittingMaterial } = paint
+      const { pane: paneMaterial, dust: dustMaterial } = paint
 
       /**
-       * And the same material again for the two rooms with a window in them,
-       * with the daylight pool hung on it — see `$lib/tour/skyPool`.
+       * The hour, and everything aboard that answers to it.
        *
-       * A second material rather than a flag on the first, because what
-       * separates them is a vertex attribute: `aSky` exists in two rooms of
-       * 314, and a program that reads it in the other 312 would be reading
-       * whatever the driver leaves in a missing attribute. The grain goes on
-       * first so the glazed rooms are the same steel as everywhere else; the
-       * pool composes with it rather than replacing its hook.
-       *
-       * `phased` is left to `material` alone on purpose: Luini's walls are
-       * about what stops the visitor, and the two rooms that go half
-       * transparent with the rest of the deck are these two — so the pool has
-       * to follow. Handled where `phased` is applied, not here.
+       * Every write it makes used to be here, spread across a `syncSky`, an
+       * `aimShafts` and the tint branch of the frame loop. It is one object now
+       * because the hour stopped being a fact about two windows: see the file
+       * comment in `$lib/tour/hourView`, and `$lib/tour/regime` for the ship's
+       * own night watch, which is what the other 312 spaces read.
        */
-      const skylitMaterial = new THREE.MeshLambertMaterial({
-        vertexColors: true,
-        side: THREE.FrontSide,
-      })
-      if (quality.surfaceDetail) applySurfaceDetail(skylitMaterial)
-      const skyPool = applySkyPool(skylitMaterial)
-
-      // The gold outline the deck plans are drawn in, carried into three
-      // dimensions: without it the decks read as one unbroken surface.
-      const edgeMaterial = new THREE.LineBasicMaterial({
-        color: 0xffd700,
-        transparent: true,
-        opacity: 0.32,
-      })
-
-      /**
-       * The seams between the deck plates: dim steel, not the gold of the plans.
-       *
-       * This is the one thing a bare floor cannot tell the visitor — how fast they
-       * are crossing it. A hundred-and-fifty-metre hall drawn as an unbroken sheet
-       * reads the same at a walk as at a run, and the courses passing underfoot at
-       * `PLATE_PITCH` are what turn the published measurement into something felt.
-       * Faint on purpose: it is a texture to walk over, not a grid to read.
-       */
-      const seamMaterial = new THREE.LineBasicMaterial({
-        color: 0x6f6256,
-        transparent: true,
-        opacity: 0.22,
-      })
-
-      /**
-       * The ceiling fittings: the one surface on the deck that is a light.
-       *
-       * `MeshBasicMaterial`, because a lamp must not be lit — run through the
-       * Lambert material it would take the night-light and the ambient like any other
-       * steel and come out as a pale square, which is a vent, not a lamp.
-       *
-       * What they burn at comes from the buffer rather than from here — see
-       * `FITTING_GLOW` and `fittingColors` in `$lib/tour/mesh`, which is also
-       * where the values above 1 and the dimming of an invented room's lamps are
-       * argued. The material only has to agree not to light them.
-       *
-       * Fog is left on. A row of fittings running away down a hundred and forty
-       * metres of corridor, each one dimmer than the last, is the whole point of
-       * drawing them: it is the only thing in the walk that makes the length of
-       * this ship countable.
-       */
-      const fittingMaterial = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        side: THREE.FrontSide,
-      })
-
-      /**
-       * The glass of the two windows: the one surface on the deck whose colour
-       * is not settled by the bake.
-       *
-       * `MeshBasicMaterial` for the reason the fittings are — a pane must not be
-       * lit — and its own material rather than theirs because what it carries is
-       * different in kind. A fitting burns at what the room's own filament burns
-       * at, which is a fact about the deck; the glass burns at what is outside
-       * it, which is a fact about the hour of the voyage.
-       *
-       * So the mesh bakes the two bands *relative* to each other — sky at 1,
-       * water at `SEA_FRACTION`, see `paneColors` in `$lib/tour/mesh` — and this
-       * colour carries the hour. One material for the whole visit, so a deck
-       * sitting in the cache is showing the right sky the moment the visitor
-       * walks back onto it.
-       *
-       * Starts at the drawn state of ch. 380, which is what the walk showed
-       * before any of this: `skyOf(REFERENCE_HOUR).glow` is `WINDOW_GLOW`.
-       */
-      const paneMaterial = new THREE.MeshBasicMaterial({
-        vertexColors: true,
-        side: THREE.FrontSide,
-      })
-      const reference = skyOf(REFERENCE_HOUR)
-
-      /**
-       * The dust of the ten great voids.
-       *
-       * Warm grey rather than white, because the only thing lighting it is the
-       * ship's own filaments, and additive at a low opacity so a mote is a
-       * suggestion of a mote. `sizeAttenuation` is the whole point: the motes near
-       * the visitor are specks and the ones fifty metres off are barely there, and
-       * that gradient is what says how deep the room is.
-       */
-      const dustMaterial = new THREE.PointsMaterial({
-        color: 0xb9a88f,
-        size: 0.07,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.55,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
+      const hourView = new TourHourView({
+        THREE,
+        camera,
+        renderer,
+        fog,
+        ambient,
+        decks: [material, skylitMaterial],
+        fittings: fittingMaterial,
+        pane: paneMaterial,
+        motes: dustMaterial,
+        pool: skyPool,
+        shafts,
+        windows: createShaftDecks(),
+        burning: () => hatsuEffects.burning > 0,
       })
 
       /**
@@ -1459,7 +1355,9 @@
         // Back to the visitor's own aperture rather than to 1: the seal is a
         // thing that happens to the eye, and lifting it hands the eye back as
         // it was set — see `exposure` in `$lib/tour/comfort`.
-        renderer.toneMappingExposure = sealed ? SEALED_EXPOSURE : $comfort.exposure
+        renderer.toneMappingExposure = sealed
+          ? SEALED_EXPOSURE
+          : $comfort.exposure * hourView.exposure
         // Restored to what the visitor asked for, which may be nothing at all.
         nightLight.intensity = sealed || $comfort.nightLight <= 0 ? 0 : NIGHT_LIGHT
         // The fittings are not lit, so putting the lights out does nothing to
@@ -4170,64 +4068,6 @@
         ground: number
       } | null = null
 
-      /** The light shafts, pointed at whichever window the visitor is near. */
-      const shaftDecks = createShaftDecks()
-      const shaftPoint = new THREE.Vector3()
-
-      /**
-       * The hour, on its three consumers at once.
-       *
-       * The glass, the pool it throws on the floor of its own room, and the
-       * shafts through it are one statement about what is outside, so they are
-       * set together off one `skyOf` — three constants that used to be written
-       * in three files and could not disagree with each other by construction.
-       *
-       * Changing event is a jump and not an hour passing: the light cuts the way
-       * `jumpTo` cuts to another deck, with no fade that would imitate a
-       * twilight nobody watched. Guarded on a key rather than eased, so it costs
-       * a string comparison a frame and is applied the frame anything moves —
-       * the projected event, or the visitor's own override.
-       */
-      let sky = reference
-      let skyKey = ''
-
-      function syncSky() {
-        const choice = $comfort.shipHour
-        const key = `${choice}|${hour.hours ?? ''}`
-        if (key === skyKey) return
-        skyKey = key
-        sky = skyOf(shipTimeOfDay(choice, hour.hours))
-        // The glass itself, whose vertex colours are the two bands relative to
-        // this — see `paneColors` in `$lib/tour/mesh`.
-        paneMaterial.color.setRGB(sky.glow[0], sky.glow[1], sky.glow[2])
-        // The pool, in the two rooms whose Lambert reads `aSky`.
-        skyPool.uSkyGlow.value = [sky.glow[0], sky.glow[1], sky.glow[2]]
-        // And the shafts' tint. Their strength is aimed per frame in
-        // `aimShafts`, which reads `sky.peak` from here.
-        if (shafts) shafts.uniforms.uTint.value = [sky.tint[0], sky.tint[1], sky.tint[2]]
-      }
-
-      const aimShafts = (plan: TierPlan, standingId: string | null) => {
-        const uniforms = shafts?.uniforms
-        if (!uniforms) return
-        const windows = shaftDecks(plan)
-
-        let strongest = 0
-        for (const { anchor, rooms } of windows) {
-          if (!standingId || !rooms.has(standingId)) continue
-          shaftPoint.set(anchor.position[0], anchor.position[1], anchor.position[2])
-          shaftPoint.project(camera)
-          // The hour's own peak rather than the constant: at night it is zero,
-          // which is the honest way to say the march has nothing to sum — the
-          // pane is under the threshold by then whatever this said.
-          const strength = shaftStrength(shaftPoint, sky.peak)
-          if (strength <= strongest) continue
-          strongest = strength
-          uniforms.uSource.value = [shaftPoint.x * 0.5 + 0.5, shaftPoint.y * 0.5 + 0.5]
-        }
-        uniforms.uStrength.value = strongest
-      }
-
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
@@ -4285,7 +4125,7 @@
         syncShells()
         syncEye()
         syncSight()
-        syncSky()
+        hourView.setHour($comfort.shipHour, hour.hours)
         syncPhasing()
         // The far deck first, so a mouth built this frame already has a room to
         // look at rather than a frame of void.
@@ -4662,28 +4502,18 @@
           }
           fogTarget = density
         }
-        fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : fogTarget, delta)
+        // The room's own air, thickened by the hour: a ship on a night regime
+        // runs its ventilation down with its lighting. The multiplier is applied
+        // to the *target* and not to the density, so it is eased across a
+        // threshold like everything else the air does — see `$lib/tour/regime`.
+        const air = fogTarget * hourView.density
+        fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : air, delta)
 
         // And its colour, when a technique has left the room standing in one.
-        // Applied on the change rather than every frame: nothing here moves,
-        // and the whole point of a tint is that it holds.
-        if (tint !== tinted) {
-          tinted = tint ?? null
-          // Halfway to white, because the ambient is the exposure: the pure
-          // aura colour multiplied into the bake reads as a room that has gone
-          // dim, and what is wanted is a room that has gone blue.
-          ambient.color.setHex(tinted ?? 0xffffff)
-          if (tinted !== null) ambient.color.lerp(WHITE, 0.4)
-          // The air and the far clip take the same colour, a long way down:
-          // the ship's own black at the end of a space would say the tint is
-          // something laid over the picture rather than the light in the room.
-          baseFog.setHex(tinted ?? 0x050505)
-          if (tinted !== null) baseFog.multiplyScalar(0.22)
-          if (!hatsuEffects.burning) {
-            fog.color.copy(baseFog)
-            renderer.setClearColor(baseFog)
-          }
-        }
+        // The hour writes the same two things, so both go through one place
+        // that knows the order — see `applyAir` in `$lib/tour/hourView`.
+        hourView.setTint(tint ?? null)
+        baseFog.copy(hourView.air)
 
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
@@ -4795,12 +4625,17 @@
           if (picked !== aimedExtra) aimedExtra = picked
         }
 
-        aimShafts(plan, standing?.id ?? null)
+        hourView.aim(plan, standing?.id ?? null)
 
         // The aperture. Written here rather than watched, for the same reason
         // the field of view is: the panel is a store and this loop is outside
         // Svelte's reactivity, and one number a frame is not a cost.
-        renderer.toneMappingExposure = blinded ? SEALED_EXPOSURE : $comfort.exposure
+        renderer.toneMappingExposure = blinded
+          ? SEALED_EXPOSURE
+          : $comfort.exposure * hourView.exposure
+        // The grade the hour asks for, and the clock the grain and the corners
+        // breathe on. Three numbers and a float: see `applyGrade`.
+        applyGrade(grade, { grade: hourView.grade, clock, calm: calmWalk, lens: quality.lens ? LENS_DEFAULTS : LENS_OFF })
 
         // The air bending around the aura. Zero unless there is aura out, and
         // zero outright for a visitor whose system asks for less movement: a

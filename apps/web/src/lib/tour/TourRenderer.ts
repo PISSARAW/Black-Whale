@@ -1,6 +1,6 @@
 /** Browser-owned renderer shell around the tour's Three.js scene. */
 import type * as Three from 'three'
-import { createGradePass } from './postGrade'
+import { LENS_DEFAULTS, LENS_OFF, createGradePass } from './postGrade'
 import { createRefractionPass } from './auraRefraction'
 import { createShaftPass } from './godRays'
 import type { PostPass } from './postTypes'
@@ -37,6 +37,14 @@ export interface SceneRuntime {
    * `$lib/tour/auraRefraction`.
    */
   refraction: PostPass | null
+  /**
+   * The grade, or `null` where the palier has none.
+   *
+   * Handed back for the reason the shafts are: the pass knows what a contrast
+   * and a vignette are, and only the walk knows what hour it is — and the hour
+   * moves all three of its numbers. See `applyGrade` and `$lib/tour/regime`.
+   */
+  grade: PostPass | null
 }
 
 /** What the driver says, before the visitor is asked. */
@@ -151,7 +159,14 @@ export async function createSceneRuntime(
     composer.addPass(refraction)
   }
 
-  if (quality.grade) composer.addPass(await createGradePass())
+  // The lens artefacts ride inside the grade rather than in a pass of their
+  // own — see `LENS_DEFAULTS` — so a palier without the taps still gets the
+  // vignette and the curve, at exactly the cost it had before.
+  let grade: PostPass | null = null
+  if (quality.grade) {
+    grade = await createGradePass(quality.lens ? LENS_DEFAULTS : LENS_OFF)
+    composer.addPass(grade)
+  }
 
   /**
    * Last, and the reason the whole file changed.
@@ -169,7 +184,18 @@ export async function createSceneRuntime(
     composer.addPass(new SMAAPass())
   }
 
-  return { renderer, scene, fog, camera, composer, renderTarget, quality, shafts, refraction }
+  return {
+    renderer,
+    scene,
+    fog,
+    camera,
+    composer,
+    renderTarget,
+    quality,
+    shafts,
+    refraction,
+    grade,
+  }
 }
 
 export interface SceneResize {

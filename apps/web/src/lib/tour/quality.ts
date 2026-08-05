@@ -93,6 +93,16 @@ export interface QualityProfile {
    * the geometry and the buffers are identical either way.
    */
   surfaceDetail: boolean
+  /**
+   * The lens artefacts inside the grade pass: the halation, the dispersion and
+   * the grain. `high` only, and for one of the three — six extra taps per pixel
+   * for the bleed. The other two are free, and are switched with it rather than
+   * separately because what they make together is one camera and half a camera
+   * is not a cheaper camera, it is a stranger one.
+   */
+  lens: boolean
+  /** The grazing sheen and the rim on the steel. See `$lib/tour/sheen`. */
+  sheen: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -104,6 +114,12 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     godRays: false,
     auraDistortion: false,
     surfaceDetail: false,
+    lens: false,
+    // On, on both paliers, and it is the one `low` addition here. The sheen is
+    // a dot product and a power in a fragment shader that was going to run
+    // anyway — no taps, no buffers — and what it buys is the thing a phone
+    // screen needs most: an edge where two dark surfaces meet.
+    sheen: true,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -114,6 +130,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     godRays: true,
     auraDistortion: true,
     surfaceDetail: true,
+    lens: true,
+    sheen: true,
     dustScale: 1,
   },
 }

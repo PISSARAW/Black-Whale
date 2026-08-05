@@ -3,46 +3,34 @@
  *
  * `sky.ts` settles what the two openings show, and says — correctly — that
  * nothing outside those two rooms reads any of it: there is no daylight in a
- * corridor on Tier 3 at any hour, and inventing one would be the walk lying
- * about a hull. That left the walk with a real hole in it all the same. At 01:27
- * and at 13:00 the other three hundred and twelve spaces were pixel for pixel
- * the same room, and a visitor who moved the clock saw two rectangles change and
- * nothing else. The ship had an hour and did not keep it.
+ * corridor on Tier 3 at any hour. That left the walk with a real hole in it all
+ * the same. At 01:27 and at 13:00 the other three hundred and twelve spaces were
+ * pixel for pixel the same room, and a visitor who moved the clock saw two
+ * rectangles change and nothing else. The ship had an hour and did not keep it.
  *
- * What fills the hole is not light from outside. It is the ship's own routine.
- * A vessel at sea does not burn its accommodation lighting flat around the
- * clock: it goes to a night regime — the passageways dropped to a fraction of
- * their day level and shifted warm so a watchkeeper crossing from a lit space to
- * a dark bridge wing is not blinded, the machinery spaces left as they are
- * because a running plant is a running plant at four in the morning. That is a
- * fact about ships and not about this ship, which puts it in exactly the class
- * `DECK_LIGHT` and `HULL_DECKS` are already in: derived, stated as derived,
- * computed from the one figure the sources give — here the hour, which the
- * voyage clock already stamps on every event.
+ * **This file is an authored palette, and it says so.** That is a change of
+ * status worth stating plainly, because the first version of it was not. It was
+ * written as a derivation — a night watch, the lighting regime a vessel at sea
+ * actually goes to — and it dimmed the ship by about a stop after dark. What was
+ * asked for instead is four hours that differ in *colour* and not in level: a
+ * morning under a blue sky, a noon under a sun, an evening in a hall lit for a
+ * party, and a night that is orange and still lit. None of that is derivable
+ * from anything the sources say about a hull with two windows in it, and
+ * dressing it as a derivation would be the one thing the rest of this
+ * reconstruction refuses to do.
  *
- * The anchor is the same anchor as everywhere else. At `REFERENCE_HOUR` this
- * file is the **identity**: every multiplier is one, every colour is the colour
- * the walk was tuned at, and the grade is `GRADE_DEFAULTS` to the digit. The ship
- * at the banquet of ch. 380 is the ship as it has always been drawn, and the
- * regime is something that happens on either side of it. `regime.test.ts` holds
- * that, so no future row of this table can quietly move the reference.
+ * So it is a palette, chosen, and its claim is aesthetic rather than
+ * evidentiary. What keeps it honest is what it is *not* allowed to touch: the
+ * two windows still carry the sourced sky out of `sky.ts`, the class ladder
+ * `light.ts` bakes into the vertices is multiplied wholesale and never
+ * reordered, and the level stays within a few per cent of the tuned exposure at
+ * every hour — so no room becomes readable at one hour and unreadable at
+ * another. The hour changes what the ship *feels* like, not what it says.
  *
  * Nothing here reads a clock. The hour is handed in, like `skyOf`'s.
  */
 import { GRADE_DEFAULTS } from './postGrade'
 import { hex, type Rgb } from './light'
-
-/**
- * The ambient wash and the far air, as the walk was tuned with them.
- *
- * Written here rather than in `TourAtmosphereView` — which imports them — for
- * the reason `sky.ts` reads `WINDOW_GLOW` out of `mesh.ts` instead of copying
- * its digits: the table below has to *be* the tuned values at 13:00, and two
- * copies of a constant are two constants that drift.
- */
-export const DAY_AMBIENT = 0xf6e5c1
-export const DAY_AMBIENT_INTENSITY = 2.2
-export const DAY_AIR = 0x0b1118
 
 /** What the hour leaves on every surface of the ship that is not a window. */
 export interface Regime {
@@ -126,122 +114,143 @@ const mixRgb = (from: Rgb, to: Rgb, t: number): Rgb => [
   mix(from[2], to[2], t),
 ]
 
-const DAY: Omit<Regime, 'deck' | 'fitting'> = {
-  ambient: { colour: hex(DAY_AMBIENT), intensity: DAY_AMBIENT_INTENSITY },
-  air: { colour: hex(DAY_AIR), density: 1 },
+/**
+ * The four hours, and the one rule that keeps them comparable.
+ *
+ * Each is a cast — a `deck` multiplier and an ambient colour — and each carries
+ * an `intensity` chosen so that the *level* comes out the same. `AmbientLight`
+ * multiplies its colour by its intensity and `hex` returns a linear colour, so
+ * the value of the hex is part of the level and not just its hue: a blue-white
+ * of 0xb4d2ff is 0,63 in luminance where the old cream was 0,795, and left at
+ * the same intensity the morning would simply be a dimmer noon. The intensities
+ * below are therefore computed rather than picked — `day / (luma(colour) ×
+ * luma(deck))`, times the share of the day this hour is meant to sit at — and
+ * the shares are 1, 1, 0,96 and 0,88. Four hours you can tell apart with your
+ * eyes shut to the colour, by nothing but which way the walls have gone.
+ *
+ * That is also the whole of the correction this file has been through. It first
+ * put the level in the hue by accident (a plausible-looking dark blue that was a
+ * six-fold dimming) and then put it there on purpose (a night watch a stop
+ * down), and the second was as wrong as the first for what is wanted here: a
+ * night the visitor cannot read is not a night, it is an outage.
+ */
+
+/**
+ * A blue sky, on a ship that has no sky.
+ *
+ * The most invented of the four and the one that reads hardest, because every
+ * filament the bake put on these walls is warm and the morning has to overcome
+ * all of them: the deck multiplier is the only one here that takes red *below*
+ * one. What it is reaching for is the hour when a hull feels like it is under
+ * daylight even where there is none.
+ */
+const MORNING: Regime = {
+  deck: [0.82, 0.95, 1.18],
+  fitting: [0.86, 0.96, 1.14],
+  ambient: { colour: hex(0xb4d2ff), intensity: 2.96 },
+  air: { colour: hex(0x0c141f), density: 1 },
   exposure: 1,
+  grade: { contrast: 1.12, saturation: 1.06, vignette: 0.31 },
+  motes: 1,
+}
+
+/** A sun. The warmest the ship gets without leaving white behind. */
+const NOON: Regime = {
+  deck: [1.08, 1.02, 0.86],
+  fitting: [1.06, 1.01, 0.9],
+  ambient: { colour: hex(0xffe7ae), intensity: 2.1 },
+  air: { colour: hex(0x14110a), density: 0.95 },
+  exposure: 1,
+  // `GRADE_DEFAULTS` itself and not a copy of its digits, on the argument
+  // `sky.ts` makes for reading `WINDOW_GLOW` out of `mesh.ts`: noon is the hour
+  // the walk was graded at, and the one place that grade is written stays
+  // `postGrade`. The other three rows move around this one.
   grade: {
     contrast: GRADE_DEFAULTS.contrast,
     saturation: GRADE_DEFAULTS.saturation,
     vignette: GRADE_DEFAULTS.vignette,
   },
-  motes: 1,
+  motes: 0.95,
 }
 
 /**
- * The watch, at its deepest.
+ * A hall lit for a party: yellow, and the fullest colour of the four.
  *
- * The two multipliers have one job each, and getting that wrong is how this row
- * was first written. `deck` and `ambient.intensity` both land on the same baked
- * vertex colour, so a night that halved the first and halved the second came out
- * at a quarter of the day — two stops, which is not a passageway on night
- * lighting, it is a power cut. The floor of the banquet hall stopped being drawn
- * at all and the room was left as its own gold outline.
- *
- * So the *level* is the ambient's to set and the ambient's alone — a little over
- * two thirds of the day, which with the aperture is about one stop and is
- * roughly where a passageway on night lighting actually sits — and `deck` is
- * near-neutral in luminance and carries only the **cast**: about two hundred
- * kelvin of amber, enough that a visitor stepping out of a stairwell knows the
- * ship has turned its lights down, nowhere near enough to recolour a room.
- *
- * The air is the third dial and it is the one that has to be held down hardest,
- * which is not obvious. In a hall the size of the banquet room most of the frame
- * is fog rather than surface, so the colour the air closes to and the density it
- * closes at together decide more of the picture's level than the lamps do: at a
- * deep 0x05080e and 1,3 the night measured at 0,37 of the day and the floor of
- * the hall simply stopped being drawn, with the whole room left as its own gold
- * outline. A twelve per cent thickening and an air two shades under the day's is
- * what the night is worth. Night aboard is not the day with a filter on it; it is
- * a narrower aperture on a ship that has put its own lights down — and you have
- * to still be able to see the deck you are standing on.
+ * Green is held up beside red rather than let fall — that is the difference
+ * between a yellow and an orange, and it is the whole of what separates this row
+ * from the next one. Written first with green down at 0,99 the evening and the
+ * night were the same hour twice, eight points apart on a measure that runs to
+ * seventy.
  */
-const WATCH: Regime = {
-  deck: [0.86, 0.78, 0.68],
-  fitting: [0.86, 0.78, 0.68],
-  ambient: { colour: hex(0xc2cede), intensity: 1.85 },
-  air: { colour: hex(0x090e16), density: 1.12 },
-  exposure: 0.94,
-  grade: { contrast: 1.22, saturation: 0.96, vignette: 0.45 },
-  motes: 1.4,
+const EVENING: Regime = {
+  deck: [1.1, 1.02, 0.7],
+  fitting: [1.09, 1.02, 0.74],
+  ambient: { colour: hex(0xffdc82), intensity: 2.23 },
+  air: { colour: hex(0x1a1108), density: 1.05 },
+  exposure: 1,
+  grade: { contrast: 1.14, saturation: 1.18, vignette: 0.36 },
+  motes: 1.15,
 }
+
+/**
+ * Orange, and still lit.
+ *
+ * Ten per cent under the day and no more. The night is told by its colour and by
+ * the air closing in around it — never by taking the room away.
+ *
+ * The only row that takes green properly down, which is what makes it read as
+ * orange against the evening's yellow rather than as more of the same.
+ */
+const NIGHT: Regime = {
+  deck: [1.24, 0.88, 0.54],
+  fitting: [1.2, 0.9, 0.6],
+  ambient: { colour: hex(0xffad5c), intensity: 3.25 },
+  air: { colour: hex(0x150c05), density: 1.12 },
+  exposure: 0.98,
+  grade: { contrast: 1.16, saturation: 1.14, vignette: 0.4 },
+  motes: 1.3,
+}
+
+/**
+ * The hour anything with no hour at all falls back to: the one ch. 380 draws.
+ *
+ * `sky.ts` falls back to `REFERENCE_HOUR` for an event the canon does not date
+ * closely enough to put a clock on, and this has to be the same hour or the two
+ * halves of the fallback would disagree — the windows showing the drawn noon
+ * over a deck lit for some other time of day.
+ */
+export const REFERENCE_REGIME: Regime = NOON
 
 /**
  * The table, midnight round to midnight.
  *
- * Seven states and straight lines between them, in the pattern of `DECK_LIGHT`,
- * `hullRumble` and `STATES` in `sky.ts` — and closed the same way, so the small
- * hours are one flat stretch of watch rather than a ramp through nothing.
+ * The four posed rows sit exactly on the four hours the visitor can ask for —
+ * `SHIP_HOURS` in `$lib/tour/sky`, 10:00, 13:00, 19:30 and 01:00 — so pressing a
+ * button lands on the row itself rather than somewhere near it, and what the
+ * panel offers is what the table holds. The rows between them are two of the
+ * four met half way, which is all a changeover is.
  *
- * - 23:00 / 00:00 / 05:00 — the watch, unchanged across the whole of the night.
- *   Three rows for one state, so the small hours are genuinely flat: an hour of
- *   the middle watch is the same hour whichever one it is, and a ramp through
- *   them would be the walk animating a changeover nobody stood up for.
- * - 07:00 — the lights come up. Half the distance back, which is what a ship
- *   changing over looks like: not a switch, a period.
- * - 09:00 — the day, and the day is the tuned picture.
- * - 13:00 — the reference. The identity, and the test says so.
- * - 18:00 — the one hour that is neither. The regime has not changed yet and
- *   the light has not either, but the *ship* has: this is the hour the walk is
- *   allowed to be beautiful on its own account — a touch of extra saturation and
- *   a touch less contrast, which is what an evening interior does under warm
- *   filaments. It carries the same status as dawn in `sky.ts`: derived, and
- *   marked.
- * - 21:00 — the changeover the other way, and steeper. A ship darkens faster
- *   than it lights: the watch is set at once and the day comes up by degrees.
+ * The night runs flat from 23:30 round to 05:00. An hour of the middle watch is
+ * the same hour whichever one it is, and a ramp through it would be the walk
+ * animating a change nobody stood up for.
  */
-/** The identity, for anything that wants the tuned picture and no hour at all. */
-export const REFERENCE_REGIME: Regime = { deck: [1, 1, 1], fitting: [1, 1, 1], ...DAY }
-
 const STATES: readonly RegimeState[] = [
-  { at: 0, regime: WATCH },
-  { at: 5, regime: WATCH },
-  {
-    at: 7,
-    regime: {
-      deck: [0.93, 0.9, 0.86],
-      fitting: [0.88, 0.85, 0.8],
-      ...blend(WATCH, REFERENCE_REGIME, 0.5),
-    },
-  },
-  { at: 9, regime: REFERENCE_REGIME },
-  { at: 13, regime: REFERENCE_REGIME },
-  {
-    at: 18,
-    regime: {
-      deck: [1.02, 0.97, 0.9],
-      fitting: [1.04, 0.98, 0.9],
-      ambient: { colour: hex(0xf8dcae), intensity: 2.15 },
-      air: { colour: hex(0x100e12), density: 1.05 },
-      exposure: 1.02,
-      grade: { contrast: 1.15, saturation: 1.14, vignette: 0.36 },
-      motes: 1.15,
-    },
-  },
-  {
-    at: 21,
-    regime: {
-      deck: [0.9, 0.83, 0.73],
-      fitting: [0.8, 0.73, 0.63],
-      ...blend(WATCH, REFERENCE_REGIME, 0.34),
-    },
-  },
-  { at: 23, regime: WATCH },
+  { at: 0, regime: NIGHT },
+  { at: 5, regime: NIGHT },
+  { at: 7.5, regime: between(NIGHT, MORNING, 0.5) },
+  { at: 10, regime: MORNING },
+  { at: 13, regime: NOON },
+  { at: 16, regime: between(NOON, EVENING, 0.5) },
+  { at: 19.5, regime: EVENING },
+  { at: 22, regime: between(EVENING, NIGHT, 0.5) },
+  { at: 23.5, regime: NIGHT },
 ]
 
-/** Everything but the two multipliers, met part way — the shared half of a row. */
-function blend(from: Regime, to: Omit<Regime, 'deck' | 'fitting'>, t: number) {
+/** Two posed hours met part way — a changeover, and the only thing between them. */
+function between(from: Regime, to: Regime, t: number): Regime {
   return {
+    deck: mixRgb(from.deck, to.deck, t),
+    fitting: mixRgb(from.fitting, to.fitting, t),
     ambient: {
       colour: mixRgb(from.ambient.colour, to.ambient.colour, t),
       intensity: mix(from.ambient.intensity, to.ambient.intensity, t),
@@ -257,14 +266,6 @@ function blend(from: Regime, to: Omit<Regime, 'deck' | 'fitting'>, t: number) {
       vignette: mix(from.grade.vignette, to.grade.vignette, t),
     },
     motes: mix(from.motes, to.motes, t),
-  }
-}
-
-function between(from: Regime, to: Regime, t: number): Regime {
-  return {
-    deck: mixRgb(from.deck, to.deck, t),
-    fitting: mixRgb(from.fitting, to.fitting, t),
-    ...blend(from, to, t),
   }
 }
 

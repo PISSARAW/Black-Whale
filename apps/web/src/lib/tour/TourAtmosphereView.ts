@@ -1,5 +1,5 @@
 import type * as Three from 'three'
-import { DAY_AIR, DAY_AMBIENT, DAY_AMBIENT_INTENSITY } from './regime'
+import { REFERENCE_REGIME } from './regime'
 
 export const NIGHT_LIGHT_INTENSITY = 1.2
 export const AURA_LIGHT_INTENSITY = 2.4
@@ -22,11 +22,14 @@ export class TourAtmosphereView {
     private readonly scene: Three.Scene,
     nightLightDistance: number,
   ) {
-    // The day's wash, and the day's far air. Read out of `$lib/tour/regime`
-    // rather than written here: the hour moves both of them, and `TourHourView`
-    // is the one writer — so the tuned values have to be the table's own or the
-    // first tick of the clock would be a step change from a second opinion.
-    this.ambient = new THREE.AmbientLight(DAY_AMBIENT, DAY_AMBIENT_INTENSITY)
+    // The reference hour's wash, and its far air. Read out of the palette in
+    // `$lib/tour/regime` rather than written here: the hour moves both of them
+    // and `TourHourView` is their one writer, so the value the scene starts at
+    // has to be the table's own — otherwise the first tick of the clock is a
+    // step change from a second opinion nobody can see in the table.
+    const { ambient, air } = REFERENCE_REGIME
+    this.ambient = new THREE.AmbientLight(0xffffff, ambient.intensity)
+    this.ambient.color.setRGB(ambient.colour[0], ambient.colour[1], ambient.colour[2])
     this.nightLight = new THREE.PointLight(
       0xffe0a8,
       nightLightDistance > 0 ? NIGHT_LIGHT_INTENSITY : 0,
@@ -48,7 +51,7 @@ export class TourAtmosphereView {
     )
     this.haloBubble.visible = false
     this.white = new THREE.Color(0xffffff)
-    this.baseFog = new THREE.Color(DAY_AIR)
+    this.baseFog = new THREE.Color().setRGB(air.colour[0], air.colour[1], air.colour[2])
     scene.add(
       this.ambient,
       this.nightLight,

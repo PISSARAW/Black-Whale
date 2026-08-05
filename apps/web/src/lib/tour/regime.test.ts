@@ -1,71 +1,88 @@
 import { describe, expect, it } from 'vitest'
-import { GRADE_DEFAULTS } from './postGrade'
-import { hex } from './light'
-import { DAY_AIR, DAY_AMBIENT, DAY_AMBIENT_INTENSITY, REFERENCE_REGIME, regimeOf } from './regime'
-import { REFERENCE_HOUR } from './sky'
+import { REFERENCE_REGIME, regimeOf, type Regime } from './regime'
+import { REFERENCE_HOUR, SHIP_HOURS } from './sky'
+
+/**
+ * What an hour is worth on a wall, as the renderer will actually compute it.
+ *
+ * `AmbientLight` multiplies its colour by its intensity and the deck multiplier
+ * multiplies the result, so the level is the product of all three and never any
+ * one of them. Every regression this file has caught has been a level hiding
+ * inside something that looked like a hue — see the note on the palette.
+ */
+const luma = (c: readonly [number, number, number]) => 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+const level = (r: Regime) => luma(r.deck) * luma(r.ambient.colour) * r.ambient.intensity
+
+/** How far a cast leans warm: positive is orange, negative is blue. */
+const warmth = (r: Regime) => r.deck[0] * r.ambient.colour[0] - r.deck[2] * r.ambient.colour[2]
+
+const HOURS = [SHIP_HOURS.morning, SHIP_HOURS.noon, SHIP_HOURS.evening, SHIP_HOURS.night]
 
 describe('regimeOf', () => {
-  it('is the identity at the hour ch. 380 draws', () => {
-    const noon = regimeOf(REFERENCE_HOUR)
-    expect(noon.deck).toEqual([1, 1, 1])
-    expect(noon.fitting).toEqual([1, 1, 1])
-    expect(noon.exposure).toBe(1)
-    expect(noon.motes).toBe(1)
-    expect(noon.air.density).toBe(1)
+  it('lands exactly on the four hours the panel offers', () => {
+    // Pressing a button has to hit the posed row rather than something near it,
+    // or the palette the panel names is not the palette the visitor gets.
+    expect(regimeOf(SHIP_HOURS.morning)).toBe(regimeOf(10))
+    expect(regimeOf(SHIP_HOURS.noon)).toBe(REFERENCE_REGIME)
+    expect(regimeOf(SHIP_HOURS.evening)).toBe(regimeOf(19.5))
+    expect(regimeOf(SHIP_HOURS.night)).toEqual(regimeOf(3))
   })
 
-  it('leaves the tuned ambient, air and grade untouched at the reference', () => {
-    const noon = regimeOf(REFERENCE_HOUR)
-    expect(noon.ambient.colour).toEqual(hex(DAY_AMBIENT))
-    expect(noon.ambient.intensity).toBe(DAY_AMBIENT_INTENSITY)
-    expect(noon.air.colour).toEqual(hex(DAY_AIR))
-    expect(noon.grade.contrast).toBe(GRADE_DEFAULTS.contrast)
-    expect(noon.grade.saturation).toBe(GRADE_DEFAULTS.saturation)
-    expect(noon.grade.vignette).toBe(GRADE_DEFAULTS.vignette)
+  it('falls back to the hour ch. 380 draws, as the sky does', () => {
+    expect(REFERENCE_REGIME).toBe(regimeOf(REFERENCE_HOUR))
   })
 
-  it('hands the reference back for anything that wants no hour at all', () => {
-    expect(REFERENCE_REGIME).toEqual(regimeOf(REFERENCE_HOUR))
+  it('keeps every hour within a few per cent of the same level', () => {
+    // The whole point of the palette: four hours told apart by colour, not by
+    // how much of the room you can see. The posed rows are computed to hit
+    // their share exactly; a changeover between two of them can overshoot by a
+    // couple of per cent, because interpolating a colour and an intensity
+    // separately does not preserve their product. Two per cent of a stop is
+    // nothing anyone can see, and holding it tighter would mean interpolating in
+    // a space nobody picked these colours in.
+    const day = level(regimeOf(REFERENCE_HOUR))
+    for (let hour = 0; hour < 24; hour += 0.25) {
+      const share = level(regimeOf(hour)) / day
+      expect(share).toBeGreaterThan(0.85)
+      expect(share).toBeLessThan(1.05)
+    }
   })
 
-  it('turns the ship down on the night watch, and warms what is left', () => {
-    const night = regimeOf(1)
-    // The level is the ambient's job and `deck` only carries the cast — see the
-    // note on `WATCH`. What the night owes is the *product*: about a stop down,
-    // and nowhere near the two stops that stop the floor being drawn.
-    const level = night.deck[0] * night.ambient.intensity
-    const day = regimeOf(REFERENCE_HOUR)
-    const full = day.deck[0] * day.ambient.intensity
-    expect(level).toBeLessThan(full * 0.75)
-    expect(level).toBeGreaterThan(full * 0.4)
-    // Warmer than it is blue: that is the whole claim of a watch regime.
-    expect(night.deck[0]).toBeGreaterThan(night.deck[2])
-    expect(night.exposure).toBeLessThan(1)
-    expect(night.air.density).toBeGreaterThan(1)
-    expect(night.motes).toBeGreaterThan(1)
-    expect(night.grade.vignette).toBeGreaterThan(GRADE_DEFAULTS.vignette)
+  it('leaves the night lit, and only a little under the day', () => {
+    const share = level(regimeOf(SHIP_HOURS.night)) / level(regimeOf(REFERENCE_HOUR))
+    expect(share).toBeGreaterThan(0.85)
+    expect(share).toBeLessThan(0.95)
+  })
+
+  it('puts the morning under a blue sky and the night under an orange one', () => {
+    expect(warmth(regimeOf(SHIP_HOURS.morning))).toBeLessThan(0)
+    expect(warmth(regimeOf(SHIP_HOURS.noon))).toBeGreaterThan(0)
+    expect(warmth(regimeOf(SHIP_HOURS.evening))).toBeGreaterThan(
+      warmth(regimeOf(SHIP_HOURS.noon)),
+    )
+    expect(warmth(regimeOf(SHIP_HOURS.night))).toBeGreaterThan(
+      warmth(regimeOf(SHIP_HOURS.evening)),
+    )
+  })
+
+  it('gives each of the four a cast no other one could be mistaken for', () => {
+    const casts = HOURS.map((hour) => warmth(regimeOf(hour)))
+    for (let i = 0; i + 1 < casts.length; i++) {
+      expect(Math.abs(casts[i + 1]! - casts[i]!)).toBeGreaterThan(0.05)
+    }
   })
 
   it('holds one flat night across the small hours', () => {
-    expect(regimeOf(23.5)).toEqual(regimeOf(0.5))
-    expect(regimeOf(2)).toEqual(regimeOf(0))
+    expect(regimeOf(23.75)).toEqual(regimeOf(0.5))
+    expect(regimeOf(2)).toEqual(regimeOf(4))
   })
 
-  it('gives the evening more colour than the day and less contrast', () => {
-    const evening = regimeOf(18)
-    expect(evening.grade.saturation).toBeGreaterThan(GRADE_DEFAULTS.saturation)
-    expect(evening.grade.contrast).toBeLessThan(GRADE_DEFAULTS.contrast + 0.05)
-    expect(evening.deck[0]).toBeGreaterThan(evening.deck[2])
-  })
-
-  it('never brightens a deck past its own day level', () => {
-    for (let hour = 0; hour < 24; hour += 0.25) {
-      const { deck, fitting } = regimeOf(hour)
-      for (const channel of [...deck, ...fitting]) {
-        expect(channel).toBeGreaterThan(0)
-        expect(channel).toBeLessThanOrEqual(1.05)
-      }
-    }
+  it('thickens the air and the dust as the day goes, and never the reverse', () => {
+    expect(regimeOf(SHIP_HOURS.noon).motes).toBeLessThan(regimeOf(SHIP_HOURS.evening).motes)
+    expect(regimeOf(SHIP_HOURS.evening).motes).toBeLessThan(regimeOf(SHIP_HOURS.night).motes)
+    expect(regimeOf(SHIP_HOURS.noon).air.density).toBeLessThan(
+      regimeOf(SHIP_HOURS.night).air.density,
+    )
   })
 
   it('moves continuously, including across midnight', () => {
@@ -73,7 +90,7 @@ describe('regimeOf', () => {
     for (let hour = 0.05; hour <= 24; hour += 0.05) {
       const next = regimeOf(hour % 24)
       expect(Math.abs(next.deck[0] - previous.deck[0])).toBeLessThan(0.02)
-      expect(Math.abs(next.exposure - previous.exposure)).toBeLessThan(0.01)
+      expect(Math.abs(next.ambient.intensity - previous.ambient.intensity)).toBeLessThan(0.05)
       previous = next
     }
   })

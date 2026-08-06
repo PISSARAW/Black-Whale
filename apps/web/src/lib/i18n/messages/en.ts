@@ -457,7 +457,7 @@ export const en = {
       hourEvening: 'Evening',
       hourNight: 'Night',
       shipHourHelp:
-        'Only the two windows show an outside. Everywhere else the hour is a colour and not a level: a blue morning, a yellow noon, a hall lit for the evening, an orange night. No room goes dark.',
+        'Only the two windows show an outside. Everywhere else the ship makes the day itself: its lamps are tunable, and they run white and high through the middle of the day, warm and lower at night — with the hall kept lit for the evening. No room goes dark.',
       /**
        * The walk is slow because the ship is enormous and nothing else on screen
        * can say so. But that is an argument about the ship rather than about

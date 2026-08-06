@@ -8,77 +8,90 @@
  * pixel for pixel the same room, and a visitor who moved the clock saw two
  * rectangles change and nothing else. The ship had an hour and did not keep it.
  *
- * **This file is an authored palette, and it says so.** That is a change of
- * status worth stating plainly, because the first version of it was not. It was
- * written as a derivation — a night watch, the lighting regime a vessel at sea
- * actually goes to — and it dimmed the ship by about a stop after dark. What was
- * asked for instead is four hours that differ in *colour* and not in level: a
- * morning under a blue sky, a noon under a sun, an evening in a hall lit for a
- * party, and a night that is orange and still lit. None of that is derivable
- * from anything the sources say about a hull with two windows in it, and
- * dressing it as a derivation would be the one thing the rest of this
- * reconstruction refuses to do.
+ * **The hole is filled by the ship's own lamps, and they are tunable.** A hull
+ * that carries people for months behind two windows has to manufacture a day for
+ * them or they stop having one — that is what long-haul vessels, submarines and
+ * polar stations all do, and they do it the same way: white-tunable fittings on
+ * a circadian schedule, cool and high at the middle of the day, warm and low at
+ * the end of it. So the claim here is the same class as `SEA_GLOW` and as dawn
+ * in `sky.ts`: derived from something nobody disputes, and marked as derived.
  *
- * So it is a palette, chosen, and its claim is aesthetic rather than
- * evidentiary. What keeps it honest is what it is *not* allowed to touch: the
- * two windows still carry the sourced sky out of `sky.ts`, the class ladder
- * `light.ts` bakes into the vertices is multiplied wholesale and never
- * reordered, and the level stays within a few per cent of the tuned exposure at
- * every hour — so no room becomes readable at one hour and unreadable at
- * another. The hour changes what the ship *feels* like, not what it says.
+ * This replaces an authored palette — four hours told apart by *colour at one
+ * level*, a blue morning and an orange night. It read as a filter laid over the
+ * finished frame rather than as light, and for a reason that is worth keeping
+ * written down, because it is the trap this file keeps falling into from a new
+ * direction each time: **the hue was being carried by the air.** `air.colour` is
+ * the fog and the clear colour, and in a hall the size of the banquet room the
+ * air is most of the frame — including every surface that receives no light at
+ * all. Tint it and the blacks stain, the materials collapse onto one value, and
+ * the depth goes. Three rules come out of that, and they are the whole design:
+ *
+ * - **The hue is carried by what lights.** `ambient` and `fitting`, never `air`.
+ * - **The level is one dial.** `ambient.intensity`, and nothing else. Every
+ *   colour in the table is emitted by `wash` at a luminance of exactly one, so
+ *   the intensity *is* the level — the two-dimmers-in-series bug that cost this
+ *   file three passes is now unrepresentable rather than merely documented.
+ * - **The steel stays steel.** `deck` is the identity at every hour, and the
+ *   reason is worth writing down because getting it wrong cost a version. The
+ *   bake is *not* coloured: `mesh.ts` writes `albedo × openness × (fill + gain ×
+ *   sources)` into each vertex, and `sources` is a **scalar**. A lamp's colour
+ *   reaches the fittings and nothing else — `lamplightOf` gives the room its
+ *   `power`, never its `glow`. So there is no tungsten illuminant under the
+ *   walls to divide back out, and a white balance written on `deck` is not a
+ *   correction of anything: it is a raw blue multiplier on albedos that are
+ *   warm on purpose, and it turns the hall blue. The only illuminant the room
+ *   has is the ambient, which is where its colour belongs.
  *
  * Nothing here reads a clock. The hour is handed in, like `skyOf`'s.
  */
 import { GRADE_DEFAULTS } from './postGrade'
 import { hex, type Rgb } from './light'
+import { luminance, wash } from './illuminant'
 
 /** What the hour leaves on every surface of the ship that is not a window. */
 export interface Regime {
   /**
-   * A multiplier on the baked light of the deck — a colour rather than a
-   * number, because a watch regime is dimmer *and* warmer and one figure could
-   * only say the first.
+   * A multiplier on the baked light of the deck, and the identity at every hour.
    *
-   * Applied on the structural material, so it multiplies the vertex bake
-   * wholesale: the class ladder `light.ts` built survives untouched, the whole
-   * ladder simply comes down together. Deliberately a gentle amber and not the
-   * red of a darkroom — the walk's proof system is a colour one, a filament
-   * warm and a window cold, and a night that painted the infirmary's cold
-   * fluorescents amber would have collapsed the distinction the grade is
-   * forbidden from touching.
+   * Kept as a field rather than deleted because the material needs a written
+   * value each time the hour lands. It has now been wrong in both directions:
+   * as a cast of the hour it doubled the ambient's own and turned rooms orange,
+   * and as a white balance it turned them blue, because the bake it was
+   * correcting is a scalar and has no colour to correct. Nothing goes here.
    */
   deck: Rgb
   /**
    * The same on the fittings, which dim with what they are lighting.
    *
-   * It must not run *ahead* of `deck`, and that is a rendering fact rather than
-   * a lighting one. The fittings are written above white so the bloom and the
-   * halation both key off them, and in a hall the size of the banquet room what
-   * those two spill is most of what is landing on the floor — so a night that
-   * took the lamps down harder than the deck took the deck down with them,
-   * twice. Held at the deck's own multiplier: the lamps dim with the room, not
-   * faster than it.
+   * Unlike `deck` this one does move, and it has to: the fittings are
+   * `MeshBasicMaterial`, so no light reaches them and the ambient cannot tell
+   * them anything. They are the only lamps in a hall that has no window, and an
+   * hour that changed the room while the lamps lighting it stayed a fixed
+   * white-hot was the single most dishonest thing in the last version. Derived
+   * rather than picked — `lamps` below — so it can neither drift from the hour's
+   * own colour nor run ahead of its level.
    */
   fitting: Rgb
   /**
    * The wash over everything: what colour it is, and how hard.
    *
-   * The two are not independent and the trap is worth naming, because it cost
-   * three passes at this table to find. `AmbientLight` multiplies its colour by
-   * its intensity, and `hex` returns a **linear** colour — so the value of the
-   * hex is part of the level, not just its hue. The night was first written at
-   * `0x4c5a70`, which reads as a plausible cool grey and is a linear luminance of
-   * 0,13 against the day's 0,78: a six-fold drop hidden inside what looked like a
-   * hue, on top of the intensity that was meant to be doing the dimming. The deck
-   * went to a fifth of the day and the floor of the banquet hall stopped being
-   * drawn.
-   *
-   * So a colour here is picked at roughly the day's own *value* and differs from
-   * it in hue alone, and `intensity` is the only thing that says how dark the
-   * hour is. Anything else is two dimmers wired in series with one label.
+   * `colour` is always at a luminance of one — see `wash` — so `intensity` is
+   * the level in the only sense that matters, the light actually landing on a
+   * wall. Two consequences, and the second is the one that used to be a bug:
+   * a row can be read straight off the table, and two rows interpolate without
+   * drifting, because luminance is linear and the midpoint of two colours at
+   * luminance one is a colour at luminance one.
    */
   ambient: { colour: Rgb; intensity: number }
-  /** The air: the colour it closes to, and a multiplier on its density. */
+  /**
+   * The air: the colour it closes to, and a multiplier on its density.
+   *
+   * **The one thing in this file forbidden to carry the hour.** It may move in
+   * value — the night closes a little darker and a little thicker — and it may
+   * not move in hue at any hour, ever. Warm light and cold air is where the
+   * depth of the room comes from; warm light and warm air is a photograph with
+   * a filter on it.
+   */
   air: { colour: Rgb; density: number }
   /** A multiplier on the visitor's own aperture — never a replacement for it. */
   exposure: number
@@ -115,51 +128,180 @@ const mixRgb = (from: Rgb, to: Rgb, t: number): Rgb => [
 ]
 
 /**
- * The four hours, and the one rule that keeps them comparable.
+ * The temperatures the fittings actually render at.
  *
- * Each is a cast — a `deck` multiplier and an ambient colour — and each carries
- * an `intensity` chosen so that the *level* comes out the same. `AmbientLight`
- * multiplies its colour by its intensity and `hex` returns a linear colour, so
- * the value of the hex is part of the level and not just its hue: a blue-white
- * of 0xb4d2ff is 0,63 in luminance where the old cream was 0,795, and left at
- * the same intensity the morning would simply be a dimmer noon. The intensities
- * below are therefore computed rather than picked — `day / (luma(colour) ×
- * luma(deck))`, times the share of the day this hour is meant to sit at — and
- * the shares are 1, 1, 0,96 and 0,88. Four hours you can tell apart with your
- * eyes shut to the colour, by nothing but which way the walls have gone.
- *
- * That is also the whole of the correction this file has been through. It first
- * put the level in the hue by accident (a plausible-looking dark blue that was a
- * six-fold dimming) and then put it there on purpose (a night watch a stop
- * down), and the second was as wrong as the first for what is wanted here: a
- * night the visitor cannot read is not a night, it is an outage.
+ * Deliberately a thousand kelvin above what the fixtures would be specified at —
+ * a warm-white lamp is a 2700 K part and the night below is 3800 K — because the
+ * walk has no chromatic adaptation and the eye does. A
+ * standing observer white-balances a warm room within a minute and stops seeing
+ * the orange; a render does not, and a literal 2700 K night comes out as sodium.
+ * The offset is the eye's own correction, done in the table because there is
+ * nowhere else in the pipeline to do it.
  */
+const NIGHT_KELVIN = 3900
+const MORNING_KELVIN = 6300
+const NOON_KELVIN = 6500
+const EVENING_KELVIN = 4100
 
 /**
- * A blue sky, on a ship that has no sky.
+ * The level the walk is tuned at, and the anchor every share below is taken of.
  *
- * The most invented of the four and the one that reads hardest, because every
- * filament the bake put on these walls is warm and the morning has to overcome
- * all of them: the deck multiplier is the only one here that takes red *below*
- * one. What it is reaching for is the hour when a hull feels like it is under
- * daylight even where there is none.
+ * `2.2` is the figure the walk had before any of this existed, and getting back
+ * to it took finding a bug in a commit called « Améliore l'ambiance visuelle ».
+ * That commit changed `new AmbientLight(0xffffff, 2.2)` to
+ * `new AmbientLight(0xf6e5c1, 2.2)` — which reads as a change of hue and is a
+ * change of *level*: `hex(0xf6e5c1)` has a luminance of 0.795, so the ship
+ * quietly lost a third of a stop and every table written afterwards, this one
+ * included, took the reduced figure for the reference and built on it.
+ *
+ * It is the same trap `wash` exists to close, one layer further out — and it is
+ * the reason the anchor is written here as a *level* rather than as a colour and
+ * an intensity. A hue cannot dim the ship any more; only this number can.
+ */
+const DAY_LEVEL = 2.2
+
+/**
+ * The far air: the hour's own colour, taken almost all the way out.
+ *
+ * This constant has now been wrong in both directions and the middle is the
+ * answer. Written as a hue of the hour, it stained every black pixel on screen —
+ * the fog and the clear colour cover most of a hall this size, including the
+ * surfaces receiving no light at all. Written as a fixed cool navy, it did
+ * nothing at all while the bake was tungsten and then took the whole room the
+ * moment the bake was balanced: with the light neutral there was no warmth left
+ * to sit against, and the hall simply went blue.
+ *
+ * And it must not be *bright*, which is the third way this went wrong: at 0.005
+ * of luminance the far air was three times the near-black the walk was tuned
+ * against, and in a hall three hundred metres long that is what closes the far
+ * end. The day now sits at 0.0016 — `0x050505`, the value the renderer still
+ * clears to — and only the night is allowed to thicken and come forward.
+ *
+ * So the air follows the hour and keeps a quarter of it. That is enough for warm
+ * light to still have somewhere cooler to fall away into, and far too little to
+ * be read as a colour of its own. `value` is the linear luminance the air closes
+ * at, carried on its own so that — as everywhere else in this file — nothing
+ * hides a level inside a hue.
+ */
+const AIR_TINT = 0.25
+const AIR_VALUE_DAY = 0.0016
+const AIR_VALUE_EVENING = 0.003
+const AIR_VALUE_NIGHT = 0.0039
+
+function airOf(kelvin: number, value: number): Rgb {
+  const hue = wash(kelvin, 1).colour
+  const damped: Rgb = [
+    1 + (hue[0] - 1) * AIR_TINT,
+    1 + (hue[1] - 1) * AIR_TINT,
+    1 + (hue[2] - 1) * AIR_TINT,
+  ]
+  const scale = value / luminance(damped)
+  return [damped[0] * scale, damped[1] * scale, damped[2] * scale]
+}
+
+/** The hour lights the ship. It does not repaint it — see `Regime.deck`. */
+const STEEL: Rgb = [1, 1, 1]
+
+/**
+ * The filament the *fittings* burn at, and how hard to divide it back out.
+ *
+ * This is the one place on the ship where a lamp's colour is actually baked
+ * in. `mesh.ts` writes `lamplight.glow` into the fittings' own vertices — the
+ * visible ceiling panels — and `glow` is a deck temperature met half way with a
+ * category hue, which lands near `0xffd4a2` on the accommodation decks. Every
+ * other surface gets that lamp as a *scalar* and never as a colour.
+ *
+ * So the balance is scoped to the fittings and to nothing else. Without it the
+ * lamps stay tungsten in a room the ambient has taken to daylight, which is the
+ * mismatch the eye catches first — a white hall lit by orange panels. With it on
+ * anything wider, the correction has nothing to cancel and simply paints.
+ */
+export const LAMP_FILAMENT = 0xffd4a2
+const BALANCE_STRENGTH = 1
+
+const LAMP_BALANCE: Rgb = (() => {
+  const lamp = hex(LAMP_FILAMENT)
+  const raw: Rgb = [
+    (1 / lamp[0]) ** BALANCE_STRENGTH,
+    (1 / lamp[1]) ** BALANCE_STRENGTH,
+    (1 / lamp[2]) ** BALANCE_STRENGTH,
+  ]
+  const scale = 1 / luminance(raw)
+  return [raw[0] * scale, raw[1] * scale, raw[2] * scale]
+})()
+
+/** The hue of the reference hour, which the fittings are measured against. */
+const NOON_HUE = wash(NOON_KELVIN, 1).colour
+
+/**
+ * What the visible lamps are worth at an hour: its cast, times its dimming.
+ *
+ * The cast is the hour's own hue divided by noon's, so the reference comes out
+ * at `[1, 1, 1]` exactly and the fittings can never disagree with the ambient
+ * about what colour the ship is burning. The dimming is the hour's share of the
+ * day and not its share divided by the aperture: `toneMappingExposure` reaches
+ * the lamps and the walls alike, so it cancels out of the comparison, and what
+ * this multiplier has to match is the *ambient's* own share. The bloom and the
+ * halation key off these, and in a hall this size that spill is most of what
+ * reaches the floor: lamps that did not dim were a night that never got dark
+ * however far the ambient came down.
+ */
+function lamps(kelvin: number, share: number): Rgb {
+  const hue = wash(kelvin, 1).colour
+  // The fittings' own vertex colours were baked under the same filament, so
+  // they take the same balance as the deck — otherwise the lamps would stay
+  // tungsten in a room that no longer is, which is the mismatch you see first.
+  const cast: Rgb = [
+    (hue[0] / NOON_HUE[0]) * LAMP_BALANCE[0],
+    (hue[1] / NOON_HUE[1]) * LAMP_BALANCE[1],
+    (hue[2] / NOON_HUE[2]) * LAMP_BALANCE[2],
+  ]
+  // The cast is normalised for the same reason `wash` normalises: a ratio of
+  // two hues is not itself at luminance one, and left alone it would put a few
+  // per cent of dimming inside what is meant to be a colour. Taken out here,
+  // `luminance(fitting) × exposure` is the hour's share of the day exactly —
+  // which is a thing a test can hold rather than approximately hold.
+  const dim = share / luminance(cast)
+  return [cast[0] * dim, cast[1] * dim, cast[2] * dim]
+}
+
+/**
+ * A morning: white, and not yet at full.
+ *
+ * Two hundred kelvin under noon and a tenth below it in level. Both hours are meant to
+ * read as plain white light — asked for in those words — so what separates them
+ * is the level, a grade with a little more contrast and a little less colour,
+ * and a morning that is the crisper of the two rather than the warmer. That is
+ * also the honest direction for a manufactured day: a ship bringing its people
+ * awake runs the cold end of its lamps in the morning, which is what circadian
+ * lighting is for in the first place.
  */
 const MORNING: Regime = {
-  deck: [0.82, 0.95, 1.18],
-  fitting: [0.86, 0.96, 1.14],
-  ambient: { colour: hex(0xb4d2ff), intensity: 2.96 },
-  air: { colour: hex(0x0c141f), density: 1 },
+  deck: STEEL,
+  fitting: lamps(MORNING_KELVIN, 0.9),
+  ambient: wash(MORNING_KELVIN, DAY_LEVEL * 0.9),
+  air: { colour: airOf(MORNING_KELVIN, AIR_VALUE_DAY), density: 1 },
   exposure: 1,
-  grade: { contrast: 1.12, saturation: 1.06, vignette: 0.31 },
+  grade: { contrast: 1.14, saturation: 1.02, vignette: 0.34 },
   motes: 1,
 }
 
-/** A sun. The warmest the ship gets without leaving white behind. */
+/**
+ * Noon, and a real one: 6500 K, the coolest and the highest hour of the ship.
+ *
+ * This is the row that moved furthest, and it moved twice. The palette's noon
+ * was a 4400 K cream — a filament's colour, which is what a room *lit by lamps
+ * at midday* looks like and is not what anyone means by noon. The first
+ * correction put it at 5600 K, which is daylight but not white: sRGB's own white
+ * point is D65, so anything under about 6500 K renders with a cast however
+ * correctly it was derived. This row sits on the white point, which is the only
+ * temperature at which "white light" means what it says.
+ */
 const NOON: Regime = {
-  deck: [1.08, 1.02, 0.86],
-  fitting: [1.06, 1.01, 0.9],
-  ambient: { colour: hex(0xffe7ae), intensity: 2.1 },
-  air: { colour: hex(0x14110a), density: 0.95 },
+  deck: STEEL,
+  fitting: lamps(NOON_KELVIN, 1),
+  ambient: wash(NOON_KELVIN, DAY_LEVEL),
+  air: { colour: airOf(NOON_KELVIN, AIR_VALUE_DAY), density: 1 },
   exposure: 1,
   // `GRADE_DEFAULTS` itself and not a copy of its digits, on the argument
   // `sky.ts` makes for reading `WINDOW_GLOW` out of `mesh.ts`: noon is the hour
@@ -174,40 +316,47 @@ const NOON: Regime = {
 }
 
 /**
- * A hall lit for a party: yellow, and the fullest colour of the four.
+ * A hall lit for a party, which is the one hour that does not follow the sun.
  *
- * Green is held up beside red rather than let fall — that is the difference
- * between a yellow and an orange, and it is the whole of what separates this row
- * from the next one. Written first with green down at 0,99 the evening and the
- * night were the same hour twice, eight points apart on a measure that runs to
- * seventy.
+ * Every other row falls with the day. This one does not: 4000 K and ninety-five
+ * per cent of noon, the vignette opened and the saturation up — because a
+ * reception room in the evening is a room somebody has just switched *on*. It is
+ * the warmest bright hour of the four, and that combination is the whole reason
+ * an evening looks like an evening rather than like a dimmed afternoon.
  */
 const EVENING: Regime = {
-  deck: [1.1, 1.02, 0.7],
-  fitting: [1.09, 1.02, 0.74],
-  ambient: { colour: hex(0xffdc82), intensity: 2.23 },
-  air: { colour: hex(0x1a1108), density: 1.05 },
+  deck: STEEL,
+  fitting: lamps(EVENING_KELVIN, 0.754),
+  ambient: wash(EVENING_KELVIN, DAY_LEVEL * 0.754),
+  air: { colour: airOf(EVENING_KELVIN, AIR_VALUE_EVENING), density: 1.03 },
   exposure: 1,
-  grade: { contrast: 1.14, saturation: 1.18, vignette: 0.36 },
+  grade: { contrast: 1.1, saturation: 1.16, vignette: 0.29 },
   motes: 1.15,
 }
 
 /**
- * Orange, and still lit.
+ * The night: the evening's own light, a fifth down and a shade warmer.
  *
- * Ten per cent under the day and no more. The night is told by its colour and by
- * the air closing in around it — never by taking the room away.
+ * Set by pointing rather than by argument — the row that was the *evening* was
+ * the one wanted for the night, so this row is that row moved. A stop down was
+ * tried first, then two thirds of one; both read as an outage rather than as a
+ * night, which is a thing this file has now got wrong four times in a row and
+ * has stopped arguing with. `0.82` on the ambient times `0.98` on the aperture
+ * is `0.804`: a third of a stop, visible beside the evening and nowhere near
+ * costing the far end of the hall.
  *
- * The only row that takes green properly down, which is what makes it read as
- * orange against the evening's yellow rather than as more of the same.
+ * The saturation still sits under the evening's, which is not a stylistic choice
+ * but the direction the eye actually goes: low light desaturates, and a night
+ * that is the most chromatic image of the four — which the palette's was — is
+ * the eye run backwards.
  */
 const NIGHT: Regime = {
-  deck: [1.24, 0.88, 0.54],
-  fitting: [1.2, 0.9, 0.6],
-  ambient: { colour: hex(0xffad5c), intensity: 3.25 },
-  air: { colour: hex(0x150c05), density: 1.12 },
+  deck: STEEL,
+  fitting: lamps(NIGHT_KELVIN, 0.651),
+  ambient: wash(NIGHT_KELVIN, DAY_LEVEL * 0.651),
+  air: { colour: airOf(NIGHT_KELVIN, AIR_VALUE_NIGHT), density: 1.1 },
   exposure: 0.98,
-  grade: { contrast: 1.16, saturation: 1.14, vignette: 0.4 },
+  grade: { contrast: 1.14, saturation: 1.02, vignette: 0.36 },
   motes: 1.3,
 }
 
@@ -246,7 +395,15 @@ const STATES: readonly RegimeState[] = [
   { at: 23.5, regime: NIGHT },
 ]
 
-/** Two posed hours met part way — a changeover, and the only thing between them. */
+/**
+ * Two posed hours met part way — a changeover, and the only thing between them.
+ *
+ * The ambient interpolates as a colour and an intensity separately, which used
+ * to overshoot the level by a couple of per cent and needed a note apologising
+ * for it. It no longer can: luminance is a linear function of the channels, so
+ * the midpoint of two colours at luminance one is itself at luminance one, and
+ * the interpolated intensity is the interpolated level exactly.
+ */
 function between(from: Regime, to: Regime, t: number): Regime {
   return {
     deck: mixRgb(from.deck, to.deck, t),
@@ -273,7 +430,7 @@ function between(from: Regime, to: Regime, t: number): Regime {
  * The ship's own regime at one hour of its day.
  *
  * The dial is closed, so an hour past the last state runs on to the first
- * through midnight rather than clamping — and since both ends hold `WATCH`, what
+ * through midnight rather than clamping — and since both ends hold `NIGHT`, what
  * that produces is an hour of night that is the same night at 23:30 and at
  * 00:30, which is the truth about a ship on watch.
  */

@@ -406,7 +406,7 @@ export const fr: Messages = {
       hourEvening: 'Soir',
       hourNight: 'Nuit',
       shipHourHelp:
-        'Seules les deux fenêtres ont un dehors. Partout ailleurs l’heure est une couleur et non un niveau : matin bleu, midi jaune, soir de salle de fête, nuit orange. Aucune pièce ne s’éteint.',
+        'Seules les deux fenêtres ont un dehors. Partout ailleurs le navire fabrique lui-même le jour : ses luminaires sont accordables, blancs et hauts au milieu du jour, chauds et plus bas la nuit — la salle restant allumée pour le soir. Aucune pièce ne s’éteint.',
       walkPace: 'Allure de marche',
       headBob: 'Mouvement de la tête',
       headBobOff: 'Aucun — l’œil reste de niveau',

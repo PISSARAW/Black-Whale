@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { blueprint, buildShip } from '../../tour/blueprint'
 import type { Space } from '../../tour/types'
@@ -28,6 +28,11 @@ import type { Space } from '../../tour/types'
 const ship = buildShip()
 
 const source = readFileSync(new URL('./local/observation-deck.svelte', import.meta.url), 'utf8')
+const area37564 = readFileSync(new URL('./local/room-37564.svelte', import.meta.url), 'utf8')
+const diningHall = readFileSync(
+  new URL('./local/central-dining-hall.svelte', import.meta.url),
+  'utf8',
+)
 
 /** Every `[a, b]` pair inside a named literal, in the order it is written. */
 function pairs(name: string): [number, number][] {
@@ -92,5 +97,42 @@ describe('the observation deck plan', () => {
     expect(source).toContain(`${across.toString().replace('.', ',')} m across the bow`)
     expect(source).toContain(`${deep} m deep`)
     expect(source).toContain(`${space.ceiling} m deckhead`)
+  })
+})
+
+describe('room appearance evidence', () => {
+  it('never changes a room layout or its occupants at random', () => {
+    const directory = new URL('./local/', import.meta.url)
+    for (const file of readdirSync(directory).filter((entry) => entry.endsWith('.svelte'))) {
+      const room = readFileSync(new URL(file, directory), 'utf8')
+      expect(room, file).not.toContain('Math.random')
+    }
+  })
+
+  it('limits Area 37564 to its attested footprint and marks its interior unknown', () => {
+    const space = blueprint.spaces.find((entry) => entry.id === 'tier-5-area-37564')!
+    const xs = space.footprint.map(([x]) => x)
+    const zs = space.footprint.map(([, z]) => z)
+    const width = Math.max(...xs) - Math.min(...xs)
+    const depth = Math.max(...zs) - Math.min(...zs)
+
+    expect(area37564).toContain(`${width} × ${depth} m`)
+    expect(area37564).toContain('intérieur non publié')
+    expect(area37564).toContain("inspect('unpublished-interior')")
+    expect(area37564).not.toContain('const pillars')
+    expect(
+      blueprint.structures.filter((entry) => entry.spaceId === 'tier-5-area-37564'),
+    ).toHaveLength(0)
+  })
+
+  it('keeps the chapter 377 refectory fixtures in both the tour and the room plan', () => {
+    const structures = blueprint.structures.filter(
+      (entry) => entry.spaceId === 'tier-5-central-dining-hall',
+    )
+    expect(structures.some((entry) => entry.id.endsWith('service-counter'))).toBe(true)
+    expect(structures.some((entry) => entry.id.endsWith('menu-board'))).toBe(true)
+    expect(diningHall).toContain('long service counter')
+    expect(diningHall).toContain('diners sit directly on the deck')
+    expect(diningHall).not.toContain('class="bench"')
   })
 })

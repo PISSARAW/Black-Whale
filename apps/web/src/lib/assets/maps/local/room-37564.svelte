@@ -1,97 +1,76 @@
 <script lang="ts">
-  // Room interactions are not wired up yet. The elements keep their click
-  // and keyboard affordances so the behaviour can be attached in one place
-  // when it exists; until then this must not log on a public page.
-  function handleElementClick(_elementId: string) {}
+  /**
+   * Area 37564, restricted to what the published material establishes.
+   *
+   * The label and its Tier 5 footprint are catalogued; volumes 34–36 do not
+   * show an identifiable interior. Earlier versions invented a vast hall,
+   * pillars, ducts and a randomly scattered crowd. A deliberately empty plan
+   * is more detailed canonically because it states the exact boundary between
+   * what is known and what is not.
+   */
+  function inspect(_area: string) {}
+  function activate(event: KeyboardEvent) {
+    if (event.key !== 'Enter' && event.key !== ' ') return
+    event.preventDefault()
+    inspect('unpublished-interior')
+  }
+
+  const SCALE = 26
+  const room = { x0: -94.5, x1: -66.5, z0: 12.25, z1: 26.25 }
+  const x = (metres: number) => (metres - room.x0) * SCALE + 136
+  const y = (metres: number) => (metres - room.z0) * SCALE + 128
 </script>
 
-<svg
-  viewBox="0 0 1000 600"
-  class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
->
+<svg viewBox="0 0 1000 600" class="h-full w-full rounded-lg border border-[#333] bg-[#050505]">
   <defs>
     <style>
-      .wall {
+      .room {
+        fill: rgba(255, 255, 240, 0.025);
         stroke: #fffff0;
-        stroke-width: 6;
+        stroke-width: 4;
+      }
+      .unknown {
         fill: none;
-      }
-      .zone {
-        fill: rgba(255, 215, 0, 0.05);
-        transition: fill 0.2s;
-        cursor: pointer;
-      }
-      .zone:hover {
-        fill: rgba(255, 215, 0, 0.15);
+        stroke: #666;
+        stroke-width: 2;
+        stroke-dasharray: 9 8;
       }
       .label {
         fill: #fffff0;
-        font-family: sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        pointer-events: none;
+        font: 700 15px sans-serif;
         text-anchor: middle;
-      }
-      .sublabel {
-        fill: #ffd700;
-        font-size: 12px;
         pointer-events: none;
+      }
+      .sub {
+        fill: #9dc4e0;
+        font: 11px sans-serif;
         text-anchor: middle;
-      }
-      .passenger {
-        fill: #555;
-        stroke: #222;
-      }
-      .pillar {
-        fill: #1a1a1a;
-        stroke: #444;
-        stroke-width: 4;
+        pointer-events: none;
       }
     </style>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700"
-    >Area 37564 (Tier 5 Assembly Point)</text
+  <text x="500" y="38" class="label" font-size="25" fill="#ffd700">Zone 37564 — niveau 5</text>
+  <text x="500" y="62" class="sub">28 × 14 m dans la reconstruction · intérieur non publié</text>
+
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspecter l’enveloppe connue de la zone 37564"
+    x={x(room.x0)}
+    y={y(room.z0)}
+    width={(room.x1 - room.x0) * SCALE}
+    height={(room.z1 - room.z0) * SCALE}
+    class="room"
+    onclick={() => inspect('unpublished-interior')}
+    onkeydown={activate}
+  />
+  <rect x={x(-91.5)} y={y(14.2)} width={22 * SCALE} height={10.1 * SCALE} class="unknown" />
+  <text x="500" y="295" class="label" font-size="30" opacity="0.24">37564</text>
+  <text x="500" y="330" class="sub"
+    >Aucun mobilier ni détail de plafond attesté dans les tomes 34–36</text
   >
-
-  <g transform="translate(50, 80)">
-    <!-- Huge Assembly Hall Walls -->
-    <rect x="0" y="0" width="900" height="500" class="wall" />
-
-    <!-- Signage on walls -->
-    <text x="150" y="50" class="label text-gray-500" font-size="40" opacity="0.4">37564</text>
-    <text x="750" y="50" class="label text-gray-500" font-size="40" opacity="0.4">37564</text>
-
-    <!-- Massive support pillars -->
-    <circle cx="200" cy="250" r="40" class="pillar" />
-    <circle cx="700" cy="250" r="40" class="pillar" />
-
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="0"
-      y="0"
-      width="900"
-      height="500"
-      onclick={() => handleElementClick('crowd')}
-    />
-
-    <!-- Dense crowd of Tier 5 passengers -->
-    {#each Array(80) as _, _i (_i)}
-      <circle
-        cx={Math.random() * 860 + 20}
-        cy={Math.random() * 460 + 20}
-        r={Math.random() * 6 + 6}
-        class="passenger"
-      />
-    {/each}
-  </g>
+  <text x="500" y="520" class="sub"
+    >Le contour vient du plan de visite ; le rectangle pointillé marque l’inconnu</text
+  >
 </svg>

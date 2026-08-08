@@ -169,14 +169,9 @@
       <text x="150" y="-10" class="label text-red-500" font-size="12"
         >Nouveau riche & general passengers mixing</text
       >
-      <!-- Draw many small circles for crowd -->
-      {#each Array(40) as _, _i (_i)}
-        <circle
-          cx={Math.random() * 300}
-          cy={Math.random() * 160 + 10}
-          r={Math.random() * 5 + 8}
-          class="passenger"
-        />
+      <!-- A stable sample of the packed assembly corridor; people are not furniture. -->
+      {#each Array(40) as _, i (i)}
+        <circle cx={(i * 73) % 300} cy={((i * 47) % 150) + 15} r={8 + (i % 5)} class="passenger" />
       {/each}
 
       <!-- A few guards -->

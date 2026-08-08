@@ -4,8 +4,9 @@
    *
    * It used to draw a toll being collected and the thugs collecting it. Who is
    * in the room is the marker layer's answer and it changes with the chapter;
-   * what the room *is* is what ch. 377 draws — long tables in rows with a bench
-   * either side, and the raised platform among them. The Buor toll of ch. 358
+   * what the room *is* is what ch. 377 draws — long low tables in rows, diners
+   * seated directly on the deck, the raised platform among them, and the long service counter
+   * under its menu boards with a line of fixed stools. The Buor toll of ch. 358
    * happens at the passage, which is where the label now sits instead.
    *
    * Every fixture is placed by the coordinates the blueprint gives it.
@@ -29,9 +30,12 @@
 
   const room = { x0: 14, x1: 45.5, y0: 10.5, y1: 42 }
 
-  /** The six refectory tables, each with its two benches. */
+  /** The six low refectory boards; the panels show no benches. */
   const tables = [16.5, 19.5, 22.5, 37, 40, 43]
   const platform = { at: [29.75, 26.25], size: [9, 12] }
+  const counter = { x0: 17, x1: 42.5, z0: 13.925, z1: 15.075 }
+  const stools = Array.from({ length: 12 }, (_, index) => 18.1 + index * 2.1)
+  const menuBoards = Array.from({ length: 6 }, (_, index) => 18.2 + index * 4.55)
 
   /** The four openings the tour derives from the shared walls. */
   const doors = [
@@ -63,16 +67,26 @@
       .table:hover {
         fill: rgba(255, 215, 0, 0.35);
       }
-      .bench {
-        fill: rgba(200, 200, 200, 0.12);
-        stroke: #8a8a8a;
-        stroke-width: 1;
-      }
       .platform {
         fill: rgba(255, 215, 0, 0.12);
         stroke: #ffd700;
         stroke-width: 2;
         cursor: pointer;
+      }
+      .counter {
+        fill: rgba(157, 111, 70, 0.24);
+        stroke: #c79a6b;
+        stroke-width: 2;
+      }
+      .stool {
+        fill: rgba(200, 200, 200, 0.18);
+        stroke: #aaa;
+        stroke-width: 1.5;
+      }
+      .menu {
+        fill: rgba(255, 255, 240, 0.08);
+        stroke: #d7d7c9;
+        stroke-width: 1;
       }
       .door {
         stroke: #ffd700;
@@ -103,7 +117,7 @@
     Central Dining Hall — Tier 5
   </text>
   <text x="500" y="56" class="label" font-size="11" opacity="0.55">
-    31.5 m × 31.5 m — ch. 377: long tables in rows, and the raised platform among them
+    31.5 m × 31.5 m — ch. 377: service counter, menu boards, stools and long communal tables
   </text>
 
   <rect
@@ -129,6 +143,27 @@
     />
   {/each}
 
+  <!-- The staffed wall counter and the fixed stools shown behind the crowd. -->
+  <rect
+    x={x(counter.x0)}
+    y={y(counter.z0)}
+    width={(counter.x1 - counter.x0) * SCALE}
+    height={(counter.z1 - counter.z0) * SCALE}
+    class="counter"
+  />
+  {#each stools as centre, index (index)}
+    <circle cx={x(centre)} cy={y(16)} r={0.36 * SCALE} class="stool" />
+  {/each}
+  {#each menuBoards as centre, index (index)}
+    <rect
+      x={x(centre - 1.65)}
+      y={y(10.72)}
+      width={3.3 * SCALE}
+      height={0.35 * SCALE}
+      class="menu"
+    />
+  {/each}
+
   <rect
     role="button"
     tabindex="0"
@@ -145,20 +180,6 @@
 
   {#each tables as centre, index (centre)}
     <rect
-      class="bench"
-      x={x(centre - 1.025)}
-      y={y(15.25)}
-      width={0.35 * SCALE}
-      height={22 * SCALE}
-    />
-    <rect
-      class="bench"
-      x={x(centre + 0.675)}
-      y={y(15.25)}
-      width={0.35 * SCALE}
-      height={22 * SCALE}
-    />
-    <rect
       role="button"
       tabindex="0"
       aria-label="Inspect map area"
@@ -172,7 +193,9 @@
     />
   {/each}
 
-  <text x={x(19.5)} y={y(13.6)} class="label" font-size="11">Six tables, a bench either side</text>
+  <text x={x(19.5)} y={y(14.05)} class="label" font-size="11">
+    Six low boards · diners sit directly on the deck
+  </text>
   <text x={x(29.75)} y={y(9.4)} class="sublabel"
     >Passage — the Buor take their toll here, ch. 358</text
   >

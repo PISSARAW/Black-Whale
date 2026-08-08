@@ -149,7 +149,7 @@
         {#each Array(4) as _, r (r)}
           {#each Array(3) as _, c (c)}
             <rect x={25 + c * 55} y={15 + r * 30} width="40" height="20" class="bunk" />
-            {#if Math.random() > 0.3}
+            {#if (r * 3 + c) % 4 !== 0}
               <circle cx={45 + c * 55} cy={25 + r * 30} r="6" class="hunter" />
             {/if}
           {/each}

@@ -19,6 +19,7 @@
     "test:coverage": "turbo test:coverage",
     "audit": "pnpm audit --prod --audit-level high",
     "canon-lint": "pnpm --filter @black-whale/contracts canon-lint:dev",
+    "rooms:audit": "node scripts/generate-room-appearance-audit.mjs",
     "doc:gen": "tsx scripts/doc-gen/generate.ts",
     "doc-lint": "tsx scripts/doc-lint.ts"
   },

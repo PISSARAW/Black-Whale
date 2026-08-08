@@ -15585,11 +15585,6 @@
     "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-366.2",
-        "note": "Shown alone in Area 37564; gives the search order before the full chapter 377 gathering"
-      },
-      {
         "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Full Troupe meeting"

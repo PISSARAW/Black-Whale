@@ -555,7 +555,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "mafia",
-    "description": "The Heil-Ly family's registered Tier 3 office, abandoned early in the voyage and later searched by Kakin soldiers; it connects to Morena's Tier 1 quarters.",
+    "description": "The Heil-Ly family's registered Tier 3 premises. The published plan establishes the office and entrance, but the manga does not reveal a complete interior layout. Chapter 378 separately shows Morena behind a door marked 302: only the numbered doorway, a dark open gathering space and the semicircle formed by her twenty-three followers are visible, so no unshown furniture should be inferred.",
     "entrances": [],
     "exits": []
   },
@@ -615,7 +615,7 @@
     "parentLocationId": "tier-5",
     "deck": 5,
     "zoneType": "public",
-    "description": "Crowded central mess hall of Tier 5. Franklin waits for Hisoka there while the Brigade uses it as an assembly point.",
+    "description": "Tier 5's crowded central refectory: six rows of long, low dining boards with passengers seated directly on the deck, a low central platform used by the Phantom Troupe, a continuous staffed service counter, fixed stools, six framed menu boards and exposed trusses, gantries, ducts and cable runs under the high ceiling. The Buor toll is outside in the access passage, not inside the hall.",
     "entrances": [],
     "exits": []
   },
@@ -695,7 +695,7 @@
     "parentLocationId": "tier-5",
     "deck": 5,
     "zoneType": "public",
-    "description": "Numbered Tier 5 sector the Phantom Troupe uses as its assembly point once the members scatter across the lower tiers.",
+    "description": "Numbered Tier 5 assembly area with a 28 × 14 m footprint in the tour reconstruction. Volumes 34–36 establish its name and function but do not show an identifiable interior; no furniture, pillars, ducts, ceiling treatment or occupants can therefore be placed from those volumes.",
     "entrances": [],
     "exits": []
   }

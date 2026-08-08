@@ -623,20 +623,12 @@
         ],
         "location": "Tier 1 - Room 1014",
         "locationId": "tier-1-royal-residential-sector-room-1014"
-      },
-      {
-        "event": "Chrollo orders the hunt for Hisoka",
-        "storyDate": "≈ Day 1 · 16:00",
-        "charactersInvolved": ["chrollo-lucilfer"],
-        "location": "Tier 5 - Standard Cabins - Area 37564",
-        "locationId": "tier-5-standard-cabins"
       }
     ],
-    "location": "Tier 1 royal suites and Tier 5 Area 37564",
+    "location": "Tier 1 royal suites",
     "keyEvents": [
       "Every royal suite is recorded separately at 16:00",
-      "Musse is in the passage, not at Camilla's table",
-      "Chrollo is shown alone; the full Troupe meeting does not occur until chapter 377"
+      "Musse is in the passage, not at Camilla's table"
     ],
     "description": "A room-by-room status sequence at 16:00. Splitting the panels prevents simultaneous but separate royal households from becoming one event."
   },

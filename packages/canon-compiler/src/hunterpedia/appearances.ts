@@ -20,7 +20,7 @@ import { normalizeName } from './wikitext.js'
 
 /** The voyage: the catalogue dates nothing outside this span. */
 export const FIRST_CHAPTER = 340
-export const LAST_CHAPTER = 416
+export const LAST_CHAPTER = 417
 
 /**
  * A list this long already covers the whole voyage and has therefore been read

@@ -1419,5 +1419,44 @@
       "day": 12
     },
     "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 417,
+    "chapterTitle": "Emergency",
+    "sequence": 1,
+    "title": "Benjamin stages Tserriednich's execution and detains his guards",
+    "summary": "Benjamin crushes the body everyone else perceives, publicly claims responsibility for Tserriednich's execution and sends Salkov and Danjin to the Justice Bureau, while Salkov remains unsure where Parallel Future's illusion begins or ends.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 417,
+    "chapterTitle": "Emergency",
+    "sequence": 2,
+    "title": "Benjamin infects Tubeppa and Tyson with TSK-17",
+    "summary": "Benjamin summons Tubeppa and Tyson to room 1001, describes TSK-17 as a stolen weapon and secretly exposes both princes to an aerosol dose while pretending to discuss a peaceful end to the contest.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 417,
+    "chapterTitle": "Emergency",
+    "sequence": 3,
+    "title": "Benjamin seizes the Justice Bureau and invokes emergency law",
+    "summary": "Benjamin turns the Justice Bureau into a consolidated military headquarters and plans to trigger Kakin's emergency succession law by ensuring every prince faces death, allowing his child to be named heir before Bohemian Rhapsody merges with his Nen and continues through his bloodline.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
   }
 ]

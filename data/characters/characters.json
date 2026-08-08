@@ -1744,8 +1744,8 @@
       "evidence": "Longhi asks Kurapika to investigate his hypothesis that Beyond fathered one of the fourteen princes."
     },
     "shipLocation": {
-      "tier": 1,
-      "room": "1004",
+      "tier": 2,
+      "room": "Justice Bureau",
       "status": "actif — infecté par TSK-17 et maudit",
       "role": "chef militaire / loi martiale"
     },
@@ -1762,7 +1762,8 @@
       "On the eleventh day, Fugetsu gives Benjamin a posthumous letter from Kacho. Benjamin's Guardian Beast chases away the evil spirits surrounding Fugetsu. He understands that these are minor parasites attracted by her weakening and estimates that she will probably not survive ten days.",
       "On the twelfth day, Benjamin receives false reports from Balsamilco, whose body is occupied by Halkenburg, concerning the latter's death and funeral. When he feels Halkenburg's aura again, he understands that it is a body-swapping power. He then becomes nauseated and discovers that he has been contaminated by TSK-17.",
       "Furykov admits to having infected Benjamin under Unma's duress while claiming to want to circumvent the curse that Beyond imposed on him at birth. He maintains that the Guardian Beast of Benjamin will be able to transform him after his death into the protective deity of Kakin. Benjamin believes him, proclaims martial law and orders the capture of the princes and the elimination of their non-military guards, while seeking to ensure the succession of his illegitimate child before he dies.",
-      "Benjamin then set up his command center at the Tier 2 Justice Office. Faced with Mizaistom, Botobai and Kaiser, he announced that he wanted to bring together the military, judicial and administrative powers. He justifies martial law with an alleged biological conspiracy by Tserriednich and Halkenburg. Mizaistom perceives the opportunistic half-truths in his speech, while Botobai and Kaiser notice his pale complexion and suspect that he himself is infected."
+      "Benjamin then set up his command center at the Tier 2 Justice Office. Faced with Mizaistom, Botobai and Kaiser, he announced that he wanted to bring together the military, judicial and administrative powers. He justifies martial law with an alleged biological conspiracy by Tserriednich and Halkenburg. Mizaistom perceives the opportunistic half-truths in his speech, while Botobai and Kaiser notice his pale complexion and suspect that he himself is infected.",
+      "After shooting the image of Tserriednich created by Parallel Future, Benjamin crushes its head, claims responsibility for the execution and sends Salkov and Danjin to the Justice Bureau. He then summons Tubeppa and Tyson, presents TSK-17 as a stolen weapon and secretly infects both of them. Benjamin plans to make every prince's death inevitable, invoke Kakin's emergency succession law and have Nasubi name his child as heir before his own death."
     ],
     "abilitiesAndPowers": "First Prince and Deputy Supreme Advisor of the military, Benjamin has considerable political and military influence, martial training, and a personal unit composed of Nen users. Balsamilco considers him a good leader and tactician when he has sufficient information. His charisma inspires absolute loyalty and affection in his men. His strength is superhuman: he can overpower and decapitate an adult lion, as well as lift a dumbbell weighing at least one hundred kilograms with one hand.",
     "equipment": [
@@ -1791,7 +1792,7 @@
         "Cannot fight another Guardian Spirit Beast",
         "Cannot directly attack the host of another Guardian Beast"
       ],
-      "ability": "According to Furykov, she could transform Benjamin after his death into the guardian deity of Kakin, capable of protecting future kings and replacing the Urn ceremony. Benjamin would then keep Benjamin Baton. This ability remains unconfirmed."
+      "ability": "Bohemian Rhapsody merges with Benjamin's Nen after his death and becomes the Guardian Spirit Beast of one of his blood relatives. Benjamin and the Beast take turns choosing a new host whenever the current one dies; the first chooser is determined by the ability. Once fused, Benjamin loses his eligibility in the Succession Contest, but intends to preserve Benjamin Baton and guide Kakin's future rulers through his bloodline."
     },
     "mangaAppearances": [
       {
@@ -2178,6 +2179,11 @@
         "chapter": 416,
         "title": "Proclamation",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "battles": [
@@ -2201,6 +2207,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-363.2"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.3"
       }
     ]
   },
@@ -2220,7 +2230,7 @@
     "shipLocation": {
       "tier": 1,
       "room": "VIP Jail",
-      "status": "emprisonnee",
+      "status": "emprisonnée — infectée par TSK-17",
       "role": "prisonniere"
     },
     "biography": [
@@ -2644,6 +2654,11 @@
         "chapter": 416,
         "title": "Proclamation",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "voice"
       }
     ],
     "battles": [
@@ -3605,6 +3620,11 @@
         "chapter": 416,
         "title": "Proclamation",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -3641,8 +3661,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1005",
-      "status": "actif",
+      "room": "1001",
+      "status": "actif — infectée par TSK-17",
       "role": "recherche / laboratoire"
     },
     "biography": [
@@ -4053,6 +4073,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
@@ -4069,6 +4094,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-417.2"
       }
     ],
     "guardianBeast": {
@@ -4091,8 +4120,8 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1006",
-      "status": "actif",
+      "room": "1001",
+      "status": "actif — infectée par TSK-17",
       "role": "preaching/influence by Nen"
     },
     "biography": [
@@ -4504,6 +4533,11 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
@@ -4520,6 +4554,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-417.2"
       }
     ],
     "guardianBeast": {
@@ -11597,15 +11635,16 @@
     "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 1,
-      "room": "1001",
+      "tier": 2,
+      "room": "Justice Bureau",
       "status": "actif",
       "role": "officier tactique"
     },
     "biography": [
       "Balsamilco commands Benjamin's private soldiers and advises the prince to avoid impulsive action until the Guardian Spirit Beasts are understood. He coordinates infiltrations of the other royal quarters and the legal use of self-defense.",
       "He analyzes Halkenburg's collective aura and the risks of Manipulation, then develops a biological assassination using TSK-17. Disguised as a military physician, he approaches Halkenburg but is struck by the prince's arrow and exchanges bodies with him.",
-      "Halkenburg's consciousness uses Balsamilco's body to return toward Benjamin while the captain's own consciousness remains trapped in Halkenburg's dying body."
+      "Halkenburg's consciousness uses Balsamilco's body to return toward Benjamin while the captain's own consciousness remains trapped in Halkenburg's dying body.",
+      "During special martial law, Benjamin's soldiers find Balsamilco conscious again in room 1009. A rehearsed question-and-answer test confirms his identity, after which he rejoins Benjamin and begins searching for the feather marks that can expose Halkenburg's next host."
     ],
     "abilitiesAndPowers": "Balsamilco is Benjamin's senior tactician, an experienced soldier and a scientific planner. He designs layered operations that exploit military law, biological agents and the succession rules.",
     "equipment": [
@@ -11997,6 +12036,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "battles": ["Balsamilco Might vs. Halkenburg and his followers"],
@@ -12004,6 +12048,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.3"
       }
     ]
   },
@@ -25414,8 +25462,8 @@
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 1,
-      "room": "1004",
+      "tier": 2,
+      "room": "Justice Bureau",
       "status": "actif",
       "role": "Private Soldier for Prince Tserriednich Hui Guo Rou ; Provisional Hunter"
     },
@@ -25804,6 +25852,11 @@
         "chapter": 416,
         "title": "Proclamation",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -25820,6 +25873,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417"
       }
     ]
   },
@@ -27927,8 +27984,8 @@
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 1,
-      "room": "1004",
+      "tier": 2,
+      "room": "Justice Bureau",
       "status": "actif",
       "role": "garde / instructeur de Nen"
     },
@@ -28331,6 +28388,11 @@
         "chapter": 416,
         "title": "Proclamation",
         "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "temporalIdentityManaged": true,
@@ -28338,6 +28400,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417"
       }
     ]
   },
@@ -37690,6 +37756,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -42327,7 +42398,13 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": [],
+    "mangaAppearances": [
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "appears"
+      }
+    ],
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1001",
@@ -42370,8 +42447,8 @@
     "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 1,
-      "room": "1003",
+      "tier": 2,
+      "room": "Justice Bureau",
       "status": "actif",
       "role": "soldat privé de Benjamin / garde du camp Zhang Lei"
     },
@@ -42381,6 +42458,11 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
+        "status": "appears"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
         "status": "appears"
       }
     ],
@@ -42397,6 +42479,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.3"
       }
     ]
   },

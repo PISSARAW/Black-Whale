@@ -1068,5 +1068,40 @@
       "Benjamin shoots Tserriednich after forcing entry into room 1004"
     ],
     "description": "With roughly ten hours of useful time left after TSK-17 symptoms begin, Benjamin moves through Tier 1 under special martial law. He confronts Camilla, kills two of her attendants and refuses to trigger her post-mortem counter; Moswana then sacrifices herself at close range and places a long-prepared Yomotsu Hegui curse on him. Benjamin next storms room 1004, detains Nen student Danjin for questioning and shoots Tserriednich, who has already instructed Salkov to report the apparent death while keeping Parallel Future secret."
+  },
+  {
+    "id": "ch-417",
+    "number": 417,
+    "publicationOrder": 417,
+    "title": "Emergency",
+    "date": "2026-08-09",
+    "timeline": [
+      {
+        "event": "Benjamin stages Tserriednich's execution and detains his guards",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["prince-benjamin", "prince-tserriednich", "salkov", "danjin"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Benjamin infects Tubeppa and Tyson with TSK-17",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["prince-benjamin", "prince-tubeppa", "prince-tyson"],
+        "location": "Black Whale 1 - Tier 1 - Room 1001"
+      },
+      {
+        "event": "Benjamin seizes the Justice Bureau and invokes emergency law",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "coventoba"],
+        "location": "Black Whale 1 - Ministry of Justice"
+      }
+    ],
+    "location": "Kakin / Black Whale 1 - Tiers 1-4",
+    "keyEvents": [
+      "Benjamin leaves Tserriednich's apparent corpse as evidence of an execution",
+      "Tubeppa and Tyson are secretly exposed to TSK-17",
+      "Benjamin orders the Justice Bureau converted into his military headquarters",
+      "Bohemian Rhapsody reveals Benjamin's post-mortem succession plan"
+    ],
+    "description": "Benjamin treats Tserriednich's apparent death as an extrajudicial execution and sends Salkov and Danjin to the Justice Bureau. Back in room 1001, he secretly exposes Tubeppa and Tyson to TSK-17 while presenting martial law as protection against a stolen biological weapon. He then tightens military control across the ship and invokes Kakin's emergency law: if every prince faces inevitable death, Nasubi may name a new line of succession. Benjamin plans to eliminate or infect the remaining princes, have his child named heir, and survive after death through Bohemian Rhapsody, the Guardian Spirit Beast that will merge with his Nen and pass between his blood relatives."
   }
 ]

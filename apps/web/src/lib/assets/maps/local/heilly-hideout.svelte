@@ -52,10 +52,10 @@
     </style>
   </defs>
   <text x="550" y="36" class="label" font-size="28" fill="#ffd700"
-    >Heil-Ly Secret Hideout · Between Tiers 2 and 3</text
+    >Heil-Ly Secret Hideout · Tier 2</text
   >
   <text x="550" y="58" class="sub"
-    >Confirmed rooms and features · their physical connections remain partly unknown</text
+    >Ch. 398–399 panel details · physical links between rooms remain partly unknown</text
   >
   <g transform="translate(55 95)">
     <rect
@@ -71,7 +71,8 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'processing-room')}
     />
     <text x="175" y="135" class="label">Processing / Shower Room</text>
-    <text x="175" y="160" class="sub">Seven doors across three walls</text>
+    <text x="175" y="152" class="sub">Tiled · Nen-protected walls · seven doors</text>
+    <text x="175" y="170" class="sub">showers · floor drains · maintenance shelves</text>
     {#each [0, 1, 2, 3, 4] as i (i)}<rect
         class="door"
         x={65 + i * 48}
@@ -81,6 +82,13 @@
       />{/each}
     <rect class="door" x="17" y="135" width="16" height="32" />
     <rect class="door" x="160" y="262" width="32" height="16" />
+    <path d="M55 205 q12 -24 24 0 v34" fill="none" stroke="#77a7b8" stroke-width="3" />
+    <path d="M95 205 q12 -24 24 0 v34" fill="none" stroke="#77a7b8" stroke-width="3" />
+    <circle cx="160" cy="230" r="7" fill="#111" stroke="#777" />
+    <circle cx="200" cy="230" r="7" fill="#111" stroke="#777" />
+    <rect x="275" y="185" width="38" height="65" fill="#242424" stroke="#777" />
+    <line x1="278" y1="205" x2="310" y2="205" stroke="#777" />
+    <line x1="278" y1="225" x2="310" y2="225" stroke="#777" />
 
     <rect
       role="button"
@@ -95,9 +103,16 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'laundry-disposal')}
     />
     <text x="175" y="455" class="label">Laundry / Disposal Room</text>
-    <text x="175" y="480" class="sub">Laundry equipment · central work table</text>
-    <rect x="65" y="515" width="70" height="55" rx="8" fill="#302f34" stroke="#777" />
-    <rect x="155" y="510" width="135" height="45" fill="#332c2c" stroke="#777" />
+    <text x="175" y="478" class="sub">Industrial washers/dryers · sinks · lockers</text>
+    <text x="175" y="496" class="sub">wall supplies · drains · two metal worktables</text>
+    <rect x="40" y="520" width="54" height="58" fill="#302f34" stroke="#777" />
+    <circle cx="67" cy="549" r="17" fill="#111" stroke="#777" />
+    <rect x="100" y="520" width="54" height="58" fill="#302f34" stroke="#777" />
+    <circle cx="127" cy="549" r="17" fill="#111" stroke="#777" />
+    <rect x="164" y="515" width="126" height="28" fill="#332c2c" stroke="#777" />
+    <rect x="164" y="550" width="126" height="28" fill="#332c2c" stroke="#777" />
+    <rect x="285" y="500" width="28" height="75" fill="#242424" stroke="#777" />
+    <rect x="42" y="492" width="108" height="18" fill="#242424" stroke="#777" />
 
     <rect
       role="button"
@@ -112,9 +127,17 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'communal-room')}
     />
     <text x="565" y="440" class="label">Communal Room</text>
-    <text x="565" y="465" class="sub">Large table · couch · dartboard · bookcase</text>
+    <text x="565" y="460" class="sub">Long table · at least eight chairs · wall storage</text>
+    <text x="565" y="478" class="sub">water dispenser · clock · exposed ceiling services</text>
     <rect x="485" y="500" width="160" height="60" rx="5" fill="#302f34" stroke="#777" />
     <rect x="435" y="500" width="35" height="85" fill="#302f34" stroke="#777" />
+    {#each [0, 1, 2, 3] as i (i)}
+      <circle cx={505 + i * 40} cy="486" r="12" fill="#242424" stroke="#777" />
+      <circle cx={505 + i * 40} cy="574" r="12" fill="#242424" stroke="#777" />
+    {/each}
+    <rect x="680" y="505" width="22" height="58" fill="#263640" stroke="#77a7b8" />
+    <rect x="495" y="385" width="145" height="18" fill="#242424" stroke="#777" />
+    <path d="M470 414 H660 M490 423 H680" fill="none" stroke="#777" stroke-width="4" />
 
     <rect
       role="button"

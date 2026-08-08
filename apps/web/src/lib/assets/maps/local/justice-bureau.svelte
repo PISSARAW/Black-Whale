@@ -53,7 +53,7 @@
   </defs>
   <text x="500" y="38" class="label" font-size="28" fill="#ffd700">Justice Bureau · Tier 2</text>
   <text x="500" y="60" class="sub"
-    >Five-story institution · functional diagram from confirmed rooms</text
+    >Ch. 400: signed room 1010 + VIP suite details · five-story layout remains schematic</text
   >
   <g transform="translate(60 90)">
     <rect width="880" height="550" class="wall" />
@@ -83,7 +83,14 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'deputy-minister-office')}
     />
     <text x="430" y="100" class="label">Deputy Minister's Office</text>
-    <text x="430" y="125" class="sub">Bookcases · work desk</text>
+    <text x="430" y="125" class="sub">Room 1010 · judicial interrogation office</text>
+    <rect x="335" y="42" width="190" height="24" fill="#222" stroke="#777" />
+    {#each [0, 1, 2, 3, 4] as shelf (shelf)}
+      <line x1={347 + shelf * 34} y1="44" x2={347 + shelf * 34} y2="64" stroke="#777" />
+    {/each}
+    <rect x="392" y="150" width="76" height="30" fill="#292929" stroke="#777" />
+    <circle cx="407" cy="194" r="10" fill="#242424" stroke="#777" />
+    <circle cx="453" cy="194" r="10" fill="#242424" stroke="#777" />
     <rect
       role="button"
       tabindex="0"
@@ -111,7 +118,26 @@
     />
     <text x="220" y="365" class="label">VIP Witness Protection Area</text>
     <text x="220" y="390" class="sub"
-      >Lavishly furnished · described as the safest place aboard</text
+      >Coffered ceiling · moulded walls · chandelier · oval mirror</text
+    >
+    <rect x="55" y="280" width="92" height="125" rx="8" fill="#292929" stroke="#777" />
+    <rect x="165" y="300" width="120" height="52" fill="#292929" stroke="#777" />
+    {#each [0, 1, 2, 3] as chair (chair)}
+      <circle
+        cx={182 + (chair % 2) * 86}
+        cy={chair < 2 ? 286 : 366}
+        r="11"
+        fill="#242424"
+        stroke="#777"
+      />
+    {/each}
+    <rect x="70" y="445" width="62" height="48" rx="12" fill="#292929" stroke="#777" />
+    <rect x="154" y="445" width="62" height="48" rx="12" fill="#292929" stroke="#777" />
+    <circle cx="143" cy="469" r="12" fill="#242424" stroke="#777" />
+    <rect x="360" y="420" width="28" height="70" fill="#263640" stroke="#777" />
+    <ellipse cx="374" cy="330" rx="14" ry="30" fill="none" stroke="#c8a956" stroke-width="3" />
+    <text x="220" y="515" class="sub"
+      >Bed · dining table · 4 chairs · 2 armchairs · side table · cabinet</text
     >
     <rect
       role="button"

@@ -50,18 +50,32 @@
         pointer-events: none;
         text-anchor: middle;
       }
+      .tile {
+        stroke: #38424e;
+        stroke-width: 1;
+        opacity: 0.45;
+      }
     </style>
   </defs>
 
-  <text x="400" y="50" class="label" font-size="24">Heil-Ly Base: Processing Room</text>
+  <text x="400" y="42" class="label" font-size="24">Heil-Ly Processing / Shower Room</text>
+  <text x="400" y="67" class="label text-[11px] text-gray-400"
+    >Ch. 398 pp. 158–167 · tiled room · Nen barrier inside the walls</text
+  >
 
   <!-- Main Room (Square) -->
   <rect x="150" y="150" width="500" height="500" class="zone" />
   <rect x="150" y="150" width="500" height="500" class="wall" />
   <rect x="145" y="145" width="510" height="510" class="nen-reinforced" />
+  {#each [200, 250, 300, 350, 400, 450, 500, 550, 600] as p (p)}
+    <line x1={p} y1="150" x2={p} y2="650" class="tile" />
+    <line x1="150" y1={p} x2="650" y2={p} class="tile" />
+  {/each}
 
   <text x="400" y="400" class="label text-[#9f7aea]">Heil-Ly processing / shower room</text>
-  <text x="400" y="420" class="label text-xs text-gray-400">Spatially isolated hideout</text>
+  <text x="400" y="420" class="label text-xs text-gray-400"
+    >Seven doors · exact door-to-fixture order is not published</text
+  >
 
   <!-- Blood stains -->
   <path class="blood" d="M 300 300 Q 320 350, 350 320 T 400 300 Z" />
@@ -73,6 +87,22 @@
 
   <rect x="550" y="150" width="100" height="100" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
   <text x="600" y="205" class="label text-[10px]">Restrooms</text>
+
+  <!-- Open-room details visible before the seven doors are explained. -->
+  <path d="M185 300 q18 -40 36 0 v75" fill="none" stroke="#77a7b8" stroke-width="5" />
+  <path d="M245 300 q18 -40 36 0 v75" fill="none" stroke="#77a7b8" stroke-width="5" />
+  <text x="233" y="397" class="label text-[10px]">wall shower hoses</text>
+  <circle cx="355" cy="525" r="14" fill="#111" stroke="#718096" stroke-width="3" />
+  <circle cx="445" cy="525" r="14" fill="#111" stroke="#718096" stroke-width="3" />
+  <text x="400" y="555" class="label text-[10px]">floor drains</text>
+  <rect x="548" y="470" width="72" height="105" fill="#242b33" stroke="#718096" stroke-width="3" />
+  <line x1="555" y1="500" x2="613" y2="500" stroke="#718096" />
+  <line x1="555" y1="530" x2="613" y2="530" stroke="#718096" />
+  <text x="584" y="595" class="label text-[10px]">maintenance shelves</text>
+
+  <text x="400" y="700" class="label text-[11px] text-gray-400"
+    >Door functions: 3 toilets · bath · shower cubicle · maintenance · portal route</text
+  >
 
   <!-- Seven canonical doors: five together, one on the adjacent wall, one opposite. -->
   {#each [0, 1, 2, 3, 4] as i (i)}

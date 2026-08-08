@@ -34,6 +34,16 @@ const diningHall = readFileSync(
   'utf8',
 )
 const lifeboats = readFileSync(new URL('./local/lifeboats.svelte', import.meta.url), 'utf8')
+const cineplex = readFileSync(new URL('./local/cineplex.svelte', import.meta.url), 'utf8')
+const room3101 = readFileSync(new URL('./local/room-3101.svelte', import.meta.url), 'utf8')
+const heillyHideout = readFileSync(
+  new URL('./local/heilly-hideout.svelte', import.meta.url),
+  'utf8',
+)
+const justiceBureau = readFileSync(
+  new URL('./local/justice-bureau.svelte', import.meta.url),
+  'utf8',
+)
 
 /** Every `[a, b]` pair inside a named literal, in the order it is written. */
 function pairs(name: string): [number, number][] {
@@ -148,5 +158,32 @@ describe('room appearance evidence', () => {
     expect(structures.some((entry) => entry.kind === 'seat')).toBe(false)
     expect(lifeboats).toContain('Bare segmented deck · no passenger seats')
     expect(lifeboats).not.toContain('class="bench"')
+  })
+
+  it('keeps the volume 38 room evidence explicit in both the tour and local plans', () => {
+    const processing = blueprint.structures.filter((entry) =>
+      entry.id.startsWith('tier-2-heilly-secret-hideout-processing-'),
+    )
+    const laundry = blueprint.structures.filter(
+      (entry) => entry.spaceId === 'tier-2-heilly-secret-hideout-laundry',
+    )
+    const communalChairs = blueprint.structures.filter(
+      (entry) => entry.spaceId === 'tier-2-heilly-secret-hideout-communal' && entry.kind === 'seat',
+    )
+    const auditoriumRows = blueprint.structures.filter((entry) =>
+      /^tier-3-cineplex-screen-\d-seat-row-\d{2}$/.test(entry.id),
+    )
+
+    expect(processing.filter((entry) => entry.kind === 'vent')).toHaveLength(2)
+    expect(laundry.some((entry) => entry.id.endsWith('work-table-02'))).toBe(true)
+    expect(communalChairs.length).toBeGreaterThanOrEqual(8)
+    expect(auditoriumRows).toHaveLength(48)
+    expect(auditoriumRows.every((entry) => entry.provenance === 'inferred')).toBe(true)
+
+    expect(room3101).toContain('Bathroom threshold = teleport trap')
+    expect(room3101).toContain('Ordinary entrance')
+    expect(cineplex).toContain('Unidentified auditorium')
+    expect(heillyHideout).toContain('at least eight chairs')
+    expect(justiceBureau).toContain('Room 1010 · judicial interrogation office')
   })
 })

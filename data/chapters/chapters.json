@@ -1532,6 +1532,368 @@
     "description": "The war intensifies with the first killings and the first major strategies. Benjamin takes military control, Hisoka takes action, and Kurapika activates his spy network. Mafia factions begin to play an active role in the conflict, manipulating the princes and their guards."
   },
   {
+    "id": "ch-391",
+    "number": 391,
+    "publicationOrder": 391,
+    "title": "Clash: Part 2",
+    "timeline": [
+      {
+        "event": "Hinrigh fights the Heil-Ly hunting party in a Tier 3 public passage",
+        "storyDate": "Time not printed",
+        "charactersInvolved": ["hinrigh-biganduffno", "padaille", "quorolle", "cashew"],
+        "location": "Black Whale 1 - Tier 3 - Public passage",
+        "locationId": "tier-3"
+      },
+      {
+        "event": "Lynch and Zakuro continue the Hisoka search elsewhere on Tier 3",
+        "storyDate": "Same operation; simultaneity is not stated",
+        "charactersInvolved": ["lynch-fullbokko", "zakuro-custard"],
+        "location": "Black Whale 1 - Tier 3",
+        "locationId": "tier-3"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 3",
+    "keyEvents": [
+      "Hinrigh tests Biohazard against Morena's attackers",
+      "The Xi-Yu search and the Hisoka search occupy separate Tier 3 scenes"
+    ],
+    "description": "The chapter stays on Tier 3 but not in one shared room. Hinrigh confronts Padaille's Heil-Ly group in a public passage while Lynch and Zakuro keep searching for Hisoka elsewhere. Morena and Tserriednich appear only through images or discussion, so they are not counted as physically present in Hinrigh's scene."
+  },
+  {
+    "id": "ch-392",
+    "number": 392,
+    "publicationOrder": 392,
+    "title": "Information",
+    "timeline": [
+      {
+        "event": "Lynch tests Hanal and rules him out as Hisoka",
+        "storyDate": "Time not printed",
+        "charactersInvolved": ["lynch-fullbokko", "zakuro-custard", "hanal"],
+        "location": "Black Whale 1 - Tier 3 - Public concourse",
+        "locationId": "tier-3"
+      },
+      {
+        "event": "Lynch strikes Bonolenov disguised as Hisoka and exposes the imposture",
+        "storyDate": "Later in the same search",
+        "charactersInvolved": ["lynch-fullbokko", "zakuro-custard", "bonolenov-ndongo"],
+        "location": "Black Whale 1 - Tier 3 - Public concourse",
+        "locationId": "tier-3"
+      },
+      {
+        "event": "Nobunaga and Phinks receive Luini inside the Cha-R office",
+        "storyDate": "Parallel sequence; exact offset not printed",
+        "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "luini", "keni-wang"],
+        "location": "Black Whale 1 - Tier 5 - Cha-R Family Office",
+        "locationId": "tier-5-cha-r-family-office"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 3 and 5",
+    "keyEvents": [
+      "Body and Soul eliminates one false lead",
+      "Bonolenov's Hisoka disguise is detected",
+      "The Cha-R office scene is separate from the Tier 3 search"
+    ],
+    "description": "Two locations are intercut. Lynch, Zakuro, Hanal and disguised Bonolenov share the Tier 3 search scene; Nobunaga, Phinks, Luini and Ken'i occupy the Cha-R office on Tier 5. Mentioned characters and Hisoka's borrowed appearance do not place the real Hisoka at either event."
+  },
+  {
+    "id": "ch-393",
+    "number": 393,
+    "publicationOrder": 393,
+    "title": "Plea",
+    "timeline": [
+      {
+        "event": "Bonolenov neutralizes Zakuro, kills Lynch and keeps using her appearance",
+        "storyDate": "Immediately after chapter 392",
+        "charactersInvolved": ["bonolenov-ndongo", "lynch-fullbokko", "zakuro-custard"],
+        "location": "Black Whale 1 - Tier 3 - Public concourse",
+        "locationId": "tier-3"
+      },
+      {
+        "event": "Bonolenov waits through a film in one unidentified cineplex auditorium",
+        "storyDate": "Later; no clock shown",
+        "charactersInvolved": ["bonolenov-ndongo"],
+        "location": "Black Whale 1 - Tier 3 - Cineplex",
+        "locationId": "tier-3-cineplex"
+      },
+      {
+        "event": "Nobunaga kills Luini inside the Cha-R office",
+        "storyDate": "Intercut with the Tier 3 sequence",
+        "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "luini", "keni-wang"],
+        "location": "Black Whale 1 - Tier 5 - Cha-R Family Office",
+        "locationId": "tier-5-cha-r-family-office"
+      },
+      {
+        "event": "Hinrigh inspects the registered Heil-Ly premises",
+        "storyDate": "Same investigation; exact offset not printed",
+        "charactersInvolved": ["hinrigh-biganduffno", "maizan"],
+        "location": "Black Whale 1 - Tier 3 - Heil-Ly Family Office",
+        "locationId": "tier-3-heilly-family-office"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 3 and 5",
+    "keyEvents": [
+      "Bonolenov preserves Chrollo's deception",
+      "The manga shows a padded cineplex auditorium but never gives its screen number",
+      "Luini dies in a physically separate Tier 5 event"
+    ],
+    "description": "The chapter intercuts three places. Bonolenov's street encounter and later cineplex wait are on Tier 3, Hinrigh investigates the registered Heil-Ly office, and Luini's death occurs with Nobunaga, Phinks and Ken'i in the Tier 5 Cha-R office. These are not one co-presence event."
+  },
+  {
+    "id": "ch-394",
+    "number": 394,
+    "publicationOrder": 394,
+    "title": "Hypothesis",
+    "timeline": [
+      {
+        "event": "Tassi crosses the bathroom threshold in room 3101",
+        "storyDate": "Time not printed",
+        "charactersInvolved": ["tassi"],
+        "location": "Black Whale 1 - Tier 3 - Room 3101",
+        "locationId": "tier-3-residential-room-3101"
+      },
+      {
+        "event": "Tassi is transferred into the Heil-Ly processing room and killed",
+        "storyDate": "Immediately after crossing the threshold",
+        "charactersInvolved": ["tassi", "bille", "morena-prudo", "gipper", "momolly", "otocin"],
+        "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout - Processing room",
+        "locationId": "tier-2-heilly-secret-hideout"
+      },
+      {
+        "event": "Tserriednich's Nen training is recalled rather than occurring in the trap sequence",
+        "storyDate": "Flashback; not simultaneous",
+        "charactersInvolved": ["prince-tserriednich", "theta", "salkov"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004 (flashback)",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 to 3",
+    "keyEvents": [
+      "Room 3101's bathroom threshold is a transfer trap",
+      "The victim's room-3101 presence ends before the hideout killing begins",
+      "The Tserriednich panels are a flashback, not shared space"
+    ],
+    "description": "The trap supplies a clean before-and-after position: Tassi is first alone in room 3101, then crosses the bathroom threshold and appears inside the Heil-Ly processing room with Morena's group. The Tserriednich training material is explicitly treated as a flashback and cannot establish co-presence with either location."
+  },
+  {
+    "id": "ch-395",
+    "number": 395,
+    "publicationOrder": 395,
+    "title": "Founding: Part 1",
+    "timeline": [
+      {
+        "event": "Nobunaga, Phinks, Feitan and Hinrigh probe room 3101 and adjacent cabins",
+        "storyDate": "Time not printed",
+        "charactersInvolved": [
+          "nobunaga-hazama",
+          "phinks-magcub",
+          "feitan-portor",
+          "hinrigh-biganduffno",
+          "keni-wang"
+        ],
+        "location": "Black Whale 1 - Tier 3 - Room 3101 sector",
+        "locationId": "tier-3-residential-room-3101"
+      },
+      {
+        "event": "The future Phantom Troupe children gather in Meteor City",
+        "storyDate": "Flashback, years before the voyage",
+        "charactersInvolved": ["chrollo-lucilfer", "franklin-bordeau", "machi-komacine"],
+        "location": "Meteor City (flashback)"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 3 / Meteor City flashback",
+    "keyEvents": [
+      "The current-day group tests the trap sector",
+      "The chapter then leaves the ship for the Troupe's childhood",
+      "Flashback characters are not technically present in room 3101"
+    ],
+    "description": "The opening continues the Tier 3 trap investigation with Nobunaga, Phinks, Feitan, Hinrigh and Ken'i. The founding story is a historical cut to Meteor City; young Chrollo, Franklin and Machi do not share the current ship event even though the panels occur in the same chapter."
+  },
+  {
+    "id": "ch-396",
+    "number": 396,
+    "publicationOrder": 396,
+    "title": "Founding: Part 2",
+    "timeline": [
+      {
+        "event": "The children dub and perform Power Cleaners for Meteor City",
+        "storyDate": "Flashback, years before the voyage",
+        "charactersInvolved": [
+          "chrollo-lucilfer",
+          "franklin-bordeau",
+          "machi-komacine",
+          "nobunaga-hazama",
+          "phinks-magcub"
+        ],
+        "location": "Meteor City - Screening/performance space (flashback)"
+      }
+    ],
+    "location": "Meteor City (flashback)",
+    "keyEvents": [
+      "Chrollo organizes the dubbed performance",
+      "No present-day Black Whale position is established"
+    ],
+    "description": "Every physical scene belongs to the Meteor City childhood flashback. The future Spiders named here share the historical screening/performance event, but the chapter provides no current position for their adult selves aboard the Black Whale."
+  },
+  {
+    "id": "ch-397",
+    "number": 397,
+    "publicationOrder": 397,
+    "title": "Founding: Part 3",
+    "timeline": [
+      {
+        "event": "The children search Meteor City for the missing Sarasa",
+        "storyDate": "Flashback, years before the voyage",
+        "charactersInvolved": [
+          "chrollo-lucilfer",
+          "franklin-bordeau",
+          "machi-komacine",
+          "nobunaga-hazama",
+          "phinks-magcub"
+        ],
+        "location": "Meteor City outskirts (flashback)"
+      },
+      {
+        "event": "Sarasa's murder leads Chrollo to plan the Phantom Troupe",
+        "storyDate": "Same historical day",
+        "charactersInvolved": [
+          "chrollo-lucilfer",
+          "franklin-bordeau",
+          "machi-komacine",
+          "nobunaga-hazama",
+          "phinks-magcub"
+        ],
+        "location": "Meteor City (flashback)"
+      }
+    ],
+    "location": "Meteor City (flashback)",
+    "keyEvents": [
+      "Sarasa is found murdered",
+      "Chrollo commits to mastering technology and hunting the killers",
+      "No present-day ship co-presence is established"
+    ],
+    "description": "The chapter remains entirely historical. The children are co-present in Meteor City, not aboard the Black Whale; using chapter 397 to place adult Chrollo, Franklin, Machi, Nobunaga or Phinks in a ship room would be a chronology error."
+  },
+  {
+    "id": "ch-398",
+    "number": 398,
+    "publicationOrder": 398,
+    "title": "Search",
+    "timeline": [
+      {
+        "event": "Hinrigh and Nobunaga enter room 3101 while Phinks and Ken'i hold outside",
+        "storyDate": "Time not printed",
+        "charactersInvolved": [
+          "hinrigh-biganduffno",
+          "nobunaga-hazama",
+          "phinks-magcub",
+          "keni-wang"
+        ],
+        "location": "Black Whale 1 - Tier 3 - Room 3101 sector",
+        "locationId": "tier-3-residential-room-3101"
+      },
+      {
+        "event": "Hinrigh passes the trapped bathroom threshold and plants the transmitter in the hideout",
+        "storyDate": "Minutes later; no clock shown",
+        "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama"],
+        "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout - Processing room",
+        "locationId": "tier-2-heilly-secret-hideout"
+      },
+      {
+        "event": "Morena's members monitor the seven-door processing room",
+        "storyDate": "Same infiltration sequence",
+        "charactersInvolved": ["morena-prudo", "terebellum", "yokotani"],
+        "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout",
+        "locationId": "tier-2-heilly-secret-hideout"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 2 and 3",
+    "keyEvents": [
+      "The bathroom door in 3101 is confirmed as the transfer threshold",
+      "Hinrigh's transmitter crosses into the actual hideout",
+      "Phinks and Ken'i outside 3101 are not inside the hideout event"
+    ],
+    "description": "The chapter distinguishes the decoy room from the base. The group first shares the 3101 sector, but only Hinrigh and Nobunaga cross into the tiled processing room. The transmitter later proves the destination is physically on Tier 2; room 3101 remains a Tier 3 entrance, not the hideout."
+  },
+  {
+    "id": "ch-399",
+    "number": 399,
+    "publicationOrder": 399,
+    "title": "Expulsion",
+    "timeline": [
+      {
+        "event": "Hinrigh and Nobunaga move through the Heil-Ly laundry and communal rooms",
+        "storyDate": "Continuation of chapter 398",
+        "charactersInvolved": [
+          "hinrigh-biganduffno",
+          "nobunaga-hazama",
+          "terebellum",
+          "yokotani",
+          "souffle"
+        ],
+        "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout",
+        "locationId": "tier-2-heilly-secret-hideout"
+      },
+      {
+        "event": "Yokotani's ability expels Hinrigh and Nobunaga from the hideout",
+        "storyDate": "End of the confrontation",
+        "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama", "yokotani"],
+        "location": "Heil-Ly portal route from the Tier 2 hideout",
+        "locationId": "tier-2-heilly-secret-hideout"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout",
+    "keyEvents": [
+      "The industrial laundry/disposal room is shown in detail",
+      "The communal room has a long table, at least eight chairs and exposed services",
+      "Yokotani removes both intruders through the legal Nen ability"
+    ],
+    "description": "Hinrigh, Nobunaga and the defending Heil-Ly members are technically together inside the same hideout sequence, moving from the tiled processing area into the equipment-heavy laundry and communal spaces. Morena is discussed but not physically shown in their confrontation and is therefore not added to that co-presence set."
+  },
+  {
+    "id": "ch-400",
+    "number": 400,
+    "publicationOrder": 400,
+    "title": "Secrecy",
+    "timeline": [
+      {
+        "event": "Nobunaga, Phinks and Feitan triangulate Hinrigh's transmitter from a Tier 3 public passage",
+        "storyDate": "Soon after the expulsion; no clock shown",
+        "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "feitan-portor"],
+        "location": "Black Whale 1 - Tier 3 - Commercial/public passage",
+        "locationId": "tier-3"
+      },
+      {
+        "event": "Kaiser, Melody, Kacho's post-mortem double and Fugetsu confer in Justice room 1010",
+        "storyDate": "Later intercut sequence; exact offset not printed",
+        "charactersInvolved": ["kaiser", "melody", "prince-kacho", "prince-fugetsu", "steiner"],
+        "location": "Black Whale 1 - Tier 2 - Ministry of Justice - Judicial office / interrogation room 1010",
+        "locationId": "tier-2-ministry-of-justice"
+      },
+      {
+        "event": "Fugetsu rests and experiments inside the VIP witness-protection suite",
+        "storyDate": "Same Justice sequence",
+        "charactersInvolved": ["prince-fugetsu", "prince-kacho", "melody"],
+        "location": "Black Whale 1 - Tier 2 - VIP Witness Protection Area",
+        "locationId": "tier-2-vip-witness-protection-area"
+      },
+      {
+        "event": "Fugetsu approaches room 1014 under Justice escort",
+        "storyDate": "Later; no clock shown",
+        "charactersInvolved": ["prince-fugetsu", "prince-kacho", "kaiser", "kurapika", "bill"],
+        "location": "Black Whale 1 - Tier 1 - Outside Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 to 3",
+    "keyEvents": [
+      "The transmitter geometry places the hideout above Tier 3, on Tier 2",
+      "Justice's room 1010 is not Kacho's royal apartment 1010",
+      "Fugetsu's protected suite is richly furnished",
+      "Prince portraits, letters and proposed audiences do not by themselves prove co-presence"
+    ],
+    "description": "Four separate locations are intercut. The three Spiders compare the transmitter reading in a Tier 3 public passage. The Justice discussion takes place behind the separately signed office/interrogation door 1010 on Tier 2, not in Kacho's Tier 1 apartment of the same number. Fugetsu then occupies the lavish VIP protection suite and later reaches the door of room 1014 under escort. Portraits and recalled figures are not promoted to physical attendance."
+  },
+  {
     "id": "ch-404",
     "number": 404,
     "publicationOrder": 404,

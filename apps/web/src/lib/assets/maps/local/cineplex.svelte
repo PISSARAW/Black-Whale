@@ -6,7 +6,7 @@
 </script>
 
 <svg
-  viewBox="0 0 1000 600"
+  viewBox="0 0 1000 800"
   class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
 >
   <defs>
@@ -56,6 +56,16 @@
       .person {
         fill: #888;
         stroke: #555;
+      }
+      .seat-row {
+        fill: #292929;
+        stroke: #8b7c68;
+        stroke-width: 2;
+      }
+      .ornate {
+        fill: none;
+        stroke: #8b7c68;
+        stroke-width: 3;
       }
     </style>
   </defs>
@@ -163,5 +173,39 @@
 
     <circle cx="280" cy="300" r="12" class="person" />
     <circle cx="780" cy="320" r="12" class="person" />
+  </g>
+
+  <!-- Ch. 393 pp. 60–61 shows one auditorium but never gives its screen number. -->
+  <g transform="translate(80 610)">
+    <rect
+      x="0"
+      y="0"
+      width="840"
+      height="155"
+      rx="8"
+      fill="#0d0d0d"
+      stroke="#8b7c68"
+      stroke-width="3"
+    />
+    <text x="420" y="24" class="label">Unidentified auditorium · panel-confirmed interior</text>
+    <text x="420" y="43" class="sublabel"
+      >Raked padded rows · coffered/ornate trim · framed posters above the doors</text
+    >
+    <rect x="34" y="63" width="150" height="70" fill="#080808" stroke="#777" stroke-width="3" />
+    <text x="109" y="101" class="sublabel">PROJECTION SCREEN</text>
+    {#each [0, 1, 2, 3, 4, 5] as row (row)}
+      <rect x={230 + row * 82} y={66 + row * 8} width="64" height="58" rx="8" class="seat-row" />
+      <line
+        x1={238 + row * 82}
+        y1={80 + row * 8}
+        x2={286 + row * 82}
+        y2={80 + row * 8}
+        stroke="#555"
+      />
+    {/each}
+    <path d="M220 54 H780 M230 54 Q500 12 770 54" class="ornate" />
+    <rect x="784" y="64" width="28" height="68" fill="#171717" stroke="#666" />
+    <rect x="780" y="49" width="36" height="13" fill="#222" stroke="#8b7c68" />
+    <text x="798" y="145" class="sublabel">poster + door</text>
   </g>
 </svg>

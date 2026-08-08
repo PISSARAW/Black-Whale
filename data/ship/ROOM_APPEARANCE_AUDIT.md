@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 809 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 895 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -572,33 +572,50 @@
 
 ## Planque secrète Heil-Ly — `tier-2-heilly-secret-hideout`
 
-- **Pont :** tier-2
-- **Preuve de l’enveloppe :** case du manga
-- **Sous-espaces :** 1
-- **Emprises relevées :** 26.25 × 52.5 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Pont :** tier-2, interior-heilly-hideout
+- **Preuve de l’enveloppe :** case du manga, plan publié, liaison déduite
+- **Sous-espaces :** 6
+- **Emprises relevées :** 26.25 × 52.5 m ; 10.52 × 5.25 m ; 33.63 × 6.3 m ; 10.52 × 8.05 m ; 10.51 × 8.05 m ; 6.3 × 8.05 m
+- **Hauteurs sous plafond :** 4 m
+- **Éléments modélisés :** 11 seat, 8 cabinet, 5 table, 3 basin, 3 vent, 1 duct
+- **Objets directement visibles dans les cases :** 25/31
+- **Espaces internes :** Salle de traitement / douches ; Couloir de bunker ; Buanderie / élimination ; Salle commune ; Bureau du chef
 - **Sources de la pièce :**
   - Chap. 356 — dissimulée dans le bloc VIP ; la pièce exacte n'est pas montrée.
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+  - Chap. 398, p. 158-167 — grande salle de traitement carrelée, protégée par une barrière de Nen dans les murs, avec sept portes, flexibles de douche, siphons de sol, petits luminaires muraux et placard de maintenance ouvert ; les portes desservent trois WC, un bain, une cabine de douche, la maintenance et la voie du portail.
+  - Reconstruit pour que les pièces dessinées communiquent ; un couloir de bunker est dessiné, mais pas son tracé.
+  - Chap. 399, p. 168-169 — la buanderie / salle d'élimination : batteries de lave-linge et sèche-linge industriels frontaux, linge suspendu, étagères murales chargées de cartons et fournitures pliées, éviers, casiers hauts, flexibles techniques, siphons de sol et plusieurs tables métalliques centrales.
+  - Chap. 399, p. 170-175 — la salle commune : longue table centrale entourée d'au moins huit chaises, tuyaux et chemins de câbles apparents au plafond, étagères et casiers muraux, poubelles, fontaine à eau, petits appareils, horloge et avis encadrés.
+  - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
+- **Sources du mobilier et des détails :**
+  - Chap. 398, p. 158-167 — la salle de traitement carrelée montre des flexibles de douche et siphons dans l'espace ouvert, un placard de maintenance ouvert avec étagères, et une barrière de Nen parcourant ses murs.
+  - Chap. 399, p. 168-169 — la buanderie / salle d'élimination contient visiblement des machines industrielles frontales, éviers, rangements muraux, casiers, siphons, flexibles et au moins deux tables métalliques centrales.
+  - Chap. 399, p. 170-175 — la salle commune contient visiblement la longue table et au moins huit chaises, des rangements muraux, une fontaine à eau et les réseaux apparents du plafond.
+  - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
+  - Chap. 407-410 — la table sur laquelle Morena Prudo et Borksen jouent la partie de négociation, et une chaise de chaque côté, dans le bureau du chef que dessine le plan de la planque.
+- **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Ministère de la Justice — `tier-2-ministry-of-justice`
 
 - **Pont :** tier-2, interior-justice-bureau
-- **Preuve de l’enveloppe :** plan publié, liaison déduite
+- **Preuve de l’enveloppe :** case du manga, plan publié, liaison déduite
 - **Sous-espaces :** 6
 - **Emprises relevées :** 63 × 45.5 m ; 12.5 × 9.5 m ; 13.5 × 9.5 m ; 20.25 × 13.5 m ; 41.5 × 1.75 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 3 table, 2 counter, 1 cabinet
-- **Objets directement visibles dans les cases :** 0/6
+- **Éléments modélisés :** 3 table, 2 cabinet, 2 counter, 2 seat
+- **Objets directement visibles dans les cases :** 5/9
 - **Espaces internes :** Hall d’accueil ; Bureau du vice-ministre ; Salles d'interrogatoire ; Parloir ; Couloir du bureau
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
   - Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées
+  - Chap. 400, p. 194-199 et 206 — le bureau judiciaire / salle d'interrogatoire 1010, signalé sur la porte, avec bureau formel, sièges visiteurs et bibliothèques toute hauteur sur les murs du fond et latéraux.
   - Plan du bureau de la Justice ; paroi vitrée, visites enregistrées de dix minutes, tiroir de transfert
   - Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite.
 - **Sources du mobilier et des détails :**
   - Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées
+  - Chap. 400, p. 194-199 et 206 — le bureau utilisé pour l'interrogatoire judiciaire dans la pièce 1010 signalée.
+  - Chap. 400, p. 194-199 et 206 — des bibliothèques toute hauteur, chargées de dossiers et volumes, bordent le bureau judiciaire derrière et à côté de la table.
+  - Chap. 400, p. 194-199 et 206 — la pièce 1010 signalée contient un bureau face aux chaises visiteurs et des murs de bibliothèques toute hauteur.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Salle de projection — `tier-2-screening-room`
@@ -618,16 +635,17 @@
 ## Zone de protection des témoins VIP — `tier-2-vip-witness-protection-area`
 
 - **Pont :** tier-2, interior-justice-bureau
-- **Preuve de l’enveloppe :** plan publié
+- **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 2
 - **Emprises relevées :** 33.25 × 45.5 m ; 19.5 × 13.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 6 seat, 2 cabinet, 2 painting, 2 table, 1 bed
+- **Objets directement visibles dans les cases :** 13/13
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
-  - Plan du bureau de la Justice ; décrit comme l'endroit le plus sûr du bord
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+  - Chap. 400, p. 200-204 — la suite de protection VIP : murs moulurés et plafonds à caissons, lustre et miroir ovale, avec lit, table à manger, fauteuils, guéridons, tableaux et meubles ; la subdivision exacte n'est pas publiée.
+- **Sources du mobilier et des détails :**
+  - Chap. 400, p. 200-204 — la suite de protection VIP montre des murs et plafonds richement moulurés avec lit, mobilier de repas, fauteuils, guéridons, meubles, tableaux et miroir ovale ; les positions sont ajustées dans le contour non publié de la suite.
 
 ## Palais de justice central — `tier-3-central-courthouse`
 
@@ -686,21 +704,25 @@
 ## Cinéplexe — `tier-3-cineplex`
 
 - **Pont :** tier-3, interior-cineplex
-- **Preuve de l’enveloppe :** case du manga, plan publié, liaison déduite
-- **Sous-espaces :** 6
-- **Emprises relevées :** 52.5 × 42 m ; 12.5 × 15 m ; 5 × 15 m ; 15 × 17.5 m
+- **Preuve de l’enveloppe :** case du manga, plan publié, reconstruction cartographique, liaison déduite
+- **Sous-espaces :** 15
+- **Emprises relevées :** 52.5 × 42 m ; 12.5 × 15 m ; 5 × 15 m ; 15 × 17.5 m ; 56 × 5 m ; 7 × 20 m
 - **Hauteurs sous plafond :** 8, 6 m
-- **Éléments modélisés :** 2 counter, 1 painting, 1 pillar, 1 platform
-- **Objets directement visibles dans les cases :** 4/5
-- **Espaces internes :** Confiserie ; Foyer (bâbord) ; Couloir des salles (salles 1 à 8) ; Foyer (tribord) ; Billetterie
+- **Éléments modélisés :** 48 seat, 9 painting, 2 counter, 1 pillar, 1 platform
+- **Objets directement visibles dans les cases :** 4/61
+- **Espaces internes :** Confiserie ; Foyer (bâbord) ; Couloir des salles (salles 1 à 8) ; Foyer (tribord) ; Billetterie ; Hall des salles ; Salle 1 ; Salle 2 ; Salle 3 ; Salle 4 ; Salle 5 ; Salle 6 ; Salle 7 ; Salle 8
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349 — huit salles
   - Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles.
   - Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite.
+  - Reconstruit pour desservir les huit salles nommées depuis le hall ; aucun dessin ne le montre.
+  - Le plan du cinéplexe sur /ship nomme huit salles ; leur ordre depuis le hall est celui de la reconstruction.
 - **Sources du mobilier et des détails :**
   - Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles.
   - Le plan du cinéplexe sur /ship accroche l'affiche du film au-dessus de l'allée qui descend vers les salles.
-- **Limite connue :** 2 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
+  - Chap. 393, p. 60-61 — une salle non identifiée du cinéplexe montre des rangées en pente de fauteuils rembourrés face à l'écran, sous un décor orné à caissons ; répéter ce motif dans les huit salles nommées est une reconstruction explicite.
+  - Le plan du cinéplexe sur /ship nomme ses huit salles d'après l'écran qu'elles portent ; chaque écran se dresse sur le mur qui fait face à l'entrée.
+- **Limite connue :** 3 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Bureau de la famille Heil-Ly — `tier-3-heilly-family-office`
 
@@ -762,10 +784,13 @@
 - **Objets directement visibles dans les cases :** 0/4
 - **Espaces internes :** Séjour ; Salle de bains anormale
 - **Sources de la pièce :**
-  - Chap. 361 — la chambre-piège des Heil-Ly
-  - Chap. 361 — la chambre-piège des Heil-Ly : la cabine, et la salle de bains taillée dans l'espace technique derrière
+  - Chap. 398, p. 150-153 — la chambre 3101 et son seuil de salle de bains piégé par téléportation
+  - Chap. 398, p. 150-153 — la 3101 est une cabine ordinaire à large sol dégagé, avec rangement haut et salle de bains dont la porte sert de piège de téléportation Heil-Ly ; la profondeur exacte de la cloison est reconstruite.
+  - Chap. 398, p. 150-153 — le seuil de la salle de bains constitue le piège Heil-Ly : le franchir transfère la victime dans la planque au lieu de mener simplement à la pièce d'eau ; les appareils et la cloison sont reconstruits d'après le plan de la cabine.
 - **Sources du mobilier et des détails :**
-  - Chap. 361 — la chambre-piège des Heil-Ly : la cabine, et la salle de bains taillée dans l'espace technique derrière
+  - Chap. 398, p. 150-153 — mobilier d'une cabine ordinaire dans la 3101 ; le seuil de la salle de bains constitue le piège de téléportation Heil-Ly.
+  - Chap. 398, p. 150-153 — la chambre montre un rangement haut contre le mur et un large sol central dégagé devant la porte piégée de la salle de bains.
+  - Chap. 398, p. 150-153 — la pièce d'eau se trouve au-delà du seuil piégé ; la position exacte de cet appareil est reconstruite d'après le plan de cabine, et non visible à travers le portail actif.
 
 ## Bloc résidentiel standard — `tier-3-residential-standard`
 

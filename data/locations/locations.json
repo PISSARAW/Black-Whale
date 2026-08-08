@@ -395,7 +395,7 @@
     "parentLocationId": "tier-2",
     "deck": 2,
     "zoneType": "mafia",
-    "description": "Morena's secret base, reached through five entrances whose rooms are connected by Nen teleportation, which is why it long read as a space of its own between Tiers 2 and 3. Hinrigh's transmitter, planted beyond the room 3101 trap, places it on Tier 2.",
+    "description": "Morena's secret base, reached through five entrances whose rooms are connected by Nen teleportation. Hinrigh's transmitter, planted beyond the room 3101 trap, places it on Tier 2. Chapters 398-399 show the tiled seven-door processing/shower room and its Nen-protected walls, then an industrial laundry/disposal room and a communal room packed with exposed services, storage and furniture.",
     "entrances": [],
     "exits": []
   },
@@ -405,7 +405,7 @@
     "parentLocationId": "tier-2",
     "deck": 2,
     "zoneType": "administrative",
-    "description": "Five-story structure constituting the ship's most neutral jurisdiction.",
+    "description": "Five-story structure constituting the ship's most neutral jurisdiction. Chapter 400 labels door 1010 as its judicial office/interrogation room and shows a guarded corridor, a formal desk with visitor seating and walls of full-height bookcases.",
     "entrances": [],
     "exits": []
   },
@@ -415,7 +415,7 @@
     "parentLocationId": "tier-2-ministry-of-justice",
     "deck": 2,
     "zoneType": "administrative",
-    "description": "Lavishly furnished area described by Kaiser as the safest place on the ship; Melody, Fugetsu, and Kacho's Guardian Spirit Beast are held there for questioning and protection.",
+    "description": "Lavishly furnished area described by Kaiser as the safest place on the ship; Melody, Fugetsu, and Kacho's Guardian Spirit Beast are held there for questioning and protection. Chapter 400 shows coffered ceilings, moulded wall panels, a chandelier, an oval mirror, framed art, a bed, dining table, armchairs, side tables and cabinets; the exact subdivision remains unpublished.",
     "entrances": [],
     "exits": []
   },
@@ -505,7 +505,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "quarters",
-    "description": "Ordinary Tier 3 passenger room used as a teleportation trap leading intruders to the Heil-Ly secret hideout; it is not the hideout itself.",
+    "description": "Ordinary Tier 3 passenger room used as a teleportation trap leading intruders to the Heil-Ly secret hideout; it is not the hideout itself. Chapter 398 shows a broad clear central floor, tall wall storage and the bathroom doorway: crossing that threshold transfers the victim instead of simply entering the washroom.",
     "entrances": [],
     "exits": []
   },
@@ -535,7 +535,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "public",
-    "description": "Tier 3 cinema. Bonolenov, wearing Hisoka's face on Chrollo's orders, sits through a film here waiting for the Heil-Ly to notice him and move him somewhere more interesting.",
+    "description": "Tier 3 cinema. Chapter 393 shows a food counter, ticket windows and public concourse beneath a high glazed arch, then one unidentified auditorium with raked padded seating, ornate/coffered trim and framed film posters over the doors. The manga does not identify which of the eight named screens is shown. Bonolenov, wearing Hisoka's face on Chrollo's orders, waits here for the Heil-Ly.",
     "entrances": [],
     "exits": []
   },

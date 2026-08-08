@@ -107,7 +107,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Hisoka Morrow',
     kind: 'elastic',
     instruction:
-      'Link map characters within emitted range; click a linked target again to retract every filament toward the first anchor.',
+      'Link characters, objects or page surfaces within emitted range; click a linked target again to retract every filament toward the first anchor.',
     rule: 'Elastic force rises with tension, emitted strands snap beyond ten meters and five seconds of stillness isolates linked targets.',
     cost: 'Continuous aura · range and increasing tension',
     color: '#f06bb5',
@@ -299,7 +299,7 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Musse',
     kind: 'surveillance',
     instruction:
-      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
+      'Attach one owl to a page location or event to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
     rule: 'The owl eavesdrops through barriers, follows by touch and retains earlier footage for later review.',
     cost: 'One attached surveillance owl',
     color: '#a8b7d8',

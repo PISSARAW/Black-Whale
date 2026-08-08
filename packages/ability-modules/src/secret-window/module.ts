@@ -35,7 +35,7 @@ export const secretWindow = defineAbility({
   site: {
     kind: 'surveillance',
     instruction:
-      'Attach one owl to a map character to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
+      'Attach one owl to a page location or event to retain a live feed and expose movement or death recorded in the next chapter. Press R to choose which owl is sent: working the ship, on your shoulder, or let go unaimed.',
     rule: 'The owl eavesdrops through barriers, follows by touch and retains earlier footage for later review.',
     cost: 'One attached surveillance owl',
     color: '#a8b7d8',

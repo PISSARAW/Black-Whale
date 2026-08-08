@@ -14,6 +14,7 @@
     parallelFutureVisible,
   } from './hatsuState.js'
   import { setAmbientMuffled, startBattleMusic, stopBattleMusic } from '$lib/audio/ambient.js'
+  import { playSiteHatsuInteraction } from '$lib/audio/siteHatsuAudio'
   import {
     hatsuById,
     siteImpactFor,
@@ -34,8 +35,8 @@
     type StoredItem,
   } from './hatsuInteractions.js'
   import { loadProphecySheets } from './prophecySheets.js'
+  import { requiresCharacterTarget } from './siteHatsuTargets'
 
-  /** Prologue, Jupiter and Metamorphosen: the three that are played, not cast. */
   const BONOLENOV_KINDS = new Set(['rhythm', 'impact', 'mimicry'])
 
   type CaptureZone = { left: number; top: number; width: number; height: number }
@@ -137,8 +138,7 @@
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const snapshots = new Map<HTMLElement, ElementSnapshot>()
-  // Which inline properties a Hatsu actually wrote, so restoring gives back
-  // only those and leaves the ones the page owns alone.
+  // Restore only properties the Hatsu wrote; leave the page's own state alone.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const styleWrites = new Map<HTMLElement, Set<string>>()
   const observers: MutationObserver[] = []
@@ -147,7 +147,7 @@
   const effectTimers = new Set<ReturnType<typeof setTimeout>>()
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
-  const bungeeSelected = new Set<string>()
+  const bungeeSelected = new Set<HTMLElement>()
   // Cleanup bookkeeping, not view state.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   const inheritedCharacters = new Set<string>()
@@ -561,10 +561,8 @@
       .forEach((element) => element.removeAttribute('data-bungee-selected'))
   }
 
-  function selectBungeeCharacter(target: HTMLElement, { x, y }: ScreenPoint, label: string) {
-    const characterId = target.dataset.hatsuCharacter
-    if (!characterId) return
-    if (bungeeSelected.has(characterId)) {
+  function selectBungeeTarget(target: HTMLElement, { x, y }: ScreenPoint, label: string) {
+    if (bungeeSelected.has(target)) {
       const anchorElement = selectedElements[0]
       if (!anchorElement) return
       const anchorRect = anchorElement.getBoundingClientRect()
@@ -593,22 +591,22 @@
     }
 
     bungeeOrigin ??= { x, y }
-    bungeeSelected.add(characterId)
+    bungeeSelected.add(target)
     selectedElements = [...selectedElements, target]
     target.dataset.bungeeSelected = 'true'
     addPoint({ x, y }, label)
     if (bungeeTimer) clearTimeout(bungeeTimer)
 
     if (bungeeSelected.size < 2) {
-      status = '1 character selected · choose at least one more'
+      status = '1 anchor selected · choose at least one more'
       return
     }
 
-    status = `${bungeeSelected.size} characters linked · filter in 5 seconds`
+    status = `${bungeeSelected.size} targets linked · filter in 5 seconds`
     bungeeTimer = setTimeout(() => {
       document.body.classList.add('bungee-gum-filtered')
       bungeeFilterActive = true
-      status = `${bungeeSelected.size} linked characters · map filtered`
+      status = `${bungeeSelected.size} linked targets · page filtered`
       bungeeTimer = null
     }, 5000)
   }
@@ -1050,6 +1048,7 @@
     const eventElement = event.target as Element
     if (puppetExecuting) return
     if (!profile || eventElement.closest('[data-hatsu-ui], [data-hatsu-pass]')) return
+    playSiteHatsuInteraction(profile.id, profile.kind)
     if (profile.kind === 'elastic' && bungeeFilterActive) return
     if (profile.kind === 'guardian') {
       recordGuardianEvent(event, eventElement)
@@ -1057,16 +1056,7 @@
     }
     if (profile.kind === 'capture' && interactWithCuldcept(event, eventElement)) return
     if (profile.kind === 'arrow' && interactWithArrow(event, eventElement)) return
-    const requiresCharacter = [
-      'elastic',
-      'chain-rule',
-      'chain-bind',
-      'control',
-      'surveillance',
-      'curse',
-      'inherit',
-      'ability-loan',
-    ].includes(profile.kind)
+    const requiresCharacter = requiresCharacterTarget(profile.kind)
     const target = requiresCharacter
       ? eventElement.closest<HTMLElement>('[data-hatsu-character]')
       : eventElement.closest<HTMLElement>(
@@ -1094,7 +1084,7 @@
 
     // Only the kinds `extendedInteraction` does not claim reach this point.
     if (profile.kind === 'elastic') {
-      selectBungeeCharacter(target, { x, y }, label)
+      selectBungeeTarget(target, { x, y }, label)
       return
     } else if (profile.kind === 'inherit') {
       const characterId = target.dataset.hatsuCharacter

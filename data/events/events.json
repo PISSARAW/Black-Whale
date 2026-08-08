@@ -570,15 +570,15 @@
   {
     "chapter": 382,
     "chapterTitle": "Awakening",
-    "sequence": 1,
+    "sequence": 2,
     "title": "Salé-salé is assassinated",
     "summary": "Yushohi kills Salé-salé with Stand by Me; the death is concealed and attributed publicly to illness.",
     "legacyTitles": [],
     "occurredAt": {
       "basis": "stated",
-      "day": 8
+      "hours": 176
     },
-    "occurredAtLabel": "Day 8 · Sunday"
+    "occurredAtLabel": "Day 8 · Sunday · 20:00"
   },
   {
     "chapter": 380,
@@ -621,7 +621,7 @@
   {
     "chapter": 382,
     "chapterTitle": "Awakening",
-    "sequence": 2,
+    "sequence": 1,
     "title": "Halkenburg commits to the Succession Contest",
     "summary": "After failing to shoot Nasubi or himself, Halkenburg accepts the fight and awakens his collective Nen ability.",
     "legacyTitles": ["Halkenburg Collapse"],
@@ -666,28 +666,6 @@
     "title": "Without You rejoins Fugetsu aboard the Black Whale",
     "summary": "The post-mortem Nen construct bearing Kacho's appearance returns through Magical Worm and remains beside Fugetsu.",
     "occursOnBlackWhale": true,
-    "legacyTitles": []
-  },
-  {
-    "chapter": 386,
-    "chapterTitle": "Hypothesis",
-    "sequence": 1,
-    "title": "Tserriednich survives Theta's execution attempt",
-    "summary": "Parallel Future lets Tserriednich foresee the gunshot, evade it and conceal the outcome from his guards.",
-    "legacyTitles": [],
-    "occurredAt": {
-      "basis": "stated",
-      "day": 9,
-      "source": "community"
-    },
-    "occurredAtLabel": "Day 9 · Monday"
-  },
-  {
-    "chapter": 389,
-    "chapterTitle": "Curse",
-    "sequence": 1,
-    "title": "Halkenburg strikes Shikaku",
-    "summary": "Halkenburg's collective arrow pierces every defence and transfers Sumidori into Shikaku's body.",
     "legacyTitles": []
   },
   {
@@ -1157,7 +1135,15 @@
     "chapterTitle": "Warning",
     "sequence": 1,
     "title": "Theta shoots Tserriednich during Zetsu",
-    "summary": "Theta uses the disappearance of the guardian beast during training to execute Tserriednich with a shot to the head.",
+    "summary": "At the printed Sunday 19:35 drill in room 1004, Theta uses the disappearance of the Guardian Spirit Beast during Zetsu to shoot Tserriednich. Chapter 387 revisits this same physical event through Parallel Future.",
+    "legacyTitles": []
+  },
+  {
+    "chapter": 386,
+    "chapterTitle": "Hypothesis",
+    "sequence": 1,
+    "title": "Shikaku's occupied body dies outside room 1007",
+    "summary": "After leaving Halkenburg's room 1009, Shikaku's body, occupied by Sumidori, shoots itself in the royal corridor outside Luzurus's suite.",
     "legacyTitles": []
   },
   {
@@ -1165,7 +1151,7 @@
     "chapterTitle": "Recreation",
     "sequence": 1,
     "title": "Tserriednich understands Parallel Future",
-    "summary": "Tserriednich determines that Zetsu grants him a ten-second vision whose predicted outcome remains visible to everyone else.",
+    "summary": "The narrative returns to Sunday's 19:35 drill. Tserriednich determines that Zetsu grants him a ten-second vision whose predicted outcome remains visible to everyone else; this is the chapter 385 shooting replayed, not a second attempt.",
     "legacyTitles": []
   },
   {
@@ -1183,11 +1169,19 @@
     "occurredAtLabel": "Day 10 · Tuesday · 11:30"
   },
   {
+    "chapter": 389,
+    "chapterTitle": "Curse",
+    "sequence": 1,
+    "title": "Camilla's Have-Nots compare their curse assignments",
+    "summary": "The curse bearers meet in room 1002 while Camilla remains detained; portraits of their assigned princes are explanatory and do not put those targets in the room.",
+    "legacyTitles": []
+  },
+  {
     "chapter": 390,
     "chapterTitle": "Clash: Part 1",
     "sequence": 1,
     "title": "Xi-Yu clashes with Heil-Ly on Tier 3",
-    "summary": "Hinrigh, Lynch and Zakuro confront Heil-Ly members; Hinrigh kills the soldiers who try to expel his team.",
+    "summary": "After Zhang Lei visits Onior and the Xi-Yu issue their orders, Hinrigh, Lynch and Zakuro descend to Tier 3, interrogate suspects and confront Heil-Ly members in the food court.",
     "legacyTitles": []
   },
   {

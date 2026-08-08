@@ -1378,40 +1378,119 @@
     "description": "Mizaistom first briefs Kakin personnel and changes the military deployment. At 10:00 on Day 4, a cutaway names separate posts across Tiers 3 to 5. Each room is recorded as its own event: sharing the cutaway timestamp does not mean sharing a scene. Fugetsu then appears alone on Tier 3 and subsequently meets Mizaistom, Mizuri, Illumi and Kalluto in the observation area. The Cha-R later review their camera footage with the three Spiders who visited the warehouse. Hisoka is not shown and receives no shipboard position."
   },
   {
+    "id": "ch-381",
+    "number": 381,
+    "publicationOrder": 381,
+    "title": "Predation",
+    "timeline": [
+      {
+        "eventId": "day5-fugetsu-disappearance-review",
+        "event": "Mizaistom reviews Fugetsu's disappearance with Public Security",
+        "storyDate": "Day 5 · Thursday · 13:44",
+        "charactersInvolved": ["mizaistom-nana"],
+        "location": "Tier 3 - Central Police Station - Public Security Office",
+        "locationId": "tier-3-central-police-station",
+        "note": "Fugetsu and Kacho are discussed but are not in this office."
+      },
+      {
+        "eventId": "day5-fugetsu-protection-interview",
+        "event": "Fugetsu, Kacho and Melody are questioned under Justice protection",
+        "storyDate": "Day 5 · Thursday · 13:44",
+        "charactersInvolved": ["prince-fugetsu", "prince-kacho", "melody", "kaiser", "keeney"],
+        "location": "Tier 2 - Ministry of Justice - VIP Witness Protection Area",
+        "locationId": "tier-2-vip-witness-protection-area",
+        "note": "The visible 1010 marker belongs to the Justice complex, not to Kacho's royal suite on Tier 1."
+      },
+      {
+        "eventId": "day5-predator-room-1008",
+        "event": "Rihan's Predator devours Salé-salé's Guardian Spirit Beast beside the prince's bed",
+        "storyDate": "Day 5 · Thursday · 20:00",
+        "charactersInvolved": ["rihan", "prince-salesale"],
+        "location": "Tier 1 - Room 1008 - Salé-salé Bedroom",
+        "locationId": "tier-1-royal-residential-sector-room-1008"
+      },
+      {
+        "eventId": "day5-yushohi-surveillance",
+        "event": "Yushohi maintains Stand By Me surveillance from Fugetsu's suite",
+        "storyDate": "Day 5 · Thursday · 20:00",
+        "charactersInvolved": ["yushohi"],
+        "location": "Tier 1 - Room 1011",
+        "locationId": "tier-1-royal-residential-sector-room-1011",
+        "note": "The cutaway is simultaneous with the room 1008 operation but is a different physical room."
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 to 3",
+    "keyEvents": [
+      "13:44 and 20:00 are separate temporal anchors on the fifth day",
+      "Justice room 1010 must not be confused with royal suite 1010",
+      "Rihan and Yushohi support the same operation from different rooms"
+    ],
+    "description": "The chapter first separates a Tier 3 police review from the protected interview on Tier 2. At 20:00, Predator reaches Salé-salé in the bedroom of room 1008 while Yushohi monitors from room 1011. Operational coordination and simultaneity do not create physical co-presence."
+  },
+  {
     "id": "ch-382",
     "number": 382,
     "publicationOrder": 382,
     "title": "Awakening",
     "timeline": [
       {
+        "eventId": "day8-halkenburg-audience",
         "event": "Halkenburg confronts Nasubi and fires on him",
         "storyDate": "≈ Day 8",
         "charactersInvolved": ["prince-halkenburg", "nasubi-hui-guo-rou"],
-        "location": "Tier 1 - King's Quarters"
+        "location": "Tier 1 - King's Living Quarters",
+        "locationId": "tier-1-king-living-quarters"
       },
       {
+        "eventId": "day8-halkenburg-audience",
         "event": "The king's Guardian Spirit Beast stops the bullet",
         "storyDate": "≈ Day 8",
         "charactersInvolved": ["nasubi-hui-guo-rou", "prince-halkenburg"],
-        "location": "Tier 1 - King's Quarters"
+        "location": "Tier 1 - King's Living Quarters",
+        "locationId": "tier-1-king-living-quarters"
       },
       {
-        "event": "Halkenburg looses his first arrow at Shikaku",
+        "eventId": "day8-halkenburg-first-arrow",
+        "event": "Halkenburg leaves the royal audience and Shikaku confronts his group",
         "storyDate": "≈ Day 8",
         "charactersInvolved": ["prince-halkenburg", "shikaku"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Royal Residential Corridor near room 1009",
+        "locationId": "tier-1-royal-residential-sector",
+        "movement": "King's Living Quarters → royal corridor → room 1009"
       },
       {
-        "event": "Salé-salé is assassinated by Yushohi on Benjamin's order",
-        "storyDate": "Day 8 · Sunday",
-        "charactersInvolved": ["prince-salesale", "yushohi", "prince-benjamin"],
-        "location": "Tier 1 - Room 1008"
+        "eventId": "day8-halkenburg-first-arrow",
+        "event": "Halkenburg's synchronized aura arrow transfers Sumidori into Shikaku's body",
+        "storyDate": "≈ Day 8",
+        "charactersInvolved": ["prince-halkenburg", "shikaku", "sumidori"],
+        "location": "Tier 1 - Room 1009 - Reception Room",
+        "locationId": "tier-1-royal-residential-sector-room-1009",
+        "note": "Shikaku supplies the visible body; Sumidori is present as the transferred consciousness."
       },
       {
-        "event": "Kurapika reads the second major aura disturbance of the voyage",
+        "eventId": "day8-sunday-banquet-opens",
+        "event": "The Sunday banquet begins",
+        "storyDate": "Day 8 · Sunday · 20:00",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "prince-kacho", "prince-fugetsu", "melody"],
+        "location": "Tier 1 - Banquet Hall",
+        "locationId": "tier-1-banquet-hall"
+      },
+      {
+        "eventId": "day8-salesale-assassination",
+        "event": "Yushohi's Stand By Me kills Salé-salé in bed while the banquet proceeds",
+        "storyDate": "Day 8 · Sunday · 20:00",
+        "charactersInvolved": ["prince-salesale", "yushohi"],
+        "location": "Tier 1 - Room 1008 - Salé-salé Bedroom",
+        "locationId": "tier-1-royal-residential-sector-room-1008",
+        "note": "Benjamin orders the operation remotely and is not placed in the bedroom."
+      },
+      {
+        "eventId": "day8-aura-disturbance-room-1014",
+        "event": "Kurapika and Oito register Halkenburg's aura disturbance from Woble's suite",
         "storyDate": "≈ Day 8",
         "charactersInvolved": ["kurapika", "queen-oito"],
-        "location": "Tier 1 - Room 1014"
+        "location": "Tier 1 - Room 1014 - Nen Classroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       }
     ],
     "location": "Tier 1 - Royal Residential Sector",
@@ -1430,28 +1509,61 @@
     "title": "Escape",
     "timeline": [
       {
+        "eventId": "day8-melody-banquet-solo",
         "event": "Melody plays a three-minute flute solo that holds the banquet",
-        "storyDate": "Day 8 · Sunday · 20:00",
+        "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["melody", "prince-kacho", "prince-fugetsu"],
-        "location": "Tier 1 - Banquet Hall"
+        "location": "Tier 1 - Banquet Hall",
+        "locationId": "tier-1-banquet-hall",
+        "note": "Three minutes is the performance duration, not a printed clock time."
       },
       {
-        "event": "Kacho and Fugetsu leave the ship by lifeboat",
+        "eventId": "day8-twins-run-to-lifeboats",
+        "event": "Kacho and Fugetsu run from the banquet through the emergency corridor",
+        "storyDate": "Day 8 · Sunday · during the banquet",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Tier 1 - Royal Residential / emergency corridor",
+        "locationId": "tier-1-royal-residential-sector",
+        "movement": "Banquet Hall → emergency corridor → lifeboat deck"
+      },
+      {
+        "eventId": "day8-lifeboat-launch",
+        "event": "Keeney launches Kacho and Fugetsu in an evacuation pod",
         "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu", "keeney"],
-        "location": "Black Whale 1 - lifeboat"
+        "location": "Tier 1 - Lifeboat Deck",
+        "locationId": "tier-1-lifeboats"
       },
       {
-        "event": "Hands close around the lifeboat and the twins turn back",
+        "eventId": "day8-lifeboat-boundary-attack",
+        "event": "Spectral hands surround the pod outside the ship",
         "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
-        "location": "Black Whale 1 - lifeboat"
+        "location": "Evacuation pod outside Black Whale 1"
       },
       {
-        "event": "Kacho dies on the drifting lifeboat and Without You takes her shape",
+        "eventId": "day8-magical-worm-return",
+        "event": "Kacho pushes Fugetsu through Magical Worm's outbound door",
         "storyDate": "Day 8 · Sunday · during the banquet",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
-        "location": "Black Whale 1 - lifeboat"
+        "location": "Magical Worm dimensional passage",
+        "movement": "Evacuation pod → Magical Worm passage → Black Whale 1"
+      },
+      {
+        "eventId": "day8-kacho-death",
+        "event": "Kacho dies alone in the drifting pod",
+        "storyDate": "Day 8 · Sunday · during the banquet",
+        "charactersInvolved": ["prince-kacho"],
+        "location": "Evacuation pod outside Black Whale 1",
+        "note": "Fugetsu has already crossed the threshold and is not physically in the pod at Kacho's death."
+      },
+      {
+        "eventId": "day8-without-you-return",
+        "event": "Without You assumes Kacho's form and rejoins Fugetsu",
+        "storyDate": "Day 8 · Sunday · during the banquet",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Magical Worm return passage / Black Whale 1",
+        "note": "The Kacho identifier here denotes her Guardian Spirit Beast's physical proxy, not Kacho's corpse."
       }
     ],
     "location": "Tier 1 - Banquet Hall / Black Whale 1 - lifeboat",
@@ -1464,72 +1576,438 @@
     "description": "Melody's solo holds the banquet for three minutes while Keeney puts the twins in a lifeboat. Hands rise around the boat and Kacho understands that a prince who runs only finds death; the sisters go back to their room and change the plan. Fugetsu's Magical Worm opens the tunnels out, Kacho's return leg brings them home — and Without You, formless, takes whichever twin dies. Kacho stays on the boat."
   },
   {
+    "id": "ch-384",
+    "number": 384,
+    "publicationOrder": 384,
+    "title": "War",
+    "timeline": [
+      {
+        "eventId": "day8-cha-r-strategy-meeting",
+        "event": "Ken'i Wang briefs Nobunaga and Phinks on mafia territory and Morena's disappearance",
+        "storyDate": "≈ Day 8 · before 19:35",
+        "charactersInvolved": ["keni-wang", "nobunaga-hazama", "phinks-magcub", "tajao"],
+        "location": "Tier 5 - Cha-R Family Office",
+        "locationId": "tier-5-cha-r-family-office"
+      },
+      {
+        "eventId": "day8-xi-yu-patriarch-briefing",
+        "event": "Onior Longbao reviews the balance between the three mafia families",
+        "storyDate": "≈ Day 8 · before 19:35",
+        "charactersInvolved": ["onior-longbao"],
+        "location": "Tier 1 - Xi-Yu Patriarch Apartment",
+        "locationId": "tier-1-vvip-living-quarters"
+      },
+      {
+        "eventId": "day8-cha-r-patriarch-orders",
+        "event": "Brocco Li orders his people to locate Morena",
+        "storyDate": "≈ Day 8 · before 19:35",
+        "charactersInvolved": ["brocco-li"],
+        "location": "Tier 1 - VVIP Living Quarters",
+        "locationId": "tier-1-vvip-living-quarters",
+        "note": "This is a separate patriarchal residence, not the Tier 5 Cha-R office."
+      },
+      {
+        "eventId": "day8-tserriednich-training-prelude",
+        "event": "Theta tests Tserriednich's aura control and begins Zetsu instruction",
+        "storyDate": "≈ Day 8 · before 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 and 5",
+    "keyEvents": [
+      "The mafia briefings occupy separate offices",
+      "Theta resolves to kill Tserriednich during Zetsu"
+    ],
+    "description": "The chapter cuts among separate mafia headquarters before settling in room 1004. Morena and her quarters are reconstructed or discussed, not physically shared with the mafia meetings. Theta and Tserriednich alone occupy the training salon."
+  },
+  {
+    "id": "ch-385",
+    "number": 385,
+    "publicationOrder": 385,
+    "title": "Warning",
+    "timeline": [
+      {
+        "eventId": "day8-1935-tserriednich-zetsu-drill",
+        "event": "Theta starts Tserriednich's Zetsu drill",
+        "storyDate": "Day 8 · Sunday · 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      },
+      {
+        "eventId": "day8-1935-theta-shot",
+        "event": "Theta fires at Tserriednich while he is in Zetsu",
+        "storyDate": "Day 8 · Sunday · shortly after 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004",
+        "note": "Chapter 387 revisits this same physical event through Parallel Future."
+      },
+      {
+        "eventId": "day8-1935-room1004-guards-enter",
+        "event": "Salkov and the private guards enter after the gunshot",
+        "storyDate": "Day 8 · Sunday · shortly after 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta", "salkov", "danjin"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004",
+        "movement": "Guard anteroom → training salon"
+      },
+      {
+        "eventId": "day8-theta-debrief",
+        "event": "The guards remove Theta from the salon and examine her Nen-beast wound",
+        "storyDate": "Day 8 · Sunday · after the drill",
+        "charactersInvolved": ["theta", "salkov", "danjin"],
+        "location": "Tier 1 - Room 1004 - Guard Anteroom",
+        "locationId": "tier-1-royal-residential-sector-room-1004",
+        "movement": "Training salon → guard anteroom"
+      }
+    ],
+    "location": "Tier 1 - Room 1004",
+    "keyEvents": [
+      "19:35 is printed",
+      "The guards enter only after the shot",
+      "Theta is then moved to a different room"
+    ],
+    "description": "Room 1004 is divided into an open training salon and an adjoining guard space. The attempted execution and its altered perception are one event, revisited in chapter 387, not two independent shootings."
+  },
+  {
+    "id": "ch-386",
+    "number": 386,
+    "publicationOrder": 386,
+    "title": "Hypothesis",
+    "timeline": [
+      {
+        "eventId": "day8-theta-debrief",
+        "event": "Theta reconstructs the shot while resting under guard",
+        "storyDate": "Day 8 · Sunday · after 19:35",
+        "charactersInvolved": ["theta", "salkov", "danjin"],
+        "location": "Tier 1 - Room 1004 - Guard Anteroom",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      },
+      {
+        "eventId": "day9-justice-fugetsu-case",
+        "event": "Kaiser and Melody review Fugetsu's protected status",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["kaiser", "melody", "belerainte"],
+        "location": "Tier 2 - Ministry of Justice",
+        "locationId": "tier-2-ministry-of-justice"
+      },
+      {
+        "eventId": "day9-shikaku-body-review",
+        "event": "Halkenburg's group studies Shikaku's occupied body",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["prince-halkenburg", "shikaku", "sumidori"],
+        "location": "Tier 1 - Room 1009 - Reception Room",
+        "locationId": "tier-1-royal-residential-sector-room-1009",
+        "note": "Shikaku is the body and Sumidori the transferred consciousness."
+      },
+      {
+        "eventId": "day9-shikaku-suicide",
+        "event": "Shikaku's occupied body leaves room 1009 and shoots itself outside room 1007",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["shikaku", "sumidori", "prince-halkenburg"],
+        "location": "Tier 1 - Royal Residential Corridor outside room 1007",
+        "locationId": "tier-1-royal-residential-sector",
+        "movement": "Room 1009 → royal corridor → outside room 1007"
+      },
+      {
+        "eventId": "day9-room1007-aura-reaction",
+        "event": "Luzurus and Basho sense Halkenburg's aura from inside room 1007",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["prince-luzurus", "basho", "ridge"],
+        "location": "Tier 1 - Room 1007 - Main Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1007",
+        "note": "They do not share the corridor suicide event."
+      },
+      {
+        "eventId": "day9-benjamin-response",
+        "event": "Benjamin and Balsamilco assess Shikaku's death",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "vict"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001"
+      },
+      {
+        "eventId": "day9-room1014-nen-class",
+        "event": "Kurapika negotiates the Nen tests with the assembled prince guards",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": [
+          "kurapika",
+          "bill",
+          "belerainte",
+          "babimyna",
+          "sakata",
+          "maor",
+          "vergei"
+        ],
+        "location": "Tier 1 - Room 1014 - Nen Classroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "eventId": "day9-room1004-guard-analysis",
+        "event": "Salkov and Danjin compare Tserriednich's progress and Theta's condition",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["salkov", "danjin", "theta"],
+        "location": "Tier 1 - Room 1004 - Guard Anteroom",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 and 2",
+    "keyEvents": [
+      "Day 9 is printed",
+      "Shikaku's body and Sumidori's consciousness are tracked separately",
+      "Room 1007 and its corridor are separate scenes"
+    ],
+    "description": "The chapter advances through several rooms on the ninth day. Halkenburg's group, Luzurus's household, Benjamin's command room and Kurapika's class react to related developments without becoming one physical gathering."
+  },
+  {
+    "id": "ch-387",
+    "number": 387,
+    "publicationOrder": 387,
+    "title": "Recreation",
+    "timeline": [
+      {
+        "eventId": "day8-1935-tserriednich-zetsu-drill",
+        "event": "Parallel Future replays the opening of the Zetsu drill",
+        "storyDate": "Day 8 · Sunday · 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004",
+        "note": "Same canonical event as chapter 385, now shown from Tserriednich's perception."
+      },
+      {
+        "eventId": "day8-1935-theta-shot",
+        "event": "Tserriednich sees Theta's shot ten seconds ahead and changes his real movement",
+        "storyDate": "Day 8 · Sunday · shortly after 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      },
+      {
+        "eventId": "day8-1935-room1004-guards-enter",
+        "event": "The guards enter the altered outcome perceived after the shot",
+        "storyDate": "Day 8 · Sunday · shortly after 19:35",
+        "charactersInvolved": ["prince-tserriednich", "theta", "salkov", "danjin"],
+        "location": "Tier 1 - Room 1004 - Nen Training Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      }
+    ],
+    "location": "Tier 1 - Room 1004",
+    "keyEvents": [
+      "The chapter repeats chapter 385's 19:35 event",
+      "Vision and altered reality are phases of one encounter"
+    ],
+    "description": "The printed clock returns to Sunday 19:35. Matching eventId values deliberately join these panels to chapter 385, preventing the replay from being mistaken for a second meeting or a second shot."
+  },
+  {
+    "id": "ch-388",
+    "number": 388,
+    "publicationOrder": 388,
+    "title": "Reflection",
+    "timeline": [
+      {
+        "eventId": "day9-room1014-nen-class",
+        "event": "Kurapika explains the testing rules and demonstrates Steal Chain with Bill's ability",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": [
+          "kurapika",
+          "bill",
+          "belerainte",
+          "babimyna",
+          "sakata",
+          "maor",
+          "vergei",
+          "yuri"
+        ],
+        "location": "Tier 1 - Room 1014 - Nen Classroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "eventId": "day9-oito-woble-bedroom",
+        "event": "Oito remains with Woble in the private bedroom while the lesson continues outside",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["queen-oito", "prince-woble"],
+        "location": "Tier 1 - Room 1014 - Oito and Woble Bedroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014",
+        "note": "The open lesson and the bedroom are adjoining but distinct co-presence spaces."
+      },
+      {
+        "eventId": "day9-rihan-room1005-analysis",
+        "event": "Rihan analyzes Tubeppa's side from room 1005",
+        "storyDate": "Day 9 · Monday",
+        "charactersInvolved": ["rihan", "prince-tubeppa"],
+        "location": "Tier 1 - Room 1005",
+        "locationId": "tier-1-royal-residential-sector-room-1005"
+      },
+      {
+        "eventId": "day10-1130-room1014-aura-exercise",
+        "event": "Kurapika's class produces a large aura response",
+        "storyDate": "Day 10 · Tuesday · 11:30",
+        "charactersInvolved": ["kurapika", "bill", "yuri"],
+        "location": "Tier 1 - Room 1014 - Nen Classroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Tier 1 - Rooms 1005 and 1014",
+    "keyEvents": [
+      "The day-10 11:30 anchor closes the chapter",
+      "The classroom and Woble's bedroom are not merged"
+    ],
+    "description": "Most of the chapter remains in the room 1014 lesson, but Oito and Woble occupy the private bedroom and Rihan observes from room 1005. The final aura exercise is explicitly dated Tuesday at 11:30."
+  },
+  {
+    "id": "ch-389",
+    "number": 389,
+    "publicationOrder": 389,
+    "title": "Curse",
+    "timeline": [
+      {
+        "eventId": "day9-1000-room1007-investigation",
+        "event": "Luzurus's guards reconstruct Shikaku's suicide with Basho",
+        "storyDate": "Day 9 · Monday · 10:00",
+        "charactersInvolved": [
+          "prince-luzurus",
+          "basho",
+          "kanjidol",
+          "ridge",
+          "macne",
+          "famule",
+          "odessa",
+          "gadeau"
+        ],
+        "location": "Tier 1 - Room 1007 - Main Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1007"
+      },
+      {
+        "eventId": "day10-1130-room1007-aura-reaction",
+        "event": "Basho and the room 1007 detail sense the aura from Kurapika's class",
+        "storyDate": "Day 10 · Tuesday · 11:30",
+        "charactersInvolved": ["prince-luzurus", "basho", "ridge"],
+        "location": "Tier 1 - Room 1007 - Main Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1007"
+      },
+      {
+        "eventId": "day10-room1007-justice-inspection",
+        "event": "Justice investigators arrive in the corridor to inspect the suicide scene",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["peuckert", "steiner", "kanjidol"],
+        "location": "Tier 1 - Royal Residential Corridor outside room 1007",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "eventId": "day10-tyson-birthday",
+        "event": "Tyson enters her birthday gathering",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["prince-tyson", "giuliano", "izunavi"],
+        "location": "Tier 1 - Room 1006 - Tyson Reception Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1006"
+      },
+      {
+        "eventId": "day10-camilla-curse-meeting",
+        "event": "Camilla's Have-Not guards compare their assigned curse targets",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": [
+          "sarahell",
+          "umanma",
+          "fukataki",
+          "meshush",
+          "mozbe",
+          "kako",
+          "lisamsetta"
+        ],
+        "location": "Tier 1 - Room 1002 - Have-Not Assembly Room",
+        "locationId": "tier-1-royal-residential-sector-room-1002",
+        "note": "Camilla is detained elsewhere; the assignment portraits do not place the targeted princes in this room."
+      },
+      {
+        "eventId": "day10-zhanglei-coin-review",
+        "event": "Zhang Lei's household examines the changed Nen coin",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["prince-zhanglei", "coventoba", "tenftory"],
+        "location": "Tier 1 - Room 1003 - Zhang Lei Reception Room",
+        "locationId": "tier-1-royal-residential-sector-room-1003"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "The chapter contains a Day 9 flashback inside a Day 10 sequence",
+      "Target portraits are not physical attendance",
+      "Five distinct rooms or corridor sectors are preserved"
+    ],
+    "description": "Chapter 389 alternates among room 1007, its outside corridor, Tyson's room 1006, Camilla's guard room 1002 and Zhang Lei's room 1003. The curse roster is explanatory evidence: only the assembled Have-Nots count as present."
+  },
+  {
     "id": "ch-390",
     "number": 390,
     "publicationOrder": 390,
-    "title": "Parasite",
-    "date": "2022-10-02",
+    "title": "Clash: Part 1",
     "timeline": [
       {
-        "event": "Assassination of Momoze (12th Princess) in room 1012",
-        "storyDate": "Day 1 · Sunday (night)",
-        "charactersInvolved": ["prince-momoze", "hanzo", "biscuit-krueger", "luini"],
-        "location": "Tier 2 - Room 1012"
+        "eventId": "day10-zhanglei-coin-review",
+        "event": "Coventoba and Tenftory continue examining Zhang Lei's coin",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["prince-zhanglei", "coventoba", "tenftory"],
+        "location": "Tier 1 - Room 1003 - Zhang Lei Reception Room",
+        "locationId": "tier-1-royal-residential-sector-room-1003"
       },
       {
-        "event": "Marayam (13th Prince) activates his Nen ability to isolate room 1013",
-        "storyDate": "≈ Day 1-2",
-        "charactersInvolved": ["prince-marayam", "biscuit-krueger", "hanzo"],
-        "location": "Tier 2 - Room 1013"
+        "eventId": "day10-zhanglei-visits-onior",
+        "event": "Zhang Lei travels under guard to speak with Onior Longbao",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["prince-zhanglei", "onior-longbao"],
+        "location": "Tier 1 - Xi-Yu Patriarch Apartment",
+        "locationId": "tier-1-vvip-living-quarters",
+        "movement": "Room 1003 → royal corridor → guarded VVIP corridor → Xi-Yu patriarch apartment"
       },
       {
-        "event": "Benjamin (1st Prince) imposes Martial Law from room 1001",
-        "storyDate": "Day 2 · Monday",
-        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "musse", "rihan"],
-        "location": "Tier 1 - Room 1001"
+        "eventId": "day10-xi-yu-search-orders",
+        "event": "Hinrigh, Rinchi and Zakuro receive the search assignment",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": [
+          "hinrigh-biganduffno",
+          "lynch-fullbokko",
+          "zakuro-custard",
+          "onior-longbao"
+        ],
+        "location": "Tier 4 - Xi-Yu Family Office",
+        "locationId": "tier-4-xi-yu-family-office",
+        "note": "The order scene is separate from Zhang Lei's VVIP audience."
       },
       {
-        "event": "Camilla (2nd Princess) attempts to murder Benjamin and is imprisoned",
-        "storyDate": "≈ Day 2-3",
-        "charactersInvolved": ["prince-camilla", "prince-benjamin", "balsamilco-might"],
-        "location": "Tier 1 - VIP Jail"
+        "eventId": "day10-xi-yu-tier3-search",
+        "event": "The Xi-Yu trio crosses the Tier 3 public concourse and splits its search",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["hinrigh-biganduffno", "lynch-fullbokko", "zakuro-custard"],
+        "location": "Tier 3 - Public concourse",
+        "locationId": "tier-3",
+        "movement": "Xi-Yu office → inter-tier stairs/checkpoint → Tier 3 concourse → food court"
       },
       {
-        "event": "Tserriednich (4th Prince) manipulates the Heil-Ly to sow chaos",
-        "storyDate": "≈ Day 4 onwards",
-        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo", "luini"],
-        "location": "Tiers 3-5"
+        "eventId": "day10-tier3-foodcourt-interrogations",
+        "event": "Rinchi questions suspects while Zakuro and Hinrigh cover the food court",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["hinrigh-biganduffno", "lynch-fullbokko", "zakuro-custard"],
+        "location": "Tier 3 - Food Court",
+        "locationId": "tier-3"
       },
       {
-        "event": "Kacho (10th Princess) and Fugetsu (11th Princess) try to escape with Melody",
-        "storyDate": "Day 8 · Sunday (night) · banquet",
-        "charactersInvolved": ["prince-kacho", "prince-fugetsu", "melody"],
-        "location": "Tier 1 - Banquet dominical"
-      },
-      {
-        "event": "Hisoka assassinates two members of the Phantom Troupe in Tier 5",
-        "storyDate": "Before departure (chapter 357)",
-        "charactersInvolved": ["hisoka", "chrollo-lucilfer", "nobunaga-hazama"],
-        "location": "Tier 5"
-      },
-      {
-        "event": "Kurapika uses Little Eye (cockroaches) to spy on other factions",
-        "storyDate": "≈ Day 2-3",
-        "charactersInvolved": ["kurapika", "queen-oito"],
-        "location": "Tier 2"
+        "eventId": "day10-tier3-foodcourt-attack",
+        "event": "Heil-Ly attackers open fire and Hinrigh converts restraints into snakes",
+        "storyDate": "Day 10 · Tuesday",
+        "charactersInvolved": ["hinrigh-biganduffno", "lynch-fullbokko", "zakuro-custard"],
+        "location": "Tier 3 - Food Court",
+        "locationId": "tier-3"
       }
     ],
-    "location": "All third parties",
+    "location": "Black Whale 1 - Tiers 1, 3 and 4",
     "keyEvents": [
-      "Premier meurtre : Momoze assasinee",
-      "Marayam active sa protection Nen",
-      "Benjamin imposes Martial Law",
-      "Camilla emprisonnee",
-      "Hisoka kills two members of the Phantom Troupe",
-      "Tentative de fuite de Kacho et Fugetsu",
-      "Debut de l'espionnage massif de Kurapika"
+      "The obsolete arc-wide summary is replaced by chapter-390 scenes",
+      "Zhang Lei moves from room 1003 to Onior's VVIP apartment",
+      "The Xi-Yu trio then moves from its office to the Tier 3 food court"
     ],
-    "description": "The war intensifies with the first killings and the first major strategies. Benjamin takes military control, Hisoka takes action, and Kurapika activates his spy network. Mafia factions begin to play an active role in the conflict, manipulating the princes and their guards."
+    "description": "Chapter 390 begins in room 1003, follows Zhang Lei through guarded corridors to Onior's separate apartment, then shifts to the Xi-Yu search team. Hinrigh, Rinchi and Zakuro travel from their Tier 4 office to the Tier 3 concourse and food court; people discussed in the mafia briefings are not added to those rooms."
   },
   {
     "id": "ch-391",
@@ -1538,6 +2016,7 @@
     "title": "Clash: Part 2",
     "timeline": [
       {
+        "eventId": "day10-hinrigh-heilly-ambush",
         "event": "Hinrigh fights the Heil-Ly hunting party in a Tier 3 public passage",
         "storyDate": "Time not printed",
         "charactersInvolved": ["hinrigh-biganduffno", "padaille", "quorolle", "cashew"],
@@ -1545,6 +2024,7 @@
         "locationId": "tier-3"
       },
       {
+        "eventId": "day10-lynch-zakuro-search",
         "event": "Lynch and Zakuro continue the Hisoka search elsewhere on Tier 3",
         "storyDate": "Same operation; simultaneity is not stated",
         "charactersInvolved": ["lynch-fullbokko", "zakuro-custard"],
@@ -1566,6 +2046,7 @@
     "title": "Information",
     "timeline": [
       {
+        "eventId": "day10-lynch-tests-hanal",
         "event": "Lynch tests Hanal and rules him out as Hisoka",
         "storyDate": "Time not printed",
         "charactersInvolved": ["lynch-fullbokko", "zakuro-custard", "hanal"],
@@ -1573,6 +2054,7 @@
         "locationId": "tier-3"
       },
       {
+        "eventId": "day10-lynch-tests-bonolenov",
         "event": "Lynch strikes Bonolenov disguised as Hisoka and exposes the imposture",
         "storyDate": "Later in the same search",
         "charactersInvolved": ["lynch-fullbokko", "zakuro-custard", "bonolenov-ndongo"],
@@ -1580,6 +2062,7 @@
         "locationId": "tier-3"
       },
       {
+        "eventId": "day10-luini-cha-r-entry",
         "event": "Nobunaga and Phinks receive Luini inside the Cha-R office",
         "storyDate": "Parallel sequence; exact offset not printed",
         "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "luini", "keni-wang"],
@@ -1602,6 +2085,7 @@
     "title": "Plea",
     "timeline": [
       {
+        "eventId": "day10-bonolenov-kills-lynch",
         "event": "Bonolenov neutralizes Zakuro, kills Lynch and keeps using her appearance",
         "storyDate": "Immediately after chapter 392",
         "charactersInvolved": ["bonolenov-ndongo", "lynch-fullbokko", "zakuro-custard"],
@@ -1609,6 +2093,7 @@
         "locationId": "tier-3"
       },
       {
+        "eventId": "day10-bonolenov-cineplex-wait",
         "event": "Bonolenov waits through a film in one unidentified cineplex auditorium",
         "storyDate": "Later; no clock shown",
         "charactersInvolved": ["bonolenov-ndongo"],
@@ -1616,6 +2101,7 @@
         "locationId": "tier-3-cineplex"
       },
       {
+        "eventId": "day10-nobunaga-kills-luini",
         "event": "Nobunaga kills Luini inside the Cha-R office",
         "storyDate": "Intercut with the Tier 3 sequence",
         "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "luini", "keni-wang"],
@@ -1623,6 +2109,7 @@
         "locationId": "tier-5-cha-r-family-office"
       },
       {
+        "eventId": "day10-hinrigh-heilly-office-inspection",
         "event": "Hinrigh inspects the registered Heil-Ly premises",
         "storyDate": "Same investigation; exact offset not printed",
         "charactersInvolved": ["hinrigh-biganduffno", "maizan"],
@@ -1645,20 +2132,25 @@
     "title": "Hypothesis",
     "timeline": [
       {
+        "eventId": "day10-tassi-room3101-threshold",
         "event": "Tassi crosses the bathroom threshold in room 3101",
         "storyDate": "Time not printed",
         "charactersInvolved": ["tassi"],
         "location": "Black Whale 1 - Tier 3 - Room 3101",
-        "locationId": "tier-3-residential-room-3101"
+        "locationId": "tier-3-residential-room-3101",
+        "movement": "Room 3101 bathroom → trapped threshold → Heil-Ly secret hideout"
       },
       {
+        "eventId": "day10-tassi-heilly-transfer",
         "event": "Tassi is transferred into the Heil-Ly processing room and killed",
         "storyDate": "Immediately after crossing the threshold",
         "charactersInvolved": ["tassi", "bille", "morena-prudo", "gipper", "momolly", "otocin"],
         "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout - Processing room",
-        "locationId": "tier-2-heilly-secret-hideout"
+        "locationId": "tier-2-heilly-secret-hideout",
+        "movement": "Tier 3 room 3101 threshold → Tier 2 Heil-Ly processing room"
       },
       {
+        "eventId": "day8-room1004-training-recollection",
         "event": "Tserriednich's Nen training is recalled rather than occurring in the trap sequence",
         "storyDate": "Flashback; not simultaneous",
         "charactersInvolved": ["prince-tserriednich", "theta", "salkov"],
@@ -1681,6 +2173,7 @@
     "title": "Founding: Part 1",
     "timeline": [
       {
+        "eventId": "day10-room3101-probe",
         "event": "Nobunaga, Phinks, Feitan and Hinrigh probe room 3101 and adjacent cabins",
         "storyDate": "Time not printed",
         "charactersInvolved": [
@@ -1694,6 +2187,7 @@
         "locationId": "tier-3-residential-room-3101"
       },
       {
+        "eventId": "meteor-city-troupe-children-gather",
         "event": "The future Phantom Troupe children gather in Meteor City",
         "storyDate": "Flashback, years before the voyage",
         "charactersInvolved": ["chrollo-lucilfer", "franklin-bordeau", "machi-komacine"],
@@ -1715,6 +2209,7 @@
     "title": "Founding: Part 2",
     "timeline": [
       {
+        "eventId": "meteor-city-power-cleaners-performance",
         "event": "The children dub and perform Power Cleaners for Meteor City",
         "storyDate": "Flashback, years before the voyage",
         "charactersInvolved": [
@@ -1741,6 +2236,7 @@
     "title": "Founding: Part 3",
     "timeline": [
       {
+        "eventId": "meteor-city-sarasa-search",
         "event": "The children search Meteor City for the missing Sarasa",
         "storyDate": "Flashback, years before the voyage",
         "charactersInvolved": [
@@ -1753,6 +2249,7 @@
         "location": "Meteor City outskirts (flashback)"
       },
       {
+        "eventId": "meteor-city-sarasa-aftermath",
         "event": "Sarasa's murder leads Chrollo to plan the Phantom Troupe",
         "storyDate": "Same historical day",
         "charactersInvolved": [
@@ -1780,25 +2277,33 @@
     "title": "Search",
     "timeline": [
       {
-        "event": "Hinrigh and Nobunaga enter room 3101 while Phinks and Ken'i hold outside",
+        "eventId": "day10-room3101-entry",
+        "event": "Hinrigh and Nobunaga enter room 3101",
         "storyDate": "Time not printed",
-        "charactersInvolved": [
-          "hinrigh-biganduffno",
-          "nobunaga-hazama",
-          "phinks-magcub",
-          "keni-wang"
-        ],
-        "location": "Black Whale 1 - Tier 3 - Room 3101 sector",
+        "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama"],
+        "location": "Black Whale 1 - Tier 3 - Room 3101",
         "locationId": "tier-3-residential-room-3101"
       },
       {
+        "eventId": "day10-room3101-corridor-watch",
+        "event": "Phinks and Ken'i hold the corridor outside room 3101",
+        "storyDate": "Same entry operation",
+        "charactersInvolved": ["phinks-magcub", "keni-wang"],
+        "location": "Black Whale 1 - Tier 3 - Corridor outside room 3101",
+        "locationId": "tier-3-residential-standard",
+        "note": "The doorway separates this pair from Hinrigh and Nobunaga's interior scene."
+      },
+      {
+        "eventId": "day10-hinrigh-nobunaga-heilly-entry",
         "event": "Hinrigh passes the trapped bathroom threshold and plants the transmitter in the hideout",
         "storyDate": "Minutes later; no clock shown",
         "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama"],
         "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout - Processing room",
-        "locationId": "tier-2-heilly-secret-hideout"
+        "locationId": "tier-2-heilly-secret-hideout",
+        "movement": "Room 3101 bathroom → Nen threshold → Heil-Ly processing room"
       },
       {
+        "eventId": "day10-heilly-monitoring-room",
         "event": "Morena's members monitor the seven-door processing room",
         "storyDate": "Same infiltration sequence",
         "charactersInvolved": ["morena-prudo", "terebellum", "yokotani"],
@@ -1821,6 +2326,7 @@
     "title": "Expulsion",
     "timeline": [
       {
+        "eventId": "day10-heilly-hideout-pursuit",
         "event": "Hinrigh and Nobunaga move through the Heil-Ly laundry and communal rooms",
         "storyDate": "Continuation of chapter 398",
         "charactersInvolved": [
@@ -1831,9 +2337,11 @@
           "souffle"
         ],
         "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout",
-        "locationId": "tier-2-heilly-secret-hideout"
+        "locationId": "tier-2-heilly-secret-hideout",
+        "movement": "Processing room → laundry/disposal room → communal room"
       },
       {
+        "eventId": "day10-yokotani-expulsion",
         "event": "Yokotani's ability expels Hinrigh and Nobunaga from the hideout",
         "storyDate": "End of the confrontation",
         "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama", "yokotani"],
@@ -1856,6 +2364,7 @@
     "title": "Secrecy",
     "timeline": [
       {
+        "eventId": "day10-transmitter-triangulation",
         "event": "Nobunaga, Phinks and Feitan triangulate Hinrigh's transmitter from a Tier 3 public passage",
         "storyDate": "Soon after the expulsion; no clock shown",
         "charactersInvolved": ["nobunaga-hazama", "phinks-magcub", "feitan-portor"],
@@ -1863,6 +2372,7 @@
         "locationId": "tier-3"
       },
       {
+        "eventId": "day10-justice-room1010-conference",
         "event": "Kaiser, Melody, Kacho's post-mortem double and Fugetsu confer in Justice room 1010",
         "storyDate": "Later intercut sequence; exact offset not printed",
         "charactersInvolved": ["kaiser", "melody", "prince-kacho", "prince-fugetsu", "steiner"],
@@ -1870,6 +2380,7 @@
         "locationId": "tier-2-ministry-of-justice"
       },
       {
+        "eventId": "day10-fugetsu-witness-suite",
         "event": "Fugetsu rests and experiments inside the VIP witness-protection suite",
         "storyDate": "Same Justice sequence",
         "charactersInvolved": ["prince-fugetsu", "prince-kacho", "melody"],
@@ -1877,11 +2388,13 @@
         "locationId": "tier-2-vip-witness-protection-area"
       },
       {
+        "eventId": "day10-fugetsu-room1014-visit",
         "event": "Fugetsu approaches room 1014 under Justice escort",
         "storyDate": "Later; no clock shown",
         "charactersInvolved": ["prince-fugetsu", "prince-kacho", "kaiser", "kurapika", "bill"],
         "location": "Black Whale 1 - Tier 1 - Outside Room 1014",
-        "locationId": "tier-1-royal-residential-sector-room-1014"
+        "locationId": "tier-1-royal-residential-sector-room-1014",
+        "movement": "Tier 2 Justice protection area → Tier 1 royal corridor → outside room 1014"
       }
     ],
     "location": "Black Whale 1 - Tiers 1 to 3",

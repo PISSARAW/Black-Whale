@@ -1,10 +1,13 @@
 export interface CanonScene {
+  eventId?: string
   event: string
   storyDate?: string
   charactersInvolved?: string[]
   location?: string
   locationId?: string
   certainty?: string
+  movement?: string
+  note?: string
 }
 
 export interface ChapterWithScenes {
@@ -13,6 +16,7 @@ export interface ChapterWithScenes {
 }
 
 export interface SharedCanonEvent {
+  eventId: string | null
   chapter: number
   sequence: number
   event: string
@@ -20,6 +24,8 @@ export interface SharedCanonEvent {
   location: string | null
   locationId: string | null
   certainty: string
+  movement: string | null
+  note: string | null
 }
 
 /**
@@ -43,6 +49,7 @@ export function sharedCanonEvents(
       if (!present.has(firstCharacterId) || !present.has(secondCharacterId)) return []
       return [
         {
+          eventId: scene.eventId ?? null,
           chapter: chapter.number,
           sequence: index + 1,
           event: scene.event,
@@ -50,6 +57,8 @@ export function sharedCanonEvents(
           location: scene.location ?? null,
           locationId: scene.locationId ?? null,
           certainty: scene.certainty ?? 'CONFIRMED',
+          movement: scene.movement ?? null,
+          note: scene.note ?? null,
         },
       ]
     }),

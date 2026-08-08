@@ -185,7 +185,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "residential",
-    "description": "Tier 1 VVIP residential neighborhoods, where the leaders of mafia families linked to royalty live in particular.",
+    "description": "Tier 1 VVIP residential neighborhoods, where the leaders of mafia families linked to royalty live in particular. Chapter 390 follows Zhang Lei through guarded corridors into Onior Longbao's trophy-crammed apartment: animal heads, full taxidermy mounts and carved objects surround an immense upholstered seat and a low table laid with food and drink.",
     "entrances": [],
     "exits": []
   },
@@ -255,7 +255,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 2nd Prince Camilla and her household at the start of the voyage.",
+    "description": "Living quarters assigned to 2nd Prince Camilla and her household at the start of the voyage. While Camilla is detained elsewhere, chapter 389 shows her Have-Not guards using a formal carpeted salon with wall chairs and a central open area to review their curse assignments.",
     "entrances": [],
     "exits": []
   },
@@ -265,7 +265,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 3rd Prince Zhang Lei, where he receives allies and representatives of the Xi-Yu family.",
+    "description": "Living quarters of 3rd Prince Zhang Lei, where he receives allies and representatives of the Xi-Yu family. Chapters 389-390 show a formal audience room: the prince sits on a raised throne-like chair facing an open tiled floor while guards examine his issued Nen coins nearby.",
     "entrances": [],
     "exits": []
   },
@@ -275,7 +275,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 4th Prince Tserriednich, where Theta trains him in Nen.",
+    "description": "Living quarters of 4th Prince Tserriednich. Chapters 384-387 distinguish a large, nearly empty Nen-training salon — polished geometric floor, tall double doors, moulded wall panels, framed decoration and a mantel clock — from the adjoining guard anteroom and sitting area where Theta is debriefed after the shot.",
     "entrances": [],
     "exits": []
   },
@@ -295,7 +295,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 6th Prince Tyson and her household.",
+    "description": "Living quarters assigned to 6th Prince Tyson and her household. Chapter 389 shows Tyson entering through tall panelled doors into an ornate birthday reception with a cake and gifts on the central table and attendants arranged around the walls.",
     "entrances": [],
     "exits": []
   },
@@ -305,7 +305,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 7th Prince Luzurus and his household; the Cha-R family is affiliated with him but its shipboard office is on Tier 5.",
+    "description": "Living quarters assigned to 7th Prince Luzurus and his household; the Cha-R family is affiliated with him but its shipboard office is on Tier 5. Chapters 386 and 389 show a lived-in main salon with deep upholstered seating, side tables, bottles, plants, shelves and crowded ornament, physically separated by its doors from Shikaku's corridor suicide.",
     "entrances": [],
     "exits": []
   },
@@ -315,7 +315,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 8th Prince Salé-salé and his household, shown hosting his entourage and parties.",
+    "description": "Living quarters assigned to 8th Prince Salé-salé and his household. Its wide-bed bedroom doubles as an informal party room: Predator reaches the Guardian Spirit Beast beside that bed, and Stand By Me later kills Salé-salé there while two companions remain with him.",
     "entrances": [],
     "exits": []
   },
@@ -325,7 +325,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 9th Prince Halkenburg and his household.",
+    "description": "Living quarters assigned to 9th Prince Halkenburg and his household. Chapters 382 and 386 show an open reception room with a broad tiled floor and chairs moved into a circle around Shikaku's occupied body, leaving space for Halkenburg's synchronized aura formation.",
     "entrances": [],
     "exits": []
   },
@@ -375,7 +375,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 14th Prince Woble, guarded by Queen Oito, Kurapika, and their reduced security detail; Kurapika's Nen classes take place here.",
+    "description": "Living quarters of 14th Prince Woble. Chapters 386-389 distinguish the main reception salon converted into Kurapika's classroom — double doors, guarded walls, a mobile demonstration table and water-divination glasses — from the curtained bedroom where Oito remains with Woble during the lesson.",
     "entrances": [],
     "exits": []
   },
@@ -445,7 +445,7 @@
     "parentLocationId": "black-whale-1",
     "deck": 3,
     "zoneType": "tier",
-    "description": "Highest tier open to general passengers, with first-class and standard cabins, medical and political wards, and several Zodiac operations.",
+    "description": "Highest tier open to general passengers, with first-class and standard cabins, medical and political wards, and several Zodiac operations. Chapter 390 adds a busy food-court sector with open counters, menu boards, café seating and public galleries; Rinchi's interrogations, the gunfire and Hinrigh's transformed handcuff-snakes occur there.",
     "entrances": [],
     "exits": []
   },
@@ -465,7 +465,7 @@
     "parentLocationId": "tier-3-political-ward",
     "deck": 3,
     "zoneType": "administrative",
-    "description": "Four-story building under the authority of Mizaistom Nana, incorporating dormitories for officers.",
+    "description": "Four-story building under the authority of Mizaistom Nana, incorporating dormitories for officers. Chapter 381 identifies the third-floor Public Security section, with desks, filing storage and uniformed personnel, where Fugetsu's disappearance is reviewed.",
     "entrances": [],
     "exits": []
   },

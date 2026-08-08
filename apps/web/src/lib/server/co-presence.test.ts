@@ -46,4 +46,71 @@ describe('canon co-presence', () => {
       }),
     )
   })
+
+  it('keeps the volume 37 operational rooms separate', () => {
+    expect(
+      sharedCanonEvents(chapters, 'rihan', 'yushohi').some(({ chapter }) => chapter === 381),
+    ).toBe(false)
+    expect(
+      sharedCanonEvents(chapters, 'prince-salesale', 'prince-benjamin').some(
+        ({ chapter }) => chapter === 382,
+      ),
+    ).toBe(false)
+    expect(sharedCanonEvents(chapters, 'prince-salesale', 'yushohi')).toContainEqual(
+      expect.objectContaining({
+        chapter: 382,
+        locationId: 'tier-1-royal-residential-sector-room-1008',
+      }),
+    )
+  })
+
+  it('identifies the chapter 385 and 387 replay as the same canonical event', () => {
+    const shot = sharedCanonEvents(chapters, 'prince-tserriednich', 'theta').filter(
+      ({ eventId }) => eventId === 'day8-1935-theta-shot',
+    )
+    expect(shot.map(({ chapter }) => chapter)).toEqual([385, 387])
+    expect(new Set(shot.map(({ storyDate }) => storyDate))).toEqual(
+      new Set(['Day 8 · Sunday · shortly after 19:35']),
+    )
+  })
+
+  it('does not turn portraits, orders or adjoining rooms into meetings', () => {
+    expect(
+      sharedCanonEvents(chapters, 'prince-camilla', 'sarahell').some(
+        ({ chapter }) => chapter === 389,
+      ),
+    ).toBe(false)
+    expect(
+      sharedCanonEvents(chapters, 'queen-oito', 'kurapika').some(({ chapter }) => chapter === 388),
+    ).toBe(false)
+    expect(
+      sharedCanonEvents(chapters, 'prince-zhanglei', 'hinrigh-biganduffno').some(
+        ({ chapter }) => chapter === 390,
+      ),
+    ).toBe(false)
+  })
+
+  it('returns room and movement evidence for the volume 37 route changes', () => {
+    expect(sharedCanonEvents(chapters, 'prince-zhanglei', 'onior-longbao')).toContainEqual(
+      expect.objectContaining({
+        chapter: 390,
+        eventId: 'day10-zhanglei-visits-onior',
+        locationId: 'tier-1-vvip-living-quarters',
+        movement: 'Room 1003 → royal corridor → guarded VVIP corridor → Xi-Yu patriarch apartment',
+      }),
+    )
+  })
+
+  it('preserves the separate present-day and flashback events in volume 38', () => {
+    expect(
+      sharedCanonEvents(chapters, 'nobunaga-hazama', 'chrollo-lucilfer').some(
+        ({ chapter }) => chapter === 395,
+      ),
+    ).toBe(false)
+    expect(
+      sharedCanonEvents(chapters, 'hinrigh-biganduffno', 'morena-prudo').some(
+        ({ chapter }) => chapter >= 394 && chapter <= 400,
+      ),
+    ).toBe(false)
+  })
 })

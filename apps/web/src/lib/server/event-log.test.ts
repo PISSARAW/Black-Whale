@@ -35,7 +35,17 @@ interface CuratedEvent {
 interface CatalogChapter {
   number: number
   title: string
-  timeline?: { event: string; charactersInvolved?: string[]; location?: string }[]
+  timeline?: {
+    eventId?: string
+    event: string
+    charactersInvolved?: string[]
+    location?: string
+    locationId?: string
+  }[]
+}
+
+interface CatalogLocation {
+  id: string
 }
 
 /**
@@ -251,5 +261,25 @@ describe('data/chapters/chapters.json', () => {
   it('describes each chapter once', () => {
     const numbers = chapters.map((chapter) => chapter.number)
     expect(numbers).toEqual([...new Set(numbers)])
+  })
+
+  it('covers every chapter in volumes 37 and 38', () => {
+    const covered = new Set(chapters.map((chapter) => chapter.number))
+    expect(
+      Array.from({ length: 20 }, (_, index) => 381 + index).filter((n) => !covered.has(n)),
+    ).toEqual([])
+  })
+
+  it('uses known room ids throughout volumes 37 and 38', async () => {
+    const locations = await readDataFile<CatalogLocation[]>('locations/locations.json')
+    const known = new Set(locations.map(({ id }) => id))
+    const unknown = chapters
+      .filter(({ number }) => number >= 381 && number <= 400)
+      .flatMap(({ number, timeline = [] }) =>
+        timeline
+          .filter(({ locationId }) => locationId && !known.has(locationId))
+          .map(({ locationId }) => `${number}:${locationId}`),
+      )
+    expect(unknown).toEqual([])
   })
 })

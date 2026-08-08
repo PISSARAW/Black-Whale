@@ -83,6 +83,13 @@ describe('shared human profiles', () => {
     expect(kurapika.signatures).toEqual(['chain-right-hand'])
   })
 
+  it('keeps Camilla’s officially coloured blond hair in the tour', () => {
+    expect(humanProfile(person('prince-camilla', 'witness'))).toMatchObject({
+      hair: 0xe3c67a,
+      likeness: 'prince-camilla',
+    })
+  })
+
   it('leaves an undeclared body exactly as it was', () => {
     // ADR-005 §5. The hash variation is the whole of what an anonymous guard
     // gets, and it has to keep getting it: the profile below is the one the

@@ -153,9 +153,9 @@
       "head": { "face": "narrow", "hairStyle": "hime", "expression": "hostile" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 350, 358 ; robe de cour sombre à col montant, palette froide",
+        "source": "édition couleur officielle Shueisha du tome 36 pour les cheveux blonds ; planches n&b ch. 349, 350, 358 pour la robe de cour sombre à col montant",
         "skin": "0xf0dfc9",
-        "hair": "0x1d1a22",
+        "hair": "0xe3c67a",
         "attire": {
           "jacket": "0x2a2436",
           "shirt": "0xe9e4dc",
@@ -166,7 +166,7 @@
       "attire": "gown",
       "signatures": ["tiara"],
       "verified": { "chapterIds": ["ch-349", "ch-350", "ch-358"], "status": "partial" },
-      "note": "La moue est le visage : hautaine au repos, folle dans la colère. Le diadème suffit à la nommer de loin, ce qui est exactement le travail qu'une signature doit faire. Coiffure exacte à confirmer."
+      "note": "La moue est le visage : hautaine au repos, folle dans la colère. Ses cheveux sont blonds dans la coloration officielle ; le diadème suffit à la nommer de loin. Coiffure exacte à confirmer."
     },
     {
       "id": "prince-zhanglei",

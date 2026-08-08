@@ -11,6 +11,8 @@ export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL'
  * manga shows from the paternity hypothesis Longhi only argues for.
  */
 export type BeyondLineageFilter = 'all' | 'any' | BeyondLineageStatus
+export type TrackingTargetKind = 'reader' | 'character' | 'object'
+export type MapEntityFilter = 'all' | 'characters' | 'objects'
 
 export const mapState = $state({
   currentZoomLevel: 'OVERVIEW' as ZoomLevel,
@@ -19,6 +21,8 @@ export const mapState = $state({
   selectedPerspectiveId: 'reader' as string,
   selectedPerspectiveKind: 'reader' as PerspectiveKind,
   selectedPerspectiveName: 'Reader view' as string,
+  trackedTargetId: 'reader' as string,
+  trackedTargetKind: 'reader' as TrackingTargetKind,
   followMode: 'consciousness' as FollowMode,
   compareWithReader: false,
   explainPanelOpen: false,
@@ -43,6 +47,7 @@ export const mapState = $state({
   },
   currentEventIndex: 0,
   filters: {
+    entityType: 'all' as MapEntityFilter,
     factions: [] as string[],
     beyondLineage: 'all' as BeyondLineageFilter,
     showUnknownPositions: false,
@@ -75,6 +80,11 @@ export const mapState = $state({
     this.selectedPerspectiveId = id
     this.selectedPerspectiveName = name
     this.selectedPerspectiveKind = kind
+  },
+
+  setTrackedTarget(id: string, kind: TrackingTargetKind) {
+    this.trackedTargetId = id
+    this.trackedTargetKind = kind
   },
 
   setFollowMode(mode: FollowMode) {
@@ -115,6 +125,10 @@ export const mapState = $state({
 
   setBeyondLineageFilter(filter: BeyondLineageFilter) {
     this.filters.beyondLineage = filter
+  },
+
+  setEntityTypeFilter(filter: MapEntityFilter) {
+    this.filters.entityType = filter
   },
 
   toggleFactionFilter(factionId: string) {

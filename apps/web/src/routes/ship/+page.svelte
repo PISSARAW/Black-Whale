@@ -23,6 +23,9 @@
   import type { BeyondLineageStatus } from '$lib/beyondLineage'
   import type { BeyondLineageFilter } from '$lib/state/mapState.svelte'
   import { PUBLIC_FEATURES } from '$lib/config/features'
+  import type { TrackedObjectSnapshot } from '$lib/importantObjects'
+  import { resolveTierSlug } from '$lib/components/map/markerProjection'
+  import type { Location } from '@black-whale/domain'
 
   let { data }: { data: PageData } = $props()
 
@@ -238,6 +241,18 @@
   })
 
   let trackedPresenceCount = $derived(data.worldState?.presences?.length || 0)
+  let importantObjects = $derived(data.importantObjects as TrackedObjectSnapshot[])
+  let trackedEntityCount = $derived(trackedPresenceCount + importantObjects.length)
+  let trackingValue = $derived(
+    mapState.trackedTargetKind === 'reader'
+      ? 'reader'
+      : `${mapState.trackedTargetKind}:${mapState.trackedTargetId}`,
+  )
+  let trackedObject = $derived(
+    mapState.trackedTargetKind === 'object'
+      ? importantObjects.find((object) => object.id === mapState.trackedTargetId) || null
+      : null,
+  )
 
   // Beyond's lineage is a second filter axis rather than a sixth faction chip:
   // it crosses every faction, and it intersects with them instead of replacing
@@ -269,6 +284,15 @@
   let activeTierProfile = $derived(tierProfiles[mapState.selectedTier || 'overview'])
   let activeTierKey = $derived(mapState.selectedTier || 'overview')
 
+  function tierForObject(object: TrackedObjectSnapshot): string | null {
+    if (!object.location) return null
+    const worldLocations = (data.worldState?.locations || []) as unknown as Location[]
+    const locations = new Map<string, Location>(
+      worldLocations.map((location) => [location.id, location]),
+    )
+    return resolveTierSlug(object.location, locations)
+  }
+
   $effect(() => {
     mapState.setFollowMode((data.followMode as FollowMode) || 'consciousness')
 
@@ -277,6 +301,22 @@
     )
     if (selectedByUrl) {
       mapState.setPerspective(selectedByUrl.id, selectedByUrl.label, selectedByUrl.kind)
+    }
+
+    const target = data.selectedTrackingTarget || 'reader'
+    if (target.startsWith('object:')) {
+      const objectId = target.slice('object:'.length)
+      mapState.setTrackedTarget(objectId, 'object')
+      const object = importantObjects.find((candidate) => candidate.id === objectId)
+      const tier = object ? tierForObject(object) : null
+      if (!tier) mapState.selectTier(null)
+      else if (mapState.currentZoomLevel !== 'OVERVIEW' && mapState.selectedTier !== tier) {
+        mapState.selectTier(tier)
+      }
+    } else if (target.startsWith('character:')) {
+      mapState.setTrackedTarget(target.slice('character:'.length), 'character')
+    } else {
+      mapState.setTrackedTarget('reader', 'reader')
     }
 
     if (!selectedPerspective) {
@@ -308,11 +348,41 @@
     if (!found) return
 
     mapState.setPerspective(found.id, found.label, found.kind)
+    mapState.setTrackedTarget(found.id, found.kind === 'reader' ? 'reader' : 'character')
 
     const url = new URL($page.url)
     url.searchParams.set('perspective', found.id)
+    url.searchParams.set('target', found.kind === 'reader' ? 'reader' : `character:${found.id}`)
     url.searchParams.set('follow', mapState.followMode)
     goto(url.toString(), { keepFocus: true })
+  }
+
+  function handleTrackingSelect(value: string) {
+    if (value === 'reader') {
+      handlePerspectiveSelect('reader')
+      return
+    }
+    if (value.startsWith('character:')) {
+      handlePerspectiveSelect(value.slice('character:'.length))
+      return
+    }
+    if (!value.startsWith('object:')) return
+
+    const id = value.slice('object:'.length)
+    const object = importantObjects.find((candidate) => candidate.id === id)
+    if (!object) return
+    mapState.setTrackedTarget(id, 'object')
+
+    if (object.location) {
+      const tier = tierForObject(object)
+      if (tier) mapState.selectTier(tier)
+    } else {
+      mapState.selectTier(null)
+    }
+
+    const url = new URL($page.url)
+    url.searchParams.set('target', value)
+    goto(url.toString(), { keepFocus: true, replaceState: true })
   }
 
   function handleFollowModeSelect(mode: FollowMode) {
@@ -429,56 +499,77 @@
 
       <div class="filter-section">
         <div class="section-label">
-          <span>{$t.ship.factionsLabel}</span><small
-            >{$t.ship.factionsActive(mapState.filters.factions.length)}</small
-          >
+          <span>{$t.ship.entityFilter.label}</span><small>{$t.ship.entityFilter.status}</small>
         </div>
-        <div class="filter-grid faction-identities">
-          {#each factions as faction (faction.id)}
-            <label
-              class:active={mapState.filters.factions.includes(faction.id)}
-              style={`--faction:${faction.color}`}
+        <div class="entity-filter" role="group" aria-label={$t.ship.entityFilter.filterLabel}>
+          {#each ['all', 'characters', 'objects'] as filter (filter)}
+            <button
+              type="button"
+              class:active={mapState.filters.entityType === filter}
+              aria-pressed={mapState.filters.entityType === filter}
+              onclick={() =>
+                mapState.setEntityTypeFilter(filter as 'all' | 'characters' | 'objects')}
             >
-              <input
-                type="checkbox"
-                checked={mapState.filters.factions.includes(faction.id)}
-                onchange={() => mapState.toggleFactionFilter(faction.id)}
-              />
-              <span class="faction-mark">{faction.mark}</span><span class="faction-name"
-                >{faction.label}<small>{faction.code}</small></span
-              >
-            </label>
+              {$t.ship.entityFilter[filter as 'all' | 'characters' | 'objects']}
+            </button>
           {/each}
         </div>
-        {#if mapState.filters.factions.length}
-          <button
-            class="clear-filters"
-            type="button"
-            onclick={() => (mapState.filters.factions = [])}>{$t.ship.clearFactionFilters}</button
-          >
-        {/if}
       </div>
 
-      {#if lineageFilters.length}
+      {#if mapState.filters.entityType !== 'objects'}
         <div class="filter-section">
           <div class="section-label">
-            <span>{$t.ship.beyondLineage.label}</span><small
-              >{$t.ship.beyondLineage.aboard(lineageMatchCount)}</small
+            <span>{$t.ship.factionsLabel}</span><small
+              >{$t.ship.factionsActive(mapState.filters.factions.length)}</small
             >
           </div>
-          <div class="lineage-filter" role="group" aria-label={$t.ship.beyondLineage.filterLabel}>
-            {#each lineageFilters as filter (filter)}
-              <button
-                type="button"
-                class:active={mapState.filters.beyondLineage === filter}
-                aria-pressed={mapState.filters.beyondLineage === filter}
-                onclick={() => mapState.setBeyondLineageFilter(filter)}
-                >{lineageLabel(filter)}</button
+          <div class="filter-grid faction-identities">
+            {#each factions as faction (faction.id)}
+              <label
+                class:active={mapState.filters.factions.includes(faction.id)}
+                style={`--faction:${faction.color}`}
               >
+                <input
+                  type="checkbox"
+                  checked={mapState.filters.factions.includes(faction.id)}
+                  onchange={() => mapState.toggleFactionFilter(faction.id)}
+                />
+                <span class="faction-mark">{faction.mark}</span><span class="faction-name"
+                  >{faction.label}<small>{faction.code}</small></span
+                >
+              </label>
             {/each}
           </div>
-          <p class="lineage-note">{$t.ship.beyondLineage.note}</p>
+          {#if mapState.filters.factions.length}
+            <button
+              class="clear-filters"
+              type="button"
+              onclick={() => (mapState.filters.factions = [])}>{$t.ship.clearFactionFilters}</button
+            >
+          {/if}
         </div>
+
+        {#if lineageFilters.length}
+          <div class="filter-section">
+            <div class="section-label">
+              <span>{$t.ship.beyondLineage.label}</span><small
+                >{$t.ship.beyondLineage.aboard(lineageMatchCount)}</small
+              >
+            </div>
+            <div class="lineage-filter" role="group" aria-label={$t.ship.beyondLineage.filterLabel}>
+              {#each lineageFilters as filter (filter)}
+                <button
+                  type="button"
+                  class:active={mapState.filters.beyondLineage === filter}
+                  aria-pressed={mapState.filters.beyondLineage === filter}
+                  onclick={() => mapState.setBeyondLineageFilter(filter)}
+                  >{lineageLabel(filter)}</button
+                >
+              {/each}
+            </div>
+            <p class="lineage-note">{$t.ship.beyondLineage.note}</p>
+          </div>
+        {/if}
       {/if}
 
       <div class="deck-signal" aria-label={$t.ship.intelligenceLabel}>
@@ -486,7 +577,7 @@
         <dl>
           <div>
             <dt>{$t.ship.tracked}</dt>
-            <dd>{trackedPresenceCount}</dd>
+            <dd>{trackedEntityCount}</dd>
           </div>
           <div>
             <dt>{$t.ship.zones}</dt>
@@ -509,20 +600,33 @@
           <span>Black Whale</span><i>/</i><strong class="capitalize">{currentDeckLabel}</strong>
         </div>
         <div class="map-tools">
-          {#if PUBLIC_FEATURES.perspectives}
-            <label class="quick-track">
-              <span>{$t.ship.track}</span>
-              <select
-                aria-label={$t.ship.trackAria}
-                value={mapState.selectedPerspectiveId}
-                onchange={(event) => handlePerspectiveSelect(event.currentTarget.value)}
-              >
-                {#each perspectiveOptions as option (option.id)}<option value={option.id}
-                    >{option.label}</option
-                  >{/each}
-              </select>
-            </label>
-          {/if}
+          <label class="quick-track">
+            <span>{$t.ship.track}</span>
+            <select
+              aria-label={$t.ship.trackAria}
+              value={trackingValue}
+              onchange={(event) => handleTrackingSelect(event.currentTarget.value)}
+            >
+              <option value="reader">{$t.ship.readerView}</option>
+              {#if PUBLIC_FEATURES.perspectives}
+                <optgroup label={$t.ship.objectTracking.characters}>
+                  {#each perspectiveOptions.filter((option) => option.kind === 'character') as option (option.id)}
+                    <option value={`character:${option.id}`}>{option.label}</option>
+                  {/each}
+                </optgroup>
+              {/if}
+              <optgroup label={$t.ship.objectTracking.objects}>
+                {#each importantObjects as object (object.id)}
+                  <option value={`object:${object.id}`}>{object.canonicalName}</option>
+                {/each}
+              </optgroup>
+            </select>
+            {#if trackedObject}
+              <small class:unknown={!trackedObject.location}>
+                {trackedObject.location?.name || $t.ship.objectTracking.unknownPosition}
+              </small>
+            {/if}
+          </label>
           <span class="live-indicator"><i></i> {$t.ship.liveData}</span>
           <span class="map-hint">{$t.ship.mapHint}</span>
         </div>
@@ -539,7 +643,7 @@
         <div class="scan-readout" data-hatsu-pass aria-live="polite">
           <span>{$t.ship.activeScan}</span>
           <strong class="capitalize">{currentDeckLabel}</strong>
-          <small>{$t.ship.scanReadout(mappedZoneCount, trackedPresenceCount)}</small>
+          <small>{$t.ship.scanReadout(mappedZoneCount, trackedEntityCount)}</small>
         </div>
         <WhyPanel
           open={mapState.explainPanelOpen && !!mapState.explainTarget}
@@ -1073,6 +1177,30 @@
     background: linear-gradient(90deg, rgba(128, 92, 153, 0.3), #0c151c 78%);
     box-shadow: inset 2px 0 #9b78bf;
   }
+  .entity-filter {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+  }
+  .entity-filter button {
+    padding: 0.4rem 0.3rem;
+    border: 1px solid #2c393d;
+    border-radius: 0.35rem;
+    background: #0c151c;
+    color: #748481;
+    font-size: 0.56rem;
+    cursor: pointer;
+  }
+  .entity-filter button:hover {
+    border-color: rgba(200, 169, 86, 0.48);
+    color: #c2b47e;
+  }
+  .entity-filter button.active {
+    border-color: rgba(200, 169, 86, 0.68);
+    background: rgba(200, 169, 86, 0.12);
+    color: #e0cc7a;
+    box-shadow: inset 0 -2px #c8a956;
+  }
   .lineage-note {
     margin-top: 0.55rem;
     color: #536260;
@@ -1218,7 +1346,8 @@
     font-size: 0.6rem;
   }
   .quick-track {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(7rem, 10rem);
     align-items: center;
     gap: 0.45rem;
     padding-right: 1rem;
@@ -1238,6 +1367,17 @@
     color: #bcc8c2;
     font-size: 0.62rem;
     cursor: pointer;
+  }
+  .quick-track small {
+    grid-column: 2;
+    overflow: hidden;
+    color: #c9a94f;
+    font: 0.46rem/1.2 var(--font-mono);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .quick-track small.unknown {
+    color: #9c7770;
   }
   .live-indicator {
     color: #88a49c;

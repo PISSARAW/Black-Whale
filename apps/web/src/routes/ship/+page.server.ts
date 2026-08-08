@@ -26,6 +26,8 @@ import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import type { PageServerLoad } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
+import { objectSnapshotsAt, type ImportantObject } from '$lib/importantObjects'
+import importantObjectCatalog from '../../../../../data/objects/objects.json'
 
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
@@ -37,6 +39,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     : 'reader'
   const followMode = url.searchParams.get('follow') || 'consciousness'
   const requestedEventId = url.searchParams.get('eventId')
+  const requestedTrackingTarget = url.searchParams.get('target')
   const legacySequence = readLegacySequence(url.searchParams.get('sequence'))
 
   const spoilerProfile = readSpoilerProfile(cookies)
@@ -155,6 +158,23 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       ? { firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } } }
       : undefined,
   })
+  const importantObjects = objectSnapshotsAt(importantObjectCatalog as ImportantObject[], {
+    chapter: selectedEvent?.chapter.number ?? 0,
+    locations: visibleLocations,
+    spoilerLimit: spoilerProfile?.maxChapter,
+  })
+  const selectedTrackingTarget =
+    requestedTrackingTarget?.startsWith('object:') &&
+    importantObjects.some((object) => `object:${object.id}` === requestedTrackingTarget)
+      ? requestedTrackingTarget
+      : requestedTrackingTarget?.startsWith('character:') &&
+          visibleCharacters.some(
+            (character: any) => `character:${character.id}` === requestedTrackingTarget,
+          )
+        ? requestedTrackingTarget
+        : selectedPerspectiveId === 'reader'
+          ? 'reader'
+          : `character:${selectedPerspectiveId}`
   let perspective: any = null
 
   if (selectedEvent?.id && selectedPerspectiveId !== 'reader') {
@@ -174,6 +194,8 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     selectedEventIndex,
     events: trimEventsForTimeline(events),
     selectedPerspectiveId,
+    selectedTrackingTarget,
+    importantObjects,
     followMode,
     selectedEventId: selectedEvent?.id || null,
     perspective,

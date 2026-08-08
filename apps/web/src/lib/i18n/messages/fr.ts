@@ -2913,6 +2913,14 @@ export const fr: Messages = {
       'Machines et stockage',
     ],
     factionsLabel: 'Factions',
+    entityFilter: {
+      label: 'Afficher',
+      status: 'Types d’entités',
+      filterLabel: 'Filtrer la carte par type d’entité',
+      all: 'Tout',
+      characters: 'Personnages',
+      objects: 'Objets',
+    },
     factionsActive: (count) => `${count} active${count === 1 ? '' : 's'}`,
     clearFactionFilters: 'Effacer les filtres de faction',
     beyondLineage: {

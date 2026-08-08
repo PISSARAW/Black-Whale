@@ -41,6 +41,21 @@
     }
   }
 
+  function trackingSelectionChanged(selection: {
+    targetId: string
+    targetKind: typeof mapState.trackedTargetKind
+    perspectiveId: string
+    followMode: typeof mapState.followMode
+  }) {
+    if (mapState.trackedTargetId !== selection.targetId) return true
+    if (mapState.trackedTargetKind !== selection.targetKind) return true
+    if (selection.targetKind !== 'character') return false
+    return (
+      mapState.selectedPerspectiveId !== selection.perspectiveId ||
+      mapState.followMode !== selection.followMode
+    )
+  }
+
   $effect(() => {
     if (containerEl) {
       pz = panzoom(containerEl, {
@@ -72,21 +87,27 @@
     const perspectiveId = mapState.selectedPerspectiveId
     const perspectiveKind = mapState.selectedPerspectiveKind
     const followMode = mapState.followMode
+    const trackedTargetId = mapState.trackedTargetId
+    const trackedTargetKind = mapState.trackedTargetKind
     const zoomLevel = mapState.currentZoomLevel
 
     if (!pz || !containerEl) return
 
-    if (perspectiveKind === 'reader') {
+    if (trackedTargetKind === 'reader' && perspectiveKind === 'reader') {
       pz.moveTo(0, 0)
       pz.zoomAbs(0, 0, 1)
       return
     }
 
     void tick().then(() => {
+      if (!containerEl) return
       if (
-        !containerEl ||
-        mapState.selectedPerspectiveId !== perspectiveId ||
-        mapState.followMode !== followMode
+        trackingSelectionChanged({
+          targetId: trackedTargetId,
+          targetKind: trackedTargetKind,
+          perspectiveId,
+          followMode,
+        })
       )
         return
       const marker = containerEl.querySelector<HTMLElement>('[data-follow-target="true"]')

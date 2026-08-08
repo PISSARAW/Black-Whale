@@ -1,0 +1,84 @@
+[
+  {
+    "id": "tsk-17",
+    "canonicalName": "TSK-17",
+    "aliases": ["TSK117", "TSK 17"],
+    "category": "biological-agent",
+    "firstVisibleChapter": 403,
+    "description": "Agent biologique employé dans le plan d'assassinat de Balsamilco. Une fois dispersé, il peut exister chez plusieurs porteurs : le marqueur indique le dernier foyer confirmé, pas l'unique dose.",
+    "sightings": [
+      {
+        "fromChapter": 403,
+        "locationSlug": "tier-3-central-courthouse",
+        "precision": "ZONE",
+        "certainty": "CONFIRMED",
+        "note": "Balsamilco apporte le TSK-17 au palais de justice pour atteindre Halkenburg."
+      },
+      {
+        "fromChapter": 404,
+        "locationSlug": "tier-3-central-hospital",
+        "precision": "ZONE",
+        "certainty": "CONFIRMED",
+        "note": "Le corps infecté de Halkenburg est transféré à l'hôpital central."
+      },
+      {
+        "fromChapter": 413,
+        "locationSlug": "tier-1-royal-residential-sector-room-1001",
+        "precision": "EXACT_ROOM",
+        "certainty": "CONFIRMED",
+        "note": "Benjamin découvre son infection dans ses quartiers ; d'autres doses peuvent déjà circuler."
+      }
+    ]
+  },
+  {
+    "id": "seed-urn",
+    "canonicalName": "Jarre des bêtes de Nen",
+    "aliases": ["Jarre des graines", "Seed Urn", "Urn of the Seed"],
+    "category": "kakin-sacred-treasure",
+    "firstVisibleChapter": 349,
+    "description": "Jarre sacrée utilisée lors de la cérémonie de succession pour faire naître les bêtes gardiennes des princes.",
+    "sightings": [
+      {
+        "fromChapter": 406,
+        "locationSlug": "tier-1",
+        "precision": "TIER",
+        "certainty": "PROBABLE",
+        "note": "Chrollo confirme que les trois trésors sacrés sont gardés au Tier 1 ; leur salle exacte n'est pas révélée."
+      }
+    ]
+  },
+  {
+    "id": "lotus-anchorite",
+    "canonicalName": "Lotus de l'Anachorète",
+    "aliases": ["Lotus Anchorite"],
+    "category": "kakin-sacred-treasure",
+    "firstVisibleChapter": 406,
+    "description": "L'un des trois trésors sacrés de Kakin recherchés par Chrollo.",
+    "sightings": [
+      {
+        "fromChapter": 406,
+        "locationSlug": "tier-1",
+        "precision": "TIER",
+        "certainty": "PROBABLE",
+        "note": "Conservé quelque part au Tier 1 avec les autres trésors sacrés."
+      }
+    ]
+  },
+  {
+    "id": "sword-of-good-omens",
+    "canonicalName": "Épée des Bons Augures",
+    "aliases": ["Sword of Good Omens"],
+    "category": "kakin-sacred-treasure",
+    "firstVisibleChapter": 406,
+    "description": "L'un des trois trésors sacrés de Kakin recherchés par Chrollo.",
+    "sightings": [
+      {
+        "fromChapter": 406,
+        "locationSlug": "tier-1",
+        "precision": "TIER",
+        "certainty": "PROBABLE",
+        "note": "Conservée quelque part au Tier 1 avec les autres trésors sacrés."
+      }
+    ]
+  }
+]

@@ -3156,6 +3156,14 @@ export const en = {
       'Machinery & storage',
     ],
     factionsLabel: 'Factions',
+    entityFilter: {
+      label: 'Show',
+      status: 'Entity types',
+      filterLabel: 'Filter the map by entity type',
+      all: 'All',
+      characters: 'Characters',
+      objects: 'Objects',
+    },
     factionsActive: (count: number) => `${count} active`,
     clearFactionFilters: 'Clear faction filters',
     beyondLineage: {

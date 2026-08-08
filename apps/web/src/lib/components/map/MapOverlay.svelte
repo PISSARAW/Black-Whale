@@ -1,6 +1,7 @@
 <script lang="ts">
   import { mapState } from '$lib/state/mapState.svelte'
   import CharacterMarker from './CharacterMarker.svelte'
+  import ObjectMarker from './ObjectMarker.svelte'
   import { page } from '$app/stores'
   import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState.js'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
@@ -13,9 +14,13 @@
     type MapMarker,
     type MapNextChapterState,
     type MapWorldState,
+    calculatePresencePosition,
+    resolveTierSlug,
+    tierOverviewY,
   } from './markerProjection'
   import type { PerspectiveState, Location } from '@black-whale/domain'
   import { locale } from '$lib/i18n'
+  import type { TrackedObjectSnapshot } from '$lib/importantObjects'
 
   /**
    * `$page.data` is untyped across routes, so the shapes are asserted once here
@@ -43,6 +48,7 @@
     ($page.data.nextChapterState || null) as MapNextChapterState | null,
   )
   let futureMode = $derived($activeHatsu?.id === 'parallel-future' && $parallelFutureVisible)
+  let importantObjects = $derived(($page.data.importantObjects || []) as TrackedObjectSnapshot[])
 
   let dynamicCharacters = $derived(
     world.presences
@@ -108,6 +114,7 @@
   }
 
   let visibleCharacters = $derived.by(() => {
+    if (mapState.filters.entityType === 'objects') return []
     const locationsById = new Map<string, Location>(
       world.locations.map((location) => [location.id, location]),
     )
@@ -128,6 +135,77 @@
     })
 
     return packMarkersForZoom(filtered, mapState.currentZoomLevel, $locale)
+  })
+
+  function trackedObjectIsInScope(
+    object: TrackedObjectSnapshot,
+    tierId: string,
+    locationsById: Map<string, Location>,
+  ) {
+    if (mapState.currentZoomLevel === 'OVERVIEW') return true
+    if (mapState.selectedTier !== tierId) return false
+    if (mapState.currentZoomLevel !== 'LOCAL') return true
+    if (!mapState.selectedLocationId) return true
+
+    const selectedLocation =
+      resolveRegionLocationSlug(mapState.selectedLocationId) || mapState.selectedLocationId
+    return belongsToLocation(object.location, selectedLocation, locationsById)
+  }
+
+  function displayedObjectPosition(
+    position: { x: number; y: number; tierId: string },
+    object: TrackedObjectSnapshot,
+    locationsById: Map<string, Location>,
+  ) {
+    if (mapState.currentZoomLevel !== 'OVERVIEW') {
+      return { x: position.x / 10, y: position.y / 6 }
+    }
+    const drawnTier = resolveTierSlug(object.location, locationsById) || position.tierId
+    return { x: 50, y: tierOverviewY[drawnTier] ?? 46 }
+  }
+
+  function presenceForObject(object: TrackedObjectSnapshot) {
+    if (!object.sighting) return null
+    if (!object.location) return null
+    return {
+      id: `object-presence:${object.id}`,
+      entityType: 'OBJECT' as const,
+      entityId: `object:${object.id}`,
+      locationId: object.location.id,
+      fromEventId: `chapter:${object.sighting.fromChapter}`,
+      precision: object.sighting.precision,
+      certainty: object.sighting.certainty,
+    }
+  }
+
+  let objectPresences = $derived(
+    importantObjects.map(presenceForObject).filter((presence) => presence !== null),
+  )
+
+  function projectObjectMarker(object: TrackedObjectSnapshot) {
+    const presence = presenceForObject(object)
+    if (!presence) return null
+    const { x, y, tierId } = calculatePresencePosition(
+      presence,
+      [...world.presences, ...objectPresences],
+      world.locations,
+    )
+    if (!tierId) return null
+
+    const locationsById = new Map(world.locations.map((location) => [location.id, location]))
+    if (!trackedObjectIsInScope(object, tierId, locationsById)) return null
+    const displayed = displayedObjectPosition({ x, y, tierId }, object, locationsById)
+
+    return {
+      object,
+      follow: mapState.trackedTargetKind === 'object' && mapState.trackedTargetId === object.id,
+      ...displayed,
+    }
+  }
+
+  let visibleObjects = $derived.by(() => {
+    if (mapState.filters.entityType === 'characters') return []
+    return importantObjects.map(projectObjectMarker).filter((marker) => marker !== null)
   })
 
   let presenceLayer: HTMLDivElement | undefined = $state()
@@ -176,13 +254,16 @@
   bind:this={presenceLayer}
   class="presence-layer absolute pointer-events-none"
   style={layerStyle}
-  aria-label={`${visibleCharacters.length} visible characters`}
+  aria-label={`${visibleCharacters.length} visible characters, ${visibleObjects.length} visible objects`}
 >
   {#each futureCharacters as char (char.id)}
     <CharacterMarker character={char} future={true} />
   {/each}
   {#each visibleCharacters as char (char.id)}
     <CharacterMarker character={char} {futureMode} />
+  {/each}
+  {#each visibleObjects as marker (marker.object.id)}
+    <ObjectMarker {...marker} />
   {/each}
 </div>
 

@@ -70,9 +70,10 @@ corriger si la fiche se trompe.
 `occurredAtLabel` est **rendu**, pas rédigé : la passe `compile:timeline` de
 `@black-whale/canon-compiler` l'écrit
 depuis `occurredAt`, et un test échoue si le libellé du fichier ne correspond
-plus à ce que le formateur produit. La seule exception est ce que l'horloge du
-navire ne peut pas tenir — le flash-back du chapitre 415, daté « deux mois
-avant le départ ».
+plus à ce que le formateur produit. Les scènes antérieures au voyage ne sont
+pas intégrées à la chronologie du Black Whale : cela vaut notamment pour la
+conversation Furykov/Beyond du chapitre 415, comme pour Hisoka/Chrollo et les
+flash-backs de la Brigade.
 
 Enfin, l'ordre compte : la cascade lit les événements dans l'ordre
 chronologique, celui que donnent le chapitre, la séquence et `occursAfterTitle`.
@@ -138,8 +139,8 @@ position supposée, pas comme un fait observé. Sur une étape de trajectoire, c
 
 Un couloir n'est une position valable que si le canon l'énonce : Shizuku est au
 `tier-4-central-passage` parce que le chapitre 380 l'y met, et elle y reste en
-`CONFIRMED`. Une position réellement inconnue reste `black-whale-unknown` — c'est
-un aveu, pas une déduction ratée.
+`CONFIRMED`. Quand seule la présence à bord est certaine, la trajectoire s'arrête
+sur `black-whale-1` : le personnage n'est placé dans aucune pièce inventée.
 
 Un tier nu est refusé des deux côtés : `pnpm canon-lint` échoue sur la fiche
 avant que le déploiement n'écrive quoi que ce soit, et `verify:map` échoue sur

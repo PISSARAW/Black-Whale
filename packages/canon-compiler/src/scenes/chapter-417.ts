@@ -41,6 +41,27 @@ export const CHAPTER_417: ChapterScenes = {
       })),
     },
     {
+      event: 'Balsamilco and Coventoba are held under surveillance',
+      participants: [
+        ['balsamilco-might', 'VICTIM'],
+        ['prince-halkenburg', 'ACTIVE'],
+        ['coventoba', 'PASSIVE'],
+      ],
+    },
+    {
+      event: "Onior's private bridge explains Zhang Lei's escape",
+      location: 'tier-1-vvip-living-quarters',
+      participants: [
+        ['onior-longbao', 'ACTIVE'],
+        ['chiyamasi', 'OBSERVER'],
+      ],
+      moves: ['onior-longbao', 'chiyamasi'].map((slug) => ({
+        slug,
+        location: 'tier-1-vvip-living-quarters',
+        id: `ch417-presence-${slug}-vvip-quarters`,
+      })),
+    },
+    {
       event: 'Benjamin seizes the Justice Bureau and invokes emergency law',
       location: 'tier-2-ministry-of-justice',
       participants: [

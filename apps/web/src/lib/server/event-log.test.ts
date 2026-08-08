@@ -215,14 +215,13 @@ describe('data/events/events.json', () => {
       expect(drifted).toEqual([])
     })
 
-    // A label without a declared time is a time nobody can order by, and the
-    // one exception earns it: chapter 415 dates itself against the departure
-    // from two months out, which is not voyage time at all.
+    // A label without a declared time is a time nobody can order by. Scenes
+    // that predate the voyage are excluded from the Black Whale timeline.
     it('writes a free label only on what the clock cannot hold', () => {
       const loose = events
         .filter((event) => event.occurredAtLabel && !event.occurredAt)
         .map((event) => event.title)
-      expect(loose).toEqual(['Furykov confronts Beyond about his sacrificial curse'])
+      expect(loose).toEqual([])
     })
   })
 

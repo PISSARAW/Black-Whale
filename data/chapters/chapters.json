@@ -136,6 +136,55 @@
     "description": "King Nasubi Hui Guo Rou officially announces the start of the War of Succession. The 14 princes (and Princess Woble) divide up into their respective districts on Tiers 1 and 2. Each prince begins to implement his strategy to survive and be chosen by the Urn of the Seed."
   },
   {
+    "id": "ch-358",
+    "number": 358,
+    "publicationOrder": 358,
+    "title": "Eve",
+    "timeline": [
+      {
+        "event": "Nasubi closes the eve festival and opens the ship",
+        "storyDate": "The night before Day 1",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "kakin-announcer"],
+        "location": "Port of Kakin - Festival Stage"
+      },
+      {
+        "event": "Balsamilco briefs Benjamin's private soldiers",
+        "storyDate": "The night before Day 1",
+        "charactersInvolved": ["balsamilco-might"],
+        "location": "Tier 1 - Royal Residential Sector - Corridor",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "event": "Kurapika and Oito review escape routes from room 1014",
+        "storyDate": "The night before Day 1",
+        "charactersInvolved": ["kurapika", "queen-oito"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Mizaistom reports by telephone",
+        "storyDate": "The night before Day 1",
+        "charactersInvolved": ["mizaistom-nana"],
+        "location": "Position unknown - telephone endpoint",
+        "certainty": "UNKNOWN"
+      },
+      {
+        "event": "Kurapika senses the aura around the child's cradle",
+        "storyDate": "The night before Day 1",
+        "charactersInvolved": ["kurapika", "queen-oito", "oito-nephew-fake-woble"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Port of Kakin and Tier 1",
+    "keyEvents": [
+      "The festival, the military briefing and room 1014 are separate scenes",
+      "Mizaistom is heard by telephone and is not placed in room 1014",
+      "The child carried aboard is catalogued under the body later identified as Oito's nephew"
+    ],
+    "description": "The final night ashore alternates between Nasubi's public festival, Balsamilco's military briefing and the Woble suite. Remote voices and montage portraits do not create physical co-presence."
+  },
+  {
     "id": "ch-359",
     "number": 359,
     "publicationOrder": 359,
@@ -144,18 +193,20 @@
       {
         "event": "The Black Whale leaves the port of Kakin for the New Continent",
         "storyDate": "Day 1 · Sunday · 12:00",
-        "charactersInvolved": ["nasubi-hui-guo-rou", "kurapika", "queen-oito", "prince-woble"],
-        "location": "Port of Kakin / Tier 1"
+        "charactersInvolved": [],
+        "location": "Black Whale - departure from the Port of Kakin",
+        "note": "A ship-wide temporal anchor, not a room-level co-presence event."
       },
       {
         "event": "Woody is found exsanguinated on the bathroom floor of room 1014",
         "storyDate": "Day 1 · Sunday · 12:15-12:30",
         "charactersInvolved": ["woody", "kurapika", "bill", "kurton", "sayird"],
-        "location": "Tier 1 - Room 1014"
+        "location": "Tier 1 - Room 1014 - Bathroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "The inaugural banquet gathers the royal family",
-        "storyDate": "Day 1 · Sunday · evening",
+        "storyDate": "Day 1 · Sunday · afternoon",
         "charactersInvolved": [
           "nasubi-hui-guo-rou",
           "prince-benjamin",
@@ -169,21 +220,26 @@
           "prince-momoze",
           "prince-marayam",
           "sevanti-hui-guo-rou",
-          "queen-oito"
+          "queen-oito",
+          "oito-nephew-fake-woble",
+          "kurapika"
         ],
-        "location": "Tier 1 - Banquet Hall"
+        "location": "Tier 1 - Banquet Hall",
+        "locationId": "tier-1-banquet-hall"
       },
       {
         "event": "Kacho proposes an alliance to Fugetsu during the banquet",
-        "storyDate": "Day 1 · Sunday · evening",
+        "storyDate": "Day 1 · Sunday · afternoon",
         "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
-        "location": "Tier 1 - Banquet Hall"
+        "location": "Tier 1 - Banquet Hall",
+        "locationId": "tier-1-banquet-hall"
       },
       {
         "event": "Four more bodyguards are found drained of blood in a corridor",
         "storyDate": "Day 1 · Sunday · after the banquet",
-        "charactersInvolved": ["kurapika", "queen-oito", "bill"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "charactersInvolved": ["kurapika", "queen-oito", "oito-nephew-fake-woble", "bill"],
+        "location": "Tier 1 - Royal Residential Sector - Corridor",
+        "locationId": "tier-1-royal-residential-sector"
       }
     ],
     "location": "Port of Kakin / Tier 1",
@@ -196,41 +252,419 @@
     "description": "The ship sails at noon on a two-month crossing — three weeks of charted water, then five of open passage — while the Zodiacs prepare to break off for the Gate. Within half an hour Woody dies exsanguinated in room 1014, and four more guards are found the same way after the inaugural banquet. Five deaths in an afternoon is what tells Kurapika the contest has already started."
   },
   {
+    "id": "ch-360",
+    "number": 360,
+    "publicationOrder": 360,
+    "title": "Parasite",
+    "timeline": [
+      {
+        "event": "Kurapika interrogates the surviving room 1014 detail",
+        "storyDate": "Day 1 · Sunday · after the inaugural banquet",
+        "charactersInvolved": [
+          "kurapika",
+          "queen-oito",
+          "oito-nephew-fake-woble",
+          "bill",
+          "kurton",
+          "sayird",
+          "hashito",
+          "sakata",
+          "sandra",
+          "shimanu"
+        ],
+        "location": "Tier 1 - Room 1014 - Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Sayird kills Kurton and attacks Kurapika",
+        "storyDate": "Day 1 · Sunday · after the inaugural banquet",
+        "charactersInvolved": ["sayird", "kurton", "kurapika", "bill"],
+        "location": "Tier 1 - Room 1014 - Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Tier 1 - Room 1014",
+    "keyEvents": [
+      "The five drained guards are identified as informants for higher-ranked queens",
+      "Sayird is manipulated inside the room and kills Kurton"
+    ],
+    "description": "The whole chapter remains inside room 1014. The interrogation precedes the attack, so Kurton is present in the first scene and becomes the victim in the second."
+  },
+  {
+    "id": "ch-361",
+    "number": 361,
+    "publicationOrder": 361,
+    "title": "Withdraw",
+    "timeline": [
+      {
+        "event": "Kurapika steals Sayird's ability",
+        "storyDate": "Day 1 · Sunday · 14:00",
+        "charactersInvolved": ["kurapika", "sayird", "bill", "queen-oito"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Tier 1 - Room 1014",
+    "keyEvents": [
+      "Steal Chain neutralizes Sayird",
+      "Emperor Time is required to control the stolen ability"
+    ],
+    "description": "Kurapika, Bill and Oito remain in room 1014 while Sayird is subdued and Steal Chain is explained."
+  },
+  {
+    "id": "ch-362",
+    "number": 362,
+    "publicationOrder": 362,
+    "title": "Resolve",
+    "timeline": [
+      {
+        "event": "Luzurus questions his Hunters about the Guardian Spirit Beasts",
+        "charactersInvolved": ["prince-luzurus", "basho", "scairt"],
+        "location": "Tier 1 - Room 1007",
+        "locationId": "tier-1-royal-residential-sector-room-1007"
+      },
+      {
+        "event": "Tyson asks Izunavi what her beast looks like",
+        "charactersInvolved": ["prince-tyson", "izunavi", "giuliano"],
+        "location": "Tier 1 - Room 1006",
+        "locationId": "tier-1-royal-residential-sector-room-1006"
+      },
+      {
+        "event": "Sale-sale ignores the beast hovering over his party",
+        "charactersInvolved": ["prince-salesale"],
+        "location": "Tier 1 - Room 1008",
+        "locationId": "tier-1-royal-residential-sector-room-1008"
+      },
+      {
+        "event": "Theta and Salkov limit Tserriednich's Nen training",
+        "charactersInvolved": ["theta", "salkov"],
+        "location": "Tier 1 - Corridor outside Room 1004",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "event": "Halkenburg finds his bodyguards unconscious",
+        "charactersInvolved": [
+          "prince-halkenburg",
+          "anesuto",
+          "deruboro",
+          "furichosefu",
+          "gihoruto",
+          "guerimori",
+          "kobihi",
+          "kontasutin",
+          "naikeru",
+          "nikoraurusu",
+          "reuen",
+          "sumidori",
+          "tagenpaku"
+        ],
+        "location": "Tier 1 - Room 1009",
+        "locationId": "tier-1-royal-residential-sector-room-1009"
+      }
+    ],
+    "location": "Tier 1 - Royal Residential Sector",
+    "keyEvents": [
+      "The chapter moves room by room and each room is a separate co-presence event",
+      "Theta and Salkov are in the corridor, not in Tserriednich's room",
+      "Halkenburg's return places him with the collapsed guards in room 1009"
+    ],
+    "description": "The princes assess the parasitic beasts from separate suites. Those simultaneous scenes are kept separate so the chapter does not imply a meeting between royal factions."
+  },
+  {
     "id": "ch-363",
     "number": 363,
     "publicationOrder": 363,
     "title": "Nen Beasts",
-    "date": "2017-04-18",
     "timeline": [
       {
-        "event": "Benjamin posts his private soldiers in every prince's quarters, on Balsamilco's counsel",
-        "storyDate": "Day 2 · Monday",
-        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "rihan", "musse"],
-        "location": "Tier 1"
+        "event": "Zhang Lei learns that Woble's detail has been decimated",
+        "storyDate": "Day 1 · Sunday",
+        "charactersInvolved": ["prince-zhanglei", "slakka", "coventoba"],
+        "location": "Tier 1 - Room 1003",
+        "locationId": "tier-1-royal-residential-sector-room-1003"
       },
       {
-        "event": "Rihan is transferred from Benjamin to Sale-sale then to Tubeppa",
-        "storyDate": "≈ Day 3-4",
-        "charactersInvolved": ["rihan", "prince-benjamin", "prince-salesale", "prince-tubeppa"],
-        "location": "Tiers 1-2"
+        "event": "Camilla puts the drop-out rule to the king",
+        "storyDate": "Day 1 · Sunday",
+        "charactersInvolved": ["prince-camilla", "nasubi-hui-guo-rou", "prince-benjamin"],
+        "location": "Tier 1 - Banquet Hall",
+        "locationId": "tier-1-banquet-hall"
       },
       {
-        "event": "Tubeppa (5th Princess) transforms her room 1005 into a laboratory",
-        "storyDate": "≈ Day 2-3",
-        "charactersInvolved": ["prince-tubeppa", "rihan"],
-        "location": "Tier 1 - Room 1005"
+        "event": "Balsamilco talks Benjamin down",
+        "storyDate": "Day 1 · Sunday",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001"
+      },
+      {
+        "event": "Benjamin's soldiers take their monitoring posts",
+        "storyDate": "Day 1 · Sunday",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001",
+        "note": "The deployments lead to separate prince suites; this command scene does not place all assigned soldiers together afterward."
+      },
+      {
+        "event": "Vincent stabs Sandra at the entrance of room 1014",
+        "storyDate": "Day 1 · Sunday",
+        "charactersInvolved": [
+          "vincent",
+          "sandra",
+          "kurapika",
+          "bill",
+          "queen-oito",
+          "oito-nephew-fake-woble"
+        ],
+        "location": "Tier 1 - Room 1014 - Entrance",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       }
     ],
-    "location": "Tier 1-2",
+    "location": "Tier 1 - Banquet Hall and royal suites",
     "keyEvents": [
       "Camilla asks the king to confirm that only biological death drops a prince from the contest",
       "Balsamilco tells Benjamin every prince carries a beast he cannot see",
       "Benjamin posts his soldiers in the princes' quarters",
-      "Vincent stabs a servant in room 1014",
-      "Transfert de Rihan entre factions",
-      "Tubeppa etablit son laboratoire"
+      "Vincent stabs Sandra in room 1014"
     ],
-    "description": "The princes take the measure of their Guardian Spirit Beasts. Zhang Lei reads the massacre of Woble's detail as the key to them, Camilla presses the king on the rules, and Benjamin — who cannot see his own beast — posts his private soldiers in every prince's quarters, which is how Vincent walks into room 1014. The two later entries below, Rihan's transfers and Tubeppa's laboratory, belong to chapters this catalogue has not separated out yet."
+    "description": "The chapter moves from Zhang Lei's suite to the banquet hall, then Benjamin's command room and finally room 1014. Rihan's later transfers and Tubeppa's laboratory are not events of this chapter."
+  },
+  {
+    "id": "ch-364",
+    "number": 364,
+    "publicationOrder": 364,
+    "title": "Speculation",
+    "timeline": [
+      {
+        "event": "Vincent attacks room 1014",
+        "charactersInvolved": ["vincent", "sandra", "kurapika", "bill"],
+        "location": "Tier 1 - Room 1014 - Salon",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Benjamin hears Vincent die and sends Babimyna",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "babimyna"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001",
+        "note": "Vincent is heard remotely and is not physically present in room 1001."
+      }
+    ],
+    "location": "Tier 1 - Rooms 1014 and 1001",
+    "keyEvents": ["Sandra dies", "Vincent poisons himself", "Babimyna replaces Vincent"],
+    "description": "The attack in room 1014 and Benjamin's listening post in room 1001 are simultaneous but separate scenes."
+  },
+  {
+    "id": "ch-365",
+    "number": 365,
+    "publicationOrder": 365,
+    "title": "Choice",
+    "timeline": [
+      {
+        "event": "Benjamin calls room 1014",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001"
+      },
+      {
+        "event": "Tubeppa calls room 1014 to propose a truce",
+        "charactersInvolved": ["prince-tubeppa", "maor"],
+        "location": "Tier 1 - Room 1005",
+        "locationId": "tier-1-royal-residential-sector-room-1005"
+      },
+      {
+        "event": "Zhang Lei receives the Woble camp",
+        "charactersInvolved": [
+          "prince-zhanglei",
+          "kurapika",
+          "queen-oito",
+          "oito-nephew-fake-woble",
+          "sakata",
+          "coventoba"
+        ],
+        "location": "Tier 1 - Room 1003 - Dining Room",
+        "locationId": "tier-1-royal-residential-sector-room-1003"
+      }
+    ],
+    "location": "Tier 1 - Rooms 1001, 1003 and 1005",
+    "keyEvents": [
+      "Three calls occur at once but their callers occupy different suites",
+      "Only Zhang Lei physically receives Kurapika, Oito and the child"
+    ],
+    "description": "Telephone contact is not treated as co-presence. The physical meeting occurs at Zhang Lei's dining table in room 1003."
+  },
+  {
+    "id": "ch-366",
+    "number": 366,
+    "publicationOrder": 366,
+    "title": "To Each His Own",
+    "timeline": [
+      {
+        "event": "Marayam eats with his room 1013 detail",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": [
+          "prince-marayam",
+          "sevanti-hui-guo-rou",
+          "biscuit-krueger",
+          "belerainte",
+          "vergei",
+          "naipei",
+          "saquelle"
+        ],
+        "location": "Tier 1 - Room 1013",
+        "locationId": "tier-1-royal-residential-sector-room-1013"
+      },
+      {
+        "event": "Momoze sleeps while her guards rotate",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-momoze", "nipaper", "bladge", "laroc", "nagmum", "tuffdy"],
+        "location": "Tier 1 - Room 1012",
+        "locationId": "tier-1-royal-residential-sector-room-1012"
+      },
+      {
+        "event": "Fugetsu looks through photographs in bed",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-fugetsu", "ladiolus", "illardia"],
+        "location": "Tier 1 - Room 1011",
+        "locationId": "tier-1-royal-residential-sector-room-1011"
+      },
+      {
+        "event": "Kacho eats with Melody",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-kacho", "melody", "keeney"],
+        "location": "Tier 1 - Room 1010",
+        "locationId": "tier-1-royal-residential-sector-room-1010"
+      },
+      {
+        "event": "Halkenburg wakes among his recovered guards",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-halkenburg", "nikoraurusu"],
+        "location": "Tier 1 - Room 1009",
+        "locationId": "tier-1-royal-residential-sector-room-1009"
+      },
+      {
+        "event": "Sale-sale remains at his party with Queen Swinko-swinko",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-salesale", "swinko-swinko-hui-guo-rou", "rihan"],
+        "location": "Tier 1 - Room 1008",
+        "locationId": "tier-1-royal-residential-sector-room-1008"
+      },
+      {
+        "event": "Luzurus consults his lead Hunter",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-luzurus", "basho"],
+        "location": "Tier 1 - Room 1007",
+        "locationId": "tier-1-royal-residential-sector-room-1007"
+      },
+      {
+        "event": "Tyson plays while Izunavi watches",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-tyson", "izunavi", "giuliano"],
+        "location": "Tier 1 - Room 1006",
+        "locationId": "tier-1-royal-residential-sector-room-1006"
+      },
+      {
+        "event": "Butch reports to Tubeppa",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-tubeppa", "butch"],
+        "location": "Tier 1 - Room 1005",
+        "locationId": "tier-1-royal-residential-sector-room-1005"
+      },
+      {
+        "event": "Theta trains Tserriednich",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-tserriednich", "theta", "salkov"],
+        "location": "Tier 1 - Room 1004 - Training Floor",
+        "locationId": "tier-1-royal-residential-sector-room-1004"
+      },
+      {
+        "event": "Zhang Lei hosts the Woble camp at his dining table",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": [
+          "prince-zhanglei",
+          "kurapika",
+          "queen-oito",
+          "oito-nephew-fake-woble",
+          "sakata",
+          "coventoba"
+        ],
+        "location": "Tier 1 - Room 1003 - Dining Room",
+        "locationId": "tier-1-royal-residential-sector-room-1003"
+      },
+      {
+        "event": "Camilla eats with Queen Duazul",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-camilla", "duazul-hui-guo-rou"],
+        "location": "Tier 1 - Room 1002",
+        "locationId": "tier-1-royal-residential-sector-room-1002"
+      },
+      {
+        "event": "Musse watches Camilla from the passage",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["musse"],
+        "location": "Tier 1 - Corridor outside Room 1002",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "event": "Balsamilco holds Benjamin's telephone post",
+        "storyDate": "Day 1 · Sunday · 16:00",
+        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "furykov"],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001"
+      },
+      {
+        "event": "Kurapika brings the Woble camp home",
+        "storyDate": "≈ Day 1 · 16:00",
+        "charactersInvolved": [
+          "kurapika",
+          "queen-oito",
+          "oito-nephew-fake-woble",
+          "bill",
+          "babimyna"
+        ],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Chrollo orders the hunt for Hisoka",
+        "storyDate": "≈ Day 1 · 16:00",
+        "charactersInvolved": ["chrollo-lucilfer"],
+        "location": "Tier 5 - Standard Cabins - Area 37564",
+        "locationId": "tier-5-standard-cabins"
+      }
+    ],
+    "location": "Tier 1 royal suites and Tier 5 Area 37564",
+    "keyEvents": [
+      "Every royal suite is recorded separately at 16:00",
+      "Musse is in the passage, not at Camilla's table",
+      "Chrollo is shown alone; the full Troupe meeting does not occur until chapter 377"
+    ],
+    "description": "A room-by-room status sequence at 16:00. Splitting the panels prevents simultaneous but separate royal households from becoming one event."
+  },
+  {
+    "id": "ch-367",
+    "number": 367,
+    "publicationOrder": 367,
+    "title": "Synchronization",
+    "timeline": [
+      {
+        "event": "Kurapika explains the Guardian Spirit Beasts",
+        "charactersInvolved": ["kurapika", "bill", "queen-oito", "babimyna"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Oito and Bill search for an insect for Little Eye",
+        "charactersInvolved": ["queen-oito", "bill", "kurapika"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      }
+    ],
+    "location": "Tier 1 - Room 1014",
+    "keyEvents": [
+      "Kurapika shares the mechanics of parasitic Nen",
+      "Oito prepares to use Little Eye"
+    ],
+    "description": "The chapter's operational scenes stay in room 1014; the remote prince factions are not treated as physically present."
   },
   {
     "id": "ch-368",
@@ -241,14 +675,17 @@
       {
         "event": "Oito watches room 1012 through Little Eye as Momoze is strangled",
         "storyDate": "Day 1 · Sunday · night",
-        "charactersInvolved": ["queen-oito", "kurapika", "prince-momoze"],
-        "location": "Tier 1 - Room 1014"
+        "charactersInvolved": ["queen-oito", "kurapika"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014",
+        "note": "Momoze is observed remotely through Little Eye and is not physically present in room 1014."
       },
       {
         "event": "Momoze is assassinated in her own room",
         "storyDate": "Day 1 · Sunday · night",
         "charactersInvolved": ["prince-momoze", "tuffdy"],
-        "location": "Tier 1 - Room 1012"
+        "location": "Tier 1 - Room 1012",
+        "locationId": "tier-1-royal-residential-sector-room-1012"
       },
       {
         "event": "Hanzo and Biscuit read the killing as the work of an off-duty guard",
@@ -303,7 +740,7 @@
         "location": "Tier 1 - Room 1014"
       },
       {
-        "event": "The princes send sixteen guards and servants to the class, each with orders of their own",
+        "event": "The sixteen envoys assemble for the first Nen class",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": [
           "satobi",
@@ -323,25 +760,47 @@
           "yuhirai",
           "shedule"
         ],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Kurapika sets the rules: a white line nobody crosses, force without warning, exclusion for anyone who breaks it",
         "storyDate": "Day 2 · Monday · 09:00",
-        "charactersInvolved": ["kurapika"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "charactersInvolved": [
+          "kurapika",
+          "satobi",
+          "mushaho",
+          "longhi",
+          "maor",
+          "danjin",
+          "myuhan",
+          "furykov",
+          "tenftory",
+          "belerainte",
+          "barrigen",
+          "yuri",
+          "loberry",
+          "ladiolus",
+          "illardia",
+          "yuhirai",
+          "shedule"
+        ],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Silent Majority possesses Loberry during Kurapika's first Nen class",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["loberry", "kurapika"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Asked who already knows Nen, only Furykov and Belerainte raise a hand",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["kurapika", "furykov", "belerainte"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       }
     ],
     "location": "Tier 1 - Royal Residential Sector",
@@ -367,19 +826,22 @@
         "event": "Loberry points at the masked doll nobody else can see and panics",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["loberry", "yuri", "kurapika", "belerainte"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Four tsuchibokko fasten onto Barrigen and drain him in front of the class",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["barrigen", "loberry", "kurapika", "belerainte"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "The class is left with a body it never saw attacked",
         "storyDate": "Day 2 · Monday · 09:00",
         "charactersInvolved": ["kurapika", "loberry", "belerainte"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       }
     ],
     "location": "Tier 1 - Royal Residential Sector",
@@ -390,6 +852,123 @@
       "Barrigen dies among sixteen witnesses and a Nen teacher, none of whom can see the weapon"
     ],
     "description": "The murder happens in the open. The assassin's rule was stated a chapter earlier — only the user and the possessed Loberry can see the decorative doll — and this is what it is for: Loberry cries out at a girl in a strange mask that no one else can find, and while the room is looking for a witness's hallucination, four conjured tsuchibokko take Barrigen by the neck. The guards see a white thing they cannot pull off; a single doll would need 44 seconds to empty a body, four working together need about 11. The class Kurapika convened at 09:00 becomes an investigation before he has taught anything, and the ability's whole design is on display: a weapon invisible to every witness, operated through the one witness who can see it. Myuhan dies the same way, but a day later — chapter 376, not here."
+  },
+  {
+    "id": "ch-371",
+    "number": 371,
+    "publicationOrder": 371,
+    "title": "Mission",
+    "timeline": [
+      {
+        "event": "Kurapika sorts the class and reads the beasts",
+        "storyDate": "Day 2 · Monday · after 09:00",
+        "charactersInvolved": [
+          "kurapika",
+          "satobi",
+          "mushaho",
+          "longhi",
+          "maor",
+          "danjin",
+          "myuhan",
+          "furykov",
+          "tenftory",
+          "belerainte",
+          "yuri",
+          "loberry",
+          "ladiolus",
+          "illardia",
+          "yuhirai",
+          "shedule"
+        ],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "The Phantom Troupe subdues the Buor men",
+        "charactersInvolved": [
+          "franklin-bordeau",
+          "phinks-magcub",
+          "feitan-portor",
+          "nobunaga-hazama"
+        ],
+        "location": "Tier 5 - Standard Cabins",
+        "locationId": "tier-5-standard-cabins"
+      },
+      {
+        "event": "Momoze is laid out in the princes' burial chamber",
+        "charactersInvolved": ["nasubi-hui-guo-rou", "nugui", "prince-momoze"],
+        "location": "Tier 1 - Princes' Burial Chamber",
+        "locationId": "tier-1-princes-burial-chamber"
+      }
+    ],
+    "location": "Tiers 1 and 5",
+    "keyEvents": [
+      "The Nen class, the Troupe fight and Momoze's burial are three unrelated locations",
+      "Momoze is present as a corpse in the burial chamber"
+    ],
+    "description": "Three storylines alternate across the ship and are kept as separate events."
+  },
+  {
+    "id": "ch-372",
+    "number": 372,
+    "publicationOrder": 372,
+    "title": "Disappearance",
+    "timeline": [
+      {
+        "event": "Hanzo obtains Tuffdy's confession",
+        "charactersInvolved": ["hanzo", "tuffdy"],
+        "location": "Tier 1 - VIP Jail",
+        "locationId": "tier-1-vip-jail"
+      },
+      {
+        "event": "Hanzo kills Tuffdy with Hanzo Skill 4",
+        "charactersInvolved": ["hanzo", "tuffdy"],
+        "location": "Tier 1 - VIP Jail",
+        "locationId": "tier-1-vip-jail"
+      }
+    ],
+    "location": "Tier 1 - VIP Jail",
+    "keyEvents": ["Hanzo identifies Momoze's murderer", "Tuffdy confesses and is killed"],
+    "description": "Hanzo's projected body enters the detention area, questions Tuffdy and kills him there."
+  },
+  {
+    "id": "ch-373",
+    "number": 373,
+    "publicationOrder": 373,
+    "title": "Inheritance",
+    "timeline": [
+      {
+        "event": "Musse kills Camilla",
+        "charactersInvolved": ["musse", "prince-camilla"],
+        "location": "Tier 1 - Corridor outside Room 1001",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "event": "Camilla's post-mortem beast kills Musse and resurrects her",
+        "charactersInvolved": ["prince-camilla", "musse"],
+        "location": "Tier 1 - Corridor outside Room 1001",
+        "locationId": "tier-1-royal-residential-sector"
+      },
+      {
+        "event": "Camilla attacks Benjamin",
+        "charactersInvolved": [
+          "prince-camilla",
+          "prince-benjamin",
+          "balsamilco-might",
+          "furykov",
+          "wolfe"
+        ],
+        "location": "Tier 1 - Room 1001",
+        "locationId": "tier-1-royal-residential-sector-room-1001"
+      }
+    ],
+    "location": "Tier 1 - Room 1001 and its corridor",
+    "keyEvents": [
+      "Camilla dies and revives in the corridor",
+      "She enters room 1001 only after the resurrection",
+      "Furykov breaks her arm and arrests her"
+    ],
+    "description": "The death and resurrection occur outside Benjamin's suite; the shooting and arrest occur inside room 1001."
   },
   {
     "id": "ch-374",
@@ -406,20 +985,23 @@
       {
         "event": "The Woble camp takes stock: Hanzo's disappearance is read as a defence by Marayam's Nen beast, and keeping a line to him open is called essential",
         "storyDate": "Day 3 · Tuesday · 01:30",
-        "charactersInvolved": ["kurapika", "queen-oito", "prince-woble"],
-        "location": "Tier 1 - Room 1014"
+        "charactersInvolved": ["kurapika", "queen-oito", "oito-nephew-fake-woble"],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Fugetsu wakes in her bed; the clock at her bedside reads TUESDAY 01:27 AM",
         "storyDate": "Day 3 · Tuesday · 01:27",
         "charactersInvolved": ["prince-fugetsu"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1011",
+        "locationId": "tier-1-royal-residential-sector-room-1011"
       },
       {
-        "event": "Fugetsu's Magical Worm opens a passage between her room and Kacho's",
+        "event": "Fugetsu crosses Magical Worm and reaches Kacho's room",
         "storyDate": "Day 3 · Tuesday · 01:27",
         "charactersInvolved": ["prince-fugetsu", "prince-kacho"],
-        "location": "Tier 1 - Royal Residential Sector"
+        "location": "Tier 1 - Room 1010",
+        "locationId": "tier-1-royal-residential-sector-room-1010"
       }
     ],
     "location": "Tier 1 - Royal Residential Sector",
@@ -430,6 +1012,49 @@
       "Fugetsu's beast turns out to open a passage rather than defend her, and its door is the entrance of the Magic Warm ride she played on with Kacho as a child"
     ],
     "description": "A caption over the water counts 37 h 30 min since departure — 01:30 of the third day against the noon sailing of chapter 340, the small hours after the class that cost Barrigen his life. The chapter spends them quietly: the galley works, Oito holds Woble, and the Woble camp sorts what it knows, reading Hanzo's disappearance inside Marayam's quarters as a defensive act of the thirteenth prince's beast and treating the line to him as the thing to keep open. Fugetsu, woken three minutes earlier by a clock reading TUESDAY 01:27 AM, watches a door rise out of her wall — the entrance of the Magic Warm ride she and Kacho played on as children — and it opens onto her sister's room. The clock and the caption agree to within three minutes, and the weekday is the one the arc never gives anywhere else: counted back, the Black Whale sailed at noon on a Sunday, which is what the banquet hall's Sunday schedule assumes."
+  },
+  {
+    "id": "ch-375",
+    "number": 375,
+    "publicationOrder": 375,
+    "title": "Persuasion",
+    "timeline": [
+      {
+        "event": "The class catalogues the princes' Guardian Spirit Beasts",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": [
+          "kurapika",
+          "furykov",
+          "belerainte",
+          "shikaku",
+          "satobi",
+          "longhi",
+          "maor"
+        ],
+        "location": "Tier 1 - Room 1014",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
+      },
+      {
+        "event": "Marayam's room is isolated from the corridor",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": [
+          "prince-marayam",
+          "sevanti-hui-guo-rou",
+          "biscuit-krueger",
+          "hanzo",
+          "belerainte",
+          "vergei"
+        ],
+        "location": "Tier 1 - Room 1013 - Nen-isolated copy",
+        "locationId": "tier-1-royal-residential-sector-room-1013"
+      }
+    ],
+    "location": "Tier 1 - Rooms 1014 and 1013",
+    "keyEvents": [
+      "The class remains in room 1014",
+      "Marayam's party occupies a Nen-isolated copy of room 1013"
+    ],
+    "description": "The analysis in room 1014 and the isolation of room 1013 are separate events."
   },
   {
     "id": "ch-376",
@@ -446,26 +1071,31 @@
       {
         "event": "Camilla's camp pleads self-defence and demands Musse be handed over, charging Benjamin with ordering the killing",
         "storyDate": "Day 3 · Tuesday · 10:05",
-        "charactersInvolved": ["prince-camilla", "prince-benjamin", "musse", "cleapatro"],
-        "location": "Tier 1 - Supreme Court"
+        "charactersInvolved": ["cleapatro"],
+        "location": "Tier 1 - Supreme Court",
+        "locationId": "tier-1-supreme-court",
+        "note": "The princes, Musse and Balsamilco are discussed by counsel; the panels do not place them in the courtroom."
       },
       {
         "event": "Benjamin's camp objects that ten rounds at an unarmed prince is disproportionate, and disowns Musse",
         "storyDate": "Day 3 · Tuesday · 10:05",
-        "charactersInvolved": ["prince-benjamin", "balsamilco-might", "cleapatro"],
-        "location": "Tier 1 - Supreme Court"
+        "charactersInvolved": ["cleapatro"],
+        "location": "Tier 1 - Supreme Court",
+        "locationId": "tier-1-supreme-court"
       },
       {
         "event": "Cleapatro confines both princes to the VIP zone under escort and has the Royal Army search every residence",
         "storyDate": "Day 3 · Tuesday · 10:05",
-        "charactersInvolved": ["cleapatro", "prince-benjamin", "prince-camilla"],
-        "location": "Tier 1 - Supreme Court"
+        "charactersInvolved": ["cleapatro"],
+        "location": "Tier 1 - Supreme Court",
+        "locationId": "tier-1-supreme-court"
       },
       {
         "event": "Myuhan is attacked the moment he enters the toilets and is dry ten seconds later",
         "storyDate": "Day 3 · Tuesday",
-        "charactersInvolved": ["myuhan", "kurapika", "bill"],
-        "location": "Tier 1 - Room 1014"
+        "charactersInvolved": ["myuhan"],
+        "location": "Tier 1 - Room 1014 - Bathroom",
+        "locationId": "tier-1-royal-residential-sector-room-1014"
       },
       {
         "event": "Kurapika seals the salon and the bedroom and reads the killer's pattern: only people without Nen",
@@ -498,150 +1128,233 @@
     "id": "ch-377",
     "number": 377,
     "publicationOrder": 377,
-    "title": "Mafia Wars",
-    "date": "2018-06-25",
+    "title": "Scheme",
     "timeline": [
       {
-        "event": "The Xi-Yu (Hinrigh) family operates on the lower thirds",
-        "storyDate": "≈ Day 3",
-        "charactersInvolved": ["hinrigh-biganduffno", "hisoka"],
-        "location": "Tiers 4-5"
-      },
-      {
-        "event": "The Cha-R family (Ken'i Wang) tactically allies with the Phantom Troupe",
-        "storyDate": "Day 7 · Saturday",
-        "charactersInvolved": ["keni-wang", "chrollo-lucilfer", "nobunaga-hazama"],
-        "location": "Tier 5"
-      },
-      {
-        "event": "Hisoka negotiates with the Xi-Yu mafia",
-        "storyDate": "≈ Day 10",
-        "charactersInvolved": ["hisoka", "hinrigh-biganduffno"],
-        "location": "Tier 4"
+        "event": "The Phantom Troupe divides the search for Hisoka",
+        "storyDate": "≈ Day 3–4",
+        "charactersInvolved": [
+          "chrollo-lucilfer",
+          "nobunaga-hazama",
+          "feitan-portor",
+          "phinks-magcub",
+          "franklin-bordeau",
+          "machi-komacine",
+          "bonolenov-ndongo",
+          "shizuku-murasaki",
+          "kalluto-zoldyck",
+          "illumi"
+        ],
+        "location": "Tier 5 - Standard Cabins",
+        "locationId": "tier-5-standard-cabins"
       }
     ],
-    "location": "Tiers 4-5",
+    "location": "Tier 5 - Standard Cabins",
     "keyEvents": [
-      "Activities of the Xi-Yu mafia",
-      "Alliance Cha-R / Brigade Fantome",
-      "Negociations Hisoka / Xi-Yu"
+      "Illumi explains that Hisoka hired him to join the Troupe and kill him",
+      "Chrollo sends the Spiders across the lower decks",
+      "Shizuku and Bonolenov remain with Chrollo",
+      "Hisoka is discussed but is not physically present"
     ],
-    "description": "Mafia factions become major players in the conflict. The Phantom Troupe allies with the Cha-R against Hisoka, while the latter negotiates with the Xi-Yu."
+    "description": "The ten surviving Spiders meet in the Tier 5 standard-cabin area. Illumi and Kalluto are physically present; Hisoka is only their target and has no attested position aboard in this chapter. The chapter ends with the group splitting up to search the lower decks."
   },
   {
     "id": "ch-378",
     "number": 378,
     "publicationOrder": 378,
-    "title": "Heil-Ly's Gambit",
-    "date": "2018-09-24",
+    "title": "Balance",
     "timeline": [
       {
         "event": "Morena gathers the twenty-three surviving Heil-Ly in room 302 and infects them one by one",
         "storyDate": "≈ Day 4",
-        "charactersInvolved": ["morena-prudo"],
-        "location": "Tier 3 - Room 302"
+        "charactersInvolved": [
+          "morena-prudo",
+          "luini",
+          "bille",
+          "cashew",
+          "chiffon-toto",
+          "daemon",
+          "dogman",
+          "gateaume",
+          "gelato",
+          "matvere",
+          "montblanc-toto",
+          "notre",
+          "orarge",
+          "padaille",
+          "perigord",
+          "quorolle",
+          "sodom",
+          "souffle",
+          "terebellum",
+          "tevelares",
+          "voconte",
+          "yokotani"
+        ],
+        "location": "Tier 3 - Heil-Ly Family Office (Room 302)",
+        "locationId": "tier-3-heilly-family-office",
+        "note": "The panel states that twenty-three people are present; the catalogue currently names twenty-two of them, Morena included."
       },
       {
-        "event": "Morena Prudo activates 'Et tu, Juliet' on the ship",
-        "storyDate": "≈ Day 4 onwards",
-        "charactersInvolved": ["morena-prudo", "luini", "prince-tserriednich"],
-        "location": "Tiers 3-5"
-      },
-      {
-        "event": "Luini uses his dimensional ability to pass through armored walls",
-        "storyDate": "≈ Day 10",
-        "charactersInvolved": ["luini", "morena-prudo"],
-        "location": "Tier 4"
-      },
-      {
-        "event": "Tserriednich uses the Heil-Ly to sow chaos",
-        "storyDate": "≈ Day 4 onwards",
-        "charactersInvolved": ["prince-tserriednich", "theta", "morena-prudo"],
-        "location": "All third parties"
+        "event": "Luini empties the Tier 5 warehouse guardpost",
+        "storyDate": "≈ Day 4",
+        "charactersInvolved": ["luini", "nobunaga-hazama", "phinks-magcub", "feitan-portor"],
+        "location": "Tier 5 - Warehouse Entrance",
+        "locationId": "tier-5-warehouse"
       }
     ],
-    "location": "Tiers 3-5",
+    "location": "Tiers 3 and 5",
     "keyEvents": [
       "Room 302 is where the Heil-Ly become Nen users: twenty-three present, examined one at a time",
       "Morena took the head of the clan by ordering its members to kill one another; those who stayed are the ones she thanks",
       "She states her goal plainly — she cares nothing for this world or for herself, which is why she destroys it",
-      "Activation d'Et tu, Juliet par Morena",
-      "Luini crosses the armored structures",
-      "Tserriednich uses Heil-Lys as weapons"
+      "Luini attacks the warehouse guardpost while Nobunaga, Phinks and Feitan collect the Troupe's weapons",
+      "Tserriednich is discussed as the Heil-Ly's patron but is not present in either scene"
     ],
-    "description": "The Heil-Ly family deploys their Nen infection strategy. It starts in room 302 on Tier 3, where Morena thanks the twenty-three people who chose to stay with her after she ordered them to kill one another, and calls them forward one at a time to have their faculties examined — the kiss that carries Contagion. Morena Prudo activates her kill-rewarding ability, while Luini uses her dimensional powers to infiltrate secure areas."
+    "description": "Two separate locations are shown. Morena and her followers gather in room 302 on Tier 3 for Contagion. Later, Luini attacks the Tier 5 warehouse guardpost where Nobunaga, Phinks and Feitan have gone to collect the Troupe's weapons. The two scenes must not be treated as one co-presence event."
+  },
+  {
+    "id": "ch-379",
+    "number": 379,
+    "publicationOrder": 379,
+    "title": "Collaboration",
+    "timeline": [
+      {
+        "event": "Luini escapes from the warehouse through his spatial ability",
+        "charactersInvolved": ["luini", "nobunaga-hazama", "phinks-magcub", "feitan-portor"],
+        "location": "Tier 5 - Warehouse Entrance",
+        "locationId": "tier-5-warehouse"
+      },
+      {
+        "event": "Cashew misleads Mizaistom's murder investigation",
+        "charactersInvolved": ["cashew", "mizaistom-nana"],
+        "location": "Tier 3 - Standard Residential Block",
+        "locationId": "tier-3-residential-standard"
+      }
+    ],
+    "location": "Tiers 3 and 5",
+    "keyEvents": [
+      "Luini and Cashew act in different places",
+      "Mizaistom never shares the Tier 5 warehouse scene with the Troupe"
+    ],
+    "description": "The chapter cross-cuts between Luini's escape on Tier 5 and Cashew's deception during the Tier 3 investigation."
   },
   {
     "id": "ch-380",
     "number": 380,
     "publicationOrder": 380,
-    "title": "Initiative",
-    "date": "2018-01-22",
+    "title": "Alarm",
     "timeline": [
       {
-        "event": "A cutaway of the whole ship places everyone who matters, captioned fourth day of the crossing, 10 in the morning",
+        "event": "Illumi and Kalluto hold the third-class observation post",
         "storyDate": "Day 4 · Wednesday · 10:00",
-        "charactersInvolved": [
-          "illumi",
-          "kalluto-zoldyck",
-          "cashew",
-          "mizaistom-nana",
-          "botobai-gigante",
-          "piyon",
-          "cluck",
-          "ginta",
-          "cheadle-yorkshire",
-          "leorio-paradinight",
-          "gel",
-          "luini",
-          "chrollo-lucilfer",
-          "bonolenov-ndongo",
-          "shizuku-murasaki",
-          "feitan-portor",
-          "hinrigh-biganduffno",
-          "machi-komacine",
-          "franklin-bordeau",
-          "keni-wang",
-          "nobunaga-hazama",
-          "phinks-magcub"
-        ],
-        "location": "Black Whale - cutaway of Tiers 3 to 5"
+        "charactersInvolved": ["illumi", "kalluto-zoldyck"],
+        "location": "Tier 3 - Observation Deck",
+        "locationId": "tier-3-observation-deck"
       },
       {
-        "event": "Hisoka arrives in Tier 5 and begins his hunt",
+        "event": "Cashew occupies an ordinary third-class cabin",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["cashew"],
+        "location": "Tier 3 - Standard Residential Block",
+        "locationId": "tier-3-residential-standard"
+      },
+      {
+        "event": "The Zodiacs coordinate from the governmental and political zone",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["mizaistom-nana", "botobai-gigante", "piyon", "cluck", "ginta"],
+        "location": "Tier 3 - Political Ward",
+        "locationId": "tier-3-political-ward"
+      },
+      {
+        "event": "Cheadle, Leorio and Gel staff the central hospital",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["cheadle-yorkshire", "leorio-paradinight", "gel"],
+        "location": "Tier 3 - Central Hospital",
+        "locationId": "tier-3-central-hospital"
+      },
+      {
+        "event": "Luini returns to the Heil-Ly family office",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["luini"],
+        "location": "Tier 3 - Heil-Ly Family Office",
+        "locationId": "tier-3-heilly-family-office"
+      },
+      {
+        "event": "Chrollo, Bonolenov and Shizuku search the central passage",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["chrollo-lucilfer", "bonolenov-ndongo", "shizuku-murasaki"],
+        "location": "Tier 4 - Central Passage",
+        "locationId": "tier-4-central-passage"
+      },
+      {
+        "event": "Feitan watches the hangar entrance",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["feitan-portor"],
+        "location": "Tier 5 - Hangar Entrance",
+        "locationId": "tier-5-hangar-entrance"
+      },
+      {
+        "event": "Hinrigh works from the Xi-Yu family office",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["hinrigh-biganduffno"],
+        "location": "Tier 4 - Xi-Yu Family Office",
+        "locationId": "tier-4-xi-yu-family-office"
+      },
+      {
+        "event": "Machi searches the ordinary fifth-class cabins",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["machi-komacine"],
+        "location": "Tier 5 - Standard Cabins",
+        "locationId": "tier-5-standard-cabins"
+      },
+      {
+        "event": "Franklin waits in the central dining hall",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["franklin-bordeau"],
+        "location": "Tier 5 - Central Dining Hall",
+        "locationId": "tier-5-central-dining-hall"
+      },
+      {
+        "event": "Ken'i Wang receives Nobunaga and Phinks in the Cha-R office",
+        "storyDate": "Day 4 · Wednesday · 10:00",
+        "charactersInvolved": ["keni-wang", "nobunaga-hazama", "phinks-magcub"],
+        "location": "Tier 5 - Cha-R Family Office",
+        "locationId": "tier-5-cha-r-family-office"
+      },
+      {
+        "event": "Fugetsu emerges alone on Tier 3",
         "storyDate": "≈ Day 4",
-        "charactersInvolved": ["hisoka", "illumi", "chrollo-lucilfer", "nobunaga-hazama"],
-        "location": "Tier 5 - Refectoire"
+        "charactersInvolved": ["prince-fugetsu"],
+        "location": "Tier 3 - First-Class Residential Block",
+        "locationId": "tier-3-residential-first-class",
+        "certainty": "PROBABLE"
       },
       {
-        "event": "The Phantom Troupe settles in Tier 5",
+        "event": "Mizaistom redistributes the Royal Army",
         "storyDate": "≈ Day 4",
-        "charactersInvolved": ["chrollo-lucilfer", "nobunaga-hazama", "illumi"],
-        "location": "Tier 5"
+        "charactersInvolved": ["mizaistom-nana", "mizuri"],
+        "location": "Tier 3 - Central Police Station",
+        "locationId": "tier-3-central-police-station"
       },
       {
-        "event": "Premieres tensions entre factions mafieuses (Xi-Yu, Cha-R, Heil-Ly)",
+        "event": "The Cha-R show the Troupe their surveillance",
         "storyDate": "≈ Day 4",
-        "charactersInvolved": ["hinrigh-biganduffno", "keni-wang", "morena-prudo", "luini"],
-        "location": "Tiers 4-5"
-      },
-      {
-        "event": "Kurapika begins teaching Nen to Queen Oito and training Woble's guards",
-        "storyDate": "Day 2 · Monday",
-        "charactersInvolved": ["kurapika", "queen-oito", "prince-woble", "bill"],
-        "location": "Tier 2 - Woble's Chamber"
+        "charactersInvolved": ["keni-wang", "nobunaga-hazama", "phinks-magcub", "feitan-portor"],
+        "location": "Tier 5 - Cha-R Family Office",
+        "locationId": "tier-5-cha-r-family-office"
       }
     ],
-    "location": "Tiers 2, 4, 5",
+    "location": "Tiers 3 to 5",
     "keyEvents": [
       "The fifth time stamp of the voyage: fourth day of the crossing, 10:00 — and the only one attached to a map",
-      "A full cutaway names where twenty-two people stand at that hour, from the third-class observation post down to the fifth-class canteen",
-      "Arrival of Hisoka and start of his hunt by the Phantom Troupe",
-      "Installation of mafia factions on lower thirds",
-      "Kurapika begins his Nen teaching",
-      "Premieres alliances et tensions entre factions"
+      "The cutaway is split into eleven room-level events so it does not create false co-presence across decks",
+      "Fugetsu reaches Tier 3 through Magical Worm and is placed under Justice protection",
+      "Mizaistom moves Royal Army strength toward Tier 3 and below",
+      "The Cha-R review warehouse surveillance with Nobunaga, Phinks and Feitan",
+      "Hisoka and Kurapika do not appear in this chapter"
     ],
-    "description": "Hisoka arrives on the Black Whale and immediately begins his hunt. The Phantom Troupe, with Chrollo and Nobunaga, settles in Tier 5 to organize the hunt. Meanwhile, Kurapika begins training Queen Oito and Prince Woble's guards in Nen, while monitoring the movements of the other factions."
+    "description": "At 10:00 on Day 4, a cutaway names separate posts across Tiers 3 to 5. Each room is recorded as its own event: sharing the cutaway timestamp does not mean sharing a scene. Fugetsu then appears alone on Tier 3, Mizaistom changes the military deployment, and the Cha-R review their camera footage with the three Spiders who visited the warehouse. Hisoka is not shown and receives no shipboard position."
   },
   {
     "id": "ch-382",
@@ -915,6 +1628,244 @@
     "description": "Nobunaga learns that the Heil-Ly control the waste processing running between Tiers 4 and 5 — a way to move as contractors and take people off the ship one at a time. The Xi-Yu find Lynch dead, and Hinrigh reads the layered trick behind it: someone wearing Hisoka manipulated a woman already manipulated, so that Hisoka would be looked for where he is not. In the crowd at Halkenburg's funeral procession, Chrollo says what he came for — the three sacred treasures of Kakin, kept on Tier 1 and tied to the machinery of the contest."
   },
   {
+    "id": "ch-408",
+    "number": 408,
+    "publicationOrder": 408,
+    "title": "Negotiation: Part 2",
+    "timeline": [
+      {
+        "event": "Morena reveals her goal and origins",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "morena-prudo",
+          "borksen",
+          "yokotani",
+          "voconte",
+          "orarge",
+          "gelato"
+        ],
+        "location": "Black Whale 1 - Heil-Ly Secret Hideout"
+      }
+    ],
+    "location": "Black Whale 1 - Heil-Ly Secret Hideout",
+    "keyEvents": [
+      "Morena explains Contagion and the Heil-Ly objective",
+      "Borksen learns why her Specialist affinity makes her valuable",
+      "The negotiation remains inside the hideout's Nen-linked game room"
+    ],
+    "description": "Morena and Borksen continue the negotiation game inside the Heil-Ly secret hideout. Yokotani, Voconte, Orarge and Gelato remain in the room as Morena explains Contagion, her origin as a Kakin Meat and the plan to destroy Kakin and the wider world. Images and memories used in the explanation do not move the characters they depict into the hideout."
+  },
+  {
+    "id": "ch-409",
+    "number": 409,
+    "publicationOrder": 409,
+    "title": "Negotiation: Part 3",
+    "timeline": [
+      {
+        "event": "Borksen locates the Heil-Ly hideout between Tiers 2 and 3",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "morena-prudo",
+          "borksen",
+          "yokotani",
+          "voconte",
+          "orarge",
+          "gelato"
+        ],
+        "location": "Black Whale 1 - Heil-Ly Secret Hideout"
+      },
+      {
+        "event": "Borksen fulfills a condition of Contagion",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": ["morena-prudo", "borksen"],
+        "location": "Black Whale 1 - Heil-Ly Secret Hideout"
+      }
+    ],
+    "location": "Black Whale 1 - Heil-Ly Secret Hideout",
+    "keyEvents": [
+      "The martial-law announcements prove the room is above Tier 3",
+      "Morena confirms five Nen-linked entrances",
+      "Borksen's kiss satisfies one condition of Contagion"
+    ],
+    "description": "The same six people remain in the negotiation room. By comparing the tier-specific announcements with the sound of the central gate, Borksen places the hideout in the inter-tier structure above Tier 3. The manga does not provide a mappable room number, so the canonical position remains the Heil-Ly secret hideout rather than room 3101 or a generic tier."
+  },
+  {
+    "id": "ch-410",
+    "number": 410,
+    "publicationOrder": 410,
+    "title": "Negotiation: Part 4",
+    "timeline": [
+      {
+        "event": "Borksen accepts Morena's offer",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "morena-prudo",
+          "borksen",
+          "yokotani",
+          "voconte",
+          "orarge",
+          "gelato"
+        ],
+        "location": "Black Whale 1 - Heil-Ly Secret Hideout"
+      },
+      {
+        "event": "Three soldiers vanish in room 3101",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [],
+        "location": "Black Whale 1 - Tier 3 - Room 3101"
+      },
+      {
+        "event": "Benjamin reaches the Justice Bureau",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": ["prince-benjamin", "mizaistom-nana", "botobai-gigante", "kaiser"],
+        "location": "Black Whale 1 - Tier 2 - Ministry of Justice"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 2 and 3",
+    "keyEvents": [
+      "Borksen chooses Yes and joins Heil-Ly",
+      "Room 3101 is confirmed as a teleportation trap, not the hideout itself",
+      "Benjamin begins turning the Justice Bureau into his command centre"
+    ],
+    "description": "Borksen accepts Morena's offer in the Heil-Ly game room. On Tier 3, soldiers disappear through the room 3101 trap while other soldiers uncover the adjoining false wall. Benjamin then reaches the Ministry of Justice on Tier 2 and confronts Mizaistom, Botobai and Kaiser."
+  },
+  {
+    "id": "ch-411",
+    "number": 411,
+    "publicationOrder": 411,
+    "title": "Announcement",
+    "date": "2026-06-28",
+    "timeline": [
+      {
+        "event": "Halkenburg calls Benjamin from Balsamilco's body",
+        "storyDate": "Day 12 · Thursday · 08:00",
+        "charactersInvolved": ["prince-halkenburg", "balsamilco-might"],
+        "location": "Black Whale 1 - Tier 2 - Ministry of Justice"
+      },
+      {
+        "event": "Benjamin receives Halkenburg's call",
+        "storyDate": "Day 12 · Thursday · 08:00",
+        "charactersInvolved": ["prince-benjamin"],
+        "location": "Black Whale 1 - Tier 1 - Room 1001"
+      },
+      {
+        "event": "Kaiser, Kacho and Melody watch over Fugetsu",
+        "storyDate": "Day 12 · Thursday · 08:00",
+        "charactersInvolved": ["kaiser", "prince-kacho", "melody", "prince-fugetsu"],
+        "location": "Black Whale 1 - Tier 2 - VIP Witness Protection Area"
+      },
+      {
+        "event": "Sarahell prepares to enter room 1014",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": ["sarahell", "fukataki"],
+        "location": "Black Whale 1 - Tier 1 - VIP Detention Area"
+      },
+      {
+        "event": "Kurapika opens the second Nen class",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "kurapika",
+          "sakata",
+          "hashito",
+          "furykov",
+          "babimyna",
+          "gipper",
+          "danjin",
+          "satobi",
+          "gadeau",
+          "tenftory",
+          "illardia",
+          "ladiolus",
+          "belerainte",
+          "naipei",
+          "roccoli",
+          "yuri",
+          "javietti",
+          "lizlura",
+          "toneaster",
+          "maor",
+          "slakka"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      },
+      {
+        "event": "Oito and the child remain in room 1014's bedroom",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": ["queen-oito", "oito-nephew-fake-woble", "bill", "shimanu"],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      }
+    ],
+    "location": "Black Whale 1 - Tiers 1 and 2",
+    "keyEvents": [
+      "Halkenburg schedules his funeral while impersonating Balsamilco",
+      "Sarahell leaves Camilla's detention room in disguise",
+      "The second Nen class gathers twenty-one named people in room 1014",
+      "Kurapika announces that the child is not an eligible participant"
+    ],
+    "description": "At 08:00 Halkenburg, inside Balsamilco's body, calls Benjamin from the Ministry of Justice. Kaiser, Kacho and Melody remain with Fugetsu in witness protection. Sarahell prepares her infiltration from Camilla's detention room. In room 1014, Kurapika opens the second Nen class while Bill and Shimano guard Oito and the child in the bedroom."
+  },
+  {
+    "id": "ch-412",
+    "number": 412,
+    "publicationOrder": 412,
+    "title": "Question",
+    "date": "2026-07-05",
+    "timeline": [
+      {
+        "event": "Kurapika postpones the second Nen class",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "kurapika",
+          "furykov",
+          "babimyna",
+          "gipper",
+          "danjin",
+          "satobi",
+          "gadeau",
+          "tenftory",
+          "illardia",
+          "ladiolus",
+          "belerainte",
+          "naipei",
+          "roccoli",
+          "yuri",
+          "javietti",
+          "lizlura",
+          "toneaster",
+          "maor",
+          "slakka"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      },
+      {
+        "event": "Oito reveals that the baby is not Woble",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "kurapika",
+          "queen-oito",
+          "bill",
+          "shimanu",
+          "oito-nephew-fake-woble"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      },
+      {
+        "event": "Beyond meets Judge Cleapatro",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": ["beyond-netero", "cleapatro", "kanzai", "saiyu"],
+        "location": "Black Whale 1 - Tier 1 - Beyond Netero's Holding Cell"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1",
+    "keyEvents": [
+      "The Nen students leave room 1014 to reconsider Kurapika's disclosure",
+      "Oito confirms that the child aboard is her nephew",
+      "The real Woble's position remains unknown",
+      "Cleapatro visits Beyond under Zodiac surveillance"
+    ],
+    "description": "Kurapika postpones the class after the participants challenge his disclosure. In the bedroom of room 1014, Oito confirms that the boy aboard is her nephew and that she does not know the real Woble's location. Elsewhere on Tier 1, Cleapatro visits Beyond's cell while Kanzai and Saiyu maintain surveillance."
+  },
+  {
     "id": "ch-413",
     "number": 413,
     "publicationOrder": 413,
@@ -923,8 +1874,8 @@
       {
         "event": "Nasubi sees Halkenburg's flame unlit at the burial",
         "storyDate": "≈ Day 12",
-        "charactersInvolved": ["nasubi-hui-guo-rou", "prince-halkenburg"],
-        "location": "Tier 1"
+        "charactersInvolved": ["nasubi-hui-guo-rou", "nugui", "prince-halkenburg"],
+        "location": "Tier 1 - Princes' Burial Chamber"
       },
       {
         "event": "Halkenburg works his ability from Balsamilco's body out of room 1009",
@@ -935,13 +1886,13 @@
       {
         "event": "Benjamin finds he carries TSK-17 and traces it back to his own mother",
         "storyDate": "≈ Day 12",
-        "charactersInvolved": ["prince-benjamin", "furykov", "unma-hui-guo-rou"],
+        "charactersInvolved": ["prince-benjamin", "furykov"],
         "location": "Tier 1 - Room 1001"
       },
       {
         "event": "Furykov explains the mark under his tongue",
         "storyDate": "≈ Day 12",
-        "charactersInvolved": ["furykov", "prince-benjamin", "beyond-netero"],
+        "charactersInvolved": ["furykov", "prince-benjamin"],
         "location": "Tier 1 - Room 1001"
       },
       {
@@ -957,7 +1908,54 @@
       "Benjamin's poisoning is traced to Unma through Furykov",
       "Martial law puts every prince under summons to room 1001"
     ],
-    "description": "Nasubi reads the unlit flame at the burial: Halkenburg's rights stand as long as his soul sits in a body, and it sits in Balsamilco's, working the marked followers out of room 1009. Benjamin, finding TSK-17 in his own blood, suspects Balsamilco and lands on his mother — Unma bought Halkenburg's victory by having Furykov infect him, holding the curse Beyond set under his tongue at birth over his head. At 14:15 Benjamin proclaims special martial law, orders the rival guards executed and summons the princes to room 1001."
+    "description": "Nasubi and Nugui inspect Halkenburg's unlit flame in the princes' burial chamber: his rights stand as long as his soul remains alive in another body. Halkenburg works from room 1009 inside Balsamilco. In room 1001 Benjamin discovers the TSK-17 infection, hears Furykov's explanation and at 14:15 proclaims special martial law. Unma and Beyond are discussed but are not physically present."
+  },
+  {
+    "id": "ch-414",
+    "number": 414,
+    "publicationOrder": 414,
+    "title": "Friends",
+    "date": "2026-07-19",
+    "timeline": [
+      {
+        "event": "Kanjidol attacks Luzurus's guards in the break room",
+        "storyDate": "Day 12 · Thursday · five minutes before 14:15",
+        "charactersInvolved": ["kanjidol", "ridge"],
+        "location": "Black Whale 1 - Tier 1 - Room 1007"
+      },
+      {
+        "event": "Rice warns Luzurus that martial law is imminent",
+        "storyDate": "Day 12 · Thursday · five minutes before 14:15",
+        "charactersInvolved": ["prince-luzurus", "rice", "basho", "bharate"],
+        "location": "Black Whale 1 - Tier 1 - Room 1007"
+      },
+      {
+        "event": "Yushohi and Chiyamasi prepare outside room 1009",
+        "storyDate": "Day 12 · Thursday · five minutes before 14:15",
+        "charactersInvolved": ["yushohi", "chiyamasi"],
+        "location": "Black Whale 1 - Tier 1 - Room 1009"
+      },
+      {
+        "event": "Kurapika seeks his friends' help to protect Woble",
+        "storyDate": "Day 12 · Thursday",
+        "charactersInvolved": [
+          "kurapika",
+          "queen-oito",
+          "bill",
+          "shimanu",
+          "oito-nephew-fake-woble"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1 Royal Residential Sector",
+    "keyEvents": [
+      "Kanjidol begins killing before the declaration",
+      "Luzurus orders his guards not to resist the military",
+      "Benjamin's soldiers prepare to breach room 1009",
+      "Kurapika chooses to involve trusted friends in the search for Woble"
+    ],
+    "description": "Five minutes before martial law, Kanjidol attacks Luzurus's detail inside room 1007 and Ridge intercepts him. Rice and Bharate warn Luzurus and Basho about Benjamin's movement, while Yushohi and Chiyamasi deploy outside room 1009. In room 1014, Kurapika, Oito, Bill and Shimano decide how to find and protect the real Woble. The closing images of Gon and Killua do not establish a mappable shipboard position."
   },
   {
     "id": "ch-415",
@@ -967,52 +1965,92 @@
     "date": "2026-07-26",
     "timeline": [
       {
-        "event": "Furykov confronts Beyond about his sacrificial curse",
-        "isFlashback": true,
-        "storyDate": "≈ 2 months before departure",
-        "charactersInvolved": ["beyond-netero", "furykov"],
-        "location": "Kakin"
-      },
-      {
         "event": "Kurapika and Oito prepare a message for the mainland",
         "storyDate": "Day 12 · Thursday · 13:50",
-        "charactersInvolved": ["kurapika", "queen-oito", "bill", "babimyna"],
-        "location": "Black Whale 1 - Tier 1"
+        "charactersInvolved": ["kurapika", "queen-oito", "shimanu", "oito-nephew-fake-woble"],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
       },
       {
-        "event": "The royal camps respond to special martial law",
+        "event": "Kurapika gives the postcards to Babimyna for dispatch",
+        "storyDate": "Day 12 · Thursday · 13:50",
+        "charactersInvolved": ["kurapika", "babimyna"],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
+      },
+      {
+        "event": "Camilla hears the martial-law announcement",
         "storyDate": "≈ Day 12",
-        "charactersInvolved": [
-          "prince-zhanglei",
-          "coventoba",
-          "prince-tubeppa",
-          "maor",
-          "rihan",
-          "theta",
-          "salkov",
-          "prince-tyson",
-          "prince-fugetsu",
-          "biscuit-krueger",
-          "vergei",
-          "prince-marayam"
-        ],
-        "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
+        "charactersInvolved": ["prince-camilla"],
+        "location": "Black Whale 1 - Tier 1 - VIP Detention Area"
+      },
+      {
+        "event": "Coventoba waits without Zhang Lei in room 1003",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["coventoba"],
+        "location": "Black Whale 1 - Tier 1 - Room 1003"
+      },
+      {
+        "event": "Tserriednich maintains Zetsu through the announcement",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-tserriednich", "salkov"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Rihan orders Tubeppa to room 1001",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-tubeppa", "rihan", "heisen", "komiya"],
+        "location": "Black Whale 1 - Tier 1 - Room 1005"
+      },
+      {
+        "event": "Tyson leaves room 1006 under escort",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["prince-tyson", "orau"],
+        "location": "Black Whale 1 - Tier 1 - Room 1006"
       },
       {
         "event": "Ridge subdues Kanjidol during martial law",
         "storyDate": "≈ Day 12",
-        "charactersInvolved": ["ridge", "kanjidol", "prince-luzurus"],
-        "location": "Black Whale 1 - Tier 1 Royal Residential Sector"
+        "charactersInvolved": ["ridge", "kanjidol", "basho", "satobi"],
+        "location": "Black Whale 1 - Tier 1 - Room 1007"
+      },
+      {
+        "event": "Seiko leaves room 1011 for the VVIP quarters",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": ["seiko-hui-guo-rou"],
+        "location": "Black Whale 1 - Tier 1 - Room 1011 / VVIP Living Quarters"
+      },
+      {
+        "event": "Marayam's camp refuses to leave its Nen space",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": [
+          "prince-marayam",
+          "sevanti-hui-guo-rou",
+          "biscuit-krueger",
+          "vergei",
+          "saquelle"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1013"
+      },
+      {
+        "event": "Oito is confined to room 1014's bedroom",
+        "storyDate": "≈ Day 12",
+        "charactersInvolved": [
+          "queen-oito",
+          "kurapika",
+          "babimyna",
+          "shimanu",
+          "oito-nephew-fake-woble"
+        ],
+        "location": "Black Whale 1 - Tier 1 - Room 1014"
       }
     ],
-    "location": "Kakin / Black Whale 1 - Tier 1",
+    "location": "Black Whale 1 - Tier 1",
     "keyEvents": [
-      "Furykov analyzes and confronts Beyond about his curse",
-      "Furykov's connection to Beyond",
+      "Kurapika and Oito prepare eight coded postcards",
       "Conflicting orders reshape the royal camps",
-      "Ridge stops Kanjidol"
+      "Ridge stops Kanjidol",
+      "Oito is confined to the bedroom of room 1014"
     ],
-    "description": "A flashback two months before departure shows Furykov analyzing the sacrificial curse placed on him at birth and confronting Beyond after the Seed Urn Ceremony assigns it a royal target. In the present, Kurapika and Oito prepare a message for the mainland before martial law spreads and Ridge halts Kanjidol's assault."
+    "description": "At 13:50 Kurapika, Oito and Shimano prepare coded postcards in room 1014, then Babimyna hands them to the delivery network. After martial law is proclaimed, the chapter visits Camilla's detention room and rooms 1003, 1004, 1005, 1006, 1007, 1011, 1013 and 1014 separately. The Furykov and Beyond material occurs before the voyage and is excluded from the Black Whale chapter timeline."
   },
   {
     "id": "ch-416",
@@ -1089,16 +2127,36 @@
         "location": "Black Whale 1 - Tier 1 - Room 1001"
       },
       {
+        "event": "Balsamilco is found unconscious in room 1009",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["balsamilco-might", "prince-halkenburg"],
+        "location": "Black Whale 1 - Tier 1 - Room 1009"
+      },
+      {
+        "event": "Balsamilco and Coventoba are held in a dining room",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["balsamilco-might", "prince-halkenburg", "coventoba"],
+        "location": "Black Whale 1 - exact detention room unconfirmed"
+      },
+      {
+        "event": "Onior's private bridge explains Zhang Lei's escape",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["onior-longbao", "chiyamasi"],
+        "location": "Black Whale 1 - Tier 1 - VVIP Living Quarters"
+      },
+      {
         "event": "Benjamin seizes the Justice Bureau and invokes emergency law",
         "storyDate": "Day 12 · Thursday · after 14:15",
         "charactersInvolved": ["prince-benjamin", "balsamilco-might", "coventoba"],
         "location": "Black Whale 1 - Ministry of Justice"
       }
     ],
-    "location": "Kakin / Black Whale 1 - Tiers 1-4",
+    "location": "Black Whale 1 - Tiers 1 and 2",
     "keyEvents": [
       "Benjamin leaves Tserriednich's apparent corpse as evidence of an execution",
       "Tubeppa and Tyson are secretly exposed to TSK-17",
+      "Balsamilco and Coventoba are placed under surveillance",
+      "Onior's private bridge accounts for Zhang Lei's escape route",
       "Benjamin orders the Justice Bureau converted into his military headquarters",
       "Bohemian Rhapsody reveals Benjamin's post-mortem succession plan"
     ],

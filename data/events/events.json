@@ -243,7 +243,7 @@
     "chapterTitle": "To Each His Own",
     "sequence": 2,
     "title": "Chrollo orders the hunt for Hisoka",
-    "summary": "The Phantom Troupe gathers aboard the Black Whale, accepts Illumi as a member and begins searching the lower tiers for Hisoka.",
+    "summary": "Chrollo is shown alone in Area 37564 on Tier 5 and sets the hunt for Hisoka in motion. The full Troupe gathering and Illumi's explanation occur in chapter 377, not here.",
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",
@@ -828,7 +828,13 @@
     "sequence": 1,
     "title": "Morena reveals her goal and origins",
     "summary": "The game compels Morena to explain Contagion, her origin as a Kakin “Meat” and her plan to destroy the kingdom and the world.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12,
+      "source": "community"
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 409,
@@ -836,7 +842,13 @@
     "sequence": 1,
     "title": "Borksen fulfills a condition of Contagion",
     "summary": "Borksen trades a kiss for a recovered response card, unknowingly satisfying one of the conditions of Morena's ability.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12,
+      "source": "community"
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
   },
   {
     "chapter": 413,
@@ -854,7 +866,7 @@
   {
     "chapter": 410,
     "chapterTitle": "Negotiation: Part 4",
-    "sequence": 2,
+    "sequence": 1,
     "title": "Borksen accepts Morena's offer",
     "summary": "Borksen deliberately chooses Yes and joins Heil-Ly, remaining at level zero until Contagion's final condition is met.",
     "legacyTitles": []
@@ -862,7 +874,7 @@
   {
     "chapter": 410,
     "chapterTitle": "Negotiation: Part 4",
-    "sequence": 1,
+    "sequence": 2,
     "title": "Three soldiers vanish in room 3101",
     "summary": "Soldiers sent into room 3101 on Tier 3 do not come back out. A hidden passage into the neighbouring room marks the place as a Heil-Ly hideout.",
     "legacyTitles": []
@@ -881,7 +893,7 @@
     "chapterTitle": "Loyalty",
     "sequence": 3,
     "title": "Benjamin proclaims martial law",
-    "summary": "Benjamin orders the capture of the princes and moves his command centre to the Justice Bureau on Tier 2.",
+    "summary": "From room 1001, Benjamin declares special martial law at 14:15, orders rival guards neutralized and summons the remaining princes into protective custody.",
     "legacyTitles": [],
     "occurredAt": {
       "basis": "derived",
@@ -893,6 +905,20 @@
     "chapter": 412,
     "chapterTitle": "Question",
     "sequence": 1,
+    "title": "Kurapika postpones the second Nen class",
+    "summary": "The assembled guards challenge Kurapika's disclosure that Woble is not participating. He postpones the lesson until 10:00 and sends them away to decide whether they still wish to learn Nen.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "stated",
+      "day": 12,
+      "source": "community"
+    },
+    "occurredAtLabel": "Day 12 · Thursday"
+  },
+  {
+    "chapter": 412,
+    "chapterTitle": "Question",
+    "sequence": 2,
     "title": "Oito reveals that the baby is not Woble",
     "summary": "Confronted by Kurapika and Bill, Oito admits that the child in room 1014 is her nephew; the real Woble remains missing.",
     "legacyTitles": [],
@@ -1114,8 +1140,16 @@
     "chapter": 379,
     "chapterTitle": "Collaboration",
     "sequence": 1,
-    "title": "Heil-Ly sabotages the murder investigation",
-    "summary": "Luini escapes through his spatial ability while Cashew mixes truth and lies to mislead Mizaistom.",
+    "title": "Luini escapes the Tier 5 warehouse",
+    "summary": "Luini withdraws from Nobunaga, Phinks and Feitan through his spatial ability at the Tier 5 warehouse entrance.",
+    "legacyTitles": ["Heil-Ly sabotages the murder investigation"]
+  },
+  {
+    "chapter": 379,
+    "chapterTitle": "Collaboration",
+    "sequence": 2,
+    "title": "Cashew misleads Mizaistom",
+    "summary": "In the Tier 3 standard residential block, Cashew mixes truth and lies to obstruct Mizaistom's investigation.",
     "legacyTitles": []
   },
   {
@@ -1257,20 +1291,39 @@
     "chapter": 411,
     "chapterTitle": "Announcement",
     "sequence": 1,
+    "title": "Halkenburg calls Benjamin from Balsamilco's body",
+    "summary": "At 08:00 Halkenburg, occupying Balsamilco, calls Benjamin from the Ministry of Justice and gives him the funeral schedule while preserving the impersonation.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Halkenburg takes Balsamilco's body",
+    "occurredAt": {
+      "basis": "stated",
+      "hours": 260,
+      "source": "community"
+    },
+    "occurredAtLabel": "Day 12 · Thursday · 08:00"
+  },
+  {
+    "chapter": 411,
+    "chapterTitle": "Announcement",
+    "sequence": 2,
+    "title": "Sarahell leaves Camilla's detention room in disguise",
+    "summary": "Sarahell completes her maid disguise in Camilla's room 302, confirms the plan against Woble with Fukataki and leaves Kako to take over her duties.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Halkenburg calls Benjamin from Balsamilco's body"
+  },
+  {
+    "chapter": 411,
+    "chapterTitle": "Announcement",
+    "sequence": 3,
     "title": "Kurapika opens the second Nen class",
     "summary": "Kurapika expands the lessons, explains how the succession ritual can fail and announces that Woble is not an eligible participant.",
     "legacyTitles": [],
-    "occurredAt": {
-      "basis": "stated",
-      "day": 12,
-      "source": "community"
-    },
-    "occurredAtLabel": "Day 12 · Thursday"
+    "occursAfterTitle": "Sarahell leaves Camilla's detention room in disguise"
   },
   {
     "chapter": 412,
     "chapterTitle": "Question",
-    "sequence": 2,
+    "sequence": 3,
     "title": "Beyond meets Judge Cleapatro",
     "summary": "Cleapatro visits Beyond in his VVIP cell to review the more than one thousand lawsuits he filed against Kakin.",
     "legacyTitles": [],
@@ -1298,37 +1351,44 @@
     "chapter": 414,
     "chapterTitle": "Friends",
     "sequence": 1,
-    "title": "Benjamin's soldiers begin their martial-law operations",
-    "summary": "Kanjidol attacks Luzurus's guards while military teams prepare to force entry into Halkenburg's quarters.",
-    "legacyTitles": []
+    "title": "Kanjidol attacks Luzurus's guards before martial law",
+    "summary": "Inside room 1007's break room, Kanjidol begins killing Luzurus's guards five minutes before the declaration and Ridge catches him in the act.",
+    "legacyTitles": ["Benjamin's soldiers begin their martial-law operations"]
   },
   {
     "chapter": 414,
     "chapterTitle": "Friends",
     "sequence": 2,
+    "title": "Luzurus orders his guards not to resist",
+    "summary": "Rice and Bharate warn Luzurus and Basho that Benjamin's soldiers have deployed outside room 1009. Luzurus predicts martial law, orders every weapon lowered and has the drugs in his bedroom destroyed.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Kanjidol attacks Luzurus's guards before martial law"
+  },
+  {
+    "chapter": 414,
+    "chapterTitle": "Friends",
+    "sequence": 3,
+    "title": "Yushohi and Chiyamasi prepare to breach room 1009",
+    "summary": "Outside Halkenburg's room, Yushohi lends Stand By Me to Chiyamasi while Benjamin's detail prepares to treat any resistance as treason.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Luzurus orders his guards not to resist"
+  },
+  {
+    "chapter": 414,
+    "chapterTitle": "Friends",
+    "sequence": 4,
     "title": "Kurapika seeks his friends' help to protect Woble",
     "summary": "Kurapika proposes tracing the real Woble and dismantling Beyond's curse, trusting friends on the mainland to protect her.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occursAfterTitle": "Yushohi and Chiyamasi prepare to breach room 1009"
   },
   {
     "chapter": 415,
     "chapterTitle": "Truth or Falsehood",
     "sequence": 1,
-    "title": "Furykov confronts Beyond about his sacrificial curse",
-    "summary": "Two months before departure, Furykov analyzes the curse placed on him at birth, determines that the Seed Urn Ceremony assigned it a royal target and confronts Beyond.",
-    "legacyTitles": ["The Seed Urn Ceremony assigns royal targets to Beyond's curses"],
-    "isFlashback": true,
-    "occurredAtLabel": "Two months before departure",
-    "occursOnBlackWhale": false,
-    "occursAfterTitle": "The fourteen princes enter the Succession Contest"
-  },
-  {
-    "chapter": 415,
-    "chapterTitle": "Truth or Falsehood",
-    "sequence": 2,
     "title": "Kurapika and Oito prepare a message for the mainland",
     "summary": "Kurapika and Oito discuss a letter intended for Oito's sister through a delivery service before the declaration of martial law interrupts them.",
-    "legacyTitles": ["Furykov identifies the structure of Beyond's curse"],
+    "legacyTitles": [],
     "occurredAt": {
       "basis": "stated",
       "hours": 265.8333333333333,
@@ -1340,9 +1400,9 @@
   {
     "chapter": 415,
     "chapterTitle": "Truth or Falsehood",
-    "sequence": 3,
-    "title": "The royal camps respond to special martial law",
-    "summary": "The princes and their guards receive conflicting movement, escort and disarmament orders as Benjamin summons the heirs and tightens control of Tier 1.",
+    "sequence": 2,
+    "title": "Martial law reaches Camilla and rooms 1003 through 1006",
+    "summary": "Camilla hears the proclamation in detention; Coventoba remains in room 1003 without Zhang Lei; Salkov watches Tserriednich maintain Zetsu in room 1004; Rihan orders Tubeppa out of room 1005; and Tyson leaves room 1006 under escort.",
     "legacyTitles": [],
     "occursAfterTitle": "Benjamin proclaims martial law",
     "occurredAt": {
@@ -1356,7 +1416,7 @@
   {
     "chapter": 415,
     "chapterTitle": "Truth or Falsehood",
-    "sequence": 4,
+    "sequence": 3,
     "title": "Ridge subdues Kanjidol during martial law",
     "summary": "After Kanjidol arms part of Luzurus's guard detail, Hunter Ridge defeats, injures and detains him in the royal residential sector.",
     "legacyTitles": [],
@@ -1365,7 +1425,35 @@
       "day": 12,
       "source": "community"
     },
-    "occurredAtLabel": "≈ Day 12"
+    "occurredAtLabel": "≈ Day 12",
+    "occursAfterTitle": "Martial law reaches Camilla and rooms 1003 through 1006"
+  },
+  {
+    "chapter": 415,
+    "chapterTitle": "Truth or Falsehood",
+    "sequence": 4,
+    "title": "Seiko evacuates room 1011 while Fugetsu stays under Justice protection",
+    "summary": "Soldiers escort Seiko from room 1011 to the VVIP quarters. She orders Fugetsu kept inside the Ministry of Justice and the absent princess's room sealed.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Ridge subdues Kanjidol during martial law"
+  },
+  {
+    "chapter": 415,
+    "chapterTitle": "Truth or Falsehood",
+    "sequence": 5,
+    "title": "Marayam's camp remains inside room 1013's Nen space",
+    "summary": "Biscuit, Vergei and Saquelle decide that moving Marayam out of the isolated room risks destroying its protection and refuse the military evacuation order.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Seiko evacuates room 1011 while Fugetsu stays under Justice protection"
+  },
+  {
+    "chapter": 415,
+    "chapterTitle": "Truth or Falsehood",
+    "sequence": 6,
+    "title": "Oito is confined to room 1014's bedroom",
+    "summary": "Twenty minutes after the proclamation, Babimyna tells Oito that her indictment is deferred but that leaving the master bedroom will be treated as flight from custody.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Marayam's camp remains inside room 1013's Nen space"
   },
   {
     "chapter": 416,
@@ -1450,6 +1538,32 @@
     "chapter": 417,
     "chapterTitle": "Emergency",
     "sequence": 3,
+    "title": "Balsamilco and Coventoba are held under surveillance",
+    "summary": "Balsamilco, still occupied by Halkenburg, is found unconscious in room 1009 and later held with Coventoba before both are brought into Benjamin's consolidated command structure.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 417,
+    "chapterTitle": "Emergency",
+    "sequence": 4,
+    "title": "Onior's private bridge explains Zhang Lei's escape",
+    "summary": "Onior remains in his Tier 1 VVIP residence while Chiyamasi reports that Zhang Lei used the private connecting passage from those quarters to reach Tier 2 before martial law.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 417,
+    "chapterTitle": "Emergency",
+    "sequence": 5,
     "title": "Benjamin seizes the Justice Bureau and invokes emergency law",
     "summary": "Benjamin turns the Justice Bureau into a consolidated military headquarters and plans to trigger Kakin's emergency succession law by ensuring every prince faces death, allowing his child to be named heir before Bohemian Rhapsody merges with his Nen and continues through his bloodline.",
     "legacyTitles": [],

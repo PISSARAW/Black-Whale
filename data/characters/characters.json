@@ -409,7 +409,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "absent"
       }
     ],
     "battles": ["Kurapika vs. Sayird", "Kurapika and Bill vs. Vincent"],
@@ -419,6 +419,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-banquet-hall",
+        "fromChapterId": "ch-359.4"
       },
       {
         "location": "tier-1-royal-residential-sector",
@@ -856,14 +860,19 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "absent"
       }
     ],
     "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "black-whale-1",
         "fromChapterId": "ch-377",
-        "note": "Recherche par l'Araignée et la Mafia"
+        "note": "Aboard, but never shown in volumes 34–36; the Troupe only discusses and searches for him"
       },
       {
         "location": "tier-3-residential-standard",
@@ -1300,9 +1309,9 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-3-residential-standard",
+        "location": "tier-3-observation-deck",
         "fromChapterId": "ch-380",
-        "note": "Confrontation avec Mizaistom sur le Pont 3"
+        "note": "Day 4, 10:00 cutaway: third-class observation post"
       },
       {
         "location": "tier-3-residential-first-class",
@@ -2210,7 +2219,31 @@
       },
       {
         "location": "tier-2-ministry-of-justice",
-        "fromChapterId": "ch-417.3"
+        "fromChapterId": "ch-410.3"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-411.1"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-413.2"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-416.1"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416.4"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1001",
+        "fromChapterId": "ch-417.2"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.5"
       }
     ]
   },
@@ -2648,7 +2681,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "absent"
+        "status": "appears"
       },
       {
         "chapter": 416,
@@ -2698,8 +2731,13 @@
         "fromChapterId": "ch-363.2"
       },
       {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-373.1",
+        "note": "Killed by Musse and resurrected in the corridor outside room 1001"
+      },
+      {
         "location": "tier-1-royal-residential-sector-room-1001",
-        "fromChapterId": "ch-373"
+        "fromChapterId": "ch-373.2"
       },
       {
         "location": "tier-1-vip-jail",
@@ -3139,7 +3177,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "mentioned"
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
@@ -3614,7 +3652,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "mentioned"
+        "status": "appears"
       },
       {
         "chapter": 416,
@@ -5926,6 +5964,18 @@
       {
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-388"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-403"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-413.2"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.5"
       }
     ]
   },
@@ -6378,6 +6428,11 @@
         "location": "tier-1-lifeboats",
         "fromChapterId": "ch-383",
         "untilChapterId": "ch-383.2"
+      },
+      {
+        "location": "tier-2-vip-witness-protection-area",
+        "fromChapterId": "ch-400",
+        "note": "Without You in Kacho's form"
       }
     ]
   },
@@ -6815,7 +6870,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "mentioned"
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
@@ -9102,13 +9157,12 @@
       {
         "chapter": 414,
         "title": "Friends",
-        "status": "appears"
+        "status": "pictured"
       },
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears",
-        "context": "flashback"
+        "status": "absent"
       }
     ],
     "mapTrajectory": [
@@ -9127,8 +9181,8 @@
     "firstAppearanceChapterId": "ch-318",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "Commissariat Central",
+      "tier": 2,
+      "room": "Ministry of Justice",
       "status": "actif",
       "role": "enqueteur / superviser"
     },
@@ -9528,14 +9582,18 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-380",
-        "note": "Intercepte Illumi et Kalluto"
+        "location": "tier-3-central-police-station",
+        "fromChapterId": "ch-380.2",
+        "note": "Conference with Kakin officials; orders the Royal Army redeployed"
       },
       {
         "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-381",
         "note": "Installe les Zoldyck en salle VIP et enquête"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-410.3"
       }
     ]
   },
@@ -9548,8 +9606,8 @@
     "firstAppearanceChapterId": "ch-318",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 3,
-      "room": "Tribunal Central",
+      "tier": 2,
+      "room": "Ministry of Justice",
       "status": "actif",
       "role": "juge"
     },
@@ -9938,6 +9996,10 @@
       {
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-410.3"
       }
     ]
   },
@@ -11182,7 +11244,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "mentioned"
       }
     ],
     "mapPresenceFromChapterId": "ch-415",
@@ -12051,7 +12113,15 @@
       },
       {
         "location": "tier-2-ministry-of-justice",
-        "fromChapterId": "ch-417.3"
+        "fromChapterId": "ch-403"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-404"
+      },
+      {
+        "location": "tier-2-ministry-of-justice",
+        "fromChapterId": "ch-417.5"
       }
     ]
   },
@@ -13326,7 +13396,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "mentioned"
       }
     ],
     "battles": ["Theta vs. Tserriednich Hui Guo Rou"],
@@ -13754,9 +13824,9 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-377",
-        "note": "Recherche de la base Heil-Ly et Hisoka"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-380",
+        "note": "Day 4, 10:00 cutaway"
       },
       {
         "location": "tier-3-heilly-family-office",
@@ -14624,6 +14694,10 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -15495,8 +15569,8 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-377",
-        "note": "Rassemblement de la Brigade, donne ses ordres"
+        "fromChapterId": "ch-366.2",
+        "note": "Shown alone in Area 37564; gives the search order before the full chapter 377 gathering"
       },
       {
         "location": "tier-5-standard-cabins",
@@ -15929,13 +16003,18 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-377",
-        "note": "Rassemblement de la Brigade"
+        "fromChapterId": "ch-371.2",
+        "note": "Subdues the Buor men with Franklin, Phinks and Feitan"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2",
+        "note": "Collects the Troupe's weapons when Luini attacks the warehouse guardpost"
       },
       {
         "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-378",
-        "note": "Visite du QG Cha-R au Pont 5"
+        "fromChapterId": "ch-380",
+        "note": "Day 4, 10:00 cutaway and subsequent surveillance review"
       },
       {
         "location": "tier-3-residential-standard",
@@ -20886,6 +20965,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-374"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -21306,7 +21389,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "absent"
       }
     ],
     "battles": [
@@ -21324,6 +21407,15 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector",
+        "fromChapterId": "ch-359.5",
+        "note": "Escorts Oito back from the inaugural banquet and finds the four drained guards"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-360"
       }
     ]
   },
@@ -23365,7 +23457,7 @@
     "temporalIdentityManaged": true,
     "mapTrajectory": [
       {
-        "location": "tier-1-royal-residential-sector",
+        "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
     ]
@@ -25873,6 +25965,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       },
       {
         "location": "tier-2-ministry-of-justice",
@@ -30839,6 +30935,11 @@
         "chapter": 414,
         "title": "Friends",
         "status": "absent"
+      },
+      {
+        "chapter": 415,
+        "title": "Truth or Falsehood",
+        "status": "appears"
       }
     ],
     "biography": [
@@ -30853,6 +30954,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-359"
+      },
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-415.4"
       }
     ]
   },
@@ -31677,6 +31782,10 @@
       {
         "location": "tier-1-soldiers-living-quarters",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -33711,7 +33820,7 @@
       },
       {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-412.2"
+        "fromChapterId": "ch-412.3"
       }
     ]
   },
@@ -37765,8 +37874,8 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-4-xi-yu-family-office",
-        "fromChapterId": "ch-358"
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-378"
       }
     ]
   },
@@ -40670,8 +40779,8 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-377",
-        "note": "Rassemblement de la Brigade"
+        "fromChapterId": "ch-371.2",
+        "note": "Subdues the Buor men with Nobunaga, Phinks and Feitan"
       },
       {
         "location": "tier-5-central-dining-hall",
@@ -41098,13 +41207,18 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-377",
-        "note": "Rassemblement de la Brigade"
+        "fromChapterId": "ch-371.2",
+        "note": "Subdues the Buor men with Franklin, Nobunaga and Feitan"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2",
+        "note": "Collects the Troupe's weapons when Luini attacks the warehouse guardpost"
       },
       {
         "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-378",
-        "note": "Visite du QG Cha-R au Pont 5"
+        "fromChapterId": "ch-380",
+        "note": "Day 4, 10:00 cutaway and subsequent surveillance review"
       },
       {
         "location": "tier-3-residential-standard",
@@ -41549,9 +41663,9 @@
         "note": "Rassemblement de la Brigade"
       },
       {
-        "location": "tier-3-residential-standard",
+        "location": "tier-3-observation-deck",
         "fromChapterId": "ch-380",
-        "note": "Confrontation avec Mizaistom sur le Pont 3"
+        "note": "Day 4, 10:00 cutaway: third-class observation post"
       },
       {
         "location": "tier-3-residential-first-class",
@@ -42069,6 +42183,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-363"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ],
     "nen": {
@@ -42302,6 +42420,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-416.1"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416.4"
       }
     ]
   },
@@ -42329,8 +42455,8 @@
       },
       {
         "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-378",
-        "note": "Chasse"
+        "fromChapterId": "ch-380",
+        "note": "Day 4, 10:00 cutaway: ordinary third-class cabins"
       }
     ]
   },
@@ -42392,7 +42518,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
+      "room": "VVIP Living Quarters",
       "status": "actif",
       "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
@@ -42409,6 +42535,14 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-414.3"
+      },
+      {
+        "location": "tier-1-vvip-living-quarters",
+        "fromChapterId": "ch-417.4"
       }
     ]
   },
@@ -42481,8 +42615,12 @@
         "fromChapterId": "ch-383"
       },
       {
+        "location": "tier-1-royal-residential-sector-room-1003",
+        "fromChapterId": "ch-415.2"
+      },
+      {
         "location": "tier-2-ministry-of-justice",
-        "fromChapterId": "ch-417.3"
+        "fromChapterId": "ch-417.5"
       }
     ]
   },
@@ -42627,13 +42765,23 @@
     "mapTrajectory": [
       {
         "location": "tier-5-standard-cabins",
-        "fromChapterId": "ch-377",
-        "note": "Rassemblement de la Brigade"
+        "fromChapterId": "ch-371.2",
+        "note": "Subdues the Buor men with Franklin, Nobunaga and Phinks"
+      },
+      {
+        "location": "tier-5-warehouse",
+        "fromChapterId": "ch-378.2",
+        "note": "Collects the Troupe's weapons when Luini attacks the warehouse guardpost"
+      },
+      {
+        "location": "tier-5-hangar-entrance",
+        "fromChapterId": "ch-380",
+        "note": "Day 4, 10:00 cutaway"
       },
       {
         "location": "tier-5-cha-r-family-office",
-        "fromChapterId": "ch-378",
-        "note": "Visite du QG Cha-R au Pont 5"
+        "fromChapterId": "ch-380.3",
+        "note": "Reviews the warehouse surveillance with Ken'i Wang"
       },
       {
         "location": "tier-3-residential-standard",
@@ -42733,8 +42881,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears",
-        "context": "flashback"
+        "status": "absent"
       },
       {
         "chapter": 416,
@@ -42756,6 +42903,18 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-368"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
+      },
+      {
+        "location": "tier-1-vip-jail",
+        "fromChapterId": "ch-416.1"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416.4"
       }
     ],
     "nen": {
@@ -42785,6 +42944,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -42821,9 +42984,9 @@
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 2,
+      "room": "Heil-Ly Secret Hideout",
+      "status": "actif",
       "role": "Mafioso ; Pro Gamer"
     },
     "mapPresenceFromChapterId": "ch-378",
@@ -42833,6 +42996,10 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -43025,6 +43192,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43075,6 +43246,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43157,7 +43332,7 @@
       },
       {
         "location": "tier-1-royal-residential-sector-room-1007",
-        "fromChapterId": "ch-414"
+        "fromChapterId": "ch-414.1"
       }
     ]
   },
@@ -43329,6 +43504,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43382,6 +43561,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43462,9 +43645,9 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-377",
-        "note": "Recherche de Hisoka"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-380",
+        "note": "No movement is shown in volumes 34–36; retained at the Xi-Yu office"
       },
       {
         "location": "tier-3-cineplex",
@@ -43551,7 +43734,7 @@
       {
         "chapter": 415,
         "title": "Truth or Falsehood",
-        "status": "appears"
+        "status": "absent"
       }
     ],
     "temporalIdentityManaged": true,
@@ -43559,6 +43742,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43842,6 +44029,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -43999,9 +44190,9 @@
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 2,
+      "room": "Heil-Ly Secret Hideout",
+      "status": "actif",
       "role": "Mafioso ; Waste Disposal Contractor"
     },
     "mapPresenceFromChapterId": "ch-378",
@@ -44011,6 +44202,10 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -44232,6 +44427,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -44340,8 +44539,8 @@
     "firstAppearanceChapterId": "ch-363",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 1,
-      "room": "1014",
+      "tier": null,
+      "room": null,
       "status": "actif",
       "role": "Guard"
     },
@@ -44352,10 +44551,6 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
-      },
-      {
-        "location": "tier-1-royal-residential-sector-room-1014",
-        "fromChapterId": "ch-411"
       }
     ]
   },
@@ -44380,6 +44575,14 @@
       {
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1007",
+        "fromChapterId": "ch-415.3"
       }
     ]
   },
@@ -44456,6 +44659,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1003",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -44682,6 +44889,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1003",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -44754,6 +44965,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -44956,9 +45171,9 @@
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 2,
+      "room": "Heil-Ly Secret Hideout",
+      "status": "actif",
       "role": "Mafioso ; Mercenary Transporter"
     },
     "mapPresenceFromChapterId": "ch-378",
@@ -44968,6 +45183,10 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -45004,9 +45223,9 @@
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": null,
-      "room": null,
-      "status": "inconnu",
+      "tier": 2,
+      "room": "Heil-Ly Secret Hideout",
+      "status": "actif",
       "role": "Mafioso ; Unscrupulous Lawyer ; Legal Advisor for the Heil-Ly Family"
     },
     "mapPresenceFromChapterId": "ch-378",
@@ -45016,6 +45235,10 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-2-heilly-secret-hideout",
+        "fromChapterId": "ch-407"
       }
     ]
   },
@@ -45064,6 +45287,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1014",
+        "fromChapterId": "ch-411.3"
       }
     ]
   },
@@ -45077,7 +45304,7 @@
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
-      "room": "1001",
+      "room": "1009",
       "status": "actif",
       "role": "Private Soldier for Prince Benjamin Hui Guo Rou"
     },
@@ -45096,6 +45323,10 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-383"
+      },
+      {
+        "location": "tier-1-royal-residential-sector-room-1009",
+        "fromChapterId": "ch-414.3"
       }
     ]
   },
@@ -45122,9 +45353,9 @@
         "fromChapterId": "ch-358"
       },
       {
-        "location": "tier-3-residential-standard",
-        "fromChapterId": "ch-377",
-        "note": "Recherche de Hisoka"
+        "location": "tier-4-xi-yu-family-office",
+        "fromChapterId": "ch-380",
+        "note": "No movement is shown in volumes 34–36; retained at the Xi-Yu office"
       },
       {
         "location": "tier-3-cineplex",

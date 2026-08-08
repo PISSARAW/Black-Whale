@@ -33,6 +33,7 @@ const diningHall = readFileSync(
   new URL('./local/central-dining-hall.svelte', import.meta.url),
   'utf8',
 )
+const lifeboats = readFileSync(new URL('./local/lifeboats.svelte', import.meta.url), 'utf8')
 
 /** Every `[a, b]` pair inside a named literal, in the order it is written. */
 function pairs(name: string): [number, number][] {
@@ -134,5 +135,18 @@ describe('room appearance evidence', () => {
     expect(diningHall).toContain('long service counter')
     expect(diningHall).toContain('diners sit directly on the deck')
     expect(diningHall).not.toContain('class="bench"')
+  })
+
+  it('keeps the chapter 383 pod cabin bare around its central post', () => {
+    const structures = blueprint.structures.filter(
+      (entry) => entry.spaceId === 'tier-1-lifeboats-port-pod-cabin',
+    )
+
+    expect(structures.some((entry) => entry.id.endsWith('pod-post'))).toBe(true)
+    expect(structures.some((entry) => entry.id.endsWith('pod-console'))).toBe(true)
+    expect(structures.some((entry) => entry.id.endsWith('pod-cabinet'))).toBe(true)
+    expect(structures.some((entry) => entry.kind === 'seat')).toBe(false)
+    expect(lifeboats).toContain('Bare segmented deck · no passenger seats')
+    expect(lifeboats).not.toContain('class="bench"')
   })
 })

@@ -1,4 +1,10 @@
 <script lang="ts">
+  /**
+   * Chapter 383, pp. 55–65: launch bay and escape-pod cabin.
+   * The cabin is deliberately seatless. Its published views show a ribbed
+   * circular shell, the hatch controls and a bare segmented deck around the
+   * central post; the former annular bench was not present in the panels.
+   */
   // Room interactions are not wired up yet. The elements keep their click
   // and keyboard affordances so the behaviour can be attached in one place
   // when it exists; until then this must not log on a public page.
@@ -54,9 +60,20 @@
         stroke: #555;
         stroke-width: 4;
       }
-      .bench {
-        fill: #444;
-        stroke: #222;
+      .rib {
+        fill: none;
+        stroke: #555;
+        stroke-width: 2;
+      }
+      .hatch {
+        fill: #151515;
+        stroke: #c9c9c0;
+        stroke-width: 5;
+      }
+      .console {
+        fill: #333;
+        stroke: #9dc4e0;
+        stroke-width: 2;
       }
     </style>
   </defs>
@@ -155,20 +172,33 @@
     <!-- Circular Pod Interior -->
     <circle cx="675" cy="250" r="180" class="lifeboat-interior" />
 
-    <!-- Benches (Outer Ring) -->
-    <circle cx="675" cy="250" r="160" class="bench" fill="none" stroke-width="30" />
-    <circle cx="675" cy="250" r="145" fill="none" stroke="#222" stroke-width="2" />
-    <!-- Bench edge -->
+    <!-- Ribbed circular shell and bare deck: no seats are shown in ch. 383. -->
+    <circle cx="675" cy="250" r="145" class="rib" />
+    <circle cx="675" cy="250" r="112" class="rib" />
+    <line x1="675" y1="70" x2="675" y2="138" class="rib" />
+    <line x1="802" y1="123" x2="754" y2="171" class="rib" />
+    <line x1="855" y1="250" x2="787" y2="250" class="rib" />
+    <line x1="548" y1="123" x2="596" y2="171" class="rib" />
+    <line x1="495" y1="250" x2="563" y2="250" class="rib" />
+
+    <!-- Round exterior hatch, low control console and separate cabinet (p. 60). -->
+    <circle cx="675" cy="92" r="32" class="hatch" />
+    <rect x="622" y="124" width="106" height="36" rx="4" class="console" />
+    <rect x="742" y="124" width="48" height="44" rx="3" class="console" />
+    <circle cx="646" cy="142" r="5" fill="#ffd700" />
+    <circle cx="664" cy="142" r="5" fill="#9dc4e0" />
+    <circle cx="682" cy="142" r="5" fill="#c9c9c0" />
 
     <!-- Central Pillar -->
     <circle cx="675" cy="250" r="40" fill="#333" stroke="#666" stroke-width="2" />
     <circle cx="675" cy="250" r="20" fill="#555" />
     <!-- Inner pole -->
 
-    <!-- Floor divisions (Sectors) -->
+    <!-- Floor divisions visible around Fugetsu on p. 65. -->
     <line x1="675" y1="105" x2="675" y2="210" stroke="#444" stroke-width="2" />
     <line x1="675" y1="290" x2="675" y2="395" stroke="#444" stroke-width="2" />
     <line x1="530" y1="250" x2="635" y2="250" stroke="#444" stroke-width="2" />
     <line x1="715" y1="250" x2="820" y2="250" stroke="#444" stroke-width="2" />
+    <text x="675" y="455" class="sublabel">Bare segmented deck · no passenger seats</text>
   </g>
 </svg>

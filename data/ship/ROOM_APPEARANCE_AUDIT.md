@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 810 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 809 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -41,13 +41,17 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 192.5 × 28 m ; 24 × 16.64 m
 - **Hauteurs sous plafond :** 7 m
-- **Éléments modélisés :** 8 painting, 3 seat, 2 cabinet, 2 table, 1 platform, 1 window
-- **Objets directement visibles dans les cases :** 17/17
+- **Éléments modélisés :** 8 painting, 6 cabinet, 3 seat, 3 table, 1 platform, 1 window
+- **Objets directement visibles dans les cases :** 22/22
 - **Espaces internes :** Salon royal
 - **Sources de la pièce :**
-  - Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.
+  - Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons.
 - **Sources du mobilier et des détails :**
   - Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.
+  - Chap. 382, p. 29–30 — un long manteau sous le tableau de bataille monumental porte des photographies encadrées, des vases et un ornement central évoquant une horloge.
+  - Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central.
+  - Chap. 382, p. 29–30 — une grande enceinte étroite à trois haut-parleurs circulaires se dresse près du mur de tableaux bâbord.
+  - Chap. 382, p. 29–30 — bouteilles, verres et récipients couvrent une desserte drapée près du groupe de sièges du Roi.
   - Chap. 413 — Halkenburg exposé dans le salon de son père, le Roi debout à son chevet.
 
 ## Pont des canots (bâbord) — `tier-1-lifeboats`
@@ -57,15 +61,17 @@
 - **Sous-espaces :** 3
 - **Emprises relevées :** 10.5 × 35 m ; 5.2 × 5.2 m
 - **Hauteurs sous plafond :** 2.6 m
-- **Éléments modélisés :** 8 lifeboat, 8 seat, 2 counter, 1 pillar, 1 platform
-- **Objets directement visibles dans les cases :** 20/20
+- **Éléments modélisés :** 8 lifeboat, 3 counter, 1 cabinet, 1 pillar, 1 platform
+- **Objets directement visibles dans les cases :** 14/14
 - **Espaces internes :** Pont des canots (tribord) ; Cabine de la capsule
 - **Sources de la pièce :**
   - Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté.
-  - Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille.
+  - Chap. 383, p. 60–65 — la cabine circulaire possède une coque nervurée, une écoutille ronde avec console et meuble latéraux, et un pont nu segmenté autour du mât central et de son large socle ; aucun siège de passager n'est visible.
 - **Sources du mobilier et des détails :**
   - Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté.
-  - Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille.
+  - Chap. 383, p. 65 — le mât central s'élève d'un large socle circulaire sur le pont segmenté nu.
+  - Chap. 383, p. 60 — une console d'instruments basse se trouve directement sous l'écoutille ronde ouverte.
+  - Chap. 383, p. 60 — un meuble rectangulaire séparé se dresse à droite de la console de l'écoutille.
 
 ## Chambre funéraire des princes — `tier-1-princes-burial-chamber`
 

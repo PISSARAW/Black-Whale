@@ -839,7 +839,7 @@
       "elevation": 128,
       "ceiling": 7,
       "provenance": "panel",
-      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
+      "source": "Ch. 382, pp. 29–32 — the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
       "hull": [
         [-14, -10.5],
         [14, -10.5],
@@ -879,7 +879,7 @@
       "elevation": 128,
       "ceiling": 2.6,
       "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "source": "Ch. 383, pp. 60–65 — the circular pod cabin has a ribbed shell, a round hatch with a side console and cabinet, and a bare segmented deck around the central post and its broad base; no passenger seats are visible.",
       "hull": [
         [-3.2, -3.2],
         [3.2, -3.2],
@@ -1139,7 +1139,7 @@
       "nameFr": "Quartiers du Roi",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
+      "source": "Ch. 382, pp. 29–32 — the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
       "ceiling": 7,
       "envelope": null,
       "footprint": [
@@ -1148,7 +1148,7 @@
         [87.5, -35],
         [-105, -35]
       ],
-      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+      "sourceFr": "Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons."
     },
     {
       "id": "tier-1-princes-burial-chamber",
@@ -7827,7 +7827,7 @@
       "nameFr": "Salon royal",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
+      "source": "Ch. 382, pp. 29–32 — the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
       "ceiling": 7,
       "envelope": null,
       "footprint": [
@@ -7836,7 +7836,7 @@
         [12, 8.32],
         [-12, 8.32]
       ],
-      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+      "sourceFr": "Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons."
     },
     {
       "id": "tier-1-king-living-quarters-vestibule",
@@ -7962,7 +7962,7 @@
         [-1.84, 1.84],
         [-0.99, 2.4]
       ],
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+      "sourceFr": "Chap. 383, p. 60–65 — la cabine circulaire possède une coque nervurée, une écoutille ronde avec console et meuble latéraux, et un pont nu segmenté autour du mât central et de son large socle ; aucun siège de passager n'est visible."
     },
     {
       "id": "tier-1-princes-burial-chamber-rotunda",
@@ -9376,8 +9376,8 @@
       "at": [-127.75, -12],
       "atTo": [0, 2],
       "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+      "source": "Ch. 383, p. 65 — Fugetsu is shown alone on the bare circular deck, beside the central post and its broad base.",
+      "sourceFr": "Chap. 383, p. 65 — Fugetsu est montrée seule sur le pont circulaire nu, à côté du mât central et de son large socle."
     },
     {
       "from": "tier-1-princes-burial-chamber",
@@ -13404,8 +13404,40 @@
       "height": 2.6,
       "sides": 12,
       "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+      "source": "Ch. 383, p. 65 — the central post rises from a broad circular base on the bare segmented deck.",
+      "sourceFr": "Chap. 383, p. 65 — le mât central s'élève d'un large socle circulaire sur le pont segmenté nu."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-console",
+      "spaceId": "tier-1-lifeboats-port-pod-cabin",
+      "kind": "counter",
+      "name": "Hatch Control Console",
+      "nameFr": "Console de commande de l'écoutille",
+      "at": [0, -1.75],
+      "size": [1.4, 0.65],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.9,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383, p. 60 — a low instrument console stands directly below the open round hatch.",
+      "sourceFr": "Chap. 383, p. 60 — une console d'instruments basse se trouve directement sous l'écoutille ronde ouverte."
+    },
+    {
+      "id": "tier-1-lifeboats-port-pod-cabinet",
+      "spaceId": "tier-1-lifeboats-port-pod-cabin",
+      "kind": "cabinet",
+      "name": "Hatch-side Cabinet",
+      "nameFr": "Meuble latéral de l'écoutille",
+      "at": [1.45, -1.45],
+      "size": [0.7, 0.7],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.95,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 383, p. 60 — a separate rectangular cabinet stands to the right of the hatch console.",
+      "sourceFr": "Chap. 383, p. 60 — un meuble rectangulaire séparé se dresse à droite de la console de l'écoutille."
     },
     {
       "id": "tier-1-lifeboats-port-pod-base",
@@ -13420,8 +13452,8 @@
       "height": 0.45,
       "sides": 16,
       "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
+      "source": "Ch. 383, p. 65 — the central post rises from a broad circular base on the bare segmented deck.",
+      "sourceFr": "Chap. 383, p. 65 — le mât central s'élève d'un large socle circulaire sur le pont segmenté nu."
     },
     {
       "id": "tier-3-cineplex-food-counter",
@@ -17246,6 +17278,86 @@
       "provenance": "panel",
       "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
       "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+    },
+    {
+      "id": "tier-1-king-living-quarters-living-mantel",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "cabinet",
+      "name": "Ornamented Mantel",
+      "nameFr": "Manteau ornementé",
+      "at": [0, -7.48],
+      "size": [3.8, 0.58],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.35,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, p. 29–30 — a long mantel below the monumental battle picture carries framed photographs, vessels and a central clock-like ornament.",
+      "sourceFr": "Chap. 382, p. 29–30 — un long manteau sous le tableau de bataille monumental porte des photographies encadrées, des vases et un ornement central évoquant une horloge."
+    },
+    {
+      "id": "tier-1-king-living-quarters-living-display-port",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "cabinet",
+      "name": "Display Pedestal (port)",
+      "nameFr": "Sellette d'exposition (bâbord)",
+      "at": [-4.2, -7.45],
+      "size": [1.05, 0.65],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.15,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, p. 29–30 — display furniture and ornamental objects line both sides of the central mantel.",
+      "sourceFr": "Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central."
+    },
+    {
+      "id": "tier-1-king-living-quarters-living-display-starboard",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "cabinet",
+      "name": "Display Pedestal (starboard)",
+      "nameFr": "Sellette d'exposition (tribord)",
+      "at": [4.2, -7.45],
+      "size": [1.05, 0.65],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.15,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, p. 29–30 — display furniture and ornamental objects line both sides of the central mantel.",
+      "sourceFr": "Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central."
+    },
+    {
+      "id": "tier-1-king-living-quarters-living-floor-speaker",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "cabinet",
+      "name": "Tall Floor Speaker",
+      "nameFr": "Grande enceinte au sol",
+      "at": [-10.25, -6.7],
+      "size": [0.72, 0.72],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.7,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, p. 29–30 — a tall narrow loudspeaker with three circular drivers stands by the port picture wall.",
+      "sourceFr": "Chap. 382, p. 29–30 — une grande enceinte étroite à trois haut-parleurs circulaires se dresse près du mur de tableaux bâbord."
+    },
+    {
+      "id": "tier-1-king-living-quarters-living-drinks-cart",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "table",
+      "name": "Drinks Service Table",
+      "nameFr": "Desserte à boissons",
+      "at": [-9.5, 4.5],
+      "size": [1.2, 1.8],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, p. 29–30 — bottles, glasses and vessels cover a cloth-draped drinks table beside the King's seating group.",
+      "sourceFr": "Chap. 382, p. 29–30 — bouteilles, verres et récipients couvrent une desserte drapée près du groupe de sièges du Roi."
     },
     {
       "id": "tier-1-king-living-quarters-living-bier",
@@ -22670,134 +22782,6 @@
       "provenance": "panel",
       "source": "The double-page panel of the police-station atrium: four levels of gallery down each side wall, the colonnade standing under them, the tiered fountain on the floor and the entrance front at the far end, its doors under a marquee between two hanging signs, and the lantern raised over the middle of the ceiling.",
       "sourceFr": "La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-1",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 1",
-      "nameFr": "Siège 1",
-      "at": [2.25, 0.0],
-      "size": [1.2, 0.35],
-      "rotation": 90,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-2",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 2",
-      "nameFr": "Siège 2",
-      "at": [1.59, 1.59],
-      "size": [1.2, 0.35],
-      "rotation": 135,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-3",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 3",
-      "nameFr": "Siège 3",
-      "at": [0.0, 2.25],
-      "size": [1.2, 0.35],
-      "rotation": 180,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-4",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 4",
-      "nameFr": "Siège 4",
-      "at": [-1.59, 1.59],
-      "size": [1.2, 0.35],
-      "rotation": 225,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-5",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 5",
-      "nameFr": "Siège 5",
-      "at": [-2.25, 0.0],
-      "size": [1.2, 0.35],
-      "rotation": 270,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-6",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 6",
-      "nameFr": "Siège 6",
-      "at": [-1.59, -1.59],
-      "size": [1.2, 0.35],
-      "rotation": 315,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-7",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 7",
-      "nameFr": "Siège 7",
-      "at": [-0.0, -2.25],
-      "size": [1.2, 0.35],
-      "rotation": 0,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
-    },
-    {
-      "id": "tier-1-lifeboats-port-pod-seat-8",
-      "spaceId": "tier-1-lifeboats-port-pod-cabin",
-      "kind": "seat",
-      "name": "Seat 8",
-      "nameFr": "Siège 8",
-      "at": [1.59, -1.59],
-      "size": [1.2, 0.35],
-      "rotation": 45,
-      "base": 0.0,
-      "height": 0.95,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 383 — the inside of a pod: a ring of seats about the central post, under the hatch.",
-      "sourceFr": "Chap. 383 — l'intérieur d'une capsule : une couronne de sièges autour du mât central, sous l'écoutille."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1014-living-telephone-15",

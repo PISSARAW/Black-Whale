@@ -55,7 +55,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "King Nasubi's residence, separated from the Princes' living quarters by the Banquet Hall; its shown living room has patterned flooring, ornate furniture, and paintings.",
+    "description": "King Nasubi's residence, separated from the Princes' living quarters by the Banquet Hall. Chapter 382 shows its double-height salon in detail: a coffered barrel vault carried by square piers, geometric inlaid flooring, a wall crowded with framed art around one monumental battle scene, an ornamented mantel and sideboards, upholstered seating, several low tables, drinks service, sculpture and clipped plants.",
     "entrances": [],
     "exits": ["tier-1-banquet-hall"]
   },
@@ -175,7 +175,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "evacuation",
-    "description": "Launch bays and escape hatch on the outer edge of Tier 1. Kacho and Fugetsu reach open water from here in chapter 383; it is the only place in the arc where anyone physically leaves the Black Whale.",
+    "description": "Launch bays and emergency access on the outer edge of Tier 1. Chapter 383 shows the guarded EMERGENCY door and keypad, the broad launch hall with columns, stairs and wall loudspeakers, and the spherical pods on their cradles. Inside a pod, the ribbed circular shell surrounds a bare segmented deck, a central post with a broad base, a round exterior hatch, its low instrument console and a separate side cabinet; no passenger seats are visible. Kacho and Fugetsu reach open water from here.",
     "entrances": [],
     "exits": []
   },

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 264
+Fichiers : 268
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -102,6 +102,10 @@ Fichiers : 264
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
 - Hatsu audiovisual coverage > gives every published Hatsu a stable dedicated audio signature
+
+## `apps/web/src/lib/audio/siteHatsuAudio.test.ts`
+
+- site Hatsu sound > gives all 85 techniques a distinct activation voice
 
 ## `apps/web/src/lib/beyondLineage.test.ts`
 
@@ -337,6 +341,10 @@ Fichiers : 264
 
 - localising a hatsu > translates the prose
 
+## `apps/web/src/lib/importantObjects.test.ts`
+
+- important object tracking > catalogues TSK-17 and the Seed Urn
+
 ## `apps/web/src/lib/infiltration/actors/memory.test.ts`
 
 - actor memory > tracks repeated exposure without duplicating observations
@@ -506,6 +514,10 @@ Fichiers : 264
 
 - global Hatsu interaction registry > provides an interaction for every catalogued Hatsu
 
+## `apps/web/src/lib/nen/siteHatsuTargets.test.ts`
+
+- global site Hatsu targets > keeps every character-only interaction backed by a body target
+
 ## `apps/web/src/lib/nen/targeting.test.ts`
 
 - what a technique may be aimed at > declares one manifest for every ability the site casts
@@ -591,6 +603,10 @@ Fichiers : 264
 - buildLocationPaths > joins a location to its parents
 - buildTimeline > orders entries by chapter then sequence
 - buildChapterTrajectory > falls back to an explicit unknown position
+
+## `apps/web/src/lib/server/co-presence.test.ts`
+
+- canon co-presence > finds characters shown in the same atomic scene
 
 ## `apps/web/src/lib/server/compare-selection.test.ts`
 

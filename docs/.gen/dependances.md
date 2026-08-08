@@ -16,7 +16,7 @@ Nœuds : 21 · Arêtes uniques : 45
 | `lib:assets` | `lib:map` | 2 |
 | `lib:assets` | `lib:tour` | 6 |
 | `lib:audio` | `lib:infiltration` | 1 |
-| `lib:audio` | `package:@black-whale/nen-engine` | 1 |
+| `lib:audio` | `package:@black-whale/nen-engine` | 2 |
 | `lib:combat` | `lib:tour` | 8 |
 | `lib:components` | `package:@black-whale/domain` | 9 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
@@ -27,7 +27,7 @@ Nœuds : 21 · Arêtes uniques : 45
 | `lib:infiltration` | `lib:nen` | 1 |
 | `lib:infiltration` | `lib:tour` | 8 |
 | `lib:nen` | `package:@black-whale/ability-modules` | 2 |
-| `lib:nen` | `package:@black-whale/nen-engine` | 8 |
+| `lib:nen` | `package:@black-whale/nen-engine` | 9 |
 | `lib:server` | `package:@black-whale/ability-modules` | 2 |
 | `lib:server` | `package:@black-whale/canon-engine` | 5 |
 | `lib:server` | `package:@black-whale/database` | 1 |
@@ -39,7 +39,7 @@ Nœuds : 21 · Arêtes uniques : 45
 | `lib:tour` | `package:@black-whale/ability-modules` | 7 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 13 |
-| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 61 |
+| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 63 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/canon-engine` | 3 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/nen-engine` | 6 |

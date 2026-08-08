@@ -430,7 +430,12 @@ export function buildHumanFigure({
   addHumanSignatures({
     THREE,
     geometry,
-    parts: { figure, head, rightHand: elbows[1].getObjectByName('hand-right') ?? elbows[1] },
+    parts: {
+      figure,
+      head,
+      arms,
+      rightHand: elbows[1].getObjectByName('hand-right') ?? elbows[1],
+    },
     materials: { ink, skin, accent, cloth, dark },
     worn: { signatures: profile.signatures, attire: profile.clothing },
   })

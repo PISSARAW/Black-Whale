@@ -121,6 +121,7 @@ export const APPEARANCE_SIGNATURES = [
   'stitches',
   'lips-full',
   'frills',
+  'tattooed-arms',
 ] as const
 
 /** Three flat colours as three.js takes them, written the way `data/` reads. */

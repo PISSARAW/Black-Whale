@@ -27,7 +27,7 @@ export interface HumanSignatureBuild {
   THREE: Three
   geometry: Geometry
   /** Where a piece can hang: the head, the trunk, and the right hand. */
-  parts: { figure: Group; head: Group; rightHand: Object3D }
+  parts: { figure: Group; head: Group; arms: readonly Object3D[]; rightHand: Object3D }
   materials: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
   worn: { signatures: readonly Signature[]; attire: Attire }
 }
@@ -47,6 +47,7 @@ interface Hang {
   THREE: Three
   head: (shape: Placed) => void
   body: (shape: Placed) => void
+  arms: (shape: Placed) => void
   hand: (shape: Placed) => void
   paint: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
 }
@@ -357,6 +358,19 @@ const PIECES: Record<Signature, Piece> = {
       })
     }
   },
+
+  'tattooed-arms': ({ THREE, arms, paint }) => {
+    for (let band = 0; band < 4; band++) {
+      arms({
+        key: 'sig:arm-tattoo-band',
+        make: () => new THREE.TorusGeometry(0.066, 0.008, 4, 12),
+        material: paint.ink,
+        at: [0, -0.07 - band * 0.04, 0],
+        turn: [Math.PI / 2, 0, 0],
+        name: band === 0 ? 'signature-tattooed-arms' : undefined,
+      })
+    }
+  },
 }
 
 /**
@@ -449,6 +463,7 @@ export function addHumanSignatures({
     THREE,
     head: mount(parts.head),
     body: mount(parts.figure),
+    arms: (shape) => parts.arms.forEach((arm) => mount(arm)(shape)),
     hand: mount(parts.rightHand),
     paint: materials,
   }

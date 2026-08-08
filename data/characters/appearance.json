@@ -1387,6 +1387,27 @@
       "note": "Vieux, long visage étroit, crâne dégarni : le boss Cha-R. À confirmer."
     },
     {
+      "id": "tserriednich-tattoo-artist",
+      "body": { "build": "average", "height": 1.0, "frame": "adult" },
+      "head": { "face": "square", "hairStyle": "shaved", "expression": "neutral" },
+      "colours": {
+        "basis": "chosen",
+        "source": "planches n&b ch. 348 et 416 ; vêtements civils sombres, tatouages noirs confirmés sur les deux bras",
+        "skin": "0xc99473",
+        "hair": "0x292522",
+        "attire": {
+          "jacket": "0x343238",
+          "shirt": "0xd8d1c6",
+          "trousers": "0x29272d",
+          "accent": "0x65525f"
+        }
+      },
+      "attire": "civilian",
+      "signatures": ["tattooed-arms"],
+      "verified": { "chapterIds": ["ch-348", "ch-416"], "status": "partial" },
+      "note": "Les tatouages couvrant les deux bras sont son signe distinctif et permettent de reconnaître le tatoueur vu auprès de Tserriednich. La ressemblance avec l'homme du flashback de Sarasa reste une hypothèse, pas une identité déclarée."
+    },
+    {
       "id": "luini",
       "body": { "build": "average", "height": 1.0, "frame": "adult" },
       "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },

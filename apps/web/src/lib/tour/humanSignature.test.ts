@@ -45,12 +45,13 @@ describe('the signature pieces', () => {
     for (const piece of SIGNATURES) {
       const figure = new THREE.Group()
       const head = new THREE.Group()
+      const arms = [new THREE.Group(), new THREE.Group()]
       const rightHand = new THREE.Group()
-      figure.add(head, rightHand)
+      figure.add(head, ...arms, rightHand)
       addHumanSignatures({
         THREE,
         geometry: (_, __, make) => make(),
-        parts: { figure, head, rightHand },
+        parts: { figure, head, arms, rightHand },
         materials: { ink: paint, skin: paint, accent: paint, cloth: paint, dark: paint },
         worn: { signatures: [piece], attire: 'civilian' },
       })
@@ -87,6 +88,16 @@ describe('the signature pieces', () => {
   it('hangs the chain on the right hand, which is where the panel puts it', () => {
     const hand = build('kurapika').root.getObjectByName('hand-right')
     expect(hand?.getObjectByName('signature-chain-0')).toBeTruthy()
+  })
+
+  it('marks both arms of Tserriednich’s unnamed tattoo artist', () => {
+    const tattooArtist = build('tserriednich-tattoo-artist').root
+    expect(
+      tattooArtist.getObjectByName('shoulder-left')?.getObjectByName('signature-tattooed-arms'),
+    ).toBeTruthy()
+    expect(
+      tattooArtist.getObjectByName('shoulder-right')?.getObjectByName('signature-tattooed-arms'),
+    ).toBeTruthy()
   })
 
   it('dresses the two nobody could reach through a role', () => {

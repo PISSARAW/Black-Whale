@@ -86,6 +86,7 @@ export const SIGNATURES = [
   'stitches',
   'lips-full',
   'frills',
+  'tattooed-arms',
 ] as const
 
 export const FRAMES = ['adult', 'child', 'infant'] as const

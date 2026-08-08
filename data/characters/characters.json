@@ -45383,6 +45383,47 @@
     ]
   },
   {
+    "id": "tserriednich-tattoo-artist",
+    "canonicalName": "Tatoueur de Tserriednich",
+    "aliases": ["Tatoueur sans nom", "Tserriednich's Tattoo Artist"],
+    "description": "Tatoueur personnel sans nom de Tserriednich et ancien membre de la Heil-Ly. Il apparaît d'abord au chapitre 348 en train de tatouer une femme captive pendant l'appel entre Tserriednich et Benjamin. Borksen révèle au chapitre 394 qu'il a tatoué les marques d'unité de son groupe et que Tserriednich l'a retiré de la Heil-Ly avant la purge de Morena. Il réapparaît dans la chambre 1004 au chapitre 416. Sa ressemblance avec l'un des hommes accompagnant Risnorth dans le flashback de Sarasa est notable, mais leur identité commune n'est pas confirmée.",
+    "factionId": "prince-tserriednich",
+    "firstAppearanceChapterId": "ch-348",
+    "canonStatus": "canon",
+    "shipLocation": {
+      "tier": 1,
+      "room": "1004",
+      "status": "actif",
+      "role": "Tatoueur personnel de Tserriednich / ancien Heil-Ly"
+    },
+    "mapPresenceFromChapterId": "ch-416",
+    "mapPresenceUntilChapterId": null,
+    "mangaAppearances": [
+      {
+        "chapter": 348,
+        "title": "Resolve",
+        "status": "debut"
+      },
+      {
+        "chapter": 394,
+        "title": "Hypothesis",
+        "status": "mentioned"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "appears"
+      }
+    ],
+    "mapTrajectory": [
+      {
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416.4",
+        "note": "Réapparaît dans les quartiers de Tserriednich ; aucune position antérieure à bord n'est confirmée"
+      }
+    ]
+  },
+  {
     "id": "zakuro-custard",
     "canonicalName": "Zakuro Custard",
     "aliases": [],

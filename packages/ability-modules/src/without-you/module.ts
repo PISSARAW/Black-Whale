@@ -96,7 +96,7 @@ export const withoutYou = defineAbility({
     },
     follow: {
       label: 'Demander à la jumelle de nous suivre',
-      evidence: shown('ch. 398 — la jumelle reste auprès de Fugetsu'),
+      evidence: shown('ch. 398 et 411 — la jumelle reste auprès de Fugetsu'),
       effects: [
         effect({
           kind: 'CUSTOM',

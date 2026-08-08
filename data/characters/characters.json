@@ -1792,7 +1792,14 @@
       "overview": "Benjamin masters Nen. His physical resistance suggests an affinity with Reinforcement, and his Ken allows him to escape several shots that would have injured Furykov unscathed.",
       "techniques": ["Ten", "Ren", "Ken", "Hatsu"],
       "combatProficiency": "His Ken blocks several bullets at point blank range without the slightest injury. He considers himself clearly superior to Furykov even after the first symptoms of TSK-17 appeared.",
-      "abilityIds": ["benjamin-aura", "benjamin-baton", "air-blow", "secret-window", "culdcept"]
+      "abilityIds": [
+        "benjamin-aura",
+        "benjamin-baton",
+        "bohemian-rhapsody",
+        "air-blow",
+        "secret-window",
+        "culdcept"
+      ]
     },
     "guardianSpiritBeast": {
       "type": "Nen parasitaire",
@@ -45340,7 +45347,22 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": null,
-    "mangaAppearances": [],
+    "mangaAppearances": [
+      {
+        "chapter": 414,
+        "title": "Friends",
+        "status": "appears"
+      }
+    ],
+    "abilitiesAndPowers": "Yushohi can lend Stand By Me to another soldier. Chapter 414 shows him entrusting it to Chiyamasi before the breach of room 1009, but does not reveal its actual effect.",
+    "nen": {
+      "type": "unknown",
+      "typeLabel": "Unknown type",
+      "confirmed": true,
+      "overview": "Yushohi is a Nen user in Benjamin's private army. His ability Stand By Me can be lent to an ally; its effect and complete conditions remain unrevealed.",
+      "techniques": ["Hatsu"],
+      "abilityIds": ["stand-by-me"]
+    },
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1001",

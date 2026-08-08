@@ -154,7 +154,7 @@ export const contagion = defineAbility({
 
     'open-game': {
       label: 'Ouvrir la partie',
-      evidence: shown('ch. 375 — la partie s’ouvre avant tout le reste'),
+      evidence: shown('ch. 407 — Morena ouvre la partie de négociation avec Borksen'),
       conditions: [requiresTarget('Un candidat est assis en face')],
       effects: [
         revealedAt(
@@ -193,7 +193,7 @@ export const contagion = defineAbility({
 
     ask: {
       label: 'Dépenser une question',
-      evidence: shown('ch. 375 — chaque question se paie'),
+      evidence: shown('ch. 407-409 — chaque question dépense une carte'),
       conditions: [
         effectIsLive('effectId', 'La partie est en cours'),
         requiresParameter('question', 'Une question est choisie'),
@@ -212,7 +212,7 @@ export const contagion = defineAbility({
     // for a card. `stake` in the language of docs/jeu-de-morena.md §4.1.
     stake: {
       label: 'Accepter le baiser',
-      evidence: shown('ch. 375 — le baiser accepté'),
+      evidence: shown('ch. 409 — Borksen accepte le baiser pour reprendre une carte'),
       conditions: [
         effectIsLive('effectId', 'La partie est en cours'),
         requiresParameter('card', 'Une carte du cimetière est nommée'),
@@ -253,14 +253,14 @@ export const contagion = defineAbility({
 
     settle: {
       label: 'Jouer la dernière carte',
-      evidence: shown('ch. 375 — la dernière carte tombe'),
+      evidence: shown('ch. 410 — la dernière carte conduit Borksen à choisir Oui'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [moveAndCatch((game, ctx) => settle(game, answerParam(ctx, 'choice')))],
     },
 
     'close-game': {
       label: 'Clore la partie',
-      evidence: shown('ch. 375 — la partie se clôt sur son verdict'),
+      evidence: shown('ch. 410 — la partie se clôt sur le Oui de Borksen'),
       conditions: [effectIsLive('effectId', 'La partie est en cours')],
       effects: [
         (ctx) => {

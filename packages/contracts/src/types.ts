@@ -1,5 +1,6 @@
 import type {
   Ability,
+  AbilityUse,
   Blueprint,
   CanonEvent,
   Chapter,
@@ -17,6 +18,7 @@ export interface Catalogue {
   /** What the named ones look like — ADR-005. Empty of nobody by default. */
   appearance: AppearanceFile
   abilities: Ability[]
+  abilityUses: AbilityUse[]
   factions: Faction[]
   locations: Location[]
   events: CanonEvent[]

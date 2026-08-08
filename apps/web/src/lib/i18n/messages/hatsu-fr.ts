@@ -49,6 +49,22 @@ export interface HatsuTextOverride {
  * to print the entries a new ability is missing.
  */
 export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
+  'bohemian-rhapsody': {
+    name: 'Bohemian Rhapsody',
+    action: 'Choisir le prochain hôte de la lignée',
+    instruction:
+      'Après la mort de Benjamin, choisissez un parent de sang pour recevoir son Nen et sa Bête gardienne, au prix de son retrait de la guerre de succession.',
+    rule: 'La transmission ne peut avoir lieu qu’après la mort de Benjamin et vers un membre de sa famille de sang.',
+    cost: 'Mort de Benjamin · hôte parent de sang · perte d’éligibilité',
+  },
+  'stand-by-me': {
+    name: 'Stand By Me',
+    action: 'Prêter Stand By Me',
+    instruction:
+      'Choisissez un soldat allié pour lui prêter temporairement la capacité ; son effet et ses autres conditions ne sont pas encore révélés.',
+    rule: 'Yushohi peut prêter Stand By Me à un autre soldat. Le chapitre 414 n’en révèle pas davantage.',
+    cost: 'Transfert temporaire · autres conditions non révélées',
+  },
   'combo-master': {
     name: 'Combo Master',
     action: 'Ouvrir le portable',
@@ -718,6 +734,8 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
 
 /** The one-line signature the effect layer prints under the active technique. */
 export const hatsuManifestationFr: Record<HatsuInteractionKind, string> = {
+  'postmortem-host-succession': 'Manteau d’hôte de la lignée Bohemian',
+  'ability-lending': 'Sceau de transfert Stand By Me',
   decipher: 'Portable conjuré et ses menus',
   elastic: 'Filament de gomme élastique',
   disguise: 'Feuille de texture truquée',

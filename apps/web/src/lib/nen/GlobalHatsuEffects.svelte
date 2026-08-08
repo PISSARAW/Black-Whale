@@ -2667,6 +2667,14 @@
   :global(.hatsu-dolphin-recipient) {
     box-shadow: 0 0 24px #63d5e666 !important;
   }
+  :global(.hatsu-stand-by-me-recipient) {
+    outline: 2px solid #88a8d8 !important;
+    box-shadow: 0 0 24px #88a8d855 !important;
+  }
+  :global(.hatsu-bohemian-host) {
+    outline: 2px double #6f567d !important;
+    box-shadow: inset 0 0 28px #6f567d55 !important;
+  }
   :global(.hatsu-truth-punched) {
     outline: 2px solid #f1a06d !important;
   }

@@ -86,7 +86,7 @@ export const parallelFuture = defineAbility({
 
     hold: {
       label: 'Maintenir la vision',
-      evidence: shown('ch. 393 — la fenêtre glisse tant que le Zetsu tient'),
+      evidence: shown('ch. 393 et 415 — la fenêtre glisse tant que le Zetsu tient'),
       conditions: [inZetsu(), effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         attributeCounter({
@@ -99,7 +99,7 @@ export const parallelFuture = defineAbility({
     'act-on-the-prediction': {
       label: 'Agir avec dix secondes d’avance',
       // The dodge that reads as impossible: he is not faster, he already knows.
-      evidence: shown('ch. 393 — l’esquive « impossible » face à Theta'),
+      evidence: shown('ch. 393 et 416 — il agit autrement après avoir vu la prédiction'),
       conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         setEffectState({
@@ -122,7 +122,7 @@ export const parallelFuture = defineAbility({
 
     conclude: {
       label: 'Conclure — le futur prédit devient réel',
-      evidence: shown('ch. 393 — les autres vivent la prédiction, lui agit autrement'),
+      evidence: shown('ch. 393 et 416-417 — les autres vivent la fausse exécution prédite'),
       conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         // The merge itself is a branch operation: the module records the

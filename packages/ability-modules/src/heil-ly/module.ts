@@ -68,7 +68,7 @@ export const voconteHideoutDoors = defineAbility({
 
     'walk-through': {
       label: 'Franchir une porte',
-      evidence: shown('ch. 383 — les membres circulent par le réseau'),
+      evidence: shown('ch. 383 et 410 — le réseau absorbe les entrants de la chambre 3101'),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [
         moveEntity({ entity: (ctx) => ctx.actor ?? { id: ctx.actorId, kind: 'CHARACTER' } }),

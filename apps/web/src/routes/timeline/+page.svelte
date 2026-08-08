@@ -33,10 +33,16 @@
 
   type Chapter = PageData['chapters'][number]
   type Event = Chapter['events'][number]
+  type AbilityUse = Event['abilityUses'][number]
+
+  function isInactiveUse(use: AbilityUse) {
+    return use.status === 'FAILED' || use.status === 'PREVENTED' || use.status === 'EXPLAINED'
+  }
 
   function matches(chapter: Chapter, event: Event) {
     if (!normalizedQuery) return true
-    return `${chapter.number} ${chapter.title || ''} ${event.title} ${event.summary}`
+    const hatsu = event.abilityUses.map((use) => `${use.abilityName} ${use.note}`).join(' ')
+    return `${chapter.number} ${chapter.title || ''} ${event.title} ${event.summary} ${hatsu}`
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
@@ -130,6 +136,19 @@
     >
   {:else if !event.isFlashback}
     <span class="event-time undated" title={$t.timeline.undatedHint}>{$t.timeline.undated}</span>
+  {/if}
+{/snippet}
+
+{#snippet hatsuUses(uses: Event['abilityUses'])}
+  {#if uses.length > 0}
+    <ul class="hatsu-uses" aria-label={$t.timeline.hatsuUses}>
+      {#each uses as use (use.id)}
+        <li class:inactive={isInactiveUse(use)} title={use.note}>
+          <span>{use.abilityName}</span>
+          <small>{$t.timeline.hatsuUseStatuses[use.status]}</small>
+        </li>
+      {/each}
+    </ul>
   {/if}
 {/snippet}
 
@@ -259,6 +278,7 @@
                       {@render eventTime(event, $t.timeline.revealedIn(chapter.number))}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
+                      {@render hatsuUses(event.abilityUses)}
                     </span>
                     <span class="event-action">
                       <span>{$t.common.chapterShort(chapter.number)}</span>
@@ -290,6 +310,20 @@
               <span>{chapter.events.length} {$t.common.events(chapter.events.length)}</span>
             </header>
 
+            {#if chapter.abilityUses.length > 0}
+              <div class="chapter-hatsu">
+                <strong>{$t.timeline.chapterHatsu}</strong>
+                <ul class="hatsu-uses">
+                  {#each chapter.abilityUses as use (use.id)}
+                    <li class:inactive={isInactiveUse(use)} title={use.note}>
+                      <span>{use.abilityName}</span>
+                      <small>{$t.timeline.hatsuUseStatuses[use.status]}</small>
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+            {/if}
+
             <ol class="events">
               {#each chapter.events as event, eventIndex (event.id)}
                 <li>
@@ -302,6 +336,7 @@
                       {@render eventTime(event, $t.timeline.flashbackOccurrence(event.ordinal))}
                       <span class="event-title">{event.title}</span>
                       <span class="event-summary">{event.summary}</span>
+                      {@render hatsuUses(event.abilityUses)}
                     </span>
                     <span class="event-action">
                       <span>{$t.timeline.sequenceShort(event.sequence)}</span>
@@ -340,6 +375,52 @@
     min-height: calc(100vh - 3.25rem);
     padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 4vw, 4rem) 6rem;
     color: var(--ink);
+  }
+
+  .chapter-hatsu {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--accent-cyan) 25%, transparent);
+    border-radius: 0.65rem;
+  }
+
+  .chapter-hatsu > strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .hatsu-uses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.55rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hatsu-uses li {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--accent-gold) 35%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-gold) 8%, transparent);
+    font-size: 0.72rem;
+  }
+
+  .hatsu-uses li.inactive {
+    border-style: dashed;
+    opacity: 0.72;
+  }
+
+  .hatsu-uses small {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .reading-progress {

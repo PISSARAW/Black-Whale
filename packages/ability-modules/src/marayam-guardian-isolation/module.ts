@@ -106,6 +106,19 @@ export const marayamGuardianIsolation = defineAbility({
       ],
     },
 
+    maintain: {
+      label: 'Maintenir l’isolement',
+      evidence: shown('ch. 415 — le camp refuse de quitter l’espace isolé de la chambre 1013'),
+      conditions: [effectIsLive('effectId', 'L’isolement est actif')],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'isolation-maintained',
+          attributes: { maintained: true },
+        }),
+      ],
+    },
+
     'perceive-the-occupants': {
       label: 'Percevoir les occupants depuis l’extérieur',
       refusal: 'Depuis l’extérieur, les occupants réels ne sont plus perceptibles',

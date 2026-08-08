@@ -3,6 +3,7 @@ import type { NenAbilityModule } from '@black-whale/nen-engine'
 import { battleCantabileMetamorphosen } from './battle-cantabile-metamorphosen/module.js'
 import { benjaminBaton } from './benjamin-baton/module.js'
 import { beyondSacrificialCurse } from './beyond-sacrificial-curse/module.js'
+import { bohemianRhapsody } from './bohemian-rhapsody/module.js'
 import { bungeeGum } from './bungee-gum/module.js'
 import { catsName } from './cats-name/module.js'
 import { chainJail } from './chain-jail/module.js'
@@ -36,6 +37,7 @@ import { silentMajority } from './silent-majority/module.js'
 import { doubleFace, skillHunter } from './skill-hunter/module.js'
 import { stealChain } from './steal-chain/module.js'
 import { stealthDolphin } from './stealth-dolphin/module.js'
+import { standByMe } from './stand-by-me/module.js'
 import { sunAndMoon } from './sun-and-moon/module.js'
 import { textureSurprise } from './texture-surprise/module.js'
 import { tserriednichGuardianLieMarks } from './tserriednich-guardian-lie-marks/module.js'
@@ -130,6 +132,7 @@ export { salesaleGuardianSmoke } from './salesale-guardian-smoke/module.js'
 export { moonlightAct } from './moonlight-act/module.js'
 export { silentMajority, SILENT_MAJORITY_LIMITS } from './silent-majority/module.js'
 export { benjaminBaton, BENJAMIN_ARMY_COHORT_ID } from './benjamin-baton/module.js'
+export { bohemianRhapsody } from './bohemian-rhapsody/module.js'
 export { rihanPredator } from './rihan-predator/module.js'
 export { yomotsuHegui } from './yomotsu-hegui/module.js'
 export { sunAndMoon } from './sun-and-moon/module.js'
@@ -140,6 +143,7 @@ export {
 export { crossGame } from './cross-game/module.js'
 export { lsdf } from './lsdf/module.js'
 export { zhangleiGuardianCoins } from './zhanglei-guardian-coins/module.js'
+export { standByMe } from './stand-by-me/module.js'
 
 export {
   blackVoice,
@@ -215,6 +219,7 @@ export const abilityModules: NenAbilityModule[] = [
   skillHunter,
   doubleFace,
   beyondSacrificialCurse,
+  bohemianRhapsody,
   catsName,
   littleEye,
   parallelFuture,
@@ -238,6 +243,7 @@ export const abilityModules: NenAbilityModule[] = [
   crossGame,
   lsdf,
   zhangleiGuardianCoins,
+  standByMe,
   indoorFish,
   funFunCloth,
   chrolloTeleportation,

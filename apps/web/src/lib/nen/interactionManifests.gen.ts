@@ -173,6 +173,17 @@ export const INTERACTION_MANIFESTS: AbilityInteractionManifest[] = [
     customComponent: 'BatonRoster',
   },
   {
+    abilityId: 'bohemian-rhapsody',
+    entryPoints: {
+      actions: ['merge'],
+      requiredState: ['canUseNen'],
+    },
+    inputMode: 'TARGET_SELECTION',
+    allowedTargets: ['CHARACTER'],
+    overlays: ['CONTROL_LINK', 'AURA'],
+    customComponent: 'BloodlineSuccessionPanel',
+  },
+  {
     abilityId: 'air-blow',
     entryPoints: {
       actions: ['fire'],
@@ -225,6 +236,17 @@ export const INTERACTION_MANIFESTS: AbilityInteractionManifest[] = [
     allowedTargets: ['CHARACTER', 'AURA'],
     overlays: ['AURA', 'RANGE'],
     customComponent: 'CardCapture',
+  },
+  {
+    abilityId: 'stand-by-me',
+    entryPoints: {
+      actions: ['lend'],
+      requiredState: ['canUseNen'],
+    },
+    inputMode: 'TARGET_SELECTION',
+    allowedTargets: ['CHARACTER'],
+    overlays: ['CONTROL_LINK'],
+    customComponent: 'AbilityLoanPanel',
   },
   {
     abilityId: 'parallel-future',

@@ -1,0 +1,227 @@
+[
+  {
+    "id": "ch408-contagion-maintained",
+    "chapter": 408,
+    "eventTitle": "Morena reveals her goal and origins",
+    "abilityId": "contagion",
+    "userId": "morena-prudo",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "The negotiation remains an active condition of Contagion while Morena explains its rules."
+  },
+  {
+    "id": "ch409-hideout-doors-explained",
+    "chapter": 409,
+    "abilityId": "voconte-hideout-doors",
+    "userId": "voconte",
+    "status": "EXPLAINED",
+    "occursOnBlackWhale": true,
+    "note": "The chapter establishes the five Nen-linked entrances without showing a new traversal."
+  },
+  {
+    "id": "ch409-contagion-kiss",
+    "chapter": 409,
+    "eventTitle": "Borksen fulfills a condition of Contagion",
+    "abilityId": "contagion",
+    "userId": "morena-prudo",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "Borksen's kiss completes one of Contagion's recruitment conditions."
+  },
+  {
+    "id": "ch410-contagion-yes",
+    "chapter": 410,
+    "eventTitle": "Borksen accepts Morena's offer",
+    "abilityId": "contagion",
+    "userId": "morena-prudo",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "The Yes result completes the game condition; Borksen remains level zero until she witnesses the required murder."
+  },
+  {
+    "id": "ch410-hideout-doors-trap",
+    "chapter": 410,
+    "eventTitle": "Three soldiers vanish in room 3101",
+    "abilityId": "voconte-hideout-doors",
+    "userId": "voconte",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "The room 3101 entrance reroutes the soldiers through the Heil-Ly door network."
+  },
+  {
+    "id": "ch411-grimmel-possession",
+    "chapter": 411,
+    "eventTitle": "Halkenburg calls Benjamin from Balsamilco's body",
+    "abilityId": "grimmel-the-dissonance",
+    "userId": "prince-halkenburg",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "The call is possible because the earlier soul exchange remains active in Balsamilco's body."
+  },
+  {
+    "id": "ch411-culdcept-failed",
+    "chapter": 411,
+    "abilityId": "culdcept",
+    "userId": "prince-benjamin",
+    "status": "FAILED",
+    "occursOnBlackWhale": true,
+    "note": "Chapter 411 reveals retrospectively that the attempt to capture Halkenburg's arrow failed; it is not a new activation during the 08:00 call."
+  },
+  {
+    "id": "ch411-without-you-maintained",
+    "chapter": 411,
+    "abilityId": "without-you",
+    "userId": "prince-kacho",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "Kacho's post-mortem double remains manifested beside Fugetsu in witness protection."
+  },
+  {
+    "id": "ch413-grimmel-possession",
+    "chapter": 413,
+    "eventTitle": "Benjamin discovers the body swap and his infection",
+    "abilityId": "grimmel-the-dissonance",
+    "userId": "prince-halkenburg",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "Halkenburg continues to operate through Balsamilco's body."
+  },
+  {
+    "id": "ch413-combo-master-console",
+    "chapter": 413,
+    "eventTitle": "Benjamin discovers the body swap and his infection",
+    "abilityId": "combo-master",
+    "userId": "furykov",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "Furykov uses the conjured console while explaining the mark and the abilities affecting him."
+  },
+  {
+    "id": "ch413-beyond-curse-revealed",
+    "chapter": 413,
+    "eventTitle": "Benjamin discovers the body swap and his infection",
+    "abilityId": "beyond-sacrificial-curse",
+    "userId": "beyond-netero",
+    "status": "REVEALED",
+    "occursOnBlackWhale": true,
+    "note": "The implanted mark is identified as an already-running curse, not newly cast aboard."
+  },
+  {
+    "id": "ch414-stand-by-me-loan",
+    "chapter": 414,
+    "eventTitle": "Yushohi and Chiyamasi prepare to breach room 1009",
+    "abilityId": "stand-by-me",
+    "userId": "yushohi",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "Yushohi lends Stand By Me to Chiyamasi; the borrowed effect itself remains unrevealed."
+  },
+  {
+    "id": "ch415-parallel-future-maintained",
+    "chapter": 415,
+    "eventTitle": "Martial law reaches Camilla and rooms 1003 through 1006",
+    "abilityId": "parallel-future",
+    "userId": "prince-tserriednich",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "Tserriednich maintains Zetsu and therefore keeps Parallel Future active through the announcement."
+  },
+  {
+    "id": "ch415-marayam-isolation-maintained",
+    "chapter": 415,
+    "eventTitle": "Marayam's camp remains inside room 1013's Nen space",
+    "abilityId": "marayam-guardian-isolation",
+    "userId": "prince-marayam",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "The spatial isolation of room 1013 remains active."
+  },
+  {
+    "id": "ch415-combo-master-pre-voyage",
+    "chapter": 415,
+    "abilityId": "combo-master",
+    "userId": "furykov",
+    "status": "EXPLAINED",
+    "occursOnBlackWhale": false,
+    "note": "The Furykov/Beyond conversation occurs before departure and is excluded from the Black Whale timeline."
+  },
+  {
+    "id": "ch415-beyond-curse-pre-voyage",
+    "chapter": 415,
+    "abilityId": "beyond-sacrificial-curse",
+    "userId": "beyond-netero",
+    "status": "EXPLAINED",
+    "occursOnBlackWhale": false,
+    "note": "The pre-voyage conversation reveals mechanics but is not a shipboard activation."
+  },
+  {
+    "id": "ch416-cats-name-prevented",
+    "chapter": 416,
+    "eventTitle": "Benjamin confronts Camilla under special martial law",
+    "abilityId": "cats-name",
+    "userId": "prince-camilla",
+    "status": "PREVENTED",
+    "occursOnBlackWhale": true,
+    "note": "Benjamin deliberately avoids killing Camilla, so Cat's Name never activates."
+  },
+  {
+    "id": "ch416-yomotsu-hegui-activated",
+    "chapter": 416,
+    "eventTitle": "Moswana sacrifices herself and curses Benjamin",
+    "abilityId": "yomotsu-hegui",
+    "userId": "moswana",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "Moswana completes the prepared suicide ritual and places the post-mortem curse on Benjamin."
+  },
+  {
+    "id": "ch416-parallel-future-activated",
+    "chapter": 416,
+    "eventTitle": "Benjamin breaches room 1004 and shoots Tserriednich",
+    "abilityId": "parallel-future",
+    "userId": "prince-tserriednich",
+    "status": "ACTIVATED",
+    "occursOnBlackWhale": true,
+    "note": "Tserriednich uses the predicted ten seconds to stage his apparent death."
+  },
+  {
+    "id": "ch417-parallel-future-maintained",
+    "chapter": 417,
+    "eventTitle": "Benjamin stages Tserriednich's execution and detains his guards",
+    "abilityId": "parallel-future",
+    "userId": "prince-tserriednich",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "The false execution remains inside the perception imposed by Parallel Future."
+  },
+  {
+    "id": "ch417-grimmel-possession",
+    "chapter": 417,
+    "eventTitle": "Balsamilco and Coventoba are held under surveillance",
+    "abilityId": "grimmel-the-dissonance",
+    "userId": "prince-halkenburg",
+    "status": "MAINTAINED",
+    "occursOnBlackWhale": true,
+    "note": "Halkenburg's consciousness remains inside Balsamilco while the body is detained."
+  },
+  {
+    "id": "ch417-bohemian-rhapsody-explained",
+    "chapter": 417,
+    "eventTitle": "Benjamin seizes the Justice Bureau and invokes emergency law",
+    "abilityId": "bohemian-rhapsody",
+    "userId": "prince-benjamin",
+    "status": "EXPLAINED",
+    "occursOnBlackWhale": true,
+    "note": "Benjamin explains the planned post-mortem host succession; his death has not occurred, so the ability is not active."
+  },
+  {
+    "id": "ch417-benjamin-baton-explained",
+    "chapter": 417,
+    "eventTitle": "Benjamin seizes the Justice Bureau and invokes emergency law",
+    "abilityId": "benjamin-baton",
+    "userId": "prince-benjamin",
+    "status": "EXPLAINED",
+    "occursOnBlackWhale": true,
+    "note": "Benjamin intends Bohemian Rhapsody to preserve Benjamin Baton; no new inheritance is triggered in this chapter."
+  }
+]

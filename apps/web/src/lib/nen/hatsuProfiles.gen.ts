@@ -27,10 +27,12 @@ export type HatsuId =
   | 'cross-game'
   | 'beyond-sacrificial-curse'
   | 'benjamin-baton'
+  | 'bohemian-rhapsody'
   | 'air-blow'
   | 'combo-master'
   | 'secret-window'
   | 'culdcept'
+  | 'stand-by-me'
   | 'parallel-future'
   | 'grimmel-the-dissonance'
   | 'without-you'
@@ -256,6 +258,18 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     action: 'Identify an eligible soldier',
   },
   {
+    id: 'bohemian-rhapsody',
+    name: 'Bohemian Rhapsody',
+    owner: 'Benjamin Hui Guo Rou',
+    kind: 'postmortem-host-succession',
+    instruction:
+      'After Benjamin dies, choose one blood relative as the next host. Before that death, the succession remains a declared plan rather than an active effect.',
+    rule: "After Benjamin's death, his Nen and Guardian Spirit Beast merge and pass through his bloodline, alternating the choice of host.",
+    cost: "Benjamin's death · blood relative host · loss of Succession Contest eligibility",
+    color: '#6f567d',
+    action: 'Choose the next bloodline host',
+  },
+  {
     id: 'air-blow',
     name: 'Air Blow',
     owner: 'Benjamin Hui Guo Rou',
@@ -302,6 +316,18 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     cost: 'Joined hands · charged aura rectangle',
     color: '#8c7ae6',
     action: 'Acquire a Nen ability',
+  },
+  {
+    id: 'stand-by-me',
+    name: 'Stand By Me',
+    owner: 'Yushohi',
+    kind: 'ability-lending',
+    instruction:
+      'Choose one allied soldier to carry Stand By Me. The revealed canon stops at the loan; no unshown combat effect is simulated.',
+    rule: 'Yushohi can lend Stand By Me to another soldier; its actual effect remains unrevealed.',
+    cost: 'Temporary transfer · further conditions unrevealed',
+    color: '#88a8d8',
+    action: 'Lend Stand By Me',
   },
   {
     id: 'parallel-future',

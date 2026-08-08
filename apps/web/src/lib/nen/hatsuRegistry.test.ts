@@ -79,7 +79,7 @@ describe('global Hatsu interaction registry', () => {
   it('keeps every Hatsu found by the extended Black Whale audit', () => {
     // Eighty-three since Combo Master: Furykov's console was the one ability
     // the audit named and the catalogue had never carried.
-    expect(HATSU_PROFILES).toHaveLength(83)
+    expect(HATSU_PROFILES).toHaveLength(85)
     expect(auditedMissingHatsu.filter((id) => !hatsuById(id))).toEqual([])
   })
 

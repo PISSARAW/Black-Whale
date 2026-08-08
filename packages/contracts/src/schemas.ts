@@ -271,6 +271,29 @@ export const abilitySchema = z
   })
   .passthrough()
 
+export const ABILITY_USE_STATUSES = [
+  'ACTIVATED',
+  'MAINTAINED',
+  'REVEALED',
+  'FAILED',
+  'PREVENTED',
+  'EXPLAINED',
+] as const
+
+/** A named Hatsu's relationship to one published chapter or event. */
+export const abilityUseSchema = z
+  .object({
+    id: slug,
+    chapter: z.number().int().positive(),
+    eventTitle: z.string().min(1).optional(),
+    abilityId: slug,
+    userId: slug,
+    status: z.enum(ABILITY_USE_STATUSES),
+    occursOnBlackWhale: z.boolean(),
+    note: z.string().min(1),
+  })
+  .strict()
+
 export const factionSchema = z
   .object({
     id: slug,
@@ -401,6 +424,7 @@ export const CATALOGUE_FILES = {
   'characters/characters.json': z.array(characterSchema).min(1),
   'characters/appearance.json': appearanceFileSchema,
   'abilities/abilities.json': z.array(abilitySchema).min(1),
+  'abilities/uses.json': z.array(abilityUseSchema),
   'factions/factions.json': z.array(factionSchema).min(1),
   'locations/locations.json': z.array(locationSchema).min(1),
   'events/events.json': z.array(eventSchema).min(1),
@@ -421,6 +445,8 @@ export type TrajectoryLeg = z.infer<typeof trajectoryLegSchema>
 export type MangaAppearance = z.infer<typeof mangaAppearanceSchema>
 export type AppearanceStatus = (typeof APPEARANCE_STATUSES)[number]
 export type Ability = z.infer<typeof abilitySchema>
+export type AbilityUse = z.infer<typeof abilityUseSchema>
+export type AbilityUseStatus = (typeof ABILITY_USE_STATUSES)[number]
 export type Faction = z.infer<typeof factionSchema>
 export type Location = z.infer<typeof locationSchema>
 export type CanonEvent = z.infer<typeof eventSchema>

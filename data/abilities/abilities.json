@@ -151,6 +151,17 @@
     "moduleKey": "benjamin-baton"
   },
   {
+    "id": "bohemian-rhapsody",
+    "ownerId": "prince-benjamin",
+    "name": "Bohemian Rhapsody",
+    "category": "unknown",
+    "abilityType": "post-mortem-bloodline-host-succession",
+    "description": "After Benjamin dies, his Nen merges with his Guardian Spirit Beast and passes to one of his blood relatives. Benjamin and the Beast then alternate the choice of a new host whenever the current host dies. The first chooser remains determined by the ability. The fusion removes Benjamin from the Succession Contest but is intended to preserve Benjamin Baton and let him guide later rulers through his bloodline. Chapter 417 explains the mechanism but does not activate it.",
+    "canonStatus": "canon",
+    "firstVisibleChapterId": "ch-417",
+    "moduleKey": "bohemian-rhapsody"
+  },
+  {
     "id": "air-blow",
     "ownerId": "prince-benjamin",
     "name": "Air Blow",
@@ -194,6 +205,18 @@
     "description": "Ability inherited from Shikaku used to acquire another Nen user's ability in the form of a card. The user brings their hands together, produces a flash of lightning, then forms an aura rectangle with their fingers, the color of which darkens during preparation. Its only known use failed against Halkenburg's arrow, capable of penetrating all defenses.",
     "canonStatus": "canon",
     "moduleKey": "culdcept"
+  },
+  {
+    "id": "stand-by-me",
+    "ownerId": "yushohi",
+    "userIds": ["chiyamasi"],
+    "name": "Stand By Me",
+    "category": "unknown",
+    "abilityType": "transferable-ability",
+    "description": "Yushohi lends Stand By Me to Chiyamasi before Benjamin's soldiers prepare to breach room 1009. Chapter 414 establishes the transfer but does not reveal the ability's combat effect, duration, natural Nen category or complete conditions.",
+    "canonStatus": "canon",
+    "firstVisibleChapterId": "ch-414",
+    "moduleKey": "stand-by-me"
   },
   {
     "id": "parallel-future",

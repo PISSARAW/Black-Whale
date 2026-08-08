@@ -2074,6 +2074,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
     ctx.addPoint({ x, y }, ctx.m.tokens.spentAbility(loaned.name))
     return true
   },
+  'ability-lending': (ctx, { target, x, y, label }) => {
+    const recipient = ctx.remember(target)
+    recipient.classList.add('hatsu-stand-by-me-recipient')
+    ctx.executeSiteTarget(recipient)
+    ctx.status = `${label} — ${ctx.profile.rule}`
+    ctx.addPoint({ x, y }, label)
+    return true
+  },
   contract: (ctx, { target, x, y, label }) => {
     // Moonlight Act cuts both ways: honoured terms are rewarded, a breach costs
     // a week of Zetsu, and both parties have to have read the terms first.
@@ -2725,6 +2733,14 @@ export const HATSU_INTERACTION_BY_KIND: Partial<
       },
       close ? 1200 : 3400,
     )
+    return true
+  },
+  'postmortem-host-succession': (ctx, { target, x, y, label }) => {
+    const host = ctx.remember(target)
+    host.classList.add('hatsu-bohemian-host')
+    ctx.executeSiteTarget(host)
+    ctx.status = `${label} — ${ctx.profile.rule}`
+    ctx.addPoint({ x, y }, label, { details: [ctx.profile.cost] })
     return true
   },
 }

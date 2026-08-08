@@ -419,6 +419,52 @@ const shipMeetsTheCatalogue: Invariant = ({ blueprint, locations }) => {
     )
 }
 
+/** Every chapter-level Hatsu claim resolves to the canon it annotates. */
+const abilityUsesResolve: Invariant = ({
+  abilityUses,
+  abilities,
+  characters,
+  chapters,
+  events,
+}) => {
+  const findings: Finding[] = []
+  const abilityIds = new Set(abilities.map((ability) => ability.id))
+  const characterIds = new Set(characters.map((character) => character.id))
+  const chapterNumbers = new Set(chapters.map((chapter) => chapter.number))
+  const eventsByTitle = new Map(events.map((event) => [event.title, event]))
+  const seen = new Set<string>()
+
+  for (const use of abilityUses) {
+    const where = `ability-uses#${use.id}`
+    if (seen.has(use.id)) findings.push(finding('ability-use-id', where, 'duplicate id'))
+    seen.add(use.id)
+    if (!abilityIds.has(use.abilityId)) {
+      findings.push(finding('ability-use-ability', where, `unknown reference ${use.abilityId}`))
+    }
+    if (!characterIds.has(use.userId)) {
+      findings.push(finding('ability-use-user', where, `unknown reference ${use.userId}`))
+    }
+    if (!chapterNumbers.has(use.chapter)) {
+      findings.push(finding('ability-use-chapter', where, `unknown chapter ${use.chapter}`))
+    }
+    if (use.eventTitle) {
+      const event = eventsByTitle.get(use.eventTitle)
+      if (!event) {
+        findings.push(finding('ability-use-event', where, `unknown event ${use.eventTitle}`))
+      } else if (event.chapter !== use.chapter) {
+        findings.push(
+          finding(
+            'ability-use-event',
+            where,
+            `${use.eventTitle} belongs to chapter ${event.chapter}, not ${use.chapter}`,
+          ),
+        )
+      }
+    }
+  }
+  return findings
+}
+
 export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'unique-ids', run: uniqueIds },
   { name: 'references-resolve', run: referencesResolve },
@@ -431,6 +477,7 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'structures-fit-their-space', run: structuresFitTheirSpace },
   { name: 'spoiler-coverage', run: spoilerCoverage },
   { name: 'ship-meets-the-catalogue', run: shipMeetsTheCatalogue },
+  { name: 'ability-uses-resolve', run: abilityUsesResolve },
   // The rules the inhabited walk rests on. Kept in a file of their own so this
   // one stays under the 500 lines ADR-002 allows, and appended here so there is
   // still one list canon-lint runs.

@@ -91,7 +91,7 @@ export const yomotsuHegui = defineAbility({
 
     consummate: {
       label: 'Consommer le rituel',
-      evidence: shown('ch. 394 — brûler l’objet, boire les cendres, se donner la mort'),
+      evidence: shown('ch. 416 — Moswana achève le rituel et se donne la mort'),
       conditions: [
         effectIsLive('effectId', 'Une préparation est en cours'),
         declaredFlag('ritualCompleted', true, 'Objet brûlé, cendres bues, poignard prêt'),
@@ -126,7 +126,7 @@ export const yomotsuHegui = defineAbility({
       label: 'Se rapprocher de la cible',
       // Four factors decide how hard it lands, and this is the one the officiant
       // can still change on the day: distance, and looking her in the eye.
-      evidence: shown('ch. 394 — proximité, contact visuel, préparation, résolution'),
+      evidence: shown('ch. 416 — proximité et contact visuel renforcent la malédiction'),
       effects: [
         attributeCounter({
           attributes: (ctx) => ({

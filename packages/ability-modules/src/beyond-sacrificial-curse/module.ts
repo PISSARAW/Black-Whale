@@ -50,7 +50,7 @@ export const beyondSacrificialCurse = defineAbility({
   actions: {
     mark: {
       label: 'Marquer un sacrifice',
-      evidence: shown('ch. 415 — la marque de naissance, visible en Gyo seul'),
+      evidence: shown('ch. 415, scène avant le voyage — marque visible en Gyo seul'),
       gyo: 'la marque de naissance que rien d’autre ne montre',
       conditions: [
         requiresTarget('Un enfant est marqué'),
@@ -85,7 +85,7 @@ export const beyondSacrificialCurse = defineAbility({
 
     trigger: {
       label: 'Déclencher le sacrifice',
-      evidence: shown('ch. 415 — la mort du sacrifice emporte la cible désignée'),
+      evidence: shown('ch. 415, scène avant le voyage — la mort emporte la cible désignée'),
       conditions: [
         effectIsLive('effectId', 'La marque est encore en place'),
         requiresParameter('curseTargetId', 'La cible désignée est connue'),
@@ -101,7 +101,7 @@ export const beyondSacrificialCurse = defineAbility({
       label: 'Frapper à l’autre bout du monde',
       // The reason Furykov calls it the strongest curse ever observed: neither
       // distance nor a guardian beast changes the outcome.
-      evidence: shown('ch. 415 — ni la distance ni le gardien n’y font rien'),
+      evidence: shown('ch. 415, scène avant le voyage — distance et gardien sont ignorés'),
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { ignoresDistance: true } })],
       cost: { label: 'La vie du sacrifice', unit: 'vie' },
     },
@@ -109,7 +109,7 @@ export const beyondSacrificialCurse = defineAbility({
     'see-the-mark-without-gyo': {
       label: 'Voir la marque sans Gyo',
       refusal: 'La marque de naissance n’apparaît qu’en Gyo',
-      evidence: shown('ch. 415 — c’est le Gyo qui la révèle'),
+      evidence: shown('ch. 415, scène avant le voyage — le Gyo révèle la marque'),
     },
 
     'read-the-sealed-target': {

@@ -82,6 +82,7 @@ export function canonLint(dataRoot: string = findDataRoot()): CanonLintResult {
     characters: parsed['characters/characters.json'] as Catalogue['characters'],
     appearance: parsed['characters/appearance.json'] as Catalogue['appearance'],
     abilities: parsed['abilities/abilities.json'] as Catalogue['abilities'],
+    abilityUses: parsed['abilities/uses.json'] as Catalogue['abilityUses'],
     factions: parsed['factions/factions.json'] as Catalogue['factions'],
     locations: parsed['locations/locations.json'] as Catalogue['locations'],
     events: parsed['events/events.json'] as Catalogue['events'],

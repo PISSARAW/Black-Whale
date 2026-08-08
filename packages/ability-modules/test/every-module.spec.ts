@@ -4,7 +4,7 @@ import type { AbilityContext, NenAbilityModule } from '@black-whale/nen-engine'
 import { abilityModules } from '../src/index.js'
 
 /**
- * What must be true of all eighty-two, tested once.
+ * What must be true of every registered ability module, tested once.
  *
  * `canon-limits.spec.ts` carries the limits that belong to one technique —
  * Bungee Gum's ten metres, its In, its post-mortem — and there is no way to
@@ -95,10 +95,9 @@ const cases = abilityModules.flatMap((module) =>
 
 describe('every ability module, on every action it offers', () => {
   it('offers more than one action to test', () => {
-    // Eighty-three since Combo Master: the console Furykov conjures was the
-    // one ability the audit named and the catalogue had never carried.
-    expect(abilityModules.length).toBe(83)
-    expect(cases.length).toBeGreaterThan(83)
+    // Stand By Me and Bohemian Rhapsody bring the post-417 catalogue to 85.
+    expect(abilityModules.length).toBe(85)
+    expect(cases.length).toBeGreaterThan(85)
   })
 
   it.each(cases.map((entry) => [`${entry.module.manifest.id}/${entry.actionId}`, entry] as const))(

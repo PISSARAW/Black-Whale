@@ -94,9 +94,11 @@ export const HATSU_SITE_IMPACT_BY_KIND = {
   flock: 'navigation',
   relay: 'storage',
   'postmortem-curse': 'control',
+  'postmortem-host-succession': 'simulation-state',
   healing: 'content-access',
   'heart-vow': 'control',
   'ability-loan': 'control',
+  'ability-lending': 'control',
   contract: 'control',
   'truth-punch': 'data-revelation',
   'blood-search': 'navigation',
@@ -317,6 +319,12 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     form: 'mark',
     motion: 'flicker',
   },
+  'postmortem-host-succession': {
+    glyph: '♜',
+    manifestation: 'Bohemian bloodline host mantle',
+    form: 'beast',
+    motion: 'orbit',
+  },
   healing: { glyph: '✚', manifestation: 'Holy Chain cross', form: 'chain', motion: 'pulse' },
   'heart-vow': {
     glyph: '♢',
@@ -325,6 +333,12 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     motion: 'strike',
   },
   'ability-loan': { glyph: '◡', manifestation: 'Stealth Dolphin', form: 'beast', motion: 'drift' },
+  'ability-lending': {
+    glyph: '⇥',
+    manifestation: 'Stand By Me transfer seal',
+    form: 'mark',
+    motion: 'pulse',
+  },
   contract: {
     glyph: '☾',
     manifestation: 'Moonlight contract seal',

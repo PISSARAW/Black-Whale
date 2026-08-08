@@ -213,12 +213,12 @@
     {
       "id": "prince-tubeppa",
       "body": { "build": "slim", "height": 1.0, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "severe" },
+      "head": { "face": "narrow", "hairStyle": "bowl", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 362 ; tenue stricte de laboratoire, palette froide",
+        "source": "planches ch. 349, 358, 362 et couleurs officielles ; coupe au bol blonde, tenue stricte de laboratoire",
         "skin": "0xe3c6a8",
-        "hair": "0x252029",
+        "hair": "0xd8bd72",
         "attire": {
           "jacket": "0x2f3b42",
           "shirt": "0xeceae2",
@@ -229,17 +229,17 @@
       "attire": "suit",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "partial" },
-      "note": "Visage fermé de chimiste, cernes, frange irrégulière. Les gants restent à confirmer et ne sont donc pas déclarés : une pièce dont on n'est pas sûr est une pièce qu'on ne dessine pas."
+      "note": "Visage fermé de chimiste, cernes et coupe au bol blonde. Les gants restent à confirmer et ne sont donc pas déclarés : une pièce dont on n'est pas sûr est une pièce qu'on ne dessine pas."
     },
     {
       "id": "prince-tyson",
       "body": { "build": "broad", "height": 0.98, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "curly", "expression": "neutral" },
+      "head": { "face": "round", "hairStyle": "long", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 362 ; tenue de scène à froufrous et cœurs, palette claire",
+        "source": "planches ch. 349, 358, 362 et couleurs officielles ; longs cheveux noirs raides, tenue à froufrous et cœurs",
         "skin": "0xf0dcc4",
-        "hair": "0x4a2f22",
+        "hair": "0x211d24",
         "attire": {
           "jacket": "0xe4b7c4",
           "shirt": "0xf7f1e8",
@@ -250,7 +250,7 @@
       "attire": "gown",
       "signatures": ["frills"],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "confirmed" },
-      "note": "Ronde et rayonnante : boucles volumineuses, cils dessinés, mouche. Le Livre de Tyson est aussi son style graphique, ce qui est la raison pour laquelle les froufrous sont une signature et pas une décoration."
+      "note": "Ronde et rayonnante : longs cheveux noirs raides, cils dessinés, mouche. Le Livre de Tyson est aussi son style graphique, ce qui est la raison pour laquelle les froufrous sont une signature et pas une décoration."
     },
     {
       "id": "prince-luzurus",
@@ -276,12 +276,12 @@
     {
       "id": "prince-salesale",
       "body": { "build": "broad", "height": 1.02, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "slicked-back", "expression": "neutral" },
+      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 366 ; chemise ouverte de bon vivant, palette chaude",
+        "source": "planches ch. 349, 358, 366 et couleurs officielles ; cheveux blonds aux tempes, sommet dégarni",
         "skin": "0xd3a17c",
-        "hair": "0x201b18",
+        "hair": "0xd2b15c",
         "attire": {
           "jacket": "0x5c4a3c",
           "shirt": "0xf1e9d8",
@@ -292,7 +292,7 @@
       "attire": "suit",
       "signatures": ["lips-full"],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-366"], "status": "confirmed" },
-      "note": "Les lèvres énormes sont la signature absolue du personnage : `lips-full` est le seul renflement de bouche du vaisseau, et c'est ce qui le nomme avant tout le reste."
+      "note": "Sommet dégarni, cheveux blonds aux tempes et lèvres énormes : `bald-crown` et `lips-full` donnent ensemble sa silhouette immédiatement reconnaissable."
     },
     {
       "id": "prince-halkenburg",
@@ -321,9 +321,9 @@
       "head": { "face": "narrow", "hairStyle": "hime", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 350, 359 ; tenue glamour, palette partagée avec sa jumelle",
+        "source": "planches ch. 349, 350, 359 et couleurs officielles ; cheveux blonds aux épaules, tenue glamour",
         "skin": "0xf2e0ca",
-        "hair": "0x231f28",
+        "hair": "0xe1c36e",
         "attire": {
           "jacket": "0x8c3a52",
           "shirt": "0xf4efe6",
@@ -334,15 +334,15 @@
       "attire": "gown",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
-      "note": "L'expression publique est un masque : le rendu ne montre que le masque, et la provenance raconte le reste. C'est la règle générale ici — l'apparence ne dit jamais ce que fait la personne."
+      "note": "Les cheveux blonds aux épaules et la tenue glamour la distinguent immédiatement de Fugetsu. L'expression publique reste un masque : la scène la charge, pas la fiche."
     },
     {
       "id": "prince-fugetsu",
       "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "anxious" },
+      "head": { "face": "narrow", "hairStyle": "bob", "expression": "anxious" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 359 ; palette identique à Kacho, la paire est le fait",
+        "source": "planches ch. 349, 358, 359 ; cheveux foncés au menton et tenue plus simple que celle de Kacho",
         "skin": "0xf2e0ca",
         "hair": "0x231f28",
         "attire": {
@@ -355,17 +355,17 @@
       "attire": "gown",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-358", "ch-359"], "status": "confirmed" },
-      "note": "Jumelle de Kacho : mêmes traits, mêmes cheveux, même palette — la seule différence déclarée est l'expression. La paire doit être manifestement une paire, donc tout le reste est copié champ pour champ et non redessiné."
+      "note": "Jumelle de Kacho par les traits, mais pas par la coiffure : Fugetsu porte un carré foncé au menton. Son expression anxieuse et sa tenue simple renforcent cette différence visible."
     },
     {
       "id": "prince-momoze",
       "body": { "build": "slim", "height": 0.9, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "bob", "expression": "anxious" },
+      "head": { "face": "round", "hairStyle": "ponytail", "expression": "anxious" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 350, 359 ; robe sage et claire d'adolescente",
+        "source": "planches ch. 349, 350, 359 et couleurs officielles ; longs cheveux orange en queue-de-cheval",
         "skin": "0xf0dfcb",
-        "hair": "0x2b2622",
+        "hair": "0xd87a3f",
         "attire": {
           "jacket": "0xa8b0b8",
           "shirt": "0xf4f0e7",
@@ -376,17 +376,17 @@
       "attire": "gown",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "partial" },
-      "note": "Menue, l'air de s'excuser d'être là — `adult` avec une hauteur basse plutôt que `child` : le gabarit enfant change les proportions, et une adolescente n'a pas la tête d'un enfant. Le serre-tête reste à confirmer, donc non déclaré."
+      "note": "Menue, avec de longs cheveux orange attachés en queue-de-cheval. `adult` avec une hauteur basse plutôt que `child` : une adolescente n'a pas les proportions d'un enfant."
     },
     {
       "id": "prince-marayam",
       "body": { "build": "average", "height": 0.62, "frame": "child" },
-      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "head": { "face": "round", "hairStyle": "spiked", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 350, 359 ; tenue princière miniature, palette de cour",
+        "source": "planches ch. 349, 350, 359 et couleurs officielles ; cheveux turquoise hérissés, tenue princière miniature",
         "skin": "0xf0dfcb",
-        "hair": "0x211d1a",
+        "hair": "0x4b9d9a",
         "attire": {
           "jacket": "0x39456b",
           "shirt": "0xf2eee5",
@@ -397,7 +397,7 @@
       "attire": "suit",
       "signatures": [],
       "verified": { "chapterIds": ["ch-349", "ch-350", "ch-359"], "status": "confirmed" },
-      "note": "Petit garçon, toujours près de Sevanti. Premier porteur du gabarit `child` : jusqu'ici il était un adulte réduit, ce qui est la définition même de ce que ce gabarit existe pour ne plus faire."
+      "note": "Petit garçon aux cheveux turquoise hérissés, toujours près de Sevanti. Le gabarit `child` lui donne les proportions d'un enfant plutôt que celles d'un adulte réduit."
     },
     {
       "id": "prince-woble",
@@ -594,9 +594,9 @@
       "head": { "face": "round", "hairStyle": "swept", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 320, 340, 345 ; crête souple, palette claire",
+        "source": "planches ch. 320, 340, 345 et palette de l'anime 2011 ; crête souple bleu sombre",
         "skin": "0xe4c3a5",
-        "hair": "0x8a5f33",
+        "hair": "0x274867",
         "attire": {
           "jacket": "0xb9884e",
           "shirt": "0xf1ead8",
@@ -607,15 +607,15 @@
       "attire": "civilian",
       "signatures": [],
       "verified": { "chapterIds": ["ch-320", "ch-340"], "status": "partial" },
-      "note": "La Poule : cheveux relevés en crête souple, à confirmer. Les oiseaux sont une ability et n'ont rien à faire dans une apparence."
+      "note": "La Poule : cheveux bleu sombre relevés en crête souple. Les oiseaux sont une ability et n'ont rien à faire dans une apparence."
     },
     {
       "id": "ginta",
       "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.24 },
-      "head": { "face": "square", "hairStyle": "wild", "expression": "hostile" },
+      "head": { "face": "square", "hairStyle": "afro", "expression": "hostile" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 340, 345 ; colosse hirsute, palette sourde",
+        "source": "planches ch. 340, 345 ; colosse à afro noir et moustache épaisse",
         "skin": "0xb8795d",
         "hair": "0x2c2521",
         "attire": {
@@ -626,9 +626,9 @@
         }
       },
       "attire": "combat",
-      "signatures": [],
+      "signatures": ["moustache"],
       "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
-      "note": "Le Mouton : colosse hirsute, détails à confirmer."
+      "note": "Le Mouton : colosse à afro noir et moustache épaisse, deux traits nécessaires pour le reconnaître à distance."
     },
     {
       "id": "gel",
@@ -1266,9 +1266,9 @@
       "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "profil `morena` de humanProfiles.ts, écrit contre les planches ch. 378, 391 ; valeurs reprises champ pour champ",
+        "source": "planches ch. 378, 391 et page couleur du ch. 401 ; longs cheveux bleu sombre",
         "skin": "0xf0dfe2",
-        "hair": "0xd9b978",
+        "hair": "0x1d2d49",
         "attire": {
           "jacket": "0x181318",
           "shirt": "0x181318",
@@ -1279,7 +1279,7 @@
       "attire": "gown",
       "signatures": [],
       "verified": { "chapterIds": ["ch-378", "ch-391"], "status": "confirmed" },
-      "note": "Le profil en dur du code devient cette entrée, et le code devient sa projection : une déclaration par fait. Les valeurs sont reprises à l'identique, donc la migration doit rendre un diff de capture nul — c'est le test que §4-P1 se donne."
+      "note": "La page couleur du chapitre 401 tranche la palette : les longs cheveux de Morena sont bleu sombre. Cette entrée reste l'unique source de sa ressemblance dans le tour et dans son jeu."
     },
     {
       "id": "hinrigh-biganduffno",

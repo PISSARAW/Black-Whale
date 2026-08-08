@@ -41,6 +41,7 @@ export const HAIR_STYLES = [
   'spiked',
   'shaved',
   'bob',
+  'bowl',
   'slicked-back',
   'pompadour',
   'drills',

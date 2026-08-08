@@ -90,6 +90,18 @@ describe('shared human profiles', () => {
     })
   })
 
+  it('keeps the corrected royal siblings visually distinct', () => {
+    expect(humanProfile(person('prince-kacho', 'witness'))).toMatchObject({
+      hair: 0xe1c36e,
+      hairStyle: 'hime',
+    })
+    expect(humanProfile(person('prince-fugetsu', 'witness'))).toMatchObject({
+      hair: 0x231f28,
+      hairStyle: 'bob',
+    })
+    expect(humanProfile(person('prince-tubeppa', 'witness')).hairStyle).toBe('bowl')
+  })
+
   it('leaves an undeclared body exactly as it was', () => {
     // ADR-005 §5. The hash variation is the whole of what an anonymous guard
     // gets, and it has to keep getting it: the profile below is the one the
@@ -123,14 +135,14 @@ describe('shared human profiles', () => {
     const byName = humanProfile(person('morena-prudo', 'fighter'))
     expect(byRole).toEqual(byName)
     expect(byRole.likeness).toBe('morena-prudo')
-    // Field for field what the hard-coded profile used to hold, which is what
-    // makes the migration a capture diff of nothing.
+    // The catalogue remains the single source of truth, including the dark-blue
+    // hair established by chapter 401's colour page.
     expect(byRole).toMatchObject({
       build: 'slim',
       height: 1,
       shoulders: 0.96,
       skin: 0xf0dfe2,
-      hair: 0xd9b978,
+      hair: 0x1d2d49,
       hairStyle: 'long',
       face: 'narrow',
       expression: 'neutral',

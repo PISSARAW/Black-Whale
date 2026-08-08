@@ -7,7 +7,7 @@ import { addHumanHair } from './humanHair'
 import { HAIR_STYLES, frameShape, humanProfile } from './humanProfiles'
 
 /**
- * Eighteen heads, and the two things that have to be true of all of them.
+ * Nineteen heads, and the two things that have to be true of all of them.
  *
  * The first is that every declared style draws *something*: a vocabulary whose
  * entries render as nothing is worse than one that refuses them, because the

@@ -21,11 +21,11 @@ type Outlined = (shape: {
  * the hair immediately after, and the phases follow that order rather than the
  * order the pieces were easiest to build in.
  *
- * Eighteen styles, all procedural: cones, lathes, cylinders and torus sections
+ * Nineteen styles, all procedural: cones, lathes, cylinders and torus sections
  * over the shared skull. No asset, no texture, no per-person geometry — every
  * shape here goes through the same `geometry()` cache the rest of the figure
- * uses, so a corridor of eighteen different heads still costs eighteen shared
- * buffers rather than eighteen new ones.
+ * uses, so a corridor of nineteen different heads still costs nineteen shared
+ * buffers rather than nineteen new ones.
  */
 export interface HumanHairBuild {
   THREE: Three
@@ -55,6 +55,7 @@ const CAPS: Record<HairStyle, Cap> = {
   spiked: { height: 1.08, y: 0.015 },
   shaved: { height: 1, y: 0, none: true },
   bob: { height: 1.08, y: 0.015 },
+  bowl: { height: 0.96, y: 0.025 },
   'slicked-back': { height: 0.92, y: 0.03 },
   pompadour: { height: 1.02, y: 0.02 },
   drills: { height: 1.08, y: 0.015 },
@@ -132,6 +133,22 @@ const STYLES: Partial<Record<HairStyle, Style>> = {
         make: () => new THREE.BoxGeometry(0.13, 0.38, 0.18),
         at: [side * 0.145, -0.04, -0.005],
         turn: [0, 0, side * -0.08],
+      })
+    }
+  },
+
+  /** A blunt horizontal fringe and a compact round cap: Tubeppa's bowl cut. */
+  bowl: ({ THREE, place }) => {
+    place({
+      key: 'hair:bowl-fringe',
+      make: () => new THREE.BoxGeometry(0.31, 0.075, 0.1),
+      at: [0, 0.1, 0.16],
+    })
+    for (const side of [-1, 1]) {
+      place({
+        key: 'hair:bowl-side',
+        make: () => new THREE.BoxGeometry(0.09, 0.2, 0.14),
+        at: [side * 0.15, 0.015, 0.02],
       })
     }
   },

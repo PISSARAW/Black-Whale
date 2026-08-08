@@ -10,6 +10,16 @@
     "exits": []
   },
   {
+    "id": "black-whale-unknown",
+    "name": "Position aboard unknown",
+    "parentLocationId": null,
+    "deck": null,
+    "zoneType": "unknown",
+    "description": "The character is canonically aboard the Black Whale, but the manga has not established a tier or room for this event.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "zodiac-hq",
     "name": "Zodiac HQ",
     "parentLocationId": null,

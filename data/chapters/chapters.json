@@ -1131,8 +1131,15 @@
     "title": "Scheme",
     "timeline": [
       {
+        "event": "Kacho and Fugetsu prepare their concert as cover for an escape plan",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": ["prince-kacho", "prince-fugetsu"],
+        "location": "Tier 1 - Room 1010",
+        "locationId": "tier-1-royal-residential-sector-room-1010"
+      },
+      {
         "event": "The Phantom Troupe divides the search for Hisoka",
-        "storyDate": "≈ Day 3–4",
+        "storyDate": "Day 3 · Tuesday",
         "charactersInvolved": [
           "chrollo-lucilfer",
           "nobunaga-hazama",
@@ -1145,18 +1152,26 @@
           "kalluto-zoldyck",
           "illumi"
         ],
-        "location": "Tier 5 - Standard Cabins",
+        "location": "Tier 5 - Central Dining Hall",
+        "locationId": "tier-5-central-dining-hall"
+      },
+      {
+        "event": "Chrollo leaves the dining hall with Shizuku and Bonolenov",
+        "storyDate": "Day 3 · Tuesday",
+        "charactersInvolved": ["chrollo-lucilfer", "shizuku-murasaki", "bonolenov-ndongo"],
+        "location": "Tier 5 - Standard-Cabin Passage",
         "locationId": "tier-5-standard-cabins"
       }
     ],
-    "location": "Tier 5 - Standard Cabins",
+    "location": "Tiers 1 and 5",
     "keyEvents": [
+      "Kacho and Fugetsu agree to use a Sunday concert as cover for their escape operation",
       "Illumi explains that Hisoka hired him to join the Troupe and kill him",
       "Chrollo sends the Spiders across the lower decks",
       "Shizuku and Bonolenov remain with Chrollo",
       "Hisoka is discussed but is not physically present"
     ],
-    "description": "The ten surviving Spiders meet in the Tier 5 standard-cabin area. Illumi and Kalluto are physically present; Hisoka is only their target and has no attested position aboard in this chapter. The chapter ends with the group splitting up to search the lower decks."
+    "description": "The chapter opens in room 1010, where Kacho and Fugetsu prepare a concert as cover for their escape plan. The ten surviving Spiders then meet in the Tier 5 central dining hall. Illumi and Kalluto are physically present; Hisoka is only their target and has no attested position aboard in this chapter. The chapter ends with the group splitting up to search the lower decks."
   },
   {
     "id": "ch-378",
@@ -1246,6 +1261,14 @@
     "title": "Alarm",
     "timeline": [
       {
+        "event": "Mizaistom briefs Kakin personnel and redistributes the Royal Army",
+        "storyDate": "Day 4 · Wednesday · before 10:00",
+        "charactersInvolved": ["mizaistom-nana"],
+        "location": "Tier 3 - Central Police Station",
+        "locationId": "tier-3-central-police-station",
+        "note": "The military audience is visible but not individually identified."
+      },
+      {
         "event": "Illumi and Kalluto hold the third-class observation post",
         "storyDate": "Day 4 · Wednesday · 10:00",
         "charactersInvolved": ["illumi", "kalluto-zoldyck"],
@@ -1331,11 +1354,17 @@
         "certainty": "PROBABLE"
       },
       {
-        "event": "Mizaistom redistributes the Royal Army",
-        "storyDate": "≈ Day 4",
-        "charactersInvolved": ["mizaistom-nana", "mizuri"],
-        "location": "Tier 3 - Central Police Station",
-        "locationId": "tier-3-central-police-station"
+        "event": "Mizaistom and Fugetsu encounter Mizuri, Illumi and Kalluto",
+        "storyDate": "Day 4 · Wednesday · after 10:00",
+        "charactersInvolved": [
+          "mizaistom-nana",
+          "prince-fugetsu",
+          "mizuri",
+          "illumi",
+          "kalluto-zoldyck"
+        ],
+        "location": "Tier 3 - Observation Deck",
+        "locationId": "tier-3-observation-deck"
       },
       {
         "event": "The Cha-R show the Troupe their surveillance",
@@ -1349,12 +1378,12 @@
     "keyEvents": [
       "The fifth time stamp of the voyage: fourth day of the crossing, 10:00 — and the only one attached to a map",
       "The cutaway is split into eleven room-level events so it does not create false co-presence across decks",
-      "Fugetsu reaches Tier 3 through Magical Worm and is placed under Justice protection",
+      "Fugetsu reaches Tier 3 through Magical Worm, then meets Mizaistom, Mizuri, Illumi and Kalluto in the observation area",
       "Mizaistom moves Royal Army strength toward Tier 3 and below",
       "The Cha-R review warehouse surveillance with Nobunaga, Phinks and Feitan",
       "Hisoka and Kurapika do not appear in this chapter"
     ],
-    "description": "At 10:00 on Day 4, a cutaway names separate posts across Tiers 3 to 5. Each room is recorded as its own event: sharing the cutaway timestamp does not mean sharing a scene. Fugetsu then appears alone on Tier 3, Mizaistom changes the military deployment, and the Cha-R review their camera footage with the three Spiders who visited the warehouse. Hisoka is not shown and receives no shipboard position."
+    "description": "Mizaistom first briefs Kakin personnel and changes the military deployment. At 10:00 on Day 4, a cutaway names separate posts across Tiers 3 to 5. Each room is recorded as its own event: sharing the cutaway timestamp does not mean sharing a scene. Fugetsu then appears alone on Tier 3 and subsequently meets Mizaistom, Mizuri, Illumi and Kalluto in the observation area. The Cha-R later review their camera footage with the three Spiders who visited the warehouse. Hisoka is not shown and receives no shipboard position."
   },
   {
     "id": "ch-382",

@@ -870,7 +870,7 @@
     "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
     "mapTrajectory": [
       {
-        "location": "black-whale-1",
+        "location": "black-whale-unknown",
         "fromChapterId": "ch-377",
         "note": "Aboard, but never shown in volumes 34–36; the Troupe only discusses and searches for him"
       },
@@ -1304,7 +1304,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Rassemblement de la Brigade"
       },
@@ -6889,6 +6889,11 @@
         "fromChapterId": "ch-359.5"
       },
       {
+        "location": "tier-1-royal-residential-sector-room-1010",
+        "fromChapterId": "ch-374.4",
+        "note": "Crosses Magical Worm and remains with Kacho through the planning scene in chapter 377"
+      },
+      {
         "location": "tier-3-residential-first-class",
         "fromChapterId": "ch-380",
         "certainty": "PROBABLE"
@@ -9585,6 +9590,11 @@
         "location": "tier-3-central-police-station",
         "fromChapterId": "ch-380.2",
         "note": "Conference with Kakin officials; orders the Royal Army redeployed"
+      },
+      {
+        "location": "tier-3-observation-deck",
+        "fromChapterId": "ch-380.3",
+        "note": "Meets Fugetsu, Mizuri, Illumi and Kalluto in the observation area"
       },
       {
         "location": "tier-3-residential-first-class",
@@ -15571,6 +15581,16 @@
         "location": "tier-5-standard-cabins",
         "fromChapterId": "ch-366.2",
         "note": "Shown alone in Area 37564; gives the search order before the full chapter 377 gathering"
+      },
+      {
+        "location": "tier-5-central-dining-hall",
+        "fromChapterId": "ch-377",
+        "note": "Full Troupe meeting"
+      },
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377.3",
+        "note": "Leaves the dining hall with Shizuku and Bonolenov"
       },
       {
         "location": "tier-5-standard-cabins",
@@ -32593,9 +32613,9 @@
         "certainty": "PROBABLE"
       },
       {
-        "location": "tier-3-central-police-station",
-        "fromChapterId": "ch-380.2",
-        "certainty": "PROBABLE"
+        "location": "tier-3-observation-deck",
+        "fromChapterId": "ch-380.3",
+        "note": "Intercepts Illumi and Kalluto while Mizaistom escorts Fugetsu"
       }
     ],
     "positionProvenance": "inferred",
@@ -39927,9 +39947,14 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377.3",
+        "note": "Leaves the dining hall with Chrollo and Shizuku"
       },
       {
         "location": "tier-4-central-passage",
@@ -40352,9 +40377,14 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Rassemblement de la Brigade"
+      },
+      {
+        "location": "tier-5-standard-cabins",
+        "fromChapterId": "ch-377.3",
+        "note": "Leaves the dining hall with Chrollo and Bonolenov"
       },
       {
         "location": "tier-4-central-passage",
@@ -41658,7 +41688,7 @@
     ],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Rassemblement de la Brigade"
       },
@@ -42088,7 +42118,7 @@
     "battles": ["Machi Komacine vs. Hisoka Morow"],
     "mapTrajectory": [
       {
-        "location": "tier-5-standard-cabins",
+        "location": "tier-5-central-dining-hall",
         "fromChapterId": "ch-377",
         "note": "Rassemblement de la Brigade"
       },

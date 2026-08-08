@@ -53,10 +53,6 @@
         stroke: #555;
         stroke-width: 2;
       }
-      .person {
-        fill: #888;
-        stroke: #555;
-      }
       .seat-row {
         fill: #292929;
         stroke: #8b7c68;
@@ -97,10 +93,6 @@
     <rect x="20" y="170" width="200" height="30" fill="#050505" stroke="#333" />
     <!-- Menu board -->
 
-    <!-- Workers behind counter -->
-    <circle cx="80" cy="190" r="10" class="person" />
-    <circle cx="180" cy="190" r="10" class="person" />
-
     <!-- Right: Tickets -->
     <rect
       role="button"
@@ -122,10 +114,6 @@
     <rect x="800" y="120" width="150" height="40" fill="#111" stroke="#333" />
     <text x="875" y="145" class="label text-blue-400">TICKETS</text>
     <rect x="800" y="200" width="150" height="60" class="counter" />
-    <!-- Workers -->
-    <circle cx="840" cy="190" r="10" class="person" />
-    <circle cx="910" cy="190" r="10" class="person" />
-
     <!-- Center Corridor leading to screens -->
     <rect
       role="button"
@@ -165,14 +153,6 @@
 
     <!-- Seating Area (Center-Left Foreground) -->
     <path d="M 100 450 Q 200 500 300 450 L 280 400 Q 200 450 120 400 Z" class="counter" />
-
-    <!-- Passengers hanging out -->
-    <circle cx="150" cy="420" r="15" class="person" />
-    <circle cx="250" cy="420" r="15" class="person" />
-    <circle cx="200" cy="440" r="15" class="person" />
-
-    <circle cx="280" cy="300" r="12" class="person" />
-    <circle cx="780" cy="320" r="12" class="person" />
   </g>
 
   <!-- Ch. 393 pp. 60–61 shows one auditorium but never gives its screen number. -->

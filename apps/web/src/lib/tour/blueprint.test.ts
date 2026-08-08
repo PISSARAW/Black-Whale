@@ -26,11 +26,13 @@ const ship = buildShip()
 
 /**
  * Catalogue entries that are not rooms: the ship, the tiers, the zones that
- * hold rooms rather than being one, and the one location that is not aboard.
+ * hold rooms rather than being one, the unresolved aboard-ship sentinel, and
+ * the one location that is not aboard.
  * Nothing here is something the visitor walks into.
  */
 const CONTAINERS = new Set([
   'black-whale-1',
+  'black-whale-unknown',
   'zodiac-hq',
   'tier-1',
   'tier-2',

@@ -720,7 +720,7 @@
 - **Sources du mobilier et des détails :**
   - Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles.
   - Le plan du cinéplexe sur /ship accroche l'affiche du film au-dessus de l'allée qui descend vers les salles.
-  - Chap. 393, p. 60-61 — une salle non identifiée du cinéplexe montre des rangées en pente de fauteuils rembourrés face à l'écran, sous un décor orné à caissons ; répéter ce motif dans les huit salles nommées est une reconstruction explicite.
+  - Disposition de sièges reconstruite et répétée dans les huit salles nommées ; aucune source publiée n'établit son attribution salle par salle.
   - Le plan du cinéplexe sur /ship nomme ses huit salles d'après l'écran qu'elles portent ; chaque écran se dresse sur le mur qui fait face à l'entrée.
 - **Limite connue :** 3 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 

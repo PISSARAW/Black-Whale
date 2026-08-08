@@ -120,6 +120,14 @@ describe('room appearance evidence', () => {
     }
   })
 
+  it('leaves occupants to the event projection instead of baking anonymous people into rooms', () => {
+    const directory = new URL('./local/', import.meta.url)
+    for (const file of readdirSync(directory).filter((entry) => entry.endsWith('.svelte'))) {
+      const room = readFileSync(new URL(file, directory), 'utf8')
+      expect(room, file).not.toMatch(/class=["']person["']/)
+    }
+  })
+
   it('limits Area 37564 to its attested footprint and marks its interior unknown', () => {
     const space = blueprint.spaces.find((entry) => entry.id === 'tier-5-area-37564')!
     const xs = space.footprint.map(([x]) => x)

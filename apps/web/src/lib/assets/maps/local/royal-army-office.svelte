@@ -43,11 +43,6 @@
         stroke: #666;
         stroke-width: 2;
       }
-      .person {
-        fill: #5a6578;
-        stroke: #2d3748;
-        stroke-width: 2;
-      }
       .screen {
         fill: #fff;
         stroke: #000;
@@ -100,47 +95,5 @@
       d="M 250 250 L 550 250 L 550 450 L 450 450 L 450 300 L 350 300 L 350 450 L 250 450 Z"
       class="furniture"
     />
-
-    <!-- Personnel (Generals / Army) around U-Shape Table -->
-    <!-- Left side -->
-    <circle cx="220" cy="280" r="12" class="person" />
-    <circle cx="220" cy="330" r="12" class="person" />
-    <circle cx="220" cy="380" r="12" class="person" />
-    <circle cx="220" cy="430" r="12" class="person" />
-
-    <!-- Right side -->
-    <circle cx="580" cy="280" r="12" class="person" />
-    <circle cx="580" cy="330" r="12" class="person" />
-    <circle cx="580" cy="380" r="12" class="person" />
-    <circle cx="580" cy="430" r="12" class="person" />
-
-    <!-- Bottom side -->
-    <circle cx="300" cy="480" r="12" class="person" />
-    <circle cx="350" cy="480" r="12" class="person" />
-    <circle cx="450" cy="480" r="12" class="person" />
-    <circle cx="500" cy="480" r="12" class="person" />
-
-    <!-- Rows of Audience Seating behind -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="50"
-      y="520"
-      width="700"
-      height="80"
-      onclick={() => handleElementClick('audience')}
-    />
-    {#each Array(15) as _, i (i)}
-      <circle cx={80 + i * 45} cy="540" r="12" class="person" />
-      <circle cx={80 + i * 45} cy="580" r="12" class="person" />
-    {/each}
   </g>
 </svg>

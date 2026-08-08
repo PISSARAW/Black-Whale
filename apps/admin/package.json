@@ -15,7 +15,7 @@
   "dependencies": {
     "@black-whale/database": "workspace:*",
     "@black-whale/domain": "workspace:*",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^7.9.1",
     "svelte": "^5.0.0"
   },
   "devDependencies": {

@@ -2740,6 +2740,7 @@
       {
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-373.1",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1001",
         "note": "Killed by Musse and resurrected in the corridor outside room 1001"
       },
       {
@@ -18522,7 +18523,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-vvip-prison-beyond"
       }
     ],
     "mapLocationCorrection": true
@@ -19741,7 +19743,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-vvip-prison-beyond"
       }
     ],
     "mapLocationCorrection": true
@@ -20154,7 +20157,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-vvip-prison-beyond",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-vvip-prison-beyond"
       }
     ],
     "mapLocationCorrection": true
@@ -42373,7 +42377,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
       }
     ]
   },
@@ -44012,7 +44017,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
       }
     ]
   },
@@ -44137,7 +44143,8 @@
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1012",
-        "fromChapterId": "ch-358"
+        "fromChapterId": "ch-358",
+        "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
       }
     ]
   },

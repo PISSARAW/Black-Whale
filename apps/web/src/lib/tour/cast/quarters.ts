@@ -3,9 +3,10 @@
  *
  * A prince's apartment is drawn twice: as a box on the deck plan, and as seven
  * rooms on its own interior level — `types.ts` says why the two are kept apart
- * rather than reconciled. The distribution posted everyone on the deck box
- * only, so walking through the door into the apartment found it empty. The
- * apartment *is* the room; a body in it is in both drawings of it.
+ * rather than reconciled. The distribution once posted everyone on the deck
+ * box as well as inside, so the entrance was crowded with a duplicate cast.
+ * The apartment *is* the detailed interior; its deck box is only the threshold
+ * used to enter it.
  *
  * Which of the seven rooms, and where in it, is staging rather than canon: no
  * page says which end of the drawing room a guard is standing at. So this
@@ -18,6 +19,7 @@
  */
 import { doorwayOf } from '../apparitions'
 import type { Ship } from '../blueprint'
+import { interiorPoint } from '../geometry'
 import type { Space, Vec2 } from '../types'
 import { seedOf, stationIn } from './stations'
 import type { Costume } from './types'
@@ -27,6 +29,46 @@ const INSIDE_THE_DOOR = 1.1
 
 /** How far apart two bodies at the same door stand, in metres. */
 const SHOULDER = 0.8
+
+/**
+ * The attested post immediately outside a room's real door.
+ *
+ * This is never inferred from a costume: the caller reaches it only through an
+ * explicit `outsideDoorOf` catalogue claim. The doorway comes from the same
+ * resolved plan the visitor walks through, and the body is pulled one stride
+ * into the adjacent corridor so it never stands in the wall opening itself.
+ */
+export function standingOutsideDoor(
+  ship: Ship,
+  room: Space,
+  seed: string,
+): { space: Space; at: Vec2; heading: number } | null {
+  const plan = ship.plans.get(room.tierId)
+  const doorway = plan?.doorways.find((door) => {
+    if (door.a !== room.id && door.b !== room.id) return false
+    const other = ship.spaces.get(door.a === room.id ? door.b : door.a)
+    return other?.category === 'corridor'
+  })
+  if (!doorway) return null
+  const space = ship.spaces.get(doorway.a === room.id ? doorway.b : doorway.a)
+  if (!space) return null
+
+  const door: Vec2 = [
+    (doorway.start[0] + doorway.end[0]) / 2,
+    (doorway.start[1] + doorway.end[1]) / 2,
+  ]
+  const middle = interiorPoint(space.footprint)
+  const dx = middle[0] - door[0]
+  const dz = middle[1] - door[1]
+  const reach = Math.hypot(dx, dz)
+  if (reach < 0.01) return null
+  const abreast = ((seedOf(seed) % 5) - 2) * SHOULDER
+  const at: Vec2 = [
+    door[0] + (dx / reach) * INSIDE_THE_DOOR - (dz / reach) * abreast,
+    door[1] + (dz / reach) * INSIDE_THE_DOOR + (dx / reach) * abreast,
+  ]
+  return { space, at, heading: Math.atan2(door[0] - at[0], door[1] - at[1]) }
+}
 
 /** The interior level of a room, and the rooms on it, or null for a plain room. */
 export function interiorOf(ship: Ship, space: Space): Space[] {

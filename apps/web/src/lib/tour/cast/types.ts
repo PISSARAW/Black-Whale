@@ -78,6 +78,8 @@ export interface CastMember {
   hatsu: string[]
   /** The beast declared on this character, if any. See `beasts.ts`. */
   beast: CastBeast | null
+  /** An attested corridor post immediately outside this room's door. */
+  outsideDoorOf?: string
   /**
    * Whether the catalogue names a place rather than a room, so the exact spot
    * is the walk's own.
@@ -140,7 +142,8 @@ export interface Post {
   costume: Costume
   /**
    * Whether this is the body's place on the interior level of its room, rather
-   * than on the deck the room is a box on. Both are the same room.
+   * than on the deck the room is a box on. The box is an entrance, not a second
+   * post for the same body.
    */
   inside?: boolean
 }

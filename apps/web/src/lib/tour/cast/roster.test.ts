@@ -108,6 +108,55 @@ describe('the roster', () => {
     expect(rosterFrom(input()).members[0]).not.toHaveProperty('approximate')
   })
 
+  it('carries an explicit outside-door claim from the active trajectory leg', () => {
+    const outside = input({
+      catalogue: CATALOGUE.map((character) =>
+        character.id === 'kurapika'
+          ? {
+              ...character,
+              mapTrajectory: [
+                {
+                  location: 'tier-1-royal-residential-sector-room-1014',
+                  fromChapterId: 'ch-358',
+                  outsideDoorOf: 'tier-1-royal-residential-sector-room-1014',
+                },
+              ],
+            }
+          : character,
+      ),
+    })
+    expect(rosterFrom(outside).members[0]!.outsideDoorOf).toBe(
+      'tier-1-royal-residential-sector-room-1014',
+    )
+  })
+
+  it('prefers the exact sector leg over a room child in the same chapter', () => {
+    const outside = input({
+      presences: [{ entityId: 'body-kurapika', locationId: 'loc-1', precision: 'ZONE' }],
+      catalogue: CATALOGUE.map((character) =>
+        character.id === 'kurapika'
+          ? {
+              ...character,
+              mapTrajectory: [
+                {
+                  location: 'tier-1-royal-residential-sector',
+                  fromChapterId: 'ch-373.1',
+                  outsideDoorOf: 'tier-1-royal-residential-sector-room-1001',
+                },
+                {
+                  location: 'tier-1-royal-residential-sector-room-1014',
+                  fromChapterId: 'ch-373.2',
+                },
+              ],
+            }
+          : character,
+      ),
+    })
+    expect(rosterFrom(outside).members[0]!.outsideDoorOf).toBe(
+      'tier-1-royal-residential-sector-room-1001',
+    )
+  })
+
   it('hands a sector its rooms as well as itself', () => {
     const inWard = input({
       presences: [{ entityId: 'body-kurapika', locationId: 'loc-ward', precision: 'EXACT_ROOM' }],

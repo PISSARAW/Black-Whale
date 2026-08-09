@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 273
+Fichiers : 274
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -542,6 +542,10 @@ Fichiers : 273
 ## `apps/web/src/lib/reconstruction/sceneEntry.test.ts`
 
 - living reconstruction scene entry > opens an apartment event in its main living room
+
+## `apps/web/src/lib/reconstruction/sceneLocation.test.ts`
+
+- catalogue scene locations > accepts a precise scene whose wording changed
 
 ## `apps/web/src/lib/reconstruction/sourceView.test.ts`
 

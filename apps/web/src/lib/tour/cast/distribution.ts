@@ -19,7 +19,7 @@ import { AVATAR } from '../apparitions'
 import type { Apparition } from '../apparitions'
 import type { Space } from '../types'
 import { drawable } from './presence'
-import { interiorOf, roomWithin, standingIn } from './quarters'
+import { interiorOf, roomWithin, standingIn, standingOutsideDoor } from './quarters'
 import { spaceAmong } from './stations'
 import type { CastMember, Costume, Post } from './types'
 import { wardrobeFor } from './wardrobe'
@@ -42,8 +42,9 @@ function spacesFor(ship: Ship, locations: readonly string[]): Space[] {
     if (wanted.has(space.locationId)) return true
     return locations.some((location) => space.locationId!.endsWith(`-${location}`))
   })
-  // Decks before interiors: a body in a room drawn at both scales belongs on
-  // the deck, which is the level the walk arrives on.
+  // Resolve the catalogued room on the deck first. `standings` then replaces
+  // that envelope with its detailed interior when one exists. A catalogue
+  // location that is itself a corridor never takes that second step.
   const onDeck = found.filter((space) => ship.plans.get(space.tierId)?.tier.kind === 'deck')
   return onDeck.length > 0 ? onDeck : found
 }
@@ -87,7 +88,10 @@ export function distribute(
     // `wardrobe.test.ts` makes a build failure. At runtime it is one body not
     // drawn, never a stranger in a corridor.
     if (!costume) continue
-    const candidates = spacesFor(ship, member.locations)
+    const candidates = spacesFor(
+      ship,
+      member.outsideDoorOf ? [member.outsideDoorOf] : member.locations,
+    )
     const space = spaceAmong(candidates, member.characterId)
     if (!space) continue
     for (const stood of standings(ship, space, { member, costume })) {
@@ -99,13 +103,14 @@ export function distribute(
 }
 
 /**
- * The one or two places a body stands, for the one room it is in.
+ * The one place a body stands, for the one room it is in.
  *
- * Two, when its room is drawn at both scales: a prince's apartment is a box on
- * the deck plan and seven rooms on its own level, and a body in the apartment
- * is in both drawings of it — the walk shows one level at a time, so it is
- * never the same person twice on screen. Posting only on the deck box is what
- * made an apartment you had walked into come out empty.
+ * A prince's apartment exists as a box on the deck and as seven rooms on its
+ * own level. The box is only the threshold used to enter with E; it is not a
+ * second room in which the cast also stands. A body is therefore posted in the
+ * detailed interior only. Someone explicitly catalogued in the outside
+ * corridor still has that corridor as their location and never reaches here
+ * through an apartment envelope.
  */
 function standings(
   ship: Ship,
@@ -114,6 +119,21 @@ function standings(
 ): Post[] {
   const { member, costume } = who
   const seed = member.characterId
+  if (member.outsideDoorOf) {
+    const outside = standingOutsideDoor(ship, space, seed)
+    if (outside) {
+      return [
+        {
+          member,
+          spaceId: outside.space.id,
+          tierId: outside.space.tierId,
+          at: outside.at,
+          heading: outside.heading,
+          costume,
+        },
+      ]
+    }
+  }
   const onDeck: Post = {
     member,
     spaceId: space.id,
@@ -124,7 +144,6 @@ function standings(
   const within = roomWithin(interiorOf(ship, space), costume, seed)
   if (!within) return [onDeck]
   return [
-    onDeck,
     {
       member,
       spaceId: within.id,
@@ -163,11 +182,7 @@ export function castApparitions(
     const space = ship.spaces.get(post.spaceId)
     if (!plan || !space) continue
     found.push({
-      // The same person, told apart by the level they are drawn on: one room
-      // drawn twice is two things to build, and the scene keys on the id.
-      id: post.inside
-        ? `cast:${post.member.characterId}:within`
-        : `cast:${post.member.characterId}`,
+      id: `cast:${post.member.characterId}`,
       kind: 'avatar',
       spaceId: post.spaceId,
       tierId: post.tierId,

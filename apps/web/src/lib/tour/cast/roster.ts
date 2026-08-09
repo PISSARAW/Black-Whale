@@ -51,6 +51,11 @@ export interface RosterCharacter {
     sourceChapterId: string
     standsWith?: string
   } | null
+  mapTrajectory?: ReadonlyArray<{
+    location: string
+    fromChapterId: string
+    outsideDoorOf?: string
+  }>
 }
 
 /** An ability, reduced to who owns it and what the walk would call it. */
@@ -163,19 +168,37 @@ function describe(
   presence: RosterPresence,
   indexes: ReturnType<typeof indexesOf>,
 ): CastMember {
+  const locations = indexes.under.get(presence.locationId ?? '') ?? []
+  const outsideDoorOf = outsideDoorFor(character, presence, locations)
   return {
     characterId: character.id,
     name: character.canonicalName,
-    locations: indexes.under.get(presence.locationId ?? '') ?? [],
+    locations,
     role: character.shipLocation?.role ?? '',
     since: presence.fromEvent?.chapterId ?? null,
     nen: Boolean(character.nen),
     hatsu: indexes.repertoires.get(character.id) ?? [],
     beast: beastOf(character),
+    ...(outsideDoorOf ? { outsideDoorOf } : {}),
     // Carried rather than recomputed downstream: the spot inside a suite is
     // the walk's, and the card has to be able to say so.
     ...(presence.precision === EXACT ? {} : { approximate: true }),
   }
+}
+
+/** The explicit outside-door claim attached to the active trajectory leg. */
+function outsideDoorFor(
+  character: RosterCharacter,
+  presence: RosterPresence,
+  locations: readonly string[],
+): string | null {
+  const legs = (character.mapTrajectory ?? []).filter((leg) => locations.includes(leg.location))
+  const exact = legs.filter((leg) => leg.location === locations[0])
+  const candidates = exact.length > 0 ? exact : legs
+  const since = presence.fromEvent?.chapterId?.split('.')[0] ?? null
+  const current = since ? candidates.filter((leg) => leg.fromChapterId.split('.')[0] === since) : []
+  const leg = current.length === 1 ? current[0] : candidates.length === 1 ? candidates[0] : null
+  return leg?.outsideDoorOf ?? null
 }
 
 /**

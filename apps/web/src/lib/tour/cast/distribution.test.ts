@@ -53,36 +53,56 @@ describe('the distribution', () => {
     const posts = distribute(ship, [
       member({ characterId: 'sakata' }),
       member({ characterId: 'hashito' }),
-    ]).filter((post) => !post.inside)
+    ])
     expect(posts).toHaveLength(2)
     expect(posts[0]!.at).not.toEqual(posts[1]!.at)
   })
 
-  /**
-   * The apartment is drawn twice — a box on the deck, seven rooms on its own
-   * level — and a body in it is in both drawings. Posting only on the box is
-   * what made a suite you had walked into come out empty.
-   */
-  it('stands a body in the suite as well as on the deck the suite is a box on', () => {
+  it('stands a body only in the detailed suite, never in its entrance box', () => {
     const posts = distribute(ship, [member({ characterId: 'sakata' })])
-    expect(posts).toHaveLength(2)
-    const [deck, within] = posts[0]!.inside ? [posts[1]!, posts[0]!] : [posts[0]!, posts[1]!]
-    expect(deck.tierId).toBe('tier-1')
-    expect(within.tierId).toBe('interior-room-1014')
-    expect(within.member.characterId).toBe('sakata')
+    expect(posts).toHaveLength(1)
+    expect(posts[0]!.tierId).toBe('interior-room-1014')
+    expect(posts[0]!.member.characterId).toBe('sakata')
+    expect(posts[0]!.inside).toBe(true)
   })
 
   /** A watch is kept at the way in: the suite's own corridor, facing the room. */
   it('posts a guard at the door of the suite and a queen in a room of it', () => {
-    const [, guard] = distribute(ship, [member({ characterId: 'sakata' })])
+    const [guard] = distribute(ship, [member({ characterId: 'sakata' })])
     expect(ship.spaces.get(guard!.spaceId)?.category).toBe('corridor')
     expect(guard!.heading).toBeDefined()
 
-    const [, queen] = distribute(ship, [
-      member({ characterId: 'oito', role: 'kakin royal family' }),
-    ])
+    const [queen] = distribute(ship, [member({ characterId: 'oito', role: 'kakin royal family' })])
     expect(ship.spaces.get(queen!.spaceId)?.category).not.toBe('corridor')
     expect(queen!.spaceId).not.toMatch(/servants|wc|bathroom|kitchen/)
+  })
+
+  it('keeps an explicitly catalogued outside presence at the corridor door', () => {
+    const [post] = distribute(ship, [
+      member({
+        characterId: 'outside-watch',
+        outsideDoorOf: ROOM_1014,
+      }),
+    ])
+    expect(post!.tierId).toBe('tier-1')
+    expect(post!.spaceId).toBe('tier-1-royal-residential-approach-1014')
+    expect(ship.spaces.get(post!.spaceId)?.category).toBe('corridor')
+    expect(post!.inside).toBeUndefined()
+  })
+
+  it('places Beyond’s attested watch on the corridor side of his cell door', () => {
+    const location = 'tier-1-vvip-prison-beyond'
+    const [post] = distribute(ship, [
+      member({
+        characterId: 'saiyu',
+        locations: [location],
+        outsideDoorOf: location,
+        role: 'zodiaque / taupe potentiel, garde de Beyond',
+      }),
+    ])
+    expect(post!.tierId).toBe('tier-1-b')
+    expect(ship.spaces.get(post!.spaceId)?.category).toBe('corridor')
+    expect(post!.inside).toBeUndefined()
   })
 
   it('keeps a room the plans draw only once to a single post', () => {
@@ -179,7 +199,7 @@ describe('the guardian beasts', () => {
     const posts = distribute(ship, [
       member({ characterId: 'prince-momoze', role: 'victime de Tuffdy', beast }),
       member({ characterId: 'sakata' }),
-    ]).filter((post) => !post.inside)
+    ])
     const beasts = beastApparitions(ship, posts)
     expect(beasts).toHaveLength(1)
     expect(beasts[0]).toMatchObject({ id: 'cast-beast:prince-momoze', kind: 'sprite', pick: true })
@@ -188,23 +208,17 @@ describe('the guardian beasts', () => {
     )
   })
 
-  /** In the salon as well as on the box: the two drawings of the same room. */
-  it('follows its prince into the suite, under an id of its own', () => {
+  it('follows its prince into the detailed suite only', () => {
     const posts = distribute(ship, [
       member({ characterId: 'prince-momoze', role: 'victime de Tuffdy', beast }),
     ])
     const beasts = beastApparitions(ship, posts)
-    expect(beasts.map((one) => one.id)).toEqual([
-      'cast-beast:prince-momoze',
-      'cast-beast:prince-momoze:within',
-    ])
-    expect(new Set(beasts.map((one) => one.tierId)).size).toBe(2)
+    expect(beasts.map((one) => one.id)).toEqual(['cast-beast:prince-momoze'])
+    expect(beasts[0]!.tierId).toBe('interior-room-1014')
   })
 
   it('walks a beast whose owner is never placed to the body it stands with', () => {
-    const posts = distribute(ship, [member({ characterId: 'oito-nephew-fake-woble' })]).filter(
-      (post) => !post.inside,
-    )
+    const posts = distribute(ship, [member({ characterId: 'oito-nephew-fake-woble' })])
     const standing: StandingBeast[] = [
       {
         ownerId: 'prince-woble',

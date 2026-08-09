@@ -227,6 +227,9 @@ const positionsNameARoom: Invariant = ({ characters, locations }) => {
       if (!known.has(leg.location)) {
         findings.push(finding('trajectory', where, `leg ${index} names no known location`))
       }
+      if (leg.outsideDoorOf && !known.has(leg.outsideDoorOf)) {
+        findings.push(finding('trajectory', where, `leg ${index} names no known outside-door room`))
+      }
       if (/^tier-[1-5]$/.test(leg.location)) {
         findings.push(finding('trajectory', where, `leg ${index} stops on a deck, not in a room`))
       }

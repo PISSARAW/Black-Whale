@@ -148,6 +148,14 @@ la présence projetée si elle arrive tout de même.
 
 ### Positions dans la pièce
 
+Dans Tour, une pièce qui possède une vue détaillée n'affiche ses personnages
+que dans cette vue. Sa boîte sur le plan du tier représente le seuil d'entrée,
+pas une seconde position du personnage. Si le manga montre explicitement un
+personnage dans le couloir devant une porte, l'étape de `mapTrajectory` porte
+`"outsideDoorOf": "<slug de la pièce>"` : Tour utilise alors la porte du plan
+pour le placer dans le couloir adjacent. Cette exception n'est jamais déduite
+du rôle du personnage, même pour un garde.
+
 Certains passagers ont une place précise dans leur pièce : Beyond Netero n'est
 pas « dans sa cellule », il est menotté au mur près du lit. Ces places vivent
 dans `localSpotAnchors`, au-dessus de `packMarkersForZoom`

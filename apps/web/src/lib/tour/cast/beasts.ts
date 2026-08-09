@@ -74,9 +74,7 @@ function draw(ship: Ship, beast: CastBeast, post: Post): Apparition | null {
   // doing something, and this one is doing nothing.
   const { at } = stationIn(space, `beast:${beast.ownerId}`)
   return {
-    // Keyed by level like its owner: a salon drawn at two scales is two things
-    // for the scene to build, and one id cannot name both.
-    id: post.inside ? `cast-beast:${beast.ownerId}:within` : `cast-beast:${beast.ownerId}`,
+    id: `cast-beast:${beast.ownerId}`,
     kind: beast.silhouette,
     spaceId: post.spaceId,
     tierId: post.tierId,

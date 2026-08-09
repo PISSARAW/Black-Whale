@@ -88,6 +88,8 @@ const trajectoryLegSchema = z
     fromChapterId: chapterRef,
     untilChapterId: chapterRef.nullable().optional(),
     certainty: z.enum(['CONFIRMED', 'PROBABLE', 'LAST_KNOWN']).optional(),
+    /** The manga places this leg in the corridor immediately outside this room. */
+    outsideDoorOf: slug.optional(),
     note: z.string().optional(),
   })
   .passthrough()

@@ -29,6 +29,7 @@
   import { examine, type Exhibit } from '$lib/tour/exhibit'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import { TourTargetView } from '$lib/tour/pageTargetView.svelte'
@@ -734,6 +735,7 @@
   const statusHint = $derived(overlayView.status)
 
   let takeScreenshot = $state<(() => Promise<Blob | null>) | null>(null)
+  let postcardPhotoBlob = $state<Blob | null>(null)
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
@@ -763,27 +765,7 @@
             if (takeScreenshot) {
               const blob = await takeScreenshot()
               if (blob) {
-                const view = currentMangaViews[0]
-                const img = new Image()
-                const url = URL.createObjectURL(blob)
-                img.onload = () => {
-                  const cvs = document.createElement('canvas')
-                  cvs.width = img.width
-                  cvs.height = img.height
-                  const ctx = cvs.getContext('2d')
-                  if (ctx) {
-                    ctx.drawImage(img, 0, 0)
-                    ctx.font = 'bold 24px sans-serif'
-                    ctx.fillStyle = 'rgba(255, 215, 0, 0.8)'
-                    ctx.textAlign = 'right'
-                    ctx.fillText(`Chapitre ${view.chapter} - ${view.labelFr}`, cvs.width - 20, cvs.height - 20)
-                    cvs.toBlob((watermarked) => {
-                      if (watermarked) downloadBlob(watermarked, `manga-angle-${view.spaceId}.png`)
-                    }, 'image/png')
-                  }
-                  URL.revokeObjectURL(url)
-                }
-                img.src = url
+                postcardPhotoBlob = blob
               }
             }
           },
@@ -791,14 +773,20 @@
              const { toBlob } = await import('html-to-image')
              const el = document.getElementById('tour-stage-container')
              if (el) {
-               const blob = await toBlob(el, { cacheBust: true })
-               if (blob) downloadBlob(blob, `photo-hud-${currentSpace?.id}.png`)
+               const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
+               if (blob) {
+                 postcardPhotoBlob = blob
+               }
              }
           }
         }
       : null
   )
 </script>
+
+{#if postcardPhotoBlob}
+  <TourPostcardModal photoBlob={postcardPhotoBlob} onClose={() => (postcardPhotoBlob = null)} />
+{/if}
 
 <svelte:window onkeydown={keyboard.onKeydown} />
 

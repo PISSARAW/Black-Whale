@@ -5,14 +5,17 @@ import { appearanceOf, hasAuthoredAppearance } from './roomAppearance'
 const ship = buildShip()
 
 describe('room appearance', () => {
-  it('gives every audited Tier 1 location a deliberate finish', () => {
+  it.each([
+    ['tier-1', 34],
+    ['tier-2', 5],
+  ])('gives every audited %s location a deliberate finish', (tier, count) => {
     const locations = new Set(
       ship.blueprint.spaces
         .map((space) => space.locationId)
-        .filter((id): id is string => id?.startsWith('tier-1-') ?? false),
+        .filter((id): id is string => id?.startsWith(`${tier}-`) ?? false),
     )
 
-    expect(locations.size).toBe(34)
+    expect(locations.size).toBe(count)
     expect([...locations].filter((id) => !hasAuthoredAppearance(id))).toEqual([])
   })
 

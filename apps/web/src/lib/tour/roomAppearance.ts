@@ -31,6 +31,11 @@ type Finish =
   | 'casino'
   | 'barracks'
   | 'secure'
+  | 'government'
+  | 'screening'
+  | 'concealed'
+  | 'protected'
+  | 'bulkhead'
 
 const LEGACY: RoomAppearance = {
   floor: 0x2a1f1f,
@@ -164,6 +169,56 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     fabric: 0x42464a,
     accent: 0x765047,
   },
+  government: {
+    floor: 0x29302d,
+    wall: 0x56605a,
+    ceiling: 0x101412,
+    column: 0x707c74,
+    wood: 0x3e3528,
+    metal: 0x7f8984,
+    fabric: 0x45504b,
+    accent: 0x7d7252,
+  },
+  screening: {
+    floor: 0x241c28,
+    wall: 0x4d4052,
+    ceiling: 0x09070b,
+    column: 0x67566d,
+    wood: 0x352a34,
+    metal: 0x6e6875,
+    fabric: 0x4d354e,
+    accent: 0x755270,
+  },
+  concealed: {
+    floor: 0x2b2420,
+    wall: 0x51463e,
+    ceiling: 0x100d0b,
+    column: 0x695d52,
+    wood: 0x3f2c20,
+    metal: 0x716c65,
+    fabric: 0x4b3c34,
+    accent: 0x805b34,
+  },
+  protected: {
+    floor: 0x252c30,
+    wall: 0x505b61,
+    ceiling: 0x0d1113,
+    column: 0x69767c,
+    wood: 0x37342f,
+    metal: 0x7c898f,
+    fabric: 0x46535a,
+    accent: 0x567280,
+  },
+  bulkhead: {
+    floor: 0x292b2c,
+    wall: 0x53585a,
+    ceiling: 0x0e1011,
+    column: 0x73787a,
+    wood: 0x3b3934,
+    metal: 0x858b8e,
+    fabric: 0x4a4d4f,
+    accent: 0x826a45,
+  },
 }
 
 const TIER_1_FINISH = new Map<string, Finish>([
@@ -194,13 +249,23 @@ const TIER_1_FINISH = new Map<string, Finish>([
   ['tier-1-vvip-prison-beyond', 'secure'],
 ])
 
+const TIER_2_FINISH = new Map<string, Finish>([
+  ['tier-2-bulkhead', 'bulkhead'],
+  ['tier-2-heilly-secret-hideout', 'concealed'],
+  ['tier-2-ministry-of-justice', 'government'],
+  ['tier-2-screening-room', 'screening'],
+  ['tier-2-vip-witness-protection-area', 'protected'],
+])
+
+const AUTHORED_FINISH = new Map([...TIER_1_FINISH, ...TIER_2_FINISH])
+
 /** Whether a catalogued location received a deliberate finish in this pass. */
 export function hasAuthoredAppearance(locationId: string): boolean {
-  return TIER_1_FINISH.has(locationId)
+  return AUTHORED_FINISH.has(locationId)
 }
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
-  const finish = space.locationId ? TIER_1_FINISH.get(space.locationId) : undefined
+  const finish = space.locationId ? AUTHORED_FINISH.get(space.locationId) : undefined
   return finish ? FINISHES[finish] : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
 }
 

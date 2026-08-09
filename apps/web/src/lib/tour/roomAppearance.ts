@@ -45,6 +45,11 @@ type Finish =
   | 'first-class'
   | 'standard-cabin'
   | 'dormitory'
+  | 'service-passage'
+  | 'recycling'
+  | 'briefing'
+  | 'ei-i-office'
+  | 'xi-yu-office'
 
 const LEGACY: RoomAppearance = {
   floor: 0x2a1f1f,
@@ -318,6 +323,56 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     fabric: 0x454d49,
     accent: 0x626b57,
   },
+  'service-passage': {
+    floor: 0x292b2b,
+    wall: 0x4e5455,
+    ceiling: 0x0d0f10,
+    column: 0x686e6f,
+    wood: 0x393733,
+    metal: 0x737a7b,
+    fabric: 0x444849,
+    accent: 0x746343,
+  },
+  recycling: {
+    floor: 0x252b28,
+    wall: 0x48544e,
+    ceiling: 0x0b0f0d,
+    column: 0x626d67,
+    wood: 0x343b33,
+    metal: 0x6e7b74,
+    fabric: 0x3e4943,
+    accent: 0x6f7048,
+  },
+  briefing: {
+    floor: 0x282e31,
+    wall: 0x505c61,
+    ceiling: 0x0e1214,
+    column: 0x69767b,
+    wood: 0x3b3933,
+    metal: 0x78848a,
+    fabric: 0x465155,
+    accent: 0x647064,
+  },
+  'ei-i-office': {
+    floor: 0x2d2226,
+    wall: 0x57434b,
+    ceiling: 0x100b0e,
+    column: 0x705862,
+    wood: 0x422b31,
+    metal: 0x756a70,
+    fabric: 0x51333f,
+    accent: 0x874052,
+  },
+  'xi-yu-office': {
+    floor: 0x292621,
+    wall: 0x544d41,
+    ceiling: 0x0f0d0a,
+    column: 0x6d6454,
+    wood: 0x403225,
+    metal: 0x736f65,
+    fabric: 0x4b4136,
+    accent: 0x7e633a,
+  },
 }
 
 const TIER_1_FINISH = new Map<string, Finish>([
@@ -369,7 +424,20 @@ const TIER_3_FINISH = new Map<string, Finish>([
   ['tier-3-residential-units', 'dormitory'],
 ])
 
-const AUTHORED_FINISH = new Map([...TIER_1_FINISH, ...TIER_2_FINISH, ...TIER_3_FINISH])
+const TIER_4_FINISH = new Map<string, Finish>([
+  ['tier-4-central-passage', 'service-passage'],
+  ['tier-4-ei-i-family-office', 'ei-i-office'],
+  ['tier-4-recycling-sewage-facilities', 'recycling'],
+  ['tier-4-royal-army-conference-room', 'briefing'],
+  ['tier-4-xi-yu-family-office', 'xi-yu-office'],
+])
+
+const AUTHORED_FINISH = new Map([
+  ...TIER_1_FINISH,
+  ...TIER_2_FINISH,
+  ...TIER_3_FINISH,
+  ...TIER_4_FINISH,
+])
 
 /** Whether a catalogued location received a deliberate finish in this pass. */
 export function hasAuthoredAppearance(locationId: string): boolean {

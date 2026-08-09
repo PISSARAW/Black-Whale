@@ -60,57 +60,86 @@ const confirmedTarget = (context: StrategyHatsuContext, name: string) =>
     ? null
     : refused(strategyMsg(context.locale ?? 'en').hatsu.requiresConfirmedHostile(name))
 
+const SUCCESS_REPORTS: Record<Locale, Record<string, string>> = {
+  en: {
+    'dowsing-chain': 'Dowsing Chain cross-checks available clues without guaranteeing truth.',
+    'little-eye': 'Little Eye observes the area through a controlled insect.',
+    'secret-window': 'Secret Window attaches persistent surveillance to the area.',
+    'emperor-time': "Emperor Time strengthens the local response at the cost of Kurapika's lifespan.",
+    'steal-chain': 'Steal Chain drains an observed user and hinders their aura.',
+    'chain-jail': 'Chain Jail forces a confirmed Spider into Zetsu.',
+    erigeron: 'Erigeron accelerates recovery and consolidates the local unit.',
+    'benjamin-aura': 'Benjamin focuses his Ren to strengthen the local defense.',
+    'benjamin-baton': 'Benjamin Baton mobilizes the legacy of an eliminated loyal soldier.',
+    'air-blow': 'Air Blow strikes an already identified hostile presence at range.',
+    culdcept: 'Culdcept temporarily neutralizes an observed opposing ability.',
+    'biohazard-hinrigh': 'Biohazard animates objects in the area to control access.',
+    contagion: "Contagion extends the Heil-Ly network from Morena's position.",
+  },
+  fr: {
+    'dowsing-chain': 'Dowsing Chain recoupe les indices disponibles sans garantir la vérité.',
+    'little-eye': 'Little Eye observe la zone par l’intermédiaire d’un insecte contrôlé.',
+    'secret-window': 'Secret Window attache une surveillance persistante à la zone.',
+    'emperor-time': 'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.',
+    'steal-chain': 'Steal Chain draine un utilisateur observé et entrave son aura.',
+    'chain-jail': 'Chain Jail impose le Zetsu à une Araignée confirmée.',
+    erigeron: 'Erigeron accélère la récupération et consolide l’unité locale.',
+    'benjamin-aura': 'Benjamin concentre son Ren pour renforcer la défense locale.',
+    'benjamin-baton': 'Benjamin Baton mobilise l’héritage d’un soldat loyal éliminé.',
+    'air-blow': 'Air Blow frappe à distance une présence hostile déjà identifiée.',
+    culdcept: 'Culdcept neutralise temporairement une capacité adverse observée.',
+    'biohazard-hinrigh': 'Biohazard anime les objets de la zone pour en contrôler les accès.',
+    contagion: 'Contagion étend le réseau Heil-Ly depuis la position de Morena.',
+  },
+}
+
+const successReport = (context: StrategyHatsuContext, abilityId: string) =>
+  SUCCESS_REPORTS[context.locale ?? 'en'][abilityId]
+
 const ADAPTERS: Record<string, Adapter> = {
-  'dowsing-chain': () =>
-    accepted(
-      ['RECON'],
-      1,
-      'Dowsing Chain recoupe les indices disponibles sans garantir la vérité.',
-    ),
-  'little-eye': () =>
-    accepted(['RECON'], 2, 'Little Eye observe la zone par l’intermédiaire d’un insecte contrôlé.'),
-  'secret-window': () =>
-    accepted(['RECON'], 2, 'Secret Window attache une surveillance persistante à la zone.'),
+  'dowsing-chain': (context) => accepted(['RECON'], 1, successReport(context, 'dowsing-chain')),
+  'little-eye': (context) => accepted(['RECON'], 2, successReport(context, 'little-eye')),
+  'secret-window': (context) => accepted(['RECON'], 2, successReport(context, 'secret-window')),
   'emperor-time': (context) =>
     currentLocation(context, 'Emperor Time') ??
     accepted(
       ['GUARD'],
       3,
-      'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.',
+      successReport(context, 'emperor-time'),
     ),
   'steal-chain': (context) =>
     confirmedTarget(context, 'Steal Chain') ??
-    accepted(['DENIAL'], 3, 'Steal Chain draine un utilisateur observé et entrave son aura.'),
+    accepted(['DENIAL'], 3, successReport(context, 'steal-chain')),
   'chain-jail': (context) =>
     context.targetHasSpider
-      ? accepted(['DENIAL'], 3, 'Chain Jail impose le Zetsu à une Araignée confirmée.')
+      ? accepted(['DENIAL'], 3, successReport(context, 'chain-jail'))
       : refused(strategyMsg(context.locale ?? 'en').hatsu.chainJailRequiresSpider),
   erigeron: (context) =>
     currentLocation(context, 'Erigeron') ??
-    accepted(['GUARD'], 2, 'Erigeron accélère la récupération et consolide l’unité locale.'),
+    accepted(['GUARD'], 2, successReport(context, 'erigeron')),
   'benjamin-aura': (context) =>
     currentLocation(context, 'Aura Manipulation') ??
-    accepted(['GUARD'], 2, 'Benjamin concentre son Ren pour renforcer la défense locale.'),
+    accepted(['GUARD'], 2, successReport(context, 'benjamin-aura')),
   'benjamin-baton': (context) =>
     context.eliminatedAllies > 0
-      ? accepted(['DENIAL'], 3, 'Benjamin Baton mobilise l’héritage d’un soldat loyal éliminé.')
+      ? accepted(['DENIAL'], 3, successReport(context, 'benjamin-baton'))
       : refused(strategyMsg(context.locale ?? 'en').hatsu.benjaminBatonRequiresDeath),
   'air-blow': (context) =>
     confirmedTarget(context, 'Air Blow') ??
-    accepted(['DENIAL'], 2, 'Air Blow frappe à distance une présence hostile déjà identifiée.'),
+    accepted(['DENIAL'], 2, successReport(context, 'air-blow')),
   culdcept: (context) =>
     confirmedTarget(context, 'Culdcept') ??
-    accepted(['DENIAL'], 3, 'Culdcept neutralise temporairement une capacité adverse observée.'),
+    accepted(['DENIAL'], 3, successReport(context, 'culdcept')),
   'cats-name': (context) => refused(strategyMsg(context.locale ?? 'en').hatsu.catsNamePassive),
   'biohazard-hinrigh': (context) =>
     currentLocation(context, 'Biohazard') ??
-    accepted(['DENIAL'], 2, 'Biohazard anime les objets de la zone pour en contrôler les accès.'),
+    accepted(['DENIAL'], 2, successReport(context, 'biohazard-hinrigh')),
   contagion: (context) =>
     currentLocation(context, 'Contagion') ??
     accepted(
       ['INFLUENCE', 'DENIAL'],
       3,
-      'Contagion étend le réseau Heil-Ly depuis la position de Morena.',
+      successReport(context, 'contagion'),
     ),
 }
 

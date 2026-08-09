@@ -1,5 +1,7 @@
 import type { BranchDifference } from './comparison'
 import type { ReconstructionReplay } from './replay'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 
 export interface ReconstructionReport {
   scenarioId: string
@@ -21,6 +23,7 @@ export interface ReconstructionReport {
 export function buildReconstructionReport(
   replay: ReconstructionReplay,
   differences: readonly BranchDifference[],
+  locale: Locale = 'en',
 ): ReconstructionReport {
   const appliedDecisionIds = replay.steps
     .filter((step) => step.status === 'applied')
@@ -49,10 +52,10 @@ export function buildReconstructionReport(
     mode: replay.scenario.mode,
     fidelity,
     divergenceDecisionId,
-    summary:
-      differenceList.length === 0
-        ? 'La branche rejoint l’état canonique sur les axes comparés.'
-        : `${affectedSubjects.length} sujet(s) divergent sur ${differenceList.length} axe(s).`,
+    summary: messagesFor(locale).reconstruction.v3.reportSummary(
+      affectedSubjects.length,
+      differenceList.length,
+    ),
     appliedDecisionIds,
     blockedDecisions,
     invalidatedDecisions,

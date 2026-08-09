@@ -10,7 +10,7 @@
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { strategyHatsuPresentation, type StrategyHatsuCue } from '$lib/strategy/hatsuPresentation'
-  import { locale } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
 
   interface Marker {
     id: string
@@ -148,14 +148,14 @@
   }
 </script>
 
-<div class="mb-4 flex flex-wrap gap-2 sm:justify-end" role="group" aria-label="Battlefield view">
+<div class="mb-4 flex flex-wrap gap-2 sm:justify-end" role="group" aria-label={$t.strategy.ui.battlefield.label}>
   <button
     class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
     'tour'
       ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
       : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
     type="button"
-    onclick={() => (view = 'tour')}>Vue 3D</button
+    onclick={() => (view = 'tour')}>{$t.strategy.ui.battlefield.tour}</button
   >
   <button
     class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
@@ -163,7 +163,7 @@
       ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
       : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
     type="button"
-    onclick={() => (view = 'map')}>Carte Tactique</button
+    onclick={() => (view = 'map')}>{$t.strategy.ui.battlefield.map}</button
   >
 </div>
 
@@ -209,14 +209,14 @@
       bind:aimedSolidAt={navigation.aimedSolidAt}
       nen={modeNen.value}
       onNenChange={modeNen.use}
-      touchLabels={{ move: 'Movement', cast: 'Action' }}
-      soundLabels={{ silence: 'Cut footsteps', restore: 'Restore footsteps' }}
-      loadingLabel="Loading Black Whale..."
-      unsupportedLabel="3D view requires WebGL. Use the tactical map."
+      touchLabels={{ move: $t.strategy.ui.battlefield.move, cast: $t.strategy.ui.battlefield.cast }}
+      soundLabels={{ silence: $t.strategy.ui.battlefield.silence, restore: $t.strategy.ui.battlefield.restore }}
+      loadingLabel={$t.strategy.ui.battlefield.loading}
+      unsupportedLabel={$t.strategy.ui.battlefield.unsupported}
     />
   </div>
 {:else}
-  <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" aria-label="Display deck">
+  <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" aria-label={$t.strategy.ui.battlefield.displayDeck}>
     {#each availableTiers as tier (tier)}
       <button
         class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier ===
@@ -224,15 +224,15 @@
           ? 'border-sky-400 bg-sky-900/30 text-sky-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
           : 'border-sky-900/50 bg-[#060b14]/50 text-sky-500/50 hover:border-sky-700 hover:text-sky-400'}"
         type="button"
-        onclick={() => selectTier(tier)}>{tier.replace('tier-', 'Pont ')}</button
+        onclick={() => selectTier(tier)}>{$t.strategy.ui.battlefield.deck(tier)}</button
       >
     {/each}
   </div>
   <PlanMap
     {markers}
     tier={selectedTier}
-    emptyLabel="Aucune donnée sur ce pont."
-    elsewhereLabel={(count) => `${count} unité${count > 1 ? 's' : ''} sur d'autres ponts.`}
+    emptyLabel={$t.strategy.ui.battlefield.empty}
+    elsewhereLabel={$t.strategy.ui.battlefield.elsewhere}
   />
 {/if}
 

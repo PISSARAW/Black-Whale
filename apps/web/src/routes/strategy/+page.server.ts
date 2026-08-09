@@ -2,15 +2,13 @@ import { prisma } from '$lib/server/db'
 import { timeline } from '$lib/server/nen'
 import { listStrategyScenarios, requireStrategyScenario } from '$lib/strategy/scenario/registry'
 import { STRATEGY_ABILITY_IDS_BY_CHARACTER } from '$lib/strategy/hatsu'
+import { messagesFor } from '$lib/i18n'
+import { parsePathname } from '$lib/i18n/config'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ url }) => {
-  const scenarios = listStrategyScenarios().map(({ id, title, description, chapterNumber }) => ({
-    id,
-    title,
-    description,
-    chapterNumber,
-  }))
+  const locale = parsePathname(url.pathname).locale
+  const scenarios = listStrategyScenarios()
   try {
     const scenario = requireStrategyScenario(url.searchParams.get('scenario') ?? undefined)
     const cutoff = await prisma.narrativeEvent.findFirst({
@@ -121,7 +119,7 @@ export const load: PageServerLoad = async ({ url }) => {
   } catch (error) {
     console.error('[strategy]', error)
     return {
-      error: 'Le scénario stratégique n’a pas pu être initialisé.',
+      error: messagesFor(locale).strategy.errors.loadFailed,
       scenario: null,
       scenarios,
       cutoff: null,

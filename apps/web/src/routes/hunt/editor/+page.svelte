@@ -1,6 +1,7 @@
 <script lang="ts">
   import { huntContractById } from '$lib/hunt/contracts/registry'
   import { editContract, encodeContract } from '$lib/hunt/contracts/share'
+  import { link, t } from '$lib/i18n'
 
   const template = huntContractById('royal-apartments')!
   let title = $state('My pursuit')
@@ -14,41 +15,41 @@
       title: { en: title, fr: titleFr },
       description: {
         en: 'A player-authored Hunt contract.',
-        fr: 'Un contrat Hunt créé par un joueur.',
+        fr: 'Un contrat de traque créé par un joueur.',
       },
       durationSeconds: duration,
       environment: { lighting, acoustics, sealableExits: lighting === 'blackout' },
     })
-    return `/hunt?contract=${encodeURIComponent(encodeContract(contract))}`
+    return $link(`/hunt?contract=${encodeURIComponent(encodeContract(contract))}`)
   })
 </script>
 
-<svelte:head><title>Hunt contract editor</title></svelte:head>
+<svelte:head><title>{$t.hunt.editor.seoTitle}</title></svelte:head>
 <main class="min-h-screen bg-slate-950 px-6 py-16 text-white">
   <section class="mx-auto max-w-2xl">
-    <p class="text-xs uppercase tracking-[.3em] text-amber-300/70">Hunt V3</p>
-    <h1 class="mt-3 text-3xl">Contract editor</h1>
+    <p class="text-xs uppercase tracking-[.3em] text-amber-300/70">{$t.hunt.editor.eyebrow}</p>
+    <h1 class="mt-3 text-3xl">{$t.hunt.editor.title}</h1>
     <div class="mt-8 grid gap-5 sm:grid-cols-2">
-      <label>English title<input bind:value={title} /></label>
-      <label>Titre français<input bind:value={titleFr} /></label>
-      <label>Duration<input type="number" min="60" max="1800" bind:value={duration} /></label>
+      <label>{$t.hunt.editor.englishTitle}<input bind:value={title} /></label>
+      <label>{$t.hunt.editor.frenchTitle}<input bind:value={titleFr} /></label>
+      <label>{$t.hunt.editor.duration}<input type="number" min="60" max="1800" bind:value={duration} /></label>
       <label
-        >Lighting<select bind:value={lighting}
-          ><option value="normal">Normal</option><option value="low">Low</option><option
-            value="blackout">Blackout</option
+        >{$t.hunt.editor.lighting}<select bind:value={lighting}
+          ><option value="normal">{$t.hunt.editor.lightingOptions.normal}</option><option value="low">{$t.hunt.editor.lightingOptions.low}</option><option
+            value="blackout">{$t.hunt.editor.lightingOptions.blackout}</option
           ></select
         ></label
       >
       <label
-        >Acoustics<select bind:value={acoustics}
-          ><option value="clear">Clear</option><option value="reverberant">Reverberant</option
-          ><option value="masked">Masked</option></select
+        >{$t.hunt.editor.acoustics}<select bind:value={acoustics}
+          ><option value="clear">{$t.hunt.editor.acousticsOptions.clear}</option><option value="reverberant">{$t.hunt.editor.acousticsOptions.reverberant}</option
+          ><option value="masked">{$t.hunt.editor.acousticsOptions.masked}</option></select
         ></label
       >
     </div>
     <a
       class="mt-8 inline-block rounded-full border border-amber-300/50 px-6 py-3 text-amber-100"
-      href={sharePath}>Play and share this contract</a
+      href={sharePath}>{$t.hunt.editor.playAndShare}</a
     >
   </section>
 </main>

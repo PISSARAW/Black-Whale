@@ -19,7 +19,7 @@ describe('Strategy campaign V3', () => {
     expect(currentCampaignScenario(campaign)?.id).toBe('mafia-war-390')
     expect(campaign.reputation).toBe('RELIABLE')
     expect(campaign.unitConditions.kurapika).toBe('WOUNDED')
-    expect(campaign.chronicle.at(-1)).toContain('prince-woble remporte')
+    expect(campaign.chronicle.at(-1)).toContain('prince-woble wins')
   })
 
   it('keeps the most severe condition and remembers betrayal', () => {

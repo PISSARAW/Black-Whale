@@ -11,7 +11,7 @@ export const room1014Case: InvestigationCase = {
   id: 'room-1014-silent-majority',
   title: 'Onze secondes',
   subtitle: 'Incident de la chambre 1014',
-  location: 'Tier 1 · Appartement 1014',
+  location: 'Pont 1 · Appartement 1014',
   chapter: 370,
   objective: "Établir le mécanisme de l'attaque sans prétendre connaître l'assassin.",
   investigator: 'Kurapika',

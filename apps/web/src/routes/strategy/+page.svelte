@@ -42,12 +42,13 @@
   } from '$lib/strategy/simulation.svelte'
   import {
     COMMAND_POINTS_PER_TURN,
-    HATSU_ROLE_LABELS,
-    ORDER_LABELS,
     VICTORY_POINTS_TARGET,
     planCost,
     strategicRoleForHatsu,
   } from '$lib/strategy/rules'
+  import { link, locale, t } from '$lib/i18n'
+  import { localizeStrategyScenario } from '$lib/strategy/localization'
+  import { displayName } from '$lib/utils/displayNames'
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
   let ready = $state(false)
@@ -64,6 +65,12 @@
   let availableSave = $state<StrategySave | null>(null)
   let campaignSave = $state<StrategyCampaignSaveV3 | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
+  let localizedScenario = $derived(
+    data.scenario ? localizeStrategyScenario(data.scenario, $locale) : null,
+  )
+  let localizedScenarios = $derived(
+    data.scenarios.map((scenario) => localizeStrategyScenario(scenario, $locale)),
+  )
   let playableFactions = $derived(
     data.factions.filter((faction) =>
       data.scenario ? isPlayableScenarioFaction(faction.id, data.scenario) : false,
@@ -169,7 +176,8 @@
         baseState: data.baseState,
         factions: data.factions,
         locations: data.locations,
-        scenario: data.scenario ?? undefined,
+        scenario: localizedScenario ?? undefined,
+        locale: $locale,
       })
       ready = true
       const saved = decodeStrategySave(
@@ -180,7 +188,7 @@
         campaignSave = saved
           ? migrateStrategySaveV2(saved)
           : createCampaignSave(
-              createStrategyCampaign(`${data.cutoff?.eventId ?? 'strategy'}:campaign`),
+              createStrategyCampaign(`${data.cutoff?.eventId ?? 'strategy'}:campaign`, $locale),
               new Date().toISOString(),
             )
         localStorage.setItem(STRATEGY_CAMPAIGN_KEY, encodeCampaignSave(campaignSave))
@@ -228,7 +236,8 @@
       baseState: data.baseState,
       factions: data.factions,
       locations: data.locations,
-      scenario: data.scenario ?? undefined,
+      scenario: localizedScenario ?? undefined,
+      locale: $locale,
     })
     selectFaction(factionId)
   }
@@ -244,30 +253,28 @@
       victoryPoints: simStore.victoryPoints,
       relationships: structuredClone(simStore.relationships),
       unitConditions: structuredClone(simStore.unitConditions),
-    })
+    }, $locale)
     campaignSave = createCampaignSave(campaign, new Date().toISOString())
     localStorage.setItem(STRATEGY_CAMPAIGN_KEY, encodeCampaignSave(campaignSave))
     const next = currentCampaignScenario(campaign)
-    if (next) window.location.assign(`/strategy?scenario=${next.id}`)
+    if (next) window.location.assign($link(`/strategy?scenario=${next.id}`))
   }
 
   function currentLocation(characterId: string): string {
     const state = simStore.currentState
-    if (!state) return 'Unknown position'
+    if (!state) return $t.strategy.ui.unknownPosition
     const entity = entityForCharacter(state, characterId)
     const locationId = entity ? state.presences[entity.id]?.locationId : undefined
-    return locationId ? (locationById.get(locationId)?.name ?? locationId) : 'Unknown position'
+    return locationId
+      ? (locationById.get(locationId)?.name ?? locationId)
+      : $t.strategy.ui.unknownPosition
   }
 
   function conditionForCharacter(characterId: string): string {
     const state = simStore.currentState
     const entity = state ? entityForCharacter(state, characterId) : undefined
     const condition = entity ? simStore.unitConditions[entity.id] : undefined
-    return condition === 'WOUNDED'
-      ? 'Wounded'
-      : condition === 'ELIMINATED'
-        ? 'Eliminated'
-        : 'Operational'
+    return $t.strategy.ui.conditions[condition ?? 'READY']
   }
 
   function queueOrder() {
@@ -287,7 +294,7 @@
       nextOrder,
     ]
     if (planCost(nextOrders) > COMMAND_POINTS_PER_TURN) {
-      errorMessage = 'This plan exceeds your command points.'
+      errorMessage = $t.strategy.errors.planExceedsPoints
       return
     }
     pendingOrders = nextOrders
@@ -315,7 +322,7 @@
       { factionId: selectedDiplomacyFactionId, action: selectedDiplomacyAction },
     ]
     if (planCost(pendingOrders) + diplomacyCost(next) > COMMAND_POINTS_PER_TURN) {
-      errorMessage = 'This diplomatic action exceeds your command points.'
+      errorMessage = $t.strategy.errors.diplomacyExceedsPoints
       return
     }
     pendingDiplomacy = next
@@ -352,7 +359,7 @@
       errorMessage =
         error instanceof StrategyInputError
           ? error.message
-          : 'The turn failed. No orders were applied.'
+          : $t.strategy.errors.turnFailed
       console.error('[strategy] turn', error)
     }
   }
@@ -371,10 +378,10 @@
       class="mx-auto flex max-w-2xl flex-col items-center justify-center pt-24 text-center"
       role="alert"
     >
-      <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-red-500">Accès Refusé</p>
+      <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-red-500">{$t.strategy.ui.accessDenied}</p>
       <h1 class="mb-4 font-black text-4xl text-white">{data.error}</h1>
       <span class="text-sm text-red-200/60"
-        >Veuillez vérifier la connexion aux serveurs tactiques.</span
+        >{$t.strategy.ui.checkConnection}</span
       >
     </section>
   {:else if !ready}
@@ -387,24 +394,24 @@
       >
         <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></span>
         <h1 class="text-[10px] font-bold uppercase tracking-widest text-sky-400">
-          Initialisation du Réseau Tactique...
+          {$t.strategy.ui.initializing}
         </h1>
       </div>
     </section>
   {:else if !playerFactionId}
     <nav
       class="mx-auto mt-8 grid w-full max-w-5xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3"
-      aria-label="Campaign Operations"
+      aria-label={$t.strategy.ui.campaignOperations}
     >
-      {#each data.scenarios as operation, index (operation.id)}
+      {#each localizedScenarios as operation, index (operation.id)}
         <a
-          href={`/strategy?scenario=${operation.id}`}
+          href={$link(`/strategy?scenario=${operation.id}`)}
           aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
           class="group flex flex-col gap-2 rounded-xl border border-sky-900/40 bg-[#0a0f1c]/80 p-5 transition-all hover:-translate-y-1 hover:border-sky-400 hover:bg-sky-900/30 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] aria-[current=page]:border-amber-500/60 aria-[current=page]:bg-amber-950/20 aria-[current=page]:shadow-[0_0_15px_rgba(251,191,36,0.15)]"
         >
           <span
             class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60 group-aria-[current=page]:text-amber-500/80"
-            >Opération {index + 1} · Chapitre {operation.chapterNumber}</span
+            >{$t.strategy.ui.operation(index + 1, operation.chapterNumber)}</span
           >
           <strong class="font-black text-lg text-white group-aria-[current=page]:text-amber-300"
             >{operation.title}</strong
@@ -433,14 +440,14 @@
           <button
             class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/50 transition-colors hover:text-sky-300"
             type="button"
-            onclick={() => (playerFactionId = null)}>← Factions</button
+            onclick={() => (playerFactionId = null)}>← {$t.strategy.ui.backToFactions}</button
           >
           <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-400">
-            RÉSEAU TACTIQUE
+            {$t.strategy.ui.tacticalNetwork}
           </p>
           <h1 class="mt-1 font-black text-3xl text-white drop-shadow-md">{playerFaction?.name}</h1>
           <span class="mt-2 block text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
-            >Tour {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
+            >{$t.strategy.ui.turn} {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
               ?.maxTurns ?? 8}</span
           >
         </header>
@@ -453,7 +460,7 @@
               class="mb-6 rounded-lg border-l-2 border-amber-400 bg-amber-950/20 p-4 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
             >
               <span class="text-[9px] font-bold uppercase tracking-widest text-amber-500"
-                >Événement Planifié</span
+                >{$t.strategy.ui.scheduledEvent}</span
               >
               <strong class="mt-1 block font-black text-sm text-amber-200"
                 >{simStore.scenarioEvent.title}</strong
@@ -470,13 +477,13 @@
                 : ''}"
             >
               <span class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60"
-                >OBJECTIF ACTUEL</span
+                >{$t.strategy.ui.currentObjective}</span
               >
               <strong class="mt-1 block font-black text-sm text-sky-100"
-                >{objective?.title ?? 'Objectif indisponible'}</strong
+                >{objective?.title ?? $t.strategy.ui.objectiveUnavailable}</strong
               >
               <p class="mt-2 text-xs leading-relaxed text-sky-200/50">
-                {objective?.description ?? 'Analyse de la situation tactique en cours.'}
+                {objective?.description ?? $t.strategy.ui.tacticalAnalysis}
               </p>
               <div class="mt-4 h-1 w-full overflow-hidden rounded-full bg-sky-950/50">
                 <i
@@ -489,10 +496,10 @@
               >
                 <span
                   >{objective?.current ?? 0} / {objective?.target ?? 0}
-                  {objective?.complete ? '· accompli' : ''}</span
+                  {objective?.complete ? `· ${$t.strategy.ui.completed}` : ''}</span
                 >
                 <span class="text-sky-400 {simStore.gameWon ? 'text-emerald-400' : ''}"
-                  >INFLUENCE {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span
+                  >{$t.strategy.ui.influence} {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span
                 >
               </div>
             </div>
@@ -500,7 +507,7 @@
 
           <section class="mb-8 border-t border-sky-900/30 pt-6">
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-xs font-black uppercase tracking-widest text-white">Nouvel Ordre</h2>
+              <h2 class="text-xs font-black uppercase tracking-widest text-white">{$t.strategy.ui.newOrder}</h2>
               <span
                 class="rounded bg-sky-900/40 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-sky-300"
                 >{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span
@@ -510,16 +517,16 @@
             <label class="mt-4 block">
               <span
                 class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60"
-                >Action</span
+                >{$t.strategy.ui.action}</span
               >
               <select
                 bind:value={selectedOrderType}
                 class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
               >
-                <option value="MOVE">Déplacement · 1 PC</option>
-                <option value="SCOUT">Investigation · 2 PC</option>
-                <option value="GUARD">Garde sur place · 1 PC</option>
-                <option value="HATSU">Activer Hatsu · 3 PC</option>
+                <option value="MOVE">{$t.strategy.ui.orderOptions.MOVE}</option>
+                <option value="SCOUT">{$t.strategy.ui.orderOptions.SCOUT}</option>
+                <option value="GUARD">{$t.strategy.ui.orderOptions.GUARD}</option>
+                <option value="HATSU">{$t.strategy.ui.orderOptions.HATSU}</option>
               </select>
             </label>
             {#if selectedOrderType === 'HATSU'}
@@ -532,26 +539,26 @@
                   bind:value={selectedAbilityId}
                   class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
                 >
-                  <option value="">Sélectionner une capacité</option>
+                  <option value="">{$t.strategy.ui.chooseAbility}</option>
                   {#each availableHatsu as profile (profile.id)}
                     <option
                       value={profile.id}
                       disabled={(simStore.hatsuCooldowns[profile.id] ?? 0) > simStore.currentTurn}
                       >{profile.name}{(simStore.hatsuCooldowns[profile.id] ?? 0) >
                       simStore.currentTurn
-                        ? ` · dispo tour ${simStore.hatsuCooldowns[profile.id]}`
+                        ? ` · ${$t.strategy.ui.availableTurn(simStore.hatsuCooldowns[profile.id])}`
                         : ''}</option
                     >
                   {/each}
                 </select>
                 {#if selectedCharacterId && !availableHatsu.length}
                   <span class="mt-1 block text-[10px] text-red-400/80"
-                    >Aucun Hatsu tactique connu pour cette unité.</span
+                    >{$t.strategy.ui.noTacticalHatsu}</span
                   >
                 {:else if selectedHatsu}
                   <span
                     class="mt-1 block text-[10px] font-bold uppercase tracking-widest text-sky-400/80"
-                    >{HATSU_ROLE_LABELS[strategicRoleForHatsu(selectedHatsu.kind)]}</span
+                    >{$t.strategy.ui.hatsuRoles[strategicRoleForHatsu(selectedHatsu.kind)]}</span
                   >
                 {/if}
               </label>
@@ -559,18 +566,18 @@
             <label class="mt-4 block">
               <span
                 class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60"
-                >Unité</span
+                >{$t.strategy.ui.unit}</span
               >
               <select
                 bind:value={selectedCharacterId}
                 class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
               >
-                <option value="">Sélectionner une unité</option>
+                <option value="">{$t.strategy.ui.chooseUnit}</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
                   <option
                     value={member.character.id}
                     disabled={conditionForCharacter(member.character.id) === 'Eliminated'}
-                    >{member.character.canonicalName} · {conditionForCharacter(member.character.id)} ·
+                    >{displayName(member.character.canonicalName, $locale)} · {conditionForCharacter(member.character.id)} ·
 
                     {currentLocation(member.character.id)}</option
                   >
@@ -583,16 +590,16 @@
                   class="mb-1 block text-[10px] font-bold uppercase tracking-widest text-sky-500/60"
                 >
                   {selectedOrderType === 'SCOUT'
-                    ? 'Zone à investiguer'
+                    ? $t.strategy.ui.destinations.scout
                     : selectedOrderType === 'HATSU'
-                      ? 'Cible'
-                      : 'Destination'}
+                      ? $t.strategy.ui.destinations.hatsu
+                      : $t.strategy.ui.destinations.move}
                 </span>
                 <select
                   bind:value={selectedLocationId}
                   class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
                 >
-                  <option value="">Sélectionner une zone</option>
+                  <option value="">{$t.strategy.ui.chooseZone}</option>
                   {#each playableLocations as location (location.id)}
                     <option value={location.id}>{location.name}</option>
                   {/each}
@@ -605,7 +612,7 @@
               disabled={!selectedCharacterId ||
                 (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
                 (selectedOrderType === 'HATSU' && !selectedAbilityId)}
-              onclick={queueOrder}>Ajouter au plan</button
+              onclick={queueOrder}>{$t.strategy.ui.addToPlan}</button
             >
           </section>
 
@@ -621,7 +628,7 @@
           <section class="mb-8 border-t border-sky-900/30 pt-6">
             <div class="mb-4">
               <h2 class="text-xs font-black uppercase tracking-widest text-white">
-                Séquence Opérationnelle
+                {$t.strategy.ui.operationalSequence}
               </h2>
             </div>
             {#if pendingOrders.length}
@@ -636,15 +643,15 @@
                       >
                       <span class="block truncate text-[10px] text-sky-200/50"
                         >{order.type === 'HATSU'
-                          ? (hatsuById(order.abilityId)?.name ?? ORDER_LABELS[order.type])
-                          : ORDER_LABELS[order.type]} · {locationById.get(order.locationId)?.name ??
+                          ? (hatsuById(order.abilityId)?.name ?? $t.strategy.ui.orderLabels[order.type])
+                          : $t.strategy.ui.orderLabels[order.type]} · {locationById.get(order.locationId)?.name ??
                           order.locationId}</span
                       >
                     </div>
                     <button
                       type="button"
                       class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-950/40 text-red-400 hover:bg-red-900 hover:text-white"
-                      aria-label={`Remove ${memberName(order.characterId)}'s order`}
+                      aria-label={$t.strategy.ui.removeOrder(memberName(order.characterId))}
                       onclick={() => removeOrder(order.characterId)}>×</button
                     >
                   </li>
@@ -654,7 +661,7 @@
               <p
                 class="rounded-lg border border-sky-900/20 bg-sky-950/10 p-4 text-xs italic text-sky-200/40"
               >
-                Aucun ordre : finaliser le tour passera l'action.
+                {$t.strategy.ui.emptyPlan}
               </p>
             {/if}
           </section>
@@ -662,7 +669,7 @@
           <section class="border-t border-sky-900/30 pt-6">
             <div class="mb-4">
               <h2 class="text-xs font-black uppercase tracking-widest text-white">
-                Registre Tactique
+                {$t.strategy.ui.tacticalLog}
               </h2>
             </div>
             <div
@@ -692,10 +699,10 @@
             disabled={simStore.gameOver}
             onclick={handleEndTurn}
             >{simStore.gameWon
-              ? 'Victoire Stratégique'
+              ? $t.strategy.ui.strategicVictory
               : simStore.gameLost
-                ? 'Opération Terminée'
-                : `Exécuter le Tour · ${spentCommandPoints} PC`}</button
+                ? $t.strategy.ui.operationEnded
+                : $t.strategy.ui.executeTurn(spentCommandPoints)}</button
           >
         </footer>
       </aside>
@@ -721,7 +728,7 @@
         >
           <div>
             <p class="text-[10px] font-bold uppercase tracking-widest text-sky-500/50">
-              SITUATION TACTIQUE · DONNÉES RESTREINTES
+              {$t.strategy.ui.restrictedSituation}
             </p>
             <h2 class="mt-1 font-black text-3xl text-white">Black Whale</h2>
           </div>
@@ -731,11 +738,11 @@
           class="mt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
         >
           <span class="flex items-center gap-1.5"
-            ><i class="inline-block h-2 w-2 rounded-full border border-sky-400 bg-sky-900"></i> Vos unités</span
+            ><i class="inline-block h-2 w-2 rounded-full border border-sky-400 bg-sky-900"></i> {$t.strategy.ui.yourUnits}</span
           >
           <span class="flex items-center gap-1.5"
             ><i class="inline-block h-2 w-2 rounded-full border border-sky-700 bg-[#0a0f1c]"></i> Contacts
-            observés</span
+            {$t.strategy.ui.observedContacts}</span
           >
         </p>
       </section>

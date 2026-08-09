@@ -55,7 +55,7 @@
         </div>
         <div class="rounded-xl border border-sky-800/30 bg-[#0a0f1c]/50 p-5">
           <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/70">
-            Objectifs d'investigation
+            {ui.investigationObjectives}
           </p>
           <ol class="space-y-4">
             {#each investigation.objectives as objective, index (objective.id)}
@@ -93,7 +93,7 @@
           <span
             class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"
           ></span>
-          GAIN
+          {ui.start}
         </button>
       </div>
     </section>

@@ -62,6 +62,96 @@ export function caseUi(locale: Locale) {
           pressing: 'Pressante',
           accusatory: 'Accusatrice',
         },
+        binder: 'Carnet d’enquête',
+        binderSections: 'Sections du carnet',
+        investigationObjectives: 'Objectifs d’enquête',
+        start: 'COMMENCER',
+        deduction: {
+          eyebrow: 'Construire la conclusion',
+          title: 'Que s’est-il passé pendant ces onze secondes ?',
+          intro:
+            'Choisissez une hypothèse puis uniquement les éléments qui la soutiennent. Le verdict évaluera aussi les contradictions.',
+          propositionsMissing: (count: number) =>
+            `${count} proposition${count === 1 ? '' : 's'} à établir`,
+          evidence: (count: number) => `Pièces versées au raisonnement · ${count}`,
+          submit: 'Soumettre',
+          analysis: 'Analyse du raisonnement',
+          contradiction: 'Contradiction',
+          establish: 'À établir',
+          epistemicLimit:
+            'Limite épistémique : l’enquêteur peut démontrer l’usage d’un Nen dissimulé, mais pas encore nommer son utilisateur. La vérité du lecteur reste séparée du verdict.',
+        },
+        evidence: {
+          statuses: {
+            CONFIRMED: 'confirmé',
+            STRONGLY_IMPLIED: 'fortement impliqué',
+            DEDUCTION: 'déduit',
+            CONTESTED: 'contesté',
+          },
+          log: 'Journal du carnet',
+          logKinds: {
+            DISCOVERY: 'indice',
+            HYPOTHESIS: 'piste',
+            HATSU: 'hatsu',
+            VERDICT: 'verdict',
+          },
+        },
+        confrontation: {
+          reviewed: 'Consigné · revoir',
+          examine: 'À examiner',
+          title: 'Confronter deux déclarations',
+          intro: 'Sélectionnez deux témoins. Une divergence précise peut devenir une déduction.',
+          action: 'Confronter les versions',
+        },
+        report: {
+          final: 'Rapport final',
+          close: 'Fermer le rapport',
+          retained: 'Reconstitution retenue',
+          unknowns: 'Inconnues persistantes',
+          rejected: 'Hypothèses écartées',
+          procedure: 'Conclusion procédurale',
+          procedureBody: (chapter: number) =>
+            `Le mécanisme peut être communiqué aux gardes. Toute accusation nominative dépasserait les éléments disponibles au chapitre ${chapter}.`,
+          signed: 'Signé',
+          review: 'Revoir les pièces (CARNET)',
+          back: 'Retour à la scène',
+        },
+        timeline: {
+          second: 'seconde',
+          creaturesActive: (count: number) => `${count} créatures actives`,
+          blood: 'volume sanguin',
+          synchronized: 'Reconstitution synchronisée',
+          slider: 'Seconde de la reconstitution',
+          pause: 'Pause',
+          replay: 'Rejouer',
+          play: 'Lecture',
+          sightLines: 'Plan des lignes de vue',
+          relativePosition: 'Position relative au moment de l’attaque',
+          doll: 'Poupée',
+          creatures: 'Créatures',
+          sightLinesLabel: (phenomenon: string) =>
+            `Lignes de vue · ${phenomenon === 'doll' ? 'poupée' : 'créatures'}`,
+          dollCaption: 'Poupée derrière Furykov · visible par Loberry seule',
+          creaturesCaption: 'Créatures matérialisées · visibles par tous',
+          events: [
+            [
+              'T − 00:11',
+              'Loberry désigne une poupée que personne d’autre ne voit.',
+              'loberry-vision',
+            ],
+            [
+              'T − 00:08',
+              'Quatre créatures blanches se fixent au cou de Barrigen.',
+              'bill-testimony',
+            ],
+            ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'],
+            ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue'],
+          ] as const,
+        },
+        lifeConsumed: (hours: number, total: number) =>
+          `Vie consommée · +${hours} h · total ${total} h`,
+        hatsuGateReason:
+          'Seules les techniques capables d’observer, d’analyser ou de reproduire la scène ont une prise sur ce dossier.',
       }
     : {
         description:
@@ -113,5 +203,86 @@ export function caseUi(locale: Locale) {
           pressing: 'Pressing',
           accusatory: 'Accusatory',
         },
+        binder: 'Investigation binder',
+        binderSections: 'Notebook sections',
+        investigationObjectives: 'Investigation objectives',
+        start: 'BEGIN',
+        deduction: {
+          eyebrow: 'Build the conclusion',
+          title: 'What happened during those eleven seconds?',
+          intro:
+            'Choose a hypothesis, then only the evidence supporting it. The verdict will also assess contradictions.',
+          propositionsMissing: (count: number) =>
+            `${count} proposition${count === 1 ? '' : 's'} still to establish`,
+          evidence: (count: number) => `Evidence submitted for reasoning · ${count}`,
+          submit: 'Submit',
+          analysis: 'Reasoning analysis',
+          contradiction: 'Contradiction',
+          establish: 'Still to establish',
+          epistemicLimit:
+            'Epistemic limit: the investigator can demonstrate the use of concealed Nen, but cannot yet name its user. Reader truth remains separate from the verdict.',
+        },
+        evidence: {
+          statuses: {
+            CONFIRMED: 'confirmed',
+            STRONGLY_IMPLIED: 'strongly implied',
+            DEDUCTION: 'deduced',
+            CONTESTED: 'contested',
+          },
+          log: 'Binder log',
+          logKinds: { DISCOVERY: 'clue', HYPOTHESIS: 'lead', HATSU: 'hatsu', VERDICT: 'verdict' },
+        },
+        confrontation: {
+          reviewed: 'Recorded · review',
+          examine: 'Examine',
+          title: 'Compare two statements',
+          intro: 'Select two witnesses. A precise discrepancy may become a deduction.',
+          action: 'Compare accounts',
+        },
+        report: {
+          final: 'Final report',
+          close: 'Close report',
+          retained: 'Accepted reconstruction',
+          unknowns: 'Remaining unknowns',
+          rejected: 'Rejected hypotheses',
+          procedure: 'Procedural conclusion',
+          procedureBody: (chapter: number) =>
+            `The mechanism may be communicated to the guards. Naming an accused person would go beyond the evidence available in chapter ${chapter}.`,
+          signed: 'Signed',
+          review: 'Review evidence (BOOK)',
+          back: 'Back to scene',
+        },
+        timeline: {
+          second: 'second',
+          creaturesActive: (count: number) => `${count} active creatures`,
+          blood: 'blood volume',
+          synchronized: 'Synchronized reconstruction',
+          slider: 'Reconstruction second',
+          pause: 'Pause',
+          replay: 'Replay',
+          play: 'Play',
+          sightLines: 'Line-of-sight plan',
+          relativePosition: 'Relative position at the moment of the attack',
+          doll: 'Doll',
+          creatures: 'Creatures',
+          sightLinesLabel: (phenomenon: string) =>
+            `Lines of sight · ${phenomenon === 'doll' ? 'doll' : 'creatures'}`,
+          dollCaption: 'Doll behind Furykov · visible only to Loberry',
+          creaturesCaption: 'Materialized creatures · visible to everyone',
+          events: [
+            ['T − 00:11', 'Loberry points to a doll nobody else can see.', 'loberry-vision'],
+            [
+              'T − 00:08',
+              'Four white creatures attach themselves to Barrigen’s neck.',
+              'bill-testimony',
+            ],
+            ['T + 00:00', 'Barrigen collapses, completely drained of blood.', 'wounds'],
+            ['After', 'Kurapika investigates a Nen mechanism.', 'nen-residue'],
+          ] as const,
+        },
+        lifeConsumed: (hours: number, total: number) =>
+          `Life consumed · +${hours} h · total ${total} h`,
+        hatsuGateReason:
+          'Only techniques able to observe, analyze or reproduce the scene can affect this case.',
       }
 }

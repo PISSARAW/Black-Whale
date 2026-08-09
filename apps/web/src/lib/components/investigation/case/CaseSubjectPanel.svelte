@@ -123,7 +123,7 @@
           {#if session.hatsuResult.lifeHours > 0}<p
               class="mt-2 font-mono text-[9px] uppercase tracking-wider text-red-200"
             >
-              Vie consommée · +{session.hatsuResult.lifeHours} h · total {$emperorTimeLifeHours} h
+              {ui.lifeConsumed(session.hatsuResult.lifeHours, $emperorTimeLifeHours)}
             </p>{/if}
         </div>
       {/if}

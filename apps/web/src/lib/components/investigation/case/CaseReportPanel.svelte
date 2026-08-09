@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
+  import type { caseUi } from '$lib/investigation/caseLabels'
 
-  let { session }: { session: CaseSession } = $props()
+  let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 
   const investigation = $derived(session.investigation)
 </script>
@@ -30,7 +31,7 @@
             <p
               class="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"
             >
-              Rapport final · {session.finalReport.caseId}
+              {ui.report.final} · {session.finalReport.caseId}
             </p>
           </div>
           <h2 class="mt-4 font-black text-4xl text-white drop-shadow-md sm:text-5xl">
@@ -44,7 +45,7 @@
         </div>
         <button
           class="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-900/30 text-emerald-300 transition-all hover:bg-emerald-400/20 hover:text-white hover:shadow-[0_0_15px_rgba(52,211,153,0.5)]"
-          aria-label="Fermer le rapport"
+          aria-label={ui.report.close}
           onclick={() => (session.reportOpen = false)}
           ><svg
             class="h-5 w-5"
@@ -59,7 +60,7 @@
       <div class="relative grid gap-8 p-6 sm:p-9 lg:grid-cols-[1.1fr_0.9fr]">
         <section>
           <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-            Reconstitution retenue
+            {ui.report.retained}
           </p>
           <ol class="mt-6 space-y-5 border-l-2 border-emerald-900/50 pl-7">
             {#each session.finalReport.mechanism as step, index (index)}
@@ -95,7 +96,7 @@
             class="rounded-xl border-l-4 border-red-400 bg-red-950/20 p-5 shadow-[0_0_15px_rgba(248,113,113,0.1)]"
           >
             <p class="text-[10px] font-bold uppercase tracking-widest text-red-400">
-              Inconnues persistantes
+              {ui.report.unknowns}
             </p>
             <ul class="mt-4 space-y-3">
               {#each session.finalReport.unknowns as unknown, index (index)}<li
@@ -111,7 +112,7 @@
           </section>
           <section class="rounded-xl border border-sky-900/40 bg-sky-950/20 p-5">
             <p class="text-[10px] font-bold uppercase tracking-widest text-sky-500/50">
-              Hypothèses écartées
+              {ui.report.rejected}
             </p>
             <ul class="mt-4 space-y-2">
               {#each session.finalReport.rejectedHypotheses as hypothesis, index (index)}<li
@@ -124,9 +125,8 @@
           </section>
           <div class="rounded border border-emerald-900/50 bg-emerald-950/20 p-4">
             <p class="text-[11px] leading-relaxed text-emerald-200/80">
-              <span class="font-bold text-emerald-400">Conclusion procédurale :</span> le mécanisme
-              peut être communiqué aux gardes. Toute accusation nominative dépasserait les éléments
-              disponibles au chapitre {investigation.chapter}.
+              <span class="font-bold text-emerald-400">{ui.report.procedure} :</span>
+              {ui.report.procedureBody(investigation.chapter)}
             </p>
           </div>
         </aside>
@@ -136,7 +136,7 @@
         class="relative flex flex-wrap items-center justify-between gap-4 border-t border-emerald-900/50 bg-[#060b14] px-6 py-5 sm:px-9"
       >
         <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-500/50"
-          >Signé · {investigation.investigator}</span
+          >{ui.report.signed} · {investigation.investigator}</span
         >
         <div class="flex gap-3">
           <button
@@ -144,10 +144,10 @@
             onclick={() => {
               session.reportOpen = false
               session.openNotebook('evidence')
-            }}>Revoir les pièces (BOOK)</button
+            }}>{ui.report.review}</button
           ><button
             class="rounded-lg border border-emerald-400/50 bg-emerald-900/40 px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300 transition-all hover:bg-emerald-400/30 hover:shadow-[0_0_15px_rgba(52,211,153,0.4)]"
-            onclick={() => (session.reportOpen = false)}>Retour à la scène</button
+            onclick={() => (session.reportOpen = false)}>{ui.report.back}</button
           >
         </div>
       </footer>

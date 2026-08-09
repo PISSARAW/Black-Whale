@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { ScenePhenomenon } from '$lib/investigation/geometry'
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
+  import type { caseUi } from '$lib/investigation/caseLabels'
 
-  let { session }: { session: CaseSession } = $props()
+  let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 </script>
 
 <section class="mb-5 overflow-hidden border border-[#d6b35a]/25 bg-black/35">
@@ -18,10 +19,10 @@
         <p class="font-mono text-5xl text-white">
           {session.replayFrame.second.toString().padStart(2, '0')}
         </p>
-        <p class="mt-1 text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">seconde</p>
+        <p class="mt-1 text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">{ui.timeline.second}</p>
         <div
           class="mt-4 flex justify-center gap-1.5"
-          aria-label={`${session.replayFrame.snakes} créatures actives`}
+          aria-label={ui.timeline.creaturesActive(session.replayFrame.snakes)}
         >
           {#each Array(4) as _, index (index)}<span
               class="block h-6 w-1.5 rounded-full transition {index < session.replayFrame.snakes
@@ -35,13 +36,13 @@
             style:width={`${session.replayFrame.bloodLevel}%`}
           ></div>
         </div>
-        <p class="mt-1 text-[8px] uppercase tracking-wider text-white/30">volume sanguin</p>
+        <p class="mt-1 text-[8px] uppercase tracking-wider text-white/30">{ui.timeline.blood}</p>
       </div>
     </div>
     <div class="flex flex-col justify-between p-5">
       <div>
         <p class="text-[9px] font-bold uppercase tracking-widest text-white/35">
-          Reconstitution synchronisée
+          {ui.timeline.synchronized}
         </p>
         <h3 class="mt-2 font-serif text-2xl text-white">{session.replayFrame.title}</h3>
         <p class="mt-2 text-sm leading-relaxed text-white/55">
@@ -57,17 +58,17 @@
           step="1"
           value={session.replaySecond}
           oninput={(event) => session.seekReplay(Number(event.currentTarget.value))}
-          aria-label="Seconde de la reconstitution"
+          aria-label={ui.timeline.slider}
         />
         <div class="mt-3 flex items-center justify-between">
           <button
             class="border border-[#d6b35a]/60 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] hover:bg-[#d6b35a]/10"
             onclick={session.toggleReplay}
             >{session.replayPlaying
-              ? 'Pause'
+              ? ui.timeline.pause
               : session.replaySecond >= 11
-                ? 'Rejouer'
-                : 'Lecture'}</button
+                ? ui.timeline.replay
+                : ui.timeline.play}</button
           >
           <span class="font-mono text-[9px] text-white/30">00:00 — 00:11</span>
         </div>
@@ -79,12 +80,12 @@
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
-        Plan des lignes de vue
+        {ui.timeline.sightLines}
       </p>
-      <p class="mt-1 text-xs text-white/40">Position relative au moment de l’attaque</p>
+      <p class="mt-1 text-xs text-white/40">{ui.timeline.relativePosition}</p>
     </div>
     <div class="flex border border-white/10">
-      {#each [['doll', 'Poupée'], ['snakes', 'Créatures']] as layer (layer[0])}
+      {#each [['doll', ui.timeline.doll], ['snakes', ui.timeline.creatures]] as layer (layer[0])}
         <button
           class="px-3 py-2 text-[9px] font-bold uppercase tracking-wider {session.scenePhenomenon ===
           layer[0]
@@ -99,7 +100,7 @@
     class="mt-4 h-auto w-full border border-white/5 bg-black/35"
     viewBox="0 0 400 260"
     role="img"
-    aria-label={`Lignes de vue · ${session.scenePhenomenon === 'doll' ? 'poupée' : 'créatures'}`}
+    aria-label={ui.timeline.sightLinesLabel(session.scenePhenomenon)}
   >
     <rect x="8" y="8" width="384" height="244" rx="4" fill="none" stroke="rgba(255,255,255,.12)" />
     {#each session.planSightLines as line (`${line.observerId}-${line.targetId}`)}
@@ -146,13 +147,13 @@
       font-size="9"
     >
       {session.scenePhenomenon === 'doll'
-        ? 'Poupée derrière Furykov · visible par Loberry seule'
-        : 'Créatures matérialisées · visibles par tous'}
+        ? ui.timeline.dollCaption
+        : ui.timeline.creaturesCaption}
     </text>
   </svg>
 </section>
 <ol class="relative ml-2 border-l border-[#d6b35a]/30 pl-7">
-  {#each [['T − 00:11', 'Loberry désigne une poupée que personne d’autre ne voit.', 'loberry-vision'], ['T − 00:08', 'Quatre créatures blanches se fixent au cou de Barrigen.', 'bill-testimony'], ['T + 00:00', 'Barrigen s’effondre, entièrement vidé de son sang.', 'wounds'], ['Après', 'Kurapika recherche un mécanisme de Nen.', 'nen-residue']] as event (event[2])}
+  {#each ui.timeline.events as event (event[2])}
     <li class="relative mb-8 last:mb-0">
       <span
         class="absolute -left-[2.08rem] top-1 h-2.5 w-2.5 rounded-full border border-[#d6b35a] {session.discoveredIds.includes(

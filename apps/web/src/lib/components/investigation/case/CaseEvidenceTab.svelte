@@ -71,11 +71,7 @@
                 evidence,
               )}"
             >
-              {evidence.truthStatus === 'CONFIRMED'
-                ? 'confirmé'
-                : evidence.truthStatus === 'DEDUCTION'
-                  ? 'déduit'
-                  : 'impliqué'}
+              {ui.evidence.statuses[evidence.truthStatus]}
             </span>
             <span class="text-[9px] font-mono text-sky-500/50"
               >#{evidence.id.slice(0, 4).toUpperCase()}</span
@@ -104,18 +100,12 @@
 {/if}
 {#if session.log.length > 0}
   <div class="mt-8 border-t border-sky-900/50 pt-5">
-    <p class="text-[10px] font-bold uppercase tracking-widest text-sky-500/50">Log du Binder</p>
+    <p class="text-[10px] font-bold uppercase tracking-widest text-sky-500/50">{ui.evidence.log}</p>
     <ol class="mt-3 space-y-2">
       {#each [...session.log].reverse().slice(0, 8) as entry, index (index)}
         <li class="flex items-center gap-3 text-xs text-sky-100/50">
           <span class="w-20 shrink-0 font-mono text-[9px] uppercase tracking-wider text-sky-400/70"
-            >{entry.kind === 'DISCOVERY'
-              ? 'indice'
-              : entry.kind === 'HYPOTHESIS'
-                ? 'piste'
-                : entry.kind === 'HATSU'
-                  ? 'hatsu'
-                  : 'verdict'}</span
+            >{ui.evidence.logKinds[entry.kind]}</span
           ><span>{entry.label}</span>
         </li>
       {/each}

@@ -2,6 +2,7 @@ import { initialRelationship, type FactionRelationship } from '../diplomacy'
 import { strategyScenarioById } from '../scenario/registry'
 import type { UnitCondition } from '../conflict'
 import type { StrategyCampaignOutcome, StrategyCampaignV3, StrategyReputation } from './types'
+import type { Locale } from '$lib/i18n/config'
 
 export const DEFAULT_CAMPAIGN_SCENARIOS = [
   'succession-guards-359',
@@ -9,7 +10,7 @@ export const DEFAULT_CAMPAIGN_SCENARIOS = [
   'succession-lockdown-400',
 ] as const
 
-export function createStrategyCampaign(seed: string): StrategyCampaignV3 {
+export function createStrategyCampaign(seed: string, locale: Locale = 'en'): StrategyCampaignV3 {
   if (!seed) throw new Error('A campaign seed is required')
   return {
     version: 3,
@@ -21,7 +22,11 @@ export function createStrategyCampaign(seed: string): StrategyCampaignV3 {
     relationships: {},
     unitConditions: {},
     reputation: 'PRAGMATIC',
-    chronicle: ['La campagne du Black Whale commence.'],
+    chronicle: [
+      locale === 'fr'
+        ? 'La campagne du Black Whale commence.'
+        : 'The Black Whale campaign begins.',
+    ],
     completed: false,
   }
 }
@@ -68,14 +73,19 @@ function reputationFor(outcomes: readonly StrategyCampaignOutcome[]): StrategyRe
   return trust >= 40 ? 'RELIABLE' : 'PRAGMATIC'
 }
 
-function chronicleEntry(outcome: StrategyCampaignOutcome): string {
-  const result = outcome.won ? 'remporte' : 'perd'
-  return `${outcome.selectedFactionId} ${result} ${outcome.scenarioId} en ${outcome.turnsPlayed} tours avec ${outcome.victoryPoints} points d’influence.`
+function chronicleEntry(outcome: StrategyCampaignOutcome, locale: Locale): string {
+  if (locale === 'fr') {
+    const result = outcome.won ? 'remporte' : 'perd'
+    return `${outcome.selectedFactionId} ${result} ${outcome.scenarioId} en ${outcome.turnsPlayed} tours avec ${outcome.victoryPoints} points d’influence.`
+  }
+  const result = outcome.won ? 'wins' : 'loses'
+  return `${outcome.selectedFactionId} ${result} ${outcome.scenarioId} in ${outcome.turnsPlayed} turns with ${outcome.victoryPoints} influence points.`
 }
 
 export function completeCampaignScenario(
   campaign: StrategyCampaignV3,
   outcome: StrategyCampaignOutcome,
+  locale: Locale = 'en',
 ): StrategyCampaignV3 {
   if (campaign.completed) throw new Error('The campaign is already complete')
   const expected = currentCampaignScenario(campaign)
@@ -90,7 +100,7 @@ export function completeCampaignScenario(
     relationships: mergeRelationships(campaign.relationships, outcome.relationships),
     unitConditions: mergeConditions(campaign.unitConditions, outcome.unitConditions),
     reputation: reputationFor(outcomes),
-    chronicle: [...campaign.chronicle, chronicleEntry(outcome)],
+    chronicle: [...campaign.chronicle, chronicleEntry(outcome, locale)],
     completed: nextIndex >= campaign.scenarioIds.length,
   }
 }

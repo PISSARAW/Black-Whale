@@ -43,12 +43,14 @@ export function diplomacyCost(orders: readonly DiplomacyOrder[]): number {
 export function resolveDiplomacy(
   current: FactionRelationship,
   action: DiplomacyAction,
+  locale: Locale = 'en',
 ): DiplomacyResolution {
+  const copy = messagesFor(locale).strategy.reports.diplomacy
   if (action === 'SHARE_INTEL') {
     return {
       relationship: { ...current, trust: Math.min(100, current.trust + 25) },
       accepted: true,
-      report: 'Shared intel improves trust.',
+      report: copy.shared,
     }
   }
   if (action === 'THREATEN') {
@@ -59,16 +61,14 @@ export function resolveDiplomacy(
         fear: Math.min(100, current.fear + 35),
       },
       accepted: true,
-      report: 'Pressure is understood, but trust decreases.',
+      report: copy.pressure,
     }
   }
   if (action === 'BETRAY') {
     return {
       relationship: { trust: -100, fear: current.fear, pact: false, betrayed: true },
       accepted: current.pact,
-      report: current.pact
-        ? 'The pact is broken. This betrayal will be remembered.'
-        : 'No pact to break.',
+      report: current.pact ? copy.betrayed : copy.noPact,
     }
   }
   const accepted = !current.betrayed && (current.trust >= 20 || current.fear >= 60)
@@ -77,7 +77,7 @@ export function resolveDiplomacy(
       ? { ...current, pact: true, trust: Math.min(100, current.trust + 10) }
       : { ...current, trust: Math.max(-100, current.trust - 5) },
     accepted,
-    report: accepted ? 'The non-aggression pact is accepted.' : 'The pact proposal is refused.',
+    report: accepted ? copy.pactAccepted : copy.pactRefused,
   }
 }
 
@@ -87,7 +87,9 @@ export function resolveDiplomacyPlan(input: {
   activeFactionIds: readonly string[]
   playerFactionId: string
   factionNames: Record<string, string>
+  locale?: Locale
 }): { relationships: Record<string, FactionRelationship>; reports: string[]; error?: string } {
+  const copy = messagesFor(input.locale ?? 'en').strategy.reports.diplomacy
   const relationships = structuredClone(input.relationships)
   const reports: string[] = []
   const addressed = new Set<string>()
@@ -96,20 +98,23 @@ export function resolveDiplomacyPlan(input: {
       !input.activeFactionIds.includes(order.factionId) ||
       order.factionId === input.playerFactionId
     )
-      return { relationships, reports, error: 'A diplomatic action targets a missing faction.' }
+      return { relationships, reports, error: copy.missingFaction }
     if (addressed.has(order.factionId))
       return {
         relationships,
         reports,
-        error: 'Only one diplomatic action is allowed per faction.',
+        error: copy.onePerFaction,
       }
     addressed.add(order.factionId)
     const resolution = resolveDiplomacy(
       relationships[order.factionId] ?? initialRelationship(),
       order.action,
+      input.locale,
     )
     relationships[order.factionId] = resolution.relationship
     reports.push(`${input.factionNames[order.factionId] ?? order.factionId} · ${resolution.report}`)
   }
   return { relationships, reports }
 }
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'

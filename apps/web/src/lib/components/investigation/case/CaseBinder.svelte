@@ -23,7 +23,7 @@
     class="absolute left-1/2 top-1/2 z-50 flex h-[90vh] w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border-2 border-sky-300/30 bg-[#0a0f1c]/95 shadow-[0_0_50px_rgba(56,189,248,0.2)]"
     role="dialog"
     aria-modal="true"
-    aria-label="Binder"
+    aria-label={ui.binder}
   >
     <div
       class="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"
@@ -61,7 +61,7 @@
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full border border-sky-400/30 bg-sky-900/30 text-sky-300 transition-all hover:bg-sky-400/20 hover:text-white hover:shadow-[0_0_15px_rgba(56,189,248,0.5)]"
         onclick={() => (session.notebookOpen = false)}
-        aria-label="Fermer"
+        aria-label={ui.close}
         ><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           ><path d="M18 6L6 18M6 6l12 12" /></svg
         ></button
@@ -70,7 +70,7 @@
 
     <nav
       class="relative grid grid-cols-2 border-b border-sky-900/50 bg-[#020617]/80 sm:grid-cols-4"
-      aria-label="Sections du carnet"
+      aria-label={ui.binderSections}
     >
       {#each ui.tabs as tab (tab[0])}
         <button
@@ -92,11 +92,11 @@
       {#if session.activeTab === 'evidence'}
         <CaseEvidenceTab {session} {ui} />
       {:else if session.activeTab === 'people'}
-        <CasePeopleTab {session} />
+        <CasePeopleTab {session} {ui} />
       {:else if session.activeTab === 'timeline'}
-        <CaseTimelineTab {session} />
+        <CaseTimelineTab {session} {ui} />
       {:else}
-        <CaseDeductionTab {session} />
+        <CaseDeductionTab {session} {ui} />
       {/if}
     </div>
 

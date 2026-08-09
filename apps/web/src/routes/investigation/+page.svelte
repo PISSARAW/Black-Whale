@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { locale } from '$lib/i18n'
+  import { link, locale } from '$lib/i18n'
   import { listCases } from '$lib/investigation/catalog'
   import {
     INVESTIGATION_PORTFOLIO_KEY,
@@ -177,7 +177,7 @@
 
             <a
               class="group/btn relative mt-6 inline-flex min-h-12 w-full items-center justify-center overflow-hidden rounded-lg bg-sky-900/40 px-5 py-3 font-bold text-sky-100 transition-all hover:bg-sky-800/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-400"
-              href={`/investigation/${investigationCase.slug}`}
+              href={$link(`/investigation/${investigationCase.slug}`)}
             >
               <div
                 class="absolute inset-0 bg-gradient-to-r from-sky-400/0 via-sky-400/10 to-sky-400/0 opacity-0 transition-opacity duration-300 group-hover/btn:opacity-100"

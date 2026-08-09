@@ -55,7 +55,9 @@ export function resolveLocationConflicts(input: {
   locationByEntity: Record<string, string | undefined>
   guardedLocations: string[]
   random: () => number
+  locale?: Locale
 }): { conditions: Record<string, UnitCondition>; reports: string[] } {
+  const copy = messagesFor(input.locale ?? 'en').strategy.reports
   let conditions = { ...input.conditions }
   const reports: string[] = []
   for (const opponent of input.opponents) {
@@ -78,10 +80,12 @@ export function resolveLocationConflicts(input: {
         roll: input.random(),
       })
       conditions = resolution.conditions
-      if (resolution.playerCasualtyId) reports.push(`Une unité alliée est touchée en ${location}.`)
+      if (resolution.playerCasualtyId) reports.push(copy.alliedHit(location))
       if (resolution.hostileCasualtyId)
-        reports.push(`Une unité adverse est neutralisée en ${location}.`)
+        reports.push(copy.hostileHit(location))
     }
   }
   return { conditions, reports }
 }
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'

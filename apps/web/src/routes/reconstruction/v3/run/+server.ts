@@ -12,16 +12,21 @@ import { prisma } from '$lib/server/db'
 import { rateLimit } from '$lib/server/rateLimit'
 import { reconstructionExecutorPorts } from '$lib/server/reconstruction-v3'
 import { readSpoilerLimit } from '$lib/server/spoiler'
+import { messagesFor } from '$lib/i18n'
+import { isLocale, type Locale } from '$lib/i18n/config'
 import type { RequestHandler } from './$types'
 
 const RUN_LIMIT = 12
 const RATE_WINDOW_MS = 60_000
 
 export const POST: RequestHandler = async ({ request, cookies, getClientAddress }) => {
+  const headerLocale = request.headers.get('x-locale')
+  let locale: Locale = isLocale(headerLocale) ? headerLocale : 'en'
+  let copy = messagesFor(locale).reconstruction.v3
   const throttle = rateLimit(`reconstruction:v3:${getClientAddress()}`, RUN_LIMIT, RATE_WINDOW_MS)
   if (!throttle.allowed) {
     return json(
-      { error: `Trop de simulations. Réessayez dans ${throttle.retryAfterSeconds}s.` },
+      { error: copy.errors.rateLimited(throttle.retryAfterSeconds) },
       { status: 429, headers: { 'Retry-After': String(throttle.retryAfterSeconds) } },
     )
   }
@@ -29,10 +34,13 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
   try {
     const body: unknown = await request.json()
     const input = body && typeof body === 'object' ? (body as Record<string, unknown>) : {}
+    const requestedLocale = typeof input.locale === 'string' ? input.locale : null
+    locale = isLocale(requestedLocale) ? requestedLocale : 'en'
+    copy = messagesFor(locale).reconstruction.v3
     const scenario = defineReconstructionScenario(parseReconstructionScenarioDraft(input.scenario))
     const spoilerLimit = readSpoilerLimit(cookies)
     if (!(await visibleFork(scenario.forkEventId, spoilerLimit))) {
-      return json({ error: 'Point de divergence inconnu ou masqué.' }, { status: 404 })
+      return json({ error: copy.errors.unknownFork }, { status: 404 })
     }
 
     const result = await executeReconstructionScenario(
@@ -43,7 +51,7 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
     const canonical = result.initialState as WorldState
     const branch = result.finalState as WorldState
     const differences = compareWorldBranches(canonical, branch)
-    const report = buildReconstructionReport(result.replay, differences)
+    const report = buildReconstructionReport(result.replay, differences, locale)
 
     return json({
       branchId: result.branchId,
@@ -51,7 +59,7 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
       report,
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Scénario invalide'
+    const message = error instanceof Error ? error.message : copy.errors.invalidScenario
     return json({ error: message }, { status: 400 })
   }
 }

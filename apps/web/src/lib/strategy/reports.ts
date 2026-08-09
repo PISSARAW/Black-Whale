@@ -1,4 +1,6 @@
 import type { ScenarioEvent } from './scenario'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 
 export interface TurnReportInput {
   completedTurn: number
@@ -18,47 +20,33 @@ export interface TurnReportInput {
   conflictReports: readonly string[]
   aiHatsuActivations: number
   playerMovesBlocked: number
+  locale?: Locale
 }
 
 export function buildTurnReports(input: TurnReportInput): string[] {
+  const copy = messagesFor(input.locale ?? 'en').strategy.reports.turn
   return [
     ...(input.scenarioEvent
-      ? [`Event · ${input.scenarioEvent.title} — ${input.scenarioEvent.description}`]
+      ? [copy.event(input.scenarioEvent.title, input.scenarioEvent.description)]
       : []),
     ...input.diplomacyReports,
-    `Turn ${input.completedTurn} · ${input.playerOrderCount} order${input.playerOrderCount !== 1 ? 's' : ''} resolved, ${input.discoveries} intel update${input.discoveries !== 1 ? 's' : ''}.`,
+    copy.resolved(input.completedTurn, input.playerOrderCount, input.discoveries),
     ...(input.interceptions
-      ? [
-          `Successful interception: ${input.interceptions} hostile movement${input.interceptions !== 1 ? 's' : ''} blocked.`,
-        ]
+      ? [copy.interceptions(input.interceptions)]
       : []),
-    ...input.activatedHatsu.map((activation) => `Hatsu activated · ${activation}.`),
+    ...input.activatedHatsu.map(copy.hatsu),
     ...input.conflictReports,
-    ...(input.aiHatsuActivations ? ['Hostile Nen activity detected.'] : []),
+    ...(input.aiHatsuActivations ? [copy.hostileNen] : []),
     ...(input.playerMovesBlocked
-      ? [
-          `Hostile control · ${input.playerMovesBlocked} allied movement${input.playerMovesBlocked !== 1 ? 's' : ''} blocked.`,
-        ]
+      ? [copy.blockedMoves(input.playerMovesBlocked)]
       : []),
     ...(input.hostileContacts
-      ? [
-          `Hostile contact in ${input.hostileContacts} zone${input.hostileContacts !== 1 ? 's' : ''}. Enemy position confirmed.`,
-        ]
+      ? [copy.contacts(input.hostileContacts)]
       : []),
-    ...(input.objectiveComplete
-      ? [`Objective achieved · ${input.victoryPoints}/3 victory points.`]
-      : []),
-    ...(input.gameWon ? ['Strategic victory achieved.'] : []),
-    ...(input.gameLost ? ['Strategic defeat · time has run out.'] : []),
-    ...(input.scoutedLocations
-      ? [
-          `Investigation complete in ${input.scoutedLocations} zone${input.scoutedLocations !== 1 ? 's' : ''}.`,
-        ]
-      : []),
-    ...(input.guardedLocations
-      ? [
-          `Protection maintained in ${input.guardedLocations} zone${input.guardedLocations !== 1 ? 's' : ''}.`,
-        ]
-      : []),
+    ...(input.objectiveComplete ? [copy.objective(input.victoryPoints)] : []),
+    ...(input.gameWon ? [copy.victory] : []),
+    ...(input.gameLost ? [copy.defeat] : []),
+    ...(input.scoutedLocations ? [copy.scouted(input.scoutedLocations)] : []),
+    ...(input.guardedLocations ? [copy.guarded(input.guardedLocations)] : []),
   ]
 }

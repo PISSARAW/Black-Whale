@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
+  import type { caseUi } from '$lib/investigation/caseLabels'
 
-  let { session }: { session: CaseSession } = $props()
+  let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 
   const investigation = $derived(session.investigation)
 </script>
@@ -26,18 +27,18 @@
           : 'text-white/30'}"
       >
         {session.discoveredIds.some((id) => subject.evidenceIds.includes(id))
-          ? 'Consigné · revoir'
-          : 'À examiner'}
+          ? ui.confrontation.reviewed
+          : ui.confrontation.examine}
       </p>
     </button>
   {/each}
 </div>
 <section class="mt-8 border-t border-white/10 pt-6">
   <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
-    Confronter deux déclarations
+    {ui.confrontation.title}
   </p>
   <p class="mt-2 text-sm text-white/45">
-    Sélectionnez deux témoins. Une divergence précise peut devenir une déduction.
+    {ui.confrontation.intro}
   </p>
   <div class="mt-4 flex flex-wrap gap-2">
     {#each investigation.subjects.filter((subject) => !subject.isDead && subject.id !== 'kurapika') as subject (subject.id)}
@@ -54,7 +55,7 @@
   <button
     class="mt-4 border border-[#d6b35a]/60 px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#e8cc84] enabled:hover:bg-[#d6b35a]/10 disabled:opacity-30"
     disabled={session.confrontationWitnessIds.length !== 2}
-    onclick={session.performConfrontation}>Confronter les versions</button
+    onclick={session.performConfrontation}>{ui.confrontation.action}</button
   >
   {#if session.confrontationResult}
     <div

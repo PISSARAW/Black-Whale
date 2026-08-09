@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
-  import { t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
   import ReconstructionV3Scene from '$lib/components/reconstruction/ReconstructionV3Scene.svelte'
   import type {
     ReconstructionDecision,
@@ -12,9 +12,10 @@
   import type { ReconstructionReport } from '$lib/reconstruction/v3/report'
   import type { ReconstructionReplay } from '$lib/reconstruction/v3/replay'
   import { decodeSharedScenario, encodeSharedScenario } from '$lib/reconstruction/v3/share'
+  import { eventTitle } from '$lib/utils/displayNames'
 
   let { data }: { data: PageData } = $props()
-  let title = $state('Nouvelle branche contrefactuelle')
+  let title = $state($t.reconstruction.v3.defaultTitle)
   let forkEventId = $state(data.events.at(-1)?.id ?? '')
   let mode = $state<'strict-canon' | 'rule-compatible'>('rule-compatible')
   let seed = $state(3)
@@ -56,6 +57,7 @@
       ability: abilityId,
       actor: actorId,
       ...(targetId ? { target: targetId } : {}),
+      locale: $locale,
     })
     fetch(`/reconstruction/v3/actions?${query}`, { signal: controller.signal })
       .then(async (response) => {
@@ -68,7 +70,7 @@
       .catch((cause) => {
         if (cause instanceof DOMException && cause.name === 'AbortError') return
         hatsuActions = []
-        error = cause instanceof Error ? cause.message : 'Actions du Hatsu indisponibles.'
+        error = cause instanceof Error ? cause.message : $t.reconstruction.v3.errors.actionsUnavailable
       })
       .finally(() => (actionsLoading = false))
     return () => controller.abort()
@@ -85,7 +87,7 @@
       seed = scenario.seed
       decisions = [...scenario.decisions] as ReconstructionDecision[]
     } catch {
-      error = 'Le scénario partagé est invalide ou a été altéré.'
+      error = $t.reconstruction.v3.errors.invalidShared
     }
   })
 
@@ -116,7 +118,7 @@
     let decision: ReconstructionDecision
     if (kind === 'MOVE_ENTITY') {
       if (!actor?.bodyId || !targetId)
-        return void (error = 'Choisissez un personnage et une destination.')
+        return void (error = $t.reconstruction.v3.errors.characterAndDestination)
       decision = {
         id,
         kind,
@@ -127,7 +129,7 @@
       }
     } else if (kind === 'SHARE_KNOWLEDGE') {
       if (!actorId || !targetId || !factId.trim())
-        return void (error = 'L’émetteur, le destinataire et le fait sont requis.')
+        return void (error = $t.reconstruction.v3.errors.knowledgeFields)
       decision = {
         id,
         kind,
@@ -138,7 +140,7 @@
       }
     } else {
       if (!actorId || !targetId || !abilityId || !actionId.trim())
-        return void (error = 'Le Hatsu, son action, l’acteur et la cible sont requis.')
+        return void (error = $t.reconstruction.v3.errors.hatsuFields)
       decision = {
         id,
         kind,
@@ -159,16 +161,16 @@
     try {
       const response = await fetch('/reconstruction/v3/run', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ scenario: draft() }),
+        headers: { 'content-type': 'application/json', 'x-locale': $locale },
+        body: JSON.stringify({ scenario: draft(), locale: $locale }),
       })
       const body = await response.json()
-      if (!response.ok) throw new Error(body.error || 'La simulation a échoué.')
+      if (!response.ok) throw new Error(body.error || $t.reconstruction.v3.errors.simulationFailed)
       branchId = body.branchId
       report = body.report
       replay = body.replay
     } catch (cause) {
-      error = cause instanceof Error ? cause.message : 'La simulation a échoué.'
+      error = cause instanceof Error ? cause.message : $t.reconstruction.v3.errors.simulationFailed
     } finally {
       running = false
     }
@@ -184,42 +186,41 @@
 </script>
 
 <Seo
-  title="Reconstruction V3 — Black Whale"
-  description="Construisez, rejouez et expliquez une branche causale du Black Whale."
+  title={$t.reconstruction.v3.seoTitle}
+  description={$t.reconstruction.v3.seoDescription}
 />
 
 <main class="v3-shell">
   <header>
-    <a href="/reconstruction">← Reconstruction canonique</a>
-    <p class="eyebrow">Laboratoire causal · V3</p>
-    <h1>Et si une décision avait changé ?</h1>
-    <p>
-      Composez une branche compatible avec les règles, exécutez ses Hatsu réels et mesurez
-      précisément où elle quitte le canon.
-    </p>
+    <a href={$link('/reconstruction')}>← {$t.reconstruction.v3.canonicalBack}</a>
+    <p class="eyebrow">{$t.reconstruction.v3.eyebrow}</p>
+    <h1>{$t.reconstruction.v3.title}</h1>
+    <p>{$t.reconstruction.v3.intro}</p>
   </header>
 
   <section class="composer panel">
     <div class="section-title">
       <span>01</span>
       <div>
-        <h2>Point de divergence</h2>
-        <p>Le filtre spoiler s’applique aussi à la simulation.</p>
+        <h2>{$t.reconstruction.v3.divergencePoint}</h2>
+        <p>{$t.reconstruction.v3.spoilerNote}</p>
       </div>
     </div>
     <div class="grid three">
-      <label>Titre<input bind:value={title} maxlength="160" /></label>
+      <label>{$t.reconstruction.v3.titleLabel}<input bind:value={title} maxlength="160" /></label>
       <label
-        >Événement canonique<select bind:value={forkEventId}
-          >{#each data.events as event (event.id)}<option value={event.id}
-              >Ch. {event.chapter} · {event.title}</option
+        >{$t.reconstruction.v3.canonicalEvent}<select bind:value={forkEventId}
+          >{#each data.events as event, index (event.id)}<option value={event.id}
+              >{$t.reconstruction.v3.chapter} {event.chapter} · {$locale === 'fr'
+                ? $t.reconstruction.v3.eventNumber(index + 1)
+                : eventTitle(event.title, $locale)}</option
             >{/each}</select
         ></label
       >
       <label
-        >Politique<select bind:value={mode}
-          ><option value="rule-compatible">Compatible avec les règles</option><option
-            value="strict-canon">Canon strict</option
+        >{$t.reconstruction.v3.policy}<select bind:value={mode}
+          ><option value="rule-compatible">{$t.reconstruction.v3.policies.compatible}</option><option
+            value="strict-canon">{$t.reconstruction.v3.policies.strict}</option
           ></select
         ></label
       >
@@ -230,13 +231,13 @@
     <div class="section-title">
       <span>02</span>
       <div>
-        <h2>Décisions</h2>
-        <p>Chaque décision peut dépendre d’un fait causal vérifiable.</p>
+        <h2>{$t.reconstruction.v3.decisions}</h2>
+        <p>{$t.reconstruction.v3.decisionsIntro}</p>
       </div>
     </div>
     <div class="grid three">
       <label
-        >Type<select bind:value={kind}
+        >{$t.reconstruction.v3.type}<select bind:value={kind}
           ><option value="MOVE_ENTITY">{$t.reconstruction.v3.actionTypes.MOVE_ENTITY}</option
           ><option value="SHARE_KNOWLEDGE"
             >{$t.reconstruction.v3.actionTypes.SHARE_KNOWLEDGE}</option
@@ -245,7 +246,7 @@
         ></label
       >
       <label
-        >Acteur<select bind:value={actorId}
+        >{$t.reconstruction.v3.actor}<select bind:value={actorId}
           >{#each data.characters as character (character.id)}<option value={character.id}
               >{character.canonicalName}</option
             >{/each}</select
@@ -253,7 +254,7 @@
       >
       {#if kind === 'MOVE_ENTITY'}
         <label
-          >Destination<select bind:value={targetId}
+          >{$t.reconstruction.v3.destination}<select bind:value={targetId}
             >{#each data.locations as location (location.id)}<option value={location.id}
                 >{location.name}</option
               >{/each}</select
@@ -261,7 +262,7 @@
         >
       {:else}
         <label
-          >Cible<select bind:value={targetId}
+          >{$t.reconstruction.v3.target}<select bind:value={targetId}
             >{#each data.characters as character (character.id)}<option value={character.id}
                 >{character.canonicalName}</option
               >{/each}</select
@@ -269,11 +270,11 @@
         >
       {/if}
       {#if kind === 'SHARE_KNOWLEDGE'}
-        <label>Identifiant du fait<input bind:value={factId} /></label>
+        <label>{$t.reconstruction.v3.factId}<input bind:value={factId} /></label>
         <label
-          >Fiabilité<select bind:value={reliability}
-            ><option value="trusted">Fiable</option><option value="unverified">Non vérifiée</option
-            ><option value="deceptive">Trompeuse</option><option value="unknown">Inconnue</option
+          >{$t.reconstruction.v3.reliability}<select bind:value={reliability}
+            ><option value="trusted">{$t.reconstruction.v3.reliabilities.trusted}</option><option value="unverified">{$t.reconstruction.v3.reliabilities.unverified}</option
+            ><option value="deceptive">{$t.reconstruction.v3.reliabilities.deceptive}</option><option value="unknown">{$t.reconstruction.v3.reliabilities.unknown}</option
             ></select
           ></label
         >
@@ -286,7 +287,7 @@
           ></label
         >
         <label
-          >Action moteur<select bind:value={actionId} disabled={actionsLoading}
+          >{$t.reconstruction.v3.hatsuAction}<select bind:value={actionId} disabled={actionsLoading}
             >{#each hatsuActions as action (action.id)}<option
                 value={action.id}
                 disabled={action.visibility === 'locked' || action.visibility === 'hidden'}
@@ -300,28 +301,28 @@
       <ReconstructionV3Scene {abilityId} onTarget={(id) => (targetId = id)} />
     {/if}
     <details>
-      <summary>Ajouter une précondition causale</summary>
+      <summary>{$t.reconstruction.v3.causalPrecondition}</summary>
       <div class="grid three condition">
         <label
-          >Condition<select bind:value={conditionKind}
-            ><option value="entity-at">Présence</option><option value="knows-fact"
-              >Connaissance</option
-            ><option value="ability-available">Hatsu disponible</option><option
-              value="event-occurred">Événement survenu</option
+          >{$t.reconstruction.v3.condition}<select bind:value={conditionKind}
+            ><option value="entity-at">{$t.reconstruction.v3.conditions.entityAt}</option><option value="knows-fact"
+              >{$t.reconstruction.v3.conditions.knowsFact}</option
+            ><option value="ability-available">{$t.reconstruction.v3.conditions.abilityAvailable}</option><option
+              value="event-occurred">{$t.reconstruction.v3.conditions.eventOccurred}</option
             ></select
           ></label
         >
-        <label>Sujet<input bind:value={conditionSubject} placeholder="acteur par défaut" /></label>
-        <label>Valeur attendue<input bind:value={conditionExpected} /></label>
+        <label>{$t.reconstruction.v3.subject}<input bind:value={conditionSubject} placeholder={$t.reconstruction.v3.defaultActor} /></label>
+        <label>{$t.reconstruction.v3.expectedValue}<input bind:value={conditionExpected} /></label>
       </div>
     </details>
-    <button class="secondary" type="button" onclick={addDecision}>Ajouter la décision</button>
+    <button class="secondary" type="button" onclick={addDecision}>{$t.reconstruction.v3.addDecision}</button>
     <ol class="decisions">
       {#each decisions as decision, index (decision.id)}<li>
           <span>{String(index + 1).padStart(2, '0')}</span><strong>{decision.kind}</strong><code
             >{decision.actorId}</code
           ><button
-            aria-label="Supprimer"
+            aria-label={$t.reconstruction.v3.removeDecision}
             onclick={() => (decisions = decisions.filter((_, i) => i !== index))}>×</button
           >
         </li>{/each}
@@ -331,9 +332,9 @@
   {#if error}<p class="error" role="alert">{error}</p>{/if}
   <div class="actions">
     <button onclick={run} disabled={running || !decisions.length}
-      >{running ? 'Simulation…' : 'Exécuter la branche'}</button
+      >{running ? $t.reconstruction.v3.running : $t.reconstruction.v3.run}</button
     ><button class="secondary" onclick={share} disabled={!decisions.length}
-      >{shared ? 'Lien copié' : 'Partager le scénario'}</button
+      >{shared ? $t.reconstruction.v3.copied : $t.reconstruction.v3.share}</button
     >
   </div>
 
@@ -342,18 +343,18 @@
       <div class="section-title">
         <span>03</span>
         <div>
-          <h2>Rapport de divergence</h2>
+          <h2>{$t.reconstruction.v3.report}</h2>
           <p>{report.summary}</p>
         </div>
       </div>
       <div class="metrics">
-        <article><small>Fidélité</small><strong>{report.fidelity}</strong></article>
-        <article><small>Branche</small><strong>{branchId}</strong></article>
+        <article><small>{$t.reconstruction.v3.fidelity}</small><strong>{report.fidelity}</strong></article>
+        <article><small>{$t.reconstruction.v3.branch}</small><strong>{branchId}</strong></article>
         <article>
-          <small>Premier écart</small><strong>{report.divergenceDecisionId ?? 'aucun'}</strong>
+          <small>{$t.reconstruction.v3.firstDivergence}</small><strong>{report.divergenceDecisionId ?? $t.reconstruction.v3.none}</strong>
         </article>
       </div>
-      <h3>Différences canon / branche</h3>
+      <h3>{$t.reconstruction.v3.differences}</h3>
       {#if report.differences.length}<div class="diffs">
           {#each report.differences as difference (`${difference.subjectId}:${difference.axis}`)}<article
             >
@@ -361,15 +362,15 @@
                 >{JSON.stringify(difference.canonical)} → {JSON.stringify(difference.branch)}</code
               >
             </article>{/each}
-        </div>{:else}<p>Aucune différence sur les axes comparés.</p>{/if}
-      {#if report.decisiveHatsu.length}<h3>Hatsu décisifs</h3>
+        </div>{:else}<p>{$t.reconstruction.v3.noDifferences}</p>{/if}
+      {#if report.decisiveHatsu.length}<h3>{$t.reconstruction.v3.decisiveHatsu}</h3>
         <ul>
           {#each report.decisiveHatsu as hatsu (hatsu.decisionId)}<li>
               {hatsu.abilityId} · {hatsu.decisionId}
             </li>{/each}
         </ul>{/if}
       {#if report.blockedDecisions.length || report.invalidatedDecisions.length}<h3>
-          Décisions non appliquées
+          {$t.reconstruction.v3.unappliedDecisions}
         </h3>
         <ul>
           {#each [...report.blockedDecisions, ...report.invalidatedDecisions] as item (item.decisionId)}<li
@@ -378,7 +379,7 @@
             </li>{/each}
         </ul>{/if}
       <details>
-        <summary>Hypothèses et replay déterministe</summary>
+        <summary>{$t.reconstruction.v3.assumptions}</summary>
         <ul>
           {#each report.assumptions as assumption (assumption)}<li>{assumption}</li>{/each}
         </ul>

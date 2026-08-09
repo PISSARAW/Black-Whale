@@ -2,6 +2,8 @@ import { json } from '@sveltejs/kit'
 import { prisma } from '$lib/server/db'
 import { nenRuntime, timeline } from '$lib/server/nen'
 import { readSpoilerLimit } from '$lib/server/spoiler'
+import { messagesFor } from '$lib/i18n'
+import { isLocale } from '$lib/i18n/config'
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
@@ -9,8 +11,10 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
   const abilityId = boundedQuery(url, 'ability')
   const actorId = boundedQuery(url, 'actor')
   const targetId = optionalQuery(url, 'target')
+  const requestedLocale = url.searchParams.get('locale')
+  const copy = messagesFor(isLocale(requestedLocale) ? requestedLocale : 'en').reconstruction.v3
   if (!eventId || !abilityId || !actorId) {
-    return json({ error: 'Événement, Hatsu et acteur requis.' }, { status: 400 })
+    return json({ error: copy.errors.requiredFields }, { status: 400 })
   }
 
   const spoilerLimit = readSpoilerLimit(cookies)
@@ -22,7 +26,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     },
     select: { id: true },
   })
-  if (!event) return json({ error: 'Point de divergence inconnu ou masqué.' }, { status: 404 })
+  if (!event) return json({ error: copy.errors.unknownFork }, { status: 404 })
 
   try {
     const state = await timeline.getKernelState({ eventId })
@@ -38,7 +42,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     )
     return json({ actions })
   } catch {
-    return json({ error: 'Actions du Hatsu indisponibles.' }, { status: 400 })
+    return json({ error: copy.errors.actionsUnavailable }, { status: 400 })
   }
 }
 

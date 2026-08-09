@@ -130,8 +130,7 @@
   onMount(() => {
     openHatsuGate({
       admits: (kind) => definition.hatsuRules.some((rule) => rule.kinds.includes(kind)),
-      reason:
-        "Seules les techniques capables d'observer, d'analyser ou de reproduire la scène ont une prise sur ce dossier.",
+      reason: ui.hatsuGateReason,
     })
     session.restore()
     return closeHatsuGate
@@ -327,6 +326,6 @@
 
   <CaseSubjectPanel {session} {ui} />
   <CaseBinder {session} {ui} />
-  <CaseReportPanel {session} />
+  <CaseReportPanel {session} {ui} />
   <CaseBriefing {session} {ui} />
 </div>

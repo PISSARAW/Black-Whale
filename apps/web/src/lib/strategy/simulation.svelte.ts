@@ -1,7 +1,7 @@
 import { SimulationEngine, resolveControlledEntity } from '@black-whale/simulation-engine'
 import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/canon-engine'
-import { get } from 'svelte/store'
-import { locale } from '$lib/i18n'
+import { messagesFor } from '$lib/i18n'
+import type { Locale } from '$lib/i18n/config'
 import {
   diplomacyCost,
   initialRelationship,
@@ -20,13 +20,13 @@ import { planOpposition } from './opposition'
 import {
   ACTIVE_SCENARIO,
   buildScenarioRoster,
-  doctrineBriefing,
   evaluateScenarioObjective,
   scenarioEventForTurn,
   scenarioDoctrineForFaction,
   seededScenarioRandom,
   selectScenarioLocationIds,
 } from './scenario'
+import { doctrineLabel } from './localization'
 import type { StrategyScenarioV2 } from './scenario/types'
 import {
   COMMAND_POINTS_PER_TURN,
@@ -58,6 +58,7 @@ export interface StrategySetup {
   factions: StrategyFaction[]
   locations: StrategyLocation[]
   scenario?: StrategyScenarioV2
+  locale?: Locale
 }
 export function createSimulationStore() {
   let engine = new SimulationEngine()
@@ -79,6 +80,7 @@ export function createSimulationStore() {
   let unitConditions = $state<Record<string, UnitCondition>>({})
   let turnHistory = $state<Array<{ orders: StrategyMoveOrder[]; diplomacy: DiplomacyOrder[] }>>([])
   let activeScenario = ACTIVE_SCENARIO
+  let activeLocale: Locale = 'en'
   let hatsuCues = $state<StrategyHatsuCue[]>([])
   let hatsuCueSequence = 0
 
@@ -88,8 +90,10 @@ export function createSimulationStore() {
     factions: loadedFactions,
     locations: loadedLocations,
     scenario = ACTIVE_SCENARIO,
+    locale = 'en',
   }: StrategySetup) {
     activeScenario = scenario
+    activeLocale = locale
     engine = new SimulationEngine()
     const newBranch = engine.createBranch(
       {
@@ -119,11 +123,11 @@ export function createSimulationStore() {
     turnHistory = []
     hatsuCues = []
     hatsuCueSequence = 0
-    turnReports = ['Simulation initialisée.']
+    turnReports = [messagesFor(activeLocale).strategy.reports.initialized]
   }
   function selectFaction(factionId: string) {
     if (!currentState || !factions.some((faction) => faction.id === factionId)) {
-      throw new StrategyInputError('Faction inconnue.')
+      throw new StrategyInputError(messagesFor(activeLocale).strategy.errors.factionUnknown)
     }
     // Bound once: `currentState` is reactive state, so the guard above does not
     // narrow it inside the closures below.
@@ -154,14 +158,16 @@ export function createSimulationStore() {
     intel = {}
     refreshIntel([], [])
     turnReports = [
-      `Briefing reçu · ${doctrineBriefing(scenarioDoctrineForFaction(factionId, activeScenario))}`,
-      `Opposition identifiée : ${
+      messagesFor(activeLocale).strategy.reports.briefing(
+        doctrineLabel(scenarioDoctrineForFaction(factionId, activeScenario), activeLocale),
+      ),
+      messagesFor(activeLocale).strategy.reports.opposition(
         roster
           .filter((faction) => faction.id !== factionId)
           .map((faction) => faction.name)
-          .join(', ') || 'aucune'
-      }.`,
-      'Les positions adverses restent inconnues tant qu’elles ne sont pas observées.',
+          .join(', '),
+      ),
+      messagesFor(activeLocale).strategy.reports.hiddenPositions,
     ]
     turnHistory = []
   }
@@ -227,17 +233,18 @@ export function createSimulationStore() {
     playerOrders: readonly StrategyMoveOrder[],
     diplomacyOrders: readonly DiplomacyOrder[] = [],
   ): StrategyTurnResult {
-    if (!branch || !currentState) throw new StrategyInputError('La simulation n’est pas prête.')
-    if (gameWon || gameLost) throw new StrategyInputError('Le scénario est terminé.')
+    const copy = messagesFor(activeLocale).strategy
+    if (!branch || !currentState) throw new StrategyInputError(copy.errors.simulationNotReady)
+    if (gameWon || gameLost) throw new StrategyInputError(copy.errors.scenarioEnded)
     if (playerFactionId !== selectedFactionId) {
-      throw new StrategyInputError('La faction active ne correspond pas au plan.')
+      throw new StrategyInputError(copy.errors.activeFactionMismatch)
     }
 
     const playerFaction = factions.find((faction) => faction.id === playerFactionId)
-    if (!playerFaction) throw new StrategyInputError('Faction inconnue.')
+    if (!playerFaction) throw new StrategyInputError(copy.errors.factionUnknown)
     if (planCost(playerOrders) + diplomacyCost(diplomacyOrders) > COMMAND_POINTS_PER_TURN) {
       throw new StrategyInputError(
-        `Le plan dépasse les ${COMMAND_POINTS_PER_TURN} points de commandement.`,
+        copy.errors.commandPointsExceeded(COMMAND_POINTS_PER_TURN),
       )
     }
 
@@ -262,6 +269,7 @@ export function createSimulationStore() {
       activeFactionIds,
       playerFactionId,
       factionNames: Object.fromEntries(factions.map((faction) => [faction.id, faction.name])),
+      locale: activeLocale,
     })
     if (diplomacy.error) throw new StrategyInputError(diplomacy.error)
     const nextRelationships = diplomacy.relationships
@@ -277,7 +285,7 @@ export function createSimulationStore() {
       unitConditions,
       hatsuCooldowns,
       turn: currentTurn,
-      locale: get(locale),
+      locale: activeLocale,
       abilityIdsForCharacter,
     })
     playerEvents.push(...plan.events)
@@ -342,6 +350,7 @@ export function createSimulationStore() {
       ),
       guardedLocations,
       random: seededScenarioRandom(`${branch.id}:${currentTurn}:conflicts`),
+      locale: activeLocale,
     })
     const camilla = resolveControlledEntity(currentState, 'prince-camilla')
     if (
@@ -360,7 +369,7 @@ export function createSimulationStore() {
         conflict.conditions[camilla.id] = 'READY'
         conflict.conditions[killer] = 'ELIMINATED'
         conflict.reports.push(
-          'Cat’s Name se déclenche : Camilla revient à la vie et son meurtrier est consumé.',
+          copy.reports.catsName,
         )
         hatsuCues = [
           ...hatsuCues,
@@ -370,7 +379,7 @@ export function createSimulationStore() {
             sourceCharacterId: 'prince-camilla',
             sourceLocationId: locationId ?? '',
             targetLocationId: locationId ?? '',
-            report: 'Cat’s Name se déclenche.',
+            report: copy.reports.catsNameShort,
           },
         ].slice(-20)
       }
@@ -434,6 +443,7 @@ export function createSimulationStore() {
         conflictReports: conflict.reports,
         aiHatsuActivations,
         playerMovesBlocked: blockedPlayerEvents.length,
+        locale: activeLocale,
       }),
     ].slice(-100)
 

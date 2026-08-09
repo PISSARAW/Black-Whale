@@ -12,7 +12,7 @@
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { playTourReportSound } from '$lib/tour/reportSound'
   import { playHatsuActivationSignature } from '$lib/audio/hatsuSounds'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import { displayName } from '$lib/utils/displayNames'
   import type { Space, Structure, Vec2 } from '$lib/tour/types'
 
@@ -49,7 +49,7 @@
   const view = new TourHatsuView({
     active: () => $activeHatsu,
     world: () => world,
-    locale: () => 'fr',
+    locale: () => $locale,
     tuneName: (air) => air,
   })
   const technique = $derived(view.technique)
@@ -118,8 +118,8 @@
       const space = ship.spaces.get(spaceId)
       if (space) goToSpace(space)
     },
-    reboundText: () => 'Le contrecoup force le Zetsu.',
-    vowText: (spaceId) => `Le pacte interdit de quitter ${spaceId}.`,
+    reboundText: () => $t.reconstruction.v3.scene.rebound,
+    vowText: (spaceId) => $t.reconstruction.v3.scene.vow(spaceId),
   })
   session.watchActivation()
   session.watchFuture()
@@ -147,12 +147,12 @@
 <div class="scene-shell" data-hatsu-pass>
   <div class="scene-toolbar">
     <div>
-      <small>Scène interactive</small>
+      <small>{$t.reconstruction.v3.scene.title}</small>
       <strong>{selectedProfile?.name ?? abilityId}</strong>
-      <span>{report?.kind ?? 'Armez le Hatsu puis visez avec le réticule.'}</span>
+      <span>{report?.kind ?? $t.reconstruction.v3.scene.hint}</span>
     </div>
     <button type="button" onclick={arm} disabled={!selectedProfile}>
-      {selectedProfile ? 'Armer le Hatsu' : 'Animation indisponible'}
+      {selectedProfile ? $t.reconstruction.v3.scene.arm : $t.reconstruction.v3.scene.unavailable}
     </button>
   </div>
   <div class="viewport">
@@ -191,10 +191,10 @@
       nen={session.nen}
       onNenChange={session.useNen}
       onArrive={session.arrived}
-      touchLabels={{ move: 'Se déplacer', cast: 'Lancer' }}
-      soundLabels={{ silence: 'Couper le son', restore: 'Rétablir le son' }}
-      loadingLabel="Chargement de la scène…"
-      unsupportedLabel="WebGL est requis pour la scène interactive."
+      touchLabels={{ move: $t.reconstruction.v3.scene.move, cast: $t.reconstruction.v3.scene.cast }}
+      soundLabels={{ silence: $t.reconstruction.v3.scene.silence, restore: $t.reconstruction.v3.scene.restore }}
+      loadingLabel={$t.reconstruction.v3.scene.loading}
+      unsupportedLabel={$t.reconstruction.v3.scene.unsupported}
     />
   </div>
 </div>

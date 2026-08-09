@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { link } from '$lib/i18n'
   import type { HuntHatsuId, HuntHatsuProfile } from '$lib/hunt/hatsu'
   import type { HunterProfile, HunterProfileId } from '$lib/hunt/hunter/profiles'
   import type { HuntTerrain, HuntTerrainId } from '$lib/hunt/arena'
@@ -100,7 +101,7 @@
       </div>
       <a
         class="mt-2 inline-block text-xs text-amber-200/65 underline underline-offset-4"
-        href="/hunt/editor"
+        href={$link('/hunt/editor')}
       >
         {locale === 'fr' ? 'Créer et partager un contrat' : 'Create and share a contract'}
       </a>

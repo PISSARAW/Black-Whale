@@ -2,6 +2,8 @@
   import type { StrategyFaction } from '$lib/strategy/types'
   import type { StrategySave } from '$lib/strategy/persistence'
   import { scenarioDoctrineForFaction } from '$lib/strategy/scenario'
+  import { doctrineLabel } from '$lib/strategy/localization'
+  import { locale, t } from '$lib/i18n'
 
   let {
     chapterNumber,
@@ -24,16 +26,15 @@
   >
     <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></span>
     <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400">
-      Scénario Tactique · Chapitre {chapterNumber}
+      {$t.strategy.ui.picker.scenario(chapterNumber)}
     </p>
   </div>
 
   <h1 class="mt-6 font-black text-5xl text-white drop-shadow-md sm:text-6xl">
-    Choisir une Faction
+    {$t.strategy.ui.picker.title}
   </h1>
   <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-sky-200/60">
-    Huit tours pour imposer votre doctrine. Les ordres tactiques, négociations diplomatiques et
-    Hatsu partagent le même pool de points de commandement.
+    {$t.strategy.ui.picker.intro}
   </p>
 
   {#if saved}
@@ -42,7 +43,7 @@
       type="button"
       onclick={onresume}
     >
-      Reprendre l'Opération · tour {saved.turns.length + 1}
+      {$t.strategy.ui.picker.resume(saved.turns.length + 1)}
     </button>
   {/if}
 
@@ -60,18 +61,18 @@
           <div>
             <strong class="block font-black text-2xl text-white">{faction.name}</strong>
             <span class="mt-2 block text-xs text-sky-200/50"
-              >{faction.members.length} unité{faction.members.length > 1 ? 's' : ''} actives</span
+              >{$t.strategy.ui.picker.activeUnits(faction.members.length)}</span
             >
             <span
               class="mt-3 block rounded-md border border-sky-900/40 bg-sky-950/40 p-2 text-[10px] font-medium leading-relaxed text-sky-100/70"
             >
-              {scenarioDoctrineForFaction(faction.id)}
+              {doctrineLabel(scenarioDoctrineForFaction(faction.id), $locale)}
             </span>
           </div>
           <em
             class="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-sky-400 not-italic"
           >
-            Initier le commandement <svg
+            {$t.strategy.ui.picker.begin} <svg
               class="h-3 w-3 transition-transform group-hover:translate-x-1"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -88,7 +89,7 @@
   {:else}
     <div class="mt-12 rounded-xl border border-red-900/50 bg-red-950/20 p-8">
       <p class="text-sm font-medium uppercase tracking-widest text-red-400">
-        Aucune faction active détectée à ce stade du récit.
+        {$t.strategy.ui.picker.none}
       </p>
     </div>
   {/if}

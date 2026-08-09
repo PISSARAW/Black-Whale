@@ -113,13 +113,13 @@ export function resolvePlayerOrders(
         !order.abilityId ||
         !world.abilityIdsForCharacter(order.characterId).includes(order.abilityId)
       ) {
-        throw new StrategyInputError('Cette unité ne maîtrise pas le Hatsu sélectionné.')
+        throw new StrategyInputError(strategyMsg(world.locale).errors.unitLacksHatsu)
       }
       if ((world.hatsuCooldowns[order.abilityId] ?? 0) > world.turn) {
-        throw new StrategyInputError('Ce Hatsu est encore en récupération.')
+        throw new StrategyInputError(strategyMsg(world.locale).errors.hatsuCoolingDown)
       }
       const profile = hatsuById(order.abilityId)
-      if (!profile) throw new StrategyInputError('Hatsu inconnu du registre tactique.')
+      if (!profile) throw new StrategyInputError(strategyMsg(world.locale).errors.unknownHatsu)
       const confirmedHostilesAtTarget = Object.values(world.intel).filter(
         (sighting) =>
           sighting.locationId === destination.id &&

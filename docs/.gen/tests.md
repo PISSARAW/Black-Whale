@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 268
+Fichiers : 273
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -92,6 +92,7 @@ Fichiers : 268
 ## `apps/web/src/lib/assets/maps/localMaps.test.ts`
 
 - the observation deck plan > draws the room the blueprint puts at the bow, corner for corner
+- room appearance evidence > never changes a room layout or its occupants at random
 
 ## `apps/web/src/lib/assets/maps/sectionMap.test.ts`
 
@@ -538,6 +539,10 @@ Fichiers : 268
 
 - reconstruction perspective projection > keeps the canonical view intact
 
+## `apps/web/src/lib/reconstruction/sceneEntry.test.ts`
+
+- living reconstruction scene entry > opens an apartment event in its main living room
+
 ## `apps/web/src/lib/reconstruction/sourceView.test.ts`
 
 - ReconstructionSourceView > projects a manga source without inventing a missing page
@@ -781,6 +786,10 @@ Fichiers : 268
 - the conduct at a post > holds Ten and nothing else where nothing has happened
 - the conduct when something happens > raises Ren, looks with Gyo and covers with Ryu when the visitor casts here
 
+## `apps/web/src/lib/tour/cast/pain.test.ts`
+
+- physical injuries in the tour > survive Zetsu while Pain Packer aura and its committed charge disappear
+
 ## `apps/web/src/lib/tour/cast/provenance.test.ts`
 
 - the provenance of a body > answers who, since when, and in what role
@@ -849,6 +858,10 @@ Fichiers : 268
 - what the visitor is handed for asking > prefers the solid: aiming at a thing is how you say which you meant
 - the claims table covers the ship > states what every kind of solid actually on board asserts
 
+## `apps/web/src/lib/tour/floorPattern.test.ts`
+
+- audited floor patterns > draws the four treatments the audit names
+
 ## `apps/web/src/lib/tour/footing.test.ts`
 
 - what the deck is made of > gives every category of room a floor
@@ -884,7 +897,7 @@ Fichiers : 268
 ## `apps/web/src/lib/tour/hatsu.test.ts`
 
 - the technique roster > names only kinds the archive actually holds
-- the keys a technique answers to > says nothing for a technique the walk cannot honour
+- the keys a technique answers to > gives every Hatsu carried by the tour at least one unambiguous interaction
 - casting reaches the whole ship > takes a room on another deck without asking where the visitor stands
 - the hideout doors > arms one frame, then pairs the second
 - Blinky and what refuses to be swallowed > empties a room of what stands in it
@@ -902,7 +915,7 @@ Fichiers : 268
 - what waits at a threshold > expels an intruder back where they came from, and does not injure them
 - Silent Majority > takes the ten rooms nearest the visitor, and remembers whether it fed
 - what the techniques make of the visitor > buys speed and reach with the aura committed, and stops buying
-- the wrapping and the sun > packs the punishment away instead of taking it, and keeps the count
+- the wrapping and the sun > turns a physical injury into a single-use packet without healing it
 - leaving the body behind > goes on without it, and comes back to it
 - the music, the chain and the deduction > needs the prologue before it can take a shape, and gives it back
 - what the walk remembers of itself > keeps the trail whether or not anything is watching, and never counts it as a hold
@@ -914,6 +927,10 @@ Fichiers : 268
 - what the walk draws for each of them > puts a body in the room for every beast that is up
 - the barrage, aimed and swept > puts a burst into everything standing in the room
 - the limb, which becomes the tool > transforms with nothing under the reticle, and does not let you pick
+
+## `apps/web/src/lib/tour/hatsuSound.test.ts`
+
+- tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
 ## `apps/web/src/lib/tour/hour.test.ts`
 

@@ -171,6 +171,16 @@ export type TourReport =
   | { kind: 'fingers-intact-refused' }
   /** Rising Sun raised with no wrapping on: the two abilities go together. */
   | { kind: 'no-packet' }
+  /** Pain Packer tried before any physical injury was available to commit. */
+  | { kind: 'no-injury' }
+  /** A physical injury chosen by the visitor, outside Nen. */
+  | {
+      kind: 'self-injured'
+      severity: 'light' | 'medium' | 'severe'
+      damage: number
+      total: number
+      packed: boolean
+    }
   /** A blow aimed at something folded away. Everything comes out of the cloth whole. */
   | { kind: 'in-the-cloth'; solidId: string }
   /** The cloth opened with nothing folded into it. */
@@ -322,9 +332,8 @@ export type TourReport =
   | { kind: 'ear-refused'; spaceId: string }
   | { kind: 'deduced'; what: string; strength: number }
   | { kind: 'nothing-to-deduce' }
-  | { kind: 'armour-worn' }
+  | { kind: 'armour-worn'; packed: number }
   | { kind: 'armour-holding'; packed: number }
-  | { kind: 'packed-away'; spaceId: string; packed: number }
   | { kind: 'sun-risen'; metres: number; solids: number }
   // On the record.
   | { kind: 'owl-attached'; rooms: number }

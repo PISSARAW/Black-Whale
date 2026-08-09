@@ -290,13 +290,13 @@ export const fr: Messages = {
       release: 'Rendre le pointeur à la page',
       releaseKeys: 'Tab — le plein écran est conservé, ce qu’Échap ne fait pas',
       nen: 'Lancer le Hatsu actif',
-      nenKeys: 'F, ou un clic, sur la pièce ou le volume que vous regardez',
+      nenKeys: 'H relâché rapidement, ou un clic, sur la pièce ou le volume que vous regardez',
       nenSelf: 'Retourner le Hatsu actif sur soi',
       nenSelfKeys: 'H maintenu, puis 2 — où que porte le regard',
       nenSecond: 'Lancer la seconde page',
       nenSecondKeys: (name) => `H maintenu, puis 2, lance ${name}, celle que tient le marque-page`,
       nenMoon: 'Poser la lune plutôt que le soleil',
-      nenMoonKeys: 'H maintenu, puis 2, marque de la lune ; F du soleil',
+      nenMoonKeys: 'H maintenu, puis 2, marque de la lune ; H relâché rapidement marque du soleil',
       touch: 'Sur écran tactile',
       touchKeys:
         'Le manche en bas à gauche fait marcher, poussé à fond il fait courir ; glissez sur la vue pour regarder ; les boutons franchissent une porte et lancent',
@@ -677,7 +677,7 @@ export const fr: Messages = {
       },
       tunes: {
         title: 'La flûte joue',
-        hint: 'F, puis H maintenu 2 et 3 · chaque air n’est entendu que par la pièce où vous êtes',
+        hint: 'H relâché rapidement, ou H maintenu puis 2 ou 3 · chaque air n’est entendu que par la pièce où vous êtes',
         dance: 'L’air vif',
         bloom: 'L’air doux',
         scatter: 'L’air aigu',
@@ -705,6 +705,18 @@ export const fr: Messages = {
         dormant: 'DORMANT',
         triggered: 'TRIGGERED',
         locked: 'Le contrat est énoncé une fois, à l’activation, et jamais retouché',
+      },
+      pain: {
+        title: 'Blessure volontaire',
+        extrapolation:
+          "Extrapolation jouable — le canon ne confirme jamais qu'une blessure auto-infligée alimente Pain Packer.",
+        injuries: (injuries, maximum, pace) =>
+          `Blessures ${injuries}/${maximum} · déplacement ${pace} %`,
+        available: (damage) => `Douleur disponible à empaqueter : ${damage}`,
+        packed: (damage) => `Engagée dans l'emballage : ${damage}`,
+        light: 'Légère',
+        medium: 'Moyenne',
+        severe: 'Grave',
       },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
@@ -935,14 +947,14 @@ export const fr: Messages = {
         deduced: (what, strength) =>
           `Condition lue — ${what} · ${strength} nommées, et plus fort à chacune`,
         nothingToDeduce: 'Plus rien à lire : chaque emprise a été nommée',
-        armourWorn:
-          "L'emballage est en place · ce que le vaisseau vous fera désormais y sera gardé, pas annulé",
+        armourWorn: (packed) =>
+          `L'emballage est en place · ${packed} dégâts engagés, sans soigner les blessures`,
         armourHolding: (packed) =>
           packed
             ? `L'emballage garde ${packed} coup${packed === 1 ? '' : 's'} · rien ne revient avant que le soleil ne se lève dessus`
             : "L'emballage ne garde encore rien · allez au-devant de ce que l'aura a dressé contre vous",
-        packedAway: (room, packed) =>
-          `${room} ne vous a rien fait : c'est parti dans l'emballage · ${packed} coup${packed === 1 ? '' : 's'} gardé${packed === 1 ? '' : 's'}`,
+        selfInjured: (damage, total, packed) =>
+          `${damage} dégâts subis · ${total} blessures conservées${packed ? " · ajoutées à l'emballage" : ''}`,
         sunRisen: (metres, solids) =>
           `Le soleil s'est levé là où vous êtes · ${metres} m de rayon, et ${solids} élément${solids === 1 ? '' : 's'} carbonisé${solids === 1 ? '' : 's'} sans égard pour à qui ils étaient`,
         jailSelfRefused: () =>
@@ -1054,6 +1066,7 @@ export const fr: Messages = {
             : `${room} balayée · ${solids} solide${solids === 1 ? '' : 's'} dans l'arc, tous debout`,
         nothingThere: (room) => `L'arc traverse ${room} et n'y trouve rien debout`,
         noPacket: 'Rien à lever · Pain Packer et Rising Sun vont ensemble, l’une paie l’autre',
+        noInjury: "Rien à empaqueter · subissez d'abord une blessure physique avant d'enfiler l'armure",
         fingersIntact:
           'Pas sans les doigts · la restriction n’est pas le prix de cette capacité, elle est la capacité — voir Restrictions & serments',
         limbArmed: (tool) =>
@@ -1203,6 +1216,8 @@ export const fr: Messages = {
         gilded: 'Pièces gardées',
         halo: 'La bulle',
         deduced: 'Conditions lues',
+        injuries: 'Blessures physiques',
+        availablePain: 'Douleur non empaquetée',
         packed: "L'emballage garde",
         packedHits: (packed) => `${packed} coup${packed === 1 ? '' : 's'}`,
         shut: 'Enchaînée',

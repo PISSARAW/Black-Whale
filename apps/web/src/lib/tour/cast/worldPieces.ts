@@ -105,15 +105,11 @@ export interface TourBody {
   /** The holds Predator has correctly named, which is what makes it stronger. */
   deduced: string[]
 
-  /**
-   * What Pain Packer has packed away, or `null` while the wrapping is off.
-   *
-   * The walk cannot injure anyone, but it does punish: a guard puts an intruder
-   * back, a room refuses to let go, a declared rule is broken. Those are the
-   * only blows it deals, so they are what the wrapping takes — and it takes
-   * them by keeping them rather than by cancelling them, which is why the count
-   * matters and nothing is given back until the sun rises on it.
-   */
+  /** Physical harm still carried by the visitor; Zetsu cannot erase it. */
+  injuries: number
+  /** Injuries not yet committed to a Pain Packer wrapping. */
+  availablePain: number
+  /** What Pain Packer has committed, or `null` while the wrapping is off. */
   packed: number | null
   /** The Judgment Chain vow sworn on the visitor's own heart, dormant or triggered. */
   vowed?: VowState
@@ -157,6 +153,8 @@ export const RESTING_BODY: TourBody = {
   masked: null,
   playing: null,
   deduced: [],
+  injuries: 0,
+  availablePain: 0,
   packed: null,
   autopilotUntil: null,
   gilded: 0,

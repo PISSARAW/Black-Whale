@@ -169,6 +169,7 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'no-solid': decline,
   'no-lock': decline,
   'no-packet': decline,
+  'no-injury': decline,
   'arms-full': decline,
   'hold-full': decline,
   'console-locked': decline,
@@ -223,7 +224,7 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   alighted: skipThroughTime,
   'cargo-taken': stretchTheGum,
   'cargo-landed': stretchTheGum,
-  'packed-away': foldPaper,
+  'self-injured': landAPunch,
   // The eye is an owl in a different shape: sent, recalled, flown, filming.
   'eye-sent': hootAnOwl,
   'eye-recalled': hootAnOwl,

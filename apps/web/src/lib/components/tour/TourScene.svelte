@@ -381,7 +381,7 @@
     /**
      * Fired when the visitor casts on what they are facing.
      *
-     * `hand` is which key cast: F is the first, R the second. What that means
+     * `hand` is which wheel position cast: a quick H is first, H then 2 is second. What that means
      * is the page's business — a second page of the book, or the second of a
      * technique's two hands — and the scene only reports which was pressed.
      */
@@ -4959,8 +4959,8 @@
     {/if}
   {/if}
 
-  <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the two
-       keys — E and F — that a phone has no way of pressing. Everything here is
+  <!-- The touchscreen's keyboard: a stick to walk with, and buttons for the
+       actions a phone has no keys for. Everything here is
        what the keys already do, routed through the same functions. -->
   {#if touch && ready && !failure}
     <!-- Jump-only mode has nothing for the stick to do, so it is not offered. -->
@@ -5000,7 +5000,7 @@
         </button>
       {/if}
       {#if aiming && hands}
-        <!-- Two techniques, so two buttons: a phone has no F and no R, and
+        <!-- Two techniques, so two buttons: a phone has no Hatsu wheel, and
              which of the two pages is being cast is the whole of the ability. -->
         {#each [{ hand: 'first' as const, name: hands.first }, { hand: 'second' as const, name: hands.second }] as page (page.hand)}
           <button
@@ -5017,7 +5017,7 @@
           </button>
         {/each}
       {:else if aiming && tunes}
-        <!-- And three, for the instrument: a phone has no F, no R and no C, so
+        <!-- And three, for the instrument: a phone has no Hatsu wheel, so
              the three airs are three buttons in the order the keys play them. -->
         {#each [{ hand: 'first' as const, name: tunes.first }, { hand: 'second' as const, name: tunes.second }, { hand: 'third' as const, name: tunes.third }] as air (air.hand)}
           <button

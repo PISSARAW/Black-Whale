@@ -293,13 +293,13 @@ export const en = {
       release: 'Give the pointer back to the page',
       releaseKeys: 'Tab — full screen is kept, which Esc would not do',
       nen: 'Cast the active Hatsu',
-      nenKeys: 'F, or click, on the room or the solid you are facing',
+      nenKeys: 'Tap H, or click, on the room or the solid you are facing',
       nenSelf: 'Turn the active Hatsu on yourself',
       nenSelfKeys: 'Hold H, then 2 — wherever you are looking',
       nenSecond: 'Cast the second page',
       nenSecondKeys: (name: string) => `Hold H, then 2, to cast ${name}, the one under the ribbon`,
       nenMoon: 'Put the moon on rather than the sun',
-      nenMoonKeys: 'Hold H, then 2, marks with the moon; F with the sun',
+      nenMoonKeys: 'Hold H, then 2, marks with the moon; tap H for the sun',
       touch: 'On a touchscreen',
       touchKeys:
         'The stick at bottom left walks, pushed to the rim it runs; drag the view to look; the buttons take a door and cast',
@@ -802,7 +802,7 @@ export const en = {
       // why each has a key of its own.
       tunes: {
         title: 'The flute plays',
-        hint: 'F, then hold H for 2 and 3 · each air is heard by the room you are standing in',
+        hint: 'Tap H, or hold H then choose 2 or 3 · each air is heard by the room you are standing in',
         dance: 'The lively air',
         bloom: 'The soft air',
         scatter: 'The sharp air',
@@ -834,6 +834,18 @@ export const en = {
         dormant: 'DORMANT',
         triggered: 'TRIGGERED',
         locked: 'The contract is spoken once, at activation, and never touched again',
+      },
+      pain: {
+        title: 'Voluntary injury',
+        extrapolation:
+          'Playable extrapolation — self-inflicted damage has never been confirmed to power Pain Packer in canon.',
+        injuries: (injuries: number, maximum: number, pace: number) =>
+          `Injuries ${injuries}/${maximum} · movement ${pace}%`,
+        available: (damage: number) => `Pain available to pack: ${damage}`,
+        packed: (damage: number) => `Committed to the wrapping: ${damage}`,
+        light: 'Light',
+        medium: 'Medium',
+        severe: 'Severe',
       },
       reports: {
         noTarget: 'Nothing in reach to cast on',
@@ -1077,14 +1089,14 @@ export const en = {
         deduced: (what: string, strength: number) =>
           `Condition read — ${what} · ${strength} named, and stronger for each`,
         nothingToDeduce: 'Nothing left to read: every hold has been named',
-        armourWorn:
-          'The wrapping is on · what the ship would do to you from here is kept in it, not undone',
+        armourWorn: (packed: number) =>
+          `The wrapping is on · ${packed} damage committed, without healing the injuries`,
         armourHolding: (packed: number) =>
           packed
             ? `The wrapping holds ${packed} blow${packed === 1 ? '' : 's'} · nothing comes back until the sun rises on them`
             : 'The wrapping holds nothing yet · walk into what the aura has set against you',
-        packedAway: (room: string, packed: number) =>
-          `${room} did nothing to you: it went into the wrapping · ${packed} packed away`,
+        selfInjured: (damage: number, total: number, packed: boolean) =>
+          `${damage} damage taken · ${total} injury carried${packed ? ' · added to the wrapping' : ''}`,
         sunRisen: (metres: number, solids: number) =>
           `The sun rose where you stand · ${metres} m of it, and ${solids} thing${solids === 1 ? '' : 's'} burnt with no regard for whose they were`,
         jailSelfRefused: () =>
@@ -1198,6 +1210,7 @@ export const en = {
         nothingThere: (room: string) => `The arc crosses ${room} and finds nothing standing in it`,
         noPacket:
           'Nothing to raise · Pain Packer and Rising Sun go together, and one pays for the other',
+        noInjury: 'Nothing to pack · take a physical injury before putting the wrapping on',
         fingersIntact:
           'Not without the fingers · the restriction is not the price of this ability, it is the ability — see Restrictions & vows',
         limbArmed: (tool: string) =>
@@ -1361,6 +1374,8 @@ export const en = {
         gilded: 'Coin carried',
         halo: 'The bubble',
         deduced: 'Conditions read',
+        injuries: 'Physical injuries',
+        availablePain: 'Pain not yet packed',
         packed: 'The wrapping holds',
         packedHits: (packed: number) => `${packed} blow${packed === 1 ? '' : 's'}`,
         shut: 'Chained shut',

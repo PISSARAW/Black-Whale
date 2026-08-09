@@ -11,6 +11,7 @@ import {
   type TourReport,
   type TourWorld,
 } from './hatsu'
+import { bodyAfterAuraEnds } from './cast/pain'
 import type { Vec2 } from './types'
 
 export function activateTourWorld(options: {
@@ -72,6 +73,7 @@ export function releaseTourWorld(world: TourWorld): { world: TourWorld; rebound:
     rebound: Boolean(world.snakes && !world.snakes.fed),
     world: {
       ...EMPTY_WORLD,
+      body: bodyAfterAuraEnds(world.body),
       holding: world.holding,
       book: world.holding === 'bookmark' ? openTheBook() : EMPTY_WORLD.book,
     },

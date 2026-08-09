@@ -11,8 +11,16 @@ import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { loadTourNen, saveTourNen } from '$lib/nen/persistence'
 import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import type { Ship } from '$lib/tour/blueprint'
-import { arriveInTour, EMPTY_WORLD, type TourReport, type TourWorld } from '$lib/tour/hatsu'
+import {
+  arriveInTour,
+  EMPTY_WORLD,
+  selfInflictTourInjury,
+  type TourInjurySeverity,
+  type TourReport,
+  type TourWorld,
+} from '$lib/tour/hatsu'
 import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
+import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
 import type { Vec2 } from '$lib/tour/types'
 
 interface ActivationContext {
@@ -52,7 +60,8 @@ export class TourHatsuSession {
     $effect(() => {
       const context = this.options.readActivation()
       if (!context.hasAura || !canUseHatsu(this.nen)) {
-        this.options.updateWorld(EMPTY_WORLD)
+        const world = untrack(() => this.options.read().world)
+        this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
         this.options.updateReport(null)
         return
       }
@@ -104,6 +113,13 @@ export class TourHatsuSession {
     if (released.rebound) this.punish(this.options.reboundText())
   }
 
+  selfInjure = (severity: TourInjurySeverity) => {
+    const result = selfInflictTourInjury(this.options.read().world, severity)
+    this.options.updateWorld(result.world)
+    this.options.updateReport(result.report)
+    this.options.show(result.report)
+  }
+
   useNen = (action: NenTechniqueAction): NenTransition => {
     const result = transitionNen(this.nen, action)
     if (result.accepted) {
@@ -111,7 +127,8 @@ export class TourHatsuSession {
       saveTourNen(this.nen)
     }
     if (!canUseHatsu(this.nen)) {
-      this.options.updateWorld(EMPTY_WORLD)
+      const world = this.options.read().world
+      this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
       this.options.updateReport(null)
     }
     return result

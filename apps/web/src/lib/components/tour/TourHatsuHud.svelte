@@ -29,6 +29,7 @@
   import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
   import { RIPPER_ANT_TURNS } from '$lib/tour/ripper'
   import type { Heard } from '$lib/tour/cast/hearing'
+  import TourPainPackerControls from './TourPainPackerControls.svelte'
   import type { Space, Structure } from '$lib/tour/types'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -97,6 +98,7 @@
     onCastHand: (hand: 'first' | 'second' | 'third') => void
     /** Moves Double Face's ribbon to the other page, which swaps the two keys. */
     onTurnTheBook: () => void
+    onSelfInjury: (severity: 'light' | 'medium' | 'severe') => void
   }
 
   let {
@@ -121,11 +123,10 @@
     onCastPage,
     onCastHand,
     onTurnTheBook,
+    onSelfInjury,
   }: Props = $props()
 
-  // The technique under the visitor's own name for it, as the dock names it.
   const named = $derived(localizeHatsu(profile, $locale))
-  /** Whether this technique's target is a thing rather than a place. */
   const onSolids = $derived(aimsAtSolids(profile) || profile.kind === 'mimicry')
   /** Or whether it has no target at all, because the target is the visitor. */
   const onBody = $derived(worksOnTheBody(profile) && !onSolids)
@@ -350,6 +351,10 @@
         return say.nothingThere(roomName(report.spaceId))
       case 'no-packet':
         return say.noPacket
+      case 'no-injury':
+        return say.noInjury
+      case 'self-injured':
+        return say.selfInjured(report.damage, report.total, report.packed)
       case 'fingers-intact-refused':
         return say.fingersIntact
       case 'limb-armed':
@@ -562,11 +567,9 @@
       case 'nothing-to-deduce':
         return say.nothingToDeduce
       case 'armour-worn':
-        return say.armourWorn
+        return say.armourWorn(report.packed)
       case 'armour-holding':
         return say.armourHolding(report.packed)
-      case 'packed-away':
-        return say.packedAway(roomName(report.spaceId), report.packed)
       case 'sun-risen':
         return say.sunRisen(report.metres, report.solids)
 
@@ -830,10 +833,11 @@
     for (const id of world.scattered) rows.push({ label: held.scattered, value: roomName(id) })
     const dancing = dancingSolidIds(world)
     if (dancing.length) rows.push({ label: held.dancing, value: `${dancing.length}` })
-    // What the two beasts that give something back left on the visitor.
     if (body.gilded) rows.push({ label: held.gilded, value: `${body.gilded}` })
     if (body.halo) rows.push({ label: held.halo, value: `${body.halo}` })
     if (body.deduced.length) rows.push({ label: held.deduced, value: `${body.deduced.length}` })
+    if (body.injuries) rows.push({ label: held.injuries, value: `${body.injuries}` })
+    if (body.availablePain) rows.push({ label: held.availablePain, value: `${body.availablePain}` })
     if (body.packed !== null) rows.push({ label: held.packed, value: held.packedHits(body.packed) })
     for (const id of world.shut) rows.push({ label: held.shut, value: roomName(id) })
     for (const id of world.guarded) rows.push({ label: held.guarded, value: roomName(id) })
@@ -964,12 +968,6 @@
         {aimedAt ? $t.tour.hatsu.aiming(nameOf(aimedAt)) : $t.tour.hatsu.aimingNothing}
       {/if}
     </p>
-    <!-- Every key this technique answers to, whether or not it has been cast
-         yet. What a technique has in it is not something the visitor can see
-         from the dock — one has three things, most have one, and the second
-         means something different under each of the ones that have two — so
-         taking an aura up is the moment to say all of them. H holds the wheel
-         open and the number picks; only the first has a key to itself. -->
     <p class="mt-2 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.keys.title}
     </p>
@@ -1001,6 +999,14 @@
     </p>
   {/if}
 
+  {#if profile.kind === 'pain-armour' || profile.kind === 'sun-flare'}
+    <TourPainPackerControls
+      body={world.body}
+      canInjure={profile.kind === 'pain-armour'}
+      onInjure={onSelfInjury}
+    />
+  {/if}
+
   {#if line && castable}
     <p
       class={locked
@@ -1026,9 +1032,6 @@
     <p class="mt-1 text-[11px] text-[#FFFFF0]/40">{$t.tour.hatsu.nothingHeld}</p>
   {/if}
 
-  <!-- Double Face has a panel of its own below, which says the same two pages
-       under the keys that play them: listing them twice would be the walk
-       offering the visitor a choice it has already made for them. -->
   {#if pages.length && !bothPages}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.book.title}
@@ -1058,7 +1061,7 @@
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.book.bothHint}</p>
     <div class="mt-1 flex flex-wrap gap-1">
-      {#each [{ key: 'F', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'H 2', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
+      {#each [{ key: 'H', hand: 'first' as const, page: bothPages[0], ribbon: false }, { key: 'H 2', hand: 'second' as const, page: bothPages[1], ribbon: true }] as live (live.key)}
         <button
           type="button"
           onclick={() => onCastHand(live.hand)}
@@ -1111,16 +1114,12 @@
     </button>
   {/if}
 
-  <!-- The flute's three airs. Not a cycle like the three above: an instrument
-       is played, so each piece has a place of its own on the wheel and landing
-       on it is the playing. The row is the same either way — the panel is
-       where a visitor finds out a technique has more than one thing in it. -->
   {#if profile.kind === 'melody'}
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.tunes.title}
     </p>
     <p class="text-[10px] leading-snug text-[#FFFFF0]/35">{$t.tour.hatsu.tunes.hint}</p>
-    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'F' }, { hand: 'second' as const, air: 'bloom' as const, key: 'H 2' }, { hand: 'third' as const, air: 'scatter' as const, key: 'H 3' }] as piece (piece.air)}
+    {#each [{ hand: 'first' as const, air: 'dance' as const, key: 'H' }, { hand: 'second' as const, air: 'bloom' as const, key: 'H 2' }, { hand: 'third' as const, air: 'scatter' as const, key: 'H 3' }] as piece (piece.air)}
       <button
         type="button"
         onclick={() => onCastHand(piece.hand)}
@@ -1137,7 +1136,7 @@
 
   <!-- Which bird Secret Window sends, on the same key and for the same reason:
        the aim only decides where the free one starts, so the visitor has to be
-       able to say which of the three it is before they press F. -->
+       able to say which of the three it is before they cast. -->
   {#if profile.kind === 'surveillance'}
     <button
       type="button"

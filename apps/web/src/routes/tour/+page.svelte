@@ -18,7 +18,7 @@
   import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
   import { placeOf, type Naming } from '$lib/tour/search'
   import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
-  import { playTourReportSound } from '$lib/tour/reportSound'
+  import { playTourHatsuSound } from '$lib/tour/hatsuSound'
   import { playTourReachSound } from '$lib/tour/reachSound'
   import { hearTheRoom } from '$lib/tour/cast/hearing'
   import { punchRuns } from '$lib/tour/punch'
@@ -239,7 +239,7 @@
   function show(shown: TourReport) {
     const seen = flashFor({ report: shown, from: position, heading }, ship, world)
     if (seen) flash = { ...seen, seq: ++flashes }
-    playTourReportSound(shown)
+    playTourHatsuSound($activeHatsu, shown)
   }
   const ticker = new TourWorldTicker({
     read: () => ({ world, ship, position, standingIn: currentSpace?.id ?? null }),
@@ -905,6 +905,7 @@
             onCastPage: castPage,
             onCastHand: castHand,
             onTurnTheBook: turnTheRibbon,
+            onSelfInjury: hatsuSession.selfInjure,
           }
         : null}
       targets={{

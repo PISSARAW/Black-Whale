@@ -80,6 +80,16 @@ import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './deciphe
 import { nextForgery, nextSign, takesAMask } from './texture'
 import { eyesTurn } from './emperor'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
+import { bodyAfterAuraEnds, paceOf } from './cast/pain'
+
+export {
+  injuryPace,
+  MAX_TOUR_INJURY,
+  paceOf,
+  selfInflictTourInjury,
+  TOUR_INJURY_DAMAGE,
+  type TourInjurySeverity,
+} from './cast/pain'
 
 /**
  * The techniques that have something to take hold of in a reconstruction.
@@ -1586,14 +1596,6 @@ function castOnSolid(
 // The third noun, and the only one on this side of the eye. Nothing here is
 // aimed: the target is whoever is walking.
 
-/** How fast the visitor goes, as a multiplier on the walk's own pace. */
-export function paceOf(body: TourBody): number {
-  const committed = 1 + body.enhance * 0.35
-  // Kurton is fuelled by his passengers: an empty vehicle is barely a vehicle.
-  const carried = body.riding ? 1.6 + body.passengers.length * 0.35 : 1
-  return committed * carried
-}
-
 /** Where the visitor's eyes are, in metres off the floor of the deck. */
 export function eyesOf(body: TourBody, standing = 1.7): number {
   if (body.eyes !== null) return body.eyes
@@ -1826,11 +1828,9 @@ function raiseTheSun({ world, ship, body, input }: BodyCastContext): TourCastRes
   // wrapping on at all there is nothing for the sun to be made of, and the
   // walk says so rather than raising a sun out of nothing.
   //
-  // The condition is the *wrapping*, not its contents. Refusing on an empty
-  // packet would make the pair uncastable in a walk that hands out one aura at
-  // a time — put Pain Packer on, and Rising Sun is there to be raised, which
-  // is the arrangement ch. 258 draws. What the packet buys is the reach.
-  if (body.packed === null) return { world, report: { kind: 'no-packet' } }
+  if (body.packed === null || body.packed < 1) {
+    return { world, report: { kind: 'no-packet' } }
+  }
 
   const metres = Math.max(SUN_FLARE_METRES_PER_HIT, packed * SUN_FLARE_METRES_PER_HIT)
   const solids = { ...world.solids }
@@ -2075,13 +2075,16 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     }
   },
 
-  // The wrapping neither heals nor deflects: while it is on, what the walk
-  // would have done to the visitor is packed away inside it and stays there.
-  // Cast on an armour already worn, it reads out what it is holding — taking
-  // it off is not offered, because the damage in it has to go somewhere.
+  // The damage precedes the wrapping. Once committed, it cannot be packed a
+  // second time even though the injury itself remains on the body.
   'pain-armour': ({ world, body, withBody }) =>
     body.packed === null
-      ? { world: withBody({ packed: 0 }), report: { kind: 'armour-worn' } }
+      ? body.availablePain > 0
+        ? {
+            world: withBody({ packed: body.availablePain, availablePain: 0 }),
+            report: { kind: 'armour-worn', packed: body.availablePain },
+          }
+        : { world, report: { kind: 'no-injury' } }
       : { world, report: { kind: 'armour-holding', packed: body.packed } },
 
   'sun-flare': raiseTheSun,
@@ -2514,7 +2517,7 @@ export type HatsuKeyAction =
 
 export interface HatsuKey {
   /** The key as it is printed on a keyboard. */
-  key: 'F' | 'H 2' | 'H 3'
+  key: 'H' | 'H 2' | 'H 3'
   action: HatsuKeyAction
   /** Whether a click does the same thing, which only the casting hand has. */
   click: boolean
@@ -2525,7 +2528,7 @@ export interface HatsuKey {
  *
  * A technique has one cast and, sometimes, a second or a third thing in it —
  * a page, an air, an order to a double, or the cast turned on the visitor
- * themselves. The first is F. The rest are held H, which opens the wheel, and
+ * themselves. A quick H casts the first. Holding H opens the wheel, and
  * then the number of the one wanted: R and C are not free to be spent here,
  * because R is Ren and C is Ko everywhere in the ship and a key cannot mean
  * two things at once. A visitor who has just picked a technique out of the
@@ -2540,13 +2543,13 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   const pages = profile.kind === 'bookmark' ? twoPages(book) : null
   if (pages) {
     return [
-      { key: 'F', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
+      { key: 'H', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
       { key: 'H 2', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
     ]
   }
   if (TWO_HANDED_KINDS.has(profile.kind)) {
     return [
-      { key: 'F', action: 'sun', click: true },
+      { key: 'H', action: 'sun', click: true },
       { key: 'H 2', action: 'moon', click: false },
     ]
   }
@@ -2556,7 +2559,7 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   // holding H is the breath before the note.
   if (profile.kind === 'melody') {
     return [
-      { key: 'F', action: 'airDance', click: true },
+      { key: 'H', action: 'airDance', click: true },
       { key: 'H 2', action: 'airBloom', click: false },
       { key: 'H 3', action: 'airScatter', click: false },
     ]
@@ -2564,7 +2567,7 @@ export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKe
   const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
   const keys: HatsuKey[] = [
     {
-      key: 'F',
+      key: 'H',
       action: onSolids ? 'castSolid' : worksOnTheBody(profile) ? 'castSelf' : 'cast',
       click: true,
     },
@@ -2739,6 +2742,7 @@ function answerForTheCat(before: TourWorld, result: TourCastResult): TourCastRes
   return {
     world: {
       ...EMPTY_WORLD,
+      body: bodyAfterAuraEnds(result.world.body),
       // What the walk remembers of itself is not a hold, and is not taken.
       trail: result.world.trail,
       cameFrom: result.world.cameFrom,
@@ -4167,24 +4171,9 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
     return true
   }
 
-  /**
-   * Pain Packer keeps what would have landed instead of cancelling it: the
-   * punishment does not happen, and the count of what it is holding goes up.
-   */
-  const pack = (spaceId: string) => {
-    if (next.body.packed === null) return false
-    const packed = next.body.packed + 1
-    next = { ...next, body: { ...next.body, packed } }
-    report = { kind: 'packed-away', spaceId, packed }
-    return true
-  }
-
-  /**
-   * Who takes the blow, in the order the canon puts them: Kacho's double is a
-   * body of its own standing in the way, so it is hit before the wrapping the
-   * visitor is wearing ever sees anything.
-   */
-  const absorb = (spaceId: string) => intercept() || pack(spaceId)
+  // These are rule and navigation sanctions, not bodily injuries. Kacho's
+  // double may intercept one; Pain Packer cannot turn them into damage.
+  const absorb = (_spaceId: string) => intercept()
 
   // What was left behind, before what was entered.
   if (leaving && next.devouring.includes(leaving)) {

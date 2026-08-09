@@ -61,6 +61,7 @@ import {
   polarityStep,
   planWithout,
   shellsFor,
+  selfInflictTourInjury,
   solidNow,
   solidWalls,
   stampedPuppets,
@@ -122,11 +123,21 @@ describe('the technique roster', () => {
     expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
   })
+
 })
 
 describe('the keys a technique answers to', () => {
   const profileFor = (kind: string) => HATSU_PROFILES.find((profile) => profile.kind === kind)!
   const under = (kind: string, book = CLOSED_BOOK) => hatsuKeys(profileFor(kind), book)
+
+  it('gives every Hatsu carried by the tour at least one unambiguous interaction', () => {
+    for (const profile of HATSU_PROFILES.filter(worksInTour)) {
+      const controls = hatsuKeys(profile, profile.kind === 'bookmark' ? openTheBook(() => 0) : CLOSED_BOOK)
+      expect(controls.length, profile.id).toBeGreaterThan(0)
+      expect(new Set(controls.map((control) => control.key)).size, profile.id).toBe(controls.length)
+      expect(controls[0].key, profile.id).toBe('H')
+    }
+  })
 
   it('says nothing for a technique the walk cannot honour', () => {
     const unheld = HATSU_PROFILES.find(
@@ -137,9 +148,9 @@ describe('the keys a technique answers to', () => {
   })
 
   it('gives the plain techniques one key, and the click that does the same', () => {
-    expect(under('teleport')).toEqual([{ key: 'F', action: 'cast', click: true }])
-    expect(under('impact')).toEqual([{ key: 'F', action: 'castSolid', click: true }])
-    expect(under('enhance')).toEqual([{ key: 'F', action: 'castSelf', click: true }])
+    expect(under('teleport')).toEqual([{ key: 'H', action: 'cast', click: true }])
+    expect(under('impact')).toEqual([{ key: 'H', action: 'castSolid', click: true }])
+    expect(under('enhance')).toEqual([{ key: 'H', action: 'castSelf', click: true }])
   })
 
   it("spends the wheel's second place wherever the walk has one", () => {
@@ -149,19 +160,19 @@ describe('the keys a technique answers to', () => {
     expect(under('surveillance')[1]).toEqual({ key: 'H 2', action: 'owlFlight', click: false })
     expect(under('scout')[1]).toEqual({ key: 'H 2', action: 'insectOrders', click: false })
     expect(under('polarity')).toEqual([
-      { key: 'F', action: 'sun', click: true },
+      { key: 'H', action: 'sun', click: true },
       { key: 'H 2', action: 'moon', click: false },
     ])
     expect(under('puppet')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
     expect(under('elastic')[1]).toEqual({ key: 'H 2', action: 'castOnSelfInstead', click: false })
     expect(under('heart-vow')).toEqual([
-      { key: 'F', action: 'castSelf', click: true },
+      { key: 'H', action: 'castSelf', click: true },
       { key: 'H 2', action: 'castOnSelfInstead', click: false },
     ])
   })
 
   it('gives the flute three places, because three airs need three', () => {
-    expect(under('melody').map((control) => control.key)).toEqual(['F', 'H 2', 'H 3'])
+    expect(under('melody').map((control) => control.key)).toEqual(['H', 'H 2', 'H 3'])
     expect(under('melody').map((control) => control.action)).toEqual([
       'airDance',
       'airBloom',
@@ -177,19 +188,19 @@ describe('the keys a technique answers to', () => {
       bookmark: 'polarity',
     }
     expect(under('bookmark', book)).toEqual([
-      { key: 'F', action: 'openPage', click: true },
+      { key: 'H', action: 'openPage', click: true },
       { key: 'H 2', action: 'alternate', click: false },
     ])
-    // Turned the other way, the alternating page is the one under F.
+    // Turned the other way, the alternating page is the one under a quick H.
     const turned: TourBook = { ...book, open: 'polarity', bookmark: 'teleport' }
     expect(under('bookmark', turned)).toEqual([
-      { key: 'F', action: 'alternate', click: true },
+      { key: 'H', action: 'alternate', click: true },
       { key: 'H 2', action: 'markedPage', click: false },
     ])
   })
 
   it('falls back to the plain cast while the book holds only one page', () => {
-    expect(under('bookmark')).toEqual([{ key: 'F', action: 'cast', click: true }])
+    expect(under('bookmark')).toEqual([{ key: 'H', action: 'cast', click: true }])
   })
 })
 
@@ -1304,65 +1315,59 @@ describe('what the techniques make of the visitor', () => {
 })
 
 describe('the wrapping and the sun', () => {
-  it('packs the punishment away instead of taking it, and keeps the count', () => {
-    // The wrapping is worn first, then the walk is given something to do to the
-    // visitor: guards on a room they then walk into.
-    let world = on(EMPTY_WORLD, 'pain-armour').world
-    expect(world.body.packed).toBe(0)
-    world = door(world, 'legal-defense', roomA.id).world
+  it('turns a physical injury into a single-use packet without healing it', () => {
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'severe')
+    expect(injured.world.body).toMatchObject({ injuries: 3, availablePain: 3, packed: null })
+    expect(paceOf(injured.world.body)).toBeLessThan(1)
 
+    const worn = on(injured.world, 'pain-armour')
+    expect(worn.report).toEqual({ kind: 'armour-worn', packed: 3 })
+    expect(worn.world.body).toMatchObject({ injuries: 3, availablePain: 0, packed: 3 })
+  })
+
+  it('adds a new physical injury directly to armour that is already worn', () => {
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'light').world
+    const worn = on(injured, 'pain-armour').world
+    const again = selfInflictTourInjury(worn, 'medium')
+    expect(again.world.body).toMatchObject({ injuries: 3, availablePain: 0, packed: 3 })
+    expect(again.report).toMatchObject({ kind: 'self-injured', packed: true })
+  })
+
+  it('does not disguise a navigation sanction as damage', () => {
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'light').world
+    let world = on(injured, 'pain-armour').world
+    world = door(world, 'legal-defense', roomA.id).world
     const arrival = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
-    // Not expelled, not injured, and not undone either: it went into the armour.
-    expect(arrival.travelTo).toBeUndefined()
-    expect(arrival.report).toMatchObject({ kind: 'packed-away', packed: 1 })
+    expect(arrival.travelTo).toBe(roomB.id)
     expect(arrival.world.body.packed).toBe(1)
   })
 
-  it('lets the double take the blow before the wrapping ever sees it', () => {
-    let world = on(EMPTY_WORLD, 'pain-armour').world
-    world = door(world, 'legal-defense', roomA.id).world
-    world = door(world, 'guardian', roomB.id).world
-
-    const first = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
-    expect(first.report).toMatchObject({ kind: 'double-spent' })
-    expect(first.world.body.packed).toBe(0)
-
-    // With the double spent, the next one is the wrapping's.
-    const second = arriveInTour({ ...first.world, cameFrom: roomB.id }, ship, roomA.id)
-    expect(second.report).toMatchObject({ kind: 'packed-away', packed: 1 })
-  })
-
-  it('spares the visitor the forced Zetsu a broken rule would have cost', () => {
-    const armoured = on(EMPTY_WORLD, 'pain-armour').world
+  it('does not let Pain Packer cancel a broken vow', () => {
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'light').world
+    const armoured = on(injured, 'pain-armour').world
     const world = door(armoured, 'heart-vow', roomA.id).world
     const broken = arriveInTour({ ...world, cameFrom: roomB.id }, ship, roomA.id)
-    expect(broken.punished).toBeFalsy()
+    expect(broken.punished).toBe(true)
     expect(broken.world.body.packed).toBe(1)
   })
 
-  it('rises on an empty wrapping at its own least radius, and not on none', () => {
-    // The two abilities go together and one pays for the other, which ch. 258
-    // states outright — so with no wrapping on at all there is nothing for the
-    // sun to be made of, and the walk says so.
+  it('requires actual packed damage and never spends the same injury twice', () => {
     expect(on(EMPTY_WORLD, 'sun-flare').report).toEqual({ kind: 'no-packet' })
+    expect(on(EMPTY_WORLD, 'pain-armour').report).toEqual({ kind: 'no-injury' })
 
-    // The condition is the wrapping, not its contents. Refusing on an empty
-    // packet would make the pair uncastable in a walk that gives out a single
-    // aura at a time: put Pain Packer on, and the sun is there to be raised.
-    // What the packet buys is the reach.
-    const worn = on(EMPTY_WORLD, 'pain-armour').world
-    expect(on(worn, 'sun-flare').report).toMatchObject({
-      kind: 'sun-risen',
-      metres: SUN_FLARE_METRES_PER_HIT,
-    })
-    expect(on(worn, 'pain-armour').report).toEqual({ kind: 'armour-holding', packed: 0 })
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'medium').world
+    const worn = on(injured, 'pain-armour').world
+    const risen = on(worn, 'sun-flare')
+    expect(risen.report).toMatchObject({ kind: 'sun-risen', metres: 8 })
+    expect(risen.world.body).toMatchObject({ injuries: 2, availablePain: 0, packed: null })
+    expect(on(risen.world, 'pain-armour').report).toEqual({ kind: 'no-injury' })
   })
 
   it('burns outward from where the visitor stands, as far as it was hurt', () => {
     // Two packed blows, and a solid Snake Arm is holding fast beside them: the
     // burst does not pick what it catches.
-    let world = { ...on(EMPTY_WORLD, 'pain-armour').world }
-    world = { ...world, body: { ...world.body, packed: 2 } }
+    const injured = selfInflictTourInjury(EMPTY_WORLD, 'medium').world
+    let world = on(injured, 'pain-armour').world
     world = on(world, 'serpent', { targetSolidId: solidA.id }).world
     expect(world.solids[solidA.id]?.bound).toBe(true)
 
@@ -1371,17 +1376,9 @@ describe('the wrapping and the sun', () => {
     expect(risen.report.metres).toBe(2 * SUN_FLARE_METRES_PER_HIT)
     expect(risen.report.solids).toBeGreaterThan(0)
     expect(risen.world.solids[solidA.id]?.gone).toBe(true)
-    // The wrapping goes with it, so the same damage is never spent twice — and
-    // with the wrapping gone there is nothing to raise a second sun out of.
-    // Putting Pain Packer back on is what makes another one possible, which is
-    // the pairing rather than a cooldown.
     expect(risen.world.body.packed).toBeNull()
     expect(on(risen.world, 'sun-flare').report).toEqual({ kind: 'no-packet' })
-    const rewrapped = on(risen.world, 'pain-armour').world
-    expect(on(rewrapped, 'sun-flare').report).toMatchObject({
-      kind: 'sun-risen',
-      metres: SUN_FLARE_METRES_PER_HIT,
-    })
+    expect(on(risen.world, 'pain-armour').report).toEqual({ kind: 'no-injury' })
   })
 
   it('reaches only the deck the visitor is standing on', () => {

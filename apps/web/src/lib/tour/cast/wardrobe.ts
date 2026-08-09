@@ -180,6 +180,7 @@ const BY_COSTUME: ReadonlyArray<readonly [Costume, readonly string[]]> = [
       'Mafioso ; Waste Disposal Contractor',
       'Mafioso Lieutenant',
       'Mafioso Supervisor',
+      'Tatoueur personnel de Tserriednich / ancien Heil-Ly',
       "Vice Boss of the Cha-R Family ; Military Advisor for the Seventh Prince's Army",
       'boss of Cha-R / godfather of Luzurus',
       'boss of Xi-Yu / advisor to Zhang Lei',

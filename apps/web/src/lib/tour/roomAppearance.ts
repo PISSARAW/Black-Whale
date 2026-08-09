@@ -36,6 +36,15 @@ type Finish =
   | 'concealed'
   | 'protected'
   | 'bulkhead'
+  | 'civic'
+  | 'clinical'
+  | 'police'
+  | 'cineplex'
+  | 'mafia-office'
+  | 'observation'
+  | 'first-class'
+  | 'standard-cabin'
+  | 'dormitory'
 
 const LEGACY: RoomAppearance = {
   floor: 0x2a1f1f,
@@ -219,6 +228,96 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     fabric: 0x4a4d4f,
     accent: 0x826a45,
   },
+  civic: {
+    floor: 0x293037,
+    wall: 0x53616a,
+    ceiling: 0x0e1215,
+    column: 0x6c7b84,
+    wood: 0x3c352d,
+    metal: 0x7c8990,
+    fabric: 0x46515a,
+    accent: 0x6e755c,
+  },
+  clinical: {
+    floor: 0x263538,
+    wall: 0x587075,
+    ceiling: 0x101719,
+    column: 0x71888c,
+    wood: 0x405052,
+    metal: 0x8ca0a3,
+    fabric: 0x547076,
+    accent: 0x5b8884,
+  },
+  police: {
+    floor: 0x252d34,
+    wall: 0x4c5c68,
+    ceiling: 0x0c1115,
+    column: 0x657580,
+    wood: 0x373735,
+    metal: 0x778790,
+    fabric: 0x414e57,
+    accent: 0x536c80,
+  },
+  cineplex: {
+    floor: 0x261b2a,
+    wall: 0x503951,
+    ceiling: 0x080609,
+    column: 0x6a4c68,
+    wood: 0x35252f,
+    metal: 0x706270,
+    fabric: 0x5d2f52,
+    accent: 0x835276,
+  },
+  'mafia-office': {
+    floor: 0x2e241f,
+    wall: 0x594a40,
+    ceiling: 0x110d0b,
+    column: 0x716054,
+    wood: 0x443023,
+    metal: 0x766e65,
+    fabric: 0x503a31,
+    accent: 0x885d32,
+  },
+  observation: {
+    floor: 0x243039,
+    wall: 0x536b78,
+    ceiling: 0x10171c,
+    column: 0x718894,
+    wood: 0x39454a,
+    metal: 0x8397a0,
+    fabric: 0x435d68,
+    accent: 0x4f8298,
+  },
+  'first-class': {
+    floor: 0x34302c,
+    wall: 0x61594f,
+    ceiling: 0x151210,
+    column: 0x7b7164,
+    wood: 0x49382b,
+    metal: 0x827b70,
+    fabric: 0x5d4b42,
+    accent: 0x846a48,
+  },
+  'standard-cabin': {
+    floor: 0x2d3030,
+    wall: 0x565d5c,
+    ceiling: 0x111414,
+    column: 0x6d7674,
+    wood: 0x403c35,
+    metal: 0x79817f,
+    fabric: 0x4b514f,
+    accent: 0x657067,
+  },
+  dormitory: {
+    floor: 0x292e2d,
+    wall: 0x505a57,
+    ceiling: 0x0f1312,
+    column: 0x68726f,
+    wood: 0x3c3a31,
+    metal: 0x737d79,
+    fabric: 0x454d49,
+    accent: 0x626b57,
+  },
 }
 
 const TIER_1_FINISH = new Map<string, Finish>([
@@ -257,7 +356,20 @@ const TIER_2_FINISH = new Map<string, Finish>([
   ['tier-2-vip-witness-protection-area', 'protected'],
 ])
 
-const AUTHORED_FINISH = new Map([...TIER_1_FINISH, ...TIER_2_FINISH])
+const TIER_3_FINISH = new Map<string, Finish>([
+  ['tier-3-central-courthouse', 'civic'],
+  ['tier-3-central-hospital', 'clinical'],
+  ['tier-3-central-police-station', 'police'],
+  ['tier-3-cineplex', 'cineplex'],
+  ['tier-3-heilly-family-office', 'mafia-office'],
+  ['tier-3-observation-deck', 'observation'],
+  ['tier-3-residential-first-class', 'first-class'],
+  ['tier-3-residential-room-3101', 'standard-cabin'],
+  ['tier-3-residential-standard', 'standard-cabin'],
+  ['tier-3-residential-units', 'dormitory'],
+])
+
+const AUTHORED_FINISH = new Map([...TIER_1_FINISH, ...TIER_2_FINISH, ...TIER_3_FINISH])
 
 /** Whether a catalogued location received a deliberate finish in this pass. */
 export function hasAuthoredAppearance(locationId: string): boolean {

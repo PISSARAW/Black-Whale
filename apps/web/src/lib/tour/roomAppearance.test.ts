@@ -8,6 +8,7 @@ describe('room appearance', () => {
   it.each([
     ['tier-1', 34],
     ['tier-2', 5],
+    ['tier-3', 10],
   ])('gives every audited %s location a deliberate finish', (tier, count) => {
     const locations = new Set(
       ship.blueprint.spaces

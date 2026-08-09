@@ -10,6 +10,7 @@
   import type { Ship } from '$lib/tour/blueprint'
   import {
     TOUR_HATSU_KINDS,
+    STAMP_LIMIT,
     aimsAtSolids,
     castablePages,
     hatsuKeys,
@@ -18,16 +19,20 @@
     SMOKE_FULL,
     dialReading,
     identityOf,
+    lockedPuppets,
     solidById,
     solidNow,
+    stampedPuppets,
+    techniqueHolding,
     twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
   import { gumStretch, gumTension } from '$lib/tour/gum'
+  import { daysLeft, daysNeeded, isBuilt, isDeciphered } from '$lib/tour/decipher'
   import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
-  import { RIPPER_ANT_TURNS } from '$lib/tour/ripper'
+  import { RIPPER_ANT_TURNS, ripperReach } from '$lib/tour/ripper'
   import type { Heard } from '$lib/tour/cast/hearing'
   import TourPainPackerControls from './TourPainPackerControls.svelte'
   import type { Space, Structure } from '$lib/tour/types'
@@ -165,6 +170,234 @@
     const profile = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
     return profile ? localizeHatsu(profile, $locale).name : kind
   }
+
+  /**
+   * Multi-step techniques keep their next action in one stable place.
+   * Reports remain the account of what just happened; this is the account of
+   * what to do next after that transient line has gone away.
+   */
+  const techniqueGuide = $derived.by(() => {
+    const controlCopy = $t.tour.hatsu.comboMaster
+    const control = touch ? controlCopy.touchControl : controlCopy.control
+    const guides = $t.tour.hatsu.guides
+    const make = (options: {
+      title: string
+      status: string
+      badge?: string | null
+      detail?: string | null
+      warning?: string | null
+      note?: string | null
+    }) => ({ badge: null, detail: null, warning: null, note: null, ...options })
+
+    if (profile.kind === 'decipher') {
+      const copy = controlCopy
+      const reading = world.decipher
+      const build = world.fabrication
+      if (!reading) {
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.chooseTarget(control),
+          note: copy.lock,
+        })
+      }
+      if (!isDeciphered(reading)) {
+        const total = daysNeeded(reading.reading)
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.deciphering(
+            personName(reading.characterId),
+            total - daysLeft(reading),
+            total,
+          ),
+          detail: standingIn === reading.spaceId ? copy.decipherRunning : copy.decipherPaused,
+          note: copy.lock,
+        })
+      }
+      if (!build) {
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.readyToBuild(control),
+          note: copy.lock,
+        })
+      }
+      if (isBuilt(build)) {
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.fabricationReady(control),
+          note: copy.lock,
+        })
+      }
+      return make({
+        title: copy.title,
+        badge: copy.clock,
+        status: copy.fabricating(build.days, build.needs),
+        detail: copy.fabricationRunning,
+        warning: copy.fabricationWarning,
+        note: copy.lock,
+      })
+    }
+
+    if (profile.kind === 'scarlet') {
+      const copy = guides.emperorTime
+      if (world.forcedZetsu > 0) {
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.zetsu(world.forcedZetsu),
+          detail: copy.zetsuDetail,
+        })
+      }
+      if (!world.scarlet) {
+        return make({
+          title: copy.title,
+          badge: copy.clock,
+          status: copy.start(control),
+          detail: copy.threshold,
+        })
+      }
+      return make({
+        title: copy.title,
+        badge: copy.clock,
+        status: copy.active(world.scarlet.hours, HOURS_IN_A_YEAR),
+        detail: copy.stop(control),
+        warning: copy.threshold,
+      })
+    }
+
+    if (profile.kind === 'windup') {
+      const copy = guides.ripper
+      if (!world.windup)
+        return make({ title: copy.title, status: copy.empty(control), warning: copy.shatter })
+      return make({
+        title: copy.title,
+        status: copy.charged(world.windup, RIPPER_ANT_TURNS, ripperReach(world.windup)),
+        detail: copy.next(control),
+        warning: copy.shatter,
+      })
+    }
+
+    if (profile.kind === 'portal') {
+      const copy = guides.worm
+      if (!world.worm)
+        return make({ title: copy.title, status: copy.first(control), warning: copy.spent })
+      if (!world.worm.b) {
+        return make({
+          title: copy.title,
+          status: copy.second(roomName(world.worm.a), control),
+          warning: copy.spent,
+        })
+      }
+      return make({
+        title: copy.title,
+        status: copy.linked(roomName(world.worm.a), roomName(world.worm.b), world.worm.crossings),
+        detail: copy.cross,
+        warning: copy.spent,
+      })
+    }
+
+    if (profile.kind === 'curse') {
+      const copy = guides.curse
+      if (!world.curse) return make({ title: copy.title, status: copy.choose(control) })
+      return make({
+        title: copy.title,
+        status: copy.victim(roomName(world.curse.victim)),
+        detail: world.laidOpen ? copy.revealed(roomName(world.curse.sacrifice)) : copy.hidden,
+        warning: world.laidOpen ? copy.warning : null,
+      })
+    }
+
+    if (profile.kind === 'chain-rule') {
+      const copy = guides.chain
+      const owner = world.book.stolenFrom
+      if (!owner) return make({ title: copy.title, status: copy.steal(control) })
+      const ability = pageName(world.book.open ?? world.book.pages[0] ?? '')
+      return make({
+        title: copy.title,
+        status: copy.held(personName(owner), ability),
+        detail: copy.return(personName(owner), control),
+      })
+    }
+
+    if (profile.kind === 'ability-loan') {
+      const copy = guides.chain
+      const abilityKind = world.book.open ?? world.book.pages[0] ?? null
+      if (!abilityKind) return make({ title: copy.title, status: copy.dolphinNeedsTheft })
+      const ability = pageName(abilityKind)
+      if (!world.laidOpen) return make({ title: copy.title, status: copy.dolphinNeedsEyes })
+      if (!world.book.loan)
+        return make({ title: copy.title, status: copy.dolphinLoad(ability, control) })
+      return make({ title: copy.title, status: copy.dolphinReady(pageName(world.book.loan)) })
+    }
+
+    if (profile.kind === 'theft' || profile.kind === 'capture') {
+      const copy = guides.book
+      const exposed = aimedAt ? techniqueHolding(world, aimedAt.id) : null
+      if (profile.kind === 'theft' && world.book.open) {
+        return make({ title: copy.title, status: copy.stolen(pageName(world.book.open)) })
+      }
+      if (exposed)
+        return make({ title: copy.title, status: copy.aimed(pageName(exposed), control) })
+      if (profile.kind === 'capture' && world.book.cards.length) {
+        return make({
+          title: copy.title,
+          status: copy.card(world.book.cards.length),
+          detail: copy.target(control),
+        })
+      }
+      return make({ title: copy.title, status: copy.target(control) })
+    }
+
+    if (profile.kind === 'bookmark') {
+      const copy = guides.book
+      const pair = twoPages(world.book)
+      return pair
+        ? make({
+            title: copy.title,
+            status: copy.double(pageName(pair[0]), pageName(pair[1])),
+            detail: copy.turn,
+          })
+        : make({ title: copy.title, status: copy.target(control) })
+    }
+
+    if (profile.kind === 'snakes') {
+      const copy = guides.majority
+      if (!world.snakes) return make({ title: copy.title, status: copy.start(control) })
+      if (!world.snakes.fed) {
+        return make({
+          title: copy.title,
+          status: copy.hungry(world.snakes.rooms.length),
+          warning: copy.rebound,
+        })
+      }
+      return make({ title: copy.title, status: copy.fed })
+    }
+
+    if (profile.kind === 'command') {
+      const copy = guides.stamp
+      const stamped = stampedPuppets(world).length
+      const locked = lockedPuppets(world).length
+      if (!stamped) return make({ title: copy.title, status: copy.start(control) })
+      if (!locked) {
+        return make({
+          title: copy.title,
+          status: copy.stamped(stamped, STAMP_LIMIT),
+          detail: copy.lock(control),
+          note: copy.toggle,
+        })
+      }
+      return make({
+        title: copy.title,
+        status: copy.locked(locked, stamped, control),
+        detail: copy.toggle,
+      })
+    }
+
+    return null
+  })
 
   /** What the dial reads from where the visitor is standing, this instant. */
   const dial = $derived(dialReading(ship, world, { at, standingIn }))
@@ -992,6 +1225,47 @@
       <p class="mt-1 text-[11px] text-[#FFFFF0]/45">
         {onSolids ? $t.tour.hatsu.solids.castHint : $t.tour.hatsu.castHint}
       </p>
+    {/if}
+
+    {#if techniqueGuide}
+      <aside
+        class="mt-3 rounded border p-2"
+        style:border-color="color-mix(in srgb, {profile.color} 30%, #333)"
+        style:background="color-mix(in srgb, {profile.color} 6%, transparent)"
+        data-technique-guide={profile.kind}
+        data-combo-master-guide={profile.kind === 'decipher' ? '' : undefined}
+        aria-live="polite"
+      >
+        <div class="flex items-baseline justify-between gap-2">
+          <p
+            class="text-[10px] font-semibold uppercase tracking-widest"
+            style:color={profile.color}
+          >
+            {techniqueGuide.title}
+          </p>
+          {#if techniqueGuide.badge}
+            <span class="shrink-0 text-right text-[9px] text-[#FFFFF0]/40">
+              {techniqueGuide.badge}
+            </span>
+          {/if}
+        </div>
+        <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/90">{techniqueGuide.status}</p>
+        {#if techniqueGuide.detail}
+          <p class="mt-1 text-[11px] leading-snug text-[#FFFFF0]/60">
+            {techniqueGuide.detail}
+          </p>
+        {/if}
+        {#if techniqueGuide.warning}
+          <p class="mt-1 text-[11px] leading-snug text-[#ffcf70]">
+            {techniqueGuide.warning}
+          </p>
+        {/if}
+        {#if techniqueGuide.note}
+          <p class="mt-1 text-[10px] leading-snug text-[#FFFFF0]/40">
+            {techniqueGuide.note}
+          </p>
+        {/if}
+      </aside>
     {/if}
   {:else}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">

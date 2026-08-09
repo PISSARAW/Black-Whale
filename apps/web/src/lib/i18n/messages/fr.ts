@@ -718,6 +718,123 @@ export const fr: Messages = {
         medium: 'Moyenne',
         severe: 'Grave',
       },
+      comboMaster: {
+        title: 'Comment utiliser Combo Master',
+        clock: '1 seconde réelle = 1 jour dans la visite',
+        control: 'H / clic',
+        touchControl: 'le bouton Hatsu',
+        chooseTarget: (control) =>
+          `1. Visez une personne porteuse d’une capacité, puis utilisez ${control} pour lancer le déchiffrage.`,
+        deciphering: (name, elapsed, total) => `Déchiffrage de ${name} : ${elapsed}/${total} jours`,
+        decipherRunning: 'Restez dans cette pièce : le compteur avance chaque seconde.',
+        decipherPaused:
+          'En pause : retournez dans la pièce où le déchiffrage a commencé. La progression est conservée.',
+        readyToBuild: (control) =>
+          `2. Décodage terminé. Ne visez plus personne, puis utilisez ${control} pour lancer le TOOL.`,
+        fabricating: (elapsed, total) => `Fabrication du TOOL : ${elapsed}/${total} jours`,
+        fabricationRunning: 'Restez dans cette pièce jusqu’à la fin du compteur.',
+        fabricationReady: (control) => `3. TOOL terminé. Utilisez ${control} pour le récupérer.`,
+        fabricationWarning:
+          'Attention : sortir de la pièce ou réutiliser la capacité avant la fin détruit toute la fabrication.',
+        lock: 'Aucun autre Hatsu ne peut être utilisé pendant le déchiffrage ou la fabrication.',
+      },
+      guides: {
+        emperorTime: {
+          title: 'Comment utiliser Emperor Time',
+          clock: '1 seconde = 1 heure de vie',
+          start: (control) => `Utilisez ${control} pour activer les yeux écarlates.`,
+          active: (hours, total) => `Yeux écarlates : ${hours}/${total} heures dépensées`,
+          stop: (control) =>
+            `Utilisez encore ${control} pour arrêter. Les heures déjà dépensées ne reviennent jamais.`,
+          threshold:
+            'Après une année entière, Emperor Time s’arrête et impose cinq minutes de Zetsu.',
+          zetsu: (seconds) => `Zetsu forcé : ${seconds} seconde${seconds === 1 ? '' : 's'}`,
+          zetsuDetail: 'Aucun Hatsu ne peut être utilisé avant la fin de ce compteur.',
+        },
+        ripper: {
+          title: 'Comment utiliser Ripper Cyclotron',
+          empty: (control) =>
+            `1. Visez une personne et utilisez ${control} pour charger une rotation dans le bras.`,
+          charged: (turns, maximum, metres) =>
+            `Charge : ${turns}/${maximum} rotations · portée ${metres} m`,
+          next: (control) =>
+            `Continuez avec ${control} sur une personne pour ajouter des rotations, ou visez un solide et utilisez-le une fois pour dépenser toute la charge.`,
+          shatter:
+            'À partir de quinze rotations, le solide frappé est détruit au lieu d’être repoussé.',
+        },
+        worm: {
+          title: 'Comment utiliser Magical Worm',
+          first: (control) =>
+            `1. Visez une pièce et utilisez ${control} pour poser la porte de départ.`,
+          second: (room, control) =>
+            `2. Porte de départ : ${room}. Visez une autre pièce et utilisez ${control} pour poser la porte de retour.`,
+          linked: (a, b, crossings) => `${a} ⇄ ${b} · ${crossings}/3 passages`,
+          cross: 'Entrez dans l’une des deux extrémités pour ressortir par l’autre.',
+          spent:
+            'Le troisième passage est le dernier : les deux portes s’effondrent derrière vous.',
+        },
+        curse: {
+          title: 'Comment utiliser la malédiction sacrificielle',
+          choose: (control) =>
+            `1. Visez la pièce de la victime et utilisez ${control} pour la marquer.`,
+          victim: (room) => `Victime marquée : ${room}`,
+          hidden: '2. Le sacrifice est caché. Activez Emperor Time pour révéler sa pièce avec Gyo.',
+          revealed: (room) =>
+            `3. Sacrifice révélé : ${room}. Entrez dans cette pièce pour le dépenser.`,
+          warning:
+            'Entrer dans la pièce du sacrifice vide immédiatement la pièce de la victime marquée.',
+        },
+        chain: {
+          title: 'Steal Chain → Stealth Dolphin',
+          steal: (control) =>
+            `1. Visez une personne qui porte un Hatsu jouable et utilisez ${control} pour le voler.`,
+          held: (name, ability) => `Pris à ${name} : ${ability}`,
+          return: (name, control) =>
+            `Visez ${name} et utilisez ${control} pour rendre la capacité, ou passez à Stealth Dolphin pour la prêter.`,
+          dolphinNeedsTheft: '1. Volez d’abord une capacité jouable avec Steal Chain.',
+          dolphinNeedsEyes: '2. Activez Emperor Time : le Dolphin ne peut pas apparaître sans lui.',
+          dolphinLoad: (ability, control) =>
+            `3. ${ability} est prête. Utilisez ${control} pour la charger dans le Dolphin.`,
+          dolphinReady: (ability) =>
+            `4. ${ability} est prêtée. Utilisez son bouton dans le livre : le prêt disparaît après cet unique lancement.`,
+        },
+        book: {
+          title: 'Livre et cartes',
+          target: (control) =>
+            `Posez d’abord l’effet d’un Hatsu sur une pièce, puis visez cette pièce et utilisez ${control}.`,
+          aimed: (ability, control) =>
+            `${ability} est exposé dans la pièce visée. Utilisez ${control} pour l’acquérir.`,
+          stolen: (ability) =>
+            `${ability} est ouvert dans Skill Hunter. Utilisez son bouton dans le livre pour le lancer ; l’original reste scellé.`,
+          card: (count) =>
+            `${count} carte${count === 1 ? '' : 's'} Culdcept prête${count === 1 ? '' : 's'}. Une carte disparaît après un lancement.`,
+          double: (open, marked) =>
+            `H lance ${open} ; H 2 lance ${marked}. Les deux pages restent actives ensemble.`,
+          turn: '« Tourner le livre » échange les pages placées sous H et H 2.',
+        },
+        majority: {
+          title: 'Comment utiliser Silent Majority',
+          start: (control) =>
+            `1. Visez une pièce et utilisez ${control} pour former le champ avec les dix pièces les plus proches.`,
+          hungry: (rooms) =>
+            `2. Quatre serpents sont lâchés dans ${rooms} pièces. Entrez dans l’une d’elles pour leur donner une victime.`,
+          rebound:
+            'Ne relâchez pas encore le Hatsu : sans victime, la malédiction se retourne contre vous.',
+          fed: '3. Les serpents ont pris une victime. Le Hatsu peut maintenant être relâché sans retour.',
+        },
+        stamp: {
+          title: 'Comment utiliser Order Stamp',
+          start: (control) =>
+            `1. Visez un solide non marqué et utilisez ${control} pour lui poser le 人.`,
+          stamped: (stamped, maximum) => `${stamped}/${maximum} pantins marqués`,
+          lock: (control) =>
+            `2. Visez un pantin marqué et utilisez ${control} pour le verrouiller sur le prochain ordre.`,
+          locked: (locked, stamped, control) =>
+            `3. ${locked}/${stamped} pantins verrouillés. Visez ailleurs et utilisez ${control} pour les y envoyer.`,
+          toggle:
+            'Utiliser la capacité sur un pantin marqué active ou désactive la réception des ordres.',
+        },
+      },
       reports: {
         noTarget: 'Rien à portée sur quoi lancer',
         teleported: (room) => `Envoyé dans ${room} — vous n'avez pas choisi où vous tombiez`,

@@ -847,6 +847,119 @@ export const en = {
         medium: 'Medium',
         severe: 'Severe',
       },
+      comboMaster: {
+        title: 'How to use Combo Master',
+        clock: '1 real second = 1 story day',
+        control: 'H / click',
+        touchControl: 'the Hatsu button',
+        chooseTarget: (control: string) =>
+          `1. Aim at a person carrying an ability, then use ${control} to start reading it.`,
+        deciphering: (name: string, elapsed: number, total: number) =>
+          `Reading ${name}: ${elapsed}/${total} days`,
+        decipherRunning: 'Stay in this room: the counter advances once a second.',
+        decipherPaused:
+          'Paused: return to the room where the reading began. Progress has been saved.',
+        readyToBuild: (control: string) =>
+          `2. Decoded. Aim away from every person, then use ${control} to start the TOOL.`,
+        fabricating: (elapsed: number, total: number) => `Building TOOL: ${elapsed}/${total} days`,
+        fabricationRunning: 'Stay in this room until the counter is complete.',
+        fabricationReady: (control: string) => `3. TOOL ready. Use ${control} to collect it.`,
+        fabricationWarning:
+          'Warning: leaving the room or using the ability again before completion destroys the entire build.',
+        lock: 'No other Hatsu can be used while reading or building.',
+      },
+      guides: {
+        emperorTime: {
+          title: 'How to use Emperor Time',
+          clock: '1 second = 1 hour of life',
+          start: (control: string) => `Use ${control} to turn the scarlet eyes on.`,
+          active: (hours: number, total: number) => `Scarlet eyes: ${hours}/${total} hours spent`,
+          stop: (control: string) =>
+            `Use ${control} again to stop. Hours already spent are never returned.`,
+          threshold: 'At one full year, Emperor Time ends and forces five minutes of Zetsu.',
+          zetsu: (seconds: number) =>
+            `Forced Zetsu: ${seconds} second${seconds === 1 ? '' : 's'} left`,
+          zetsuDetail: 'No Hatsu can be used until this countdown reaches zero.',
+        },
+        ripper: {
+          title: 'How to use Ripper Cyclotron',
+          empty: (control: string) =>
+            `1. Aim at a person and use ${control} to wind one rotation into the arm.`,
+          charged: (turns: number, maximum: number, metres: number) =>
+            `Charge: ${turns}/${maximum} rotations · reach ${metres} m`,
+          next: (control: string) =>
+            `Keep ${control} on a person to add rotations, or aim at a solid and use it once to spend the entire charge.`,
+          shatter: 'At fifteen rotations or more, the struck solid is destroyed instead of pushed.',
+        },
+        worm: {
+          title: 'How to use Magical Worm',
+          first: (control: string) =>
+            `1. Aim at a room and use ${control} to place the Start Door.`,
+          second: (room: string, control: string) =>
+            `2. Start Door: ${room}. Aim at another room and use ${control} to place the Return Door.`,
+          linked: (a: string, b: string, crossings: number) =>
+            `${a} ⇄ ${b} · ${crossings}/3 crossings`,
+          cross: 'Enter either endpoint to come out at the other one.',
+          spent: 'The third crossing is the last: the two doors collapse behind you.',
+        },
+        curse: {
+          title: 'How to use Sacrificial Curse',
+          choose: (control: string) => `1. Aim at the victim's room and use ${control} to mark it.`,
+          victim: (room: string) => `Victim marked: ${room}`,
+          hidden: '2. The sacrifice is hidden. Activate Emperor Time to reveal its room with Gyo.',
+          revealed: (room: string) =>
+            `3. Sacrifice revealed: ${room}. Enter that room to spend it.`,
+          warning: 'Entering the sacrifice room immediately empties the marked victim room.',
+        },
+        chain: {
+          title: 'Steal Chain → Stealth Dolphin',
+          steal: (control: string) =>
+            `1. Aim at a person carrying a playable Hatsu and use ${control} to steal it.`,
+          held: (name: string, ability: string) => `Held from ${name}: ${ability}`,
+          return: (name: string, control: string) =>
+            `Aim at ${name} and use ${control} to return the ability, or switch to Stealth Dolphin to loan it.`,
+          dolphinNeedsTheft: '1. Steal a playable ability with Steal Chain first.',
+          dolphinNeedsEyes: '2. Activate Emperor Time; the Dolphin cannot appear without it.',
+          dolphinLoad: (ability: string, control: string) =>
+            `3. ${ability} is ready. Use ${control} to load it into the Dolphin.`,
+          dolphinReady: (ability: string) =>
+            `4. ${ability} is loaned. Use its button in the book; the loan is spent after that single cast.`,
+        },
+        book: {
+          title: 'Book and cards',
+          target: (control: string) =>
+            `First put a Hatsu effect on a room, then aim at that room and use ${control}.`,
+          aimed: (ability: string, control: string) =>
+            `${ability} is exposed in the aimed room. Use ${control} to acquire it.`,
+          stolen: (ability: string) =>
+            `${ability} is open in Skill Hunter. Use its button in the book to cast it; the original remains sealed.`,
+          card: (count: number) =>
+            `${count} Culdcept card${count === 1 ? '' : 's'} ready. A card disappears after one cast.`,
+          double: (open: string, marked: string) =>
+            `H casts ${open}; H 2 casts ${marked}. Both pages remain active together.`,
+          turn: '“Turn the book” swaps which page is under H and H 2.',
+        },
+        majority: {
+          title: 'How to use Silent Majority',
+          start: (control: string) =>
+            `1. Aim at a room and use ${control} to form the field from the ten nearest rooms.`,
+          hungry: (rooms: number) =>
+            `2. Four snakes are loose across ${rooms} rooms. Enter one of those rooms to give them a victim.`,
+          rebound: 'Do not release the Hatsu yet: without a victim, the curse rebounds on you.',
+          fed: '3. The snakes have taken a victim. The Hatsu can now be released without rebound.',
+        },
+        stamp: {
+          title: 'How to use Order Stamp',
+          start: (control: string) =>
+            `1. Aim at an unstamped solid and use ${control} to give it the 人 mark.`,
+          stamped: (stamped: number, maximum: number) => `${stamped}/${maximum} puppets stamped`,
+          lock: (control: string) =>
+            `2. Aim at a stamped puppet and use ${control} to lock it for the next order.`,
+          locked: (locked: number, stamped: number, control: string) =>
+            `3. ${locked}/${stamped} puppets locked. Aim anywhere else and use ${control} to send them there.`,
+          toggle: 'Using the ability on a stamped puppet toggles whether it receives orders.',
+        },
+      },
       reports: {
         noTarget: 'Nothing in reach to cast on',
         teleported: (room: string) => `Sent to ${room} — you did not choose where you landed`,

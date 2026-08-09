@@ -195,5 +195,58 @@ export function setAmbientMuffled(on: boolean) {
   muffled = on
   ambientMuffled.set(on)
   if (graph) applyMuffle(graph, on, 0.9)
-  if (fluteGraph) applyMuffle(fluteGraph, on, 0.9)
+}
+
+/** 
+ * Triggers a low-frequency pulse to simulate the pressure of an Aura (Ren).
+ * Creates a 30Hz oscillator with a slow vibrato/tremolo effect.
+ */
+export function triggerAuraPulse(g: Graph, at: number, duration: number, intensity: number = 0.5) {
+  const { context } = g
+  const gain = context.createGain()
+  
+  // Pulse fade in/out
+  gain.gain.setValueAtTime(0, at)
+  gain.gain.linearRampToValueAtTime(intensity, at + duration * 0.2)
+  gain.gain.linearRampToValueAtTime(0, at + duration)
+  
+  // 30Hz sub-bass
+  const osc = context.createOscillator()
+  osc.type = 'sine'
+  osc.frequency.value = 30
+  
+  // Add a tremolo (LFO on gain) to make it "beat" or "breathe"
+  const tremolo = context.createGain()
+  tremolo.gain.value = 0.5
+  
+  const lfo = context.createOscillator()
+  lfo.type = 'sine'
+  lfo.frequency.value = 4 // 4 beats per second
+  lfo.connect(tremolo.gain)
+  lfo.start(at)
+  lfo.stop(at + duration)
+  
+  osc.connect(tremolo)
+  tremolo.connect(gain)
+  gain.connect(g.master) // Route directly to master
+  
+  osc.start(at)
+  osc.stop(at + duration)
+}
+
+/**
+ * Triggers a sudden, eerie drop in ambient volume to simulate an assassin in Zetsu.
+ */
+export function triggerZetsuSilence(g: Graph, at: number, duration: number) {
+  const { context } = g
+  
+  // We temporarily duck the master gain.
+  // Note: this assumes the ambient theme doesn't constantly reset master.gain.
+  // We use current time to get the current value, but since it's an AudioParam we just scale it.
+  
+  g.master.gain.cancelScheduledValues(at)
+  // Drop volume quickly to 10%
+  g.master.gain.setTargetAtTime(0.1, at, 0.5)
+  // Bring it back slowly after duration
+  g.master.gain.setTargetAtTime(1.0, at + duration, 2)
 }

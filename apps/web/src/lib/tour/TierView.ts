@@ -9,6 +9,7 @@ export interface TierRoomView {
   mesh: Three.Mesh
   edges: Three.LineSegments
   seams: Three.LineSegments
+  patterns: Three.LineSegments
   fittings: Three.Mesh
   /**
    * The window glass, in the two rooms that have any and nowhere else.
@@ -29,6 +30,7 @@ export interface TierMaterials {
   surface: Three.Material
   edge: Three.Material
   seam: Three.Material
+  pattern: Three.Material
   fitting: Three.Material
   /**
    * The glass, whose colour is the hour of the voyage.
@@ -92,6 +94,7 @@ interface TierAttributes {
   color: Three.BufferAttribute
   edge: Three.BufferAttribute
   seam: Three.BufferAttribute
+  pattern: Three.BufferAttribute
   fitting: Three.BufferAttribute
   fittingColor: Three.BufferAttribute
   pane: Three.BufferAttribute
@@ -115,7 +118,7 @@ export class TierView {
 
     for (const group of mesh.groups) {
       const room = this.room(group, shared, { ship, tierId, reveal, dustScale })
-      root.add(room.mesh, room.edges, room.seams, room.fittings)
+      root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
       if (room.panes) root.add(room.panes)
       if (room.motes) root.add(room.motes)
       rooms.push(room)
@@ -125,7 +128,7 @@ export class TierView {
 
   /**
    * One room of the deck: a draw range into the shared buffers, plus whatever
-   * of the four other kinds of thing it happens to hold.
+   * of the other drawable kinds it happens to hold.
    *
    * The deck is still one upload — every room's geometry points at the same
    * `BufferAttribute`s and differs only in its range and in the bounding sphere
@@ -168,6 +171,10 @@ export class TierView {
         this.geometry(slice(shared.seam, group.seamStart, group.seamCount)),
         this.materials.seam,
       ),
+      patterns: new this.THREE.LineSegments(
+        this.geometry(slice(shared.pattern, group.patternStart, group.patternCount)),
+        this.materials.pattern,
+      ),
       fittings: this.lit(
         slice(shared.fitting, group.fittingStart, group.fittingCount),
         shared.fittingColor,
@@ -194,6 +201,7 @@ export class TierView {
       color: of(mesh.colors),
       edge: of(mesh.edges),
       seam: of(mesh.seams),
+      pattern: of(mesh.patterns),
       fitting: of(mesh.fittings),
       fittingColor: of(mesh.fittingColors),
       pane: of(mesh.panes),
@@ -236,6 +244,7 @@ export class TierView {
       room.mesh.geometry.dispose()
       room.edges.geometry.dispose()
       room.seams.geometry.dispose()
+      room.patterns.geometry.dispose()
       room.fittings.geometry.dispose()
       room.panes?.geometry.dispose()
       room.motes?.geometry.dispose()

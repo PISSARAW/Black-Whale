@@ -803,8 +803,18 @@
       // corridor as mud. The filmic curve is what holds both ends: it rolls a lamp
       // off instead of clipping it and keeps shadowed steel above black. It is also
       // what `syncSight` closes when the monkeys take sight.
-      const { renderer, scene, fog, camera, composer, renderTarget, quality, shafts, refraction, grade } =
-        runtime
+      const {
+        renderer,
+        scene,
+        fog,
+        camera,
+        composer,
+        renderTarget,
+        quality,
+        shafts,
+        refraction,
+        grade,
+      } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
         scene,
@@ -920,7 +930,7 @@
        */
 
       /**
-       * The seven materials the deck is drawn with.
+       * The eight materials the deck is drawn with.
        *
        * Every argument behind them — why the structure is front-culled, why the
        * two glazed rooms need a material of their own, why a fitting must not be
@@ -930,7 +940,12 @@
        */
       const paint = createDeckMaterials(THREE, quality)
       const { surface: material, skylit: skylitMaterial, pool: skyPool } = paint
-      const { edge: edgeMaterial, seam: seamMaterial, fitting: fittingMaterial } = paint
+      const {
+        edge: edgeMaterial,
+        seam: seamMaterial,
+        pattern: patternMaterial,
+        fitting: fittingMaterial,
+      } = paint
       const { pane: paneMaterial, dust: dustMaterial } = paint
 
       /**
@@ -1077,6 +1092,7 @@
         surface: material,
         edge: edgeMaterial,
         seam: seamMaterial,
+        pattern: patternMaterial,
         fitting: fittingMaterial,
         pane: paneMaterial,
         skylit: skylitMaterial,
@@ -1470,6 +1486,7 @@
             room.mesh.visible = on
             room.edges.visible = on
             room.seams.visible = on
+            room.patterns.visible = on
             room.fittings.visible = on
             if (room.panes) room.panes.visible = on
             if (room.motes) room.motes.visible = on
@@ -4635,7 +4652,12 @@
           : $comfort.exposure * hourView.exposure
         // The grade the hour asks for, and the clock the grain and the corners
         // breathe on. Three numbers and a float: see `applyGrade`.
-        applyGrade(grade, { grade: hourView.grade, clock, calm: calmWalk, lens: quality.lens ? LENS_DEFAULTS : LENS_OFF })
+        applyGrade(grade, {
+          grade: hourView.grade,
+          clock,
+          calm: calmWalk,
+          lens: quality.lens ? LENS_DEFAULTS : LENS_OFF,
+        })
 
         // The air bending around the aura. Zero unless there is aura out, and
         // zero outright for a visitor whose system asks for less movement: a
@@ -4761,6 +4783,7 @@
         shellMaterial.dispose()
         edgeMaterial.dispose()
         seamMaterial.dispose()
+        patternMaterial.dispose()
         material.dispose()
         skylitMaterial.dispose()
         paneMaterial.dispose()

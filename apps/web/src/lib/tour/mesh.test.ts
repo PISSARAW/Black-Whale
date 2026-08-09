@@ -113,6 +113,7 @@ describe('buildTierMesh', () => {
       // one in the fittings would be a lamp that fills the screen.
       expect(mesh.edges.every(Number.isFinite)).toBe(true)
       expect(mesh.seams.every(Number.isFinite)).toBe(true)
+      expect(mesh.patterns.every(Number.isFinite)).toBe(true)
       expect(mesh.fittings.every(Number.isFinite)).toBe(true)
       expect(mesh.fittingColors.every(Number.isFinite)).toBe(true)
     }
@@ -798,6 +799,20 @@ describe('the deck plating', () => {
         points += group.seamCount
       }
       expect(points, `${tierId} has plating belonging to no room`).toBe(mesh.seams.length / 3)
+    }
+  })
+
+  it('cuts the audited floor patterns into the same rooms as the geometry', () => {
+    for (const [tierId, plan] of ship.plans) {
+      const mesh = buildTierMesh(plan)
+      let points = 0
+      for (const group of mesh.groups) {
+        expect(group.patternStart, `${group.spaceId} floor pattern is out of order`).toBe(points)
+        points += group.patternCount
+      }
+      expect(points, `${tierId} has floor pattern belonging to no room`).toBe(
+        mesh.patterns.length / 3,
+      )
     }
   })
 

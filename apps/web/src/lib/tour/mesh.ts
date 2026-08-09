@@ -25,6 +25,7 @@ import {
 } from './geometry'
 import { ceilingOf, floorOf } from './blueprint'
 import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
+import { floorPatternOf } from './floorPattern'
 import { appearanceOf, structureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
@@ -63,6 +64,9 @@ export interface MeshGroup {
   /** The room's stretch of the plating, in line-segment endpoints. */
   seamStart: number
   seamCount: number
+  /** The room's audited tile, board or radial joints. */
+  patternStart: number
+  patternCount: number
   /** The room's stretch of the ceiling fittings, in vertices. */
   fittingStart: number
   fittingCount: number
@@ -104,6 +108,8 @@ export interface TierMesh {
    * bare floor needs it at all.
    */
   seams: Float32Array
+  /** Attested floor joints, brighter than the generic deck plating. */
+  patterns: Float32Array
   /**
    * The ceiling fittings, as downward-facing quads.
    *
@@ -1209,6 +1215,7 @@ export function buildSolidMesh(structure: Structure, where: SolidPlacement): Tie
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     seams: new Float32Array(0),
+    patterns: new Float32Array(0),
     // A solid lifted out of its deck by a technique takes the room's light with
     // it, not the room's lamps: the fittings stay on the ceiling they hang from.
     fittings: new Float32Array(0),
@@ -1229,6 +1236,8 @@ export function buildSolidMesh(structure: Structure, where: SolidPlacement): Tie
         edgeCount,
         seamStart: 0,
         seamCount: 0,
+        patternStart: 0,
+        patternCount: 0,
         fittingStart: 0,
         fittingCount: 0,
         paneStart: 0,
@@ -1259,6 +1268,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
   const edges: number[] = []
   const seams: number[] = []
+  const patterns: number[] = []
   const fittings: number[] = []
   const fittingColors: number[] = []
   const panes: number[] = []
@@ -1432,6 +1442,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const start = builder.positions.length / 3
     const edgeStart = edges.length / 3
     const seamStart = seams.length / 3
+    const patternStart = patterns.length / 3
     const fittingStart = fittings.length / 3
     const paneStart = panes.length / 3
 
@@ -1549,11 +1560,14 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       }
     }
 
-    // The plating, laid on the ship's grid and clipped to this room. Lifted off
-    // the floor by the same hair the wall lines are, so it is not fighting the
-    // deck for the same depth value.
-    for (const [from, to] of plateSeams(space.footprint)) {
-      seams.push(from[0], base + OFFSET, from[1], to[0], base + OFFSET, to[1])
+    // A panel-shown finish replaces the generic deck plating in the handful of
+    // rooms where the audit names one. The royal inlay takes the architectural
+    // gold line; tile, boards and radial joints stay in the subdued seam line.
+    const pattern = floorPatternOf(space)
+    const floorLines = pattern?.segments ?? plateSeams(space.footprint)
+    const floorBuffer = pattern ? (pattern.style === 'inlay' ? edges : patterns) : seams
+    for (const [from, to] of floorLines) {
+      floorBuffer.push(from[0], base + OFFSET, from[1], to[0], base + OFFSET, to[1])
     }
 
     /**
@@ -1776,6 +1790,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const count = builder.positions.length / 3 - start
     const edgeCount = edges.length / 3 - edgeStart
     const seamCount = seams.length / 3 - seamStart
+    const patternCount = patterns.length / 3 - patternStart
     const fittingCount = fittings.length / 3 - fittingStart
     const paneCount = panes.length / 3 - paneStart
     if (!count && !edgeCount) continue
@@ -1787,6 +1802,8 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
       edgeCount,
       seamStart,
       seamCount,
+      patternStart,
+      patternCount,
       fittingStart,
       fittingCount,
       paneStart,
@@ -1810,6 +1827,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     colors: new Float32Array(builder.colors),
     edges: new Float32Array(edges),
     seams: new Float32Array(seams),
+    patterns: new Float32Array(patterns),
     fittings: new Float32Array(fittings),
     fittingColors: new Float32Array(fittingColors),
     panes: new Float32Array(panes),

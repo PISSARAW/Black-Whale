@@ -1,5 +1,5 @@
 /**
- * The seven materials a deck is drawn with, and the arguments behind each.
+ * The eight materials a deck is drawn with, and the arguments behind each.
  *
  * They were built inline in `TourScene.svelte`, which was the right place for
  * them while they were seven constructor calls. They stopped being that. Three
@@ -10,7 +10,7 @@
  *
  * What it is *not* is a place where any of these decisions changed. Every
  * comment below is the comment that was written beside the call it belongs to,
- * and the walk gets back exactly the seven materials it made for itself.
+ * and the walk gets back those materials plus the audited floor-pattern line.
  */
 import type * as Three from 'three'
 import { applySurfaceDetail } from './surfaceDetail'
@@ -28,6 +28,7 @@ export interface DeckMaterials {
   pool: ReturnType<typeof applySkyPool>
   edge: Three.LineBasicMaterial
   seam: Three.LineBasicMaterial
+  pattern: Three.LineBasicMaterial
   fitting: Three.MeshBasicMaterial
   pane: Three.MeshBasicMaterial
   dust: Three.PointsMaterial
@@ -73,10 +74,7 @@ function dressSteel(material: Three.MeshLambertMaterial, quality: QualityProfile
  * structural materials only: the fittings and the window panes are lights, and a
  * lamp with the tooth of a bulkhead on it is a painted panel, not a lamp.
  */
-export function createDeckMaterials(
-  THREE: typeof Three,
-  quality: QualityProfile,
-): DeckMaterials {
+export function createDeckMaterials(THREE: typeof Three, quality: QualityProfile): DeckMaterials {
   const surface = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.FrontSide })
   dressSteel(surface, quality)
 
@@ -104,12 +102,14 @@ export function createDeckMaterials(
 }
 
 /**
- * The lines and the lights: the four materials that carry no shader hook.
+ * The lines and the lights: the five materials that carry no shader hook.
  *
  * Split out for the borne rather than for the argument — the arguments are each
  * beside their own call below, where they have always been.
  */
-function trim(THREE: typeof Three): Pick<DeckMaterials, 'edge' | 'seam' | 'fitting' | 'pane'> {
+function trim(
+  THREE: typeof Three,
+): Pick<DeckMaterials, 'edge' | 'seam' | 'pattern' | 'fitting' | 'pane'> {
   return {
     // The gold outline the deck plans are drawn in, carried into three
     // dimensions: without it the decks read as one unbroken surface.
@@ -125,6 +125,15 @@ function trim(THREE: typeof Three): Pick<DeckMaterials, 'edge' | 'seam' | 'fitti
      * Faint on purpose: it is a texture to walk over, not a grid to read.
      */
     seam: new THREE.LineBasicMaterial({ color: 0x6f6256, transparent: true, opacity: 0.22 }),
+
+    // Tile grout, floorboard ends and the pod's radial joints are panel-shown
+    // facts, not the inferred plating above. Kept neutral, but made legible in
+    // the dim rooms where the generic seam would disappear into the floor.
+    pattern: new THREE.LineBasicMaterial({
+      color: 0xb8a58d,
+      transparent: true,
+      opacity: 0.5,
+    }),
 
     /**
      * The ceiling fittings: the one surface on the deck that is a light.

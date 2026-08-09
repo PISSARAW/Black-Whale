@@ -734,7 +734,7 @@
   const statusHint = $derived(overlayView.status)
 
   let takeScreenshot = $state<(() => Promise<Blob | null>) | null>(null)
-  let gyoMode = $state(false)
+  const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
   const downloadBlob = (blob: Blob, filename: string) => {
@@ -816,7 +816,7 @@
       immersive={chrome.immersive}
       {navigation}
       bind:takeScreenshot
-      bind:gyoMode
+      gyoMode={gyoMode}
       scene={{
         ship,
         world,
@@ -868,7 +868,7 @@
         controls: overlayControls,
         statusHint,
         tourist,
-        gyo: { active: gyoMode, onToggle: () => (gyoMode = !gyoMode) },
+        gyo: { active: gyoMode, onToggle: () => hatsuSession.useNen({ type: 'GYO', on: !gyoMode }) },
         linkPrompt: touch ? null : linkPrompt,
         // The provenance card of the light, beside the deck: the visitor can
         // see why the bay is black at chapter 374 and a drawn noon elsewhere.

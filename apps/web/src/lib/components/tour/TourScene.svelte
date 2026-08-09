@@ -578,7 +578,7 @@
     propels = false,
     gumOn = null,
     hour = NO_HOUR,
-    gyoMode = $bindable(false),
+    gyoMode = false,
   }: Props = $props()
 
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())

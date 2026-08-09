@@ -512,6 +512,8 @@
     unsupportedLabel: string
     /** Optional bindable for capturing the pure canvas */
     takeScreenshot?: (() => Promise<Blob | null>) | null
+    /** Gyo mode toggle */
+    gyoMode?: boolean
   }
 
   let {
@@ -576,6 +578,7 @@
     propels = false,
     gumOn = null,
     hour = NO_HOUR,
+    gyoMode = $bindable(false),
   }: Props = $props()
 
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())
@@ -830,6 +833,7 @@
         shafts,
         refraction,
         grade,
+        gyoFilter,
       } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -4681,6 +4685,11 @@
         if (refraction) {
           refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(shownNen)
           refraction.uniforms.uTime.value = clock
+        }
+        
+        // Gyo mode toggles the custom filter pass
+        if (gyoFilter) {
+          gyoFilter.enabled = gyoMode
         }
 
         const { width, height } = renderer.getSize(size)

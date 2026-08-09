@@ -1,6 +1,7 @@
 /** Browser-owned renderer shell around the tour's Three.js scene. */
 import type * as Three from 'three'
 import { LENS_DEFAULTS, LENS_OFF, createGradePass } from './postGrade'
+import { createGyoPass } from './gyoFilter'
 import { createRefractionPass } from './auraRefraction'
 import { createShaftPass } from './godRays'
 import type { PostPass } from './postTypes'
@@ -45,6 +46,10 @@ export interface SceneRuntime {
    * moves all three of its numbers. See `applyGrade` and `$lib/tour/regime`.
    */
   grade: PostPass | null
+  /**
+   * The Gyo filter pass, toggled on/off to see Nen elements.
+   */
+  gyoFilter: PostPass | null
 }
 
 /** What the driver says, before the visitor is asked. */
@@ -168,6 +173,11 @@ export async function createSceneRuntime(
     composer.addPass(grade)
   }
 
+  // Gyo Filter is added after grade so it overrides the final colors with its effect.
+  let gyoFilter: PostPass | null = null
+  gyoFilter = await createGyoPass()
+  composer.addPass(gyoFilter)
+
   /**
    * Last, and the reason the whole file changed.
    *
@@ -195,6 +205,7 @@ export async function createSceneRuntime(
     shafts,
     refraction,
     grade,
+    gyoFilter,
   }
 }
 

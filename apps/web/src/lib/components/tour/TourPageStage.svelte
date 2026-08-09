@@ -41,9 +41,10 @@
      */
     address: AddressProps
     takeScreenshot?: (() => Promise<Blob | null>) | null
+    gyoMode?: boolean
   }
 
-  let { immersive, navigation, scene, overlay, examine, address, takeScreenshot = $bindable(null) }: Props = $props()
+  let { immersive, navigation, scene, overlay, examine, address, takeScreenshot = $bindable(null), gyoMode = $bindable(false) }: Props = $props()
 </script>
 
 <section
@@ -66,6 +67,7 @@
     bind:aimedAt={navigation.aimedAt}
     bind:aimedSolidAt={navigation.aimedSolidAt}
     bind:takeScreenshot
+    bind:gyoMode
     {...scene}
   />
   <TourSceneOverlay {...overlay} />

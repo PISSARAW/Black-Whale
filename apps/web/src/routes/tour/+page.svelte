@@ -734,7 +734,8 @@
   const statusHint = $derived(overlayView.status)
 
   let takeScreenshot = $state<(() => Promise<Blob | null>) | null>(null)
-  const currentMangaViews = $derived(viewsForSpace(currentSpace?.id))
+  let gyoMode = $state(false)
+  const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
   const downloadBlob = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob)
@@ -755,7 +756,7 @@
             const view = currentMangaViews[0]
             navigation.jumpTo = view.spaceId
             navigation.jumpAt = view.at
-            navigation.jumpHeading = view.heading
+            navigation.heading = view.heading
             navigation.lookPitch = view.pitch
           },
           onTakePhoto: async () => {
@@ -815,6 +816,7 @@
       immersive={chrome.immersive}
       {navigation}
       bind:takeScreenshot
+      bind:gyoMode
       scene={{
         ship,
         world,
@@ -866,6 +868,7 @@
         controls: overlayControls,
         statusHint,
         tourist,
+        gyo: { active: gyoMode, onToggle: () => (gyoMode = !gyoMode) },
         linkPrompt: touch ? null : linkPrompt,
         // The provenance card of the light, beside the deck: the visitor can
         // see why the bay is black at chapter 374 and a drawn noon elsewhere.

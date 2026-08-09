@@ -10,6 +10,7 @@ describe('room appearance', () => {
     ['tier-2', 5],
     ['tier-3', 10],
     ['tier-4', 5],
+    ['tier-5', 7],
   ])('gives every audited %s location a deliberate finish', (tier, count) => {
     const locations = new Set(
       ship.blueprint.spaces
@@ -19,6 +20,17 @@ describe('room appearance', () => {
 
     expect(locations.size).toBe(count)
     expect([...locations].filter((id) => !hasAuthoredAppearance(id))).toEqual([])
+  })
+
+  it('covers the complete 61-location appearance audit', () => {
+    const locations = new Set(
+      ship.blueprint.spaces
+        .map((space) => space.locationId)
+        .filter((id): id is string => id !== null),
+    )
+
+    expect(locations.size).toBe(61)
+    expect([...locations].every(hasAuthoredAppearance)).toBe(true)
   })
 
   it('separates the main Tier 1 visual registers without adding geometry', () => {

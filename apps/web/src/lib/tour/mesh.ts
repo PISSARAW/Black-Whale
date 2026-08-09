@@ -35,7 +35,6 @@ import type {
   Segment,
   Space,
   Structure,
-  StructureKind,
   Tier,
   Triangle,
   Vec2,

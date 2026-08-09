@@ -7,6 +7,7 @@
  * bulkheads, ceiling and solids a visual register appropriate to the place.
  */
 import type { Space, SpaceCategory, StructureKind, Tier } from './types'
+import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 
 export interface RoomAppearance {
   floor: number
@@ -19,7 +20,7 @@ export interface RoomAppearance {
   accent: number
 }
 
-type Finish =
+export type Finish =
   | 'legacy'
   | 'royal-salon'
   | 'gilded-hall'
@@ -50,6 +51,13 @@ type Finish =
   | 'briefing'
   | 'ei-i-office'
   | 'xi-yu-office'
+  | 'assembly-bay'
+  | 'mess-hall'
+  | 'cha-r-office'
+  | 'hangar'
+  | 'hold-clinic'
+  | 'fifth-class'
+  | 'warehouse'
 
 const LEGACY: RoomAppearance = {
   floor: 0x2a1f1f,
@@ -373,79 +381,85 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     fabric: 0x4b4136,
     accent: 0x7e633a,
   },
+  'assembly-bay': {
+    floor: 0x282521,
+    wall: 0x4b4943,
+    ceiling: 0x0c0b0a,
+    column: 0x65615a,
+    wood: 0x383127,
+    metal: 0x6f706d,
+    fabric: 0x413b34,
+    accent: 0x765637,
+  },
+  'mess-hall': {
+    floor: 0x2d2921,
+    wall: 0x514d42,
+    ceiling: 0x0f0d0a,
+    column: 0x696357,
+    wood: 0x433724,
+    metal: 0x74746b,
+    fabric: 0x494238,
+    accent: 0x7d6038,
+  },
+  'cha-r-office': {
+    floor: 0x2e211e,
+    wall: 0x59433c,
+    ceiling: 0x100b09,
+    column: 0x70574e,
+    wood: 0x452d20,
+    metal: 0x766a61,
+    fabric: 0x51352f,
+    accent: 0x8a4b32,
+  },
+  hangar: {
+    floor: 0x26292a,
+    wall: 0x4a5052,
+    ceiling: 0x0b0d0e,
+    column: 0x666c6e,
+    wood: 0x37352f,
+    metal: 0x777d7f,
+    fabric: 0x404547,
+    accent: 0x875936,
+  },
+  'hold-clinic': {
+    floor: 0x263235,
+    wall: 0x50676b,
+    ceiling: 0x0e1517,
+    column: 0x687e82,
+    wood: 0x3a4849,
+    metal: 0x7e9295,
+    fabric: 0x496368,
+    accent: 0x4e7e78,
+  },
+  'fifth-class': {
+    floor: 0x292b2a,
+    wall: 0x4d5350,
+    ceiling: 0x0d0f0e,
+    column: 0x656b68,
+    wood: 0x3a382f,
+    metal: 0x707875,
+    fabric: 0x414845,
+    accent: 0x64654d,
+  },
+  warehouse: {
+    floor: 0x292721,
+    wall: 0x4c4a42,
+    ceiling: 0x0d0c0a,
+    column: 0x656158,
+    wood: 0x3e3528,
+    metal: 0x716f68,
+    fabric: 0x45413a,
+    accent: 0x805839,
+  },
 }
-
-const TIER_1_FINISH = new Map<string, Finish>([
-  ['tier-1-banquet-hall', 'gilded-hall'],
-  ['tier-1-king-living-quarters', 'royal-salon'],
-  ['tier-1-lifeboats', 'evacuation'],
-  ['tier-1-princes-burial-chamber', 'funerary'],
-  ['tier-1-queens-living-quarters', 'royal-passage'],
-  ...Array.from(
-    { length: 8 },
-    (_, index) =>
-      [
-        `tier-1-queens-living-quarters-room-${String(index + 1).padStart(2, '0')}`,
-        'royal-suite' as const,
-      ] as const,
-  ),
-  ['tier-1-royal-residential-sector', 'royal-passage'],
-  ...Array.from(
-    { length: 14 },
-    (_, index) =>
-      [`tier-1-royal-residential-sector-room-${1001 + index}`, 'royal-suite' as const] as const,
-  ),
-  ['tier-1-soldiers-living-quarters', 'barracks'],
-  ['tier-1-supreme-court', 'court'],
-  ['tier-1-vip-casino', 'casino'],
-  ['tier-1-vip-jail', 'secure'],
-  ['tier-1-vvip-living-quarters', 'royal-passage'],
-  ['tier-1-vvip-prison-beyond', 'secure'],
-])
-
-const TIER_2_FINISH = new Map<string, Finish>([
-  ['tier-2-bulkhead', 'bulkhead'],
-  ['tier-2-heilly-secret-hideout', 'concealed'],
-  ['tier-2-ministry-of-justice', 'government'],
-  ['tier-2-screening-room', 'screening'],
-  ['tier-2-vip-witness-protection-area', 'protected'],
-])
-
-const TIER_3_FINISH = new Map<string, Finish>([
-  ['tier-3-central-courthouse', 'civic'],
-  ['tier-3-central-hospital', 'clinical'],
-  ['tier-3-central-police-station', 'police'],
-  ['tier-3-cineplex', 'cineplex'],
-  ['tier-3-heilly-family-office', 'mafia-office'],
-  ['tier-3-observation-deck', 'observation'],
-  ['tier-3-residential-first-class', 'first-class'],
-  ['tier-3-residential-room-3101', 'standard-cabin'],
-  ['tier-3-residential-standard', 'standard-cabin'],
-  ['tier-3-residential-units', 'dormitory'],
-])
-
-const TIER_4_FINISH = new Map<string, Finish>([
-  ['tier-4-central-passage', 'service-passage'],
-  ['tier-4-ei-i-family-office', 'ei-i-office'],
-  ['tier-4-recycling-sewage-facilities', 'recycling'],
-  ['tier-4-royal-army-conference-room', 'briefing'],
-  ['tier-4-xi-yu-family-office', 'xi-yu-office'],
-])
-
-const AUTHORED_FINISH = new Map([
-  ...TIER_1_FINISH,
-  ...TIER_2_FINISH,
-  ...TIER_3_FINISH,
-  ...TIER_4_FINISH,
-])
 
 /** Whether a catalogued location received a deliberate finish in this pass. */
 export function hasAuthoredAppearance(locationId: string): boolean {
-  return AUTHORED_FINISH.has(locationId)
+  return hasAuthoredFinish(locationId)
 }
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
-  const finish = space.locationId ? AUTHORED_FINISH.get(space.locationId) : undefined
+  const finish = space.locationId ? authoredFinishOf(space.locationId) : undefined
   return finish ? FINISHES[finish] : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
 }
 

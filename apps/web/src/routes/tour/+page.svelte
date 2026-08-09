@@ -58,6 +58,7 @@
   import { NO_CAST, readingIsFelt, spacesForLocation, type AddressWords } from '$lib/tour/cast'
   import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
   import { NO_HOUR } from '$lib/tour/hour'
+  import { viewsForSpace } from '$lib/tour/mangaViews'
   import type { PageData } from './$types'
 
   // The walk is no longer only a ship: the server hands it the cast of the
@@ -731,6 +732,71 @@
   const aimReadout = $derived(overlayView.aim)
   const overlayControls = $derived(overlayView.controls)
   const statusHint = $derived(overlayView.status)
+
+  let takeScreenshot = $state<(() => Promise<Blob | null>) | null>(null)
+  const currentMangaViews = $derived(viewsForSpace(currentSpace?.id))
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  const tourist = $derived(
+    currentMangaViews.length > 0
+      ? {
+          available: true,
+          onJumpToAngle: () => {
+            const view = currentMangaViews[0]
+            navigation.jumpTo = view.spaceId
+            navigation.jumpAt = view.at
+            navigation.jumpHeading = view.heading
+            navigation.lookPitch = view.pitch
+          },
+          onTakePhoto: async () => {
+            if (takeScreenshot) {
+              const blob = await takeScreenshot()
+              if (blob) {
+                const view = currentMangaViews[0]
+                const img = new Image()
+                const url = URL.createObjectURL(blob)
+                img.onload = () => {
+                  const cvs = document.createElement('canvas')
+                  cvs.width = img.width
+                  cvs.height = img.height
+                  const ctx = cvs.getContext('2d')
+                  if (ctx) {
+                    ctx.drawImage(img, 0, 0)
+                    ctx.font = 'bold 24px sans-serif'
+                    ctx.fillStyle = 'rgba(255, 215, 0, 0.8)'
+                    ctx.textAlign = 'right'
+                    ctx.fillText(`Chapitre ${view.chapter} - ${view.labelFr}`, cvs.width - 20, cvs.height - 20)
+                    cvs.toBlob((watermarked) => {
+                      if (watermarked) downloadBlob(watermarked, `manga-angle-${view.spaceId}.png`)
+                    }, 'image/png')
+                  }
+                  URL.revokeObjectURL(url)
+                }
+                img.src = url
+              }
+            }
+          },
+          onTakePhotoWithHud: async () => {
+             const { toBlob } = await import('html-to-image')
+             const el = document.getElementById('tour-stage-container')
+             if (el) {
+               const blob = await toBlob(el, { cacheBust: true })
+               if (blob) downloadBlob(blob, `photo-hud-${currentSpace?.id}.png`)
+             }
+          }
+        }
+      : null
+  )
 </script>
 
 <svelte:window onkeydown={keyboard.onKeydown} />
@@ -748,6 +814,7 @@
     <TourPageStage
       immersive={chrome.immersive}
       {navigation}
+      bind:takeScreenshot
       scene={{
         ship,
         world,
@@ -798,6 +865,7 @@
         aim: aimReadout,
         controls: overlayControls,
         statusHint,
+        tourist,
         linkPrompt: touch ? null : linkPrompt,
         // The provenance card of the light, beside the deck: the visitor can
         // see why the bay is black at chapter 374 and a drawn noon elsewhere.

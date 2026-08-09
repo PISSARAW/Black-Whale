@@ -83,6 +83,12 @@
      * year, drawn the same way on both surfaces.
      */
     scarlet: { share: number; label: string } | null
+    tourist?: {
+      available: boolean
+      onJumpToAngle: () => void
+      onTakePhoto: () => void
+      onTakePhotoWithHud: () => void
+    } | null
   }
 
   let {
@@ -99,10 +105,41 @@
     examine,
     hour,
     scarlet,
+    tourist = null,
   }: Props = $props()
 </script>
 
 {#if autopilot}<div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>{/if}
+
+{#if tourist?.available}
+  <div class="pointer-events-auto absolute right-3 top-3 z-40 flex flex-col items-end gap-2">
+    <button
+      type="button"
+      onclick={tourist.onJumpToAngle}
+      class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+    >
+      Voir l'angle du manga
+    </button>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        onclick={tourist.onTakePhoto}
+        title="Photo Pure"
+        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-lg text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+      >
+        📷
+      </button>
+      <button
+        type="button"
+        onclick={tourist.onTakePhotoWithHud}
+        title="Photo avec Interface"
+        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-lg text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+      >
+        📱
+      </button>
+    </div>
+  </div>
+{/if}
 
 {#if scarlet}
   <!-- First in the layer, and with no z of its own, so every read-out over the

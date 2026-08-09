@@ -510,12 +510,15 @@
     loadingLabel: string
     /** Shown instead of the walk when the browser cannot give us WebGL. */
     unsupportedLabel: string
+    /** Optional bindable for capturing the pure canvas */
+    takeScreenshot?: (() => Promise<Blob | null>) | null
   }
 
   let {
     ship,
     loadingLabel,
     unsupportedLabel,
+    takeScreenshot = $bindable(null),
     tierId = $bindable(),
     currentSpace = $bindable(null),
     availableLink = $bindable(null),
@@ -702,6 +705,19 @@
   let container = $state<HTMLDivElement | null>(null)
   let ready = $state(false)
   let failure = $state<string | null>(null)
+  
+  let pendingScreenshot: (() => void) | null = null
+
+  $effect(() => {
+    takeScreenshot = async () => {
+      if (!canvas || !ready) return null
+      return new Promise<Blob | null>((resolve) => {
+        pendingScreenshot = () => {
+          canvas!.toBlob((blob) => resolve(blob), 'image/png')
+        }
+      })
+    }
+  })
 
   /**
    * The virtual joystick, as a vector inside the unit circle: `x` to the right,
@@ -4710,6 +4726,11 @@
           recordCamera.lookAt(record.look[0], record.lookY, record.look[1])
           renderSceneInset({ runtime, lens: recordCamera, corner: 'bottom', measure: size })
         }
+      }
+
+      if (pendingScreenshot) {
+        pendingScreenshot()
+        pendingScreenshot = null
       }
 
       /**

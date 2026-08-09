@@ -40,12 +40,14 @@
      * answers is about the body you are standing in front of.
      */
     address: AddressProps
+    takeScreenshot?: (() => Promise<Blob | null>) | null
   }
 
-  let { immersive, navigation, scene, overlay, examine, address }: Props = $props()
+  let { immersive, navigation, scene, overlay, examine, address, takeScreenshot = $bindable(null) }: Props = $props()
 </script>
 
 <section
+  id="tour-stage-container"
   class="relative overflow-hidden {immersive
     ? 'h-full min-h-0'
     : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
@@ -60,8 +62,10 @@
     bind:touch={navigation.touch}
     bind:position={navigation.position}
     bind:heading={navigation.heading}
+    bind:lookPitch={navigation.lookPitch}
     bind:aimedAt={navigation.aimedAt}
     bind:aimedSolidAt={navigation.aimedSolidAt}
+    bind:takeScreenshot
     {...scene}
   />
   <TourSceneOverlay {...overlay} />

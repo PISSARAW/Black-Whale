@@ -12,6 +12,7 @@ export class TourNavigationState {
   touch = $state(false)
   position = $state<Vec2>([0, 0])
   heading = $state(0)
+  lookPitch = $state(0)
   aimedAt = $state<Space | null>(null)
   aimedSolidAt = $state<import('$lib/tour/types').Structure | null>(null)
 

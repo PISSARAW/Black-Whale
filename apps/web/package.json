@@ -21,6 +21,7 @@
     "@black-whale/simulation-engine": "workspace:*",
     "@prisma/client": "^5.0.0",
     "@tanstack/svelte-query": "^5.0.0",
+    "html-to-image": "^1.11.11",
     "panzoom": "^9.4.4",
     "svelte": "^5.0.0",
     "three": "^0.185.1"

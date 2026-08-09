@@ -25,6 +25,7 @@ import {
 } from './geometry'
 import { ceilingOf, floorOf } from './blueprint'
 import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
+import { appearanceOf, structureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
 import type {
@@ -33,7 +34,6 @@ import type {
   Provenance,
   Segment,
   Space,
-  SpaceCategory,
   Structure,
   StructureKind,
   Tier,
@@ -174,61 +174,10 @@ export interface TierMesh {
 }
 
 /**
- * Floor colours, keyed to the palette the archive already uses: near-black
- * hull, ivory, and gold for anything royal.
- */
-const CATEGORY_COLOURS: Record<SpaceCategory, number> = {
-  room: 0x2a1f1f,
-  corridor: 0x1a1414,
-  quarters: 0x3a2418,
-  residential: 0x2e211c,
-  public: 0x3d2a16,
-  military: 0x1f2a1f,
-  administrative: 0x1c2430,
-  medical: 0x1b2a30,
-  mafia: 0x2c1c2e,
-  prison: 0x2a1414,
-  ceremonial: 0x3a2e10,
-  evacuation: 0x14262a,
-  infrastructure: 0x1e1e1e,
-  storage: 0x24211a,
-}
-
-/**
  * What stands in a room, kept apart from the room itself: bare machinery for
  * the springs, near-black lacquer for the coffins, and the gold of the deck
  * plans for a stage or a dais.
  */
-const STRUCTURE_COLOURS: Record<StructureKind, number> = {
-  spring: 0x6d7078,
-  casket: 0x241d1d,
-  platform: 0x4c3a17,
-  counter: 0x3c3227,
-  table: 0x33291f,
-  bed: 0x4a4642,
-  seat: 0x342a24,
-  cabinet: 0x2e251d,
-  basin: 0x3f4246,
-  painting: 0x1d1a16,
-  // The frame, not the glass. What is seen through the opening is the emissive
-  // pane the room draws in front of this — see `WINDOW_GLOW`.
-  window: 0x14181e,
-  lifeboat: 0x8a8f96,
-  pillar: 0x6a5a4a,
-  bars: 0x7f868e,
-  manacle: 0x6f6250,
-  camera: 0x22262a,
-  telephone: 0x2a2622,
-  duct: 0x3a3d42,
-  // Darker than the ducting it belongs to: a grille is mostly the gaps in it.
-  vent: 0x24272b,
-}
-
-const WALL_COLOUR = hex(0x4a4038)
-const CEILING_COLOUR = hex(0x0b0909)
-/** Columns sit a shade above the walls so they read as structure. */
-const COLUMN_COLOUR = hex(0x6a5a4a)
-
 function blend(a: Rgb, b: Rgb, amount: number): Rgb {
   return [
     a[0] + (b[0] - a[0]) * amount,
@@ -268,10 +217,6 @@ const LIFT = 0.12
 
 /** Any albedo as the deck carries it: its own colour over the ship's ambient. */
 const lifted = (base: Rgb): Rgb => blend(base, [1, 1, 1], LIFT)
-
-const WALL_ALBEDO = lifted(WALL_COLOUR)
-const CEILING_ALBEDO = lifted(CEILING_COLOUR)
-const COLUMN_ALBEDO = lifted(COLUMN_COLOUR)
 
 /**
  * The reveal: the ship painted in what it is worth as evidence, and nothing
@@ -1105,7 +1050,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
   // used to blend a pink into it, which meant a forged surface announced itself
   // to anybody with eyes: the one thing ch. 61 is explicit that it does not do.
   // See `texture.ts`.
-  const colour = lifted(hex(STRUCTURE_COLOURS[structure.kind]))
+  const colour = lifted(hex(structureColourOf(structure.kind, appearanceOf(room, tier))))
   const bottom = floorOf(room, tier) + structure.base
   const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 
@@ -1491,10 +1436,11 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     const fittingStart = fittings.length / 3
     const paneStart = panes.length / 3
 
-    const floorColour = reveal
-      ? revealed(space.provenance, 0.62)
-      : lifted(hex(CATEGORY_COLOURS[space.category]))
-    const ceilingColour = reveal ? revealed(space.provenance, 0.82) : CEILING_ALBEDO
+    const appearance = appearanceOf(space, tier)
+    const floorColour = reveal ? revealed(space.provenance, 0.62) : lifted(hex(appearance.floor))
+    const ceilingColour = reveal
+      ? revealed(space.provenance, 0.82)
+      : lifted(hex(appearance.ceiling))
     const top = heightOf(space)
     const indices = triangulate(space.footprint)
     // Every surface of this room is shaded by this one object: the fittings of
@@ -1660,7 +1606,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         ? BLIND_COLOUR
         : reveal
           ? revealed(space.provenance, 0.45)
-          : WALL_ALBEDO
+          : lifted(hex(appearance.wall))
       // The badge takes the baked light like any other albedo: the reveal is a
       // change of what the surfaces mean, not of how the room is lit, and a
       // doctrine painted in flat colour would lose the very corners and creases
@@ -1689,7 +1635,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
 
     // Columns get a cap so you are not looking up an open shaft, and a brighter
     // face than the walls so they read as structure at a distance.
-    const colour = reveal ? revealed(space.provenance, 0.3) : COLUMN_ALBEDO
+    const colour = reveal ? revealed(space.provenance, 0.3) : lifted(hex(appearance.column))
     const h = COLUMN_HALF_WIDTH
     for (const centre of plan.columns.get(space.id) ?? []) {
       const corners: Vec2[] = [
@@ -1748,7 +1694,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
           [door.end, door.start],
           { bottom: otherBase, top: base },
           {
-            colour: WALL_ALBEDO,
+            colour: lifted(hex(appearance.wall)),
             shade: bake(light.wall(otherBase, base)),
             sky: sky.wall,
           },
@@ -1768,7 +1714,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
           ? DECLARED_COLOUR
           : reveal
             ? revealed(provenance, 0.45)
-            : WALL_ALBEDO
+            : lifted(hex(appearance.wall))
       // Both ways round, because a lintel is the one surface on the deck with a
       // room on either side of it and only one entry in the buffers. A wall is
       // drawn twice over — once by each of the two rooms that share it, which is

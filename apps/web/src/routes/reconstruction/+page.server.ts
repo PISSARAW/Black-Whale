@@ -2,6 +2,8 @@ import { prisma } from '$lib/server/db'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { resolveReconstructionSources } from '$lib/reconstruction/sourceView'
 import { buildReconstructionClaimIndex } from '$lib/reconstruction/claimIndex'
+import { catalogSceneLocation, type CatalogChapterScenes } from '$lib/reconstruction/sceneLocation'
+import { readDataFile } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -22,6 +24,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       },
     })
 
+    const catalogChapters = await readDataFile<CatalogChapterScenes[]>('chapters/chapters.json')
     const eventIds = chapters.flatMap((chapter) => chapter.events.map((event) => event.id))
     const [worldEvents, presences, locations, participations, participantCharacters] =
       await Promise.all([
@@ -117,6 +120,19 @@ export const load: PageServerLoad = async ({ cookies }) => {
     const locationSlugs = Object.fromEntries(
       locations.map((location) => [location.id, location.slug]),
     )
+    const locationIds = new Map(locations.map((location) => [location.slug, location.id]))
+    const locatedChapters = chapters.map((chapter) => ({
+      ...chapter,
+      events: chapter.events.map((event) => {
+        if (event.locationId) return event
+        const slug = catalogSceneLocation({
+          chapterNumber: chapter.number,
+          eventTitle: event.title,
+          chapters: catalogChapters,
+        })
+        return { ...event, locationId: slug ? (locationIds.get(slug) ?? null) : null }
+      }),
+    }))
 
     const byCharacterId = new Map(
       participantCharacters.map((character) => [character.id, character]),
@@ -166,7 +182,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
 
     return {
-      chapters,
+      chapters: locatedChapters,
       worldEvents,
       presences,
       sceneCharacters,

@@ -231,6 +231,17 @@ export function reduceWorld(previous: WorldState, event: WorldEvent): WorldState
       )
       return next
     }
+    case 'ENVIRONMENT_ALTERED': {
+      const { locationId, vestigeType, metadata } = event.payload
+      const vestigesForLocation = next.vestiges[locationId] ?? []
+      vestigesForLocation.push({
+        type: vestigeType,
+        occurredAt: event.cursor,
+        metadata,
+      })
+      next.vestiges[locationId] = vestigesForLocation
+      return next
+    }
   }
 }
 

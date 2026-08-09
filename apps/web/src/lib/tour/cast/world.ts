@@ -478,4 +478,8 @@ export interface TourWorld {
    * beast at your back is a beast that never appeared.
    */
   summoned: { spaceId: string; at: Vec2; heading: number } | null
+  /**
+   * Environmental damages that have occurred up to the cap.
+   */
+  vestiges: Record<string, import('./types').TourVestige[]>
 }

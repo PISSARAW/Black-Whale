@@ -156,9 +156,9 @@ export const RESTING_BODY: TourBody = {
   injuries: 0,
   availablePain: 0,
   packed: null,
-  autopilotUntil: null,
   gilded: 0,
   halo: 0,
+  vestiges: {},
 }
 
 /**

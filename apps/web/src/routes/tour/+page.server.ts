@@ -184,6 +184,14 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
 
   const aboard = allowed ? members.filter((member) => allowed.has(member.characterId)) : members
 
+  const vestiges: Record<string, import('$lib/tour/cast/types').TourVestige[]> = {}
+  for (const [locationId, locationVestiges] of Object.entries(world.vestiges ?? {})) {
+    vestiges[locationId] = locationVestiges.map((v) => ({
+      type: v.type,
+      metadata: v.metadata,
+    }))
+  }
+
   return {
     cast: {
       eventId: event.id,
@@ -192,6 +200,7 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
       members: aboard,
       beasts,
       dossiers: dossiersFor(aboard, cap),
+      vestiges,
     },
     // Read off the event rather than recomputed: the voyage clock runs once, at
     // compile time, and both the walk and `/ship` read what it stamped.

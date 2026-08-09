@@ -698,7 +698,19 @@
     "sequence": 1,
     "title": "The Heil-Ly hideout is traced to Tier 2",
     "summary": "Hinrigh plants a transmitter beyond the room 3101 trap, allowing the Phantom Troupe to locate Morena's true base.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "events": [
+      {
+        "type": "ENVIRONMENT_ALTERED",
+        "payload": {
+          "locationId": "tier-2-heil-ly-hideout",
+          "vestigeType": "wall_cut",
+          "metadata": {
+            "target": "tier-2-heil-ly-laundry"
+          }
+        }
+      }
+    ]
   },
   {
     "chapter": 402,

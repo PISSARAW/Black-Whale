@@ -12,6 +12,7 @@ export type DomainEventType =
   | 'RELATION_CHANGED'
   | 'BODY_REVIVED'
   | 'ABILITY_INHERITED'
+  | 'ENVIRONMENT_ALTERED'
 
 export interface DomainEvent<T = Record<string, unknown>> {
   type: DomainEventType
@@ -47,7 +48,19 @@ export interface FactLearnedPayload {
   knowledgeId: string
 }
 
+export type VestigeType = 'wall-breach' | 'broken-door' | 'blood-stain'
+
+export interface EnvironmentAlteredPayload {
+  locationId: string
+  vestigeType: VestigeType
+  /** 
+   * Additional context for the renderer, e.g. which specific door is broken.
+   */
+  metadata?: Record<string, string | number | boolean>
+}
+
 export type BodyMovedEvent = DomainEvent<BodyMovedPayload>
 export type ConsciousnessTransferredEvent = DomainEvent<ConsciousnessTransferredPayload>
 export type AbilityActivatedEvent = DomainEvent<AbilityActivatedPayload>
 export type FactLearnedEvent = DomainEvent<FactLearnedPayload>
+export type EnvironmentAlteredEvent = DomainEvent<EnvironmentAlteredPayload>

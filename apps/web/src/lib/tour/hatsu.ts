@@ -3864,26 +3864,53 @@ export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
  * `linkUnderfoot` is what offers a stair, and the walk refuses that separately
  * for a room that is shut.
  */
-export function planSealed(ship: Ship, plan: TierPlan, shut: readonly string[]): TierPlan {
+export function planSealed(
+  ship: Ship,
+  plan: TierPlan,
+  shut: readonly string[],
+  vestiges: Record<string, import('./cast/types').TourVestige[]>,
+): TierPlan {
   const closed = new Set(shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
   if (!closed.size) return plan
 
-  const sealed = new Set([
-    ...ship.seals.map((seal) => sealKey(seal.a, seal.b)),
-    ...plan.doorways
-      .filter((door) => closed.has(door.a) || closed.has(door.b))
-      .map((door) => sealKey(door.a, door.b)),
-  ])
+  const brokenDoors = new Set<string>()
+  for (const [locationId, locationVestiges] of Object.entries(vestiges)) {
+    for (const vestige of locationVestiges) {
+      if (vestige.type === 'door_broken' && vestige.metadata?.target) {
+        brokenDoors.add(sealKey(locationId, String(vestige.metadata.target)))
+      }
+    }
+  }
+
+  const sealed = new Set(
+    [
+      ...ship.seals.map((seal) => sealKey(seal.a, seal.b)),
+      ...plan.doorways
+        .filter((door) => closed.has(door.a) || closed.has(door.b))
+        .map((door) => sealKey(door.a, door.b)),
+    ].filter((key) => !brokenDoors.has(key))
+  )
+  
   // A declared door would re-open the wall the seal just closed, so the ones
   // into a shut room are dropped with it.
   const overrides = new Map(
     ship.doors
-      .filter((door) => !closed.has(door.a) && !closed.has(door.b))
+      .filter((door) => !closed.has(door.a) && !closed.has(door.b) || brokenDoors.has(sealKey(door.a, door.b)))
       .map((door) => [sealKey(door.a, door.b), door] as const),
   )
 
   const doorways = deriveDoorways(plan.spaces, { sealed, overrides })
+  const cutWalls = new Set<string>()
+  for (const [locationId, locationVestiges] of Object.entries(vestiges)) {
+    for (const vestige of locationVestiges) {
+      if (vestige.type === 'wall_cut' && vestige.metadata?.target) {
+        cutWalls.add(sealKey(locationId, String(vestige.metadata.target)))
+      }
+    }
+  }
+
   const walls = plan.spaces.flatMap((space) => wallSegments(space, doorways))
+    .filter((wall) => !wall.adjacent || !cutWalls.has(sealKey(wall.space, wall.adjacent)))
   for (const [spaceId, centres] of plan.columns) {
     for (const centre of centres) walls.push(...columnWalls(spaceId, centre))
   }
@@ -3904,7 +3931,7 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
   const plan = ship.plans.get(tierId)
   if (!plan) throw new Error(`no plan for ${tierId}`)
   return planWithout(
-    planSealed(ship, plan, world.shut),
+    planSealed(ship, plan, world.shut, world.vestiges),
     emptiedOn(world, tierId, ship),
     heldSolidIds(world),
   )

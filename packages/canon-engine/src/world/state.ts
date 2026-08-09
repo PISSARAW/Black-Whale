@@ -74,6 +74,12 @@ export interface KnowledgeRecord {
   acquiredAt: StoryCursor
 }
 
+export interface Vestige {
+  type: string // VestigeType from domain
+  occurredAt: StoryCursor
+  metadata?: Record<string, string | number | boolean>
+}
+
 export interface WorldState {
   schemaVersion: 1
   cursor: StoryCursor
@@ -84,6 +90,7 @@ export interface WorldState {
   effects: Record<string, EffectInstance>
   knowledgeByObserver: Record<string, Record<string, KnowledgeRecord>>
   abilitiesByOwner: Record<string, string[]>
+  vestiges: Record<string, Vestige[]>
 }
 
 export function createEmptyWorld(cursor: StoryCursor): WorldState {
@@ -97,6 +104,7 @@ export function createEmptyWorld(cursor: StoryCursor): WorldState {
     effects: {},
     knowledgeByObserver: {},
     abilitiesByOwner: {},
+    vestiges: {},
   }
 }
 

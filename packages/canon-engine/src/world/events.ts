@@ -38,14 +38,18 @@ export type AbilityGrantedEvent = EventEnvelope<
   'ABILITY_GRANTED',
   { ownerId: string; abilityId: string }
 >
-/**
- * Symmetric of ABILITY_GRANTED: the owner loses the ability (Skill Hunter's victim,
- * Steal Chain, a Stealth Dolphin loan being consumed, a creator's death).
- */
 export type AbilityRevokedEvent = EventEnvelope<
   'ABILITY_REVOKED',
   { ownerId: string; abilityId: string; reason?: string }
 >
+
+import type { VestigeType } from '@black-whale/domain'
+
+export type EnvironmentAlteredEvent = EventEnvelope<
+  'ENVIRONMENT_ALTERED',
+  { locationId: string; vestigeType: VestigeType; metadata?: Record<string, string | number | boolean> }
+>
+
 /**
  * Moves an effect along ACTIVE ⇄ DORMANT → TRIGGERED → ENDED. Conditional traps and
  * curses are created DORMANT and only transition when their canonical trigger fires.
@@ -83,6 +87,7 @@ export type WorldEvent =
   | KnowledgeGrantedEvent
   | AbilityGrantedEvent
   | AbilityRevokedEvent
+  | EnvironmentAlteredEvent
 
 export type WorldEventType = WorldEvent['type']
 
@@ -133,6 +138,8 @@ export function proposedSubjectIds(event: ProposedWorldEvent): string[] {
     case 'ABILITY_GRANTED':
     case 'ABILITY_REVOKED':
       return [event.payload.ownerId]
+    case 'ENVIRONMENT_ALTERED':
+      return [] // Environmental damage doesn't have an entity subject
   }
 }
 

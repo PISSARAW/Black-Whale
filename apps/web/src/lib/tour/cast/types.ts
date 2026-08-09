@@ -123,6 +123,17 @@ export interface CastPayload {
    * people the walk is allowed to draw.
    */
   dossiers: Record<string, CastDossier>
+  /**
+   * Environmental damages (broken doors, cut walls) that have occurred up to the cap.
+   * Grouped by locationId.
+   */
+  vestiges: Record<string, TourVestige[]>
+}
+
+/** An environmental trace left by a past event. */
+export interface TourVestige {
+  type: string
+  metadata?: Record<string, string | number | boolean>
 }
 
 /** A beast that keeps another body's position, resolved to that body. */
@@ -156,6 +167,7 @@ export const NO_CAST: CastPayload = {
   members: [],
   beasts: [],
   dossiers: {},
+  vestiges: {},
 }
 
 /**

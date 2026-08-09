@@ -13,7 +13,7 @@
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
   import { AVATAR, flashFor, type Apparition, type TourFlash } from '$lib/tour/apparitions'
-  import { EMPTY_WORLD, centroid, type TourReport, type TourWorld } from '$lib/tour/hatsu'
+  import { EMPTY_WORLD, type TourReport, type TourWorld } from '$lib/tour/hatsu'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
   import { TourCastController } from '$lib/tour/pageCastController'
@@ -23,7 +23,10 @@
   import { displayName } from '$lib/utils/displayNames'
   import { claimLevel, evidenceForEvent } from '$lib/reconstruction/evidence'
   import { visibleInPerspective, type PerspectiveProjection } from '$lib/reconstruction/perspective'
+  import { mainSceneSpace } from '$lib/reconstruction/sceneEntry'
   import { readReconstructionUrl, writeReconstructionUrl } from '$lib/reconstruction/urlState'
+  import { shipHourOf } from '$lib/tour/hour'
+  import { stationIn } from '$lib/tour/cast/stations'
   import type { Space, Vec2 } from '$lib/tour/types'
 
   let { data }: { data: PageData } = $props()
@@ -277,6 +280,7 @@
       }),
   )
   let selectedEvent = $derived(chronologicalEvents[currentIndex])
+  let selectedHour = $derived(shipHourOf(selectedEvent?.event ?? {}))
   let selectedEvidence = $derived.by(() => {
     if (!selectedEvent) return []
     const sourceIds = data.worldEvents
@@ -438,20 +442,30 @@
     )
   }
 
-  function avatar(entityId: string, locationId: string): Apparition | null {
-    const space = spaceForLocation(
-      ship,
-      (data.locationSlugs as Record<string, string>)[locationId] ?? locationId,
-    )
+  function avatar(
+    entityId: string,
+    locationId: string,
+    event: { id: string; locationId: string | null },
+  ): Apparition | null {
+    const locationSlug = (data.locationSlugs as Record<string, string>)[locationId] ?? locationId
+    const eventLocationSlug = event.locationId
+      ? ((data.locationSlugs as Record<string, string>)[event.locationId] ?? event.locationId)
+      : null
+    const space =
+      locationId === event.locationId
+        ? mainSceneSpace(ship, eventLocationSlug)
+        : spaceForLocation(ship, locationSlug)
     if (!space) return null
     const plan = ship.plans.get(space.tierId)
     if (!plan) return null
+    const station = stationIn(space, `${event.id}:${entityId}`)
     return {
       id: `avatar-${entityId}`,
       kind: 'avatar',
       spaceId: space.id,
       tierId: space.tierId,
-      at: centroid(space),
+      at: station.at,
+      heading: station.heading,
       y: floorOf(space, plan.tier),
       colour: AVATAR,
       size: 0.9,
@@ -547,6 +561,44 @@
       }
     }
 
+    // Older events do not all have their main room backfilled on the event
+    // itself. Their participating bodies still carry exact presences, so the
+    // room shared by the largest part of the cast is the best available scene
+    // location. A tie deliberately keeps source order instead of inventing a
+    // more precise claim.
+    const exactLocationByEntity: Record<string, string> = {}
+    for (const presence of data.presences) {
+      if (
+        isLegacyPresenceActive(presence, targetPosition) &&
+        presence.precision === 'EXACT_ROOM' &&
+        presence.locationId
+      ) {
+        exactLocationByEntity[presence.entityId] = presence.locationId
+      }
+    }
+    for (const [entityId, presence] of Object.entries(state.presences)) {
+      if (presence.precision === 'EXACT_ROOM' && presence.locationId) {
+        exactLocationByEntity[entityId] = presence.locationId
+      } else {
+        delete exactLocationByEntity[entityId]
+      }
+    }
+    const participantBodyIds = new Set(
+      data.sceneCharacters
+        .filter((character) => character.eventId === target.id)
+        .map((character) => character.bodyId),
+    )
+    const locationCounts: Record<string, number> = {}
+    for (const bodyId of participantBodyIds) {
+      const locationId = exactLocationByEntity[bodyId]
+      if (locationId) locationCounts[locationId] = (locationCounts[locationId] ?? 0) + 1
+    }
+    const inferredEventLocationId = Object.entries(locationCounts).reduce<string | null>(
+      (best, [locationId, count]) => (!best || count > locationCounts[best]! ? locationId : best),
+      null,
+    )
+    const sceneLocationId = target.locationId ?? inferredEventLocationId
+
     // Temporal Presence rows establish the canonical baseline. A backfilled
     // world event for the same entity takes precedence over that baseline.
     const byEntity: Record<string, Apparition> = {}
@@ -555,7 +607,10 @@
       if (!isLegacyPresenceActive(presence, targetPosition)) continue
       presenceByEntity[presence.entityId] = displayPresence(presence.entityId, presence)
       if (presence.precision !== 'EXACT_ROOM' || !presence.locationId) continue
-      const shown = avatar(presence.entityId, presence.locationId)
+      const shown = avatar(presence.entityId, presence.locationId, {
+        id: target.id,
+        locationId: sceneLocationId,
+      })
       if (shown) byEntity[presence.entityId] = shown
     }
     for (const [entityId, presence] of Object.entries(state.presences)) {
@@ -564,7 +619,10 @@
         delete byEntity[entityId]
         continue
       }
-      const shown = avatar(entityId, presence.locationId)
+      const shown = avatar(entityId, presence.locationId, {
+        id: target.id,
+        locationId: sceneLocationId,
+      })
       if (shown) byEntity[entityId] = shown
     }
 
@@ -629,6 +687,50 @@
     currentIndex = index
   }
 
+  function enterSelectedScene() {
+    viewMode = 'scene'
+    const event = selectedEvent?.event
+    if (!event) return
+    const locationSlug = event.locationId
+      ? ((data.locationSlugs as Record<string, string>)[event.locationId] ?? event.locationId)
+      : null
+    const primary = mainSceneSpace(ship, locationSlug)
+    const shownParticipants = sceneCharacters.flatMap((character) =>
+      character.shown ? [character.shown] : [],
+    )
+    const countsBySpace: Record<string, number> = {}
+    for (const shown of shownParticipants) {
+      countsBySpace[shown.spaceId] = (countsBySpace[shown.spaceId] ?? 0) + 1
+    }
+    const participant = shownParticipants.reduce<Apparition | null>(
+      (best, shown) =>
+        !best || (countsBySpace[shown.spaceId] ?? 0) > (countsBySpace[best.spaceId] ?? 0)
+          ? shown
+          : best,
+      null,
+    )
+    const destination = primary ?? participant
+    if (!destination) return
+    tierId = destination.tierId
+    jumpTo = 'footprint' in destination ? destination.id : destination.spaceId
+    jumpAt =
+      'footprint' in destination ? stationIn(destination, `visitor:${event.id}`).at : destination.at
+  }
+
+  let lastAutomaticallyEnteredSceneKey: string | null = null
+  $effect(() => {
+    const eventId = viewMode === 'scene' ? (selectedEvent?.event.id ?? null) : null
+    if (!eventId) return
+    // Include the resolved cast spaces so an older event whose room is inferred
+    // can settle once reconstruction has replaced the previous event's extras.
+    const sceneKey = `${eventId}:${selectedEvent?.event.locationId ?? ''}:${sceneCharacters
+      .map((character) => character.shown?.spaceId ?? '')
+      .join('|')}`
+    if (sceneKey === lastAutomaticallyEnteredSceneKey) return
+    lastAutomaticallyEnteredSceneKey = sceneKey
+    enterSelectedScene()
+  })
+
   function watchCharacter(character: (typeof sceneCharacters)[number]) {
     if (!character.shown) return
     selectedBodyId = character.bodyId
@@ -687,11 +789,7 @@
       >
         {$t.reconstruction.overview}
       </button>
-      <button
-        class:active={viewMode === 'scene'}
-        type="button"
-        onclick={() => (viewMode = 'scene')}
-      >
+      <button class:active={viewMode === 'scene'} type="button" onclick={enterSelectedScene}>
         {$t.reconstruction.scene}
       </button>
     </div>
@@ -851,6 +949,7 @@
               {extras}
               touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
               soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
+              hour={selectedHour}
               loadingLabel={$t.tour.loading}
               unsupportedLabel={$t.tour.unsupported}
             />

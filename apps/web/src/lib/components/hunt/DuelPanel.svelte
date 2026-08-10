@@ -113,7 +113,7 @@
   </p>
 
   <section
-    class="pointer-events-auto absolute inset-x-3 bottom-3 mx-auto w-[min(94vw,38rem)] rounded-xl border border-white/10 bg-black/75 p-3 shadow-2xl backdrop-blur-md sm:bottom-6"
+    class="pointer-events-auto absolute inset-x-3 bottom-3 mx-auto w-[min(94vw,38rem)] rounded-xl border border-white/10 bg-black/75 p-3 shadow-2xl backdrop-blur-md sm:bottom-6 mb-[env(safe-area-inset-bottom)]"
     aria-label={labels.title}
   >
     <div class="grid grid-cols-4 gap-1.5" aria-label={labels.action.guard}>

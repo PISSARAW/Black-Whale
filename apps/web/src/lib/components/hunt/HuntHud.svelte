@@ -57,7 +57,7 @@
 </script>
 
 <div
-  class="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-72"
+  class="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:inset-auto sm:bottom-6 sm:left-6 sm:w-72 mb-[env(safe-area-inset-bottom)]"
 >
   <div class="rounded-lg bg-black/65 p-4 text-sm text-white/85 backdrop-blur">
     <p class="text-xs uppercase tracking-widest text-white/45">

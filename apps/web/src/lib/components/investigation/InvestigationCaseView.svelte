@@ -149,7 +149,7 @@
   <meta name="description" content={ui.description} />
 </svelte:head>
 
-<div class="relative h-screen w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
+<div class="relative h-[100dvh] w-full overflow-hidden bg-[#050809] font-sans text-[#f4ead4]">
   <TourModeFullscreen />
   <TourMinimapPanel
     {plan}

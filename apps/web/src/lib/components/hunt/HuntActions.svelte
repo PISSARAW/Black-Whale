@@ -22,7 +22,7 @@
 </script>
 
 <nav
-  class="absolute inset-x-0 bottom-3 z-20 flex flex-wrap justify-center gap-2 px-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:max-w-md sm:justify-end"
+  class="absolute inset-x-0 bottom-3 z-20 flex flex-wrap justify-center gap-2 px-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:max-w-md sm:justify-end mb-[env(safe-area-inset-bottom)]"
   aria-label={labels.hint}
 >
   {#if hatsuId === 'bungee-gum'}

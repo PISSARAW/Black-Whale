@@ -370,7 +370,7 @@
   ])}
 />
 
-<div class="relative h-screen w-full overflow-hidden bg-black text-white">
+<div class="relative h-[100dvh] w-full overflow-hidden bg-black text-white">
   <TourModeFullscreen />
   <TourMinimapPanel
     {plan}

@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
+  import GameManualOverlay from '$lib/components/tour/GameManualOverlay.svelte'
   import ReplayPanel from '$lib/components/arena/ReplayPanel.svelte'
   import ArenaV3Panel from '$lib/components/arena/ArenaV3Panel.svelte'
   import ArenaHatsuFx from '$lib/components/arena/ArenaHatsuFx.svelte'
@@ -71,6 +72,7 @@
   let game = $state(freshGame())
   let started = $state(false)
   let briefingOpen = $state(true)
+  let manualOpen = $state(false)
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
   let lookPitch = $state(0)
@@ -359,6 +361,12 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey) return
+    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+      manualOpen = !manualOpen
+      event.preventDefault()
+      return
+    }
+    if (manualOpen) return // Block game inputs while manual is open
     if (isNenControlCode(event.code)) return
     if (isMovement(event.code)) {
       started = true
@@ -1045,4 +1053,22 @@
       </div>
     </div>
   {/if}
+
+  <GameManualOverlay
+    open={manualOpen}
+    title="Arena Mode"
+    titleFr="Mode Arena"
+    objective="Defeat your opponent in direct combat. Manage your aura, use Nen techniques like Ryu and Gyo, and strike when they drop their guard."
+    objectiveFr="Battez votre adversaire en combat direct. Gérez votre aura, utilisez des techniques de Nen comme Ryu et Gyo, et frappez quand il baisse sa garde."
+    controls={[
+      { keys: ['Z', 'Q', 'S', 'D'], description: 'Move / Approach', descriptionFr: 'Se déplacer / S\'approcher' },
+      { keys: ['Shift (L/R)'], description: 'Guard (Ken)', descriptionFr: 'Garde (Ken)' },
+      { keys: ['J', 'L'], description: 'Evade (Left/Right)', descriptionFr: 'Esquiver (Gauche/Droite)' },
+      { keys: ['V'], description: 'Feint', descriptionFr: 'Feinter' },
+      { keys: ['Space', 'Click'], description: 'Strike', descriptionFr: 'Frapper' },
+      { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer un Hatsu' },
+      { keys: ['N', 'I', 'O', 'P'], description: 'Nen Modes (Ren, In, Gyo, Ken)', descriptionFr: 'Modes Nen (Ren, In, Gyo, Ken)' },
+    ]}
+    onClose={() => (manualOpen = false)}
+  />
 </div>

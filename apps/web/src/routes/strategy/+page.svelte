@@ -9,6 +9,7 @@
   import StrategyDiplomacyPanel from '$lib/components/strategy/StrategyDiplomacyPanel.svelte'
   import StrategyDebrief from '$lib/components/strategy/StrategyDebrief.svelte'
   import StrategyFactionPicker from '$lib/components/strategy/StrategyFactionPicker.svelte'
+  import GameManualOverlay from '$lib/components/tour/GameManualOverlay.svelte'
   import { calculatePresencePosition } from '$lib/components/map/markerProjection'
   import { hatsuById } from '$lib/nen/hatsuRegistry'
   import { isPlayableScenarioFaction } from '$lib/strategy/scenario'
@@ -62,6 +63,7 @@
   let selectedDiplomacyFactionId = $state('')
   let selectedDiplomacyAction = $state<DiplomacyAction>('SHARE_INTEL')
   let errorMessage = $state<string | null>(null)
+  let manualOpen = $state(false)
   let availableSave = $state<StrategySave | null>(null)
   let campaignSave = $state<StrategyCampaignSaveV3 | null>(null)
   let playerFaction = $derived(data.factions.find((faction) => faction.id === playerFactionId))
@@ -170,7 +172,18 @@
   })
 
   let objective = $derived(simStore.objective)
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+      if (ready && playerFactionId) {
+        manualOpen = !manualOpen
+        event.preventDefault()
+      }
+    }
+  }
+
   onMount(() => {
+    window.addEventListener('keydown', handleKeydown)
     if (data.baseState) {
       simStore.init({
         baseState: data.baseState,
@@ -199,6 +212,12 @@
         saved.scenarioId === data.scenario?.id
       )
         availableSave = saved
+    }
+  })
+
+  onDestroy(() => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('keydown', handleKeydown)
     }
   })
 
@@ -748,4 +767,17 @@
       </section>
     </div>
   {/if}
+
+  <GameManualOverlay
+    open={manualOpen}
+    title="Strategy Mode"
+    titleFr="Mode Stratégie"
+    objective="Command your faction across the Black Whale. Deploy units, assign Hatsu roles, and achieve your objectives before turns run out."
+    objectiveFr="Commandez votre faction à travers le Black Whale. Déployez vos unités, assignez des rôles Hatsu et atteignez vos objectifs avant la fin des tours."
+    controls={[
+      { keys: ['Click'], description: 'Select units and zones / Select orders', descriptionFr: 'Sélectionner unités et zones / Sélectionner ordres' },
+      { keys: ['H'], description: 'Open Instruction Manual', descriptionFr: 'Ouvrir le mode d\'emploi' },
+    ]}
+    onClose={() => (manualOpen = false)}
+  />
 </main>

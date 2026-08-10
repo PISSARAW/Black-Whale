@@ -19,6 +19,7 @@
   import type { Apparition } from '$lib/tour/apparitions'
   import type { Space, Vec2 } from '$lib/tour/types'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
+  import GameManualOverlay from '$lib/components/tour/GameManualOverlay.svelte'
 
   /**
    * The room, and the dossier over it.
@@ -47,6 +48,7 @@
   let position = $state<Vec2>([0, 0])
   let heading = $state(Math.PI)
   let jumpTo = $state<string | null>(initialDefinition.scene.spaceId)
+  let manualOpen = $state(false)
 
   const nameOf = (entity: any) => {
     if (!entity) return ''
@@ -137,6 +139,12 @@
   })
 
   function handleKeydown(event: KeyboardEvent) {
+    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+      manualOpen = !manualOpen
+      event.preventDefault()
+      return
+    }
+    if (manualOpen) return // Block game inputs while manual is open
     if (event.key !== 'Escape') return
     session.closeTopLayer()
   }
@@ -328,4 +336,20 @@
   <CaseBinder {session} {ui} />
   <CaseReportPanel {session} {ui} />
   <CaseBriefing {session} {ui} />
+
+  <GameManualOverlay
+    open={manualOpen}
+    title="Investigation Mode"
+    titleFr="Mode Investigation"
+    objective="Explore the crime scene, gather evidence, interrogate witnesses, and solve the mystery using Nen."
+    objectiveFr="Explorez la scène de crime, rassemblez des preuves, interrogez les témoins et résolvez le mystère en utilisant le Nen."
+    controls={[
+      { keys: ['W', 'A', 'S', 'D'], description: 'Move around', descriptionFr: 'Se déplacer' },
+      { keys: ['Click'], description: 'Inspect object / Speak to witness', descriptionFr: 'Inspecter objet / Parler au témoin' },
+      { keys: ['H'], description: 'Open Hatsu Panel', descriptionFr: 'Ouvrir le panneau Hatsu' },
+      { keys: ['N'], description: 'Use Ren/Gyo (Toggle aura)', descriptionFr: 'Utiliser Ren/Gyo (Activer aura)' },
+      { keys: ['Esc'], description: 'Close current panel', descriptionFr: 'Fermer le panneau actuel' },
+    ]}
+    onClose={() => (manualOpen = false)}
+  />
 </div>

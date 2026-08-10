@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
+  import GameManualOverlay from '$lib/components/tour/GameManualOverlay.svelte'
   import { buildArena } from '$lib/hunt/arena'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import {
@@ -126,6 +127,7 @@
   let currentSpace = $state<Space | null>(extraction)
   let engaged = $state(false)
   let briefing = $state(true)
+  let manualOpen = $state(false)
   let frame = 0
   let owed = 0
   let last = 0
@@ -255,6 +257,14 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (finished || event.repeat) return
+    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+      if (!briefing) {
+        manualOpen = !manualOpen
+        event.preventDefault()
+      }
+      return
+    }
+    if (manualOpen) return // Block game inputs while manual is open
     if (game.challenge && event.code === 'Digit1') {
       send({ type: 'ANSWER', answer: 'workOrder' })
       event.preventDefault()
@@ -945,4 +955,21 @@
       </article>
     </div>
   {/if}
+
+  <GameManualOverlay
+    open={manualOpen}
+    title="Infiltration Mode"
+    titleFr="Mode Infiltration"
+    objective="Infiltrate the objective room, bypass security, copy the documents, and extract safely using Nen."
+    objectiveFr="Infiltrez la salle de l'objectif, contournez la sécurité, copiez les documents et extrayez-vous en sécurité avec le Nen."
+    controls={[
+      { keys: ['Click'], description: 'Move to location', descriptionFr: 'Se déplacer vers un lieu' },
+      { keys: ['X'], description: 'Toggle Ten/Zetsu', descriptionFr: 'Basculer Ten/Zetsu' },
+      { keys: ['V'], description: 'Create Diversion', descriptionFr: 'Créer une diversion' },
+      { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer Hatsu' },
+      { keys: ['F'], description: 'Interact (Copy / Verify / Extract)', descriptionFr: 'Interagir (Copier / Vérifier / Extraire)' },
+      { keys: ['1', '2'], description: 'Answer Challenges', descriptionFr: 'Répondre aux défis' },
+    ]}
+    onClose={() => (manualOpen = false)}
+  />
 </div>

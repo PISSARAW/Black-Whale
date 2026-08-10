@@ -58,6 +58,7 @@
   import { tutorialMessages } from '$lib/hunt/tutorialMessages'
   import { terrainMessages } from '$lib/hunt/terrainMessages'
   import { debriefMessages } from '$lib/hunt/debriefMessages'
+  import GameManualOverlay from '$lib/components/tour/GameManualOverlay.svelte'
   import { safeFrameDebt } from '$lib/hunt/lifecycle'
   import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
   import { contractMessages } from '$lib/hunt/contracts/messages'
@@ -274,6 +275,7 @@
   // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
   let briefed = $state(false)
+  let manualOpen = $state(false)
   let tutorialDismissed = $state(false)
   let lesson = $derived(tutorialStep(game))
   let duelSeat = $state<{ at: Vec2; heading: number; eye: number } | null>(null)
@@ -374,6 +376,12 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
+    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+      manualOpen = !manualOpen
+      event.preventDefault()
+      return
+    }
+    if (manualOpen) return // Block game inputs while manual is open
     if (isNenControlCode(event.code)) return
     const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
     if (handled) event.preventDefault()
@@ -808,4 +816,26 @@
       onBegin={begin}
     />
   {/if}
+
+  <GameManualOverlay
+    open={manualOpen}
+    title="Hunt Mode"
+    titleFr="Mode Hunt"
+    objective="Hunt down the target using Nen. Manage your aura pool, use Gyo to see hidden traps, and survive."
+    objectiveFr="Traquez la cible en utilisant le Nen. Gérez votre aura, utilisez Gyo pour voir les pièges cachés et survivez."
+    controls={[
+      { keys: ['W', 'A', 'S', 'D'], description: 'Move / Walk', descriptionFr: 'Se déplacer' },
+      { keys: ['X'], description: 'Zetsu (Hide aura)', descriptionFr: 'Zetsu (Cacher l\'aura)' },
+      { keys: ['N'], description: 'Ren (Ready for action)', descriptionFr: 'Ren (Prêt à l\'action)' },
+      { keys: ['F'], description: 'En (Sweep area)', descriptionFr: 'En (Balayer la zone)' },
+      { keys: ['U'], description: 'Shu (Imbue object)', descriptionFr: 'Shu (Imprégner objet)' },
+      { keys: ['V'], description: 'Lay trap (Hatsu)', descriptionFr: 'Poser piège (Hatsu)' },
+      { keys: ['R'], description: 'Recover trap', descriptionFr: 'Récupérer piège' },
+      { keys: ['Space'], description: 'Strike (Duel)', descriptionFr: 'Frapper (Duel)' },
+      { keys: ['I'], description: 'In (Hide traps)', descriptionFr: 'In (Cacher l\'aura des objets)' },
+      { keys: ['O'], description: 'Gyo (See In)', descriptionFr: 'Gyo (Voir In)' },
+      { keys: ['P'], description: 'Ken (Guard all)', descriptionFr: 'Ken (Garde totale)' },
+    ]}
+    onClose={() => (manualOpen = false)}
+  />
 </div>

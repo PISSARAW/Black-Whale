@@ -202,6 +202,8 @@ export interface DoorwayRules {
   sealed?: ReadonlySet<string>
   /** Pairs whose opening is placed by hand, keyed by `sealKey`. */
   overrides?: ReadonlyMap<string, DoorOverride>
+  /** Pairs where the wall has been cut, keyed by `sealKey`. */
+  cutWalls?: ReadonlySet<string>
 }
 
 export function deriveDoorways(spaces: Space[], rules: DoorwayRules = {}): Doorway[] {
@@ -215,10 +217,11 @@ export function deriveDoorways(spaces: Space[], rules: DoorwayRules = {}): Doorw
 
       const key = sealKey(a.id, b.id)
       const override = rules.overrides?.get(key)
+      const isCut = rules.cutWalls?.has(key)
 
       // A declared door beats everything: it is how an envelope is entered at
       // all, and how a plan places an opening the geometry would have centred.
-      if (!override) {
+      if (!override && !isCut) {
         if (rules.sealed?.has(key)) continue
         if (a.envelope !== b.envelope) continue
       }

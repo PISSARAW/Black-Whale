@@ -158,7 +158,7 @@ export const RESTING_BODY: TourBody = {
   packed: null,
   gilded: 0,
   halo: 0,
-  vestiges: {},
+  autopilotUntil: null,
 }
 
 /**
@@ -379,4 +379,5 @@ export const EMPTY_WORLD: TourWorld = {
   dragon: null,
   cat: null,
   summoned: null,
+  vestiges: {},
 }

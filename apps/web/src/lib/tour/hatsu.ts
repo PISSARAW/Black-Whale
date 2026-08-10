@@ -3868,7 +3868,7 @@ export function planSealed(
   ship: Ship,
   plan: TierPlan,
   shut: readonly string[],
-  vestiges: Record<string, import('./cast/types').TourVestige[]>,
+  vestiges: Record<string, import('./cast/types').TourVestige[]> = {},
 ): TierPlan {
   const closed = new Set(shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
   if (!closed.size) return plan
@@ -3899,7 +3899,6 @@ export function planSealed(
       .map((door) => [sealKey(door.a, door.b), door] as const),
   )
 
-  const doorways = deriveDoorways(plan.spaces, { sealed, overrides })
   const cutWalls = new Set<string>()
   for (const [locationId, locationVestiges] of Object.entries(vestiges)) {
     for (const vestige of locationVestiges) {
@@ -3909,8 +3908,9 @@ export function planSealed(
     }
   }
 
+  const doorways = deriveDoorways(plan.spaces, { sealed, overrides, cutWalls })
+
   const walls = plan.spaces.flatMap((space) => wallSegments(space, doorways))
-    .filter((wall) => !wall.adjacent || !cutWalls.has(sealKey(wall.space, wall.adjacent)))
   for (const [spaceId, centres] of plan.columns) {
     for (const centre of centres) walls.push(...columnWalls(spaceId, centre))
   }

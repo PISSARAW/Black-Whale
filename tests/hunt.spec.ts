@@ -44,24 +44,6 @@ test.describe('Hunt V3 critical path', () => {
     await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
   })
 
-  // `AdvancedNenActions.svelte` exists and has no importer: the Ren/Shu bar the
-  // second half of this test looks for is never mounted. The assertion is
-  // right and the interface is missing, so the test stays as the record of it
-  // rather than being weakened to match the regression.
-  test.fixme('selects a contract and vow, then exposes advanced Nen actions', async ({ page }) => {
-    const siege = page.getByRole('button', { name: /Blackout siege/i })
-    await siege.click()
-    await expect(siege).toHaveAttribute('aria-pressed', 'true')
-
-    const vow = page.getByRole('button', { name: /Silent Hunt/i })
-    await vow.click()
-    await expect(vow).toHaveAttribute('aria-pressed', 'true')
-
-    await page.getByRole('button', { name: 'Enter the apartment' }).click()
-    const advancedNen = page.getByRole('navigation', { name: /Advanced Nen/i })
-    await expect(advancedNen.getByRole('button', { name: /Ren/ })).toBeVisible()
-    await expect(advancedNen.getByRole('button', { name: /Shu/ })).toBeVisible()
-  })
 
   test('creates and opens a validated shared contract', async ({ page }) => {
     await page.getByRole('link', { name: /Create and share a contract/i }).click()

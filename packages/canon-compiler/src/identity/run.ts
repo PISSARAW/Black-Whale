@@ -319,12 +319,12 @@ export async function compileIdentities(prisma: PrismaClient): Promise<CompileId
     // examine Fugetsu, who is already being held in witness protection.
     fugetsuProtected,
   ] = await Promise.all([
-    event("Halkenburg's synchronized aura arrow transfers Sumidori into Shikaku's body"),
-    event("Halkenburg forces a mind swap into Balsamilco's body"),
-    event("Halkenburg's first body dies"),
-    event('Kacho dies alone in the drifting pod'),
-    event("Without You assumes Kacho's form and rejoins Fugetsu"),
-    event('Borksen locates the Heil-Ly hideout between Tiers 2 and 3'),
+    event('Halkenburg commits to the Succession Contest'),
+    event("Halkenburg takes Balsamilco's body"),
+    event("Halkenburg's body dies"),
+    event('Kacho dies and Without You awakens'),
+    event('Without You rejoins Fugetsu aboard the Black Whale'),
+    event('The Phantom Troupe confirms the hideout is on Tier 2'),
   ])
   const [centralHospital, fugetsuRoom, witnessProtection, unknownLocation] = await Promise.all([
     location('tier-3-central-hospital'),

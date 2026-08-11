@@ -31,18 +31,12 @@ export function buildTurnReports(input: TurnReportInput): string[] {
       : []),
     ...input.diplomacyReports,
     copy.resolved(input.completedTurn, input.playerOrderCount, input.discoveries),
-    ...(input.interceptions
-      ? [copy.interceptions(input.interceptions)]
-      : []),
+    ...(input.interceptions ? [copy.interceptions(input.interceptions)] : []),
     ...input.activatedHatsu.map(copy.hatsu),
     ...input.conflictReports,
     ...(input.aiHatsuActivations ? [copy.hostileNen] : []),
-    ...(input.playerMovesBlocked
-      ? [copy.blockedMoves(input.playerMovesBlocked)]
-      : []),
-    ...(input.hostileContacts
-      ? [copy.contacts(input.hostileContacts)]
-      : []),
+    ...(input.playerMovesBlocked ? [copy.blockedMoves(input.playerMovesBlocked)] : []),
+    ...(input.hostileContacts ? [copy.contacts(input.hostileContacts)] : []),
     ...(input.objectiveComplete ? [copy.objective(input.victoryPoints)] : []),
     ...(input.gameWon ? [copy.victory] : []),
     ...(input.gameLost ? [copy.defeat] : []),

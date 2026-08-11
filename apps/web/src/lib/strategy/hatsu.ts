@@ -65,7 +65,8 @@ const SUCCESS_REPORTS: Record<Locale, Record<string, string>> = {
     'dowsing-chain': 'Dowsing Chain cross-checks available clues without guaranteeing truth.',
     'little-eye': 'Little Eye observes the area through a controlled insect.',
     'secret-window': 'Secret Window attaches persistent surveillance to the area.',
-    'emperor-time': "Emperor Time strengthens the local response at the cost of Kurapika's lifespan.",
+    'emperor-time':
+      "Emperor Time strengthens the local response at the cost of Kurapika's lifespan.",
     'steal-chain': 'Steal Chain drains an observed user and hinders their aura.',
     'chain-jail': 'Chain Jail forces a confirmed Spider into Zetsu.',
     erigeron: 'Erigeron accelerates recovery and consolidates the local unit.',
@@ -80,7 +81,8 @@ const SUCCESS_REPORTS: Record<Locale, Record<string, string>> = {
     'dowsing-chain': 'Dowsing Chain recoupe les indices disponibles sans garantir la vérité.',
     'little-eye': 'Little Eye observe la zone par l’intermédiaire d’un insecte contrôlé.',
     'secret-window': 'Secret Window attache une surveillance persistante à la zone.',
-    'emperor-time': 'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.',
+    'emperor-time':
+      'Emperor Time renforce la réponse locale, au prix de la durée de vie de Kurapika.',
     'steal-chain': 'Steal Chain draine un utilisateur observé et entrave son aura.',
     'chain-jail': 'Chain Jail impose le Zetsu à une Araignée confirmée.',
     erigeron: 'Erigeron accélère la récupération et consolide l’unité locale.',
@@ -102,11 +104,7 @@ const ADAPTERS: Record<string, Adapter> = {
   'secret-window': (context) => accepted(['RECON'], 2, successReport(context, 'secret-window')),
   'emperor-time': (context) =>
     currentLocation(context, 'Emperor Time') ??
-    accepted(
-      ['GUARD'],
-      3,
-      successReport(context, 'emperor-time'),
-    ),
+    accepted(['GUARD'], 3, successReport(context, 'emperor-time')),
   'steal-chain': (context) =>
     confirmedTarget(context, 'Steal Chain') ??
     accepted(['DENIAL'], 3, successReport(context, 'steal-chain')),
@@ -136,11 +134,7 @@ const ADAPTERS: Record<string, Adapter> = {
     accepted(['DENIAL'], 2, successReport(context, 'biohazard-hinrigh')),
   contagion: (context) =>
     currentLocation(context, 'Contagion') ??
-    accepted(
-      ['INFLUENCE', 'DENIAL'],
-      3,
-      successReport(context, 'contagion'),
-    ),
+    accepted(['INFLUENCE', 'DENIAL'], 3, successReport(context, 'contagion')),
 }
 
 export function strategyHatsuResolution(

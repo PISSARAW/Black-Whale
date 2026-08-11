@@ -192,7 +192,10 @@
       onNenChange={session.useNen}
       onArrive={session.arrived}
       touchLabels={{ move: $t.reconstruction.v3.scene.move, cast: $t.reconstruction.v3.scene.cast }}
-      soundLabels={{ silence: $t.reconstruction.v3.scene.silence, restore: $t.reconstruction.v3.scene.restore }}
+      soundLabels={{
+        silence: $t.reconstruction.v3.scene.silence,
+        restore: $t.reconstruction.v3.scene.restore,
+      }}
       loadingLabel={$t.reconstruction.v3.scene.loading}
       unsupportedLabel={$t.reconstruction.v3.scene.unsupported}
     />

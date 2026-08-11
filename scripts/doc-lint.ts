@@ -45,7 +45,11 @@ function parseFrontMatter(source: string): FrontMatter | null {
         currentKey = null
       }
     } else if (line.trim().startsWith('- ') && currentKey) {
-      const value = line.trim().slice(2).trim().replace(/^['"]|['"]$/g, '')
+      const value = line
+        .trim()
+        .slice(2)
+        .trim()
+        .replace(/^['"]|['"]$/g, '')
       const arr = (result[currentKey] as string[]) || []
       arr.push(value)
       result[currentKey] = arr
@@ -162,8 +166,10 @@ async function checkGenFiles(): Promise<string[]> {
     /^<!-- généré par pnpm doc:gen — ne pas éditer -->\n\n/,
     '',
   )
-  if (actualRoutes !== expectedRoutes) errors.push('docs/.gen/routes.md est désynchronisé (pnpm doc:gen)')
-  if (actualTests !== expectedTests) errors.push('docs/.gen/tests.md est désynchronisé (pnpm doc:gen)')
+  if (actualRoutes !== expectedRoutes)
+    errors.push('docs/.gen/routes.md est désynchronisé (pnpm doc:gen)')
+  if (actualTests !== expectedTests)
+    errors.push('docs/.gen/tests.md est désynchronisé (pnpm doc:gen)')
   return errors
 }
 
@@ -189,7 +195,13 @@ function countCodeLines(patterns: string[]): number {
       cwd: ROOT,
       dot: true,
       onlyFiles: true,
-      ignore: ['**/node_modules/**', '**/.svelte-kit/**', '**/.gen/**', '**/coverage/**', '**/dist/**'],
+      ignore: [
+        '**/node_modules/**',
+        '**/.svelte-kit/**',
+        '**/.gen/**',
+        '**/coverage/**',
+        '**/dist/**',
+      ],
     })
     for (const file of files) {
       if (seen.has(file)) continue
@@ -214,7 +226,10 @@ function today(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-function updateFrontMatter(source: string, values: { 'revu-le': string; empreinte: string }): string {
+function updateFrontMatter(
+  source: string,
+  values: { 'revu-le': string; empreinte: string },
+): string {
   return source
     .replace(/^revu-le:\s*[^\n]+/m, `revu-le: ${values['revu-le']}`)
     .replace(/^empreinte:\s*[^\n]+/m, `empreinte: ${values.empreinte}`)
@@ -255,7 +270,9 @@ function checkSeals(files: string[], coverage: CoverageFile | null): string[] {
 
     const currentEmpreinte = computeEmpreinte(fm.couvre)
     if (fm.empreinte !== snapshot.empreinte || currentEmpreinte !== snapshot.empreinte) {
-      warnings.push(`${rel}: couvre ou empreinte a changé depuis le dernier sceau (${snapshot.revuLe})`)
+      warnings.push(
+        `${rel}: couvre ou empreinte a changé depuis le dernier sceau (${snapshot.revuLe})`,
+      )
     }
 
     const currentLines = countCodeLines(fm.couvre)
@@ -357,7 +374,9 @@ function findLargeUndocumentedDirs(): string[] {
         if (fm && fm.etage === 2) continue
       }
       if (countFilesRecursively(dir) > LARGE_DIR_THRESHOLD) {
-        warnings.push(`${relative(ROOT, dir)}/ a plus de ${LARGE_DIR_THRESHOLD} fichiers sans fiche étage 2`)
+        warnings.push(
+          `${relative(ROOT, dir)}/ a plus de ${LARGE_DIR_THRESHOLD} fichiers sans fiche étage 2`,
+        )
       }
     }
   }
@@ -375,7 +394,9 @@ async function main() {
   if (sealMode) {
     const coverage = sealPages(stageFiles)
     saveCoverage(coverage)
-    console.log(`doc-lint --seal: ${Object.keys(coverage.snapshots).length} pages scellées, ${coverage.coveredPaths.length} chemins couverts`)
+    console.log(
+      `doc-lint --seal: ${Object.keys(coverage.snapshots).length} pages scellées, ${coverage.coveredPaths.length} chemins couverts`,
+    )
     return
   }
 

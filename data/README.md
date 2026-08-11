@@ -20,16 +20,16 @@ decisions: [adr-001, adr-006]
 
 ## Découpage
 
-| Dossier | Contenu |
-| ------- | ------- |
-| `data/abilities/` | Déclarations des capacités et Hatsu |
-| `data/characters/` | Fiches de personnages |
-| `data/chapters/` | Captions et événements par chapitre |
-| `data/events/` | Événements narratifs référencés par les chapitres |
-| `data/factions/` | Groupes et organisations |
-| `data/locations/` | Lieux du monde |
-| `data/ship/` | Plan du navire (`data/ship/blueprint.json`) |
-| `data/prophecies/` | Prophéties et divinations |
+| Dossier            | Contenu                                           |
+| ------------------ | ------------------------------------------------- |
+| `data/abilities/`  | Déclarations des capacités et Hatsu               |
+| `data/characters/` | Fiches de personnages                             |
+| `data/chapters/`   | Captions et événements par chapitre               |
+| `data/events/`     | Événements narratifs référencés par les chapitres |
+| `data/factions/`   | Groupes et organisations                          |
+| `data/locations/`  | Lieux du monde                                    |
+| `data/ship/`       | Plan du navire (`data/ship/blueprint.json`)       |
+| `data/prophecies/` | Prophéties et divinations                         |
 
 ## Invariants
 

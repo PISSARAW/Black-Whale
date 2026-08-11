@@ -72,7 +72,8 @@
           <em
             class="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-sky-400 not-italic"
           >
-            {$t.strategy.ui.picker.begin} <svg
+            {$t.strategy.ui.picker.begin}
+            <svg
               class="h-3 w-3 transition-transform group-hover:translate-x-1"
               viewBox="0 0 20 20"
               fill="currentColor"

@@ -243,9 +243,7 @@ export function createSimulationStore() {
     const playerFaction = factions.find((faction) => faction.id === playerFactionId)
     if (!playerFaction) throw new StrategyInputError(copy.errors.factionUnknown)
     if (planCost(playerOrders) + diplomacyCost(diplomacyOrders) > COMMAND_POINTS_PER_TURN) {
-      throw new StrategyInputError(
-        copy.errors.commandPointsExceeded(COMMAND_POINTS_PER_TURN),
-      )
+      throw new StrategyInputError(copy.errors.commandPointsExceeded(COMMAND_POINTS_PER_TURN))
     }
 
     const allowedCharacters = new Set(playerFaction.members.map((member) => member.character.id))
@@ -368,9 +366,7 @@ export function createSimulationStore() {
       if (killer) {
         conflict.conditions[camilla.id] = 'READY'
         conflict.conditions[killer] = 'ELIMINATED'
-        conflict.reports.push(
-          copy.reports.catsName,
-        )
+        conflict.reports.push(copy.reports.catsName)
         hatsuCues = [
           ...hatsuCues,
           {

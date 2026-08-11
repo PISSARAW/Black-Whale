@@ -1351,4 +1351,3 @@ Fichiers : 274
 ## `scripts/silhouettes.test.ts`
 
 - the Nen creature silhouettes > are the same shapes in the contracts and in the walk
-

@@ -12,21 +12,21 @@ Ce dépôt utilise une doc **ancrée** ([ADR-006](decision/adr-006-la-doc-ancree
 
 ## Cartes (étage 1)
 
-| Carte | Territoire | Répond à |
-| ----- | ---------- | -------- |
-| [01 le canon](carte/01-le-canon.md) | `data/**`, `canon-*` | Où est déclaré un fait ? Que devient-il ? |
-| [02 le temps](carte/02-le-temps.md) | `domain/temporal.ts`, `canon-engine/timeline`, `tour/hour.ts` | Les trois temps du dépôt |
-| [03 l'identité](carte/03-l-identite.md) | `domain/identity.ts`, `lib/identity` | Corps, conscience, aura |
-| [04 le nen](carte/04-le-nen.md) | `ability-sdk`, `ability-modules`, `nen-engine`, `lib/nen` | Le trajet d'un hatsu |
-| [05 la visite](carte/05-la-visite.md) | `tour/`, `components/tour/` | Géométrie, rendu, lumière, son |
-| [06 le navire](carte/06-le-navire.md) | `lib/map`, `routes/ship` | Carte dessinée, projection |
-| [07 les modes](carte/07-les-modes.md) | `arena`, `hunt`, `infiltration`, etc. | Ce que « jouable » veut dire |
-| [08 le spoiler](carte/08-le-spoiler.md) | `canon-engine/spoiler`, `routes/spoiler-limit` | Le cap et sa propagation |
-| [09 la façade web](carte/09-la-facade-web.md) | `routes/**`, `lib/server`, `lib/i18n` | Load, actions, frontière serveur |
-| [10 l'admin](carte/10-l-admin.md) | `apps/admin/**` | Écritures et session signée |
-| [11 les données](carte/11-les-donnees.md) | `data/`, `packages/contracts` | Contrat d'un fichier de données |
-| [12 l'exploitation](carte/12-l-exploitation.md) | `infrastructure/`, `.github/workflows` | Déployer, restaurer |
-| [13 les bornes](carte/13-les-bornes.md) | `eslint.config.js`, `.claude/hooks` | Renvoie à `CLAUDE.md` + ADR-002 |
+| Carte                                           | Territoire                                                    | Répond à                                  |
+| ----------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------- |
+| [01 le canon](carte/01-le-canon.md)             | `data/**`, `canon-*`                                          | Où est déclaré un fait ? Que devient-il ? |
+| [02 le temps](carte/02-le-temps.md)             | `domain/temporal.ts`, `canon-engine/timeline`, `tour/hour.ts` | Les trois temps du dépôt                  |
+| [03 l'identité](carte/03-l-identite.md)         | `domain/identity.ts`, `lib/identity`                          | Corps, conscience, aura                   |
+| [04 le nen](carte/04-le-nen.md)                 | `ability-sdk`, `ability-modules`, `nen-engine`, `lib/nen`     | Le trajet d'un hatsu                      |
+| [05 la visite](carte/05-la-visite.md)           | `tour/`, `components/tour/`                                   | Géométrie, rendu, lumière, son            |
+| [06 le navire](carte/06-le-navire.md)           | `lib/map`, `routes/ship`                                      | Carte dessinée, projection                |
+| [07 les modes](carte/07-les-modes.md)           | `arena`, `hunt`, `infiltration`, etc.                         | Ce que « jouable » veut dire              |
+| [08 le spoiler](carte/08-le-spoiler.md)         | `canon-engine/spoiler`, `routes/spoiler-limit`                | Le cap et sa propagation                  |
+| [09 la façade web](carte/09-la-facade-web.md)   | `routes/**`, `lib/server`, `lib/i18n`                         | Load, actions, frontière serveur          |
+| [10 l'admin](carte/10-l-admin.md)               | `apps/admin/**`                                               | Écritures et session signée               |
+| [11 les données](carte/11-les-donnees.md)       | `data/`, `packages/contracts`                                 | Contrat d'un fichier de données           |
+| [12 l'exploitation](carte/12-l-exploitation.md) | `infrastructure/`, `.github/workflows`                        | Déployer, restaurer                       |
+| [13 les bornes](carte/13-les-bornes.md)         | `eslint.config.js`, `.claude/hooks`                           | Renvoie à `CLAUDE.md` + ADR-002           |
 
 ## Geste (recettes)
 

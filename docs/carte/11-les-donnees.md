@@ -64,12 +64,12 @@ Si `canonLint` retourne un catalogue valide, `packages/canon-compiler` peut ensu
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `data/` | Archive JSON. Pas de logique. Pas d'import de code. |
-| `packages/contracts/src/schemas.ts` | Déclare ce que le site lit dans chaque fichier. Tolérant sur les champs inutilisés. |
-| `packages/contracts/src/invariants.ts` | Vérifie les références, les unicités, l'ordre des sources, la cohérence spoiler. |
-| `packages/contracts/src/lint.ts` | Orchestrateur : d'abord schéma, ensuite invariants. |
+| Ce dossier …                           | Règle                                                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------- |
+| `data/`                                | Archive JSON. Pas de logique. Pas d'import de code.                                 |
+| `packages/contracts/src/schemas.ts`    | Déclare ce que le site lit dans chaque fichier. Tolérant sur les champs inutilisés. |
+| `packages/contracts/src/invariants.ts` | Vérifie les références, les unicités, l'ordre des sources, la cohérence spoiler.    |
+| `packages/contracts/src/lint.ts`       | Orchestrateur : d'abord schéma, ensuite invariants.                                 |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -90,15 +90,15 @@ Si `canonLint` retourne un catalogue valide, `packages/canon-compiler` peut ensu
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| ajouter ou corriger un personnage | `data/characters/characters.json`, puis `pnpm canon-lint` |
-| ajouter une salle | `data/locations/locations.json`, puis `pnpm canon-lint` |
-| ajouter un chapitre ou un événement | `data/chapters/chapters.json` ou `data/events/events.json`, puis `pnpm canon-lint` |
-| ajouter un Hatsu au catalogue | `data/abilities/abilities.json`, puis `pnpm canon-lint` |
-| changer la règle d'une provenance | `packages/contracts/src/schemas.ts` et `packages/contracts/src/invariants.ts` |
-| ajouter un invariant inter-fichier | `packages/contracts/src/invariants.ts` + un test dans `packages/contracts` |
-| comprendre une erreur de `canon-lint` | `packages/contracts/src/lint.ts` et `packages/contracts/src/types.ts` |
+| Je veux …                             | J'ouvre                                                                            |
+| ------------------------------------- | ---------------------------------------------------------------------------------- |
+| ajouter ou corriger un personnage     | `data/characters/characters.json`, puis `pnpm canon-lint`                          |
+| ajouter une salle                     | `data/locations/locations.json`, puis `pnpm canon-lint`                            |
+| ajouter un chapitre ou un événement   | `data/chapters/chapters.json` ou `data/events/events.json`, puis `pnpm canon-lint` |
+| ajouter un Hatsu au catalogue         | `data/abilities/abilities.json`, puis `pnpm canon-lint`                            |
+| changer la règle d'une provenance     | `packages/contracts/src/schemas.ts` et `packages/contracts/src/invariants.ts`      |
+| ajouter un invariant inter-fichier    | `packages/contracts/src/invariants.ts` + un test dans `packages/contracts`         |
+| comprendre une erreur de `canon-lint` | `packages/contracts/src/lint.ts` et `packages/contracts/src/types.ts`              |
 
 ## Vérifier
 

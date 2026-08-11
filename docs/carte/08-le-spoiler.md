@@ -68,13 +68,13 @@ data/abilities/abilities.json + data/characters/characters.json + data/chapters/
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `packages/canon-engine/src/spoiler/` | Reçoit un profil et filtre. Ne sait pas d'où vient le cap. |
-| `apps/web/src/lib/server/spoiler.ts` | Lit/écrit le cookie. Ne filtre pas le monde. |
-| `apps/web/src/lib/server/httpCache.ts` | Décide de la politique de cache. Ne touche pas au contenu. |
+| Ce dossier …                                    | Règle                                                                                   |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `packages/canon-engine/src/spoiler/`            | Reçoit un profil et filtre. Ne sait pas d'où vient le cap.                              |
+| `apps/web/src/lib/server/spoiler.ts`            | Lit/écrit le cookie. Ne filtre pas le monde.                                            |
+| `apps/web/src/lib/server/httpCache.ts`          | Décide de la politique de cache. Ne touche pas au contenu.                              |
 | `apps/web/src/lib/server/ability-visibility.ts` | Date les Hatsu. Vit sur le serveur car la réponse conditionne ce qui quitte le serveur. |
-| `apps/web/src/routes/spoiler-limit/+server.ts` | Seul écrivain du cap. Refuse les valeurs invalides et les redirections hors origine. |
+| `apps/web/src/routes/spoiler-limit/+server.ts`  | Seul écrivain du cap. Refuse les valeurs invalides et les redirections hors origine.    |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -94,14 +94,14 @@ data/abilities/abilities.json + data/characters/characters.json + data/chapters/
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| changer la valeur par défaut ou la durée du cookie | `apps/web/src/lib/server/spoiler.ts` |
-| ajouter une règle de filtrage du monde | `packages/canon-engine/src/spoiler/index.ts` + un test dans `packages/canon-engine` |
-| changer la politique de cache | `apps/web/src/lib/server/httpCache.ts` + `apps/web/src/lib/server/httpCache.test.ts` |
-| ajouter un `firstVisibleChapterId` au catalogue | `data/abilities/abilities.json` et `apps/web/src/lib/server/ability-visibility.ts` |
-| changer le contrôle de cap dans l'interface | `apps/web/src/routes/+layout.server.ts` et `apps/web/src/routes/spoiler-limit/+server.ts` |
-| vérifier qu'une route ne fuit pas | `apps/web/src/lib/server/httpCache.test.ts` |
+| Je veux …                                          | J'ouvre                                                                                   |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| changer la valeur par défaut ou la durée du cookie | `apps/web/src/lib/server/spoiler.ts`                                                      |
+| ajouter une règle de filtrage du monde             | `packages/canon-engine/src/spoiler/index.ts` + un test dans `packages/canon-engine`       |
+| changer la politique de cache                      | `apps/web/src/lib/server/httpCache.ts` + `apps/web/src/lib/server/httpCache.test.ts`      |
+| ajouter un `firstVisibleChapterId` au catalogue    | `data/abilities/abilities.json` et `apps/web/src/lib/server/ability-visibility.ts`        |
+| changer le contrôle de cap dans l'interface        | `apps/web/src/routes/+layout.server.ts` et `apps/web/src/routes/spoiler-limit/+server.ts` |
+| vérifier qu'une route ne fuit pas                  | `apps/web/src/lib/server/httpCache.test.ts`                                               |
 
 ## Vérifier
 

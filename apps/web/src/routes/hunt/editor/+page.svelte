@@ -32,17 +32,25 @@
     <div class="mt-8 grid gap-5 sm:grid-cols-2">
       <label>{$t.hunt.editor.englishTitle}<input bind:value={title} /></label>
       <label>{$t.hunt.editor.frenchTitle}<input bind:value={titleFr} /></label>
-      <label>{$t.hunt.editor.duration}<input type="number" min="60" max="1800" bind:value={duration} /></label>
+      <label
+        >{$t.hunt.editor.duration}<input
+          type="number"
+          min="60"
+          max="1800"
+          bind:value={duration}
+        /></label
+      >
       <label
         >{$t.hunt.editor.lighting}<select bind:value={lighting}
-          ><option value="normal">{$t.hunt.editor.lightingOptions.normal}</option><option value="low">{$t.hunt.editor.lightingOptions.low}</option><option
-            value="blackout">{$t.hunt.editor.lightingOptions.blackout}</option
-          ></select
+          ><option value="normal">{$t.hunt.editor.lightingOptions.normal}</option><option
+            value="low">{$t.hunt.editor.lightingOptions.low}</option
+          ><option value="blackout">{$t.hunt.editor.lightingOptions.blackout}</option></select
         ></label
       >
       <label
         >{$t.hunt.editor.acoustics}<select bind:value={acoustics}
-          ><option value="clear">{$t.hunt.editor.acousticsOptions.clear}</option><option value="reverberant">{$t.hunt.editor.acousticsOptions.reverberant}</option
+          ><option value="clear">{$t.hunt.editor.acousticsOptions.clear}</option><option
+            value="reverberant">{$t.hunt.editor.acousticsOptions.reverberant}</option
           ><option value="masked">{$t.hunt.editor.acousticsOptions.masked}</option></select
         ></label
       >

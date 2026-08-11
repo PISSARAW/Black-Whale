@@ -18,14 +18,14 @@ decisions: [adr-006]
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| ------ | -------- | -------------- |
-| Synthèse | `apps/web/src/lib/audio/hatsu/synth.ts` | Helpers de bruit filtré, d'oscillateurs et d'enveloppes |
-| Hatsu one-shot | `apps/web/src/lib/audio/hatsu/*.ts`, `apps/web/src/lib/audio/hatsuSounds.ts` | Sons des techniques (impact, chaîne, bête, refus…) |
-| Ambiance | `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/ambient/**` | Boucles de fond, musique du site, atmosphère du navire |
-| Pas | `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/steps/**` | Son des pas selon le matériau |
-| Nen | `apps/web/src/lib/audio/nenSounds.ts` | Sons génériques liés au Nen (aura, etc.) |
-| UI mode | `apps/web/src/lib/audio/infiltrationHatsuSounds.ts` | Sons spécifiques au mode infiltration |
+| Groupe         | Fichiers                                                                     | Responsabilité                                          |
+| -------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Synthèse       | `apps/web/src/lib/audio/hatsu/synth.ts`                                      | Helpers de bruit filtré, d'oscillateurs et d'enveloppes |
+| Hatsu one-shot | `apps/web/src/lib/audio/hatsu/*.ts`, `apps/web/src/lib/audio/hatsuSounds.ts` | Sons des techniques (impact, chaîne, bête, refus…)      |
+| Ambiance       | `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/ambient/**`     | Boucles de fond, musique du site, atmosphère du navire  |
+| Pas            | `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/steps/**`         | Son des pas selon le matériau                           |
+| Nen            | `apps/web/src/lib/audio/nenSounds.ts`                                        | Sons génériques liés au Nen (aura, etc.)                |
+| UI mode        | `apps/web/src/lib/audio/infiltrationHatsuSounds.ts`                          | Sons spécifiques au mode infiltration                   |
 
 ## Invariants
 

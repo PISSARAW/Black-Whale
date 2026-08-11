@@ -45,15 +45,15 @@ Trajets concrets :
 
 ## Les frontières
 
-| Dossier | Promet | Refuse |
-| --- | --- | --- |
-| `apps/web/src/lib/arena` | Un duel 1v1 contre une IA paramétrée par doctrine et difficulté, avec replay et challenges. | Ne connaît pas la traque, le vaisseau entier ni la campagne. |
-| `apps/web/src/lib/combat` | Le modèle d'un combat au corps-à-corps : état, reducer, fighter, perception, échange. | Ne rend rien, ne sait pas qui est joueur ou IA, n'a pas de route. |
-| `apps/web/src/lib/hunt` | Une partie d'évasion dans un appartement du vaisseau, avec transition vers un duel. | Ne simule pas le mouvement du joueur (c'est `TourScene`); ne réutilise pas `apps/web/src/lib/arena`. |
-| `apps/web/src/lib/infiltration` | Une mission furtive sociale : couverture, témoins, alerte, extraction. | Ne partage pas son graphe avec `apps/web/src/lib/hunt`; les témoins sont propres au mode. |
-| `apps/web/src/lib/investigation` | Un cas à résoudre par collection d'indices, interrogatoires et confrontation. | N'accède pas à la base canon en direct; les affaires sont codées en dur. |
-| `apps/web/src/lib/reconstruction` | Une visualisation narrative du vaisseau à chaque événement canon. | N'est pas un mode jouable au sens action; le v3 est un bac à sable isolé. |
-| `apps/web/src/lib/strategy` | Un mode tour par tour sur le canon, avec factions, ordres et Hatsu stratégiques. | Ne simule pas le combat en temps réel; repose sur `packages/simulation-engine`. |
+| Dossier                           | Promet                                                                                      | Refuse                                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `apps/web/src/lib/arena`          | Un duel 1v1 contre une IA paramétrée par doctrine et difficulté, avec replay et challenges. | Ne connaît pas la traque, le vaisseau entier ni la campagne.                                         |
+| `apps/web/src/lib/combat`         | Le modèle d'un combat au corps-à-corps : état, reducer, fighter, perception, échange.       | Ne rend rien, ne sait pas qui est joueur ou IA, n'a pas de route.                                    |
+| `apps/web/src/lib/hunt`           | Une partie d'évasion dans un appartement du vaisseau, avec transition vers un duel.         | Ne simule pas le mouvement du joueur (c'est `TourScene`); ne réutilise pas `apps/web/src/lib/arena`. |
+| `apps/web/src/lib/infiltration`   | Une mission furtive sociale : couverture, témoins, alerte, extraction.                      | Ne partage pas son graphe avec `apps/web/src/lib/hunt`; les témoins sont propres au mode.            |
+| `apps/web/src/lib/investigation`  | Un cas à résoudre par collection d'indices, interrogatoires et confrontation.               | N'accède pas à la base canon en direct; les affaires sont codées en dur.                             |
+| `apps/web/src/lib/reconstruction` | Une visualisation narrative du vaisseau à chaque événement canon.                           | N'est pas un mode jouable au sens action; le v3 est un bac à sable isolé.                            |
+| `apps/web/src/lib/strategy`       | Un mode tour par tour sur le canon, avec factions, ordres et Hatsu stratégiques.            | Ne simule pas le combat en temps réel; repose sur `packages/simulation-engine`.                      |
 
 Importations communes : tous les modes importent `apps/web/src/lib/tour` (géométrie, rendu), `apps/web/src/lib/nen` (contrôles, état), `apps/web/src/lib/i18n` (textes) et, selon le cas, `packages/canon-engine` ou `packages/simulation-engine`.
 
@@ -75,23 +75,23 @@ Importations communes : tous les modes importent `apps/web/src/lib/tour` (géom�
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --- | --- |
-| changer les règles d'un combat | `apps/web/src/lib/combat/reducer.ts` + `apps/web/src/lib/combat/fighter.ts` |
-| changer l'IA de l'arène | `apps/web/src/lib/arena/ai.ts` |
-| ajouter un terrain d'arène | `apps/web/src/lib/arena/terrain.ts` (sélection dans le blueprint) |
-| ajouter un contrat de traque | `apps/web/src/lib/hunt/contracts/registry.ts` |
-| régler le loop de la traque | `apps/web/src/lib/hunt/loop.ts` |
-| régler le duel de contact | `apps/web/src/lib/hunt/duel/reducer.ts` |
-| ajouter une mission d'infiltration | `apps/web/src/lib/infiltration/missions/definitions.ts` |
-| changer la logique de couverture | `apps/web/src/lib/infiltration/social/cover.ts` |
-| ajouter une affaire | `apps/web/src/lib/investigation/cases/` + `apps/web/src/lib/investigation/catalog.ts` |
-| changer le verdict d'une hypothèse | `apps/web/src/lib/investigation/case.ts` |
-| ajouter un événement dans la reconstruction | `data/ship/` et `packages/canon-engine` (voir [01 le canon](01-le-canon.md)) |
-| changer la projection de perspective | `apps/web/src/lib/reconstruction/perspective.ts` + `apps/web/src/routes/reconstruction/perspective/+server.ts` |
-| ajouter un scénario stratégique | `apps/web/src/lib/strategy/scenario/registry.ts` |
-| changer les règles de commandement | `apps/web/src/lib/strategy/rules.ts` |
-| relier un Hatsu au mode stratégique | `apps/web/src/lib/strategy/hatsu.ts` |
+| Je veux …                                   | J'ouvre                                                                                                        |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| changer les règles d'un combat              | `apps/web/src/lib/combat/reducer.ts` + `apps/web/src/lib/combat/fighter.ts`                                    |
+| changer l'IA de l'arène                     | `apps/web/src/lib/arena/ai.ts`                                                                                 |
+| ajouter un terrain d'arène                  | `apps/web/src/lib/arena/terrain.ts` (sélection dans le blueprint)                                              |
+| ajouter un contrat de traque                | `apps/web/src/lib/hunt/contracts/registry.ts`                                                                  |
+| régler le loop de la traque                 | `apps/web/src/lib/hunt/loop.ts`                                                                                |
+| régler le duel de contact                   | `apps/web/src/lib/hunt/duel/reducer.ts`                                                                        |
+| ajouter une mission d'infiltration          | `apps/web/src/lib/infiltration/missions/definitions.ts`                                                        |
+| changer la logique de couverture            | `apps/web/src/lib/infiltration/social/cover.ts`                                                                |
+| ajouter une affaire                         | `apps/web/src/lib/investigation/cases/` + `apps/web/src/lib/investigation/catalog.ts`                          |
+| changer le verdict d'une hypothèse          | `apps/web/src/lib/investigation/case.ts`                                                                       |
+| ajouter un événement dans la reconstruction | `data/ship/` et `packages/canon-engine` (voir [01 le canon](01-le-canon.md))                                   |
+| changer la projection de perspective        | `apps/web/src/lib/reconstruction/perspective.ts` + `apps/web/src/routes/reconstruction/perspective/+server.ts` |
+| ajouter un scénario stratégique             | `apps/web/src/lib/strategy/scenario/registry.ts`                                                               |
+| changer les règles de commandement          | `apps/web/src/lib/strategy/rules.ts`                                                                           |
+| relier un Hatsu au mode stratégique         | `apps/web/src/lib/strategy/hatsu.ts`                                                                           |
 
 ## Vérifier
 

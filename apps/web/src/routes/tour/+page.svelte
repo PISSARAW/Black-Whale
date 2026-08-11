@@ -739,8 +739,6 @@
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
-
-
   const tourist = $derived(
     currentMangaViews.length > 0
       ? {
@@ -761,17 +759,17 @@
             }
           },
           onTakePhotoWithHud: async () => {
-             const { toBlob } = await import('html-to-image')
-             const el = document.getElementById('tour-stage-container')
-             if (el) {
-               const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
-               if (blob) {
-                 postcardPhotoBlob = blob
-               }
-             }
-          }
+            const { toBlob } = await import('html-to-image')
+            const el = document.getElementById('tour-stage-container')
+            if (el) {
+              const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
+              if (blob) {
+                postcardPhotoBlob = blob
+              }
+            }
+          },
         }
-      : null
+      : null,
   )
 </script>
 
@@ -795,7 +793,7 @@
       immersive={chrome.immersive}
       {navigation}
       bind:takeScreenshot
-      gyoMode={gyoMode}
+      {gyoMode}
       scene={{
         ship,
         world,
@@ -847,7 +845,10 @@
         controls: overlayControls,
         statusHint,
         tourist,
-        gyo: { active: gyoMode, onToggle: () => hatsuSession.useNen({ type: 'GYO', on: !gyoMode }) },
+        gyo: {
+          active: gyoMode,
+          onToggle: () => hatsuSession.useNen({ type: 'GYO', on: !gyoMode }),
+        },
         linkPrompt: touch ? null : linkPrompt,
         // The provenance card of the light, beside the deck: the visitor can
         // see why the bay is black at chapter 374 and a drawn noon elsewhere.

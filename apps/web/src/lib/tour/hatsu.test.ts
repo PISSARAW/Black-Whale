@@ -123,7 +123,6 @@ describe('the technique roster', () => {
     expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
   })
-
 })
 
 describe('the keys a technique answers to', () => {
@@ -132,7 +131,10 @@ describe('the keys a technique answers to', () => {
 
   it('gives every Hatsu carried by the tour at least one unambiguous interaction', () => {
     for (const profile of HATSU_PROFILES.filter(worksInTour)) {
-      const controls = hatsuKeys(profile, profile.kind === 'bookmark' ? openTheBook(() => 0) : CLOSED_BOOK)
+      const controls = hatsuKeys(
+        profile,
+        profile.kind === 'bookmark' ? openTheBook(() => 0) : CLOSED_BOOK,
+      )
       expect(controls.length, profile.id).toBeGreaterThan(0)
       expect(new Set(controls.map((control) => control.key)).size, profile.id).toBe(controls.length)
       expect(controls[0].key, profile.id).toBe('H')

@@ -81,8 +81,7 @@ export function resolveLocationConflicts(input: {
       })
       conditions = resolution.conditions
       if (resolution.playerCasualtyId) reports.push(copy.alliedHit(location))
-      if (resolution.hostileCasualtyId)
-        reports.push(copy.hostileHit(location))
+      if (resolution.hostileCasualtyId) reports.push(copy.hostileHit(location))
     }
   }
   return { conditions, reports }

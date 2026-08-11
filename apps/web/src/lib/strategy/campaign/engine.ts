@@ -23,9 +23,7 @@ export function createStrategyCampaign(seed: string, locale: Locale = 'en'): Str
     unitConditions: {},
     reputation: 'PRAGMATIC',
     chronicle: [
-      locale === 'fr'
-        ? 'La campagne du Black Whale commence.'
-        : 'The Black Whale campaign begins.',
+      locale === 'fr' ? 'La campagne du Black Whale commence.' : 'The Black Whale campaign begins.',
     ],
     completed: false,
   }

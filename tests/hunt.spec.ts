@@ -44,7 +44,6 @@ test.describe('Hunt V3 critical path', () => {
     await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
   })
 
-
   test('creates and opens a validated shared contract', async ({ page }) => {
     await page.getByRole('link', { name: /Create and share a contract/i }).click()
     await expect(page.getByRole('heading', { name: 'Contract editor' })).toBeVisible()

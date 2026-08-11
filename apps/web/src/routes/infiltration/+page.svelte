@@ -963,11 +963,19 @@
     objective="Infiltrate the objective room, bypass security, copy the documents, and extract safely using Nen."
     objectiveFr="Infiltrez la salle de l'objectif, contournez la sécurité, copiez les documents et extrayez-vous en sécurité avec le Nen."
     controls={[
-      { keys: ['Click'], description: 'Move to location', descriptionFr: 'Se déplacer vers un lieu' },
+      {
+        keys: ['Click'],
+        description: 'Move to location',
+        descriptionFr: 'Se déplacer vers un lieu',
+      },
       { keys: ['X'], description: 'Toggle Ten/Zetsu', descriptionFr: 'Basculer Ten/Zetsu' },
       { keys: ['V'], description: 'Create Diversion', descriptionFr: 'Créer une diversion' },
       { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer Hatsu' },
-      { keys: ['F'], description: 'Interact (Copy / Verify / Extract)', descriptionFr: 'Interagir (Copier / Vérifier / Extraire)' },
+      {
+        keys: ['F'],
+        description: 'Interact (Copy / Verify / Extract)',
+        descriptionFr: 'Interagir (Copier / Vérifier / Extraire)',
+      },
       { keys: ['1', '2'], description: 'Answer Challenges', descriptionFr: 'Répondre aux défis' },
     ]}
     onClose={() => (manualOpen = false)}

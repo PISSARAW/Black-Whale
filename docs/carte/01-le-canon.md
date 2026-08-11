@@ -23,6 +23,7 @@ decisions: [adr-001, adr-006]
 **Refuse :** aucun fichier de `data/` ne contient de logique, de rendu ou de dérivé calculé ; `packages/database` n'est pas accessible directement depuis `apps/web` ou `apps/admin` sans passer par `apps/web/src/lib/server/` (voir [09 la façade web](09-la-facade-web.md)) ; `packages/canon-engine/src/world` ne fait pas de requête Prisma.
 
 **Entrées publiques :**
+
 - `data/**` : les fichiers JSON de chaque dossier (`data/characters/characters.json`, `data/locations/locations.json`, etc.).
 - `packages/canon-compiler/src/index.ts` : exports des passes `chapters`, `characters`, `rooms`, `trajectory`, `packages/canon-compiler/src/map/run.ts`, `packages/canon-compiler/src/map/presence-choice.ts`.
 - `packages/database/src/index.ts` : exporte `PrismaClient` et tout le client Prisma.
@@ -44,18 +45,18 @@ decisions: [adr-001, adr-006]
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `data/**` | Déclare. Ne contient que du JSON ; `packages/contracts` valide chaque fichier contre son schéma, puis l'archive contre elle-même (`packages/contracts/src/invariants.ts`). |
-| `packages/canon-compiler/**` | Compile. Lit `data/` et écrit dans la base. Chaque passe est un script CLI (`packages/canon-compiler/package.json`) ; le runtime web ne l'importe pas. |
-| `packages/database/**` | Persiste. Seul endroit qui ouvre `PrismaClient`. Les migrations déplacent le schéma ; le contenu arrive par les passes du compilateur. |
+| Ce dossier …                         | Règle                                                                                                                                                                                           |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data/**`                            | Déclare. Ne contient que du JSON ; `packages/contracts` valide chaque fichier contre son schéma, puis l'archive contre elle-même (`packages/contracts/src/invariants.ts`).                      |
+| `packages/canon-compiler/**`         | Compile. Lit `data/` et écrit dans la base. Chaque passe est un script CLI (`packages/canon-compiler/package.json`) ; le runtime web ne l'importe pas.                                          |
+| `packages/database/**`               | Persiste. Seul endroit qui ouvre `PrismaClient`. Les migrations déplacent le schéma ; le contenu arrive par les passes du compilateur.                                                          |
 | `packages/canon-engine/src/world/**` | Réduit. Transforme un flux d'événements en un `WorldState` pur. Importé par `packages/ability-modules`, `packages/nen-engine`, `packages/simulation-engine` et, via le serveur, par `apps/web`. |
 
 ## Les faits qui ne se lisent pas dans le code
 
 - **Un fait est lu avant d'être compilé.** `packages/contracts/src/lint.ts` appelle `canonLint` : schéma d'abord, invariants ensuite. Si un fichier est invalide, les invariants ne tournent pas, afin d'éviter de raisonner sur des valeurs incertaines.
 - **La base ne se remplit pas avec les migrations.** `packages/canon-compiler/src/map/run.ts` : "`migrate deploy` only moves the schema. Everything the archive shows — locations, characters, presences — lives in `data/characters/characters.json` and reaches the database solely through this pass."
-- **Une présence est un intervalle demi-ouvert.** `packages/canon-compiler/src/trajectory.ts` : une étape se ferme à l'événement *suivant*, de sorte qu'un personnage mort dans un événement y est encore présent pendant qu'il meurt.
+- **Une présence est un intervalle demi-ouvert.** `packages/canon-compiler/src/trajectory.ts` : une étape se ferme à l'événement _suivant_, de sorte qu'un personnage mort dans un événement y est encore présent pendant qu'il meurt.
 - **`death` n'est pas une fin si le personnage réapparaît.** `packages/canon-compiler/src/characters.ts` (`deathChapter`) : Hisoka est marqué `death` au chapitre 356 et réapparaît au 357, donc il ne quitte jamais la carte.
 - **Un tier n'est pas une position.** `data/CONVENTIONS.md` §Positions : `tier-3` est un pont, pas un endroit. `packages/canon-compiler/src/rooms.ts` (`locationCandidates`) retombe sur `black-whale-unknown` plutôt que de laisser un passager dans le vide d'un couloir.
 - **L'héritage de Benjamin et la mort du lanceur sont des règles du monde, pas des capacités.** `packages/canon-engine/src/world/reducer.ts` (`applyInheritanceInvariant`, `applyPostMortemInvariant`) les applique à chaque `BODY_STATE_CHANGED` vers `DEAD` ou `DESTROYED`.
@@ -70,14 +71,14 @@ decisions: [adr-001, adr-006]
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| ajouter ou corriger un personnage | `data/characters/characters.json`, puis `pnpm canon-lint`, puis `pnpm --filter @black-whale/canon-compiler compile:map:dev` |
-| ajouter une salle au navire | `data/locations/locations.json` et `data/README.md` ; relancer `compile:map:dev` |
-| corriger la position d'un personnage | `data/characters/characters.json` (`shipLocation` ou `mapTrajectory`), puis `compile:map:dev` |
-| ajouter une règle du monde (mort, héritage, transfert) | `packages/canon-engine/src/world/reducer.ts` et un test dans `packages/canon-engine/test/post-mortem.spec.ts` |
-| créer une simulation ou une branche alternative | `packages/canon-engine/src/world/branch.ts` (`InMemoryBranchEngine`) |
-| vérifier la cohérence de l'archive | `pnpm canon-lint` |
+| Je veux …                                              | J'ouvre                                                                                                                     |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| ajouter ou corriger un personnage                      | `data/characters/characters.json`, puis `pnpm canon-lint`, puis `pnpm --filter @black-whale/canon-compiler compile:map:dev` |
+| ajouter une salle au navire                            | `data/locations/locations.json` et `data/README.md` ; relancer `compile:map:dev`                                            |
+| corriger la position d'un personnage                   | `data/characters/characters.json` (`shipLocation` ou `mapTrajectory`), puis `compile:map:dev`                               |
+| ajouter une règle du monde (mort, héritage, transfert) | `packages/canon-engine/src/world/reducer.ts` et un test dans `packages/canon-engine/test/post-mortem.spec.ts`               |
+| créer une simulation ou une branche alternative        | `packages/canon-engine/src/world/branch.ts` (`InMemoryBranchEngine`)                                                        |
+| vérifier la cohérence de l'archive                     | `pnpm canon-lint`                                                                                                           |
 
 ## Vérifier
 

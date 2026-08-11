@@ -9,19 +9,19 @@
 
 Volumétrie mesurée le 2026-08-05 :
 
-| Zone                       | Fichiers src | Lignes      |
-| -------------------------- | -----------: | ----------: |
-| `apps/web`                 |          818 |     155 294 |
-| `packages/ability-modules` |           63 |      12 579 |
-| `packages/canon-compiler`  |           45 |       4 753 |
-| `packages/canon-engine`    |           23 |       2 723 |
-| `apps/admin`               |           37 |       2 187 |
-| `packages/contracts`       |           10 |       1 733 |
-| `packages/nen-engine`      |            7 |       1 482 |
-| `packages/ability-sdk`     |            7 |       1 436 |
-| `packages/domain`          |           14 |         971 |
-| `packages/simulation-engine` |          4 |         578 |
-| **Total**                  |    **1 028** | **183 736** |
+| Zone                         | Fichiers src |      Lignes |
+| ---------------------------- | -----------: | ----------: |
+| `apps/web`                   |          818 |     155 294 |
+| `packages/ability-modules`   |           63 |      12 579 |
+| `packages/canon-compiler`    |           45 |       4 753 |
+| `packages/canon-engine`      |           23 |       2 723 |
+| `apps/admin`                 |           37 |       2 187 |
+| `packages/contracts`         |           10 |       1 733 |
+| `packages/nen-engine`        |            7 |       1 482 |
+| `packages/ability-sdk`       |            7 |       1 436 |
+| `packages/domain`            |           14 |         971 |
+| `packages/simulation-engine` |            4 |         578 |
+| **Total**                    |    **1 028** | **183 736** |
 
 225 fichiers de test. 3 fichiers `.gen.ts`. 8 jeux de données dans `data/`. 24 routes publiques.
 `apps/web/src/lib/tour` compte à lui seul ~140 fichiers.
@@ -80,12 +80,12 @@ Ce qui reste au milieu — la frontière et le pourquoi — est la doc, et il y 
 
 ### Les quatre étages
 
-| Étage | Nom          | Où                        | Nombre | Écrit par | Taille cible |
-| ----- | ------------ | ------------------------- | -----: | --------- | ------------ |
-| 0     | Le routeur   | `docs/README.md`          |      1 | main      | ≤ 150 l      |
-| 1     | Les cartes   | `docs/carte/*.md`         |     13 | main      | ≤ 400 l      |
-| 2     | Les fiches   | `<dossier>/README.md`     |    ~32 | agents    | ≤ 200 l      |
-| 3     | Le généré    | `docs/.gen/*.md`          |      7 | machine   | libre        |
+| Étage | Nom        | Où                    | Nombre | Écrit par | Taille cible |
+| ----- | ---------- | --------------------- | -----: | --------- | ------------ |
+| 0     | Le routeur | `docs/README.md`      |      1 | main      | ≤ 150 l      |
+| 1     | Les cartes | `docs/carte/*.md`     |     13 | main      | ≤ 400 l      |
+| 2     | Les fiches | `<dossier>/README.md` |    ~32 | agents    | ≤ 200 l      |
+| 3     | Le généré  | `docs/.gen/*.md`      |      7 | machine   | libre        |
 
 Un agent lit **au plus deux fichiers** avant d'écrire : le routeur (ou directement la carte s'il
 la connaît) et la fiche du dossier qu'il touche. Les `.gen` ne se lisent pas en entier, ils se
@@ -178,21 +178,21 @@ infrastructure/README.md   scripts/README.md   tests/README.md
 
 ### Ce que couvre chaque carte
 
-| Carte                 | Couvre                                                                                                                                        | Répond à                                                                    |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| **01 le canon**       | `data/**` → `packages/canon-compiler` → `packages/database` → `packages/canon-engine/world`                                                    | Où est déclaré un fait ? Que devient-il ? Qui a le droit de le réécrire ?    |
-| **02 le temps**       | `domain/temporal.ts`, `ordering.ts`, `voyage-clock.ts`, `canon-engine/timeline`, `tour/hour.ts`                                                | `StoryCursor` vs horloge de bord vs heure de la visite — trois temps, un modèle |
-| **03 l'identité**     | `domain/identity.ts`, `canon-engine/identity`, `lib/identity`, `lib/server/identity-records.ts`                                                | Corps, conscience, aura : qui répond quoi                                     |
-| **04 le nen**         | `ability-sdk` → `ability-modules` (53) → `nen-engine` → `hatsuProfiles.gen.ts` / `interactionManifests.gen.ts` → `lib/nen` → `tour/hatsu.ts`   | Le trajet d'un hatsu de sa déclaration à son pixel. **La carte la plus lue.** |
-| **05 la visite**      | `data/ship/blueprint.json` → `tour/blueprint.ts` → `geometry`/`mesh` → `TourRenderer` → lumière, son, poussière, apparitions                   | Comment la géométrie devient une salle qu'on traverse                        |
-| **06 le navire**      | `lib/assets/maps/**`, `lib/map`, `server/mapPayload.ts`, `state/mapState.svelte.ts`, `routes/ship`                                             | La carte dessinée : projection, pas rendu                                     |
-| **07 les modes**      | `arena`, `combat`, `hunt`, `infiltration`, `investigation`, `reconstruction`, `strategy` + leurs routes                                        | Ce que « jouable » veut dire ici ; le patron Morena (règles dans le module)   |
-| **08 le spoiler**     | `canon-engine/spoiler`, `server/spoiler.ts`, `server/httpCache.ts`, `server/ability-visibility.ts`, `routes/spoiler-limit`                     | Le cap, sa propagation, la variation de cache. **Zone à invariants durs.**     |
-| **09 la façade web**  | `apps/web/src/routes/**` (24 routes), `lib/server/**`, `lib/i18n`, `lib/seo`, `lib/config/features.ts`                                         | `load` vs action vs client ; où se pose la frontière serveur                  |
-| **10 l'admin**        | `apps/admin/**`, session signée, écritures                                                                                                     | La seule zone qui écrit hors de `data/`                                       |
-| **11 les données**    | `data/CONVENTIONS.md`, `packages/contracts` (zod + invariants), `data/**/*.json`                                                               | Le contrat d'un fichier de données, ce que canon-lint refuse                  |
-| **12 l'exploitation** | `infrastructure/docker`, `infrastructure/hetzner`, `.github/workflows` (ci, restore-drill), sauvegardes                                        | Déployer, restaurer, ce qui casse en production                               |
-| **13 les bornes**     | `eslint.config.js`, `.claude/hooks/enforce-limits.mjs`, `scripts/check-ratchet.test.ts`                                                        | Renvoie à `CLAUDE.md` + ADR-002. Ne réexplique rien.                          |
+| Carte                 | Couvre                                                                                                                                       | Répond à                                                                        |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| **01 le canon**       | `data/**` → `packages/canon-compiler` → `packages/database` → `packages/canon-engine/world`                                                  | Où est déclaré un fait ? Que devient-il ? Qui a le droit de le réécrire ?       |
+| **02 le temps**       | `domain/temporal.ts`, `ordering.ts`, `voyage-clock.ts`, `canon-engine/timeline`, `tour/hour.ts`                                              | `StoryCursor` vs horloge de bord vs heure de la visite — trois temps, un modèle |
+| **03 l'identité**     | `domain/identity.ts`, `canon-engine/identity`, `lib/identity`, `lib/server/identity-records.ts`                                              | Corps, conscience, aura : qui répond quoi                                       |
+| **04 le nen**         | `ability-sdk` → `ability-modules` (53) → `nen-engine` → `hatsuProfiles.gen.ts` / `interactionManifests.gen.ts` → `lib/nen` → `tour/hatsu.ts` | Le trajet d'un hatsu de sa déclaration à son pixel. **La carte la plus lue.**   |
+| **05 la visite**      | `data/ship/blueprint.json` → `tour/blueprint.ts` → `geometry`/`mesh` → `TourRenderer` → lumière, son, poussière, apparitions                 | Comment la géométrie devient une salle qu'on traverse                           |
+| **06 le navire**      | `lib/assets/maps/**`, `lib/map`, `server/mapPayload.ts`, `state/mapState.svelte.ts`, `routes/ship`                                           | La carte dessinée : projection, pas rendu                                       |
+| **07 les modes**      | `arena`, `combat`, `hunt`, `infiltration`, `investigation`, `reconstruction`, `strategy` + leurs routes                                      | Ce que « jouable » veut dire ici ; le patron Morena (règles dans le module)     |
+| **08 le spoiler**     | `canon-engine/spoiler`, `server/spoiler.ts`, `server/httpCache.ts`, `server/ability-visibility.ts`, `routes/spoiler-limit`                   | Le cap, sa propagation, la variation de cache. **Zone à invariants durs.**      |
+| **09 la façade web**  | `apps/web/src/routes/**` (24 routes), `lib/server/**`, `lib/i18n`, `lib/seo`, `lib/config/features.ts`                                       | `load` vs action vs client ; où se pose la frontière serveur                    |
+| **10 l'admin**        | `apps/admin/**`, session signée, écritures                                                                                                   | La seule zone qui écrit hors de `data/`                                         |
+| **11 les données**    | `data/CONVENTIONS.md`, `packages/contracts` (zod + invariants), `data/**/*.json`                                                             | Le contrat d'un fichier de données, ce que canon-lint refuse                    |
+| **12 l'exploitation** | `infrastructure/docker`, `infrastructure/hetzner`, `.github/workflows` (ci, restore-drill), sauvegardes                                      | Déployer, restaurer, ce qui casse en production                                 |
+| **13 les bornes**     | `eslint.config.js`, `.claude/hooks/enforce-limits.mjs`, `scripts/check-ratchet.test.ts`                                                      | Renvoie à `CLAUDE.md` + ADR-002. Ne réexplique rien.                            |
 
 ---
 
@@ -232,15 +232,16 @@ data/ship/blueprint.json → tour/blueprint.ts → tour/geometry.ts → tour/mes
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| importe      | …     |
-| n'importe jamais | …  |
-| est importé par  | …  |
+| Ce dossier …     | Règle |
+| ---------------- | ----- |
+| importe          | …     |
+| n'importe jamais | …     |
+| est importé par  | …     |
 
 ## Les faits qui ne se lisent pas dans le code
 
 <mesures, constantes justifiées, décisions négatives. Chacun avec sa source.>
+
 - 2,1 m/s : la marche, dérivée de l'échelle de la reconstruction — pas un réglage de confort.
 - Aucune lumière ambiante : il n'y en a pas à bord. Un couloir sans luminaire est noir.
 - GLTF rejeté (ADR-005 §4) : la ressemblance passe par `appearance.json`, pas par un asset.
@@ -251,10 +252,10 @@ data/ship/blueprint.json → tour/blueprint.ts → tour/geometry.ts → tour/mes
 
 ## Par où entrer
 
-| Je veux …            | J'ouvre                  |
-| -------------------- | ------------------------ |
-| changer une salle    | `data/ship/blueprint.json` + fiche `data/ship/README.md` |
-| changer une lumière  | `tour/light.ts`, puis `docs/carte/05-la-visite.md#lumiere` |
+| Je veux …           | J'ouvre                                                    |
+| ------------------- | ---------------------------------------------------------- |
+| changer une salle   | `data/ship/blueprint.json` + fiche `data/ship/README.md`   |
+| changer une lumière | `tour/light.ts`, puis `docs/carte/05-la-visite.md#lumiere` |
 
 ## Vérifier
 
@@ -278,16 +279,17 @@ pnpm test:e2e tests/tour.spec.ts
 <un tableau : sous-groupe de fichiers → responsabilité. Pas fichier par fichier —
 par groupe, sinon la fiche est un inventaire et pourrit.>
 
-| Groupe                       | Fichiers          | Responsabilité |
-| ---------------------------- | ----------------- | -------------- |
-| Géométrie                    | `geometry`, `mesh`, `blueprint` | … |
-| Rendu                        | `TourRenderer`, `TierView`, `PortalRenderer` | … |
-| Ambiance                     | `light`, `dust`, `atmosphere`, `sky`, `hour` | … |
-| Vue de page (`page*.ts`)     | 22 fichiers       | état et contrôleurs de `/tour` uniquement |
+| Groupe                   | Fichiers                                     | Responsabilité                            |
+| ------------------------ | -------------------------------------------- | ----------------------------------------- |
+| Géométrie                | `geometry`, `mesh`, `blueprint`              | …                                         |
+| Rendu                    | `TourRenderer`, `TierView`, `PortalRenderer` | …                                         |
+| Ambiance                 | `light`, `dust`, `atmosphere`, `sky`, `hour` | …                                         |
+| Vue de page (`page*.ts`) | 22 fichiers                                  | état et contrôleurs de `/tour` uniquement |
 
 ## Invariants
 
 <3 à 6 lignes maximum, chacune adossée à un test nommé>
+
 - Toute salle est atteignable — `blueprint.test.ts › aucune salle orpheline`
 
 ## Ajouter quelque chose ici
@@ -307,15 +309,15 @@ vérification. Aucune prose. Test de qualité : un agent l'exécute sans ouvrir 
 Sept artefacts, produits par `pnpm doc:gen`, sortis dans `docs/.gen/`, **commités** (pour que les
 agents les lisent sans build) et vérifiés à jour en CI comme les `.gen.ts` du canon.
 
-| Fichier           | Source                                                     | Contenu                                                                    |
-| ----------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `symboles.md`     | API TypeScript (`ts-morph`)                                 | Chaque export public de `packages/*` et `lib/*/index.ts` : signature + chemin:ligne |
-| `dependances.md`  | graphe d'imports                                            | Arêtes entre paquets et entre dossiers de `lib` ; **cycles marqués**        |
-| `routes.md`       | `apps/*/src/routes/**`                                      | 24 routes : paramètres, `+page.server.ts`, actions, cap de spoiler appliqué |
-| `donnees.md`      | `packages/contracts` (zod) + `data/**`                      | Schéma de chaque fichier de données, nombre d'entrées, invariants inter-fichiers |
-| `tests.md`        | 225 `*.test.ts` + 4 `*.spec.ts`                             | Nom de chaque `describe`/`it` → fichier. C'est la spécification exécutable.  |
-| `bornes.md`       | `eslint.config.js` + `wc -l`                                | Les deux listes du cliquet, la longueur actuelle, la dérive depuis le commit précédent |
-| `hatsu.md`        | `abilities.json` + manifests + `hatsuProfiles.gen.ts`       | 82 hatsu × castable / visuel / sonore / ciblage — le tableau tenu à la main aujourd'hui |
+| Fichier          | Source                                                | Contenu                                                                                 |
+| ---------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `symboles.md`    | API TypeScript (`ts-morph`)                           | Chaque export public de `packages/*` et `lib/*/index.ts` : signature + chemin:ligne     |
+| `dependances.md` | graphe d'imports                                      | Arêtes entre paquets et entre dossiers de `lib` ; **cycles marqués**                    |
+| `routes.md`      | `apps/*/src/routes/**`                                | 24 routes : paramètres, `+page.server.ts`, actions, cap de spoiler appliqué             |
+| `donnees.md`     | `packages/contracts` (zod) + `data/**`                | Schéma de chaque fichier de données, nombre d'entrées, invariants inter-fichiers        |
+| `tests.md`       | 225 `*.test.ts` + 4 `*.spec.ts`                       | Nom de chaque `describe`/`it` → fichier. C'est la spécification exécutable.             |
+| `bornes.md`      | `eslint.config.js` + `wc -l`                          | Les deux listes du cliquet, la longueur actuelle, la dérive depuis le commit précédent  |
+| `hatsu.md`       | `abilities.json` + manifests + `hatsuProfiles.gen.ts` | 82 hatsu × castable / visuel / sonore / ciblage — le tableau tenu à la main aujourd'hui |
 
 Chacun s'ouvre par la même ligne : `<!-- généré par pnpm doc:gen — ne pas éditer -->`, et `doc-lint`
 échoue si un `.gen.md` est modifié à la main (diff non reproductible).
@@ -331,17 +333,17 @@ supprime le besoin d'écrire à la main la moitié des sections « comportement 
 Nouveau paquet ou sous-commande de `packages/contracts` (qui héberge déjà `canon-lint`).
 `pnpm doc-lint`, branché dans `.github/workflows/ci.yml`.
 
-| # | Vérification                                                                                          | Sévérité |
-| - | ----------------------------------------------------------------------------------------------------- | -------- |
-| 1 | Tout chemin de `couvre:` existe                                                                        | erreur   |
-| 2 | Tout lien interne (`.md`, `#ancre`, `chemin:ligne`) résout                                              | erreur   |
-| 3 | Tout dossier de la **liste de couverture** possède un `README.md` avec front-matter valide             | erreur   |
-| 4 | La liste de couverture **ne rétrécit jamais** (cliquet, à l'image de `check-ratchet`)                   | erreur   |
-| 5 | Un `.gen.md` diffère de ce que `doc:gen` produit                                                        | erreur   |
-| 6 | Une page d'étage 0/1/2 dépasse sa taille cible                                                          | erreur   |
-| 7 | Le code sous `couvre:` a dérivé de > 15 % des lignes depuis `revu-le` → la page est marquée `à relire`  | avertis. |
-| 8 | Une page n'est atteignable depuis aucun lien de `docs/README.md`                                        | avertis. |
-| 9 | Un dossier de `lib/` ou `packages/` de plus de 8 fichiers sans fiche                                     | avertis. |
+| #   | Vérification                                                                                           | Sévérité |
+| --- | ------------------------------------------------------------------------------------------------------ | -------- |
+| 1   | Tout chemin de `couvre:` existe                                                                        | erreur   |
+| 2   | Tout lien interne (`.md`, `#ancre`, `chemin:ligne`) résout                                             | erreur   |
+| 3   | Tout dossier de la **liste de couverture** possède un `README.md` avec front-matter valide             | erreur   |
+| 4   | La liste de couverture **ne rétrécit jamais** (cliquet, à l'image de `check-ratchet`)                  | erreur   |
+| 5   | Un `.gen.md` diffère de ce que `doc:gen` produit                                                       | erreur   |
+| 6   | Une page d'étage 0/1/2 dépasse sa taille cible                                                         | erreur   |
+| 7   | Le code sous `couvre:` a dérivé de > 15 % des lignes depuis `revu-le` → la page est marquée `à relire` | avertis. |
+| 8   | Une page n'est atteignable depuis aucun lien de `docs/README.md`                                       | avertis. |
+| 9   | Un dossier de `lib/` ou `packages/` de plus de 8 fichiers sans fiche                                   | avertis. |
 
 La règle 4 est le mécanisme qui a déjà fonctionné pour les bornes de longueur : on ne demande pas
 que tout soit documenté demain, on interdit que la couverture recule. La règle 7 est ce qui empêche
@@ -383,16 +385,16 @@ pourquoi l'architecture pousse le maximum de charge vers l'étage 3, où la just
 
 ## 9. Ce qui bouge dans l'existant
 
-| Aujourd'hui                                    | Devient                                                                    |
-| ---------------------------------------------- | -------------------------------------------------------------------------- |
-| `docs/adr-00{1..5}.md`                         | `docs/decision/adr-00{1..5}.md` — inchangés, regroupés                      |
-| `docs/{arena,hunt,investigation,reconstruction,strategy}-v2-backlog.md`, `*-release*.md` | `docs/archive/` — datés, en lecture seule           |
-| `docs/tour-{immersion,2.0,heure,classes-lumiere,lumiere-uniforme}.md` | fondus dans `docs/carte/05-la-visite.md` ; les mesures survivent, le récit descend en archive |
-| `docs/jeu-de-morena.md`, `jeu-de-traque.md`, `infiltration-v2.md` | sources de `docs/carte/07-les-modes.md` + fiches des dossiers de mode |
-| `docs/hatsu-potentiel.md` (70 ko)              | reste — c'est un plan de conception, pas une doc de code ; lié depuis la carte 04 |
-| `docs/completude.md`                           | `docs/archive/` — audit daté du 2026-07-30, déjà corrigé par l'ADR-001      |
-| `docs/decoupage-notes.md`                      | reste où il est (journal du découpage, cité par ADR-002)                    |
-| `data/ship/README.md`, `data/prophecies/README.md` | ré-alignés sur le gabarit d'étage 2 — ils en sont déjà proches           |
+| Aujourd'hui                                                                              | Devient                                                                                       |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `docs/adr-00{1..5}.md`                                                                   | `docs/decision/adr-00{1..5}.md` — inchangés, regroupés                                        |
+| `docs/{arena,hunt,investigation,reconstruction,strategy}-v2-backlog.md`, `*-release*.md` | `docs/archive/` — datés, en lecture seule                                                     |
+| `docs/tour-{immersion,2.0,heure,classes-lumiere,lumiere-uniforme}.md`                    | fondus dans `docs/carte/05-la-visite.md` ; les mesures survivent, le récit descend en archive |
+| `docs/jeu-de-morena.md`, `jeu-de-traque.md`, `infiltration-v2.md`                        | sources de `docs/carte/07-les-modes.md` + fiches des dossiers de mode                         |
+| `docs/hatsu-potentiel.md` (70 ko)                                                        | reste — c'est un plan de conception, pas une doc de code ; lié depuis la carte 04             |
+| `docs/completude.md`                                                                     | `docs/archive/` — audit daté du 2026-07-30, déjà corrigé par l'ADR-001                        |
+| `docs/decoupage-notes.md`                                                                | reste où il est (journal du découpage, cité par ADR-002)                                      |
+| `data/ship/README.md`, `data/prophecies/README.md`                                       | ré-alignés sur le gabarit d'étage 2 — ils en sont déjà proches                                |
 
 Le tri seul divise `docs/` par deux et supprime l'ambiguïté « spécification vivante vs compte rendu ».
 
@@ -403,14 +405,14 @@ Le tri seul divise `docs/` par deux et supprime l'ambiguïté « spécification 
 Six lots. L'ordre est celui du rendement : ce qui sert le plus tôt d'abord, ce qui coûte le plus
 en dernier, et jamais de rédaction manuelle avant que la génération existe.
 
-| Lot | Contenu                                                                          | Effort | Ce qu'on gagne dès la fin du lot                       |
-| --- | -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------- |
-| 0   | `docs/README.md` (routeur) + tri de l'existant (§9) + 3 lignes dans `CLAUDE.md`   | 0,5 j  | Un point d'entrée. `docs/` cesse d'être un tas.         |
+| Lot | Contenu                                                                           | Effort | Ce qu'on gagne dès la fin du lot                             |
+| --- | --------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------ |
+| 0   | `docs/README.md` (routeur) + tri de l'existant (§9) + 3 lignes dans `CLAUDE.md`   | 0,5 j  | Un point d'entrée. `docs/` cesse d'être un tas.              |
 | 1   | `doc:gen` — `symboles`, `dependances`, `routes`, `tests`                          | 1,5 j  | **Le plus gros gain.** Un agent trouve un symbole sans grep. |
-| 2   | `doc-lint` règles 1, 2, 5, 6 + branchement CI                                     | 1 j    | La doc ne peut plus pointer dans le vide.               |
-| 3   | 13 cartes (étage 1), une par territoire                                           | 3–4 j  | Le routage marche. Un agent sait où il est.             |
-| 4   | ~32 fiches (étage 2) — **parallélisable, un agent par dossier**                    | 2 j    | Les frontières sont écrites là où elles s'appliquent.   |
-| 5   | `doc-lint` règles 3, 4, 7, 8, 9 + `donnees`, `bornes`, `hatsu` générés + `geste/` | 1,5 j  | Le cliquet. La couverture ne peut plus reculer.         |
+| 2   | `doc-lint` règles 1, 2, 5, 6 + branchement CI                                     | 1 j    | La doc ne peut plus pointer dans le vide.                    |
+| 3   | 13 cartes (étage 1), une par territoire                                           | 3–4 j  | Le routage marche. Un agent sait où il est.                  |
+| 4   | ~32 fiches (étage 2) — **parallélisable, un agent par dossier**                   | 2 j    | Les frontières sont écrites là où elles s'appliquent.        |
+| 5   | `doc-lint` règles 3, 4, 7, 8, 9 + `donnees`, `bornes`, `hatsu` générés + `geste/` | 1,5 j  | Le cliquet. La couverture ne peut plus reculer.              |
 
 Le lot 4 est le seul volumineux et c'est celui qui se délègue le mieux : chaque fiche ne dépend que
 de son dossier et du gabarit. Un agent par paquet, en parallèle, chacun avec pour seule consigne

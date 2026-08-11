@@ -825,14 +825,22 @@
     objectiveFr="Traquez la cible en utilisant le Nen. Gérez votre aura, utilisez Gyo pour voir les pièges cachés et survivez."
     controls={[
       { keys: ['W', 'A', 'S', 'D'], description: 'Move / Walk', descriptionFr: 'Se déplacer' },
-      { keys: ['X'], description: 'Zetsu (Hide aura)', descriptionFr: 'Zetsu (Cacher l\'aura)' },
-      { keys: ['N'], description: 'Ren (Ready for action)', descriptionFr: 'Ren (Prêt à l\'action)' },
+      { keys: ['X'], description: 'Zetsu (Hide aura)', descriptionFr: "Zetsu (Cacher l'aura)" },
+      {
+        keys: ['N'],
+        description: 'Ren (Ready for action)',
+        descriptionFr: "Ren (Prêt à l'action)",
+      },
       { keys: ['F'], description: 'En (Sweep area)', descriptionFr: 'En (Balayer la zone)' },
       { keys: ['U'], description: 'Shu (Imbue object)', descriptionFr: 'Shu (Imprégner objet)' },
       { keys: ['V'], description: 'Lay trap (Hatsu)', descriptionFr: 'Poser piège (Hatsu)' },
       { keys: ['R'], description: 'Recover trap', descriptionFr: 'Récupérer piège' },
       { keys: ['Space'], description: 'Strike (Duel)', descriptionFr: 'Frapper (Duel)' },
-      { keys: ['I'], description: 'In (Hide traps)', descriptionFr: 'In (Cacher l\'aura des objets)' },
+      {
+        keys: ['I'],
+        description: 'In (Hide traps)',
+        descriptionFr: "In (Cacher l'aura des objets)",
+      },
       { keys: ['O'], description: 'Gyo (See In)', descriptionFr: 'Gyo (Voir In)' },
       { keys: ['P'], description: 'Ken (Guard all)', descriptionFr: 'Ken (Garde totale)' },
     ]}

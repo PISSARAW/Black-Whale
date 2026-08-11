@@ -149,10 +149,13 @@
     <button
       type="button"
       onclick={gyo.onToggle}
-      class="mt-2 flex items-center gap-2 rounded border border-[#FFD700]/40 px-2 py-1 text-xs transition-colors hover:border-[#FFD700]/70 {gyo.active ? 'bg-[#FFD700]/20 text-[#FFD700]' : 'bg-[#050505]/80 text-[#FFD700]/80'}"
+      class="mt-2 flex items-center gap-2 rounded border border-[#FFD700]/40 px-2 py-1 text-xs transition-colors hover:border-[#FFD700]/70 {gyo.active
+        ? 'bg-[#FFD700]/20 text-[#FFD700]'
+        : 'bg-[#050505]/80 text-[#FFD700]/80'}"
       title="Filtre Gyo / Vision Nen"
     >
-      <span>{gyo.active ? '[Gyo]' : '[Nen]'}</span> {gyo.active ? 'Gyo Actif' : 'Activer Gyo'}
+      <span>{gyo.active ? '[Gyo]' : '[Nen]'}</span>
+      {gyo.active ? 'Gyo Actif' : 'Activer Gyo'}
     </button>
   {/if}
 </div>

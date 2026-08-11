@@ -122,7 +122,9 @@
       {#if session.verdict.contradictions.length > 0}<p
           class="mt-4 rounded bg-red-900/40 p-3 text-xs font-medium text-red-200"
         >
-          {ui.deduction.contradiction} : {session.verdict.contradictions.map((item) => item.title).join(' · ')}
+          {ui.deduction.contradiction} : {session.verdict.contradictions
+            .map((item) => item.title)
+            .join(' · ')}
         </p>{/if}
       {#if session.verdict.missing.length > 0}<p
           class="mt-4 rounded bg-amber-900/40 p-3 text-xs font-medium text-amber-200"

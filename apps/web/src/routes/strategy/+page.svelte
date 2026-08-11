@@ -264,15 +264,19 @@
   function continueCampaign() {
     if (!campaignSave || !data.scenario || !playerFactionId) return
     if (currentCampaignScenario(campaignSave.campaign)?.id !== data.scenario.id) return
-    const campaign = completeCampaignScenario(campaignSave.campaign, {
-      scenarioId: data.scenario.id,
-      selectedFactionId: playerFactionId,
-      won: simStore.gameWon,
-      turnsPlayed: Math.min(simStore.currentTurn - 1, data.scenario.maxTurns),
-      victoryPoints: simStore.victoryPoints,
-      relationships: structuredClone(simStore.relationships),
-      unitConditions: structuredClone(simStore.unitConditions),
-    }, $locale)
+    const campaign = completeCampaignScenario(
+      campaignSave.campaign,
+      {
+        scenarioId: data.scenario.id,
+        selectedFactionId: playerFactionId,
+        won: simStore.gameWon,
+        turnsPlayed: Math.min(simStore.currentTurn - 1, data.scenario.maxTurns),
+        victoryPoints: simStore.victoryPoints,
+        relationships: structuredClone(simStore.relationships),
+        unitConditions: structuredClone(simStore.unitConditions),
+      },
+      $locale,
+    )
     campaignSave = createCampaignSave(campaign, new Date().toISOString())
     localStorage.setItem(STRATEGY_CAMPAIGN_KEY, encodeCampaignSave(campaignSave))
     const next = currentCampaignScenario(campaign)
@@ -376,9 +380,7 @@
       )
     } catch (error) {
       errorMessage =
-        error instanceof StrategyInputError
-          ? error.message
-          : $t.strategy.errors.turnFailed
+        error instanceof StrategyInputError ? error.message : $t.strategy.errors.turnFailed
       console.error('[strategy] turn', error)
     }
   }
@@ -397,11 +399,11 @@
       class="mx-auto flex max-w-2xl flex-col items-center justify-center pt-24 text-center"
       role="alert"
     >
-      <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-red-500">{$t.strategy.ui.accessDenied}</p>
+      <p class="mb-4 text-[10px] font-bold uppercase tracking-widest text-red-500">
+        {$t.strategy.ui.accessDenied}
+      </p>
       <h1 class="mb-4 font-black text-4xl text-white">{data.error}</h1>
-      <span class="text-sm text-red-200/60"
-        >{$t.strategy.ui.checkConnection}</span
-      >
+      <span class="text-sm text-red-200/60">{$t.strategy.ui.checkConnection}</span>
     </section>
   {:else if !ready}
     <section
@@ -466,7 +468,8 @@
           </p>
           <h1 class="mt-1 font-black text-3xl text-white drop-shadow-md">{playerFaction?.name}</h1>
           <span class="mt-2 block text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
-            >{$t.strategy.ui.turn} {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
+            >{$t.strategy.ui.turn}
+            {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
               ?.maxTurns ?? 8}</span
           >
         </header>
@@ -518,7 +521,8 @@
                   {objective?.complete ? `· ${$t.strategy.ui.completed}` : ''}</span
                 >
                 <span class="text-sky-400 {simStore.gameWon ? 'text-emerald-400' : ''}"
-                  >{$t.strategy.ui.influence} {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span
+                  >{$t.strategy.ui.influence}
+                  {simStore.victoryPoints} / {VICTORY_POINTS_TARGET}</span
                 >
               </div>
             </div>
@@ -526,7 +530,9 @@
 
           <section class="mb-8 border-t border-sky-900/30 pt-6">
             <div class="mb-4 flex items-center justify-between">
-              <h2 class="text-xs font-black uppercase tracking-widest text-white">{$t.strategy.ui.newOrder}</h2>
+              <h2 class="text-xs font-black uppercase tracking-widest text-white">
+                {$t.strategy.ui.newOrder}
+              </h2>
               <span
                 class="rounded bg-sky-900/40 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-sky-300"
                 >{remainingCommandPoints} / {COMMAND_POINTS_PER_TURN} PC</span
@@ -596,7 +602,9 @@
                   <option
                     value={member.character.id}
                     disabled={conditionForCharacter(member.character.id) === 'Eliminated'}
-                    >{displayName(member.character.canonicalName, $locale)} · {conditionForCharacter(member.character.id)} ·
+                    >{displayName(member.character.canonicalName, $locale)} · {conditionForCharacter(
+                      member.character.id,
+                    )} ·
 
                     {currentLocation(member.character.id)}</option
                   >
@@ -662,9 +670,11 @@
                       >
                       <span class="block truncate text-[10px] text-sky-200/50"
                         >{order.type === 'HATSU'
-                          ? (hatsuById(order.abilityId)?.name ?? $t.strategy.ui.orderLabels[order.type])
-                          : $t.strategy.ui.orderLabels[order.type]} · {locationById.get(order.locationId)?.name ??
-                          order.locationId}</span
+                          ? (hatsuById(order.abilityId)?.name ??
+                            $t.strategy.ui.orderLabels[order.type])
+                          : $t.strategy.ui.orderLabels[order.type]} · {locationById.get(
+                          order.locationId,
+                        )?.name ?? order.locationId}</span
                       >
                     </div>
                     <button
@@ -757,10 +767,12 @@
           class="mt-4 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
         >
           <span class="flex items-center gap-1.5"
-            ><i class="inline-block h-2 w-2 rounded-full border border-sky-400 bg-sky-900"></i> {$t.strategy.ui.yourUnits}</span
+            ><i class="inline-block h-2 w-2 rounded-full border border-sky-400 bg-sky-900"></i>
+            {$t.strategy.ui.yourUnits}</span
           >
           <span class="flex items-center gap-1.5"
-            ><i class="inline-block h-2 w-2 rounded-full border border-sky-700 bg-[#0a0f1c]"></i> Contacts
+            ><i class="inline-block h-2 w-2 rounded-full border border-sky-700 bg-[#0a0f1c]"></i>
+            Contacts
             {$t.strategy.ui.observedContacts}</span
           >
         </p>
@@ -775,8 +787,16 @@
     objective="Command your faction across the Black Whale. Deploy units, assign Hatsu roles, and achieve your objectives before turns run out."
     objectiveFr="Commandez votre faction à travers le Black Whale. Déployez vos unités, assignez des rôles Hatsu et atteignez vos objectifs avant la fin des tours."
     controls={[
-      { keys: ['Click'], description: 'Select units and zones / Select orders', descriptionFr: 'Sélectionner unités et zones / Sélectionner ordres' },
-      { keys: ['H'], description: 'Open Instruction Manual', descriptionFr: 'Ouvrir le mode d\'emploi' },
+      {
+        keys: ['Click'],
+        description: 'Select units and zones / Select orders',
+        descriptionFr: 'Sélectionner unités et zones / Sélectionner ordres',
+      },
+      {
+        keys: ['H'],
+        description: 'Open Instruction Manual',
+        descriptionFr: "Ouvrir le mode d'emploi",
+      },
     ]}
     onClose={() => (manualOpen = false)}
   />

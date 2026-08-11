@@ -70,7 +70,8 @@
       .catch((cause) => {
         if (cause instanceof DOMException && cause.name === 'AbortError') return
         hatsuActions = []
-        error = cause instanceof Error ? cause.message : $t.reconstruction.v3.errors.actionsUnavailable
+        error =
+          cause instanceof Error ? cause.message : $t.reconstruction.v3.errors.actionsUnavailable
       })
       .finally(() => (actionsLoading = false))
     return () => controller.abort()
@@ -185,10 +186,7 @@
   }
 </script>
 
-<Seo
-  title={$t.reconstruction.v3.seoTitle}
-  description={$t.reconstruction.v3.seoDescription}
-/>
+<Seo title={$t.reconstruction.v3.seoTitle} description={$t.reconstruction.v3.seoDescription} />
 
 <main class="v3-shell">
   <header>
@@ -211,7 +209,8 @@
       <label
         >{$t.reconstruction.v3.canonicalEvent}<select bind:value={forkEventId}
           >{#each data.events as event, index (event.id)}<option value={event.id}
-              >{$t.reconstruction.v3.chapter} {event.chapter} · {$locale === 'fr'
+              >{$t.reconstruction.v3.chapter}
+              {event.chapter} · {$locale === 'fr'
                 ? $t.reconstruction.v3.eventNumber(index + 1)
                 : eventTitle(event.title, $locale)}</option
             >{/each}</select
@@ -219,9 +218,8 @@
       >
       <label
         >{$t.reconstruction.v3.policy}<select bind:value={mode}
-          ><option value="rule-compatible">{$t.reconstruction.v3.policies.compatible}</option><option
-            value="strict-canon">{$t.reconstruction.v3.policies.strict}</option
-          ></select
+          ><option value="rule-compatible">{$t.reconstruction.v3.policies.compatible}</option
+          ><option value="strict-canon">{$t.reconstruction.v3.policies.strict}</option></select
         ></label
       >
     </div>
@@ -273,9 +271,10 @@
         <label>{$t.reconstruction.v3.factId}<input bind:value={factId} /></label>
         <label
           >{$t.reconstruction.v3.reliability}<select bind:value={reliability}
-            ><option value="trusted">{$t.reconstruction.v3.reliabilities.trusted}</option><option value="unverified">{$t.reconstruction.v3.reliabilities.unverified}</option
-            ><option value="deceptive">{$t.reconstruction.v3.reliabilities.deceptive}</option><option value="unknown">{$t.reconstruction.v3.reliabilities.unknown}</option
-            ></select
+            ><option value="trusted">{$t.reconstruction.v3.reliabilities.trusted}</option><option
+              value="unverified">{$t.reconstruction.v3.reliabilities.unverified}</option
+            ><option value="deceptive">{$t.reconstruction.v3.reliabilities.deceptive}</option
+            ><option value="unknown">{$t.reconstruction.v3.reliabilities.unknown}</option></select
           ></label
         >
       {:else if kind === 'ACTIVATE_HATSU'}
@@ -305,18 +304,26 @@
       <div class="grid three condition">
         <label
           >{$t.reconstruction.v3.condition}<select bind:value={conditionKind}
-            ><option value="entity-at">{$t.reconstruction.v3.conditions.entityAt}</option><option value="knows-fact"
-              >{$t.reconstruction.v3.conditions.knowsFact}</option
-            ><option value="ability-available">{$t.reconstruction.v3.conditions.abilityAvailable}</option><option
-              value="event-occurred">{$t.reconstruction.v3.conditions.eventOccurred}</option
+            ><option value="entity-at">{$t.reconstruction.v3.conditions.entityAt}</option><option
+              value="knows-fact">{$t.reconstruction.v3.conditions.knowsFact}</option
+            ><option value="ability-available"
+              >{$t.reconstruction.v3.conditions.abilityAvailable}</option
+            ><option value="event-occurred">{$t.reconstruction.v3.conditions.eventOccurred}</option
             ></select
           ></label
         >
-        <label>{$t.reconstruction.v3.subject}<input bind:value={conditionSubject} placeholder={$t.reconstruction.v3.defaultActor} /></label>
+        <label
+          >{$t.reconstruction.v3.subject}<input
+            bind:value={conditionSubject}
+            placeholder={$t.reconstruction.v3.defaultActor}
+          /></label
+        >
         <label>{$t.reconstruction.v3.expectedValue}<input bind:value={conditionExpected} /></label>
       </div>
     </details>
-    <button class="secondary" type="button" onclick={addDecision}>{$t.reconstruction.v3.addDecision}</button>
+    <button class="secondary" type="button" onclick={addDecision}
+      >{$t.reconstruction.v3.addDecision}</button
+    >
     <ol class="decisions">
       {#each decisions as decision, index (decision.id)}<li>
           <span>{String(index + 1).padStart(2, '0')}</span><strong>{decision.kind}</strong><code
@@ -348,10 +355,14 @@
         </div>
       </div>
       <div class="metrics">
-        <article><small>{$t.reconstruction.v3.fidelity}</small><strong>{report.fidelity}</strong></article>
+        <article>
+          <small>{$t.reconstruction.v3.fidelity}</small><strong>{report.fidelity}</strong>
+        </article>
         <article><small>{$t.reconstruction.v3.branch}</small><strong>{branchId}</strong></article>
         <article>
-          <small>{$t.reconstruction.v3.firstDivergence}</small><strong>{report.divergenceDecisionId ?? $t.reconstruction.v3.none}</strong>
+          <small>{$t.reconstruction.v3.firstDivergence}</small><strong
+            >{report.divergenceDecisionId ?? $t.reconstruction.v3.none}</strong
+          >
         </article>
       </div>
       <h3>{$t.reconstruction.v3.differences}</h3>

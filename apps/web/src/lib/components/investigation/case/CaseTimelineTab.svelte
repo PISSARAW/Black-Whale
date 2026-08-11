@@ -19,7 +19,9 @@
         <p class="font-mono text-5xl text-white">
           {session.replayFrame.second.toString().padStart(2, '0')}
         </p>
-        <p class="mt-1 text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">{ui.timeline.second}</p>
+        <p class="mt-1 text-[9px] font-bold uppercase tracking-[0.25em] text-[#d6b35a]">
+          {ui.timeline.second}
+        </p>
         <div
           class="mt-4 flex justify-center gap-1.5"
           aria-label={ui.timeline.creaturesActive(session.replayFrame.snakes)}
@@ -146,9 +148,7 @@
       fill={session.scenePhenomenon === 'doll' ? '#d6b35a' : '#7dd3fc'}
       font-size="9"
     >
-      {session.scenePhenomenon === 'doll'
-        ? ui.timeline.dollCaption
-        : ui.timeline.creaturesCaption}
+      {session.scenePhenomenon === 'doll' ? ui.timeline.dollCaption : ui.timeline.creaturesCaption}
     </text>
   </svg>
 </section>

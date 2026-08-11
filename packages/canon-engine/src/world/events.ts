@@ -47,7 +47,11 @@ import type { VestigeType } from '@black-whale/domain'
 
 export type EnvironmentAlteredEvent = EventEnvelope<
   'ENVIRONMENT_ALTERED',
-  { locationId: string; vestigeType: VestigeType; metadata?: Record<string, string | number | boolean> }
+  {
+    locationId: string
+    vestigeType: VestigeType
+    metadata?: Record<string, string | number | boolean>
+  }
 >
 
 /**

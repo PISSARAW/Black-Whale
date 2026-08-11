@@ -21,7 +21,10 @@
   let { open, title, titleFr, objective, objectiveFr, controls, onClose }: Props = $props()
 
   function handleKeydown(event: KeyboardEvent) {
-    if (open && (event.key === 'Escape' || event.key === 'h' || event.key === 'H' || event.key === '?')) {
+    if (
+      open &&
+      (event.key === 'Escape' || event.key === 'h' || event.key === 'H' || event.key === '?')
+    ) {
       onClose()
       event.preventDefault()
     }
@@ -45,19 +48,26 @@
     aria-modal="true"
     aria-labelledby="manual-title"
   >
-    <div class="relative w-full max-w-2xl rounded-xl border border-white/15 bg-[#0a0f16]/90 p-8 shadow-2xl">
+    <div
+      class="relative w-full max-w-2xl rounded-xl border border-white/15 bg-[#0a0f16]/90 p-8 shadow-2xl"
+    >
       <button
         class="absolute right-6 top-6 text-white/50 transition-colors hover:text-white"
         onclick={onClose}
         aria-label={$locale === 'fr' ? 'Fermer' : 'Close'}
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
 
       <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-500">
-        {$locale === 'fr' ? 'Mode d\'emploi' : 'Instruction Manual'}
+        {$locale === 'fr' ? "Mode d'emploi" : 'Instruction Manual'}
       </p>
       <h2 id="manual-title" class="mt-2 text-3xl font-black tracking-tight text-white">
         {$locale === 'fr' ? titleFr : title}
@@ -81,7 +91,10 @@
             <li class="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
               <div class="flex shrink-0 gap-1">
                 {#each control.keys as key (key)}
-                  <kbd class="min-w-[1.5rem] rounded border border-white/20 bg-black/50 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-inner">{key}</kbd>
+                  <kbd
+                    class="min-w-[1.5rem] rounded border border-white/20 bg-black/50 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-inner"
+                    >{key}</kbd
+                  >
                 {/each}
               </div>
               <span class="text-xs leading-snug text-white/80">

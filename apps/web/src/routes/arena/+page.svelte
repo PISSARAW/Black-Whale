@@ -1061,13 +1061,25 @@
     objective="Defeat your opponent in direct combat. Manage your aura, use Nen techniques like Ryu and Gyo, and strike when they drop their guard."
     objectiveFr="Battez votre adversaire en combat direct. Gérez votre aura, utilisez des techniques de Nen comme Ryu et Gyo, et frappez quand il baisse sa garde."
     controls={[
-      { keys: ['Z', 'Q', 'S', 'D'], description: 'Move / Approach', descriptionFr: 'Se déplacer / S\'approcher' },
+      {
+        keys: ['Z', 'Q', 'S', 'D'],
+        description: 'Move / Approach',
+        descriptionFr: "Se déplacer / S'approcher",
+      },
       { keys: ['Shift (L/R)'], description: 'Guard (Ken)', descriptionFr: 'Garde (Ken)' },
-      { keys: ['J', 'L'], description: 'Evade (Left/Right)', descriptionFr: 'Esquiver (Gauche/Droite)' },
+      {
+        keys: ['J', 'L'],
+        description: 'Evade (Left/Right)',
+        descriptionFr: 'Esquiver (Gauche/Droite)',
+      },
       { keys: ['V'], description: 'Feint', descriptionFr: 'Feinter' },
       { keys: ['Space', 'Click'], description: 'Strike', descriptionFr: 'Frapper' },
       { keys: ['H'], description: 'Cast Hatsu', descriptionFr: 'Lancer un Hatsu' },
-      { keys: ['N', 'I', 'O', 'P'], description: 'Nen Modes (Ren, In, Gyo, Ken)', descriptionFr: 'Modes Nen (Ren, In, Gyo, Ken)' },
+      {
+        keys: ['N', 'I', 'O', 'P'],
+        description: 'Nen Modes (Ren, In, Gyo, Ken)',
+        descriptionFr: 'Modes Nen (Ren, In, Gyo, Ken)',
+      },
     ]}
     onClose={() => (manualOpen = false)}
   />

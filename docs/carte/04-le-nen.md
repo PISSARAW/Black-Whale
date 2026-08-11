@@ -37,24 +37,24 @@ apps/web/src/lib/nen/          ← registre client, résolution visuelle
 apps/web/src/lib/tour/cast/    ← casts de la visite first-person
 ```
 
-| Étape | Où | Responsabilité |
-| ----- | -- | -------------- |
-| Données | `data/abilities/abilities.json` | Déclaration des capacités et de leurs règles |
-| SDK | `packages/ability-sdk/src/` | Types et helpers communs à toutes les abilities |
-| Modules | `packages/ability-modules/src/**` | Implémentation spécifique de chaque Hatsu |
-| Moteur | `packages/nen-engine/src/` | Résolution générique des effets, coûts, ciblages |
-| Compiler | `packages/canon-compiler/src/` | Génère les profils et manifestes consommés par le web |
-| Web | `apps/web/src/lib/nen/` | Registre Hatsu, helpers de cast et de ciblage |
-| Visite | `apps/web/src/lib/tour/cast/` | Traduction des effets en animations / sons |
+| Étape    | Où                                | Responsabilité                                        |
+| -------- | --------------------------------- | ----------------------------------------------------- |
+| Données  | `data/abilities/abilities.json`   | Déclaration des capacités et de leurs règles          |
+| SDK      | `packages/ability-sdk/src/`       | Types et helpers communs à toutes les abilities       |
+| Modules  | `packages/ability-modules/src/**` | Implémentation spécifique de chaque Hatsu             |
+| Moteur   | `packages/nen-engine/src/`        | Résolution générique des effets, coûts, ciblages      |
+| Compiler | `packages/canon-compiler/src/`    | Génère les profils et manifestes consommés par le web |
+| Web      | `apps/web/src/lib/nen/`           | Registre Hatsu, helpers de cast et de ciblage         |
+| Visite   | `apps/web/src/lib/tour/cast/`     | Traduction des effets en animations / sons            |
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `packages/ability-modules/src/` | Ne dépend pas du rendu web. Une règle Hatsu doit compiler sans Svelte. |
-| `packages/nen-engine/src/` | Ne connaît pas les modules spécifiques : il travaille sur le contrat SDK. |
-| `apps/web/src/lib/nen/` | Ne lit pas directement `data/abilities/abilities.json` : il consomme les `.gen.ts`. |
-| `apps/web/src/lib/tour/cast/` | Ne réécrit pas la règle : il traduit le résultat du moteur en pixels. |
+| Ce dossier …                    | Règle                                                                               |
+| ------------------------------- | ----------------------------------------------------------------------------------- |
+| `packages/ability-modules/src/` | Ne dépend pas du rendu web. Une règle Hatsu doit compiler sans Svelte.              |
+| `packages/nen-engine/src/`      | Ne connaît pas les modules spécifiques : il travaille sur le contrat SDK.           |
+| `apps/web/src/lib/nen/`         | Ne lit pas directement `data/abilities/abilities.json` : il consomme les `.gen.ts`. |
+| `apps/web/src/lib/tour/cast/`   | Ne réécrit pas la règle : il traduit le résultat du moteur en pixels.               |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -70,12 +70,12 @@ apps/web/src/lib/tour/cast/    ← casts de la visite first-person
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| ajouter un Hatsu | `docs/geste/un-hatsu.md` + `packages/ability-modules/src/` |
-| modifier une règle | le module concerné dans `packages/ability-modules/src/` |
-| changer le rendu d'un cast | `apps/web/src/lib/tour/cast/` + cette carte |
-| comprendre la compilation | `packages/canon-compiler/src/` |
+| Je veux …                  | J'ouvre                                                    |
+| -------------------------- | ---------------------------------------------------------- |
+| ajouter un Hatsu           | `docs/geste/un-hatsu.md` + `packages/ability-modules/src/` |
+| modifier une règle         | le module concerné dans `packages/ability-modules/src/`    |
+| changer le rendu d'un cast | `apps/web/src/lib/tour/cast/` + cette carte                |
+| comprendre la compilation  | `packages/canon-compiler/src/`                             |
 
 ## Vérifier
 

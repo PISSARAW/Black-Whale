@@ -44,7 +44,16 @@
     gyoMode?: boolean
   }
 
-  let { immersive, navigation, scene, overlay, examine, address, takeScreenshot = $bindable(null), gyoMode = false }: Props = $props()
+  let {
+    immersive,
+    navigation,
+    scene,
+    overlay,
+    examine,
+    address,
+    takeScreenshot = $bindable(null),
+    gyoMode = false,
+  }: Props = $props()
 </script>
 
 <section
@@ -67,7 +76,7 @@
     bind:aimedAt={navigation.aimedAt}
     bind:aimedSolidAt={navigation.aimedSolidAt}
     bind:takeScreenshot
-    gyoMode={gyoMode}
+    {gyoMode}
     {...scene}
   />
   <TourSceneOverlay {...overlay} />

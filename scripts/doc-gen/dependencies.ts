@@ -23,13 +23,20 @@ function packageName(dir: string): string | null {
 function sourceContainer(filePath: string): { kind: 'package' | 'lib'; name: string } | null {
   const rel = relative(ROOT, filePath)
   const pkgMatch = rel.match(/^packages\/([^/]+)\//)
-  if (pkgMatch) return { kind: 'package', name: packageName(join(ROOT, 'packages', pkgMatch[1])) || pkgMatch[1] }
+  if (pkgMatch)
+    return {
+      kind: 'package',
+      name: packageName(join(ROOT, 'packages', pkgMatch[1])) || pkgMatch[1],
+    }
   const libMatch = rel.match(/^apps\/web\/src\/lib\/([^/]+)\//)
   if (libMatch) return { kind: 'lib', name: libMatch[1] }
   return null
 }
 
-function targetContainer(specifier: string, sourceFile: string): { kind: 'package' | 'lib'; name: string } | null {
+function targetContainer(
+  specifier: string,
+  sourceFile: string,
+): { kind: 'package' | 'lib'; name: string } | null {
   if (specifier.startsWith('@black-whale/')) {
     return { kind: 'package', name: specifier.split('/').slice(0, 2).join('/') }
   }
@@ -37,7 +44,11 @@ function targetContainer(specifier: string, sourceFile: string): { kind: 'packag
   const resolved = resolve(dirname(sourceFile), specifier)
   const rel = relative(ROOT, resolved)
   const pkgMatch = rel.match(/^packages\/([^/]+)\//)
-  if (pkgMatch) return { kind: 'package', name: packageName(join(ROOT, 'packages', pkgMatch[1])) || pkgMatch[1] }
+  if (pkgMatch)
+    return {
+      kind: 'package',
+      name: packageName(join(ROOT, 'packages', pkgMatch[1])) || pkgMatch[1],
+    }
   const libMatch = rel.match(/^apps\/web\/src\/lib\/([^/]+)\//)
   if (libMatch) return { kind: 'lib', name: libMatch[1] }
   return null
@@ -93,7 +104,12 @@ function findCycles(nodes: string[], edges: Edge[]): string[][] {
 export function generateDependencies(): string {
   const files = globSync(
     ['packages/*/src/**/*.ts', 'apps/web/src/lib/**/*.ts', 'apps/web/src/lib/**/*.svelte'],
-    { cwd: ROOT, onlyFiles: true, dot: true, ignore: ['**/node_modules/**', '**/.svelte-kit/**', '**/.gen/**'] },
+    {
+      cwd: ROOT,
+      onlyFiles: true,
+      dot: true,
+      ignore: ['**/node_modules/**', '**/.svelte-kit/**', '**/.gen/**'],
+    },
   )
 
   const edges: Edge[] = []

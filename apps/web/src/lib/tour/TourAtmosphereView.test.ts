@@ -23,7 +23,11 @@ describe('TourAtmosphereView', () => {
     const { ambient, air } = REFERENCE_REGIME
 
     const wash = atmosphere.ambient.color
-    expect([wash.r, wash.g, wash.b]).toEqual([ambient.colour[0], ambient.colour[1], ambient.colour[2]])
+    expect([wash.r, wash.g, wash.b]).toEqual([
+      ambient.colour[0],
+      ambient.colour[1],
+      ambient.colour[2],
+    ])
     expect(atmosphere.ambient.intensity).toBe(ambient.intensity)
 
     const fog = atmosphere.baseFog

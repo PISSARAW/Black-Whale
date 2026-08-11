@@ -82,13 +82,13 @@ decisions:
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `apps/web/src/lib/server/` | importe les packages, `data/` et `apps/web/src/lib/` côté serveur uniquement ; ne touche jamais `apps/web/src/lib/components/`. |
-| `apps/web/src/routes/` | importe `apps/web/src/lib/server/`, `apps/web/src/lib/components/`, `apps/web/src/lib/i18n/`, `apps/web/src/lib/seo/`, `apps/web/src/lib/config/features.ts` ; pas d'import direct de packages sauf via `apps/web/src/lib/server/`. |
-| `apps/web/src/lib/i18n/` | importé par tout le monde ; ne dépend pas de `apps/web/src/lib/server/` ni de `apps/web/src/routes/`. |
-| `apps/web/src/lib/seo/` | importé par les routes, les composants et `apps/web/src/routes/sitemap.xml/+server.ts` ainsi que `apps/web/src/routes/robots.txt/+server.ts` ; ne dépend pas de l'état du serveur. |
-| `apps/web/src/lib/config/features.ts` | importé partout ; ne contient que des constantes booléennes. |
+| Ce dossier …                          | Règle                                                                                                                                                                                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/src/lib/server/`            | importe les packages, `data/` et `apps/web/src/lib/` côté serveur uniquement ; ne touche jamais `apps/web/src/lib/components/`.                                                                                                     |
+| `apps/web/src/routes/`                | importe `apps/web/src/lib/server/`, `apps/web/src/lib/components/`, `apps/web/src/lib/i18n/`, `apps/web/src/lib/seo/`, `apps/web/src/lib/config/features.ts` ; pas d'import direct de packages sauf via `apps/web/src/lib/server/`. |
+| `apps/web/src/lib/i18n/`              | importé par tout le monde ; ne dépend pas de `apps/web/src/lib/server/` ni de `apps/web/src/routes/`.                                                                                                                               |
+| `apps/web/src/lib/seo/`               | importé par les routes, les composants et `apps/web/src/routes/sitemap.xml/+server.ts` ainsi que `apps/web/src/routes/robots.txt/+server.ts` ; ne dépend pas de l'état du serveur.                                                  |
+| `apps/web/src/lib/config/features.ts` | importé partout ; ne contient que des constantes booléennes.                                                                                                                                                                        |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -112,16 +112,16 @@ decisions:
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| ajouter une route | `docs/geste/une-route.md` |
-| modifier le cap de spoiler | `apps/web/src/routes/spoiler-limit/+server.ts` et `apps/web/src/lib/server/spoiler.ts` |
-| modifier la politique de cache | `apps/web/src/lib/server/httpCache.ts` et `apps/web/src/lib/server/httpCache.test.ts` |
-| ajouter ou modifier une locale | `apps/web/src/lib/i18n/config.ts` puis les catalogues `apps/web/src/lib/i18n/messages/en.ts` et `apps/web/src/lib/i18n/messages/fr.ts` |
-| changer un titre ou un schéma JSON-LD | `apps/web/src/lib/seo/config.ts`, `apps/web/src/lib/seo/schema.ts`, `apps/web/src/lib/components/Seo.svelte` |
-| activer/désactiver une fonctionnalité | `apps/web/src/lib/config/features.ts` |
-| comprendre le load d'une page | la route concernée, par exemple `apps/web/src/routes/characters/+page.server.ts`, puis le helper `apps/web/src/lib/server/` qu'elle appelle |
-| comprendre la visite | `docs/carte/05-la-visite.md` |
+| Je veux …                             | J'ouvre                                                                                                                                     |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| ajouter une route                     | `docs/geste/une-route.md`                                                                                                                   |
+| modifier le cap de spoiler            | `apps/web/src/routes/spoiler-limit/+server.ts` et `apps/web/src/lib/server/spoiler.ts`                                                      |
+| modifier la politique de cache        | `apps/web/src/lib/server/httpCache.ts` et `apps/web/src/lib/server/httpCache.test.ts`                                                       |
+| ajouter ou modifier une locale        | `apps/web/src/lib/i18n/config.ts` puis les catalogues `apps/web/src/lib/i18n/messages/en.ts` et `apps/web/src/lib/i18n/messages/fr.ts`      |
+| changer un titre ou un schéma JSON-LD | `apps/web/src/lib/seo/config.ts`, `apps/web/src/lib/seo/schema.ts`, `apps/web/src/lib/components/Seo.svelte`                                |
+| activer/désactiver une fonctionnalité | `apps/web/src/lib/config/features.ts`                                                                                                       |
+| comprendre le load d'une page         | la route concernée, par exemple `apps/web/src/routes/characters/+page.server.ts`, puis le helper `apps/web/src/lib/server/` qu'elle appelle |
+| comprendre la visite                  | `docs/carte/05-la-visite.md`                                                                                                                |
 
 ## Vérifier
 

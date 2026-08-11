@@ -3867,7 +3867,10 @@ export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
 export function planSealed(
   ship: Ship,
   plan: TierPlan,
-  options: { shut: readonly string[], vestiges?: Record<string, import('./cast/types').TourVestige[]> }
+  options: {
+    shut: readonly string[]
+    vestiges?: Record<string, import('./cast/types').TourVestige[]>
+  },
 ): TierPlan {
   const closed = new Set(options.shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
   if (!closed.size) return plan
@@ -3887,14 +3890,17 @@ export function planSealed(
       ...plan.doorways
         .filter((door) => closed.has(door.a) || closed.has(door.b))
         .map((door) => sealKey(door.a, door.b)),
-    ].filter((key) => !brokenDoors.has(key))
+    ].filter((key) => !brokenDoors.has(key)),
   )
-  
+
   // A declared door would re-open the wall the seal just closed, so the ones
   // into a shut room are dropped with it.
   const overrides = new Map(
     ship.doors
-      .filter((door) => !closed.has(door.a) && !closed.has(door.b) || brokenDoors.has(sealKey(door.a, door.b)))
+      .filter(
+        (door) =>
+          (!closed.has(door.a) && !closed.has(door.b)) || brokenDoors.has(sealKey(door.a, door.b)),
+      )
       .map((door) => [sealKey(door.a, door.b), door] as const),
   )
 

@@ -708,7 +708,7 @@
   let container = $state<HTMLDivElement | null>(null)
   let ready = $state(false)
   let failure = $state<string | null>(null)
-  
+
   let pendingScreenshot: (() => void) | null = null
 
   $effect(() => {
@@ -4686,7 +4686,7 @@
           refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(shownNen)
           refraction.uniforms.uTime.value = clock
         }
-        
+
         // Gyo mode toggles the custom filter pass
         if (gyoFilter) {
           gyoFilter.enabled = gyoMode

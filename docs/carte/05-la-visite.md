@@ -30,24 +30,24 @@ apps/web/src/lib/tour/geometry.ts → apps/web/src/lib/tour/mesh.ts → apps/web
 apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, heure, audio
 ```
 
-| Étape | Fichier | Responsabilité |
-| ----- | ------- | -------------- |
-| Donnée source | `data/ship/blueprint.json` | Les espaces du navire, dessinés à la main |
-| Validation | `apps/web/src/lib/tour/blueprint.ts` | Indexe le blueprint, vérifie qu'aucune salle n'est orpheline |
-| Géométrie | `apps/web/src/lib/tour/geometry.ts` | Polygones, murs, portes, projection d'un plan 2D |
-| Mesh | `apps/web/src/lib/tour/mesh.ts` | Génération du mesh Three.js : sols, plafonds, murs |
-| Rendu | `apps/web/src/lib/tour/TourRenderer.ts` | Boucle de rendu, caméra, effets de post-traitement |
-| Composant | `apps/web/src/routes/tour/+page.svelte` | Surface Svelte : clavier, resize, chargement |
-| Contrôleurs | `apps/web/src/lib/tour/pageBodyView.svelte.ts`, `apps/web/src/lib/tour/pageHatsuView.svelte.ts` | État client de la visite |
+| Étape         | Fichier                                                                                         | Responsabilité                                               |
+| ------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Donnée source | `data/ship/blueprint.json`                                                                      | Les espaces du navire, dessinés à la main                    |
+| Validation    | `apps/web/src/lib/tour/blueprint.ts`                                                            | Indexe le blueprint, vérifie qu'aucune salle n'est orpheline |
+| Géométrie     | `apps/web/src/lib/tour/geometry.ts`                                                             | Polygones, murs, portes, projection d'un plan 2D             |
+| Mesh          | `apps/web/src/lib/tour/mesh.ts`                                                                 | Génération du mesh Three.js : sols, plafonds, murs           |
+| Rendu         | `apps/web/src/lib/tour/TourRenderer.ts`                                                         | Boucle de rendu, caméra, effets de post-traitement           |
+| Composant     | `apps/web/src/routes/tour/+page.svelte`                                                         | Surface Svelte : clavier, resize, chargement                 |
+| Contrôleurs   | `apps/web/src/lib/tour/pageBodyView.svelte.ts`, `apps/web/src/lib/tour/pageHatsuView.svelte.ts` | État client de la visite                                     |
 
 ## Les frontières
 
-| Ce dossier … | Règle |
-| ------------ | ----- |
-| `apps/web/src/lib/tour/` | Ne lit pas directement `data/ship/blueprint.json` : il passe par `apps/web/src/lib/tour/blueprint.ts`. |
-| `apps/web/src/lib/tour/` | Ne contient pas de logique de mode jouable : les casts sont dans `apps/web/src/lib/tour/cast/`, la règle dans le module Hatsu. |
-| `apps/web/src/lib/audio/` | Sert tous les sons du site, mais les sons de Hatsu one-shot sont réservés à `apps/web/src/lib/audio/hatsu/`. |
-| `apps/web/src/lib/components/tour/` | Composants Svelte de la visite uniquement ; pas de logique de rendu Three.js. |
+| Ce dossier …                        | Règle                                                                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/src/lib/tour/`            | Ne lit pas directement `data/ship/blueprint.json` : il passe par `apps/web/src/lib/tour/blueprint.ts`.                         |
+| `apps/web/src/lib/tour/`            | Ne contient pas de logique de mode jouable : les casts sont dans `apps/web/src/lib/tour/cast/`, la règle dans le module Hatsu. |
+| `apps/web/src/lib/audio/`           | Sert tous les sons du site, mais les sons de Hatsu one-shot sont réservés à `apps/web/src/lib/audio/hatsu/`.                   |
+| `apps/web/src/lib/components/tour/` | Composants Svelte de la visite uniquement ; pas de logique de rendu Three.js.                                                  |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -64,13 +64,13 @@ apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, 
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| changer une salle | `data/ship/blueprint.json` + fiche `data/ship/README.md` |
-| changer une lumière | `apps/web/src/lib/tour/light.ts` + cette carte |
-| ajouter/modifier un son de Hatsu | `apps/web/src/lib/audio/hatsu/` + `apps/web/src/lib/tour/reportSound.ts` |
-| ajouter un effet visuel de Hatsu | `apps/web/src/lib/tour/HatsuSceneEffects.ts` + `apps/web/src/lib/tour/apparitions.ts` |
-| comprendre le rendu | `apps/web/src/lib/tour/TourRenderer.ts` + `apps/web/src/lib/components/tour/TourScene.svelte` |
+| Je veux …                        | J'ouvre                                                                                       |
+| -------------------------------- | --------------------------------------------------------------------------------------------- |
+| changer une salle                | `data/ship/blueprint.json` + fiche `data/ship/README.md`                                      |
+| changer une lumière              | `apps/web/src/lib/tour/light.ts` + cette carte                                                |
+| ajouter/modifier un son de Hatsu | `apps/web/src/lib/audio/hatsu/` + `apps/web/src/lib/tour/reportSound.ts`                      |
+| ajouter un effet visuel de Hatsu | `apps/web/src/lib/tour/HatsuSceneEffects.ts` + `apps/web/src/lib/tour/apparitions.ts`         |
+| comprendre le rendu              | `apps/web/src/lib/tour/TourRenderer.ts` + `apps/web/src/lib/components/tour/TourScene.svelte` |
 
 ## Vérifier
 

@@ -39,10 +39,10 @@ const fragmentShader = /* glsl */ `
 
 export const GYO_SHADER = {
   uniforms: {
-    tDiffuse: { value: null }
+    tDiffuse: { value: null },
   },
   vertexShader,
-  fragmentShader
+  fragmentShader,
 }
 
 export async function createGyoPass(): Promise<PostPass> {

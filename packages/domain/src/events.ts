@@ -53,7 +53,7 @@ export type VestigeType = 'wall-breach' | 'broken-door' | 'blood-stain'
 export interface EnvironmentAlteredPayload {
   locationId: string
   vestigeType: VestigeType
-  /** 
+  /**
    * Additional context for the renderer, e.g. which specific door is broken.
    */
   metadata?: Record<string, string | number | boolean>

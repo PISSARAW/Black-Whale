@@ -26,7 +26,9 @@
 
 <section class="mb-8 border-t border-sky-900/30 pt-6">
   <div class="mb-4 flex items-center justify-between">
-    <h2 class="text-xs font-black uppercase tracking-widest text-white">{$t.strategy.ui.diplomacy.title}</h2>
+    <h2 class="text-xs font-black uppercase tracking-widest text-white">
+      {$t.strategy.ui.diplomacy.title}
+    </h2>
     <span
       class="rounded bg-sky-900/40 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-sky-300"
       >{$t.strategy.ui.diplomacy.actions(pending.length)}</span
@@ -38,7 +40,9 @@
       <div class="flex flex-col gap-1 border-l-2 border-sky-600 pl-3">
         <strong class="text-xs text-sky-100">{faction.name}</strong>
         <span class="text-[10px] text-sky-200/60"
-          >{$t.strategy.ui.diplomacy.trust} {relation?.trust ?? 0} · {$t.strategy.ui.diplomacy.fear} {relation?.fear ?? 0}{relation?.pact
+          >{$t.strategy.ui.diplomacy.trust}
+          {relation?.trust ?? 0} · {$t.strategy.ui.diplomacy.fear}
+          {relation?.fear ?? 0}{relation?.pact
             ? ` · ${$t.strategy.ui.diplomacy.activePact}`
             : ''}</span
         >
@@ -84,7 +88,9 @@
         <li
           class="relative before:absolute before:-left-3 before:top-1/2 before:h-1 before:w-1 before:-translate-y-1/2 before:rounded-full before:bg-amber-400"
         >
-          {$t.strategy.ui.diplomacy.options[order.action].replace(/ · .*/, '')} · {factions.find((f) => f.id === order.factionId)?.name}
+          {$t.strategy.ui.diplomacy.options[order.action].replace(/ · .*/, '')} · {factions.find(
+            (f) => f.id === order.factionId,
+          )?.name}
         </li>
       {/each}
     </ul>

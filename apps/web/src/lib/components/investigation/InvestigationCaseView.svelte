@@ -345,10 +345,22 @@
     objectiveFr="Explorez la scène de crime, rassemblez des preuves, interrogez les témoins et résolvez le mystère en utilisant le Nen."
     controls={[
       { keys: ['W', 'A', 'S', 'D'], description: 'Move around', descriptionFr: 'Se déplacer' },
-      { keys: ['Click'], description: 'Inspect object / Speak to witness', descriptionFr: 'Inspecter objet / Parler au témoin' },
+      {
+        keys: ['Click'],
+        description: 'Inspect object / Speak to witness',
+        descriptionFr: 'Inspecter objet / Parler au témoin',
+      },
       { keys: ['H'], description: 'Open Hatsu Panel', descriptionFr: 'Ouvrir le panneau Hatsu' },
-      { keys: ['N'], description: 'Use Ren/Gyo (Toggle aura)', descriptionFr: 'Utiliser Ren/Gyo (Activer aura)' },
-      { keys: ['Esc'], description: 'Close current panel', descriptionFr: 'Fermer le panneau actuel' },
+      {
+        keys: ['N'],
+        description: 'Use Ren/Gyo (Toggle aura)',
+        descriptionFr: 'Utiliser Ren/Gyo (Activer aura)',
+      },
+      {
+        keys: ['Esc'],
+        description: 'Close current panel',
+        descriptionFr: 'Fermer le panneau actuel',
+      },
     ]}
     onClose={() => (manualOpen = false)}
   />

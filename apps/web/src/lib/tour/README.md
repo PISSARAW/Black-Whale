@@ -19,16 +19,16 @@ decisions: [adr-003, adr-005, adr-006]
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| ------ | -------- | -------------- |
-| Géométrie | `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/geometry.ts`, `apps/web/src/lib/tour/mesh.ts`, `apps/web/src/lib/tour/types.ts` | Lecture, validation et mesh du plan du navire |
-| Rendu | `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/PortalRenderer.ts`, `apps/web/src/lib/tour/TierView.ts` | Boucle Three.js, caméra, portails, étages |
-| Ambiance | `apps/web/src/lib/tour/light.ts`, `apps/web/src/lib/tour/atmosphere.ts`, `apps/web/src/lib/tour/dust.ts`, `apps/web/src/lib/tour/sky.ts`, `apps/web/src/lib/tour/hour.ts` | Lumières, brume, ciel, heure du chapitre |
-| Audio | `apps/web/src/lib/tour/reportSound.ts`, `apps/web/src/lib/tour/pageHatsuAudio.svelte.ts` | Sons one-shot Hatsu et boucles d'ambiance |
-| Casts | `apps/web/src/lib/tour/cast/*.ts` | Traduction des effets Hatsu en animations / sons |
-| État page | `apps/web/src/lib/tour/page*.svelte.ts` | État et contrôleurs de la route /tour |
-| Apparitions | `apps/web/src/lib/tour/apparitions.ts`, `apps/web/src/lib/tour/apparition*View.ts` | Entités 3D instanciées dans la scène |
-| Composants | `apps/web/src/lib/components/tour/*` | Surface Svelte de la visite |
+| Groupe      | Fichiers                                                                                                                                                                  | Responsabilité                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Géométrie   | `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/geometry.ts`, `apps/web/src/lib/tour/mesh.ts`, `apps/web/src/lib/tour/types.ts`                              | Lecture, validation et mesh du plan du navire    |
+| Rendu       | `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/PortalRenderer.ts`, `apps/web/src/lib/tour/TierView.ts`                                                   | Boucle Three.js, caméra, portails, étages        |
+| Ambiance    | `apps/web/src/lib/tour/light.ts`, `apps/web/src/lib/tour/atmosphere.ts`, `apps/web/src/lib/tour/dust.ts`, `apps/web/src/lib/tour/sky.ts`, `apps/web/src/lib/tour/hour.ts` | Lumières, brume, ciel, heure du chapitre         |
+| Audio       | `apps/web/src/lib/tour/reportSound.ts`, `apps/web/src/lib/tour/pageHatsuAudio.svelte.ts`                                                                                  | Sons one-shot Hatsu et boucles d'ambiance        |
+| Casts       | `apps/web/src/lib/tour/cast/*.ts`                                                                                                                                         | Traduction des effets Hatsu en animations / sons |
+| État page   | `apps/web/src/lib/tour/page*.svelte.ts`                                                                                                                                   | État et contrôleurs de la route /tour            |
+| Apparitions | `apps/web/src/lib/tour/apparitions.ts`, `apps/web/src/lib/tour/apparition*View.ts`                                                                                        | Entités 3D instanciées dans la scène             |
+| Composants  | `apps/web/src/lib/components/tour/*`                                                                                                                                      | Surface Svelte de la visite                      |
 
 ## Invariants
 

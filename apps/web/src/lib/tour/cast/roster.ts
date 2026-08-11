@@ -192,16 +192,16 @@ function outsideDoorFor(
   presence: RosterPresence,
   locations: readonly string[],
 ): string | null {
-  const trajectory = character.mapTrajectory;
-  if (!trajectory) return null;
-  const legs = trajectory.filter((leg) => locations.includes(leg.location));
-  const exact = legs.filter((leg) => leg.location === locations[0]);
-  const candidates = exact.length > 0 ? exact : legs;
-  const since = presence.fromEvent?.chapterId?.split('.')[0];
-  const current = since ? candidates.filter((leg) => leg.fromChapterId.split('.')[0] === since) : [];
-  if (current.length === 1) return current[0].outsideDoorOf ?? null;
-  if (candidates.length === 1) return candidates[0].outsideDoorOf ?? null;
-  return null;
+  const trajectory = character.mapTrajectory
+  if (!trajectory) return null
+  const legs = trajectory.filter((leg) => locations.includes(leg.location))
+  const exact = legs.filter((leg) => leg.location === locations[0])
+  const candidates = exact.length > 0 ? exact : legs
+  const since = presence.fromEvent?.chapterId?.split('.')[0]
+  const current = since ? candidates.filter((leg) => leg.fromChapterId.split('.')[0] === since) : []
+  if (current.length === 1) return current[0].outsideDoorOf ?? null
+  if (candidates.length === 1) return candidates[0].outsideDoorOf ?? null
+  return null
 }
 
 /**

@@ -148,7 +148,11 @@
   }
 </script>
 
-<div class="mb-4 flex flex-wrap gap-2 sm:justify-end" role="group" aria-label={$t.strategy.ui.battlefield.label}>
+<div
+  class="mb-4 flex flex-wrap gap-2 sm:justify-end"
+  role="group"
+  aria-label={$t.strategy.ui.battlefield.label}
+>
   <button
     class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {view ===
     'tour'
@@ -210,13 +214,19 @@
       nen={modeNen.value}
       onNenChange={modeNen.use}
       touchLabels={{ move: $t.strategy.ui.battlefield.move, cast: $t.strategy.ui.battlefield.cast }}
-      soundLabels={{ silence: $t.strategy.ui.battlefield.silence, restore: $t.strategy.ui.battlefield.restore }}
+      soundLabels={{
+        silence: $t.strategy.ui.battlefield.silence,
+        restore: $t.strategy.ui.battlefield.restore,
+      }}
       loadingLabel={$t.strategy.ui.battlefield.loading}
       unsupportedLabel={$t.strategy.ui.battlefield.unsupported}
     />
   </div>
 {:else}
-  <div class="mb-4 flex flex-wrap gap-2 sm:justify-end" aria-label={$t.strategy.ui.battlefield.displayDeck}>
+  <div
+    class="mb-4 flex flex-wrap gap-2 sm:justify-end"
+    aria-label={$t.strategy.ui.battlefield.displayDeck}
+  >
     {#each availableTiers as tier (tier)}
       <button
         class="rounded-full border px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-all {selectedTier ===

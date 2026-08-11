@@ -14,9 +14,9 @@ export function generateSymbols(): string {
 
   const sections: { heading: string; rows: string[] }[] = []
 
-  for (const sourceFile of project.getSourceFiles().sort((a, b) =>
-    a.getFilePath().localeCompare(b.getFilePath()),
-  )) {
+  for (const sourceFile of project
+    .getSourceFiles()
+    .sort((a, b) => a.getFilePath().localeCompare(b.getFilePath()))) {
     const filePath = relative(ROOT, sourceFile.getFilePath())
     const exports = sourceFile.getExportedDeclarations()
     const sourceLines = sourceFile.getFullText().split('\n')
@@ -29,7 +29,9 @@ export function generateSymbols(): string {
       let line = decl.getStartLineNumber()
       if (originPath.includes('node_modules')) {
         originPath = filePath
-        const exportLine = sourceLines.findIndex((l) => new RegExp(`\\bexport\\b.*\\b${name}\\b`).test(l))
+        const exportLine = sourceLines.findIndex((l) =>
+          new RegExp(`\\bexport\\b.*\\b${name}\\b`).test(l),
+        )
         line = exportLine === -1 ? decl.getStartLineNumber() : exportLine + 1
       }
       rows.push(`| \`${name}\` | \`${originPath}:${line}\` |`)

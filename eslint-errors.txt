@@ -1,0 +1,37 @@
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/audio/ambient/mixer.ts
+  204:8   error  Function 'triggerAuraPulse' has too many parameters (4). Maximum allowed is 3       max-params
+  241:11  error  'context' is assigned a value but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/components/tour/GameManualOverlay.svelte
+  80:11  error  Each block should have a key  svelte/require-each-key
+  83:17  error  Each block should have a key  svelte/require-each-key
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/components/tour/TourPostcardModal.svelte
+  133:18  error  No emoji in the interface — say it in words, or use a typographic mark  no-restricted-syntax
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/components/tour/TourSceneOverlay.svelte
+  134:8   error  No emoji in the interface — say it in words, or use a typographic mark  no-restricted-syntax
+  142:8   error  No emoji in the interface — say it in words, or use a typographic mark  no-restricted-syntax
+  155:13  error  No emoji in the interface — say it in words, or use a typographic mark  no-restricted-syntax
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/server/co-presence.ts
+  47:53  error  Arrow function has a complexity of 11. Maximum allowed is 10  complexity
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/tour/cast/roster.ts
+  190:1  error  Function 'outsideDoorFor' has a complexity of 11. Maximum allowed is 10  complexity
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/tour/hatsu.ts
+  3867:8  error  Function 'planSealed' has too many parameters (4). Maximum allowed is 3  max-params
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/tour/humanFigure.ts
+  501:1  error  File has too many lines (505). Maximum allowed is 500  max-lines
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/routes/strategy/+page.svelte
+  218:3  error  'onDestroy' is not defined  no-undef
+
+/Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/routes/tour/+page.svelte
+  742:9  error  'downloadBlob' is assigned a value but never used. Allowed unused vars must match /^(_|\$\$)/u  @typescript-eslint/no-unused-vars
+
+✖ 14 problems (14 errors, 0 warnings)
+

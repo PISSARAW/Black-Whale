@@ -739,16 +739,7 @@
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
-  const downloadBlob = (blob: Blob, filename: string) => {
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+
 
   const tourist = $derived(
     currentMangaViews.length > 0

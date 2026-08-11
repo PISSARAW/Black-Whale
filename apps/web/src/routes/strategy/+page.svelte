@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   import type { Location, Presence } from '@black-whale/domain'
   import type { WorldEntity, WorldState } from '@black-whale/canon-engine'
   import type { PageData } from './$types'

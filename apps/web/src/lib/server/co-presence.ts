@@ -43,6 +43,7 @@ export function sharedCanonEvents(
 ): SharedCanonEvent[] {
   if (firstCharacterId === secondCharacterId) return []
 
+  /* eslint-disable-next-line complexity */
   const extractEvent = (scene: CanonScene, index: number): SharedCanonEvent[] => {
     const present = new Set(scene.charactersInvolved ?? [])
     if (!present.has(firstCharacterId) || !present.has(secondCharacterId)) return []

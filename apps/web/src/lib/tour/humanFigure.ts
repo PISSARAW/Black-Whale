@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'

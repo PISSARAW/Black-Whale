@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 274
+Fichiers : 275
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -341,6 +341,10 @@ Fichiers : 274
 ## `apps/web/src/lib/i18n/hatsu.test.ts`
 
 - localising a hatsu > translates the prose
+
+## `apps/web/src/lib/i18n/translation-regression.test.ts`
+
+- translation regressions > localizes strategy scenarios and their dynamic objectives in French
 
 ## `apps/web/src/lib/importantObjects.test.ts`
 
@@ -1351,3 +1355,4 @@ Fichiers : 274
 ## `scripts/silhouettes.test.ts`
 
 - the Nen creature silhouettes > are the same shapes in the contracts and in the walk
+

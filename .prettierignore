@@ -8,6 +8,7 @@ build/
 pnpm-lock.yaml
 packages/database/package-lock.json
 packages/database/prisma/migrations/
+docs/.gen/
 
 # Vite writes these next to the config it is loading; they are not source.
 apps/*/vite.config.ts.timestamp-*.mjs

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
@@ -9,10 +8,8 @@ import { buildHumanHead } from './humanHead'
 import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
-
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
-
 export interface HumanFigureBuild {
   THREE: Three
   glow: (colour: number, opacity: number) => MeshBasicMaterial
@@ -21,7 +18,6 @@ export interface HumanFigureBuild {
   seen: HumanLook
   observerGyo?: boolean
 }
-
 export interface HumanFigure {
   root: Group
   turns: Object3D

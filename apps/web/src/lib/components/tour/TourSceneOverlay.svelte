@@ -130,17 +130,17 @@
         type="button"
         onclick={tourist.onTakePhoto}
         title="Photo Pure"
-        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-lg text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
-        📷
+        IMG
       </button>
       <button
         type="button"
         onclick={tourist.onTakePhotoWithHud}
         title="Photo avec Interface"
-        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-lg text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
-        📱
+        UI
       </button>
     </div>
   {/if}
@@ -152,7 +152,7 @@
       class="mt-2 flex items-center gap-2 rounded border border-[#FFD700]/40 px-2 py-1 text-xs transition-colors hover:border-[#FFD700]/70 {gyo.active ? 'bg-[#FFD700]/20 text-[#FFD700]' : 'bg-[#050505]/80 text-[#FFD700]/80'}"
       title="Filtre Gyo / Vision Nen"
     >
-      <span>👁️</span> {gyo.active ? 'Gyo Actif' : 'Activer Gyo'}
+      <span>{gyo.active ? '[Gyo]' : '[Nen]'}</span> {gyo.active ? 'Gyo Actif' : 'Activer Gyo'}
     </button>
   {/if}
 </div>

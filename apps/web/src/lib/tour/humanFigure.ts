@@ -493,13 +493,11 @@ export function buildHumanFigure({
   far.scale.setScalar(unit)
   far.position.copy(figure.position)
   far.rotation.copy(figure.rotation)
-
   const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
   const animateAura = animateHumanAura(aura, nen)
   const animate = (seconds: number) => {
     animateHuman(seconds)
     animateAura(seconds)
   }
-
   return { root, turns: figure, lod: { near: figure, far }, animate }
 }

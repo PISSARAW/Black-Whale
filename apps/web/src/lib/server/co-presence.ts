@@ -43,24 +43,30 @@ export function sharedCanonEvents(
 ): SharedCanonEvent[] {
   if (firstCharacterId === secondCharacterId) return []
 
+  const extractEvent = (scene: CanonScene, index: number): SharedCanonEvent[] => {
+    const present = new Set(scene.charactersInvolved ?? [])
+    if (!present.has(firstCharacterId) || !present.has(secondCharacterId)) return []
+    return [
+      {
+        eventId: scene.eventId ?? null,
+        chapter: -1,
+        sequence: index + 1,
+        event: scene.event,
+        storyDate: scene.storyDate ?? null,
+        location: scene.location ?? null,
+        locationId: scene.locationId ?? null,
+        certainty: scene.certainty ?? 'CONFIRMED',
+        movement: scene.movement ?? null,
+        note: scene.note ?? null,
+      },
+    ]
+  }
+
   return chapters.flatMap((chapter) =>
     (chapter.timeline ?? []).flatMap((scene, index) => {
-      const present = new Set(scene.charactersInvolved ?? [])
-      if (!present.has(firstCharacterId) || !present.has(secondCharacterId)) return []
-      return [
-        {
-          eventId: scene.eventId ?? null,
-          chapter: chapter.number,
-          sequence: index + 1,
-          event: scene.event,
-          storyDate: scene.storyDate ?? null,
-          location: scene.location ?? null,
-          locationId: scene.locationId ?? null,
-          certainty: scene.certainty ?? 'CONFIRMED',
-          movement: scene.movement ?? null,
-          note: scene.note ?? null,
-        },
-      ]
+      const events = extractEvent(scene, index)
+      events.forEach((e) => (e.chapter = chapter.number))
+      return events
     }),
   )
 }

@@ -1014,7 +1014,7 @@ const door = (
 describe('shutting a room', () => {
   it('takes the doorway out of the geometry rather than drawing a lock on it', () => {
     const plan = ship.plans.get(roomA.tierId)!
-    const shut = planSealed(ship, plan, [roomA.id])
+    const shut = planSealed(ship, plan, { shut: [roomA.id] })
 
     const before = plan.doorways.filter((d) => d.a === roomA.id || d.b === roomA.id).length
     const after = shut.doorways.filter((d) => d.a === roomA.id || d.b === roomA.id).length
@@ -1038,8 +1038,8 @@ describe('shutting a room', () => {
 
   it('leaves the rest of the deck exactly as it was', () => {
     const plan = ship.plans.get(roomA.tierId)!
-    expect(planSealed(ship, plan, [])).toBe(plan)
-    expect(planSealed(ship, plan, ['a-room-on-another-deck'])).toBe(plan)
+    expect(planSealed(ship, plan, { shut: [] })).toBe(plan)
+    expect(planSealed(ship, plan, { shut: ['a-room-on-another-deck'] })).toBe(plan)
   })
 
   it('refuses to chain a room no technique is holding, and takes one that is', () => {

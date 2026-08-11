@@ -3867,14 +3867,13 @@ export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
 export function planSealed(
   ship: Ship,
   plan: TierPlan,
-  shut: readonly string[],
-  vestiges: Record<string, import('./cast/types').TourVestige[]> = {},
+  options: { shut: readonly string[], vestiges?: Record<string, import('./cast/types').TourVestige[]> }
 ): TierPlan {
-  const closed = new Set(shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
+  const closed = new Set(options.shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
   if (!closed.size) return plan
 
   const brokenDoors = new Set<string>()
-  for (const [locationId, locationVestiges] of Object.entries(vestiges)) {
+  for (const [locationId, locationVestiges] of Object.entries(options.vestiges ?? {})) {
     for (const vestige of locationVestiges) {
       if (vestige.type === 'door_broken' && vestige.metadata?.target) {
         brokenDoors.add(sealKey(locationId, String(vestige.metadata.target)))
@@ -3900,7 +3899,7 @@ export function planSealed(
   )
 
   const cutWalls = new Set<string>()
-  for (const [locationId, locationVestiges] of Object.entries(vestiges)) {
+  for (const [locationId, locationVestiges] of Object.entries(options.vestiges ?? {})) {
     for (const vestige of locationVestiges) {
       if (vestige.type === 'wall_cut' && vestige.metadata?.target) {
         cutWalls.add(sealKey(locationId, String(vestige.metadata.target)))
@@ -3931,7 +3930,7 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
   const plan = ship.plans.get(tierId)
   if (!plan) throw new Error(`no plan for ${tierId}`)
   return planWithout(
-    planSealed(ship, plan, world.shut, world.vestiges),
+    planSealed(ship, plan, { shut: world.shut, vestiges: world.vestiges }),
     emptiedOn(world, tierId, ship),
     heldSolidIds(world),
   )

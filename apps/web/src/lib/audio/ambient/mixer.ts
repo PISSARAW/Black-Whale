@@ -201,7 +201,7 @@ export function setAmbientMuffled(on: boolean) {
  * Triggers a low-frequency pulse to simulate the pressure of an Aura (Ren).
  * Creates a 30Hz oscillator with a slow vibrato/tremolo effect.
  */
-export function triggerAuraPulse(g: Graph, at: number, duration: number, intensity: number = 0.5) {
+export function triggerAuraPulse(g: Graph, { at, duration, intensity = 0.5 }: { at: number; duration: number; intensity?: number }) {
   const { context } = g
   const gain = context.createGain()
   
@@ -238,7 +238,6 @@ export function triggerAuraPulse(g: Graph, at: number, duration: number, intensi
  * Triggers a sudden, eerie drop in ambient volume to simulate an assassin in Zetsu.
  */
 export function triggerZetsuSilence(g: Graph, at: number, duration: number) {
-  const { context } = g
   
   // We temporarily duck the master gain.
   // Note: this assumes the ambient theme doesn't constantly reset master.gain.

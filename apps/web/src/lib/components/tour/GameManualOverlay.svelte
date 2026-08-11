@@ -77,10 +77,10 @@
           {$locale === 'fr' ? 'Commandes' : 'Controls'}
         </h3>
         <ul class="grid gap-3 sm:grid-cols-2">
-          {#each controls as control}
+          {#each controls as control (control.description)}
             <li class="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 p-3">
               <div class="flex shrink-0 gap-1">
-                {#each control.keys as key}
+                {#each control.keys as key (key)}
                   <kbd class="min-w-[1.5rem] rounded border border-white/20 bg-black/50 px-1.5 py-0.5 text-center font-mono text-[10px] font-bold text-white shadow-inner">{key}</kbd>
                 {/each}
               </div>

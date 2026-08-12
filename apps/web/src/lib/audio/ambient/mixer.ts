@@ -1,13 +1,23 @@
 import { writable } from 'svelte/store'
 
+import { resumeSharedContext, sharedAudioContext } from '../context'
+import { type Bus, outputBus } from '../output'
+
 /**
- * The mixer: one AudioContext, and the filter that seals a visitor's hearing.
+ * The mixer: the filter that seals a visitor's hearing, and the two graphs
+ * behind it.
  *
  * The theme, Melody's flute, Bonolenov's dance and every Hatsu voice end up
- * behind the same `muffle` node, which is what lets Three Monkeys take the
- * hearing of all four without any of them knowing about it. The graph is held
- * here rather than in the theme because a technique may sound while the theme
- * is off, and a second AudioContext is a second ship.
+ * behind a `muffle` node, which is what lets Three Monkeys take the hearing of
+ * all four without any of them knowing about it.
+ *
+ * The theme and the techniques have a graph each now, and no longer a context
+ * each: they share the ship's one context (`../context`) and part company only
+ * at the fader they end on, so the visitor can hold the soundtrack down without
+ * quietening a cast. The Hatsu graph used to be a stand-in built while the
+ * theme was off and thrown away when it started — a technique's voice changed
+ * mixer, and therefore changed level, depending on whether music happened to be
+ * playing. It is now its own graph and stays put.
  */
 
 export const ambientMuffled = writable(false)
@@ -27,8 +37,8 @@ export type Graph = {
 let graph: Graph | null = null
 let muffled = false
 
-/** Kept only while the theme is off — otherwise notes go through its mixer. */
-let fluteGraph: Graph | null = null
+/** The techniques' own graph, built on first use and kept for the session. */
+let effectsGraph: Graph | null = null
 
 /** The theme's own graph, when the theme is playing. */
 export const themeGraph = () => graph
@@ -38,26 +48,14 @@ export function setThemeGraph(next: Graph | null) {
   graph = next
 }
 
-/**
- * Drop the stand-in the flute built while the theme was off: the theme's own
- * mixer takes over, and a session of toggling never stacks up idle contexts.
- */
-export function dropStandInGraph() {
-  if (!fluteGraph) return
-  void fluteGraph.context.close()
-  fluteGraph = null
-}
-
 /** Whether hearing is currently sealed, which a new graph has to be told. */
 export const isMuffled = () => muffled
 
 export const midiToHz = (midi: number) => 440 * Math.pow(2, (midi - 69) / 12)
 
-export function buildGraph(): Graph {
-  const Ctor =
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-  const context = new Ctor()
+export function buildGraph(bus: Bus = 'ambient'): Graph {
+  const context = sharedAudioContext()
+  if (!context) throw new Error('no Web Audio')
 
   // Sealed hearing squeezes the whole mix through this filter, so every voice
   // is routed here rather than straight at the destination.
@@ -94,7 +92,11 @@ export function buildGraph(): Graph {
 
   muffle.connect(air)
   air.connect(master)
-  master.connect(context.destination)
+  // The fader for this bus, and behind it the limiter every sound aboard ends
+  // on. `destination` only when there is no output stage at all, which is a
+  // browser that has a context and refuses to build a gain — it cannot happen,
+  // and the sound still comes out if it does.
+  master.connect(outputBus(bus) ?? context.destination)
 
   return { context, master, muffle, air, reverbSend }
 }
@@ -166,28 +168,29 @@ export function applyMuffle(g: Graph, on: boolean, seconds: number) {
 /**
  * The mixer anything the Hatsu layer plays should go through.
  *
- * The theme's own graph when the theme is on, and a stand-in built on first use
- * when it is off — either way it is behind `muffle`, which is what lets Three
- * Monkeys take the visitor's hearing without every caller knowing about it.
- * `$lib/audio/hatsuSounds` is the other user of this; it is exported rather
- * than duplicated so a technique never opens a second AudioContext.
+ * Its own graph, on its own fader, built on first use and kept: a technique
+ * sounds the same whether or not the theme happens to be playing, which was not
+ * true while this borrowed the theme's mixer. It is behind a `muffle` of its
+ * own, which is what lets Three Monkeys take the visitor's hearing without
+ * every caller knowing about it. `$lib/audio/hatsuSounds` is the other user of
+ * this; it is exported rather than duplicated so a technique never opens a
+ * second graph.
  */
 export function hatsuAudioGraph(): Graph | null {
-  if (graph) return graph
   if (typeof window === 'undefined') return null
-  if (!fluteGraph) {
+  if (!effectsGraph) {
     // A click must never fail because the browser has no Web Audio; the score
     // still draws itself, it just stays silent.
     try {
-      fluteGraph = buildGraph()
+      effectsGraph = buildGraph('effects')
     } catch {
       return null
     }
-    applyMuffle(fluteGraph, muffled, 0.05)
+    applyMuffle(effectsGraph, muffled, 0.05)
   }
   // A click is a gesture, so this resume always has permission to succeed.
-  if (fluteGraph.context.state === 'suspended') void fluteGraph.context.resume()
-  return fluteGraph
+  resumeSharedContext()
+  return effectsGraph
 }
 
 /** Three Monkeys' second strike seals hearing: the theme drops underwater. */
@@ -195,6 +198,9 @@ export function setAmbientMuffled(on: boolean) {
   muffled = on
   ambientMuffled.set(on)
   if (graph) applyMuffle(graph, on, 0.9)
+  // And the techniques with it. They were sealed for free while they borrowed
+  // the theme's mixer; on their own graph they have to be told.
+  if (effectsGraph) applyMuffle(effectsGraph, on, 0.9)
 }
 
 /**

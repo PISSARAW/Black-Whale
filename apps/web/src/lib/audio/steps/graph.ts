@@ -1,7 +1,10 @@
 import { HULL_FUNDAMENTAL, hullNoise, hullRumble } from '$lib/tour/atmosphere'
 
+import { sharedAudioContext } from '../context'
+import { outputBus } from '../output'
+
 /**
- * One AudioContext for the walk, and the state that has to survive it.
+ * The walk's graph, and the state that has to survive it.
  *
  * The deck the visitor stands on and whether their hearing is sealed are known
  * before there is a graph and remembered after it is gone — the walk can be
@@ -99,10 +102,11 @@ export function setCurrentDeckElevation(elevation: number) {
 export const isMuffled = () => muffled
 
 export function buildGraph(): Graph {
-  const Ctor =
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-  const context = new Ctor()
+  // The ship's one context, shared with the theme and with every technique —
+  // which is what lets a cast be fed into `send` below and come back out of the
+  // room it was made in. See `../context`.
+  const context = sharedAudioContext()
+  if (!context) throw new Error('no Web Audio')
 
   const master = context.createGain()
   master.gain.value = 0.9
@@ -114,7 +118,7 @@ export function buildGraph(): Graph {
   muffle.frequency.value = 18000
   muffle.Q.value = 0.4
   muffle.connect(master)
-  master.connect(context.destination)
+  master.connect(outputBus('walk') ?? context.destination)
 
   const dry = context.createGain()
   dry.gain.value = 0.8

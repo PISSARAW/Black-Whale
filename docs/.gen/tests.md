@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 278
+Fichiers : 281
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -107,6 +107,11 @@ Fichiers : 278
 ## `apps/web/src/lib/audio/siteHatsuAudio.test.ts`
 
 - site Hatsu sound > gives all 85 techniques a distinct activation voice
+
+## `apps/web/src/lib/audio/space.test.ts`
+
+- the emission > varies nothing outside a cast
+- what the ear is given > places a sound made in the room the visitor is in, without a wall
 
 ## `apps/web/src/lib/beyondLineage.test.ts`
 
@@ -882,6 +887,12 @@ Fichiers : 278
 
 - what the deck is made of > gives every category of room a floor
 
+## `apps/web/src/lib/tour/frameBudget.test.ts`
+
+- the ceilings > gives the light palier the looser interval and the tighter geometry
+- reading a window against its budget > says nothing when every line is under
+- the meter > says nothing until a window is up
+
 ## `apps/web/src/lib/tour/geometry.test.ts`
 
 - polygon basics > measures area regardless of winding
@@ -1097,6 +1108,10 @@ Fichiers : 278
 - skyOf > is the drawn state, to the digit, at overcast noon
 - shipTimeOfDay > follows the projection when the visitor has not overruled it
 - timeOfDayOf > puts the horn at noon and chapter 374 in the small hours
+
+## `apps/web/src/lib/tour/soundPlace.test.ts`
+
+- where a cast at a body happened > puts it down the reticle, in the room the visitor is in
 
 ## `apps/web/src/lib/tour/texture.test.ts`
 

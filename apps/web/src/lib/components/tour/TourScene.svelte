@@ -97,15 +97,14 @@
     enterDeck,
     enterRoom,
     footstep,
-    nearWall,
+    listenFrom,
     setStepsAuraQuiet,
     setStepsMuffled,
     startSteps,
-    stepsPlaying,
     stepsWereSilenced,
     stopSteps,
-    toggleSteps,
   } from '$lib/audio/steps'
+  import TourSoundControls from './TourSoundControls.svelte'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.
@@ -4577,7 +4576,7 @@
           // distance: crossing a hall, the near wall goes from arm's length to
           // fifty metres, and the ear hears the room open around it. Moved on the
           // same quarter-metre threshold the minimap is, not every frame.
-          if (standing) nearWall(distanceToBoundary(pointer, standing.footprint))
+          listenFrom(pointer, yaw, standing)
         }
         if (Math.abs(angleGap(yaw, reportedYaw)) >= REPORT_TURN) {
           reportedYaw = yaw
@@ -4924,37 +4923,13 @@
     </div>
   {/if}
 
-  <!-- The walk has a voice — its footsteps, and the room answering them — so it
-       needs a way to be quietened without leaving the page. Top left, because the
-       remote eye's feed is inset in the top right and the read-outs are along the
-       bottom. Nothing sounds before the visitor engages the walk, and this
-       remembers their answer for the next visit. -->
+  <!-- The walk has a voice — its footsteps, the room answering them, the theme
+       and the techniques — so it needs a way to be quietened, and to be
+       balanced, without leaving the page. Top left, because the remote eye's
+       feed is inset in the top right and the read-outs are along the bottom.
+       See `TourSoundControls`. -->
   {#if ready && !failure}
-    <button
-      type="button"
-      onclick={() => toggleSteps()}
-      aria-pressed={$stepsPlaying}
-      title={$stepsPlaying ? soundLabels.silence : soundLabels.restore}
-      class="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-[#FFD700]/40 bg-[#050505]/80 text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/80 hover:text-[#FFD700]"
-    >
-      <span class="sr-only">{$stepsPlaying ? soundLabels.silence : soundLabels.restore}</span>
-      <!-- A speaker, with the waves struck through when the walk is silent. -->
-      <svg
-        viewBox="0 0 24 24"
-        class="h-4 w-4"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        aria-hidden="true"
-      >
-        <path d="M4 9.5h3L11 6v12l-4-3.5H4z" stroke-linejoin="round" />
-        {#if $stepsPlaying}
-          <path d="M15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11" stroke-linecap="round" />
-        {:else}
-          <path d="M15 9.5l5 5M20 9.5l-5 5" stroke-linecap="round" />
-        {/if}
-      </svg>
-    </button>
+    <TourSoundControls labels={soundLabels} />
     {#if showNenControls}
       <TourNenControls
         nenState={effectiveNen}

@@ -1,4 +1,5 @@
 import { type Graph } from '../ambient'
+import { emissionColour, emissionDetune, emissionLevel, emissionTarget } from '../space'
 
 /** A sound that runs until something stops it: a motor, a swarm, a dirge. */
 export interface Held {
@@ -17,6 +18,14 @@ export const startsAt = (g: Graph) => g.context.currentTime + LEAD
 // `voice` cannot do because nothing in a written melody bends. `rush` is a loop
 // of white noise through one filter, which is what air, paper, sparks and
 // gunfire all are once you stop naming them.
+//
+// Both end on `emissionTarget` rather than on the mixer's own filter. That is
+// where a cast is placed in the room it happened in, put through the wall
+// between it and the ear, and fed into the reverberation of the space the
+// visitor is standing in — none of which any voice below has to know about.
+// The three `emission*` readings are the variation the same call brings: a
+// technique cast twice is not the same recording twice. Outside a cast they
+// return neutral, so the theme and the held loops are untouched.
 
 /** Two seconds of white noise, built once per context and looped by everything. */
 const noiseBuffers = new WeakMap<AudioContext, AudioBuffer>()
@@ -59,7 +68,7 @@ export function swept(g: Graph, at: number, o: Swept) {
 
   const gain = context.createGain()
   gain.gain.setValueAtTime(0.0001, at)
-  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, o.peak), at + attack)
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, o.peak * emissionLevel()), at + attack)
   gain.gain.exponentialRampToValueAtTime(0.0001, ends)
 
   const osc = context.createOscillator()
@@ -68,7 +77,10 @@ export function swept(g: Graph, at: number, o: Swept) {
   if (o.to !== undefined && o.to !== o.from) {
     osc.frequency.exponentialRampToValueAtTime(Math.max(1, o.to), at + duration)
   }
-  if (o.detune) osc.detune.value = o.detune
+  // Cents rather than hertz, and the same cents for every voice of the cast:
+  // the bend and the wobble keep their shape, the whole thing simply sits a
+  // hair off where it sat last time.
+  osc.detune.value = (o.detune ?? 0) + emissionDetune()
 
   if (o.wobble) {
     const lfo = context.createOscillator()
@@ -82,7 +94,7 @@ export function swept(g: Graph, at: number, o: Swept) {
   }
 
   osc.connect(gain)
-  gain.connect(g.muffle)
+  gain.connect(emissionTarget(g))
   if (o.send) {
     const send = context.createGain()
     send.gain.value = o.send
@@ -119,28 +131,34 @@ export function rush(g: Graph, at: number, o: Rush) {
   source.buffer = noiseBuffer(context)
   source.loop = true
 
+  // Noise has no pitch to detune, so its variation is the filter: the same gust
+  // is a few per cent brighter or duller each time it is thrown.
+  const colour = emissionColour()
   const filter = context.createBiquadFilter()
   filter.type = o.type ?? 'bandpass'
-  filter.frequency.setValueAtTime(o.cutoff ?? 1200, at)
+  filter.frequency.setValueAtTime((o.cutoff ?? 1200) * colour, at)
   if (o.sweepTo !== undefined) {
-    filter.frequency.exponentialRampToValueAtTime(Math.max(20, o.sweepTo), at + duration)
+    filter.frequency.exponentialRampToValueAtTime(Math.max(20, o.sweepTo * colour), at + duration)
   }
   filter.Q.value = o.q ?? 1
 
   const gain = context.createGain()
   gain.gain.setValueAtTime(0.0001, at)
-  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, o.peak), at + attack)
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, o.peak * emissionLevel()), at + attack)
   gain.gain.exponentialRampToValueAtTime(0.0001, ends)
 
   source.connect(filter)
   filter.connect(gain)
-  gain.connect(g.muffle)
+  gain.connect(emissionTarget(g))
   if (o.send) {
     const send = context.createGain()
     send.gain.value = o.send
     gain.connect(send)
     send.connect(g.reverbSend)
   }
-  source.start(at)
+  // From a different point in the two seconds every time. Without this a gust
+  // is not merely the same sound twice, it is the same *sample* twice, which is
+  // the one thing the ear catches immediately.
+  source.start(at, Math.random() * 1.5)
   source.stop(ends + 0.05)
 }

@@ -29,8 +29,10 @@ import {
   unspoolWire,
   wakeTheMachine,
 } from '$lib/audio/hatsuSounds'
+import { soundedFrom } from '$lib/audio/space'
 import type { BodyKind } from './bodyKinds'
 import type { Reach } from './cast'
+import { placeOfReach } from './soundPlace'
 
 const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
   // Hisoka's, and the reason this module exists: the filament goes out, takes
@@ -72,8 +74,13 @@ const BODY_SOUND: Partial<Record<BodyKind, () => void>> = {
  * A reading — Dowsing Chain putting its question — is silent for the same
  * reason the panel answers it in words: the swing of the pendulum is the
  * answer, and a noise over it would announce a finding before showing it.
+ *
+ * It sounds from where the body was standing, which is down the reticle: see
+ * `placeOfReach`. That is only a couple of metres, and it is audible — a hold
+ * laid on somebody to the visitor's left arrives on their left.
  */
 export function playTourReachSound(reach: Reach): void {
   if (reach.outcome === 'refused' || reach.outcome === 'told') return
-  BODY_SOUND[reach.kind]?.()
+  const sound = BODY_SOUND[reach.kind]
+  if (sound) soundedFrom(placeOfReach(reach), sound)
 }

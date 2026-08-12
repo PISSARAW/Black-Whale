@@ -52,10 +52,12 @@ export function stopSteps() {
     const now = context.currentTime
     held.master.gain.cancelScheduledValues(now)
     held.master.gain.setTargetAtTime(0.0001, now, 0.15)
-    // Let whatever is ringing ring out before the context goes away, or the
-    // silence starts with a click.
+    // The context stays open: it is the ship's, and the theme and the
+    // techniques are on it. What goes is this graph — off the bus, nothing
+    // pulls on it, and the two convolvers and the hull stop being computed.
+    // Let whatever is ringing ring out first, or the silence starts with a click.
     setTimeout(() => {
-      if (!currentGraph()) void context.close()
+      if (!currentGraph()) held.master.disconnect()
     }, 1200)
   }
   stepsPlaying.set(false)

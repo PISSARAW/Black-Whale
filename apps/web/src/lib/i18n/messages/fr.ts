@@ -397,6 +397,10 @@ export const fr: Messages = {
     sound: {
       silence: 'Couper le son de la visite',
       restore: 'Écouter la visite : les pas, et la salle qui leur répond',
+      levels: 'Niveaux',
+      ambient: 'Musique',
+      walk: 'Le navire',
+      effects: 'Techniques',
     },
     touch: {
       hint: 'Glissez pour regarder · manche pour marcher',

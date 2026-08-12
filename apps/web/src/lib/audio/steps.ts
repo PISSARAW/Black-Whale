@@ -28,6 +28,7 @@
  */
 
 export { enterDeck, enterRoom, nearWall } from './steps/rooms'
+export { listenFrom } from './steps/listener'
 export { footstep, rewindSound } from './steps/voices'
 export { setStepsAuraQuiet, setStepsMuffled } from './steps/graph'
 export { startSteps, stepsPlaying, stepsWereSilenced, stopSteps, toggleSteps } from './steps/toggle'

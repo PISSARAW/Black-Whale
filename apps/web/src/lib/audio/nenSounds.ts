@@ -5,6 +5,7 @@ import {
   type NenTechniqueState,
 } from '@black-whale/nen-engine'
 import { hatsuAudioGraph, type Graph } from './ambient'
+import { emissionTarget } from './space'
 import type { NenObjectInteraction } from '$lib/tour/NenSceneAura'
 
 const LEAD = 0.012
@@ -27,7 +28,10 @@ function tone(g: Graph, at: number, sound: Tone) {
   gain.gain.exponentialRampToValueAtTime(sound.peak, at + Math.min(0.045, sound.duration / 4))
   gain.gain.exponentialRampToValueAtTime(0.0001, at + sound.duration)
   oscillator.connect(gain)
-  gain.connect(g.muffle)
+  // Into the room as well as into the mixer: aura raised in the hold rings for
+  // four seconds and in a cabin for half of one. The held sustain below stays
+  // on the mixer alone — it outlives the room it was started in.
+  gain.connect(emissionTarget(g))
   oscillator.start(at)
   oscillator.stop(at + sound.duration + 0.03)
 }

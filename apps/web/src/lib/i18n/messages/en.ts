@@ -405,6 +405,15 @@ export const en = {
     sound: {
       silence: 'Silence the walk',
       restore: 'Hear the walk: footsteps, and the room answering them',
+      /**
+       * The three faders. They are named by what makes the sound rather than
+       * by the part of the mixer it ends on: a visitor is turning the music
+       * down, not the ambient bus.
+       */
+      levels: 'Levels',
+      ambient: 'Music',
+      walk: 'The ship',
+      effects: 'Techniques',
     },
     touch: {
       hint: 'Drag to look · stick to walk',

@@ -5,7 +5,6 @@ import {
   BAR,
   BEAT,
   buildGraph,
-  dropStandInGraph,
   type Graph,
   isMuffled,
   midiToHz,
@@ -183,11 +182,15 @@ export async function startAmbient() {
   if (typeof window === 'undefined') return
   // The toggle exists in both the header and the drawer; only one may start it.
   if (scheduler) return
-  const graph = themeGraph() ?? buildGraph()
+  let graph: Graph
+  // The ship may have no Web Audio at all, in which case there is no theme and
+  // the page is otherwise untouched.
+  try {
+    graph = themeGraph() ?? buildGraph()
+  } catch {
+    return
+  }
   setThemeGraph(graph)
-  // The theme's own mixer takes over the flute; drop the stand-in context so a
-  // session of toggling never stacks up idle AudioContexts.
-  dropStandInGraph()
   // Browsers hand back a suspended context until a gesture resumes it.
   if (graph.context.state === 'suspended') await graph.context.resume()
 
@@ -211,10 +214,15 @@ export function stopAmbient() {
     const now = graph.context.currentTime
     graph.master.gain.cancelScheduledValues(now)
     graph.master.gain.setTargetAtTime(0.0001, now, 0.4)
-    const context = graph.context
-    // Let the tail ring out before the context goes away.
+    // The context is not closed. It is the ship's, shared with the walk and
+    // with every technique, and closing it because the soundtrack was switched
+    // off would take the footsteps and the casts with it. What is dropped is
+    // this graph: once its master is off the bus nothing pulls on it, and the
+    // feedback delay that stands in for the hall stops being computed. Let the
+    // tail ring out first, or the silence starts with a click.
+    const { master } = graph
     setTimeout(() => {
-      if (!scheduler) void context.close()
+      if (!scheduler) master.disconnect()
     }, 2500)
     setThemeGraph(null)
   }

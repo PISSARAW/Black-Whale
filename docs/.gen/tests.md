@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 275
+Fichiers : 276
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -832,6 +832,10 @@ Fichiers : 275
 
 - comfortDefaults > starts the walk wide and continuous by default
 - readComfort > falls back to the defaults with nothing stored
+
+## `apps/web/src/lib/tour/contactShadow.test.ts`
+
+- contact shadow > multiplies the floor rather than painting over it
 
 ## `apps/web/src/lib/tour/decipher.test.ts`
 

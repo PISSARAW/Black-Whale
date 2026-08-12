@@ -5,6 +5,7 @@ import { humanAnimation, poseHuman } from './humanAnimation'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
+import { contactShadow } from './contactShadow'
 import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
@@ -437,14 +438,9 @@ export function buildHumanFigure({
     worn: { signatures: profile.signatures, attire: profile.clothing },
   })
 
-  const groundShadow = new THREE.Mesh(
-    geometry(THREE, 'ground-shadow', () => new THREE.CircleGeometry(0.42, 12)),
-    glow(INK, 0.2),
-  )
-  groundShadow.rotation.x = -Math.PI / 2
-  groundShadow.scale.y = 0.42
-  groundShadow.position.y = 0.008
-  root.add(groundShadow)
+  // Scaled by the body rather than fixed: a child took the same coin-sized
+  // patch as a guardsman before. See `$lib/tour/contactShadow`.
+  root.add(contactShadow(THREE, { radius: 0.46 * unit, squash: 0.45 }))
 
   if (seen.human?.alert) {
     const alert = new THREE.Mesh(

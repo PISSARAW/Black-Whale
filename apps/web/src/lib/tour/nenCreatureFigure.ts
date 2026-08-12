@@ -1,5 +1,6 @@
 import type { Group, Material, Mesh, MeshBasicMaterial, Object3D } from 'three'
 import type { ApparitionKind } from './apparitions'
+import { contactShadow } from './contactShadow'
 
 type Three = typeof import('three')
 
@@ -84,21 +85,13 @@ export function styleNenCreature(
     if (edge) mesh.add(edge)
   }
 
-  // A faint ink wash anchors hovering and oddly proportioned bodies in the
-  // room. It is deliberately not a light: Nen keeps its colour and the ship
-  // keeps control of illumination.
-  const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(Math.max(0.08, size * 0.9), 20),
-    new THREE.MeshBasicMaterial({
-      color: 0x171318,
-      transparent: true,
-      opacity: 0.18,
-      depthWrite: false,
-    }),
-  )
-  ground.name = 'nen-creature-ground'
-  ground.rotation.x = -Math.PI / 2
-  ground.scale.y = 0.55
-  ground.position.y = -Math.max(0.01, size * 0.04)
-  root.add(ground)
+  // A contact patch anchors hovering and oddly proportioned bodies in the room.
+  // It is deliberately not a light: Nen keeps its colour and the ship keeps
+  // control of illumination — and a patch that multiplies rather than paints
+  // makes no claim about colour at all. See `$lib/tour/contactShadow`.
+  //
+  // Weaker than a person's: half of this list does not touch the floor, and a
+  // creature that hovers wants to be told where it is without being told it is
+  // standing there.
+  root.add(contactShadow(THREE, { radius: Math.max(0.08, size * 0.9), strength: 0.34 }))
 }

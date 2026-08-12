@@ -15,14 +15,14 @@ describe('Nen creature figure', () => {
     expect(isNenCreatureKind('avatar')).toBe(false)
   })
 
-  it('adds manga ink and a ground wash to substantial geometry', () => {
+  it('adds manga ink and a contact shadow to substantial geometry', () => {
     const root = new Group()
     root.add(new Mesh(new BoxGeometry(1, 1, 1), new MeshBasicMaterial({ color: 0xffffff })))
 
     styleNenCreature(THREE, root, { kind: 'cat', size: 1 })
 
     expect(root.getObjectByName('nen-creature-ink')).toBeTruthy()
-    expect(root.getObjectByName('nen-creature-ground')).toBeTruthy()
+    expect(root.getObjectByName('contact-shadow')).toBeTruthy()
   })
 
   it('leaves non-creature manifestations untouched', () => {

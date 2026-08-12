@@ -147,6 +147,8 @@ const fragmentShader = /* glsl */ `
   varying vec2 vUv;
 
   const vec3 LUMA = vec3(0.2126, 0.7152, 0.0722);
+  /** One step of an eight-bit channel: the width of the band being broken. */
+  const float DITHER_STEP = 1.0 / 255.0;
 
   /**
    * The frame sampled with the channels pulled apart along the radius.
@@ -193,6 +195,31 @@ const fragmentShader = /* glsl */ `
     return fract(sin(dot(uv * 1024.0 + t, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
   }
 
+  /**
+   * A quantisation dither, one step of the output format wide.
+   *
+   * Not a lens artefact and not tunable, which is why it has no uniform and is
+   * not in the Lens record: the frame is written to an eight-bit canvas whatever the
+   * palier, and everything on this ship is a dark smooth gradient — an
+   * exponential fog across a hundred-metre coursive, a vignette, the falloff of
+   * one filament. Those are exactly the signals that band, and the band is an
+   * artefact of the write rather than anything the walk decided.
+   *
+   * Triangular rather than uniform — two hashes subtracted — because a uniform
+   * dither leaves the noise floor modulated by how close a pixel sits to a step,
+   * which reads as the banding moving rather than as the banding going. The
+   * second hash is offset so the two are not the same number.
+   *
+   * It rides here rather than in a pass of its own, and before SMAA rather than
+   * after, for the same reason the grain does: SMAA blends at edges and leaves
+   * flat areas alone, and flat areas are the entire problem.
+   */
+  vec3 dither(vec2 uv) {
+    float a = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+    float b = fract(sin(dot(uv + 0.5773, vec2(39.3468, 11.1357))) * 24634.6345);
+    return vec3(a - b) * DITHER_STEP;
+  }
+
   void main() {
     vec4 texel = texture2D(tDiffuse, vUv);
     vec3 colour = disperse(vUv);
@@ -221,6 +248,12 @@ const fragmentShader = /* glsl */ `
       float shadowed = 1.0 - smoothstep(0.0, 0.7, luma);
       colour *= 1.0 + grainAt(vUv, uTime) * uGrain * shadowed;
     }
+
+    // Last of all, and after the vignette rather than before it: the vignette
+    // is itself one of the gradients that bands, and a dither applied upstream
+    // of it would be multiplied back down to nothing in the corners — which is
+    // precisely where the frame is darkest and the steps are widest.
+    colour += dither(vUv);
 
     gl_FragColor = vec4(max(colour, 0.0), texel.a);
   }

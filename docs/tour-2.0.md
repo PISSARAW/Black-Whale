@@ -24,8 +24,38 @@ sur `docs/tour-immersion.md`.
 | 3 — poussière réactive             | ✅   | `dust.ts` (`disturbDust`), déplacement borné par le dégagement échantillonné                     |
 | 4 — inspection de provenance       | ✅   | `exhibit.ts`, `TourExamineCard.svelte`, touche **P** et bouton (tactile)                         |
 | 7.1 — smoke Playwright             | ✅   | `tests/tour.spec.ts`, projets `chromium` et `mobile`                                             |
-| 7.2 — captures de référence        | ⛔   | abandonné : sans GPU sur le runner, une capture teste le pilote de la CI, pas la visite          |
-| 7.3 — budget de frame              | ⏸    | non fait                                                                                         |
+| 7.2 — captures de référence        | ⛔   | abandonné ; remplacé par `lightRig.test.ts` — voir la note ci-après                              |
+| 7.3 — budget de frame              | ✅   | `frameBudget.ts`, `frameBudgetFeed.ts`, `TourFrameBudget.svelte` — `?frames`, tous les builds    |
+
+**Sur 7.2.** L'abandon des captures reste juste — sans GPU sur le runner, une capture
+teste le pilote de la CI. Mais ce que les captures devaient garder, c'était la doctrine
+de lumière, et celle-là ne demande pas de GPU : ce qu'un visiteur voit est
+`albédo × ombre cuite × lavis de l'heure`, et le troisième terme vivait dans un fichier
+que les deux premiers ne connaissaient pas, si bien que personne ne possédait le produit.
+`apps/web/src/lib/tour/lightRig.test.ts` le possède maintenant — luminance unité à chaque
+heure, ancre à 2,2, veilleuse un ordre sous la lampe frontale, sol le plus sombre près du
+noir une fois le lavis appliqué, cale plus sombre que le pont du Roi. Vérifié par
+mutation : remonter `LIGHT.fill` à 2,4 casse deux de ces tests, retirer la normalisation
+du lavis en casse trois.
+
+**Sur 7.3, et ce qu'il a immédiatement montré.** Première mesure du palier `low`, prise à
+l'entrée du pont 1 sur chromium logiciel — les compteurs sont ce que three.js a réellement
+émis et ne dépendent pas de la machine ; les images par seconde, elles, sont un fait sur
+un rastériseur logiciel et non sur un téléphone.
+
+|                            | appels | triangles | géométries | textures | programmes |
+| -------------------------- | ------ | --------- | ---------- | -------- | ---------- |
+| `high` (desktop)           | 87     | 36 396    | 68         | 19       | 20         |
+| `low` (iPhone 13, Pixel 5) | 63     | 35 195    | 63         | 2        | 6          |
+
+**`low` est un palier de fragment et rien d'autre.** Il retire quatorze programmes sur
+vingt et dix-sept textures sur dix-neuf — toute la chaîne de post-traitement — et laisse
+la géométrie intacte : −3 % de triangles, −28 % d'appels. C'est cohérent avec ce que
+`quality.ts` déclare, ligne à ligne, mais la conséquence n'avait jamais été écrite : un
+téléphone borné par la géométrie ou par la bande passante n'a aujourd'hui **aucun levier**.
+`dustScale: 0.45` est le seul du palier, et il ne se voit pas dans les compteurs.
+Si un `low` réel manque son budget avec un `cpuMs` plat, la réponse ne sera pas une passe
+de plus à éteindre : ce sera `VIEW_DEPTH`, qui vaut 2 sur les deux paliers.
 
 **Sur 0.7.** Le coût que le correctif visait — `buildShip()` au chargement du
 module — n'existe plus : `theShip()` construit à la première demande. Ne reste

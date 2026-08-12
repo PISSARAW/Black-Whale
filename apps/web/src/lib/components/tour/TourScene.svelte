@@ -72,7 +72,7 @@
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
-  import { EYE_FOV, OWL_FOV, type CardFace, type EyeFeed } from '$lib/tour/morena'
+  import { type CardFace, type EyeFeed } from '$lib/tour/morena'
   import {
     SPRINT_SPEED,
     STICK_RADIUS,
@@ -123,8 +123,8 @@
     createSceneRuntime,
     disposeSceneRuntime,
     observeSceneResize,
-    renderSceneInset,
   } from '$lib/tour/TourRenderer'
+  import { SceneInsets } from '$lib/tour/sceneInsets'
   import { listenToSceneInput } from '$lib/tour/sceneInput'
   import { PortalRenderer } from '$lib/tour/PortalRenderer'
   import { TierView, type BuiltTierView } from '$lib/tour/TierView'
@@ -1033,21 +1033,10 @@
       let eyeKey = ''
 
       /**
-       * And the same eye at the table, which needs no deck of its own.
-       *
-       * The walk's eye is somewhere else on the ship, so half of what `syncEye`
-       * does is keeping the room it is watching in the scene. This one is in
-       * the room the visitor is sitting in — it is over the cards in front of
-       * them — so it is a camera and nothing else, aimed wherever the page says
-       * the insect is holding.
+       * The two corners over the walk, and the two cameras the table lazily
+       * makes for them. See `$lib/tour/sceneInsets`.
        */
-      let tableCamera: import('three').PerspectiveCamera | null = null
-      /**
-       * And the same technique's other half at the same table: the owl's
-       * recording, which is a camera that does not move because the thing that
-       * made the picture is a bird bolted to a bulkhead an hour ago.
-       */
-      let recordCamera: import('three').PerspectiveCamera | null = null
+      const insets = new SceneInsets(THREE)
 
       /**
        * Secret Window's film: where the bird was, and the playback of it.
@@ -4699,57 +4688,23 @@
         renderPortals()
         composer.render()
 
-        // The eye's feed, inset in the corner: the same scene from where the eye
-        // was left, however many decks away that is.
-        if (eyeCamera) {
-          eyeCamera.rotation.set(0, 0, 0)
-          eyeCamera.rotateY(now / 6000)
-          renderSceneInset({ runtime, lens: eyeCamera, corner: 'top', measure: size })
-        }
-
-        // The table's own eye, which is the same technique doing the same thing
-        // a metre away rather than a deck away: Little Eye is over Morena's fan
-        // and this is what it is sending back. The walk's eye and this one are
-        // never up together — one is sent into a room by the dock, the other is
-        // put on the table by the game — so they share the corner.
-        else if (feed) {
-          if (!tableCamera) tableCamera = new THREE.PerspectiveCamera(EYE_FOV, 1, 0.02, 40)
-          tableCamera.position.set(feed.at[0], feed.y, feed.at[1])
-          tableCamera.lookAt(feed.look[0], feed.lookY, feed.look[1])
-          renderSceneInset({ runtime, lens: tableCamera, corner: 'top', measure: size })
-        }
-
-        // The owl's film, inset below the eye's feed: the last ten seconds of
-        // a bird that is not there any more, played at the speed it flew them.
-        if (filmCamera && showing) {
-          renderSceneInset({ runtime, lens: filmCamera, corner: 'bottom', measure: size })
-        }
-        // And the table's own owl, in the same corner and for the same reason:
-        // this is not a feed, it is what a bird already filmed being looked at
-        // afterwards. It holds still because a recording does, and it stays up
-        // once it is up — the hand can end, and footage does not un-happen.
-        else if (record) {
-          if (!recordCamera) recordCamera = new THREE.PerspectiveCamera(OWL_FOV, 1, 0.02, 40)
-          recordCamera.position.set(record.at[0], record.y, record.at[1])
-          recordCamera.lookAt(record.look[0], record.lookY, record.look[1])
-          renderSceneInset({ runtime, lens: recordCamera, corner: 'bottom', measure: size })
-        }
+        // The live corner and the footage corner, over the finished frame.
+        insets.render({
+          runtime,
+          measure: size,
+          eye: eyeCamera,
+          spin: now / 6000,
+          feed,
+          film: filmCamera,
+          showing: Boolean(showing),
+          record,
+        })
       }
 
       if (pendingScreenshot) {
         pendingScreenshot()
         pendingScreenshot = null
       }
-
-      /**
-       * A second camera, in a box in the corner of the first.
-       *
-       * Three things ask for one — the eye's live feed, the table's, and the
-       * owl's ten seconds of playback — and they differ in nothing but which
-       * corner they take. The scissor dance is fiddly enough (clear the depth,
-       * not the colour; put `autoClear` back, or the next frame draws the walk
-       * into a stale buffer) that three copies of it was two too many.
-       */
 
       /**
        * The walk only runs while it is on screen.
@@ -4787,8 +4742,7 @@
         visible = null
         eyeDeck = null
         eyeCamera = null
-        tableCamera = null
-        recordCamera = null
+        insets.clear()
         for (const id of Object.keys(solids)) dropSolid(id)
         for (const id of Object.keys(apparitions)) dropApparition(id)
         while (leaving.length) dropLeavingCard(leaving.length - 1)

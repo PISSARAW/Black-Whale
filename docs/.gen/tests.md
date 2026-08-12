@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 276
+Fichiers : 278
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -710,6 +710,10 @@ Fichiers : 276
 
 - TourAtmosphereView > starts on the reference hour the palette holds, and not on a copy of it
 
+## `apps/web/src/lib/tour/ambientOcclusion.test.ts`
+
+- the occlusion pass > measures its disc in metres of ship, not in pixels
+
 ## `apps/web/src/lib/tour/apparitions.test.ts`
 
 - what a quiet ship shows > shows nothing at all
@@ -1031,6 +1035,10 @@ Fichiers : 276
 ## `apps/web/src/lib/tour/nenCreatureFigure.test.ts`
 
 - Nen creature figure > covers beasts used by the tour and Morena without styling props or people
+
+## `apps/web/src/lib/tour/outputPass.test.ts`
+
+- the colour management flag > is off unless this visit asked for it
 
 ## `apps/web/src/lib/tour/pageBodyReadout.test.ts`
 

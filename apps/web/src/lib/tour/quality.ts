@@ -103,6 +103,16 @@ export interface QualityProfile {
   lens: boolean
   /** The grazing sheen and the rim on the steel. See `$lib/tour/sheen`. */
   sheen: boolean
+  /**
+   * The darkness in the junctions the bake cannot see.
+   *
+   * `high` only, and not because eighteen taps are ruinous — because it is the
+   * one effect on this list whose input is the depth buffer, and the depth
+   * buffer only exists on `high`: `createHighTierTarget` allocates it, and a
+   * `low` composer never asks for one. Switching this on for a `low` machine
+   * would not be an expensive picture, it would be no picture at all.
+   */
+  occlusion: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -120,6 +130,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     // anyway — no taps, no buffers — and what it buys is the thing a phone
     // screen needs most: an edge where two dark surfaces meet.
     sheen: true,
+    // No depth buffer on this palier to read: see `occlusion` above.
+    occlusion: false,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -132,6 +144,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     surfaceDetail: true,
     lens: true,
     sheen: true,
+    occlusion: true,
     dustScale: 1,
   },
 }

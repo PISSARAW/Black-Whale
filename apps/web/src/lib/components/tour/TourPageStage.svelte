@@ -5,6 +5,7 @@
   import TourSceneOverlay from './TourSceneOverlay.svelte'
   import TourExamineCard from './TourExamineCard.svelte'
   import TourAddressCard from './TourAddressCard.svelte'
+  import TourFrameBudget from './TourFrameBudget.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
@@ -82,4 +83,12 @@
   <TourSceneOverlay {...overlay} />
   <TourExamineCard {...examine} />
   <TourAddressCard {...address} />
+  <!--
+    The cost of the frame the other four are drawn over. Unconditional, and it
+    costs nothing to mount: without `?frames` nothing measures and this renders
+    empty. It belongs to the stage rather than to `TourSceneOverlay` because it
+    is not part of the walk's HUD — it takes no prop from the tour and answers
+    to a query string rather than to anything the visit knows about.
+  -->
+  <TourFrameBudget />
 </section>

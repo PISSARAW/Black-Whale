@@ -84,6 +84,43 @@ test.describe('the walk', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
+  /**
+   * The frame budget, which is the one thing here that can only be checked in a
+   * browser: `renderer.info` is a count of what three.js actually issued, so it
+   * does not exist until something has been drawn.
+   *
+   * What is asserted is the instrument, not a number. The runner draws on
+   * SwiftShader, so its frame rate is a fact about a software rasteriser and
+   * asserting on it would be the same mistake as a reference capture. The
+   * triangle and draw-call counts, though, are the GPU's only in the sense that
+   * it received them — they are decided by the mesh and by `visibility.ts`, so
+   * a count of zero on a booted deck is a real break wherever it is run.
+   */
+  test('measures the frame only when asked, and counts what was drawn', async ({ page }) => {
+    await page.goto('/tour')
+    await ready(page)
+    // Off by default, in every build: the walk pays nothing for an instrument
+    // nobody switched on.
+    await expect(page.locator('#tour-frame-budget')).toHaveCount(0)
+
+    await page.goto('/tour?frames')
+    await ready(page)
+    const meter = page.locator('#tour-frame-budget')
+    // A window is half a second of frames, and the deck has to build first.
+    await expect(meter).toBeVisible({ timeout: 30_000 })
+    await expect(meter).toContainText(/img\/s/)
+
+    // The counters have to be the whole frame and not its last draw call — the
+    // reason `meteredFrame` turns `info.autoReset` off. A deck that reached the
+    // screen drew triangles.
+    // Parsed rather than pattern-matched: `Intl` groups thousands with a narrow
+    // no-break space, and a regex written against an ordinary one would pass on
+    // a broken "0 tri" and fail on a healthy "41 203 tri".
+    const readout = (await meter.textContent()) ?? ''
+    const drawn = /([\d\s\u202f\u00a0]+)tri/.exec(readout)?.[1] ?? ''
+    expect(Number(drawn.replace(/\D/g, ''))).toBeGreaterThan(0)
+  })
+
   test('lets the visitor set the palier, and keeps it across a reload', async ({ page }) => {
     await page.goto('/tour')
     await ready(page)

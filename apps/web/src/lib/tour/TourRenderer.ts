@@ -2,6 +2,8 @@
 import type * as Three from 'three'
 import { assemblePostChain } from './postChain'
 import type { PostPass } from './postTypes'
+import type { FrameMeter } from './frameBudget'
+import { frameReading, reportQualityTier, startFrameMeter } from './frameBudgetFeed'
 import {
   detectTier,
   qualityProfile,
@@ -121,6 +123,10 @@ export async function createSceneRuntime(
     coarse: options.coarse,
   })
 
+  // What the frame budget will be weighed against, said once, here: this is the
+  // moment the palier stops being a request and becomes a fact about a machine.
+  reportQualityTier(quality.tier)
+
   const { EffectComposer } = await import('three/examples/jsm/postprocessing/EffectComposer.js')
   const { RenderPass } = await import('three/examples/jsm/postprocessing/RenderPass.js')
 
@@ -184,6 +190,39 @@ export function disposeSceneRuntime(runtime: SceneRuntime): void {
   runtime.renderer.forceContextLoss()
 }
 
+/**
+ * The same frame, with a clock and a counter round it.
+ *
+ * `info.autoReset` has to go off and the reset has to be ours, and that is not
+ * a detail: three.js clears `info.render` at the top of every `render()` call,
+ * so read as it comes it reports the *last* draw of the frame rather than the
+ * frame. A tour frame is several draws — the portal panes, the composer chain,
+ * and up to two corner insets — and counting only the last of them would say a
+ * room costs a fraction of what it costs, which is the exact failure this
+ * instrument exists to stop being possible.
+ */
+function meteredFrame(
+  renderer: Three.WebGLRenderer,
+  frame: (time: number) => void,
+  meter: FrameMeter,
+): (time: number) => void {
+  const info = renderer.info
+  info.autoReset = false
+  return (time: number) => {
+    meter.begin(time)
+    info.reset()
+    frame(time)
+    const reading = meter.end(performance.now(), {
+      calls: info.render.calls,
+      triangles: info.render.triangles,
+      geometries: info.memory.geometries,
+      textures: info.memory.textures,
+      programs: info.programs?.length ?? 0,
+    })
+    if (reading) frameReading.set(reading)
+  }
+}
+
 /** Run the expensive frame loop only while the tour canvas is visible. */
 export function animateVisibleScene(options: {
   container: HTMLElement
@@ -192,11 +231,17 @@ export function animateVisibleScene(options: {
   onResume: () => void
 }): () => void {
   const { container, renderer, frame, onResume } = options
+  // Null unless this page was asked to measure, and then the walk runs exactly
+  // the callback it always ran. See `$lib/tour/frameBudgetFeed`.
+  const meter = startFrameMeter()
+  const run = meter ? meteredFrame(renderer, frame, meter) : frame
   const observer = new IntersectionObserver(
     ([entry]) => {
       if (entry.isIntersecting) {
         onResume()
-        renderer.setAnimationLoop(frame)
+        // The gap the canvas spent off screen is not a slow frame.
+        meter?.resume()
+        renderer.setAnimationLoop(run)
       } else {
         renderer.setAnimationLoop(null)
       }
@@ -204,10 +249,11 @@ export function animateVisibleScene(options: {
     { threshold: 0 },
   )
   observer.observe(container)
-  renderer.setAnimationLoop(frame)
+  renderer.setAnimationLoop(run)
   return () => {
     renderer.setAnimationLoop(null)
     observer.disconnect()
+    if (meter) frameReading.set(null)
   }
 }
 

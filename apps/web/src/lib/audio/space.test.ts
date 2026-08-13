@@ -6,6 +6,7 @@ import {
   emissionLevel,
   emissionTarget,
   listenerNow,
+  setFacing,
   setListener,
   soundedFrom,
 } from './space'
@@ -20,6 +21,11 @@ import {
  */
 function fakeContext() {
   const built: string[] = []
+  const panners: {
+    positionX: { value: number }
+    positionY: { value: number }
+    positionZ: { value: number }
+  }[] = []
   const connect = () => undefined
   const param = () => ({ value: 0 })
   const context = {
@@ -33,7 +39,7 @@ function fakeContext() {
     },
     createPanner: () => {
       built.push('panner')
-      return {
+      const panner = {
         connect,
         panningModel: '',
         distanceModel: '',
@@ -44,9 +50,19 @@ function fakeContext() {
         positionY: param(),
         positionZ: param(),
       }
+      panners.push(panner)
+      return panner
     },
   }
-  return { built, sink: { context, muffle: { id: 'muffle' } } as never }
+  return { built, panners, sink: { context, muffle: { id: 'muffle' } } as never }
+}
+
+/** Where the one panner of a cast made at `at` ended up, seen from the ear. */
+function heardAt(at: [number, number]) {
+  const { panners, sink } = fakeContext()
+  soundedFrom({ at, spaceId: 'hold' }, () => emissionTarget(sink))
+  const panner = panners[0]
+  return { x: panner.positionX.value, y: panner.positionY.value, z: panner.positionZ.value }
 }
 
 describe('the emission', () => {
@@ -84,7 +100,7 @@ describe('the emission', () => {
 
 describe('what the ear is given', () => {
   it('places a sound made in the room the visitor is in, without a wall', () => {
-    setListener({ at: [0, 0], heading: 0, spaceId: 'hold' })
+    setListener({ at: [0, 0], heading: 0, pitch: 0, spaceId: 'hold' })
     const { built, sink } = fakeContext()
     soundedFrom({ at: [4, 4], spaceId: 'hold' }, () => emissionTarget(sink))
     expect(built).toContain('panner')
@@ -92,7 +108,7 @@ describe('what the ear is given', () => {
   })
 
   it('puts a wall in front of a sound made in another room', () => {
-    setListener({ at: [0, 0], heading: 0, spaceId: 'hold' })
+    setListener({ at: [0, 0], heading: 0, pitch: 0, spaceId: 'hold' })
     const { built, sink } = fakeContext()
     soundedFrom({ at: [4, 4], spaceId: 'cabin' }, () => emissionTarget(sink))
     expect(built).toContain('filter')
@@ -105,7 +121,57 @@ describe('what the ear is given', () => {
   })
 
   it('remembers where the visitor is standing and which way they face', () => {
-    setListener({ at: [3, -7], heading: 1.2, spaceId: 'promenade' })
-    expect(listenerNow()).toEqual({ at: [3, -7], heading: 1.2, spaceId: 'promenade' })
+    setListener({ at: [3, -7], heading: 1.2, pitch: -0.3, spaceId: 'promenade' })
+    expect(listenerNow()).toEqual({
+      at: [3, -7],
+      heading: 1.2,
+      pitch: -0.3,
+      spaceId: 'promenade',
+    })
+  })
+})
+
+/**
+ * The half of the ear the walk never told: a visitor who stands still and looks
+ * round used to hear a frozen room. Both of these failed before `setFacing` and
+ * the pitch existed, which is the whole reason they are written down.
+ */
+describe('turning without moving', () => {
+  it('swings a cast across the head when the visitor turns to face it', () => {
+    setListener({ at: [0, 0], heading: 0, pitch: 0, spaceId: 'hold' })
+    const before = heardAt([6, 0])
+    expect(before.x).toBeGreaterThan(1)
+
+    // A quarter turn brings what was on the right round to straight ahead.
+    setFacing(-Math.PI / 2, 0)
+    const after = heardAt([6, 0])
+    expect(Math.abs(after.x)).toBeLessThan(1e-9)
+    expect(after.z).toBeLessThan(-1)
+  })
+
+  it('tips the room the other way when the visitor looks up', () => {
+    setListener({ at: [0, 0], heading: 0, pitch: 0, spaceId: 'hold' })
+    // Straight ahead of a visitor facing along the walk's own forward.
+    const level = heardAt([0, -6])
+    expect(level.z).toBeLessThan(-1)
+    expect(Math.abs(level.y)).toBeLessThan(1e-9)
+
+    setFacing(0, 0.6)
+    const raised = heardAt([0, -6])
+    // Looking up drops what is in front of you below the line of sight, and
+    // takes nothing off the distance while doing it.
+    expect(raised.y).toBeLessThan(-1)
+    expect(Math.hypot(raised.x, raised.y, raised.z)).toBeCloseTo(
+      Math.hypot(level.x, level.y, level.z),
+      9,
+    )
+  })
+
+  it('leaves the room and the place alone when only the head turns', () => {
+    setListener({ at: [3, -7], heading: 0, pitch: 0, spaceId: 'promenade' })
+    setFacing(2.1, 0.4)
+    expect(listenerNow().at).toEqual([3, -7])
+    expect(listenerNow().spaceId).toBe('promenade')
+    expect(listenerNow().heading).toBe(2.1)
   })
 })

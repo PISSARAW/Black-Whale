@@ -15,12 +15,15 @@
  * the hold differ here by a factor of about six in reverberation time, which is
  * not a subtlety — it is the difference between a slap and a rumble.
  *
- * The hull is here rather than in `$lib/audio/ambient` for the same reason the
- * footsteps are. The voyage theme is a soundtrack over the archive, off until
+ * The hull and the sea are here rather than in `$lib/audio/ambient` for the same
+ * reason the footsteps are. The voyage theme is a soundtrack over the archive, off until
  * someone asks for it; the machinery is a thing aboard the ship, and it belongs to
  * whatever else the walk makes audible — one `AudioContext`, one toggle, and the
- * same lowpass when a technique seals hearing. See `hullRumble` for what it is
- * keyed to, which is the deck's own elevation.
+ * same lowpass when a technique seals hearing. See `hullRumble` and `seaOutside`
+ * for what they are keyed to, which is the deck's own elevation — and
+ * `steps/environment.ts` for the panner that puts the engines under the visitor
+ * and the water over or under them depending on which side of the waterline
+ * they are standing.
  *
  * ADR-002 files the four jobs separately — the graph and the state that outlives
  * it, the room and the deck, the voices, the button — in `steps/`. The walk
@@ -28,7 +31,7 @@
  */
 
 export { enterDeck, enterRoom, nearWall } from './steps/rooms'
-export { listenFrom } from './steps/listener'
+export { listenFrom, lookFrom, type Standing } from './steps/listener'
 export { footstep, rewindSound } from './steps/voices'
 export { setStepsAuraQuiet, setStepsMuffled } from './steps/graph'
 export { startSteps, stepsPlaying, stepsWereSilenced, stopSteps, toggleSteps } from './steps/toggle'

@@ -11,6 +11,7 @@
  * and the ceiling over it. No new data, no new geometry — the blueprint already
  * says all of this, and everything here is arithmetic on it.
  */
+import { atElevation, type Band } from './byElevation'
 import { longestChord, perimeter, polygonArea } from './geometry'
 import { ceilingOf } from './blueprint'
 import type { Space, Tier } from './types'
@@ -237,12 +238,17 @@ export function impulseResponse(
 /**
  * How loud the machinery is, and how much of it gets through, deck by deck.
  *
- * There is no sky on the Black Whale — two windows out of 314 spaces, and the
+ * There is no sky on the Black Whale — two windows out of 387 spaces, and the
  * rest of the voyage happens inside a hull. What stands in for the weather is the
  * ship itself: the engines are in the bottom of it, and everything above them
  * hears a filtered version of the same noise. Stand on Tier 5 and it is a
  * presence; stand in the King's living room seventy-two metres up and it is a
  * suggestion you notice when it changes.
+ *
+ * The other half of that weather is the water, and it is in `./sea` rather than
+ * here: it is dosed by elevation the same way, off the same table shape, but it
+ * peaks at the waterline instead of at the keel and it is the one thing aboard
+ * that is *above* a visitor on Tier 5 and below one on Tier 1.
  *
  * These five pairs are a mix decision and not a derivation, which is why they are
  * written out rather than computed: nothing in `blueprint.json` measures a decibel
@@ -255,7 +261,7 @@ export function impulseResponse(
  * against the footsteps; the cutoff is in hertz, and the fall from 260 to 70 is
  * the mass of four decks of steel between the visitor and the engine room.
  */
-export const HULL_DECKS: readonly { elevation: number; level: number; cutoff: number }[] = [
+export const HULL_DECKS: readonly Band[] = [
   { elevation: 0, level: 1, cutoff: 260 },
   { elevation: 31.5, level: 0.7, cutoff: 190 },
   { elevation: 63, level: 0.45, cutoff: 140 },
@@ -268,25 +274,11 @@ export const HULL_DECKS: readonly { elevation: number; level: number; cutoff: nu
  *
  * Linear in elevation, and flat outside the range: the hold is the loudest place
  * on the ship because it is the closest to the machinery, and nothing above Tier 1
- * is quieter than Tier 1 because there is nothing above Tier 1.
+ * is quieter than Tier 1 because there is nothing above Tier 1. The arithmetic is
+ * in `./byElevation`, shared with the sea, which is dosed the same way.
  */
 export function hullRumble(elevation: number): { level: number; cutoff: number } {
-  const first = HULL_DECKS[0]
-  const last = HULL_DECKS[HULL_DECKS.length - 1]
-  if (!(elevation > first.elevation)) return { level: first.level, cutoff: first.cutoff }
-  if (elevation >= last.elevation) return { level: last.level, cutoff: last.cutoff }
-
-  for (let i = 1; i < HULL_DECKS.length; i++) {
-    const above = HULL_DECKS[i]
-    if (elevation > above.elevation) continue
-    const below = HULL_DECKS[i - 1]
-    const t = (elevation - below.elevation) / (above.elevation - below.elevation)
-    return {
-      level: below.level + (above.level - below.level) * t,
-      cutoff: below.cutoff + (above.cutoff - below.cutoff) * t,
-    }
-  }
-  return { level: last.level, cutoff: last.cutoff }
+  return atElevation(HULL_DECKS, elevation)
 }
 
 /** The lowest note of the hull, in hertz: the engine, not the room it is heard in. */

@@ -1,17 +1,11 @@
-import {
-  MAX_REVERB,
-  MIN_REVERB,
-  hullRumble,
-  impulseResponse,
-  slapDelay,
-} from '$lib/tour/atmosphere'
+import { MAX_REVERB, MIN_REVERB, impulseResponse, slapDelay } from '$lib/tour/atmosphere'
 
+import { orientEnvironment, settleEnvironment } from './environment'
 import {
   CROSSFADE,
+  currentFacing,
   currentGraph,
   currentRoomKey,
-  HULL_GAIN,
-  HULL_SETTLE,
   setCurrentDeckElevation,
   setCurrentRoomKey,
 } from './graph'
@@ -72,34 +66,27 @@ export function enterRoom(id: string, reverb: number, wallDistance: number) {
 }
 
 /**
- * Puts the visitor on a deck: how much of the machinery reaches this elevation.
+ * Puts the visitor on a deck: how much of the ship and of the sea reach here.
  *
  * Called with the elevation of the level being walked, which for an interior is
  * the elevation of the deck it is inside — a prince's bathroom is seventy-two
  * metres up whatever the room plan is drawn at.
  *
- * Eased over `HULL_SETTLE`, which is slow on purpose and much slower than the
- * crossfade between two rooms. A lift or a stairwell is the one place on the ship
- * where a visitor changes deck, and the rumble coming up to meet them over a
- * couple of seconds is the whole cue: you hear that you are descending. Cut
- * instantly it would read as a bug in the audio, which is what every abrupt gain
- * change reads as.
+ * The easing, and the reason for it, are in `settleEnvironment`. What stays here
+ * is the remembering: the visitor can silence the walk on Tier 5, cross half the
+ * ship, and turn it back on from a button in the markup that has no idea which
+ * deck they are standing on. `startSteps` reads this back, so the deck the
+ * rumble describes is the deck they are on.
  */
 export function enterDeck(elevation: number) {
-  // Remembered whether or not there is a graph to tell: the visitor can silence
-  // the walk on Tier 5, cross half the ship, and turn it back on from a button in
-  // the markup that has no idea which deck they are standing on. `startSteps`
-  // reads this back, so the deck the rumble describes is the deck they are on.
   setCurrentDeckElevation(elevation)
   const g = currentGraph()
   if (!g) return
-  const { level, cutoff } = hullRumble(elevation)
-  const now = g.context.currentTime
-
-  g.hull.gain.cancelScheduledValues(now)
-  g.hull.gain.setTargetAtTime(level * HULL_GAIN, now, HULL_SETTLE / 3)
-  g.hullDamp.frequency.cancelScheduledValues(now)
-  g.hullDamp.frequency.setTargetAtTime(cutoff, now, HULL_SETTLE / 3)
+  settleEnvironment(g.env, elevation)
+  // A graph built a moment ago has never been turned, and this is the first
+  // thing that happens to it. Without this the engines come up dead ahead of a
+  // visitor who was facing the stern when they pressed the button.
+  orientEnvironment(g.env, currentFacing())
 }
 
 /**

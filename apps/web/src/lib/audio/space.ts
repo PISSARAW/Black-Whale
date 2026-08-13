@@ -1,5 +1,6 @@
 import type { Vec2 } from '$lib/tour/types'
 
+import { earLocal, type Facing } from './ears'
 import { currentGraph } from './steps/graph'
 
 /**
@@ -31,16 +32,27 @@ export interface Place {
   spaceId: string | null
 }
 
-export interface Listener extends Place {
-  /** Where the visitor is facing, in the walk's own convention. */
-  heading: number
-}
+export interface Listener extends Place, Facing {}
 
-let listener: Listener = { at: [0, 0], heading: 0, spaceId: null }
+let listener: Listener = { at: [0, 0], heading: 0, pitch: 0, spaceId: null }
 
 /** Called by the walk as the visitor moves; see `steps/listener.ts`. */
 export function setListener(next: Listener): void {
   listener = next
+}
+
+/**
+ * The same ear, turned without being moved.
+ *
+ * Standing still and looking round is the commonest thing a visitor does, and
+ * until now it changed nothing: `setListener` was only ever called on the
+ * quarter-metre threshold the minimap is redrawn on, so a cast made to the left
+ * stayed on the left when the visitor turned to face it. This is the cheap half
+ * of that call — no room, no wall, no geometry — and the walk makes it on every
+ * meaningful change of heading or pitch.
+ */
+export function setFacing(heading: number, pitch: number): void {
+  listener = { ...listener, heading, pitch }
 }
 
 export const listenerNow = (): Listener => listener
@@ -118,8 +130,17 @@ export const emissionColour = (): number => emission?.colour ?? 1
 /** A multiplier on the peak level of the sound being played, or one. */
 export const emissionLevel = (): number => emission?.level ?? 1
 
-/** Listener-local coordinates of a point: x to the right, −z ahead. */
-function localTo(at: Vec2): { x: number; z: number } {
+/**
+ * Listener-local coordinates of a point: x to the right, +y up, −z ahead.
+ *
+ * The walk gives a cast a `Vec2`, so every cast happens at the visitor's own
+ * height and `y` goes in as nought. It does not come out as nought: looking up
+ * tips the whole world down, and a gong on the far side of the hall drops below
+ * the line of sight exactly as the picture says it should. The rotation itself
+ * is in `./ears`, shared with the machinery and the sea, which are the two
+ * sources that do have a height of their own.
+ */
+function localTo(at: Vec2): { x: number; y: number; z: number } {
   let dx = at[0] - listener.at[0]
   let dz = at[1] - listener.at[1]
   const away = Math.hypot(dx, dz)
@@ -127,13 +148,7 @@ function localTo(at: Vec2): { x: number; z: number } {
     dx = (dx / away) * FURTHEST
     dz = (dz / away) * FURTHEST
   }
-  const sin = Math.sin(listener.heading)
-  const cos = Math.cos(listener.heading)
-  // The walk's forward is (−sin, −cos) and its right is (cos, −sin); the Web
-  // Audio listener sits at the origin facing −z, so ahead has to come out
-  // negative. Both conventions are written down rather than guessed: see
-  // `hatsu.ts`, which walks the same vector to decide what a cast can reach.
-  return { x: dx * cos - dz * sin, z: dx * sin + dz * cos }
+  return earLocal({ x: dx, y: 0, z: dz }, listener)
 }
 
 /**
@@ -180,9 +195,9 @@ function buildTarget(g: Sink, place: Place | null): AudioNode {
   panner.refDistance = REFERENCE
   panner.rolloffFactor = 0.6
   panner.maxDistance = 240
-  const { x, z } = localTo(place.at)
+  const { x, y, z } = localTo(place.at)
   panner.positionX.value = x
-  panner.positionY.value = 0
+  panner.positionY.value = y
   panner.positionZ.value = z
   panner.connect(tap)
 

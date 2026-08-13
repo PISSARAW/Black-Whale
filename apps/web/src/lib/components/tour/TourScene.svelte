@@ -92,12 +92,14 @@
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
+  import { reporter } from '$lib/tour/reporting'
   import { footingOf } from '$lib/tour/footing'
   import {
     enterDeck,
     enterRoom,
     footstep,
     listenFrom,
+    lookFrom,
     setStepsAuraQuiet,
     setStepsMuffled,
     startSteps,
@@ -1183,19 +1185,13 @@
       let pitch = 0
       let currentTierId = ''
 
-      /** How far the visitor has to move or turn before the HUD is told. */
-      const REPORT_STEP = 0.25
-      const REPORT_TURN = 0.02
-      let reported: Vec2 = [0, 0]
-      let reportedYaw = 0
-      /** The shorter way round from `b` to `a`, so ±π never reads as a full turn. */
-      const angleGap = (a: number, b: number) =>
-        ((((a - b) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+      /** How rarely the loop tells the page and the ear; see `$lib/tour/reporting`. */
+      const worth = reporter()
 
       /** Mirrors the visitor out at once, for a step the thresholds would miss. */
       function report() {
-        reported = pointer
-        reportedYaw = yaw
+        worth.seen(pointer, yaw, pitch)
+        lookFrom(yaw, pitch)
         position = pointer
         heading = yaw
       }
@@ -4578,25 +4574,19 @@
             (standing ? wayOutOfInterior(ship.links, plan.tier) : null))
           : null
         if (link?.to !== untrack(() => availableLink)?.to) availableLink = link
-        // `position` is a fresh array every frame, so assigning it unguarded
-        // invalidates whatever reads it — the minimap, which redraws a hull, a
-        // few dozen dotted paths and its legends, on the thread that has to get
-        // the next frame out. A quarter of a metre and a degree or so is below
-        // what the minimap can show anyway, and takes it from 60 Hz to a walking
-        // pace of about eight.
-        if (Math.hypot(pointer[0] - reported[0], pointer[1] - reported[1]) >= REPORT_STEP) {
-          reported = pointer
-          position = pointer
-          // The reverberation belongs to the room, but the first reflection is a
-          // distance: crossing a hall, the near wall goes from arm's length to
-          // fifty metres, and the ear hears the room open around it. Moved on the
-          // same quarter-metre threshold the minimap is, not every frame.
-          listenFrom(pointer, yaw, standing)
-        }
-        if (Math.abs(angleGap(yaw, reportedYaw)) >= REPORT_TURN) {
-          reportedYaw = yaw
-          heading = yaw
-        }
+        const stepped = worth.stepped(pointer)
+        const turned = worth.turned(yaw)
+        const tilted = worth.tilted(pitch)
+        if (stepped) position = pointer
+        if (turned) heading = yaw
+        // The reverberation belongs to the room, but the first reflection is a
+        // distance: crossing a hall, the near wall goes from arm's length to
+        // fifty metres, and the ear hears the room open around it. That much is
+        // walked geometry and waits for the quarter-metre threshold; turning the
+        // head costs six audio parameters and gets its own, or a visitor could
+        // turn on the spot and hear the ship stay where it was.
+        if (stepped) listenFrom({ at: pointer, heading: yaw, pitch, space: standing })
+        else if (turned || tilted) lookFrom(yaw, pitch)
 
         // Setting foot in a room is the event the hideout doors and the paper
         // dolls both wait on. Walking about inside one is not.

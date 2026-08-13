@@ -1,7 +1,7 @@
-import { HULL_FUNDAMENTAL, hullNoise, hullRumble } from '$lib/tour/atmosphere'
-
+import type { Facing } from '../ears'
 import { sharedAudioContext } from '../context'
 import { outputBus } from '../output'
+import { buildEnvironment, type Environment } from './environment'
 
 /**
  * The walk's graph, and the state that has to survive it.
@@ -15,31 +15,6 @@ import { outputBus } from '../output'
 
 /** How long a change of room takes to be heard, in seconds. */
 export const CROSSFADE = 0.4
-
-/**
- * What the loudest deck of the ship mixes the hull at.
- *
- * Under the footsteps by design: at Tier 5 the rumble is the floor of the mix and
- * a boot on the plate still lands on top of it. `hullRumble` gives the fraction of
- * this each elevation gets, from 1 in the hold to 0,12 in the King's rooms.
- */
-export const HULL_GAIN = 0.16
-
-/**
- * Seconds of pink noise in the loop.
- *
- * Long enough that the ear cannot find the period — under two seconds a noise
- * loop is heard as a texture repeating — and short enough that the buffer is a few
- * hundred kilobytes rather than a few megabytes. `hullNoise` folds its ends
- * together, so the length is a question of period and not of the seam.
- */
-export const HULL_LOOP = 4
-
-/** The deck the damping starts at, before the walk says where the visitor is. */
-export const HULL_DECK_DEFAULT = hullRumble(0)
-
-/** How long the hull takes to change when the visitor changes deck, in seconds. */
-export const HULL_SETTLE = 2.5
 
 type Room = {
   convolver: ConvolverNode
@@ -64,10 +39,8 @@ export type Graph = {
   current: 0 | 1
   /** A second of noise, made once and re-read by every step. */
   grit: AudioBuffer
-  /** How loud the machinery is where the visitor is standing. */
-  hull: GainNode
-  /** How much of it the decks between here and the engines let through. */
-  hullDamp: BiquadFilterNode
+  /** The machinery and the water: continuous, placed, and not made in a room. */
+  env: Environment
 }
 
 let graph: Graph | null = null
@@ -77,6 +50,10 @@ let auraQuiet = false
 let roomKey = ''
 /** The deck last handed to `enterDeck`, so a graph built later still knows it. */
 let deckElevation = 0
+/** And the way the visitor was facing, for the same reason and a sharper one:
+ * they can turn to face the stern, then switch the walk's sound on, and the
+ * engines would come up dead ahead if nobody had kept this. */
+let facing: Facing = { heading: 0, pitch: 0 }
 
 /** The live graph, or null while the walk is silent. */
 export const currentGraph = () => graph
@@ -96,6 +73,12 @@ export const currentDeckElevation = () => deckElevation
 
 export function setCurrentDeckElevation(elevation: number) {
   deckElevation = elevation
+}
+
+export const currentFacing = () => facing
+
+export function setCurrentFacing(next: Facing) {
+  facing = next
 }
 
 /** Whether hearing is sealed, which a graph built later still has to be told. */
@@ -156,58 +139,11 @@ export function buildGraph(): Graph {
   const channel = grit.getChannelData(0)
   for (let i = 0; i < channel.length; i++) channel[i] = Math.random() * 2 - 1
 
-  /**
-   * The hull: the engines, heard through however many decks are between.
-   *
-   * Two voices into one gain. The sine at `HULL_FUNDAMENTAL` is the machinery
-   * itself — a single very low note, more felt than heard, and the thing that
-   * makes a pair of headphones say "ship" — and the pink bed around it is
-   * everything the note drives: plate, ducting, the four thousand rooms it is
-   * transmitted through. Both are shaped by one lowpass, because what changes
-   * with elevation is not the engine but how much of it survives the steel.
-   *
-   * Outside the convolvers on purpose. The reverberation is what a *room* does to
-   * a sound made in it; the rumble is not made in the room, it arrives through
-   * its walls, and running it through the hold's four-second tail would smear a
-   * continuous noise into a continuous noise at more cost. It goes through
-   * `muffle`, so sealing hearing seals the ship too.
-   *
-   * Started silent: the level is set the moment the walk knows which deck the
-   * visitor is standing on. See `enterDeck`.
-   */
-  const hullDamp = context.createBiquadFilter()
-  hullDamp.type = 'lowpass'
-  hullDamp.frequency.value = HULL_DECK_DEFAULT.cutoff
-  hullDamp.Q.value = 0.7
-
-  const hull = context.createGain()
-  hull.gain.value = 0
-  hullDamp.connect(hull)
-  hull.connect(muffle)
-
-  const bed = context.createBufferSource()
-  const pink = context.createBuffer(
-    1,
-    Math.floor(HULL_LOOP * context.sampleRate),
-    context.sampleRate,
-  )
-  pink.copyToChannel(hullNoise(HULL_LOOP, context.sampleRate), 0)
-  bed.buffer = pink
-  bed.loop = true
-  const bedLevel = context.createGain()
-  bedLevel.gain.value = 0.6
-  bed.connect(bedLevel)
-  bedLevel.connect(hullDamp)
-  bed.start()
-
-  const engine = context.createOscillator()
-  engine.type = 'sine'
-  engine.frequency.value = HULL_FUNDAMENTAL
-  const engineLevel = context.createGain()
-  engineLevel.gain.value = 0.5
-  engine.connect(engineLevel)
-  engineLevel.connect(hullDamp)
-  engine.start()
+  // The machinery and the sea, both silent until the walk says which deck this
+  // is. They hang off `muffle` like everything else, so sealed hearing takes
+  // them too, and they are the one part of the graph that is placed in three
+  // dimensions rather than mixed flat. See `./environment`.
+  const env = buildEnvironment(context, muffle)
 
   return {
     context,
@@ -220,8 +156,7 @@ export function buildGraph(): Graph {
     rooms: [makeRoom(), makeRoom()],
     current: 0,
     grit,
-    hull,
-    hullDamp,
+    env,
   }
 }
 

@@ -55,6 +55,7 @@ export interface PostChain {
   gyoFilter: PostPass | null
   depthOfField: PostPass | null
   motionBlur: MotionBlurPass | null
+  ssr: any | null
 }
 
 export interface PostChainBuild {
@@ -63,6 +64,8 @@ export interface PostChainBuild {
   quality: QualityProfile
   /** The half-float target, on the palier that has one. Carries the depth. */
   renderTarget?: Three.WebGLRenderTarget
+  renderer: Three.WebGLRenderer
+  scene: Three.Scene
 }
 
 /**
@@ -136,6 +139,49 @@ async function addFrameEffects(
     composer.addPass(refraction)
   }
 
+  let ssr: any | null = null
+  if (quality.ssr) {
+    const { SSRPass } = await import('three/examples/jsm/postprocessing/SSRPass.js')
+    
+    const selects: Three.Mesh[] = []
+    build.scene.traverse((child) => {
+      if ((child as Three.Mesh).isMesh) {
+        const mesh = child as Three.Mesh
+        if (mesh.material) {
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+          for (const mat of materials) {
+            const standardMat = mat as Three.MeshStandardMaterial
+            if (
+              (standardMat.metalness !== undefined && standardMat.metalness > 0.1) ||
+              (standardMat.roughness !== undefined && standardMat.roughness < 0.6)
+            ) {
+              selects.push(mesh)
+              break
+            }
+          }
+        }
+      }
+    })
+
+    const size = build.renderer.getSize(new build.THREE.Vector2())
+    const ssrPass = new SSRPass({
+      renderer: build.renderer,
+      scene: build.scene,
+      camera: build.camera,
+      width: size.width,
+      height: size.height,
+      selects: selects.length > 0 ? selects : null,
+    })
+
+    // Tweak SSR visuals
+    ssrPass.thickness = 0.015
+    ssrPass.maxDistance = 10
+    ssrPass.opacity = 0.8
+
+    ssr = ssrPass
+    composer.addPass(ssrPass)
+  }
+
   let depthOfField: PostPass | null = null
   if (quality.dof && build.renderTarget?.depthTexture) {
     depthOfField = await createDepthOfFieldPass({
@@ -191,7 +237,7 @@ async function addFrameEffects(
     composer.addPass(new SMAAPass())
   }
 
-  return { refraction, grade, gyoFilter, depthOfField, motionBlur }
+  return { refraction, grade, gyoFilter, depthOfField, motionBlur, ssr }
 }
 
 /** The whole chain, in order, on a composer that already has its `RenderPass`. */

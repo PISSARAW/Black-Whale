@@ -57,6 +57,10 @@ export interface SceneRuntime {
    * The Motion Blur pass, updated with camera transforms.
    */
   motionBlur: any | null
+  /**
+   * Screen Space Reflections pass.
+   */
+  ssr: any | null
 }
 
 /** What the driver says, before the visitor is asked. */
@@ -146,7 +150,7 @@ export async function createSceneRuntime(
 
   // Everything after the room itself, in the order a picture is made — see
   // `$lib/tour/postChain`, which owns the argument for each place in it.
-  const chain = await assemblePostChain(composer, { THREE, camera, quality, renderTarget })
+  const chain = await assemblePostChain(composer, { THREE, camera, quality, renderTarget, renderer, scene })
 
   return { renderer, scene, fog, camera, composer, renderTarget, quality, ...chain }
 }

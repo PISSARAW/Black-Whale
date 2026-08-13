@@ -128,6 +128,12 @@ export interface QualityProfile {
    * velocity via reprojection.
    */
   motionBlur: boolean
+  /**
+   * Screen Space Reflections (SSR).
+   *
+   * `high` only, because it requires raymarching and extra normal buffers.
+   */
+  ssr: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -149,6 +155,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     occlusion: false,
     dof: false,
     motionBlur: false,
+    ssr: false,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -164,6 +171,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     occlusion: true,
     dof: true,
     motionBlur: true,
+    ssr: true,
     dustScale: 1,
   },
 }

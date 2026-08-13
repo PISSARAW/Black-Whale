@@ -833,6 +833,7 @@
         refraction,
         grade,
         gyoFilter,
+        depthOfField,
       } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -3199,6 +3200,7 @@
       const picker = new THREE.Raycaster()
       /** The middle of the screen, where a held pointer is always looking. */
       const RETICLE = new THREE.Vector2(0, 0)
+      let focusDistance = 10
       /** And where a free cursor is, in clip space, for a page that has one. */
       const cursor = new THREE.Vector2()
 
@@ -4446,6 +4448,19 @@
         // Cyclotron's wind-up is the whole of its stated cost, and a cost the
         // ship does not show is a key that appears to do nothing.
         hatsuEffects.syncWinding({ turns: world.windup, at: pointer, eye, yaw, delta })
+
+        if (depthOfField) {
+          picker.setFromCamera(RETICLE, camera)
+          const intersectables: import('three').Object3D[] = []
+          if (visible) intersectables.push(visible.root)
+          for (const s of Object.values(solids)) {
+            if (s) intersectables.push(s.mesh)
+          }
+          const hits = picker.intersectObjects(intersectables, true)
+          const targetDistance = hits.length > 0 ? hits[0].distance : 100.0
+          focusDistance += (targetDistance - focusDistance) * Math.min(1, delta * 5)
+          depthOfField.uniforms.focus.value = focusDistance
+        }
 
         // One pace, one footstep, on the same counter the head is dipping to — so
         // the sound lands with the foot at every speed and never drifts off it.

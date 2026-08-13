@@ -49,6 +49,10 @@ export interface SceneRuntime {
    * The Gyo filter pass, toggled on/off to see Nen elements.
    */
   gyoFilter: PostPass | null
+  /**
+   * The Depth of Field pass, updated with autofocus distance.
+   */
+  depthOfField: PostPass | null
 }
 
 /** What the driver says, before the visitor is asked. */

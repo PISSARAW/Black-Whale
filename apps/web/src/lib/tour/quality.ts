@@ -113,6 +113,14 @@ export interface QualityProfile {
    * would not be an expensive picture, it would be no picture at all.
    */
   occlusion: boolean
+  /**
+   * Depth of Field (Bokeh).
+   *
+   * `high` only, because it requires the depth buffer to calculate the circle
+   * of confusion for each pixel. It uses a modified BokehShader that reads
+   * our existing linear depth texture.
+   */
+  dof: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -132,6 +140,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     sheen: true,
     // No depth buffer on this palier to read: see `occlusion` above.
     occlusion: false,
+    dof: false,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -145,6 +154,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     lens: true,
     sheen: true,
     occlusion: true,
+    dof: true,
     dustScale: 1,
   },
 }

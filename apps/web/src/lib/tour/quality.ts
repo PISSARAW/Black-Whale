@@ -121,6 +121,13 @@ export interface QualityProfile {
    * our existing linear depth texture.
    */
   dof: boolean
+  /**
+   * Camera-based Motion Blur.
+   *
+   * `high` only, because it relies on the depth buffer to calculate per-pixel
+   * velocity via reprojection.
+   */
+  motionBlur: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -141,6 +148,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     // No depth buffer on this palier to read: see `occlusion` above.
     occlusion: false,
     dof: false,
+    motionBlur: false,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -155,6 +163,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     sheen: true,
     occlusion: true,
     dof: true,
+    motionBlur: true,
     dustScale: 1,
   },
 }

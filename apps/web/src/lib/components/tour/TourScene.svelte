@@ -834,6 +834,7 @@
         grade,
         gyoFilter,
         depthOfField,
+        motionBlur,
       } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -4460,6 +4461,10 @@
           const targetDistance = hits.length > 0 ? hits[0].distance : 100.0
           focusDistance += (targetDistance - focusDistance) * Math.min(1, delta * 5)
           depthOfField.uniforms.focus.value = focusDistance
+        }
+
+        if (motionBlur) {
+          motionBlur.update(camera, delta)
         }
 
         // One pace, one footstep, on the same counter the head is dipping to — so

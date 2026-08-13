@@ -53,6 +53,10 @@ export interface SceneRuntime {
    * The Depth of Field pass, updated with autofocus distance.
    */
   depthOfField: PostPass | null
+  /**
+   * The Motion Blur pass, updated with camera transforms.
+   */
+  motionBlur: any | null
 }
 
 /** What the driver says, before the visitor is asked. */

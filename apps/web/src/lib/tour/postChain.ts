@@ -31,6 +31,8 @@ import { createRefractionPass } from './auraRefraction'
 import { createShaftPass } from './godRays'
 import { createOcclusionPass } from './ambientOcclusion'
 import { createDepthOfFieldPass } from './depthOfField'
+import { createMotionBlurPass } from './motionBlur'
+import type { MotionBlurPass } from './motionBlur'
 import { createOutputPass, wantsColourManagement } from './outputPass'
 import type { PostPass } from './postTypes'
 import type { QualityProfile } from './quality'
@@ -52,6 +54,7 @@ export interface PostChain {
   grade: PostPass | null
   gyoFilter: PostPass | null
   depthOfField: PostPass | null
+  motionBlur: MotionBlurPass | null
 }
 
 export interface PostChainBuild {
@@ -142,6 +145,15 @@ async function addFrameEffects(
     composer.addPass(depthOfField)
   }
 
+  let motionBlur: MotionBlurPass | null = null
+  if (quality.motionBlur && build.renderTarget?.depthTexture) {
+    motionBlur = await createMotionBlurPass({
+      camera: build.camera,
+      depth: build.renderTarget.depthTexture,
+    })
+    composer.addPass(motionBlur)
+  }
+
   // The lens artefacts ride inside the grade rather than in a pass of their
   // own — see `LENS_DEFAULTS` — so a palier without the taps still gets the
   // vignette and the curve, at exactly the cost it had before.
@@ -179,7 +191,7 @@ async function addFrameEffects(
     composer.addPass(new SMAAPass())
   }
 
-  return { refraction, grade, gyoFilter, depthOfField }
+  return { refraction, grade, gyoFilter, depthOfField, motionBlur }
 }
 
 /** The whole chain, in order, on a composer that already has its `RenderPass`. */

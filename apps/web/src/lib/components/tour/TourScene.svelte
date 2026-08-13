@@ -835,7 +835,6 @@
         gyoFilter,
         depthOfField,
         motionBlur,
-        ssr,
         lensDirt,
       } = runtime
       const portals = new PortalRenderer(THREE, {

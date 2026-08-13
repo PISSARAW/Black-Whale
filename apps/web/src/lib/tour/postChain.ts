@@ -129,6 +129,72 @@ async function addRoomEffects(
   return { shafts, lensDirt }
 }
 
+function selectSSRMeshes(scene: Three.Scene): Three.Mesh[] {
+  const selects: Three.Mesh[] = []
+  scene.traverse((child) => {
+    if ((child as Three.Mesh).isMesh) {
+      const mesh = child as Three.Mesh
+      if (mesh.material) {
+        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+        for (const mat of materials) {
+          const standardMat = mat as Three.MeshStandardMaterial
+          if (
+            (standardMat.metalness !== undefined && standardMat.metalness > 0.1) ||
+            (standardMat.roughness !== undefined && standardMat.roughness < 0.6)
+          ) {
+            selects.push(mesh)
+            break
+          }
+        }
+      }
+    }
+  })
+  return selects
+}
+
+async function createSSRPass(build: PostChainBuild): Promise<any> {
+  const { SSRPass } = await import('three/examples/jsm/postprocessing/SSRPass.js')
+  const selects = selectSSRMeshes(build.scene)
+  const size = build.renderer.getSize(new build.THREE.Vector2())
+  const ssrPass = new SSRPass({
+    renderer: build.renderer,
+    scene: build.scene,
+    camera: build.camera,
+    width: size.width,
+    height: size.height,
+    selects: selects.length > 0 ? selects : null,
+  })
+  ssrPass.thickness = 0.015
+  ssrPass.maxDistance = 10
+  ssrPass.opacity = 0.8
+  return ssrPass
+}
+
+async function addOpticalEffects(
+  composer: PassChain,
+  build: PostChainBuild,
+): Promise<{ depthOfField: PostPass | null; motionBlur: MotionBlurPass | null }> {
+  let depthOfField: PostPass | null = null
+  if (build.quality.dof && build.renderTarget?.depthTexture) {
+    depthOfField = await createDepthOfFieldPass({
+      camera: build.camera,
+      depth: build.renderTarget.depthTexture,
+    })
+    composer.addPass(depthOfField)
+  }
+
+  let motionBlur: MotionBlurPass | null = null
+  if (build.quality.motionBlur && build.renderTarget?.depthTexture) {
+    motionBlur = await createMotionBlurPass({
+      camera: build.camera,
+      depth: build.renderTarget.depthTexture,
+    })
+    composer.addPass(motionBlur)
+  }
+
+  return { depthOfField, motionBlur }
+}
+
 /**
  * What happens to the frame once the room in it is settled.
  *
@@ -155,64 +221,11 @@ async function addFrameEffects(
 
   let ssr: any | null = null
   if (quality.ssr) {
-    const { SSRPass } = await import('three/examples/jsm/postprocessing/SSRPass.js')
-    
-    const selects: Three.Mesh[] = []
-    build.scene.traverse((child) => {
-      if ((child as Three.Mesh).isMesh) {
-        const mesh = child as Three.Mesh
-        if (mesh.material) {
-          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
-          for (const mat of materials) {
-            const standardMat = mat as Three.MeshStandardMaterial
-            if (
-              (standardMat.metalness !== undefined && standardMat.metalness > 0.1) ||
-              (standardMat.roughness !== undefined && standardMat.roughness < 0.6)
-            ) {
-              selects.push(mesh)
-              break
-            }
-          }
-        }
-      }
-    })
-
-    const size = build.renderer.getSize(new build.THREE.Vector2())
-    const ssrPass = new SSRPass({
-      renderer: build.renderer,
-      scene: build.scene,
-      camera: build.camera,
-      width: size.width,
-      height: size.height,
-      selects: selects.length > 0 ? selects : null,
-    })
-
-    // Tweak SSR visuals
-    ssrPass.thickness = 0.015
-    ssrPass.maxDistance = 10
-    ssrPass.opacity = 0.8
-
-    ssr = ssrPass
-    composer.addPass(ssrPass)
+    ssr = await createSSRPass(build)
+    composer.addPass(ssr)
   }
 
-  let depthOfField: PostPass | null = null
-  if (quality.dof && build.renderTarget?.depthTexture) {
-    depthOfField = await createDepthOfFieldPass({
-      camera: build.camera,
-      depth: build.renderTarget.depthTexture,
-    })
-    composer.addPass(depthOfField)
-  }
-
-  let motionBlur: MotionBlurPass | null = null
-  if (quality.motionBlur && build.renderTarget?.depthTexture) {
-    motionBlur = await createMotionBlurPass({
-      camera: build.camera,
-      depth: build.renderTarget.depthTexture,
-    })
-    composer.addPass(motionBlur)
-  }
+  const { depthOfField, motionBlur } = await addOpticalEffects(composer, build)
 
   // The lens artefacts ride inside the grade rather than in a pass of their
   // own — see `LENS_DEFAULTS` — so a palier without the taps still gets the

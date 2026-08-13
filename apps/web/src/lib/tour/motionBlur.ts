@@ -90,7 +90,7 @@ export async function createMotionBlurPass(
   options.camera.updateMatrixWorld()
   prevViewProj.multiplyMatrices(options.camera.projectionMatrix, options.camera.matrixWorldInverse)
 
-  pass.update = (camera: THREE.PerspectiveCamera, delta: number) => {
+  pass.update = (camera: THREE.PerspectiveCamera, _delta: number) => {
     // Current frame's ViewProjection matrix
     currentViewProj.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
     
@@ -101,7 +101,6 @@ export async function createMotionBlurPass(
     // Scale velocity by delta to ensure consistent blur regardless of framerate
     // Assuming 60fps as baseline (1/60 ~ 0.016s). 
     // We clamp delta to avoid huge blur on lag spikes.
-    const safeDelta = Math.min(delta, 0.1)
     pass.uniforms.velocityScale.value = 1.0
 
     // Store current matrix as previous for the next frame

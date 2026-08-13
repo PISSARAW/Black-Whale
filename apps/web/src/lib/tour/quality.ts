@@ -32,7 +32,16 @@ export type QualitySetting = 'auto' | QualityTier
  * misses, and an integrated one wrongly put in `high` drops the walk to eight
  * frames a second, which is the walk not working.
  */
-const MODEST_GPUS = ['mali', 'adreno', 'intel', 'hd graphics', 'uhd graphics', 'powervr']
+const MODEST_GPUS = [
+  'mali',
+  'adreno',
+  'intel',
+  'hd graphics',
+  'uhd graphics',
+  'powervr',
+  'swiftshader',
+  'llvmpipe',
+]
 
 /**
  * The palier this machine gets before the visitor says otherwise.
@@ -189,9 +198,11 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
 }
 
 /** The palier and pointer resolved to the one truth the post chain reads. */
-export function qualityProfile(options: {
-  tier: QualityTier
-  coarse: boolean
-}): QualityProfile {
-  return { tier: options.tier, smaa: !options.coarse, taa: !options.coarse && options.tier === 'high', ...PROFILES[options.tier] }
+export function qualityProfile(options: { tier: QualityTier; coarse: boolean }): QualityProfile {
+  return {
+    tier: options.tier,
+    smaa: !options.coarse,
+    taa: !options.coarse && options.tier === 'high',
+    ...PROFILES[options.tier],
+  }
 }

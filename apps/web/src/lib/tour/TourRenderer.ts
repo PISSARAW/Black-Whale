@@ -12,12 +12,15 @@ import {
   type QualitySetting,
 } from './quality'
 
+import type { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import type { TAARenderPass } from 'three/examples/jsm/postprocessing/TAARenderPass.js'
+
 export interface SceneRuntime {
   renderer: Three.WebGLRenderer
   scene: Three.Scene
   fog: Three.FogExp2
   camera: Three.PerspectiveCamera
-  composer: any // Typed as any to avoid static import of EffectComposer
+  composer: EffectComposer
   renderTarget?: Three.WebGLRenderTarget
   /** What this machine is spending, and what the visitor asked for. */
   quality: QualityProfile
@@ -56,19 +59,19 @@ export interface SceneRuntime {
   /**
    * The Motion Blur pass, updated with camera transforms.
    */
-  motionBlur: any | null
+  motionBlur: PostPass | null
   /**
    * Screen Space Reflections pass.
    */
-  ssr: any | null
+  ssr: PostPass | null
   /**
    * Lens Dirt pass.
    */
-  lensDirt: any | null
+  lensDirt: PostPass | null
   /**
    * Temporal Anti-Aliasing pass.
    */
-  taa: any | null
+  taa: TAARenderPass | null
 }
 
 /** What the driver says, before the visitor is asked. */
@@ -148,13 +151,13 @@ export async function createSceneRuntime(
   reportQualityTier(quality.tier)
 
   const { EffectComposer } = await import('three/examples/jsm/postprocessing/EffectComposer.js')
-  
+
   let renderTarget: Three.WebGLRenderTarget | undefined
   if (quality.tier === 'high') renderTarget = createHighTierTarget(THREE, renderer)
 
   const composer = new EffectComposer(renderer, renderTarget)
-  
-  let taa: any = null
+
+  let taa: TAARenderPass | null = null
   if (quality.taa) {
     const { TAARenderPass } = await import('three/examples/jsm/postprocessing/TAARenderPass.js')
     taa = new TAARenderPass(scene, camera)
@@ -169,7 +172,14 @@ export async function createSceneRuntime(
 
   // Everything after the room itself, in the order a picture is made — see
   // `$lib/tour/postChain`, which owns the argument for each place in it.
-  const chain = await assemblePostChain(composer, { THREE, camera, quality, renderTarget, renderer, scene })
+  const chain = await assemblePostChain(composer, {
+    THREE,
+    camera,
+    quality,
+    renderTarget,
+    renderer,
+    scene,
+  })
 
   return { renderer, scene, fog, camera, composer, renderTarget, quality, taa, ...chain }
 }

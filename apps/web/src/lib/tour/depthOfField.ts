@@ -13,9 +13,7 @@ export interface DepthOfFieldPassOptions {
   depth: Three.Texture
 }
 
-export async function createDepthOfFieldPass(
-  options: DepthOfFieldPassOptions,
-): Promise<PostPass> {
+export async function createDepthOfFieldPass(options: DepthOfFieldPassOptions): Promise<PostPass> {
   const { camera, depth } = options
 
   const { ShaderPass } = await import('three/examples/jsm/postprocessing/ShaderPass.js')

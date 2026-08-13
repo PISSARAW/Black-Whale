@@ -4712,7 +4712,8 @@
           // 1.5 intensity for lower decks, 0.0 for clean upper decks
           const targetIntensity = isLowerDeck ? 1.5 : 0.0
           // Smoothly interpolate the intensity to avoid hard pop when taking the elevator/stairs
-          lensDirt.uniforms.dirtIntensity.value += (targetIntensity - lensDirt.uniforms.dirtIntensity.value) * delta * 2.0
+          lensDirt.uniforms.dirtIntensity.value +=
+            (targetIntensity - lensDirt.uniforms.dirtIntensity.value) * delta * 2.0
         }
 
         const { width, height } = renderer.getSize(size)
@@ -4721,7 +4722,7 @@
         // The far ends of the tunnel are drawn into their panes first, from
         // where the visitor's head would be if it were standing at the other one.
         renderPortals()
-        
+
         if (runtime.taa) {
           const moved =
             Math.abs(pointer[0] - previousTaaPointer[0]) > 0.001 ||
@@ -4730,7 +4731,7 @@
             Math.abs(pitch - previousTaaPitch) > 0.001
 
           runtime.taa.accumulate = !moved
-          
+
           previousTaaPointer[0] = pointer[0]
           previousTaaPointer[1] = pointer[1]
           previousTaaYaw = yaw

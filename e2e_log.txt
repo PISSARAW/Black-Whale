@@ -1,0 +1,636 @@
+End to end	Run end-to-end tests	﻿2026-08-13T13:30:48.8381915Z ##[group]Run pnpm test:e2e --project=chromium
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8382241Z ^[[36;1mpnpm test:e2e --project=chromium^[[0m
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8422449Z shell: /usr/bin/bash -e {0}
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8422675Z env:
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8422850Z   POSTGRES_USER: bw_user
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8423053Z   POSTGRES_PASSWORD: bw_password
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8423281Z   POSTGRES_DB: black_whale_test
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8423752Z   DATABASE_URL: ***localhost:5432/black_whale_test
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8424031Z   ADMIN_PASSWORD: e2e-password-not-a-secret
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8424340Z   SESSION_SECRET: e2e-session-secret-at-least-32-characters-long
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8424666Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+End to end	Run end-to-end tests	2026-08-13T13:30:48.8424908Z ##[endgroup]
+End to end	Run end-to-end tests	2026-08-13T13:30:49.1356834Z 
+End to end	Run end-to-end tests	2026-08-13T13:30:49.1357737Z > black-whale@0.0.1 test:e2e /home/runner/work/Black-Whale/Black-Whale
+End to end	Run end-to-end tests	2026-08-13T13:30:49.1358219Z > playwright test "--project=chromium"
+End to end	Run end-to-end tests	2026-08-13T13:30:49.1358573Z 
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1335572Z [WebServer] ▲ [WARNING] Cannot find base config file "./.svelte-kit/tsconfig.json" [tsconfig.json]
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1336334Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1336591Z [WebServer]     tsconfig.json:2:13:
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1337001Z [WebServer]       2 │   "extends": "./.svelte-kit/tsconfig.json",
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1337435Z [WebServer]         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+End to end	Run end-to-end tests	2026-08-13T13:30:50.1337693Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2067905Z [WebServer] 1:30:51 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:68:37 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2069170Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2069845Z [WebServer] 66:   const DT = 1 / 60
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2070380Z [WebServer] 67:   const ship = theShip()
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2070989Z [WebServer] 68:   const terrain = buildCombatTerrain(data.terrainId)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2071608Z [WebServer]                                              ^
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2072222Z [WebServer] 69:   let plan = $state(ship.plans.get(terrain.tierId)!)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2072861Z [WebServer] 70:   const ground = floorOf(terrain.space, plan.tier)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2074190Z [WebServer] 1:30:51 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:70:40 This reference only captures the initial value of `plan`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2075243Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2075670Z [WebServer] 68:   const terrain = buildCombatTerrain(data.terrainId)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2076078Z [WebServer] 69:   let plan = $state(ship.plans.get(terrain.tierId)!)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2076469Z [WebServer] 70:   const ground = floorOf(terrain.space, plan.tier)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2077227Z [WebServer]                                                 ^
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2077482Z [WebServer] 71: 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2077734Z [WebServer] 72:   let game = $state(freshGame())
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2078808Z [WebServer] 1:30:51 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:136:26 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2079971Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2080513Z [WebServer] 134:   let lesson = $state(0)
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2080887Z [WebServer] 135: 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2081321Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2081841Z [WebServer]                                    ^
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2082407Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2083053Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2084449Z [WebServer] 1:30:51 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:137:28 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2085964Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2086417Z [WebServer] 135: 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2086850Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2087456Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2088003Z [WebServer]                                      ^
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2088739Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2089214Z [WebServer] 139: 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2090233Z [WebServer] 1:30:51 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:138:29 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2090926Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2091286Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2091651Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2092025Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2092390Z [WebServer]                                       ^
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2092632Z [WebServer] 139: 
+End to end	Run end-to-end tests	2026-08-13T13:30:51.2092988Z [WebServer] 140:   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1836568Z [WebServer] 1:30:52 PM [vite-plugin-svelte] src/lib/components/investigation/InvestigationCaseView.svelte:38:24 This reference only captures the initial value of `caseId`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1838515Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1839526Z [WebServer] 36:   const ship = theShip()
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1840067Z [WebServer] 37:   const modeNen = new ModeNenState()
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1840546Z [WebServer] 38:   const initialCaseId = caseId
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1841039Z [WebServer]                                   ^
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1841640Z [WebServer] 39:   const initialDefinition = caseById(initialCaseId, 'fr')!
+End to end	Run end-to-end tests	2026-08-13T13:30:52.1842376Z [WebServer] 40:   const definition = $derived(caseById(caseId, $locale)!)
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1159279Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:19:27 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1160983Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1162082Z [WebServer] 17:   let { data }: { data: PageData } = $props()
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1162962Z [WebServer] 18:   let title = $state($t.reconstruction.v3.defaultTitle)
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1163853Z [WebServer] 19:   let forkEventId = $state(data.events.at(-1)?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1164579Z [WebServer]                                    ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1168401Z [WebServer] 20:   let mode = $state<'strict-canon' | 'rule-compatible'>('rule-compatible')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1169030Z [WebServer] 21:   let seed = $state(3)
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1169950Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:23:23 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1170684Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1171000Z [WebServer] 21:   let seed = $state(3)
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1171424Z [WebServer] 22:   let kind = $state<ReconstructionDecision['kind']>('MOVE_ENTITY')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1171841Z [WebServer] 23:   let actorId = $state(data.characters[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1172161Z [WebServer]                                ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1172494Z [WebServer] 24:   let targetId = $state(data.locations[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1172808Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1173577Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:24:24 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1174460Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1174915Z [WebServer] 22:   let kind = $state<ReconstructionDecision['kind']>('MOVE_ENTITY')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1175344Z [WebServer] 23:   let actorId = $state(data.characters[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1175725Z [WebServer] 24:   let targetId = $state(data.locations[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1176042Z [WebServer]                                 ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1176358Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1176660Z [WebServer] 26:   let reliability = $state('trusted')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1177473Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:27:25 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1178170Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1178652Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1178943Z [WebServer] 26:   let reliability = $state('trusted')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1179299Z [WebServer] 27:   let abilityId = $state(data.abilities[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1179623Z [WebServer]                                  ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1179923Z [WebServer] 28:   let actionId = $state('activate')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1180214Z [WebServer] 29:   let hatsuActions = $state<
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1181017Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/lib/components/arena/ReplayPanel.svelte:13:20 This reference only captures the initial value of `replay`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1181758Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1182025Z [WebServer] 11: 
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1182314Z [WebServer] 12:   let { replay, locale }: Props = $props()
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1182640Z [WebServer] 13:   let tick = $state(replay.ticks)
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1182925Z [WebServer]                               ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1183278Z [WebServer] 14:   let perspective = $state<ReplayPerspective>('player')
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1183769Z [WebServer] 15:   let frame = $derived(projectFrame(stateAtTick(replay, tick), perspective))
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1184453Z [WebServer] 1:30:55 PM [vite-plugin-svelte] src/lib/components/hunt/HuntActions.svelte:69:2 Unused CSS selector ".hunt-action.hatsu"
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1184977Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1185273Z [WebServer] 67:     outline-offset: 2px;
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1185509Z [WebServer] 68:   }
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1185725Z [WebServer] 69:   .hunt-action.hatsu {
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1185971Z [WebServer]                         ^
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1186260Z [WebServer] 70:     border-color: rgb(196 181 253 / 0.4);
+End to end	Run end-to-end tests	2026-08-13T13:30:55.1186660Z [WebServer] 71:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:00.6289169Z [WebServer] "default" is imported from external module "panzoom" but never used in "src/lib/components/map/MapContainer.svelte".
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0934250Z [WebServer] 1:31:03 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:68:37 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0935911Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0936602Z [WebServer] 66:   const DT = 1 / 60
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0937199Z [WebServer] 67:   const ship = theShip()
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0937954Z [WebServer] 68:   const terrain = buildCombatTerrain(data.terrainId)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0939228Z [WebServer]                                              ^
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0939793Z [WebServer] 69:   let plan = $state(ship.plans.get(terrain.tierId)!)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0940402Z [WebServer] 70:   const ground = floorOf(terrain.space, plan.tier)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0941791Z [WebServer] 1:31:03 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:70:40 This reference only captures the initial value of `plan`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0943402Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0944044Z [WebServer] 68:   const terrain = buildCombatTerrain(data.terrainId)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0944716Z [WebServer] 69:   let plan = $state(ship.plans.get(terrain.tierId)!)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0945371Z [WebServer] 70:   const ground = floorOf(terrain.space, plan.tier)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0945971Z [WebServer]                                                 ^
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0946373Z [WebServer] 71: 
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0946733Z [WebServer] 72:   let game = $state(freshGame())
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0948059Z [WebServer] 1:31:03 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:136:26 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0949410Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0949834Z [WebServer] 134:   let lesson = $state(0)
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0950080Z [WebServer] 135: 
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0950350Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0950668Z [WebServer]                                    ^
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0951008Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0951397Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0952275Z [WebServer] 1:31:03 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:137:28 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0953025Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0953314Z [WebServer] 135: 
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0953568Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0953945Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0954279Z [WebServer]                                      ^
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0954633Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0954922Z [WebServer] 139: 
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0955676Z [WebServer] 1:31:03 PM [vite-plugin-svelte] src/routes/arena/+page.svelte:138:29 This reference only captures the initial value of `data`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0956474Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0956853Z [WebServer] 136:   const initialDoctrine = data.doctrine
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0957227Z [WebServer] 137:   const initialDifficulty = data.difficulty
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0957642Z [WebServer] 138:   const initialChallengeId = data.challengeId
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0957997Z [WebServer]                                       ^
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0958255Z [WebServer] 139: 
+End to end	Run end-to-end tests	2026-08-13T13:31:03.0958961Z [WebServer] 140:   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0127101Z [WebServer] 1:31:04 PM [vite-plugin-svelte] src/lib/components/investigation/InvestigationCaseView.svelte:38:24 This reference only captures the initial value of `caseId`. Did you mean to reference it inside a closure instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0128913Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0129438Z [WebServer] 36:   const ship = theShip()
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0129935Z [WebServer] 37:   const modeNen = new ModeNenState()
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0130447Z [WebServer] 38:   const initialCaseId = caseId
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0130930Z [WebServer]                                   ^
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0131611Z [WebServer] 39:   const initialDefinition = caseById(initialCaseId, 'fr')!
+End to end	Run end-to-end tests	2026-08-13T13:31:04.0132431Z [WebServer] 40:   const definition = $derived(caseById(caseId, $locale)!)
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6975127Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:19:27 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6977141Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6978052Z [WebServer] 17:   let { data }: { data: PageData } = $props()
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6994852Z [WebServer] 18:   let title = $state($t.reconstruction.v3.defaultTitle)
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6995682Z [WebServer] 19:   let forkEventId = $state(data.events.at(-1)?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6996216Z [WebServer]                                    ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6996895Z [WebServer] 20:   let mode = $state<'strict-canon' | 'rule-compatible'>('rule-compatible')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6997445Z [WebServer] 21:   let seed = $state(3)
+End to end	Run end-to-end tests	2026-08-13T13:31:05.6998874Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:23:23 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7000078Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7000555Z [WebServer] 21:   let seed = $state(3)
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7001152Z [WebServer] 22:   let kind = $state<ReconstructionDecision['kind']>('MOVE_ENTITY')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7001803Z [WebServer] 23:   let actorId = $state(data.characters[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7002345Z [WebServer]                                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7002865Z [WebServer] 24:   let targetId = $state(data.locations[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7003349Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7004625Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:24:24 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7005740Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7006400Z [WebServer] 22:   let kind = $state<ReconstructionDecision['kind']>('MOVE_ENTITY')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7007069Z [WebServer] 23:   let actorId = $state(data.characters[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7007656Z [WebServer] 24:   let targetId = $state(data.locations[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7008152Z [WebServer]                                 ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7008684Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7009117Z [WebServer] 26:   let reliability = $state('trusted')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7010338Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/routes/reconstruction/v3/+page.svelte:27:25 This reference only captures the initial value of `data`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7011446Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7011941Z [WebServer] 25:   let factId = $state('')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7012400Z [WebServer] 26:   let reliability = $state('trusted')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7012979Z [WebServer] 27:   let abilityId = $state(data.abilities[0]?.id ?? '')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7013763Z [WebServer]                                  ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7014221Z [WebServer] 28:   let actionId = $state('activate')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7014674Z [WebServer] 29:   let hatsuActions = $state<
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7015931Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/lib/components/arena/ReplayPanel.svelte:13:20 This reference only captures the initial value of `replay`. Did you mean to reference it inside a derived instead?
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7017119Z [WebServer] https://svelte.dev/e/state_referenced_locally
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7017519Z [WebServer] 11: 
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7017915Z [WebServer] 12:   let { replay, locale }: Props = $props()
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7018606Z [WebServer] 13:   let tick = $state(replay.ticks)
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7019030Z [WebServer]                               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7019584Z [WebServer] 14:   let perspective = $state<ReplayPerspective>('player')
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7020347Z [WebServer] 15:   let frame = $derived(projectFrame(stateAtTick(replay, tick), perspective))
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7021489Z [WebServer] 1:31:05 PM [vite-plugin-svelte] src/lib/components/hunt/HuntActions.svelte:69:2 Unused CSS selector ".hunt-action.hatsu"
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7022577Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7023033Z [WebServer] 67:     outline-offset: 2px;
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7023427Z [WebServer] 68:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7023788Z [WebServer] 69:   .hunt-action.hatsu {
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7024178Z [WebServer]                         ^
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7024623Z [WebServer] 70:     border-color: rgb(196 181 253 / 0.4);
+End to end	Run end-to-end tests	2026-08-13T13:31:05.7025001Z [WebServer] 71:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:11.7828691Z [WebServer] [plugin:vite:reporter] [plugin vite:reporter] 
+End to end	Run end-to-end tests	2026-08-13T13:31:11.7831860Z [WebServer] (!) /home/runner/work/Black-Whale/Black-Whale/node_modules/.pnpm/html-to-image@1.11.13/node_modules/html-to-image/es/index.js is dynamically imported by /home/runner/work/Black-Whale/Black-Whale/apps/web/src/routes/tour/+page.svelte but also statically imported by /home/runner/work/Black-Whale/Black-Whale/apps/web/src/lib/components/tour/TourPostcardModal.svelte, dynamic import will not move module into another chunk.
+End to end	Run end-to-end tests	2026-08-13T13:31:11.7834402Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:31:12.1525371Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:31:12.1549264Z [WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+End to end	Run end-to-end tests	2026-08-13T13:31:12.1579283Z [WebServer] - Using dynamic import() to code-split the application
+End to end	Run end-to-end tests	2026-08-13T13:31:12.1580892Z [WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+End to end	Run end-to-end tests	2026-08-13T13:31:12.1609446Z [WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1403145Z [WebServer] ▲ [WARNING] Cannot find base config file "./.svelte-kit/tsconfig.json" [tsconfig.json]
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1403649Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1403986Z [WebServer]     tsconfig.json:2:13:
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1404458Z [WebServer]       2 │   "extends": "./.svelte-kit/tsconfig.json",
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1404903Z [WebServer]         ╵              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+End to end	Run end-to-end tests	2026-08-13T13:31:23.1405202Z [WebServer] 
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9364163Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/+layout.svelte:60:8 Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9365028Z [WebServer] https://svelte.dev/e/slot_element_deprecated
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9365418Z [WebServer] 58:       <!-- Page Content -->
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9365852Z [WebServer] 59:       <div class="p-6 flex-1 overflow-auto bg-gray-50 text-gray-900">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9366354Z [WebServer] 60:         <slot />
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9366714Z [WebServer]                     ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9367046Z [WebServer] 61:       </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9367354Z [WebServer] 62:     </main>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9368573Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/+layout.svelte:65:2 Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9370050Z [WebServer] https://svelte.dev/e/slot_element_deprecated
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9370393Z [WebServer] 63:   </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9370604Z [WebServer] 64: {:else}
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9370796Z [WebServer] 65:   <slot />
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9371043Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9371357Z [WebServer] 66: {/if}
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9371618Z [WebServer] 67: 
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9941934Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:23:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9943316Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9944234Z [WebServer] 21:       <div class="grid grid-cols-2 gap-4">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9944835Z [WebServer] 22:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9945435Z [WebServer] 23:           <label class="block text-sm font-medium text-gray-700 mb-1">Chapter</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9946125Z [WebServer]                                                                                          ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9946981Z [WebServer] 24:           <select
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9947364Z [WebServer] 25:             name="chapterId"
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9948106Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:36:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9949256Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9949759Z [WebServer] 34:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9950113Z [WebServer] 35:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9950786Z [WebServer] 36:           <label class="block text-sm font-medium text-gray-700 mb-1">Sequence</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9951626Z [WebServer]                                                                                           ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9952145Z [WebServer] 37:           <input
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9952548Z [WebServer] 38:             type="number"
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9953523Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:49:8 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9954485Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9954947Z [WebServer] 47: 
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9955175Z [WebServer] 48:       <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9955577Z [WebServer] 49:         <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9956048Z [WebServer]                                                                                      ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9956360Z [WebServer] 50:         <input
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9956606Z [WebServer] 51:           type="text"
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9957154Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:59:8 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9957718Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9958001Z [WebServer] 57: 
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9958184Z [WebServer] 58:       <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9958729Z [WebServer] 59:         <label class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9959222Z [WebServer]                                                                                        ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9959532Z [WebServer] 60:         <textarea
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9959776Z [WebServer] 61:           name="summary"
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9960304Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:124:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9960850Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9961231Z [WebServer] 122:       <div class="grid grid-cols-2 gap-4">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9961517Z [WebServer] 123:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9961933Z [WebServer] 124:           <label class="block text-sm font-medium text-gray-700 mb-1">Character</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9962661Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9963217Z [WebServer] 125:           <select name="characterId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9963726Z [WebServer] 126:             <option value="">No consequence...</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9964324Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:133:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9964875Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9965184Z [WebServer] 131:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9965406Z [WebServer] 132:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9965820Z [WebServer] 133:           <label class="block text-sm font-medium text-gray-700 mb-1">New Location</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9966323Z [WebServer]                                                                                                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9966853Z [WebServer] 134:           <select name="locationId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9967449Z [WebServer] 135:             <option value="">Select Location...</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9968037Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:142:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9968806Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9969123Z [WebServer] 140:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9969342Z [WebServer] 141:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9969754Z [WebServer] 142:           <label class="block text-sm font-medium text-gray-700 mb-1">Precision</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9970249Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9970781Z [WebServer] 143:           <select name="precision" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9971282Z [WebServer] 144:             <option value="EXACT_ROOM">Exact Room</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9972279Z [WebServer] 1:31:23 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:151:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9973069Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9973502Z [WebServer] 149:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9973823Z [WebServer] 150:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9974428Z [WebServer] 151:           <label class="block text-sm font-medium text-gray-700 mb-1">Certainty</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9975135Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9975758Z [WebServer] 152:           <select name="certainty" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:23.9976262Z [WebServer] 153:             <option value="CONFIRMED">Confirmed</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0012279Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/login/+page.svelte:23:6 Avoid using autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0012925Z [WebServer] https://svelte.dev/e/a11y_autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0013374Z [WebServer] 21:       type="password"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0013754Z [WebServer] 22:       required
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0014099Z [WebServer] 23:       autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0014382Z [WebServer]                    ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0014662Z [WebServer] 24:       autocomplete="current-password"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.0015284Z [WebServer] 25:       class="mt-2 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-yellow-400"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7941445Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/+page.svelte:77:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7942561Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7943341Z [WebServer] 75: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7944373Z [WebServer] 76: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7944827Z [WebServer] 77:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7945152Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7945514Z [WebServer] 78:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7945835Z [WebServer] 79:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7946412Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/abilities/+page.svelte:111:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7947011Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7947388Z [WebServer] 109: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7947681Z [WebServer] 110: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7947987Z [WebServer] 111:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7948472Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7948840Z [WebServer] 112:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7949174Z [WebServer] 113:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7949743Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/chapters/+page.svelte:44:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7950322Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7950683Z [WebServer] 42: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7951369Z [WebServer] 43: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7951766Z [WebServer] 44:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7952368Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7952712Z [WebServer] 45:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7953052Z [WebServer] 46:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7953837Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/characters/+page.svelte:113:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7954664Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7955086Z [WebServer] 111: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7955374Z [WebServer] 112: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7955688Z [WebServer] 113:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7956003Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7956352Z [WebServer] 114:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7956678Z [WebServer] 115:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7957352Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/facts/+page.svelte:142:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7958125Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7958688Z [WebServer] 140: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7958994Z [WebServer] 141: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7959317Z [WebServer] 142:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7959652Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7960020Z [WebServer] 143:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7960368Z [WebServer] 144:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7961101Z [WebServer] 1:31:24 PM [vite-plugin-svelte] src/routes/sources/+page.svelte:44:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7961601Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7961842Z [WebServer] 42: 
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7962022Z [WebServer] 43: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7962236Z [WebServer] 44:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7962445Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7962673Z [WebServer] 45:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:24.7962899Z [WebServer] 46:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4134881Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/+layout.svelte:60:8 Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4135818Z [WebServer] https://svelte.dev/e/slot_element_deprecated
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4136205Z [WebServer] 58:       <!-- Page Content -->
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4136796Z [WebServer] 59:       <div class="p-6 flex-1 overflow-auto bg-gray-50 text-gray-900">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4137379Z [WebServer] 60:         <slot />
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4137777Z [WebServer]                     ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4138153Z [WebServer] 61:       </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4138674Z [WebServer] 62:     </main>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4139530Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/+layout.svelte:65:2 Using `<slot>` to render parent content is deprecated. Use `{@render ...}` tags instead
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4140196Z [WebServer] https://svelte.dev/e/slot_element_deprecated
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4140518Z [WebServer] 63:   </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4141125Z [WebServer] 64: {:else}
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4141331Z [WebServer] 65:   <slot />
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4141531Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4141738Z [WebServer] 66: {/if}
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4141920Z [WebServer] 67: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4326879Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:23:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4327752Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4328220Z [WebServer] 21:       <div class="grid grid-cols-2 gap-4">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4328742Z [WebServer] 22:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4329186Z [WebServer] 23:           <label class="block text-sm font-medium text-gray-700 mb-1">Chapter</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4329795Z [WebServer]                                                                                          ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4330324Z [WebServer] 24:           <select
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4330758Z [WebServer] 25:             name="chapterId"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4331706Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:36:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4333080Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4333641Z [WebServer] 34:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4333939Z [WebServer] 35:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4334351Z [WebServer] 36:           <label class="block text-sm font-medium text-gray-700 mb-1">Sequence</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4334906Z [WebServer]                                                                                           ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4335474Z [WebServer] 37:           <input
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4335898Z [WebServer] 38:             type="number"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4336861Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:49:8 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4337916Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4338558Z [WebServer] 47: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4338901Z [WebServer] 48:       <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4339604Z [WebServer] 49:         <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4340463Z [WebServer]                                                                                      ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4341033Z [WebServer] 50:         <input
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4341463Z [WebServer] 51:           type="text"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4342421Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:59:8 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4343448Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4343945Z [WebServer] 57: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4344248Z [WebServer] 58:       <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4344781Z [WebServer] 59:         <label class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4345274Z [WebServer]                                                                                        ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4345621Z [WebServer] 60:         <textarea
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4345881Z [WebServer] 61:           name="summary"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4346446Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:124:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4347040Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4347433Z [WebServer] 122:       <div class="grid grid-cols-2 gap-4">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4347756Z [WebServer] 123:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4348179Z [WebServer] 124:           <label class="block text-sm font-medium text-gray-700 mb-1">Character</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4349176Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4349739Z [WebServer] 125:           <select name="characterId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4350437Z [WebServer] 126:             <option value="">No consequence...</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4351055Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:133:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4351603Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4351912Z [WebServer] 131:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4352133Z [WebServer] 132:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4352552Z [WebServer] 133:           <label class="block text-sm font-medium text-gray-700 mb-1">New Location</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4353052Z [WebServer]                                                                                                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4353578Z [WebServer] 134:           <select name="locationId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4354057Z [WebServer] 135:             <option value="">Select Location...</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4354661Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:142:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4355351Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4355656Z [WebServer] 140:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4355872Z [WebServer] 141:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4356277Z [WebServer] 142:           <label class="block text-sm font-medium text-gray-700 mb-1">Precision</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4356763Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4357286Z [WebServer] 143:           <select name="precision" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4357772Z [WebServer] 144:             <option value="EXACT_ROOM">Exact Room</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4358544Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/events/new/+page.svelte:151:10 A form label must be associated with a control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4359457Z [WebServer] https://svelte.dev/e/a11y_label_has_associated_control
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4359782Z [WebServer] 149:         </div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4359996Z [WebServer] 150:         <div>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4360391Z [WebServer] 151:           <label class="block text-sm font-medium text-gray-700 mb-1">Certainty</label>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4360870Z [WebServer]                                                                                             ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4361383Z [WebServer] 152:           <select name="certainty" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4361856Z [WebServer] 153:             <option value="CONFIRMED">Confirmed</option>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4419988Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/login/+page.svelte:23:6 Avoid using autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4420962Z [WebServer] https://svelte.dev/e/a11y_autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4421449Z [WebServer] 21:       type="password"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4421888Z [WebServer] 22:       required
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4422232Z [WebServer] 23:       autofocus
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4422584Z [WebServer]                    ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4423029Z [WebServer] 24:       autocomplete="current-password"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.4423850Z [WebServer] 25:       class="mt-2 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-yellow-400"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7757855Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/+page.svelte:77:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7758906Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7759351Z [WebServer] 75: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7759647Z [WebServer] 76: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7759937Z [WebServer] 77:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7760239Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7760590Z [WebServer] 78:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7760910Z [WebServer] 79:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7762153Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/abilities/+page.svelte:111:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7762961Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7763376Z [WebServer] 109: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7763648Z [WebServer] 110: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7763978Z [WebServer] 111:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7764292Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7764656Z [WebServer] 112:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7765002Z [WebServer] 113:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7765697Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/chapters/+page.svelte:44:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7766434Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7766789Z [WebServer] 42: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7767072Z [WebServer] 43: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7767382Z [WebServer] 44:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7767719Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7768088Z [WebServer] 45:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7768561Z [WebServer] 46:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7769174Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/facts/+page.svelte:142:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7770191Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7770604Z [WebServer] 140: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7770891Z [WebServer] 141: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7771212Z [WebServer] 142:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7771546Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7771911Z [WebServer] 143:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7772275Z [WebServer] 144:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7773049Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/characters/+page.svelte:113:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7773832Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7774237Z [WebServer] 111: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7774529Z [WebServer] 112: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7774839Z [WebServer] 113:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7775178Z [WebServer]                ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7775543Z [WebServer] 114:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7775904Z [WebServer] 115:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7776644Z [WebServer] 1:31:26 PM [vite-plugin-svelte] src/routes/sources/+page.svelte:44:2 Unused CSS selector ".bw-gold"
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7777412Z [WebServer] https://svelte.dev/e/css_unused_selector
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7777811Z [WebServer] 42: 
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7778102Z [WebServer] 43: <style>
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7781468Z [WebServer] 44:   .bw-gold {
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7781814Z [WebServer]               ^
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7782055Z [WebServer] 45:     color: #ffd700;
+End to end	Run end-to-end tests	2026-08-13T13:31:26.7782278Z [WebServer] 46:   }
+End to end	Run end-to-end tests	2026-08-13T13:31:29.7471412Z 
+End to end	Run end-to-end tests	2026-08-13T13:31:29.7472232Z Running 20 tests using 2 workers
+End to end	Run end-to-end tests	2026-08-13T13:31:37.6537025Z [WebServer] {"level":"error","message":"request failed","at":"2026-08-13T13:31:37.646Z","reference":"jdk57dix","status":404,"method":"GET","path":"/this-route-does-not-exist","errorName":"Error","errorMessage":"Not found: /this-route-does-not-exist","stack":"Error: Not found: /this-route-does-not-exist\n    at resolve2 (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:3947:18)\n    at file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:3736:27\n    at AsyncLocalStorage.run (node:async_hooks:346:14)\n    at with_request_store (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/chunks/utils2.js-Cltlv16e.js:296:20)\n    at fn (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:3734:26)\n    at record_span (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:240:12)\n    at resolve (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:3728:22)\n    at Object.handle (file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/entries/hooks.server.js-B3CNAbhO.js:81:26)\n    at file:///home/runner/work/Black-Whale/Black-Whale/apps/web/build/server/chunks/index.js-DezJX6HV.js:3725:32\n    at AsyncLocalStorage.run (node:async_hooks:346:14)"}
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3265439Z ·············×±×··T···
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3266049Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3266959Z   1) [chromium] › tests/tour.spec.ts:43:7 › the walk › hands over the evidence for what is in front of you 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3267660Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3267989Z     Test timeout of 60000ms exceeded.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3268544Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3268960Z     Error: locator.click: Test timeout of 60000ms exceeded.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3269542Z     Call log:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3270131Z       - waiting for getByRole('button', { name: /Examine|Examiner/ })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3272525Z         - locator resolved to <button type="button" class="pointer-events-auto absolute bottom-24 right-3 rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-[11px] text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]">…</button>
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3273789Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3273801Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3274496Z       52 |     // sticky, and Playwright's default lands the button underneath it.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3275218Z       53 |     await ask.evaluate((node) => node.scrollIntoView({ block: 'center' }))
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3275751Z     > 54 |     await ask.click()
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3276079Z          |               ^
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3276370Z       55 |
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3277240Z       56 |     const card = page.getByRole('complementary', { name: /Evidence|Pièce à conviction/ })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3277881Z       57 |     await expect(card).toBeVisible()
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3278646Z         at /home/runner/work/Black-Whale/Black-Whale/tests/tour.spec.ts:54:15
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3279050Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3279655Z     Error Context: test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium/error-context.md
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3280288Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3280928Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3281886Z     test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3282650Z     Usage:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3282811Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3283469Z         pnpm exec playwright show-trace test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3284177Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3284661Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3284913Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3285256Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3285492Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3285602Z     Test timeout of 60000ms exceeded.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3285748Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3285872Z     Error: expect(locator).toBeVisible() failed
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3286298Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3286605Z     Locator:  getByRole('complementary', { name: /Evidence|Pièce à conviction/ })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3287007Z     Expected: visible
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3287201Z     Received: undefined
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3287332Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3287404Z     Call log:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3287622Z       - Expect "toBeVisible" with timeout 10000ms
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3288098Z       - waiting for getByRole('complementary', { name: /Evidence|Pièce à conviction/ })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3289038Z       - Protocol error (Runtime.callFunctionOn): Internal server error, session closed.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3289474Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3289483Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3289582Z       55 |
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3290241Z       56 |     const card = page.getByRole('complementary', { name: /Evidence|Pièce à conviction/ })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3290890Z     > 57 |     await expect(card).toBeVisible()
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3291275Z          |                        ^
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3291806Z       58 |     // The card is evidence, so it must carry the two things evidence carries:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3292403Z       59 |     // what this asserts, and where it comes from.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3293075Z       60 |     // Standing in a room, the answer is that room's chapter; the one place the
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3293771Z         at /home/runner/work/Black-Whale/Black-Whale/tests/tour.spec.ts:57:24
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3294187Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3294844Z     Error Context: test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium-retry1/error-context.md
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3295283Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3295664Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3296358Z     test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium-retry1/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3296795Z     Usage:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3296888Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3297335Z         pnpm exec playwright show-trace test-results/tour-the-walk-hands-over-t-cd70a-for-what-is-in-front-of-you-chromium-retry1/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3301437Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3301799Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3302177Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3302647Z   2) [chromium] › tests/hunt.spec.ts:31:7 › Hunt V3 critical path › starts the selected contract with its configured loadout 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3302994Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303099Z     Test timeout of 60000ms exceeded.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303248Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303369Z     Error: expect(locator).toBeVisible() failed
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303537Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303713Z     Locator:  getByRole('navigation', { name: 'Hunt actions' })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3303987Z     Expected: visible
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3304174Z     Received: undefined
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3304289Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3304357Z     Call log:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3304577Z       - Expect "toBeVisible" with timeout 10000ms
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3304919Z       - waiting for getByRole('navigation', { name: 'Hunt actions' })
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3305371Z       - Protocol error (Runtime.callFunctionOn): Internal server error, session closed.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3305645Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3305651Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3305794Z       4 | async function enterTheApartment(page: Page) {
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3306342Z       5 |   await page.getByRole('button', { name: 'Enter the apartment' }).click()
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3307005Z     > 6 |   await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3308157Z         |                                                                        ^
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3308741Z       7 | }
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3309000Z       8 |
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3309366Z       9 | test.describe('Hunt V3 critical path', () => {
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3310174Z         at enterTheApartment (/home/runner/work/Black-Whale/Black-Whale/tests/hunt.spec.ts:6:72)
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3311089Z         at /home/runner/work/Black-Whale/Black-Whale/tests/hunt.spec.ts:37:5
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3311425Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3311993Z     Error Context: test-results/hunt-Hunt-V3-critical-path-138cc-with-its-configured-loadout-chromium/error-context.md
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3312603Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3313113Z     attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3313996Z     test-results/hunt-Hunt-V3-critical-path-138cc-with-its-configured-loadout-chromium/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3314577Z     Usage:
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3314707Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3315315Z         pnpm exec playwright show-trace test-results/hunt-Hunt-V3-critical-path-138cc-with-its-configured-loadout-chromium/trace.zip
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3315940Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3316354Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3316699Z 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3316811Z   1 failed
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3317409Z     [chromium] › tests/tour.spec.ts:43:7 › the walk › hands over the evidence for what is in front of you 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3318058Z   1 flaky
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3318743Z     [chromium] › tests/hunt.spec.ts:31:7 › Hunt V3 critical path › starts the selected contract with its configured loadout 
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3319162Z   18 passed (3.8m)
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3403902Z  ELIFECYCLE  Command failed with exit code 1.
+End to end	Run end-to-end tests	2026-08-13T13:34:39.3626332Z ##[error]Process completed with exit code 1.
+Build & Test	Check formatting	﻿2026-08-13T13:30:28.3641230Z ##[group]Run pnpm format:check
+Build & Test	Check formatting	2026-08-13T13:30:28.3641570Z ^[[36;1mpnpm format:check^[[0m
+Build & Test	Check formatting	2026-08-13T13:30:28.3687647Z shell: /usr/bin/bash -e {0}
+Build & Test	Check formatting	2026-08-13T13:30:28.3687917Z env:
+Build & Test	Check formatting	2026-08-13T13:30:28.3688120Z   POSTGRES_USER: bw_user
+Build & Test	Check formatting	2026-08-13T13:30:28.3688373Z   POSTGRES_PASSWORD: bw_password
+Build & Test	Check formatting	2026-08-13T13:30:28.3688656Z   POSTGRES_DB: black_whale_test
+Build & Test	Check formatting	2026-08-13T13:30:28.3688946Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+Build & Test	Check formatting	2026-08-13T13:30:28.3689250Z ##[endgroup]
+Build & Test	Check formatting	2026-08-13T13:30:28.7821320Z 
+Build & Test	Check formatting	2026-08-13T13:30:28.7822814Z > black-whale@0.0.1 format:check /home/runner/work/Black-Whale/Black-Whale
+Build & Test	Check formatting	2026-08-13T13:30:28.7823896Z > prettier --check .
+Build & Test	Check formatting	2026-08-13T13:30:28.7824531Z 
+Build & Test	Check formatting	2026-08-13T13:30:28.8750750Z Checking formatting...
+Build & Test	Check formatting	2026-08-13T13:30:36.9503558Z [^[[33mwarn^[[39m] apps/web/src/lib/components/tour/TourScene.svelte
+Build & Test	Check formatting	2026-08-13T13:30:43.2494524Z [^[[33mwarn^[[39m] apps/web/src/lib/tour/depthOfField.ts
+Build & Test	Check formatting	2026-08-13T13:30:45.3936297Z [^[[33mwarn^[[39m] apps/web/src/lib/tour/motionBlur.ts
+Build & Test	Check formatting	2026-08-13T13:30:45.7639792Z [^[[33mwarn^[[39m] apps/web/src/lib/tour/postChain.ts
+Build & Test	Check formatting	2026-08-13T13:30:45.8047025Z [^[[33mwarn^[[39m] apps/web/src/lib/tour/quality.ts
+Build & Test	Check formatting	2026-08-13T13:30:46.1327952Z [^[[33mwarn^[[39m] apps/web/src/lib/tour/TourRenderer.ts
+Build & Test	Check formatting	2026-08-13T13:30:56.6418175Z [^[[33mwarn^[[39m] Code style issues found in 6 files. Run Prettier with --write to fix.
+Build & Test	Check formatting	2026-08-13T13:30:56.6859611Z  ELIFECYCLE  Command failed with exit code 1.
+Build & Test	Check formatting	2026-08-13T13:30:56.7083450Z ##[error]Process completed with exit code 1.

@@ -47,7 +47,9 @@ import type { QualityProfile } from './quality'
  */
 type PassChain = { addPass: (pass: Pass) => void }
 
-/** The passes the walk has to write to every frame, handed back by name. */
+import type { SSRPass } from 'three/examples/jsm/postprocessing/SSRPass.js'
+import type { LensDirtPass } from './lensDirt.js'
+
 export interface PostChain {
   shafts: PostPass | null
   refraction: PostPass | null
@@ -55,8 +57,8 @@ export interface PostChain {
   gyoFilter: PostPass | null
   depthOfField: PostPass | null
   motionBlur: MotionBlurPass | null
-  ssr: any | null
-  lensDirt: any | null
+  ssr: SSRPass | null
+  lensDirt: LensDirtPass | null
 }
 
 export interface PostChainBuild {
@@ -80,7 +82,7 @@ export interface PostChainBuild {
 async function addRoomEffects(
   composer: PassChain,
   build: PostChainBuild,
-): Promise<{ shafts: PostPass | null, lensDirt: any | null }> {
+): Promise<{ shafts: PostPass | null; lensDirt: LensDirtPass | null }> {
   const { THREE, camera, quality, renderTarget } = build
 
   // First of the effects, and it has to be: occlusion is a property of the
@@ -89,7 +91,9 @@ async function addRoomEffects(
   // filled in. It reads the depth `RenderPass` just wrote, which is why it is
   // conditioned on the target that carries one rather than on the palier alone.
   if (quality.occlusion && renderTarget?.depthTexture) {
-    composer.addPass(await createOcclusionPass({ camera, depth: renderTarget.depthTexture, ssgi: quality.ssgi }))
+    composer.addPass(
+      await createOcclusionPass({ camera, depth: renderTarget.depthTexture, ssgi: quality.ssgi }),
+    )
   }
 
   // Ahead of the bloom on purpose: a shaft is light, and light on this ship
@@ -113,12 +117,14 @@ async function addRoomEffects(
     )
   }
 
-  let lensDirt: any | null = null
+  let lensDirt: LensDirtPass | null = null
   if (quality.lensDirt) {
     const { LensDirtPass } = await import('./lensDirt.js')
     const textureLoader = new THREE.TextureLoader()
     const dirtTexture = await textureLoader.loadAsync('/textures/lens_dirt.jpg')
-    const size = build.renderer ? build.renderer.getSize(new THREE.Vector2()) : new THREE.Vector2(window.innerWidth, window.innerHeight)
+    const size = build.renderer
+      ? build.renderer.getSize(new THREE.Vector2())
+      : new THREE.Vector2(window.innerWidth, window.innerHeight)
     lensDirt = new LensDirtPass(dirtTexture, size.width, size.height)
     // The user wants it subtle and dynamic based on the deck. The default here is 0.
     // It will be updated by TourScene based on the current deck.
@@ -152,7 +158,7 @@ function selectSSRMeshes(scene: Three.Scene): Three.Mesh[] {
   return selects
 }
 
-async function createSSRPass(build: PostChainBuild): Promise<any> {
+async function createSSRPass(build: PostChainBuild): Promise<SSRPass> {
   const { SSRPass } = await import('three/examples/jsm/postprocessing/SSRPass.js')
   const selects = selectSSRMeshes(build.scene)
   const size = build.renderer.getSize(new build.THREE.Vector2())
@@ -219,7 +225,7 @@ async function addFrameEffects(
     composer.addPass(refraction)
   }
 
-  let ssr: any | null = null
+  let ssr: SSRPass | null = null
   if (quality.ssr) {
     ssr = await createSSRPass(build)
     composer.addPass(ssr)

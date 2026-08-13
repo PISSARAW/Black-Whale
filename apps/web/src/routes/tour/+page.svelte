@@ -739,10 +739,10 @@
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
 
-  const tourist = $derived(
-    currentMangaViews.length > 0
+  const tourist = $derived({
+    available: true,
+    ...(currentMangaViews.length > 0
       ? {
-          available: true,
           onJumpToAngle: () => {
             const view = currentMangaViews[0]
             navigation.jumpTo = view.spaceId
@@ -750,27 +750,27 @@
             navigation.heading = view.heading
             navigation.lookPitch = view.pitch
           },
-          onTakePhoto: async () => {
-            if (takeScreenshot) {
-              const blob = await takeScreenshot()
-              if (blob) {
-                postcardPhotoBlob = blob
-              }
-            }
-          },
-          onTakePhotoWithHud: async () => {
-            const { toBlob } = await import('html-to-image')
-            const el = document.getElementById('tour-stage-container')
-            if (el) {
-              const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
-              if (blob) {
-                postcardPhotoBlob = blob
-              }
-            }
-          },
         }
-      : null,
-  )
+      : {}),
+    onTakePhoto: async () => {
+      if (takeScreenshot) {
+        const blob = await takeScreenshot()
+        if (blob) {
+          postcardPhotoBlob = blob
+        }
+      }
+    },
+    onTakePhotoWithHud: async () => {
+      const { toBlob } = await import('html-to-image')
+      const el = document.getElementById('tour-stage-container')
+      if (el) {
+        const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
+        if (blob) {
+          postcardPhotoBlob = blob
+        }
+      }
+    },
+  })
 </script>
 
 {#if postcardPhotoBlob}

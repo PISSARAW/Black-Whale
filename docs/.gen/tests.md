@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 281
+Fichiers : 282
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -988,6 +988,12 @@ Fichiers : 281
 ## `apps/web/src/lib/tour/light.test.ts`
 
 - the class grid > lights the royal deck closer, warmer and harder than the hold
+
+## `apps/web/src/lib/tour/lightRig.test.ts`
+
+- the ambient is an exposure and not a light > keeps every hour of the day at unit luminance, so a hue cannot dim the ship
+- the visitor is not a lamp > keeps the night-light an order below the headlamp it replaced
+- an unlit floor is unlit in the picture and not only in the bake > has floor to read on both ends of the ship
 
 ## `apps/web/src/lib/tour/likenessGrid.test.ts`
 

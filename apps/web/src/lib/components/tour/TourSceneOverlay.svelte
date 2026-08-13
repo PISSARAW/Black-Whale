@@ -85,7 +85,7 @@
     scarlet: { share: number; label: string } | null
     tourist?: {
       available: boolean
-      onJumpToAngle: () => void
+      onJumpToAngle?: () => void
       onTakePhoto: () => void
       onTakePhotoWithHud: () => void
     } | null
@@ -118,13 +118,15 @@
 
 <div class="pointer-events-auto absolute right-3 top-3 z-40 flex flex-col items-end gap-2">
   {#if tourist?.available}
-    <button
-      type="button"
-      onclick={tourist.onJumpToAngle}
-      class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
-    >
-      Voir l'angle du manga
-    </button>
+    {#if tourist.onJumpToAngle}
+      <button
+        type="button"
+        onclick={tourist.onJumpToAngle}
+        class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+      >
+        Voir l'angle du manga
+      </button>
+    {/if}
     <div class="flex gap-2">
       <button
         type="button"

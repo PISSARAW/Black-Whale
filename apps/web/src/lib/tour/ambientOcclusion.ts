@@ -170,6 +170,9 @@ const fragmentShader = /* glsl */ `
     float spin = turnAt(gl_FragCoord.xy);
 
     float occlusion = 0.0;
+#ifdef USE_SSGI
+    vec3 indirectLight = vec3(0.0);
+#endif
     for (int i = 0; i < TAPS; i++) {
       float index = float(i);
       // sqrt of the index spaces the taps evenly over the *area* of the disc
@@ -185,16 +188,31 @@ const fragmentShader = /* glsl */ `
       // less the further away it is: a wall across the room is in front of this
       // pixel too, and it is not what is darkening the corner.
       float share = max(dot(facing, towards / span) - uBias, 0.0);
-      occlusion += share * (uRadius / (uRadius + span));
+      float weight = share * (uRadius / (uRadius + span));
+      occlusion += weight;
+#ifdef USE_SSGI
+      vec3 tapColor = texture2D(tDiffuse, tap).rgb;
+      // Accumulate bounced light (realistic subtle bounce strength of 0.8)
+      indirectLight += tapColor * weight * 0.8;
+#endif
     }
     occlusion = occlusion / float(TAPS);
+#ifdef USE_SSGI
+    indirectLight = indirectLight / float(TAPS);
+#endif
 
     // A source is not occluded; it is the thing doing the lighting.
     float luma = dot(texel.rgb, LUMA);
     float lit = 1.0 - smoothstep(0.75, 1.1, luma);
 
     float kept = 1.0 - clamp(occlusion * uStrength * fade * lit, 0.0, 1.0);
+#ifdef USE_SSGI
+    // The bounced light multiplies the surface's own color (albedo)
+    vec3 finalColor = (texel.rgb * kept) + (texel.rgb * indirectLight * fade * lit);
+    gl_FragColor = vec4(finalColor, texel.a);
+#else
     gl_FragColor = vec4(texel.rgb * kept, texel.a);
+#endif
   }
 `
 
@@ -222,6 +240,7 @@ export const OCCLUSION_SHADER = {
 export interface OcclusionBuild {
   camera: Three.PerspectiveCamera
   depth: Three.DepthTexture
+  ssgi: boolean
 }
 
 /**
@@ -253,7 +272,7 @@ export function projectionScale(camera: Three.PerspectiveCamera): [number, numbe
  */
 export async function createOcclusionPass(build: OcclusionBuild): Promise<PostPass> {
   const { ShaderPass } = await import('three/examples/jsm/postprocessing/ShaderPass.js')
-  const { camera, depth } = build
+  const { camera, depth, ssgi } = build
 
   /**
    * The frame's arguments taken whole rather than named.
@@ -292,6 +311,9 @@ export async function createOcclusionPass(build: OcclusionBuild): Promise<PostPa
     uniforms: occlusionUniforms(),
     vertexShader,
     fragmentShader,
+    defines: {
+      ...(ssgi ? { USE_SSGI: '1' } : {}),
+    },
   }) as unknown as PostPass
   pass.uniforms.tDepth.value = depth
   return pass

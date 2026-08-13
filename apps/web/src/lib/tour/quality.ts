@@ -121,6 +121,8 @@ export interface QualityProfile {
    * our existing linear depth texture.
    */
   dof: boolean
+  /** Screen Space Global Illumination (bounce light). */
+  ssgi: boolean
   /**
    * Camera-based Motion Blur.
    *
@@ -160,6 +162,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     dof: false,
     motionBlur: false,
     ssr: false,
+    ssgi: false,
     lensDirt: true,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
@@ -177,6 +180,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     dof: true,
     motionBlur: true,
     ssr: true,
+    ssgi: true,
     lensDirt: true,
     dustScale: 1,
   },

@@ -89,7 +89,7 @@ async function addRoomEffects(
   // filled in. It reads the depth `RenderPass` just wrote, which is why it is
   // conditioned on the target that carries one rather than on the palier alone.
   if (quality.occlusion && renderTarget?.depthTexture) {
-    composer.addPass(await createOcclusionPass({ camera, depth: renderTarget.depthTexture }))
+    composer.addPass(await createOcclusionPass({ camera, depth: renderTarget.depthTexture, ssgi: quality.ssgi }))
   }
 
   // Ahead of the bloom on purpose: a shaft is light, and light on this ship

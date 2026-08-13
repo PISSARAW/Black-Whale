@@ -14,6 +14,9 @@ import {
 
 import type { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import type { TAARenderPass } from 'three/examples/jsm/postprocessing/TAARenderPass.js'
+import type { SSRPass } from 'three/examples/jsm/postprocessing/SSRPass.js'
+import type { LensDirtPass } from './lensDirt.js'
+import type { MotionBlurPass } from './motionBlur.js'
 
 export interface SceneRuntime {
   renderer: Three.WebGLRenderer
@@ -59,15 +62,15 @@ export interface SceneRuntime {
   /**
    * The Motion Blur pass, updated with camera transforms.
    */
-  motionBlur: PostPass | null
+  motionBlur: MotionBlurPass | null
   /**
    * Screen Space Reflections pass.
    */
-  ssr: PostPass | null
+  ssr: SSRPass | null
   /**
    * Lens Dirt pass.
    */
-  lensDirt: PostPass | null
+  lensDirt: LensDirtPass | null
   /**
    * Temporal Anti-Aliasing pass.
    */

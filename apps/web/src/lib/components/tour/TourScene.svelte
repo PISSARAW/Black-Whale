@@ -4732,8 +4732,7 @@
 
           runtime.taa.accumulate = !moved
 
-          previousTaaPointer[0] = pointer[0]
-          previousTaaPointer[1] = pointer[1]
+          previousTaaPointer = [pointer[0], pointer[1]]
           previousTaaYaw = yaw
           previousTaaPitch = pitch
         }

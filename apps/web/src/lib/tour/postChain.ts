@@ -169,6 +169,7 @@ async function createSSRPass(build: PostChainBuild): Promise<SSRPass> {
     width: size.width,
     height: size.height,
     selects: selects.length > 0 ? selects : null,
+    groundReflector: null,
   })
   ssrPass.thickness = 0.015
   ssrPass.maxDistance = 10
@@ -212,7 +213,7 @@ async function addOpticalEffects(
 async function addFrameEffects(
   composer: PassChain,
   build: PostChainBuild,
-): Promise<Omit<PostChain, 'shafts'>> {
+): Promise<Omit<PostChain, 'shafts' | 'lensDirt'>> {
   const { quality } = build
 
   // After the bloom and before the grade. Before the bloom, the halo would be

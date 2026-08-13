@@ -836,6 +836,7 @@
         depthOfField,
         motionBlur,
         ssr,
+        lensDirt,
       } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -4699,6 +4700,15 @@
         // Gyo mode toggles the custom filter pass
         if (gyoFilter) {
           gyoFilter.enabled = gyoMode
+        }
+
+        // Lens dirt is only present in the lower decks (T3, T4, T5)
+        if (lensDirt) {
+          const isLowerDeck = ['T3', 'T4', 'T5'].includes(currentTierId)
+          // 1.5 intensity for lower decks, 0.0 for clean upper decks
+          const targetIntensity = isLowerDeck ? 1.5 : 0.0
+          // Smoothly interpolate the intensity to avoid hard pop when taking the elevator/stairs
+          lensDirt.uniforms.dirtIntensity.value += (targetIntensity - lensDirt.uniforms.dirtIntensity.value) * delta * 2.0
         }
 
         const { width, height } = renderer.getSize(size)

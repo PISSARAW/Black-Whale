@@ -56,6 +56,7 @@ export interface PostChain {
   depthOfField: PostPass | null
   motionBlur: MotionBlurPass | null
   ssr: any | null
+  lensDirt: any | null
 }
 
 export interface PostChainBuild {
@@ -79,7 +80,7 @@ export interface PostChainBuild {
 async function addRoomEffects(
   composer: PassChain,
   build: PostChainBuild,
-): Promise<PostPass | null> {
+): Promise<{ shafts: PostPass | null, lensDirt: any | null }> {
   const { THREE, camera, quality, renderTarget } = build
 
   // First of the effects, and it has to be: occlusion is a property of the
@@ -112,7 +113,20 @@ async function addRoomEffects(
     )
   }
 
-  return shafts
+  let lensDirt: any | null = null
+  if (quality.lensDirt) {
+    const { LensDirtPass } = await import('./lensDirt.js')
+    const textureLoader = new THREE.TextureLoader()
+    const dirtTexture = await textureLoader.loadAsync('/textures/lens_dirt.jpg')
+    const size = build.renderer ? build.renderer.getSize(new THREE.Vector2()) : new THREE.Vector2(window.innerWidth, window.innerHeight)
+    lensDirt = new LensDirtPass(dirtTexture, size.width, size.height)
+    // The user wants it subtle and dynamic based on the deck. The default here is 0.
+    // It will be updated by TourScene based on the current deck.
+    lensDirt.uniforms.dirtIntensity.value = 0.0
+    composer.addPass(lensDirt)
+  }
+
+  return { shafts, lensDirt }
 }
 
 /**
@@ -245,7 +259,7 @@ export async function assemblePostChain(
   composer: PassChain,
   build: PostChainBuild,
 ): Promise<PostChain> {
-  const shafts = await addRoomEffects(composer, build)
+  const { shafts, lensDirt } = await addRoomEffects(composer, build)
   const frame = await addFrameEffects(composer, build)
-  return { shafts, ...frame }
+  return { shafts, lensDirt, ...frame }
 }

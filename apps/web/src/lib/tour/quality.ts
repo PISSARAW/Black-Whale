@@ -134,6 +134,10 @@ export interface QualityProfile {
    * `high` only, because it requires raymarching and extra normal buffers.
    */
   ssr: boolean
+  /**
+   * Lens dirt on bright lights.
+   */
+  lensDirt: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
 }
@@ -156,6 +160,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     dof: false,
     motionBlur: false,
     ssr: false,
+    lensDirt: true,
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
@@ -172,6 +177,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
     dof: true,
     motionBlur: true,
     ssr: true,
+    lensDirt: true,
     dustScale: 1,
   },
 }

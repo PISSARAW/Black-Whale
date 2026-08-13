@@ -61,6 +61,10 @@ export interface SceneRuntime {
    * Screen Space Reflections pass.
    */
   ssr: any | null
+  /**
+   * Lens Dirt pass.
+   */
+  lensDirt: any | null
 }
 
 /** What the driver says, before the visitor is asked. */

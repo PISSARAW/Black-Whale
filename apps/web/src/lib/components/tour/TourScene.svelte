@@ -4098,6 +4098,11 @@
         ground: number
       } | null = null
 
+      // TAA Tracking
+      let previousTaaPointer: Vec2 = [0, 0]
+      let previousTaaYaw = 0
+      let previousTaaPitch = 0
+
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
         previous = now
@@ -4717,6 +4722,22 @@
         // The far ends of the tunnel are drawn into their panes first, from
         // where the visitor's head would be if it were standing at the other one.
         renderPortals()
+        
+        if (runtime.taa) {
+          const moved =
+            Math.abs(pointer[0] - previousTaaPointer[0]) > 0.001 ||
+            Math.abs(pointer[1] - previousTaaPointer[1]) > 0.001 ||
+            Math.abs(yaw - previousTaaYaw) > 0.001 ||
+            Math.abs(pitch - previousTaaPitch) > 0.001
+
+          runtime.taa.accumulate = !moved
+          
+          previousTaaPointer[0] = pointer[0]
+          previousTaaPointer[1] = pointer[1]
+          previousTaaYaw = yaw
+          previousTaaPitch = pitch
+        }
+
         composer.render()
 
         // The live corner and the footage corner, over the finished frame.

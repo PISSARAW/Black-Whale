@@ -75,6 +75,8 @@ export interface QualityProfile {
    * `low` desktop with jagged gold outlines it used to be told it had.
    */
   smaa: boolean
+  /** Temporal Anti-Aliasing (TAA) for static accumulation. */
+  taa: boolean
   /** Bloom, which is what makes a fitting read as a lamp rather than a tile. */
   bloom: boolean
   /** The vignette and the grade: one pass, and cheap enough for both paliers. */
@@ -144,7 +146,7 @@ export interface QualityProfile {
   dustScale: number
 }
 
-const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
+const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'>> = {
   low: {
     bloom: false,
     grade: true,
@@ -186,7 +188,10 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa'>> = {
   },
 }
 
-/** The full profile for a palier on this pointer. */
-export function qualityProfile(options: { tier: QualityTier; coarse: boolean }): QualityProfile {
-  return { tier: options.tier, smaa: !options.coarse, ...PROFILES[options.tier] }
+/** The palier and pointer resolved to the one truth the post chain reads. */
+export function qualityProfile(options: {
+  tier: QualityTier
+  coarse: boolean
+}): QualityProfile {
+  return { tier: options.tier, smaa: !options.coarse, taa: !options.coarse && options.tier === 'high', ...PROFILES[options.tier] }
 }

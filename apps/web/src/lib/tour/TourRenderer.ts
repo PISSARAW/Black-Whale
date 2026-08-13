@@ -65,6 +65,10 @@ export interface SceneRuntime {
    * Lens Dirt pass.
    */
   lensDirt: any | null
+  /**
+   * Temporal Anti-Aliasing pass.
+   */
+  taa: any | null
 }
 
 /** What the driver says, before the visitor is asked. */
@@ -144,19 +148,30 @@ export async function createSceneRuntime(
   reportQualityTier(quality.tier)
 
   const { EffectComposer } = await import('three/examples/jsm/postprocessing/EffectComposer.js')
-  const { RenderPass } = await import('three/examples/jsm/postprocessing/RenderPass.js')
-
+  
   let renderTarget: Three.WebGLRenderTarget | undefined
   if (quality.tier === 'high') renderTarget = createHighTierTarget(THREE, renderer)
 
   const composer = new EffectComposer(renderer, renderTarget)
-  composer.addPass(new RenderPass(scene, camera))
+  
+  let taa: any = null
+  if (quality.taa) {
+    const { TAARenderPass } = await import('three/examples/jsm/postprocessing/TAARenderPass.js')
+    taa = new TAARenderPass(scene, camera)
+    taa.unbiased = false
+    taa.sampleLevel = 2 // 4 samples for good quality and performance balance
+    taa.accumulate = false // Start with accumulation off
+    composer.addPass(taa)
+  } else {
+    const { RenderPass } = await import('three/examples/jsm/postprocessing/RenderPass.js')
+    composer.addPass(new RenderPass(scene, camera))
+  }
 
   // Everything after the room itself, in the order a picture is made — see
   // `$lib/tour/postChain`, which owns the argument for each place in it.
   const chain = await assemblePostChain(composer, { THREE, camera, quality, renderTarget, renderer, scene })
 
-  return { renderer, scene, fog, camera, composer, renderTarget, quality, ...chain }
+  return { renderer, scene, fog, camera, composer, renderTarget, quality, taa, ...chain }
 }
 
 export interface SceneResize {

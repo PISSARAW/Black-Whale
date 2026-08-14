@@ -129,6 +129,7 @@ export class NenSceneAura {
           u_opacity: { value: 0.8 },
         },
         transparent: true,
+        premultipliedAlpha: true,
         depthWrite: false,
         blending: THREE.MultiplyBlending,
         side: THREE.DoubleSide,

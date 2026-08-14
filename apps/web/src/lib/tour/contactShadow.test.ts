@@ -13,6 +13,7 @@ describe('contact shadow', () => {
     // NormalBlending it would be a grey sticker on a lit deck and invisible in
     // the hold — which is what it replaced.
     expect(material.blending).toBe(THREE.MultiplyBlending)
+    expect(material.premultipliedAlpha).toBe(true)
     expect(material.depthWrite).toBe(false)
     // Fog on a multiplier is not haze: it would pull the patch towards the air
     // colour with distance, and a multiplier above one is a highlight.

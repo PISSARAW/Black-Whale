@@ -135,6 +135,7 @@ function contactMaterial(THREE: Three, strength: number): Material {
     vertexShader,
     fragmentShader,
     transparent: true,
+    premultipliedAlpha: true,
     blending: THREE.MultiplyBlending,
     depthWrite: false,
     // Fog would tint the multiplier towards the air colour with distance, which

@@ -1,0 +1,12 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^pnpm --filter @black-whale/web dev --host 0\\.0\\.0\\.0$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^pnpm --filter @black-whale/web test -- --run apps/web/src/lib/tour/quality\\.test\\.ts$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

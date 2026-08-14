@@ -205,7 +205,10 @@ export function qualityProfile(options: { tier: QualityTier; coarse: boolean }):
   return {
     tier: options.tier,
     smaa: !options.coarse,
-    taa: !options.coarse && options.tier === 'high',
+    // TAARenderPass alternates between its accumulation targets on
+    // Chrome/ANGLE and can expose the empty one as a black frame. SMAA remains
+    // the stable final anti-aliasing pass on desktop.
+    taa: false,
     ...PROFILES[options.tier],
   }
 }

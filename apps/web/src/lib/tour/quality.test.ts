@@ -73,4 +73,9 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'low', coarse: false }).smaa).toBe(true)
     expect(qualityProfile({ tier: 'high', coarse: true }).smaa).toBe(false)
   })
+
+  it('keeps temporal accumulation off because it can alternate with black frames', () => {
+    expect(qualityProfile({ tier: 'low', coarse: false }).taa).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).taa).toBe(false)
+  })
 })

@@ -88,11 +88,14 @@ function canonicalCue(g: Graph, technique: NenTechnique) {
 
 /** Audible signature of a basic Nen transition. Zetsu gets only its closing hush. */
 export function playNenTechniqueSound(action: NenTechniqueAction) {
+  // Gyo already changes the surrounding mix while it is held. Its former
+  // action cue stacked another pitched oscillator on top of the perception
+  // bed, producing a sharp electronic beep on both mouse and keyboard use.
+  if (action.type === 'GYO') return
   const g = hatsuAudioGraph()
   if (!g) return
   if (activeTransition(action)) return canonicalCue(g, ACTION_TECHNIQUE[action.type])
   switch (action.type) {
-    case 'GYO':
     case 'IN':
     case 'KEN':
     case 'SHU':

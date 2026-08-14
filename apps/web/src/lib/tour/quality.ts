@@ -192,7 +192,10 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // Bokeh shader across browsers. On Chrome/ANGLE the pass currently turns
     // the completed frame entirely black.
     dof: false,
-    motionBlur: true,
+    // Camera reprojection smears the whole corridor during ordinary walking,
+    // which makes navigation harder to read and can leave bright fixtures as
+    // long radial streaks. Movement stays crisp on every quality tier.
+    motionBlur: false,
     ssr: true,
     ssgi: true,
     lensDirt: true,

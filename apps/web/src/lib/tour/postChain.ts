@@ -16,7 +16,6 @@
  *   bloom       what a source does to the air around it
  *   refraction  the air bending round an aura
  *   grade       the hour: contrast, saturation, vignette, and the lens
- *   gyo         the Nen filter, which overrides the picture rather than joins it
  *   output      linear working values turned into a picture — off by default
  *   SMAA        the anti-aliasing, on the final image rather than a middle one
  *
@@ -26,7 +25,6 @@
 import type * as Three from 'three'
 import type { Pass } from 'three/examples/jsm/postprocessing/Pass.js'
 import { LENS_DEFAULTS, LENS_OFF, createGradePass } from './postGrade'
-import { createGyoPass } from './gyoFilter'
 import { createRefractionPass } from './auraRefraction'
 import { createShaftPass } from './godRays'
 import { createOcclusionPass } from './ambientOcclusion'
@@ -243,9 +241,11 @@ async function addFrameEffects(
     composer.addPass(grade)
   }
 
-  // Gyo Filter is added after grade so it overrides the final colors with its effect.
-  const gyoFilter = await createGyoPass()
-  composer.addPass(gyoFilter)
+  // Gyo reveals Nen objects in the scene itself. It deliberately has no
+  // full-screen filter: switching a pass in a live EffectComposer can expose
+  // the previous render target for one frame, and recolouring the whole ship
+  // made the mode uncomfortable to use even when it did not flash.
+  const gyoFilter: PostPass | null = null
 
   // Before the anti-aliasing and after everything else: the conversion is what
   // turns the walk's linear working values into the picture, and SMAA is meant

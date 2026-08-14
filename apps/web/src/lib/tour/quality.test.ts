@@ -78,4 +78,9 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'low', coarse: false }).taa).toBe(false)
     expect(qualityProfile({ tier: 'high', coarse: false }).taa).toBe(false)
   })
+
+  it('keeps camera motion blur off so walking remains readable', () => {
+    expect(qualityProfile({ tier: 'low', coarse: false }).motionBlur).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).motionBlur).toBe(false)
+  })
 })

@@ -31,8 +31,8 @@ describe('what the aura does to hearing', () => {
     expect(ren.pressure).toBeGreaterThan(gyo.pressure)
   })
 
-  it('rings for the states that are looking at something, and not for the rest', () => {
-    expect(nenPerception(from({ gyo: true })).ring).toBeGreaterThan(0)
+  it('keeps exploratory Gyo quiet and reserves the ring for hostile states', () => {
+    expect(nenPerception(from({ gyo: true })).ring).toBe(0)
     expect(nenPerception(from({ on: true })).ring).toBeGreaterThan(0)
     expect(nenPerception(from({ mode: 'ren', ken: true })).ring).toBe(0)
   })

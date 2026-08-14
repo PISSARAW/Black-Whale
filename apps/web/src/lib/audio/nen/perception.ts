@@ -14,8 +14,8 @@ import { letGoOfGyo, snapIntoGyo } from './onset'
  *     the top of it because Gyo is the technique that is *only* perception.
  *   - **pressure** — how loud the aura's own bed is. This is output. Ko is the
  *     top of it, because Ko is every drop of it in one place.
- *   - **ring** — the high beating tone, which is dread. Reserved for the states
- *     the anime scores as looking at something you would rather not see.
+ *   - **ring** — the high beating tone, which is dread. Reserved for hostile
+ *     states; Gyo stays quiet enough to use as an exploration tool.
  *
  * The two axes are separate on purpose, and the anime is where the separation
  * comes from. A character in Ren is loud and the room stays: you hear the roar
@@ -44,7 +44,7 @@ const PERCEPTION: Readonly<Record<NenTechnique, NenPerception>> = {
   // The roar. Loud, and it costs the room almost nothing.
   ren: { veil: 0.16, pressure: 0.62, ring: 0 },
   // The eyes. The one state that is all perception and no output.
-  gyo: { veil: 0.82, pressure: 0.5, ring: 0.55 },
+  gyo: { veil: 0.82, pressure: 0.5, ring: 0 },
   // Aura hidden is aura the visitor is holding still; the world barely moves.
   in: { veil: 0.1, pressure: 0.12, ring: 0 },
   // A circle laid over the ship. Wider than Gyo and shallower — En is knowing
@@ -113,9 +113,9 @@ let bed: NenBed | null = null
 let last: Graph | null = null
 let pending: number | null = null
 
-function settle(next: NenPerception, g: Graph) {
+function settle(next: NenPerception, g: Graph, silentOnset = false) {
   const seconds = next.veil > shown.veil ? CLOSING : OPENING
-  if (next.veil >= SNAP && shown.veil < SNAP) snapIntoGyo(g)
+  if (!silentOnset && next.veil >= SNAP && shown.veil < SNAP) snapIntoGyo(g)
   if (next.veil < SNAP && shown.veil >= SNAP) letGoOfGyo(g)
   setWorldVeil(next.veil, seconds)
   bed ??= nenBed(g)
@@ -140,7 +140,10 @@ function cancelPending() {
  */
 export function applyNenPerception(state: NenTechniqueState, g: Graph): void {
   cancelPending()
-  settle(nenPerception(state), g)
+  // The full-screen Gyo treatment was removed because it made exploration
+  // uncomfortable; its matching high metallic onset was the same problem in
+  // audio. Keep the veil and low pressure, but enter it without a ping.
+  settle(nenPerception(state), g, state.gyo)
 }
 
 /**

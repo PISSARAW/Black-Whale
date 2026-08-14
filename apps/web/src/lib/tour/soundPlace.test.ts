@@ -55,7 +55,7 @@ describe('where a report happened', () => {
 
 describe('where a cast at a body happened', () => {
   it('puts it down the reticle, in the room the visitor is in', () => {
-    setListener({ at: [0, 0], heading: 0, spaceId: 'hold' })
+    setListener({ at: [0, 0], heading: 0, pitch: 0, spaceId: 'hold' })
     const place = placeOfReach({ outcome: 'worn', kind: 'disguise', characterId: 'hisoka' })
 
     // Heading zero looks along −z in the walk's convention, so a body in front

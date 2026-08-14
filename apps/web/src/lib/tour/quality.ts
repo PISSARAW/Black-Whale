@@ -188,7 +188,10 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     lens: true,
     sheen: true,
     occlusion: true,
-    dof: true,
+    // Disabled until the native depth texture is sampled correctly by the
+    // Bokeh shader across browsers. On Chrome/ANGLE the pass currently turns
+    // the completed frame entirely black.
+    dof: false,
     motionBlur: true,
     ssr: true,
     ssgi: true,

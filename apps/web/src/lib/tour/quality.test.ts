@@ -51,6 +51,13 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'high', coarse: false }).grade).toBe(true)
   })
 
+  it('keeps the depth-of-field pass off until native depth sampling is portable', () => {
+    // Chrome/ANGLE can compile the Bokeh shader successfully and still return
+    // a completely black frame, so capability detection cannot recover here.
+    expect(qualityProfile({ tier: 'low', coarse: false }).dof).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).dof).toBe(false)
+  })
+
   it('thins the dust on low without putting it out', () => {
     // The dust is what makes a six-thousand-square-metre hall read as a volume,
     // and the small screen is the one that needs that most.

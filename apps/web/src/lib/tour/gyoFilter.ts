@@ -21,17 +21,26 @@ const fragmentShader = /* glsl */ `
   void main() {
     vec4 texel = texture2D(tDiffuse, vUv);
     
-    // Calculate the brightness of the pixel
+    // Calculate brightness from the incoming frame.
     float luma = dot(texel.rgb, LUMA);
 
-    // Isolate high-intensity pixels (aura bloom and light sources)
-    float glowMask = smoothstep(0.6, 1.2, luma);
-    
-    // The environment becomes a very dark, low-contrast monochrome 
-    vec3 environment = vec3(luma * 0.25);
-    
-    // Mix the dark environment with the original vibrant color for emissive parts
+    // Keep the world readable: retain a lifted monochrome floor so Gyo does
+    // not collapse dark decks into full black.
+    float lifted = max(luma, 0.08);
+    vec3 environment = vec3(pow(lifted, 0.75) * 0.55);
+
+    // Isolate brighter Nen cues and light sources while leaving low/mid tones
+    // mostly in monochrome.
+    float glowMask = smoothstep(0.22, 0.95, luma);
+
+    // Preserve color where Nen effects are bright enough to stand out.
     vec3 finalColor = mix(environment, texel.rgb, glowMask);
+
+    // Panic fallback: if a pixel is still near-black after the filter, recover
+    // a guarded part of the source so the scene never collapses into void.
+    float panic = 1.0 - smoothstep(0.02, 0.10, luma);
+    vec3 guardedSource = texel.rgb * 0.85 + vec3(0.03);
+    finalColor = mix(finalColor, guardedSource, panic * 0.75);
 
     gl_FragColor = vec4(finalColor, texel.a);
   }

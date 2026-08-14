@@ -1203,7 +1203,21 @@
       const holding = (...codes: string[]) => codes.some((code) => pressed[code] === true)
 
       function loadTier(nextTierId: string, at?: Vec2) {
-        const plan = ship.plans.get(nextTierId)
+        // Fallback sur le premier tier valide si nextTierId est vide/invalide
+        let tierIdToLoad = nextTierId
+        if (!tierIdToLoad || !ship.plans.has(tierIdToLoad)) {
+          const firstTier = ship.tiers[0]?.id
+          if (firstTier && ship.plans.has(firstTier)) {
+            tierIdToLoad = firstTier
+          } else if (ship.tiers.length > 0) {
+            // Dernier recours: prendre le premier tier du tableau
+            tierIdToLoad = ship.tiers[0].id
+          } else {
+            console.warn('Aucun tier valide trouvé dans le blueprint.')
+            return
+          }
+        }
+        const plan = ship.plans.get(tierIdToLoad)
         if (!plan) return
 
         // The deck the eye is watching stays in the scene whether or not the
@@ -1260,6 +1274,10 @@
       }
 
       loadTier(tierId)
+      // S'assurer que tierId est valide après le premier chargement
+      if (!tierId && ship.tiers.length > 0) {
+        tierId = ship.tiers[0].id
+      }
 
       // ── Nen ──────────────────────────────────────
       // Everything below draws what `$lib/tour/hatsu` decided. No branch here

@@ -5,6 +5,7 @@ import {
   type NenTechniqueState,
 } from '@black-whale/nen-engine'
 import { hatsuAudioGraph, type Graph } from './ambient'
+import { applyNenPerception, releaseNenPerception } from './nen/perception'
 import { emissionTarget } from './space'
 import type { NenObjectInteraction } from '$lib/tour/NenSceneAura'
 
@@ -127,7 +128,17 @@ export function playNenObjectSound(kind: NenObjectInteraction) {
 /** Keeps the active principle audible without stacking a new AudioContext per mode. */
 export function sustainNenSound(state: NenTechniqueState): () => void {
   const g = hatsuAudioGraph()
-  if (!g || g.context.state !== 'running' || state.mode === 'zetsu') return () => {}
+  if (!g || g.context.state !== 'running' || state.mode === 'zetsu') {
+    // Zetsu is a state and not an absence of one: the world has to be *given
+    // back*, which is what the release does. Same for a graph that will not
+    // run — whatever the veil was left at has to open again.
+    releaseNenPerception()
+    return () => {}
+  }
+  // What the aura does to the rest of the mix rides on the same lifetime as the
+  // held tone: the walk re-runs this on every change of state and tears the
+  // last one down first. See `nen/perception.ts`.
+  applyNenPerception(state, g)
   const technique: NenTechnique = state.on ? 'on' : state.ken ? 'ken' : state.en ? 'en' : state.mode
   const profile = NEN_PRESENTATION[technique]
   const now = g.context.currentTime
@@ -149,6 +160,7 @@ export function sustainNenSound(state: NenTechniqueState): () => void {
   oscillator.start(now)
   lfo.start(now)
   return () => {
+    releaseNenPerception()
     const stopAt = g.context.currentTime + profile.envelope.release
     gain.gain.cancelScheduledValues(g.context.currentTime)
     gain.gain.setValueAtTime(Math.max(0.0001, gain.gain.value), g.context.currentTime)

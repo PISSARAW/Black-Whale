@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store'
 
 import { sharedAudioContext } from './context'
+import { veiled } from './veil'
 
 /**
  * The last thing every sound aboard passes through: three faders and a limiter.
@@ -82,10 +83,14 @@ function buildStage(context: AudioContext): Stage {
   limiter.release.value = 0.22
   limiter.connect(context.destination)
 
+  // Between the fader and the limiter, for the two buses that carry the
+  // ordinary world, there is a veil: the thing Gyo closes so that the aura has
+  // somewhere to be heard. `veiled` hands back the limiter untouched for the
+  // techniques' bus, which is never veiled. See `veil.ts`.
   const make = (bus: Bus) => {
     const gain = context.createGain()
     gain.gain.value = levels[bus]
-    gain.connect(limiter)
+    gain.connect(veiled(context, bus, limiter))
     return gain
   }
 

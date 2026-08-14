@@ -4,7 +4,7 @@ etage: 2
 couvre:
   - apps/web/src/lib/audio/**
 depend-de: [05-la-visite]
-revu-le: 2026-08-05
+revu-le: 2026-08-13
 empreinte: f798985
 decisions: [adr-006]
 ---
@@ -13,23 +13,25 @@ decisions: [adr-006]
 
 **Promet :** fournir tous les sons du site via Web Audio API, sans fichier audio externe.
 **Refuse :** de charger des samples ou de déléguer à un moteur audio tiers.
-**Entrées publiques :** `apps/web/src/lib/audio/hatsuSounds.ts`, `apps/web/src/lib/audio/nenSounds.ts`, `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/space.ts`, `apps/web/src/lib/audio/output.ts`.
+**Entrées publiques :** `apps/web/src/lib/audio/hatsuSounds.ts`, `apps/web/src/lib/audio/nenSounds.ts`, `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/space.ts`, `apps/web/src/lib/audio/output.ts`, `apps/web/src/lib/audio/veil.ts`, `apps/web/src/lib/audio/nen/perception.ts`.
 **Carte :** [05 la visite](../../../../../docs/carte/05-la-visite.md)
 
 ## Découpage
 
-| Groupe         | Fichiers                                                                     | Responsabilité                                              |
-| -------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Contexte       | `apps/web/src/lib/audio/context.ts`                                          | L'unique `AudioContext` du navire, jamais fermé             |
-| Sortie         | `apps/web/src/lib/audio/output.ts`                                           | Trois faders (musique, navire, techniques) et limiteur      |
-| Espace         | `apps/web/src/lib/audio/space.ts`, `apps/web/src/lib/audio/ears.ts`          | Position de l'oreille, cap et tangage, occlusion, variation |
-| Synthèse       | `apps/web/src/lib/audio/hatsu/synth.ts`                                      | Helpers de bruit filtré, d'oscillateurs et d'enveloppes     |
-| Hatsu one-shot | `apps/web/src/lib/audio/hatsu/*.ts`, `apps/web/src/lib/audio/hatsuSounds.ts` | Sons des techniques (impact, chaîne, bête, refus…)          |
-| Ambiance       | `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/ambient/**`     | Boucles de fond, musique du site, atmosphère du navire      |
-| Pas            | `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/steps/**`         | Son des pas selon le matériau                               |
-| Environnement  | `apps/web/src/lib/audio/steps/environment.ts`                                | Moteurs et mer : boucles continues, placées en 3D           |
-| Nen            | `apps/web/src/lib/audio/nenSounds.ts`                                        | Sons génériques liés au Nen (aura, etc.)                    |
-| UI mode        | `apps/web/src/lib/audio/infiltrationHatsuSounds.ts`                          | Sons spécifiques au mode infiltration                       |
+| Groupe         | Fichiers                                                                     | Responsabilité                                                 |
+| -------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Contexte       | `apps/web/src/lib/audio/context.ts`                                          | L'unique `AudioContext` du navire, jamais fermé                |
+| Sortie         | `apps/web/src/lib/audio/output.ts`                                           | Trois faders (musique, navire, techniques) et limiteur         |
+| Voile          | `apps/web/src/lib/audio/veil.ts`                                             | Ce que le Gyo ferme : le monde ordinaire, pas le Nen           |
+| Perception Nen | `apps/web/src/lib/audio/nen/**`                                              | Bourdonnement de l'aura, キィン d'entrée, profil par technique |
+| Espace         | `apps/web/src/lib/audio/space.ts`, `apps/web/src/lib/audio/ears.ts`          | Position de l'oreille, cap et tangage, occlusion, variation    |
+| Synthèse       | `apps/web/src/lib/audio/hatsu/synth.ts`                                      | Helpers de bruit filtré, d'oscillateurs et d'enveloppes        |
+| Hatsu one-shot | `apps/web/src/lib/audio/hatsu/*.ts`, `apps/web/src/lib/audio/hatsuSounds.ts` | Sons des techniques (impact, chaîne, bête, refus…)             |
+| Ambiance       | `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/ambient/**`     | Boucles de fond, musique du site, atmosphère du navire         |
+| Pas            | `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/steps/**`         | Son des pas selon le matériau                                  |
+| Environnement  | `apps/web/src/lib/audio/steps/environment.ts`                                | Moteurs et mer : boucles continues, placées en 3D              |
+| Nen            | `apps/web/src/lib/audio/nenSounds.ts`                                        | Sons génériques liés au Nen (aura, etc.)                       |
+| UI mode        | `apps/web/src/lib/audio/infiltrationHatsuSounds.ts`                          | Sons spécifiques au mode infiltration                          |
 
 ## Invariants
 
@@ -41,6 +43,10 @@ decisions: [adr-006]
 - Les deux bruits continus du navire — les moteurs et la mer — sont sur le bus `walk` et non `ambient` : c'est le vaisseau, pas la bande-son. Ils passent par le `muffle` de la marche, donc une technique qui scelle l'ouïe les scelle aussi, et ils ne traversent jamais les convolveurs : ils n'arrivent pas de la salle, ils la traversent.
 - Une seule rotation d'oreille, dans `apps/web/src/lib/audio/ears.ts` : cap **et** tangage. Personne ne réécrit la trigonométrie, et personne n'appelle `AudioListener.setOrientation` — l'auditeur reste à l'origine et toutes les sources sont placées relativement à lui.
 - Le niveau d'une source continue vient de la courbe d'élévation (`hullRumble`, `seaOutside`), jamais du modèle de distance du `PannerNode` : le panner ne donne qu'une direction, `rolloffFactor` est à zéro. Doser deux fois, c'est doser faux.
+- **Le voile ne touche jamais le bus `effects`.** `apps/web/src/lib/audio/veil.ts` s'insère entre les faders `ambient` / `walk` et le limiteur : quand le visiteur met de l'aura dans ses yeux, c'est le navire qui s'éloigne et non l'aura qui monte. Un voile posé sur tout serait un bouton de volume.
+- Le lit du Nen (`apps/web/src/lib/audio/nen/bed.ts`) est construit une fois par contexte et **jamais reconstruit** : il vit au fond de son fader entre deux auras. Un lit rebâti à chaque changement d'état claque à chaque changement d'état.
+- Deux axes séparés, tirés de l'anime : le **voile** est la perception (Gyo en haut), la **pression** est la sortie (Ko en haut). Les fondre en une seule intensité ferait que le Ren étouffe le navire, ce qui est faux deux fois.
+- Le Zetsu ne s'étouffe pas, il **rend** le monde : `apps/web/src/lib/audio/nen/perception.ts` ne le compose pas du tout, le voile s'ouvre et le lit tombe.
 - Chaque `TourReport` de la visite a un son dédié — `apps/web/src/lib/tour/reportSound.ts` — et une position — `apps/web/src/lib/tour/soundPlace.ts`.
 
 ## Ajouter un son ici

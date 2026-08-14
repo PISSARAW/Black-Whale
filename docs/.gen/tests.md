@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 282
+Fichiers : 287
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -104,6 +104,10 @@ Fichiers : 282
 
 - Hatsu audiovisual coverage > gives every published Hatsu a stable dedicated audio signature
 
+## `apps/web/src/lib/audio/nen/perception.test.ts`
+
+- what the aura does to hearing > leaves the world open for a body merely holding Ten
+
 ## `apps/web/src/lib/audio/siteHatsuAudio.test.ts`
 
 - site Hatsu sound > gives all 85 techniques a distinct activation voice
@@ -112,6 +116,17 @@ Fichiers : 282
 
 - the emission > varies nothing outside a cast
 - what the ear is given > places a sound made in the room the visitor is in, without a wall
+- turning without moving > swings a cast across the head when the visitor turns to face it
+
+## `apps/web/src/lib/audio/steps/environment.test.ts`
+
+- where the ship puts its own two noises > holds the water over the visitor on Tier 5 and under them on Tier 1
+- turning the visitor > swings the engines across the head, because they are aft and not merely below
+- how much of each reaches a deck > is loudest in the machinery at the keel and loudest in the water at the waterline
+
+## `apps/web/src/lib/audio/veil.test.ts`
+
+- the veil over the ordinary world > puts a filter in front of the ship and none in front of the techniques
 
 ## `apps/web/src/lib/beyondLineage.test.ts`
 
@@ -1092,10 +1107,19 @@ Fichiers : 282
 
 - regimeOf > lands exactly on the four hours the panel offers
 
+## `apps/web/src/lib/tour/reporting.test.ts`
+
+- what the loop bothers to report > says nothing until the visitor has walked a step
+
 ## `apps/web/src/lib/tour/ripper.test.ts`
 
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
+
+## `apps/web/src/lib/tour/sea.test.ts`
+
+- where the water is > stands at the elevation of Tier 4, which is the first deck the canon leaves dry
+- what is left of the sea at each deck > gives each deck of the table exactly what the table says
 
 ## `apps/web/src/lib/tour/search.test.ts`
 

@@ -1,4 +1,5 @@
 import { setAmbientMuffled } from '$lib/audio/ambient'
+import { dropNenPerception } from '$lib/audio/nen/perception'
 import {
   startEngine,
   startFly,
@@ -52,6 +53,7 @@ export class TourHatsuAudio {
 
   dispose() {
     setAmbientMuffled(false)
+    dropNenPerception()
     stopEveryHatsuLoop()
   }
 }

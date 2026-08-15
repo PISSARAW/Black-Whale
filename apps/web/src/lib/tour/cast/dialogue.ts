@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- Authored bilingual dialogue catalogue; splitting it obscures voice coverage. */
 /**
  * One sentence a person can say at the event currently projected in the walk.
  *

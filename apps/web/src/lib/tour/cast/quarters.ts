@@ -91,10 +91,9 @@ export function interiorOf(ship: Ship, space: Space): Space[] {
  */
 export function roomWithin(
   rooms: readonly Space[],
-  costume: Costume,
-  seed: string,
-  catalogueRole: string,
+  options: { costume: Costume; seed: string; catalogueRole: string },
 ): Space | null {
+  const { costume, seed, catalogueRole } = options
   if (rooms.length === 0) return null
   const sorted = [...rooms].sort((left, right) => left.id.localeCompare(right.id))
   const onWatch = costume.role === 'guard' || costume.role === 'nen-guard'

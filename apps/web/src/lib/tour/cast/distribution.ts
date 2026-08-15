@@ -146,7 +146,11 @@ function standings(
     ...standingIn(space, costume, seed),
     costume,
   }
-  const within = roomWithin(interiorOf(ship, space), costume, seed, member.role)
+  const within = roomWithin(interiorOf(ship, space), {
+    costume,
+    seed,
+    catalogueRole: member.role,
+  })
   if (!within) return [onDeck]
   return [
     {

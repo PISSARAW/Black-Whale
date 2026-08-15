@@ -153,6 +153,12 @@
   import TourNenControls from './TourNenControls.svelte'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
+  interface JumpArrival {
+    at?: Vec2
+    facing?: number
+    looking?: number
+  }
+
   interface Props {
     ship: Ship
     /** The deck being walked. Two-way: stairs change it from inside. */
@@ -1251,12 +1257,12 @@
        * `landing` is for the one arrival that is not the room's own door: a
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
-      function goTo(spaceId: string, landing?: Vec2, facing?: number, looking?: number) {
+      function goTo(spaceId: string, arrival: JumpArrival = {}) {
         const space = ship.spaces.get(spaceId)
         if (!space) return
-        const at = landing ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
-        yaw = facing ?? spawnFacing(space, at)
-        pitch = looking ?? 0
+        const at = arrival.at ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
+        yaw = arrival.facing ?? spawnFacing(space, at)
+        pitch = arrival.looking ?? 0
         lookPitch = pitch
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
         else {
@@ -4644,7 +4650,7 @@
             wormFrom = tunnel
             // Out of the far mouth rather than at the far room's door: a tunnel
             // whose exit was across the room would be a tunnel you fall out of.
-            goTo(tunnel, ends.find((end) => end.spaceId === tunnel)?.at)
+            goTo(tunnel, { at: ends.find((end) => end.spaceId === tunnel)?.at })
             return
           }
         }
@@ -4836,8 +4842,7 @@
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
-      jump = (spaceId: string, landing?: Vec2, facing?: number, looking?: number) =>
-        goTo(spaceId, landing, facing, looking)
+      jump = (spaceId: string, arrival?: JumpArrival) => goTo(spaceId, arrival)
       // Sitting down is a jump with a direction. `goTo` puts the visitor where
       // a room's door would leave them, facing the middle of it; a chair says
       // both, so neither is derived here.
@@ -4881,9 +4886,7 @@
   })
 
   /** Assigned once the scene is live; the effect below waits for it. */
-  let jump = $state<
-    ((spaceId: string, landing?: Vec2, facing?: number, looking?: number) => void) | null
-  >(null)
+  let jump = $state<((spaceId: string, arrival?: JumpArrival) => void) | null>(null)
   /** The same, for the one arrival that is a chair rather than a doorway. */
   let sitDown = $state<((at: Vec2, facing: number) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
@@ -4923,7 +4926,11 @@
   $effect(() => {
     const requested = jumpTo
     if (!requested || !jump) return
-    jump(requested, jumpAt ?? undefined, jumpHeading ?? undefined, jumpPitch ?? undefined)
+    jump(requested, {
+      at: jumpAt ?? undefined,
+      facing: jumpHeading ?? undefined,
+      looking: jumpPitch ?? undefined,
+    })
     jumpTo = null
     jumpAt = null
     jumpHeading = null

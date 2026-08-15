@@ -10,6 +10,12 @@ export interface EventHatsuUse {
 
 const VISIBLE_USE = new Set(['ACTIVATED', 'MAINTAINED'])
 
+interface EventHatsuOptions {
+  event: { chapter: number; title: string }
+  kindFor: (abilityId: string) => string | null
+  carried: ReadonlySet<string>
+}
+
 /**
  * Techniques visibly active in one exact event.
  *
@@ -19,10 +25,9 @@ const VISIBLE_USE = new Set(['ACTIVATED', 'MAINTAINED'])
  */
 export function eventHatsuFor(
   uses: readonly EventHatsuUse[],
-  event: { chapter: number; title: string },
-  kindFor: (abilityId: string) => string | null,
-  carried: ReadonlySet<string>,
+  options: EventHatsuOptions,
 ): Record<string, string[]> {
+  const { event, kindFor, carried } = options
   const found: Record<string, string[]> = {}
   for (const use of uses) {
     if (

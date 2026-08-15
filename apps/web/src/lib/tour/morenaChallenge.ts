@@ -50,6 +50,36 @@ export function encodeMorenaChallenge(challenge: MorenaChallenge): string {
   return btoa(json).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '')
 }
 
+function integerInRange(value: unknown, minimum: number, maximum: number): value is number {
+  return (
+    typeof value === 'number' && Number.isInteger(value) && value >= minimum && value <= maximum
+  )
+}
+
+function isChallengeVerdict(value: unknown): value is MorenaChallengeVerdict {
+  return value === 'infected' || value === 'forced'
+}
+
+function isAnswerCard(value: unknown): value is AnswerCard | null {
+  return (
+    value === null ||
+    value === 'yes' ||
+    value === 'no' ||
+    value === 'back' ||
+    value === 'joker' ||
+    value === 'x'
+  )
+}
+
+function isMorenaChallenge(value: Partial<MorenaChallenge>): value is MorenaChallenge {
+  if (value.v !== VERSION) return false
+  if (!integerInRange(value.seed, 0, 0xffffffff)) return false
+  if (!integerInRange(value.streak, 1, MAX_STREAK)) return false
+  if (!integerInRange(value.rounds, 1, MAX_ROUNDS)) return false
+  if (!isChallengeVerdict(value.verdict)) return false
+  return isAnswerCard(value.marked)
+}
+
 export function decodeMorenaChallenge(encoded: string | null): MorenaChallenge | null {
   if (!encoded || encoded.length > 256) return null
   try {
@@ -58,27 +88,7 @@ export function decodeMorenaChallenge(encoded: string | null): MorenaChallenge |
       .replaceAll('_', '/')
       .padEnd(encoded.length + ((4 - (encoded.length % 4)) % 4), '=')
     const value = JSON.parse(atob(padded)) as Partial<MorenaChallenge>
-    if (
-      value.v !== VERSION ||
-      !Number.isInteger(value.seed) ||
-      value.seed! < 0 ||
-      value.seed! > 0xffffffff ||
-      !Number.isInteger(value.streak) ||
-      value.streak! < 1 ||
-      value.streak! > MAX_STREAK ||
-      !Number.isInteger(value.rounds) ||
-      value.rounds! < 1 ||
-      value.rounds! > MAX_ROUNDS ||
-      (value.verdict !== 'infected' && value.verdict !== 'forced') ||
-      (value.marked !== null &&
-        value.marked !== 'yes' &&
-        value.marked !== 'no' &&
-        value.marked !== 'back' &&
-        value.marked !== 'joker' &&
-        value.marked !== 'x')
-    )
-      return null
-    return value as MorenaChallenge
+    return isMorenaChallenge(value) ? value : null
   } catch {
     return null
   }

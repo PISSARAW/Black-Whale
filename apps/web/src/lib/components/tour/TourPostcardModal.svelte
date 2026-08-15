@@ -163,9 +163,9 @@
             bind:value={stampType}
             class="bg-zinc-950 border border-zinc-700 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
           >
-            {#each stampCategories as category}
+            {#each stampCategories as category (category)}
               <optgroup label={$t.tour.postcard.stampCategories[category]}>
-                {#each POSTCARD_STAMPS.filter((stamp) => stamp.category === category) as stamp}
+                {#each POSTCARD_STAMPS.filter((stamp) => stamp.category === category) as stamp (stamp.id)}
                   <option value={stamp.id}>{$t.tour.postcard.stamps[stamp.id].name}</option>
                 {/each}
               </optgroup>

@@ -761,14 +761,15 @@
       }
     },
     onTakePhotoWithHud: async () => {
-      const { toBlob } = await import('html-to-image')
       const el = document.getElementById('tour-stage-container')
-      if (el) {
-        const blob = await toBlob(el, { cacheBust: true, pixelRatio: 2 })
-        if (blob) {
-          postcardPhotoBlob = blob
-        }
-      }
+      if (!el || !takeScreenshot) return
+
+      const sceneBlob = await takeScreenshot()
+      if (!sceneBlob) return
+
+      const { captureStageWithHud } = await import('$lib/tour/hudCapture')
+      const blob = await captureStageWithHud(el, sceneBlob)
+      if (blob) postcardPhotoBlob = blob
     },
   })
 </script>

@@ -600,6 +600,7 @@ export const en = {
       cancel: 'Cancel',
       creating: 'Creating…',
       download: 'Download',
+      downloadError: 'The photo could not be created. Please try again in a moment.',
     },
 
     sceneOverlay: {

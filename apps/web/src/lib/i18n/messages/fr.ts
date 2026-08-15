@@ -593,6 +593,7 @@ export const fr: Messages = {
       cancel: 'Annuler',
       creating: 'Création…',
       download: 'Télécharger',
+      downloadError: 'La photo n’a pas pu être créée. Réessayez dans un instant.',
     },
 
     sceneOverlay: {

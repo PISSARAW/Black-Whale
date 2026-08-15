@@ -15,8 +15,10 @@
   }
   let { photoBlob, onClose }: Props = $props()
 
-  let photoUrl = $derived(URL.createObjectURL(photoBlob))
+  let photoUrl = $state<string | null>(null)
+  let imageReady = $state(false)
   let saving = $state(false)
+  let downloadFailed = $state(false)
   let text = $state($t.tour.postcard.defaultMessage)
   let stampType = $state<PostcardStampId>('kakin')
   let activeStamp = $derived(postcardStamp(stampType))
@@ -24,9 +26,22 @@
 
   const stampCategories: PostcardStampCategory[] = ['official', 'royal', 'underworld', 'expedition']
 
-  // Clean up URL object when component unmounts
+  // html-to-image cannot reliably fetch a blob URL while cloning the card
+  // (notably in Safari and embedded browsers). A data URL is self-contained,
+  // so the clone can use the captured frame without another fetch.
   $effect(() => {
-    return () => URL.revokeObjectURL(photoUrl)
+    const reader = new FileReader()
+    reader.onload = () => {
+      photoUrl = typeof reader.result === 'string' ? reader.result : null
+    }
+    reader.onerror = () => {
+      downloadFailed = true
+    }
+    reader.readAsDataURL(photoBlob)
+
+    return () => {
+      if (reader.readyState === FileReader.LOADING) reader.abort()
+    }
   })
 
   // The route entrance animation leaves a transform on its shell. Fixed
@@ -39,11 +54,13 @@
 
   async function handleDownload() {
     saving = true
+    downloadFailed = false
     try {
       const node = document.getElementById('postcard-export-frame')
       if (node) {
-        // Run html-to-image on the frame
-        const dataBlob = await toBlob(node, { cacheBust: true, pixelRatio: 2 })
+        // Every captured frame is already self-contained. `cacheBust` can
+        // corrupt temporary image sources and leave this action doing nothing.
+        const dataBlob = await toBlob(node, { pixelRatio: 2 })
         if (dataBlob) {
           const url = URL.createObjectURL(dataBlob)
           const a = document.createElement('a')
@@ -52,10 +69,16 @@
           document.body.appendChild(a)
           a.click()
           document.body.removeChild(a)
-          URL.revokeObjectURL(url)
+          // Let the browser consume the object URL before releasing it.
+          window.setTimeout(() => URL.revokeObjectURL(url), 1_000)
           onClose()
+        } else {
+          downloadFailed = true
         }
-      }
+      } else downloadFailed = true
+    } catch (error) {
+      console.error('Unable to create postcard.', error)
+      downloadFailed = true
     } finally {
       saving = false
     }
@@ -79,12 +102,15 @@
         style="border: 2px solid #ddd; max-width: 100%; aspect-ratio: 4/3; width: 800px;"
       >
         <!-- The photo -->
-        <img
-          src={photoUrl}
-          alt={$t.tour.postcard.imageAlt}
-          class="w-full h-full object-cover border border-gray-300"
-          style="min-height: 0;"
-        />
+        {#if photoUrl}
+          <img
+            src={photoUrl}
+            alt={$t.tour.postcard.imageAlt}
+            class="w-full h-full object-cover border border-gray-300"
+            style="min-height: 0;"
+            onload={() => (imageReady = true)}
+          />
+        {/if}
 
         <!-- Overlay Text -->
         <div
@@ -157,9 +183,10 @@
           {$t.tour.postcard.cancel}
         </button>
         <button
+          type="button"
           class="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold transition-colors flex items-center gap-2"
           onclick={handleDownload}
-          disabled={saving}
+          disabled={saving || !imageReady}
         >
           {#if saving}
             <div
@@ -172,6 +199,14 @@
         </button>
       </div>
     </div>
+    {#if downloadFailed}
+      <p
+        class="rounded border border-red-500/50 bg-red-950/80 px-4 py-3 text-center text-sm text-red-100"
+        role="alert"
+      >
+        {$t.tour.postcard.downloadError}
+      </p>
+    {/if}
   </div>
 </div>
 

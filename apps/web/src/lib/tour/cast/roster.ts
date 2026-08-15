@@ -186,7 +186,7 @@ function describe(
   }
 }
 
-/** The explicit outside-door claim attached to the active trajectory leg. */
+/** The explicit outside-door room or interior space attached to the active trajectory leg. */
 function outsideDoorFor(
   character: RosterCharacter,
   presence: RosterPresence,

@@ -92,17 +92,31 @@ describe('the distribution', () => {
 
   it('places Beyond’s attested watch on the corridor side of his cell door', () => {
     const location = 'tier-1-vvip-prison-beyond'
+    const cell = 'tier-1-vvip-prison-beyond-cell'
     const [post] = distribute(ship, [
       member({
         characterId: 'saiyu',
         locations: [location],
-        outsideDoorOf: location,
+        outsideDoorOf: cell,
         role: 'zodiaque / taupe potentiel, garde de Beyond',
       }),
     ])
-    expect(post!.tierId).toBe('tier-1-b')
+    expect(post!.tierId).toBe('interior-beyond-cell')
+    expect(post!.spaceId).toBe('tier-1-vvip-prison-beyond-watch')
     expect(ship.spaces.get(post!.spaceId)?.category).toBe('corridor')
     expect(post!.inside).toBeUndefined()
+  })
+
+  it('keeps Beyond on the cell side of the bars', () => {
+    const [post] = distribute(ship, [
+      member({
+        characterId: 'beyond-netero',
+        locations: ['tier-1-vvip-prison-beyond'],
+        role: 'leader secret',
+      }),
+    ])
+    expect(post!.spaceId).toBe('tier-1-vvip-prison-beyond-cell')
+    expect(post!.inside).toBe(true)
   })
 
   it('keeps a room the plans draw only once to a single post', () => {

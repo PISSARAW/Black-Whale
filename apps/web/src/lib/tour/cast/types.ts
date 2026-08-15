@@ -79,7 +79,7 @@ export interface CastMember {
   hatsu: string[]
   /** The beast declared on this character, if any. See `beasts.ts`. */
   beast: CastBeast | null
-  /** An attested corridor post immediately outside this room's door. */
+  /** An attested post immediately outside this catalogue room or precise interior space. */
   outsideDoorOf?: string
   /**
    * Whether the catalogue names a place rather than a room, so the exact spot

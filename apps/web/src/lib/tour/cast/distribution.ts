@@ -38,6 +38,11 @@ const HUMAN_SIZE = 0.42
 function spacesFor(ship: Ship, locations: readonly string[]): Space[] {
   const wanted = new Set(locations)
   const found = ship.blueprint.spaces.filter((space) => {
+    // `outsideDoorOf` may name the precise reconstructed room whose threshold
+    // is attested, rather than only its broader catalogue location. Beyond's
+    // guards, for example, stand outside the cell itself but inside the holding
+    // block, on the watch side of its bars.
+    if (wanted.has(space.id)) return true
     if (!space.locationId) return false
     if (wanted.has(space.locationId)) return true
     return locations.some((location) => space.locationId!.endsWith(`-${location}`))

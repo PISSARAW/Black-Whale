@@ -193,9 +193,10 @@ const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chap
  * This used to be checked by `verify_map_coverage.mjs`, which runs against the
  * database — after the deploy had already written the corridor.
  */
-const positionsNameARoom: Invariant = ({ characters, locations }) => {
+const positionsNameARoom: Invariant = ({ characters, locations, blueprint }) => {
   const findings: Finding[] = []
   const known = new Set(locations.map((location) => location.id))
+  const knownDoorTargets = new Set([...known, ...blueprint.spaces.map((space) => space.id)])
 
   for (const character of characters) {
     const where = `characters#${character.id}`
@@ -227,7 +228,7 @@ const positionsNameARoom: Invariant = ({ characters, locations }) => {
       if (!known.has(leg.location)) {
         findings.push(finding('trajectory', where, `leg ${index} names no known location`))
       }
-      if (leg.outsideDoorOf && !known.has(leg.outsideDoorOf)) {
+      if (leg.outsideDoorOf && !knownDoorTargets.has(leg.outsideDoorOf)) {
         findings.push(finding('trajectory', where, `leg ${index} names no known outside-door room`))
       }
       if (/^tier-[1-5]$/.test(leg.location)) {

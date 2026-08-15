@@ -18524,7 +18524,7 @@
       {
         "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358",
-        "outsideDoorOf": "tier-1-vvip-prison-beyond"
+        "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
     "mapLocationCorrection": true
@@ -19744,7 +19744,7 @@
       {
         "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358",
-        "outsideDoorOf": "tier-1-vvip-prison-beyond"
+        "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
     "mapLocationCorrection": true
@@ -20158,7 +20158,7 @@
       {
         "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358",
-        "outsideDoorOf": "tier-1-vvip-prison-beyond"
+        "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
     "mapLocationCorrection": true

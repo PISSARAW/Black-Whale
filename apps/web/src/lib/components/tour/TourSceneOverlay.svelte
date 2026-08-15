@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { t } from '$lib/i18n'
+
   interface LocationReadout {
     level: string
     room: string
@@ -124,14 +126,14 @@
         onclick={tourist.onJumpToAngle}
         class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
-        Voir l'angle du manga
+        {$t.tour.sceneOverlay.mangaAngle}
       </button>
     {/if}
     <div class="flex gap-2">
       <button
         type="button"
         onclick={tourist.onTakePhoto}
-        title="Photo Pure"
+        title={$t.tour.sceneOverlay.photoPure}
         class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
         IMG
@@ -139,7 +141,7 @@
       <button
         type="button"
         onclick={tourist.onTakePhotoWithHud}
-        title="Photo avec Interface"
+        title={$t.tour.sceneOverlay.photoWithInterface}
         class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
         UI
@@ -154,10 +156,10 @@
       class="mt-2 flex items-center gap-2 rounded border border-[#FFD700]/40 px-2 py-1 text-xs transition-colors hover:border-[#FFD700]/70 {gyo.active
         ? 'bg-[#FFD700]/20 text-[#FFD700]'
         : 'bg-[#050505]/80 text-[#FFD700]/80'}"
-      title="Filtre Gyo / Vision Nen"
+      title={$t.tour.sceneOverlay.gyoTitle}
     >
       <span>{gyo.active ? '[Gyo]' : '[Nen]'}</span>
-      {gyo.active ? 'Gyo Actif' : 'Activer Gyo'}
+      {gyo.active ? $t.tour.sceneOverlay.gyoActive : $t.tour.sceneOverlay.gyoActivate}
     </button>
   {/if}
 </div>

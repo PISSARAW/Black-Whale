@@ -485,6 +485,15 @@ export const fr: Messages = {
       download: 'Télécharger',
     },
 
+    sceneOverlay: {
+      mangaAngle: "Voir l'angle du manga",
+      photoPure: 'Photo sans interface',
+      photoWithInterface: 'Photo avec interface',
+      gyoTitle: 'Filtre Gyo / Vision Nen',
+      gyoActive: 'Gyo actif',
+      gyoActivate: 'Activer Gyo',
+    },
+
     fullscreen: {
       enter: 'Plein écran',
       exit: 'Quitter le plein écran',

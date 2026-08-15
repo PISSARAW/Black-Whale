@@ -512,6 +512,15 @@ export const en = {
       download: 'Download',
     },
 
+    sceneOverlay: {
+      mangaAngle: 'View the manga angle',
+      photoPure: 'Clean photo',
+      photoWithInterface: 'Photo with interface',
+      gyoTitle: 'Gyo filter / Nen vision',
+      gyoActive: 'Gyo active',
+      gyoActivate: 'Activate Gyo',
+    },
+
     /**
      * The walk at the size of the screen.
      *

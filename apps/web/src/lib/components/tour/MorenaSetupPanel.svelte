@@ -7,13 +7,22 @@
   interface Props {
     mode: 'menu' | 'rules'
     cheats?: boolean
+    locked?: boolean
     carried: HatsuProfile | null
     onDeal: () => void
     onRules: () => void
     onBack: () => void
   }
 
-  let { mode, cheats = $bindable(true), carried, onDeal, onRules, onBack }: Props = $props()
+  let {
+    mode,
+    cheats = $bindable(true),
+    locked = false,
+    carried,
+    onDeal,
+    onRules,
+    onBack,
+  }: Props = $props()
   const copy = $derived($t.tour.morena)
   const tableKind = $derived<TableKind | null>(
     worksAtTheTable(carried?.kind) ? (carried!.kind as TableKind) : null,
@@ -28,7 +37,7 @@
     <label
       class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
     >
-      <input type="radio" class="mt-1" bind:group={cheats} value={true} />
+      <input type="radio" class="mt-1" bind:group={cheats} value={true} disabled={locked} />
       <span
         ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.marked}</span>
         <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60">{copy.menu.markedNote}</span
@@ -38,7 +47,7 @@
     <label
       class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
     >
-      <input type="radio" class="mt-1" bind:group={cheats} value={false} />
+      <input type="radio" class="mt-1" bind:group={cheats} value={false} disabled={locked} />
       <span
         ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.clean}</span>
         <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60">{copy.menu.cleanNote}</span

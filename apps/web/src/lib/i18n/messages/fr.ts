@@ -1772,6 +1772,35 @@ export const fr: Messages = {
         },
       },
 
+      challenge: {
+        invitation: 'Invitation transmise',
+        streak: (wins) =>
+          `Morena mène ${wins} à 0${wins > 1 ? ' — sa série vous attend' : ' — prenez la place laissée vide'}`,
+        invitationBody: (rounds) =>
+          `La personne avant vous a tenu ${rounds} tour${rounds > 1 ? 's' : ''} avant de finir sur Oui. Morena vous remet exactement la même partie.`,
+        sameGame:
+          'Même configuration et même hasard ; votre Hatsu et vos décisions restent les vôtres.',
+        chain: 'Chaîne de négociation',
+        morenaWins: (wins) => `Morena ${wins} — Joueurs 0`,
+        morenaWinsBody: (rounds) =>
+          `Vous avez tenu ${rounds} tour${rounds > 1 ? 's' : ''}. Puisque vous avez perdu, Morena vous autorise à donner votre chaise à quelqu’un d’autre.`,
+        share: 'Défier quelqu’un',
+        copied: 'Invitation copiée',
+        shareTitle: 'Une invitation de Morena Prudo',
+        shareText: (wins) =>
+          `Morena a déjà battu ${wins} joueur${wins > 1 ? 's' : ''}. Essaie de briser sa série.`,
+        broken: 'Chaîne rompue',
+        playerWins: (wins) =>
+          `Vous arrêtez Morena après ${wins} victoire${wins > 1 ? 's' : ''} consécutive${wins > 1 ? 's' : ''}`,
+        playerWinsBody:
+          'No ou X est resté sur la table. Cette invitation ne peut plus contaminer personne.',
+        unfinished: 'Partie interrompue',
+        unfinishedBody:
+          'Quitter la table ne bat pas Morena et ne prolonge pas sa série. Il faut aller jusqu’à la dernière carte.',
+        nonCanonical:
+          'Défi communautaire non canonique : le lien transmet une invitation au jeu, jamais Contagion.',
+      },
+
       hatsu: {
         title: 'L’aura que vous avez en main',
         none: 'Rien en main. Prenez une technique dans le dock Nen et rasseyez-vous — certaines ont beaucoup à dire à douze cartes.',

@@ -1910,6 +1910,34 @@ export const en = {
         },
       },
 
+      challenge: {
+        invitation: 'Forwarded invitation',
+        streak: (wins: number) =>
+          `Morena leads ${wins}–0${wins > 1 ? ' — her streak is waiting for you' : ' — take the empty chair'}`,
+        invitationBody: (rounds: number) =>
+          `The person before you lasted ${rounds} round${rounds === 1 ? '' : 's'} before ending on Yes. Morena is handing you the exact same game.`,
+        sameGame: 'Same setup and same chance; your Hatsu and your decisions remain your own.',
+        chain: 'Negotiation chain',
+        morenaWins: (wins: number) => `Morena ${wins} — Players 0`,
+        morenaWinsBody: (rounds: number) =>
+          `You lasted ${rounds} round${rounds === 1 ? '' : 's'}. Since you lost, Morena allows you to give your chair to somebody else.`,
+        share: 'Challenge someone',
+        copied: 'Invitation copied',
+        shareTitle: 'An invitation from Morena Prudo',
+        shareText: (wins: number) =>
+          `Morena has already beaten ${wins} player${wins === 1 ? '' : 's'}. Try to break her streak.`,
+        broken: 'Chain broken',
+        playerWins: (wins: number) =>
+          `You stop Morena after ${wins} consecutive win${wins === 1 ? '' : 's'}`,
+        playerWinsBody:
+          'No or X remained on the table. This invitation cannot contaminate anybody else.',
+        unfinished: 'Game interrupted',
+        unfinishedBody:
+          'Leaving the table neither beats Morena nor extends her streak. You have to reach the final card.',
+        nonCanonical:
+          'Non-canonical community challenge: the link carries an invitation to the game, never Contagion.',
+      },
+
       /**
        * What a Hatsu can do to twelve cards.
        *

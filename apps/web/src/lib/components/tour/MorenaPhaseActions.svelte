@@ -20,16 +20,17 @@
     game: MorenaGame
     choice?: AnswerCard | null
     nameOfCard: (card: AnswerCard) => string
+    random?: () => number
   }
 
-  let { game = $bindable(), choice = $bindable(null), nameOfCard }: Props = $props()
+  let { game = $bindable(), choice = $bindable(null), nameOfCard, random }: Props = $props()
   const copy = $derived($t.tour.morena)
   const settlement = $derived(needsAChoice(game))
   const questionCopy = (question: QuestionCard) =>
     (copy.questions as Record<string, { short: string; title: string }>)[question]
 
   function ask(question: QuestionCard) {
-    game = askMorena(game, question)
+    game = askMorena(game, question, { random })
   }
 
   function play() {

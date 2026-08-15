@@ -111,10 +111,14 @@ export const withinReach = (game: MorenaGame): Set<string> => new Set(Object.key
  * refuses every move it does not recognise and hands the game back unchanged,
  * which is the same answer and only written once.
  */
-export function playGesture(game: MorenaGame, gesture: TableGesture): MorenaGame {
+export function playGesture(
+  game: MorenaGame,
+  gesture: TableGesture,
+  options: { random?: () => number } = {},
+): MorenaGame {
   switch (gesture.kind) {
     case 'ask':
-      return askMorena(game, gesture.question)
+      return askMorena(game, gesture.question, options)
     case 'kiss':
       return takeTheDeal(game, gesture.card)
     case 'decline':

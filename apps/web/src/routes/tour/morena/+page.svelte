@@ -28,10 +28,12 @@
   import MorenaGameStatus from '$lib/components/tour/MorenaGameStatus.svelte'
   import MorenaPhaseActions from '$lib/components/tour/MorenaPhaseActions.svelte'
   import MorenaVerdictPanel from '$lib/components/tour/MorenaVerdictPanel.svelte'
+  import MorenaChallengeCard from '$lib/components/tour/MorenaChallengeCard.svelte'
   import MorenaHatsuSeats from '$lib/components/tour/MorenaHatsuSeats.svelte'
   import MorenaTranscript from '$lib/components/tour/MorenaTranscript.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
+  import { page } from '$app/stores'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { get } from 'svelte/store'
@@ -73,6 +75,11 @@
     type TableKind,
   } from '$lib/tour/morena'
   import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
+  import {
+    decodeMorenaChallenge,
+    morenaChallengeRandom,
+    newMorenaChallengeSeed,
+  } from '$lib/tour/morenaChallenge'
 
   const ship = theShip()
   const modeNen = new ModeNenState()
@@ -100,6 +107,17 @@
   let game = $state<MorenaGame>(dealTheGame())
   /** What a Back or a Joker is being pointed at, while it is being pointed. */
   let choice = $state<AnswerCard | null>(null)
+  const incomingChallenge = $derived(decodeMorenaChallenge($page.url.searchParams.get('challenge')))
+  let challengeConsumed = $state(false)
+  let currentChallengeSeed = $state(0)
+  let previousChallengeStreak = $state(0)
+  let drawFromChallenge = morenaChallengeRandom(0)
+  const challengeWaiting = $derived(Boolean(incomingChallenge && !challengeConsumed))
+  const randomAtTable = () => drawFromChallenge()
+
+  $effect(() => {
+    if (challengeWaiting) cheats = incomingChallenge?.marked !== null
+  })
 
   let tierId = $state(HIDEOUT_TIER)
 
@@ -271,9 +289,14 @@
     // Chrollo's pages are live at any moment is exactly the sort of thing no
     // record of the Black Whale settles, so it is a roll, and it is rolled
     // again every deal.
+    const invitation = challengeWaiting ? incomingChallenge : null
+    currentChallengeSeed = invitation?.seed ?? newMorenaChallengeSeed()
+    previousChallengeStreak = invitation?.streak ?? 0
+    drawFromChallenge = morenaChallengeRandom(currentChallengeSeed)
+    challengeConsumed = true
     const pages = carryingTheBook ? openTheBookHere() : null
     game = dealTheGame({
-      marked: cheats ? 'back' : null,
+      marked: invitation ? invitation.marked : cheats ? 'back' : null,
       technique: pages ? pages[0] : tableKind,
       bookmark: pages ? pages[1] : null,
     })
@@ -295,7 +318,7 @@
   ) {
     const seat = keyed[hand === 'second' ? 1 : 0]
     if (!seat || seat.usedUp) return
-    game = playTechnique(game, { page: seat.page })
+    game = playTechnique(game, { page: seat.page, random: randomAtTable })
   }
 
   function walkOut() {
@@ -342,7 +365,7 @@
   function takeHold(id: string) {
     const gesture = gesturesAt(game)[id]
     if (!gesture) return
-    game = playGesture(game, gesture)
+    game = playGesture(game, gesture, { random: randomAtTable })
     // The panel's half-made choice is spent or void either way: the hand was
     // settled by hand, or it moved on to a phase that has no use for it.
     choice = null
@@ -586,10 +609,15 @@
         </div>
       {/if}
 
+      {#if (view === 'menu' || view === 'rules') && challengeWaiting}
+        <MorenaChallengeCard incoming={incomingChallenge} path={$link('/tour/morena')} />
+      {/if}
+
       {#if view === 'menu'}
         <MorenaSetupPanel
           mode="menu"
           bind:cheats
+          locked={challengeWaiting}
           {carried}
           onDeal={deal}
           onRules={() => (view = 'rules')}
@@ -637,13 +665,19 @@
         {/if}
 
         {#if game.phase === 'deal'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
         {:else if game.phase === 'asking'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
         {:else if game.phase === 'settling'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} />
+          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
         {:else if game.verdict}
           <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => (view = 'menu')} />
+          <MorenaChallengeCard
+            {game}
+            seed={currentChallengeSeed}
+            previousStreak={previousChallengeStreak}
+            path={$link('/tour/morena')}
+          />
         {/if}
 
         <MorenaHatsuSeats

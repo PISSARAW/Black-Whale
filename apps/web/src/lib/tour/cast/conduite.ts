@@ -69,6 +69,8 @@ export interface Tick {
   visitorIn: string | null
   /** How many effects the distribution already has standing. */
   standing: number
+  /** The techniques the selected event explicitly shows active, by user. */
+  eventHatsu: Readonly<Record<string, readonly string[]>>
 }
 
 /** What one body decided to do, before anything was cast. */
@@ -95,9 +97,10 @@ function actsOn(characterId: string, tick: Tick): boolean {
 }
 
 /** The techniques this body could use here, in a fixed order. */
-function repertoire(post: Post): HatsuInteractionKind[] {
+function repertoire(post: Post, eventHatsu: Tick['eventHatsu']): HatsuInteractionKind[] {
+  const attested = new Set(eventHatsu[post.member.characterId] ?? [])
   return [...post.member.hatsu]
-    .filter((kind) => !DORMANT_KINDS.has(kind))
+    .filter((kind) => attested.has(kind) && !DORMANT_KINDS.has(kind))
     .sort()
     .map((kind) => kind as HatsuInteractionKind)
 }
@@ -119,7 +122,7 @@ export function intentsFor(posts: readonly Post[], tick: Tick): Intent[] {
     if (found.length + tick.standing >= BUDGET) break
     if (!post.member.nen) continue
     if (!actsOn(post.member.characterId, tick)) continue
-    const kinds = repertoire(post)
+    const kinds = repertoire(post, tick.eventHatsu)
     if (kinds.length === 0) continue
     const kind = kinds[seedOf(`${post.member.characterId}:${tick.chapter}`) % kinds.length]!
     found.push({ characterId: post.member.characterId, kind, targetId: post.spaceId, from: post })

@@ -8,6 +8,7 @@ import { BODY_KINDS } from '$lib/tour/bodyKinds'
 import {
   dossierFor,
   contextLinesFor,
+  eventHatsuFor,
   inSlugSpace,
   rosterFrom,
   type CastDossier,
@@ -15,11 +16,13 @@ import {
   type DossierCharacter,
   type RosterAbility,
   type RosterCharacter,
+  type EventHatsuUse,
 } from '$lib/tour/cast'
 import type { CastMember, CastPayload } from '$lib/tour/cast'
 import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
 import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
+import abilityUseCatalog from '../../../../../data/abilities/uses.json'
 import factionCatalog from '../../../../../data/factions/factions.json'
 import type { PageServerLoad } from './$types'
 
@@ -201,6 +204,12 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
         title: event.title,
         summary: event.summary,
       }),
+      eventHatsu: eventHatsuFor(
+        abilityUseCatalog as EventHatsuUse[],
+        { chapter: event.chapter.number, title: event.title },
+        (abilityId) => KINDS_BY_ABILITY.get(abilityId as never) ?? null,
+        CARRIED,
+      ),
       vestiges,
     },
     // Read off the event rather than recomputed: the voyage clock runs once, at
@@ -219,6 +228,7 @@ function empty(spoilerLimit: number | null): CastPayload {
     beasts: [],
     dossiers: {},
     dialogue: {},
+    eventHatsu: {},
     vestiges: {},
   }
 }

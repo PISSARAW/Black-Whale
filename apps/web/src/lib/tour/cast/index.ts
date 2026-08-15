@@ -59,6 +59,7 @@ export {
   type DialogueEvent,
   type DialogueMember,
 } from './dialogue'
+export { eventHatsuFor, type EventHatsuUse } from './eventHatsu'
 export {
   CHAIN_JAIL_FACTION,
   reachBody,

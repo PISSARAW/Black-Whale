@@ -190,6 +190,7 @@ export class TourCastView {
       chapter: cast.chapterNumber,
       visitorIn,
       standing: 0,
+      eventHatsu: cast.eventHatsu,
     })
     if (intents.length === 0) return
     const next = runConduct(this.options.ship, world, intents)

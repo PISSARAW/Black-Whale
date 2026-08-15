@@ -133,6 +133,12 @@ export interface CastPayload {
    */
   dialogue: Record<string, ContextLine>
   /**
+   * Techniques visibly active in this exact event, by their user's id.
+   * Empty means the scene gives no evidence of a cast; mere proximity never
+   * promotes a technique from the character catalogue into an activation.
+   */
+  eventHatsu: Record<string, string[]>
+  /**
    * Environmental damages (broken doors, cut walls) that have occurred up to the cap.
    * Grouped by locationId.
    */
@@ -177,6 +183,7 @@ export const NO_CAST: CastPayload = {
   beasts: [],
   dossiers: {},
   dialogue: {},
+  eventHatsu: {},
   vestiges: {},
 }
 

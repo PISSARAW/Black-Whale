@@ -77,6 +77,40 @@ describe('the distribution', () => {
     expect(queen!.spaceId).not.toMatch(/servants|wc|bathroom|kitchen/)
   })
 
+  it('does not mistake a prince in a suit for domestic staff', () => {
+    const [prince] = distribute(ship, [
+      member({
+        characterId: 'prince-tserriednich',
+        locations: ['tier-1-royal-residential-sector-room-1004'],
+        role: 'prince / Nen training',
+      }),
+    ])
+    expect(prince!.spaceId).not.toMatch(/servants|wc|bathroom|kitchen/)
+    expect(ship.spaces.get(prince!.spaceId)?.category).not.toBe('corridor')
+  })
+
+  it('keeps domestic staff in their room rather than a bathroom or WC', () => {
+    const [servant] = distribute(ship, [
+      member({
+        characterId: 'shimanu',
+        role: 'servant of Queen Oito',
+      }),
+    ])
+    expect(servant!.spaceId).toBe('tier-1-royal-residential-sector-room-1014-servants')
+  })
+
+  it('keeps medical staff out of the hospital supply cupboard', () => {
+    const [doctor] = distribute(ship, [
+      member({
+        characterId: 'leorio-paradinight',
+        locations: ['tier-3-central-hospital'],
+        role: 'medecin / etudiant',
+      }),
+    ])
+    expect(doctor!.spaceId).not.toMatch(/supplies|storage/)
+    expect(ship.spaces.get(doctor!.spaceId)?.category).toBe('medical')
+  })
+
   it('keeps an explicitly catalogued outside presence at the corridor door', () => {
     const [post] = distribute(ship, [
       member({

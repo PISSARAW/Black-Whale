@@ -89,22 +89,33 @@ export function interiorOf(ship: Ship, space: Space): Space[] {
  * Service rooms are excluded for the visitor's sake as much as for accuracy: a
  * queen posted in the lavatory is a joke the reconstruction should not make.
  */
-export function roomWithin(rooms: readonly Space[], costume: Costume, seed: string): Space | null {
+export function roomWithin(
+  rooms: readonly Space[],
+  costume: Costume,
+  seed: string,
+  catalogueRole: string,
+): Space | null {
   if (rooms.length === 0) return null
   const sorted = [...rooms].sort((left, right) => left.id.localeCompare(right.id))
   const onWatch = costume.role === 'guard' || costume.role === 'nen-guard'
   const ways = sorted.filter((room) => room.category === 'corridor')
   if (onWatch && ways.length > 0) return ways[seedOf(seed) % ways.length]!
 
-  // Everyone else takes a room that is lived in — not the way through it, and
-  // not the service end unless the service end is where they work. A queen
-  // standing in her own hallway reads as a queen who has just arrived; she
-  // lives there.
-  const service = /servants|wc|bathroom|kitchen/
-  const staff = costume.role === 'steward'
-  const served = sorted.filter((room) => service.test(room.id))
-  const lived = sorted.filter((room) => room.category !== 'corridor' && !service.test(room.id))
-  const pool = staff && served.length > 0 ? served : lived.length > 0 ? lived : sorted
+  // A costume describes the silhouette, not the person's job. Princes,
+  // investigators and doctors can all wear the steward profile, so using that
+  // profile as proof of domestic work put them in bathrooms and cupboards.
+  // Only an explicit domestic role takes the servants' room, and even they are
+  // never staged in a WC or bathroom without an attested position there.
+  const domestic = /servant|maid|butler|majordomo|chamberlain/i.test(catalogueRole)
+  const attendants = sorted.filter((room) => /-servants$/.test(room.id))
+  if (domestic && attendants.length > 0) return attendants[seedOf(seed) % attendants.length]!
+
+  const service = /servants|wc|bathroom|kitchen|supplies|storage/
+  const lived = sorted.filter(
+    (room) => room.category !== 'corridor' && room.category !== 'storage' && !service.test(room.id),
+  )
+  const nonCorridors = sorted.filter((room) => room.category !== 'corridor')
+  const pool = lived.length > 0 ? lived : nonCorridors.length > 0 ? nonCorridors : sorted
   return pool[seedOf(seed) % pool.length]!
 }
 

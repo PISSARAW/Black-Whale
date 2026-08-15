@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition'
   import { toBlob } from 'html-to-image'
+  import { t } from '$lib/i18n'
 
   interface Props {
     photoBlob: Blob
@@ -10,7 +11,7 @@
 
   let photoUrl = $derived(URL.createObjectURL(photoBlob))
   let saving = $state(false)
-  let text = $state('Bons baisers du Tier 1')
+  let text = $state($t.tour.postcard.defaultMessage)
   let stampType = $state<'kakin' | 'hunter'>('kakin')
 
   // Clean up URL object when component unmounts
@@ -62,7 +63,7 @@
         <!-- The photo -->
         <img
           src={photoUrl}
-          alt="Screenshot"
+          alt={$t.tour.postcard.imageAlt}
           class="w-full h-full object-cover border border-gray-300"
           style="min-height: 0;"
         />
@@ -115,7 +116,7 @@
     >
       <div class="flex-1 flex flex-col gap-4 w-full">
         <label class="flex flex-col gap-1 text-sm font-medium text-zinc-400">
-          Message de la carte
+          {$t.tour.postcard.message}
           <input
             type="text"
             bind:value={text}
@@ -125,14 +126,14 @@
         </label>
 
         <div class="flex items-center gap-4">
-          <span class="text-sm font-medium text-zinc-400">Tampon :</span>
+          <span class="text-sm font-medium text-zinc-400">{$t.tour.postcard.stamp}</span>
           <label class="flex items-center gap-2 cursor-pointer hover:text-red-400">
             <input type="radio" bind:group={stampType} value="kakin" class="accent-red-500" />
-            Empire Kakin
+            {$t.tour.postcard.kakinStamp}
           </label>
           <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
             <input type="radio" bind:group={stampType} value="hunter" class="accent-blue-500" />
-            Association Hunter
+            {$t.tour.postcard.hunterStamp}
           </label>
         </div>
       </div>
@@ -142,7 +143,7 @@
           class="px-5 py-2.5 rounded-lg border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
           onclick={onClose}
         >
-          Annuler
+          {$t.tour.postcard.cancel}
         </button>
         <button
           class="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold transition-colors flex items-center gap-2"
@@ -153,9 +154,9 @@
             <div
               class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
             ></div>
-            Création...
+            {$t.tour.postcard.creating}
           {:else}
-            Télécharger
+            {$t.tour.postcard.download}
           {/if}
         </button>
       </div>

@@ -710,19 +710,6 @@
   let ready = $state(false)
   let failure = $state<string | null>(null)
 
-  let pendingScreenshot: (() => void) | null = null
-
-  $effect(() => {
-    takeScreenshot = async () => {
-      if (!canvas || !ready) return null
-      return new Promise<Blob | null>((resolve) => {
-        pendingScreenshot = () => {
-          canvas!.toBlob((blob) => resolve(blob), 'image/png')
-        }
-      })
-    }
-  })
-
   /**
    * The virtual joystick, as a vector inside the unit circle: `x` to the right,
    * `z` forward. The keyboard's held keys deliberately stay out of Svelte's
@@ -4761,11 +4748,6 @@
         })
       }
 
-      if (pendingScreenshot) {
-        pendingScreenshot()
-        pendingScreenshot = null
-      }
-
       /**
        * The walk only runs while it is on screen.
        *
@@ -4787,8 +4769,18 @@
         },
       })
       ready = true
+      // A photo must not depend on IntersectionObserver scheduling another
+      // animation frame. Render one current frame explicitly, then use the
+      // browser's asynchronous encoder. This also works while the walk is
+      // paused or the tab has just regained focus.
+      takeScreenshot = async () => {
+        if (disposed || !canvas) return null
+        composer.render()
+        return new Promise<Blob | null>((resolve) => canvas!.toBlob(resolve, 'image/png'))
+      }
 
       cleanup = () => {
+        takeScreenshot = null
         if (hatsuHoldTimer !== null) window.clearTimeout(hatsuHoldTimer)
         stopAnimating()
         resize.dispose()

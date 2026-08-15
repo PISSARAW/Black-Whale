@@ -473,6 +473,18 @@ export const fr: Messages = {
       failed: "Impossible d'accéder au presse-papiers",
     },
 
+    postcard: {
+      defaultMessage: 'Bons baisers du Tier 1',
+      imageAlt: 'Capture de la visite',
+      message: 'Message de la carte',
+      stamp: 'Tampon :',
+      kakinStamp: 'Empire Kakin',
+      hunterStamp: 'Association Hunter',
+      cancel: 'Annuler',
+      creating: 'Création…',
+      download: 'Télécharger',
+    },
+
     fullscreen: {
       enter: 'Plein écran',
       exit: 'Quitter le plein écran',

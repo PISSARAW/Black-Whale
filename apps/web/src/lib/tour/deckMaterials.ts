@@ -43,9 +43,8 @@ export interface DeckMaterials {
  * would drop it — which is a silent failure, since both edit the same shader
  * and neither throws.
  *
- * The grain is `high` only and the sheen is on everywhere: see `surfaceDetail`
- * and `sheen` in `$lib/tour/quality` for why the cheaper of the two is the one a
- * phone keeps.
+ * Both hooks are gated by the quality profile. In particular, the sheen stays
+ * off on drivers where its custom vertex finish can black out the frame.
  */
 function dressSteel(material: Three.MeshLambertMaterial, quality: QualityProfile): void {
   if (quality.surfaceDetail) applySurfaceDetail(material)

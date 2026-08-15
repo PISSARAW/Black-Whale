@@ -163,11 +163,10 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     auraDistortion: false,
     surfaceDetail: false,
     lens: false,
-    // On, on both paliers, and it is the one `low` addition here. The sheen is
-    // a dot product and a power in a fragment shader that was going to run
-    // anyway — no taps, no buffers — and what it buys is the thing a phone
-    // screen needs most: an edge where two dark surfaces meet.
-    sheen: true,
+    // The per-vertex sheen shader compiles on Chrome/ANGLE but leaves the
+    // completed WebGL frame black on the production driver. Keep the material
+    // matte until the finish can be expressed without a custom attribute.
+    sheen: false,
     // No depth buffer on this palier to read: see `occlusion` above.
     occlusion: false,
     dof: false,
@@ -186,7 +185,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     auraDistortion: true,
     surfaceDetail: true,
     lens: true,
-    sheen: true,
+    // See the low tier: this is a driver-stability switch, not a quality knob.
+    sheen: false,
     occlusion: true,
     // Disabled until the native depth texture is sampled correctly by the
     // Bokeh shader across browsers. On Chrome/ANGLE the pass currently turns
@@ -197,8 +197,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // long radial streaks. Movement stays crisp on every quality tier.
     motionBlur: false,
     // The deck is assembled after the post chain, so SSR cannot yet select the
-    // handful of genuinely reflective submeshes. Per-surface grazing sheen is
-    // material-aware; global screen-space reflections are not.
+    // handful of genuinely reflective submeshes. Global screen-space
+    // reflections would affect every surface instead.
     ssr: false,
     ssgi: true,
     lensDirt: true,

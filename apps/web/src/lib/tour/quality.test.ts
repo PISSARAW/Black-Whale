@@ -88,4 +88,9 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'low', coarse: false }).ssr).toBe(false)
     expect(qualityProfile({ tier: 'high', coarse: false }).ssr).toBe(false)
   })
+
+  it('keeps the per-vertex sheen shader off on production drivers', () => {
+    expect(qualityProfile({ tier: 'low', coarse: false }).sheen).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).sheen).toBe(false)
+  })
 })

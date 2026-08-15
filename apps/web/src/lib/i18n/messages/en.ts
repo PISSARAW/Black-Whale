@@ -500,6 +500,18 @@ export const en = {
       failed: 'Could not reach the clipboard',
     },
 
+    postcard: {
+      defaultMessage: 'Greetings from Tier 1',
+      imageAlt: 'Tour screenshot',
+      message: 'Postcard message',
+      stamp: 'Stamp:',
+      kakinStamp: 'Kakin Empire',
+      hunterStamp: 'Hunter Association',
+      cancel: 'Cancel',
+      creating: 'Creating…',
+      download: 'Download',
+    },
+
     /**
      * The walk at the size of the screen.
      *

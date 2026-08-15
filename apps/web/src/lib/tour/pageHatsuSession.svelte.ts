@@ -1,7 +1,6 @@
 import { untrack } from 'svelte'
 import { get } from 'svelte/store'
 import {
-  canUseHatsu,
   transitionNen,
   type NenTechniqueAction,
   type NenTechniqueState,
@@ -21,6 +20,7 @@ import {
 } from '$lib/tour/hatsu'
 import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
 import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
+import { canUseTourHatsu } from '$lib/tour/hatsuMode'
 import type { Vec2 } from '$lib/tour/types'
 
 interface ActivationContext {
@@ -52,6 +52,8 @@ export class TourHatsuSession {
   /** TourSense reads and mutates the same Nen contract as every other surface. */
   nen = $state<NenTechniqueState>(loadTourNen())
   private wasFutureVisible = false
+  private futureArmed = false
+  private activationKind: HatsuInteractionKind | null = null
   private unsubscribeFuture: (() => void) | null = null
 
   constructor(private readonly options: SessionOptions) {}
@@ -59,7 +61,12 @@ export class TourHatsuSession {
   watchActivation() {
     $effect(() => {
       const context = this.options.readActivation()
-      if (!context.hasAura || !canUseHatsu(this.nen)) {
+      const changedKind = context.activeKind !== this.activationKind
+      this.activationKind = context.activeKind
+      if (changedKind && context.activeKind === 'future' && !this.futureArmed)
+        parallelFutureVisible.set(false)
+      if (!context.hasAura || !canUseTourHatsu(this.nen, context.activeKind)) {
+        if (context.activeKind === 'future') parallelFutureVisible.set(false)
         const world = untrack(() => this.options.read().world)
         this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
         this.options.updateReport(null)
@@ -83,18 +90,41 @@ export class TourHatsuSession {
   watchFuture() {
     this.unsubscribeFuture = parallelFutureVisible.subscribe((isVisible) => {
       const active = get(activeHatsu)
-      if (this.wasFutureVisible && !isVisible && active?.id === 'parallel-future') {
+      if (
+        this.wasFutureVisible &&
+        !isVisible &&
+        this.futureArmed &&
+        active?.id === 'parallel-future'
+      ) {
         const report: TourReport = { kind: 'vision-ended' }
         this.options.updateReport(report)
         this.options.show(report)
       }
+      if (!isVisible) this.futureArmed = false
       this.wasFutureVisible = isVisible
+    })
+  }
+
+  /** Starts a fresh ten-second window only after a valid Tour cast in Zetsu. */
+  armFutureVision() {
+    this.futureArmed = false
+    parallelFutureVisible.set(false)
+    queueMicrotask(() => {
+      if (
+        !this.unsubscribeFuture ||
+        get(activeHatsu)?.id !== 'parallel-future' ||
+        !canUseTourHatsu(this.nen, 'future')
+      )
+        return
+      this.futureArmed = true
+      parallelFutureVisible.set(true)
     })
   }
 
   dispose() {
     this.unsubscribeFuture?.()
     this.unsubscribeFuture = null
+    this.futureArmed = false
   }
 
   turn = (requested: HatsuInteractionKind) => {
@@ -126,7 +156,8 @@ export class TourHatsuSession {
       this.nen = result.state
       saveTourNen(this.nen)
     }
-    if (!canUseHatsu(this.nen)) {
+    if (!canUseTourHatsu(this.nen, this.options.read().activeKind)) {
+      if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)
       const world = this.options.read().world
       this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
       this.options.updateReport(null)

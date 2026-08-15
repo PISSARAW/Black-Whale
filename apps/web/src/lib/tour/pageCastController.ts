@@ -46,7 +46,7 @@ export class TourCastController {
       heading: context.heading,
       rules: vowRulesFor(context.activeKind, spaceId, this.options.vowRules),
     })
-    if (!cast) return
+    if (!cast) return null
     const { result, mark } = cast
     this.finish(result.world, result.report)
     this.options.updateHands(
@@ -57,9 +57,11 @@ export class TourCastController {
         marked: result.report?.kind === 'marked',
       }),
     )
-    if (!result.travelTo) return
-    const landing = result.world.landed[result.travelTo] ?? null
-    this.options.goToSpace(context.ship.spaces.get(result.travelTo)!, landing)
+    if (result.travelTo) {
+      const landing = result.world.landed[result.travelTo] ?? null
+      this.options.goToSpace(context.ship.spaces.get(result.travelTo)!, landing)
+    }
+    return result.report
   }
 
   castPage = (kind: HatsuInteractionKind) => {
@@ -82,7 +84,7 @@ export class TourCastController {
 
   castHand = (hand: CastHand) => {
     const context = this.options.read()
-    this.castOn(aimedTargetId(context), aimedSolidId(context), hand)
+    return this.castOn(aimedTargetId(context), aimedSolidId(context), hand)
   }
 
   turnRibbon = () => {

@@ -8,6 +8,7 @@
     aimedObjectId?: string | null
     availability?: Partial<Record<NenTechnique | 'hatsu' | 'action', Availability>>
     hatsuAllowedInZetsu?: boolean
+    hatsuRequiresZetsu?: boolean
     /**
      * Whether a Ten held and used for nothing is being shown to its owner.
      *
@@ -29,6 +30,7 @@
     aimedObjectId = null,
     availability = {},
     hatsuAllowedInZetsu = false,
+    hatsuRequiresZetsu = false,
     restingAuraShown = true,
     onAction,
     onTen,
@@ -41,6 +43,8 @@
     availability[technique] !== false && typeof availability[technique] !== 'string'
   const reason = (technique: NenTechnique | 'hatsu' | 'action') =>
     typeof availability[technique] === 'string' ? (availability[technique] as string) : undefined
+  const hatsuBlockedByMode = () =>
+    nenState.mode === 'zetsu' ? !hatsuAllowedInZetsu : hatsuRequiresZetsu
   const toggle = (type: 'IN' | 'GYO' | 'KEN') =>
     onAction({ type, on: !nenState[type.toLowerCase() as 'in' | 'gyo' | 'ken'] })
   const zoneNames: Record<NenBodyZone, string> = {
@@ -163,13 +167,13 @@
       >
       <button
         class="col-span-2"
-        disabled={!enabled('hatsu') ||
-          !onHatsu ||
-          (nenState.mode === 'zetsu' && !hatsuAllowedInZetsu)}
+        disabled={!enabled('hatsu') || !onHatsu || hatsuBlockedByMode()}
         title={reason('hatsu') ??
-          (nenState.mode === 'zetsu' && !hatsuAllowedInZetsu
-            ? 'Le Zetsu ferme ce Hatsu.'
-            : undefined)}
+          (hatsuRequiresZetsu && nenState.mode !== 'zetsu'
+            ? 'Ce Hatsu exige le Zetsu.'
+            : nenState.mode === 'zetsu' && !hatsuAllowedInZetsu
+              ? 'Le Zetsu ferme ce Hatsu.'
+              : undefined)}
         onclick={() => onHatsu?.()}>Hatsu</button
       >
       <button

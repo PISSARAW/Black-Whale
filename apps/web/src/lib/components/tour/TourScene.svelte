@@ -399,8 +399,10 @@
       solidId: string | null,
       hand: 'first' | 'second' | 'third',
     ) => void
-    /** Exceptional abilities whose activation condition explicitly requires Zetsu. */
+    /** Exceptional abilities which remain usable after entering Zetsu. */
     hatsuAllowedInZetsu?: boolean
+    /** Abilities, such as Parallel Future, which cannot be activated before Zetsu. */
+    hatsuRequiresZetsu?: boolean
     /** Fired whenever the visitor sets foot in a different space. */
     onArrive?: (spaceId: string | null) => void
     /**
@@ -569,6 +571,7 @@
     onCast,
     onHatsu,
     hatsuAllowedInZetsu = false,
+    hatsuRequiresZetsu = false,
     onArrive,
     onWorm,
     onFish,
@@ -600,6 +603,8 @@
     return [touchLabels.cast]
   })
   const effectiveNen = $derived(nen ?? localNen)
+  const hatsuBlockedByMode = () =>
+    effectiveNen.mode === 'zetsu' ? !hatsuAllowedInZetsu : hatsuRequiresZetsu
   function useNen(action: NenTechniqueAction) {
     const result = transitionNen(effectiveNen, action)
     if (!result.accepted) return
@@ -3487,6 +3492,7 @@
       }
 
       function cast(hand: 'first' | 'second' | 'third' = 'first') {
+        if (hatsuBlockedByMode()) return
         onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null, hand)
         if (swings) throwThread()
       }
@@ -3506,7 +3512,7 @@
           onOrder?.()
           return
         }
-        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu)) return
+        if (!onHatsu || hatsuBlockedByMode()) return
         const self = hand === 'second' && selfCastable && !hands && !tunes && !twoHanded
         onHatsu(
           self ? null : (facing()?.id ?? null),
@@ -3524,8 +3530,7 @@
       let hatsuPressed = false
 
       function beginHatsu(event: KeyboardEvent) {
-        if (!onHatsu || (effectiveNen.mode === 'zetsu' && !hatsuAllowedInZetsu) || event.repeat)
-          return false
+        if (!onHatsu || hatsuBlockedByMode() || event.repeat) return false
         hatsuPressed = true
         hatsuVariantIndex = event.shiftKey && hatsuVariants.length > 1 ? 1 : lastHatsuVariant
         hatsuHoldTimer = window.setTimeout(() => {
@@ -4956,6 +4961,7 @@
         aimedObjectId={aimedSolidAt?.id ?? null}
         availability={nenAvailability}
         {hatsuAllowedInZetsu}
+        {hatsuRequiresZetsu}
         restingAuraShown={$comfort.restingAura}
         onAction={useNen}
         onTen={toggleTen}

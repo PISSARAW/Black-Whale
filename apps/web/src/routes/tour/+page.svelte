@@ -29,6 +29,7 @@
   import { examine, type Exhibit } from '$lib/tour/exhibit'
   import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import { canUseTourHatsu } from '$lib/tour/hatsuMode'
   import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
@@ -356,9 +357,27 @@
     hatsuSession.dispose()
     hatsuAudio.dispose()
   })
-  const castOn = casting.castOn
-  const castPage = casting.castPage
-  const castHand = casting.castHand
+  const castOn = (
+    spaceId: string | null,
+    solidId: string | null = null,
+    hand: CastHand = 'first',
+  ) => {
+    const kind = technique?.kind ?? null
+    if (!canUseTourHatsu(hatsuSession.nen, kind)) return null
+    const castReport = casting.castOn(spaceId, solidId, hand)
+    if (castReport?.kind === 'foreseen') hatsuSession.armFutureVision()
+    return castReport
+  }
+  const castPage = (kind: HatsuInteractionKind) => {
+    if (!canUseTourHatsu(hatsuSession.nen, kind)) return
+    casting.castPage(kind)
+  }
+  const castHand = (hand: CastHand) => {
+    const kind = technique?.kind ?? null
+    if (!canUseTourHatsu(hatsuSession.nen, kind)) return
+    const castReport = casting.castHand(hand)
+    if (castReport?.kind === 'foreseen') hatsuSession.armFutureVision()
+  }
   const turnTheRibbon = casting.turnRibbon
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
@@ -379,7 +398,10 @@
     spaceId: string | null,
     solidId: string | null = null,
     hand: CastHand = 'first',
-  ) => (bodyView.reach(Date.now()) ? undefined : castOn(spaceId, solidId, hand))
+  ) => {
+    if (!canUseTourHatsu(hatsuSession.nen, technique?.kind ?? null)) return
+    return bodyView.reach(Date.now()) ? undefined : castOn(spaceId, solidId, hand)
+  }
   const fishEat = ticker.fishEat
   const beastStep = ticker.beastStep
   const takeCoin = ticker.takeCoin
@@ -813,6 +835,8 @@
         reveal: chrome.reveal,
         onCast: castAt,
         onHatsu: castAt,
+        hatsuAllowedInZetsu: technique?.kind === 'future',
+        hatsuRequiresZetsu: technique?.kind === 'future',
         onArrive: arrived,
         onWorm: crossWorm,
         onFish: fishEat,

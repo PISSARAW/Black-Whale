@@ -1574,6 +1574,7 @@
           geometry.setAttribute('position', new THREE.BufferAttribute(built.positions, 3))
           geometry.setAttribute('normal', new THREE.BufferAttribute(built.normals, 3))
           geometry.setAttribute('color', new THREE.BufferAttribute(built.colors, 3))
+          geometry.setAttribute('aSheen', new THREE.BufferAttribute(built.sheens, 1))
           const edgeGeometry = new THREE.BufferGeometry()
           edgeGeometry.setAttribute('position', new THREE.BufferAttribute(built.edges, 3))
 
@@ -4864,7 +4865,11 @@
       take = takeLink
       castNow = cast
       hatsuNow = useHatsu
-    })()
+    })().catch((error: unknown) => {
+      if (disposed) return
+      console.error('Unable to initialise the tour scene.', error)
+      failure = 'webgl'
+    })
 
     return () => {
       disposed = true

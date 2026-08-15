@@ -35,6 +35,8 @@ describe('applySheen', () => {
     )
     expect(fragmentShader).toContain('outgoingLight')
     expect(vertexShader).toContain('vSheenPosition')
+    expect(vertexShader).toContain('aSheen')
+    expect(fragmentShader).toContain('vSheen')
     expect(uniforms.uSheen).toBeDefined()
     expect(uniforms.uRim).toBeDefined()
   })

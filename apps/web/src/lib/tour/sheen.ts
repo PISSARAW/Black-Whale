@@ -79,7 +79,9 @@ export const BRUSH_DEPTH = 0.5
 export const BRUSH_PERIOD = 0.62
 
 const vertexHead = /* glsl */ `
+  attribute float aSheen;
   varying vec3 vSheenPosition;
+  varying float vSheen;
 `
 
 /**
@@ -92,6 +94,7 @@ const vertexHead = /* glsl */ `
  */
 const vertexBody = /* glsl */ `
   vSheenPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;
+  vSheen = aSheen;
 `
 
 const fragmentHead = /* glsl */ `
@@ -102,6 +105,7 @@ const fragmentHead = /* glsl */ `
   uniform float uBrushDepth;
   uniform float uBrushPeriod;
   varying vec3 vSheenPosition;
+  varying float vSheen;
 `
 
 /**
@@ -133,14 +137,14 @@ const fragmentBody = /* glsl */ `
     float brush = 1.0 - uBrushDepth * (0.5 - stripes / 6.0);
 
     // The sheen: the surface's own light, more of it along the glance.
-    outgoingLight *= 1.0 + pow(grazing, uSheenFalloff) * uSheen * brush;
+    outgoingLight *= 1.0 + pow(grazing, uSheenFalloff) * uSheen * vSheen * brush;
 
     // The rim, twice throttled: by a high power, so it lives in the last few
     // degrees before the surface turns away, and by the surface's own luminance,
     // so a corridor the bake left black does not acquire an outline it has not
     // earned. The rim lifts what is lit and barely touches what is not.
     float lit = dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722));
-    outgoingLight += outgoingLight * pow(grazing, uRimFalloff) * uRim
+    outgoingLight += outgoingLight * pow(grazing, uRimFalloff) * uRim * vSheen
                    * (0.25 + 0.75 * clamp(lit * 4.0, 0.0, 1.0));
   }
 `

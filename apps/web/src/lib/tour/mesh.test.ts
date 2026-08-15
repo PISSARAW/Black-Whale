@@ -100,6 +100,7 @@ describe('buildTierMesh', () => {
       expect(mesh.positions.length).toBe(mesh.triangles * 9)
       expect(mesh.normals.length).toBe(mesh.positions.length)
       expect(mesh.colors.length).toBe(mesh.positions.length)
+      expect(mesh.sheens.length).toBe(mesh.positions.length / 3)
     }
   })
 

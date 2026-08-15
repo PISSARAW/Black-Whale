@@ -196,7 +196,10 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // which makes navigation harder to read and can leave bright fixtures as
     // long radial streaks. Movement stays crisp on every quality tier.
     motionBlur: false,
-    ssr: true,
+    // The deck is assembled after the post chain, so SSR cannot yet select the
+    // handful of genuinely reflective submeshes. Per-surface grazing sheen is
+    // material-aware; global screen-space reflections are not.
+    ssr: false,
     ssgi: true,
     lensDirt: true,
     dustScale: 1,

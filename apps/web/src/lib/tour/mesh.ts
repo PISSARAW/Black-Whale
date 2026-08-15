@@ -26,6 +26,7 @@ import {
 import { ceilingOf, floorOf } from './blueprint'
 import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
 import { floorPatternOf } from './floorPattern'
+import { structureSheenOf } from './surfaceFinish'
 import { appearanceOf, structureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
@@ -89,6 +90,8 @@ export interface TierMesh {
   positions: Float32Array
   normals: Float32Array
   colors: Float32Array
+  /** Share of the structural steel sheen, aligned one value per vertex. */
+  sheens: Float32Array
   /**
    * Line-segment pairs tracing where surfaces meet: the foot and head of every
    * wall, and the arrises of every column.
@@ -841,6 +844,8 @@ type Corners = readonly [Vec3, Vec3, Vec3]
 interface Paint {
   colour: Rgb
   shade?: Shade
+  /** Share of the structural steel sheen. Defaults to one for the hull. */
+  sheen?: number
   /**
    * The daylight's share of this surface's light, where there is any — see
    * `RoomLight.skyShare`. Absent everywhere but the two rooms with a window,
@@ -924,6 +929,7 @@ class MeshBuilder {
   readonly positions: number[] = []
   readonly normals: number[] = []
   readonly colors: number[] = []
+  readonly sheens: number[] = []
 
   /**
    * The daylight's share, per vertex, in the two rooms that have any.
@@ -935,7 +941,7 @@ class MeshBuilder {
    */
   readonly skies: number[] = []
 
-  triangle([a, b, c]: Corners, { colour, shade, sky }: Paint): void {
+  triangle([a, b, c]: Corners, { colour, shade, sky, sheen = 1 }: Paint): void {
     const ux = b[0] - a[0]
     const uy = b[1] - a[1]
     const uz = b[2] - a[2]
@@ -956,6 +962,7 @@ class MeshBuilder {
       this.normals.push(nx, ny, nz)
       const light = shade ? shade(vertex[0], vertex[1], vertex[2]) : 1
       this.colors.push(colour[0] * light, colour[1] * light, colour[2] * light)
+      this.sheens.push(sheen)
       if (!sky) continue
       // The vertex just written, so the backfill lands on the one before it.
       const index = this.positions.length / 3
@@ -1067,6 +1074,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
   const facing = light.floor
   const sideSky = sky?.sides
   const faceSky = sky?.facing
+  const sheen = structureSheenOf(structure.kind)
 
   // A run of bars is one solid to walk around and a row of uprights to see
   // through: drawn as a slab it would be the wall the cell fronts are not.
@@ -1078,7 +1086,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
         builder.quad(
           [start, end],
           { bottom, top: railBottom },
-          { colour, shade: sides, sky: sideSky },
+          { colour, shade: sides, sky: sideSky, sheen },
         )
       }
     }
@@ -1089,7 +1097,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
       builder.quad(
         [start, end],
         { bottom: railBottom, top },
-        { colour, shade: sides, sky: sideSky },
+        { colour, shade: sides, sky: sideSky, sheen },
       )
       horizontal(start, end, railBottom + OFFSET)
       horizontal(start, end, top - OFFSET)
@@ -1099,14 +1107,14 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
       const a = outline[railCap[i]]
       const b = outline[railCap[i + 1]]
       const c = outline[railCap[i + 2]]
-      builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing, sky: faceSky })
+      builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing, sky: faceSky, sheen })
     }
     for (const corner of outline) vertical(corner, bottom, top)
     return
   }
 
   for (const [start, end] of iterateEdges(outline)) {
-    builder.quad([start, end], { bottom, top }, { colour, shade: sides, sky: sideSky })
+    builder.quad([start, end], { bottom, top }, { colour, shade: sides, sky: sideSky, sheen })
     vertical(start, bottom, top)
     horizontal(start, end, top - OFFSET)
   }
@@ -1116,11 +1124,15 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
     const a = outline[cap[i]]
     const b = outline[cap[i + 1]]
     const c = outline[cap[i + 2]]
-    builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing, sky: faceSky })
+    builder.patch([a, b, c], { y: top, up: true }, { colour, shade: facing, sky: faceSky, sheen })
     // Hung off the floor, so it is closed underneath as well as on top. Its
     // underside is in shadow, which the crease at its own base already says.
     if (structure.base > 0) {
-      builder.patch([a, b, c], { y: bottom, up: false }, { colour, shade: sides, sky: sideSky })
+      builder.patch(
+        [a, b, c],
+        { y: bottom, up: false },
+        { colour, shade: sides, sky: sideSky, sheen },
+      )
     }
   }
 }
@@ -1213,6 +1225,7 @@ export function buildSolidMesh(structure: Structure, where: SolidPlacement): Tie
     positions: new Float32Array(builder.positions),
     normals: new Float32Array(builder.normals),
     colors: new Float32Array(builder.colors),
+    sheens: new Float32Array(builder.sheens),
     edges: new Float32Array(edges),
     seams: new Float32Array(0),
     patterns: new Float32Array(0),
@@ -1825,6 +1838,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     positions: new Float32Array(builder.positions),
     normals: new Float32Array(builder.normals),
     colors: new Float32Array(builder.colors),
+    sheens: new Float32Array(builder.sheens),
     edges: new Float32Array(edges),
     seams: new Float32Array(seams),
     patterns: new Float32Array(patterns),

@@ -92,6 +92,7 @@ interface TierAttributes {
   position: Three.BufferAttribute
   normal: Three.BufferAttribute
   color: Three.BufferAttribute
+  sheen: Three.BufferAttribute
   edge: Three.BufferAttribute
   seam: Three.BufferAttribute
   pattern: Three.BufferAttribute
@@ -150,6 +151,7 @@ export class TierView {
     const geometry = this.geometry(slice(shared.position, group.start, group.count))
     geometry.setAttribute('normal', shared.normal)
     geometry.setAttribute('color', shared.color)
+    geometry.setAttribute('aSheen', shared.sheen)
     // A room has a window exactly when it draws glass, so the same test picks
     // the attribute and the patched material — and picks neither under the
     // reveal, where the bake is off and there is no pool to put back.
@@ -199,6 +201,7 @@ export class TierView {
       position: of(mesh.positions),
       normal: of(mesh.normals),
       color: of(mesh.colors),
+      sheen: of(mesh.sheens, 1),
       edge: of(mesh.edges),
       seam: of(mesh.seams),
       pattern: of(mesh.patterns),

@@ -83,4 +83,9 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'low', coarse: false }).motionBlur).toBe(false)
     expect(qualityProfile({ tier: 'high', coarse: false }).motionBlur).toBe(false)
   })
+
+  it('keeps global screen-space reflections off', () => {
+    expect(qualityProfile({ tier: 'low', coarse: false }).ssr).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).ssr).toBe(false)
+  })
 })

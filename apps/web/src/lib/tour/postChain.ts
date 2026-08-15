@@ -166,7 +166,10 @@ async function createSSRPass(build: PostChainBuild): Promise<SSRPass> {
     camera: build.camera,
     width: size.width,
     height: size.height,
-    selects: selects.length > 0 ? selects : null,
+    // An empty array means "reflect nothing". `null` means "reflect the whole
+    // scene" in SSRPass, which made every table, phone and painted surface a
+    // mirror when this pass was assembled before the deck geometry existed.
+    selects,
     groundReflector: null,
   })
   ssrPass.thickness = 0.015

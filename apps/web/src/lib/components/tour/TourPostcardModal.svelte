@@ -2,6 +2,12 @@
   import { fade, scale } from 'svelte/transition'
   import { toBlob } from 'html-to-image'
   import { t } from '$lib/i18n'
+  import {
+    POSTCARD_STAMPS,
+    postcardStamp,
+    type PostcardStampCategory,
+    type PostcardStampId,
+  } from '$lib/tour/postcardStamps'
 
   interface Props {
     photoBlob: Blob
@@ -12,11 +18,23 @@
   let photoUrl = $derived(URL.createObjectURL(photoBlob))
   let saving = $state(false)
   let text = $state($t.tour.postcard.defaultMessage)
-  let stampType = $state<'kakin' | 'hunter'>('kakin')
+  let stampType = $state<PostcardStampId>('kakin')
+  let activeStamp = $derived(postcardStamp(stampType))
+  let activeStampCopy = $derived($t.tour.postcard.stamps[stampType])
+
+  const stampCategories: PostcardStampCategory[] = ['official', 'royal', 'underworld', 'expedition']
 
   // Clean up URL object when component unmounts
   $effect(() => {
     return () => URL.revokeObjectURL(photoUrl)
+  })
+
+  // The route entrance animation leaves a transform on its shell. Fixed
+  // descendants would otherwise be positioned against the whole route rather
+  // than the viewport, putting this modal below the fold on a long tour page.
+  $effect(() => {
+    document.documentElement.classList.add('postcard-open')
+    return () => document.documentElement.classList.remove('postcard-open')
   })
 
   async function handleDownload() {
@@ -45,11 +63,11 @@
 </script>
 
 <div
-  class="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 lg:p-8"
+  class="postcard-modal fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-4 lg:items-center lg:p-8"
   transition:fade={{ duration: 200 }}
 >
   <div
-    class="flex flex-col gap-6 w-full max-w-4xl"
+    class="my-auto flex w-full max-w-4xl flex-col gap-6"
     transition:scale={{ start: 0.95, duration: 200 }}
   >
     <!-- Postcard preview -->
@@ -75,32 +93,20 @@
           {text}
         </div>
 
-        <!-- Stamps -->
-        {#if stampType === 'kakin'}
-          <div
-            class="absolute -top-6 -right-6 w-32 h-32 rounded-full border-[6px] border-red-700/80 text-red-700/80 flex items-center justify-center rotate-[15deg] mix-blend-multiply pointer-events-none opacity-90"
+        <!-- The seals are fictional souvenirs: owner-driven, but never presented as canon logos. -->
+        <div
+          class={`postcard-stamp stamp-${activeStamp.id} shape-${activeStamp.shape} tone-${activeStamp.tone}`}
+          style={`--stamp-color: ${activeStamp.ink}; --stamp-rotation: ${activeStamp.rotation}deg;`}
+          aria-hidden="true"
+        >
+          <span class="stamp-orbit"></span>
+          <span class="stamp-mark">{activeStamp.mark}</span>
+          <span class="stamp-title">{activeStampCopy.title}</span>
+          <span class="stamp-motto">{activeStampCopy.motto}</span>
+          <span class="stamp-serial"
+            >BW1 · {String(POSTCARD_STAMPS.indexOf(activeStamp) + 1).padStart(2, '0')}</span
           >
-            <div
-              class="text-center font-bold uppercase tracking-tighter leading-tight"
-              style="font-size: 1.1rem; border-top: 2px dashed rgba(185,28,28,0.8); border-bottom: 2px dashed rgba(185,28,28,0.8); padding: 4px 0;"
-            >
-              KAKIN EMPIRE<br />
-              <span class="text-sm">Official VIP</span>
-            </div>
-          </div>
-        {:else}
-          <div
-            class="absolute -top-4 -right-4 w-28 h-28 border-[4px] border-blue-800/80 text-blue-800/80 flex items-center justify-center rotate-[-10deg] mix-blend-multiply pointer-events-none opacity-90"
-          >
-            <div
-              class="text-center font-bold uppercase tracking-widest leading-none"
-              style="font-size: 1.5rem;"
-            >
-              HUNTER<br />
-              <span class="text-sm border-t border-blue-800/80 mt-1 block pt-1">ASSOC.</span>
-            </div>
-          </div>
-        {/if}
+        </div>
 
         <!-- Subtle vintage texture overlay -->
         <div
@@ -125,17 +131,22 @@
           />
         </label>
 
-        <div class="flex items-center gap-4">
-          <span class="text-sm font-medium text-zinc-400">{$t.tour.postcard.stamp}</span>
-          <label class="flex items-center gap-2 cursor-pointer hover:text-red-400">
-            <input type="radio" bind:group={stampType} value="kakin" class="accent-red-500" />
-            {$t.tour.postcard.kakinStamp}
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer hover:text-blue-400">
-            <input type="radio" bind:group={stampType} value="hunter" class="accent-blue-500" />
-            {$t.tour.postcard.hunterStamp}
-          </label>
-        </div>
+        <label class="flex flex-col gap-1 text-sm font-medium text-zinc-400">
+          {$t.tour.postcard.stamp}
+          <select
+            bind:value={stampType}
+            class="bg-zinc-950 border border-zinc-700 rounded px-3 py-2 text-white focus:outline-none focus:border-red-500"
+          >
+            {#each stampCategories as category}
+              <optgroup label={$t.tour.postcard.stampCategories[category]}>
+                {#each POSTCARD_STAMPS.filter((stamp) => stamp.category === category) as stamp}
+                  <option value={stamp.id}>{$t.tour.postcard.stamps[stamp.id].name}</option>
+                {/each}
+              </optgroup>
+            {/each}
+          </select>
+          <span class="text-xs font-normal text-zinc-500">{$t.tour.postcard.stampHint}</span>
+        </label>
       </div>
 
       <div class="flex gap-4">
@@ -163,3 +174,264 @@
     </div>
   </div>
 </div>
+
+<style>
+  .postcard-stamp {
+    --stamp-color: #8f172b;
+    --stamp-rotation: 0deg;
+    position: absolute;
+    z-index: 4;
+    top: 0.75rem;
+    right: 0.8rem;
+    width: 9rem;
+    height: 9rem;
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    place-items: center;
+    padding: 0.7rem;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--stamp-color) 88%, transparent);
+    border: 0.28rem solid currentColor;
+    transform: rotate(var(--stamp-rotation));
+    mix-blend-mode: multiply;
+    opacity: 0.88;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-align: center;
+    text-transform: uppercase;
+    filter: contrast(1.08);
+    pointer-events: none;
+  }
+
+  .postcard-stamp::before,
+  .postcard-stamp::after {
+    content: '';
+    position: absolute;
+    inset: 0.3rem;
+    border: 0.09rem dashed currentColor;
+    opacity: 0.72;
+  }
+
+  .postcard-stamp::after {
+    inset: auto 8% 14%;
+    height: 0.08rem;
+    border: 0;
+    background: currentColor;
+    box-shadow:
+      0.7rem -5.4rem 0 -0.02rem currentColor,
+      -1.2rem -2.8rem 0 -0.04rem currentColor;
+    opacity: 0.33;
+  }
+
+  .stamp-orbit {
+    position: absolute;
+    inset: 0.55rem;
+    border: 0.08rem solid currentColor;
+    opacity: 0.55;
+  }
+
+  .stamp-mark {
+    z-index: 1;
+    align-self: end;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2.65rem;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.15rem;
+  }
+
+  .stamp-title {
+    z-index: 1;
+    max-width: 100%;
+    padding: 0.16rem 0.28rem;
+    border-top: 0.12rem solid currentColor;
+    border-bottom: 0.12rem solid currentColor;
+    font-size: 0.8rem;
+    font-weight: 950;
+    line-height: 1;
+    letter-spacing: -0.035rem;
+  }
+
+  .stamp-motto {
+    z-index: 1;
+    max-width: 7.5rem;
+    margin-top: 0.22rem;
+    font-size: 0.43rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 0.045rem;
+  }
+
+  .stamp-serial {
+    position: absolute;
+    z-index: 1;
+    bottom: 0.2rem;
+    right: 0.55rem;
+    font-size: 0.34rem;
+    font-weight: 900;
+    letter-spacing: 0.06rem;
+    opacity: 0.72;
+  }
+
+  .shape-round,
+  .shape-round::before,
+  .shape-round .stamp-orbit {
+    border-radius: 999px;
+  }
+
+  .shape-oval {
+    width: 10.2rem;
+    height: 7.2rem;
+    top: 1.3rem;
+    border-radius: 50%;
+  }
+
+  .shape-oval::before,
+  .shape-oval .stamp-orbit {
+    border-radius: 50%;
+  }
+
+  .shape-oval .stamp-mark {
+    font-size: 2rem;
+  }
+
+  .shape-square {
+    width: 8.3rem;
+    height: 8.3rem;
+    border-radius: 0.15rem;
+  }
+
+  .shape-ticket {
+    width: 11rem;
+    height: 6.4rem;
+    top: 1.4rem;
+    border-radius: 0.4rem;
+  }
+
+  .shape-ticket .stamp-orbit {
+    border-left-style: dashed;
+    border-right-style: dashed;
+  }
+
+  .shape-ticket .stamp-mark {
+    font-size: 1.9rem;
+  }
+
+  .shape-diamond {
+    width: 7.8rem;
+    height: 7.8rem;
+    top: 1.1rem;
+    right: 1.45rem;
+    transform: rotate(calc(var(--stamp-rotation) + 45deg));
+  }
+
+  .shape-diamond > * {
+    transform: rotate(-45deg);
+  }
+
+  .shape-diamond .stamp-orbit {
+    transform: none;
+  }
+
+  .tone-luxe {
+    border-style: double;
+    border-width: 0.45rem;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .tone-military {
+    border-radius: 0;
+    letter-spacing: 0.04rem;
+    filter: contrast(1.2);
+  }
+
+  .tone-military::before {
+    border-style: solid;
+    border-width: 0.16rem;
+  }
+
+  .tone-clinical {
+    opacity: 0.82;
+    border-width: 0.2rem;
+  }
+
+  .tone-clinical::before {
+    border-style: dotted;
+  }
+
+  .tone-ominous {
+    border-style: double;
+    box-shadow: inset 0 0 0 0.16rem currentColor;
+    filter: contrast(1.35) saturate(0.75);
+  }
+
+  .tone-ominous .stamp-mark {
+    text-shadow:
+      0.12rem 0 currentColor,
+      -0.08rem 0 currentColor;
+  }
+
+  .tone-playful {
+    border-style: dotted;
+    opacity: 0.84;
+  }
+
+  .tone-playful .stamp-title {
+    transform: rotate(-2deg);
+    font-family: 'Trebuchet MS', ui-sans-serif, sans-serif;
+  }
+
+  .tone-gentle {
+    opacity: 0.68;
+    border-width: 0.2rem;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .tone-clandestine {
+    border-style: dashed;
+    filter: contrast(1.4);
+    clip-path: polygon(1% 4%, 97% 0, 100% 94%, 4% 100%);
+  }
+
+  .stamp-tserriednich {
+    border-width: 0.12rem;
+    opacity: 0.95;
+  }
+
+  .stamp-tserriednich::before,
+  .stamp-tserriednich .stamp-orbit {
+    border-style: solid;
+  }
+
+  .stamp-tyson::after {
+    box-shadow:
+      1rem -5.2rem 0 0 currentColor,
+      -1rem -5.2rem 0 0 currentColor;
+  }
+
+  .stamp-woble {
+    width: 6.6rem;
+    height: 6.6rem;
+    top: 1.65rem;
+    right: 1.9rem;
+  }
+
+  .stamp-hisoka {
+    border-top-color: #297fa3;
+    border-bottom-color: #297fa3;
+  }
+
+  .stamp-heilLy {
+    border-style: dotted dashed double;
+  }
+
+  .stamp-zoldyck {
+    opacity: 0.54;
+  }
+
+  @media (max-width: 640px) {
+    .postcard-stamp {
+      scale: 0.72;
+      transform-origin: top right;
+    }
+  }
+</style>

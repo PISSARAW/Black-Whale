@@ -258,6 +258,13 @@ html.tour-immersive .route-shell {
   animation: none;
 }
 
+/* The postcard is also fixed inside the route shell. While it is open, lift
+   the route's filled transform so the editor is measured against the viewport
+   instead of the several-thousand-pixel tour document. */
+html.postcard-open .route-shell {
+  animation: none;
+}
+
 /* Nothing scrolls behind it. */
 html.tour-immersive body {
   overflow: hidden;

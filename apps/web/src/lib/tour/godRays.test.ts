@@ -48,12 +48,9 @@ describe('where the light is taken to come from', () => {
 })
 
 describe('which decks have shafts at all', () => {
-  it('finds the two openings the manga draws, and no third', () => {
+  it('finds the observation-deck opening the manga draws, and no second', () => {
     const found = [...ship.plans.values()].flatMap((plan) => shaftAnchors(plan))
-    expect(found.map((anchor) => anchor.structureId).sort()).toEqual([
-      'tier-1-king-living-quarters-living-great-window',
-      'tier-3-observation-deck-window',
-    ])
+    expect(found.map((anchor) => anchor.structureId)).toEqual(['tier-3-observation-deck-window'])
   })
 
   it('leaves every other deck without one', () => {
@@ -61,7 +58,7 @@ describe('which decks have shafts at all', () => {
     // hull, so a shaft anywhere but these two rooms would be light arriving
     // from an outside that does not exist.
     const withShafts = [...ship.plans.values()].filter((plan) => shaftAnchors(plan).length)
-    expect(withShafts).toHaveLength(2)
+    expect(withShafts).toHaveLength(1)
   })
 })
 

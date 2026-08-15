@@ -170,6 +170,8 @@
     jumpAt?: Vec2 | null
     /** Optional facing for a jump owned by a game rather than a doorway. */
     jumpHeading?: number | null
+    /** Optional vertical angle for a jump authored from a manga panel. */
+    jumpPitch?: number | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
     /**
@@ -528,6 +530,7 @@
     jumpTo = $bindable(null),
     jumpAt = $bindable(null),
     jumpHeading = $bindable(null),
+    jumpPitch = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
@@ -1243,12 +1246,13 @@
        * `landing` is for the one arrival that is not the room's own door: a
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
-      function goTo(spaceId: string, landing?: Vec2, facing?: number) {
+      function goTo(spaceId: string, landing?: Vec2, facing?: number, looking?: number) {
         const space = ship.spaces.get(spaceId)
         if (!space) return
         const at = landing ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
         yaw = facing ?? spawnFacing(space, at)
-        pitch = 0
+        pitch = looking ?? 0
+        lookPitch = pitch
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
         else {
           pointer = at
@@ -4827,7 +4831,8 @@
 
       // The page asks for a jump by setting `jumpTo`; honour it and clear it so
       // asking twice for the same space works.
-      jump = (spaceId: string, landing?: Vec2, facing?: number) => goTo(spaceId, landing, facing)
+      jump = (spaceId: string, landing?: Vec2, facing?: number, looking?: number) =>
+        goTo(spaceId, landing, facing, looking)
       // Sitting down is a jump with a direction. `goTo` puts the visitor where
       // a room's door would leave them, facing the middle of it; a chair says
       // both, so neither is derived here.
@@ -4871,7 +4876,9 @@
   })
 
   /** Assigned once the scene is live; the effect below waits for it. */
-  let jump = $state<((spaceId: string, landing?: Vec2, facing?: number) => void) | null>(null)
+  let jump = $state<
+    ((spaceId: string, landing?: Vec2, facing?: number, looking?: number) => void) | null
+  >(null)
   /** The same, for the one arrival that is a chair rather than a doorway. */
   let sitDown = $state<((at: Vec2, facing: number) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
@@ -4911,10 +4918,11 @@
   $effect(() => {
     const requested = jumpTo
     if (!requested || !jump) return
-    jump(requested, jumpAt ?? undefined, jumpHeading ?? undefined)
+    jump(requested, jumpAt ?? undefined, jumpHeading ?? undefined, jumpPitch ?? undefined)
     jumpTo = null
     jumpAt = null
     jumpHeading = null
+    jumpPitch = null
   })
 </script>
 

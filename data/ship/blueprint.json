@@ -846,7 +846,7 @@
         [14, 14.5],
         [-14, 14.5]
       ],
-      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.",
+      "sourceFr": "Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte à caissons, sol géométrique, tableau de bataille monumental au-dessus du manteau, nombreux petits cadres et mobilier de réception.",
       "parentTierId": null
     },
     {
@@ -17026,9 +17026,9 @@
     {
       "id": "tier-1-king-living-quarters-living-great-window",
       "spaceId": "tier-1-king-living-quarters-living",
-      "kind": "window",
-      "name": "Great Window",
-      "nameFr": "Grande baie",
+      "kind": "painting",
+      "name": "Monumental Battle Painting",
+      "nameFr": "Tableau de bataille monumental",
       "at": [0, -8.18],
       "size": [9, 0.22],
       "rotation": 0,
@@ -17036,8 +17036,8 @@
       "height": 3.2,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382 — the King's living room: patterned floor, paired seating, framed paintings and the window at the far end.",
-      "sourceFr": "Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond."
+      "source": "Ch. 382, pp. 29–30 — a monumental framed battle painting dominates the wall above the ornamented mantel.",
+      "sourceFr": "Chap. 382, p. 29–30 — un tableau de bataille monumental domine le mur au-dessus du manteau ornementé."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-port-01",

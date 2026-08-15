@@ -1189,23 +1189,23 @@ describe('the ceiling fittings', () => {
       // One value per vertex, written to three channels: the relation, not a colour.
       expect(mesh.paneColors.length).toBe(mesh.panes.length)
     }
-    // The bay of the observation deck and the King's great window, and nothing
-    // else on the ship has an outside.
-    expect(glazed).toBe(2)
+    // Only the observation-deck bay has an outside. The large rectangle behind
+    // Nasubi is the battle painting visible on pp. 29–30, not glazing.
+    expect(glazed).toBe(1)
   })
 })
 
 /**
- * The two windows, which are the only two places on the ship where the outside
+ * The observation-deck window, the only place on the ship where the outside
  * exists.
  *
  * Every other source on board is a filament on a ceiling grid, derived. These are
- * declared: `kind: 'window'` in `blueprint.json`, on two structures a panel draws.
+ * declared: `kind: 'window'` in `blueprint.json`, on the structure a panel draws.
  * So what is worth guarding is what the kind buys — that the pane is drawn as a
  * light and not as lacquer, that it is drawn where the light is computed from, and
- * that being the exception costs the other 312 rooms nothing.
+ * that being the exception costs every other room nothing.
  */
-describe('the two windows', () => {
+describe('the observation-deck window', () => {
   const windows = ship.structures.filter((entry) => entry.kind === 'window')
 
   /** The room a window stands in, and the deck that room is on. */
@@ -1217,12 +1217,10 @@ describe('the two windows', () => {
     throw new Error(`${structure.id} stands in no room`)
   }
 
-  it('types two of them on the whole ship, and both are drawn by a panel', () => {
-    // The figure is the point of the feature: 409 spaces, 2 ways of seeing out.
-    expect(windows.map((entry) => entry.id).sort()).toEqual([
-      'tier-1-king-living-quarters-living-great-window',
-      'tier-3-observation-deck-window',
-    ])
+  it('types the observation-deck opening, drawn by a panel', () => {
+    // The King's apparent opening is the monumental battle painting on
+    // pp. 29–30; only the observation deck is actually a way of seeing out.
+    expect(windows.map((entry) => entry.id)).toEqual(['tier-3-observation-deck-window'])
     for (const entry of windows) {
       expect(entry.provenance, `${entry.id} is not drawn`).toBe('panel')
       // Hung off the floor and taller than a person: this is a bay, not a porthole.

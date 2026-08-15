@@ -8,6 +8,8 @@ export class TourNavigationState {
   availableLink = $state<{ link: Link; to: string } | null>(null)
   jumpTo = $state<string | null>(null)
   jumpAt = $state<Vec2 | null>(null)
+  jumpHeading = $state<number | null>(null)
+  jumpPitch = $state<number | null>(null)
   engaged = $state(false)
   touch = $state(false)
   position = $state<Vec2>([0, 0])

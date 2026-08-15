@@ -22,6 +22,8 @@
       | 'availableLink'
       | 'jumpTo'
       | 'jumpAt'
+      | 'jumpHeading'
+      | 'jumpPitch'
       | 'engaged'
       | 'touch'
       | 'position'
@@ -69,6 +71,8 @@
     bind:availableLink={navigation.availableLink}
     bind:jumpTo={navigation.jumpTo}
     bind:jumpAt={navigation.jumpAt}
+    bind:jumpHeading={navigation.jumpHeading}
+    bind:jumpPitch={navigation.jumpPitch}
     bind:engaged={navigation.engaged}
     bind:touch={navigation.touch}
     bind:position={navigation.position}

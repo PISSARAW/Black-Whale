@@ -87,6 +87,7 @@
     scarlet: { share: number; label: string } | null
     tourist?: {
       available: boolean
+      mangaViewLabel?: string
       onJumpToAngle?: () => void
       onTakePhoto: () => void
       onTakePhotoWithHud: () => void
@@ -124,6 +125,10 @@
       <button
         type="button"
         onclick={tourist.onJumpToAngle}
+        title={tourist.mangaViewLabel}
+        aria-label={tourist.mangaViewLabel
+          ? `${$t.tour.sceneOverlay.mangaAngle} — ${tourist.mangaViewLabel}`
+          : $t.tour.sceneOverlay.mangaAngle}
         class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
       >
         {$t.tour.sceneOverlay.mangaAngle}

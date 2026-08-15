@@ -738,17 +738,23 @@
   let postcardPhotoBlob = $state<Blob | null>(null)
   const gyoMode = $derived(hatsuSession.nen.gyo)
   const currentMangaViews = $derived(viewsForSpace(currentSpace?.id ?? null))
+  const currentMangaView = $derived(currentMangaViews[0] ?? null)
 
   const tourist = $derived({
     available: true,
-    ...(currentMangaViews.length > 0
+    ...(currentMangaView
       ? {
+          mangaViewLabel: `${french ? currentMangaView.labelFr : currentMangaView.label} — ${
+            french ? 'tome' : 'vol.'
+          } ${currentMangaView.volume}, ${french ? 'chap.' : 'ch.'} ${currentMangaView.chapter}${
+            currentMangaView.pages ? `, p. ${currentMangaView.pages}` : ''
+          }`,
           onJumpToAngle: () => {
-            const view = currentMangaViews[0]
+            const view = currentMangaView
             navigation.jumpTo = view.spaceId
             navigation.jumpAt = view.at
-            navigation.heading = view.heading
-            navigation.lookPitch = view.pitch
+            navigation.jumpHeading = view.heading
+            navigation.jumpPitch = view.pitch
           },
         }
       : {}),

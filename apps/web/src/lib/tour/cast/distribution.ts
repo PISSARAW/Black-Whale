@@ -209,7 +209,7 @@ function drawnAs(post: Post, look: CastLook): NonNullable<Apparition['human']> {
   return {
     role: post.costume.role,
     ...(post.costume.dress ? { dress: post.costume.dress } : {}),
-    pose: poseOf(post.costume.role),
+    pose: post.pose ?? poseOf(post.costume.role),
     identity: post.member.characterId,
     ...(look.aura ? { aura: look.aura } : {}),
     ...(look.nen ? { nen: look.nen } : {}),

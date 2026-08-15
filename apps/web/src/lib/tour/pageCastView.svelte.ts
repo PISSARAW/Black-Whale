@@ -7,6 +7,7 @@ import {
 import type { Ship } from '$lib/tour/blueprint'
 import type { Apparition } from '$lib/tour/apparitions'
 import type { TourWorld } from '$lib/tour/hatsu'
+import type { MangaView } from '$lib/tour/mangaViews'
 import {
   auraFor,
   auraReader,
@@ -25,6 +26,7 @@ import {
   type Post,
   type Situation,
 } from '$lib/tour/cast'
+import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
 
 /** What the page knows that the distribution needs. */
 interface CastContext {
@@ -36,6 +38,8 @@ interface CastContext {
   visitorIn: string | null
   /** Whether the visitor has a technique up. A raised aura is felt in the room. */
   casting: boolean
+  /** The source panel whose exact blocking is currently being reproduced. */
+  mangaView: MangaView | null
 }
 
 /**
@@ -82,8 +86,17 @@ export class TourCastView {
 
   /** Where everyone on this deck stands, at the event the server selected. */
   posts = $derived.by<Post[]>(() => {
-    const { cast, tierId } = this.options.read()
-    return distribute(this.options.ship, cast.members, { tierId })
+    const { cast, tierId, mangaView } = this.options.read()
+    if (!mangaView?.staging?.length) {
+      return distribute(this.options.ship, cast.members, { tierId })
+    }
+    const viewTierId = this.options.ship.spaces.get(mangaView.spaceId)?.tierId
+    if (!viewTierId) return distribute(this.options.ship, cast.members, { tierId })
+    return stagePostsForMangaView(
+      distribute(this.options.ship, cast.members),
+      mangaView,
+      viewTierId,
+    ).filter((post) => post.tierId === tierId)
   })
 
   /**

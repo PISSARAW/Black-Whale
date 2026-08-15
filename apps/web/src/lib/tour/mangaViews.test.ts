@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from './blueprint'
 import { pointInPolygon, structureFootprint } from './geometry'
-import { MANGA_VIEWS, viewsForSpace } from './mangaViews'
+import { MANGA_VIEWS, mangaViewById, viewsForSpace } from './mangaViews'
 
 describe('manga photo viewpoints', () => {
   const ship = theShip()
@@ -34,8 +34,7 @@ describe('manga photo viewpoints', () => {
       const plan = ship.plans.get(space!.tierId)!
       const obstruction = plan.structures.find(
         (structure) =>
-          structure.spaceId === space!.id &&
-          pointInPolygon(view.at, structureFootprint(structure)),
+          structure.spaceId === space!.id && pointInPolygon(view.at, structureFootprint(structure)),
       )
       expect(obstruction?.id, `${view.id} starts inside the scenery`).toBeUndefined()
     }
@@ -47,9 +46,18 @@ describe('manga photo viewpoints', () => {
       'tier-3-cineplex-screen-corridor',
       'tier-3-cineplex-ticket-desk',
     ]) {
-      expect(viewsForSpace(spaceId).map((view) => view.id)).toContain(
-        'cineplex-establishing-shot',
-      )
+      expect(viewsForSpace(spaceId).map((view) => view.id)).toContain('cineplex-establishing-shot')
     }
+  })
+
+  it("carries the character blocking drawn in Nasubi's establishing panel", () => {
+    const view = mangaViewById('nasubi-living-mantel')
+    expect(view?.eventSequence).toBe(1)
+    expect(view?.staging).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ characterId: 'nasubi-hui-guo-rou', pose: 'seated' }),
+        expect.objectContaining({ characterId: 'prince-halkenburg' }),
+      ]),
+    )
   })
 })

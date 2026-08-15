@@ -1,4 +1,12 @@
 import type { Vec2 } from './types'
+import type { Apparition } from './apparitions'
+
+export interface MangaCastStaging {
+  characterId: string
+  at: Vec2
+  heading?: number
+  pose?: NonNullable<Apparition['human']>['pose']
+}
 
 export interface MangaView {
   /** The unique ID for this view */
@@ -13,6 +21,8 @@ export interface MangaView {
   pitch: number
   /** The chapter this view is from, for the watermark */
   chapter: number
+  /** Event order inside the chapter when the panel reproduces a populated scene. */
+  eventSequence?: number
   /** Collected edition used to check the framing. */
   volume: number
   /** Printed page(s), when the edition exposes a stable reference. */
@@ -21,6 +31,8 @@ export interface MangaView {
   label: string
   /** Description of the scene in French */
   labelFr: string
+  /** Character blocking visible in the source panel, when it is explicit. */
+  staging?: readonly MangaCastStaging[]
   /**
    * Other zones of the same continuous room from which this view is offered.
    * The cineplex hall, for example, is split into three navigation spaces even
@@ -35,9 +47,7 @@ function headingTo(from: Vec2, target: Vec2): number {
   return Math.atan2(from[0] - target[0], from[1] - target[1])
 }
 
-function view(
-  input: Omit<MangaView, 'heading'> & { target: Vec2 },
-): MangaView {
+function view(input: Omit<MangaView, 'heading'> & { target: Vec2 }): MangaView {
   const { target, ...rest } = input
   return { ...rest, heading: headingTo(input.at, target) }
 }
@@ -78,7 +88,7 @@ export const MANGA_VIEWS: MangaView[] = [
     chapter: 362,
     volume: 35,
     label: "Benjamin's reception room and its guard line",
-    labelFr: "Le salon de réception de Benjamin et sa ligne de gardes",
+    labelFr: 'Le salon de réception de Benjamin et sa ligne de gardes',
   }),
   view({
     id: 'tserriednich-living-training',
@@ -215,14 +225,34 @@ export const MANGA_VIEWS: MangaView[] = [
   view({
     id: 'nasubi-living-mantel',
     spaceId: 'tier-1-king-living-quarters-living',
-    at: [-2.8, 7],
+    at: [0, 7.15],
     target: [0, -7.45],
-    pitch: 0.04,
+    pitch: -0.07,
     chapter: 382,
+    eventSequence: 1,
     volume: 37,
     pages: '29–30',
     label: "Nasubi's salon facing the monumental painting and ornamented mantel",
     labelFr: 'Le salon de Nasubi face au tableau monumental et au manteau ornementé',
+    // Ch. 382, pp. 29–30: Nasubi occupies the left seating group,
+    // Halkenburg crosses the open floor at right, while Nasubi's Guardian
+    // Spirit Beast occupies the far edge. This blocking is part of the panel
+    // just as much as the lens:
+    // leaving the generic hashed stations in place put the King outside it.
+    staging: [
+      {
+        characterId: 'nasubi-hui-guo-rou',
+        at: [-5, -0.15],
+        heading: 0,
+        pose: 'seated',
+      },
+      {
+        characterId: 'prince-halkenburg',
+        at: [5.1, -1.35],
+        heading: -1.45,
+        pose: 'idle',
+      },
+    ],
   }),
   view({
     id: 'lifeboat-round-hatch',
@@ -239,10 +269,7 @@ export const MANGA_VIEWS: MangaView[] = [
   view({
     id: 'cineplex-establishing-shot',
     spaceId: 'tier-3-cineplex-screen-corridor',
-    triggerSpaceIds: [
-      'tier-3-cineplex-concession',
-      'tier-3-cineplex-ticket-desk',
-    ],
+    triggerSpaceIds: ['tier-3-cineplex-concession', 'tier-3-cineplex-ticket-desk'],
     at: [0, -4.25],
     target: [0, 9.8],
     pitch: 0.02,
@@ -260,7 +287,7 @@ export const MANGA_VIEWS: MangaView[] = [
     chapter: 398,
     volume: 38,
     pages: '150–153',
-    label: "Room 3101 facing the Heil-Ly bathroom trap",
+    label: 'Room 3101 facing the Heil-Ly bathroom trap',
     labelFr: 'La chambre 3101 face au piège Heil-Ly de la salle de bains',
   }),
 ]
@@ -270,4 +297,9 @@ export function viewsForSpace(spaceId: string | null): MangaView[] {
   return MANGA_VIEWS.filter(
     (view) => view.spaceId === spaceId || view.triggerSpaceIds?.includes(spaceId),
   )
+}
+
+export function mangaViewById(id: string | null): MangaView | null {
+  if (!id) return null
+  return MANGA_VIEWS.find((view) => view.id === id) ?? null
 }

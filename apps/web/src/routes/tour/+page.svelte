@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount, untrack } from 'svelte'
+  import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
@@ -60,7 +61,7 @@
   import { NO_CAST, readingIsFelt, spacesForLocation, type AddressWords } from '$lib/tour/cast'
   import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
   import { NO_HOUR } from '$lib/tour/hour'
-  import { viewsForSpace } from '$lib/tour/mangaViews'
+  import { mangaViewById, viewsForSpace, type MangaView } from '$lib/tour/mangaViews'
   import type { PageData } from './$types'
 
   // The walk is no longer only a ship: the server hands it the cast of the
@@ -82,6 +83,8 @@
     ship.spaces.get($page.url.searchParams.get('space') ?? '') ?? null,
   )
   const requestedDeck = $derived($page.url.searchParams.get('deck'))
+  const requestedMangaView = $derived(mangaViewById($page.url.searchParams.get('mangaView')))
+  let activeMangaView = $state<MangaView | null>(untrack(() => requestedMangaView))
   const initialTierId = untrack(
     () =>
       requestedSpace?.tierId ??
@@ -118,7 +121,16 @@
   $effect(() => {
     const space = requestedSpace
     const deck = requestedDeck
-    untrack(() => navigation.honor(space, deck))
+    const mangaView = requestedMangaView
+    untrack(() => {
+      navigation.honor(space, deck)
+      if (!mangaView) return
+      activeMangaView = mangaView
+      navigation.jumpTo = mangaView.spaceId
+      navigation.jumpAt = mangaView.at
+      navigation.jumpHeading = mangaView.heading
+      navigation.jumpPitch = mangaView.pitch
+    })
   })
 
   async function copyViewpoint() {
@@ -572,6 +584,7 @@
       tierId,
       visitorIn: currentSpace?.id ?? null,
       casting: Boolean(technique),
+      mangaView: activeMangaView,
     }),
     // What the visitor is doing to one body in particular (ADR-004): the
     // conduct answers being aimed at personally, and being held, differently
@@ -773,6 +786,16 @@
           }`,
           onJumpToAngle: () => {
             const view = currentMangaView
+            if ($page.url.searchParams.get('mangaView') !== view.id) {
+              const url = new URL($page.url)
+              url.searchParams.delete('deck')
+              url.searchParams.delete('eventId')
+              url.searchParams.set('space', view.spaceId)
+              url.searchParams.set('mangaView', view.id)
+              void goto(url.toString(), { keepFocus: true, noScroll: true })
+              return
+            }
+            activeMangaView = view
             navigation.jumpTo = view.spaceId
             navigation.jumpAt = view.at
             navigation.jumpHeading = view.heading

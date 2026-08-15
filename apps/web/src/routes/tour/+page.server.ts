@@ -20,6 +20,7 @@ import {
 } from '$lib/tour/cast'
 import type { CastMember, CastPayload } from '$lib/tour/cast'
 import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
+import { mangaViewById } from '$lib/tour/mangaViews'
 import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import abilityUseCatalog from '../../../../../data/abilities/uses.json'
@@ -169,7 +170,17 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
     orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
     include: { chapter: true },
   })
-  const { event } = selectEvent(events, { eventId: url.searchParams.get('eventId') })
+  const mangaView = mangaViewById(url.searchParams.get('mangaView'))
+  const mangaEvent = mangaView
+    ? events.find(
+        (candidate) =>
+          candidate.chapter.number === mangaView.chapter &&
+          (mangaView.eventSequence === undefined || candidate.sequence === mangaView.eventSequence),
+      )
+    : null
+  const { event } = selectEvent(events, {
+    eventId: mangaEvent?.id ?? url.searchParams.get('eventId'),
+  })
   if (!event) return { cast: empty(cap), hour: NO_HOUR }
 
   const world = await timeline.getWorldState({ eventId: event.id })

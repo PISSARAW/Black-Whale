@@ -165,6 +165,8 @@ export interface Post {
   at: Vec2
   /** Which way it faces, or absent to turn to whoever is looking. */
   heading?: number
+  /** Panel-specific blocking may hold a body in a pose shown by that panel. */
+  pose?: NonNullable<Apparition['human']>['pose']
   costume: Costume
   /**
    * Whether this is the body's place on the interior level of its room, rather

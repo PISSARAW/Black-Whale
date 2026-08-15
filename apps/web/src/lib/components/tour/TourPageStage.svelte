@@ -5,12 +5,14 @@
   import TourSceneOverlay from './TourSceneOverlay.svelte'
   import TourExamineCard from './TourExamineCard.svelte'
   import TourAddressCard from './TourAddressCard.svelte'
+  import TourDialogueCard from './TourDialogueCard.svelte'
   import TourFrameBudget from './TourFrameBudget.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
   type ExamineProps = ComponentProps<typeof TourExamineCard>
   type AddressProps = ComponentProps<typeof TourAddressCard>
+  type DialogueProps = ComponentProps<typeof TourDialogueCard>
 
   interface Props {
     immersive: boolean
@@ -38,6 +40,7 @@
      * would mean looking away from the thing it is about.
      */
     examine: ExamineProps
+    dialogue: DialogueProps
     /**
      * And the exchange, in the same place and for the same reason: what a body
      * answers is about the body you are standing in front of.
@@ -53,6 +56,7 @@
     scene,
     overlay,
     examine,
+    dialogue,
     address,
     takeScreenshot = $bindable(null),
     gyoMode = false,
@@ -86,6 +90,7 @@
   />
   <TourSceneOverlay {...overlay} />
   <TourExamineCard {...examine} />
+  <TourDialogueCard {...dialogue} />
   <TourAddressCard {...address} />
   <!--
     The cost of the frame the other four are drawn over. Unconditional, and it

@@ -151,7 +151,7 @@
     // One key for the cards, and it puts back whichever is up: the exchange
     // first, since it is the one the visitor opened from the other.
     examine: () => {
-      if (bodyView.talk) bodyView.close()
+      if (bodyView.talk || bodyView.conversation) bodyView.close()
       else if (asking) close()
       else ask()
     },
@@ -864,7 +864,7 @@
         // Hidden while the card is up: the same gesture puts it back, and the
         // card carries its own way out.
         examine:
-          asking || bodyView.talk
+          asking || bodyView.talk || bodyView.conversation
             ? null
             : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
       }}
@@ -876,6 +876,15 @@
         // The way on to the exchange, only in front of somebody the server
         // sent a dossier for. The evidence card steps aside for it: both are
         // the same card in the same place, about the same body.
+        talk: bodyView.contextLine
+          ? {
+              label: $t.tour.dialogue.open,
+              onOpen: () => {
+                close()
+                bodyView.speak()
+              },
+            }
+          : null,
         address: bodyView.dossier
           ? {
               label: $t.tour.address.open,
@@ -885,6 +894,11 @@
               },
             }
           : null,
+      }}
+      dialogue={{
+        conversation: bodyView.conversation,
+        onClose: bodyView.close,
+        onOpenArchive: bodyView.address,
       }}
       address={{
         talk: bodyView.talk,

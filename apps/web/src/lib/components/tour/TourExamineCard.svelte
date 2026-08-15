@@ -50,10 +50,11 @@
      * card is where the visitor already is when the question occurs to them. A
      * pillar gets `null`, and there is no button.
      */
+    talk: { label: string; onOpen: () => void } | null
     address: { label: string; onOpen: () => void } | null
   }
 
-  let { open, exhibit, sourcesHref, onClose, address }: Props = $props()
+  let { open, exhibit, sourcesHref, onClose, talk, address }: Props = $props()
 
   /** The same four colours the legend and the reveal already use. */
   const badgeClass: Record<Provenance, string> = {
@@ -118,14 +119,24 @@
         </p>
       {/if}
 
-      {#if address}
-        <p class="mt-3">
-          <button
-            type="button"
-            onclick={address.onOpen}
-            class="rounded border border-[#FFD700]/40 px-2 py-1 text-[11px] text-[#FFD700]/90 transition-colors hover:border-[#FFD700] hover:text-[#FFD700]"
-            >{address.label}</button
-          >
+      {#if talk || address}
+        <p class="mt-3 flex flex-wrap gap-2">
+          {#if talk}
+            <button
+              type="button"
+              onclick={talk.onOpen}
+              class="rounded border border-[#FFD700]/60 bg-[#FFD700]/10 px-2 py-1 text-[11px] text-[#FFD700] transition-colors hover:bg-[#FFD700]/20"
+              >{talk.label}</button
+            >
+          {/if}
+          {#if address}
+            <button
+              type="button"
+              onclick={address.onOpen}
+              class="rounded border border-[#FFFFF0]/20 px-2 py-1 text-[11px] text-[#FFFFF0]/60 transition-colors hover:border-[#FFD700]/60 hover:text-[#FFD700]"
+              >{address.label}</button
+            >
+          {/if}
         </p>
       {/if}
 

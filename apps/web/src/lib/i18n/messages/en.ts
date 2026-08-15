@@ -825,7 +825,7 @@ export const en = {
      * answers are the catalogue's.
      */
     address: {
-      open: 'Address',
+      open: 'Question the archives',
       close: 'Say nothing',
       title: 'What this body can answer',
       nobody: 'Nobody in front of you.',
@@ -854,6 +854,13 @@ export const en = {
       withheld: (count: number) =>
         `${count} step${count === 1 ? '' : 's'} of their route ${count === 1 ? 'is' : 'are'} past your chapter.`,
       unsealed: 'The body answered in their place',
+    },
+
+    dialogue: {
+      open: 'Talk',
+      close: 'End the conversation',
+      title: 'Conversation',
+      paraphrase: (chapter: number) => `Faithful contextual paraphrase · ch. ${chapter}`,
     },
 
     /**

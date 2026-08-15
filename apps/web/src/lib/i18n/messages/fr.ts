@@ -738,7 +738,7 @@ export const fr: Messages = {
     },
 
     address: {
-      open: 'Adresser',
+      open: 'Interroger les archives',
       close: 'Se taire',
       title: 'Ce que ce corps peut répondre',
       nobody: 'Personne devant vous.',
@@ -767,6 +767,13 @@ export const fr: Messages = {
       withheld: (count) =>
         `${count} étape${count === 1 ? '' : 's'} de sa trajectoire ${count === 1 ? 'est' : 'sont'} au-delà de votre chapitre.`,
       unsealed: 'Le corps a répondu à sa place',
+    },
+
+    dialogue: {
+      open: 'Parler',
+      close: 'Mettre fin à la conversation',
+      title: 'Conversation',
+      paraphrase: (chapter) => `Paraphrase contextuelle fidèle · ch. ${chapter}`,
     },
 
     body: {

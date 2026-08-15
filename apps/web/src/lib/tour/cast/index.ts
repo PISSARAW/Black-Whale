@@ -53,6 +53,13 @@ export {
   type DossierStep,
 } from './dossier'
 export {
+  contextLineFor,
+  contextLinesFor,
+  type ContextLine,
+  type DialogueEvent,
+  type DialogueMember,
+} from './dialogue'
+export {
   CHAIN_JAIL_FACTION,
   reachBody,
   type Reach,

@@ -15,6 +15,7 @@
 import type { Apparition } from '../apparitions'
 import type { Vec2 } from '../types'
 import type { CastDossier } from './dossier'
+import type { ContextLine } from './dialogue'
 import type { TourWorld } from './world'
 import type { SolidHold } from './worldPieces'
 import type { TourReport } from './report'
@@ -124,6 +125,14 @@ export interface CastPayload {
    */
   dossiers: Record<string, CastDossier>
   /**
+   * What each person can say about the event currently being reconstructed.
+   *
+   * Authored as a contextual paraphrase in both supported languages, and made
+   * on the server from the already-capped event. The browser therefore never
+   * receives a line from a chapter the reader has not selected or unlocked.
+   */
+  dialogue: Record<string, ContextLine>
+  /**
    * Environmental damages (broken doors, cut walls) that have occurred up to the cap.
    * Grouped by locationId.
    */
@@ -167,6 +176,7 @@ export const NO_CAST: CastPayload = {
   members: [],
   beasts: [],
   dossiers: {},
+  dialogue: {},
   vestiges: {},
 }
 

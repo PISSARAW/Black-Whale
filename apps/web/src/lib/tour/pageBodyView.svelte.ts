@@ -31,6 +31,7 @@ import {
   type BodyMark,
   type CastDossier,
   type CastPayload,
+  type ContextLine,
   type Interview,
   type Post,
   type Reach,
@@ -107,6 +108,9 @@ export class TourBodyView {
   /** The exchange currently open, or null. Held rather than derived: see below. */
   talk = $state<Interview | null>(null)
 
+  /** The present-tense reply currently being spoken in the reconstruction. */
+  conversation = $state<{ name: string; line: ContextLine } | null>(null)
+
   /**
    * What Body and Soul took, kept beside the interview rather than inside it.
    *
@@ -133,6 +137,13 @@ export class TourBodyView {
     const person = this.aimed
     if (!person) return null
     return this.options.read().cast.dossiers[person.member.characterId] ?? null
+  })
+
+  /** The line authored for this person at this exact projected event. */
+  contextLine = $derived.by<ContextLine | null>(() => {
+    const person = this.aimed
+    if (!person) return null
+    return this.options.read().cast.dialogue[person.member.characterId] ?? null
   })
 
   /** What the visitor's own aura tells them about that body. */
@@ -194,7 +205,7 @@ export class TourBodyView {
       book: context.book,
       // Melody hears a lie in a heart that is answering. The exchange being
       // open is the walk's own record of somebody talking.
-      speaking: this.talk !== null,
+      speaking: this.talk !== null || this.conversation !== null,
       // The blow goes through matter, not through air — and the bulkhead
       // between the visitor and this body is matter. See `punch.ts`.
       throughMatter: context.throughMatter(person.at),
@@ -240,13 +251,28 @@ export class TourBodyView {
       this.talk = null
       return
     }
+    this.conversation = null
     this.talk = interview(this.optionsFor(person, dossier))
     this.extracted = []
+  }
+
+  /** Let the person answer from inside the event currently being reconstructed. */
+  speak = () => {
+    const person = this.aimed
+    const line = this.contextLine
+    if (!person || !line) {
+      this.conversation = null
+      return
+    }
+    this.talk = null
+    this.extracted = []
+    this.conversation = { name: person.member.name, line }
   }
 
   /** Put it away. The same gesture, and the panel carries its own way out. */
   close = () => {
     this.talk = null
+    this.conversation = null
     this.extracted = []
   }
 

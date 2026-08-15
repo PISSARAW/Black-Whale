@@ -7,6 +7,7 @@ import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
 import { BODY_KINDS } from '$lib/tour/bodyKinds'
 import {
   dossierFor,
+  contextLinesFor,
   inSlugSpace,
   rosterFrom,
   type CastDossier,
@@ -194,6 +195,12 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
       members: aboard,
       beasts,
       dossiers: dossiersFor(aboard, cap),
+      dialogue: contextLinesFor(aboard, {
+        id: event.id,
+        chapter: event.chapter.number,
+        title: event.title,
+        summary: event.summary,
+      }),
       vestiges,
     },
     // Read off the event rather than recomputed: the voyage clock runs once, at
@@ -211,6 +218,7 @@ function empty(spoilerLimit: number | null): CastPayload {
     members: [],
     beasts: [],
     dossiers: {},
+    dialogue: {},
     vestiges: {},
   }
 }

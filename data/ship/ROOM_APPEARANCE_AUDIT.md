@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 895 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 922 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -41,12 +41,13 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 192.5 × 28 m ; 24 × 16.64 m
 - **Hauteurs sous plafond :** 7 m
-- **Éléments modélisés :** 8 painting, 6 cabinet, 3 seat, 3 table, 1 platform, 1 window
+- **Éléments modélisés :** 9 painting, 6 cabinet, 3 seat, 3 table, 1 platform
 - **Objets directement visibles dans les cases :** 22/22
 - **Espaces internes :** Salon royal
 - **Sources de la pièce :**
   - Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons.
 - **Sources du mobilier et des détails :**
+  - Chap. 382, p. 29–30 — un tableau de bataille monumental domine le mur au-dessus du manteau ornementé.
   - Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.
   - Chap. 382, p. 29–30 — un long manteau sous le tableau de bataille monumental porte des photographies encadrées, des vases et un ornement central évoquant une horloge.
   - Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central.
@@ -228,14 +229,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat, 1 telephone
+- **Objets directement visibles dans les cases :** 17/17
 - **Espaces internes :** Quartiers des domestiques — 1001 (Benjamin) ; WC du personnel — 1001 (Benjamin) ; Vestibule d'entrée — 1001 (Benjamin) ; Cuisine — 1001 (Benjamin) ; Salle à manger — 1001 (Benjamin) ; Salon — 1001 (Benjamin) ; Chambre du prince — 1001 (Benjamin) ; Bain et WC — 1001 (Benjamin)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 366 — le passage dans la chambre 1001 montre Balsamilco au téléphone près de la porte de Benjamin, tandis que Furykov se tient dans le salon de réception.
+  - Chap. 363 — le discours de Benjamin à ses soldats est cadré par le grand tableau accroché dans son salon de réception.
 
 ## Chambre 1002 (Camilla) — `tier-1-royal-residential-sector-room-1002`
 
@@ -244,14 +247,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 4 cabinet, 4 seat, 3 basin, 3 bed, 3 table, 2 counter
+- **Objets directement visibles dans les cases :** 19/19
 - **Espaces internes :** Quartiers des domestiques — 1002 (Camilla) ; WC du personnel — 1002 (Camilla) ; Vestibule d'entrée — 1002 (Camilla) ; Cuisine — 1002 (Camilla) ; Salle à manger — 1002 (Camilla) ; Salon — 1002 (Camilla) ; Chambre du prince — 1002 (Camilla) ; Bain et WC — 1002 (Camilla)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 389 — les gardes Intouchables de Camilla se réunissent dans un salon formel tapissé, assis le long des murs autour d'un vaste centre dégagé.
+  - Chap. 366 — Camilla mange avec la reine Duazul tandis que Musse occupe un bureau séparé dans le passage de la chambre 1002.
 
 ## Chambre 1003 (Zhang Lei) — `tier-1-royal-residential-sector-room-1003`
 
@@ -277,14 +282,15 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat
+- **Objets directement visibles dans les cases :** 17/17
 - **Espaces internes :** Quartiers des domestiques — 1004 (Tserriednich) ; WC du personnel — 1004 (Tserriednich) ; Vestibule d'entrée — 1004 (Tserriednich) ; Cuisine — 1004 (Tserriednich) ; Salle à manger — 1004 (Tserriednich) ; Salon — 1004 (Tserriednich) ; Chambre du prince — 1004 (Tserriednich) ; Bain et WC — 1004 (Tserriednich)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 384–387 — le salon presque vide où Tserriednich s'entraîne au Nen présente un sol géométrique poli, de hautes portes à panneaux, des murs moulurés, un cadre et une pendule sur le manteau.
 
 ## Chambre 1005 (Tubeppa) — `tier-1-royal-residential-sector-room-1005`
 
@@ -310,14 +316,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 seat
+- **Objets directement visibles dans les cases :** 18/18
 - **Espaces internes :** Quartiers des domestiques — 1006 (Tyson) ; WC du personnel — 1006 (Tyson) ; Vestibule d'entrée — 1006 (Tyson) ; Cuisine — 1006 (Tyson) ; Salle à manger — 1006 (Tyson) ; Salon — 1006 (Tyson) ; Chambre du prince — 1006 (Tyson) ; Bain et WC — 1006 (Tyson)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 389 — Tyson entre par de hautes portes à panneaux dans une réception d'anniversaire ornée ; un gâteau et des cadeaux occupent la table centrale tandis que les assistants longent les murs.
+  - Chap. 389 — la réception d'anniversaire de Tyson est garnie de cadeaux emballés autour de son présentoir central.
 
 ## Chambre 1007 (Luzurus) — `tier-1-royal-residential-sector-room-1007`
 
@@ -326,14 +334,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 2 seat, 1 painting
+- **Objets directement visibles dans les cases :** 19/19
 - **Espaces internes :** Quartiers des domestiques — 1007 (Luzurus) ; WC du personnel — 1007 (Luzurus) ; Vestibule d'entrée — 1007 (Luzurus) ; Cuisine — 1007 (Luzurus) ; Salle à manger — 1007 (Luzurus) ; Salon — 1007 (Luzurus) ; Chambre du prince — 1007 (Luzurus) ; Bain et WC — 1007 (Luzurus)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 386 et 389 — le salon habité de Luzurus est encombré de sièges profondément rembourrés, de tables d'appoint, de bouteilles, de plantes, d'étagères et d'ornements.
+  - Chap. 414 — Luzurus regarde un film dans la chambre 1007 avec Rice et Basho ; l'écran appartient au salon encombré montré auparavant.
 
 ## Chambre 1008 (Salé-salé) — `tier-1-royal-residential-sector-room-1008`
 
@@ -342,14 +352,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 seat
+- **Objets directement visibles dans les cases :** 16/16
 - **Espaces internes :** Quartiers des domestiques — 1008 (Salé-salé) ; WC du personnel — 1008 (Salé-salé) ; Vestibule d'entrée — 1008 (Salé-salé) ; Cuisine — 1008 (Salé-salé) ; Salle à manger — 1008 (Salé-salé) ; Salon — 1008 (Salé-salé) ; Chambre du prince — 1008 (Salé-salé) ; Bain et WC — 1008 (Salé-salé)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
+  - Chap. 366 et 382 — Salé-salé reste couché avec deux compagnes dans le large lit qui transforme sa chambre en pièce de fête informelle ; Predator et Stand By Me l'atteignent tous deux à côté de ce lit.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 366 et 382 — la chambre au large lit de Salé-salé sert aussi de pièce de fête informelle, avec ses compagnes et les boissons gardées près du lit.
 
 ## Chambre 1009 (Halkenburg) — `tier-1-royal-residential-sector-room-1009`
 
@@ -358,14 +370,15 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 7 seat, 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table
+- **Objets directement visibles dans les cases :** 21/21
 - **Espaces internes :** Quartiers des domestiques — 1009 (Halkenburg) ; WC du personnel — 1009 (Halkenburg) ; Vestibule d'entrée — 1009 (Halkenburg) ; Cuisine — 1009 (Halkenburg) ; Salle à manger — 1009 (Halkenburg) ; Salon — 1009 (Halkenburg) ; Chambre du prince — 1009 (Halkenburg) ; Bain et WC — 1009 (Halkenburg)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 382 et 386 — le salon de Halkenburg laisse un vaste centre carrelé dégagé, les chaises étant disposées en cercle autour du corps de Shikaku occupé.
 
 ## Chambre 1010 (Kacho) — `tier-1-royal-residential-sector-room-1010`
 
@@ -394,14 +407,15 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
+- **Objets directement visibles dans les cases :** 16/16
 - **Espaces internes :** Quartiers des domestiques — 1011 (Fugetsu) ; WC du personnel — 1011 (Fugetsu) ; Vestibule d'entrée — 1011 (Fugetsu) ; Cuisine — 1011 (Fugetsu) ; Salle à manger — 1011 (Fugetsu) ; Salon — 1011 (Fugetsu) ; Chambre du prince — 1011 (Fugetsu) ; Bain et WC — 1011 (Fugetsu)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 366 et 374 — Fugetsu regarde des photographies dans son lit ; lorsque Magical Worm s'ouvre, le réveil numérique à côté d'elle indique mardi, 01 h 27.
 
 ## Chambre 1012 (Momoze) — `tier-1-royal-residential-sector-room-1012`
 
@@ -410,8 +424,8 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat, 1 vent
-- **Objets directement visibles dans les cases :** 16/16
+- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat, 1 telephone, 1 vent
+- **Objets directement visibles dans les cases :** 17/17
 - **Espaces internes :** Quartiers des domestiques — 1012 (Momoze) ; WC du personnel — 1012 (Momoze) ; Vestibule d'entrée — 1012 (Momoze) ; Cuisine — 1012 (Momoze) ; Salle à manger — 1012 (Momoze) ; Salon — 1012 (Momoze) ; Chambre du prince — 1012 (Momoze) ; Bain et WC — 1012 (Momoze)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
@@ -419,6 +433,7 @@
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
   - Chap. 367 — le même réseau, un appartement plus loin : le cafard sort des égouts par la grille de la grande chambre du prince Momoze et surplombe le lit. C'est par cette grille que la reine Oito assiste au meurtre de Momoze au chap. 368.
+  - Chap. 373 — les gardes armés refusent l'accès à la chambre 1012 scellée, même lorsqu'un visiteur demande seulement à utiliser le téléphone qui se trouve à l'intérieur.
 
 ## Chambre 1013 (Marayam) — `tier-1-royal-residential-sector-room-1013`
 
@@ -427,8 +442,8 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat, 1 vent
-- **Objets directement visibles dans les cases :** 16/16
+- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 painting, 1 seat, 1 vent
+- **Objets directement visibles dans les cases :** 19/19
 - **Espaces internes :** Quartiers des domestiques — 1013 (Marayam) ; WC du personnel — 1013 (Marayam) ; Vestibule d'entrée — 1013 (Marayam) ; Cuisine — 1013 (Marayam) ; Salle à manger — 1013 (Marayam) ; Salon — 1013 (Marayam) ; Chambre du prince — 1013 (Marayam) ; Bain et WC — 1013 (Marayam)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
@@ -436,6 +451,9 @@
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
   - Chap. 367 — le réseau d'égouts sous la zone d'habitation et les grilles à persiennes par lesquelles il débouche dans les appartements : le cafard de Bill est lâché dans les égouts et gagne ainsi un prince après l'autre. Les pièces du prince Marayam sont les premières qu'il observe d'en haut, juste sous le plafond.
+  - Chap. 366 — la chambre protégée de Marayam contient le mobilier de jeu bas où sont gardées ses voitures miniatures et ses briques, tandis que domestiques et gardes veillent sur lui.
+  - Chap. 366 — des voitures miniatures et des briques de construction identifient la chambre protégée de Marayam comme l'espace de vie d'un enfant.
+  - Chap. 366 — le tableau encadré derrière la reine Sevanti et Marayam appartient au salon meublé montré avant que la pièce ne soit isolée par le Nen.
 
 ## Chambre 1014 (Woble) — `tier-1-royal-residential-sector-room-1014`
 

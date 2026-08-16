@@ -7,7 +7,7 @@ const ship = buildShip()
 const space = (id: string) => ship.spaces.get(id)!
 
 describe('audited floor patterns', () => {
-  it('draws the four treatments the audit names', () => {
+  it('draws the panel-attested treatments the audit names', () => {
     expect(floorPatternOf(space('tier-1-king-living-quarters-living'))?.kind).toBe(
       'geometric-inlay',
     )
@@ -16,6 +16,12 @@ describe('audited floor patterns', () => {
       'floorboards',
     )
     expect(floorPatternOf(space('tier-2-heilly-secret-hideout-processing'))?.kind).toBe('tile')
+    expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1004-living'))?.kind).toBe(
+      'geometric-inlay',
+    )
+    expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1009-living'))?.kind).toBe(
+      'tile',
+    )
   })
 
   it('tiles Woble’s apartment except for the panel-shown kitchen floorboards', () => {

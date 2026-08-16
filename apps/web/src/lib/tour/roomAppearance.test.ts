@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildShip } from './blueprint'
-import { appearanceOf, hasAuthoredAppearance } from './roomAppearance'
+import { appearanceOf, authoredStructureColourOf, hasAuthoredAppearance } from './roomAppearance'
 
 const ship = buildShip()
 
@@ -49,5 +49,26 @@ describe('room appearance', () => {
 
     expect(new Set(appearances.map((appearance) => appearance.floor)).size).toBe(ids.length)
     expect(new Set(appearances.map((appearance) => appearance.wall)).size).toBe(ids.length)
+  })
+
+  it('uses attested colours for writing surfaces without recolouring ordinary furniture', () => {
+    const whiteboard = ship.structures.find((entry) => entry.id.endsWith('living-whiteboard-1'))!
+    const sofa = ship.structures.find(
+      (entry) => entry.id === 'tier-1-royal-residential-sector-room-1005-living-seat-04',
+    )!
+    const room = ship.spaces.get(whiteboard.spaceId)!
+    const appearance = appearanceOf(room, ship.plans.get(room.tierId)!.tier)
+
+    expect(authoredStructureColourOf(whiteboard, appearance)).toBe(0xf2f2ea)
+    expect(authoredStructureColourOf(sofa, appearance)).toBe(appearance.fabric)
+  })
+
+  it('distinguishes Camilla’s carpeted salon from the rest of her apartment', () => {
+    const salon = ship.spaces.get('tier-1-royal-residential-sector-room-1002-living')!
+    const bedroom = ship.spaces.get('tier-1-royal-residential-sector-room-1002-bedroom')!
+    const tier = ship.plans.get(salon.tierId)!.tier
+
+    expect(appearanceOf(salon, tier).floor).toBe(0x553238)
+    expect(appearanceOf(salon, tier).floor).not.toBe(appearanceOf(bedroom, tier).floor)
   })
 })

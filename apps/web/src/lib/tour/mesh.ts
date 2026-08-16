@@ -27,7 +27,7 @@ import { ceilingOf, floorOf } from './blueprint'
 import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
 import { floorPatternOf } from './floorPattern'
 import { structureSheenOf } from './surfaceFinish'
-import { appearanceOf, structureColourOf } from './roomAppearance'
+import { appearanceOf, authoredStructureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
 import type { BlindWall, TierPlan } from './blueprint'
 import type {
@@ -1062,7 +1062,7 @@ function extrudeSolid(into: Surfaces, structure: Structure, where: Standing): vo
   // used to blend a pink into it, which meant a forged surface announced itself
   // to anybody with eyes: the one thing ch. 61 is explicit that it does not do.
   // See `texture.ts`.
-  const colour = lifted(hex(structureColourOf(structure.kind, appearanceOf(room, tier))))
+  const colour = lifted(hex(authoredStructureColourOf(structure, appearanceOf(room, tier))))
   const bottom = floorOf(room, tier) + structure.base
   const top = Math.min(bottom + structure.height, floorOf(room, tier) + ceilingOf(room, tier))
 

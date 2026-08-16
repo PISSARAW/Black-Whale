@@ -631,6 +631,12 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
     if (!structure.nameFr.trim()) issues.push(`${id}: missing French name`)
     if (structure.height <= 0) issues.push(`${id}: stands no higher than the floor`)
     if (structure.base < 0) issues.push(`${id}: hangs below the floor`)
+    if (
+      structure.colour !== undefined &&
+      (!Number.isInteger(structure.colour) || structure.colour < 0 || structure.colour > 0xffffff)
+    ) {
+      issues.push(`${id}: colour must be a 24-bit integer`)
+    }
     if (structure.sides !== null && structure.sides < 3) {
       issues.push(`${id}: ${structure.sides} sides cannot enclose anything`)
     }

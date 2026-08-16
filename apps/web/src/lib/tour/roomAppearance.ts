@@ -6,7 +6,7 @@
  * palettes therefore never add geometry: they give the already-audited floor,
  * bulkheads, ceiling and solids a visual register appropriate to the place.
  */
-import type { Space, SpaceCategory, StructureKind, Tier } from './types'
+import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 
 export interface RoomAppearance {
@@ -460,7 +460,17 @@ export function hasAuthoredAppearance(locationId: string): boolean {
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   const finish = space.locationId ? authoredFinishOf(space.locationId) : undefined
-  return finish ? FINISHES[finish] : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
+  const appearance = finish
+    ? FINISHES[finish]
+    : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
+
+  // Ch. 389 distinguishes Camilla's formal meeting salon by its continuous
+  // carpet. Keep the rest of Apartment 1002 on the shared princely finish.
+  if (space.id === 'tier-1-royal-residential-sector-room-1002-living') {
+    return { ...appearance, floor: 0x553238 }
+  }
+
+  return appearance
 }
 
 /** Material families keep audited objects legible without changing their shape. */
@@ -480,4 +490,12 @@ export function structureColourOf(kind: StructureKind, appearance: RoomAppearanc
     default:
       return appearance.metal
   }
+}
+
+/** Use an attested object colour without assigning invented colour to manga art. */
+export function authoredStructureColourOf(
+  structure: Structure,
+  appearance: RoomAppearance,
+): number {
+  return structure.colour ?? structureColourOf(structure.kind, appearance)
 }

@@ -2,9 +2,8 @@
  * Floor markings a manga panel actually shows.
  *
  * These are lines laid over the existing floor, never added furniture or an
- * invented change of level. The audit only authorises four treatments: the
- * King's geometric inlay, the pod's radial deck, Woble's floorboards against
- * the tiled remainder of the apartment, and the Heil-Ly processing-room tile.
+ * invented change of level. The catalogue also records Tserriednich's polished
+ * geometric training floor and Halkenburg's broad tiled reception room.
  */
 import { clipSegment, plateSeams } from './geometry'
 import type { Polygon, Space, Vec2 } from './types'
@@ -115,7 +114,10 @@ function floorboards(polygon: Polygon): [Vec2, Vec2][] {
 const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
-  if (space.id === 'tier-1-king-living-quarters-living') {
+  if (
+    space.id === 'tier-1-king-living-quarters-living' ||
+    space.id === 'tier-1-royal-residential-sector-room-1004-living'
+  ) {
     return { kind: 'geometric-inlay', style: 'inlay', segments: geometricInlay(space.footprint) }
   }
   if (space.id === 'tier-1-lifeboats-port-pod-cabin') {
@@ -127,6 +129,9 @@ export function floorPatternOf(space: Space): FloorPattern | null {
       : { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
   if (space.id === 'tier-2-heilly-secret-hideout-processing') {
+    return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
+  }
+  if (space.id === 'tier-1-royal-residential-sector-room-1009-living') {
     return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
   return null

@@ -309,6 +309,12 @@ export interface Structure {
   provenance: Provenance
   source: string
   sourceFr: string
+  /**
+   * Authored surface colour when the panel identifies the object's material
+   * or value unambiguously (a whiteboard is white, a cork board is ochre).
+   * Omitted for black-and-white artwork whose chroma would be an invention.
+   */
+  colour?: number
   aura?: string
 }
 

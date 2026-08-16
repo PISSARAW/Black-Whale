@@ -115,7 +115,7 @@
       onclick={() => handleElementClick('living')}
     />
     <text x="250" y="390" class="label" font-size="24">Living</text>
-    {#if !['1002', '1004', '1007', '1009', '1010'].includes(roomNumber)}
+    {#if !['1002', '1004', '1007', '1009', '1010', '1013'].includes(roomNumber)}
       <rect x="300" y="350" width="80" height="60" class="furniture" />
       <!-- Table du seul programme-type ; supprimée lorsqu'une planche la contredit. -->
     {/if}
@@ -333,6 +333,31 @@
       <rect x="80" y="330" width="150" height="16" class="fixed" />
       <text x="550" y="105" class="sublabel">Cuisine équipée · ch. 376</text>
       <text x="205" y="375" class="sublabel">Commode, tabouret, tableaux · ch. 374/376</text>
+    {:else if roomNumber === '1013'}
+      <!-- Appartement très cloisonné · plan révélé en planche (ch. 367). -->
+
+      <!-- Table longue dans les servants' quarters (haut gauche) -->
+      <!-- Réunion de camp autour d'une table de conférence. -->
+      <rect x="25" y="22" width="225" height="65" rx="5" class="fixed" />
+      <rect x="12" y="18" width="18" height="74" rx="3" class="fixed" />
+      <rect x="254" y="18" width="18" height="74" rx="3" class="fixed" />
+      <text x="148" y="106" class="sublabel">Table de réunion longue · ch. 367</text>
+
+      <!-- Sous-cloisons : cellules dans la moitié basse des servants' quarters -->
+      <line class="thin-wall" x1="0" y1="142" x2="215" y2="142" />
+      <line class="thin-wall" x1="72" y1="142" x2="72" y2="250" />
+      <line class="thin-wall" x1="144" y1="142" x2="144" y2="250" />
+      <line class="thin-wall" x1="0" y1="196" x2="72" y2="196" />
+      <line class="thin-wall" x1="72" y1="196" x2="144" y2="196" />
+      <text x="108" y="240" class="sublabel" font-size="10">Cellules · ch. 367</text>
+
+      <!-- Cloison verticale dans le living (espace gardé subdivisé) -->
+      <line class="thin-wall" x1="345" y1="252" x2="345" y2="435" />
+      <text x="172" y="400" class="sublabel">Salon gardé · centre dégagé</text>
+
+      <!-- Bête spirituelle de Marayam dans l'entrée de la chambre -->
+      <text x="600" y="590" class="sublabel">Chambre · Marayam</text>
+      <text x="600" y="612" class="evidence">Bête gardienne dans l'encadrement · ch. 367</text>
     {/if}
   </g>
 </svg>

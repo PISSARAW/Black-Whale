@@ -79,4 +79,10 @@ describe('manga photo viewpoints', () => {
       'borksen',
     ])
   })
+
+  it('offers both the furnished room and bathroom-trap compositions for room 3101', () => {
+    expect(viewsForSpace('tier-3-residential-room-3101-living').map(({ id }) => id)).toEqual(
+      expect.arrayContaining(['room-3101-bunks-storage', 'room-3101-bathroom-trap']),
+    )
+  })
 })

@@ -291,6 +291,18 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'Le hall du cinéma entre la confiserie, les guichets et les salles',
   }),
   view({
+    id: 'room-3101-bunks-storage',
+    spaceId: 'tier-3-residential-room-3101-living',
+    at: [1, 0],
+    target: [-6.25, 0.45],
+    pitch: -0.02,
+    chapter: 393,
+    volume: 38,
+    pages: '64–67',
+    label: 'Room 3101 facing the stacked bunk and open wall storage',
+    labelFr: 'La chambre 3101 face au lit superposé et au rangement mural ouvert',
+  }),
+  view({
     id: 'room-3101-bathroom-trap',
     spaceId: 'tier-3-residential-room-3101-living',
     at: [-4.7, 2.8],

@@ -168,6 +168,14 @@ describe('manga photo viewpoints', () => {
     expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
   })
 
+  it('offers the published Xi-Yu office plan from both Tier 4 rooms', () => {
+    const plan = mangaViewById('xi-yu-office-aerial-plan')
+
+    expect(plan).toMatchObject({ chapter: 380, volume: 36 })
+    expect(viewsForSpace('tier-4-xi-yu-family-office-meeting-room')).toContain(plan)
+    expect(viewsForSpace('tier-4-xi-yu-family-office-entrance')).toContain(plan)
+  })
+
   it('offers each of the three panel-shown rooms inside the Tier 5 Cha-R office', () => {
     expect(viewsForSpace('tier-5-cha-r-family-office-main-office').map(({ id }) => id)).toContain(
       'cha-r-emblem-three-doors',

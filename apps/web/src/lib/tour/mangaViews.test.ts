@@ -187,4 +187,15 @@ describe('manga photo viewpoints', () => {
       'cha-r-cctv-monitor-room',
     )
   })
+
+  it('offers only the published Tier 5 volumes in aerial plan views', () => {
+    const office = mangaViewById('cha-r-office-aerial-plan')
+    const warehouse = mangaViewById('cha-r-warehouse-aerial-plan')
+
+    expect(office).toMatchObject({ chapter: 380, volume: 36 })
+    expect(office?.visibleSpaceIds).toHaveLength(3)
+    expect(office?.visibleSpaceIds).not.toContain('tier-5-cha-r-family-office-hall')
+    expect(warehouse).toMatchObject({ chapter: 378, volume: 36 })
+    expect(warehouse?.visibleSpaceIds).toEqual(['tier-5-warehouse'])
+  })
 })

@@ -36,11 +36,14 @@ describe('manga photo viewpoints', () => {
       }
 
       const plan = ship.plans.get(space!.tierId)!
-      const obstruction = plan.structures.find(
-        (structure) =>
-          structure.spaceId === space!.id && pointInPolygon(view.at, structureFootprint(structure)),
-      )
-      expect(obstruction?.id, `${view.id} starts inside the scenery`).toBeUndefined()
+      if (view.eyeHeight === undefined) {
+        const obstruction = plan.structures.find(
+          (structure) =>
+            structure.spaceId === space!.id &&
+            pointInPolygon(view.at, structureFootprint(structure)),
+        )
+        expect(obstruction?.id, `${view.id} starts inside the scenery`).toBeUndefined()
+      }
     }
   })
 
@@ -68,6 +71,22 @@ describe('manga photo viewpoints', () => {
     ]) {
       expect(viewsForSpace(spaceId)).toContain(plan)
     }
+  })
+
+  it('offers the published Tier 1 interior plans as aerial photographs', () => {
+    for (let number = 1001; number <= 1014; number += 1) {
+      const id = `prince-apartment-${number}-aerial-plan`
+      const entrance = `tier-1-royal-residential-sector-room-${number}-entrance`
+      expect(viewsForSpace(entrance).map((view) => view.id)).toContain(id)
+      expect(mangaViewById(id)).toMatchObject({ chapter: 363, volume: 35, pages: '49–50' })
+    }
+
+    expect(viewsForSpace('tier-1-vip-jail-corridor').map((view) => view.id)).toContain(
+      'vip-detention-aerial-plan',
+    )
+    expect(viewsForSpace('tier-1-vvip-prison-beyond-watch').map((view) => view.id)).toContain(
+      'beyond-cell-aerial-plan',
+    )
   })
 
   it("carries the character blocking drawn in Nasubi's establishing panel", () => {

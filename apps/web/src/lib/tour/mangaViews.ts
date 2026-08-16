@@ -90,6 +90,36 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'Beyond vu à travers les barreaux de la cellule de haute sécurité',
   }),
   view({
+    id: 'beyond-cell-aerial-plan',
+    spaceId: 'tier-1-vvip-prison-beyond-watch',
+    at: [0, 0],
+    target: [0, -1],
+    pitch: -1.5,
+    eyeHeight: 14,
+    chapter: 359,
+    volume: 34,
+    label: "Aerial plan of Beyond's high-security cell and the Zodiac watch post",
+    labelFr: 'Plan aérien de la cellule haute sécurité de Beyond et du poste des Zodiaques',
+  }),
+  view({
+    id: 'vip-detention-aerial-plan',
+    spaceId: 'tier-1-vip-jail-corridor',
+    at: [0, 0],
+    target: [0, -1],
+    pitch: -1.5,
+    eyeHeight: 15,
+    chapter: 350,
+    volume: 34,
+    label: 'Aerial plan of the VIP detention block and its four cells',
+    labelFr: 'Plan aérien du quartier de détention VIP et de ses quatre cellules',
+    triggerSpaceIds: [
+      'tier-1-vip-jail-cell-first-class',
+      'tier-1-vip-jail-cell-vip',
+      'tier-1-vip-jail-cell-standard',
+      'tier-1-vip-jail-cell-standard-2',
+    ],
+  }),
+  view({
     id: 'woble-living-phone-wall',
     spaceId: 'tier-1-royal-residential-sector-room-1014-living',
     at: [1, 4.7],
@@ -432,6 +462,29 @@ export const MANGA_VIEWS: MangaView[] = [
         pose: 'seated',
       },
     ],
+  }),
+  ...Array.from({ length: 14 }, (_, index) => {
+    const room = String(1001 + index)
+    const base = `tier-1-royal-residential-sector-room-${room}`
+    return view({
+      id: `prince-apartment-${room}-aerial-plan`,
+      spaceId: `${base}-living`,
+      at: [0, 0],
+      target: [0, -1],
+      pitch: -1.5,
+      eyeHeight: 16,
+      chapter: 363,
+      volume: 35,
+      pages: '49–50',
+      label: `Aerial manga plan of princely apartment ${room}`,
+      labelFr: `Plan manga aérien de l’appartement princier ${room}`,
+      triggerSpaceIds: [
+        `${base}-entrance`,
+        `${base}-servants`,
+        `${base}-servants-wc`,
+        `${base}-bathroom`,
+      ],
+    })
   }),
 ]
 

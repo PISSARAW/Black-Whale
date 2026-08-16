@@ -1,5 +1,5 @@
 /** The audited location-to-finish registry, split from the palette values. */
-import type { Finish } from './roomAppearance'
+import type { Finish } from './roomAppearanceTypes'
 
 const TIER_1_FINISH = new Map<string, Finish>([
   ['tier-1-banquet-hall', 'gilded-hall'],

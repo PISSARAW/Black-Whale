@@ -1,60 +1,8 @@
-import type { Vec2 } from './types'
-import type { Apparition } from './apparitions'
+import { MANGA_APARTMENT_VIEWS } from './mangaApartmentViews'
+import { MANGA_CHA_R_VIEWS } from './mangaChaRViews'
+import { mangaView as view, type MangaView } from './mangaViewModel'
 
-export interface MangaCastStaging {
-  characterId: string
-  at: Vec2
-  heading?: number
-  pose?: NonNullable<Apparition['human']>['pose']
-}
-
-export interface MangaView {
-  /** The unique ID for this view */
-  id: string
-  /** The space this view belongs to */
-  spaceId: string
-  /** The position of the camera */
-  at: Vec2
-  /** The horizontal angle (yaw) of the camera in radians */
-  heading: number
-  /** The vertical angle (pitch) of the camera in radians */
-  pitch: number
-  /** Height above the floor for aerial plans; ordinary panel views use the visitor's eyes. */
-  eyeHeight?: number
-  /** Published rooms to render when a plan omits reconstructed connecting volumes. */
-  visibleSpaceIds?: readonly string[]
-  /** The chapter this view is from, for the watermark */
-  chapter: number
-  /** Event order inside the chapter when the panel reproduces a populated scene. */
-  eventSequence?: number
-  /** Collected edition used to check the framing. */
-  volume: number
-  /** Printed page(s), when the edition exposes a stable reference. */
-  pages?: string
-  /** Description of the scene */
-  label: string
-  /** Description of the scene in French */
-  labelFr: string
-  /** Character blocking visible in the source panel, when it is explicit. */
-  staging?: readonly MangaCastStaging[]
-  /**
-   * Other zones of the same continuous room from which this view is offered.
-   * The cineplex hall, for example, is split into three navigation spaces even
-   * though the manga draws it as one room in one establishing shot.
-   */
-  triggerSpaceIds?: readonly string[]
-}
-
-function headingTo(from: Vec2, target: Vec2): number {
-  // Three.js' camera looks down local -Z; TourScene documents the resulting
-  // ground-plane ray as (-sin(yaw), -cos(yaw)).
-  return Math.atan2(from[0] - target[0], from[1] - target[1])
-}
-
-function view(input: Omit<MangaView, 'heading'> & { target: Vec2 }): MangaView {
-  const { target, ...rest } = input
-  return { ...rest, heading: headingTo(input.at, target) }
-}
+export type { MangaCastStaging, MangaView } from './mangaViewModel'
 
 /**
  * A catalogue of specific camera angles that reproduce panels from the manga.
@@ -441,78 +389,7 @@ export const MANGA_VIEWS: MangaView[] = [
     label: 'Queen Unma in her formal salon with the nursery visible behind her',
     labelFr: 'La reine Unma dans son salon d’apparat, avec la nursery visible derrière elle',
   }),
-  view({
-    id: 'cha-r-emblem-three-doors',
-    spaceId: 'tier-5-cha-r-family-office-main-office',
-    at: [-4, -10],
-    target: [-17, 1],
-    pitch: 0.01,
-    chapter: 379,
-    volume: 36,
-    label: 'The Cha-R emblem room and its treasure-chest, robot-faced and wooden doors',
-    labelFr:
-      'La salle à l’emblème Cha-R et ses portes en forme de coffre, à face de robot et en bois',
-  }),
-  view({
-    id: 'cha-r-bunks-bookshelves',
-    spaceId: 'tier-5-cha-r-family-office-bedroom',
-    at: [-11, 5.5],
-    target: [-11, 9.3],
-    pitch: -0.03,
-    chapter: 379,
-    volume: 36,
-    label: 'The Cha-R compartment lined with stacked bunks and wall bookshelves',
-    labelFr: 'Le compartiment Cha-R bordé de lits superposés et de bibliothèques murales',
-    staging: [
-      {
-        characterId: 'feitan-portor',
-        at: [-18, 7.1],
-        heading: Math.PI,
-        pose: 'idle',
-      },
-    ],
-  }),
-  view({
-    id: 'cha-r-cctv-monitor-room',
-    spaceId: 'tier-5-cha-r-family-office-monitor-room',
-    at: [9.75, -2],
-    target: [9.75, -10],
-    pitch: -0.02,
-    chapter: 380,
-    volume: 36,
-    label: 'The separate Cha-R CCTV room facing its dark monitor bank',
-    labelFr: 'La salle de vidéosurveillance Cha-R séparée face à son mur d’écrans sombre',
-  }),
-  view({
-    id: 'cha-r-office-aerial-plan',
-    spaceId: 'tier-5-cha-r-family-office-hall',
-    at: [-1.5, 0],
-    target: [-1.5, -1],
-    pitch: -1.5,
-    eyeHeight: 32,
-    chapter: 380,
-    volume: 36,
-    label: 'Aerial plan of the three published Cha-R office rooms',
-    labelFr: 'Plan aérien des trois pièces publiées du bureau Cha-R',
-    visibleSpaceIds: [
-      'tier-5-cha-r-family-office-main-office',
-      'tier-5-cha-r-family-office-bedroom',
-      'tier-5-cha-r-family-office-monitor-room',
-    ],
-  }),
-  view({
-    id: 'cha-r-warehouse-aerial-plan',
-    spaceId: 'tier-5-warehouse',
-    at: [21, -21],
-    target: [21, -22],
-    pitch: -1.5,
-    eyeHeight: 90,
-    chapter: 378,
-    volume: 36,
-    label: 'Aerial plan of the Cha-R warehouse and its crate rows',
-    labelFr: 'Plan aérien de l’entrepôt Cha-R et de ses rangées de caisses',
-    visibleSpaceIds: ['tier-5-warehouse'],
-  }),
+  ...MANGA_CHA_R_VIEWS,
   view({
     id: 'morena-office-negotiation-game',
     spaceId: 'tier-2-heilly-secret-hideout-office',
@@ -561,29 +438,7 @@ export const MANGA_VIEWS: MangaView[] = [
       'tier-2-heilly-secret-hideout-office',
     ],
   }),
-  ...Array.from({ length: 14 }, (_, index) => {
-    const room = String(1001 + index)
-    const base = `tier-1-royal-residential-sector-room-${room}`
-    return view({
-      id: `prince-apartment-${room}-aerial-plan`,
-      spaceId: `${base}-living`,
-      at: [0, 0],
-      target: [0, -1],
-      pitch: -1.5,
-      eyeHeight: 16,
-      chapter: 363,
-      volume: 35,
-      pages: '49–50',
-      label: `Aerial manga plan of princely apartment ${room}`,
-      labelFr: `Plan manga aérien de l’appartement princier ${room}`,
-      triggerSpaceIds: [
-        `${base}-entrance`,
-        `${base}-servants`,
-        `${base}-servants-wc`,
-        `${base}-bathroom`,
-      ],
-    })
-  }),
+  ...MANGA_APARTMENT_VIEWS,
 ]
 
 export function viewsForSpace(spaceId: string | null): MangaView[] {

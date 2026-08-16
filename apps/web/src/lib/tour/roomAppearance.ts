@@ -8,56 +8,9 @@
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
+import type { Finish, RoomAppearance } from './roomAppearanceTypes'
 
-export interface RoomAppearance {
-  floor: number
-  wall: number
-  ceiling: number
-  column: number
-  wood: number
-  metal: number
-  fabric: number
-  accent: number
-}
-
-export type Finish =
-  | 'legacy'
-  | 'royal-salon'
-  | 'gilded-hall'
-  | 'royal-suite'
-  | 'royal-passage'
-  | 'funerary'
-  | 'evacuation'
-  | 'court'
-  | 'casino'
-  | 'barracks'
-  | 'secure'
-  | 'government'
-  | 'screening'
-  | 'concealed'
-  | 'protected'
-  | 'bulkhead'
-  | 'civic'
-  | 'clinical'
-  | 'police'
-  | 'cineplex'
-  | 'mafia-office'
-  | 'observation'
-  | 'first-class'
-  | 'standard-cabin'
-  | 'dormitory'
-  | 'service-passage'
-  | 'recycling'
-  | 'briefing'
-  | 'ei-i-office'
-  | 'xi-yu-office'
-  | 'assembly-bay'
-  | 'mess-hall'
-  | 'cha-r-office'
-  | 'hangar'
-  | 'hold-clinic'
-  | 'fifth-class'
-  | 'warehouse'
+export type { Finish, RoomAppearance } from './roomAppearanceTypes'
 
 const LEGACY: RoomAppearance = {
   floor: 0x2a1f1f,

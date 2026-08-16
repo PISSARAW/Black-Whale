@@ -110,6 +110,20 @@ describe('manga photo viewpoints', () => {
     )
   })
 
+  it('keeps reconstructed circulation out of the published Tier 3 first-class plan', () => {
+    const plan = mangaViewById('first-class-cabins-aerial-plan')
+
+    expect(plan).toMatchObject({ chapter: 393, volume: 38 })
+    expect(plan?.visibleSpaceIds).toHaveLength(12)
+    expect(plan?.visibleSpaceIds).not.toEqual(
+      expect.arrayContaining([
+        'tier-3-residential-first-class-hallway',
+        'tier-3-residential-first-class-companionway',
+        'tier-3-residential-first-class-upper-corridor',
+      ]),
+    )
+  })
+
   it("carries the character blocking drawn in Nasubi's establishing panel", () => {
     const view = mangaViewById('nasubi-living-mantel')
     expect(view?.eventSequence).toBe(1)

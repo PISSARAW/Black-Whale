@@ -13,6 +13,9 @@ export interface PostcardStampDefinition {
   rotation: number
 }
 
+/** Opaque paper behind every seal, so the captured scene can never swallow its ink. */
+export const POSTCARD_STAMP_BACKING = '#fffdf0'
+
 /**
  * Every seal belongs to an authority or group aboard the Black Whale.  The
  * postcard deliberately keeps these as ink and type rather than importing
@@ -222,7 +225,7 @@ export const POSTCARD_STAMPS = [
     id: 'saleSale',
     category: 'royal',
     mark: '✺',
-    ink: '#d35b20',
+    ink: '#a9491a',
     shape: 'round',
     tone: 'playful',
     rotation: 12,
@@ -240,7 +243,7 @@ export const POSTCARD_STAMPS = [
     id: 'kacho',
     category: 'royal',
     mark: '♫',
-    ink: '#c45567',
+    ink: '#9d4452',
     shape: 'oval',
     tone: 'gentle',
     rotation: 6,
@@ -249,7 +252,7 @@ export const POSTCARD_STAMPS = [
     id: 'fugetsu',
     category: 'royal',
     mark: '➳',
-    ink: '#5686ac',
+    ink: '#456b8a',
     shape: 'oval',
     tone: 'gentle',
     rotation: -6,
@@ -258,7 +261,7 @@ export const POSTCARD_STAMPS = [
     id: 'momoze',
     category: 'royal',
     mark: '❀',
-    ink: '#8d6ca8',
+    ink: '#715686',
     shape: 'round',
     tone: 'gentle',
     rotation: 4,
@@ -276,7 +279,7 @@ export const POSTCARD_STAMPS = [
     id: 'woble',
     category: 'royal',
     mark: '♔',
-    ink: '#b77b16',
+    ink: '#926212',
     shape: 'round',
     tone: 'playful',
     rotation: 7,
@@ -304,7 +307,7 @@ export const POSTCARD_STAMPS = [
     id: 'heilLy',
     category: 'underworld',
     mark: '✣',
-    ink: '#58820c',
+    ink: '#46680a',
     shape: 'round',
     tone: 'ominous',
     rotation: -11,

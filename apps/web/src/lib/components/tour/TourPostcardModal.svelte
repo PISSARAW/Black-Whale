@@ -4,6 +4,7 @@
   import { createPostcardBlob } from '$lib/tour/postcardExport'
   import {
     POSTCARD_STAMPS,
+    POSTCARD_STAMP_BACKING,
     postcardStamp,
     type PostcardStampCategory,
     type PostcardStampId,
@@ -130,7 +131,7 @@
           <!-- The seals are fictional souvenirs: owner-driven, but never presented as canon logos. -->
           <div
             class={`postcard-stamp stamp-${activeStamp.id} shape-${activeStamp.shape} tone-${activeStamp.tone}`}
-            style={`--stamp-color: ${activeStamp.ink}; --stamp-rotation: ${activeStamp.rotation}deg;`}
+            style={`--stamp-color: ${activeStamp.ink}; --stamp-backing: ${POSTCARD_STAMP_BACKING}; --stamp-rotation: ${activeStamp.rotation}deg;`}
             aria-hidden="true"
           >
             <span class="stamp-orbit"></span>
@@ -222,6 +223,7 @@
 <style>
   .postcard-stamp {
     --stamp-color: #8f172b;
+    --stamp-backing: #fffdf0;
     --stamp-rotation: 0deg;
     position: absolute;
     z-index: 4;
@@ -235,13 +237,18 @@
     padding: 0.7rem;
     overflow: hidden;
     color: var(--stamp-color);
+    background: var(--stamp-backing);
     border: 0.28rem solid currentColor;
     transform: rotate(var(--stamp-rotation));
-    opacity: 0.94;
+    opacity: 1;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     text-align: center;
     text-transform: uppercase;
-    filter: contrast(1.12) drop-shadow(0 0 0.08rem rgba(255, 253, 240, 0.9));
+    box-shadow:
+      0 0 0 0.12rem rgba(255, 253, 240, 0.98),
+      0 0 0 0.28rem rgba(9, 9, 11, 0.88),
+      0 0.45rem 1rem rgba(9, 9, 11, 0.55);
+    filter: contrast(1.08);
     pointer-events: none;
   }
 
@@ -393,7 +400,6 @@
   }
 
   .tone-clinical {
-    opacity: 0.82;
     border-width: 0.2rem;
   }
 
@@ -415,7 +421,6 @@
 
   .tone-playful {
     border-style: dotted;
-    opacity: 0.84;
   }
 
   .tone-playful .stamp-title {
@@ -424,7 +429,6 @@
   }
 
   .tone-gentle {
-    opacity: 0.68;
     border-width: 0.2rem;
     font-family: Georgia, 'Times New Roman', serif;
   }
@@ -437,7 +441,6 @@
 
   .stamp-tserriednich {
     border-width: 0.12rem;
-    opacity: 0.95;
   }
 
   .stamp-tserriednich::before,
@@ -468,7 +471,7 @@
   }
 
   .stamp-zoldyck {
-    opacity: 0.54;
+    border-style: double;
   }
 
   @media (max-width: 640px) {

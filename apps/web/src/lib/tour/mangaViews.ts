@@ -21,6 +21,8 @@ export interface MangaView {
   pitch: number
   /** Height above the floor for aerial plans; ordinary panel views use the visitor's eyes. */
   eyeHeight?: number
+  /** Published rooms to render when a plan omits reconstructed connecting volumes. */
+  visibleSpaceIds?: readonly string[]
   /** The chapter this view is from, for the watermark */
   chapter: number
   /** Event order inside the chapter when the panel reproduces a populated scene. */
@@ -461,6 +463,29 @@ export const MANGA_VIEWS: MangaView[] = [
         heading: Math.PI,
         pose: 'seated',
       },
+    ],
+  }),
+  view({
+    id: 'heilly-hideout-aerial-plan',
+    spaceId: 'tier-2-heilly-secret-hideout-corridor',
+    at: [-1.6, -3.5],
+    target: [-1.6, -4.5],
+    pitch: -1.48,
+    eyeHeight: 28,
+    chapter: 399,
+    volume: 38,
+    label: 'Aerial plan of the published Heil-Ly hideout rooms',
+    labelFr: 'Plan aérien des pièces publiées de la planque Heil-Ly',
+    triggerSpaceIds: [
+      'tier-2-heilly-secret-hideout-processing',
+      'tier-2-heilly-secret-hideout-laundry',
+      'tier-2-heilly-secret-hideout-communal',
+    ],
+    visibleSpaceIds: [
+      'tier-2-heilly-secret-hideout-processing',
+      'tier-2-heilly-secret-hideout-laundry',
+      'tier-2-heilly-secret-hideout-communal',
+      'tier-2-heilly-secret-hideout-office',
     ],
   }),
   ...Array.from({ length: 14 }, (_, index) => {

@@ -25,6 +25,12 @@ describe('manga photo viewpoints', () => {
       expect(Number.isFinite(view.heading), view.id).toBe(true)
       expect(Number.isFinite(view.pitch), view.id).toBe(true)
 
+      for (const visibleSpaceId of view.visibleSpaceIds ?? []) {
+        expect(ship.spaces.get(visibleSpaceId)?.tierId, `${view.id}: ${visibleSpaceId}`).toBe(
+          space!.tierId,
+        )
+      }
+
       if (view.eyeHeight === undefined) {
         const oneMetreAhead: [number, number] = [
           view.at[0] - Math.sin(view.heading),
@@ -86,6 +92,21 @@ describe('manga photo viewpoints', () => {
     )
     expect(viewsForSpace('tier-1-vvip-prison-beyond-watch').map((view) => view.id)).toContain(
       'beyond-cell-aerial-plan',
+    )
+  })
+
+  it('keeps the inferred Heil-Ly connector out of the published Tier 2 plan', () => {
+    const plan = mangaViewById('heilly-hideout-aerial-plan')
+
+    expect(plan).toMatchObject({ chapter: 399, volume: 38 })
+    expect(plan?.visibleSpaceIds).not.toContain('tier-2-heilly-secret-hideout-corridor')
+    expect(plan?.visibleSpaceIds).toEqual(
+      expect.arrayContaining([
+        'tier-2-heilly-secret-hideout-processing',
+        'tier-2-heilly-secret-hideout-laundry',
+        'tier-2-heilly-secret-hideout-communal',
+        'tier-2-heilly-secret-hideout-office',
+      ]),
     )
   })
 

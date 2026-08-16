@@ -11,6 +11,7 @@ export class TourNavigationState {
   jumpHeading = $state<number | null>(null)
   jumpPitch = $state<number | null>(null)
   jumpEyeHeight = $state<number | null>(null)
+  jumpVisibleSpaceIds = $state<readonly string[] | null>(null)
   engaged = $state(false)
   touch = $state(false)
   position = $state<Vec2>([0, 0])

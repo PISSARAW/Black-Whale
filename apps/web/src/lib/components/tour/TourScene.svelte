@@ -158,6 +158,7 @@
     facing?: number
     looking?: number
     eyeHeight?: number
+    visibleSpaceIds?: readonly string[]
   }
 
   interface Props {
@@ -181,6 +182,8 @@
     jumpPitch?: number | null
     /** Optional camera height for an aerial manga plan. */
     jumpEyeHeight?: number | null
+    /** Published rooms to draw when an aerial plan excludes inferred connectors. */
+    jumpVisibleSpaceIds?: readonly string[] | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
     /**
@@ -543,6 +546,7 @@
     jumpHeading = $bindable(null),
     jumpPitch = $bindable(null),
     jumpEyeHeight = $bindable(null),
+    jumpVisibleSpaceIds = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
@@ -1191,6 +1195,7 @@
       // A manga plan can lift the camera out of the visitor's body. It remains
       // stable until the visitor walks or another jump restores eye level.
       let authoredEyeHeight: number | null = null
+      let authoredVisibleSpaceIds: Set<string> | null = null
       let currentTierId = ''
 
       /** How rarely the loop tells the page and the ear; see `$lib/tour/reporting`. */
@@ -1271,6 +1276,7 @@
         yaw = arrival.facing ?? spawnFacing(space, at)
         pitch = arrival.looking ?? 0
         authoredEyeHeight = arrival.eyeHeight ?? null
+        authoredVisibleSpaceIds = arrival.visibleSpaceIds ? new Set(arrival.visibleSpaceIds) : null
         shownKey = ''
         lookPitch = pitch
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
@@ -1505,7 +1511,7 @@
             visible,
             authoredEyeHeight === null
               ? visibleSpaces(activePlan, standingId)
-              : new Set(activePlan.spaces.map((space) => space.id)),
+              : (authoredVisibleSpaceIds ?? new Set(activePlan.spaces.map((space) => space.id))),
           )
         }
         if (eyeDeck && eyeSpace) {
@@ -4384,6 +4390,7 @@
         if (velocity[0] !== 0 || velocity[1] !== 0) {
           if (authoredEyeHeight !== null) {
             authoredEyeHeight = null
+            authoredVisibleSpaceIds = null
             shownKey = ''
           }
           const target: Vec2 = [pointer[0] + velocity[0] * delta, pointer[1] + velocity[1] * delta]
@@ -4952,12 +4959,14 @@
       facing: jumpHeading ?? undefined,
       looking: jumpPitch ?? undefined,
       eyeHeight: jumpEyeHeight ?? undefined,
+      visibleSpaceIds: jumpVisibleSpaceIds ?? undefined,
     })
     jumpTo = null
     jumpAt = null
     jumpHeading = null
     jumpPitch = null
     jumpEyeHeight = null
+    jumpVisibleSpaceIds = null
   })
 </script>
 

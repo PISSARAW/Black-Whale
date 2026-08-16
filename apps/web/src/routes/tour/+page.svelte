@@ -131,6 +131,7 @@
       navigation.jumpHeading = mangaView.heading
       navigation.jumpPitch = mangaView.pitch
       navigation.jumpEyeHeight = mangaView.eyeHeight ?? null
+      navigation.jumpVisibleSpaceIds = mangaView.visibleSpaceIds ?? null
     })
   })
 
@@ -802,6 +803,7 @@
             navigation.jumpHeading = view.heading
             navigation.jumpPitch = view.pitch
             navigation.jumpEyeHeight = view.eyeHeight ?? null
+            navigation.jumpVisibleSpaceIds = view.visibleSpaceIds ?? null
           },
         }
       : {}),

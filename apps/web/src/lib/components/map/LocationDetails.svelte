@@ -5,17 +5,42 @@
   import { link, locale, t } from '$lib/i18n'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
 
-  let locations = $derived($page.data.worldState?.locations || [])
-  let presences = $derived($page.data.worldState?.presences || [])
-  let bodies = $derived($page.data.worldState?.bodies || [])
-  let characters = $derived($page.data.worldState?.characters || [])
+  interface MapLocation {
+    id: string
+    slug: string
+    name: string
+    type: string
+    parentLocationId: string | null
+  }
+  interface MapPresence {
+    entityId: string
+    locationId: string | null
+    certainty: string
+  }
+  interface MapBody {
+    id: string
+    originalCharacterId: string | null
+  }
+  interface MapCharacter {
+    id: string
+    canonicalName: string
+  }
+
+  let locations = $derived(($page.data.worldState?.locations || []) as MapLocation[])
+  let presences = $derived(($page.data.worldState?.presences || []) as MapPresence[])
+  let bodies = $derived(($page.data.worldState?.bodies || []) as MapBody[])
+  let characters = $derived(($page.data.worldState?.characters || []) as MapCharacter[])
 
   function matchesSlug(slug: string | undefined, target: string) {
     return slug === target || Boolean(slug?.endsWith(`-${target}`))
   }
 
-  function belongsToLocation(location: any, targetSlug: string, byId: Map<string, any>) {
-    let current = location
+  function belongsToLocation(
+    location: MapLocation,
+    targetSlug: string,
+    byId: Map<string, MapLocation>,
+  ) {
+    let current: MapLocation | null | undefined = location
     let depth = 0
 
     while (current && depth < 8) {
@@ -31,20 +56,20 @@
     const targetSlug = resolveRegionLocationSlug(mapState.selectedLocationId)
     if (!targetSlug) return null
 
-    const byId = new Map<string, any>(locations.map((location: any) => [location.id, location]))
-    const location = locations.find((candidate: any) => matchesSlug(candidate.slug, targetSlug))
+    const byId = new Map(locations.map((location) => [location.id, location]))
+    const location = locations.find((candidate) => matchesSlug(candidate.slug, targetSlug))
     if (!location) return null
 
-    let tier = location
+    let tier: MapLocation | null | undefined = location
     while (tier?.parentLocationId && tier.type !== 'TIER') tier = byId.get(tier.parentLocationId)
 
-    const presentCharacters = presences.flatMap((presence: any) => {
-      const presenceLocation = byId.get(presence.locationId)
+    const presentCharacters = presences.flatMap((presence) => {
+      const presenceLocation = presence.locationId ? byId.get(presence.locationId) : undefined
       if (!presenceLocation || !belongsToLocation(presenceLocation, targetSlug, byId)) return []
 
-      const body = bodies.find((candidate: any) => candidate.id === presence.entityId)
+      const body = bodies.find((candidate) => candidate.id === presence.entityId)
       const character = body
-        ? characters.find((candidate: any) => candidate.id === body.originalCharacterId)
+        ? characters.find((candidate) => candidate.id === body.originalCharacterId)
         : null
 
       return character

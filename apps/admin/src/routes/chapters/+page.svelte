@@ -39,9 +39,3 @@
     </tbody>
   </table>
 </div>
-
-<style>
-  .bw-gold {
-    color: #ffd700;
-  }
-</style>

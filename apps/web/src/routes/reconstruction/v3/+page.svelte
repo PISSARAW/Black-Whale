@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import { onMount, untrack } from 'svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { link, locale, t } from '$lib/i18n'
@@ -16,15 +16,15 @@
 
   let { data }: { data: PageData } = $props()
   let title = $state($t.reconstruction.v3.defaultTitle)
-  let forkEventId = $state(data.events.at(-1)?.id ?? '')
+  let forkEventId = $state(untrack(() => data.events.at(-1)?.id ?? ''))
   let mode = $state<'strict-canon' | 'rule-compatible'>('rule-compatible')
   let seed = $state(3)
   let kind = $state<ReconstructionDecision['kind']>('MOVE_ENTITY')
-  let actorId = $state(data.characters[0]?.id ?? '')
-  let targetId = $state(data.locations[0]?.id ?? '')
+  let actorId = $state(untrack(() => data.characters[0]?.id ?? ''))
+  let targetId = $state(untrack(() => data.locations[0]?.id ?? ''))
   let factId = $state('')
   let reliability = $state('trusted')
-  let abilityId = $state(data.abilities[0]?.id ?? '')
+  let abilityId = $state(untrack(() => data.abilities[0]?.id ?? ''))
   let actionId = $state('activate')
   let hatsuActions = $state<
     Array<{ id: string; label: string; visibility: string; hint?: string }>

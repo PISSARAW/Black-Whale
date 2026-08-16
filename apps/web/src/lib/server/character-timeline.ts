@@ -39,12 +39,100 @@ export type ChapterTrajectory = {
   isMovement: boolean
 }
 
-export const eventDetail = (event: any) => event?.summary || event?.title || null
+interface EventRecord {
+  summary?: string | null
+  title?: string | null
+  sequence: number
+  chapter: { number: number }
+  isFlashback?: boolean
+  occurredAtLabel?: string | null
+}
 
-export function buildLocationPaths(locations: any[]) {
+interface EventBoundary {
+  chapter: { number: number }
+}
+
+export interface LocationRecord {
+  id: string
+  slug?: string
+  name: string
+  parentLocationId?: string | null
+}
+
+interface PresenceRecord {
+  fromEvent: EventRecord
+  untilEvent?: EventBoundary | null
+  location?: LocationRecord | null
+  certainty?: string | null
+}
+
+interface StateRecord {
+  state: string
+  fromEvent: EventRecord
+  untilEvent?: EventBoundary | null
+}
+
+interface BodyRecord {
+  id?: string
+  label?: string | null
+  character?: { canonicalName: string } | null
+  presences?: PresenceRecord[]
+  states?: StateRecord[]
+}
+
+interface OccupancyRecord {
+  bodyId?: string
+  body?: BodyRecord | null
+  fromEvent: EventRecord
+  untilEvent?: EventBoundary | null
+  certainty?: string | null
+}
+
+interface CharacterTimelineRecord {
+  slug?: string | null
+  originalBody?: BodyRecord | null
+  originalConsciousness?: {
+    states?: StateRecord[]
+    occupancies?: OccupancyRecord[]
+  } | null
+}
+
+interface CatalogAppearance {
+  chapter: number
+  status: string
+  title?: string | null
+}
+
+export interface CatalogTimelineCharacter {
+  id?: string
+  mangaAppearances?: CatalogAppearance[]
+}
+
+interface CatalogEvent {
+  event?: string | null
+  location?: string | null
+  isFlashback?: boolean
+  charactersInvolved?: string[]
+}
+
+export interface CatalogChapter {
+  number: number
+  timeline?: CatalogEvent[]
+}
+
+interface ApparentBodyRecord {
+  body?: BodyRecord | null
+  fromEvent: EventRecord
+  untilEvent?: EventBoundary | null
+}
+
+export const eventDetail = (event?: { summary?: string | null; title?: string | null } | null) =>
+  event?.summary || event?.title || null
+
+export function buildLocationPaths(locations: LocationRecord[]) {
   const byId = new Map(locations.map((location) => [location.id, location]))
   const paths = new Map<string, string>()
-  const resolve = (location: any): string => {
+  const resolve = (location?: LocationRecord | null): string => {
     if (!location) return 'Position inconnue'
     if (paths.has(location.id)) return paths.get(location.id)!
     const parent = location.parentLocationId ? byId.get(location.parentLocationId) : null
@@ -59,24 +147,32 @@ export function buildLocationPaths(locations: any[]) {
   return paths
 }
 
-export const presenceLocation = (presence: any, paths: Map<string, string>) =>
-  presence?.location ? paths.get(presence.location.slug) || presence.location.name : null
+export const presenceLocation = (
+  presence: PresenceRecord | null | undefined,
+  paths: Map<string, string>,
+) =>
+  presence?.location
+    ? (presence.location.slug ? paths.get(presence.location.slug) : null) || presence.location.name
+    : null
 
-export const activeAtChapter = (record: any, chapter: number) => {
+export const activeAtChapter = (
+  record: { fromEvent: EventBoundary; untilEvent?: EventBoundary | null },
+  chapter: number,
+) => {
   const from = record.fromEvent.chapter.number
   const until = record.untilEvent?.chapter.number ?? Number.POSITIVE_INFINITY
   return from <= chapter && chapter <= until
 }
 
 export function bodyTimeline(
-  body: any,
+  body: BodyRecord | null | undefined,
   locationPaths: Map<string, string>,
   includeLocation = true,
 ): TimelineEntry[] {
   if (!body) return []
   return [
     ...(includeLocation
-      ? body.presences.map((presence: any) => ({
+      ? (body.presences || []).map((presence) => ({
           chapter: presence.fromEvent.chapter.number,
           sequence: presence.fromEvent.sequence,
           kind: 'body-location' as const,
@@ -89,7 +185,7 @@ export function bodyTimeline(
           occurredAtLabel: presence.fromEvent.occurredAtLabel,
         }))
       : []),
-    ...body.states.map((state: any) => ({
+    ...(body.states || []).map((state) => ({
       chapter: state.fromEvent.chapter.number,
       sequence: state.fromEvent.sequence,
       kind: 'body-state' as const,
@@ -103,8 +199,8 @@ export function bodyTimeline(
 }
 
 export function buildTimeline(
-  character: any,
-  jsonCharacter: any,
+  character: CharacterTimelineRecord | null,
+  jsonCharacter: CatalogTimelineCharacter,
   locationPaths: Map<string, string>,
 ): TimelineEntry[] {
   const timeline = bodyTimeline(character?.originalBody, locationPaths)
@@ -128,7 +224,7 @@ export function buildTimeline(
       ? `Corps de ${occupancy.body.character.canonicalName}`
       : occupancy.body?.label || 'Corps inconnu'
     const presence = occupancy.body?.presences?.findLast?.(
-      (item: any) =>
+      (item) =>
         item.fromEvent.chapter.number < occupancy.fromEvent.chapter.number ||
         (item.fromEvent.chapter.number === occupancy.fromEvent.chapter.number &&
           item.fromEvent.sequence <= occupancy.fromEvent.sequence),
@@ -187,7 +283,7 @@ export function buildTimeline(
 
 export function appendApparentBodyTimeline(
   timeline: TimelineEntry[],
-  appearances: any[],
+  appearances: ApparentBodyRecord[],
   locationPaths: Map<string, string>,
 ) {
   for (const appearance of appearances) {
@@ -232,9 +328,9 @@ export function appendApparentBodyTimeline(
  */
 export interface TrajectorySources {
   timeline: TimelineEntry[]
-  character: any
-  jsonCharacter: any
-  chapters: any[]
+  character: CharacterTimelineRecord | null
+  jsonCharacter: CatalogTimelineCharacter
+  chapters: CatalogChapter[]
   locationPaths: Map<string, string>
 }
 
@@ -253,11 +349,11 @@ export function buildChapterTrajectory({
     ),
   )
   const identifiers = new Set([jsonCharacter.id, character?.slug].filter(Boolean))
-  const catalogueEvents = new Map<number, any[]>()
+  const catalogueEvents = new Map<number, CatalogEvent[]>()
 
   for (const chapter of chapters) {
     const matchingEvents = (chapter.timeline || []).filter(
-      (event: any) =>
+      (event) =>
         !event.isFlashback &&
         (event.charactersInvolved || []).some((id: string) => identifiers.has(id)),
     )
@@ -317,9 +413,9 @@ export function buildChapterTrajectory({
       // A temporal presence covering the whole chapter is a valid position even if no move starts there.
       if (!visits.length) {
         const bodyPresence = character?.originalBody?.presences
-          ?.filter((presence: any) => activeAtChapter(presence, chapter))
+          ?.filter((presence) => activeAtChapter(presence, chapter))
           .sort(
-            (a: any, b: any) =>
+            (a, b) =>
               b.fromEvent.chapter.number - a.fromEvent.chapter.number ||
               b.fromEvent.sequence - a.fromEvent.sequence,
           )[0]
@@ -330,21 +426,21 @@ export function buildChapterTrajectory({
             location: bodyLocation,
             detail: 'Position du corps valable pour ce chapitre.',
             subject: 'body',
-            certainty: bodyPresence.certainty,
+            certainty: bodyPresence?.certainty,
           })
 
         const activeOccupancy = character?.originalConsciousness?.occupancies
-          ?.filter((occupancy: any) => activeAtChapter(occupancy, chapter))
+          ?.filter((occupancy) => activeAtChapter(occupancy, chapter))
           .sort(
-            (a: any, b: any) =>
+            (a, b) =>
               b.fromEvent.chapter.number - a.fromEvent.chapter.number ||
               b.fromEvent.sequence - a.fromEvent.sequence,
           )[0]
         if (activeOccupancy && activeOccupancy.bodyId !== character?.originalBody?.id) {
           const hostPresence = activeOccupancy.body?.presences
-            ?.filter((presence: any) => activeAtChapter(presence, chapter))
+            ?.filter((presence) => activeAtChapter(presence, chapter))
             .sort(
-              (a: any, b: any) =>
+              (a, b) =>
                 b.fromEvent.chapter.number - a.fromEvent.chapter.number ||
                 b.fromEvent.sequence - a.fromEvent.sequence,
             )[0]

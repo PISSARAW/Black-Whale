@@ -20,7 +20,6 @@
       name="password"
       type="password"
       required
-      autofocus
       autocomplete="current-password"
       class="mt-2 w-full rounded-md border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-yellow-400"
     />

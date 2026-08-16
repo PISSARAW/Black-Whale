@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import { centroid } from '$lib/tour/hatsu'
   import { theShip, crossingsOn } from '$lib/tour/blueprint'
   import TourScene from '$lib/components/tour/TourScene.svelte'
@@ -35,7 +35,7 @@
 
   const ship = theShip()
   const modeNen = new ModeNenState()
-  const initialCaseId = caseId
+  const initialCaseId = untrack(() => caseId)
   const initialDefinition = caseById(initialCaseId, 'fr')!
   const definition = $derived(caseById(caseId, $locale)!)
   const investigation = $derived(definition.content)
@@ -50,7 +50,7 @@
   let jumpTo = $state<string | null>(initialDefinition.scene.spaceId)
   let manualOpen = $state(false)
 
-  const nameOf = (entity: any) => {
+  const nameOf = (entity: { name: string; nameFr?: string | null } | null | undefined) => {
     if (!entity) return ''
     return $locale === 'fr' && entity.nameFr ? entity.nameFr : entity.name
   }

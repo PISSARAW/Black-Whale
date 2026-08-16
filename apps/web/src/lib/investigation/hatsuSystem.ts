@@ -3,6 +3,7 @@ import type { InvestigationHatsuRule } from './definition'
 import type { InvestigationHatsuUse } from './hatsu'
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'
+import type { Messages } from '$lib/i18n'
 
 export interface HatsuInvestigationContext {
   availableEvidenceIds: Iterable<string>
@@ -82,7 +83,11 @@ export function resolveInvestigationHatsu(
   }
 }
 
-function findingFor(rule: InvestigationHatsuRule, affordable: boolean, msg: any) {
+function findingFor(
+  rule: InvestigationHatsuRule,
+  affordable: boolean,
+  msg: Messages['investigation']['hatsu'],
+) {
   if (!affordable) return msg.requiresLifeHours(rule.lifeHours)
   if (rule.outcome === 'forbidden') return msg.ethicalOrProceduralConditions
   if (rule.outcome === 'limited') return msg.confirmsLimits

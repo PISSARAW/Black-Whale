@@ -6,6 +6,7 @@
   import type { BeyondLineageStatus } from '$lib/beyondLineage'
 
   let { data }: { data: PageData } = $props()
+  type Character = PageData['characters'][number]
   let query = $state('')
   // Sentinel for "no faction filter", kept out of the copy so the comparison
   // below does not depend on the active language.
@@ -19,16 +20,16 @@
   const ANY_LINEAGE = 'any'
   type LineageFilter = 'all' | typeof ANY_LINEAGE | BeyondLineageStatus
   let activeLineage = $state<LineageFilter>('all')
-  const lineageOf = (character: any): BeyondLineageStatus | undefined =>
+  const lineageOf = (character: Character): BeyondLineageStatus | undefined =>
     character.beyondLineage?.status
   // The whole control disappears rather than sitting there empty: an always-on
   // chip would tell a spoiler-capped reader that there is something to reveal.
-  let lineageAvailable = $derived(data.characters.some((character: any) => lineageOf(character)))
+  let lineageAvailable = $derived(data.characters.some((character) => lineageOf(character)))
   let lineageFilters: LineageFilter[] = $derived([
     'all',
     ANY_LINEAGE,
     ...(['confirmed', 'suspected'] as BeyondLineageStatus[]).filter((status) =>
-      data.characters.some((character: any) => lineageOf(character) === status),
+      data.characters.some((character) => lineageOf(character) === status),
     ),
   ])
   let lineageLabel = $derived((filter: LineageFilter) =>
@@ -117,11 +118,11 @@
   let factions: string[] = $derived([
     ALL_FACTIONS,
     ...Array.from(
-      new Set<string>(data.characters.map((character: any) => factionKey(character.factionId))),
+      new Set<string>(data.characters.map((character) => factionKey(character.factionId))),
     ).sort((a, b) => factionLabel(a).localeCompare(factionLabel(b), $t.common.intlLocale)),
   ])
   let filteredCharacters = $derived(
-    data.characters.filter((character: any) => {
+    data.characters.filter((character) => {
       const faction = factionKey(character.factionId)
       const matchesFaction = activeFaction === ALL_FACTIONS || faction === activeFaction
       const lineage = lineageOf(character)
@@ -135,8 +136,8 @@
     }),
   )
 
-  let charactersByFaction: Record<string, any[]> = $derived(
-    filteredCharacters.reduce((acc: Record<string, any[]>, character: any) => {
+  let charactersByFaction: Record<string, Character[]> = $derived(
+    filteredCharacters.reduce((acc: Record<string, Character[]>, character) => {
       const faction = factionKey(character.factionId)
       ;(acc[faction] ||= []).push(character)
       return acc

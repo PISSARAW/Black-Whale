@@ -3,6 +3,7 @@
   import { stateAtTick } from '$lib/arena/replay/player'
   import { projectFrame, type ReplayPerspective } from '$lib/arena/replay/perspective'
   import { replayShareUrl } from '$lib/arena/replay/share'
+  import { untrack } from 'svelte'
 
   interface Props {
     replay: ArenaReplay
@@ -10,7 +11,7 @@
   }
 
   let { replay, locale }: Props = $props()
-  let tick = $state(replay.ticks)
+  let tick = $state(untrack(() => replay.ticks))
   let perspective = $state<ReplayPerspective>('player')
   let frame = $derived(projectFrame(stateAtTick(replay, tick), perspective))
   let event = $derived(frame.event)

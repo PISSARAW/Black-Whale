@@ -19,7 +19,7 @@
    * deck and in a bedroom.
    */
   import type { Crossing, TierPlan } from '$lib/tour/blueprint'
-  import type { Space, Vec2 } from '$lib/tour/types'
+  import type { Space, Tier, Vec2 } from '$lib/tour/types'
 
   interface Props {
     plan: TierPlan
@@ -34,7 +34,7 @@
      */
     crossings?: Crossing[]
     /** The name to write on a room, in the language being read. */
-    nameOf?: (space: Space | { name: string; nameFr: string } | undefined) => string
+    nameOf?: (space: Space | Tier | undefined) => string
     onSelect?: (space: Space) => void
     /**
      * What clicking a room does, in words: the plan travels while the visitor is

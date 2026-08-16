@@ -119,28 +119,26 @@
   let followLabel: Record<FollowMode, string> = $derived($t.ship.followLabels)
 
   let perspectiveOptions = $derived.by(() => {
-    const fromCharacters: PerspectiveOption[] = (data.worldState?.characters || []).map(
-      (char: any) => ({
-        id: char.id,
-        label: displayName(char.canonicalName, $locale),
-        kind: 'character',
-      }),
-    )
+    const fromCharacters: PerspectiveOption[] = (data.worldState?.characters || []).map((char) => ({
+      id: char.id,
+      label: displayName(char.canonicalName, $locale),
+      kind: 'character',
+    }))
 
     return [{ id: 'reader', label: $t.ship.readerView, kind: 'reader' as const }, ...fromCharacters]
   })
 
   let currentEvt = $derived(
-    data.events.find((event: any) => event.id === data.selectedEventId) ||
+    data.events.find((event) => event.id === data.selectedEventId) ||
       data.events[data.events.length - 1],
   )
 
   let unknownPositionCount = $derived.by(() => {
     const locations = new Map(
-      (data.worldState?.locations || []).map((location: any) => [location.id, location]),
+      (data.worldState?.locations || []).map((location) => [location.id, location] as const),
     )
-    return (data.worldState?.presences || []).filter((presence: any) => {
-      const location: any = presence.locationId ? locations.get(presence.locationId) : null
+    return (data.worldState?.presences || []).filter((presence) => {
+      const location = presence.locationId ? locations.get(presence.locationId) : null
       return !location || location.type === 'UNKNOWN'
     }).length
   })
@@ -154,10 +152,10 @@
     const perspectiveName = selectedPerspective?.label || $t.ship.readerView
     const observer = data.perspective?.observer
     const observerCharacter = data.worldState?.characters?.find(
-      (char: any) => char.id === observer?.characterId,
+      (char) => char.id === observer?.characterId,
     )
     const occupiedBody = data.worldState?.bodies?.find(
-      (body: any) => body.id === observer?.currentBodyId,
+      (body) => body.id === observer?.currentBodyId,
     )
     const anomaly = Boolean(observer?.isDissonant)
 
@@ -172,7 +170,7 @@
       followedConsciousness: canonicalPerspective,
       occupiedBody: occupiedBodyLabel,
       apparentIdentity:
-        data.worldState?.characters?.find((char: any) => char.id === observer?.apparentCharacterId)
+        data.worldState?.characters?.find((char) => char.id === observer?.apparentCharacterId)
           ?.canonicalName || occupiedBodyLabel,
       followMode: mapState.followMode,
       hasAnomaly: anomaly,
@@ -234,7 +232,7 @@
     const locations = data.worldState?.locations || []
     if (!mapState.selectedTier) return locations.length
     return locations.filter(
-      (location: any) =>
+      (location) =>
         location.slug === mapState.selectedTier ||
         location.slug?.startsWith(`${mapState.selectedTier}-`),
     ).length
@@ -261,7 +259,7 @@
   // chip would tell a capped reader that there is something left to reveal.
   let lineageStatuses = $derived(
     (['confirmed', 'suspected'] as BeyondLineageStatus[]).filter((status) =>
-      (data.worldState?.characters || []).some((char: any) => char.beyondLineage === status),
+      (data.worldState?.characters || []).some((char) => char.beyondLineage === status),
     ),
   )
   let lineageFilters = $derived(
@@ -273,7 +271,7 @@
   // Counted over characters, not presences: a passenger the archive puts in two
   // places is still one child of Beyond.
   let lineageMatchCount = $derived(
-    (data.worldState?.characters || []).filter((char: any) =>
+    (data.worldState?.characters || []).filter((char) =>
       mapState.filters.beyondLineage === 'suspected' ||
       mapState.filters.beyondLineage === 'confirmed'
         ? char.beyondLineage === mapState.filters.beyondLineage

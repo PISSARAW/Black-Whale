@@ -13,7 +13,7 @@ export const load: PageServerLoad = async () => {
   })
 
   return {
-    abilities: abilities as any[],
-    characters: characters as any[],
+    abilities,
+    characters,
   }
 }

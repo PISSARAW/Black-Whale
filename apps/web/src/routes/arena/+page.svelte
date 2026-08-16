@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
@@ -65,9 +65,9 @@
 
   const DT = 1 / 60
   const ship = theShip()
-  const terrain = buildCombatTerrain(data.terrainId)
+  const terrain = untrack(() => buildCombatTerrain(data.terrainId))
   let plan = $state(ship.plans.get(terrain.tierId)!)
-  const ground = floorOf(terrain.space, plan.tier)
+  let ground = $derived(floorOf(terrain.space, plan.tier))
 
   let game = $state(freshGame())
   let started = $state(false)
@@ -133,9 +133,9 @@
   let hatsuAnimationSeq = $state(0)
   let lesson = $state(0)
 
-  const initialDoctrine = data.doctrine
-  const initialDifficulty = data.difficulty
-  const initialChallengeId = data.challengeId
+  const initialDoctrine = untrack(() => data.doctrine)
+  const initialDifficulty = untrack(() => data.difficulty)
+  const initialChallengeId = untrack(() => data.challengeId)
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)

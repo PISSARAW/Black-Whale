@@ -11,6 +11,21 @@
   import { link, locale, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
+  type WorldState = NonNullable<PageData['worldState']>
+  type Location = WorldState['locations'][number]
+  type Difference = PageData['comparison'][number]
+  type Perspective = NonNullable<PageData['leftPerspective']>
+  interface MapMarker {
+    id: string
+    bodyId: string
+    subjectId: string
+    name: string
+    tier: string | null
+    zone: string
+    x: number
+    y: number
+    certainty: string
+  }
 
   let selectedEventId = $state(untrack(() => data.selectedEventId || ''))
   let selectedLeft = $state(untrack(() => data.selectedLeft || ''))
@@ -115,12 +130,12 @@
   }
 
   let entitiesInView = $derived.by(() => {
-    const byLocation = new Map<string, any>(
-      locations.map((location: any) => [location.id, location] as [string, any]),
+    const byLocation = new Map<string, Location>(
+      locations.map((location) => [location.id, location]),
     )
 
-    function resolveTier(location: any) {
-      let current = location
+    function resolveTier(location: Location) {
+      let current: Location | null | undefined = location
       let depth = 0
       while (current && depth < 8) {
         if (current.type === 'TIER') return current.slug
@@ -131,12 +146,10 @@
     }
 
     return presences
-      .map((presence: any) => {
-        const body = bodies.find((item: any) => item.id === presence.entityId)
-        const owner = body
-          ? characters.find((item: any) => item.id === body.originalCharacterId)
-          : null
-        const location = byLocation.get(presence.locationId)
+      .map((presence) => {
+        const body = bodies.find((item) => item.id === presence.entityId)
+        const owner = body ? characters.find((item) => item.id === body.originalCharacterId) : null
+        const location = presence.locationId ? byLocation.get(presence.locationId) : undefined
         return {
           id: presence.entityId,
           subjectId: owner?.id || body?.id || presence.entityId,
@@ -146,22 +159,20 @@
           zone: location?.slug || '',
         }
       })
-      .filter((item: any) => (!tier || item.tier === tier) && (!zone || item.zone === zone))
+      .filter((item) => (!tier || item.tier === tier) && (!zone || item.zone === zone))
   })
 
   let zonesInTier = $derived(
-    locations.filter(
-      (location: any) => location.slug?.startsWith(tier) && location.type !== 'TIER',
-    ),
+    locations.filter((location) => location.slug?.startsWith(tier) && location.type !== 'TIER'),
   )
 
   let baseMarkers = $derived.by(() => {
-    const byLocation = new Map<string, any>(
-      locations.map((location: any) => [location.id, location] as [string, any]),
+    const byLocation = new Map<string, Location>(
+      locations.map((location) => [location.id, location]),
     )
 
-    function resolveTier(location: any) {
-      let current = location
+    function resolveTier(location: Location) {
+      let current: Location | null | undefined = location
       let depth = 0
       while (current && depth < 8) {
         if (current.type === 'TIER') return current.slug
@@ -171,12 +182,10 @@
       return null
     }
 
-    return presences.map((presence: any) => {
-      const body = bodies.find((item: any) => item.id === presence.entityId)
-      const owner = body
-        ? characters.find((item: any) => item.id === body.originalCharacterId)
-        : null
-      const location = byLocation.get(presence.locationId)
+    return presences.map((presence): MapMarker => {
+      const body = bodies.find((item) => item.id === presence.entityId)
+      const owner = body ? characters.find((item) => item.id === body.originalCharacterId) : null
+      const location = presence.locationId ? byLocation.get(presence.locationId) : undefined
       const markerTier = location ? resolveTier(location) : null
 
       let x = 500
@@ -206,7 +215,7 @@
   })
 
   let scopedMarkers = $derived(
-    baseMarkers.filter((marker: any) => marker.tier === tier && (!zone || marker.zone === zone)),
+    baseMarkers.filter((marker) => marker.tier === tier && (!zone || marker.zone === zone)),
   )
 
   function codeWeight(code: '=' | '←' | '→' | '≠' | '~' | '⏱') {
@@ -217,7 +226,7 @@
     return 1
   }
 
-  function differenceCode(diff: any): '=' | '←' | '→' | '≠' | '~' | '⏱' {
+  function differenceCode(diff: Difference): '=' | '←' | '→' | '≠' | '~' | '⏱' {
     if (diff.dimension === 'EVENT') return '⏱'
     return pickCode(diff)
   }
@@ -227,7 +236,7 @@
     // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const map = new Map<string, '=' | '←' | '→' | '≠' | '~' | '⏱'>()
 
-    for (const diff of differences as any[]) {
+    for (const diff of differences) {
       const subjectId = diff.subjectId
       if (!subjectId) continue
 
@@ -242,7 +251,11 @@
     return map
   })
 
-  function markerLabel(marker: any, perspective: any, mode: 'left' | 'right' | 'reader') {
+  function markerLabel(
+    marker: MapMarker,
+    perspective: Perspective | null,
+    mode: 'left' | 'right' | 'reader',
+  ) {
     if (mode === 'reader') return marker.name
     if (!perspective) return marker.name
 
@@ -250,10 +263,10 @@
     if (observerId && marker.subjectId === observerId) return marker.name
 
     const facts = (perspective.knownFacts || []).filter(
-      (fact: any) => fact.subjectId === marker.subjectId || fact.subjectId === marker.bodyId,
+      (fact) => fact.subjectId === marker.subjectId || fact.subjectId === marker.bodyId,
     )
     const beliefs = (perspective.beliefs || []).filter(
-      (belief: any) => belief.subjectId === marker.subjectId || belief.subjectId === marker.bodyId,
+      (belief) => belief.subjectId === marker.subjectId || belief.subjectId === marker.bodyId,
     )
 
     if (facts.length > 0) return marker.name
@@ -262,7 +275,7 @@
   }
 
   let leftMapMarkers = $derived(
-    scopedMarkers.map((marker: any) => ({
+    scopedMarkers.map((marker) => ({
       ...marker,
       label: markerLabel(marker, data.leftPerspective, 'left'),
       code: subjectCodeMap.get(marker.subjectId) || '=',
@@ -271,7 +284,7 @@
   )
 
   let rightMapMarkers = $derived(
-    scopedMarkers.map((marker: any) => ({
+    scopedMarkers.map((marker) => ({
       ...marker,
       label: markerLabel(marker, data.rightPerspective, 'right'),
       code: subjectCodeMap.get(marker.subjectId) || '=',
@@ -280,7 +293,7 @@
   )
 
   let readerMapMarkers = $derived(
-    scopedMarkers.map((marker: any) => ({
+    scopedMarkers.map((marker) => ({
       ...marker,
       label: markerLabel(marker, null, 'reader'),
       code: subjectCodeMap.get(marker.subjectId) || '=',
@@ -289,17 +302,15 @@
   )
 
   let focusMarker = $derived(
-    scopedMarkers.find((marker: any) => marker.subjectId === selectedSubject) ||
+    scopedMarkers.find((marker) => marker.subjectId === selectedSubject) ||
       scopedMarkers[0] || { x: 500, y: 300 },
   )
 
   let canonicalRows = $derived.by(() => {
     if (!compareCanonical) return []
-    const facts = (canonicalTruth.facts || []).filter(
-      (fact: any) => fact.subjectId === selectedSubject,
-    )
+    const facts = (canonicalTruth.facts || []).filter((fact) => fact.subjectId === selectedSubject)
     const objectivePosition = canonicalTruth.positions?.[selectedSubject]
-    const rows = facts.map((fact: any) => ({
+    const rows = facts.map((fact) => ({
       type: $t.compare.rowTypes.canonicalFact,
       key: fact.predicate,
       value: formatValue(fact.value),
@@ -368,7 +379,7 @@
     syncState(true)
   }
 
-  function pickCode(diff: any): '=' | '←' | '→' | '≠' | '~' | '⏱' {
+  function pickCode(diff: Difference): '=' | '←' | '→' | '≠' | '~' | '⏱' {
     if (diff.differenceType === 'LEFT_ONLY') return '←'
     if (diff.differenceType === 'RIGHT_ONLY') return '→'
     if (diff.differenceType === 'CONTRADICTION') return '≠'
@@ -382,7 +393,7 @@
     return JSON.stringify(value)
   }
 
-  function matchesFilter(diff: any) {
+  function matchesFilter(diff: Difference) {
     if (activeFilter === 'all') return true
     const byFilter: Record<string, string[]> = {
       identities: ['IDENTITY', 'EXISTENCE'],
@@ -395,17 +406,17 @@
     return (byFilter[activeFilter] || []).includes(diff.dimension)
   }
 
-  let filteredDifferences = $derived(differences.filter((diff: any) => matchesFilter(diff)))
+  let filteredDifferences = $derived(differences.filter((diff) => matchesFilter(diff)))
 
-  function perspectiveRows(perspective: any) {
+  function perspectiveRows(perspective: Perspective | null) {
     const facts = (perspective?.knownFacts || []).filter(
-      (fact: any) => !selectedSubject || fact.subjectId === selectedSubject,
+      (fact) => !selectedSubject || fact.subjectId === selectedSubject,
     )
     const beliefs = (perspective?.beliefs || []).filter(
-      (belief: any) => !selectedSubject || belief.subjectId === selectedSubject,
+      (belief) => !selectedSubject || belief.subjectId === selectedSubject,
     )
     return [
-      ...facts.map((fact: any) => ({
+      ...facts.map((fact) => ({
         type:
           fact.truthStatus === 'CONTESTED'
             ? $t.compare.rowTypes.contestedBelief
@@ -413,7 +424,7 @@
         key: fact.predicate,
         value: formatValue(fact.value),
       })),
-      ...beliefs.map((belief: any) => ({
+      ...beliefs.map((belief) => ({
         type: $t.compare.rowTypes.belief,
         key: belief.predicate,
         value: formatValue(belief.believedValue),

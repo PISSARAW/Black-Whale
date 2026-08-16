@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
   // Beyond's lineage is stripped rather than flagged: the registry filter runs in
   // the browser, so anything still attached here would be readable in the payload
   // by a reader who asked not to be spoiled.
-  const visible = characters.map((character) => {
+  const visible: CatalogCharacter[] = characters.map((character): CatalogCharacter => {
     const lineage = visibleLineage(character.beyondLineage, spoilerLimit)
     if (lineage === character.beyondLineage) return character
     const { beyondLineage: _dropped, ...rest } = character

@@ -20,9 +20,9 @@ export const load: PageServerLoad = async () => {
   })
 
   return {
-    facts: facts as any[],
-    characters: characters as any[],
-    locations: locations as any[],
-    events: events as any[],
+    facts,
+    characters,
+    locations,
+    events,
   }
 }

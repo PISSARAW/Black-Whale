@@ -1071,7 +1071,7 @@
   {spoken}
   {crossings}
   {crossingLabel}
-  nameOf={(space) => nameOf(named(space))}
+  nameOf={(entity) => (entity ? ('tierId' in entity ? nameOf(named(entity)) : nameOf(entity)) : '')}
   selectLabel={planVerb}
   {naming}
   onClosePlan={() => (chrome.planOpen = false)}

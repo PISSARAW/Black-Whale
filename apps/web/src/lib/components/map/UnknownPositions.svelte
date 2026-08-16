@@ -4,23 +4,40 @@
   import { displayName } from '$lib/utils/displayNames'
   import { locale, t } from '$lib/i18n'
 
+  interface MapLocation {
+    id: string
+    type: string
+  }
+  interface MapBody {
+    id: string
+    originalCharacterId: string | null
+  }
+  interface MapCharacter {
+    id: string
+    canonicalName: string
+  }
+  interface MapPresence {
+    entityId: string
+    locationId: string | null
+  }
+
   let unknownCharacters = $derived.by(() => {
     const worldState = $page.data.worldState
-    const locations = new Map<string, any>(
-      (worldState?.locations || []).map((location: any) => [location.id, location]),
+    const locations = new Map<string, MapLocation>(
+      ((worldState?.locations || []) as MapLocation[]).map((location) => [location.id, location]),
     )
-    const bodies = worldState?.bodies || []
-    const characters = worldState?.characters || []
+    const bodies = (worldState?.bodies || []) as MapBody[]
+    const characters = (worldState?.characters || []) as MapCharacter[]
 
-    return (worldState?.presences || [])
-      .filter((presence: any) => {
+    return ((worldState?.presences || []) as MapPresence[])
+      .filter((presence) => {
         const location = presence.locationId ? locations.get(presence.locationId) : null
         return !location || location.type === 'UNKNOWN'
       })
-      .map((presence: any) => {
-        const body = bodies.find((candidate: any) => candidate.id === presence.entityId)
+      .map((presence) => {
+        const body = bodies.find((candidate) => candidate.id === presence.entityId)
         const character = body
-          ? characters.find((candidate: any) => candidate.id === body.originalCharacterId)
+          ? characters.find((candidate) => candidate.id === body.originalCharacterId)
           : null
 
         return {
@@ -36,7 +53,7 @@
   })
 
   let identifiedCount = $derived(
-    unknownCharacters.filter((character: any) => character.identified).length,
+    unknownCharacters.filter((character) => character.identified).length,
   )
 </script>
 

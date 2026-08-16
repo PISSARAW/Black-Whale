@@ -7,7 +7,7 @@
   import MapOverlay from './MapOverlay.svelte'
 
   let containerEl: HTMLElement | undefined = $state()
-  let pz: any
+  let pz: ReturnType<typeof panzoom> | undefined
   let zoomPercent = $state(100)
 
   function syncZoom() {
@@ -58,17 +58,19 @@
 
   $effect(() => {
     if (containerEl) {
-      pz = panzoom(containerEl, {
+      const instance = panzoom(containerEl, {
         maxZoom: 5,
         minZoom: 0.5,
         bounds: true,
         boundsPadding: 0.1,
       })
-      pz.on('zoom', syncZoom)
-      pz.on('transform', syncZoom)
+      pz = instance
+      instance.on('zoom', syncZoom)
+      instance.on('transform', syncZoom)
 
       return () => {
-        pz.dispose()
+        instance.dispose()
+        if (pz === instance) pz = undefined
       }
     }
   })
@@ -92,10 +94,11 @@
     const zoomLevel = mapState.currentZoomLevel
 
     if (!pz || !containerEl) return
+    const instance = pz
 
     if (trackedTargetKind === 'reader' && perspectiveKind === 'reader') {
-      pz.moveTo(0, 0)
-      pz.zoomAbs(0, 0, 1)
+      instance.moveTo(0, 0)
+      instance.zoomAbs(0, 0, 1)
       return
     }
 
@@ -113,13 +116,13 @@
       const marker = containerEl.querySelector<HTMLElement>('[data-follow-target="true"]')
       if (!marker) return
 
-      const transform = pz.getTransform()
+      const transform = instance.getTransform()
       const scale = Math.max(transform.scale, zoomLevel === 'OVERVIEW' ? 1.2 : 1)
       const markerLayer = marker.offsetParent as HTMLElement | null
       const markerX = marker.offsetLeft + (markerLayer?.offsetLeft || 0)
       const markerY = marker.offsetTop + (markerLayer?.offsetTop || 0)
-      pz.zoomAbs(0, 0, scale)
-      pz.moveTo(
+      instance.zoomAbs(0, 0, scale)
+      instance.moveTo(
         containerEl.clientWidth / 2 - markerX * scale,
         containerEl.clientHeight / 2 - markerY * scale,
       )

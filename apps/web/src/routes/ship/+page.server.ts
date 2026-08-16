@@ -28,6 +28,7 @@ import { redirect } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
 import { objectSnapshotsAt, type ImportantObject } from '$lib/importantObjects'
 import importantObjectCatalog from '../../../../../data/objects/objects.json'
+import type { BeyondLineageStatus } from '$lib/beyondLineage'
 
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
@@ -87,19 +88,26 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     : null
 
   // Filter world state characters by spoiler
-  let visibleCharacters = rawWorldState.characters
+  type WorldCharacter = (typeof rawWorldState.characters)[number]
+  type VisibleCharacter = WorldCharacter & {
+    factionTags?: string[]
+    hatsuNames?: string[]
+    hatsuIds?: string[]
+    beyondLineage?: BeyondLineageStatus
+  }
+  let visibleCharacters: VisibleCharacter[] = rawWorldState.characters
   if (spoilerProfile) {
     const allowedCharacters = await prisma.character.findMany({
       where: { firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } } },
       select: { id: true },
     })
     const allowedCharacterIds = new Set(allowedCharacters.map((character) => character.id))
-    visibleCharacters = rawWorldState.characters.filter((character: any) =>
+    visibleCharacters = rawWorldState.characters.filter((character) =>
       allowedCharacterIds.has(character.id),
     )
   }
 
-  const visibleCharacterIdsForAffiliations = visibleCharacters.map((character: any) => character.id)
+  const visibleCharacterIdsForAffiliations = visibleCharacters.map((character) => character.id)
   const memberships =
     selectedEvent && visibleCharacterIdsForAffiliations.length
       ? await prisma.affiliationMembership.findMany({
@@ -115,7 +123,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         })
       : []
   const activeFactionTypesByCharacter = activeFactionTypesAt(memberships, selectedEvent)
-  visibleCharacters = visibleCharacters.map((character: any) => {
+  visibleCharacters = visibleCharacters.map((character) => {
     // Absent rather than null when the reader is capped below the reveal: the
     // map filter reads this field, and an explicit null is still an answer.
     const beyondLineage = beyondLineageStatusFor(
@@ -138,7 +146,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
   const perspectiveIsAvailable =
     requestedPerspectiveId === 'reader' ||
-    visibleCharacters.some((character: any) => character.id === requestedPerspectiveId)
+    visibleCharacters.some((character) => character.id === requestedPerspectiveId)
   if (!perspectiveIsAvailable) {
     const canonicalUrl = new URL(url)
     canonicalUrl.searchParams.set('perspective', 'reader')
@@ -148,7 +156,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
   // Presences reference bodies, not characters. Resolve the body owner before
   // applying the spoiler filter so valid character positions are not discarded.
-  const visibleCharacterIds = new Set(visibleCharacters.map((character: any) => character.id))
+  const visibleCharacterIds = new Set(visibleCharacters.map((character) => character.id))
   const visibleBodyIds = resolveVisibleBodyIds(rawWorldState, visibleCharacterIds)
   const visiblePresences = filterPresencesByBodies(rawWorldState.presences, visibleBodyIds)
 
@@ -169,13 +177,13 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       ? requestedTrackingTarget
       : requestedTrackingTarget?.startsWith('character:') &&
           visibleCharacters.some(
-            (character: any) => `character:${character.id}` === requestedTrackingTarget,
+            (character) => `character:${character.id}` === requestedTrackingTarget,
           )
         ? requestedTrackingTarget
         : selectedPerspectiveId === 'reader'
           ? 'reader'
           : `character:${selectedPerspectiveId}`
-  let perspective: any = null
+  let perspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
 
   if (selectedEvent?.id && selectedPerspectiveId !== 'reader') {
     try {
@@ -215,7 +223,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     nextChapterState: nextChapterWorldState
       ? trimWorldStateForMap({
           chapterNumber: nextChapterNumber,
-          characters: nextChapterWorldState.characters.map((character: any) => {
+          characters: nextChapterWorldState.characters.map((character) => {
             const beyondLineage = beyondLineageStatusFor(
               character,
               catalogIndex,

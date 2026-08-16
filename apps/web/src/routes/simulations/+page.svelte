@@ -7,8 +7,8 @@
   import { link, t } from '$lib/i18n'
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
-  let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}) as any[])
-  let effects = $derived(Object.values(data.branch?.snapshot?.effects || {}) as any[])
+  let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}))
+  let effects = $derived(Object.values(data.branch?.snapshot?.effects || {}))
   let selectedAction = $derived(
     data.actions.find((action) => action.id === data.selection.actionId) ?? null,
   )

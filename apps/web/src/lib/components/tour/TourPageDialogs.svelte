@@ -3,7 +3,7 @@
   import type { Crossing, Ship, TierPlan } from '$lib/tour/blueprint'
   import { PROVENANCE_CLASS } from '$lib/tour/pagePresentation'
   import type { Naming } from '$lib/tour/search'
-  import type { Space, Vec2 } from '$lib/tour/types'
+  import type { Space, Tier, Vec2 } from '$lib/tour/types'
   import TourFinder from './TourFinder.svelte'
   import TourPlanDialog from './TourPlanDialog.svelte'
 
@@ -18,7 +18,7 @@
     spoken: string | null
     crossings: Crossing[]
     crossingLabel: (crossing: Crossing) => string
-    nameOf: (space: Space) => string
+    nameOf: (entity: Space | Tier | undefined) => string
     selectLabel: (room: string) => string
     naming: Naming
     onClosePlan: () => void

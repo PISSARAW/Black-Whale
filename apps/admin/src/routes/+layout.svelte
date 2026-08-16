@@ -1,8 +1,9 @@
 <script lang="ts">
   import '../app.css'
   import type { LayoutData } from './$types'
+  import type { Snippet } from 'svelte'
 
-  let { data }: { data: LayoutData } = $props()
+  let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
   async function updateSpoilerLimit(e: Event) {
     const input = e.target as HTMLInputElement
@@ -57,10 +58,10 @@
 
       <!-- Page Content -->
       <div class="p-6 flex-1 overflow-auto bg-gray-50 text-gray-900">
-        <slot />
+        {@render children()}
       </div>
     </main>
   </div>
 {:else}
-  <slot />
+  {@render children()}
 {/if}

@@ -9,13 +9,31 @@ import {
   buildCharacterProfile,
   buildRoleHistory,
   readFirstAppearanceChapter,
+  type AbilityRecord,
+  type CatalogCharacterRecord,
 } from '$lib/server/character-profile'
 import {
   appendApparentBodyTimeline,
   buildChapterTrajectory,
   buildLocationPaths,
   buildTimeline,
+  type CatalogChapter,
+  type CatalogTimelineCharacter,
+  type LocationRecord,
 } from '$lib/server/character-timeline'
+
+interface ProphecyRecord {
+  id: string
+  subjectId: string
+  subjectName: string
+  desire: string
+  poem: string[]
+  blank?: boolean
+  reading: string
+  foretells: string
+  horizon: string
+  canonStatus: string
+}
 
 const eventInclude = { include: { chapter: true } } as const
 
@@ -66,14 +84,16 @@ const characterInclude = {
 export const load: PageServerLoad = async ({ params, cookies }) => {
   const spoilerLimit = readSpoilerLimit(cookies) ?? null
   const [characters, chapters, locations, abilities, prophecies] = await Promise.all([
-    readDataFile<any[]>('characters/characters.json'),
-    readDataFile<any[]>('chapters/chapters.json'),
-    readDataFile<any[]>('locations/locations.json'),
-    readDataFile<any[]>('abilities/abilities.json'),
-    readDataFile<any[]>('prophecies/prophecies.json'),
+    readDataFile<Array<CatalogCharacterRecord & CatalogTimelineCharacter>>(
+      'characters/characters.json',
+    ),
+    readDataFile<CatalogChapter[]>('chapters/chapters.json'),
+    readDataFile<LocationRecord[]>('locations/locations.json'),
+    readDataFile<AbilityRecord[]>('abilities/abilities.json'),
+    readDataFile<ProphecyRecord[]>('prophecies/prophecies.json'),
   ])
   const locationPaths = buildLocationPaths(locations)
-  const jsonCharacter = characters.find((candidate: any) => candidate.id === params.slug)
+  const jsonCharacter = characters.find((candidate) => candidate.id === params.slug)
 
   if (!jsonCharacter) throw error(404, 'Character not found')
 
@@ -122,7 +142,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 
   // Prophecies carry no chapter anchor, so the spoiler limit cannot filter them;
   // the sheet ships collapsed on the page instead of being withheld here.
-  const prophecy = prophecies.find((sheet: any) => sheet.subjectId === params.slug) ?? null
+  const prophecy = prophecies.find((sheet) => sheet.subjectId === params.slug) ?? null
 
   return {
     character: buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber),

@@ -9,14 +9,14 @@
   import { link, locale, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
-  let character = $derived(data.character as any)
-  let prophecy = $derived((data as any).prophecy)
-  let timeline = $derived((data.timeline || []) as any[])
-  let chapterTrajectory = $derived((data.chapterTrajectory || []) as any[])
-  let roleHistory = $derived((data.roleHistory || []) as any[])
-  let affiliations = $derived((data.affiliations || []) as any[])
+  let character = $derived(data.character)
+  let prophecy = $derived(data.prophecy)
+  let timeline = $derived(data.timeline || [])
+  let chapterTrajectory = $derived(data.chapterTrajectory || [])
+  let roleHistory = $derived(data.roleHistory || [])
+  let affiliations = $derived(data.affiliations || [])
   let documentedAppearances = $derived(
-    (character.mangaAppearances || []).filter((appearance: any) => appearance.status !== 'absent'),
+    (character.mangaAppearances || []).filter((appearance) => appearance.status !== 'absent'),
   )
   let displayName = $derived(toDisplayName(character.canonicalName, $locale))
   let initials = $derived(
@@ -39,12 +39,12 @@
     truncate(character.description) || $t.characterDetail.fallbackDescription(displayName),
   )
   let latestKnownChapter = $derived(
-    chapterTrajectory.findLast((chapter: any) =>
-      chapter.visits.some((visit: any) => visit.location !== 'Position inconnue'),
+    chapterTrajectory.findLast((chapter) =>
+      chapter.visits.some((visit) => visit.location !== 'Position inconnue'),
     ),
   )
   let currentLocation = $derived(
-    latestKnownChapter?.visits.map((visit: any) => visit.location).join(' → ') ||
+    latestKnownChapter?.visits.map((visit) => visit.location).join(' → ') ||
       [
         character.shipLocation?.tier ? $t.ship.tierLabel(character.shipLocation.tier) : null,
         character.shipLocation?.room,
@@ -80,7 +80,7 @@
   )
   let latestState = $derived(
     timeline.findLast(
-      (entry: any) =>
+      (entry) =>
         !entry.isFlashback &&
         (entry.kind === 'body-state' ||
           entry.kind === 'consciousness-state' ||
@@ -339,8 +339,8 @@
                       class="ability-description"
                       onclick={() => activateAbility(ability.id)}
                       aria-label={$t.characterDetail.activateAbility(
-                        ability.name,
-                        ability.description,
+                        ability.name || ability.id,
+                        ability.description || '',
                       )}
                       aria-pressed={$activeHatsu?.id === ability.id}
                       data-hatsu-pass
@@ -455,9 +455,9 @@
                       </li>
                     {/each}
                   </ol>
-                  {#if chapter.events.some((entry: any) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location')}
+                  {#if chapter.events.some((entry) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location')}
                     <div class="chapter-states">
-                      {#each chapter.events.filter((entry: any) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location') as entry, entryIndex (entryIndex)}
+                      {#each chapter.events.filter((entry) => entry.kind !== 'body-location' && entry.kind !== 'consciousness-location') as entry, entryIndex (entryIndex)}
                         <span>{kindLabels[entry.kind]} · {humanize(entry.label)}</span>
                       {/each}
                     </div>

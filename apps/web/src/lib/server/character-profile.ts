@@ -14,21 +14,57 @@ export interface CharacterProfile {
   id: string
   slug: string
   canonicalName: string
-  aliases: unknown[]
-  identity: unknown
-  shipLocation: unknown
+  aliases: string[]
+  identity: CharacterIdentity | null
+  shipLocation: ShipLocation | null
   factionId: string | null
   firstVisibleChapter: number | null
   description: string | null
-  biography: unknown[]
-  abilitiesAndPowers: unknown
-  equipment: unknown[]
-  nen: unknown
-  mangaAppearances: unknown[]
-  battles: unknown[]
-  competitions: unknown[]
-  abilities: unknown[]
+  biography: string[]
+  abilitiesAndPowers: string | null
+  equipment: EquipmentRecord[]
+  nen: NenRecord | null
+  mangaAppearances: MangaAppearance[]
+  battles: NamedEncounter[]
+  competitions: NamedEncounter[]
+  abilities: AbilityRecord[]
 }
+
+export interface CharacterIdentity {
+  status: string
+  description: string
+  counterpartId: string
+  counterpartLabel: string
+}
+
+export interface ShipLocation {
+  tier?: number
+  room?: string
+  status?: string
+  role?: string | null
+}
+
+export interface EquipmentRecord {
+  name: string
+  description: string
+}
+
+export interface NenRecord {
+  type: string
+  typeLabel?: string
+  secondaryTypeLabels?: string[]
+  overview?: string
+  combatProficiency?: string
+  techniques?: string[]
+}
+
+export interface MangaAppearance {
+  chapter: number
+  status: string
+  title?: string
+}
+
+export type NamedEncounter = string | { label?: string; name?: string }
 
 export interface HistoryEntry {
   label: string
@@ -45,16 +81,71 @@ export interface AffiliationEntry {
   untilChapter: number | null
 }
 
+export interface CatalogCharacterRecord {
+  id: string
+  canonicalName?: string
+  aliases?: string[]
+  identity?: CharacterIdentity
+  shipLocation?: ShipLocation
+  factionId?: string | null
+  description?: string | null
+  biography?: string[]
+  abilitiesAndPowers?: string
+  equipment?: EquipmentRecord[]
+  nen?: NenRecord
+  mangaAppearances?: MangaAppearance[]
+  battles?: NamedEncounter[]
+  competitions?: NamedEncounter[]
+  firstAppearanceChapterId?: string | null
+}
+
+export interface AbilityRecord {
+  id: string
+  ownerId?: string | null
+  userIds?: string[]
+  name?: string
+  alternateNames?: string[]
+  category?: string
+  secondaryCategories?: string[]
+  description?: string
+}
+
+interface HistoryEvent {
+  summary?: string | null
+  title?: string | null
+  chapter: { number: number }
+}
+
+interface CharacterHistoryRecord {
+  roles?: Array<{
+    roleName: string
+    fromEvent: HistoryEvent
+    untilEvent?: HistoryEvent | null
+  }>
+  assignments?: Array<{
+    officialRole: string
+    fromEvent: HistoryEvent
+    untilEvent?: HistoryEvent | null
+  }>
+  affiliations?: Array<{
+    faction: { name: string }
+    role: string
+    status: string
+    fromEvent: HistoryEvent
+    untilEvent?: HistoryEvent | null
+  }>
+}
+
 /** Normalises one catalogue entry, attaching the abilities that point at it. */
 export function buildCharacterProfile(
-  jsonCharacter: any,
-  abilities: any[],
+  jsonCharacter: CatalogCharacterRecord,
+  abilities: AbilityRecord[],
   firstVisibleChapter: number | null,
 ): CharacterProfile {
   return {
     id: jsonCharacter.id,
     slug: jsonCharacter.id,
-    canonicalName: jsonCharacter.canonicalName,
+    canonicalName: jsonCharacter.canonicalName || '',
     aliases: jsonCharacter.aliases || [],
     identity: jsonCharacter.identity || null,
     shipLocation: jsonCharacter.shipLocation || null,
@@ -81,15 +172,15 @@ export function buildCharacterProfile(
  * They are separate tables but the same thing to a reader: what this person
  * was, and until when.
  */
-export function buildRoleHistory(character: any): HistoryEntry[] {
+export function buildRoleHistory(character: CharacterHistoryRecord | null): HistoryEntry[] {
   return [
-    ...(character?.roles || []).map((role: any) => ({
+    ...(character?.roles || []).map((role) => ({
       label: role.roleName,
       chapter: role.fromEvent.chapter.number,
       untilChapter: role.untilEvent?.chapter.number || null,
       detail: eventDetail(role.fromEvent),
     })),
-    ...(character?.assignments || []).map((assignment: any) => ({
+    ...(character?.assignments || []).map((assignment) => ({
       label: assignment.officialRole,
       chapter: assignment.fromEvent.chapter.number,
       untilChapter: assignment.untilEvent?.chapter.number || null,
@@ -99,8 +190,8 @@ export function buildRoleHistory(character: any): HistoryEntry[] {
 }
 
 /** Faction memberships flattened to the chapters they span. */
-export function buildAffiliations(character: any): AffiliationEntry[] {
-  return (character?.affiliations || []).map((membership: any) => ({
+export function buildAffiliations(character: CharacterHistoryRecord | null): AffiliationEntry[] {
+  return (character?.affiliations || []).map((membership) => ({
     name: membership.faction.name,
     role: membership.role,
     status: membership.status,
@@ -115,7 +206,9 @@ export function buildAffiliations(character: any): AffiliationEntry[] {
  * Returns null when the catalogue has no first appearance, which means "no
  * restriction" — an unknown debut must not hide the character from everyone.
  */
-export function readFirstAppearanceChapter(jsonCharacter: any): number | null {
+export function readFirstAppearanceChapter(jsonCharacter: {
+  firstAppearanceChapterId?: string | null
+}): number | null {
   const match = jsonCharacter.firstAppearanceChapterId?.match(/ch-(\d+)/)
   return match ? Number.parseInt(match[1]) : null
 }

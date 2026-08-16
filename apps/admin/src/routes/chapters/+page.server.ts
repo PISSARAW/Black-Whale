@@ -14,6 +14,6 @@ export const load: PageServerLoad = async () => {
   })
 
   return {
-    chapters: chapters as any[],
+    chapters,
   }
 }

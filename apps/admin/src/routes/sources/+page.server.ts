@@ -14,6 +14,6 @@ export const load: PageServerLoad = async () => {
   })
 
   return {
-    sources: sources as any[],
+    sources,
   }
 }

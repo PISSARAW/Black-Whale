@@ -20,8 +20,11 @@
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Chapter</label>
+          <label for="chapter-id" class="block text-sm font-medium text-gray-700 mb-1"
+            >Chapter</label
+          >
           <select
+            id="chapter-id"
             name="chapterId"
             class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
             required
@@ -33,8 +36,10 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Sequence</label>
+          <label for="sequence" class="block text-sm font-medium text-gray-700 mb-1">Sequence</label
+          >
           <input
+            id="sequence"
             type="number"
             name="sequence"
             class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
@@ -46,8 +51,9 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
         <input
+          id="title"
           type="text"
           name="title"
           class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
@@ -56,8 +62,9 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
+        <label for="summary" class="block text-sm font-medium text-gray-700 mb-1">Summary</label>
         <textarea
+          id="summary"
           name="summary"
           rows="3"
           class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
@@ -121,8 +128,14 @@
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Character</label>
-          <select name="characterId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+          <label for="character-id" class="block text-sm font-medium text-gray-700 mb-1"
+            >Character</label
+          >
+          <select
+            id="character-id"
+            name="characterId"
+            class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+          >
             <option value="">No consequence...</option>
             {#each data.characters as char (char.id)}
               <option value={char.id}>{char.canonicalName}</option>
@@ -130,8 +143,14 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">New Location</label>
-          <select name="locationId" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+          <label for="location-id" class="block text-sm font-medium text-gray-700 mb-1"
+            >New Location</label
+          >
+          <select
+            id="location-id"
+            name="locationId"
+            class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+          >
             <option value="">Select Location...</option>
             {#each data.locations as loc (loc.id)}
               <option value={loc.id}>{loc.name} ({loc.type})</option>
@@ -139,8 +158,14 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Precision</label>
-          <select name="precision" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+          <label for="precision" class="block text-sm font-medium text-gray-700 mb-1"
+            >Precision</label
+          >
+          <select
+            id="precision"
+            name="precision"
+            class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+          >
             <option value="EXACT_ROOM">Exact Room</option>
             <option value="ZONE">Zone</option>
             <option value="TIER">Tier</option>
@@ -148,11 +173,17 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Certainty</label>
-          <select name="certainty" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+          <label for="certainty" class="block text-sm font-medium text-gray-700 mb-1"
+            >Certainty</label
+          >
+          <select
+            id="certainty"
+            name="certainty"
+            class="w-full border-gray-300 rounded-md shadow-sm p-2 border"
+          >
             <option value="CONFIRMED">Confirmed</option>
             <option value="PROBABLE">Probable</option>
-            <option value="UNKNOWN">Unknown</option>
+            <option value="LAST_KNOWN">Last known</option>
           </select>
         </div>
       </div>

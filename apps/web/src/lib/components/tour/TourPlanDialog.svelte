@@ -1,7 +1,7 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
   import type { Crossing, TierPlan } from '$lib/tour/blueprint'
-  import type { Space, Vec2 } from '$lib/tour/types'
+  import type { Space, Tier, Vec2 } from '$lib/tour/types'
   import TourMinimap from './TourMinimap.svelte'
 
   interface Props {
@@ -13,7 +13,7 @@
     spoken: string | null
     crossings: Crossing[]
     crossingLabel: (crossing: Crossing) => string
-    nameOf: (entity: any) => string
+    nameOf: (entity: Space | Tier | undefined) => string
     selectLabel: (room: string) => string
     aiming: boolean
     onClose: () => void

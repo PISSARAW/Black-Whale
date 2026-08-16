@@ -12,7 +12,7 @@ export const load: PageServerLoad = async () => {
   })
 
   return {
-    characters: characters as any[],
-    events: events as any[],
+    characters,
+    events,
   }
 }

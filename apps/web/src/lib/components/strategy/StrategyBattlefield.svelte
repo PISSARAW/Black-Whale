@@ -32,7 +32,7 @@
   let view = $state<'tour' | 'map'>('tour')
   let selectedTier = $state('tier-1')
 
-  const nameOf = (entity: any) => {
+  const nameOf = (entity: { name: string; nameFr?: string | null } | null | undefined) => {
     if (!entity) return ''
     return $locale === 'fr' && entity.nameFr ? entity.nameFr : entity.name
   }

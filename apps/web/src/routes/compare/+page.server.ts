@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   })
 
   if (spoilerProfile) {
-    characters = filterVisible(characters as any, spoilerProfile) as any
+    characters = filterVisible(characters, spoilerProfile)
   }
 
   const events = await prisma.narrativeEvent.findMany({
@@ -37,9 +37,9 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   const { selectedEventId, selectedLeft, selectedRight, compareCanonical, sync } =
     resolveComparisonSelection(url.searchParams, { characters, events })
 
-  let leftPerspective: any = null
-  let rightPerspective: any = null
-  let comparison: any[] = []
+  let leftPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
+  let rightPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
+  let comparison: Awaited<ReturnType<typeof comparePerspectives>> = []
 
   if (selectedEventId && selectedLeft && selectedRight) {
     try {
@@ -53,10 +53,19 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
     }
   }
 
-  let worldState: any = null
+  let worldState:
+    | (Omit<Awaited<ReturnType<typeof timeline.getWorldState>>, 'locations'> & {
+        locations: Awaited<ReturnType<typeof prisma.location.findMany>>
+      })
+    | null = null
   let selectedEventSequence = defaultEvent?.sequence
   let selectedEventChapter = defaultEvent?.chapter?.number
-  let canonicalTruth: any = {
+  let canonicalTruth: {
+    facts: Awaited<ReturnType<typeof prisma.fact.findMany>>
+    positions: ReturnType<typeof buildCanonicalPositions>
+    chapter: number | null
+    restrictedBySpoiler: number | null
+  } = {
     facts: [],
     positions: {},
     chapter: selectedEventChapter || null,
@@ -70,12 +79,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
     if (selectedEventSequence !== undefined) {
       const rawWorld = await timeline.getWorldState({ eventId: selectedEventId })
-      const locations = await prisma.location.findMany()
+      const locations = await prisma.location.findMany({
+        where:
+          maxChapter === undefined
+            ? undefined
+            : { firstVisibleEvent: { chapter: { number: { lte: maxChapter } } } },
+      })
       worldState = {
         ...rawWorld,
-        locations: spoilerProfile
-          ? (filterVisible(locations as any, spoilerProfile) as any)
-          : locations,
+        locations,
       }
 
       if (compareCanonical) {

@@ -1,6 +1,7 @@
 {
   "name": "black-whale",
   "version": "0.0.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "postinstall": "pnpm --filter @black-whale/database generate",

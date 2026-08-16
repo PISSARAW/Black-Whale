@@ -120,7 +120,7 @@
                   ? 'bg-green-100 text-green-700'
                   : fact.truthStatus === 'STRONGLY_IMPLIED'
                     ? 'bg-blue-100 text-blue-700'
-                    : fact.truthStatus === 'DEDUCED'
+                    : fact.truthStatus === 'DEDUCTION'
                       ? 'bg-purple-100 text-purple-700'
                       : 'bg-orange-100 text-orange-700'}
               "
@@ -137,9 +137,3 @@
     </tbody>
   </table>
 </div>
-
-<style>
-  .bw-gold {
-    color: #ffd700;
-  }
-</style>

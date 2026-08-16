@@ -66,9 +66,6 @@
     outline: 2px solid white;
     outline-offset: 2px;
   }
-  .hunt-action.hatsu {
-    border-color: rgb(196 181 253 / 0.4);
-  }
   kbd {
     color: rgb(125 211 252);
     font: inherit;

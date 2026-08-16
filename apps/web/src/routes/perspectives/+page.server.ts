@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   })
 
   if (spoilerProfile) {
-    characters = filterVisible(characters as any, spoilerProfile) as any
+    characters = filterVisible(characters, spoilerProfile)
   }
 
   // Load all events with their chapters

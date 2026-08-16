@@ -1,6 +1,18 @@
 import { getPrisma } from '$lib/server/db'
 import { fail, redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
+import type { Prisma } from '@black-whale/database'
+
+const presencePrecisions = ['EXACT_ROOM', 'ZONE', 'TIER', 'UNKNOWN'] as const
+const presenceCertainties = ['CONFIRMED', 'PROBABLE', 'LAST_KNOWN'] as const
+
+function isPresencePrecision(value: string): value is (typeof presencePrecisions)[number] {
+  return presencePrecisions.includes(value as (typeof presencePrecisions)[number])
+}
+
+function isPresenceCertainty(value: string): value is (typeof presenceCertainties)[number] {
+  return presenceCertainties.includes(value as (typeof presenceCertainties)[number])
+}
 
 export const load: PageServerLoad = async () => {
   const prisma = await getPrisma()
@@ -31,8 +43,10 @@ export const actions: Actions = {
     // Consequence data
     const characterId = data.get('characterId')?.toString()
     const locationId = data.get('locationId')?.toString()
-    const precision = data.get('precision')?.toString() as any
-    const certainty = data.get('certainty')?.toString() as any
+    const precisionValue = data.get('precision')?.toString() || ''
+    const certaintyValue = data.get('certainty')?.toString() || ''
+    const precision = isPresencePrecision(precisionValue) ? precisionValue : null
+    const certainty = isPresenceCertainty(certaintyValue) ? certaintyValue : null
 
     if (!chapterId || !title || !summary || sequence <= 0) {
       return fail(400, { error: 'Missing required event fields' })
@@ -43,7 +57,7 @@ export const actions: Actions = {
 
     try {
       // Run everything in a transaction
-      await prisma.$transaction(async (tx: any) => {
+      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // 1. Create the event
         const event = await tx.narrativeEvent.create({
           data: {
@@ -54,6 +68,7 @@ export const actions: Actions = {
             isFlashback,
             occurredAtLabel,
           },
+          include: { chapter: true },
         })
 
         // Rebuild the occurrence order. Chapter/sequence remain the reading order;
@@ -63,14 +78,14 @@ export const actions: Actions = {
           include: { chapter: true },
         })
         existingEvents.sort(
-          (left: any, right: any) =>
+          (left, right) =>
             (left.ordinal ?? Number.MAX_SAFE_INTEGER) -
               (right.ordinal ?? Number.MAX_SAFE_INTEGER) ||
             left.chapter.number - right.chapter.number ||
             left.sequence - right.sequence,
         )
         const insertionIndex = occursBeforeEventId
-          ? existingEvents.findIndex((candidate: any) => candidate.id === occursBeforeEventId)
+          ? existingEvents.findIndex((candidate) => candidate.id === occursBeforeEventId)
           : existingEvents.length
         if (occursBeforeEventId && insertionIndex < 0)
           throw new Error('Occurrence anchor not found')
@@ -97,22 +112,21 @@ export const actions: Actions = {
               include: { fromEvent: true, untilEvent: true },
             })
             presences.sort(
-              (left: any, right: any) =>
+              (left, right) =>
                 (left.fromEvent.ordinal ?? Number.MAX_SAFE_INTEGER) -
                 (right.fromEvent.ordinal ?? Number.MAX_SAFE_INTEGER),
             )
             const eventOrdinal = chronologicalEvents.findIndex(
-              (candidate: any) => candidate.id === event.id,
+              (candidate) => candidate.id === event.id,
             )
             const previousPresence = presences.findLast(
-              (presence: any) =>
+              (presence) =>
                 (presence.fromEvent.ordinal ?? Number.MAX_SAFE_INTEGER) < eventOrdinal &&
                 (!presence.untilEvent ||
                   (presence.untilEvent.ordinal ?? Number.MAX_SAFE_INTEGER) > eventOrdinal),
             )
             const nextPresence = presences.find(
-              (presence: any) =>
-                (presence.fromEvent.ordinal ?? Number.MAX_SAFE_INTEGER) > eventOrdinal,
+              (presence) => (presence.fromEvent.ordinal ?? Number.MAX_SAFE_INTEGER) > eventOrdinal,
             )
 
             if (previousPresence) {

@@ -54,8 +54,8 @@ export class NenSceneAura {
   readonly #flux: Three.Mesh
   readonly #en: Three.Mesh
 
-  readonly #fluxUniforms: any
-  readonly #enUniforms: any
+  readonly #fluxUniforms: Record<string, Three.IUniform>
+  readonly #enUniforms: Record<string, Three.IUniform>
 
   #seconds = 0
 

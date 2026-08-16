@@ -60,4 +60,13 @@ describe('manga photo viewpoints', () => {
       ]),
     )
   })
+
+  it('offers the two Tier 1 rooms enriched from their manga panels', () => {
+    expect(viewsForSpace('tier-1-supreme-court').map((view) => view.id)).toContain(
+      'supreme-court-bench-seal',
+    )
+    expect(viewsForSpace('tier-1-queens-living-quarters-room-01').map((view) => view.id)).toContain(
+      'unma-nursery-salon',
+    )
+  })
 })

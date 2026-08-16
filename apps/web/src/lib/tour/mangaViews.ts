@@ -190,6 +190,18 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'Les quatorze cercueils en rayon de la chambre funéraire de la succession',
   }),
   view({
+    id: 'supreme-court-bench-seal',
+    spaceId: 'tier-1-supreme-court',
+    at: [112, 38.5],
+    target: [122.35, 38.5],
+    pitch: 0.03,
+    chapter: 371,
+    volume: 36,
+    pages: '9',
+    label: 'The Supreme Court bench beneath the circular judicial seal',
+    labelFr: 'Le banc de la Cour suprême sous le sceau judiciaire circulaire',
+  }),
+  view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
     at: [2.15, -4.95],
@@ -289,6 +301,17 @@ export const MANGA_VIEWS: MangaView[] = [
     pages: '150–153',
     label: 'Room 3101 facing the Heil-Ly bathroom trap',
     labelFr: 'La chambre 3101 face au piège Heil-Ly de la salle de bains',
+  }),
+  view({
+    id: 'unma-nursery-salon',
+    spaceId: 'tier-1-queens-living-quarters-room-01',
+    at: [-36.2, 7.9],
+    target: [-33.6, 12.5],
+    pitch: 0.01,
+    chapter: 403,
+    volume: 39,
+    label: 'Queen Unma in her formal salon with the nursery visible behind her',
+    labelFr: 'La reine Unma dans son salon d’apparat, avec la nursery visible derrière elle',
   }),
 ]
 

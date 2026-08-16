@@ -93,4 +93,16 @@ describe('manga photo viewpoints', () => {
     expect(view?.pages).toBe('189')
     expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
   })
+
+  it('offers each of the three panel-shown rooms inside the Tier 5 Cha-R office', () => {
+    expect(viewsForSpace('tier-5-cha-r-family-office-main-office').map(({ id }) => id)).toContain(
+      'cha-r-emblem-three-doors',
+    )
+    expect(viewsForSpace('tier-5-cha-r-family-office-bedroom').map(({ id }) => id)).toContain(
+      'cha-r-bunks-bookshelves',
+    )
+    expect(viewsForSpace('tier-5-cha-r-family-office-monitor-room').map(({ id }) => id)).toContain(
+      'cha-r-cctv-monitor-room',
+    )
+  })
 })

@@ -712,9 +712,13 @@ face, et un couloir au dos des deux rangées. C'est ce qui donne à chaque
 appartement **une seule** entrée : ses trois autres faces regardent la cour.
 La reconstruction a longtemps rangé ces boîtes en deux terrasses accolées le
 long de deux coursives, ce qui faisait de la page un diagramme de voisinage
-alors qu'elle dessine des volumes séparés. Les quatorze appartements sont le
-même plan : le jeu de meubles est authoré une fois, dans le repère de
-l'appartement, et répété pour chaque prince.
+alors qu'elle dessine des volumes séparés. La coupe du chap. 368 interdit aussi
+d'en faire quatorze copies conformes : les 1011 et 1012 présentent deux
+distributions presque en miroir, la 1013 sépare un bloc de service, un grand
+espace central et une aile privée, et la 1014 ouvre deux grands volumes autour
+d'un vestibule avant. La carte locale reproduit donc séparément ces quatre
+silhouettes. Elle ne nomme pas les pièces que la planche ne nomme pas ; une
+cloison visible est un fait, sa fonction ne l'est pas forcément.
 
 Quelques-uns en portent davantage, et c'est l'ordre d'autorité qui le veut : là
 où une planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle

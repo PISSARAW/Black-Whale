@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveRegionLocationSlug } from './mapAssetRegistry'
+import { resolveMapAssetKey, resolveRegionLocationSlug } from './mapAssetRegistry'
 
 /**
  * The deck SVGs name their clickable regions independently of the catalogue, so
@@ -21,6 +21,12 @@ describe('resolveRegionLocationSlug', () => {
   it('resolves prince apartments from their room number', () => {
     expect(resolveRegionLocationSlug('room-1014')).toBe('tier-1-royal-residential-sector-room-1014')
     expect(resolveRegionLocationSlug('room-1001')).toBe('tier-1-royal-residential-sector-room-1001')
+  })
+
+  it('uses the chapter 368 cutaway for the four junior-prince apartments', () => {
+    expect(resolveMapAssetKey('LOCAL', 'tier-1', 'room-1011')).toBe('junior-prince-apartment')
+    expect(resolveMapAssetKey('LOCAL', 'tier-1', 'room-1014')).toBe('junior-prince-apartment')
+    expect(resolveMapAssetKey('LOCAL', 'tier-1', 'room-1010')).toBe('prince-apartment')
   })
 
   it('does not mistake other numbered rooms for prince apartments', () => {

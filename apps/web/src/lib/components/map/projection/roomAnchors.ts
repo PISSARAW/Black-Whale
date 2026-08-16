@@ -59,8 +59,10 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
     occupants: { 'prince-camilla': { x: 27, y: 33.33 } },
   },
 
-  // The prince apartments below share `local/prince-apartment.svelte`: 800 × 953,
-  // contents offset by (50, 70). The shared plan draws a bed at (20, 550)
+  // Rooms 1001–1010 use `local/prince-apartment.svelte`. Rooms 1011–1014 use
+  // the distinct ch. 368 cutaway in `local/junior-prince-apartment.svelte`;
+  // their coordinates below therefore follow that second drawing. The shared
+  // plan draws a bed at (20, 550)
   // 100 × 110 in the master bedroom, a living-room table at (300, 350) 80 × 60,
   // and the asset adds one per-room fixture where canon seats a prince on
   // something of his own. No fallback is declared for any of them — the centred
@@ -115,18 +117,18 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // the same fixture, offset by half its width rather than stacked.
   'tier-1-royal-residential-sector-room-1011': {
     occupants: {
-      'prince-fugetsu': { x: 12.5, y: 85.15 },
-      'prince-kacho': { x: 18, y: 85.15 },
+      'prince-fugetsu': { x: 69, y: 35 },
+      'prince-kacho': { x: 75, y: 35 },
     },
   },
   // Momoze is asleep in her bed in ch. 361, which is where Tuffdy kills her.
   'tier-1-royal-residential-sector-room-1012': {
-    occupants: { 'prince-momoze': { x: 15, y: 85.15 } },
+    occupants: { 'prince-momoze': { x: 21, y: 35 } },
   },
   // Hanzo leaves his body on the bed while his Nen double hunts Tuffdy, ch. 372,
   // and climbs back into it there in ch. 375.
   'tier-1-royal-residential-sector-room-1013': {
-    occupants: { hanzo: { x: 15, y: 85.15 } },
+    occupants: { hanzo: { x: 78, y: 72 } },
   },
   // 1014 is the room the arc stages most often, so it carries the most spots.
   // Kurapika stands at the front of the Nen class facing the students, who keep
@@ -136,23 +138,23 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // (ch. 359) and Vincent by the entrance (ch. 364).
   'tier-1-royal-residential-sector-room-1014': {
     occupants: {
-      kurapika: { x: 50, y: 72.41 },
+      kurapika: { x: 69, y: 39 },
       // Oito swapped the babies, so the cradle holds whichever one the archive
       // currently believes is in it.
-      'prince-woble': { x: 75, y: 67.15 },
-      'oito-nephew-fake-woble': { x: 75, y: 67.15 },
-      'queen-oito': { x: 69, y: 67.15 },
+      'prince-woble': { x: 29, y: 27 },
+      'oito-nephew-fake-woble': { x: 29, y: 27 },
+      'queen-oito': { x: 37, y: 39 },
       // The two bodyguards keep the protected side of the room. Canon says
       // that much and never places them against a fixture.
-      bill: { x: 69, y: 61.1, inferred: true },
-      shimanu: { x: 81, y: 61.1, inferred: true },
-      longhi: { x: 56.25, y: 87.07 },
-      woody: { x: 81.25, y: 87.07 },
-      vincent: { x: 50, y: 15.06 },
+      bill: { x: 45, y: 43, inferred: true },
+      shimanu: { x: 55, y: 43, inferred: true },
+      longhi: { x: 37, y: 78 },
+      woody: { x: 72, y: 78 },
+      vincent: { x: 50, y: 83 },
       // Silent Majority drops these two on the classroom floor itself, in front
       // of the students it is hiding among — ch. 369 and ch. 370.
-      barrigen: { x: 40, y: 62.13 },
-      myuhan: { x: 60, y: 62.13 },
+      barrigen: { x: 64, y: 48 },
+      myuhan: { x: 76, y: 48 },
     },
   },
 

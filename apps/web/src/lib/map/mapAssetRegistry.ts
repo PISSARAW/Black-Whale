@@ -11,6 +11,7 @@ import Tier4B from '$lib/assets/maps/tier-4-b.svelte'
 import Tier5 from '$lib/assets/maps/tier-5.svelte'
 import Tier5B from '$lib/assets/maps/tier-5-b.svelte'
 import PrinceApartment from '$lib/assets/maps/local/prince-apartment.svelte'
+import JuniorPrinceApartment from '$lib/assets/maps/local/junior-prince-apartment.svelte'
 import Room3101 from '$lib/assets/maps/local/room-3101.svelte'
 import HeillyProcessing from '$lib/assets/maps/local/heilly-processing.svelte'
 import CentralCourthouse from '$lib/assets/maps/local/central-courthouse.svelte'
@@ -57,6 +58,7 @@ export const MAP_ASSETS = {
   'tier-5': Tier5,
   'tier-5-b': Tier5B,
   'prince-apartment': PrinceApartment,
+  'junior-prince-apartment': JuniorPrinceApartment,
   'room-3101': Room3101,
   'heilly-processing': HeillyProcessing,
   'central-courthouse': CentralCourthouse,
@@ -208,6 +210,7 @@ export function resolveMapAssetKey(
   if (level === 'OVERVIEW') return 'black-whale-overview'
   if (level === 'TIER') return tierId && tierId in MAP_ASSETS ? (tierId as MapAssetKey) : null
   if (!locationId) return null
+  if (/room-101[1-4]$/.test(locationId)) return 'junior-prince-apartment'
   if (locationId.startsWith('room-10') || locationId.includes('royal-residential-sector-room-10'))
     return 'prince-apartment'
   return LOCATION_ASSETS[locationId] ?? null

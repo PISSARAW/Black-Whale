@@ -124,6 +124,8 @@ export type LinkKind = 'stair' | 'lift' | 'bulkhead' | 'door'
  * - `telephone` — the wall set a room is reached on. Small, and kept for the
  *   reason the manacle is: ch. 360 hangs one in Prince Woble's rooms, and it is
  *   standing at it that Kurapika calls Biscuit and learns what the beasts are.
+ * - `mobile` — a nursery mobile hung over a cot. It is its own kind because it
+ *   hangs inside the room rather than reading as a picture fixed to a wall.
  */
 export type StructureKind =
   | 'spring'
@@ -143,6 +145,7 @@ export type StructureKind =
   | 'manacle'
   | 'camera'
   | 'telephone'
+  | 'mobile'
   | 'duct'
   | 'vent'
 

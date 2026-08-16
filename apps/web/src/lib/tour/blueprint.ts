@@ -456,6 +456,7 @@ const STRUCTURE_KINDS = new Set([
   'manacle',
   'camera',
   'telephone',
+  'mobile',
   'duct',
   'vent',
 ])

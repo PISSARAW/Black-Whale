@@ -28,6 +28,7 @@ export const STRUCTURE_SHEEN: Readonly<Record<StructureKind, number>> = {
   manacle: 0.85,
   camera: 0.06,
   telephone: 0,
+  mobile: 0.12,
   duct: 0.34,
   vent: 0.3,
 }

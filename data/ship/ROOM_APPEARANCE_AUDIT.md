@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 922 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 931 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -104,15 +104,21 @@
 ## Chambre de reine 01 — `tier-1-queens-living-quarters-room-01`
 
 - **Pont :** tier-1-c
-- **Preuve de l’enveloppe :** reconstruction cartographique
+- **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 1
 - **Emprises relevées :** 8.4 × 13.13 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Éléments modélisés :** 3 table, 2 bed, 2 painting, 1 mobile, 1 seat
+- **Objets directement visibles dans les cases :** 8/9
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Le chap. 403 montre le salon richement lambrissé de la reine Unma et la nursery derrière sa porte ouverte ; le plan des quartiers des reines sur /ship fournit l’emprise de la chambre 01 dans le bloc de huit chambres.
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Chap. 403 — la porte ouverte derrière la reine Unma laisse voir un berceau au fond de la chambre 01.
+  - Chap. 403 — un mobile suspendu est visible directement au-dessus du berceau dans la nursery de la reine Unma.
+  - Chap. 403 — la reine Unma est assise dans un haut fauteuil orné au milieu de son salon richement lambrissé.
+  - Chap. 403 — un petit guéridon sculpté se tient de chaque côté du fauteuil de la reine Unma.
+  - Chap. 403 — une table basse rectangulaire sculptée se tient devant le fauteuil de la reine Unma.
+  - Chap. 403 — des tableaux encadrés sont suspendus dans les panneaux moulurés derrière le fauteuil de la reine Unma.
 
 ## Chambre de reine 02 — `tier-1-queens-living-quarters-room-02`
 
@@ -500,11 +506,13 @@
 - **Sous-espaces :** 1
 - **Emprises relevées :** 42 × 28 m
 - **Hauteurs sous plafond :** 8 m
-- **Éléments modélisés :** 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 0/5
+- **Éléments modélisés :** 2 counter, 2 table, 1 painting, 1 seat
+- **Objets directement visibles dans les cases :** 2/6
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
 - **Sources du mobilier et des détails :**
+  - Chap. 371 — Cleapatro reçoit la requête d’urgence dans la salle des juges de la Cour suprême, assis derrière son haut banc ornementé.
+  - Chap. 371 — un grand emblème circulaire de la Cour est centré sur le mur à panneaux au-dessus du banc de Cleapatro.
   - Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond.
 
 ## Casino VIP — `tier-1-vip-casino`

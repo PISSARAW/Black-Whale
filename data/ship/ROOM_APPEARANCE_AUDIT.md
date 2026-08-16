@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 931 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 934 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -603,8 +603,8 @@
 - **Sous-espaces :** 6
 - **Emprises relevées :** 26.25 × 52.5 m ; 10.52 × 5.25 m ; 33.63 × 6.3 m ; 10.52 × 8.05 m ; 10.51 × 8.05 m ; 6.3 × 8.05 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 11 seat, 8 cabinet, 5 table, 3 basin, 3 vent, 1 duct
-- **Objets directement visibles dans les cases :** 25/31
+- **Éléments modélisés :** 12 seat, 10 cabinet, 5 table, 3 basin, 3 vent, 1 duct
+- **Objets directement visibles dans les cases :** 29/34
 - **Espaces internes :** Salle de traitement / douches ; Couloir de bunker ; Buanderie / élimination ; Salle commune ; Bureau du chef
 - **Sources de la pièce :**
   - Chap. 356 — dissimulée dans le bloc VIP ; la pièce exacte n'est pas montrée.
@@ -618,6 +618,10 @@
   - Chap. 399, p. 168-169 — la buanderie / salle d'élimination contient visiblement des machines industrielles frontales, éviers, rangements muraux, casiers, siphons, flexibles et au moins deux tables métalliques centrales.
   - Chap. 399, p. 170-175 — la salle commune contient visiblement la longue table et au moins huit chaises, des rangements muraux, une fontaine à eau et les réseaux apparents du plafond.
   - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
+  - Chap. 407 — le grand téléviseur sombre et son meuble bas occupent le mur derrière la chaise de bureau de Morena.
+  - Chap. 399, p. 3 — le flanc d’un canapé est visible contre le mur du bureau lorsque Hinrigh ouvre la porte de la planque ; le chap. 407 le montre en face de la table de Morena.
+  - Chap. 407 — une Famicom repose sur le meuble du téléviseur derrière Morena ; sa coque claire se détache de l’écran sombre.
+  - Chap. 407 — une Super Famicom est posée à côté de la Famicom sur le meuble du téléviseur derrière Morena.
   - Chap. 407-410 — la table sur laquelle Morena Prudo et Borksen jouent la partie de négociation, et une chaise de chaque côté, dans le bureau du chef que dessine le plan de la planque.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 

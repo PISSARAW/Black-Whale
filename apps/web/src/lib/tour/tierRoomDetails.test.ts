@@ -37,4 +37,15 @@ describe('manga details outside the princely apartments', () => {
     expect(byId.get('tier-1-supreme-court-bench')?.provenance).toBe('panel')
     expect(byId.get('tier-1-supreme-court-seal')?.provenance).toBe('panel')
   })
+
+  it('keeps Morena’s couch, television and two consoles distinct on Tier 2', () => {
+    const details = new Map(
+      byLocation('tier-2-heilly-secret-hideout').map((detail) => [detail.id, detail]),
+    )
+
+    expect(details.get('tier-2-heilly-secret-hideout-office-couch')?.provenance).toBe('panel')
+    expect(details.get('tier-2-heilly-secret-hideout-console')?.colour).toBe(0x1c1d20)
+    expect(details.get('tier-2-heilly-secret-hideout-famicom')?.colour).toBe(0xe5dfcf)
+    expect(details.get('tier-2-heilly-secret-hideout-super-famicom')?.colour).toBe(0xbebfbd)
+  })
 })

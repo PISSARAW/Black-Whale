@@ -371,7 +371,11 @@ describe('what the walk lays on the table', () => {
     expect(table.kind).toBe('table')
     expect(table.at).toEqual([...TABLE_AT])
     expect(table.height).toBe(TABLE_HEIGHT)
-    expect(structures.filter((solid) => solid.kind === 'seat')).toHaveLength(2)
+    expect(
+      structures.filter(
+        (solid) => solid.id.endsWith('-dealer-chair') || solid.id.endsWith('-guest-chair'),
+      ),
+    ).toHaveLength(2)
   })
 
   it('seats both players inside the room they are playing in', () => {

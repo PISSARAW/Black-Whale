@@ -48,4 +48,23 @@ describe('manga details outside the princely apartments', () => {
     expect(details.get('tier-2-heilly-secret-hideout-famicom')?.colour).toBe(0xe5dfcf)
     expect(details.get('tier-2-heilly-secret-hideout-super-famicom')?.colour).toBe(0xbebfbd)
   })
+
+  it('keeps room 3101’s stacked bunks and wall storage distinct on Tier 3', () => {
+    const details = new Map(
+      byLocation('tier-3-residential-room-3101').map((detail) => [detail.id, detail]),
+    )
+
+    expect(details.get('tier-3-residential-room-3101-bed')?.name).toBe('Bunk Bed')
+    expect(details.get('tier-3-residential-room-3101-bed')?.height).toBe(2.15)
+    expect(details.get('tier-3-residential-room-3101-bunk-ladder')?.kind).toBe('bars')
+    expect(details.get('tier-3-residential-room-3101-wardrobe')?.size).toEqual([0.8, 1.4])
+    expect(details.get('tier-3-residential-room-3101-drawers')?.height).toBe(0.9)
+    expect(details.get('tier-3-residential-room-3101-shelves')?.height).toBe(2.1)
+
+    for (const detail of details.values()) {
+      if (detail.spaceId === 'tier-3-residential-room-3101-living') {
+        expect(detail.provenance).toBe('panel')
+      }
+    }
+  })
 })

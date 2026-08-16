@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 934 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 937 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -810,16 +810,19 @@
 - **Sous-espaces :** 3
 - **Emprises relevées :** 21 × 10.5 m ; 9 × 9 m ; 5 × 5 m
 - **Hauteurs sous plafond :** 3.5 m
-- **Éléments modélisés :** 2 basin, 1 bed, 1 cabinet
-- **Objets directement visibles dans les cases :** 0/4
+- **Éléments modélisés :** 3 cabinet, 2 basin, 1 bars, 1 bed
+- **Objets directement visibles dans les cases :** 5/7
 - **Espaces internes :** Séjour ; Salle de bains anormale
 - **Sources de la pièce :**
   - Chap. 398, p. 150-153 — la chambre 3101 et son seuil de salle de bains piégé par téléportation
-  - Chap. 398, p. 150-153 — la 3101 est une cabine ordinaire à large sol dégagé, avec rangement haut et salle de bains dont la porte sert de piège de téléportation Heil-Ly ; la profondeur exacte de la cloison est reconstruite.
+  - Chap. 393, p. 64-67 — la 3101 est montrée depuis ses deux extrémités : deux couchettes superposées occupent une moitié du mur du fond, une penderie ouverte avec vêtements suspendus, tiroirs et étagères occupe l'autre, et la porte de la salle de bains se trouve sur le mur latéral ; la profondeur exacte de la cloison est reconstruite.
   - Chap. 398, p. 150-153 — le seuil de la salle de bains constitue le piège Heil-Ly : le franchir transfère la victime dans la planque au lieu de mener simplement à la pièce d'eau ; les appareils et la cloison sont reconstruits d'après le plan de la cabine.
 - **Sources du mobilier et des détails :**
-  - Chap. 398, p. 150-153 — mobilier d'une cabine ordinaire dans la 3101 ; le seuil de la salle de bains constitue le piège de téléportation Heil-Ly.
-  - Chap. 398, p. 150-153 — la chambre montre un rangement haut contre le mur et un large sol central dégagé devant la porte piégée de la salle de bains.
+  - Chap. 393, p. 64-67 — deux couchages superposés sont visibles contre le mur du fond de la chambre 3101.
+  - Chap. 393, p. 64-67 — l'échelle se trouve sur le côté libre du lit superposé.
+  - Chap. 393, p. 64-67 — la penderie ouverte se trouve à côté du lit superposé, sur le mur du fond.
+  - Chap. 393, p. 64-67 — une rangée de tiroirs intégrés se trouve à côté de la penderie ouverte.
+  - Chap. 393, p. 64-67 — des étagères ouvertes intégrées complètent le mur de rangement à côté des tiroirs.
   - Chap. 398, p. 150-153 — la pièce d'eau se trouve au-delà du seuil piégé ; la position exacte de cet appareil est reconstruite d'après le plan de cabine, et non visible à travers le portail actif.
 
 ## Bloc résidentiel standard — `tier-3-residential-standard`

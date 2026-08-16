@@ -81,11 +81,11 @@
   </defs>
 
   <text x="400" y="30" class="label" font-size="28" fill="#FFD700"
-    >Appartement Princier {roomNumber}</text
+    >Prince's Apartment {roomNumber}</text
   >
-  <text x="400" y="53" class="evidence">Programme-type · chap. 363</text>
+  <text x="400" y="53" class="evidence">Programme-type · ch. 363</text>
   <text x="400" y="70" class="evidence"
-    >Cloisons individuelles non publiées pour les chambres 1001 à 1010</text
+    >Individual partitions unpublished for rooms 1001 to 1010</text
   >
 
   <g transform="translate(50, 82)">
@@ -117,7 +117,7 @@
     <text x="250" y="390" class="label" font-size="24">Living</text>
     {#if !['1002', '1004', '1007', '1009', '1010', '1013'].includes(roomNumber)}
       <rect x="300" y="350" width="80" height="60" class="furniture" />
-      <!-- Table du seul programme-type ; supprimée lorsqu'une planche la contredit. -->
+      <!-- Default programme-type table; removed where a panel contradicts it. -->
     {/if}
 
     <!-- Servants' Quarters (Top Left) -->
@@ -263,101 +263,101 @@
     <circle cx="650" cy="580" r="15" class="furniture" />
     <!-- Toilet -->
 
-    <!-- Éléments propres à chaque appartement. Les éléments événementiels
-      (cadeaux, gâteau, cercle de chaises) ne deviennent pas des fixtures. -->
+    <!-- Apartment-specific fixtures. Event props
+      (gifts, cake, chair circles) are not made permanent. -->
     {#if roomNumber === '1001'}
-      <!-- Réception vue aux ch. 363 et 366. -->
+      <!-- Reception room seen in ch. 363 and 366. -->
       <rect x="70" y="270" width="150" height="18" class="fixed" />
-      <text x="145" y="310" class="sublabel">Grand tableau · ch. 363</text>
+      <text x="145" y="310" class="sublabel">Large painting · ch. 363</text>
       <rect x="410" y="315" width="24" height="24" rx="4" class="fixed" />
-      <text x="505" y="330" class="sublabel">Téléphone · ch. 366</text>
+      <text x="505" y="330" class="sublabel">Telephone · ch. 366</text>
     {:else if roomNumber === '1002'}
-      <!-- Centre dégagé et sièges en périphérie, ch. 389. -->
+      <!-- Clear centre, peripheral seating, ch. 389. -->
       <rect x="25" y="300" width="70" height="30" rx="8" class="fixed" />
       <rect x="25" y="380" width="70" height="30" rx="8" class="fixed" />
       <rect x="605" y="400" width="70" height="30" rx="8" class="fixed" />
-      <text x="350" y="390" class="sublabel">Salon formel, centre dégagé · ch. 389</text>
+      <text x="350" y="390" class="sublabel">Formal salon, clear centre · ch. 389</text>
     {:else if roomNumber === '1004'}
-      <!-- Même salon d'entraînement aux ch. 384–387. -->
+      <!-- Same clear training room in ch. 384–387. -->
       <rect x="610" y="370" width="65" height="24" class="fixed" />
       <circle cx="642" cy="382" r="6" class="fixed" />
-      <text x="350" y="405" class="sublabel">Salon d'entraînement dégagé · ch. 384–387</text>
-      <text x="642" y="420" class="sublabel">Manteau + pendule</text>
+      <text x="350" y="405" class="sublabel">Clear training room · ch. 384–387</text>
+      <text x="642" y="420" class="sublabel">Coat + clock</text>
     {:else if roomNumber === '1003'}
-      <!-- Salle à manger confirmée aux ch. 365 et 366. -->
+      <!-- State dining room confirmed in ch. 365 and 366. -->
       <rect x="465" y="205" width="175" height="55" rx="6" class="fixed" />
       <rect x="430" y="215" width="25" height="35" rx="4" class="fixed" />
       <rect x="650" y="215" width="25" height="35" rx="4" class="fixed" />
       <rect x="675" y="170" width="18" height="105" class="fixed" />
       <circle cx="445" cy="175" r="13" class="fixed" />
-      <text x="550" y="292" class="sublabel">Table d'apparat · ch. 365–366</text>
+      <text x="550" y="292" class="sublabel">State dining table · ch. 365–366</text>
     {:else if roomNumber === '1005'}
-      <!-- Cabinet scientifique vu au ch. 366. -->
+      <!-- Scientific cabinet seen in ch. 366. -->
       <rect x="55" y="300" width="145" height="60" class="fixed" />
       <rect x="40" y="265" width="110" height="14" class="fixed" />
       <rect x="165" y="265" width="110" height="14" class="fixed" />
       <rect x="290" y="265" width="90" height="14" class="fixed" />
-      <text x="220" y="390" class="sublabel">Bureau, tableaux blancs et notes · ch. 366</text>
+      <text x="220" y="390" class="sublabel">Desk, whiteboards and notes · ch. 366</text>
     {:else if roomNumber === '1006'}
-      <!-- La salle est certaine ; le décor d'anniversaire est temporaire. -->
-      <text x="350" y="395" class="sublabel">Grande réception à hautes portes · ch. 389</text>
-      <text x="350" y="417" class="evidence">Gâteau et cadeaux omis : décor événementiel</text>
+      <!-- Room confirmed; birthday decoration is temporary. -->
+      <text x="350" y="395" class="sublabel">Large reception room, high doors · ch. 389</text>
+      <text x="350" y="417" class="evidence">Cake and gifts omitted: event decoration</text>
     {:else if roomNumber === '1007'}
-      <!-- Salon récurrent aux ch. 386 et 389. -->
+      <!-- Recurring cluttered salon in ch. 386 and 389. -->
       <rect x="65" y="410" width="190" height="65" rx="14" class="fixed" />
       <rect x="285" y="425" width="65" height="45" class="fixed" />
       <rect x="610" y="300" width="65" height="175" class="fixed" />
       <rect x="440" y="295" width="120" height="20" class="fixed" />
       <circle cx="95" cy="330" r="22" class="fixed" />
       <circle cx="580" cy="330" r="22" class="fixed" />
-      <text x="350" y="500" class="sublabel">Salon encombré · ch. 386 et 389</text>
+      <text x="350" y="500" class="sublabel">Cluttered salon · ch. 386 and 389</text>
     {:else if roomNumber === '1008'}
-      <!-- Chambre festive confirmée aux ch. 362, 366 et 382. -->
+      <!-- Festive bedroom confirmed in ch. 362, 366 and 382. -->
       <rect x="20" y="550" width="225" height="110" rx="10" class="fixed" />
       <rect x="360" y="575" width="100" height="45" class="fixed" />
       <rect x="475" y="560" width="25" height="70" class="fixed" />
-      <text x="330" y="650" class="sublabel">Grand lit + audiovisuel · ch. 362/366/382</text>
+      <text x="330" y="650" class="sublabel">Large bed + audiovisual · ch. 362/366/382</text>
     {:else if roomNumber === '1009'}
-      <!-- Les chaises du rituel sont mobiles ; les meubles muraux restent. -->
+      <!-- Ritual chairs are movable; wall fixtures remain. -->
       <rect x="35" y="275" width="120" height="28" class="fixed" />
       <rect x="545" y="365" width="130" height="28" class="fixed" />
       <rect x="285" y="275" width="95" height="26" class="fixed" />
-      <text x="350" y="405" class="sublabel">Centre carrelé dégagé · ch. 382 et 386</text>
-      <text x="350" y="427" class="evidence">Bibliothèques et manteau · ch. 386</text>
+      <text x="350" y="405" class="sublabel">Clear tiled centre · ch. 382 and 386</text>
+      <text x="350" y="427" class="evidence">Bookshelves and mantelpiece · ch. 386</text>
     {:else if roomNumber === '1010'}
-      <!-- Cuisine et salon détaillés aux ch. 374 et 376. -->
+      <!-- Kitchen and salon detailed in ch. 374 and 376. -->
       <rect x="420" y="20" width="250" height="45" class="fixed" />
       <rect x="640" y="65" width="30" height="65" class="fixed" />
       <rect x="65" y="285" width="180" height="28" class="fixed" />
       <circle cx="275" cy="300" r="16" class="fixed" />
       <rect x="80" y="330" width="150" height="16" class="fixed" />
-      <text x="550" y="105" class="sublabel">Cuisine équipée · ch. 376</text>
-      <text x="205" y="375" class="sublabel">Commode, tabouret, tableaux · ch. 374/376</text>
+      <text x="550" y="105" class="sublabel">Fitted kitchen · ch. 376</text>
+      <text x="205" y="375" class="sublabel">Dresser, stool, paintings · ch. 374/376</text>
     {:else if roomNumber === '1013'}
-      <!-- Appartement très cloisonné · plan révélé en planche (ch. 367). -->
+      <!-- Heavily subdivided apartment · layout revealed in panel (ch. 367). -->
 
-      <!-- Table longue dans les servants' quarters (haut gauche) -->
-      <!-- Réunion de camp autour d'une table de conférence. -->
+      <!-- Long table in the servants' quarters (top left) -->
+      <!-- Camp meeting around a conference table. -->
       <rect x="25" y="22" width="225" height="65" rx="5" class="fixed" />
       <rect x="12" y="18" width="18" height="74" rx="3" class="fixed" />
       <rect x="254" y="18" width="18" height="74" rx="3" class="fixed" />
-      <text x="148" y="106" class="sublabel">Table de réunion longue · ch. 367</text>
+      <text x="148" y="106" class="sublabel">Long meeting table · ch. 367</text>
 
-      <!-- Sous-cloisons : cellules dans la moitié basse des servants' quarters -->
+      <!-- Sub-partitions: cells in the lower half of the servants' quarters -->
       <line class="thin-wall" x1="0" y1="142" x2="215" y2="142" />
       <line class="thin-wall" x1="72" y1="142" x2="72" y2="250" />
       <line class="thin-wall" x1="144" y1="142" x2="144" y2="250" />
       <line class="thin-wall" x1="0" y1="196" x2="72" y2="196" />
       <line class="thin-wall" x1="72" y1="196" x2="144" y2="196" />
-      <text x="108" y="240" class="sublabel" font-size="10">Cellules · ch. 367</text>
+      <text x="108" y="240" class="sublabel" font-size="10">Cells · ch. 367</text>
 
-      <!-- Cloison verticale dans le living (espace gardé subdivisé) -->
+      <!-- Vertical partition in the living room (subdivided guarded space) -->
       <line class="thin-wall" x1="345" y1="252" x2="345" y2="435" />
-      <text x="172" y="400" class="sublabel">Salon gardé · centre dégagé</text>
+      <text x="172" y="400" class="sublabel">Guarded salon · clear centre</text>
 
-      <!-- Bête spirituelle de Marayam dans l'entrée de la chambre -->
-      <text x="600" y="590" class="sublabel">Chambre · Marayam</text>
-      <text x="600" y="612" class="evidence">Bête gardienne dans l'encadrement · ch. 367</text>
+      <!-- Marayam's guardian spirit beast in the bedroom doorway -->
+      <text x="600" y="590" class="sublabel">Bedroom · Marayam</text>
+      <text x="600" y="612" class="evidence">Guardian beast in the doorway · ch. 367</text>
     {/if}
   </g>
 </svg>

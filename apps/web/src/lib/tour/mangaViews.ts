@@ -279,6 +279,26 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'La cabine nervurée de la capsule face à son écoutille ronde et sa console',
   }),
   view({
+    id: 'royal-army-briefing-audience',
+    spaceId: 'tier-4-royal-army-conference-room-floor',
+    at: [0, 6.5],
+    target: [0, -5.2],
+    pitch: 0.05,
+    chapter: 380,
+    volume: 36,
+    pages: '189',
+    label: 'The royal-army briefing from behind the U-shaped conference table',
+    labelFr: 'Le briefing de l’armée royale derrière la table de conférence en U',
+    staging: [
+      {
+        characterId: 'mizaistom-nana',
+        at: [0.8, -3.25],
+        heading: Math.PI,
+        pose: 'idle',
+      },
+    ],
+  }),
+  view({
     id: 'cineplex-establishing-shot',
     spaceId: 'tier-3-cineplex-screen-corridor',
     triggerSpaceIds: ['tier-3-cineplex-concession', 'tier-3-cineplex-ticket-desk'],

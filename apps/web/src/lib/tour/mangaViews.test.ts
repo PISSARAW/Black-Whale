@@ -85,4 +85,12 @@ describe('manga photo viewpoints', () => {
       expect.arrayContaining(['room-3101-bunks-storage', 'room-3101-bathroom-trap']),
     )
   })
+
+  it('offers the Tier 4 briefing from behind the U-shaped table', () => {
+    const view = mangaViewById('royal-army-briefing-audience')
+
+    expect(viewsForSpace('tier-4-royal-army-conference-room-floor')).toContain(view)
+    expect(view?.pages).toBe('189')
+    expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
+  })
 })

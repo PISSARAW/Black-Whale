@@ -69,4 +69,14 @@ describe('manga photo viewpoints', () => {
       'unma-nursery-salon',
     )
   })
+
+  it('offers Morena’s Tier 2 office with both players staged at the game table', () => {
+    const view = mangaViewById('morena-office-negotiation-game')
+
+    expect(viewsForSpace('tier-2-heilly-secret-hideout-office')).toContain(view)
+    expect(view?.staging?.map(({ characterId }) => characterId)).toEqual([
+      'morena-prudo',
+      'borksen',
+    ])
+  })
 })

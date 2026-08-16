@@ -313,6 +313,31 @@ export const MANGA_VIEWS: MangaView[] = [
     label: 'Queen Unma in her formal salon with the nursery visible behind her',
     labelFr: 'La reine Unma dans son salon d’apparat, avec la nursery visible derrière elle',
   }),
+  view({
+    id: 'morena-office-negotiation-game',
+    spaceId: 'tier-2-heilly-secret-hideout-office',
+    at: [14.4, 0.55],
+    target: [11.9, 6.45],
+    pitch: -0.02,
+    chapter: 407,
+    volume: 39,
+    label: 'Morena’s negotiation table between the wall couch and the two consoles',
+    labelFr: 'La table de négociation de Morena entre le canapé mural et les deux consoles',
+    staging: [
+      {
+        characterId: 'morena-prudo',
+        at: [12.08, 1.6],
+        heading: 0,
+        pose: 'seated',
+      },
+      {
+        characterId: 'borksen',
+        at: [12.08, 3.7],
+        heading: Math.PI,
+        pose: 'seated',
+      },
+    ],
+  }),
 ]
 
 export function viewsForSpace(spaceId: string | null): MangaView[] {

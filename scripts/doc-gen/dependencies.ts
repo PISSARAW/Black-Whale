@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, relative, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { globSync } from 'fast-glob'
+import fastGlob from 'fast-glob'
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url))
 
@@ -102,7 +102,7 @@ function findCycles(nodes: string[], edges: Edge[]): string[][] {
 }
 
 export function generateDependencies(): string {
-  const files = globSync(
+  const files = fastGlob.sync(
     ['packages/*/src/**/*.ts', 'apps/web/src/lib/**/*.ts', 'apps/web/src/lib/**/*.svelte'],
     {
       cwd: ROOT,

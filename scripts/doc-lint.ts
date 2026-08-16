@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, relative, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
-import { globSync } from 'fast-glob'
+import fastGlob from 'fast-glob'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const DOCS = join(ROOT, 'docs')
@@ -96,7 +96,7 @@ function findStagePages(dir: string): string[] {
 
 function globExists(pattern: string): boolean {
   if (!pattern.includes('*')) return existsSync(join(ROOT, pattern))
-  const matches = globSync(pattern, { cwd: ROOT, dot: true })
+  const matches = fastGlob.sync(pattern, { cwd: ROOT, dot: true })
   return matches.length > 0
 }
 
@@ -191,7 +191,7 @@ function countCodeLines(patterns: string[]): number {
   let total = 0
   const seen = new Set<string>()
   for (const pattern of patterns) {
-    const files = globSync(pattern, {
+    const files = fastGlob.sync(pattern, {
       cwd: ROOT,
       dot: true,
       onlyFiles: true,

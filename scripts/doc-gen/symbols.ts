@@ -1,6 +1,6 @@
 import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { globSync } from 'fast-glob'
+import fastGlob from 'fast-glob'
 import { Project } from 'ts-morph'
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url))
@@ -9,7 +9,7 @@ const INDEX_PATTERNS = ['packages/*/src/index.ts', 'apps/web/src/lib/*/index.ts'
 
 export function generateSymbols(): string {
   const project = new Project()
-  const indexFiles = globSync(INDEX_PATTERNS, { cwd: ROOT, onlyFiles: true, dot: true })
+  const indexFiles = fastGlob.sync(INDEX_PATTERNS, { cwd: ROOT, onlyFiles: true, dot: true })
   for (const file of indexFiles) project.addSourceFileAtPath(join(ROOT, file))
 
   const sections: { heading: string; rows: string[] }[] = []

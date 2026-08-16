@@ -460,7 +460,7 @@ Entrées analysées : 11
 | `Finding` | `packages/contracts/src/types.ts:36` |
 | `GuardianBeast` | `packages/contracts/src/schemas.ts:442` |
 | `INHABITANT_INVARIANTS` | `packages/contracts/src/inhabitants.ts:228` |
-| `INVARIANTS` | `packages/contracts/src/invariants.ts:471` |
+| `INVARIANTS` | `packages/contracts/src/invariants.ts:472` |
 | `Location` | `packages/contracts/src/schemas.ts:453` |
 | `MangaAppearance` | `packages/contracts/src/schemas.ts:447` |
 | `NEN_CREATURE_SILHOUETTES` | `packages/contracts/src/schemas.ts:106` |

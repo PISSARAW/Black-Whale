@@ -36,9 +36,9 @@ Nœuds : 23 · Arêtes uniques : 46
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
 | `lib:strategy` | `package:@black-whale/canon-engine` | 6 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 5 |
-| `lib:tour` | `package:@black-whale/ability-modules` | 7 |
+| `lib:tour` | `package:@black-whale/ability-modules` | 9 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
-| `lib:tour` | `package:@black-whale/nen-engine` | 13 |
+| `lib:tour` | `package:@black-whale/nen-engine` | 15 |
 | `lib:utils` | `lib:state` | 1 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 63 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 287
+Fichiers : 294
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -793,6 +793,10 @@ Fichiers : 287
 
 - the conduct > casts nothing while the visitor is nowhere near
 
+## `apps/web/src/lib/tour/cast/dialogue.test.ts`
+
+- contextual character dialogue > dates and identifies every bilingual line as a paraphrase
+
 ## `apps/web/src/lib/tour/cast/distribution.test.ts`
 
 - the distribution > stands a named body in the room the catalogue puts it in
@@ -804,6 +808,10 @@ Fichiers : 287
 - what one body can be asked > reads the role, the faction and the declared category out of the catalogue
 - the route, cut at the reader’s chapter > travels whole to a reader who has set no cap
 
+## `apps/web/src/lib/tour/cast/eventHatsu.test.ts`
+
+- event-attested Hatsu > allows an activation explicitly attached to the selected event
+
 ## `apps/web/src/lib/tour/cast/hearing.test.ts`
 
 - what the ear picks up in the room > counts the hearts in the room and nobody else’s
@@ -811,6 +819,10 @@ Fichiers : 287
 ## `apps/web/src/lib/tour/cast/hostility.test.ts`
 
 - which rooms are dangerous to stand in > finds none in a ship nothing has been done to
+
+## `apps/web/src/lib/tour/cast/mangaStage.test.ts`
+
+- manga panel cast staging > uses the panel positions and keeps unrelated rooms untouched
 
 ## `apps/web/src/lib/tour/cast/nen.test.ts`
 
@@ -928,7 +940,7 @@ Fichiers : 287
 ## `apps/web/src/lib/tour/godRays.test.ts`
 
 - where the light is taken to come from > anchors on the middle of the opening in plan
-- which decks have shafts at all > finds the two openings the manga draws, and no third
+- which decks have shafts at all > finds the observation-deck opening the manga draws, and no second
 - how hard the shafts blow > is at full strength with the window dead ahead
 
 ## `apps/web/src/lib/tour/gum.test.ts`
@@ -1014,6 +1026,10 @@ Fichiers : 287
 
 - the reference grid > draws every declared likeness the way it drew it last time
 
+## `apps/web/src/lib/tour/mangaViews.test.ts`
+
+- manga photo viewpoints > has a unique, bilingual, traceable entry for every panel view
+
 ## `apps/web/src/lib/tour/mesh.test.ts`
 
 - the reveal > changes what every level says and not one triangle of it
@@ -1023,7 +1039,7 @@ Fichiers : 287
 - the deck plating > lays a course under every room with a floor
 - the depth of a doorway > gives every opening two cheeks, in the list collision reads
 - the ceiling fittings > hangs one over every room, on the grid the bake pools from
-- the two windows > types two of them on the whole ship, and both are drawn by a panel
+- the observation-deck window > types the observation-deck opening, drawn by a panel
 
 ## `apps/web/src/lib/tour/morena.test.ts`
 
@@ -1044,6 +1060,10 @@ Fichiers : 287
 - not being the person sitting > caps the game at a draw and keeps the answer off you
 - the room, which is the thing that catches you > watches by default, because LSDF is standing in it
 - the five seats the table opened last > empties her chair rather than yours, and does not narrow you for it
+
+## `apps/web/src/lib/tour/morenaChallenge.test.ts`
+
+- Morena shared challenges > round-trips a compact, language-neutral invitation
 
 ## `apps/web/src/lib/tour/morenaHands.test.ts`
 
@@ -1142,6 +1162,10 @@ Fichiers : 287
 ## `apps/web/src/lib/tour/soundPlace.test.ts`
 
 - where a cast at a body happened > puts it down the reticle, in the room the visitor is in
+
+## `apps/web/src/lib/tour/surfaceFinish.test.ts`
+
+- surface finish by solid kind > keeps fabric and composite electronics matte
 
 ## `apps/web/src/lib/tour/texture.test.ts`
 

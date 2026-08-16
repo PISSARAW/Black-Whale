@@ -26,6 +26,7 @@
       | 'jumpAt'
       | 'jumpHeading'
       | 'jumpPitch'
+      | 'jumpEyeHeight'
       | 'engaged'
       | 'touch'
       | 'position'
@@ -77,6 +78,7 @@
     bind:jumpAt={navigation.jumpAt}
     bind:jumpHeading={navigation.jumpHeading}
     bind:jumpPitch={navigation.jumpPitch}
+    bind:jumpEyeHeight={navigation.jumpEyeHeight}
     bind:engaged={navigation.engaged}
     bind:touch={navigation.touch}
     bind:position={navigation.position}

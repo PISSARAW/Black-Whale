@@ -130,6 +130,7 @@
       navigation.jumpAt = mangaView.at
       navigation.jumpHeading = mangaView.heading
       navigation.jumpPitch = mangaView.pitch
+      navigation.jumpEyeHeight = mangaView.eyeHeight ?? null
     })
   })
 
@@ -800,6 +801,7 @@
             navigation.jumpAt = view.at
             navigation.jumpHeading = view.heading
             navigation.jumpPitch = view.pitch
+            navigation.jumpEyeHeight = view.eyeHeight ?? null
           },
         }
       : {}),

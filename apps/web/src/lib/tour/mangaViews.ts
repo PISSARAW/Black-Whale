@@ -19,6 +19,8 @@ export interface MangaView {
   heading: number
   /** The vertical angle (pitch) of the camera in radians */
   pitch: number
+  /** Height above the floor for aerial plans; ordinary panel views use the visitor's eyes. */
+  eyeHeight?: number
   /** The chapter this view is from, for the watermark */
   chapter: number
   /** Event order inside the chapter when the panel reproduces a populated scene. */
@@ -57,6 +59,25 @@ function view(input: Omit<MangaView, 'heading'> & { target: Vec2 }): MangaView {
  * The walk can jump the visitor here so they see exactly what the drawing shows.
  */
 export const MANGA_VIEWS: MangaView[] = [
+  view({
+    id: 'princely-quarter-aerial-plan',
+    spaceId: 'tier-1-royal-residential-cross-gap-1',
+    at: [10.5, 4.9],
+    target: [10.5, 30],
+    pitch: -0.95,
+    eyeHeight: 36,
+    chapter: 363,
+    volume: 35,
+    pages: '49–50',
+    label: 'Aerial plan of the princely residential quarter, apartments 1 to 14',
+    labelFr: 'Plan aérien du quartier résidentiel des princes, appartements 1 à 14',
+    triggerSpaceIds: [
+      'tier-1-royal-residential-corridor-port',
+      'tier-1-royal-residential-corridor-starboard',
+      'tier-1-royal-residential-corridor-aft',
+      ...Array.from({ length: 8 }, (_, index) => `tier-1-royal-residential-cross-gap-${index + 1}`),
+    ],
+  }),
   view({
     id: 'beyond-cell-bars',
     spaceId: 'tier-1-vvip-prison-beyond-cell',

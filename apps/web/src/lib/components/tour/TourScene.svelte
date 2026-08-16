@@ -157,6 +157,7 @@
     at?: Vec2
     facing?: number
     looking?: number
+    eyeHeight?: number
   }
 
   interface Props {
@@ -178,6 +179,8 @@
     jumpHeading?: number | null
     /** Optional vertical angle for a jump authored from a manga panel. */
     jumpPitch?: number | null
+    /** Optional camera height for an aerial manga plan. */
+    jumpEyeHeight?: number | null
     /** Whether the pointer is captured, so the page can say how to get out. */
     engaged?: boolean
     /**
@@ -539,6 +542,7 @@
     jumpAt = $bindable(null),
     jumpHeading = $bindable(null),
     jumpPitch = $bindable(null),
+    jumpEyeHeight = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
     touchLabels,
@@ -1184,6 +1188,9 @@
       let ground = 0
       let yaw = 0
       let pitch = 0
+      // A manga plan can lift the camera out of the visitor's body. It remains
+      // stable until the visitor walks or another jump restores eye level.
+      let authoredEyeHeight: number | null = null
       let currentTierId = ''
 
       /** How rarely the loop tells the page and the ear; see `$lib/tour/reporting`. */
@@ -1263,13 +1270,15 @@
         const at = arrival.at ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
         yaw = arrival.facing ?? spawnFacing(space, at)
         pitch = arrival.looking ?? 0
+        authoredEyeHeight = arrival.eyeHeight ?? null
+        shownKey = ''
         lookPitch = pitch
         if (space.tierId !== currentTierId) loadTier(space.tierId, at)
         else {
           pointer = at
           const plan = ship.plans.get(currentTierId)!
           ground = floorOf(space, plan.tier)
-          camera.position.set(at[0], ground + EYE_HEIGHT, at[1])
+          camera.position.set(at[0], ground + (authoredEyeHeight ?? EYE_HEIGHT), at[1])
           report()
         }
         tierId = space.tierId
@@ -1491,7 +1500,14 @@
           else wanted.push({ deck, ids: new Set(ids) })
         }
 
-        if (visible && activePlan) want(visible, visibleSpaces(activePlan, standingId))
+        if (visible && activePlan) {
+          want(
+            visible,
+            authoredEyeHeight === null
+              ? visibleSpaces(activePlan, standingId)
+              : new Set(activePlan.spaces.map((space) => space.id)),
+          )
+        }
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
           if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id))
@@ -4366,6 +4382,10 @@
         velocity = walking ? glide(velocity, wanted, delta) : [0, 0]
 
         if (velocity[0] !== 0 || velocity[1] !== 0) {
+          if (authoredEyeHeight !== null) {
+            authoredEyeHeight = null
+            shownKey = ''
+          }
           const target: Vec2 = [pointer[0] + velocity[0] * delta, pointer[1] + velocity[1] * delta]
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
@@ -4424,10 +4444,8 @@
         ground += (groundTarget - ground) * Math.min(1, delta * 6)
         const eye =
           ground +
-          eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT) +
-          bob.rise +
-          breath +
-          swingRise
+          (authoredEyeHeight ?? eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT)) +
+          (authoredEyeHeight === null ? bob.rise + breath + swingRise : 0)
         // Open on the run, close on the walk. Off the speed actually being made
         // rather than off the sprint key, so a visitor held against a bulkhead
         // is not sprinting and the view says so.
@@ -4575,7 +4593,10 @@
         // to the *target* and not to the density, so it is eased across a
         // threshold like everything else the air does — see `$lib/tour/regime`.
         const air = fogTarget * hourView.density
-        fog.density = settleDensity(fog.density, blinded ? SEALED_DENSITY : air, delta)
+        fog.density =
+          authoredEyeHeight === null
+            ? settleDensity(fog.density, blinded ? SEALED_DENSITY : air, delta)
+            : 0
 
         // And its colour, when a technique has left the room standing in one.
         // The hour writes the same two things, so both go through one place
@@ -4930,11 +4951,13 @@
       at: jumpAt ?? undefined,
       facing: jumpHeading ?? undefined,
       looking: jumpPitch ?? undefined,
+      eyeHeight: jumpEyeHeight ?? undefined,
     })
     jumpTo = null
     jumpAt = null
     jumpHeading = null
     jumpPitch = null
+    jumpEyeHeight = null
   })
 </script>
 

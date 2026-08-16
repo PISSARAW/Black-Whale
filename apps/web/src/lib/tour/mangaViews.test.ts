@@ -25,11 +25,15 @@ describe('manga photo viewpoints', () => {
       expect(Number.isFinite(view.heading), view.id).toBe(true)
       expect(Number.isFinite(view.pitch), view.id).toBe(true)
 
-      const oneMetreAhead: [number, number] = [
-        view.at[0] - Math.sin(view.heading),
-        view.at[1] - Math.cos(view.heading),
-      ]
-      expect(pointInPolygon(oneMetreAhead, space!.footprint), `${view.id} faces out`).toBe(true)
+      if (view.eyeHeight === undefined) {
+        const oneMetreAhead: [number, number] = [
+          view.at[0] - Math.sin(view.heading),
+          view.at[1] - Math.cos(view.heading),
+        ]
+        expect(pointInPolygon(oneMetreAhead, space!.footprint), `${view.id} faces out`).toBe(true)
+      } else {
+        expect(view.eyeHeight, view.id).toBeGreaterThan(1.7)
+      }
 
       const plan = ship.plans.get(space!.tierId)!
       const obstruction = plan.structures.find(
@@ -47,6 +51,22 @@ describe('manga photo viewpoints', () => {
       'tier-3-cineplex-ticket-desk',
     ]) {
       expect(viewsForSpace(spaceId).map((view) => view.id)).toContain('cineplex-establishing-shot')
+    }
+  })
+
+  it('offers the chapter 363 aerial plan all around the princely quarter', () => {
+    const plan = mangaViewById('princely-quarter-aerial-plan')
+
+    expect(plan).toMatchObject({ chapter: 363, volume: 35, pages: '49–50' })
+    expect(plan?.eyeHeight).toBeGreaterThanOrEqual(30)
+    expect(plan?.pitch).toBeLessThan(-0.9)
+    for (const spaceId of [
+      'tier-1-royal-residential-corridor-port',
+      'tier-1-royal-residential-corridor-starboard',
+      'tier-1-royal-residential-corridor-aft',
+      'tier-1-royal-residential-cross-gap-8',
+    ]) {
+      expect(viewsForSpace(spaceId)).toContain(plan)
     }
   })
 

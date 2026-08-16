@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition'
-  import { toBlob } from 'html-to-image'
   import { t } from '$lib/i18n'
+  import { createPostcardBlob } from '$lib/tour/postcardExport'
   import {
     POSTCARD_STAMPS,
     postcardStamp,
@@ -19,6 +19,9 @@
   let imageReady = $state(false)
   let saving = $state(false)
   let downloadFailed = $state(false)
+  let frameNode = $state<HTMLElement>()
+  let photoNode = $state<HTMLImageElement>()
+  let overlayNode = $state<HTMLElement>()
   let text = $state($t.tour.postcard.defaultMessage)
   let stampType = $state<PostcardStampId>('kakin')
   let activeStamp = $derived(postcardStamp(stampType))
@@ -26,9 +29,9 @@
 
   const stampCategories: PostcardStampCategory[] = ['official', 'royal', 'underworld', 'expedition']
 
-  // html-to-image cannot reliably fetch a blob URL while cloning the card
-  // (notably in Safari and embedded browsers). A data URL is self-contained,
-  // so the clone can use the captured frame without another fetch.
+  // Keep the preview self-contained and decodable after the temporary capture
+  // blob has left the tour renderer. The export draws this loaded image
+  // directly into its canvas rather than fetching it again.
   $effect(() => {
     const reader = new FileReader()
     reader.onload = () => {
@@ -56,11 +59,13 @@
     saving = true
     downloadFailed = false
     try {
-      const node = document.getElementById('postcard-export-frame')
-      if (node) {
-        // Every captured frame is already self-contained. `cacheBust` can
-        // corrupt temporary image sources and leave this action doing nothing.
-        const dataBlob = await toBlob(node, { pixelRatio: 2 })
+      if (frameNode && photoNode && overlayNode) {
+        const dataBlob = await createPostcardBlob({
+          frame: frameNode,
+          photo: photoNode,
+          overlay: overlayNode,
+          pixelRatio: 2,
+        })
         if (dataBlob) {
           const url = URL.createObjectURL(dataBlob)
           const a = document.createElement('a')
@@ -98,12 +103,14 @@
       <!-- The element that will be exported -->
       <div
         id="postcard-export-frame"
+        bind:this={frameNode}
         class="relative bg-[#fffdf0] p-4 pb-16 shadow-2xl overflow-hidden flex flex-col items-center"
         style="border: 2px solid #ddd; max-width: 100%; aspect-ratio: 4/3; width: 800px;"
       >
         <!-- The photo -->
         {#if photoUrl}
           <img
+            bind:this={photoNode}
             src={photoUrl}
             alt={$t.tour.postcard.imageAlt}
             class="w-full h-full object-cover border border-gray-300"
@@ -112,33 +119,35 @@
           />
         {/if}
 
-        <!-- Overlay Text -->
-        <div
-          class="absolute bottom-4 left-0 w-full text-center px-4 font-serif italic text-3xl text-zinc-800 drop-shadow-sm tracking-wide"
-        >
-          {text}
-        </div>
-
-        <!-- The seals are fictional souvenirs: owner-driven, but never presented as canon logos. -->
-        <div
-          class={`postcard-stamp stamp-${activeStamp.id} shape-${activeStamp.shape} tone-${activeStamp.tone}`}
-          style={`--stamp-color: ${activeStamp.ink}; --stamp-rotation: ${activeStamp.rotation}deg;`}
-          aria-hidden="true"
-        >
-          <span class="stamp-orbit"></span>
-          <span class="stamp-mark">{activeStamp.mark}</span>
-          <span class="stamp-title">{activeStampCopy.title}</span>
-          <span class="stamp-motto">{activeStampCopy.motto}</span>
-          <span class="stamp-serial"
-            >BW1 · {String(POSTCARD_STAMPS.indexOf(activeStamp) + 1).padStart(2, '0')}</span
+        <div bind:this={overlayNode} class="absolute inset-0 pointer-events-none">
+          <!-- Overlay Text -->
+          <div
+            class="absolute bottom-4 left-0 w-full text-center px-4 font-serif italic text-3xl text-zinc-800 drop-shadow-sm tracking-wide"
           >
-        </div>
+            {text}
+          </div>
 
-        <!-- Subtle vintage texture overlay -->
-        <div
-          class="absolute inset-0 pointer-events-none"
-          style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%);"
-        ></div>
+          <!-- The seals are fictional souvenirs: owner-driven, but never presented as canon logos. -->
+          <div
+            class={`postcard-stamp stamp-${activeStamp.id} shape-${activeStamp.shape} tone-${activeStamp.tone}`}
+            style={`--stamp-color: ${activeStamp.ink}; --stamp-rotation: ${activeStamp.rotation}deg;`}
+            aria-hidden="true"
+          >
+            <span class="stamp-orbit"></span>
+            <span class="stamp-mark">{activeStamp.mark}</span>
+            <span class="stamp-title">{activeStampCopy.title}</span>
+            <span class="stamp-motto">{activeStampCopy.motto}</span>
+            <span class="stamp-serial"
+              >BW1 · {String(POSTCARD_STAMPS.indexOf(activeStamp) + 1).padStart(2, '0')}</span
+            >
+          </div>
+
+          <!-- Subtle vintage texture overlay -->
+          <div
+            class="absolute inset-0"
+            style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.05) 100%);"
+          ></div>
+        </div>
       </div>
     </div>
 
@@ -225,15 +234,14 @@
     place-items: center;
     padding: 0.7rem;
     overflow: hidden;
-    color: color-mix(in srgb, var(--stamp-color) 88%, transparent);
+    color: var(--stamp-color);
     border: 0.28rem solid currentColor;
     transform: rotate(var(--stamp-rotation));
-    mix-blend-mode: multiply;
-    opacity: 0.88;
+    opacity: 0.94;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     text-align: center;
     text-transform: uppercase;
-    filter: contrast(1.08);
+    filter: contrast(1.12) drop-shadow(0 0 0.08rem rgba(255, 253, 240, 0.9));
     pointer-events: none;
   }
 

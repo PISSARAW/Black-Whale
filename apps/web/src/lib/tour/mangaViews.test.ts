@@ -84,7 +84,11 @@ describe('manga photo viewpoints', () => {
       const id = `prince-apartment-${number}-aerial-plan`
       const entrance = `tier-1-royal-residential-sector-room-${number}-entrance`
       expect(viewsForSpace(entrance).map((view) => view.id)).toContain(id)
-      expect(mangaViewById(id)).toMatchObject({ chapter: 363, volume: 35, pages: '49–50' })
+      expect(mangaViewById(id)).toMatchObject(
+        number >= 1011
+          ? { chapter: 368, volume: 35, pages: '149–150' }
+          : { chapter: 363, volume: 35, pages: '49–50' },
+      )
     }
 
     expect(viewsForSpace('tier-1-vip-jail-corridor').map((view) => view.id)).toContain(

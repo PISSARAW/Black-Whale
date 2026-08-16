@@ -753,9 +753,24 @@ montre s'ajoute au jeu commun pour ce seul appartement.
   pièce, et c'est bien ce que la planche montre — un salon dont un bout est
   devenu un cabinet de travail, pas un salon remplacé.
 
-Les autres appartements gardent le jeu du plan, parce qu'aucune page ne les
-montre. Ce n'est pas une inégalité de traitement : c'est le dossier qui dit ce
-qu'il sait, pièce par pièce.
+Les autres appartements gardent les **cloisons** du programme-type lorsque le
+manga ne publie pas leur coupe complète, mais ils ne gardent pas pour autant un
+mobilier générique là où une planche entre dans la pièce. La carte locale
+distingue donc deux niveaux de preuve : le trait blanc reste le programme-type
+du chap. 363 pour les 1001 à 1010, tandis que les volumes dorés sont les
+aménagements propres montrés dans les chapitres. Elle retire aussi ce qu'une
+scène rend seulement circonstanciel : les cadeaux de l'anniversaire de Tyson et
+le cercle de chaises autour de Shikaku ne deviennent pas des fixtures.
+
+Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
+la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
+Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),
+la chambre festive de Salé-salé (chap. 362, 366 et 382), le centre dégagé et les
+meubles muraux de Halkenburg (chap. 382 et 386), et le salon de Kacho (chap. 374
+et 376). Les scènes uniques restent affichables, mais leur légende ne les fait
+pas passer pour une confirmation répétée : salon formel de Camilla (chap. 389),
+cabinet scientifique de Tubeppa (chap. 366), grande réception de Tyson
+(chap. 389) et cuisine de Kacho (chap. 376).
 
 Il vaut pour tout plan de salle, pas seulement celui des princes : les douze
 couchettes que chaque chambrée de soldats et chaque salle des Hunters

@@ -64,14 +64,31 @@
         fill: rgba(100, 100, 100, 0.2);
         pointer-events: none;
       }
+      .evidence {
+        fill: #999;
+        font-family: sans-serif;
+        font-size: 12px;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+      .fixed {
+        stroke: #ffd700;
+        stroke-width: 2;
+        fill: rgba(255, 215, 0, 0.09);
+        pointer-events: none;
+      }
     </style>
   </defs>
 
-  <text x="400" y="40" class="label" font-size="28" fill="#FFD700"
+  <text x="400" y="30" class="label" font-size="28" fill="#FFD700"
     >Appartement Princier {roomNumber}</text
   >
+  <text x="400" y="53" class="evidence">Programme-type · chap. 363</text>
+  <text x="400" y="70" class="evidence"
+    >Cloisons individuelles non publiées pour les chambres 1001 à 1010</text
+  >
 
-  <g transform="translate(50, 70)">
+  <g transform="translate(50, 82)">
     <!-- Outer boundary -->
     <rect x="0" y="0" width="700" height="680" class="wall" />
 
@@ -98,8 +115,10 @@
       onclick={() => handleElementClick('living')}
     />
     <text x="250" y="390" class="label" font-size="24">Living</text>
-    <rect x="300" y="350" width="80" height="60" class="furniture" />
-    <!-- Center Table -->
+    {#if !['1002', '1004', '1007', '1009', '1010'].includes(roomNumber)}
+      <rect x="300" y="350" width="80" height="60" class="furniture" />
+      <!-- Table du seul programme-type ; supprimée lorsqu'une planche la contredit. -->
+    {/if}
 
     <!-- Servants' Quarters (Top Left) -->
     <!-- Bounds: x: 0 to 300, y: 0 to 250 -->
@@ -183,8 +202,10 @@
     <line class="door" x1="600" y1="350" x2="650" y2="310" />
     <!-- Door to Living -->
     <text x="550" y="250" class="label">Dining</text>
-    <rect x="510" y="220" width="80" height="40" class="furniture" />
-    <!-- Dining Table -->
+    {#if roomNumber !== '1003'}
+      <rect x="510" y="220" width="80" height="40" class="furniture" />
+      <!-- Dining table from the ch. 363 programme-type. -->
+    {/if}
 
     <!-- Prince's Master Bedroom (Bottom Left/Center) -->
     <!-- Bounds: x: 0 to 500, y: 530 to 680 -->
@@ -242,59 +263,76 @@
     <circle cx="650" cy="580" r="15" class="furniture" />
     <!-- Toilet -->
 
-    <!-- Dynamic Elements per room -->
-    <!--
-      One asset draws fourteen apartments, so the shared plan holds only what
-      every suite has: a bed, a dining table, a living room. Canon seats several
-      princes on a fixture that is theirs alone — Luzurus never leaves his couch,
-      Camilla receives from her massage table, Woble is in a cradle — and a plan
-      that draws none of them leaves those markers floating in a room the map
-      says is empty. Each block below is a fixture a chapter puts on panel, and
-      `localSpotAnchors` in `markerProjection.ts` reads its centre.
-    -->
+    <!-- Éléments propres à chaque appartement. Les éléments événementiels
+      (cadeaux, gâteau, cercle de chaises) ne deviennent pas des fixtures. -->
     {#if roomNumber === '1001'}
-      <!-- Benjamin runs the war from his console, ch. 363, 389 and 413. -->
-      <rect x="460" y="400" width="180" height="70" class="furniture" />
-      <text x="550" y="490" class="sublabel">Command console</text>
+      <!-- Réception vue aux ch. 363 et 366. -->
+      <rect x="70" y="270" width="150" height="18" class="fixed" />
+      <text x="145" y="310" class="sublabel">Grand tableau · ch. 363</text>
+      <rect x="410" y="315" width="24" height="24" rx="4" class="fixed" />
+      <text x="505" y="330" class="sublabel">Téléphone · ch. 366</text>
     {:else if roomNumber === '1002'}
-      <!-- Camilla is attended on her table, ch. 413. -->
-      <rect x="90" y="300" width="150" height="60" rx="10" class="furniture" />
-      <text x="165" y="380" class="sublabel">Massage table</text>
+      <!-- Centre dégagé et sièges en périphérie, ch. 389. -->
+      <rect x="25" y="300" width="70" height="30" rx="8" class="fixed" />
+      <rect x="25" y="380" width="70" height="30" rx="8" class="fixed" />
+      <rect x="605" y="400" width="70" height="30" rx="8" class="fixed" />
+      <text x="350" y="390" class="sublabel">Salon formel, centre dégagé · ch. 389</text>
     {:else if roomNumber === '1004'}
-      <!-- Tserriednich's Zetsu drills, ch. 362 through 404. -->
-      <rect
-        x="440"
-        y="370"
-        width="210"
-        height="130"
-        fill="rgba(255, 0, 0, 0.08)"
-        stroke="red"
-        stroke-width="2"
-        stroke-dasharray="5,5"
-      />
-      <text x="545" y="355" class="sublabel">Zetsu training zone</text>
+      <!-- Même salon d'entraînement aux ch. 384–387. -->
+      <rect x="610" y="370" width="65" height="24" class="fixed" />
+      <circle cx="642" cy="382" r="6" class="fixed" />
+      <text x="350" y="405" class="sublabel">Salon d'entraînement dégagé · ch. 384–387</text>
+      <text x="642" y="420" class="sublabel">Manteau + pendule</text>
+    {:else if roomNumber === '1003'}
+      <!-- Salle à manger confirmée aux ch. 365 et 366. -->
+      <rect x="465" y="205" width="175" height="55" rx="6" class="fixed" />
+      <rect x="430" y="215" width="25" height="35" rx="4" class="fixed" />
+      <rect x="650" y="215" width="25" height="35" rx="4" class="fixed" />
+      <rect x="675" y="170" width="18" height="105" class="fixed" />
+      <circle cx="445" cy="175" r="13" class="fixed" />
+      <text x="550" y="292" class="sublabel">Table d'apparat · ch. 365–366</text>
+    {:else if roomNumber === '1005'}
+      <!-- Cabinet scientifique vu au ch. 366. -->
+      <rect x="55" y="300" width="145" height="60" class="fixed" />
+      <rect x="40" y="265" width="110" height="14" class="fixed" />
+      <rect x="165" y="265" width="110" height="14" class="fixed" />
+      <rect x="290" y="265" width="90" height="14" class="fixed" />
+      <text x="220" y="390" class="sublabel">Bureau, tableaux blancs et notes · ch. 366</text>
     {:else if roomNumber === '1006'}
-      <!-- Tyson preaches from a fixed seat, her disciples before her, ch. 375. -->
-      <rect x="110" y="300" width="130" height="60" class="furniture" />
-      <text x="175" y="380" class="sublabel">Preaching dais</text>
+      <!-- La salle est certaine ; le décor d'anniversaire est temporaire. -->
+      <text x="350" y="395" class="sublabel">Grande réception à hautes portes · ch. 389</text>
+      <text x="350" y="417" class="evidence">Gâteau et cadeaux omis : décor événementiel</text>
     {:else if roomNumber === '1007'}
-      <!-- Luzurus is on this couch in ch. 362, 366 and still in 414. -->
-      <rect x="90" y="420" width="190" height="60" rx="12" class="furniture" />
-      <text x="185" y="500" class="sublabel">Couch</text>
-    {:else if roomNumber === '1014'}
-      <text x="350" y="440" class="sublabel">Nen Classroom</text>
-      <circle
-        cx="350"
-        cy="460"
-        r="60"
-        fill="rgba(255, 0, 0, 0.1)"
-        stroke="red"
-        stroke-width="2"
-        stroke-dasharray="5,5"
-      />
-      <!-- Woble's cradle, on the guarded side of the class. -->
-      <rect x="500" y="430" width="100" height="70" rx="8" class="furniture" />
-      <text x="550" y="520" class="sublabel">Cradle</text>
+      <!-- Salon récurrent aux ch. 386 et 389. -->
+      <rect x="65" y="410" width="190" height="65" rx="14" class="fixed" />
+      <rect x="285" y="425" width="65" height="45" class="fixed" />
+      <rect x="610" y="300" width="65" height="175" class="fixed" />
+      <rect x="440" y="295" width="120" height="20" class="fixed" />
+      <circle cx="95" cy="330" r="22" class="fixed" />
+      <circle cx="580" cy="330" r="22" class="fixed" />
+      <text x="350" y="500" class="sublabel">Salon encombré · ch. 386 et 389</text>
+    {:else if roomNumber === '1008'}
+      <!-- Chambre festive confirmée aux ch. 362, 366 et 382. -->
+      <rect x="20" y="550" width="225" height="110" rx="10" class="fixed" />
+      <rect x="360" y="575" width="100" height="45" class="fixed" />
+      <rect x="475" y="560" width="25" height="70" class="fixed" />
+      <text x="330" y="650" class="sublabel">Grand lit + audiovisuel · ch. 362/366/382</text>
+    {:else if roomNumber === '1009'}
+      <!-- Les chaises du rituel sont mobiles ; les meubles muraux restent. -->
+      <rect x="35" y="275" width="120" height="28" class="fixed" />
+      <rect x="545" y="365" width="130" height="28" class="fixed" />
+      <rect x="285" y="275" width="95" height="26" class="fixed" />
+      <text x="350" y="405" class="sublabel">Centre carrelé dégagé · ch. 382 et 386</text>
+      <text x="350" y="427" class="evidence">Bibliothèques et manteau · ch. 386</text>
+    {:else if roomNumber === '1010'}
+      <!-- Cuisine et salon détaillés aux ch. 374 et 376. -->
+      <rect x="420" y="20" width="250" height="45" class="fixed" />
+      <rect x="640" y="65" width="30" height="65" class="fixed" />
+      <rect x="65" y="285" width="180" height="28" class="fixed" />
+      <circle cx="275" cy="300" r="16" class="fixed" />
+      <rect x="80" y="330" width="150" height="16" class="fixed" />
+      <text x="550" y="105" class="sublabel">Cuisine équipée · ch. 376</text>
+      <text x="205" y="375" class="sublabel">Commode, tabouret, tableaux · ch. 374/376</text>
     {/if}
   </g>
 </svg>

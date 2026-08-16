@@ -2,7 +2,7 @@
   import { mapState } from '$lib/state/mapState.svelte'
 
   type Wall = readonly [number, number, number, number]
-  type Layout = { walls: readonly Wall[]; note: string }
+  type Layout = { walls: readonly Wall[]; note: string; evidence: string }
 
   const layouts: Record<string, Layout> = {
     '1011': {
@@ -20,6 +20,7 @@
         [605, 300, 605, 520],
       ],
       note: 'Cloisonnement propre visible dans la coupe',
+      evidence: 'Lit, photos et réveil · chap. 366 et 374',
     },
     '1012': {
       walls: [
@@ -37,6 +38,7 @@
         [665, 535, 665, 700],
       ],
       note: 'Disposition distincte de la 1011, non interchangeable',
+      evidence: 'Lit à baldaquin · chap. 366–368 ; grille · chap. 367–368',
     },
     '1013': {
       walls: [
@@ -54,6 +56,7 @@
         [650, 540, 650, 700],
       ],
       note: 'Bloc de service à gauche, grand espace central, aile privée à droite',
+      evidence: "Mobilier d'enfant · chap. 366 ; grille de service · chap. 367",
     },
     '1014': {
       walls: [
@@ -64,6 +67,7 @@
         [50, 250, 420, 250],
       ],
       note: 'Deux grands espaces ouverts et un vestibule avant',
+      evidence: 'Salon · chap. 360 ; cuisine · 367 ; salle à manger · 371',
     },
   }
 
@@ -136,7 +140,6 @@
     <rect x="55" y="105" width="690" height="590" fill="url(#uncertain)" opacity="0.08" />
   {/if}
   <text x="400" y="742" class="caption">{layout.note}</text>
-  <text x="400" y="766" class="source"
-    >Les fonctions non nommées par la planche restent indéterminées.</text
-  >
+  <text x="400" y="764" class="source">{layout.evidence}</text>
+  <text x="400" y="786" class="source">Fonctions non légendées : indéterminées.</text>
 </svg>

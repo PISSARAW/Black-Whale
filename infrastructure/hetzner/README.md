@@ -49,6 +49,13 @@ The deployment refuses to run on a dirty checkout (the image tag would not descr
 
 The migration step runs on its own, before any running container is replaced. If it fails the script stops there and the previous release keeps serving — nothing is torn down, and the failure costs no downtime. Fix what the output reports and run the script again.
 
+The deploy host is kept within a fixed disk budget: build cache and dangling
+images are removed before and after builds, while the three most recent
+successful releases remain available for rollback. Set
+`BLACK_WHALE_RETAIN_RELEASES` to a positive integer to retain a different
+number. The release being deployed and any image still used by a running
+container are never removed.
+
 For upgrades, pull the reviewed commit and run the same command. Check state with:
 
 ```sh
@@ -68,7 +75,7 @@ Every image is tagged with the commit it was built from, and `deploy.sh` appends
 
 The script refuses before stopping anything if the target images have been pruned, so a rollback either happens or leaves the current release running.
 
-The **database schema is not reversed**. Prisma migrations here are forward-only, so an older image is expected to tolerate a newer schema. If it does not, the way out is a forward deploy. `docker image prune` removes rollback targets: keep at least the last few releases.
+The **database schema is not reversed**. Prisma migrations here are forward-only, so an older image is expected to tolerate a newer schema. If it does not, the way out is a forward deploy. The deploy script keeps the most recent releases according to the retention setting above and removes older local image tags.
 
 ## 5. Backups and restoration
 

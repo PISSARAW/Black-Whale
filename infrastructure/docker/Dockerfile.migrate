@@ -1,6 +1,14 @@
 FROM node:20-alpine
 RUN apk add --no-cache openssl libc6-compat
-RUN corepack enable
+# The container runs as `node`, while image construction runs as root. Without
+# a shared Corepack cache, the first runtime `pnpm` downloads pnpm again into
+# /home/node. That is unnecessary network I/O and was the first write to fail
+# when a deploy host ran out of space.
+ENV COREPACK_HOME=/opt/corepack
+RUN mkdir -p "$COREPACK_HOME" \
+    && corepack enable \
+    && corepack prepare pnpm@9.4.0 --activate \
+    && chmod -R a+rX "$COREPACK_HOME"
 WORKDIR /app
 COPY . .
 # The Prisma CLI is a dev dependency of the database package, so the install has

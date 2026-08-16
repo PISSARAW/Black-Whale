@@ -17,12 +17,27 @@ const structuresForPrince = (number: number) => {
 const expectedDetails: Readonly<Record<number, readonly string[]>> = {
   1001: ['living-telephone', 'living-reception-painting'],
   1002: ['living-wall-chair-1', 'living-wall-chair-2', 'living-wall-chair-3', 'living-guard-desk'],
-  1003: ['dining-chair-head', 'dining-credenza', 'dining-framed-document'],
+  1003: ['dining-chair-head', 'dining-credenza', 'dining-framed-document', 'dining-candelabrum'],
   1004: ['living-mantel-clock', 'living-framed-decoration'],
   1005: ['living-desk', 'living-whiteboard-1', 'living-whiteboard-2', 'living-noticeboard'],
   1006: ['living-birthday-table', 'living-gift-display-1', 'living-gift-display-2'],
-  1007: ['living-deep-sofa', 'living-side-table', 'living-shelving', 'living-television'],
-  1008: ['bedroom-bed-01', 'bedroom-party-table'],
+  1007: [
+    'living-deep-sofa',
+    'living-side-table',
+    'living-shelving',
+    'living-television',
+    'living-topiary-left',
+    'living-topiary-right',
+    'living-painting-left',
+    'living-painting-centre',
+    'living-painting-right',
+  ],
+  1008: [
+    'bedroom-bed-01',
+    'bedroom-party-table',
+    'bedroom-entertainment-console',
+    'bedroom-television',
+  ],
   1009: [
     'living-circle-chair-1',
     'living-circle-chair-2',
@@ -30,10 +45,19 @@ const expectedDetails: Readonly<Record<number, readonly string[]>> = {
     'living-circle-chair-4',
     'living-circle-chair-5',
     'living-circle-chair-6',
+    'living-bookcase-left',
+    'living-mantel',
+    'living-bookcase-right',
   ],
-  1010: ['kitchen-cabinet-15', 'living-painting-17', 'living-painting-18'],
-  1011: ['bedroom-clock-and-photos'],
-  1012: ['bedroom-vent-15', 'bedroom-telephone'],
+  1010: [
+    'kitchen-cabinet-15',
+    'living-painting-17',
+    'living-painting-18',
+    'living-dresser',
+    'living-round-stool',
+  ],
+  1011: ['bedroom-clock-and-photos', 'bedroom-book-stack'],
+  1012: ['bedroom-vent-15', 'bedroom-telephone', 'bedroom-canopy-headboard'],
   1013: ['living-vent-15', 'living-child-table', 'living-toy-chest', 'living-framed-painting'],
   1014: ['living-telephone-15', 'living-painting-21', 'dining-table-25', 'kitchen-cabinet-24'],
 }
@@ -47,7 +71,7 @@ describe('manga details in every prince apartment', () => {
       const actual = structuresForPrince(number).map((structure) =>
         structure.id.slice(prefix.length),
       )
-    expect(actual).toEqual(expect.arrayContaining([...ids]))
+      expect(actual).toEqual(expect.arrayContaining([...ids]))
     },
   )
 

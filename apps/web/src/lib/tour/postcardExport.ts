@@ -40,24 +40,19 @@ function drawPhoto(
   const height = photoRect.height * pixelRatio
   const crop = coverCrop(options.photo, photoRect.width, photoRect.height)
 
-  context.drawImage(
-    options.photo,
-    crop.sx,
-    crop.sy,
-    crop.sw,
-    crop.sh,
-    x,
-    y,
-    width,
-    height,
-  )
+  context.drawImage(options.photo, crop.sx, crop.sy, crop.sw, crop.sh, x, y, width, height)
 
   const border = getComputedStyle(options.photo)
   const borderWidth = Number.parseFloat(border.borderTopWidth) * pixelRatio
   if (borderWidth > 0) {
     context.strokeStyle = border.borderTopColor
     context.lineWidth = borderWidth
-    context.strokeRect(x + borderWidth / 2, y + borderWidth / 2, width - borderWidth, height - borderWidth)
+    context.strokeRect(
+      x + borderWidth / 2,
+      y + borderWidth / 2,
+      width - borderWidth,
+      height - borderWidth,
+    )
   }
 }
 

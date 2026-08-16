@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 937 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 952 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -895,18 +895,22 @@
 ## Salle de conférence de l'armée royale de Kakin — `tier-4-royal-army-conference-room`
 
 - **Pont :** tier-4, interior-royal-army-conference
-- **Preuve de l’enveloppe :** case du manga, plan publié
+- **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 2
 - **Emprises relevées :** 52.5 × 52.5 m ; 20 × 15 m
 - **Hauteurs sous plafond :** 5 m
-- **Éléments modélisés :** 3 table, 2 painting, 1 counter
-- **Objets directement visibles dans les cases :** 0/6
+- **Éléments modélisés :** 15 seat, 3 table, 2 painting, 1 counter
+- **Objets directement visibles dans les cases :** 21/21
 - **Espaces internes :** Salle de conférence
 - **Sources de la pièce :**
   - Chap. 350 — réunion de coordination de la sécurité
-  - Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350
+  - Chap. 380, p. 189 — la salle de briefing de l'armée royale est montrée depuis le public : un pupitre se dresse devant un écran de projection vierge et un tableau de cartes, face à une table en U entourée de quinze sièges.
 - **Sources du mobilier et des détails :**
-  - Plan de la salle de conférence ; le briefing que Mizaistom tient au chap. 350
+  - Chap. 380, p. 189 — le grand écran de projection vierge est suspendu derrière l'orateur.
+  - Chap. 380, p. 189 — un tableau de cartes clair, plus petit, est suspendu à gauche de l'écran de projection.
+  - Chap. 380, p. 189 — l'orateur se tient à côté du pupitre, devant l'écran de projection.
+  - Chap. 380, p. 189 — trois éléments de table joints forment le U au centre de la salle de briefing.
+  - Chap. 380, p. 189 — quinze sièges entourent la table en U pendant le briefing de l'armée royale.
 
 ## Bureau de la famille Xi-Yu — `tier-4-xi-yu-family-office`
 

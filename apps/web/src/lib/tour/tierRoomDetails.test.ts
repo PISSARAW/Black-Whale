@@ -67,4 +67,17 @@ describe('manga details outside the princely apartments', () => {
       }
     }
   })
+
+  it('keeps the pale briefing boards and fifteen chairs shown on Tier 4', () => {
+    const details = byLocation('tier-4-royal-army-conference-room')
+    const byId = new Map(details.map((detail) => [detail.id, detail]))
+    const chairs = details.filter((detail) => detail.id.includes('-chair-'))
+
+    expect(chairs).toHaveLength(15)
+    expect(chairs.every((chair) => chair.kind === 'seat' && chair.provenance === 'panel')).toBe(
+      true,
+    )
+    expect(byId.get('tier-4-royal-army-conference-room-floor-screen')?.colour).toBe(0xe8e6df)
+    expect(byId.get('tier-4-royal-army-conference-room-floor-chart-board')?.colour).toBe(0xd8d7d2)
+  })
 })

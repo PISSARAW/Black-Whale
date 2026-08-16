@@ -121,9 +121,9 @@ describe('packMarkersForZoom', () => {
     } as MapMarker
     const [placed] = packMarkersForZoom([momoze], 'LOCAL')
 
-    // The bed the apartment asset draws in the master bedroom.
-    expect(placed.x).toBeCloseTo(15)
-    expect(placed.y).toBeCloseTo(85.15)
+    // The bed in the left-hand private room of the ch. 368 cutaway.
+    expect(placed.x).toBeCloseTo(21)
+    expect(placed.y).toBeCloseTo(35)
   })
 
   it('lays the twins side by side on the one bed they share', () => {
@@ -142,10 +142,10 @@ describe('packMarkersForZoom', () => {
     const [fugetsu, kacho] = packMarkersForZoom(bedroom, 'LOCAL')
 
     expect(fugetsu.y).toBeCloseTo(kacho.y)
-    expect(kacho.x - fugetsu.x).toBeCloseTo(5.5)
+    expect(kacho.x - fugetsu.x).toBeCloseTo(6)
   })
 
-  it('holds Longhi in 1014’s master bedroom while the class keeps the living room', () => {
+  it('holds Longhi in 1014’s private wing while the class keeps the open room', () => {
     const room = [
       ['longhi', 'longhi'],
       ['student', 'sakata'],
@@ -160,8 +160,8 @@ describe('packMarkersForZoom', () => {
     )
     const [longhi, student] = packMarkersForZoom(room, 'LOCAL')
 
-    expect(longhi.x).toBeCloseTo(56.25)
-    expect(longhi.y).toBeCloseTo(87.07)
+    expect(longhi.x).toBeCloseTo(37)
+    expect(longhi.y).toBeCloseTo(78)
     // 1014 declares no fallback, so everyone else keeps the centred grid.
     expect(student.x).toBe(50)
     expect(student.y).toBe(50)
@@ -203,17 +203,20 @@ describe('packMarkersForZoom', () => {
     )
     const [kurapika, woble, oito, woody, vincent, student] = packMarkersForZoom(room, 'LOCAL')
 
-    // Oito is beside the cradle, not in it, and both sit right of the class.
-    expect(woble.x).toBeCloseTo(75)
-    expect(oito.y).toBeCloseTo(woble.y)
-    expect(oito.x).toBeLessThan(woble.x)
-    expect(kurapika.x).toBeLessThan(oito.x)
-    // Kurapika faces the class, which keeps the centred grid above him.
-    expect(kurapika.y).toBeGreaterThan(student.y)
+    // Woble and Oito keep the guarded side of the ch. 368 cutaway, left of
+    // Kurapika's teaching position rather than in the open classroom grid.
+    expect(woble.x).toBeCloseTo(29)
+    expect(woble.y).toBeCloseTo(27)
+    expect(oito.x).toBeCloseTo(37)
+    expect(oito.y).toBeCloseTo(39)
+    expect(kurapika.x).toBeGreaterThan(oito.x)
+    // Kurapika faces the class, which keeps the centred grid below him.
+    expect(kurapika.y).toBeLessThan(student.y)
     expect(student.x).toBe(50)
-    // The bathroom is bottom right of the plan, the entrance top centre.
+    // The cutaway's entrance is on the lower face; both bodies remain on the
+    // lower half of the apartment instead of using the old generic topology.
     expect(woody.y).toBeGreaterThan(kurapika.y)
-    expect(vincent.y).toBeLessThan(student.y)
+    expect(vincent.y).toBeGreaterThan(student.y)
   })
 
   it('holds the confined inside the safe area the bureau plan draws', () => {
@@ -268,11 +271,12 @@ describe('packMarkersForZoom', () => {
     )
     const [barrigen, myuhan, kurapika] = packMarkersForZoom(room, 'LOCAL')
 
-    // Both lie on the class floor, either side of the teacher who is below them.
+    // Both lie on the class floor, either side of the teacher and deeper into
+    // the open room in the ch. 368 orientation.
     expect(barrigen.y).toBeCloseTo(myuhan.y)
     expect(barrigen.x).toBeLessThan(kurapika.x)
     expect(myuhan.x).toBeGreaterThan(kurapika.x)
-    expect(barrigen.y).toBeLessThan(kurapika.y)
+    expect(barrigen.y).toBeGreaterThan(kurapika.y)
   })
 
   it('says what each local position in a room is worth', () => {

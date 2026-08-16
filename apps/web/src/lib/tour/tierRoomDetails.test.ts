@@ -80,4 +80,21 @@ describe('manga details outside the princely apartments', () => {
     expect(byId.get('tier-4-royal-army-conference-room-floor-screen')?.colour).toBe(0xe8e6df)
     expect(byId.get('tier-4-royal-army-conference-room-floor-chart-board')?.colour).toBe(0xd8d7d2)
   })
+
+  it('keeps the Cha-R emblem, unlike doors, bunks and dark monitors on Tier 5', () => {
+    const details = new Map(
+      byLocation('tier-5-cha-r-family-office').map((detail) => [detail.id, detail]),
+    )
+
+    expect(details.get('tier-5-cha-r-family-office-logo')?.colour).toBe(0x1c1d20)
+    expect(details.get('tier-5-cha-r-family-office-monitor-bank')?.colour).toBe(0x1c1d20)
+    expect(details.get('tier-5-cha-r-family-office-strongbox')?.name).toBe(
+      'Treasure-Chest Metal Door',
+    )
+    expect(details.get('tier-5-cha-r-family-office-robot-door')?.provenance).toBe('panel')
+    expect(details.get('tier-5-cha-r-family-office-wooden-door')?.provenance).toBe('panel')
+    expect(details.get('tier-5-cha-r-family-office-bed')?.height).toBe(2.15)
+    expect(details.get('tier-5-cha-r-family-office-bunk-02')?.height).toBe(2.15)
+    expect(details.get('tier-5-cha-r-family-office-bookshelves')?.kind).toBe('cabinet')
+  })
 })

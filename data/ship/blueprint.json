@@ -778,15 +778,15 @@
       "nameFr": "Bureau de la famille Cha-R",
       "elevation": 0,
       "ceiling": 4,
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
+      "provenance": "panel",
+      "source": "Chs. 379-380 — the Cha-R hideout is shown as an emblem room with three unlike doors, an adjoining bunk-and-bookshelf compartment, and a separate CCTV monitor room.",
       "hull": [
         [-21.5, -13],
         [21.5, -13],
         [21.5, 13],
         [-21.5, 13]
       ],
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice",
+      "sourceFr": "Chap. 379-380 — la planque Cha-R est montrée comme une salle à l'emblème munie de trois portes différentes, un compartiment attenant avec lits superposés et bibliothèques, et une salle de vidéosurveillance séparée.",
       "parentTierId": null
     },
     {
@@ -6956,11 +6956,11 @@
       "id": "tier-5-cha-r-family-office-main-office",
       "tierId": "interior-cha-r-office",
       "locationId": "tier-5-cha-r-family-office",
-      "name": "Main Office",
-      "nameFr": "Bureau principal",
+      "name": "Emblem Room",
+      "nameFr": "Salle à l’emblème",
       "category": "mafia",
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
+      "provenance": "panel",
+      "source": "Chs. 379-380 — the main Cha-R room carries the family emblem and three unlike doors: a treasure-chest-patterned metal door, a robot-faced metal door and a wooden door.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -6969,17 +6969,17 @@
         [-2.25, 3.25],
         [-20.25, 3.25]
       ],
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "sourceFr": "Chap. 379-380 — la salle principale Cha-R porte l'emblème de la famille et trois portes différentes : une porte métallique à motif de coffre, une porte métallique à face de robot et une porte en bois."
     },
     {
       "id": "tier-5-cha-r-family-office-bedroom",
       "tierId": "interior-cha-r-office",
       "locationId": "tier-5-cha-r-family-office",
-      "name": "Bedroom",
-      "nameFr": "Chambre",
+      "name": "Bunk Room",
+      "nameFr": "Salle des couchettes",
       "category": "quarters",
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
+      "provenance": "panel",
+      "source": "Ch. 379, p. 16 — the compartment adjoining the emblem room contains stacked bunks and bookshelves; a man lies on the lower bunk beneath Feitan.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -6988,7 +6988,7 @@
         [-2.25, 11.75],
         [-20.25, 11.75]
       ],
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "sourceFr": "Chap. 379, p. 16 — le compartiment attenant à la salle de l'emblème contient des lits superposés et des bibliothèques ; un homme est allongé sur la couchette inférieure sous Feitan."
     },
     {
       "id": "tier-5-cha-r-family-office-monitor-room",
@@ -6997,8 +6997,8 @@
       "name": "Monitor Room",
       "nameFr": "Salle de surveillance",
       "category": "mafia",
-      "provenance": "plan",
-      "source": "Cha-R office plan; surveillance of key Tier 5 areas",
+      "provenance": "panel",
+      "source": "Ch. 380 — the separate monitor room is entered through the white door from the emblem room and displays CCTV footage of key Tier 5 areas.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -7007,7 +7007,7 @@
         [20.25, 11.75],
         [-0.75, 11.75]
       ],
-      "sourceFr": "Plan du bureau Cha-R ; surveillance des zones clés du pont 5"
+      "sourceFr": "Chap. 380 — la salle de surveillance séparée s'ouvre par la porte blanche depuis la salle de l'emblème et affiche les images des zones clés du pont 5."
     },
     {
       "id": "tier-5-cha-r-family-office-hall",
@@ -18565,33 +18565,33 @@
       "id": "tier-5-cha-r-family-office-strongbox",
       "spaceId": "tier-5-cha-r-family-office-main-office",
       "kind": "cabinet",
-      "name": "Strongbox Cabinet",
-      "nameFr": "Armoire forte",
+      "name": "Treasure-Chest Metal Door",
+      "nameFr": "Porte métallique en forme de coffre",
       "at": [-19.4, -6],
       "size": [1.2, 2],
       "rotation": 0,
       "base": 0,
       "height": 1.9,
       "sides": null,
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "provenance": "panel",
+      "source": "Chs. 379-380 — the first metal door has a raised treasure-chest-like centre panel.",
+      "sourceFr": "Chap. 379-380 — la première porte métallique possède un panneau central en relief évoquant un coffre."
     },
     {
       "id": "tier-5-cha-r-family-office-bed",
       "spaceId": "tier-5-cha-r-family-office-bedroom",
       "kind": "bed",
-      "name": "Bed",
-      "nameFr": "Lit",
+      "name": "Bunk Bed 1",
+      "nameFr": "Lit superposé 1",
       "at": [-18, 8.5],
       "size": [1.4, 2],
       "rotation": 0,
       "base": 0,
-      "height": 0.55,
+      "height": 2.15,
       "sides": null,
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "provenance": "panel",
+      "source": "Ch. 379, p. 16 — stacked bunks line the adjoining compartment; the lower bunk is occupied beneath Feitan.",
+      "sourceFr": "Chap. 379, p. 16 — des lits superposés bordent le compartiment attenant ; la couchette inférieure est occupée sous Feitan."
     },
     {
       "id": "tier-5-cha-r-family-office-monitor-bank",
@@ -18605,9 +18605,10 @@
       "base": 0,
       "height": 1.9,
       "sides": null,
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "provenance": "panel",
+      "source": "Ch. 380 — the monitor room's dark CCTV bank shows recordings of the hideout and key Tier 5 locations.",
+      "sourceFr": "Chap. 380 — le mur sombre d'écrans de vidéosurveillance montre les enregistrements de la planque et des zones clés du pont 5.",
+      "colour": 1842464
     },
     {
       "id": "tier-5-cha-r-family-office-watch-desk",
@@ -18621,9 +18622,90 @@
       "base": 0,
       "height": 0.75,
       "sides": null,
-      "provenance": "plan",
-      "source": "Cha-R office plan; the middle section beside the propeller",
-      "sourceFr": "Plan du bureau Cha-R ; la section centrale, près de l’hélice"
+      "provenance": "panel",
+      "source": "Ch. 380 — the CCTV operator works from the desk facing the monitor bank.",
+      "sourceFr": "Chap. 380 — l'opérateur de vidéosurveillance travaille à la table face au mur d'écrans."
+    },
+    {
+      "id": "tier-5-cha-r-family-office-logo",
+      "spaceId": "tier-5-cha-r-family-office-main-office",
+      "kind": "painting",
+      "name": "Cha-R Emblem Panel",
+      "nameFr": "Panneau à l’emblème Cha-R",
+      "at": [-11.25, 3.13],
+      "size": [5, 0.22],
+      "rotation": 0,
+      "base": 1,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Chs. 379-380 — the Cha-R emblem is painted as a dark graphic panel in the main room.",
+      "sourceFr": "Chap. 379-380 — l'emblème Cha-R est peint en panneau graphique sombre dans la salle principale.",
+      "colour": 1842464
+    },
+    {
+      "id": "tier-5-cha-r-family-office-robot-door",
+      "spaceId": "tier-5-cha-r-family-office-main-office",
+      "kind": "cabinet",
+      "name": "Robot-Faced Metal Door",
+      "nameFr": "Porte métallique à face de robot",
+      "at": [-19.4, -2.5],
+      "size": [1.2, 2],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Chs. 379-380 — the second metal door bears four dark marks arranged like a robot's eyes and feet and conceals the secret passage.",
+      "sourceFr": "Chap. 379-380 — la deuxième porte métallique porte quatre marques sombres disposées comme les yeux et les pieds d'un robot et dissimule le passage secret."
+    },
+    {
+      "id": "tier-5-cha-r-family-office-wooden-door",
+      "spaceId": "tier-5-cha-r-family-office-main-office",
+      "kind": "cabinet",
+      "name": "Wooden Door",
+      "nameFr": "Porte en bois",
+      "at": [-19.4, 0.65],
+      "size": [1.2, 1.6],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Chs. 379-380 — a plain wooden door completes the three distinct doors in the emblem room.",
+      "sourceFr": "Chap. 379-380 — une porte en bois ordinaire complète les trois portes distinctes de la salle à l'emblème."
+    },
+    {
+      "id": "tier-5-cha-r-family-office-bunk-02",
+      "spaceId": "tier-5-cha-r-family-office-bedroom",
+      "kind": "bed",
+      "name": "Bunk Bed 2",
+      "nameFr": "Lit superposé 2",
+      "at": [-14.5, 8.5],
+      "size": [1.4, 2],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.15,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 379, p. 16 — more than one stacked bunk is visible along the compartment wall.",
+      "sourceFr": "Chap. 379, p. 16 — plusieurs lits superposés sont visibles le long du mur du compartiment."
+    },
+    {
+      "id": "tier-5-cha-r-family-office-bookshelves",
+      "spaceId": "tier-5-cha-r-family-office-bedroom",
+      "kind": "cabinet",
+      "name": "Wall Bookshelves",
+      "nameFr": "Bibliothèques murales",
+      "at": [-3, 8.25],
+      "size": [0.8, 4.5],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 379, p. 16 — tall bookshelves share the adjoining compartment with the bunk beds.",
+      "sourceFr": "Chap. 379, p. 16 — de hautes bibliothèques partagent le compartiment attenant avec les lits superposés."
     },
     {
       "id": "tier-4-royal-army-conference-room-floor-screen",

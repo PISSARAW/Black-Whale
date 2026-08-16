@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 952 éléments modélisés.**
+**Couverture : 61 lieux, 409 espaces, 957 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -960,20 +960,30 @@
 ## Bureau de la famille Cha-R — `tier-5-cha-r-family-office`
 
 - **Pont :** tier-5, interior-cha-r-office
-- **Preuve de l’enveloppe :** plan publié, liaison déduite
+- **Preuve de l’enveloppe :** case du manga, plan publié, liaison déduite
 - **Sous-espaces :** 5
 - **Emprises relevées :** 42 × 31.5 m ; 18 × 15 m ; 18 × 7 m ; 21 × 23.5 m ; 1.5 × 23.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 2 table, 1 bed, 1 cabinet, 1 counter
-- **Objets directement visibles dans les cases :** 0/5
-- **Espaces internes :** Bureau principal ; Chambre ; Salle de surveillance ; Couloir du bureau
+- **Éléments modélisés :** 4 cabinet, 2 bed, 2 table, 1 counter, 1 painting
+- **Objets directement visibles dans les cases :** 9/10
+- **Espaces internes :** Salle à l’emblème ; Salle des couchettes ; Salle de surveillance ; Couloir du bureau
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
-  - Plan du bureau Cha-R ; la section centrale, près de l’hélice
-  - Plan du bureau Cha-R ; surveillance des zones clés du pont 5
+  - Chap. 379-380 — la salle principale Cha-R porte l'emblème de la famille et trois portes différentes : une porte métallique à motif de coffre, une porte métallique à face de robot et une porte en bois.
+  - Chap. 379, p. 16 — le compartiment attenant à la salle de l'emblème contient des lits superposés et des bibliothèques ; un homme est allongé sur la couchette inférieure sous Feitan.
+  - Chap. 380 — la salle de surveillance séparée s'ouvre par la porte blanche depuis la salle de l'emblème et affiche les images des zones clés du pont 5.
   - Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite. L’entrée est la porte blindée à serrure électronique qui y est dessinée, surveillée par deux caméras.
 - **Sources du mobilier et des détails :**
   - Plan du bureau Cha-R ; la section centrale, près de l’hélice
+  - Chap. 379-380 — la première porte métallique possède un panneau central en relief évoquant un coffre.
+  - Chap. 379, p. 16 — des lits superposés bordent le compartiment attenant ; la couchette inférieure est occupée sous Feitan.
+  - Chap. 380 — le mur sombre d'écrans de vidéosurveillance montre les enregistrements de la planque et des zones clés du pont 5.
+  - Chap. 380 — l'opérateur de vidéosurveillance travaille à la table face au mur d'écrans.
+  - Chap. 379-380 — l'emblème Cha-R est peint en panneau graphique sombre dans la salle principale.
+  - Chap. 379-380 — la deuxième porte métallique porte quatre marques sombres disposées comme les yeux et les pieds d'un robot et dissimule le passage secret.
+  - Chap. 379-380 — une porte en bois ordinaire complète les trois portes distinctes de la salle à l'emblème.
+  - Chap. 379, p. 16 — plusieurs lits superposés sont visibles le long du mur du compartiment.
+  - Chap. 379, p. 16 — de hautes bibliothèques partagent le compartiment attenant avec les lits superposés.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Entrée du hangar — `tier-5-hangar-entrance`

@@ -1,8 +1,67 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte'
+  import { hatsuAudioGraph } from '$lib/audio/ambient.js'
+
   // Room interactions are not wired up yet. The elements keep their click
   // and keyboard affordances so the behaviour can be attached in one place
   // when it exists; until then this must not log on a public page.
   function handleElementClick(_elementId: string) {}
+
+  let osc: OscillatorNode | null = null
+  let lfo: OscillatorNode | null = null
+  let gain: GainNode | null = null
+
+  onMount(() => {
+    const graph = hatsuAudioGraph()
+    if (!graph) return
+    const { context } = graph
+
+    // Low ominous hum (bourdonnement) - roughly G1 (49 Hz)
+    osc = context.createOscillator()
+    osc.type = 'sawtooth'
+    osc.frequency.value = 49
+
+    // LFO for the pulsating "OOOOO" effect
+    lfo = context.createOscillator()
+    lfo.type = 'sine'
+    lfo.frequency.value = 3 // 3 pulses per second
+    
+    const lfoGain = context.createGain()
+    lfoGain.gain.value = 4 // subtle frequency modulation
+    lfo.connect(lfoGain)
+    lfoGain.connect(osc.frequency)
+
+    gain = context.createGain()
+    gain.gain.setValueAtTime(0.0001, context.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.02, context.currentTime + 2) // Fade in smoothly
+
+    osc.connect(gain)
+    gain.connect(graph.muffle)
+
+    osc.start()
+    lfo.start()
+  })
+
+  onDestroy(() => {
+    if (gain) {
+      const graph = hatsuAudioGraph()
+      const now = graph?.context.currentTime || 0
+      // Fade out to prevent clicks
+      gain.gain.cancelScheduledValues(now)
+      gain.gain.setTargetAtTime(0.0001, now, 0.2)
+      setTimeout(() => {
+        if (osc) {
+          try { osc.stop() } catch {}
+          osc.disconnect()
+        }
+        if (lfo) {
+          try { lfo.stop() } catch {}
+          lfo.disconnect()
+        }
+        gain?.disconnect()
+      }, 500)
+    }
+  })
 </script>
 
 <svg

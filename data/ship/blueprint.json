@@ -21570,28 +21570,6 @@
       "sourceFr": "Le plan du cinéplexe sur /ship accroche l'affiche du film au-dessus de l'allée qui descend vers les salles."
     },
     {
-      "id": "tier-3-observation-deck-window",
-      "spaceId": "tier-3-observation-deck",
-      "kind": "window",
-      "name": "Observation Window",
-      "nameFr": "Baie du pont d’observation",
-      "at": [
-        -154.5,
-        0
-      ],
-      "size": [
-        0.3,
-        30
-      ],
-      "rotation": 0,
-      "base": 1,
-      "height": 6,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 380 — the window the observation deck looks out of. The panel draws it curved; it runs the outboard wall, which is the bow face since ch. 358 puts the deck in the bow. What it looks out at is drawn too: the container city of the lower tiers, then the sea, then the horizon and the cloud above it.",
-      "sourceFr": "Chap. 380 — la baie par laquelle le pont d’observation regarde dehors. La planche la dessine courbe ; elle court le long du mur extérieur, c’est-à-dire la face avant depuis que le chap. 358 met le pont à la proue. Ce qu’elle donne à voir est dessiné aussi : la ville de conteneurs des ponts inférieurs, puis la mer, puis l’horizon et les nuages au-dessus."
-    },
-    {
       "id": "tier-3-observation-deck-bar-port",
       "spaceId": "tier-3-observation-deck",
       "kind": "counter",
@@ -21609,7 +21587,7 @@
       "base": 0,
       "height": 1.2,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -21631,7 +21609,7 @@
       "base": 0,
       "height": 1.2,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -21653,7 +21631,7 @@
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -21675,7 +21653,7 @@
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -21697,7 +21675,7 @@
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -21719,7 +21697,7 @@
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 380 - decorative interior elements of the observation deck.",
       "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
@@ -40688,6 +40666,94 @@
       "provenance": "panel",
       "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tiered benches along the side walls.",
       "sourceFr": "Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs latéraux."
+    },
+    {
+      "id": "tier-3-observation-deck-window-1",
+      "spaceId": "tier-3-observation-deck",
+      "kind": "window",
+      "name": "Observation Window 1",
+      "nameFr": "Baie du pont d’observation 1",
+      "at": [
+        -150.71057085362867,
+        40.92106477826237
+      ],
+      "size": [
+        0.3,
+        21.80350850198276
+      ],
+      "rotation": 164.74488129694225,
+      "base": 1,
+      "height": 6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 380",
+      "sourceFr": "Chap. 380"
+    },
+    {
+      "id": "tier-3-observation-deck-window-2",
+      "spaceId": "tier-3-observation-deck",
+      "kind": "window",
+      "name": "Observation Window 2",
+      "nameFr": "Baie du pont d’observation 2",
+      "at": [
+        -155.201488842937,
+        14.9701488842937
+      ],
+      "size": [
+        0.3,
+        29.14962686336267
+      ],
+      "rotation": 174.28940686250036,
+      "base": 1,
+      "height": 6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 380",
+      "sourceFr": "Chap. 380"
+    },
+    {
+      "id": "tier-3-observation-deck-window-3",
+      "spaceId": "tier-3-observation-deck",
+      "kind": "window",
+      "name": "Observation Window 3",
+      "nameFr": "Baie du pont d’observation 3",
+      "at": [
+        -155.201488842937,
+        -14.9701488842937
+      ],
+      "size": [
+        0.3,
+        29.14962686336267
+      ],
+      "rotation": -174.28940686250036,
+      "base": 1,
+      "height": 6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 380",
+      "sourceFr": "Chap. 380"
+    },
+    {
+      "id": "tier-3-observation-deck-window-4",
+      "spaceId": "tier-3-observation-deck",
+      "kind": "window",
+      "name": "Observation Window 4",
+      "nameFr": "Baie du pont d’observation 4",
+      "at": [
+        -150.71057085362867,
+        -40.92106477826237
+      ],
+      "size": [
+        0.3,
+        21.80350850198276
+      ],
+      "rotation": -164.74488129694225,
+      "base": 1,
+      "height": 6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 380",
+      "sourceFr": "Chap. 380"
     }
   ]
 }

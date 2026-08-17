@@ -21604,7 +21604,14 @@
       "size": [
         1.5,
         4
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-observation-deck-bar-starboard",
@@ -21619,7 +21626,14 @@
       "size": [
         1.5,
         4
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-observation-deck-lounger-port-1",
@@ -21634,7 +21648,14 @@
       "size": [
         2.5,
         1.5
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-observation-deck-lounger-port-2",
@@ -21649,7 +21670,14 @@
       "size": [
         2.5,
         1.5
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-observation-deck-lounger-starboard-1",
@@ -21664,7 +21692,14 @@
       "size": [
         2.5,
         1.5
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-observation-deck-lounger-starboard-2",
@@ -21679,7 +21714,14 @@
       "size": [
         2.5,
         1.5
-      ]
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "inferred",
+      "source": "Ch. 380 - decorative interior elements of the observation deck.",
+      "sourceFr": "Chap. 380 - éléments décoratifs intérieurs du pont d’observation."
     },
     {
       "id": "tier-3-cineplex-ticket-windows",

@@ -9,6 +9,18 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  * The walk can jump the visitor here so they see exactly what the drawing shows.
  */
 export const MANGA_VIEWS: MangaView[] = [
+  {
+    id: 'kacho-fugetsu-vestibule-farewell',
+    chapter: 359,
+    space: 'tier-1-banquet-hall-vestibule',
+    label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
+    labelFr: 'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
+    camera: {
+      position: [-50, -5.5, 1.5],
+      target: [-50, -3.5, 1.5],
+      fov: 60,
+    },
+  },
   view({
     id: 'princely-quarter-aerial-plan',
     spaceId: 'tier-1-royal-residential-cross-gap-1',

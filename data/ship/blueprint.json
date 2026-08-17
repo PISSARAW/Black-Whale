@@ -20734,28 +20734,6 @@
       "sourceFr": "Chap. 382 \u2014 le poste gard\u00e9 \u00e0 l'entr\u00e9e des quartiers princiers, son comptoir et ses soldats en faction."
     },
     {
-      "id": "tier-1-supreme-court-bench",
-      "spaceId": "tier-1-supreme-court",
-      "kind": "counter",
-      "name": "Supreme Magistrate's Bench",
-      "nameFr": "Banc du magistrat supr\u00eame",
-      "at": [
-        118,
-        38.5
-      ],
-      "size": [
-        2.5,
-        12
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.2,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 371 \u2014 Cleapatro receives the emergency request from the Supreme Court judges' room, seated behind its high ornamented bench.",
-      "sourceFr": "Chap. 371 \u2014 Cleapatro re\u00e7oit la requ\u00eate d\u2019urgence dans la salle des juges de la Cour supr\u00eame, assis derri\u00e8re son haut banc ornement\u00e9."
-    },
-    {
       "id": "tier-1-supreme-court-seal",
       "spaceId": "tier-1-supreme-court",
       "kind": "painting",
@@ -20776,94 +20754,6 @@
       "provenance": "panel",
       "source": "Ch. 371 \u2014 a large circular court seal is centred on the panelled wall above Cleapatro's bench.",
       "sourceFr": "Chap. 371 \u2014 un grand embl\u00e8me circulaire de la Cour est centr\u00e9 sur le mur \u00e0 panneaux au-dessus du banc de Cleapatro."
-    },
-    {
-      "id": "tier-1-supreme-court-prosecution",
-      "spaceId": "tier-1-supreme-court",
-      "kind": "table",
-      "name": "Prosecution Table",
-      "nameFr": "Table de l\u2019accusation",
-      "at": [
-        108,
-        31
-      ],
-      "size": [
-        2.5,
-        8
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.8,
-      "sides": null,
-      "provenance": "map",
-      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
-      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en t\u00eate, l'accusation et la d\u00e9fense face \u00e0 face, le box entre les deux et le banc du public au fond."
-    },
-    {
-      "id": "tier-1-supreme-court-defence",
-      "spaceId": "tier-1-supreme-court",
-      "kind": "table",
-      "name": "Defence Table",
-      "nameFr": "Table de la d\u00e9fense",
-      "at": [
-        108,
-        46
-      ],
-      "size": [
-        2.5,
-        8
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.8,
-      "sides": null,
-      "provenance": "map",
-      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
-      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en t\u00eate, l'accusation et la d\u00e9fense face \u00e0 face, le box entre les deux et le banc du public au fond."
-    },
-    {
-      "id": "tier-1-supreme-court-dock",
-      "spaceId": "tier-1-supreme-court",
-      "kind": "counter",
-      "name": "Dock",
-      "nameFr": "Box des accus\u00e9s",
-      "at": [
-        103,
-        38.5
-      ],
-      "size": [
-        2,
-        3
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 1,
-      "sides": null,
-      "provenance": "map",
-      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
-      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en t\u00eate, l'accusation et la d\u00e9fense face \u00e0 face, le box entre les deux et le banc du public au fond."
-    },
-    {
-      "id": "tier-1-supreme-court-public-bench",
-      "spaceId": "tier-1-supreme-court",
-      "kind": "seat",
-      "name": "Public Bench",
-      "nameFr": "Banc du public",
-      "at": [
-        92,
-        38.5
-      ],
-      "size": [
-        2,
-        22
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.9,
-      "sides": null,
-      "provenance": "map",
-      "source": "The /ship courtroom plan: the magistrate's bench at the head, prosecution and defence facing each other across the floor, the dock between them and the public bench at the back.",
-      "sourceFr": "Le plan de salle d'audience de /ship : le banc du magistrat en t\u00eate, l'accusation et la d\u00e9fense face \u00e0 face, le box entre les deux et le banc du public au fond."
     },
     {
       "id": "tier-1-vip-casino-mezzanine-port",
@@ -40446,6 +40336,226 @@
       "provenance": "panel",
       "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
       "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+    },
+    {
+      "id": "tier-1-supreme-court-bench",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "counter",
+      "name": "Supreme Magistrate's Bench",
+      "nameFr": "Banc du magistrat supr\u00eame",
+      "at": [
+        118,
+        38.5
+      ],
+      "size": [
+        2.5,
+        12
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing a high bench with stairs.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant un banc \u00e9lev\u00e9 avec des escaliers."
+    },
+    {
+      "id": "tier-1-supreme-court-clerk-left",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Left Clerk Desk",
+      "nameFr": "Bureau du greffier gauche",
+      "at": [
+        115,
+        33.5
+      ],
+      "size": [
+        2,
+        5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing two lower desks in front of the judge.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant deux bureaux plus bas devant le juge."
+    },
+    {
+      "id": "tier-1-supreme-court-clerk-right",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Right Clerk Desk",
+      "nameFr": "Bureau du greffier droit",
+      "at": [
+        115,
+        43.5
+      ],
+      "size": [
+        2,
+        5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing two lower desks in front of the judge.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant deux bureaux plus bas devant le juge."
+    },
+    {
+      "id": "tier-1-supreme-court-podium",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "counter",
+      "name": "Speaker Podium",
+      "nameFr": "Pupitre de l'orateur",
+      "at": [
+        108,
+        38.5
+      ],
+      "size": [
+        1.2,
+        1.8
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing a central podium.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant un pupitre central."
+    },
+    {
+      "id": "tier-1-supreme-court-prosecution",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Prosecution Table",
+      "nameFr": "Table de l'accusation",
+      "at": [
+        102,
+        33
+      ],
+      "size": [
+        2,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tables facing the judge.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des tables face au juge."
+    },
+    {
+      "id": "tier-1-supreme-court-defence",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "table",
+      "name": "Defence Table",
+      "nameFr": "Table de la d\u00e9fense",
+      "at": [
+        102,
+        44
+      ],
+      "size": [
+        2,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tables facing the judge.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des tables face au juge."
+    },
+    {
+      "id": "tier-1-supreme-court-benches-south-1",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "seat",
+      "name": "South Side Benches (Lower)",
+      "nameFr": "Bancs lat\u00e9raux sud (bas)",
+      "at": [
+        105,
+        27
+      ],
+      "size": [
+        22,
+        1.5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tiered benches along the side walls.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs lat\u00e9raux."
+    },
+    {
+      "id": "tier-1-supreme-court-benches-south-2",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "seat",
+      "name": "South Side Benches (Upper)",
+      "nameFr": "Bancs lat\u00e9raux sud (haut)",
+      "at": [
+        105,
+        25
+      ],
+      "size": [
+        22,
+        1.5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tiered benches along the side walls.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs lat\u00e9raux."
+    },
+    {
+      "id": "tier-1-supreme-court-benches-north-1",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "seat",
+      "name": "North Side Benches (Lower)",
+      "nameFr": "Bancs lat\u00e9raux nord (bas)",
+      "at": [
+        105,
+        50
+      ],
+      "size": [
+        22,
+        1.5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tiered benches along the side walls.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs lat\u00e9raux."
+    },
+    {
+      "id": "tier-1-supreme-court-benches-north-2",
+      "spaceId": "tier-1-supreme-court",
+      "kind": "seat",
+      "name": "North Side Benches (Upper)",
+      "nameFr": "Bancs lat\u00e9raux nord (haut)",
+      "at": [
+        105,
+        52
+      ],
+      "size": [
+        22,
+        1.5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Panel of the Supreme Court hearing regarding Camilla's arrest - showing tiered benches along the side walls.",
+      "sourceFr": "Case de l'audience de la Cour supr\u00eame concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs lat\u00e9raux."
     }
   ]
 }

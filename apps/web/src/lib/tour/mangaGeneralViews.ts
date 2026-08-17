@@ -11,6 +11,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     target: [118, 1.0],
     pitch: 0,
     eyeHeight: 38.5,
+    volume: 36,
   }),
   view({
     id: 'princes-burial-chamber-overhead',
@@ -48,6 +49,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     target: [6, 0.5],
     pitch: -0.1,
     eyeHeight: 3,
+    volume: 34,
   }),
   view({
     id: 'kacho-fugetsu-vestibule-farewell',
@@ -60,6 +62,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     target: [-50, 1.5],
     pitch: 0,
     eyeHeight: -5.5,
+    volume: 34,
   }),
   view({
     id: 'princely-quarter-aerial-plan',

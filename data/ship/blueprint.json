@@ -40358,6 +40358,94 @@
       "provenance": "panel",
       "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
       "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-smoking-platform",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "platform",
+      "name": "Raised Smoking Platform",
+      "nameFr": "Estrade fumeur",
+      "at": [
+        6,
+        3
+      ],
+      "size": [
+        3.0,
+        2.5
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.15,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
+      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-smoking-table",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "table",
+      "name": "Low Hookah Table",
+      "nameFr": "Table basse \u00e0 narguil\u00e9",
+      "at": [
+        6,
+        3
+      ],
+      "size": [
+        1.4,
+        0.7
+      ],
+      "rotation": 0,
+      "base": 0.15,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
+      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-cushion-luzurus",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "seat",
+      "name": "Floor Cushion",
+      "nameFr": "Coussin de sol",
+      "at": [
+        6,
+        2
+      ],
+      "size": [
+        0.7,
+        0.7
+      ],
+      "rotation": 0,
+      "base": 0.15,
+      "height": 0.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
+      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-cushion-basho",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "seat",
+      "name": "Floor Cushion",
+      "nameFr": "Coussin de sol",
+      "at": [
+        6,
+        4
+      ],
+      "size": [
+        0.7,
+        0.7
+      ],
+      "rotation": 0,
+      "base": 0.15,
+      "height": 0.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
+      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
     }
   ]
 }

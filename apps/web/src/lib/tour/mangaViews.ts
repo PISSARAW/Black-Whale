@@ -10,11 +10,24 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  */
 export const MANGA_VIEWS: MangaView[] = [
   {
+    id: 'luzurus-smoking-area',
+    chapter: 359,
+    space: 'tier-1-royal-residential-sector-room-1007-living',
+    label: 'Luzurus and Basho smoking hookah in the raised tatami area',
+    labelFr: "Luzurus et Basho fumant le narguilé dans l'espace surélevé",
+    camera: {
+      position: [3, 3, 1.2],
+      target: [6, 3, 0.5],
+      fov: 60,
+    },
+  },
+  {
     id: 'kacho-fugetsu-vestibule-farewell',
     chapter: 359,
     space: 'tier-1-banquet-hall-vestibule',
     label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
-    labelFr: 'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
+    labelFr:
+      'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
     camera: {
       position: [-50, -5.5, 1.5],
       target: [-50, -3.5, 1.5],

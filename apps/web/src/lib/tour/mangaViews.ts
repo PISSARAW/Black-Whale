@@ -523,6 +523,17 @@ export const MANGA_VIEWS: MangaView[] = [
       },
     ],
   }),
+  view({
+    id: 'observation-deck-panorama',
+    spaceId: 'tier-3-observation-deck',
+    at: [-147, 0],
+    target: [-160, 0],
+    pitch: -0.05,
+    chapter: 380,
+    volume: 36,
+    label: 'Panoramic view of the container city from the observation deck window',
+    labelFr: 'Vue panoramique sur la ville-conteneur depuis la baie vitrée du poste d’observation',
+  }),
   ...MANGA_APARTMENT_VIEWS,
 ]
 

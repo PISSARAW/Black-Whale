@@ -12,6 +12,7 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  */
 export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_GENERAL_VIEWS,
+  view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
     at: [2.15, -4.95],

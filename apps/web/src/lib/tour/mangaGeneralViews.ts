@@ -254,5 +254,4 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     label: 'The Supreme Court bench beneath the circular judicial seal',
     labelFr: 'Le banc de la Cour suprême sous le sceau judiciaire circulaire',
   }),
-  view({
 ]

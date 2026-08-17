@@ -9,6 +9,19 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  * The walk can jump the visitor here so they see exactly what the drawing shows.
  */
 export const MANGA_VIEWS: MangaView[] = [
+  view({
+    id: 'princes-burial-chamber-overhead',
+    spaceId: 'tier-1-princes-burial-chamber-rotunda',
+    at: [0, 0],
+    target: [0, 0],
+    pitch: -Math.PI / 2, // overhead view (top-down)
+    eyeHeight: 40,
+    chapter: 383,
+    volume: 37,
+    pages: '18-19',
+    label: 'The 14 coffins around the central machine',
+    labelFr: 'Les 14 cercueils autour de la machine centrale',
+  }),
   {
     id: 'luzurus-smoking-area',
     chapter: 359,

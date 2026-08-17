@@ -25,7 +25,7 @@
     lfo = context.createOscillator()
     lfo.type = 'sine'
     lfo.frequency.value = 3 // 3 pulses per second
-    
+
     const lfoGain = context.createGain()
     lfoGain.gain.value = 4 // subtle frequency modulation
     lfo.connect(lfoGain)
@@ -51,11 +51,19 @@
       gain.gain.setTargetAtTime(0.0001, now, 0.2)
       setTimeout(() => {
         if (osc) {
-          try { osc.stop() } catch { /* ignore */ }
+          try {
+            osc.stop()
+          } catch {
+            /* ignore */
+          }
           osc.disconnect()
         }
         if (lfo) {
-          try { lfo.stop() } catch { /* ignore */ }
+          try {
+            lfo.stop()
+          } catch {
+            /* ignore */
+          }
           lfo.disconnect()
         }
         gain?.disconnect()

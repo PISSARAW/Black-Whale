@@ -144,7 +144,7 @@
   <text x="400" y="42" class="title">Prince's Apartment {roomNumber}</text>
   <text x="400" y="70" class="source">Chap. 368 · rooms 1011 to 1014 cutaway</text>
   <rect x="50" y="100" width="700" height="600" class="outer" />
-  
+
   {#each layout.walls as wall (`${wall[0]}-${wall[1]}-${wall[2]}-${wall[3]}`)}
     <line x1={wall[0]} y1={wall[1]} x2={wall[2]} y2={wall[3]} class="wall" />
   {/each}

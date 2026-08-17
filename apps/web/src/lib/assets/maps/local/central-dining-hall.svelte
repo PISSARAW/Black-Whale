@@ -177,7 +177,7 @@
   <!-- Franklin's isolated corner with vending machines (ch. 379-380) -->
   <rect x={x(14)} y={y(22)} width={0.8 * SCALE} height={3 * SCALE} class="vending" />
   <rect x={x(14)} y={y(25.2)} width={0.8 * SCALE} height={1.5 * SCALE} class="vending" />
-  
+
   <rect x={x(14)} y={y(28)} width={0.6 * SCALE} height={2.5 * SCALE} class="bench" />
   <rect
     role="button"
@@ -191,7 +191,7 @@
     class="table"
     onclick={() => handleElementClick('franklin-table')}
   />
-  
+
   <rect x={x(14)} y={y(31)} width={0.8 * SCALE} height={3.5 * SCALE} class="vending" />
   <text x={x(16.5)} y={y(29.4)} class="sublabel">Franklin's table · ch. 379</text>
 

@@ -190,7 +190,7 @@
   <rect x={px(12)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
   <rect x={px(8)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
   <circle cx={px(10)} cy={py(-150)} r={1.5 * SCALE} class="parasol" />
-  
+
   <text x={px(0)} y={py(-146)} class="sublabel">Indoor beach / Lounge area (ch. 380)</text>
 
   <!-- The one way in: the promenade behind the deck -->

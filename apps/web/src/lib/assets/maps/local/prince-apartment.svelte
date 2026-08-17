@@ -270,7 +270,7 @@
       <!-- Large central conference table for the guards briefing -->
       <rect x="150" y="340" width="260" height="90" rx="3" class="fixed" />
       <text x="280" y="390" class="sublabel">Large conference table</text>
-      
+
       <rect x="70" y="270" width="150" height="18" class="fixed" />
       <text x="145" y="310" class="sublabel">Large painting · ch. 363</text>
       <rect x="410" y="315" width="24" height="24" rx="4" class="fixed" />

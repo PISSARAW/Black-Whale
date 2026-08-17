@@ -158,19 +158,19 @@
 
   <!-- Specific room markers -->
   {#if roomNumber === '1012'}
-    <rect x="70" y="120" width="40" height="30" rx="3" class="fixed" />
-    <text x="90" y="165" class="sublabel" font-size="10">Vent grille · Little Eye entry</text>
+    <rect x="70" y="640" width="40" height="30" rx="3" class="fixed" />
+    <text x="90" y="685" class="sublabel" font-size="10">Vent grille · Little Eye</text>
   {:else if roomNumber === '1013'}
     <rect x="70" y="120" width="180" height="80" rx="5" class="fixed" />
     <text x="160" y="165" class="sublabel">Long meeting table</text>
     <text x="400" y="400" class="sublabel">Guarded salon</text>
     <text x="625" y="620" class="sublabel">Bedroom · Marayam</text>
   {:else if roomNumber === '1014'}
-    <rect x="70" y="530" width="120" height="140" rx="4" class="fixed" />
-    <line class="fixed" x1="70" y1="530" x2="70" y2="670" stroke-width="6" />
-    <line class="fixed" x1="190" y1="530" x2="190" y2="670" stroke-width="6" />
-    <line class="fixed" x1="70" y1="530" x2="190" y2="530" stroke-width="6" />
-    <text x="130" y="610" class="sublabel">Canopy bed</text>
+    <rect x="70" y="110" width="120" height="130" rx="4" class="fixed" />
+    <line class="fixed" x1="70" y1="110" x2="70" y2="240" stroke-width="6" />
+    <line class="fixed" x1="190" y1="110" x2="190" y2="240" stroke-width="6" />
+    <line class="fixed" x1="70" y1="110" x2="190" y2="110" stroke-width="6" />
+    <text x="130" y="180" class="sublabel">Canopy bed</text>
   {/if}
 
   <text x="400" y="742" class="caption">{layout.note}</text>

@@ -9,24 +9,23 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  * The walk can jump the visitor here so they see exactly what the drawing shows.
  */
 export const MANGA_VIEWS: MangaView[] = [
-  {
+  view({
     id: 'supreme-court-camilla-hearing',
     chapter: 379,
-    space: 'tier-1-supreme-court',
+    spaceId: 'tier-1-supreme-court',
     label: 'Supreme Court hearing regarding the arrest of Prince Camilla',
     labelFr: "Audience de la Cour suprême concernant l'arrestation de la Princesse Camilla",
-    camera: {
-      position: [98, 38.5, 3.5],
-      target: [118, 38.5, 1.0],
-      fov: 60,
-    },
-  },
+    at: [98, 3.5],
+    target: [118, 1.0],
+    pitch: 0,
+    eyeHeight: 38.5,
+  }),
   view({
     id: 'princes-burial-chamber-overhead',
     spaceId: 'tier-1-princes-burial-chamber-rotunda',
     at: [0, 0],
     target: [0, 0],
-    pitch: -Math.PI / 2, // overhead view (top-down)
+    pitch: -1.57, // overhead view (top-down)
     eyeHeight: 40,
     chapter: 383,
     volume: 37,
@@ -34,31 +33,42 @@ export const MANGA_VIEWS: MangaView[] = [
     label: 'The 14 coffins around the central machine',
     labelFr: 'Les 14 cercueils autour de la machine centrale',
   }),
-  {
+  view({
+    id: 'central-dining-hall-troupe',
+    spaceId: 'tier-5-central-dining-hall',
+    at: [0, -10],
+    target: [0, 0],
+    pitch: -0.4,
+    eyeHeight: 5,
+    chapter: 377,
+    volume: 36,
+    pages: '105-106',
+    label: 'The Phantom Troupe gathered at the raised platform',
+    labelFr: 'La Brigade Fantôme réunie sur la plateforme centrale',
+  }),
+  view({
     id: 'luzurus-smoking-area',
     chapter: 359,
-    space: 'tier-1-royal-residential-sector-room-1007-living',
+    spaceId: 'tier-1-royal-residential-sector-room-1007-living',
     label: 'Luzurus and Basho smoking hookah in the raised tatami area',
     labelFr: "Luzurus et Basho fumant le narguilé dans l'espace surélevé",
-    camera: {
-      position: [3, 3, 1.2],
-      target: [6, 3, 0.5],
-      fov: 60,
-    },
-  },
-  {
+    at: [3, 1.2],
+    target: [6, 0.5],
+    pitch: -0.1,
+    eyeHeight: 3,
+  }),
+  view({
     id: 'kacho-fugetsu-vestibule-farewell',
     chapter: 359,
-    space: 'tier-1-banquet-hall-vestibule',
+    spaceId: 'tier-1-banquet-hall-vestibule',
     label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
     labelFr:
       'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
-    camera: {
-      position: [-50, -5.5, 1.5],
-      target: [-50, -3.5, 1.5],
-      fov: 60,
-    },
-  },
+    at: [-50, 1.5],
+    target: [-50, 1.5],
+    pitch: 0,
+    eyeHeight: -5.5,
+  }),
   view({
     id: 'princely-quarter-aerial-plan',
     spaceId: 'tier-1-royal-residential-cross-gap-1',

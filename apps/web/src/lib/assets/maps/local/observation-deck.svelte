@@ -108,6 +108,22 @@
       .door:hover {
         stroke: #fff;
       }
+      .bar {
+        fill: rgba(220, 180, 100, 0.2);
+        stroke: #d09030;
+        stroke-width: 2;
+      }
+      .lounger {
+        fill: rgba(180, 220, 255, 0.1);
+        stroke: #8eb8e6;
+        stroke-width: 1.5;
+      }
+      .parasol {
+        fill: rgba(255, 100, 100, 0.15);
+        stroke: #cc4444;
+        stroke-width: 2;
+        stroke-dasharray: 4 4;
+      }
       .centreline {
         stroke: #fffff0;
         stroke-width: 1;
@@ -163,6 +179,19 @@
     onclick={() => handleElementClick('observation-window')}
   />
   <text x={px(0)} y={py(bay.at[0]) + 24} class="sublabel">Observation window — 30 m of glass</text>
+
+  <!-- Decorative interior (Ch. 380: parasols, bars, loungers) -->
+  <rect x={px(-10)} y={py(-152)} width={4 * SCALE} height={1.5 * SCALE} class="bar" />
+  <rect x={px(-12)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
+  <rect x={px(-8)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
+  <circle cx={px(-10)} cy={py(-150)} r={1.5 * SCALE} class="parasol" />
+
+  <rect x={px(10)} y={py(-152)} width={4 * SCALE} height={1.5 * SCALE} class="bar" />
+  <rect x={px(12)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
+  <rect x={px(8)} y={py(-149)} width={1.5 * SCALE} height={2.5 * SCALE} class="lounger" />
+  <circle cx={px(10)} cy={py(-150)} r={1.5 * SCALE} class="parasol" />
+  
+  <text x={px(0)} y={py(-146)} class="sublabel">Indoor beach / Lounge area (ch. 380)</text>
 
   <!-- The one way in: the promenade behind the deck -->
   <line

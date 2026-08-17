@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import { MANGA_APARTMENT_VIEWS } from './mangaApartmentViews'
 import { MANGA_CHA_R_VIEWS } from './mangaChaRViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'

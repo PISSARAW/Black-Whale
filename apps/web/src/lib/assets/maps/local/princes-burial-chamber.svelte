@@ -51,11 +51,11 @@
       gain.gain.setTargetAtTime(0.0001, now, 0.2)
       setTimeout(() => {
         if (osc) {
-          try { osc.stop() } catch {}
+          try { osc.stop() } catch { /* ignore */ }
           osc.disconnect()
         }
         if (lfo) {
-          try { lfo.stop() } catch {}
+          try { lfo.stop() } catch { /* ignore */ }
           lfo.disconnect()
         }
         gain?.disconnect()

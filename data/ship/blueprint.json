@@ -2407,6 +2407,22 @@
           -3.5
         ],
         [
+          -47,
+          -3.5
+        ],
+        [
+          -47,
+          -7.5
+        ],
+        [
+          -53,
+          -7.5
+        ],
+        [
+          -53,
+          -3.5
+        ],
+        [
           -87.5,
           -3.5
         ]
@@ -15587,6 +15603,37 @@
           42
         ]
       ]
+    },
+    {
+      "id": "tier-1-banquet-hall-vestibule",
+      "tierId": "tier-1",
+      "locationId": "tier-1-banquet-hall",
+      "name": "Banquet Hall Vestibule",
+      "nameFr": "Sas de la salle du banquet",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Chs. 383 and 389 \u2014 The entrance to the banquet hall features a secure vestibule with inner and outer double doors, both guarded.",
+      "sourceFr": "Chap. 383 et 389 \u2014 L'entr\u00e9e de la salle des f\u00eates comporte un sas s\u00e9curis\u00e9 avec une double porte int\u00e9rieure et ext\u00e9rieure, toutes deux gard\u00e9es.",
+      "ceiling": 9,
+      "envelope": null,
+      "footprint": [
+        [
+          -53,
+          -7.5
+        ],
+        [
+          -47,
+          -7.5
+        ],
+        [
+          -47,
+          -3.5
+        ],
+        [
+          -53,
+          -3.5
+        ]
+      ]
     }
   ],
   "links": [
@@ -18835,6 +18882,28 @@
       "width": 24.5,
       "reason": "The floor steps down here and no wall is drawn: the opening is the full depth of the hall, and what is at it is the step itself.",
       "reasonFr": "Le sol descend d'une marche ici et aucun mur n'y est dessin\u00e9 : l'ouverture fait toute la profondeur de la halle, et ce qui s'y tient est la marche elle-m\u00eame."
+    },
+    {
+      "a": "tier-1-main-corridor",
+      "b": "tier-1-banquet-hall-vestibule",
+      "at": [
+        -50,
+        -3.5
+      ],
+      "width": 3,
+      "reason": "Outer doors of the banquet hall vestibule.",
+      "reasonFr": "Portes ext\u00e9rieures du sas de la salle des f\u00eates."
+    },
+    {
+      "a": "tier-1-banquet-hall-vestibule",
+      "b": "tier-1-banquet-hall",
+      "at": [
+        -50,
+        -7.5
+      ],
+      "width": 3,
+      "reason": "Inner doors of the banquet hall vestibule.",
+      "reasonFr": "Portes int\u00e9rieures du sas de la salle des f\u00eates."
     }
   ],
   "structures": [

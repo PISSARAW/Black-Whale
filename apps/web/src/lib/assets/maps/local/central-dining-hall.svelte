@@ -110,6 +110,16 @@
         pointer-events: none;
         text-anchor: middle;
       }
+      .vending {
+        fill: rgba(200, 220, 255, 0.15);
+        stroke: #8fb8e6;
+        stroke-width: 1.5;
+      }
+      .bench {
+        fill: rgba(180, 150, 120, 0.2);
+        stroke: #a67c52;
+        stroke-width: 1.5;
+      }
     </style>
   </defs>
 
@@ -163,6 +173,27 @@
       class="menu"
     />
   {/each}
+
+  <!-- Franklin's isolated corner with vending machines (ch. 379-380) -->
+  <rect x={x(14)} y={y(22)} width={0.8 * SCALE} height={3 * SCALE} class="vending" />
+  <rect x={x(14)} y={y(25.2)} width={0.8 * SCALE} height={1.5 * SCALE} class="vending" />
+  
+  <rect x={x(14)} y={y(28)} width={0.6 * SCALE} height={2.5 * SCALE} class="bench" />
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspect map area"
+    onkeydown={activate}
+    x={x(14.6)}
+    y={y(28.25)}
+    width={1.2 * SCALE}
+    height={2 * SCALE}
+    class="table"
+    onclick={() => handleElementClick('franklin-table')}
+  />
+  
+  <rect x={x(14)} y={y(31)} width={0.8 * SCALE} height={3.5 * SCALE} class="vending" />
+  <text x={x(16.5)} y={y(29.4)} class="sublabel">Franklin's table · ch. 379</text>
 
   <rect
     role="button"

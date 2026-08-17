@@ -115,7 +115,7 @@
       onclick={() => handleElementClick('living')}
     />
     <text x="250" y="390" class="label" font-size="24">Living</text>
-    {#if !['1002', '1004', '1007', '1009', '1010', '1013'].includes(roomNumber)}
+    {#if !['1002', '1004', '1007', '1009', '1010'].includes(roomNumber)}
       <rect x="300" y="350" width="80" height="60" class="furniture" />
       <!-- Default programme-type table; removed where a panel contradicts it. -->
     {/if}
@@ -333,31 +333,6 @@
       <rect x="80" y="330" width="150" height="16" class="fixed" />
       <text x="550" y="105" class="sublabel">Fitted kitchen · ch. 376</text>
       <text x="205" y="375" class="sublabel">Dresser, stool, paintings · ch. 374/376</text>
-    {:else if roomNumber === '1013'}
-      <!-- Heavily subdivided apartment · layout revealed in panel (ch. 367). -->
-
-      <!-- Long table in the servants' quarters (top left) -->
-      <!-- Camp meeting around a conference table. -->
-      <rect x="25" y="22" width="225" height="65" rx="5" class="fixed" />
-      <rect x="12" y="18" width="18" height="74" rx="3" class="fixed" />
-      <rect x="254" y="18" width="18" height="74" rx="3" class="fixed" />
-      <text x="148" y="106" class="sublabel">Long meeting table · ch. 367</text>
-
-      <!-- Sub-partitions: cells in the lower half of the servants' quarters -->
-      <line class="thin-wall" x1="0" y1="142" x2="215" y2="142" />
-      <line class="thin-wall" x1="72" y1="142" x2="72" y2="250" />
-      <line class="thin-wall" x1="144" y1="142" x2="144" y2="250" />
-      <line class="thin-wall" x1="0" y1="196" x2="72" y2="196" />
-      <line class="thin-wall" x1="72" y1="196" x2="144" y2="196" />
-      <text x="108" y="240" class="sublabel" font-size="10">Cells · ch. 367</text>
-
-      <!-- Vertical partition in the living room (subdivided guarded space) -->
-      <line class="thin-wall" x1="345" y1="252" x2="345" y2="435" />
-      <text x="172" y="400" class="sublabel">Guarded salon · clear centre</text>
-
-      <!-- Marayam's guardian spirit beast in the bedroom doorway -->
-      <text x="600" y="590" class="sublabel">Bedroom · Marayam</text>
-      <text x="600" y="612" class="evidence">Guardian beast in the doorway · ch. 367</text>
     {/if}
   </g>
 </svg>

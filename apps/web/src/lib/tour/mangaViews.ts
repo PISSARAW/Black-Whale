@@ -9,6 +9,18 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
  * The walk can jump the visitor here so they see exactly what the drawing shows.
  */
 export const MANGA_VIEWS: MangaView[] = [
+  {
+    id: 'supreme-court-camilla-hearing',
+    chapter: 379,
+    space: 'tier-1-supreme-court',
+    label: 'Supreme Court hearing regarding the arrest of Prince Camilla',
+    labelFr: "Audience de la Cour suprême concernant l'arrestation de la Princesse Camilla",
+    camera: {
+      position: [98, 38.5, 3.5],
+      target: [118, 38.5, 1.0],
+      fov: 60,
+    },
+  },
   view({
     id: 'princes-burial-chamber-overhead',
     spaceId: 'tier-1-princes-burial-chamber-rotunda',

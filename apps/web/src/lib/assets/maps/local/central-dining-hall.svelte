@@ -178,7 +178,7 @@
   <rect x={x(14)} y={y(22)} width={0.8 * SCALE} height={3 * SCALE} class="vending" />
   <rect x={x(14)} y={y(25.2)} width={0.8 * SCALE} height={1.5 * SCALE} class="vending" />
 
-  <rect x={x(14)} y={y(28)} width={0.6 * SCALE} height={2.5 * SCALE} class="bench" />
+  <rect x={x(14)} y={y(28)} width={0.6 * SCALE} height={2.5 * SCALE} class="seat" />
   <rect
     role="button"
     tabindex="0"

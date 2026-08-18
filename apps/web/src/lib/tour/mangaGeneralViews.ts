@@ -7,17 +7,16 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     spaceId: 'tier-1-supreme-court',
     label: 'Supreme Court hearing regarding the arrest of Prince Camilla',
     labelFr: "Audience de la Cour suprême concernant l'arrestation de la Princesse Camilla",
-    at: [98, 3.5],
-    target: [118, 1.0],
+    at: [98, 38.5],
+    target: [118, 38.5],
     pitch: 0,
-    eyeHeight: 38.5,
     volume: 36,
   }),
   view({
     id: 'princes-burial-chamber-overhead',
     spaceId: 'tier-1-princes-burial-chamber-rotunda',
     at: [0, 0],
-    target: [0, 0],
+    target: [30, 26],
     pitch: -1.57, // overhead view (top-down)
     eyeHeight: 40,
     chapter: 383,
@@ -29,7 +28,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
   view({
     id: 'central-dining-hall-troupe',
     spaceId: 'tier-5-central-dining-hall',
-    at: [0, -10],
+    at: [30, 16],
     target: [0, 0],
     pitch: -0.4,
     eyeHeight: 5,
@@ -48,7 +47,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     at: [3, 1.2],
     target: [6, 0.5],
     pitch: -0.1,
-    eyeHeight: 3,
     volume: 34,
   }),
   view({
@@ -58,10 +56,9 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
     labelFr:
       'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
-    at: [-50, 1.5],
-    target: [-50, 1.5],
+    at: [-50, -5.5],
+    target: [-50, -3.5],
     pitch: 0,
-    eyeHeight: -5.5,
     volume: 34,
   }),
   view({

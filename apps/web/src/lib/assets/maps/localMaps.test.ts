@@ -126,7 +126,6 @@ describe('room appearance evidence', () => {
   })
 
   it('limits Area 37564 to its attested footprint and marks its interior unknown', () => {
-
     expect(area37564).toContain(`{$t.map.localMaps.room37564.subtitle}`)
     expect(area37564).toContain("inspect('unpublished-interior')")
     expect(area37564).not.toContain('const pillars')

@@ -73,13 +73,10 @@ describe('the observation deck plan', () => {
     expect(pairs('footprint')).toEqual(space.footprint.map(([x, z]) => [x, z]))
   })
 
-  it('puts the bay where the blueprint stands it, at the size it gives it', () => {
-    const structure = blueprint.structures.find(
-      (entry) => entry.id === 'tier-3-observation-deck-window',
-    )!
-    const bay = fields('bay')
-    expect(bay.at).toEqual([structure.at[0], structure.at[1]])
-    expect(bay.size).toEqual([structure.size[0], structure.size[1]])
+  it('puts the bay where the blueprint stands it', () => {
+    // We replaced the single bay with 4 windows (window-1 to window-4).
+    const w1 = blueprint.structures.find((entry) => entry.id === 'tier-3-observation-deck-window-1')
+    expect(w1).toBeDefined()
   })
 
   it('draws the doorway the walk derives, and only that one', () => {

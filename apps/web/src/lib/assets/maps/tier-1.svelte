@@ -494,10 +494,11 @@
     {
       id: 'tier-1-banquet-hall',
       region: 'banquet-hall',
-      points: '250.0,220.0 631.43,220.0 631.43,290.0 250.0,290.0',
+      points:
+        '250.0,220.0 631.43,220.0 631.43,290.0 365.71,290.0 365.71,278.57 348.57,278.57 348.57,290.0 250.0,290.0',
       label: 'Banquet Hall',
       size: 12,
-      at: [440.7, 259.0],
+      at: [441.3, 258.8],
       turned: false,
       through: false,
       inferred: false,
@@ -842,6 +843,17 @@
       turned: true,
       through: false,
       inferred: true,
+    },
+    {
+      id: 'tier-1-banquet-hall-vestibule',
+      region: 'banquet-hall',
+      points: '348.57,278.57 365.71,278.57 365.71,290.0 348.57,290.0',
+      label: '',
+      size: 0,
+      at: [357.1, 284.3],
+      turned: false,
+      through: false,
+      inferred: false,
     },
   ]
 

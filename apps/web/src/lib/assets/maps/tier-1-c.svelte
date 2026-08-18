@@ -32,7 +32,7 @@
       id: 'tier-1-queens-corridor',
       region: 'queens-living-quarters',
       points: '414.0,310.0 431.0,310.0 431.0,460.0 414.0,460.0',
-      label: "Queens' Quarters Corridor",
+      label: 'Queens\' Quarters Corridor',
       size: 9,
       at: [422.5, 388.0],
       turned: true,

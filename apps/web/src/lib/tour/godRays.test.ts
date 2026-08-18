@@ -50,7 +50,12 @@ describe('where the light is taken to come from', () => {
 describe('which decks have shafts at all', () => {
   it('finds the observation-deck opening the manga draws, and no second', () => {
     const found = [...ship.plans.values()].flatMap((plan) => shaftAnchors(plan))
-    expect(found.map((anchor) => anchor.structureId)).toEqual(['tier-3-observation-deck-window'])
+    expect(found.map((anchor) => anchor.structureId)).toEqual([
+      'tier-3-observation-deck-window-1',
+      'tier-3-observation-deck-window-2',
+      'tier-3-observation-deck-window-3',
+      'tier-3-observation-deck-window-4',
+    ])
   })
 
   it('leaves every other deck without one', () => {

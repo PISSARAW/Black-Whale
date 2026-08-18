@@ -1565,7 +1565,7 @@
       at: [459.4, 502.6],
       cut: false,
       through: true,
-      inferred: false,
+      inferred: true,
     },
     {
       id: 'tier-5-service-corridor-aft',
@@ -1581,7 +1581,7 @@
       at: [552.1, 502.6],
       cut: false,
       through: true,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-burial-passage',

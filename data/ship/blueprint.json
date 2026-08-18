@@ -41888,6 +41888,182 @@
       "provenance": "panel",
       "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
       "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-north-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Top)",
+      "nameFr": "Banc VIP (Haut)",
+      "at": [
+        29.5,
+        34.2
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-north-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Bottom)",
+      "nameFr": "Banc VIP (Bas)",
+      "at": [
+        29.5,
+        26.8
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-north-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Left)",
+      "nameFr": "Banc VIP (Gauche)",
+      "at": [
+        26.3,
+        30.5
+      ],
+      "size": [
+        0.4,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-north-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Right)",
+      "nameFr": "Banc VIP (Droite)",
+      "at": [
+        32.7,
+        30.5
+      ],
+      "size": [
+        0.4,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-south-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Top)",
+      "nameFr": "Banc VIP (Haut)",
+      "at": [
+        29.5,
+        25.2
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-south-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Bottom)",
+      "nameFr": "Banc VIP (Bas)",
+      "at": [
+        29.5,
+        17.8
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-south-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Left)",
+      "nameFr": "Banc VIP (Gauche)",
+      "at": [
+        26.3,
+        21.5
+      ],
+      "size": [
+        0.4,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
+    },
+    {
+      "id": "tier-5-central-dining-hall-platform-south-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "VIP Bench (Right)",
+      "nameFr": "Banc VIP (Droite)",
+      "at": [
+        32.7,
+        21.5
+      ],
+      "size": [
+        0.4,
+        7
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Central VIP tables are surrounded by benches on all sides.",
+      "sourceFr": "Chap. 377 \u2014 Les tables centrales VIP sont entour\u00e9es de bancs de tous les c\u00f4t\u00e9s."
     }
   ]
 }

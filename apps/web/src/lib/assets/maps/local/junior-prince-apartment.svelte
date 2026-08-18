@@ -142,7 +142,9 @@
     </pattern>
   </defs>
 
-  <text x="400" y="42" class="title">{$t.map.localMaps.juniorPrinceApartment.title(roomNumber)}</text>
+  <text x="400" y="42" class="title"
+    >{$t.map.localMaps.juniorPrinceApartment.title(roomNumber)}</text
+  >
   <text x="400" y="70" class="source">Chap. 368 · rooms 1011 to 1014 cutaway</text>
   <rect x="50" y="100" width="700" height="600" class="outer" />
 
@@ -174,7 +176,11 @@
     <text x="130" y="180" class="sublabel">Canopy bed</text>
   {/if}
 
-  <text x="400" y="742" class="caption">{$t.map.localMaps.juniorPrinceApartment.layoutNote(layout.note)}</text>
-  <text x="400" y="764" class="source">{$t.map.localMaps.juniorPrinceApartment.layoutEvidence(layout.evidence)}</text>
+  <text x="400" y="742" class="caption"
+    >{$t.map.localMaps.juniorPrinceApartment.layoutNote(layout.note)}</text
+  >
+  <text x="400" y="764" class="source"
+    >{$t.map.localMaps.juniorPrinceApartment.layoutEvidence(layout.evidence)}</text
+  >
   <text x="400" y="786" class="source">Unlabeled functions: undetermined.</text>
 </svg>

@@ -38,4 +38,4 @@ export const enLocalMaps = {
     layoutNote: (note: string) => note,
     layoutEvidence: (evidence: string) => evidence,
   },
-};
+}

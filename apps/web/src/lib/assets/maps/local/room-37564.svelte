@@ -51,7 +51,9 @@
     </style>
   </defs>
 
-  <text x="500" y="38" class="label" font-size="25" fill="#ffd700">{$t.map.localMaps.room37564.title}</text>
+  <text x="500" y="38" class="label" font-size="25" fill="#ffd700"
+    >{$t.map.localMaps.room37564.title}</text
+  >
   <text x="500" y="62" class="sub">{$t.map.localMaps.room37564.subtitle}</text>
 
   <rect
@@ -67,7 +69,9 @@
     onkeydown={activate}
   />
   <rect x={x(-91.5)} y={y(14.2)} width={22 * SCALE} height={10.1 * SCALE} class="unknown" />
-  <text x="500" y="295" class="label" font-size="30" opacity="0.24">{$t.map.localMaps.room37564.zone}</text>
+  <text x="500" y="295" class="label" font-size="30" opacity="0.24"
+    >{$t.map.localMaps.room37564.zone}</text
+  >
   <text x="500" y="330" class="sub"
     >Aucun mobilier ni détail de plafond attesté dans les tomes 34–36</text
   >

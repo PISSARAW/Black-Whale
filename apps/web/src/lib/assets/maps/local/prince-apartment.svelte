@@ -82,10 +82,10 @@
   </defs>
 
   <text x="400" y="30" class="label" font-size="28" fill="#FFD700"
-    >{$t.map.localMaps.princeApartment.title(roomNumber)}</text>
+    >{$t.map.localMaps.princeApartment.title(roomNumber)}</text
+  >
   <text x="400" y="53" class="evidence">{$t.map.localMaps.princeApartment.programmeType}</text>
-  <text x="400" y="70" class="evidence"
-    >{$t.map.localMaps.princeApartment.unpublished}</text>
+  <text x="400" y="70" class="evidence">{$t.map.localMaps.princeApartment.unpublished}</text>
 
   <g transform="translate(50, 82)">
     <!-- Outer boundary -->
@@ -113,7 +113,9 @@
       points="0,250 400,250 400,350 700,350 700,530 0,530"
       onclick={() => handleElementClick('living')}
     />
-    <text x="250" y="390" class="label" font-size="24">{$t.map.localMaps.princeApartment.living}</text>
+    <text x="250" y="390" class="label" font-size="24"
+      >{$t.map.localMaps.princeApartment.living}</text
+    >
     {#if !['1001', '1002', '1004', '1007', '1009', '1010'].includes(roomNumber)}
       <rect x="300" y="350" width="80" height="60" class="furniture" />
       <!-- Default programme-type table; removed where a panel contradicts it. -->
@@ -268,7 +270,9 @@
       <!-- Reception room seen in ch. 363 and 366. -->
       <!-- Large central conference table for the guards briefing -->
       <rect x="150" y="340" width="260" height="90" rx="3" class="fixed" />
-      <text x="280" y="390" class="sublabel">{$t.map.localMaps.princeApartment.largeConference}</text>
+      <text x="280" y="390" class="sublabel"
+        >{$t.map.localMaps.princeApartment.largeConference}</text
+      >
 
       <rect x="70" y="270" width="150" height="18" class="fixed" />
       <text x="145" y="310" class="sublabel">{$t.map.localMaps.princeApartment.largePainting}</text>
@@ -300,10 +304,13 @@
       <rect x="40" y="265" width="110" height="14" class="fixed" />
       <rect x="165" y="265" width="110" height="14" class="fixed" />
       <rect x="290" y="265" width="90" height="14" class="fixed" />
-      <text x="220" y="390" class="sublabel">{$t.map.localMaps.princeApartment.deskWhiteboards}</text>
+      <text x="220" y="390" class="sublabel"
+        >{$t.map.localMaps.princeApartment.deskWhiteboards}</text
+      >
     {:else if roomNumber === '1006'}
       <!-- Room confirmed; birthday decoration is temporary. -->
-      <text x="350" y="395" class="sublabel">{$t.map.localMaps.princeApartment.largeReception}</text>
+      <text x="350" y="395" class="sublabel">{$t.map.localMaps.princeApartment.largeReception}</text
+      >
       <text x="350" y="417" class="evidence">{$t.map.localMaps.princeApartment.cakeAndGifts}</text>
     {:else if roomNumber === '1007'}
       <!-- Recurring cluttered salon in ch. 386 and 389. -->
@@ -313,7 +320,8 @@
       <rect x="440" y="295" width="120" height="20" class="fixed" />
       <circle cx="95" cy="330" r="22" class="fixed" />
       <circle cx="580" cy="330" r="22" class="fixed" />
-      <text x="350" y="500" class="sublabel">{$t.map.localMaps.princeApartment.clutteredSalon}</text>
+      <text x="350" y="500" class="sublabel">{$t.map.localMaps.princeApartment.clutteredSalon}</text
+      >
     {:else if roomNumber === '1008'}
       <!-- Festive bedroom confirmed in ch. 362, 366 and 382. -->
       <rect x="20" y="550" width="225" height="110" rx="10" class="fixed" />

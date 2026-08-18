@@ -40526,50 +40526,6 @@
       "sourceFr": "Chap. 359"
     },
     {
-      "id": "tier-5-central-dining-hall-service-counter",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "counter",
-      "name": "Continuous Service Counter",
-      "nameFr": "Comptoir de service continu",
-      "at": [
-        14.6,
-        26.25
-      ],
-      "size": [
-        1.2,
-        25
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 1.05,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-menu-board",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "painting",
-      "name": "Service Menu Boards",
-      "nameFr": "Panneaux de menu du service",
-      "at": [
-        14.7,
-        26.25
-      ],
-      "size": [
-        0.3,
-        24
-      ],
-      "rotation": 0,
-      "base": 2.15,
-      "height": 1.1,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
       "id": "tier-5-central-dining-hall-platform-north",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "table",
@@ -40666,50 +40622,6 @@
       "at": [
         20,
         22
-      ],
-      "size": [
-        6,
-        1
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-3",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        20,
-        25
-      ],
-      "size": [
-        6,
-        1
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-4",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        20,
-        28
       ],
       "size": [
         6,
@@ -40856,50 +40768,6 @@
       "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
     },
     {
-      "id": "tier-5-central-dining-hall-table-east-3",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        40.5,
-        25
-      ],
-      "size": [
-        7,
-        1
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-east-4",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        40.5,
-        28
-      ],
-      "size": [
-        7,
-        1
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
       "id": "tier-5-central-dining-hall-table-east-5",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "table",
@@ -40988,28 +40856,6 @@
       "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
     },
     {
-      "id": "tier-5-central-dining-hall-table-north-1",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        29.5,
-        39.5
-      ],
-      "size": [
-        1,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
       "id": "tier-5-central-dining-hall-table-north-2",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "table",
@@ -41039,28 +40885,6 @@
       "nameFr": "Table basse de r\u00e9fectoire",
       "at": [
         27,
-        13
-      ],
-      "size": [
-        1,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-south-1",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "table",
-      "name": "Low Refectory Table",
-      "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [
-        29.5,
         13
       ],
       "size": [
@@ -41304,94 +41128,6 @@
       "at": [
         20,
         21.3
-      ],
-      "size": [
-        6,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-3-bench-top",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        20,
-        25.7
-      ],
-      "size": [
-        6,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-3-bench-bottom",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        20,
-        24.3
-      ],
-      "size": [
-        6,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-4-bench-top",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        20,
-        28.7
-      ],
-      "size": [
-        6,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-west-4-bench-bottom",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        20,
-        27.3
       ],
       "size": [
         6,
@@ -41670,94 +41406,6 @@
       "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
     },
     {
-      "id": "tier-5-central-dining-hall-table-east-3-bench-top",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        40.5,
-        25.7
-      ],
-      "size": [
-        7,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-east-3-bench-bottom",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        40.5,
-        24.3
-      ],
-      "size": [
-        7,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-east-4-bench-top",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        40.5,
-        28.7
-      ],
-      "size": [
-        7,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-east-4-bench-bottom",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        40.5,
-        27.3
-      ],
-      "size": [
-        7,
-        0.4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
       "id": "tier-5-central-dining-hall-table-east-5-bench-top",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "seat",
@@ -41934,50 +41582,6 @@
       "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
     },
     {
-      "id": "tier-5-central-dining-hall-table-north-1-bench-left",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        28.8,
-        39.5
-      ],
-      "size": [
-        0.4,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-north-1-bench-right",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        30.2,
-        39.5
-      ],
-      "size": [
-        0.4,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
       "id": "tier-5-central-dining-hall-table-north-2-bench-left",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "seat",
@@ -42066,50 +41670,6 @@
       "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
     },
     {
-      "id": "tier-5-central-dining-hall-table-south-1-bench-left",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        28.8,
-        13
-      ],
-      "size": [
-        0.4,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
-      "id": "tier-5-central-dining-hall-table-south-1-bench-right",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "seat",
-      "name": "Bench",
-      "nameFr": "Banc",
-      "at": [
-        30.2,
-        13
-      ],
-      "size": [
-        0.4,
-        4
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.45,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
-      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
-    },
-    {
       "id": "tier-5-central-dining-hall-table-south-2-bench-left",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "seat",
@@ -42152,6 +41712,94 @@
       "provenance": "panel",
       "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
       "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-service-counter-south",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "counter",
+      "name": "Service Counter (South)",
+      "nameFr": "Comptoir de service (Sud)",
+      "at": [
+        14.6,
+        19.125
+      ],
+      "size": [
+        1.2,
+        10.75
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.05,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-service-counter-north",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "counter",
+      "name": "Service Counter (North)",
+      "nameFr": "Comptoir de service (Nord)",
+      "at": [
+        14.6,
+        33.375
+      ],
+      "size": [
+        1.2,
+        10.75
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.05,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-menu-board-south",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "painting",
+      "name": "Service Menu Boards (South)",
+      "nameFr": "Panneaux de menu du service (Sud)",
+      "at": [
+        14.7,
+        19.125
+      ],
+      "size": [
+        0.3,
+        10.75
+      ],
+      "rotation": 0,
+      "base": 2.15,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-menu-board-north",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "painting",
+      "name": "Service Menu Boards (North)",
+      "nameFr": "Panneaux de menu du service (Nord)",
+      "at": [
+        14.7,
+        33.375
+      ],
+      "size": [
+        0.3,
+        10.75
+      ],
+      "rotation": 0,
+      "base": 2.15,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
     }
   ]
 }

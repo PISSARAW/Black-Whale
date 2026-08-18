@@ -1,3 +1,4 @@
+import { frLocalMaps } from './localMapsFr'
 import type { Messages } from './types'
 
 /**
@@ -3253,6 +3254,7 @@ export const fr: Messages = {
   },
 
   map: {
+    localMaps: frLocalMaps,
     unknownBody: 'Corps inconnu',
     outsideTier: 'Hors des ponts',
     unknownPosition: 'Position inconnue',

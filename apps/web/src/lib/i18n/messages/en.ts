@@ -1,3 +1,4 @@
+import { enLocalMaps } from './localMapsEn'
 /**
  * The English message catalogue. It is the source of truth for the shape of
  * every other locale: `fr.ts` is typed against it, so a missing or misspelled
@@ -3464,6 +3465,7 @@ export const en = {
   },
 
   map: {
+    localMaps: enLocalMaps,
     unknownBody: 'Unknown body',
     outsideTier: 'Outside tier',
     unknownPosition: 'Unknown position',

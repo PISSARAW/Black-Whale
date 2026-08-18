@@ -126,11 +126,6 @@ describe('room appearance evidence', () => {
   })
 
   it('limits Area 37564 to its attested footprint and marks its interior unknown', () => {
-    const space = blueprint.spaces.find((entry) => entry.id === 'tier-5-area-37564')!
-    const xs = space.footprint.map(([x]) => x)
-    const zs = space.footprint.map(([, z]) => z)
-    const width = Math.max(...xs) - Math.min(...xs)
-    const depth = Math.max(...zs) - Math.min(...zs)
 
     expect(area37564).toContain(`{$t.map.localMaps.room37564.subtitle}`)
     expect(area37564).toContain("inspect('unpublished-interior')")

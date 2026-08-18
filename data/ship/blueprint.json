@@ -40570,94 +40570,6 @@
       "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
     },
     {
-      "id": "tier-5-central-dining-hall-pillar-nw",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "pillar",
-      "name": "Concrete Pillar",
-      "nameFr": "Pilier en b\u00e9ton",
-      "at": [
-        24,
-        37
-      ],
-      "size": [
-        2,
-        2
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 9,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-pillar-ne",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "pillar",
-      "name": "Concrete Pillar",
-      "nameFr": "Pilier en b\u00e9ton",
-      "at": [
-        35,
-        37
-      ],
-      "size": [
-        2,
-        2
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 9,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-pillar-sw",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "pillar",
-      "name": "Concrete Pillar",
-      "nameFr": "Pilier en b\u00e9ton",
-      "at": [
-        24,
-        15
-      ],
-      "size": [
-        2,
-        2
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 9,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
-      "id": "tier-5-central-dining-hall-pillar-se",
-      "spaceId": "tier-5-central-dining-hall",
-      "kind": "pillar",
-      "name": "Concrete Pillar",
-      "nameFr": "Pilier en b\u00e9ton",
-      "at": [
-        35,
-        15
-      ],
-      "size": [
-        2,
-        2
-      ],
-      "rotation": 0,
-      "base": 0,
-      "height": 9,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
-      "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
-    },
-    {
       "id": "tier-5-central-dining-hall-platform-north",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "platform",
@@ -41272,6 +41184,974 @@
       "provenance": "panel",
       "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
       "sourceFr": "Chap. 377 \u2014 Am\u00e9nagement d\u00e9taill\u00e9 bas\u00e9 sur les indices visuels : Comptoir \u00e0 l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orient\u00e9es selon les zones (Ouest/Est \u00e0 l'horizontale, Nord/Sud \u00e0 la verticale)."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-0-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        16.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-0-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        15.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-1-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        19.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-1-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        18.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-2-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        22.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-2-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        21.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-3-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        25.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-3-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        24.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-4-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        28.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-4-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        27.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-5-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        31.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-5-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        30.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-6-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        34.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-6-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        33.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-7-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        37.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-7-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        36.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-0-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        16.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-0-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        15.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-1-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        19.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-1-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        18.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-2-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        22.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-2-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        21.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-3-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        25.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-3-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        24.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-4-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        28.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-4-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        27.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-5-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        31.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-5-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        30.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-6-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        34.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-6-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        33.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-7-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        37.7
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-east-7-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        40.5,
+        36.3
+      ],
+      "size": [
+        7,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-0-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        26.3,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-0-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        27.7,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-1-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        28.8,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-1-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        30.2,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-2-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        31.3,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-north-2-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        32.7,
+        39.5
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-0-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        26.3,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-0-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        27.7,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-1-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        28.8,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-1-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        30.2,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-2-bench-left",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        31.3,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-south-2-bench-right",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        32.7,
+        13
+      ],
+      "size": [
+        0.4,
+        4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.25,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs.",
+      "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
     }
   ]
 }

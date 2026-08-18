@@ -42,7 +42,7 @@ jobs:
       # No `version:` here on purpose. The action reads the `packageManager`
       # field in package.json, and pinning a second version makes it refuse to
       # run at all rather than pick one.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.9
 
       - uses: actions/setup-node@v4
         with:
@@ -173,7 +173,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.9
       - uses: actions/setup-node@v4
         with:
           node-version: 20

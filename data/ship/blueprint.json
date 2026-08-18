@@ -10616,11 +10616,11 @@
       "id": "tier-5-service-corridor-forward",
       "tierId": "tier-5",
       "locationId": null,
-      "name": "Passage to the Great Refectory",
-      "nameFr": "Couloir de passage vers le grand r\u00e9fectoire",
+      "name": "Service Corridor (forward)",
+      "nameFr": "Couloir de service (avant)",
       "category": "corridor",
       "provenance": "panel",
-      "source": "Ch. 371 \u2014 captioned in the panel as the passage to the great refectory: a gang has thrown a scaffold of pipes across it and charges 5 000 jenis to pass, passengers camp down both walls with what they own, a lit sign hangs over the run, and the stall the Buor clan watches trades out of its crates beside them. Which of the hall's two ends the caption means is not said; the reconstruction puts it at the forward one, and the aft corridor stays what it was.",
+      "source": "Reconstructed as the staff area behind the West service counter.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -10641,17 +10641,17 @@
           42
         ]
       ],
-      "sourceFr": "Chap. 371 \u2014 l\u00e9gend\u00e9 dans la planche comme le couloir de passage vers le grand r\u00e9fectoire : une bande y a dress\u00e9 un \u00e9chafaudage de tubes et fait payer 5 000 jenis le passage, des passagers campent le long des deux parois avec ce qu'ils poss\u00e8dent, un panneau lumineux pend au-dessus, et l'\u00e9tal que surveille le clan Buor vend depuis ses caisses \u00e0 c\u00f4t\u00e9. La l\u00e9gende ne dit pas lequel des deux bouts de la salle elle d\u00e9signe ; la reconstruction le place \u00e0 l'avant, et le couloir arri\u00e8re reste ce qu'il \u00e9tait."
+      "sourceFr": "Reconstruit comme l'arri\u00e8re-cuisine derri\u00e8re le comptoir Ouest."
     },
     {
       "id": "tier-5-service-corridor-aft",
       "tierId": "tier-5",
       "locationId": null,
-      "name": "Service Corridor (aft)",
-      "nameFr": "Couloir de service (arri\u00e8re)",
+      "name": "Passage to the Great Refectory",
+      "nameFr": "Couloir de passage vers le grand r\u00e9fectoire",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "source": "Ch. 371 \u2014 captioned in the panel as the passage to the great refectory: a gang has thrown a scaffold of pipes across it and charges 5 000 jenis to pass. Placed at the aft (East) end because the forward (West) end is occupied by the service counter.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -10672,7 +10672,7 @@
           42
         ]
       ],
-      "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
+      "sourceFr": "Chap. 371 \u2014 l\u00e9gend\u00e9 dans la planche comme le couloir de passage vers le grand r\u00e9fectoire. Plac\u00e9 \u00e0 l'arri\u00e8re (Est) car l'avant (Ouest) est occup\u00e9 par le comptoir de service."
     },
     {
       "id": "tier-5-aft-corridor",

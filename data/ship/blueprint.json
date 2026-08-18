@@ -41714,92 +41714,180 @@
       "sourceFr": "Chap. 377 \u2014 Les tables sont \u00e9quip\u00e9es de bancs."
     },
     {
-      "id": "tier-5-central-dining-hall-service-counter-south",
+      "id": "tier-5-central-dining-hall-service-counter",
       "spaceId": "tier-5-central-dining-hall",
       "kind": "counter",
-      "name": "Service Counter (South)",
-      "nameFr": "Comptoir de service (Sud)",
+      "name": "Continuous Service Counter",
+      "nameFr": "Comptoir de service continu",
       "at": [
         14.6,
-        19.125
+        26.25
       ],
       "size": [
         1.2,
-        10.75
+        25
       ],
       "rotation": 0,
       "base": 0,
       "height": 1.05,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
-      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
     },
     {
-      "id": "tier-5-central-dining-hall-service-counter-north",
+      "id": "tier-5-central-dining-hall-menu-board",
       "spaceId": "tier-5-central-dining-hall",
-      "kind": "counter",
-      "name": "Service Counter (North)",
-      "nameFr": "Comptoir de service (Nord)",
+      "kind": "painting",
+      "name": "Service Menu Boards",
+      "nameFr": "Panneaux de menu du service",
       "at": [
-        14.6,
-        33.375
+        14.7,
+        26.25
       ],
       "size": [
-        1.2,
-        10.75
+        0.3,
+        24
+      ],
+      "rotation": 0,
+      "base": 2.15,
+      "height": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-3",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table",
+      "nameFr": "Table de r\u00e9fectoire",
+      "at": [
+        20,
+        25
+      ],
+      "size": [
+        6,
+        1
       ],
       "rotation": 0,
       "base": 0,
-      "height": 1.05,
+      "height": 0.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
-      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
     },
     {
-      "id": "tier-5-central-dining-hall-menu-board-south",
+      "id": "tier-5-central-dining-hall-table-west-3-bench-top",
       "spaceId": "tier-5-central-dining-hall",
-      "kind": "painting",
-      "name": "Service Menu Boards (South)",
-      "nameFr": "Panneaux de menu du service (Sud)",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
       "at": [
-        14.7,
-        19.125
+        20,
+        25.7
       ],
       "size": [
-        0.3,
-        10.75
+        6,
+        0.4
       ],
       "rotation": 0,
-      "base": 2.15,
-      "height": 1.1,
+      "base": 0,
+      "height": 0.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
-      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
     },
     {
-      "id": "tier-5-central-dining-hall-menu-board-north",
+      "id": "tier-5-central-dining-hall-table-west-3-bench-bottom",
       "spaceId": "tier-5-central-dining-hall",
-      "kind": "painting",
-      "name": "Service Menu Boards (North)",
-      "nameFr": "Panneaux de menu du service (Nord)",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
       "at": [
-        14.7,
-        33.375
+        20,
+        24.3
       ],
       "size": [
-        0.3,
-        10.75
+        6,
+        0.4
       ],
       "rotation": 0,
-      "base": 2.15,
-      "height": 1.1,
+      "base": 0,
+      "height": 0.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 377 \u2014 Counter split to allow passage from the West service corridor.",
-      "sourceFr": "Chap. 377 \u2014 Comptoir s\u00e9par\u00e9 en deux pour permettre le passage depuis le couloir de service Ouest."
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-4",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "table",
+      "name": "Refectory Table",
+      "nameFr": "Table de r\u00e9fectoire",
+      "at": [
+        20,
+        28
+      ],
+      "size": [
+        6,
+        1
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-4-bench-top",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        28.7
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
+    },
+    {
+      "id": "tier-5-central-dining-hall-table-west-4-bench-bottom",
+      "spaceId": "tier-5-central-dining-hall",
+      "kind": "seat",
+      "name": "Bench",
+      "nameFr": "Banc",
+      "at": [
+        20,
+        27.3
+      ],
+      "size": [
+        6,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.45,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Continuous service counter on West wall.",
+      "sourceFr": "Chap. 377 \u2014 Comptoir de service continu sur le mur Ouest."
     }
   ]
 }

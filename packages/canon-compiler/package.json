@@ -43,7 +43,7 @@
     "@black-whale/contracts": "workspace:*",
     "@black-whale/domain": "workspace:*",
     "@black-whale/nen-engine": "workspace:*",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^7.9.1",
     "prettier": "^3.0.0"
   },
   "devDependencies": {

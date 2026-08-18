@@ -132,8 +132,7 @@ describe('room appearance evidence', () => {
     const width = Math.max(...xs) - Math.min(...xs)
     const depth = Math.max(...zs) - Math.min(...zs)
 
-    expect(area37564).toContain(`${width} × ${depth} m`)
-    expect(area37564).toContain('intérieur non publié')
+    expect(area37564).toContain(`{$t.map.localMaps.room37564.subtitle}`)
     expect(area37564).toContain("inspect('unpublished-interior')")
     expect(area37564).not.toContain('const pillars')
     expect(

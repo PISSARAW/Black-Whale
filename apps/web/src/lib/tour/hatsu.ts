@@ -1,5 +1,5 @@
-export * from './cast/types'
 export * from './cast/kinds'
+export * from './cast/types'
 /**
  * Nen inside the walk: what a Hatsu does to the ship rather than to the page.
  *
@@ -21,74 +21,74 @@ export * from './cast/kinds'
  * Nothing here imports three.js or touches the DOM: the world is a value, and
  * `TourScene` is the only thing that knows how to draw it.
  */
-import { ceilingOf, type Ship, type TierPlan } from './blueprint'
-import {
-  blocksTheFloor,
-  columnWalls,
-  deriveDoorways,
-  pointInPolygon,
-  sealKey,
-  structureFootprint,
-  structureWalls,
-  wallSegments,
-} from './geometry'
-import type { Polygon, Space, Structure, Vec2, WallSegment } from './types'
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
+import { ceilingOf, type Ship, type TierPlan } from './blueprint'
+import {
+    blocksTheFloor,
+    centroid,
+    columnWalls,
+    deriveDoorways,
+    distanceTo,
+    pointInPolygon,
+    sealKey,
+    structureFootprint,
+    structureWalls,
+    wallSegments,
+    wanderOffset,
+} from './geometry'
+import type { Polygon, Space, Structure, Vec2, WallSegment } from './types'
 // The shapes the walk casts on live in `cast/types.ts`; line 1 re-exports them
 // for everyone who reads them off `hatsu`, and this brings them into scope for
 // the reducers below, which is a different thing and needs saying separately.
 import {
-  CLOSED_BOOK,
-  EMPTY_WORLD,
-  type Aim,
-  type DeckMoment,
-  type Doors,
-  type DoorOptions,
-  type Heading,
-  type HeldSolid,
-  type LoadedDeck,
-  type Mark,
-  type Perch,
-  type Played,
-  type Ray,
-  type Scene,
-  type SolidHold,
-  type Stood,
-  type TourBody,
-  type TourBook,
-  type TourCastInput,
-  type TourCastResult,
-  type TourReport,
-  type TourWorld,
-  type VowState,
-} from './cast/types'
-import {
-  aimsAtSolids,
-  BODY_HATSU_KINDS,
-  EITHER_TARGET,
-  OWL_FILM_SECONDS,
-  OWL_SECONDS,
-  ROOM_OR_BODY,
-  SOLID_HATSU_KINDS,
-  worksInTour,
-  worksOnTheBody,
+    aimsAtSolids,
+    BODY_HATSU_KINDS,
+    EITHER_TARGET,
+    OWL_FILM_SECONDS,
+    OWL_SECONDS,
+    ROOM_OR_BODY,
+    SOLID_HATSU_KINDS,
+    worksInTour,
+    worksOnTheBody,
 } from './cast/kinds'
+import { bodyAfterAuraEnds, paceOf } from './cast/pain'
+import {
+    CLOSED_BOOK,
+    EMPTY_WORLD,
+    type DeckMoment,
+    type DoorOptions,
+    type Doors,
+    type Heading,
+    type HeldSolid,
+    type LoadedDeck,
+    type Played,
+    type SolidHold,
+    type Stood,
+    type TourBody,
+    type TourBook,
+    type TourCastInput,
+    type TourCastResult,
+    type TourReport,
+    type TourWorld,
+    type VowState
+} from './cast/types'
+import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
+import { FLOCK_BIRDS, FLOCK_PER_ROOM, FLOCK_ROOMS } from "./effects"
+import { eyesTurn } from './emperor'
 import { aimGum, gumLanding, gumTension } from './gum'
 import { punchRuns } from './punch'
-import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
-import { nextForgery, nextSign, takesAMask } from './texture'
-import { eyesTurn } from './emperor'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
-import { bodyAfterAuraEnds, paceOf } from './cast/pain'
+import { perchFor } from "./targeting"
+import { nextForgery, nextSign, takesAMask } from './texture'
 
 export {
-  injuryPace,
-  MAX_TOUR_INJURY,
-  paceOf,
-  selfInflictTourInjury,
-  TOUR_INJURY_DAMAGE,
-  type TourInjurySeverity,
+    injuryPace,
+    MAX_TOUR_INJURY,
+    paceOf,
+    selfInflictTourInjury,
+    TOUR_INJURY_DAMAGE,
+    type TourInjurySeverity
 } from './cast/pain'
 
 /**
@@ -215,76 +215,6 @@ export const boundSolidIds = (world: TourWorld): string[] =>
   Object.entries(world.solids)
     .filter(([, hold]) => hold.bound && !hold.gone)
     .map(([id]) => id)
-
-/**
- * A solid Biohazard woke up does not stand still.
- *
- * The drift is a circle, and it is computed rather than stored so the collision
- * test and the renderer can each ask for it at the same instant and get the
- * same answer. The phase comes off the id, so two animated solids in one room
- * are never in step.
- */
-export function wanderOffset(id: string, seconds: number): Vec2 {
-  let phase = 0
-  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
-  const angle = seconds * 0.6 + (phase * Math.PI) / 180
-  return [Math.cos(angle) * 1.4, Math.sin(angle) * 1.4]
-}
-
-/**
- * Where a solid the lively air took hold of is, this instant.
- *
- * A hop and a small sway about where it stands, computed rather than stored for
- * the reason the wander is, and off the same hash — so two things dancing in
- * one room are never in step, and the same thing dances the same way twice.
- *
- * The sway is deliberately narrower than a hand: the collision test does not
- * read this, so a dancing table still stops the visitor exactly where the table
- * stands, and anything wider would be a thing that had left its own floor.
- */
-export function danceOffset(id: string, seconds: number): [number, number, number] {
-  let phase = 0
-  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
-  const beat = seconds * 3.4 + (phase * Math.PI) / 180
-  // Off the floor and down again — the rise is `abs`, because a thing that
-  // dropped as far below its floor as it rose above it is a thing falling
-  // through the deck.
-  return [Math.sin(beat * 0.5) * 0.12, Math.abs(Math.sin(beat)) * 0.24, Math.cos(beat * 0.5) * 0.12]
-}
-
-/**
- * Where a thing the jellyfish has off the deck is, this instant.
- *
- * Nothing like the dance, which is a hop on the spot: this is a thing with no
- * floor under it any more, so it climbs, drifts and turns, and the three are on
- * periods that do not divide into each other — a room the beast has hold of
- * never comes back round to the arrangement it started in.
- *
- * The rise is the tell. A quarter of a metre of hop reads as dancing; a metre
- * and a half of it, with the thing turning as it goes, reads as a room whose
- * contents have stopped obeying the deck. The phase is off the id, as
- * everywhere else here, so twenty things in one room go up in their own time
- * and the same room lifts the same way twice.
- *
- * The fourth number is the turn, in radians: `driftSolids` needs it, and a
- * levitating table that kept its bearing would be a table on an invisible lift.
- */
-export function driftOffset(id: string, seconds: number): [number, number, number, number] {
-  let phase = 0
-  for (let i = 0; i < id.length; i++) phase = (phase * 31 + id.charCodeAt(i)) % 360
-  const own = (phase * Math.PI) / 180
-  // Up and held up: the rise is an offset sine about a metre off the deck
-  // rather than one that touches down, because a thing that came back to the
-  // floor every few seconds is a thing being bounced rather than one adrift.
-  const rise = 1.05 + Math.sin(seconds * 0.5 + own) * 0.45
-  return [
-    Math.sin(seconds * 0.37 + own) * 0.9,
-    rise,
-    Math.sin(seconds * 0.29 + own * 1.7) * 0.9,
-    seconds * 0.33 + own,
-  ]
-}
-
 /**
  * The three things Padaille's arm can turn out to be.
  *
@@ -409,190 +339,6 @@ export function settleTheRoom(world: TourWorld, ship: Ship, spaceId: string): To
     else delete solids[solid.id]
   }
   return { ...world, solids }
-}
-
-/**
- * How many steps of the gas a thing survives, and how far down each one takes it.
- *
- * Four stages counting the one the cast starts them at: gas in the room and
- * nothing showing yet, then two-thirds of its own height, then a third, then a
- * puddle, and then it is not there. The numbers are `squash` multipliers, so
- * the melt costs the walk nothing it was not already able to draw.
- */
-export const MELT_STAGES = [1, 0.62, 0.3, 0.12]
-
-/**
- * One tick of Tubeppa's gas, on the walk's clock rather than on a cast.
- *
- * The scene asks for this every couple of seconds while the beast is up, the
- * way it asks for the fish. Everything in the beast's room that has not
- * finished melting goes down one stage; anything that has reached the bottom is
- * gone. Rooms the beast has left are not touched — the gas stopped being made
- * the moment it walked out, and what it had already taken it keeps.
- */
-export function gasStep(world: TourWorld, ship: Ship): TourCastResult | null {
-  if (!world.toad) return null
-  const solids = { ...world.solids }
-  let melting = 0
-  let gone = 0
-  for (const solid of standingIn(ship, world, world.toad)) {
-    const hold = solids[solid.id]
-    if (hold?.melting === undefined) continue
-    const stage = hold.melting + 1
-    if (stage >= MELT_STAGES.length) {
-      solids[solid.id] = { ...hold, melting: stage, gone: true }
-      gone++
-      continue
-    }
-    solids[solid.id] = { ...hold, melting: stage, squash: MELT_STAGES[stage] }
-    melting++
-  }
-  if (!melting && !gone) return null
-  return {
-    world: { ...world, solids },
-    report: { kind: 'melted', spaceId: world.toad, melting, gone },
-  }
-}
-
-/**
- * How many steps Salé-salé's beast takes to fill a room.
- *
- * Six, which at the walk's own tick is somewhere near a quarter of a minute:
- * long enough that the filling is something you stand and watch happen, short
- * enough that nobody has to wait for the mouths to close.
- */
-export const SMOKE_FULL = 6
-
-/**
- * How far Momoze's flock spreads, and how thick it is where it has spread.
- *
- * Ten rooms is the snakes' own reach and is kept deliberately: it is the walk's
- * established answer to "near where you are standing" and a second number for
- * the same idea would be a second rule. Four to a room is a crowd without being
- * a census — forty beasts across a deck is plenty to walk into one, and the
- * fortieth says nothing the fourth did not.
- */
-export const FLOCK_ROOMS = 10
-export const FLOCK_PER_ROOM = 4
-
-/**
- * How many of Cluck's birds come when she calls them into one room.
- *
- * Not Momoze's number and not a count of the ability: the catalogue puts this
- * flock in the hundreds — six hundred ballots delivered — and six hundred
- * pigeons in a cabin is a room nobody can see across. Twelve is how many a
- * reconstruction can draw circling a person and still have each one be a bird
- * rather than a texture, which is the whole point of drawing them: under Gyo
- * each is a separate thread of aura, and a bundle you cannot count is not what
- * Gyo shows you. Staging, and named so it reads as staging.
- */
-export const FLOCK_BIRDS = 12
-
-/**
- * One step of the smoke, on the walk's clock rather than on a cast.
- *
- * The room takes one more part of what is coming out of the mouths, and when it
- * has taken the last one the beast shuts them: that is the whole of the
- * technique's shape, and it is the reason this counts up rather than simply
- * being on — a room that filled instantly would have no moment of being full.
- */
-export function smokeStep(world: TourWorld): TourCastResult | null {
-  const smoke = world.smoke
-  if (!smoke || smoke.filled >= SMOKE_FULL) return null
-  const filled = smoke.filled + 1
-  return {
-    world: { ...world, smoke: { ...smoke, filled } },
-    report: {
-      kind: 'smoke-spread',
-      spaceId: smoke.spaceId,
-      filled,
-      full: filled >= SMOKE_FULL,
-    },
-  }
-}
-
-/**
- * How far one step of Luzurus's secretion drags a thing, and how close is eaten.
- *
- * A metre and a half a step is a thing being pulled rather than a thing sliding
- * — you can watch it come — and a metre and a half of clearance is where the
- * beast takes it: near enough to be at the visitor, far enough that the walk
- * never has to draw a table inside their head.
- */
-export const REEL_METRES = 1.5
-export const REEL_REACH = 1.5
-
-/**
- * One step of the reeling, on the walk's clock rather than on a cast.
- *
- * Everything the secretion caught comes a step nearer whoever set the trap, and
- * what arrives is eaten. Only things in the beast's own room move: the reach of
- * a secretion is the room it was spat over, and a trap that pulled the whole
- * ship towards you would be a different ability.
- *
- * `at` is where the visitor is standing, which is what they are pulled towards.
- * Nothing here reads the room's walls — a thing being dragged to somebody by an
- * animal that has hold of it does not stop at the furniture.
- */
-export function reelStep(world: TourWorld, ship: Ship, at: Vec2): TourCastResult | null {
-  if (!world.centipede) return null
-  const solids = { ...world.solids }
-  let pulled = 0
-  let eaten = 0
-  for (const solid of standingIn(ship, world, world.centipede)) {
-    const hold = solids[solid.id]
-    if (hold?.glued === undefined) continue
-    const now = solidNow(solid, hold)
-    const dx = at[0] - now.at[0]
-    const dz = at[1] - now.at[1]
-    const gap = Math.hypot(dx, dz)
-    if (gap <= REEL_REACH) {
-      solids[solid.id] = { ...hold, glued: hold.glued + 1, gone: true }
-      eaten++
-      continue
-    }
-    const step = Math.min(REEL_METRES, gap - REEL_REACH)
-    solids[solid.id] = {
-      ...hold,
-      glued: hold.glued + 1,
-      at: [now.at[0] + (dx / gap) * step, now.at[1] + (dz / gap) * step],
-    }
-    pulled++
-  }
-  if (!pulled && !eaten) return null
-  return {
-    world: { ...world, solids },
-    report: { kind: 'reeled', spaceId: world.centipede, pulled, eaten },
-  }
-}
-
-/**
- * One thing broken up by Camilla's cat, on the walk's clock.
- *
- * One at a time and never more: the whole of what makes it read as an animal
- * with a room to get through rather than as a blast is that you can watch it
- * work. Its own room only, and it stops when there is nothing left standing —
- * a cat with an empty room sits in it, which is what the ability is doing
- * anyway. What it takes is `gone`, because a thing a cat that size has had its
- * paws on is not a thing anybody puts back.
- */
-export function catStep(world: TourWorld, ship: Ship): TourCastResult | null {
-  if (!world.cat) return null
-  const standing = standingIn(ship, world, world.cat)
-  const next = standing[0]
-  if (!next) return null
-  return {
-    world: {
-      ...world,
-      solids: { ...world.solids, [next.id]: { ...world.solids[next.id], gone: true } },
-    },
-    report: {
-      kind: 'crushed-one',
-      spaceId: world.cat,
-      solidId: next.id,
-      left: standing.length - 1,
-    },
-  }
 }
 
 /**
@@ -3791,67 +3537,6 @@ function landingIn(
 }
 
 /**
- * Straight-line distance to a room, and how many levels lie between.
- *
- * Two decks are two grids in the same coordinates, so the plan distance is
- * meaningful across them; the level count is reported beside it rather than
- * folded in, because "forty metres, three decks down" is what a visitor needs.
- */
-export function distanceTo(
-  ship: Ship,
-  target: Space,
-  from: Stood,
-): { metres: number; decks: number } {
-  const { at, standingIn } = from
-  const centre = centroid(target)
-  const here = standingIn ? ship.spaces.get(standingIn) : null
-  const fromTier = here ? ship.tiers.findIndex((tier) => tier.id === here.tierId) : -1
-  const toTier = ship.tiers.findIndex((tier) => tier.id === target.tierId)
-  return {
-    metres: Math.round(Math.hypot(centre[0] - at[0], centre[1] - at[1])),
-    decks: fromTier < 0 || toTier < 0 ? 0 : Math.abs(toTier - fromTier),
-  }
-}
-
-/** The mean of a footprint's corners: close enough to aim a chain at. */
-export function centroid(space: Space): Vec2 {
-  const sum = space.footprint.reduce<[number, number]>(
-    (total, point) => [total[0] + point[0], total[1] + point[1]],
-    [0, 0],
-  )
-  return [sum[0] / space.footprint.length, sum[1] / space.footprint.length]
-}
-
-/**
- * The room the visitor is looking at, found by walking the reticle out across
- * the deck plan.
- *
- * Deliberately not a three.js raycast against the mesh. Aura is not light: the
- * technique reaches the room whether or not a wall stands between, and the walk
- * out over the floor plan is the reading of "what you are facing" that matches
- * that. It also keeps the whole targeting path testable without a GPU.
- *
- * The first room that is not the one underfoot wins; if the ray only ever
- * crosses the room the visitor is standing in, that room is the target.
- */
-export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
-  const { at, heading, range = 90 } = aim
-  // The camera looks along (-sin yaw, -cos yaw), as the walk's own movement
-  // code has it.
-  const dx = -Math.sin(heading)
-  const dz = -Math.cos(heading)
-  const here = plan.spaces.find((space) => pointInPolygon(at, space.footprint)) ?? null
-
-  const STEP = 0.5
-  for (let travelled = STEP; travelled <= range; travelled += STEP) {
-    const point: Vec2 = [at[0] + dx * travelled, at[1] + dz * travelled]
-    const space = plan.spaces.find((candidate) => pointInPolygon(point, candidate.footprint))
-    if (space && space.id !== here?.id) return space
-  }
-  return here
-}
-
-/**
  * The deck with a room's doorways shut.
  *
  * The reconstruction derives its doorways from the walls two rooms share, and
@@ -3943,41 +3628,6 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
 }
 
 /**
- * The solid down the reticle, found the same way the room is.
- *
- * Walked out over the floor plan rather than raycast against the mesh, for the
- * same reason: aura reaches what it is aimed at, and a coffin behind a coffin
- * is still something you can name. The nearest one along the ray wins, and its
- * current outline is what is tested, so a solid Nen has moved is where the
- * technique put it and not where the blueprint drew it.
- */
-export function aimedSolid(scene: Scene, plan: TierPlan, aim: Aim): Structure | null {
-  const { ship, world } = scene
-  const { at, heading, range = 40 } = aim
-  const dx = -Math.sin(heading)
-  const dz = -Math.cos(heading)
-
-  // What Nen is holding moves every frame, so its outline is never cached.
-  // There are a handful of those at most, against the hundred and twenty-odd
-  // the deck itself stands.
-  const targets = bakedTargets(ship, world, plan).concat(
-    detachedOn(ship, world, { tierId: plan.tier.id }).map((held) => targetOf(held.structure)),
-  )
-
-  let nearest: Structure | null = null
-  let distance = Infinity
-  for (const target of targets) {
-    // Each hit tightens the ray for the ones after it: past the nearest solid
-    // found so far, nothing can win.
-    const hit = rayReaches(target, { at, dx, dz }, Math.min(range, distance))
-    if (hit === null || hit >= distance) continue
-    distance = hit
-    nearest = target.structure
-  }
-  return nearest
-}
-
-/**
  * A solid's outline with the box around it, so the reticle can dismiss it in
  * four comparisons instead of walking its edges.
  */
@@ -3988,105 +3638,6 @@ interface SolidTarget {
   minZ: number
   maxX: number
   maxZ: number
-}
-
-function targetOf(structure: Structure): SolidTarget {
-  const outline = structureFootprint(structure)
-  let minX = Infinity
-  let minZ = Infinity
-  let maxX = -Infinity
-  let maxZ = -Infinity
-  for (const [x, z] of outline) {
-    if (x < minX) minX = x
-    if (x > maxX) maxX = x
-    if (z < minZ) minZ = z
-    if (z > maxZ) maxZ = z
-  }
-  return { structure, outline, minX, minZ, maxX, maxZ }
-}
-
-/**
- * The outlines of everything standing on a deck, kept between frames.
- *
- * `structureFootprint` turns a centre, a size and a rotation into a polygon,
- * and the deck stands a hundred and twenty-four of them. Rebuilding all of them
- * for every poll of the reticle — six times a second, for as long as a
- * technique is up — was the single most expensive thing in the walk. They only
- * change when a technique empties a room or lifts a solid out of the deck, so
- * that is what the key is. Keyed by the plan object as well, so a deck rebuilt
- * from different data never reads a previous deck's outlines.
- */
-const bakedTargets = (() => {
-  const cache = new WeakMap<TierPlan, { key: string; targets: SolidTarget[] }>()
-
-  return (ship: Ship, world: TourWorld, plan: TierPlan): SolidTarget[] => {
-    const emptied = emptiedOn(world, plan.tier.id, ship).slice().sort()
-    const held = heldSolidIds(world).slice().sort()
-    const key = `${emptied.join(',')}::${held.join(',')}`
-
-    const kept = cache.get(plan)
-    if (kept?.key === key) return kept.targets
-
-    const gone = new Set(emptied)
-    const lifted = new Set(held)
-    const targets = plan.structures
-      .filter((structure) => !gone.has(structure.spaceId) && !lifted.has(structure.id))
-      .map(targetOf)
-    cache.set(plan, { key, targets })
-    return targets
-  }
-})()
-
-/**
- * How far along the ray the solid is, or `null` if the ray misses it.
- *
- * The reticle used to be marched out in steps of 0.4 m and tested against every
- * outline at every step — fourteen thousand point-in-polygon tests for one
- * poll, and a solid narrower than the step could still be walked straight past.
- * This is the segment-against-polygon test that was meant all along: the box
- * rejects nearly everything, and what survives is one crossing test per edge.
- */
-function rayReaches(target: SolidTarget, ray: Ray, range: number): number | null {
-  const { at, dx, dz } = ray
-  let near = 0
-  let far = range
-
-  // Slab test, one axis at a time. A ray running parallel to a pair of sides
-  // either starts between them or never meets them.
-  const slab = (origin: number, direction: number, [low, high]: readonly [number, number]) => {
-    if (Math.abs(direction) < 1e-9) return origin >= low && origin <= high
-    const first = (low - origin) / direction
-    const second = (high - origin) / direction
-    near = Math.max(near, Math.min(first, second))
-    far = Math.min(far, Math.max(first, second))
-    return near <= far
-  }
-  if (!slab(at[0], dx, [target.minX, target.maxX])) return null
-  if (!slab(at[1], dz, [target.minZ, target.maxZ])) return null
-
-  // Standing inside it — under a mezzanine, under a run of ducting — is aiming
-  // at it, which is what marching from the first step out already did.
-  if (pointInPolygon(at, target.outline)) return 0
-
-  let nearest: number | null = null
-  const outline = target.outline
-  for (let i = 0; i < outline.length; i++) {
-    const a = outline[i]
-    const b = outline[(i + 1) % outline.length]
-    const ex = b[0] - a[0]
-    const ez = b[1] - a[1]
-    const denominator = dx * ez - dz * ex
-    if (Math.abs(denominator) < 1e-9) continue
-
-    const px = a[0] - at[0]
-    const pz = a[1] - at[1]
-    const along = (px * ez - pz * ex) / denominator
-    if (along < 0 || along > range || (nearest !== null && along >= nearest)) continue
-    const across = (px * dz - pz * dx) / denominator
-    if (across < 0 || across > 1) continue
-    nearest = along
-  }
-  return nearest
 }
 
 /**
@@ -4469,26 +4020,6 @@ export function fishBite(
 }
 
 /**
- * Where the bird actually lands, which the technique decides and the reticle
- * only sometimes.
- *
- * The free bird is the one the aim is for. The shoulder bird belongs to the
- * visitor and is put in the room they are standing in — aiming across the ship
- * with it up sends it no further than your own shoulder. The third is thrown
- * without looking, so it is given the ship and not the target.
- */
-function perchFor(world: TourWorld, ship: Ship, choice: Perch): string {
-  const { targetId, standingIn, random } = choice
-  if (world.owlMode === 'shoulder') return standingIn ?? targetId
-  if (world.owlMode === 'random') {
-    const rooms = [...ship.spaces.keys()]
-    if (!rooms.length) return targetId
-    return rooms[Math.min(rooms.length - 1, Math.floor(random() * rooms.length))]
-  }
-  return targetId
-}
-
-/**
  * One hop of the free bird, which is the only one that moves on its own.
  *
  * It goes through a door rather than through the hull: the ship's own
@@ -4612,119 +4143,8 @@ export function ageTheOwl(
   }
 }
 
-/** How fast a marked thing crosses its room towards its opposite, in m/s. */
-const POLARITY_PACE = 0.9
 /** How near the two have to come, in metres, before the pair goes off. */
 export const POLARITY_CONTACT = 1.2
-
-/** Where a marked solid is this instant: where it was put, plus its own drift. */
-function markedAt(
-  ship: Ship,
-  world: TourWorld,
-  mark: Mark,
-): { spaceId: string; base: Vec2; at: Vec2 } | null {
-  const { id, hold, seconds } = mark
-  const original = solidById(ship, world, id)
-  if (!original) return null
-  const base = solidNow(original, hold).at
-  const drift = hold.alive ? wanderOffset(id, seconds) : ([0, 0] as Vec2)
-  return { spaceId: original.spaceId, base, at: [base[0] + drift[0], base[1] + drift[1]] }
-}
-
-/**
- * The sun and the moon walking towards each other, and what happens when they meet.
- *
- * Genthru's pair does nothing on its own: the bomb is the mark, and the mark is
- * spent when the two touch. In a walk where nothing else is moving, that would
- * be a payoff nobody ever sees — so a marked thing wakes up and goes looking
- * for its opposite, at a walking pace, and the room it is in is as far as it
- * will go. Two marks in two rooms sit there marked, which is the honest answer:
- * they never touch.
- *
- * Called on the walk's clock rather than on a cast. `delta` is how much of a
- * second went by since the last call; `seconds` is the same clock the scene
- * draws the drift off, so what is seen touching is what detonates.
- */
-export function polarityStep(
-  world: TourWorld,
-  ship: Ship,
-  step: { seconds: number; delta: number },
-): { world: TourWorld; report: TourReport | null } | null {
-  const { seconds, delta } = step
-  const suns: string[] = []
-  const moons: string[] = []
-  for (const [id, hold] of Object.entries(world.solids)) {
-    if (hold.gone) continue
-    if (hold.mark === 'sun') suns.push(id)
-    if (hold.mark === 'moon') moons.push(id)
-  }
-  if (!suns.length || !moons.length) return null
-
-  const solids = { ...world.solids }
-  /** Everything already blown this tick: a thing goes off once and is not there after. */
-  const spent = new Set<string>()
-  let report: TourReport | null = null
-
-  for (const sunId of suns) {
-    if (spent.has(sunId)) continue
-    const sun = markedAt(ship, world, { id: sunId, hold: world.solids[sunId], seconds })
-    if (!sun) continue
-    const room = ship.spaces.get(sun.spaceId)
-    if (!room) continue
-
-    // The nearest opposite in the same room. Nothing reaches through a bulkhead
-    // or through a deck: `at` is measured on the level it stands on, so two
-    // things four decks apart share coordinates and share nothing else.
-    let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
-    for (const moonId of moons) {
-      if (spent.has(moonId)) continue
-      const moon = markedAt(ship, world, { id: moonId, hold: world.solids[moonId], seconds })
-      if (!moon || moon.spaceId !== sun.spaceId) continue
-      const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
-      const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])
-      if (!nearest || away < nearest.away) nearest = { id: moonId, ...moon, away, apart }
-    }
-    if (!nearest) continue
-
-    // Touching: both go, and the marks go with them. The first pair to meet is
-    // the one the walk speaks of — a second explosion in the same tenth of a
-    // second would talk over it.
-    //
-    // Two measurements rather than one, and either will do it. Where the things
-    // are drawn is the one a visitor can see, and it is what a near miss is
-    // decided on; but a living thing's drift is a ring it never leaves, and two
-    // rings of the same size can turn about the same point forever without the
-    // gap between them ever closing. So the things themselves arriving at the
-    // same place counts as having met, whatever the drift is doing over it.
-    if (nearest.away < POLARITY_CONTACT || nearest.apart < POLARITY_CONTACT) {
-      solids[sunId] = { ...solids[sunId], gone: true, alive: false, mark: undefined }
-      solids[nearest.id] = { ...solids[nearest.id], gone: true, alive: false, mark: undefined }
-      spent.add(sunId)
-      spent.add(nearest.id)
-      report ??= { kind: 'detonated', solidId: sunId, otherId: nearest.id }
-      continue
-    }
-
-    // Not touching yet: each takes a step towards the other, and neither leaves
-    // the room it was marked in.
-    const dx = nearest.base[0] - sun.base[0]
-    const dz = nearest.base[1] - sun.base[1]
-    const span = Math.hypot(dx, dz) || 1
-    const stride = Math.min(POLARITY_PACE * delta, span / 2)
-    const walk = (from: Vec2, towards: 1 | -1): Vec2 => {
-      const to: Vec2 = [
-        from[0] + (dx / span) * stride * towards,
-        from[1] + (dz / span) * stride * towards,
-      ]
-      return pointInPolygon(to, room.footprint) ? to : from
-    }
-    solids[sunId] = { ...solids[sunId], at: walk(sun.base, 1) }
-    solids[nearest.id] = { ...solids[nearest.id], at: walk(nearest.base, -1) }
-  }
-
-  return { world: { ...world, solids }, report }
-}
-
 /**
  * Which kinds the walk has a cast written for, by the thing it is aimed at.
  *
@@ -4752,3 +4172,7 @@ export const wearTheMask = (world: TourWorld, characterId: string): TourWorld =>
   ...world,
   body: { ...world.body, masked: world.body.masked === characterId ? null : characterId },
 })
+
+export { catStep, FLOCK_BIRDS, FLOCK_PER_ROOM, FLOCK_ROOMS, gasStep, MELT_STAGES, polarityStep, REEL_METRES, REEL_REACH, reelStep, SMOKE_FULL, smokeStep } from "./effects"
+export { centroid, danceOffset, distanceTo, driftOffset, wanderOffset } from "./geometry"
+export { aimedSolid, aimedSpace } from "./targeting"

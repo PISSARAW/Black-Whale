@@ -230,6 +230,25 @@ export function observeSceneResize(options: ResizeOptions): SceneResize {
 }
 
 export function disposeSceneRuntime(runtime: SceneRuntime): void {
+  runtime.scene.traverse((node: any) => {
+    if (node.isMesh) {
+      if (node.geometry) node.geometry.dispose()
+      if (node.material) {
+        const materials = Array.isArray(node.material) ? node.material : [node.material]
+        for (const mat of materials) {
+          for (const value of Object.values(mat)) {
+            if (value && typeof value === 'object' && (value as any).isTexture) {
+              (value as any).dispose()
+            }
+          }
+          mat.dispose()
+        }
+      }
+    }
+  })
+  if (runtime.renderTarget) {
+    runtime.renderTarget.dispose()
+  }
   runtime.renderer.dispose()
   runtime.renderer.forceContextLoss()
 }
@@ -293,7 +312,6 @@ export function animateVisibleScene(options: {
     { threshold: 0 },
   )
   observer.observe(container)
-  renderer.setAnimationLoop(run)
   return () => {
     renderer.setAnimationLoop(null)
     observer.disconnect()

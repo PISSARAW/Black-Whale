@@ -20,19 +20,19 @@ import type { Vec2 } from './types'
 
 export interface WorldStep {
   world: TourWorld
-  report: TourReport | null
+  report: TourReport | TourReport[] | null
 }
 
 export function stepFish(options: { world: TourWorld; ship: Ship }): WorldStep | null {
   let world = options.world
-  let report: TourReport | null = null
+  let reports: TourReport[] = []
   for (const spaceId of options.world.devouring) {
     const bite = fishBite(world, options.ship, spaceId)
     if (!bite) continue
     world = bite.world
-    report = bite.report
+    if (bite.report) reports.push(bite.report)
   }
-  return report ? { world, report } : null
+  return reports.length > 0 || world !== options.world ? { world, report: reports } : null
 }
 
 export function stepBeast(options: {
@@ -41,20 +41,33 @@ export function stepBeast(options: {
   position: Vec2
 }): WorldStep | null {
   let world = options.world
-  let report: TourReport | null = null
-  const steps = [
-    gasStep(world, options.ship),
-    reelStep(world, options.ship, options.position),
-    catStep(world, options.ship),
-  ]
-  for (const step of steps) {
-    if (!step) continue
-    world = step.world
-    report = step.report
+  let reports: TourReport[] = []
+
+  const gas = gasStep(world, options.ship)
+  if (gas) {
+    world = gas.world
+    if (gas.report) reports.push(gas.report)
   }
+
+  const reel = reelStep(world, options.ship, options.position)
+  if (reel) {
+    world = reel.world
+    if (reel.report) reports.push(reel.report)
+  }
+
+  const cat = catStep(world, options.ship)
+  if (cat) {
+    world = cat.world
+    if (cat.report) reports.push(cat.report)
+  }
+
   const smoke = smokeStep(world)
-  if (smoke) ({ world, report } = smoke)
-  return report ? { world, report } : null
+  if (smoke) {
+    world = smoke.world
+    if (smoke.report) reports.push(smoke.report)
+  }
+
+  return reports.length > 0 || world !== options.world ? { world, report: reports } : null
 }
 
 export const stepCoin = (world: TourWorld): WorldStep | null => takeTheCoin(world)
@@ -96,20 +109,22 @@ export function stepConsole(scene: {
 }): WorldStep | null {
   const { world, standingIn } = scene
   let next = world
-  let report: TourReport | null = null
+  let reports: TourReport[] = []
 
   if (world.decipher && !isDeciphered(world.decipher)) {
     const beside = standingIn !== null && world.decipher.spaceId === standingIn
     const worked = oneDayBeside(world.decipher, beside)
     if (worked !== world.decipher) {
       next = { ...next, decipher: worked }
-      report = isDeciphered(worked)
-        ? { kind: 'deciphered', characterId: worked.characterId, days: worked.days }
-        : {
-            kind: 'decipher-advanced',
-            characterId: worked.characterId,
-            left: daysLeft(worked),
-          }
+      reports.push(
+        isDeciphered(worked)
+          ? { kind: 'deciphered', characterId: worked.characterId, days: worked.days }
+          : {
+              kind: 'decipher-advanced',
+              characterId: worked.characterId,
+              left: daysLeft(worked),
+            }
+      )
     }
   }
 
@@ -119,17 +134,17 @@ export function stepConsole(scene: {
       // Leaving costs every day of it, which is the half of the menu that the
       // walk out of the door punishes.
       next = { ...next, fabrication: null }
-      report = {
+      reports.push({
         kind: 'fabrication-lost',
         slot: world.fabrication.slot,
         days: world.fabrication.days,
-      }
+      })
     } else if (bench !== world.fabrication) {
       next = { ...next, fabrication: bench }
     }
   }
 
-  return next === world ? null : { world: next, report }
+  return next === world ? null : { world: next, report: reports }
 }
 
 /**

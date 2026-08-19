@@ -778,10 +778,9 @@
   }
 
   onMount(() => {
-    // A phone reports a coarse pointer and no hover, so the controls are there
-    // before the first tap. Anything the query is unsure about — a hybrid
-    // laptop, an old browser — waits for a finger to land instead.
-    touch = window.matchMedia?.('(hover: none) and (pointer: coarse)').matches ?? false
+    // A coarse pointer anywhere means there is a touchscreen, even on a hybrid
+    // laptop that also has a mouse and reports hover.
+    touch = window.matchMedia?.('(any-pointer: coarse)').matches ?? false
   })
 
   onMount(() => {

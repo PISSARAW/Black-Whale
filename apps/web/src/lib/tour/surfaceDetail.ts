@@ -155,7 +155,9 @@ export function applySurfaceDetail(
   strength = DETAIL_STRENGTH,
 ): Record<string, { value: number }> {
   const uniforms = detailUniforms(strength)
-  material.onBeforeCompile = (shader) => {
+  const previousOnBeforeCompile = material.onBeforeCompile
+  material.onBeforeCompile = (shader, renderer) => {
+    previousOnBeforeCompile?.call(material, shader, renderer)
     Object.assign(shader.uniforms, uniforms)
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', `#include <common>\n${vertexHead}`)
@@ -164,7 +166,11 @@ export function applySurfaceDetail(
       .replace('#include <common>', `#include <common>\n${fragmentHead}`)
       .replace('#include <color_fragment>', `#include <color_fragment>\n${fragmentBody}`)
   }
-  material.customProgramCacheKey = () => `tour-grain-${strength}`
+  const previousCustomProgramCacheKey = material.customProgramCacheKey
+  material.customProgramCacheKey = () => {
+    const prevKey = previousCustomProgramCacheKey?.call(material) || ''
+    return prevKey + `tour-grain-${strength}`
+  }
   material.needsUpdate = true
   return uniforms
 }

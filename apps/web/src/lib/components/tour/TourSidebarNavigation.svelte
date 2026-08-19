@@ -43,7 +43,7 @@
       type="button"
       onclick={props.onHide}
       aria-expanded="true"
-      class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+      class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/90 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
       >{$t.tour.fullscreen.hidePanel}</button
     >
     <button
@@ -65,7 +65,7 @@
         aria-current={deck.active ? 'true' : undefined}
         class="rounded border px-2.5 py-1 text-xs transition-colors {deck.active
           ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-          : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+          : 'border-[#333] text-[#FFFFF0]/90 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
         >{deck.label}</button
       >
     {/each}
@@ -90,13 +90,13 @@
   <button
     type="button"
     onclick={props.onOpenPlan}
-    class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+    class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/90 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
     >{$t.tour.plan.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">M</kbd></button
   >
   <button
     type="button"
     onclick={props.onOpenFinder}
-    class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
+    class="rounded border border-[#333] px-2.5 py-1 text-xs text-[#FFFFF0]/90 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
     >{$t.tour.find.open} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">⌘K</kbd></button
   >
   <button
@@ -106,7 +106,7 @@
     title={$t.tour.reveal.help}
     class="rounded border px-2.5 py-1 text-xs transition-colors {props.reveal
       ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-      : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+      : 'border-[#333] text-[#FFFFF0]/90 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
     >{$t.tour.reveal.toggle} <kbd class="ml-1 text-[10px] text-[#FFD700]/70">L</kbd></button
   >
   <button
@@ -115,7 +115,7 @@
     aria-pressed={props.immersive}
     class="rounded border px-2.5 py-1 text-xs transition-colors {props.immersive
       ? 'border-[#FFD700] bg-[#FFD700]/15 text-[#FFD700]'
-      : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+      : 'border-[#333] text-[#FFFFF0]/90 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
     >{props.immersive ? $t.tour.fullscreen.exit : $t.tour.fullscreen.enter}
     <kbd class="ml-1 text-[10px] text-[#FFD700]/70">V</kbd></button
   >
@@ -124,7 +124,9 @@
     onclick={props.onCopy}
     class="rounded border px-2.5 py-1 text-xs transition-colors {props.copied === 'done'
       ? 'border-[#FFD700] text-[#FFD700]'
-      : 'border-[#333] text-[#FFFFF0]/70 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
+      : props.copied === 'failed'
+        ? 'border-[#ff4d4d] text-[#ff4d4d]'
+        : 'border-[#333] text-[#FFFFF0]/90 hover:border-[#FFD700]/50 hover:text-[#FFFFF0]'}"
   >
     {props.copied === 'done'
       ? $t.tour.viewpoint.copied

@@ -18,36 +18,36 @@
   </p>
   <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs text-[#FFFFF0]/70">
     <dt class="text-[#FFFFF0]">{$t.tour.controls.move}</dt>
-    <dd>{$t.tour.controls.moveKeys}</dd>
+    <dd><kbd>{$t.tour.controls.moveKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.look}</dt>
-    <dd>{$t.tour.controls.lookKeys}</dd>
+    <dd><kbd>{$t.tour.controls.lookKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.sprint}</dt>
-    <dd>{$t.tour.controls.sprintKeys}</dd>
+    <dd><kbd>{$t.tour.controls.sprintKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.use}</dt>
-    <dd>{$t.tour.controls.useKeys}</dd>
+    <dd><kbd>{$t.tour.controls.useKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.plan}</dt>
-    <dd>{$t.tour.controls.planKeys}</dd>
+    <dd><kbd>{$t.tour.controls.planKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.find}</dt>
-    <dd>{$t.tour.controls.findKeys}</dd>
+    <dd><kbd>{$t.tour.controls.findKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.reveal}</dt>
-    <dd>{$t.tour.controls.revealKeys}</dd>
+    <dd><kbd>{$t.tour.controls.revealKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.fullscreen}</dt>
-    <dd>{$t.tour.controls.fullscreenKeys}</dd>
+    <dd><kbd>{$t.tour.controls.fullscreenKeys}</kbd></dd>
     <dt class="text-[#FFFFF0]">{$t.tour.controls.release}</dt>
-    <dd>{$t.tour.controls.releaseKeys}</dd>
+    <dd><kbd>{$t.tour.controls.releaseKeys}</kbd></dd>
     {#if hasTechnique}<dt class="text-[#FFFFF0]">{$t.tour.controls.nen}</dt>
-      <dd>{$t.tour.controls.nenKeys}</dd>{/if}
+      <dd><kbd>{$t.tour.controls.nenKeys}</kbd></dd>{/if}
     {#if secondHand}
       <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSecond}</dt>
-      <dd>{$t.tour.controls.nenSecondKeys(secondHand)}</dd>
+      <dd><kbd>{$t.tour.controls.nenSecondKeys(secondHand)}</kbd></dd>
     {:else if twoHanded}
       <dt class="text-[#FFFFF0]">{$t.tour.controls.nenMoon}</dt>
-      <dd>{$t.tour.controls.nenMoonKeys}</dd>
+      <dd><kbd>{$t.tour.controls.nenMoonKeys}</kbd></dd>
     {:else if selfCastable}
       <dt class="text-[#FFFFF0]">{$t.tour.controls.nenSelf}</dt>
-      <dd>{$t.tour.controls.nenSelfKeys}</dd>
+      <dd><kbd>{$t.tour.controls.nenSelfKeys}</kbd></dd>
     {/if}
     {#if touch}<dt class="text-[#FFFFF0]">{$t.tour.controls.touch}</dt>
-      <dd>{$t.tour.controls.touchKeys}</dd>{/if}
+      <dd><kbd>{$t.tour.controls.touchKeys}</kbd></dd>{/if}
   </dl>
 </section>

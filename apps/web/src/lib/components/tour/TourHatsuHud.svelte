@@ -1256,14 +1256,28 @@
           </p>
         {/if}
         {#if techniqueGuide.warning}
-          <p class="mt-1 text-[11px] leading-snug text-[#ffcf70]">
-            {techniqueGuide.warning}
-          </p>
+          <div class="mt-1 flex items-start gap-1.5">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-3 w-3 shrink-0 text-[#ffcf70]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <p class="text-[11px] leading-snug text-[#ffcf70]">
+              {techniqueGuide.warning}
+            </p>
+          </div>
         {/if}
         {#if techniqueGuide.note}
-          <p class="mt-1 text-[10px] leading-snug text-[#FFFFF0]/40">
-            {techniqueGuide.note}
-          </p>
+          <div class="mt-1 flex items-start gap-1.5">
+            <svg viewBox="0 0 24 24" class="mt-0.5 h-3 w-3 shrink-0 text-[#FFFFF0]/40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <p class="text-[10px] leading-snug text-[#FFFFF0]/40">
+              {techniqueGuide.note}
+            </p>
+          </div>
         {/if}
       </aside>
     {/if}
@@ -1282,14 +1296,22 @@
   {/if}
 
   {#if line && castable}
-    <p
-      class={locked
-        ? 'mt-2 pl-2 text-xs leading-snug text-[#FFFFF0]/40'
-        : 'mt-2 border-l-2 pl-2 text-xs leading-snug text-[#FFFFF0]'}
-      style:border-color={locked ? undefined : profile.color}
-    >
-      {line}
-    </p>
+    <div class="mt-2 flex items-start gap-2">
+      <svg
+        viewBox="0 0 10 10"
+        class="mt-0.5 h-2 w-2 shrink-0"
+        style:fill={locked ? '#FFFFF040' : profile.color}
+      >
+        <polygon points="5,0 10,5 5,10 0,5" />
+      </svg>
+      <p
+        class={locked
+          ? 'text-xs leading-snug text-[#FFFFF0]/40'
+          : 'text-xs leading-snug text-[#FFFFF0]'}
+      >
+        {line}
+      </p>
+    </div>
   {/if}
 
   <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">

@@ -37,8 +37,11 @@ export class TourWorldTicker {
     if (!step) return
     this.options.updateWorld(step.world)
     if (!step.report) return
-    this.options.updateReport(step.report)
-    if (audible) this.options.show(step.report)
+    const reports = Array.isArray(step.report) ? step.report : [step.report]
+    for (const report of reports) {
+      this.options.updateReport(report)
+      if (audible) this.options.show(report)
+    }
   }
 
   fishEat = () => {

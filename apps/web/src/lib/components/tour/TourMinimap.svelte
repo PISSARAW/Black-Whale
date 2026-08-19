@@ -300,14 +300,25 @@
   }
   .zone.clickable {
     cursor: pointer;
+    outline: none;
   }
   .zone.clickable:hover {
     fill: #3d1c1c;
+  }
+  .zone.clickable:focus-visible {
+    fill: #3d1c1c;
+    stroke: #ffd700;
+    stroke-width: calc(var(--unit) * 2.5);
   }
   /* Aiming is not travelling, so the plan does not glow gold for it. */
   .aiming .zone.clickable:hover {
     fill: #2a2536;
     stroke: #c6b3ff;
+  }
+  .aiming .zone.clickable:focus-visible {
+    fill: #2a2536;
+    stroke: #c6b3ff;
+    stroke-width: calc(var(--unit) * 2.5);
   }
   .zone.through {
     fill: #150b0b;

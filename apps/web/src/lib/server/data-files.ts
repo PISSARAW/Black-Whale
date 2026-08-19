@@ -28,9 +28,16 @@ export function dataRoot(): string {
   return cachedDataRoot
 }
 
+const dataCache = new Map<string, unknown>()
+
 export async function readDataFile<T = unknown>(relativePath: string): Promise<T> {
+  if (dataCache.has(relativePath)) {
+    return dataCache.get(relativePath) as T
+  }
   const contents = await fs.readFile(join(dataRoot(), relativePath), 'utf-8')
-  return JSON.parse(contents) as T
+  const data = JSON.parse(contents) as T
+  dataCache.set(relativePath, data)
+  return data
 }
 
 /**

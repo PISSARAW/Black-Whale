@@ -5,6 +5,7 @@ import { STRATEGY_ABILITY_IDS_BY_CHARACTER } from '$lib/strategy/hatsu'
 import { messagesFor } from '$lib/i18n'
 import { parsePathname } from '$lib/i18n/config'
 import type { PageServerLoad } from './$types'
+import { log, describeError } from '$lib/server/log'
 
 export const load: PageServerLoad = async ({ url }) => {
   const locale = parsePathname(url.pathname).locale
@@ -117,7 +118,7 @@ export const load: PageServerLoad = async ({ url }) => {
       locations,
     }
   } catch (error) {
-    console.error('[strategy]', error)
+    log.error('[strategy]', describeError(error))
     return {
       error: messagesFor(locale).strategy.errors.loadFailed,
       scenario: null,

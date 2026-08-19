@@ -29,5 +29,5 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
  */
 function sameOriginPath(value: FormDataEntryValue | null): string {
   const path = typeof value === 'string' ? value : ''
-  return path.startsWith('/') && !path.startsWith('//') ? path : '/'
+  return path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\') ? path : '/'
 }

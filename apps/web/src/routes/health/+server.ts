@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { prisma } from '$lib/server/db'
+import { log, describeError } from '$lib/server/log'
 
 /**
  * Liveness *and* readiness: every page of this site is a database read, so a web
@@ -15,7 +16,7 @@ export const GET: RequestHandler = async () => {
       headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
     })
   } catch (error) {
-    console.error('[health] database unreachable', error)
+    log.error('[health] database unreachable', describeError(error))
     return new Response(JSON.stringify({ status: 'unavailable', database: 'down' }), {
       status: 503,
       headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },

@@ -26,6 +26,7 @@ import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import abilityUseCatalog from '../../../../../data/abilities/uses.json'
 import factionCatalog from '../../../../../data/factions/factions.json'
 import type { PageServerLoad } from './$types'
+import { log, describeError } from '$lib/server/log'
 
 /**
  * Who is aboard while the visitor walks.
@@ -126,7 +127,7 @@ export const load: PageServerLoad = async (event) => {
   try {
     return await aboardAt(event)
   } catch (error) {
-    console.error('Failed to load the cast for the tour', error)
+    log.error('Failed to load the cast for the tour', describeError(error))
     return { cast: empty(readSpoilerLimit(event.cookies) ?? null), hour: NO_HOUR }
   }
 }

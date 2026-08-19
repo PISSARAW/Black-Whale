@@ -14,6 +14,7 @@ import { nenRuntime } from '$lib/server/nen'
 import { simulationStore } from '$lib/server/simulations'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { rateLimit } from '$lib/server/rateLimit'
+import { log, describeError } from '$lib/server/log'
 import type { Actions, PageServerLoad } from './$types'
 
 /** Where the lab opens; every other runnable ability is one select away. */
@@ -37,7 +38,7 @@ const RATE_WINDOW_MS = 60_000
 function message(error: unknown, fallback: string): string {
   if (error instanceof SimulationInputError || error instanceof SimulationNotFoundError)
     return error.message
-  console.error('[simulations]', error)
+  log.error('[simulations]', describeError(error))
   return fallback
 }
 
@@ -72,7 +73,7 @@ async function planFor(
     )
   } catch (error) {
     // A malformed selection must not cost the visitor the whole branch view.
-    console.error('[simulations] plan', error)
+    log.error('[simulations] plan', describeError(error))
     return null
   }
 }
@@ -92,7 +93,7 @@ async function actionsFor(snapshot: BranchSnapshot, selection: Selection) {
       snapshot,
     )
   } catch (error) {
-    console.error('[simulations] actions', error)
+    log.error('[simulations] actions', describeError(error))
     return []
   }
 }

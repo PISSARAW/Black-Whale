@@ -25,10 +25,14 @@ export type RateLimitResult = { allowed: boolean; retryAfterSeconds: number }
 
 export function rateLimit(key: string, limit: number, windowMs: number): RateLimitResult {
   const now = Date.now()
-  if (buckets.size > MAX_TRACKED_KEYS) sweep(now)
+  if (buckets.size >= MAX_TRACKED_KEYS) sweep(now)
 
   const bucket = buckets.get(key)
   if (!bucket || bucket.resetAt <= now) {
+    if (buckets.size >= MAX_TRACKED_KEYS) {
+      const first = buckets.keys().next().value
+      if (first !== undefined) buckets.delete(first)
+    }
     buckets.set(key, { count: 1, resetAt: now + windowMs })
     return { allowed: true, retryAfterSeconds: 0 }
   }

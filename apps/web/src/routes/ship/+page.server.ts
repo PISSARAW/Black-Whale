@@ -26,6 +26,7 @@ import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import type { PageServerLoad } from './$types'
 import { redirect } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
+import { log, describeError } from '$lib/server/log'
 import { objectSnapshotsAt, type ImportantObject } from '$lib/importantObjects'
 import importantObjectCatalog from '../../../../../data/objects/objects.json'
 import type { BeyondLineageStatus } from '$lib/beyondLineage'
@@ -193,7 +194,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
         spoilerProfile?.maxChapter,
       )
     } catch (error) {
-      console.error('Failed to build perspective for ship page', error)
+      log.error('Failed to build perspective for ship page', describeError(error))
     }
   }
 

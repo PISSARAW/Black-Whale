@@ -224,7 +224,7 @@ export function isVisibleAtSpoilerLimit(
   jsonCharacter: { firstAppearanceChapterId?: string | null },
   spoilerLimit?: number,
 ): boolean {
-  if (!spoilerLimit) return true
+  if (spoilerLimit === undefined || spoilerLimit === null) return true
   const firstChapter = readFirstAppearanceChapter(jsonCharacter)
   return firstChapter === null || firstChapter <= spoilerLimit
 }

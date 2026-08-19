@@ -8,6 +8,7 @@ import { buildCanonicalPositions } from '@black-whale/canon-engine'
 import { timeline } from '$lib/server/timeline'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
+import { log, describeError } from '$lib/server/log'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
   if (!PUBLIC_FEATURES.compare) throw error(404, 'Not found')
@@ -44,12 +45,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   if (selectedEventId && selectedLeft && selectedRight) {
     try {
       ;[leftPerspective, rightPerspective, comparison] = await Promise.all([
-        buildPerspective(selectedLeft, selectedEventId),
-        buildPerspective(selectedRight, selectedEventId),
-        comparePerspectives(selectedLeft, selectedRight, selectedEventId),
+        buildPerspective(selectedLeft, selectedEventId, maxChapter),
+        buildPerspective(selectedRight, selectedEventId, maxChapter),
+        comparePerspectives(selectedLeft, selectedRight, selectedEventId, maxChapter),
       ])
     } catch (error) {
-      console.error('Failed to build perspective comparison', error)
+      log.error('Failed to build perspective comparison', describeError(error))
     }
   }
 

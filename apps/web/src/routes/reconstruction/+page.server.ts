@@ -5,6 +5,7 @@ import { buildReconstructionClaimIndex } from '$lib/reconstruction/claimIndex'
 import { catalogSceneLocation, type CatalogChapterScenes } from '$lib/reconstruction/sceneLocation'
 import { readDataFile } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
+import { log, describeError } from '$lib/server/log'
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const maxChapter = readSpoilerLimit(cookies)
@@ -193,7 +194,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
       spoilerLimit: maxChapter,
     }
   } catch (err: unknown) {
-    console.error('Failed to load reconstruction:', err)
+    log.error('Failed to load reconstruction:', describeError(err))
     const message = err instanceof Error ? err.message : String(err)
     return {
       error: message,

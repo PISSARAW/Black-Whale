@@ -48,7 +48,7 @@ export const actions: Actions = {
     const precision = isPresencePrecision(precisionValue) ? precisionValue : null
     const certainty = isPresenceCertainty(certaintyValue) ? certaintyValue : null
 
-    if (!chapterId || !title || !summary || sequence <= 0) {
+    if (!chapterId || !title || !summary || Number.isNaN(sequence) || sequence <= 0) {
       return fail(400, { error: 'Missing required event fields' })
     }
     if (isFlashback && !occursBeforeEventId) {

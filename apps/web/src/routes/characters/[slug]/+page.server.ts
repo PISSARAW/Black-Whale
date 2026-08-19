@@ -98,7 +98,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   if (!jsonCharacter) throw error(404, 'Character not found')
 
   const firstVisibleChapterNumber = readFirstAppearanceChapter(jsonCharacter)
-  if (spoilerLimit && firstVisibleChapterNumber && firstVisibleChapterNumber > spoilerLimit) {
+  if (spoilerLimit !== null && firstVisibleChapterNumber !== null && firstVisibleChapterNumber > spoilerLimit) {
     throw error(404, 'Character not found')
   }
 
@@ -128,7 +128,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     })
     timeline = appendApparentBodyTimeline(timeline, apparentBodies, locationPaths)
   }
-  if (spoilerLimit)
+  if (spoilerLimit !== null)
     timeline = timeline.filter((entry) => entry.chapter === null || entry.chapter <= spoilerLimit)
   let chapterTrajectory = buildChapterTrajectory({
     timeline,
@@ -137,7 +137,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     chapters,
     locationPaths,
   })
-  if (spoilerLimit)
+  if (spoilerLimit !== null)
     chapterTrajectory = chapterTrajectory.filter((entry) => entry.chapter <= spoilerLimit)
 
   // Prophecies carry no chapter anchor, so the spoiler limit cannot filter them;

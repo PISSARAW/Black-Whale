@@ -15,7 +15,7 @@ const LOGIN_WINDOW_MS = 10 * 60 * 1000
 
 function safeNext(value: FormDataEntryValue | string | null): string {
   const next = typeof value === 'string' ? value : '/'
-  return next.startsWith('/') && !next.startsWith('//') ? next : '/'
+  return next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\') ? next : '/'
 }
 
 export const load: PageServerLoad = ({ locals, url }) => {

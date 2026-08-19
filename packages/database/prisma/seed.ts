@@ -5,6 +5,10 @@ import {
   PresenceCertainty,
   BodyStateType,
   NarrativeImportance,
+  SubjectType,
+  TruthStatus,
+  EpistemicState,
+  AcquisitionMethod,
 } from '@prisma/client'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
@@ -499,13 +503,13 @@ async function main() {
   const fact1 = await prisma.fact.create({
     data: {
       id: 'fact-kurapika-is-hunter',
-      subjectType: 'CHARACTER' as any,
+      subjectType: SubjectType.CHARACTER,
       subjectId: kurapika.id,
       predicate: 'is',
       value: { role: 'Hunter', specialization: 'Blacklist Hunter' },
       validFromEventId: evt0.id,
       validUntilEventId: null,
-      truthStatus: 'CONFIRMED' as any,
+      truthStatus: TruthStatus.CONFIRMED,
       firstVisibleEventId: evt0.id,
     },
   })
@@ -514,13 +518,13 @@ async function main() {
   const fact2 = await prisma.fact.create({
     data: {
       id: 'fact-benjamin-is-first-prince',
-      subjectType: 'CHARACTER' as any,
+      subjectType: SubjectType.CHARACTER,
       subjectId: benjamin.id,
       predicate: 'is',
       value: { title: '1st Prince', family: 'Hui Guo Rou' },
       validFromEventId: evt1.id,
       validUntilEventId: null,
-      truthStatus: 'CONFIRMED' as any,
+      truthStatus: TruthStatus.CONFIRMED,
       firstVisibleEventId: evt1.id,
     },
   })
@@ -529,13 +533,13 @@ async function main() {
   const fact3 = await prisma.fact.create({
     data: {
       id: 'fact-room-1014-is-vvip',
-      subjectType: 'LOCATION' as any,
+      subjectType: SubjectType.LOCATION,
       subjectId: locRoom1014 || room1014?.id || '',
       predicate: 'isLocatedIn',
       value: { area: 'VVIP', tier: 1 },
       validFromEventId: evt1.id,
       validUntilEventId: null,
-      truthStatus: 'CONFIRMED' as any,
+      truthStatus: TruthStatus.CONFIRMED,
       firstVisibleEventId: evt1.id,
     },
   })
@@ -544,13 +548,13 @@ async function main() {
   await prisma.fact.create({
     data: {
       id: 'fact-halkenburg-collapsed',
-      subjectType: 'CHARACTER' as any,
+      subjectType: SubjectType.CHARACTER,
       subjectId: 'halkenburg',
       predicate: 'status',
       value: { state: 'COLLAPSED', location: locMedicalDistrict || medicalDistrict?.id || '' },
       validFromEventId: evt4.id,
       validUntilEventId: null,
-      truthStatus: 'CONFIRMED' as any,
+      truthStatus: TruthStatus.CONFIRMED,
       firstVisibleEventId: evt4.id,
     },
   })
@@ -564,9 +568,9 @@ async function main() {
       factId: fact2.id,
       fromEventId: evt1.id,
       untilEventId: null,
-      epistemicState: 'KNOWN' as any,
+      epistemicState: EpistemicState.KNOWN,
       confidence: 1.0,
-      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      acquisitionMethod: AcquisitionMethod.DIRECT_OBSERVATION,
       sourceCharacterId: null,
       acquisitionEventId: evt1.id,
     },
@@ -580,9 +584,9 @@ async function main() {
       factId: fact1.id,
       fromEventId: evt0.id,
       untilEventId: null,
-      epistemicState: 'KNOWN' as any,
+      epistemicState: EpistemicState.KNOWN,
       confidence: 1.0,
-      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      acquisitionMethod: AcquisitionMethod.DIRECT_OBSERVATION,
       sourceCharacterId: null,
       acquisitionEventId: evt0.id,
     },
@@ -596,9 +600,9 @@ async function main() {
       factId: fact3.id,
       fromEventId: evt1.id,
       untilEventId: null,
-      epistemicState: 'KNOWN' as any,
+      epistemicState: EpistemicState.KNOWN,
       confidence: 1.0,
-      acquisitionMethod: 'DIRECT_OBSERVATION' as any,
+      acquisitionMethod: AcquisitionMethod.DIRECT_OBSERVATION,
       sourceCharacterId: null,
       acquisitionEventId: evt1.id,
     },

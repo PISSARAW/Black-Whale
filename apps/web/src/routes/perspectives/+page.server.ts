@@ -5,6 +5,7 @@ import type { PageServerLoad } from './$types'
 import { filterVisible } from '@black-whale/canon-engine'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
+import { log, describeError } from '$lib/server/log'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
   if (!PUBLIC_FEATURES.perspectives) throw error(404, 'Not found')
@@ -45,14 +46,14 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
   if (eventId && leftCharacterId) {
     try {
-      leftPerspective = await buildPerspective(leftCharacterId, eventId)
+      leftPerspective = await buildPerspective(leftCharacterId, eventId, maxChapter)
 
       if (rightCharacterId) {
-        rightPerspective = await buildPerspective(rightCharacterId, eventId)
-        comparison = await comparePerspectives(leftCharacterId, rightCharacterId, eventId)
+        rightPerspective = await buildPerspective(rightCharacterId, eventId, maxChapter)
+        comparison = await comparePerspectives(leftCharacterId, rightCharacterId, eventId, maxChapter)
       }
     } catch (e) {
-      console.error('Failed to build perspective data', e)
+      log.error('Failed to build perspective data', describeError(e))
     }
   }
 

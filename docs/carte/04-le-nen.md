@@ -15,72 +15,35 @@ decisions: [adr-001, adr-006]
 
 # Le nen
 
-> Le nen est le système de capacités. Un Hatsu est déclaré dans `packages/ability-modules/`,
-> compilé en profils et manifestes par `packages/canon-compiler/`, puis consommé côté web
-> par `apps/web/src/lib/nen/` et la visite (`apps/web/src/lib/tour/cast/`).
+Ce territoire retrace le voyage d'un hatsu (capacité) depuis sa déclaration originelle jusqu'à son affichage sous forme de pixel à l'écran.
 
-## Le trajet
+## Promet
 
-```
-data/abilities/abilities.json
-        ↓
-packages/ability-sdk/         ← contrat de base d'une ability
-        ↓
-packages/ability-modules/*    ← 53 modules, un par Hatsu / famille
-        ↓
-packages/nen-engine/           ← moteur de résolution des effets
-        ↓
-packages/canon-compiler/       → hatsuProfiles.gen.ts, interactionManifests.gen.ts
-        ↓
-apps/web/src/lib/nen/          ← registre client, résolution visuelle
-        ↓
-apps/web/src/lib/tour/cast/    ← casts de la visite first-person
-```
+- `packages/ability-sdk` : Fournit les interfaces et les contrats de base pour définir ce qu'est une capacité (hatsu).
+- `packages/ability-modules` : Héberge l'implémentation spécifique des règles et des effets de chaque hatsu (déclarés initialement en données).
+- `packages/nen-engine` : Moteur de résolution central qui calcule l'issue d'une capacité (succès, coûts, effets sur la cible).
+- `apps/web/src/lib/nen` et `apps/web/src/lib/tour/cast` : Gèrent l'interprétation visuelle et l'intégration des hatsus résolus pour les afficher à l'utilisateur, en exploitant les manifestes et profils générés.
 
-| Étape    | Où                                | Responsabilité                                        |
-| -------- | --------------------------------- | ----------------------------------------------------- |
-| Données  | `data/abilities/abilities.json`   | Déclaration des capacités et de leurs règles          |
-| SDK      | `packages/ability-sdk/src/`       | Types et helpers communs à toutes les abilities       |
-| Modules  | `packages/ability-modules/src/**` | Implémentation spécifique de chaque Hatsu             |
-| Moteur   | `packages/nen-engine/src/`        | Résolution générique des effets, coûts, ciblages      |
-| Compiler | `packages/canon-compiler/src/`    | Génère les profils et manifestes consommés par le web |
-| Web      | `apps/web/src/lib/nen/`           | Registre Hatsu, helpers de cast et de ciblage         |
-| Visite   | `apps/web/src/lib/tour/cast/`     | Traduction des effets en animations / sons            |
+## Refuse
 
-## Les frontières
+- Les `ability-modules` ne contiennent aucun code lié à l'interface utilisateur ou à la présentation visuelle.
+- `packages/nen-engine` ne déclenche pas directement d'animations ou de sons ; il ne produit que des calculs d'état (dégâts, application d'effets).
+- Les composants visuels (`apps/web/src/lib/tour/cast`) ne modifient jamais la logique ou les données de résolution d'un hatsu.
 
-| Ce dossier …                    | Règle                                                                               |
-| ------------------------------- | ----------------------------------------------------------------------------------- |
-| `packages/ability-modules/src/` | Ne dépend pas du rendu web. Une règle Hatsu doit compiler sans Svelte.              |
-| `packages/nen-engine/src/`      | Ne connaît pas les modules spécifiques : il travaille sur le contrat SDK.           |
-| `apps/web/src/lib/nen/`         | Ne lit pas directement `data/abilities/abilities.json` : il consomme les `.gen.ts`. |
-| `apps/web/src/lib/tour/cast/`   | Ne réécrit pas la règle : il traduit le résultat du moteur en pixels.               |
+## Trajet
 
-## Les faits qui ne se lisent pas dans le code
+1. **Définition** : Les règles du hatsu sont implémentées dans `packages/ability-modules`, appuyées par les contrats du `ability-sdk`.
+2. **Génération** : Le compilateur canon génère des fichiers de liaison (`hatsuProfiles.gen.ts`, `interactionManifests.gen.ts`) permettant au frontend de connaître les capacités disponibles.
+3. **Résolution** : Lors de l'invocation, `packages/nen-engine` applique la logique du module, évalue les conditions et détermine les résultats de l'action.
+4. **Restitution** : Le frontend lit ces résultats via `apps/web/src/lib/nen` et traduit ces effets en animations, en ciblant le point visuel (pixel) dans `tour/hatsu.ts`.
 
-- **53 modules d'ability.** Chaque module est une famille ou un Hatsu isolé ; le nombre est mesuré et stable.
-- **Les `.gen.ts` sont commités.** Ils sont générés par `packages/canon-compiler/src/` et vérifiés frais en CI.
-- **Le moteur ne sait pas dessiner.** `packages/nen-engine/src/` dit ce qui arrive ; `apps/web/src/lib/tour/cast/` choisit comment le montrer.
+## Frontières
 
-## Les pièges
+- **Logique vs Rendu** : Une séparation stricte existe entre le calcul du hatsu (`nen-engine` et `ability-modules`) et sa restitution visuelle (le frontend web).
+- **Compilation vs Exécution** : Les manifestes (`*.gen.ts`) constituent un contrat statique et immuable à l'exécution, évitant au frontend de devoir recalculer les profils.
 
-- **Ne pas éditer `hatsuProfiles.gen.ts` à la main.** La source de vérité est `data/abilities/abilities.json` et les modules.
-- **Un changement de règle Hatsu doit passer par `packages/canon-compiler/src/`.** Le web ne relit pas les modules au runtime.
-- **`apps/web/src/lib/tour/cast/` n'est pas une règle.** Le code y traduit des décisions déjà prises ; s'il commence à décider, le bug est en amont.
+## Invariants
 
-## Par où entrer
-
-| Je veux …                  | J'ouvre                                                    |
-| -------------------------- | ---------------------------------------------------------- |
-| ajouter un Hatsu           | `docs/geste/un-hatsu.md` + `packages/ability-modules/src/` |
-| modifier une règle         | le module concerné dans `packages/ability-modules/src/`    |
-| changer le rendu d'un cast | `apps/web/src/lib/tour/cast/` + cette carte                |
-| comprendre la compilation  | `packages/canon-compiler/src/`                             |
-
-## Vérifier
-
-```
-pnpm --filter @black-whale/canon-compiler check:hatsu
-pnpm --filter @black-whale/nen-engine test
-pnpm --filter @black-whale/web test tour/cast/
-```
+- Les règles d'un hatsu ne sont évaluées que par le `nen-engine` ; le frontend doit faire confiance à son verdict.
+- Les interfaces générées (`hatsuProfiles.gen.ts`, etc.) doivent toujours correspondre exactement aux modules existants lors du build.
+- L'activation d'un hatsu suit un chemin unidirectionnel strict : de la déclaration (SDK/modules) à la résolution (moteur) puis au rendu visuel (cast/pixels).

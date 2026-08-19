@@ -28,80 +28,44 @@ decisions:
 
 # Les modes
 
-> Les sept modes sont des tranches verticales jouables. Chacune réutilise `apps/web/src/lib/tour` pour le rendu, mais garde son propre état, son loop et son contrat. `apps/web/src/lib/combat` n'a pas de route : c'est le moteur partagé de l'arène et du duel de la traque.
+> Les sept modes sont des tranches verticales jouables. Ce territoire définit ce que "jouable" signifie ici et implémente le patron Morena : les règles vivent dans le module, le rendu dans la route.
 
-## Le trajet
+## Promet
 
-Le patron Morena est le même pour tous : les règles vivent dans le module, le rendu dans la route, et `TourScene` n'est jamais modifié par un mode. Chaque mode possède sa route (sauf `apps/web/src/lib/combat`), son état/reducer, son moteur d'avancement (loop, campagne ou simulation), son adaptateur Hatsu, et il lit le Hatsu choisi via `apps/web/src/lib/nen/hatsuState.ts`.
+- Implémenter des expériences autonomes (`arena`, `hunt`, `infiltration`, `investigation`, `reconstruction`, `strategy`).
+- Fournir un moteur partagé de résolution de conflits au corps-à-corps via `combat`.
+- Maintenir un état isolé par mode avec son propre loop et ses propres règles d'avancement.
 
-Trajets concrets :
+## Refuse
 
-- **Arena** : `apps/web/src/routes/arena/+page.ts` lit les paramètres, `apps/web/src/lib/arena/ai.ts` pilote `apps/web/src/lib/combat/reducer.ts`, `apps/web/src/routes/arena/+page.svelte` rend le duel.
-- **Hunt** : `apps/web/src/routes/hunt/+page.svelte` lie `TourScene` à `apps/web/src/lib/hunt/state.ts` et `apps/web/src/lib/hunt/loop.ts`; le contact ouvre un duel géré par `apps/web/src/lib/hunt/duel/reducer.ts`.
-- **Infiltration** : `apps/web/src/routes/infiltration/+page.svelte` pose la mission via `apps/web/src/lib/infiltration/state.ts`, puis `apps/web/src/lib/infiltration/loop.ts` fait avancer les témoins et l'alerte; les missions vivent dans `apps/web/src/lib/infiltration/missions/definitions.ts`.
-- **Investigation** : `apps/web/src/routes/investigation/+page.svelte` liste les dossiers de `apps/web/src/lib/investigation/catalog.ts`; `apps/web/src/routes/investigation/[caseId]/+page.svelte` résout `apps/web/src/lib/investigation/case.ts`.
-- **Reconstruction** : `apps/web/src/routes/reconstruction/+page.server.ts` charge la base canon; `apps/web/src/routes/reconstruction/+page.svelte` reconstruit le vaisseau avec `packages/canon-engine`; `apps/web/src/routes/reconstruction/v3/+page.svelte` est le bac à sable « Et si… ».
-- **Strategy** : `apps/web/src/routes/strategy/+page.server.ts` initialise le `baseState`; `apps/web/src/lib/strategy/simulation.svelte.ts` gère les tours; `apps/web/src/lib/strategy/campaign/engine.ts` relie les scénarios en campagne.
+- Modifier ou dépendre de l'état d'autres modes (par exemple, `arena` ignore `hunt`).
+- Injecter des règles de jeu dans `TourScene` (le rendu reste agnostique et n'est jamais modifié par un mode).
+- Partager une sauvegarde ou une campagne entre des modes non liés.
 
-## Les frontières
+## Trajet
 
-| Dossier                           | Promet                                                                                      | Refuse                                                                                               |
-| --------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `apps/web/src/lib/arena`          | Un duel 1v1 contre une IA paramétrée par doctrine et difficulté, avec replay et challenges. | Ne connaît pas la traque, le vaisseau entier ni la campagne.                                         |
-| `apps/web/src/lib/combat`         | Le modèle d'un combat au corps-à-corps : état, reducer, fighter, perception, échange.       | Ne rend rien, ne sait pas qui est joueur ou IA, n'a pas de route.                                    |
-| `apps/web/src/lib/hunt`           | Une partie d'évasion dans un appartement du vaisseau, avec transition vers un duel.         | Ne simule pas le mouvement du joueur (c'est `TourScene`); ne réutilise pas `apps/web/src/lib/arena`. |
-| `apps/web/src/lib/infiltration`   | Une mission furtive sociale : couverture, témoins, alerte, extraction.                      | Ne partage pas son graphe avec `apps/web/src/lib/hunt`; les témoins sont propres au mode.            |
-| `apps/web/src/lib/investigation`  | Un cas à résoudre par collection d'indices, interrogatoires et confrontation.               | N'accède pas à la base canon en direct; les affaires sont codées en dur.                             |
-| `apps/web/src/lib/reconstruction` | Une visualisation narrative du vaisseau à chaque événement canon.                           | N'est pas un mode jouable au sens action; le v3 est un bac à sable isolé.                            |
-| `apps/web/src/lib/strategy`       | Un mode tour par tour sur le canon, avec factions, ordres et Hatsu stratégiques.            | Ne simule pas le combat en temps réel; repose sur `packages/simulation-engine`.                      |
+Le patron Morena est le même pour tous : les règles vivent dans le module, le rendu dans la route.
 
-Importations communes : tous les modes importent `apps/web/src/lib/tour` (géométrie, rendu), `apps/web/src/lib/nen` (contrôles, état), `apps/web/src/lib/i18n` (textes) et, selon le cas, `packages/canon-engine` ou `packages/simulation-engine`.
+- **Arena** : `routes/arena/+page.ts` lit les paramètres → `lib/arena/ai.ts` pilote → `lib/combat/reducer.ts` → `routes/arena/+page.svelte` rend le duel.
+- **Hunt** : Le joueur navigue via `TourScene` → Contact initié → `lib/hunt/state.ts` → `lib/hunt/duel/reducer.ts`.
+- **Infiltration** : Missions posées → `lib/infiltration/loop.ts` fait avancer les témoins et l'alerte.
+- **Investigation** : Dossiers de `lib/investigation/catalog.ts` listés → résolus dans `lib/investigation/case.ts`.
+- **Reconstruction** : Charge la base canon dans `routes/reconstruction/+page.server.ts` → reconstruit le vaisseau.
+- **Strategy** : `lib/strategy/simulation.svelte.ts` gère les tours → `lib/strategy/campaign/engine.ts` relie les scénarios.
 
-## Les faits qui ne se lisent pas dans le code
+## Frontières
 
-- `apps/web/src/lib/combat` est le seul moteur partagé entre modes : `apps/web/src/lib/arena/ai.ts` l'appelle, et `apps/web/src/lib/hunt/duel/reducer.ts` en reprend le contrat pour le duel de contact. Il n'y a pas de route `/combat`.
-- `TourScene` est le rendu commun, mais il ignore le mode qui le pilote. C'est le mode qui envoie `WALKED`, `SYNC_POSITION` ou `FACE`, et qui reçoit `position`, `heading`, `currentSpace` par binding (`apps/web/src/routes/hunt/+page.svelte`, `apps/web/src/routes/arena/+page.svelte`, `apps/web/src/routes/infiltration/+page.svelte`).
-- La traque et l'infiltration utilisent le même `apps/web/src/lib/hunt/arena.ts` pour choisir huit salles dans `data/ship/blueprint.json`, mais leurs graphes de navigation et leurs règles de perception sont séparées (`apps/web/src/lib/hunt/navmesh.ts` vs `apps/web/src/lib/infiltration/patrol.ts`).
-- Chaque mode a son propre contrat de Hatsu : `apps/web/src/lib/arena/hatsu.ts` classe les effets en `bind`/`impact`/`barrage`/`restore`/`enhance`; `apps/web/src/lib/hunt/hatsu.ts` porte `bungee-gum`, `parallel-future`, `dowsing-chain`; `apps/web/src/lib/infiltration/hatsu.ts` porte `little-eye`, `texture-surprise`, `illumi-needle-people`; `apps/web/src/lib/strategy/hatsu.ts` classe par rôle stratégique.
-- Les sauvegardes sont locales et versionnées : `apps/web/src/lib/hunt/replay.ts`, `apps/web/src/lib/infiltration/persistence.ts`, `apps/web/src/lib/strategy/persistence.ts`, `apps/web/src/lib/investigation/portfolio.ts`.
+- `lib/arena` : Limité à un duel 1v1 contre une IA. Ne connaît pas la traque ni le vaisseau entier.
+- `lib/combat` : Moteur pur de combat, ne rend rien et n'a aucune route associée.
+- `lib/hunt` : Gère l'évasion et les duels de contact. Ne réutilise pas `arena` et s'appuie sur `TourScene` pour le mouvement.
+- `lib/infiltration` : Définit sa propre logique de furtivité et de témoins, séparée du graphe de navigation de `hunt`.
+- `lib/investigation` : N'accède pas à la base canon en direct, les dossiers sont prédéfinis.
+- `lib/reconstruction` : Réservé à la visualisation narrative du canon (ce n'est pas un mode d'action).
+- `lib/strategy` : Mode tour par tour, sans simulation de combat en temps réel, reposant sur `packages/simulation-engine`.
 
-## Les pièges
+## Invariants
 
-- **Ajouter un Hatsu dans un mode sans le déclarer dans `apps/web/src/lib/nen/hatsuRegistry.ts`** : le Hatsu n'apparaîtra pas dans le sélecteur, même si sa logique locale est codée.
-- **Écrire du mouvement du joueur dans `apps/web/src/lib/hunt/loop.ts`** : le loop reçoit la position depuis `TourScene` (`apps/web/src/routes/hunt/+page.svelte`). Simuler le mouvement là crée une seconde physique qui diverge.
-- **Faire dépendre `apps/web/src/lib/arena` de `apps/web/src/lib/hunt` ou l'inverse** : les deux utilisent `apps/web/src/lib/combat`, mais leurs boucles de jeu, formats de replay et terrains sont distincts.
-- **Modifier `data/ship/blueprint.json` en pensant changer un terrain de mode** : les modes ne déclarent pas de nouvelles salles; ils sélectionnent des salles existantes via `apps/web/src/lib/hunt/arena.ts` et `apps/web/src/lib/arena/terrain.ts`.
-- **Oublier le cap de spoiler dans la reconstruction** : `apps/web/src/routes/reconstruction/+page.server.ts` lit `readSpoilerLimit` et filtre les chapitres; `apps/web/src/routes/reconstruction/v3/+page.server.ts` en a aussi besoin.
-
-## Par où entrer
-
-| Je veux …                                   | J'ouvre                                                                                                        |
-| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| changer les règles d'un combat              | `apps/web/src/lib/combat/reducer.ts` + `apps/web/src/lib/combat/fighter.ts`                                    |
-| changer l'IA de l'arène                     | `apps/web/src/lib/arena/ai.ts`                                                                                 |
-| ajouter un terrain d'arène                  | `apps/web/src/lib/arena/terrain.ts` (sélection dans le blueprint)                                              |
-| ajouter un contrat de traque                | `apps/web/src/lib/hunt/contracts/registry.ts`                                                                  |
-| régler le loop de la traque                 | `apps/web/src/lib/hunt/loop.ts`                                                                                |
-| régler le duel de contact                   | `apps/web/src/lib/hunt/duel/reducer.ts`                                                                        |
-| ajouter une mission d'infiltration          | `apps/web/src/lib/infiltration/missions/definitions.ts`                                                        |
-| changer la logique de couverture            | `apps/web/src/lib/infiltration/social/cover.ts`                                                                |
-| ajouter une affaire                         | `apps/web/src/lib/investigation/cases/` + `apps/web/src/lib/investigation/catalog.ts`                          |
-| changer le verdict d'une hypothèse          | `apps/web/src/lib/investigation/case.ts`                                                                       |
-| ajouter un événement dans la reconstruction | `data/ship/` et `packages/canon-engine` (voir [01 le canon](01-le-canon.md))                                   |
-| changer la projection de perspective        | `apps/web/src/lib/reconstruction/perspective.ts` + `apps/web/src/routes/reconstruction/perspective/+server.ts` |
-| ajouter un scénario stratégique             | `apps/web/src/lib/strategy/scenario/registry.ts`                                                               |
-| changer les règles de commandement          | `apps/web/src/lib/strategy/rules.ts`                                                                           |
-| relier un Hatsu au mode stratégique         | `apps/web/src/lib/strategy/hatsu.ts`                                                                           |
-
-## Vérifier
-
-```
-pnpm --filter @black-whale/web test arena/
-pnpm --filter @black-whale/web test combat/
-pnpm --filter @black-whale/web test hunt/
-pnpm --filter @black-whale/web test infiltration/
-pnpm --filter @black-whale/web test investigation/
-pnpm --filter @black-whale/web test reconstruction/
-pnpm --filter @black-whale/web test strategy/
-pnpm doc-lint
-```
+- `combat` est le seul moteur partagé entre différents modes (utilisé par `arena` et `hunt/duel`).
+- `TourScene` ignore le mode qui le pilote. Il réagit aux événements (`WALKED`, `FACE`, etc.) et synchronise la position par binding.
+- Chaque mode doit déclarer ses Hatsu spécifiques dans `lib/nen/hatsuRegistry.ts` pour qu'ils soient disponibles.
+- Les sauvegardes de progression de chaque mode sont toujours locales, versionnées et isolées (ex: `lib/hunt/replay.ts`, `lib/infiltration/persistence.ts`).

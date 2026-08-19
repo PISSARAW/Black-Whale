@@ -152,7 +152,7 @@ export const presenceLocation = (
   paths: Map<string, string>,
 ) =>
   presence?.location
-    ? (presence.location.slug ? paths.get(presence.location.slug) : null) || presence.location.name
+    ? paths.get(presence.location.id) || presence.location.name
     : null
 
 export const activeAtChapter = (

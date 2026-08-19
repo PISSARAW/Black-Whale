@@ -28,7 +28,16 @@ export interface TemporalRecord {
  * that have not been placed on the ship's timeline yet.
  */
 export function compareEventOrder(left: OrderedEvent, right: OrderedEvent): number {
-  if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
+  const leftHas = left.ordinal != null
+  const rightHas = right.ordinal != null
+
+  if (leftHas && rightHas && left.ordinal !== right.ordinal) {
+    return left.ordinal! - right.ordinal!
+  }
+  if (leftHas !== rightHas) {
+    return leftHas ? -1 : 1
+  }
+
   return left.chapter.number - right.chapter.number || left.sequence - right.sequence
 }
 

@@ -9,6 +9,7 @@ import { timeline } from '$lib/server/timeline'
 import { error } from '@sveltejs/kit'
 import { PUBLIC_FEATURES } from '$lib/config/features'
 import { log, describeError } from '$lib/server/log'
+import { isActiveAt } from '@black-whale/domain'
 
 export const load: PageServerLoad = async ({ cookies, url }) => {
   if (!PUBLIC_FEATURES.compare) throw error(404, 'Not found')
@@ -92,21 +93,22 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
       }
 
       if (compareCanonical) {
-        const objectiveFacts = await prisma.fact.findMany({
+        const activeEvent = selectedEvent ?? defaultEvent;
+        const revealedThroughChapter = spoilerProfile?.maxChapter ?? activeEvent?.chapter.number ?? Number.POSITIVE_INFINITY;
+        
+        const rawFacts = await prisma.fact.findMany({
           where: {
-            fromEvent: {
-              sequence: { lte: selectedEventSequence },
-            },
-            OR: [
-              { validUntilEventId: null },
-              {
-                untilEvent: {
-                  sequence: { gt: selectedEventSequence },
-                },
-              },
-            ],
+            fromEvent: { chapter: { number: { lte: revealedThroughChapter } } },
+          },
+          include: {
+            fromEvent: { include: { chapter: true } },
+            untilEvent: { include: { chapter: true } },
           },
         })
+
+        const objectiveFacts = rawFacts.filter((fact) =>
+          activeEvent ? isActiveAt(fact as any, activeEvent as any, revealedThroughChapter) : false
+        )
 
         canonicalTruth = {
           facts: objectiveFacts,

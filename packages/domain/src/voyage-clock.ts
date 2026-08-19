@@ -228,16 +228,56 @@ export function curatedChronology<T extends CuratedOrder>(events: readonly T[]):
     (left, right) => left.chapter - right.chapter || left.sequence - right.sequence,
   )
 
-  for (const event of events) {
-    if (!event.occursAfterTitle) continue
-    const from = ordered.indexOf(event)
-    if (from === -1) continue
-    ordered.splice(from, 1)
-    const anchor = ordered.findIndex((candidate) => candidate.title === event.occursAfterTitle)
-    ordered.splice(anchor === -1 ? from : anchor + 1, 0, event)
+  const byTitle = new Map<string, T>()
+  const inDegree = new Map<string, number>()
+  const children = new Map<string, T[]>()
+
+  for (const event of ordered) {
+    byTitle.set(event.title, event)
+    inDegree.set(event.title, 0)
   }
 
-  return ordered
+  for (const event of ordered) {
+    const parentTitle = event.occursAfterTitle
+    if (parentTitle && byTitle.has(parentTitle)) {
+      let kids = children.get(parentTitle)
+      if (!kids) {
+        kids = []
+        children.set(parentTitle, kids)
+      }
+      kids.push(event)
+      inDegree.set(event.title, 1)
+    }
+  }
+
+  const result: T[] = []
+  const visited = new Set<string>()
+
+  const visit = (event: T) => {
+    if (visited.has(event.title)) return
+    visited.add(event.title)
+    result.push(event)
+    const kids = children.get(event.title)
+    if (kids) {
+      for (const kid of kids) {
+        visit(kid)
+      }
+    }
+  }
+
+  for (const event of ordered) {
+    if (inDegree.get(event.title) === 0) {
+      visit(event)
+    }
+  }
+
+  for (const event of ordered) {
+    if (!visited.has(event.title)) {
+      visit(event)
+    }
+  }
+
+  return result
 }
 
 /**

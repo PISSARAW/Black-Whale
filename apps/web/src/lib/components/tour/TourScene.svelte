@@ -107,8 +107,6 @@
     stopSteps,
   } from '$lib/audio/steps'
   import TourSoundControls from './TourSoundControls.svelte'
-  import { TourPostProcessPipeline } from './TourPostProcessPipeline'
-  import { TourCameraController } from './TourCameraController'
   // The roar makes a noise of its own rather than reporting one: it is answered
   // to a keypress, so it does not go through the page's report-to-sound table.
   // The flock's chirp is raised by the page itself, where the arrival happens.

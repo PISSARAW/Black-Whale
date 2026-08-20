@@ -230,15 +230,16 @@ export function observeSceneResize(options: ResizeOptions): SceneResize {
 }
 
 export function disposeSceneRuntime(runtime: SceneRuntime): void {
-  runtime.scene.traverse((node: any) => {
-    if (node.isMesh) {
-      if (node.geometry) node.geometry.dispose()
-      if (node.material) {
-        const materials = Array.isArray(node.material) ? node.material : [node.material]
+  runtime.scene.traverse((node: Three.Object3D) => {
+    if ((node as Three.Mesh).isMesh) {
+      const mesh = node as Three.Mesh
+      if (mesh.geometry) mesh.geometry.dispose()
+      if (mesh.material) {
+        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
         for (const mat of materials) {
           for (const value of Object.values(mat)) {
-            if (value && typeof value === 'object' && (value as any).isTexture) {
-              (value as any).dispose()
+            if (value && typeof value === 'object' && (value as Three.Texture).isTexture) {
+              (value as Three.Texture).dispose()
             }
           }
           mat.dispose()

@@ -96,6 +96,69 @@ export function catStep(world: TourWorld, ship: Ship): TourCastResult | null {
     },
   }
 }
+function findNearestMoon(
+  sun: { spaceId: string; base: Vec2; at: Vec2 },
+  moons: string[],
+  ctx: { spent: Set<string>; world: TourWorld; ship: Ship; seconds: number },
+) {
+  let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
+  for (const moonId of moons) {
+    if (ctx.spent.has(moonId)) continue
+    const moon = markedAt(ctx.ship, ctx.world, { id: moonId, hold: ctx.world.solids[moonId], seconds: ctx.seconds })
+    if (!moon || moon.spaceId !== sun.spaceId) continue
+    const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
+    const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])
+    if (!nearest || away < nearest.away) nearest = { id: moonId, ...moon, away, apart }
+  }
+  return nearest
+}
+
+function processSun(
+  sunId: string,
+  ctx: {
+    spent: Set<string>
+    world: TourWorld
+    ship: Ship
+    seconds: number
+    delta: number
+    moons: string[]
+    solids: Record<string, TourWorld['solids'][string]>
+    report: TourReport | null
+  },
+) {
+  if (ctx.spent.has(sunId)) return
+  const sun = markedAt(ctx.ship, ctx.world, { id: sunId, hold: ctx.world.solids[sunId], seconds: ctx.seconds })
+  if (!sun) return
+  const room = ctx.ship.spaces.get(sun.spaceId)
+  if (!room) return
+
+  const nearest = findNearestMoon(sun, ctx.moons, ctx)
+  if (!nearest) return
+
+  if (nearest.away < POLARITY_CONTACT || nearest.apart < POLARITY_CONTACT) {
+    ctx.solids[sunId] = { ...ctx.solids[sunId], gone: true, alive: false, mark: undefined }
+    ctx.solids[nearest.id] = { ...ctx.solids[nearest.id], gone: true, alive: false, mark: undefined }
+    ctx.spent.add(sunId)
+    ctx.spent.add(nearest.id)
+    ctx.report ??= { kind: 'detonated', solidId: sunId, otherId: nearest.id }
+    return
+  }
+
+  const dx = nearest.base[0] - sun.base[0]
+  const dz = nearest.base[1] - sun.base[1]
+  const span = Math.hypot(dx, dz) || 1
+  const stride = Math.min(POLARITY_PACE * ctx.delta, span / 2)
+  const walk = (from: Vec2, towards: 1 | -1): Vec2 => {
+    const to: Vec2 = [
+      from[0] + (dx / span) * stride * towards,
+      from[1] + (dz / span) * stride * towards,
+    ]
+    return pointInPolygon(to, room.footprint) ? to : from
+  }
+  ctx.solids[sunId] = { ...ctx.solids[sunId], at: walk(sun.base, 1) }
+  ctx.solids[nearest.id] = { ...ctx.solids[nearest.id], at: walk(nearest.base, -1) }
+}
+
 export function polarityStep(
   world: TourWorld,
   ship: Ship,
@@ -112,66 +175,12 @@ export function polarityStep(
   if (!suns.length || !moons.length) return null
 
   const solids = { ...world.solids }
-  /** Everything already blown this tick: a thing goes off once and is not there after. */
   const spent = new Set<string>()
-  let report: TourReport | null = null
+  const ctx = { spent, world, ship, seconds, delta, moons, solids, report: null as TourReport | null }
 
   for (const sunId of suns) {
-    if (spent.has(sunId)) continue
-    const sun = markedAt(ship, world, { id: sunId, hold: world.solids[sunId], seconds })
-    if (!sun) continue
-    const room = ship.spaces.get(sun.spaceId)
-    if (!room) continue
-
-    // The nearest opposite in the same room. Nothing reaches through a bulkhead
-    // or through a deck: `at` is measured on the level it stands on, so two
-    // things four decks apart share coordinates and share nothing else.
-    let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
-    for (const moonId of moons) {
-      if (spent.has(moonId)) continue
-      const moon = markedAt(ship, world, { id: moonId, hold: world.solids[moonId], seconds })
-      if (!moon || moon.spaceId !== sun.spaceId) continue
-      const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
-      const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])
-      if (!nearest || away < nearest.away) nearest = { id: moonId, ...moon, away, apart }
-    }
-    if (!nearest) continue
-
-    // Touching: both go, and the marks go with them. The first pair to meet is
-    // the one the walk speaks of — a second explosion in the same tenth of a
-    // second would talk over it.
-    //
-    // Two measurements rather than one, and either will do it. Where the things
-    // are drawn is the one a visitor can see, and it is what a near miss is
-    // decided on; but a living thing's drift is a ring it never leaves, and two
-    // rings of the same size can turn about the same point forever without the
-    // gap between them ever closing. So the things themselves arriving at the
-    // same place counts as having met, whatever the drift is doing over it.
-    if (nearest.away < POLARITY_CONTACT || nearest.apart < POLARITY_CONTACT) {
-      solids[sunId] = { ...solids[sunId], gone: true, alive: false, mark: undefined }
-      solids[nearest.id] = { ...solids[nearest.id], gone: true, alive: false, mark: undefined }
-      spent.add(sunId)
-      spent.add(nearest.id)
-      report ??= { kind: 'detonated', solidId: sunId, otherId: nearest.id }
-      continue
-    }
-
-    // Not touching yet: each takes a step towards the other, and neither leaves
-    // the room it was marked in.
-    const dx = nearest.base[0] - sun.base[0]
-    const dz = nearest.base[1] - sun.base[1]
-    const span = Math.hypot(dx, dz) || 1
-    const stride = Math.min(POLARITY_PACE * delta, span / 2)
-    const walk = (from: Vec2, towards: 1 | -1): Vec2 => {
-      const to: Vec2 = [
-        from[0] + (dx / span) * stride * towards,
-        from[1] + (dz / span) * stride * towards,
-      ]
-      return pointInPolygon(to, room.footprint) ? to : from
-    }
-    solids[sunId] = { ...solids[sunId], at: walk(sun.base, 1) }
-    solids[nearest.id] = { ...solids[nearest.id], at: walk(nearest.base, -1) }
+    processSun(sunId, ctx)
   }
 
-  return { world: { ...world, solids }, report }
+  return { world: { ...world, solids: ctx.solids }, report: ctx.report }
 }

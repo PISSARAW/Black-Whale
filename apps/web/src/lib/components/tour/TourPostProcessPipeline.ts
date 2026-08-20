@@ -1,12 +1,12 @@
-import type { applyGrade, LENS_DEFAULTS, LENS_OFF } from '$lib/tour/postGrade'
+import { applyGrade, LENS_DEFAULTS, LENS_OFF } from '$lib/tour/postGrade'
 import { refractionAmount } from '$lib/tour/auraRefraction'
 import type { SceneRuntime } from '$lib/tour/TourRenderer'
 import type { TourRenderContext } from './TourRenderContext'
 
 export class TourPostProcessPipeline {
-  constructor(private runtime: SceneRuntime, private applyGradeFn: typeof applyGrade, private defaults: typeof LENS_DEFAULTS, private off: typeof LENS_OFF) {}
+  constructor(private runtime: SceneRuntime) {}
 
-  update(ctx: TourRenderContext) {
+  private updateFocusAndBlur(ctx: TourRenderContext) {
     if (this.runtime.depthOfField) {
       ctx.picker.setFromCamera(ctx.reticle, ctx.camera)
       const hits = ctx.picker.intersectObjects(ctx.intersectables, true)
@@ -18,16 +18,20 @@ export class TourPostProcessPipeline {
     if (this.runtime.motionBlur) {
       this.runtime.motionBlur.update(ctx.camera, ctx.delta)
     }
+  }
+
+  update(ctx: TourRenderContext) {
+    this.updateFocusAndBlur(ctx)
 
     this.runtime.renderer.toneMappingExposure = ctx.blinded
       ? ctx.sealedExposure
       : ctx.comfortExposure * ctx.hourViewExposure
     
-    this.applyGradeFn(this.runtime.grade, {
+    applyGrade(this.runtime.grade, {
       grade: ctx.hourViewGrade,
       clock: ctx.clock,
       calm: ctx.calmWalk,
-      lens: this.runtime.quality.lens ? this.defaults : this.off,
+      lens: this.runtime.quality.lens ? LENS_DEFAULTS : LENS_OFF,
     })
 
     if (this.runtime.refraction) {

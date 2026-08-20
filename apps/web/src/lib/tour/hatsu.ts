@@ -37,7 +37,7 @@ import {
     wallSegments,
     wanderOffset,
 } from './geometry'
-import type { Polygon, Space, Structure, Vec2, WallSegment } from './types'
+import type { Space, Structure, Vec2, WallSegment } from './types'
 // The shapes the walk casts on live in `cast/types.ts`; line 1 re-exports them
 // for everyone who reads them off `hatsu`, and this brings them into scope for
 // the reducers below, which is a different thing and needs saying separately.
@@ -3631,15 +3631,6 @@ export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPl
  * A solid's outline with the box around it, so the reticle can dismiss it in
  * four comparisons instead of walking its edges.
  */
-interface SolidTarget {
-  structure: Structure
-  outline: Polygon
-  minX: number
-  minZ: number
-  maxX: number
-  maxZ: number
-}
-
 /**
  * The deck as it stands once Nen has been through it.
  *

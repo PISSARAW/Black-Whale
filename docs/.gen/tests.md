@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 294
+Fichiers : 297
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -908,7 +908,7 @@ Fichiers : 294
 
 ## `apps/web/src/lib/tour/floorPattern.test.ts`
 
-- audited floor patterns > draws the four treatments the audit names
+- audited floor patterns > draws the panel-attested treatments the audit names
 
 ## `apps/web/src/lib/tour/footing.test.ts`
 
@@ -1109,6 +1109,14 @@ Fichiers : 294
 
 - Emperor Time on the beat > spends the hour without touching the read-out
 
+## `apps/web/src/lib/tour/postcardStamps.test.ts`
+
+- postcard stamp legibility > keeps every ink readable against the scene-independent paper backing
+
+## `apps/web/src/lib/tour/princeRoomDetails.test.ts`
+
+- manga details in every prince apartment > gives every princely wall picture an intentional material colour
+
 ## `apps/web/src/lib/tour/punch.test.ts`
 
 - the line the blow takes through the matter > runs the whole way when there is deck the whole way
@@ -1171,6 +1179,10 @@ Fichiers : 294
 
 - the limit stated with the technique > refuses the round solids, which offer no flat face
 - the plaque, which is a flat limited surface with writing on it > puts a neighbour’s number on the door
+
+## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
+
+- manga details outside the princely apartments > keeps Queen Unma’s crib, mobile and formal salon on Tier 1
 
 ## `apps/web/src/lib/tour/visibility.test.ts`
 

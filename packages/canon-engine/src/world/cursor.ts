@@ -23,10 +23,19 @@ export function compareStoryPosition(
 }
 
 export function buildCanonicalCursors(events: CursorSource[], branchId = 'canon'): StoryCursor[] {
-  const ordered = [...events].sort((left, right) => {
-    if (left.ordinal != null && right.ordinal != null) return left.ordinal - right.ordinal
-    return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-  })
+  // A total order first, then one rank per event. Sorting on the pair directly
+  // — "both have ordinals? compare them, else compare chapters" — is not
+  // transitive: with a canon-dated event and a legacy one straddling it, the
+  // three pairwise comparisons can disagree, and a sort built on them scrambles
+  // the chronology depending on input order.
+  const byPublication = [...events].sort(
+    (left, right) =>
+      left.chapter.number - right.chapter.number || left.sequence - right.sequence,
+  )
+  const publicationRank = new Map(byPublication.map((event, index) => [event.id, index]))
+  const rankOf = (event: CursorSource): number => event.ordinal ?? publicationRank.get(event.id)!
+
+  const ordered = [...events].sort((left, right) => rankOf(left) - rankOf(right))
 
   return ordered.map((event, index) => ({
     branchId,

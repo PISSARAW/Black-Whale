@@ -107,6 +107,14 @@ function transferConsciousness(state: WorldState, payload: PayloadOf<'CONSCIOUSN
     if (state.consciousnessByBody[payload.fromBodyId] === payload.consciousnessId) {
       state.consciousnessByBody[payload.fromBodyId] = null
     }
+  } else {
+    // No origin named: vacate whichever body the consciousness holds now.
+    // Leaving it seated would put one consciousness in two bodies at once.
+    for (const [bodyId, occupant] of Object.entries(state.consciousnessByBody)) {
+      if (occupant === payload.consciousnessId && bodyId !== payload.toBodyId) {
+        state.consciousnessByBody[bodyId] = null
+      }
+    }
   }
   state.consciousnessByBody[payload.toBodyId] = payload.consciousnessId
 }

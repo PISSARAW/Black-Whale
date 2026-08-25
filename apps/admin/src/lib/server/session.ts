@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
 
 export const ADMIN_SESSION_COOKIE = 'bw_admin_session'
 const SESSION_TTL_SECONDS = 12 * 60 * 60
@@ -25,10 +25,15 @@ function requiredSecret(name: 'ADMIN_PASSWORD' | 'SESSION_SECRET'): string {
   return name === 'ADMIN_PASSWORD' ? 'admin' : 'development-session-secret'
 }
 
+/**
+ * Both sides are hashed before the comparison: `timingSafeEqual` refuses
+ * buffers of different lengths, and comparing lengths first would leak the
+ * secret's length through response timing. A fixed-length digest hides it.
+ */
 function equal(left: string, right: string): boolean {
-  const leftBuffer = Buffer.from(left)
-  const rightBuffer = Buffer.from(right)
-  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer)
+  const leftDigest = createHash('sha256').update(left).digest()
+  const rightDigest = createHash('sha256').update(right).digest()
+  return timingSafeEqual(leftDigest, rightDigest)
 }
 
 /**

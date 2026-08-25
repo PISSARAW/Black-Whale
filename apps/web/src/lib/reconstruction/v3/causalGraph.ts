@@ -1,3 +1,4 @@
+import { ScenarioInputError } from './errors'
 import type {
   ReconstructionDecision,
   ReconstructionPrecondition,
@@ -128,7 +129,7 @@ function assertAcyclic(decisions: readonly ReconstructionDecision[], edges: read
   const visiting = new Set<string>()
   const visited = new Set<string>()
   const visit = (id: string) => {
-    if (visiting.has(id)) throw new Error(`Causal cycle detected at decision ${id}`)
+    if (visiting.has(id)) throw new ScenarioInputError(`Causal cycle detected at decision ${id}`)
     if (visited.has(id)) return
     visiting.add(id)
     for (const dependency of dependencies.get(id) ?? []) visit(dependency)

@@ -1,3 +1,5 @@
+import { ScenarioInputError } from './errors'
+
 export const RECONSTRUCTION_SCENARIO_VERSION = 3 as const
 
 export type ReconstructionScenarioMode = 'strict-canon' | 'rule-compatible'
@@ -50,21 +52,21 @@ export function defineReconstructionScenario(
 ): ReconstructionScenario {
   requireId(draft.id, 'scenario id')
   requireId(draft.forkEventId, 'fork event')
-  if (!draft.title.trim()) throw new Error('A reconstruction scenario requires a title')
+  if (!draft.title.trim()) throw new ScenarioInputError('A reconstruction scenario requires a title')
   if (!Number.isSafeInteger(draft.seed) || draft.seed < 0) {
-    throw new Error('Scenario seed must be a non-negative safe integer')
+    throw new ScenarioInputError('Scenario seed must be a non-negative safe integer')
   }
   const decisionIds = new Set<string>()
   const preconditionIds = new Set<string>()
   for (const decision of draft.decisions) {
     requireId(decision.id, 'decision id')
     requireId(decision.actorId, `actor of ${decision.id}`)
-    if (decisionIds.has(decision.id)) throw new Error(`Duplicate decision id: ${decision.id}`)
+    if (decisionIds.has(decision.id)) throw new ScenarioInputError(`Duplicate decision id: ${decision.id}`)
     decisionIds.add(decision.id)
     for (const precondition of decision.preconditions) {
       requireId(precondition.id, `precondition of ${decision.id}`)
       if (preconditionIds.has(precondition.id)) {
-        throw new Error(`Duplicate precondition id: ${precondition.id}`)
+        throw new ScenarioInputError(`Duplicate precondition id: ${precondition.id}`)
       }
       preconditionIds.add(precondition.id)
     }
@@ -86,7 +88,7 @@ export function defineReconstructionScenario(
 export function parseReconstructionScenarioDraft(value: unknown): ReconstructionScenarioDraft {
   const draft = record(value, 'scenario')
   const decisions = array(draft.decisions, 'decisions')
-  if (decisions.length > 50) throw new Error('A scenario may contain at most 50 decisions')
+  if (decisions.length > 50) throw new ScenarioInputError('A scenario may contain at most 50 decisions')
 
   return {
     id: string(draft.id, 'scenario id'),
@@ -97,16 +99,16 @@ export function parseReconstructionScenarioDraft(value: unknown): Reconstruction
     decisions: decisions.map((rawDecision, index) => {
       const decision = record(rawDecision, `decision ${index}`)
       const targets = array(decision.targetIds, `targets of decision ${index}`)
-      if (targets.length > 20) throw new Error('A decision may contain at most 20 targets')
+      if (targets.length > 20) throw new ScenarioInputError('A decision may contain at most 20 targets')
       const parameters = record(decision.parameters, `parameters of decision ${index}`)
       for (const [key, parameter] of Object.entries(parameters)) {
         if (!['string', 'number', 'boolean'].includes(typeof parameter)) {
-          throw new Error(`Parameter ${key} of decision ${index} must be scalar`)
+          throw new ScenarioInputError(`Parameter ${key} of decision ${index} must be scalar`)
         }
       }
       const preconditions = array(decision.preconditions, `preconditions of decision ${index}`)
       if (preconditions.length > 20) {
-        throw new Error('A decision may contain at most 20 preconditions')
+        throw new ScenarioInputError('A decision may contain at most 20 preconditions')
       }
       return {
         id: string(decision.id, `decision ${index} id`),
@@ -163,38 +165,38 @@ function canonicalJson(value: unknown): string {
 }
 
 function requireId(value: string, field: string): void {
-  if (!value.trim()) throw new Error(`A reconstruction scenario requires ${field}`)
-  if (value.length > 128) throw new Error(`${field} must be at most 128 characters`)
+  if (!value.trim()) throw new ScenarioInputError(`A reconstruction scenario requires ${field}`)
+  if (value.length > 128) throw new ScenarioInputError(`${field} must be at most 128 characters`)
 }
 
 function record(value: unknown, field: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw new Error(`${field} must be an object`)
+    throw new ScenarioInputError(`${field} must be an object`)
   }
   return value as Record<string, unknown>
 }
 
 function array(value: unknown, field: string): unknown[] {
-  if (!Array.isArray(value)) throw new Error(`${field} must be an array`)
+  if (!Array.isArray(value)) throw new ScenarioInputError(`${field} must be an array`)
   return value
 }
 
 function string(value: unknown, field: string, max = 128): string {
-  if (typeof value !== 'string' || !value.trim()) throw new Error(`${field} must be a string`)
-  if (value.length > max) throw new Error(`${field} must be at most ${max} characters`)
+  if (typeof value !== 'string' || !value.trim()) throw new ScenarioInputError(`${field} must be a string`)
+  if (value.length > max) throw new ScenarioInputError(`${field} must be at most ${max} characters`)
   return value.trim()
 }
 
 function safeInteger(value: unknown, field: string): number {
   if (!Number.isSafeInteger(value) || Number(value) < 0) {
-    throw new Error(`${field} must be a non-negative safe integer`)
+    throw new ScenarioInputError(`${field} must be a non-negative safe integer`)
   }
   return Number(value)
 }
 
 function member<T extends string>(value: unknown, values: readonly T[], field: string): T {
   if (typeof value !== 'string' || !values.includes(value as T)) {
-    throw new Error(`${field} is invalid`)
+    throw new ScenarioInputError(`${field} is invalid`)
   }
   return value as T
 }

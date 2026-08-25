@@ -1,6 +1,11 @@
 import { json } from '@sveltejs/kit'
 import type { WorldState } from '@black-whale/canon-engine'
+import {
+  SimulationInputError,
+  SimulationNotFoundError,
+} from '@black-whale/simulation-engine'
 import { compareWorldBranches } from '$lib/reconstruction/v3/comparison'
+import { ScenarioInputError } from '$lib/reconstruction/v3/errors'
 import { executeReconstructionScenario } from '$lib/reconstruction/v3/executor'
 import type { BranchEpistemicState, BranchKnowledgeState } from '$lib/reconstruction/v3/knowledge'
 import { buildReconstructionReport } from '$lib/reconstruction/v3/report'
@@ -9,6 +14,7 @@ import {
   parseReconstructionScenarioDraft,
 } from '$lib/reconstruction/v3/scenario'
 import { prisma } from '$lib/server/db'
+import { log, describeError } from '$lib/server/log'
 import { rateLimit } from '$lib/server/rateLimit'
 import { reconstructionExecutorPorts } from '$lib/server/reconstruction-v3'
 import { readSpoilerLimit } from '$lib/server/spoiler'
@@ -59,8 +65,18 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
       report,
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : copy.errors.invalidScenario
-    return json({ error: message }, { status: 400 })
+    // Only scenario-level mistakes are echoed back verbatim. Any other failure
+    // (Prisma, TypeError) keeps its message server-side and answers with a
+    // generic copy, so internals never cross to the client.
+    if (
+      error instanceof ScenarioInputError ||
+      error instanceof SimulationInputError ||
+      error instanceof SimulationNotFoundError
+    ) {
+      return json({ error: error.message }, { status: 400 })
+    }
+    log.error('Reconstruction run failed', describeError(error))
+    return json({ error: copy.errors.invalidScenario }, { status: 500 })
   }
 }
 

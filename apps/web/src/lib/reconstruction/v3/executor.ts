@@ -1,3 +1,4 @@
+import { ScenarioInputError } from './errors'
 import { buildCausalGraph, type CausalContext } from './causalGraph'
 import {
   propagateKnowledge,
@@ -163,7 +164,7 @@ async function applyDecision(input: DecisionExecution) {
     deceptive: decision.parameters['deceptive'] === true,
   })
   if (propagated.traces.some((trace) => trace.status === 'blocked')) {
-    throw new Error(propagated.traces.find((trace) => trace.status === 'blocked')!.reason)
+    throw new ScenarioInputError(propagated.traces.find((trace) => trace.status === 'blocked')!.reason)
   }
   return {
     state,
@@ -176,20 +177,20 @@ async function applyDecision(input: DecisionExecution) {
 function reliabilityParameter(decision: ReconstructionDecision): TransferReliability {
   const value = String(decision.parameters['reliability'] ?? 'trusted')
   if (!['trusted', 'unverified', 'deceptive', 'unknown'].includes(value)) {
-    throw new Error(`Decision ${decision.id} has invalid reliability ${value}`)
+    throw new ScenarioInputError(`Decision ${decision.id} has invalid reliability ${value}`)
   }
   return value as TransferReliability
 }
 
 function requiredTarget(decision: ReconstructionDecision): string {
   const target = decision.targetIds[0]
-  if (!target) throw new Error(`Decision ${decision.id} requires a target`)
+  if (!target) throw new ScenarioInputError(`Decision ${decision.id} requires a target`)
   return target
 }
 
 function requiredParameter(decision: ReconstructionDecision, key: string): string {
   const value = decision.parameters[key]
   if (typeof value !== 'string' || !value)
-    throw new Error(`Decision ${decision.id} requires ${key}`)
+    throw new ScenarioInputError(`Decision ${decision.id} requires ${key}`)
   return value
 }

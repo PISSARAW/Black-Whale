@@ -48,6 +48,23 @@ export function bodyRef(ctx: AbilityContext, ref: EntityRef | undefined): Entity
   return body ? { id: body.id, kind: 'BODY' } : undefined
 }
 
+/**
+ * The body state behind an entity id, characters included.
+ *
+ * The kernel indexes `bodyStates` by body; a caller holding a character reads
+ * through to that character's body rather than always missing.
+ */
+export function bodyStateOf(ctx: AbilityContext, entityId: string): string | undefined {
+  const states = ctx.worldState?.bodyStates
+  if (!states) return undefined
+  const direct = states[entityId]
+  if (direct !== undefined) return direct
+  const body = Object.values(ctx.worldState?.entities ?? {}).find(
+    (entity) => entity.kind === 'BODY' && entity.originalCharacterId === entityId,
+  )
+  return body ? states[body.id] : undefined
+}
+
 /** Reads a string activation parameter, or undefined when the caller omitted it. */
 export function param(ctx: AbilityContext, key: string): string | undefined {
   const value = ctx.parameters?.[key]

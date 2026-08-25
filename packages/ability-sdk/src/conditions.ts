@@ -1,5 +1,5 @@
 import type { AbilityConditionResult, AbilityContext } from '@black-whale/nen-engine'
-import { listParam, numberParam, param } from './context.js'
+import { bodyStateOf, listParam, numberParam, param } from './context.js'
 
 export type ConditionFn = (ctx: AbilityContext) => AbilityConditionResult
 
@@ -42,7 +42,8 @@ export const isConscious = (): ConditionFn =>
 export const isAlive = (): ConditionFn =>
   condition('is-alive', 'Actor body is alive', (ctx) => {
     if (!ctx.worldState) return 'UNKNOWN'
-    const state = ctx.worldState.bodyStates[ctx.actorId]
+    // The actor is a character; the state lives on their body.
+    const state = bodyStateOf(ctx, ctx.actorId)
     return state ? (state === 'ALIVE' || state === 'INJURED' ? 'MET' : 'UNMET') : 'UNKNOWN'
   })
 
@@ -96,7 +97,7 @@ export const targetHasAffiliation = (affiliationId: string, label: string): Cond
 export const targetIsAlive = (): ConditionFn =>
   condition('target-is-alive', 'La cible est vivante', (ctx) => {
     if (!ctx.worldState || ctx.targets.length === 0) return 'UNKNOWN'
-    const states = ctx.targets.map((targetId) => ctx.worldState?.bodyStates[targetId])
+    const states = ctx.targets.map((targetId) => bodyStateOf(ctx, targetId))
     if (states.some((state) => state === 'DEAD')) return 'UNMET'
     return states.some((state) => state === undefined) ? 'UNKNOWN' : 'MET'
   })

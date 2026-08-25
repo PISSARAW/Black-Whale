@@ -801,10 +801,6 @@
       <h2 id="reconstruction-error-title">{$t.reconstruction.loadErrorTitle}</h2>
       <p>{$t.reconstruction.loadErrorBody}</p>
       <button type="button" onclick={() => location.reload()}>{$t.reconstruction.retry}</button>
-      <details>
-        <summary>{$t.reconstruction.technicalDetails}</summary>
-        <code>{data.error}</code>
-      </details>
     </section>
   {:else if chronologicalEvents.length === 0}
     <section class="empty-state"><p>{$t.reconstruction.empty}</p></section>

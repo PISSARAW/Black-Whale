@@ -210,10 +210,11 @@ export const load: PageServerLoad = async ({ cookies }) => {
       spoilerLimit: maxChapter,
     }
   } catch (err: unknown) {
+    // The details stay in the log: Prisma and engine messages name tables,
+    // columns and internals no visitor should read.
     log.error('Failed to load reconstruction:', describeError(err))
-    const message = err instanceof Error ? err.message : String(err)
     return {
-      error: message,
+      error: 'reconstruction-unavailable',
       chapters: [],
       worldEvents: [],
       presences: [],

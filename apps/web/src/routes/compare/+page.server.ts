@@ -65,7 +65,6 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
         locations: Awaited<ReturnType<typeof prisma.location.findMany>>
       })
     | null = null
-  let selectedEventSequence = defaultEvent?.sequence
   let selectedEventChapter = defaultEvent?.chapter?.number
   let canonicalTruth: {
     facts: Awaited<ReturnType<typeof prisma.fact.findMany>>
@@ -80,12 +79,15 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
   }
 
   if (selectedEventId) {
+    // Only an event the reader is allowed to see drives the world payload.
+    // `events` is already capped, so an id past the cap or a fabricated id
+    // finds no row here — and must not reach `getWorldState`, which would
+    // happily build the world at any chapter it is handed.
     const selectedEvent = events.find((event) => event.id === selectedEventId)
-    selectedEventSequence = selectedEvent?.sequence ?? selectedEventSequence
-    selectedEventChapter = selectedEvent?.chapter?.number ?? selectedEventChapter
+    if (selectedEvent) {
+      selectedEventChapter = selectedEvent.chapter?.number
 
-    if (selectedEventSequence !== undefined) {
-      const rawWorld = await timeline.getWorldState({ eventId: selectedEventId })
+      const rawWorld = await timeline.getWorldState({ eventId: selectedEvent.id })
       const locations = await prisma.location.findMany({
         where:
           maxChapter === undefined

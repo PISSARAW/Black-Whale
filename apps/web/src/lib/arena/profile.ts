@@ -47,10 +47,30 @@ export function freshArenaProfile(now = new Date(0)): ArenaProfile {
   }
 }
 
+/**
+ * A mastery table is only usable when every technique carries a finite,
+ * non-negative count. A partial or corrupted table would otherwise turn the
+ * comparisons in `unmetRequirements` into `NaN < n`, which is always false —
+ * unlocking missions the player never earned.
+ */
+function hasCompleteMastery(value: unknown): value is ArenaProfile['mastery'] {
+  const counts = value as Partial<Record<NenMastery, unknown>> | null
+  return (
+    typeof counts === 'object' &&
+    counts !== null &&
+    NEN_MASTERIES.every((technique) => {
+      const count = counts[technique]
+      return typeof count === 'number' && Number.isFinite(count) && count >= 0
+    })
+  )
+}
+
 export function loadArenaProfile(storage: ProfileStorage): ArenaProfile {
   try {
     const value = JSON.parse(storage.getItem(ARENA_PROFILE_KEY) ?? '') as ArenaProfile
-    if (value.version !== ARENA_PROFILE_VERSION || !value.mastery) throw new Error('invalid')
+    if (value.version !== ARENA_PROFILE_VERSION || !hasCompleteMastery(value.mastery)) {
+      throw new Error('invalid')
+    }
     return value
   } catch {
     return freshArenaProfile()
@@ -77,7 +97,7 @@ export function recordArenaResult(
   const mastery = { ...profile.mastery }
   for (const command of replay.commands) {
     const technique = masteryFor(command.action)
-    if (technique) mastery[technique] = Math.min(100, mastery[technique] + 1)
+    if (technique) mastery[technique] = Math.min(100, (mastery[technique] ?? 0) + 1)
   }
   const completed = challengeId && result?.complete ? challengeId : null
   const bestGrades = { ...profile.bestGrades }

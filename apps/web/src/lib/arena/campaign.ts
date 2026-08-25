@@ -95,7 +95,9 @@ export function unmetRequirements(mission: CampaignMission, profile: ArenaProfil
     unmet.push(`challenge:${mission.requires.challenge}`)
   }
   for (const [technique, minimum] of Object.entries(mission.requires.mastery ?? {})) {
-    if (profile.mastery[technique as NenMastery] < (minimum ?? 0))
+    // `?? 0` keeps a missing count a lock rather than an unlock: NaN would
+    // fail every comparison and read as "requirement met".
+    if ((profile.mastery[technique as NenMastery] ?? 0) < (minimum ?? 0))
       unmet.push(`mastery:${technique}:${minimum}`)
   }
   return unmet

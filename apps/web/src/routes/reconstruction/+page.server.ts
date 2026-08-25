@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/db'
+import type { Prisma } from '@black-whale/database'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { resolveReconstructionSources } from '$lib/reconstruction/sourceView'
 import { buildReconstructionClaimIndex } from '$lib/reconstruction/claimIndex'
@@ -6,6 +7,23 @@ import { catalogSceneLocation, type CatalogChapterScenes } from '$lib/reconstruc
 import { readDataFile } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
 import { log, describeError } from '$lib/server/log'
+
+/**
+ * The presences the reader may see.
+ *
+ * The cap applies here or not at all: this table is the whole spatial
+ * chronology of the canon, labels and real names and chapter/page sources
+ * included, so an uncapped read would hand the visitor every movement of every
+ * character whatever their limit. A presence is visible once its first event is.
+ */
+function visiblePresences(maxChapter: number | undefined): Prisma.PresenceWhereInput {
+  return {
+    entityType: 'BODY',
+    ...(maxChapter !== undefined
+      ? { fromEvent: { chapter: { number: { lte: maxChapter } } } }
+      : {}),
+  }
+}
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const maxChapter = readSpoilerLimit(cookies)
@@ -37,9 +55,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
           orderBy: { ordinal: 'asc' },
         }),
         prisma.presence.findMany({
-          where: {
-            entityType: 'BODY',
-          },
+          where: visiblePresences(maxChapter),
           select: {
             id: true,
             entityId: true,

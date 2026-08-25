@@ -48,7 +48,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
       ;[leftPerspective, rightPerspective, comparison] = await Promise.all([
         buildPerspective(selectedLeft, selectedEventId, maxChapter),
         buildPerspective(selectedRight, selectedEventId, maxChapter),
-        comparePerspectives(selectedLeft, selectedRight, selectedEventId, maxChapter),
+        comparePerspectives({
+          leftId: selectedLeft,
+          rightId: selectedRight,
+          eventId: selectedEventId,
+          spoilerLimit: maxChapter,
+        }),
       ])
     } catch (error) {
       log.error('Failed to build perspective comparison', describeError(error))

@@ -50,7 +50,12 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
       if (rightCharacterId) {
         rightPerspective = await buildPerspective(rightCharacterId, eventId, maxChapter)
-        comparison = await comparePerspectives(leftCharacterId, rightCharacterId, eventId, maxChapter)
+        comparison = await comparePerspectives({
+          leftId: leftCharacterId,
+          rightId: rightCharacterId,
+          eventId,
+          spoilerLimit: maxChapter,
+        })
       }
     } catch (e) {
       log.error('Failed to build perspective data', describeError(e))

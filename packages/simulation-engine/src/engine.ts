@@ -20,7 +20,6 @@ export interface CreateBranchInput {
 export interface SimulationStepResult {
   snapshot: WorldState
   appliedEvents: WorldEvent[]
-  canonFidelity: number
   warnings: string[]
 }
 
@@ -69,7 +68,6 @@ export class SimulationEngine {
     return {
       snapshot: result.state,
       appliedEvents: result.events,
-      canonFidelity: policy === 'STRICT_CANON' ? 1 : policy === 'RULE_COMPATIBLE' ? 0.75 : 0,
       warnings:
         policy === 'SANDBOX' ? ['Sandbox branch: canonical constraints may be bypassed.'] : [],
     }
@@ -86,12 +84,10 @@ export class SimulationEngine {
     fromOrdinal?: number
   }): SimulationStepResult & { skippedEvents: WorldEvent[] } {
     const merged = this.branches.mergeInto(input)
-    const policy = this.branches.getBranch(input.targetBranchId).rulePolicy
     return {
       snapshot: merged.state,
       appliedEvents: merged.events,
       skippedEvents: merged.skipped,
-      canonFidelity: policy === 'STRICT_CANON' ? 1 : policy === 'RULE_COMPATIBLE' ? 0.75 : 0,
       warnings: merged.skipped.length
         ? [`${merged.skipped.length} predicted events were overridden by a diverging actor.`]
         : [],

@@ -17,7 +17,6 @@ function store() {
     applyAction: vi.fn(async (_branchId: string, input: { actionType: string }) => ({
       snapshot: { lastAction: input.actionType },
       appliedEvents: [{ id: `event-${input.actionType}` }],
-      canonFidelity: 0.75,
       warnings: [],
     })),
   }

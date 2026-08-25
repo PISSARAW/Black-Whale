@@ -107,14 +107,17 @@ export class TourWorldTicker {
   scarletSecond = () => {
     const step = stepScarlet(this.options.read().world)
     if (!step) return
-    this.apply(step.report?.kind === 'eyes-held' ? { ...step, report: null } : step)
+    const report = step.report
+    // Emperor Time is held, not ticked: its own renewal stays silent, while
+    // anything a step left behind still speaks.
+    const renewsItself = !Array.isArray(report) && report?.kind === 'eyes-held'
+    this.apply(renewsItself ? { ...step, report: null } : step)
   }
 
   crossWorm = (spaceId: string | null, arrivedFrom: string | null) => {
     const crossing = wormExit(this.options.read().world, spaceId, arrivedFrom)
     if (!crossing) return null
-    this.options.updateWorld(crossing.world)
-    this.options.updateReport(crossing.report)
+    this.apply(crossing)
     return crossing.to
   }
 }

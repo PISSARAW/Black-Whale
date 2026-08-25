@@ -1,7 +1,35 @@
-import type { Scene, Ray } from "three"
 import type { TierPlan, Ship } from "./blueprint"
-import { Aim, detachedOn, TourWorld, emptiedOn, heldSolidIds, type Perch, type Mark, solidById, solidNow, wanderOffset } from "./hatsu"
+import {
+  detachedOn,
+  emptiedOn,
+  heldSolidIds,
+  solidById,
+  solidNow,
+  wanderOffset,
+  type Aim,
+  type Perch,
+  type Mark,
+  type TourWorld,
+} from "./hatsu"
+import { pointInPolygon, structureFootprint } from "./geometry"
 import type { Space, Vec2, Structure } from "./types"
+
+/** A planar ray: where it starts and the unit direction it travels along. */
+export interface AimRay {
+  at: Vec2
+  dx: number
+  dz: number
+}
+
+/** A solid the reticle can land on, with its outline and bounding box. */
+export interface SolidTarget {
+  structure: Structure
+  outline: Vec2[]
+  minX: number
+  minZ: number
+  maxX: number
+  maxZ: number
+}
 
 export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
   const { at, heading, range = 90 } = aim
@@ -19,7 +47,11 @@ export function aimedSpace(plan: TierPlan, aim: Aim): Space | null {
   }
   return here
 }
-export function aimedSolid(scene: Scene, plan: TierPlan, aim: Aim): Structure | null {
+export function aimedSolid(
+  scene: { ship: Ship; world: TourWorld },
+  plan: TierPlan,
+  aim: Aim,
+): Structure | null {
   const { ship, world } = scene
   const { at, heading, range = 40 } = aim
   const dx = -Math.sin(heading)
@@ -114,7 +146,7 @@ function checkSegment(
   return along
 }
 
-export function rayReaches(target: SolidTarget, ray: Ray, range: number): number | null {
+export function rayReaches(target: SolidTarget, ray: AimRay, range: number): number | null {
   const { at, dx, dz } = ray
   const bounds = { near: 0, far: range }
 

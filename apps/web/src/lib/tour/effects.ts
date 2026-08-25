@@ -1,5 +1,6 @@
 import type { Ship } from "./blueprint"
-import { TourWorld, TourCastResult, standingIn, solidNow, TourReport, POLARITY_CONTACT } from "./hatsu"
+import { standingIn, solidNow, POLARITY_CONTACT, type TourWorld, type TourCastResult, type TourReport } from "./hatsu"
+import { pointInPolygon } from "./geometry"
 import { markedAt, POLARITY_PACE } from "./targeting"
 import type { Vec2 } from "./types"
 

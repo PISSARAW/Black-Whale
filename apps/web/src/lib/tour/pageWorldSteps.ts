@@ -29,17 +29,16 @@ export function stepFish(options: { world: TourWorld; ship: Ship }): WorldStep |
   for (const spaceId of options.world.devouring) {
     const bite = fishBite(world, options.ship, spaceId)
     if (!bite) continue
+    if (bite.report) reports.push(...(Array.isArray(bite.report) ? bite.report : [bite.report]))
     world = bite.world
-    if (bite.report) reports.push(bite.report)
   }
   return reports.length > 0 || world !== options.world ? { world, report: reports } : null
 }
 
 function applySubStep(state: { world: TourWorld; reports: TourReport[] }, next: WorldStep | null) {
-  if (next) {
-    state.world = next.world
-    if (next.report) state.reports.push(next.report)
-  }
+  if (!next) return
+  state.world = next.world
+  if (next.report) state.reports.push(...(Array.isArray(next.report) ? next.report : [next.report]))
 }
 
 export function stepBeast(options: {
@@ -133,7 +132,10 @@ export function stepConsole(scene: {
     }
   }
 
-  return next === world ? null : { world: next, report: reports }
+  /** One line for what just happened: a lone report stays alone, silence is null. */
+  const said = (): TourReport | TourReport[] | null =>
+    reports.length === 1 ? reports[0] : reports.length > 1 ? reports : null
+  return next === world ? null : { world: next, report: said() }
 }
 
 /**

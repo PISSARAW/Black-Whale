@@ -3,8 +3,10 @@ import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ cookies }) => {
   const prisma = await getPrisma()
-  const spoilerLimitCookie = cookies.get('adminSpoilerLimit')
-  const spoilerLimit = spoilerLimitCookie ? parseInt(spoilerLimitCookie) : null
+  // Cookie values are client-controlled; reject anything that is not a plain
+  // non-negative integer rather than letting NaN reach the Prisma clause.
+  const parsed = Number.parseInt(cookies.get('adminSpoilerLimit') ?? '', 10)
+  const spoilerLimit = Number.isSafeInteger(parsed) && parsed >= 0 ? parsed : null
 
   const whereClause = spoilerLimit
     ? {

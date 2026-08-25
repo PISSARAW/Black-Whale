@@ -26,14 +26,18 @@ function finding(rule: string, where: string, message: string): Finding {
  * of the chapter rather than a second digit — comparing the two parts as one
  * number is what keeps `ch-359.4` before `ch-361` and after `ch-359`. Null for
  * `ch-unknown`, which sits nowhere in particular.
+ *
+ * The fraction is capped at three digits because the scale is 1/1000: a wider
+ * sequence would overflow it and sort past the next chapter. Sequences are
+ * capped at 999 by the schema; this flags any reference that slips through.
  */
+const MAX_SEQUENCE_DIGITS = 3
+
 function chapterPosition(value: string | null | undefined): number | null {
-  const match = /^ch-(\d+)(?:\.(\d+))?$/.exec(value ?? '')
+  const match = new RegExp(`^ch-(\\d+)(?:\\.(\\d{1,${MAX_SEQUENCE_DIGITS}}))?$`).exec(value ?? '')
   if (!match) return null
   return Number(match[1]) + Number(match[2] ?? 0) / 1000
-}
-
-/** Every `id` in a file is used once. A duplicate silently wins or loses. */
+}/** Every `id` in a file is used once. A duplicate silently wins or loses. */
 const uniqueIds: Invariant = ({ characters, abilities, factions, locations, chapters }) => {
   const findings: Finding[] = []
   const check = (file: string, ids: readonly string[]) => {
@@ -153,11 +157,13 @@ const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chap
 
   const check = (where: string, value: string | null | undefined) => {
     if (!value || value === 'ch-unknown') return
-    const match = /^ch-(\d+)(?:\.\d+)?$/.exec(value)
+    const match = /^ch-(\d+)(?:\.(\d+))?$/.exec(value)
     if (!match) {
       findings.push(finding('chapter-reference', where, `${value} is not ch-<number>`))
       return
     }
+    if ((match[2]?.length ?? 0) > MAX_SEQUENCE_DIGITS)
+      findings.push(finding('chapter-reference', where, `${value} overflows the sequence scale`))
     if (Number(match[1]) > last) {
       findings.push(
         finding('chapter-reference', where, `${value} is past the last catalogued chapter ${last}`),

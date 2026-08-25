@@ -319,7 +319,10 @@ export const eventSchema = z
     title: z.string().min(1),
     chapterTitle: z.string().min(1),
     chapter: z.number().int().positive(),
-    sequence: z.number().int().nonnegative(),
+    // Capped at 999 because the chronological sort encodes it as a three-digit
+    // fraction of the chapter (`chapterPosition`): a wider sequence would
+    // overflow the scale and order past the next chapter.
+    sequence: z.number().int().nonnegative().max(999),
     summary: z.string().optional(),
     /**
      * Titles a previous run wrote for this event. The timeline pass matches on

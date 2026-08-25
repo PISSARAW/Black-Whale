@@ -26,10 +26,12 @@ export function chapterNumber(value: string | null | undefined): number | null {
  * A reference as one sortable number, the sequence as a fraction of the chapter.
  *
  * Keeps `ch-359.4` after `ch-359` and before `ch-361`, which a two-part
- * comparison spread over call sites kept getting wrong.
+ * comparison spread over call sites kept getting wrong. The fraction caps at
+ * three digits — the scale is 1/1000, so a wider sequence would overflow it and
+ * sort past the next chapter; `eventSchema.sequence` caps at 999 to match.
  */
 export function chapterPosition(value: string | null | undefined): number | null {
   const reference = parseChapterReference(value)
-  if (!reference) return null
+  if (!reference || (reference.sequence ?? 0) >= 1000) return null
   return reference.number + (reference.sequence ?? 0) / 1000
 }

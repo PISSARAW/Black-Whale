@@ -8,9 +8,9 @@ export interface TourRenderContext {
   sealedExposure: number
   comfortExposure: number
   hourViewExposure: number
-  hourViewGrade: any
+  hourViewGrade: { contrast: number; saturation: number; vignette: number }
   calmWalk: boolean
-  shownNen: any
+  shownNen: import('@black-whale/nen-engine').NenTechniqueState | null
   gyoMode: boolean
   currentTierId: string
   picker: THREE.Raycaster

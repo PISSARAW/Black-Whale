@@ -258,7 +258,7 @@ export default tseslint.config(
       'apps/web/src/lib/tour/apparitions.ts', // 1827
       'apps/web/src/lib/tour/blueprint.ts', // 758
       'apps/web/src/lib/tour/geometry.ts', // 942
-      'apps/web/src/lib/tour/hatsu.ts', // 53\n      'apps/web/src/lib/tour/effects.ts',\n      'apps/web/src/lib/tour/targeting.ts',64\n      'apps/web/src/lib/tour/effects.ts',\n      'apps/web/src/lib/tour/targeting.ts',
+      'apps/web/src/lib/tour/hatsu.ts', // 5364
       'apps/web/src/lib/tour/mesh.ts', // 1603
       'apps/web/src/lib/tour/morena.ts', // 1034
       'apps/web/src/routes/+layout.svelte', // 859

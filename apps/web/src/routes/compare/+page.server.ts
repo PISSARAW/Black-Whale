@@ -107,7 +107,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
         })
 
         const objectiveFacts = rawFacts.filter((fact) =>
-          activeEvent ? isActiveAt(fact as any, activeEvent as any, revealedThroughChapter) : false
+          activeEvent ? isActiveAt(fact as import('@black-whale/domain').TemporalRecord, activeEvent as import('@black-whale/domain').OrderedEvent, revealedThroughChapter) : false
         )
 
         canonicalTruth = {

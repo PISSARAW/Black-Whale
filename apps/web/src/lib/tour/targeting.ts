@@ -78,23 +78,48 @@ export const bakedTargets = (() => {
     return targets
   }
 })()
+function intersectSlab(ctx: {
+  origin: number
+  direction: number
+  low: number
+  high: number
+  bounds: { near: number; far: number }
+}): boolean {
+  if (Math.abs(ctx.direction) < 1e-9) return ctx.origin >= ctx.low && ctx.origin <= ctx.high
+  const first = (ctx.low - ctx.origin) / ctx.direction
+  const second = (ctx.high - ctx.origin) / ctx.direction
+  ctx.bounds.near = Math.max(ctx.bounds.near, Math.min(first, second))
+  ctx.bounds.far = Math.min(ctx.bounds.far, Math.max(first, second))
+  return ctx.bounds.near <= ctx.bounds.far
+}
+
+function checkSegment(
+  segment: { a: Vec2; b: Vec2 },
+  ray: { at: Vec2; dx: number; dz: number; range: number },
+  nearest: number | null,
+): number | null {
+  const { a, b } = segment
+  const { at, dx, dz, range } = ray
+  const ex = b[0] - a[0]
+  const ez = b[1] - a[1]
+  const denominator = dx * ez - dz * ex
+  if (Math.abs(denominator) < 1e-9) return nearest
+
+  const px = a[0] - at[0]
+  const pz = a[1] - at[1]
+  const along = (px * ez - pz * ex) / denominator
+  if (along < 0 || along > range || (nearest !== null && along >= nearest)) return nearest
+  const across = (px * dz - pz * dx) / denominator
+  if (across < 0 || across > 1) return nearest
+  return along
+}
+
 export function rayReaches(target: SolidTarget, ray: Ray, range: number): number | null {
   const { at, dx, dz } = ray
-  let near = 0
-  let far = range
+  const bounds = { near: 0, far: range }
 
-  // Slab test, one axis at a time. A ray running parallel to a pair of sides
-  // either starts between them or never meets them.
-  const slab = (origin: number, direction: number, [low, high]: readonly [number, number]) => {
-    if (Math.abs(direction) < 1e-9) return origin >= low && origin <= high
-    const first = (low - origin) / direction
-    const second = (high - origin) / direction
-    near = Math.max(near, Math.min(first, second))
-    far = Math.min(far, Math.max(first, second))
-    return near <= far
-  }
-  if (!slab(at[0], dx, [target.minX, target.maxX])) return null
-  if (!slab(at[1], dz, [target.minZ, target.maxZ])) return null
+  if (!intersectSlab({ origin: at[0], direction: dx, low: target.minX, high: target.maxX, bounds })) return null
+  if (!intersectSlab({ origin: at[1], direction: dz, low: target.minZ, high: target.maxZ, bounds })) return null
 
   // Standing inside it — under a mezzanine, under a run of ducting — is aiming
   // at it, which is what marching from the first step out already did.
@@ -105,18 +130,7 @@ export function rayReaches(target: SolidTarget, ray: Ray, range: number): number
   for (let i = 0; i < outline.length; i++) {
     const a = outline[i]
     const b = outline[(i + 1) % outline.length]
-    const ex = b[0] - a[0]
-    const ez = b[1] - a[1]
-    const denominator = dx * ez - dz * ex
-    if (Math.abs(denominator) < 1e-9) continue
-
-    const px = a[0] - at[0]
-    const pz = a[1] - at[1]
-    const along = (px * ez - pz * ex) / denominator
-    if (along < 0 || along > range || (nearest !== null && along >= nearest)) continue
-    const across = (px * dz - pz * dx) / denominator
-    if (across < 0 || across > 1) continue
-    nearest = along
+    nearest = checkSegment({ a, b }, { at, dx, dz, range }, nearest)
   }
   return nearest
 }

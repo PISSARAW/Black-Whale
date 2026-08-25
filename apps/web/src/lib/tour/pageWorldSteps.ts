@@ -25,7 +25,7 @@ export interface WorldStep {
 
 export function stepFish(options: { world: TourWorld; ship: Ship }): WorldStep | null {
   let world = options.world
-  let reports: TourReport[] = []
+  const reports: TourReport[] = []
   for (const spaceId of options.world.devouring) {
     const bite = fishBite(world, options.ship, spaceId)
     if (!bite) continue
@@ -35,39 +35,28 @@ export function stepFish(options: { world: TourWorld; ship: Ship }): WorldStep |
   return reports.length > 0 || world !== options.world ? { world, report: reports } : null
 }
 
+function applySubStep(state: { world: TourWorld; reports: TourReport[] }, next: WorldStep | null) {
+  if (next) {
+    state.world = next.world
+    if (next.report) state.reports.push(next.report)
+  }
+}
+
 export function stepBeast(options: {
   world: TourWorld
   ship: Ship
   position: Vec2
 }): WorldStep | null {
-  let world = options.world
-  let reports: TourReport[] = []
+  const state = { world: options.world, reports: [] as TourReport[] }
 
-  const gas = gasStep(world, options.ship)
-  if (gas) {
-    world = gas.world
-    if (gas.report) reports.push(gas.report)
-  }
+  applySubStep(state, gasStep(state.world, options.ship))
+  applySubStep(state, reelStep(state.world, options.ship, options.position))
+  applySubStep(state, catStep(state.world, options.ship))
+  applySubStep(state, smokeStep(state.world))
 
-  const reel = reelStep(world, options.ship, options.position)
-  if (reel) {
-    world = reel.world
-    if (reel.report) reports.push(reel.report)
-  }
-
-  const cat = catStep(world, options.ship)
-  if (cat) {
-    world = cat.world
-    if (cat.report) reports.push(cat.report)
-  }
-
-  const smoke = smokeStep(world)
-  if (smoke) {
-    world = smoke.world
-    if (smoke.report) reports.push(smoke.report)
-  }
-
-  return reports.length > 0 || world !== options.world ? { world, report: reports } : null
+  return state.reports.length > 0 || state.world !== options.world
+    ? { world: state.world, report: state.reports }
+    : null
 }
 
 export const stepCoin = (world: TourWorld): WorldStep | null => takeTheCoin(world)
@@ -109,7 +98,7 @@ export function stepConsole(scene: {
 }): WorldStep | null {
   const { world, standingIn } = scene
   let next = world
-  let reports: TourReport[] = []
+  const reports: TourReport[] = []
 
   if (world.decipher && !isDeciphered(world.decipher)) {
     const beside = standingIn !== null && world.decipher.spaceId === standingIn

@@ -42,6 +42,21 @@ function message(error: unknown, fallback: string): string {
   return fallback
 }
 
+/** Whether the event exists on the whale and sits within the reader's cap. */
+async function visibleFork(eventId: string, spoilerLimit: number | undefined): Promise<boolean> {
+  if (!eventId) return false
+  return Boolean(
+    await prisma.narrativeEvent.findFirst({
+      where: {
+        id: eventId,
+        occursOnBlackWhale: true,
+        ...(spoilerLimit === undefined ? {} : { chapter: { number: { lte: spoilerLimit } } }),
+      },
+      select: { id: true },
+    }),
+  )
+}
+
 interface Selection {
   abilityId: string
   actionId: string | null
@@ -231,7 +246,7 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 }
 
 export const actions: Actions = {
-  create: async ({ request, getClientAddress }) => {
+  create: async ({ request, cookies, getClientAddress }) => {
     const throttle = rateLimit(`sim:create:${getClientAddress()}`, CREATE_LIMIT, RATE_WINDOW_MS)
     if (!throttle.allowed) {
       return fail(429, {
@@ -240,11 +255,18 @@ export const actions: Actions = {
     }
 
     const data = await request.formData()
+    const parentEventId = String(data.get('parentEventId') || '')
+    // The lab only forks what the reader has already reached: the picker lists
+    // capped events, but a hand-made post could name any chapter.
+    if (!(await visibleFork(parentEventId, readSpoilerLimit(cookies)))) {
+      return fail(404, { message: 'Unknown or hidden fork event.' })
+    }
+
     let branchId: string
     try {
       const branch = await simulationStore.createBranch(
         parseCreateSimulationInput({
-          parentEventId: data.get('parentEventId'),
+          parentEventId,
           mode: data.get('mode') ?? 'rule-compatible',
         }),
       )

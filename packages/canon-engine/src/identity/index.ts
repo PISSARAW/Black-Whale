@@ -155,8 +155,9 @@ export class IdentityEngine implements IIdentityEngine {
       return this.resolveIdentity(body.id, eventId)
     }
 
-    // For 'apparent', we'd need to find bodies that look like `entityId`.
-    // We'll leave that stubbed for now or find the body where originalCharacterId == entityId if no disguise.
+    // 'apparent' tracks who witnesses believe they see: the body currently
+    // wearing `entityId` as an appearance, or — when no disguise is active —
+    // that character's original body.
     if (mode === 'apparent') {
       // Find appearance states active at eventId with appearanceCharacterId = entityId
       const targetEvent = await this.prisma.narrativeEvent.findUnique({

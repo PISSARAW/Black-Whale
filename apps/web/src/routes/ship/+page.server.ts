@@ -12,6 +12,7 @@ import {
   readLegacySequence,
   resolveVisibleBodyIds,
   selectEvent,
+  type WorldSnapshot,
 } from '@black-whale/canon-engine'
 import {
   beyondLineageStatusFor,
@@ -34,6 +35,21 @@ import type { BeyondLineageStatus } from '$lib/beyondLineage'
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
 const walkTargets = walkTargetsByLocation(theShip())
+
+/**
+ * Applies both spoiler filters to a world state: characters outside the
+ * reader's allow-list drop out, and presences follow only bodies that remain
+ * visible. Used for the present world *and* the next-chapter preview — sending
+ * the future state unfiltered would leak names, positions and hatsu of
+ * characters whose reveal sits past the cap.
+ */
+function applySpoilerFilters(worldState: WorldSnapshot, allowedCharacterIds: Set<string> | null) {
+  const characters = allowedCharacterIds
+    ? worldState.characters.filter((character) => allowedCharacterIds.has(character.id))
+    : worldState.characters
+  const bodyIds = resolveVisibleBodyIds(worldState, new Set(characters.map((c) => c.id)))
+  return { characters, presences: filterPresencesByBodies(worldState.presences, bodyIds) }
+}
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
   const requestedPerspectiveId = PUBLIC_FEATURES.perspectives
@@ -63,15 +79,19 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   })
   const sequence = selectedEvent?.sequence ?? 0
 
-  const rawWorldState = selectedEvent
+  const rawWorldState: WorldSnapshot = selectedEvent
     ? await timeline.getWorldState({ eventId: selectedEvent.id })
     : {
+        atEventId: '',
         characters: [],
         bodies: [],
         consciousnesses: [],
         presences: [],
         occupancies: [],
         appearances: [],
+        locations: [],
+        activeAbilities: [],
+        knownFacts: [],
         bodyStates: {},
       }
   const nextChapterNumber = events
@@ -89,24 +109,26 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
     : null
 
   // Filter world state characters by spoiler
-  type WorldCharacter = (typeof rawWorldState.characters)[number]
+  type WorldCharacter = WorldSnapshot['characters'][number]
   type VisibleCharacter = WorldCharacter & {
     factionTags?: string[]
     hatsuNames?: string[]
     hatsuIds?: string[]
     beyondLineage?: BeyondLineageStatus
   }
-  let visibleCharacters: VisibleCharacter[] = rawWorldState.characters
+  let allowedCharacterIds: Set<string> | null = null
   if (spoilerProfile) {
     const allowedCharacters = await prisma.character.findMany({
       where: { firstVisibleEvent: { chapter: { number: { lte: spoilerProfile.maxChapter } } } },
       select: { id: true },
     })
-    const allowedCharacterIds = new Set(allowedCharacters.map((character) => character.id))
-    visibleCharacters = rawWorldState.characters.filter((character) =>
-      allowedCharacterIds.has(character.id),
-    )
+    allowedCharacterIds = new Set(allowedCharacters.map((character) => character.id))
   }
+  const nextChapterVisible = nextChapterWorldState
+    ? applySpoilerFilters(nextChapterWorldState, allowedCharacterIds)
+    : null
+  const presentWorld = applySpoilerFilters(rawWorldState, allowedCharacterIds)
+  let visibleCharacters: VisibleCharacter[] = presentWorld.characters
 
   const visibleCharacterIdsForAffiliations = visibleCharacters.map((character) => character.id)
   const memberships =
@@ -155,11 +177,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
   }
   const selectedPerspectiveId = requestedPerspectiveId
 
-  // Presences reference bodies, not characters. Resolve the body owner before
-  // applying the spoiler filter so valid character positions are not discarded.
-  const visibleCharacterIds = new Set(visibleCharacters.map((character) => character.id))
-  const visibleBodyIds = resolveVisibleBodyIds(rawWorldState, visibleCharacterIds)
-  const visiblePresences = filterPresencesByBodies(rawWorldState.presences, visibleBodyIds)
+  // Presences reference bodies, not characters. `applySpoilerFilters` resolved
+  // the body owner before applying the spoiler filter so valid character
+  // positions are not discarded.
+  const visiblePresences = presentWorld.presences
 
   // Load locations to match presences to actual SVGs
   const visibleLocations = await prisma.location.findMany({
@@ -221,10 +242,10 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
       bodyStates: rawWorldState.bodyStates,
       locations: visibleLocations,
     }),
-    nextChapterState: nextChapterWorldState
+    nextChapterState: nextChapterVisible
       ? trimWorldStateForMap({
           chapterNumber: nextChapterNumber,
-          characters: nextChapterWorldState.characters.map((character) => {
+          characters: nextChapterVisible.characters.map((character) => {
             const beyondLineage = beyondLineageStatusFor(
               character,
               catalogIndex,
@@ -237,12 +258,12 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
               ...(beyondLineage ? { beyondLineage } : {}),
             }
           }),
-          bodies: nextChapterWorldState.bodies,
-          consciousnesses: nextChapterWorldState.consciousnesses,
-          presences: nextChapterWorldState.presences,
-          occupancies: nextChapterWorldState.occupancies,
-          appearances: nextChapterWorldState.appearances,
-          bodyStates: nextChapterWorldState.bodyStates,
+          bodies: nextChapterWorldState?.bodies ?? [],
+          consciousnesses: nextChapterWorldState?.consciousnesses ?? [],
+          presences: nextChapterVisible.presences,
+          occupancies: nextChapterWorldState?.occupancies ?? [],
+          appearances: nextChapterWorldState?.appearances ?? [],
+          bodyStates: nextChapterWorldState?.bodyStates ?? {},
           locations: visibleLocations,
         })
       : null,

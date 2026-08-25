@@ -28,7 +28,8 @@ decisions:
 
 # Les modes
 
-> Les sept modes sont des tranches verticales jouables. Ce territoire définit ce que "jouable" signifie ici et implémente le patron Morena : les règles vivent dans le module, le rendu dans la route.
+> Les six modes sont des tranches verticales jouables (le jeu de Morena, côté
+> visite, a sa [fiche propre](../jeu-de-morena.md)). Ce territoire définit ce que "jouable" signifie ici et implémente le patron Morena : les règles vivent dans le module, le rendu dans la route.
 
 ## Promet
 

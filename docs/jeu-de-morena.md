@@ -1,15 +1,21 @@
 # Le jeu de Morena — spécification de mécanique
 
-> **État.** Le jeu n'existe nulle part dans le code. `packages/ability-modules/src/contagion/module.ts`
-> le réduit à une case de checklist (`INFECTION_STEPS = ['game-won-yes', 'kiss', 'witnessed-murder']`)
-> qu'un appelant coche depuis l'extérieur. Ce document propose la mécanique qui remplit cette
-> case : ce qu'est une partie, comment on la gagne, et — la partie utile — comment un hatsu
-> pesant s'y branche. Le canon tient en quatre phrases (`data/abilities/abilities.json#contagion`) :
+> **État.** Un jeu de Morena **existe et se joue** : les règles vivent dans
+> `packages/ability-modules/src/contagion/` (`game.ts`, `deck.ts`, `table.ts`,
+> `phases.ts`, `verdict.ts`, `limits.ts`) et la table est jouable sur la route
+> `/tour/morena`. C'est une implémentation **en cartes** (le fan de questions de
+> Morena, la main du visiteur, la carte marquée qui tend le piège de la
+> Manipulation) — elle remplit le même contrat canon et alimente la checklist de
+> Contagion (`INFECTION_STEPS = ['game-won-yes', 'kiss', 'witnessed-murder']`),
+> mais elle ne suit pas la mécanique compteur-par-compteur décrite ci-dessous.
+> Cette page reste donc ce qu'elle a toujours été : la conception de référence,
+> marquée `canonStatus: 'inferred'`, à confronter à l'implémentation avant tout
+> changement de l'une ou de l'autre. Le canon tient en quatre phrases
+> (`data/abilities/abilities.json#contagion`) :
 > **jeu de négociation mené jusqu'à un « Oui » final**, puis baiser, puis meurtre observé ;
 > **tricher ou abandonner déclenche une Manipulation qui limite la réponse à Oui ou Non** ;
 > avant les trois conditions la cible reste niveau zéro ; la partie s'achève à la mort de
-> Morena, à la mort de la cible, ou quand elle est accomplie. Tout le reste ci-dessous est de
-> la conception, marquée comme telle : `canonStatus: 'inferred'`.
+> Morena, à la mort de la cible, ou quand elle est accomplie.
 
 ---
 

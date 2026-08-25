@@ -125,12 +125,15 @@ export const load: PageServerLoad = async ({ cookies }) => {
     isVisibleAtSpoilerLimit(character, spoilerLimit),
   )
 
+  // `!== undefined`, not truthiness: a cap of 0 means "nothing revealed yet"
+  // and must filter everything, where a falsy 0 would disable the filter.
   return {
     factions,
     characters,
-    relations: spoilerLimit
-      ? relations.filter((relation) => relation.chapter <= spoilerLimit)
-      : relations,
+    relations:
+      spoilerLimit !== undefined
+        ? relations.filter((relation) => relation.chapter <= spoilerLimit)
+        : relations,
     spoilerLimit,
   }
 }

@@ -16,6 +16,7 @@ import {
   fallbackCursor,
   param,
   resolve,
+  bodyRef,
   targetRefs,
   type Resolvable,
 } from './context.js'
@@ -369,9 +370,11 @@ export interface BodyStateOptions {
 export const bodyState =
   (options: BodyStateOptions): EffectBuilder =>
   (ctx) => {
+    // The fallback resolves the target's *body*: a state is carried by a body,
+    // and handing the reducer a character id would abort the whole step.
     const bodyId = options.bodyId
       ? resolve(options.bodyId, ctx)
-      : (param(ctx, 'bodyId') ?? targetRefs(ctx)[0]?.id)
+      : (param(ctx, 'bodyId') ?? bodyRef(ctx, targetRefs(ctx)[0])?.id)
     return bodyId
       ? [{ type: 'BODY_STATE_CHANGED', payload: { bodyId, state: resolve(options.state, ctx) } }]
       : []

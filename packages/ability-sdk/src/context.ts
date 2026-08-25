@@ -32,6 +32,22 @@ export function targetRefs(ctx: AbilityContext): EntityRef[] {
   return ctx.targetRefs ?? ctx.targets.map((id) => ({ id, kind: 'OBJECT' as const }))
 }
 
+/**
+ * The body standing behind an entity reference.
+ *
+ * A body state is carried by a body: naming a character has to resolve to their
+ * own body, or the reducer will refuse the event and abort the whole step. No
+ * body found means no event — a silent no-op beats a transaction that takes the
+ * rest of the activation down with it.
+ */
+export function bodyRef(ctx: AbilityContext, ref: EntityRef | undefined): EntityRef | undefined {
+  if (!ref || ref.kind === 'BODY') return ref
+  const body = Object.values(ctx.worldState?.entities ?? {}).find(
+    (entity) => entity.kind === 'BODY' && entity.originalCharacterId === ref.id,
+  )
+  return body ? { id: body.id, kind: 'BODY' } : undefined
+}
+
 /** Reads a string activation parameter, or undefined when the caller omitted it. */
 export function param(ctx: AbilityContext, key: string): string | undefined {
   const value = ctx.parameters?.[key]

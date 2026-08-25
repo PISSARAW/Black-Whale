@@ -144,11 +144,20 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   // the sheet ships collapsed on the page instead of being withheld here.
   const prophecy = prophecies.find((sheet) => sheet.subjectId === params.slug) ?? null
 
+  // The catalogue's own chapter list is a chronology like any other: past the
+  // cap it is hidden, exactly as the timeline above is.
+  const profile = buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber)
+  if (spoilerLimit !== null) {
+    profile.mangaAppearances = profile.mangaAppearances.filter(
+      (appearance) => appearance.chapter <= spoilerLimit,
+    )
+  }
+
   return {
-    character: buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber),
+    character: profile,
     prophecy,
-    roleHistory: buildRoleHistory(character),
-    affiliations: buildAffiliations(character),
+    roleHistory: buildRoleHistory(character, spoilerLimit),
+    affiliations: buildAffiliations(character, spoilerLimit),
     timeline,
     chapterTrajectory,
   }

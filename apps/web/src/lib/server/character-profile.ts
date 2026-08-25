@@ -170,34 +170,55 @@ export function buildCharacterProfile(
  * Roles and official assignments as one chronological list.
  *
  * They are separate tables but the same thing to a reader: what this person
- * was, and until when.
+ * was, and until when. A reader's cap hides everything that starts past it and
+ * truncates an end that runs past it — a role still held at the cap reads as
+ * held "through" it rather than revealing chapters the reader has not reached.
  */
-export function buildRoleHistory(character: CharacterHistoryRecord | null): HistoryEntry[] {
+export function buildRoleHistory(
+  character: CharacterHistoryRecord | null,
+  spoilerCap: number | null = null,
+): HistoryEntry[] {
+  const started = (chapter: number) => spoilerCap === null || chapter <= spoilerCap
+  const ended = (chapter: number | null) =>
+    spoilerCap !== null && chapter !== null ? Math.min(chapter, spoilerCap) : chapter
+
   return [
-    ...(character?.roles || []).map((role) => ({
-      label: role.roleName,
-      chapter: role.fromEvent.chapter.number,
-      untilChapter: role.untilEvent?.chapter.number || null,
-      detail: eventDetail(role.fromEvent),
-    })),
-    ...(character?.assignments || []).map((assignment) => ({
-      label: assignment.officialRole,
-      chapter: assignment.fromEvent.chapter.number,
-      untilChapter: assignment.untilEvent?.chapter.number || null,
-      detail: eventDetail(assignment.fromEvent),
-    })),
+    ...(character?.roles || [])
+      .filter((role) => started(role.fromEvent.chapter.number))
+      .map((role) => ({
+        label: role.roleName,
+        chapter: role.fromEvent.chapter.number,
+        untilChapter: ended(role.untilEvent?.chapter.number || null),
+        detail: eventDetail(role.fromEvent),
+      })),
+    ...(character?.assignments || [])
+      .filter((assignment) => started(assignment.fromEvent.chapter.number))
+      .map((assignment) => ({
+        label: assignment.officialRole,
+        chapter: assignment.fromEvent.chapter.number,
+        untilChapter: ended(assignment.untilEvent?.chapter.number || null),
+        detail: eventDetail(assignment.fromEvent),
+      })),
   ]
 }
 
-/** Faction memberships flattened to the chapters they span. */
-export function buildAffiliations(character: CharacterHistoryRecord | null): AffiliationEntry[] {
-  return (character?.affiliations || []).map((membership) => ({
-    name: membership.faction.name,
-    role: membership.role,
-    status: membership.status,
-    chapter: membership.fromEvent.chapter.number,
-    untilChapter: membership.untilEvent?.chapter.number || null,
-  }))
+/** Faction memberships flattened to the chapters they span, capped like roles. */
+export function buildAffiliations(
+  character: CharacterHistoryRecord | null,
+  spoilerCap: number | null = null,
+): AffiliationEntry[] {
+  return (character?.affiliations || [])
+    .filter((membership) => spoilerCap === null || membership.fromEvent.chapter.number <= spoilerCap)
+    .map((membership) => ({
+      name: membership.faction.name,
+      role: membership.role,
+      status: membership.status,
+      chapter: membership.fromEvent.chapter.number,
+      untilChapter:
+        spoilerCap !== null && membership.untilEvent
+          ? Math.min(membership.untilEvent.chapter.number, spoilerCap)
+          : (membership.untilEvent?.chapter.number || null),
+    }))
 }
 
 /**

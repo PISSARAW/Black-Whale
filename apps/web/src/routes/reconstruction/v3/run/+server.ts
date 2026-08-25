@@ -1,4 +1,4 @@
-import { json } from '@sveltejs/kit'
+import { json, type Cookies } from '@sveltejs/kit'
 import type { WorldState } from '@black-whale/canon-engine'
 import {
   SimulationInputError,
@@ -27,8 +27,8 @@ const RATE_WINDOW_MS = 60_000
 
 export const POST: RequestHandler = async ({ request, cookies, getClientAddress }) => {
   const headerLocale = request.headers.get('x-locale')
-  let locale: Locale = isLocale(headerLocale) ? headerLocale : 'en'
-  let copy = messagesFor(locale).reconstruction.v3
+  const locale: Locale = isLocale(headerLocale) ? headerLocale : 'en'
+  const copy = messagesFor(locale).reconstruction.v3
   const throttle = rateLimit(`reconstruction:v3:${getClientAddress()}`, RUN_LIMIT, RATE_WINDOW_MS)
   if (!throttle.allowed) {
     return json(
@@ -38,46 +38,60 @@ export const POST: RequestHandler = async ({ request, cookies, getClientAddress 
   }
 
   try {
-    const body: unknown = await request.json()
-    const input = body && typeof body === 'object' ? (body as Record<string, unknown>) : {}
-    const requestedLocale = typeof input.locale === 'string' ? input.locale : null
-    locale = isLocale(requestedLocale) ? requestedLocale : 'en'
-    copy = messagesFor(locale).reconstruction.v3
-    const scenario = defineReconstructionScenario(parseReconstructionScenarioDraft(input.scenario))
-    const spoilerLimit = readSpoilerLimit(cookies)
-    if (!(await visibleFork(scenario.forkEventId, spoilerLimit))) {
-      return json({ error: copy.errors.unknownFork }, { status: 404 })
-    }
-
-    const result = await executeReconstructionScenario(
-      scenario,
-      (state) => knowledgeFromWorldState(state as WorldState),
-      reconstructionExecutorPorts(),
-    )
-    const canonical = result.initialState as WorldState
-    const branch = result.finalState as WorldState
-    const differences = compareWorldBranches(canonical, branch)
-    const report = buildReconstructionReport(result.replay, differences, locale)
-
-    return json({
-      branchId: result.branchId,
-      replay: result.replay,
-      report,
-    })
+    return await runScenario({ body: await request.json(), cookies, locale })
   } catch (error) {
-    // Only scenario-level mistakes are echoed back verbatim. Any other failure
-    // (Prisma, TypeError) keeps its message server-side and answers with a
-    // generic copy, so internals never cross to the client.
-    if (
-      error instanceof ScenarioInputError ||
-      error instanceof SimulationInputError ||
-      error instanceof SimulationNotFoundError
-    ) {
-      return json({ error: error.message }, { status: 400 })
-    }
-    log.error('Reconstruction run failed', describeError(error))
-    return json({ error: copy.errors.invalidScenario }, { status: 500 })
+    return failure(error, locale)
   }
+}
+
+/** Parses, checks and executes one scenario, answering with the replay. */
+async function runScenario(input: { body: unknown; cookies: Cookies; locale: Locale }) {
+  const draft = normalise(input.body)
+  const requestedLocale = typeof draft.locale === 'string' ? draft.locale : null
+  const locale: Locale = isLocale(requestedLocale) ? requestedLocale : input.locale
+  const copy = messagesFor(locale).reconstruction.v3
+  const scenario = defineReconstructionScenario(parseReconstructionScenarioDraft(draft.scenario))
+  if (!(await visibleFork(scenario.forkEventId, readSpoilerLimit(input.cookies)))) {
+    return json({ error: copy.errors.unknownFork }, { status: 404 })
+  }
+
+  const result = await executeReconstructionScenario(
+    scenario,
+    (state) => knowledgeFromWorldState(state as WorldState),
+    reconstructionExecutorPorts(),
+  )
+  const differences = compareWorldBranches(
+    result.initialState as WorldState,
+    result.finalState as WorldState,
+  )
+  return json({
+    branchId: result.branchId,
+    replay: result.replay,
+    report: buildReconstructionReport(result.replay, differences, locale),
+  })
+}
+
+/** Whatever the client sent, as an object a draft can be read off of. */
+function normalise(body: unknown): Record<string, unknown> {
+  return body && typeof body === 'object' ? (body as Record<string, unknown>) : {}
+}
+
+/**
+ * Only scenario-level mistakes are echoed back verbatim. Any other failure
+ * (Prisma, TypeError) keeps its message server-side and answers with a generic
+ * copy, so internals never cross to the client.
+ */
+function failure(error: unknown, locale: Locale) {
+  if (
+    error instanceof ScenarioInputError ||
+    error instanceof SimulationInputError ||
+    error instanceof SimulationNotFoundError
+  ) {
+    return json({ error: error.message }, { status: 400 })
+  }
+  log.error('Reconstruction run failed', describeError(error))
+  const copy = messagesFor(locale).reconstruction.v3
+  return json({ error: copy.errors.invalidScenario }, { status: 500 })
 }
 
 async function visibleFork(eventId: string, spoilerLimit: number | undefined): Promise<boolean> {

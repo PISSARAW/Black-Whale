@@ -27,6 +27,50 @@ export const load: PageServerLoad = async () => {
   return { chapters, characters, locations, events }
 }
 
+interface EventReferences {
+  chapterId: string
+  occursBeforeEventId: string | null
+  /** The consequence ids, present only when the form asks for a presence. */
+  consequence: { characterId: string; locationId: string } | null
+}
+
+/** The error message for the first dangling reference, or null when all resolve. */
+async function missingReference(
+  prisma: Prisma.TransactionClient,
+  refs: EventReferences,
+): Promise<string | null> {
+  if (!(await prisma.chapter.findUnique({ where: { id: refs.chapterId }, select: { id: true } }))) {
+    return 'Unknown chapter.'
+  }
+  if (
+    refs.occursBeforeEventId &&
+    !(await prisma.narrativeEvent.findUnique({
+      where: { id: refs.occursBeforeEventId },
+      select: { id: true },
+    }))
+  ) {
+    return 'The occurrence anchor event does not exist.'
+  }
+  if (!refs.consequence) return null
+  if (
+    !(await prisma.character.findUnique({
+      where: { id: refs.consequence.characterId },
+      select: { id: true },
+    }))
+  ) {
+    return 'Unknown character for the consequence.'
+  }
+  if (
+    !(await prisma.location.findUnique({
+      where: { id: refs.consequence.locationId },
+      select: { id: true },
+    }))
+  ) {
+    return 'Unknown location for the consequence.'
+  }
+  return null
+}
+
 export const actions: Actions = {
   default: async ({ request }) => {
     const data = await request.formData()
@@ -48,12 +92,24 @@ export const actions: Actions = {
     const precision = isPresencePrecision(precisionValue) ? precisionValue : null
     const certainty = isPresenceCertainty(certaintyValue) ? certaintyValue : null
 
-    if (!chapterId || !title || !summary || Number.isNaN(sequence) || sequence <= 0) {
+    if (!chapterId || !title || !summary || Number.isNaN(sequence) || sequence < 0) {
       return fail(400, { error: 'Missing required event fields' })
     }
     if (isFlashback && !occursBeforeEventId) {
       return fail(400, { error: 'A flashback must be placed before a known event.' })
     }
+
+    // Referenced rows are checked up front: letting a dangling id reach Prisma
+    // would turn a typo into a foreign-key error and a generic 500.
+    const referenceError = await missingReference(prisma, {
+      chapterId,
+      occursBeforeEventId,
+      consequence:
+        characterId && locationId && precision && certainty
+          ? { characterId, locationId }
+          : null,
+    })
+    if (referenceError) return fail(400, { error: referenceError })
 
     try {
       // Run everything in a transaction

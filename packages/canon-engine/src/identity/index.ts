@@ -58,7 +58,13 @@ export class IdentityEngine implements IIdentityEngine {
     })
     const occupancy = occupancies
       .filter((candidate) => isActiveAt(candidate, targetEvent))
-      .sort((left, right) => compareEventOrder(right.fromEvent, left.fromEvent))[0]
+      // Same start twice would leave the winner to array order, which is not
+      // stable across queries; the id makes the pick deterministic.
+      .sort(
+        (left, right) =>
+          compareEventOrder(right.fromEvent, left.fromEvent) ||
+          left.id.localeCompare(right.id),
+      )[0]
 
     const consciousness = occupancy?.consciousness ?? null
 

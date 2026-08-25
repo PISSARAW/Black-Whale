@@ -6,6 +6,7 @@ import {
   CONTAGION_LIMITS,
   dealTheGame,
   sheWillNotPlay,
+  takeTheDeal,
   theEyesTakeYou,
   infectionStepsFrom,
   settle,
@@ -271,6 +272,25 @@ describe('the branch, replayed', () => {
     const result = run('close-game', { effectId: 'game-1' }, withGame(won))
     const closed = result.events![0] as { payload: { attributes: Record<string, unknown> } }
     expect(closed.payload.attributes['reason']).toBe('game-completed')
+  })
+
+  it('springs the trap when a Back pulls the marked card out of the graveyard', () => {
+    const sprung = settle(
+      { ...dealTheGame({ marked: 'x' }), phase: 'settling', hand: ['back'], graveyard: ['x'] },
+      'x',
+    )
+    expect(sprung.verdict).toBe('forced')
+    expect(sprung.finalCard).toBe('x')
+  })
+
+  it('springs the trap when the kiss buys the marked card back', () => {
+    const sprung = takeTheDeal(
+      { ...dealTheGame({ marked: 'x' }), phase: 'deal', graveyard: ['x'] },
+      'x',
+    )
+    expect(sprung.phase).toBe('over')
+    expect(sprung.verdict).toBe('forced')
+    expect(sprung.kissed).toBe(true)
   })
 })
 

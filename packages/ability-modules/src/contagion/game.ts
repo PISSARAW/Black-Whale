@@ -696,6 +696,32 @@ export function takeTheDeal(game: MorenaGame, card: AnswerCard): MorenaGame {
   if (!game.graveyard.includes(card)) return unchanged(game)
   const graveyard = [...game.graveyard]
   graveyard.splice(graveyard.indexOf(card), 1)
+
+  // The kiss is a reach like any other: buying the marked card back with it
+  // springs the trap at once, the mouth notwithstanding. The game closes here
+  // for the same reason `settle` closes on the marker — a forced Yes is an
+  // ending, not a card still in hand.
+  if (card === game.marked) {
+    const aftermath = payTheRiders(game, 'forced')
+    return {
+      ...game,
+      phase: 'over',
+      ending: 'played',
+      kissed: true,
+      hand: [card],
+      graveyard,
+      verdict: 'forced',
+      finalCard: card,
+      aftermath,
+      log: [
+        ...game.log,
+        { kind: 'kissed', round: game.round, card },
+        { kind: 'settled', round: game.round, card, verdict: 'forced' as Verdict },
+        ...aftermath.map((what): Beat => ({ kind: 'aftermath', round: game.round, what })),
+      ],
+    }
+  }
+
   const kissed: MorenaGame = {
     ...game,
     phase: 'asking',
@@ -898,6 +924,13 @@ export function settle(game: MorenaGame, choice?: AnswerCard | 'yes' | 'no'): Mo
     if (game.graveyard.length === 0) return close('back', 'refused')
     if (!choice || !game.graveyard.includes(choice as AnswerCard)) return unchanged(game)
     const recovered = choice as AnswerCard
+    // Reaching through the graveyard counts as reaching: pulling the marked
+    // card out of it springs the trap whatever the guest meant to answer with.
+    if (recovered === game.marked) {
+      return close(recovered, 'forced', [
+        { kind: 'recovered', round: game.round, card: recovered },
+      ])
+    }
     // A Back that pulls a Joker still has to be pointed somewhere, and there is
     // nothing left to point it with: an unaimed Joker is a refusal.
     if (recovered === 'joker') {

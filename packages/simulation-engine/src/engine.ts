@@ -58,6 +58,11 @@ export class SimulationEngine {
     this.branches.restoreBranch(branch, snapshot, events)
   }
 
+  /** Forgets a resident branch; persistence is the caller's business. */
+  dropBranch(branchId: string): boolean {
+    return this.branches.dropBranch(branchId)
+  }
+
   applyEvents(branchId: string, events: ProposedWorldEvent[]): SimulationStepResult {
     const result = this.branches.append(branchId, events)
     const policy = this.branches.getBranch(branchId).rulePolicy

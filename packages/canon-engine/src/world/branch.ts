@@ -65,6 +65,16 @@ export class InMemoryBranchEngine {
     })
   }
 
+  /**
+   * Drops a branch from memory without touching whatever persistence holds it.
+   * Branches created or mutated by anonymous visitors must not stay resident
+   * for the life of the process; a dropped branch can always be rehydrated
+   * from its latest snapshot via `restoreBranch`.
+   */
+  dropBranch(branchId: string): boolean {
+    return this.records.delete(branchId)
+  }
+
   append(
     branchId: string,
     proposed: ProposedWorldEvent[],

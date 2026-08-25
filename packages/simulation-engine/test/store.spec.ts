@@ -25,16 +25,46 @@ function worldWithEntity(): WorldState {
 /** Enough of PrismaClient for the paths exercised here. */
 function fakePrisma() {
   const transaction = {
-    worldBranch: { upsert: vi.fn(), create: vi.fn() },
-    worldProjectionSnapshot: { create: vi.fn() },
+    worldBranch: {
+      upsert: vi.fn(),
+      create: vi.fn((input: { data: { id: string } }) => {
+        branchIdOfLastCreate = input.data.id
+      }),
+    },
+    worldProjectionSnapshot: {
+      create: vi.fn((input: { data: { payload: unknown } }) =>
+        snapshots.set(branchIdOfLastCreate, input.data.payload),
+      ),
+    },
     worldEventRecord: { create: vi.fn() },
     worldEffectRecord: { create: vi.fn() },
   }
-  return {
+  const client = {
     $transaction: vi.fn(async (run: (tx: typeof transaction) => Promise<void>) => run(transaction)),
-    worldBranch: { findUnique: vi.fn() },
-  } as never
+    worldBranch: {
+      findUnique: vi.fn(async ({ where }: { where: { id: string } }) =>
+        snapshots.has(where.id)
+          ? {
+              id: where.id,
+              name: 'restored',
+              kind: 'SIMULATION',
+              rulePolicy: 'SANDBOX',
+              parentBranchId: null,
+              ownerId: null,
+              createdAt: new Date(),
+              projections: [{ payload: snapshots.get(where.id) }],
+            }
+          : null,
+      ),
+      findMany: vi.fn(async () => []),
+      deleteMany: vi.fn(),
+    },
+  }
+  return client
 }
+
+const snapshots = new Map<string, unknown>()
+let branchIdOfLastCreate = ''
 
 function ports(overrides: Partial<SimulationStorePorts> = {}): SimulationStorePorts {
   return {
@@ -90,7 +120,7 @@ describe('parseSimulationActionInput', () => {
 
 describe('SimulationStore.applyAction', () => {
   it('rejects a move targeting an entity absent from the branch', async () => {
-    const store = new SimulationStore(fakePrisma(), ports())
+    const store = new SimulationStore(fakePrisma() as never, ports())
     const branch = await store.createBranch({ parentEventId: 'event-1', mode: 'sandbox' })
 
     await expect(
@@ -123,7 +153,7 @@ describe('SimulationStore.applyAction', () => {
 
   it('activates an ability against the branch state, not the canonical timeline', async () => {
     const executeAbility = vi.fn(async () => ({ allowed: true, events: [] }))
-    const store = new SimulationStore(fakePrisma(), ports({ executeAbility }))
+    const store = new SimulationStore(fakePrisma() as never, ports({ executeAbility }))
     const branch = await store.createBranch({ parentEventId: 'event-1', mode: 'rule-compatible' })
 
     await store.applyAction(branch.id, {
@@ -143,5 +173,40 @@ describe('SimulationStore.applyAction', () => {
     ]
     expect(request.eventId).toBe('event-1')
     expect(state.cursor.branchId).toBe(branch.id)
+  })
+})
+
+describe('SimulationStore bounds', () => {
+  it('deletes simulation branches past the TTL when a new one is created', async () => {
+    const prisma = fakePrisma()
+    prisma.worldBranch.findMany.mockResolvedValue([{ id: 'stale' }])
+
+    await new SimulationStore(prisma as never, ports()).createBranch({
+      parentEventId: 'event-1',
+      mode: 'sandbox',
+    })
+
+    expect(prisma.worldBranch.deleteMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ kind: 'SIMULATION' }),
+    })
+  })
+
+  it('keeps only the most recent branches resident, rehydrating evicted ones on demand', async () => {
+    const store = new SimulationStore(fakePrisma() as never, ports())
+    const created = []
+    for (let index = 0; index < 26; index += 1) {
+      created.push(
+        (await store.createBranch({ parentEventId: 'event-1', mode: 'sandbox' })).id,
+      )
+    }
+
+    // The oldest branch was dropped from memory; its state survives in the
+    // latest projection and is rehydrated from there.
+    await expect(store.getBranchState(created[0])).resolves.toMatchObject({
+      branch: { id: created[0] },
+    })
+    await expect(store.getBranchState(created[25])).resolves.toMatchObject({
+      branch: { id: created[25] },
+    })
   })
 })

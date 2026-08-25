@@ -71,6 +71,21 @@ const MAX_ID_LENGTH = 128
 const MAX_PAYLOAD_KEYS = 32
 const MAX_PAYLOAD_BYTES = 8 * 1024
 
+/**
+ * Branches are throwaway visitor artefacts: anything older than the TTL is
+ * deleted (rows and snapshots cascade), which keeps the database from growing
+ * without bound under anonymous traffic. The rate limit bounds throughput,
+ * not the total.
+ */
+const BRANCH_TTL_MS = 24 * 60 * 60 * 1000
+
+/**
+ * Resident branches each hold a full world state in memory for nothing — a
+ * dropped branch is rehydrated from its latest projection on demand. The cap
+ * keeps process memory bounded; only simulation branches are evicted.
+ */
+const MAX_RESIDENT_BRANCHES = 24
+
 function boundedId(value: unknown, field: string): string {
   if (typeof value !== 'string' || value.length === 0) {
     throw new SimulationInputError(`${field} is required`)
@@ -159,6 +174,7 @@ export class SimulationStore {
   ) {}
 
   async createBranch(input: CreateSimulationInput) {
+    await this.purgeExpiredBranches()
     const baseState = await this.ports.loadKernelState(input.parentEventId)
     const branch = this.engine.createBranch(
       {
@@ -204,6 +220,7 @@ export class SimulationStore {
       })
     })
 
+    this.evictResidentBranches(branch.id)
     return branch
   }
 
@@ -279,6 +296,36 @@ export class SimulationStore {
   private async getState(branchId: string): Promise<WorldState> {
     await this.ensureLoaded(branchId)
     return this.engine.getBranchState(branchId)
+  }
+
+  /**
+   * Deletes simulation branches past the TTL, rows and snapshots together
+   * (both cascade from the branch row). The canon branch is never touched.
+   */
+  private async purgeExpiredBranches(): Promise<void> {
+    const cutoff = { createdAt: { lt: new Date(Date.now() - BRANCH_TTL_MS) } }
+    const expired = await this.prisma.worldBranch.findMany({
+      where: { kind: 'SIMULATION', ...cutoff },
+      select: { id: true },
+    })
+    if (!expired.length) return
+    await this.prisma.worldBranch.deleteMany({ where: { kind: 'SIMULATION', ...cutoff } })
+    for (const branch of expired) this.engine.dropBranch(branch.id)
+  }
+
+  /**
+   * Keeps only the most recent simulation branches resident. Every dropped
+   * branch is rehydratable from its latest world-state projection, so eviction
+   * is invisible beyond the next read paying a database round-trip.
+   */
+  private evictResidentBranches(exceptId: string): void {
+    const residents = this.engine
+      .listBranches()
+      .filter((branch) => branch.kind === 'SIMULATION' && branch.id !== exceptId)
+      .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
+    for (const branch of residents.slice(0, Math.max(0, residents.length - MAX_RESIDENT_BRANCHES))) {
+      this.engine.dropBranch(branch.id)
+    }
   }
 
   private async ensureLoaded(branchId: string): Promise<void> {

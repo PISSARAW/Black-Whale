@@ -2,9 +2,8 @@ import type { ChapterScenes } from './apply.js'
 
 /**
  * Chapter 418 reveals that the body executed in 416 was Tserriednich's
- * Parallel Future prediction. His final destination after leaving room 1004 is
- * deliberately not recorded: Route A is an intended route, not a confirmed
- * position.
+ * Parallel Future prediction. He leaves room 1004, but the chapter does not
+ * identify a mappable destination after he enters Route A.
  */
 export const CHAPTER_418: ChapterScenes = {
   chapter: 418,
@@ -40,6 +39,11 @@ export const CHAPTER_418: ChapterScenes = {
         ['vantine', 'OBSERVER'],
         ['danjin', 'OBSERVER'],
       ],
+      moves: ['salkov', 'danjin'].map((slug) => ({
+        slug,
+        location: 'tier-1-royal-residential-sector-room-1004',
+        id: `ch418-presence-${slug}-room1004`,
+      })),
     },
     {
       event: 'Tserriednich leaves room 1004 through Route A',

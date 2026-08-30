@@ -13,15 +13,15 @@ decisions: []
 
 **Promet :** Les outils pour modérer et configurer le jeu.
 **Refuse :** Le rendu du jeu ou les interactions normales des joueurs.
-**Entrée publique :** `src/routes/**`
+**Entrée publique :** `apps/admin/src/routes/**`
 **Carte :** [10 l'admin](../../docs/carte/10-l-admin.md)
 
 ## Découpage
 
 | Groupe | Fichiers | Responsabilité |
 | --- | --- | --- |
-| Dashboard | `src/routes/**` | Vues d'administration |
-| Lib | `src/lib/**` | Composants internes de l'admin |
+| Dashboard | `apps/admin/src/routes/**` | Vues d'administration |
+| Lib | `apps/admin/src/lib/**` | Composants internes de l'admin |
 
 ## Invariants
 

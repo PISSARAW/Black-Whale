@@ -13,17 +13,17 @@ decisions: []
 
 **Promet :** L'évaluation et la résolution des faits dans le monde.
 **Refuse :** La modification directe des données de base.
-**Entrée publique :** `index.ts`
+**Entrée publique :** `packages/canon-engine/src/index.ts`
 **Carte :** [01 le canon](../../docs/carte/01-le-canon.md)
 
 ## Découpage
 
 | Groupe | Fichiers | Responsabilité |
 | --- | --- | --- |
-| World | `world/**` | Gestion de l'état du monde |
-| Timeline | `timeline/**` | Temps et historique |
-| Identité | `identity/**` | Résolution d'identités |
-| Spoiler | `spoiler/**` | Gestion du cap de spoiler |
+| World | `packages/canon-engine/src/world/**` | Gestion de l'état du monde |
+| Timeline | `packages/canon-engine/src/timeline/**` | Temps et historique |
+| Identité | `packages/canon-engine/src/identity/**` | Résolution d'identités |
+| Spoiler | `packages/canon-engine/src/spoiler/**` | Gestion du cap de spoiler |
 
 ## Invariants
 

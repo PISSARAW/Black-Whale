@@ -13,16 +13,16 @@ decisions: []
 
 **Promet :** L'interface utilisateur, le rendu client (visite, modes) et le serveur SSR frontal.
 **Refuse :** L'administration directe ou la mutation de l'état global du canon.
-**Entrée publique :** `src/routes/**`
+**Entrée publique :** `apps/web/src/routes/**`
 **Carte :** [09 la facade web](../../docs/carte/09-la-facade-web.md)
 
 ## Découpage
 
 | Groupe | Fichiers | Responsabilité |
 | --- | --- | --- |
-| Routes | `src/routes/**` | Pages SvelteKit, load() et actions |
-| Lib | `src/lib/**` | Composants, logique partagée, tour, modes |
-| Server | `src/lib/server/**` | Frontière serveur, actions sécurisées |
+| Routes | `apps/web/src/routes/**` | Pages SvelteKit, load() et actions |
+| Lib | `apps/web/src/lib/**` | Composants, logique partagée, tour, modes |
+| Server | `apps/web/src/lib/server/**` | Frontière serveur, actions sécurisées |
 
 ## Invariants
 

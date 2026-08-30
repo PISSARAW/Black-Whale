@@ -20,7 +20,7 @@ interface FrontMatter {
 }
 
 function parseFrontMatter(source: string): FrontMatter | null {
-  const match = source.match(/^---\n([\s\S]*?)\n---/)
+  const match = source.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---/)
   if (!match) return null
   const body = match[1]
   const result: FrontMatter = {}
@@ -94,13 +94,19 @@ function findStagePages(dir: string): string[] {
   return out
 }
 
+function isPlaceholder(pattern: string): boolean {
+  return pattern.includes('<') || pattern.includes('>')
+}
+
 function globExists(pattern: string): boolean {
+  if (isPlaceholder(pattern)) return true
   if (!pattern.includes('*')) return existsSync(join(ROOT, pattern))
   const matches = fastGlob.sync(pattern, { cwd: ROOT, dot: true })
   return matches.length > 0
 }
 
 function pathExists(rawPath: string, baseDir: string): boolean {
+  if (isPlaceholder(rawPath)) return true
   if (rawPath.startsWith('/')) return existsSync(rawPath)
   const isRelativeToFile = rawPath.startsWith('./') || rawPath.startsWith('../')
   if (!isRelativeToFile) {
@@ -114,7 +120,7 @@ function pathExists(rawPath: string, baseDir: string): boolean {
 
 function extractCodePaths(source: string): string[] {
   const paths = new Set<string>()
-  const body = source.replace(/^---\n[\s\S]*?\n---/, '')
+  const body = source.replace(/\r\n/g, '\n').replace(/^---\n[\s\S]*?\n---/, '')
   for (const match of body.matchAll(/`([^`\n]+)`/g)) {
     const text = match[1].trim()
     if (!text.includes('/') && !text.includes('\\')) continue
@@ -191,6 +197,7 @@ function countCodeLines(patterns: string[]): number {
   let total = 0
   const seen = new Set<string>()
   for (const pattern of patterns) {
+    if (isPlaceholder(pattern)) continue
     const files = fastGlob.sync(pattern, {
       cwd: ROOT,
       dot: true,
@@ -251,7 +258,10 @@ function sealPages(files: string[]): CoverageFile {
     writeFileSync(file, updateFrontMatter(source, { 'revu-le': revuLe, empreinte }))
 
     coverage.snapshots[rel] = { revuLe, empreinte, codeLines }
-    for (const pattern of fm.couvre) coverage.coveredPaths.push(pattern)
+    for (const pattern of fm.couvre) {
+      if (isPlaceholder(pattern)) continue
+      coverage.coveredPaths.push(pattern)
+    }
   }
   coverage.coveredPaths = [...new Set(coverage.coveredPaths)].sort()
   return coverage
@@ -322,7 +332,10 @@ function computeCoveredPaths(files: string[]): string[] {
     const source = readFileSync(file, 'utf8')
     const fm = parseFrontMatter(source)
     if (!fm || !fm.couvre) continue
-    for (const pattern of fm.couvre) paths.add(pattern)
+    for (const pattern of fm.couvre) {
+      if (isPlaceholder(pattern)) continue
+      paths.add(pattern)
+    }
   }
   return [...paths].sort()
 }

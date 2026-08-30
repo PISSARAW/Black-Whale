@@ -34,13 +34,13 @@ decisions:
 
 ## Les frontières
 
-| Ce dossier …                          | Règle                                                                                                                |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `apps/web/src/lib/server/`            | importe les packages, `data/` et `apps/web/src/lib/` côté serveur uniquement ; ne touche jamais les composants client. |
+| Ce dossier …                          | Règle                                                                                                                   |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/src/lib/server/`            | importe les packages, `data/` et `apps/web/src/lib/` côté serveur uniquement ; ne touche jamais les composants client.  |
 | `apps/web/src/routes/`                | importe `apps/web/src/lib/server/`, `apps/web/src/lib/i18n/`, `apps/web/src/lib/seo/`. Pas d'import direct des paquets. |
-| `apps/web/src/lib/i18n/`              | est importé par tout le monde ; ne dépend pas du serveur.                                                             |
-| `apps/web/src/lib/seo/`               | est importé par les routes et composants ; ne dépend pas du serveur.                                                 |
-| `apps/web/src/lib/config/features.ts` | est importé partout ; ne contient que des constantes booléennes.                                                     |
+| `apps/web/src/lib/i18n/`              | est importé par tout le monde ; ne dépend pas du serveur.                                                               |
+| `apps/web/src/lib/seo/`               | est importé par les routes et composants ; ne dépend pas du serveur.                                                    |
+| `apps/web/src/lib/config/features.ts` | est importé partout ; ne contient que des constantes booléennes.                                                        |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -58,13 +58,13 @@ decisions:
 
 ## Par où entrer
 
-| Je veux …                             | J'ouvre                                                                                                                                     |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| ajouter une route                     | `docs/geste/une-route.md`                                                                                                                   |
-| modifier le cap de spoiler            | `apps/web/src/routes/spoiler-limit/+server.ts` et `apps/web/src/lib/server/spoiler.ts`                                                      |
-| modifier la politique de cache        | `apps/web/src/lib/server/httpCache.ts`                                                       |
-| ajouter ou modifier une locale        | `apps/web/src/lib/i18n/config.ts`                                                                                                           |
-| activer/désactiver une fonctionnalité | `apps/web/src/lib/config/features.ts`                                                                                                       |
+| Je veux …                             | J'ouvre                                                                                |
+| ------------------------------------- | -------------------------------------------------------------------------------------- |
+| ajouter une route                     | `docs/geste/une-route.md`                                                              |
+| modifier le cap de spoiler            | `apps/web/src/routes/spoiler-limit/+server.ts` et `apps/web/src/lib/server/spoiler.ts` |
+| modifier la politique de cache        | `apps/web/src/lib/server/httpCache.ts`                                                 |
+| ajouter ou modifier une locale        | `apps/web/src/lib/i18n/config.ts`                                                      |
+| activer/désactiver une fonctionnalité | `apps/web/src/lib/config/features.ts`                                                  |
 
 ## Vérifier
 

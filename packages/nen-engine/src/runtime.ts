@@ -245,9 +245,7 @@ export class NenRuntime {
     // Cloned like `planInState`: building the context grants a catalogued owner
     // their ability in place, and a refused activation must not leave that
     // grant — nor any other mutation — behind in the caller's state.
-    return this.engine.execute(
-      await this.buildContext(abilityId, request, cloneWorld(worldState)),
-    )
+    return this.engine.execute(await this.buildContext(abilityId, request, cloneWorld(worldState)))
   }
 
   private async contextFromEvent(

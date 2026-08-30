@@ -1,6 +1,6 @@
-import type { Ship } from "./blueprint"
-import type { Stood } from "./hatsu"
-import type { Vec2, Space } from "./types"
+import type { Ship } from './blueprint'
+import type { Stood } from './hatsu'
+import type { Vec2, Space } from './types'
 
 export function wanderOffset(id: string, seconds: number): Vec2 {
   let phase = 0

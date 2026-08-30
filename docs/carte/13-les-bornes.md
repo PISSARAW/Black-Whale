@@ -21,15 +21,15 @@ decisions: []
 
 ## Les frontières
 
-| Ce dossier …     | Règle |
-| ---------------- | ----- |
+| Ce dossier …     | Règle                                            |
+| ---------------- | ------------------------------------------------ |
 | importe          | Rien d'applicatif. Outils de linting uniquement. |
-| n'importe jamais | Le code métier. |
-| est importé par  | La CI et les hooks de pre-commit. |
+| n'importe jamais | Le code métier.                                  |
+| est importé par  | La CI et les hooks de pre-commit.                |
 
 ## Les faits qui ne se lisent pas dans le code
 
-- Le cliquet de complexité (ratchet mechanism) ne permet jamais à la complexité globale ou à la taille des fichiers de reculer. 
+- Le cliquet de complexité (ratchet mechanism) ne permet jamais à la complexité globale ou à la taille des fichiers de reculer.
 - La règle des 500 lignes est stricte. Les fichiers générés sont les seules exceptions.
 
 ## Les pièges
@@ -38,10 +38,10 @@ decisions: []
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| comprendre l'esprit des bornes | `CLAUDE.md` |
-| voir les limites exactes | `eslint.config.js` |
+| Je veux …                      | J'ouvre            |
+| ------------------------------ | ------------------ |
+| comprendre l'esprit des bornes | `CLAUDE.md`        |
+| voir les limites exactes       | `eslint.config.js` |
 
 ## Vérifier
 

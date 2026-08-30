@@ -1,8 +1,15 @@
-import type { Ship } from "./blueprint"
-import { standingIn, solidNow, POLARITY_CONTACT, type TourWorld, type TourCastResult, type TourReport } from "./hatsu"
-import { pointInPolygon } from "./geometry"
-import { markedAt, POLARITY_PACE } from "./targeting"
-import type { Vec2 } from "./types"
+import type { Ship } from './blueprint'
+import {
+  standingIn,
+  solidNow,
+  POLARITY_CONTACT,
+  type TourWorld,
+  type TourCastResult,
+  type TourReport,
+} from './hatsu'
+import { pointInPolygon } from './geometry'
+import { markedAt, POLARITY_PACE } from './targeting'
+import type { Vec2 } from './types'
 
 export const MELT_STAGES = [1, 0.62, 0.3, 0.12]
 export function gasStep(world: TourWorld, ship: Ship): TourCastResult | null {
@@ -105,7 +112,11 @@ function findNearestMoon(
   let nearest: { id: string; base: Vec2; at: Vec2; away: number; apart: number } | null = null
   for (const moonId of moons) {
     if (ctx.spent.has(moonId)) continue
-    const moon = markedAt(ctx.ship, ctx.world, { id: moonId, hold: ctx.world.solids[moonId], seconds: ctx.seconds })
+    const moon = markedAt(ctx.ship, ctx.world, {
+      id: moonId,
+      hold: ctx.world.solids[moonId],
+      seconds: ctx.seconds,
+    })
     if (!moon || moon.spaceId !== sun.spaceId) continue
     const away = Math.hypot(sun.at[0] - moon.at[0], sun.at[1] - moon.at[1])
     const apart = Math.hypot(sun.base[0] - moon.base[0], sun.base[1] - moon.base[1])
@@ -128,7 +139,11 @@ function processSun(
   },
 ) {
   if (ctx.spent.has(sunId)) return
-  const sun = markedAt(ctx.ship, ctx.world, { id: sunId, hold: ctx.world.solids[sunId], seconds: ctx.seconds })
+  const sun = markedAt(ctx.ship, ctx.world, {
+    id: sunId,
+    hold: ctx.world.solids[sunId],
+    seconds: ctx.seconds,
+  })
   if (!sun) return
   const room = ctx.ship.spaces.get(sun.spaceId)
   if (!room) return
@@ -138,7 +153,12 @@ function processSun(
 
   if (nearest.away < POLARITY_CONTACT || nearest.apart < POLARITY_CONTACT) {
     ctx.solids[sunId] = { ...ctx.solids[sunId], gone: true, alive: false, mark: undefined }
-    ctx.solids[nearest.id] = { ...ctx.solids[nearest.id], gone: true, alive: false, mark: undefined }
+    ctx.solids[nearest.id] = {
+      ...ctx.solids[nearest.id],
+      gone: true,
+      alive: false,
+      mark: undefined,
+    }
     ctx.spent.add(sunId)
     ctx.spent.add(nearest.id)
     ctx.report ??= { kind: 'detonated', solidId: sunId, otherId: nearest.id }
@@ -177,7 +197,16 @@ export function polarityStep(
 
   const solids = { ...world.solids }
   const spent = new Set<string>()
-  const ctx = { spent, world, ship, seconds, delta, moons, solids, report: null as TourReport | null }
+  const ctx = {
+    spent,
+    world,
+    ship,
+    seconds,
+    delta,
+    moons,
+    solids,
+    report: null as TourReport | null,
+  }
 
   for (const sunId of suns) {
     processSun(sunId, ctx)

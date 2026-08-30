@@ -21,11 +21,11 @@ decisions: [adr-001, adr-006]
 
 ## Les frontières
 
-| Ce dossier …                           | Règle                                                                               |
-| -------------------------------------- | ----------------------------------------------------------------------------------- |
-| `data/`                                | est l'archive JSON ; n'importe aucun code, ne contient aucune logique.              |
-| `packages/contracts/src/schemas.ts`    | valide la structure isolée des JSON.                                                |
-| `packages/contracts/src/invariants.ts` | valide les références inter-fichiers, les unicités et l'ordre des sources.          |
+| Ce dossier …                           | Règle                                                                      |
+| -------------------------------------- | -------------------------------------------------------------------------- |
+| `data/`                                | est l'archive JSON ; n'importe aucun code, ne contient aucune logique.     |
+| `packages/contracts/src/schemas.ts`    | valide la structure isolée des JSON.                                       |
+| `packages/contracts/src/invariants.ts` | valide les références inter-fichiers, les unicités et l'ordre des sources. |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -42,12 +42,12 @@ decisions: [adr-001, adr-006]
 
 ## Par où entrer
 
-| Je veux …                             | J'ouvre                                                                            |
-| ------------------------------------- | ---------------------------------------------------------------------------------- |
-| ajouter ou corriger un personnage     | `data/characters/characters.json`                                                  |
-| ajouter une salle                     | `data/locations/locations.json`                                                    |
-| changer la règle d'une provenance     | `packages/contracts/src/schemas.ts` et `packages/contracts/src/invariants.ts`      |
-| comprendre une erreur de `canon-lint` | `packages/contracts/src/lint.ts`                                                   |
+| Je veux …                             | J'ouvre                                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------- |
+| ajouter ou corriger un personnage     | `data/characters/characters.json`                                             |
+| ajouter une salle                     | `data/locations/locations.json`                                               |
+| changer la règle d'une provenance     | `packages/contracts/src/schemas.ts` et `packages/contracts/src/invariants.ts` |
+| comprendre une erreur de `canon-lint` | `packages/contracts/src/lint.ts`                                              |
 
 ## Vérifier
 

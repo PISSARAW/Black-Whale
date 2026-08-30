@@ -18,8 +18,8 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
+| Groupe     | Fichiers                 | Responsabilité                |
+| ---------- | ------------------------ | ----------------------------- |
 | Définition | `builder.ts`, `types.ts` | Déclaration fluide d'un Hatsu |
 
 ## Invariants

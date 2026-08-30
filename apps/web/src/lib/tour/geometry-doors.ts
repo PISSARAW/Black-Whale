@@ -152,10 +152,7 @@ function openingOn(
         ),
       )
     : (wall.from + wall.to) / 2
-  const at = (t: number): Vec2 => [
-    wall.a1[0] + wall.unit[0] * t,
-    wall.a1[1] + wall.unit[1] * t,
-  ]
+  const at = (t: number): Vec2 => [wall.a1[0] + wall.unit[0] * t, wall.a1[1] + wall.unit[1] * t]
 
   return {
     tierId: side.a.tierId,
@@ -177,7 +174,10 @@ interface EdgeWalk {
 
 /** A wall stretch between two distances along one walked edge. */
 function stretch(edge: EdgeWalk, from: number, to: number): WallSegment {
-  const at = (t: number): Vec2 => [edge.start[0] + edge.unit[0] * t, edge.start[1] + edge.unit[1] * t]
+  const at = (t: number): Vec2 => [
+    edge.start[0] + edge.unit[0] * t,
+    edge.start[1] + edge.unit[1] * t,
+  ]
   return { spaceId: edge.spaceId, start: at(from), end: at(to) }
 }
 

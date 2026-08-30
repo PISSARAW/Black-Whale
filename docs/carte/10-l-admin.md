@@ -20,11 +20,11 @@ decisions: []
 
 ## Les frontières
 
-| Ce dossier …     | Règle |
-| ---------------- | ----- |
+| Ce dossier …     | Règle                                                                          |
+| ---------------- | ------------------------------------------------------------------------------ |
 | importe          | Les contrats partagés (`packages/contracts`) et les outils d'authentification. |
-| n'importe jamais | Le code spécifique au client web (jeux, modes, visite). |
-| est importé par  | Personne. C'est une application isolée. |
+| n'importe jamais | Le code spécifique au client web (jeux, modes, visite).                        |
+| est importé par  | Personne. C'est une application isolée.                                        |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -37,9 +37,9 @@ decisions: []
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| ajouter un panneau de contrôle | `apps/admin/src/routes/characters/` |
+| Je veux …                         | J'ouvre                                |
+| --------------------------------- | -------------------------------------- |
+| ajouter un panneau de contrôle    | `apps/admin/src/routes/characters/`    |
 | modifier la validation de session | `apps/admin/src/lib/server/session.ts` |
 
 ## Vérifier

@@ -46,6 +46,7 @@ navigateur (cookie httpOnly)
 ```
 
 Pour les Hatsu, le chemin vérifie l'autorisation d'affichage :
+
 ```text
 data/abilities/abilities.json + chapters.json
   → apps/web/src/lib/server/ability-visibility.ts (loadAbilityVisibility)

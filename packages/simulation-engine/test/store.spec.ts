@@ -195,9 +195,7 @@ describe('SimulationStore bounds', () => {
     const store = new SimulationStore(fakePrisma() as never, ports())
     const created = []
     for (let index = 0; index < 26; index += 1) {
-      created.push(
-        (await store.createBranch({ parentEventId: 'event-1', mode: 'sandbox' })).id,
-      )
+      created.push((await store.createBranch({ parentEventId: 'event-1', mode: 'sandbox' })).id)
     }
 
     // The oldest branch was dropped from memory; its state survives in the

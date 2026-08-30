@@ -150,10 +150,7 @@ export function buildLocationPaths(locations: LocationRecord[]) {
 export const presenceLocation = (
   presence: PresenceRecord | null | undefined,
   paths: Map<string, string>,
-) =>
-  presence?.location
-    ? paths.get(presence.location.id) || presence.location.name
-    : null
+) => (presence?.location ? paths.get(presence.location.id) || presence.location.name : null)
 
 export const activeAtChapter = (
   record: { fromEvent: EventBoundary; untilEvent?: EventBoundary | null },

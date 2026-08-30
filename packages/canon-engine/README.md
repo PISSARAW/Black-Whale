@@ -18,12 +18,12 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
-| World | `packages/canon-engine/src/world/**` | Gestion de l'état du monde |
-| Timeline | `packages/canon-engine/src/timeline/**` | Temps et historique |
-| Identité | `packages/canon-engine/src/identity/**` | Résolution d'identités |
-| Spoiler | `packages/canon-engine/src/spoiler/**` | Gestion du cap de spoiler |
+| Groupe   | Fichiers                                | Responsabilité             |
+| -------- | --------------------------------------- | -------------------------- |
+| World    | `packages/canon-engine/src/world/**`    | Gestion de l'état du monde |
+| Timeline | `packages/canon-engine/src/timeline/**` | Temps et historique        |
+| Identité | `packages/canon-engine/src/identity/**` | Résolution d'identités     |
+| Spoiler  | `packages/canon-engine/src/spoiler/**`  | Gestion du cap de spoiler  |
 
 ## Invariants
 

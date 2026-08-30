@@ -22,10 +22,10 @@ decisions: []
 
 ## Les frontières
 
-| Ce dossier …     | Règle |
-| ---------------- | ----- |
-| importe          | Les contrats de domaine et les schémas de base. |
-| n'importe jamais | Les vues ou les composants Svelte directement. |
+| Ce dossier …     | Règle                                                                   |
+| ---------------- | ----------------------------------------------------------------------- |
+| importe          | Les contrats de domaine et les schémas de base.                         |
+| n'importe jamais | Les vues ou les composants Svelte directement.                          |
 | est importé par  | Le Nen (`ability-sdk`), la visite, et les modes (combat, infiltration). |
 
 ## Les faits qui ne se lisent pas dans le code
@@ -39,10 +39,10 @@ decisions: []
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| vérifier qui contrôle un corps | `packages/canon-engine/src/identity/index.ts` |
-| afficher le nom d'un personnage | `apps/web/src/lib/identity/continuity.ts` |
+| Je veux …                       | J'ouvre                                       |
+| ------------------------------- | --------------------------------------------- |
+| vérifier qui contrôle un corps  | `packages/canon-engine/src/identity/index.ts` |
+| afficher le nom d'un personnage | `apps/web/src/lib/identity/continuity.ts`     |
 
 ## Vérifier
 

@@ -25,70 +25,70 @@ import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
 import { ceilingOf, type Ship, type TierPlan } from './blueprint'
 import {
-    blocksTheFloor,
-    centroid,
-    columnWalls,
-    deriveDoorways,
-    distanceTo,
-    pointInPolygon,
-    sealKey,
-    structureFootprint,
-    structureWalls,
-    wallSegments,
-    wanderOffset,
+  blocksTheFloor,
+  centroid,
+  columnWalls,
+  deriveDoorways,
+  distanceTo,
+  pointInPolygon,
+  sealKey,
+  structureFootprint,
+  structureWalls,
+  wallSegments,
+  wanderOffset,
 } from './geometry'
 import type { Space, Structure, Vec2, WallSegment } from './types'
 // The shapes the walk casts on live in `cast/types.ts`; line 1 re-exports them
 // for everyone who reads them off `hatsu`, and this brings them into scope for
 // the reducers below, which is a different thing and needs saying separately.
 import {
-    aimsAtSolids,
-    BODY_HATSU_KINDS,
-    EITHER_TARGET,
-    OWL_FILM_SECONDS,
-    OWL_SECONDS,
-    ROOM_OR_BODY,
-    SOLID_HATSU_KINDS,
-    worksInTour,
-    worksOnTheBody,
+  aimsAtSolids,
+  BODY_HATSU_KINDS,
+  EITHER_TARGET,
+  OWL_FILM_SECONDS,
+  OWL_SECONDS,
+  ROOM_OR_BODY,
+  SOLID_HATSU_KINDS,
+  worksInTour,
+  worksOnTheBody,
 } from './cast/kinds'
 import { bodyAfterAuraEnds, paceOf } from './cast/pain'
 import {
-    CLOSED_BOOK,
-    EMPTY_WORLD,
-    type DeckMoment,
-    type DoorOptions,
-    type Doors,
-    type Heading,
-    type HeldSolid,
-    type LoadedDeck,
-    type Played,
-    type SolidHold,
-    type Stood,
-    type TourBody,
-    type TourBook,
-    type TourCastInput,
-    type TourCastResult,
-    type TourReport,
-    type TourWorld,
-    type VowState
+  CLOSED_BOOK,
+  EMPTY_WORLD,
+  type DeckMoment,
+  type DoorOptions,
+  type Doors,
+  type Heading,
+  type HeldSolid,
+  type LoadedDeck,
+  type Played,
+  type SolidHold,
+  type Stood,
+  type TourBody,
+  type TourBook,
+  type TourCastInput,
+  type TourCastResult,
+  type TourReport,
+  type TourWorld,
+  type VowState,
 } from './cast/types'
 import { daysLeft, daysNeeded, isBuilt, isDeciphered, isLocked } from './decipher'
-import { FLOCK_BIRDS, FLOCK_PER_ROOM, FLOCK_ROOMS } from "./effects"
+import { FLOCK_BIRDS, FLOCK_PER_ROOM, FLOCK_ROOMS } from './effects'
 import { eyesTurn } from './emperor'
 import { aimGum, gumLanding, gumTension } from './gum'
 import { punchRuns } from './punch'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
-import { perchFor } from "./targeting"
+import { perchFor } from './targeting'
 import { nextForgery, nextSign, takesAMask } from './texture'
 
 export {
-    injuryPace,
-    MAX_TOUR_INJURY,
-    paceOf,
-    selfInflictTourInjury,
-    TOUR_INJURY_DAMAGE,
-    type TourInjurySeverity
+  injuryPace,
+  MAX_TOUR_INJURY,
+  paceOf,
+  selfInflictTourInjury,
+  TOUR_INJURY_DAMAGE,
+  type TourInjurySeverity,
 } from './cast/pain'
 
 /**
@@ -4164,6 +4164,19 @@ export const wearTheMask = (world: TourWorld, characterId: string): TourWorld =>
   body: { ...world.body, masked: world.body.masked === characterId ? null : characterId },
 })
 
-export { catStep, FLOCK_BIRDS, FLOCK_PER_ROOM, FLOCK_ROOMS, gasStep, MELT_STAGES, polarityStep, REEL_METRES, REEL_REACH, reelStep, SMOKE_FULL, smokeStep } from "./effects"
-export { centroid, danceOffset, distanceTo, driftOffset, wanderOffset } from "./geometry"
-export { aimedSolid, aimedSpace } from "./targeting"
+export {
+  catStep,
+  FLOCK_BIRDS,
+  FLOCK_PER_ROOM,
+  FLOCK_ROOMS,
+  gasStep,
+  MELT_STAGES,
+  polarityStep,
+  REEL_METRES,
+  REEL_REACH,
+  reelStep,
+  SMOKE_FULL,
+  smokeStep,
+} from './effects'
+export { centroid, danceOffset, distanceTo, driftOffset, wanderOffset } from './geometry'
+export { aimedSolid, aimedSpace } from './targeting'

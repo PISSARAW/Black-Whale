@@ -11,7 +11,8 @@ export class TourPostProcessPipeline {
       ctx.picker.setFromCamera(ctx.reticle, ctx.camera)
       const hits = ctx.picker.intersectObjects(ctx.intersectables, true)
       const targetDistance = hits.length > 0 ? hits[0].distance : 100.0
-      ctx.focusDistanceState.focusDistance += (targetDistance - ctx.focusDistanceState.focusDistance) * Math.min(1, ctx.delta * 5)
+      ctx.focusDistanceState.focusDistance +=
+        (targetDistance - ctx.focusDistanceState.focusDistance) * Math.min(1, ctx.delta * 5)
       this.runtime.depthOfField.uniforms.focus.value = ctx.focusDistanceState.focusDistance
     }
 
@@ -26,7 +27,7 @@ export class TourPostProcessPipeline {
     this.runtime.renderer.toneMappingExposure = ctx.blinded
       ? ctx.sealedExposure
       : ctx.comfortExposure * ctx.hourViewExposure
-    
+
     applyGrade(this.runtime.grade, {
       grade: ctx.hourViewGrade,
       clock: ctx.clock,
@@ -35,7 +36,9 @@ export class TourPostProcessPipeline {
     })
 
     if (this.runtime.refraction) {
-      this.runtime.refraction.uniforms.uAmount.value = ctx.calmWalk ? 0 : refractionAmount(ctx.shownNen)
+      this.runtime.refraction.uniforms.uAmount.value = ctx.calmWalk
+        ? 0
+        : refractionAmount(ctx.shownNen)
       this.runtime.refraction.uniforms.uTime.value = ctx.clock
     }
 

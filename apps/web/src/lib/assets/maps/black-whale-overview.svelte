@@ -120,7 +120,7 @@
       w: 463.88,
       h: 16.87,
       label: '',
-      name: 'King\'s Living Quarters',
+      name: "King's Living Quarters",
       size: 0,
       at: [413.0, 191.1],
       cut: false,
@@ -600,7 +600,7 @@
       w: 118.08,
       h: 12.05,
       label: '',
-      name: 'Guards\' Round (aft)',
+      name: "Guards' Round (aft)",
       size: 0,
       at: [459.4, 193.5],
       cut: false,
@@ -1048,7 +1048,7 @@
       w: 80.12,
       h: 7.23,
       label: '',
-      name: 'Soldiers\' Living Quarters',
+      name: "Soldiers' Living Quarters",
       size: 0,
       at: [562.7, 172.8],
       cut: false,
@@ -1064,7 +1064,7 @@
       w: 38.37,
       h: 14.46,
       label: '',
-      name: 'Princes\' Burial Chamber',
+      name: "Princes' Burial Chamber",
       size: 0,
       at: [413.0, 192.3],
       cut: false,
@@ -1080,7 +1080,7 @@
       w: 75.91,
       h: 7.23,
       label: '',
-      name: 'Beyond Netero\'s Holding Cell',
+      name: "Beyond Netero's Holding Cell",
       size: 0,
       at: [678.7, 172.8],
       cut: false,
@@ -1528,7 +1528,7 @@
       w: 27.71,
       h: 12.05,
       label: '',
-      name: 'V5 Politician\'s Suite',
+      name: "V5 Politician's Suite",
       size: 0,
       at: [276.8, 193.5],
       cut: false,
@@ -1608,7 +1608,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 01',
+      name: "Queen's Room 01",
       size: 0,
       at: [351.4, 164.4],
       cut: false,
@@ -1624,7 +1624,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 02',
+      name: "Queen's Room 02",
       size: 0,
       at: [386.0, 164.4],
       cut: false,
@@ -1640,7 +1640,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 03',
+      name: "Queen's Room 03",
       size: 0,
       at: [351.4, 164.4],
       cut: false,
@@ -1656,7 +1656,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 04',
+      name: "Queen's Room 04",
       size: 0,
       at: [386.0, 164.4],
       cut: false,
@@ -1672,7 +1672,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 05',
+      name: "Queen's Room 05",
       size: 0,
       at: [351.4, 164.4],
       cut: false,
@@ -1688,7 +1688,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 06',
+      name: "Queen's Room 06",
       size: 0,
       at: [386.0, 164.4],
       cut: false,
@@ -1704,7 +1704,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 07',
+      name: "Queen's Room 07",
       size: 0,
       at: [351.4, 164.4],
       cut: false,
@@ -1720,7 +1720,7 @@
       w: 20.25,
       h: 7.23,
       label: '',
-      name: 'Queen\'s Room 08',
+      name: "Queen's Room 08",
       size: 0,
       at: [386.0, 164.4],
       cut: false,
@@ -1736,7 +1736,7 @@
       w: 14.33,
       h: 7.23,
       label: '',
-      name: 'Queens\' Quarters Corridor',
+      name: "Queens' Quarters Corridor",
       size: 0,
       at: [368.7, 164.4],
       cut: false,
@@ -1768,7 +1768,7 @@
       w: 7.23,
       h: 12.05,
       label: '',
-      name: 'Guards\' Round (port)',
+      name: "Guards' Round (port)",
       size: 0,
       at: [403.9, 193.5],
       cut: false,
@@ -1784,7 +1784,7 @@
       w: 7.23,
       h: 12.05,
       label: '',
-      name: 'Guards\' Round (starboard)',
+      name: "Guards' Round (starboard)",
       size: 0,
       at: [514.8, 193.5],
       cut: false,
@@ -2295,8 +2295,8 @@
       y: 187.5,
       w: 118.08,
       h: 12.05,
-      label: 'Princes\' Quarters Gate',
-      name: 'Princes\' Quarters Gate',
+      label: "Princes' Quarters Gate",
+      name: "Princes' Quarters Gate",
       size: 8,
       at: [459.4, 196.2],
       cut: true,
@@ -3285,7 +3285,13 @@
         stroke-dasharray: 8 6;
       }
     </style>
-    <pattern id="unbuilt" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+    <pattern
+      id="unbuilt"
+      width="6"
+      height="6"
+      patternTransform="rotate(45)"
+      patternUnits="userSpaceOnUse"
+    >
       <rect width="6" height="6" fill="#140d0d" />
       <line x1="0" y1="0" x2="0" y2="6" stroke="#ffd700" stroke-opacity="0.13" stroke-width="1.5" />
     </pattern>
@@ -3293,7 +3299,10 @@
 
   <rect class="sea" x="0" y={waterline} width="1000" height={600 - waterline} />
 
-  <polygon class="hull" points="76.84,508.0 76.84,497.16 76.84,477.64 76.84,466.79 50.31,432.09 50.31,421.25 50.31,411.37 50.31,404.14 44.0,356.18 44.0,341.73 44.0,333.05 44.0,325.82 44.0,324.62 44.0,317.39 86.17,276.66 86.17,264.61 128.34,199.55 128.34,187.5 287.68,176.42 287.68,169.19 287.68,167.98 287.68,160.75 302.16,160.75 302.16,149.91 316.64,149.91 316.64,139.06 331.13,139.06 331.13,128.22 345.61,128.22 345.61,117.38 360.09,117.38 360.09,106.53 374.58,106.53 374.58,95.69 389.06,95.69 389.06,84.84 403.55,84.84 403.55,74.0 519.42,74.0 519.42,84.84 533.9,84.84 533.9,95.69 548.38,95.69 548.38,106.53 562.87,106.53 562.87,117.38 577.35,117.38 577.35,128.22 591.83,128.22 591.83,139.06 606.32,139.06 606.32,149.91 620.8,149.91 620.8,160.75 635.29,160.75 635.29,167.98 729.27,169.19 729.27,176.42 729.27,187.5 729.27,199.55 771.44,264.61 771.44,276.66 811.51,317.39 811.51,324.62 811.51,325.82 811.51,333.05 811.51,341.73 811.51,356.18 805.17,404.14 805.17,411.37 805.17,421.25 805.17,432.09 706.96,466.79 706.96,477.64 706.96,497.16 706.96,508.0" />
+  <polygon
+    class="hull"
+    points="76.84,508.0 76.84,497.16 76.84,477.64 76.84,466.79 50.31,432.09 50.31,421.25 50.31,411.37 50.31,404.14 44.0,356.18 44.0,341.73 44.0,333.05 44.0,325.82 44.0,324.62 44.0,317.39 86.17,276.66 86.17,264.61 128.34,199.55 128.34,187.5 287.68,176.42 287.68,169.19 287.68,167.98 287.68,160.75 302.16,160.75 302.16,149.91 316.64,149.91 316.64,139.06 331.13,139.06 331.13,128.22 345.61,128.22 345.61,117.38 360.09,117.38 360.09,106.53 374.58,106.53 374.58,95.69 389.06,95.69 389.06,84.84 403.55,84.84 403.55,74.0 519.42,74.0 519.42,84.84 533.9,84.84 533.9,95.69 548.38,95.69 548.38,106.53 562.87,106.53 562.87,117.38 577.35,117.38 577.35,128.22 591.83,128.22 591.83,139.06 606.32,139.06 606.32,149.91 620.8,149.91 620.8,160.75 635.29,160.75 635.29,167.98 729.27,169.19 729.27,176.42 729.27,187.5 729.27,199.55 771.44,264.61 771.44,276.66 811.51,317.39 811.51,324.62 811.51,325.82 811.51,333.05 811.51,341.73 811.51,356.18 805.17,404.14 805.17,411.37 805.17,421.25 805.17,432.09 706.96,466.79 706.96,477.64 706.96,497.16 706.96,508.0"
+  />
 
   {#each terraces as terrace, i (i)}
     <rect class="gap" x={terrace.x} y={terrace.y} width={terrace.w} height={terrace.h} />
@@ -3346,18 +3355,20 @@
   <line class="waterline" x1="0" y1={waterline} x2="1000" y2={waterline} />
 
   <!-- The eye of the ch. 349 page: low, forward, and opening nothing. -->
-  <circle cx="120.8" cy="375.46" r="12.0" fill="#050505" stroke="#ffd700" stroke-width="2" pointer-events="none" />
+  <circle
+    cx="120.8"
+    cy="375.46"
+    r="12.0"
+    fill="#050505"
+    stroke="#ffd700"
+    stroke-width="2"
+    pointer-events="none"
+  />
   <circle cx="120.8" cy="375.46" r="4.6" fill="#fffff0" pointer-events="none" />
 
   <!-- One tier, several floors: the bracket says it, the letters place them. -->
   {#each brackets as bracket (bracket.id)}
-    <line
-      class="liner-rail"
-      x1={bracket.x}
-      y1={bracket.top}
-      x2={bracket.x}
-      y2={bracket.bottom}
-    />
+    <line class="liner-rail" x1={bracket.x} y1={bracket.top} x2={bracket.x} y2={bracket.bottom} />
     <text class="liner-name" x={bracket.x + 6} y={bracket.top - 8}
       >{$t.ship.tierLabel(bracket.tier)}</text
     >
@@ -3378,8 +3389,7 @@
         <text x={bracketX + 11} y={deck.floor + 3} font-size="10">{deck.letter}</text>
       {:else}
         <text x="6" y={deck.ceiling + 12}>{deckName(deck)}</text>
-        <text x="6" y={deck.ceiling + 25} font-size="9" fill-opacity="0.55"
-          >{deck.elevation} m</text
+        <text x="6" y={deck.ceiling + 25} font-size="9" fill-opacity="0.55">{deck.elevation} m</text
         >
       {/if}
     </g>

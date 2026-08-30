@@ -18,8 +18,8 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
+| Groupe     | Fichiers                        | Responsabilité                                  |
+| ---------- | ------------------------------- | ----------------------------------------------- |
 | Resolution | `resolver.ts`, `interaction.ts` | Calcul des effets et interactions des capacités |
 
 ## Invariants

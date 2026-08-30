@@ -30,7 +30,7 @@
 | `reconstruction/v3/run` | `+server.ts` |
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
-| `ship` | `+page.server.ts`, `+page.svelte`, `+page.ts` |
+| `ship` | `+page.server.ts`, `+page.svelte` |
 | `simulations` | `+page.server.ts`, `+page.svelte` |
 | `sitemap.xml` | `+server.ts` |
 | `spoiler-limit` | `+server.ts`, `spoiler-limit.test.ts` |

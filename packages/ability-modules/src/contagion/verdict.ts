@@ -1,15 +1,7 @@
 export type Verdict = 'infected' | 'refused' | 'cancelled' | 'forced'
 
 export type Rider =
-  | 'bound'
-  | 'moon'
-  | 'stolen'
-  | 'sworn'
-  | 'smoke'
-  | 'taxed'
-  | 'trapped'
-  | 'deterred'
-  | 'solicited'
+  'bound' | 'moon' | 'stolen' | 'sworn' | 'smoke' | 'taxed' | 'trapped' | 'deterred' | 'solicited'
 
 export type Aftermath =
   | 'bound'

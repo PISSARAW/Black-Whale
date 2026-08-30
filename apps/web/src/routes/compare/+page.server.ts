@@ -100,9 +100,10 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
       }
 
       if (compareCanonical) {
-        const activeEvent = selectedEvent ?? defaultEvent;
-        const revealedThroughChapter = spoilerProfile?.maxChapter ?? activeEvent?.chapter.number ?? Number.POSITIVE_INFINITY;
-        
+        const activeEvent = selectedEvent ?? defaultEvent
+        const revealedThroughChapter =
+          spoilerProfile?.maxChapter ?? activeEvent?.chapter.number ?? Number.POSITIVE_INFINITY
+
         const rawFacts = await prisma.fact.findMany({
           where: {
             fromEvent: { chapter: { number: { lte: revealedThroughChapter } } },
@@ -114,7 +115,13 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
         })
 
         const objectiveFacts = rawFacts.filter((fact) =>
-          activeEvent ? isActiveAt(fact as import('@black-whale/domain').TemporalRecord, activeEvent as import('@black-whale/domain').OrderedEvent, revealedThroughChapter) : false
+          activeEvent
+            ? isActiveAt(
+                fact as import('@black-whale/domain').TemporalRecord,
+                activeEvent as import('@black-whale/domain').OrderedEvent,
+                revealedThroughChapter,
+              )
+            : false,
         )
 
         canonicalTruth = {

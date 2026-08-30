@@ -105,9 +105,7 @@ export const actions: Actions = {
       chapterId,
       occursBeforeEventId,
       consequence:
-        characterId && locationId && precision && certainty
-          ? { characterId, locationId }
-          : null,
+        characterId && locationId && precision && certainty ? { characterId, locationId } : null,
     })
     if (referenceError) return fail(400, { error: referenceError })
 

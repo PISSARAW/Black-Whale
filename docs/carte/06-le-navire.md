@@ -23,11 +23,11 @@ decisions: []
 
 ## Les frontières
 
-| Ce dossier …     | Règle |
-| ---------------- | ----- |
-| importe          | Les données spatiales statiques et l'état réactif (`svelte.ts`). |
+| Ce dossier …     | Règle                                                                        |
+| ---------------- | ---------------------------------------------------------------------------- |
+| importe          | Les données spatiales statiques et l'état réactif (`svelte.ts`).             |
 | n'importe jamais | Le moteur 3D (`Three.js`), `TourRenderer` ou les géométries de la visite 3D. |
-| est importé par  | Les interfaces utilisateur de navigation et l'écran de carte. |
+| est importé par  | Les interfaces utilisateur de navigation et l'écran de carte.                |
 
 ## Les faits qui ne se lisent pas dans le code
 
@@ -41,9 +41,9 @@ decisions: []
 
 ## Par où entrer
 
-| Je veux … | J'ouvre |
-| --------- | ------- |
-| mettre à jour le tracé d'un pont | `apps/web/src/lib/assets/maps/` |
+| Je veux …                            | J'ouvre                                    |
+| ------------------------------------ | ------------------------------------------ |
+| mettre à jour le tracé d'un pont     | `apps/web/src/lib/assets/maps/`            |
 | résoudre le plan dessiné d'une salle | `apps/web/src/lib/map/mapAssetRegistry.ts` |
 
 ## Vérifier

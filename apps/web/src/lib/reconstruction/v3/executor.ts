@@ -164,7 +164,9 @@ async function applyDecision(input: DecisionExecution) {
     deceptive: decision.parameters['deceptive'] === true,
   })
   if (propagated.traces.some((trace) => trace.status === 'blocked')) {
-    throw new ScenarioInputError(propagated.traces.find((trace) => trace.status === 'blocked')!.reason)
+    throw new ScenarioInputError(
+      propagated.traces.find((trace) => trace.status === 'blocked')!.reason,
+    )
   }
   return {
     state,

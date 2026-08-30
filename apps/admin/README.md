@@ -18,10 +18,10 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
-| Dashboard | `apps/admin/src/routes/**` | Vues d'administration |
-| Lib | `apps/admin/src/lib/**` | Composants internes de l'admin |
+| Groupe    | Fichiers                   | Responsabilité                 |
+| --------- | -------------------------- | ------------------------------ |
+| Dashboard | `apps/admin/src/routes/**` | Vues d'administration          |
+| Lib       | `apps/admin/src/lib/**`    | Composants internes de l'admin |
 
 ## Invariants
 

@@ -112,7 +112,10 @@ export function collinearOverlap(a: Segment, b: Segment): { from: number; to: nu
 }
 
 /** A point `t` metres along the unit vector `unit` from `a`. */
-export const along = (a: Vec2, unit: Vec2, t: number): Vec2 => [a[0] + unit[0] * t, a[1] + unit[1] * t]
+export const along = (a: Vec2, unit: Vec2, t: number): Vec2 => [
+  a[0] + unit[0] * t,
+  a[1] + unit[1] * t,
+]
 
 /**
  * Ear clipping for simple polygons, concave included. Returns index triples
@@ -244,4 +247,3 @@ function segmentsProperlyCross([a1, a2]: Segment, [b1, b2]: Segment): boolean {
     ((d3 > EPSILON && d4 < -EPSILON) || (d3 < -EPSILON && d4 > EPSILON))
   )
 }
-

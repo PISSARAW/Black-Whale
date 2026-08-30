@@ -98,7 +98,11 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   if (!jsonCharacter) throw error(404, 'Character not found')
 
   const firstVisibleChapterNumber = readFirstAppearanceChapter(jsonCharacter)
-  if (spoilerLimit !== null && firstVisibleChapterNumber !== null && firstVisibleChapterNumber > spoilerLimit) {
+  if (
+    spoilerLimit !== null &&
+    firstVisibleChapterNumber !== null &&
+    firstVisibleChapterNumber > spoilerLimit
+  ) {
     throw error(404, 'Character not found')
   }
 

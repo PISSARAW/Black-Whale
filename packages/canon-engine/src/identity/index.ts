@@ -62,8 +62,7 @@ export class IdentityEngine implements IIdentityEngine {
       // stable across queries; the id makes the pick deterministic.
       .sort(
         (left, right) =>
-          compareEventOrder(right.fromEvent, left.fromEvent) ||
-          left.id.localeCompare(right.id),
+          compareEventOrder(right.fromEvent, left.fromEvent) || left.id.localeCompare(right.id),
       )[0]
 
     const consciousness = occupancy?.consciousness ?? null

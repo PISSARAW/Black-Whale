@@ -37,7 +37,7 @@ function chapterPosition(value: string | null | undefined): number | null {
   const match = new RegExp(`^ch-(\\d+)(?:\\.(\\d{1,${MAX_SEQUENCE_DIGITS}}))?$`).exec(value ?? '')
   if (!match) return null
   return Number(match[1]) + Number(match[2] ?? 0) / 1000
-}/** Every `id` in a file is used once. A duplicate silently wins or loses. */
+} /** Every `id` in a file is used once. A duplicate silently wins or loses. */
 const uniqueIds: Invariant = ({ characters, abilities, factions, locations, chapters }) => {
   const findings: Finding[] = []
   const check = (file: string, ids: readonly string[]) => {

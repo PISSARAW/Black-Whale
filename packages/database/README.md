@@ -18,8 +18,8 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
+| Groupe | Fichiers    | Responsabilité                 |
+| ------ | ----------- | ------------------------------ |
 | Client | `client.ts` | Connexion à la base de données |
 
 ## Invariants

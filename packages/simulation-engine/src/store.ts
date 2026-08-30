@@ -323,7 +323,10 @@ export class SimulationStore {
       .listBranches()
       .filter((branch) => branch.kind === 'SIMULATION' && branch.id !== exceptId)
       .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
-    for (const branch of residents.slice(0, Math.max(0, residents.length - MAX_RESIDENT_BRANCHES))) {
+    for (const branch of residents.slice(
+      0,
+      Math.max(0, residents.length - MAX_RESIDENT_BRANCHES),
+    )) {
       this.engine.dropBranch(branch.id)
     }
   }

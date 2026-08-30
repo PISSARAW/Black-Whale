@@ -111,7 +111,7 @@ export function stepConsole(scene: {
               kind: 'decipher-advanced',
               characterId: worked.characterId,
               left: daysLeft(worked),
-            }
+            },
       )
     }
   }

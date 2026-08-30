@@ -18,10 +18,10 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
+| Groupe      | Fichiers                                        | Responsabilité                        |
+| ----------- | ----------------------------------------------- | ------------------------------------- |
 | Temporalité | `temporal.ts`, `ordering.ts`, `voyage-clock.ts` | Gérer le temps (StoryCursor, horloge) |
-| Identité | `identity.ts` | Corps, conscience, aura |
+| Identité    | `identity.ts`                                   | Corps, conscience, aura               |
 
 ## Invariants
 

@@ -52,7 +52,8 @@ export function defineReconstructionScenario(
 ): ReconstructionScenario {
   requireId(draft.id, 'scenario id')
   requireId(draft.forkEventId, 'fork event')
-  if (!draft.title.trim()) throw new ScenarioInputError('A reconstruction scenario requires a title')
+  if (!draft.title.trim())
+    throw new ScenarioInputError('A reconstruction scenario requires a title')
   if (!Number.isSafeInteger(draft.seed) || draft.seed < 0) {
     throw new ScenarioInputError('Scenario seed must be a non-negative safe integer')
   }
@@ -61,7 +62,8 @@ export function defineReconstructionScenario(
   for (const decision of draft.decisions) {
     requireId(decision.id, 'decision id')
     requireId(decision.actorId, `actor of ${decision.id}`)
-    if (decisionIds.has(decision.id)) throw new ScenarioInputError(`Duplicate decision id: ${decision.id}`)
+    if (decisionIds.has(decision.id))
+      throw new ScenarioInputError(`Duplicate decision id: ${decision.id}`)
     decisionIds.add(decision.id)
     for (const precondition of decision.preconditions) {
       requireId(precondition.id, `precondition of ${decision.id}`)
@@ -88,7 +90,8 @@ export function defineReconstructionScenario(
 export function parseReconstructionScenarioDraft(value: unknown): ReconstructionScenarioDraft {
   const draft = record(value, 'scenario')
   const decisions = array(draft.decisions, 'decisions')
-  if (decisions.length > 50) throw new ScenarioInputError('A scenario may contain at most 50 decisions')
+  if (decisions.length > 50)
+    throw new ScenarioInputError('A scenario may contain at most 50 decisions')
 
   return {
     id: string(draft.id, 'scenario id'),
@@ -99,7 +102,8 @@ export function parseReconstructionScenarioDraft(value: unknown): Reconstruction
     decisions: decisions.map((rawDecision, index) => {
       const decision = record(rawDecision, `decision ${index}`)
       const targets = array(decision.targetIds, `targets of decision ${index}`)
-      if (targets.length > 20) throw new ScenarioInputError('A decision may contain at most 20 targets')
+      if (targets.length > 20)
+        throw new ScenarioInputError('A decision may contain at most 20 targets')
       const parameters = record(decision.parameters, `parameters of decision ${index}`)
       for (const [key, parameter] of Object.entries(parameters)) {
         if (!['string', 'number', 'boolean'].includes(typeof parameter)) {
@@ -182,7 +186,8 @@ function array(value: unknown, field: string): unknown[] {
 }
 
 function string(value: unknown, field: string, max = 128): string {
-  if (typeof value !== 'string' || !value.trim()) throw new ScenarioInputError(`${field} must be a string`)
+  if (typeof value !== 'string' || !value.trim())
+    throw new ScenarioInputError(`${field} must be a string`)
   if (value.length > max) throw new ScenarioInputError(`${field} must be at most ${max} characters`)
   return value.trim()
 }

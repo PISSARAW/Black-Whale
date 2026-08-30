@@ -29,8 +29,7 @@ export function buildCanonicalCursors(events: CursorSource[], branchId = 'canon'
   // three pairwise comparisons can disagree, and a sort built on them scrambles
   // the chronology depending on input order.
   const byPublication = [...events].sort(
-    (left, right) =>
-      left.chapter.number - right.chapter.number || left.sequence - right.sequence,
+    (left, right) => left.chapter.number - right.chapter.number || left.sequence - right.sequence,
   )
   const publicationRank = new Map(byPublication.map((event, index) => [event.id, index]))
   const rankOf = (event: CursorSource): number => event.ordinal ?? publicationRank.get(event.id)!

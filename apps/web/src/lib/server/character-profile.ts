@@ -208,7 +208,9 @@ export function buildAffiliations(
   spoilerCap: number | null = null,
 ): AffiliationEntry[] {
   return (character?.affiliations || [])
-    .filter((membership) => spoilerCap === null || membership.fromEvent.chapter.number <= spoilerCap)
+    .filter(
+      (membership) => spoilerCap === null || membership.fromEvent.chapter.number <= spoilerCap,
+    )
     .map((membership) => ({
       name: membership.faction.name,
       role: membership.role,
@@ -217,7 +219,7 @@ export function buildAffiliations(
       untilChapter:
         spoilerCap !== null && membership.untilEvent
           ? Math.min(membership.untilEvent.chapter.number, spoilerCap)
-          : (membership.untilEvent?.chapter.number || null),
+          : membership.untilEvent?.chapter.number || null,
     }))
 }
 

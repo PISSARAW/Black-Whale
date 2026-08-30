@@ -18,11 +18,11 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
-| Routes | `apps/web/src/routes/**` | Pages SvelteKit, load() et actions |
-| Lib | `apps/web/src/lib/**` | Composants, logique partagée, tour, modes |
-| Server | `apps/web/src/lib/server/**` | Frontière serveur, actions sécurisées |
+| Groupe | Fichiers                     | Responsabilité                            |
+| ------ | ---------------------------- | ----------------------------------------- |
+| Routes | `apps/web/src/routes/**`     | Pages SvelteKit, load() et actions        |
+| Lib    | `apps/web/src/lib/**`        | Composants, logique partagée, tour, modes |
+| Server | `apps/web/src/lib/server/**` | Frontière serveur, actions sécurisées     |
 
 ## Invariants
 

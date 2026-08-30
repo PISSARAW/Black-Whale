@@ -65,7 +65,7 @@
       id: 'tier-1-soldiers-living-quarters',
       region: 'soldiers-living-quarters',
       points: '605.0,310.0 700.0,310.0 700.0,460.0 605.0,460.0',
-      label: 'Soldiers\' Living Quarters',
+      label: "Soldiers' Living Quarters",
       size: 9,
       at: [652.5, 388.0],
       turned: true,

@@ -1436,6 +1436,7 @@ Fichiers : 297
 - parseCreateSimulationInput > accepts a canonical fork request
 - parseSimulationActionInput > rejects an unsupported action type
 - SimulationStore.applyAction > rejects a move targeting an entity absent from the branch
+- SimulationStore bounds > deletes simulation branches past the TTL when a new one is created
 
 ## `scripts/doc-lint.test.ts`
 

@@ -1,4 +1,4 @@
-import type { TierPlan, Ship } from "./blueprint"
+import type { TierPlan, Ship } from './blueprint'
 import {
   detachedOn,
   emptiedOn,
@@ -10,9 +10,9 @@ import {
   type Perch,
   type Mark,
   type TourWorld,
-} from "./hatsu"
-import { pointInPolygon, structureFootprint } from "./geometry"
-import type { Space, Vec2, Structure } from "./types"
+} from './hatsu'
+import { pointInPolygon, structureFootprint } from './geometry'
+import type { Space, Vec2, Structure } from './types'
 
 /** A planar ray: where it starts and the unit direction it travels along. */
 export interface AimRay {
@@ -150,8 +150,10 @@ export function rayReaches(target: SolidTarget, ray: AimRay, range: number): num
   const { at, dx, dz } = ray
   const bounds = { near: 0, far: range }
 
-  if (!intersectSlab({ origin: at[0], direction: dx, low: target.minX, high: target.maxX, bounds })) return null
-  if (!intersectSlab({ origin: at[1], direction: dz, low: target.minZ, high: target.maxZ, bounds })) return null
+  if (!intersectSlab({ origin: at[0], direction: dx, low: target.minX, high: target.maxX, bounds }))
+    return null
+  if (!intersectSlab({ origin: at[1], direction: dz, low: target.minZ, high: target.maxZ, bounds }))
+    return null
 
   // Standing inside it — under a mezzanine, under a run of ducting — is aiming
   // at it, which is what marching from the first step out already did.

@@ -18,9 +18,9 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
-| Schemas | `*.schema.ts` | Schémas Zod |
+| Groupe  | Fichiers      | Responsabilité |
+| ------- | ------------- | -------------- |
+| Schemas | `*.schema.ts` | Schémas Zod    |
 
 ## Invariants
 

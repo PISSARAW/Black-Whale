@@ -239,7 +239,7 @@ export function disposeSceneRuntime(runtime: SceneRuntime): void {
         for (const mat of materials) {
           for (const value of Object.values(mat)) {
             if (value && typeof value === 'object' && (value as Three.Texture).isTexture) {
-              (value as Three.Texture).dispose()
+              ;(value as Three.Texture).dispose()
             }
           }
           mat.dispose()

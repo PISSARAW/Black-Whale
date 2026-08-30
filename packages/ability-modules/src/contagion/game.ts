@@ -20,15 +20,29 @@
  * Morena *says* when she answers a question belongs to whoever is rendering.
  */
 
-import { type AnswerCard, type QuestionCard, ANSWER_CARDS, QUESTION_CARDS, WIDER_VOCABULARY } from './deck.js';
-import { type GamePhase } from './phases.js';
-import { type Verdict, type Rider, type Aftermath } from './verdict.js';
-import { type TableMove, type TableKind, type TablePage, exposureNow, moveFor, livePages, spentOn } from './table.js';
+import {
+  type AnswerCard,
+  type QuestionCard,
+  ANSWER_CARDS,
+  QUESTION_CARDS,
+  WIDER_VOCABULARY,
+} from './deck.js'
+import { type GamePhase } from './phases.js'
+import { type Verdict, type Rider, type Aftermath } from './verdict.js'
+import {
+  type TableMove,
+  type TableKind,
+  type TablePage,
+  exposureNow,
+  moveFor,
+  livePages,
+  spentOn,
+} from './table.js'
 
-export * from './deck.js';
-export * from './phases.js';
-export * from './verdict.js';
-export * from './table.js';
+export * from './deck.js'
+export * from './phases.js'
+export * from './verdict.js'
+export * from './table.js'
 
 /** One line of what happened, in the order it happened. */
 export type Beat =
@@ -164,7 +178,6 @@ export interface MorenaGame {
   log: Beat[]
 }
 
-
 export interface DealOptions {
   /** Which card Morena marks. Defaults to the one she marks in ch. 410. */
   marked?: AnswerCard | null
@@ -220,7 +233,6 @@ export function dealTheGame(options: DealOptions = {}): MorenaGame {
 
 /** A game that cannot move: every step below returns this rather than throwing. */
 const unchanged = (game: MorenaGame): MorenaGame => game
-
 
 /**
  * The Manipulation: the answer narrowed to Yes or No.
@@ -927,9 +939,7 @@ export function settle(game: MorenaGame, choice?: AnswerCard | 'yes' | 'no'): Mo
     // Reaching through the graveyard counts as reaching: pulling the marked
     // card out of it springs the trap whatever the guest meant to answer with.
     if (recovered === game.marked) {
-      return close(recovered, 'forced', [
-        { kind: 'recovered', round: game.round, card: recovered },
-      ])
+      return close(recovered, 'forced', [{ kind: 'recovered', round: game.round, card: recovered }])
     }
     // A Back that pulls a Joker still has to be pointed somewhere, and there is
     // nothing left to point it with: an unaimed Joker is a refusal.
@@ -1047,4 +1057,3 @@ export function summariseGame(game: MorenaGame): Record<string, unknown> {
     game: JSON.parse(JSON.stringify(game)) as MorenaGame,
   }
 }
-

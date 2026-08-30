@@ -18,8 +18,8 @@ decisions: []
 
 ## Découpage
 
-| Groupe | Fichiers | Responsabilité |
-| --- | --- | --- |
+| Groupe      | Fichiers                   | Responsabilité                                 |
+| ----------- | -------------------------- | ---------------------------------------------- |
 | Compilateur | `compiler.ts`, `parser.ts` | Extraction et assemblage des données statiques |
 
 ## Invariants

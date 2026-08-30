@@ -3,6 +3,7 @@ titre: L'admin
 etage: 1
 couvre:
   - apps/admin/**
+  - apps/admin/src/routes/**
 depend-de: []
 revu-le: 2026-08-05
 empreinte: 588f913
@@ -15,7 +16,7 @@ decisions: []
 
 ## Le trajet
 
-`apps/admin/src/routes/+layout.server.ts` (session signée) → `apps/admin/src/routes/api/mutate/+server.ts` → Écriture persistante.
+`apps/admin/src/routes/+layout.server.ts` (session signée) → `apps/admin/src/routes/api/characters/+server.ts` → Écriture persistante.
 
 ## Les frontières
 
@@ -38,7 +39,7 @@ decisions: []
 
 | Je veux … | J'ouvre |
 | --------- | ------- |
-| ajouter un panneau de contrôle | `apps/admin/src/routes/dashboard/` |
+| ajouter un panneau de contrôle | `apps/admin/src/routes/characters/` |
 | modifier la validation de session | `apps/admin/src/lib/server/session.ts` |
 
 ## Vérifier

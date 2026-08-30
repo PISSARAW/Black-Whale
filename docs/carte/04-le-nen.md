@@ -35,7 +35,7 @@ Ce territoire retrace le voyage d'un hatsu (capacité) depuis sa déclaration or
 1. **Définition** : Les règles du hatsu sont implémentées dans `packages/ability-modules`, appuyées par les contrats du `ability-sdk`.
 2. **Génération** : Le compilateur canon génère des fichiers de liaison (`hatsuProfiles.gen.ts`, `interactionManifests.gen.ts`) permettant au frontend de connaître les capacités disponibles.
 3. **Résolution** : Lors de l'invocation, `packages/nen-engine` applique la logique du module, évalue les conditions et détermine les résultats de l'action.
-4. **Restitution** : Le frontend lit ces résultats via `apps/web/src/lib/nen` et traduit ces effets en animations, en ciblant le point visuel (pixel) dans `tour/hatsu.ts`.
+4. **Restitution** : Le frontend lit ces résultats via `apps/web/src/lib/nen` et traduit ces effets en animations, en ciblant le point visuel (pixel) dans `apps/web/src/lib/tour/hatsu.ts`.
 
 ## Frontières
 

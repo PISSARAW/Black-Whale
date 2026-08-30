@@ -15,6 +15,6 @@ decisions: []
 
 1. Créer la définition de l'événement dans `data/events/<nom>.json`.
 2. L'ajouter à la chronologie d'un chapitre dans `data/chapters/<chapitre>.json`.
-3. (Si nécessaire) Ajuster le moteur dans `packages/canon-engine/world/events.ts`.
+3. (Si nécessaire) Ajuster le moteur dans `packages/canon-engine/src/world/events.ts`.
 4. Vérifier que la compilation canon réussit avec :
    `pnpm --filter @black-whale/canon-compiler test`

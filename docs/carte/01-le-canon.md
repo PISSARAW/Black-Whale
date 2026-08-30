@@ -5,6 +5,7 @@ couvre:
   - data/**
   - packages/canon-compiler/**
   - packages/database/**
+  - packages/database/prisma/**
   - packages/canon-engine/src/world/**
 depend-de: [11-les-donnees, 03-l-identite]
 revu-le: 2026-08-05

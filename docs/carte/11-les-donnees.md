@@ -17,7 +17,7 @@ decisions: [adr-001, adr-006]
 
 ## Le trajet
 
-`data/*.json` → `packages/contracts/src/schemas.ts` → `packages/contracts/src/lint.ts` → `packages/contracts/src/invariants.ts`
+`data/abilities/abilities.json` → `packages/contracts/src/schemas.ts` → `packages/contracts/src/lint.ts` → `packages/contracts/src/invariants.ts`
 
 ## Les frontières
 

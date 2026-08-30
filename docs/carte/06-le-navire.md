@@ -19,7 +19,7 @@ decisions: []
 
 ## Le trajet
 
-`apps/web/src/lib/assets/maps/deck-1.svg` → `apps/web/src/lib/server/mapPayload.ts` → `apps/web/src/routes/ship/+page.server.ts` → `apps/web/src/lib/state/mapState.svelte.ts` → `apps/web/src/lib/map/MapView.svelte`
+`apps/web/src/lib/assets/maps/tier-1.svelte` → `apps/web/src/lib/server/mapPayload.ts` → `apps/web/src/routes/ship/+page.server.ts` → `apps/web/src/lib/state/mapState.svelte.ts` → `apps/web/src/lib/map/mapAssetRegistry.ts`
 
 ## Les frontières
 
@@ -44,7 +44,7 @@ decisions: []
 | Je veux … | J'ouvre |
 | --------- | ------- |
 | mettre à jour le tracé d'un pont | `apps/web/src/lib/assets/maps/` |
-| changer la logique de zoom | `apps/web/src/lib/map/MapView.svelte` |
+| résoudre le plan dessiné d'une salle | `apps/web/src/lib/map/mapAssetRegistry.ts` |
 
 ## Vérifier
 

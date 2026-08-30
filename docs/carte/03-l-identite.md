@@ -18,7 +18,7 @@ decisions: []
 
 ## Le trajet
 
-`packages/domain/src/identity.ts` → `packages/canon-engine/src/identity/index.ts` → `apps/web/src/lib/server/identity-records.ts` → `apps/web/src/lib/identity/index.ts`
+`packages/domain/src/identity.ts` → `packages/canon-engine/src/identity/index.ts` → `apps/web/src/lib/server/identity-records.ts` → `apps/web/src/lib/identity/continuity.ts`
 
 ## Les frontières
 
@@ -41,8 +41,8 @@ decisions: []
 
 | Je veux … | J'ouvre |
 | --------- | ------- |
-| vérifier qui contrôle un corps | `packages/canon-engine/src/identity/possession.ts` |
-| afficher le nom d'un personnage | `apps/web/src/lib/identity/display.ts` |
+| vérifier qui contrôle un corps | `packages/canon-engine/src/identity/index.ts` |
+| afficher le nom d'un personnage | `apps/web/src/lib/identity/continuity.ts` |
 
 ## Vérifier
 

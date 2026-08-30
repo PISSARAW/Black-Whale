@@ -47,26 +47,26 @@ decisions:
 
 Le patron Morena est le même pour tous : les règles vivent dans le module, le rendu dans la route.
 
-- **Arena** : `routes/arena/+page.ts` lit les paramètres → `lib/arena/ai.ts` pilote → `lib/combat/reducer.ts` → `routes/arena/+page.svelte` rend le duel.
-- **Hunt** : Le joueur navigue via `TourScene` → Contact initié → `lib/hunt/state.ts` → `lib/hunt/duel/reducer.ts`.
-- **Infiltration** : Missions posées → `lib/infiltration/loop.ts` fait avancer les témoins et l'alerte.
-- **Investigation** : Dossiers de `lib/investigation/catalog.ts` listés → résolus dans `lib/investigation/case.ts`.
-- **Reconstruction** : Charge la base canon dans `routes/reconstruction/+page.server.ts` → reconstruit le vaisseau.
-- **Strategy** : `lib/strategy/simulation.svelte.ts` gère les tours → `lib/strategy/campaign/engine.ts` relie les scénarios.
+- **Arena** : `apps/web/src/routes/arena/+page.ts` lit les paramètres → `apps/web/src/lib/arena/ai.ts` pilote → `apps/web/src/lib/combat/reducer.ts` → `apps/web/src/routes/arena/+page.svelte` rend le duel.
+- **Hunt** : Le joueur navigue via `TourScene` → Contact initié → `apps/web/src/lib/hunt/state.ts` → `apps/web/src/lib/hunt/duel/reducer.ts`.
+- **Infiltration** : Missions posées → `apps/web/src/lib/infiltration/loop.ts` fait avancer les témoins et l'alerte.
+- **Investigation** : Dossiers de `apps/web/src/lib/investigation/catalog.ts` listés → résolus dans `apps/web/src/lib/investigation/case.ts`.
+- **Reconstruction** : Charge la base canon dans `apps/web/src/routes/reconstruction/+page.server.ts` → reconstruit le vaisseau.
+- **Strategy** : `apps/web/src/lib/strategy/simulation.svelte.ts` gère les tours → `apps/web/src/lib/strategy/campaign/engine.ts` relie les scénarios.
 
 ## Frontières
 
-- `lib/arena` : Limité à un duel 1v1 contre une IA. Ne connaît pas la traque ni le vaisseau entier.
-- `lib/combat` : Moteur pur de combat, ne rend rien et n'a aucune route associée.
-- `lib/hunt` : Gère l'évasion et les duels de contact. Ne réutilise pas `arena` et s'appuie sur `TourScene` pour le mouvement.
-- `lib/infiltration` : Définit sa propre logique de furtivité et de témoins, séparée du graphe de navigation de `hunt`.
-- `lib/investigation` : N'accède pas à la base canon en direct, les dossiers sont prédéfinis.
-- `lib/reconstruction` : Réservé à la visualisation narrative du canon (ce n'est pas un mode d'action).
-- `lib/strategy` : Mode tour par tour, sans simulation de combat en temps réel, reposant sur `packages/simulation-engine`.
+- `apps/web/src/lib/arena` : Limité à un duel 1v1 contre une IA. Ne connaît pas la traque ni le vaisseau entier.
+- `apps/web/src/lib/combat` : Moteur pur de combat, ne rend rien et n'a aucune route associée.
+- `apps/web/src/lib/hunt` : Gère l'évasion et les duels de contact. Ne réutilise pas `arena` et s'appuie sur `TourScene` pour le mouvement.
+- `apps/web/src/lib/infiltration` : Définit sa propre logique de furtivité et de témoins, séparée du graphe de navigation de `hunt`.
+- `apps/web/src/lib/investigation` : N'accède pas à la base canon en direct, les dossiers sont prédéfinis.
+- `apps/web/src/lib/reconstruction` : Réservé à la visualisation narrative du canon (ce n'est pas un mode d'action).
+- `apps/web/src/lib/strategy` : Mode tour par tour, sans simulation de combat en temps réel, reposant sur `packages/simulation-engine`.
 
 ## Invariants
 
-- `combat` est le seul moteur partagé entre différents modes (utilisé par `arena` et `hunt/duel`).
+- `combat` est le seul moteur partagé entre différents modes (utilisé par `arena` et `apps/web/src/lib/hunt/duel`).
 - `TourScene` ignore le mode qui le pilote. Il réagit aux événements (`WALKED`, `FACE`, etc.) et synchronise la position par binding.
-- Chaque mode doit déclarer ses Hatsu spécifiques dans `lib/nen/hatsuRegistry.ts` pour qu'ils soient disponibles.
-- Les sauvegardes de progression de chaque mode sont toujours locales, versionnées et isolées (ex: `lib/hunt/replay.ts`, `lib/infiltration/persistence.ts`).
+- Chaque mode doit déclarer ses Hatsu spécifiques dans `apps/web/src/lib/nen/hatsuRegistry.ts` pour qu'ils soient disponibles.
+- Les sauvegardes de progression de chaque mode sont toujours locales, versionnées et isolées (ex: `apps/web/src/lib/hunt/replay.ts`, `apps/web/src/lib/infiltration/persistence.ts`).

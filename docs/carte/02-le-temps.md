@@ -24,9 +24,9 @@ decisions: []
 
 | Ce dossier …     | Règle |
 | ---------------- | ----- |
-| importe          | Rien d'autre que les définitions de domaine (`domain/`) pour les paquets core. `tour/hour.ts` importe le moteur canon. |
+| importe          | Rien d'autre que les définitions de domaine (`packages/domain/`) pour les paquets core. `apps/web/src/lib/tour/hour.ts` importe le moteur canon. |
 | n'importe jamais | L'état global de l'interface utilisateur ou les données de session (le temps est absolu). |
-| est importé par  | Les modes de jeu, la visite (`tour/`), et les résolutions d'actions (Nen). |
+| est importé par  | Les modes de jeu, la visite (`apps/web/src/lib/tour/`), et les résolutions d'actions (Nen). |
 
 ## Les faits qui ne se lisent pas dans le code
 

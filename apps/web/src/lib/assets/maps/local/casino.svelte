@@ -3,7 +3,9 @@
    * The VIP casino, drawn from `data/ship/blueprint.json`.
    *
    * Ch. 405 gives the room three things: the gaming floor, the shopfronts
-   * around it and the mezzanine above. The blueprint holds exactly those, and
+   * around it and the mezzanine above. Ch. 419 adds a spiral emergency stair
+   * at the aft edge; its exact footprint is not drawn, so the marker remains
+   * explicitly reconstructed. The blueprint holds exactly those, and
    * this plan places them by the same coordinates — 17.5 m across by 52.5 m
    * fore to aft, a door at either end. The room is drawn turned a quarter
    * turn, the way the queens' block is: fore is to the left, port at the top.
@@ -40,6 +42,7 @@
   const tableColumns = [-53.5, -44.5]
   const tableRows = Array.from({ length: 9 }, (_, index) => 8 + index * 5.5)
   const TABLE_RADIUS = 1.1
+  const emergencyStair = { across: -48, fore: 54.25 }
 </script>
 
 <svg
@@ -86,6 +89,16 @@
       .door:hover {
         stroke: #fff;
       }
+      .emergency-stair circle {
+        fill: rgba(255, 92, 92, 0.12);
+        stroke: #ff5c5c;
+        stroke-width: 2;
+        stroke-dasharray: 5 3;
+      }
+      .emergency-stair path {
+        stroke: #ff5c5c;
+        stroke-width: 1.5;
+      }
       .label {
         fill: #fffff0;
         font-family: sans-serif;
@@ -107,7 +120,7 @@
     VIP Casino — Tier 1
   </text>
   <text x="500" y="50" class="label" font-size="10" opacity="0.55">
-    17.5 m × 52.5 m — ch. 405: the gaming floor, the shopfronts and the mezzanine above
+    17.5 m × 52.5 m — ch. 405 / 419: gaming floor, mezzanine and reconstructed emergency spiral stair
   </text>
 
   <rect
@@ -146,6 +159,21 @@
   {/each}
   <text x={px(29.75)} y={py(-56.4) + 4} class="sublabel">Mezzanine</text>
   <text x={px(29.75)} y={py(-41.6) + 4} class="sublabel">Mezzanine</text>
+
+  <!-- Ch. 419 names this emergency spiral staircase but does not draw its exact footprint. -->
+  <g class="emergency-stair" aria-label="Emergency spiral staircase, chapter 419">
+    <circle
+      cx={px(emergencyStair.fore)}
+      cy={py(emergencyStair.across)}
+      r={2.25 * SCALE}
+    />
+    <path
+      d={`M ${px(emergencyStair.fore) - 1.4 * SCALE} ${py(emergencyStair.across)} L ${px(emergencyStair.fore) + 1.4 * SCALE} ${py(emergencyStair.across)} M ${px(emergencyStair.fore)} ${py(emergencyStair.across) - 1.4 * SCALE} L ${px(emergencyStair.fore)} ${py(emergencyStair.across) + 1.4 * SCALE}`}
+    />
+    <text x={px(emergencyStair.fore)} y={py(emergencyStair.across) - 3 * SCALE} class="sublabel">
+      Emergency stair · ch. 419
+    </text>
+  </g>
 
   <!-- The shopfronts, under the mezzanine on both sides -->
   {#each shopfronts as shop, index (index)}

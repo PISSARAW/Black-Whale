@@ -1422,7 +1422,7 @@
       "nameFr": "Casino VIP",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 405 \u2014 the gaming floor, the shopfronts around it and the mezzanine above.",
+      "source": "Ch. 405 \u2014 the gaming floor, the shopfronts around it and the mezzanine above; ch. 419-420 confirm the casino as the escape route and the site of the encounter under martial law.",
       "ceiling": 8,
       "envelope": null,
       "footprint": [
@@ -1431,7 +1431,26 @@
         [-40.25, 56],
         [-57.75, 56]
       ],
-      "sourceFr": "Chap. 405 \u2014 la salle de jeu, les boutiques autour et la mezzanine au-dessus."
+      "sourceFr": "Ch. 405 \u2014 la salle de jeu, les boutiques autour et la mezzanine au-dessus ; les chap. 419-420 confirment le casino comme voie de fuite et lieu de la rencontre sous loi martiale."
+    },
+    {
+      "id": "tier-1-vip-casino-emergency-stair",
+      "tierId": "tier-1-c",
+      "locationId": "tier-1-vip-casino",
+      "name": "VIP Casino Emergency Spiral Stair",
+      "nameFr": "Escalier en colimaçon de secours du casino VIP",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Ch. 419 names the casino emergency exit as a spiral staircase designed to prevent a crowd from swarming up from below; the page does not give its exact footprint, so this marker stays at the aft edge of the casino plan.",
+      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colimaçon conçu pour empêcher une foule de remonter depuis les ponts inférieurs ; la planche n'en donne pas l'emprise exacte, le marqueur reste donc sur le bord arrière du plan du casino.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [-50, 52.5],
+        [-46, 52.5],
+        [-46, 56],
+        [-50, 56]
+      ]
     },
     {
       "id": "tier-1-queens-corridor",
@@ -9481,6 +9500,15 @@
       "provenance": "panel",
       "source": "Ch. 356 \u2014 concealed inside the VIP block; the exact room is not shown.",
       "sourceFr": "Chap. 356 \u2014 dissimul\u00e9e dans le bloc VIP ; la pi\u00e8ce exacte n'est pas montr\u00e9e."
+    },
+    {
+      "from": "tier-1-vip-casino",
+      "to": "tier-1-vip-casino-emergency-stair",
+      "kind": "stair",
+      "at": [-48, 56],
+      "provenance": "panel",
+      "source": "Ch. 419 — Tserriednich identifies the VIP casino's emergency exit as a spiral staircase intended to stop a crowd coming up from below.",
+      "sourceFr": "Chap. 419 — Tserriednich identifie la sortie de secours du casino VIP comme un escalier en colimaçon destiné à empêcher une foule de remonter depuis les ponts inférieurs."
     },
     {
       "from": "tier-1-vvip-prison-beyond",

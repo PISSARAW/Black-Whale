@@ -190,6 +190,16 @@
     "exits": []
   },
   {
+    "id": "tier-1-vvip-recreation-hall",
+    "name": "VVIP Recreation Hall",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "public",
+    "description": "Double-height recreation hall in the Tier 1 VVIP area, confirmed by chapter 419: a broad central room with side staircases, an upper gallery and a rear passage. The royal army seals Tier 1 while the hall's corridors and inter-level routes are being controlled.",
+    "entrances": [],
+    "exits": []
+  },
+  {
     "id": "tier-1-vip-casino",
     "name": "VIP Casino",
     "parentLocationId": "tier-1",

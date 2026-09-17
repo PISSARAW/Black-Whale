@@ -29,6 +29,17 @@
 
   const regions: Region[] = [
     {
+      id: 'tier-1-vvip-recreation-hall',
+      region: 'vvip-recreation-hall',
+      points: '500.0,328.57 580.0,328.57 580.0,420.0 500.0,420.0',
+      label: 'VVIP Recreation Hall',
+      size: 12,
+      at: [540.0, 374.3],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
       id: 'tier-1-jail-block-walkway',
       region: null,
       points: '835.0,250.0 850.0,250.0 850.0,350.0 835.0,350.0',

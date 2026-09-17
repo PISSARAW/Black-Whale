@@ -29,6 +29,17 @@
 
   const regions: Region[] = [
     {
+      id: 'tier-1-vvip-recreation-gallery',
+      region: 'vvip-recreation-hall',
+      points: '500.0,328.57 580.0,328.57 580.0,420.0 500.0,420.0',
+      label: 'VVIP Recreation Gallery',
+      size: 12,
+      at: [540.0, 374.3],
+      turned: false,
+      through: false,
+      inferred: false,
+    },
+    {
       id: 'tier-1-queens-corridor',
       region: 'queens-living-quarters',
       points: '414.0,310.0 431.0,310.0 431.0,460.0 414.0,460.0',

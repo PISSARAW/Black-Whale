@@ -158,6 +158,7 @@ const REGION_LOCATION_SLUGS: Record<string, string | null> = {
   'supreme-court': 'tier-1-supreme-court',
   'vip-detention': 'tier-1-vip-jail',
   'vvip-living-quarters': 'tier-1-vvip-living-quarters',
+  'vvip-recreation-hall': 'tier-1-vvip-recreation-hall',
   // Tier 2
   't2-justice': 'tier-2-ministry-of-justice',
   't2-screening-room': 'tier-2-screening-room',

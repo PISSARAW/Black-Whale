@@ -9381,7 +9381,8 @@
       "to": "tier-1-royal-approach",
       "kind": "stair",
       "retractable": true,
-      "at": [8.75, -35.7],
+      "at": [8.75, -65.8],
+      "atTo": [8.75, -35.7],
       "provenance": "plan",
       "source": "Deck plan, ch. 349 \u2014 Tier 1 access from Tier 2; ch. 419 shows the access as a small gangway to the Tier 1 ship deck, capable of retracting during the lockdown.",
       "sourceFr": "Plan des ponts, chap. 349 \u2014 acc\u00e8s au pont 1 depuis le pont 2 ; le chap. 419 montre cet acc\u00e8s comme une petite passerelle vers le pont du navire de niveau 1, capable de se r\u00e9tracter pendant le verrouillage."
@@ -9541,6 +9542,36 @@
       "provenance": "inferred",
       "source": "Ch. 419 — the casino's emergency spiral staircase is the controlled route from the entertainment room to the lower level; the lower landing is reconstructed directly below it.",
       "sourceFr": "Chap. 419 — l'escalier en colimaçon de secours du casino est le passage contrôlé de la salle de divertissements vers le niveau inférieur ; le palier inférieur est reconstruit juste en dessous."
+    },
+    {
+      "from": "tier-1-starboard-corridor",
+      "to": "tier-1-vvip-recreation-hall",
+      "kind": "door",
+      "at": [70, 26],
+      "atTo": [28, 26],
+      "provenance": "panel",
+      "source": "Ch. 419 — the recreation hall opens onto the controlled Tier 1 passage shown around the VVIP area.",
+      "sourceFr": "Chap. 419 — la salle de loisirs s'ouvre sur le passage contrôlé du pont 1 montré autour de la zone VVIP."
+    },
+    {
+      "from": "tier-1-vvip-recreation-hall",
+      "to": "tier-1-vvip-recreation-gallery",
+      "kind": "stair",
+      "at": [5, 26],
+      "atTo": [5, 26],
+      "provenance": "panel",
+      "source": "Ch. 419 — the left-hand staircase connects the recreation hall floor to its upper gallery; the matching right-hand stair is represented by the same walkable level change.",
+      "sourceFr": "Chap. 419 — l'escalier de gauche relie le sol de la salle à sa galerie supérieure ; l'escalier droit correspondant est représenté par le même changement de niveau praticable."
+    },
+    {
+      "from": "tier-1-vvip-recreation-hall",
+      "to": "tier-1-vvip-recreation-gallery",
+      "kind": "stair",
+      "at": [23, 26],
+      "atTo": [23, 26],
+      "provenance": "panel",
+      "source": "Ch. 419 — the right-hand staircase mirrors the left-hand stair and provides the second walkable route to the upper gallery.",
+      "sourceFr": "Chap. 419 — l'escalier de droite reprend la disposition de celui de gauche et fournit le second accès praticable à la galerie supérieure."
     },
     {
       "from": "tier-1-vvip-prison-beyond",

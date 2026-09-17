@@ -3058,5 +3058,135 @@
       "Bohemian Rhapsody reveals Benjamin's post-mortem succession plan"
     ],
     "description": "Benjamin treats Tserriednich's apparent death as an extrajudicial execution and sends Salkov and Danjin to the Justice Bureau. Back in room 1001, he secretly exposes Tubeppa and Tyson to TSK-17 while presenting martial law as protection against a stolen biological weapon. He then tightens military control across the ship and invokes Kakin's emergency law: if every prince faces inevitable death, Nasubi may name a new line of succession. Benjamin plans to eliminate or infect the remaining princes, have his child named heir, and survive after death through Bohemian Rhapsody, the Guardian Spirit Beast that will merge with his Nen and pass between his blood relatives."
+  },
+  {
+    "id": "ch-418",
+    "number": 418,
+    "publicationOrder": 418,
+    "title": "Hypothesis",
+    "date": "2026-08-23",
+    "timeline": [
+      {
+        "event": "Tserriednich tests the rules of Parallel Future with Salkov",
+        "storyDate": "Day 12 · Thursday · afternoon",
+        "charactersInvolved": ["prince-tserriednich", "salkov"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Benjamin's soldiers execute Tserriednich's predicted body",
+        "storyDate": "Day 12 · Thursday · after 14:15",
+        "charactersInvolved": ["prince-benjamin", "prince-tserriednich", "salkov", "danjin", "butch", "vantine"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Tserriednich stages a wake and leaves a sealed coffin",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich", "salkov", "vantine", "theta", "danjin"],
+        "location": "Black Whale 1 - Tier 1 - Room 1004"
+      },
+      {
+        "event": "Tserriednich chooses the royal Route A escape",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich", "theta", "salkov"],
+        "location": "Black Whale 1 - Tier 1 - Royal Residential Sector"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1 - Room 1004 and Royal Residential Sector",
+    "keyEvents": [
+      "Parallel Future's object, person and continuity restrictions are tested",
+      "Tserriednich's apparent death is converted into a controlled wake",
+      "The coffin is entrusted to Salkov until 06:00 on Day 13",
+      "Three Tier 1 passages are identified: Route A for royalty, Route B for soldiers and mafia, Route C for general traffic"
+    ],
+    "description": "The chapter retells Benjamin's execution from inside Tserriednich's illusion. In room 1004, Tserriednich tests the limits of Parallel Future, writes his own will, fills the coffin with confiscated weapons and leaves under a disguise. He plans to use the royal Route A, while Benjamin's force takes Route C and Route B remains watched."
+  },
+  {
+    "id": "ch-419",
+    "number": 419,
+    "publicationOrder": 419,
+    "title": "Implementation",
+    "date": "2026-08-30",
+    "timeline": [
+      {
+        "event": "Tserriednich measures the range of Laplace's Devil",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - Royal Quarters Block"
+      },
+      {
+        "event": "Tserriednich kills the first four soldiers in the VVIP corridor",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - VVIP Area"
+      },
+      {
+        "event": "Laplace's Devil is named and tested against the royal soldiers",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - VVIP Area"
+      },
+      {
+        "event": "The royal army locks down Tier 1 and retracts the bridges",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1"
+      },
+      {
+        "event": "Tserriednich enters the VIP casino through the emergency route",
+        "storyDate": "Day 12 · Thursday · evening",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1 - VVIP Area and VIP Casino",
+    "keyEvents": [
+      "Laplace's Devil operates over an approximately 36 metre radius",
+      "People entering the field after activation are not deceived",
+      "Leaving the field or ending Zetsu resets the illusion",
+      "Special martial law seals Tier 1 and retracts the bridges to lower tiers",
+      "Tserriednich reroutes through the casino's emergency spiral staircase"
+    ],
+    "description": "Tserriednich leaves room 1004 and experiments with Laplace's Devil in the royal and VVIP passages. The ability's range is measured at roughly 36 metres, and the royal army responds to the unexplained massacre by sealing Tier 1, retracting the bridges and ordering a search. Tserriednich reaches the VIP casino."
+  },
+  {
+    "id": "ch-420",
+    "number": 420,
+    "publicationOrder": 420,
+    "title": "Encounter",
+    "date": "2026-09-06",
+    "timeline": [
+      {
+        "event": "Tserriednich discovers the casino patrols killed without gunfire",
+        "storyDate": "Day 12 · Thursday · night",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+      },
+      {
+        "event": "Tserriednich encounters Hisoka in the VIP casino",
+        "storyDate": "Day 12 · Thursday · night",
+        "charactersInvolved": ["prince-tserriednich", "hisoka"],
+        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+      },
+      {
+        "event": "Hisoka kills the patrols while Tserriednich escapes the predicted death",
+        "storyDate": "Day 12 · Thursday · night",
+        "charactersInvolved": ["prince-tserriednich", "hisoka"],
+        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+      },
+      {
+        "event": "The casino exit is surrounded and Tserriednich drops Zetsu",
+        "storyDate": "Day 12 · Thursday · night",
+        "charactersInvolved": ["prince-tserriednich"],
+        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+      }
+    ],
+    "location": "Black Whale 1 - Tier 1 - VIP Casino",
+    "keyEvents": [
+      "Hisoka is confirmed to have remained in the Tier 1 casino since chapter 405",
+      "Hisoka's massacre of the casino patrols is discovered",
+      "Laplace's Devil lets Tserriednich survive a lethal encounter and feed Hisoka a false corpse",
+      "The casino exit is surrounded by the royal army"
+    ],
+    "description": "The casino is empty except for dead royal patrols and Hisoka at a gaming machine. Tserriednich tests Laplace's Devil against him, sees a predicted death and survives while Hisoka attacks an illusion. The army surrounds the liner, ending the casino escape and leaving Tserriednich with one deliberate use of the ability."
   }
 ]

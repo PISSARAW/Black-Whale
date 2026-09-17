@@ -86,6 +86,9 @@
   >
   <text x="400" y="53" class="evidence">{$t.map.localMaps.princeApartment.programmeType}</text>
   <text x="400" y="70" class="evidence">{$t.map.localMaps.princeApartment.unpublished}</text>
+  {#if ['1002', '1004', '1006'].includes(roomNumber)}
+    <text x="400" y="785" class="evidence">Panel-confirmed apartment plan · rooms 1002 / 1004 / 1006</text>
+  {/if}
 
   <g transform="translate(50, 82)">
     <!-- Outer boundary -->

@@ -1669,7 +1669,7 @@
       "nameFr": "Chambre 1001 (Benjamin)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the residential-zone double page: fourteen free-standing apartments in two rows of seven inside the inner bulkhead, odd numbers to starboard, each with its one door facing the numbered door assigned to it; the room numbers are from ch. 349.",
+      "source": "Ch. 363 \u2014 the residential-zone double page: fourteen free-standing apartments in two rows of seven inside the inner bulkhead, odd numbers to starboard, each with its one door facing the numbered door assigned to it; the room numbers are from ch. 349. The attached panel confirms this apartment plan for rooms 1002, 1004 and 1006.",
       "ceiling": null,
       "envelope": "apartment-1001",
       "footprint": [
@@ -2203,6 +2203,7 @@
       "source": "Ch. 363 \u2014 the residential-zone double page: fourteen free-standing apartments in two rows of seven inside the inner bulkhead, odd numbers to starboard, each with its one door facing the numbered door assigned to it; the room numbers are from ch. 349.",
       "ceiling": null,
       "envelope": "apartment-1004",
+      "confirmation": "Attached panel confirms the standard apartment plan shared by rooms 1002, 1004 and 1006.",
       "footprint": [
         [-8, 12],
         [9, 12],
@@ -2557,6 +2558,7 @@
       "source": "Ch. 363 \u2014 the residential-zone double page: fourteen free-standing apartments in two rows of seven inside the inner bulkhead, odd numbers to starboard, each with its one door facing the numbered door assigned to it; the room numbers are from ch. 349.",
       "ceiling": null,
       "envelope": "apartment-1006",
+      "confirmation": "Attached panel confirms the standard apartment plan shared by rooms 1002, 1004 and 1006.",
       "footprint": [
         [-8, 18.75],
         [9, 18.75],

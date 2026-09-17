@@ -255,7 +255,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 2nd Prince Camilla and her household at the start of the voyage. While Camilla is detained elsewhere, chapter 389 shows her Have-Not guards using a formal carpeted salon with wall chairs and a central open area to review their curse assignments.",
+    "description": "Living quarters assigned to 2nd Prince Camilla and her household at the start of the voyage. The attached plan confirms the standard apartment layout also shown for rooms 1004 and 1006: service rooms at the entrance, a large central salon and private rooms at the rear. While Camilla is detained elsewhere, chapter 389 shows her Have-Not guards using a formal carpeted salon with wall chairs and a central open area to review their curse assignments.",
     "entrances": [],
     "exits": []
   },
@@ -275,7 +275,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 4th Prince Tserriednich. Chapters 384-387 distinguish a large, nearly empty Nen-training salon — polished geometric floor, tall double doors, moulded wall panels, framed decoration and a mantel clock — from the adjoining guard anteroom and sitting area where Theta is debriefed after the shot.",
+    "description": "Living quarters of 4th Prince Tserriednich. The attached plan confirms the standard apartment shell: service rooms at the entrance, a large central salon and private rooms at the rear. Chapters 384-387 distinguish a large, nearly empty Nen-training salon — polished geometric floor, tall double doors, moulded wall panels, framed decoration and a mantel clock — from the adjoining guard anteroom and sitting area where Theta is debriefed after the shot.",
     "entrances": [],
     "exits": []
   },
@@ -295,7 +295,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 6th Prince Tyson and her household. Chapter 389 shows Tyson entering through tall panelled doors into an ornate birthday reception with a cake and gifts on the central table and attendants arranged around the walls.",
+    "description": "Living quarters assigned to 6th Prince Tyson and her household. The attached plan confirms the standard apartment shell also shown for rooms 1002 and 1004: service rooms at the entrance, a large central salon and private rooms at the rear. Chapter 389 shows Tyson entering through tall panelled doors into an ornate birthday reception with a cake and gifts on the central table and attendants arranged around the walls.",
     "entrances": [],
     "exits": []
   },

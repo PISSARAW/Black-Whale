@@ -1435,14 +1435,14 @@
     },
     {
       "id": "tier-1-vip-casino-emergency-stair",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1-b",
       "locationId": "tier-1-vip-casino",
       "name": "VIP Casino Emergency Spiral Stair",
       "nameFr": "Escalier en colimaçon de secours du casino VIP",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Ch. 419 names the casino emergency exit as a spiral staircase designed to prevent a crowd from swarming up from below; the page does not give its exact footprint, so this marker stays at the aft edge of the casino plan.",
-      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colimaçon conçu pour empêcher une foule de remonter depuis les ponts inférieurs ; la planche n'en donne pas l'emprise exacte, le marqueur reste donc sur le bord arrière du plan du casino.",
+      "source": "Ch. 419 names the casino emergency exit as a spiral staircase designed to prevent a crowd from swarming up from below. Its exact footprint is not drawn; the landing is reconstructed on Tier 1-B directly below the aft edge of the casino.",
+      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colimaçon conçu pour empêcher une foule de remonter depuis les ponts inférieurs. Son emprise exacte n'est pas dessinée ; le palier est reconstruit au pont 1-B, juste sous le bord arrière du casino.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -9507,10 +9507,11 @@
       "from": "tier-1-vip-casino",
       "to": "tier-1-vip-casino-emergency-stair",
       "kind": "stair",
-      "at": [-48, 56],
-      "provenance": "panel",
-      "source": "Ch. 419 — Tserriednich identifies the VIP casino's emergency exit as a spiral staircase intended to stop a crowd coming up from below.",
-      "sourceFr": "Chap. 419 — Tserriednich identifie la sortie de secours du casino VIP comme un escalier en colimaçon destiné à empêcher une foule de remonter depuis les ponts inférieurs."
+      "at": [-48, 54.25],
+      "atTo": [-48, 54.25],
+      "provenance": "inferred",
+      "source": "Ch. 419 — the casino's emergency spiral staircase is the controlled route from the entertainment room to the lower level; the lower landing is reconstructed directly below it.",
+      "sourceFr": "Chap. 419 — l'escalier en colimaçon de secours du casino est le passage contrôlé de la salle de divertissements vers le niveau inférieur ; le palier inférieur est reconstruit juste en dessous."
     },
     {
       "from": "tier-1-vvip-prison-beyond",

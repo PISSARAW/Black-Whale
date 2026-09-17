@@ -62,6 +62,17 @@
       inferred: true,
     },
     {
+      id: 'tier-1-vip-casino-emergency-stair',
+      region: null,
+      points: '357.14,450.0 368.57,450.0 368.57,460.0 357.14,460.0',
+      label: 'Casino emergency stair · from Tier 1-C',
+      size: 8,
+      at: [362.86, 455.0],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
       id: 'tier-1-soldiers-living-quarters',
       region: 'soldiers-living-quarters',
       points: '605.0,310.0 700.0,310.0 700.0,460.0 605.0,460.0',

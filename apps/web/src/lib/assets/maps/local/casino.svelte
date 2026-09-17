@@ -173,6 +173,9 @@
     <text x={px(emergencyStair.fore)} y={py(emergencyStair.across) - 3 * SCALE} class="sublabel">
       Emergency stair · ch. 419
     </text>
+    <text x={px(emergencyStair.fore)} y={py(emergencyStair.across) + 4.5 * SCALE} class="sublabel">
+      Vers le pont inférieur
+    </text>
   </g>
 
   <!-- The shopfronts, under the mezzanine on both sides -->

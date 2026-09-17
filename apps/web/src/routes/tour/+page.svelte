@@ -150,6 +150,7 @@
       up: $t.tour.plan.crossingUp,
       down: $t.tour.plan.crossingDown,
       across: $t.tour.plan.crossingAcross,
+      retractableLabel: $t.tour.retractableShort,
     })
   }
   const keyboard = new TourKeyboardController({

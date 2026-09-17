@@ -344,6 +344,8 @@ export interface Link {
   from: string
   to: string
   kind: LinkKind
+  /** The crossing is a gangway that can be pulled back from the Tier 1 ship deck. */
+  retractable?: boolean
   /** Where the link is, in `from`'s coordinates. */
   at: Vec2
   /**

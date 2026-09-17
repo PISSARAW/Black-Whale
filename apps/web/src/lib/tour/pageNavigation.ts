@@ -4,6 +4,7 @@ import type { Link, Space } from './types'
 export interface LinkWords {
   takeLink: (destination: string) => string
   takeBulkhead: (destination: string) => string
+  retractable: (destination: string) => string
   enterInterior: (destination: string) => string
   leaveInterior: (destination: string) => string
 }
@@ -21,14 +22,17 @@ export function linkPrompt(options: {
   if (!destination) return null
   const tier = options.ship.tiers.find((candidate) => candidate.id === destination.tierId)
   const label = `${options.nameOf(destination)}${tier ? ` — ${options.nameOf(tier)}` : ''}`
+  const described = options.available.link.retractable
+    ? options.words.retractable(label)
+    : label
   if (options.available.link.kind === 'door') {
     return tier?.kind === 'interior'
       ? options.words.enterInterior(options.nameOf(tier))
       : options.words.leaveInterior(options.nameOf(destination))
   }
   return options.available.link.kind === 'bulkhead'
-    ? options.words.takeBulkhead(label)
-    : options.words.takeLink(label)
+    ? options.words.takeBulkhead(described)
+    : options.words.takeLink(described)
 }
 
 export function crossingLabel(options: {
@@ -39,6 +43,7 @@ export function crossingLabel(options: {
   up: (label: string) => string
   down: (label: string) => string
   across: (label: string) => string
+  retractableLabel?: string
 }): string {
   const destination = options.ship.spaces.get(options.crossing.to)
   const tier = destination
@@ -47,9 +52,12 @@ export function crossingLabel(options: {
   const label = destination
     ? `${options.nameOf(options.named(destination))}${tier ? ` — ${options.nameOf(tier)}` : ''}`
     : options.crossing.to
-  if (options.crossing.rise > 0.5) return options.up(label)
-  if (options.crossing.rise < -0.5) return options.down(label)
-  return options.across(label)
+  const described = options.crossing.link.retractable
+    ? `${label} · ${options.retractableLabel ?? 'retractable gangway'}`
+    : label
+  if (options.crossing.rise > 0.5) return options.up(described)
+  if (options.crossing.rise < -0.5) return options.down(described)
+  return options.across(described)
 }
 
 export function viewpointUrl(options: {

@@ -414,6 +414,17 @@
       inferred: false,
     },
     {
+      id: 'tier-1-retractable-gangway',
+      region: null,
+      points: '517.0,190.0 533.0,190.0 533.0,210.0 517.0,210.0',
+      label: 'Retractable gangway to Tier 2',
+      size: 8,
+      at: [525.0, 205.0],
+      turned: false,
+      through: true,
+      inferred: true,
+    },
+    {
       id: 'tier-1-main-corridor',
       region: null,
       points: '250.0,290.0 460.0,290.0 460.0,310.0 250.0,310.0',

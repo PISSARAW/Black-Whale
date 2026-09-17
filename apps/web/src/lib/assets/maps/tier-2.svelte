@@ -33,8 +33,8 @@
       region: null,
       points:
         '512.0,132.0 503.0,123.0 503.0,101.0 512.0,92.0 538.0,92.0 547.0,101.0 547.0,123.0 538.0,132.0',
-      label: '',
-      size: 0,
+      label: 'Retractable gangway to Tier 1',
+      size: 8,
       at: [525.0, 112.0],
       turned: false,
       through: true,

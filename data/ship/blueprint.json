@@ -8699,6 +8699,34 @@
       ]
     },
     {
+      "id": "tier-1-vvip-recreation-hall",
+      "tierId": "tier-1-b",
+      "locationId": "tier-1-vvip-recreation-hall",
+      "name": "VVIP Recreation Hall",
+      "nameFr": "Grande salle de loisirs VVIP",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 419 — the VVIP recreation hall is shown as a broad double-height room with two side staircases, an upper gallery and a rear passage during the Tier 1 lockdown.",
+      "sourceFr": "Chap. 419 — la grande salle de loisirs VVIP apparaît comme une vaste pièce à double hauteur avec deux escaliers latéraux, une galerie supérieure et un passage arrière pendant le confinement du pont 1.",
+      "ceiling": 8,
+      "envelope": null,
+      "footprint": [[0, 10], [28, 10], [28, 42], [0, 42]]
+    },
+    {
+      "id": "tier-1-vvip-recreation-gallery",
+      "tierId": "tier-1-c",
+      "locationId": "tier-1-vvip-recreation-hall",
+      "name": "VVIP Recreation Hall Gallery",
+      "nameFr": "Galerie de la grande salle de loisirs VVIP",
+      "category": "public",
+      "provenance": "panel",
+      "source": "Ch. 419 — the upper bridge/gallery spanning the recreation hall is visible above the central floor and is reached by the side staircases.",
+      "sourceFr": "Chap. 419 — la passerelle/galerie supérieure qui traverse la salle de loisirs est visible au-dessus du sol central et s'atteint par les escaliers latéraux.",
+      "ceiling": 3,
+      "envelope": null,
+      "footprint": [[0, 10], [28, 10], [28, 42], [0, 42]]
+    },
+    {
       "id": "tier-1-c-port-corridor",
       "tierId": "tier-1-c",
       "locationId": null,
@@ -9352,10 +9380,11 @@
       "from": "tier-2-tier-1-access",
       "to": "tier-1-royal-approach",
       "kind": "stair",
+      "retractable": true,
       "at": [8.75, -35.7],
       "provenance": "plan",
-      "source": "Deck plan, ch. 349 \u2014 Tier 1 access from Tier 2",
-      "sourceFr": "Plan des ponts, chap. 349 \u2014 acc\u00e8s au pont 1 depuis le pont 2"
+      "source": "Deck plan, ch. 349 \u2014 Tier 1 access from Tier 2; ch. 419 shows the access as a small gangway to the Tier 1 ship deck, capable of retracting during the lockdown.",
+      "sourceFr": "Plan des ponts, chap. 349 \u2014 acc\u00e8s au pont 1 depuis le pont 2 ; le chap. 419 montre cet acc\u00e8s comme une petite passerelle vers le pont du navire de niveau 1, capable de se r\u00e9tracter pendant le verrouillage."
     },
     {
       "from": "tier-3-bulkhead-access",

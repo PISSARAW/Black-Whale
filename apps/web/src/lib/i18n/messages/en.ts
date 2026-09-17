@@ -359,6 +359,7 @@ export const en = {
     takeBulkhead: (destination: string) => `Press E to pass the bulkhead to ${destination}`,
     retractable: (destination: string) => `Take the retractable gangway to ${destination}`,
     retractableShort: 'retractable gangway',
+    gangway: { extend: 'Extend gangway', retract: 'Retract gangway' },
     enterInterior: (destination: string) => `Press E to step inside ${destination}`,
     leaveInterior: (destination: string) => `Press E to step back out to ${destination}`,
     insideOf: (room: string) => `Inside ${room}`,

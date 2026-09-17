@@ -115,6 +115,7 @@
   import { NEN_KEYS, nenZoneIndex, ryuDistribution, type NenBodyZone } from '$lib/nen/controls'
   import { visibleSpaces } from '$lib/tour/visibility'
   import { createShaftDecks } from '$lib/tour/shaftDecks'
+  import { buildGangwayView, type GangwayView } from '$lib/tour/gangwayView'
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { TourHourView } from '$lib/tour/hourView'
   import { createDeckMaterials } from '$lib/tour/deckMaterials'
@@ -169,6 +170,8 @@
     currentSpace?: Space | null
     /** The stairwell within reach, if any. */
     availableLink?: { link: Link; to: string } | null
+    /** Whether the chapter 419 gangway is currently extended. */
+    retractableGangwayOpen?: boolean
     /** Set to jump the visitor somewhere; cleared once honoured. */
     jumpTo?: string | null
     /**
@@ -201,6 +204,8 @@
      * so it has to be possible to stop it without leaving the page.
      */
     soundLabels: { silence: string; restore: string }
+    /** Labels for the chapter 419 gangway control. */
+    gangwayLabels?: { extend: string; retract: string }
     /**
      * What the door or stairwell within reach is called, worded for a button
      * rather than for a key. `null` when there is nothing to take.
@@ -541,6 +546,7 @@
     tierId = $bindable(),
     currentSpace = $bindable(null),
     availableLink = $bindable(null),
+    retractableGangwayOpen = $bindable(true),
     jumpTo = $bindable(null),
     jumpAt = $bindable(null),
     jumpHeading = $bindable(null),
@@ -551,6 +557,7 @@
     touch = $bindable(false),
     touchLabels,
     soundLabels,
+    gangwayLabels = { extend: 'Extend gangway', retract: 'Retract gangway' },
     touchUseLabel = null,
     position = $bindable([0, 0]),
     heading = $bindable(0),
@@ -854,6 +861,25 @@
       })
       const hatsuEffects = new HatsuSceneEffects(THREE, scene)
       const nenAura = new NenSceneAura(THREE, scene)
+      const gangwayLink = ship.links.find(
+        (link) => link.retractable && link.from === 'tier-2-tier-1-access',
+      )
+      const gangwaySource = gangwayLink ? ship.spaces.get(gangwayLink.from) : null
+      const gangwayTarget = gangwayLink ? ship.spaces.get(gangwayLink.to) : null
+      const gangwayView: GangwayView | null =
+        gangwayLink && gangwaySource && gangwayTarget
+          ? buildGangwayView(
+              THREE,
+              gangwayLink.at,
+              gangwayLink.atTo ?? gangwayLink.at,
+            )
+          : null
+      if (gangwayView && gangwaySource) {
+        const tier = ship.tiers.find((candidate) => candidate.id === gangwaySource.tierId)
+        gangwayView.root.position.y = tier?.elevation ?? 0
+        scene.add(gangwayView.root)
+        gangwayView.setExtended(retractableGangwayOpen)
+      }
       /**
        * The air, which is a different air in every room.
        *
@@ -3701,6 +3727,10 @@
         if (!event.repeat && (event.code === 'ArrowLeft' || event.code === 'ArrowRight')) {
           yaw += event.code === 'ArrowLeft' ? snapStep() : -snapStep()
         }
+        if (event.code === 'KeyR' && toggleGangway()) {
+          event.preventDefault()
+          return
+        }
         if (event.code === 'KeyE' || event.code === 'Enter') takeLink()
         // The Nen vocabulary is one alphabet across the whole ship — the same
         // letters in the walk, in the arena and in the hunt — and every letter
@@ -3712,6 +3742,14 @@
       const onKeyUp = (event: KeyboardEvent) => {
         delete pressed[event.code]
         finishHatsu(event)
+      }
+
+      function toggleGangway(): boolean {
+        const found = untrack(() => availableLink)
+        if (!found?.link.retractable) return false
+        retractableGangwayOpen = !retractableGangwayOpen
+        gangwayView?.setExtended(retractableGangwayOpen)
+        return true
       }
 
       function takeLink() {
@@ -3727,6 +3765,7 @@
           return
         }
         const found = untrack(() => availableLink)
+        if (found?.link.retractable && !retractableGangwayOpen) return
         if (found) goTo(found.to)
       }
 
@@ -4613,6 +4652,10 @@
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
+        if (gangwayView && gangwaySource) {
+          gangwayView.root.visible = currentTierId === gangwaySource.tierId
+          gangwayView.setExtended(retractableGangwayOpen)
+        }
         // Standing on a stairwell offers it; standing anywhere inside an interior
         // offers the way out of it, because a seven-room apartment does not mark
         // which room the front door is in and a visitor who jumped straight to
@@ -4853,6 +4896,7 @@
         atmosphere.dispose()
         hatsuEffects.dispose()
         nenAura.dispose(scene)
+        gangwayView?.dispose()
         // The walk is over: no more footsteps, and the audio graph goes with it.
         stopSteps()
         shells?.geometry.dispose()
@@ -4897,6 +4941,7 @@
       }
       // What E and F do, handed to the buttons a touchscreen gets instead.
       take = takeLink
+      toggle = toggleGangway
       castNow = cast
       hatsuNow = useHatsu
     })().catch((error: unknown) => {
@@ -4918,6 +4963,7 @@
   let sitDown = $state<((at: Vec2, facing: number) => void) | null>(null)
   /** The same, for the two things the on-screen buttons stand in for. */
   let take = $state<(() => void) | null>(null)
+  let toggle = $state<(() => boolean) | null>(null)
   let castNow = $state<((hand?: 'first' | 'second' | 'third') => void) | null>(null)
   let hatsuNow = $state<((hand: 'first' | 'second' | 'third') => void) | null>(null)
 
@@ -4991,6 +5037,16 @@
        See `TourSoundControls`. -->
   {#if ready && !failure}
     <TourSoundControls labels={soundLabels} />
+    {#if availableLink?.link.retractable}
+      <button
+        type="button"
+        onclick={() => toggle?.()}
+        class="pointer-events-auto absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded border border-[#d4b56b]/70 bg-[#050505]/90 px-3 py-2 text-xs text-[#f2d58b] shadow-lg"
+      >
+        {retractableGangwayOpen ? gangwayLabels.retract : gangwayLabels.extend}
+        <span class="ml-2 opacity-60">R</span>
+      </button>
+    {/if}
     {#if showNenControls}
       <TourNenControls
         nenState={effectiveNen}

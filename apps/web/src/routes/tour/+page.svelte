@@ -883,6 +883,7 @@
         propels: technique?.kind === 'elastic',
         gumOn: strandOn,
         touchUseLabel,
+        gangwayLabels: $t.tour.gangway,
         touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },
         soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
         loadingLabel: $t.tour.loading,

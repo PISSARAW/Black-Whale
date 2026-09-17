@@ -356,6 +356,7 @@ export const fr: Messages = {
     takeBulkhead: (destination) => `Appuyez sur E pour franchir la cloison vers ${destination}`,
     retractable: (destination) => `Prendre la passerelle rétractable vers ${destination}`,
     retractableShort: 'passerelle rétractable',
+    gangway: { extend: 'Déployer la passerelle', retract: 'Rétracter la passerelle' },
     enterInterior: (destination) => `Appuyez sur E pour entrer dans ${destination}`,
     leaveInterior: (destination) => `Appuyez sur E pour ressortir vers ${destination}`,
     insideOf: (room) => `Intérieur de ${room}`,

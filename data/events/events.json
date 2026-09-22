@@ -1583,107 +1583,56 @@
     "chapter": 418,
     "chapterTitle": "Hypothesis",
     "sequence": 1,
-    "title": "Tserriednich tests the rules of Parallel Future with Salkov",
-    "summary": "In room 1004, Tserriednich tests what the illusion can change, how objects behave and how long the Nen beast can sustain it.",
+    "title": "Tserriednich tests the limits of Parallel Future",
+    "summary": "Before Benjamin enters room 1004, Tserriednich confirms that his Zetsu-and-closed-eyes ability shows the next ten seconds, cannot alter another person and can only move unheld objects without using them to harm anyone. His Guardian Spirit Beast appears to sustain the illusion within a limited area by consuming stored aura.",
     "legacyTitles": [],
-    "occurredAt": { "basis": "derived", "day": 12 },
+    "occursAfterTitle": "Tserriednich maintains Zetsu through the announcement",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
     "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 418,
     "chapterTitle": "Hypothesis",
     "sequence": 2,
-    "title": "Tserriednich stages a wake and leaves a sealed coffin",
-    "summary": "After Benjamin's apparent execution, Tserriednich writes his will, fills the coffin with weapons and arranges for Salkov to carry it after 06:00 on Day 13.",
+    "title": "Tserriednich watches Benjamin execute his predicted double",
+    "summary": "Tserriednich steps outside the prediction while remaining in Zetsu and watches Benjamin shoot and stomp the apparent body in room 1004. The soldiers and household retain the scripted perception of his death while he remains unseen beside them.",
     "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich tests the rules of Parallel Future with Salkov",
-    "occurredAt": { "basis": "derived", "day": 12 },
+    "occursAfterTitle": "Benjamin breaches room 1004 and shoots Tserriednich",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
     "occurredAtLabel": "≈ Day 12"
   },
   {
     "chapter": 418,
     "chapterTitle": "Hypothesis",
     "sequence": 3,
-    "title": "Tserriednich chooses the royal Route A escape",
-    "summary": "Tserriednich leaves room 1004 in disguise and chooses the royal passage while the other two Tier 1 routes are watched or occupied.",
+    "title": "Tserriednich stages his own sealed-coffin wake",
+    "summary": "While the room remains inside Parallel Future, Tserriednich writes a false will, fills his coffin with confiscated guns and has Salkov read the will aloud. The military agrees that the sealed coffin will remain untouched until 06:00 on Day 13 and that Salkov alone will move it.",
     "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich stages a wake and leaves a sealed coffin",
-    "occurredAt": { "basis": "derived", "day": 12 },
+    "occursAfterTitle": "Tserriednich watches Benjamin execute his predicted double",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
     "occurredAtLabel": "≈ Day 12"
   },
   {
-    "chapter": 419,
-    "chapterTitle": "Implementation",
-    "sequence": 1,
-    "title": "Tserriednich measures the range of Laplace's Devil",
-    "summary": "The ability's field reaches roughly 36 metres; ending Zetsu or crossing its boundary resets the illusion.",
-    "legacyTitles": [],
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 419,
-    "chapterTitle": "Implementation",
-    "sequence": 2,
-    "title": "Tserriednich kills the first four soldiers in the VVIP corridor",
-    "summary": "Tserriednich leaves four real casualties before activating Laplace's Devil against the remaining royal soldiers.",
-    "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich measures the range of Laplace's Devil",
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 419,
-    "chapterTitle": "Implementation",
-    "sequence": 3,
-    "title": "The royal army locks down Tier 1 and retracts the bridges",
-    "summary": "Unable to explain the incident, the army forbids movement, seals doors and retracts the connecting bridges to the lower tiers.",
-    "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich kills the first four soldiers in the VVIP corridor",
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 419,
-    "chapterTitle": "Implementation",
+    "chapter": 418,
+    "chapterTitle": "Hypothesis",
     "sequence": 4,
-    "title": "Tserriednich enters the VIP casino through the emergency route",
-    "summary": "Tserriednich reroutes through the VVIP entertainment district and reaches the casino's emergency staircase entrance.",
+    "title": "Tserriednich leaves room 1004 through Route A",
+    "summary": "With roughly three hours and forty-eight minutes of the illusion's stored aura remaining, Tserriednich disguises himself, chooses the Tier 1 royal Route A and leaves room 1004. Whether Theta briefly perceived him when she turned toward the coffin remains unresolved.",
     "legacyTitles": [],
-    "occursAfterTitle": "The royal army locks down Tier 1 and retracts the bridges",
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 420,
-    "chapterTitle": "Encounter",
-    "sequence": 1,
-    "title": "Tserriednich discovers the casino patrols killed without gunfire",
-    "summary": "The Tier 1 casino is empty except for royal patrols killed by sharp blades before they could fire.",
-    "legacyTitles": [],
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 420,
-    "chapterTitle": "Encounter",
-    "sequence": 2,
-    "title": "Tserriednich encounters Hisoka in the VIP casino",
-    "summary": "Tserriednich finds Hisoka playing at a machine and activates Laplace's Devil to test himself against him.",
-    "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich discovers the casino patrols killed without gunfire",
-    "occurredAt": { "basis": "derived", "day": 12 },
-    "occurredAtLabel": "≈ Day 12"
-  },
-  {
-    "chapter": 420,
-    "chapterTitle": "Encounter",
-    "sequence": 3,
-    "title": "The casino exit is surrounded and Tserriednich drops Zetsu",
-    "summary": "Hisoka kills the predicted body while Tserriednich escapes the illusion; the army surrounds the liner and the prince banks one final use of his ability.",
-    "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich encounters Hisoka in the VIP casino",
-    "occurredAt": { "basis": "derived", "day": 12 },
+    "occursAfterTitle": "Tserriednich stages his own sealed-coffin wake",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
     "occurredAtLabel": "≈ Day 12"
   }
 ]

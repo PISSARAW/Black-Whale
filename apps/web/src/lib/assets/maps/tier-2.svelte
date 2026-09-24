@@ -108,10 +108,10 @@
     {
       id: 'tier-2-tier-1-route-c',
       region: null,
-      points: '475.71,450.0 524.29,450.0 524.29,475.71 475.71,475.71',
+      points: '548.57,450.0 597.14,450.0 597.14,475.71 548.57,475.71',
       label: 'Route C',
       size: 12,
-      at: [500.0, 466.9],
+      at: [572.9, 466.9],
       turned: false,
       through: true,
       inferred: true,

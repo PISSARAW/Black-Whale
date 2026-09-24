@@ -865,31 +865,6 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "absent"
-      },
-      {
-        "chapter": 416,
-        "title": "Proclamation",
-        "status": "absent"
-      },
-      {
-        "chapter": 417,
-        "title": "Emergency",
-        "status": "absent"
-      },
-      {
-        "chapter": 418,
-        "title": "Hypothesis",
-        "status": "absent"
-      },
-      {
-        "chapter": 419,
-        "title": "Implementation",
-        "status": "absent"
-      },
-      {
-        "chapter": 420,
-        "title": "Encounter",
-        "status": "appears"
       }
     ],
     "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
@@ -918,11 +893,6 @@
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-393",
         "note": "Accepte de monter au Pont 1 à la demande de Hinrigh"
-      },
-      {
-        "location": "tier-1-vip-casino",
-        "fromChapterId": "ch-405",
-        "note": "Chapter 420 confirms that the real Hisoka remained in the casino and killed the royal patrols before confronting Tserriednich."
       }
     ]
   },
@@ -3701,21 +3671,6 @@
         "chapter": 417,
         "title": "Emergency",
         "status": "appears"
-      },
-      {
-        "chapter": 418,
-        "title": "Hypothesis",
-        "status": "appears"
-      },
-      {
-        "chapter": 419,
-        "title": "Implementation",
-        "status": "appears"
-      },
-      {
-        "chapter": 420,
-        "title": "Encounter",
-        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -3729,12 +3684,8 @@
       },
       {
         "location": "tier-1-royal-residential-sector-room-1004",
-        "fromChapterId": "ch-363"
-      },
-      {
-        "location": "tier-1-vip-casino",
-        "fromChapterId": "ch-419",
-        "note": "Leaves room 1004 under martial law, crosses the VVIP and royal passages and reaches the casino in chapter 419; chapter 420 confirms the encounter there."
+        "fromChapterId": "ch-363",
+        "untilChapterId": "ch-418.4"
       }
     ],
     "guardianBeast": {
@@ -25630,8 +25581,8 @@
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
-      "room": "Justice Bureau",
+      "tier": 1,
+      "room": "1004",
       "status": "actif",
       "role": "Private Soldier for Prince Tserriednich Hui Guo Rou ; Provisional Hunter"
     },
@@ -26047,8 +25998,8 @@
         "fromChapterId": "ch-411.3"
       },
       {
-        "location": "tier-2-ministry-of-justice",
-        "fromChapterId": "ch-417"
+        "location": "tier-1-royal-residential-sector-room-1004",
+        "fromChapterId": "ch-416.4"
       }
     ]
   },
@@ -28156,8 +28107,8 @@
     "firstAppearanceChapterId": "ch-348",
     "canonStatus": "canon",
     "shipLocation": {
-      "tier": 2,
-      "room": "Justice Bureau",
+      "tier": 1,
+      "room": "1004",
       "status": "actif",
       "role": "garde / instructeur de Nen"
     },
@@ -28572,10 +28523,6 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
-      },
-      {
-        "location": "tier-2-ministry-of-justice",
-        "fromChapterId": "ch-417"
       }
     ]
   },

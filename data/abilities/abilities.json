@@ -232,7 +232,7 @@
       "刹那の10秒"
     ],
     "category": "specialist",
-    "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, real time resumes while his vision constantly stays ten seconds ahead; he simultaneously perceives the prediction and the present and can move again. When he ends the precognition, everyone in the vision except him perceives the next ten seconds exactly as predicted, even though he actually changes his actions due to his knowledge of the future. Chapter 419 names the ability Laplace's Devil (Laplace's Demon in the Viz reading) and establishes an effective field of roughly 36 metres: people outside at activation are not deceived, and leaving the field or ending Zetsu resets the illusion.",
+    "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, everyone in the ability's range continues to perceive that prediction while he alone can act differently. Chapter 418 confirms that he cannot alter another person and can only move unheld objects without using them to harm anyone. His Guardian Spirit Beast appears to sustain the illusion within a limited area by consuming stored aura; its exact range and the effect on people outside it remain unknown.",
     "canonStatus": "canon",
     "moduleKey": "parallel-future"
   },

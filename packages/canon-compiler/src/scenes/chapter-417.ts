@@ -3,6 +3,12 @@ import type { ChapterScenes } from './apply.js'
 export const CHAPTER_417: ChapterScenes = {
   chapter: 417,
   idPrefix: 'ch417',
+  // Chapter 418 reveals that this transfer was part of Parallel Future's
+  // prediction, not a physical move by either guard.
+  retiredPresenceIds: [
+    'ch417-presence-salkov-justice-bureau',
+    'ch417-presence-danjin-justice-bureau',
+  ],
   scenes: [
     {
       event: "Benjamin stages Tserriednich's execution and detains his guards",
@@ -12,18 +18,6 @@ export const CHAPTER_417: ChapterScenes = {
         ['prince-tserriednich', 'VICTIM'],
         ['salkov', 'OBSERVER'],
         ['danjin', 'PASSIVE'],
-      ],
-      moves: [
-        {
-          slug: 'salkov',
-          location: 'tier-2-ministry-of-justice',
-          id: 'ch417-presence-salkov-justice-bureau',
-        },
-        {
-          slug: 'danjin',
-          location: 'tier-2-ministry-of-justice',
-          id: 'ch417-presence-danjin-justice-bureau',
-        },
       ],
     },
     {

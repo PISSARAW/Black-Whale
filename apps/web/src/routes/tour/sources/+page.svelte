@@ -303,7 +303,8 @@
   const sealReasons = $derived(byReason(ship.seals))
   const doorReasons = $derived(byReason(ship.doors))
 
-  const spaceUrl = $derived((space: Space) => `${$link('/tour')}?space=${space.id}`)
+  /** URL to walk to a specific space from the sources page */
+  const spaceUrl = (space: Space) => `${$link('/tour')}?space=${space.id}`
 </script>
 
 <Seo

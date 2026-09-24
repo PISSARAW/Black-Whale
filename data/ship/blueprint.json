@@ -1152,38 +1152,38 @@
     },
     {
       "id": "tier-1-princes-burial-chamber",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-princes-burial-chamber",
       "name": "Princes' Burial Chamber",
       "nameFr": "Chambre fun\u00e9raire des princes",
       "category": "ceremonial",
-      "provenance": "panel",
-      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
+      "provenance": "inferred",
+      "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre. The chamber is assigned to Tier 1-C and placed within that deck's hull as a reconstruction choice.",
       "ceiling": 6,
       "envelope": null,
       "footprint": [
-        [-5.97, -68.25],
-        [-3.43, -69.77],
-        [-1.63, -72.11],
-        [-0.79, -74.94],
-        [-1.04, -77.89],
-        [-2.34, -80.54],
-        [-4.52, -82.54],
-        [-7.27, -83.61],
-        [-10.23, -83.61],
-        [-12.98, -82.54],
-        [-15.16, -80.54],
-        [-16.46, -77.89],
-        [-16.71, -74.94],
-        [-15.87, -72.11],
-        [-14.07, -69.77],
-        [-11.53, -68.25]
+        [54.78, 35.75],
+        [57.32, 34.23],
+        [59.12, 31.89],
+        [59.96, 29.06],
+        [59.71, 26.11],
+        [58.41, 23.46],
+        [56.23, 21.46],
+        [53.48, 20.39],
+        [50.52, 20.39],
+        [47.77, 21.46],
+        [45.59, 23.46],
+        [44.29, 26.11],
+        [44.04, 29.06],
+        [44.88, 31.89],
+        [46.68, 34.23],
+        [49.22, 35.75]
       ],
-      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils dispos\u00e9s en rayons autour de son centre."
+      "sourceFr": "Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils dispos\u00e9s en rayons autour de son centre. La chambre est affect\u00e9e au pont 1-C et replac\u00e9e dans sa coque selon le choix de reconstruction."
     },
     {
       "id": "tier-1-burial-passage",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": null,
       "name": "Burial Chamber Passage",
       "nameFr": "Passage de la chambre fun\u00e9raire",
@@ -1193,10 +1193,10 @@
       "ceiling": null,
       "envelope": null,
       "footprint": [
-        [-11.53, -68.25],
-        [-5.97, -68.25],
-        [-5.97, -63],
-        [-11.53, -63]
+        [49.22, 35.75],
+        [54.78, 35.75],
+        [54.78, 41],
+        [49.22, 41]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
     },
@@ -1438,11 +1438,11 @@
       "tierId": "tier-1-b",
       "locationId": "tier-1-vip-casino",
       "name": "VIP Casino Emergency Spiral Stair",
-      "nameFr": "Escalier en colimaçon de secours du casino VIP",
+      "nameFr": "Escalier en colima\u00e7on de secours du casino VIP",
       "category": "corridor",
       "provenance": "inferred",
       "source": "Ch. 419 names the casino emergency exit as a spiral staircase designed to prevent a crowd from swarming up from below. Its exact footprint is not drawn; the landing is reconstructed on Tier 1-B directly below the aft edge of the casino.",
-      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colimaçon conçu pour empêcher une foule de remonter depuis les ponts inférieurs. Son emprise exacte n'est pas dessinée ; le palier est reconstruit au pont 1-B, juste sous le bord arrière du casino.",
+      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colima\u00e7on con\u00e7u pour emp\u00eacher une foule de remonter depuis les ponts inf\u00e9rieurs. Son emprise exacte n'est pas dessin\u00e9e ; le palier est reconstruit au pont 1-B, juste sous le bord arri\u00e8re du casino.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -1454,7 +1454,7 @@
     },
     {
       "id": "tier-1-queens-corridor",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters",
       "name": "Queens' Quarters Corridor",
       "nameFr": "Couloir des quartiers des reines",
@@ -1473,7 +1473,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-01",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-01",
       "name": "Queen's Room 01",
       "nameFr": "Chambre de reine 01",
@@ -1492,7 +1492,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-02",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-02",
       "name": "Queen's Room 02",
       "nameFr": "Chambre de reine 02",
@@ -1511,7 +1511,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-03",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-03",
       "name": "Queen's Room 03",
       "nameFr": "Chambre de reine 03",
@@ -1530,7 +1530,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-04",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-04",
       "name": "Queen's Room 04",
       "nameFr": "Chambre de reine 04",
@@ -1549,7 +1549,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-05",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-05",
       "name": "Queen's Room 05",
       "nameFr": "Chambre de reine 05",
@@ -1568,7 +1568,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-06",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-06",
       "name": "Queen's Room 06",
       "nameFr": "Chambre de reine 06",
@@ -1587,7 +1587,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-07",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-07",
       "name": "Queen's Room 07",
       "nameFr": "Chambre de reine 07",
@@ -1606,7 +1606,7 @@
     },
     {
       "id": "tier-1-queens-living-quarters-room-08",
-      "tierId": "tier-1-c",
+      "tierId": "tier-1",
       "locationId": "tier-1-queens-living-quarters-room-08",
       "name": "Queen's Room 08",
       "nameFr": "Chambre de reine 08",
@@ -4829,13 +4829,13 @@
     },
     {
       "id": "tier-1-lifeboats-port",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-lifeboats",
       "name": "Lifeboat Deck (port)",
       "nameFr": "Pont des canots (b\u00e2bord)",
       "category": "evacuation",
-      "provenance": "panel",
-      "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them.",
+      "provenance": "inferred",
+      "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -4844,17 +4844,17 @@
         [-122.5, 17.5],
         [-133, 17.5]
       ],
-      "sourceFr": "Chap. 383 \u2014 la baie de lancement : les capsules sur leurs berceaux et la console de mise \u00e0 l'eau \u00e0 c\u00f4t\u00e9."
+      "sourceFr": "Chap. 383 \u2014 la baie de lancement : les capsules sur leurs berceaux et la console de mise \u00e0 l'eau \u00e0 c\u00f4t\u00e9. Le pont 1-C est le choix de reconstruction pour leur emplacement."
     },
     {
       "id": "tier-1-lifeboats-starboard",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-lifeboats",
       "name": "Lifeboat Deck (starboard)",
       "nameFr": "Pont des canots (tribord)",
       "category": "evacuation",
-      "provenance": "panel",
-      "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them.",
+      "provenance": "inferred",
+      "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -4863,7 +4863,7 @@
         [133, 17.5],
         [122.5, 17.5]
       ],
-      "sourceFr": "Chap. 383 \u2014 la baie de lancement : les capsules sur leurs berceaux et la console de mise \u00e0 l'eau \u00e0 c\u00f4t\u00e9."
+      "sourceFr": "Chap. 383 \u2014 la baie de lancement : les capsules sur leurs berceaux et la console de mise \u00e0 l'eau \u00e0 c\u00f4t\u00e9. Le pont 1-C est le choix de reconstruction pour leur emplacement."
     },
     {
       "id": "tier-1-royal-approach",
@@ -5080,11 +5080,11 @@
       "id": "tier-2-tier-1-access",
       "tierId": "tier-2",
       "locationId": null,
-      "name": "Tier 1 Stairwell",
-      "nameFr": "Cage d\u2019escalier vers le pont 1",
+      "name": "Route A",
+      "nameFr": "Route A",
       "category": "corridor",
-      "provenance": "inferred",
-      "source": "Reconstructed to make the deck contiguous; no panel shows it.",
+      "provenance": "plan",
+      "source": "Ch. 418 \u2014 Route A is reserved for the royal family and V5 VIPs; ch. 419 shows the Tier 1 gangway can retract during lockdown.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -5097,7 +5097,7 @@
         [16.45, -61.95],
         [13.3, -58.8]
       ],
-      "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
+      "sourceFr": "Chap. 418 \u2014 la route A est r\u00e9serv\u00e9e \u00e0 la famille royale et aux VIP du V5 ; le chap. 419 montre que la passerelle du pont 1 se r\u00e9tracte pendant le confinement."
     },
     {
       "id": "tier-2-forward-corridor",
@@ -7960,7 +7960,7 @@
     },
     {
       "id": "tier-1-lifeboats-port-pod-cabin",
-      "tierId": "interior-lifeboat",
+      "tierId": "tier-1-c",
       "locationId": "tier-1-lifeboats",
       "name": "Pod Cabin",
       "nameFr": "Cabine de la capsule",
@@ -8706,11 +8706,16 @@
       "nameFr": "Grande salle de loisirs VVIP",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 419 — the VVIP recreation hall is shown as a broad double-height room with two side staircases, an upper gallery and a rear passage during the Tier 1 lockdown.",
-      "sourceFr": "Chap. 419 — la grande salle de loisirs VVIP apparaît comme une vaste pièce à double hauteur avec deux escaliers latéraux, une galerie supérieure et un passage arrière pendant le confinement du pont 1.",
+      "source": "Ch. 419 \u2014 the VVIP recreation hall is shown as a broad double-height room with two side staircases, an upper gallery and a rear passage during the Tier 1 lockdown.",
+      "sourceFr": "Chap. 419 \u2014 la grande salle de loisirs VVIP appara\u00eet comme une vaste pi\u00e8ce \u00e0 double hauteur avec deux escaliers lat\u00e9raux, une galerie sup\u00e9rieure et un passage arri\u00e8re pendant le confinement du pont 1.",
       "ceiling": 8,
       "envelope": null,
-      "footprint": [[0, 10], [28, 10], [28, 42], [0, 42]]
+      "footprint": [
+        [0, 10],
+        [28, 10],
+        [28, 42],
+        [0, 42]
+      ]
     },
     {
       "id": "tier-1-vvip-recreation-gallery",
@@ -8720,11 +8725,16 @@
       "nameFr": "Galerie de la grande salle de loisirs VVIP",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 419 — the upper bridge/gallery spanning the recreation hall is visible above the central floor and is reached by the side staircases.",
-      "sourceFr": "Chap. 419 — la passerelle/galerie supérieure qui traverse la salle de loisirs est visible au-dessus du sol central et s'atteint par les escaliers latéraux.",
+      "source": "Ch. 419 \u2014 the upper bridge/gallery spanning the recreation hall is visible above the central floor and is reached by the side staircases.",
+      "sourceFr": "Chap. 419 \u2014 la passerelle/galerie sup\u00e9rieure qui traverse la salle de loisirs est visible au-dessus du sol central et s'atteint par les escaliers lat\u00e9raux.",
       "ceiling": 3,
       "envelope": null,
-      "footprint": [[0, 10], [28, 10], [28, 42], [0, 42]]
+      "footprint": [
+        [0, 10],
+        [28, 10],
+        [28, 42],
+        [0, 42]
+      ]
     },
     {
       "id": "tier-1-c-port-corridor",
@@ -8842,7 +8852,7 @@
     },
     {
       "id": "tier-1-queens-void",
-      "tierId": "tier-1",
+      "tierId": "tier-1-c",
       "locationId": null,
       "name": "Port Central Floor",
       "nameFr": "Plancher b\u00e2bord central",
@@ -9143,6 +9153,101 @@
         [-47, -3.5],
         [-53, -3.5]
       ]
+    },
+    {
+      "category": "corridor",
+      "provenance": "inferred",
+      "ceiling": null,
+      "envelope": null,
+      "locationId": null,
+      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
+      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "id": "tier-2-tier-1-route-b",
+      "tierId": "tier-2",
+      "name": "Route B",
+      "nameFr": "Route B",
+      "footprint": [
+        [98, -28],
+        [116, -28],
+        [116, -12],
+        [98, -12]
+      ]
+    },
+    {
+      "category": "corridor",
+      "provenance": "inferred",
+      "ceiling": null,
+      "envelope": null,
+      "locationId": null,
+      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
+      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "id": "tier-1-route-b-landing",
+      "tierId": "tier-1",
+      "name": "Route B",
+      "nameFr": "Route B",
+      "footprint": [
+        [66, -27],
+        [84, -27],
+        [84, -9],
+        [66, -9]
+      ]
+    },
+    {
+      "category": "corridor",
+      "provenance": "inferred",
+      "ceiling": null,
+      "envelope": null,
+      "locationId": null,
+      "source": "Ch. 418 \u2014 Route C serves general passengers; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
+      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "id": "tier-2-tier-1-route-c",
+      "tierId": "tier-2",
+      "name": "Route C",
+      "nameFr": "Route C",
+      "footprint": [
+        [-8.5, 52.5],
+        [8.5, 52.5],
+        [8.5, 61.5],
+        [-8.5, 61.5]
+      ]
+    },
+    {
+      "category": "corridor",
+      "provenance": "inferred",
+      "ceiling": null,
+      "envelope": null,
+      "locationId": null,
+      "source": "Ch. 418 \u2014 Route C serves general passengers; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
+      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "id": "tier-1-route-c-landing",
+      "tierId": "tier-1",
+      "name": "Route C",
+      "nameFr": "Route C",
+      "footprint": [
+        [-8.5, 55],
+        [-8.5, 63],
+        [8.5, 63],
+        [8.5, 55]
+      ]
+    },
+    {
+      "id": "tier-1-route-a-landing",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Route A",
+      "nameFr": "Route A",
+      "category": "corridor",
+      "provenance": "plan",
+      "source": "Ch. 418 \u2014 Route A is reserved for the royal family and V5 VIPs; the landing position follows the Tier 1 access shown in ch. 349/419.",
+      "sourceFr": "Chap. 418 \u2014 la route A est r\u00e9serv\u00e9e \u00e0 la famille royale et aux VIP du V5 ; le palier reprend l\u2019acc\u00e8s au pont 1 du plan des chap. 349/419.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [5, -35],
+        [21, -35],
+        [21, -28],
+        [5, -28]
+      ]
     }
   ],
   "links": [
@@ -9378,14 +9483,14 @@
     },
     {
       "from": "tier-2-tier-1-access",
-      "to": "tier-1-royal-approach",
+      "to": "tier-1-route-a-landing",
       "kind": "stair",
       "retractable": true,
       "at": [8.75, -65.8],
-      "atTo": [8.75, -35.7],
+      "atTo": [8.75, -31.5],
       "provenance": "plan",
-      "source": "Deck plan, ch. 349 \u2014 Tier 1 access from Tier 2; ch. 419 shows the access as a small gangway to the Tier 1 ship deck, capable of retracting during the lockdown.",
-      "sourceFr": "Plan des ponts, chap. 349 \u2014 acc\u00e8s au pont 1 depuis le pont 2 ; le chap. 419 montre cet acc\u00e8s comme une petite passerelle vers le pont du navire de niveau 1, capable de se r\u00e9tracter pendant le verrouillage."
+      "source": "Ch. 418 \u2014 Route A is reserved for the royal family and V5 VIPs; ch. 419 shows the Tier 1 gangway can retract during lockdown.",
+      "sourceFr": "Chap. 418 \u2014 la route A est r\u00e9serv\u00e9e \u00e0 la famille royale et aux VIP du V5 ; le chap. 419 montre que la passerelle du pont 1 se r\u00e9tracte pendant le confinement."
     },
     {
       "from": "tier-3-bulkhead-access",
@@ -9457,7 +9562,7 @@
       "from": "tier-1-princes-burial-chamber",
       "to": "tier-1-princes-burial-chamber-rotunda",
       "kind": "door",
-      "at": [-8.75, -70],
+      "at": [52, 34],
       "atTo": [0, 9],
       "provenance": "inferred",
       "source": "Reconstructed as the way from the passage into the chamber; the chamber is drawn, its threshold is not.",
@@ -9540,8 +9645,8 @@
       "at": [-48, 54.25],
       "atTo": [-48, 54.25],
       "provenance": "inferred",
-      "source": "Ch. 419 — the casino's emergency spiral staircase is the controlled route from the entertainment room to the lower level; the lower landing is reconstructed directly below it.",
-      "sourceFr": "Chap. 419 — l'escalier en colimaçon de secours du casino est le passage contrôlé de la salle de divertissements vers le niveau inférieur ; le palier inférieur est reconstruit juste en dessous."
+      "source": "Ch. 419 \u2014 the casino's emergency spiral staircase is the controlled route from the entertainment room to the lower level; the lower landing is reconstructed directly below it.",
+      "sourceFr": "Chap. 419 \u2014 l'escalier en colima\u00e7on de secours du casino est le passage contr\u00f4l\u00e9 de la salle de divertissements vers le niveau inf\u00e9rieur ; le palier inf\u00e9rieur est reconstruit juste en dessous."
     },
     {
       "from": "tier-1-starboard-corridor",
@@ -9550,8 +9655,8 @@
       "at": [70, 26],
       "atTo": [28, 26],
       "provenance": "panel",
-      "source": "Ch. 419 — the recreation hall opens onto the controlled Tier 1 passage shown around the VVIP area.",
-      "sourceFr": "Chap. 419 — la salle de loisirs s'ouvre sur le passage contrôlé du pont 1 montré autour de la zone VVIP."
+      "source": "Ch. 419 \u2014 the recreation hall opens onto the controlled Tier 1 passage shown around the VVIP area.",
+      "sourceFr": "Chap. 419 \u2014 la salle de loisirs s'ouvre sur le passage contr\u00f4l\u00e9 du pont 1 montr\u00e9 autour de la zone VVIP."
     },
     {
       "from": "tier-1-vvip-recreation-hall",
@@ -9560,8 +9665,8 @@
       "at": [5, 26],
       "atTo": [5, 26],
       "provenance": "panel",
-      "source": "Ch. 419 — the left-hand staircase connects the recreation hall floor to its upper gallery; the matching right-hand stair is represented by the same walkable level change.",
-      "sourceFr": "Chap. 419 — l'escalier de gauche relie le sol de la salle à sa galerie supérieure ; l'escalier droit correspondant est représenté par le même changement de niveau praticable."
+      "source": "Ch. 419 \u2014 the left-hand staircase connects the recreation hall floor to its upper gallery; the matching right-hand stair is represented by the same walkable level change.",
+      "sourceFr": "Chap. 419 \u2014 l'escalier de gauche relie le sol de la salle \u00e0 sa galerie sup\u00e9rieure ; l'escalier droit correspondant est repr\u00e9sent\u00e9 par le m\u00eame changement de niveau praticable."
     },
     {
       "from": "tier-1-vvip-recreation-hall",
@@ -9570,8 +9675,8 @@
       "at": [23, 26],
       "atTo": [23, 26],
       "provenance": "panel",
-      "source": "Ch. 419 — the right-hand staircase mirrors the left-hand stair and provides the second walkable route to the upper gallery.",
-      "sourceFr": "Chap. 419 — l'escalier de droite reprend la disposition de celui de gauche et fournit le second accès praticable à la galerie supérieure."
+      "source": "Ch. 419 \u2014 the right-hand staircase mirrors the left-hand stair and provides the second walkable route to the upper gallery.",
+      "sourceFr": "Chap. 419 \u2014 l'escalier de droite reprend la disposition de celui de gauche et fournit le second acc\u00e8s praticable \u00e0 la galerie sup\u00e9rieure."
     },
     {
       "from": "tier-1-vvip-prison-beyond",
@@ -9646,6 +9751,38 @@
       "provenance": "inferred",
       "source": "No page draws a stair between these decks. A deck nobody can reach is scenery, and a tier is one building: the flight is put where both decks run a corridor.",
       "sourceFr": "Aucune page ne dessine d\u2019escalier entre ces ponts. Un pont que personne n\u2019atteint est un d\u00e9cor, et un pont est un seul b\u00e2timent : la vol\u00e9e est pos\u00e9e l\u00e0 o\u00f9 les deux ponts portent une coursive."
+    },
+    {
+      "from": "tier-2-tier-1-route-b",
+      "to": "tier-1-route-b-landing",
+      "kind": "stair",
+      "retractable": true,
+      "at": [105, -20],
+      "atTo": [75.25, -20],
+      "provenance": "inferred",
+      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
+      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
+    },
+    {
+      "from": "tier-2-tier-1-route-c",
+      "to": "tier-1-route-c-landing",
+      "kind": "stair",
+      "retractable": true,
+      "at": [0, 52.5],
+      "atTo": [0, 59.5],
+      "provenance": "inferred",
+      "source": "Ch. 418 \u2014 Route C serves general passengers; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
+      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
+    },
+    {
+      "from": "tier-1-route-a-landing",
+      "to": "tier-1-royal-approach",
+      "kind": "door",
+      "at": [8.75, -31.5],
+      "atTo": [8.75, -28],
+      "provenance": "inferred",
+      "source": "Reconstructed connection from Route A landing into the Banquet Hall Vestibule.",
+      "sourceFr": "Liaison reconstruite entre le palier de la route A et le vestibule de la salle de banquet."
     }
   ],
   "seals": [
@@ -27531,7 +27668,7 @@
       "kind": "table",
       "name": "Low Refectory Table",
       "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [27, 37.0],
+      "at": [27, 37],
       "size": [1, 4],
       "rotation": 0,
       "base": 0,
@@ -27547,7 +27684,7 @@
       "kind": "table",
       "name": "Low Refectory Table",
       "nameFr": "Table basse de r\u00e9fectoire",
-      "at": [32, 37.0],
+      "at": [32, 37],
       "size": [1, 4],
       "rotation": 0,
       "base": 0,
@@ -27599,7 +27736,7 @@
       "size": [1.5, 2.5],
       "rotation": 0,
       "base": 0,
-      "height": 2.0,
+      "height": 2,
       "sides": null,
       "provenance": "panel",
       "source": "Ch. 377 \u2014 Detailed layout based on visual evidence: Service counter on West wall, 4 central pillars, two central platforms for VIPs, and low tables oriented in different zones (West/East horizontal, North/South vertical).",
@@ -28043,7 +28180,7 @@
       "kind": "seat",
       "name": "Bench",
       "nameFr": "Banc",
-      "at": [26.3, 37.0],
+      "at": [26.3, 37],
       "size": [0.38, 3.8],
       "rotation": 0,
       "base": 0,
@@ -28059,7 +28196,7 @@
       "kind": "seat",
       "name": "Bench",
       "nameFr": "Banc",
-      "at": [27.7, 37.0],
+      "at": [27.7, 37],
       "size": [0.38, 3.8],
       "rotation": 0,
       "base": 0,
@@ -28075,7 +28212,7 @@
       "kind": "seat",
       "name": "Bench",
       "nameFr": "Banc",
-      "at": [31.3, 37.0],
+      "at": [31.3, 37],
       "size": [0.38, 3.8],
       "rotation": 0,
       "base": 0,
@@ -28091,7 +28228,7 @@
       "kind": "seat",
       "name": "Bench",
       "nameFr": "Banc",
-      "at": [32.7, 37.0],
+      "at": [32.7, 37],
       "size": [0.38, 3.8],
       "rotation": 0,
       "base": 0,

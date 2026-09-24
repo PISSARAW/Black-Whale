@@ -305,9 +305,9 @@ d'un même bâtiment — pas un pont principal flanqué de deux annexes.
 
 | Pont       | Nom      | Élévation | Ce qu'il porte                                     |
 | ---------- | -------- | --------- | -------------------------------------------------- |
-| `tier-1-c` | Pont 1-C | 141,1 m   | casino, bloc des reines                            |
-| `tier-1-b` | Pont 1-B | 137,6 m   | chambrées, quartier de détention, Cour suprême     |
-| `tier-1`   | Pont 1-A | 128 m     | la chaîne royale, les canots, la chambre funéraire |
+| `tier-1-c` | Pont 1-C | 141,1 m   | casino, canots, chambre funéraire                  |
+| `tier-1-b` | Pont 1-B | 137,6 m   | quartier des gardes, détention, Cour suprême       |
+| `tier-1`   | Pont 1-A | 128 m     | quartiers du roi et des reines, banquet, princes   |
 
 Les **identifiants ne suivent pas les noms** : `tier-1` reste `tier-1` et non
 `tier-1-a`. Ce n'est pas un oubli — trente-quatre lieux du catalogue, et avec
@@ -330,10 +330,10 @@ Trois règles, et elles se lisent dans l'ordre :
    reconstruction, et la `source` de chaque pont le dit en toutes lettres, sans
    citer de chapitre — un pont `inferred` qui citerait une planche prétendrait à
    une preuve qu'il n'a pas.
-3. **Ce qui touche le bordé ne monte pas.** Les canots sont à `x ±133`, au-delà
-   de la proue et de la poupe du pont 1 (`−126,87 … 122,5`), et la chambre
-   funéraire à `z −83,6` quand le pont 1 s'arrête à `−70` par le travers. Un
-   pont en gradin est plus court par définition : ils restent en bas.
+3. **Les canots et la chambre funéraire sont affectés au pont 1-C.** Les canots
+   gardent leur position aux extrémités avant et arrière. La chambre funéraire
+   est repositionnée dans la coque du 1-C ; son existence est attestée, mais ce
+   pont et cette position restent des choix de reconstruction.
 
 Le premier pont au-dessus du pont royal ne commence pas 3,5 m plus haut mais à
 **137,6 m**, au-dessus des 9 m de la salle de banquet. Ce n'est pas un
@@ -935,3 +935,14 @@ pnpm --filter @black-whale/web test
 pont, que chaque `locationId` existe, que toute salle du catalogue présente à
 bord est reconstruite, et que **le vaisseau entier reste connexe** — de la
 chambre funéraire du pont 1 aux entrepôts du pont 5.
+
+
+### Routes du pont 1 vers le pont 2
+
+Le plan des chapitres 418–419 distingue trois accès rétractables vers le pont 2 :
+la route A pour les VIP, la route B pour les chefs de la mafia et la route C pour
+les passagers ordinaires. Les trois passerelles figurent désormais dans le
+modèle ; l’emplacement des routes B et C est reconstruit à partir des bords du
+plan et reste à confronter aux planches détaillées. Le couloir en U autour du
+quartier princier reste une coursive du pont 1-A ; les chambrées des gardes sont
+sur le pont 1-B.

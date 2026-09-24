@@ -494,7 +494,7 @@
       id: 'tier-1-route-a-landing',
       region: null,
       points: '537.14,200.0 582.86,200.0 582.86,220.0 537.14,220.0',
-      label: 'Route A',
+      label: 'A',
       size: 12,
       at: [560.0, 214.0],
       turned: false,

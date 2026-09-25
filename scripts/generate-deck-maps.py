@@ -1,17 +1,22 @@
-"""Generate the five deck maps of /ship from data/ship/blueprint.json.
+"""Generate the five deck maps of /ship.
 
     python3 scripts/generate-deck-maps.py     # from the repository root
 
-One unit of the 1000x600 deck-plan viewBox is 0.35 m, with the ship's midpoint
-at (500, 300) — the same frame the blueprint is authored in, so a room lands on
-the map exactly where the reconstruction puts it, and every room the blueprint
-holds is drawn rather than the dozen a hand-drawn map had room to name.
+The 1000x600 authored deck-plan frame uses 0.35 m per unit and puts the ship's
+midpoint at (500, 300), matching the blueprint. Every tier is shown in this
+landscape frame; the room geometry remains in the ship's shared coordinate
+system.
 
-The deck maps are therefore generated rather than edited: change a footprint in
-the blueprint and rerun this. What stays hand-written is which rooms zoom into
-their own local plan, in apps/web/src/lib/map/mapAssetRegistry.ts, which this
-reads to decide what a region click should open.
+The deck maps are generated rather than edited, from the blueprint footprints.
+Tier 1-A also reads chapter annotations from data/ship/tier-1-a-layout.json.
+What stays hand-written is which rooms zoom into their own local plan, in
+apps/web/src/lib/map/mapAssetRegistry.ts, which this reads to decide what a
+region click should open.
 """
+import json
+import sys
+from pathlib import Path
+
 from blueprint_common import THROUGH, centroid, load_blueprint, region_for
 
 BP = load_blueprint()
@@ -19,8 +24,15 @@ BP = load_blueprint()
 def sx(x): return round(x / 0.35 + 500, 2)
 def sy(z): return round(z / 0.35 + 300, 2)
 
-for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
+deck_tiers = [t for t in BP['tiers'] if t['kind'] == 'deck']
+selected_tiers = set(sys.argv[1:])
+if selected_tiers:
+    deck_tiers = [t for t in deck_tiers if t['id'] in selected_tiers]
+
+for tier in deck_tiers:
     tid = tier['id']
+    layout_path = Path('data/ship/tier-1-a-layout.json')
+    source_path = Path('data/ship/blueprint.json')
     spaces = [s for s in BP['spaces'] if s['tierId'] == tid]
     hull = ' '.join(f'{sx(x)},{sy(z)}' for x, z in tier['hull'])
 
@@ -36,7 +48,7 @@ for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
         # down. A room taller than it is wide takes the label on its side.
         size = 12 if (w > len(label) * 6.5 and h > 16) else (9 if (w > len(label) * 5 and h > 12) else 0)
         turned = False
-        if not size and h > w:
+        if not size and h > w and tid != 'tier-1':
             size = 12 if (h > len(label) * 6.5 and w > 16) else (9 if (h > len(label) * 5 and w > 12) else 0)
             turned = bool(size)
         rows.append({
@@ -62,21 +74,37 @@ for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
         '    }'
         for r in rows)
 
+    rotated = False
+    annotation = ''
+    if tid == 'tier-1':
+        notes = json.loads(layout_path.read_text(encoding='utf-8')).get('annotations', [])
+        annotation_rows = []
+        for note in notes:
+            x, y = note['at']
+            rotation = f' transform="rotate(-90 {x} {y})"' if rotated else ''
+            annotation_rows.append(
+                f'  <text class="label" x="{x}" y="{y}" font-size="{note.get("size", 14)}" text-anchor="{note.get("anchor", "middle")}"{rotation}>{note["text"]}</text>'
+            )
+        annotation = '\n'.join(annotation_rows)
+    rotate_open = '  <g transform="matrix(0 1 -1 0 600 0)">' if rotated else ''
+    rotate_close = '  </g>' if rotated else ''
+    view_box = '0 0 600 1000' if rotated else '0 0 1000 600'
+
     name = tier['name']
     src = f'''<script lang="ts">
   /**
-   * {name}, generated from `data/ship/blueprint.json`.
+   * {name}, generated from `{source_path.as_posix()}`.
    *
-   * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
-   * (500, 300) — the frame the reconstruction is authored in. So every room is
-   * drawn where the blueprint puts it, and every room the blueprint holds is
-   * drawn: this map used to name a dozen of them and leave the rest as deck.
+   * The authored plan uses a 1000 x 600 coordinate frame at 0.35 m per unit,
+   * with the ship's midpoint at (500, 300). Every tier uses the same landscape
+   * frame; the walkthrough geometry remains in the shared ship axes.
+   * Every room in the blueprint is drawn rather than leaving unnamed deck.
    *
    * Rooms the catalogue has a record for are clickable and zoom into their own
    * plan. Corridors and the spaces the reconstruction invented to keep the deck
    * contiguous are drawn dimmer and are not: there is nothing to open.
    *
-   * Do not hand-edit — regenerate from the blueprint.
+   * Do not hand-edit — regenerate from the blueprint and annotations.
    */
   import {{ mapState }} from '$lib/state/mapState.svelte'
 
@@ -108,7 +136,7 @@ for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
   }}
 </script>
 
-<svg viewBox="0 0 1000 600" class="w-full h-full text-[#FFFFF0]">
+<svg viewBox="{view_box}" class="w-full h-full text-[#FFFFF0]">
   <defs>
     <style>
       .hull {{
@@ -154,7 +182,9 @@ for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
     </style>
   </defs>
 
+{rotate_open}
   <polygon class="hull" points="{hull}" />
+{annotation}
 
   <g id="{tid}-zones">
     {{#each regions as zone (zone.id)}}
@@ -194,6 +224,7 @@ for tier in [t for t in BP['tiers'] if t['kind'] == 'deck']:
       >
     {{/each}}
   </g>
+{rotate_close}
 </svg>
 '''
     out = f'apps/web/src/lib/assets/maps/{tid}.svelte'

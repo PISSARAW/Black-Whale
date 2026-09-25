@@ -2,16 +2,16 @@
   /**
    * Tier 1-B, generated from `data/ship/blueprint.json`.
    *
-   * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
-   * (500, 300) — the frame the reconstruction is authored in. So every room is
-   * drawn where the blueprint puts it, and every room the blueprint holds is
-   * drawn: this map used to name a dozen of them and leave the rest as deck.
+   * The authored plan uses a 1000 x 600 coordinate frame at 0.35 m per unit,
+   * with the ship's midpoint at (500, 300). Every tier uses the same landscape
+   * frame; the walkthrough geometry remains in the shared ship axes.
+   * Every room in the blueprint is drawn rather than leaving unnamed deck.
    *
    * Rooms the catalogue has a record for are clickable and zoom into their own
    * plan. Corridors and the spaces the reconstruction invented to keep the deck
    * contiguous are drawn dimmer and are not: there is nothing to open.
    *
-   * Do not hand-edit — regenerate from the blueprint.
+   * Do not hand-edit — regenerate from the blueprint and annotations.
    */
   import { mapState } from '$lib/state/mapState.svelte'
 
@@ -187,7 +187,9 @@
     </style>
   </defs>
 
+
   <polygon class="hull" points="326.43,211.43 850.0,211.43 850.0,485.71 326.43,485.71" />
+
 
   <g id="tier-1-b-zones">
     {#each regions as zone (zone.id)}
@@ -227,4 +229,5 @@
       >
     {/each}
   </g>
+
 </svg>

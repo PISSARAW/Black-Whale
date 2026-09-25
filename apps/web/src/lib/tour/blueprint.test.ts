@@ -178,10 +178,9 @@ describe('party walls and apartment envelopes', () => {
     }
   })
 
-  // The second bulkhead: the fourteen numbered doors are the only way off the
-  // guards' round and into the court the apartments stand in, and each of them
-  // opens on one approach and one only — odd to starboard, even to port.
-  it('opens the inner bulkhead by its fourteen numbered doors and nothing else', () => {
+  // The fourteen numbered doors open onto the prince-sector approaches; those
+  // approaches meet the unnamed passage into the room behind the block.
+  it('opens each numbered apartment onto its approach and the aft passage', () => {
     const court = (id: string) => ship.spaces.get(id)!.envelope === 'princes-inner-court'
     const fromOutside = [...ship.plans.values()]
       .flatMap((plan) => plan.doorways)
@@ -190,33 +189,20 @@ describe('party walls and apartment envelopes', () => {
 
     expect(fromOutside).toHaveLength(14)
     for (let n = 1; n <= 14; n++) {
-      const side = n % 2 ? 'starboard' : 'port'
       const numbered = fromOutside.filter((door) =>
         [door.a, door.b].includes(`tier-1-royal-residential-approach-${1000 + n}`),
       )
       expect(numbered, `door n° ${n} is not in the inner bulkhead`).toHaveLength(1)
-      expect([numbered[0].a, numbered[0].b]).toContain(`tier-1-royal-residential-corridor-${side}`)
+      expect([numbered[0].a, numbered[0].b]).toContain('tier-1-aft-blank-approach')
     }
   })
 
-  // The first bulkhead: the round the guards walk runs all the way round the
-  // block and stops at the aft wall, so the shared-wall rule opened it onto the
-  // aft promenade — a way in that walks past the gate the panels post soldiers on.
-  it("lets nothing onto the guards' round but the guarded gate", () => {
-    const sector = new Set([
-      'tier-1-royal-residential-corridor-port',
-      'tier-1-royal-residential-corridor-starboard',
-      'tier-1-royal-residential-corridor-aft',
-    ])
-    const fromOutside = [...ship.plans.values()]
-      .flatMap((plan) => plan.doorways)
-      .filter((door) => sector.has(door.a) !== sector.has(door.b))
-      .filter((door) => !door.a.includes('-approach-10') && !door.b.includes('-approach-10'))
-
-    expect(fromOutside).toHaveLength(2)
-    for (const door of fromOutside) {
-      expect([door.a, door.b]).toContain('tier-1-princes-quarters-gate')
-    }
+  // The U surrounds the unnamed room; Route C leaves from its stern leg.
+  it('places Route C at the aft end of the U corridor', () => {
+    const aft = ship.spaces.get('tier-1-royal-residential-corridor-aft')!
+    const routeC = ship.spaces.get('tier-1-route-c-landing')!
+    expect(aft.footprint.map(([x]) => x)).toEqual([103, 109, 109, 103])
+    expect(routeC.footprint.map(([x]) => x)).toEqual([109, 109, 116, 116])
   })
 
   it("gives every queen's room one door, onto the block corridor", () => {

@@ -22,7 +22,7 @@ export interface RoomWords {
   nameOf: (entity: { name: string; nameFr: string }) => string
   /** The deck, and the room this one is inside. `search.ts` builds it. */
   placeOf: (space: Space) => string
-  /** "157 × 25 m under 9 m" */
+  /** "51 × 28 m under 9 m" */
   size: (long: number, wide: number, ceiling: number) => string
   /** "4 exits" */
   exits: (count: number) => string
@@ -96,7 +96,7 @@ export function exitsFrom(ship: Ship, space: Space): number {
 /**
  * One room, in one sentence.
  *
- * "Banquet Hall, Tier 1, 157 × 25 m under 9 m, 4 exits, 72 tables, a stage, a
+ * "Banquet Hall, Tier 1, 51 × 28 m under 9 m, 4 exits, 72 tables, a stage, a
  * throne dais." The clauses are dropped rather than padded when the ship has
  * nothing to say: a room with no solids in it says so once, and a room the
  * blueprint gives no way out of does not claim zero exits.

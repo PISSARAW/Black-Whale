@@ -2,16 +2,16 @@
   /**
    * Tier 1-C, generated from `data/ship/blueprint.json`.
    *
-   * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
-   * (500, 300) — the frame the reconstruction is authored in. So every room is
-   * drawn where the blueprint puts it, and every room the blueprint holds is
-   * drawn: this map used to name a dozen of them and leave the rest as deck.
+   * The authored plan uses a 1000 x 600 coordinate frame at 0.35 m per unit,
+   * with the ship's midpoint at (500, 300). Every tier uses the same landscape
+   * frame; the walkthrough geometry remains in the shared ship axes.
+   * Every room in the blueprint is drawn rather than leaving unnamed deck.
    *
    * Rooms the catalogue has a record for are clickable and zoom into their own
    * plan. Corridors and the spaces the reconstruction invented to keep the deck
    * contiguous are drawn dimmer and are not: there is nothing to open.
    *
-   * Do not hand-edit — regenerate from the blueprint.
+   * Do not hand-edit — regenerate from the blueprint and annotations.
    */
   import { mapState } from '$lib/state/mapState.svelte'
 
@@ -86,10 +86,10 @@
     {
       id: 'tier-1-lifeboats-port',
       region: 'lifeboats',
-      points: '120.0,250.0 150.0,250.0 150.0,350.0 120.0,350.0',
+      points: '811.43,200.0 880.0,200.0 880.0,250.0 811.43,250.0',
       label: '',
       size: 0,
-      at: [135.0, 300.0],
+      at: [845.7, 225.0],
       turned: false,
       through: false,
       inferred: true,
@@ -97,10 +97,10 @@
     {
       id: 'tier-1-lifeboats-starboard',
       region: 'lifeboats',
-      points: '850.0,250.0 880.0,250.0 880.0,350.0 850.0,350.0',
+      points: '811.43,350.0 880.0,350.0 880.0,400.0 811.43,400.0',
       label: '',
       size: 0,
-      at: [865.0, 300.0],
+      at: [845.7, 375.0],
       turned: false,
       through: false,
       inferred: true,
@@ -198,7 +198,9 @@
     </style>
   </defs>
 
+
   <polygon class="hull" points="326.43,301.43 738.57,301.43 738.57,485.71 326.43,485.71" />
+
 
   <g id="tier-1-c-zones">
     {#each regions as zone (zone.id)}
@@ -238,4 +240,5 @@
       >
     {/each}
   </g>
+
 </svg>

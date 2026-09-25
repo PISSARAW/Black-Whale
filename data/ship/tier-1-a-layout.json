@@ -1,0 +1,53 @@
+{
+  "note": "Presentation annotations for Tier 1-A. Room geometry comes from blueprint.json; /ship uses the same horizontal landscape frame as the other deck maps.",
+  "annotations": [
+    {
+      "at": [
+        361.4,
+        300
+      ],
+      "text": "KING AND QUEEN'S QUARTERS",
+      "size": 14
+    },
+    {
+      "at": [
+        655.7,
+        300.0
+      ],
+      "text": "PRINCES' QUARTERS",
+      "size": 13
+    },
+    {
+      "at": [
+        617.1,
+        150
+      ],
+      "text": "A → TIER 2 · VIP",
+      "size": 12
+    },
+    {
+      "at": [
+        617.1,
+        450
+      ],
+      "text": "B → TIER 2 · MAFIA LEADERS",
+      "size": 12
+    },
+    {
+      "at": [
+        821.4,
+        300
+      ],
+      "text": "C → TIER 2 · PASSENGERS",
+      "size": 12
+    },
+    {
+      "at": [
+        875,
+        300
+      ],
+      "text": "LIFEBOAT DECK · TIER 1-C · AT C",
+      "size": 12
+    }
+  ]
+}

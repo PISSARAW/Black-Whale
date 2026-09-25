@@ -5,8 +5,8 @@ import type { Location } from '@black-whale/domain'
 // ──────────────────────────────────────────────
 
 /**
- * Location ids to SVG coordinates, per deck, in the shared `0 0 1000 600`
- * viewBox of the tier maps.
+ * Location ids to SVG coordinates, per deck, in the authored `0 0 1000 600`
+ * viewBox. All deck maps, including Tier 1-A, use this landscape frame directly.
  *
  * Generated from `data/ship/blueprint.json`, like the deck maps themselves: a
  * location's anchor is the centroid of the space the reconstruction gives it,
@@ -23,27 +23,34 @@ type TierAnchor = { x: number; y: number; small?: true }
 
 export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   'tier-1': {
-    'tier-1': { x: 523.9, y: 284.8 },
-    'tier-1-banquet-hall': { x: 475.0, y: 255.0 },
-    'tier-1-king-living-quarters': { x: 475.0, y: 160.0 },
-    'tier-1-lifeboats': { x: 135.0, y: 300.0, small: true },
-    'tier-1-princes-burial-chamber': { x: 475.0, y: 83.4, small: true },
-    'tier-1-royal-residential-sector': { x: 530.0, y: 385.0 },
-    'tier-1-royal-residential-sector-room-1001': { x: 558.6, y: 322.1, small: true },
-    'tier-1-royal-residential-sector-room-1002': { x: 501.4, y: 322.1, small: true },
-    'tier-1-royal-residential-sector-room-1003': { x: 558.6, y: 341.4, small: true },
-    'tier-1-royal-residential-sector-room-1004': { x: 501.4, y: 341.4, small: true },
-    'tier-1-royal-residential-sector-room-1005': { x: 558.6, y: 360.7, small: true },
-    'tier-1-royal-residential-sector-room-1006': { x: 501.4, y: 360.7, small: true },
-    'tier-1-royal-residential-sector-room-1007': { x: 558.6, y: 380.0, small: true },
-    'tier-1-royal-residential-sector-room-1008': { x: 501.4, y: 380.0, small: true },
-    'tier-1-royal-residential-sector-room-1009': { x: 558.6, y: 399.3, small: true },
-    'tier-1-royal-residential-sector-room-1010': { x: 501.4, y: 399.3, small: true },
-    'tier-1-royal-residential-sector-room-1011': { x: 558.6, y: 418.6, small: true },
-    'tier-1-royal-residential-sector-room-1012': { x: 501.4, y: 418.6, small: true },
-    'tier-1-royal-residential-sector-room-1013': { x: 558.6, y: 437.9, small: true },
-    'tier-1-royal-residential-sector-room-1014': { x: 501.4, y: 437.9, small: true },
-    'tier-1-vvip-living-quarters': { x: 292.9, y: 385.0, small: true },
+    'tier-1': { x: 500, y: 300 },
+    'tier-1-banquet-hall': { x: 497.1, y: 300.0 },
+    'tier-1-king-living-quarters': { x: 361.4, y: 300.0 },
+    'tier-1-vvip-living-quarters': { x: 262.8, y: 300.0, small: true },
+    'tier-1-queens-living-quarters': { x: 361.4, y: 300.0 },
+    'tier-1-royal-residential-sector': { x: 655.7, y: 300.0 },
+    'tier-1-queens-living-quarters-room-01': { x: 310.0, y: 200.0, small: true },
+    'tier-1-queens-living-quarters-room-02': { x: 344.3, y: 200.0, small: true },
+    'tier-1-queens-living-quarters-room-03': { x: 378.6, y: 200.0, small: true },
+    'tier-1-queens-living-quarters-room-04': { x: 412.9, y: 200.0, small: true },
+    'tier-1-queens-living-quarters-room-05': { x: 310.0, y: 400.0, small: true },
+    'tier-1-queens-living-quarters-room-06': { x: 344.3, y: 400.0, small: true },
+    'tier-1-queens-living-quarters-room-07': { x: 378.6, y: 400.0, small: true },
+    'tier-1-queens-living-quarters-room-08': { x: 412.9, y: 400.0, small: true },
+    'tier-1-royal-residential-sector-room-1001': { x: 566.0, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1002': { x: 566.0, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1003': { x: 595.9, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1004': { x: 595.9, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1005': { x: 625.8, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1006': { x: 625.8, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1007': { x: 655.7, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1008': { x: 655.7, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1009': { x: 685.6, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1010': { x: 685.6, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1011': { x: 715.5, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1012': { x: 715.5, y: 329.3, small: true },
+    'tier-1-royal-residential-sector-room-1013': { x: 745.4, y: 270.8, small: true },
+    'tier-1-royal-residential-sector-room-1014': { x: 745.4, y: 329.3, small: true },
   },
   /**
    * The garrison deck of the tier 1 liner. Its rooms are drawn on
@@ -62,15 +69,6 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   /** The guest deck of the tier 1 liner, drawn on `tier-1-c.svelte`. */
   'tier-1-c': {
     'tier-1-c': { x: 425.0, y: 385.0 },
-    'tier-1-queens-living-quarters': { x: 422.5, y: 385.0, small: true },
-    'tier-1-queens-living-quarters-room-01': { x: 402.0, y: 328.8, small: true },
-    'tier-1-queens-living-quarters-room-02': { x: 443.0, y: 328.8, small: true },
-    'tier-1-queens-living-quarters-room-03': { x: 402.0, y: 366.3, small: true },
-    'tier-1-queens-living-quarters-room-04': { x: 443.0, y: 366.3, small: true },
-    'tier-1-queens-living-quarters-room-05': { x: 402.0, y: 403.8, small: true },
-    'tier-1-queens-living-quarters-room-06': { x: 443.0, y: 403.8, small: true },
-    'tier-1-queens-living-quarters-room-07': { x: 402.0, y: 441.3, small: true },
-    'tier-1-queens-living-quarters-room-08': { x: 443.0, y: 441.3, small: true },
     'tier-1-vip-casino': { x: 360.0, y: 385.0 },
   },
   'tier-2': {

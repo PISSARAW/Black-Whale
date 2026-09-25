@@ -78,15 +78,14 @@ reconstruction gagne le lieu, elle ne déménage pas la pièce.
 Les plans de ponts sont dessinés dans un `viewBox` de 1000 × 600. Une unité de
 ce `viewBox` vaut **0,35 m**.
 
-Ce facteur est fixé par la **taille des pièces**, pas par la longueur du
-vaisseau : les plans sont schématiques, ils disent ce qui jouxte quoi, pas
-combien ça mesure. Lus au pied de la lettre à 1 m par unité, ils donnent une
-salle de banquet de 450 m de long — un volume que personne ne peut parcourir. À
-0,35, on obtient un appartement princier de 16,6 × 7,5 m et une salle de banquet de
-157 × 25 m sous 9 m de plafond, et les proportions des plans sont conservées
-exactement. La coque reconstruite fait alors **318 m de long sur 175 m de large**
-au pont 3, le plus étendu des cinq : c'est la taille de la reconstruction, pas
-une mesure du Black Whale.
+Ce facteur fixe l'affichage des plans, pas une mesure réelle du vaisseau : les
+plans disent surtout ce qui jouxte quoi. Les anciennes dimensions du Tier 1-A,
+dont une salle de banquet de 157 m, ont été remplacées par une implantation
+reconstruite d'après les chapitres 418–419. Les pièces du banquet et du quartier
+princier sont désormais réorientées et redimensionnées pour suivre ce plan ; ces
+mesures restent des estimations. La coque reconstruite fait **318 m de long sur
+175 m de large** au pont 3, le plus étendu des cinq : c'est la taille de la
+reconstruction, pas une mesure du Black Whale.
 
 ```
 x = (svg.x - 500) × 0,35     x d'avant en arrière, proue en -x
@@ -941,8 +940,30 @@ chambre funéraire du pont 1 aux entrepôts du pont 5.
 
 Le plan des chapitres 418–419 distingue trois accès rétractables vers le pont 2 :
 la route A pour les VIP, la route B pour les chefs de la mafia et la route C pour
-les passagers ordinaires. Les trois passerelles figurent désormais dans le
-modèle ; l’emplacement des routes B et C est reconstruit à partir des bords du
-plan et reste à confronter aux planches détaillées. Le couloir en U autour du
-quartier princier reste une coursive du pont 1-A ; les chambrées des gardes sont
-sur le pont 1-B.
+les passagers ordinaires. Les trois passerelles figurent dans le modèle. Le
+couloir en U entoure la pièce anonyme derrière le quartier princier et s'ouvre
+vers celui-ci ; les quartiers des gardes sont sur le pont 1-B.
+
+### Vue schématique du pont 1-A
+
+La carte `/ship` du pont 1-A suit désormais l'ordre de lecture proue→poupe
+fourni pour le plan des chapitres 418–419 : promenade de bâbord, bloc non
+identifié, quartiers royaux, salle de banquet, quartier princier, puis un
+second bloc non identifié ceint par une coursive en U. Les huit pièces des
+Reines sont montrées en deux groupes de quatre, de part et d'autre de la pièce
+centrale du Roi. Les accès A et B sont indiqués de chaque côté du quartier
+princier; C et la référence au Lifeboat Deck du pont 1-C partagent la position
+arrière.
+
+Deux pièces latérales sans nom sont ajoutées de part et d'autre du hall de
+banquet, chacune reliée par un couloir court. Leur présence suit la précision
+de l’utilisateur ; leur fonction reste inconnue.
+
+La géométrie détaillée de la carte et de la visite vient de `blueprint.json` ;
+`tier-1-a-layout.json` ne contient que les annotations du plan. La carte `/ship`
+du pont 1-A est présentée à l'horizontale, comme les ponts 1-B et 1-C. Les
+repères utilisent directement le même repère de coordonnées. Les suites VVIP
+occupent le bloc avant non identifié ; les autres espaces reconstruits
+restent autour du parcours et sont raccordés. Les pièces sans nom restent sans
+fonction inventée. Les dimensions intérieures détaillées des appartements
+conservent leur échelle locale ; seuls leurs accès sur le pont sont repositionnés.

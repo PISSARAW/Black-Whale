@@ -158,7 +158,9 @@
     locationsById: Map<string, Location>,
   ) {
     if (mapState.currentZoomLevel !== 'OVERVIEW') {
-      return { x: position.x / 10, y: position.y / 6 }
+      const x = position.x / 10
+      const y = position.y / 6
+      return { x, y }
     }
     const drawnTier = resolveTierSlug(object.location, locationsById) || position.tierId
     return { x: 50, y: tierOverviewY[drawnTier] ?? 46 }

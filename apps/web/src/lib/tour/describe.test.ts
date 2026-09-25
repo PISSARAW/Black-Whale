@@ -60,8 +60,8 @@ const banquet = ship.spaces.get('tier-1-banquet-hall')!
 describe('extentOf', () => {
   it('reads the long and the short side off the footprint', () => {
     const { long, wide } = extentOf(banquet.footprint)
-    expect(Math.round(long)).toBe(134)
-    expect(Math.round(wide)).toBe(25)
+    expect(Math.round(long)).toBe(51)
+    expect(Math.round(wide)).toBe(28)
   })
 
   it('does not care which way round the polygon is wound', () => {
@@ -106,7 +106,7 @@ describe('describeSpace', () => {
   it('says what a room is, where it is, how big and what is in it', () => {
     const said = describeSpace(ship, banquet, words)
     expect(said.startsWith('Banquet Hall, Tier 1-A, ')).toBe(true)
-    expect(said).toContain('134 × 25 m under 9 m')
+    expect(said).toContain('51 × 28 m under 9 m')
     expect(said).toContain(`${exitsFrom(ship, banquet)} exits`)
     expect(said).toContain('72 table')
     expect(said).toContain('Proscenium Pier')

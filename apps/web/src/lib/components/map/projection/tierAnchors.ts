@@ -27,7 +27,9 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
     'tier-1-banquet-hall': { x: 497.1, y: 300.0 },
     'tier-1-king-living-quarters': { x: 361.4, y: 300.0 },
     'tier-1-vvip-living-quarters': { x: 262.8, y: 300.0, small: true },
-    'tier-1-queens-living-quarters': { x: 361.4, y: 300.0 },
+    // An unnumbered queen-suite position belongs in the shared corridor, not
+    // at the centroid of the split suites (which is the king's exact anchor).
+    'tier-1-queens-living-quarters': { x: 287.1, y: 300.0, small: true },
     'tier-1-royal-residential-sector': { x: 655.7, y: 300.0 },
     'tier-1-queens-living-quarters-room-01': { x: 310.0, y: 200.0, small: true },
     'tier-1-queens-living-quarters-room-02': { x: 344.3, y: 200.0, small: true },
@@ -62,6 +64,7 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   'tier-1-b': {
     'tier-1-b': { x: 690.0, y: 300.0 },
     'tier-1-soldiers-living-quarters': { x: 652.5, y: 385.0 },
+    'tier-1-vvip-recreation-hall': { x: 540.0, y: 374.3 },
     'tier-1-supreme-court': { x: 790.0, y: 410.0 },
     'tier-1-vip-jail': { x: 790.0, y: 320.0, small: true },
     'tier-1-vvip-prison-beyond': { x: 790.0, y: 270.0, small: true },
@@ -69,6 +72,10 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   /** The guest deck of the tier 1 liner, drawn on `tier-1-c.svelte`. */
   'tier-1-c': {
     'tier-1-c': { x: 425.0, y: 385.0 },
+    'tier-1-princes-burial-chamber': { x: 648.6, y: 380.6, small: true },
+    // The two lifeboat blocks straddle the centreline; the shared access
+    // passage is the honest anchor for a presence with no pod named.
+    'tier-1-lifeboats': { x: 845.7, y: 300.0, small: true },
     'tier-1-vip-casino': { x: 360.0, y: 385.0 },
   },
   'tier-2': {

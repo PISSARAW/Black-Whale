@@ -62,6 +62,18 @@ describe('the deck a marker is filed under', () => {
       expect(anchor, `${deck.id} anchors nobody`).toBe(deck.id)
     }
   })
+
+  it('keeps an unnumbered queen-suite marker off the king-quarter anchor', () => {
+    const queens = anchorFor('tier-1', 'tier-1-queens-living-quarters')
+    const king = anchorFor('tier-1', 'tier-1-king-living-quarters')
+
+    expect(queens).not.toBeNull()
+    expect(king).not.toBeNull()
+    expect(queens).not.toMatchObject({ x: king!.x, y: king!.y })
+    // The parent location has no numbered room; its shared passage is the
+    // only position the reconstruction can support without inventing one.
+    expect(queens).toMatchObject({ x: 287.1, y: 300, small: true })
+  })
 })
 
 /**

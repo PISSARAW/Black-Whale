@@ -77,6 +77,21 @@ describe('the distribution', () => {
     expect(queen!.spaceId).not.toMatch(/servants|wc|bathroom|kitchen/)
   })
 
+  it('keeps an unnumbered queen-quarter resident on the queen deck geometry', () => {
+    const [queen] = distribute(ship, [
+      member({
+        characterId: 'koroabde',
+        locations: ['tier-1-queens-living-quarters'],
+        role: 'Spy for Queen Tang Zhao Li Hui Guo Rou',
+      }),
+    ])
+
+    expect(queen).toBeDefined()
+    expect(queen!.tierId).toBe('tier-1')
+    expect(queen!.spaceId).toMatch(/^tier-1-queens-/)
+    expect(queen!.spaceId).not.toContain('king-living-quarters')
+  })
+
   it('does not mistake a prince in a suit for domestic staff', () => {
     const [prince] = distribute(ship, [
       member({

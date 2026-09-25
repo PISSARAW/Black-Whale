@@ -3,10 +3,13 @@
    * The VIP casino, drawn from `data/ship/blueprint.json`.
    *
    * Ch. 405 gives the room three things: the gaming floor, the shopfronts
-   * around it and the mezzanine above. Ch. 419 adds a spiral emergency stair
-   * at the aft edge; its exact footprint is not drawn, so the marker remains
-   * explicitly reconstructed. The blueprint holds exactly those, and
-   * this plan places them by the same coordinates — 17.5 m across by 52.5 m
+   * around it and the mezzanine above. Ch. 420 identifies the large SWAMP BALL
+   * arcade machine and fixes the scene's sequence: Tserriednich crosses the
+   * floor, meets Hisoka at the machine, then reaches the emergency stair named
+   * in ch. 419. The manga gives no top-down coordinates for that scene, so its
+   * route and SWAMP BALL position are shown as reconstructed. The blueprint
+   * holds exactly those, and this plan places them by the same coordinates —
+   * 17.5 m across by 52.5 m
    * fore to aft, a door at either end. The room is drawn turned a quarter
    * turn, the way the queens' block is: fore is to the left, port at the top.
    *
@@ -41,7 +44,8 @@
   ]
   const tableColumns = [-53.5, -44.5]
   const tableRows = Array.from({ length: 9 }, (_, index) => 8 + index * 5.5)
-  const TABLE_RADIUS = 1.1
+  const arcadeCabinet = { width: 1.3, depth: 1.15 }
+  const swampBall = { across: -49, fore: 34 }
   const emergencyStair = { across: -48, fore: 54.25 }
 </script>
 
@@ -69,7 +73,7 @@
         cursor: pointer;
       }
       .gaming-table {
-        fill: rgba(0, 102, 51, 0.55);
+        fill: rgba(0, 102, 51, 0.4);
         stroke: #8b4513;
         stroke-width: 1.5;
         cursor: pointer;
@@ -80,6 +84,30 @@
       .gaming-table:hover {
         fill: rgba(255, 215, 0, 0.35);
         stroke: #ffd700;
+      }
+      .gaming-screen {
+        fill: #9ed8c4;
+        stroke: #8b4513;
+        stroke-width: 1;
+        pointer-events: none;
+      }
+      .swamp-ball rect {
+        fill: rgba(0, 102, 51, 0.68);
+        stroke: #ffd700;
+        stroke-width: 2;
+      }
+      .swamp-ball circle {
+        fill: rgba(255, 255, 240, 0.12);
+        stroke: #fffff0;
+        stroke-width: 1;
+      }
+      .chapter-route {
+        fill: none;
+        stroke: #ffb347;
+        stroke-width: 2;
+        stroke-dasharray: 5 5;
+        opacity: 0.7;
+        pointer-events: none;
       }
       .door {
         stroke: #ffd700;
@@ -117,10 +145,10 @@
   </defs>
 
   <text x="500" y="30" class="label" font-size="22" font-weight="bold" fill="#FFD700">
-    VIP Casino — Tier 1
+    Casino VIP — pont 1
   </text>
   <text x="500" y="50" class="label" font-size="10" opacity="0.55">
-    17.5 m × 52.5 m — ch. 405 / 419: gaming floor, mezzanine and reconstructed emergency spiral stair
+    17,5 m × 52,5 m · schéma reconstitué d’après les chap. 405 / 419 / 420
   </text>
 
   <rect
@@ -130,6 +158,15 @@
     height={(room.across1 - room.across0) * SCALE}
     class="room"
   />
+
+  <!-- Ch. 420 gives the movement sequence, not a measured route or machine location. -->
+  <path
+    class="chapter-route"
+    d={`M ${px(5)} ${py(-49)} L ${px(swampBall.fore)} ${py(swampBall.across)} L ${px(emergencyStair.fore)} ${py(emergencyStair.across)}`}
+  />
+  <text x={px(17)} y={py(-49) - 8} class="sublabel" opacity="0.8">
+    Itinéraire du chap. 420 · indicatif
+  </text>
 
   <!-- The two openings, one at either end of the hall -->
   {#each [room.fore0, room.fore1] as end (end)}
@@ -194,20 +231,51 @@
     />
   {/each}
 
-  <!-- The gaming floor -->
+  <!-- Repeated gaming machines: illustrative positions, not a surveyed count or grid. -->
   {#each tableColumns as across (across)}
     {#each tableRows as fore (fore)}
-      <circle
+      <g
         role="button"
         tabindex="0"
-        aria-label="Inspect map area"
+        aria-label="Borne de jeu, position indicative"
         onkeydown={activate}
-        class="gaming-table"
-        cx={px(fore)}
-        cy={py(across)}
-        r={TABLE_RADIUS * SCALE}
-        onclick={() => handleElementClick(`gaming-table-${fore}-${across}`)}
-      />
+        onclick={() => handleElementClick(`gaming-machine-${fore}-${across}`)}
+      >
+        <rect
+          class="gaming-table"
+          x={px(fore) - (arcadeCabinet.width * SCALE) / 2}
+          y={py(across) - (arcadeCabinet.depth * SCALE) / 2}
+          width={arcadeCabinet.width * SCALE}
+          height={arcadeCabinet.depth * SCALE}
+          rx="3"
+        />
+        <rect
+          class="gaming-screen"
+          x={px(fore) - 7}
+          y={py(across) - 6}
+          width="14"
+          height="9"
+          rx="1"
+        />
+      </g>
     {/each}
   {/each}
+
+  <!-- Ch. 420 names this large arcade machine; the plan cannot locate it exactly. -->
+  <g class="swamp-ball" aria-label="SWAMP BALL, position indicative, chapter 420">
+    <rect
+      x={px(swampBall.fore) - 26}
+      y={py(swampBall.across) - 22}
+      width="52"
+      height="44"
+      rx="4"
+    />
+    <circle cx={px(swampBall.fore)} cy={py(swampBall.across) - 2} r="11" />
+    <text x={px(swampBall.fore)} y={py(swampBall.across) + 3} class="label" font-size="8">
+      SWAMP BALL
+    </text>
+    <text x={px(swampBall.fore)} y={py(swampBall.across) + 34} class="sublabel" font-size="9">
+      emplacement indicatif · ch. 420
+    </text>
+  </g>
 </svg>

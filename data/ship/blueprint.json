@@ -8520,7 +8520,7 @@
       "category": "evacuation",
       "provenance": "inferred",
       "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
-      "ceiling": null,
+      "ceiling": 3.4,
       "envelope": null,
       "footprint": [
         [
@@ -8551,7 +8551,7 @@
       "category": "evacuation",
       "provenance": "inferred",
       "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
-      "ceiling": null,
+      "ceiling": 3.4,
       "envelope": null,
       "footprint": [
         [

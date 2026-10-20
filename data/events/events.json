@@ -1154,9 +1154,18 @@
     "chapter": 386,
     "chapterTitle": "Hypothesis",
     "sequence": 1,
+    "title": "Halkenburg strikes Shikaku",
+    "summary": "Inside room 1009, Halkenburg uses Grimmel the Dissonance to transfer Shikaku's consciousness into Sumidori and Sumidori's into Shikaku, swapping the two bodyguards.",
+    "legacyTitles": []
+  },
+  {
+    "chapter": 386,
+    "chapterTitle": "Hypothesis",
+    "sequence": 2,
     "title": "Shikaku's occupied body dies outside room 1007",
     "summary": "After leaving Halkenburg's room 1009, Shikaku's body, occupied by Sumidori, shoots itself in the royal corridor outside Luzurus's suite.",
-    "legacyTitles": []
+    "legacyTitles": [],
+    "occursAfterTitle": "Halkenburg strikes Shikaku"
   },
   {
     "chapter": 387,

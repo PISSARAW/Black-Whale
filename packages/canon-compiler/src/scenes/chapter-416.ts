@@ -38,6 +38,9 @@ export const CHAPTER_416: ChapterScenes = {
   retiredPresenceIds: [
     ...DETAINED.map((slug) => `ch416-presence-${slug}-room1002`),
     'ch416-presence-moswana-room1002',
+    // He never moved in this scene. The catalogue owns his room-1004 stay
+    // and its end at Route A; a second open record hid his later escape.
+    'ch416-presence-prince-tserriednich-room1004',
   ],
   repair: pullBackDetentionBoundary,
   scenes: [
@@ -80,7 +83,7 @@ export const CHAPTER_416: ChapterScenes = {
         ['prince-tserriednich', 'ACTIVE'],
         ['salkov', 'OBSERVER'],
       ],
-      moves: ['prince-tserriednich', 'salkov', 'danjin'].map((slug) => ({
+      moves: ['salkov', 'danjin'].map((slug) => ({
         slug,
         location: 'tier-1-royal-residential-sector-room-1004',
         id: `ch416-presence-${slug}-room1004`,

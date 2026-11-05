@@ -1586,7 +1586,7 @@
     "title": "Tserriednich tests the limits of Parallel Future",
     "summary": "Before Benjamin enters room 1004, Tserriednich confirms that his Zetsu-and-closed-eyes ability shows the next ten seconds, cannot alter another person and can only move unheld objects without using them to harm anyone. His Guardian Spirit Beast appears to sustain the illusion within a limited area by consuming stored aura.",
     "legacyTitles": [],
-    "occursAfterTitle": "Tserriednich maintains Zetsu through the announcement",
+    "occursAfterTitle": "Martial law reaches Camilla and rooms 1003 through 1006",
     "occurredAt": {
       "basis": "derived",
       "day": 12
@@ -1629,6 +1629,132 @@
     "summary": "With roughly three hours and forty-eight minutes of the illusion's stored aura remaining, Tserriednich disguises himself, chooses the Tier 1 royal Route A and leaves room 1004. Whether Theta briefly perceived him when she turned toward the coffin remains unresolved.",
     "legacyTitles": [],
     "occursAfterTitle": "Tserriednich stages his own sealed-coffin wake",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 419,
+    "chapterTitle": "Implementation",
+    "sequence": 1,
+    "title": "Tserriednich measures the range of Laplace's Devil",
+    "summary": "The ability's field reaches roughly 36 metres; ending Zetsu or crossing its boundary resets the illusion.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12",
+    "occursAfterTitle": "Tserriednich leaves room 1004 through Route A"
+  },
+  {
+    "chapter": 419,
+    "chapterTitle": "Implementation",
+    "sequence": 2,
+    "title": "Tserriednich kills the first four soldiers in the VVIP corridor",
+    "summary": "Tserriednich leaves four real casualties before activating Laplace's Devil against the remaining royal soldiers.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Tserriednich measures the range of Laplace's Devil",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 419,
+    "chapterTitle": "Implementation",
+    "sequence": 3,
+    "title": "Laplace's Devil is named and tested against the royal soldiers",
+    "summary": "Tserriednich tests the illusion against the remaining royal soldiers and names it Laplace's Devil. Soldiers entering its field after activation can see his real movements.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Tserriednich kills the first four soldiers in the VVIP corridor",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 419,
+    "chapterTitle": "Implementation",
+    "sequence": 4,
+    "title": "The royal army locks down Tier 1 and retracts the bridges",
+    "summary": "Unable to explain the incident, the army forbids movement, seals doors and retracts the connecting bridges to the lower tiers.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Laplace's Devil is named and tested against the royal soldiers",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 419,
+    "chapterTitle": "Implementation",
+    "sequence": 5,
+    "title": "Tserriednich enters the VIP casino through the emergency route",
+    "summary": "Tserriednich reroutes through the VVIP entertainment district and reaches the casino's emergency staircase entrance.",
+    "legacyTitles": [],
+    "occursAfterTitle": "The royal army locks down Tier 1 and retracts the bridges",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 420,
+    "chapterTitle": "Encounter",
+    "sequence": 1,
+    "title": "Tserriednich discovers the casino patrols killed without gunfire",
+    "summary": "The Tier 1 casino is empty except for royal patrols killed by sharp blades before they could fire.",
+    "legacyTitles": [],
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12",
+    "occursAfterTitle": "Tserriednich enters the VIP casino through the emergency route"
+  },
+  {
+    "chapter": 420,
+    "chapterTitle": "Encounter",
+    "sequence": 2,
+    "title": "Tserriednich encounters Hisoka in the VIP casino",
+    "summary": "Tserriednich finds Hisoka playing at a machine and activates Laplace's Devil to test himself against him.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Tserriednich discovers the casino patrols killed without gunfire",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 420,
+    "chapterTitle": "Encounter",
+    "sequence": 3,
+    "title": "Hisoka kills the patrols while Tserriednich escapes the predicted death",
+    "summary": "Hisoka kills the arriving royal soldiers and attacks Tserriednich's predicted body. Tserriednich survives by moving outside the prediction while Hisoka perceives a false corpse.",
+    "legacyTitles": [],
+    "occursAfterTitle": "Tserriednich encounters Hisoka in the VIP casino",
+    "occurredAt": {
+      "basis": "derived",
+      "day": 12
+    },
+    "occurredAtLabel": "≈ Day 12"
+  },
+  {
+    "chapter": 420,
+    "chapterTitle": "Encounter",
+    "sequence": 4,
+    "title": "The casino exit is surrounded and Tserriednich plans to recharge",
+    "summary": "The royal army surrounds the liner and blocks the casino exit. Tserriednich plans to end Zetsu in a safe place to recharge, preserving one final use of his ability.",
+    "legacyTitles": ["The casino exit is surrounded and Tserriednich drops Zetsu"],
+    "occursAfterTitle": "Hisoka kills the patrols while Tserriednich escapes the predicted death",
     "occurredAt": {
       "basis": "derived",
       "day": 12

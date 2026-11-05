@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 297
+Fichiers : 298
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1300,6 +1300,10 @@ Fichiers : 297
 ## `packages/canon-compiler/test/presence-choice.spec.ts`
 
 - picking the presence a catalogue position means > has nothing to pick from an empty history
+
+## `packages/canon-compiler/test/recent-chapters.spec.ts`
+
+- the 411–420 publication batch > keeps every released chapter in both the catalogue and the event log
 
 ## `packages/canon-engine/src/timeline/affiliations.test.ts`
 

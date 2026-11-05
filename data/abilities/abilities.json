@@ -229,10 +229,12 @@
       "Yochimu",
       "Foresight Dream",
       "Ephemeral Ten Seconds",
-      "刹那の10秒"
+      "刹那の10秒",
+      "Laplace's Devil",
+      "Laplace's Demon"
     ],
     "category": "specialist",
-    "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, everyone in the ability's range continues to perceive that prediction while he alone can act differently. Chapter 418 confirms that he cannot alter another person and can only move unheld objects without using them to harm anyone. His Guardian Spirit Beast appears to sustain the illusion within a limited area by consuming stored aura; its exact range and the effect on people outside it remain unknown.",
+    "description": "When Tserriednich closes his eyes and activates Zetsu, he instantly receives a vision of the next ten seconds. If he holds Zetsu, everyone in the ability's range continues to perceive that prediction while he alone can act differently. Chapter 418 confirms that he cannot alter another person and can only move unheld objects without using them to harm anyone. His Guardian Spirit Beast appears to sustain the illusion within a limited area by consuming stored aura; chapter 419 names the ability Laplace's Devil (Laplace's Demon in the Viz reading), measures its field at roughly 36 metres and establishes that people outside the field at activation are not deceived. Leaving the field or ending Zetsu resets the illusion.",
     "canonStatus": "canon",
     "moduleKey": "parallel-future"
   },

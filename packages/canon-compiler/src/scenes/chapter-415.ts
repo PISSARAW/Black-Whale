@@ -21,6 +21,8 @@ export const CHAPTER_415: ChapterScenes = {
     'ch415-presence-bill-room1014',
     'ch415-presence-ridge-royal-sector',
     'ch415-presence-kanjidol-royal-sector',
+    // His stay is already bounded by mapTrajectory, including the Route A exit.
+    'ch415-presence-prince-tserriednich-room1004',
   ],
   scenes: [
     {
@@ -66,11 +68,11 @@ export const CHAPTER_415: ChapterScenes = {
           location: 'tier-1-royal-residential-sector-room-1003',
           id: 'ch415-presence-coventoba-room1003',
         },
-        ...['prince-tserriednich', 'salkov'].map((slug) => ({
-          slug,
+        {
+          slug: 'salkov',
           location: 'tier-1-royal-residential-sector-room-1004',
-          id: `ch415-presence-${slug}-room1004`,
-        })),
+          id: 'ch415-presence-salkov-room1004',
+        },
         ...['prince-tubeppa', 'rihan', 'heisen', 'komiya'].map((slug) => ({
           slug,
           location: 'tier-1-royal-residential-sector-room-1005',

@@ -865,6 +865,31 @@
         "chapter": 415,
         "title": "Truth or Falsehood",
         "status": "absent"
+      },
+      {
+        "chapter": 416,
+        "title": "Proclamation",
+        "status": "absent"
+      },
+      {
+        "chapter": 417,
+        "title": "Emergency",
+        "status": "absent"
+      },
+      {
+        "chapter": 418,
+        "title": "Hypothesis",
+        "status": "absent"
+      },
+      {
+        "chapter": 419,
+        "title": "Implementation",
+        "status": "absent"
+      },
+      {
+        "chapter": 420,
+        "title": "Encounter",
+        "status": "appears"
       }
     ],
     "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
@@ -893,6 +918,11 @@
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-393",
         "note": "Accepte de monter au Pont 1 à la demande de Hinrigh"
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-405",
+        "note": "Chapter 420 confirms that the real Hisoka remained in the casino and killed the royal patrols before confronting Tserriednich."
       }
     ]
   },
@@ -3240,7 +3270,7 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "1004",
+      "room": "Casino VIP",
       "status": "actif",
       "role": "prince / Nen training"
     },
@@ -3671,6 +3701,21 @@
         "chapter": 417,
         "title": "Emergency",
         "status": "appears"
+      },
+      {
+        "chapter": 418,
+        "title": "Hypothesis",
+        "status": "appears"
+      },
+      {
+        "chapter": 419,
+        "title": "Implementation",
+        "status": "appears"
+      },
+      {
+        "chapter": 420,
+        "title": "Encounter",
+        "status": "appears"
       }
     ],
     "mapTrajectory": [
@@ -3686,6 +3731,16 @@
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-363",
         "untilChapterId": "ch-418.4"
+      },
+      {
+        "location": "black-whale-unknown",
+        "fromChapterId": "ch-419.1",
+        "note": "Aboard in the royal and VVIP passages; no precise room is asserted before the casino entrance."
+      },
+      {
+        "location": "tier-1-vip-casino",
+        "fromChapterId": "ch-419.5",
+        "note": "Reaches the casino through the emergency route at the end of chapter 419, then encounters Hisoka in chapter 420."
       }
     ],
     "guardianBeast": {

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 298
+Fichiers : 299
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1143,6 +1143,10 @@ Fichiers : 298
 
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
+
+## `apps/web/src/lib/tour/royalPrecinct.test.ts`
+
+- Royal Precinct, compared with chapters 417–420 > keeps all fourteen apartments clear of the unnamed aft block
 
 ## `apps/web/src/lib/tour/sea.test.ts`
 

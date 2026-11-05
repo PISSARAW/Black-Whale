@@ -179,13 +179,14 @@ describe('party walls and apartment envelopes', () => {
   })
 
   // The fourteen numbered doors open onto the prince-sector approaches; those
-  // approaches meet the unnamed passage into the room behind the block.
-  it('opens each numbered apartment onto its approach and the aft passage', () => {
+  // approaches meet the long-side corridors, clear of the unnamed aft block.
+  it('opens each numbered apartment onto its approach and the side corridor', () => {
     const court = (id: string) => ship.spaces.get(id)!.envelope === 'princes-inner-court'
     const fromOutside = [...ship.plans.values()]
       .flatMap((plan) => plan.doorways)
       .filter((door) => court(door.a) !== court(door.b))
       .filter((door) => !door.a.includes('-sector-room-10') && !door.b.includes('-sector-room-10'))
+      .filter((door) => [door.a, door.b].some((id) => id.includes('-approach-10')))
 
     expect(fromOutside).toHaveLength(14)
     for (let n = 1; n <= 14; n++) {
@@ -193,16 +194,18 @@ describe('party walls and apartment envelopes', () => {
         [door.a, door.b].includes(`tier-1-royal-residential-approach-${1000 + n}`),
       )
       expect(numbered, `door n° ${n} is not in the inner bulkhead`).toHaveLength(1)
-      expect([numbered[0].a, numbered[0].b]).toContain('tier-1-aft-blank-approach')
+      expect([numbered[0].a, numbered[0].b]).toContain(
+        `tier-1-princes-front-corridor-${n % 2 ? 'port' : 'starboard'}`,
+      )
     }
   })
 
-  // The U surrounds the unnamed room; Route C leaves from its stern leg.
-  it('places Route C at the aft end of the U corridor', () => {
+  // Chapter 418 puts B astern, with A and C on opposite long sides.
+  it('places Route B at the aft end of the U corridor', () => {
     const aft = ship.spaces.get('tier-1-royal-residential-corridor-aft')!
-    const routeC = ship.spaces.get('tier-1-route-c-landing')!
+    const routeB = ship.spaces.get('tier-1-route-b-landing')!
     expect(aft.footprint.map(([x]) => x)).toEqual([103, 109, 109, 103])
-    expect(routeC.footprint.map(([x]) => x)).toEqual([109, 109, 116, 116])
+    expect(routeB.footprint.map(([x]) => x)).toEqual([109, 109, 116, 116])
   })
 
   it("gives every queen's room one door, onto the block corridor", () => {
@@ -210,7 +213,7 @@ describe('party walls and apartment envelopes', () => {
       const doors = boundaryDoors(`queen-room-0${n}`)
       expect(doors, `queen's room 0${n} has ${doors.length} ways in`).toHaveLength(1)
       const [door] = doors
-      expect([door.a, door.b]).toContain('tier-1-queens-corridor')
+      expect([door.a, door.b]).toContain(`tier-1-queens-corridor-${n <= 4 ? 'port' : 'starboard'}`)
     }
   })
 
@@ -268,12 +271,14 @@ describe('interiors', () => {
 
   it('gives every interior a way in and a way back out', () => {
     for (const tier of interiors) {
-      // The room may also have a stairwell in it, so the door is picked by
-      // what it joins rather than by being the first link that names the room.
+      // Apartments have doors; internal mezzanines have stairs. Check both ends
+      // so a stair to another ship deck cannot count as an interior entrance.
       const link = ship.links.find(
         (candidate) =>
-          candidate.kind === 'door' &&
-          (candidate.from === tier.parentSpaceId || candidate.to === tier.parentSpaceId),
+          (candidate.from === tier.parentSpaceId &&
+            ship.spaces.get(candidate.to)?.tierId === tier.id) ||
+          (candidate.to === tier.parentSpaceId &&
+            ship.spaces.get(candidate.from)?.tierId === tier.id),
       )
       expect(link, `${tier.id} cannot be entered`).toBeDefined()
       // Both ends given, since the two sides have different origins.

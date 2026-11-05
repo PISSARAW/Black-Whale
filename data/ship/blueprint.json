@@ -2238,6 +2238,38 @@
       ],
       "sourceFr": "La planche du bloc des passagers ordinaires : un portail portant SRCL 9041 \u2013 9488, et derri\u00e8re lui une coursive \u00e0 portes de cabines des deux c\u00f4t\u00e9s, avec des soldats post\u00e9s dedans.",
       "parentTierId": null
+    },
+    {
+      "id": "interior-vvip-recreation-gallery",
+      "kind": "interior",
+      "parentTierId": null,
+      "parentSpaceId": "tier-1-vvip-recreation-hall",
+      "locationId": "tier-1-vvip-recreation-hall",
+      "name": "VVIP Recreation Gallery",
+      "nameFr": "Galerie de la salle de loisirs VVIP",
+      "elevation": 128,
+      "ceiling": 6,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 two side staircases reach the upper gallery inside the recreation hall. This is an internal mezzanine, not an independently attested ship deck; dimensions are estimated.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 deux escaliers lat\u00e9raux desservent la galerie sup\u00e9rieure \u00e0 l\u2019int\u00e9rieur de la salle de loisirs. Il s\u2019agit d\u2019une mezzanine int\u00e9rieure, pas d\u2019un pont distinct attest\u00e9 ; dimensions estim\u00e9es.",
+      "hull": [
+        [
+          26,
+          -50
+        ],
+        [
+          56,
+          -50
+        ],
+        [
+          56,
+          -25
+        ],
+        [
+          26,
+          -25
+        ]
+      ]
     }
   ],
   "spaces": [
@@ -3156,19 +3188,19 @@
       "envelope": "apartment-1001",
       "footprint": [
         [
-          19.214,
+          18.232,
           -1.535
         ],
         [
-          19.214,
+          18.232,
           -18.93
         ],
         [
-          26.969,
+          23.1809,
           -18.93
         ],
         [
-          26.969,
+          23.1809,
           -1.535
         ]
       ],
@@ -3459,19 +3491,19 @@
       "envelope": "apartment-1002",
       "footprint": [
         [
-          19.214,
+          18.232,
           18.93
         ],
         [
-          19.214,
+          18.232,
           1.535
         ],
         [
-          26.969,
+          23.1809,
           1.535
         ],
         [
-          26.969,
+          23.1809,
           18.93
         ]
       ],
@@ -3762,19 +3794,19 @@
       "envelope": "apartment-1003",
       "footprint": [
         [
-          29.684,
+          24.9135,
           -1.535
         ],
         [
-          29.684,
+          24.9135,
           -18.93
         ],
         [
-          37.439,
+          29.8624,
           -18.93
         ],
         [
-          37.439,
+          29.8624,
           -1.535
         ]
       ],
@@ -4066,19 +4098,19 @@
       "confirmation": "Attached panel confirms the standard apartment plan shared by rooms 1002, 1004 and 1006.",
       "footprint": [
         [
-          29.684,
+          24.9135,
           18.93
         ],
         [
-          29.684,
+          24.9135,
           1.535
         ],
         [
-          37.439,
+          29.8624,
           1.535
         ],
         [
-          37.439,
+          29.8624,
           18.93
         ]
       ],
@@ -4369,19 +4401,19 @@
       "envelope": "apartment-1005",
       "footprint": [
         [
-          40.153,
+          31.5943,
           -1.535
         ],
         [
-          40.153,
+          31.5943,
           -18.93
         ],
         [
-          47.908,
+          36.5433,
           -18.93
         ],
         [
-          47.908,
+          36.5433,
           -1.535
         ]
       ],
@@ -4673,19 +4705,19 @@
       "confirmation": "Attached panel confirms the standard apartment plan shared by rooms 1002, 1004 and 1006.",
       "footprint": [
         [
-          40.153,
+          31.5943,
           18.93
         ],
         [
-          40.153,
+          31.5943,
           1.535
         ],
         [
-          47.908,
+          36.5433,
           1.535
         ],
         [
-          47.908,
+          36.5433,
           18.93
         ]
       ],
@@ -4976,19 +5008,19 @@
       "envelope": "apartment-1007",
       "footprint": [
         [
-          50.622,
+          38.2752,
           -1.535
         ],
         [
-          50.622,
+          38.2752,
           -18.93
         ],
         [
-          58.378,
+          43.2248,
           -18.93
         ],
         [
-          58.378,
+          43.2248,
           -1.535
         ]
       ],
@@ -5279,19 +5311,19 @@
       "envelope": "apartment-1008",
       "footprint": [
         [
-          50.622,
+          38.2752,
           18.93
         ],
         [
-          50.622,
+          38.2752,
           1.535
         ],
         [
-          58.378,
+          43.2248,
           1.535
         ],
         [
-          58.378,
+          43.2248,
           18.93
         ]
       ],
@@ -5582,19 +5614,19 @@
       "envelope": "apartment-1009",
       "footprint": [
         [
-          61.092,
+          44.9567,
           -1.535
         ],
         [
-          61.092,
+          44.9567,
           -18.93
         ],
         [
-          68.847,
+          49.9057,
           -18.93
         ],
         [
-          68.847,
+          49.9057,
           -1.535
         ]
       ],
@@ -5885,19 +5917,19 @@
       "envelope": "apartment-1010",
       "footprint": [
         [
-          61.092,
+          44.9567,
           18.93
         ],
         [
-          61.092,
+          44.9567,
           1.535
         ],
         [
-          68.847,
+          49.9057,
           1.535
         ],
         [
-          68.847,
+          49.9057,
           18.93
         ]
       ],
@@ -6188,19 +6220,19 @@
       "envelope": "apartment-1011",
       "footprint": [
         [
-          71.561,
+          51.6376,
           -1.535
         ],
         [
-          71.561,
+          51.6376,
           -18.93
         ],
         [
-          79.316,
+          56.5865,
           -18.93
         ],
         [
-          79.316,
+          56.5865,
           -1.535
         ]
       ],
@@ -6491,19 +6523,19 @@
       "envelope": "apartment-1012",
       "footprint": [
         [
-          71.561,
+          51.6376,
           18.93
         ],
         [
-          71.561,
+          51.6376,
           1.535
         ],
         [
-          79.316,
+          56.5865,
           1.535
         ],
         [
-          79.316,
+          56.5865,
           18.93
         ]
       ],
@@ -6794,19 +6826,19 @@
       "envelope": "apartment-1013",
       "footprint": [
         [
-          82.031,
+          58.3191,
           -1.535
         ],
         [
-          82.031,
+          58.3191,
           -18.93
         ],
         [
-          89.786,
+          63.268,
           -18.93
         ],
         [
-          89.786,
+          63.268,
           -1.535
         ]
       ],
@@ -7097,19 +7129,19 @@
       "envelope": "apartment-1014",
       "footprint": [
         [
-          82.031,
+          58.3191,
           18.93
         ],
         [
-          82.031,
+          58.3191,
           1.535
         ],
         [
-          89.786,
+          63.268,
           1.535
         ],
         [
-          89.786,
+          63.268,
           18.93
         ]
       ],
@@ -7431,19 +7463,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          19.214,
+          18.232,
           -18.93
         ],
         [
-          19.214,
+          18.232,
           -22.0
         ],
         [
-          26.969,
+          23.1809,
           -22.0
         ],
         [
-          26.969,
+          23.1809,
           -18.93
         ]
       ],
@@ -7462,19 +7494,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          19.214,
+          18.232,
           22.0
         ],
         [
-          19.214,
+          18.232,
           18.93
         ],
         [
-          26.969,
+          23.1809,
           18.93
         ],
         [
-          26.969,
+          23.1809,
           22.0
         ]
       ],
@@ -7493,19 +7525,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          29.684,
+          24.9135,
           -18.93
         ],
         [
-          29.684,
+          24.9135,
           -22.0
         ],
         [
-          37.439,
+          29.8624,
           -22.0
         ],
         [
-          37.439,
+          29.8624,
           -18.93
         ]
       ],
@@ -7524,19 +7556,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          29.684,
+          24.9135,
           22.0
         ],
         [
-          29.684,
+          24.9135,
           18.93
         ],
         [
-          37.439,
+          29.8624,
           18.93
         ],
         [
-          37.439,
+          29.8624,
           22.0
         ]
       ],
@@ -7555,19 +7587,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          40.153,
+          31.5943,
           -18.93
         ],
         [
-          40.153,
+          31.5943,
           -22.0
         ],
         [
-          47.908,
+          36.5433,
           -22.0
         ],
         [
-          47.908,
+          36.5433,
           -18.93
         ]
       ],
@@ -7586,19 +7618,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          40.153,
+          31.5943,
           22.0
         ],
         [
-          40.153,
+          31.5943,
           18.93
         ],
         [
-          47.908,
+          36.5433,
           18.93
         ],
         [
-          47.908,
+          36.5433,
           22.0
         ]
       ],
@@ -7617,19 +7649,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          50.622,
+          38.2752,
           -18.93
         ],
         [
-          50.622,
+          38.2752,
           -22.0
         ],
         [
-          58.378,
+          43.2248,
           -22.0
         ],
         [
-          58.378,
+          43.2248,
           -18.93
         ]
       ],
@@ -7648,19 +7680,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          50.622,
+          38.2752,
           22.0
         ],
         [
-          50.622,
+          38.2752,
           18.93
         ],
         [
-          58.378,
+          43.2248,
           18.93
         ],
         [
-          58.378,
+          43.2248,
           22.0
         ]
       ],
@@ -7679,19 +7711,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          61.092,
+          44.9567,
           -18.93
         ],
         [
-          61.092,
+          44.9567,
           -22.0
         ],
         [
-          68.847,
+          49.9057,
           -22.0
         ],
         [
-          68.847,
+          49.9057,
           -18.93
         ]
       ],
@@ -7710,19 +7742,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          61.092,
+          44.9567,
           22.0
         ],
         [
-          61.092,
+          44.9567,
           18.93
         ],
         [
-          68.847,
+          49.9057,
           18.93
         ],
         [
-          68.847,
+          49.9057,
           22.0
         ]
       ],
@@ -7741,19 +7773,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          71.561,
+          51.6376,
           -18.93
         ],
         [
-          71.561,
+          51.6376,
           -22.0
         ],
         [
-          79.316,
+          56.5865,
           -22.0
         ],
         [
-          79.316,
+          56.5865,
           -18.93
         ]
       ],
@@ -7772,19 +7804,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          71.561,
+          51.6376,
           22.0
         ],
         [
-          71.561,
+          51.6376,
           18.93
         ],
         [
-          79.316,
+          56.5865,
           18.93
         ],
         [
-          79.316,
+          56.5865,
           22.0
         ]
       ],
@@ -7803,19 +7835,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          82.031,
+          58.3191,
           -18.93
         ],
         [
-          82.031,
+          58.3191,
           -22.0
         ],
         [
-          89.786,
+          63.268,
           -22.0
         ],
         [
-          89.786,
+          63.268,
           -18.93
         ]
       ],
@@ -7834,19 +7866,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          82.031,
+          58.3191,
           22.0
         ],
         [
-          82.031,
+          58.3191,
           18.93
         ],
         [
-          89.786,
+          63.268,
           18.93
         ],
         [
-          89.786,
+          63.268,
           22.0
         ]
       ],
@@ -7873,11 +7905,11 @@
           -22.0
         ],
         [
-          19.214,
+          18.232,
           -22.0
         ],
         [
-          19.214,
+          18.232,
           22.0
         ]
       ],
@@ -7896,19 +7928,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          26.969,
+          23.1809,
           22.0
         ],
         [
-          26.969,
+          23.1809,
           -22.0
         ],
         [
-          29.684,
+          24.9135,
           -22.0
         ],
         [
-          29.684,
+          24.9135,
           22.0
         ]
       ],
@@ -7927,19 +7959,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          37.439,
+          29.8624,
           22.0
         ],
         [
-          37.439,
+          29.8624,
           -22.0
         ],
         [
-          40.153,
+          31.5943,
           -22.0
         ],
         [
-          40.153,
+          31.5943,
           22.0
         ]
       ],
@@ -7958,19 +7990,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          47.908,
+          36.5433,
           22.0
         ],
         [
-          47.908,
+          36.5433,
           -22.0
         ],
         [
-          50.622,
+          38.2752,
           -22.0
         ],
         [
-          50.622,
+          38.2752,
           22.0
         ]
       ],
@@ -7989,19 +8021,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          58.378,
+          43.2248,
           22.0
         ],
         [
-          58.378,
+          43.2248,
           -22.0
         ],
         [
-          61.092,
+          44.9567,
           -22.0
         ],
         [
-          61.092,
+          44.9567,
           22.0
         ]
       ],
@@ -8020,19 +8052,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          68.847,
+          49.9057,
           22.0
         ],
         [
-          68.847,
+          49.9057,
           -22.0
         ],
         [
-          71.561,
+          51.6376,
           -22.0
         ],
         [
-          71.561,
+          51.6376,
           22.0
         ]
       ],
@@ -8051,19 +8083,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          79.316,
+          56.5865,
           22.0
         ],
         [
-          79.316,
+          56.5865,
           -22.0
         ],
         [
-          82.031,
+          58.3191,
           -22.0
         ],
         [
-          82.031,
+          58.3191,
           22.0
         ]
       ],
@@ -8082,19 +8114,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          89.786,
+          63.268,
           22.0
         ],
         [
-          89.786,
+          63.268,
           -22.0
         ],
         [
-          92.5,
+          65.0,
           -22.0
         ],
         [
-          92.5,
+          65.0,
           22.0
         ]
       ],
@@ -8113,19 +8145,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          19.214,
+          18.232,
           1.535
         ],
         [
-          19.214,
+          18.232,
           -1.535
         ],
         [
-          26.969,
+          23.1809,
           -1.535
         ],
         [
-          26.969,
+          23.1809,
           1.535
         ]
       ],
@@ -8144,19 +8176,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          29.684,
+          24.9135,
           1.535
         ],
         [
-          29.684,
+          24.9135,
           -1.535
         ],
         [
-          37.439,
+          29.8624,
           -1.535
         ],
         [
-          37.439,
+          29.8624,
           1.535
         ]
       ],
@@ -8175,19 +8207,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          40.153,
+          31.5943,
           1.535
         ],
         [
-          40.153,
+          31.5943,
           -1.535
         ],
         [
-          47.908,
+          36.5433,
           -1.535
         ],
         [
-          47.908,
+          36.5433,
           1.535
         ]
       ],
@@ -8206,19 +8238,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          50.622,
+          38.2752,
           1.535
         ],
         [
-          50.622,
+          38.2752,
           -1.535
         ],
         [
-          58.378,
+          43.2248,
           -1.535
         ],
         [
-          58.378,
+          43.2248,
           1.535
         ]
       ],
@@ -8237,19 +8269,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          61.092,
+          44.9567,
           1.535
         ],
         [
-          61.092,
+          44.9567,
           -1.535
         ],
         [
-          68.847,
+          49.9057,
           -1.535
         ],
         [
-          68.847,
+          49.9057,
           1.535
         ]
       ],
@@ -8268,19 +8300,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          71.561,
+          51.6376,
           1.535
         ],
         [
-          71.561,
+          51.6376,
           -1.535
         ],
         [
-          79.316,
+          56.5865,
           -1.535
         ],
         [
-          79.316,
+          56.5865,
           1.535
         ]
       ],
@@ -8299,19 +8331,19 @@
       "envelope": "princes-inner-court",
       "footprint": [
         [
-          82.031,
+          58.3191,
           1.535
         ],
         [
-          82.031,
+          58.3191,
           -1.535
         ],
         [
-          89.786,
+          63.268,
           -1.535
         ],
         [
-          89.786,
+          63.268,
           1.535
         ]
       ],
@@ -8617,20 +8649,20 @@
       "envelope": null,
       "footprint": [
         [
-          24.0,
-          -43.0
+          24,
+          -55
         ],
         [
-          58.0,
-          -43.0
+          58,
+          -55
         ],
         [
-          58.0,
-          -38.0
+          58,
+          -50
         ],
         [
-          24.0,
-          -38.0
+          24,
+          -50
         ]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
@@ -13611,8 +13643,8 @@
       "id": "tier-1-main-corridor-starboard",
       "tierId": "tier-1",
       "locationId": null,
-      "name": "Mafia Leaders Stair Passage B",
-      "nameFr": "Passage des chefs de la mafia vers l\u2019escalier B",
+      "name": "Passenger Stair Passage C",
+      "nameFr": "Passage vers l\u2019escalier C des passagers",
       "category": "corridor",
       "provenance": "inferred",
       "source": "Reconstructed to make the deck contiguous; no panel shows it.",
@@ -14988,65 +15020,82 @@
     },
     {
       "id": "tier-1-vvip-recreation-hall",
-      "tierId": "tier-1-b",
+      "tierId": "tier-1",
       "locationId": "tier-1-vvip-recreation-hall",
       "name": "VVIP Recreation Hall",
       "nameFr": "Grande salle de loisirs VVIP",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 419 \u2014 the VVIP recreation hall is shown as a broad double-height room with two side staircases, an upper gallery and a rear passage during the Tier 1 lockdown.",
-      "sourceFr": "Chap. 419 \u2014 la grande salle de loisirs VVIP appara\u00eet comme une vaste pi\u00e8ce \u00e0 double hauteur avec deux escaliers lat\u00e9raux, une galerie sup\u00e9rieure et un passage arri\u00e8re pendant le confinement du pont 1.",
+      "source": "Ch. 419, p. 17 floor plan and p. 18 hall view \u2014 the VVIP recreation hall flanks the prince block on the way to the Tier 2 gangway. Its footprint, headroom and internal mezzanine height are estimated.",
+      "sourceFr": "Chap. 419, plan p. 17 et vue du hall p. 18 \u2014 la salle de loisirs VVIP longe le quartier princier sur le trajet vers la passerelle du niveau 2. Emprise, hauteur sous plafond et hauteur de mezzanine estim\u00e9es.",
       "ceiling": 8,
       "envelope": null,
       "footprint": [
         [
-          0,
-          10
+          26,
+          -50
         ],
         [
-          28,
-          10
+          56,
+          -50
         ],
         [
-          28,
-          42
+          56,
+          -25
         ],
         [
-          0,
-          42
+          26,
+          -25
         ]
       ]
     },
     {
       "id": "tier-1-vvip-recreation-gallery",
-      "tierId": "tier-1-c",
+      "tierId": "interior-vvip-recreation-gallery",
       "locationId": "tier-1-vvip-recreation-hall",
       "name": "VVIP Recreation Hall Gallery",
       "nameFr": "Galerie de la grande salle de loisirs VVIP",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 419 \u2014 the upper bridge/gallery spanning the recreation hall is visible above the central floor and is reached by the side staircases.",
-      "sourceFr": "Chap. 419 \u2014 la passerelle/galerie sup\u00e9rieure qui traverse la salle de loisirs est visible au-dessus du sol central et s'atteint par les escaliers lat\u00e9raux.",
-      "ceiling": 3,
+      "source": "Ch. 419, p. 18 \u2014 two side staircases reach the upper gallery inside the recreation hall. This is an internal mezzanine, not an independently attested ship deck; dimensions are estimated.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 deux escaliers lat\u00e9raux desservent la galerie sup\u00e9rieure \u00e0 l\u2019int\u00e9rieur de la salle de loisirs. Il s\u2019agit d\u2019une mezzanine int\u00e9rieure, pas d\u2019un pont distinct attest\u00e9 ; dimensions estim\u00e9es.",
+      "ceiling": 3.2,
       "envelope": null,
       "footprint": [
         [
-          0,
-          10
+          26,
+          -50
         ],
         [
-          28,
-          10
+          56,
+          -50
         ],
         [
-          28,
-          42
+          56,
+          -25
         ],
         [
-          0,
-          42
+          53,
+          -25
+        ],
+        [
+          53,
+          -47
+        ],
+        [
+          29,
+          -47
+        ],
+        [
+          29,
+          -25
+        ],
+        [
+          26,
+          -25
         ]
-      ]
+      ],
+      "floor": 2.8
     },
     {
       "id": "tier-1-c-port-corridor",
@@ -15736,8 +15785,8 @@
       "ceiling": null,
       "envelope": null,
       "locationId": null,
-      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
-      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "source": "Ch. 418 \u2014 Route B serves soldiers and mafia personnel; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
+      "sourceFr": "Chap. 418 \u2014 la route B dessert les soldats et le personnel des mafias ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
       "id": "tier-2-tier-1-route-b",
       "tierId": "tier-2",
       "name": "Route B",
@@ -15767,12 +15816,12 @@
       "ceiling": null,
       "envelope": null,
       "locationId": null,
-      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
-      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
-      "id": "tier-1-route-b-landing",
+      "source": "Reconstructed starboard flank landing for Route C; the access identity follows the three-route schematic, while the footprint is estimated.",
+      "sourceFr": "Palier reconstruit de la route C, sur le flanc tribord ; l\u2019identit\u00e9 de l\u2019acc\u00e8s suit le sch\u00e9ma des trois routes, son emprise est estim\u00e9e.",
+      "id": "tier-1-route-c-landing",
       "tierId": "tier-1",
-      "name": "Mafia Leaders Passage B",
-      "nameFr": "Passage des chefs de la mafia B",
+      "name": "Route C Landing",
+      "nameFr": "Palier de la route C",
       "footprint": [
         [
           24.0,
@@ -15829,12 +15878,12 @@
       "ceiling": null,
       "envelope": null,
       "locationId": null,
-      "source": "Ch. 418 \u2014 Route C serves general passengers; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
-      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
-      "id": "tier-1-route-c-landing",
+      "source": "Reconstructed stern landing for Route B; the access identity follows the three-route schematic, while the footprint is estimated.",
+      "sourceFr": "Palier reconstruit de la route B, \u00e0 l\u2019arri\u00e8re ; l\u2019identit\u00e9 de l\u2019acc\u00e8s suit le sch\u00e9ma des trois routes, son emprise est estim\u00e9e.",
+      "id": "tier-1-route-b-landing",
       "tierId": "tier-1",
-      "name": "Passenger Passage C",
-      "nameFr": "Passage des passagers C",
+      "name": "Route B Landing",
+      "nameFr": "Palier de la route B",
       "footprint": [
         [
           109.0,
@@ -15868,20 +15917,20 @@
       "envelope": null,
       "footprint": [
         [
-          24.0,
-          -62.0
+          24,
+          -68
         ],
         [
-          58.0,
-          -62.0
+          58,
+          -68
         ],
         [
-          58.0,
-          -43.0
+          58,
+          -55
         ],
         [
-          24.0,
-          -43.0
+          24,
+          -55
         ]
       ]
     },
@@ -15961,19 +16010,19 @@
       "envelope": null,
       "footprint": [
         [
-          -5,
+          10.5,
           -36
         ],
         [
-          3,
+          13,
           -36
         ],
         [
-          3,
+          13,
           -30
         ],
         [
-          -5,
+          10.5,
           -30
         ]
       ]
@@ -16039,6 +16088,192 @@
           36
         ]
       ]
+    },
+    {
+      "id": "tier-1-princes-front-corridor-port",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Princes\u2019 Port Corridor",
+      "nameFr": "Couloir b\u00e2bord des princes",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed continuous passage along the numbered prince entrances; width is estimated.",
+      "sourceFr": "Passage continu reconstruit le long des entr\u00e9es num\u00e9rot\u00e9es des princes ; largeur estim\u00e9e.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          16.5,
+          -25
+        ],
+        [
+          65,
+          -25
+        ],
+        [
+          65,
+          -22
+        ],
+        [
+          16.5,
+          -22
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-princes-front-corridor-starboard",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Princes\u2019 Starboard Corridor",
+      "nameFr": "Couloir tribord des princes",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed continuous passage along the numbered prince entrances; width is estimated.",
+      "sourceFr": "Passage continu reconstruit le long des entr\u00e9es num\u00e9rot\u00e9es des princes ; largeur estim\u00e9e.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          16.5,
+          22
+        ],
+        [
+          65,
+          22
+        ],
+        [
+          65,
+          25
+        ],
+        [
+          16.5,
+          25
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-princes-starboard-connection",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Royal Passage",
+      "nameFr": "Passage royal",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed connection between the prince entrances and the general-passenger access.",
+      "sourceFr": "Liaison reconstruite entre les entr\u00e9es des princes et l\u2019acc\u00e8s des passagers ordinaires.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          24,
+          25
+        ],
+        [
+          58,
+          25
+        ],
+        [
+          58,
+          38
+        ],
+        [
+          24,
+          38
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-corridor-port",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters",
+      "name": "Queens\u2019 Port Corridor",
+      "nameFr": "Couloir des reines \u2014 b\u00e2bord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed corridor serving the four queen suites on this side of the king\u2019s room; width estimated.",
+      "sourceFr": "Couloir reconstruit desservant les quatre suites des reines de ce c\u00f4t\u00e9 de la salle du roi ; largeur estim\u00e9e.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          -72,
+          -20
+        ],
+        [
+          -25,
+          -20
+        ],
+        [
+          -25,
+          -16
+        ],
+        [
+          -72,
+          -16
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-queens-corridor-starboard",
+      "tierId": "tier-1",
+      "locationId": "tier-1-queens-living-quarters",
+      "name": "Queens\u2019 Starboard Corridor",
+      "nameFr": "Couloir des reines \u2014 tribord",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed corridor serving the four queen suites on this side of the king\u2019s room; width estimated.",
+      "sourceFr": "Couloir reconstruit desservant les quatre suites des reines de ce c\u00f4t\u00e9 de la salle du roi ; largeur estim\u00e9e.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          -72,
+          16
+        ],
+        [
+          -25,
+          16
+        ],
+        [
+          -25,
+          20
+        ],
+        [
+          -72,
+          20
+        ]
+      ]
+    },
+    {
+      "id": "tier-1-forward-connecting-walkway",
+      "tierId": "tier-1",
+      "locationId": null,
+      "name": "Forward Connecting Walkway",
+      "nameFr": "Passage de liaison avant",
+      "category": "corridor",
+      "provenance": "inferred",
+      "source": "Reconstructed short connection across the unmodelled forward floor, keeping the promenade reachable without opening a private suite.",
+      "sourceFr": "Courte liaison reconstruite sur le plancher avant non document\u00e9, pour atteindre la promenade sans traverser une suite priv\u00e9e.",
+      "ceiling": null,
+      "envelope": null,
+      "footprint": [
+        [
+          -103.5,
+          -40
+        ],
+        [
+          -90,
+          -40
+        ],
+        [
+          -90,
+          -37
+        ],
+        [
+          -103.5,
+          -37
+        ]
+      ]
     }
   ],
   "links": [
@@ -16047,8 +16282,8 @@
       "to": "tier-1-royal-residential-sector-room-1001-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        -31.408
+        20.706,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16063,8 +16298,8 @@
       "to": "tier-1-royal-residential-sector-room-1002-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        -31.408
+        20.706,
+        18.92
       ],
       "atTo": [
         0,
@@ -16079,8 +16314,8 @@
       "to": "tier-1-royal-residential-sector-room-1003-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        -20.939
+        27.388,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16095,8 +16330,8 @@
       "to": "tier-1-royal-residential-sector-room-1004-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        -20.939
+        27.388,
+        18.92
       ],
       "atTo": [
         0,
@@ -16111,8 +16346,8 @@
       "to": "tier-1-royal-residential-sector-room-1005-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        -10.469
+        34.069,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16127,8 +16362,8 @@
       "to": "tier-1-royal-residential-sector-room-1006-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        -10.469
+        34.069,
+        18.92
       ],
       "atTo": [
         0,
@@ -16143,8 +16378,8 @@
       "to": "tier-1-royal-residential-sector-room-1007-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        0.0
+        40.75,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16159,8 +16394,8 @@
       "to": "tier-1-royal-residential-sector-room-1008-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        0.0
+        40.75,
+        18.92
       ],
       "atTo": [
         0,
@@ -16175,8 +16410,8 @@
       "to": "tier-1-royal-residential-sector-room-1009-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        10.469
+        47.431,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16191,8 +16426,8 @@
       "to": "tier-1-royal-residential-sector-room-1010-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        10.469
+        47.431,
+        18.92
       ],
       "atTo": [
         0,
@@ -16207,8 +16442,8 @@
       "to": "tier-1-royal-residential-sector-room-1011-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        20.939
+        54.112,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16223,8 +16458,8 @@
       "to": "tier-1-royal-residential-sector-room-1012-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        20.939
+        54.112,
+        18.92
       ],
       "atTo": [
         0,
@@ -16239,8 +16474,8 @@
       "to": "tier-1-royal-residential-sector-room-1013-entrance",
       "kind": "door",
       "at": [
-        53.233,
-        31.408
+        60.794,
+        -18.92
       ],
       "atTo": [
         0,
@@ -16255,8 +16490,8 @@
       "to": "tier-1-royal-residential-sector-room-1014-entrance",
       "kind": "door",
       "at": [
-        32.767,
-        31.408
+        60.794,
+        18.92
       ],
       "atTo": [
         0,
@@ -16421,7 +16656,7 @@
       ],
       "atTo": [
         41,
-        -52.5
+        -61.5
       ],
       "provenance": "plan",
       "source": "Ch. 418 \u2014 Route A is reserved for the royal family and V5 VIPs; ch. 419 shows the Tier 1 gangway can retract during lockdown.",
@@ -16668,32 +16903,16 @@
       "sourceFr": "Chap. 419 \u2014 l'escalier en colima\u00e7on de secours du casino est le passage contr\u00f4l\u00e9 de la salle de divertissements vers le niveau inf\u00e9rieur ; le palier inf\u00e9rieur est reconstruit juste en dessous."
     },
     {
-      "from": "tier-1-starboard-corridor",
-      "to": "tier-1-vvip-recreation-hall",
-      "kind": "door",
-      "at": [
-        116,
-        0
-      ],
-      "atTo": [
-        28,
-        26
-      ],
-      "provenance": "panel",
-      "source": "Ch. 419 \u2014 the recreation hall opens onto the controlled Tier 1 passage shown around the VVIP area.",
-      "sourceFr": "Chap. 419 \u2014 la salle de loisirs s'ouvre sur le passage contr\u00f4l\u00e9 du pont 1 montr\u00e9 autour de la zone VVIP."
-    },
-    {
       "from": "tier-1-vvip-recreation-hall",
       "to": "tier-1-vvip-recreation-gallery",
       "kind": "stair",
       "at": [
-        5,
-        26
+        30,
+        -27
       ],
       "atTo": [
-        5,
-        26
+        27.5,
+        -33.4
       ],
       "provenance": "panel",
       "source": "Ch. 419 \u2014 the left-hand staircase connects the recreation hall floor to its upper gallery; the matching right-hand stair is represented by the same walkable level change.",
@@ -16704,12 +16923,12 @@
       "to": "tier-1-vvip-recreation-gallery",
       "kind": "stair",
       "at": [
-        23,
-        26
+        52,
+        -27
       ],
       "atTo": [
-        23,
-        26
+        54.5,
+        -33.4
       ],
       "provenance": "panel",
       "source": "Ch. 419 \u2014 the right-hand staircase mirrors the left-hand stair and provides the second walkable route to the upper gallery.",
@@ -16829,12 +17048,12 @@
         -20
       ],
       "atTo": [
-        41,
-        52.5
+        112.5,
+        0
       ],
       "provenance": "inferred",
-      "source": "Ch. 418 \u2014 Route B serves mafia leaders; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
-      "sourceFr": "Chap. 418 \u2014 la route B dessert chefs de la mafia ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
+      "source": "Ch. 418 \u2014 Route B serves soldiers and mafia personnel; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
+      "sourceFr": "Chap. 418 \u2014 la route B dessert les soldats et le personnel des mafias ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
     },
     {
       "from": "tier-2-tier-1-route-c",
@@ -16846,47 +17065,15 @@
         52.5
       ],
       "atTo": [
-        112.5,
-        0
+        41,
+        52.5
       ],
       "provenance": "inferred",
       "source": "Ch. 418 \u2014 Route C serves general passengers; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
       "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
     },
     {
-      "from": "tier-1-route-a-landing",
-      "to": "tier-1-main-corridor",
-      "kind": "door",
-      "at": [
-        41,
-        -43
-      ],
-      "atTo": [
-        41,
-        -43
-      ],
-      "provenance": "inferred",
-      "source": "Reconstructed connection from the VIP Route A landing to its stair passage.",
-      "sourceFr": "Liaison reconstruite entre le palier VIP de la route A et son passage vers l\u2019escalier."
-    },
-    {
       "from": "tier-1-route-b-landing",
-      "to": "tier-1-main-corridor-starboard",
-      "kind": "door",
-      "at": [
-        41,
-        43
-      ],
-      "atTo": [
-        41,
-        43
-      ],
-      "provenance": "inferred",
-      "source": "Reconstructed connection from the mafia leaders\u2019 Route B landing to its stair passage.",
-      "sourceFr": "Liaison reconstruite entre le palier de la route B des chefs de la mafia et son passage vers l\u2019escalier."
-    },
-    {
-      "from": "tier-1-route-c-landing",
       "to": "tier-1-lifeboats-port",
       "kind": "stair",
       "at": [
@@ -16898,11 +17085,11 @@
         -17.5
       ],
       "provenance": "inferred",
-      "source": "Reconstructed stair from Route C to the port half of the Lifeboat Deck, Tier 1-C.",
-      "sourceFr": "Escalier reconstruit depuis la route C vers la partie b\u00e2bord du pont des canots, pont 1-C."
+      "source": "Reconstructed connection from the aft Route B landing to the lifeboat deck.",
+      "sourceFr": "Liaison reconstruite entre le palier arri\u00e8re B et le pont des canots."
     },
     {
-      "from": "tier-1-route-c-landing",
+      "from": "tier-1-route-b-landing",
       "to": "tier-1-lifeboats-starboard",
       "kind": "stair",
       "at": [
@@ -16914,17 +17101,11 @@
         17.5
       ],
       "provenance": "inferred",
-      "source": "Reconstructed stair from Route C to the starboard half of the Lifeboat Deck, Tier 1-C.",
-      "sourceFr": "Escalier reconstruit depuis la route C vers la partie tribord du pont des canots, pont 1-C."
+      "source": "Reconstructed connection from the aft Route B landing to the lifeboat deck.",
+      "sourceFr": "Liaison reconstruite entre le palier arri\u00e8re B et le pont des canots."
     }
   ],
   "seals": [
-    {
-      "a": "tier-1-banquet-hall",
-      "b": "tier-1-port-promenade",
-      "reason": "The stage stands against this wall for the whole depth of the hall; the hall is entered from its vestibule.",
-      "reasonFr": "La sc\u00e8ne occupe ce mur sur toute la profondeur de la salle ; on entre dans la salle par son vestibule."
-    },
     {
       "a": "tier-1-royal-residential-sector-room-1001-servants",
       "b": "tier-1-royal-residential-sector-room-1001-entrance",
@@ -17274,12 +17455,6 @@
       "reasonFr": "Le plan de la salle dessine ici un mur plein."
     },
     {
-      "a": "tier-1-royal-residential-corridor-aft",
-      "b": "tier-1-aft-promenade",
-      "reason": "Ch. 363 \u2014 the sector is closed by a wall at its aft end: the guards\u2019 round stops there, and the guarded gate forward is the only way in.",
-      "reasonFr": "Chap. 363 \u2014 le secteur est ferm\u00e9 par un mur \u00e0 son extr\u00e9mit\u00e9 arri\u00e8re : le chemin de ronde s\u2019y arr\u00eate, et le poste gard\u00e9 de l\u2019avant est la seule entr\u00e9e."
-    },
-    {
       "a": "tier-1-royal-residential-sector-room-1001-servants-wc",
       "b": "tier-1-royal-residential-sector-room-1001-entrance",
       "reason": "The apartment plan draws a solid wall here.",
@@ -17362,18 +17537,6 @@
       "b": "tier-1-royal-residential-sector-room-1014-entrance",
       "reason": "The apartment plan draws a solid wall here.",
       "reasonFr": "Le plan de l'appartement dessine ici un mur plein."
-    },
-    {
-      "a": "tier-1-banquet-hall",
-      "b": "tier-1-main-corridor",
-      "reason": "The hall is entered from its vestibule, not directly from the corridor.",
-      "reasonFr": "On entre dans la salle par son vestibule, et non directement par le couloir."
-    },
-    {
-      "a": "tier-1-banquet-hall",
-      "b": "tier-1-main-corridor-starboard",
-      "reason": "The hall is entered from its vestibule.",
-      "reasonFr": "On entre dans la salle par son vestibule."
     }
   ],
   "doors": [
@@ -17555,10 +17718,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-01",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-port",
       "at": [
-        -61.0,
-        -35.011
+        -66.5,
+        -20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17566,10 +17729,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-02",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-port",
       "at": [
-        -60.0,
-        -35.011
+        -54.5,
+        -20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17577,10 +17740,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-03",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-port",
       "at": [
-        -37.0,
-        -35.0
+        -42.5,
+        -20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17588,10 +17751,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-04",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-port",
       "at": [
-        -36.0,
-        -35.0
+        -30.5,
+        -20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17599,10 +17762,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-05",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-starboard",
       "at": [
-        -61.0,
-        34.989
+        -66.5,
+        20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17610,10 +17773,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-06",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-starboard",
       "at": [
-        -60.0,
-        34.989
+        -54.5,
+        20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17621,10 +17784,10 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-07",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-starboard",
       "at": [
-        -37.0,
-        35.0
+        -42.5,
+        20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
@@ -17632,21 +17795,21 @@
     },
     {
       "a": "tier-1-queens-living-quarters-room-08",
-      "b": "tier-1-queens-corridor",
+      "b": "tier-1-queens-corridor-starboard",
       "at": [
-        -36.0,
-        35.0
+        -30.5,
+        20
       ],
       "width": 2,
       "reason": "The room opens onto the block corridor alone.",
       "reasonFr": "La chambre n\u2019ouvre que sur le couloir du bloc."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1001",
       "at": [
-        66.0,
-        31.954
+        20.706,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 1 in the inner bulkhead: the one way into apartment 1001 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17656,19 +17819,19 @@
       "a": "tier-1-royal-residential-approach-1001",
       "b": "tier-1-royal-residential-sector-room-1001",
       "at": [
-        44.535,
-        -31.408
+        20.706,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 1.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 1."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1002",
       "at": [
-        103.0,
-        -41.046
+        20.706,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 2 in the inner bulkhead: the one way into apartment 1002 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17678,19 +17841,19 @@
       "a": "tier-1-royal-residential-approach-1002",
       "b": "tier-1-royal-residential-sector-room-1002",
       "at": [
-        41.465,
-        -31.408
+        20.706,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 2.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 2."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1003",
       "at": [
-        66.0,
-        33.469
+        27.388,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 3 in the inner bulkhead: the one way into apartment 1003 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17700,19 +17863,19 @@
       "a": "tier-1-royal-residential-approach-1003",
       "b": "tier-1-royal-residential-sector-room-1003",
       "at": [
-        44.535,
-        -20.939
+        27.388,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 3.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 3."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1004",
       "at": [
-        103.0,
-        -39.531
+        27.388,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 4 in the inner bulkhead: the one way into apartment 1004 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17722,19 +17885,19 @@
       "a": "tier-1-royal-residential-approach-1004",
       "b": "tier-1-royal-residential-sector-room-1004",
       "at": [
-        41.465,
-        -20.939
+        27.388,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 4.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 4."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1005",
       "at": [
-        66.0,
-        34.985
+        34.069,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 5 in the inner bulkhead: the one way into apartment 1005 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17744,19 +17907,19 @@
       "a": "tier-1-royal-residential-approach-1005",
       "b": "tier-1-royal-residential-sector-room-1005",
       "at": [
-        44.535,
-        -10.469
+        34.069,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 5.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 5."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1006",
       "at": [
-        103.0,
-        -38.015
+        34.069,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 6 in the inner bulkhead: the one way into apartment 1006 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17766,19 +17929,19 @@
       "a": "tier-1-royal-residential-approach-1006",
       "b": "tier-1-royal-residential-sector-room-1006",
       "at": [
-        41.465,
-        -10.469
+        34.069,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 6.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 6."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1007",
       "at": [
-        66.0,
-        36.5
+        40.75,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 7 in the inner bulkhead: the one way into apartment 1007 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17788,19 +17951,19 @@
       "a": "tier-1-royal-residential-approach-1007",
       "b": "tier-1-royal-residential-sector-room-1007",
       "at": [
-        44.535,
-        0.0
+        40.75,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 7.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 7."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1008",
       "at": [
-        103.0,
-        -36.5
+        40.75,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 8 in the inner bulkhead: the one way into apartment 1008 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17810,19 +17973,19 @@
       "a": "tier-1-royal-residential-approach-1008",
       "b": "tier-1-royal-residential-sector-room-1008",
       "at": [
-        41.465,
-        0.0
+        40.75,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 8.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 8."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1009",
       "at": [
-        66.0,
-        38.015
+        47.431,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 9 in the inner bulkhead: the one way into apartment 1009 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17832,19 +17995,19 @@
       "a": "tier-1-royal-residential-approach-1009",
       "b": "tier-1-royal-residential-sector-room-1009",
       "at": [
-        44.535,
-        10.469
+        47.431,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 9.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 9."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1010",
       "at": [
-        103.0,
-        -34.985
+        47.431,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 10 in the inner bulkhead: the one way into apartment 1010 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17854,19 +18017,19 @@
       "a": "tier-1-royal-residential-approach-1010",
       "b": "tier-1-royal-residential-sector-room-1010",
       "at": [
-        41.465,
-        10.469
+        47.431,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 10.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 10."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1011",
       "at": [
-        66.0,
-        39.531
+        54.112,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 11 in the inner bulkhead: the one way into apartment 1011 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17876,19 +18039,19 @@
       "a": "tier-1-royal-residential-approach-1011",
       "b": "tier-1-royal-residential-sector-room-1011",
       "at": [
-        44.535,
-        20.939
+        54.112,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 11.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 11."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1012",
       "at": [
-        103.0,
-        -33.469
+        54.112,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 12 in the inner bulkhead: the one way into apartment 1012 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17898,19 +18061,19 @@
       "a": "tier-1-royal-residential-approach-1012",
       "b": "tier-1-royal-residential-sector-room-1012",
       "at": [
-        41.465,
-        20.939
+        54.112,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 12.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 12."
     },
     {
-      "a": "tier-1-royal-residential-corridor-starboard",
+      "a": "tier-1-princes-front-corridor-port",
       "b": "tier-1-royal-residential-approach-1013",
       "at": [
-        66.0,
-        41.046
+        60.794,
+        -22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 13 in the inner bulkhead: the one way into apartment 1013 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17920,19 +18083,19 @@
       "a": "tier-1-royal-residential-approach-1013",
       "b": "tier-1-royal-residential-sector-room-1013",
       "at": [
-        44.535,
-        31.408
+        60.794,
+        -18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 13.",
       "reasonFr": "Chap. 363 \u2014 l\u2019unique porte de l\u2019appartement, sur la face qui regarde droit la porte num\u00e9rot\u00e9e n\u00b0 13."
     },
     {
-      "a": "tier-1-royal-residential-corridor-port",
+      "a": "tier-1-princes-front-corridor-starboard",
       "b": "tier-1-royal-residential-approach-1014",
       "at": [
-        103.0,
-        -31.954
+        60.794,
+        22
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 door n\u00b0 14 in the inner bulkhead: the one way into apartment 1014 and into nothing else. The apartment\u2019s own door faces it across the approach.",
@@ -17942,8 +18105,8 @@
       "a": "tier-1-royal-residential-approach-1014",
       "b": "tier-1-royal-residential-sector-room-1014",
       "at": [
-        41.465,
-        31.408
+        60.794,
+        18.93
       ],
       "width": 2,
       "reason": "Ch. 363 \u2014 the apartment\u2019s single door, on the face that looks straight at numbered door n\u00b0 14.",
@@ -19468,17 +19631,6 @@
       "reasonFr": "Le sol descend d'une marche ici et aucun mur n'y est dessin\u00e9 : l'ouverture fait toute la profondeur de la halle, et ce qui s'y tient est la marche elle-m\u00eame."
     },
     {
-      "a": "tier-1-main-corridor",
-      "b": "tier-1-banquet-hall-vestibule",
-      "at": [
-        41.347,
-        -43.0
-      ],
-      "width": 3,
-      "reason": "Outer doors of the banquet hall vestibule.",
-      "reasonFr": "Portes ext\u00e9rieures du sas de la salle des f\u00eates."
-    },
-    {
       "a": "tier-1-banquet-hall-vestibule",
       "b": "tier-1-banquet-hall",
       "at": [
@@ -19532,6 +19684,28 @@
       "width": 8,
       "reason": "The starboard-side corridor opens into the unnamed annex room.",
       "reasonFr": "Le couloir tribord d\u00e9bouche dans la pi\u00e8ce annexe sans nom."
+    },
+    {
+      "a": "tier-1-princes-quarters-gate",
+      "b": "tier-1-royal-residential-cross-gap-1",
+      "at": [
+        16.5,
+        0
+      ],
+      "width": 2,
+      "reason": "Guarded entrance from the banquet side into the prince court.",
+      "reasonFr": "Entr\u00e9e gard\u00e9e depuis le banquet vers la cour des princes."
+    },
+    {
+      "a": "tier-1-royal-residential-cross-gap-8",
+      "b": "tier-1-aft-blank-approach",
+      "at": [
+        65,
+        0
+      ],
+      "width": 2,
+      "reason": "Passage from the prince court to the unnamed aft block.",
+      "reasonFr": "Passage de la cour des princes vers le bloc arri\u00e8re sans nom."
     }
   ],
   "structures": [
@@ -21324,8 +21498,8 @@
       "name": "Gate Desk",
       "nameFr": "Comptoir du poste",
       "at": [
-        17.571,
-        0.0
+        14.75,
+        -4
       ],
       "size": [
         0.98,
@@ -39627,10 +39801,10 @@
       "nameFr": "Galerie lat\u00e9rale (mur avant, 2)",
       "at": [
         11.8,
-        -4.238
+        -10.785
       ],
       "size": [
-        20.667,
+        7.57,
         2.286
       ],
       "rotation": 90.0,
@@ -39714,14 +39888,14 @@
       "name": "Service Run (spine, 1)",
       "nameFr": "R\u00e9seau de service (collectrice, 1)",
       "at": [
-        43.0,
-        -31.408
+        20.706,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.7509,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39736,14 +39910,14 @@
       "name": "Service Run (spine, 2)",
       "nameFr": "R\u00e9seau de service (collectrice, 2)",
       "at": [
-        43.0,
-        -20.939
+        27.388,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.7509,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39758,14 +39932,14 @@
       "name": "Service Run (spine, 3)",
       "nameFr": "R\u00e9seau de service (collectrice, 3)",
       "at": [
-        43.0,
-        -10.469
+        34.069,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.751,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39780,14 +39954,14 @@
       "name": "Service Run (spine, 4)",
       "nameFr": "R\u00e9seau de service (collectrice, 4)",
       "at": [
-        43.0,
+        40.75,
         0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.7516,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39802,14 +39976,14 @@
       "name": "Service Run (spine, 5)",
       "nameFr": "R\u00e9seau de service (collectrice, 5)",
       "at": [
-        43.0,
-        10.469
+        47.431,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.751,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39824,14 +39998,14 @@
       "name": "Service Run (spine, 6)",
       "nameFr": "R\u00e9seau de service (collectrice, 6)",
       "at": [
-        43.0,
-        20.939
+        54.112,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.7509,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39846,14 +40020,14 @@
       "name": "Service Run (spine, 7)",
       "nameFr": "R\u00e9seau de service (collectrice, 7)",
       "at": [
-        43.0,
-        31.408
+        60.794,
+        0.0
       ],
       "size": [
-        0.716,
-        7.445
+        4.7509,
+        0.716
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39868,14 +40042,14 @@
       "name": "Service Run (branch, 1)",
       "nameFr": "R\u00e9seau de service (antenne, 1)",
       "at": [
-        43.0,
-        -36.635
+        17.366,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3856,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39890,14 +40064,14 @@
       "name": "Service Run (branch, 2)",
       "nameFr": "R\u00e9seau de service (antenne, 2)",
       "at": [
-        43.0,
-        -26.181
+        24.047,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3861,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39912,14 +40086,14 @@
       "name": "Service Run (branch, 3)",
       "nameFr": "R\u00e9seau de service (antenne, 3)",
       "at": [
-        43.0,
-        -15.696
+        30.728,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3855,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39934,14 +40108,14 @@
       "name": "Service Run (branch, 4)",
       "nameFr": "R\u00e9seau de service (antenne, 4)",
       "at": [
-        43.0,
-        -5.242
+        37.409,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3855,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39956,14 +40130,14 @@
       "name": "Service Run (branch, 5)",
       "nameFr": "R\u00e9seau de service (antenne, 5)",
       "at": [
-        43.0,
-        5.242
+        44.091,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3855,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -39978,14 +40152,14 @@
       "name": "Service Run (branch, 6)",
       "nameFr": "R\u00e9seau de service (antenne, 6)",
       "at": [
-        43.0,
-        15.696
+        50.772,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3855,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40000,14 +40174,14 @@
       "name": "Service Run (branch, 7)",
       "nameFr": "R\u00e9seau de service (antenne, 7)",
       "at": [
-        43.0,
-        26.181
+        57.453,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3861,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40022,14 +40196,14 @@
       "name": "Service Run (branch, 8)",
       "nameFr": "R\u00e9seau de service (antenne, 8)",
       "at": [
-        43.0,
-        36.635
+        64.134,
+        0.0
       ],
       "size": [
-        43.795,
-        1.086
+        1.3856,
+        43.795
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40044,14 +40218,14 @@
       "name": "Service Run (stub, 1001)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1001)",
       "at": [
-        63.465,
-        -31.408
+        20.706,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40066,14 +40240,14 @@
       "name": "Service Run (stub, 1002)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1002)",
       "at": [
-        22.535,
-        -31.408
+        20.706,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40088,14 +40262,14 @@
       "name": "Service Run (stub, 1003)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1003)",
       "at": [
-        63.465,
-        -20.939
+        27.388,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40110,14 +40284,14 @@
       "name": "Service Run (stub, 1004)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1004)",
       "at": [
-        22.535,
-        -20.939
+        27.388,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40132,14 +40306,14 @@
       "name": "Service Run (stub, 1005)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1005)",
       "at": [
-        63.465,
-        -10.469
+        34.069,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40154,14 +40328,14 @@
       "name": "Service Run (stub, 1006)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1006)",
       "at": [
-        22.535,
-        -10.469
+        34.069,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40176,14 +40350,14 @@
       "name": "Service Run (stub, 1007)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1007)",
       "at": [
-        63.465,
-        0.0
+        40.75,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40198,14 +40372,14 @@
       "name": "Service Run (stub, 1008)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1008)",
       "at": [
-        22.535,
-        0.0
+        40.75,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40220,14 +40394,14 @@
       "name": "Service Run (stub, 1009)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1009)",
       "at": [
-        63.465,
-        10.469
+        47.431,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40242,14 +40416,14 @@
       "name": "Service Run (stub, 1010)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1010)",
       "at": [
-        22.535,
-        10.469
+        47.431,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40264,14 +40438,14 @@
       "name": "Service Run (stub, 1011)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1011)",
       "at": [
-        63.465,
-        20.939
+        54.112,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40286,14 +40460,14 @@
       "name": "Service Run (stub, 1012)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1012)",
       "at": [
-        22.535,
-        20.939
+        54.112,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40308,14 +40482,14 @@
       "name": "Service Run (stub, 1013)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1013)",
       "at": [
-        63.465,
-        31.408
+        60.794,
+        -20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -40330,14 +40504,14 @@
       "name": "Service Run (stub, 1014)",
       "nameFr": "R\u00e9seau de service (d\u00e9rivation, 1014)",
       "at": [
-        22.535,
-        31.408
+        60.794,
+        20.465
       ],
       "size": [
-        2.865,
-        1.086
+        1.086,
+        2.865
       ],
-      "rotation": 0.0,
+      "rotation": 0,
       "base": 3.1,
       "height": 0.7,
       "sides": null,
@@ -42613,6 +42787,710 @@
       "provenance": "panel",
       "source": "Ch. 380",
       "sourceFr": "Chap. 380"
+    },
+    {
+      "id": "tier-1-vip-casino-swamp-ball",
+      "spaceId": "tier-1-vip-casino",
+      "kind": "counter",
+      "name": "SWAMP BALL",
+      "nameFr": "SWAMP BALL",
+      "at": [
+        -49,
+        34
+      ],
+      "size": [
+        3.2,
+        4.2
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 3.6,
+      "sides": 8,
+      "provenance": "panel",
+      "source": "Ch. 420 \u2014 Hisoka plays the large SWAMP BALL arcade cabinet. Its schematic position matches the local casino plan; dimensions and placement are estimated.",
+      "sourceFr": "Chap. 420 \u2014 Hisoka joue \u00e0 la grande borne SWAMP BALL. Sa position sch\u00e9matique correspond au plan local du casino ; dimensions et emplacement estim\u00e9s."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-01",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 1",
+      "nameFr": "Gauche Escalier 1",
+      "at": [
+        30,
+        -28.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-02",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 2",
+      "nameFr": "Gauche Escalier 2",
+      "at": [
+        30,
+        -28.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-03",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 3",
+      "nameFr": "Gauche Escalier 3",
+      "at": [
+        30,
+        -28.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-04",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 4",
+      "nameFr": "Gauche Escalier 4",
+      "at": [
+        30,
+        -29.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-05",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 5",
+      "nameFr": "Gauche Escalier 5",
+      "at": [
+        30,
+        -29.6
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-06",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 6",
+      "nameFr": "Gauche Escalier 6",
+      "at": [
+        30,
+        -30.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-07",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 7",
+      "nameFr": "Gauche Escalier 7",
+      "at": [
+        30,
+        -30.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-08",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 8",
+      "nameFr": "Gauche Escalier 8",
+      "at": [
+        30,
+        -30.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-09",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 9",
+      "nameFr": "Gauche Escalier 9",
+      "at": [
+        30,
+        -31.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-10",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 10",
+      "nameFr": "Gauche Escalier 10",
+      "at": [
+        30,
+        -31.6
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-11",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 11",
+      "nameFr": "Gauche Escalier 11",
+      "at": [
+        30,
+        -32.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-12",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 12",
+      "nameFr": "Gauche Escalier 12",
+      "at": [
+        30,
+        -32.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-13",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 13",
+      "nameFr": "Gauche Escalier 13",
+      "at": [
+        30,
+        -32.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-stair-14",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Stair 14",
+      "nameFr": "Gauche Escalier 14",
+      "at": [
+        30,
+        -33.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-01",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 1",
+      "nameFr": "Droite Escalier 1",
+      "at": [
+        52,
+        -28.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-02",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 2",
+      "nameFr": "Droite Escalier 2",
+      "at": [
+        52,
+        -28.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-03",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 3",
+      "nameFr": "Droite Escalier 3",
+      "at": [
+        52,
+        -28.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-04",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 4",
+      "nameFr": "Droite Escalier 4",
+      "at": [
+        52,
+        -29.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 0.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-05",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 5",
+      "nameFr": "Droite Escalier 5",
+      "at": [
+        52,
+        -29.6
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-06",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 6",
+      "nameFr": "Droite Escalier 6",
+      "at": [
+        52,
+        -30.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-07",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 7",
+      "nameFr": "Droite Escalier 7",
+      "at": [
+        52,
+        -30.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-08",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 8",
+      "nameFr": "Droite Escalier 8",
+      "at": [
+        52,
+        -30.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-09",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 9",
+      "nameFr": "Droite Escalier 9",
+      "at": [
+        52,
+        -31.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 1.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-10",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 10",
+      "nameFr": "Droite Escalier 10",
+      "at": [
+        52,
+        -31.6
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-11",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 11",
+      "nameFr": "Droite Escalier 11",
+      "at": [
+        52,
+        -32.0
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.2,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-12",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 12",
+      "nameFr": "Droite Escalier 12",
+      "at": [
+        52,
+        -32.4
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.4,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-13",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 13",
+      "nameFr": "Droite Escalier 13",
+      "at": [
+        52,
+        -32.8
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.6,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-stair-14",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Stair 14",
+      "nameFr": "Droite Escalier 14",
+      "at": [
+        52,
+        -33.2
+      ],
+      "size": [
+        2,
+        0.4
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 2.8,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-rear-gallery",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Rear Gallery",
+      "nameFr": "Fond Galerie",
+      "at": [
+        41,
+        -48.5
+      ],
+      "size": [
+        29.98,
+        2.98
+      ],
+      "rotation": 0,
+      "base": 2.3,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-left-gallery",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Left Gallery",
+      "nameFr": "Gauche Galerie",
+      "at": [
+        27.5,
+        -37.5
+      ],
+      "size": [
+        2.98,
+        18.98
+      ],
+      "rotation": 0,
+      "base": 2.3,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-recreation-right-gallery",
+      "spaceId": "tier-1-vvip-recreation-hall",
+      "kind": "platform",
+      "name": "Right Gallery",
+      "nameFr": "Droite Galerie",
+      "at": [
+        54.5,
+        -37.5
+      ],
+      "size": [
+        2.98,
+        18.98
+      ],
+      "rotation": 0,
+      "base": 2.3,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
+      "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
     }
   ]
 }

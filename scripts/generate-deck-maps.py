@@ -14,6 +14,7 @@ apps/web/src/lib/map/mapAssetRegistry.ts, which this reads to decide what a
 region click should open.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -43,7 +44,7 @@ for tier in deck_tiers:
         cx, cy = centroid(fp)
         xs = [sx(p[0]) for p in fp]; ys = [sy(p[1]) for p in fp]
         w, h = max(xs) - min(xs), max(ys) - min(ys)
-        label = s['name']
+        label = 'VVIP Rec. Hall' if s['id'] == 'tier-1-vvip-recreation-hall' else s['name']
         # A label only where it fits: 6.5 px a character across, 16 px a line
         # down. A room taller than it is wide takes the label on its side.
         size = 12 if (w > len(label) * 6.5 and h > 16) else (9 if (w > len(label) * 5 and h > 12) else 0)
@@ -51,10 +52,17 @@ for tier in deck_tiers:
         if not size and h > w and tid != 'tier-1':
             size = 12 if (h > len(label) * 6.5 and w > 16) else (9 if (h > len(label) * 5 and w > 12) else 0)
             turned = bool(size)
+        # Keep the fourteen doors identifiable on the compact royal plan.
+        # The full names remain available when the room is opened.
+        apartment = re.fullmatch(r'tier-1-royal-residential-sector-room-(10\d\d)', s['id'])
+        label_z = cy
+        if apartment and tid == 'tier-1':
+            label, size = apartment.group(1), 6
+            label_z = -16.5 if int(label) % 2 else 16.5
         rows.append({
             'id': s['id'], 'region': region_for(s), 'points': pts,
             'label': label if size else '', 'size': size,
-            'cx': round(sx(cx), 1), 'cy': round(sy(cy) + (size / 3 if size else 0), 1),
+            'cx': round(sx(cx), 1), 'cy': round(sy(label_z) + (size / 3 if size else 0), 1),
             'turned': turned,
             'through': s['category'] in THROUGH,
             'provenance': s['provenance'],
@@ -184,7 +192,6 @@ for tier in deck_tiers:
 
 {rotate_open}
   <polygon class="hull" points="{hull}" />
-{annotation}
 
   <g id="{tid}-zones">
     {{#each regions as zone (zone.id)}}
@@ -224,6 +231,7 @@ for tier in deck_tiers:
       >
     {{/each}}
   </g>
+{annotation}
 {rotate_close}
 </svg>
 '''

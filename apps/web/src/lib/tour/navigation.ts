@@ -346,10 +346,11 @@ export function wayOutOfInterior(
 ): { link: Link; to: string } | null {
   const parentSpaceId = tier.parentSpaceId
   if (tier.kind !== 'interior' || !parentSpaceId) return null
-  const link = links.find(
-    (candidate) =>
-      candidate.kind === 'door' &&
-      (candidate.from === parentSpaceId || candidate.to === parentSpaceId),
-  )
+  const joinsParent = (candidate: Link) =>
+    candidate.from === parentSpaceId || candidate.to === parentSpaceId
+  // A mezzanine is an interior reached by stairs rather than an apartment door.
+  const link =
+    links.find((candidate) => candidate.kind === 'door' && joinsParent(candidate)) ??
+    links.find(joinsParent)
   return link ? { link, to: parentSpaceId } : null
 }

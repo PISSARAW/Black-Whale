@@ -270,7 +270,7 @@
     <!-- The four stairwells, the bulkhead and the doors into the interiors. Over
          the legends on purpose: a name you cannot read is worth less than the
          only way off the deck. -->
-    {#each crossings as crossing (`${crossing.link.from}|${crossing.link.to}`)}
+    {#each crossings as crossing (`${crossing.link.from}|${crossing.link.to}|${crossing.at[0]}|${crossing.at[1]}`)}
       <g class="crossing">
         <title>{crossingLabel(crossing)}</title>
         <circle cx={crossing.at[0]} cy={crossing.at[1]} r={unit * 9} />

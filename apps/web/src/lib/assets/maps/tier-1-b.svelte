@@ -76,7 +76,7 @@
       id: 'tier-1-soldiers-living-quarters',
       region: 'soldiers-living-quarters',
       points: '605.0,310.0 700.0,310.0 700.0,460.0 605.0,460.0',
-      label: 'Soldiers\' Living Quarters',
+      label: "Soldiers' Living Quarters",
       size: 9,
       at: [652.5, 388.0],
       turned: true,
@@ -112,17 +112,6 @@
       label: 'Supreme Court',
       size: 12,
       at: [790.0, 414.0],
-      turned: false,
-      through: false,
-      inferred: false,
-    },
-    {
-      id: 'tier-1-vvip-recreation-hall',
-      region: 'vvip-recreation-hall',
-      points: '500.0,328.57 580.0,328.57 580.0,420.0 500.0,420.0',
-      label: '',
-      size: 0,
-      at: [540.0, 374.3],
       turned: false,
       through: false,
       inferred: false,
@@ -187,9 +176,7 @@
     </style>
   </defs>
 
-
   <polygon class="hull" points="326.43,211.43 850.0,211.43 850.0,485.71 326.43,485.71" />
-
 
   <g id="tier-1-b-zones">
     {#each regions as zone (zone.id)}
@@ -229,5 +216,4 @@
       >
     {/each}
   </g>
-
 </svg>

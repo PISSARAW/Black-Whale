@@ -302,11 +302,11 @@ voit qu'on n'y est pas entré.
 Le pont 1 est donc découpé en **trois ponts égaux**, et ce sont trois étages
 d'un même bâtiment — pas un pont principal flanqué de deux annexes.
 
-| Pont       | Nom      | Élévation | Ce qu'il porte                                     |
-| ---------- | -------- | --------- | -------------------------------------------------- |
-| `tier-1-c` | Pont 1-C | 141,1 m   | casino, canots, chambre funéraire                  |
-| `tier-1-b` | Pont 1-B | 137,6 m   | quartier des gardes, détention, Cour suprême       |
-| `tier-1`   | Pont 1-A | 128 m     | quartiers du roi et des reines, banquet, princes   |
+| Pont       | Nom      | Élévation | Ce qu'il porte                                   |
+| ---------- | -------- | --------- | ------------------------------------------------ |
+| `tier-1-c` | Pont 1-C | 141,1 m   | casino, canots, chambre funéraire                |
+| `tier-1-b` | Pont 1-B | 137,6 m   | quartier des gardes, détention, Cour suprême     |
+| `tier-1`   | Pont 1-A | 128 m     | quartiers du roi et des reines, banquet, princes |
 
 Les **identifiants ne suivent pas les noms** : `tier-1` reste `tier-1` et non
 `tier-1-a`. Ce n'est pas un oubli — trente-quatre lieux du catalogue, et avec
@@ -935,35 +935,37 @@ pont, que chaque `locationId` existe, que toute salle du catalogue présente à
 bord est reconstruite, et que **le vaisseau entier reste connexe** — de la
 chambre funéraire du pont 1 aux entrepôts du pont 5.
 
-
 ### Routes du pont 1 vers le pont 2
 
 Le plan des chapitres 418–419 distingue trois accès rétractables vers le pont 2 :
-la route A pour les VIP, la route B pour les chefs de la mafia et la route C pour
+la route A pour les royaux/V5, la route B pour les soldats et les mafias, C pour
 les passagers ordinaires. Les trois passerelles figurent dans le modèle. Le
-couloir en U entoure la pièce anonyme derrière le quartier princier et s'ouvre
-vers celui-ci ; les quartiers des gardes sont sur le pont 1-B.
+schéma du chapitre 418 place A et C sur les flancs opposés, et B à l’arrière.
+Le couloir en U entoure la pièce anonyme derrière le quartier princier ;
+les quartiers des gardes restent sur le pont 1-B reconstruit.
 
 ### Vue schématique du pont 1-A
 
-La carte `/ship` du pont 1-A suit désormais l'ordre de lecture proue→poupe
-fourni pour le plan des chapitres 418–419 : promenade de bâbord, bloc non
-identifié, quartiers royaux, salle de banquet, quartier princier, puis un
-second bloc non identifié ceint par une coursive en U. Les huit pièces des
-Reines sont montrées en deux groupes de quatre, de part et d'autre de la pièce
-centrale du Roi. Les accès A et B sont indiqués de chaque côté du quartier
-princier; C et la référence au Lifeboat Deck du pont 1-C partagent la position
-arrière.
+La comparaison directe avec les planches 417–420 est consignée dans
+[`royal-precinct-audit.md`](royal-precinct-audit.md). Le plan du chapitre 419
+maintient l’enchaînement quartiers du Roi et des Reines → banquet → quartier
+princier, puis bloc anonyme arrière et coursive en U. La salle de loisirs VVIP
+longe le quartier princier du côté de l’accès A ; elle figure sur le pont royal,
+et sa galerie est une mezzanine intérieure, pas un pont supplémentaire. Les
+dimensions et la hauteur de la mezzanine restent des estimations.
 
-Deux pièces latérales sans nom sont ajoutées de part et d'autre du hall de
-banquet, chacune reliée par un couloir court. Leur présence suit la précision
-de l’utilisateur ; leur fonction reste inconnue.
+Les quatorze appartements tiennent devant le bloc arrière, sans chevauchement.
+Leurs boîtes sur le pont ont été resserrées ; les intérieurs détaillés gardent
+leur échelle locale. Les portes numérotées, les accès aux intérieurs, les gaines
+et les marqueurs suivent ces mêmes coordonnées. Les suites des huit Reines
+gardent leurs deux rangées de quatre autour de la salle du Roi ; des couloirs
+reconstruits desservent effectivement chaque rangée.
 
-La géométrie détaillée de la carte et de la visite vient de `blueprint.json` ;
-`tier-1-a-layout.json` ne contient que les annotations du plan. La carte `/ship`
-du pont 1-A est présentée à l'horizontale, comme les ponts 1-B et 1-C. Les
-repères utilisent directement le même repère de coordonnées. Les suites VVIP
-occupent le bloc avant non identifié ; les autres espaces reconstruits
-restent autour du parcours et sont raccordés. Les pièces sans nom restent sans
-fonction inventée. Les dimensions intérieures détaillées des appartements
-conservent leur échelle locale ; seuls leurs accès sur le pont sont repositionnés.
+Les accès A et C se font face sur les côtés du quartier princier ; B se trouve
+à l’arrière, près du chemin reconstruit vers les canots. Les pièces latérales
+sans nom du banquet restent sans fonction attribuée. Les suites VVIP du bloc
+avant et les raccordements non dessinés restent des placements de reconstruction.
+
+La carte et la visite lisent `blueprint.json` ; `tier-1-a-layout.json` ne porte
+que les annotations. La coupe d’ensemble et les plans de pont sont régénérés
+depuis cette géométrie, dans le même repère horizontal.

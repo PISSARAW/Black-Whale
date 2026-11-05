@@ -159,6 +159,13 @@ describe('wayOutOfInterior', () => {
     const fromVestibule = linkUnderfoot(ship.links, entrance.to, [0, 0])
     expect(fromVestibule?.to).toBe(wayOutOfInterior(ship.links, interior)?.to)
   })
+
+  it('returns from the recreation mezzanine using its stairs', () => {
+    const gallery = ship.tiers.find((tier) => tier.id === 'interior-vvip-recreation-gallery')!
+    const exit = wayOutOfInterior(ship.links, gallery)
+    expect(exit?.link.kind).toBe('stair')
+    expect(exit?.to).toBe('tier-1-vvip-recreation-hall')
+  })
 })
 
 describe('crossingsOn', () => {
@@ -182,6 +189,17 @@ describe('crossingsOn', () => {
     const fromAbove = crossingsOn(ship, upper.tierId).find((crossing) => crossing.link === stair)!
     expect(Math.sign(fromBelow.rise)).toBe(-Math.sign(fromAbove.rise))
     expect(Math.abs(fromBelow.rise)).toBeGreaterThan(1)
+  })
+
+  it('includes the recreation gallery floor height in both stair directions', () => {
+    const up = crossingsOn(ship, 'tier-1').filter(
+      (crossing) => crossing.to === 'tier-1-vvip-recreation-gallery',
+    )
+    const down = crossingsOn(ship, 'interior-vvip-recreation-gallery')
+    expect(up).toHaveLength(2)
+    expect(down).toHaveLength(2)
+    for (const crossing of up) expect(crossing.rise).toBeCloseTo(2.8)
+    for (const crossing of down) expect(crossing.rise).toBeCloseTo(-2.8)
   })
 
   it('reads a door into an interior in the coordinates of the level asked for', () => {

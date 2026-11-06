@@ -39,7 +39,8 @@
         })
       : { x: 0, y: 0, scale: 1 }
     fittedScale = transform.scale
-    pz.zoomAbs(0, 0, transform.scale)
+    // The public zoom operation also cancels an in-flight smooth zoom.
+    pz.zoomTo(0, 0, transform.scale / pz.getTransform().scale)
     pz.moveTo(transform.x, transform.y)
     zoomPercent = 100
   }

@@ -88,6 +88,7 @@
   } from '$lib/tour/navigation'
   import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
+  import { updateWalkPostEffects } from '$lib/tour/walkPostEffects'
   import { ConcertStageView } from '$lib/tour/ConcertStageView'
   import { positionHeldFlute } from '$lib/tour/heldFlute'
   import type { ConcertPerformance } from '$lib/tour/melodyConcert'
@@ -850,12 +851,9 @@
         renderTarget,
         quality,
         shafts,
-        refraction,
         grade,
-        gyoFilter,
         depthOfField,
         motionBlur,
-        lensDirt,
       } = runtime
       const portals = new PortalRenderer(THREE, {
         renderer,
@@ -4422,7 +4420,10 @@
         // visitor arrives at a stand, the way anyone put down somewhere does.
         velocity = walking ? glide(velocity, wanted, delta) : [0, 0]
 
-        if (velocity[0] !== 0 || velocity[1] !== 0) {
+        velocity = concertView.move(concert, {
+          tierId: currentTierId, reveal, at: pointer, velocity, delta,
+        })
+        if (!concertView.active && (velocity[0] !== 0 || velocity[1] !== 0)) {
           if (authoredEyeHeight !== null) {
             authoredEyeHeight = null
             authoredVisibleSpaceIds = null
@@ -4577,7 +4578,6 @@
           haloBubble.scale.setScalar(Math.min(6, 1.8 + halo * 0.5))
         }
         atmosphere.syncLitRooms(ship, world.lit)
-        concertView.update(concert, { tierId: currentTierId, reveal })
         // The aura is carried by the visitor, because the visitor is the one
         // emitting it. Positioned whether or not it is lit: `syncShells` raises the
         // intensity, and a light at the wrong end of the deck the frame a technique
@@ -4736,28 +4736,9 @@
           lens: quality.lens ? LENS_DEFAULTS : LENS_OFF,
         })
 
-        // The air bending around the aura. Zero unless there is aura out, and
-        // zero outright for a visitor whose system asks for less movement: a
-        // swimming picture is movement, whatever it is a picture of.
-        if (refraction) {
-          refraction.uniforms.uAmount.value = calmWalk ? 0 : refractionAmount(shownNen)
-          refraction.uniforms.uTime.value = clock
-        }
-
-        // Gyo mode toggles the custom filter pass
-        if (gyoFilter) {
-          gyoFilter.enabled = gyoMode
-        }
-
-        // Lens dirt is only present in the lower decks (T3, T4, T5)
-        if (lensDirt) {
-          const isLowerDeck = ['T3', 'T4', 'T5'].includes(currentTierId)
-          // 1.5 intensity for lower decks, 0.0 for clean upper decks
-          const targetIntensity = isLowerDeck ? 1.5 : 0.0
-          // Smoothly interpolate the intensity to avoid hard pop when taking the elevator/stairs
-          lensDirt.uniforms.dirtIntensity.value +=
-            (targetIntensity - lensDirt.uniforms.dirtIntensity.value) * delta * 2.0
-        }
+        updateWalkPostEffects(runtime, {
+          calm: calmWalk, nen: shownNen, clock, gyo: gyoMode, tier: currentTierId, delta,
+        })
 
         const { width, height } = renderer.getSize(size)
         renderer.setScissorTest(false)
@@ -4765,6 +4746,8 @@
         // The far ends of the tunnel are drawn into their panes first, from
         // where the visitor's head would be if it were standing at the other one.
         renderPortals()
+        concertView.render({ camera, actors: apparitions, seconds: clock, yaw,
+          runtime, exposure: $comfort.exposure }, concert)
 
         if (runtime.taa) {
           const moved =
@@ -4773,7 +4756,7 @@
             Math.abs(yaw - previousTaaYaw) > 0.001 ||
             Math.abs(pitch - previousTaaPitch) > 0.001
 
-          runtime.taa.accumulate = !moved
+          runtime.taa.accumulate = !moved && !concertView.active
 
           previousTaaPointer = [pointer[0], pointer[1]]
           previousTaaYaw = yaw

@@ -154,6 +154,11 @@
             >{clock}</output
           >
         </div>
+        <p>
+          {french
+            ? 'Promène-toi dans le paysage fleuri : la vision couvre toute la salle, jusqu’au bout de service.'
+            : 'Walk through the flowered landscape: the vision fills the entire hall, including the service end.'}
+        </p>
         <button type="button" class="stop" onclick={() => stop()}
           >{french ? 'Arrêter le concert' : 'Stop the concert'}</button
         >

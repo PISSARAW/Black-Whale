@@ -130,10 +130,16 @@ de la visite. La flûte portée utilise les axes de la caméra pour rester visib
 à tous les caps. Le morceau s'arrête à trois minutes, sur commande, à la sortie
 de la salle ou si le visiteur interrompt son propre hatsu.
 
-Le projecteur et les marguerites sont temporaires. Le parterre interprète
-l'effet de la musique ; il ne transforme pas le plan physique du navire et ne
-reproduit pas le relief montagneux de la double page. La musique est une
-interprétation originale synthétisée à la flûte, issue de l'air doux déjà
+Pendant les trois minutes, la vision remplace toute la salle continue :
+`Banquet Hall` et `Banquet Hall (Service End)`. Marguerites, prairie vallonnée,
+ciel ouvert et crêtes alpines enneigées reprennent la double page du chapitre 383.
+Les teintes et le relief navigable restent des interprétations du dessin.
+La promenade déplace uniquement le point de vue dans la vision : les tables,
+les murs et les escaliers ne bloquent pas cette marche. À l'arrêt, la visite
+retrouve la position physique laissée dans la salle. Le plan du navire et les
+effets antérieurs restent intacts ; la flûte ou Melody restent visibles dans
+le paysage selon le mode choisi. La musique est une interprétation originale
+synthétisée à la flûte, issue de l'air doux déjà
 présent dans l'application : le manga ne fournit ni enregistrement ni partition.
 L'audio utilise le contexte et le bus d'effets communs, avec une sortie annulable.
 L'arrêt libère la programmation sonore et retire les effets ajoutés par le

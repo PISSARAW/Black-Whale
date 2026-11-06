@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
-import { theShip, floorOf } from './blueprint'
+import { theShip } from './blueprint'
 import { EMPTY_WORLD } from './hatsu'
 import { castApparitions } from './cast/distribution'
 import { buildHumanFigure } from './humanFigure'
@@ -148,19 +148,23 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
     }
   })
 
-  it('lights only the active stage and releases every temporary spotlight mesh', () => {
+  it('opens the alpine vision only during the concert and releases its geometry', () => {
     const scene = new THREE.Scene()
     const view = new ConcertStageView(THREE, scene, ship)
     expect(view.root.visible).toBe(false)
     view.update({ mode: 'melody', playing: true }, { tierId: 'tier-1', reveal: false })
     expect(view.root.visible).toBe(true)
     const bounds = new THREE.Box3().setFromObject(view.root)
-    const room = ship.spaces.get(BANQUET_SERVICE)!
-    expect(bounds.max.y).toBeLessThan(floorOf(room, plan.tier) + room.ceiling!)
+    expect(bounds.max.y).toBeGreaterThan(170)
+    expect(view.root.getObjectByName('concert-open-sky')).toBeDefined()
+    expect(view.root.getObjectByName('concert-flower-field')).toBeDefined()
     view.update({ mode: 'self', playing: true }, { tierId: 'tier-1', reveal: true })
     expect(view.root.visible).toBe(false)
-    const meshes = view.root.children.filter((item) => item instanceof THREE.Mesh) as THREE.Mesh[]
-    const disposed = meshes.map(({ geometry }) => vi.spyOn(geometry, 'dispose'))
+    const disposed: ReturnType<typeof vi.spyOn>[] = []
+    view.root.traverse((object) => {
+      if (object instanceof THREE.Mesh) disposed.push(vi.spyOn(object.geometry, 'dispose'))
+      if (object instanceof THREE.InstancedMesh) disposed.push(vi.spyOn(object, 'dispose'))
+    })
     view.dispose()
     expect(view.root.parent).toBeNull()
     for (const spy of disposed) expect(spy).toHaveBeenCalledOnce()

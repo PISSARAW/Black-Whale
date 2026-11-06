@@ -1,64 +1,96 @@
 import type * as Three from 'three'
 import { floorOf, type Ship } from './blueprint'
+import type { Vec2 } from './types'
 import { MELODY_CONCERT, type ConcertPerformance } from './melodyConcert'
-import { buildConcertFlowers } from './concertFlowers'
+import { buildConcertLandscape } from './concertLandscape'
+import { ConcertLandscapeWalk, type ConcertLandscapeSpec } from './concertLandscapeWalk'
+import { ConcertDreamView, CONCERT_DREAM_LAYER } from './ConcertDreamView'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 
-/** The single local stage spot of the flute solo; hidden outside the performance. */
+interface ConcertContext {
+  tierId: string
+  reveal: boolean
+}
+interface ConcertWalkFrame extends ConcertContext {
+  at: Vec2
+  velocity: Vec2
+  delta: number
+}
+
+/** The concert owns an imagined landscape, never a replacement physical ship plan. */
 export class ConcertStageView {
   readonly root: Three.Group
+  private readonly spec: ConcertLandscapeSpec | null
+  private readonly dream: ConcertDreamView
+  private walk: ConcertLandscapeWalk | null = null
+  private bodyAt: Vec2 | null = null
 
-  constructor(THREE: typeof Three, scene: Three.Scene, ship: Ship) {
+  constructor(
+    private readonly THREE: typeof Three,
+    scene: Three.Scene,
+    ship: Ship,
+  ) {
     this.root = new THREE.Group()
-    this.root.name = 'melody-concert-spotlight'
+    this.root.name = 'melody-concert-landscape'
     this.root.visible = false
-    const fixture = MELODY_CONCERT.performer
-    const room = ship.spaces.get(fixture.spaceId)
+    this.dream = new ConcertDreamView(THREE, scene)
+    const room = ship.spaces.get(MELODY_CONCERT.performer.spaceId)
     const plan = room ? ship.plans.get(room.tierId) : undefined
     const stage = plan?.structures.find(({ id }) => id === 'tier-1-banquet-hall-stage')
-    if (!room || !plan || !stage) return
-    const floor = floorOf(room, plan.tier) + stage.base + stage.height + 0.07
-    const [x, z] = fixture.at
-    const beam = new THREE.Mesh(
-      new THREE.ConeGeometry(0.72, 6.8, 32, 1, true),
-      new THREE.MeshBasicMaterial({
-        color: 0xfff4d9,
-        transparent: true,
-        opacity: 0.045,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-      }),
-    )
-    beam.position.set(x, floor + 3.4, z)
-    const pool = new THREE.Mesh(
-      new THREE.CircleGeometry(0.72, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0xfff4d9,
-        transparent: true,
-        opacity: 0.22,
-        depthWrite: false,
-      }),
-    )
-    pool.rotation.x = -Math.PI / 2
-    pool.position.set(x, floor, z)
-    const spot = new THREE.SpotLight(0xfff4e7, 26, 9, Math.atan2(0.72, 6.8), 0.55, 1)
-    spot.position.set(x, floor + 6.8, z)
-    spot.target.position.set(x, floor, z)
-    this.root.add(beam, pool, spot, spot.target)
-    this.root.add(buildConcertFlowers(THREE, ship))
-    scene.add(this.root)
+    this.spec =
+      room && plan && stage
+        ? {
+            origin: [MELODY_CONCERT.performer.at[0], MELODY_CONCERT.performer.at[1]],
+            floor: floorOf(room, plan.tier),
+            stageRise: stage.base + stage.height,
+          }
+        : null
+    if (this.spec) scene.add(this.root)
   }
 
-  update(performance: ConcertPerformance, context: { tierId: string; reveal: boolean }): void {
-    this.root.visible =
-      this.root.children.length > 0 &&
-      performance.playing &&
-      context.tierId === 'tier-1' &&
-      !context.reveal
+  get active(): boolean {
+    return this.root.visible
+  }
+
+  update(performance: ConcertPerformance, context: ConcertContext): void {
+    const active =
+      !!this.spec && performance.playing && context.tierId === 'tier-1' && !context.reveal
+    if (active && !this.root.children.length) this.build()
+    this.root.visible = active
+    if (!active) {
+      this.dream.restore()
+      this.walk = null
+      this.bodyAt = null
+    }
+  }
+
+  move(performance: ConcertPerformance, frame: ConcertWalkFrame): Vec2 {
+    const wasActive = this.active
+    this.update(performance, frame)
+    if (!this.active || !this.spec) return wasActive ? [0, 0] : frame.velocity
+    if (!this.walk || this.bodyAt?.[0] !== frame.at[0] || this.bodyAt?.[1] !== frame.at[1]) {
+      this.walk = new ConcertLandscapeWalk(this.spec, frame.at)
+      this.bodyAt = [...frame.at]
+    }
+    this.walk.move(frame.velocity, frame.delta)
+    return frame.velocity
+  }
+
+  render(frame: Parameters<ConcertDreamView['apply']>[0], performance: ConcertPerformance): void {
+    if (this.active && this.walk) this.dream.apply(frame, this.walk, performance)
   }
 
   dispose(): void {
+    this.dream.restore()
+    this.root.traverse((object) => {
+      if ((object as Three.InstancedMesh).isInstancedMesh) (object as Three.InstancedMesh).dispose()
+    })
     disposeBanquetDetails(this.root)
     this.root.clear()
+  }
+
+  private build(): void {
+    this.root.add(buildConcertLandscape(this.THREE, this.spec!))
+    this.root.traverse((object) => object.layers.set(CONCERT_DREAM_LAYER))
   }
 }

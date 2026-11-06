@@ -109,7 +109,10 @@ describe('describeSpace', () => {
     expect(said).toContain('51 × 28 m under 9 m')
     expect(said).toContain(`${exitsFrom(ship, banquet)} exits`)
     expect(said).toContain('72 table')
-    expect(said).toContain('Proscenium Pier')
+    const pillar = ship.structures.find(
+      (structure) => structure.spaceId === banquet.id && structure.kind === 'pillar',
+    )!
+    expect(said).toContain(pillar.name)
     expect(said.endsWith('.')).toBe(true)
   })
 

@@ -3,10 +3,15 @@ import { expect, test } from 'playwright/test'
 test('walking from the map preserves the selected room, event and hour', async ({ page }) => {
   await page.goto('/fr/ship')
   await page.getByRole('button', { name: /^Chronologie/i }).click()
-  await page.getByLabel('Choisir un événement', { exact: true }).selectOption('0')
-  await expect(
-    page.getByRole('button', { name: 'Événement précédent', exact: true }),
-  ).toBeDisabled()
+  // The fresh CI catalogue can start with an undated setup event. The departure
+  // in chapter 359, sequence 2 is a declared clock anchor in data/events.
+  const events = page.getByLabel('Choisir un événement', { exact: true })
+  const departure = events.getByRole('option').filter({ hasText: /\b359 · 2 —/ })
+  const departureIndex = await departure.getAttribute('value')
+  expect(departureIndex).toBeTruthy()
+  await events.selectOption(departureIndex!)
+  await expect(events).toHaveValue(departureIndex!)
+  await expect(page).toHaveURL(/eventId=/)
   const eventId = new URL(page.url()).searchParams.get('eventId')
   expect(eventId).toBeTruthy()
   const hour = (await page.locator('#ship-timeline-events > p').textContent())!.trim()

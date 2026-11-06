@@ -869,11 +869,7 @@
       const gangwayTarget = gangwayLink ? ship.spaces.get(gangwayLink.to) : null
       const gangwayView: GangwayView | null =
         gangwayLink && gangwaySource && gangwayTarget
-          ? buildGangwayView(
-              THREE,
-              gangwayLink.at,
-              gangwayLink.atTo ?? gangwayLink.at,
-            )
+          ? buildGangwayView(THREE, gangwayLink.at, gangwayLink.atTo ?? gangwayLink.at)
           : null
       if (gangwayView && gangwaySource) {
         const tier = ship.tiers.find((candidate) => candidate.id === gangwaySource.tierId)

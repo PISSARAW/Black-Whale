@@ -28,7 +28,9 @@
       aria-hidden="true"
     >
       <div class="veil"></div>
-      <div class="target-ring"><span><MangaIcon glyph={presentation.glyph} /></span><small>{target}</small></div>
+      <div class="target-ring">
+        <span><MangaIcon glyph={presentation.glyph} /></span><small>{target}</small>
+      </div>
 
       {#if presentation.animation === 'dowsing-chain'}
         <div class="chain"><i></i><i></i><i></i><i></i><b>◇</b></div>

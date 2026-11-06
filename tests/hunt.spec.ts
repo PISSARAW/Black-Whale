@@ -8,6 +8,7 @@ async function enterTheApartment(page: Page, touch: boolean) {
   if (touch) await begin.tap()
   else await begin.click()
   await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
+  await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30_000 })
 }
 
 test.describe('Hunt V3 critical path', () => {
@@ -20,6 +21,7 @@ test.describe('Hunt V3 critical path', () => {
     await expect(page.getByRole('button', { name: /Royal apartments/i })).toBeVisible({
       timeout: 20_000,
     })
+    await expect(page.locator('canvas')).toHaveCount(0)
   })
 
   test('starts the selected contract with its configured loadout', async ({ page, isMobile }) => {

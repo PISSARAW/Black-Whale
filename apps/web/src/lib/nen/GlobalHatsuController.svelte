@@ -179,8 +179,7 @@
     box-shadow:
       0 8px 35px #0009,
       inset 0 0 20px rgba(216, 184, 94, 0.08);
-    font:
-      700 0.62rem/1 var(--font-condensed);
+    font: 700 0.62rem/1 var(--font-condensed);
     letter-spacing: 0.12em;
     cursor: pointer;
   }

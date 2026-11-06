@@ -1,5 +1,6 @@
 <script lang="ts">
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
+  import RelationshipGlyph from '$lib/components/RelationshipGlyph.svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -178,7 +179,7 @@
                 class="tie-card"
                 style={`--relation:${palette[relation.type]?.color || '#768083'}`}
               >
-                <div class="relation-glyph" aria-hidden="true"><MangaIcon glyph={palette[relation.type]?.mark} /></div>
+                <RelationshipGlyph glyph={palette[relation.type]?.mark} />
                 <div class="tie-copy">
                   <p>
                     <span
@@ -190,7 +191,8 @@
                     >
                   </p>
                   <button type="button" onclick={() => selectFaction(relation.counterpartId)}
-                    >{relation.counterpart?.name || relation.counterpartId} <span><MangaIcon name="arrowUpRight" /></span></button
+                    >{relation.counterpart?.name || relation.counterpartId}
+                    <span><MangaIcon name="arrowUpRight" /></span></button
                   >
                   <h4>{relation.label}</h4>
                   <p class="evidence">{relation.evidence}</p>
@@ -504,13 +506,6 @@
     border: 0;
     background: none;
     border-bottom: 1px solid var(--line-default);
-  }
-  .relation-glyph {
-    display: grid;
-    place-items: center;
-    border-right: 0;
-    color: var(--relation);
-    font: 500 1.25rem/1 var(--font-mono);
   }
   .tie-copy {
     padding: 1rem 1.15rem;

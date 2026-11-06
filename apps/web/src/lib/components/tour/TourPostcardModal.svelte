@@ -136,7 +136,12 @@
             aria-hidden="true"
           >
             <span class="stamp-orbit"></span>
-            <span class="stamp-mark"><MangaIcon glyph={activeStamp.id === 'hunter' ? undefined : activeStamp.mark} name="hunter" /></span>
+            <span class="stamp-mark"
+              ><MangaIcon
+                glyph={activeStamp.id === 'hunter' ? undefined : activeStamp.mark}
+                name="hunter"
+              /></span
+            >
             <span class="stamp-title">{activeStampCopy.title}</span>
             <span class="stamp-motto">{activeStampCopy.motto}</span>
             <span class="stamp-serial"

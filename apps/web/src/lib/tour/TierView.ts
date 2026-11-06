@@ -3,6 +3,7 @@ import { buildTierMesh, type MeshGroup, type TierMesh } from './mesh'
 import { walkedPlan, type TourWorld } from './hatsu'
 import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
+import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 
 export interface TierRoomView {
   spaceId: string
@@ -21,6 +22,7 @@ export interface TierRoomView {
   panes: Three.Mesh | null
   motes: Three.Points | null
   dust: Dust | null
+  details: Three.Group | null
 }
 export interface BuiltTierView {
   root: Three.Group
@@ -112,13 +114,21 @@ export class TierView {
   ) {}
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
-    const mesh = buildTierMesh(walkedPlan(ship, world, tierId), { reveal })
+    const plan = walkedPlan(ship, world, tierId)
+    const mesh = buildTierMesh(plan, { reveal })
     const shared = this.attributes(mesh)
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
 
     for (const group of mesh.groups) {
       const room = this.room(group, shared, { ship, tierId, reveal, dustScale })
+      room.details = buildBanquetDetails({
+        THREE: this.THREE,
+        plan,
+        spaceId: group.spaceId,
+        reveal,
+      })
+      if (room.details) room.mesh.add(room.details)
       root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
       if (room.panes) root.add(room.panes)
       if (room.motes) root.add(room.motes)
@@ -191,6 +201,7 @@ export class TierView {
         : null,
       motes: this.motes(dust),
       dust,
+      details: null,
     }
   }
 
@@ -251,6 +262,7 @@ export class TierView {
       room.fittings.geometry.dispose()
       room.panes?.geometry.dispose()
       room.motes?.geometry.dispose()
+      if (room.details) disposeBanquetDetails(room.details)
     }
   }
 

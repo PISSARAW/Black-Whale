@@ -8,12 +8,11 @@
  * that into a failing test instead of a room nobody can reach.
  */
 import blueprintJson from '../../../../../data/ship/blueprint.json'
+import { columnsForRooms, roomColumnPositions } from './roomColumns'
 import {
   COLUMN_HALF_WIDTH,
   COLUMN_SPACING,
   EPSILON,
-  columnPositions,
-  columnWalls,
   deriveDoorways,
   doorJambs,
   interiorPoint,
@@ -147,13 +146,7 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     // coffin's faces are — the doorway pass in `mesh.ts` draws exactly these.
     for (const door of doorways) walls.push(...doorJambs(door))
 
-    const columns = new Map<string, Vec2[]>()
-    for (const space of tierSpaces) {
-      const centres = columnPositions(space.footprint)
-      if (!centres.length) continue
-      columns.set(space.id, centres)
-      for (const centre of centres) walls.push(...columnWalls(space.id, centre))
-    }
+    const columns = columnsForRooms(tierSpaces, walls)
 
     // A structure's faces join the room's own walls, so the collision test and
     // the renderer read one list and cannot disagree about what is solid —
@@ -274,7 +267,7 @@ export function spawnPoint(space: Space, structures: Structure[] = []): Vec2 {
   const clearance = COLUMN_HALF_WIDTH + 1.2
 
   let candidate = point
-  for (const centre of columnPositions(space.footprint)) {
+  for (const centre of roomColumnPositions(space)) {
     const dx = point[0] - centre[0]
     const dz = point[1] - centre[1]
     if (Math.abs(dx) > clearance || Math.abs(dz) > clearance) continue
@@ -629,7 +622,7 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
           issues.push(`structures ${standing[i].id} and ${standing[j].id} stand in each other`)
         }
       }
-      for (const centre of columnPositions(room.footprint)) {
+      for (const centre of roomColumnPositions(room)) {
         if (pointInPolygon(centre, structureFootprint(standing[i]))) {
           issues.push(`structure ${standing[i].id}: stands on a column of ${room.id}`)
         }

@@ -130,7 +130,10 @@ export class TourCastView {
     const { cast } = this.options.read()
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
-      ...beastApparitions(this.options.ship, this.posts, cast.beasts),
+      ...beastApparitions(this.options.ship, this.posts, {
+        standing: cast.beasts,
+        chapter: cast.chapterNumber,
+      }),
     ]
   })
 

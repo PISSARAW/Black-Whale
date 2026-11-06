@@ -1,9 +1,12 @@
+import { tserriednichGuardian } from './apparitionMangaGuardianView'
+import { modelKit } from './nenModelPrimitives'
 import type { Object3D } from 'three'
 import { TENTACLES, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 
 function medusa(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const hide = glow(seen.colour, 0.82)
+  const hide = glow(seen.colour, 1)
+  const kit = modelKit({ THREE, glow, root, skin: hide }, seen.size)
   const canopy = new THREE.Group()
   canopy.name = 'camilla-eye-canopy'
   const rings = [1, 8, 13, 17]
@@ -13,17 +16,29 @@ function medusa(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count + ring * 0.31
       const pod = new THREE.Group()
+      pod.userData.bakeStatic = true
       const lobe = new THREE.Mesh(
-        new THREE.SphereGeometry(seen.size * (ring === 3 ? 0.37 : 0.4), 10, 7),
+        new THREE.LatheGeometry(
+          [
+            [0, -0.44],
+            [0.08, -0.36],
+            [0.2, -0.23],
+            [0.36, 0.02],
+            [0.37, 0.2],
+            [0.22, 0.36],
+            [0, 0.42],
+          ].map(([x, y]) => new THREE.Vector2(x * seen.size, y * seen.size)),
+          18,
+        ),
         hide,
       )
-      lobe.scale.set(1.25, 0.82, 0.92)
+      lobe.scale.set(1.15, 0.9, 0.85)
       pod.add(lobe)
       const eye = new THREE.Mesh(
         new THREE.SphereGeometry(seen.size * 0.055, 7, 5),
         glow(0x171318, 1),
       )
-      eye.position.set(0, seen.size * 0.02, -seen.size * 0.37)
+      eye.position.set(0, -seen.size * 0.26, -seen.size * 0.18)
       pod.add(eye)
       pod.position.set(
         Math.cos(angle) * radius,
@@ -32,12 +47,32 @@ function medusa(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
       )
       pod.rotation.y = angle + Math.PI / 2
       canopy.add(pod)
+      kit.tube({
+        name: `canopy-branch-${ring}-${i}`,
+        points: [
+          [0, 0.05, 0],
+          [Math.cos(angle) * radius * 0.55, 0.22 - ring * 0.08, Math.sin(angle) * radius * 0.38],
+          [Math.cos(angle) * radius, 0.3 - ring * 0.14, Math.sin(angle) * radius * 0.68],
+        ],
+        radius: 0.045,
+        colour: seen.colour,
+        into: canopy,
+      })
     }
   }
   root.add(canopy)
 
   const body = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.48, seen.size * 0.78, seen.size * 1.85, 12),
+    new THREE.LatheGeometry(
+      [
+        [0.78, -0.92],
+        [0.56, -0.68],
+        [0.49, -0.2],
+        [0.48, 0.45],
+        [0.55, 0.9],
+      ].map(([x, y]) => new THREE.Vector2(x * seen.size, y * seen.size)),
+      24,
+    ),
     hide,
   )
   body.position.y = -seen.size * 0.75
@@ -78,165 +113,8 @@ function medusa(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return skirt
 }
 
-interface ChimeraFootContext {
-  THREE: BasicApparitionContext['THREE']
-  leg: import('three').Group
-  dark: import('three').MeshBasicMaterial
-}
-
-function addChimeraFoot(seen: Apparition, context: ChimeraFootContext, front: number) {
-  const { THREE, leg, dark } = context
-  const geometry =
-    front < 0
-      ? new THREE.SphereGeometry(seen.size * 0.16, 8, 6)
-      : new THREE.BoxGeometry(seen.size * 0.18, seen.size * 0.14, seen.size * 0.42)
-  const foot = new THREE.Mesh(geometry, dark)
-  foot.position.set(0, -seen.size * 1.42, front < 0 ? seen.size * 0.08 : 0)
-  leg.add(foot)
-  if (front >= 0) return
-  for (let claw = 0; claw < 3; claw++) {
-    const talon = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.04, seen.size * 0.24, 4),
-      dark,
-    )
-    talon.rotation.x = Math.PI / 2
-    talon.position.set((claw - 1) * seen.size * 0.1, -seen.size * 1.45, seen.size * 0.24)
-    leg.add(talon)
-  }
-}
-
-function chimera(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const coat = glow(seen.colour, 0.78)
-  const dark = glow(0x1b151d, 0.98)
-  const barrel = new THREE.Mesh(
-    new THREE.CapsuleGeometry(seen.size * 0.58, seen.size * 1.12, 5, 12),
-    coat,
-  )
-  barrel.rotation.z = Math.PI / 2
-  barrel.position.y = seen.size * 0.48
-  barrel.scale.set(1, 1.08, 1.18)
-  root.add(barrel)
-  for (const front of [-1, 1]) {
-    for (const side of [-1, 1]) {
-      const leg = new THREE.Group()
-      const upper = new THREE.Mesh(
-        new THREE.CapsuleGeometry(seen.size * 0.14, seen.size * 0.72, 4, 7),
-        coat,
-      )
-      upper.position.y = -seen.size * 0.3
-      leg.add(upper)
-      const shin = new THREE.Mesh(
-        new THREE.CylinderGeometry(seen.size * 0.1, seen.size * 0.06, seen.size * 0.78, 7),
-        coat,
-      )
-      shin.position.y = -seen.size * 1.0
-      leg.add(shin)
-      addChimeraFoot(seen, { THREE, leg, dark }, front)
-      leg.position.set(front * seen.size * 0.62, 0, side * seen.size * 0.36)
-      root.add(leg)
-    }
-  }
-  // The neck and the head, which are the part that moves: it looks at
-  // whoever comes near the thing it has just touched.
-  const head = new THREE.Group()
-  head.position.set(-seen.size * 0.72, seen.size * 0.72, 0)
-  for (let neckIndex = 0; neckIndex < 9; neckIndex++) {
-    const along = neckIndex / 8
-    const neck = new THREE.Mesh(
-      new THREE.TorusGeometry(seen.size * (0.24 - along * 0.055), seen.size * 0.085, 6, 10),
-      coat,
-    )
-    neck.rotation.y = Math.PI / 2
-    neck.position.set(-along * seen.size * 0.95, seen.size * (0.25 - along * 1.1), 0)
-    head.add(neck)
-  }
-  const skull = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.24, 12, 9), coat)
-  skull.scale.set(0.8, 1.18, 0.78)
-  skull.position.set(-seen.size * 0.98, -seen.size * 0.98, 0)
-  head.add(skull)
-  // Two horns, swept back over the neck: the one thing about this
-  // animal nobody mistakes for a horse.
-  for (const side of [-1, 1]) {
-    const horn = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.07, seen.size * 0.8, 5),
-      glow(seen.colour, 0.9),
-    )
-    horn.position.set(-seen.size * 1.0, -seen.size * 0.68, side * seen.size * 0.13)
-    horn.rotation.set(0, side * 0.22, side * 0.18)
-    head.add(horn)
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.045, 7, 5), dark)
-    eye.position.set(-seen.size * 1.18, -seen.size * 0.94, side * seen.size * 0.16)
-    head.add(eye)
-  }
-  for (let lock = 0; lock < 8; lock++) {
-    const hair = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.055, seen.size * (0.45 + (lock % 3) * 0.18), 4),
-      dark,
-    )
-    hair.position.set(
-      -seen.size * (0.78 + (lock % 3) * 0.12),
-      -seen.size * (0.82 + Math.floor(lock / 3) * 0.2),
-      (lock - 3.5) * seen.size * 0.075,
-    )
-    hair.rotation.z = -0.35 + (lock % 2) * 0.25
-    head.add(hair)
-  }
-  root.add(head)
-
-  const crown = new THREE.Group()
-  crown.position.set(seen.size * 0.52, seen.size * 1.02, 0)
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.18, 9, 7), coat)
-  eye.scale.set(0.7, 1, 0.7)
-  crown.add(eye)
-  for (let tendril = 0; tendril < 9; tendril++) {
-    const ribbon = new THREE.Mesh(
-      new THREE.ConeGeometry(seen.size * 0.06, seen.size * (0.7 + (tendril % 4) * 0.22), 4),
-      dark,
-    )
-    const angle = (Math.PI * 2 * tendril) / 9
-    ribbon.position.set(
-      Math.cos(angle) * seen.size * 0.25,
-      seen.size * 0.35,
-      Math.sin(angle) * seen.size * 0.25,
-    )
-    ribbon.rotation.z = Math.cos(angle) * 1.05
-    ribbon.rotation.x = Math.sin(angle) * 1.05
-    crown.add(ribbon)
-  }
-  root.add(crown)
-  return head
-}
-
-function monster(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const hide = glow(seen.colour, 0.85)
-  const climb = seen.climb ?? seen.size
-  const mass = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 10, 8), hide)
-  mass.scale.set(1, Math.max(0.5, climb / (seen.size * 2)), 0.9)
-  mass.position.y = climb / 2
-  root.add(mass)
-  for (let i = 0; i < 9; i++) {
-    const angle = (Math.PI * 2 * i) / 9
-    const spine = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.14, seen.size * 0.9, 4), hide)
-    spine.position.set(
-      Math.cos(angle) * seen.size * 0.7,
-      climb * (0.45 + (i % 3) * 0.2),
-      Math.sin(angle) * seen.size * 0.7,
-    )
-    spine.rotation.z = -Math.cos(angle) * 1.1
-    spine.rotation.x = Math.sin(angle) * 1.1
-    root.add(spine)
-  }
-  // Two eyes, because the thing it was had none and that is the tell.
-  const glare = glow(0xffe0f0, 1)
-  for (const side of [-1, 1]) {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.13, 8, 6), glare)
-    eye.position.set(seen.size * 0.6, climb * 0.62, side * seen.size * 0.3)
-    root.add(eye)
-  }
-  return root
-}
-
 function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const kit = modelKit({ THREE, glow, root, skin: glow(seen.colour, 1) }, seen.size)
   const hide = glow(seen.colour, 0.82)
   const raised = glow(seen.colour, 0.98)
   const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 14, 10), hide)
@@ -297,6 +175,24 @@ function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
         seen.size * (0.18 - wheel * 0.28),
       )
       root.add(rim)
+      for (let spoke = 0; spoke < 8; spoke++) {
+        const angle = (spoke * Math.PI) / 4
+        const y = -(0.2 + wheel * 0.38)
+        const z = 0.18 - wheel * 0.28
+        kit.tube({
+          name: `wheel-${side}-${wheel}-spoke-${spoke}`,
+          points: [
+            [side * 1.32, y, z],
+            [
+              side * 1.32,
+              y + Math.cos(angle) * (0.31 - wheel * 0.04),
+              z + Math.sin(angle) * (0.31 - wheel * 0.04),
+            ],
+          ],
+          radius: 0.025,
+          colour: seen.colour,
+        })
+      }
     }
   }
 
@@ -331,69 +227,52 @@ function toad(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
   return root
 }
 
-function wog(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const ink = glow(0x171318, 1)
-  const stem = new THREE.Group()
-  stem.name = 'eyewog-limbs'
-  const torso = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.07, seen.size * 0.055, seen.size * 1.25, 6),
-    ink,
-  )
-  torso.rotation.z = -0.18
-  stem.add(torso)
-
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.27, 10, 8), glow(0xf8f2e8, 1))
-  eye.scale.set(0.72, 1, 0.5)
-  eye.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.08)
-  stem.add(eye)
-  const pupil = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.1, 7, 5), ink)
-  pupil.position.set(-seen.size * 0.1, -seen.size * 0.3, seen.size * 0.2)
-  stem.add(pupil)
-
-  // Four twig limbs, each ending in the three prehensile fingers shown
-  // in the source. Their uneven angles keep the creature insect-like.
-  for (let limbIndex = 0; limbIndex < 4; limbIndex++) {
-    const side = limbIndex % 2 ? 1 : -1
-    const upper = limbIndex < 2
-    const limb = new THREE.Group()
-    limb.position.set(side * seen.size * 0.05, seen.size * (upper ? 0.32 : -0.38), 0)
-    const arm = new THREE.Mesh(
-      new THREE.CylinderGeometry(seen.size * 0.018, seen.size * 0.014, seen.size * 0.52, 4),
-      ink,
-    )
-    arm.rotation.z = side * (upper ? 1.05 : 0.72)
-    limb.add(arm)
-    for (let finger = 0; finger < 3; finger++) {
-      const digit = new THREE.Mesh(
-        new THREE.CylinderGeometry(seen.size * 0.01, seen.size * 0.007, seen.size * 0.2, 4),
-        ink,
-      )
-      digit.position.set(side * seen.size * 0.25, -seen.size * 0.16 + finger * seen.size * 0.07, 0)
-      digit.rotation.z = side * (0.65 + finger * 0.35)
-      limb.add(digit)
+function wog(seen: Apparition, context: BasicApparitionContext): Object3D {
+  const limbs = new context.THREE.Group()
+  limbs.name = 'eyewog-limbs'
+  const l = modelKit({ ...context, root: limbs }, seen.size)
+  l.oval({ name: 'ocular-head', at: [0, 0, 0], radii: [0.27, 0.33, 0.13], colour: 0xf8f2e8 })
+  l.oval({ name: 'large-pupil', at: [0, 0, 0.13], radii: [0.12, 0.19, 0.025], colour: 0x171318 })
+  for (const side of [-1, 1])
+    for (const upper of [-1, 1]) {
+      l.tube({
+        name: `bent-limb-${side}-${upper}`,
+        points: [
+          [side * 0.11, upper * 0.13, -0.05],
+          [side * 0.36, upper * 0.36, -0.01],
+          [side * 0.48, upper * 0.18, 0.03],
+        ],
+        radius: 0.025,
+        colour: 0x171318,
+      })
+      l.hand({
+        name: `prehensile-hand-${side}-${upper}`,
+        at: [side * 0.48, upper * 0.18, 0.03],
+        scale: 0.32,
+        colour: 0x171318,
+        into: undefined,
+        fingers: 3,
+      })
     }
-    stem.add(limb)
-  }
-
-  const tail = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.016, seen.size * 0.92, 5),
-    ink,
-  )
-  tail.position.set(seen.size * 0.06, seen.size * 0.88, 0)
-  tail.rotation.z = -0.18
-  stem.add(tail)
-  const club = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), ink)
-  club.scale.set(0.7, 1.45, 0.7)
-  club.position.set(seen.size * 0.14, seen.size * 1.36, 0)
-  club.rotation.z = -0.5
-  stem.add(club)
-  root.add(stem)
-  return stem
+  l.tube({
+    name: 'flexible-tail',
+    points: [
+      [0, 0.24, -0.04],
+      [0.06, 0.62, -0.08],
+      [-0.07, 0.98, 0],
+      [0.05, 1.2, 0],
+    ],
+    radius: 0.025,
+    colour: 0x171318,
+  })
+  l.oval({ name: 'tail-club', at: [0.06, 1.23, 0], radii: [0.1, 0.17, 0.06], colour: 0x171318 })
+  context.root.add(limbs)
+  return limbs
 }
 
 const BUILDERS: Partial<
   Record<Apparition['kind'], (seen: Apparition, context: BasicApparitionContext) => Object3D>
-> = { medusa, chimera, monster, toad, wog }
+> = { medusa, chimera: tserriednichGuardian, toad, wog }
 
 export function buildGuardianApparition(
   seen: Apparition,

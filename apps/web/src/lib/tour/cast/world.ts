@@ -423,16 +423,7 @@ export interface TourWorld {
    */
   smoke: { spaceId: string; filled: number } | null
 
-  /**
-   * The rooms Momoze's Guardian Spirit Beasts are loose in.
-   *
-   * The only one of the eight that is a crowd rather than an animal: what the
-   * ability puts in the ship is a great many of them, of every size and shape,
-   * and they do not keep to the room they were called into — they go through
-   * the walls and carry on. So this is a list of rooms rather than one, and
-   * what it means is "the flock is somewhere in here", which is as precise as
-   * the ability ever gets.
-   */
+  /** Rooms occupied by Momoze's mouse-shaped guardian and its small replicas. */
   menagerie: string[]
 
   /**

@@ -39,15 +39,8 @@ const posed = listBetween(
 )
 
 /**
- * The kinds the scene positions from the camera rather than from the room.
- *
- * Read out of `TourScene.svelte`'s animation loop: a branch that sets a root's
- * position from `camera.position` is drawing something the visitor is carrying.
- * Two of them are Nen creatures — Tyson's beast and its eye-wogs hang in front
- * of whoever reads the Book of Tyson, which is the whole ability — and a
- * guardian beast declared as one of those is an animal glued to the visitor's
- * face on every deck. That is not a hypothesis: it shipped, and it is what this
- * pair of lists exists to prevent.
+ * Creature kinds with a camera-carried animation. A kind can also have a posed
+ * instance (Tyson), provided the posed-guardian guard runs before this branch.
  */
 function carriedKinds(): string[] {
   const scene = readFileSync(`${ROOT}apps/web/src/lib/components/tour/TourScene.svelte`, 'utf8')
@@ -69,12 +62,16 @@ describe('the Nen creature silhouettes', () => {
     expect([...contracts].sort()).toEqual([...walk].sort())
   })
 
-  it('keep the carried creatures out of the posed list', () => {
+  it('guard posed beasts before the carried-creature animation', () => {
     const carried = carriedKinds()
     // A guard on the guard: if the scene is refactored past this reading, the
     // list comes back empty and the check below would pass by knowing nothing.
     expect(carried).toContain('tyson-guardian')
-    expect(posed.filter((silhouette) => carried.includes(silhouette))).toEqual([])
+    const scene = readFileSync(`${ROOT}apps/web/src/lib/components/tour/TourScene.svelte`, 'utf8')
+    expect(scene.indexOf('if (held.root.userData.posedGuardian)')).toBeLessThan(
+      scene.indexOf("if (held.kind === 'tyson-guardian')"),
+    )
+    expect(posed.filter((silhouette) => carried.includes(silhouette))).toEqual(['tyson-guardian'])
     expect(posed.every((silhouette) => walk.includes(silhouette))).toBe(true)
   })
 

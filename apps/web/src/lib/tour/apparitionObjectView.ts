@@ -4,6 +4,9 @@ import type { BasicApparitionContext } from './apparitionBasicView'
 import { buildChainTip } from './chainTips'
 import { buildDealer } from './dealer'
 import { FORGED_AURA } from './morena'
+import { indoorFish, blinky } from './apparitionMangaObjectView'
+import { paperDoll } from './apparitionMangaPropView'
+import { BONE, INK, modelKit } from './nenModelPrimitives'
 
 type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D | null
 
@@ -19,42 +22,6 @@ function gum(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), skin)
   blob.scale.set(1, 0.7, 1)
   root.add(blob)
-  return root
-}
-
-function double(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
-  const material = glow(seen.colour, 0.42)
-  const body = new THREE.Mesh(
-    new THREE.CapsuleGeometry(seen.size * 0.3, seen.size * 1.1, 4, 8),
-    material,
-  )
-  body.position.y = seen.size * 0.15
-  root.add(body)
-  const head = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.26, 10, 8), material)
-  head.position.y = seen.size * 1.05
-  root.add(head)
-  return root
-}
-
-function fish(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionContext) {
-  const body = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 8, 6), skin)
-  body.scale.set(1.7, 0.75, 0.75)
-  root.add(body)
-  const tail = new THREE.Mesh(new THREE.ConeGeometry(seen.size * 0.55, seen.size, 4), skin)
-  tail.rotation.z = Math.PI / 2
-  tail.position.x = seen.size * 1.7
-  root.add(tail)
-  const eye = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 6, 5), glow(0xfff3d0, 1))
-  eye.position.set(-seen.size * 1.1, seen.size * 0.2, seen.size * 0.35)
-  root.add(eye)
-  return root
-}
-
-function paper(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
-  root.add(new THREE.Mesh(new THREE.PlaneGeometry(seen.size, seen.size * 1.4), skin))
-  const head = new THREE.Mesh(new THREE.CircleGeometry(seen.size * 0.3, 8), skin)
-  head.position.y = seen.size * 0.85
-  root.add(head)
   return root
 }
 
@@ -120,47 +87,6 @@ function puppet(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   return root
 }
 
-function hoover(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
-  const canister = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.55, seen.size * 0.6, seen.size * 1.1, 12),
-    glow(seen.colour, 1),
-  )
-  root.add(canister)
-  const hose = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.12, seen.size * 0.12, seen.size * 1.6, 6),
-    glow(seen.colour, 0.9),
-  )
-  hose.rotation.z = Math.PI / 2.6
-  hose.position.set(seen.size * 0.7, seen.size * 0.5, -seen.size * 0.4)
-  root.add(hose)
-  const nozzle = new THREE.Mesh(
-    new THREE.ConeGeometry(seen.size * 0.34, seen.size * 0.6, 8),
-    glow(seen.colour, 1),
-  )
-  nozzle.rotation.x = -Math.PI / 2
-  nozzle.position.set(seen.size * 1.25, seen.size * 0.95, -seen.size * 0.9)
-  root.add(nozzle)
-  if (seen.stage) {
-    root.add(
-      new THREE.Mesh(
-        new THREE.SphereGeometry(seen.size * 0.42, 10, 8),
-        glow(0x9be8ff, Math.min(0.85, 0.25 + seen.stage * 0.14)),
-      ),
-    )
-  }
-  return null
-}
-
-/**
- * Whichever of Kurapika's five chains is in the hand: the tip first, then the
- * links.
- *
- * The order is load-bearing — the scene reads the first child as the end of the
- * chain and strings everything after it between there and the wrist — so the tip
- * goes on as one group rather than as its own meshes. Which tip it is comes off
- * `stage`; see `chainTips.ts`, where the five ends are the only thing that
- * differs between five abilities that are otherwise one chain.
- */
 function chain(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   const steel = glow(seen.colour, 1)
   root.add(buildChainTip(seen.stage, { THREE, steel, size: seen.size }))
@@ -184,12 +110,55 @@ function book(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
     const cover = new THREE.Mesh(new THREE.BoxGeometry(wide, 0.006, long), board)
     cover.position.set((side * wide) / 2, -0.004, 0)
     leaf.add(cover)
+    // The palm on the binding is visible from the back of the open book too.
+    const kit = modelKit({ THREE, glow, root: leaf, skin: board }, wide)
+    const palm = new THREE.Group()
+    palm.position.set(side * wide * 0.5, -0.009, 0)
+    palm.rotation.x = Math.PI / 2
+    kit.oval({
+      name: 'cover-palm',
+      at: [0, 0, 0],
+      radii: [0.17, 0.2, 0.008],
+      colour: BONE,
+      into: palm,
+    })
+    for (let finger = 0; finger < 5; finger++)
+      kit.tube({
+        name: `cover-finger-${finger}`,
+        points: [
+          [(finger - 2) * 0.075, 0.1, 0],
+          [(finger - 2) * 0.09, 0.38 - Math.abs(finger - 2) * 0.035, 0],
+        ],
+        radius: 0.025,
+        colour: BONE,
+        into: palm,
+      })
+    if (side > 0) leaf.add(palm)
     const sheet = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.9, 0.002, long * 0.9), paper)
     sheet.position.set((side * wide) / 2, 0.002, 0)
     leaf.add(sheet)
+    // A portrait block and separated rule text, as on the ability pages.
+    const portrait = new THREE.Group()
+    portrait.rotation.x = -Math.PI / 2
+    portrait.position.set(side * wide * 0.3, 0.006, -long * 0.25)
+    kit.oval({
+      name: 'page-portrait-head',
+      at: [0, 0.07, 0],
+      radii: [0.09, 0.12, 0.005],
+      colour: INK,
+      into: portrait,
+    })
+    kit.oval({
+      name: 'page-portrait-shoulders',
+      at: [0, -0.1, 0],
+      radii: [0.16, 0.08, 0.005],
+      colour: INK,
+      into: portrait,
+    })
+    leaf.add(portrait)
     for (let index = 0; index < 5; index++) {
       const line = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.6, 0.001, long * 0.035), ink)
-      line.position.set((side * wide) / 2, 0.004, (index - 2) * long * 0.14)
+      line.position.set((side * wide) / 2, 0.006, index * long * 0.1)
       leaf.add(line)
     }
     root.add(leaf)
@@ -413,11 +382,10 @@ function contract(seen: Apparition, { THREE, glow, root }: BasicApparitionContex
 
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   gum,
-  double,
-  fish,
-  paper,
+  fish: indoorFish,
+  paper: paperDoll,
   puppet,
-  hoover,
+  hoover: blinky,
   chain,
   book,
   flute,

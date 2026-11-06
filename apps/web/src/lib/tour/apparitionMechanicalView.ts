@@ -1,6 +1,20 @@
 import type { Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { BONE, INK, modelKit } from './nenModelPrimitives'
+
+function blackFlame(THREE: BasicApparitionContext['THREE'], width: number, length: number) {
+  const shape = new THREE.Shape()
+  shape.moveTo(-width, 0)
+  shape.bezierCurveTo(-width * 2, length * 0.25, width * 0.8, length * 0.65, 0, length)
+  shape.bezierCurveTo(width * 0.4, length * 0.7, width * 2, length * 0.28, width, 0)
+  shape.closePath()
+  return new THREE.ExtrudeGeometry(shape, {
+    depth: width * 0.3,
+    bevelEnabled: false,
+    curveSegments: 12,
+  })
+}
 
 function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
   const iron = glow(seen.colour, 0.9)
@@ -93,14 +107,10 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   for (let i = 0; i < 32; i++) {
     const angle = (Math.PI * 2 * i) / 32
     const flame = new THREE.Mesh(
-      new THREE.ConeGeometry(
-        seen.size * (0.065 + (i % 4) * 0.012),
-        seen.size * (0.36 + (i % 5) * 0.12),
-        5,
-      ),
-      glow(0x241923, 0.68),
+      blackFlame(THREE, seen.size * (0.065 + (i % 4) * 0.012), seen.size * (0.36 + (i % 5) * 0.12)),
+      glow(0x241923, 1),
     )
-    flame.position.set(Math.cos(angle) * seen.size * 1.27, Math.sin(angle) * seen.size * 1.27, 0)
+    flame.position.set(Math.cos(angle) * seen.size * 1.02, Math.sin(angle) * seen.size * 1.02, 0)
     flame.rotation.z = angle - Math.PI / 2 + Math.sin(i * 2.3) * 0.13
     fire.add(flame)
   }
@@ -109,9 +119,9 @@ function wheel(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
 }
 
 function coin(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const worth = Math.min(6, Math.log10(Math.max(1, seen.stage)) + 1)
+  const kit = modelKit({ THREE, glow, root, skin: glow(seen.colour, 1) }, seen.size)
   const disc = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size, seen.size, seen.size * 0.12 * worth, 20),
+    new THREE.CylinderGeometry(seen.size, seen.size, seen.size * 0.12, 40),
     glow(seen.colour, 1),
   )
   disc.rotation.x = Math.PI / 2
@@ -121,28 +131,112 @@ function coin(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): 
     glow(seen.colour, 0.7),
   )
   root.add(rim)
+  const digits = String(Math.max(1, Math.floor(seen.stage)))
+  const segments: Record<string, number[]> = {
+    '0': [0, 1, 2, 4, 5, 6],
+    '1': [2, 5],
+    '2': [0, 2, 3, 4, 6],
+    '3': [0, 2, 3, 5, 6],
+    '4': [1, 2, 3, 5],
+    '5': [0, 1, 3, 5, 6],
+    '6': [0, 1, 3, 4, 5, 6],
+    '7': [0, 2, 5],
+    '8': [0, 1, 2, 3, 4, 5, 6],
+    '9': [0, 1, 2, 3, 5, 6],
+  }
+  const positions = [
+    [0, 0.45],
+    [-0.2, 0.23],
+    [0.2, 0.23],
+    [0, 0],
+    [-0.2, -0.23],
+    [0.2, -0.23],
+    [0, -0.45],
+  ]
+  const scale = Math.min(1, 2 / digits.length)
+  for (let i = 0; i < digits.length; i++)
+    for (const segment of segments[digits[i]]) {
+      const [x, y] = positions[segment],
+        horizontal = segment === 0 || segment === 3 || segment === 6
+      kit.box({
+        name: `coin-value-${i}-${segment}`,
+        at: [((i - (digits.length - 1) / 2) * 0.55 + x) * scale, y * scale, 0.067],
+        dimensions: [horizontal ? 0.34 * scale : 0.045, horizontal ? 0.045 : 0.37 * scale, 0.012],
+        colour: INK,
+      })
+    }
+  const reverse = new THREE.Group()
+  reverse.rotation.y = Math.PI
+  const portrait = modelKit({ THREE, glow, root: reverse, skin: glow(BONE, 1) }, seen.size)
+  portrait.oval({
+    name: 'guardian-face-engraving',
+    at: [0, 0, 0.075],
+    radii: [0.3, 0.3, 0.02],
+    colour: 0xc6a75a,
+  })
+  for (const side of [-1, 1])
+    portrait.box({
+      name: `engraved-eye-${side}`,
+      at: [side * 0.12, 0.06, 0.1],
+      dimensions: [0.13, 0.025, 0.012],
+      colour: INK,
+    })
+  portrait.box({
+    name: 'engraved-mouth',
+    at: [0, -0.1, 0.1],
+    dimensions: [0.22, 0.025, 0.012],
+    colour: INK,
+  })
+  for (let spoke = 0; spoke < 8; spoke++) {
+    const a = (spoke * Math.PI) / 4
+    portrait.tube({
+      name: `engraved-spoke-${spoke}`,
+      points: [
+        [Math.cos(a) * 0.34, Math.sin(a) * 0.34, 0.09],
+        [Math.cos(a) * 0.62, Math.sin(a) * 0.62, 0.09],
+      ],
+      radius: 0.025,
+      colour: INK,
+    })
+  }
+  root.add(reverse)
   return root
 }
 
 function tysonGuardian(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const flesh = glow(seen.colour, 0.8)
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh)
-  ball.scale.set(1.12, 1, 0.68)
-  root.add(ball)
-  for (const side of [-1, 1]) {
-    const lobe = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.66, 14, 10), flesh)
-    lobe.scale.set(0.92, 0.9, 0.7)
-    lobe.position.set(side * seen.size * 0.43, seen.size * 0.38, 0)
-    root.add(lobe)
-  }
-  const point = new THREE.Mesh(
-    new THREE.ConeGeometry(seen.size * 0.92, seen.size * 1.25, 18),
+  const flesh = glow(seen.colour, 1)
+  const heart = new THREE.Shape()
+  heart.moveTo(0, -seen.size * 1.1)
+  heart.bezierCurveTo(
+    -seen.size * 1.55,
+    -seen.size * 0.05,
+    -seen.size * 1.15,
+    seen.size * 1.45,
+    0,
+    seen.size * 0.62,
+  )
+  heart.bezierCurveTo(
+    seen.size * 1.15,
+    seen.size * 1.45,
+    seen.size * 1.55,
+    -seen.size * 0.05,
+    0,
+    -seen.size * 1.1,
+  )
+  const body = new THREE.Mesh(
+    new THREE.ExtrudeGeometry(heart, {
+      depth: seen.size * 0.3,
+      bevelEnabled: true,
+      bevelSize: seen.size * 0.1,
+      bevelThickness: seen.size * 0.12,
+      bevelSegments: 4,
+      curveSegments: 32,
+    }),
     flesh,
   )
-  point.rotation.z = Math.PI
-  point.position.y = -seen.size * 0.48
-  point.scale.z = 0.68
-  root.add(point)
+  body.name = 'heart-shaped-guardian'
+  body.position.z = -seen.size * 0.1
+  root.add(body)
   const eyeShape = new THREE.Shape()
   eyeShape.moveTo(-seen.size * 0.78, 0)
   eyeShape.bezierCurveTo(
@@ -171,11 +265,11 @@ function tysonGuardian(seen: Apparition, { THREE, glow, root }: BasicApparitionC
   const wings = new THREE.Group()
   wings.name = 'wings'
   for (const side of [-1, 1]) {
-    for (let tier = 0; tier < 3; tier++) {
+    for (let tier = 0; tier < 2; tier++) {
       const wing = new THREE.Group()
       wing.position.set(
         side * seen.size * (0.96 + tier * 0.04),
-        seen.size * (0.52 - tier * 0.47),
+        seen.size * (0.46 - tier * 0.8),
         -seen.size * 0.08,
       )
       for (let i = 0; i < 3; i++) {

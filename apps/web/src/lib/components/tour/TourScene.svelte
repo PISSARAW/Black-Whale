@@ -140,6 +140,12 @@
   import { ApparitionView } from '$lib/tour/ApparitionView'
   import { buildBasicApparition, BIRD_TETHER, BIRD_WINGS } from '$lib/tour/apparitionBasicView'
   import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
+  import { buildWormPortal } from '$lib/tour/apparitionPortalView'
+  import { batchNenModel } from '$lib/tour/nenModelBatch'
+  import { buildRoyalBeastApparition } from '$lib/tour/apparitionRoyalBeastView'
+  import { buildBiohazardApparition } from '$lib/tour/apparitionBiohazardView'
+  import { buildSupportBeastApparition } from '$lib/tour/apparitionSupportBeastView'
+  import { buildMangaPropApparition } from '$lib/tour/apparitionMangaPropView'
   import { buildEmbellishmentApparition } from '$lib/tour/apparitionEmbellishmentView'
   import { buildInsectApparition } from '$lib/tour/apparitionInsectView'
   import { buildSnakeApparition } from '$lib/tour/apparitionSnakeView'
@@ -1608,6 +1614,8 @@
         const standing: Record<string, true> = {}
 
         for (const { structure, room } of detachedOn(ship, world, { tierId: currentTierId })) {
+          if (world.solids[structure.id]?.alive && ['camera', 'manacle'].includes(structure.kind))
+            continue
           standing[structure.id] = true
           const key = JSON.stringify(structure)
           if (solids[structure.id]?.key === key) continue
@@ -1973,6 +1981,14 @@
         turns = buildDragonApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildVowApparition(seen, { THREE, glow, root, skin }) ?? turns
         turns = buildAnimalApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildRoyalBeastApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildSupportBeastApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildMangaPropApparition(seen, { THREE, glow, root, skin }) ?? turns
+        turns = buildBiohazardApparition(seen, { THREE, glow, root, skin }) ?? turns
+        root.userData.carried = seen.carried ?? false
+        root.userData.variant = seen.variant
+        root.userData.heading = seen.heading
+        root.userData.posedGuardian = seen.id.startsWith('cast-beast:')
 
         // ── The Guardian Spirit Beasts ─────────────
         //
@@ -2019,23 +2035,34 @@
         }
 
         if (seen.kind === 'portal') {
-          const rim = new THREE.Mesh(
-            new THREE.TorusGeometry(seen.size, seen.size * 0.09, 8, 32),
-            glow(seen.colour, 1),
-          )
-          root.add(rim)
-          // The far end, or — while only one mouth has been placed — the
-          // technique's own colour, so an unpaired door still reads as a door.
-          pane = new THREE.Mesh(
-            new THREE.CircleGeometry(seen.size, 32),
-            seen.pair ? portals.material(seen.id) : glow(seen.colour, 0.22),
-          )
-          pane.renderOrder = 1
-          root.add(pane)
+          pane =
+            buildWormPortal(
+              seen,
+              { THREE, glow, root, skin },
+              seen.pair ? portals.material(seen.id) : undefined,
+            ) ?? null
           turns = root
         }
 
-        styleNenCreature(THREE, root, { kind: seen.kind, size: seen.size })
+        if (
+          !humanLod &&
+          !['chain', 'snake', 'vow-heart', 'dealer', 'book', 'coin'].includes(seen.kind)
+        )
+          batchNenModel(root)
+        const groundSpace = ship.spaces.get(seen.spaceId)
+        const groundPlan = groundSpace ? ship.plans.get(groundSpace.tierId) : null
+        const groundOffset =
+          groundSpace && groundPlan ? floorOf(groundSpace, groundPlan.tier) - seen.y : 0
+        const carriedCreature =
+          seen.carried ||
+          (!seen.id.startsWith('cast-beast:') &&
+            ['hoover', 'tyson-guardian', 'wog'].includes(seen.kind))
+        styleNenCreature(THREE, root, {
+          kind: seen.kind,
+          size: seen.size,
+          groundOffset,
+          shadow: !carriedCreature,
+        })
 
         return {
           key: '',
@@ -2076,7 +2103,7 @@
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
           keyOf: (seen) =>
-            `${seen.kind}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|gyo:${effectiveNen.gyo}`,
+            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|gyo:${effectiveNen.gyo}`,
           build: buildApparition,
           preserve: (held) => ({ facing: held.facing, flown: held.flown }),
           restore: (held, saved) => {
@@ -2094,6 +2121,7 @@
             held.pair = seen.pair
             held.humanPose = seen.human?.pose
             held.humanHeading = seen.heading
+            held.root.userData.heading = seen.heading
             held.pick = seen.pick ?? false
             if (!held.positioned) {
               held.root.position.set(seen.at[0], seen.y, seen.at[1])
@@ -2550,6 +2578,31 @@
             continue
           }
 
+          if (held.root.userData.posedGuardian) {
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.y = held.root.userData.heading ?? 0
+            const wings = held.root.getObjectByName('wings')
+            if (wings)
+              wings.children.forEach((wing, i) => {
+                wing.rotation.z = Math.sin(phase * 3 + i) * 0.12
+              })
+            continue
+          }
+
+          if (held.root.userData.carried) {
+            const sin = Math.sin(yaw),
+              cos = Math.cos(yaw)
+            const armour = held.kind === 'pain-armour'
+            const reach = armour ? 0 : held.kind === 'dolphin' ? 1.05 : 0.6
+            held.root.position.set(
+              camera.position.x + cos * (armour ? 0 : 0.32) - sin * reach,
+              camera.position.y - (armour ? 0 : 0.5),
+              camera.position.z - sin * (armour ? 0 : 0.32) - cos * reach,
+            )
+            held.root.rotation.set(0, yaw + (held.kind === 'pain-armour' ? 0 : Math.PI), 0)
+            continue
+          }
+
           if (held.kind === 'hoover') {
             // Worn at the hip, on the visitor's right, pointing where they are:
             // it is a thing they are carrying, not a thing in the room.
@@ -2863,36 +2916,16 @@
             continue
           }
 
-          // Momoze's flock, which is the one thing in the walk that is allowed
-          // to leave the room it belongs to: the reach is wider than the water
-          // its station was given, so a beast on that arc goes through the
-          // bulkhead, spends a moment in whatever is on the other side of it,
-          // and comes back. Every one of them is playing — a slow ring, a hop
-          // on top of it, a roll and a turn — and no two are on the same count,
-          // because the phase is its own number and its number is its own.
+          // The guardian and the small replicas retain the same upright mouse anatomy.
           if (held.kind === 'sprite') {
-            const own = held.stage
-            const turn = phase * (0.2 + (own % 5) * 0.05) + own
-            const bob = Math.sin(phase * (1.2 + (own % 3) * 0.5) + own)
-            held.root.position.set(
-              held.at[0] + Math.cos(turn) * held.spread,
-              held.y + bob * (0.3 + (own % 4) * 0.18),
-              held.at[1] + Math.sin(turn * 1.3) * held.spread,
-            )
-            // Nose along the way it is going, and rolling as it plays: they
-            // dance and fly, and a creature that stayed upright would be doing
-            // neither.
-            held.root.rotation.set(
-              Math.sin(phase * 0.8 + own) * 0.4,
-              -turn + Math.PI / 2,
-              Math.sin(phase * 0.6 + own * 2) * 0.5,
+            held.root.position.set(held.at[0], held.y, held.at[1])
+            held.root.rotation.y = Math.atan2(
+              camera.position.x - held.root.position.x,
+              camera.position.z - held.root.position.z,
             )
             continue
           }
 
-          // Tyson's, which is not in the room: it hangs in front of the reader
-          // at eye height, looks straight at them, and beats its wings. Carried
-          // like the flute and the book, so the position is the camera's.
           if (held.kind === 'tyson-guardian') {
             const sin = Math.sin(yaw)
             const cos = Math.cos(yaw)

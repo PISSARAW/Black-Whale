@@ -1352,6 +1352,7 @@
   },
   {
     "id": "nasubi-hui-guo-rou",
+    "guardianBeast": { "silhouette": "nasubi-guardian", "sourceChapterId": "ch-349" },
     "canonicalName": "Nasubi Hui Guo Rou",
     "aliases": ["The King"],
     "description": "King of the Kakin Empire. Orchestrated the War of Succession via the Urn of the Seed.",
@@ -1771,6 +1772,7 @@
   },
   {
     "id": "prince-benjamin",
+    "guardianBeast": { "silhouette": "benjamin-guardian", "sourceChapterId": "ch-362" },
     "canonicalName": "Benjamin Hui Guo Rou",
     "aliases": ["1st Prince"],
     "description": "Eldest son of Unma. Paramilitary leader who manages the application of Martial Law from room 1001.",
@@ -4663,9 +4665,9 @@
       }
     ],
     "guardianBeast": {
-      "silhouette": "ghost",
-      "sourceChapterId": "ch-362",
-      "note": "Tyson's beast is drawn where it acts: hanging in front of whoever reads the Book of Tyson, which is what `tyson-guardian` and `wog` are in the walk and why both ride the visitor rather than stand in a room. The animal itself is never drawn in her salon, so the posed shape is the neutral spectral one rather than an anatomy invented for it."
+      "silhouette": "tyson-guardian",
+      "sourceChapterId": "ch-375",
+      "note": "Heart-shaped guardian with four wings and a central eye; the salon model uses the same anatomy as the active manifestation."
     }
   },
   {
@@ -5561,6 +5563,7 @@
   },
   {
     "id": "prince-halkenburg",
+    "guardianBeast": { "silhouette": "halkenburg-guardian", "sourceChapterId": "ch-349" },
     "canonicalName": "Halkenburg Hui Guo Rou",
     "aliases": ["9th Prince"],
     "description": "Ninth Prince of Kakin, biological son of Unma adopted by Duazul. A pacifist turned fighter, his body is dead but his soul remains active in that of Balsamilco.",
@@ -7928,13 +7931,7 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
-    ],
-    "guardianBeast": {
-      "silhouette": "ghost",
-      "sourceChapterId": "ch-358",
-      "standsWith": "oito-nephew-fake-woble",
-      "note": "Kurapika senses the dark aura around the cradle in room 1014 in ch. 358; the beast itself is never drawn there, so the walk gives it the neutral spectral shape rather than inventing an anatomy. The real Woble's whereabouts are never confirmed, so the animal keeps the position of the child presented as Woble, which is the cradle the aura was sensed around."
-    }
+    ]
   },
   {
     "id": "oito-nephew-fake-woble",

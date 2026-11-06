@@ -255,6 +255,21 @@ function bird(seen: Apparition, { THREE, root, skin, observerGyo }: BasicApparit
 const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   bird,
   owl,
+  double: (seen, context) =>
+    human(
+      {
+        ...seen,
+        kind: 'avatar',
+        size: 0.42,
+        human: {
+          role: 'witness',
+          identity: 'prince-kacho',
+          pose: seen.human?.pose ?? 'idle',
+          aura: 'none',
+        },
+      },
+      context,
+    ),
   avatar: human,
   combatant: human,
   card,

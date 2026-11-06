@@ -1,3 +1,5 @@
+import { hatsuManifestations } from './hatsuManifestations'
+import { GUARDIAN_PRESENTATION } from './nenAppearance'
 /**
  * What Nen puts in the room, as things rather than as state.
  *
@@ -38,6 +40,21 @@ import type { CardFace } from './morena'
 export type ApparitionKind =
   /** A live opponent supplied by a game played inside the walk. */
   | 'combatant'
+  | 'benjamin-guardian'
+  | 'halkenburg-guardian'
+  | 'nasubi-guardian'
+  | 'tserriednich-second'
+  | 'dolphin'
+  | 'predator-salesale'
+  | 'blood-snake'
+  | 'nen-spider'
+  | 'cookie'
+  | 'phone'
+  | 'cloth'
+  | 'staff'
+  | 'jupiter'
+  | 'pain-armour'
+  | 'animal-object'
   /** Musse's owl, perched where Secret Window attached it. */
   | 'owl'
   /** Mizaistom's card, laid on the room: blue, yellow, then red. */
@@ -177,6 +194,12 @@ export interface Apparition {
   at: Vec2
   /** Direction of travel for moving humans, in radians around the vertical axis. */
   heading?: number
+  /** Attested design variant, independent of animation stage or heading. */
+  variant?: 'slender' | 'enlarged' | 'aggressive'
+  /** Presentation attachment: room apparitions must never snap to the camera. */
+  carried?: boolean
+  /** Original object's silhouette retained by an animal-object hybrid. */
+  objectShape?: { size: Vec2; height: number; kind: string }
   /** How high its centre is, in metres above sea level, like every other Y. */
   y: number
   /** Its size in metres: what that measures is the kind's own business. */
@@ -279,7 +302,7 @@ export const OWL = 0xa8b7d8
 /**
  * Cluck's pigeons, in the grey the birds are drawn in.
  *
- * Deliberately not the owl's blue and not Momoze's colour wheel: this flock is
+ * This flock is
  * ordinary birds under somebody's control, and the thing that marks them as
  * Nen is the thread each one is on rather than a colour no pigeon has.
  */
@@ -638,6 +661,12 @@ export interface Cast {
    * visitor would be dropping the single fact the archive gives.
    */
   heading?: number
+  /** Attested design variant, independent of animation stage or heading. */
+  variant?: 'slender' | 'enlarged' | 'aggressive'
+  /** Presentation attachment: room apparitions must never snap to the camera. */
+  carried?: boolean
+  /** Original object's silhouette retained by an animal-object hybrid. */
+  objectShape?: { size: Vec2; height: number; kind: string }
 }
 
 /**
@@ -687,6 +716,10 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     const { kind, height, size, colour, ...extra } = drawn
     const measured = room(ship, space)
     if (!measured) return
+    const body = GUARDIAN_PRESENTATION[kind]
+    const fitted = body
+      ? Math.min(size, (measured.ceiling - measured.floor - 0.2) / body.height)
+      : size
     found.push({
       id,
       kind,
@@ -695,8 +728,10 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       at: landing(space),
       // Never through the deckhead: a cabin with 2,2 m of headroom gets its owl
       // under the beam rather than in the deck above it.
-      y: Math.min(measured.floor + height, measured.ceiling - 0.25),
-      size,
+      y: body
+        ? measured.floor - body.bottom * fitted
+        : Math.min(measured.floor + height, measured.ceiling - 0.25),
+      size: fitted,
       colour,
       stage: 0,
       hidden: false,
@@ -856,7 +891,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         // Beside and a little behind: a guardian walks at your shoulder, and
         // one standing in front of you is in the way of the walk.
         at: [beside[0] + 1.4, beside[1] + 1.4],
-        y: floor + 0.9,
+        y: floor,
         size: 0.9,
         colour: DOUBLE,
         stage: 0,
@@ -865,7 +900,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     } else {
       place(`double:${guarded.id}`, guarded, {
         kind: 'double',
-        height: 0.9,
+        height: 0,
         size: 0.9,
         colour: DOUBLE,
         spread: mode === 'wander' ? 2.5 : 0,
@@ -1074,8 +1109,8 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
   // what Double Face is, so it is what `stage` carries: 0 for the left page,
   // 1 for the right. The book is worn like the chain and the hoover, so the
   // room and the height here say only what deck it belongs to.
-  if (world.holding === 'bookmark' && visitor && world.book.bookmark) {
-    const ribboned = world.book.pages.indexOf(world.book.bookmark)
+  if ((world.holding === 'theft' || world.holding === 'bookmark') && visitor) {
+    const ribboned = world.book.bookmark ? world.book.pages.indexOf(world.book.bookmark) : -1
     found.push({
       id: 'book',
       kind: 'book',
@@ -1086,7 +1121,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       // Half the width of one page, in metres: a book held at reading distance.
       size: 0.16,
       colour: BOOK,
-      stage: ribboned < 0 ? 0 : ribboned,
+      stage: ribboned < 0 ? -1 : ribboned % 2,
       hidden: false,
     })
   }
@@ -1393,8 +1428,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         y: minted.y,
         size: 0.19,
         colour: COIN,
-        // What it is worth, which is what the scene draws it thicker for: the
-        // tenth coin is the same disc and unmistakably more of one.
+        // Its face carries the value; increasing it does not thicken the coin.
         stage: world.wheel.coin,
         hidden: false,
       })
@@ -1513,6 +1547,19 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         spread: 0,
       })
     }
+    if (world.pinned === spaceId)
+      found.push({
+        id: `nen-spider:${spaceId}`,
+        kind: 'nen-spider',
+        spaceId,
+        tierId: space.tierId,
+        at: landing(space),
+        y: measured.floor + 1.45,
+        size: 0.08,
+        colour: 0xeee9dd,
+        stage: 0,
+        hidden: false,
+      })
   }
 
   // Cluck's flock, called in and circling the person who called it.
@@ -1571,7 +1618,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         tierId: barring.tierId,
         at: way,
         y: measured.floor,
-        size: 1.15,
+        size: Math.min(1.15, (measured.ceiling - measured.floor - 0.1) / 3.2),
         colour: DRAGON,
         // Which way it is facing, as a bearing into the room, so the scene does
         // not have to work the geometry out again every frame.
@@ -1601,7 +1648,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
         tierId: prowling.tierId,
         at: over,
         y: measured.floor,
-        size: 1.3,
+        size: Math.min(1.3, (measured.ceiling - measured.floor - 0.1) / 3.05),
         colour: CAT,
         // How much of the room is left, so the scene can have it working rather
         // than sitting: a cat over nothing has finished.
@@ -1631,7 +1678,7 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     }
   }
 
-  return found
+  return [...found, ...hatsuManifestations(ship, world, { visitor, seconds })]
 }
 
 /**
@@ -1740,7 +1787,7 @@ export function wormMouths(
       // the doorway you can see and the doorway you can walk into are two
       // different places, which is a tunnel that cannot be entered.
       at: world.landed[space.id] ?? measured.at,
-      y: Math.min(measured.floor + PORTAL_RADIUS + 0.1, measured.ceiling - 0.3),
+      y: Math.min(measured.floor + 0.65, measured.ceiling - 0.3),
     })
   }
   return mouths
@@ -1773,7 +1820,17 @@ export function wormMouthAt(ship: Ship, world: TourWorld, standing: Footing): st
  * direction to travel in.
  */
 export interface TourFlash {
-  kind: 'gust' | 'punch' | 'sun' | 'arrow' | 'rewind' | 'lash' | 'blast' | 'swing' | 'volley'
+  kind:
+    | 'gust'
+    | 'punch'
+    | 'sun'
+    | 'arrow'
+    | 'rewind'
+    | 'lash'
+    | 'blast'
+    | 'swing'
+    | 'volley'
+    | 'jupiter'
   tierId: string
   at: Vec2
   /** The floor it comes out of, or the height it lands at, in metres. */
@@ -1818,6 +1875,19 @@ const barrageShatter = (report: TourReport): report is Extract<TourReport, { kin
 export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | null {
   const { report, from } = cast
   if (!report) return null
+  if (report.kind === 'crushed') {
+    const solid = solidById(ship, world, report.solidId)
+    const space = solid ? ship.spaces.get(solid.spaceId) : null
+    const measured = space ? room(ship, space) : null
+    if (!solid || !space || !measured) return null
+    return {
+      kind: 'jupiter',
+      tierId: space.tierId,
+      at: solidNow(solid, world.solids[solid.id]).at,
+      y: measured.floor + Math.min(1.2, (measured.ceiling - measured.floor) / 2),
+      colour: 0xc7b39a,
+    }
+  }
 
   // Air Blow. The gust leaves the left palm and not the middle of the visitor,
   // because the emission coming out of the left palm is the whole of what the

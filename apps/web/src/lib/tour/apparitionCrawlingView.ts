@@ -1,8 +1,10 @@
 import type { Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { modelKit } from './nenModelPrimitives'
 
 function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
+  const kit = modelKit({ THREE, glow, root, skin: glow(seen.colour, 1) }, seen.size)
   const shell = glow(seen.colour, 0.88)
   const markings = glow(0x2a1920, 0.92)
   const body = new THREE.Group()
@@ -52,6 +54,30 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
   skull.scale.set(1.08, 0.66, 1.35)
   skull.position.set(seen.size * 0.72, -seen.size * 0.1, 0)
   root.add(skull)
+  for (const side of [-1, 1]) {
+    kit.tube({
+      name: `antenna-${side}`,
+      points: [
+        [1, 0.35, side * 0.5],
+        [1.45, 0.8, side * 0.85],
+        [1.9, 0.65, side * 0.95],
+      ],
+      radius: 0.035,
+      colour: 0x2a1920,
+    })
+    const wing = kit.patch({
+      name: `head-wing-${side}`,
+      points: [
+        [0, 0],
+        [-0.35, 0.42],
+        [-0.65, 0.35],
+        [-0.5, 0.06],
+      ],
+      at: [0.7, 0.42, side * 0.65],
+      colour: 0xc6b8a9,
+    })
+    wing.rotation.y = side * 0.8
+  }
   // Two black eyes and a ring of teeth: the head in the source is read
   // entirely off those two things.
   for (const side of [-1, 1]) {
@@ -73,7 +99,7 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
       new THREE.ConeGeometry(seen.size * 0.055, seen.size * 0.2, 3),
       glow(0xfdf3e6, 1),
     )
-    const across = (i / 5 - 0.5) * seen.size * 0.78
+    const across = ((i % 6) / 5 - 0.5) * seen.size * 0.78
     const lower = i >= 6
     tooth.position.set(0, -seen.size * (lower ? 0.47 : 0.27), across)
     tooth.rotation.z = lower ? 0 : Math.PI
@@ -84,8 +110,8 @@ function centipede(seen: Apparition, { THREE, glow, root }: BasicApparitionConte
 }
 
 function mouths(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const flesh = glow(seen.colour, 0.84)
-  const core = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 16, 12), flesh)
+  const flesh = glow(seen.colour, 1)
+  const core = new THREE.Mesh(new THREE.SphereGeometry(seen.size, 28, 20), flesh)
   core.scale.set(1.08, 0.96, 1)
   root.add(core)
   // Overlapping lobes break the perfect sphere into the soft, potato-
@@ -114,24 +140,28 @@ function mouths(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     [0.08, 0.05, 1.02, 0.13, 0],
     [0.55, -0.05, 0.86, 0.14, 0],
     [-0.48, 0.58, 0.7, 0.12, 0],
+    [-0.55, 0.3, -0.82, 0.29, 1],
+    [0.45, 0.5, -0.78, 0.3, 1],
+    [0.1, -0.5, -0.9, 0.34, 1],
+    [-0.48, -0.3, -0.87, 0.18, 0],
+    [0.68, -0.1, -0.74, 0.2, 0],
   ] as const
   for (let i = 0; i < mouths.length; i++) {
     const [x, y, z, radius, toothed] = mouths[i]
     const mouth = new THREE.Group()
     mouth.position.set(x * seen.size, y * seen.size, z * seen.size)
-    mouth.rotation.z = ((i % 3) - 1) * 0.22
+    mouth.lookAt(new THREE.Vector3(x * seen.size * 2, y * seen.size * 2, z * seen.size * 2))
+    mouth.rotateZ(((i % 3) - 1) * 0.22)
     const dark = new THREE.Mesh(new THREE.CircleGeometry(seen.size * radius, 16), glow(0x1a1420, 1))
     dark.scale.set(1, toothed ? 0.62 : 0.34, 1)
     mouth.add(dark)
-    for (const lip of [-1, 1]) {
-      const line = new THREE.Mesh(
-        new THREE.CapsuleGeometry(seen.size * radius * 0.16, seen.size * radius * 1.55, 3, 7),
-        glow(seen.colour, 1),
-      )
-      line.rotation.z = Math.PI / 2
-      line.position.set(0, lip * seen.size * radius * (toothed ? 0.45 : 0.24), 0.012)
-      mouth.add(line)
-    }
+    const lip = new THREE.Mesh(
+      new THREE.TorusGeometry(seen.size * radius, seen.size * radius * 0.13, 8, 28),
+      glow(seen.colour, 1),
+    )
+    lip.scale.y = toothed ? 0.62 : 0.34
+    lip.position.z = 0.014
+    mouth.add(lip)
     if (toothed) {
       for (let toothIndex = 0; toothIndex < 8; toothIndex++) {
         const upper = toothIndex < 4

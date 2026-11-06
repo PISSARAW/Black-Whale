@@ -104,6 +104,18 @@ const trajectoryLegSchema = z
  * asserts the two lists still name the same shapes.
  */
 export const NEN_CREATURE_SILHOUETTES = [
+  'cookie',
+  'hoover',
+  'animal-object',
+  'benjamin-guardian',
+  'halkenburg-guardian',
+  'nasubi-guardian',
+  'tserriednich-second',
+  'dolphin',
+  'predator-salesale',
+  'blood-snake',
+  'nen-spider',
+
   'owl',
   'fish',
   'insect',
@@ -123,59 +135,39 @@ export const NEN_CREATURE_SILHOUETTES = [
 ] as const
 
 /**
- * The shapes that stand in a room, as opposed to riding the visitor.
- *
- * Two of the sixteen are not creatures in a room at all: Tyson's eye-wog and
- * its parent hang in front of whoever is reading the Book of Tyson, so the walk
- * draws them at the camera — that is the ability, and it is why they exist. A
- * *posed* beast has to be somewhere a visitor can walk up to and aim at, so
- * declaring one of those two as a guardian beast's silhouette produces an
- * animal glued to the visitor's face on every deck of the ship, which is what
- * it did until this list existed.
- *
- * `scripts/silhouettes.test.ts` keeps it honest: it reads which kinds the scene
- * positions from the camera and asserts none of them is in here.
+ * Attested guardian anatomies. A posed guardian is anchored to its room or
+ * owner before camera-carried animations run. Tyson therefore shares one
+ * heart-shaped model between the salon and the active technique.
+ * `scripts/silhouettes.test.ts` checks the vocabulary and this placement guard.
  */
 export const POSED_SILHOUETTES = [
-  'owl',
-  'fish',
-  'insect',
+  'benjamin-guardian',
+  'halkenburg-guardian',
+  'nasubi-guardian',
   'medusa',
   'chimera',
-  'monster',
   'toad',
   'wheel',
+  'tyson-guardian',
   'centipede',
   'mouths',
   'sprite',
   'dragon',
-  'ghost',
-  'cat',
 ] as const
 
 /**
  * The Guardian Spirit Beast a prince carries.
  *
  * Declared rather than derived, because deriving it from `abilities.json` is
- * wrong in both directions: Woble's beast has no catalogued technique, and a
- * catalogued technique is the beast's *ability* rather than proof of where the
- * animal stands. `sourceChapterId` is what makes it a fact and not a
+ * a catalogued technique is the beast's ability rather than evidence of its
+ * visible anatomy or position. An unrevealed beast has no silhouette entry. `sourceChapterId` is what makes it a fact and not a
  * decoration — see the `guardian-beast` invariant.
  */
 const guardianBeastSchema = z
   .object({
     silhouette: z.enum(POSED_SILHOUETTES),
     sourceChapterId: chapterRef,
-    /**
-     * Whose position the beast keeps, when its owner has none of their own.
-     *
-     * One prince needs it. The real Woble's whereabouts are never confirmed, so
-     * the catalogue gives that body no trajectory at all — while the beast is
-     * seen in room 1014, around the cradle of the child presented as Woble.
-     * Naming that body here is what lets the walk place the animal without
-     * either inventing a position for the prince or filing the beast under
-     * somebody it does not belong to.
-     */
+    /** Another attested body's position, when the owner has no trajectory. */
     standsWith: slug.optional(),
     note: z.string().optional(),
   })

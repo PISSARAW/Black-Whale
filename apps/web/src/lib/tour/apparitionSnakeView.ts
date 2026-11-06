@@ -1,6 +1,7 @@
 import type { Object3D } from 'three'
 import { SNAKE_BOW, SNAKE_HEAD, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { modelKit } from './nenModelPrimitives'
 
 const SNAKE_BEADS = 26
 
@@ -64,6 +65,20 @@ function snake(seen: Apparition, { THREE, glow, root }: BasicApparitionContext):
   // is -z: a snout is what says which end of a snake this is.
   skull.scale.set(0.95, 0.82, 1.45)
   head.add(skull)
+  const kit = modelKit({ THREE, glow, root: head, skin: violet })
+  for (const [index, x, y] of [
+    [0, -0.1, 0.11],
+    [1, 0.1, 0.11],
+    [2, -0.12, -0.02],
+    [3, 0.12, -0.02],
+  ]) {
+    kit.heart({
+      name: `heart-mark-${index}`,
+      at: [x, y, -0.25],
+      width: 0.065,
+      colour: 0x171318,
+    }).rotation.y = Math.PI
+  }
 
   // The mouth, held open. A snake that has hold of something is not a
   // snake with its mouth shut.

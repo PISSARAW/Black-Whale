@@ -4,14 +4,11 @@ import type { TourFlash } from './apparitions'
 import { HatsuRewindEffect, type RewindFrame } from './HatsuRewindEffect'
 import { HatsuVolleyEffect } from './HatsuVolleyEffect'
 import { HatsuWindingEffect, type WindingFrame } from './HatsuWindingEffect'
+import { HatsuJupiterEffect } from './HatsuJupiterEffect'
 
 const GUST_SECONDS = 1.1
 const PUNCH_SECONDS = 1
-/**
- * Shorter than the fist out of the deck, for the reason the ability is named
- * for: the wind-up is the long part and has already happened by the time this
- * is drawn. What is left is one turn of the arm arriving.
- */
+/** Cyclotron lands after the wind-up; only the impact remains to draw. */
 const SWING_SECONDS = 0.55
 /** Long enough for ten barrels to open in turn and be done. See `fireABurst`. */
 const VOLLEY_SECONDS = 0.7
@@ -50,6 +47,7 @@ export interface VehicleFrame {
 
 /** Owns transient and visitor-carried Nen visuals outside the apparition world. */
 export class HatsuSceneEffects {
+  readonly #jupiter: HatsuJupiterEffect
   readonly #chassis: Three.Group
   readonly #chassisSkin: Three.MeshLambertMaterial
   readonly #headlamp: Three.PointLight
@@ -84,6 +82,7 @@ export class HatsuSceneEffects {
     private readonly THREE: typeof Three,
     private readonly scene: Three.Scene,
   ) {
+    this.#jupiter = new HatsuJupiterEffect(THREE, scene)
     this.#chassis = new THREE.Group()
     this.#chassis.visible = false
     this.#chassisSkin = new THREE.MeshLambertMaterial({ color: 0xf2a65a })
@@ -226,6 +225,7 @@ export class HatsuSceneEffects {
 
   play(flash: SequencedFlash): boolean {
     if (flash.seq === this.#playedSeq) return false
+    this.#jupiter.hide()
     this.#playedSeq = flash.seq
     this.#played = flash
     this.#playing = 0
@@ -277,6 +277,7 @@ export class HatsuSceneEffects {
   }
 
   private animateFlash(played: SequencedFlash, through: number, frame: FlashFrame): void {
+    if (played.kind === 'jupiter') return this.#jupiter.play(played, through)
     if (played.kind === 'arrow') return this.animateArrow(played, through)
     if (played.kind === 'blast') return this.animateBlast(played, through, frame)
     if (played.kind === 'sun') return this.animateSun(played, through, frame)
@@ -432,6 +433,7 @@ export class HatsuSceneEffects {
   }
 
   private hideFlashes(): void {
+    this.#jupiter.hide()
     this.#volley.hide()
     this.#seam.visible = false
     this.#gust.visible = false
@@ -444,6 +446,7 @@ export class HatsuSceneEffects {
   }
 
   dispose(): void {
+    this.#jupiter.dispose()
     this.scene.remove(
       this.#chassis,
       this.#headlamp,

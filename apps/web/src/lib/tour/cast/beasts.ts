@@ -18,17 +18,12 @@
  * has to act, it is that primitive moving to `TRIGGERED` inside its module —
  * not a new rule here.
  */
-import { floorOf } from '../blueprint'
+import { ceilingOf, floorOf } from '../blueprint'
 import type { Ship } from '../blueprint'
 import type { Apparition } from '../apparitions'
-import { seedOf, stationIn } from './stations'
+import { stationIn } from './stations'
+import { GUARDIAN_PRESENTATION, UNREVEALED_NEN_APPEARANCES } from '../nenAppearance'
 import type { CastBeast, Post, StandingBeast } from './types'
-
-/** How far a posted beast wanders from its spot, in metres. */
-const ROAMING = 1.6
-
-/** How large the walk draws one. The silhouettes carry their own proportions. */
-const BEAST_SIZE = 0.85
 
 /** The colour a dormant beast is drawn in: the walk's own neutral aura grey. */
 const DORMANT = 0x9aa6c4
@@ -37,14 +32,17 @@ const DORMANT = 0x9aa6c4
  * The beasts standing in the ship at this event.
  *
  * Two ways in, and both of them are the owner's position rather than the
- * beast's: an owner the walk has posted brings their own animal, and an owner
- * the archive never places — the real Woble — brings one to the body their
- * declaration names. Neither invents a room for an animal.
+ * beast's: a posted owner brings their own known animal, while a separately
+ * declared, attested animal may keep another body's position. An unknown
+ * anatomy is never supplied by a placeholder ghost.
  */
 export function beastApparitions(
   ship: Ship,
   posts: readonly Post[],
-  standing: readonly StandingBeast[] = [],
+  {
+    standing = [],
+    chapter = null,
+  }: { standing?: readonly StandingBeast[]; chapter?: number | null } = {},
 ): Apparition[] {
   const byCharacter = new Map(posts.map((post) => [post.member.characterId, post]))
   const placed: Array<{ beast: CastBeast; post: Post }> = []
@@ -58,13 +56,18 @@ export function beastApparitions(
   }
 
   return placed
-    .map(({ beast, post }) => draw(ship, beast, post))
+    .map(({ beast, post }) => draw(ship, { beast, post }, chapter))
     .filter((apparition): apparition is Apparition => apparition !== null)
     .sort((left, right) => left.id.localeCompare(right.id))
 }
 
 /** One beast, in the room its prince is in. */
-function draw(ship: Ship, beast: CastBeast, post: Post): Apparition | null {
+function draw(
+  ship: Ship,
+  { beast, post }: { beast: CastBeast; post: Post },
+  chapter: number | null,
+): Apparition | null {
+  if (beast.ownerId in UNREVEALED_NEN_APPEARANCES) return null
   const plan = ship.plans.get(post.tierId)
   const space = ship.spaces.get(post.spaceId)
   if (!plan || !space) return null
@@ -72,29 +75,49 @@ function draw(ship: Ship, beast: CastBeast, post: Post): Apparition | null {
   // is not an animal in the room. Seeded on the owner, so it is the same corner
   // every time — a beast that had moved between two loads would be a beast
   // doing something, and this one is doing nothing.
-  const { at } = stationIn(space, `beast:${beast.ownerId}`)
+  const presentation = GUARDIAN_PRESENTATION[beast.silhouette]
+  if (!presentation) return null
+  const shoulder = presentation.anchor === 'shoulders'
+  const floor = floorOf(space, plan.tier)
+  const clearance = ceilingOf(space, plan.tier)
+  const anchor = shoulder
+    ? Math.min(1.45, clearance * 0.4)
+    : presentation.anchor === 'hover'
+      ? 0.5
+      : 0
+  const size = Math.min(
+    presentation.size,
+    Math.max(0.1, (clearance - anchor - 0.2) / presentation.height),
+  )
+  const at = shoulder ? post.at : stationIn(space, `beast:${beast.ownerId}`).at
+  const y = floor + anchor - presentation.bottom * size
   return {
     id: `cast-beast:${beast.ownerId}`,
     kind: beast.silhouette,
     spaceId: post.spaceId,
     tierId: post.tierId,
     at,
-    // Off the floor by a little, and by a little more for a beast whose number
-    // says so: several of these hang under the deckhead in the panels, and the
-    // silhouettes are drawn to be seen from below.
-    y: floorOf(space, plan.tier) + 0.4 + ((seedOf(beast.ownerId) >>> 7) % 5) * 0.12,
-    size: BEAST_SIZE,
+    // The anchor comes from this anatomy, fitted to the room’s headroom.
+    y,
+    size,
     colour: DORMANT,
     stage: 0,
     hidden: false,
-    // The deambulation, and the only thing it ever does. `spread` is the field
-    // the fish and the free bird already move on, so the beast costs the scene
-    // nothing it was not already paying.
-    spread: ROAMING,
+    // A dormant guardian retains its pose rather than roaming at random.
+    spread: 0,
+    carried: false,
+    heading: post.heading,
+    ...(beast.silhouette === 'dragon' ? { variant: dragonForm(chapter) } : {}),
+
     // Aimed at, it answers. What it answers with is the viewfinder's business —
     // see `guardianVoice` — and it is a sound and a card, never an effect.
     pick: true,
   }
+}
+
+function dragonForm(chapter: number | null): Apparition['variant'] {
+  if (chapter === null || chapter < 370) return 'slender'
+  return chapter < 372 ? 'enlarged' : 'aggressive'
 }
 
 /** The four voices the walk already has, in `lib/audio/hatsuSounds.ts`. */
@@ -125,6 +148,9 @@ const VOICES: Partial<Record<Apparition['kind'], BeastVoice>> = {
   centipede: 'hiss',
   medusa: 'hiss',
   ghost: 'hiss',
+  'benjamin-guardian': 'roar',
+  'halkenburg-guardian': 'roar',
+  'nasubi-guardian': 'hiss',
 }
 
 /** Which beast is under this apparition id, if it is one at all. */

@@ -1,9 +1,16 @@
 import type { Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { BONE, INK, modelKit } from './nenModelPrimitives'
+
+const DRAGON_FORMS = {
+  slender: { bulk: [0.7, 1.65, 0.68], tail: [0.65, 0.75, 1.3], scales: 6, spines: 4 },
+  enlarged: { bulk: [1.35, 1.25, 1.12], tail: [1, 1, 1], scales: 18, spines: 11 },
+  aggressive: { bulk: [1.35, 0.85, 1.1], tail: [1, 1, 1], scales: 18, spines: 11 },
+} as const
 
 function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): Object3D {
-  const hide = glow(seen.colour, 0.8)
+  const hide = glow(seen.colour, 1)
   const bulk = new THREE.Mesh(
     new THREE.CapsuleGeometry(seen.size * 0.72, seen.size * 1.1, 5, 12),
     hide,
@@ -12,6 +19,8 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   bulk.position.set(0, seen.size * 0.9, -seen.size * 0.7)
   bulk.scale.set(1.35, 1.25, 1.12)
   root.add(bulk)
+  const form = DRAGON_FORMS[seen.variant ?? 'enlarged']
+  bulk.scale.set(form.bulk[0], form.bulk[1], form.bulk[2])
   // Its body coils deep into the room and ends in the enormous raised
   // tail visible behind Marayam, rather than stopping at the shoulders.
   const tail = new THREE.Group()
@@ -30,10 +39,11 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     tail.add(segment)
   }
   root.add(tail)
+  tail.scale.set(form.tail[0], form.tail[1], form.tail[2])
 
   // Layered scales along the flank keep the long body from reading as
   // a smooth snake or a piece of furniture at room distance.
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < form.scales; i++) {
     const scale = new THREE.Mesh(
       new THREE.ConeGeometry(seen.size * 0.1, seen.size * 0.28, 5),
       glow(seen.colour, 0.96),
@@ -96,7 +106,7 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
   root.add(head)
   // The mane, which is most of what the drawing is: a fan of spines
   // running back off the skull.
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i < form.spines; i++) {
     const spine = new THREE.Mesh(
       new THREE.ConeGeometry(seen.size * 0.07, seen.size * (0.5 + (i % 3) * 0.28), 4),
       glow(seen.colour, 0.95),
@@ -136,7 +146,35 @@ function dragon(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
     arm.position.set(side * seen.size * 0.7, seen.size * 0.58, seen.size * 0.15)
     root.add(arm)
   }
+  addAggressiveVines(seen, { THREE, glow, root, skin: hide })
   return head
+}
+
+function addAggressiveVines(seen: Apparition, { THREE, glow, root }: BasicApparitionContext): void {
+  if (seen.variant !== 'aggressive') return
+  const kit = modelKit({ THREE, glow, root, skin: glow(seen.colour, 1) }, seen.size)
+  for (const side of [-1, 1]) {
+    kit.tube({
+      name: `toothed-vine-${side}`,
+      points: [
+        [side * 0.5, 0.8, -0.7],
+        [side * 1.2, 1.05, -0.1],
+        [side * 1.45, 0.75, 0.8],
+        [side * 1.1, 0.55, 1.6],
+      ],
+      radius: 0.075,
+      colour: seen.colour,
+    })
+    for (let i = 0; i < 10; i++)
+      kit.spike({
+        name: `vine-tooth-${side}-${i}`,
+        from: [side * (1.1 + Math.sin(i * 0.3) * 0.3), 0.9 - i * 0.035, -0.1 + i * 0.17],
+        to: [side * (0.92 + Math.sin(i * 0.3) * 0.3), 0.78 - i * 0.035, -0.1 + i * 0.17],
+        radius: 0.035,
+        colour: BONE,
+      })
+  }
+  kit.oval({ name: 'aggressive-mouth', at: [0, 1.18, 1.25], radii: [0.3, 0.12, 0.03], colour: INK })
 }
 
 export function buildDragonApparition(

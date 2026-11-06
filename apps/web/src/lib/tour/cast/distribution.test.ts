@@ -284,18 +284,18 @@ describe('the guardian beasts', () => {
     const posts = distribute(ship, [member({ characterId: 'oito-nephew-fake-woble' })])
     const standing: StandingBeast[] = [
       {
-        ownerId: 'prince-woble',
-        ownerName: 'Woble Hui Guo Rou',
-        silhouette: 'ghost',
+        ownerId: 'absent-owner',
+        ownerName: 'Absent owner',
+        silhouette: 'medusa',
         sourceChapterId: 'ch-358',
         standsWithId: 'oito-nephew-fake-woble',
       },
     ]
-    const beasts = beastApparitions(ship, posts, standing)
+    const beasts = beastApparitions(ship, posts, { standing })
     expect(beasts).toHaveLength(1)
     expect(beasts[0]!.spaceId).toBe(posts[0]!.spaceId)
-    // Present and dormant: it wanders its room and does nothing else.
-    expect(beasts[0]!.spread).toBeGreaterThan(0)
+    // The dormant beast retains its anatomical anchor.
+    expect(beasts[0]!.spread).toBe(0)
     expect(beasts[0]!.stage).toBe(0)
   })
 
@@ -309,6 +309,6 @@ describe('the guardian beasts', () => {
         standsWithId: 'oito-nephew-fake-woble',
       },
     ]
-    expect(beastApparitions(ship, [], standing)).toEqual([])
+    expect(beastApparitions(ship, [], { standing })).toEqual([])
   })
 })

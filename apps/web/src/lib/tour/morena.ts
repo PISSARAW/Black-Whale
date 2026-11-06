@@ -907,7 +907,7 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       at: SPRITE_AT,
       y: floor + 1.3,
       size: SPRITE_SIZE,
-      colour: SPRITES[asking > 0 ? 4 : 0],
+      colour: SPRITES[0],
       // Which of the flock's shapes it is, and — because the walk drives the
       // dance off the same number — how far it swings while it asks. Nought is
       // the round-eared one with the grin, and the shortest swing in the flock:
@@ -991,8 +991,9 @@ export function tableauOf(game: MorenaGame, floor: number): Apparition[] {
       ...common,
       id: 'guest-double',
       kind: 'double',
+      human: { role: 'witness', identity: 'prince-kacho', pose: 'seated', aura: 'none' },
       at: GUEST_AT,
-      y: floor + 0.62,
+      y: floor,
       size: 0.42,
       colour: DOUBLE,
       stage: 0,

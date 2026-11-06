@@ -275,15 +275,15 @@ describe('guardian-beasts-are-sourced', () => {
   it('refuses a beast whose owner is nowhere and stands with nobody', () => {
     const found = run('guardian-beasts-are-sourced', (copy) => {
       const woble = copy.characters.find((entry) => entry.id === 'prince-woble')!
-      delete woble.guardianBeast!.standsWith
+      woble.guardianBeast = { silhouette: 'medusa', sourceChapterId: 'ch-362' }
     })
     expect(found).toEqual([expect.objectContaining({ rule: 'guardian-beast' })])
   })
 
-  it('accepts the real Woble standing with the child presented as Woble', () => {
+  it('does not assign a visible anatomy to Woble before it has been revealed', () => {
     const woble = catalogue!.characters.find((entry) => entry.id === 'prince-woble')
     expect(woble?.mapTrajectory ?? []).toHaveLength(0)
-    expect(woble?.guardianBeast?.standsWith).toBe('oito-nephew-fake-woble')
+    expect(woble?.guardianBeast).toBeUndefined()
     expect(run('guardian-beasts-are-sourced', () => {})).toEqual([])
   })
 })

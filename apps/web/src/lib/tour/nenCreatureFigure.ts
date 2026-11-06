@@ -13,6 +13,18 @@ type Three = typeof import('three')
  * acquiring a cartoon outline merely because they are apparitions too.
  */
 export const NEN_CREATURE_KINDS = new Set<ApparitionKind>([
+  'cookie',
+  'hoover',
+  'animal-object',
+  'benjamin-guardian',
+  'halkenburg-guardian',
+  'nasubi-guardian',
+  'tserriednich-second',
+  'dolphin',
+  'predator-salesale',
+  'blood-snake',
+  'nen-spider',
+
   'owl',
   'fish',
   'insect',
@@ -68,7 +80,12 @@ function outlinedMesh(THREE: Three, source: Mesh): Mesh | null {
 export function styleNenCreature(
   THREE: Three,
   root: Group,
-  { kind, size }: { kind: ApparitionKind; size: number },
+  {
+    kind,
+    size,
+    groundOffset = 0,
+    shadow: drawShadow = true,
+  }: { kind: ApparitionKind; size: number; groundOffset?: number; shadow?: boolean },
 ): void {
   if (!isNenCreatureKind(kind)) return
 
@@ -93,5 +110,8 @@ export function styleNenCreature(
   // Weaker than a person's: half of this list does not touch the floor, and a
   // creature that hovers wants to be told where it is without being told it is
   // standing there.
-  root.add(contactShadow(THREE, { radius: Math.max(0.08, size * 0.9), strength: 0.34 }))
+  if (!drawShadow) return
+  const shadow = contactShadow(THREE, { radius: Math.max(0.08, size * 0.9), strength: 0.34 })
+  shadow.position.y += groundOffset
+  root.add(shadow)
 }

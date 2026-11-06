@@ -9,7 +9,7 @@ export const CONCERT_DREAM_LAYER = 27
 
 interface DreamFrame {
   camera: Three.PerspectiveCamera
-  actors: Record<string, { root: Three.Object3D }>
+  actors: Readonly<Record<string, { root: Three.Object3D } | undefined>>
   seconds: number
   yaw: number
   runtime?: SceneRuntime

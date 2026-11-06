@@ -75,7 +75,7 @@ describe('the three-minute flowered listening landscape', () => {
     expect(scene.fog).toBe(fog)
     expect(scene.background).toBe(background)
     view.move(playing, { ...context, at, velocity: [0, 0], delta: 1 })
-    view.render({ camera, actors: {}, seconds: 4, yaw: 0 }, playing)
+    view.render({ camera, actors: { 'cast:melody': undefined }, seconds: 4, yaw: 0 }, playing)
     expect(camera.position.z).toBe(z)
     view.dispose()
     expect(camera.layers.mask).toBe(mask)

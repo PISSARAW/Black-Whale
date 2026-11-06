@@ -2527,7 +2527,7 @@ describe('the Guardian Spirit Beasts', () => {
       expect(worldIsQuiet(back.world)).toBe(true)
     })
 
-    it('gives every one of them a size and a shape of its own', () => {
+    it('keeps one palette for the guardian and its smaller replicas', () => {
       const loosed = castInTour(EMPTY_WORLD, 'solicitation', {
         ship,
         targetId: furnished.id,
@@ -2536,10 +2536,16 @@ describe('the Guardian Spirit Beasts', () => {
       }).world
       const flock = apparitionsOn(ship, loosed).filter((seen) => seen.kind === 'sprite')
       expect(flock.length).toBeGreaterThan(FLOCK_ROOMS)
-      expect(new Set(flock.map((one) => one.size)).size).toBeGreaterThan(1)
-      expect(new Set(flock.map((one) => one.colour)).size).toBeGreaterThan(1)
-      // And they leave the rooms they belong to, which nothing else aboard does.
-      for (const one of flock) expect(one.spread ?? 0).toBeGreaterThan(2)
+      expect(new Set(flock.map((one) => one.colour)).size).toBe(1)
+      const guardians = flock.filter((one) => one.stage === 0)
+      const replicas = flock.filter((one) => one.stage === 1)
+      expect(guardians).toHaveLength(1)
+      expect(replicas).toHaveLength(flock.length - 1)
+      for (const replica of replicas) expect(replica.size).toBeLessThan(guardians[0].size)
+      for (const one of flock) {
+        expect(one.spread ?? 0).toBe(0)
+        expect(pointInPolygon(one.at, ship.spaces.get(one.spaceId)!.footprint)).toBe(true)
+      }
     })
   })
 
@@ -2672,15 +2678,27 @@ describe('the Guardian Spirit Beasts', () => {
       expect(pointInPolygon(barred.at, furnished.footprint)).toBe(true)
     })
 
-    it('leaves a monster standing where a third contact took a fitting', () => {
+    it('keeps the third-contact state without inventing the resulting anatomy', () => {
       const solid = busy.solids[0]
-      const cursed: TourWorld = {
-        ...EMPTY_WORLD,
-        solids: { [solid.id]: { lies: 3, monster: true, gone: true } },
+      let cursed = EMPTY_WORLD
+      for (let contact = 0; contact < 3; contact++) {
+        cursed = castInTour(cursed, 'lie-marks', {
+          ship,
+          targetId: solid.spaceId,
+          targetSolidId: solid.id,
+          standingIn: null,
+          at: [0, 0],
+        }).world
       }
-      const shown = apparitionsOn(ship, cursed).filter((seen) => seen.kind === 'monster')
-      expect(shown.length).toBe(1)
-      expect(shown[0].spaceId).toBe(solid.spaceId)
+      const before = structuredClone(cursed)
+      const shown = apparitionsOn(ship, cursed)
+      expect(shown.filter((seen) => seen.kind === 'monster')).toEqual([])
+      expect(shown).toContainEqual(
+        expect.objectContaining({ kind: 'chimera', spaceId: solid.spaceId }),
+      )
+      expect(cursed.solids[solid.id]).toMatchObject({ lies: 3, monster: true, gone: true })
+      expect(standingIn(ship, cursed, solid.spaceId).map((one) => one.id)).not.toContain(solid.id)
+      expect(cursed).toEqual(before)
     })
   })
 })

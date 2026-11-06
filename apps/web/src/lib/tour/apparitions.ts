@@ -422,8 +422,6 @@ const MEDUSA = 0xd98cae
  * one colour in the corridors and another over the wood would read as two.
  */
 export const CHIMERA = 0x9e6d89
-/** What a third lie leaves standing: the same violet, gone bad. */
-const MONSTER = 0x6f3f66
 const TOAD = 0x7fb08a
 /** The gas, which is the one thing in the walk that is meant to look wrong. */
 const GAS = 0xb9e08f
@@ -448,17 +446,8 @@ const MOUTHS = 0xb9a6d8
  */
 export const FUME_COLOURS = [0xc9a0e8, 0x8fd5e0, 0xe8c48f, 0x9fe0a8, 0xe89fb8, 0xd8d88f]
 
-/**
- * The colours Momoze's flock comes in.
- *
- * Momoze's ability is drawn as a nursery: a bear the size of a room, a jelly on
- * the ceiling, a wolf on the floorboards, and nothing about any of them
- * matching anything else. So the flock is the one thing in the walk with no
- * single colour — the registry publishes the ability in that first pink, and
- * the rest are the walk's own, chosen only to be plainly not each other.
- */
-export const SPRITES = [0xe7a6c4, 0x9fd6e8, 0xf0d79a, 0xa8dfb4, 0xc6b0ea, 0xf0a89a, 0xd9e0a0]
-
+/** Momoze's guardian and its replicas share one neutral, chosen palette. */
+export const SPRITES = [0xd3c9c3]
 /**
  * How many puffs of gas a room gets, and how many tentacles the jellyfish has.
  *
@@ -1343,34 +1332,8 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       at: beside(stood),
     })
 
-  // And what the third contact left: the fitting is `gone` from the deck and
-  // this stands where it stood, at its size, so a coffin becomes something the
-  // size of a coffin rather than something the size of a beast.
-  for (const [id, hold] of Object.entries(world.solids)) {
-    if (!hold.monster) continue
-    const was = solidById(ship, world, id)
-    const where = was ? spaceOf(was.spaceId) : null
-    const measured = where ? room(ship, where) : null
-    if (!was || !where || !measured) continue
-    const now = solidNow(was, hold)
-    found.push({
-      id: `monster:${id}`,
-      kind: 'monster',
-      spaceId: where.id,
-      tierId: where.tierId,
-      at: [now.at[0] + wanderOffset(id, seconds)[0], now.at[1] + wanderOffset(id, seconds)[1]],
-      y: measured.floor + now.base,
-      // Half the widest side of what it was, floored: whatever it is now, it
-      // came out of that, and a thing that grew in the changing would be a
-      // claim about the curse the technique does not make.
-      size: Math.max(0.45, Math.max(now.size[0], now.size[1]) / 2),
-      colour: MONSTER,
-      stage: 0,
-      hidden: false,
-      spread: 1.2,
-      climb: Math.max(now.height, 0.6),
-    })
-  }
+  // The third lie's resulting anatomy has not been shown. Keep its gameplay
+  // state, but never turn the absence of a design into a made-up monster.
 
   // Tubeppa's, squatting where the aura came down, and the room full of what it
   // is making: the puffs are spread over the whole footprint the way the shoal
@@ -1529,43 +1492,25 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     }
   }
 
-  // Momoze's flock, four to a room across the ten rooms it was loosed over.
-  //
-  // Two things here are deliberate and both are the ability. The `spread` is
-  // larger than the water the room gave the station, so these are the only
-  // apparitions in the walk that leave the room they belong to — they go
-  // through the bulkhead and come back, which is what the drawing shows and
-  // what nothing else aboard is allowed to do. And the size varies with the
-  // beast rather than with the room: they are of every size and shape, so no
-  // two neighbours are the same one drawn twice.
+  // The guardian and its small pestering copies share the mouse design.
   for (const spaceId of world.menagerie) {
     const space = spaceOf(spaceId)
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue
     for (const station of stationsIn(space, FLOCK_PER_ROOM, landing(space))) {
-      // A hash off the room and the place in it, so the same room gives the
-      // same four creatures every time it is asked and the deck is not
-      // reshuffled on every frame.
-      let seed = station.index * 7 + 3
-      for (let i = 0; i < spaceId.length; i++) seed = (seed * 31 + spaceId.charCodeAt(i)) % 997
+      const primary = spaceId === world.menagerie[0] && station.index === 0
       found.push({
         id: `sprite:${spaceId}:${station.index}`,
         kind: 'sprite',
-        spaceId: space.id,
+        spaceId,
         tierId: space.tierId,
         at: station.at,
-        y: Math.min(measured.floor + 0.6 + (seed % 5) * 0.45, measured.ceiling - 0.5),
-        // From a hand's width to something the size of a person: everything
-        // about this flock is that no two of them are alike.
-        size: 0.22 + (seed % 7) * 0.16,
-        colour: SPRITES[seed % SPRITES.length],
-        // Which shape it is, and its own phase: both come off the same number,
-        // because a beast that flew like its neighbour and looked like its
-        // neighbour is its neighbour.
-        stage: seed,
+        y: measured.floor + (primary ? 0 : 1.25),
+        size: primary ? Math.min(1.1, (measured.ceiling - measured.floor - 0.2) / 3.3) : 0.18,
+        colour: 0xd3c9c3,
+        stage: primary ? 0 : 1,
         hidden: false,
-        // Wider than the water on purpose: through the wall and back.
-        spread: 2.6 + (seed % 4),
+        spread: 0,
       })
     }
   }

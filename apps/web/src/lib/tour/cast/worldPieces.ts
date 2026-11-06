@@ -222,8 +222,9 @@ export interface SolidHold {
    *
    * The escalation is the ability, so it is a count rather than three flags:
    * the first contact shoves the thing, the second leaves the green on it, and
-   * the third is the one there is no fourth after — the solid is `gone` and a
-   * `monster` stands where it was.
+   * the third is the one there is no fourth after — the solid is `gone` and
+   * `monster` records its transformation. Rendering still requires an
+   * established anatomy for the replacement.
    */
   lies?: number
   /** The third contact landed: what is here now is not what was here. */

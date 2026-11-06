@@ -1047,10 +1047,9 @@ const SOLID_CASTS: Partial<Record<HatsuInteractionKind, SolidCast>> = {
       }
     }
 
-    // The third, which takes the thing away and leaves the thing it became.
-    // `gone` rather than a third appearance, because what stands there
-    // afterwards is not a fitting of the ship at all: the deck stops drawing
-    // it and `$lib/tour/apparitions` puts a beast where it was.
+    // The third contact removes the original from the deck. Keep the
+    // transformation in the simulation state even when no replacement
+    // anatomy is established for the renderer.
     return {
       world: withHold(beside, id, { lies, monster: true, gone: true }),
       report: { kind: 'lie-transformed', solidId: id },
@@ -3111,13 +3110,9 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  // Momoze's, which is the odd one of the eight: not an animal but a great
-  // many, of every size and shape, and none of them stays where it was put.
-  // They are loosed over the rooms nearest the cast — the same reach the snakes
-  // take, and for the same reason: a flock spread over three hundred rooms is a
-  // flock nobody ever meets — and from there they go through the walls, which
-  // is the one thing about them the walk has to be careful to actually draw.
-  // Cast again anywhere in their range and they are called back in.
+  // The solicitation covers the nearby rooms. Its visible bodies are the
+  // mouse guardian and small replicas, projected by apparitionsOn; the
+  // surrounding rooms do not establish additional species or anatomies.
   solicitation: ({ world, ship, at, standingIn }) =>
     looseTheFlock(world, ship, { at, standingIn }) ?? {
       world: { ...world, menagerie: [] },

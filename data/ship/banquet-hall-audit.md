@@ -103,8 +103,41 @@ et [salle des cérémonies au chapitre 359](https://www.scan-vf.net/hunter-x-hun
 Le dessin vient de Yoshihiro Togashi / Shueisha ; les profils simplifiés,
 le rythme des panneaux et les teintes sont une interprétation du modèle.
 L'angle « Les galeries du banquet inaugural » permet de les inspecter dans
-la visite. Les détails restent fusionnés en deux lots maximum par salle,
-sans ajouter de lumière ni dépasser le budget de 150 000 triangles.
+la visite. Les détails architecturaux restent fusionnés en deux lots maximum par salle,
+sans lumière permanente supplémentaire ni dépassement du budget de 150 000 triangles.
+
+## Accès au plateau et concert de Melody
+
+Deux volées de sept marches de 20 cm permettent de rejoindre le plateau depuis
+l'allée centrale du bout de service, puis de redescendre. Les buffets et le
+passage derrière la scène restent libres. Ces escaliers sont une **inférence
+de circulation**, pas un détail situé par une case ; leur provenance et leurs
+dimensions estimées sont déclarées dans le plan commun. Les personnages et les
+arrivées volontaires sur le plateau suivent désormais sa surface supérieure.
+
+Le preset `melody-concert.json` restitue le solo de flûte du chapitre 383,
+après la prestation de piano de Keeney : Melody seule, en costume sombre,
+sous un projecteur, puis l'espace fleuri du morceau de trois minutes
+([pages de lecture 7–8](https://www.scan-vf.net/hunter-x-hunter/chapitre-383/7)).
+Le participant est nommé et sourcé ; ce preset explicite reste disponible
+lorsque la chronologie n'est pas chargée, et respecte la limite de lecture
+pour demander cette reconstitution.
+
+Deux commandes sont proposées dans « Concert de Melody » : demander sa
+prestation, ou prendre son hatsu et se placer sur scène pour jouer soi-même.
+Dans le second cas, le hatsu et les restrictions Nen ordinaires restent ceux
+de la visite. La flûte portée utilise les axes de la caméra pour rester visible
+à tous les caps. Le morceau s'arrête à trois minutes, sur commande, à la sortie
+de la salle ou si le visiteur interrompt son propre hatsu.
+
+Le projecteur et les marguerites sont temporaires. Le parterre interprète
+l'effet de la musique ; il ne transforme pas le plan physique du navire et ne
+reproduit pas le relief montagneux de la double page. La musique est une
+interprétation originale synthétisée à la flûte, issue de l'air doux déjà
+présent dans l'application : le manga ne fournit ni enregistrement ni partition.
+L'audio utilise le contexte et le bus d'effets communs, avec une sortie annulable.
+L'arrêt libère la programmation sonore et retire les effets ajoutés par le
+concert en conservant les effets présents auparavant.
 
 ## Limites de la reconstruction
 

@@ -32,7 +32,7 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
       positionHeldFlute(flute, camera.position, { yaw, playing: true, seconds: 1 })
       const screen = flute.position.clone().project(camera)
       expect(Math.abs(screen.x)).toBeLessThan(1)
-      expect(Math.abs(screen.y)).toBeLessThan(1.1)
+      expect(Math.abs(screen.y)).toBeLessThan(0.9)
       expect(screen.z).toBeLessThan(1)
     }
   })
@@ -164,5 +164,14 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
     view.dispose()
     expect(view.root.parent).toBeNull()
     for (const spy of disposed) expect(spy).toHaveBeenCalledOnce()
+  })
+
+  it('leaves shared-renderer games without a banquet hall untouched', () => {
+    const scene = new THREE.Scene()
+    const view = new ConcertStageView(THREE, scene, { ...ship, spaces: new Map() })
+    view.update({ mode: 'self', playing: true }, { tierId: 'tier-1', reveal: false })
+    expect(view.root.visible).toBe(false)
+    expect(scene.children).toHaveLength(0)
+    view.dispose()
   })
 })

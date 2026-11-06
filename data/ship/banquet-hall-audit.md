@@ -76,8 +76,18 @@ Les deux escaliers rejoignent la cote de dalle, avec un retour ouvert dans
 chaque parapet au palier. Leur implantation latérale libère les tables et
 l'estrade royale. Le nombre de marches (18 par volée), leur pas et toutes
 les cotes sont estimés, comme la position des raccords entre les tronçons
-du plan partagé. Ils restituent la silhouette ; la navigation conserve sa
-hauteur de visite au rez-de-chaussée.
+du plan partagé. Les marches sont désormais des surfaces praticables : la
+hauteur de déplacement suit les marches, tandis que la caméra amortit les
+variations. Deux paliers permettent de tourner vers les galeries, dont les
+parapets et les retours arrêtent le visiteur. Les raccords entre tronçons
+restent ouverts à hauteur de galerie, et le sol en dessous reste accessible.
+
+Les tables 01, 19, 37 et 55 sont décalées vers les intervalles entre les
+rangées pour libérer une allée transversale devant les escaliers. Les 72
+tables sont conservées, sans chevauchement ni obstruction de l'allée centrale.
+Le panneau suspendu dégage aussi la hauteur de passage sur la galerie.
+Ces placements de mobilier restent estimés ; le plan local suit les mêmes
+structures que la visite.
 
 Les colonnes reprennent la base annelée et bombée du premier plan, avec des
 cannelures creusées dans le fût et un chapiteau mouluré. Leurs centres et leur

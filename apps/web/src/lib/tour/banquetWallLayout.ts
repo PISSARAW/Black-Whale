@@ -78,3 +78,18 @@ export function galleryFront(structure: Structure) {
     top: structure.base + structure.height,
   }
 }
+
+/** Leave the landing turn open at the head of each stair. */
+export function galleryParapetStart(gallery: Structure, structures: readonly Structure[]): number {
+  const front = galleryFront(gallery)
+  const start = front.z - front.length / 2
+  const stair = structures.find(
+    (item) =>
+      item.id.includes('-gallery-stair-') &&
+      item.height >= front.top - 0.01 &&
+      Math.abs(item.at[0] - gallery.at[0]) < 3 &&
+      item.at[1] > start &&
+      item.at[1] < start + 1.5,
+  )
+  return stair ? stair.at[1] + 0.6 : start
+}

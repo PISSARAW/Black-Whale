@@ -79,17 +79,16 @@
     STICK_RADIUS,
     STICK_RIM,
     WALK_SPEED,
-    bobOf,
-    breathOf,
     glide,
     linkUnderfoot,
-    resolveMovement,
     stepsIn,
     stickVector,
     walkInput,
-    wallsNear,
     wayOutOfInterior,
   } from '$lib/tour/navigation'
+  import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
+  import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
+  import { walkingHeadMotion, easeWalkingGround } from '$lib/tour/walkingCamera'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
@@ -160,14 +159,6 @@
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import TourNenControls from './TourNenControls.svelte'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
-
-  interface JumpArrival {
-    at?: Vec2
-    facing?: number
-    looking?: number
-    eyeHeight?: number
-    visibleSpaceIds?: readonly string[]
-  }
 
   interface Props {
     ship: Ship
@@ -1218,6 +1209,8 @@
       let pointer: Vec2 = [0, 0]
       /** The floor the visitor is standing on, eased between rooms at a step. */
       let ground = 0
+      const surfaces = new SurfaceWalker()
+      const stairs = new StairNavigator(ship)
       let yaw = 0
       let pitch = 0
       // A manga plan can lift the camera out of the visitor's body. It remains
@@ -1243,7 +1236,7 @@
       const pressed: Record<string, boolean> = {}
       const holding = (...codes: string[]) => codes.some((code) => pressed[code] === true)
 
-      function loadTier(nextTierId: string, at?: Vec2) {
+      function loadTier(nextTierId: string, at?: Vec2, surfaceHeight?: number) {
         // Fallback sur le premier tier valide si nextTierId est vide/invalide
         let tierIdToLoad = nextTierId
         if (!tierIdToLoad || !ship.plans.has(tierIdToLoad)) {
@@ -1281,7 +1274,7 @@
           yaw = spawnFacing(entry, pointer)
           pitch = 0
         }
-        ground = floorOf(spaceAt(plan, pointer) ?? entry, plan.tier)
+        ground = surfaces.reset(plan, pointer, surfaceHeight)
         camera.position.set(pointer[0], ground + EYE_HEIGHT, pointer[1])
         report()
         // How much of the machinery reaches this elevation. An interior carries
@@ -1307,11 +1300,11 @@
         authoredVisibleSpaceIds = arrival.visibleSpaceIds ? new Set(arrival.visibleSpaceIds) : null
         shownKey = ''
         lookPitch = pitch
-        if (space.tierId !== currentTierId) loadTier(space.tierId, at)
+        if (space.tierId !== currentTierId) loadTier(space.tierId, at, arrival.surfaceHeight)
         else {
           pointer = at
           const plan = ship.plans.get(currentTierId)!
-          ground = floorOf(space, plan.tier)
+          ground = surfaces.reset(plan, pointer, arrival.surfaceHeight)
           camera.position.set(at[0], ground + (authoredEyeHeight ?? EYE_HEIGHT), at[1])
           report()
         }
@@ -3554,14 +3547,14 @@
         // ending inside a bulkhead was the one thing the thread could do that
         // walking could not.
         const walked = activePlan ?? ship.plans.get(currentTierId)
-        pointer =
-          walksThroughWalls(world) || !walked
-            ? target
-            : resolveMovement(
-                pointer,
-                target,
-                wallsNear([...walked.walls, ...loose, ...collisionWalls], pointer, 6),
-              )
+        pointer = walked
+          ? surfaces.move(walked, {
+              from: pointer,
+              to: target,
+              extras: [...loose, ...collisionWalls],
+              ghost: walksThroughWalls(world),
+            })
+          : target
         // Up and over: the rise is what makes it a swing rather than a winch.
         swingRise = Math.sin(arc.through * Math.PI) * 2.2
 
@@ -4465,17 +4458,27 @@
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
           const from = pointer
-          pointer = walksThroughWalls(world)
-            ? target
-            : resolveMovement(
-                pointer,
-                target,
-                wallsNear([...walked.walls, ...loose, ...collisionWalls], pointer, 6),
-              )
+          pointer = surfaces.move(walked, {
+            from: pointer,
+            to: target,
+            extras: [...loose, ...collisionWalls],
+            ghost: walksThroughWalls(world),
+          })
           // Ground actually covered, which is not what was asked for: a visitor
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
           travelledOnFoot += Math.hypot(pointer[0] - from[0], pointer[1] - from[1])
+          const stair = stairs.cross({
+            spaceId: spaceAt(plan, pointer)?.id ?? null,
+            from,
+            at: pointer,
+            height: surfaces.floor(walked, pointer),
+            enabled: !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+          })
+          if (stair) {
+            goTo(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
+            return
+          }
         }
 
         if (world.puppet === puppetId && world.puppet && walking) {
@@ -4486,37 +4489,14 @@
         const standing = spaceAt(plan, pointer)
         applyVisibility(standing?.id ?? null)
 
-        /**
-         * The head's rise and fall, off the distance walked rather than the clock.
-         *
-         * How much of it there is follows the velocity rather than the keys: a
-         * visitor easing to a stop has the swing leave their head as the ground
-         * stops going by, instead of it being switched off under them. Capped at
-         * the half again a run used to get flat.
-         *
-         * Scaled by what the visitor asked for, which for a visitor who has asked
-         * their system for less movement is nothing: a view that swings while the
-         * body does not is the thing that actually makes people ill, and
-         * `$lib/tour/comfort` is where that is argued.
-         */
-        const gait = Math.min(1.5, Math.hypot(velocity[0], velocity[1]) / WALK_SPEED)
-        const bob = bobOf(travelledOnFoot, $comfort.headBob * gait)
-        // And at a stand, the breath under it: the one movement left when the
-        // legs have stopped, and what keeps a visitor standing still from being
-        // a tripod. Time rather than distance, because breathing is.
-        const breath = breathOf(now / 1000, $comfort.headBob * (1 - Math.min(1, gait)))
-        /**
-         * The floor under the visitor, eased onto rather than snapped to.
-         *
-         * Almost every room on the ship is the deck itself, so this is a constant
-         * for all but a handful of steps. Where a panel does draw one — the
-         * service end of the banquet hall — a hard cut of half a metre reads as
-         * the view jumping, which is the one thing `$lib/tour/comfort` exists to
-         * refuse. Ten per cent of the remaining rise per frame at 60 Hz settles
-         * it in about a fifth of a second: the length of a stride onto a step.
-         */
-        const groundTarget = floorOf(standing ?? entrySpace(plan), plan.tier)
-        ground += (groundTarget - ground) * Math.min(1, delta * 6)
+        const { gait, bob, breath } = walkingHeadMotion({
+          velocity,
+          walked: travelledOnFoot,
+          amplitude: $comfort.headBob,
+          seconds: now / 1000,
+        })
+        const groundTarget = surfaces.floor(walked, pointer)
+        ground = easeWalkingGround(ground, groundTarget, delta)
         const eye =
           ground +
           (authoredEyeHeight ?? eyesOf(world.body, seated ? seated.eye : EYE_HEIGHT)) +
@@ -4952,7 +4932,7 @@
         if (!plan) return
         pointer = at
         const space = spaceAt(plan, at)
-        ground = floorOf(space ?? entrySpace(plan), plan.tier)
+        ground = surfaces.reset(plan, pointer)
         yaw = facing
         pitch = 0
         camera.position.set(at[0], ground + (seated?.eye ?? EYE_HEIGHT), at[1])

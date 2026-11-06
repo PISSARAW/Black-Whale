@@ -1,7 +1,9 @@
 import type * as Three from 'three'
 import { floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
-import { galleryFront } from './banquetWallLayout'
+import { galleryFront, galleryParapetStart } from './banquetWallLayout'
+import { banquetRails, stairRailSides } from './banquetWalkLayout'
+export { galleryParapetStart } from './banquetWallLayout'
 import type { Structure } from './types'
 
 const STONE = 0xc9c4b2
@@ -59,20 +61,6 @@ function parapet(
   }
 }
 
-/** The front rail stops at the head of the matching stair, leaving a turn onto the gallery. */
-export function galleryParapetStart(gallery: Structure, structures: readonly Structure[]): number {
-  const front = galleryFront(gallery)
-  const start = front.z - front.length / 2
-  const stair = structures.find(
-    (item) =>
-      item.id.includes('-gallery-stair-') &&
-      item.height >= front.top - 0.01 &&
-      Math.abs(item.at[0] - gallery.at[0]) < 3 &&
-      Math.abs(item.at[1] - start) < 1,
-  )
-  return stair ? stair.at[1] + 0.6 : start
-}
-
 function gallery(context: GalleryContext, structure: Structure, floor: number): void {
   const { into, plan } = context
   const front = galleryFront(structure)
@@ -126,16 +114,15 @@ function stairRails(context: GalleryContext, steps: Structure[], floor: number):
   cheek.lineTo(run + tread, last.height)
   cheek.lineTo(0, first.height)
   cheek.closePath()
-  for (const side of [-1, 1]) {
+  for (const { side, start, end } of stairRailSides(steps)) {
     into.add(new THREE.ExtrudeGeometry(cheek, { depth: 0.09, bevelEnabled: false }), {
       at: [first.at[0] + (side * width) / 2 - 0.045, floor, first.at[1] + tread / 2],
       rotation: [0, Math.PI / 2, 0],
       colour: STONE,
     })
     // On the gallery side the last 60 cm stay open for the landing turn.
-    const cut = side === Math.sign(first.at[0] + 1) ? 0.65 : 0
-    const length = run - cut
-    const centreZ = (first.at[1] + last.at[1] + cut) / 2
+    const length = start[1] - end[1]
+    const centreZ = (start[1] + end[1]) / 2
     const baseY = floor + first.height + ((length / run) * rise) / 2
     for (const [offset, height, depth, colour] of [
       [0.39, 1.16, 0.16, STONE],
@@ -165,6 +152,37 @@ function stairRails(context: GalleryContext, steps: Structure[], floor: number):
       ],
       colour: EDGE,
     })
+  }
+}
+
+function landingsAndReturns(context: GalleryContext, structures: Structure[], floor: number): void {
+  const { into } = context
+  for (const landing of structures.filter(({ id }) => id.includes('-gallery-landing-'))) {
+    into.box([Math.max(...landing.size), landing.height + 0.04, Math.min(...landing.size)], {
+      at: [landing.at[0], floor + landing.base + landing.height / 2, landing.at[1]],
+      colour: STONE,
+    })
+  }
+  for (const rail of banquetRails(structures).filter(
+    ({ kind }) => kind === 'return' || kind === 'landing',
+  )) {
+    const dx = rail.end[0] - rail.start[0],
+      dz = rail.end[1] - rail.start[1]
+    const length = Math.hypot(dx, dz)
+    for (const [height, width, y] of [
+      [0.94, 0.17, 0.47],
+      [0.08, 0.32, 0.99],
+    ]) {
+      into.box([length, height, width], {
+        at: [
+          (rail.start[0] + rail.end[0]) / 2,
+          floor + rail.base + y,
+          (rail.start[1] + rail.end[1]) / 2,
+        ],
+        rotation: [0, -Math.atan2(dz, dx), 0],
+        colour: EDGE,
+      })
+    }
   }
 }
 
@@ -199,6 +217,7 @@ export function dressBanquetGalleries(context: GalleryContext): void {
     plan.tier,
   )
   const structures = plan.structures.filter((item) => item.spaceId === spaceId)
+  landingsAndReturns(context, structures, floor)
   for (const structure of structures.filter(({ id }) => /-gallery-(forward|aft)-/.test(id))) {
     gallery(context, structure, floor)
   }

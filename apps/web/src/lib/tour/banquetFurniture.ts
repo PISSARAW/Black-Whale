@@ -4,6 +4,8 @@ import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 
 const LINEN = 0xe2ded0
 const BRASS = 0xb39961
+// The cloth is repeated on 72 tables, so its folds share a bounded mesh budget.
+const CLOTH_SEGMENTS = 32
 const WINE = 0x633c40
 
 /** The cloth wraps the audited table solid, including its collision outline. */
@@ -28,7 +30,7 @@ export function dressBanquetTable(options: {
     { y: floor + 0.06, radius: radius + 0.045 },
   ]
   const point = (index: number, ring: (typeof rings)[number]): Point3 => {
-    const angle = (index * Math.PI) / 24
+    const angle = (index * Math.PI * 2) / CLOTH_SEGMENTS
     const pleat = ((index % 2) * 0.035 * (y - ring.y)) / table.height
     return [
       x + Math.cos(angle) * (ring.radius + pleat),
@@ -37,7 +39,7 @@ export function dressBanquetTable(options: {
     ]
   }
   for (let band = 0; band < rings.length - 1; band++) {
-    for (let index = 0; index < 48; index++) {
+    for (let index = 0; index < CLOTH_SEGMENTS; index++) {
       const a = point(index, rings[band]),
         b = point(index + 1, rings[band])
       const c = point(index + 1, rings[band + 1]),

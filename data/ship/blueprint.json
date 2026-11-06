@@ -19727,16 +19727,16 @@
   "structures": [
     {
       "id": "tier-1-banquet-hall-stage",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "platform",
       "name": "Stage",
       "nameFr": "Sc\u00e8ne",
       "at": [
-        -1.0,
-        -28.095
+        -1,
+        27.6
       ],
       "size": [
-        2.667,
+        2.2,
         22.857
       ],
       "rotation": 90.0,
@@ -19744,8 +19744,8 @@
       "height": 1.4,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 383 \u2014 the stage at the end of the hall, and the throne on its dais before it.",
-      "sourceFr": "Chap. 383 \u2014 la sc\u00e8ne au bout de la salle, et le tr\u00f4ne sur son estrade devant elle."
+      "source": "Ch. 383, opening banquet and piano panels \u2014 the performance stage, its light curtain and ornamental proscenium stand at the opposite end from the royal throne. Dimensions and spacing are reconstruction estimates.",
+      "sourceFr": "Chap. 383, ouverture du banquet et vue du piano \u2014 la sc\u00e8ne de spectacle, son rideau clair et son encadrement ornement\u00e9 se trouvent \u00e0 l\u2019extr\u00e9mit\u00e9 oppos\u00e9e au tr\u00f4ne royal. Dimensions et espacement estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-throne-dais",
@@ -19766,8 +19766,8 @@
       "height": 1,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 383 \u2014 the stage at the end of the hall, and the throne on its dais before it.",
-      "sourceFr": "Chap. 383 \u2014 la sc\u00e8ne au bout de la salle, et le tr\u00f4ne sur son estrade devant elle."
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
     },
     {
       "id": "tier-5-hull-suspension-spring-01",
@@ -19909,7 +19909,7 @@
       "nameFr": "Comptoir de buffet 1",
       "at": [
         -8.143,
-        24.667
+        23.8
       ],
       "size": [
         5.333,
@@ -19931,7 +19931,7 @@
       "nameFr": "Comptoir de buffet 2",
       "at": [
         6.143,
-        24.667
+        23.8
       ],
       "size": [
         5.333,
@@ -39151,13 +39151,13 @@
     },
     {
       "id": "tier-1-banquet-hall-proscenium-port",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "pillar",
       "name": "Proscenium Pier (port)",
       "nameFr": "Pile d'avant-sc\u00e8ne (b\u00e2bord)",
       "at": [
-        -10.143,
-        -26.19
+        -10.12,
+        27.1
       ],
       "size": [
         0.914,
@@ -39165,21 +39165,21 @@
       ],
       "rotation": 90.0,
       "base": 0,
-      "height": 9,
+      "height": 9.6,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 383, opening banquet and piano panels \u2014 the performance stage, its light curtain and ornamental proscenium stand at the opposite end from the royal throne. Dimensions and spacing are reconstruction estimates.",
+      "sourceFr": "Chap. 383, ouverture du banquet et vue du piano \u2014 la sc\u00e8ne de spectacle, son rideau clair et son encadrement ornement\u00e9 se trouvent \u00e0 l\u2019extr\u00e9mit\u00e9 oppos\u00e9e au tr\u00f4ne royal. Dimensions et espacement estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-proscenium-starboard",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "pillar",
       "name": "Proscenium Pier (starboard)",
       "nameFr": "Pile d'avant-sc\u00e8ne (tribord)",
       "at": [
-        8.143,
-        -26.19
+        8.12,
+        27.1
       ],
       "size": [
         0.914,
@@ -39187,33 +39187,33 @@
       ],
       "rotation": 90.0,
       "base": 0,
-      "height": 9,
+      "height": 9.6,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 383, opening banquet and piano panels \u2014 the performance stage, its light curtain and ornamental proscenium stand at the opposite end from the royal throne. Dimensions and spacing are reconstruction estimates.",
+      "sourceFr": "Chap. 383, ouverture du banquet et vue du piano \u2014 la sc\u00e8ne de spectacle, son rideau clair et son encadrement ornement\u00e9 se trouvent \u00e0 l\u2019extr\u00e9mit\u00e9 oppos\u00e9e au tr\u00f4ne royal. Dimensions et espacement estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-curtain",
-      "spaceId": "tier-1-banquet-hall",
+      "spaceId": "tier-1-banquet-hall-service-end",
       "kind": "painting",
       "name": "Stage Curtain",
       "nameFr": "Rideau de sc\u00e8ne",
       "at": [
-        -1.0,
-        -26.533
+        -1,
+        28.5
       ],
       "size": [
-        0.381,
+        0.22,
         13.714
       ],
       "rotation": 90.0,
-      "base": 5.5,
-      "height": 3.5,
+      "base": 1.4,
+      "height": 7.8,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 383, opening banquet and piano panels \u2014 the performance stage, its light curtain and ornamental proscenium stand at the opposite end from the royal throne. Dimensions and spacing are reconstruction estimates.",
+      "sourceFr": "Chap. 383, ouverture du banquet et vue du piano \u2014 la sc\u00e8ne de spectacle, son rideau clair et son encadrement ornement\u00e9 se trouvent \u00e0 l\u2019extr\u00e9mit\u00e9 oppos\u00e9e au tr\u00f4ne royal. Dimensions et espacement estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-hanging-panel",
@@ -39244,20 +39244,20 @@
       "name": "Throne Parapet",
       "nameFr": "Parapet du tr\u00f4ne",
       "at": [
-        -1.0,
-        -22.0
+        0.5,
+        -22
       ],
       "size": [
         0.152,
-        8.686
+        5.6
       ],
       "rotation": 90.0,
       "base": 0,
-      "height": 1.1,
+      "height": 2,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 383 \u2014 the throne on its dais: the draped parapet across its front and the flight of steps down from it, and the service line the buffet is dressed from, behind the counter.",
-      "sourceFr": "Chap. 383 \u2014 le tr\u00f4ne sur son estrade : le parapet drap\u00e9 en travers de sa face et l'emmarchement qui en descend, et la ligne de service d'o\u00f9 le buffet est dress\u00e9, derri\u00e8re le comptoir."
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
     },
     {
       "id": "tier-1-banquet-hall-throne-steps",
@@ -39266,20 +39266,20 @@
       "name": "Throne Steps",
       "nameFr": "Emmarchement du tr\u00f4ne",
       "at": [
-        -1.0,
-        -21.703
+        -4.1,
+        -20.68
       ],
       "size": [
-        0.362,
-        11.429
+        0.35,
+        3
       ],
       "rotation": 90.0,
       "base": 0,
-      "height": 0.5,
+      "height": 0.25,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 383 \u2014 the throne on its dais: the draped parapet across its front and the flight of steps down from it, and the service line the buffet is dressed from, behind the counter.",
-      "sourceFr": "Chap. 383 \u2014 le tr\u00f4ne sur son estrade : le parapet drap\u00e9 en travers de sa face et l'emmarchement qui en descend, et la ligne de service d'o\u00f9 le buffet est dress\u00e9, derri\u00e8re le comptoir."
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
     },
     {
       "id": "tier-1-banquet-hall-service-line-1",
@@ -39289,7 +39289,7 @@
       "nameFr": "Ligne de service 1",
       "at": [
         -11.8,
-        24.667
+        23.8
       ],
       "size": [
         5.333,
@@ -39311,7 +39311,7 @@
       "nameFr": "Ligne de service 2",
       "at": [
         8.771,
-        24.667
+        23.8
       ],
       "size": [
         5.333,
@@ -39332,12 +39332,12 @@
       "name": "Dispenser Shelving",
       "nameFr": "Meuble \u00e0 distributeurs",
       "at": [
-        -8.143,
-        29.619
+        -13.65,
+        28.8
       ],
       "size": [
-        0.229,
-        6.857
+        1.4,
+        0.6
       ],
       "rotation": 90.0,
       "base": 0,
@@ -43507,6 +43507,138 @@
       "provenance": "panel",
       "source": "Ch. 419, p. 18 \u2014 the two side stair flights and the upper gallery across the rear of the VVIP recreation hall. Heights, tread count and dimensions are estimated for the reconstruction.",
       "sourceFr": "Chap. 419, p. 18 \u2014 les deux vol\u00e9es lat\u00e9rales et la galerie sup\u00e9rieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estim\u00e9s pour la reconstruction."
+    },
+    {
+      "id": "tier-1-banquet-hall-throne-steps-2",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Throne Step 2",
+      "nameFr": "Marche du tr\u00f4ne 2",
+      "at": [
+        -4.1,
+        -21.03
+      ],
+      "size": [
+        0.35,
+        3
+      ],
+      "rotation": 90.0,
+      "base": 0,
+      "height": 0.5,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-throne-steps-3",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Throne Step 3",
+      "nameFr": "Marche du tr\u00f4ne 3",
+      "at": [
+        -4.1,
+        -21.38
+      ],
+      "size": [
+        0.35,
+        3
+      ],
+      "rotation": 90.0,
+      "base": 0,
+      "height": 0.75,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-throne-steps-4",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Throne Step 4",
+      "nameFr": "Marche du tr\u00f4ne 4",
+      "at": [
+        -4.1,
+        -21.73
+      ],
+      "size": [
+        0.35,
+        3
+      ],
+      "rotation": 90.0,
+      "base": 0,
+      "height": 1.0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-royal-column-port",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "pillar",
+      "name": "Royal dais column (port)",
+      "nameFr": "Colonne de l\u2019estrade royale (port)",
+      "at": [
+        -7.1,
+        -24.5
+      ],
+      "size": [
+        1.3,
+        1.3
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 9,
+      "sides": 24,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-royal-column-starboard",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "pillar",
+      "name": "Royal dais column (starboard)",
+      "nameFr": "Colonne de l\u2019estrade royale (starboard)",
+      "at": [
+        5.1,
+        -24.5
+      ],
+      "size": [
+        1.3,
+        1.3
+      ],
+      "rotation": 0,
+      "base": 0,
+      "height": 9,
+      "sides": 24,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-royal-drape",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "painting",
+      "name": "Royal Dais Backdrop",
+      "nameFr": "Draperie derri\u00e8re l\u2019estrade royale",
+      "at": [
+        -1,
+        -28.7
+      ],
+      "size": [
+        0.22,
+        14
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 8.9,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
+      "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
     }
   ]
 }

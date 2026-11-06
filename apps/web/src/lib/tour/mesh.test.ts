@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
 import {
   COLUMN_HALF_WIDTH,
-  DOOR_HEIGHT,
   JAMB_DEPTH,
   PLATE_PITCH,
   columnWalls,
@@ -35,6 +34,7 @@ import {
   type TierMesh,
 } from './mesh'
 import { REFERENCE_HOUR, skyOf } from './sky'
+import { openingHeights } from './openingHeights'
 import type { Provenance, Structure, Vec2 } from './types'
 
 const ship = buildShip()
@@ -477,6 +477,11 @@ describe('which way the surfaces face', () => {
 
       for (const door of plan.doorways) {
         const dx = door.end[0] - door.start[0]
+        const space = plan.spaces.find(({ id }) => id === door.a)!
+        const other = plan.spaces.find(({ id }) => id === door.b)!
+        const opening = openingHeights({ space, other, tier: plan.tier })
+        // A continuous room's change of floor level has no lintel to face.
+        if (opening.bottom >= opening.top) continue
         const dz = door.end[1] - door.start[1]
         const length = Math.hypot(dx, dz)
         if (length < 0.5) continue
@@ -490,7 +495,7 @@ describe('which way the surfaces face', () => {
         for (let i = 0; i < mesh.positions.length; i += 9) {
           if (Math.abs(mesh.normals[i + 1]) > 1e-6) continue
           const cy = (mesh.positions[i + 1] + mesh.positions[i + 4] + mesh.positions[i + 7]) / 3
-          if (cy < DOOR_HEIGHT + plan.tier.elevation) continue
+          if (cy < opening.bottom) continue
           const cx = (mesh.positions[i] + mesh.positions[i + 3] + mesh.positions[i + 6]) / 3
           const cz = (mesh.positions[i + 2] + mesh.positions[i + 5] + mesh.positions[i + 8]) / 3
           // On the opening's own line, within its own span.
@@ -951,7 +956,6 @@ describe('the depth of a doorway', () => {
       structures: [],
       columns: new Map(),
     })
-    const head = plan.tier.elevation + DOOR_HEIGHT
     const missing: string[] = []
 
     // Where an opening runs a wall from one corner to the other — the front of a
@@ -969,6 +973,9 @@ describe('the depth of a doorway', () => {
     for (const door of plan.doorways) {
       for (const cheek of doorJambs(door)) {
         const mid: Vec2 = [(cheek.start[0] + cheek.end[0]) / 2, (cheek.start[1] + cheek.end[1]) / 2]
+        const space = plan.spaces.find(({ id }) => id === door.a)!
+        const other = plan.spaces.find(({ id }) => id === door.b)!
+        const head = openingHeights({ space, other, tier: plan.tier }).bottom
         const onACorner = corners.has(`${mid[0].toFixed(3)}|${mid[1].toFixed(3)}`)
         let standing = 0
         let above = 0

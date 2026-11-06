@@ -67,7 +67,7 @@ function chandelier(options: {
 }
 
 /** The round fluted facing follows the tour's existing column positions. */
-function column(into: BanquetDetailBuilder, at: Point3, height: number): void {
+export function dressBanquetColumn(into: BanquetDetailBuilder, at: Point3, height: number): void {
   const [x, y, z] = at
   into.cylinder(
     { radius: 0.65, height: height - 0.64, sides: 24 },
@@ -109,7 +109,7 @@ export function dressBanquetArchitecture(options: {
     chandelier({ THREE, into, at: [x, ceiling - 0.2, z] })
   }
   for (const [x, z] of plan.columns.get(spaceId) ?? []) {
-    column(into, [x, floor, z], ceiling - floor)
+    dressBanquetColumn(into, [x, floor, z], ceiling - floor)
   }
   // High cornices follow the actual wall runs, including the vestibule notch.
   // Column faces and furniture faces are not walls to decorate.

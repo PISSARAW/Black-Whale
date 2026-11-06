@@ -66,11 +66,21 @@ export class BanquetDetailBuilder {
   }
 
   sphere(size: Point3, placement: Placement): void {
-    this.add(new this.THREE.SphereGeometry(1, 8, 6).scale(...size), placement)
+    this.add(new this.THREE.SphereGeometry(1, 8, 4).scale(...size), placement)
   }
 
   ring(size: { radius: number; tube: number }, placement: Placement): void {
     this.add(new this.THREE.TorusGeometry(size.radius, size.tube, 4, 24), placement)
+  }
+
+  curve(points: readonly Point3[], radius: number, placement: Placement): void {
+    const path = new this.THREE.CatmullRomCurve3(
+      points.map((point) => new this.THREE.Vector3(...point)),
+    )
+    this.add(
+      new this.THREE.TubeGeometry(path, Math.max(12, points.length), radius, 5, false),
+      placement,
+    )
   }
 
   finish(): Three.Group {

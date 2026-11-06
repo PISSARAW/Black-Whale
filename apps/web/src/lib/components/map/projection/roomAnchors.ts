@@ -2,6 +2,7 @@ import { DEFAULT_LOCALE, type Locale } from '$lib/i18n/config'
 import { messagesFor } from '$lib/i18n'
 
 import type { MapMarker } from './types'
+import { banquetSpotAnchors } from './banquetPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -182,48 +183,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       'prince-halkenburg': { x: 50, y: 78.46 },
     },
   },
-  // `local/banquet-hall.svelte`, 1000 × 320, six pixels to the metre with the
-  // vestibule's fore wall at the origin — the asset draws the hall the ch. 349
-  // deck plan cuts, 157.5 m long and 24.5 m deep, and the same grid of tables
-  // the blueprint lays: four rows on y = -24.5, -19.5, -12 and -7, eighteen
-  // columns from x = -58 at a six-metre pitch, and the throne's axis left open
-  // between the second row and the third.
-  //
-  // Only the throne is depicted: the inaugural banquet of ch. 359 seats Nasubi
-  // on it, and the hall holds him nowhere else. Everyone else is at a table the
-  // chapter shows but the archive cannot number, so they take one table each and
-  // say so — the twins share theirs because they leave together, and Oito holds
-  // the child. Those are readings of the scene, not copies of it.
-  'tier-1-banquet-hall': {
-    occupants: {
-      // The dais, thirteen metres in front of the stage.
-      'nasubi-hui-guo-rou': { x: 13.75, y: 66.09 },
-      'prince-benjamin': { x: 63.7, y: 49.69, inferred: true },
-      // Ch. 362 has Tserriednich and Tubeppa strike their alliance here, so
-      // they share a table.
-      'prince-tserriednich': { x: 34.1, y: 73.13, inferred: true },
-      'prince-tubeppa': { x: 35.7, y: 73.13, inferred: true },
-      'prince-camilla': { x: 63.7, y: 73.13, inferred: true },
-      'prince-zhanglei': { x: 70.9, y: 73.13, inferred: true },
-      // Halkenburg keeps a corner until he crosses to the throne in ch. 361 to
-      // tell his father he withdraws. The corner is the habitual place; the
-      // crossing is the freeze-frame the anchors deliberately do not chase.
-      'prince-halkenburg': { x: 81.7, y: 49.69, inferred: true },
-      'prince-kacho': { x: 23.3, y: 59.06, inferred: true },
-      'prince-fugetsu': { x: 24.9, y: 59.06, inferred: true },
-      'queen-oito': { x: 48.5, y: 73.13, inferred: true },
-      'oito-nephew-fake-woble': { x: 50.1, y: 73.13, inferred: true },
-      // Momoze is in a corner, and the catalogue's own biographies seat her
-      // beside Marayam, who stays with their mother Sevanti: one corner table
-      // for the three of them. Which corner is not depicted.
-      'sevanti-hui-guo-rou': { x: 19.7, y: 49.69, inferred: true },
-      'prince-marayam': { x: 20.5, y: 49.69, inferred: true },
-      'prince-momoze': { x: 21.3, y: 49.69, inferred: true },
-    },
-    // The hall seats the whole ceremony: anyone the chapter does not single out
-    // belongs among the tables, not on the king's dais.
-    fallback: { x: 52.9, y: 59.06, inferred: true },
-  },
+  // The shared banquet projection keeps the king on the drawn dais.
+  'tier-1-banquet-hall': banquetSpotAnchors,
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and
   // ch. 407–410 seat Borksen at the far end for the negotiation game.

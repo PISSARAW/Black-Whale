@@ -9,7 +9,6 @@
 import {
   BAR_RAIL,
   COLUMN_HALF_WIDTH,
-  DOOR_HEIGHT,
   EPSILON,
   distanceToBoundary,
   doorSoffit,
@@ -26,6 +25,7 @@ import {
 import { ceilingOf, floorOf } from './blueprint'
 import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
 import { floorPatternOf } from './floorPattern'
+import { openingHeights } from './openingHeights'
 import { structureSheenOf } from './surfaceFinish'
 import { appearanceOf, authoredStructureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
@@ -1703,8 +1703,7 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     for (const door of lintelsOf.get(space.id) ?? []) {
       const other = spaces.get(door.b)
       if (!other) continue
-      const lintelTop = Math.max(top, heightOf(other))
-      const lintelBottom = base + DOOR_HEIGHT
+      const { top: lintelTop, bottom: lintelBottom, provenance } = openingHeights({ space, other, tier })
 
       /**
        * The riser, where the two rooms are at different heights.
@@ -1728,10 +1727,6 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
         horizontal(door.start, door.end, base + OFFSET)
       }
 
-      const provenance: Provenance =
-        space.provenance === 'inferred' || other.provenance === 'inferred'
-          ? 'inferred'
-          : space.provenance
       // The one hundred and fifty-six openings the blueprint places by hand are
       // the only doorways nothing derives, so the reveal marks them: everything
       // else in the ship opened because two footprints touch.

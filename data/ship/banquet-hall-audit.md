@@ -22,11 +22,45 @@ la case de l’alliance Tubeppa–Tserriednich au chapitre 362.
   auparavant une rangée dans l'axe du trône. Leurs centres servent aussi aux
   collisions. Leur espacement métrique reste une estimation du modèle.
 - Les nappes plissées et les couverts habillent les tables du plan parcouru.
-  Le trône est contenu sur l’estrade existante, le rideau suit son volume,
+  Le trône est contenu sur l’estrade royale, les rideaux suivent leurs volumes,
   les cannelures suivent les colonnes et les lustres la grille d’éclairage.
 - Les détails sont rattachés à chaque salle, masqués avec elle, libérés avec
   le pont et retirés dans la vue des provenances. Un objet déplacé par un
   Hatsu ne laisse pas de nappe à son ancien emplacement.
+
+## Le fauteuil royal et la scène — correction des références
+
+La case du chapitre 359 située après le monologue de Benjamin (page de lecture
+13) montre le roi sur un fauteuil sculpté à dossier galbé, épaules arrondies,
+volutes et crête florale. Une petite table ronde sur piédestal se trouve devant
+son côté droit. Les sept pointes et le dossier rectangulaire du premier modèle
+ne reproduisaient pas ce dessin : ils sont remplacés par cette silhouette.
+
+Le rideau de fond et les colonnes du quartier royal appartiennent à cette
+estrade. La scène des spectacles est **à l’autre extrémité** de la salle : les
+vues du banquet et du piano au chapitre 383 (pages de lecture 1 et 5) la
+montrent avec un fond clair, un bandeau drapé supérieur et une rangée de petits
+projecteurs. La page 6 confirme le parapet à panneaux sculptés et son accès
+latéral. La première reconstruction plaçait à tort la scène derrière le roi.
+
+Les profils sont relus sur ces cases, consultées dans le
+[lecteur du chapitre 359](https://www.scan-vf.net/hunter-x-hunter/chapitre-359/13)
+et le [lecteur du chapitre 383](https://www.scan-vf.net/hunter-x-hunter/chapitre-383/5),
+faute de prévisualisation accessible chez l’éditeur. La source éditoriale reste
+Yoshihiro Togashi / Shueisha. Aucun scan ni texture tirée du manga n’est embarqué.
+
+Le plan partagé distingue désormais les deux estrades. Quatre marches mènent
+à l’accès latéral du roi ; un passage derrière la scène conserve l’accès au
+couloir. Les buffets sont rapprochés de l’avant du bout de service pour laisser
+la place à la scène. Leur position exacte, les quatre marches, les profils de
+sculpture et les dimensions sont estimés. Le plan local 2D et ses marqueurs
+projettent les mêmes structures que la visite plutôt qu’un ancien plan codé
+en dur.
+
+Le passage entre la salle et son bout de service est ouvert jusqu'au plafond
+commun. Le linteau générique de porte à 2,60 m produisait une cloison suspendue
+qui cachait le haut de la scène ; il est retiré uniquement pour cette jonction
+de deux niveaux d'une même salle. Les portes ordinaires gardent leur linteau.
 
 ## Limites de la reconstruction
 

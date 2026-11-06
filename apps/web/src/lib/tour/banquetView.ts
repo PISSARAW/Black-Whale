@@ -3,7 +3,9 @@ import type { TierPlan } from './blueprint'
 import { floorOf } from './blueprint'
 import { BanquetDetailBuilder, disposeBanquetDetails } from './banquetDetailBuilder'
 import { dressBanquetArchitecture } from './banquetArchitecture'
-import { dressBanquetCurtain, dressBanquetTable, dressBanquetThrone } from './banquetFurniture'
+import { dressBanquetTable } from './banquetFurniture'
+import { dressBanquetThrone } from './banquetThrone'
+import { dressBanquetStage, dressRoyalPlatform } from './banquetStage'
 
 export { disposeBanquetDetails }
 export const BANQUET_SPACE = 'tier-1-banquet-hall'
@@ -32,9 +34,9 @@ export function buildBanquetDetails(options: {
     dressBanquetTable({ THREE, into, table, floor })
   }
   const dais = structures.find((structure) => structure.id === `${BANQUET_SPACE}-throne-dais`)
-  if (dais) dressBanquetThrone(into, dais, floor)
-  const curtain = structures.find((structure) => structure.id === `${BANQUET_SPACE}-curtain`)
-  if (curtain) dressBanquetCurtain(into, curtain, floor)
+  if (dais) dressBanquetThrone({ THREE, into, dais, floor })
+  dressRoyalPlatform({ THREE, into, structures, floor })
+  dressBanquetStage({ THREE, into, structures, floor })
   dressBanquetArchitecture({ THREE, into, plan, spaceId })
   return into.finish()
 }

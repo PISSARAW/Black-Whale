@@ -27,6 +27,7 @@ import {
   type Situation,
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
+import { concertCast, type ConcertPerformance } from './melodyConcert'
 
 /** What the page knows that the distribution needs. */
 interface CastContext {
@@ -40,6 +41,7 @@ interface CastContext {
   casting: boolean
   /** The source panel whose exact blocking is currently being reproduced. */
   mangaView: MangaView | null
+  concert?: ConcertPerformance
 }
 
 /**
@@ -86,17 +88,19 @@ export class TourCastView {
 
   /** Where everyone on this deck stands, at the event the server selected. */
   posts = $derived.by<Post[]>(() => {
-    const { cast, tierId, mangaView } = this.options.read()
+    const { cast, tierId, mangaView, concert } = this.options.read()
+    const all = distribute(this.options.ship, cast.members)
+    const posts = concert
+      ? concertCast(all, { ship: this.options.ship, performance: concert, cap: cast.spoilerLimit })
+      : all
     if (!mangaView?.staging?.length) {
-      return distribute(this.options.ship, cast.members, { tierId })
+      return posts.filter((post) => post.tierId === tierId)
     }
     const viewTierId = this.options.ship.spaces.get(mangaView.spaceId)?.tierId
     if (!viewTierId) return distribute(this.options.ship, cast.members, { tierId })
-    return stagePostsForMangaView(
-      distribute(this.options.ship, cast.members),
-      mangaView,
-      viewTierId,
-    ).filter((post) => post.tierId === tierId)
+    return stagePostsForMangaView(posts, mangaView, viewTierId).filter(
+      (post) => post.tierId === tierId,
+    )
   })
 
   /**

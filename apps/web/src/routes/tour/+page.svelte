@@ -5,7 +5,14 @@
   import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
   import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
-  import TourPageSidebar from '$lib/components/tour/TourPageSidebar.svelte'
+  import TourMelodyConcert from '$lib/components/tour/TourMelodyConcert.svelte'
+  import { concertWorld, type ConcertPerformance } from '$lib/tour/melodyConcert'
+  import {
+    applyMangaView,
+    initialTierForRequest,
+    watchMangaRequest,
+  } from '$lib/tour/mangaRequest.svelte'
+  import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
   import { activeHatsu } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -85,11 +92,7 @@
   const requestedDeck = $derived($page.url.searchParams.get('deck'))
   const requestedMangaView = $derived(mangaViewById($page.url.searchParams.get('mangaView')))
   let activeMangaView = $state<MangaView | null>(untrack(() => requestedMangaView))
-  const initialTierId = untrack(
-    () =>
-      requestedSpace?.tierId ??
-      (requestedDeck && ship.plans.has(requestedDeck) ? requestedDeck : ship.tiers[0].id),
-  )
+  const initialTierId = untrack(() => initialTierForRequest(ship, $page.url))
   const navigation = new TourNavigationState(ship, initialTierId)
   const tierId = $derived(navigation.tierId)
   const currentSpace = $derived(navigation.currentSpace)
@@ -118,21 +121,10 @@
   const touchUseLabel = $derived(promptFor($t.tour.touch))
   const goToSpace = navigation.goToSpace
   const selectTier = navigation.selectTier
-  $effect(() => {
-    const space = requestedSpace
-    const deck = requestedDeck
-    const mangaView = requestedMangaView
-    untrack(() => {
-      navigation.honor(space, deck)
-      if (!mangaView) return
-      activeMangaView = mangaView
-      navigation.jumpTo = mangaView.spaceId
-      navigation.jumpAt = mangaView.at
-      navigation.jumpHeading = mangaView.heading
-      navigation.jumpPitch = mangaView.pitch
-      navigation.jumpEyeHeight = mangaView.eyeHeight ?? null
-      navigation.jumpVisibleSpaceIds = mangaView.visibleSpaceIds ?? null
-    })
+  watchMangaRequest({
+    navigation,
+    read: () => ({ space: requestedSpace, deck: requestedDeck, view: requestedMangaView }),
+    onView: (view) => (activeMangaView = view),
   })
 
   async function copyViewpoint() {
@@ -240,7 +232,9 @@
     chrome.dispose()
   })
   let world = $state<TourWorld>(EMPTY_WORLD)
-  hatsuAudio.watch(() => world)
+  let concert = $state<ConcertPerformance>({ mode: null, playing: false })
+  const sceneWorld = $derived(concertWorld(world, concert))
+  hatsuAudio.watch(() => sceneWorld)
   let now = $state(Date.now())
   $effect(() => {
     const i = setInterval(() => {
@@ -588,6 +582,7 @@
       visitorIn: currentSpace?.id ?? null,
       casting: Boolean(technique),
       mangaView: activeMangaView,
+      concert,
     }),
     // What the visitor is doing to one body in particular (ADR-004): the
     // conduct answers being aimed at personally, and being held, differently
@@ -783,8 +778,10 @@
     ...(currentMangaView
       ? {
           mangaViewLabel: `${french ? currentMangaView.labelFr : currentMangaView.label} — ${
-            french ? 'tome' : 'vol.'
-          } ${currentMangaView.volume}, ${french ? 'chap.' : 'ch.'} ${currentMangaView.chapter}${
+            currentMangaView.volume
+              ? `${french ? 'tome' : 'vol.'} ${currentMangaView.volume}, `
+              : ''
+          }${french ? 'chap.' : 'ch.'} ${currentMangaView.chapter}${
             currentMangaView.pages ? `, p. ${currentMangaView.pages}` : ''
           }`,
           onJumpToAngle: () => {
@@ -799,12 +796,7 @@
               return
             }
             activeMangaView = view
-            navigation.jumpTo = view.spaceId
-            navigation.jumpAt = view.at
-            navigation.jumpHeading = view.heading
-            navigation.jumpPitch = view.pitch
-            navigation.jumpEyeHeight = view.eyeHeight ?? null
-            navigation.jumpVisibleSpaceIds = view.visibleSpaceIds ?? null
+            applyMangaView(navigation, view)
           },
         }
       : {}),
@@ -838,233 +830,209 @@
 
 <TourPageIntro {ship} />
 
-<div class="tour-workspace" data-hatsu-pass>
-  <div
-    class="grid {chrome.immersive
-      ? `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
-          chrome.panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
-        }`
-      : 'items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px]'}"
-  >
-    <TourPageStage
-      immersive={chrome.immersive}
-      {navigation}
-      bind:takeScreenshot
-      {gyoMode}
-      scene={{
+<TourWorkspace
+  immersive={chrome.immersive}
+  bind:panelOpen={chrome.panelOpen}
+  navigation={{
+    immersive: chrome.immersive,
+    reveal: chrome.reveal,
+    copied: chrome.copied,
+    decks: ship.decks.map((tier) => ({
+      id: tier.id,
+      label: nameOf(tier),
+      active: tier.id === deck?.id,
+    })),
+    onFullscreen: () => chrome.toggleFullscreen(),
+    onSelectDeck: selectTier,
+    onOpenPlan: () => (chrome.planOpen = true),
+    onOpenFinder: () => (chrome.findOpen = true),
+    onToggleReveal: () => (chrome.reveal = !chrome.reveal),
+    onCopy: copyViewpoint,
+  }}
+  hatsu={$activeHatsu
+    ? {
         ship,
+        profile: $activeHatsu,
+        castable: Boolean(technique),
         world,
-        flash,
-        auraColour: technique?.color ?? null,
-        nen: hatsuSession.nen,
-        onNenChange: hatsuSession.useNen,
-        aiming: Boolean(technique),
-        selfCastable,
-        reveal: chrome.reveal,
-        onCast: castAt,
-        onHatsu: castAt,
-        hatsuAllowedInZetsu: technique?.kind === 'future',
-        hatsuRequiresZetsu: technique?.kind === 'future',
-        onArrive: arrived,
-        onWorm: crossWorm,
-        onFish: fishEat,
-        onOwl: owlFlight,
-        onOwlSecond: owlSecond,
-        onScout: scoutFlight,
-        onBeast: beastStep,
-        onCoin: takeCoin,
-        onPolarity: polarityWalk,
-        hands,
-        tunes,
-        twoHanded,
-        orders,
-        onOrder: () => technique && turn(technique.kind),
-        swings: technique?.kind === 'stitch',
-        propels: technique?.kind === 'elastic',
-        gumOn: strandOn,
-        touchUseLabel,
-        gangwayLabels: $t.tour.gangway,
-        touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },
-        soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
-        loadingLabel: $t.tour.loading,
-        unsupportedLabel: $t.tour.unsupported,
-        extras: castView.apparitions,
-        // Taking hold of a beast is the one thing §2.4 lets one do: it answers,
-        // and nothing else in the ship changes.
-        onPick: (id) => castView.speak(id),
-        hour,
-      }}
-      overlay={{
-        autopilot: isAutopilot,
-        reticleColor: technique?.color ?? null,
-        spoken,
-        location: locationReadout,
-        penalty: hatsuSession.penalty,
-        note: bodyNote,
-        aim: aimReadout,
-        controls: overlayControls,
-        statusHint,
-        tourist,
-        gyo: {
-          active: gyoMode,
-          onToggle: () => hatsuSession.useNen({ type: 'GYO', on: !gyoMode }),
-        },
-        linkPrompt: touch ? null : linkPrompt,
-        // The provenance card of the light, beside the deck: the visitor can
-        // see why the bay is black at chapter 374 and a drawn noon elsewhere.
-        hour: hour.label,
-        scarlet: scarletWash,
-        // Hidden while the card is up: the same gesture puts it back, and the
-        // card carries its own way out.
-        examine:
-          asking || bodyView.talk || bodyView.conversation
-            ? null
-            : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
-      }}
-      examine={{
-        open: asking,
-        exhibit,
-        sourcesHref: $link('/tour/sources'),
-        onClose: close,
-        // The way on to the exchange, only in front of somebody the server
-        // sent a dossier for. The evidence card steps aside for it: both are
-        // the same card in the same place, about the same body.
-        talk: bodyView.contextLine
-          ? {
-              label: $t.tour.dialogue.open,
-              onOpen: () => {
-                close()
-                bodyView.speak()
-              },
-            }
-          : null,
-        address: bodyView.dossier
-          ? {
-              label: $t.tour.address.open,
-              onOpen: () => {
-                close()
-                bodyView.address()
-              },
-            }
-          : null,
-      }}
-      dialogue={{
-        conversation: bodyView.conversation,
-        onClose: bodyView.close,
-        onOpenArchive: bodyView.address,
-      }}
-      address={{
-        talk: bodyView.talk,
-        extracted: bodyView.extracted,
-        reading: bodyView.reading,
-        held: bodyView.heldMark,
-        onClose: bodyView.close,
-      }}
-    />
-
-    {#if chrome.immersive && !chrome.panelOpen}
-      <button
-        type="button"
-        onclick={() => (chrome.panelOpen = true)}
-        aria-expanded="false"
-        class="absolute right-0 top-1/2 z-30 -translate-y-1/2 rounded-l border border-r-0 border-[#333] bg-[#050505]/90 px-2 py-3 text-xs text-[#FFFFF0]/70 transition-colors hover:border-[#FFD700]/50 hover:text-[#FFFFF0]"
-      >
-        {$t.tour.fullscreen.showPanel}
-      </button>
-    {/if}
-
-    <TourPageSidebar
-      immersive={chrome.immersive}
-      panelOpen={chrome.panelOpen}
-      navigation={{
-        immersive: chrome.immersive,
-        reveal: chrome.reveal,
-        copied: chrome.copied,
-        decks: ship.decks.map((tier) => ({
-          id: tier.id,
-          label: nameOf(tier),
-          active: tier.id === deck?.id,
-        })),
-        plan,
-        position,
-        heading,
-        crossings,
-        currentSpaceId: currentSpace?.id ?? null,
-        planLabel: $t.tour.minimap(nameOf(plan.tier)),
-        nameOf: (space) => {
-          if (!space) return ''
-          return nameOf(named(space as Space))
-        },
-        crossingLabel,
-        onSelectPlan: selectOnPlan,
-        selectLabel: planVerb,
-        aiming: false,
-        onHide: () => (chrome.panelOpen = false),
-        onFullscreen: () => chrome.toggleFullscreen(),
-        onSelectDeck: selectTier,
-        onOpenPlan: () => (chrome.planOpen = true),
-        onOpenFinder: () => (chrome.findOpen = true),
-        onToggleReveal: () => (chrome.reveal = !chrome.reveal),
-        onCopy: copyViewpoint,
-      }}
-      hatsu={$activeHatsu
-        ? {
-            ship,
-            profile: $activeHatsu,
-            castable: Boolean(technique),
-            world,
-            report,
-            aimedAt,
-            aimedSolidAt,
-            at: [...position] as [number, number],
-            standingIn: currentSpace?.id ?? null,
-            touch,
-            nameOf,
-            sourceOf,
-            personName: bodyNameOf,
-            heard,
-            onRelease: release,
-            onCycleDouble: cycleDouble,
-            onCycleOwl: cycleOwl,
-            onCycleEye: cycleEye,
-            onCastPage: castPage,
-            onCastHand: castHand,
-            onTurnTheBook: turnTheRibbon,
-            onSelfInjury: hatsuSession.selfInjure,
-          }
-        : null}
-      targets={{
-        mode: targetMode,
-        solidGroups: solidTargets,
-        spaceGroups: targets,
-        deckSpaces: sortedSpaces,
-        currentSpaceId: currentSpace?.id ?? null,
-        techniqueColor: technique?.color ?? null,
-        nameOf: targetName,
-        roomName: (solid) => targetName(ship.spaces.get(solid.spaceId) ?? solid),
-        provenanceLabel,
-        provenanceClass,
-        isSolidActive: (solidId) => Boolean(world.solids[solidId]),
-        onSolid: (spaceId, solidId) => castOn(spaceId, solidId),
-        onSpace: (space) => (technique ? castOn(space.id) : goToSpace(space)),
-      }}
-      controls={{
-        hasTechnique: Boolean(technique),
-        secondHand: hands?.second ?? null,
-        twoHanded,
-        selfCastable,
+        report,
+        aimedAt,
+        aimedSolidAt,
+        at: [...position] as [number, number],
+        standingIn: currentSpace?.id ?? null,
         touch,
-      }}
-      calm={chrome.calm}
-      provenance={{
-        reveal: chrome.reveal,
-        blindWalls,
-        handPlacedDoors,
-        sourcesHref: $link('/tour/sources'),
-      }}
-    />
-  </div>
-</div>
+        nameOf,
+        sourceOf,
+        personName: bodyNameOf,
+        heard,
+        onRelease: release,
+        onCycleDouble: cycleDouble,
+        onCycleOwl: cycleOwl,
+        onCycleEye: cycleEye,
+        onCastPage: castPage,
+        onCastHand: castHand,
+        onTurnTheBook: turnTheRibbon,
+        onSelfInjury: hatsuSession.selfInjure,
+      }
+    : null}
+  targets={{
+    mode: targetMode,
+    solidGroups: solidTargets,
+    spaceGroups: targets,
+    deckSpaces: sortedSpaces,
+    currentSpaceId: currentSpace?.id ?? null,
+    techniqueColor: technique?.color ?? null,
+    nameOf: targetName,
+    roomName: (solid) => targetName(ship.spaces.get(solid.spaceId) ?? solid),
+    provenanceLabel,
+    provenanceClass,
+    isSolidActive: (solidId) => Boolean(world.solids[solidId]),
+    onSolid: (spaceId, solidId) => castOn(spaceId, solidId),
+    onSpace: (space) => (technique ? castOn(space.id) : goToSpace(space)),
+  }}
+  controls={{
+    hasTechnique: Boolean(technique),
+    secondHand: hands?.second ?? null,
+    twoHanded,
+    selfCastable,
+    touch,
+  }}
+  calm={chrome.calm}
+  provenance={{
+    reveal: chrome.reveal,
+    blindWalls,
+    handPlacedDoors,
+    sourcesHref: $link('/tour/sources'),
+  }}
+>
+  <TourPageStage
+    immersive={chrome.immersive}
+    {navigation}
+    bind:takeScreenshot
+    {gyoMode}
+    scene={{
+      ship,
+      world: sceneWorld,
+      concert,
+      flash,
+      auraColour: technique?.color ?? null,
+      nen: hatsuSession.nen,
+      onNenChange: hatsuSession.useNen,
+      aiming: Boolean(technique),
+      selfCastable,
+      reveal: chrome.reveal,
+      onCast: castAt,
+      onHatsu: castAt,
+      hatsuAllowedInZetsu: technique?.kind === 'future',
+      hatsuRequiresZetsu: technique?.kind === 'future',
+      onArrive: arrived,
+      onWorm: crossWorm,
+      onFish: fishEat,
+      onOwl: owlFlight,
+      onOwlSecond: owlSecond,
+      onScout: scoutFlight,
+      onBeast: beastStep,
+      onCoin: takeCoin,
+      onPolarity: polarityWalk,
+      hands,
+      tunes,
+      twoHanded,
+      orders,
+      onOrder: () => technique && turn(technique.kind),
+      swings: technique?.kind === 'stitch',
+      propels: technique?.kind === 'elastic',
+      gumOn: strandOn,
+      touchUseLabel,
+      gangwayLabels: $t.tour.gangway,
+      touchLabels: { move: $t.tour.touch.move, cast: $t.tour.touch.cast },
+      soundLabels: { silence: $t.tour.sound.silence, restore: $t.tour.sound.restore },
+      loadingLabel: $t.tour.loading,
+      unsupportedLabel: $t.tour.unsupported,
+      extras: castView.apparitions,
+      // Taking hold of a beast is the one thing §2.4 lets one do: it answers,
+      // and nothing else in the ship changes.
+      onPick: (id) => castView.speak(id),
+      hour,
+    }}
+    overlay={{
+      autopilot: isAutopilot,
+      reticleColor: technique?.color ?? null,
+      spoken,
+      location: locationReadout,
+      penalty: hatsuSession.penalty,
+      note: bodyNote,
+      aim: aimReadout,
+      controls: overlayControls,
+      statusHint,
+      tourist,
+      gyo: {
+        active: gyoMode,
+        onToggle: () => hatsuSession.useNen({ type: 'GYO', on: !gyoMode }),
+      },
+      linkPrompt: touch ? null : linkPrompt,
+      // The provenance card of the light, beside the deck: the visitor can
+      // see why the bay is black at chapter 374 and a drawn noon elsewhere.
+      hour: hour.label,
+      scarlet: scarletWash,
+      // Hidden while the card is up: the same gesture puts it back, and the
+      // card carries its own way out.
+      examine:
+        asking || bodyView.talk || bodyView.conversation
+          ? null
+          : { label: $t.tour.examine.open, key: touch ? null : 'P', onOpen: ask },
+    }}
+    examine={{
+      open: asking,
+      exhibit,
+      sourcesHref: $link('/tour/sources'),
+      onClose: close,
+      // The way on to the exchange, only in front of somebody the server
+      // sent a dossier for. The evidence card steps aside for it: both are
+      // the same card in the same place, about the same body.
+      talk: bodyView.contextLine
+        ? {
+            label: $t.tour.dialogue.open,
+            onOpen: () => {
+              close()
+              bodyView.speak()
+            },
+          }
+        : null,
+      address: bodyView.dossier
+        ? {
+            label: $t.tour.address.open,
+            onOpen: () => {
+              close()
+              bodyView.address()
+            },
+          }
+        : null,
+    }}
+    dialogue={{
+      conversation: bodyView.conversation,
+      onClose: bodyView.close,
+      onOpenArchive: bodyView.address,
+    }}
+    address={{
+      talk: bodyView.talk,
+      extracted: bodyView.extracted,
+      reading: bodyView.reading,
+      held: bodyView.heldMark,
+      onClose: bodyView.close,
+    }}
+  >
+    {#snippet concertPanel()}
+      <TourMelodyConcert
+        {ship}
+        {navigation}
+        bind:world
+        bind:performance={concert}
+        allowed={canUseTourHatsu(hatsuSession.nen, 'melody')}
+        cap={cast.spoilerLimit}
+      />
+    {/snippet}
+  </TourPageStage>
+</TourWorkspace>
 
 <TourPageDialogs
   bind:dialog={chrome.planDialog}
@@ -1084,11 +1052,3 @@
   onSelect={selectOnPlan}
   onGo={goToSpace}
 />
-
-<style>
-  .tour-workspace {
-    max-width: 1600px;
-    margin: auto;
-    padding: 0 var(--page-gutter) 5rem;
-  }
-</style>

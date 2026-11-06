@@ -1,0 +1,21 @@
+{
+  "chapter": 383,
+  "durationSeconds": 180,
+  "source": "Ch. 383, flute solo following Keeney's piano performance: Melody stands alone in a spotlight and carries her listeners into a flower-filled landscape for three minutes. Metric blocking is estimated.",
+  "sourceFr": "Chap. 383, solo de flûte après le piano de Keeney : Melody joue seule sous un projecteur et emporte ses auditeurs dans un paysage fleuri pendant trois minutes. Placement métrique estimé.",
+  "performer": {
+    "characterId": "melody",
+    "name": "Melody",
+    "role": "Bodyguard",
+    "nen": true,
+    "hatsu": ["melody"],
+    "spaceId": "tier-1-banquet-hall-service-end",
+    "at": [-1, 27.25],
+    "heading": 3.141592653589793
+  },
+  "audience": {
+    "at": [-1, 22.5],
+    "target": [-1, 27.25],
+    "pitch": 0.12
+  }
+}

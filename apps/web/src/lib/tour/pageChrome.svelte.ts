@@ -7,7 +7,7 @@ export class TourChromeState {
   planOpen = $state(false)
   planDialog = $state<HTMLDialogElement | null>(null)
   findOpen = $state(false)
-  panelOpen = $state(true)
+  panelOpen = $state(false)
   calm = $state(false)
 
   private readonly screen = new Fullscreen()
@@ -22,8 +22,10 @@ export class TourChromeState {
     $effect(() => this.screen.watch())
     $effect(() => {
       if (!this.planDialog) return
-      if (this.planOpen && !this.planDialog.open) this.planDialog.showModal()
-      else if (!this.planOpen && this.planDialog.open) this.planDialog.close()
+      if (this.planOpen && !this.planDialog.open) {
+        document.exitPointerLock?.()
+        this.planDialog.showModal()
+      } else if (!this.planOpen && this.planDialog.open) this.planDialog.close()
     })
   }
 

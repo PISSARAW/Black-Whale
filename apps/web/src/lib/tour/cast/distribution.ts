@@ -13,7 +13,7 @@
  * the same ship twice — which is what makes a screenshot at a fixed chapter a
  * test rather than a souvenir.
  */
-import { floorOf } from '../blueprint'
+import { standingSurface } from '../standingSurface'
 import type { Ship } from '../blueprint'
 import { AVATAR } from '../apparitions'
 import type { Apparition } from '../apparitions'
@@ -197,7 +197,7 @@ export function castApparitions(
       tierId: post.tierId,
       at: post.at,
       ...(post.heading === undefined ? {} : { heading: post.heading }),
-      y: floorOf(space, plan.tier),
+      y: standingSurface(plan, post.at, space),
       size: HUMAN_SIZE,
       colour: AVATAR,
       stage: 0,

@@ -9,6 +9,7 @@ import {
 import { resolveMovement, wallsNear } from './navigation'
 import { banquetRails, type BanquetRail } from './banquetWalkLayout'
 import type { Structure, Vec2, WallSegment } from './types'
+import { standingSurface } from './standingSurface'
 
 const STEP = 0.26
 interface WalkModel {
@@ -102,7 +103,7 @@ export class SurfaceWalker {
 
   reset(plan: TierPlan, at: Vec2, height?: number): number {
     this.at = at
-    this.height = height ?? deckFloor(plan, at)
+    this.height = height ?? standingSurface(plan, at)
     return this.height
   }
 

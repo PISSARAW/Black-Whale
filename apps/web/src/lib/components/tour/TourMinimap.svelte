@@ -50,6 +50,7 @@
      * Take the height offered rather than the one the drawing implies. The plan
      * in the column sizes itself; the full-screen one fills the dialog.
      */
+    showPosition?: boolean
     fill?: boolean
   }
 
@@ -69,6 +70,7 @@
     crossingLabel = () => '',
     aiming = false,
     fill = false,
+    showPosition = true,
   }: Props = $props()
 
   const PADDING = 20
@@ -280,8 +282,10 @@
       </g>
     {/each}
 
-    <path d={cone} fill="#FFFFF0" opacity="0.55" />
-    <circle cx={position[0]} cy={position[1]} r={unit * 5} fill="#FFFFF0" />
+    {#if showPosition}
+      <path d={cone} fill="#FFFFF0" opacity="0.55" />
+      <circle cx={position[0]} cy={position[1]} r={unit * 5} fill="#FFFFF0" />
+    {/if}
   </svg>
 </figure>
 

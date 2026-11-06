@@ -2,6 +2,7 @@
   import { t } from '$lib/i18n'
 
   interface Props {
+    expanded?: boolean
     hasTechnique: boolean
     secondHand: string | null
     twoHanded: boolean
@@ -9,10 +10,17 @@
     touch: boolean
   }
 
-  let { hasTechnique, secondHand, twoHanded, selfCastable, touch }: Props = $props()
+  let {
+    expanded = false,
+    hasTechnique,
+    secondHand,
+    twoHanded,
+    selfCastable,
+    touch,
+  }: Props = $props()
 </script>
 
-<details class="tour-disclosure">
+<details class="tour-disclosure" open={expanded}>
   <summary>{$t.tour.controls.title}</summary>
   <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs text-[#FFFFF0]/70">
     <dt class="text-[#FFFFF0]">{$t.tour.controls.move}</dt>

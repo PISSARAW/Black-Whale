@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { t } from '$lib/i18n'
+  import { tourWords } from '$lib/tour/workspaceWords'
+  import type { ComponentProps, Snippet } from 'svelte'
+  import TourSceneTools from './TourSceneTools.svelte'
 
   interface LocationReadout {
     level: string
@@ -39,6 +41,7 @@
   }
 
   interface Props {
+    tools?: Snippet
     autopilot: boolean
     reticleColor: string | null
     spoken: string
@@ -85,20 +88,12 @@
      * year, drawn the same way on both surfaces.
      */
     scarlet: { share: number; label: string } | null
-    tourist?: {
-      available: boolean
-      mangaViewLabel?: string
-      onJumpToAngle?: () => void
-      onTakePhoto: () => void
-      onTakePhotoWithHud: () => void
-    } | null
-    gyo?: {
-      active: boolean
-      onToggle: () => void
-    } | null
+    tourist?: ComponentProps<typeof TourSceneTools>['tourist']
+    gyo?: ComponentProps<typeof TourSceneTools>['gyo']
   }
 
   let {
+    tools,
     autopilot,
     reticleColor,
     spoken,
@@ -119,55 +114,7 @@
 
 {#if autopilot}<div class="pointer-events-auto absolute inset-0 z-50 bg-black"></div>{/if}
 
-<div class="pointer-events-auto absolute right-3 top-3 z-40 flex flex-col items-end gap-2">
-  {#if tourist?.available}
-    {#if tourist.onJumpToAngle}
-      <button
-        type="button"
-        onclick={tourist.onJumpToAngle}
-        title={tourist.mangaViewLabel}
-        aria-label={tourist.mangaViewLabel
-          ? `${$t.tour.sceneOverlay.mangaAngle} — ${tourist.mangaViewLabel}`
-          : $t.tour.sceneOverlay.mangaAngle}
-        class="rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-xs text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
-      >
-        {$t.tour.sceneOverlay.mangaAngle}
-      </button>
-    {/if}
-    <div class="flex gap-2">
-      <button
-        type="button"
-        onclick={tourist.onTakePhoto}
-        title={$t.tour.sceneOverlay.photoPure}
-        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
-      >
-        IMG
-      </button>
-      <button
-        type="button"
-        onclick={tourist.onTakePhotoWithHud}
-        title={$t.tour.sceneOverlay.photoWithInterface}
-        class="flex h-8 w-8 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 text-[10px] font-bold text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
-      >
-        UI
-      </button>
-    </div>
-  {/if}
-
-  {#if gyo}
-    <button
-      type="button"
-      onclick={gyo.onToggle}
-      class="mt-2 flex items-center gap-2 rounded border border-[#FFD700]/40 px-2 py-1 text-xs transition-colors hover:border-[#FFD700]/70 {gyo.active
-        ? 'bg-[#FFD700]/20 text-[#FFD700]'
-        : 'bg-[#050505]/80 text-[#FFD700]/80'}"
-      title={$t.tour.sceneOverlay.gyoTitle}
-    >
-      <span>{gyo.active ? '[Gyo]' : '[Nen]'}</span>
-      {gyo.active ? $t.tour.sceneOverlay.gyoActive : $t.tour.sceneOverlay.gyoActivate}
-    </button>
-  {/if}
-</div>
+<TourSceneTools {tourist} {gyo} extra={tools} />
 
 {#if scarlet}
   <!-- First in the layer, and with no z of its own, so every read-out over the
@@ -269,14 +216,14 @@
 {/if}
 
 {#if controls.length}
-  <ul
-    class="pointer-events-none absolute bottom-3 left-3 space-y-0.5 rounded bg-[#050505]/80 px-2 py-1"
-  >
-    {#each controls as control (control.key)}<li class="flex items-baseline gap-2 text-[11px]">
-        <kbd class="shrink-0 font-mono text-[10px]" style:color={control.color}>{control.key}</kbd
-        ><span class="text-[#FFFFF0]/70">{control.action}</span>
-      </li>{/each}
-  </ul>
+  <details class="quick-controls">
+    <summary>{$tourWords.shortcuts}</summary>
+    <ul>
+      {#each controls as control (control.key)}
+        <li><kbd style:color={control.color}>{control.key}</kbd><span>{control.action}</span></li>
+      {/each}
+    </ul>
+  </details>
 {/if}
 
 <p
@@ -289,3 +236,35 @@
   >
     {linkPrompt}
   </p>{/if}
+
+<style>
+  .quick-controls {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    z-index: 20;
+    max-width: min(360px, calc(100% - 1.5rem));
+    border: 1px solid #3a3830;
+    border-radius: 4px;
+    background: #111216;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+  }
+  .quick-controls summary {
+    min-height: 44px;
+    padding: 0.8rem;
+    cursor: pointer;
+  }
+  .quick-controls ul {
+    padding: 0 0.8rem 0.8rem;
+  }
+  .quick-controls li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-top: 0.3rem;
+  }
+  .quick-controls kbd {
+    min-width: 2rem;
+  }
+</style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ComponentProps } from 'svelte'
+  import type { ComponentProps, Snippet } from 'svelte'
   import type { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
   import TourScene from './TourScene.svelte'
   import TourSceneOverlay from './TourSceneOverlay.svelte'
@@ -50,6 +50,7 @@
     address: AddressProps
     takeScreenshot?: (() => Promise<Blob | null>) | null
     gyoMode?: boolean
+    concertPanel?: Snippet
   }
 
   let {
@@ -62,6 +63,7 @@
     address,
     takeScreenshot = $bindable(null),
     gyoMode = false,
+    concertPanel,
   }: Props = $props()
 </script>
 
@@ -87,7 +89,7 @@
     {gyoMode}
     {...scene}
   />
-  <TourSceneOverlay {...overlay} />
+  <TourSceneOverlay {...overlay} tools={concertPanel} />
   <TourExamineCard {...examine} />
   <TourDialogueCard {...dialogue} />
   <TourAddressCard {...address} />
@@ -105,8 +107,8 @@
   .tour-stage {
     position: relative;
     min-width: 0;
-    height: min(70svh, 800px);
-    min-height: 360px;
+    height: 100%;
+    min-height: 0;
     overflow: hidden;
     border: 1px solid var(--line-default);
     border-radius: 3px;

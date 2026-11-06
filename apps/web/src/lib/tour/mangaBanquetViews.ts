@@ -1,7 +1,20 @@
 import { mangaView as view, type MangaView } from './mangaViewModel'
 import { BANQUET_SERVICE, BANQUET_SPACE } from './banquetView'
+import fixture from '../../../../../data/ship/melody-concert.json'
 
 export const MANGA_BANQUET_VIEWS: MangaView[] = [
+  view({
+    id: 'banquet-melody-concert',
+    spaceId: BANQUET_SERVICE,
+    triggerSpaceIds: [BANQUET_SPACE],
+    chapter: fixture.chapter,
+    volume: 37,
+    at: [fixture.audience.at[0], fixture.audience.at[1]],
+    target: [fixture.audience.target[0], fixture.audience.target[1]],
+    pitch: fixture.audience.pitch,
+    label: 'Melody’s flute concert, facing the performance stage',
+    labelFr: 'Le concert de flûte de Melody, face à la scène des spectacles',
+  }),
   view({
     id: 'banquet-side-galleries',
     spaceId: BANQUET_SPACE,

@@ -18,7 +18,7 @@
   import type { QualitySetting } from '$lib/tour/quality'
   import type { ShipHourChoice } from '$lib/tour/sky'
 
-  let { calm }: { calm: boolean } = $props()
+  let { calm, expanded = false }: { calm: boolean; expanded?: boolean } = $props()
 
   /**
    * The hour behind the two windows. `quality`'s doctrine word for word: the
@@ -47,7 +47,7 @@
   ]
 </script>
 
-<details class="tour-disclosure">
+<details class="tour-disclosure" open={expanded}>
   <summary>{$t.tour.comfort.title}</summary>
   {#if calm}<p class="mb-2 text-xs leading-snug text-[#FFFFF0]/50">{$t.tour.comfort.calm}</p>{/if}
   <div class="space-y-2.5 text-xs text-[#FFFFF0]/70">

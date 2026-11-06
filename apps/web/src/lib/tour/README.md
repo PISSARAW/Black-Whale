@@ -44,3 +44,15 @@ decisions: [adr-003, adr-005, adr-006]
 - Pour une nouvelle salle : `docs/geste/une-salle.md`.
 - Pour un nouveau son de Hatsu : `docs/geste/un-hatsu.md` + `apps/web/src/lib/audio/hatsu/`.
 - Pour un nouvel effet visuel : cette fiche + `docs/carte/05-la-visite.md`.
+
+## Navigation de la visite
+
+`TourWorkspace.svelte` garde la scène montée sur toute la largeur. La barre propose le
+pont, les plans, la recherche et le plein écran ; le panneau Options regroupe Confort,
+Lieux / Nen, Commandes et Sources. Les outils photo et Gyo restent dans la vue.
+
+Le sélecteur de `TourPlanDialog.svelte` consulte les ponts et les intérieurs sans déplacer
+le visiteur. Seule la sélection d’une pièce déclenche le déplacement. « Ma position »
+revient au niveau parcouru ; le marqueur de position ne figure que sur ce niveau.
+`TourPlanViewport.svelte` porte le zoom et le déplacement du plan, sans sélectionner une
+pièce à la fin d’un glissement. Sur mobile, l’index des pièces se déplie sous le plan.

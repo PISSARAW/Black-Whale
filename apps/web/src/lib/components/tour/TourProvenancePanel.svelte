@@ -2,16 +2,17 @@
   import { t } from '$lib/i18n'
 
   interface Props {
+    expanded?: boolean
     reveal: boolean
     blindWalls: [string, number][]
     handPlacedDoors: [string, number][]
     sourcesHref: string
   }
 
-  let { reveal, blindWalls, handPlacedDoors, sourcesHref }: Props = $props()
+  let { expanded = false, reveal, blindWalls, handPlacedDoors, sourcesHref }: Props = $props()
 </script>
 
-<details class="tour-disclosure">
+<details class="tour-disclosure" open={expanded}>
   <summary>{$t.tour.provenance.title}</summary>
   <ul class="space-y-1.5 text-xs text-[#FFFFF0]/60">
     <li>

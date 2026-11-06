@@ -53,6 +53,7 @@
 </script>
 
 <TourPlanDialog
+  {ship}
   bind:dialog
   {plan}
   {position}

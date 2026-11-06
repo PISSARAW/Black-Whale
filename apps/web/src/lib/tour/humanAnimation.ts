@@ -1,5 +1,6 @@
 import type { Euler, Group, Object3D } from 'three'
 import type { Apparition } from './apparitions'
+import { poseFluteArms, raiseConcertFlute } from './humanFlutePose'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
 
@@ -35,7 +36,9 @@ interface AnimatedHuman {
  */
 export function poseHuman(rig: PosedHuman): void {
   const { pose, figure, head, arms, legs, elbows, knees } = rig
-  if (pose === 'guard') {
+  if (pose === 'flute') {
+    poseFluteArms(rig)
+  } else if (pose === 'guard') {
     arms.forEach((arm, index) => {
       const side = index === 0 ? -1 : 1
       arm.position.set(side * 0.22, 1.31, 0.08)
@@ -90,6 +93,7 @@ export function poseHuman(rig: PosedHuman): void {
 }
 
 export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
+  if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
   const figureBasePosition = rig.figure.position.clone()
   const figureBaseRotation = rig.figure.rotation.clone()
   const shoulderBasePosition = rig.arms.map((arm) => arm.position.clone())

@@ -88,6 +88,9 @@
   } from '$lib/tour/navigation'
   import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
+  import { ConcertStageView } from '$lib/tour/ConcertStageView'
+  import { positionHeldFlute } from '$lib/tour/heldFlute'
+  import type { ConcertPerformance } from '$lib/tour/melodyConcert'
   import { walkingHeadMotion, easeWalkingGround } from '$lib/tour/walkingCamera'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
@@ -226,6 +229,7 @@
     nen?: NenTechniqueState
     /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
     showNenControls?: boolean
+    concert?: ConcertPerformance
     /** Visible-but-disabled principles for modes that intentionally implement a subset. */
     nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean | string>>
     /** Controlled modes receive every accepted standard Nen action here. */
@@ -566,6 +570,7 @@
     onNenChange,
     onPhysicalNenAction,
     showNenControls = true,
+    concert = { mode: null, playing: false },
     nenAvailability = {},
     flash = null,
     aiming = false,
@@ -932,8 +937,8 @@
        *   than drawing an outline on it.
        */
       const atmosphere = new TourAtmosphereView(THREE, scene, $comfort.nightLight)
-      const { ambient, nightLight, auraLight, gildLight, haloLight, haloBubble, litLights } =
-        atmosphere
+      const concertView = new ConcertStageView(THREE, scene, ship)
+      const { ambient, nightLight, auraLight, gildLight, haloLight, haloBubble } = atmosphere
       const NIGHT_LIGHT = NIGHT_LIGHT_INTENSITY
       /** The clear colour the air is closing to. Written by `hourView`. */
       const baseFog = atmosphere.baseFog
@@ -2410,41 +2415,6 @@
       }
 
       /**
-       * The flute, at the lips or at the side.
-       *
-       * Carried like the book and the chain: the group is put at the visitor's
-       * hands every frame and turned with them, so the instrument lies across
-       * the player with the head end on their left, which is how a transverse
-       * flute is held. `stage` says whether anything is coming out of it —
-       * raised, it is up at the mouth and breathing quickly with the playing;
-       * down, it hangs at the hip on a slow sway.
-       */
-      function raiseTheFlute(held: Shown, phase: number) {
-        const sin = Math.sin(yaw)
-        const cos = Math.cos(yaw)
-        const playing = held.stage > 0
-        // Forward is (cos, -sin) and the right hand is (-sin, -cos): played, it
-        // comes in under the eye and barely in front; down, it is out at the
-        // hip and well below it.
-        const ahead = playing ? 0.34 : 0.4
-        const aside = playing ? 0.12 : 0.42
-        const drop = playing ? 0.24 : 0.72
-        held.root.position.set(
-          camera.position.x + cos * ahead - sin * aside,
-          camera.position.y -
-            drop +
-            Math.sin(phase * (playing ? 7 : 1.5)) * (playing ? 0.006 : 0.02),
-          camera.position.z - sin * ahead - cos * aside,
-        )
-        // A quarter turn off the walk's own yaw puts the tube along the
-        // visitor's right, which is where the far end of a flute goes.
-        held.root.rotation.set(0, yaw + Math.PI / 2, 0)
-        // Level at the lips; angled down and away when it is only being held.
-        held.root.rotateZ(playing ? -0.12 : -0.95)
-        held.root.rotateX(playing ? 0.06 : 0.3)
-      }
-
-      /**
        * The run of a snake, from the shoulder it came out of to the coil.
        *
        * Snake Arm is a limb, not a thing put down in a room: whatever it has
@@ -2954,7 +2924,11 @@
           }
 
           if (held.kind === 'flute') {
-            raiseTheFlute(held, phase)
+            positionHeldFlute(held.root, camera.position, {
+              yaw,
+              seconds: phase,
+              playing: held.stage > 0,
+            })
             continue
           }
 
@@ -4602,30 +4576,8 @@
           haloBubble.position.set(pointer[0], eye, pointer[1])
           haloBubble.scale.setScalar(Math.min(6, 1.8 + halo * 0.5))
         }
-        // And a lamp in every room an eye-wog lit, on the deck being walked.
-        // Built the first time the room needs one and dropped when the levy is
-        // blown off it, exactly as the solids are.
-        for (const spaceId of world.lit) {
-          if (litLights[spaceId]) continue
-          const space = ship.spaces.get(spaceId)
-          const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
-          if (!space || !tier) continue
-          const middle = centroid(space)
-          const lamp = new THREE.PointLight(0xfff1d8, 2.6, 26, 2)
-          lamp.position.set(
-            middle[0],
-            floorOf(space, tier) + ceilingOf(space, tier) * 0.7,
-            middle[1],
-          )
-          scene.add(lamp)
-          litLights[spaceId] = lamp
-        }
-        for (const spaceId of Object.keys(litLights)) {
-          if (world.lit.includes(spaceId)) continue
-          const lamp = litLights[spaceId]
-          if (lamp) scene.remove(lamp)
-          delete litLights[spaceId]
-        }
+        atmosphere.syncLitRooms(ship, world.lit)
+        concertView.update(concert, { tierId: currentTierId, reveal })
         // The aura is carried by the visitor, because the visitor is the one
         // emitting it. Positioned whether or not it is lit: `syncShells` raises the
         // intensity, and a light at the wrong end of the deck the frame a technique
@@ -4903,6 +4855,7 @@
         gumGeometry.dispose()
         gumMaterial.dispose()
         portals.dispose()
+        concertView.dispose()
         atmosphere.dispose()
         hatsuEffects.dispose()
         nenAura.dispose(scene)

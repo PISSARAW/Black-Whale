@@ -103,6 +103,26 @@ export function dressBanquetStage(context: StageContext): void {
   performanceCurtain(context)
   stageFront(context)
   proscenium(context)
+  stageStairs(context)
+}
+
+function stageStairs({ into, structures, floor }: StageContext): void {
+  for (const step of structures.filter(({ id }) => id.includes('-stage-stair-'))) {
+    const width = Math.max(...step.size),
+      depth = Math.min(...step.size)
+    into.box([width, 0.035, depth], {
+      at: [step.at[0], floor + step.height + 0.0175, step.at[1]],
+      colour: 0x746957,
+    })
+    into.box([width, 0.19, 0.025], {
+      at: [step.at[0], floor + step.height - 0.1, step.at[1] - depth / 2 - 0.0125],
+      colour: STONE,
+    })
+    into.box([width + 0.02, 0.045, 0.06], {
+      at: [step.at[0], floor + step.height - 0.025, step.at[1] - depth / 2],
+      colour: CARVED,
+    })
+  }
 }
 
 /** The king's curtained bay and carved balcony remain at the opposite end. */

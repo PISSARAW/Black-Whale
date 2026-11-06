@@ -24,16 +24,17 @@ describe('walking every modelled staircase', () => {
     const key = step.id.replace(/-\d+$/, '')
     flights.set(key, [...(flights.get(key) ?? []), step])
   }
-  it('covers all five physical flights and their 68 treads', () => {
-    expect(flights.size).toBe(5)
-    expect([...flights.values()].reduce((count, flight) => count + flight.length, 0)).toBe(68)
+  it('covers all seven physical flights and their 82 treads', () => {
+    expect(flights.size).toBe(7)
+    expect([...flights.values()].reduce((count, flight) => count + flight.length, 0)).toBe(82)
   })
   it.each([...flights])('ascends and descends every tread of %s', (_id, flight) => {
     const steps = [...flight].sort((a, b) => a.height - b.height)
     const first = steps[0],
       last = steps.at(-1)!
     const walker = new SurfaceWalker()
-    const start: Vec2 = [first.at[0], first.at[1] + Math.min(...first.size) / 2 + 0.6]
+    const direction = Math.sign(last.at[1] - first.at[1])
+    const start: Vec2 = [first.at[0], first.at[1] - direction * (Math.min(...first.size) / 2 + 0.6)]
     let at = start
     const base = walker.reset(plan, start)
     for (const step of steps) {

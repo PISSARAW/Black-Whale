@@ -67,6 +67,7 @@
   $effect(() => {
     if (!dialog) return
     if (open && !dialog.open) {
+      document.exitPointerLock?.()
       dialog.showModal()
       // Selected rather than cleared: reopening the finder on the search you
       // just ran is useful, and the first keystroke replaces it either way.
@@ -117,6 +118,7 @@
 </script>
 
 <dialog
+  data-hatsu-pass
   bind:this={dialog}
   aria-label={labels.title}
   onclose={() => (open = false)}

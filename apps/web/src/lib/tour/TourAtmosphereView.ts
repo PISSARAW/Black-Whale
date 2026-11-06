@@ -1,5 +1,7 @@
 import type * as Three from 'three'
 import { REFERENCE_REGIME } from './regime'
+import { ceilingOf, floorOf, type Ship } from './blueprint'
+import { centroid } from './geometry'
 
 export const NIGHT_LIGHT_INTENSITY = 1.2
 export const AURA_LIGHT_INTENSITY = 2.4
@@ -60,6 +62,26 @@ export class TourAtmosphereView {
       this.haloLight,
       this.haloBubble,
     )
+  }
+
+  syncLitRooms(ship: Ship, rooms: readonly string[]): void {
+    for (const spaceId of rooms) {
+      if (this.litLights[spaceId]) continue
+      const space = ship.spaces.get(spaceId)
+      const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
+      if (!space || !tier) continue
+      const middle = centroid(space)
+      const lamp = new this.THREE.PointLight(0xfff1d8, 2.6, 26, 2)
+      lamp.position.set(middle[0], floorOf(space, tier) + ceilingOf(space, tier) * 0.7, middle[1])
+      this.scene.add(lamp)
+      this.litLights[spaceId] = lamp
+    }
+    for (const spaceId of Object.keys(this.litLights)) {
+      if (rooms.includes(spaceId)) continue
+      const lamp = this.litLights[spaceId]
+      if (lamp) this.scene.remove(lamp)
+      delete this.litLights[spaceId]
+    }
   }
 
   dispose(): void {

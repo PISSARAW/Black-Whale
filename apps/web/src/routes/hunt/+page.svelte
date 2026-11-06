@@ -16,7 +16,7 @@
    */
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
-  import TourScene from '$lib/components/tour/TourScene.svelte'
+  import HuntScene from '$lib/components/hunt/HuntScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
   import { theShip, crossingsOn } from '$lib/tour/blueprint'
   import type { TourFlash } from '$lib/tour/apparitions'
@@ -648,7 +648,9 @@
         : $t.hunt.hud.ten}
     {/if}
   </div>
-  <TourScene
+  <HuntScene
+    active={briefed}
+    duelling={Boolean(game.duel)}
     {ship}
     bind:tierId
     bind:position
@@ -661,23 +663,6 @@
     flash={activeHatsuFlash}
     nen={playerNen}
     showNenControls={true}
-    nenAvailability={game.duel
-      ? {
-          ren: 'Le duel contrôle Ren via Ken.',
-          en: 'En est interrompu au contact.',
-          shu: 'Aucun objet libre pendant le duel.',
-          on: 'On n’est pas maîtrisé dans ce contrat.',
-          action: 'F frappe pendant le duel.',
-        }
-      : {
-          gyo: 'Gyo exige un adversaire engagé.',
-          in: 'In exige un duel dans ce mode.',
-          ken: 'Ken exige un adversaire engagé.',
-          ko: 'Ko exige une cible de duel.',
-          ryu: 'Ryu exige une cible de duel.',
-          on: 'On n’est pas maîtrisé dans ce contrat.',
-          action: 'Visez un objet imprégnable.',
-        }}
     onNenChange={useStandardNen}
     onPhysicalNenAction={() => game.duel && strike()}
     onHatsu={() => send({ type: 'HATSU' })}

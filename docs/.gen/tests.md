@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 300
+Fichiers : 301
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -92,6 +92,7 @@ Fichiers : 300
 ## `apps/web/src/lib/assets/maps/localMaps.test.ts`
 
 - the observation deck plan > draws the room the blueprint puts at the bow, corner for corner
+- the central courthouse plan > keeps the clerks’ desk at the position and size drawn on the right
 - room appearance evidence > never changes a room layout or its occupants at random
 
 ## `apps/web/src/lib/assets/maps/sectionMap.test.ts`
@@ -769,6 +770,10 @@ Fichiers : 300
 
 - how much aura is out > bends nothing when there is no scene to read
 - the shell an aura is seen as from outside > gives a body in Zetsu nothing to wear
+
+## `apps/web/src/lib/tour/banquetView.test.ts`
+
+- the inaugural banquet reconstruction > keeps round tables within the reshaped hall, clear of one another and of the central aisle
 
 ## `apps/web/src/lib/tour/blueprint.test.ts`
 

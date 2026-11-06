@@ -3,6 +3,19 @@ import { BANQUET_SERVICE, BANQUET_SPACE } from './banquetView'
 
 export const MANGA_BANQUET_VIEWS: MangaView[] = [
   view({
+    id: 'banquet-side-galleries',
+    spaceId: BANQUET_SPACE,
+    triggerSpaceIds: [BANQUET_SERVICE],
+    chapter: 358,
+    volume: 34,
+    at: [-1, -3],
+    target: [-13.8, -14],
+    pitch: 0.14,
+    label: 'The inaugural banquet galleries, panelled parapets and fluted columns',
+    labelFr:
+      'Les galeries du banquet inaugural, leurs parapets à panneaux et les colonnes cannelées',
+  }),
+  view({
     id: 'banquet-inaugural-hall',
     spaceId: BANQUET_SPACE,
     triggerSpaceIds: [BANQUET_SERVICE],

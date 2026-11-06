@@ -51,7 +51,7 @@ export class BanquetDetailBuilder {
   }
 
   cylinder(
-    size: { radius: number; height: number; bottom?: number; sides?: number },
+    size: { radius: number; height: number; bottom?: number; sides?: number; open?: boolean },
     placement: Placement,
   ): void {
     this.add(
@@ -60,6 +60,8 @@ export class BanquetDetailBuilder {
         size.bottom ?? size.radius,
         size.height,
         size.sides ?? 16,
+        1,
+        size.open ?? false,
       ),
       placement,
     )
@@ -70,7 +72,40 @@ export class BanquetDetailBuilder {
   }
 
   ring(size: { radius: number; tube: number }, placement: Placement): void {
-    this.add(new this.THREE.TorusGeometry(size.radius, size.tube, 4, 24), placement)
+    this.add(new this.THREE.TorusGeometry(size.radius, size.tube, 4, 20), placement)
+  }
+
+  profile(points: readonly (readonly [number, number])[], placement: Placement): void {
+    this.add(
+      new this.THREE.LatheGeometry(
+        points.map(([radius, y]) => new this.THREE.Vector2(radius, y)),
+        24,
+      ),
+      placement,
+    )
+  }
+
+  flutedShaft(
+    size: { radius: number; height: number; flutes: number },
+    placement: Placement,
+  ): void {
+    const geometry = new this.THREE.CylinderGeometry(
+      size.radius,
+      size.radius,
+      size.height,
+      size.flutes * 4,
+      1,
+      true,
+    )
+    const position = geometry.getAttribute('position')
+    for (let index = 0; index < position.count; index++) {
+      const angle = Math.atan2(position.getZ(index), position.getX(index))
+      const radius = size.radius + 0.035 * (1 + Math.cos(angle * size.flutes))
+      position.setX(index, Math.cos(angle) * radius)
+      position.setZ(index, Math.sin(angle) * radius)
+    }
+    geometry.computeVertexNormals()
+    this.add(geometry, placement)
   }
 
   curve(points: readonly Point3[], radius: number, placement: Placement): void {

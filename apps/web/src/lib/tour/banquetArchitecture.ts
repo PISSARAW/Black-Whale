@@ -4,10 +4,11 @@ import type { Point3 } from './banquetDetailBuilder'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { lampsOf, lamplightOf } from './light'
 import { ceilingOf, floorOf } from './blueprint'
+import { dressBanquetWalls } from './banquetWalls'
+import { dressBanquetGalleries } from './banquetGalleries'
 
 const IVORY = 0xc5c1af
 const GOLD = 0x9b8256
-const SHADOW = 0x77776d
 
 function coffer(into: BanquetDetailBuilder, at: Point3, span: number): void {
   const [x, y, z] = at
@@ -53,7 +54,7 @@ function chandelier(options: {
       const px = x + Math.cos(angle) * radius
       const pz = z + Math.sin(angle) * radius
       into.cylinder(
-        { radius: 0.008, height: 0.26, sides: 4 },
+        { radius: 0.008, height: 0.26, sides: 4, open: true },
         { at: [px, ringY - 0.13, pz], colour: IVORY },
       )
       into.add(new THREE.OctahedronGeometry(0.075).scale(0.7, 1.9, 0.7), {
@@ -69,28 +70,37 @@ function chandelier(options: {
 /** The round fluted facing follows the tour's existing column positions. */
 export function dressBanquetColumn(into: BanquetDetailBuilder, at: Point3, height: number): void {
   const [x, y, z] = at
-  into.cylinder(
-    { radius: 0.65, height: height - 0.64, sides: 24 },
+  into.flutedShaft(
+    { radius: 0.65, height: height - 1.24, flutes: 16 },
     { at: [x, y + height / 2, z], colour: IVORY },
   )
-  for (const top of [false, true]) {
-    const level = top ? y + height - 0.24 : y + 0.24
-    into.cylinder({ radius: 0.8, height: 0.18, sides: 24 }, { at: [x, level, z], colour: IVORY })
-    into.cylinder(
-      { radius: 0.7, height: 0.1, sides: 24 },
-      { at: [x, level + (top ? -0.15 : 0.15), z], colour: GOLD },
-    )
-  }
-  for (let flute = 0; flute < 16; flute++) {
-    const angle = (flute * Math.PI) / 8
-    into.cylinder(
-      { radius: 0.018, height: height - 1.05, sides: 5 },
-      {
-        at: [x + Math.cos(angle) * 0.65, y + height / 2, z + Math.sin(angle) * 0.65],
-        colour: SHADOW,
-      },
-    )
-  }
+  into.profile(
+    [
+      [0.65, 0],
+      [0.78, 0.04],
+      [0.8, 0.12],
+      [0.78, 0.18],
+      [0.68, 0.22],
+      [0.65, 0.28],
+      [0.74, 0.38],
+      [0.76, 0.49],
+      [0.72, 0.58],
+      [0.65, 0.68],
+    ],
+    { at, colour: IVORY },
+  )
+  into.profile(
+    [
+      [0.65, height - 0.68],
+      [0.7, height - 0.57],
+      [0.78, height - 0.49],
+      [0.8, height - 0.36],
+      [0.8, height - 0.18],
+      [0.68, height - 0.12],
+      [0.65, height],
+    ],
+    { at, colour: IVORY },
+  )
 }
 
 export function dressBanquetArchitecture(options: {
@@ -111,25 +121,6 @@ export function dressBanquetArchitecture(options: {
   for (const [x, z] of plan.columns.get(spaceId) ?? []) {
     dressBanquetColumn(into, [x, floor, z], ceiling - floor)
   }
-  // High cornices follow the actual wall runs, including the vestibule notch.
-  // Column faces and furniture faces are not walls to decorate.
-  for (const wall of plan.walls.filter(
-    (wall) => wall.spaceId === spaceId && !wall.structureId && !wall.jambOf,
-  )) {
-    const dx = wall.end[0] - wall.start[0],
-      dz = wall.end[1] - wall.start[1]
-    const length = Math.hypot(dx, dz)
-    if (length < 2) continue
-    for (const offset of [0.35, 0.62]) {
-      into.box([length, 0.12, 0.18], {
-        at: [
-          (wall.start[0] + wall.end[0]) / 2,
-          ceiling - offset,
-          (wall.start[1] + wall.end[1]) / 2,
-        ],
-        rotation: [0, -Math.atan2(dz, dx), 0],
-        colour: IVORY,
-      })
-    }
-  }
+  dressBanquetWalls({ into, plan, spaceId })
+  dressBanquetGalleries({ THREE, into, plan, spaceId })
 }

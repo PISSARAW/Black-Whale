@@ -62,6 +62,41 @@ commun. Le linteau générique de porte à 2,60 m produisait une cloison suspend
 qui cachait le haut de la scène ; il est retiré uniquement pour cette jonction
 de deux niveaux d'une même salle. Les portes ordinaires gardent leur linteau.
 
+## Murs, colonnes et galeries — panorama du chapitre 358
+
+Le grand panorama du chapitre 358 (page de lecture 9) montre les galeries
+surélevées, leurs parapets pleins à panneaux, leurs sous-faces à caissons et
+deux volées d'escalier latérales. Les anciens blocs de galerie posés au sol
+à un mètre de haut ne reproduisaient pas cette organisation. Leurs dalles
+sont désormais suspendues : sous-face à 3,05 m, épaisseur 28 cm, parapet
+d'environ un mètre. Les tronçons se rejoignent au-dessus des entrées ;
+l'entaille du sas reste libre. Le panneau suspendu est remonté au-dessus
+du parapet. Le sol sous les galeries est libre dans le même plan de collision.
+
+Les deux escaliers rejoignent la cote de dalle, avec un retour ouvert dans
+chaque parapet au palier. Leur implantation latérale libère les tables et
+l'estrade royale. Le nombre de marches (18 par volée), leur pas et toutes
+les cotes sont estimés, comme la position des raccords entre les tronçons
+du plan partagé. Ils restituent la silhouette ; la navigation conserve sa
+hauteur de visite au rez-de-chaussée.
+
+Les colonnes reprennent la base annelée et bombée du premier plan, avec des
+cannelures creusées dans le fût et un chapiteau mouluré. Leurs centres et leur
+emprise maximale restent ceux de la reconstruction précédente. La case de
+la salle des cérémonies au chapitre 359 (page de lecture 12) guide les hautes
+travées encadrées, les panneaux clairs veinés et les remplissages à montants
+verticaux. Ces remplissages restent opaques : cette case ne suffit pas à
+établir de nouvelles fenêtres extérieures. Les corniches et soubassements
+s'arrêtent aux ouvertures réelles du plan.
+
+Références de consultation : [panorama du chapitre 358](https://www.scan-vf.net/hunter-x-hunter/chapitre-358/9)
+et [salle des cérémonies au chapitre 359](https://www.scan-vf.net/hunter-x-hunter/chapitre-359/12).
+Le dessin vient de Yoshihiro Togashi / Shueisha ; les profils simplifiés,
+le rythme des panneaux et les teintes sont une interprétation du modèle.
+L'angle « Les galeries du banquet inaugural » permet de les inspecter dans
+la visite. Les détails restent fusionnés en deux lots maximum par salle,
+sans ajouter de lumière ni dépasser le budget de 150 000 triangles.
+
 ## Limites de la reconstruction
 
 Le plan conserve son implantation commune avec `/ship`, issue des chapitres

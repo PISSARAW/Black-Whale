@@ -2422,7 +2422,7 @@
       "nameFr": "Salle du banquet",
       "category": "public",
       "provenance": "panel",
-      "source": "Ch. 349 \u2014 departure ceremony",
+      "source": "Ch. 358\u2013359 \u2014 inaugural banquet panorama and ceremony hall; shared metric footprint follows the reconstructed royal-deck plan.",
       "ceiling": 9,
       "envelope": null,
       "footprint": [
@@ -2459,7 +2459,7 @@
           -30.0
         ]
       ],
-      "sourceFr": "Chap. 349 \u2014 c\u00e9r\u00e9monie de d\u00e9part"
+      "sourceFr": "Chap. 358\u2013359 \u2014 panorama du banquet inaugural et salle des c\u00e9r\u00e9monies ; implantation m\u00e9trique commune au plan reconstruit du pont royal."
     },
     {
       "id": "tier-1-banquet-hall-service-end",
@@ -39230,8 +39230,8 @@
         0.686
       ],
       "rotation": 90.0,
-      "base": 2.6,
-      "height": 4,
+      "base": 4.55,
+      "height": 3.55,
       "sides": null,
       "provenance": "panel",
       "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
@@ -39802,12 +39802,12 @@
         2.286
       ],
       "rotation": 90.0,
-      "base": 0,
-      "height": 1,
+      "base": 3.05,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-gallery-forward-2",
@@ -39817,19 +39817,19 @@
       "nameFr": "Galerie lat\u00e9rale (mur avant, 2)",
       "at": [
         11.8,
-        -10.785
+        -2.9515
       ],
       "size": [
-        7.57,
+        23.237,
         2.286
       ],
       "rotation": 90.0,
-      "base": 0,
-      "height": 1,
+      "base": 3.05,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-gallery-forward-3",
@@ -39846,12 +39846,12 @@
         2.286
       ],
       "rotation": 90.0,
-      "base": 0,
-      "height": 1,
+      "base": 3.05,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-gallery-aft-1",
@@ -39861,19 +39861,19 @@
       "nameFr": "Galerie lat\u00e9rale (mur arri\u00e8re, 1)",
       "at": [
         -13.8,
-        -15.76
+        -14.42825
       ],
       "size": [
-        19.714,
+        22.3775,
         2.286
       ],
       "rotation": 90.0,
-      "base": 0,
-      "height": 1,
+      "base": 3.05,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     },
     {
       "id": "tier-1-banquet-hall-gallery-aft-2",
@@ -39890,12 +39890,12 @@
         2.286
       ],
       "rotation": 90.0,
-      "base": 0,
-      "height": 1,
+      "base": 3.05,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 the inaugural banquet seen down the hall: the raised galleries running the length of both side walls, the proscenium piers and the curtain framing the stage, and the panel hung over the port gallery.",
-      "sourceFr": "Chap. 359 \u2014 le banquet inaugural vu dans l'axe de la halle : les galeries sur\u00e9lev\u00e9es qui courent le long des deux murs lat\u00e9raux, les piles et le rideau qui encadrent la sc\u00e8ne, et le panneau suspendu au-dessus de la galerie b\u00e2bord."
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     },
     {
       "id": "tier-1-royal-residential-service-run-spine-1",
@@ -43639,6 +43639,798 @@
       "provenance": "panel",
       "source": "Ch. 359, banquet panel behind Benjamin \u2014 the king sits in a carved high-backed chair on a separate raised platform, with a small round table, draped backdrop and lateral columns; ch. 383 confirms the decorated parapet and side access. Metric dimensions remain reconstruction estimates.",
       "sourceFr": "Chap. 359, case du banquet derri\u00e8re Benjamin \u2014 le roi si\u00e8ge dans un fauteuil sculpt\u00e9 \u00e0 haut dossier, sur une estrade distincte avec une petite table ronde, un fond drap\u00e9 et des colonnes lat\u00e9rales ; le chap. 383 confirme le parapet d\u00e9cor\u00e9 et l\u2019acc\u00e8s lat\u00e9ral. Dimensions m\u00e9triques estim\u00e9es."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-01",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 1",
+      "nameFr": "Escalier de la galerie (port), marche 1",
+      "at": [
+        -11.157,
+        -20.25
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.185,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-02",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 2",
+      "nameFr": "Escalier de la galerie (port), marche 2",
+      "at": [
+        -11.157,
+        -20.55
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.37,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-03",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 3",
+      "nameFr": "Escalier de la galerie (port), marche 3",
+      "at": [
+        -11.157,
+        -20.85
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.555,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-04",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 4",
+      "nameFr": "Escalier de la galerie (port), marche 4",
+      "at": [
+        -11.157,
+        -21.15
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.74,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-05",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 5",
+      "nameFr": "Escalier de la galerie (port), marche 5",
+      "at": [
+        -11.157,
+        -21.45
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.925,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-06",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 6",
+      "nameFr": "Escalier de la galerie (port), marche 6",
+      "at": [
+        -11.157,
+        -21.75
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.11,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-07",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 7",
+      "nameFr": "Escalier de la galerie (port), marche 7",
+      "at": [
+        -11.157,
+        -22.05
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.295,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-08",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 8",
+      "nameFr": "Escalier de la galerie (port), marche 8",
+      "at": [
+        -11.157,
+        -22.35
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.48,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-09",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 9",
+      "nameFr": "Escalier de la galerie (port), marche 9",
+      "at": [
+        -11.157,
+        -22.65
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.665,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-10",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 10",
+      "nameFr": "Escalier de la galerie (port), marche 10",
+      "at": [
+        -11.157,
+        -22.95
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-11",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 11",
+      "nameFr": "Escalier de la galerie (port), marche 11",
+      "at": [
+        -11.157,
+        -23.25
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.035,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-12",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 12",
+      "nameFr": "Escalier de la galerie (port), marche 12",
+      "at": [
+        -11.157,
+        -23.55
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.22,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-13",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 13",
+      "nameFr": "Escalier de la galerie (port), marche 13",
+      "at": [
+        -11.157,
+        -23.85
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.405,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-14",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 14",
+      "nameFr": "Escalier de la galerie (port), marche 14",
+      "at": [
+        -11.157,
+        -24.15
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.59,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-15",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 15",
+      "nameFr": "Escalier de la galerie (port), marche 15",
+      "at": [
+        -11.157,
+        -24.45
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.775,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-16",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 16",
+      "nameFr": "Escalier de la galerie (port), marche 16",
+      "at": [
+        -11.157,
+        -24.75
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.96,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-17",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 17",
+      "nameFr": "Escalier de la galerie (port), marche 17",
+      "at": [
+        -11.157,
+        -25.05
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 3.145,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-port-18",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (port), tread 18",
+      "nameFr": "Escalier de la galerie (port), marche 18",
+      "at": [
+        -11.157,
+        -25.35
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 3.33,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-01",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 1",
+      "nameFr": "Escalier de la galerie (starboard), marche 1",
+      "at": [
+        9.157,
+        -20.25
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.185,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-02",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 2",
+      "nameFr": "Escalier de la galerie (starboard), marche 2",
+      "at": [
+        9.157,
+        -20.55
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.37,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-03",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 3",
+      "nameFr": "Escalier de la galerie (starboard), marche 3",
+      "at": [
+        9.157,
+        -20.85
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.555,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-04",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 4",
+      "nameFr": "Escalier de la galerie (starboard), marche 4",
+      "at": [
+        9.157,
+        -21.15
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.74,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-05",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 5",
+      "nameFr": "Escalier de la galerie (starboard), marche 5",
+      "at": [
+        9.157,
+        -21.45
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.925,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-06",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 6",
+      "nameFr": "Escalier de la galerie (starboard), marche 6",
+      "at": [
+        9.157,
+        -21.75
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.11,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-07",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 7",
+      "nameFr": "Escalier de la galerie (starboard), marche 7",
+      "at": [
+        9.157,
+        -22.05
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.295,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-08",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 8",
+      "nameFr": "Escalier de la galerie (starboard), marche 8",
+      "at": [
+        9.157,
+        -22.35
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.48,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-09",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 9",
+      "nameFr": "Escalier de la galerie (starboard), marche 9",
+      "at": [
+        9.157,
+        -22.65
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.665,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-10",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 10",
+      "nameFr": "Escalier de la galerie (starboard), marche 10",
+      "at": [
+        9.157,
+        -22.95
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 1.85,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-11",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 11",
+      "nameFr": "Escalier de la galerie (starboard), marche 11",
+      "at": [
+        9.157,
+        -23.25
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.035,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-12",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 12",
+      "nameFr": "Escalier de la galerie (starboard), marche 12",
+      "at": [
+        9.157,
+        -23.55
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.22,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-13",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 13",
+      "nameFr": "Escalier de la galerie (starboard), marche 13",
+      "at": [
+        9.157,
+        -23.85
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.405,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-14",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 14",
+      "nameFr": "Escalier de la galerie (starboard), marche 14",
+      "at": [
+        9.157,
+        -24.15
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.59,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-15",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 15",
+      "nameFr": "Escalier de la galerie (starboard), marche 15",
+      "at": [
+        9.157,
+        -24.45
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.775,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-16",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 16",
+      "nameFr": "Escalier de la galerie (starboard), marche 16",
+      "at": [
+        9.157,
+        -24.75
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 2.96,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-17",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 17",
+      "nameFr": "Escalier de la galerie (starboard), marche 17",
+      "at": [
+        9.157,
+        -25.05
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 3.145,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
+    },
+    {
+      "id": "tier-1-banquet-hall-gallery-stair-starboard-18",
+      "spaceId": "tier-1-banquet-hall",
+      "kind": "platform",
+      "name": "Gallery stair (starboard), tread 18",
+      "nameFr": "Escalier de la galerie (starboard), marche 18",
+      "at": [
+        9.157,
+        -25.35
+      ],
+      "size": [
+        0.3,
+        3
+      ],
+      "rotation": 90,
+      "base": 0,
+      "height": 3.33,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 358, inaugural banquet panorama \u2014 elevated side galleries with solid panelled parapets, coffered soffits and twin lateral stairs. Gallery height, thickness, stair count and metric positions are reconstruction estimates.",
+      "sourceFr": "Chap. 358, panorama du banquet inaugural \u2014 galeries lat\u00e9rales en mezzanine, parapets pleins \u00e0 panneaux, sous-faces \u00e0 caissons et deux escaliers lat\u00e9raux. Hauteur, \u00e9paisseur, nombre de marches et positions m\u00e9triques estim\u00e9s."
     }
   ]
 }

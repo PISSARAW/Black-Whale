@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { SvelteURLSearchParams } from 'svelte/reactivity'
   import { mapState } from '$lib/state/mapState.svelte'
   import { displayName } from '$lib/utils/displayNames'
   import { link, locale, t } from '$lib/i18n'
@@ -102,7 +103,7 @@
     // blueprint in the browser for one id. See `lib/tour/walkTargets.ts`.
     const space = slug ? ($page.data.walkTargets?.[slug] ?? null) : null
     if (!space) return null
-    const params = new URLSearchParams({ space })
+    const params = new SvelteURLSearchParams({ space })
     if ($page.data.selectedEventId) params.set('eventId', $page.data.selectedEventId)
     return `${$link('/tour')}?${params}`
   })

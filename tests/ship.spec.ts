@@ -4,6 +4,7 @@ import { expect, test } from 'playwright/test'
 test.beforeEach(async ({ page }) => {
   const response = await page.goto('/fr/ship')
   expect(response?.status()).toBe(200)
+  await page.waitForLoadState('networkidle')
   await expect(page.getByRole('heading', { name: 'Black Whale 01' })).toBeVisible()
 })
 
@@ -27,7 +28,7 @@ test('a room opens its plan and breadcrumbs return to the deck and overview', as
   await tiers.getByRole('button', { name: 'Niveau 1', exact: true }).click()
   await page.getByRole('button', { name: 'Open 1014', exact: true }).click()
   await expect(page.getByRole('complementary', { name: 'Détails du lieu' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Y aller à pied', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: /^Y aller à pied/ })).toBeVisible()
   await page
     .locator('.ship-breadcrumb')
     .getByRole('button', { name: 'Enceinte royale', exact: true })

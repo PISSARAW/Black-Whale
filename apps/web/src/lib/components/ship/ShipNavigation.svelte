@@ -83,7 +83,7 @@
     cursor: pointer;
   }
   button:hover {
-    background: var(--surface-hover);
+    background: var(--surface-raised);
     color: var(--text-primary);
   }
   .levels button {

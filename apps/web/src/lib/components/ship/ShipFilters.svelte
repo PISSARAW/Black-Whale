@@ -122,7 +122,7 @@
     cursor: pointer;
   }
   button.active {
-    border-color: var(--accent-gold-dim);
+    border-color: var(--line-strong);
     background: rgba(200, 169, 86, 0.1);
     color: var(--accent-gold-bright);
   }

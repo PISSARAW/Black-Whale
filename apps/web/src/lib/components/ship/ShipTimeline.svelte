@@ -98,7 +98,7 @@
 <style>
   .timeline {
     border-top: 1px solid var(--line);
-    background: var(--surface-base);
+    background: var(--surface-deep);
   }
   .timeline-bar {
     display: flex;

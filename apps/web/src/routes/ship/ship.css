@@ -42,7 +42,7 @@
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 0.65rem;
-  background: var(--surface-base);
+  background: var(--surface-deep);
 }
 .ship-workspace.expanded {
   position: fixed;
@@ -106,7 +106,7 @@
   flex-shrink: 0;
 }
 .ship-actions button:hover {
-  background: var(--surface-hover);
+  background: var(--surface-raised);
   color: var(--text-primary);
 }
 .ship-actions button.active,
@@ -166,7 +166,7 @@
   min-height: 0;
   overflow: hidden;
   border-left: 1px solid var(--line);
-  background: var(--surface-base);
+  background: var(--surface-panel);
 }
 .ship-panel > header {
   display: flex;
@@ -193,7 +193,7 @@
 }
 .ship-panel header button:hover {
   color: var(--accent-gold);
-  background: var(--surface-hover);
+  background: var(--surface-raised);
 }
 .ship-panel-content {
   min-height: 0;

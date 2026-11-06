@@ -14,8 +14,8 @@
   noindex
 />
 
-<div class="max-w-4xl mx-auto p-6 space-y-4">
-  <header class="bw-panel p-5">
+<div class="archive-page space-y-4">
+  <header class="mb-8">
     <h1 class="font-condensed text-3xl text-[#e5c57a]">{$t.bodyDetail.title(record.label)}</h1>
     <p class="text-sm text-slate-300 mt-2">{$t.bodyDetail.intro}</p>
 
@@ -46,7 +46,7 @@
   </header>
 
   {#if record.occupants.length}
-    <section class="bw-panel p-4">
+    <section class="archive-section">
       <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
         {$t.bodyDetail.occupants}
       </h2>
@@ -63,7 +63,7 @@
     </section>
   {/if}
 
-  <section class="bw-panel p-4">
+  <section class="archive-section">
     <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
       {$t.identity.continuityTitle}
     </h2>

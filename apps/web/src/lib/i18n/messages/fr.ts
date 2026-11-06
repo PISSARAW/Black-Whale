@@ -331,7 +331,7 @@ export const fr: Messages = {
       },
     },
     intro:
-      "Le vaisseau comme architecture, pas comme décor : ni passagers, ni chapitre, ni chronologie. Chaque surface dit d'où elle vient — une planche, le plan des ponts, ou la reconstruction elle-même.",
+      'Parcourez le navire, choisissez un pont et examinez les lieux pour consulter leurs sources.',
     enter: 'Cliquez pour marcher',
     // Tab d'abord : c'est celle qui marche en plein écran, là où Échap libère le
     // pointeur et quitte le plein écran d'une seule touche.
@@ -473,6 +473,7 @@ export const fr: Messages = {
     aimAt: (room) => `Viser ${room}`,
 
     viewpoint: {
+      tools: 'Options de la visite',
       copy: 'Copier ce point de vue',
       copied: 'Lien copié',
       failed: "Impossible d'accéder au presse-papiers",
@@ -871,9 +872,9 @@ export const fr: Messages = {
           castSolid: 'Lancer sur le volume que vous visez',
           castSelf: 'Lancer sur vous, où que vous visiez',
           castOnSelfInstead: 'Lancer sur vous plutôt que sur ce qui est devant vous',
-          sun: 'Poser le soleil ☀',
-          moon: 'Poser la lune ☾',
-          alternate: 'Alterner le soleil ☀ et la lune ☾',
+          sun: 'Poser le soleil',
+          moon: 'Poser la lune',
+          alternate: 'Alterner le soleil et la lune',
           openPage: 'Lancer la page ouverte',
           markedPage: 'Lancer la page que tient le marque-page',
           airDance: 'Jouer l’air vif',
@@ -1118,7 +1119,7 @@ export const fr: Messages = {
             ? `Le portable prend tout · ${days} jours encore, et rien d'autre ne sort d'ici là`
             : 'Le portable prend tout · rien d’autre ne sort pendant qu’il travaille',
         affectedUsers: (attack, affected, unreadable) =>
-          `⚠ ${attack} · ${affected} utilisateur${affected === 1 ? '' : 's'} affecté${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} illisible${unreadable === 1 ? '' : 's'}` : ''}`,
+          `${attack} · ${affected} utilisateur${affected === 1 ? '' : 's'} affecté${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} illisible${unreadable === 1 ? '' : 's'}` : ''}`,
         blastSolidRefused: (solid) =>
           `Vous tenez la paume sur ${solid} et rien ne suit. La cadence et la portée d'Air Blow ne sont pas données : le catalogue concède une émission depuis la paume gauche et dit que le fonctionnement précis reste inconnu, alors la visite ne vous dessinera pas une seconde bourrasque dont elle n'a pas le titre.`,
         stripped: (room, count) =>
@@ -1463,7 +1464,7 @@ export const fr: Messages = {
             : `Le bras était une hache · ${solid} est en deux morceaux, sans place où poser le second`,
         grown: (solid) => `${solid} a grossi hors de toute proportion`,
         growthRefused: (solid) => `${solid} bouge à peine · du Nen l'habite déjà`,
-        marked: (solid, sun) => `${sun ? '☀' : '☾'} sur ${solid}`,
+        marked: (solid, sun) => `${sun ? 'Soleil' : 'Lune'} sur ${solid}`,
         detonated: (solid, other) =>
           `${solid} et ${other} se sont rejoints, il ne reste ni l'un ni l'autre`,
         swapped: (solid, other) =>
@@ -2742,7 +2743,7 @@ export const fr: Messages = {
     openMenu: 'Ouvrir le menu de navigation',
     closeMenu: 'Fermer le menu de navigation',
     siteNavigation: 'Navigation du site',
-    menuDossier: 'Dossier de navigation',
+    menuDossier: 'Navigation',
     menuClassified: 'CONFIDENTIEL / 05 SECTIONS',
     mainSections: 'Sections principales',
     archiveSections: 'Sections des archives',
@@ -2774,9 +2775,9 @@ export const fr: Messages = {
     eyebrow: 'Expédition royale de Kakin · Voyage 001',
     titleLead: 'Montez à bord du',
     titleBrand: 'Black Whale',
-    lede: "Une archive de l'arc de la guerre de succession. Elle consigne où se trouve chaque passager, quel corps abrite quelle conscience, quels Nen sont en jeu et ce que chaque personnage croit à cet instant du voyage.",
+    lede: 'Explorez le navire, retrouvez ses passagers et suivez les événements de la guerre de succession.',
     exploreShip: 'Explorer le navire',
-    walkTheShip: 'Faire la visite virtuelle',
+    walkTheShip: 'Visite virtuelle',
     openRegistry: 'Ouvrir le registre des passagers',
     latestChapter: 'Dernier chapitre indexé',
     published: (date) => `Publié le ${date}`,
@@ -2826,7 +2827,7 @@ export const fr: Messages = {
     eyebrow: 'Manifeste 02 · Fiches d’identité',
     titleLine1: 'Registre des',
     titleLine2: 'passagers',
-    note: 'Toute identité est une cible mouvante. Parcourez les passagers confirmés, leurs alias, leurs affiliations et leurs premières apparitions consignées.',
+    note: 'Personnages, affiliations et premières apparitions.',
     totalRecords: 'Fiches au total',
     visible: 'Affichées',
     filtersLabel: 'Filtres du registre',
@@ -3297,6 +3298,28 @@ export const fr: Messages = {
   },
 
   ship: {
+    workspace: {
+      presences: 'Présences',
+      intro: 'Choisissez un pont. Explorez une salle. Suivez l’histoire.',
+      level: (level: number) => `Niveau ${level}`,
+      decks: 'Ponts',
+      chooseDeck: 'Choisissez un niveau ci-dessus ou un pont sur la carte pour l’explorer.',
+      filters: 'Filtres',
+      tracking: 'Suivre',
+      guide: 'Repères',
+      close: 'Fermer le panneau',
+      reset: 'Réinitialiser les filtres',
+      focus: 'Agrandir la carte',
+      exitFocus: 'Quitter la vue agrandie',
+      previous: 'Événement précédent',
+      next: 'Événement suivant',
+      selectEvent: 'Choisir un événement',
+      advancedTimeline: 'Chronologies des points de vue',
+      activeFilters: (count: number) => `${count} actif${count === 1 ? '' : 's'}`,
+      deckContext: 'À propos de ce pont',
+      mapHelp:
+        'Sélectionnez une salle pour ouvrir son plan et voir qui s’y trouve. Glissez pour vous déplacer, utilisez + et − pour zoomer et la cible pour recentrer la vue.',
+    },
     seoTitle: 'Carte du Black Whale — Hunter × Hunter',
     seoDescription:
       'Explorez les cinq ponts du Black Whale pont par pont : les salles, les positions connues des personnages et le point de vue de n’importe quel passager, chapitre par chapitre.',
@@ -3683,11 +3706,12 @@ export const fr: Messages = {
       'Tous les pouvoirs de Nen documentés à bord du Black Whale — conditions, limitations et propriétaires, du Bungee Gum aux bêtes gardiennes des princes.',
     breadcrumb: 'Pouvoirs',
     title: 'Archive des pouvoirs de Nen',
-    subtitle: 'Pouvoirs enregistrés dans le moteur narratif.',
+    subtitle: 'Pouvoirs, détenteurs et conditions d’utilisation.',
     unknownCategory: 'Inconnue',
     noDescription: 'Aucune description disponible.',
     activate: 'Activer sur tout le site',
     activateAria: (name) => `Activer ${name} sur tout le site`,
+    instructions: 'Mode d’emploi',
     cost: (cost) => `Coût : ${cost}`,
     empty: 'Aucun pouvoir trouvé.',
   },

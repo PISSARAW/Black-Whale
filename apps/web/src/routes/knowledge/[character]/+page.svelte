@@ -37,8 +37,8 @@
   noindex
 />
 
-<div class="max-w-5xl mx-auto p-6 space-y-5">
-  <header class="bw-panel p-5">
+<div class="archive-page space-y-5">
+  <header class="mb-8">
     <h1 class="font-condensed text-3xl text-[#e5c57a]">{$t.knowledgeDetail.title(name)}</h1>
     <p class="text-sm text-slate-300 mt-2">{$t.knowledgeDetail.intro}</p>
     <div class="mt-4 flex flex-wrap gap-2 text-xs">
@@ -56,7 +56,7 @@
     </div>
   </header>
 
-  <section class="bw-panel p-4">
+  <section class="archive-section">
     <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
       {$t.knowledgeDetail.informationState}
     </h2>
@@ -77,7 +77,7 @@
   </section>
 
   {#if data.edges.length}
-    <section class="bw-panel p-4">
+    <section class="archive-section">
       <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
         {$t.knowledgeDetail.graphTitle}
       </h2>

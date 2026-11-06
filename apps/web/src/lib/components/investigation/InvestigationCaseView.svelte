@@ -207,19 +207,15 @@
     class="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-start justify-between gap-3 p-3 sm:flex-row sm:gap-4 sm:p-6"
   >
     <div
-      class="relative max-w-xl overflow-hidden rounded-xl border border-sky-300/30 bg-[#0a0f1c]/80 p-4 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]"
+      class="relative max-w-xl overflow-hidden rounded-sm border border-sky-300/30 bg-[#0a0f1c]/80 p-4"
     >
-      <div
-        class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400 shadow-[0_0_10px_#38bdf8]"
-      ></div>
-      <p
-        class="text-[10px] font-bold uppercase tracking-[0.28em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
-      >
+      <div class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400"></div>
+      <p class="text-[10px] font-bold uppercase tracking-normal text-sky-300">
         {ui.dossier}
         {investigation.id} · {ui.chapter}
         {investigation.chapter}
       </p>
-      <h1 class="mt-1 font-black text-2xl leading-none text-white drop-shadow-md sm:text-4xl">
+      <h1 class="mt-1 font-black text-2xl leading-none text-white sm:text-4xl">
         {investigation.title}
       </h1>
       <p class="mt-2 text-xs text-sky-100/70 sm:text-sm">
@@ -229,25 +225,25 @@
 
     <div class="pointer-events-auto flex w-full items-stretch justify-end gap-3 sm:w-auto">
       <button
-        class="group relative min-w-0 flex-1 overflow-hidden rounded-lg border border-sky-400/20 bg-[#0a0f1c]/90 px-4 py-2 text-left backdrop-blur-md transition-all hover:border-sky-400/60 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] sm:flex-none"
+        class="group relative min-w-0 flex-1 overflow-hidden rounded-sm border border-sky-400/20 bg-[#0a0f1c]/90 px-4 py-2 text-left transition-all hover:border-sky-400/60 sm:flex-none"
         onclick={() => hatsuPanelOpen.set(true)}
       >
         <span
           class="absolute inset-0 bg-gradient-to-br from-sky-400/0 via-sky-400/5 to-sky-400/10 opacity-0 transition-opacity group-hover:opacity-100"
         ></span>
         <span class="relative z-10 flex items-center gap-2">
-          <span class="block h-2 w-2 rounded-full bg-fuchsia-400 shadow-[0_0_5px_#e879f9]"></span>
-          <span class="block text-[9px] font-bold uppercase tracking-[0.2em] text-sky-300/70"
+          <span class="block h-2 w-2 rounded-full bg-fuchsia-400"></span>
+          <span class="block text-[9px] font-bold uppercase tracking-normal text-sky-300/70"
             >Hatsu</span
           >
         </span>
         <span
-          class="relative z-10 mt-1 block max-w-28 truncate text-xs font-black tracking-wide drop-shadow-md"
+          class="relative z-10 mt-1 block max-w-28 truncate text-xs font-black tracking-wide"
           style:color={$activeHatsu?.color ?? '#ffffff'}>{$activeHatsu?.name ?? ui.choose}</span
         >
       </button>
       <button
-        class="group relative min-w-0 flex-1 overflow-hidden rounded-lg border border-sky-400/40 bg-sky-900/60 px-5 py-3 text-left backdrop-blur-md transition-all hover:border-sky-400 hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] sm:min-w-32 sm:flex-none"
+        class="group relative min-w-0 flex-1 overflow-hidden rounded-sm border border-sky-400/40 bg-sky-900/60 px-5 py-3 text-left transition-all hover:border-sky-400 sm:min-w-32 sm:flex-none"
         onclick={() =>
           session.solved ? (session.reportOpen = true) : session.openNotebook('evidence')}
       >
@@ -255,9 +251,7 @@
           class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"
         ></span>
         <span class="relative z-10 flex items-center justify-between gap-3">
-          <span
-            class="block text-[9px] font-bold uppercase tracking-[0.22em] text-sky-300 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
-          >
+          <span class="block text-[9px] font-bold uppercase tracking-normal text-sky-300">
             BOOK
           </span>
           <span
@@ -266,13 +260,12 @@
             {session.solved ? '✓' : session.discoveredIds.length}
           </span>
         </span>
-        <span class="relative z-10 mt-1 block text-sm font-black text-white drop-shadow-md"
+        <span class="relative z-10 mt-1 block text-sm font-black text-white"
           >{session.solved ? ui.solved : `${ui.items}`}</span
         >
-        <span
-          class="relative z-10 mt-2 block h-1 overflow-hidden rounded-full bg-sky-950 shadow-inner"
+        <span class="relative z-10 mt-2 block h-1 overflow-hidden rounded-full bg-sky-950"
           ><span
-            class="block h-full rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] transition-all"
+            class="block h-full rounded-full bg-sky-400 transition-all"
             style:width={`${session.progress}%`}
           ></span></span
         >
@@ -281,13 +274,13 @@
   </header>
 
   <aside class="pointer-events-none absolute bottom-5 left-4 z-30 hidden w-64 sm:block">
-    <p class="mb-2 text-[9px] font-bold uppercase tracking-[0.2em] text-white/45">
+    <p class="mb-2 text-[9px] font-bold uppercase tracking-normal text-white/45">
       {ui.people}
     </p>
     <div class="grid grid-cols-2 gap-1.5">
       {#each investigation.subjects as subject (subject.id)}
         <button
-          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left backdrop-blur transition {session.discoveredIds.some(
+          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left transition {session.discoveredIds.some(
             (id) => subject.evidenceIds.includes(id),
           )
             ? 'border-[#d6b35a]/60'
@@ -304,9 +297,9 @@
   </aside>
 
   <aside class="pointer-events-none absolute bottom-5 right-4 z-30 hidden w-72 lg:block">
-    <div class="border border-white/15 bg-black/75 p-4 backdrop-blur">
+    <div class="border border-white/15 bg-black/75 p-4">
       <div class="flex items-center justify-between">
-        <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d6b35a]">
+        <p class="text-[9px] font-bold uppercase tracking-normal text-[#d6b35a]">
           {ui.objectives}
         </p>
         <span class="font-mono text-[10px] text-white/40"
@@ -327,9 +320,7 @@
   </aside>
 
   <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-    <div
-      class="h-2 w-2 rounded-full border border-white/70 bg-black/20 shadow-[0_0_8px_black]"
-    ></div>
+    <div class="h-2 w-2 rounded-full border border-white/70 bg-black/20"></div>
   </div>
 
   <CaseSubjectPanel {session} {ui} />

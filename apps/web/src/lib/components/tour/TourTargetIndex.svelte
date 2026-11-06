@@ -29,14 +29,14 @@
       : undefined
 </script>
 
-<section>
-  <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+<details class="tour-disclosure" open={props.mode !== 'jump'}>
+  <summary>
     {#if props.mode === 'body'}{$t.tour.hatsu.body.noTarget}
     {:else if props.mode === 'solid'}{$t.tour.hatsu.solids.targets} · {$t.tour.hatsu.allDecks}
     {:else if props.mode === 'relay'}{$t.tour.hatsu.solids.relayTargets}
     {:else if props.mode === 'space'}{$t.tour.hatsu.targets} · {$t.tour.hatsu.allDecks}
     {:else}{$t.tour.jumpTo}{/if}
-  </p>
+  </summary>
   {#if props.mode === 'body'}
     <p class="rounded border border-[#333] px-2.5 py-2 text-xs leading-snug text-[#FFFFF0]/50">
       {$t.tour.hatsu.body.castHint}
@@ -123,4 +123,4 @@
       {/each}
     </ul>
   {/if}
-</section>
+</details>

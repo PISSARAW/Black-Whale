@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { t } from '$lib/i18n'
 
   let {
@@ -21,7 +22,7 @@
 <article class="difference" data-code={code}>
   <header>
     <h3>{title}</h3>
-    <span class="code" aria-label={$t.perspectiveUi.differenceType}>{code}</span>
+    <span class="code" aria-label={$t.perspectiveUi.differenceType}><MangaIcon glyph={code} /></span>
   </header>
   <div class="columns">
     <p><strong>{leftLabel}:</strong> {leftValue}</p>

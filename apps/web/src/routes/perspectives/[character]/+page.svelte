@@ -40,8 +40,8 @@
   noindex
 />
 
-<div class="max-w-6xl mx-auto p-6 space-y-5">
-  <header class="bw-panel p-5">
+<div class="archive-page space-y-5">
+  <header class="mb-8">
     <h1 class="font-condensed text-3xl text-[#e5c57a]">{$t.perspectiveDetail.title(name)}</h1>
     <p class="text-sm text-slate-300 mt-2">{$t.perspectiveDetail.intro}</p>
 
@@ -121,7 +121,7 @@
     <p class="bw-panel p-5 text-sm text-slate-400 italic">{$t.perspectiveDetail.noEvents}</p>
   {:else}
     <section class="grid lg:grid-cols-[1.2fr_1fr] gap-4">
-      <article class="bw-panel p-4">
+      <article class="archive-section">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
           {$t.perspectiveDetail.subjectiveMap}
         </h2>
@@ -138,7 +138,7 @@
         </ul>
       </article>
 
-      <article class="bw-panel p-4">
+      <article class="archive-section">
         <h2 class="text-sm uppercase tracking-widest text-slate-400 mb-3">
           {$t.perspectiveDetail.activeKnowledge}
         </h2>

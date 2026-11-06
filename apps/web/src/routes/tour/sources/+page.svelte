@@ -317,7 +317,7 @@
   ])}
 />
 
-<div class="mx-auto max-w-5xl px-4 py-8">
+<div class="archive-page">
   <header class="mb-8">
     <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
       <a class="hover:text-[#FFD700]" href={$link('/tour')}>{$t.nav.virtualTour}</a>
@@ -337,11 +337,11 @@
     </p>
 
     <dl class="mt-5 flex flex-wrap gap-2 text-xs">
-      <div class="rounded border border-[#333] px-2.5 py-1 text-[#FFFFF0]/80">
+      <div class="text-[#FFFFF0]/70">
         {$t.tourSources.counts(ship.blueprint.spaces.length, distinctSources)}
       </div>
       {#each tally as entry (entry.provenance)}
-        <div class="rounded border px-2.5 py-1 {provenanceClass(entry.provenance)}">
+        <div class="px-2.5 py-1 {provenanceClass(entry.provenance)}">
           {$t.tourSources.tally(provenanceLabel(entry.provenance), entry.count)}
         </div>
       {/each}
@@ -364,10 +364,10 @@
   </header>
 
   <!-- The index the page is titled after: which chapters the ship is read out of -->
-  <section id="chapters" class="mb-8 scroll-mt-4">
-    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+  <details id="chapters" class="tour-disclosure mb-4">
+    <summary>
       {$t.tourSources.chapters.title}
-    </h2>
+    </summary>
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
       {$t.tourSources.chapters.help(chapters.length)}
     </p>
@@ -389,36 +389,36 @@
         </li>
       {/each}
     </ul>
-  </section>
+  </details>
 
   <!-- What the drawings can and cannot support, before the room-by-room list -->
-  <section id="method" class="mb-8 scroll-mt-4 rounded-lg border border-[#333] p-4 sm:p-5">
-    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+  <details id="method" class="tour-disclosure mb-4">
+    <summary>
       {$t.tourSources.method.title}
-    </h2>
+    </summary>
     <div class="mt-3 space-y-3 text-sm leading-relaxed text-[#FFFFF0]/70">
       <p>{$t.tourSources.method.crossSection}</p>
       <p>{$t.tourSources.method.apartmentPlan}</p>
       <p>{$t.tourSources.method.scale}</p>
       <p>{$t.tourSources.method.doorways}</p>
     </div>
-  </section>
+  </details>
 
   <!-- The debts the method leaves. The order of authority puts the manga first,
        so every place the reconstruction departs from ch. 349 is owed a reason —
        and a departure nobody wrote down is indistinguishable from an oversight.
        Prose rather than a count off the blueprint: what a file leaves out is
        precisely what that file cannot be made to report. -->
-  <section id="departures" class="mb-8 scroll-mt-4">
-    <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">
+  <details id="departures" class="tour-disclosure mb-4">
+    <summary>
       {$t.tourSources.departures.title}
-    </h2>
+    </summary>
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
       {$t.tourSources.departures.help}
     </p>
     <ul class="mt-3 space-y-3">
       {#each $t.tourSources.departures.items as departure (departure.drawn)}
-        <li class="overflow-hidden rounded-lg border border-[#333]">
+        <li class="overflow-hidden rounded-sm border border-[#333]">
           <p class="border-b border-[#333] p-3 text-xs leading-relaxed text-[#FFFFF0]/85">
             <span class="mr-2 text-[10px] uppercase tracking-wider text-[#FFD700]/70">
               {$t.tourSources.departures.drawn}
@@ -434,7 +434,7 @@
         </li>
       {/each}
     </ul>
-  </section>
+  </details>
 
   <!-- The room-by-room account -->
   <section id="rooms" class="scroll-mt-4">
@@ -522,7 +522,7 @@
 
     <ul class="mt-4 space-y-3">
       {#each groups as group (group.key)}
-        <li class="overflow-hidden rounded-lg border border-[#333]">
+        <li class="overflow-hidden rounded-sm border border-[#333]">
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-[#333] p-3">
             {#if group.provenance}
               <span
@@ -581,7 +581,7 @@
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
       {$t.tourSources.levels.help(ship.decks.length, ship.tiers.length - ship.decks.length)}
     </p>
-    <ul class="mt-3 divide-y divide-[#222] rounded-lg border border-[#333]">
+    <ul class="mt-3 divide-y divide-[#222] rounded-sm border border-[#333]">
       {#each levels as entry (entry.tier.id)}
         <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-xs">
           <span
@@ -615,7 +615,7 @@
       <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
         {$t.tourSources.structures.help}
       </p>
-      <ul class="mt-3 divide-y divide-[#222] rounded-lg border border-[#333]">
+      <ul class="mt-3 divide-y divide-[#222] rounded-sm border border-[#333]">
         {#each solids as entry (entry.label)}
           <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-xs">
             <span
@@ -647,7 +647,7 @@
     </p>
     <ul class="mt-3 space-y-3">
       {#each unfurnished as entry (entry.label)}
-        <li class="overflow-hidden rounded-lg border border-[#333]">
+        <li class="overflow-hidden rounded-sm border border-[#333]">
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-[#333] p-3">
             <span
               class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider {provenanceClass(
@@ -687,7 +687,7 @@
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/60">
       {$t.tourSources.links.help}
     </p>
-    <ul class="mt-3 divide-y divide-[#222] rounded-lg border border-[#333]">
+    <ul class="mt-3 divide-y divide-[#222] rounded-sm border border-[#333]">
       {#each verticalLinks as entry (`${entry.connection.from}-${entry.connection.to}`)}
         <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-xs">
           <span
@@ -741,7 +741,7 @@
     </section>
   </div>
 
-  <section class="mt-10 rounded-lg border border-[#333] p-4 sm:p-5">
+  <section class="mt-10 rounded-sm border border-[#333] p-4 sm:p-5">
     <h2 class="text-xs uppercase tracking-widest text-[#FFD700]/70">{$t.tourSources.data.title}</h2>
     <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">
       {$t.tourSources.data.help}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
   import { aliasLabel, displayName as toDisplayName, locationLabel } from '$lib/utils/displayNames'
   import { hatsuById } from '$lib/nen/hatsuRegistry.js'
@@ -19,13 +20,6 @@
     (character.mangaAppearances || []).filter((appearance) => appearance.status !== 'absent'),
   )
   let displayName = $derived(toDisplayName(character.canonicalName, $locale))
-  let initials = $derived(
-    displayName
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part: string) => part[0])
-      .join(''),
-  )
   let factionName = $derived(
     character.factionId
       ? character.factionId
@@ -57,7 +51,11 @@
   // section appearing or disappearing cannot leave the list counting wrong.
   let sections = $derived(
     [
-      { id: 'role', label: $t.characterDetail.sections.role, shown: true },
+      {
+        id: 'role',
+        label: $t.characterDetail.sections.role,
+        shown: Boolean(roleHistory.length || affiliations.length),
+      },
       {
         id: 'identity',
         label: $t.characterDetail.sections.identity,
@@ -78,16 +76,6 @@
       { id: 'trajectory', label: $t.characterDetail.sections.trajectory, shown: true },
     ].filter((section) => section.shown),
   )
-  let latestState = $derived(
-    timeline.findLast(
-      (entry) =>
-        !entry.isFlashback &&
-        (entry.kind === 'body-state' ||
-          entry.kind === 'consciousness-state' ||
-          entry.kind === 'appearance'),
-    ),
-  )
-
   let labels: Record<string, string> = $derived($t.characterDetail.states)
   let kindLabels: Record<string, string> = $derived($t.characterDetail.kinds)
 
@@ -135,16 +123,7 @@
   </nav>
 
   <header class="dossier-hero">
-    <div class="identity-plate" aria-hidden="true">
-      <span class="scan-line"></span><strong>{initials}</strong><small
-        >{$t.characterDetail.subjectPrefix} / {(
-          character.slug || character.id
-        ).toUpperCase()}</small
-      >
-    </div>
-
     <div class="hero-copy">
-      <p class="eyebrow">{$t.characterDetail.eyebrow}</p>
       <h1>{displayName}</h1>
       {#if character.aliases?.length}<p class="aliases">
           {$t.characterDetail.alsoKnownAs} · {character.aliases
@@ -177,10 +156,11 @@
         <dt>{$t.characterDetail.reportedStatus}</dt>
         <dd>{character.shipLocation?.status || $t.characterDetail.unconfirmed}</dd>
       </div>
-      <div>
-        <dt>{$t.characterDetail.latestTransition}</dt>
-        <dd>{latestState ? humanize(latestState.label) : $t.characterDetail.noneRecorded}</dd>
-      </div>
+
+      {#if factionName}<div>
+          <dt>{$t.characterDetail.catalogueAffiliation}</dt>
+          <dd>{factionName}</dd>
+        </div>{/if}
     </dl>
   </header>
 
@@ -188,70 +168,45 @@
     <aside class="dossier-index">
       <p>{$t.characterDetail.fileIndex}</p>
       <nav aria-label={$t.characterDetail.dossierSections}>
-        {#each sections as section, sectionIndex (section.id)}
-          <a href={`#${section.id}`}
-            ><span>{String(sectionIndex + 1).padStart(2, '0')}</span>{section.label}</a
-          >
+        {#each sections as section (section.id)}
+          <a href={`#${section.id}`}>{section.label}</a>
         {/each}
       </nav>
-      <div class="scope-note">
-        <span>{$t.characterDetail.scope}</span>
-        <p>{$t.characterDetail.scopeNote}</p>
-      </div>
     </aside>
 
-    <main class="dossier-content">
-      <section id="role" class="dossier-section role-section reveal-on-scroll">
-        <header>
-          <p class="section-code">{$t.characterDetail.codes.operationalPosition}</p>
-          <h2>{$t.characterDetail.sections.role}</h2>
-        </header>
-        <div class="role-grid">
-          <article>
-            <span>{$t.characterDetail.currentFunction}</span><strong
-              >{character.shipLocation?.role || $t.common.unknown}</strong
-            >
-          </article>
-          <article>
-            <span>{$t.characterDetail.currentArea}</span><strong>{currentLocation}</strong><small
-              >{character.shipLocation?.status || $t.characterDetail.statusUnconfirmed}</small
-            >
-          </article>
-          {#if character.factionId}<article>
-              <span>{$t.characterDetail.catalogueAffiliation}</span><strong
-                >{character.factionId.replaceAll('-', ' ')}</strong
-              >
-            </article>{/if}
-        </div>
-
-        {#if roleHistory.length || affiliations.length}
-          <div class="role-history">
-            {#each roleHistory as role, roleIndex (roleIndex)}
-              <article>
-                <small
-                  >{$t.characterDetail.chapterUpper(role.chapter)}{role.untilChapter
-                    ? `–${role.untilChapter}`
-                    : '+'}</small
-                ><strong>{role.label}</strong>{#if role.detail}<p>{role.detail}</p>{/if}
-              </article>
-            {/each}
-            {#each affiliations as affiliation, affiliationIndex (affiliationIndex)}
-              <article>
-                <small
-                  >{$t.characterDetail.chapterUpper(affiliation.chapter)}{affiliation.untilChapter
-                    ? `–${affiliation.untilChapter}`
-                    : '+'} · {affiliation.status}</small
-                ><strong>{affiliation.name}</strong>
-                <p>{humanize(affiliation.role)}</p>
-              </article>
-            {/each}
-          </div>
-        {/if}
-      </section>
-
+    <div class="dossier-content">
+      {#if roleHistory.length || affiliations.length}
+        <section id="role" class="dossier-section role-section reveal-on-scroll">
+          <header>
+            <h2>{$t.characterDetail.sections.role}</h2>
+          </header>
+          {#if roleHistory.length || affiliations.length}
+            <div class="role-history">
+              {#each roleHistory as role, roleIndex (roleIndex)}
+                <article>
+                  <small
+                    >{$t.characterDetail.chapterUpper(role.chapter)}{role.untilChapter
+                      ? `–${role.untilChapter}`
+                      : '+'}</small
+                  ><strong>{role.label}</strong>{#if role.detail}<p>{role.detail}</p>{/if}
+                </article>
+              {/each}
+              {#each affiliations as affiliation, affiliationIndex (affiliationIndex)}
+                <article>
+                  <small
+                    >{$t.characterDetail.chapterUpper(affiliation.chapter)}{affiliation.untilChapter
+                      ? `–${affiliation.untilChapter}`
+                      : '+'} · {affiliation.status}</small
+                  ><strong>{affiliation.name}</strong>
+                  <p>{humanize(affiliation.role)}</p>
+                </article>
+              {/each}
+            </div>
+          {/if}
+        </section>
+      {/if}
       {#if character.identity}
         <section id="identity" class="identity-alert dossier-section reveal-on-scroll">
-          <div class="section-code">{$t.characterDetail.codes.identityContinuity}</div>
           <div>
             <p>{character.identity.status}</p>
             <h2>{$t.characterDetail.identityTitle}</h2>
@@ -259,7 +214,7 @@
           </div>
           <a href={$link(`/characters/${character.identity.counterpartId}`)}
             >{$t.characterDetail.relatedRecord}<br /><strong
-              >{character.identity.counterpartLabel} ↗</strong
+              >{character.identity.counterpartLabel} <MangaIcon name="arrowUpRight" /></strong
             ></a
           >
         </section>
@@ -268,7 +223,6 @@
       {#if character.biography?.length}
         <section id="biography" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">{$t.characterDetail.codes.characterRecord}</p>
             <h2>{$t.characterDetail.sections.biography}</h2>
           </header>
           <div class="prose-record">
@@ -292,7 +246,6 @@
       {#if character.nen || character.abilities?.length}
         <section id="nen" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">{$t.characterDetail.codes.auraProfile}</p>
             <h2>{$t.characterDetail.sections.nen}</h2>
           </header>
           {#if character.nen}
@@ -333,27 +286,22 @@
                   {#if ability.alternateNames?.length}<span
                       >{ability.alternateNames.join(' / ')}</span
                     >{/if}
+                  <p>{ability.description}</p>
                   {#if profile}
                     <button
                       type="button"
                       class="ability-description"
                       onclick={() => activateAbility(ability.id)}
-                      aria-label={$t.characterDetail.activateAbility(
-                        ability.name || ability.id,
-                        ability.description || '',
-                      )}
+                      aria-label={$t.abilities.activateAria(ability.name || ability.id)}
                       aria-pressed={$activeHatsu?.id === ability.id}
                       data-hatsu-pass
                     >
-                      <span>{ability.description}</span>
                       <small
                         >{$activeHatsu?.id === ability.id
                           ? $t.characterDetail.hatsuActive
-                          : $t.characterDetail.clickToActivate}</small
+                          : $t.abilities.activate}</small
                       >
                     </button>
-                  {:else}
-                    <p>{ability.description}</p>
                   {/if}
                 </article>
               {/each}
@@ -365,18 +313,14 @@
       {#if prophecy}
         <section id="prophecy" class="dossier-section reveal-on-scroll">
           <header>
-            <p class="section-code">{$t.characterDetail.codes.apocryphal}</p>
             <h2>{$t.characterDetail.sections.prophecy}</h2>
           </header>
           <ProphecyPoem {prophecy} />
         </section>
       {/if}
 
-      <section id="appearances" class="dossier-section reveal-on-scroll">
-        <header>
-          <p class="section-code">{$t.characterDetail.codes.sourceIndex}</p>
-          <h2>{$t.characterDetail.sections.appearances}</h2>
-        </header>
+      <details id="appearances" class="dossier-section source-records">
+        <summary><h2>{$t.characterDetail.sections.appearances}</h2></summary>
         {#if documentedAppearances.length}
           <div class="appearance-grid">
             {#each documentedAppearances as appearance, appearanceIndex (appearanceIndex)}<article>
@@ -409,11 +353,10 @@
               </article>{/if}
           </div>
         {/if}
-      </section>
+      </details>
 
       <section id="trajectory" class="dossier-section reveal-on-scroll">
         <header>
-          <p class="section-code">{$t.characterDetail.codes.trajectory}</p>
           <h2>{$t.characterDetail.sections.trajectory}</h2>
         </header>
         <p class="trajectory-intro">{$t.characterDetail.trajectoryIntro}</p>
@@ -473,700 +416,413 @@
           </div>
         {/if}
       </section>
-    </main>
+    </div>
   </div>
 </div>
 
 <style>
-  :global(html) {
-    scroll-behavior: smooth;
-  }
   .dossier-page {
-    min-height: 100vh;
-    padding: 1.25rem var(--page-gutter) 8rem;
+    max-width: 1280px;
+    margin: auto;
+    padding: 2rem var(--page-gutter) 5rem;
   }
   .breadcrumb {
     display: flex;
-    max-width: var(--container-wide);
-    margin: 0 auto 1.5rem;
-    gap: 0.55rem;
-    color: var(--text-faint);
-    font: 0.54rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .breadcrumb a {
-    color: var(--accent-gold);
+    color: var(--text-secondary);
     text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    color: var(--text-primary);
   }
   .breadcrumb strong {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 400;
   }
   .dossier-hero {
-    display: grid;
-    max-width: var(--container-wide);
-    margin: 0 auto 4rem;
-    grid-template-columns: minmax(13rem, 0.36fr) 1fr minmax(13rem, 0.34fr);
-    gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: center;
-  }
-  .identity-plate {
-    position: relative;
-    display: grid;
-    aspect-ratio: 4/5;
-    place-items: center;
-    overflow: hidden;
-    border: 1px solid var(--line-default);
-    background:
-      radial-gradient(circle at 50% 30%, rgba(112, 189, 193, 0.16), transparent 35%),
-      linear-gradient(145deg, #17262d, #090e12);
-  }
-  .identity-plate::before,
-  .identity-plate::after {
-    position: absolute;
-    content: '';
-  }
-  .identity-plate::before {
-    inset: 10%;
-    border: 1px solid rgba(200, 169, 86, 0.18);
-    border-radius: 50% 50% 42% 42%;
-  }
-  .identity-plate::after {
-    right: 10%;
-    bottom: 10%;
-    left: 10%;
-    height: 1px;
-    background: var(--line-default);
-  }
-  .identity-plate strong {
-    color: rgba(226, 201, 121, 0.76);
-    font: 500 clamp(3rem, 7vw, 6.5rem)/1 var(--font-display);
-    letter-spacing: -0.04em;
-  }
-  .identity-plate small {
-    position: absolute;
-    right: 0.7rem;
-    bottom: 0.7rem;
-    left: 0.7rem;
-    color: var(--text-faint);
-    font: 0.43rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-align: center;
-  }
-  .scan-line {
-    position: absolute;
-    z-index: 2;
-    top: 18%;
-    right: 8%;
-    left: 8%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-    box-shadow: 0 0 12px rgba(112, 189, 193, 0.5);
-    animation: scan 4s ease-in-out infinite alternate;
+    margin-bottom: 2rem;
   }
   h1 {
-    margin: 0.65rem 0 0.4rem;
-    font-size: clamp(3.5rem, 7vw, 7rem);
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 0.8;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
   }
   .aliases {
-    color: var(--accent-gold);
-    font: 0.57rem/1.5 var(--font-mono);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    margin: 0.8rem 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
   }
   .primary-role {
-    display: grid;
-    gap: 0.35rem;
-    margin-top: 1.7rem;
-    padding-left: 1rem;
-    border-left: 2px solid var(--accent-gold);
+    margin-top: 1rem;
   }
   .primary-role span {
-    color: var(--text-faint);
-    font: 0.5rem/1 var(--font-mono);
-    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .primary-role strong {
-    font: 500 1.25rem/1.25 var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1.6;
   }
   .hero-links {
-    display: flex;
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
   }
   .hero-links a {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.62rem 0.75rem;
-    border: 1px solid var(--line-default);
-    border-radius: 0.35rem;
-    color: var(--text-secondary);
-    font-size: 0.6rem;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-  .hero-links a:hover {
+    gap: 0.75rem;
+    min-height: 44px;
     color: var(--accent-gold-bright);
-  }
-  .hero-links span {
-    color: var(--accent-gold);
+    font-size: 0.8rem;
+    text-decoration: none;
   }
   .record-stats {
-    margin: 0;
-    border-top: 1px solid var(--line-default);
-  }
-  .record-stats div {
-    padding: 1rem 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0 0;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line-subtle);
     border-bottom: 1px solid var(--line-subtle);
   }
   .record-stats dt {
-    color: var(--text-faint);
-    font: 0.5rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .record-stats dd {
-    margin: 0.35rem 0 0;
-    color: var(--text-primary);
-    font: 500 1rem/1.25 var(--font-display);
-    text-transform: capitalize;
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
   }
   .dossier-layout {
     display: grid;
-    max-width: var(--container-wide);
-    margin: auto;
-    grid-template-columns: 13rem minmax(0, 1fr);
-    gap: clamp(2rem, 5vw, 6rem);
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 3rem;
   }
   .dossier-index {
     position: sticky;
-    top: calc(var(--header-height) + 2rem);
+    top: calc(var(--header-height) + 1.5rem);
     height: fit-content;
   }
-  .dossier-index > p,
-  .section-code {
-    color: var(--accent-gold);
-    font: 0.5rem/1 var(--font-mono);
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
+  .dossier-index > p {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .dossier-index nav {
     display: grid;
-    margin-top: 0.8rem;
   }
-  .dossier-index nav a {
-    display: grid;
-    grid-template-columns: 1.8rem 1fr;
-    padding: 0.72rem 0;
-    border-bottom: 1px solid var(--line-subtle);
-    color: var(--text-muted);
-    font-size: 0.67rem;
+  .dossier-index a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
     text-decoration: none;
   }
-  .dossier-index nav a:hover {
-    padding-left: 0.35rem;
-    color: var(--text-primary);
-  }
-  .dossier-index nav span {
-    color: var(--text-faint);
-    font: 0.48rem/1 var(--font-mono);
-  }
-  .scope-note {
-    margin-top: 2rem;
-    padding: 1rem;
-    border: 1px solid var(--line-subtle);
-    border-radius: 0.45rem;
-    background: rgba(12, 20, 25, 0.65);
-  }
-  .scope-note span {
-    color: var(--accent-cyan);
-    font: 0.48rem/1 var(--font-mono);
-    text-transform: uppercase;
-  }
-  .scope-note p {
-    margin: 0.65rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.62rem;
-    line-height: 1.55;
+  .dossier-index a:hover {
+    color: var(--accent-gold-bright);
   }
   .dossier-content {
     min-width: 0;
   }
   .dossier-section {
-    scroll-margin-top: calc(var(--header-height) + 2rem);
-    padding: clamp(2rem, 4vw, 3.5rem) 0;
-    border-top: 1px solid var(--line-default);
+    scroll-margin-top: calc(var(--header-height) + 1.5rem);
+    padding: 2rem 0;
+    border-top: 1px solid var(--line-subtle);
   }
-  .dossier-section > header h2 {
-    margin: 0.45rem 0 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    line-height: 0.95;
+  .dossier-section:first-child {
+    border-top: 0;
+    padding-top: 0;
   }
-  .role-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    margin-top: 2rem;
-    background: var(--line-subtle);
-    border: 1px solid var(--line-subtle);
+  .dossier-section h2 {
+    margin: 0 0 1.25rem;
+    font: 500 1.25rem/1.4 var(--font-sans);
   }
-  .role-grid article {
-    display: grid;
-    gap: 0.55rem;
-    padding: 1.2rem;
-    background: var(--surface-deep);
+  .dossier-section h3 {
+    margin: 0.5rem 0;
+    font: 600 0.95rem/1.5 var(--font-sans);
   }
-  .role-grid span,
-  .role-grid small {
-    color: var(--text-faint);
-    font: 0.48rem/1.3 var(--font-mono);
-    text-transform: uppercase;
-  }
-  .role-grid strong {
-    font-size: 0.82rem;
-    text-transform: capitalize;
+  .dossier-section p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.8;
   }
   .role-history {
     display: grid;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    gap: 1rem;
   }
   .role-history article {
     display: grid;
-    grid-template-columns: 7rem 1fr 2fr;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--line-subtle);
-  }
-  .role-history small {
-    color: var(--accent-gold);
-    font: 0.48rem/1 var(--font-mono);
-  }
-  .role-history strong {
-    font-size: 0.72rem;
-  }
-  .role-history p {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.62rem;
-    line-height: 1.5;
-  }
-  .identity-alert {
-    display: grid;
-    grid-template-columns: 10rem 1fr auto;
-    gap: 1.5rem;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding: 1.5rem;
-    border: 1px solid rgba(213, 163, 67, 0.35);
-    border-radius: 0.55rem;
-    background: linear-gradient(100deg, rgba(102, 64, 18, 0.24), rgba(17, 23, 25, 0.7));
-  }
-  .identity-alert > div p {
-    margin: 0;
-    color: #e8b85f;
-    font: 0.55rem/1 var(--font-mono);
-    text-transform: uppercase;
-  }
-  .identity-alert h2 {
-    margin: 0.35rem 0;
-    color: #f0e5c4;
-    font-size: 1.5rem;
-  }
-  .identity-alert > div span {
-    color: #b9aa89;
-    font-size: 0.72rem;
-    line-height: 1.55;
-  }
-  .identity-alert a {
-    padding-left: 1.5rem;
-    border-left: 1px solid rgba(213, 163, 67, 0.25);
-    color: #9b8e74;
-    font-size: 0.55rem;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-  .identity-alert a strong {
-    display: block;
-    margin-top: 0.35rem;
-    color: #e4c06d;
-    font-size: 0.68rem;
-  }
-  .trajectory-intro {
-    max-width: 48rem;
-    margin: 1.2rem 0 0;
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    line-height: 1.65;
-  }
-  .trajectory {
-    display: grid;
-    margin: 2rem 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .trajectory > li {
-    display: grid;
-    grid-template-columns: 4rem 1rem 1fr;
-    gap: 1rem;
-    min-height: 7rem;
-  }
-  .chapter {
-    display: grid;
-    height: min-content;
-    text-align: right;
-  }
-  .chapter span,
-  .chapter small {
-    color: var(--text-faint);
-    font: 0.43rem/1 var(--font-mono);
-  }
-  .chapter strong {
-    color: var(--text-primary);
-    font: 500 1.25rem/1.2 var(--font-display);
-  }
-  .event-dot {
-    position: relative;
-    width: 0.6rem;
-    height: 0.6rem;
-    margin-top: 0.25rem;
-    border: 2px solid var(--surface-void);
-    border-radius: 50%;
-    background: var(--state-known);
-    box-shadow: 0 0 0 1px var(--state-known);
-  }
-  .event-dot::after {
-    position: absolute;
-    top: 0.65rem;
-    left: 50%;
-    width: 1px;
-    height: calc(100% + 6.5rem);
-    background: var(--line-default);
-    content: '';
-  }
-  .trajectory > li.multi-location .event-dot {
-    background: var(--accent-gold);
-    box-shadow: 0 0 0 1px var(--accent-gold);
-  }
-  .trajectory > li > article {
-    padding: 0 0 1.5rem;
+    grid-template-columns: 7rem 1fr;
+    gap: 0.4rem 1rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--line-subtle);
   }
-  .trajectory > li > article > small {
-    color: var(--accent-cyan);
-    font: 0.48rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .role-history small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
-  .visits {
-    display: grid;
-    gap: 0.5rem;
-    margin: 1rem 0 0;
-    padding: 0;
-    list-style: none;
+  .role-history strong {
+    font-size: 0.85rem;
+    font-weight: 500;
   }
-  .visits > li {
-    display: grid;
-    grid-template-columns: 2rem 1fr;
-    gap: 0.8rem;
-    padding: 0.9rem;
-    border: 1px solid var(--line-subtle);
-    border-left: 2px solid var(--state-known);
-    border-radius: 0.35rem;
-    background: rgba(12, 19, 24, 0.6);
-  }
-  .visits > li.consciousness {
-    border-left-color: var(--state-transferred);
-  }
-  .visits > li.unknown {
-    border-left-color: var(--state-unknown);
-    opacity: 0.72;
-  }
-  .visit-order {
-    color: var(--accent-gold);
-    font: 0.5rem/1 var(--font-mono);
-  }
-  .visits h3 {
+  .role-history p {
+    grid-column: 2;
     margin: 0;
-    color: var(--text-primary);
-    font-size: 1rem;
-    line-height: 1.35;
-    text-transform: none;
   }
-  .visits small {
+  .identity-alert {
+    border-left: 2px solid var(--state-suspected);
+    padding-left: 1.25rem;
+  }
+  .identity-alert > div p {
+    color: var(--state-suspected);
+    font-size: 0.75rem;
+  }
+  .identity-alert > div span {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.8;
+  }
+  .identity-alert a {
     display: block;
-    margin-top: 0.35rem;
-    color: var(--text-faint);
-    font: 0.45rem/1 var(--font-mono);
-    text-transform: uppercase;
+    margin-top: 1rem;
+    color: var(--accent-gold-bright);
+    font-size: 0.8rem;
   }
-  .visits p {
-    max-width: 50rem;
-    margin: 0.55rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.63rem;
-    line-height: 1.55;
-  }
-  .chapter-states {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: 0.8rem;
-  }
-  .chapter-states span {
-    padding: 0.35rem 0.5rem;
-    border: 1px solid var(--line-subtle);
-    border-radius: 999px;
-    color: var(--text-secondary);
-    font: 0.46rem/1 var(--font-mono);
-    text-transform: uppercase;
-  }
-  .empty {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    border: 1px dashed var(--line-default);
-    color: var(--text-secondary);
-  }
-  .empty p {
-    margin: 0.5rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.68rem;
+  .identity-alert a strong {
+    font-weight: 500;
   }
   .prose-record {
-    max-width: 52rem;
-    margin-top: 1.5rem;
+    max-width: 48rem;
   }
-  .prose-record p,
-  .capability-summary p,
-  .nen-profile p,
-  .ability-grid p,
-  .equipment-grid p,
-  .encounter-grid p {
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    line-height: 1.72;
+  .prose-record p {
+    margin: 0 0 1rem;
   }
   .capability-summary {
-    margin-top: 1.8rem;
-    padding: 1.2rem;
-    border-left: 2px solid var(--accent-cyan);
-    background: rgba(112, 189, 193, 0.05);
+    margin-top: 1.5rem;
   }
   .capability-summary small,
   .nen-profile small,
-  .ability-grid small,
   .encounter-grid small {
-    color: var(--accent-cyan);
-    font: 0.48rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-  }
-  .capability-summary p {
-    margin: 0.6rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .equipment-grid,
   .ability-grid,
   .encounter-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-top: 1.2rem;
+    column-gap: 2rem;
+    margin-top: 1rem;
   }
   .equipment-grid article,
   .ability-grid article,
   .encounter-grid article {
-    padding: 1rem;
-    border: 1px solid var(--line-subtle);
-    background: rgba(12, 20, 25, 0.45);
+    min-width: 0;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--line-subtle);
   }
-  .ability-grid article.interactive {
-    border-color: color-mix(in srgb, var(--ability-color) 30%, var(--line-subtle));
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
+  .equipment-grid strong {
+    font-size: 0.85rem;
+    font-weight: 500;
   }
-  .ability-grid article.interactive:hover,
   .ability-grid article.active {
-    border-color: var(--ability-color);
-    box-shadow: inset 0 0 24px color-mix(in srgb, var(--ability-color) 6%, transparent);
+    border-top-color: var(--ability-color);
   }
-  .equipment-grid p,
-  .ability-grid p,
-  .encounter-grid p {
-    margin: 0.55rem 0 0;
+  .ability-grid small,
+  .ability-grid article > span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .nen-profile {
     display: grid;
-    grid-template-columns: minmax(11rem, 0.3fr) 1fr;
+    grid-template-columns: 10rem minmax(0, 1fr);
     gap: 1.5rem;
-    margin-top: 1.5rem;
   }
   .nen-profile > article {
     display: grid;
     align-content: start;
-    gap: 0.55rem;
-    padding: 1.2rem;
-    border: 1px solid var(--line-default);
+    gap: 0.6rem;
   }
   .nen-profile strong {
-    color: var(--accent-gold);
-    font: 500 1.4rem/1 var(--font-display);
-    text-transform: uppercase;
+    font-size: 1rem;
+    font-weight: 500;
   }
-  .nen-profile span,
-  .ability-grid span {
-    color: var(--text-faint);
-    font-size: 0.58rem;
+  .nen-profile span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   .nen-profile p {
-    margin: 0 0 0.8rem;
+    margin: 0 0 1rem;
   }
   .technique-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 1rem;
-  }
-  .technique-list span {
-    padding: 0.38rem 0.55rem;
-    border: 1px solid var(--line-default);
-    border-radius: 999px;
+    gap: 0.5rem 1rem;
+    margin: 1rem 0;
     color: var(--text-secondary);
-    font: 0.5rem/1 var(--font-mono);
-  }
-  .ability-grid h3 {
-    margin: 0.45rem 0;
-    font-size: 1.2rem;
+    font-size: 0.75rem;
   }
   .ability-description {
-    display: grid;
-    width: 100%;
-    gap: 0.6rem;
-    margin-top: 0.55rem;
-    padding: 0.75rem;
-    border: 1px solid transparent;
-    border-radius: 0.3rem;
-    background: color-mix(in srgb, var(--ability-color) 5%, transparent);
-    color: var(--text-secondary);
-    text-align: left;
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent-gold-bright);
     cursor: pointer;
-    transition:
-      background 0.2s,
-      border-color 0.2s;
+    text-align: left;
   }
-  .ability-description:hover,
-  .ability-description:focus-visible {
-    border-color: color-mix(in srgb, var(--ability-color) 55%, transparent);
-    background: color-mix(in srgb, var(--ability-color) 10%, transparent);
-    outline: none;
+  .ability-description small {
+    color: inherit;
+    font-size: 0.8rem;
   }
-  .ability-description > span {
+  .source-records summary {
+    min-height: 44px;
+    cursor: pointer;
     color: var(--text-secondary);
-    font-size: 0.72rem;
-    line-height: 1.72;
   }
-  .ability-description > small {
-    color: var(--ability-color);
-    font: 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
+  .source-records summary h2 {
+    display: inline;
+    margin-left: 0.5rem;
   }
   .appearance-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    margin-top: 1.5rem;
-    background: var(--line-subtle);
-    border: 1px solid var(--line-subtle);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+    margin-top: 1rem;
   }
   .appearance-grid article {
     display: grid;
     grid-template-columns: 3rem 1fr;
-    gap: 0.7rem;
-    padding: 0.75rem;
-    background: var(--surface-deep);
+    gap: 0.75rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line-subtle);
+    font-size: 0.8rem;
   }
   .appearance-grid strong {
-    color: var(--accent-gold);
-    font: 500 1rem/1 var(--font-display);
-  }
-  .appearance-grid div {
-    display: grid;
-    gap: 0.3rem;
-  }
-  .appearance-grid span {
-    font-size: 0.62rem;
+    font-weight: 500;
   }
   .appearance-grid small {
-    color: var(--text-faint);
-    font: 0.45rem/1 var(--font-mono);
-    text-transform: uppercase;
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
   }
-  @keyframes scan {
-    to {
-      top: 78%;
-    }
+  .trajectory {
+    display: grid;
+    gap: 1.25rem;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    list-style: none;
   }
-  @media (max-width: 1000px) {
-    .dossier-hero {
-      grid-template-columns: 12rem 1fr;
-    }
-    .record-stats {
-      grid-column: 1/-1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-    }
-    .record-stats div {
-      padding: 1rem;
-      border-right: 1px solid var(--line-subtle);
-    }
+  .trajectory > li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: 1rem;
+  }
+  .chapter {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+  }
+  .chapter span,
+  .chapter small {
+    color: var(--text-muted);
+  }
+  .chapter strong {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .event-dot {
+    display: none;
+  }
+  .trajectory > li > article {
+    min-width: 0;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line-subtle);
+  }
+  .trajectory > li > article > small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .visits {
+    display: grid;
+    gap: 1rem;
+    margin: 0.75rem 0;
+    padding: 0;
+    list-style: none;
+  }
+  .visits > li {
+    padding-left: 1rem;
+    border-left: 2px solid var(--state-known);
+  }
+  .visits > li.consciousness {
+    border-left-color: var(--state-transferred);
+  }
+  .visits > li.unknown {
+    border-left-color: var(--state-unknown);
+  }
+  .visit-order {
+    display: none;
+  }
+  .visits h3 {
+    margin-top: 0;
+  }
+  .visits small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .visits p {
+    margin: 0.5rem 0 0;
+  }
+  .chapter-states {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+  .empty {
+    padding: 1rem 0;
+    color: var(--text-secondary);
+  }
+  .empty strong {
+    font-weight: 500;
+  }
+  @media (max-width: 900px) {
     .dossier-layout {
       grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
     .dossier-index {
       position: static;
     }
     .dossier-index nav {
       display: flex;
-      overflow-x: auto;
-    }
-    .dossier-index nav a {
-      min-width: max-content;
-      padding: 0.7rem 1rem;
-    }
-    .scope-note {
-      display: none;
-    }
-  }
-  @media (max-width: 700px) {
-    .dossier-page {
-      padding-inline: 1rem;
-    }
-    .dossier-hero {
-      grid-template-columns: 1fr;
-    }
-    .identity-plate {
-      width: 11rem;
+      flex-wrap: wrap;
+      gap: 0 1.25rem;
     }
     .record-stats {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .identity-alert {
-      grid-template-columns: 1fr;
-    }
-    .identity-alert > .section-code {
-      display: none;
-    }
-    .identity-alert a {
-      padding: 1rem 0 0;
-      border-top: 1px solid rgba(213, 163, 67, 0.25);
-      border-left: 0;
-    }
-    .role-grid,
+  }
+  @media (max-width: 600px) {
     .equipment-grid,
     .ability-grid,
     .encounter-grid,
@@ -1177,18 +833,12 @@
     .role-history article {
       grid-template-columns: 1fr;
     }
-    .dossier-index {
-      margin-inline: -1rem;
-      padding-inline: 1rem;
+    .role-history p {
+      grid-column: auto;
     }
     .trajectory > li {
-      grid-template-columns: 3rem 0.8rem 1fr;
-      gap: 0.65rem;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .scan-line {
-      animation: none;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      gap: 0.75rem;
     }
   }
 </style>

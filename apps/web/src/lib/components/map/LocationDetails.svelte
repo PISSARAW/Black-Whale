@@ -92,19 +92,19 @@
   })
 
   /**
-   * The same room, on foot.
-   *
-   * `/tour` reads the blueprint and nothing else — no passenger, no chapter, no
-   * spoiler cap — and this does not change that: it is an outgoing link, so the
-   * walk learns nothing from the map by being linked to. The reconstruction has
-   * a space for every room the catalogue puts aboard, which is what makes the
-   * offer honest rather than a dead end.
+   * The same room, on foot, at the same event. Use the loader's resolved event
+   * id so default selections and legacy sequence links also keep their cast
+   * and voyage hour when the visitor leaves the map.
    */
-  let walkTo = $derived.by(() => {
+  let walkHref = $derived.by(() => {
     const slug = resolveRegionLocationSlug(mapState.selectedLocationId)
     // The loader answers this: reading it here would have meant the whole
     // blueprint in the browser for one id. See `lib/tour/walkTargets.ts`.
-    return slug ? ($page.data.walkTargets?.[slug] ?? null) : null
+    const space = slug ? ($page.data.walkTargets?.[slug] ?? null) : null
+    if (!space) return null
+    const params = new URLSearchParams({ space })
+    if ($page.data.selectedEventId) params.set('eventId', $page.data.selectedEventId)
+    return `${$link('/tour')}?${params}`
   })
 
   function closePanel() {
@@ -114,19 +114,19 @@
 
 {#if mapState.selectedLocationId && locationDetails}
   <aside
-    class="absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl"
+    class="location-panel absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl"
     aria-label={$t.mapUi.locationDetails}
   >
     <button
       type="button"
       onclick={closePanel}
-      class="absolute top-4 right-4 text-gray-400 hover:text-white"
+      class="absolute top-2 right-2 grid h-11 w-11 place-items-center text-gray-400 hover:text-white"
       aria-label={$t.mapUi.closeLocationDetails}
     >
       ✕
     </button>
 
-    <h2 class="mb-1 text-xl font-bold tracking-wider text-[#FFD700] uppercase">
+    <h2 class="mb-1 pr-8 text-xl font-bold tracking-wider text-[#FFD700] uppercase">
       {locationDetails.name}
     </h2>
     <p class="mb-6 text-sm text-gray-400">
@@ -156,9 +156,9 @@
       {/if}
     </section>
 
-    {#if walkTo}
+    {#if walkHref}
       <a
-        href={`${$link('/tour')}?space=${walkTo}`}
+        href={walkHref}
         class="mt-6 inline-block rounded border border-[#FFD700]/60 px-3 py-1.5 text-center text-xs tracking-wider text-[#FFD700] uppercase transition-colors hover:bg-[#FFD700]/10"
       >
         {$t.mapUi.walkThere} →
@@ -170,3 +170,24 @@
     </p>
   </aside>
 {/if}
+
+<style>
+  .location-panel {
+    max-width: 100%;
+    overscroll-behavior: contain;
+  }
+  @media (max-width: 600px) {
+    .location-panel {
+      top: auto;
+      bottom: 0;
+      width: 100%;
+      height: 58%;
+      padding: 1rem;
+      border-top: 1px solid var(--accent-gold);
+      border-left: 0;
+    }
+    .location-panel h2 {
+      font-size: 1rem;
+    }
+  }
+</style>

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { iconForHatsu } from '$lib/nen/hatsuIcons'
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { onMount } from 'svelte'
   import {
     activeHatsu,
@@ -136,7 +138,7 @@
             onclick={() => activateHatsu(profile)}
             style:--hatsu={profile.color}
           >
-            <span class="mini-sigil"></span>
+            <span class="mini-sigil"><MangaIcon name={iconForHatsu(profile.kind)} /></span>
             <span
               ><strong>{profile.name}</strong><small
                 >{profile.owner} · {blockedIds.has(profile.id)
@@ -162,7 +164,7 @@
     z-index: 100;
     right: 1rem;
     bottom: 1rem;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-sans);
   }
   .sigil {
     position: relative;
@@ -178,8 +180,7 @@
       0 8px 35px #0009,
       inset 0 0 20px rgba(216, 184, 94, 0.08);
     font:
-      700 0.62rem/1 'IBM Plex Sans Condensed',
-      sans-serif;
+      700 0.62rem/1 var(--font-condensed);
     letter-spacing: 0.12em;
     cursor: pointer;
   }
@@ -289,7 +290,7 @@
   }
   .eyebrow {
     color: color-mix(in srgb, var(--hatsu, #d8b85e) 85%, white);
-    font: 600 0.55rem/1.2 'IBM Plex Sans Condensed';
+    font: 600 0.55rem/1.2 var(--font-condensed);
     letter-spacing: 0.12em;
   }
   .instruction {
@@ -430,13 +431,13 @@
     white-space: nowrap;
   }
   .mini-sigil {
-    width: 0.65rem;
-    height: 0.65rem;
+    display: grid;
+    width: 1.8rem;
+    height: 1.8rem;
+    place-items: center;
     flex: none;
-    border: 1px solid var(--hatsu);
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--hatsu) 25%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--hatsu) 40%, transparent);
+    color: var(--hatsu);
+    font-size: 1.3rem;
   }
   .picker footer {
     border-top: 1px solid #22313e;

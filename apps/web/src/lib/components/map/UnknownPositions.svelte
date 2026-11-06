@@ -59,7 +59,7 @@
 
 {#if mapState.filters.showUnknownPositions}
   <div
-    class="absolute bottom-4 left-4 z-40 flex max-h-[min(38rem,calc(100%-2rem))] w-80 flex-col rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 text-[#FFFFF0] shadow-lg"
+    class="absolute bottom-4 left-4 z-40 flex max-h-[min(38rem,calc(100%-2rem))] w-80 max-w-[calc(100%-2rem)] flex-col rounded-lg border border-gray-700 bg-[#1a1a1a] p-4 text-[#FFFFF0] shadow-lg"
   >
     <div class="mb-3 flex items-center justify-between border-b border-gray-700 pb-2">
       <h3 class="text-sm font-bold tracking-wider text-gray-400 uppercase">
@@ -68,7 +68,7 @@
       <button
         type="button"
         onclick={() => (mapState.filters.showUnknownPositions = false)}
-        class="text-gray-500 hover:text-white"
+        class="grid h-11 w-11 shrink-0 place-items-center text-gray-500 hover:text-white"
         aria-label={$t.mapUi.closeUnknownPositions}>✕</button
       >
     </div>

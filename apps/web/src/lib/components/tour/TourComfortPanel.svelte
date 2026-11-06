@@ -47,10 +47,8 @@
   ]
 </script>
 
-<section class="rounded border border-[#333] p-3">
-  <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-    {$t.tour.comfort.title}
-  </p>
+<details class="tour-disclosure">
+  <summary>{$t.tour.comfort.title}</summary>
   {#if calm}<p class="mb-2 text-xs leading-snug text-[#FFFFF0]/50">{$t.tour.comfort.calm}</p>{/if}
   <div class="space-y-2.5 text-xs text-[#FFFFF0]/70">
     <label class="block">
@@ -257,4 +255,4 @@
       >{$t.tour.comfort.reset}</button
     >
   </div>
-</section>
+</details>

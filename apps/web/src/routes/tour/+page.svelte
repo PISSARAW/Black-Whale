@@ -838,13 +838,13 @@
 
 <TourPageIntro {ship} />
 
-<div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
+<div class="tour-workspace" data-hatsu-pass>
   <div
     class="grid {chrome.immersive
       ? `fixed inset-0 z-[90] h-[100dvh] w-screen overflow-hidden bg-[#050505] ${
           chrome.panelOpen ? 'grid-cols-[1fr_min(22rem,50vw)]' : 'grid-cols-1'
         }`
-      : 'gap-4 lg:grid-cols-[1fr_320px]'}"
+      : 'items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px]'}"
   >
     <TourPageStage
       immersive={chrome.immersive}
@@ -1084,3 +1084,11 @@
   onSelect={selectOnPlan}
   onGo={goToSpace}
 />
+
+<style>
+  .tour-workspace {
+    max-width: 1600px;
+    margin: auto;
+    padding: 0 var(--page-gutter) 5rem;
+  }
+</style>

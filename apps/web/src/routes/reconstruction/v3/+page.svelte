@@ -191,14 +191,12 @@
 <main class="v3-shell">
   <header>
     <a href={$link('/reconstruction')}>← {$t.reconstruction.v3.canonicalBack}</a>
-    <p class="eyebrow">{$t.reconstruction.v3.eyebrow}</p>
     <h1>{$t.reconstruction.v3.title}</h1>
     <p>{$t.reconstruction.v3.intro}</p>
   </header>
 
   <section class="composer panel">
     <div class="section-title">
-      <span>01</span>
       <div>
         <h2>{$t.reconstruction.v3.divergencePoint}</h2>
         <p>{$t.reconstruction.v3.spoilerNote}</p>
@@ -227,7 +225,6 @@
 
   <section class="panel">
     <div class="section-title">
-      <span>02</span>
       <div>
         <h2>{$t.reconstruction.v3.decisions}</h2>
         <p>{$t.reconstruction.v3.decisionsIntro}</p>
@@ -348,7 +345,6 @@
   {#if report}
     <section class="report panel">
       <div class="section-title">
-        <span>03</span>
         <div>
           <h2>{$t.reconstruction.v3.report}</h2>
           <p>{report.summary}</p>
@@ -406,10 +402,10 @@
     color: #eef3f8;
   }
   .v3-shell {
-    max-width: 1180px;
+    max-width: 1280px;
     margin: auto;
-    padding: 3rem 1.25rem 6rem;
-    font-family: Inter, system-ui, sans-serif;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
+    font-family: var(--font-sans);
   }
   header {
     max-width: 780px;
@@ -420,9 +416,9 @@
     text-decoration: none;
   }
   h1 {
-    font-family: Georgia, serif;
-    font-size: clamp(2.5rem, 7vw, 5.5rem);
-    line-height: 0.92;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    line-height: 1.1;
     margin: 0.5rem 0 1rem;
   }
   h2,
@@ -430,20 +426,14 @@
   p {
     margin-top: 0;
   }
-  .eyebrow,
-  .section-title > span {
-    color: #e8b05b;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 0.72rem;
-  }
   .panel {
-    background: linear-gradient(145deg, #111a27, #0b111b);
-    border: 1px solid #263447;
-    border-radius: 18px;
-    padding: 1.5rem;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 1.5rem 0;
     margin: 1rem 0;
-    box-shadow: 0 24px 70px #0006;
+    box-shadow: none;
+    border-top: 1px solid var(--line-default);
   }
   .section-title {
     display: flex;
@@ -453,8 +443,8 @@
   }
   .section-title h2 {
     margin: 0;
-    font-family: Georgia, serif;
-    font-size: 1.7rem;
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
   }
   .section-title p {
     color: #91a0b1;
@@ -472,8 +462,8 @@
     gap: 0.45rem;
     color: #aeb9c6;
     font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    text-transform: none;
+    letter-spacing: 0;
   }
   input,
   select {

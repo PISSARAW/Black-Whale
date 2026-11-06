@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema, collectionSchema } from '$lib/seo/schema'
@@ -59,60 +60,6 @@
     return key
   })
 
-  const royalPalette = ['#d4b563', '#a98655', '#7f9d8b', '#9d7b95', '#718ca2', '#b17c68', '#859f62']
-  let factionIdentity = $derived((key: string) => {
-    if (key.includes('phantom troupe'))
-      return {
-        category: $t.registry.categories.intruderCell,
-        code: '№13',
-        mark: '✳',
-        accent: '#9b78bf',
-        wash: '#211628',
-      }
-    if (key.includes('mafia'))
-      return {
-        category: $t.registry.categories.mafiaFamily,
-        code: '3F',
-        mark: '⬡',
-        accent: '#b96552',
-        wash: '#251716',
-      }
-    if (key.includes('zodiac') || key.includes('hunter'))
-      return {
-        category: $t.registry.categories.hunterAssociation,
-        code: 'HXA',
-        mark: '✦',
-        accent: '#69b8ad',
-        wash: '#112421',
-      }
-    if (key.includes('kakin royal army') || key.includes('justice bureau'))
-      return {
-        category: $t.registry.categories.stateAuthority,
-        code: 'KKN',
-        mark: '◆',
-        accent: '#93a3a5',
-        wash: '#172126',
-      }
-    if (key.startsWith('faction ')) {
-      const hash = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0)
-      const accent = royalPalette[hash % royalPalette.length]
-      return {
-        category: $t.registry.categories.royalHousehold,
-        code: key.slice('faction '.length).slice(0, 3).toUpperCase(),
-        mark: '♛',
-        accent,
-        wash: '#241f15',
-      }
-    }
-    return {
-      category: $t.registry.categories.unaligned,
-      code: 'IND',
-      mark: '·',
-      accent: '#778788',
-      wash: '#151d20',
-    }
-  })
-
   // Sorted on the translated label so the filter row reads alphabetically in
   // whichever language is on screen.
   let factions: string[] = $derived([
@@ -168,21 +115,10 @@
 <div class="registry-page">
   <header class="registry-hero">
     <div>
-      <p class="eyebrow">{$t.registry.eyebrow}</p>
-      <h1>{$t.registry.titleLine1}<br />{$t.registry.titleLine2}</h1>
+      <h1>{$t.nav.characters}</h1>
     </div>
     <div class="hero-note">
       <p>{$t.registry.note}</p>
-      <dl>
-        <div>
-          <dt>{$t.registry.totalRecords}</dt>
-          <dd>{data.characters.length}</dd>
-        </div>
-        <div>
-          <dt>{$t.registry.visible}</dt>
-          <dd>{filteredCharacters.length}</dd>
-        </div>
-      </dl>
     </div>
   </header>
 
@@ -197,76 +133,44 @@
           aria-label={$t.common.clearSearch}>×</button
         >{/if}
     </label>
-    <div class="faction-filter" aria-label={$t.registry.filterByAffiliation}>
-      {#each factions as faction (faction)}
-        <button
-          type="button"
-          class:active={activeFaction === faction}
-          aria-pressed={activeFaction === faction}
-          onclick={() => (activeFaction = faction)}
-          >{faction === ALL_FACTIONS ? $t.common.all : factionLabel(faction)}</button
-        >
-      {/each}
-    </div>
-    {#if lineageAvailable}
-      <div class="lineage-filter" aria-label={$t.registry.beyondLineage.filterLabel}>
-        <span aria-hidden="true">✶</span>
-        {#each lineageFilters as filter (filter)}
-          <button
-            type="button"
-            class:active={activeLineage === filter}
-            aria-pressed={activeLineage === filter}
-            onclick={() => (activeLineage = filter)}>{lineageLabel(filter)}</button
+    <label class="filter-field">
+      <span>{$t.registry.filterByAffiliation}</span>
+      <select bind:value={activeFaction}>
+        {#each factions as faction (faction)}
+          <option value={faction}
+            >{faction === ALL_FACTIONS ? $t.common.all : factionLabel(faction)}</option
           >
         {/each}
-      </div>
+      </select>
+    </label>
+    {#if lineageAvailable}
+      <label class="filter-field">
+        <span>{$t.registry.beyondLineage.filterLabel}</span>
+        <select bind:value={activeLineage}>
+          {#each lineageFilters as filter (filter)}
+            <option value={filter}>{lineageLabel(filter)}</option>
+          {/each}
+        </select>
+      </label>
     {/if}
+    <p class="result-count" aria-live="polite">
+      {$t.common.results(filteredCharacters.length, data.characters.length)}
+    </p>
   </section>
 
   {#if filteredCharacters.length}
     <div class="registry-groups" aria-live="polite">
-      {#each Object.entries(charactersByFaction) as [faction, characters], groupIndex (faction)}
-        {@const identity = factionIdentity(faction)}
-        <section
-          class="faction-group reveal-on-scroll"
-          style={`--faction-accent:${identity.accent};--faction-wash:${identity.wash}`}
-        >
+      {#each Object.entries(charactersByFaction) as [faction, characters] (faction)}
+        <section class="faction-group reveal-on-scroll">
           <header class="faction-heading">
-            <span>{String(groupIndex + 1).padStart(2, '0')}</span>
-            <div class="faction-title">
-              <i aria-hidden="true">{identity.mark}</i>
-              <div>
-                <small>{identity.category} · {identity.code}</small>
-                <h2>{factionLabel(faction)}</h2>
-              </div>
-            </div>
+            <h2>{factionLabel(faction)}</h2>
             <p>{characters.length} {$t.common.records(characters.length)}</p>
           </header>
 
           <div class="character-grid">
-            {#each characters as character, index (character.id)}
-              <a
-                href={$link(`/characters/${character.id}`)}
-                class="character-card"
-                data-affiliation={identity.category}
-              >
-                <div class="portrait" aria-hidden="true">
-                  <span
-                    >{character.canonicalName
-                      .split(/\s+/)
-                      .slice(0, 2)
-                      .map((part: string) => part[0])
-                      .join('')}</span
-                  >
-                  <i>{String(index + 1).padStart(2, '0')}</i>
-                </div>
+            {#each characters as character (character.id)}
+              <a href={$link(`/characters/${character.id}`)} class="character-card">
                 <div class="card-copy">
-                  <div class="card-status">
-                    <span class:canon={character.canonStatus === 'canon'}></span>{identity.code} · {character.canonStatus ===
-                    'canon'
-                      ? $t.registry.canonical
-                      : $t.registry.secondary}
-                  </div>
                   <h3>{character.canonicalName}</h3>
                   {#if character.beyondLineage}
                     <p
@@ -284,10 +188,11 @@
                     {character.description || $t.registry.noIntelligence}
                   </p>
                   <div class="card-footer">
+                    {#if character.canonStatus !== 'canon'}<span>{$t.registry.secondary}</span>{/if}
                     <span
                       >{character.firstAppearanceChapterId?.replace('-', ' ') ||
                         $t.registry.appearanceUnknown}</span
-                    ><i aria-hidden="true">↗</i>
+                    ><i aria-hidden="true"><MangaIcon name="arrowUpRight" /></i>
                   </div>
                 </div>
               </a>
@@ -317,453 +222,205 @@
 
 <style>
   .registry-page {
-    min-height: 100vh;
-    padding: clamp(3rem, 7vw, 7rem) var(--page-gutter) 8rem;
+    max-width: 1280px;
+    min-height: 70vh;
+    margin: auto;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
   }
   .registry-hero {
-    display: grid;
-    max-width: var(--container-wide);
-    margin: 0 auto 4rem;
-    grid-template-columns: 1fr minmax(18rem, 0.55fr);
-    align-items: end;
-    gap: 3rem;
+    margin-bottom: 2rem;
   }
   h1 {
-    margin: 0.7rem 0 0;
-    color: var(--text-primary);
-    font-size: clamp(4.5rem, 10vw, 9rem);
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 500;
-    letter-spacing: -0.065em;
-    line-height: 0.72;
-    text-transform: uppercase;
-  }
-  .hero-note {
-    padding-left: 2rem;
-    border-left: 1px solid var(--line-default);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
   .hero-note > p {
-    margin: 0;
+    max-width: 46rem;
+    margin: 0.8rem 0 0;
     color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.7;
   }
-  dl {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    margin: 2rem 0 0;
-    gap: 1px;
-    background: var(--line-subtle);
-  }
-  dl div {
-    padding: 0.8rem;
-    background: var(--surface-void);
-  }
-  dt {
-    color: var(--text-faint);
-    font: 0.5rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  dd {
-    margin: 0.35rem 0 0;
-    color: var(--accent-gold-bright);
-    font: 500 1.5rem/1 var(--font-display);
-  }
   .registry-controls {
-    position: sticky;
-    z-index: 20;
-    top: calc(var(--header-height) + 0.6rem);
-    display: grid;
-    max-width: var(--container-wide);
-    margin: 0 auto 4rem;
-    grid-template-columns: minmax(18rem, 0.8fr) 1.4fr;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 0.65rem;
-    border: 1px solid var(--line-default);
-    border-radius: 0.8rem;
-    background: rgba(8, 14, 18, 0.9);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
-    backdrop-filter: blur(18px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line-default);
   }
   .search-field {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
+    min-height: 44px;
+    min-width: 14rem;
+    flex: 1 1 18rem;
     align-items: center;
-    gap: 0.65rem;
-    padding: 0.55rem 0.7rem;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--line-default);
+    border-radius: 3px;
   }
   .search-field > span:first-child {
-    color: var(--accent-gold);
-    font-size: 1.1rem;
+    color: var(--text-muted);
   }
   .search-field input {
     min-width: 0;
+    width: 100%;
     border: 0;
-    outline: 0;
     background: transparent;
     color: var(--text-primary);
-    font-size: 0.78rem;
+    font-size: 0.85rem;
   }
-  .search-field input::placeholder {
-    color: var(--text-faint);
+  .search-field input:focus {
+    outline: none;
+  }
+  .search-field:focus-within {
+    outline: 2px solid var(--accent-gold-bright);
+    outline-offset: 2px;
   }
   .search-field button {
     border: 0;
     background: none;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     cursor: pointer;
   }
-  .faction-filter {
-    display: flex;
-    overflow-x: auto;
-    gap: 0.35rem;
-    scrollbar-width: none;
+  .filter-field {
+    display: grid;
+    gap: 0.4rem;
+    flex: 1 1 11rem;
   }
-  .faction-filter button {
-    flex: none;
-    padding: 0.5rem 0.65rem;
-    border: 1px solid transparent;
-    border-radius: 0.35rem;
-    background: transparent;
-    color: var(--text-muted);
-    font: 0.52rem/1 var(--font-mono);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    cursor: pointer;
+  .filter-field > span {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
   }
-  .faction-filter button:hover {
+  select {
+    min-height: 44px;
+    max-width: 100%;
+    padding: 0.6rem;
+    border: 1px solid var(--line-default);
+    border-radius: 3px;
+    background: var(--surface-deep);
     color: var(--text-primary);
+    font-size: 0.8rem;
   }
-  .faction-filter button.active {
-    border-color: var(--line-strong);
-    background: rgba(200, 169, 86, 0.08);
-    color: var(--accent-gold-bright);
-  }
-  /* Spans both columns: the lineage axis applies on top of whatever faction is
-     selected, so it reads as a second line rather than a neighbour. */
-  .lineage-filter {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    grid-column: 1 / -1;
-    padding-top: 0.55rem;
-    border-top: 1px solid var(--line-subtle);
-  }
-  .lineage-filter > span {
-    padding-left: 0.35rem;
-    color: var(--accent-alert);
-    font-size: 0.6rem;
-  }
-  .lineage-filter button {
-    flex: none;
-    padding: 0.5rem 0.65rem;
-    border: 1px solid transparent;
-    border-radius: 0.35rem;
-    background: transparent;
+  .result-count {
+    flex-basis: 100%;
+    margin: 0;
     color: var(--text-muted);
-    font: 0.52rem/1 var(--font-mono);
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-  .lineage-filter button:hover {
-    color: var(--text-primary);
-  }
-  .lineage-filter button.active {
-    border-color: color-mix(in srgb, var(--accent-alert) 45%, transparent);
-    background: color-mix(in srgb, var(--accent-alert) 10%, transparent);
-    color: var(--accent-alert);
-  }
-  .lineage-badge {
-    display: inline-block;
-    margin: 0 0 0.35rem;
-    padding: 0.2rem 0.4rem;
-    border: 1px solid color-mix(in srgb, var(--accent-alert) 40%, transparent);
-    border-radius: 0.25rem;
-    color: var(--accent-alert);
-    font: 0.44rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  /* A hypothesis must not look like a confirmed birthmark. */
-  .lineage-badge.suspected {
-    border-style: dashed;
-    border-color: color-mix(in srgb, var(--accent-alert) 25%, transparent);
-    color: color-mix(in srgb, var(--accent-alert) 65%, var(--text-muted));
+    font-size: 0.75rem;
   }
   .registry-groups {
     display: grid;
-    max-width: var(--container-wide);
-    margin: auto;
-    gap: 6rem;
-  }
-  .faction-group {
-    position: relative;
-  }
-  .faction-group::before {
-    position: absolute;
-    top: 3.25rem;
-    left: 0;
-    width: 7rem;
-    height: 1px;
-    background: var(--faction-accent);
-    box-shadow: 0 0 18px color-mix(in srgb, var(--faction-accent) 45%, transparent);
-    content: '';
+    gap: 2.5rem;
   }
   .faction-heading {
-    display: grid;
-    grid-template-columns: 3rem 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--faction-accent) 25%, var(--line-default));
-  }
-  .faction-heading > span,
-  .faction-heading > p {
-    color: var(--text-faint);
-    font: 0.53rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .faction-title {
     display: flex;
-    align-items: center;
-    gap: 0.85rem;
-  }
-  .faction-title > i {
-    display: grid;
-    width: 2.6rem;
-    height: 2.6rem;
-    place-items: center;
-    border: 1px solid color-mix(in srgb, var(--faction-accent) 45%, transparent);
-    border-radius: 50%;
-    color: var(--faction-accent);
-    background: color-mix(in srgb, var(--faction-wash) 82%, transparent);
-    font-style: normal;
-  }
-  .faction-title small {
-    color: color-mix(in srgb, var(--faction-accent) 75%, var(--text-muted));
-    font: 0.48rem/1 var(--font-mono);
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line-subtle);
   }
   .faction-heading h2 {
-    margin: 0.3rem 0 0;
-    color: var(--text-primary);
-    font-size: 2rem;
+    margin: 0;
+    font: 500 1rem/1.4 var(--font-sans);
     text-transform: capitalize;
   }
   .faction-heading p {
     margin: 0;
+    color: var(--text-muted);
+    font-size: 0.7rem;
   }
   .character-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    background: color-mix(in srgb, var(--faction-accent) 12%, var(--line-subtle));
-    border: 1px solid color-mix(in srgb, var(--faction-accent) 18%, var(--line-subtle));
+    column-gap: 2rem;
   }
   .character-card {
-    position: relative;
-    display: grid;
+    display: block;
     min-width: 0;
-    grid-template-columns: 5rem 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    overflow: hidden;
-    background: linear-gradient(
-      115deg,
-      color-mix(in srgb, var(--faction-wash) 35%, rgba(9, 15, 19, 0.96)),
-      rgba(9, 15, 19, 0.97) 42%
-    );
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--line-subtle);
     color: inherit;
     text-decoration: none;
-    transition:
-      background 0.25s,
-      transform 0.3s var(--ease-out);
   }
-  .character-card::after {
-    position: absolute;
-    right: 0.45rem;
-    top: 0.4rem;
-    color: color-mix(in srgb, var(--faction-accent) 24%, transparent);
-    font: 0.42rem/1 var(--font-mono);
-    letter-spacing: 0.06em;
-    content: attr(data-affiliation);
-    text-transform: uppercase;
-  }
-  .character-card:hover {
-    z-index: 2;
-    background: color-mix(in srgb, var(--faction-wash) 70%, var(--surface-raised));
-    transform: translateY(-4px);
-    box-shadow:
-      0 18px 45px rgba(0, 0, 0, 0.25),
-      inset 0 2px var(--faction-accent);
-  }
-  .portrait {
-    position: relative;
-    display: grid;
-    height: 7rem;
-    place-items: center;
-    overflow: hidden;
-    border: 1px solid color-mix(in srgb, var(--faction-accent) 30%, var(--line-default));
-    background:
-      radial-gradient(
-        circle at 50% 28%,
-        color-mix(in srgb, var(--faction-accent) 18%, transparent),
-        transparent 42%
-      ),
-      linear-gradient(145deg, color-mix(in srgb, var(--faction-wash) 80%, #17262d), #0b1115);
-  }
-  .portrait::before {
-    position: absolute;
-    inset: 12%;
-    border: 1px solid color-mix(in srgb, var(--faction-accent) 18%, transparent);
-    border-radius: 50%;
-    content: '';
-  }
-  .portrait::after {
-    position: absolute;
-    inset: 50% -20% auto;
-    height: 1px;
-    background: color-mix(in srgb, var(--faction-accent) 26%, transparent);
-    content: '';
-  }
-  .portrait > span {
-    color: color-mix(in srgb, var(--faction-accent) 76%, white);
-    font: 500 1.4rem/1 var(--font-display);
-    letter-spacing: 0.05em;
-  }
-  .portrait i {
-    position: absolute;
-    right: 0.35rem;
-    bottom: 0.35rem;
-    color: color-mix(in srgb, var(--faction-accent) 55%, var(--text-faint));
-    font: normal 0.45rem/1 var(--font-mono);
-  }
-  .card-copy {
-    min-width: 0;
-  }
-  .card-status {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: color-mix(in srgb, var(--faction-accent) 55%, var(--text-faint));
-    font: 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .card-status span {
-    width: 0.35rem;
-    height: 0.35rem;
-    border-radius: 50%;
-    background: var(--state-unknown);
-  }
-  .card-status span.canon {
-    background: var(--state-known);
-    box-shadow: 0 0 8px rgba(117, 201, 184, 0.35);
+  .character-card:hover h3 {
+    color: var(--accent-gold-bright);
   }
   .card-copy h3 {
-    margin: 0.65rem 0 0.25rem;
+    margin: 0 0 0.4rem;
     color: var(--text-primary);
-    font-size: 1.45rem;
-    line-height: 1;
+    font: 600 0.95rem/1.4 var(--font-sans);
   }
   .aliases {
     overflow: hidden;
     margin: 0;
-    color: var(--faction-accent);
-    font: 0.48rem/1.4 var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.7rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .description {
     display: -webkit-box;
     overflow: hidden;
-    margin: 0.8rem 0 1rem;
-    color: var(--text-muted);
-    font-size: 0.7rem;
-    line-height: 1.55;
-    line-clamp: 3;
+    margin: 0.65rem 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.65;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
   }
   .card-footer {
     display: flex;
     justify-content: space-between;
-    padding-top: 0.7rem;
-    border-top: 1px solid var(--line-subtle);
-    color: var(--text-faint);
-    font: 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    color: var(--text-muted);
+    font-size: 0.7rem;
   }
   .card-footer i {
-    color: var(--faction-accent);
     font-style: normal;
-    transition: transform 0.2s;
   }
-  .character-card:hover .card-footer i {
-    transform: translate(2px, -2px);
+  .lineage-badge {
+    display: inline-block;
+    margin: 0.2rem 0;
+    color: var(--accent-alert);
+    font-size: 0.7rem;
+  }
+  .lineage-badge.suspected {
+    color: var(--state-suspected);
   }
   .empty-state {
-    max-width: var(--container-wide);
-    margin: 0 auto;
-    padding: 7rem 1rem;
-    border: 1px dashed var(--line-default);
-    text-align: center;
+    padding: 3rem 0;
   }
-  .empty-state > span {
-    color: var(--accent-alert);
-    font: 0.55rem/1 var(--font-mono);
-    letter-spacing: 0.15em;
+  .empty-state > span,
+  .empty-state p {
+    color: var(--text-secondary);
   }
   .empty-state h2 {
-    margin: 1rem 0 0.4rem;
-    font-size: 2.2rem;
-  }
-  .empty-state p {
-    color: var(--text-muted);
+    margin: 0.75rem 0;
+    font-size: 1.8rem;
   }
   .empty-state button {
+    min-height: 44px;
     margin-top: 1rem;
-    padding: 0.65rem 0.9rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 0.35rem;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--line-default);
+    border-radius: 3px;
     background: transparent;
-    color: var(--accent-gold-bright);
+    color: var(--text-primary);
     cursor: pointer;
   }
-  @media (max-width: 1050px) {
+  @media (max-width: 1000px) {
     .character-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (max-width: 760px) {
-    .registry-page {
-      padding-inline: 1rem;
-    }
-    .registry-hero {
-      grid-template-columns: 1fr;
-    }
-    .hero-note {
-      padding-left: 0;
-      border-left: 0;
-    }
-    .registry-controls {
-      top: calc(var(--header-height) + 0.35rem);
-      grid-template-columns: 1fr;
-    }
+  @media (max-width: 600px) {
     .character-grid {
       grid-template-columns: 1fr;
-    }
-    .faction-heading {
-      grid-template-columns: 2rem 1fr auto;
-    }
-    .character-card {
-      grid-template-columns: 4.5rem 1fr;
     }
   }
 </style>

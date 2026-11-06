@@ -475,8 +475,8 @@
 
 <svelte:window onkeydown={onWindowKeydown} />
 
-<div class="mx-auto max-w-[1600px] px-4 py-8" data-hatsu-pass>
-  <header class="mb-6">
+<div class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8" data-hatsu-pass>
+  <header class="archive-page-heading mb-6">
     <p class="text-xs uppercase tracking-widest text-[#FFD700]/70">
       <a class="hover:text-[#FFD700]" href={$link('/tour')}>{$t.nav.virtualTour}</a>
       <span class="px-1 text-[#FFFFF0]/30">/</span>
@@ -503,7 +503,7 @@
     <section
       class="relative overflow-hidden {immersive
         ? 'h-full min-h-0'
-        : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
+        : 'h-[65svh] min-h-[360px] rounded-sm border border-[#333]'}"
     >
       <TourScene
         {ship}

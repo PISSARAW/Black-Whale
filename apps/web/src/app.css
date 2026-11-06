@@ -17,8 +17,8 @@
   /* Text */
   --text-primary: #f0eee6;
   --text-secondary: #a9b2b2;
-  --text-muted: #768083;
-  --text-faint: #566165;
+  --text-muted: #929c9e;
+  --text-faint: #849093;
 
   /* Lines and accents */
   --line-subtle: rgba(173, 188, 190, 0.12);
@@ -47,10 +47,11 @@
   --state-possessed: #d88450;
 
   /* Type */
-  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-display: 'Reggae One', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-condensed: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-sans: 'Manrope', 'Avenir Next', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
-  --tracking-label: 0.14em;
+  --tracking-label: 0.06em;
 
   /* Spacing and layout */
   --header-height: 4rem;
@@ -95,33 +96,11 @@ body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-    radial-gradient(1100px 700px at -15% -25%, rgba(29, 75, 83, 0.38), transparent 65%),
-    radial-gradient(900px 650px at 115% -20%, rgba(92, 67, 36, 0.25), transparent 63%),
-    var(--surface-void);
-  background-attachment: fixed;
-  background-size:
-    4rem 4rem,
-    4rem 4rem,
-    auto,
-    auto,
-    auto;
+  background: var(--surface-void);
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-body::before {
-  position: fixed;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E");
-  content: '';
-  opacity: 0.055;
 }
 
 button,
@@ -153,7 +132,9 @@ h2,
 h3,
 .font-condensed {
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.035em;
 }
 
 .font-mono {
@@ -164,7 +145,6 @@ h3,
   border: 1px solid var(--line-default);
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--surface-panel) 90%, var(--surface-deep));
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
 }
 
 .site-container {
@@ -212,27 +192,6 @@ h3,
   border: 0;
 }
 
-/* Progressive, CSS-native editorial reveals. Content remains visible when the
-   browser does not support view timelines. */
-@supports (animation-timeline: view()) {
-  .reveal-on-scroll {
-    animation: editorial-reveal both var(--ease-expo);
-    animation-timeline: view();
-    animation-range: entry 8% cover 32%;
-  }
-
-  @keyframes editorial-reveal {
-    from {
-      opacity: 0.15;
-      transform: translateY(2.5rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-}
-
 /* What full screen takes away, and what it keeps — for every room of the
    reconstruction that asks for the screen, which is now more than one, so the
    rules live with the archive rather than inside one route's scoped styles.
@@ -245,24 +204,6 @@ h3,
 html.tour-immersive .app-header,
 html.tour-immersive .app-footer {
   display: none;
-}
-
-/* And the route's entry animation stands down with them — not for the motion,
-   which is over in half a second, but because it is filled `both` and leaves a
-   `transform` on the shell for good. A transformed ancestor is the containing
-   block for everything fixed inside it, so `inset: 0` would measure the route
-   rather than the screen: the room would start under the header and run off the
-   bottom of the window, taking its read-outs with it. `animation: none` is what
-   lifts it — a plain `transform: none` loses to a running fill. */
-html.tour-immersive .route-shell {
-  animation: none;
-}
-
-/* The postcard is also fixed inside the route shell. While it is open, lift
-   the route's filled transform so the editor is measured against the viewport
-   instead of the several-thousand-pixel tour document. */
-html.postcard-open .route-shell {
-  animation: none;
 }
 
 /* Nothing scrolls behind it. */
@@ -295,14 +236,6 @@ html.tour-immersive body {
   :root {
     --header-height: 3.5rem;
   }
-  body {
-    background-size:
-      2.5rem 2.5rem,
-      2.5rem 2.5rem,
-      auto,
-      auto,
-      auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -317,4 +250,66 @@ html.tour-immersive body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Shared archive layout and optional tools. */
+.archive-page {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
+}
+.archive-page-heading h1,
+.archive-page > header h1 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+.archive-page-heading > p,
+.archive-page > header > p {
+  max-width: 48rem;
+  margin-top: 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+.archive-page .archive-section {
+  padding: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--line-subtle);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.archive-page .archive-section h2 {
+  color: var(--text-primary);
+  font: 500 1.1rem/1.5 var(--font-sans);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.tour-disclosure {
+  min-width: 0;
+  border-bottom: 1px solid var(--line-subtle);
+  padding-block: 0.25rem 0.75rem;
+}
+.tour-disclosure > summary {
+  min-height: 44px;
+  padding: 0.75rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.tour-disclosure[open] > summary {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.tour-disclosure :where(button, select) {
+  min-height: 36px;
+}
+.tour-disclosure :where(input[type='range']) {
+  min-height: 24px;
 }

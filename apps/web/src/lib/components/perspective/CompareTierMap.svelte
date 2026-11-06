@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
   import { t } from '$lib/i18n'
 
@@ -70,7 +71,7 @@
             onclick={() => onSelect?.(marker.subjectId)}
             aria-label={$t.perspectiveUi.markerAria(marker.label, marker.certainty)}
           >
-            <span class="code">{marker.code}</span>
+            <span class="code"><MangaIcon glyph={marker.code} /></span>
             <span>{marker.label}</span>
           </button>
         {/each}
@@ -88,7 +89,7 @@
       <p><strong>→</strong> {$t.perspectiveUi.codeLegend.rightOnly}</p>
       <p><strong>≠</strong> {$t.perspectiveUi.codeLegend.contradiction}</p>
       <p><strong>~</strong> {$t.perspectiveUi.codeLegend.confidenceGap}</p>
-      <p><strong>⏱</strong> {$t.perspectiveUi.codeLegend.temporal}</p>
+      <p><strong><MangaIcon name="clock" /></strong> {$t.perspectiveUi.codeLegend.temporal}</p>
     </aside>
   </div>
 </section>

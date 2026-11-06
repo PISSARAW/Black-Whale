@@ -11,10 +11,8 @@
   let { reveal, blindWalls, handPlacedDoors, sourcesHref }: Props = $props()
 </script>
 
-<section class="rounded border border-[#333] p-3">
-  <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-    {$t.tour.provenance.title}
-  </p>
+<details class="tour-disclosure">
+  <summary>{$t.tour.provenance.title}</summary>
   <ul class="space-y-1.5 text-xs text-[#FFFFF0]/60">
     <li>
       <span class="rounded border border-[#FFD700]/60 bg-[#FFD700]/10 px-1 text-[#FFD700]"
@@ -69,4 +67,4 @@
       >
     </li>
   </ul>
-</section>
+</details>

@@ -111,6 +111,46 @@ describe('the observation deck plan', () => {
   })
 })
 
+describe('the central courthouse plan', () => {
+  it('keeps the clerks’ desk at the position and size drawn on the right', () => {
+    const court = readFileSync(
+      new URL('./local/central-courthouse.svelte', import.meta.url),
+      'utf8',
+    )
+    const rectAfter = (label: string) => {
+      const rect = court.split(`<!-- ${label} -->`)[1]?.match(/<rect\s+([^>]+)\/>/)
+      if (!rect) throw new Error(`${label} is not drawn`)
+      const values = Object.fromEntries(
+        [...rect[1].matchAll(/(x|y|width|height)="([\d.]+)"/g)].map((match) => [
+          match[1],
+          Number(match[2]),
+        ]),
+      )
+      return values
+    }
+    const room = rectAfter('Room Walls')
+    const desk = rectAfter("Clerk's Desk (Right)")
+    const space = ship.spaces.get('tier-3-central-courthouse-courtroom')!
+    const clerks = ship.structures.find((entry) => entry.id === 'tier-3-central-courthouse-clerks')!
+    const xs = space.footprint.map(([x]) => x)
+    const zs = space.footprint.map(([, z]) => z)
+    const scaleX = (Math.max(...xs) - Math.min(...xs)) / room.width
+    const scaleZ = (Math.max(...zs) - Math.min(...zs)) / room.height
+
+    // Compare with the authored SVG, so moving either version alone fails.
+    expect(clerks.at[0]).toBeCloseTo(
+      Math.min(...xs) + (desk.x + desk.width / 2 - room.x) * scaleX,
+      4,
+    )
+    expect(clerks.at[1]).toBeCloseTo(
+      Math.min(...zs) + (desk.y + desk.height / 2 - room.y) * scaleZ,
+      4,
+    )
+    expect(clerks.size[0]).toBeCloseTo(desk.width * scaleX, 4)
+    expect(clerks.size[1]).toBeCloseTo(desk.height * scaleZ, 4)
+  })
+})
+
 describe('room appearance evidence', () => {
   it('never changes a room layout or its occupants at random', () => {
     const directory = new URL('./local/', import.meta.url)

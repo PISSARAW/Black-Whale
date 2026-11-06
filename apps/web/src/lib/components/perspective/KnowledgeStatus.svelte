@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { KnowledgeVisualState } from './types'
   import { t } from '$lib/i18n'
 
@@ -32,7 +33,7 @@
   role="status"
   aria-label={$t.perspectiveUi.statusAria(label, state)}
 >
-  <span class="icon" aria-hidden="true">{iconByState[state]}</span>
+  <span class="icon" aria-hidden="true"><MangaIcon glyph={iconByState[state]} /></span>
   <span class="label">{label}</span>
   {#if details}
     <span class="details">{details}</span>

@@ -20,78 +20,116 @@
   } = $props()
 </script>
 
-<section class="mx-auto max-w-5xl px-6 py-12 text-center sm:py-24">
-  <div
-    class="inline-flex items-center gap-3 rounded-full border border-sky-500/30 bg-sky-950/40 px-4 py-1.5 shadow-[0_0_15px_rgba(14,165,233,0.2)]"
-  >
-    <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></span>
-    <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400">
-      {$t.strategy.ui.picker.scenario(chapterNumber)}
-    </p>
-  </div>
-
-  <h1 class="mt-6 font-black text-5xl text-white drop-shadow-md sm:text-6xl">
-    {$t.strategy.ui.picker.title}
-  </h1>
-  <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-sky-200/60">
-    {$t.strategy.ui.picker.intro}
-  </p>
-
-  {#if saved}
-    <button
-      class="mt-8 rounded-full border border-amber-400/50 bg-amber-900/30 px-8 py-3 text-sm font-bold uppercase tracking-widest text-amber-400 transition-all hover:bg-amber-400/20 hover:shadow-[0_0_20px_rgba(251,191,36,0.3)]"
-      type="button"
-      onclick={onresume}
-    >
-      {$t.strategy.ui.picker.resume(saved.turns.length + 1)}
-    </button>
-  {/if}
-
+<section class="faction-choice-page">
+  <header class="archive-page-heading">
+    <p class="scenario">{$t.strategy.ui.picker.scenario(chapterNumber)}</p>
+    <h1>{$t.strategy.ui.picker.title}</h1>
+    <p>{$t.strategy.ui.picker.intro}</p>
+  </header>
+  {#if saved}<button type="button" class="resume" onclick={onresume}
+      >{$t.strategy.ui.picker.resume(saved.turns.length + 1)}</button
+    >{/if}
   {#if factions.length}
-    <div class="mt-12 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+    <div class="faction-options">
       {#each factions as faction (faction.id)}
-        <button
-          type="button"
-          onclick={() => onselect(faction.id)}
-          class="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-sky-900/50 bg-[#0a0f1c]/80 p-6 transition-all hover:-translate-y-1 hover:border-sky-400 hover:bg-sky-900/30 hover:shadow-[0_0_25px_rgba(56,189,248,0.3)]"
-        >
-          <div
-            class="absolute inset-0 bg-gradient-to-br from-sky-400/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-          ></div>
-          <div>
-            <strong class="block font-black text-2xl text-white">{faction.name}</strong>
-            <span class="mt-2 block text-xs text-sky-200/50"
-              >{$t.strategy.ui.picker.activeUnits(faction.members.length)}</span
-            >
-            <span
-              class="mt-3 block rounded-md border border-sky-900/40 bg-sky-950/40 p-2 text-[10px] font-medium leading-relaxed text-sky-100/70"
-            >
-              {doctrineLabel(scenarioDoctrineForFaction(faction.id), $locale)}
-            </span>
-          </div>
-          <em
-            class="mt-6 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-sky-400 not-italic"
+        <button type="button" onclick={() => onselect(faction.id)}>
+          <strong>{faction.name}</strong>
+          <span class="members">{$t.strategy.ui.picker.activeUnits(faction.members.length)}</span>
+          <span class="doctrine"
+            >{doctrineLabel(scenarioDoctrineForFaction(faction.id), $locale)}</span
           >
-            {$t.strategy.ui.picker.begin}
-            <svg
-              class="h-3 w-3 transition-transform group-hover:translate-x-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              ><path
-                fill-rule="evenodd"
-                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                clip-rule="evenodd"
-              /></svg
-            >
-          </em>
+          <span class="begin">{$t.strategy.ui.picker.begin} <span aria-hidden="true">→</span></span>
         </button>
       {/each}
     </div>
-  {:else}
-    <div class="mt-12 rounded-xl border border-red-900/50 bg-red-950/20 p-8">
-      <p class="text-sm font-medium uppercase tracking-widest text-red-400">
-        {$t.strategy.ui.picker.none}
-      </p>
-    </div>
-  {/if}
+  {:else}<p>{$t.strategy.ui.picker.none}</p>{/if}
 </section>
+
+<style>
+  .faction-choice-page {
+    max-width: 1280px;
+    margin: auto;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
+  }
+  header {
+    margin-bottom: 2rem;
+  }
+  .faction-choice-page header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    font-weight: 500;
+  }
+  .faction-choice-page header > p {
+    font: 400 0.9rem/1.75 var(--font-sans);
+    color: var(--text-secondary);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 0.8rem;
+  }
+  header .scenario {
+    margin-bottom: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .resume {
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--line-default);
+    border-radius: 3px;
+    background: none;
+    color: var(--accent-gold-bright);
+    cursor: pointer;
+  }
+  .faction-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  .faction-options > button {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: start;
+    gap: 0.75rem;
+    padding: 1.5rem 0;
+    border: 0;
+    border-top: 1px solid var(--line-default);
+    background: none;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+  }
+  strong {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .members {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  .doctrine {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+  .begin {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 1rem;
+    color: var(--accent-gold-bright);
+    font-size: 0.8rem;
+  }
+  @media (max-width: 900px) {
+    .faction-options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .faction-options {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

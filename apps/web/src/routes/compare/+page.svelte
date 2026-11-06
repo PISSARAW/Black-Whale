@@ -449,8 +449,7 @@
 <div class="compare-page">
   <header class="compare-hero">
     <div class="hero-copy">
-      <p class="eyebrow">{$t.compare.eyebrow}</p>
-      <h1>{$t.compare.titleLine1}<br />{$t.compare.titleLine2}</h1>
+      <h1>{$t.compare.titleLine1} {$t.compare.titleLine2}</h1>
       <p>{$t.compare.intro}</p>
     </div>
     <dl class="hero-metrics">
@@ -797,24 +796,24 @@
 
 <style>
   .compare-page {
-    max-width: 100rem;
+    max-width: 1280px;
     margin: auto;
-    padding: clamp(2rem, 5vw, 5rem) var(--page-gutter) 7rem;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
   }
   .compare-hero {
     display: grid;
-    grid-template-columns: 1fr auto minmax(15rem, 0.4fr);
-    align-items: end;
-    gap: clamp(2rem, 5vw, 5rem);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 2rem;
     margin-bottom: 2.5rem;
   }
   .hero-copy h1 {
-    margin: 0.7rem 0 1rem;
-    font-size: clamp(4rem, 8vw, 7.5rem);
+    margin: 0 0 0.8rem;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 500;
-    letter-spacing: -0.06em;
-    line-height: 0.72;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-transform: none;
   }
   .hero-copy > p:last-child {
     max-width: 42rem;
@@ -826,13 +825,13 @@
   .hero-metrics {
     display: flex;
     margin: 0;
-    border: 1px solid var(--line-default);
-    border-radius: 0.55rem;
+    border: 0;
+    border-radius: 0;
   }
   .hero-metrics div {
     min-width: 7rem;
-    padding: 0.8rem;
-    border-right: 1px solid var(--line-subtle);
+    padding: 0.5rem 1rem;
+    border-right: 0;
   }
   .hero-metrics div:last-child {
     border: 0;
@@ -894,9 +893,9 @@
     margin-top: 0.7rem;
     padding: 0.75rem;
     border: 1px solid var(--line-default);
-    border-radius: 0.65rem;
-    background: rgba(11, 18, 24, 0.84);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+    border-radius: 3px;
+    background: var(--surface-deep);
+    box-shadow: none;
   }
   .primary-controls {
     grid-template-columns: repeat(4, 1fr);

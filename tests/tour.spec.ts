@@ -125,6 +125,10 @@ test.describe('the walk', () => {
     await page.goto('/tour')
     await ready(page)
 
+    await page
+      .locator('summary')
+      .filter({ hasText: /Comfort|Confort/ })
+      .click()
     const lighter = page.getByRole('button', { name: /^(Lighter|Allégée)$/ })
     await expect(lighter).toBeVisible({ timeout: 30_000 })
     await lighter.click()
@@ -134,6 +138,11 @@ test.describe('the walk', () => {
     // this machine throttles, and being made to say so on every visit is the
     // same as not being able to say it.
     await page.reload()
+    await ready(page)
+    await page
+      .locator('summary')
+      .filter({ hasText: /Comfort|Confort/ })
+      .click()
     await expect(page.getByRole('button', { name: /^(Lighter|Allégée)$/ })).toHaveAttribute(
       'aria-pressed',
       'true',

@@ -1,30 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import {
-    ambientMuffled,
-    ambientPlaying,
-    ambientWasEnabled,
-    startAmbient,
-    toggleAmbient,
-  } from './ambient.js'
+  import { ambientMuffled, ambientPlaying, toggleAmbient } from './ambient.js'
   import { t } from '$lib/i18n'
-
-  onMount(() => {
-    if (!ambientWasEnabled()) return
-    // Autoplay is blocked until the visitor interacts, so a returning listener's
-    // preference is honoured on their first click or key press, not on load.
-    const resume = () => {
-      void startAmbient()
-      teardown()
-    }
-    const teardown = () => {
-      window.removeEventListener('pointerdown', resume)
-      window.removeEventListener('keydown', resume)
-    }
-    window.addEventListener('pointerdown', resume, { once: true })
-    window.addEventListener('keydown', resume, { once: true })
-    return teardown
-  })
 
   $: label = $ambientPlaying
     ? $ambientMuffled

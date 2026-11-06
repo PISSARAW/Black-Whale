@@ -333,8 +333,7 @@ export const en = {
           'Command a Succession War faction through eight turns of intelligence, diplomacy and conflict.',
       },
     },
-    intro:
-      'The ship as architecture, not as a stage: no passengers, no chapter, no timeline. Every surface says where it comes from — a panel, the deck plan, or the reconstruction itself.',
+    intro: 'Explore the ship, choose a deck, and examine places to see their sources.',
     enter: 'Click to walk',
     // Tab is named first because it is the one that works in full screen: Esc
     // releases the pointer and leaves full screen in the same press.
@@ -500,6 +499,7 @@ export const en = {
     aimAt: (room: string) => `Aim at ${room}`,
 
     viewpoint: {
+      tools: 'Tour options',
       copy: 'Copy this viewpoint',
       copied: 'Link copied',
       failed: 'Could not reach the clipboard',
@@ -971,9 +971,9 @@ export const en = {
           castSolid: 'Cast on the solid you are facing',
           castSelf: 'Cast on yourself, wherever you are aiming',
           castOnSelfInstead: 'Cast on yourself rather than on what is in front of you',
-          sun: 'Put the sun ☀ on it',
-          moon: 'Put the moon ☾ on it',
-          alternate: 'Alternate the sun ☀ and the moon ☾',
+          sun: 'Put the sun on it',
+          moon: 'Put the moon on it',
+          alternate: 'Alternate the sun and the moon',
           openPage: 'Cast the open page',
           markedPage: 'Cast the page under the ribbon',
           airDance: 'Play the lively air',
@@ -1230,7 +1230,7 @@ export const en = {
             ? `The console has all of it · ${days} days to go, and nothing else goes out until then`
             : 'The console has all of it · nothing else goes out while it works',
         affectedUsers: (attack: string, affected: number, unreadable: number) =>
-          `⚠ ${attack} · ${affected} affected user${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} it cannot read` : ''}`,
+          `${attack} · ${affected} affected user${affected === 1 ? '' : 's'}${unreadable ? ` · ${unreadable} signature${unreadable === 1 ? '' : 's'} it cannot read` : ''}`,
         blastSolidRefused: (solid: string) =>
           `You hold the palm on ${solid} and nothing follows. Air Blow's rate and reach are not given: the catalogue concedes an emission from the left palm and says the precise functioning remains unknown, so the walk will not draw you a second gust it has no authority for.`,
         stripped: (room: string, count: number) =>
@@ -1588,7 +1588,7 @@ export const en = {
             : `The arm was an axe · ${solid} is in two pieces, with nowhere to lay the second`,
         grown: (solid: string) => `${solid} has grown out of all proportion`,
         growthRefused: (solid: string) => `${solid} barely stirs · Nen is already in it`,
-        marked: (solid: string, sun: boolean) => `${sun ? '☀' : '☾'} on ${solid}`,
+        marked: (solid: string, sun: boolean) => `${sun ? 'Sun' : 'Moon'} on ${solid}`,
         detonated: (solid: string, other: string) =>
           `${solid} and ${other} met, and neither is left`,
         swapped: (solid: string, other: string) =>
@@ -2941,7 +2941,7 @@ export const en = {
     openMenu: 'Open navigation menu',
     closeMenu: 'Close navigation menu',
     siteNavigation: 'Site navigation',
-    menuDossier: 'Navigation dossier',
+    menuDossier: 'Navigation',
     menuClassified: 'CLASSIFIED / 05 SECTIONS',
     mainSections: 'Main sections',
     archiveSections: 'Archive sections',
@@ -2978,7 +2978,7 @@ export const en = {
     eyebrow: 'Kakin Royal Expedition · Voyage 001',
     titleLead: 'Enter the',
     titleBrand: 'Black Whale',
-    lede: 'An archive of the Succession War arc. It records where every passenger is, which body holds which consciousness, what Nen is in play, and what each character believes at that moment of the voyage.',
+    lede: 'Explore the ship, find its passengers, and follow the events of the Succession War.',
     exploreShip: 'Explore the ship',
     walkTheShip: 'Take the virtual tour',
     openRegistry: 'Open passenger registry',
@@ -3030,7 +3030,7 @@ export const en = {
     eyebrow: 'Manifest 02 · Identity records',
     titleLine1: 'Passenger',
     titleLine2: 'Registry',
-    note: 'Every identity is a moving target. Browse confirmed passengers, aliases, affiliations, and first recorded appearances.',
+    note: 'Characters, affiliations, and first appearances.',
     totalRecords: 'Total records',
     visible: 'Visible',
     filtersLabel: 'Registry filters',
@@ -3509,6 +3509,28 @@ export const en = {
   },
 
   ship: {
+    workspace: {
+      presences: 'Positions',
+      intro: 'Choose a deck. Explore a room. Follow the story.',
+      level: (level: number) => `Tier ${level}`,
+      decks: 'Decks',
+      chooseDeck: 'Select a tier above or a deck on the map to explore it.',
+      filters: 'Filters',
+      tracking: 'Follow',
+      guide: 'Map guide',
+      close: 'Close panel',
+      reset: 'Reset filters',
+      focus: 'Expand map',
+      exitFocus: 'Exit expanded view',
+      previous: 'Previous event',
+      next: 'Next event',
+      selectEvent: 'Choose an event',
+      advancedTimeline: 'Perspective timelines',
+      activeFilters: (count: number) => `${count} active`,
+      deckContext: 'About this deck',
+      mapHelp:
+        'Select a room to open its plan and see who is there. Drag to move, use + and − to zoom, and the target to reset the view.',
+    },
     seoTitle: 'Black Whale Map — Hunter × Hunter',
     seoDescription:
       'Explore the five tiers of the Black Whale deck by deck: rooms, known character positions and the perspective of anyone aboard, chapter by chapter.',
@@ -3904,11 +3926,12 @@ export const en = {
       "Every Nen ability documented aboard the Black Whale — conditions, limitations and owners, from Bungee Gum to the princes' guardian spirit beasts.",
     breadcrumb: 'Abilities',
     title: 'Nen Ability Archive',
-    subtitle: 'Abilities registered in the narrative engine.',
+    subtitle: 'Abilities, owners, and conditions of use.',
     unknownCategory: 'Unknown',
     noDescription: 'No description available.',
     activate: 'Activate across the site',
     activateAria: (name: string) => `Activate ${name} across the site`,
+    instructions: 'How to use',
     cost: (cost: string | number) => `Cost: ${cost}`,
     empty: 'No abilities found.',
   },

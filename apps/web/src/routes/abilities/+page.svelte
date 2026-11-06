@@ -43,77 +43,145 @@
   ])}
 />
 
-<div class="max-w-4xl mx-auto p-8">
-  <header class="mb-12">
-    <h1 class="text-3xl font-bold text-bw-gold mb-2">{$t.abilities.title}</h1>
-    <p class="text-gray-400">{$t.abilities.subtitle}</p>
+<div class="ability-page">
+  <header>
+    <h1>{$t.abilities.title}</h1>
+    <p>{$t.abilities.subtitle}</p>
   </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="ability-list">
     {#each abilities as ability (ability.id)}
       {@const registryProfile = hatsuById(ability.id)}
       {@const profile = registryProfile ? localizeHatsu(registryProfile, $locale) : null}
-      <article
-        data-hatsu-id={ability.id}
-        class="block group relative bg-bw-navy/50 border border-bw-gold/20 rounded-xl p-6 overflow-hidden hover:border-bw-gold/60 transition-colors"
-      >
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-bw-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
-        ></div>
-        <div class="relative">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <h2 class="text-xl font-bold text-white group-hover:text-bw-gold transition-colors">
-                {ability.name}
-              </h2>
-              <p class="text-gray-500 text-sm mt-1 uppercase tracking-wider">{ability.owner}</p>
-            </div>
-            <span
-              class="px-2 py-1 text-xs rounded-full bg-bw-gold/10 text-bw-gold border border-bw-gold/30"
-            >
-              {ability.category || $t.abilities.unknownCategory}
-            </span>
+      <article data-hatsu-id={ability.id}>
+        <div class="ability-heading">
+          <div>
+            <h2>{ability.name}</h2>
+            <p class="owner">{ability.owner}</p>
           </div>
-
-          <p class="text-gray-400 text-sm mt-2 line-clamp-2">
-            {ability.description || $t.abilities.noDescription}
-          </p>
-
-          {#if profile}
+          <span class="category">{ability.category || $t.abilities.unknownCategory}</span>
+        </div>
+        <p class="description">{ability.description || $t.abilities.noDescription}</p>
+        {#if profile}
+          <div class="ability-actions">
+            <details>
+              <summary>{$t.abilities.instructions}</summary>
+              <p>{profile.instruction}</p>
+              <p>{$t.abilities.cost(profile.cost)}</p>
+            </details>
             <button
-              class="mt-6 flex w-full items-center text-left text-bw-gold/80 text-sm font-semibold hover:text-bw-gold"
+              type="button"
               onclick={() => activate(ability.id)}
               data-hatsu-pass
               aria-label={$t.abilities.activateAria(ability.name)}
+              >{$t.abilities.activate} <span aria-hidden="true">→</span></button
             >
-              <span>{$t.abilities.activate}</span>
-              <svg
-                class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </button>
-            <div class="mt-3 border-l pl-3 text-xs" style={`border-color:${profile.color}`}>
-              <p class="text-gray-400">{profile.instruction}</p>
-              <p class="mt-1 text-gray-600">{$t.abilities.cost(profile.cost)}</p>
-            </div>
-          {/if}
-        </div>
+          </div>
+        {/if}
       </article>
     {/each}
-
-    {#if abilities.length === 0}
-      <div class="col-span-full py-12 text-center border border-dashed border-gray-700 rounded-xl">
-        <p class="text-gray-500">{$t.abilities.empty}</p>
-      </div>
-    {/if}
+    {#if abilities.length === 0}<p class="empty">{$t.abilities.empty}</p>{/if}
   </div>
 </div>
+
+<style>
+  .ability-page {
+    max-width: 1280px;
+    margin: auto;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
+  }
+  header {
+    margin-bottom: 2.5rem;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  header p {
+    margin: 0.8rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .ability-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem;
+  }
+  article {
+    min-width: 0;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line-default);
+  }
+  .ability-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  h2 {
+    margin: 0;
+    font: 600 1rem/1.5 var(--font-sans);
+  }
+  .owner {
+    margin: 0.35rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+  .category {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    overflow-wrap: anywhere;
+  }
+  .description {
+    margin: 1rem 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+  .ability-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  details {
+    min-width: 0;
+    flex: 1;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+  summary {
+    min-height: 44px;
+    padding: 0.75rem 0;
+    cursor: pointer;
+  }
+  details p {
+    margin: 0.5rem 0 0;
+    line-height: 1.7;
+  }
+  button {
+    flex: none;
+    min-height: 44px;
+    padding: 0.5rem 0;
+    border: 0;
+    background: none;
+    color: var(--accent-gold-bright);
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  button span {
+    margin-left: 0.5rem;
+  }
+  .empty {
+    color: var(--text-secondary);
+  }
+  @media (max-width: 760px) {
+    .ability-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

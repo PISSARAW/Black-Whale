@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { investigationHatsuPresentation } from '$lib/investigation/hatsuPresentation'
 
@@ -27,7 +28,7 @@
       aria-hidden="true"
     >
       <div class="veil"></div>
-      <div class="target-ring"><span>{presentation.glyph}</span><small>{target}</small></div>
+      <div class="target-ring"><span><MangaIcon glyph={presentation.glyph} /></span><small>{target}</small></div>
 
       {#if presentation.animation === 'dowsing-chain'}
         <div class="chain"><i></i><i></i><i></i><i></i><b>◇</b></div>
@@ -38,7 +39,7 @@
         <div class="insect"><i></i><b></b><b></b></div>
         <div class="scan"></div>
       {:else if presentation.animation === 'secret-window'}
-        <div class="owl"><i>◉</i><i>◉</i><b>♧</b></div>
+        <div class="owl"><i>◉</i><i>◉</i><b><MangaIcon name="owl" /></b></div>
         <div class="recording"></div>
       {:else if presentation.animation === 'truth-punch'}
         <div class="fist">拳</div>

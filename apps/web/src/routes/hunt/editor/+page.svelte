@@ -25,9 +25,8 @@
 </script>
 
 <svelte:head><title>{$t.hunt.editor.seoTitle}</title></svelte:head>
-<main class="min-h-screen bg-slate-950 px-6 py-16 text-white">
-  <section class="mx-auto max-w-2xl">
-    <p class="text-xs uppercase tracking-[.3em] text-amber-300/70">{$t.hunt.editor.eyebrow}</p>
+<main class="archive-page">
+  <section class="archive-page-heading mx-auto max-w-2xl">
     <h1 class="mt-3 text-3xl">{$t.hunt.editor.title}</h1>
     <div class="mt-8 grid gap-5 sm:grid-cols-2">
       <label>{$t.hunt.editor.englishTitle}<input bind:value={title} /></label>

@@ -271,7 +271,6 @@ export default tseslint.config(
       'apps/web/src/routes/reconstruction/+page.svelte', // 1700
       'apps/web/src/routes/reconstruction/v3/+page.svelte', // 589
       'apps/web/src/routes/relationships/+page.svelte', // 756
-      'apps/web/src/routes/ship/+page.svelte', // 1879
       'apps/web/src/routes/strategy/+page.svelte', // 744
       'apps/web/src/routes/timeline/+page.svelte', // 873
       'apps/web/src/routes/tour/+page.svelte', // 512
@@ -365,7 +364,6 @@ export default tseslint.config(
       'apps/web/src/routes/reconstruction/+page.svelte', // 22
       'apps/web/src/routes/reconstruction/v3/+page.svelte', // 15
       'apps/web/src/routes/ship/+page.server.ts', // 26
-      'apps/web/src/routes/ship/+page.svelte', // 25
       'apps/web/src/routes/simulations/+page.server.ts', // 15
       'apps/web/src/routes/strategy/+page.svelte', // 13
       'apps/web/src/routes/tour/morena/+page.svelte', // 13

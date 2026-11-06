@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { iconForHatsu } from '$lib/nen/hatsuIcons'
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu, localizeHatsuList, manifestationFor } from '$lib/i18n/hatsu'
   import { hatsuStatusFor } from '$lib/i18n/hatsuStatus'
@@ -1277,7 +1279,7 @@
               <circle cx="111" cy="28" r="2.5"></circle>
             </svg>
           {:else}
-            <b>{visualSignature.glyph}</b>
+            <b><MangaIcon name={iconForHatsu(profile.kind)} /></b>
           {/if}
         </div>
         <span>{visualSignature.manifestation}</span>
@@ -1297,14 +1299,14 @@
         type="button"
         onclick={replayGuardianEvents}
         aria-label={$t.nen.replayLastEvents}
-        ><span>♙</span><small>{$t.nen.guardianLabel}</small></button
+        ><span><MangaIcon name="guardian" /></span><small>{$t.nen.guardianLabel}</small></button
       >
       {#if guardianReplayPoint}<div
           class="guardian-replay"
           style:left={`${guardianReplayPoint.x}px`}
           style:top={`${guardianReplayPoint.y}px`}
         >
-          <span>↻</span><small>{guardianReplayPoint.label}</small>
+          <span><MangaIcon name="rotate" /></span><small>{guardianReplayPoint.label}</small>
         </div>{/if}
     {/if}
     {#if profile.kind === 'portal'}
@@ -1365,7 +1367,7 @@
         style:left={`${point.x}px`}
         style:top={`${point.y}px`}
       >
-        <span>{visualSignature?.glyph || '×'}</span>
+        <span><MangaIcon name={iconForHatsu(profile.kind)} /></span>
         <small>{point.label}</small>
       </div>
     {/each}

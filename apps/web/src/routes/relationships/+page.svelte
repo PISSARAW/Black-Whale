@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -86,7 +87,6 @@
 <div class="network-page">
   <header class="network-hero">
     <div>
-      <p class="eyebrow">{$t.factions.eyebrow}</p>
       <h1>{$t.factions.title}</h1>
       <p class="intro">{$t.factions.intro}</p>
     </div>
@@ -117,7 +117,6 @@
     <aside class="faction-index" aria-label={$t.factions.indexLabel}>
       <div class="index-heading">
         <div>
-          <span>01</span>
           <h2>{$t.factions.chooseFaction}</h2>
         </div>
         <label>
@@ -151,21 +150,7 @@
     <section class="intelligence-panel" aria-live="polite">
       {#if activeFaction}
         <header class="faction-header">
-          <div class="faction-seal" aria-hidden="true">
-            {activeFaction.name
-              .split(' ')
-              .map((word) => word[0])
-              .slice(0, 2)
-              .join('')}
-          </div>
           <div>
-            <p>
-              {$t.factions.selectedDossier(
-                String(
-                  data.factions.findIndex((faction) => faction.id === selectedFactionId) + 1,
-                ).padStart(2, '0'),
-              )}
-            </p>
             <h2>{activeFaction.name}</h2>
             <span>{activeFaction.description}</span>
           </div>
@@ -174,7 +159,6 @@
         <section class="ties-section">
           <div class="section-title">
             <div>
-              <span>02</span>
               <h3>{$t.factions.knownConnections}</h3>
             </div>
             <div class="relation-filters" aria-label={$t.factions.filterConnections}>
@@ -194,7 +178,7 @@
                 class="tie-card"
                 style={`--relation:${palette[relation.type]?.color || '#768083'}`}
               >
-                <div class="relation-glyph" aria-hidden="true">{palette[relation.type]?.mark}</div>
+                <div class="relation-glyph" aria-hidden="true"><MangaIcon glyph={palette[relation.type]?.mark} /></div>
                 <div class="tie-copy">
                   <p>
                     <span
@@ -206,7 +190,7 @@
                     >
                   </p>
                   <button type="button" onclick={() => selectFaction(relation.counterpartId)}
-                    >{relation.counterpart?.name || relation.counterpartId} <span>↗</span></button
+                    >{relation.counterpart?.name || relation.counterpartId} <span><MangaIcon name="arrowUpRight" /></span></button
                   >
                   <h4>{relation.label}</h4>
                   <p class="evidence">{relation.evidence}</p>
@@ -225,7 +209,6 @@
         <section class="members-section">
           <div class="section-title">
             <div>
-              <span>03</span>
               <h3>{$t.factions.knownPersonnel}</h3>
             </div>
             <small>{$t.factions.recordCount(members.length)}</small>
@@ -233,13 +216,6 @@
           <div class="member-grid">
             {#each members as character (character.id)}
               <a href={$link(`/characters/${character.id}`)}>
-                <span class="initials"
-                  >{character.canonicalName
-                    .split(' ')
-                    .map((word) => word[0])
-                    .slice(0, 2)
-                    .join('')}</span
-                >
                 <span
                   ><strong>{character.canonicalName}</strong><small
                     >{character.shipLocation?.role ||
@@ -247,7 +223,7 @@
                       $t.factions.affiliationConfirmed}</small
                   ></span
                 >
-                <i>↗</i>
+                <i><MangaIcon name="arrowUpRight" /></i>
               </a>
             {:else}
               <div class="empty-state compact">
@@ -264,8 +240,8 @@
 <style>
   .network-page {
     min-height: 100vh;
-    padding: clamp(2rem, 5vw, 5rem) var(--page-gutter) 6rem;
-    background: radial-gradient(circle at 76% 15%, rgba(112, 189, 193, 0.08), transparent 28%);
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
+    background: none;
   }
   .network-hero {
     display: grid;
@@ -278,44 +254,45 @@
     border-bottom: 1px solid var(--line-default);
   }
   .network-hero h1 {
-    margin: 0.45rem 0 0.7rem;
-    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    margin: 0 0 0.8rem;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 500;
-    line-height: 0.82;
-    letter-spacing: -0.035em;
-    text-transform: uppercase;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: none;
   }
   .intro {
     max-width: 48rem;
     margin: 0;
     color: var(--text-secondary);
-    font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+    font-size: 0.9rem;
     line-height: 1.7;
   }
   .network-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     margin: 0;
-    border: 1px solid var(--line-default);
-    background: rgba(11, 17, 21, 0.78);
+    border: 0;
+    background: none;
   }
   .network-stats div {
-    padding: 1.1rem;
-    border-right: 1px solid var(--line-default);
+    padding: 0.5rem 1rem;
+    border-right: 0;
   }
   .network-stats div:last-child {
     border: 0;
   }
   .network-stats dt {
-    color: var(--text-faint);
+    color: var(--text-muted);
     font: 0.48rem/1.2 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 0.7rem;
   }
   .network-stats dd {
     margin: 0.45rem 0 0;
-    color: var(--accent-gold-bright);
-    font: 500 1.8rem/1 var(--font-display);
+    color: var(--text-primary);
+    font: 500 1rem/1.5 var(--font-sans);
   }
   .spoiler-notice {
     display: flex;
@@ -340,8 +317,8 @@
     min-height: 44rem;
     margin: auto;
     border: 1px solid var(--line-default);
-    background: rgba(7, 10, 12, 0.72);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.22);
+    background: none;
+    box-shadow: none;
   }
   .faction-index {
     border-right: 1px solid var(--line-default);
@@ -368,11 +345,6 @@
     font-size: 1rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-  }
-  .index-heading > div > span,
-  .section-title > div > span {
-    color: var(--accent-gold);
-    font: 0.52rem/1 var(--font-mono);
   }
   .index-heading label {
     display: block;
@@ -437,15 +409,15 @@
   }
   .faction-copy strong {
     overflow: hidden;
-    font: 500 1rem/1.1 var(--font-display);
+    font: 500 0.9rem/1.4 var(--font-sans);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .faction-copy small {
     color: var(--text-faint);
-    font: 0.45rem/1 var(--font-mono);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font: 0.7rem/1.4 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   .arrow {
     color: var(--text-faint);
@@ -460,37 +432,18 @@
   }
   .faction-header {
     display: grid;
-    grid-template-columns: 6rem 1fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
     align-items: center;
-    padding: clamp(1.5rem, 4vw, 3rem);
+    padding: 1.5rem 2rem;
     border-bottom: 1px solid var(--line-default);
-    background: linear-gradient(110deg, rgba(200, 169, 86, 0.08), transparent 55%);
-  }
-  .faction-seal {
-    display: grid;
-    width: 6rem;
-    height: 6rem;
-    place-items: center;
-    border: 1px solid var(--line-strong);
-    border-radius: 50%;
-    color: var(--accent-gold-bright);
-    background: radial-gradient(circle, rgba(200, 169, 86, 0.1), transparent 65%);
-    font: 500 1.6rem/1 var(--font-display);
-    letter-spacing: 0.08em;
-  }
-  .faction-header p {
-    margin: 0;
-    color: var(--accent-gold);
-    font: 0.5rem/1 var(--font-mono);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    background: none;
   }
   .faction-header h2 {
-    margin: 0.5rem 0;
-    font-size: clamp(2rem, 5vw, 4rem);
-    line-height: 0.9;
-    text-transform: uppercase;
+    margin: 0 0 0.6rem;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    text-transform: none;
   }
   .faction-header > div > span {
     display: block;
@@ -529,10 +482,11 @@
     border-radius: 0.2rem;
     background: transparent;
     color: var(--text-faint);
-    font: 0.45rem/1 var(--font-mono);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font: 0.72rem/1.4 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
     cursor: pointer;
+    min-height: 44px;
   }
   .relation-filters button:hover,
   .relation-filters button.active {
@@ -546,18 +500,15 @@
   }
   .tie-card {
     display: grid;
-    grid-template-columns: 3.5rem 1fr;
-    border: 1px solid color-mix(in srgb, var(--relation) 28%, var(--line-subtle));
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--relation) 7%, var(--surface-deep)),
-      var(--surface-deep) 42%
-    );
+    grid-template-columns: 1.5rem 1fr;
+    border: 0;
+    background: none;
+    border-bottom: 1px solid var(--line-default);
   }
   .relation-glyph {
     display: grid;
     place-items: center;
-    border-right: 1px solid color-mix(in srgb, var(--relation) 25%, var(--line-subtle));
+    border-right: 0;
     color: var(--relation);
     font: 500 1.25rem/1 var(--font-mono);
   }
@@ -570,9 +521,9 @@
     gap: 1rem;
     margin: 0;
     color: var(--relation);
-    font: 0.46rem/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font: 0.7rem/1.5 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   .tie-copy > p a {
     color: var(--text-faint);
@@ -604,40 +555,31 @@
   .evidence {
     margin: 0.65rem 0 0;
     color: var(--text-muted);
-    font-size: 0.68rem;
+    font-size: 0.8rem;
     line-height: 1.6;
   }
   .member-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
-    background: var(--line-subtle);
-    border: 1px solid var(--line-subtle);
+    gap: 0 1.5rem;
+    background: none;
+    border: 0;
   }
   .member-grid > a {
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto;
+    grid-template-columns: 1fr auto;
     gap: 0.75rem;
     align-items: center;
-    padding: 0.8rem;
-    background: var(--surface-deep);
+    padding: 1rem 0;
+    background: none;
     color: inherit;
     text-decoration: none;
+    border-bottom: 1px solid var(--line-subtle);
   }
   .member-grid > a:hover {
     background: var(--surface-panel);
   }
-  .initials {
-    display: grid;
-    width: 2.5rem;
-    height: 2.5rem;
-    place-items: center;
-    border: 1px solid var(--line-default);
-    border-radius: 50%;
-    color: var(--accent-gold);
-    font: 0.55rem/1 var(--font-mono);
-  }
-  .member-grid > a > span:nth-child(2) {
+  .member-grid > a > span {
     display: flex;
     min-width: 0;
     flex-direction: column;
@@ -645,14 +587,14 @@
   }
   .member-grid strong {
     overflow: hidden;
-    font: 500 1rem/1 var(--font-display);
+    font: 500 0.85rem/1.4 var(--font-sans);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .member-grid small {
     overflow: hidden;
     color: var(--text-faint);
-    font: 0.46rem/1.2 var(--font-mono);
+    font: 0.7rem/1.4 var(--font-sans);
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -730,12 +672,7 @@
       border-bottom: 1px solid var(--line-default);
     }
     .faction-header {
-      grid-template-columns: 3.5rem 1fr;
-    }
-    .faction-seal {
-      width: 3.5rem;
-      height: 3.5rem;
-      font-size: 1rem;
+      grid-template-columns: 1fr;
     }
     .section-title {
       align-items: flex-start;

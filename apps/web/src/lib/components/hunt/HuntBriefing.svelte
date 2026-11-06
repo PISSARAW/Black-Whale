@@ -64,11 +64,8 @@
   }: Props = $props()
 </script>
 
-<section
-  class="absolute inset-0 z-40 grid place-items-center overflow-y-auto bg-black/88 p-6 backdrop-blur-md"
->
-  <div class="max-w-lg text-center">
-    <p class="text-xs uppercase tracking-[0.35em] text-sky-300/80">{labels.eyebrow}</p>
+<section class="absolute inset-0 z-40 grid place-items-center overflow-y-auto bg-black/88 p-6">
+  <div class="hunt-briefing archive-page-heading">
     <h1 class="mt-4 text-3xl font-medium text-white sm:text-4xl">{labels.title}</h1>
     <p class="mx-auto mt-5 max-w-md text-base leading-relaxed text-white/70">{labels.premise}</p>
     <p
@@ -78,13 +75,13 @@
     </p>
     <p class="mt-4 text-sm text-white/55">{labels.objective}</p>
     <div class="mx-auto mt-6 max-w-lg">
-      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
+      <p class="text-[0.65rem] uppercase tracking-normal text-amber-300/70">
         {contractLabel}
       </p>
       <div class="mt-2 grid gap-2 sm:grid-cols-2">
         {#each contracts as contract (contract.id)}
           <button
-            class="rounded-lg border p-3 text-left transition {selectedContract === contract.id
+            class="rounded-sm border p-3 text-left transition {selectedContract === contract.id
               ? 'border-amber-300 bg-amber-300/10'
               : 'border-white/10 bg-white/[0.03]'}"
             aria-pressed={selectedContract === contract.id}
@@ -105,28 +102,13 @@
       >
         {locale === 'fr' ? 'Créer et partager un contrat' : 'Create and share a contract'}
       </a>
-      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-amber-300/70">
-        {locale === 'fr' ? 'Vœu optionnel' : 'Optional vow'}
-      </p>
-      <div class="mt-2 grid grid-cols-3 gap-2">
-        {#each [{ id: null, en: 'None', fr: 'Aucun' }, { id: 'silent-hunt', en: 'Silent Hunt', fr: 'Traque silencieuse' }, { id: 'no-retreat', en: 'No retreat', fr: 'Sans retraite' }] as vow (vow.id)}
-          <button
-            class="rounded-lg border p-2 text-xs transition {selectedVow === vow.id
-              ? 'border-amber-300 bg-amber-300/10 text-white'
-              : 'border-white/10 text-white/50'}"
-            aria-pressed={selectedVow === vow.id}
-            onclick={() => onSelectVow(vow.id as HuntVow | null)}
-            >{locale === 'fr' ? vow.fr : vow.en}</button
-          >
-        {/each}
-      </div>
-      <p class="text-[0.65rem] uppercase tracking-[0.25em] text-violet-300/70">
+      <p class="text-[0.65rem] uppercase tracking-normal text-violet-300/70">
         {labels.chooseHatsu}
       </p>
       <div class="mt-2 grid gap-2 sm:grid-cols-3">
         {#each profiles as profile (profile.id)}
           <button
-            class="rounded-lg border p-3 text-left transition {selected === profile.id
+            class="rounded-sm border p-3 text-left transition {selected === profile.id
               ? 'border-violet-300 bg-violet-300/10'
               : 'border-white/10 bg-white/[0.03]'}"
             aria-pressed={selected === profile.id}
@@ -139,47 +121,65 @@
           </button>
         {/each}
       </div>
-      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-sky-300/70">
-        {terrainLabel}
-      </p>
-      <div class="mt-2 grid gap-2 sm:grid-cols-3">
-        {#each terrains as terrain (terrain.id)}
-          <button
-            class="rounded-lg border p-3 text-left transition {selectedTerrain === terrain.id
-              ? 'border-sky-300 bg-sky-300/10'
-              : 'border-white/10 bg-white/[0.03]'}"
-            aria-pressed={selectedTerrain === terrain.id}
-            onclick={() => onSelectTerrain(terrain.id)}
-          >
-            <span class="block text-sm font-medium text-sky-100">
-              {locale === 'fr' ? terrain.name.fr : terrain.name.en}
-            </span>
-            <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
-              {locale === 'fr' ? terrain.description.fr : terrain.description.en}
-            </span>
-          </button>
-        {/each}
-      </div>
-      <p class="mt-2 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
-      <p class="mt-5 text-[0.65rem] uppercase tracking-[0.25em] text-rose-300/70">
-        {hunterLabels.choose}
-      </p>
-      <div class="mt-2 grid gap-2 sm:grid-cols-3">
-        {#each hunterProfiles as profile (profile.id)}
-          <button
-            class="rounded-lg border p-3 text-left transition {selectedHunter === profile.id
-              ? 'border-rose-300 bg-rose-300/10'
-              : 'border-white/10 bg-white/[0.03]'}"
-            aria-pressed={selectedHunter === profile.id}
-            onclick={() => onSelectHunter(profile.id)}
-          >
-            <span class="block text-sm font-medium capitalize text-rose-100">{profile.id}</span>
-            <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
-              {hunterLabels.role[profile.id]}
-            </span>
-          </button>
-        {/each}
-      </div>
+      <details class="tour-disclosure mt-4">
+        <summary>{locale === 'fr' ? 'Réglages de la traque' : 'Hunt settings'}</summary>
+        <p class="mt-5 text-[0.65rem] uppercase tracking-normal text-amber-300/70">
+          {locale === 'fr' ? 'Vœu optionnel' : 'Optional vow'}
+        </p>
+        <div class="mt-2 grid grid-cols-3 gap-2">
+          {#each [{ id: null, en: 'None', fr: 'Aucun' }, { id: 'silent-hunt', en: 'Silent Hunt', fr: 'Traque silencieuse' }, { id: 'no-retreat', en: 'No retreat', fr: 'Sans retraite' }] as vow (vow.id)}
+            <button
+              class="rounded-sm border p-2 text-xs transition {selectedVow === vow.id
+                ? 'border-amber-300 bg-amber-300/10 text-white'
+                : 'border-white/10 text-white/50'}"
+              aria-pressed={selectedVow === vow.id}
+              onclick={() => onSelectVow(vow.id as HuntVow | null)}
+              >{locale === 'fr' ? vow.fr : vow.en}</button
+            >
+          {/each}
+        </div>
+        <p class="mt-5 text-[0.65rem] uppercase tracking-normal text-sky-300/70">
+          {terrainLabel}
+        </p>
+        <div class="mt-2 grid gap-2 sm:grid-cols-3">
+          {#each terrains as terrain (terrain.id)}
+            <button
+              class="rounded-sm border p-3 text-left transition {selectedTerrain === terrain.id
+                ? 'border-sky-300 bg-sky-300/10'
+                : 'border-white/10 bg-white/[0.03]'}"
+              aria-pressed={selectedTerrain === terrain.id}
+              onclick={() => onSelectTerrain(terrain.id)}
+            >
+              <span class="block text-sm font-medium text-sky-100">
+                {locale === 'fr' ? terrain.name.fr : terrain.name.en}
+              </span>
+              <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
+                {locale === 'fr' ? terrain.description.fr : terrain.description.en}
+              </span>
+            </button>
+          {/each}
+        </div>
+        <p class="mt-2 text-xs leading-relaxed text-white/45">{labels.hatsuRule}</p>
+        <p class="mt-5 text-[0.65rem] uppercase tracking-normal text-rose-300/70">
+          {hunterLabels.choose}
+        </p>
+        <div class="mt-2 grid gap-2 sm:grid-cols-3">
+          {#each hunterProfiles as profile (profile.id)}
+            <button
+              class="rounded-sm border p-3 text-left transition {selectedHunter === profile.id
+                ? 'border-rose-300 bg-rose-300/10'
+                : 'border-white/10 bg-white/[0.03]'}"
+              aria-pressed={selectedHunter === profile.id}
+              onclick={() => onSelectHunter(profile.id)}
+            >
+              <span class="block text-sm font-medium capitalize text-rose-100">{profile.id}</span>
+              <span class="mt-1 block text-[0.65rem] leading-snug text-white/40">
+                {hunterLabels.role[profile.id]}
+              </span>
+            </button>
+          {/each}
+        </div>
+      </details>
     </div>
     <button
       class="mt-8 rounded-full border border-sky-300/60 bg-sky-300/10 px-7 py-3 text-sm uppercase tracking-widest text-sky-100 transition hover:bg-sky-300/20"
@@ -187,3 +187,11 @@
     >
   </div>
 </section>
+
+<style>
+  .hunt-briefing {
+    width: min(48rem, 100%);
+    padding-block: 1.5rem;
+    text-align: left;
+  }
+</style>

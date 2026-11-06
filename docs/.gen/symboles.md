@@ -407,7 +407,7 @@ Entrées analysées : 11
 | `buildCanonicalPositions` | `packages/canon-engine/src/timeline/snapshot.ts:93` |
 | `cloneValue` | `packages/canon-engine/src/world/state.ts:115` |
 | `cloneWorld` | `packages/canon-engine/src/world/state.ts:111` |
-| `compareEventOrder` | `packages/domain/dist/ordering.d.ts:29` |
+| `compareEventOrder` | `packages/domain/dist/ordering.d.ts:30` |
 | `compareStoryPosition` | `packages/canon-engine/src/world/cursor.ts:18` |
 | `createEmptyWorld` | `packages/canon-engine/src/world/state.ts:96` |
 | `createSnapshotStore` | `packages/canon-engine/src/timeline/snapshotStore.ts:40` |
@@ -416,7 +416,7 @@ Entrées analysées : 11
 | `filterTemporalRecords` | `packages/canon-engine/src/spoiler/index.ts:49` |
 | `filterVisible` | `packages/canon-engine/src/spoiler/index.ts:34` |
 | `getSpoilerFilter` | `packages/canon-engine/src/spoiler/index.ts:16` |
-| `isRevealed` | `packages/domain/dist/ordering.d.ts:31` |
+| `isRevealed` | `packages/domain/dist/ordering.d.ts:32` |
 | `listCanonicalEvents` | `packages/canon-engine/src/timeline/index.ts:437` |
 | `maskFutureEnds` | `packages/canon-engine/src/spoiler/index.ts:63` |
 | `projectMapScene` | `packages/canon-engine/src/world/projections.ts:83` |
@@ -651,14 +651,14 @@ Entrées analysées : 11
 | `ZoneType` | `packages/domain/src/location.ts:1` |
 | `bracket` | `packages/domain/src/voyage-clock.ts:166` |
 | `clockOf` | `packages/domain/src/voyage-clock.ts:106` |
-| `compareEventOrder` | `packages/domain/src/ordering.ts:30` |
+| `compareEventOrder` | `packages/domain/src/ordering.ts:31` |
 | `curatedChronology` | `packages/domain/src/voyage-clock.ts:226` |
 | `dayOf` | `packages/domain/src/voyage-clock.ts:85` |
 | `formatBracket` | `packages/domain/src/voyage-clock.ts:138` |
 | `formatVoyageTime` | `packages/domain/src/voyage-clock.ts:121` |
 | `hasVoyageTime` | `packages/domain/src/voyage-clock.ts:296` |
-| `isActiveAt` | `packages/domain/src/ordering.ts:62` |
-| `isRevealed` | `packages/domain/src/ordering.ts:45` |
+| `isActiveAt` | `packages/domain/src/ordering.ts:63` |
+| `isRevealed` | `packages/domain/src/ordering.ts:46` |
 | `spanOfDay` | `packages/domain/src/voyage-clock.ts:90` |
 | `weekdayOf` | `packages/domain/src/voyage-clock.ts:95` |
 

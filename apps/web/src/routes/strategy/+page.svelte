@@ -411,7 +411,7 @@
       aria-live="polite"
     >
       <div
-        class="mb-4 flex items-center gap-3 rounded-full border border-sky-500/30 bg-sky-950/40 px-5 py-2 shadow-[0_0_15px_rgba(14,165,233,0.2)]"
+        class="mb-4 flex items-center gap-3 rounded-full border border-sky-500/30 bg-sky-950/40 px-5 py-2"
       >
         <span class="h-2 w-2 animate-pulse rounded-full bg-sky-400"></span>
         <h1 class="text-[10px] font-bold uppercase tracking-widest text-sky-400">
@@ -428,7 +428,7 @@
         <a
           href={$link(`/strategy?scenario=${operation.id}`)}
           aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
-          class="group flex flex-col gap-2 rounded-xl border border-sky-900/40 bg-[#0a0f1c]/80 p-5 transition-all hover:-translate-y-1 hover:border-sky-400 hover:bg-sky-900/30 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] aria-[current=page]:border-amber-500/60 aria-[current=page]:bg-amber-950/20 aria-[current=page]:shadow-[0_0_15px_rgba(251,191,36,0.15)]"
+          class="group flex flex-col gap-2 rounded-sm border border-sky-900/40 bg-[#0a0f1c]/80 p-5 transition-all hover:border-sky-400 hover:bg-sky-900/30 aria-[current=page]:border-amber-500/60 aria-[current=page]:bg-amber-950/20"
         >
           <span
             class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60 group-aria-[current=page]:text-amber-500/80"
@@ -456,17 +456,17 @@
       class="grid min-h-[calc(100vh-4rem)] grid-cols-1 md:grid-cols-[minmax(22rem,28rem)_minmax(0,1fr)]"
     >
       <TourModeFullscreen />
-      <aside class="flex flex-col border-r border-sky-900/40 bg-[#0a0f1c]/95 backdrop-blur-md">
+      <aside class="flex flex-col border-r border-sky-900/40 bg-[#0a0f1c]/95">
         <header class="border-b border-sky-900/50 bg-[#060b14]/50 p-6">
           <button
             class="mb-4 text-[10px] font-bold uppercase tracking-widest text-sky-500/50 transition-colors hover:text-sky-300"
             type="button"
             onclick={() => (playerFactionId = null)}>← {$t.strategy.ui.backToFactions}</button
           >
-          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-400">
+          <p class="text-[10px] font-bold uppercase tracking-normal text-sky-400">
             {$t.strategy.ui.tacticalNetwork}
           </p>
-          <h1 class="mt-1 font-black text-3xl text-white drop-shadow-md">{playerFaction?.name}</h1>
+          <h1 class="mt-1 font-black text-3xl text-white">{playerFaction?.name}</h1>
           <span class="mt-2 block text-[10px] font-bold uppercase tracking-widest text-sky-200/50"
             >{$t.strategy.ui.turn}
             {Math.min(simStore.currentTurn, data.scenario?.maxTurns ?? 8)} / {data.scenario
@@ -478,9 +478,7 @@
           class="flex-1 overflow-y-auto p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-sky-900/50"
         >
           {#if simStore.scenarioEvent}
-            <section
-              class="mb-6 rounded-lg border-l-2 border-amber-400 bg-amber-950/20 p-4 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
-            >
+            <section class="mb-6 rounded-sm border-l-2 border-amber-400 bg-amber-950/20 p-4">
               <span class="text-[9px] font-bold uppercase tracking-widest text-amber-500"
                 >{$t.strategy.ui.scheduledEvent}</span
               >
@@ -494,8 +492,8 @@
           {/if}
           <section class="mb-8">
             <div
-              class="rounded-xl border border-sky-900/40 bg-gradient-to-br from-[#101827] to-[#0a0f1c] p-5 shadow-[0_0_20px_rgba(14,165,233,0.1)] {objective?.complete
-                ? 'border-emerald-500/50 shadow-[0_0_20px_rgba(52,211,153,0.15)]'
+              class="rounded-sm border border-sky-900/40 bg-gradient-to-br from-[#101827] to-[#0a0f1c] p-5 {objective?.complete
+                ? 'border-emerald-500/50'
                 : ''}"
             >
               <span class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60"
@@ -546,7 +544,7 @@
               >
               <select
                 bind:value={selectedOrderType}
-                class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
+                class="w-full rounded-sm border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
               >
                 <option value="MOVE">{$t.strategy.ui.orderOptions.MOVE}</option>
                 <option value="SCOUT">{$t.strategy.ui.orderOptions.SCOUT}</option>
@@ -562,7 +560,7 @@
                 >
                 <select
                   bind:value={selectedAbilityId}
-                  class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
+                  class="w-full rounded-sm border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
                 >
                   <option value="">{$t.strategy.ui.chooseAbility}</option>
                   {#each availableHatsu as profile (profile.id)}
@@ -595,7 +593,7 @@
               >
               <select
                 bind:value={selectedCharacterId}
-                class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
+                class="w-full rounded-sm border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
               >
                 <option value="">{$t.strategy.ui.chooseUnit}</option>
                 {#each playerFaction?.members ?? [] as member (member.character.id)}
@@ -624,7 +622,7 @@
                 </span>
                 <select
                   bind:value={selectedLocationId}
-                  class="w-full rounded-lg border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
+                  class="w-full rounded-sm border border-sky-900/50 bg-[#060b14] p-3 text-xs text-sky-50 outline-none transition-colors focus:border-sky-400 focus:ring-1 focus:ring-sky-400"
                 >
                   <option value="">{$t.strategy.ui.chooseZone}</option>
                   {#each playableLocations as location (location.id)}
@@ -634,7 +632,7 @@
               </label>
             {/if}
             <button
-              class="mt-6 w-full rounded-lg border border-sky-400/50 bg-sky-900/40 px-5 py-3 text-xs font-bold uppercase tracking-widest text-sky-300 transition-all enabled:hover:bg-sky-400/30 enabled:hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] disabled:cursor-not-allowed disabled:opacity-40"
+              class="mt-6 w-full rounded-sm border border-sky-400/50 bg-sky-900/40 px-5 py-3 text-xs font-bold uppercase tracking-widest text-sky-300 transition-all enabled:hover:bg-sky-400/30 disabled:cursor-not-allowed disabled:opacity-40"
               type="button"
               disabled={!selectedCharacterId ||
                 (selectedOrderType !== 'GUARD' && !selectedLocationId) ||
@@ -662,7 +660,7 @@
               <ul class="space-y-3">
                 {#each pendingOrders as order (order.characterId)}
                   <li
-                    class="flex items-center justify-between gap-3 rounded-lg border border-sky-900/40 bg-[#060b14]/50 p-3 shadow-inner"
+                    class="flex items-center justify-between gap-3 rounded-sm border border-sky-900/40 bg-[#060b14]/50 p-3"
                   >
                     <div class="min-w-0">
                       <strong class="block truncate text-xs text-sky-100"
@@ -688,7 +686,7 @@
               </ul>
             {:else}
               <p
-                class="rounded-lg border border-sky-900/20 bg-sky-950/10 p-4 text-xs italic text-sky-200/40"
+                class="rounded-sm border border-sky-900/20 bg-sky-950/10 p-4 text-xs italic text-sky-200/40"
               >
                 {$t.strategy.ui.emptyPlan}
               </p>
@@ -702,7 +700,7 @@
               </h2>
             </div>
             <div
-              class="max-h-40 overflow-y-auto rounded-lg border border-sky-900/40 bg-[#040810] p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-sky-900/50"
+              class="max-h-40 overflow-y-auto rounded-sm border border-sky-900/40 bg-[#040810] p-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-sky-900/50"
               aria-live="polite"
             >
               {#each simStore.turnReports as report, index (`${index}:${report}`)}<p
@@ -723,7 +721,7 @@
               {errorMessage}
             </p>{/if}
           <button
-            class="w-full rounded-lg bg-sky-400 px-5 py-3.5 text-xs font-black uppercase tracking-[0.15em] text-[#020617] shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all enabled:hover:bg-sky-300 enabled:hover:shadow-[0_0_25px_rgba(56,189,248,0.6)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+            class="w-full rounded-sm bg-sky-400 px-5 py-3.5 text-xs font-black uppercase tracking-normal text-[#020617] transition-all enabled:hover:bg-sky-300 disabled:cursor-not-allowed disabled:opacity-40"
             type="button"
             disabled={simStore.gameOver}
             onclick={handleEndTurn}

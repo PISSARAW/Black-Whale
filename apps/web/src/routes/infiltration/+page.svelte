@@ -423,9 +423,9 @@
 
   {#if !briefing && !finished}
     <section
-      class="pointer-events-none absolute left-4 top-16 w-[min(24rem,calc(100%-2rem))] rounded border border-white/15 bg-black/85 p-4 backdrop-blur"
+      class="pointer-events-none absolute left-4 top-16 w-[min(24rem,calc(100%-2rem))] rounded border border-white/15 bg-black/85 p-4"
     >
-      <p class="text-[10px] uppercase tracking-[.25em] text-amber-300">{$t.infiltration.cover}</p>
+      <p class="text-[10px] uppercase tracking-normal text-amber-300">{$t.infiltration.cover}</p>
       <h1 class="mt-1 text-lg font-bold">{$t.infiltration.title}</h1>
       <p class="mt-2 text-sm text-white/65">{roomName(currentSpace)}</p>
       <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
@@ -477,14 +477,14 @@
     </section>
 
     <div
-      class="pointer-events-auto absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-cyan-900/50 bg-slate-950/85 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.8),inset_0_1px_15px_rgba(6,182,212,0.1)] backdrop-blur-md"
+      class="pointer-events-auto absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-sm border border-cyan-900/50 bg-slate-950/85 p-3"
     >
       {#if needsHatsuTarget}
         {#each nearbyHatsuTargets as target (target.id)}
           <button
             onclick={() => send({ type: 'TARGET_HATSU', witnessId: target.id })}
             aria-pressed={game.hatsu.targetWitnessId === target.id}
-            class="rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-semibold text-red-200 shadow-[inset_0_1px_10px_rgba(239,68,68,0.15)] transition-all hover:border-red-500 hover:bg-red-900/60 aria-pressed:border-red-400 aria-pressed:bg-red-500/20"
+            class="rounded-sm border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-semibold text-red-200 transition-all hover:border-red-500 hover:bg-red-900/60 aria-pressed:border-red-400 aria-pressed:bg-red-500/20"
             >{$t.infiltration.witnesses[target.id]}</button
           >
         {/each}
@@ -493,20 +493,20 @@
         {#each scoutDestinations as destination (destination.id)}
           <button
             onclick={() => moveScoutTo(destination)}
-            class="rounded-xl border border-fuchsia-400/40 bg-fuchsia-950/40 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_10px_rgba(232,121,249,0.15)] transition-colors hover:border-fuchsia-400 hover:bg-fuchsia-900/60"
+            class="rounded-sm border border-fuchsia-400/40 bg-fuchsia-950/40 px-4 py-2 text-xs font-semibold text-fuchsia-200 transition-colors hover:border-fuchsia-400 hover:bg-fuchsia-900/60"
           >
             Eye → {roomName(destination)}
           </button>
         {/each}
         <button
           onclick={() => send({ type: 'SCOUT_RECALL' })}
-          class="rounded-xl border border-fuchsia-500/30 bg-black/60 px-4 py-2 text-xs font-semibold text-fuchsia-200 shadow-[inset_0_1px_8px_rgba(232,121,249,0.1)] transition-colors hover:border-fuchsia-500 hover:bg-fuchsia-900/40"
+          class="rounded-sm border border-fuchsia-500/30 bg-black/60 px-4 py-2 text-xs font-semibold text-fuchsia-200 transition-colors hover:border-fuchsia-500 hover:bg-fuchsia-900/40"
           >{$t.infiltration.hatsuInteractive.recall}</button
         >
       {/if}
       {#if canCopy || canVerify || canExtract}<button
           onclick={act}
-          class="rounded-xl border border-amber-400/50 bg-amber-950/50 px-5 py-2.5 text-xs font-bold tracking-wide text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-all hover:border-amber-400 hover:bg-amber-900/70"
+          class="rounded-sm border border-amber-400/50 bg-amber-950/50 px-5 py-2.5 text-xs font-bold tracking-wide text-amber-300 transition-all hover:border-amber-400 hover:bg-amber-900/70"
           >F · {canCopy
             ? $t.infiltration.copy
             : canVerify
@@ -516,14 +516,14 @@
       <button
         onclick={() => send({ type: 'ZETSU' })}
         aria-keyshortcuts="X"
-        class="rounded-xl border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 shadow-[inset_0_1px_8px_rgba(6,182,212,0.1)] transition-all hover:border-cyan-400 hover:bg-cyan-900/50"
+        class="rounded-sm border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-900/50"
         >X · Ten/Zetsu</button
       >
       <button
         onclick={() => send({ type: 'DIVERT' })}
         aria-keyshortcuts="V"
         disabled={!!game.diversion}
-        class="rounded-xl border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 shadow-[inset_0_1px_8px_rgba(6,182,212,0.1)] transition-all hover:border-cyan-400 hover:bg-cyan-900/50 disabled:opacity-30 disabled:hover:border-cyan-500/30 disabled:hover:bg-cyan-950/30"
+        class="rounded-sm border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-900/50 disabled:opacity-30 disabled:hover:border-cyan-500/30 disabled:hover:bg-cyan-950/30"
         >V · {$t.infiltration.divert}</button
       >
       <button
@@ -534,20 +534,20 @@
           .filter((condition) => !condition.met)
           .map((condition) => $t.infiltration.hatsuConditions[condition.id])
           .join(' · ')}
-        class="rounded-xl border border-fuchsia-400/50 bg-fuchsia-950/40 px-4 py-2.5 text-xs font-bold tracking-wide text-fuchsia-200 shadow-[0_0_15px_rgba(232,121,249,0.2)] transition-all hover:border-fuchsia-400 hover:bg-fuchsia-900/60 hover:shadow-[0_0_20px_rgba(232,121,249,0.4)] disabled:opacity-30 disabled:shadow-none"
+        class="rounded-sm border border-fuchsia-400/50 bg-fuchsia-950/40 px-4 py-2.5 text-xs font-bold tracking-wide text-fuchsia-200 transition-all hover:border-fuchsia-400 hover:bg-fuchsia-900/60 disabled:opacity-30"
         >H · {$t.infiltration.castHatsu}</button
       >
     </div>
 
     {#if game.challenge}
       <div
-        class="absolute inset-0 grid place-items-center bg-red-950/80 p-6 backdrop-blur-sm"
+        class="absolute inset-0 grid place-items-center bg-red-950/80 p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cover-check-title"
       >
         <section
-          class="relative w-full max-w-md overflow-hidden rounded-xl border border-red-500/80 bg-slate-950 p-8 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
+          class="relative w-full max-w-md overflow-hidden rounded-sm border border-red-500/80 bg-slate-950 p-8"
         >
           <div class="absolute left-0 top-0 h-1 w-full bg-red-500"></div>
           <div
@@ -555,15 +555,12 @@
           ></div>
           <div class="relative z-10">
             <p
-              class="flex items-center gap-2 text-xs font-bold uppercase tracking-[.25em] text-red-500 animate-pulse"
+              class="flex items-center gap-2 text-xs font-bold uppercase tracking-normal text-red-500 animate-pulse"
             >
               <span class="inline-block h-2 w-2 rounded-full bg-red-500"></span>
               {$t.infiltration.challenge}
             </p>
-            <h2
-              id="cover-check-title"
-              class="mt-3 text-3xl font-black tracking-tight text-white drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
-            >
+            <h2 id="cover-check-title" class="mt-3 text-3xl font-black tracking-tight text-white">
               {$t.infiltration.witnesses[game.challenge.witnessId]}
             </h2>
             <p class="mt-4 text-sm leading-relaxed text-red-100/80">
@@ -576,7 +573,7 @@
               <button
                 aria-keyshortcuts="1"
                 onclick={() => send({ type: 'ANSWER', answer: 'workOrder' })}
-                class="group relative overflow-hidden rounded-lg border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+                class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60"
               >
                 <span
                   class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
@@ -586,7 +583,7 @@
               <button
                 aria-keyshortcuts="2"
                 onclick={() => send({ type: 'ANSWER', answer: 'bluff' })}
-                class="group relative overflow-hidden rounded-lg border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+                class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60"
               >
                 <span
                   class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
@@ -610,31 +607,22 @@
 
   {#if briefing}
     <div
-      class="absolute inset-0 grid place-items-center bg-slate-950/95 p-6 backdrop-blur-md"
+      class="absolute inset-0 grid place-items-center bg-slate-950/95 p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="mission-title"
     >
       <article
-        class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl"
+        class="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-sm border border-slate-700 bg-[#0a0f16]"
       >
-        <div
-          class="sticky top-0 z-10 border-b border-slate-800 bg-[#0a0f16]/95 px-8 py-5 backdrop-blur"
-        >
+        <div class="sticky top-0 z-10 border-b border-slate-800 bg-[#0a0f16]/95 px-8 py-5">
           <p
-            class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500"
+            class="flex items-center gap-3 text-xs font-bold uppercase tracking-normal text-cyan-500"
           >
-            <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"
-            ></span>
+            <span class="inline-block h-2 w-2 rounded-full bg-cyan-500"></span>
             {$t.infiltration.briefing}
-            <span class="ml-auto font-mono text-[10px] text-slate-500"
-              >SECURE CONNECTION ESTABLISHED</span
-            >
           </p>
-          <h1
-            id="mission-title"
-            class="mt-2 text-4xl font-black tracking-tight text-white drop-shadow-md"
-          >
+          <h1 id="mission-title" class="mt-2 text-4xl font-black tracking-tight text-white">
             {$t.infiltration.title}
           </h1>
         </div>
@@ -657,7 +645,7 @@
           </div>
 
           <div class="mt-10 mb-4 flex items-center gap-4">
-            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-amber-400">
+            <h2 class="text-xs font-bold uppercase tracking-normal text-amber-400">
               {$t.infiltration.chooseMission}
             </h2>
             <div class="h-px flex-1 bg-gradient-to-r from-amber-400/20 to-transparent"></div>
@@ -668,15 +656,13 @@
               <button
                 onclick={() => chooseMission(mission.id)}
                 aria-pressed={selectedMission === mission.id}
-                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {selectedMission ===
+                class="group relative overflow-hidden rounded-sm border p-4 text-left text-xs transition-all {selectedMission ===
                 mission.id
-                  ? 'border-amber-400 bg-amber-400/10 shadow-[inset_0_0_20px_rgba(251,191,36,0.15)]'
+                  ? 'border-amber-400 bg-amber-400/10'
                   : 'border-slate-800 bg-slate-900/50 hover:border-amber-400/50 hover:bg-slate-800'}"
               >
                 {#if selectedMission === mission.id}
-                  <div
-                    class="absolute left-0 top-0 h-full w-1 bg-amber-400 shadow-[0_0_10px_#fbbf24]"
-                  ></div>
+                  <div class="absolute left-0 top-0 h-full w-1 bg-amber-400"></div>
                 {/if}
                 <strong
                   class="block text-sm font-bold text-white transition-colors group-hover:text-amber-300"
@@ -689,7 +675,7 @@
             {/each}
           </div>
 
-          <div class="mt-6 rounded-lg border border-slate-800 bg-slate-900/50 p-4">
+          <div class="mt-6 rounded-sm border border-slate-800 bg-slate-900/50 p-4">
             <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
               Mission Objectives
             </h3>
@@ -704,7 +690,7 @@
           </div>
 
           <div class="mt-10 mb-4 flex items-center gap-4">
-            <h2 class="text-xs font-bold uppercase tracking-[.2em] text-fuchsia-400">
+            <h2 class="text-xs font-bold uppercase tracking-normal text-fuchsia-400">
               {$t.infiltration.chooseHatsu}
             </h2>
             <div class="h-px flex-1 bg-gradient-to-r from-fuchsia-400/20 to-transparent"></div>
@@ -715,15 +701,13 @@
               <button
                 onclick={() => send({ type: 'SELECT_HATSU', id: ability.id })}
                 aria-pressed={game.hatsu.id === ability.id}
-                class="group relative overflow-hidden rounded-lg border p-4 text-left text-xs transition-all {game
+                class="group relative overflow-hidden rounded-sm border p-4 text-left text-xs transition-all {game
                   .hatsu.id === ability.id
-                  ? 'border-fuchsia-400 bg-fuchsia-400/10 shadow-[inset_0_0_20px_rgba(232,121,249,0.15)]'
+                  ? 'border-fuchsia-400 bg-fuchsia-400/10'
                   : 'border-slate-800 bg-slate-900/50 hover:border-fuchsia-400/50 hover:bg-slate-800'}"
               >
                 {#if game.hatsu.id === ability.id}
-                  <div
-                    class="absolute left-0 top-0 h-full w-1 bg-fuchsia-400 shadow-[0_0_10px_#e879f9]"
-                  ></div>
+                  <div class="absolute left-0 top-0 h-full w-1 bg-fuchsia-400"></div>
                 {/if}
                 <strong
                   class="block text-sm font-bold text-white transition-colors group-hover:text-fuchsia-300"
@@ -738,7 +722,7 @@
           </div>
 
           {#if game.hatsu.id === 'texture-surprise'}
-            <div class="mt-4 rounded-lg border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
+            <div class="mt-4 rounded-sm border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
               <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
                 Configure Hatsu
               </h3>
@@ -754,7 +738,7 @@
               </div>
             </div>
           {:else if game.hatsu.id === 'illumi-needle-people'}
-            <div class="mt-4 rounded-lg border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
+            <div class="mt-4 rounded-sm border border-fuchsia-900/50 bg-fuchsia-950/20 p-4">
               <h3 class="mb-3 text-[10px] font-bold uppercase tracking-wider text-fuchsia-400">
                 Configure Hatsu
               </h3>
@@ -775,7 +759,7 @@
             <button
               onclick={() => (briefing = false)}
               aria-keyshortcuts="Enter"
-              class="group relative overflow-hidden rounded-lg bg-cyan-500 px-8 py-4 text-sm font-bold tracking-wide text-slate-950 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all hover:bg-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.6)]"
+              class="group relative overflow-hidden rounded-sm bg-cyan-500 px-8 py-4 text-sm font-bold tracking-wide text-slate-950 transition-all hover:bg-cyan-400"
             >
               <span
                 class="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-100"
@@ -789,23 +773,20 @@
   {/if}
 
   {#if finished}
-    <div class="absolute inset-0 overflow-y-auto bg-slate-950/95 p-6 backdrop-blur-md">
+    <div class="absolute inset-0 overflow-y-auto bg-slate-950/95 p-6">
       <article class="mx-auto max-w-4xl py-10">
-        <div
-          class="relative overflow-hidden rounded-xl border border-slate-700 bg-[#0a0f16] shadow-2xl"
-        >
+        <div class="relative overflow-hidden rounded-sm border border-slate-700 bg-[#0a0f16]">
           <div class="border-b border-slate-800 bg-[#0a0f16]/95 px-10 py-8">
             <p
-              class="flex items-center gap-3 text-xs font-bold uppercase tracking-[.3em] text-cyan-500"
+              class="flex items-center gap-3 text-xs font-bold uppercase tracking-normal text-cyan-500"
             >
-              <span class="inline-block h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"
-              ></span>
+              <span class="inline-block h-2 w-2 rounded-full bg-cyan-500"></span>
               {$t.infiltration.debrief}
               <span class="ml-auto font-mono text-[10px] text-slate-500">OPERATION ENDED</span>
             </p>
             <h1
               class="mt-4 text-5xl font-black tracking-tight {game.outcome === 'escaped'
-                ? 'text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]'
+                ? 'text-cyan-400'
                 : 'text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.4)]'}"
             >
               {$t.infiltration.outcomes[game.outcome]}
@@ -833,25 +814,25 @@
           <div class="px-10 py-8">
             <div class="grid grid-cols-3 gap-4">
               <div
-                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+                class="rounded-sm border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
               >
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                <p class="text-[10px] font-bold uppercase tracking-normal text-slate-500">
                   {$t.infiltration.v3.objectiveAxis}
                 </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.material}</p>
               </div>
               <div
-                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+                class="rounded-sm border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
               >
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                <p class="text-[10px] font-bold uppercase tracking-normal text-slate-500">
                   {$t.infiltration.v3.informationAxis}
                 </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.information}</p>
               </div>
               <div
-                class="rounded-lg border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
+                class="rounded-sm border border-slate-800 bg-slate-900/50 p-5 transition-colors hover:border-cyan-900"
               >
-                <p class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">
+                <p class="text-[10px] font-bold uppercase tracking-normal text-slate-500">
                   {$t.infiltration.v3.coverAxis}
                 </p>
                 <p class="mt-2 text-xl font-semibold text-white">{verdict.cover}</p>
@@ -859,7 +840,7 @@
             </div>
 
             {#if timeline.length > 0}
-              <div class="mt-8 rounded-lg border border-slate-800 bg-black/40 p-5">
+              <div class="mt-8 rounded-sm border border-slate-800 bg-black/40 p-5">
                 <h3 class="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                   Mission Timeline
                 </h3>
@@ -902,7 +883,7 @@
                 <div class="grid gap-4 sm:grid-cols-3">
                   {#each report.witnesses as witness (witness.id)}
                     <section
-                      class="relative overflow-hidden rounded-lg border border-slate-800 bg-slate-900/30 p-5"
+                      class="relative overflow-hidden rounded-sm border border-slate-800 bg-slate-900/30 p-5"
                     >
                       <div
                         class="absolute left-0 top-0 h-full w-1 {witness.belief.reported
@@ -942,7 +923,7 @@
 
               <button
                 onclick={again}
-                class="group relative overflow-hidden rounded-lg bg-slate-800 px-8 py-3 text-sm font-bold tracking-wide text-white transition-all hover:bg-slate-700 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                class="group relative overflow-hidden rounded-sm bg-slate-800 px-8 py-3 text-sm font-bold tracking-wide text-white transition-all hover:bg-slate-700"
               >
                 <span
                   class="absolute inset-0 bg-white/5 opacity-0 transition-opacity group-hover:opacity-100"

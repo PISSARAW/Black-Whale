@@ -431,10 +431,6 @@
     }
   }
   @media (max-width: 600px) {
-    .voyage {
-      min-width: 37rem;
-      transform: translateX(-18%);
-    }
     .plate,
     .specs {
       display: none;

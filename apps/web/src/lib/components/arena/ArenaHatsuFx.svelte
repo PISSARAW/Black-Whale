@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { iconForHatsu } from '$lib/nen/hatsuIcons'
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { HATSU_VISUAL_SIGNATURE_BY_KIND, type HatsuProfile } from '$lib/nen/hatsuRegistry'
 
   interface Props {
@@ -19,7 +21,7 @@
     aria-label={signature.manifestation}
   >
     <i class="wake"></i><i class="body"></i><i class="trail"></i>
-    <b>{signature.glyph}</b>
+    <b><MangaIcon name={iconForHatsu(profile.kind)} /></b>
     <span>{profile.name}</span>
   </div>
 {/key}

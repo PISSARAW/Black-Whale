@@ -158,7 +158,6 @@
   </div>
   <header class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">{$t.timeline.eyebrow}</p>
       <h1>{$t.timeline.title}</h1>
       <p class="intro">{$t.timeline.intro}</p>
     </div>
@@ -179,7 +178,10 @@
     </dl>
   </header>
 
-  <div class="voyage-overview"><VoyageProgress compact /></div>
+  <details class="voyage-overview">
+    <summary>{$t.voyage.label}</summary>
+    <VoyageProgress compact />
+  </details>
 
   <div class="toolbar">
     <label class="search-field">
@@ -373,15 +375,16 @@
 
   .timeline-page {
     min-height: calc(100vh - 3.25rem);
-    padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 4vw, 4rem) 6rem;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
     color: var(--ink);
   }
 
   .chapter-hatsu {
     margin: 0 0 1rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid color-mix(in srgb, var(--accent-cyan) 25%, transparent);
-    border-radius: 0.65rem;
+    padding: 0.25rem 1rem;
+    border: 0;
+    border-radius: 0;
+    border-left: 1px solid var(--line-default);
   }
 
   .chapter-hatsu > strong {
@@ -436,8 +439,8 @@
     display: block;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-gold));
-    box-shadow: 0 0 12px var(--accent-gold-glow);
+    background: var(--accent-gold);
+    box-shadow: none;
     transform-origin: left;
   }
 
@@ -453,7 +456,6 @@
   .hero-copy {
     max-width: 690px;
   }
-  .eyebrow,
   aside > p,
   .chapter-header p {
     margin: 0 0 0.55rem;
@@ -467,19 +469,27 @@
   h1 {
     margin: 0;
     color: #f2efe3;
-    font-size: clamp(3rem, 8vw, 6.2rem);
-    font-weight: 600;
-    letter-spacing: -0.055em;
-    line-height: 0.88;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
 
   .intro {
     max-width: 620px;
-    margin: 1.25rem 0 0;
+    margin: 0.8rem 0 0;
     color: #9ba8aa;
-    font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+    font-size: 0.9rem;
     line-height: 1.65;
   }
+  .voyage-overview summary {
+    min-height: 44px;
+    padding: 0.75rem 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
   .voyage-overview {
     max-width: 1180px;
     margin: 0 auto 1rem;
@@ -489,49 +499,48 @@
     display: flex;
     flex: none;
     margin: 0;
-    gap: 1px;
+    gap: 1.5rem;
     overflow: hidden;
-    border: 1px solid rgba(134, 156, 162, 0.22);
-    border-radius: 0.7rem;
-    background: rgba(134, 156, 162, 0.18);
+    border: 0;
+    border-radius: 0;
+    background: none;
   }
   .stats div {
-    min-width: 105px;
-    padding: 0.85rem 1rem;
-    background: rgba(9, 16, 23, 0.88);
+    min-width: 0;
+    padding: 0;
+    background: none;
   }
   .stats dt {
-    color: #70817f;
-    font-size: 0.58rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: none;
   }
   .stats dd {
     margin: 0.2rem 0 0;
     color: #e6dfc8;
-    font:
-      600 1.35rem/1 'IBM Plex Sans Condensed',
-      sans-serif;
+    font: 500 1rem/1.5 var(--font-sans);
   }
 
   .toolbar {
     display: flex;
     position: sticky;
     z-index: 20;
-    top: 0.75rem;
+    top: var(--header-height);
     max-width: 1180px;
     margin: 0 auto 2.4rem;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.75rem 1rem;
-    padding: 0.65rem;
-    border: 1px solid rgba(105, 128, 137, 0.24);
-    border-radius: 0.8rem;
-    background: rgba(8, 14, 20, 0.88);
-    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.22);
-    backdrop-filter: blur(16px);
+    padding: 0.75rem 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--surface-void);
+    box-shadow: none;
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--line-default);
   }
   .search-field {
     display: flex;
@@ -578,9 +587,9 @@
     margin-left: auto;
     gap: 2px;
     padding: 2px;
-    border: 1px solid rgba(105, 128, 137, 0.24);
+    border: 0;
     border-radius: 0.5rem;
-    background: rgba(9, 16, 23, 0.6);
+    background: none;
   }
   .order-switch button {
     padding: 0.4rem 0.7rem;
@@ -692,9 +701,7 @@
     border: 3px solid #071019;
     border-radius: 50%;
     background: #c9a44a;
-    box-shadow:
-      0 0 0 1px rgba(201, 164, 74, 0.65),
-      0 0 18px rgba(201, 164, 74, 0.18);
+    box-shadow: none;
   }
   .line {
     width: 1px;
@@ -727,7 +734,7 @@
 
   .events {
     display: grid;
-    gap: 0.6rem;
+    gap: 0;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -739,16 +746,17 @@
     grid-template-columns: 42px minmax(0, 1fr) auto;
     align-items: center;
     gap: 1rem;
-    padding: 1.15rem 1.2rem;
-    border: 1px solid rgba(91, 112, 120, 0.24);
-    border-radius: 0.68rem;
-    background: linear-gradient(110deg, rgba(17, 25, 36, 0.88), rgba(10, 18, 26, 0.76));
+    padding: 1.25rem 0.5rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
     color: inherit;
     text-decoration: none;
     transition:
       border-color 0.2s ease,
       transform 0.2s ease,
       background 0.2s ease;
+    border-bottom: 1px solid var(--line-subtle);
   }
   .events a::before {
     position: absolute;
@@ -760,9 +768,9 @@
     transition: opacity 0.2s ease;
   }
   .events a:hover {
-    transform: translateX(4px);
+    transform: none;
     border-color: rgba(201, 164, 74, 0.38);
-    background: linear-gradient(110deg, rgba(25, 32, 39, 0.96), rgba(12, 23, 32, 0.88));
+    background: var(--surface-deep);
   }
   .events a:hover::before {
     opacity: 1;
@@ -892,7 +900,7 @@
       flex: 1;
     }
     .toolbar {
-      top: 0.5rem;
+      top: var(--header-height);
     }
   }
 
@@ -935,7 +943,7 @@
       padding: 0.7rem;
     }
     .stats dt {
-      font-size: 0.5rem;
+      font-size: 0.7rem;
     }
     .stats dd {
       font-size: 1.1rem;

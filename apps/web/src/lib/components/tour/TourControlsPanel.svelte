@@ -12,10 +12,8 @@
   let { hasTechnique, secondHand, twoHanded, selfCastable, touch }: Props = $props()
 </script>
 
-<section class="rounded border border-[#333] p-3">
-  <p class="mb-2 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-    {$t.tour.controls.title}
-  </p>
+<details class="tour-disclosure">
+  <summary>{$t.tour.controls.title}</summary>
   <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-xs text-[#FFFFF0]/70">
     <dt class="text-[#FFFFF0]">{$t.tour.controls.move}</dt>
     <dd><kbd>{$t.tour.controls.moveKeys}</kbd></dd>
@@ -50,4 +48,4 @@
     {#if touch}<dt class="text-[#FFFFF0]">{$t.tour.controls.touch}</dt>
       <dd><kbd>{$t.tour.controls.touchKeys}</kbd></dd>{/if}
   </dl>
-</section>
+</details>

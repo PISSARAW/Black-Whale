@@ -25,7 +25,6 @@
 
 <div class="lab">
   <header>
-    <p>{$t.simulations.eyebrow}</p>
     <h1>{$t.simulations.title}</h1>
     <span>{$t.simulations.intro}</span>
   </header>
@@ -39,7 +38,6 @@
 
   <section class="panel create-panel">
     <div>
-      <small>01</small>
       <h2>{$t.simulations.forkTitle}</h2>
     </div>
     <form method="POST" action="?/create">
@@ -73,7 +71,6 @@
     <section class="branch-grid">
       <article class="panel branch-state">
         <div class="heading">
-          <small>02</small>
           <h2>{$t.simulations.branchStateTitle}</h2>
         </div>
         <dl>
@@ -111,7 +108,6 @@
 
       <article class="panel ability-panel">
         <div class="heading">
-          <small>03</small>
           <h2>{$t.simulations.executeTitle}</h2>
         </div>
         <p>{$t.simulations.executeCopy}</p>
@@ -191,7 +187,6 @@
 
     <section class="panel move-panel">
       <div class="heading">
-        <small>04</small>
         <h2>{$t.simulations.moveTitle}</h2>
       </div>
       <p>{$t.simulations.moveCopy}</p>
@@ -219,7 +214,6 @@
 
     <section class="panel scene-panel">
       <div class="heading">
-        <small>05</small>
         <h2>{$t.simulations.sceneTitle}</h2>
       </div>
 
@@ -256,27 +250,21 @@
 
 <style>
   .lab {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 6rem;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
     color: var(--text-primary);
   }
   header {
     margin-bottom: 2rem;
-    border-left: 2px solid var(--accent-gold);
-    padding-left: 1.25rem;
-  }
-  header p,
-  .heading small,
-  .create-panel small {
-    color: var(--accent-gold);
-    font: 600 0.58rem/1 var(--font-mono);
-    letter-spacing: 0.14em;
+    border-left: 0;
+    padding-left: 0;
   }
   header h1 {
-    margin: 0.35rem 0;
-    font-size: clamp(2.4rem, 6vw, 5rem);
+    margin: 0 0 0.8rem;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
     font-weight: 500;
+    line-height: 1.1;
   }
   header span,
   .ability-panel > p,
@@ -285,10 +273,11 @@
     font-size: 0.8rem;
   }
   .panel {
-    border: 1px solid var(--line-subtle);
-    border-radius: 0.6rem;
-    background: color-mix(in srgb, var(--surface-raised) 85%, transparent);
-    padding: 1.25rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line-subtle);
   }
   .create-panel > div,
   .heading {
@@ -312,9 +301,9 @@
     display: grid;
     gap: 0.35rem;
     color: var(--text-muted);
-    font: 500 0.58rem/1.2 var(--font-mono);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font: 400 0.8rem/1.5 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   select,
   input {

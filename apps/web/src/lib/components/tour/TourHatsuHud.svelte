@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   /**
    * What the technique is doing to the ship, said in words.
    *
@@ -1214,7 +1215,14 @@
                 ? `${control.key} / ${$t.tour.hatsu.keys.click}`
                 : control.key}
           </kbd>
-          <span class="text-[#FFFFF0]/70">{$t.tour.hatsu.keys.actions[control.action]}</span>
+          <span class="text-[#FFFFF0]/70">
+            {#if control.action === 'sun' || control.action === 'moon'}
+              <MangaIcon name={control.action} />
+            {:else if control.action === 'alternate'}
+              <MangaIcon name="polarity" />
+            {/if}
+            {$t.tour.hatsu.keys.actions[control.action]}
+          </span>
         </li>
       {/each}
     </ul>
@@ -1327,6 +1335,11 @@
           ? 'text-xs leading-snug text-[#FFFFF0]/40'
           : 'text-xs leading-snug text-[#FFFFF0]'}
       >
+        {#if report?.kind === 'affected-users'}
+          <MangaIcon name="warning" />
+        {:else if report?.kind === 'marked'}
+          <MangaIcon name={report.mark === 'sun' ? 'sun' : 'moon'} />
+        {/if}
         {line}
       </p>
     </div>

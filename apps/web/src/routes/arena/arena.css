@@ -38,9 +38,9 @@
   .briefing-card {
     width: min(620px, 100%);
     padding: clamp(24px, 5vw, 48px);
-    border: 1px solid rgb(255 215 0 / 45%);
-    background: linear-gradient(145deg, rgb(10 19 24 / 98%), rgb(3 8 12 / 98%));
-    box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+    border: 1px solid var(--line-default);
+    background: var(--surface-deep);
+    box-shadow: none;
     color: #fffff0;
   }
 

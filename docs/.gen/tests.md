@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 299
+Fichiers : 300
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -136,6 +136,10 @@ Fichiers : 299
 
 - Nen perception > lets Gyo reveal a Ryu distribution concealed with In
 - qualitative exchanges > resolves impacts without health or damage fields
+
+## `apps/web/src/lib/components/map/mapViewport.test.ts`
+
+- fittedMapTransform > centres a small deck and fits its hull instead of its empty SVG margins
 
 ## `apps/web/src/lib/components/map/projection/markers.test.ts`
 

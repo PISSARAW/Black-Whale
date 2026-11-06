@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { fade, scale } from 'svelte/transition'
   import { t } from '$lib/i18n'
   import { createPostcardBlob } from '$lib/tour/postcardExport'
@@ -135,7 +136,7 @@
             aria-hidden="true"
           >
             <span class="stamp-orbit"></span>
-            <span class="stamp-mark">{activeStamp.mark}</span>
+            <span class="stamp-mark"><MangaIcon glyph={activeStamp.id === 'hunter' ? undefined : activeStamp.mark} name="hunter" /></span>
             <span class="stamp-title">{activeStampCopy.title}</span>
             <span class="stamp-motto">{activeStampCopy.motto}</span>
             <span class="stamp-serial"

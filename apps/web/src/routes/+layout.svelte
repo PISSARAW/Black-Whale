@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import '../app.css'
   import { page } from '$app/stores'
   import GlobalHatsuController from '$lib/nen/GlobalHatsuController.svelte'
@@ -8,11 +9,30 @@
   import LanguageSwitcher from '$lib/i18n/LanguageSwitcher.svelte'
   import SpoilerFilter from '$lib/components/SpoilerFilter.svelte'
   import { link, routePath, t } from '$lib/i18n'
-  import { tick } from 'svelte'
+  import { onMount, tick } from 'svelte'
+  import { ambientWasEnabled, startAmbient } from '$lib/audio/ambient'
   import type { LayoutData } from './$types'
   import { PUBLIC_FEATURES } from '$lib/config/features'
 
   export let data: LayoutData
+
+  // Resume a saved audio preference even while its menu control is unmounted.
+  onMount(() => {
+    if (!ambientWasEnabled()) return
+    // Autoplay is blocked until the visitor interacts, so a returning listener's
+    // preference is honoured on their first click or key press, not on load.
+    const resume = () => {
+      void startAmbient()
+      teardown()
+    }
+    const teardown = () => {
+      window.removeEventListener('pointerdown', resume)
+      window.removeEventListener('keydown', resume)
+    }
+    window.addEventListener('pointerdown', resume, { once: true })
+    window.addEventListener('keydown', resume, { once: true })
+    return teardown
+  })
 
   let menuOpen = false
   let paletteOpen = false
@@ -29,17 +49,15 @@
   ]
 
   $: secondaryNavigation = [
-    { href: '/abilities', label: $t.nav.abilityArchive, index: '01' },
-    ...(PUBLIC_FEATURES.compare
-      ? [{ href: '/compare', label: $t.nav.comparePerspectives, index: '02' }]
-      : []),
-    { href: '/relationships', label: $t.nav.factionNetwork, index: '03' },
-    { href: '/simulations', label: $t.nav.simulations, index: '04' },
-    { href: '/tour', label: $t.nav.virtualTour, index: '05' },
-    { href: '/tour/modes', label: $t.nav.tourModes, index: '06' },
-    { href: '/tour/sources', label: $t.nav.shipSources, index: '07' },
-    { href: '/arena', label: $t.nav.arena, index: '08' },
-    { href: '/reconstruction', label: $t.nav.reconstruction, index: '09' },
+    { href: '/abilities', label: $t.nav.abilityArchive },
+    ...(PUBLIC_FEATURES.compare ? [{ href: '/compare', label: $t.nav.comparePerspectives }] : []),
+    { href: '/relationships', label: $t.nav.factionNetwork },
+    { href: '/simulations', label: $t.nav.simulations },
+    { href: '/tour', label: $t.nav.virtualTour },
+    { href: '/tour/modes', label: $t.nav.tourModes },
+    { href: '/tour/sources', label: $t.nav.shipSources },
+    { href: '/arena', label: $t.nav.arena },
+    { href: '/reconstruction', label: $t.nav.reconstruction },
   ]
 
   // Compared against the locale-stripped path, so a section stays highlighted
@@ -103,13 +121,7 @@
 
   <header class="app-header" data-hatsu-pass>
     <a href={$link('/')} class="brand" aria-label={$t.layout.brandHome} onclick={closeMenu}>
-      <span class="brand-mark" aria-hidden="true">
-        <span>BW</span>
-      </span>
-      <span class="brand-copy">
-        <strong>Black Whale</strong>
-        <small>{$t.layout.brandTagline}</small>
-      </span>
+      <strong>Black Whale</strong>
     </a>
 
     <nav class="primary-nav" aria-label={$t.layout.primaryNavigation}>
@@ -125,7 +137,6 @@
     </nav>
 
     <div class="header-meta">
-      <AmbientToggle />
       <button type="button" onclick={openPalette} aria-label={$t.layout.openQuickNavigation}>
         <span>{$t.layout.quickFind}</span><kbd>⌘K</kbd>
       </button>
@@ -165,7 +176,6 @@
       <div class="menu-scroll">
         <div class="menu-heading">
           <p>{$t.layout.menuDossier}</p>
-          <span>{$t.layout.menuClassified}</span>
         </div>
 
         <nav class="menu-primary" aria-label={$t.layout.mainSections}>
@@ -184,15 +194,13 @@
         <nav class="menu-sections" aria-label={$t.layout.archiveSections}>
           {#each secondaryNavigation as item (item.href)}
             <a href={$link(item.href)} class:active={isActive(item.href)} onclick={closeMenu}>
-              <span>{item.index}</span>
               <strong>{item.label}</strong>
-              <i aria-hidden="true">↗</i>
             </a>
           {/each}
         </nav>
 
         <button class="menu-search" type="button" onclick={openPalette}>
-          <span aria-hidden="true">⌕</span>
+          <span aria-hidden="true"><MangaIcon name="search" /></span>
           <span>{$t.layout.quickFind}</span>
         </button>
 
@@ -208,16 +216,11 @@
           />
         </div>
 
-        <!-- The header meta row is hidden on mobile, so the theme toggle and the
-             language switcher ride here. -->
+        <!-- Audio settings live in the menu; the language switcher also stays
+             reachable here when the compact header is shown. -->
         <div class="menu-audio">
           <AmbientToggle />
           <LanguageSwitcher compact />
-        </div>
-
-        <div class="menu-footer">
-          <span>{$t.layout.menuFooterExpedition}</span>
-          <span>{$t.layout.menuFooterStatus}</span>
         </div>
       </div>
     </div>
@@ -234,7 +237,6 @@
   <footer class="app-footer" data-hatsu-pass>
     <div class="footer-brand">
       <strong>Black Whale</strong>
-      <small>{$t.layout.footerTagline}</small>
     </div>
 
     <nav class="footer-nav" aria-label={$t.layout.archiveSections}>
@@ -276,199 +278,88 @@
   .app-shell {
     min-height: 100vh;
   }
-
   .app-header {
     position: sticky;
     top: 0;
     z-index: 80;
     display: grid;
-    grid-template-columns: minmax(12rem, 1fr) auto minmax(8rem, 1fr) 3.75rem;
+    grid-template-columns: minmax(10rem, 1fr) auto minmax(8rem, 1fr) 3.5rem;
     min-height: var(--header-height);
     align-items: stretch;
     border-bottom: 1px solid var(--line-subtle);
-    background: color-mix(in srgb, var(--surface-void) 91%, transparent);
-    box-shadow: 0 12px 42px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(18px) saturate(120%);
+    background: var(--surface-void);
   }
-
-  .app-header::after {
-    position: absolute;
-    right: 0;
-    bottom: -1px;
-    left: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-gold) 45%, transparent 80%);
-    content: '';
-    opacity: 0.25;
-  }
-
   .brand {
     display: flex;
-    min-width: 0;
     align-items: center;
-    gap: 0.75rem;
     padding: 0 var(--space-5);
     color: var(--text-primary);
     text-decoration: none;
   }
-
-  .brand-mark {
-    position: relative;
-    display: grid;
-    width: 2rem;
-    height: 2rem;
-    flex: none;
-    place-items: center;
-    border: 1px solid color-mix(in srgb, var(--accent-gold) 60%, transparent);
-    border-radius: 50%;
-    color: var(--accent-gold-bright);
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    letter-spacing: 0.08em;
-  }
-
-  .brand-mark::before,
-  .brand-mark::after {
-    position: absolute;
-    width: 0.25rem;
-    height: 0.25rem;
-    border-radius: 50%;
-    background: var(--accent-gold);
-    content: '';
-  }
-
-  .brand-mark::before {
-    top: -0.14rem;
-  }
-  .brand-mark::after {
-    bottom: -0.14rem;
-  }
-
-  .brand-copy {
-    display: grid;
-    line-height: 1;
-  }
-  .brand-copy strong {
+  .brand strong {
     font-family: var(--font-display);
-    font-size: 1.05rem;
-    letter-spacing: 0.025em;
+    font-size: 1.4rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
   }
-  .brand-copy small {
-    margin-top: 0.28rem;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.47rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
   .primary-nav {
     display: flex;
     align-items: stretch;
   }
-
   .primary-nav a {
-    position: relative;
     display: flex;
     align-items: center;
-    padding: 0 1.1rem;
+    padding: 0 1rem;
+    border-bottom: 2px solid transparent;
     color: var(--text-secondary);
-    font-size: 0.73rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-size: 0.8rem;
     text-decoration: none;
-    transition:
-      color var(--duration-fast) var(--ease-out),
-      background var(--duration-fast) var(--ease-out);
   }
-
   .primary-nav a:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.025);
   }
   .primary-nav a.active {
-    color: var(--accent-gold-bright);
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-gold);
   }
-  .primary-nav a.active::after {
-    position: absolute;
-    right: 1.1rem;
-    bottom: 0;
-    left: 1.1rem;
-    height: 2px;
-    background: var(--accent-gold);
-    box-shadow: 0 -3px 12px var(--accent-gold-glow);
-    content: '';
-  }
-
   .header-meta {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.8rem;
-    padding: 0 var(--space-4);
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.12em;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    font-size: 0.65rem;
   }
-
   .header-meta button {
     display: flex;
+    min-height: 44px;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.35rem 0.45rem;
+    gap: 0.6rem;
     border: 0;
-    border-radius: 0.3rem;
-    background: transparent;
-    color: var(--text-faint);
+    background: none;
+    color: var(--text-secondary);
     cursor: pointer;
     font: inherit;
-    letter-spacing: inherit;
-    text-transform: uppercase;
-  }
-  .header-meta button:hover {
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--text-primary);
   }
   .header-meta kbd {
-    padding: 0.18rem 0.28rem;
-    border: 1px solid var(--line-default);
-    border-radius: 0.2rem;
-    color: var(--accent-gold);
-    font: 0.48rem/1 var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.6rem;
   }
-
-  .header-meta > span {
-    padding-left: 0.8rem;
-    border-left: 1px solid var(--line-subtle);
-  }
-
-  /* The chip states the active cap, so it needs its label; below this width the
-     header cannot hold four items and the drawer copy takes over. */
-  @media (max-width: 1120px) {
-    .spoiler-slot {
-      display: none;
-    }
-  }
-
   .menu-toggle {
     display: grid;
-    min-width: 3rem;
+    min-width: 3.5rem;
     place-content: center;
     gap: 0.35rem;
     border: 0;
-    border-left: 1px solid var(--line-subtle);
-    background: transparent;
+    background: none;
     color: var(--text-primary);
     cursor: pointer;
   }
-
   .menu-toggle span {
     display: block;
     width: 1.1rem;
     height: 1px;
     background: currentColor;
-    transition: transform var(--duration-base) var(--ease-out);
   }
   .menu-toggle.open span:first-child {
     transform: translateY(0.2rem) rotate(45deg);
@@ -476,241 +367,128 @@
   .menu-toggle.open span:last-child {
     transform: translateY(-0.2rem) rotate(-45deg);
   }
-
   .menu-backdrop {
     position: fixed;
     z-index: 68;
     inset: var(--header-height) 0 0;
-    background: rgba(0, 0, 0, 0.62);
-    backdrop-filter: blur(4px);
-    animation: fade-in var(--duration-base) var(--ease-out);
+    background: rgba(0, 0, 0, 0.55);
   }
-
   .site-menu {
     position: fixed;
     z-index: 72;
     top: var(--header-height);
     right: 0;
     bottom: 0;
-    width: min(34rem, 100%);
+    width: min(27rem, 100%);
     border-left: 1px solid var(--line-default);
-    background: linear-gradient(145deg, rgba(18, 28, 34, 0.98), rgba(6, 9, 11, 0.99));
-    box-shadow: -30px 0 80px rgba(0, 0, 0, 0.36);
-    animation: menu-in var(--duration-slow) var(--ease-expo);
+    background: var(--surface-deep);
   }
-
   .site-menu:focus {
     outline: none;
   }
-
   .menu-scroll {
-    display: grid;
-    height: 100%;
-    grid-template-rows: auto 1fr auto;
-    overflow-y: auto;
-    padding: clamp(1.5rem, 4vw, 3.5rem);
-    padding-bottom: max(clamp(1.5rem, 4vw, 3.5rem), env(safe-area-inset-bottom));
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .menu-heading,
-  .menu-footer {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.56rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    height: 100%;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    padding: 1.5rem 2rem max(2rem, env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
   }
   .menu-heading p {
     margin: 0;
-    color: var(--accent-gold);
-  }
-  .menu-sections {
-    align-self: center;
-  }
-
-  /* Primary destinations, search and the theme toggle live in the header on desktop. */
-  .menu-primary,
-  .menu-search,
-  .menu-audio {
-    display: none;
-  }
-
-  .menu-spoiler {
-    display: grid;
-    padding-top: 1rem;
-    border-top: 1px solid var(--line-subtle);
     color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
   }
-
   .menu-sections a {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr auto;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 0.9rem 0;
+    display: block;
+    min-height: 44px;
+    padding: 0.75rem 0;
     border-bottom: 1px solid var(--line-subtle);
-    color: var(--text-primary);
+    color: var(--text-secondary);
     text-decoration: none;
-    transition:
-      color var(--duration-fast) var(--ease-out),
-      padding var(--duration-base) var(--ease-out);
   }
-
-  .menu-sections a:hover {
-    padding-left: 0.5rem;
-    color: var(--accent-gold-bright);
+  .menu-sections a strong {
+    font-size: 0.95rem;
+    font-weight: 400;
   }
+  .menu-sections a:hover,
   .menu-sections a.active {
     color: var(--accent-gold-bright);
   }
-  .menu-sections a.active > span {
-    color: var(--accent-gold);
+  .menu-primary,
+  .menu-search {
+    display: none;
   }
-  .menu-sections a > span {
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.56rem;
-  }
-  .menu-sections a strong {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-  }
-  .menu-sections a i {
-    color: var(--accent-gold);
-    font-style: normal;
-    font-size: 0.8rem;
-  }
-  .menu-footer {
-    align-self: end;
+  .menu-spoiler {
     padding-top: 1rem;
     border-top: 1px solid var(--line-subtle);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
   }
-
+  .menu-audio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
   .app-footer {
     display: grid;
-    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
-    gap: 2rem clamp(2rem, 6vw, 5rem);
+    grid-template-columns: 1fr 3fr;
+    gap: 1.5rem 3rem;
+    margin: 0 auto;
+    padding: 2rem var(--page-gutter) max(2rem, env(safe-area-inset-bottom));
     border-top: 1px solid var(--line-subtle);
-    background: color-mix(in srgb, var(--surface-void) 96%, transparent);
-    padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem)
-      max(clamp(2rem, 5vw, 3.5rem), env(safe-area-inset-bottom));
   }
-
   .footer-brand strong {
-    display: block;
-    color: var(--text-primary);
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    letter-spacing: 0.025em;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
-  .footer-brand small {
-    display: block;
-    margin-top: 0.4rem;
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
   .footer-nav p {
-    margin: 0 0 0.9rem;
-    color: var(--accent-gold);
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    margin: 0 0 1rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
-
   .footer-nav ul {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
     margin: 0;
     padding: 0;
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-    gap: 0.55rem 1.5rem;
     list-style: none;
   }
-
   .footer-nav a {
     color: var(--text-secondary);
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     text-decoration: none;
-    transition: color var(--duration-fast) var(--ease-out);
   }
   .footer-nav a:hover {
-    color: var(--accent-gold-bright);
+    color: var(--text-primary);
+    text-decoration: underline;
   }
-
   .footer-legal {
     display: grid;
-    gap: 0.35rem;
     grid-column: 1 / -1;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--line-subtle);
-    color: var(--text-faint);
-    font-family: var(--font-mono);
-    font-size: 0.54rem;
-    letter-spacing: 0.1em;
+    gap: 0.4rem;
+    padding-top: 1rem;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    line-height: 1.6;
   }
-
   .footer-credit a {
-    color: var(--text-secondary);
     text-decoration: underline;
-    text-decoration-color: var(--line-strong);
     text-underline-offset: 0.2em;
-    transition: color var(--duration-fast) var(--ease-out);
   }
-  .footer-credit a:hover {
-    color: var(--accent-gold-bright);
-  }
-
   .route-shell {
     min-height: calc(100vh - var(--header-height));
-    animation: route-enter var(--duration-slow) var(--ease-expo) both;
   }
-
-  @keyframes route-enter {
-    from {
-      opacity: 0;
-      transform: translateY(0.65rem);
-      clip-path: inset(0 0 4% 0);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      clip-path: inset(0);
+  @media (max-width: 1200px) {
+    .spoiler-slot {
+      display: none;
     }
   }
-
-  @keyframes menu-in {
-    from {
-      opacity: 0;
-      transform: translateX(2rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
   @media (max-width: 800px) {
     .app-header {
       grid-template-columns: 1fr auto;
@@ -722,138 +500,38 @@
     .brand {
       padding-inline: 1rem;
     }
-    .brand-copy small {
-      display: none;
-    }
-
-    .menu-toggle {
-      min-width: 3.25rem;
-    }
-    .menu-toggle span {
-      width: 1.25rem;
-    }
-
-    .menu-backdrop {
-      inset: 0;
-    }
-
-    .site-menu {
-      top: 0;
-      left: 0;
-      width: 100%;
-      border-left: 0;
-      border-top: 1px solid var(--line-subtle);
-    }
-
     .menu-scroll {
-      grid-template-rows: auto auto auto auto auto;
-      align-content: start;
-      gap: 1.25rem;
-      padding: calc(var(--header-height) + 1rem) 1.25rem max(1.5rem, env(safe-area-inset-bottom));
+      padding-inline: 1.25rem;
     }
-
-    .menu-heading {
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    /* The primary destinations are unreachable from the header on mobile,
-       so the drawer carries them as a compact pill row. */
     .menu-primary {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
     }
-
     .menu-primary a {
       display: flex;
-      min-height: 3rem;
+      min-height: 44px;
       align-items: center;
-      justify-content: center;
-      padding: 0.5rem;
-      border: 1px solid var(--line-subtle);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text-secondary);
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-align: center;
+      padding: 0.6rem 0;
+      color: var(--text-primary);
+      font-size: 1rem;
       text-decoration: none;
     }
-
     .menu-primary a.active {
-      border-color: var(--line-strong);
-      background: var(--accent-gold-glow);
       color: var(--accent-gold-bright);
     }
-
-    .menu-sections {
-      align-self: start;
-    }
-    .menu-sections a {
-      min-height: 3.25rem;
-      align-items: center;
-      padding: 0.55rem 0;
-      gap: 0.75rem;
-      grid-template-columns: 1.75rem 1fr auto;
-    }
-    .menu-sections a strong {
-      font-size: 1.4rem;
-    }
-    .menu-sections a:hover {
-      padding-left: 0;
-    }
-
     .menu-search {
       display: flex;
-      min-height: 3rem;
+      min-height: 44px;
       align-items: center;
       gap: 0.6rem;
-      padding: 0 0.9rem;
-      border: 1px solid var(--line-default);
-      border-radius: var(--radius-sm);
-      background: transparent;
-      color: var(--text-muted);
+      padding: 0.6rem 0;
+      border: 0;
+      background: none;
+      color: var(--text-secondary);
       cursor: pointer;
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-size: 0.85rem;
     }
-
-    .menu-search > span:first-child {
-      color: var(--accent-gold);
-      font-size: 1rem;
-    }
-
-    .menu-audio {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-    }
-
-    .menu-footer {
-      flex-direction: column;
-      gap: 0.3rem;
-      align-self: start;
-      padding-top: 0.75rem;
-    }
-
     .app-footer {
       grid-template-columns: 1fr;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .route-shell,
-    .site-menu,
-    .menu-backdrop {
-      animation: none;
     }
   }
 </style>

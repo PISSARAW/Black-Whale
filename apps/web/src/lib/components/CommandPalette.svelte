@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { goto } from '$app/navigation'
   import { tick } from 'svelte'
   import { link, t } from '$lib/i18n'
@@ -140,7 +141,7 @@
             <button type="button" class:featured={index === 0} onclick={() => navigate(item.href)}>
               <span class="command-code">{item.code}</span>
               <span><strong>{item.label}</strong><small>{item.group}</small></span>
-              <i aria-hidden="true">↗</i>
+              <i aria-hidden="true"><MangaIcon name="arrowUpRight" /></i>
             </button>
           {/each}
         {:else}

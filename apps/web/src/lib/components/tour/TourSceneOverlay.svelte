@@ -190,7 +190,7 @@
 <p class="sr-only" aria-live="polite" aria-atomic="true">{spoken}</p>
 
 {#if location}
-  <div class="pointer-events-none absolute left-3 top-14 max-w-sm">
+  <div class="pointer-events-none absolute left-3 top-14 max-w-[min(24rem,calc(100%-8rem))]">
     <p class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">
       {location.level}{#if hour}<span class="ml-2 text-[#FFFFF0]/40">{hour}</span>{/if}
     </p>
@@ -201,9 +201,6 @@
         >{location.badge}</span
       >
     {/if}
-    {#if location.source}<p class="mt-1 text-xs leading-snug text-[#FFFFF0]/60">
-        {location.source}
-      </p>{/if}
   </div>
 {/if}
 

@@ -12,7 +12,7 @@ export default {
       },
       fontFamily: {
         sans: ['Manrope', 'Avenir Next', 'sans-serif'],
-        condensed: ['Barlow Condensed', 'Arial Narrow', 'sans-serif'],
+        condensed: ['var(--font-display)'],
         mono: ['IBM Plex Mono', 'monospace'],
       },
     },

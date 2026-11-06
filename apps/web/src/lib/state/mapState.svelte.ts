@@ -46,6 +46,7 @@ export const mapState = $state({
     canonicalValue?: string
   },
   currentEventIndex: 0,
+  showEntities: false,
   filters: {
     entityType: 'all' as MapEntityFilter,
     factions: [] as string[],
@@ -85,6 +86,7 @@ export const mapState = $state({
   setTrackedTarget(id: string, kind: TrackingTargetKind) {
     this.trackedTargetId = id
     this.trackedTargetKind = kind
+    if (kind !== 'reader') this.showEntities = true
   },
 
   setFollowMode(mode: FollowMode) {
@@ -125,13 +127,23 @@ export const mapState = $state({
 
   setBeyondLineageFilter(filter: BeyondLineageFilter) {
     this.filters.beyondLineage = filter
+    this.showEntities = true
   },
 
   setEntityTypeFilter(filter: MapEntityFilter) {
     this.filters.entityType = filter
+    this.showEntities = true
+  },
+
+  resetFilters() {
+    this.filters.entityType = 'all'
+    this.filters.factions = []
+    this.filters.beyondLineage = 'all'
+    this.filters.showUnknownPositions = false
   },
 
   toggleFactionFilter(factionId: string) {
+    this.showEntities = true
     if (this.filters.factions.includes(factionId)) {
       this.filters.factions = this.filters.factions.filter((f) => f !== factionId)
     } else {

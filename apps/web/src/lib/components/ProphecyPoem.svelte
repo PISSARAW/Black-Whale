@@ -64,12 +64,10 @@
   .sheet {
     display: grid;
     gap: 1.5rem;
-    padding: clamp(1.4rem, 3vw, 2.4rem);
-    border: 1px solid var(--line-default);
+    padding: 0 0 0 1.25rem;
+    border: 0;
     border-left: 2px solid var(--accent-gold);
-    background:
-      radial-gradient(circle at 12% 0%, rgba(200, 169, 86, 0.07), transparent 45%),
-      linear-gradient(160deg, rgba(23, 38, 45, 0.5), transparent);
+    background: none;
   }
   header {
     display: flex;
@@ -83,9 +81,9 @@
   .sheet-code {
     margin: 0;
     color: var(--accent-gold);
-    font: 0.5rem/1 var(--font-mono);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font: 0.75rem/1.5 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   header dl {
     display: flex;
@@ -94,14 +92,14 @@
   }
   header dt {
     color: var(--text-faint);
-    font: 0.45rem/1.6 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font: 0.7rem/1.6 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   header dd {
     margin: 0;
     color: var(--text-secondary);
-    font: 0.6rem/1.4 var(--font-mono);
+    font: 0.8rem/1.5 var(--font-sans);
   }
   .desire {
     display: grid;
@@ -113,9 +111,9 @@
   }
   .desire span {
     color: var(--text-faint);
-    font: 0.45rem/1 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font: 0.75rem/1.5 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   blockquote {
     display: grid;
@@ -142,9 +140,9 @@
   details summary {
     color: var(--text-secondary);
     cursor: pointer;
-    font: 0.55rem/1.6 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font: 0.8rem/1.6 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
   }
   details summary:hover {
     color: var(--accent-gold-bright);
@@ -161,7 +159,7 @@
     padding-top: 1rem;
     border-top: 1px solid var(--line-subtle);
     color: var(--text-faint);
-    font: 0.5rem/1.7 var(--font-mono);
-    letter-spacing: 0.05em;
+    font: 0.75rem/1.7 var(--font-sans);
+    letter-spacing: 0;
   }
 </style>

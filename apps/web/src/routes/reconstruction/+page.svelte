@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
   import { onDestroy } from 'svelte'
   import { goto } from '$app/navigation'
@@ -776,7 +777,6 @@
 <main class="reconstruction-shell">
   <header class="masthead" data-hatsu-pass>
     <div>
-      <p class="eyebrow">{$t.reconstruction.eyebrow}</p>
       <h1>{$t.reconstruction.title}</h1>
       <p>{$t.reconstruction.intro}</p>
     </div>
@@ -1129,7 +1129,7 @@
       <button
         class="play"
         aria-label={isPlaying ? $t.reconstruction.pause : $t.reconstruction.play}
-        onclick={togglePlay}>{isPlaying ? 'Ⅱ' : '▶'}</button
+        onclick={togglePlay}><MangaIcon name={isPlaying ? 'pause' : 'play'} /></button
       >
       <button
         aria-label={$t.reconstruction.next}
@@ -1155,9 +1155,9 @@
   }
   .reconstruction-shell {
     min-height: 100vh;
-    background: #030608;
+    background: var(--surface-void);
     color: #edf1ee;
-    padding: 6rem 1.25rem 5.5rem;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
   }
   .error-state {
     max-width: 46rem;
@@ -1176,15 +1176,6 @@
     padding: 0.55rem 0.9rem;
     color: #e5c57a;
     cursor: pointer;
-  }
-  .error-state details {
-    margin-top: 1.25rem;
-    color: rgba(237, 241, 238, 0.65);
-  }
-  .error-state code {
-    display: block;
-    margin-top: 0.6rem;
-    overflow-wrap: anywhere;
   }
   .evidence-panel ul {
     display: grid;
@@ -1266,10 +1257,10 @@
   }
   .masthead h1 {
     margin: 0.15rem 0 0.35rem;
-    font-family: Georgia, serif;
-    font-size: clamp(2rem, 4vw, 4.2rem);
-    font-weight: 400;
-    line-height: 1;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.1;
   }
   .masthead > div > p:last-child {
     max-width: 48rem;
@@ -1286,7 +1277,7 @@
   }
   .mode-switch {
     display: flex;
-    border: 1px solid rgba(237, 241, 238, 0.16);
+    border: 0;
     padding: 0.2rem;
   }
   .mode-switch button {
@@ -1295,8 +1286,8 @@
     padding: 0.65rem 0.9rem;
     color: rgba(237, 241, 238, 0.58);
     font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    text-transform: none;
+    letter-spacing: 0;
   }
   .mode-switch button.active {
     background: rgba(229, 197, 122, 0.13);

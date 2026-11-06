@@ -65,12 +65,7 @@
   }: Props = $props()
 </script>
 
-<section
-  id="tour-stage-container"
-  class="relative overflow-hidden {immersive
-    ? 'h-full min-h-0'
-    : 'min-h-[420px] rounded-lg border border-[#333] lg:h-[70vh]'}"
->
+<section id="tour-stage-container" class="tour-stage" class:immersive>
   <TourScene
     bind:tierId={navigation.tierId}
     bind:currentSpace={navigation.currentSpace}
@@ -105,3 +100,21 @@
   -->
   <TourFrameBudget />
 </section>
+
+<style>
+  .tour-stage {
+    position: relative;
+    min-width: 0;
+    height: min(70svh, 800px);
+    min-height: 360px;
+    overflow: hidden;
+    border: 1px solid var(--line-default);
+    border-radius: 3px;
+  }
+  .tour-stage.immersive {
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+</style>

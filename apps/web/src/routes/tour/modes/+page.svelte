@@ -56,20 +56,17 @@
 />
 
 <main class="modes-shell">
-  <div class="modes-glow" aria-hidden="true"></div>
   <header>
     <nav aria-label="Breadcrumb" class="breadcrumb">
       <a href={$link('/tour')}>{$t.nav.virtualTour}</a><span>/</span><span>{$t.nav.tourModes}</span>
     </nav>
-    <p class="eyebrow">{$t.tour.modes.eyebrow}</p>
     <h1>{$t.tour.modes.title}</h1>
     <p class="intro">{$t.tour.modes.intro}</p>
   </header>
 
   <section class="mode-grid" aria-label={$t.nav.tourModes}>
     {#each modes as mode (mode.key)}
-      <a class="mode-card" href={$link(mode.href)} style={`--accent: ${mode.accent}`}>
-        <span class="number">{mode.number}</span>
+      <a class="mode-card" href={$link(mode.href)}>
         <span class="tag">{mode.copy.tag}</span>
         <h2>{mode.copy.title}</h2>
         <p>{mode.copy.description}</p>
@@ -81,150 +78,81 @@
 
 <style>
   .modes-shell {
-    position: relative;
-    isolation: isolate;
-    min-height: 75vh;
-    overflow: hidden;
-    padding: clamp(2.5rem, 7vw, 6rem) max(1rem, calc((100vw - 1400px) / 2));
-    background: #07090a;
-    color: #fffff0;
-  }
-  .modes-glow {
-    position: absolute;
-    z-index: -1;
-    top: -20rem;
-    left: 35%;
-    width: 45rem;
-    height: 45rem;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.09), transparent 68%);
+    max-width: 1280px;
+    margin: auto;
+    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
   }
   header {
-    max-width: 52rem;
-    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+    margin-bottom: 2.5rem;
   }
   .breadcrumb {
     display: flex;
-    gap: 0.65rem;
-    margin-bottom: 2rem;
-    color: rgba(255, 255, 240, 0.45);
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
     font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
   }
-  .breadcrumb a:hover {
-    color: #ffd700;
-  }
-  .eyebrow {
-    color: #ffd700;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+  .breadcrumb a {
+    color: var(--text-secondary);
+    text-decoration: none;
   }
   h1 {
-    margin-top: 0.8rem;
-    font-size: clamp(2.6rem, 7vw, 5.5rem);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -0.05em;
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
   .intro {
-    max-width: 45rem;
-    margin-top: 1.5rem;
-    color: rgba(255, 255, 240, 0.65);
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    line-height: 1.7;
+    max-width: 48rem;
+    margin-top: 0.8rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.75;
   }
   .mode-grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem;
   }
   .mode-card {
-    --accent: #ffd700;
-    position: relative;
     display: flex;
-    min-height: 19rem;
-    grid-column: span 4;
     flex-direction: column;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 240, 0.12);
-    border-radius: 0.4rem;
-    padding: 1.6rem;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
-    transition:
-      transform 0.25s ease,
-      border-color 0.25s ease,
-      background 0.25s ease;
-  }
-  .mode-card::before {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 2px;
-    background: var(--accent);
-    content: '';
-    transform: scaleX(0.22);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
-  .mode-card:hover,
-  .mode-card:focus-visible {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    background: rgba(255, 255, 255, 0.065);
-    outline: none;
-  }
-  .mode-card:hover::before,
-  .mode-card:focus-visible::before {
-    transform: scaleX(1);
-  }
-  .number {
-    align-self: flex-end;
-    color: rgba(255, 255, 240, 0.25);
-    font: 600 0.75rem/1 monospace;
+    align-items: start;
+    min-width: 0;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line-default);
+    text-decoration: none;
   }
   .tag {
-    width: fit-content;
-    margin-top: 2rem;
-    color: var(--accent);
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    color: var(--text-muted);
+    font-size: 0.75rem;
   }
   h2 {
-    margin-top: 0.65rem;
-    font-size: 1.55rem;
-    font-weight: 750;
-    letter-spacing: -0.025em;
+    margin: 0.5rem 0;
+    font: 500 1.1rem/1.5 var(--font-sans);
   }
   .mode-card p {
-    margin-top: 0.8rem;
-    color: rgba(255, 255, 240, 0.58);
-    font-size: 0.9rem;
-    line-height: 1.6;
+    margin: 0 0 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.75;
   }
   .action {
-    margin-top: auto;
-    padding-top: 1.5rem;
-    color: var(--accent);
-    font-size: 0.76rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 1rem;
+    color: var(--accent-gold-bright);
+    font-size: 0.8rem;
   }
-  @media (max-width: 900px) {
-    .mode-card {
-      grid-column: span 6;
-    }
+  .mode-card:hover h2 {
+    color: var(--accent-gold-bright);
   }
-  @media (max-width: 580px) {
-    .mode-card {
-      min-height: 16rem;
-      grid-column: 1 / -1;
+  @media (max-width: 700px) {
+    .mode-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

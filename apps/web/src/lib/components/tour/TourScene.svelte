@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   /**
    * The first-person walk through the reconstruction.
    *
@@ -5171,7 +5172,7 @@
               : ''}
             style:color={auraColour ?? '#FFFFF0'}
           >
-            {mark.glyph}
+            <MangaIcon glyph={mark.glyph} />
           </button>
         {/each}
       {:else if aiming}

@@ -5,14 +5,21 @@
   import { mapState } from '$lib/state/mapState.svelte'
   import { getMapAsset, resolveMapAssetKey } from '$lib/map/mapAssetRegistry'
   import MapOverlay from './MapOverlay.svelte'
+  import { fittedMapTransform } from './mapViewport'
+  import { activeHatsu } from '$lib/nen/hatsuState'
 
   let containerEl: HTMLElement | undefined = $state()
   let pz: ReturnType<typeof panzoom> | undefined
   let zoomPercent = $state(100)
+  let fittedScale = 1
+
+  $effect(() => {
+    if ($activeHatsu) mapState.showEntities = true
+  })
 
   function syncZoom() {
     if (!pz) return
-    zoomPercent = Math.round(pz.getTransform().scale * 100)
+    zoomPercent = Math.round((pz.getTransform().scale / fittedScale) * 100)
   }
 
   function zoomBy(factor: number) {
@@ -22,9 +29,18 @@
   }
 
   function resetView() {
-    if (!pz) return
-    pz.moveTo(0, 0)
-    pz.zoomAbs(0, 0, 1)
+    if (!pz || !containerEl) return
+    const svg = containerEl.querySelector<SVGSVGElement>(':scope > svg')
+    const transform = svg
+      ? fittedMapTransform({
+          viewport: { width: containerEl.clientWidth, height: containerEl.clientHeight },
+          viewBox: svg.viewBox.baseVal,
+          drawing: svg.getBBox(),
+        })
+      : { x: 0, y: 0, scale: 1 }
+    fittedScale = transform.scale
+    pz.zoomAbs(0, 0, transform.scale)
+    pz.moveTo(transform.x, transform.y)
     zoomPercent = 100
   }
 
@@ -67,9 +83,12 @@
       pz = instance
       instance.on('zoom', syncZoom)
       instance.on('transform', syncZoom)
+      const observer = new ResizeObserver(() => resetView())
+      observer.observe(containerEl)
 
       return () => {
         instance.dispose()
+        observer.disconnect()
         if (pz === instance) pz = undefined
       }
     }
@@ -77,8 +96,12 @@
 
   // Re-center or adjust zoom when level changes
   $effect(() => {
+    // Two decks share the TIER zoom level but have different plans.
+    // Read both selections so switching plans also restores the framing.
+    void mapState.selectedTier
+    void mapState.selectedLocationId
     if (pz && mapState.currentZoomLevel) {
-      resetView()
+      void tick().then(resetView)
     }
   })
 
@@ -97,8 +120,7 @@
     const instance = pz
 
     if (trackedTargetKind === 'reader' && perspectiveKind === 'reader') {
-      instance.moveTo(0, 0)
-      instance.zoomAbs(0, 0, 1)
+      void tick().then(resetView)
       return
     }
 
@@ -183,7 +205,7 @@
     {/if}
 
     <!-- Dynamic Overlay for characters -->
-    <MapOverlay />
+    {#if mapState.showEntities}<MapOverlay />{/if}
   </div>
 
   <div class="zoom-controls" data-hatsu-pass aria-label={$t.mapUi.zoomControls}>
@@ -232,7 +254,7 @@
     top: 1rem;
     right: 1rem;
     display: grid;
-    grid-template-columns: 2rem 3.4rem 2rem 2rem;
+    grid-template-columns: 2.75rem 3rem 2.75rem 2.75rem;
     align-items: center;
     overflow: hidden;
     border: 1px solid rgba(101, 126, 133, 0.35);
@@ -243,7 +265,7 @@
   }
   .zoom-controls button {
     display: grid;
-    height: 2rem;
+    height: 2.75rem;
     place-items: center;
     border: 0;
     border-right: 1px solid rgba(101, 126, 133, 0.2);

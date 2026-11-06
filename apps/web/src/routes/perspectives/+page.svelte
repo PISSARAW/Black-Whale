@@ -58,7 +58,7 @@
   ])}
 />
 
-<div class="max-w-7xl mx-auto p-6">
+<div class="archive-page">
   <header class="mb-10">
     <h1 class="text-3xl font-bold text-bw-gold mb-2">{$t.perspectives.title}</h1>
     <p class="text-gray-400">{$t.perspectives.intro}</p>
@@ -84,9 +84,7 @@
   </header>
 
   <!-- Formulaire de configuration -->
-  <div
-    class="bg-bw-navy border border-bw-gold/20 p-6 rounded-xl mb-10 flex flex-col md:flex-row gap-6 items-end"
-  >
+  <div class="border-y border-white/10 py-5 mb-8 flex flex-col md:flex-row gap-6 items-end">
     <div class="flex-1 relative w-full">
       <label for="perspective-event" class="block text-sm text-gray-400 mb-1"
         >{$t.perspectives.pointInTime}</label
@@ -96,14 +94,14 @@
           id="perspective-event"
           type="text"
           placeholder={$t.perspectives.searchEventPlaceholder}
-          class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none placeholder-gray-600"
+          class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-sm focus:border-bw-gold focus:outline-none placeholder-gray-600"
           bind:value={searchEventQuery}
           on:focus={() => (showEventDropdown = true)}
           on:blur={() => setTimeout(() => (showEventDropdown = false), 200)}
         />
         {#if selectedEvent && !showEventDropdown}
           <div
-            class="absolute inset-y-0 left-0 right-0 p-3 bg-bw-dark border border-bw-gold/50 rounded-lg pointer-events-none truncate text-bw-gold"
+            class="absolute inset-y-0 left-0 right-0 p-3 bg-bw-dark border border-bw-gold/50 rounded-sm pointer-events-none truncate text-bw-gold"
           >
             {$t.perspectives.eventOption(selectedEvent.chapter.number, selectedEvent.title)}
           </div>
@@ -112,7 +110,7 @@
 
       {#if showEventDropdown}
         <div
-          class="absolute z-10 w-full mt-1 bg-bw-dark border border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+          class="absolute z-10 w-full mt-1 bg-bw-dark border border-gray-700 rounded-sm max-h-60 overflow-y-auto"
         >
           {#each filteredEvents as event (event.id)}
             <button
@@ -140,7 +138,7 @@
         id="observer-a"
         bind:value={selectedLeft}
         on:change={submitForm}
-        class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
+        class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-sm focus:border-bw-gold focus:outline-none"
       >
         <option value="" disabled>{$t.perspectives.chooseCharacter}</option>
         {#each data.characters as char (char.id)}
@@ -157,7 +155,7 @@
         id="observer-b"
         bind:value={selectedRight}
         on:change={submitForm}
-        class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-lg focus:border-bw-gold focus:outline-none"
+        class="w-full bg-bw-dark border border-gray-700 text-white p-3 rounded-sm focus:border-bw-gold focus:outline-none"
       >
         <option value="">{$t.perspectives.noneSingleView}</option>
         {#each data.characters as char (char.id)}
@@ -171,14 +169,14 @@
 
   <!-- Résultat -->
   {#if !selectedEventId || !selectedLeft}
-    <div class="py-20 text-center border border-dashed border-gray-700 rounded-xl">
+    <div class="py-20 text-center border border-dashed border-gray-700 rounded-sm">
       <p class="text-gray-500">{$t.perspectives.selectPrompt}</p>
     </div>
   {:else if selectedRight && data.comparison}
     <!-- Mode Comparaison -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- Fiche Gauche -->
-      <div class="bg-bw-dark border border-gray-800 rounded-xl p-6">
+      <div class="bg-bw-dark border border-gray-800 rounded-sm p-6">
         <h2 class="text-2xl font-bold text-bw-gold mb-4 border-b border-gray-800 pb-2">
           {getCharacterName(selectedLeft)}
         </h2>
@@ -187,7 +185,7 @@
           {$t.perspectives.identityState}
         </h3>
         <div
-          class="bg-bw-navy/50 p-4 rounded-lg border border-gray-800 mb-6 font-mono text-xs text-gray-300"
+          class="bg-bw-navy/50 p-4 rounded-sm border border-gray-800 mb-6 font-mono text-xs text-gray-300"
         >
           <p>
             {$t.perspectives.occupiedBody}:
@@ -222,7 +220,7 @@
       </div>
 
       <!-- Fiche Droite -->
-      <div class="bg-bw-dark border border-gray-800 rounded-xl p-6">
+      <div class="bg-bw-dark border border-gray-800 rounded-sm p-6">
         <h2 class="text-2xl font-bold text-bw-gold mb-4 border-b border-gray-800 pb-2">
           {getCharacterName(selectedRight)}
         </h2>
@@ -231,7 +229,7 @@
           {$t.perspectives.identityState}
         </h3>
         <div
-          class="bg-bw-navy/50 p-4 rounded-lg border border-gray-800 mb-6 font-mono text-xs text-gray-300"
+          class="bg-bw-navy/50 p-4 rounded-sm border border-gray-800 mb-6 font-mono text-xs text-gray-300"
         >
           <p>
             {$t.perspectives.occupiedBody}:
@@ -267,13 +265,13 @@
     </div>
 
     <!-- Section Différences -->
-    <div class="mt-8 bg-bw-navy/30 border border-bw-gold/30 rounded-xl p-6">
+    <div class="mt-8 bg-bw-navy/30 border border-bw-gold/30 rounded-sm p-6">
       <h3 class="text-xl font-bold text-white mb-4">{$t.perspectives.differencesTitle}</h3>
 
       <div class="space-y-3">
         {#each data.comparison as diff, diffIndex (diffIndex)}
           <div
-            class="p-4 rounded-lg border flex items-center justify-between
+            class="p-4 rounded-sm border flex items-center justify-between
             {diff.differenceType === 'CONTRADICTION'
               ? 'bg-red-900/20 border-red-500/50'
               : 'bg-bw-dark border-gray-700'}"
@@ -329,7 +327,7 @@
     </div>
   {:else if data.leftPerspective}
     <!-- Mode Simple (Un seul observateur) -->
-    <div class="bg-bw-dark border border-gray-800 rounded-xl p-8 max-w-3xl mx-auto">
+    <div class="bg-bw-dark border border-gray-800 rounded-sm p-8 max-w-3xl mx-auto">
       <h2 class="text-3xl font-bold text-bw-gold mb-6 pb-4 border-b border-gray-800">
         {$t.perspectives.perspectiveOf(getCharacterName(selectedLeft))}
       </h2>
@@ -344,13 +342,13 @@
         </h3>
 
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-bw-navy p-4 rounded-lg border border-gray-800">
+          <div class="bg-bw-navy p-4 rounded-sm border border-gray-800">
             <span class="block text-xs text-gray-500 mb-1">{$t.perspectives.occupiedBody}</span>
             <span class="font-mono text-white text-sm"
               >{data.leftPerspective.observer?.currentBodyId || $t.perspectives.notFound}</span
             >
           </div>
-          <div class="bg-bw-navy p-4 rounded-lg border border-gray-800">
+          <div class="bg-bw-navy p-4 rounded-sm border border-gray-800">
             <span class="block text-xs text-gray-500 mb-1">{$t.perspectives.consciousness}</span>
             <span class="font-mono text-white text-sm"
               >{data.leftPerspective.observer?.consciousnessId || $t.perspectives.notFound}</span
@@ -371,7 +369,7 @@
         <div class="space-y-4">
           {#each data.leftPerspective.knownFacts || [] as fact (fact.id)}
             <div
-              class="p-4 bg-gray-900 rounded-lg border border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              class="p-4 bg-gray-900 rounded-sm border border-gray-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
             >
               <div>
                 <span
@@ -396,7 +394,7 @@
 
           {#if !data.leftPerspective.knownFacts || data.leftPerspective.knownFacts.length === 0}
             <div
-              class="p-8 text-center border border-dashed border-gray-800 rounded-lg text-gray-500 italic"
+              class="p-8 text-center border border-dashed border-gray-800 rounded-sm text-gray-500 italic"
             >
               {$t.perspectives.noVerifiedKnowledge}
             </div>

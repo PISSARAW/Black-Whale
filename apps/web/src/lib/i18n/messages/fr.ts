@@ -36,7 +36,7 @@ export const fr: Messages = {
     },
     rateLimited: {
       title: 'Trop de requêtes',
-      body: 'Les archives limitent les écritures pour qu’un seul visiteur ne dépense pas tout le navire. Patientez un instant puis réessayez.',
+      body: 'Les archives limitent les écritures pour éviter qu’un seul visiteur ne sature le service. Patientez un instant puis réessayez.',
     },
     server: {
       title: 'Les archives n’ont pas pu répondre',
@@ -350,7 +350,7 @@ export const fr: Messages = {
       `${metres.toLocaleString('fr-FR')} m de coque reconstruite, de la proue à la poupe`,
     counts: (spaces, decks, interiors) =>
       `${spaces} espaces reconstruits sur ${decks} ponts, dont ${interiors} intérieurs de pièces à leur propre échelle`,
-    minimap: (deckName) => `Plan du ${deckName}`,
+    minimap: (deckName) => `Plan — ${deckName}`,
     jumpTo: 'Rejoindre un espace',
     takeLink: (destination) => `Appuyez sur E pour rejoindre ${destination} par l'escalier`,
     takeBulkhead: (destination) => `Appuyez sur E pour franchir la cloison vers ${destination}`,
@@ -359,7 +359,7 @@ export const fr: Messages = {
     gangway: { extend: 'Déployer la passerelle', retract: 'Rétracter la passerelle' },
     enterInterior: (destination) => `Appuyez sur E pour entrer dans ${destination}`,
     leaveInterior: (destination) => `Appuyez sur E pour ressortir vers ${destination}`,
-    insideOf: (room) => `Intérieur de ${room}`,
+    insideOf: (room) => `Intérieur — ${room}`,
     atFullSize: 'Dessiné à sa propre échelle',
     controls: {
       title: 'Commandes',
@@ -941,8 +941,8 @@ export const fr: Messages = {
           subject === 'soi'
             ? 'rompre le serment, c’est se transpercer le cœur'
             : `ne pas porter la main sur ${subject}`,
-        dormant: 'DORMANT',
-        triggered: 'TRIGGERED',
+        dormant: 'EN SOMMEIL',
+        triggered: 'DÉCLENCHÉ',
         locked: 'Le contrat est énoncé une fois, à l’activation, et jamais retouché',
       },
       pain: {
@@ -2695,7 +2695,7 @@ export const fr: Messages = {
 
     spaces: (count) => `${count} espace${count === 1 ? '' : 's'}`,
     walkThere: (name) => `Marcher jusqu’à ${name}`,
-    insideOf: (room) => `intérieur de ${room}`,
+    insideOf: (room) => `intérieur — ${room}`,
     noMatch: 'Aucun espace ne correspond.',
 
     links: {
@@ -3153,7 +3153,7 @@ export const fr: Messages = {
     lifeConsumed: (hours) => `VIE CONSUMÉE · ${hours} / 8 760 H`,
     trays: {
       pocket: 'FUN FUN CLOTH',
-      vacuum: 'BLINKY STORAGE',
+      vacuum: 'RÉSERVE DE BLINKY',
       relay: 'RELAIS DE TRANSPORT',
       hidden: 'ESPACE CACHÉ',
     },

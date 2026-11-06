@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { readDataFile, type CatalogCharacter } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
 
@@ -17,7 +18,7 @@ interface CatalogChapter {
 // The homepage advertises the size of the archive. Every figure it shows is
 // counted from the catalogue at request time so the numbers cannot drift away
 // from the data the rest of the site serves.
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = localizedLoad(async (_event: Parameters<PageServerLoad>[0]) => {
   const [characters, locations, chapters, abilities] = await Promise.all([
     readDataFile<CatalogCharacter[]>('characters/characters.json'),
     readDataFile<CatalogLocation[]>('locations/locations.json'),
@@ -52,4 +53,4 @@ export const load: PageServerLoad = async () => {
       date: latestChapter.date,
     },
   }
-}
+})

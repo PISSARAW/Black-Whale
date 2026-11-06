@@ -1,30 +1,15 @@
 <script lang="ts">
+  import { palette, type CharacterRecord } from '$lib/relationships/presentation'
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
 
-  type CharacterRecord = {
-    id: string
-    canonicalName: string
-    factionId?: string | null
-    aliases?: string[]
-    shipLocation?: { role?: string | null } | null
-  }
-
   let { data }: { data: PageData } = $props()
   let selectedFactionId = $state('prince-woble')
   let query = $state('')
   let relationFilter = $state('all')
-
-  const palette: Record<string, { color: string; mark: string }> = {
-    alliance: { color: '#75c9b8', mark: '↔' },
-    cooperation: { color: '#70bdc1', mark: '◇' },
-    conflict: { color: '#df746b', mark: '×' },
-    patronage: { color: '#e6b661', mark: '◆' },
-    control: { color: '#c99d66', mark: '↓' },
-  }
 
   const characters = $derived(data.characters as CharacterRecord[])
   const factionById = $derived(new Map(data.factions.map((faction) => [faction.id, faction])))
@@ -178,7 +163,9 @@
                 class="tie-card"
                 style={`--relation:${palette[relation.type]?.color || '#768083'}`}
               >
-                <div class="relation-glyph" aria-hidden="true"><MangaIcon glyph={palette[relation.type]?.mark} /></div>
+                <div class="relation-glyph" aria-hidden="true">
+                  <MangaIcon glyph={palette[relation.type]?.mark} />
+                </div>
                 <div class="tie-copy">
                   <p>
                     <span
@@ -190,7 +177,8 @@
                     >
                   </p>
                   <button type="button" onclick={() => selectFaction(relation.counterpartId)}
-                    >{relation.counterpart?.name || relation.counterpartId} <span><MangaIcon name="arrowUpRight" /></span></button
+                    >{relation.counterpart?.name || relation.counterpartId}
+                    <span><MangaIcon name="arrowUpRight" /></span></button
                   >
                   <h4>{relation.label}</h4>
                   <p class="evidence">{relation.evidence}</p>

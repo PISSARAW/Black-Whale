@@ -1,7 +1,7 @@
 export const enLocalMaps = {
   princeApartment: {
     title: (roomNumber: string | number) => `Prince's Apartment ${roomNumber}`,
-    programmeType: `Programme-type · ch. 363`,
+    programmeType: `Typical layout · ch. 363`,
     unpublished: `Individual partitions unpublished for rooms 1001 to 1010`,
     living: `Living`,
     servants: `Servants'`,

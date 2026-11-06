@@ -49,10 +49,14 @@
 
       <div class="hero-actions">
         <a class="primary-action" href={$link('/ship')}
-          ><span>{$t.home.exploreShip}</span><i aria-hidden="true"><MangaIcon name="arrowUpRight" /></i></a
+          ><span>{$t.home.exploreShip}</span><i aria-hidden="true"
+            ><MangaIcon name="arrowUpRight" /></i
+          ></a
         >
         <a class="ghost-action" href={$link('/tour')}
-          ><span>{$t.home.walkTheShip}</span><i aria-hidden="true"><MangaIcon name="arrowUpRight" /></i></a
+          ><span>{$t.home.walkTheShip}</span><i aria-hidden="true"
+            ><MangaIcon name="arrowUpRight" /></i
+          ></a
         >
       </div>
 

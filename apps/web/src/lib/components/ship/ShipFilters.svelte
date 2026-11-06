@@ -55,7 +55,8 @@
             checked={mapState.filters.factions.includes(faction)}
             onchange={() => mapState.toggleFactionFilter(faction)}
           />
-          <MangaIcon name={factionIcons[faction]} /> {$t.ship.factions[faction]}
+          <MangaIcon name={factionIcons[faction]} />
+          {$t.ship.factions[faction]}
         </label>
       {/each}
     </div>

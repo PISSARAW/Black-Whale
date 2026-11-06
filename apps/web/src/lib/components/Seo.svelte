@@ -2,6 +2,7 @@
   import { page } from '$app/stores'
   import { DEFAULT_IMAGE, SITE_NAME, TWITTER_CARD, absoluteUrl, pageTitle } from '$lib/seo/config'
   import { locale, routePath, t } from '$lib/i18n'
+  import { publicMetadata } from '$lib/i18n/publicText'
   import { DEFAULT_LOCALE, LOCALE_TAGS, alternatePaths } from '$lib/i18n/config'
 
   let {
@@ -27,7 +28,13 @@
   // Query strings (spoiler filters, selected character, …) are view state, not
   // distinct documents — the canonical always points at the bare path.
   let canonical = $derived(absoluteUrl($page.url.pathname))
-  let nodes = $derived(jsonLd === null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+  let nodes = $derived(
+    publicMetadata(
+      jsonLd === null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd],
+      $locale,
+      $page.data.localizedContent,
+    ),
+  )
 
   // Each locale is its own indexable document; the alternates tell crawlers they
   // are the same page, and `x-default` names the one to serve when no language

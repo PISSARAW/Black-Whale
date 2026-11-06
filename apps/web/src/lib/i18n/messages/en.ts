@@ -41,7 +41,7 @@ export const en = {
     },
     rateLimited: {
       title: 'Too many requests',
-      body: 'The archive throttles writes so a single visitor cannot spend the whole ship. Wait a moment and try again.',
+      body: 'The archive throttles writes so a single visitor cannot exhaust the service. Wait a moment and try again.',
     },
     server: {
       title: 'The archive could not answer',

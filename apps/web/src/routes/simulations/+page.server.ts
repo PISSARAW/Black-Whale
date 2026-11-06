@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { fail, redirect } from '@sveltejs/kit'
 import { listCanonicalEvents } from '@black-whale/canon-engine'
 import {
@@ -179,71 +180,73 @@ function sceneMarkers(
   return { markers, tier }
 }
 
-export const load: PageServerLoad = async ({ url, cookies }) => {
-  const [events, locationRows] = await Promise.all([
-    listCanonicalEvents(prisma, readSpoilerLimit(cookies)),
-    prisma.location.findMany({ orderBy: { name: 'asc' } }),
-  ])
-  // Prisma rows carry their own nullability; the projection reads the domain
-  // shape, the same way the timeline engine bridges it.
-  const locations = locationRows as unknown as Location[]
-
-  const abilities = nenRuntime
-    .listRunnableAbilities()
-    .sort((left, right) => left.name.localeCompare(right.name))
-  const requestedAbility = url.searchParams.get('ability')
-  const ability =
-    abilities.find((entry) => entry.id === requestedAbility) ??
-    abilities.find((entry) => entry.id === DEFAULT_ABILITY) ??
-    abilities[0]
-
-  const base = {
-    events,
-    abilities,
-    locations: locations.map((location) => ({ id: location.id, name: location.name })),
-    branch: null,
-    scene: null,
-    plan: null,
-    actions: [] as Awaited<ReturnType<typeof actionsFor>>,
-    markers: [] as ReturnType<typeof sceneMarkers>['markers'],
-    tier: null as string | null,
-    branchError: null as string | null,
-  }
-
-  const selection: Selection = {
-    abilityId: ability?.id ?? DEFAULT_ABILITY,
-    actionId: url.searchParams.get('action'),
-    // Each ability opens on its canonical owner, so a visitor switching ability
-    // is not left holding an actor who cannot use it.
-    actorId: url.searchParams.get('actor') || ability?.owner || '',
-    targetId: url.searchParams.get('target'),
-  }
-
-  const branchId = url.searchParams.get('branch')
-  if (!branchId) return { ...base, selection }
-
-  try {
-    const [branch, scene] = await Promise.all([
-      simulationStore.getBranchState(branchId),
-      simulationStore.getMapScene(branchId, 'black-whale-overview'),
+export const load: PageServerLoad = localizedLoad(
+  async ({ url, cookies }: Parameters<PageServerLoad>[0]) => {
+    const [events, locationRows] = await Promise.all([
+      listCanonicalEvents(prisma, readSpoilerLimit(cookies)),
+      prisma.location.findMany({ orderBy: { name: 'asc' } }),
     ])
+    // Prisma rows carry their own nullability; the projection reads the domain
+    // shape, the same way the timeline engine bridges it.
+    const locations = locationRows as unknown as Location[]
 
-    const actions = await actionsFor(branch.snapshot, selection)
-    // A visitor who has not picked an action gets the ability's first one, so the
-    // panel explains something rather than waiting to be told what to explain.
-    const resolved: Selection = {
-      ...selection,
-      actionId:
-        actions.find((action) => action.id === selection.actionId)?.id ?? actions[0]?.id ?? null,
+    const abilities = nenRuntime
+      .listRunnableAbilities()
+      .sort((left, right) => left.name.localeCompare(right.name))
+    const requestedAbility = url.searchParams.get('ability')
+    const ability =
+      abilities.find((entry) => entry.id === requestedAbility) ??
+      abilities.find((entry) => entry.id === DEFAULT_ABILITY) ??
+      abilities[0]
+
+    const base = {
+      events,
+      abilities,
+      locations: locations.map((location) => ({ id: location.id, name: location.name })),
+      branch: null,
+      scene: null,
+      plan: null,
+      actions: [] as Awaited<ReturnType<typeof actionsFor>>,
+      markers: [] as ReturnType<typeof sceneMarkers>['markers'],
+      tier: null as string | null,
+      branchError: null as string | null,
     }
-    const plan = await planFor(branch.snapshot, resolved)
-    const { markers, tier } = sceneMarkers(scene, branch.snapshot, locations)
 
-    return { ...base, branch, scene, plan, actions, markers, tier, selection: resolved }
-  } catch (error) {
-    return { ...base, selection, branchError: message(error, 'Unable to load this branch.') }
-  }
-}
+    const selection: Selection = {
+      abilityId: ability?.id ?? DEFAULT_ABILITY,
+      actionId: url.searchParams.get('action'),
+      // Each ability opens on its canonical owner, so a visitor switching ability
+      // is not left holding an actor who cannot use it.
+      actorId: url.searchParams.get('actor') || ability?.owner || '',
+      targetId: url.searchParams.get('target'),
+    }
+
+    const branchId = url.searchParams.get('branch')
+    if (!branchId) return { ...base, selection }
+
+    try {
+      const [branch, scene] = await Promise.all([
+        simulationStore.getBranchState(branchId),
+        simulationStore.getMapScene(branchId, 'black-whale-overview'),
+      ])
+
+      const actions = await actionsFor(branch.snapshot, selection)
+      // A visitor who has not picked an action gets the ability's first one, so the
+      // panel explains something rather than waiting to be told what to explain.
+      const resolved: Selection = {
+        ...selection,
+        actionId:
+          actions.find((action) => action.id === selection.actionId)?.id ?? actions[0]?.id ?? null,
+      }
+      const plan = await planFor(branch.snapshot, resolved)
+      const { markers, tier } = sceneMarkers(scene, branch.snapshot, locations)
+
+      return { ...base, branch, scene, plan, actions, markers, tier, selection: resolved }
+    } catch (error) {
+      return { ...base, selection, branchError: message(error, 'Unable to load this branch.') }
+    }
+  },
+)
 
 export const actions: Actions = {
   create: async ({ request, cookies, getClientAddress }) => {

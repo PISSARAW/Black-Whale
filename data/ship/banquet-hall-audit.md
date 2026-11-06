@@ -30,8 +30,7 @@ la case de l’alliance Tubeppa–Tserriednich au chapitre 362.
 
 ## Le fauteuil royal et la scène — correction des références
 
-La case du chapitre 359 située après le monologue de Benjamin (page de lecture
-13) montre le roi sur un fauteuil sculpté à dossier galbé, épaules arrondies,
+La case du chapitre 359 située après le monologue de Benjamin (page de lecture 13) montre le roi sur un fauteuil sculpté à dossier galbé, épaules arrondies,
 volutes et crête florale. Une petite table ronde sur piédestal se trouve devant
 son côté droit. Les sept pointes et le dossier rectangulaire du premier modèle
 ne reproduisaient pas ce dessin : ils sont remplacés par cette silhouette.

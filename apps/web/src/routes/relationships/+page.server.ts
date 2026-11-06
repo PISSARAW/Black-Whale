@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { isVisibleAtSpoilerLimit } from '$lib/server/character-profile'
 import { readDataFile, type CatalogCharacter, type CatalogFaction } from '$lib/server/data-files'
 import { readSpoilerLimit } from '$lib/server/spoiler'
@@ -114,26 +115,28 @@ const relations: NetworkRelation[] = [
   },
 ]
 
-export const load: PageServerLoad = async ({ cookies }) => {
-  const [factions, allCharacters] = await Promise.all([
-    readDataFile<CatalogFaction[]>('factions/factions.json'),
-    readDataFile<CatalogCharacter[]>('characters/characters.json'),
-  ])
+export const load: PageServerLoad = localizedLoad(
+  async ({ cookies }: Parameters<PageServerLoad>[0]) => {
+    const [factions, allCharacters] = await Promise.all([
+      readDataFile<CatalogFaction[]>('factions/factions.json'),
+      readDataFile<CatalogCharacter[]>('characters/characters.json'),
+    ])
 
-  const spoilerLimit = readSpoilerLimit(cookies)
-  const characters = allCharacters.filter((character) =>
-    isVisibleAtSpoilerLimit(character, spoilerLimit),
-  )
+    const spoilerLimit = readSpoilerLimit(cookies)
+    const characters = allCharacters.filter((character) =>
+      isVisibleAtSpoilerLimit(character, spoilerLimit),
+    )
 
-  // `!== undefined`, not truthiness: a cap of 0 means "nothing revealed yet"
-  // and must filter everything, where a falsy 0 would disable the filter.
-  return {
-    factions,
-    characters,
-    relations:
-      spoilerLimit !== undefined
-        ? relations.filter((relation) => relation.chapter <= spoilerLimit)
-        : relations,
-    spoilerLimit,
-  }
-}
+    // `!== undefined`, not truthiness: a cap of 0 means "nothing revealed yet"
+    // and must filter everything, where a falsy 0 would disable the filter.
+    return {
+      factions,
+      characters,
+      relations:
+        spoilerLimit !== undefined
+          ? relations.filter((relation) => relation.chapter <= spoilerLimit)
+          : relations,
+      spoilerLimit,
+    }
+  },
+)

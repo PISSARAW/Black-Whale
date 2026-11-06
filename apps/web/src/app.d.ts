@@ -10,7 +10,9 @@ declare global {
     // The locale is derived from the URL wherever it is needed, so it does not
     // ride here either.
     // interface Locals {}
-    // interface PageData {}
+    interface PageData {
+      localizedContent?: Record<string, string>
+    }
     // interface PageState {}
     // interface Platform {}
   }

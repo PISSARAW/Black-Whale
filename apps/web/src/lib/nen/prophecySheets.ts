@@ -1,3 +1,5 @@
+import { loadPoemTranslations, localizedProphecy } from './localizedProphecy'
+
 /**
  * The sheets Lovely Ghostwriter reads from.
  *
@@ -37,7 +39,8 @@ let byName: Map<string, ProphecySheet> | null = null
 let loading: Promise<void> | null = null
 
 export function loadProphecySheets(): Promise<void> {
-  loading ??= import('../../../../../data/prophecies/prophecies.json').then((module) => {
+  loading ??= import('../../../../../data/prophecies/prophecies.json').then(async (module) => {
+    await loadPoemTranslations()
     const records = (module.default ?? module) as unknown as RawProphecy[]
     const sheets = records.map((record) => ({
       subjectId: record.subjectId,
@@ -71,7 +74,7 @@ const CHARACTER_PATH = /\/characters\/([^/?#]+)/
  * marker's own id, a link to their page inside or around the target, the page
  * the visitor is standing on, and finally the name the marker carries.
  */
-export function prophecySubjectFor(target: HTMLElement, pathname: string): ProphecySheet | null {
+function findSubject(target: HTMLElement, pathname: string): ProphecySheet | null {
   if (!byId || !byName) return null
 
   const marker = target.closest<HTMLElement>('[data-hatsu-character]')
@@ -100,4 +103,8 @@ export function prophecySubjectFor(target: HTMLElement, pathname: string): Proph
   }
 
   return null
+}
+
+export function prophecySubjectFor(target: HTMLElement, pathname: string): ProphecySheet | null {
+  return localizedProphecy(findSubject(target, pathname), pathname)
 }

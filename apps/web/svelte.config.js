@@ -1,9 +1,10 @@
 import adapter from '@sveltejs/adapter-node'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import { publicTextPreprocess } from './i18n-preprocess.mjs'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  preprocess: vitePreprocess(),
+  preprocess: [publicTextPreprocess(), vitePreprocess()],
   kit: {
     adapter: adapter(),
     alias: {

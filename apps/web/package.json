@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@black-whale/ability-modules": "workspace:*",
+    "@black-whale/canon-engine": "workspace:*",
     "@black-whale/database": "workspace:*",
     "@black-whale/domain": "workspace:*",
-    "@black-whale/canon-engine": "workspace:*",
     "@black-whale/nen-engine": "workspace:*",
     "@black-whale/simulation-engine": "workspace:*",
     "@prisma/client": "^5.0.0",
@@ -33,6 +33,7 @@
     "@types/three": "^0.185.1",
     "@vitest/coverage-v8": "^2.0.0",
     "autoprefixer": "^10.4.0",
+    "magic-string": "0.30.21",
     "postcss": "^8.4.0",
     "rimraf": "^5.0.0",
     "svelte-check": "^3.8.0",

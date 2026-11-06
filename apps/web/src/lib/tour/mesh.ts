@@ -1,3 +1,4 @@
+import { runsAlong } from './meshSeals'
 /**
  * Extrudes a deck into triangles: floors, ceilings, walls and door lintels.
  *
@@ -29,7 +30,7 @@ import { openingHeights } from './openingHeights'
 import { structureSheenOf } from './surfaceFinish'
 import { appearanceOf, authoredStructureColourOf } from './roomAppearance'
 import type { Lamplight, Rgb } from './light'
-import type { BlindWall, TierPlan } from './blueprint'
+import type { TierPlan } from './blueprint'
 import type {
   Doorway,
   Polygon,
@@ -256,25 +257,6 @@ const DECLARED_COLOUR = hex(0x7095d6)
 /** Room colours are lit; floors and ceilings need to stay walkable-dark. */
 const revealed = (provenance: Provenance, darken: number): Rgb =>
   blend(REVEAL_COLOURS[provenance], [0, 0, 0], darken)
-
-/** Whether a wall segment runs along the stretch a seal keeps blind. */
-function runsAlong(wall: WallSegment, blind: BlindWall): boolean {
-  const dx = blind.end[0] - blind.start[0]
-  const dz = blind.end[1] - blind.start[1]
-  const length = Math.hypot(dx, dz)
-  if (length < EPSILON) return false
-  const unit: Vec2 = [dx / length, dz / length]
-
-  for (const point of [wall.start, wall.end]) {
-    const ox = point[0] - blind.start[0]
-    const oz = point[1] - blind.start[1]
-    // Off the seal's line, or past either of its ends: a different wall.
-    if (Math.abs(ox * unit[1] - oz * unit[0]) > 0.05) return false
-    const t = ox * unit[0] + oz * unit[1]
-    if (t < -0.05 || t > length + 0.05) return false
-  }
-  return true
-}
 
 /**
  * How far apart the baked light is sampled, in metres.
@@ -1703,7 +1685,11 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
     for (const door of lintelsOf.get(space.id) ?? []) {
       const other = spaces.get(door.b)
       if (!other) continue
-      const { top: lintelTop, bottom: lintelBottom, provenance } = openingHeights({ space, other, tier })
+      const {
+        top: lintelTop,
+        bottom: lintelBottom,
+        provenance,
+      } = openingHeights({ space, other, tier })
 
       /**
        * The riser, where the two rooms are at different heights.

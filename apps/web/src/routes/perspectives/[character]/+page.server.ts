@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { error } from '@sveltejs/kit'
 import { findCharacterRef } from '$lib/server/character-lookup'
 import { loadKnowledgeMap } from '$lib/server/knowledge-map'
@@ -6,29 +7,31 @@ import { buildSubjectiveView, listCursorEvents } from '$lib/server/subjective-vi
 import type { PageServerLoad } from './$types'
 import { PUBLIC_FEATURES } from '$lib/config/features'
 
-export const load: PageServerLoad = async ({ params, cookies, url }) => {
-  if (!PUBLIC_FEATURES.perspectives) throw error(404, 'Not found')
+export const load: PageServerLoad = localizedLoad(
+  async ({ params, cookies, url }: Parameters<PageServerLoad>[0]) => {
+    if (!PUBLIC_FEATURES.perspectives) throw error(404, 'Not found')
 
-  const spoilerLimit = readSpoilerLimit(cookies) ?? null
-  const character = await findCharacterRef(params.character, spoilerLimit)
+    const spoilerLimit = readSpoilerLimit(cookies) ?? null
+    const character = await findCharacterRef(params.character, spoilerLimit)
 
-  if (!character) throw error(404, 'Character not found')
+    if (!character) throw error(404, 'Character not found')
 
-  const [view, events, knowledge] = await Promise.all([
-    buildSubjectiveView(character.id, url.searchParams.get('eventId'), spoilerLimit),
-    listCursorEvents(spoilerLimit),
-    loadKnowledgeMap(character.id, character.canonicalName, spoilerLimit),
-  ])
+    const [view, events, knowledge] = await Promise.all([
+      buildSubjectiveView(character.id, url.searchParams.get('eventId'), spoilerLimit),
+      listCursorEvents(spoilerLimit),
+      loadKnowledgeMap(character.id, character.canonicalName, spoilerLimit),
+    ])
 
-  return {
-    character,
-    view,
-    events,
-    // What the observer holds at the cursor — rows that open later are theirs to
-    // learn, not theirs to know here.
-    knowledge: view
-      ? knowledge.entries.filter((entry) => entry.fromChapter <= view.cursor.chapter)
-      : [],
-    spoilerLimit,
-  }
-}
+    return {
+      character,
+      view,
+      events,
+      // What the observer holds at the cursor — rows that open later are theirs to
+      // learn, not theirs to know here.
+      knowledge: view
+        ? knowledge.entries.filter((entry) => entry.fromChapter <= view.cursor.chapter)
+        : [],
+      spoilerLimit,
+    }
+  },
+)

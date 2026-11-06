@@ -26,9 +26,7 @@
     >{french ? 'Salle du banquet' : 'Banquet Hall'}</text
   >
   <text x="500" y="47" text-anchor="middle" fill="#b1a58d" font-size="12"
-    >{french
-      ? 'Niveau 1-A · Chap. 359 et 383'
-      : 'Tier 1-A · Ch. 359 and 383'}</text
+    >{french ? 'Niveau 1-A · Chap. 359 et 383' : 'Tier 1-A · Ch. 359 and 383'}</text
   >
   {#each banquetRooms as room (room.id)}
     <polygon

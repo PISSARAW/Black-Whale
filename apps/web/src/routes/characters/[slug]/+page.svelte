@@ -12,7 +12,6 @@
   let { data }: { data: PageData } = $props()
   let character = $derived(data.character)
   let prophecy = $derived(data.prophecy)
-  let timeline = $derived(data.timeline || [])
   let chapterTrajectory = $derived(data.chapterTrajectory || [])
   let roleHistory = $derived(data.roleHistory || [])
   let affiliations = $derived(data.affiliations || [])

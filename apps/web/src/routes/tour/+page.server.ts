@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { prisma } from '$lib/server/db'
 import { readSpoilerLimit, readSpoilerProfile } from '$lib/server/spoiler'
 import { timeline } from '$lib/server/timeline'
@@ -123,14 +124,14 @@ function dossiersFor(members: readonly CastMember[], cap: number | null) {
  * corridors are as empty as they were the day before ADR-003 — which is a state
  * this walk has always been able to be in.
  */
-export const load: PageServerLoad = async (event) => {
+export const load: PageServerLoad = localizedLoad(async (event: Parameters<PageServerLoad>[0]) => {
   try {
     return await aboardAt(event)
   } catch (error) {
     log.error('Failed to load the cast for the tour', describeError(error))
     return { cast: empty(readSpoilerLimit(event.cookies) ?? null), hour: NO_HOUR }
   }
-}
+})
 
 /** The cast at the projected event, and the hour that event happens at. */
 interface Aboard {

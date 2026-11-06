@@ -1,3 +1,4 @@
+import { localizedLoad } from '$lib/server/localized-load'
 import { resolveComparisonSelection } from '$lib/server/compare-selection'
 import { prisma } from '$lib/server/db'
 import { buildPerspective, comparePerspectives } from '$lib/server/perspectives'
@@ -11,142 +12,144 @@ import { PUBLIC_FEATURES } from '$lib/config/features'
 import { log, describeError } from '$lib/server/log'
 import { isActiveAt } from '@black-whale/domain'
 
-export const load: PageServerLoad = async ({ cookies, url }) => {
-  if (!PUBLIC_FEATURES.compare) throw error(404, 'Not found')
+export const load: PageServerLoad = localizedLoad(
+  async ({ cookies, url }: Parameters<PageServerLoad>[0]) => {
+    if (!PUBLIC_FEATURES.compare) throw error(404, 'Not found')
 
-  const spoilerProfile = readSpoilerProfile(cookies)
-  const maxChapter = spoilerProfile?.maxChapter
+    const spoilerProfile = readSpoilerProfile(cookies)
+    const maxChapter = spoilerProfile?.maxChapter
 
-  let characters = await prisma.character.findMany({
-    orderBy: { canonicalName: 'asc' },
-    include: { firstVisibleEvent: { include: { chapter: true } } },
-  })
+    let characters = await prisma.character.findMany({
+      orderBy: { canonicalName: 'asc' },
+      include: { firstVisibleEvent: { include: { chapter: true } } },
+    })
 
-  if (spoilerProfile) {
-    characters = filterVisible(characters, spoilerProfile)
-  }
-
-  const events = await prisma.narrativeEvent.findMany({
-    where: {
-      occursOnBlackWhale: true,
-      ...(maxChapter !== undefined ? { chapter: { number: { lte: maxChapter } } } : {}),
-    },
-    orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
-    include: { chapter: true },
-  })
-
-  const defaultEvent = events[events.length - 1]
-  const { selectedEventId, selectedLeft, selectedRight, compareCanonical, sync } =
-    resolveComparisonSelection(url.searchParams, { characters, events })
-
-  let leftPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
-  let rightPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
-  let comparison: Awaited<ReturnType<typeof comparePerspectives>> = []
-
-  if (selectedEventId && selectedLeft && selectedRight) {
-    try {
-      ;[leftPerspective, rightPerspective, comparison] = await Promise.all([
-        buildPerspective(selectedLeft, selectedEventId, maxChapter),
-        buildPerspective(selectedRight, selectedEventId, maxChapter),
-        comparePerspectives({
-          leftId: selectedLeft,
-          rightId: selectedRight,
-          eventId: selectedEventId,
-          spoilerLimit: maxChapter,
-        }),
-      ])
-    } catch (error) {
-      log.error('Failed to build perspective comparison', describeError(error))
+    if (spoilerProfile) {
+      characters = filterVisible(characters, spoilerProfile)
     }
-  }
 
-  let worldState:
-    | (Omit<Awaited<ReturnType<typeof timeline.getWorldState>>, 'locations'> & {
-        locations: Awaited<ReturnType<typeof prisma.location.findMany>>
-      })
-    | null = null
-  let selectedEventChapter = defaultEvent?.chapter?.number
-  let canonicalTruth: {
-    facts: Awaited<ReturnType<typeof prisma.fact.findMany>>
-    positions: ReturnType<typeof buildCanonicalPositions>
-    chapter: number | null
-    restrictedBySpoiler: number | null
-  } = {
-    facts: [],
-    positions: {},
-    chapter: selectedEventChapter || null,
-    restrictedBySpoiler: spoilerProfile?.maxChapter ?? null,
-  }
+    const events = await prisma.narrativeEvent.findMany({
+      where: {
+        occursOnBlackWhale: true,
+        ...(maxChapter !== undefined ? { chapter: { number: { lte: maxChapter } } } : {}),
+      },
+      orderBy: [{ chapter: { number: 'asc' } }, { sequence: 'asc' }],
+      include: { chapter: true },
+    })
 
-  if (selectedEventId) {
-    // Only an event the reader is allowed to see drives the world payload.
-    // `events` is already capped, so an id past the cap or a fabricated id
-    // finds no row here — and must not reach `getWorldState`, which would
-    // happily build the world at any chapter it is handed.
-    const selectedEvent = events.find((event) => event.id === selectedEventId)
-    if (selectedEvent) {
-      selectedEventChapter = selectedEvent.chapter?.number
+    const defaultEvent = events[events.length - 1]
+    const { selectedEventId, selectedLeft, selectedRight, compareCanonical, sync } =
+      resolveComparisonSelection(url.searchParams, { characters, events })
 
-      const rawWorld = await timeline.getWorldState({ eventId: selectedEvent.id })
-      const locations = await prisma.location.findMany({
-        where:
-          maxChapter === undefined
-            ? undefined
-            : { firstVisibleEvent: { chapter: { number: { lte: maxChapter } } } },
-      })
-      worldState = {
-        ...rawWorld,
-        locations,
+    let leftPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
+    let rightPerspective: Awaited<ReturnType<typeof buildPerspective>> | null = null
+    let comparison: Awaited<ReturnType<typeof comparePerspectives>> = []
+
+    if (selectedEventId && selectedLeft && selectedRight) {
+      try {
+        ;[leftPerspective, rightPerspective, comparison] = await Promise.all([
+          buildPerspective(selectedLeft, selectedEventId, maxChapter),
+          buildPerspective(selectedRight, selectedEventId, maxChapter),
+          comparePerspectives({
+            leftId: selectedLeft,
+            rightId: selectedRight,
+            eventId: selectedEventId,
+            spoilerLimit: maxChapter,
+          }),
+        ])
+      } catch (error) {
+        log.error('Failed to build perspective comparison', describeError(error))
       }
+    }
 
-      if (compareCanonical) {
-        const activeEvent = selectedEvent ?? defaultEvent
-        const revealedThroughChapter =
-          spoilerProfile?.maxChapter ?? activeEvent?.chapter.number ?? Number.POSITIVE_INFINITY
-
-        const rawFacts = await prisma.fact.findMany({
-          where: {
-            fromEvent: { chapter: { number: { lte: revealedThroughChapter } } },
-          },
-          include: {
-            fromEvent: { include: { chapter: true } },
-            untilEvent: { include: { chapter: true } },
-          },
+    let worldState:
+      | (Omit<Awaited<ReturnType<typeof timeline.getWorldState>>, 'locations'> & {
+          locations: Awaited<ReturnType<typeof prisma.location.findMany>>
         })
+      | null = null
+    let selectedEventChapter = defaultEvent?.chapter?.number
+    let canonicalTruth: {
+      facts: Awaited<ReturnType<typeof prisma.fact.findMany>>
+      positions: ReturnType<typeof buildCanonicalPositions>
+      chapter: number | null
+      restrictedBySpoiler: number | null
+    } = {
+      facts: [],
+      positions: {},
+      chapter: selectedEventChapter || null,
+      restrictedBySpoiler: spoilerProfile?.maxChapter ?? null,
+    }
 
-        const objectiveFacts = rawFacts.filter((fact) =>
-          activeEvent
-            ? isActiveAt(
-                fact as import('@black-whale/domain').TemporalRecord,
-                activeEvent as import('@black-whale/domain').OrderedEvent,
-                revealedThroughChapter,
-              )
-            : false,
-        )
+    if (selectedEventId) {
+      // Only an event the reader is allowed to see drives the world payload.
+      // `events` is already capped, so an id past the cap or a fabricated id
+      // finds no row here — and must not reach `getWorldState`, which would
+      // happily build the world at any chapter it is handed.
+      const selectedEvent = events.find((event) => event.id === selectedEventId)
+      if (selectedEvent) {
+        selectedEventChapter = selectedEvent.chapter?.number
 
-        canonicalTruth = {
-          facts: objectiveFacts,
-          positions: buildCanonicalPositions(rawWorld),
-          chapter: selectedEventChapter || null,
-          restrictedBySpoiler: spoilerProfile?.maxChapter ?? null,
+        const rawWorld = await timeline.getWorldState({ eventId: selectedEvent.id })
+        const locations = await prisma.location.findMany({
+          where:
+            maxChapter === undefined
+              ? undefined
+              : { firstVisibleEvent: { chapter: { number: { lte: maxChapter } } } },
+        })
+        worldState = {
+          ...rawWorld,
+          locations,
+        }
+
+        if (compareCanonical) {
+          const activeEvent = selectedEvent ?? defaultEvent
+          const revealedThroughChapter =
+            spoilerProfile?.maxChapter ?? activeEvent?.chapter.number ?? Number.POSITIVE_INFINITY
+
+          const rawFacts = await prisma.fact.findMany({
+            where: {
+              fromEvent: { chapter: { number: { lte: revealedThroughChapter } } },
+            },
+            include: {
+              fromEvent: { include: { chapter: true } },
+              untilEvent: { include: { chapter: true } },
+            },
+          })
+
+          const objectiveFacts = rawFacts.filter((fact) =>
+            activeEvent
+              ? isActiveAt(
+                  fact as import('@black-whale/domain').TemporalRecord,
+                  activeEvent as import('@black-whale/domain').OrderedEvent,
+                  revealedThroughChapter,
+                )
+              : false,
+          )
+
+          canonicalTruth = {
+            facts: objectiveFacts,
+            positions: buildCanonicalPositions(rawWorld),
+            chapter: selectedEventChapter || null,
+            restrictedBySpoiler: spoilerProfile?.maxChapter ?? null,
+          }
         }
       }
     }
-  }
 
-  return {
-    characters,
-    events,
-    selectedEventId,
-    selectedLeft,
-    selectedRight,
-    leftPerspective,
-    rightPerspective,
-    comparison,
-    compareCanonical,
-    canonicalTruth,
-    worldState,
-    sync,
-    spoilerLimit: spoilerProfile?.maxChapter ?? null,
-  }
-}
+    return {
+      characters,
+      events,
+      selectedEventId,
+      selectedLeft,
+      selectedRight,
+      leftPerspective,
+      rightPerspective,
+      comparison,
+      compareCanonical,
+      canonicalTruth,
+      worldState,
+      sync,
+      spoilerLimit: spoilerProfile?.maxChapter ?? null,
+    }
+  },
+)

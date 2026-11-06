@@ -44,7 +44,7 @@ export const localRoomAnchors: Record<string, { x: number; y: number }> = Object
  * only table their cabin has. Unlisted passengers claim nothing at all and say
  * so in the tooltip.
  */
-type Spot = { x: number; y: number; inferred?: true }
+type Spot = { x: number; y: number; inferred?: boolean }
 
 const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallback?: Spot }> = {
   // `local/beyond-cell.svelte`, 800 × 600, contents offset by (100, 100).
@@ -333,7 +333,7 @@ export function spotAnchorFor(marker: MapMarker): (Spot & { exact: boolean }) | 
  * artefact of drawing it, not a statement about the room.
  */
 export function spotNoteFor(
-  spot: { inferred?: true } | null,
+  spot: { inferred?: boolean } | null,
   locale: Locale = DEFAULT_LOCALE,
 ): string | undefined {
   const m = messagesFor(locale).map

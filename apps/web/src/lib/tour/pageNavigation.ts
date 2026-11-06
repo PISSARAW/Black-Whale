@@ -22,9 +22,7 @@ export function linkPrompt(options: {
   if (!destination) return null
   const tier = options.ship.tiers.find((candidate) => candidate.id === destination.tierId)
   const label = `${options.nameOf(destination)}${tier ? ` — ${options.nameOf(tier)}` : ''}`
-  const described = options.available.link.retractable
-    ? options.words.retractable(label)
-    : label
+  const described = options.available.link.retractable ? options.words.retractable(label) : label
   if (options.available.link.kind === 'door') {
     return tier?.kind === 'interior'
       ? options.words.enterInterior(options.nameOf(tier))

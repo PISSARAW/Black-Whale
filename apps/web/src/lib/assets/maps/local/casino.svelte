@@ -199,11 +199,7 @@
 
   <!-- Ch. 419 names this emergency spiral staircase but does not draw its exact footprint. -->
   <g class="emergency-stair" aria-label="Emergency spiral staircase, chapter 419">
-    <circle
-      cx={px(emergencyStair.fore)}
-      cy={py(emergencyStair.across)}
-      r={2.25 * SCALE}
-    />
+    <circle cx={px(emergencyStair.fore)} cy={py(emergencyStair.across)} r={2.25 * SCALE} />
     <path
       d={`M ${px(emergencyStair.fore) - 1.4 * SCALE} ${py(emergencyStair.across)} L ${px(emergencyStair.fore) + 1.4 * SCALE} ${py(emergencyStair.across)} M ${px(emergencyStair.fore)} ${py(emergencyStair.across) - 1.4 * SCALE} L ${px(emergencyStair.fore)} ${py(emergencyStair.across) + 1.4 * SCALE}`}
     />
@@ -263,13 +259,7 @@
 
   <!-- Ch. 420 names this large arcade machine; the plan cannot locate it exactly. -->
   <g class="swamp-ball" aria-label="SWAMP BALL, position indicative, chapter 420">
-    <rect
-      x={px(swampBall.fore) - 26}
-      y={py(swampBall.across) - 22}
-      width="52"
-      height="44"
-      rx="4"
-    />
+    <rect x={px(swampBall.fore) - 26} y={py(swampBall.across) - 22} width="52" height="44" rx="4" />
     <circle cx={px(swampBall.fore)} cy={py(swampBall.across) - 2} r="11" />
     <text x={px(swampBall.fore)} y={py(swampBall.across) + 3} class="label" font-size="8">
       SWAMP BALL

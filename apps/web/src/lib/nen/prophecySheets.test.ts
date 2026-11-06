@@ -92,3 +92,17 @@ describe('Lovely Ghostwriter sheets', () => {
     expect(prophecySubjectFor(target({}), '/timeline')).toBeNull()
   })
 })
+
+it('renders the same on-demand poem in the route language', async () => {
+  await loadProphecySheets()
+  const marker = target({ characterId: 'kurapika' })
+  const english = prophecySubjectFor(marker, '/ship')
+  const french = prophecySubjectFor(marker, '/fr/ship')
+  expect(english?.poem[0]).toBe(
+    'In the first month at sea you will sleep on the same floor as the eyes you buried.',
+  )
+  expect(french?.poem[0]).toContain('premier mois')
+  expect(french?.poem[0]).not.toContain('In ')
+  expect(french?.subjectId).toBe(english?.subjectId)
+  expect(prophecySubjectFor(marker, '/ship')?.poem).toEqual(english?.poem)
+})

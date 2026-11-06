@@ -1,6 +1,7 @@
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { BONE, INK, modelKit } from './nenModelPrimitives'
+import { buildCookieFigure } from './nenCookieFigure'
 
 function dolphin(seen: Apparition, context: BasicApparitionContext) {
   const k = modelKit(context, seen.size)
@@ -68,85 +69,6 @@ function dolphin(seen: Apparition, context: BasicApparitionContext) {
     radius: 0.015,
     colour: INK,
   })
-  return context.root
-}
-
-function cookie(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size),
-    skin = 0xe7d3be,
-    dress = 0xf0ebe1
-  k.oval({ name: 'cookie-torso', at: [0, 1, 0], radii: [0.23, 0.37, 0.15], colour: dress })
-  const skirt = k.add({
-    geometry: new context.THREE.CylinderGeometry(
-      seen.size * 0.19,
-      seen.size * 0.31,
-      seen.size * 0.57,
-      20,
-    ),
-    colour: dress,
-    at: [0, 0.59, 0],
-    name: 'cookie-skirt',
-  })
-  skirt.rotation.z = -0.04
-  k.box({ name: 'dark-apron', at: [0, 0.8, 0.16], dimensions: [0.28, 0.68, 0.025], colour: INK })
-  k.oval({ name: 'cookie-head', at: [0, 1.5, 0.02], radii: [0.18, 0.24, 0.16], colour: skin })
-  for (const side of [-1, 1]) {
-    k.oval({
-      name: `hair-curtain-${side}`,
-      at: [side * 0.16, 1.39, -0.06],
-      radii: [0.1, 0.43, 0.12],
-      colour: 0xaaa0ac,
-    })
-    k.oval({
-      name: `eye-${side}`,
-      at: [side * 0.075, 1.53, 0.169],
-      radii: [0.045, 0.066, 0.015],
-      colour: INK,
-    })
-    k.tube({
-      name: `arm-${side}`,
-      points: [
-        [side * 0.22, 1.22, 0],
-        [side * 0.4, 1.06, 0.12],
-        [side * 0.3, 0.9, 0.36],
-      ],
-      radius: 0.055,
-      colour: skin,
-    })
-    k.oval({
-      name: `short-sleeve-${side}`,
-      at: [side * 0.25, 1.2, 0],
-      radii: [0.11, 0.13, 0.12],
-      colour: dress,
-    })
-    k.hand({ name: `massage-hand-${side}`, at: [side * 0.3, 0.9, 0.36], scale: 0.35, colour: skin })
-    k.tube({
-      name: `leg-${side}`,
-      points: [
-        [side * 0.12, 0.37, 0],
-        [side * 0.12, 0.09, 0.01],
-      ],
-      radius: 0.065,
-      colour: skin,
-    })
-    k.oval({
-      name: `shoe-${side}`,
-      at: [side * 0.12, 0.06, 0.07],
-      radii: [0.08, 0.06, 0.16],
-      colour: INK,
-    })
-    k.patch({
-      name: `bow-${side}`,
-      points: [
-        [0, 0],
-        [side * 0.12, 0.09],
-        [side * 0.12, -0.06],
-      ],
-      at: [0, 1.26, 0.17],
-      colour: INK,
-    })
-  }
-  k.oval({ name: 'hair-crown', at: [0, 1.69, -0.025], radii: [0.2, 0.1, 0.17], colour: 0xaaa0ac })
   return context.root
 }
 
@@ -276,7 +198,7 @@ function bloodSnake(seen: Apparition, context: BasicApparitionContext) {
 
 const BUILDERS = {
   dolphin,
-  cookie,
+  cookie: buildCookieFigure,
   'predator-salesale': predator,
   'nen-spider': spider,
   'blood-snake': bloodSnake,

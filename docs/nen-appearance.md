@@ -47,6 +47,37 @@ Les planches consultées sont notamment recensées dans les galeries
 et [de Camilla](https://hunterxhunter.fandom.com/wiki/Camilla_Hui_Guo_Rou/Image_Gallery).
 Les caractéristiques structurantes sont aussi consignées dans `nenAppearance.ts`.
 
+## Affinage des visages et des proportions
+
+La seconde passe confronte les vues de face, de trois quarts et de profil aux
+cases dessinées. Elle corrige les écarts suivants :
+
+| Modèle                     | Écart constaté                                                           | Affinage                                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Momoze                     | Deux grands yeux frontaux, bouche ovale à deux rangées                   | Deux yeux noirs latéraux, deux marques centrales superposées, bouche rectangulaire à cinq dents supérieures et oreilles claires  |
+| Benjamin                   | Thorax ovoïde, tête à calotte séparée et membres courts                  | Profil continu du crâne allongé, taille étroite, côtes, membres longs, genoux écartés et nervures des membranes                  |
+| Halkenburg                 | Grand œil rond, petit museau et plumes arrondies                         | Œil horizontal sous l'arcade massive, front plissé, museau large, narines, lèvres épaisses, cornes latérales et plumes effilées  |
+| Nasubi                     | Volumes uniformes, bouche ovale et membres lisses                        | Masque allongé, yeux circulaires cerclés, bouche en V inversé, lèvres, langue aplatie, plis et membres épineux                   |
+| Tserriednich, gardienne    | Visage sphérique, cornes d'épaisseur constante et tronc sans musculature | Mâchoire et pommettes profilées, yeux en amande, nez et lèvres, tête inclinée, mèches effilées, pectoraux et muscles des membres |
+| Tserriednich, seconde bête | Deux cornes génériques et tête arrondie                                  | Capuchon sans visage à pointe recourbée, épaules développées, appendices effilés et articulations noueuses                       |
+| Cookie                     | Yeux ovales sans paupières, cheveux symétriques et tablier rectangulaire | Visage fuselé, paupières et cils, raie latérale, cheveux droits, silhouette ajustée, col et trois boutons en cœur                |
+| Indoor Fish                | Crâne plat et détails visibles d'un seul côté                            | Crâne volumétrique biseauté, deux orbites, arcades, branches mandibulaires, vertèbres et rayons des nageoires                    |
+
+Repères visuels consultés :
+[Momoze, tome 34 p. 196](https://www.g913-jiro.com/entry/2017/07/03/203640),
+[Cookie, tome 17 p. 130 et tome 20 p. 34](https://www.g913-jiro.com/entry/2017/06/05/201150),
+[les deux bêtes de Tserriednich, ch. 384](https://hamliet.home.blog/2018/10/12/two-nen-beasts/),
+[Benjamin, planche avec le prince](https://64.media.tumblr.com/04b3d6fd4a449ec1db7e3d3c5dd152fb/f7103c315a7b36d5-10/s540x810/ec0ffa8ca764fa1896e9c0d15398e7231e0692ba.jpg),
+[Halkenburg, ch. 349](https://66.media.tumblr.com/64f39063d3f5b210f015fa3f6cbd479f/tumblr_inline_pfrw2dUMD91tk589m_540.png),
+[Nasubi, détail de la planche](https://image.idntimes.com/post/20241204/rsz-chap-349-nasubis-sacred-beast-cropped-56965fbaa68adf470a17cc45ea5d328d-6a7969b129e86e652bb2aa3084c0b02a.png),
+[Indoor Fish, tome 11](https://www.g913-jiro.com/entry/2016/12/08/072745).
+
+Le contour est extrudé suivant les normales avec une épaisseur constante :
+agrandir la géométrie regroupée décalait les traits noirs sur les yeux et le
+haut des crânes. Un test garde ce trait centré sur les détails hauts. Les
+surfaces profilées partagent les attributs des autres primitives pour conserver
+le regroupement par matériau et son budget de rendu.
+
 ## Apparences non établies
 
 - **Woble** : retrait de la déclaration `ghost`. Une aura inquiétante n'établit

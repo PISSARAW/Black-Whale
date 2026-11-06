@@ -40,7 +40,8 @@ export const NEN_MODEL_REFERENCES = {
   cat: { chapters: [373], design: 'Black cat with long arms and prehensile hands.' },
   sprite: {
     chapters: [361],
-    design: 'Round ears, forehead eye patterns, triangular teeth and heart.',
+    design:
+      'Two lateral dot eyes, two stacked central slit marks, rectangular mouth, five upper triangles and heart.',
   },
   chimera: {
     chapters: [362, 384, 385],
@@ -52,7 +53,8 @@ export const NEN_MODEL_REFERENCES = {
   },
   cookie: {
     chapters: [201],
-    design: 'Long straight hair, short-sleeved dress, dark apron and bow.',
+    design:
+      'Side-parted straight hair, tapered face, collared short-sleeved dress and three heart buttons on the fitted dark apron.',
   },
   'predator-salesale': {
     chapters: [375],
@@ -68,7 +70,8 @@ export const NEN_MODEL_REFERENCES = {
   },
   'halkenburg-guardian': {
     chapters: [349, 382],
-    design: 'Feathered cyclops ogre with horns, perched on shoulders.',
+    design:
+      'Narrow horizontal cyclops eye under a heavy brow, broad muzzle, lateral horns and layered pointed feathers, perched on shoulders.',
   },
   'nasubi-guardian': {
     chapters: [349],

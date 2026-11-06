@@ -33,4 +33,17 @@ describe('Nen creature figure', () => {
 
     expect(root.getObjectByName('nen-creature-ink')).toBeUndefined()
   })
+
+  it('keeps ink thin and centred on high facial features after geometry batching', () => {
+    const root = new Group()
+    const geometry = new BoxGeometry(0.2, 0.2, 0.2).translate(0, 3, 0)
+    root.add(new Mesh(geometry, new MeshBasicMaterial()))
+    styleNenCreature(THREE, root, { kind: 'halkenburg-guardian', size: 1, shadow: false })
+    const edge = root.getObjectByName('nen-creature-ink') as Mesh
+    const bounds = new THREE.Box3().setFromObject(edge)
+    expect(bounds.getCenter(new THREE.Vector3()).y).toBeCloseTo(3)
+    expect(bounds.max.y).toBeLessThan(3.11)
+    expect(bounds.min.y).toBeGreaterThan(2.89)
+    expect(geometry.attributes.position.getY(0)).toBeCloseTo(3.1)
+  })
 })

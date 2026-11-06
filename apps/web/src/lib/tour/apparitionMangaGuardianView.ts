@@ -1,13 +1,26 @@
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
-import { BONE, INK, modelKit } from './nenModelPrimitives'
+import { BONE, INK } from './nenModelPrimitives'
+import { sculptKit } from './nenSculptPrimitives'
+import { buildNenFemaleFace } from './nenFemaleFace'
 
 /** Momoze's one mouse-shaped guardian and its smaller copies share an anatomy. */
 export function momoze(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size)
+  const k = sculptKit(context, seen.size)
   const hide = 0xd3c9c3
   k.oval({ name: 'mouse-body', at: [0, 1.12, 0], radii: [0.83, 1.12, 0.62], colour: hide })
-  k.oval({ name: 'mouse-head', at: [0, 2.12, 0], radii: [0.94, 0.78, 0.55], colour: hide })
+  k.loft({
+    name: 'mouse-head',
+    colour: hide,
+    sections: [
+      [1.48, 0.7, 0.36, 0],
+      [1.6, 0.94, 0.45, 0],
+      [2.15, 1.02, 0.5, 0],
+      [2.55, 0.88, 0.45, 0],
+      [2.82, 0.52, 0.3, 0],
+      [2.9, 0, 0, 0],
+    ],
+  })
   for (const side of [-1, 1]) {
     k.oval({
       name: `round-ear-${side}`,
@@ -19,19 +32,13 @@ export function momoze(seen: Apparition, context: BasicApparitionContext) {
       name: `inner-ear-${side}`,
       at: [side * 0.82, 2.72, 0.16],
       radii: [0.34, 0.38, 0.04],
-      colour: INK,
+      colour: 0xb8aaa2,
     })
     k.oval({
-      name: `forehead-eye-mark-${side}`,
-      at: [side * 0.32, 2.47, 0.49],
-      radii: [0.11, 0.26, 0.025],
+      name: `small-lateral-eye-${side}`,
+      at: [side * 0.67, 2.24, 0.39],
+      radii: [0.074, 0.074, 0.025],
       colour: INK,
-    })
-    k.oval({
-      name: `eye-mark-centre-${side}`,
-      at: [side * 0.32, 2.47, 0.515],
-      radii: [0.04, 0.15, 0.012],
-      colour: BONE,
     })
     k.tube({
       name: `arm-${side}`,
@@ -58,18 +65,49 @@ export function momoze(seen: Apparition, context: BasicApparitionContext) {
       colour: hide,
     })
   }
-  k.oval({ name: 'grinning-mouth', at: [0, 1.98, 0.53], radii: [0.67, 0.32, 0.055], colour: INK })
-  for (let i = 0; i < 9; i++) {
-    const x = (i - 4) * 0.13
-    for (const side of [-1, 1])
-      k.spike({
-        name: `tooth-${side}-${i}`,
-        from: [x, 1.98 + side * (0.22 - Math.abs(x) * 0.1), 0.59],
-        to: [x, 1.98 + side * 0.04, 0.61],
-        radius: 0.065,
-        colour: BONE,
-      })
+  for (let i = 0; i < 2; i++) {
+    const y = 2.7 - i * 0.21
+    k.oval({
+      name: `central-mark-rim-${i}`,
+      at: [0, y, 0.5],
+      radii: [0.105, 0.105, 0.025],
+      colour: INK,
+    })
+    k.oval({
+      name: `central-mark-centre-${i}`,
+      at: [0, y, 0.522],
+      radii: [0.082, 0.082, 0.012],
+      colour: BONE,
+    })
+    k.oval({
+      name: `central-mark-slit-${i}`,
+      at: [0, y, 0.538],
+      radii: [0.018, 0.065, 0.008],
+      colour: INK,
+    })
   }
+  k.patch({
+    name: 'rectangular-mouth',
+    at: [0, 0, 0.505],
+    colour: INK,
+    points: [
+      [-0.41, 2.27],
+      [0.41, 2.27],
+      [0.41, 1.65],
+      [-0.41, 1.65],
+    ],
+  })
+  for (let i = 0; i < 5; i++)
+    k.patch({
+      name: `upper-triangular-tooth-${i}`,
+      at: [(i - 2) * 0.162, 2.27, 0.54],
+      colour: BONE,
+      points: [
+        [-0.079, 0],
+        [0.079, 0],
+        [0, -0.235],
+      ],
+    })
   k.heart({ name: 'belly-heart', at: [0, 1.04, 0.6], width: 0.48, colour: INK })
   k.tube({
     name: 'mouse-tail',
@@ -85,17 +123,58 @@ export function momoze(seen: Apparition, context: BasicApparitionContext) {
   return context.root
 }
 
+function neckMane(k: ReturnType<typeof sculptKit>, neckCurve: import('three').CatmullRomCurve3) {
+  for (let i = 0; i < 16; i++) {
+    const p = neckCurve.getPoint(0.12 + i * 0.044)
+    for (const side of [-1, 1])
+      k.taper({
+        name: `curled-neck-mane-${i}-${side}`,
+        colour: 0x554943,
+        radii: [0.03, 0.045, 0.026, 0],
+        points: [
+          [p.x, p.y + 0.14, side * 0.12],
+          [p.x - 0.08, p.y + 0.28, side * 0.23],
+          [p.x + 0.07, p.y + 0.36, side * 0.32],
+          [p.x + 0.15, p.y + 0.27, side * 0.3],
+        ],
+      })
+  }
+}
+
 /** Ch. 362/384: equine trunk, human forearms, heels, ringed neck and flail tail. */
 export function tserriednichGuardian(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size)
+  const k = sculptKit(context, seen.size)
   const hide = 0xc2b4ad
   k.oval({ name: 'equine-trunk', at: [0.1, 1.35, 0], radii: [1.12, 0.67, 0.53], colour: hide })
+  k.oval({ name: 'raised-withers', at: [-0.56, 1.79, 0], radii: [0.47, 0.48, 0.4], colour: hide })
   for (const side of [-1, 1]) {
     k.oval({
       name: `haunch-${side}`,
       at: [0.78, 1.3, side * 0.33],
       radii: [0.43, 0.62, 0.33],
       colour: hide,
+    })
+    k.oval({
+      name: `pectoral-${side}`,
+      at: [-0.59, 1.39, side * 0.35],
+      radii: [0.37, 0.53, 0.3],
+      colour: hide,
+    })
+    k.oval({
+      name: `forearm-flexor-${side}`,
+      at: [-0.86, 0.73, side * 0.46],
+      radii: [0.17, 0.29, 0.15],
+      colour: hide,
+    })
+    k.taper({
+      name: `hind-calf-${side}`,
+      colour: hide,
+      radii: [0.16, 0.12, 0.075],
+      points: [
+        [0.96, 0.72, side * 0.4],
+        [0.86, 0.45, side * 0.41],
+        [0.69, 0.18, side * 0.43],
+      ],
     })
     k.tube({
       name: `hind-leg-${side}`,
@@ -151,8 +230,8 @@ export function tserriednichGuardian(seen: Apparition, context: BasicApparitionC
   const neckCurve = new context.THREE.CatmullRomCurve3(
     path.map((p) => new context.THREE.Vector3(...p)),
   )
-  for (let i = 0; i < 11; i++) {
-    const t = i / 10
+  for (let i = 0; i < 19; i++) {
+    const t = i / 18
     const point = neckCurve.getPoint(t)
     const ring = k.add({
       geometry: new context.THREE.TorusGeometry(seen.size * 0.22, seen.size * 0.025, 6, 20),
@@ -165,58 +244,46 @@ export function tserriednichGuardian(seen: Apparition, context: BasicApparitionC
       neckCurve.getTangent(t).normalize(),
     )
   }
+  neckMane(k, neckCurve)
   const head = new context.THREE.Group()
   head.name = 'female-head'
   head.position.set(-2 * seen.size, 1.1 * seen.size, 0)
-  head.rotation.y = -Math.PI / 2
-  const h = modelKit({ ...context, root: head }, seen.size)
-  h.oval({ name: 'face', at: [0, 0, 0], radii: [0.3, 0.39, 0.23], colour: hide })
-  h.oval({ name: 'nose', at: [0, -0.02, 0.23], radii: [0.055, 0.12, 0.09], colour: hide })
+  head.rotation.set(0, -Math.PI / 2, -0.32)
+  const h = buildNenFemaleFace(
+    { ...context, root: head },
+    {
+      size: seen.size,
+      skin: hide,
+      width: 0.27,
+      height: 0.41,
+      depth: 0.225,
+      eye: 0.095,
+    },
+  )
   for (const side of [-1, 1]) {
-    h.tube({
+    h.taper({
       name: `swept-horn-${side}`,
       points: [
         [side * 0.23, 0.28, -0.05],
-        [side * 0.4, 0.62, -0.15],
-        [side * 0.48, 0.88, -0.4],
-        [side * 0.4, 1.1, -0.6],
+        [side * 0.42, 0.54, -0.17],
+        [side * 0.67, 0.84, -0.35],
       ],
-      radius: 0.075,
+      radii: [0.105, 0.08, 0],
       colour: hide,
     })
-    h.eye({ name: `human-eye-${side}`, at: [side * 0.13, 0.09, 0.21], radius: 0.065 })
-    h.tube({
-      name: `brow-${side}`,
-      points: [
-        [side * 0.05, 0.18, 0.22],
-        [side * 0.13, 0.2, 0.23],
-        [side * 0.23, 0.16, 0.17],
-      ],
-      radius: 0.025,
-      colour: INK,
-    })
   }
-  h.tube({
-    name: 'lips',
-    points: [
-      [-0.12, -0.18, 0.2],
-      [0, -0.2, 0.25],
-      [0.12, -0.18, 0.2],
-    ],
-    radius: 0.025,
-    colour: INK,
-  })
-  for (let i = 0; i < 28; i++) {
-    const a = (i * Math.PI * 2) / 28
-    h.tube({
+  for (let i = 0; i < 42; i++) {
+    const a = (i * Math.PI * 2) / 42
+    h.taper({
       name: `mane-lock-${i}`,
       points: [
         [Math.cos(a) * 0.28, Math.sin(a) * 0.36, -0.07],
-        [Math.cos(a) * 0.56, Math.sin(a) * 0.65, -0.1],
-        [Math.cos(a) * 0.63 + Math.sin(i) * 0.13, Math.max(-0.7, Math.sin(a) * 0.85 - 0.2), 0.02],
-        [Math.cos(a) * 0.7, Math.max(-0.7, Math.sin(a) * 0.9 - 0.42), 0.03],
+        [Math.cos(a) * 0.48, Math.sin(a) * 0.6, -0.18],
+        [Math.cos(a) * 0.59 + Math.sin(i) * 0.1, Math.max(-0.68, Math.sin(a) * 0.78 - 0.16), -0.07],
+        [Math.cos(a) * 0.68, Math.max(-0.72, Math.sin(a) * 0.84 - 0.28), 0.02],
+        [Math.cos(a) * 0.65 - Math.sin(i) * 0.08, Math.max(-0.78, Math.sin(a) * 0.89 - 0.39), 0.04],
       ],
-      radius: 0.055,
+      radii: [0.045, 0.055, 0.045, 0.025, 0],
       colour: 0x554943,
     })
   }

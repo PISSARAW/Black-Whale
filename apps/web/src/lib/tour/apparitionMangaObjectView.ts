@@ -1,10 +1,11 @@
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { BONE, INK, modelKit } from './nenModelPrimitives'
+import { sculptKit } from './nenSculptPrimitives'
 
 /** Chapter 97: exposed vertebrae and paired ribs, rather than a solid fish body. */
 export function indoorFish(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size)
+  const k = sculptKit(context, seen.size)
   k.tube({
     name: 'vertebral-column',
     points: [
@@ -19,6 +20,7 @@ export function indoorFish(seen: Apparition, context: BasicApparitionContext) {
   for (let i = 0; i < 12; i++) {
     const x = -0.65 + i * 0.18
     const r = Math.sin(((i + 1) / 14) * Math.PI) * 0.48
+    k.oval({ name: `vertebra-${i}`, at: [x, 0.06, 0], radii: [0.065, 0.075, 0.09], colour: BONE })
     for (const side of [-1, 1]) {
       k.tube({
         name: `rib-${i}-${side}`,
@@ -39,21 +41,53 @@ export function indoorFish(seen: Apparition, context: BasicApparitionContext) {
       })
     }
   }
-  k.patch({
-    name: 'skull',
-    points: [
-      [-0.52, -0.24],
-      [-0.56, 0.12],
-      [-0.12, 0.5],
-      [0.25, 0.22],
-      [0.2, -0.2],
-    ],
-    at: [-1.05, 0, -0.13],
+  const skull = new context.THREE.Shape()
+  skull.moveTo(-0.52, -0.24)
+  skull.lineTo(-0.56, 0.12)
+  skull.lineTo(-0.12, 0.5)
+  skull.lineTo(0.25, 0.22)
+  skull.lineTo(0.2, -0.2)
+  skull.closePath()
+  k.add({
+    name: 'volumetric-skull',
+    at: [-1.05, 0, -0.12],
     colour: BONE,
-    into: undefined,
-    depth: 0.26,
+    geometry: new context.THREE.ExtrudeGeometry(skull, {
+      depth: 0.24,
+      bevelEnabled: true,
+      bevelSize: 0.065,
+      bevelThickness: 0.065,
+      bevelSegments: 2,
+    }).scale(seen.size, seen.size, seen.size),
   })
-  k.oval({ name: 'eye-socket', at: [-1.12, 0.18, 0.145], radii: [0.085, 0.11, 0.025], colour: INK })
+  for (const side of [-1, 1]) {
+    k.oval({
+      name: `eye-socket-${side}`,
+      at: [-1.12, 0.18, side * 0.19],
+      radii: [0.085, 0.11, 0.02],
+      colour: INK,
+    })
+    k.taper({
+      name: `zygomatic-arch-${side}`,
+      colour: 0xc5bdab,
+      radii: [0.015, 0.023, 0.01],
+      points: [
+        [-1.35, 0.17, side * 0.19],
+        [-1.25, 0, side * 0.195],
+        [-0.89, -0.14, side * 0.18],
+      ],
+    })
+    k.taper({
+      name: `jaw-ramus-${side}`,
+      colour: BONE,
+      radii: [0.04, 0.035, 0.025],
+      points: [
+        [-0.88, -0.12, side * 0.15],
+        [-1, -0.34, side * 0.15],
+        [-1.49, -0.3, side * 0.1],
+      ],
+    })
+  }
   k.tube({
     name: 'lower-jaw',
     points: [
@@ -97,6 +131,17 @@ export function indoorFish(seen: Apparition, context: BasicApparitionContext) {
       colour: BONE,
     })
     fin.rotation.y = side * 0.5
+    for (let ray = 0; ray < 4; ray++)
+      k.taper({
+        name: `pectoral-ray-${side}-${ray}`,
+        colour: 0xa89e8a,
+        radii: [0.008, 0.005, 0],
+        points: [
+          [-0.55, -0.25, side * 0.23],
+          [-0.35 + ray * 0.045, -0.47, side * 0.3],
+          [-0.16 + ray * 0.025, -0.91 + ray * 0.14, side * 0.4],
+        ],
+      })
   }
   return context.root
 }

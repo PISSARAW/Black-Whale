@@ -88,6 +88,24 @@ describe('the manga models', () => {
     const before = new THREE.Box3().setFromObject(ctx.root, true)
     expect(before.isEmpty()).toBe(false)
     batchNenModel(ctx.root)
+    if (
+      [
+        'sprite',
+        'chimera',
+        'benjamin-guardian',
+        'halkenburg-guardian',
+        'nasubi-guardian',
+        'cookie',
+      ].includes(kind)
+    ) {
+      let draws = 0
+      ctx.root.traverse((part) => {
+        if ((part as THREE.Mesh).isMesh) draws++
+      })
+      // A missing UV/normal attribute must not silently leave hundreds of
+      // feathers, facial features or hair locks as separate draw calls.
+      expect(draws).toBeLessThan(24)
+    }
     const after = new THREE.Box3().setFromObject(ctx.root, true)
     expect(before.min.distanceTo(after.min)).toBeLessThan(0.00001)
     expect(before.max.distanceTo(after.max)).toBeLessThan(0.00001)

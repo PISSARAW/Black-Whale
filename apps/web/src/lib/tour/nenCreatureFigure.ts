@@ -63,15 +63,33 @@ function outlineMaterial(THREE: Three, source: Material): MeshBasicMaterial {
   return made
 }
 
-function outlinedMesh(THREE: Three, source: Mesh): Mesh | null {
+function outlinedMesh(THREE: Three, source: Mesh, thickness: number): Mesh | null {
   if (!source.geometry || Array.isArray(source.material)) return null
   const material = source.material as Material
   // Fumes, glows and portal-like washes need soft edges. Outlining only the
   // substantial surfaces keeps the figure legible without drawing black fog.
   if (material.transparent && material.opacity < 0.45) return null
-  const edge = new THREE.Mesh(source.geometry, outlineMaterial(THREE, material))
+  // Scaling a merged mesh moves every feature away from the model origin:
+  // a high eye acquires a thick displaced black cap. Extrude along surface
+  // normals instead, with the same thin stroke on the face and the feet.
+  const geometry = source.geometry.clone()
+  if (!geometry.attributes.normal) geometry.computeVertexNormals()
+  const positions = geometry.attributes.position,
+    normals = geometry.attributes.normal
+  const normal = new THREE.Vector3()
+  for (let i = 0; i < positions.count; i++) {
+    normal.fromBufferAttribute(normals, i).divide(source.scale).normalize()
+    positions.setXYZ(
+      i,
+      positions.getX(i) + (normal.x * thickness) / source.scale.x,
+      positions.getY(i) + (normal.y * thickness) / source.scale.y,
+      positions.getZ(i) + (normal.z * thickness) / source.scale.z,
+    )
+  }
+  geometry.computeBoundingBox()
+  geometry.computeBoundingSphere()
+  const edge = new THREE.Mesh(geometry, outlineMaterial(THREE, material))
   edge.name = 'nen-creature-ink'
-  edge.scale.setScalar(1.055)
   edge.renderOrder = Math.max(0, source.renderOrder - 1)
   return edge
 }
@@ -98,7 +116,7 @@ export function styleNenCreature(
     if (mesh.isMesh && mesh.name !== 'nen-creature-ink') meshes.push(mesh)
   })
   for (const mesh of meshes) {
-    const edge = outlinedMesh(THREE, mesh)
+    const edge = outlinedMesh(THREE, mesh, size * 0.009)
     if (edge) mesh.add(edge)
   }
 

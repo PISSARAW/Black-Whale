@@ -118,9 +118,9 @@ export class BanquetDetailBuilder {
     )
   }
 
-  finish(): Three.Group {
+  finish(name = 'banquet-manga-details'): Three.Group {
     const root = new this.THREE.Group()
-    root.name = 'banquet-manga-details'
+    root.name = name
     this.mesh(this.surfaces, new this.THREE.MeshLambertMaterial({ vertexColors: true }), root)
     this.mesh(this.lights, new this.THREE.MeshBasicMaterial({ vertexColors: true }), root)
     return root

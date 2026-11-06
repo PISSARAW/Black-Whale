@@ -38,7 +38,8 @@ describe('manga photo viewpoints', () => {
         ]
         expect(pointInPolygon(oneMetreAhead, space!.footprint), `${view.id} faces out`).toBe(true)
       } else {
-        expect(view.eyeHeight, view.id).toBeGreaterThan(1.7)
+        // A seated panel may be lower than a standing visitor; aerial plans stay above them.
+        expect(view.eyeHeight, view.id).toBeGreaterThan(view.pitch < -1 ? 1.7 : 0)
       }
 
       const plan = ship.plans.get(space!.tierId)!

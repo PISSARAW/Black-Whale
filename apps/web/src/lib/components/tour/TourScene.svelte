@@ -88,7 +88,7 @@
   } from '$lib/tour/navigation'
   import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
-  import { updateWalkPostEffects } from '$lib/tour/walkPostEffects'
+  import { updateWalkOptics, WalkTemporalState, SEALED_EXPOSURE } from '$lib/tour/walkPostEffects'
   import { ConcertStageView } from '$lib/tour/ConcertStageView'
   import { positionHeldFlute } from '$lib/tour/heldFlute'
   import type { ConcertPerformance } from '$lib/tour/melodyConcert'
@@ -123,7 +123,6 @@
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { TourHourView } from '$lib/tour/hourView'
   import { createDeckMaterials } from '$lib/tour/deckMaterials'
-  import { LENS_DEFAULTS, LENS_OFF, applyGrade } from '$lib/tour/postGrade'
   import { refractionAmount, type AuraGlass } from '$lib/tour/auraRefraction'
   import {
     animateVisibleScene,
@@ -692,15 +691,6 @@
    * the horizon, and the pane is baked once while this is read every frame.
    */
   const EYE_HEIGHT = 1.7
-  /**
-   * What the aperture closes to when the monkeys take sight.
-   *
-   * Not zero: the ship is still there and still lit — the bake is in the
-   * vertices and cannot be switched off — and a black frame would say the deck
-   * had gone rather than that the eye had. Two per cent leaves the brightest
-   * filaments as a suggestion and nothing else.
-   */
-  const SEALED_EXPOSURE = 0.02
   /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
   const LOOK_SENSITIVITY = 0.0022
   const MAX_PITCH = Math.PI / 2 - 0.05
@@ -851,7 +841,6 @@
         renderTarget,
         quality,
         shafts,
-        grade,
         depthOfField,
         motionBlur,
       } = runtime
@@ -4170,9 +4159,7 @@
       } | null = null
 
       // TAA Tracking
-      let previousTaaPointer: Vec2 = [0, 0]
-      let previousTaaYaw = 0
-      let previousTaaPitch = 0
+      const temporal = new WalkTemporalState()
 
       const tick = (now: number) => {
         const delta = Math.min((now - previous) / 1000, 0.1)
@@ -4421,7 +4408,11 @@
         velocity = walking ? glide(velocity, wanted, delta) : [0, 0]
 
         velocity = concertView.move(concert, {
-          tierId: currentTierId, reveal, at: pointer, velocity, delta,
+          tierId: currentTierId,
+          reveal,
+          at: pointer,
+          velocity,
+          delta,
         })
         if (!concertView.active && (velocity[0] !== 0 || velocity[1] !== 0)) {
           if (authoredEyeHeight !== null) {
@@ -4721,23 +4712,18 @@
 
         hourView.aim(plan, standing?.id ?? null)
 
-        // The aperture. Written here rather than watched, for the same reason
-        // the field of view is: the panel is a store and this loop is outside
-        // Svelte's reactivity, and one number a frame is not a cost.
-        renderer.toneMappingExposure = blinded
-          ? SEALED_EXPOSURE
-          : $comfort.exposure * hourView.exposure
-        // The grade the hour asks for, and the clock the grain and the corners
-        // breathe on. Three numbers and a float: see `applyGrade`.
-        applyGrade(grade, {
-          grade: hourView.grade,
-          clock,
+        updateWalkOptics(runtime, {
+          hour: hourView,
+          exposure: $comfort.exposure,
+          blinded,
+          outside,
+          lens: quality.lens,
           calm: calmWalk,
-          lens: quality.lens ? LENS_DEFAULTS : LENS_OFF,
-        })
-
-        updateWalkPostEffects(runtime, {
-          calm: calmWalk, nen: shownNen, clock, gyo: gyoMode, tier: currentTierId, delta,
+          nen: shownNen,
+          clock,
+          gyo: gyoMode,
+          tier: currentTierId,
+          delta,
         })
 
         const { width, height } = renderer.getSize(size)
@@ -4746,22 +4732,19 @@
         // The far ends of the tunnel are drawn into their panes first, from
         // where the visitor's head would be if it were standing at the other one.
         renderPortals()
-        concertView.render({ camera, actors: apparitions, seconds: clock, yaw,
-          runtime, exposure: $comfort.exposure }, concert)
+        concertView.render(
+          {
+            camera,
+            actors: apparitions,
+            seconds: clock,
+            yaw,
+            runtime,
+            exposure: $comfort.exposure,
+          },
+          concert,
+        )
 
-        if (runtime.taa) {
-          const moved =
-            Math.abs(pointer[0] - previousTaaPointer[0]) > 0.001 ||
-            Math.abs(pointer[1] - previousTaaPointer[1]) > 0.001 ||
-            Math.abs(yaw - previousTaaYaw) > 0.001 ||
-            Math.abs(pitch - previousTaaPitch) > 0.001
-
-          runtime.taa.accumulate = !moved && !concertView.active
-
-          previousTaaPointer = [pointer[0], pointer[1]]
-          previousTaaYaw = yaw
-          previousTaaPitch = pitch
-        }
+        temporal.update(runtime.taa, { at: pointer, yaw, pitch, concert: concertView.active })
 
         composer.render()
 

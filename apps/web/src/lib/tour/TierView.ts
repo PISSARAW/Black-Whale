@@ -4,6 +4,8 @@ import { walkedPlan, type TourWorld } from './hatsu'
 import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
+import { buildRoyalSalonDetails } from './royalSalonView'
+import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 
 export interface TierRoomView {
   spaceId: string
@@ -115,19 +117,25 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const mesh = buildTierMesh(plan, { reveal })
+    const mesh = buildTierMesh(casinoSurfacePlan(plan, reveal), {
+      reveal,
+    })
     const shared = this.attributes(mesh)
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
 
     for (const group of mesh.groups) {
       const room = this.room(group, shared, { ship, tierId, reveal, dustScale })
-      room.details = buildBanquetDetails({
+      const detailsOptions = {
         THREE: this.THREE,
         plan,
         spaceId: group.spaceId,
         reveal,
-      })
+      }
+      room.details =
+        buildBanquetDetails(detailsOptions) ??
+        buildRoyalSalonDetails(detailsOptions) ??
+        buildCasinoDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)
       root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
       if (room.panes) root.add(room.panes)

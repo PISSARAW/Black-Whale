@@ -3,6 +3,8 @@ import { MANGA_GENERAL_VIEWS } from './mangaGeneralViews'
 import { MANGA_APARTMENT_VIEWS } from './mangaApartmentViews'
 import { MANGA_CHA_R_VIEWS } from './mangaChaRViews'
 import { MANGA_BANQUET_VIEWS } from './mangaBanquetViews'
+import { MANGA_CASINO_VIEWS } from './mangaCasinoViews'
+import { MANGA_ROYAL_SALON_VIEWS } from './mangaRoyalSalonViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -14,6 +16,7 @@ export type { MangaCastStaging, MangaView } from './mangaViewModel'
 export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_GENERAL_VIEWS,
   ...MANGA_BANQUET_VIEWS,
+  ...MANGA_CASINO_VIEWS,
   view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
@@ -47,38 +50,7 @@ export const MANGA_VIEWS: MangaView[] = [
     label: "Kacho's kitchen and the lower cupboard named in Melody's Morse code",
     labelFr: 'La cuisine de Kacho et le placard bas désigné par le morse de Senritsu',
   }),
-  view({
-    id: 'nasubi-living-mantel',
-    spaceId: 'tier-1-king-living-quarters-living',
-    at: [0, 7.15],
-    target: [0, -7.45],
-    pitch: -0.07,
-    chapter: 382,
-    eventSequence: 1,
-    volume: 37,
-    pages: '29–30',
-    label: "Nasubi's salon facing the monumental painting and ornamented mantel",
-    labelFr: 'Le salon de Nasubi face au tableau monumental et au manteau ornementé',
-    // Ch. 382, pp. 29–30: Nasubi occupies the left seating group,
-    // Halkenburg crosses the open floor at right, while Nasubi's Guardian
-    // Spirit Beast occupies the far edge. This blocking is part of the panel
-    // just as much as the lens:
-    // leaving the generic hashed stations in place put the King outside it.
-    staging: [
-      {
-        characterId: 'nasubi-hui-guo-rou',
-        at: [-5, -0.15],
-        heading: 0,
-        pose: 'seated',
-      },
-      {
-        characterId: 'prince-halkenburg',
-        at: [5.1, -1.35],
-        heading: -1.45,
-        pose: 'idle',
-      },
-    ],
-  }),
+  ...MANGA_ROYAL_SALON_VIEWS,
   view({
     id: 'lifeboat-round-hatch',
     spaceId: 'tier-1-lifeboats-port-pod-cabin',

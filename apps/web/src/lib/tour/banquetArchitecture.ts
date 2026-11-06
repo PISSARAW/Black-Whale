@@ -27,7 +27,7 @@ function coffer(into: BanquetDetailBuilder, at: Point3, span: number): void {
 }
 
 /** Tiered crystal baskets seen above the tables in chapters 358–359 and 362. */
-function chandelier(options: {
+export function chandelier(options: {
   THREE: typeof Three
   into: BanquetDetailBuilder
   at: Point3

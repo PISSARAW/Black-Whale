@@ -12,43 +12,52 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 61 lieux, 409 espaces, 972 éléments modélisés.**
+**Couverture : 62 lieux, 429 espaces, 1149 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
 - **Pont :** tier-1
 - **Preuve de l’enveloppe :** case du manga
-- **Sous-espaces :** 2
-- **Emprises relevées :** 133.5 × 24.5 m ; 24 × 24.5 m
+- **Sous-espaces :** 3
+- **Emprises relevées :** 28 × 50.86 m ; 28 × 9.14 m ; 4.57 × 2.29 m
 - **Hauteurs sous plafond :** 9, 9.6 m
-- **Éléments modélisés :** 72 table, 8 platform, 5 counter, 2 painting, 2 pillar, 1 cabinet
-- **Objets directement visibles dans les cases :** 90/90
-- **Espaces internes :** Salle du banquet (bout du service)
+- **Éléments modélisés :** 72 table, 63 platform, 5 counter, 4 pillar, 3 painting, 1 cabinet
+- **Objets directement visibles dans les cases :** 134/148
+- **Espaces internes :** Salle du banquet (bout du service) ; Sas de la salle du banquet
 - **Sources de la pièce :**
-  - Chap. 349 — cérémonie de départ
+  - Chap. 358–359 — panorama du banquet inaugural et salle des cérémonies ; implantation métrique commune au plan reconstruit du pont royal.
   - Chap. 383 — le bout de la halle où le buffet est dressé, une marche en contrebas du sol où se tiennent les tables, le plafond filant de niveau au-dessus des deux.
+  - Chap. 383 et 389 — L'entrée de la salle des fêtes comporte un sas sécurisé avec une double porte intérieure et extérieure, toutes deux gardées.
 - **Sources du mobilier et des détails :**
-  - Chap. 383 — la scène au bout de la salle, et le trône sur son estrade devant elle.
+  - Chap. 383, ouverture du banquet et vue du piano — la scène de spectacle, son rideau clair et son encadrement ornementé se trouvent à l’extrémité opposée au trône royal. Dimensions et espacement estimés.
+  - Chap. 359, case du banquet derrière Benjamin — le roi siège dans un fauteuil sculpté à haut dossier, sur une estrade distincte avec une petite table ronde, un fond drapé et des colonnes latérales ; le chap. 383 confirme le parapet décoré et l’accès latéral. Dimensions métriques estimées.
   - Chap. 383 — le buffet qui sert la salle, les cuisiniers derrière le comptoir et les plats disposés dessus.
   - Chap. 359 — le banquet inaugural : des tables rondes en rangées à travers la salle, une allée laissée libre dans l'axe du trône.
   - Chap. 359 — le banquet inaugural vu dans l'axe de la halle : les galeries surélevées qui courent le long des deux murs latéraux, les piles et le rideau qui encadrent la scène, et le panneau suspendu au-dessus de la galerie bâbord.
   - Chap. 383 — le trône sur son estrade : le parapet drapé en travers de sa face et l'emmarchement qui en descend, et la ligne de service d'où le buffet est dressé, derrière le comptoir.
+  - Chap. 358, panorama du banquet inaugural — galeries latérales en mezzanine, parapets pleins à panneaux, sous-faces à caissons et deux escaliers latéraux. Hauteur, épaisseur, nombre de marches et positions métriques estimés.
+  - Chap. 359
+  - Escalier bas inféré pour accéder à la scène des spectacles. Sept marches, implantation et dimensions métriques estimées ; aucune case ne situe cette volée.
 
 ## Quartiers du Roi — `tier-1-king-living-quarters`
 
 - **Pont :** tier-1, interior-king-quarters
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 2
-- **Emprises relevées :** 192.5 × 28 m ; 24 × 16.64 m
+- **Emprises relevées :** 47 × 32 m ; 24 × 16.64 m
 - **Hauteurs sous plafond :** 7 m
-- **Éléments modélisés :** 9 painting, 6 cabinet, 3 seat, 3 table, 1 platform
-- **Objets directement visibles dans les cases :** 22/22
+- **Éléments modélisés :** 10 painting, 7 cabinet, 6 pillar, 4 seat, 3 table, 1 platform
+- **Objets directement visibles dans les cases :** 31/31
 - **Espaces internes :** Salon royal
 - **Sources de la pièce :**
   - Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons.
 - **Sources du mobilier et des détails :**
-  - Chap. 382, p. 29–30 — un tableau de bataille monumental domine le mur au-dessus du manteau ornementé.
-  - Chap. 382 — le salon du Roi : sol à motifs, sièges appariés, tableaux encadrés et la baie du fond.
+  - Chap. 382, p. 28–30 — un grand panneau paysager encadré fait face au Roi assis, distinct du tableau de bataille au-dessus du manteau latéral ; il ne prouve pas une baie extérieure.
+  - Chap. 382, p. 29–30 — Nasubi est allongé dans un large fauteuil rembourré face au panneau paysager.
+  - Chap. 382, p. 28 — une grande enceinte sombre borde chaque côté du grand panneau paysager.
+  - Chap. 382, p. 29–30 — des piles carrées claires à panneaux sombres portent la voûte à caissons ; nombre et implantation métrique reconstruits.
+  - Chap. 382, p. 29–30 — le tableau de bataille et le manteau occupent le mur latéral, perpendiculaire au grand panneau paysager face au Roi.
+  - Chap. 382, p. 28–30 — le salon orné : tableaux encadrés, sièges rembourrés, tables basses et meubles d’exposition ; placement détaillé et dimensions reconstruits.
   - Chap. 382, p. 29–30 — un long manteau sous le tableau de bataille monumental porte des photographies encadrées, des vases et un ornement central évoquant une horloge.
   - Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central.
   - Chap. 382, p. 29–30 — une grande enceinte étroite à trois haut-parleurs circulaires se dresse près du mur de tableaux bâbord.
@@ -57,16 +66,16 @@
 
 ## Pont des canots (bâbord) — `tier-1-lifeboats`
 
-- **Pont :** tier-1, interior-lifeboat
+- **Pont :** tier-1-c, interior-lifeboat
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 3
-- **Emprises relevées :** 10.5 × 35 m ; 5.2 × 5.2 m
-- **Hauteurs sous plafond :** 2.6 m
+- **Emprises relevées :** 24 × 17.5 m ; 5.2 × 5.2 m
+- **Hauteurs sous plafond :** 3.4, 2.6 m
 - **Éléments modélisés :** 8 lifeboat, 3 counter, 1 cabinet, 1 pillar, 1 platform
 - **Objets directement visibles dans les cases :** 14/14
 - **Espaces internes :** Pont des canots (tribord) ; Cabine de la capsule
 - **Sources de la pièce :**
-  - Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté.
+  - Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté. Le pont 1-C est le choix de reconstruction pour leur emplacement.
   - Chap. 383, p. 60–65 — la cabine circulaire possède une coque nervurée, une écoutille ronde avec console et meuble latéraux, et un pont nu segmenté autour du mât central et de son large socle ; aucun siège de passager n'est visible.
 - **Sources du mobilier et des détails :**
   - Chap. 383 — la baie de lancement : les capsules sur leurs berceaux et la console de mise à l'eau à côté.
@@ -76,7 +85,7 @@
 
 ## Chambre funéraire des princes — `tier-1-princes-burial-chamber`
 
-- **Pont :** tier-1, interior-burial-chamber
+- **Pont :** tier-1-c, interior-burial-chamber
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 2
 - **Emprises relevées :** 15.92 × 15.36 m ; 20.54 × 20.54 m
@@ -85,28 +94,31 @@
 - **Objets directement visibles dans les cases :** 17/17
 - **Espaces internes :** Rotonde
 - **Sources de la pièce :**
+  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre. La chambre est affectée au pont 1-C et replacée dans sa coque selon le choix de reconstruction.
   - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
 - **Sources du mobilier et des détails :**
   - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
 
 ## Couloir des quartiers des reines — `tier-1-queens-living-quarters`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** liaison déduite
-- **Sous-espaces :** 1
-- **Emprises relevées :** 5.95 × 52.5 m
+- **Sous-espaces :** 3
+- **Emprises relevées :** 5 × 100 m ; 47 × 4 m
 - **Éléments modélisés :** aucun objet non attesté
 - **Objets directement visibles dans les cases :** 0/0
+- **Espaces internes :** Couloir des reines — bâbord ; Couloir des reines — tribord
 - **Sources de la pièce :**
   - Reconstruit pour rendre le pont continu ; aucune planche ne le montre.
-- **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
+  - Couloir reconstruit desservant les quatre suites des reines de ce côté de la salle du roi ; largeur estimée.
+- **Limite connue :** 3 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Chambre de reine 01 — `tier-1-queens-living-quarters-room-01`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.13 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 3 table, 2 bed, 2 painting, 1 mobile, 1 seat
 - **Objets directement visibles dans les cases :** 8/9
 - **Sources de la pièce :**
@@ -122,10 +134,10 @@
 
 ## Chambre de reine 02 — `tier-1-queens-living-quarters-room-02`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.13 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -135,10 +147,10 @@
 
 ## Chambre de reine 03 — `tier-1-queens-living-quarters-room-03`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.12 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -148,10 +160,10 @@
 
 ## Chambre de reine 04 — `tier-1-queens-living-quarters-room-04`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.12 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -161,10 +173,10 @@
 
 ## Chambre de reine 05 — `tier-1-queens-living-quarters-room-05`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.13 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -174,10 +186,10 @@
 
 ## Chambre de reine 06 — `tier-1-queens-living-quarters-room-06`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.13 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -187,10 +199,10 @@
 
 ## Chambre de reine 07 — `tier-1-queens-living-quarters-room-07`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.12 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -200,10 +212,10 @@
 
 ## Chambre de reine 08 — `tier-1-queens-living-quarters-room-08`
 
-- **Pont :** tier-1-c
+- **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 8.4 × 13.12 m
+- **Emprises relevées :** 11 × 30 m
 - **Éléments modélisés :** 1 bed
 - **Objets directement visibles dans les cases :** 0/1
 - **Sources de la pièce :**
@@ -211,17 +223,17 @@
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
 
-## Chemin de ronde des gardes (bâbord) — `tier-1-royal-residential-sector`
+## Coursive arrière en U (bâbord) — `tier-1-royal-residential-sector`
 
 - **Pont :** tier-1
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 32
-- **Emprises relevées :** 3 × 49 m ; 49 × 3.5 m ; 3 × 5 m ; 43 × 1.75 m
+- **Emprises relevées :** 37 × 11 m ; 6 × 84 m ; 4.95 × 3.07 m ; 1.73 × 44 m
 - **Éléments modélisés :** 29 duct
 - **Objets directement visibles dans les cases :** 29/29
-- **Espaces internes :** Chemin de ronde des gardes (tribord) ; Chemin de ronde des gardes (arrière) ; Dégagement — porte 1 ; Dégagement — porte 2 ; Dégagement — porte 3 ; Dégagement — porte 4 ; Dégagement — porte 5 ; Dégagement — porte 6 ; Dégagement — porte 7 ; Dégagement — porte 8 ; Dégagement — porte 9 ; Dégagement — porte 10 ; Dégagement — porte 11 ; Dégagement — porte 12 ; Dégagement — porte 13 ; Dégagement — porte 14 ; Traverse 1 ; Traverse 2 ; Traverse 3 ; Traverse 4 ; Traverse 5 ; Traverse 6 ; Traverse 7 ; Traverse 8 ; Coursive arrière 1 ; Coursive arrière 2 ; Coursive arrière 3 ; Coursive arrière 4 ; Coursive arrière 5 ; Coursive arrière 6 ; Coursive arrière 7
+- **Espaces internes :** Coursive arrière en U (tribord) ; Coursive arrière en U (poupe) ; Dégagement — porte 1 ; Dégagement — porte 2 ; Dégagement — porte 3 ; Dégagement — porte 4 ; Dégagement — porte 5 ; Dégagement — porte 6 ; Dégagement — porte 7 ; Dégagement — porte 8 ; Dégagement — porte 9 ; Dégagement — porte 10 ; Dégagement — porte 11 ; Dégagement — porte 12 ; Dégagement — porte 13 ; Dégagement — porte 14 ; Traverse 1 ; Traverse 2 ; Traverse 3 ; Traverse 4 ; Traverse 5 ; Traverse 6 ; Traverse 7 ; Traverse 8 ; Coursive arrière 1 ; Coursive arrière 2 ; Coursive arrière 3 ; Coursive arrière 4 ; Coursive arrière 5 ; Coursive arrière 6 ; Coursive arrière 7
 - **Sources de la pièce :**
-  - Chap. 363 — la double page de la zone d'habitation dessine deux cloisons : l'extérieure, en dedans de laquelle les gardes font leur ronde, et l'intérieure, qui porte les quatorze portes numérotées. Voici le chemin de ronde entre les deux, et ce sont les soldats du chap. 349 qui s’y tiennent.
+  - Chap. 419 — le plan montre un couloir en U autour d’une pièce sans nom derrière les quartiers princiers ; sa fonction exacte n’est pas identifiée.
   - Chap. 363 — les appartements se dressent isolés à l'intérieur de la cloison intérieure, et chaque porte numérotée fait face à la porte de l’appartement qui lui est assigné. Voici le dégagement entre les deux.
   - Chap. 363 — les quatorze appartements ne se touchent pas et ne touchent pas la cloison qui les entoure : la double page laisse un écart de tous les côtés, et cet écart se parcourt.
   - Chap. 363 — la double page dessine un couloir au dos des appartements, entre les deux rangées : les quatorze lui présentent leur dos, et aucun n’y a de porte.
@@ -233,7 +245,7 @@
 - **Pont :** tier-1, interior-room-1001
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat, 1 telephone
 - **Objets directement visibles dans les cases :** 17/17
@@ -251,7 +263,7 @@
 - **Pont :** tier-1, interior-room-1002
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 4 cabinet, 4 seat, 3 basin, 3 bed, 3 table, 2 counter
 - **Objets directement visibles dans les cases :** 19/19
@@ -269,7 +281,7 @@
 - **Pont :** tier-1, interior-room-1003
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 7 cabinet, 3 basin, 3 bed, 3 seat, 3 table, 2 counter, 1 painting
 - **Objets directement visibles dans les cases :** 22/22
@@ -287,7 +299,7 @@
 - **Pont :** tier-1, interior-room-1004
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat
 - **Objets directement visibles dans les cases :** 17/17
@@ -304,7 +316,7 @@
 - **Pont :** tier-1, interior-room-1005
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 3 painting, 3 table, 2 counter, 2 seat
 - **Objets directement visibles dans les cases :** 20/20
@@ -321,7 +333,7 @@
 - **Pont :** tier-1, interior-room-1006
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 seat
 - **Objets directement visibles dans les cases :** 18/18
@@ -339,10 +351,10 @@
 - **Pont :** tier-1, interior-room-1007
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 7 cabinet, 4 painting, 3 basin, 3 bed, 3 table, 2 counter, 2 seat
-- **Objets directement visibles dans les cases :** 24/24
+- **Éléments modélisés :** 7 cabinet, 5 seat, 5 table, 4 painting, 3 basin, 3 bed, 2 counter, 1 platform
+- **Objets directement visibles dans les cases :** 30/30
 - **Espaces internes :** Quartiers des domestiques — 1007 (Luzurus) ; WC du personnel — 1007 (Luzurus) ; Vestibule d'entrée — 1007 (Luzurus) ; Cuisine — 1007 (Luzurus) ; Salle à manger — 1007 (Luzurus) ; Salon — 1007 (Luzurus) ; Chambre du prince — 1007 (Luzurus) ; Bain et WC — 1007 (Luzurus)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
@@ -353,13 +365,14 @@
   - Chap. 414 — Luzurus regarde un film dans la chambre 1007 avec Rice et Basho ; l'écran appartient au salon encombré montré auparavant.
   - Chap. 386 — la vue d'ensemble du salon de Luzurus montre deux topiaires ronds assortis encadrant les sièges rembourrés.
   - Chap. 386 et 389 — le salon encombré de Luzurus est bordé de grands tableaux encadrés au-dessus et entre les sièges et les meubles.
+  - Chap. 359 — Luzurus et Basho fument le narguilé dans un espace distinct de la pièce, avec un sol surélevé, des coussins et des tables basses.
 
 ## Chambre 1008 (Salé-salé) — `tier-1-royal-residential-sector-room-1008`
 
 - **Pont :** tier-1, interior-room-1008
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 painting, 1 seat
 - **Objets directement visibles dans les cases :** 18/18
@@ -378,7 +391,7 @@
 - **Pont :** tier-1, interior-room-1009
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 7 cabinet, 7 seat, 3 basin, 3 bed, 2 counter, 2 table
 - **Objets directement visibles dans les cases :** 24/24
@@ -396,7 +409,7 @@
 - **Pont :** tier-1, interior-room-1010
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 3 counter, 2 painting, 2 seat, 2 table
 - **Objets directement visibles dans les cases :** 21/21
@@ -417,7 +430,7 @@
 - **Pont :** tier-1, interior-room-1011
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
 - **Objets directement visibles dans les cases :** 17/17
@@ -435,7 +448,7 @@
 - **Pont :** tier-1, interior-room-1012
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat, 1 telephone, 1 vent
 - **Objets directement visibles dans les cases :** 18/18
@@ -454,7 +467,7 @@
 - **Pont :** tier-1, interior-room-1013
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 painting, 1 seat, 1 vent
 - **Objets directement visibles dans les cases :** 19/19
@@ -474,7 +487,7 @@
 - **Pont :** tier-1, interior-room-1014
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 9
-- **Emprises relevées :** 17 × 5 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
+- **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
 - **Éléments modélisés :** 8 cabinet, 4 table, 3 basin, 3 bed, 3 painting, 2 counter, 2 seat, 1 telephone
 - **Objets directement visibles dans les cases :** 26/26
@@ -514,29 +527,38 @@
 - **Sous-espaces :** 1
 - **Emprises relevées :** 42 × 28 m
 - **Hauteurs sous plafond :** 8 m
-- **Éléments modélisés :** 2 counter, 2 table, 1 painting, 1 seat
-- **Objets directement visibles dans les cases :** 2/6
+- **Éléments modélisés :** 4 seat, 4 table, 2 counter, 1 painting
+- **Objets directement visibles dans les cases :** 11/11
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
 - **Sources du mobilier et des détails :**
-  - Chap. 371 — Cleapatro reçoit la requête d’urgence dans la salle des juges de la Cour suprême, assis derrière son haut banc ornementé.
   - Chap. 371 — un grand emblème circulaire de la Cour est centré sur le mur à panneaux au-dessus du banc de Cleapatro.
-  - Le plan de salle d'audience de /ship : le banc du magistrat en tête, l'accusation et la défense face à face, le box entre les deux et le banc du public au fond.
+  - Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant un banc élevé avec des escaliers.
+  - Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant deux bureaux plus bas devant le juge.
+  - Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant un pupitre central.
+  - Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant des tables face au juge.
+  - Case de l'audience de la Cour suprême concernant l'arrestation de Camilla - montrant des bancs en gradins le long des murs latéraux.
 
 ## Casino VIP — `tier-1-vip-casino`
 
-- **Pont :** tier-1-c
-- **Preuve de l’enveloppe :** case du manga
-- **Sous-espaces :** 1
-- **Emprises relevées :** 17.5 × 52.5 m
+- **Pont :** tier-1-c, tier-1-b
+- **Preuve de l’enveloppe :** case du manga, liaison déduite
+- **Sous-espaces :** 2
+- **Emprises relevées :** 17.5 × 52.5 m ; 4 × 3.5 m
 - **Hauteurs sous plafond :** 8 m
-- **Éléments modélisés :** 19 table, 14 counter, 4 seat, 2 platform
-- **Objets directement visibles dans les cases :** 39/39
+- **Éléments modélisés :** 18 cabinet, 17 counter, 4 seat, 2 platform, 1 table
+- **Objets directement visibles dans les cases :** 42/42
+- **Espaces internes :** Escalier en colimaçon de secours du casino VIP
 - **Sources de la pièce :**
-  - Chap. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus.
+  - Ch. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus ; les chap. 419-420 confirment le casino comme voie de fuite et lieu de la rencontre sous loi martiale.
+  - Palier inférieur reconstruit pour l’escalier de secours en colimaçon du casino. Ni son emprise ni son affectation au pont 1-B ne sont attestées.
 - **Sources du mobilier et des détails :**
+  - Chap. 420 — parapet clair de la mezzanine à motifs carrés en gradins. Dimensions et implantation sur la dalle reconstruite estimées.
   - Chap. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus.
+  - Chap. 420 — bornes hautes à couronnement arrondi, façade de jeu et commandes. Les dix-huit unités en deux rangées sont une reconstruction schématique, pas un décompte ni un plan mesuré.
   - Chap. 405 — la salle de jeu, les devantures autour et la mezzanine au-dessus : les boutiques courent sur toute la longueur des deux murs à chaque niveau, et un salon de fauteuils occupe le milieu de la salle.
+  - Chap. 420 — Hisoka joue à la grande borne SWAMP BALL. Sa position schématique correspond au plan local du casino ; dimensions et emplacement estimés.
+- **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Prison VIP — `tier-1-vip-jail`
 
@@ -565,7 +587,7 @@
 - **Pont :** tier-1
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
-- **Emprises relevées :** 3 × 52.5 m
+- **Emprises relevées :** 1.39 × 70 m
 - **Éléments modélisés :** aucun objet non attesté
 - **Objets directement visibles dans les cases :** 0/0
 - **Sources de la pièce :**
@@ -590,6 +612,22 @@
   - Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant.
   - Plan de la cellule de haute sécurité ; la garde des Zodiaques tenue devant les barreaux, chap. 359
   - Chap. 359 — le bloc cellulaire du niveau 1 : dans la cellule, la table basse sur laquelle repose la boisson de Beyond, et hors des barreaux le banc de la garde, sa table basse, l'étagère contre le mur arrière et le poste mural près de la porte.
+
+## Grande salle de loisirs VVIP — `tier-1-vvip-recreation-hall`
+
+- **Pont :** tier-1, interior-vvip-recreation-gallery
+- **Preuve de l’enveloppe :** case du manga
+- **Sous-espaces :** 2
+- **Emprises relevées :** 30 × 25 m
+- **Hauteurs sous plafond :** 8, 3.2 m
+- **Éléments modélisés :** 31 platform
+- **Objets directement visibles dans les cases :** 31/31
+- **Espaces internes :** Galerie de la grande salle de loisirs VVIP
+- **Sources de la pièce :**
+  - Chap. 419, plan p. 17 et vue du hall p. 18 — la salle de loisirs VVIP longe le quartier princier sur le trajet vers la passerelle du niveau 2. Emprise, hauteur sous plafond et hauteur de mezzanine estimées.
+  - Chap. 419, p. 18 — deux escaliers latéraux desservent la galerie supérieure à l’intérieur de la salle de loisirs. Il s’agit d’une mezzanine intérieure, pas d’un pont distinct attesté ; dimensions estimées.
+- **Sources du mobilier et des détails :**
+  - Chap. 419, p. 18 — les deux volées latérales et la galerie supérieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estimés pour la reconstruction.
 
 ## Cloison blindée du pont 2 — `tier-2-bulkhead`
 
@@ -785,12 +823,13 @@
 - **Sous-espaces :** 1
 - **Emprises relevées :** 17 × 129.5 m
 - **Hauteurs sous plafond :** 9 m
-- **Éléments modélisés :** 1 window
-- **Objets directement visibles dans les cases :** 1/1
+- **Éléments modélisés :** 4 seat, 2 counter, 1 window
+- **Objets directement visibles dans les cases :** 7/7
 - **Sources de la pièce :**
   - Chap. 358 — la coupe annotée du quatrième jour, qui pointe cette pièce et dit donc où elle se trouve sur la longueur du navire. La reconstruction la mettait à l'arrière, sur un plan lu avec les axes croisés.
 - **Sources du mobilier et des détails :**
-  - Chap. 380 — la baie par laquelle le pont d’observation regarde dehors. La planche la dessine courbe ; elle court le long du mur extérieur, c’est-à-dire la face avant depuis que le chap. 358 met le pont à la proue. Ce qu’elle donne à voir est dessiné aussi : la ville de conteneurs des ponts inférieurs, puis la mer, puis l’horizon et les nuages au-dessus.
+  - Chap. 380 - éléments décoratifs intérieurs du pont d’observation.
+  - Chap. 380
 
 ## Bloc résidentiel première classe — `tier-3-residential-first-class`
 
@@ -955,15 +994,15 @@
 - **Sous-espaces :** 1
 - **Emprises relevées :** 31.5 × 31.5 m
 - **Hauteurs sous plafond :** 9 m
-- **Éléments modélisés :** 6 table, 2 duct, 1 counter, 1 painting, 1 platform
-- **Objets directement visibles dans les cases :** 11/11
+- **Éléments modélisés :** 44 seat, 21 table, 2 duct, 1 cabinet, 1 counter, 1 painting
+- **Objets directement visibles dans les cases :** 70/70
 - **Sources de la pièce :**
   - Chap. 358 — la taxe Buor sur les repas. Le chap. 371 dessine la salle elle-même, et dit ce qu'elle est : le seul réfectoire du vaisseau, plein d'un bout à l'autre à l'heure du repas, la table des trois familles mafieuses au milieu de la foule, et au-dessus une charpente de fermes, de passerelles et de gaines bien trop haute pour les 4,5 m du pont — la salle reçoit donc 9 m, au même titre que la mezzanine du casino lui vaut ses 8.
 - **Sources du mobilier et des détails :**
-  - Chap. 377 — la salle à l'heure du repas : de longues planches basses en rangées, les convives assis à même le pont le long d'elles — pas un banc dans la salle — et au milieu l'estrade que prend la Brigade, assez basse pour qu'on s'y assoie de même.
-  - Chap. 377 — le mur du fond du réfectoire : un comptoir de service continu tenu par le personnel, devant une rangée de clients assis, où passent plats et boissons.
-  - Chap. 377 — six grands panneaux de menu encadrés sont suspendus au-dessus du comptoir, leurs colonnes de plats et de prix visibles depuis la salle.
-  - Chap. 371 — la salle dessinée pleine, sous la charpente qui lui donne sa hauteur : fermes et passerelles au-dessus, et les gaines qui courent entre elles, hors d'atteinte de toutes les têtes de la salle.
+  - Chap. 377 — Aménagement détaillé basé sur les indices visuels : Comptoir à l'Ouest, 4 piliers centraux, deux estrades centrales pour les VIPs, et des tables basses orientées selon les zones (Ouest/Est à l'horizontale, Nord/Sud à la verticale).
+  - Chap. 377 — Les tables sont équipées de bancs.
+  - Chap. 377 — Comptoir de service continu sur le mur Ouest.
+  - Chap. 377 — Les tables centrales VIP sont entourées de bancs de tous les côtés.
 
 ## Bureau de la famille Cha-R — `tier-5-cha-r-family-office`
 

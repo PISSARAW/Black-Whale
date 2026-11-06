@@ -3,6 +3,7 @@ import { messagesFor } from '$lib/i18n'
 
 import type { MapMarker } from './types'
 import { banquetSpotAnchors } from './banquetPlan'
+import { salonSpotAnchors } from './royalSalonPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -174,15 +175,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
     fallback: { x: 28, y: 67.86, inferred: true },
   },
 
-  // `local/king-quarters.svelte`, 900 × 650, contents offset by (75, 75).
-  // Nasubi receives from the central seat, ch. 382; the bier the asset now draws
-  // holds Halkenburg in ch. 413, his father standing over him.
-  'tier-1-king-living-quarters': {
-    occupants: {
-      'nasubi-hui-guo-rou': { x: 50, y: 50.38 },
-      'prince-halkenburg': { x: 50, y: 78.46 },
-    },
-  },
+  // The royal chair and the ch. 413 bier follow the same plan as the walk.
+  'tier-1-king-living-quarters': salonSpotAnchors,
   // The shared banquet projection keeps the king on the drawn dais.
   'tier-1-banquet-hall': banquetSpotAnchors,
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).

@@ -849,7 +849,9 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   gaines du 37564 ;
 - le casino VIP est sa salle de jeu, les devantures autour et la mezzanine
   au-dessus (chap. 405) — c'est la mezzanine qui lui donne ses 8 m sous
-  plafond, aucune salle à galerie ne tenant sous les 5 m du pont ;
+  plafond, aucune salle à galerie ne tenant sous les 5 m du pont. La reprise
+  des bornes, de SWAMP BALL et des décors du chapitre 420 est détaillée dans
+  [`casino-audit.md`](casino-audit.md) ;
 - le pont d'observation est la baie par laquelle il regarde dehors
   (chap. 380) : la planche la dessine incurvée, le plan des ponts dessine en
   biais le mur qui la porte, et la baie suit le mur ;

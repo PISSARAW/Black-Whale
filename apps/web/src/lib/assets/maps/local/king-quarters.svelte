@@ -1,85 +1,90 @@
 <script lang="ts">
-  // Area inspection is not wired up yet; the keyboard and click affordances
-  // stay so the behaviour can be attached in one place when it exists.
-  function inspect(_area: string) {}
-  function inspectWithKeyboard(event: KeyboardEvent, area: string) {
-    if (event.key === 'Enter' || event.key === ' ') inspect(area)
-  }
+  import { locale } from '$lib/i18n'
+  import {
+    salonRooms,
+    salonFixtures,
+    salonDoors,
+    salonPolygon,
+  } from '$lib/components/map/projection/royalSalonPlan'
+  const french = $derived($locale === 'fr')
 </script>
 
 <svg
   viewBox="0 0 900 650"
-  class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
+  role="img"
+  aria-label={french ? 'Plan du salon du roi Nasubi' : 'King Nasubi’s salon plan'}
+  class="w-full h-full rounded-lg border border-[#333] bg-[#050505] text-[#fffff0]"
 >
   <defs>
-    <pattern id="royal-floor" width="32" height="32" patternUnits="userSpaceOnUse">
-      <path d="M0 16 L16 0 L32 16 L16 32 Z" fill="none" stroke="#6f5b2a" stroke-width="1" />
+    <pattern id="royal-floor" width="76.8" height="76.8" patternUnits="userSpaceOnUse">
+      <path d="M0 38.4 38.4 0 76.8 38.4 38.4 76.8Z" fill="none" stroke="#75684c" stroke-width="1" />
     </pattern>
-    <style>
-      .wall {
-        fill: none;
-        stroke: #fffff0;
-        stroke-width: 6;
-      }
-      .zone {
-        fill: rgba(255, 215, 0, 0.05);
-        cursor: pointer;
-      }
-      .zone:hover {
-        fill: rgba(255, 215, 0, 0.14);
-      }
-      .label {
-        fill: #fffff0;
-        font: bold 16px sans-serif;
-        text-anchor: middle;
-        pointer-events: none;
-      }
-      .sub {
-        fill: #c8a956;
-        font: 12px sans-serif;
-        text-anchor: middle;
-        pointer-events: none;
-      }
-      .furniture {
-        fill: #2a241c;
-        stroke: #9a7a35;
-        stroke-width: 2;
-      }
-      .painting {
-        fill: #181818;
-        stroke: #c8a956;
-        stroke-width: 3;
-      }
-    </style>
   </defs>
-  <text x="450" y="38" class="label" font-size="28" fill="#ffd700">Royal Living Quarters</text>
-  <g transform="translate(75 75)">
-    <rect width="750" height="520" fill="url(#royal-floor)" class="wall" />
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect the royal living room"
-      class="zone"
-      x="40"
-      y="55"
-      width="670"
-      height="390"
-      onclick={() => inspect('living-room')}
-      onkeydown={(event) => inspectWithKeyboard(event, 'living-room')}
+  <text x="450" y="30" text-anchor="middle" fill="currentColor" font-size="22">
+    {french ? 'Le salon du roi Nasubi' : 'King Nasubi’s Salon'}
+  </text>
+  <text x="450" y="51" text-anchor="middle" fill="#b1a58d" font-size="12">
+    {french
+      ? 'Chap. 382 · Panneau paysager et manteau sur deux murs distincts'
+      : 'Ch. 382 · Landscape panel and mantel on separate walls'}
+  </text>
+  {#each salonRooms as room (room.id)}
+    <polygon
+      points={salonPolygon(room.footprint)}
+      fill={room.id.endsWith('-living') ? 'url(#royal-floor)' : '#191919'}
+      stroke="#ccc6b7"
+      stroke-width="2"
     />
-    <text x="375" y="185" class="label">Royal Living Room</text>
-    <rect x="235" y="205" width="280" height="95" rx="10" class="furniture" />
-    <rect x="105" y="205" width="95" height="170" rx="8" class="furniture" />
-    <rect x="550" y="205" width="95" height="170" rx="8" class="furniture" />
-    <rect x="315" y="330" width="120" height="55" class="furniture" />
-    {#each [135, 285, 435, 585] as x (x)}
-      <rect x={x - 35} y="65" width="70" height="90" class="painting" />
-    {/each}
-    <!-- Halkenburg is laid out here in ch. 413, Nasubi standing beside him. -->
-    <rect x="250" y="400" width="250" height="70" rx="4" class="furniture" />
-    <text x="375" y="392" class="sub">Bier</text>
-    <line x1="300" y1="520" x2="450" y2="520" stroke="#050505" stroke-width="14" />
-    <path d="M300 515 Q375 435 450 515" fill="none" stroke="#ffd700" stroke-width="4" />
-    <text x="375" y="490" class="sub">Guarded gate toward the Banquet Hall</text>
-  </g>
+  {/each}
+  {#each salonFixtures as fixture (fixture.id)}
+    <polygon
+      points={fixture.polygon}
+      fill={fixture.kind === 'seat'
+        ? '#586252'
+        : fixture.kind === 'painting'
+          ? '#a58e58'
+          : '#393329'}
+      stroke={fixture.id.endsWith('-royal-chaise') ? '#dfc590' : '#ab9872'}
+      stroke-width={fixture.kind === 'painting' ? 2.5 : 1.2}
+    >
+      <title>{french ? fixture.nameFr : fixture.name}</title>
+    </polygon>
+  {/each}
+  {#each salonDoors as door, index (index)}
+    <line
+      x1={door.from.x}
+      y1={door.from.y}
+      x2={door.to.x}
+      y2={door.to.y}
+      stroke="#c2a767"
+      stroke-width="4"
+    />
+  {/each}
+  <text x="450" y="96" text-anchor="middle" fill="#dac28b" font-size="12">
+    {french ? 'Panneau paysager' : 'Landscape panel'}
+  </text>
+  <text
+    x="770"
+    y="232"
+    text-anchor="middle"
+    fill="#dac28b"
+    font-size="12"
+    transform="rotate(90 770 232)"
+  >
+    {french ? 'Tableau de bataille et manteau' : 'Battle painting and mantel'}
+  </text>
+  <text x="330" y="324" text-anchor="middle" fill="#dac28b" font-size="11">
+    {french ? 'Fauteuil du roi' : 'King’s reclining chair'}
+  </text>
+  <text x="450" y="451" text-anchor="middle" fill="#b1a58d" font-size="11">
+    {french ? 'Catafalque · chap. 413' : 'Bier · ch. 413'}
+  </text>
+  <text x="450" y="554" text-anchor="middle" fill="#b1a58d" font-size="12">
+    {french ? 'Vestibule reconstitué' : 'Reconstructed vestibule'}
+  </text>
+  <text x="450" y="621" text-anchor="middle" fill="#9b9689" font-size="11">
+    {french
+      ? 'Dimensions, couleurs et placement détaillé estimés.'
+      : 'Estimated dimensions, colours and detailed placement.'}
+  </text>
 </svg>

@@ -8,6 +8,7 @@
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
+import { PRISON_APPEARANCE } from './prisonAppearance'
 import type { Finish, RoomAppearance } from './roomAppearanceTypes'
 
 export type { Finish, RoomAppearance } from './roomAppearanceTypes'
@@ -45,13 +46,13 @@ const CATEGORY_FLOOR: Record<SpaceCategory, number> = {
 const FINISHES: Record<Finish, RoomAppearance> = {
   legacy: LEGACY,
   'royal-salon': {
-    floor: 0x3a261d,
-    wall: 0x72533b,
-    ceiling: 0x20130f,
-    column: 0x9a7954,
+    floor: 0xb4ad98,
+    wall: 0x8b816e,
+    ceiling: 0x706a5e,
+    column: 0xbeb49f,
     wood: 0x4b281d,
     metal: 0xb08a4a,
-    fabric: 0x692b31,
+    fabric: 0x697166,
     accent: 0xb18b4f,
   },
   'gilded-hall': {
@@ -115,10 +116,10 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     accent: 0xa8894f,
   },
   casino: {
-    floor: 0x3c2026,
-    wall: 0x6b3b42,
-    ceiling: 0x160b11,
-    column: 0x8d5c58,
+    floor: 0x46363b,
+    wall: 0xb5b0a0,
+    ceiling: 0xbeb8a7,
+    column: 0xc9c5b5,
     wood: 0x4b271f,
     metal: 0xc09a4e,
     fabric: 0x762b43,
@@ -412,6 +413,7 @@ export function hasAuthoredAppearance(locationId: string): boolean {
 }
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
+  if (space.tierId === 'interior-beyond-cell') return { ...FINISHES.secure, ...PRISON_APPEARANCE }
   const finish = space.locationId ? authoredFinishOf(space.locationId) : undefined
   const appearance = finish
     ? FINISHES[finish]

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 301
+Fichiers : 315
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -100,6 +100,10 @@ Fichiers : 301
 - the longitudinal section > draws every room the walk holds on a deck, and no room it does not
 - the decks of the section > draws every deck the reconstruction walks, from the top down
 - the decks the reconstruction does not hold > bands the space between one deck and the next, and nothing else
+
+## `apps/web/src/lib/audio/ambient/melodyConcert.test.ts`
+
+- the original concert flute > cancels its scheduler and pending notes without closing the shared audio context
 
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
@@ -366,6 +370,14 @@ Fichiers : 301
 ## `apps/web/src/lib/i18n/hatsu.test.ts`
 
 - localising a hatsu > translates the prose
+
+## `apps/web/src/lib/i18n/publicText.test.ts`
+
+- public text localization > localizes room labels and keeps surrounding spacing
+
+## `apps/web/src/lib/i18n/publicTextPreprocess.test.ts`
+
+- public text rendering boundary > localizes visible text and accessible labels while preserving paths and styles
 
 ## `apps/web/src/lib/i18n/translation-regression.test.ts`
 
@@ -731,6 +743,10 @@ Fichiers : 301
 
 - strategy AI personalities > assigns a stable personality to every faction
 
+## `apps/web/src/lib/tour/StairNavigator.test.ts`
+
+- automatic stair landings > covers both ends of every non-retractable stair link
+
 ## `apps/web/src/lib/tour/TourAtmosphereView.test.ts`
 
 - TourAtmosphereView > starts on the reference hour the palette holds, and not on a copy of it
@@ -771,6 +787,10 @@ Fichiers : 301
 - how much aura is out > bends nothing when there is no scene to read
 - the shell an aura is seen as from outside > gives a body in Zetsu nothing to wear
 
+## `apps/web/src/lib/tour/banquetSurroundings.test.ts`
+
+- the banquet walls and mezzanines > places every wall face inside its room and bounds panel frames to the doorway-cut run
+
 ## `apps/web/src/lib/tour/banquetView.test.ts`
 
 - the inaugural banquet reconstruction > keeps round tables within the reshaped hall, clear of one another and of the central aisle
@@ -786,6 +806,10 @@ Fichiers : 301
 - placing the visitor > spawns inside the space it was asked for
 - ceilings > falls back to the tier when a space does not set one
 - spawnFacing > looks down the long axis of a hall, away from the near end
+
+## `apps/web/src/lib/tour/casinoView.test.ts`
+
+- the chapter 420 casino reconstruction > keeps a bounded two-batch room below the banquet detail budget
 
 ## `apps/web/src/lib/tour/cast/address.test.ts`
 
@@ -877,6 +901,10 @@ Fichiers : 301
 
 - comfortDefaults > starts the walk wide and continuous by default
 - readComfort > falls back to the defaults with nothing stored
+
+## `apps/web/src/lib/tour/concertLandscape.test.ts`
+
+- the three-minute flowered listening landscape > supports Melody and the audience, then offers a bounded walk beyond the physical hall
 
 ## `apps/web/src/lib/tour/contactShadow.test.ts`
 
@@ -991,6 +1019,10 @@ Fichiers : 301
 - the barrage, aimed and swept > puts a burst into everything standing in the room
 - the limb, which becomes the tool > transforms with nothing under the reticle, and does not let you pick
 
+## `apps/web/src/lib/tour/hatsuManifestations.test.ts`
+
+- physical Nen manifestations > does not present an unknown Predator counter as the Salé-salé design
+
 ## `apps/web/src/lib/tour/hatsuSound.test.ts`
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
@@ -1038,6 +1070,10 @@ Fichiers : 301
 ## `apps/web/src/lib/tour/mangaViews.test.ts`
 
 - manga photo viewpoints > has a unique, bilingual, traceable entry for every panel view
+
+## `apps/web/src/lib/tour/melodyConcert.test.ts`
+
+- Melody’s requested concert and the visitor’s performance > keeps the playing flute inside the first-person frame at every heading
 
 ## `apps/web/src/lib/tour/mesh.test.ts`
 
@@ -1157,6 +1193,10 @@ Fichiers : 301
 
 - Royal Precinct, compared with chapters 417–420 > keeps all fourteen apartments clear of the unnamed aft block
 
+## `apps/web/src/lib/tour/royalSalonView.test.ts`
+
+- the royal salon reconstructed from chapter 382 > satisfies the shared blueprint invariants for the royal salon
+
 ## `apps/web/src/lib/tour/sea.test.ts`
 
 - where the water is > stands at the elevation of Tier 4, which is the first deck the canon leaves dry
@@ -1201,6 +1241,10 @@ Fichiers : 301
 
 - the door graph > is symmetric: a door is a door from either side
 - what is drawn from where the visitor stands > always holds the room underfoot and everything it opens onto
+
+## `apps/web/src/lib/tour/walkPostEffects.test.ts`
+
+- temporal sampling during the walk and Melody’s concert > resumes accumulation after the concert when the camera is still
 
 ## `apps/web/src/lib/tour/walkTargets.test.ts`
 

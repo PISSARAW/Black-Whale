@@ -1,6 +1,8 @@
 import type * as Three from 'three'
 import type { Vec2 } from './types'
 
+export const PRINCE_VIEW_SPACE = 'tier-2-starboard-promenade'
+
 export interface GangwayView {
   root: Three.Group
   setExtended: (extended: boolean) => void

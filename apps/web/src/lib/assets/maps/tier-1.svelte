@@ -995,7 +995,7 @@
       at: [745.7, 303.0],
       turned: false,
       through: false,
-      inferred: true,
+      inferred: false,
     },
     {
       id: 'tier-1-detention-void',

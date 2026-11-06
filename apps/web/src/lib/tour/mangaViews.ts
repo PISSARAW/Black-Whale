@@ -191,8 +191,8 @@ export const MANGA_VIEWS: MangaView[] = [
   view({
     id: 'unma-nursery-salon',
     spaceId: 'tier-1-queens-living-quarters-room-01',
-    at: [-36.2, 7.9],
-    target: [-33.6, 12.5],
+    at: [-66.5, -35],
+    target: [-63.9, -30.4],
     pitch: 0.01,
     chapter: 403,
     volume: 39,

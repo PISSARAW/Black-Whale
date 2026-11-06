@@ -104,10 +104,13 @@ describe.each(decks.map((tier) => [tier.id, tier] as const))('%s', (_id, tier) =
     }
   })
 
-  it('names rooms by the name the walk shows, or leaves them unnamed', () => {
+  it('names rooms in full or by their compact royal-plan labels', () => {
     for (const room of rooms) {
       const region = byId.get(room.id)!
-      expect(region.label, room.id).toBe(region.size > 0 ? room.name : '')
+      const number = room.id.match(/^tier-1-royal-residential-sector-room-(10\d\d)$/)?.[1]
+      const label =
+        number ?? (room.id === 'tier-1-vvip-recreation-hall' ? 'VVIP Rec. Hall' : room.name)
+      expect(region.label, room.id).toBe(region.size > 0 ? label : '')
     }
   })
 

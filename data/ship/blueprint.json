@@ -1782,7 +1782,7 @@
       "locationId": "tier-1-lifeboats",
       "name": "Lifeboat",
       "nameFr": "Canot de sauvetage",
-      "elevation": 128,
+      "elevation": 141.1,
       "ceiling": 2.6,
       "provenance": "panel",
       "source": "Ch. 383, pp. 60\u201365 \u2014 the circular pod cabin has a ribbed shell, a round hatch with a side console and cabinet, and a bare segmented deck around the central post and its broad base; no passenger seats are visible.",
@@ -1804,7 +1804,7 @@
           3.2
         ]
       ],
-      "sourceFr": "Chap. 383 \u2014 l'int\u00e9rieur d'une capsule : une couronne de si\u00e8ges autour du m\u00e2t central, sous l'\u00e9coutille.",
+      "sourceFr": "Chap. 383, p. 60\u201365 \u2014 la cabine circulaire poss\u00e8de une coque nervur\u00e9e, une \u00e9coutille ronde avec console et meuble lat\u00e9raux, et un pont nu segment\u00e9 autour du m\u00e2t central et de son large socle ; aucun si\u00e8ge de passager n'est visible.",
       "parentTierId": null
     },
     {
@@ -1814,7 +1814,7 @@
       "locationId": "tier-1-princes-burial-chamber",
       "name": "Princes' Burial Chamber",
       "nameFr": "Chambre fun\u00e9raire des princes",
-      "elevation": 128,
+      "elevation": 141.1,
       "ceiling": 8,
       "provenance": "panel",
       "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre.",
@@ -2311,7 +2311,7 @@
       "name": "Princes' Burial Chamber",
       "nameFr": "Chambre fun\u00e9raire des princes",
       "category": "ceremonial",
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 358 shows the chamber; ch. 371 draws it round, the fourteen coffins set radially about its centre. The chamber is assigned to Tier 1-C and placed within that deck's hull as a reconstruction choice.",
       "ceiling": 6,
       "envelope": null,
@@ -2405,11 +2405,11 @@
         ],
         [
           54.78,
-          41
+          56
         ],
         [
           49.22,
-          41
+          56
         ]
       ],
       "sourceFr": "Reconstruit pour rendre le pont continu ; aucune planche ne le montre."
@@ -2811,8 +2811,8 @@
       "nameFr": "Escalier en colima\u00e7on de secours du casino VIP",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Ch. 419 names the casino emergency exit as a spiral staircase designed to prevent a crowd from swarming up from below. Its exact footprint is not drawn; the landing is reconstructed on Tier 1-B directly below the aft edge of the casino.",
-      "sourceFr": "Le chap. 419 nomme la sortie de secours du casino comme un escalier en colima\u00e7on con\u00e7u pour emp\u00eacher une foule de remonter depuis les ponts inf\u00e9rieurs. Son emprise exacte n'est pas dessin\u00e9e ; le palier est reconstruit au pont 1-B, juste sous le bord arri\u00e8re du casino.",
+      "source": "Reconstructed lower landing for the casino emergency spiral stair. Neither its footprint nor its assignment to Tier 1-B is attested.",
+      "sourceFr": "Palier inf\u00e9rieur reconstruit pour l\u2019escalier de secours en colima\u00e7on du casino. Ni son emprise ni son affectation au pont 1-B ne sont attest\u00e9es.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -8550,7 +8550,7 @@
       "name": "Lifeboat Deck (port)",
       "nameFr": "Pont des canots (b\u00e2bord)",
       "category": "evacuation",
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
       "ceiling": 3.4,
       "envelope": null,
@@ -8581,7 +8581,7 @@
       "name": "Lifeboat Deck (starboard)",
       "nameFr": "Pont des canots (tribord)",
       "category": "evacuation",
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 383 \u2014 the launch bay: the pods on their cradles and the launch console beside them. Tier 1-C is the reconstruction choice for their deck.",
       "ceiling": 3.4,
       "envelope": null,
@@ -9077,6 +9077,22 @@
       "footprint": [
         [
           -87.5,
+          52.5
+        ],
+        [
+          17,
+          52.5
+        ],
+        [
+          17,
+          61.5
+        ],
+        [
+          34,
+          61.5
+        ],
+        [
+          34,
           52.5
         ],
         [
@@ -13734,13 +13750,13 @@
     },
     {
       "id": "tier-1-lifeboats-port-pod-cabin",
-      "tierId": "tier-1-c",
+      "tierId": "interior-lifeboat",
       "locationId": "tier-1-lifeboats",
       "name": "Pod Cabin",
       "nameFr": "Cabine de la capsule",
       "category": "evacuation",
       "provenance": "panel",
-      "source": "Ch. 383 \u2014 the inside of a pod: a ring of seats about the central post, under the hatch.",
+      "source": "Ch. 383, pp. 60\u201365 \u2014 the circular pod cabin has a ribbed shell, a round hatch with a side console and cabinet, and a bare segmented deck around the central post and its broad base; no passenger seats are visible.",
       "ceiling": 2.6,
       "envelope": null,
       "footprint": [
@@ -15166,7 +15182,7 @@
       "name": "Unnamed Aft Room",
       "nameFr": "Pi\u00e8ce arri\u00e8re sans nom",
       "category": "infrastructure",
-      "provenance": "inferred",
+      "provenance": "panel",
       "source": "Ch. 419 \u2014 an unnamed room is shown behind the prince quarters, inside the U-shaped corridor.",
       "sourceFr": "Chap. 419 \u2014 une pi\u00e8ce sans nom appara\u00eet derri\u00e8re les quartiers princiers, \u00e0 l\u2019int\u00e9rieur du couloir en U.",
       "ceiling": null,
@@ -15785,8 +15801,8 @@
       "ceiling": null,
       "envelope": null,
       "locationId": null,
-      "source": "Ch. 418 \u2014 Route B serves soldiers and mafia personnel; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
-      "sourceFr": "Chap. 418 \u2014 la route B dessert les soldats et le personnel des mafias ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "source": "Reconstructed lower landing for Route B, serving soldiers and mafia personnel. Its footprint and exact position are not attested.",
+      "sourceFr": "Palier inf\u00e9rieur reconstruit pour la route B, desservant les soldats et le personnel des mafias. Son emprise et sa position exacte ne sont pas attest\u00e9es.",
       "id": "tier-2-tier-1-route-b",
       "tierId": "tier-2",
       "name": "Route B",
@@ -15797,11 +15813,11 @@
           -28
         ],
         [
-          116,
+          105,
           -28
         ],
         [
-          116,
+          105,
           -12
         ],
         [
@@ -15847,8 +15863,8 @@
       "ceiling": null,
       "envelope": null,
       "locationId": null,
-      "source": "Ch. 418 \u2014 Route C serves general passengers; the landing is placed at the corresponding Tier 1 access edge in this reconstruction.",
-      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; le palier est plac\u00e9 au bord correspondant du pont 1 dans cette reconstruction.",
+      "source": "Reconstructed lower landing for Route C, serving general passengers. Its footprint and exact position are not attested.",
+      "sourceFr": "Palier inf\u00e9rieur reconstruit pour la route C, desservant les passagers ordinaires. Son emprise et sa position exacte ne sont pas attest\u00e9es.",
       "id": "tier-2-tier-1-route-c",
       "tierId": "tier-2",
       "name": "Route C",
@@ -16899,8 +16915,8 @@
         54.25
       ],
       "provenance": "inferred",
-      "source": "Ch. 419 \u2014 the casino's emergency spiral staircase is the controlled route from the entertainment room to the lower level; the lower landing is reconstructed directly below it.",
-      "sourceFr": "Chap. 419 \u2014 l'escalier en colima\u00e7on de secours du casino est le passage contr\u00f4l\u00e9 de la salle de divertissements vers le niveau inf\u00e9rieur ; le palier inf\u00e9rieur est reconstruit juste en dessous."
+      "source": "Reconstructed connection from the casino emergency exit to the lower landing directly beneath it; the exact path and level are estimated.",
+      "sourceFr": "Liaison reconstruite entre la sortie de secours du casino et le palier plac\u00e9 juste en dessous ; le trajet et le niveau exacts sont estim\u00e9s."
     },
     {
       "from": "tier-1-vvip-recreation-hall",
@@ -17044,7 +17060,7 @@
       "kind": "stair",
       "retractable": true,
       "at": [
-        105,
+        101.5,
         -20
       ],
       "atTo": [
@@ -17052,8 +17068,8 @@
         0
       ],
       "provenance": "inferred",
-      "source": "Ch. 418 \u2014 Route B serves soldiers and mafia personnel; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
-      "sourceFr": "Chap. 418 \u2014 la route B dessert les soldats et le personnel des mafias ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
+      "source": "Reconstructed retractable gangway connecting the two landings of Route B; its dimensions and endpoints are estimated.",
+      "sourceFr": "Passerelle r\u00e9tractable reconstruite entre les deux paliers de la route B ; ses dimensions et ses points de raccordement sont estim\u00e9s."
     },
     {
       "from": "tier-2-tier-1-route-c",
@@ -17069,8 +17085,8 @@
         52.5
       ],
       "provenance": "inferred",
-      "source": "Ch. 418 \u2014 Route C serves general passengers; the Tier 1 gangway shown in ch. 419 can retract during lockdown.",
-      "sourceFr": "Chap. 418 \u2014 la route C dessert passagers ordinaires ; la passerelle du pont 1 montr\u00e9e au chap. 419 peut se r\u00e9tracter pendant le confinement."
+      "source": "Reconstructed retractable gangway connecting the two landings of Route C; its dimensions and endpoints are estimated.",
+      "sourceFr": "Passerelle r\u00e9tractable reconstruite entre les deux paliers de la route C ; ses dimensions et ses points de raccordement sont estim\u00e9s."
     },
     {
       "from": "tier-1-route-b-landing",

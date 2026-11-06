@@ -22,10 +22,35 @@ describe('compareEventOrder', () => {
     expect(compareEventOrder(flashback, present)).toBeLessThan(0)
   })
 
-  it('ignores an ordinal that only one side carries', () => {
-    // Comparing a placed event to an unplaced one falls back to reading order,
-    // which is the only thing both sides agree on.
-    expect(compareEventOrder(event(410, 1, 5), event(401, 1))).toBeGreaterThan(0)
+  it.each([undefined, null])(
+    'places dated events before legacy events with ordinal %s',
+    (missing) => {
+      const placed = event(410, 1, 0)
+      const legacy = event(401, 1, missing)
+      expect(compareEventOrder(placed, legacy)).toBeLessThan(0)
+      expect(compareEventOrder(legacy, placed)).toBeGreaterThan(0)
+    },
+  )
+
+  it('keeps mixed flashback and legacy comparisons transitive', () => {
+    const flashback = event(410, 1, 5)
+    const present = event(401, 1, 42)
+    const legacy = event(405, 1)
+    for (const input of [
+      [flashback, present, legacy],
+      [legacy, flashback, present],
+      [present, legacy, flashback],
+    ]) {
+      expect(input.sort(compareEventOrder)).toEqual([flashback, present, legacy])
+    }
+    expect(compareEventOrder(flashback, present)).toBeLessThan(0)
+    expect(compareEventOrder(present, legacy)).toBeLessThan(0)
+    expect(compareEventOrder(flashback, legacy)).toBeLessThan(0)
+  })
+
+  it('breaks equal ordinal ties by publication order', () => {
+    expect(compareEventOrder(event(401, 2, 5), event(402, 1, 5))).toBeLessThan(0)
+    expect(compareEventOrder(event(401, 1, 5), event(401, 2, 5))).toBeLessThan(0)
   })
 })
 

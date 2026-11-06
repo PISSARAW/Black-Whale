@@ -2,16 +2,16 @@
   /**
    * Tier 2, generated from `data/ship/blueprint.json`.
    *
-   * One unit of this 1000 x 600 viewBox is 0.35 m and the ship's midpoint is
-   * (500, 300) — the frame the reconstruction is authored in. So every room is
-   * drawn where the blueprint puts it, and every room the blueprint holds is
-   * drawn: this map used to name a dozen of them and leave the rest as deck.
+   * The authored plan uses a 1000 x 600 coordinate frame at 0.35 m per unit,
+   * with the ship's midpoint at (500, 300). Every tier uses the same landscape
+   * frame; the walkthrough geometry remains in the shared ship axes.
+   * Every room in the blueprint is drawn rather than leaving unnamed deck.
    *
    * Rooms the catalogue has a record for are clickable and zoom into their own
    * plan. Corridors and the spaces the reconstruction invented to keep the deck
    * contiguous are drawn dimmer and are not: there is nothing to open.
    *
-   * Do not hand-edit — regenerate from the blueprint.
+   * Do not hand-edit — regenerate from the blueprint and annotations.
    */
   import { mapState } from '$lib/state/mapState.svelte'
 
@@ -31,7 +31,8 @@
     {
       id: 'tier-2-tier-1-access',
       region: null,
-      points: '512.0,132.0 503.0,123.0 503.0,101.0 512.0,92.0 538.0,92.0 547.0,101.0 547.0,123.0 538.0,132.0',
+      points:
+        '512.0,132.0 503.0,123.0 503.0,101.0 512.0,92.0 538.0,92.0 547.0,101.0 547.0,123.0 538.0,132.0',
       label: 'Route A',
       size: 9,
       at: [525.0, 115.0],
@@ -64,10 +65,11 @@
     {
       id: 'tier-2-aft-corridor',
       region: null,
-      points: '250.0,450.0 800.0,450.0 800.0,480.0 250.0,480.0',
+      points:
+        '250.0,450.0 548.57,450.0 548.57,475.71 597.14,475.71 597.14,450.0 800.0,450.0 800.0,480.0 250.0,480.0',
       label: 'Aft Corridor',
       size: 12,
-      at: [525.0, 469.0],
+      at: [521.1, 469.2],
       turned: false,
       through: true,
       inferred: true,
@@ -97,11 +99,11 @@
     {
       id: 'tier-2-tier-1-route-b',
       region: null,
-      points: '780.0,220.0 831.43,220.0 831.43,265.71 780.0,265.71',
+      points: '780.0,220.0 800.0,220.0 800.0,265.71 780.0,265.71',
       label: 'Route B',
       size: 12,
-      at: [805.7, 246.9],
-      turned: false,
+      at: [790.0, 246.9],
+      turned: true,
       through: true,
       inferred: true,
     },
@@ -242,7 +244,10 @@
     </style>
   </defs>
 
-  <polygon class="hull" points="200.0,80.0 159.51,92.31 128.0,125.77 105.51,175.03 92.0,234.89 87.51,300.0 92.0,365.11 105.51,424.97 128.0,474.23 159.51,507.69 200.0,520.0 750.0,520.0 804.0,507.69 846.0,474.23 876.0,424.97 894.0,365.11 900.0,300.0 894.0,234.89 876.0,175.03 846.0,125.77 804.0,92.31 750.0,80.0" />
+  <polygon
+    class="hull"
+    points="200.0,80.0 159.51,92.31 128.0,125.77 105.51,175.03 92.0,234.89 87.51,300.0 92.0,365.11 105.51,424.97 128.0,474.23 159.51,507.69 200.0,520.0 750.0,520.0 804.0,507.69 846.0,474.23 876.0,424.97 894.0,365.11 900.0,300.0 894.0,234.89 876.0,175.03 846.0,125.77 804.0,92.31 750.0,80.0"
+  />
 
   <g id="tier-2-zones">
     {#each regions as zone (zone.id)}

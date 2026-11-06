@@ -84,7 +84,7 @@ import {
 import type { Vec2 } from './types'
 import { apparitionsOn } from './apparitions'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
-import { pointInPolygon } from './geometry'
+import { pointInPolygon, structureFootprint } from './geometry'
 import { RIPPER_ANT_TURNS } from './ripper'
 
 const ship = buildShip()
@@ -692,11 +692,16 @@ describe('what a technique does to a solid', () => {
   })
 
   it('copies a solid as something no page supports', () => {
-    const result = hit(EMPTY_WORLD, 'clone', solidA.id)
+    // A small table has room beside it. The full-width stage cannot move along x.
+    const original = busiest.solids.find((solid) => solid.kind === 'table')!
+    const result = hit(EMPTY_WORLD, 'clone', original.id)
     expect(result.world.copies).toHaveLength(1)
     const copy = result.world.copies[0]
     expect(solidNow(copy, result.world.solids[copy.id]).provenance).toBe('inferred')
-    expect(copy.at).not.toEqual(solidA.at)
+    expect(copy.at).not.toEqual(original.at)
+    expect(
+      structureFootprint(copy).every((at) => pointInPolygon(at, busiest.space.footprint)),
+    ).toBe(true)
   })
 })
 
@@ -736,7 +741,7 @@ describe('the rules solids hold each other to', () => {
     // Knocked back and turned by the blow, and held by nothing afterwards: a
     // whip is over the moment it lands.
     const struck = first.world.solids[solidA.id]
-    expect(struck.rotation).toBe(40)
+    expect(struck.rotation).toBe((solidA.rotation ?? 0) + 40)
     expect(struck.bound).toBeUndefined()
     expect(hit(first.world, 'dowsing', solidA.id).report).toMatchObject({ hits: 2 })
   })

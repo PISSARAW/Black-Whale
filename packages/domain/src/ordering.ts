@@ -24,8 +24,9 @@ export interface TemporalRecord {
  * Negative when `left` comes first.
  *
  * Ordinals win when both events carry one, because that is the true
- * chronology. Falling back to chapter and sequence is only correct for events
- * that have not been placed on the ship's timeline yet.
+ * chronology. Placed events precede unplaced legacy events; publication order
+ * breaks ordinal ties and orders legacy events among themselves. Falling back
+ * to publication order for a mixed pair would make this comparator non-transitive.
  */
 export function compareEventOrder(left: OrderedEvent, right: OrderedEvent): number {
   const leftHas = left.ordinal != null

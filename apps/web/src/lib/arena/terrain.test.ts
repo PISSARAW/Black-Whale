@@ -14,12 +14,13 @@ describe('a combat terrain from the Black Whale', () => {
   it('derives two walkable spawn points at a playable opening distance', () => {
     expect(pointInPolygon(terrain.spawns[0], terrain.footprint)).toBe(true)
     expect(pointInPolygon(terrain.spawns[1], terrain.footprint)).toBe(true)
-    expect(
-      Math.hypot(
-        terrain.spawns[0][0] - terrain.spawns[1][0],
-        terrain.spawns[0][1] - terrain.spawns[1][1],
-      ),
-    ).toBeCloseTo(24, 0)
+    const distance = Math.hypot(
+      terrain.spawns[0][0] - terrain.spawns[1][0],
+      terrain.spawns[0][1] - terrain.spawns[1][1],
+    )
+    // The terrain samples clear positions on a 2.5 m grid; 24 m is a target,
+    // not an exact distance available in every furnished room.
+    expect(Math.abs(distance - 24)).toBeLessThanOrEqual(2.5)
   })
 
   it('turns attested furniture into tactical collision and cover', () => {

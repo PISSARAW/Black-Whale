@@ -120,6 +120,14 @@
   import { visibleSpaces } from '$lib/tour/visibility'
   import { createShaftDecks } from '$lib/tour/shaftDecks'
   import { buildGangwayView, type GangwayView } from '$lib/tour/gangwayView'
+  import {
+    enterGangway,
+    gangwayPaths,
+    gangwayDirection,
+    gangwayFloor,
+    stepGangway,
+    type GangwayWalk,
+  } from '$lib/tour/gangwayNavigation'
   import { NO_HOUR, type ShipHour } from '$lib/tour/hour'
   import { TourHourView } from '$lib/tour/hourView'
   import { createDeckMaterials } from '$lib/tour/deckMaterials'
@@ -131,7 +139,7 @@
     observeSceneResize,
   } from '$lib/tour/TourRenderer'
   import { SceneInsets } from '$lib/tour/sceneInsets'
-  import { listenToSceneInput } from '$lib/tour/sceneInput'
+  import { listenToSceneInput, sceneKeyIsForElsewhere } from '$lib/tour/sceneInput'
   import { PortalRenderer } from '$lib/tour/PortalRenderer'
   import { TierView, type BuiltTierView } from '$lib/tour/TierView'
   import {
@@ -186,6 +194,7 @@
     jumpPitch?: number | null
     /** Optional camera height for an aerial manga plan. */
     jumpEyeHeight?: number | null
+    jumpCameraDistance?: number | null
     /** Published rooms to draw when an aerial plan excludes inferred connectors. */
     jumpVisibleSpaceIds?: readonly string[] | null
     /** Whether the pointer is captured, so the page can say how to get out. */
@@ -554,6 +563,7 @@
     jumpHeading = $bindable(null),
     jumpPitch = $bindable(null),
     jumpEyeHeight = $bindable(null),
+    jumpCameraDistance = $bindable(null),
     jumpVisibleSpaceIds = $bindable(null),
     engaged = $bindable(false),
     touch = $bindable(false),
@@ -732,6 +742,7 @@
   let container = $state<HTMLDivElement | null>(null)
   let ready = $state(false)
   let failure = $state<string | null>(null)
+  let gangwayOccupied = $state(false)
 
   /**
    * The virtual joystick, as a vector inside the unit circle: `x` to the right,
@@ -851,18 +862,8 @@
       })
       const hatsuEffects = new HatsuSceneEffects(THREE, scene)
       const nenAura = new NenSceneAura(THREE, scene)
-      const gangwayLink = ship.links.find(
-        (link) => link.retractable && link.from === 'tier-2-tier-1-access',
-      )
-      const gangwaySource = gangwayLink ? ship.spaces.get(gangwayLink.from) : null
-      const gangwayTarget = gangwayLink ? ship.spaces.get(gangwayLink.to) : null
-      const gangwayView: GangwayView | null =
-        gangwayLink && gangwaySource && gangwayTarget
-          ? buildGangwayView(THREE, gangwayLink.at, gangwayLink.atTo ?? gangwayLink.at)
-          : null
-      if (gangwayView && gangwaySource) {
-        const tier = ship.tiers.find((candidate) => candidate.id === gangwaySource.tierId)
-        gangwayView.root.position.y = tier?.elevation ?? 0
+      const gangwayView: GangwayView | null = buildGangwayView(THREE, ship)
+      if (gangwayView) {
         scene.add(gangwayView.root)
         gangwayView.setExtended(retractableGangwayOpen)
       }
@@ -1208,8 +1209,11 @@
       // A manga plan can lift the camera out of the visitor's body. It remains
       // stable until the visitor walks or another jump restores eye level.
       let authoredEyeHeight: number | null = null
+      let authoredCameraDistance = 0
       let authoredVisibleSpaceIds: Set<string> | null = null
       let currentTierId = ''
+      const boardingPaths = gangwayPaths(ship)
+      let gangwayWalk: GangwayWalk | null = null
 
       /** How rarely the loop tells the page and the ear; see `$lib/tour/reporting`. */
       const worth = reporter()
@@ -1283,12 +1287,15 @@
        * tunnel puts you where its far mouth stands, not where the stairs would.
        */
       function goTo(spaceId: string, arrival: JumpArrival = {}) {
+        gangwayWalk = null
+        gangwayOccupied = false
         const space = ship.spaces.get(spaceId)
         if (!space) return
         const at = arrival.at ?? spawnPoint(space, ship.plans.get(space.tierId)?.structures ?? [])
         yaw = arrival.facing ?? spawnFacing(space, at)
         pitch = arrival.looking ?? 0
         authoredEyeHeight = arrival.eyeHeight ?? null
+        authoredCameraDistance = arrival.cameraDistance ?? 0
         authoredVisibleSpaceIds = arrival.visibleSpaceIds ? new Set(arrival.visibleSpaceIds) : null
         shownKey = ''
         lookPitch = pitch
@@ -1503,7 +1510,7 @@
       function applyVisibility(standingId: string | null) {
         const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
         const mouths = wormMouths(ship, world)
-        const key = `${standingId ?? ''}::${activeKey}::${eyeKey}::${mouths
+        const key = `${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
           .map((mouth) => mouth.spaceId)
           .join(',')}`
         if (key === shownKey) return
@@ -1520,11 +1527,15 @@
         }
 
         if (visible && activePlan) {
+          const onQuay = gangwayWalk !== null || gangwayView?.spaceIds.has(standingId ?? '')
           want(
             visible,
-            authoredEyeHeight === null
-              ? visibleSpaces(activePlan, standingId)
-              : (authoredVisibleSpaceIds ?? new Set(activePlan.spaces.map((space) => space.id))),
+            onQuay
+              ? new Set()
+              : (authoredVisibleSpaceIds ??
+                  (authoredEyeHeight === null
+                    ? visibleSpaces(activePlan, standingId)
+                    : new Set(activePlan.spaces.map((space) => space.id)))),
           )
         }
         if (eyeDeck && eyeSpace) {
@@ -1544,7 +1555,7 @@
 
         for (const { deck, ids } of wanted) {
           for (const room of deck.rooms) {
-            const on = ids.has(room.spaceId)
+            const on = ids.has(room.spaceId) && !gangwayView?.spaceIds.has(room.spaceId)
             room.mesh.visible = on
             room.edges.visible = on
             room.seams.visible = on
@@ -3591,29 +3602,6 @@
       }
 
       // ── Input ────────────────────────────────────
-      /**
-       * Whether the key belongs to the page rather than to the walk.
-       *
-       * The listener is on `window`, so it hears every key pressed anywhere on
-       * the page — including the five gangway buttons, the index of rooms and
-       * the Hatsu bar. Space is how a focused button is pressed and the arrows
-       * are how a list is walked; swallowing them there would leave a keyboard
-       * visitor unable to work the page at all.
-       */
-      const isKeyForElsewhere = (event: KeyboardEvent) => {
-        const target = event.target
-        if (!(target instanceof HTMLElement)) return false
-        if (target.isContentEditable || target.closest('input, textarea, select') !== null) {
-          return true
-        }
-        if (target.closest('a, button, [role="button"], [tabindex]') !== null) {
-          return ['Space', 'Enter', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(
-            event.code,
-          )
-        }
-        return false
-      }
-
       /** One step to the side, in radians, as the visitor has set it. */
       const snapStep = () => ($comfort.snapAngle * Math.PI) / 180
 
@@ -3688,7 +3676,7 @@
           document.exitPointerLock()
           return
         }
-        if (isKeyForElsewhere(event)) return
+        if (sceneKeyIsForElsewhere(event, canvas)) return
         if (event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
         if (hatsuWheelOpen && wheelZone !== null) {
@@ -3729,6 +3717,7 @@
       }
 
       function toggleGangway(): boolean {
+        if (gangwayWalk) return true
         const found = untrack(() => availableLink)
         if (!found?.link.retractable) return false
         retractableGangwayOpen = !retractableGangwayOpen
@@ -3750,7 +3739,31 @@
         }
         const found = untrack(() => availableLink)
         if (found?.link.retractable && !retractableGangwayOpen) return
+        if (found?.link.retractable && !$comfort.jumpOnly) {
+          beginGangway(found.link)
+          return
+        }
         if (found) goTo(found.to)
+      }
+
+      function beginGangway(link: Link) {
+        const path = boardingPaths.find(
+          (candidate) => candidate.link.from === link.from && candidate.link.to === link.to,
+        )
+        if (!path) return
+        const reverse = currentTierId === path.toTier
+        gangwayWalk = { path, reverse, progress: 0, auto: true }
+        gangwayOccupied = true
+        const direction = gangwayDirection(gangwayWalk)
+        pointer = [...(reverse ? path.to : path.from)]
+        ground = gangwayFloor(gangwayWalk)
+        yaw = Math.atan2(-direction[0], -direction[1])
+        pitch = Math.atan2(reverse ? path.fromY - path.toY : path.toY - path.fromY, path.run) * 0.4
+        lookPitch = pitch
+        authoredEyeHeight = null
+        authoredCameraDistance = 0
+        authoredVisibleSpaceIds = null
+        shownKey = ''
       }
 
       /**
@@ -4399,10 +4412,17 @@
          */
         const walking = !arc && !$comfort.jumpOnly
         const pace = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * $comfort.walkPace
-        const wanted: Vec2 =
+        let wanted: Vec2 =
           walking && moving
             ? [(advance * -sin + strafe * cos) * pace, (advance * -cos + strafe * -sin) * pace]
             : [0, 0]
+        if (gangwayWalk?.auto && walking) {
+          if (moving) gangwayWalk.auto = false
+          else {
+            const direction = gangwayDirection(gangwayWalk)
+            wanted = [direction[0] * pace, direction[1] * pace]
+          }
+        }
         // Nothing is being carried across a jump or out of jump-only mode: the
         // visitor arrives at a stand, the way anyone put down somewhere does.
         velocity = walking ? glide(velocity, wanted, delta) : [0, 0]
@@ -4415,8 +4435,9 @@
           delta,
         })
         if (!concertView.active && (velocity[0] !== 0 || velocity[1] !== 0)) {
-          if (authoredEyeHeight !== null) {
+          if (authoredEyeHeight !== null || authoredVisibleSpaceIds !== null) {
             authoredEyeHeight = null
+            authoredCameraDistance = 0
             authoredVisibleSpaceIds = null
             shownKey = ''
           }
@@ -4424,12 +4445,41 @@
           // Luini walks through the walls rather than around them, so the move
           // is taken whole and the collision pass is simply not run.
           const from = pointer
-          pointer = surfaces.move(walked, {
-            from: pointer,
-            to: target,
-            extras: [...loose, ...collisionWalls],
-            ghost: walksThroughWalls(world),
-          })
+          const movement: Vec2 = [velocity[0] * delta, velocity[1] * delta]
+          if (!gangwayWalk) {
+            gangwayWalk = enterGangway(boardingPaths, {
+              tierId: currentTierId,
+              at: pointer,
+              movement,
+              open: retractableGangwayOpen && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+            })
+            if (gangwayWalk) {
+              gangwayOccupied = true
+              shownKey = ''
+            }
+          }
+          if (gangwayWalk) {
+            const step = stepGangway(gangwayWalk, pointer, movement)
+            pointer = step.at
+            gangwayWalk.progress = step.progress
+            ground = step.floor
+            if (step.arrived) {
+              goTo(step.destination, { at: step.destinationAt, facing: yaw, looking: 0 })
+              return
+            }
+            if (step.returned) {
+              gangwayWalk = null
+              gangwayOccupied = false
+              shownKey = ''
+            }
+          } else {
+            pointer = surfaces.move(walked, {
+              from: pointer,
+              to: target,
+              extras: [...loose, ...collisionWalls],
+              ghost: walksThroughWalls(world),
+            })
+          }
           // Ground actually covered, which is not what was asked for: a visitor
           // pushing into a bulkhead has stopped walking, and their gait and their
           // footsteps both have to know it.
@@ -4439,7 +4489,8 @@
             from,
             at: pointer,
             height: surfaces.floor(walked, pointer),
-            enabled: !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
+            enabled:
+              !gangwayWalk && !seated && linkIsOpen(world, spaceAt(plan, pointer)?.id ?? null),
           })
           if (stair) {
             goTo(stair.spaceId, { ...stair.arrival, facing: yaw, looking: pitch })
@@ -4452,7 +4503,11 @@
           world.solids[world.puppet].at = pointer
         }
 
-        const standing = spaceAt(plan, pointer)
+        const standing = gangwayWalk
+          ? (ship.spaces.get(
+              gangwayWalk.reverse ? gangwayWalk.path.link.to : gangwayWalk.path.link.from,
+            ) ?? null)
+          : spaceAt(plan, pointer)
         applyVisibility(standing?.id ?? null)
 
         const { gait, bob, breath } = walkingHeadMotion({
@@ -4461,7 +4516,9 @@
           amplitude: $comfort.headBob,
           seconds: now / 1000,
         })
-        const groundTarget = surfaces.floor(walked, pointer)
+        const groundTarget = gangwayWalk
+          ? gangwayFloor(gangwayWalk)
+          : surfaces.floor(walked, pointer)
         ground = easeWalkingGround(ground, groundTarget, delta)
         const eye =
           ground +
@@ -4476,7 +4533,13 @@
           camera.fov = $comfort.fov + fovLift
           camera.updateProjectionMatrix()
         }
-        camera.position.set(pointer[0], eye, pointer[1])
+        // Preserve the panorama's horizontal framing on portrait screens.
+        const cameraPullback = authoredCameraDistance * Math.max(1, 1.4 / camera.aspect)
+        camera.position.set(
+          pointer[0] + Math.sin(yaw) * cameraPullback,
+          eye,
+          pointer[1] + Math.cos(yaw) * cameraPullback,
+        )
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
         camera.rotateX(pitch)
@@ -4590,7 +4653,11 @@
         // runs its ventilation down with its lighting. The multiplier is applied
         // to the *target* and not to the density, so it is eased across a
         // threshold like everything else the air does — see `$lib/tour/regime`.
-        const air = fogTarget * hourView.density
+        const outside =
+          gangwayWalk !== null ||
+          (currentTierId === 'tier-2' &&
+            gangwayView?.isOutside(standing?.id ?? null, authoredVisibleSpaceIds !== null))
+        const air = (outside ? 0.0015 : fogTarget) * hourView.density
         fog.density =
           authoredEyeHeight === null
             ? settleDensity(fog.density, blinded ? SEALED_DENSITY : air, delta)
@@ -4605,9 +4672,21 @@
         // Mirror the loop's state out for the HUD, without re-rendering on
         // every frame: these only change when they actually change.
         if (standing?.id !== untrack(() => currentSpace)?.id) currentSpace = standing
-        if (gangwayView && gangwaySource) {
-          gangwayView.root.visible = currentTierId === gangwaySource.tierId
+        if (gangwayView) {
+          gangwayView.setLocation(
+            gangwayWalk
+              ? gangwayWalk.path.link.from
+              : currentTierId === 'tier-2'
+                ? (standing?.id ?? null)
+                : null,
+            authoredVisibleSpaceIds !== null,
+          )
           gangwayView.setExtended(retractableGangwayOpen)
+        }
+        const far = outside ? Math.max(420, cameraPullback + VIEW_DISTANCE * 2) : VIEW_DISTANCE
+        if (camera.far !== far) {
+          camera.far = far
+          camera.updateProjectionMatrix()
         }
         // Standing on a stairwell offers it; standing anywhere inside an interior
         // offers the way out of it, because a seven-room apartment does not mark
@@ -4744,7 +4823,12 @@
           concert,
         )
 
-        temporal.update(runtime.taa, { at: pointer, yaw, pitch, concert: concertView.active })
+        temporal.update(runtime.taa, {
+          at: pointer,
+          yaw,
+          pitch,
+          concert: concertView.active,
+        })
 
         composer.render()
 
@@ -4933,6 +5017,7 @@
       facing: jumpHeading ?? undefined,
       looking: jumpPitch ?? undefined,
       eyeHeight: jumpEyeHeight ?? undefined,
+      cameraDistance: jumpCameraDistance ?? undefined,
       visibleSpaceIds: jumpVisibleSpaceIds ?? undefined,
     })
     jumpTo = null
@@ -4940,12 +5025,18 @@
     jumpHeading = null
     jumpPitch = null
     jumpEyeHeight = null
+    jumpCameraDistance = null
     jumpVisibleSpaceIds = null
   })
 </script>
 
 <div class="relative h-full w-full bg-[#050505]" bind:this={container}>
-  <canvas bind:this={canvas} class="block h-full w-full cursor-crosshair touch-none"></canvas>
+  <canvas
+    bind:this={canvas}
+    tabindex="0"
+    aria-label={touchLabels.move}
+    class="block h-full w-full cursor-crosshair touch-none"
+  ></canvas>
 
   {#if !ready && !failure}
     <div class="absolute inset-0 grid place-items-center text-sm text-[#FFFFF0]/60">
@@ -4970,6 +5061,7 @@
       <button
         type="button"
         onclick={() => toggle?.()}
+        disabled={gangwayOccupied}
         class="pointer-events-auto absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded border border-[#d4b56b]/70 bg-[#050505]/90 px-3 py-2 text-xs text-[#f2d58b] shadow-lg"
       >
         {retractableGangwayOpen ? gangwayLabels.retract : gangwayLabels.extend}

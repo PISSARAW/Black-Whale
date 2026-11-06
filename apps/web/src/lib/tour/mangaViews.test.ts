@@ -13,7 +13,7 @@ describe('manga photo viewpoints', () => {
       expect(view.label.trim(), view.id).not.toBe('')
       expect(view.labelFr.trim(), view.id).not.toBe('')
       expect(view.chapter, view.id).toBeGreaterThanOrEqual(350)
-      expect(view.volume, view.id).toBeGreaterThanOrEqual(34)
+      if (view.volume !== undefined) expect(view.volume, view.id).toBeGreaterThanOrEqual(34)
     }
   })
 

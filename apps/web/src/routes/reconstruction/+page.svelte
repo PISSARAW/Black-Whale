@@ -1,14 +1,23 @@
 <script lang="ts">
-  import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import type { PageData } from './$types'
-  import { onDestroy } from 'svelte'
-  import { goto } from '$app/navigation'
+  import { onDestroy, untrack } from 'svelte'
+  import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
   import { createEmptyWorld, reduceWorld } from '@black-whale/canon-engine'
   import type { StoryCursor, WorldEvent } from '@black-whale/canon-engine'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
-  import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
+  import ReconstructionHeader from '$lib/components/reconstruction/ReconstructionHeader.svelte'
+  import ReconstructionWorkspace from '$lib/components/reconstruction/ReconstructionWorkspace.svelte'
+  import ReconstructionViewport from '$lib/components/reconstruction/ReconstructionViewport.svelte'
+  import ReconstructionTimeline from '$lib/components/reconstruction/ReconstructionTimeline.svelte'
+  import ReconstructionInspector from '$lib/components/reconstruction/ReconstructionInspector.svelte'
+  import ReconstructionFilters from '$lib/components/reconstruction/ReconstructionFilters.svelte'
+  import type {
+    DisplayPresence,
+    PresenceChange,
+    SceneTarget,
+  } from '$lib/reconstruction/workspaceTypes'
   import ReconstructionOverview from '$lib/components/reconstruction/ReconstructionOverview.svelte'
   import { activeHatsu, hatsuPanelOpen } from '$lib/nen/hatsuState'
   import { localizeHatsu } from '$lib/i18n/hatsu'
@@ -22,8 +31,9 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { displayName } from '$lib/utils/displayNames'
-  import { claimLevel, evidenceForEvent } from '$lib/reconstruction/evidence'
-  import { visibleInPerspective, type PerspectiveProjection } from '$lib/reconstruction/perspective'
+  import { evidenceForEvent } from '$lib/reconstruction/evidence'
+  import { visibleInPerspective } from '$lib/reconstruction/perspective'
+  import { PerspectiveLoader } from '$lib/reconstruction/perspectiveLoader.svelte'
   import { mainSceneSpace } from '$lib/reconstruction/sceneEntry'
   import { readReconstructionUrl, writeReconstructionUrl } from '$lib/reconstruction/urlState'
   import { shipHourOf } from '$lib/tour/hour'
@@ -75,20 +85,11 @@
   let changeFilter = $state<'all' | 'changed'>('all')
   let certaintyFilter = $state<'all' | DisplayPresence['certainty']>('all')
   let perspectiveCharacterId = $state('canon')
-  let perspective = $state<PerspectiveProjection | null>(null)
-  let perspectiveLoading = $state(false)
-  let perspectiveError = $state(false)
+  const lens = new PerspectiveLoader()
+  const perspective = $derived(lens.projection)
+  const perspectiveLoading = $derived(lens.loading)
+  const perspectiveError = $derived(lens.error)
   let urlHydrated = $state(false)
-
-  type DisplayPresence = {
-    entityId: string
-    locationId: string | null
-    locationLabel: string | null
-    precision: 'EXACT_ROOM' | 'ZONE' | 'TIER' | 'UNKNOWN'
-    certainty: 'CONFIRMED' | 'PROBABLE' | 'LAST_KNOWN'
-    tierId: string | null
-    name: string
-  }
 
   let currentPresences = $state<DisplayPresence[]>([])
   let previousPresences = $state<DisplayPresence[]>([])
@@ -203,12 +204,6 @@
   )
 
   let activeBodyIds = $derived(new Set(sceneCharacters.map((character) => character.bodyId)))
-  type PresenceChange = DisplayPresence & {
-    change: 'arrived' | 'moved' | 'departed' | 'unchanged'
-    previousLocationLabel: string | null
-    previousTierId: string | null
-  }
-
   let presenceChanges = $derived.by(() => {
     const previousById = new Map(previousPresences.map((presence) => [presence.entityId, presence]))
     const currentById = new Map(currentPresences.map((presence) => [presence.entityId, presence]))
@@ -355,43 +350,19 @@
       certainty: certaintyFilter,
       observer: perspectiveCharacterId,
     })
-    if ($page.url.search.slice(1) === query) return
-    void goto(`${$page.url.pathname}${query ? `?${query}` : ''}`, {
-      replaceState: true,
-      keepFocus: true,
-      noScroll: true,
-    })
+    if (window.location.search.slice(1) === query) return
+    untrack(() =>
+      replaceState(`${window.location.pathname}${query ? `?${query}` : ''}`, $page.state),
+    )
   })
 
-  $effect(() => {
-    const observer = perspectiveCharacterId
-    const event = selectedEvent?.event.id
-    if (observer === 'canon' || !event) {
-      perspective = null
-      perspectiveLoading = false
-      perspectiveError = false
-      return
-    }
-    const controller = new AbortController()
-    perspectiveLoading = true
-    perspectiveError = false
-    const query = `observer=${encodeURIComponent(observer)}&event=${encodeURIComponent(event)}${
-      data.spoilerLimit ? `&spoiler=${data.spoilerLimit}` : ''
-    }`
-    fetch(`/reconstruction/perspective?${query}`, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(String(response.status))
-        return response.json() as Promise<PerspectiveProjection>
-      })
-      .then((projection) => (perspective = projection))
-      .catch((error) => {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-        perspective = null
-        perspectiveError = true
-      })
-      .finally(() => (perspectiveLoading = false))
-    return () => controller.abort()
-  })
+  $effect(() =>
+    lens.request({
+      observer: perspectiveCharacterId,
+      event: selectedEvent?.event.id ?? null,
+      spoiler: data.spoilerLimit,
+    }),
+  )
   let hatsuReading = $derived.by(() => {
     if (!$activeHatsu) return null
     const selected = selectedBodyId
@@ -732,7 +703,7 @@
     enterSelectedScene()
   })
 
-  function watchCharacter(character: (typeof sceneCharacters)[number]) {
+  function watchCharacter(character: SceneTarget) {
     if (!character.shown) return
     selectedBodyId = character.bodyId
     viewMode = 'scene'
@@ -774,27 +745,8 @@
   ])}
 />
 
-<main class="reconstruction-shell">
-  <header class="masthead" data-hatsu-pass>
-    <div>
-      <h1>{$t.reconstruction.title}</h1>
-      <p>{$t.reconstruction.intro}</p>
-    </div>
-    <div class="mode-switch" aria-label={$t.reconstruction.viewLabel}>
-      <a href={$link('/reconstruction/v3')}>V3 · Et si…</a>
-      <button
-        class:active={viewMode === 'overview'}
-        type="button"
-        onclick={() => (viewMode = 'overview')}
-      >
-        {$t.reconstruction.overview}
-      </button>
-      <button class:active={viewMode === 'scene'} type="button" onclick={enterSelectedScene}>
-        {$t.reconstruction.scene}
-      </button>
-    </div>
-  </header>
-
+<div class="reconstruction-page">
+  <ReconstructionHeader />
   {#if data.error}
     <section class="error-state" role="alert" aria-labelledby="reconstruction-error-title">
       <p class="eyebrow">{$t.reconstruction.loadErrorEyebrow}</p>
@@ -805,117 +757,49 @@
   {:else if chronologicalEvents.length === 0}
     <section class="empty-state"><p>{$t.reconstruction.empty}</p></section>
   {:else}
-    <div class="workspace">
-      {#if viewMode === 'scene'}
-        <TourModeFullscreen />
-      {/if}
-      <aside class="timeline-panel" data-hatsu-pass>
-        <label class="search">
-          <span>{$t.reconstruction.searchEvents}</span>
-          <input
-            type="search"
-            bind:value={eventQuery}
-            placeholder={$t.reconstruction.searchPlaceholder}
-          />
-        </label>
-        <nav aria-label={$t.reconstruction.timeline}>
-          {#each filteredEvents as entry (entry.event.id)}
-            <button
-              type="button"
-              class:current={entry.index === currentIndex}
-              class:followed={followedEventIndexes.includes(entry.index)}
-              aria-current={entry.index === currentIndex ? 'step' : undefined}
-              onclick={() => chooseScene(entry.index)}
-            >
-              <span class="event-index">{String(entry.index + 1).padStart(3, '0')}</span>
-              <span>
-                <small
-                  >{$t.common.chapterShort(entry.chapter.number)}{entry.event.occurredAtLabel
-                    ? ` · ${entry.event.occurredAtLabel}`
-                    : ''}</small
-                >
-                <strong>{entry.event.title}</strong>
-              </span>
-            </button>
-          {/each}
-        </nav>
-      </aside>
-
-      <section class="stage" aria-label={$t.reconstruction.currentState}>
+    <ReconstructionWorkspace
+      bind:viewMode
+      bind:observer={perspectiveCharacterId}
+      bind:selectedId={selectedBodyId}
+      observers={perspectiveCharacters}
+      event={{
+        chapter: selectedEvent.chapter.number,
+        title: selectedEvent.event.title,
+        time: selectedEvent.event.occurredAtLabel,
+      }}
+      index={currentIndex}
+      count={chronologicalEvents.length}
+      {isPlaying}
+      filtered={changeFilter !== 'all' || certaintyFilter !== 'all'}
+      loading={perspectiveLoading}
+      error={perspectiveError}
+      activeTechnique={activeTechnique?.name ?? null}
+      follow={followedBodyId && followedName
+        ? {
+            name: followedName,
+            count: followedEventIndexes.length,
+            onPrevious: () => jumpFollow(-1),
+            onNext: () => jumpFollow(1),
+            onStop: () => (followedBodyId = null),
+          }
+        : null}
+      onEnter={enterSelectedScene}
+      onChoose={chooseScene}
+      onPlay={togglePlay}
+    >
+      {#snippet children(showNames, inspect, inspectDeck)}
         {#if viewMode === 'overview'}
-          <ReconstructionOverview
-            markers={overviewMarkers}
-            selectedId={selectedBodyId}
-            onSelect={selectOverviewCharacter}
-          />
-          <div class="map-filters" aria-label={$t.reconstruction.filters} data-hatsu-pass>
-            <label class="perspective-select">
-              <span>{$t.reconstruction.perspective}</span>
-              <select bind:value={perspectiveCharacterId}>
-                <option value="canon">{$t.reconstruction.canonicalPerspective}</option>
-                {#each perspectiveCharacters as character (character.id)}
-                  <option value={character.id}>{character.name}</option>
-                {/each}
-              </select>
-            </label>
-            <button
-              class:active={changeFilter === 'all'}
-              type="button"
-              onclick={() => (changeFilter = 'all')}>{$t.reconstruction.allPresences}</button
-            >
-            <button
-              class:active={changeFilter === 'changed'}
-              type="button"
-              onclick={() => (changeFilter = 'changed')}>{$t.reconstruction.changesOnly}</button
-            >
-            <select bind:value={certaintyFilter} aria-label={$t.reconstruction.certaintyFilter}>
-              <option value="all">{$t.reconstruction.allCertainties}</option>
-              <option value="CONFIRMED">{$t.reconstruction.legendKnown}</option>
-              <option value="PROBABLE">{$t.reconstruction.legendProbable}</option>
-              <option value="LAST_KNOWN">{$t.reconstruction.legendLastKnown}</option>
-            </select>
-          </div>
-          {#if perspectiveCharacterId !== 'canon'}
-            <div class="perspective-status" aria-live="polite" data-hatsu-pass>
-              {#if perspectiveLoading}
-                {$t.reconstruction.loadingPerspective}
-              {:else if perspectiveError}
-                {$t.reconstruction.perspectiveUnavailable}
-              {:else if perspective}
-                {$t.reconstruction.perspectiveSummary(
-                  perspective.visibleBodyIds.length,
-                  perspective.knownFactCount,
-                  perspective.beliefCount,
-                )}
-              {/if}
-            </div>
-          {/if}
-          <div class="map-legend" data-hatsu-pass>
-            <span><i class="active-dot"></i>{$t.reconstruction.legendActive}</span>
-            <span><i></i>{$t.reconstruction.legendKnown}</span>
-            <span><i class="probable"></i>{$t.reconstruction.legendProbable}</span>
-            <span><i class="last-known"></i>{$t.reconstruction.legendLastKnown}</span>
-            <span><i class="arrived"></i>{$t.reconstruction.arrived}</span>
-            <span><i class="departed"></i>{$t.reconstruction.departed}</span>
-          </div>
-          <aside
-            class="hatsu-lens"
-            class:active={Boolean(activeTechnique)}
-            style:--hatsu={activeTechnique?.color ?? '#6faeb2'}
-            data-hatsu-pass
-          >
-            {#if activeTechnique}
-              <span>{$t.reconstruction.hatsuLens}</span>
-              <strong>{activeTechnique.name}</strong>
-              <p>{hatsuReading}</p>
-            {:else}
-              <span>{$t.reconstruction.hatsuLens}</span>
-              <p>{$t.reconstruction.noHatsu}</p>
-              <button type="button" onclick={() => hatsuPanelOpen.set(true)}>
-                {$t.reconstruction.chooseHatsu}
-              </button>
-            {/if}
-          </aside>
+          <ReconstructionViewport>
+            <ReconstructionOverview
+              markers={overviewMarkers}
+              selectedId={selectedBodyId}
+              onSelect={inspect}
+              {showNames}
+              detailed={showNames || Boolean(activeTechnique)}
+              onGroup={inspectDeck}
+              loading={perspectiveLoading}
+            />
+          </ReconstructionViewport>
         {:else}
           <div class="tour-stage">
             <TourScene
@@ -957,837 +841,134 @@
             {/if}
           </div>
         {/if}
-      </section>
-
-      <aside class="event-panel">
-        <p class="eyebrow">{$t.reconstruction.event}</p>
-        <p class="event-time">
-          {$t.common.chapterShort(selectedEvent.chapter.number)}
-          {#if selectedEvent.event.occurredAtLabel}<span>{selectedEvent.event.occurredAtLabel}</span
-            >{/if}
-        </p>
-        <h2>{selectedEvent.event.title}</h2>
-        <p class="summary">{selectedEvent.event.summary}</p>
-
-        <section aria-labelledby="scene-cast">
-          <div class="section-heading">
-            <h3 id="scene-cast">{$t.reconstruction.characters}</h3>
-            <span>{sceneCharacters.length}</span>
-          </div>
-          {#if sceneCharacters.length}
-            <div class="cast">
-              {#each sceneCharacters as character (character.characterId)}
-                <div class="cast-row">
-                  <button
-                    type="button"
-                    class:selected={selectedBodyId === character.bodyId}
-                    disabled={!character.shown}
-                    title={character.shown
-                      ? $t.reconstruction.watchCharacter(character.name)
-                      : $t.reconstruction.unknownPosition}
-                    onclick={() => watchCharacter(character)}
-                    data-hatsu-character={character.bodyId}
-                    data-hatsu-character-name={character.name}
-                    data-hatsu-uncertain={!character.shown ? 'true' : undefined}
-                  >
-                    <span
-                      ><strong>{character.name}</strong><small
-                        >{$t.reconstruction.roles[character.participationType]}</small
-                      ></span
-                    >
-                    <b>{character.shown ? '→' : '?'}</b>
-                  </button>
-                  <button
-                    class="follow"
-                    class:active={followedBodyId === character.bodyId}
-                    type="button"
-                    data-hatsu-pass
-                    aria-label={$t.reconstruction.followCharacter(character.name)}
-                    onclick={() => toggleFollow(character.bodyId)}>◎</button
-                  >
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <p class="muted">{$t.reconstruction.noCharacters}</p>
-          {/if}
-        </section>
-
-        <section>
-          <div class="section-heading">
-            <h3>{$t.reconstruction.changes}</h3>
-            <span>{changedPresences.length}</span>
-          </div>
-          {#if changedPresences.length}
-            <ul class="change-list">
-              {#each changedPresences.slice(0, 8) as presence (presence.entityId)}
-                <li data-change={presence.change}>
-                  <strong>{presence.name}</strong>
-                  <span>
-                    {#if presence.change === 'moved'}
-                      {presence.previousLocationLabel ?? $t.common.unknown} → {presence.locationLabel ??
-                        $t.common.unknown}
-                    {:else}
-                      {$t.reconstruction.changeLabels[presence.change]}
-                      {#if presence.locationLabel}
-                        · {presence.locationLabel}{/if}
-                    {/if}
-                  </span>
-                  <small data-evidence={claimLevel(presence.certainty, presence.precision)}>
-                    {$t.reconstruction.evidenceLevels[
-                      claimLevel(presence.certainty, presence.precision)
-                    ]}
-                  </small>
-                </li>
-              {/each}
-            </ul>
-          {:else}
-            <p class="muted">{$t.reconstruction.noChanges}</p>
-          {/if}
-        </section>
-
-        <section class="evidence-panel">
-          <div class="section-heading">
-            <h3>{$t.reconstruction.sources}</h3>
-            <span>{selectedEvidence.length}</span>
-          </div>
-          <ul>
-            {#each selectedEvidence as evidence (evidence.id)}
-              <li data-evidence={evidence.level}>
-                <span>{$t.reconstruction.evidenceLevels[evidence.level]}</span>
-                <strong>{evidence.label}</strong>
-                {#if evidence.detail}<code>{evidence.detail}</code>{/if}
-              </li>
-            {/each}
-          </ul>
-        </section>
-
-        {#if followedBodyId && followedName}
-          <section class="follow-panel">
-            <div class="section-heading">
-              <h3>{$t.reconstruction.following}</h3>
-              <button type="button" onclick={() => (followedBodyId = null)}>×</button>
-            </div>
-            <strong>{followedName}</strong>
-            <p>{$t.reconstruction.followCount(followedEventIndexes.length)}</p>
-            <div>
-              <button type="button" onclick={() => jumpFollow(-1)}
-                >← {$t.reconstruction.previousTrace}</button
-              >
-              <button type="button" onclick={() => jumpFollow(1)}
-                >{$t.reconstruction.nextTrace} →</button
-              >
-            </div>
-          </section>
-        {/if}
-
-        <section>
-          <div class="section-heading">
-            <h3>{$t.reconstruction.shipState}</h3>
-            <span>{currentPresences.length}</span>
-          </div>
-          <dl class="state-stats">
-            <div>
-              <dt>{$t.reconstruction.exact}</dt>
-              <dd>{extras.length}</dd>
-            </div>
-            <div>
-              <dt>{$t.reconstruction.approximate}</dt>
-              <dd>
-                {currentPresences.filter(
-                  (presence) => presence.tierId && presence.precision !== 'EXACT_ROOM',
-                ).length}
-              </dd>
-            </div>
-            <div>
-              <dt>{$t.reconstruction.unlocated}</dt>
-              <dd>{unknownPresences.length}</dd>
-            </div>
-          </dl>
-          {#if unknownPresences.length}
-            <details>
-              <summary>{$t.reconstruction.showUnlocated(unknownPresences.length)}</summary>
-              <ul>
-                {#each unknownPresences as presence (presence.entityId)}<li>
-                    {presence.name}
-                  </li>{/each}
-              </ul>
-            </details>
-          {/if}
-        </section>
-
-        <p class="method-note">{$t.reconstruction.methodNote}</p>
-      </aside>
-    </div>
-
-    <footer class="transport" data-hatsu-pass>
-      <button
-        aria-label={$t.reconstruction.previous}
-        disabled={currentIndex === 0}
-        onclick={() => chooseScene(currentIndex - 1)}>←</button
-      >
-      <button
-        class="play"
-        aria-label={isPlaying ? $t.reconstruction.pause : $t.reconstruction.play}
-        onclick={togglePlay}><MangaIcon name={isPlaying ? 'pause' : 'play'} /></button
-      >
-      <button
-        aria-label={$t.reconstruction.next}
-        disabled={currentIndex >= chronologicalEvents.length - 1}
-        onclick={() => chooseScene(currentIndex + 1)}>→</button
-      >
-      <input
-        aria-label={$t.reconstruction.timeline}
-        type="range"
-        min="0"
-        max={Math.max(0, chronologicalEvents.length - 1)}
-        value={currentIndex}
-        oninput={(event) => chooseScene(Number(event.currentTarget.value))}
-      />
-      <span>{currentIndex + 1} / {chronologicalEvents.length}</span>
-    </footer>
+      {/snippet}
+      {#snippet timeline(dismiss)}
+        <ReconstructionTimeline
+          entries={filteredEvents}
+          bind:query={eventQuery}
+          {currentIndex}
+          followed={followedEventIndexes}
+          onChoose={chooseScene}
+          onDone={dismiss}
+        />
+      {/snippet}
+      {#snippet inspector(initial, dismiss, deck)}
+        <ReconstructionInspector
+          {initial}
+          event={{
+            chapter: selectedEvent.chapter.number,
+            title: selectedEvent.event.title,
+            summary: selectedEvent.event.summary,
+            time: selectedEvent.event.occurredAtLabel,
+            evidence: selectedEvidence,
+          }}
+          changes={changedPresences}
+          people={{
+            initialDeck: deck,
+            cast: sceneCharacters,
+            avatars: extras,
+            presences: visibleInPerspective(
+              currentPresences,
+              perspectiveCharacterId === 'canon' ? null : perspective,
+            ),
+            selectedId: selectedBodyId,
+            followedId: followedBodyId,
+            onSelect: selectOverviewCharacter,
+            onWatch: watchCharacter,
+            onFollow: toggleFollow,
+            onDone: dismiss,
+          }}
+          statistics={{
+            total: currentPresences.length,
+            exact: extras.length,
+            approximate: currentPresences.filter(
+              (presence) => presence.tierId && presence.precision !== 'EXACT_ROOM',
+            ).length,
+            unlocated: unknownPresences,
+          }}
+        />
+      {/snippet}
+      {#snippet filters(showNames, onNames, dismiss)}
+        <ReconstructionFilters
+          bind:changeFilter
+          bind:certaintyFilter
+          {showNames}
+          {onNames}
+          onDone={dismiss}
+          hatsu={{
+            name: activeTechnique?.name ?? null,
+            reading: hatsuReading,
+            color: activeTechnique?.color ?? null,
+            onChoose: () => hatsuPanelOpen.set(true),
+          }}
+          status={{
+            loading: perspectiveLoading,
+            error: perspectiveError,
+            summary: perspective
+              ? $t.reconstruction.perspectiveSummary(
+                  perspective.visibleBodyIds.length,
+                  perspective.knownFactCount,
+                  perspective.beliefCount,
+                )
+              : null,
+          }}
+        />
+      {/snippet}
+    </ReconstructionWorkspace>
   {/if}
-</main>
+</div>
 
 <style>
-  :global(body) {
-    background: #030608;
-  }
-  .reconstruction-shell {
+  .reconstruction-page {
     min-height: 100vh;
-    background: var(--surface-void);
+    background: #03080b;
     color: #edf1ee;
-    padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 5rem;
-  }
-  .error-state {
-    max-width: 46rem;
-    margin: 5rem auto;
-    padding: 2rem;
-    border: 1px solid rgba(207, 128, 108, 0.55);
-    background: rgba(39, 17, 16, 0.72);
-  }
-  .error-state h2 {
-    margin: 0.35rem 0 0.7rem;
-  }
-  .error-state button {
-    margin-top: 1rem;
-    border: 1px solid #e5c57a;
-    background: transparent;
-    padding: 0.55rem 0.9rem;
-    color: #e5c57a;
-    cursor: pointer;
-  }
-  .evidence-panel ul {
-    display: grid;
-    gap: 0.45rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .evidence-panel li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.2rem 0.55rem;
-    border-left: 2px solid #6faeb2;
-    padding-left: 0.65rem;
-  }
-  .evidence-panel li[data-evidence='derived'] {
-    border-left-style: dashed;
-    border-left-color: #e5c57a;
-  }
-  .evidence-panel li[data-evidence='inferred'] {
-    border-left-style: dotted;
-    border-left-color: #cf806c;
-  }
-  .evidence-panel li span,
-  .change-list small[data-evidence] {
-    color: rgba(237, 241, 238, 0.55);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .evidence-panel li code {
-    grid-column: 2;
-    overflow-wrap: anywhere;
-    color: rgba(237, 241, 238, 0.48);
-    font-size: 0.66rem;
-  }
-  .perspective-select {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .perspective-select span {
-    font-size: 0.66rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .perspective-status {
-    border-top: 1px solid rgba(111, 174, 178, 0.35);
-    background: rgba(5, 15, 19, 0.9);
-    padding: 0.55rem 0.8rem;
-    color: rgba(237, 241, 238, 0.7);
-    font-size: 0.72rem;
-  }
-  .scene-hatsu-report {
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 5;
-    display: grid;
-    gap: 0.2rem;
-    border: 1px solid color-mix(in srgb, var(--hatsu, #6faeb2) 65%, transparent);
-    background: rgba(3, 8, 10, 0.9);
-    padding: 0.65rem 0.85rem;
-    color: #edf1ee;
-  }
-  .scene-hatsu-report span {
-    color: rgba(237, 241, 238, 0.58);
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .masthead {
-    max-width: 1600px;
-    margin: 0 auto 1.2rem;
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 2rem;
-  }
-  .masthead h1 {
-    margin: 0.15rem 0 0.35rem;
-    font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-    font-weight: 500;
-    line-height: 1.1;
-  }
-  .masthead > div > p:last-child {
-    max-width: 48rem;
-    margin: 0;
-    color: rgba(237, 241, 238, 0.62);
-  }
-  .eyebrow {
-    margin: 0;
-    color: #d5b86e;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-  .mode-switch {
-    display: flex;
-    border: 0;
-    padding: 0.2rem;
-  }
-  .mode-switch button {
-    border: 0;
-    background: transparent;
-    padding: 0.65rem 0.9rem;
-    color: rgba(237, 241, 238, 0.58);
-    font-size: 0.72rem;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .mode-switch button.active {
-    background: rgba(229, 197, 122, 0.13);
-    color: #f2ddb0;
-  }
-  .workspace {
-    max-width: 1600px;
-    height: min(70vh, 760px);
-    min-height: 36rem;
-    margin: auto;
-    display: grid;
-    grid-template-columns: minmax(15rem, 0.7fr) minmax(32rem, 2.2fr) minmax(18rem, 0.9fr);
-    border: 1px solid rgba(237, 241, 238, 0.15);
-    background: #071014;
-  }
-  .timeline-panel,
-  .event-panel {
-    min-width: 0;
-    background: rgba(5, 10, 13, 0.96);
-  }
-  .timeline-panel {
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(237, 241, 238, 0.12);
-  }
-  .search {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(237, 241, 238, 0.1);
-  }
-  .search span {
-    display: block;
-    margin-bottom: 0.4rem;
-    color: rgba(237, 241, 238, 0.48);
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .search input {
-    width: 100%;
-    border: 1px solid rgba(237, 241, 238, 0.14);
-    background: #020506;
-    padding: 0.65rem 0.75rem;
-    color: inherit;
-  }
-  .timeline-panel nav {
-    overflow-y: auto;
-  }
-  .timeline-panel nav button {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    gap: 0.65rem;
-    border: 0;
-    border-bottom: 1px solid rgba(237, 241, 238, 0.07);
-    background: transparent;
-    padding: 0.8rem;
-    color: rgba(237, 241, 238, 0.65);
-    text-align: left;
-  }
-  .timeline-panel nav button:hover,
-  .timeline-panel nav button.current {
-    background: rgba(229, 197, 122, 0.08);
-    color: #f2e5c9;
-  }
-  .timeline-panel nav button.current {
-    box-shadow: inset 2px 0 #d5b86e;
-  }
-  .timeline-panel nav button.followed:not(.current) {
-    box-shadow: inset 2px 0 rgba(111, 174, 178, 0.65);
-  }
-  .event-index,
-  .timeline-panel small {
-    color: rgba(237, 241, 238, 0.35);
-    font-size: 0.6rem;
-  }
-  .timeline-panel strong {
-    display: block;
-    margin-top: 0.2rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-  .stage {
-    position: relative;
-    min-width: 0;
-    overflow: hidden;
-    background: #030608;
   }
   .tour-stage {
     position: absolute;
     inset: 0;
   }
-  .map-filters {
+  .scene-hatsu-report {
     position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
     z-index: 5;
-    top: 1rem;
-    left: 1rem;
-    display: flex;
-    gap: 0.3rem;
-    border: 1px solid rgba(237, 241, 238, 0.13);
-    background: rgba(3, 8, 10, 0.9);
-    padding: 0.3rem;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #6faeb2;
+    background: #0c161dee;
+    font-size: 0.8rem;
   }
-  .map-filters button,
-  .map-filters select {
-    border: 0;
-    background: transparent;
-    padding: 0.45rem 0.55rem;
-    color: rgba(237, 241, 238, 0.58);
-    font-size: 0.62rem;
+  .scene-hatsu-report span {
+    color: #99adb5;
+    font-size: 0.7rem;
   }
-  .hatsu-lens {
-    position: absolute;
-    z-index: 6;
-    top: 1rem;
-    right: 1rem;
-    width: min(16rem, 42%);
-    border: 1px solid rgba(237, 241, 238, 0.14);
-    background: rgba(3, 8, 10, 0.92);
-    padding: 0.75rem;
-    color: rgba(237, 241, 238, 0.58);
-    box-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.35);
+  .error-state,
+  .empty-state {
+    max-width: 46rem;
+    margin: 4rem auto;
+    padding: 2rem;
+    color: #bac9cf;
+    line-height: 1.7;
   }
-  .hatsu-lens.active {
-    border-color: color-mix(in srgb, var(--hatsu) 58%, rgba(237, 241, 238, 0.16));
-    box-shadow: 0 0 1.5rem color-mix(in srgb, var(--hatsu) 14%, transparent);
+  .error-state {
+    border: 1px solid #86574c;
+    background: #271110;
   }
-  .hatsu-lens > span {
-    display: block;
-    color: color-mix(in srgb, var(--hatsu) 75%, #fff 25%);
-    font-size: 0.58rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  .error-state h2 {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
   }
-  .hatsu-lens strong {
-    display: block;
-    margin-top: 0.25rem;
-    font-family: Georgia, serif;
-    color: #edf1ee;
+  .error-state button {
+    min-height: 44px;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5c57a;
+    color: #e5c57a;
   }
-  .hatsu-lens p {
-    margin: 0.35rem 0 0;
-    font-size: 0.62rem;
-    line-height: 1.45;
-  }
-  .hatsu-lens button {
-    margin-top: 0.55rem;
-    border: 1px solid rgba(229, 197, 122, 0.45);
-    background: rgba(229, 197, 122, 0.08);
-    padding: 0.4rem 0.55rem;
-    color: #f2ddb0;
-    font-size: 0.6rem;
-  }
-  .map-filters button.active {
-    background: rgba(229, 197, 122, 0.14);
-    color: #f2ddb0;
-  }
-  .map-filters select {
-    border-left: 1px solid rgba(237, 241, 238, 0.12);
-    color-scheme: dark;
-  }
-  .map-legend {
-    position: absolute;
-    left: 1rem;
-    bottom: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    border: 1px solid rgba(237, 241, 238, 0.13);
-    background: rgba(3, 8, 10, 0.88);
-    padding: 0.55rem 0.7rem;
-    font-size: 0.62rem;
-    color: rgba(237, 241, 238, 0.65);
-  }
-  .map-legend span {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
-  .map-legend i {
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: 50%;
-    background: #6faeb2;
-  }
-  .map-legend i.active-dot {
-    background: #e5c57a;
-  }
-  .map-legend i.probable {
-    border: 1px dashed #d5b86e;
-    background: transparent;
-  }
-  .map-legend i.last-known {
-    border: 1px dotted #cf806c;
-    background: transparent;
-    opacity: 0.7;
-  }
-  .map-legend i.arrived {
-    background: #78c6a3;
-  }
-  .map-legend i.departed {
-    border: 1px solid #cf806c;
-    background: transparent;
-    opacity: 0.55;
-  }
-  .event-panel {
-    overflow-y: auto;
-    border-left: 1px solid rgba(237, 241, 238, 0.12);
-    padding: 1.15rem;
-  }
-  .event-panel h2 {
-    margin: 0.4rem 0 0.75rem;
-    font-family: Georgia, serif;
-    font-size: 1.55rem;
-    font-weight: 400;
-    line-height: 1.15;
-  }
-  .event-time {
-    display: flex;
-    justify-content: space-between;
-    margin: 1.1rem 0 0;
-    color: rgba(237, 241, 238, 0.5);
-    font-size: 0.68rem;
-  }
-  .summary {
-    color: rgba(237, 241, 238, 0.68);
-    font-size: 0.78rem;
-    line-height: 1.6;
-  }
-  .event-panel section {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(237, 241, 238, 0.1);
-  }
-  .section-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.65rem;
-  }
-  .section-heading h3 {
-    margin: 0;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-  }
-  .section-heading span {
+  .eyebrow {
     color: #d5b86e;
     font-size: 0.7rem;
-  }
-  .cast {
-    display: grid;
-    gap: 0.35rem;
-  }
-  .cast-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.3rem;
-  }
-  .cast-row > button:first-child {
-    width: 100%;
-  }
-  .cast-row button.follow {
-    width: 2.25rem;
-    justify-content: center;
-    color: rgba(237, 241, 238, 0.45);
-  }
-  .cast-row button.follow.active {
-    border-color: #6faeb2;
-    color: #9bd3d5;
-    background: rgba(111, 174, 178, 0.12);
-  }
-  .cast button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid rgba(237, 241, 238, 0.1);
-    background: rgba(255, 255, 255, 0.025);
-    padding: 0.55rem 0.65rem;
-    color: inherit;
-    text-align: left;
-  }
-  .cast button:hover:not(:disabled),
-  .cast button.selected {
-    border-color: rgba(229, 197, 122, 0.55);
-  }
-  .cast button:disabled {
-    opacity: 0.45;
-  }
-  .cast strong,
-  .cast small {
-    display: block;
-  }
-  .cast strong {
-    font-size: 0.72rem;
-  }
-  .cast small {
-    margin-top: 0.15rem;
-    color: rgba(237, 241, 238, 0.38);
-    font-size: 0.58rem;
-    text-transform: uppercase;
-  }
-  .state-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.35rem;
-    margin: 0;
-  }
-  .state-stats div {
-    background: rgba(255, 255, 255, 0.035);
-    padding: 0.55rem;
-  }
-  .state-stats dt {
-    color: rgba(237, 241, 238, 0.42);
-    font-size: 0.58rem;
-  }
-  .state-stats dd {
-    margin: 0.2rem 0 0;
-    color: #e5c57a;
-    font-family: Georgia, serif;
-    font-size: 1.25rem;
-  }
-  details {
-    margin-top: 0.65rem;
-    color: rgba(237, 241, 238, 0.55);
-    font-size: 0.68rem;
-  }
-  details ul {
-    padding-left: 1.2rem;
-  }
-  .method-note {
-    margin-top: 1.2rem;
-    border-left: 2px solid rgba(229, 197, 122, 0.45);
-    padding-left: 0.7rem;
-    color: rgba(237, 241, 238, 0.45);
-    font-size: 0.66rem;
-    line-height: 1.5;
-  }
-  .muted {
-    color: rgba(237, 241, 238, 0.42);
-    font-size: 0.7rem;
-  }
-  .change-list {
-    display: grid;
-    gap: 0.42rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .change-list li {
-    border-left: 2px solid rgba(237, 241, 238, 0.2);
-    padding-left: 0.55rem;
-  }
-  .change-list li[data-change='arrived'] {
-    border-color: #78c6a3;
-  }
-  .change-list li[data-change='moved'] {
-    border-color: #e5c57a;
-  }
-  .change-list li[data-change='departed'] {
-    border-color: #cf806c;
-  }
-  .change-list strong,
-  .change-list span {
-    display: block;
-  }
-  .change-list strong {
-    font-size: 0.68rem;
-  }
-  .change-list span {
-    margin-top: 0.1rem;
-    color: rgba(237, 241, 238, 0.46);
-    font-size: 0.6rem;
-  }
-  .follow-panel > strong {
-    color: #9bd3d5;
-    font-family: Georgia, serif;
-    font-size: 1.05rem;
-  }
-  .follow-panel p {
-    color: rgba(237, 241, 238, 0.48);
-    font-size: 0.65rem;
-  }
-  .follow-panel .section-heading button {
-    border: 0;
-    background: transparent;
-    color: inherit;
-  }
-  .follow-panel > div:last-child {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.35rem;
-  }
-  .follow-panel > div:last-child button {
-    border: 1px solid rgba(237, 241, 238, 0.12);
-    background: transparent;
-    padding: 0.45rem;
-    color: rgba(237, 241, 238, 0.62);
-    font-size: 0.6rem;
-  }
-  .transport {
-    position: fixed;
-    z-index: 60;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: grid;
-    grid-template-columns: auto auto auto minmax(8rem, 1fr) auto;
-    align-items: center;
-    gap: 0.75rem;
-    border-top: 1px solid rgba(237, 241, 238, 0.14);
-    background: rgba(3, 6, 8, 0.94);
-    padding: 0.75rem max(1rem, calc((100vw - 1600px) / 2));
-    backdrop-filter: blur(12px);
-  }
-  .transport button {
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid rgba(237, 241, 238, 0.15);
-    background: transparent;
-    color: inherit;
-  }
-  .transport button.play {
-    border-color: rgba(229, 197, 122, 0.5);
-    color: #e5c57a;
-  }
-  .transport button:disabled {
-    opacity: 0.25;
-  }
-  .transport input {
-    width: 100%;
-    accent-color: #d5b86e;
-  }
-  .transport span {
-    min-width: 4rem;
-    text-align: right;
-    color: rgba(237, 241, 238, 0.5);
-    font-size: 0.7rem;
-  }
-  :global(.hatsu-dock) {
-    bottom: 4.6rem;
-  }
-  .empty-state {
-    max-width: 60rem;
-    margin: 5rem auto;
-    text-align: center;
-    color: rgba(237, 241, 238, 0.55);
-  }
-  @media (max-width: 1100px) {
-    .workspace {
-      height: auto;
-      min-height: 0;
-      grid-template-columns: 14rem 1fr;
-    }
-    .event-panel {
-      grid-column: 1 / -1;
-      border-top: 1px solid rgba(237, 241, 238, 0.12);
-      border-left: 0;
-    }
-    .stage {
-      min-height: 30rem;
-    }
-    .hatsu-lens {
-      top: auto;
-      right: 0.6rem;
-      bottom: 3.4rem;
-      width: min(15rem, 58%);
-    }
-  }
-  @media (max-width: 700px) {
-    .reconstruction-shell {
-      padding: 5rem 0.7rem 6rem;
-    }
-    .masthead {
-      display: block;
-    }
-    .mode-switch {
-      margin-top: 1rem;
-      width: max-content;
-    }
-    .workspace {
-      display: flex;
-      flex-direction: column;
-    }
-    .timeline-panel {
-      max-height: 15rem;
-      border-right: 0;
-    }
-    .stage {
-      min-height: 23rem;
-      order: -1;
-    }
-    .event-panel {
-      overflow: visible;
-    }
-    .transport {
-      grid-template-columns: auto auto auto 1fr;
-    }
-    .transport span {
-      display: none;
-    }
   }
 </style>

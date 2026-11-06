@@ -784,6 +784,10 @@
           }${french ? 'chap.' : 'ch.'} ${currentMangaView.chapter}${
             currentMangaView.pages ? `, p. ${currentMangaView.pages}` : ''
           }`,
+          mangaViewButtonLabel:
+            currentMangaView.id === 'royal-liner-prince-view'
+              ? $t.tour.sceneOverlay.princeView
+              : undefined,
           onJumpToAngle: () => {
             const view = currentMangaView
             if ($page.url.searchParams.get('mangaView') !== view.id) {

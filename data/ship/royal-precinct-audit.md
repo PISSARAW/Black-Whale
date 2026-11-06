@@ -49,3 +49,59 @@ Les fonctions des blocs non identifiés restent inconnues. Le placement des
 suites VVIP dans le bloc avant est conservé comme hypothèse du modèle. Les
 intérieurs détaillés des appartements gardent leurs plans propres : leur
 redimensionnement schématique sur le pont ne change pas la taille des salons.
+
+## Extérieur du paquebot dans la visite
+
+La visite utilise ce contrôle des chapitres 418–420 pour sa reconstruction
+extérieure originale : coque effilée entourée d'un bassin, superstructures en
+retrait et trois passerelles rétractables. Les contours et hauteurs des ponts,
+ainsi que les extrémités des passerelles, viennent du même `blueprint.json` que
+les espaces visitables. Les enveloppes schématiques des ponts supérieurs sont
+écrêtées par leur coque porteuse courbe pour éviter les surplombs artificiels
+que produirait leur simple boîte englobante. Le bassin local ne déplace pas la ligne de flottaison
+océanique définie dans `sea.ts`.
+
+L'effilement sous le pont royal, la profondeur du bassin, les garde-corps et
+le rythme des fenêtres sont des estimations visuelles. Les paliers A, B et C
+sont présentés comme des quais ouverts ; leurs limites de collision et leurs
+liens de traversée sont conservés. Les fenêtres de façade ne créent aucune
+nouvelle pièce dans les plans.
+
+La **« Vue du prince »** (`/tour?mangaView=royal-liner-prince-view`), proposée
+aux trois accès du Tier 2, cadre le paquebot depuis un poste sur la promenade
+arrière du modèle. Sa référence est le chapitre 419, p. 18, complétée par le
+schéma du 418 et le contexte extérieur du 420. Le libellé précise **« cadrage
+reconstitué »** : le recul et la hauteur de la caméra panoramique ainsi que
+la focale ne sont pas attestés par la planche. Le visiteur reste ancré sur la
+promenade ; marcher rétablit la caméra à hauteur d'homme à cet endroit.
+Aucun numéro de tome n'est attribué à ces chapitres
+dans cette vue. Les scans ne sont ni ajoutés au dépôt, ni utilisés en texture.
+
+### Relecture visuelle et traversées continues
+
+La vue extérieure du chapitre 420 a été relue directement dans la reproduction
+[de la planche de sortie](https://anna-movies.com/hunterhunter/assets/reference/chapter-420-wsj-pages-20260909/alternate-descent.webp).
+Elle montre une proue dégagée et pointue, plusieurs terrasses en retrait, une
+superstructure centrale cylindrique à pinacles, des rangées de lumières et des
+projecteurs sur le quai qui entoure le bassin. La façade extérieure reprend
+ces traits en volumes originaux : cinq retraits de façade, bandeaux de balcons,
+renfoncement rectangulaire du pont avant, couronnement et amortisseur annelé à
+l'avant. Les dimensions, couleurs et répétitions sont estimées ; la fonction du
+renfoncement du pont avant n'est pas identifiée. Les pièces visitées restent
+celles du plan intérieur. Aucun scan n'est utilisé comme texture.
+
+Le cadrage panoramique vient désormais de l'avant du modèle. Le quai et les
+projecteurs sont visibles, et le niveau lumineux extérieur conserve la
+lisibilité d'un navire sous projecteurs même lorsque le régime intérieur est
+nocturne. Cet éclairage n'augmente pas celui des pièces fermées.
+
+Les trois passerelles se traversent à pied, avec progression continue de la
+position et de la hauteur entre les paliers existants. Les garde-corps bornent
+le déplacement latéral. La touche E lance une traversée guidée ; une commande
+de marche reprend le contrôle manuel et permet de faire demi-tour. Le mode de
+confort sans marche conserve son raccourci de changement de niveau. Une
+passerelle rétractée ne se traverse pas ; la rétraction est désactivée tant
+qu'une traversée est en cours. Les ouvertures dans la peau extérieure laissent
+passer le visiteur jusqu'aux intérieurs, sans bloquer sur les anciennes cloisons
+des paliers. L'inclinaison résulte des hauteurs estimées du plan, pas d'une
+mesure publiée dans le manga.

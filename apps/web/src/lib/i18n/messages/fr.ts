@@ -332,7 +332,7 @@ export const fr: Messages = {
     },
     intro:
       'Parcourez le navire, choisissez un pont et examinez les lieux pour consulter leurs sources.',
-    enter: 'Cliquez pour marcher',
+    enter: 'Cliquez dans la scène, puis utilisez ZQSD ou les flèches pour marcher',
     // Tab d'abord : c'est celle qui marche en plein écran, là où Échap libère le
     // pointeur et quitte le plein écran d'une seule touche.
     engaged: 'Tab pour libérer le pointeur — Échap le libère et quitte le plein écran',
@@ -604,6 +604,7 @@ export const fr: Messages = {
 
     sceneOverlay: {
       mangaAngle: "Voir l'angle du manga",
+      princeView: 'Vue du prince',
       photoPure: 'Photo sans interface',
       photoWithInterface: 'Photo avec interface',
       gyoTitle: 'Filtre Gyo / Vision Nen',

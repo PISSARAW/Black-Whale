@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 315
+Fichiers : 323
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -576,9 +576,17 @@ Fichiers : 315
 
 - reconstruction evidence > always anchors a scene to its chapter and deduplicates transition sources
 
+## `apps/web/src/lib/reconstruction/mapGroups.test.ts`
+
+- deck groups > counts subdecks together and excludes departed presences
+
 ## `apps/web/src/lib/reconstruction/perspective.test.ts`
 
 - reconstruction perspective projection > keeps the canonical view intact
+
+## `apps/web/src/lib/reconstruction/perspectiveLoader.test.ts`
+
+- observer request ownership > does not let an aborted observer replace the current projection or clear its loading state
 
 ## `apps/web/src/lib/reconstruction/sceneEntry.test.ts`
 
@@ -957,6 +965,14 @@ Fichiers : 315
 - reading a window against its budget > says nothing when every line is under
 - the meter > says nothing until a window is up
 
+## `apps/web/src/lib/tour/gangwayNavigation.test.ts`
+
+- walking the royal gangways > walks all three routes continuously, uphill and back down, to their actual interiors
+
+## `apps/web/src/lib/tour/gangwayView.test.ts`
+
+- royal liner exterior > joins every retractable crossing to its real endpoints and retracts at the quay
+
 ## `apps/web/src/lib/tour/geometry.test.ts`
 
 - polygon basics > measures area regardless of winding
@@ -1162,6 +1178,14 @@ Fichiers : 315
 
 - manga details in every prince apartment > gives every princely wall picture an intentional material colour
 
+## `apps/web/src/lib/tour/prisonCast.test.ts`
+
+- the chapter 359 prison cast > keeps Beyond on his mattress and the three Zodiacs on the watch side of the grille
+
+## `apps/web/src/lib/tour/prisonView.test.ts`
+
+- Beyond’s prison, chapter 359 > keeps the reconstructed fixtures inside the rooms without introducing blueprint errors
+
 ## `apps/web/src/lib/tour/punch.test.ts`
 
 - the line the blow takes through the matter > runs the whole way when there is deck the whole way
@@ -1196,6 +1220,10 @@ Fichiers : 315
 ## `apps/web/src/lib/tour/royalSalonView.test.ts`
 
 - the royal salon reconstructed from chapter 382 > satisfies the shared blueprint invariants for the royal salon
+
+## `apps/web/src/lib/tour/sceneInput.test.ts`
+
+- entering the walk after using page controls > hands the keyboard from the deck selector to the canvas before the mouse handler runs
 
 ## `apps/web/src/lib/tour/sea.test.ts`
 

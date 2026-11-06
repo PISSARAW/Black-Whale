@@ -334,7 +334,7 @@ export const en = {
       },
     },
     intro: 'Explore the ship, choose a deck, and examine places to see their sources.',
-    enter: 'Click to walk',
+    enter: 'Click inside the scene, then use WASD or the arrow keys to walk',
     // Tab is named first because it is the one that works in full screen: Esc
     // releases the pointer and leaves full screen in the same press.
     engaged: 'Press Tab to release the pointer — Esc releases it and full screen with it',
@@ -610,6 +610,7 @@ export const en = {
 
     sceneOverlay: {
       mangaAngle: 'View the manga angle',
+      princeView: "Prince's view",
       photoPure: 'Clean photo',
       photoWithInterface: 'Photo with interface',
       gyoTitle: 'Gyo filter / Nen vision',

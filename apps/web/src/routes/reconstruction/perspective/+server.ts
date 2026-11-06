@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
   // `?spoiler=` is exactly how the policy would be bypassed. The parameter is
   // still accepted, but it can only ever *lower* what the cookie allows.
   const cookieCap = readSpoilerLimit(cookies)
-  const asked = Number(url.searchParams.get('spoiler'))
+  const asked = Number(url.searchParams.get('spoiler') || NaN)
   const queryCap = Number.isSafeInteger(asked) && asked >= 0 ? asked : undefined
   const spoiler =
     cookieCap === undefined

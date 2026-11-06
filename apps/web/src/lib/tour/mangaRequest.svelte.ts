@@ -15,12 +15,16 @@ export function initialTierForRequest(ship: Ship, url: URL): string {
   )
 }
 
-export function applyMangaView(navigation: TourNavigationState, view: MangaView): void {
+type CameraArrival = TourNavigationState & { jumpCameraDistance?: number | null }
+type CameraView = MangaView & { cameraDistance?: number }
+
+export function applyMangaView(navigation: CameraArrival, view: CameraView): void {
   navigation.jumpTo = view.spaceId
   navigation.jumpAt = view.at
   navigation.jumpHeading = view.heading
   navigation.jumpPitch = view.pitch
   navigation.jumpEyeHeight = view.eyeHeight ?? null
+  navigation.jumpCameraDistance = view.cameraDistance ?? null
   navigation.jumpVisibleSpaceIds = view.visibleSpaceIds ?? null
 }
 

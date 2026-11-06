@@ -1,5 +1,6 @@
 <script lang="ts">
   import BlackWhaleOverview from '$lib/assets/maps/black-whale-overview.svelte'
+  import ReconstructionGroups from './ReconstructionGroups.svelte'
   import { trajectoryPath } from '$lib/reconstruction/trajectory'
 
   type ReconstructionMarker = {
@@ -60,10 +61,18 @@
   let {
     markers,
     selectedId = null,
+    showNames = false,
+    loading = false,
+    detailed = false,
+    onGroup,
     onSelect,
   }: {
     markers: ReconstructionMarker[]
     selectedId?: string | null
+    showNames?: boolean
+    loading?: boolean
+    detailed?: boolean
+    onGroup: (tier: string) => void
     onSelect?: (id: string) => void
   } = $props()
 
@@ -101,15 +110,16 @@
   )
 </script>
 
-<div class="overview" data-hatsu-scope="reconstruction">
-  <div class="map"><BlackWhaleOverview /></div>
+<div class="overview" class:names={showNames} data-hatsu-scope="reconstruction">
+  <div class="map" inert aria-hidden="true"><BlackWhaleOverview /></div>
+  {#if !detailed && !loading}<ReconstructionGroups {markers} onChoose={onGroup} />{/if}
   <svg class="trajectories" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    {#each trajectories as trajectory (trajectory.id)}
+    {#each loading || !detailed ? [] : trajectories as trajectory (trajectory.id)}
       <path d={trajectory.path} pathLength="1" />
     {/each}
   </svg>
   <div class="markers">
-    {#each positioned as marker (marker.id)}
+    {#each loading ? [] : positioned.filter((marker) => detailed || marker.id === selectedId) as marker (marker.id)}
       <button
         type="button"
         class="marker"
@@ -140,8 +150,8 @@
   .overview {
     position: relative;
     width: 100%;
-    aspect-ratio: 10 / 7;
-    min-height: 25rem;
+    height: 100%;
+    min-height: 0;
     overflow: hidden;
     background: radial-gradient(circle at 45% 42%, rgba(34, 63, 72, 0.2), transparent 44%), #030608;
   }
@@ -196,7 +206,10 @@
     border: 1px solid rgba(144, 174, 178, 0.5);
     border-radius: 999px;
     background: rgba(7, 16, 20, 0.9);
-    padding: 0.18rem 0.42rem 0.18rem 0.24rem;
+    min-width: 20px;
+    min-height: 20px;
+    justify-content: center;
+    padding: 0.22rem;
     color: rgba(238, 244, 242, 0.86);
     font-size: 0.62rem;
     line-height: 1;
@@ -254,20 +267,22 @@
   }
 
   .name {
+    display: none;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  @media (max-width: 900px) {
-    .overview {
-      min-height: 20rem;
-    }
-    .name {
-      display: none;
-    }
-    .marker {
-      padding: 0.28rem;
-    }
+  .names .name,
+  .marker.selected .name,
+  .marker:hover .name,
+  .marker:focus-visible .name {
+    display: inline-block;
+  }
+  .names .marker,
+  .marker.selected,
+  .marker:hover,
+  .marker:focus-visible {
+    padding-inline: 0.4rem;
   }
 </style>

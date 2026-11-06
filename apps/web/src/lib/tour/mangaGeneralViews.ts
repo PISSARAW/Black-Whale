@@ -1,6 +1,22 @@
 import { mangaView as view, type MangaView } from './mangaViewModel'
+import { PRINCE_VIEW_SPACE } from './gangwayView'
 
 export const MANGA_GENERAL_VIEWS: MangaView[] = [
+  view({
+    id: 'royal-liner-prince-view',
+    spaceId: PRINCE_VIEW_SPACE,
+    at: [-110, -48],
+    target: [20, 0],
+    pitch: -0.23,
+    eyeHeight: 70,
+    cameraDistance: 130,
+    visibleSpaceIds: [],
+    chapter: 419,
+    pages: '18',
+    label: "Prince's view — the royal liner from Tier 2 (reconstructed framing)",
+    labelFr: 'Vue du prince — le paquebot royal depuis le Tier 2 (cadrage reconstitué)',
+    triggerSpaceIds: ['tier-2-tier-1-access', 'tier-2-tier-1-route-b', 'tier-2-tier-1-route-c'],
+  }),
   view({
     id: 'supreme-court-camilla-hearing',
     chapter: 379,

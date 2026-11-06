@@ -25,14 +25,16 @@ export interface MangaView {
   pitch: number
   /** Height above the floor for aerial plans; ordinary panel views use the visitor's eyes. */
   eyeHeight?: number
+  /** Pull the photo camera back from its walkable anchor; walking restores the anchor. */
+  cameraDistance?: number
   /** Published rooms to render when a plan omits reconstructed connecting volumes. */
   visibleSpaceIds?: readonly string[]
   /** The chapter this view is from, for the watermark */
   chapter: number
   /** Event order inside the chapter when the panel reproduces a populated scene. */
   eventSequence?: number
-  /** Collected edition used to check the framing. */
-  volume: number
+  /** Collected edition, when available; recent chapters may be uncollected. */
+  volume?: number
   /** Printed page(s), when the edition exposes a stable reference. */
   pages?: string
   /** Description of the scene */

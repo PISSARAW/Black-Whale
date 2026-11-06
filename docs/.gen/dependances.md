@@ -38,7 +38,7 @@ Nœuds : 23 · Arêtes uniques : 46
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 5 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 9 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
-| `lib:tour` | `package:@black-whale/nen-engine` | 15 |
+| `lib:tour` | `package:@black-whale/nen-engine` | 16 |
 | `lib:utils` | `lib:state` | 1 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 63 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |

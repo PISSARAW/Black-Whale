@@ -4,6 +4,7 @@ import { MANGA_APARTMENT_VIEWS } from './mangaApartmentViews'
 import { MANGA_CHA_R_VIEWS } from './mangaChaRViews'
 import { MANGA_BANQUET_VIEWS } from './mangaBanquetViews'
 import { MANGA_CASINO_VIEWS } from './mangaCasinoViews'
+import { MANGA_PRISON_VIEWS } from './mangaPrisonViews'
 import { MANGA_ROYAL_SALON_VIEWS } from './mangaRoyalSalonViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
@@ -17,6 +18,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_GENERAL_VIEWS,
   ...MANGA_BANQUET_VIEWS,
   ...MANGA_CASINO_VIEWS,
+  ...MANGA_PRISON_VIEWS,
   view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',

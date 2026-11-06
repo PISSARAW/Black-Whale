@@ -4,6 +4,7 @@ import { messagesFor } from '$lib/i18n'
 import type { MapMarker } from './types'
 import { banquetSpotAnchors } from './banquetPlan'
 import { salonSpotAnchors } from './royalSalonPlan'
+import { prisonSpotAnchors } from './prisonPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -48,13 +49,7 @@ export const localRoomAnchors: Record<string, { x: number; y: number }> = Object
 type Spot = { x: number; y: number; inferred?: boolean }
 
 const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallback?: Spot }> = {
-  // `local/beyond-cell.svelte`, 800 × 600, contents offset by (100, 100).
-  'tier-1-vvip-prison-beyond': {
-    // The bed, against the wall his right arm is bolted to.
-    occupants: { 'beyond-netero': { x: 23.75, y: 54.17 } },
-    // The guard half, past the bars: the Zodiacs' 24-hour watch.
-    fallback: { x: 65.63, y: 50 },
-  },
+  'tier-1-vvip-prison-beyond': prisonSpotAnchors,
   // `local/vip-detention.svelte`, 1000 × 600, contents offset by (50, 80).
   'tier-1-vip-jail': {
     // The first-class cell, the one a detained princess is held in.

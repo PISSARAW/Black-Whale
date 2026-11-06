@@ -599,19 +599,21 @@
 - **Pont :** tier-1-b, interior-beyond-cell
 - **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 3
-- **Emprises relevées :** 31.5 × 14 m ; 8.75 × 10 m ; 6.25 × 10 m
-- **Hauteurs sous plafond :** 3.5 m
-- **Éléments modélisés :** 3 counter, 2 bars, 2 table, 1 basin, 1 bed, 1 cabinet, 1 manacle, 1 seat, 1 telephone
-- **Objets directement visibles dans les cases :** 9/13
+- **Emprises relevées :** 31.5 × 14 m ; 4.3 × 3.2 m ; 3.3 × 3.2 m
+- **Hauteurs sous plafond :** 2.8 m ; 3.5 m
+- **Éléments modélisés :** 3 seat, 2 bars, 2 table, 1 basin, 1 bed, 1 cabinet, 1 manacle, 1 telephone
+- **Objets directement visibles dans les cases :** 11/12
 - **Espaces internes :** Poste de garde des Zodiaques ; La cellule même
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
-  - Plan de la cellule de haute sécurité ; la garde des Zodiaques tenue devant les barreaux, chap. 359
-  - Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant.
+  - Chap. 359, page de lecture 5 : cellule et garde des Zodiaques ; proportions et cotes reconstruites, sans plan de sol publié.
+  - Chap. 359, page de lecture 5 — Beyond allongé sur une couchette avec oreiller, platine carrée boulonnée et courte chaîne au-dessus de la tête, boisson sur la petite table ; les Zodiaques attendent sur des assises basses devant les barreaux. Dimensions et implantations détaillées estimées.
 - **Sources du mobilier et des détails :**
-  - Le chap. 350 montre la cellule de haute sécurité et ses entraves ; le chap. 359, la façade à barreaux et la garde tenue devant.
-  - Plan de la cellule de haute sécurité ; la garde des Zodiaques tenue devant les barreaux, chap. 359
+  - Chap. 359, page de lecture 5 — Beyond allongé sur une couchette avec oreiller, platine carrée boulonnée et courte chaîne au-dessus de la tête, boisson sur la petite table ; les Zodiaques attendent sur des assises basses devant les barreaux. Dimensions et implantations détaillées estimées.
+  - L’ancien plan local /ship dessine un urinoir. Sa présence et sa position ne sont pas établies par la case consultée du chap. 359.
   - Chap. 359 — le bloc cellulaire du niveau 1 : dans la cellule, la table basse sur laquelle repose la boisson de Beyond, et hors des barreaux le banc de la garde, sa table basse, l'étagère contre le mur arrière et le poste mural près de la porte.
+
+- **Détail et contrôle visuel :** [audit de la prison](beyond-prison-audit.md).
 
 ## Grande salle de loisirs VVIP — `tier-1-vvip-recreation-hall`
 

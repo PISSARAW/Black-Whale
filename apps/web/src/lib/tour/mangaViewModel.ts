@@ -3,6 +3,10 @@ import type { Vec2 } from './types'
 
 export interface MangaCastStaging {
   characterId: string
+  /** A panel can span both sides of a grille or doorway. */
+  spaceId?: string
+  /** Height of the supporting bunk or cushion above the room floor. */
+  floorOffset?: number
   at: Vec2
   heading?: number
   pose?: NonNullable<Apparition['human']>['pose']

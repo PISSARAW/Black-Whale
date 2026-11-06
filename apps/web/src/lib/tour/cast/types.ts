@@ -167,6 +167,8 @@ export interface Post {
   heading?: number
   /** Panel-specific blocking may hold a body in a pose shown by that panel. */
   pose?: NonNullable<Apparition['human']>['pose']
+  /** A panel may place a reclining body on a bunk rather than on the floor. */
+  floorOffset?: number
   costume: Costume
   /**
    * Whether this is the body's place on the interior level of its room, rather

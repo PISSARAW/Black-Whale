@@ -87,6 +87,28 @@ describe('the hair, which is what the reader recognises first', () => {
     expect(cache.size).toBeLessThan(HAIR_STYLES.length * 3)
   })
 
+  it('keeps the bald crown clear of both eyes', () => {
+    const group = new THREE.Group()
+    const ink = new MeshBasicMaterial()
+    addHumanHair({
+      THREE,
+      geometry: (_, _key, make) => make(),
+      outlined: () => new THREE.Group(),
+      head: { group, hairInk: ink, ink },
+      style: 'bald-crown',
+    })
+    group.updateMatrixWorld(true)
+    for (const x of [-0.062, 0.062]) {
+      const ray = new THREE.Raycaster(
+        new THREE.Vector3(x, 0.018, 0.4),
+        new THREE.Vector3(0, 0, -1),
+        0,
+        0.25,
+      )
+      expect(ray.intersectObject(group, true)).toHaveLength(0)
+    }
+  })
+
   it('gives Kurapika a bob and Nobunaga a topknot, from the catalogue alone', () => {
     expect(humanProfile(person('kurapika')).hairStyle).toBe('bob')
     expect(humanProfile(person('nobunaga-hazama')).hairStyle).toBe('chonmage')

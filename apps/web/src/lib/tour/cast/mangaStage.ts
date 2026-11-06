@@ -26,12 +26,13 @@ export function stagePostsForMangaView(
     return [
       {
         ...post,
-        spaceId: view.spaceId,
+        spaceId: entry.spaceId ?? view.spaceId,
         tierId: viewTierId,
         inside: true,
         at: entry.at,
         ...(entry.heading === undefined ? {} : { heading: entry.heading }),
         ...(entry.pose === undefined ? {} : { pose: entry.pose }),
+        ...(entry.floorOffset === undefined ? {} : { floorOffset: entry.floorOffset }),
       },
     ]
   })

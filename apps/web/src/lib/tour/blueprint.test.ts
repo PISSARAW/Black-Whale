@@ -401,8 +401,7 @@ describe('the cells', () => {
     const inside = ship.structures.filter(
       (structure) => structure.spaceId === 'tier-1-vvip-prison-beyond-cell',
     )
-    // What ch. 350 draws in it: the bunk, the urinal, and the manacle he is
-    // chained to the wall by — and the side table ch. 359 stands his drink on.
+    // Ch. 359: bunk, wall restraint and drink table. The urinal is map evidence.
     expect(inside.map((structure) => structure.kind).sort()).toEqual([
       'bars',
       'bars',
@@ -415,9 +414,9 @@ describe('the cells', () => {
     const watch = ship.structures.filter(
       (structure) => structure.spaceId === 'tier-1-vvip-prison-beyond-watch',
     )
-    // Three stations off the plan, and what ch. 359 furnishes the room with:
-    // the bench, the low table, the shelving and the wall set by the door.
-    expect(watch, 'the Zodiac watch keeps no stations').toHaveLength(7)
+    expect(watch.filter(({ kind }) => kind === 'counter')).toHaveLength(0)
+    expect(watch.filter(({ id }) => id.includes('-cushion-'))).toHaveLength(2)
+    expect(watch).toHaveLength(6)
   })
 
   it('leaves nothing but the plan box on the deck itself', () => {

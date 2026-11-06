@@ -72,8 +72,8 @@ describe('packMarkersForZoom', () => {
     const [placed] = packMarkersForZoom([beyond], 'LOCAL')
 
     // The bed, against the wall his right arm is manacled to.
-    expect(placed.x).toBeCloseTo(23.75)
-    expect(placed.y).toBeCloseTo(54.17)
+    expect(placed.x).toBeCloseTo(25.5)
+    expect(placed.y).toBeCloseTo(58)
   })
 
   it('drops the rest of the room on its fallback corner, fanned out', () => {
@@ -89,9 +89,9 @@ describe('packMarkersForZoom', () => {
     const [beyond, cleapatro, saiyu] = packMarkersForZoom(cell, 'LOCAL')
 
     // Beyond keeps his bed; the two watching him share the guard side.
-    expect(beyond.x).toBeCloseTo(23.75)
-    expect(cleapatro.x).toBeCloseTo(65.63)
-    expect(saiyu.x).toBeCloseTo(69.63)
+    expect(beyond.x).toBeCloseTo(25.5)
+    expect(cleapatro.x).toBeCloseTo(78)
+    expect(saiyu.x).toBeCloseTo(82)
     expect(`${cleapatro.x},${cleapatro.y}`).not.toBe(`${saiyu.x},${saiyu.y}`)
   })
 

@@ -5,6 +5,7 @@ import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 import { buildRoyalSalonDetails } from './royalSalonView'
+import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 
 export interface TierRoomView {
@@ -117,7 +118,7 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const mesh = buildTierMesh(casinoSurfacePlan(plan, reveal), {
+    const mesh = buildTierMesh(casinoSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), {
       reveal,
     })
     const shared = this.attributes(mesh)
@@ -135,6 +136,7 @@ export class TierView {
       room.details =
         buildBanquetDetails(detailsOptions) ??
         buildRoyalSalonDetails(detailsOptions) ??
+        buildPrisonDetails(detailsOptions) ??
         buildCasinoDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)
       root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)

@@ -654,22 +654,22 @@
     {
       "id": "beyond-netero",
       "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.26 },
-      "head": { "face": "square", "hairStyle": "wild", "expression": "neutral" },
+      "head": { "face": "square", "hairStyle": "bald-crown", "expression": "neutral" },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 340, 345 ; masse de vieux chêne, crinière et barbe grises",
+        "source": "Planches n&b ch. 359, page de lecture 5 : robe claire, couronne dégarnie, barbe sombre ; teintes interprétées.",
         "skin": "0xc99473",
-        "hair": "0x6a6259",
+        "hair": "0x211f1d",
         "attire": {
-          "jacket": "0x4b4640",
+          "jacket": "0xe6e1d5",
           "shirt": "0xe6e1d5",
-          "trousers": "0x35312c",
+          "trousers": "0xd8d2c4",
           "accent": "0x8e7c55"
         }
       },
       "attire": "civilian",
       "signatures": ["beard-full"],
-      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
+      "verified": { "chapterIds": ["ch-340", "ch-345", "ch-359"], "status": "confirmed" },
       "note": "Vieillard hors gabarit, et le sourire du père. En cellule — mais la cellule se visite, ce qui est la seule raison pour laquelle il a besoin d'une apparence."
     },
     {

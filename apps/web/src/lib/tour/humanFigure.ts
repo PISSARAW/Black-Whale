@@ -2,6 +2,8 @@ import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } fro
 import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
+import { legacyHumanPose as legacyPose } from './humanRestPoses'
+import { addPrisonBook, prisonFootMaterial, prisonFootGeometry } from './humanPrisonProps'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
@@ -178,20 +180,6 @@ function limb({ THREE, glow, radius, length, colour }: LimbShape): Group {
     ink: glow(INK, 1),
     scale: 1.072,
   })
-}
-
-function legacyPose(seen: HumanLook): NonNullable<Apparition['human']>['pose'] {
-  if (seen.human) return seen.human.pose
-  const pose = Math.floor(seen.stage / 3)
-  return pose === 1
-    ? 'guard'
-    : pose === 2
-      ? 'held'
-      : pose === 3
-        ? 'fallen'
-        : pose === 4
-          ? 'attack'
-          : 'idle'
 }
 
 export function buildHumanFigure({
@@ -376,8 +364,12 @@ export function buildHumanFigure({
     knee.add(shin)
     const shoe = outlined({
       THREE,
-      geometry: geometry(THREE, 'shoe', () => new THREE.BoxGeometry(0.15, 0.09, 0.25)),
-      material: dark,
+      geometry: prisonFootGeometry(
+        seen,
+        THREE,
+        geometry(THREE, 'shoe', () => new THREE.BoxGeometry(0.15, 0.09, 0.25)),
+      ),
+      material: prisonFootMaterial(seen, skin, dark),
       ink,
     })
     shoe.position.set(0, -0.32, 0.055)
@@ -437,6 +429,8 @@ export function buildHumanFigure({
     materials: { ink, skin, accent, cloth, dark },
     worn: { signatures: profile.signatures, attire: profile.clothing },
   })
+
+  addPrisonBook({ THREE, seen, figure, paper: cloth, cover: cloth })
 
   // Scaled by the body rather than fixed: a child took the same coin-sized
   // patch as a guardsman before. See `$lib/tour/contactShadow`.

@@ -272,7 +272,8 @@ const STYLES: Partial<Record<HairStyle, Style>> = {
   'bald-crown': ({ THREE, place }) => {
     place({
       key: 'hair:crown-ring',
-      make: () => new THREE.CylinderGeometry(0.196, 0.2, 0.11, 10, 1, true),
+      make: () =>
+        new THREE.CylinderGeometry(0.196, 0.2, 0.11, 10, 1, true, Math.PI / 3, (Math.PI * 4) / 3),
       at: [0, -0.02, 0],
     })
   },

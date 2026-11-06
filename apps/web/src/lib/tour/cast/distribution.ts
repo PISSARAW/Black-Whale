@@ -197,7 +197,7 @@ export function castApparitions(
       tierId: post.tierId,
       at: post.at,
       ...(post.heading === undefined ? {} : { heading: post.heading }),
-      y: standingSurface(plan, post.at, space),
+      y: standingSurface(plan, post.at, space) + (post.floorOffset ?? 0),
       size: HUMAN_SIZE,
       colour: AVATAR,
       stage: 0,

@@ -21,6 +21,8 @@ export interface HumanAppearance {
     | 'attack'
     | 'fallen'
     | 'seated'
+    | 'reclined'
+    | 'cross-legged'
     | 'flute'
   /**
    * What this body is wearing, when its role's own clothes are not the answer.

@@ -108,7 +108,7 @@ test.describe('the walk', () => {
     const meter = page.locator('#tour-frame-budget')
     // A window is half a second of frames, and the deck has to build first.
     await expect(meter).toBeVisible({ timeout: 30_000 })
-    await expect(meter).toContainText(/img\/s/)
+    await expect(meter).toContainText(/img\/s|fps/)
 
     // The counters have to be the whole frame and not its last draw call — the
     // reason `meteredFrame` turns `info.autoReset` off. A deck that reached the

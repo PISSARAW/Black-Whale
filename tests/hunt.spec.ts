@@ -1,23 +1,17 @@
 import { expect, test, type Page } from 'playwright/test'
 
 /** Leaves the briefing, and waits for the actions the hunt is played with. */
-async function enterTheApartment(page: Page) {
-  await page.getByRole('button', { name: 'Enter the apartment' }).click()
+async function enterTheApartment(page: Page, touch: boolean) {
+  const begin = page.getByRole('button', { name: 'Enter the apartment' })
+  await begin.scrollIntoViewIfNeeded()
+  await expect(begin).toBeInViewport()
+  if (touch) await begin.tap()
+  else await begin.click()
   await expect(page.getByRole('navigation', { name: 'Hunt actions' })).toBeVisible()
 }
 
 test.describe('Hunt V3 critical path', () => {
-  // These have been failing on the phone viewport, unnoticed: nothing in CI ran
-  // Playwright, so the only e2e in the repo proved nothing. ADR-001 chantier 1
-  // puts the suite in CI, which means every remaining red has to be either
-  // fixed or named. This one is named: on iPhone 13 the pre-game controls sit
-  // under the fold and the click never lands. It is a real defect of the hunt
-  // interface on small screens, not of the test.
-  test.beforeEach(async ({ page }, testInfo) => {
-    test.skip(
-      testInfo.project.name === 'mobile',
-      'Hunt pre-game controls are unreachable on a phone viewport — tracked separately.',
-    )
+  test.beforeEach(async ({ page }) => {
     const response = await page.goto('/hunt')
     expect(response?.status()).toBeLessThan(400)
     // Waiting for the contract list rather than a fixed second: hydration takes
@@ -28,19 +22,32 @@ test.describe('Hunt V3 critical path', () => {
     })
   })
 
-  test('starts the selected contract with its configured loadout', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Royal apartments/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+  test('starts the selected contract with its configured loadout', async ({ page, isMobile }) => {
+    const contract = page.getByRole('button', { name: /Royal apartments/i })
+    await expect(contract).toHaveAttribute('aria-pressed', 'true')
+    if (isMobile) await contract.tap()
+    else await contract.click()
     await expect(page.getByRole('button', { name: /Bungee Gum/i })).toBeVisible()
-    await enterTheApartment(page)
+    await page.getByText('Hunt settings', { exact: true }).click()
+    const vow = page.getByRole('button', { name: 'No retreat', exact: true })
+    if (isMobile) await vow.tap()
+    else await vow.click()
+    await expect(vow).toHaveAttribute('aria-pressed', 'true')
+    await enterTheApartment(page, isMobile)
   })
 
-  test('exposes sound and gameplay controls to assistive technology', async ({ page }) => {
+  test('exposes sound and gameplay controls to assistive technology', async ({
+    page,
+    isMobile,
+  }) => {
     const sound = page.getByRole('button', { name: 'Enable sound' })
     await expect(sound).toHaveAttribute('aria-pressed', 'false')
-    await enterTheApartment(page)
+    await enterTheApartment(page, isMobile)
+    await sound.click()
+    const mute = page.getByRole('button', { name: 'Mute sound' })
+    await expect(mute).toHaveAttribute('aria-pressed', 'true')
+    await mute.click()
+    await expect(sound).toHaveAttribute('aria-pressed', 'false')
     await expect(page.locator('[aria-live="polite"]').first()).toBeAttached()
   })
 

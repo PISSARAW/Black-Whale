@@ -64,9 +64,11 @@
   }: Props = $props()
 </script>
 
-<section class="absolute inset-0 z-40 grid place-items-center overflow-y-auto bg-black/88 p-6">
+<section class="hunt-briefing-overlay" aria-labelledby="hunt-briefing-title">
   <div class="hunt-briefing archive-page-heading">
-    <h1 class="mt-4 text-3xl font-medium text-white sm:text-4xl">{labels.title}</h1>
+    <h1 id="hunt-briefing-title" class="mt-4 text-3xl font-medium text-white sm:text-4xl">
+      {labels.title}
+    </h1>
     <p class="mx-auto mt-5 max-w-md text-base leading-relaxed text-white/70">{labels.premise}</p>
     <p
       class="mx-auto mt-4 max-w-md border-y border-white/10 py-4 text-sm leading-relaxed text-rose-200/90"
@@ -189,8 +191,23 @@
 </section>
 
 <style>
+  .hunt-briefing-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #080b0c;
+    padding: 1.5rem;
+  }
+
   .hunt-briefing {
+    flex: none;
     width: min(48rem, 100%);
+    margin-block: auto;
     padding-block: 1.5rem;
     text-align: left;
   }

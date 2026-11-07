@@ -5,12 +5,13 @@ import type { Space } from './types'
 
 export const BURIAL_SPACE = 'tier-1-princes-burial-chamber-rotunda'
 
-const OBSIDIAN = 0x141211,
-  DARK_STONE = 0x25211d,
-  BRONZE = 0x4a4035,
+const OBSIDIAN = 0x0c0b0a,
+  DARK_STONE = 0x1c1916,
+  BRONZE = 0x3d352b,
   GOLD = 0xbda062,
-  CIRCUIT_LINE = 0x6e6350,
-  MOMOZE_GLOW = 0xf59e0b
+  LUMEN_WHITE = 0xffffff,
+  LUMEN_WARM = 0xf5ecd5,
+  MOMOZE_FLAME = 0xff5500
 
 interface Context {
   into: BanquetDetailBuilder
@@ -65,44 +66,52 @@ function outerWallPilasters(context: Context): void {
       rotation: [0, -angle + Math.PI / 2, 0],
     })
   }
+
+  // Cove uplight ring running along the perimeter floor base
+  into.ring(
+    { radius: wallRadius - 0.05, tube: 0.008 },
+    { at: [0, floor + 0.012, 0], colour: LUMEN_WARM, glow: true, rotation: [Math.PI / 2, 0, 0] },
+  )
 }
 
 function floorCircuits(into: BanquetDetailBuilder, floor: number): void {
-  const rings = [1.8, 3.1, 4.4, 5.7, 7.0, 8.3, 9.6]
+  const rings = [1.5, 2.2, 2.9, 3.6, 4.3, 5.0, 5.7, 6.4, 7.1, 7.8, 8.5, 9.2, 9.8]
   const tube = 0.006
   const y = floor + tube + 0.002
 
-  // Concentric circuit rings
+  // Concentric luminescent circuit rings emitting stark white floor light
   for (const r of rings) {
     into.ring(
       { radius: r, tube },
-      { at: [0, y, 0], colour: CIRCUIT_LINE, rotation: [Math.PI / 2, 0, 0] },
+      { at: [0, y, 0], colour: LUMEN_WHITE, glow: true, rotation: [Math.PI / 2, 0, 0] },
     )
   }
 
   // Radial maze cross-lines connecting concentric rings
-  for (let i = 0; i < 28; i++) {
-    const angle = (i * 2 * Math.PI) / 28
-    const rStart = rings[i % 4]
-    const rEnd = rings[(i % 4) + 2] ?? rings[6]
+  for (let i = 0; i < 42; i++) {
+    const angle = (i * 2 * Math.PI) / 42
+    const rStart = rings[i % 5]
+    const rEnd = rings[(i % 5) + 2] ?? rings[rings.length - 1]
     const span = rEnd - rStart
     const midR = (rStart + rEnd) / 2
-    into.box([0.04, 0.006, span], {
+    into.box([0.035, 0.006, span], {
       at: [Math.cos(angle) * midR, y, Math.sin(angle) * midR],
-      colour: CIRCUIT_LINE,
+      colour: LUMEN_WHITE,
+      glow: true,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
   }
 }
 
 function centralApparatus(into: BanquetDetailBuilder, floor: number): void {
-  // 14 starburst base spikes radiating on the floor
+  // 14 starburst base spikes radiating on the floor with upward luminous glow
   for (let i = 0; i < 14; i++) {
     const angle = (i * 2 * Math.PI) / 14
     const midR = 1.85
-    into.box([0.12, 0.06, 1.3], {
-      at: [Math.cos(angle) * midR, floor + 0.03, Math.sin(angle) * midR],
-      colour: BRONZE,
+    into.box([0.1, 0.04, 1.3], {
+      at: [Math.cos(angle) * midR, floor + 0.025, Math.sin(angle) * midR],
+      colour: LUMEN_WARM,
+      glow: true,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
   }
@@ -125,12 +134,20 @@ function centralApparatus(into: BanquetDetailBuilder, floor: number): void {
     { at: [0, floor + 1.3, 0], colour: OBSIDIAN },
   )
 
-  // 14 vertical conduit rods around the cylinder
+  // 14 vertical conduit rods around the cylinder, glowing at their base
   for (let i = 0; i < 14; i++) {
     const angle = (i * 2 * Math.PI) / 14
+    const x = Math.cos(angle) * 0.97
+    const z = Math.sin(angle) * 0.97
     into.box([0.06, 1.55, 0.08], {
-      at: [Math.cos(angle) * 0.97, floor + 1.3, Math.sin(angle) * 0.97],
+      at: [x, floor + 1.3, z],
       colour: BRONZE,
+      rotation: [0, -angle + Math.PI / 2, 0],
+    })
+    into.box([0.04, 0.25, 0.06], {
+      at: [x, floor + 0.65, z],
+      colour: LUMEN_WARM,
+      glow: true,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
   }
@@ -154,7 +171,8 @@ function cablesAndRelayNodes(into: BanquetDetailBuilder, floor: number): void {
     const cableMidR = 1.2 + cableSpan / 2
     into.box([0.045, 0.025, cableSpan], {
       at: [Math.cos(angle) * cableMidR, floor + 0.015, Math.sin(angle) * cableMidR],
-      colour: isMomoze ? BRONZE : 0x2a2520,
+      colour: isMomoze ? 0xf59e0b : 0x221f1c,
+      glow: isMomoze,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
 
@@ -169,18 +187,29 @@ function cablesAndRelayNodes(into: BanquetDetailBuilder, floor: number): void {
       { at: [nx, floor + 0.06, nz], colour: BRONZE },
     )
 
+    // Glowing base ring on relay node
+    into.ring(
+      { radius: 0.2, tube: 0.005 },
+      {
+        at: [nx, floor + 0.015, nz],
+        colour: isMomoze ? 0xf59e0b : LUMEN_WARM,
+        glow: true,
+        rotation: [Math.PI / 2, 0, 0],
+      },
+    )
+
     // Relay orb
     into.sphere([0.2, 0.2, 0.2], {
       at: [nx, floor + 0.24, nz],
-      colour: isMomoze ? MOMOZE_GLOW : DARK_STONE,
+      colour: isMomoze ? MOMOZE_FLAME : DARK_STONE,
       glow: isMomoze,
     })
 
     if (isMomoze) {
       // White-hot inner core of Momoze's aura flame
-      into.sphere([0.09, 0.13, 0.09], {
+      into.sphere([0.1, 0.15, 0.1], {
         at: [nx, floor + 0.24, nz],
-        colour: 0xffffff,
+        colour: LUMEN_WHITE,
         glow: true,
       })
     }

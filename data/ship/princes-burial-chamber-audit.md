@@ -37,9 +37,15 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
 - **Rotonde et coupole** :
   - Enveloppe circulaire rythmée par 14 pilastres et panneaux sombres en basalte poli.
   - Coupole zénithale à nervures radiales convergeant vers un anneau central supérieur.
-- **Sol labyrinthique cérémoniel** :
-  - Dallage sombre rehaussé de méandres et circuits géométriques concentriques et radiaux
-    en surépaisseur fine, matérialisant les conduits d'aura rituelle de la dynastie Hui Guo Rou.
+- **Sol labyrinthique cérémoniel et éclairage ascendant** :
+  - Contrairement aux pièces classiques du vaisseau éclairées par le plafond, la chambre
+    est plongée dans l'obscurité en partie haute et tire sa clarté du sol.
+  - Le réseau de méandres et circuits géométriques concentriques et radiaux émet une
+    lumière blanche incandescente (`glow`), révélant les conduits d'aura sacrificielle.
+  - Une gorge lumineuse court au ras du sol le long de la paroi circulaire extérieure,
+    baignant le pied des pilastres d'une clarté ascendante.
+  - L'échelle monumentale de la rotonde (plus de 20 m d'envergure) écrase visuellement
+    la stature pourtant colossale du Roi Nasubi (2,3 m) et de son garde au chevet de Momoze.
 - **Machine / Spire rituelle centrale (`reliquaire`)** :
   - Cylindre vertical massif de 2,2 m de hauteur et ~1,8 m de diamètre.
   - Dôme supérieur avec cœur rituel et corniche sculptée.

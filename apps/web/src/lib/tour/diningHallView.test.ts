@@ -82,6 +82,41 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
     disposeBanquetDetails(root)
   })
 
+  it('physically anchors overhead elements to ceiling and walls without mid-air gaps', () => {
+    const root = build()
+    const meshes = root.children as THREE.Mesh[]
+    const positions: [number, number, number][] = []
+    for (const mesh of meshes) {
+      const posAttr = mesh.geometry.getAttribute('position')
+      for (let i = 0; i < posAttr.count; i++) {
+        positions.push([posAttr.getX(i), posAttr.getY(i), posAttr.getZ(i)])
+      }
+    }
+
+    // Geometry reaches flush to the 9.0 m ceiling (within 0.05 m)
+    const ceilingVertices = positions.filter(([, y]) => y >= 8.95)
+    expect(ceilingVertices.length).toBeGreaterThan(50)
+
+    // Geometry reaches flush to the West wall at x = 14.0 (within 0.05 m)
+    const westWallVertices = positions.filter(([x]) => x <= 14.05)
+    expect(westWallVertices.length).toBeGreaterThan(50)
+
+    // Geometry reaches flush to the East wall at x = 45.5 (within 0.05 m)
+    const eastWallVertices = positions.filter(([x]) => x >= 45.45)
+    expect(eastWallVertices.length).toBeGreaterThan(20)
+
+    // Kitchen exhaust drop duct and hood cover the vertical span without gap
+    const ductHoodY = positions
+      .filter(([x, , z]) => Math.abs(x - 14.42) < 0.5 && Math.abs(z - 23.5) < 0.8)
+      .map(([, y]) => y)
+    const minY = Math.min(...ductHoodY)
+    const maxY = Math.max(...ductHoodY)
+    expect(maxY).toBeGreaterThanOrEqual(8.95)
+    expect(minY).toBeLessThanOrEqual(2.25)
+
+    disposeBanquetDetails(root)
+  })
+
   it('omits the interpretation in evidence mode and in unrelated rooms', () => {
     expect(build({ reveal: true })).toBeNull()
     expect(build({ spaceId: 'tier-5-hangar-entrance' })).toBeNull()

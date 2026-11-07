@@ -16,6 +16,7 @@ interface CounterContext {
   into: BanquetDetailBuilder
   structure: Structure
   floor: number
+  ceiling?: number
 }
 
 /** 25-metre continuous West service counter with tray slides and sneeze guards. */
@@ -100,6 +101,11 @@ function dressCounterSneezeGuard(options: SneezeGuardOptions): void {
     at: [x, topY + 0.25, z],
     colour: 0xd8e4e8,
   })
+  // Stainless steel top clamping rail securing the continuous screen
+  into.box([0.05, 0.03, sizeZ - 1], {
+    at: [x, topY + 0.44, z],
+    colour: STAINLESS,
+  })
 }
 
 interface WarmingWellsOptions {
@@ -132,6 +138,8 @@ interface TariffBoardOptions {
 function dressVerticalTariffBoard(options: TariffBoardOptions): void {
   const { into, at } = options
   const [x, y, z] = at
+  // Wall mounting backer plate flush against the West wall at x = 14.0
+  into.box([0.04, 1.95, 0.9], { at: [14.02, y, z], colour: 0x38342c })
   into.box([0.06, 1.9, 0.85], { at: [x, y, z], colour: MENU_FRAME })
   into.box([0.07, 1.8, 0.78], { at: [x, y, z], colour: 0xeeece8 })
   for (const dy of [-0.65, -0.45, -0.25, -0.05, 0.15, 0.35, 0.55, 0.75]) {
@@ -228,11 +236,34 @@ export function dressMenuBoards(context: CounterContext): void {
     })
   }
 
-  // Suspension brackets going upward
-  for (let pz = z - sizeZ / 2 + 2; pz < z + sizeZ / 2; pz += 4) {
-    into.box([0.04, 1.2, 0.04], {
-      at: [x, y + structure.height / 2 + 0.6, pz],
+  // Vertical steel hanger columns extending to 9 m ceiling and horizontal wall cantilevers
+  const ceiling = context.ceiling ?? floor + 9.0
+  const topOfBoard = floor + structure.base + structure.height
+  const hangerHeight = ceiling - topOfBoard
+  const hangerMidY = topOfBoard + hangerHeight / 2
+  const wallGap = x - 14.0
+  const wallMidX = 14.0 + wallGap / 2
+
+  for (let pz = z - sizeZ / 2 + 2; pz < z + sizeZ / 2; pz += 3.5) {
+    into.box([0.06, hangerHeight, 0.06], {
+      at: [x, hangerMidY, pz],
       colour: MENU_FRAME,
+    })
+    into.box([0.2, 0.04, 0.2], {
+      at: [x, ceiling - 0.02, pz],
+      colour: 0x484239,
+    })
+    into.box([wallGap, 0.05, 0.05], {
+      at: [wallMidX, topOfBoard - 0.15, pz],
+      colour: MENU_FRAME,
+    })
+    into.box([wallGap, 0.05, 0.05], {
+      at: [wallMidX, floor + structure.base + 0.15, pz],
+      colour: MENU_FRAME,
+    })
+    into.box([0.02, 0.45, 0.14], {
+      at: [14.01, y, pz],
+      colour: 0x3d3f44,
     })
   }
 }

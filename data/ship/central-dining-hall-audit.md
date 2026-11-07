@@ -59,12 +59,21 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
     clients du comptoir.
   - Meubles inox de dépose de plateaux repas et goulottes vide-ordures aux deux extrémités
     du comptoir.
-  - Panneaux de menu rétro-éclairés (`menu-board`) suspendus au-dessus du comptoir,
-    découpés en registres lisibles.
+  - Panneaux de menu rétro-éclairés (`menu-board`) au-dessus du comptoir, fermement
+    ancrés par des colonnes d'acier montant jusqu'au plafond (9 m) et des consoles
+    cantilever murales horizontales fixées dans la cloison Ouest.
+  - Hotte d'extraction inox suspendue au-dessus du poste de cuisson, coiffée par la gaine
+    descendante de plafond cerclée de colliers d'ancrage mural.
 - **Passages et seuils de coursives (taxe Buor)** :
-  - Bornes de guidage et pupitre de contrôle aux seuils des coursives Nord et Sud
-    matérialisant le poste de perception de la taxe Buor (chapitre 358).
-  - Chemins de câbles électriques industriels longitudinaux suspendus sous les fermes.
+  - Bornes de guidage, lisses tubulaires de guidage muralisées et portillons de contrôle
+    aux seuils des coursives Nord et Sud matérialisant le poste de perception de la taxe Buor (chapitre 358).
+  - Chemins de câbles électriques industriels longitudinaux avec suspentes filetées au plafond,
+    étriers trapezoïdaux et collerettes de traversée murale.
+  - Passerelles techniques de maintenance de 31,5 m suspendues au plafond tous les 3,5 m par
+    des haubans verticaux, ancrées dans les murs d'extrémité Nord et Sud par des corbeaux en acier,
+    et pourvues d'une échelle d'accès muralisée.
+  - Gaines de ventilation horizontales prolongées jusqu'aux murs d'extrémité Ouest et Est par
+    des manchons de traversée avec plaques d'étanchéité rivetées.
 - **Distributeurs automatiques (vending machines)** :
   - Batterie de distributeurs automatiques sur le mur Est (`dispensers`) : carrosseries
     sombres, vitrines de sélection lumineuses, fentes de paiement et réceptacles.

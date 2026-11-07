@@ -1,5 +1,5 @@
 import type * as Three from 'three'
-import { floorOf, type TierPlan } from './blueprint'
+import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, disposeBanquetDetails } from './banquetDetailBuilder'
 import { dressDiningHallArchitecture } from './diningHallArchitecture'
 import {
@@ -19,6 +19,7 @@ interface StructureContext {
   into: BanquetDetailBuilder
   structure: Structure
   floor: number
+  ceiling: number
 }
 
 function dressServiceOrDispensers(context: StructureContext): boolean {
@@ -78,6 +79,7 @@ export function buildDiningHallDetails(options: {
 
   const into = new BanquetDetailBuilder(THREE)
   const floor = floorOf(space, plan.tier)
+  const ceiling = floor + ceilingOf(space, plan.tier)
 
   // 1. Industrial overhead architecture, trusses, catwalks, lamps, ducts and columns
   dressDiningHallArchitecture({ THREE, into, plan, space })
@@ -85,7 +87,7 @@ export function buildDiningHallDetails(options: {
   // 2. Specific furniture, counters and tableware
   const structures = plan.structures.filter((structure) => structure.spaceId === spaceId)
   for (const structure of structures) {
-    dressDiningHallStructure({ into, structure, floor })
+    dressDiningHallStructure({ into, structure, floor, ceiling })
   }
 
   return into.finish('central-dining-hall-manga-details')

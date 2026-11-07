@@ -299,6 +299,26 @@ export function dressCentralVIPPlatform(context: FurnitureContext): void {
   }
 }
 
+interface FranklinBenchOptions {
+  into: BanquetDetailBuilder
+  x: number
+  z: number
+  w: number
+  floor: number
+}
+
+function dressFranklinBenches(options: FranklinBenchOptions): void {
+  const { into, x, z, w, floor } = options
+  for (const sz of [-0.68, 0.68]) {
+    into.box([w, 0.04, 0.34], { at: [x, floor + 0.43, z + sz], colour: BENCH_WOOD })
+    for (const sx of [-1, 1]) {
+      const legX = x + sx * (w / 2 - 0.3)
+      into.box([0.06, 0.41, 0.06], { at: [legX, floor + 0.205, z + sz], colour: BENCH_LEGS })
+      into.box([0.14, 0.02, 0.14], { at: [legX, floor + 0.01, z + sz], colour: TABLE_LEGS })
+    }
+  }
+}
+
 /** Franklin's solo waiting table (chapters 379-380). */
 export function dressFranklinTable(context: FurnitureContext): void {
   const { into, structure, floor } = context
@@ -322,6 +342,9 @@ export function dressFranklinTable(context: FurnitureContext): void {
       )
     }
   }
+
+  // Grounded refectory benches alongside Franklin's table
+  dressFranklinBenches({ into, x, z, w, floor })
 
   // Franklin's meal tray (fast-food burger meal from ch. 378), condiment caddy and large mug
   placeBurgerClamshellMeal(into, [x, topY, z], TRAY_RED)

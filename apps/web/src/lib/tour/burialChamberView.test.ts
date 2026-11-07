@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { theShip, floorOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
-import { buildBurialChamberDetails, BURIAL_SPACE } from './burialChamberView'
+import {
+  buildBurialChamberDetails,
+  burialSurfacePlan,
+  hasBurialModel,
+  BURIAL_SPACE,
+} from './burialChamberView'
 import { MANGA_BURIAL_CHAMBER_VIEWS } from './mangaBurialChamberViews'
 import { structureFootprint, pointInPolygon, polygonsOverlap } from './geometry'
 import {
@@ -128,5 +133,18 @@ describe('the princes burial chamber reconstructed from chapter 371', () => {
       expect(view.staging).toBeDefined()
       expect(view.staging?.some((s) => s.characterId === 'nasubi-hui-guo-rou')).toBe(true)
     }
+  })
+
+  it('filters coarse blueprint caskets from the walked plan via burialSurfacePlan', () => {
+    const rawCaskets = plan.structures.filter((s) => hasBurialModel(s))
+    expect(rawCaskets.length).toBeGreaterThan(0)
+
+    const filtered = burialSurfacePlan(plan, false)
+    const remaining = filtered.structures.filter((s) => hasBurialModel(s))
+    expect(remaining).toHaveLength(0)
+
+    // In reveal mode, blueprint structures are kept for documentary inspection
+    const revealed = burialSurfacePlan(plan, true)
+    expect(revealed.structures.filter((s) => hasBurialModel(s))).toHaveLength(rawCaskets.length)
   })
 })

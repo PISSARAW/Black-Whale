@@ -8,7 +8,7 @@ import { buildRoyalSalonDetails } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
-import { buildBurialChamberDetails } from './burialChamberView'
+import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
 
 export interface TierRoomView {
   spaceId: string
@@ -136,7 +136,9 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const mesh = buildTierMesh(casinoSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), {
+    const basePlan = prisonSurfacePlan(plan, reveal)
+    const surfacePlan = burialSurfacePlan(casinoSurfacePlan(basePlan, reveal), reveal)
+    const mesh = buildTierMesh(surfacePlan, {
       reveal,
     })
     const shared = this.attributes(mesh)

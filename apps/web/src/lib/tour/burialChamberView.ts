@@ -4,7 +4,22 @@ import { BanquetDetailBuilder, disposeBanquetDetails } from './banquetDetailBuil
 import { BURIAL_SPACE, dressBurialArchitecture } from './burialChamberArchitecture'
 import { dressBurialCoffin } from './burialChamberFurniture'
 
+import type { Structure } from './types'
+
 export { disposeBanquetDetails, BURIAL_SPACE }
+
+export function hasBurialModel(structure: Structure): boolean {
+  return structure.spaceId === BURIAL_SPACE && structure.kind === 'casket'
+}
+
+/** Omit duplicate coarse blueprint boxes, retaining complete walked collision. */
+export function burialSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal || !plan.spaces.some(({ id }) => id === BURIAL_SPACE)) return plan
+  return {
+    ...plan,
+    structures: plan.structures.filter((structure) => !hasBurialModel(structure)),
+  }
+}
 
 /**
  * Reconstructed Princes' Burial Chamber from chapters 358 and 371.

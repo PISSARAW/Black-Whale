@@ -179,32 +179,55 @@
     {/if}
   {/each}
 
-  <!-- Central Machine Starburst Spikes -->
-  <g stroke="#92794c" stroke-width="1.5">
+  <!-- Central Machine Starburst Sharp Spikes (28 razor teeth from ch. 371) -->
+  <g>
     {#each Array(14) as _, i (i)}
-      {@const angle = (i * 2 * Math.PI) / 14}
-      {@const x1 = 400 + Math.cos(angle) * 35}
-      {@const y1 = 400 + Math.sin(angle) * 35}
-      {@const x2 = 400 + Math.cos(angle) * 65}
-      {@const y2 = 400 + Math.sin(angle) * 65}
-      <line {x1} {y1} {x2} {y2} stroke="#b49b67" stroke-width="2" />
+      {@const longAngle = (i * 2 * Math.PI) / 14}
+      {@const lx1 = 400 + Math.cos(longAngle - 0.07) * 40}
+      {@const ly1 = 400 + Math.sin(longAngle - 0.07) * 40}
+      {@const lx2 = 400 + Math.cos(longAngle) * 85}
+      {@const ly2 = 400 + Math.sin(longAngle) * 85}
+      {@const lx3 = 400 + Math.cos(longAngle + 0.07) * 40}
+      {@const ly3 = 400 + Math.sin(longAngle + 0.07) * 40}
+      <polygon points="{lx1},{ly1} {lx2},{ly2} {lx3},{ly3}" fill="#26211a" stroke="#d4af37" stroke-width="1" />
+
+      {@const shortAngle = longAngle + Math.PI / 14}
+      {@const sx1 = 400 + Math.cos(shortAngle - 0.06) * 40}
+      {@const sy1 = 400 + Math.sin(shortAngle - 0.06) * 40}
+      {@const sx2 = 400 + Math.cos(shortAngle) * 62}
+      {@const sy2 = 400 + Math.sin(shortAngle) * 62}
+      {@const sx3 = 400 + Math.cos(shortAngle + 0.06) * 40}
+      {@const sy3 = 400 + Math.sin(shortAngle + 0.06) * 40}
+      <polygon points="{sx1},{sy1} {sx2},{sy2} {sx3},{sy3}" fill="#1a1816" stroke="#8c7d67" stroke-width="0.8" />
     {/each}
   </g>
 
-  <!-- Central Reliquary Apparatus -->
+  <!-- Central Reliquary Apparatus & 14 Cable Ports -->
   {#if burialReliquary}
     <circle
       cx="400"
       cy="400"
-      r="42"
+      r="44"
       fill="#1c1917"
       stroke="#d4af37"
       stroke-width="2.5"
     >
       <title>{french ? burialReliquary.nameFr : burialReliquary.name}</title>
     </circle>
-    <circle cx="400" cy="400" r="28" fill="#292524" stroke="#a88b4d" stroke-width="1.5" />
-    <circle cx="400" cy="400" r="12" fill="#44403c" stroke="#ffd700" stroke-width="1.5" />
+    <circle cx="400" cy="400" r="30" fill="#292524" stroke="#a88b4d" stroke-width="1.5" />
+    <!-- 14 cable ports / nozzles -->
+    {#each burialCables as cable (cable.index)}
+      {@const angle = Math.atan2(cable.to.y - 400, cable.to.x - 400)}
+      <circle
+        cx={400 + Math.cos(angle) * 43}
+        cy={400 + Math.sin(angle) * 43}
+        r={cable.active ? 3.5 : 2.5}
+        fill={cable.active ? '#f59e0b' : '#3d3830'}
+        stroke={cable.active ? '#fef3c7' : '#8c7d67'}
+        stroke-width="1"
+      />
+    {/each}
+    <circle cx="400" cy="400" r="14" fill="#44403c" stroke="#ffd700" stroke-width="1.5" />
     <text x="400" y="404" text-anchor="middle" fill="#d4af37" font-size="11" font-weight="bold">
       壺
     </text>
@@ -213,6 +236,8 @@
   <!-- The 14 Coffins -->
   {#each burialCoffins as coffin (coffin.id)}
     {@const isMomoze = coffin.id.endsWith('coffin-01')}
+    {@const rad = (coffin.rotation * Math.PI) / 180}
+    <!-- Coffin outer tub -->
     <polygon
       points={coffin.polygon}
       fill={isMomoze ? '#38221f' : '#1c1917'}
@@ -225,6 +250,30 @@
           : (french ? coffin.nameFr : coffin.name)}
       </title>
     </polygon>
+
+    <!-- Axial spine ridge along vault -->
+    <line
+      x1={coffin.point.x - Math.sin(rad) * 26}
+      y1={coffin.point.y - Math.cos(rad) * 26}
+      x2={coffin.point.x + Math.sin(rad) * 26}
+      y2={coffin.point.y + Math.cos(rad) * 26}
+      stroke={isMomoze ? '#d97706' : '#574d3f'}
+      stroke-width="2"
+    />
+
+    <!-- Coffin 1: Viewing window & Nen core inside -->
+    {#if isMomoze}
+      <circle
+        cx={coffin.point.x}
+        cy={coffin.point.y}
+        r="7"
+        fill="#f59e0b"
+        fill-opacity="0.6"
+        stroke="#fde68a"
+        stroke-width="1.5"
+        filter="url(#momoze-glow)"
+      />
+    {/if}
   {/each}
 
   <!-- Key annotations -->

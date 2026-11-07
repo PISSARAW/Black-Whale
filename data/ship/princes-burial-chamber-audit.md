@@ -47,20 +47,23 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
   - L'échelle monumentale de la rotonde (plus de 20 m d'envergure) écrase visuellement
     la stature pourtant colossale du Roi Nasubi (2,3 m) et de son garde au chevet de Momoze.
 - **Machine / Spire rituelle centrale (`reliquaire`)** :
-  - Cylindre vertical massif de 2,2 m de hauteur et ~1,8 m de diamètre.
-  - Dôme supérieur avec cœur rituel et corniche sculptée.
-  - Fût cannelé et relief cérémoniel gravé sur la face avant.
-  - Base évasée ornée d'une couronne de pointes et contreforts rayonnants le long du dallage.
+  - Cylindre vertical massif de 2,2 m de hauteur et ~1,8 m de diamètre, cannelé avec 14 nervures verticales et deux cerclages de bronze.
+  - Couronne de base rayonnante au sol composée de 28 dents triangulaires acérées (14 longues pointes entre les câbles et 14 pointes secondaires).
+  - Collerette annulaire étagée accueillant 14 buses d'amarrage d'où jaillissent les câbles rituels.
+  - Bas-relief rituel Kakin gravé en applique sur le torse : cadran rectangulaire d'or et d'obsidienne orné d'un anneau labyrinthique et d'un cœur émissif.
+  - Dôme supérieur couronné d'une pointe sacrificielle et d'un conduit ombilical courbe reliant le sommet au pied de la machine.
 - **Câblage rituel et relais d'aura** :
   - 14 lignes de câbles souples au sol reliant la machine centrale aux 14 cercueils.
   - 14 orbes métalliques de dérivation sur socle à mi-distance (rayon ~4,2 m).
   - Orbe n°1 allumé d'une lueur émissive chaude (énergie vitale de Momoze).
 - **Les 14 capsules funéraires (`coffin-01` à `coffin-14`)** :
-  - Caisson rectangulaire sur socle en retrait (dimensions 1,1 × 2,2 m, hauteur 0,85 m).
-  - Couvercle en voûte cintrée caractéristique du dessin de Togashi.
-  - Panneaux latéraux gravés de motifs de vagues royales Kakin.
-  - Tête de capsule arrondie pourvue de la fiche de raccordement du câble de Nen.
-  - Plaque d'identification au pied de chaque cercueil.
+  - Surélévation sur berceaux courbes : deux paires d'arceaux transversaux sous la cuve décollant le cercueil du dallage.
+  - Flancs ornés de bas-reliefs de volutes et vagues royales Kakin le long des parois.
+  - Couvercle en voûte cintrée fendu sur toute sa longueur d'une crête / épine dorsale axiale en gradin.
+  - Tête de capsule pourvue d'un portail cintré et d'une prise femelle recevant le câble de Nen.
+  - Pied extérieur muni d'un encadrement droit et d'une plaque gravée au chiffre du prince.
+  - **Capsule n°1 (Momoze)** : verrière translucide ouverte sur la silhouette du corps sous aura incandescente.
+  - Filtrage `burialSurfacePlan` éliminant les boîtes brutes du blueprint pour restituer le modèle procédural pur.
 
 ## 3. Cohérence avec le banquet et le salon royal
 

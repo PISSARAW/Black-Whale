@@ -123,7 +123,6 @@
 - **Objets directement visibles dans les cases :** 8/9
 - **Sources de la pièce :**
   - Le chap. 403 montre le salon richement lambrissé de la reine Unma et la nursery derrière sa porte ouverte ; le plan des quartiers des reines sur /ship fournit l’emprise de la chambre 01 dans le bloc de huit chambres.
-  - Audit dédié et fidélisation d'ensemble : voir [`unma-room-audit.md`](./unma-room-audit.md).
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
   - Chap. 403 — la porte ouverte derrière la reine Unma laisse voir un berceau au fond de la chambre 01.
@@ -224,18 +223,6 @@
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
 
-## Poste d'accès des princes — `tier-1-princes-quarters-gate`
-
-- **Pont :** tier-1
-- **Preuve de l’enveloppe :** case du manga
-- **Emprises relevées :** 3.5 × 13.18 m
-- **Éléments modélisés :** 1 desk, 4 guard sentries, 1 security barrier, 1 portal
-- **Objets directement visibles dans les cases :** 7/7
-- **Sources de la pièce :**
-  - Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction ; le chap. 363 le place en travers de la face avant du bloc résidentiel où commencent les deux coursives.
-- **Sources du mobilier et des détails :**
-  - Chap. 382 — comptoir d'enregistrement en bois avec registre de contrôle, soldats de la garde royale de Kakin en faction armée et sas de contrôle.
-
 ## Coursive arrière en U (bâbord) — `tier-1-royal-residential-sector`
 
 - **Pont :** tier-1
@@ -302,6 +289,7 @@
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 365 et 366 — la salle à manger d'apparat du prince Zhang Lei, lieu de l'audience avec la reine Oito : très longue table en bois sculpté, fauteuils à haut dossier aux extrémités, crédence, statue sur sellette, guéridon d'entrée et haut candélabre à branches. Audit dédié : voir `zhang-lei-room-audit.md`.
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
   - Chap. 365 — la salle à manger du prince Zhang Lei, où il reçoit la reine Oito : la longue table sculptée, un fauteuil à haut dossier à chacun de ses bouts, la crédence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le guéridon près de la porte.

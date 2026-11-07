@@ -10,7 +10,12 @@ import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
 import { buildQueenUnmaDetails } from './queenUnmaView'
+import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
+import { buildCamillaRoomDetails } from './camillaView'
+import { buildZhangLeiDetails } from './zhangLeiView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
+import { buildHeillyHideoutDetails, heillySurfacePlan } from './heillyHideoutView'
+import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauView'
 
 export interface TierRoomView {
   spaceId: string
@@ -113,23 +118,38 @@ interface TierAttributes {
   sky: Three.BufferAttribute | null
 }
 
-/** Builds and disposes the shared-buffer visual representation of a deck. */
-function roomDetails(options: {
+interface RoomDetailOptions {
   THREE: typeof Three
   plan: ReturnType<typeof walkedPlan>
   spaceId: string
   reveal: boolean
-}): Three.Group | null {
-  return (
-    buildBanquetDetails(options) ??
-    buildRoyalSalonDetails(options) ??
-    buildDiningHallDetails(options) ??
-    buildPrisonDetails(options) ??
-    buildCasinoDetails(options) ??
-    buildBurialChamberDetails(options) ??
-    buildQueenUnmaDetails(options) ??
-    buildPrincesQuartersDetails(options)
-  )
+}
+
+type RoomDetailBuilder = (options: RoomDetailOptions) => Three.Group | null
+
+const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
+  buildBanquetDetails,
+  buildRoyalSalonDetails,
+  buildDiningHallDetails,
+  buildPrisonDetails,
+  buildCasinoDetails,
+  buildBurialChamberDetails,
+  buildQueenUnmaDetails,
+  buildBenjaminRoomDetails,
+  buildCamillaRoomDetails,
+  buildZhangLeiDetails,
+  buildPrincesQuartersDetails,
+  buildHeillyHideoutDetails,
+  buildJusticeBureauDetails,
+]
+
+/** Builds and disposes the shared-buffer visual representation of a deck. */
+function roomDetails(options: RoomDetailOptions): Three.Group | null {
+  for (const builder of DETAIL_BUILDERS) {
+    const group = builder(options)
+    if (group) return group
+  }
+  return null
 }
 
 export class TierView {
@@ -141,8 +161,17 @@ export class TierView {
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const basePlan = prisonSurfacePlan(plan, reveal)
-    const surfacePlan = burialSurfacePlan(
-      casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+    const surfacePlan = justiceSurfacePlan(
+      heillySurfacePlan(
+        benjaminSurfacePlan(
+          burialSurfacePlan(
+            casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+            reveal,
+          ),
+          reveal,
+        ),
+        reveal,
+      ),
       reveal,
     )
     const mesh = buildTierMesh(surfacePlan, {

@@ -8,7 +8,16 @@ import { prisonSpotAnchors } from './prisonPlan'
 import { diningHallSpotAnchors } from './diningHallPlan'
 import { burialSpotAnchors } from './burialChamberPlan'
 import { queenUnmaSpotAnchors } from './queenUnmaPlan'
+import { zhangLeiSpotAnchors } from './zhangLeiPlan'
+import { benjaminSpotAnchors } from './benjaminRoomPlan'
+import {
+  camillaSpotAnchors,
+  camillaLivingSpotAnchors,
+  camillaDiningSpotAnchors,
+  camillaEntranceSpotAnchors,
+} from './camillaPlan'
 import { princesSpotAnchors } from './princesPlan'
+import { justiceSpotAnchors } from './justiceBureauPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -75,18 +84,21 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // Tserriednich stands over the water glass in ch. 376 and is on his training
   // floor in seven other chapters, so the training floor is what the room shows.
 
-  // Benjamin takes his reports from the command post, ch. 363, 389 and 413.
+  // Benjamin takes his reports from the command post, ch. 363, 366 and 413.
   'tier-1-royal-residential-sector-room-1001': {
     occupants: { 'prince-benjamin': { x: 75, y: 63.29 } },
   },
-  // Camilla holds court from the massage table, ch. 413.
-  'tier-1-royal-residential-sector-room-1002': {
-    occupants: { 'prince-camilla': { x: 26.88, y: 49.78 } },
-  },
-  // Zhang Lei works the ZhangCoins from the low table, ch. 374 to 404.
+  'tier-1-royal-residential-sector-room-1001-living': benjaminSpotAnchors,
+  // Camilla holds court from the massage table, ch. 413; Have-Nots in salon, ch. 389; Duazul & Musse, ch. 366.
+  'tier-1-royal-residential-sector-room-1002': camillaSpotAnchors,
+  'tier-1-royal-residential-sector-room-1002-living': camillaLivingSpotAnchors,
+  'tier-1-royal-residential-sector-room-1002-dining': camillaDiningSpotAnchors,
+  'tier-1-royal-residential-sector-room-1002-entrance': camillaEntranceSpotAnchors,
+  // Zhang Lei works the ZhangCoins from the low table, ch. 374 to 404; state dining audience, ch. 365–366.
   'tier-1-royal-residential-sector-room-1003': {
     occupants: { 'prince-zhanglei': { x: 48.75, y: 56.21 } },
   },
+  'tier-1-royal-residential-sector-room-1003-dining': zhangLeiSpotAnchors,
   // Tserriednich drills Zetsu on his training floor; Theta is laid on a bed
   // after his Nen beast marks her in ch. 385, with Salkov at her side.
   'tier-1-royal-residential-sector-room-1004': {
@@ -162,10 +174,7 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
 
   // `local/justice-bureau.svelte`, 1000 × 700, contents offset by (60, 90).
   // Melody and Kaiser are questioned across the interrogation table in ch. 386
-  // and ch. 400; nobody else in the bureau is placed, so there is no fallback.
-  'tier-2-ministry-of-justice': {
-    occupants: { melody: { x: 74, y: 30 }, kaiser: { x: 82, y: 30 } },
-  },
+  'tier-2-ministry-of-justice': justiceSpotAnchors,
   // Witness protection is a room the bureau plan draws but the archive files as
   // its own location, so without an anchor everyone confined there landed in the
   // middle of the whole bureau. Fugetsu and Without You are the only occupants

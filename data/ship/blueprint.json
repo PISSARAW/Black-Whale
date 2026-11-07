@@ -2142,7 +2142,7 @@
       "nameFr": "Salle \u00e0 manger \u2014 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 365 and 366 \u2014 Prince Zhang Lei's state dining room, venue of his formal audience with Queen Oito: long carved wood table, high-backed armchairs at the ends, credenza, statue on its stand, entrance pedestal table and tall branched candelabrum. Dedicated audit: see `zhang-lei-room-audit.md`.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2151,7 +2151,7 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 365 et 366 \u2014 la salle \u00e0 manger d'apparat du prince Zhang Lei, lieu de l'audience avec la reine Oito : tr\u00e8s longue table en bois sculpt\u00e9, fauteuils \u00e0 haut dossier aux extr\u00e9mit\u00e9s, cr\u00e9dence, statue sur sellette, gu\u00e9ridon d'entr\u00e9e et haut cand\u00e9labre \u00e0 branches. Audit d\u00e9di\u00e9 : voir `zhang-lei-room-audit.md`."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-living",

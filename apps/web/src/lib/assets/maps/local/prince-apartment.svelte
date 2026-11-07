@@ -272,23 +272,49 @@
     <!-- Apartment-specific fixtures. Event props
       (gifts, cake, chair circles) are not made permanent. -->
     {#if roomNumber === '1001'}
-      <!-- Reception room seen in ch. 363 and 366. -->
-      <!-- Large central conference table for the guards briefing -->
-      <rect x="150" y="340" width="260" height="90" rx="3" class="fixed" />
-      <text x="280" y="390" class="sublabel"
-        >{$t.map.localMaps.princeApartment.largeConference}</text
-      >
-
+      <!-- Reception room seen in ch. 362, 363 and 366. -->
+      <!-- Large mural painting on the rear wall dominating the salon -->
       <rect x="70" y="270" width="150" height="18" class="fixed" />
       <text x="145" y="310" class="sublabel">{$t.map.localMaps.princeApartment.largePainting}</text>
-      <rect x="410" y="315" width="24" height="24" rx="4" class="fixed" />
-      <text x="505" y="330" class="sublabel">{$t.map.localMaps.princeApartment.telephone}</text>
+
+      <!-- Command telephone console near private quarters door -->
+      <rect x="410" y="315" width="28" height="24" rx="4" class="fixed" />
+      <circle cx="424" cy="327" r="4" class="fixed" />
+      <text x="515" y="330" class="sublabel">{$t.map.localMaps.princeApartment.telephone}</text>
+
+      <!-- Private guard formation at attention in two disciplined rows (ch. 362, 363) -->
+      {#each [200, 260, 320, 380, 440] as gx (gx)}
+        <rect x={gx} y="375" width="16" height="16" rx="2" class="fixed" />
+        <rect x={gx} y="425" width="16" height="16" rx="2" class="fixed" />
+      {/each}
+      <text x="320" y="470" class="sublabel">Gardes au garde-à-vous · ch. 362/363</text>
     {:else if roomNumber === '1002'}
-      <!-- Clear centre, peripheral seating, ch. 389. -->
-      <rect x="25" y="300" width="70" height="30" rx="8" class="fixed" />
-      <rect x="25" y="380" width="70" height="30" rx="8" class="fixed" />
-      <rect x="605" y="400" width="70" height="30" rx="8" class="fixed" />
+      <!-- Salon formel tapissé avec cercle des Intouchables et divan de Camilla (ch. 389, 413) -->
+      <rect x="170" y="325" width="360" height="155" rx="6" class="fixed" />
+      <rect x="120" y="380" width="70" height="30" rx="4" class="fixed" />
+      <circle cx="205" cy="395" r="9" class="fixed" />
+      <!-- Assises périphériques des Intouchables le long des murs -->
+      <rect x="30" y="305" width="22" height="22" rx="2" class="fixed" />
+      <rect x="30" y="355" width="22" height="22" rx="2" class="fixed" />
+      <rect x="30" y="405" width="22" height="22" rx="2" class="fixed" />
+      <rect x="130" y="495" width="22" height="22" rx="2" class="fixed" />
+      <rect x="210" y="495" width="22" height="22" rx="2" class="fixed" />
+      <rect x="290" y="495" width="22" height="22" rx="2" class="fixed" />
+      <rect x="370" y="495" width="22" height="22" rx="2" class="fixed" />
+      <rect x="450" y="495" width="22" height="22" rx="2" class="fixed" />
+      <rect x="640" y="400" width="22" height="22" rx="2" class="fixed" />
+      <rect x="640" y="450" width="22" height="22" rx="2" class="fixed" />
       <text x="350" y="390" class="sublabel">{$t.map.localMaps.princeApartment.formalSalon}</text>
+
+      <!-- Salle à manger privée : chaires de Camilla et de la reine Duazul (ch. 366) -->
+      <rect x="475" y="226" width="18" height="28" rx="3" class="fixed" />
+      <rect x="605" y="226" width="18" height="28" rx="3" class="fixed" />
+      <rect x="495" y="160" width="110" height="16" class="fixed" />
+
+      <!-- Vestibule d'entrée : bureau de surveillance et téléphone d'écoute de Musse (ch. 366) -->
+      <rect x="345" y="110" width="45" height="24" rx="2" class="fixed" />
+      <circle cx="367" cy="88" r="9" class="fixed" />
+      <rect x="372" y="112" width="12" height="10" rx="1" class="fixed" />
     {:else if roomNumber === '1004'}
       <!-- Same clear training room in ch. 384–387. -->
       <rect x="610" y="370" width="65" height="24" class="fixed" />
@@ -297,11 +323,24 @@
       <text x="642" y="420" class="sublabel">{$t.map.localMaps.princeApartment.coatClock}</text>
     {:else if roomNumber === '1003'}
       <!-- State dining room confirmed in ch. 365 and 366. -->
+      <!-- Longue table sculptée d'apparat -->
       <rect x="465" y="205" width="175" height="55" rx="6" class="fixed" />
+      <!-- Fauteuil de tête (Prince Zhang Lei) -->
       <rect x="430" y="215" width="25" height="35" rx="4" class="fixed" />
+      <!-- Fauteuil d'audience (Reine Oito) -->
       <rect x="650" y="215" width="25" height="35" rx="4" class="fixed" />
-      <rect x="675" y="170" width="18" height="105" class="fixed" />
+      <!-- Crédence d'apparat le long du mur tribord -->
+      <rect x="675" y="165" width="18" height="95" class="fixed" />
+      <!-- Statue d'art sur sa sellette -->
+      <rect x="673" y="275" width="20" height="20" rx="3" class="fixed" />
+      <circle cx="683" cy="285" r="5" class="fixed" />
+      <!-- Guéridon circulaire près de l'entrée -->
       <circle cx="445" cy="175" r="13" class="fixed" />
+      <!-- Haut candélabre à branches -->
+      <circle cx="660" cy="180" r="10" class="fixed" />
+      <circle cx="660" cy="180" r="3" fill="#ffd700" />
+      <!-- Grand cadre officiel au mur -->
+      <rect x="425" y="152" width="60" height="6" class="fixed" />
       <text x="550" y="292" class="sublabel">{$t.map.localMaps.princeApartment.stateDining}</text>
     {:else if roomNumber === '1005'}
       <!-- Scientific cabinet seen in ch. 366. -->

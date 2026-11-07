@@ -9,6 +9,11 @@ import { MANGA_ROYAL_SALON_VIEWS } from './mangaRoyalSalonViews'
 import { MANGA_DINING_HALL_VIEWS } from './mangaDiningHallViews'
 import { MANGA_BURIAL_CHAMBER_VIEWS } from './mangaBurialChamberViews'
 import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
+import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
+import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
+import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
+import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
+import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -24,6 +29,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_PRISON_VIEWS,
   ...MANGA_DINING_HALL_VIEWS,
   ...MANGA_BURIAL_CHAMBER_VIEWS,
+  ...MANGA_JUSTICE_BUREAU_VIEWS,
   view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
@@ -58,6 +64,7 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'La cuisine de Kacho et le placard bas désigné par le morse de Senritsu',
   }),
   ...MANGA_ROYAL_SALON_VIEWS,
+  ...MANGA_BENJAMIN_ROOM_VIEWS,
   view({
     id: 'lifeboat-round-hatch',
     spaceId: 'tier-1-lifeboats-port-pod-cabin',
@@ -170,32 +177,10 @@ export const MANGA_VIEWS: MangaView[] = [
     ],
   }),
   ...MANGA_QUEEN_UNMA_VIEWS,
+  ...MANGA_CAMILLA_VIEWS,
+  ...MANGA_ZHANG_LEI_VIEWS,
   ...MANGA_CHA_R_VIEWS,
-  view({
-    id: 'morena-office-negotiation-game',
-    spaceId: 'tier-2-heilly-secret-hideout-office',
-    at: [14.4, 0.55],
-    target: [11.9, 6.45],
-    pitch: -0.02,
-    chapter: 407,
-    volume: 39,
-    label: 'Morena’s negotiation table between the wall couch and the two consoles',
-    labelFr: 'La table de négociation de Morena entre le canapé mural et les deux consoles',
-    staging: [
-      {
-        characterId: 'morena-prudo',
-        at: [12.08, 1.6],
-        heading: 0,
-        pose: 'seated',
-      },
-      {
-        characterId: 'borksen',
-        at: [12.08, 3.7],
-        heading: Math.PI,
-        pose: 'seated',
-      },
-    ],
-  }),
+  ...MANGA_HEILLY_VIEWS,
   view({
     id: 'heilly-hideout-aerial-plan',
     spaceId: 'tier-2-heilly-secret-hideout-corridor',

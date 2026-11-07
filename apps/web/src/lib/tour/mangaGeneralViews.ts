@@ -100,17 +100,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Le salon de Woble, du téléphone mural au mobilier de présentation',
   }),
   view({
-    id: 'benjamin-living-guards',
-    spaceId: 'tier-1-royal-residential-sector-room-1001-living',
-    at: [0, 4.8],
-    target: [-6.2, 1.8],
-    pitch: -0.02,
-    chapter: 362,
-    volume: 35,
-    label: "Benjamin's reception room and its guard line",
-    labelFr: 'Le salon de réception de Benjamin et sa ligne de gardes',
-  }),
-  view({
     id: 'tserriednich-living-training',
     spaceId: 'tier-1-royal-residential-sector-room-1004-living',
     at: [0.2, 4.8],

@@ -419,6 +419,17 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
     ? FINISHES[finish]
     : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
 
+  // Ch. 362–366 establish Benjamin's austere military reception room.
+  if (space.id === 'tier-1-royal-residential-sector-room-1001-living') {
+    return {
+      ...appearance,
+      floor: 0x272420,
+      wall: 0x484d47,
+      wood: 0x382d24,
+      metal: 0x8a7a58,
+    }
+  }
+
   // Ch. 389 distinguishes Camilla's formal meeting salon by its continuous
   // carpet. Keep the rest of Apartment 1002 on the shared princely finish.
   if (space.id === 'tier-1-royal-residential-sector-room-1002-living') {

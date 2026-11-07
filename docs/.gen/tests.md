@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 327
+Fichiers : 332
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -803,6 +803,10 @@ Fichiers : 327
 
 - the inaugural banquet reconstruction > keeps round tables within the reshaped hall, clear of one another and of the central aisle
 
+## `apps/web/src/lib/tour/benjaminRoomView.test.ts`
+
+- the room of Prince Benjamin reconstructed from chapters 362, 363 and 366 > satisfies the shared blueprint invariants for Benjamin’s room
+
 ## `apps/web/src/lib/tour/blueprint.test.ts`
 
 - the ship blueprint > satisfies every reconstruction invariant
@@ -818,6 +822,10 @@ Fichiers : 327
 ## `apps/web/src/lib/tour/burialChamberView.test.ts`
 
 - the princes burial chamber reconstructed from chapter 371 > satisfies the shared blueprint invariants for the burial rotunda
+
+## `apps/web/src/lib/tour/camillaRoom1002View.test.ts`
+
+- Princess Camilla Room 1002 reconstructed from chapters 366, 389 and 413 > satisfies the shared blueprint invariants for Room 1002
 
 ## `apps/web/src/lib/tour/casinoView.test.ts`
 
@@ -1051,6 +1059,10 @@ Fichiers : 327
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
+## `apps/web/src/lib/tour/heillyHideoutView.test.ts`
+
+- the Heil-Ly secret hideout reconstructed from chapters 398, 399 and 407 > satisfies blueprint invariants for all rooms of the hideout
+
 ## `apps/web/src/lib/tour/hour.test.ts`
 
 - shipHourOf > takes the hour canon states
@@ -1076,6 +1088,10 @@ Fichiers : 327
 ## `apps/web/src/lib/tour/humanSignature.test.ts`
 
 - the signature pieces > draws something for every piece of the closed vocabulary
+
+## `apps/web/src/lib/tour/justiceBureauView.test.ts`
+
+- the Justice Bureau reconstructed from chapter 400 > satisfies the shared blueprint invariants for interior-justice-bureau
 
 ## `apps/web/src/lib/tour/light.test.ts`
 
@@ -1289,6 +1305,10 @@ Fichiers : 327
 ## `apps/web/src/lib/tour/walkTargets.test.ts`
 
 - where the walk opens for a location on the map > answers what spaceForLocation would have answered, for every slug it holds
+
+## `apps/web/src/lib/tour/zhangLeiView.test.ts`
+
+- state dining room of Prince Zhang Lei reconstructed from chapters 365 and 366 > satisfies the shared blueprint invariants for Room 1003 state dining
 
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 

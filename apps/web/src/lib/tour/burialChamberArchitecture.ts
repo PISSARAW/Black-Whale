@@ -5,13 +5,14 @@ import type { Space } from './types'
 
 export const BURIAL_SPACE = 'tier-1-princes-burial-chamber-rotunda'
 
-const OBSIDIAN = 0x0c0b0a,
-  DARK_STONE = 0x1c1916,
-  BRONZE = 0x3d352b,
-  GOLD = 0xbda062,
+const OBSIDIAN = 0x24201c,
+  DARK_STONE = 0x3d352c,
+  PILASTER_STONE = 0x857a6e,
+  BRONZE = 0x72604c,
+  GOLD = 0xd4af37,
   LUMEN_WHITE = 0xffffff,
-  LUMEN_WARM = 0xf5ecd5,
-  MOMOZE_FLAME = 0xff5500
+  LUMEN_WARM = 0xfef5e0,
+  MOMOZE_FLAME = 0xff6600
 
 interface Context {
   into: BanquetDetailBuilder
@@ -53,10 +54,10 @@ function outerWallPilasters(context: Context): void {
     const angle = (i * 2 * Math.PI) / 14
     const x = Math.cos(angle) * wallRadius
     const z = Math.sin(angle) * wallRadius
-    // Pilaster body
+    // Pilaster body in lighter polished ceremonial stone
     into.box([0.7, ceilingHeight, 0.22], {
       at: [x, floor + halfH, z],
-      colour: DARK_STONE,
+      colour: PILASTER_STONE,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
     // Gold ceremonial banding
@@ -65,19 +66,33 @@ function outerWallPilasters(context: Context): void {
       colour: GOLD,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
+    // Dedicated uplight trough at the base of every pilaster
+    into.box([0.76, 0.05, 0.18], {
+      at: [x * 0.985, floor + 0.035, z * 0.985],
+      colour: LUMEN_WHITE,
+      glow: true,
+      rotation: [0, -angle + Math.PI / 2, 0],
+    })
+    // Ceremonial sconce fixture casting warm ascending wash up the wall
+    into.box([0.18, 0.08, 0.12], {
+      at: [x * 0.98, floor + 2.8, z * 0.98],
+      colour: LUMEN_WARM,
+      glow: true,
+      rotation: [0, -angle + Math.PI / 2, 0],
+    })
   }
 
-  // Cove uplight ring running along the perimeter floor base
+  // Broad cove uplight ring running along the perimeter floor base
   into.ring(
-    { radius: wallRadius - 0.05, tube: 0.008 },
-    { at: [0, floor + 0.012, 0], colour: LUMEN_WARM, glow: true, rotation: [Math.PI / 2, 0, 0] },
+    { radius: wallRadius - 0.06, tube: 0.024 },
+    { at: [0, floor + 0.03, 0], colour: LUMEN_WHITE, glow: true, rotation: [Math.PI / 2, 0, 0] },
   )
 }
 
 function floorCircuits(into: BanquetDetailBuilder, floor: number): void {
   const rings = [1.5, 2.2, 2.9, 3.6, 4.3, 5.0, 5.7, 6.4, 7.1, 7.8, 8.5, 9.2, 9.8]
-  const tube = 0.006
-  const y = floor + tube + 0.002
+  const tube = 0.01
+  const y = floor + tube + 0.003
 
   // Concentric luminescent circuit rings emitting stark white floor light
   for (const r of rings) {
@@ -94,12 +109,26 @@ function floorCircuits(into: BanquetDetailBuilder, floor: number): void {
     const rEnd = rings[(i % 5) + 2] ?? rings[rings.length - 1]
     const span = rEnd - rStart
     const midR = (rStart + rEnd) / 2
-    into.box([0.035, 0.006, span], {
+    into.box([0.05, 0.008, span], {
       at: [Math.cos(angle) * midR, y, Math.sin(angle) * midR],
       colour: LUMEN_WHITE,
       glow: true,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
+  }
+
+  // 14 glowing junction rings at the soul relay distance (r = 4.15)
+  for (let i = 0; i < 14; i++) {
+    const angle = (i * 2 * Math.PI) / 14
+    into.ring(
+      { radius: 0.32, tube: 0.008 },
+      {
+        at: [Math.cos(angle) * 4.15, y, Math.sin(angle) * 4.15],
+        colour: LUMEN_WARM,
+        glow: true,
+        rotation: [Math.PI / 2, 0, 0],
+      },
+    )
   }
 }
 
@@ -189,7 +218,7 @@ function flutedVesselAndGlyph(into: BanquetDetailBuilder, floor: number): void {
     { at: [0, floor + 1.75, 0], colour: BRONZE, rotation: [Math.PI / 2, 0, 0] },
   )
 
-  // 14 vertical conduit rods along fluting
+  // 14 vertical conduit rods along fluting with warm luminous core
   for (let i = 0; i < 14; i++) {
     const angle = (i * 2 * Math.PI) / 14
     const x = Math.cos(angle) * 1.0
@@ -197,6 +226,12 @@ function flutedVesselAndGlyph(into: BanquetDetailBuilder, floor: number): void {
     into.box([0.05, 1.55, 0.06], {
       at: [x, floor + 1.25, z],
       colour: BRONZE,
+      rotation: [0, -angle + Math.PI / 2, 0],
+    })
+    into.box([0.02, 1.45, 0.04], {
+      at: [x * 0.99, floor + 1.25, z * 0.99],
+      colour: LUMEN_WARM,
+      glow: true,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
   }
@@ -232,6 +267,12 @@ function flutedVesselAndGlyph(into: BanquetDetailBuilder, floor: number): void {
 }
 
 function domeAndUmbilical(into: BanquetDetailBuilder, floor: number): void {
+  // Luminous halo under the capital cornice
+  into.ring(
+    { radius: 1.15, tube: 0.014 },
+    { at: [0, floor + 2.05, 0], colour: LUMEN_WARM, glow: true, rotation: [Math.PI / 2, 0, 0] },
+  )
+
   // Upper cornice and top dome cap
   into.cylinder(
     { radius: 1.18, height: 0.16, sides: 28 },

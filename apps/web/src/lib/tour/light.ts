@@ -99,8 +99,8 @@ export interface CategoryLight {
 export const CATEGORY_LIGHT: Record<SpaceCategory, CategoryLight> = {
   /** Dense and warm: somewhere a person sleeps. */
   quarters: { spacing: 0.8, hue: 0xffd0a0, power: 1.1 },
-  /** One source and the rest in the dark, which is what ceremony is lit like. */
-  ceremonial: { spacing: 1.6, hue: 0xffe0a8, power: 0.5 },
+  /** Ceremonial chambers: solemn ascending radiance. */
+  ceremonial: { spacing: 1.15, hue: 0xf5ecd5, power: 0.95 },
   /** The casino, the cineplex: lit to dazzle rather than to see by. */
   public: { spacing: 0.9, hue: 0xffc98a, power: 1.3 },
   /** Cold, even, without a shadow anywhere in it — and that is the worst of it. */

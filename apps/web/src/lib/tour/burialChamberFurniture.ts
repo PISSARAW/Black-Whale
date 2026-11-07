@@ -1,13 +1,15 @@
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { Structure } from './types'
 
-const DARK_STONE = 0x1f1b18,
-  COFFIN_BODY = 0x27211c,
-  BRONZE = 0x453a2e,
-  GOLD = 0xbda062,
+const DARK_STONE = 0x2e2722,
+  COFFIN_BODY = 0xd2cbc0,
+  COFFIN_LID = 0xe4ded2,
+  BRONZE = 0x76634c,
+  GOLD = 0xd4af37,
   MOMOZE_AMBER = 0xf59e0b,
-  MOMOZE_PALE = 0xfde68a,
-  LUMEN_WHITE = 0xffffff
+  MOMOZE_PALE = 0xfef3c7,
+  LUMEN_WHITE = 0xffffff,
+  LUMEN_WARM = 0xfbf3de
 
 interface Context {
   into: BanquetDetailBuilder
@@ -30,7 +32,16 @@ function offsetPoint(
 
 function coffinCradleFeet(context: Context, rotY: number): void {
   const { into, structure, floor } = context
+  const [x, z] = structure.at
   const [width, length] = structure.size
+
+  // Luminous aura floor pad under each pod, casting upward floor light
+  into.box([width * 0.94, 0.005, length * 0.96], {
+    at: [x, floor + 0.006, z],
+    colour: LUMEN_WARM,
+    glow: true,
+    rotation: [0, rotY, 0],
+  })
 
   // Manga ch. 371: curved cradle feet / rocker skids elevating the pod
   for (const sign of [-0.28, 0.28]) {
@@ -105,7 +116,7 @@ function coffinVaultedLidAndSpine(context: Context, rotY: number): void {
     { radius: lidRadius, height: lidLength, sides: 16 },
     {
       at: [x, lidY, z],
-      colour: isMomoze ? 0x362d25 : COFFIN_BODY,
+      colour: isMomoze ? 0xb59e88 : COFFIN_LID,
       rotation: [Math.PI / 2, 0, rotY],
     },
   )

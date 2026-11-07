@@ -170,7 +170,7 @@ Couloir du 1014, dernier événement sous cap ch. 361 :
   reconnaissable **avant** d'être visé ; Bill à côté de lui, distinct.
 - Dans la pièce, Oito (jeune, frange, robe simple) porte Woble (gabarit
   `infant`) : les deux silhouettes vont ensemble.
-- King's Living Quarters : Nasubi barbu, couronné, en robe d'apparat.
+- King's Living Quarters : Nasubi couronné, en manteau d'apparat sur pantalon.
 - Salon de Camilla : le diadème suffit à la nommer de loin.
 - Un garde sans entrée est rendu strictement comme aujourd'hui.
 - La fiche de provenance au viseur cite les `chapterIds` de l'appearance à côté
@@ -188,10 +188,12 @@ visage.
 
 ### A.1 Le roi et les reines (9)
 
-- **`nasubi-hui-guo-rou`** — Massif sans être un combattant : poitrail de
-  patriarche, barbe noire dense qui encadre toute la mâchoire, moustache,
-  cheveux gominés en arrière, petits yeux satisfaits. Robe d'apparat et
-  couronne kakine. Signatures : `beard-full`, `crown`. Couleurs : chosen.
+- **`nasubi-hui-guo-rou`** — Massif sans être un combattant : corpulence ronde,
+  visage glabre à double menton charnu, petits yeux satisfaits. Couvre-chef
+  royal bulbeux kakin orné de cabochons et blason, manteau d'apparat ouvert sur
+  pantalon avec grand plastron pectoral à écailles et ceinture médaillon
+  (ch. 358). Signatures : `crown`. Attire : `kakin-robe`. Coiffure : `shaved`
+  (sous la couronne). Couleurs : chosen.
 - **`unma-hui-guo-rou`** — Première épouse : âgée, port massif et droit,
   visage lourd et immobile, chignon strict. Robe de cour _(coiffure exacte à
   confirmer)_.
@@ -403,8 +405,8 @@ amendement de cette annexe.
 | `glasses-round`        | 2 tores fins + pont                                   | Leorio, Shizuku, Furykov           |
 | `glasses-thin`         | 2 cadres plats + branches                             | Halkenburg, Cheadle                |
 | `tiara`                | arc de tore + pointes                                 | Camilla                            |
-| `crown`                | cylindre crénelé bas                                  | Nasubi                             |
-| `beard-full`           | coque extrudée sous la mâchoire                       | Nasubi, Beyond                     |
+| `crown`                | coiffe bulbeuse kakine à bourrelet et cabochons       | Nasubi                             |
+| `beard-full`           | coque extrudée sous la mâchoire                       | Beyond                             |
 | `moustache`            | 2 quarts de tore                                      | Balsamilco, Onior, Vergei, Botobai |
 | `mutton-chops`         | 2 coques latérales de mâchoire                        | Benjamin, Basho                    |
 | `goatee`               | cône court au menton                                  | Basho, Leorio, Nobunaga            |
@@ -443,6 +445,13 @@ Le vocabulaire est fermé, donc l'étendre se fait ici et nulle part ailleurs.
   Longbao portent une tunique chinoise, Nobunaga et Kalluto un kimono, et aucun
   des six costumes de `wardrobe.ts` n'en est un. Sans eux, la priorité §2.5
   n'aurait rien à dire dans les deux cas où elle a le plus à dire.
+- **`kakin-robe` (attire) et fidélisation de Nasubi, 2026-11-07.** Planche du
+  ch. 358 en main : le roi Nasubi ne porte pas une robe de cour féminine
+  (`gown` / jupe au sol masquant les jambes) mais le manteau d'apparat impérial
+  ouvert sur pantalon ample, avec grand plastron pectoral cérémoniel en écailles
+  et ceinture à boucle médaillon. La barbe noire dense issue du brouillon de
+  mémoire est levée : le souverain est glabre à double menton charnu. La
+  couronne (`crown`) devient la coiffe bulbeuse kakine authentique.
 
 ---
 

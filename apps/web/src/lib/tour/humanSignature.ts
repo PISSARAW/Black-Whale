@@ -1,5 +1,6 @@
 import type { BufferGeometry, Group, Material, Object3D } from 'three'
 import type { Attire, Signature } from './humanProfiles'
+import { buildKakinCrown, buildKakinRobe } from './humanKakinRoyal'
 
 type Three = typeof import('three')
 type Geometry = (THREE: Three, key: string, make: () => BufferGeometry) => BufferGeometry
@@ -108,24 +109,7 @@ const PIECES: Record<Signature, Piece> = {
     }
   },
 
-  crown: ({ THREE, head, paint }) => {
-    head({
-      key: 'sig:crown-band',
-      make: () => new THREE.CylinderGeometry(0.185, 0.185, 0.09, 10, 1, true),
-      material: paint.accent,
-      at: [0, 0.16, 0],
-      name: 'signature-crown',
-    })
-    for (let i = 0; i < 6; i++) {
-      const turn = (i / 6) * Math.PI * 2
-      head({
-        key: 'sig:crown-point',
-        make: () => new THREE.ConeGeometry(0.028, 0.075, 4),
-        material: paint.accent,
-        at: [Math.cos(turn) * 0.16, 0.235, Math.sin(turn) * 0.16],
-      })
-    }
-  },
+  crown: buildKakinCrown,
 
   'beard-full': ({ THREE, head, paint }) => {
     head({
@@ -434,6 +418,8 @@ const GARMENTS: Partial<Record<Attire, Piece>> = {
       name: 'attire-obi',
     })
   },
+
+  'kakin-robe': buildKakinRobe,
 }
 
 export function addHumanSignatures({

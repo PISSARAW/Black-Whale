@@ -69,11 +69,13 @@ describe('the signature pieces', () => {
   })
 
   it('gives the acceptance scene the faces it names', () => {
-    // ADR-005 §6, read off the rig: the crown and beard in the King's Living
-    // Quarters, the cross on the forehead in the Troupe's corridor, the star
-    // and the tear on a man who is aboard behind a borrowed face.
+    // ADR-005 §6, read off the rig: the crown and Kakin robe in the King's Living
+    // Quarters (clean-shaven per ch. 358), the beard on Beyond, the cross on
+    // Chrollo's forehead, the star and the tear on Hisoka.
     expect(build('nasubi-hui-guo-rou').root.getObjectByName('signature-crown')).toBeTruthy()
-    expect(build('nasubi-hui-guo-rou').root.getObjectByName('signature-beard')).toBeTruthy()
+    expect(build('nasubi-hui-guo-rou').root.getObjectByName('attire-kakin-robe')).toBeTruthy()
+    expect(build('nasubi-hui-guo-rou').root.getObjectByName('signature-beard')).toBeUndefined()
+    expect(build('beyond-netero').root.getObjectByName('signature-beard')).toBeTruthy()
     expect(build('chrollo-lucilfer').root.getObjectByName('signature-forehead-cross')).toBeTruthy()
     expect(build('hisoka').root.getObjectByName('signature-star')).toBeTruthy()
     expect(build('hisoka').root.getObjectByName('signature-tear')).toBeTruthy()

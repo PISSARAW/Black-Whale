@@ -63,6 +63,7 @@ export const ATTIRE = [
   'gown',
   'changshan',
   'kimono',
+  'kakin-robe',
 ] as const
 
 export const SIGNATURES = [

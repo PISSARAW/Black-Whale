@@ -91,6 +91,7 @@ export const APPEARANCE_ATTIRE = [
   'gown',
   'changshan',
   'kimono',
+  'kakin-robe',
 ] as const
 
 /**

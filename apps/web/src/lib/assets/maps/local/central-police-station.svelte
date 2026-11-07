@@ -1,8 +1,10 @@
 <script lang="ts">
-  // Room interactions are not wired up yet. The elements keep their click
-  // and keyboard affordances so the behaviour can be attached in one place
-  // when it exists; until then this must not log on a public page.
+  // Room interactions keep their keyboard/click affordances for map navigation
   function handleElementClick(_elementId: string) {}
+
+  const portColumns = [80, 180, 280, 380]
+  const starboardColumns = [140, 220, 300, 380]
+  const galleryLevels = [1, 2, 3, 4]
 </script>
 
 <svg
@@ -13,57 +15,74 @@
     <style>
       .wall {
         stroke: #fffff0;
-        stroke-width: 6;
+        stroke-width: 5;
         fill: none;
       }
       .zone {
-        fill: rgba(255, 215, 0, 0.05);
+        fill: rgba(30, 53, 77, 0.08);
         transition: fill 0.2s;
         cursor: pointer;
       }
       .zone:hover {
-        fill: rgba(255, 215, 0, 0.15);
+        fill: rgba(30, 53, 77, 0.22);
       }
       .label {
         fill: #fffff0;
         font-family: sans-serif;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
         pointer-events: none;
         text-anchor: middle;
       }
       .sublabel {
-        fill: #ffd700;
-        font-size: 12px;
+        fill: #c2a65d;
+        font-size: 11px;
         pointer-events: none;
         text-anchor: middle;
       }
       .column {
-        fill: #222;
-        stroke: #555;
-        stroke-width: 4;
+        fill: #4d535a;
+        stroke: #7a838b;
+        stroke-width: 2;
       }
       .balcony {
-        fill: rgba(255, 255, 255, 0.05);
-        stroke: #444;
+        fill: rgba(122, 131, 139, 0.08);
+        stroke: #5d646b;
+        stroke-width: 1.5;
+      }
+      .railing {
+        stroke: #c2a65d;
         stroke-width: 2;
+        stroke-dasharray: 4 2;
       }
       .furniture {
-        fill: #333;
-        stroke: #666;
-        stroke-width: 2;
+        fill: #2a2f35;
+        stroke: #7a838b;
+        stroke-width: 1.5;
+      }
+      .water {
+        fill: #3a6b8c;
+        stroke: #88b5c4;
+        stroke-width: 1.5;
+      }
+      .sign {
+        fill: #1e354d;
+        stroke: #c2a65d;
+        stroke-width: 1.5;
       }
     </style>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Central Police Station</text>
+  <!-- Title & Chapter attribution -->
+  <text x="500" y="38" class="label" font-size="24" fill="#C2A65D">Central Police Station</text>
+  <text x="500" y="58" class="sublabel" fill="#888">Tier 3 · Atrium monumental sur 4 étages · Chap. 349, 378, 393</text>
 
-  <g transform="translate(50, 80)">
-    <!-- Left Half: Main Atrium -->
+  <g transform="translate(45, 80)">
+    <!-- Main Atrium (Left side, 22x15m metric footprint) -->
     <rect
       role="button"
       tabindex="0"
-      aria-label="Inspect map area"
+      aria-label="Inspect Main Atrium"
       onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault()
@@ -73,70 +92,123 @@
       class="zone"
       x="0"
       y="0"
-      width="550"
-      height="550"
-      onclick={() => handleElementClick('main-atrium')}
+      width="560"
+      height="540"
+      onclick={() => handleElementClick('tier-3-central-police-station-atrium')}
     />
-    <rect x="0" y="0" width="550" height="550" class="wall" />
-    <text x="275" y="30" class="label text-blue-400">Main Atrium</text>
+    <rect x="0" y="0" width="560" height="540" class="wall" />
+    <text x="280" y="28" class="label text-blue-400">Main Atrium (16m ceiling)</text>
 
-    <!-- Balconies (Sides) -->
-    <rect class="balcony" x="0" y="50" width="100" height="400" />
-    <rect class="balcony" x="450" y="50" width="100" height="400" />
+    <!-- 4 Tiers of Galleries: Port side (x = 0 to 95) -->
+    <rect class="balcony" x="0" y="45" width="95" height="420" />
+    <line x1="95" y1="45" x2="95" y2="465" class="railing" />
+    {#each galleryLevels as lvl (lvl)}
+      <line x1={lvl * 22} y1="45" x2={lvl * 22} y2="465" stroke="#333" stroke-width="1" />
+    {/each}
+    <text x="48" y="255" class="sublabel" transform="rotate(-90 48 255)">Galleries (4 levels)</text>
 
-    <!-- Massive Columns -->
-    <rect class="column" x="120" y="50" width="40" height="400" />
-    <rect class="column" x="390" y="50" width="40" height="400" />
+    <!-- 4 Tiers of Galleries: Starboard side (x = 465 to 560) -->
+    <rect class="balcony" x="465" y="45" width="95" height="420" />
+    <line x1="465" y1="45" x2="465" y2="465" class="railing" />
+    {#each galleryLevels as lvl (lvl)}
+      <line x1={465 + lvl * 22} y1="45" x2={465 + lvl * 22} y2="465" stroke="#333" stroke-width="1" />
+    {/each}
+    <text x="512" y="255" class="sublabel" transform="rotate(90 512 255)">Galleries (4 levels)</text>
 
-    <!-- Central Fountain -->
-    <ellipse cx="275" cy="350" rx="80" ry="40" class="furniture" />
-    <ellipse cx="275" cy="340" rx="60" ry="30" fill="#222" stroke="#444" />
-    <circle cx="275" cy="330" r="20" fill="#444" />
-    <text x="275" y="360" class="sublabel text-gray-400">Fountain</text>
+    <!-- Monumental Colonnade (8 columns) -->
+    {#each portColumns as cy (cy)}
+      <rect class="column" x="125" y={cy} width="28" height="28" rx="2" />
+    {/each}
+    {#each starboardColumns as cy (cy)}
+      <rect class="column" x="407" y={cy} width="28" height="28" rx="2" />
+    {/each}
 
-    <!-- Main Entrance Doors (Bottom) -->
-    <line x1="200" y1="550" x2="350" y2="550" stroke="#050505" stroke-width="12" />
-    <rect x="200" y="520" width="150" height="30" fill="none" stroke="#FFD700" stroke-width="3" />
-    <text x="275" y="540" class="sublabel">Entrance</text>
+    <!-- Central Stepped Fountain (at x = 280, y = 225) -->
+    <polygon points="280,165 330,185 350,235 330,285 280,305 230,285 210,235 230,185" class="furniture" />
+    <polygon points="280,180 315,195 330,235 315,275 280,290 245,275 230,235 245,195" class="water" />
+    <circle cx="280" cy="235" r="28" class="furniture" />
+    <circle cx="280" cy="235" r="16" class="water" />
+    <circle cx="280" cy="235" r="6" fill="#c2a65d" />
+    <text x="280" y="239" class="sublabel" font-size="10" fill="#fffff0">Fountain</text>
 
-    <!-- Guards -->
-    <circle cx="180" cy="530" r="8" fill="#4a5568" />
-    <circle cx="370" cy="530" r="8" fill="#4a5568" />
+    <!-- Front Reception Desk (Starboard aft) -->
+    <rect x="380" y="90" width="125" height="28" class="furniture" rx="2" />
+    <rect x="385" y="92" width="115" height="6" fill="#88b5c4" />
+    <text x="442" y="108" class="sublabel">Front Desk</text>
 
-    <!-- Right Half: Community Safety Section -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="600"
-      y="0"
-      width="300"
-      height="300"
-      onclick={() => handleElementClick('community-safety')}
-    />
-    <rect x="600" y="0" width="300" height="300" class="wall" />
-    <text x="750" y="30" class="label text-green-400">Community Safety Section</text>
+    <!-- Entrance Marquee & Hanging Signs (Bottom / South wall) -->
+    <line x1="190" y1="540" x2="370" y2="540" stroke="#050505" stroke-width="10" />
+    <!-- Marquee -->
+    <rect x="200" y="505" width="160" height="30" fill="rgba(42, 47, 53, 0.6)" stroke="#c2a65d" stroke-width="2" rx="2" />
+    <text x="280" y="525" class="sublabel">Entrance Marquee</text>
+    <!-- Hanging Signs -->
+    <rect class="sign" x="160" y="515" width="22" height="22" rx="2" />
+    <text x="171" y="530" font-size="9" fill="#c2a65d" text-anchor="middle">POL</text>
+    <rect class="sign" x="378" y="515" width="22" height="22" rx="2" />
+    <text x="389" y="530" font-size="9" fill="#c2a65d" text-anchor="middle">POL</text>
 
-    <!-- Staff Desk -->
-    <rect x="650" y="120" width="200" height="50" class="furniture" />
+    <!-- Sentry & Officer positions -->
+    <circle cx="280" cy="285" r="7" fill="#22262a" stroke="#c2a65d" stroke-width="1.5" />
+    <text x="280" y="306" class="sublabel" font-size="9">Mizaistom</text>
+    <circle cx="442" cy="72" r="5" fill="#1a2b3c" stroke="#c2a65d" />
+    <circle cx="180" cy="495" r="5" fill="#1a2b3c" stroke="#c2a65d" />
+    <circle cx="380" cy="495" r="5" fill="#1a2b3c" stroke="#c2a65d" />
 
-    <!-- Civilian / Visitor -->
-    <circle cx="750" cy="200" r="15" fill="#ccc" />
-    <rect x="735" y="215" width="30" height="20" fill="#666" />
-    <text x="750" y="250" class="sublabel text-gray-500">Visitor</text>
+    <!-- Right: Community Safety Section (600 to 910) -->
+    <g transform="translate(600, 0)">
+      <rect
+        role="button"
+        tabindex="0"
+        aria-label="Inspect Community Safety Section"
+        onkeydown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+          }
+        }}
+        class="zone"
+        x="0"
+        y="0"
+        width="310"
+        height="320"
+        onclick={() => handleElementClick('tier-3-central-police-station-safety-section')}
+      />
+      <rect x="0" y="0" width="310" height="320" class="wall" />
+      <text x="155" y="28" class="label text-green-400">Community Safety</text>
 
-    <!-- Standing Civilian -->
-    <circle cx="650" cy="200" r="15" fill="#aaa" />
-    <rect x="640" y="215" width="20" height="40" fill="#555" />
+      <!-- Consultation Safety Desk -->
+      <rect x="30" y="80" width="250" height="38" class="furniture" rx="2" />
+      <!-- Citizen Divider Screens -->
+      {#each [90, 155, 220] as dx (dx)}
+        <line x1={dx} y1="80" x2={dx} y2="118" stroke="#88b5c4" stroke-width="2" />
+      {/each}
+      <text x="155" y="104" class="sublabel">Public Safety Desk</text>
 
-    <!-- Door -->
-    <line x1="600" y1="250" x2="600" y2="280" stroke="#050505" stroke-width="8" />
+      <!-- Filing cabinets behind desk -->
+      <rect x="30" y="145" width="250" height="22" fill="#2a2f35" stroke="#555" />
+      <!-- Notice bulletin board -->
+      <rect x="40" y="185" width="230" height="18" fill="#d8d4ca" stroke="#c2a65d" />
+      <text x="155" y="198" font-size="10" fill="#222" text-anchor="middle">Official Notices & Advisories</text>
+
+      <!-- Citizen & Officer indicators -->
+      <circle cx="100" cy="55" r="6" fill="#888" />
+      <text x="100" y="44" font-size="9" fill="#aaa" text-anchor="middle">Citizen</text>
+      <circle cx="210" cy="55" r="6" fill="#888" />
+      <circle cx="155" cy="130" r="6" fill="#1a2b3c" stroke="#c2a65d" />
+      <text x="155" y="140" font-size="9" fill="#c2a65d" text-anchor="middle">Officer</text>
+    </g>
+
+    <!-- Right Lower: Security Checkpoint / Entrance Sas -->
+    <g transform="translate(600, 360)">
+      <rect x="0" y="0" width="310" height="180" class="wall" />
+      <text x="155" y="28" class="label text-gray-300">Security Checkpoint</text>
+      <!-- Metal detector portals -->
+      <rect x="80" y="60" width="45" height="24" fill="#2a2f35" stroke="#7a838b" stroke-width="2" />
+      <rect x="185" y="60" width="45" height="24" fill="#2a2f35" stroke="#7a838b" stroke-width="2" />
+      <text x="155" y="76" font-size="10" fill="#c2a65d" text-anchor="middle">Scanners</text>
+      <!-- Baggage check table -->
+      <rect x="70" y="115" width="170" height="30" class="furniture" />
+      <text x="155" y="134" class="sublabel">Baggage Inspection</text>
+    </g>
   </g>
 </svg>

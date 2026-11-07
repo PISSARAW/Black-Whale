@@ -1,0 +1,48 @@
+import { mangaView as view } from './mangaViewModel'
+
+export const MANGA_CINEPLEX_VIEWS = [
+  view({
+    id: 'cineplex-concession-popcorn',
+    spaceId: 'tier-3-cineplex-concession',
+    at: [-20.5, 0],
+    target: [-23.2, 0],
+    pitch: 0.0,
+    chapter: 393,
+    volume: 38,
+    label: 'The confectionery counter and popcorn machine in the cineplex concourse',
+    labelFr: 'Le comptoir de confiserie et la machine à pop-corn dans le hall du cinéma',
+  }),
+  view({
+    id: 'cineplex-ticket-windows-booths',
+    spaceId: 'tier-3-cineplex-ticket-desk',
+    at: [19.5, 0],
+    target: [23.2, 0],
+    pitch: 0.02,
+    chapter: 393,
+    volume: 38,
+    label: 'The ticket windows and timetable displays across the concourse',
+    labelFr: 'Les guichets de billetterie et les panneaux de séances dans le hall',
+  }),
+  view({
+    id: 'cineplex-screens-descending-ramp',
+    spaceId: 'tier-3-cineplex-screen-corridor',
+    at: [0, 0],
+    target: [0, 11.0],
+    pitch: -0.04,
+    chapter: 393,
+    volume: 38,
+    label: 'The descending ramp with guardrails leading to screens 1 through 8',
+    labelFr: 'La rampe descendante avec garde-corps menant aux salles 1 à 8',
+  }),
+  view({
+    id: 'cineplex-hisoka-seating',
+    spaceId: 'tier-3-cineplex-concession',
+    at: [-13.5, 0],
+    target: [-17, 0],
+    pitch: -0.08,
+    chapter: 393,
+    volume: 38,
+    label: 'The circular seating island where Hisoka waits with popcorn and soda',
+    labelFr: "L'îlot circulaire de sièges où Hisoka attend avec pop-corn et soda",
+  }),
+]

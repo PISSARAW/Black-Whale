@@ -13,7 +13,11 @@ import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
 import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
 import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
 import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
+import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
 import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
+import { MANGA_POLICE_VIEWS } from './mangaPoliceViews'
+import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
+import { MANGA_ROYAL_ARMY_CONFERENCE_VIEWS } from './mangaRoyalArmyConferenceViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -30,6 +34,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_DINING_HALL_VIEWS,
   ...MANGA_BURIAL_CHAMBER_VIEWS,
   ...MANGA_JUSTICE_BUREAU_VIEWS,
+  ...MANGA_CINEPLEX_VIEWS,
   view({
     id: 'woble-dining-guards',
     spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
@@ -76,26 +81,6 @@ export const MANGA_VIEWS: MangaView[] = [
     pages: '60–65',
     label: 'The ribbed lifeboat cabin facing its round hatch and console',
     labelFr: 'La cabine nervurée de la capsule face à son écoutille ronde et sa console',
-  }),
-  view({
-    id: 'royal-army-briefing-audience',
-    spaceId: 'tier-4-royal-army-conference-room-floor',
-    at: [0, 6.5],
-    target: [0, -5.2],
-    pitch: 0.05,
-    chapter: 380,
-    volume: 36,
-    pages: '189',
-    label: 'The royal-army briefing from behind the U-shaped conference table',
-    labelFr: 'Le briefing de l’armée royale derrière la table de conférence en U',
-    staging: [
-      {
-        characterId: 'mizaistom-nana',
-        at: [0.8, -3.25],
-        heading: Math.PI,
-        pose: 'idle',
-      },
-    ],
   }),
   view({
     id: 'xi-yu-office-aerial-plan',
@@ -181,6 +166,9 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_ZHANG_LEI_VIEWS,
   ...MANGA_CHA_R_VIEWS,
   ...MANGA_HEILLY_VIEWS,
+  ...MANGA_POLICE_VIEWS,
+  ...MANGA_HOSPITAL_VIEWS,
+  ...MANGA_ROYAL_ARMY_CONFERENCE_VIEWS,
   view({
     id: 'heilly-hideout-aerial-plan',
     spaceId: 'tier-2-heilly-secret-hideout-corridor',

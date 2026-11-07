@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 429 espaces, 1148 éléments modélisés.**
+**Couverture : 62 lieux, 429 espaces, 1160 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -621,14 +621,21 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 30 × 25 m
 - **Hauteurs sous plafond :** 8, 3.2 m
-- **Éléments modélisés :** 31 platform
-- **Objets directement visibles dans les cases :** 31/31
+- **Éléments modélisés :** 31 platform, 6 table, 4 seat, 2 cabinet
+- **Objets directement visibles dans les cases :** 43/43
 - **Espaces internes :** Galerie de la grande salle de loisirs VVIP
 - **Sources de la pièce :**
-  - Chap. 419, plan p. 17 et vue du hall p. 18 — la salle de loisirs VVIP longe le quartier princier sur le trajet vers la passerelle du niveau 2. Emprise, hauteur sous plafond et hauteur de mezzanine estimées.
-  - Chap. 419, p. 18 — deux escaliers latéraux desservent la galerie supérieure à l’intérieur de la salle de loisirs. Il s’agit d’une mezzanine intérieure, pas d’un pont distinct attesté ; dimensions estimées.
+  - Chap. 419, plan p. 17 et vue du hall p. 18 — la salle de loisirs VVIP longe le quartier princier sur le trajet vers la passerelle du niveau 2 ; voir data/ship/vvip-recreation-hall-audit.md. Emprise, hauteur sous plafond et hauteur de mezzanine estimées.
+  - Chap. 419, p. 18 — deux escaliers latéraux desservent la galerie supérieure à l’intérieur de la salle de loisirs ; voir data/ship/vvip-recreation-hall-audit.md. Il s’agit d’une mezzanine intérieure, pas d’un pont distinct attesté ; dimensions estimées.
 - **Sources du mobilier et des détails :**
   - Chap. 419, p. 18 — les deux volées latérales et la galerie supérieure au fond de la salle de loisirs VVIP. Hauteurs, nombre de marches et dimensions estimés pour la reconstruction.
+  - Chap. 419, p. 18 — table de billard d'apparat de la grande salle de loisirs VVIP ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — canapé d'apparat capitonné en cuir et velours ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — fauteuil club profond de salon ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — table basse en marbre et laiton doré ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — comptoir de rafraîchissement d'apparat en marbre et bois sculpté ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — étagère miroir à carafes et verres en cristal ; voir data/ship/vvip-recreation-hall-audit.md.
+  - Chap. 419, p. 18 — table de jeu d'apparat avec feutrine verte ; voir data/ship/vvip-recreation-hall-audit.md.
 
 ## Cloison blindée du pont 2 — `tier-2-bulkhead`
 
@@ -1016,6 +1023,7 @@
 - **Objets directement visibles dans les cases :** 9/10
 - **Espaces internes :** Salle à l’emblème ; Salle des couchettes ; Salle de surveillance ; Couloir du bureau
 - **Sources de la pièce :**
+  - Dossier d'audit dédié : [`cha-r-office-audit.md`](cha-r-office-audit.md).
   - Plan des ponts, chap. 349
   - Chap. 379-380 — la salle principale Cha-R porte l'emblème de la famille et trois portes différentes : une porte métallique à motif de coffre, une porte métallique à face de robot et une porte en bois.
   - Chap. 379, p. 16 — le compartiment attenant à la salle de l'emblème contient des lits superposés et des bibliothèques ; un homme est allongé sur la couchette inférieure sous Feitan.

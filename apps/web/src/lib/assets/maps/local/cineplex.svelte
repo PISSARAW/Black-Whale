@@ -1,7 +1,6 @@
 <script lang="ts">
-  // Room interactions are not wired up yet. The elements keep their click
-  // and keyboard affordances so the behaviour can be attached in one place
-  // when it exists; until then this must not log on a public page.
+  // Room interactions keep their keyboard and click affordances so behaviour
+  // can be attached in one place when it exists.
   function handleElementClick(_elementId: string) {}
 </script>
 
@@ -63,13 +62,37 @@
         stroke: #8b7c68;
         stroke-width: 3;
       }
+      .stanchion {
+        fill: #d4af37;
+        stroke: #8b7c68;
+        stroke-width: 1.5;
+      }
+      .velvet-rope {
+        stroke: #851724;
+        stroke-width: 3;
+        fill: none;
+      }
+      .popcorn-glow {
+        fill: #f5d77f;
+      }
+      .rail {
+        stroke: #d4af37;
+        stroke-width: 2.5;
+        fill: none;
+      }
+      .led-guide {
+        stroke: #3d7499;
+        stroke-width: 1.5;
+        stroke-dasharray: 4 2;
+      }
     </style>
   </defs>
 
-  <text x="500" y="40" class="label" font-size="28" fill="#FFD700">Cineplex (Multiplexe)</text>
+  <text x="500" y="36" class="label" font-size="26" fill="#FFD700">Cineplex Concourse (Chapitre 393)</text>
+  <text x="500" y="56" class="sublabel">Grand hall ouvert · billetterie · confiserie/pop-corn · rampe des salles</text>
 
-  <g transform="translate(50, 80)">
-    <!-- Left: Food & Drinks -->
+  <g transform="translate(50, 70)">
+    <!-- Left: Food & Drinks Concession -->
     <rect
       role="button"
       tabindex="0"
@@ -82,18 +105,40 @@
       }}
       class="zone"
       x="0"
-      y="100"
-      width="250"
-      height="300"
+      y="80"
+      width="270"
+      height="320"
       onclick={() => handleElementClick('food-drinks')}
     />
-    <rect x="0" y="200" width="250" height="60" class="counter" />
-    <rect x="20" y="120" width="200" height="40" fill="#111" stroke="#333" />
-    <text x="120" y="145" class="label text-yellow-500">FOOD & DRINKS</text>
-    <rect x="20" y="170" width="200" height="30" fill="#050505" stroke="#333" />
-    <!-- Menu board -->
+    <!-- Concession Counter Body -->
+    <rect x="10" y="180" width="240" height="70" rx="4" class="counter" />
+    <rect x="8" y="176" width="244" height="10" rx="2" fill="#2a2a2e" stroke="#444" />
 
-    <!-- Right: Tickets -->
+    <!-- Popcorn Machine on Counter -->
+    <rect x="25" y="145" width="45" height="40" rx="3" fill="#cc292b" stroke="#777" />
+    <rect x="28" y="152" width="39" height="26" fill="#88c0d0" opacity="0.6" />
+    <circle cx="47" cy="165" r="8" class="popcorn-glow" />
+    <text x="47" y="140" class="sublabel" font-size="9">POPCORN</text>
+
+    <!-- Hot Snack Showcase -->
+    <rect x="80" y="155" width="60" height="28" rx="2" fill="#88c0d0" opacity="0.4" stroke="#555" />
+    <line x1="82" y1="168" x2="138" y2="168" stroke="#f5d77f" stroke-width="2" />
+
+    <!-- Soda Fountain -->
+    <rect x="155" y="150" width="40" height="32" rx="2" fill="#768088" stroke="#333" />
+    {#each [160, 168, 176, 184] as tap (tap)}
+      <circle cx={tap} cy="162" r="2.5" fill="#1a1a1a" />
+    {/each}
+
+    <!-- POS Registers -->
+    <rect x="205" y="168" width="16" height="12" fill="#222" stroke="#555" />
+    <rect x="228" y="168" width="16" height="12" fill="#222" stroke="#555" />
+
+    <!-- Overhead Menu Board -->
+    <rect x="15" y="100" width="230" height="35" rx="3" fill="#111" stroke="#444" />
+    <text x="130" y="122" class="label text-yellow-500" font-size="14">FOOD &amp; DRINKS</text>
+
+    <!-- Center: Descending Corridor Ramp to screens -->
     <rect
       role="button"
       tabindex="0"
@@ -105,54 +150,82 @@
         }
       }}
       class="zone"
-      x="750"
-      y="100"
-      width="250"
-      height="300"
-      onclick={() => handleElementClick('tickets')}
-    />
-    <rect x="800" y="120" width="150" height="40" fill="#111" stroke="#333" />
-    <text x="875" y="145" class="label text-blue-400">TICKETS</text>
-    <rect x="800" y="200" width="150" height="60" class="counter" />
-    <!-- Center Corridor leading to screens -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="350"
-      y="150"
-      width="300"
-      height="350"
+      x="330"
+      y="110"
+      width="340"
+      height="380"
       onclick={() => handleElementClick('screens-corridor')}
     />
 
-    <!-- Huge Movie Poster above corridor -->
-    <rect x="350" y="50" width="300" height="80" class="screen-sign" />
-    <text x="500" y="95" class="label text-red-500" font-size="24">THE THING</text>
-    <text x="500" y="145" class="sublabel">SCREENS 1 - 8</text>
+    <!-- Huge Movie Poster Marquee above ramp -->
+    <rect x="340" y="50" width="320" height="65" rx="4" class="screen-sign" />
+    <text x="500" y="85" class="label text-red-500" font-size="22">THE THING</text>
+    <text x="500" y="104" class="sublabel" font-size="11">NOW SHOWING · SCREENS 1 - 8</text>
 
-    <!-- Perspective Lines for Corridor -->
-    <line x1="350" y1="150" x2="450" y2="300" stroke="#333" stroke-width="2" />
-    <line x1="650" y1="150" x2="550" y2="300" stroke="#333" stroke-width="2" />
-    <line x1="350" y1="500" x2="450" y2="300" stroke="#333" stroke-width="2" />
-    <line x1="650" y1="500" x2="550" y2="300" stroke="#333" stroke-width="2" />
-    <rect x="450" y="250" width="100" height="50" fill="#000" />
-    <!-- End of hall -->
+    <!-- Descending Ramp Perspective and Guardrails -->
+    <line x1="360" y1="120" x2="430" y2="350" class="rail" />
+    <line x1="640" y1="120" x2="570" y2="350" class="rail" />
+    {#each [150, 190, 230, 270, 310] as rz (rz)}
+      <line x1={360 + (rz - 120) * 0.3} y1={rz} x2={640 - (rz - 120) * 0.3} y2={rz} class="led-guide" />
+    {/each}
+    <rect x="430" y="340" width="140" height="30" fill="#0c0c10" stroke="#444" />
+    <text x="500" y="360" class="sublabel" font-size="10">HALL DES SALLES (1–8)</text>
 
-    <!-- Foreground Massive Pillar (Right side) -->
-    <rect class="pillar" x="650" y="0" width="60" height="500" />
-    <rect x="660" y="200" width="40" height="60" fill="#222" />
-    <!-- Poster on pillar -->
+    <!-- Foreground Massive Pillar with Posters -->
+    <rect class="pillar" x="650" y="120" width="50" height="280" rx="3" />
+    <rect x="655" y="160" width="40" height="60" fill="#1b2a38" stroke="#777" />
+    <text x="675" y="195" class="sublabel" font-size="8">POSTER</text>
 
-    <!-- Seating Area (Center-Left Foreground) -->
-    <path d="M 100 450 Q 200 500 300 450 L 280 400 Q 200 450 120 400 Z" class="counter" />
+    <!-- Circular Seating Island (Hisoka / Bonolenov with Popcorn) -->
+    <g transform="translate(180, 380)">
+      <circle cx="0" cy="0" r="48" fill="#1a1215" stroke="#851724" stroke-width="4" />
+      <circle cx="0" cy="0" r="22" fill="#36241b" stroke="#666" stroke-width="2" />
+      <!-- Popcorn bucket & drink cup on the island table -->
+      <circle cx="6" cy="4" r="7" class="popcorn-glow" stroke="#cc292b" stroke-width="2" />
+      <circle cx="-8" cy="-5" r="4" fill="#203550" stroke="#eee" stroke-width="1.5" />
+      <text x="0" y="62" class="sublabel" font-size="10">Ilot central · Hisoka (pop-corn)</text>
+    </g>
+
+    <!-- Right: Tickets Desk -->
+    <rect
+      role="button"
+      tabindex="0"
+      aria-label="Inspect map area"
+      onkeydown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+        }
+      }}
+      class="zone"
+      x="730"
+      y="80"
+      width="270"
+      height="320"
+      onclick={() => handleElementClick('tickets')}
+    />
+    <!-- Ticket Counter Body -->
+    <rect x="750" y="180" width="230" height="70" rx="4" class="counter" />
+    <rect x="748" y="176" width="234" height="10" rx="2" fill="#2a2a2e" stroke="#444" />
+
+    <!-- 3 Glazed Ticket Booth Windows -->
+    {#each [770, 840, 910] as wx (wx)}
+      <rect x={wx} y="130" width="55" height="50" fill="#88c0d0" opacity="0.4" stroke="#768088" />
+      <circle cx={wx + 27} cy="155" r="4" fill="#768088" />
+      <rect x={wx + 15} y="174" width="25" height="4" fill="#18181c" />
+    {/each}
+
+    <!-- Timetable Screens -->
+    <rect x="755" y="95" width="220" height="35" rx="3" fill="#0c1520" stroke="#3d7499" />
+    <text x="865" y="117" class="label text-blue-400" font-size="14">TICKETS &amp; SÉANCES</text>
+
+    <!-- Queue Guidance Stanchions & Velvet Ropes -->
+    {#each [770, 840, 910] as sx (sx)}
+      <line x1={sx + 10} y1="210" x2={sx + 10} y2="280" class="velvet-rope" />
+      <circle cx={sx + 10} cy="210" r="4" class="stanchion" />
+      <circle cx={sx + 10} cy="245" r="4" class="stanchion" />
+      <circle cx={sx + 10} cy="280" r="4" class="stanchion" />
+    {/each}
   </g>
 
   <!-- Ch. 393 pp. 60–61 shows one auditorium but never gives its screen number. -->

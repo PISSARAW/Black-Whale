@@ -18,6 +18,9 @@ import {
 } from './camillaPlan'
 import { princesSpotAnchors } from './princesPlan'
 import { justiceSpotAnchors } from './justiceBureauPlan'
+import { policeSpotAnchors } from './policeStationPlan'
+import { cineplexSpotAnchors } from './cineplexPlan'
+import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -235,13 +238,23 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-vip-casino': {
     occupants: { hisoka: { x: 50.4, y: 34.5, inferred: true } },
   },
-  // `local/cineplex.svelte`, 1000 × 600, contents offset by (50, 80).
-  // Bonolenov watches from the seating area in ch. 393, wearing Hisoka's face.
-  'tier-3-cineplex': {
-    occupants: { 'bonolenov-ndongo': { x: 25, y: 84.17 } },
+  // `local/cineplex.svelte`, 1000 × 800 (ch. 393).
+  // Bonolenov watches from the seating island, wearing Hisoka's face, while Hisoka sits with popcorn.
+  'tier-3-cineplex': cineplexSpotAnchors,
+  'interior-cineplex': cineplexSpotAnchors,
+  // The central police station atrium and safety desk (ch. 349, 378, 393).
+  'tier-3-central-police-station': policeSpotAnchors,
+  'tier-3-central-police-station-atrium': policeSpotAnchors,
+  'tier-3-central-police-station-safety-section': {
+    occupants: {},
+    fallback: policeSpotAnchors.safetyDesk,
   },
   // The central dining hall follows the shared blueprint projection (ch. 371, 377, 379–380).
   'tier-5-central-dining-hall': diningHallSpotAnchors,
+  // The Royal Army conference & briefing room (ch. 350, 380).
+  'tier-4-royal-army-conference-room': royalArmyConferenceSpotAnchors,
+  'tier-4-royal-army-conference-room-floor': royalArmyConferenceSpotAnchors,
+  'interior-royal-army-conference': royalArmyConferenceSpotAnchors,
   // `local/cha-r-office.svelte`, 1000 × 680, contents offset by (70, 90).
   // Tajao and Wang hold the main office table in ch. 405–406. Luini is not
   // placed: he comes through a hole in a wall the plan does not draw.

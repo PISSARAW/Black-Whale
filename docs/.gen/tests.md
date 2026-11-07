@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 332
+Fichiers : 336
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -917,6 +917,14 @@ Fichiers : 332
 
 - the world state, in slug space > turns a body’s owner into the id the catalogue files them under
 
+## `apps/web/src/lib/tour/chaROfficeView.test.ts`
+
+- the Cha-R family office reconstructed from chapters 379 and 380 > satisfies blueprint invariants for all rooms of the office
+
+## `apps/web/src/lib/tour/cineplexView.test.ts`
+
+- the Tier 3 Cineplex concourse reconstructed from chapter 393 > satisfies the shared blueprint invariants for interior-cineplex
+
 ## `apps/web/src/lib/tour/comfort.test.ts`
 
 - comfortDefaults > starts the walk wide and continuous by default
@@ -1063,6 +1071,10 @@ Fichiers : 332
 
 - the Heil-Ly secret hideout reconstructed from chapters 398, 399 and 407 > satisfies blueprint invariants for all rooms of the hideout
 
+## `apps/web/src/lib/tour/hospitalView.test.ts`
+
+- the Central Hospital and Medical Ward reconstructed from chapters 358 and 391 > satisfies blueprint invariants for all rooms of the hospital
+
 ## `apps/web/src/lib/tour/hour.test.ts`
 
 - shipHourOf > takes the hour canon states
@@ -1193,6 +1205,10 @@ Fichiers : 332
 ## `apps/web/src/lib/tour/pageWorldTicker.test.ts`
 
 - Emperor Time on the beat > spends the hour without touching the read-out
+
+## `apps/web/src/lib/tour/policeStationView.test.ts`
+
+- the central police station reconstructed from chapters 349, 378 and 393 > satisfies the shared blueprint invariants for the police spaces
 
 ## `apps/web/src/lib/tour/postcardStamps.test.ts`
 

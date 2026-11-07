@@ -5,6 +5,7 @@ import type { MapMarker } from './types'
 import { banquetSpotAnchors } from './banquetPlan'
 import { salonSpotAnchors } from './royalSalonPlan'
 import { prisonSpotAnchors } from './prisonPlan'
+import { diningHallSpotAnchors } from './diningHallPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -217,12 +218,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-3-cineplex': {
     occupants: { 'bonolenov-ndongo': { x: 25, y: 84.17 } },
   },
-  // `local/central-dining-hall.svelte`, 1000 × 600, contents offset by (50, 80).
-  // The Troupe gathers information from the foreground table, ch. 371 and 377.
-  'tier-5-central-dining-hall': {
-    occupants: {},
-    fallback: { x: 55, y: 66.67, inferred: true },
-  },
+  // The central dining hall follows the shared blueprint projection (ch. 371, 377, 379–380).
+  'tier-5-central-dining-hall': diningHallSpotAnchors,
   // `local/cha-r-office.svelte`, 1000 × 680, contents offset by (70, 90).
   // Tajao and Wang hold the main office table in ch. 405–406. Luini is not
   // placed: he comes through a hole in a wall the plan does not draw.

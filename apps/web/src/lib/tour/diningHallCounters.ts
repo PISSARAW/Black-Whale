@@ -66,6 +66,59 @@ export function dressServiceCounter(context: CounterContext): void {
     at: [x + sizeX / 4, topY + 0.25, z],
     colour: 0xd8e4e8,
   })
+
+  // Fixed counter stools along customer-facing aisle (East face)
+  dressCounterStools({
+    into,
+    x: slideX + 0.45,
+    span: [z - sizeZ / 2, z + sizeZ / 2],
+    floor,
+  })
+
+  // Tray return racks at the counter extremities
+  dressTrayReturnRack({ into, at: [x, floor, z - sizeZ / 2 + 0.8], floor })
+  dressTrayReturnRack({ into, at: [x, floor, z + sizeZ / 2 - 0.8], floor })
+}
+
+interface StoolRowOptions {
+  into: BanquetDetailBuilder
+  x: number
+  span: [number, number]
+  floor: number
+}
+
+function dressCounterStools(options: StoolRowOptions): void {
+  const { into, x, span, floor } = options
+  const [minZ, maxZ] = span
+  const step = 2.0
+  for (let z = minZ + 1.5; z <= maxZ - 1.5; z += step) {
+    into.cylinder({ radius: 0.14, height: 0.02, sides: 8 }, { at: [x, floor + 0.01, z], colour: STAINLESS })
+    into.cylinder({ radius: 0.035, height: 0.62, sides: 8 }, { at: [x, floor + 0.32, z], colour: STAINLESS })
+    into.cylinder({ radius: 0.22, height: 0.06, sides: 16 }, { at: [x, floor + 0.65, z], colour: 0x303338 })
+    into.ring(
+      { radius: 0.22, tube: 0.015 },
+      { at: [x, floor + 0.65, z], rotation: [Math.PI / 2, 0, 0], colour: STAINLESS },
+    )
+  }
+}
+
+interface TrayReturnOptions {
+  into: BanquetDetailBuilder
+  at: [number, number, number]
+  floor: number
+}
+
+function dressTrayReturnRack(options: TrayReturnOptions): void {
+  const { into, at, floor } = options
+  const [x, , z] = at
+  // Stainless steel tray rack cabinet
+  into.box([0.9, 1.4, 0.75], { at: [x, floor + 0.7, z], colour: STAINLESS })
+  // Horizontal tray slide shelves
+  for (const dy of [0.35, 0.65, 0.95, 1.25]) {
+    into.box([0.84, 0.02, 0.7], { at: [x, floor + dy, z], colour: TRAY_SLIDE })
+  }
+  // Circular waste chute aperture with dark rim
+  into.cylinder({ radius: 0.16, height: 0.04, sides: 12 }, { at: [x, floor + 1.42, z], colour: 0x1a1c1e })
 }
 
 /** Suspended multi-section illuminated menu boards over the service counter. */

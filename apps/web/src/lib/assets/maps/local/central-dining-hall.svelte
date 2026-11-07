@@ -11,223 +11,188 @@
    *
    * Every fixture is placed by the coordinates the blueprint gives it.
    */
+  import { locale } from '$lib/i18n'
+  import {
+    diningHallRooms,
+    diningHallFixtures,
+    diningHallDoors,
+    diningHallColumns,
+    diningHallPolygon,
+    diningHallPoint,
+    DINING_HALL_VIEWBOX,
+  } from '$lib/components/map/projection/diningHallPlan'
 
-  // Room interactions are not wired up yet. The elements keep their click
-  // and keyboard affordances so the behaviour can be attached in one place
-  // when it exists; until then this must not log on a public page.
-  function handleElementClick(_elementId: string) {}
+  const french = $derived($locale === 'fr')
 
-  function activate(event: KeyboardEvent) {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-    event.preventDefault()
-    ;(event.currentTarget as Element).dispatchEvent(new MouseEvent('click', { bubbles: true }))
-  }
-
-  /** Twenty-five pixels to the metre, in the coordinates of the Tier 5 plan. */
-  const SCALE = 25
-  const x = (metres: number) => (metres - 14) * SCALE + 80
-  const y = (metres: number) => (metres - 10.5) * SCALE + 100
-
-  const room = { x0: 14, x1: 45.5, y0: 10.5, y1: 42 }
-
-  /** The six low refectory boards; the panels show no benches. */
-  const tables = [16.5, 19.5, 22.5, 37, 40, 43]
-  const platform = { at: [29.75, 26.25], size: [9, 12] }
-  const counter = { x0: 17, x1: 42.5, z0: 13.925, z1: 15.075 }
-  const stools = Array.from({ length: 12 }, (_, index) => 18.1 + index * 2.1)
-  const menuBoards = Array.from({ length: 6 }, (_, index) => 18.2 + index * 4.55)
-
-  /** The four openings the tour derives from the shared walls. */
-  const doors = [
-    { id: 'transverse-corridor', axis: 'y' as const, at: 10.5, from: 28.25, to: 31.25 },
-    { id: 'aft-corridor', axis: 'y' as const, at: 42, from: 28.25, to: 31.25 },
-    { id: 'service-corridor-forward', axis: 'x' as const, at: 14, from: 24.75, to: 27.75 },
-    { id: 'service-corridor-aft', axis: 'x' as const, at: 45.5, from: 24.75, to: 27.75 },
-  ]
+  // Fixed stools along the customer-facing side of the service counter
+  const stoolXs = Array.from({ length: 12 }, (_, index) => 18.1 + index * 2.1)
+  const stoolPoints = stoolXs.map((sx) => diningHallPoint([sx, 16.0]))
 </script>
 
 <svg
-  viewBox="0 0 1000 900"
-  class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
+  viewBox="0 0 {DINING_HALL_VIEWBOX.width} {DINING_HALL_VIEWBOX.height}"
+  role="img"
+  aria-label={french
+    ? 'Plan du réfectoire central du niveau 5'
+    : 'Central dining hall plan, Tier 5'}
+  class="w-full h-full rounded-lg border border-[#333] bg-[#050505] text-[#fffff0]"
 >
   <defs>
     <style>
       .room {
         fill: rgba(255, 255, 240, 0.03);
         stroke: #fffff0;
-        stroke-width: 3;
+        stroke-width: 2.5;
       }
       .table {
-        fill: rgba(217, 164, 65, 0.18);
+        fill: rgba(217, 164, 65, 0.22);
         stroke: #d9a441;
         stroke-width: 1.5;
-        cursor: pointer;
-        transition: fill 0.2s;
-      }
-      .table:hover {
-        fill: rgba(255, 215, 0, 0.35);
       }
       .platform {
-        fill: rgba(255, 215, 0, 0.12);
+        fill: rgba(255, 215, 0, 0.16);
         stroke: #ffd700;
         stroke-width: 2;
-        cursor: pointer;
       }
       .counter {
-        fill: rgba(157, 111, 70, 0.24);
+        fill: rgba(157, 111, 70, 0.28);
         stroke: #c79a6b;
         stroke-width: 2;
       }
       .stool {
-        fill: rgba(200, 200, 200, 0.18);
+        fill: rgba(200, 200, 200, 0.22);
         stroke: #aaa;
         stroke-width: 1.5;
       }
       .menu {
-        fill: rgba(255, 255, 240, 0.08);
+        fill: rgba(255, 255, 240, 0.12);
         stroke: #d7d7c9;
         stroke-width: 1;
       }
+      .vending {
+        fill: rgba(200, 220, 255, 0.18);
+        stroke: #8fb8e6;
+        stroke-width: 1.5;
+      }
+      .seat {
+        fill: rgba(180, 150, 120, 0.22);
+        stroke: #a67c52;
+        stroke-width: 1.2;
+      }
+      .duct {
+        fill: rgba(80, 85, 92, 0.3);
+        stroke: #686d75;
+        stroke-width: 1.2;
+      }
+      .pillar {
+        fill: #26282b;
+        stroke: #5a5c60;
+        stroke-width: 1.8;
+      }
       .door {
         stroke: #ffd700;
-        stroke-width: 5;
-        cursor: pointer;
-      }
-      .door:hover {
-        stroke: #fff;
+        stroke-width: 4.5;
       }
       .label {
         fill: #fffff0;
         font-family: sans-serif;
-        font-size: 13px;
-        pointer-events: none;
         text-anchor: middle;
       }
       .sublabel {
         fill: #ffd700;
         font-family: sans-serif;
         font-size: 11px;
-        pointer-events: none;
         text-anchor: middle;
-      }
-      .vending {
-        fill: rgba(200, 220, 255, 0.15);
-        stroke: #8fb8e6;
-        stroke-width: 1.5;
-      }
-      .bench {
-        fill: rgba(180, 150, 120, 0.2);
-        stroke: #a67c52;
-        stroke-width: 1.5;
       }
     </style>
   </defs>
 
   <text x="500" y="34" class="label" font-size="22" font-weight="bold" fill="#FFD700">
-    Central Dining Hall — Tier 5
+    {french ? 'Réfectoire central — Niveau 5' : 'Central Dining Hall — Tier 5'}
   </text>
-  <text x="500" y="56" class="label" font-size="11" opacity="0.55">
-    31.5 m × 31.5 m — ch. 377: service counter, menu boards, stools and long communal tables
+  <text x="500" y="56" class="label" font-size="11" opacity="0.6">
+    {french
+      ? '31,5 m × 31,5 m · Chap. 377 : comptoir de service, tabourets et longues tables communes'
+      : '31.5 m × 31.5 m · ch. 377: long service counter, menu boards, stools and communal tables'}
   </text>
 
-  <rect
-    x={x(room.x0)}
-    y={y(room.y0)}
-    width={(room.x1 - room.x0) * SCALE}
-    height={(room.y1 - room.y0) * SCALE}
-    class="room"
-  />
-
-  {#each doors as door (door.id)}
-    <line
-      role="button"
-      tabindex="0"
-      aria-label="Open the doors"
-      onkeydown={activate}
-      class="door"
-      x1={door.axis === 'y' ? x(door.from) : x(door.at)}
-      y1={door.axis === 'y' ? y(door.at) : y(door.from)}
-      x2={door.axis === 'y' ? x(door.to) : x(door.at)}
-      y2={door.axis === 'y' ? y(door.at) : y(door.to)}
-      onclick={() => handleElementClick(door.id)}
-    />
+  <!-- Room perimeter footprint -->
+  {#each diningHallRooms as room (room.id)}
+    <polygon points={diningHallPolygon(room.footprint)} class="room" />
   {/each}
 
-  <!-- The staffed wall counter and the fixed stools shown behind the crowd. -->
-  <rect
-    x={x(counter.x0)}
-    y={y(counter.z0)}
-    width={(counter.x1 - counter.x0) * SCALE}
-    height={(counter.z1 - counter.z0) * SCALE}
-    class="counter"
-  />
-  {#each stools as centre, index (index)}
-    <circle cx={x(centre)} cy={y(16)} r={0.36 * SCALE} class="stool" />
-  {/each}
-  {#each menuBoards as centre, index (index)}
-    <rect
-      x={x(centre - 1.65)}
-      y={y(10.72)}
-      width={3.3 * SCALE}
-      height={0.35 * SCALE}
-      class="menu"
-    />
+  <!-- Structural pillars -->
+  {#each diningHallColumns as col, index (index)}
+    <rect x={col.x - 16} y={col.y - 16} width="32" height="32" class="pillar">
+      <title>{french ? 'Pilier porteur' : 'Structural column'}</title>
+    </rect>
   {/each}
 
-  <!-- Franklin's isolated corner with vending machines (ch. 379-380) -->
-  <rect x={x(14)} y={y(22)} width={0.8 * SCALE} height={3 * SCALE} class="vending" />
-  <rect x={x(14)} y={y(25.2)} width={0.8 * SCALE} height={1.5 * SCALE} class="vending" />
-
-  <rect x={x(14)} y={y(28)} width={0.6 * SCALE} height={2.5 * SCALE} class="seat" />
-  <rect
-    role="button"
-    tabindex="0"
-    aria-label="Inspect map area"
-    onkeydown={activate}
-    x={x(14.6)}
-    y={y(28.25)}
-    width={1.2 * SCALE}
-    height={2 * SCALE}
-    class="table"
-    onclick={() => handleElementClick('franklin-table')}
-  />
-
-  <rect x={x(14)} y={y(31)} width={0.8 * SCALE} height={3.5 * SCALE} class="vending" />
-  <text x={x(16.5)} y={y(29.4)} class="sublabel">Franklin's table · ch. 379</text>
-
-  <rect
-    role="button"
-    tabindex="0"
-    aria-label="Inspect map area"
-    onkeydown={activate}
-    class="platform"
-    x={x(platform.at[0] - platform.size[0] / 2)}
-    y={y(platform.at[1] - platform.size[1] / 2)}
-    width={platform.size[0] * SCALE}
-    height={platform.size[1] * SCALE}
-    onclick={() => handleElementClick('platform')}
-  />
-  <text x={x(29.75)} y={y(26.6)} class="sublabel">Raised platform</text>
-
-  {#each tables as centre, index (centre)}
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={activate}
-      class="table"
-      x={x(centre - 0.5)}
-      y={y(15.25)}
-      width={1 * SCALE}
-      height={22 * SCALE}
-      onclick={() => handleElementClick(`table-${index + 1}`)}
-    />
+  <!-- Shared blueprint fixtures -->
+  {#each diningHallFixtures as fixture (fixture.id)}
+    {@const isCounter = fixture.kind === 'counter'}
+    {@const isMenu = fixture.id.includes('menu-board')}
+    {@const isTable = fixture.kind === 'table'}
+    {@const isSeat = fixture.kind === 'seat'}
+    {@const isPlatform = fixture.kind === 'platform' || fixture.id.includes('-platform-')}
+    {@const isVending = fixture.kind === 'cabinet' || fixture.id.includes('vending')}
+    {@const isDuct = fixture.kind === 'duct'}
+    <polygon
+      points={fixture.polygon}
+      class={isCounter
+        ? 'counter'
+        : isMenu
+          ? 'menu'
+          : isPlatform
+            ? 'platform'
+            : isVending
+              ? 'vending'
+              : isTable
+                ? 'table'
+                : isSeat
+                  ? 'seat'
+                  : isDuct
+                    ? 'duct'
+                    : 'table'}
+    >
+      <title>{french ? fixture.nameFr : fixture.name}</title>
+    </polygon>
   {/each}
 
-  <text x={x(19.5)} y={y(14.05)} class="label" font-size="11">
-    Six low boards · diners sit directly on the deck
+  <!-- Fixed counter stools along customer aisle -->
+  {#each stoolPoints as stool, index (index)}
+    <circle cx={stool.x} cy={stool.y} r={9} class="stool">
+      <title>{french ? 'Tabouret fixe' : 'Fixed stool'}</title>
+    </circle>
+  {/each}
+
+  <!-- Doorways connecting to corridors and passages -->
+  {#each diningHallDoors as door, index (index)}
+    <line x1={door.from.x} y1={door.from.y} x2={door.to.x} y2={door.to.y} class="door">
+      <title>{french ? 'Accès couloir' : 'Passage doorway'}</title>
+    </line>
+  {/each}
+
+  <!-- Annotated canon zones -->
+  <text x="500" y="72" class="sublabel">
+    {french
+      ? 'Passage — le péage Buor est prélevé ici, chap. 358'
+      : 'Passage — the Buor take their toll here, ch. 358'}
   </text>
-  <text x={x(29.75)} y={y(9.4)} class="sublabel"
-    >Passage — the Buor take their toll here, ch. 358</text
-  >
+  <text x="500" y="475" class="sublabel">
+    {french
+      ? 'Estrade centrale · rassemblement de la Brigade fantôme (chap. 377)'
+      : 'Raised platform · Phantom Troupe gathering (ch. 377)'}
+  </text>
+  <text x="210" y="675" class="sublabel">
+    {french
+      ? 'Table isolée de Franklin · chap. 379–380'
+      : 'Franklin’s isolated table · ch. 379–380'}
+  </text>
+  <text x="500" y="930" class="label" font-size="11">
+    {french
+      ? 'Six rangées de tables · les convives s’assoient au ras du pont'
+      : 'Six low boards · diners sit directly on the deck'}
+  </text>
 </svg>
+

@@ -11,6 +11,8 @@ import {
   diningHallSpotAnchors,
   DINING_HALL_VIEWBOX,
 } from '$lib/components/map/projection/diningHallPlan'
+import { spotAnchorFor } from '$lib/components/map/projection/roomAnchors'
+import type { MapMarker } from '$lib/components/map/projection/types'
 
 const ship = theShip()
 const plan = ship.plans.get('tier-5')!
@@ -135,6 +137,29 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
       x: (franklinPos.x / DINING_HALL_VIEWBOX.width) * 100,
       y: (franklinPos.y / DINING_HALL_VIEWBOX.height) * 100,
     })
+
+    const southPlatform = diningHallFixtures.find(({ id }) => id.endsWith('-platform-south'))!
+    const southPos = diningHallPoint(southPlatform.at)
+    expect(diningHallSpotAnchors.fallback).toEqual({
+      x: (southPos.x / DINING_HALL_VIEWBOX.width) * 100,
+      y: (southPos.y / DINING_HALL_VIEWBOX.height) * 100,
+      inferred: true,
+    })
+
+    const franklinAnchor = spotAnchorFor({
+      id: 'franklin-marker',
+      locationId: DINING_HALL_SPACE,
+      characterSlug: 'franklin-bordeau',
+    } as unknown as MapMarker)
+    expect(franklinAnchor?.exact).toBe(true)
+    expect(franklinAnchor?.x).toBeCloseTo(diningHallSpotAnchors.occupants['franklin-bordeau'].x)
+
+    const fallbackAnchor = spotAnchorFor({
+      id: 'generic-passenger',
+      locationId: DINING_HALL_SPACE,
+    } as unknown as MapMarker)
+    expect(fallbackAnchor?.exact).toBe(false)
+    expect(fallbackAnchor?.x).toBeCloseTo(diningHallSpotAnchors.fallback.x)
   })
 
   it('releases the GPU resources when the room is unloaded', () => {

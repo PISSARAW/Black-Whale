@@ -48,9 +48,15 @@ function spot(at: Vec2) {
 const franklinTable = diningHallFixtures.find(({ id }) => id.endsWith('-franklin-table'))!
 const platformSouth = diningHallFixtures.find(({ id }) => id.endsWith('-platform-south'))!
 
+export const diningHallColumns = (ship.plans.get('tier-5')?.columns.get(DINING_HALL) ?? []).map(
+  ([x, z]) => diningHallPoint([x, z]),
+)
+
 export const diningHallSpotAnchors = {
   occupants: {
     'franklin-bordeau': spot(franklinTable.at),
     'chrollo-lucilfer': spot(platformSouth.at),
   },
+  fallback: { ...spot(platformSouth.at), inferred: true },
 }
+

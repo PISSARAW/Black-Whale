@@ -42,23 +42,33 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
   - Les 4 piliers carrés centraux sont renforcés par des embases évasées rivetées et
     des corbeaux structurels en tête soutenant les fermes maîtresses.
   - Plinthe industrielle de protection en tôle larmée le long des cloisons.
-- **Comptoir de distribution et menus** :
+- **Comptoir de distribution, tabourets et dépose-plateaux** :
   - Comptoir de service continu Ouest (`service-counter`) de 25 m : plateau en acier
     inoxydable, glissières de guidage à trois barres pour plateaux repas (tray slides),
     façade renforcée et vitrines de protection hygiénique.
+  - Ligne de tabourets fixes sur piétement chromé avec assise sombre le long de la travée
+    clients du comptoir.
+  - Meubles inox de dépose de plateaux repas et goulottes vide-ordures aux deux extrémités
+    du comptoir.
   - Panneaux de menu rétro-éclairés (`menu-board`) suspendus au-dessus du comptoir,
     découpés en registres lisibles.
+- **Passages et seuils de coursives (taxe Buor)** :
+  - Bornes de guidage et pupitre de contrôle aux seuils des coursives Nord et Sud
+    matérialisant le poste de perception de la taxe Buor (chapitre 358).
+  - Chemins de câbles électriques industriels longitudinaux suspendus sous les fermes.
 - **Distributeurs automatiques (vending machines)** :
   - Batterie de distributeurs automatiques sur le mur Est (`dispensers`) : carrosseries
     sombres, vitrines de sélection lumineuses, fentes de paiement et réceptacles.
 - **Tables, bancs et vie du réfectoire** :
   - Estrades centrales VIP (`platform-north`, `platform-south`) : encadrement avec
     marche biseautée, tables entourées de bancs sur quatre faces et garnies de plateaux
-    repas, bols de ramen/bouillon, gobelets et baguettes.
-  - Table isolée de Franklin (`franklin-table`) : plateau de cantine, boisson et bancs.
+    repas, bols de ramen/bouillon, gobelets, baguettes, théière centrale, coupes en
+    céramique pour les membres de la Brigade et ménagère de condiments.
+  - Table isolée de Franklin (`franklin-table`) : plateau de cantine, grande chope,
+    ménagère et bancs face aux distributeurs.
   - Tables communes et bancs : piètements tubulaires métalliques, plateaux stratifiés
-    à chants protégés et vaisselle collective dispersée évoquant l'affluence décrite
-    au chapitre 371.
+    à chants protégés, vaisselle collective et ménagères de condiments (shoyu, sel,
+    serviettes) réparties le long des travées.
 
 ## 3. Cohérence avec le banquet et le salon royal
 
@@ -70,6 +80,9 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
 - Respect du mode preuve (`reveal`) : les fioritures architecturales s'effacent pour
   rendre compte uniquement de la doctrine documentaire.
 - Libération intégrale des géométries et matériaux avec `disposeBanquetDetails`.
+- Projection cartographique unifiée 2D (`diningHallPlan.ts`, `central-dining-hall.svelte`,
+  `roomAnchors.ts`) calquée sur l'architecture de `banquetPlan` et `royalSalonPlan`,
+  garantissant une cohérence parfaite des ancres de personnages et du mobilier.
 
 ## 4. Limites
 

@@ -218,4 +218,40 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
     at: [bounds.maxX - 0.04, floor + 0.225, (bounds.minZ + bounds.maxZ) / 2],
     colour: DARK_STEEL,
   })
+
+  // 6. Buor toll passage guide stanchions and guard station (ch. 358)
+  passageBarrier({ into, floor, z: bounds.minZ + 0.4 })
+  passageBarrier({ into, floor, z: bounds.maxZ - 0.4 })
+  into.box([0.6, 1.05, 0.45], {
+    at: [27.5, floor + 0.525, bounds.minZ + 0.8],
+    colour: DARK_STEEL,
+  })
+
+  // 7. Overhead electrical cable trays beneath the trusses
+  cableTrays(into, [bounds.minZ, bounds.maxZ], ceiling - 0.7)
 }
+
+interface BarrierOptions {
+  into: BanquetDetailBuilder
+  floor: number
+  z: number
+}
+
+function passageBarrier(options: BarrierOptions) {
+  const { into, floor, z } = options
+  for (const x of [28.25, 31.25]) {
+    into.cylinder({ radius: 0.04, height: 1.0, sides: 8 }, { at: [x, floor + 0.5, z], colour: STEEL })
+    into.cylinder({ radius: 0.1, height: 0.03, sides: 8 }, { at: [x, floor + 0.015, z], colour: DARK_STEEL })
+  }
+}
+
+function cableTrays(into: BanquetDetailBuilder, spanZ: [number, number], y: number) {
+  const [minZ, maxZ] = spanZ
+  const lengthZ = maxZ - minZ
+  const midZ = (minZ + maxZ) / 2
+  for (const x of [19.0, 40.5]) {
+    into.box([0.3, 0.05, lengthZ], { at: [x, y, midZ], colour: DARK_STEEL })
+    into.box([0.18, 0.03, lengthZ], { at: [x, y + 0.03, midZ], colour: 0x222428 })
+  }
+}
+

@@ -13,6 +13,13 @@ export const TRAY_BROWN = 0x483a30
 export const BOWL_WHITE = 0xdad6cb
 export const CUP_BLUE = 0x384c59
 export const CHOPSTICKS = 0xc2ab7a
+export const CADDY_BASE = 0x2a2c2e
+export const SAUCE_BOTTLE = 0x1f1914
+export const SAUCE_CAP = 0x8a201c
+export const SHAKER = 0xcccccc
+export const NAPKIN_HOLDER = 0x909498
+export const NAPKIN_PAPER = 0xf5f3ee
+export const TEACUP = 0xdcd8cf
 
 interface FurnitureContext {
   into: BanquetDetailBuilder
@@ -46,42 +53,70 @@ function placeMealTray(into: BanquetDetailBuilder, at: Point3, trayColour = TRAY
   })
 }
 
-/** Refectory table with laminated top, protective edging and tubular steel legs. */
-export function dressDiningTable(context: FurnitureContext): void {
-  const { into, structure, floor } = context
-  const [x, z] = structure.at
-  const [w, d] = structure.size
-  const y = floor + structure.base
-  const topY = y + structure.height
+/** Places a table condiment caddy with soy sauce bottle, salt shaker and napkin dispenser. */
+function placeCondimentCaddy(into: BanquetDetailBuilder, at: Point3) {
+  const [x, y, z] = at
 
-  // Laminated table top
-  into.box([w, 0.045, d], {
-    at: [x, topY - 0.022, z],
-    colour: TABLE_TOP,
-  })
+  // Steel tray base
+  into.box([0.18, 0.015, 0.12], { at: [x, y + 0.0075, z], colour: CADDY_BASE })
 
-  // Protective dark edge banding
-  into.box([w + 0.02, 0.05, d + 0.02], {
-    at: [x, topY - 0.025, z],
-    colour: TABLE_EDGE,
-  })
+  // Soy sauce bottle with red spout cap
+  into.cylinder(
+    { radius: 0.026, bottom: 0.03, height: 0.1, sides: 8 },
+    { at: [x - 0.045, y + 0.05, z - 0.01], colour: SAUCE_BOTTLE },
+  )
+  into.cylinder(
+    { radius: 0.014, height: 0.025, sides: 8 },
+    { at: [x - 0.045, y + 0.11, z - 0.01], colour: SAUCE_CAP },
+  )
 
-  // 4 tubular steel legs
+  // Salt shaker
+  into.cylinder(
+    { radius: 0.02, height: 0.075, sides: 8 },
+    { at: [x + 0.045, y + 0.038, z - 0.025], colour: SHAKER },
+  )
+
+  // Metal napkin dispenser with white paper napkins
+  into.box([0.03, 0.08, 0.08], { at: [x + 0.045, y + 0.04, z + 0.025], colour: NAPKIN_HOLDER })
+  into.box([0.022, 0.075, 0.07], { at: [x + 0.045, y + 0.04, z + 0.025], colour: NAPKIN_PAPER })
+}
+
+interface TableLegsOptions {
+  into: BanquetDetailBuilder
+  origin: [number, number, number]
+  size: [number, number]
+  height: number
+}
+
+function placeTableLegs(options: TableLegsOptions): void {
+  const { into, origin, size, height } = options
+  const [x, y, z] = origin
+  const [w, d] = size
   const legOffsetX = w / 2 - 0.25
   const legOffsetZ = d / 2 - 0.2
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {
       into.cylinder(
-        { radius: 0.032, height: structure.height - 0.05, sides: 8 },
+        { radius: 0.032, height: height - 0.05, sides: 8 },
         {
-          at: [x + sx * legOffsetX, y + (structure.height - 0.05) / 2, z + sz * legOffsetZ],
+          at: [x + sx * legOffsetX, y + (height - 0.05) / 2, z + sz * legOffsetZ],
           colour: TABLE_LEGS,
         },
       )
     }
   }
+}
 
-  // Scattered trays along long tables (every ~2.2 metres)
+interface TablewareRowOptions {
+  into: BanquetDetailBuilder
+  at: [number, number, number]
+  size: [number, number]
+}
+
+function placeTableTableware(options: TablewareRowOptions): void {
+  const { into, at, size } = options
+  const [x, topY, z] = at
+  const [w, d] = size
   const isHorizontal = w > d
   const length = isHorizontal ? w : d
   const count = Math.max(1, Math.floor(length / 2.4))
@@ -92,7 +127,32 @@ export function dressDiningTable(context: FurnitureContext): void {
     const pz = isHorizontal ? z : z - d / 2 + i * step
     const trayColour = i % 2 === 0 ? TRAY_RED : TRAY_BROWN
     placeMealTray(into, [px, topY, pz], trayColour)
+
+    if (i < count) {
+      const caddyX = isHorizontal ? px + step / 2 : px
+      const caddyZ = isHorizontal ? pz : pz + step / 2
+      placeCondimentCaddy(into, [caddyX, topY, caddyZ])
+    }
   }
+}
+
+/** Refectory table with laminated top, protective edging and tubular steel legs. */
+export function dressDiningTable(context: FurnitureContext): void {
+  const { into, structure, floor } = context
+  const [x, z] = structure.at
+  const [w, d] = structure.size
+  const y = floor + structure.base
+  const topY = y + structure.height
+
+  // Laminated table top and protective edge banding
+  into.box([w, 0.045, d], { at: [x, topY - 0.022, z], colour: TABLE_TOP })
+  into.box([w + 0.02, 0.05, d + 0.02], { at: [x, topY - 0.025, z], colour: TABLE_EDGE })
+
+  // 4 tubular steel legs
+  placeTableLegs({ into, origin: [x, y, z], size: [w, d], height: structure.height })
+
+  // Scattered trays and condiment caddies along long tables
+  placeTableTableware({ into, at: [x, topY, z], size: [w, d] })
 }
 
 /** Dining bench with finished wooden plank and steel stanchion feet. */
@@ -173,6 +233,17 @@ export function dressCentralVIPPlatform(context: FurnitureContext): void {
     { radius: 0.1, height: 0.18, sides: 10 },
     { at: [x + 0.45, topY + 0.11, z], colour: 0x3d3a36 },
   )
+
+  // Condiment caddy and ceramic teacups for the 10 Spiders
+  placeCondimentCaddy(into, [x - 0.5, topY + 0.02, z])
+  for (const dx of [-1.8, -0.6, 0.6, 1.8]) {
+    for (const dz of [-0.8, 0.8]) {
+      into.cylinder(
+        { radius: 0.035, bottom: 0.028, height: 0.05, sides: 8 },
+        { at: [x + dx + 0.24, topY + 0.045, z + dz * 0.8], colour: TEACUP },
+      )
+    }
+  }
 }
 
 /** Franklin's solo waiting table (chapters 379-380). */
@@ -199,10 +270,11 @@ export function dressFranklinTable(context: FurnitureContext): void {
     }
   }
 
-  // Franklin's meal tray and large mug
+  // Franklin's meal tray, condiment caddy and large mug
   placeMealTray(into, [x, topY, z], TRAY_RED)
+  placeCondimentCaddy(into, [x - 0.35, topY, z])
   into.cylinder(
     { radius: 0.055, height: 0.14, sides: 12 },
-    { at: [x + 0.5, topY + 0.07, z + 0.1], colour: 0x5a6d7a },
+    { at: [x + 0.45, topY + 0.07, z + 0.1], colour: 0x5a6d7a },
   )
 }

@@ -27,7 +27,6 @@ export interface HospitalContext {
 function hospitalBed(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [x, z] = structure.at
   const [w, d] = structure.size
-  const h = structure.height
 
   // Tubular bed frame
   into.box([w, 0.08, d], {

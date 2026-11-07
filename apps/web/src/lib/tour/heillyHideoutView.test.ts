@@ -4,16 +4,12 @@ import { theShip, floorOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import {
   buildHeillyHideoutDetails,
-  HEILLY_COMMUNAL,
-  HEILLY_CORRIDOR,
-  HEILLY_LAUNDRY,
-  HEILLY_OFFICE,
   HEILLY_PROCESSING,
   HEILLY_SPACES,
   heillySurfacePlan,
 } from './heillyHideoutView'
 import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
-import { pointInPolygon, structureFootprint } from './geometry'
+import { pointInPolygon } from './geometry'
 
 const ship = theShip()
 const plan = ship.plans.get('interior-heilly-hideout')!

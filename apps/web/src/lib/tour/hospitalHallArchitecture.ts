@@ -1,4 +1,3 @@
-import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
   CLINICAL_MINT,
   CLINICAL_TEAL,

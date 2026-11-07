@@ -3,7 +3,6 @@ import type { Structure } from './types'
 import {
   CHAIR_FABRIC,
   CHROME,
-  CLINICAL_TEAL,
   CLINICAL_WHITE,
   DESK_WOOD,
   MONITOR_FRAME,

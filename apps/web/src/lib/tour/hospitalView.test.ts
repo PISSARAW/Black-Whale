@@ -5,11 +5,7 @@ import { disposeBanquetDetails } from './banquetDetailBuilder'
 import {
   buildHospitalDetails,
   HOSPITAL_CLINIC,
-  HOSPITAL_HALL,
-  HOSPITAL_RESEARCH,
   HOSPITAL_SPACES,
-  HOSPITAL_STAFF,
-  HOSPITAL_SUPPLIES,
   hospitalSurfacePlan,
 } from './hospitalView'
 import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'

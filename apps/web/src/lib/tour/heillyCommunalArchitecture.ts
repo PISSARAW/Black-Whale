@@ -1,4 +1,4 @@
-import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
+import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { Space, Structure } from './types'
 import {
   COOLER_BODY,
@@ -39,7 +39,6 @@ function largeTable(into: BanquetDetailBuilder, structure: Structure, floor: num
   })
   // Sturdy steel legs and crossbeam
   const halfW = w / 2 - 0.25
-  const halfD = d / 2 - 0.25
   for (const dx of [-halfW, halfW]) {
     into.box([0.1, h - 0.06, d - 0.4], {
       at: [x + dx, floor + (h - 0.06) / 2, z],
@@ -128,7 +127,6 @@ function surveillanceMonitorBank(into: BanquetDetailBuilder, floor: number): voi
 
 function waterDispenser(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [x, z] = structure.at
-  const h = structure.height
 
   // Main cooler body
   into.box([0.42, 0.95, 0.42], {

@@ -18,12 +18,12 @@
   viewBox="0 0 1000 520"
   role="img"
   aria-label={french
-    ? 'Plan de la salle du banquet, trône et scène aux extrémités opposées'
+    ? 'Plan de la salle des fêtes, trône et scène aux extrémités opposées'
     : 'Banquet hall plan, with the throne and stage at opposite ends'}
   class="w-full h-full rounded-lg bg-[#050505] text-[#fffff0]"
 >
   <text x="500" y="27" text-anchor="middle" fill="currentColor" font-size="20"
-    >{french ? 'Salle du banquet' : 'Banquet Hall'}</text
+    >{french ? 'Salle des fêtes' : 'Banquet Hall'}</text
   >
   <text x="500" y="47" text-anchor="middle" fill="#b1a58d" font-size="12"
     >{french ? 'Niveau 1-A · Chap. 359 et 383' : 'Tier 1-A · Ch. 359 and 383'}</text

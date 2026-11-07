@@ -137,6 +137,13 @@ describe('the inaugural banquet reconstruction', () => {
         ),
       ).toBe(false)
     }
+    const daisView = mangaViewById('banquet-royal-dais')!
+    expect(daisView.staging).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ characterId: 'nasubi-hui-guo-rou', pose: 'seated' }),
+        expect.objectContaining({ characterId: 'prince-benjamin' }),
+      ]),
+    )
   })
 
   it('separates the performance stage from the royal dais and preserves the backstage crossing', () => {

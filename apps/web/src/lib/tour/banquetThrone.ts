@@ -121,6 +121,15 @@ function royalTable({ into, dais, floor }: ThroneContext): void {
     into.curve(path, 0.075, { at: [x, y, z], colour: CARVED })
   }
   into.cylinder({ radius: 0.18, height: 0.025 }, { at: [x, y + 1.1, z], colour: 0xe2ded0 })
+  // The king's golden goblet and banquet dish seen beside him in ch. 359
+  into.cylinder(
+    { radius: 0.04, bottom: 0.02, height: 0.09, sides: 8 },
+    { at: [x + 0.14, y + 1.13, z - 0.08], colour: 0xb39961 },
+  )
+  into.cylinder(
+    { radius: 0.13, bottom: 0.16, height: 0.07, sides: 8 },
+    { at: [x - 0.12, y + 1.12, z + 0.05], colour: 0xc8c2b0 },
+  )
 }
 
 export function dressBanquetThrone(context: ThroneContext): void {

@@ -6,6 +6,10 @@ const STONE = 0xcac5b5
 const RECESS = 0xa39f91
 const MOULDING = 0xe0d7bd
 const GRILLE = 0x494b49
+const POT = 0x8a7258
+const FOLIAGE = 0x2d4829
+const FOLIAGE_LIGHT = 0x3d5d36
+const DRAPE = 0xb8b19e
 
 interface WallSurface {
   into: BanquetDetailBuilder
@@ -38,6 +42,35 @@ function wallBox(
     rotation: [0, wall.run.angle, 0],
     colour: options.colour,
   })
+}
+
+/** Side curtains framing the tall window bays, visible in chapter 359. */
+function bayDrapes(wall: WallSurface, panel: Panel): void {
+  const drapeWidth = 0.14
+  const { along, width, bottom, height } = panel
+  for (const sign of [-1, 1]) {
+    wallBox(wall, [drapeWidth, height - 0.1, 0.08], {
+      along: along + sign * (width / 2 - drapeWidth / 2),
+      y: bottom + height / 2,
+      inset: 0.14,
+      colour: DRAPE,
+    })
+    wallBox(wall, [drapeWidth + 0.02, 0.05, 0.09], {
+      along: along + sign * (width / 2 - drapeWidth / 2),
+      y: bottom + height * 0.42,
+      inset: 0.15,
+      colour: MOULDING,
+    })
+  }
+}
+
+/** Potted indoor shrubs standing between window bays in chapter 359. */
+function pottedPlant(wall: WallSurface, along: number): void {
+  wallBox(wall, [0.34, 0.42, 0.34], { along, y: 0.21, inset: 0.24, colour: POT })
+  wallBox(wall, [0.38, 0.045, 0.38], { along, y: 0.42, inset: 0.24, colour: MOULDING })
+  wallBox(wall, [0.04, 0.35, 0.04], { along, y: 0.61, inset: 0.24, colour: 0x4a3b2c })
+  wallBox(wall, [0.44, 0.46, 0.44], { along, y: 0.98, inset: 0.24, colour: FOLIAGE })
+  wallBox(wall, [0.34, 0.38, 0.34], { along, y: 1.28, inset: 0.24, colour: FOLIAGE_LIGHT })
 }
 
 function frame(wall: WallSurface, panel: Panel, inset = 0.15): void {
@@ -109,6 +142,7 @@ function upperBay(wall: WallSurface, panel: Panel, grille: boolean): void {
   })
   frame(wall, panel)
   frame(wall, { along, bottom: bottom + 0.16, height: height - 0.32, width: width - 0.32 }, 0.17)
+  bayDrapes(wall, panel)
   if (grille) {
     for (const fraction of [-0.3, -0.1, 0.1, 0.3]) {
       wallBox(wall, [0.035, height - 0.32, 0.04], {
@@ -154,6 +188,9 @@ function wallRun(wall: WallSurface, height: number): void {
       y: 4.48 + (height - 4.72) / 2,
       colour: STONE,
     })
+    if (bay.index % 2 === 0) {
+      pottedPlant(wall, bay.along - bay.width / 2 - 0.14)
+    }
   }
 }
 

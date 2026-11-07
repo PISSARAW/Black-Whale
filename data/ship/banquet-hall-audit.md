@@ -22,7 +22,15 @@ la case de l’alliance Tubeppa–Tserriednich au chapitre 362.
   auparavant une rangée dans l'axe du trône. Leurs centres servent aussi aux
   collisions. Leur espacement métrique reste une estimation du modèle.
 - Les nappes plissées et les couverts habillent les tables du plan parcouru.
-  Le trône est contenu sur l’estrade royale, les rideaux suivent leurs volumes,
+  Chaque table est désormais pourvue de sa lampe de table à abat-jour conique
+  lumineux et entourée de chaises de banquet cannées à dossier galbé, fidèles
+  au mobilier de réception visible au premier plan du chapitre 359 (« Niveau 1 — Salle des fêtes »).
+- Les baies vitrées latérales reçoivent des rideaux drapés latéraux et des
+  arbustes d'intérieur en pot ornemental disposés le long des colonnes.
+- L'estrade royale accueille le roi Nasubi sur son fauteuil sculpté avec sa coupe
+  dorée et son plat de banquet, tandis que le premier prince Benjamin se tient
+  au premier plan dans la vue canonique `banquet-royal-dais` (chapitre 359, page 13).
+- Le trône est contenu sur l’estrade royale, les rideaux suivent leurs volumes,
   les cannelures suivent les colonnes et les lustres la grille d’éclairage.
 - Les détails sont rattachés à chaque salle, masqués avec elle, libérés avec
   le pont et retirés dans la vue des provenances. Un objet déplacé par un

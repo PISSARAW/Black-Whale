@@ -1,6 +1,22 @@
-import { mangaView as view, type MangaView } from './mangaViewModel'
+import { mangaView as view, type MangaCastStaging, type MangaView } from './mangaViewModel'
 import { BANQUET_SERVICE, BANQUET_SPACE } from './banquetView'
 import fixture from '../../../../../data/ship/melody-concert.json'
+
+const royalDaisStaging: readonly MangaCastStaging[] = [
+  {
+    characterId: 'nasubi-hui-guo-rou',
+    at: [-1.0, -23.05],
+    floorOffset: 0.63,
+    heading: 0,
+    pose: 'seated',
+  },
+  {
+    characterId: 'prince-benjamin',
+    at: [-1.3, -19.0],
+    heading: 0.1,
+    pose: 'idle',
+  },
+]
 
 export const MANGA_BANQUET_VIEWS: MangaView[] = [
   view({
@@ -34,11 +50,12 @@ export const MANGA_BANQUET_VIEWS: MangaView[] = [
     triggerSpaceIds: [BANQUET_SERVICE],
     chapter: 359,
     volume: 34,
+    pages: '11–12',
     at: [-1, 12],
     target: [-1, -26],
     pitch: 0.08,
-    label: 'The inaugural banquet, looking between the round tables towards the royal dais',
-    labelFr: 'Le banquet inaugural, entre les tables rondes face à l’estrade royale',
+    label: 'Tier 1 — Banquet Hall: the inaugural banquet facing the royal dais',
+    labelFr: 'Niveau 1 — Salle des fêtes : le banquet inaugural face à l’estrade royale',
   }),
   view({
     id: 'banquet-royal-dais',
@@ -46,11 +63,13 @@ export const MANGA_BANQUET_VIEWS: MangaView[] = [
     triggerSpaceIds: [BANQUET_SERVICE],
     chapter: 359,
     volume: 34,
+    pages: '13',
     at: [-1, -17.5],
     target: [-1, -23.05],
     pitch: 0.12,
-    label: 'The carved royal chair and its separate curtained dais at the inaugural banquet',
-    labelFr: 'Le fauteuil royal sculpté et son estrade drapée distincte au banquet inaugural',
+    label: 'King Nasubi on the royal dais and Prince Benjamin at the inaugural banquet',
+    labelFr: 'Le roi Nasubi sur l’estrade royale et le prince Benjamin au banquet inaugural',
+    staging: royalDaisStaging,
   }),
   view({
     id: 'banquet-performance-stage',

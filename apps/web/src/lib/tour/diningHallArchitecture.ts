@@ -116,6 +116,28 @@ function catwalk(into: BanquetDetailBuilder, options: CatwalkOptions) {
   into.box([1.0, 0.35, 0.16], { at: [x, y - 0.15, maxZ - 0.08], colour: DARK_STEEL })
 }
 
+function dressLadderCrinoline(options: {
+  into: BanquetDetailBuilder
+  x: number
+  z: number
+  bottomY: number
+  topY: number
+}): void {
+  const { into, x, z, bottomY, topY } = options
+  const cageHeight = topY - bottomY
+  for (let cy = bottomY; cy < topY; cy += 1.2) {
+    into.box([0.5, 0.025, 0.025], { at: [x, cy, z - 0.35], colour: DARK_STEEL })
+    into.box([0.025, 0.025, 0.35], { at: [x - 0.24, cy, z - 0.175], colour: DARK_STEEL })
+    into.box([0.025, 0.025, 0.35], { at: [x + 0.24, cy, z - 0.175], colour: DARK_STEEL })
+  }
+  for (const dx of [-0.24, 0, 0.24]) {
+    into.box([0.02, cageHeight, 0.02], {
+      at: [x + dx, bottomY + cageHeight / 2, z - 0.35],
+      colour: DARK_STEEL,
+    })
+  }
+}
+
 function dressCatwalkLadder(options: {
   into: BanquetDetailBuilder
   x: number
@@ -134,6 +156,7 @@ function dressCatwalkLadder(options: {
   for (let y = floor + 0.3; y < topY; y += 0.35) {
     into.box([0.4, 0.025, 0.025], { at: [x, y, z], colour: STEEL })
   }
+  dressLadderCrinoline({ into, x, z, bottomY: floor + 2.2, topY })
 }
 
 /** Hanging industrial cage lamps suspended from ceiling with junction box. */

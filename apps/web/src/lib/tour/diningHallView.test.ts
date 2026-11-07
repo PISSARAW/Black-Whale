@@ -97,6 +97,22 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
     const ceilingVertices = positions.filter(([, y]) => y >= 8.95)
     expect(ceilingVertices.length).toBeGreaterThan(50)
 
+    // Catwalk hangers reaching the 9.0 m ceiling on both longitudinal lines
+    const catwalkWestCeiling = positions.filter(([x, y]) => Math.abs(x - 23.5) < 0.6 && y >= 8.95)
+    const catwalkEastCeiling = positions.filter(([x, y]) => Math.abs(x - 37.5) < 0.6 && y >= 8.95)
+    expect(catwalkWestCeiling.length).toBeGreaterThanOrEqual(10)
+    expect(catwalkEastCeiling.length).toBeGreaterThanOrEqual(10)
+
+    // Menu board hangers reaching the 9.0 m ceiling above the service counter
+    const menuBoardCeiling = positions.filter(([x, y]) => Math.abs(x - 14.7) < 0.3 && y >= 8.95)
+    expect(menuBoardCeiling.length).toBeGreaterThanOrEqual(10)
+
+    // South wall catwalk access ladder with safety cage crinoline
+    const ladderCageVertices = positions.filter(
+      ([x, y, z]) => Math.abs(x - 23.5) < 0.35 && y >= 2.2 && y <= 7.65 && z >= 41.4 && z <= 41.9,
+    )
+    expect(ladderCageVertices.length).toBeGreaterThanOrEqual(20)
+
     // Geometry reaches flush to the West wall at x = 14.0 (within 0.05 m)
     const westWallVertices = positions.filter(([x]) => x <= 14.05)
     expect(westWallVertices.length).toBeGreaterThan(50)

@@ -30,9 +30,9 @@ function buildLiving(options: {
   const floor = floorOf(space, plan.tier)
 
   dressCamillaLivingArchitecture({ THREE, into, plan, space })
-  dressCamillaChaise(new CamillaSurface(into, [-5.5, 0, 2.0], floor, 0))
-  dressCamillaTable(new CamillaSurface(into, [-3.9, 0, 2.0], floor, 0))
-  dressUntouchablesSeats(new CamillaSurface(into, [0, 0, 0], floor, 0))
+  dressCamillaChaise(new CamillaSurface(into, [-5.5, 0, 2.0], { floor }))
+  dressCamillaTable(new CamillaSurface(into, [-3.9, 0, 2.0], { floor }))
+  dressUntouchablesSeats(new CamillaSurface(into, [0, 0, 0], { floor }))
 
   return into.finish('camilla-living-details')
 }
@@ -47,7 +47,7 @@ function buildDining(options: {
   const floor = floorOf(space, plan.tier)
 
   dressCamillaDiningArchitecture({ THREE, into, plan, space })
-  dressDiningTable(new CamillaSurface(into, [6.0, 0, -2.7], floor, 0))
+  dressDiningTable(new CamillaSurface(into, [6.0, 0, -2.7], { floor }))
 
   return into.finish('camilla-dining-details')
 }
@@ -62,7 +62,7 @@ function buildEntrance(options: {
   const floor = floorOf(space, plan.tier)
 
   dressCamillaEntranceArchitecture({ THREE, into, plan, space })
-  dressMusseSurveillanceDesk(new CamillaSurface(into, [0.4, 0, -6.5], floor, 0))
+  dressMusseSurveillanceDesk(new CamillaSurface(into, [0.4, 0, -6.5], { floor }))
 
   return into.finish('camilla-entrance-details')
 }

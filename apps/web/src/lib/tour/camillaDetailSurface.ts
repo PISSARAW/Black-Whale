@@ -32,14 +32,24 @@ export interface FrameOptions {
   colour?: number
 }
 
+export interface CamillaSurfaceContext {
+  floor: number
+  angle?: number
+}
+
 /** Local coordinate system for Camilla's apartment suite. */
 export class CamillaSurface {
+  readonly floor: number
+  readonly angle: number
+
   constructor(
     readonly into: BanquetDetailBuilder,
     readonly origin: Point3,
-    readonly floor: number,
-    readonly angle: number = 0,
-  ) {}
+    context: CamillaSurfaceContext,
+  ) {
+    this.floor = context.floor
+    this.angle = context.angle ?? 0
+  }
 
   point([x, y, z]: Point3): Point3 {
     const cos = Math.cos(this.angle)
@@ -62,9 +72,11 @@ export class CamillaSurface {
   cylinder(
     size: { radius: number; height: number; bottom?: number; sides?: number },
     at: Point3,
-    colour: number,
-    rotation: Point3 = [0, this.angle, 0],
+    colourOrOptions: number | { colour: number; rotation?: Point3 },
   ): void {
+    const isNum = typeof colourOrOptions === 'number'
+    const colour = isNum ? colourOrOptions : colourOrOptions.colour
+    const rotation = (!isNum && colourOrOptions.rotation) ? colourOrOptions.rotation : ([0, this.angle, 0] as Point3)
     this.into.cylinder(size, { at: this.point(at), rotation, colour })
   }
 

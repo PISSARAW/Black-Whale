@@ -71,7 +71,7 @@ export const NEN_MODEL_REFERENCES = {
   'halkenburg-guardian': {
     chapters: [349, 382],
     design:
-      'Narrow horizontal cyclops eye under a heavy brow, broad muzzle, lateral horns and layered pointed feathers, perched on shoulders.',
+      'Curved ribbed ram horns, spiky crown, narrow horizontal cyclops eye under a heavy brow, broad muzzle, lateral spines, ribbed chin, dark torso and predatory claws flanking shoulders, covered in layered pointed feathers.',
   },
   'nasubi-guardian': {
     chapters: [349],

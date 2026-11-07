@@ -21,6 +21,7 @@ import { justiceSpotAnchors } from './justiceBureauPlan'
 import { policeSpotAnchors } from './policeStationPlan'
 import { cineplexSpotAnchors } from './cineplexPlan'
 import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
+import { vvipRecreationSpotAnchors } from './vvipRecreationPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -191,6 +192,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-king-living-quarters': salonSpotAnchors,
   // The shared banquet projection keeps the king on the drawn dais.
   'tier-1-banquet-hall': banquetSpotAnchors,
+  // Grand VVIP recreation hall with double stairs and mezzanine (ch. 419).
+  'tier-1-vvip-recreation-hall': vvipRecreationSpotAnchors,
   // Nasubi stands by Momoze's coffin in the secret rotunda (ch. 371).
   'tier-1-princes-burial-chamber': burialSpotAnchors,
   // Queen Unma sits in her carved armchair in Room 01, ch. 403.

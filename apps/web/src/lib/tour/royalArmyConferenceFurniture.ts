@@ -1,4 +1,4 @@
-import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
+import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
   ARMY_CHAIR_CUSHION,
   ARMY_CHAIR_LEATHER,
@@ -60,7 +60,7 @@ export function dressLectern(
   for (const offset of [-0.22, 0.22]) {
     surface.cylinder({ radius: 0.007, height: 0.26, sides: 8 }, [offset, h + 0.15, 0.1], ARMY_MIC_STEM)
     surface.cylinder({ radius: 0.014, height: 0.05, sides: 10 }, [offset, h + 0.28, 0.08], ARMY_STEEL)
-    surface.sphere([0.015, 0.006, 0.015], [offset, h + 0.27, 0.08], ARMY_MIC_LED, true)
+    surface.sphere([0.015, 0.006, 0.015], [offset, h + 0.27, 0.08], { colour: ARMY_MIC_LED, glow: true })
   }
 
   // Briefing folder and speaker notes
@@ -112,19 +112,12 @@ function chairArmrests(surface: RoyalArmyConferenceSurface): void {
 }
 
 function resolveChairAngle(structureId: string): number {
-  if (structureId.endsWith('chair-01') || structureId.endsWith('chair-02') ||
-      structureId.endsWith('chair-03') || structureId.endsWith('chair-04') ||
-      structureId.endsWith('chair-05')) {
-    return 0 // Facing South (+Z) towards U-table interior and audience
-  }
-  if (structureId.endsWith('chair-06') || structureId.endsWith('chair-07') ||
-      structureId.endsWith('chair-08') || structureId.endsWith('chair-09')) {
-    return -Math.PI / 2 // Facing East (+X) towards port arm
-  }
-  if (structureId.endsWith('chair-10') || structureId.endsWith('chair-11') ||
-      structureId.endsWith('chair-12') || structureId.endsWith('chair-13')) {
-    return Math.PI / 2 // Facing West (-X) towards starboard arm
-  }
+  const match = structureId.match(/chair-(\d+)$/)
+  if (!match) return 0
+  const num = parseInt(match[1], 10)
+  if (num >= 1 && num <= 5) return 0 // Facing South (+Z) towards U-table interior and audience
+  if (num >= 6 && num <= 9) return -Math.PI / 2 // Facing East (+X) towards port arm
+  if (num >= 10 && num <= 13) return Math.PI / 2 // Facing West (-X) towards starboard arm
   return Math.PI // chair-14 & 15 facing North (-Z)
 }
 

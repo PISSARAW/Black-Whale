@@ -1023,7 +1023,6 @@
 - **Objets directement visibles dans les cases :** 9/10
 - **Espaces internes :** Salle à l’emblème ; Salle des couchettes ; Salle de surveillance ; Couloir du bureau
 - **Sources de la pièce :**
-  - Dossier d'audit dédié : [`cha-r-office-audit.md`](cha-r-office-audit.md).
   - Plan des ponts, chap. 349
   - Chap. 379-380 — la salle principale Cha-R porte l'emblème de la famille et trois portes différentes : une porte métallique à motif de coffre, une porte métallique à face de robot et une porte en bois.
   - Chap. 379, p. 16 — le compartiment attenant à la salle de l'emblème contient des lits superposés et des bibliothèques ; un homme est allongé sur la couchette inférieure sous Feitan.

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 336
+Fichiers : 339
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -938,6 +938,13 @@ Fichiers : 336
 
 - contact shadow > multiplies the floor rather than painting over it
 
+## `apps/web/src/lib/tour/corridorWallArchitecture.test.ts`
+
+- corridorWallLayout > correctly identifies tier from space id or fallback
+- isCorridorSpace > identifies corridor spaces and excludes specialized gates/approaches
+- Tier-specific corridor wall builders > dresses Tier 1 wall with wainscoting and sconces
+- buildCorridorWallDetails > generates 3D corridor wall groups on each deck of the ship
+
 ## `apps/web/src/lib/tour/decipher.test.ts`
 
 - the three durations the archive gives, and no fourth > reads them off the ability module rather than restating them
@@ -1257,6 +1264,10 @@ Fichiers : 336
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
 
+## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
+
+- Royal Army Conference Room reconstructed from Chapters 350 and 380 > satisfies the shared blueprint invariants for interior-royal-army-conference
+
 ## `apps/web/src/lib/tour/royalPrecinct.test.ts`
 
 - Royal Precinct, compared with chapters 417–420 > keeps all fourteen apartments clear of the unnamed aft block
@@ -1313,6 +1324,10 @@ Fichiers : 336
 
 - the door graph > is symmetric: a door is a door from either side
 - what is drawn from where the visitor stands > always holds the room underfoot and everything it opens onto
+
+## `apps/web/src/lib/tour/vvipRecreationView.test.ts`
+
+- VVIP recreation hall reconstructed from chapter 419 > satisfies the shared blueprint invariants for VVIP recreation hall and gallery
 
 ## `apps/web/src/lib/tour/walkPostEffects.test.ts`
 

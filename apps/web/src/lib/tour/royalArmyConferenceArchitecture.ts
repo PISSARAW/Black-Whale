@@ -5,7 +5,6 @@ import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import {
   ARMY_CHART_GRID,
   ARMY_CHART_PALE,
-  ARMY_CHROME,
   ARMY_GLOW_LIGHT,
   ARMY_LIGHT_STEEL,
   ARMY_SCREEN_HOUSING,
@@ -93,7 +92,6 @@ function buildWallPerimeter(context: ArchitectureContext): void {
 
 function buildCeilingLighting(context: ArchitectureContext): void {
   const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
   const ceiling = ceilingOf(space, plan.tier)
   const lightY = ceiling - 0.15
 
@@ -147,8 +145,7 @@ export function dressBriefingScreen(
   surface.cylinder(
     { radius: 0.09, height: w + 0.3, sides: 16 },
     [0, h + 0.09, 0],
-    ARMY_SCREEN_HOUSING,
-    [0, 0, Math.PI / 2],
+    { colour: ARMY_SCREEN_HOUSING, rotation: [0, 0, Math.PI / 2] },
   )
 
   // Side guide rails & tension weights
@@ -171,8 +168,7 @@ export function dressBriefingScreen(
   surface.cylinder(
     { radius: 0.03, height: w + 0.1, sides: 12 },
     [0, 0.02, 0.03],
-    ARMY_LIGHT_STEEL,
-    [0, 0, Math.PI / 2],
+    { colour: ARMY_LIGHT_STEEL, rotation: [0, 0, Math.PI / 2] },
   )
 }
 
@@ -216,14 +212,12 @@ export function dressTacticalChartBoard(
   surface.cylinder(
     { radius: 0.008, height: 0.12, sides: 8 },
     [0.4, 0.035, 0.05],
-    0x203060,
-    [0, 0, Math.PI / 2],
+    { colour: 0x203060, rotation: [0, 0, Math.PI / 2] },
   )
   surface.cylinder(
     { radius: 0.008, height: 0.12, sides: 8 },
     [0.6, 0.035, 0.05],
-    0xa02020,
-    [0, 0, Math.PI / 2],
+    { colour: 0xa02020, rotation: [0, 0, Math.PI / 2] },
   )
 }
 

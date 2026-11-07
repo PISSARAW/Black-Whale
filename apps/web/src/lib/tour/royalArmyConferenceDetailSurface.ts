@@ -79,9 +79,10 @@ export class RoyalArmyConferenceSurface {
   box(
     size: Point3,
     at: Point3,
-    colour: number,
-    glow = false,
+    colourOrOptions: number | { colour: number; glow?: boolean },
   ): void {
+    const colour = typeof colourOrOptions === 'number' ? colourOrOptions : colourOrOptions.colour
+    const glow = typeof colourOrOptions === 'object' ? colourOrOptions.glow ?? false : false
     this.into.box(size, {
       at: this.point(at),
       rotation: [0, this.angle, 0],
@@ -93,9 +94,10 @@ export class RoyalArmyConferenceSurface {
   sphere(
     size: Point3,
     at: Point3,
-    colour: number,
-    glow = false,
+    colourOrOptions: number | { colour: number; glow?: boolean },
   ): void {
+    const colour = typeof colourOrOptions === 'number' ? colourOrOptions : colourOrOptions.colour
+    const glow = typeof colourOrOptions === 'object' ? colourOrOptions.glow ?? false : false
     this.into.sphere(size, {
       at: this.point(at),
       rotation: [0, this.angle, 0],
@@ -107,9 +109,13 @@ export class RoyalArmyConferenceSurface {
   cylinder(
     size: CylinderSize,
     at: Point3,
-    colour: number,
-    rotation: Point3 = [0, this.angle, 0],
+    colourOrOptions: number | { colour: number; rotation?: Point3 },
   ): void {
+    const colour = typeof colourOrOptions === 'number' ? colourOrOptions : colourOrOptions.colour
+    const rotation: Point3 =
+      typeof colourOrOptions === 'object' && colourOrOptions.rotation
+        ? colourOrOptions.rotation
+        : [0, this.angle, 0]
     this.into.cylinder(size, {
       at: this.point(at),
       rotation,
@@ -147,13 +153,13 @@ export function drawDeskMicrophone(
   surface.box([0.12, 0.02, 0.12], [x, y + 0.01, z], ARMY_STEEL)
   surface.box([0.08, 0.015, 0.08], [x, y + 0.02, z], ARMY_LIGHT_STEEL)
   // Push-to-talk button
-  surface.box([0.025, 0.01, 0.025], [x, y + 0.03, z + 0.02], ARMY_MIC_LED, true)
+  surface.box([0.025, 0.01, 0.025], [x, y + 0.03, z + 0.02], { colour: ARMY_MIC_LED, glow: true })
   // Gooseneck stem
   surface.cylinder({ radius: 0.006, height: 0.22, sides: 8 }, [x, y + 0.12, z - 0.01], ARMY_MIC_STEM)
   // Microphone head capsule
   surface.cylinder({ radius: 0.012, height: 0.04, sides: 10 }, [x, y + 0.24, z - 0.02], ARMY_STEEL)
   // Light ring at mic head
-  surface.sphere([0.014, 0.005, 0.014], [x, y + 0.23, z - 0.02], ARMY_MIC_LED, true)
+  surface.sphere([0.014, 0.005, 0.014], [x, y + 0.23, z - 0.02], { colour: ARMY_MIC_LED, glow: true })
 }
 
 /** Helper to draw an attendee briefing notepad and pen. */
@@ -170,7 +176,6 @@ export function drawAttendeePaper(
   surface.cylinder(
     { radius: 0.004, height: 0.14, sides: 6 },
     [x + 0.16, y + 0.01, z],
-    ARMY_CHROME,
-    [Math.PI / 2, 0, 0],
+    { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
   )
 }

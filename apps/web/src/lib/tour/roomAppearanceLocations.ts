@@ -28,6 +28,14 @@ const TIER_1_FINISH = new Map<string, Finish>([
   ['tier-1-vip-jail', 'secure'],
   ['tier-1-vvip-living-quarters', 'royal-passage'],
   ['tier-1-vvip-prison-beyond', 'secure'],
+  ['tier-1-main-corridor', 'royal-passage'],
+  ['tier-1-main-corridor-starboard', 'royal-passage'],
+  ['tier-1-port-promenade', 'royal-passage'],
+  ['tier-1-starboard-corridor', 'royal-passage'],
+  ['tier-1-aft-promenade', 'royal-passage'],
+  ['tier-1-forward-connecting-walkway', 'royal-passage'],
+  ['tier-1-banquet-side-corridor-port', 'gilded-hall'],
+  ['tier-1-banquet-side-corridor-starboard', 'gilded-hall'],
 ])
 
 const TIER_2_FINISH = new Map<string, Finish>([
@@ -36,6 +44,12 @@ const TIER_2_FINISH = new Map<string, Finish>([
   ['tier-2-ministry-of-justice', 'government'],
   ['tier-2-screening-room', 'screening'],
   ['tier-2-vip-witness-protection-area', 'protected'],
+  ['tier-2-forward-corridor', 'government'],
+  ['tier-2-main-corridor', 'government'],
+  ['tier-2-aft-corridor', 'government'],
+  ['tier-2-port-promenade', 'government'],
+  ['tier-2-starboard-promenade', 'government'],
+  ['tier-2-tier-1-access', 'bulkhead'],
 ])
 
 const TIER_3_FINISH = new Map<string, Finish>([
@@ -49,6 +63,15 @@ const TIER_3_FINISH = new Map<string, Finish>([
   ['tier-3-residential-room-3101', 'standard-cabin'],
   ['tier-3-residential-standard', 'standard-cabin'],
   ['tier-3-residential-units', 'dormitory'],
+  ['tier-3-forward-corridor', 'standard-cabin'],
+  ['tier-3-central-spine', 'standard-cabin'],
+  ['tier-3-starboard-corridor', 'standard-cabin'],
+  ['tier-3-aft-corridor', 'standard-cabin'],
+  ['tier-3-port-promenade', 'standard-cabin'],
+  ['tier-3-starboard-promenade', 'standard-cabin'],
+  ['tier-3-residential-standard-corridor', 'standard-cabin'],
+  ['tier-3-residential-first-class-hallway', 'first-class'],
+  ['tier-3-residential-first-class-upper-corridor', 'first-class'],
 ])
 
 const TIER_4_FINISH = new Map<string, Finish>([
@@ -57,6 +80,12 @@ const TIER_4_FINISH = new Map<string, Finish>([
   ['tier-4-recycling-sewage-facilities', 'recycling'],
   ['tier-4-royal-army-conference-room', 'briefing'],
   ['tier-4-xi-yu-family-office', 'xi-yu-office'],
+  ['tier-4-forward-corridor', 'service-passage'],
+  ['tier-4-port-corridor', 'service-passage'],
+  ['tier-4-starboard-corridor', 'service-passage'],
+  ['tier-4-aft-corridor', 'service-passage'],
+  ['tier-4-starboard-promenade', 'service-passage'],
+  ['tier-4-secondary-passage', 'service-passage'],
 ])
 
 const TIER_5_FINISH = new Map<string, Finish>([
@@ -67,6 +96,14 @@ const TIER_5_FINISH = new Map<string, Finish>([
   ['tier-5-medical-clinic', 'hold-clinic'],
   ['tier-5-standard-cabins', 'fifth-class'],
   ['tier-5-warehouse', 'warehouse'],
+  ['tier-5-forward-corridor', 'assembly-bay'],
+  ['tier-5-main-corridor', 'assembly-bay'],
+  ['tier-5-transverse-corridor', 'assembly-bay'],
+  ['tier-5-aft-corridor', 'assembly-bay'],
+  ['tier-5-cabin-cross-corridor-west', 'assembly-bay'],
+  ['tier-5-cabin-cross-corridor-east', 'assembly-bay'],
+  ['tier-5-port-promenade', 'assembly-bay'],
+  ['tier-5-starboard-promenade', 'assembly-bay'],
 ])
 
 const AUTHORED_FINISH = new Map([

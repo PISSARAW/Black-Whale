@@ -13,6 +13,7 @@ import { buildQueenUnmaDetails } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails } from './camillaView'
 import { buildZhangLeiDetails } from './zhangLeiView'
+import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
 import { buildHeillyHideoutDetails, heillySurfacePlan } from './heillyHideoutView'
 import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauView'
@@ -21,6 +22,7 @@ import { buildChaROfficeDetails, chaRSurfacePlan } from './chaROfficeView'
 import { buildHospitalDetails, hospitalSurfacePlan } from './hospitalView'
 import { buildRoyalArmyConferenceDetails } from './royalArmyConferenceView'
 import { buildCineplexDetails, cineplexSurfacePlan } from './cineplexView'
+import { buildCorridorWallDetails } from './corridorWallView'
 
 export interface TierRoomView {
   spaceId: string
@@ -143,6 +145,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildBenjaminRoomDetails,
   buildCamillaRoomDetails,
   buildZhangLeiDetails,
+  buildVvipRecreationDetails,
   buildPrincesQuartersDetails,
   buildHeillyHideoutDetails,
   buildJusticeBureauDetails,
@@ -151,6 +154,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildHospitalDetails,
   buildRoyalArmyConferenceDetails,
   buildCineplexDetails,
+  buildCorridorWallDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */

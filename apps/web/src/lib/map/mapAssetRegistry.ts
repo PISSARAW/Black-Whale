@@ -43,6 +43,7 @@ import XiYuOffice from '$lib/assets/maps/local/xi-yu-office.svelte'
 import ChaROffice from '$lib/assets/maps/local/cha-r-office.svelte'
 import Warehouse from '$lib/assets/maps/local/warehouse.svelte'
 import ScreeningRoom from '$lib/assets/maps/local/screening-room.svelte'
+import VvipRecreationHall from '$lib/assets/maps/local/vvip-recreation-hall.svelte'
 
 export const MAP_ASSETS = {
   'black-whale-overview': BlackWhaleOverview,
@@ -90,11 +91,14 @@ export const MAP_ASSETS = {
   'cha-r-office': ChaROffice,
   warehouse: Warehouse,
   'screening-room': ScreeningRoom,
+  'vvip-recreation-hall': VvipRecreationHall,
 } as const
 
 export type MapAssetKey = keyof typeof MAP_ASSETS
 
 const LOCATION_ASSETS: Record<string, MapAssetKey> = {
+  'vvip-recreation-hall': 'vvip-recreation-hall',
+  'tier-1-vvip-recreation-hall': 'vvip-recreation-hall',
   'room-3101': 'room-3101',
   'heilly-processing': 'heilly-processing',
   'central-courthouse': 'central-courthouse',

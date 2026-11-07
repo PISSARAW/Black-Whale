@@ -8,6 +8,7 @@ import { buildRoyalSalonDetails } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
+import { buildBurialChamberDetails } from './burialChamberView'
 
 export interface TierRoomView {
   spaceId: string
@@ -111,6 +112,22 @@ interface TierAttributes {
 }
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
+function roomDetails(options: {
+  THREE: typeof Three
+  plan: ReturnType<typeof walkedPlan>
+  spaceId: string
+  reveal: boolean
+}): Three.Group | null {
+  return (
+    buildBanquetDetails(options) ??
+    buildRoyalSalonDetails(options) ??
+    buildDiningHallDetails(options) ??
+    buildPrisonDetails(options) ??
+    buildCasinoDetails(options) ??
+    buildBurialChamberDetails(options)
+  )
+}
+
 export class TierView {
   constructor(
     private readonly THREE: typeof Three,
@@ -134,12 +151,7 @@ export class TierView {
         spaceId: group.spaceId,
         reveal,
       }
-      room.details =
-        buildBanquetDetails(detailsOptions) ??
-        buildRoyalSalonDetails(detailsOptions) ??
-        buildDiningHallDetails(detailsOptions) ??
-        buildPrisonDetails(detailsOptions) ??
-        buildCasinoDetails(detailsOptions)
+      room.details = roomDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)
       root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
       if (room.panes) root.add(room.panes)

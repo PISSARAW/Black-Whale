@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 323
+Fichiers : 325
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -815,6 +815,10 @@ Fichiers : 323
 - ceilings > falls back to the tier when a space does not set one
 - spawnFacing > looks down the long axis of a hall, away from the near end
 
+## `apps/web/src/lib/tour/burialChamberView.test.ts`
+
+- the princes burial chamber reconstructed from chapter 371 > satisfies the shared blueprint invariants for the burial rotunda
+
 ## `apps/web/src/lib/tour/casinoView.test.ts`
 
 - the chapter 420 casino reconstruction > keeps a bounded two-batch room below the banquet detail budget
@@ -931,6 +935,10 @@ Fichiers : 323
 - exitsFrom > counts the doorways and links the blueprint actually derives
 - solidsIn > counts a long run rather than naming each of it
 - describeSpace > says what a room is, where it is, how big and what is in it
+
+## `apps/web/src/lib/tour/diningHallView.test.ts`
+
+- the central dining hall reconstructed from chapters 371, 377 and 379-380 > satisfies the shared blueprint invariants for the dining hall
 
 ## `apps/web/src/lib/tour/dust.test.ts`
 

@@ -29,19 +29,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     volume: 36,
   }),
   view({
-    id: 'princes-burial-chamber-overhead',
-    spaceId: 'tier-1-princes-burial-chamber-rotunda',
-    at: [0, 0],
-    target: [30, 26],
-    pitch: -1.57, // overhead view (top-down)
-    eyeHeight: 40,
-    chapter: 383,
-    volume: 37,
-    pages: '18-19',
-    label: 'The 14 coffins around the central machine',
-    labelFr: 'Les 14 cercueils autour de la machine centrale',
-  }),
-  view({
     id: 'luzurus-smoking-area',
     chapter: 359,
     spaceId: 'tier-1-royal-residential-sector-room-1007-living',
@@ -210,17 +197,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     volume: 35,
     label: "Woble's kitchen counter beneath the glass-fronted cupboards",
     labelFr: 'Le plan de travail de Woble sous les éléments hauts vitrés',
-  }),
-  view({
-    id: 'burial-rotunda-caskets',
-    spaceId: 'tier-1-princes-burial-chamber-rotunda',
-    at: [0, -9.25],
-    target: [29.5, 26],
-    pitch: 0.08,
-    chapter: 371,
-    volume: 36,
-    label: 'The fourteen radial caskets of the succession-war burial chamber',
-    labelFr: 'Les quatorze cercueils en rayon de la chambre funéraire de la succession',
   }),
   view({
     id: 'supreme-court-bench-seal',

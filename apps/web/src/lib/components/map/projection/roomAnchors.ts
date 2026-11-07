@@ -6,6 +6,7 @@ import { banquetSpotAnchors } from './banquetPlan'
 import { salonSpotAnchors } from './royalSalonPlan'
 import { prisonSpotAnchors } from './prisonPlan'
 import { diningHallSpotAnchors } from './diningHallPlan'
+import { burialSpotAnchors } from './burialChamberPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -175,6 +176,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-king-living-quarters': salonSpotAnchors,
   // The shared banquet projection keeps the king on the drawn dais.
   'tier-1-banquet-hall': banquetSpotAnchors,
+  // Nasubi stands by Momoze's coffin in the secret rotunda (ch. 371).
+  'tier-1-princes-burial-chamber': burialSpotAnchors,
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and
   // ch. 407–410 seat Borksen at the far end for the negotiation game.

@@ -44,9 +44,19 @@ describe('the princes burial chamber reconstructed from chapter 371', () => {
     expect(burialReliquary).toBeDefined()
     expect(burialCables).toHaveLength(14)
 
-    // Coffin 1 (Momoze) has the active relay
-    expect(burialCables[0].active).toBe(true)
-    expect(burialCables.slice(1).every((cable) => !cable.active)).toBe(true)
+    // Chapter 420 canon state by prince number:
+    // Casket 8 (Sale-sale) closed, 9 open, 10 (Kacho) closed, 11 open, 12 (Momoze) closed.
+    expect(burialCoffins.filter((c) => c.closed)).toHaveLength(3)
+    expect(burialCoffins.filter((c) => !c.closed)).toHaveLength(11)
+    expect(burialCoffins.find((c) => c.coffinNumber === 8)?.closed).toBe(true)
+    expect(burialCoffins.find((c) => c.coffinNumber === 9)?.closed).toBe(false)
+    expect(burialCoffins.find((c) => c.coffinNumber === 10)?.closed).toBe(true)
+    expect(burialCoffins.find((c) => c.coffinNumber === 11)?.closed).toBe(false)
+    expect(burialCoffins.find((c) => c.coffinNumber === 12)?.closed).toBe(true)
+
+    // Closed coffins are non-adjacent, exactly 3 active flames
+    expect(burialCables.filter((c) => c.active)).toHaveLength(3)
+    expect(burialCables.filter((c) => c.flame)).toHaveLength(3)
   })
 
   it('keeps all coffins within the rotunda and free of mutual collision overlap', () => {

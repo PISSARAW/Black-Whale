@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 325
+Fichiers : 327
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1203,6 +1203,10 @@ Fichiers : 325
 - detecting the palier > puts a coarse pointer on the light palier whatever its GPU says
 - the visitor overruling the detection > defers to the detection on auto
 - what a palier switches on > turns off everything that costs a second pass over the frame, on low
+
+## `apps/web/src/lib/tour/queenUnmaView.test.ts`
+
+- the room of Queen Unma reconstructed from chapter 403 > satisfies the shared blueprint invariants for Queen Unma’s room
 
 ## `apps/web/src/lib/tour/reachSound.test.ts`
 

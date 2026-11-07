@@ -181,7 +181,8 @@ function nozzleCollar(into: BanquetDetailBuilder, floor: number): void {
   // 14 cable nozzle ports docked around base collar
   for (let i = 0; i < 14; i++) {
     const angle = Math.PI / 2 - (i * 2 * Math.PI) / 14 - (2 * Math.PI) / 28
-    const isMomoze = i === 0
+    const coffinNumber = i + 1
+    const hasFlame = coffinNumber === 8 || coffinNumber === 10 || coffinNumber === 12
     const nx = Math.cos(angle) * 1.32
     const nz = Math.sin(angle) * 1.32
 
@@ -193,8 +194,8 @@ function nozzleCollar(into: BanquetDetailBuilder, floor: number): void {
       { radius: 0.07, tube: 0.012 },
       {
         at: [Math.cos(angle) * 1.42, floor + 0.35, Math.sin(angle) * 1.42],
-        colour: isMomoze ? MOMOZE_FLAME : LUMEN_WARM,
-        glow: true,
+        colour: hasFlame ? MOMOZE_FLAME : DARK_STONE,
+        glow: hasFlame,
         rotation: [0, -angle, 0],
       },
     )
@@ -311,15 +312,17 @@ function centralApparatus(into: BanquetDetailBuilder, floor: number): void {
 function cablesAndRelayNodes(into: BanquetDetailBuilder, floor: number): void {
   for (let i = 0; i < 14; i++) {
     const angle = Math.PI / 2 - (i * 2 * Math.PI) / 14 - (2 * Math.PI) / 28
-    const isMomoze = i === 0
+    const coffinNumber = i + 1
+    const isClosed = coffinNumber === 8 || coffinNumber === 10 || coffinNumber === 12
+    const hasFlame = isClosed
 
     // Cable running from central machine (r = 1.2) to coffin head (r = 6.95)
     const cableSpan = 5.75
     const cableMidR = 1.2 + cableSpan / 2
     into.box([0.045, 0.025, cableSpan], {
       at: [Math.cos(angle) * cableMidR, floor + 0.015, Math.sin(angle) * cableMidR],
-      colour: isMomoze ? 0xf59e0b : 0x221f1c,
-      glow: isMomoze,
+      colour: hasFlame ? 0xf59e0b : 0x221f1c,
+      glow: hasFlame,
       rotation: [0, -angle + Math.PI / 2, 0],
     })
 
@@ -331,16 +334,16 @@ function cablesAndRelayNodes(into: BanquetDetailBuilder, floor: number): void {
     // Relay pedestal
     into.cylinder(
       { radius: 0.18, height: 0.12, sides: 12 },
-      { at: [nx, floor + 0.06, nz], colour: BRONZE },
+      { at: [nx, floor + 0.06, nz], colour: isClosed ? BRONZE : DARK_STONE },
     )
 
-    // Glowing base ring on relay node
+    // Base ring on relay node
     into.ring(
       { radius: 0.2, tube: 0.005 },
       {
         at: [nx, floor + 0.015, nz],
-        colour: isMomoze ? 0xf59e0b : LUMEN_WARM,
-        glow: true,
+        colour: hasFlame ? 0xf59e0b : DARK_STONE,
+        glow: hasFlame,
         rotation: [Math.PI / 2, 0, 0],
       },
     )
@@ -348,12 +351,12 @@ function cablesAndRelayNodes(into: BanquetDetailBuilder, floor: number): void {
     // Relay orb
     into.sphere([0.2, 0.2, 0.2], {
       at: [nx, floor + 0.24, nz],
-      colour: isMomoze ? MOMOZE_FLAME : DARK_STONE,
-      glow: isMomoze,
+      colour: hasFlame ? MOMOZE_FLAME : DARK_STONE,
+      glow: hasFlame,
     })
 
-    if (isMomoze) {
-      // White-hot inner core of Momoze's aura flame
+    if (hasFlame) {
+      // White-hot inner core of aura flame
       into.sphere([0.1, 0.15, 0.1], {
         at: [nx, floor + 0.24, nz],
         colour: LUMEN_WHITE,

@@ -9,6 +9,8 @@ import { buildDiningHallDetails } from './diningHallView'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
+import { buildQueenUnmaDetails } from './queenUnmaView'
+import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
 
 export interface TierRoomView {
   spaceId: string
@@ -124,7 +126,9 @@ function roomDetails(options: {
     buildDiningHallDetails(options) ??
     buildPrisonDetails(options) ??
     buildCasinoDetails(options) ??
-    buildBurialChamberDetails(options)
+    buildBurialChamberDetails(options) ??
+    buildQueenUnmaDetails(options) ??
+    buildPrincesQuartersDetails(options)
   )
 }
 
@@ -137,7 +141,10 @@ export class TierView {
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const basePlan = prisonSurfacePlan(plan, reveal)
-    const surfacePlan = burialSurfacePlan(casinoSurfacePlan(basePlan, reveal), reveal)
+    const surfacePlan = burialSurfacePlan(
+      casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+      reveal,
+    )
     const mesh = buildTierMesh(surfacePlan, {
       reveal,
     })

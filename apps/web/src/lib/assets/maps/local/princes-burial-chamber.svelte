@@ -118,8 +118,8 @@
   </text>
   <text x="400" y="52" text-anchor="middle" fill="#b1a58d" font-size="12">
     {french
-      ? 'Chap. 371 · Les 14 cercueils radiaux et l’appareil central sacrificiel'
-      : 'Ch. 371 · 14 radial caskets and central sacrificial apparatus'}
+      ? 'Chap. 420 · Cercueils fermés : n°8, n°10, n°12 · Autres cercueils ouverts'
+      : 'Ch. 420 · Sealed caskets: #8, #10, #12 · Other caskets open'}
   </text>
 
   <!-- Room footprint & floor -->
@@ -148,11 +148,11 @@
       y1={cable.from.y}
       x2={cable.to.x}
       y2={cable.to.y}
-      stroke={cable.active ? '#d97706' : '#3d3830'}
+      stroke={cable.flame ? '#d97706' : '#3d3830'}
       stroke-width={cable.active ? 2.5 : 1.5}
     />
     <!-- Intermediate Soul Node / Relay -->
-    {#if cable.active}
+    {#if cable.flame}
       <circle
         cx={cable.node.x}
         cy={cable.node.y}
@@ -162,7 +162,7 @@
         stroke-width="2"
         filter="url(#momoze-glow)"
       >
-        <title>{french ? 'Relais actif : âme de Momoze' : 'Active relay: Momoze’s life force'}</title>
+        <title>{french ? `Relais actif : âme de ${cable.prince?.nameFr}` : `Active relay: ${cable.prince?.name}’s life force`}</title>
       </circle>
       <circle cx={cable.node.x} cy={cable.node.y} r="3" fill="#ffffff" />
     {:else}
@@ -174,7 +174,7 @@
         stroke="#6b5e4a"
         stroke-width="1.2"
       >
-        <title>{french ? `Relais n°${cable.index + 1} (inactif)` : `Relay #${cable.index + 1} (inactive)`}</title>
+        <title>{french ? `Relais n°${cable.coffinNumber} (en attente : ${cable.prince?.nameFr})` : `Relay #${cable.coffinNumber} (awaiting: ${cable.prince?.name})`}</title>
       </circle>
     {/if}
   {/each}
@@ -222,8 +222,8 @@
         cx={400 + Math.cos(angle) * 43}
         cy={400 + Math.sin(angle) * 43}
         r={cable.active ? 3.5 : 2.5}
-        fill={cable.active ? '#f59e0b' : '#3d3830'}
-        stroke={cable.active ? '#fef3c7' : '#8c7d67'}
+        fill={cable.flame ? '#f59e0b' : '#3d3830'}
+        stroke={cable.flame ? '#fef3c7' : '#8c7d67'}
         stroke-width="1"
       />
     {/each}
@@ -235,19 +235,23 @@
 
   <!-- The 14 Coffins -->
   {#each burialCoffins as coffin (coffin.id)}
-    {@const isMomoze = coffin.id.endsWith('coffin-01')}
     {@const rad = (coffin.rotation * Math.PI) / 180}
     <!-- Coffin outer tub -->
     <polygon
       points={coffin.polygon}
-      fill={isMomoze ? '#38221f' : '#1c1917'}
-      stroke={isMomoze ? '#f59e0b' : '#8c7d67'}
-      stroke-width={isMomoze ? 2.5 : 1.2}
+      fill={coffin.closed ? '#38221f' : '#141210'}
+      stroke={coffin.closed ? '#d4af37' : '#6b5e4a'}
+      stroke-width={coffin.closed ? 2.5 : 1.2}
+      stroke-dasharray={coffin.closed ? undefined : '4 2'}
     >
       <title>
-        {isMomoze
-          ? (french ? 'Cercueil 01 · Momoze (occupé)' : 'Coffin 01 · Momoze (occupied)')
-          : (french ? coffin.nameFr : coffin.name)}
+        {coffin.closed
+          ? (french
+              ? `Cercueil n°${coffin.coffinNumber} (scellé) · ${coffin.prince?.nameFr} · chap. ${coffin.prince?.chapter}`
+              : `Casket #${coffin.coffinNumber} (sealed) · ${coffin.prince?.name} · ch. ${coffin.prince?.chapter}`)
+          : (french
+              ? `Cercueil n°${coffin.coffinNumber} (ouvert · en attente) · ${coffin.prince?.nameFr}`
+              : `Casket #${coffin.coffinNumber} (open · awaiting) · ${coffin.prince?.name}`)}
       </title>
     </polygon>
 
@@ -257,12 +261,12 @@
       y1={coffin.point.y - Math.cos(rad) * 26}
       x2={coffin.point.x + Math.sin(rad) * 26}
       y2={coffin.point.y + Math.cos(rad) * 26}
-      stroke={isMomoze ? '#d97706' : '#574d3f'}
-      stroke-width="2"
+      stroke={coffin.closed ? '#d4af37' : '#3f382f'}
+      stroke-width={coffin.closed ? 2 : 1}
     />
 
-    <!-- Coffin 1: Viewing window & Nen core inside -->
-    {#if isMomoze}
+    <!-- Coffin core: Viewing window with flame for deceased -->
+    {#if coffin.closed}
       <circle
         cx={coffin.point.x}
         cy={coffin.point.y}
@@ -277,15 +281,12 @@
   {/each}
 
   <!-- Key annotations -->
-  <text x="475" y="695" text-anchor="start" fill="#f59e0b" font-size="11" font-weight="bold">
-    {french ? 'Cercueil 1 (Momoze) · Roi Nasubi au chevet' : 'Coffin 1 (Momoze) · King Nasubi present'}
-  </text>
   <text x="400" y="475" text-anchor="middle" fill="#d4af37" font-size="11">
     {french ? 'Appareil rituel central' : 'Central ritual apparatus'}
   </text>
   <text x="400" y="780" text-anchor="middle" fill="#8c7d67" font-size="11">
     {french
-      ? 'Quatorze capsules radiales reliées par conduits d’aura · Chapitre 371'
-      : 'Fourteen radial caskets linked by aura conduits · Chapter 371'}
+      ? 'Quatorze capsules par numéro de prince · Chap. 420 : n°8, n°10 et n°12 fermés (non adjacents)'
+      : 'Fourteen caskets by prince number · Ch. 420: #8, #10 & #12 closed (non-adjacent)'}
   </text>
 </svg>

@@ -7,8 +7,6 @@ const DARK_STONE = 0x2e2722,
   BRONZE = 0x76634c,
   GOLD = 0xd4af37,
   MOMOZE_AMBER = 0xf59e0b,
-  MOMOZE_PALE = 0xfef3c7,
-  LUMEN_WHITE = 0xffffff,
   LUMEN_WARM = 0xfbf3de
 
 interface Context {
@@ -64,7 +62,13 @@ function coffinCradleFeet(context: Context, rotY: number): void {
   }
 }
 
-function coffinTubAndFlanks(context: Context, rotY: number): void {
+function isCoffinClosed(id: string): boolean {
+  const match = id.match(/coffin-(\d+)$/)
+  const num = match ? parseInt(match[1], 10) : 0
+  return num === 8 || num === 10 || num === 12
+}
+
+function coffinTubAndFlanks(context: Context, rotY: number, isClosed: boolean): void {
   const { into, structure, floor } = context
   const [x, z] = structure.at
   const [width, length] = structure.size
@@ -84,6 +88,15 @@ function coffinTubAndFlanks(context: Context, rotY: number): void {
     rotation: [0, rotY, 0],
   })
 
+  if (!isClosed) {
+    // Empty inner cavity visible inside the open awaiting coffin
+    into.box([width * 0.72, 0.22, length * 0.82], {
+      at: [x, floor + 0.08 + tubHeight * 0.65, z],
+      colour: 0x161210,
+      rotation: [0, rotY, 0],
+    })
+  }
+
   // Kakin ceremonial wave relief carvings along both flanks
   for (const side of [-1, 1]) {
     for (const lzFrac of [-0.25, 0, 0.25]) {
@@ -101,43 +114,60 @@ function coffinTubAndFlanks(context: Context, rotY: number): void {
   }
 }
 
-function coffinVaultedLidAndSpine(context: Context, rotY: number): void {
+function coffinVaultedLidAndSpine(context: Context, rotY: number, isClosed: boolean): void {
   const { into, structure, floor } = context
   const [x, z] = structure.at
-  const [, length] = structure.size
-  const isMomoze = structure.id.endsWith('coffin-01')
+  const [width, length] = structure.size
   const tubHeight = 0.34
   const lidRadius = 0.34
   const lidLength = length * 0.92
   const lidY = floor + 0.08 + tubHeight
 
-  // Barrel-vaulted arched lid
-  into.cylinder(
-    { radius: lidRadius, height: lidLength, sides: 16 },
-    {
-      at: [x, lidY, z],
-      colour: isMomoze ? 0xb59e88 : COFFIN_LID,
-      rotation: [Math.PI / 2, 0, rotY],
-    },
-  )
+  if (isClosed) {
+    // Sealed closed vaulted lid
+    into.cylinder(
+      { radius: lidRadius, height: lidLength, sides: 16 },
+      {
+        at: [x, lidY, z],
+        colour: COFFIN_LID,
+        rotation: [Math.PI / 2, 0, rotY],
+      },
+    )
 
-  // Manga ch. 371: prominent stepped axial spine running along apex from head to foot
-  into.box([0.18, 0.04, lidLength * 0.96], {
-    at: [x, lidY + lidRadius + 0.02, z],
-    colour: BRONZE,
-    rotation: [0, rotY, 0],
-  })
-  into.box([0.09, 0.03, lidLength * 0.92], {
-    at: [x, lidY + lidRadius + 0.05, z],
-    colour: GOLD,
-    rotation: [0, rotY, 0],
-  })
+    // Prominent stepped axial spine running along apex from head to foot
+    into.box([0.18, 0.04, lidLength * 0.96], {
+      at: [x, lidY + lidRadius + 0.02, z],
+      colour: BRONZE,
+      rotation: [0, rotY, 0],
+    })
+    into.box([0.09, 0.03, lidLength * 0.92], {
+      at: [x, lidY + lidRadius + 0.05, z],
+      colour: GOLD,
+      rotation: [0, rotY, 0],
+    })
+  } else {
+    // Open lid tilted back on hinges (living prince's coffin awaiting occupant)
+    const [lx, lz] = offsetPoint(context, rotY, [width * 0.38, 0])
+    into.cylinder(
+      { radius: lidRadius, height: lidLength, sides: 16 },
+      {
+        at: [lx, lidY + 0.32, lz],
+        colour: 0xc8c0b4,
+        rotation: [Math.PI / 2, 0, rotY + 0.55],
+      },
+    )
+    const [sx, sz] = offsetPoint(context, rotY, [width * 0.38 + 0.05, 0])
+    into.box([0.14, 0.03, lidLength * 0.94], {
+      at: [sx, lidY + 0.32 + lidRadius * 0.85, sz],
+      colour: BRONZE,
+      rotation: [0, rotY, 0],
+    })
+  }
 }
 
-function coffinHeadAndFoot(context: Context, rotY: number): void {
+function coffinHeadAndFoot(context: Context, rotY: number, isClosed: boolean): void {
   const { into, structure, floor } = context
   const [width, length] = structure.size
-  const isMomoze = structure.id.endsWith('coffin-01')
 
   // Inward head portal (lz = -length * 0.47) where ritual cable docks
   const [hx, hz] = offsetPoint(context, rotY, [0, -length * 0.47])
@@ -149,8 +179,8 @@ function coffinHeadAndFoot(context: Context, rotY: number): void {
     { radius: 0.12, tube: 0.015 },
     {
       at: [hx, floor + 0.22, hz],
-      colour: isMomoze ? MOMOZE_AMBER : BRONZE,
-      glow: isMomoze,
+      colour: isClosed ? MOMOZE_AMBER : BRONZE,
+      glow: isClosed,
       rotation: [Math.PI / 2, 0, rotY],
     },
   )
@@ -164,46 +194,17 @@ function coffinHeadAndFoot(context: Context, rotY: number): void {
   })
   into.box([0.24, 0.14, 0.02], {
     at: [fx, floor + 0.32, fz],
-    colour: GOLD,
+    colour: isClosed ? GOLD : BRONZE,
     rotation: [0, rotY, 0],
-  })
-}
-
-function momozeInterior(context: Context, rotY: number): void {
-  const { into, structure, floor } = context
-  const [x, z] = structure.at
-  const [width, length] = structure.size
-
-  // Luminous Nen aura bed inside Momoze's transparent viewing capsule
-  into.box([width * 0.52, 0.08, length * 0.68], {
-    at: [x, floor + 0.26, z],
-    colour: MOMOZE_AMBER,
-    glow: true,
-    rotation: [0, rotY, 0],
-  })
-  // Sleeping body / shroud silhouette
-  into.box([width * 0.36, 0.12, length * 0.54], {
-    at: [x, floor + 0.34, z],
-    colour: MOMOZE_PALE,
-    glow: true,
-    rotation: [0, rotY, 0],
-  })
-  // Headrest pillow / face aura
-  const [px, pz] = offsetPoint(context, rotY, [0, -length * 0.18])
-  into.sphere([0.11, 0.07, 0.09], {
-    at: [px, floor + 0.42, pz],
-    colour: LUMEN_WHITE,
-    glow: true,
   })
 }
 
 export function dressBurialCoffin(context: Context): void {
   const rotY = (context.structure.rotation * Math.PI) / 180
+  const isClosed = isCoffinClosed(context.structure.id)
+
   coffinCradleFeet(context, rotY)
-  coffinTubAndFlanks(context, rotY)
-  coffinVaultedLidAndSpine(context, rotY)
-  coffinHeadAndFoot(context, rotY)
-  if (context.structure.id.endsWith('coffin-01')) {
-    momozeInterior(context, rotY)
-  }
+  coffinTubAndFlanks(context, rotY, isClosed)
+  coffinVaultedLidAndSpine(context, rotY, isClosed)
+  coffinHeadAndFoot(context, rotY, isClosed)
 }

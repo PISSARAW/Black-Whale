@@ -90,6 +90,16 @@
     }, 250)
   }
 
+  function playFree(): void {
+    if (locked) return
+    if ($page.url.searchParams.has('mangaView')) {
+      const url = new URL($page.url)
+      url.searchParams.delete('mangaView')
+      void goto(url, { noScroll: true, keepFocus: true })
+    }
+    play('melody')
+  }
+
   async function requestConcert(): Promise<void> {
     if (locked) return
     stop()
@@ -169,6 +179,16 @@
             : 'Listen to her solo or take her flute. Both staircases lead onto the stage.'}
         </p>
         <div class="actions">
+          <button
+            type="button"
+            class="free"
+            onclick={playFree}
+            disabled={locked}
+            title={french
+              ? 'Lancer la performance de Melody en visite libre'
+              : 'Play Melody’s performance with free navigation'}
+            >{french ? 'Performance libre' : 'Free performance'}</button
+          >
           <button type="button" onclick={requestConcert} disabled={locked}
             >{french ? 'Demander le concert' : 'Request the concert'}</button
           >
@@ -232,6 +252,18 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.45rem;
+  }
+  .actions .free {
+    grid-column: 1 / -1;
+    border-color: #877343;
+    background: #2b2819;
+    color: #f2d481;
+    font-weight: 600;
+  }
+  .actions .free:hover:not(:disabled) {
+    border-color: #e4c36f;
+    background: #3b3620;
+    color: #fff2a8;
   }
   button {
     min-height: 38px;

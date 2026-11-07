@@ -123,6 +123,7 @@
 - **Objets directement visibles dans les cases :** 8/9
 - **Sources de la pièce :**
   - Le chap. 403 montre le salon richement lambrissé de la reine Unma et la nursery derrière sa porte ouverte ; le plan des quartiers des reines sur /ship fournit l’emprise de la chambre 01 dans le bloc de huit chambres.
+  - Audit dédié et fidélisation d'ensemble : voir [`unma-room-audit.md`](./unma-room-audit.md).
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
   - Chap. 403 — la porte ouverte derrière la reine Unma laisse voir un berceau au fond de la chambre 01.
@@ -222,6 +223,18 @@
   - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
 - **Sources du mobilier et des détails :**
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+
+## Poste d'accès des princes — `tier-1-princes-quarters-gate`
+
+- **Pont :** tier-1
+- **Preuve de l’enveloppe :** case du manga
+- **Emprises relevées :** 3.5 × 13.18 m
+- **Éléments modélisés :** 1 desk, 4 guard sentries, 1 security barrier, 1 portal
+- **Objets directement visibles dans les cases :** 7/7
+- **Sources de la pièce :**
+  - Chap. 382 — le poste gardé à l'entrée des quartiers princiers, son comptoir et ses soldats en faction ; le chap. 363 le place en travers de la face avant du bloc résidentiel où commencent les deux coursives.
+- **Sources du mobilier et des détails :**
+  - Chap. 382 — comptoir d'enregistrement en bois avec registre de contrôle, soldats de la garde royale de Kakin en faction armée et sas de contrôle.
 
 ## Coursive arrière en U (bâbord) — `tier-1-royal-residential-sector`
 

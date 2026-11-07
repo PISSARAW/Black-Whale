@@ -8,6 +8,7 @@ import { MANGA_PRISON_VIEWS } from './mangaPrisonViews'
 import { MANGA_ROYAL_SALON_VIEWS } from './mangaRoyalSalonViews'
 import { MANGA_DINING_HALL_VIEWS } from './mangaDiningHallViews'
 import { MANGA_BURIAL_CHAMBER_VIEWS } from './mangaBurialChamberViews'
+import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
 export type { MangaCastStaging, MangaView } from './mangaViewModel'
@@ -168,17 +169,7 @@ export const MANGA_VIEWS: MangaView[] = [
       'tier-3-residential-first-class-upper-cabin-3-wc',
     ],
   }),
-  view({
-    id: 'unma-nursery-salon',
-    spaceId: 'tier-1-queens-living-quarters-room-01',
-    at: [-66.5, -35],
-    target: [-63.9, -30.4],
-    pitch: 0.01,
-    chapter: 403,
-    volume: 39,
-    label: 'Queen Unma in her formal salon with the nursery visible behind her',
-    labelFr: 'La reine Unma dans son salon d’apparat, avec la nursery visible derrière elle',
-  }),
+  ...MANGA_QUEEN_UNMA_VIEWS,
   ...MANGA_CHA_R_VIEWS,
   view({
     id: 'morena-office-negotiation-game',

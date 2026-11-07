@@ -7,6 +7,8 @@ import { salonSpotAnchors } from './royalSalonPlan'
 import { prisonSpotAnchors } from './prisonPlan'
 import { diningHallSpotAnchors } from './diningHallPlan'
 import { burialSpotAnchors } from './burialChamberPlan'
+import { queenUnmaSpotAnchors } from './queenUnmaPlan'
+import { princesSpotAnchors } from './princesPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -52,6 +54,7 @@ type Spot = { x: number; y: number; inferred?: boolean }
 
 const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallback?: Spot }> = {
   'tier-1-vvip-prison-beyond': prisonSpotAnchors,
+  'tier-1-princes-quarters-gate': princesSpotAnchors,
   // `local/vip-detention.svelte`, 1000 × 600, contents offset by (50, 80).
   'tier-1-vip-jail': {
     // The first-class cell, the one a detained princess is held in.
@@ -178,6 +181,13 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-banquet-hall': banquetSpotAnchors,
   // Nasubi stands by Momoze's coffin in the secret rotunda (ch. 371).
   'tier-1-princes-burial-chamber': burialSpotAnchors,
+  // Queen Unma sits in her carved armchair in Room 01, ch. 403.
+  'tier-1-queens-living-quarters': {
+    occupants: {
+      'unma-hui-guo-rou': { x: 22.19, y: 34.17 },
+    },
+  },
+  'tier-1-queens-living-quarters-room-01': queenUnmaSpotAnchors,
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and
   // ch. 407–410 seat Borksen at the far end for the negotiation game.

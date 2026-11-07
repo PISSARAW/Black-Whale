@@ -6,7 +6,7 @@ manga, conformité stricte avec le plan du navire et habillage volumétrique dé
 attaché aux structures de la visite.
 
 Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitres 358,
-371, 377, 379 et 380).
+371, 377, 378, 379 et 380).
 
 ## 1. Cases relues et volume architectural
 
@@ -23,6 +23,15 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
   Description visuelle du comptoir de service continu le long du mur Ouest, surmonté
   de panneaux de menu et bordé de tabourets ; présence de 4 piliers centraux massifs
   en acier riveté ; disposition de tables basses et bancs selon deux orientations.
+- **Chapitre 378 (« Équilibre »)** : Vue en plongée isométrique du comptoir de service Ouest
+  et gros plan canonique sur le plateau-repas de 5e classe :
+  - Plateau garni d'une **boîte burger en carton ouverte à clapet (*clamshell box*)**
+    contenant un hamburger complet, un gobelet à paille et une coupelle de sauce/salade.
+    Ce repas industriel de cafétéria s'oppose thématiquement au tournedos et verre à pied
+    de Morena Prudo en 2e classe.
+  - Comptoir garni de **bacs gastronormes chauffants (bains-marie)**, d'un écran pare-haleine
+    vitré, d'un haut-parleur mural de sonorisation, d'un grand panneau vertical de tarifs
+    et d'une colonne de ventilation verticale descendant le long du mur.
 - **Chapitres 379–380** : Franklin assis seul à une table de coin face au mur Est,
   à proximité des distributeurs automatiques de boissons, dégustant son repas tout
   en attendant l'arrivée d'Hisoka, les mains prêtes.

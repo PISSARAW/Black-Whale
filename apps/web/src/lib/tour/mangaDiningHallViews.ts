@@ -63,4 +63,17 @@ export const MANGA_DINING_HALL_VIEWS: MangaView[] = [
     label: 'Overhead view of the crowded Tier 5 refectory from the steel trusses',
     labelFr: 'Vue plongeante sur le réfectoire bondé du niveau 5 depuis les fermes métalliques',
   }),
+  view({
+    id: 'central-dining-hall-ch378-service',
+    spaceId: DINING_HALL_SPACE,
+    at: [20.0, 39.0],
+    target: [15.5, 24.0],
+    pitch: -0.32,
+    eyeHeight: 5.2,
+    chapter: 378,
+    volume: 36,
+    pages: '121',
+    label: 'High-angle view of the continuous service counter, menu boards and queuing crowd',
+    labelFr: 'Vue plongeante sur le comptoir de service, les panneaux de menu et la foule',
+  }),
 ]

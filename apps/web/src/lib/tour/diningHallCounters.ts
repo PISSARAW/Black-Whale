@@ -55,17 +55,11 @@ export function dressServiceCounter(context: CounterContext): void {
     })
   }
 
-  // Upright sneeze guard posts and acrylic top rail
-  for (let pz = z - sizeZ / 2 + 1; pz < z + sizeZ / 2; pz += 3) {
-    into.box([0.03, 0.45, 0.03], {
-      at: [x + sizeX / 4, topY + 0.225, pz],
-      colour: STAINLESS,
-    })
-  }
-  into.box([0.04, 0.35, sizeZ - 1], {
-    at: [x + sizeX / 4, topY + 0.25, z],
-    colour: 0xd8e4e8,
-  })
+  // Upright sneeze guard posts and acrylic screen
+  dressCounterSneezeGuard({ into, x: x + sizeX / 4, topY, z, sizeZ })
+
+  // Stainless steel food warming insert wells (bains-marie) with hot dishes
+  dressFoodWarmingWells({ into, x, topY, span: [z - sizeZ / 2, z + sizeZ / 2] })
 
   // Fixed counter stools along customer-facing aisle (East face)
   dressCounterStools({
@@ -78,6 +72,87 @@ export function dressServiceCounter(context: CounterContext): void {
   // Tray return racks at the counter extremities
   dressTrayReturnRack({ into, at: [x, floor, z - sizeZ / 2 + 0.8], floor })
   dressTrayReturnRack({ into, at: [x, floor, z + sizeZ / 2 - 0.8], floor })
+
+  // Tall vertical menu tariff board on right wall flank (ch. 378 panel 1)
+  dressVerticalTariffBoard({ into, at: [14.06, floor + 2.1, z + sizeZ / 2 + 0.8] })
+
+  // Back-of-counter crates and supply sacks (ch. 378 panel 1)
+  dressBackOfCounterStorage({ into, origin: [x, floor, z - sizeZ / 2 + 3.0] })
+}
+
+interface SneezeGuardOptions {
+  into: BanquetDetailBuilder
+  x: number
+  topY: number
+  z: number
+  sizeZ: number
+}
+
+function dressCounterSneezeGuard(options: SneezeGuardOptions): void {
+  const { into, x, topY, z, sizeZ } = options
+  for (let pz = z - sizeZ / 2 + 1; pz < z + sizeZ / 2; pz += 3) {
+    into.box([0.03, 0.45, 0.03], {
+      at: [x, topY + 0.225, pz],
+      colour: STAINLESS,
+    })
+  }
+  into.box([0.04, 0.35, sizeZ - 1], {
+    at: [x, topY + 0.25, z],
+    colour: 0xd8e4e8,
+  })
+}
+
+interface WarmingWellsOptions {
+  into: BanquetDetailBuilder
+  x: number
+  topY: number
+  span: [number, number]
+}
+
+function dressFoodWarmingWells(options: WarmingWellsOptions): void {
+  const { into, x, topY, span } = options
+  const [minZ, maxZ] = span
+  const foodColours = [0x7a3a22, 0xe8e4dc, 0xa66030, 0x4a2a1a]
+  let idx = 0
+  for (let pz = minZ + 2.5; pz <= maxZ - 2.5; pz += 3.2) {
+    into.box([0.5, 0.04, 0.38], { at: [x - 0.1, topY + 0.02, pz], colour: 0xb8c0c4 })
+    into.box([0.44, 0.02, 0.32], {
+      at: [x - 0.1, topY + 0.03, pz],
+      colour: foodColours[idx % foodColours.length],
+    })
+    idx++
+  }
+}
+
+interface TariffBoardOptions {
+  into: BanquetDetailBuilder
+  at: [number, number, number]
+}
+
+function dressVerticalTariffBoard(options: TariffBoardOptions): void {
+  const { into, at } = options
+  const [x, y, z] = at
+  into.box([0.06, 1.9, 0.85], { at: [x, y, z], colour: MENU_FRAME })
+  into.box([0.07, 1.8, 0.78], { at: [x, y, z], colour: 0xeeece8 })
+  for (const dy of [-0.65, -0.45, -0.25, -0.05, 0.15, 0.35, 0.55, 0.75]) {
+    into.box([0.075, 0.02, 0.3], { at: [x + 0.005, y + dy, z - 0.18], colour: 0x222426 })
+    into.box([0.075, 0.02, 0.3], { at: [x + 0.005, y + dy, z + 0.18], colour: 0x222426 })
+  }
+}
+
+interface StorageOptions {
+  into: BanquetDetailBuilder
+  origin: [number, number, number]
+}
+
+function dressBackOfCounterStorage(options: StorageOptions): void {
+  const { into, origin } = options
+  const [, floor, z] = origin
+  into.box([0.36, 0.35, 0.45], { at: [14.35, floor + 0.175, z - 2.0], colour: 0x7c6248 })
+  into.box([0.36, 0.35, 0.45], { at: [14.35, floor + 0.175, z - 1.45], colour: 0x6e563d })
+  into.box([0.34, 0.32, 0.42], { at: [14.35, floor + 0.51, z - 1.7], colour: 0x82694e })
+  into.sphere([0.16, 0.28, 0.16], { at: [14.35, floor + 0.28, z + 1.8], colour: 0xb5ab9a })
+  into.sphere([0.18, 0.25, 0.16], { at: [14.35, floor + 0.25, z + 2.3], colour: 0x9e9484 })
 }
 
 interface StoolRowOptions {

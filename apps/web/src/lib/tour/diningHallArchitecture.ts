@@ -229,6 +229,51 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
 
   // 7. Overhead electrical cable trays beneath the trusses
   cableTrays(into, [bounds.minZ, bounds.maxZ], ceiling - 0.7)
+
+  // 8. Chapter 378 service wall fixtures: PA speaker, vertical drop duct and kitchen window
+  dressChapter378Fixtures({ into, floor, ceiling, minX: bounds.minX })
+}
+
+interface Ch378FixturesOptions {
+  into: BanquetDetailBuilder
+  floor: number
+  ceiling: number
+  minX: number
+}
+
+function dressChapter378Fixtures(options: Ch378FixturesOptions): void {
+  const { into, floor, ceiling, minX } = options
+
+  // Wall-mounted PA loudspeaker box with circular speaker cone & electrical conduit
+  const speakerY = floor + 4.8
+  into.box([0.16, 0.45, 0.35], { at: [minX + 0.1, speakerY, 17.5], colour: DARK_STEEL })
+  into.cylinder(
+    { radius: 0.12, height: 0.04, sides: 12 },
+    { at: [minX + 0.18, speakerY, 17.5], rotation: [0, 0, Math.PI / 2], colour: 0x1f2124 },
+  )
+  const conduitHeight = ceiling - (speakerY + 0.225)
+  into.cylinder(
+    { radius: 0.018, height: conduitHeight, sides: 6 },
+    { at: [minX + 0.1, ceiling - conduitHeight / 2, 17.5], colour: STEEL },
+  )
+
+  // Vertical cylindrical drop duct descending from ceiling behind counter
+  into.cylinder(
+    { radius: 0.34, height: 3.2, sides: 16 },
+    { at: [minX + 0.42, ceiling - 1.6, 23.5], colour: STEEL },
+  )
+  into.cylinder(
+    { radius: 0.37, height: 0.07, sides: 16 },
+    { at: [minX + 0.42, ceiling - 1.1, 23.5], colour: RIVET_STEEL },
+  )
+  into.cylinder(
+    { radius: 0.37, height: 0.07, sides: 16 },
+    { at: [minX + 0.42, ceiling - 2.6, 23.5], colour: RIVET_STEEL },
+  )
+
+  // Kitchen observation window in service wall
+  into.box([0.05, 1.4, 0.95], { at: [minX + 0.04, floor + 2.8, 30.5], colour: STEEL })
+  into.box([0.02, 1.3, 0.85], { at: [minX + 0.06, floor + 2.8, 30.5], colour: 0x88aab8 })
 }
 
 interface BarrierOptions {

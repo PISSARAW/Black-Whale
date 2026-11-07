@@ -20,6 +20,11 @@ export const SHAKER = 0xcccccc
 export const NAPKIN_HOLDER = 0x909498
 export const NAPKIN_PAPER = 0xf5f3ee
 export const TEACUP = 0xdcd8cf
+export const CLAMSHELL_BOX = 0xd8c8a8
+export const BURGER_BUN = 0xd49b4b
+export const BURGER_PATTY = 0x4a2818
+export const BURGER_GREENS = 0x6e9934
+export const SIDE_CUP = 0xf0ede6
 
 interface FurnitureContext {
   into: BanquetDetailBuilder
@@ -51,6 +56,50 @@ function placeMealTray(into: BanquetDetailBuilder, at: Point3, trayColour = TRAY
     at: [x - 0.02, y + 0.022, z + 0.1],
     colour: CHOPSTICKS,
   })
+}
+
+/**
+ * Fast-food hamburger meal in an open clamshell box with drink and side cup
+ * directly depicted on the meal tray in chapter 378 (panel 3).
+ */
+function placeBurgerClamshellMeal(into: BanquetDetailBuilder, at: Point3, trayColour = TRAY_RED) {
+  const [x, y, z] = at
+
+  // Serving tray
+  into.box([0.44, 0.018, 0.32], { at: [x, y + 0.009, z], colour: trayColour })
+
+  // Open clamshell box bottom
+  into.box([0.18, 0.025, 0.17], { at: [x + 0.05, y + 0.02, z + 0.02], colour: CLAMSHELL_BOX })
+  // Open clamshell box lid angled backward
+  into.box([0.18, 0.13, 0.012], {
+    at: [x + 0.05, y + 0.08, z - 0.065],
+    rotation: [-0.4, 0, 0],
+    colour: CLAMSHELL_BOX,
+  })
+
+  // Hamburger inside clamshell box
+  const bx = x + 0.05
+  const bz = z + 0.02
+  into.cylinder({ radius: 0.052, height: 0.018, sides: 12 }, { at: [bx, y + 0.03, bz], colour: BURGER_BUN })
+  into.cylinder({ radius: 0.056, height: 0.022, sides: 12 }, { at: [bx, y + 0.045, bz], colour: BURGER_PATTY })
+  into.box([0.1, 0.008, 0.1], { at: [bx, y + 0.055, bz], colour: BURGER_GREENS })
+  into.sphere([0.052, 0.026, 0.052], { at: [bx, y + 0.07, bz], colour: BURGER_BUN })
+
+  // Beverage tumbler cup with drinking straw
+  into.cylinder(
+    { radius: 0.038, bottom: 0.03, height: 0.095, sides: 8 },
+    { at: [x - 0.12, y + 0.06, z - 0.06], colour: CUP_BLUE },
+  )
+  into.cylinder(
+    { radius: 0.004, height: 0.06, sides: 6 },
+    { at: [x - 0.12, y + 0.12, z - 0.06], rotation: [0.15, 0, 0.1], colour: 0xeeeeee },
+  )
+
+  // Side cup (coleslaw / dip)
+  into.cylinder(
+    { radius: 0.04, bottom: 0.032, height: 0.04, sides: 10 },
+    { at: [x - 0.12, y + 0.035, z + 0.06], colour: SIDE_CUP },
+  )
 }
 
 /** Places a table condiment caddy with soy sauce bottle, salt shaker and napkin dispenser. */
@@ -126,7 +175,11 @@ function placeTableTableware(options: TablewareRowOptions): void {
     const px = isHorizontal ? x - w / 2 + i * step : x
     const pz = isHorizontal ? z : z - d / 2 + i * step
     const trayColour = i % 2 === 0 ? TRAY_RED : TRAY_BROWN
-    placeMealTray(into, [px, topY, pz], trayColour)
+    if (i % 2 === 1) {
+      placeBurgerClamshellMeal(into, [px, topY, pz], trayColour)
+    } else {
+      placeMealTray(into, [px, topY, pz], trayColour)
+    }
 
     if (i < count) {
       const caddyX = isHorizontal ? px + step / 2 : px
@@ -270,8 +323,8 @@ export function dressFranklinTable(context: FurnitureContext): void {
     }
   }
 
-  // Franklin's meal tray, condiment caddy and large mug
-  placeMealTray(into, [x, topY, z], TRAY_RED)
+  // Franklin's meal tray (fast-food burger meal from ch. 378), condiment caddy and large mug
+  placeBurgerClamshellMeal(into, [x, topY, z], TRAY_RED)
   placeCondimentCaddy(into, [x - 0.35, topY, z])
   into.cylinder(
     { radius: 0.055, height: 0.14, sides: 12 },

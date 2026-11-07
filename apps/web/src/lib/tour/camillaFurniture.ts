@@ -36,23 +36,23 @@ function camillaChaiseMattress(surface: CamillaSurface): void {
 
 function camillaChaiseHeadrest(surface: CamillaSurface): void {
   // Arched scrolled headrest at the west end (X = -0.9)
-  surface.cylinder({ radius: 0.24, height: 0.88, sides: 14 }, [-0.9, 0.62, 0], CAMILLA_VELVET, [
-    Math.PI / 2,
-    0,
-    0,
-  ])
-  surface.cylinder({ radius: 0.26, height: 0.92, sides: 14 }, [-0.9, 0.62, 0], CAMILLA_WOOD, [
-    Math.PI / 2,
-    0,
-    0,
-  ])
+  surface.cylinder(
+    { radius: 0.24, height: 0.88, sides: 14 },
+    [-0.9, 0.62, 0],
+    { colour: CAMILLA_VELVET, rotation: [Math.PI / 2, 0, 0] },
+  )
+  surface.cylinder(
+    { radius: 0.26, height: 0.92, sides: 14 },
+    [-0.9, 0.62, 0],
+    { colour: CAMILLA_WOOD, rotation: [Math.PI / 2, 0, 0] },
+  )
 
   // Cylindrical silk bolster cushion
-  surface.cylinder({ radius: 0.12, height: 0.78, sides: 12 }, [-0.74, 0.64, 0], CAMILLA_SILK, [
-    Math.PI / 2,
-    0,
-    0,
-  ])
+  surface.cylinder(
+    { radius: 0.12, height: 0.78, sides: 12 },
+    [-0.74, 0.64, 0],
+    { colour: CAMILLA_SILK, rotation: [Math.PI / 2, 0, 0] },
+  )
 
   // Decorative silk accent pillows
   surface.sphere([0.22, 0.14, 0.2], [-0.5, 0.58, -0.16], CAMILLA_SILK)
@@ -140,7 +140,12 @@ function diningTableSetting(surface: CamillaSurface): void {
   surface.sphere([0.07, 0.07, 0.07], [0, 0.84, 0], 0x5a1020)
 }
 
-function courtChair(surface: CamillaSurface, at: Point3, velvetCol: number, angle: number): void {
+function courtChair(
+  surface: CamillaSurface,
+  at: Point3,
+  options: { velvetCol: number; angle: number },
+): void {
+  const { velvetCol, angle } = options
   const [x, y, z] = at
   // 4 carved legs
   for (const sx of [-0.22, 0.22]) {
@@ -175,8 +180,8 @@ export function dressDiningTable(surface: CamillaSurface): void {
   diningTableSetting(surface)
 
   // Chairs: Camilla on west facing east, Duazul on east facing west
-  courtChair(surface, [-1.35, 0, 0], CAMILLA_VELVET, 0)
-  courtChair(surface, [1.35, 0, 0], DUAZUL_VELVET, 1)
+  courtChair(surface, [-1.35, 0, 0], { velvetCol: CAMILLA_VELVET, angle: 0 })
+  courtChair(surface, [1.35, 0, 0], { velvetCol: DUAZUL_VELVET, angle: 1 })
 }
 
 // --- Musse's Surveillance Post ---
@@ -199,11 +204,11 @@ function musseDossiers(surface: CamillaSurface): void {
 function musseBirdPerch(surface: CamillaSurface): void {
   // Perch evoking Musse's "Secret Window" Nen bird
   surface.cylinder({ radius: 0.015, height: 1.6, sides: 8 }, [-0.75, 0.8, -0.2], MUSSE_METAL)
-  surface.cylinder({ radius: 0.018, height: 0.38, sides: 8 }, [-0.75, 1.58, -0.2], CAMILLA_WOOD, [
-    0,
-    0,
-    Math.PI / 2,
-  ])
+  surface.cylinder(
+    { radius: 0.018, height: 0.38, sides: 8 },
+    [-0.75, 1.58, -0.2],
+    { colour: CAMILLA_WOOD, rotation: [0, 0, Math.PI / 2] },
+  )
   surface.sphere([0.04, 0.06, 0.05], [-0.75, 1.65, -0.2], 0x2e353f) // Stylised bird silhouette
 }
 

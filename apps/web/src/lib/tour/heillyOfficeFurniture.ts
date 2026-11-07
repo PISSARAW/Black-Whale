@@ -1,4 +1,4 @@
-import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
+import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { Space, Structure } from './types'
 import {
   CHROME,
@@ -8,7 +8,6 @@ import {
   MONITOR_CASE,
   SFAMICOM_DARK,
   SFAMICOM_GREY,
-  STEEL_BRUSHED,
   STEEL_DARK,
   WOOD_MAFIA,
 } from './heillyHideoutDetailSurface'

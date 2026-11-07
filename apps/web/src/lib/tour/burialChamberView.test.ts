@@ -137,6 +137,8 @@ describe('the princes burial chamber reconstructed from chapter 371', () => {
 
   it('publishes the canonical manga views from chapter 371 with staging', () => {
     expect(MANGA_BURIAL_CHAMBER_VIEWS.length).toBe(3)
+    expect(MANGA_BURIAL_CHAMBER_VIEWS[0].id).toBe('burial-rotunda-caskets')
+    expect(MANGA_BURIAL_CHAMBER_VIEWS[0].eyeHeight).toBeUndefined()
     for (const view of MANGA_BURIAL_CHAMBER_VIEWS) {
       expect(view.spaceId).toBe(BURIAL_SPACE)
       expect(view.chapter).toBe(371)

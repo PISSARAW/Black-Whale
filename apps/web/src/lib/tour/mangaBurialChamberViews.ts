@@ -16,17 +16,6 @@ const source = {
 export const MANGA_BURIAL_CHAMBER_VIEWS: MangaView[] = [
   view({
     ...source,
-    id: 'princes-burial-chamber-overhead',
-    at: [0, 0],
-    target: [0.01, 0.01],
-    pitch: -1.57,
-    eyeHeight: 28,
-    pages: '18–19',
-    label: 'The 14 radial coffins, central apparatus and ritual labyrinth floor',
-    labelFr: 'Les 14 cercueils en rayon, l’appareil central et le sol en labyrinthe rituel',
-  }),
-  view({
-    ...source,
     id: 'burial-rotunda-caskets',
     at: [0, -8.2],
     target: [1.8, 7.87],
@@ -45,5 +34,16 @@ export const MANGA_BURIAL_CHAMBER_VIEWS: MangaView[] = [
     pages: '20–21',
     label: 'King Nasubi standing at Momoze’s coffin: “My daughter is still alive...”',
     labelFr: 'Le roi Nasubi au chevet du cercueil de Momoze : « Ma fille est toujours en vie... »',
+  }),
+  view({
+    ...source,
+    id: 'princes-burial-chamber-overhead',
+    at: [0, 4.5],
+    target: [0, 0],
+    pitch: -1.45,
+    eyeHeight: 26,
+    pages: '18–19',
+    label: 'The 14 radial coffins, central apparatus and ritual labyrinth floor',
+    labelFr: 'Les 14 cercueils en rayon, l’appareil central et le sol en labyrinthe rituel',
   }),
 ]

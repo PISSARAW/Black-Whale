@@ -134,5 +134,8 @@ export function floorPatternOf(space: Space): FloorPattern | null {
   if (space.id === 'tier-1-royal-residential-sector-room-1009-living') {
     return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
+  if (space.id === 'tier-5-central-dining-hall') {
+    return { kind: 'tile', style: 'joint', segments: plateSeams(space.footprint, 1.75) }
+  }
   return null
 }

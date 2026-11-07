@@ -5,6 +5,7 @@ import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 import { buildRoyalSalonDetails } from './royalSalonView'
+import { buildDiningHallDetails } from './diningHallView'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 
@@ -136,6 +137,7 @@ export class TierView {
       room.details =
         buildBanquetDetails(detailsOptions) ??
         buildRoyalSalonDetails(detailsOptions) ??
+        buildDiningHallDetails(detailsOptions) ??
         buildPrisonDetails(detailsOptions) ??
         buildCasinoDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)

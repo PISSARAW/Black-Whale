@@ -890,7 +890,7 @@
         "event": "Momoze is laid out in the princes' burial chamber",
         "charactersInvolved": ["nasubi-hui-guo-rou", "nugui", "prince-momoze"],
         "location": "Tier 1 - Princes' Burial Chamber",
-        "locationId": "tier-1-princes-burial-chamber"
+        "locationId": "tier-1-princes-burial-chamber-rotunda"
       }
     ],
     "location": "Tiers 1 and 5",

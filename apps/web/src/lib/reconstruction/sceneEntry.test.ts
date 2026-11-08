@@ -18,7 +18,7 @@ describe('living reconstruction scene entry', () => {
   })
 
   it('opens a single-room interior in its detailed main room', () => {
-    expect(mainSceneSpace(ship, 'tier-1-princes-burial-chamber')?.id).toBe(
+    expect(mainSceneSpace(ship, 'tier-1-princes-burial-chamber-rotunda')?.id).toBe(
       'tier-1-princes-burial-chamber-rotunda',
     )
   })

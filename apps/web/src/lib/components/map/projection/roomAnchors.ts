@@ -197,7 +197,7 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // Grand VVIP recreation hall with double stairs and mezzanine (ch. 419).
   'tier-1-vvip-recreation-hall': vvipRecreationSpotAnchors,
   // Nasubi stands by Momoze's coffin in the secret rotunda (ch. 371).
-  'tier-1-princes-burial-chamber': burialSpotAnchors,
+  'tier-1-princes-burial-chamber-rotunda': burialSpotAnchors,
   // Queen Unma sits in her carved armchair in Room 01, ch. 403.
   'tier-1-queens-living-quarters': {
     occupants: {

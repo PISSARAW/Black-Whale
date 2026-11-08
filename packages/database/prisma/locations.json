@@ -70,7 +70,7 @@
     "exits": []
   },
   {
-    "id": "tier-1-princes-burial-chamber",
+    "id": "tier-1-princes-burial-chamber-rotunda",
     "name": "Princes' Burial Chamber",
     "parentLocationId": "tier-1",
     "deck": 1,

@@ -72,7 +72,7 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   /** The guest deck of the tier 1 liner, drawn on `tier-1-c.svelte`. */
   'tier-1-c': {
     'tier-1-c': { x: 425.0, y: 385.0 },
-    'tier-1-princes-burial-chamber': { x: 648.6, y: 380.6, small: true },
+    'tier-1-princes-burial-chamber-rotunda': { x: 648.6, y: 380.6, small: true },
     // The two lifeboat blocks straddle the centreline; the shared access
     // passage is the honest anchor for a presence with no pod named.
     'tier-1-lifeboats': { x: 845.7, y: 300.0, small: true },

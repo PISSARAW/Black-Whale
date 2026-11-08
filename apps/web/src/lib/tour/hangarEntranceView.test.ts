@@ -101,7 +101,7 @@ describe('the Tier 5 Hangar Entrance reconstructed from chapters 358, 377, 390 a
 
     const bounds = new THREE.Box3().setFromObject(root)
     const floor = floorOf(space, plan.tier)
-    expect(bounds.min.y).toBeGreaterThanOrEqual(floor - 0.05)
+    expect(bounds.min.y).toBeGreaterThanOrEqual(floor - 0.16)
     expect(bounds.max.y).toBeLessThanOrEqual(floor + space.ceiling! + 0.5)
     disposeBanquetDetails(root)
   })

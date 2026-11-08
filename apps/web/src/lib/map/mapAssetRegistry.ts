@@ -160,7 +160,7 @@ const REGION_LOCATION_SLUGS: Record<string, string | null> = {
   casino: 'tier-1-vip-casino',
   'king-quarters': 'tier-1-king-living-quarters',
   lifeboats: 'tier-1-lifeboats',
-  'princes-burial-chamber': 'tier-1-princes-burial-chamber',
+  'princes-burial-chamber': 'tier-1-princes-burial-chamber-rotunda',
   'queens-living-quarters': 'tier-1-queens-living-quarters',
   'soldiers-living-quarters': 'tier-1-soldiers-living-quarters',
   'supreme-court': 'tier-1-supreme-court',

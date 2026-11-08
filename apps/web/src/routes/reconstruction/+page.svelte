@@ -48,7 +48,9 @@
   const ship = theShip()
 
   const chronologicalEvents = $derived(sortChronologicalEvents(data.chapters))
-  const initialParams = resolveInitialReconstructionParams(data.chapters, $page.url.searchParams)
+  const initialParams = untrack(() =>
+    resolveInitialReconstructionParams(data.chapters, $page.url.searchParams),
+  )
 
   const engineEvents = $derived(
     data.worldEvents.map((record) => ({

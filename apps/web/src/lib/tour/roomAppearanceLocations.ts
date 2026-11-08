@@ -6,7 +6,7 @@ const TIER_1_FINISH = new Map<string, Finish>([
   ['tier-1-vvip-recreation-hall', 'gilded-hall'],
   ['tier-1-king-living-quarters', 'royal-salon'],
   ['tier-1-lifeboats', 'evacuation'],
-  ['tier-1-princes-burial-chamber', 'funerary'],
+  ['tier-1-princes-burial-chamber-rotunda', 'funerary'],
   ['tier-1-queens-living-quarters', 'royal-passage'],
   ...Array.from(
     { length: 8 },

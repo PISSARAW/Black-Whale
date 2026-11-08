@@ -37,7 +37,7 @@ describe('room appearance', () => {
     const ids = [
       'tier-1-banquet-hall',
       'tier-1-lifeboats',
-      'tier-1-princes-burial-chamber',
+      'tier-1-princes-burial-chamber-rotunda',
       'tier-1-vip-casino',
       'tier-1-vip-jail',
     ]

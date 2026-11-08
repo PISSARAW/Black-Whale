@@ -50,7 +50,7 @@ const NAMED_ROOM_SLUGS: ReadonlyArray<readonly [string, string]> = [
   ['queens living quarters', 'tier-1-queens-living-quarters'],
   ["soldiers' living quarters", 'tier-1-soldiers-living-quarters'],
   ['soldiers living quarters', 'tier-1-soldiers-living-quarters'],
-  ['burial chamber', 'tier-1-princes-burial-chamber'],
+  ['burial chamber', 'tier-1-princes-burial-chamber-rotunda'],
   ['lifeboat', 'tier-1-lifeboats'],
   ['canot de sauvetage', 'tier-1-lifeboats'],
   ['cineplex', 'tier-3-cineplex'],

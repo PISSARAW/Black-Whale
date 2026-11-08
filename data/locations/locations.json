@@ -57,7 +57,9 @@
     "zoneType": "quarters",
     "description": "King Nasubi's residence, separated from the Princes' living quarters by the Banquet Hall. Chapter 382 shows its double-height salon in detail: a coffered barrel vault carried by square piers, geometric inlaid flooring, a wall crowded with framed art around one monumental battle scene, an ornamented mantel and sideboards, upholstered seating, several low tables, drinks service, sculpture and clipped plants.",
     "entrances": [],
-    "exits": ["tier-1-banquet-hall"]
+    "exits": [
+      "tier-1-banquet-hall"
+    ]
   },
   {
     "id": "tier-1-queens-living-quarters",
@@ -160,16 +162,6 @@
     "exits": []
   },
   {
-    "id": "tier-1-princes-burial-chamber",
-    "name": "Princes' Burial Chamber",
-    "parentLocationId": "tier-1",
-    "deck": 1,
-    "zoneType": "ceremonial",
-    "description": "Funerary hall where the princes killed during the voyage are laid out. The hall is round, with fourteen coffins set radially about a central spire — one per prince, prepared before anyone has died. Momoze is the first to occupy hers: chapter 371 puts the king at her open coffin, refusing to mourn a daughter he calls part of the foundations of Kakin. Halkenburg's burial is held there later, and Chrollo works the mourners with Love Dial 6700 under cover of the procession.",
-    "entrances": [],
-    "exits": ["tier-1-banquet-hall"]
-  },
-  {
     "id": "tier-1-lifeboats",
     "name": "Lifeboat Deck",
     "parentLocationId": "tier-1",
@@ -215,7 +207,7 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "administrative",
-    "description": "Highest jurisdiction on the ship, managed by Supreme Magistrate Cleapatro. Chapter 376 shows it in session on the morning of the third day: bench, stand and public benches, the two princes' camps pleading Camilla's attack on Benjamin. It is the one place aboard where the contest is fought with counsel rather than Nen, and its rulings bind princes — confinement to the VIP zone, court supervisors on every outing, a search of every residence on Tier 1.",
+    "description": "Highest jurisdiction on the ship, managed by Supreme Magistrate Cleapatro. Chapter 376 shows it in session on the morning of the third day: bench, stand and public benches, the two princes' camps pleading Camilla's attack on Benjamin. It is the one place aboard where the contest is fought with counsel rather than Nen, and its rulings bind princes \u2014 confinement to the VIP zone, court supervisors on every outing, a search of every residence on Tier 1.",
     "entrances": [],
     "exits": []
   },
@@ -285,7 +277,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 4th Prince Tserriednich. The attached plan confirms the standard apartment shell: service rooms at the entrance, a large central salon and private rooms at the rear. Chapters 384-387 distinguish a large, nearly empty Nen-training salon — polished geometric floor, tall double doors, moulded wall panels, framed decoration and a mantel clock — from the adjoining guard anteroom and sitting area where Theta is debriefed after the shot.",
+    "description": "Living quarters of 4th Prince Tserriednich. The attached plan confirms the standard apartment shell: service rooms at the entrance, a large central salon and private rooms at the rear. Chapters 384-387 distinguish a large, nearly empty Nen-training salon \u2014 polished geometric floor, tall double doors, moulded wall panels, framed decoration and a mantel clock \u2014 from the adjoining guard anteroom and sitting area where Theta is debriefed after the shot.",
     "entrances": [],
     "exits": []
   },
@@ -321,11 +313,11 @@
   },
   {
     "id": "tier-1-royal-residential-sector-room-1008",
-    "name": "Room 1008 (Salé-salé)",
+    "name": "Room 1008 (Sal\u00e9-sal\u00e9)",
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters assigned to 8th Prince Salé-salé and his household. Its wide-bed bedroom doubles as an informal party room: Predator reaches the Guardian Spirit Beast beside that bed, and Stand By Me later kills Salé-salé there while two companions remain with him.",
+    "description": "Living quarters assigned to 8th Prince Sal\u00e9-sal\u00e9 and his household. Its wide-bed bedroom doubles as an informal party room: Predator reaches the Guardian Spirit Beast beside that bed, and Stand By Me later kills Sal\u00e9-sal\u00e9 there while two companions remain with him.",
     "entrances": [],
     "exits": []
   },
@@ -365,7 +357,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Crime scene of the 12th Princess Momoze, strangled here in chapter 368. From chapter 373 onward the door is crossed with KEEP OUT tape and held by armed soldiers: access is refused outright, and the refusal covers the telephone inside — a guard who asks only to place a call is turned away. The room is one of the sealed points of Tier 1 rather than a place anyone still passes through.",
+    "description": "Crime scene of the 12th Princess Momoze, strangled here in chapter 368. From chapter 373 onward the door is crossed with KEEP OUT tape and held by armed soldiers: access is refused outright, and the refusal covers the telephone inside \u2014 a guard who asks only to place a call is turned away. The room is one of the sealed points of Tier 1 rather than a place anyone still passes through.",
     "entrances": [],
     "exits": []
   },
@@ -385,7 +377,7 @@
     "parentLocationId": "tier-1-royal-residential-sector",
     "deck": 1,
     "zoneType": "quarters",
-    "description": "Living quarters of 14th Prince Woble. Chapters 386-389 distinguish the main reception salon converted into Kurapika's classroom — double doors, guarded walls, a mobile demonstration table and water-divination glasses — from the curtained bedroom where Oito remains with Woble during the lesson.",
+    "description": "Living quarters of 14th Prince Woble. Chapters 386-389 distinguish the main reception salon converted into Kurapika's classroom \u2014 double doors, guarded walls, a mobile demonstration table and water-divination glasses \u2014 from the curtained bedroom where Oito remains with Woble during the lesson.",
     "entrances": [],
     "exits": []
   },
@@ -455,7 +447,7 @@
     "parentLocationId": "black-whale-1",
     "deck": 3,
     "zoneType": "tier",
-    "description": "Highest tier open to general passengers, with first-class and standard cabins, medical and political wards, and several Zodiac operations. Chapter 390 adds a busy food-court sector with open counters, menu boards, café seating and public galleries; Rinchi's interrogations, the gunfire and Hinrigh's transformed handcuff-snakes occur there.",
+    "description": "Highest tier open to general passengers, with first-class and standard cabins, medical and political wards, and several Zodiac operations. Chapter 390 adds a busy food-court sector with open counters, menu boards, caf\u00e9 seating and public galleries; Rinchi's interrogations, the gunfire and Hinrigh's transformed handcuff-snakes occur there.",
     "entrances": [],
     "exits": []
   },
@@ -525,7 +517,7 @@
     "parentLocationId": "tier-3",
     "deck": 3,
     "zoneType": "residential",
-    "description": "Upper passenger cabins on Tier 3, the best accommodation available outside the royal tiers. The Hunter Association contingent works from here: at the departure seven of them sit a logistics meeting in the compartment — the Zodiacs Pyon, Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one unnamed Hunter.",
+    "description": "Upper passenger cabins on Tier 3, the best accommodation available outside the royal tiers. The Hunter Association contingent works from here: at the departure seven of them sit a logistics meeting in the compartment \u2014 the Zodiacs Pyon, Gel, Cluck and Ginta, the doctors Sanbica Norton and Tokarine, and one unnamed Hunter.",
     "entrances": [],
     "exits": []
   },
@@ -537,7 +529,9 @@
     "zoneType": "residential",
     "description": "Ordinary Tier 3 cabins, and the hunting ground of Morena's Contagion carriers: Luini alone kills twenty people here before teleporting out, and the resulting panic is what pushes Mizaistom to redeploy the Royal Army. Room 302, where Morena infects the twenty-three Heil-Ly in chapter 378, is one of these cabins; the panel gives its door plate but nothing that would place it on the deck plan, so it has no entry of its own.",
     "entrances": [],
-    "exits": ["tier-3-residential-room-3101"]
+    "exits": [
+      "tier-3-residential-room-3101"
+    ]
   },
   {
     "id": "tier-3-cineplex",
@@ -611,13 +605,17 @@
   },
   {
     "id": "tier-4-central-passage",
-    "name": "Central Passage Tier 4–5",
+    "name": "Central Passage Tier 4\u20135",
     "parentLocationId": "tier-4",
     "deck": 4,
     "zoneType": "corridor",
     "description": "Central passage connecting Tiers 4 and 5. Chrollo, Shizuku and Bonolenov progress there on the fourth day of the journey.",
-    "entrances": ["tier-4"],
-    "exits": ["tier-5"]
+    "entrances": [
+      "tier-4"
+    ],
+    "exits": [
+      "tier-5"
+    ]
   },
   {
     "id": "tier-5-central-dining-hall",
@@ -636,8 +634,12 @@
     "deck": null,
     "zoneType": "infrastructure",
     "description": "Sewage processing facility for the ship's passengers, located between Tiers 4 and 5. Its precise internal layout and any connection to Heil-Ly routes are unconfirmed.",
-    "entrances": ["tier-4-central-passage"],
-    "exits": ["tier-5"]
+    "entrances": [
+      "tier-4-central-passage"
+    ],
+    "exits": [
+      "tier-5"
+    ]
   },
   {
     "id": "tier-3-residential-units",
@@ -705,7 +707,7 @@
     "parentLocationId": "tier-5",
     "deck": 5,
     "zoneType": "public",
-    "description": "Numbered Tier 5 assembly area with a 28 × 14 m footprint in the tour reconstruction. Volumes 34–36 establish its name and function but do not show an identifiable interior; no furniture, pillars, ducts, ceiling treatment or occupants can therefore be placed from those volumes.",
+    "description": "Numbered Tier 5 assembly area with a 28 \u00d7 14 m footprint in the tour reconstruction. Volumes 34\u201336 establish its name and function but do not show an identifiable interior; no furniture, pillars, ducts, ceiling treatment or occupants can therefore be placed from those volumes.",
     "entrances": [],
     "exits": []
   }

@@ -113,6 +113,6 @@ export function bindDoorAnimation(sentinel: Three.Object3D, door: AnimatedDoor):
     lastTime = now
 
     const cam = camera as Three.Camera
-    door.update(cam.position.x, cam.position.z, cam.position.y, dt)
+    door.update({ x: cam.position.x, z: cam.position.z, y: cam.position.y }, dt)
   }
 }

@@ -1,7 +1,6 @@
 import {
   SCREENING_BRASS,
   SCREENING_DARK_STEEL,
-  SCREENING_EXIT_GREEN,
   SCREENING_GLASS,
   SCREENING_GOLD_LEAF,
   SCREENING_WALL_FABRIC,
@@ -15,12 +14,6 @@ export interface ArchitectureContext {
   surface: ScreeningRoomSurface
   floor: number
   ceilingHeight: number
-}
-
-interface WallSpan {
-  start: [number, number]
-  end: [number, number]
-  axis: 'x' | 'y'
 }
 
 function wallPilaster(
@@ -54,49 +47,6 @@ function wallSconce(surface: ScreeningRoomSurface, at: [number, number, number])
       glow: true,
     })
   }
-}
-
-function exitDoorway(
-  surface: ScreeningRoomSurface,
-  at: [number, number, number],
-  orientation: 'x' | 'y',
-): void {
-  const [x, y, z] = at
-  const isX = orientation === 'x'
-  const frameW = isX ? 0.16 : 2.6
-  const frameD = isX ? 2.6 : 0.16
-  const doorW = isX ? 0.08 : 1.2
-  const doorD = isX ? 1.2 : 0.08
-
-  // Ornate architrave surround
-  surface.box([frameW + 0.2, 2.9, frameD + 0.2], [x, y + 1.45, z], SCREENING_WOOD_MAHOGANY)
-  // Door leaves
-  for (const offset of [-0.62, 0.62]) {
-    const dx = isX ? 0 : offset
-    const dz = isX ? offset : 0
-    surface.box([doorW, 2.7, doorD], [x + dx, y + 1.35, z + dz], SCREENING_WOOD_TRIM)
-    // Brass push bar
-    surface.cylinder(
-      { radius: 0.02, height: isX ? doorD * 0.7 : doorW * 0.7, sides: 8 },
-      [x + dx, y + 1.05, z + dz + (isX ? 0 : 0.06)],
-      {
-        colour: SCREENING_BRASS,
-        rotation: isX ? [Math.PI / 2, 0, 0] : [0, 0, Math.PI / 2],
-      },
-    )
-    // Brass kickplate
-    surface.box(
-      [isX ? 0.09 : doorW * 0.9, 0.25, isX ? doorD * 0.9 : 0.09],
-      [x + dx, y + 0.14, z + dz],
-      SCREENING_BRASS,
-    )
-  }
-  // Illuminated green exit sign over lintel
-  surface.glowingBox(
-    [isX ? 0.12 : 0.8, 0.24, isX ? 0.8 : 0.12],
-    [x, y + 3.1, z],
-    SCREENING_EXIT_GREEN,
-  )
 }
 
 function projectionBooth(surface: ScreeningRoomSurface, floor: number): void {
@@ -147,9 +97,7 @@ function perimeterWallDetails(context: ArchitectureContext): void {
   for (let x = xMin + 6; x < xMax - 6; x += 7.2) {
     wallPilaster(surface, [x, floor, zMin + 0.06], h)
     wallSconce(surface, [x + 3.6, floor + 3.2, zMin + 0.06])
-    // Lower wainscot panel
     surface.box([5.4, 1.2, 0.06], [x + 3.6, floor + 0.6, zMin + 0.03], SCREENING_WOOD_MAHOGANY)
-    // Upper fabric acoustic panel
     surface.box(
       [5.4, h - 2.2, 0.04],
       [x + 3.6, floor + 1.2 + (h - 2.2) / 2, zMin + 0.02],
@@ -189,11 +137,6 @@ export function dressScreeningRoomArchitecture(context: ArchitectureContext): vo
   const { surface, floor } = context
 
   perimeterWallDetails(context)
-
-  // 3 Canon emergency double exits
-  exitDoorway(surface, [-43.75, floor, 7.1], 'y')
-  exitDoorway(surface, [-43.75, floor, 52.4], 'y')
-  exitDoorway(surface, [-87.4, floor, 29.75], 'x')
 
   // Projection booth at rear of hall
   projectionBooth(surface, floor)

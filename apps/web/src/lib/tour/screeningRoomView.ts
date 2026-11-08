@@ -37,7 +37,7 @@ export function buildScreeningRoomDetails(options: {
   const into = new BanquetDetailBuilder(THREE)
   const surface = new ScreeningRoomSurface(into)
   const floor = floorOf(space, plan.tier)
-  const ceilingHeight = ceilingOf(space) ?? 10
+  const ceilingHeight = ceilingOf(space, plan.tier) ?? 10
 
   // 1. Classical architecture, wall damask panels, pilasters, emergency exits, projection booth
   dressScreeningRoomArchitecture({ surface, floor, ceilingHeight })

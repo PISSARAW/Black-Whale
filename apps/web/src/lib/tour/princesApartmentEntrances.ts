@@ -1,8 +1,6 @@
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { Space } from './types'
 
-const MAHOGANY = 0x3a1f18
-const DOOR_PANEL = 0x2e1812
 const BRONZE = 0x72604c
 const GOLD = 0xd4af37
 const STEEL = 0x889098
@@ -34,45 +32,6 @@ function resolveDoorGeometry(space: Space): DoorGeometry {
   const sideSign = isOdd ? 1 : -1
   const doorY = isOdd ? maxY : minY
   return { doorX, doorY, sideSign, isOdd }
-}
-
-function royalDoubleDoor(into: BanquetDetailBuilder, floor: number, geom: DoorGeometry): void {
-  const { doorX, doorY, sideSign } = geom
-  const doorZ = doorY + sideSign * 0.06
-
-  // Double door body
-  into.box([1.8, 2.6, 0.1], {
-    at: [doorX, floor + 1.3, doorZ],
-    colour: MAHOGANY,
-  })
-
-  // Moulded classical architrave frame
-  into.box([2.04, 2.72, 0.14], {
-    at: [doorX, floor + 1.36, doorZ],
-    colour: BRONZE,
-  })
-
-  // Recessed panels on the two leaves
-  for (const leafX of [doorX - 0.44, doorX + 0.44]) {
-    for (const panelY of [floor + 0.65, floor + 1.85]) {
-      into.box([0.62, 0.95, 0.12], {
-        at: [leafX, panelY, doorZ],
-        colour: DOOR_PANEL,
-      })
-      into.box([0.56, 0.89, 0.13], {
-        at: [leafX, panelY, doorZ],
-        colour: BRONZE,
-      })
-    }
-  }
-
-  // Brass handles at center
-  for (const handleX of [doorX - 0.08, doorX + 0.08]) {
-    into.box([0.03, 0.22, 0.06], {
-      at: [handleX, floor + 1.15, doorZ + sideSign * 0.08],
-      colour: GOLD,
-    })
-  }
 }
 
 function doorEntablatureAndPlaque(
@@ -154,7 +113,6 @@ function approachSecurityAndRunner(
 export function dressApartmentEntrance(context: ApproachContext): void {
   const { into, space, floor } = context
   const geom = resolveDoorGeometry(space)
-  royalDoubleDoor(into, floor, geom)
   doorEntablatureAndPlaque(into, floor, geom)
   approachSecurityAndRunner(into, floor, geom)
 }

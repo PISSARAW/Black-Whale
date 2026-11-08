@@ -7,6 +7,7 @@ import {
   POLICE_GOLD,
   POLICE_GRANITE,
   POLICE_GRANITE_DARK,
+  POLICE_LIGHT_DIFFUSER,
   POLICE_METAL,
   POLICE_NAVY,
   POLICE_OAK,
@@ -36,7 +37,7 @@ const PORT_COLUMN_Y = [-7.84, -4.74, -1.63, 1.47] as const
 const STARBOARD_COLUMN_Y = [-5.5, -3.0, -0.5, 2.0] as const
 const GALLERY_LEVELS = [3.4, 6.8, 10.2, 13.6] as const
 
-/** Colonnade of 8 monumental 16m pillars supporting the roof architrave */
+/** Colonnade of 8 monumental 16m pillars with classical sconces supporting architrave */
 function dressPoliceColonnade(options: ColonnadeOptions): void {
   const { into, floor, ceiling } = options
   const columnPositions: [number, number][] = [
@@ -56,6 +57,16 @@ function dressPoliceColonnade(options: ColonnadeOptions): void {
     // Capital and entablature block
     into.box([1.8, 0.5, 1.8], { at: [cx, floor + ceiling - 0.75, cy], colour: POLICE_STONE })
     into.box([2.1, 0.5, 2.1], { at: [cx, floor + ceiling - 0.25, cy], colour: POLICE_GRANITE_DARK })
+
+    // Twin-branch brass wall sconces on column face pointing toward atrium center
+    const inward = cx > 0 ? -1 : 1
+    const sconceX = cx + inward * 0.8
+    const sconceY = floor + 3.4
+    into.box([0.04, 0.38, 0.18], { at: [sconceX, sconceY, cy], colour: POLICE_BRASS })
+    for (const side of [-0.14, 0.14]) {
+      into.cylinder({ radius: 0.015, height: 0.18 }, { at: [sconceX + inward * 0.1, sconceY + 0.05, cy + side], colour: POLICE_BRASS })
+      into.sphere([0.06, 0.1, 0.06], { at: [sconceX + inward * 0.1, sconceY + 0.16, cy + side], colour: POLICE_LIGHT_DIFFUSER, glow: true })
+    }
   }
 
   // Longitudinal architrave beam connecting column tops
@@ -92,14 +103,10 @@ function dressPoliceGalleries(options: GalleryOptions): void {
 
 /** Continuous balustrade with brass handrail and vertical security balusters */
 function dressGalleryBalustrade(into: BanquetDetailBuilder, edgeX: number, slabY: number): void {
-  // Top brass handrail
   into.box([0.08, 0.08, 14.6], { at: [edgeX, slabY + 1.05, -2.4], colour: POLICE_BRASS })
-  // Bottom curb
   into.box([0.1, 0.08, 14.6], { at: [edgeX, slabY + 0.04, -2.4], colour: POLICE_METAL })
-  // Intermediate safety rail
   into.box([0.04, 0.04, 14.6], { at: [edgeX, slabY + 0.55, -2.4], colour: POLICE_METAL })
 
-  // Vertical balusters spaced along the gallery length
   for (let y = -9.5; y <= 4.7; y += 0.48) {
     into.box([0.03, 0.95, 0.03], { at: [edgeX, slabY + 0.55, y], colour: POLICE_METAL })
   }
@@ -108,19 +115,36 @@ function dressGalleryBalustrade(into: BanquetDetailBuilder, edgeX: number, slabY
 /** Office portals and lighted transom windows lining the galleries */
 function dressGalleryOfficeDoors(into: BanquetDetailBuilder, slabY: number): void {
   for (let y = -8.0; y <= 3.0; y += 3.6) {
-    // Port office door
-    into.box([0.12, 2.2, 1.1], { at: [-10.9, slabY + 1.1, y], colour: POLICE_OAK })
-    into.box([0.16, 0.1, 1.3], { at: [-10.9, slabY + 2.25, y], colour: POLICE_STONE })
-    into.box([0.08, 0.6, 1.1], { at: [-10.9, slabY + 2.6, y], colour: POLICE_GLASS })
-
-    // Starboard office door
-    into.box([0.12, 2.2, 1.1], { at: [10.9, slabY + 1.1, y], colour: POLICE_OAK })
-    into.box([0.16, 0.1, 1.3], { at: [10.9, slabY + 2.25, y], colour: POLICE_STONE })
-    into.box([0.08, 0.6, 1.1], { at: [10.9, slabY + 2.6, y], colour: POLICE_GLASS })
+    for (const sideX of [-10.9, 10.9]) {
+      into.box([0.12, 2.2, 1.1], { at: [sideX, slabY + 1.1, y], colour: POLICE_OAK })
+      into.box([0.16, 0.1, 1.3], { at: [sideX, slabY + 2.25, y], colour: POLICE_STONE })
+      into.box([0.08, 0.6, 1.1], { at: [sideX, slabY + 2.6, y], colour: POLICE_GLASS })
+      into.box([0.02, 0.08, 0.02], { at: [sideX + (sideX > 0 ? -0.07 : 0.07), slabY + 1.1, y + 0.4], colour: POLICE_BRASS })
+    }
   }
 }
 
-/** Raised central roof lantern (12x8m, 2.5m rise) with skylight mullions */
+/** Monumental coffered ceiling grid spanning around the central lantern */
+function dressPoliceCofferedCeiling(options: ColonnadeOptions): void {
+  const { into, floor, ceiling } = options
+  const ceilY = floor + ceiling - 0.2
+
+  // Longitudinal primary coffer beams
+  for (const bx of [-8.5, -4.5, 4.5, 8.5]) {
+    into.box([0.5, 0.4, 14.6], { at: [bx, ceilY, -2.5], colour: POLICE_STONE })
+  }
+
+  // Transverse primary coffer beams outside the 12x8m lantern opening
+  into.box([21.6, 0.4, 0.5], { at: [0, ceilY, -8.5], colour: POLICE_STONE })
+  into.box([21.6, 0.4, 0.5], { at: [0, ceilY, 3.5], colour: POLICE_STONE })
+
+  // High dentil cornice molding running below ceiling perimeter
+  const corniceY = floor + ceiling - 0.35
+  into.box([21.6, 0.24, 0.25], { at: [0, corniceY, -9.85], colour: POLICE_GRANITE_DARK })
+  into.box([21.6, 0.24, 0.25], { at: [0, corniceY, 4.85], colour: POLICE_GRANITE_DARK })
+}
+
+/** Raised central roof lantern (12x8m, 2.5m rise) with trusses, mullions and pendant lamps */
 function dressPoliceLantern(options: ColonnadeOptions): void {
   const { into, floor, ceiling } = options
   const lanternY = floor + ceiling
@@ -137,10 +161,51 @@ function dressPoliceLantern(options: ColonnadeOptions): void {
   into.box([0.1, 2.3, 8.0], { at: [-6.05, lanternY + 1.35, -2.5], colour: POLICE_GLASS })
   into.box([0.1, 2.3, 8.0], { at: [6.05, lanternY + 1.35, -2.5], colour: POLICE_GLASS })
 
+  // Vertical window mullions on clerestory glass
+  for (let x = -4.5; x <= 4.5; x += 1.8) {
+    into.box([0.06, 2.3, 0.14], { at: [x, lanternY + 1.35, -6.45], colour: POLICE_METAL })
+    into.box([0.06, 2.3, 0.14], { at: [x, lanternY + 1.35, 1.45], colour: POLICE_METAL })
+  }
+
   // Lantern ceiling cap and cross-trusses
   into.box([12.6, 0.3, 8.4], { at: [0, lanternY + 2.6, -2.5], colour: POLICE_GRANITE_DARK })
   into.box([0.2, 0.3, 8.0], { at: [-2.0, lanternY + 2.4, -2.5], colour: POLICE_METAL })
   into.box([0.2, 0.3, 8.0], { at: [2.0, lanternY + 2.4, -2.5], colour: POLICE_METAL })
+
+  // 4 Industrial high-bay pendant chandeliers suspended by steel cables
+  const pendantPositions: [number, number][] = [
+    [-3.2, -4.8],
+    [3.2, -4.8],
+    [-3.2, -0.2],
+    [3.2, -0.2],
+  ]
+
+  for (const [px, pz] of pendantPositions) {
+    // Steel suspension cable
+    into.cylinder({ radius: 0.015, height: 7.2 }, { at: [px, lanternY + 2.4 - 3.6, pz], colour: POLICE_METAL })
+    // Industrial metal bell shade
+    into.cylinder({ radius: 0.44, bottom: 0.18, height: 0.36 }, { at: [px, floor + 11.2, pz], colour: POLICE_METAL })
+    into.cylinder({ radius: 0.16, height: 0.08 }, { at: [px, floor + 11.42, pz], colour: POLICE_BRASS })
+    // Glowing diffuser lamp
+    into.sphere([0.34, 0.12, 0.34], { at: [px, floor + 11.08, pz], colour: POLICE_LIGHT_DIFFUSER, glow: true })
+  }
+}
+
+/** Classical wall moldings, dado rail and fluted pilasters on perimeter walls */
+function dressPoliceWallMoldings(into: BanquetDetailBuilder, floor: number): void {
+  // Baseboard plinths along north and south walls
+  into.box([21.6, 0.35, 0.12], { at: [0, floor + 0.175, -9.9], colour: POLICE_GRANITE_DARK })
+  into.box([21.6, 0.35, 0.12], { at: [0, floor + 0.175, 4.9], colour: POLICE_GRANITE_DARK })
+
+  // Chair rail / dado molding along back wall
+  into.box([21.6, 0.08, 0.1], { at: [0, floor + 1.1, -9.9], colour: POLICE_STONE })
+
+  // Fluted pilasters on the north perimeter wall
+  for (let px = -7.2; px <= 7.2; px += 3.6) {
+    into.box([0.5, 3.2, 0.08], { at: [px, floor + 1.7, -9.92], colour: POLICE_STONE })
+    into.box([0.62, 0.15, 0.12], { at: [px, floor + 0.075, -9.9], colour: POLICE_GRANITE_DARK })
+    into.box([0.58, 0.12, 0.12], { at: [px, floor + 3.25, -9.9], colour: POLICE_STONE })
+  }
 }
 
 /** Entrance marquee, hanging police signs and security doors */
@@ -184,6 +249,8 @@ export function dressPoliceAtriumArchitecture(options: PoliceArchitectureOptions
 
   dressPoliceColonnade({ into, floor, ceiling })
   dressPoliceGalleries({ into, floor })
+  dressPoliceCofferedCeiling({ into, floor, ceiling })
   dressPoliceLantern({ into, floor, ceiling })
+  dressPoliceWallMoldings(into, floor)
   dressPoliceMarqueeAndSigns(into, floor)
 }

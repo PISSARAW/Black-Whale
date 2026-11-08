@@ -18,6 +18,16 @@ export const CINE_NEON_AMBER = 0xec9d41
 export const CINE_NEON_BLUE = 0x3d7499
 export const CINE_VELVET = 0x851724
 export const CINE_SCREEN_GLOW = 0x90a8b4
+export const CINE_SCREEN_SURFACE = 0xe4ebf2
+export const CINE_SCREEN_BORDER = 0x0a0a0c
+export const CINE_EXIT_GREEN = 0x22c55e
+export const CINE_SEAT_FABRIC = 0x6d1522
+export const CINE_SEAT_FRAME = 0x1c1c20
+export const CINE_GOLD_ACCENT = 0xd4af37
+export const CINE_DUCT_STEEL = 0x5a636c
+export const CINE_ACOUSTIC_FABRIC = 0x221a20
+export const CINE_CARPET_GOLD = 0xb5934e
+export const CINE_SPEAKER_BLACK = 0x18181c
 
 export interface PosterOptions {
   into: BanquetDetailBuilder
@@ -140,3 +150,28 @@ export function dressStanchionLine(options: StanchionOptions): void {
     dressVelvetRope(into, posts[i], posts[i + 1])
   }
 }
+
+/** Illuminated green emergency EXIT sign box */
+export function dressExitLightBox(
+  into: BanquetDetailBuilder,
+  at: Point3,
+  rotation: [number, number, number] = [0, 0, 0],
+): void {
+  // Dark box casing
+  into.box([0.55, 0.22, 0.12], { at, rotation, colour: CINE_POSTER_FRAME })
+  // Glowing green lens
+  into.box([0.5, 0.18, 0.13], { at, rotation, colour: CINE_EXIT_GREEN, glow: true })
+}
+
+/** Screen portal illuminated room number header box (e.g. SCREEN 1) */
+export function dressScreenPortalSign(
+  into: BanquetDetailBuilder,
+  at: Point3,
+  rotation: [number, number, number] = [0, 0, 0],
+): void {
+  // Beveled outer casing
+  into.box([1.4, 0.35, 0.15], { at, rotation, colour: CINE_POSTER_FRAME })
+  // Backlit screen number plate
+  into.box([1.3, 0.28, 0.16], { at, rotation, colour: CINE_NEON_AMBER, glow: true })
+}
+

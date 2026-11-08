@@ -168,8 +168,16 @@
     {#each [150, 190, 230, 270, 310] as rz (rz)}
       <line x1={360 + (rz - 120) * 0.3} y1={rz} x2={640 - (rz - 120) * 0.3} y2={rz} class="led-guide" />
     {/each}
-    <rect x="430" y="340" width="140" height="30" fill="#0c0c10" stroke="#444" />
-    <text x="500" y="360" class="sublabel" font-size="10">HALL DES SALLES (1–8)</text>
+    <rect x="420" y="340" width="160" height="26" rx="3" fill="#0c0c10" stroke="#444" />
+    <text x="500" y="357" class="sublabel" font-size="10">HALL DES SALLES (1–8)</text>
+
+    <!-- Portails d'accès aux 8 auditoriums -->
+    <g transform="translate(290, 375)">
+      {#each [1, 2, 3, 4, 5, 6, 7, 8] as num (num)}
+        <rect x={(num - 1) * 52} y="0" width="46" height="20" rx="3" fill="#141418" stroke="#d4af37" stroke-width="1.2" />
+        <text x={(num - 1) * 52 + 23} y="14" class="sublabel" font-size="9">S{num}</text>
+      {/each}
+    </g>
 
     <!-- Foreground Massive Pillar with Posters -->
     <rect class="pillar" x="650" y="120" width="50" height="280" rx="3" />

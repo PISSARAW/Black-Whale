@@ -52,6 +52,26 @@ Les éléments 3D sont générés via `BanquetDetailBuilder` pour s'intégrer au
 5. **Foyers latéraux (`tier-3-cineplex-foyer-port`, `tier-3-cineplex-foyer-starboard`)** :
    - Allées bordées d'affiches de cinéma sous verre avec cadre rétro-éclairé et tapis de circulation.
 
+6. **Toiture & Plafond (`cineplexCeiling.ts`)** :
+   - Grille de faux-plafond à caissons acoustiques en retrait et poutres laquées acajou.
+   - Conduits et gaines CVC cylindriques métalliques suspendus avec brides et tiges d'acier.
+   - Spots encastrés à halo chaleureux et haut-parleurs surround Dolby Atmos intégrés dans chaque travée.
+   - Enseignes lumineuses directionnelles suspendues ("SCREENS 1 - 8 ↓", "← FOOD & DRINKS", "TICKETS →").
+
+7. **Sols & Moquette Art-Déco (`cineplexFloor.ts`)** :
+   - Moquette moelleuse aubergine/bordeaux avec trame géométrique art-déco de losanges et étoiles dorées.
+   - Margelles de marbre sombre et profilés de transition en laiton poli le long des façades de comptoirs.
+
+8. **Murs & Boiseries Acoustiques (`cineplexWalls.ts`)** :
+   - Panneaux muraux acoustiques en tissu capitonné avec cadres acajou et baguettes laiton.
+   - Appliques murales art-déco à double faisceau (éclairage tamisé haut/bas).
+   - Plinthes et corniches continues en bois massif et métal doré.
+   - Portes d'issues de secours avec barres de panique inox et boîtiers lumineux "EXIT" verts.
+
+9. **Hall Distributeur & Salles de Projection 1 à 8 (`cineplexScreensHall.ts`, `cineplexAuditorium.ts`)** :
+   - **Hall des salles (`tier-3-cineplex-screens-hall`)** : 8 portails architecturaux avec boîtiers numériques lumineux ("SALLE 1" à "SALLE 8"), rideaux d'entrée en velours lourd et affichettes numériques "Now Showing".
+   - **Auditoriums (`tier-3-cineplex-screen-1` à `screen-8`)** : écran géant incurvé argenté avec estrade basse et velours noir mat absorbant, gradins étagés surélevés par paliers avec nez de marche LED bleus, rangées de fauteuils de cinéma en velours bordeaux avec accoudoirs et porte-gobelets, cabine de projection vitrée en paroi arrière avec lentille de projection lumineuse, panneaux acoustiques muraux et issue de secours frontale.
+
 En mode visite standard, `cineplexSurfacePlan()` écarte les parallélépipèdes bruts du blueprint (`tier-3-cineplex-food-counter`, `tier-3-cineplex-seating-island`, `tier-3-cineplex-screen-corridor-poster`, `tier-3-cineplex-concourse-pillar`, `tier-3-cineplex-ticket-windows`) pour injecter les modèles haute fidélité, tout en conservant leur emprise de collision.
 
 ## Projection 2D et plan SVG (`cineplex.svelte` & `cineplexPlan.ts`)
@@ -61,8 +81,9 @@ Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèl
 - Billetterie avec 3 guichets vitrés et potelets à cordons de velours.
 - Arche d'affiche "THE THING" au-dessus du passage central.
 - Rampe descendante avec doubles mains-courantes et repères LED.
+- Portails d'accès miniaturisés et annotés des 8 salles de projection (S1 à S8).
 - Îlot central avec repère annoté d'Hisoka et de son pop-corn.
-- Salle d'auditorium inférieure conservée à l'identique avec son écran de projection et ses rangées de sièges en gradin.
+- Salle d'auditorium inférieure avec écran de projection, gradins et rangées de fauteuils.
 
 `cineplexSpotAnchors` ancre avec précision les personnages clés de la scène :
 - `hisoka` et `bonolenov-ndongo` sur l'îlot central.
@@ -77,3 +98,7 @@ Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèl
 - `cineplex-ticket-windows-booths` : cadrage frontal sur les guichets de billetterie et les panneaux de séances.
 - `cineplex-screens-descending-ramp` : perspective plongeante dans la rampe avec garde-corps vers les salles.
 - `cineplex-hisoka-seating` : cadrage centré sur l'îlot de banquette où Hisoka déguste son pop-corn.
+- `cineplex-auditorium-screen` : vue immersive en contre-plongée depuis les gradins vers l'écran géant incurvé.
+- `cineplex-screens-hall-concourse` : perspective le long du couloir des 8 salles avec leurs portails lumineux.
+- `cineplex-ceiling-coffer-marquee` : plan en contre-plongée révélant les caissons de toiture, gaines CVC et l'enseigne "THE THING".
+

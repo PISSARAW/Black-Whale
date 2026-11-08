@@ -123,6 +123,33 @@ describe('the central police station reconstructed from chapters 349, 378 and 39
     disposeBanquetDetails(entranceDetails!)
   })
 
+  it('includes high-fidelity floor paving, screens, roof coffers and security apparatus', () => {
+    const atriumRoot = build()
+    expect(atriumRoot.children).toHaveLength(2)
+    expect(triangles(atriumRoot)).toBeGreaterThan(10_000)
+    disposeBanquetDetails(atriumRoot)
+
+    const safetyRoot = buildPoliceStationDetails({
+      THREE,
+      plan,
+      spaceId: POLICE_SAFETY,
+      reveal: false,
+    })!
+    expect(safetyRoot.children).toHaveLength(2)
+    expect(triangles(safetyRoot)).toBeGreaterThan(2_000)
+    disposeBanquetDetails(safetyRoot)
+
+    const entranceRoot = buildPoliceStationDetails({
+      THREE,
+      plan,
+      spaceId: POLICE_ENTRANCE,
+      reveal: false,
+    })!
+    expect(entranceRoot.children).toHaveLength(2)
+    expect(triangles(entranceRoot)).toBeGreaterThan(400)
+    disposeBanquetDetails(entranceRoot)
+  })
+
   it('places camera views and Mizaistom Nana within room footprint and clear of solids', () => {
     for (const view of MANGA_POLICE_VIEWS) {
       const space = ship.spaces.get(view.spaceId)!

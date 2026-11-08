@@ -20,6 +20,22 @@ export const ARMY_MIC_LED = 0xbf3030
 export const ARMY_GLASS = 0xb0c4de
 export const ARMY_GLOW_LIGHT = 0xfffaee
 
+export const ARMY_CEILING_GRID = 0x22252a
+export const ARMY_CEILING_TILE = 0xd8dbe0
+export const ARMY_HVAC_SLAT = 0x3e4249
+export const ARMY_CARPET_DARK = 0x1b1e22
+export const ARMY_CARPET_BORDER = 0x2e333b
+export const ARMY_INLAY_BRASS = 0xb28938
+export const ARMY_GOLD_CREST = 0xcfa438
+export const ARMY_ALERT_RED = 0xc0392b
+export const ARMY_EMERGENCY_GREEN = 0x27ae60
+export const ARMY_PROJECTOR_LENS = 0x4a9eff
+export const ARMY_SCREEN_TACTICAL_BLUE = 0x1f4e79
+export const ARMY_SCREEN_TACTICAL_CYAN = 0x2980b9
+export const ARMY_SCREEN_TACTICAL_ACCENT = 0xe67e22
+export const ARMY_BLOTTER_LEATHER = 0x1a1c1e
+export const ARMY_NAMEPLATE_BRASS = 0xb8860b
+
 export interface CylinderSize {
   radius: number
   height: number
@@ -179,3 +195,56 @@ export function drawAttendeePaper(
     { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
   )
 }
+
+/** Helper to draw an official brass/wood triangular desk nameplate. */
+export function drawDelegateNameplate(
+  surface: RoyalArmyConferenceSurface,
+  at: Point3,
+  width = 0.22,
+): void {
+  const [x, y, z] = at
+  // Triangular wood wedge base
+  surface.box([width, 0.035, 0.04], [x, y + 0.018, z], ARMY_TABLE_WOOD)
+  // Slanted brass faceplate
+  surface.box([width - 0.02, 0.028, 0.008], [x, y + 0.018, z + 0.018], ARMY_NAMEPLATE_BRASS)
+  // Subtle name label strip
+  surface.box([width - 0.06, 0.012, 0.004], [x, y + 0.018, z + 0.023], ARMY_PAPER)
+}
+
+/** Helper to draw a tactical colored magnetic push-pin on a chart board. */
+export function drawTacticalPin(
+  surface: RoyalArmyConferenceSurface,
+  at: Point3,
+  colour: number,
+): void {
+  const [x, y, z] = at
+  // Flat magnetic disc
+  surface.cylinder({ radius: 0.022, height: 0.008, sides: 12 }, [x, y, z], { colour, rotation: [Math.PI / 2, 0, 0] })
+  // Tapered grip pin
+  surface.cylinder(
+    { radius: 0.012, height: 0.02, sides: 10 },
+    [x, y, z + 0.012],
+    { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
+  )
+}
+
+/** Helper to draw a confidential top-secret military folder with red diagonal stripe. */
+export function drawDossierWithStripe(
+  surface: RoyalArmyConferenceSurface,
+  at: Point3,
+): void {
+  const [x, y, z] = at
+  // Charcoal/black heavy cardboard folder
+  surface.box([0.32, 0.012, 0.24], [x, y + 0.006, z], ARMY_STEEL)
+  // Interior paper sheets peek
+  surface.box([0.3, 0.006, 0.22], [x + 0.01, y + 0.01, z], ARMY_PAPER)
+  // Diagonal warning stripe in red
+  surface.box([0.31, 0.008, 0.04], [x, y + 0.012, z], ARMY_ALERT_RED)
+  // Kakin military seal stamp
+  surface.cylinder(
+    { radius: 0.02, height: 0.004, sides: 10 },
+    [x + 0.08, y + 0.015, z],
+    { colour: ARMY_GOLD_CREST, rotation: [0, 0, 0] },
+  )
+}
+

@@ -5,8 +5,20 @@ import { PoliceStationSurface } from './policeStationDetailSurface'
 import { dressPoliceAtriumArchitecture } from './policeStationArchitecture'
 import { dressPoliceTieredFountain } from './policeStationFountain'
 import {
+  dressPoliceAtriumFloor,
+  dressPoliceEntranceFloor,
+  dressPoliceSafetyFloor,
+} from './policeStationFloor'
+import {
+  dressPoliceAtriumScreens,
+  dressPoliceRadioRacks,
+  dressPoliceXRayMonitor,
+} from './policeStationScreens'
+import {
+  dressPoliceAtriumBenchesAndStanchions,
   dressPoliceEntranceSecurity,
   dressPoliceFrontDesk,
+  dressPoliceSafetyArchives,
   dressPoliceSafetyDesk,
 } from './policeStationFurniture'
 import { dressPoliceOfficers } from './policeStationOfficers'
@@ -61,7 +73,10 @@ export function buildPoliceStationDetails(options: {
 
   if (spaceId === POLICE_ATRIUM) {
     dressPoliceAtriumArchitecture({ THREE, into, plan, space })
+    dressPoliceAtriumFloor({ into, floor })
     dressPoliceTieredFountain({ into, center: [0, -2.5], floor })
+    dressPoliceAtriumScreens({ into, floor })
+    dressPoliceAtriumBenchesAndStanchions(into, floor)
 
     const frontDesk = structures.find((s) => s.id.endsWith('-front-desk'))
     if (frontDesk) {
@@ -73,6 +88,10 @@ export function buildPoliceStationDetails(options: {
   }
 
   if (spaceId === POLICE_SAFETY) {
+    dressPoliceSafetyFloor({ into, floor })
+    dressPoliceRadioRacks({ into, floor })
+    dressPoliceSafetyArchives(into, floor)
+
     const safetyDesk = structures.find((s) => s.id.endsWith('-safety-desk'))
     if (safetyDesk) {
       dressPoliceSafetyDesk(new PoliceStationSurface(into, safetyDesk, floor))
@@ -81,7 +100,9 @@ export function buildPoliceStationDetails(options: {
   }
 
   if (spaceId === POLICE_ENTRANCE) {
+    dressPoliceEntranceFloor({ into, floor })
     dressPoliceEntranceSecurity(into, floor)
+    dressPoliceXRayMonitor({ into, floor })
     return into.finish('police-station-entrance-manga-details')
   }
 

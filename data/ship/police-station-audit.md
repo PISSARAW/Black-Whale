@@ -58,40 +58,65 @@ l'Association des Hunters au Niveau 3 du Black Whale :
    - Des officiers et agents de police kakinois en uniforme d'ordonnance patrouillent les galeries
      supérieures et assurent la faction au sol.
 
-## 2. Architecture et mobilier modélisés
+## 2. Architecture, sol, toiture, écrans et mobilier modélisés
 
-- **Atrium principal (`tier-3-central-police-station-atrium`)** :
-  - Dallage de sol bicolore en dalles de granit institutionnel.
-  - Colonnade de 8 piliers monumentaux de 16 mètres de hauteur.
+- **Toit, lanterneau et éclairage zénithal (`policeStationArchitecture.ts`)** :
+  - Plafond monumental à caissons profonds (16 m de hauteur sous plafond) avec réseau de poutres maîtresses longitudinales et transversales.
+  - Lanterneau central surélevé de +2,5 m (culminant à 18,5 m) avec verrière à claire-voie et montants verticaux (mullions).
+  - Fermes structurales en acier sous le lanterneau et poutres de faîte.
+  - 4 lustres suspendus industriels à haute baie, accrochés à des câbles d'acier depuis le lanterneau avec abat-jour métalliques sombres, bagues en laiton et diffuseurs lumineux (`glow: true`).
+- **Sol et dallages géométriques (`policeStationFloor.ts`)** :
+  - Dallage bicolore en dalles de granit institutionnel avec bordures périphériques sombres.
+  - Rosace octogonale concentrique entourant la margelle de la fontaine à `[0, -2.5]` avec goujons en laiton à chaque sommet et caniveau de drainage périphérique.
+  - Allée centrale de circulation nord-sud et allées de stylobate reliant les fûts de colonnes.
+  - Lignes de délimitation de file d'attente incrustées en laiton devant le comptoir d'accueil et le guichet citoyen.
+  - Tapis d'entrée technique encastré avec profilés métalliques dans le sas d'entrée et seuils de transition en laiton.
+- **Murs, colonnade et appliques murales (`policeStationArchitecture.ts`)** :
+  - Colonnade de 8 piliers monumentaux de 16 mètres de hauteur avec socles moulurés, fûts à panneaux et chapiteaux supportant l'architrave.
+  - Appliques murales doubles en laiton avec bras cintrés et diffuseurs lumineux (`glow: true`) sur chaque pilier (comme dans le salon royal).
+  - Plinthes, cimaise / dado rail et corniche denticulée haute courant le long des murs périphériques.
+  - Pilastres cannelés étagés sur les parois arrière.
   - 4 étages de galeries ouvertes latérales avec garde-corps métalliques et consoles en encorbellement.
-  - Façades des bureaux d'étage avec portes d'accès et impostes vitrées.
-  - Lanterneau central zénithal à verrière et poutres de plafond croisées.
-- **Fontaine centrale (`tier-3-central-police-station-fountain`)** :
-  - Bassin octogonal à bordures moulurées de 4,4 m de diamètre.
-  - Gradins intermédiaires, piédestal à cannelures et vasque supérieure à jets d'eau.
-  - Nappe d'eau à réflexion bleutée.
-- **Façade d'entrée et signalétique (`marquee`, `sign-port`, `sign-starboard`)** :
-  - Marquise d'entrée en fer forgé sombre à verrière et consoles biseautées.
-  - Deux enseignes suspendues verticales à lettrage or sur fond bleu nuit officiel.
-  - Portes à double battant avec poignées en laiton.
-- **Comptoirs et sécurité (`front-desk`, `safety-desk`, sas d'entrée)** :
-  - Banques d'accueil en chêne et acier poli avec parois en verre securit.
-  - Écrans informatiques, téléphones de service, registres d'entrées et lampes de bureau.
-  - Portiques de détection électromagnétique et tourniquets dans le sas d'entrée.
-- **Figures et factionnaires** :
-  - Silhouette haute et reconnaissable de Mizaistom Nana (costume caractéristique et chapeau).
-  - Officiers de police kakinois au poste d'accueil, à l'entrée et aux balcons.
+  - Façades des bureaux d'étage avec portes d'accès, poignées en laiton et impostes vitrées à croisillons.
+- **Écrans et télécommunications (`policeStationScreens.ts`)** :
+  - Mur d'écrans CCTV monumental (matrice de 4 × 3 moniteurs de surveillance, 12 écrans) contre la paroi nord de l'atrium, avec châssis métallique, dalles lumineuses phosphorescentes (`glow: true`) et voyants LED de statut rouge/vert.
+  - Pupitre de commandement de vidéosurveillance avec joysticks PTZ, claviers de commande et consoles d'opérateurs.
+  - Panneau suspendu d'avis de sécurité et d'état des paliers (`status board`) avec affichage doré lumineux au-dessus de l'accueil.
+  - Baies de télécommunications radio VHF/UHF avec cadrans de fréquence, oscilloscopes audio lumineux et barres de LED dans la section de sécurité.
+  - Écran d'inspection à rayons X sur bras articulé au-dessus du scanner de bagages.
+- **Mobilier d'accueil, d'attente et de consultation (`policeStationFurniture.ts`)** :
+  - 4 bancs d'attente monumentaux en chêne massif avec coussins et dossiers capitonnés en cuir foncé le long des allées de colonnade.
+  - Potelets de guidage en laiton avec cordes de velours bleu nuit délimitant la file de l'accueil.
+  - Pupitre d'information et d'orientation publique sur colonne de bronze.
+  - Comptoir d'accueil (`front-desk`) avec double poste informatique, registre d'émargement, encrier, passe-documents et lampe de banquier.
+  - Guichet de sécurité publique (`safety-desk`) avec cloisons acoustiques en verre acrylique, terminaux de consultation, téléphones et chaises visiteurs.
+  - Batterie d'armoires et meubles d'archives judiciaires à 4 tiroirs avec poignées en laiton et porte-étiquettes.
+  - Tableau d'affichage en liège avec avis de recherche officiels et directives de police.
+  - Fontaine à eau pour les usagers.
+- **Poste de contrôle d'accès du sas d'entrée (`entrance security`)** :
+  - Scanner à bagages à rayons X complet : tunnel plombé avec rideaux de lamelles de plomb, convoyeur motorisé à rouleaux en inox, moniteur d'analyse.
+  - Portique de détection électromagnétique multizone avec voyants LED de passage.
+  - Tourniquets de contrôle d'accès à tripode et lecteurs de badges magnétiques.
+  - Pupitre d'émargement et de filtrage pour les sentinelles.
+- **Figures et factionnaires (`policeStationOfficers.ts`)** :
+  - Silhouette haute et reconnaissable de Mizaistom Nana (costume caractéristique, manteau long et chapeau melon).
+  - Officiers de police kakinois au poste d'accueil, à l'entrée, en patrouille de galerie et à la sécurité publique.
 
 ## 3. Matériaux et conformité technique
 
-- **Palette de teintes** :
-  - Pierre de taille et granit : `#7a838b`, `#9aa2aa`, `#5d646b`.
-  - Ferronnerie et poutres métalliques : `#2a2f35`, `#383e46`.
-  - Bleu nuit institutionnel de la police : `#1e354d`, `#254160`.
+- **Palette de teintes procédurales (`policeStationDetailSurface.ts`)** :
+  - Pierre de taille et granit : `#7a838b`, `#9aa2aa`, `#4d535a`, `#8e979f`, `#3f464d`.
+  - Ferronnerie et poutres métalliques : `#2a2f35`, `#1a1e22`.
+  - Bleu nuit institutionnel de la police : `#1e354d`, `#1a2b3c`.
   - Cuivre et laiton d'ornement : `#c2a65d`, `#d4af37`.
-  - Verre translucide de verrière : `#88b5c4`.
+  - Cuir d'ameublement : `#2c2621`.
+  - Verre translucide et écrans lumineux : `#88b5c4`, `#3d708f`, `#f5ebd3`.
+  - Voyants d'alerte : `#c0392b`, `#27ae60`.
   - Eau de fontaine : `#3a6b8c`.
-- **Règles d'ingénierie logicielle** :
-  - Respect strict des limites de complexité ($\le 10$), de taille de fichier ($\le 500$ lignes)
-    et de signature de fonction ($\le 3$ paramètres).
-  - Zéro texture matricielle ou asset externe soumis à droits d'auteur.
+- **Règles d'ingénierie logicielle (ADR-002 & CLAUDE.md)** :
+  - Respect strict des limites de complexité cyclomatique ($\le 10$).
+  - Tous les fichiers font strictement moins de 500 lignes (fichiers entre 70 et 256 lignes).
+  - Encapsulation des paramètres de fonction ($\le 3$ paramètres par fonction).
+  - Zéro émoji dans le code, les commentaires et l'interface.
+  - 100% rendu procédural Three.js sans textures matricielles externes.
+

@@ -23,6 +23,7 @@ import { buildHospitalDetails, hospitalSurfacePlan } from './hospitalView'
 import { buildRoyalArmyConferenceDetails } from './royalArmyConferenceView'
 import { buildCineplexDetails, cineplexSurfacePlan } from './cineplexView'
 import { buildCorridorWallDetails } from './corridorWallView'
+import { buildDoorDetails } from './doorView'
 
 export interface TierRoomView {
   spaceId: string
@@ -42,6 +43,7 @@ export interface TierRoomView {
   motes: Three.Points | null
   dust: Dust | null
   details: Three.Group | null
+  doors: Three.Group | null
 }
 export interface BuiltTierView {
   root: Three.Group
@@ -125,7 +127,7 @@ interface TierAttributes {
   sky: Three.BufferAttribute | null
 }
 
-interface RoomDetailOptions {
+export interface RoomDetailOptions {
   THREE: typeof Three
   plan: ReturnType<typeof walkedPlan>
   spaceId: string
@@ -217,6 +219,8 @@ export class TierView {
       }
       room.details = roomDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)
+      room.doors = buildDoorDetails(detailsOptions)
+      if (room.doors) room.mesh.add(room.doors)
       root.add(room.mesh, room.edges, room.seams, room.patterns, room.fittings)
       if (room.panes) root.add(room.panes)
       if (room.motes) root.add(room.motes)
@@ -290,6 +294,7 @@ export class TierView {
       motes: this.motes(dust),
       dust,
       details: null,
+      doors: null,
     }
   }
 
@@ -351,6 +356,7 @@ export class TierView {
       room.panes?.geometry.dispose()
       room.motes?.geometry.dispose()
       if (room.details) disposeBanquetDetails(room.details)
+      if (room.doors) disposeBanquetDetails(room.doors)
     }
   }
 

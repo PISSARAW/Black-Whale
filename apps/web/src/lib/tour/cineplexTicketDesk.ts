@@ -81,6 +81,18 @@ export function dressTicketQueues(into: BanquetDetailBuilder, floor: number): vo
   dressStanchionLine({ into, from: endFrom, to: endTo, count: 5 })
 }
 
+/** Metallic brochure and movie schedule rack */
+function dressBrochureStand(surface: CineplexSurface, zOffset: number): void {
+  // Heavy floor base
+  surface.box([0.45, 0.05, 0.4], [1.6, 0.03, zOffset], CINE_STEEL)
+  // Upright support column
+  surface.cylinder({ radius: 0.025, height: 1.1, sides: 8 }, [1.6, 0.58, zOffset], CINE_STEEL)
+  // Slanted multi-tier magazine tray
+  surface.box([0.4, 0.45, 0.12], [1.6, 1.15, zOffset], 0x222226)
+  // Displayed printed pamphlets
+  surface.box([0.34, 0.38, 0.04], [1.6, 1.18, zOffset + 0.03], CINE_SCREEN_GLOW)
+}
+
 /** Complete ticket desk with 3 glazed service booths, screens and queues */
 export function dressTicketWindows(surface: CineplexSurface): void {
   dressTicketCounterBase(surface)
@@ -88,6 +100,8 @@ export function dressTicketWindows(surface: CineplexSurface): void {
   for (const z of [-2.5, 0, 2.5]) {
     dressSingleTicketWindow(surface, z)
   }
+  dressBrochureStand(surface, -4.2)
+  dressBrochureStand(surface, 4.2)
   dressTicketTimetableScreens(surface)
   dressTicketQueues(surface.into, surface.floor)
 }

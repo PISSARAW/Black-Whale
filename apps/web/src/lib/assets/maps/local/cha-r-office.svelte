@@ -155,6 +155,9 @@
       </text>
     </g>
 
+    <!-- Parquet en acajou avec bordure laiton -->
+    <rect x="75" y="115" width="260" height="150" fill="#351d13" stroke="#cca64e" stroke-width="1.5" stroke-dasharray="6 4" rx="2" />
+
     <!-- Bureau de commandement -->
     <rect x="105" y="150" width="200" height="65" fill="#3d2014" stroke="#8d7335" stroke-width="2.5" rx="3" />
     <rect x="150" y="160" width="110" height="42" fill="#2c2e30" rx="2" />
@@ -165,6 +168,10 @@
     <text x="205" y="185" class="sub">
       {french ? 'Bureau de commandement' : 'Command Desk'}
     </text>
+
+    <!-- Mini-dôme caméra d'angle -->
+    <circle cx="370" cy="40" r="5" fill="#333" stroke="#cc2222" stroke-width="1.5" />
+    <circle cx="370" cy="40" r="2" fill="#cc2222" />
 
     <!-- Les 3 portes spécifiques sur le mur ouest -->
     <!-- 1. Porte coffre-fort -->
@@ -266,6 +273,18 @@
       </text>
     </g>
 
+    <!-- Casiers métalliques -->
+    <g transform="translate(145 352)">
+      <rect x="0" y="0" width="100" height="20" fill="#303439" stroke="#1f2123" stroke-width="1.5" rx="1" />
+      <text x="50" y="14" class="micro" fill="#aaa">
+        {french ? 'Casiers métalliques' : 'Steel Lockers'}
+      </text>
+    </g>
+
+    <!-- Mini-dôme caméra d'angle -->
+    <circle cx="370" cy="500" r="5" fill="#333" stroke="#cc2222" stroke-width="1.5" />
+    <circle cx="370" cy="500" r="2" fill="#cc2222" />
+
     <!-- 3. SALLE DE VIDÉOSURVEILLANCE -->
     <rect
       role="button"
@@ -285,6 +304,15 @@
     <text x="635" y="72" class="sub">
       {french ? 'Surveillance des zones clés du niveau 5 (Chap. 380)' : 'Live CCTV coverage of key Tier 5 areas (Ch. 380)'}
     </text>
+
+    <!-- Dalles de faux-plancher informatique -->
+    <rect x="445" y="85" width="380" height="420" fill="none" stroke="#23272a" stroke-width="1" stroke-dasharray="14 14" />
+
+    <!-- Mini-dômes caméras d'angle -->
+    <circle cx="820" cy="40" r="5" fill="#333" stroke="#cc2222" stroke-width="1.5" />
+    <circle cx="820" cy="40" r="2" fill="#cc2222" />
+    <circle cx="820" cy="500" r="5" fill="#333" stroke="#cc2222" stroke-width="1.5" />
+    <circle cx="820" cy="500" r="2" fill="#cc2222" />
 
     <!-- Porte blanche d'accès -->
     <g transform="translate(425 210)">

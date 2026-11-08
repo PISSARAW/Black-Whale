@@ -11,6 +11,8 @@ import {
   CINEPLEX_TICKET_DESK,
   CINEPLEX_FOYER_PORT,
   CINEPLEX_FOYER_STARBOARD,
+  CINEPLEX_SCREENS_HALL,
+  CINEPLEX_SCREENS,
 } from './cineplexView'
 import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
 import {
@@ -41,10 +43,14 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     expect(isCineplexSpace(CINEPLEX_TICKET_DESK)).toBe(true)
     expect(isCineplexSpace(CINEPLEX_FOYER_PORT)).toBe(true)
     expect(isCineplexSpace(CINEPLEX_FOYER_STARBOARD)).toBe(true)
+    expect(isCineplexSpace(CINEPLEX_SCREENS_HALL)).toBe(true)
+    for (const screenId of CINEPLEX_SCREENS) {
+      expect(isCineplexSpace(screenId)).toBe(true)
+    }
     expect(isCineplexSpace('tier-3-observation-deck')).toBe(false)
   })
 
-  it('builds high-fidelity 3D details for concession, tickets, ramp corridor and foyers', () => {
+  it('builds high-fidelity 3D details for concession, tickets, ramp corridor, screens hall and auditoriums', () => {
     const concessionGroup = buildCineplexDetails({
       THREE,
       plan,
@@ -87,6 +93,26 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     expect(foyerGroup).toBeDefined()
     expect(foyerGroup.name).toBe('cineplex-foyer-port-manga-details')
     expect(triangles(foyerGroup)).toBeGreaterThan(20)
+
+    const screensHallGroup = buildCineplexDetails({
+      THREE,
+      plan,
+      spaceId: CINEPLEX_SCREENS_HALL,
+      reveal: false,
+    })!
+    expect(screensHallGroup).toBeDefined()
+    expect(screensHallGroup.name).toBe('cineplex-screens-hall-manga-details')
+    expect(triangles(screensHallGroup)).toBeGreaterThan(100)
+
+    const auditoriumGroup = buildCineplexDetails({
+      THREE,
+      plan,
+      spaceId: 'tier-3-cineplex-screen-1',
+      reveal: false,
+    })!
+    expect(auditoriumGroup).toBeDefined()
+    expect(auditoriumGroup.name).toBe('cineplex-tier-3-cineplex-screen-1-manga-details')
+    expect(triangles(auditoriumGroup)).toBeGreaterThan(200)
   })
 
   it('suppresses coarse blueprint models in normal walk via cineplexSurfacePlan', () => {
@@ -123,7 +149,7 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
   })
 
   it('registers canonical Chapter 393 manga camera views', () => {
-    expect(MANGA_CINEPLEX_VIEWS).toHaveLength(4)
+    expect(MANGA_CINEPLEX_VIEWS).toHaveLength(7)
     for (const view of MANGA_CINEPLEX_VIEWS) {
       expect(view.chapter).toBe(393)
       expect(view.volume).toBe(38)

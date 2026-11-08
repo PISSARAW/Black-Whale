@@ -125,12 +125,44 @@ function dressConcessionMenuBoard(surface: CineplexSurface): void {
   }
 }
 
-/** Complete concession counter with popcorn, soda and registers */
+/** Backwall commercial beverage cooler with illuminated drink shelves */
+function dressBeverageCooler(surface: CineplexSurface, zOffset: number): void {
+  const coolerX = -1.2
+  // Black metal refrigeration cabinet
+  surface.box([0.7, 2.1, 1.8], [coolerX, 1.05, zOffset], 0x18181c)
+  // Glazed sliding doors
+  surface.box([0.05, 1.9, 1.7], [coolerX + 0.35, 1.05, zOffset], CINE_GLASS)
+  // Illuminated interior shelves with cold bottles
+  for (let y = 0.4; y <= 1.8; y += 0.45) {
+    surface.box([0.5, 0.02, 1.6], [coolerX, y, zOffset], CINE_SCREEN_GLOW)
+    for (let dz = -0.6; dz <= 0.6; dz += 0.3) {
+      surface.cylinder({ radius: 0.04, height: 0.22, sides: 8 }, [coolerX + 0.1, y + 0.11, zOffset + dz], CINE_NEON_AMBER)
+    }
+  }
+}
+
+/** Condiment and napkin station island */
+function dressCondimentStation(surface: CineplexSurface, zOffset: number): void {
+  // Wood cabinet body
+  surface.box([0.75, 0.95, 1.2], [1.8, 0.48, zOffset], CINE_WOOD)
+  surface.box([0.8, 0.06, 1.25], [1.8, 0.98, zOffset], CINE_MARBLE)
+  // Napkin dispensers
+  surface.box([0.18, 0.16, 0.22], [1.8, 1.09, zOffset - 0.35], CINE_STEEL)
+  // Straw container
+  surface.cylinder({ radius: 0.06, height: 0.2, sides: 10 }, [1.8, 1.11, zOffset], CINE_STEEL)
+  // Sauce pumps (butter / seasonings)
+  surface.cylinder({ radius: 0.07, height: 0.22, sides: 10 }, [1.8, 1.12, zOffset + 0.35], CINE_STEEL)
+}
+
+/** Complete concession counter with popcorn, soda, coolers, condiments and registers */
 export function dressConcessionCounter(surface: CineplexSurface): void {
   dressCounterBase(surface)
   dressPopcornMachine(surface, -1.8)
   dressCounterGlassShowcase(surface, 1.2)
   dressSodaFountain(surface, 3.4)
+  dressBeverageCooler(surface, -2.5)
+  dressBeverageCooler(surface, 2.5)
+  dressCondimentStation(surface, 0)
   dressPosRegister(surface, -3.8)
   dressPosRegister(surface, -0.3)
   dressConcessionMenuBoard(surface)

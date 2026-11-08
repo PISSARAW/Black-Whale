@@ -1,12 +1,12 @@
 import type * as Three from 'three'
-import { floorOf, type TierPlan } from './blueprint'
+import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
   CineplexSurface,
-  dressMoviePosterLightbox,
-  CINE_CARPET,
-  CINE_POSTER_ART,
 } from './cineplexDetailSurface'
+import { dressConcourseCeiling, dressSuspendedDirectionalSigns } from './cineplexCeiling'
+import { dressConcourseFloor } from './cineplexFloor'
+import { dressConcourseWallSpan, dressWallPosters } from './cineplexWalls'
 import { dressConcessionCounter, dressSeatingIsland } from './cineplexConcession'
 import { dressTicketWindows } from './cineplexTicketDesk'
 import {
@@ -14,7 +14,9 @@ import {
   dressFeaturePosterMarquee,
   dressConcoursePillar,
 } from './cineplexScreenCorridor'
-import type { Structure } from './types'
+import { dressScreensHallConcourse } from './cineplexScreensHall'
+import { dressCinemaAuditorium } from './cineplexAuditorium'
+import type { Space, Structure } from './types'
 
 export const CINEPLEX_CONCESSION = 'tier-3-cineplex-concession'
 export const CINEPLEX_SCREEN_CORRIDOR = 'tier-3-cineplex-screen-corridor'
@@ -23,13 +25,25 @@ export const CINEPLEX_FOYER_PORT = 'tier-3-cineplex-foyer-port'
 export const CINEPLEX_FOYER_STARBOARD = 'tier-3-cineplex-foyer-starboard'
 export const CINEPLEX_SCREENS_HALL = 'tier-3-cineplex-screens-hall'
 
-const CINEPLEX_SPACES = new Set([
+export const CINEPLEX_SCREENS = [
+  'tier-3-cineplex-screen-1',
+  'tier-3-cineplex-screen-2',
+  'tier-3-cineplex-screen-3',
+  'tier-3-cineplex-screen-4',
+  'tier-3-cineplex-screen-5',
+  'tier-3-cineplex-screen-6',
+  'tier-3-cineplex-screen-7',
+  'tier-3-cineplex-screen-8',
+] as const
+
+const CINEPLEX_SPACES = new Set<string>([
   CINEPLEX_CONCESSION,
   CINEPLEX_SCREEN_CORRIDOR,
   CINEPLEX_TICKET_DESK,
   CINEPLEX_FOYER_PORT,
   CINEPLEX_FOYER_STARBOARD,
   CINEPLEX_SCREENS_HALL,
+  ...CINEPLEX_SCREENS,
 ])
 
 export function isCineplexSpace(spaceId: string): boolean {
@@ -55,35 +69,21 @@ export function cineplexSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   }
 }
 
-function dressFoyerDetails(into: BanquetDetailBuilder, floor: number, side: 'port' | 'starboard'): void {
-  const x = side === 'port' ? -10 : 10
-  // Runner carpet
-  into.box([4.4, 0.02, 14.0], {
-    at: [x, floor + 0.01, 0],
-    rotation: [0, 0, 0],
-    colour: CINE_CARPET,
-  })
-  // Movie poster lightboxes along side walls
-  const wallX = side === 'port' ? -12.4 : 12.4
-  const posterRotation: [number, number, number] = [0, side === 'port' ? Math.PI / 2 : -Math.PI / 2, 0]
-  for (const z of [-4, 0, 4]) {
-    dressMoviePosterLightbox({
-      into,
-      at: [wallX, floor + 2.2, z],
-      size: [1.2, 1.8],
-      rotation: posterRotation,
-      artColour: CINE_POSTER_ART,
-    })
-  }
-}
-
 interface SpaceDressContext {
   into: BanquetDetailBuilder
+  space: Space
   floor: number
+  ceiling: number
   structures: Structure[]
 }
 
-function dressConcessionSpace({ into, floor, structures }: SpaceDressContext): Three.Group | null {
+function dressConcessionSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: -25, xMax: -12.5, zMin: -7.5, zMax: 7.5 }
+  dressConcourseFloor(into, bounds, floor)
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressConcourseWallSpan({ into, from: [-25, -7.5], to: [-25, 7.5], floor, ceiling })
+  dressConcourseWallSpan({ into, from: [-25, -7.5], to: [-12.5, -7.5], floor, ceiling })
+
   for (const structure of structures) {
     const surface = new CineplexSurface(into, structure, floor)
     if (structure.id.endsWith('-food-counter')) dressConcessionCounter(surface)
@@ -92,7 +92,13 @@ function dressConcessionSpace({ into, floor, structures }: SpaceDressContext): T
   return into.finish('cineplex-concession-manga-details')
 }
 
-function dressTicketDeskSpace({ into, floor, structures }: SpaceDressContext): Three.Group | null {
+function dressTicketDeskSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: 12.5, xMax: 25, zMin: -7.5, zMax: 7.5 }
+  dressConcourseFloor(into, bounds, floor)
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressConcourseWallSpan({ into, from: [25, 7.5], to: [25, -7.5], floor, ceiling })
+  dressConcourseWallSpan({ into, from: [12.5, -7.5], to: [25, -7.5], floor, ceiling })
+
   for (const structure of structures) {
     const surface = new CineplexSurface(into, structure, floor)
     if (structure.id.endsWith('-ticket-windows')) dressTicketWindows(surface)
@@ -100,8 +106,12 @@ function dressTicketDeskSpace({ into, floor, structures }: SpaceDressContext): T
   return into.finish('cineplex-tickets-manga-details')
 }
 
-function dressScreenCorridorSpace({ into, floor, structures }: SpaceDressContext): Three.Group | null {
+function dressScreenCorridorSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: -7.5, xMax: 7.5, zMin: -5, zMax: 12.5 }
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressSuspendedDirectionalSigns(into, ceiling)
   dressDescendingRamp(into, floor)
+
   for (const structure of structures) {
     const surface = new CineplexSurface(into, structure, floor)
     if (structure.id.endsWith('-screen-corridor-poster')) dressFeaturePosterMarquee(surface)
@@ -110,14 +120,32 @@ function dressScreenCorridorSpace({ into, floor, structures }: SpaceDressContext
   return into.finish('cineplex-screen-corridor-manga-details')
 }
 
-function dressFoyerPortSpace({ into, floor }: SpaceDressContext): Three.Group | null {
-  dressFoyerDetails(into, floor, 'port')
+function dressFoyerPortSpace({ into, floor, ceiling }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: -12.5, xMax: -7.5, zMin: -7.5, zMax: 7.5 }
+  dressConcourseFloor(into, bounds, floor)
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressWallPosters({ into, from: [-12.4, -6.0], to: [-12.4, 6.0], floor })
   return into.finish('cineplex-foyer-port-manga-details')
 }
 
-function dressFoyerStarboardSpace({ into, floor }: SpaceDressContext): Three.Group | null {
-  dressFoyerDetails(into, floor, 'starboard')
+function dressFoyerStarboardSpace({ into, floor, ceiling }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: 7.5, xMax: 12.5, zMin: -7.5, zMax: 7.5 }
+  dressConcourseFloor(into, bounds, floor)
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressWallPosters({ into, from: [12.4, -6.0], to: [12.4, 6.0], floor })
   return into.finish('cineplex-foyer-starboard-manga-details')
+}
+
+function dressScreensHallSpace({ into, floor, ceiling }: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: -28, xMax: 28, zMin: 12.5, zMax: 17.5 }
+  dressConcourseCeiling(into, bounds, ceiling)
+  dressScreensHallConcourse(into, floor)
+  return into.finish('cineplex-screens-hall-manga-details')
+}
+
+function dressAuditoriumSpace({ into, space, floor }: SpaceDressContext): Three.Group | null {
+  dressCinemaAuditorium(into, space, floor)
+  return into.finish(`cineplex-${space.id}-manga-details`)
 }
 
 const SPACE_BUILDERS: Record<string, (ctx: SpaceDressContext) => Three.Group | null> = {
@@ -126,9 +154,14 @@ const SPACE_BUILDERS: Record<string, (ctx: SpaceDressContext) => Three.Group | n
   [CINEPLEX_SCREEN_CORRIDOR]: dressScreenCorridorSpace,
   [CINEPLEX_FOYER_PORT]: dressFoyerPortSpace,
   [CINEPLEX_FOYER_STARBOARD]: dressFoyerStarboardSpace,
+  [CINEPLEX_SCREENS_HALL]: dressScreensHallSpace,
 }
 
-/** Reconstructed Cineplex Concourse from Chapter 393 (food stall, ticket desk, ramp) */
+for (const screenId of CINEPLEX_SCREENS) {
+  SPACE_BUILDERS[screenId] = dressAuditoriumSpace
+}
+
+/** Reconstructed Cineplex from Chapter 393 (food stall, ticket desk, ramp, screens hall and 8 auditoriums) */
 export function buildCineplexDetails(options: {
   THREE: typeof Three
   plan: TierPlan
@@ -143,7 +176,14 @@ export function buildCineplexDetails(options: {
   if (!space || !builder) return null
 
   const floor = floorOf(space, plan.tier)
+  const ceilingHeight = ceilingOf(space, plan.tier)
   const structures = plan.structures.filter((s) => s.spaceId === spaceId)
   const into = new BanquetDetailBuilder(THREE)
-  return builder({ into, floor, structures })
+  return builder({
+    into,
+    space,
+    floor,
+    ceiling: floor + ceilingHeight,
+    structures,
+  })
 }

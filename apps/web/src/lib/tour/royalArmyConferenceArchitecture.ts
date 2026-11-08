@@ -1,17 +1,22 @@
 import type * as Three from 'three'
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { banquetWallRuns, wallPoint } from './banquetWallLayout'
-import { ceilingOf, floorOf, type TierPlan } from './blueprint'
+import { floorOf, type TierPlan } from './blueprint'
 import {
-  ARMY_CHART_GRID,
-  ARMY_CHART_PALE,
+  ARMY_CARPET_BORDER,
+  ARMY_CARPET_DARK,
+  ARMY_CHROME,
   ARMY_GLOW_LIGHT,
+  ARMY_INLAY_BRASS,
   ARMY_LIGHT_STEEL,
-  ARMY_SCREEN_HOUSING,
-  ARMY_SCREEN_WHITE,
   ARMY_STEEL,
-  RoyalArmyConferenceSurface,
+  ARMY_TABLE_CHAMFER,
+  ARMY_TABLE_WOOD,
 } from './royalArmyConferenceDetailSurface'
+import {
+  dressBriefingScreenDisplay,
+  dressTacticalChartBoardDisplay,
+} from './royalArmyConferenceScreenDisplay'
 import type { Space, Structure } from './types'
 
 export interface ArchitectureContext {
@@ -21,34 +26,104 @@ export interface ArchitectureContext {
   space: Space
 }
 
+function buildCommandFlooring(context: ArchitectureContext): void {
+  const { into, space, plan } = context
+  const floor = floorOf(space, plan.tier)
+  const floorY = floor + 0.005
+
+  // Main acoustic carpet field (dark charcoal slate)
+  into.box([19.6, 0.008, 14.6], {
+    at: [0, floorY, 0],
+    colour: ARMY_CARPET_DARK,
+  })
+
+  // Perimeter border runner (darker contrast boundary 0.8m from walls)
+  into.box([19.6, 0.01, 0.8], {
+    at: [0, floorY + 0.001, -7.0],
+    colour: ARMY_CARPET_BORDER,
+  })
+  into.box([19.6, 0.01, 0.8], {
+    at: [0, floorY + 0.001, 7.0],
+    colour: ARMY_CARPET_BORDER,
+  })
+  into.box([0.8, 0.01, 14.6], {
+    at: [-9.5, floorY + 0.001, 0],
+    colour: ARMY_CARPET_BORDER,
+  })
+  into.box([0.8, 0.01, 14.6], {
+    at: [9.5, floorY + 0.001, 0],
+    colour: ARMY_CARPET_BORDER,
+  })
+
+  // Polished brass inlay expansion border outlining executive seating zone
+  const brassY = floorY + 0.003
+  into.box([12.5, 0.008, 0.06], {
+    at: [0, brassY, -4.0],
+    colour: ARMY_INLAY_BRASS,
+  })
+  into.box([12.5, 0.008, 0.06], {
+    at: [0, brassY, 5.0],
+    colour: ARMY_INLAY_BRASS,
+  })
+  into.box([0.06, 0.008, 9.0], {
+    at: [-6.25, brassY, 0.5],
+    colour: ARMY_INLAY_BRASS,
+  })
+  into.box([0.06, 0.008, 9.0], {
+    at: [6.25, brassY, 0.5],
+    colour: ARMY_INLAY_BRASS,
+  })
+}
+
 function buildPresenterStage(context: ArchitectureContext): void {
   const { into, space, plan } = context
   const floor = floorOf(space, plan.tier)
-  // Low presenter stage at the north wall: 11.5m wide, 3.4m deep, 0.15m height
   const stageW = 11.5
   const stageD = 3.4
-  const stageH = 0.15
+  const stageH = 0.16
   const stageZ = -5.7
 
-  // Main stage deck
+  // Stage foundation sub-floor
   into.box([stageW, stageH, stageD], {
     at: [0, floor + stageH / 2, stageZ],
-    colour: 0x383a3f,
+    colour: ARMY_STEEL,
   })
 
-  // Beveled edge trim / safety nosing
-  into.box([stageW + 0.05, 0.02, 0.06], {
-    at: [0, floor + stageH - 0.01, stageZ + stageD / 2],
-    colour: ARMY_LIGHT_STEEL,
+  // Hardwood parquet platform top deck
+  into.box([stageW - 0.04, 0.015, stageD - 0.04], {
+    at: [0, floor + stageH + 0.005, stageZ],
+    colour: ARMY_TABLE_WOOD,
   })
 
-  // Side trims
+  // Front beveled aluminum safety nosing
+  into.box([stageW + 0.06, 0.025, 0.08], {
+    at: [0, floor + stageH, stageZ + stageD / 2],
+    colour: ARMY_CHROME,
+  })
+  // Side nosings
   for (const side of [-1, 1]) {
-    into.box([0.06, 0.02, stageD], {
-      at: [side * (stageW / 2), floor + stageH - 0.01, stageZ],
-      colour: ARMY_LIGHT_STEEL,
+    into.box([0.08, 0.025, stageD], {
+      at: [side * (stageW / 2), floor + stageH, stageZ],
+      colour: ARMY_CHROME,
     })
   }
+
+  // Under-lip step LED illumination strip (soft continuous warm white glow)
+  into.box([stageW - 0.2, 0.015, 0.03], {
+    at: [0, floor + stageH - 0.02, stageZ + stageD / 2 + 0.02],
+    colour: ARMY_GLOW_LIGHT,
+    glow: true,
+  })
+
+  // Access step transition at stage center
+  into.box([2.4, 0.08, 0.45], {
+    at: [0, floor + 0.04, stageZ + stageD / 2 + 0.22],
+    colour: ARMY_TABLE_CHAMFER,
+  })
+  into.box([2.44, 0.015, 0.06], {
+    at: [0, floor + 0.08, stageZ + stageD / 2 + 0.42],
+    colour: ARMY_CHROME,
+  })
 }
 
 function buildWallPerimeter(context: ArchitectureContext): void {
@@ -56,61 +131,46 @@ function buildWallPerimeter(context: ArchitectureContext): void {
   const floor = floorOf(space, plan.tier)
 
   for (const run of banquetWallRuns(plan, space)) {
-    // Military base plinth in dark steel
-    into.box([run.length, 0.22, 0.06], {
-      at: wallPoint(run, { along: run.length / 2, y: floor + 0.11, inset: 0.03 }),
+    // Heavy military base plinth with cable channel
+    into.box([run.length, 0.24, 0.08], {
+      at: wallPoint(run, { along: run.length / 2, y: floor + 0.12, inset: 0.04 }),
       rotation: [0, run.angle, 0],
       colour: ARMY_STEEL,
     })
 
-    // Technical dado rail with conduit groove
-    into.box([run.length, 0.08, 0.05], {
-      at: wallPoint(run, { along: run.length / 2, y: floor + 1.05, inset: 0.025 }),
+    // Acoustic wood slat wainscoting up to 1.15m
+    const slatCount = Math.max(1, Math.floor(run.length / 0.18))
+    for (let i = 0; i < slatCount; i++) {
+      const along = ((i + 0.5) * run.length) / slatCount
+      into.box([0.14, 0.88, 0.025], {
+        at: wallPoint(run, { along, y: floor + 0.68, inset: 0.02 }),
+        rotation: [0, run.angle, 0],
+        colour: ARMY_TABLE_WOOD,
+      })
+    }
+
+    // Brushed aluminum architectural dado rail with conduit groove
+    into.box([run.length, 0.09, 0.06], {
+      at: wallPoint(run, { along: run.length / 2, y: floor + 1.18, inset: 0.03 }),
       rotation: [0, run.angle, 0],
       colour: ARMY_LIGHT_STEEL,
     })
 
-    // Upper perimeter cornice
-    into.box([run.length, 0.12, 0.08], {
-      at: wallPoint(run, { along: run.length / 2, y: floor + 4.9, inset: 0.04 }),
+    // Upper perimeter cornice moulding at ceiling junction
+    into.box([run.length, 0.14, 0.09], {
+      at: wallPoint(run, { along: run.length / 2, y: floor + 4.92, inset: 0.045 }),
       rotation: [0, run.angle, 0],
       colour: ARMY_STEEL,
     })
 
-    // Vertical acoustic panel slats
-    const count = Math.max(1, Math.floor(run.length / 2.2))
-    for (let i = 0; i < count; i++) {
-      const along = ((i + 0.5) * run.length) / count
-      into.box([0.04, 3.6, 0.02], {
-        at: wallPoint(run, { along, y: floor + 2.9, inset: 0.015 }),
+    // Vertical acoustic fabric absorbing panels along the upper wall
+    const panelCount = Math.max(1, Math.floor(run.length / 2.2))
+    for (let i = 0; i < panelCount; i++) {
+      const along = ((i + 0.5) * run.length) / panelCount
+      into.box([0.06, 3.4, 0.02], {
+        at: wallPoint(run, { along, y: floor + 3.0, inset: 0.015 }),
         rotation: [0, run.angle, 0],
         colour: ARMY_LIGHT_STEEL,
-      })
-    }
-  }
-}
-
-function buildCeilingLighting(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const ceiling = ceilingOf(space, plan.tier)
-  const lightY = ceiling - 0.15
-
-  // 3 Longitudinal fluorescent light banks (North, Centre, South)
-  const zPositions = [-4.5, 0.5, 5.0]
-  const xPositions = [-6.5, 0, 6.5]
-
-  for (const z of zPositions) {
-    for (const x of xPositions) {
-      // Light housing
-      into.box([2.8, 0.1, 0.4], {
-        at: [x, lightY, z],
-        colour: ARMY_LIGHT_STEEL,
-      })
-      // Emissive tube diffuser
-      into.box([2.6, 0.03, 0.28], {
-        at: [x, lightY - 0.05, z],
-        colour: ARMY_GLOW_LIGHT,
-        glow: true,
       })
     }
   }
@@ -120,15 +180,34 @@ function buildFloorConduits(context: ArchitectureContext): void {
   const { into, space, plan } = context
   const floor = floorOf(space, plan.tier)
 
-  // Cable raceways from tables to lectern and screen
-  into.box([0.16, 0.02, 2.5], {
-    at: [-0.75, floor + 0.01, -2.0],
+  // Surface-mounted beveled aluminum cable raceways
+  into.box([0.18, 0.025, 2.5], {
+    at: [-0.75, floor + 0.012, -2.0],
     colour: ARMY_LIGHT_STEEL,
   })
-  into.box([0.16, 0.02, 2.0], {
-    at: [0, floor + 0.01, -4.5],
+  into.box([0.18, 0.025, 2.0], {
+    at: [0, floor + 0.012, -4.5],
     colour: ARMY_LIGHT_STEEL,
   })
+
+  // Flush-mounted under-desk electrical and AV pop-up floor boxes
+  const boxPositions: [number, number][] = [
+    [-2.5, 0],
+    [2.5, 0],
+    [-2.5, 3.6],
+    [2.5, 3.6],
+    [0, -0.65],
+  ]
+  for (const [bx, bz] of boxPositions) {
+    into.box([0.3, 0.015, 0.3], {
+      at: [bx, floor + 0.008, bz],
+      colour: ARMY_LIGHT_STEEL,
+    })
+    into.box([0.22, 0.018, 0.22], {
+      at: [bx, floor + 0.009, bz],
+      colour: ARMY_STEEL,
+    })
+  }
 }
 
 /** Detail dressing for the 7.5m blank briefing projection screen (Chap. 380, p. 189). */
@@ -137,39 +216,7 @@ export function dressBriefingScreen(
   structure: Structure,
   floor: number,
 ): void {
-  const surface = new RoyalArmyConferenceSurface({ into, structure, floor, angle: 0 })
-  const w = structure.size[0]
-  const h = structure.height
-
-  // Top motorized roller housing
-  surface.cylinder(
-    { radius: 0.09, height: w + 0.3, sides: 16 },
-    [0, h + 0.09, 0],
-    { colour: ARMY_SCREEN_HOUSING, rotation: [0, 0, Math.PI / 2] },
-  )
-
-  // Side guide rails & tension weights
-  for (const side of [-1, 1]) {
-    surface.box([0.04, h + 0.1, 0.04], [side * (w / 2 + 0.04), h / 2, 0], ARMY_STEEL)
-    // Wall mount bracket
-    surface.box([0.06, 0.12, 0.14], [side * (w / 2), h + 0.09, -0.06], ARMY_LIGHT_STEEL)
-  }
-
-  // Matte projection canvas (recessed white screen)
-  surface.box([w * 0.96, h * 0.94, 0.02], [0, h / 2, 0.02], ARMY_SCREEN_WHITE)
-
-  // Black mask / antireflective border bezel (16:9 inner frame)
-  surface.box([w, 0.08, 0.03], [0, h - 0.04, 0.02], ARMY_STEEL)
-  surface.box([w, 0.08, 0.03], [0, 0.04, 0.02], ARMY_STEEL)
-  surface.box([0.1, h, 0.03], [-w / 2 + 0.05, h / 2, 0.02], ARMY_STEEL)
-  surface.box([0.1, h, 0.03], [w / 2 - 0.05, h / 2, 0.02], ARMY_STEEL)
-
-  // Bottom counterweight bar
-  surface.cylinder(
-    { radius: 0.03, height: w + 0.1, sides: 12 },
-    [0, 0.02, 0.03],
-    { colour: ARMY_LIGHT_STEEL, rotation: [0, 0, Math.PI / 2] },
-  )
+  dressBriefingScreenDisplay(into, structure, floor)
 }
 
 /** Detail dressing for the 5m tactical chart whiteboard (Chap. 380, p. 189). */
@@ -178,53 +225,13 @@ export function dressTacticalChartBoard(
   structure: Structure,
   floor: number,
 ): void {
-  // Chart board is on the west wall (X = -9.88, depth = 5.0 along Z)
-  const surface = new RoyalArmyConferenceSurface({
-    into,
-    structure,
-    floor,
-    angle: Math.PI / 2,
-  })
-  const w = structure.size[1] // length along the wall: 5.0m
-  const h = structure.height // 2.5m
-
-  // Aluminium frame
-  surface.box([w, 0.05, 0.04], [0, h - 0.025, 0.02], ARMY_LIGHT_STEEL)
-  surface.box([w, 0.05, 0.04], [0, 0.025, 0.02], ARMY_LIGHT_STEEL)
-  surface.box([0.05, h, 0.04], [-w / 2 + 0.025, h / 2, 0.02], ARMY_LIGHT_STEEL)
-  surface.box([0.05, h, 0.04], [w / 2 - 0.025, h / 2, 0.02], ARMY_LIGHT_STEEL)
-
-  // Pale whiteboard surface
-  surface.box([w - 0.08, h - 0.08, 0.015], [0, h / 2, 0.015], ARMY_CHART_PALE)
-
-  // Tactical grid lines (horizontal and vertical)
-  for (let y = 0.4; y < h - 0.3; y += 0.45) {
-    surface.box([w - 0.2, 0.008, 0.02], [0, y, 0.02], ARMY_CHART_GRID)
-  }
-  for (let x = -w / 2 + 0.5; x < w / 2 - 0.3; x += 0.8) {
-    surface.box([0.008, h - 0.2, 0.02], [x, h / 2, 0.02], ARMY_CHART_GRID)
-  }
-
-  // Bottom marker tray
-  surface.box([w - 0.4, 0.03, 0.08], [0, 0.015, 0.05], ARMY_LIGHT_STEEL)
-  // Dry-erase pens & magnetic erasers
-  surface.box([0.14, 0.025, 0.05], [-0.5, 0.035, 0.05], ARMY_STEEL)
-  surface.cylinder(
-    { radius: 0.008, height: 0.12, sides: 8 },
-    [0.4, 0.035, 0.05],
-    { colour: 0x203060, rotation: [0, 0, Math.PI / 2] },
-  )
-  surface.cylinder(
-    { radius: 0.008, height: 0.12, sides: 8 },
-    [0.6, 0.035, 0.05],
-    { colour: 0xa02020, rotation: [0, 0, Math.PI / 2] },
-  )
+  dressTacticalChartBoardDisplay(into, structure, floor)
 }
 
 /** Complete architectural ensemble of the Royal Army conference briefing room. */
 export function dressRoyalArmyConferenceArchitecture(context: ArchitectureContext): void {
+  buildCommandFlooring(context)
   buildPresenterStage(context)
   buildWallPerimeter(context)
-  buildCeilingLighting(context)
   buildFloorConduits(context)
 }

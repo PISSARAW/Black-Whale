@@ -14,6 +14,14 @@ export const POLICE_OAK = 0x423429
 export const POLICE_PAPER = 0xd8d4ca
 export const POLICE_OFFICER_BLUE = 0x1a2b3c
 export const POLICE_FLESH = 0xd2b19a
+export const POLICE_SCREEN_FRAME = 0x1a1e22
+export const POLICE_SCREEN_GLOW = 0x3d708f
+export const POLICE_ALERT_RED = 0xc0392b
+export const POLICE_ALERT_GREEN = 0x27ae60
+export const POLICE_LEATHER = 0x2c2621
+export const POLICE_LIGHT_DIFFUSER = 0xf5ebd3
+export const POLICE_TILES_LIGHT = 0x8e979f
+export const POLICE_TILES_DARK = 0x3f464d
 
 export class PoliceStationSurface {
   readonly width: number

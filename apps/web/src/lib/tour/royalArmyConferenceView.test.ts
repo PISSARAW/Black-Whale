@@ -78,7 +78,21 @@ describe('Royal Army Conference Room reconstructed from Chapters 350 and 380', (
     expect(hasInfiniteCoords(root!)).toBe(false)
     expect(root!.children.some((c) => (c as unknown as { isLight?: boolean }).isLight)).toBe(false)
     expect(triangles(root!)).toBeLessThan(150_000)
+    expect(triangles(root!)).toBeGreaterThan(10_000)
     expect(root!.children.length).toBeLessThanOrEqual(2)
+  })
+
+  it('generates rich ceiling, wall and tactical display details', () => {
+    const root = buildRoyalArmyConferenceDetails({
+      THREE,
+      plan,
+      spaceId: ROYAL_ARMY_CONFERENCE_ROOM,
+      reveal: false,
+    })!
+    expect(root).not.toBeNull()
+    const triCount = triangles(root)
+    // Richness on par with royal salon and king room
+    expect(triCount).toBeGreaterThan(15_000)
   })
 
   it('returns null in reveal mode or for unrelated rooms', () => {

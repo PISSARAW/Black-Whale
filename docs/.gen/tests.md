@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 339
+Fichiers : 340
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -962,6 +962,12 @@ Fichiers : 339
 ## `apps/web/src/lib/tour/diningHallView.test.ts`
 
 - the central dining hall reconstructed from chapters 371, 377 and 379-380 > satisfies the shared blueprint invariants for the dining hall
+
+## `apps/web/src/lib/tour/doorView.test.ts`
+
+- doorView — resolveTier > correctly maps space ids and plan tier fallbacks to tiers 1 through 5
+- doorView — computeDoorPlacement > computes exact metric coordinates and orientation for a doorway
+- doorView — buildDoorDetails > builds faithful doors on each deck according to its tier
 
 ## `apps/web/src/lib/tour/dust.test.ts`
 

@@ -17,8 +17,8 @@ function dressGatePortalFrame(surface: HangarEntranceSurface): void {
   const d = surface.depth
 
   // Left and right vertical jambs in heavy UPN steel
-  surface.box([0.5, h + 0.3, d + 0.25], [-w / 2 + 0.25, h / 2, 0], HANGAR_STEEL_DARK)
-  surface.box([0.5, h + 0.3, d + 0.25], [w / 2 - 0.25, h / 2, 0], HANGAR_STEEL_DARK)
+  surface.box([0.5, h + 0.3, d + 0.25], [-w / 2 + 0.25, (h + 0.3) / 2, 0], HANGAR_STEEL_DARK)
+  surface.box([0.5, h + 0.3, d + 0.25], [w / 2 - 0.25, (h + 0.3) / 2, 0], HANGAR_STEEL_DARK)
 
   // Overhead massive lintel beam with top track housing
   surface.box([w + 0.4, 0.45, d + 0.3], [0, h + 0.15, 0], HANGAR_STEEL_DARK)

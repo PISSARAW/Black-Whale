@@ -56,5 +56,26 @@ Chapitre 359 chez VIZ / Shonen Jump.
 - Lambris d'appui d'acajou de 1,2 m de hauteur avec cadres de boiserie.
 - Panneaux muraux supérieurs absorbants en damas pourpre encadrés de pilastres cannelés.
 - Appliques murales à double bras en laiton poli à lueur ambrée.
-- 3 doubles portes d'évacuation canoniques avec barres anti-panique et blocs autonomes d'éclairage de sécurité (BAES) verts.
+- Enceintes surround d'ambiance en noyer et acier sombre réparties le long des parois.
+- Portes d'accès aux loges suspendues depuis le foyer de coursive à 4,4 m de hauteur.
+- 3 doubles portes d'évacuation canoniques avec barres anti-panique en laiton et blocs autonomes d'éclairage de sécurité (BAES) verts.
 - Cabine de projection en fond de salle (mur est à X = 0) dotée de hublots optiques et d'une fenêtre d'observation.
+
+### 7. Scénographie, son et éclairage de scène
+
+- Pendillons et coulisses acoustiques en velours noir en arrière du cadre de scène.
+- Pont d'éclairage scénique suspendu en treillis d'acier équipé de projecteurs orientables ambrés.
+- Colonnes de diffusion acoustique de façade (line arrays) montées sur les piles de proscénium.
+- Tapis d'allée cérémoniel carmin à bordures dorées le long de l'axe central (2 m de largeur) et chemins transversaux vers les issues nord et sud.
+
+## Cadrages manga et points de vue canoniques (chapitre 359)
+
+- `screening-room-overview` : Vue d'ensemble depuis le fond du parterre vers le proscénium, la scène, l'écran et les loges latérales.
+- `screening-room-stage-proscenium` : Vue en contre-plongée depuis l'allée centrale vers le pupitre officiel et l'écran de briefing.
+- `screening-room-vip-box` : Vue plongeante depuis la loge d'honneur bâbord vers le parterre et la scène.
+- `screening-room-stage-looking-back` : Vue depuis le pupitre de scène embrassant les gradins, les lustres et la cabine de projection.
+
+## Ancrages de projection 2D / 3D et Carte Locale
+
+- Carte locale interactive bilingue [`screening-room.svelte`](file:///Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/assets/maps/local/screening-room.svelte) avec fiches d'inspection détaillées.
+- Ancrages de projection dans [`screeningRoomPlan.ts`](file:///Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/components/map/projection/screeningRoomPlan.ts) enregistrés dans [`roomAnchors.ts`](file:///Users/henripissa/Documents/GitHub.nosync/Black-Whale/apps/web/src/lib/components/map/projection/roomAnchors.ts).

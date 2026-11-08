@@ -1,5 +1,6 @@
 import {
   SCREENING_CARPET,
+  SCREENING_GOLD_LEAF,
   SCREENING_SEAT_FRAME,
   SCREENING_SEAT_VELVET,
   SCREENING_WARM_GLOW,
@@ -107,11 +108,44 @@ function dressSeatingBlock(
   }
 }
 
+function dressAisleRunners(surface: ScreeningRoomSurface, floor: number): void {
+  const runnerCol = SCREENING_SEAT_VELVET
+  const borderCol = SCREENING_GOLD_LEAF
+  const y = floor + 0.01
+
+  // Central axial aisle runner from stage apron to rear promenade
+  const centralLen = 60.0
+  const centralX = -43.25
+  const centralZ = 29.75
+  const centralW = 2.0
+  surface.box([centralLen, 0.015, centralW], [centralX, y, centralZ], runnerCol)
+  for (const dz of [-centralW / 2, centralW / 2]) {
+    surface.box([centralLen, 0.02, 0.05], [centralX, y + 0.005, centralZ + dz], borderCol)
+  }
+
+  // Cross-aisle runner connecting North and South exit doors (at X = -43.75)
+  const crossLen = 45.0
+  const crossZ = 29.75
+  const crossW = 2.4
+  surface.box([crossW, 0.015, crossLen], [-43.75, y, crossZ], runnerCol)
+  for (const dx of [-crossW / 2, crossW / 2]) {
+    surface.box([0.05, 0.02, crossLen], [-43.75 + dx, y + 0.005, crossZ], borderCol)
+  }
+
+  // Front stage apron cross-aisle runner
+  surface.box([2.0, 0.015, 38.0], [-74.2, y, centralZ], runnerCol)
+  // Rear distribution cross-aisle runner
+  surface.box([2.4, 0.015, 38.0], [-12.2, y, centralZ], runnerCol)
+}
+
 /** Complete stalls seating blocks of the Tier 2 Screening Room. */
 export function dressScreeningRoomSeats(context: SeatsContext): void {
   const { surface, floor } = context
 
-  // 6 canon seating blocks from blueprint.json with progressive raked sightline risers
+  // 1. Processional carpet runners along central and cross aisles
+  dressAisleRunners(surface, floor)
+
+  // 2. 6 canon seating blocks from blueprint.json with progressive raked sightline risers
   const blocks: readonly SeatingBlockDef[] = [
     { x: -70, z: 29.75, elevation: 0.08, blockIndex: 1 },
     { x: -60, z: 29.75, elevation: 0.24, blockIndex: 2 },

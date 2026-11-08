@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 429 espaces, 1160 éléments modélisés.**
+**Couverture : 62 lieux, 428 espaces, 1165 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -82,20 +82,19 @@
   - Chap. 383, p. 65 — le mât central s'élève d'un large socle circulaire sur le pont segmenté nu.
   - Chap. 383, p. 60 — une console d'instruments basse se trouve directement sous l'écoutille ronde ouverte.
   - Chap. 383, p. 60 — un meuble rectangulaire séparé se dresse à droite de la console de l'écoutille.
-  - Voir dossier dédié : [`pod-cabin-audit.md`](./pod-cabin-audit.md).
 
-## Chambre funéraire des princes — `tier-1-princes-burial-chamber`
+## Rotonde de la chambre funéraire des princes — `tier-1-princes-burial-chamber-rotunda`
 
-- **Pont :** tier-1-c, tier-1-c
+- **Pont :** tier-1-c, interior-burial-chamber
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 2
 - **Emprises relevées :** 15.92 × 15.36 m ; 20.54 × 20.54 m
-- **Hauteurs sous plafond :** 6, 8 m
+- **Hauteurs sous plafond :** 8 m
 - **Éléments modélisés :** 17 casket
 - **Objets directement visibles dans les cases :** 17/17
 - **Espaces internes :** Rotonde
 - **Sources de la pièce :**
-  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre. La chambre est affectée au pont 1-C et replacée dans sa coque selon le choix de reconstruction.
+  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre. La rotonde est le espace fusionné combinant l'ancienne chambre extérieure et la rotonde intérieure.
   - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
 - **Sources du mobilier et des détails :**
   - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
@@ -505,18 +504,17 @@
   - Chap. 360 — les appartements du prince Woble tels que Kurapika les trouve : le téléphone mural par lequel il appelle Biscuit, l'armoire et la table de présentation le long du mur tribord, le fauteuil canné, les deux sellettes à sculpture, et les tableaux encadrés le long du mur lambrissé.
   - Chap. 367 — la cuisine du prince Woble vue depuis le sol : le plan de travail contre la cloison avant, les éléments hauts vitrés portés au-dessus, les bouteilles posées sur le plan, et le plancher où attendent les gardes du corps.
 
-## Quartiers des soldats — `tier-1-soldiers-living-quarters`
+## Passage gardé vers les ponts inférieurs — `tier-1-soldiers-living-quarters`
 
-- **Pont :** tier-1-b, interior-soldiers-quarters
+- **Pont :** tier-1-b
 - **Preuve de l’enveloppe :** plan publié
-- **Sous-espaces :** 10
-- **Emprises relevées :** 33.25 × 52.5 m ; 45 × 5.5 m ; 10 × 7.5 m
+- **Sous-espaces :** 9
+- **Emprises relevées :** 45 × 5.5 m ; 10 × 7.5 m
 - **Hauteurs sous plafond :** 3.5 m
 - **Éléments modélisés :** 96 bed
 - **Objets directement visibles dans les cases :** 0/96
-- **Espaces internes :** Passage gardé vers les ponts inférieurs ; Caserne de l'armée royale 1 ; Caserne de l'armée royale 2 ; Caserne de l'armée royale 3 ; Caserne de l'armée royale 4 ; Quartiers des Hunters provisoires 1 ; Quartiers des Hunters provisoires 2 ; Quartiers des Hunters provisoires 3 ; Quartiers des Hunters provisoires 4
+- **Espaces internes :** Caserne de l'armée royale 1 ; Caserne de l'armée royale 2 ; Caserne de l'armée royale 3 ; Caserne de l'armée royale 4 ; Quartiers des Hunters provisoires 1 ; Quartiers des Hunters provisoires 2 ; Quartiers des Hunters provisoires 3 ; Quartiers des Hunters provisoires 4
 - **Sources de la pièce :**
-  - Plan des ponts, chap. 349
   - Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite. Le plan dessine le passage plus étroit que les salles qu’il dessert.
   - Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires
 - **Sources du mobilier et des détails :**
@@ -715,7 +713,7 @@
 - **Sources de la pièce :**
   - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 - **Sources du mobilier et des détails :**
-  - Chap. 359 — le théâtre : scène surélevée (+1,1 m) avec parquet et escaliers d'accès, grand arc et piles de proscénium cannelées à chapiteaux dorés, rideau de velours carmin festonné et embrasses, écran panoramique avec cadre absorbant noir et structure acier, pupitre de briefing et feux de rampe, 4 galeries de loges suspendues à 4,4 m sur corbeaux avec balustrades dorées et fauteuils de club, parterre en 6 blocs de gradins avec allée centrale et fauteuils de cinéma rabattables, plafond à caissons monumentaux à 10 m avec 5 grands lustres étagés en cristal et laiton, lambris d'acajou, appliques murales et portes de secours avec blocs BAES.
+  - Chap. 359 — le théâtre : scène surélevée (+1,1 m) avec parquet de chêne et escaliers, grand arc et piles de proscénium cannelées à chapiteaux dorés, rideau de velours carmin festonné et embrasses, écran panoramique avec cadre absorbant noir et structure acier, pupitre de briefing et feux de rampe, pendillons de scène, pont d'éclairage scénique, colonnes de façade et enceintes surround, 4 galeries de loges suspendues à 4,4 m sur corbeaux avec balustrades dorées et fauteuils de club, parterre en 6 blocs de gradins avec grand tapis d'allée central et fauteuils rabattables, plafond à caissons monumentaux à 10 m avec 5 grands lustres étagés en cristal et laiton, lambris d'acajou, appliques murales et portes de secours avec blocs BAES.
 
 ## Zone de protection des témoins VIP — `tier-2-vip-witness-protection-area`
 
@@ -1048,11 +1046,16 @@
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 1
 - **Emprises relevées :** 28 × 6.5 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 2 platform, 2 table, 1 counter
+- **Objets directement visibles dans les cases :** 4/5
 - **Sources de la pièce :**
   - Chap. 358 — la coupe annotée du quatrième jour, qui pointe cette pièce et dit donc où elle se trouve sur la longueur du navire. La reconstruction la mettait dans le coin arrière tribord.
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+- **Sources du mobilier et des détails :**
+  - Chap. 358 — Porte blindée monumentale contrôlant l'accès fret aux hangars et entrepôts des ponts inférieurs.
+  - Rail de pont roulant pour la manutention de conteneurs lourds et matériel militaire.
+  - Chap. 358 — Poste de garde et terminal d'accès contrôlant les entrées piétonnes et véhiculaires.
+  - Chap. 358 — Palettes et caisses de fret entreposées le long de la cloison ouest.
+  - Chap. 358 — Fûts de fluides industriels sur bac de rétention le long de la cloison est.
 
 ## Clinique du pont 5 — `tier-5-medical-clinic`
 
@@ -1090,7 +1093,7 @@
 - **Emprises relevées :** 112 × 49 m
 - **Hauteurs sous plafond :** 12 m
 - **Éléments modélisés :** 32 cabinet, 4 counter, 1 camera
-- **Objets directement visibles dans les cases :** 0/37
+- **Objets directement visibles dans les cases :** 37/37
 - **Sources de la pièce :**
   - Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée
 - **Sources du mobilier et des détails :**

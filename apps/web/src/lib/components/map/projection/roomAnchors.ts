@@ -24,6 +24,8 @@ import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
 import { vvipRecreationSpotAnchors } from './vvipRecreationPlan'
 import { supremeCourtSpotAnchors } from './supremeCourtPlan'
 import { hangarEntranceSpotAnchors } from './hangarEntrancePlan'
+import { screeningRoomSpotAnchors } from './screeningRoomPlan'
+import { warehouseSpotAnchors } from './warehousePlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -245,6 +247,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   },
   // The Supreme Court courtroom (ch. 349, 371, 376, 379).
   'tier-1-supreme-court': supremeCourtSpotAnchors,
+  // The Tier 2 Screening Room & Grand Theatre (ch. 359).
+  'tier-2-screening-room': screeningRoomSpotAnchors,
   // `local/cineplex.svelte`, 1000 × 800 (ch. 393).
   // Bonolenov watches from the seating island, wearing Hisoka's face, while Hisoka sits with popcorn.
   'tier-3-cineplex': cineplexSpotAnchors,
@@ -264,6 +268,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-4-royal-army-conference-room': royalArmyConferenceSpotAnchors,
   'tier-4-royal-army-conference-room-floor': royalArmyConferenceSpotAnchors,
   'interior-royal-army-conference': royalArmyConferenceSpotAnchors,
+  // The Cha-R warehouse and crate rows (ch. 378–380).
+  'tier-5-warehouse': warehouseSpotAnchors,
   // `local/cha-r-office.svelte`, 1000 × 680, contents offset by (70, 90).
   // Tajao and Wang hold the main office table in ch. 405–406. Luini is not
   // placed: he comes through a hole in a wall the plan does not draw.

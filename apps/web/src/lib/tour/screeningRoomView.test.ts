@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
 import { theShip, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
+import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
+import { screeningRoomSpotAnchors } from '../components/map/projection/screeningRoomPlan'
 import {
   buildScreeningRoomDetails,
   hasScreeningRoomModel,
@@ -121,5 +123,52 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
 
     const preserved = screeningRoomSurfacePlan(plan, true)
     expect(preserved.structures.filter((s) => s.spaceId === SCREENING_ROOM_SPACE)).toHaveLength(15)
+  })
+
+  it('exposes canonical manga viewpoints positioned inside the auditorium', () => {
+    expect(MANGA_SCREENING_ROOM_VIEWS).toHaveLength(4)
+
+    const space = plan.spaces.find((s) => s.id === SCREENING_ROOM_SPACE)!
+    const [minX, minZ] = space.footprint[0]
+    const [maxX, maxZ] = space.footprint[2]
+
+    for (const v of MANGA_SCREENING_ROOM_VIEWS) {
+      expect(v.spaceId).toBe(SCREENING_ROOM_SPACE)
+      expect(v.chapter).toBe(359)
+      expect(v.volume).toBe(34)
+      expect(v.label.length).toBeGreaterThan(10)
+      expect(v.labelFr.length).toBeGreaterThan(10)
+
+      // Position within room metric bounds
+      expect(v.at[0]).toBeGreaterThanOrEqual(minX)
+      expect(v.at[0]).toBeLessThanOrEqual(maxX)
+      expect(v.at[1]).toBeGreaterThanOrEqual(minZ)
+      expect(v.at[1]).toBeLessThanOrEqual(maxZ)
+    }
+
+    const ids = MANGA_SCREENING_ROOM_VIEWS.map((v) => v.id)
+    expect(ids).toContain('screening-room-overview')
+    expect(ids).toContain('screening-room-stage-proscenium')
+    expect(ids).toContain('screening-room-vip-box')
+    expect(ids).toContain('screening-room-stage-looking-back')
+  })
+
+  it('defines 2D/3D projection anchors for key theater fixtures and occupants', () => {
+    expect(screeningRoomSpotAnchors.occupants.briefingOfficer).toBeDefined()
+    expect(screeningRoomSpotAnchors.occupants.stallsCenter).toBeDefined()
+    expect(screeningRoomSpotAnchors.occupants.vipPort).toBeDefined()
+    expect(screeningRoomSpotAnchors.stage).toBeDefined()
+    expect(screeningRoomSpotAnchors.screen).toBeDefined()
+    expect(screeningRoomSpotAnchors.curtain).toBeDefined()
+    expect(screeningRoomSpotAnchors.projectionBooth).toBeDefined()
+    expect(screeningRoomSpotAnchors.centralAisle).toBeDefined()
+
+    // Check anchor coordinates are percentage values between 0 and 100
+    for (const coord of Object.values(screeningRoomSpotAnchors.occupants)) {
+      expect(coord.x).toBeGreaterThan(0)
+      expect(coord.x).toBeLessThan(100)
+      expect(coord.y).toBeGreaterThan(0)
+      expect(coord.y).toBeLessThan(100)
+    }
   })
 })

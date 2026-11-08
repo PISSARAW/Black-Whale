@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 343
+Fichiers : 344
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1037,6 +1037,10 @@ Fichiers : 343
 
 - what a strand is holding > reads nothing until the visitor has moved off what they stuck
 - where a thing comes to rest when the gum brings it in > stops it short of the visitor rather than inside them
+
+## `apps/web/src/lib/tour/hangarEntranceView.test.ts`
+
+- the Tier 5 Hangar Entrance reconstructed from chapters 358, 377, 390 and 400 > satisfies the shared blueprint invariants for the hangar entrance
 
 ## `apps/web/src/lib/tour/hatsu.test.ts`
 

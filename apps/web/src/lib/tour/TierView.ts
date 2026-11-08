@@ -28,6 +28,7 @@ import { buildDoorDetails } from './doorView'
 import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from './supremeCourtView'
 import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screeningRoomView'
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
+import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
 
 export interface TierRoomView {
   spaceId: string
@@ -165,6 +166,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildSupremeCourtDetails,
   buildScreeningRoomDetails,
   buildHangarEntranceDetails,
+  buildWarehouseDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
@@ -185,19 +187,22 @@ export class TierView {
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const basePlan = prisonSurfacePlan(plan, reveal)
-    const surfacePlan = hangarEntranceSurfacePlan(
-      screeningRoomSurfacePlan(
-        supremeCourtSurfacePlan(
-          podCabinSurfacePlan(
-            cineplexSurfacePlan(
-              hospitalSurfacePlan(
-                chaRSurfacePlan(
-                  policeSurfacePlan(
-                    justiceSurfacePlan(
-                      heillySurfacePlan(
-                        benjaminSurfacePlan(
-                          burialSurfacePlan(
-                            casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+    const surfacePlan = warehouseSurfacePlan(
+      hangarEntranceSurfacePlan(
+        screeningRoomSurfacePlan(
+          supremeCourtSurfacePlan(
+            podCabinSurfacePlan(
+              cineplexSurfacePlan(
+                hospitalSurfacePlan(
+                  chaRSurfacePlan(
+                    policeSurfacePlan(
+                      justiceSurfacePlan(
+                        heillySurfacePlan(
+                          benjaminSurfacePlan(
+                            burialSurfacePlan(
+                              casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+                              reveal,
+                            ),
                             reveal,
                           ),
                           reveal,

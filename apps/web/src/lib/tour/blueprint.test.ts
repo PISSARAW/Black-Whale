@@ -246,7 +246,6 @@ describe('interiors', () => {
     for (const slug of [
       'beyond-cell',
       'vip-detention',
-      'soldiers-quarters',
       'justice-bureau',
       'central-hospital',
       'cineplex',

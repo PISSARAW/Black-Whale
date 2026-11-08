@@ -108,11 +108,19 @@ function dressIndustrialConduits(into: BanquetDetailBuilder, floor: number): voi
   // High-pressure red and yellow pipeline runs along west wall
   into.cylinder(
     { radius: 0.06, height: 5.6 },
-    { at: [-13.7, floor + 2.8, 0.25], colour: HANGAR_RUST_ORANGE },
+    {
+      at: [-13.7, floor + 2.8, 0.25],
+      colour: HANGAR_RUST_ORANGE,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
   into.cylinder(
     { radius: 0.04, height: 5.6 },
-    { at: [-13.7, floor + 3.0, 0.25], colour: HANGAR_HAZARD_YELLOW },
+    {
+      at: [-13.7, floor + 3.0, 0.25],
+      colour: HANGAR_HAZARD_YELLOW,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
 }
 

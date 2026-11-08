@@ -1,6 +1,7 @@
 import {
   SCREENING_BRASS,
   SCREENING_DARK_STEEL,
+  SCREENING_EXIT_GREEN,
   SCREENING_GLASS,
   SCREENING_GOLD_LEAF,
   SCREENING_WALL_FABRIC,
@@ -132,12 +133,99 @@ function perimeterWallDetails(context: ArchitectureContext): void {
   }
 }
 
+function surroundSpeakers(surface: ScreeningRoomSurface, floor: number, height: number): void {
+  const speakerY = floor + height * 0.58
+  const xPositions = [-72.0, -58.0, -44.0, -30.0, -16.0]
+
+  for (const sx of xPositions) {
+    // North wall surround speaker
+    surface.box([0.48, 0.65, 0.28], [sx, speakerY, 7.28], SCREENING_WOOD_MAHOGANY)
+    surface.box([0.42, 0.58, 0.04], [sx, speakerY, 7.42], SCREENING_DARK_STEEL)
+    surface.cylinder({ radius: 0.08, height: 0.02, sides: 8 }, [sx, speakerY + 0.12, 7.44], {
+      colour: SCREENING_GOLD_LEAF,
+      rotation: [Math.PI / 2, 0, 0],
+    })
+
+    // South wall surround speaker
+    surface.box([0.48, 0.65, 0.28], [sx, speakerY, 52.22], SCREENING_WOOD_MAHOGANY)
+    surface.box([0.42, 0.58, 0.04], [sx, speakerY, 52.08], SCREENING_DARK_STEEL)
+    surface.cylinder({ radius: 0.08, height: 0.02, sides: 8 }, [sx, speakerY + 0.12, 52.06], {
+      colour: SCREENING_GOLD_LEAF,
+      rotation: [Math.PI / 2, 0, 0],
+    })
+  }
+}
+
+function boxAccessDoors(surface: ScreeningRoomSurface, floor: number): void {
+  const doorY = floor + 4.4 + 1.2
+  // Access doors from private VIP gallery foyers into the 4 box galleries
+  const doorPositions: [number, number][] = [
+    [-62.0, 7.15],
+    [-27.0, 7.15],
+    [-62.0, 52.35],
+    [-27.0, 52.35],
+  ]
+
+  for (const [dx, dz] of doorPositions) {
+    // Molded mahogany architrave
+    surface.box([1.9, 2.45, 0.08], [dx, doorY, dz], SCREENING_WOOD_MAHOGANY)
+    // Double door leafs
+    surface.box([0.85, 2.25, 0.04], [dx - 0.44, doorY - 0.05, dz], SCREENING_WOOD_TRIM)
+    surface.box([0.85, 2.25, 0.04], [dx + 0.44, doorY - 0.05, dz], SCREENING_WOOD_TRIM)
+    // Brass door levers
+    surface.box([0.14, 0.04, 0.06], [dx - 0.08, doorY - 0.15, dz + 0.04], SCREENING_BRASS)
+    surface.box([0.14, 0.04, 0.06], [dx + 0.08, doorY - 0.15, dz + 0.04], SCREENING_BRASS)
+  }
+}
+
+function emergencyExitPortals(surface: ScreeningRoomSurface, floor: number): void {
+  const portalH = 2.8
+  const portalY = floor + portalH / 2
+
+  // North exit door (Z = 7.1)
+  surface.box([3.2, portalH, 0.12], [-43.75, portalY, 7.16], SCREENING_WOOD_MAHOGANY)
+  surface.box([2.8, 0.12, 0.04], [-43.75, floor + 1.0, 7.22], SCREENING_BRASS)
+  surface.glowingBox(
+    [0.55, 0.22, 0.12],
+    [-43.75, floor + portalH + 0.18, 7.22],
+    SCREENING_EXIT_GREEN,
+  )
+
+  // South exit door (Z = 52.4)
+  surface.box([3.2, portalH, 0.12], [-43.75, portalY, 52.34], SCREENING_WOOD_MAHOGANY)
+  surface.box([2.8, 0.12, 0.04], [-43.75, floor + 1.0, 52.28], SCREENING_BRASS)
+  surface.glowingBox(
+    [0.55, 0.22, 0.12],
+    [-43.75, floor + portalH + 0.18, 52.28],
+    SCREENING_EXIT_GREEN,
+  )
+
+  // Port backstage exit door (X = -87.4)
+  surface.box([0.12, portalH, 3.2], [-87.34, portalY, 29.75], SCREENING_WOOD_MAHOGANY)
+  surface.box([0.04, 0.12, 2.8], [-87.28, floor + 1.0, 29.75], SCREENING_BRASS)
+  surface.glowingBox(
+    [0.12, 0.22, 0.55],
+    [-87.28, floor + portalH + 0.18, 29.75],
+    SCREENING_EXIT_GREEN,
+  )
+}
+
 /** Complete architectural envelope of the Screening Room (Tier 2). */
 export function dressScreeningRoomArchitecture(context: ArchitectureContext): void {
-  const { surface, floor } = context
+  const { surface, floor, ceilingHeight } = context
 
+  // 1. Classical pilasters, damask acoustic fabric and wall sconces
   perimeterWallDetails(context)
 
-  // Projection booth at rear of hall
+  // 2. High-fidelity acoustic surround horn speakers
+  surroundSpeakers(surface, floor, ceilingHeight)
+
+  // 3. Elevated VIP box access doors
+  boxAccessDoors(surface, floor)
+
+  // 4. Ground floor emergency exits with illuminated BAES signs
+  emergencyExitPortals(surface, floor)
+
+  // 5. Projection booth at rear of hall
   projectionBooth(surface, floor)
 }

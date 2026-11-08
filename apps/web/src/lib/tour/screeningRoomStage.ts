@@ -223,6 +223,65 @@ function projectionScreen(surface: ScreeningRoomSurface, floor: number): void {
   )
 }
 
+function stageWings(surface: ScreeningRoomSurface, floor: number, height: number): void {
+  const wingH = height - 2.4
+  const wingY = floor + 1.1 + wingH / 2
+  // 3 pairs of black acoustic velvet tormentors/legs along stage depth
+  const wingXs = [-79.0, -81.5, -84.0]
+  for (const wx of wingXs) {
+    // Port wing
+    surface.box([0.15, wingH, 3.2], [wx, wingY, 14.2], SCREENING_CURTAIN_DARK)
+    // Starboard wing
+    surface.box([0.15, wingH, 3.2], [wx, wingY, 45.3], SCREENING_CURTAIN_DARK)
+  }
+}
+
+function stageLightingTruss(surface: ScreeningRoomSurface, floor: number, height: number): void {
+  const trussX = -76.8
+  const trussY = floor + height - 1.6
+  const span = 30.0
+  const centerZ = 29.75
+
+  // Structural square truss girder
+  surface.box([0.35, 0.35, span], [trussX, trussY, centerZ], SCREENING_DARK_STEEL)
+
+  // Stage profile spotlights clamped along the truss
+  const spotCount = 8
+  const stepZ = span / (spotCount + 1)
+  for (let i = 1; i <= spotCount; i++) {
+    const sz = centerZ - span / 2 + i * stepZ
+    surface.cylinder({ radius: 0.08, height: 0.28, sides: 8 }, [trussX, trussY - 0.22, sz], {
+      colour: SCREENING_DARK_STEEL,
+      rotation: [0, 0, Math.PI / 6],
+    })
+    surface.glowingSphere(
+      [0.07, 0.07, 0.07],
+      [trussX + 0.1, trussY - 0.32, sz],
+      SCREENING_WARM_GLOW,
+    )
+  }
+}
+
+function prosceniumSpeakers(surface: ScreeningRoomSurface, floor: number, height: number): void {
+  const speakerX = -75.0
+  const speakerY = floor + height * 0.55
+
+  for (const sz of [14.4, 45.1]) {
+    // Vertical line array cluster
+    for (let i = 0; i < 4; i++) {
+      const cy = speakerY + (i - 1.5) * 0.45
+      surface.box([0.38, 0.38, 0.48], [speakerX, cy, sz], SCREENING_DARK_STEEL)
+      surface.box([0.04, 0.32, 0.42], [speakerX + 0.19, cy, sz], SCREENING_WOOD_MAHOGANY)
+    }
+    // Rigging steel cable
+    surface.cylinder(
+      { radius: 0.015, height: height * 0.35 },
+      [speakerX, floor + height * 0.8, sz],
+      { colour: SCREENING_DARK_STEEL },
+    )
+  }
+}
+
 /** Complete proscenium stage ensemble of the Screening Room. */
 export function dressScreeningRoomStage(context: StageContext): void {
   const { surface, floor, ceilingHeight } = context
@@ -242,4 +301,13 @@ export function dressScreeningRoomStage(context: StageContext): void {
 
   // 5. Cinema screen and briefing podium
   projectionScreen(surface, floor)
+
+  // 6. Backstage wings (pendillons)
+  stageWings(surface, floor, ceilingHeight)
+
+  // 7. Overhead stage lighting truss
+  stageLightingTruss(surface, floor, ceilingHeight)
+
+  // 8. Line array proscenium speakers
+  prosceniumSpeakers(surface, floor, ceilingHeight)
 }

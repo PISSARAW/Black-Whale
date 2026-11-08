@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
-import { theShip, floorOf, validateBlueprint } from './blueprint'
+import { theShip, floorOf, ceilingOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import {
   buildHangarEntranceDetails,
@@ -101,8 +101,8 @@ describe('the Tier 5 Hangar Entrance reconstructed from chapters 358, 377, 390 a
 
     const bounds = new THREE.Box3().setFromObject(root)
     const floor = floorOf(space, plan.tier)
-    expect(bounds.min.y).toBeGreaterThanOrEqual(floor - 0.16)
-    expect(bounds.max.y).toBeLessThanOrEqual(floor + space.ceiling! + 0.5)
+    expect(bounds.min.y).toBeGreaterThanOrEqual(floor - 0.05)
+    expect(bounds.max.y).toBeLessThanOrEqual(floor + ceilingOf(space, plan.tier) + 0.5)
     disposeBanquetDetails(root)
   })
 

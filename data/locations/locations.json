@@ -57,9 +57,7 @@
     "zoneType": "quarters",
     "description": "King Nasubi's residence, separated from the Princes' living quarters by the Banquet Hall. Chapter 382 shows its double-height salon in detail: a coffered barrel vault carried by square piers, geometric inlaid flooring, a wall crowded with framed art around one monumental battle scene, an ornamented mantel and sideboards, upholstered seating, several low tables, drinks service, sculpture and clipped plants.",
     "entrances": [],
-    "exits": [
-      "tier-1-banquet-hall"
-    ]
+    "exits": ["tier-1-banquet-hall"]
   },
   {
     "id": "tier-1-queens-living-quarters",
@@ -160,6 +158,16 @@
     "description": "Barracks for the Royal Army detachment posted to Tier 1. Roughly 2,000 guards and soldiers sail with the ship and 70% of them are stationed on Tiers 1 and 2; Mizaistom later moves 800 of them down to the lower tiers.",
     "entrances": [],
     "exits": []
+  },
+  {
+    "id": "tier-1-princes-burial-chamber-rotunda",
+    "name": "Princes' Burial Chamber",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "ceremonial",
+    "description": "Funerary hall where the princes killed during the voyage are laid out. The hall is round, with fourteen coffins set radially about a central spire — one per prince, prepared before anyone has died. Momoze is the first to occupy hers: chapter 371 puts the king at her open coffin, refusing to mourn a daughter he calls part of the foundations of Kakin. Halkenburg's burial is held there later, and Chrollo works the mourners with Love Dial 6700 under cover of the procession.",
+    "entrances": [],
+    "exits": ["tier-1-banquet-hall"]
   },
   {
     "id": "tier-1-lifeboats",
@@ -529,9 +537,7 @@
     "zoneType": "residential",
     "description": "Ordinary Tier 3 cabins, and the hunting ground of Morena's Contagion carriers: Luini alone kills twenty people here before teleporting out, and the resulting panic is what pushes Mizaistom to redeploy the Royal Army. Room 302, where Morena infects the twenty-three Heil-Ly in chapter 378, is one of these cabins; the panel gives its door plate but nothing that would place it on the deck plan, so it has no entry of its own.",
     "entrances": [],
-    "exits": [
-      "tier-3-residential-room-3101"
-    ]
+    "exits": ["tier-3-residential-room-3101"]
   },
   {
     "id": "tier-3-cineplex",
@@ -610,12 +616,8 @@
     "deck": 4,
     "zoneType": "corridor",
     "description": "Central passage connecting Tiers 4 and 5. Chrollo, Shizuku and Bonolenov progress there on the fourth day of the journey.",
-    "entrances": [
-      "tier-4"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-5-central-dining-hall",
@@ -634,12 +636,8 @@
     "deck": null,
     "zoneType": "infrastructure",
     "description": "Sewage processing facility for the ship's passengers, located between Tiers 4 and 5. Its precise internal layout and any connection to Heil-Ly routes are unconfirmed.",
-    "entrances": [
-      "tier-4-central-passage"
-    ],
-    "exits": [
-      "tier-5"
-    ]
+    "entrances": ["tier-4-central-passage"],
+    "exits": ["tier-5"]
   },
   {
     "id": "tier-3-residential-units",

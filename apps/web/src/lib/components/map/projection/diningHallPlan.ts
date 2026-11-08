@@ -59,4 +59,3 @@ export const diningHallSpotAnchors = {
   },
   fallback: { ...spot(platformSouth.at), inferred: true },
 }
-

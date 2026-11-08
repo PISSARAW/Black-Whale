@@ -13,6 +13,7 @@ Dans le chapitre 393, Lynch Fullbokko et Zakuro Custard (membres exécutifs de l
 famille mafieuse Xi-Yu) patrouillent au Tier 3 à la recherche d'Hisoka.
 Ils pénètrent dans le grand hall public du cinéma où une grande case d'établissement
 révèle l'intégralité du concourse sous une haute structure architecturale :
+
 - Le stand de restauration et confiserie sur le flanc bâbord (Ouest).
 - La billetterie avec ses guichets vitrés sur le flanc tribord (Est).
 - Les affichages de films en caissons lumineux et l'enseigne monumentale "THE THING" au-dessus du passage central.
@@ -77,6 +78,7 @@ En mode visite standard, `cineplexSurfacePlan()` écarte les parallélépipèdes
 ## Projection 2D et plan SVG (`cineplex.svelte` & `cineplexPlan.ts`)
 
 Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèlement à la scène :
+
 - Stand confiserie avec icône de machine à pop-corn dorée, vitrine chauffante et fontaine à soda.
 - Billetterie avec 3 guichets vitrés et potelets à cordons de velours.
 - Arche d'affiche "THE THING" au-dessus du passage central.
@@ -86,6 +88,7 @@ Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèl
 - Salle d'auditorium inférieure avec écran de projection, gradins et rangées de fauteuils.
 
 `cineplexSpotAnchors` ancre avec précision les personnages clés de la scène :
+
 - `hisoka` et `bonolenov-ndongo` sur l'îlot central.
 - `lynch-fullbokko` et `zakuro-custard` dans le hall face à l'îlot.
 - `hinrigh-biganduffno` à proximité pour la négociation.
@@ -101,4 +104,3 @@ Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèl
 - `cineplex-auditorium-screen` : vue immersive en contre-plongée depuis les gradins vers l'écran géant incurvé.
 - `cineplex-screens-hall-concourse` : perspective le long du couloir des 8 salles avec leurs portails lumineux.
 - `cineplex-ceiling-coffer-marquee` : plan en contre-plongée révélant les caissons de toiture, gaines CVC et l'enseigne "THE THING".
-

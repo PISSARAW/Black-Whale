@@ -62,7 +62,11 @@ export function dressTreasureChestDoor(placement: DoorPlacement): void {
   // Mechanical combination dial and heavy cylindrical barrel hinges
   into.cylinder(
     { radius: 0.05, height: 0.04, sides: 16 },
-    { at: [x + 0.13, floor + 1.62, z + 0.28], colour: CHROME_BRIGHT, rotation: [0, 0, Math.PI / 2] },
+    {
+      at: [x + 0.13, floor + 1.62, z + 0.28],
+      colour: CHROME_BRIGHT,
+      rotation: [0, 0, Math.PI / 2],
+    },
   )
   for (const hy of [floor + 0.45, floor + 1.95]) {
     into.cylinder(
@@ -98,14 +102,29 @@ export function dressRobotFacedDoor(placement: DoorPlacement): void {
   into.box([0.04, 0.2, 0.2], { at: [x + 0.11, floor + 0.68, z + 0.24], colour: STEEL_CUTOUT_DARK })
 
   // Concealed hairline seam around the secret passage
-  into.box([0.02, 2.38, 0.025], { at: [x + 0.1, floor + 1.27, z - 0.61], colour: STEEL_CUTOUT_DARK })
-  into.box([0.02, 2.38, 0.025], { at: [x + 0.1, floor + 1.27, z + 0.61], colour: STEEL_CUTOUT_DARK })
+  into.box([0.02, 2.38, 0.025], {
+    at: [x + 0.1, floor + 1.27, z - 0.61],
+    colour: STEEL_CUTOUT_DARK,
+  })
+  into.box([0.02, 2.38, 0.025], {
+    at: [x + 0.1, floor + 1.27, z + 0.61],
+    colour: STEEL_CUTOUT_DARK,
+  })
   into.box([0.02, 0.025, 1.24], { at: [x + 0.1, floor + 2.44, z], colour: STEEL_CUTOUT_DARK })
 
   // Discreet magnetic lock card slot and pivot hinge caps
-  into.box([0.02, 0.08, 0.02], { at: [x + 0.11, floor + 1.15, z + 0.54], colour: STEEL_CUTOUT_DARK })
-  into.cylinder({ radius: 0.03, height: 0.08, sides: 8 }, { at: [x + 0.02, floor + 2.44, z - 0.58], colour: STEEL_DARK })
-  into.cylinder({ radius: 0.03, height: 0.08, sides: 8 }, { at: [x + 0.02, floor + 0.08, z - 0.58], colour: STEEL_DARK })
+  into.box([0.02, 0.08, 0.02], {
+    at: [x + 0.11, floor + 1.15, z + 0.54],
+    colour: STEEL_CUTOUT_DARK,
+  })
+  into.cylinder(
+    { radius: 0.03, height: 0.08, sides: 8 },
+    { at: [x + 0.02, floor + 2.44, z - 0.58], colour: STEEL_DARK },
+  )
+  into.cylinder(
+    { radius: 0.03, height: 0.08, sides: 8 },
+    { at: [x + 0.02, floor + 0.08, z - 0.58], colour: STEEL_DARK },
+  )
 }
 
 /** The third door of the main office: traditional paneled wood door with brass lever. */
@@ -156,7 +175,11 @@ export function dressWhiteDoor(placement: DoorPlacement): void {
   into.box([0.065, 0.24, 0.04], { at: [x + 0.45, floor + 1.05, z + 0.09], colour: CHROME_BRIGHT })
   into.cylinder(
     { radius: 0.016, height: 0.13, sides: 8 },
-    { at: [x + 0.49, floor + 1.08, z + 0.11], colour: CHROME_BRIGHT, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [x + 0.49, floor + 1.08, z + 0.11],
+      colour: CHROME_BRIGHT,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
 
   // Overhead hydraulic door closer arm

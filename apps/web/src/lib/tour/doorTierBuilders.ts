@@ -85,8 +85,8 @@ function dressSingleLeaf(context: DoorDressContext, options: OpenLeafOptions): v
   const sin = Math.sin(openAngle)
 
   // Leaf center relative to door center
-  const leafCenterX = hingeX + (hingeSide * (leafW / 2)) * cos
-  const leafCenterZ = (hingeSide * (leafW / 2)) * sin
+  const leafCenterX = hingeX + hingeSide * (leafW / 2) * cos
+  const leafCenterZ = hingeSide * (leafW / 2) * sin
 
   doorBox({
     into,
@@ -98,8 +98,8 @@ function dressSingleLeaf(context: DoorDressContext, options: OpenLeafOptions): v
   })
 
   // Door handle near outer edge of leaf
-  const handleX = hingeX + (hingeSide * (leafW - 0.08)) * cos
-  const handleZ = (hingeSide * (leafW - 0.08)) * sin
+  const handleX = hingeX + hingeSide * (leafW - 0.08) * cos
+  const handleZ = hingeSide * (leafW - 0.08) * sin
   doorBox({
     into,
     placement,

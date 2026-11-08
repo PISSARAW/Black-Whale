@@ -66,9 +66,17 @@ function dressDoorPlaque(
   const { at, angle, numberText } = options
   into.box([0.45, 0.22, 0.03], { at, rotation: [0, angle, 0], colour: JUSTICE_WOOD })
   into.box([0.41, 0.18, 0.035], { at, rotation: [0, angle, 0], colour: JUSTICE_BRASS })
-  into.box([0.22, 0.08, 0.04], { at: [at[0], at[1] + 0.02, at[2]], rotation: [0, angle, 0], colour: JUSTICE_GOLD })
+  into.box([0.22, 0.08, 0.04], {
+    at: [at[0], at[1] + 0.02, at[2]],
+    rotation: [0, angle, 0],
+    colour: JUSTICE_GOLD,
+  })
   if (numberText === '1010') {
-    into.box([0.08, 0.03, 0.045], { at: [at[0], at[1] - 0.04, at[2]], rotation: [0, angle, 0], colour: 0x111111 })
+    into.box([0.08, 0.03, 0.045], {
+      at: [at[0], at[1] - 0.04, at[2]],
+      rotation: [0, angle, 0],
+      colour: 0x111111,
+    })
   }
 }
 
@@ -91,11 +99,23 @@ export function dressOffice1010Architecture(options: ArchitectureOptions): void 
   // Official door 1010 leading to corridor
   const doorZ = -3.0
   dressDoorPlaque(into, { at: [-0.5, floor + 2.1, doorZ - 0.03], angle: 0, numberText: '1010' })
-  dressDoorPlaque(into, { at: [-0.5, floor + 2.1, doorZ + 0.03], angle: Math.PI, numberText: '1010' })
+  dressDoorPlaque(into, {
+    at: [-0.5, floor + 2.1, doorZ + 0.03],
+    angle: Math.PI,
+    numberText: '1010',
+  })
 
   // Wall wainscoting along free walls
-  into.box([12.3, 0.95, 0.05], { at: [-0.5, floor + 0.48, -12.45], rotation: [0, 0, 0], colour: JUSTICE_WOOD })
-  into.box([0.05, 0.95, 9.3], { at: [-6.7, floor + 0.48, -7.75], rotation: [0, 0, 0], colour: JUSTICE_WOOD })
+  into.box([12.3, 0.95, 0.05], {
+    at: [-0.5, floor + 0.48, -12.45],
+    rotation: [0, 0, 0],
+    colour: JUSTICE_WOOD,
+  })
+  into.box([0.05, 0.95, 9.3], {
+    at: [-6.7, floor + 0.48, -7.75],
+    rotation: [0, 0, 0],
+    colour: JUSTICE_WOOD,
+  })
 }
 
 /** Heavy transfer drawer between visitor side and detainee side */
@@ -118,8 +138,14 @@ function dressBoothDividers(into: BanquetDetailBuilder, floor: number, partition
     into.box([0.08, 1.6, 1.8], { at: [bx, floor + 1.25, partitionZ], colour: JUSTICE_WOOD })
     // Handset intercoms on both sides
     for (const side of [-1, 1]) {
-      into.box([0.1, 0.28, 0.08], { at: [bx - 0.08 * side, floor + 1.25, partitionZ + 0.25 * side], colour: 0x1f2326 })
-      into.box([0.05, 0.22, 0.06], { at: [bx - 0.12 * side, floor + 1.25, partitionZ + 0.25 * side], colour: JUSTICE_BRASS })
+      into.box([0.1, 0.28, 0.08], {
+        at: [bx - 0.08 * side, floor + 1.25, partitionZ + 0.25 * side],
+        colour: 0x1f2326,
+      })
+      into.box([0.05, 0.22, 0.06], {
+        at: [bx - 0.12 * side, floor + 1.25, partitionZ + 0.25 * side],
+        colour: JUSTICE_BRASS,
+      })
     }
   }
 }
@@ -140,7 +166,10 @@ export function dressVisitationArchitecture(options: ArchitectureOptions): void 
   // Structural steel mullions
   for (let x = 1.0; x <= 20.5; x += 2.4) {
     into.box([0.1, 1.6, 0.12], { at: [x, floor + 1.66, partitionZ], colour: JUSTICE_STEEL })
-    into.cylinder({ radius: 0.06, height: 0.05 }, { at: [x, floor + 1.45, partitionZ], colour: JUSTICE_BRASS })
+    into.cylinder(
+      { radius: 0.06, height: 0.05 },
+      { at: [x, floor + 1.45, partitionZ], colour: JUSTICE_BRASS },
+    )
   }
 
   // Central transfer drawer
@@ -165,7 +194,10 @@ export function dressLobbyArchitecture(options: ArchitectureOptions): void {
 
   // Security turnstiles
   into.box([0.08, 0.95, 0.4], { at: [-16.0, floor + 0.48, -3.2], colour: JUSTICE_STEEL })
-  into.cylinder({ radius: 0.03, height: 0.6 }, { at: [-16.0, floor + 0.75, -3.2], colour: JUSTICE_BRASS })
+  into.cylinder(
+    { radius: 0.03, height: 0.6 },
+    { at: [-16.0, floor + 0.75, -3.2], colour: JUSTICE_BRASS },
+  )
 
   // Waiting benches along side wall
   into.box([0.5, 0.48, 4.2], { at: [-20.4, floor + 0.24, -8.0], colour: JUSTICE_WOOD })

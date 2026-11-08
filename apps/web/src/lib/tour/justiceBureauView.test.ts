@@ -87,9 +87,7 @@ describe('the Justice Bureau reconstructed from chapter 400', () => {
     const surfaced = justiceSurfacePlan(plan, false)
     expect(surfaced.structures.some(hasJusticeBureauModel)).toBe(false)
     // Retains other structures such as witness protection and secondary interrogation
-    expect(
-      surfaced.structures.some((s) => s.spaceId.includes('witness-protection')),
-    ).toBe(true)
+    expect(surfaced.structures.some((s) => s.spaceId.includes('witness-protection'))).toBe(true)
 
     // In reveal mode, all blueprint structures are preserved
     const revealed = justiceSurfacePlan(plan, true)

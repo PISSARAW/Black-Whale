@@ -1,9 +1,4 @@
-import {
-  wallBays,
-  wallBox,
-  wallPoint,
-  type WallSurface,
-} from './corridorWallLayout'
+import { wallBays, wallBox, wallPoint, type WallSurface } from './corridorWallLayout'
 
 const STEEL_STIFFENER = 0x393f45
 const CONDUIT_PIPE = 0x5a6068
@@ -21,10 +16,7 @@ interface Tier4WallContext {
   ceiling: number
 }
 
-function verticalStiffeners(
-  wall: WallSurface,
-  context: Tier4WallContext,
-): void {
+function verticalStiffeners(wall: WallSurface, context: Tier4WallContext): void {
   const { floor, ceiling } = context
   const height = ceiling - floor
   const { length } = wall.run
@@ -49,10 +41,7 @@ function verticalStiffeners(
   }
 }
 
-function horizontalConduits(
-  wall: WallSurface,
-  context: Tier4WallContext,
-): void {
+function horizontalConduits(wall: WallSurface, context: Tier4WallContext): void {
   const { floor, ceiling } = context
   const { length } = wall.run
 
@@ -114,11 +103,7 @@ function hazardBands(wall: WallSurface, floor: number): void {
   }
 }
 
-function navalBulkheadDoor(
-  wall: WallSurface,
-  along: number,
-  floor: number,
-): void {
+function navalBulkheadDoor(wall: WallSurface, along: number, floor: number): void {
   // Heavy watertight doorframe with rounded top
   wallBox(wall, [0.94, 2.05, 0.05], {
     along,
@@ -155,11 +140,7 @@ function navalBulkheadDoor(
   })
 }
 
-function cagedMarineLamp(
-  wall: WallSurface,
-  along: number,
-  floor: number,
-): void {
+function cagedMarineLamp(wall: WallSurface, along: number, floor: number): void {
   // Cast metal bulkhead box
   wallBox(wall, [0.1, 0.16, 0.05], {
     along,
@@ -191,17 +172,11 @@ function pipeValve(wall: WallSurface, along: number, floor: number): void {
     inset: 0.07,
   })
   const pt = wallPoint(wall.run, { along, y: floor + 1.35, inset: 0.13 })
-  wall.into.cylinder(
-    { radius: 0.07, height: 0.02, sides: 8 },
-    { at: pt, colour: VALVE_RED },
-  )
+  wall.into.cylinder({ radius: 0.07, height: 0.02, sides: 8 }, { at: pt, colour: VALVE_RED })
 }
 
 /** Dresses a Tier 4 industrial mafia passage with stiffeners, conduits, valves and caged lights. */
-export function dressTier4CorridorWall(
-  wall: WallSurface,
-  context: Tier4WallContext,
-): void {
+export function dressTier4CorridorWall(wall: WallSurface, context: Tier4WallContext): void {
   const { floor } = context
   verticalStiffeners(wall, context)
   horizontalConduits(wall, context)

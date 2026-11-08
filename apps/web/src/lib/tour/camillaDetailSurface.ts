@@ -76,7 +76,8 @@ export class CamillaSurface {
   ): void {
     const isNum = typeof colourOrOptions === 'number'
     const colour = isNum ? colourOrOptions : colourOrOptions.colour
-    const rotation = (!isNum && colourOrOptions.rotation) ? colourOrOptions.rotation : ([0, this.angle, 0] as Point3)
+    const rotation =
+      !isNum && colourOrOptions.rotation ? colourOrOptions.rotation : ([0, this.angle, 0] as Point3)
     this.into.cylinder(size, { at: this.point(at), rotation, colour })
   }
 
@@ -97,12 +98,12 @@ export function camillaMouldedPost(surface: CamillaSurface, options: PostOptions
   const [x, y, z] = at
 
   surface.box([radius * 2.2, height * 0.15, radius * 2.2], [x, y + height * 0.075, z], colour)
-  surface.cylinder(
-    { radius, height: height * 0.65, sides: 12 },
-    [x, y + height * 0.475, z],
-    colour,
+  surface.cylinder({ radius, height: height * 0.65, sides: 12 }, [x, y + height * 0.475, z], colour)
+  surface.sphere(
+    [radius * 1.3, height * 0.08, radius * 1.3],
+    [x, y + height * 0.84, z],
+    CAMILLA_GOLD,
   )
-  surface.sphere([radius * 1.3, height * 0.08, radius * 1.3], [x, y + height * 0.84, z], CAMILLA_GOLD)
   surface.box([radius * 2.2, height * 0.12, radius * 2.2], [x, y + height * 0.94, z], colour)
 }
 
@@ -112,7 +113,11 @@ export function camillaCarvedLeg(
 ): void {
   const { at, height, colour = CAMILLA_WOOD } = options
   const [x, y, z] = at
-  surface.cylinder({ radius: 0.04, bottom: 0.02, height, sides: 10 }, [x, y + height / 2, z], colour)
+  surface.cylinder(
+    { radius: 0.04, bottom: 0.02, height, sides: 10 },
+    [x, y + height / 2, z],
+    colour,
+  )
   surface.sphere([0.035, 0.025, 0.035], [x, y + 0.02, z], CAMILLA_GOLD)
 }
 

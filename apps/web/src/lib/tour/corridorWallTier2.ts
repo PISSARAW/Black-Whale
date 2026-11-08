@@ -1,10 +1,4 @@
-import {
-  wallBays,
-  wallBox,
-  wallPoint,
-  type WallBay,
-  type WallSurface,
-} from './corridorWallLayout'
+import { wallBays, wallBox, wallPoint, type WallBay, type WallSurface } from './corridorWallLayout'
 
 const BUMPER_RAIL = 0x484e55
 const BUMPER_BRACKET = 0x272a2e
@@ -99,10 +93,7 @@ function securityIntercom(wall: WallSurface, along: number, floor: number): void
     inset: 0.07,
   })
   const domePt = wallPoint(wall.run, { along, y: floor + 2.16, inset: 0.14 })
-  wall.into.cylinder(
-    { radius: 0.04, height: 0.04, sides: 6 },
-    { at: domePt, colour: 0x181a1d },
-  )
+  wall.into.cylinder({ radius: 0.04, height: 0.04, sides: 6 }, { at: domePt, colour: 0x181a1d })
 }
 
 function fireHoseCabinet(wall: WallSurface, along: number, floor: number): void {
@@ -151,10 +142,7 @@ function bayEquipment(wall: WallSurface, bay: WallBay, floor: number): void {
 }
 
 /** Dresses a Tier 2 administrative/security corridor wall run. */
-export function dressTier2CorridorWall(
-  wall: WallSurface,
-  context: Tier2WallContext,
-): void {
+export function dressTier2CorridorWall(wall: WallSurface, context: Tier2WallContext): void {
   const { floor, ceiling } = context
   protectiveBumper(wall, floor)
   panelJoints(wall, context)

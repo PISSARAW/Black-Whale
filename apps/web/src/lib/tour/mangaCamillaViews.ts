@@ -1,9 +1,5 @@
 import { mangaView as view, type MangaCastStaging, type MangaView } from './mangaViewModel'
-import {
-  CAMILLA_DINING,
-  CAMILLA_ENTRANCE,
-  CAMILLA_LIVING,
-} from './camillaView'
+import { CAMILLA_DINING, CAMILLA_ENTRANCE, CAMILLA_LIVING } from './camillaView'
 
 const untouchablesStaging: MangaCastStaging[] = [
   { characterId: 'lisamsetta', at: [-8.2, 0.2], heading: Math.PI / 2, pose: 'seated' },
@@ -76,6 +72,7 @@ export const MANGA_CAMILLA_VIEWS: MangaView[] = [
     target: [0.4, -6.5],
     pitch: -0.05,
     label: 'Musse stationed at his surveillance desk and telephone post in the entrance passage',
-    labelFr: 'Musse posté à son bureau de surveillance et téléphone d’écoute dans le vestibule d’entrée',
+    labelFr:
+      'Musse posté à son bureau de surveillance et téléphone d’écoute dans le vestibule d’entrée',
   }),
 ]

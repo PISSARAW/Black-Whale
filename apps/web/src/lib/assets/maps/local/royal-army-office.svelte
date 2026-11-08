@@ -106,9 +106,7 @@
   <text x="500" y="42" class="label" font-size="22" fill="#FFD700">
     Kakin Royal Army Briefing Room (Chap. 350, 380)
   </text>
-  <text x="500" y="62" class="sublabel">
-    Tier 4 Security Operations & Joint Military Command
-  </text>
+  <text x="500" y="62" class="sublabel"> Tier 4 Security Operations & Joint Military Command </text>
 
   <g transform="translate(100, 80)">
     <!-- Room Walls (20m x 15m -> 800 x 600) -->
@@ -132,7 +130,15 @@
       height="136"
       onclick={() => handleElementClick('stage')}
     />
-    <line x1="170" y1="136" x2="630" y2="136" stroke="#5a5d64" stroke-width="3" stroke-dasharray="6 3" />
+    <line
+      x1="170"
+      y1="136"
+      x2="630"
+      y2="136"
+      stroke="#5a5d64"
+      stroke-width="3"
+      stroke-dasharray="6 3"
+    />
     <text x="580" y="125" class="sublabel" font-size="10">DAIS (0.15m)</text>
 
     <!-- Briefing Screen (7.5m x 0.22m, X: [250, 550], Y: [3, 11]) -->
@@ -195,7 +201,7 @@
       <g
         role="button"
         tabindex="0"
-        aria-label={"Chair " + chair.label}
+        aria-label={'Chair ' + chair.label}
         onkeydown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
@@ -205,7 +211,14 @@
         onclick={() => handleElementClick(chair.id)}
       >
         <circle cx={chair.cx} cy={chair.cy} r="14" class="chair" />
-        <text x={chair.cx} y={chair.cy + 4} font-size="10" fill="#fff" text-anchor="middle" pointer-events="none">
+        <text
+          x={chair.cx}
+          y={chair.cy + 4}
+          font-size="10"
+          fill="#fff"
+          text-anchor="middle"
+          pointer-events="none"
+        >
           {chair.label}
         </text>
       </g>

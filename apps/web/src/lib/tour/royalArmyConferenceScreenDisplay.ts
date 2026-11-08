@@ -29,11 +29,10 @@ export function dressBriefingScreenDisplay(
   const h = structure.height
 
   // Top motorized roller housing
-  surface.cylinder(
-    { radius: 0.11, height: w + 0.35, sides: 16 },
-    [0, h + 0.11, 0],
-    { colour: ARMY_STEEL, rotation: [0, 0, Math.PI / 2] },
-  )
+  surface.cylinder({ radius: 0.11, height: w + 0.35, sides: 16 }, [0, h + 0.11, 0], {
+    colour: ARMY_STEEL,
+    rotation: [0, 0, Math.PI / 2],
+  })
 
   // Side guide rails & wall mount brackets
   for (const side of [-1, 1]) {
@@ -50,11 +49,10 @@ export function dressBriefingScreenDisplay(
   surface.box([0.12, h, 0.03], [w / 2 - 0.06, h / 2, 0.025], ARMY_STEEL)
 
   // Bottom weighted tension roller bar
-  surface.cylinder(
-    { radius: 0.035, height: w + 0.15, sides: 12 },
-    [0, 0.025, 0.035],
-    { colour: ARMY_LIGHT_STEEL, rotation: [0, 0, Math.PI / 2] },
-  )
+  surface.cylinder({ radius: 0.035, height: w + 0.15, sides: 12 }, [0, 0.025, 0.035], {
+    colour: ARMY_LIGHT_STEEL,
+    rotation: [0, 0, Math.PI / 2],
+  })
 
   // Tactical Briefing Display in relief: Dark naval HUD backdrop
   const dispW = w * 0.94
@@ -72,7 +70,11 @@ export function dressBriefingScreenDisplay(
   surface.sphere([dispW * 0.32, dispH * 0.22, 0.008], [0, shipY, 0.036], ARMY_SCREEN_TACTICAL_CYAN)
   // Upper superstructure (Tier 1 & Tier 2 crowns)
   surface.box([dispW * 0.35, 0.22, 0.01], [0, shipY + dispH * 0.18, 0.037], ARMY_LIGHT_STEEL)
-  surface.box([dispW * 0.22, 0.16, 0.012], [0, shipY + dispH * 0.28, 0.038], ARMY_SCREEN_TACTICAL_ACCENT)
+  surface.box(
+    [dispW * 0.22, 0.16, 0.012],
+    [0, shipY + dispH * 0.28, 0.038],
+    ARMY_SCREEN_TACTICAL_ACCENT,
+  )
 
   // Deck partition lines (Tiers 1 to 5)
   for (let tier = 1; tier <= 4; tier++) {
@@ -164,10 +166,9 @@ export function dressTacticalChartBoardDisplay(
   // Color dry-erase markers (Blue, Red, Black, Green)
   const markerColors = [0x1f4e79, 0xb02a2a, 0x1a1a1a, 0x2e7d32]
   markerColors.forEach((col, idx) => {
-    surface.cylinder(
-      { radius: 0.009, height: 0.13, sides: 8 },
-      [0.2 + idx * 0.18, 0.04, 0.06],
-      { colour: col, rotation: [0, 0, Math.PI / 2] },
-    )
+    surface.cylinder({ radius: 0.009, height: 0.13, sides: 8 }, [0.2 + idx * 0.18, 0.04, 0.06], {
+      colour: col,
+      rotation: [0, 0, Math.PI / 2],
+    })
   })
 }

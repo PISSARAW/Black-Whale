@@ -1,16 +1,18 @@
 # Audit Canonicité : Murs des Couloirs et Coursives par Palier (Tiers 1 à 5)
 
-Ce document répertorie l'ensemble des sources graphiques du manga *Hunter × Hunter* (Yoshihiro Togashi, chapitres 358 à 400) documentant l'aspect des murs des couloirs, coursives, avenues intérieures et passages de service de chaque palier du Black Whale 1 (B.W. 1).
+Ce document répertorie l'ensemble des sources graphiques du manga _Hunter × Hunter_ (Yoshihiro Togashi, chapitres 358 à 400) documentant l'aspect des murs des couloirs, coursives, avenues intérieures et passages de service de chaque palier du Black Whale 1 (B.W. 1).
 
 ---
 
 ## 1. Tier 1 — Palier Royal & Première Classe (VVIP)
 
 ### Sources Manga
+
 - **Chapitres :** 358–360 (Banquets et circulations VVIP), 363 (vue d'ensemble des 14 suites princières et leurs coursives), 366–369 (patrouilles des gardes du corps et passages de service), 371, 374, 382 (poste d'accès des princes et factions), 388, 399, 400.
 - **Atmosphère :** Neoclassique, opulence royale, boiseries nobles, finitions palatiales de paquebot de luxe.
 
 ### Reconstitution des Parois
+
 1. **Lambris de soubassement (Wainscoting / Boiseries) :**
    - Plinthe de base en bois sombre à la jonction du sol (`0x271913`).
    - Panneaux de boiseries en acajou chaud (`0x3a1f18`) montant jusqu'à 1.05 m.
@@ -28,10 +30,12 @@ Ce document répertorie l'ensemble des sources graphiques du manga *Hunter × Hu
 ## 2. Tier 2 — Palier Administratif, Judiciaire & Haute Sécurité
 
 ### Sources Manga
+
 - **Chapitres :** 378, 379, 388, 391, 392, 400 (Bureau de la Justice, Tribunal Suprême, zones de détention VIP, sas de transit vers le Tier 1).
 - **Atmosphère :** Institutionnelle, clinique, sécuritaire, contrôle étatique strict de Kakin.
 
 ### Reconstitution des Parois
+
 1. **Lisse de protection antichoc (Bumper Rail) :**
    - Plinthe de protection renforcée au sol.
    - Lisse tubulaire continue en acier brossé / caoutchouc dense (`0x484e55`) à 0.95 m de hauteur (hauteur d'appui pour éviter les chocs de chariots et brancards).
@@ -50,10 +54,12 @@ Ce document répertorie l'ensemble des sources graphiques du manga *Hunter × Hu
 ## 3. Tier 3 — Palier des Passagers Réguliers (Cabines Standard & Commerces)
 
 ### Sources Manga
+
 - **Chapitres :** 358 (embarquement général), 378, 380, 384, 390, 398, 399 (battues de Hinrigh, Wang et Nobunaga le long des rangées de cabines, portes matriculées `SRCL 9041 – 9488`).
 - **Atmosphère :** Coursives de passagers à haute densité, standardisation modulaire, structure fonctionnelle de transport maritime.
 
 ### Reconstitution des Parois
+
 1. **Cloisonnement modulaire :**
    - Plinthe de sol sombre (`0x2b2420`).
    - Couvre-joints verticaux en aluminium extrudé (`0x9aa0a6`) tous les 1.6 m reliant les panneaux préfabriqués stratifiés.
@@ -72,10 +78,12 @@ Ce document répertorie l'ensemble des sources graphiques du manga *Hunter × Hu
 ## 4. Tier 4 — Palier Industriel & Territoires Mafieux
 
 ### Sources Manga
+
 - **Chapitres :** 378, 384, 385, 390, 392, 393, 394, 395, 396 (Guerre des trois familles mafieuses : Cha-R, Xi-Yu, Heil-Ly ; déchetteries, conduites de recyclage, passages de fret).
 - **Atmosphère :** Brute, industrielle, tôles d'acier, réseau de fluides apparent, passages sous tension.
 
 ### Reconstitution des Parois
+
 1. **Raidisseurs verticaux de cloison (Membrures en U) :**
    - Profilés métalliques en U (`0x393f45`) soudés tous les 1.6 m pour rigidifier les tôles d'acier.
    - Profilé continu en U au sol en guise de talon de cloison.
@@ -92,10 +100,12 @@ Ce document répertorie l'ensemble des sources graphiques du manga *Hunter × Hu
 ## 5. Tier 5 — Fond de Cale, Immigrants & Zone Fret
 
 ### Sources Manga
+
 - **Chapitres :** 358 (cale profonde et rassemblement de la population défavorisée), 371, 377, 390, 392, 400.
 - **Atmosphère :** Structure navale géante à nu, acier brut patiné, membrures colossales, cales de fret immenses.
 
 ### Reconstitution des Parois
+
 1. **Membrures transversales de coque (Web Frames) :**
    - Cadres structuraux géants (`0x2e333a`) saillants de 24 cm, espacés tous les 2.8 m.
    - Goussets d'angle triangulaires soudés en tête (plafond) et en pied (sol) formant un renfort à 45°.

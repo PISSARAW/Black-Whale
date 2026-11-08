@@ -65,7 +65,7 @@ export const MANGA_CINEPLEX_VIEWS = [
     chapter: 393,
     volume: 38,
     label: 'The lower concourse distributing access to screening rooms 1 through 8',
-    labelFr: "Le hall inférieur desservant les entrées des salles de projection 1 à 8",
+    labelFr: 'Le hall inférieur desservant les entrées des salles de projection 1 à 8',
   }),
   view({
     id: 'cineplex-ceiling-coffer-marquee',
@@ -79,4 +79,3 @@ export const MANGA_CINEPLEX_VIEWS = [
     labelFr: 'Le plafond à caissons, les gaines de ventilation et le bandeau THE THING',
   }),
 ]
-

@@ -6,7 +6,8 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tome 38 (chapitres 398 et 3
 
 ## 1. Salle de traitement / d'exécution (`tier-2-heilly-secret-hideout-processing`)
 
-D'après le chapitre 398 (*Recherche*, p. 158–167) :
+D'après le chapitre 398 (_Recherche_, p. 158–167) :
+
 - **Faïence blanche intégrale** : soubassement carrelé en blanc stérile (`TILE_WHITE`), plinthes et joints fins de carreaux sanitaires étanches.
 - **Barrière de Nen murale** : bandeau d'aura et circuits de glyphes protecteurs pourpres / violets luminescents (`0xa855f7` / `0xc084fc`) courant le long du périmètre mural et des angles verticaux, restituant la barrière étanche aux sons et aux émissions d'aura constatée par Hinrigh et Lynch.
 - **Sept portes canoniques** :
@@ -20,7 +21,8 @@ D'après le chapitre 398 (*Recherche*, p. 158–167) :
 
 ## 2. Buanderie / Salle d'élimination (`tier-2-heilly-secret-hideout-laundry`)
 
-D'après le chapitre 399 (*Expulsion*, p. 168–169) :
+D'après le chapitre 399 (_Expulsion_, p. 168–169) :
+
 - **Batteries de lave-linge et sèche-linge industriels** : châssis cubiques d'acier blanc et gris, hublots circulaires vitrés cerclés de chrome avec tambours sombres, bandeaux supérieurs inclinés équipés de sélecteurs rotatifs, touches et témoins LED d'état, reliés à une gaine collectrice d'extraction supérieure.
 - **Tables de travail centrales inox** : deux grandes tables métalliques de tri et de pliage avec plateaux brossés, pieds tubulaires et étagères basses contenant caisses et piles de linge plié.
 - **Évier technique** : double bac profond en acier inoxydable avec robinet mélangeur à col-de-cygne chromé.
@@ -29,7 +31,8 @@ D'après le chapitre 399 (*Expulsion*, p. 168–169) :
 
 ## 3. Salle commune (`tier-2-heilly-secret-hideout-communal`)
 
-D'après le chapitre 399 (*Expulsion*, p. 170–175) :
+D'après le chapitre 399 (_Expulsion_, p. 170–175) :
+
 - **Grande table centrale** : table de réunion massive en bois et stratifié sombre avec structure porteuse acier et chants biseautés.
 - **Chaises multiples** : huit sièges ergonomiques de réunion disposés de part et d'autre de la table, avec assises et dossiers rembourrés montés sur piétements tubulaires.
 - **Écrans de contrôle** : mur d'écrans de vidéosurveillance CCTV (matrice de 6 moniteurs à lueur cathodique / phosphore vert affichant les flux des coursives, équipés de voyants de veille et d'une régie de sélection).
@@ -39,7 +42,8 @@ D'après le chapitre 399 (*Expulsion*, p. 170–175) :
 
 ## 4. Bureau de Morena Prudo (`tier-2-heilly-secret-hideout-office`)
 
-D'après les chapitres 407 à 410 (*Négociation*) :
+D'après les chapitres 407 à 410 (_Négociation_) :
+
 - **Bureau de la cheffe** : bureau exécutif en bois précieux sombre, caissons à tiroirs, sous-main, lampe de bureau en laiton et chemises de dossiers.
 - **Fauteuil de direction** : fauteuil pivotant en cuir noir à haut dossier et accoudoirs.
 - **Table de négociation** : table du jeu de cartes entre Morena Prudo et Borksen avec tapis feutré sombre, jeu de cartes, cartes distribuées et chaise d'invité en vis-à-vis.

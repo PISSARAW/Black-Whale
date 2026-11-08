@@ -35,7 +35,11 @@ function dressSingleTicketWindow(surface: CineplexSurface, zOffset: number): voi
   // Ticket pass slot (counter level gap)
   surface.box([0.15, 0.04, 0.45], [0, windowY + 0.04, zOffset], 0x18181c)
   // Speaker intercom grille
-  surface.cylinder({ radius: 0.06, height: 0.03, sides: 12 }, [0, windowY + 0.6, zOffset], CINE_STEEL)
+  surface.cylinder(
+    { radius: 0.06, height: 0.03, sides: 12 },
+    [0, windowY + 0.6, zOffset],
+    CINE_STEEL,
+  )
 
   // Clerk monitor and keyboard inside
   surface.box([0.3, 0.22, 0.04], [0.35, windowY + 0.25, zOffset], CINE_SCREEN_GLOW)

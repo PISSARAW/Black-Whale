@@ -87,10 +87,18 @@ function dressSodaFountain(surface: CineplexSurface, zOffset: number): void {
   // Dispenser nozzles
   for (let i = -2; i <= 2; i++) {
     surface.box([0.1, 0.12, 0.08], [0.28, 1.42, zOffset + i * 0.2], 0x1a1a1a)
-    surface.cylinder({ radius: 0.02, height: 0.06, sides: 8 }, [0.32, 1.34, zOffset + i * 0.2], CINE_STEEL)
+    surface.cylinder(
+      { radius: 0.02, height: 0.06, sides: 8 },
+      [0.32, 1.34, zOffset + i * 0.2],
+      CINE_STEEL,
+    )
   }
   // Stacked paper cups beside the machine
-  surface.cylinder({ radius: 0.09, height: 0.45, bottom: 0.07, sides: 10 }, [0.2, 1.36, zOffset + 0.75], CINE_POPCORN_WHITE)
+  surface.cylinder(
+    { radius: 0.09, height: 0.45, bottom: 0.07, sides: 10 },
+    [0.2, 1.36, zOffset + 0.75],
+    CINE_POPCORN_WHITE,
+  )
 }
 
 /** POS cash register terminal */
@@ -136,7 +144,11 @@ function dressBeverageCooler(surface: CineplexSurface, zOffset: number): void {
   for (let y = 0.4; y <= 1.8; y += 0.45) {
     surface.box([0.5, 0.02, 1.6], [coolerX, y, zOffset], CINE_SCREEN_GLOW)
     for (let dz = -0.6; dz <= 0.6; dz += 0.3) {
-      surface.cylinder({ radius: 0.04, height: 0.22, sides: 8 }, [coolerX + 0.1, y + 0.11, zOffset + dz], CINE_NEON_AMBER)
+      surface.cylinder(
+        { radius: 0.04, height: 0.22, sides: 8 },
+        [coolerX + 0.1, y + 0.11, zOffset + dz],
+        CINE_NEON_AMBER,
+      )
     }
   }
 }
@@ -151,7 +163,11 @@ function dressCondimentStation(surface: CineplexSurface, zOffset: number): void 
   // Straw container
   surface.cylinder({ radius: 0.06, height: 0.2, sides: 10 }, [1.8, 1.11, zOffset], CINE_STEEL)
   // Sauce pumps (butter / seasonings)
-  surface.cylinder({ radius: 0.07, height: 0.22, sides: 10 }, [1.8, 1.12, zOffset + 0.35], CINE_STEEL)
+  surface.cylinder(
+    { radius: 0.07, height: 0.22, sides: 10 },
+    [1.8, 1.12, zOffset + 0.35],
+    CINE_STEEL,
+  )
 }
 
 /** Complete concession counter with popcorn, soda, coolers, condiments and registers */

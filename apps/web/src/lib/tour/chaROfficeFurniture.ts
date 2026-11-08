@@ -88,7 +88,10 @@ export function dressChaREmblem(placement: FurniturePlacement): void {
   }
 }
 
-function deskAccessories(into: BanquetDetailBuilder, top: { x: number; y: number; z: number }): void {
+function deskAccessories(
+  into: BanquetDetailBuilder,
+  top: { x: number; y: number; z: number },
+): void {
   const { x, y, z } = top
 
   // Dark stitched leather desk blotter
@@ -107,27 +110,44 @@ function deskAccessories(into: BanquetDetailBuilder, top: { x: number; y: number
   into.box([0.28, 0.02, 0.38], { at: [x + 0.6, y + 0.05, z + 0.08], colour: PAPER_CREAM })
 
   // Brass ashtray with lit cigarette and glowing ember
-  into.cylinder({ radius: 0.065, height: 0.025, sides: 12 }, { at: [x - 0.42, y + 0.02, z - 0.22], colour: ASH_TRAY_BRASS })
+  into.cylinder(
+    { radius: 0.065, height: 0.025, sides: 12 },
+    { at: [x - 0.42, y + 0.02, z - 0.22], colour: ASH_TRAY_BRASS },
+  )
   into.cylinder(
     { radius: 0.006, height: 0.06, sides: 6 },
     { at: [x - 0.42, y + 0.035, z - 0.22], colour: PAPER_CREAM, rotation: [0.2, 0, 0.3] },
   )
-  into.sphere([0.008, 0.008, 0.008], { at: [x - 0.44, y + 0.045, z - 0.23], colour: EMBER_ORANGE, glow: true })
+  into.sphere([0.008, 0.008, 0.008], {
+    at: [x - 0.44, y + 0.045, z - 0.23],
+    colour: EMBER_ORANGE,
+    glow: true,
+  })
 
   // Whiskey decanter and lowball tumblers on silver tray
   into.box([0.42, 0.02, 0.28], { at: [x + 0.75, y + 0.02, z - 0.22], colour: CHROME_BRIGHT })
   into.box([0.12, 0.22, 0.12], { at: [x + 0.72, y + 0.13, z - 0.22], colour: GLASS_CLEAR })
   into.box([0.1, 0.12, 0.1], { at: [x + 0.72, y + 0.08, z - 0.22], colour: LIQUOR_AMBER })
-  into.cylinder({ radius: 0.035, height: 0.07, sides: 8 }, { at: [x + 0.84, y + 0.05, z - 0.22], colour: GLASS_CLEAR })
+  into.cylinder(
+    { radius: 0.035, height: 0.07, sides: 8 },
+    { at: [x + 0.84, y + 0.05, z - 0.22], colour: GLASS_CLEAR },
+  )
 
   // Brass banker's desk lamp
-  into.cylinder({ radius: 0.08, height: 0.03, sides: 12 }, { at: [x - 0.85, y + 0.02, z - 0.25], colour: BRASS_ACCENT })
+  into.cylinder(
+    { radius: 0.08, height: 0.03, sides: 12 },
+    { at: [x - 0.85, y + 0.02, z - 0.25], colour: BRASS_ACCENT },
+  )
   into.box([0.16, 0.12, 0.2], {
     at: [x - 0.75, y + 0.32, z - 0.22],
     colour: BRASS_ACCENT,
     rotation: [0.3, 0.2, 0],
   })
-  into.sphere([0.045, 0.045, 0.045], { at: [x - 0.73, y + 0.28, z - 0.2], colour: SPOTLIGHT_WARM, glow: true })
+  into.sphere([0.045, 0.045, 0.045], {
+    at: [x - 0.73, y + 0.28, z - 0.2],
+    colour: SPOTLIGHT_WARM,
+    glow: true,
+  })
 }
 
 function deskSeating(into: BanquetDetailBuilder, floor: number, at: Vec2): void {
@@ -138,7 +158,10 @@ function deskSeating(into: BanquetDetailBuilder, floor: number, at: Vec2): void 
   into.box([0.64, 0.8, 0.12], { at: [x, floor + 0.88, z + 1.08], colour: LEATHER_DARK })
   into.box([0.08, 0.22, 0.48], { at: [x - 0.32, floor + 0.62, z + 0.82], colour: LEATHER_DARK })
   into.box([0.08, 0.22, 0.48], { at: [x + 0.32, floor + 0.62, z + 0.82], colour: LEATHER_DARK })
-  into.cylinder({ radius: 0.045, height: 0.42, sides: 8 }, { at: [x, floor + 0.21, z + 0.82], colour: CHROME_BRIGHT })
+  into.cylinder(
+    { radius: 0.045, height: 0.42, sides: 8 },
+    { at: [x, floor + 0.21, z + 0.82], colour: CHROME_BRIGHT },
+  )
 
   // Two visitor armchairs facing the command desk
   for (const vx of [x - 0.7, x + 0.7]) {
@@ -146,7 +169,10 @@ function deskSeating(into: BanquetDetailBuilder, floor: number, at: Vec2): void 
     into.box([0.52, 0.54, 0.09], { at: [vx, floor + 0.72, z - 1.22], colour: STEEL_GRAPHITE })
     for (const legX of [-0.23, 0.23]) {
       for (const legZ of [-1.18, -0.78]) {
-        into.box([0.05, 0.42, 0.05], { at: [vx + legX, floor + 0.21, z + legZ], colour: OFFICE_WOOD_DARK })
+        into.box([0.05, 0.42, 0.05], {
+          at: [vx + legX, floor + 0.21, z + legZ],
+          colour: OFFICE_WOOD_DARK,
+        })
       }
     }
   }
@@ -166,7 +192,10 @@ export function dressCommandDesk(placement: FurniturePlacement): void {
   // Pedestal brass drawer handles
   for (const px of [x - 0.9, x + 0.9]) {
     for (let d = 0; d < 3; d++) {
-      into.box([0.14, 0.03, 0.03], { at: [px, floor + 0.2 + d * 0.2, z + 0.54], colour: BRASS_ACCENT })
+      into.box([0.14, 0.03, 0.03], {
+        at: [px, floor + 0.2 + d * 0.2, z + 0.54],
+        colour: BRASS_ACCENT,
+      })
     }
   }
 
@@ -224,8 +253,16 @@ export function dressStorageShelves(placement: FurniturePlacement): void {
   into.box([0.76, 2.3, 4.4], { at: [x, floor + 1.15, z], colour: STEEL_DARK })
 
   // Rear diagonal X-braces
-  into.box([0.04, 2.2, 0.05], { at: [x - 0.36, floor + 1.15, z], colour: STEEL_BRUSHED, rotation: [0.45, 0, 0] })
-  into.box([0.04, 2.2, 0.05], { at: [x - 0.36, floor + 1.15, z], colour: STEEL_BRUSHED, rotation: [-0.45, 0, 0] })
+  into.box([0.04, 2.2, 0.05], {
+    at: [x - 0.36, floor + 1.15, z],
+    colour: STEEL_BRUSHED,
+    rotation: [0.45, 0, 0],
+  })
+  into.box([0.04, 2.2, 0.05], {
+    at: [x - 0.36, floor + 1.15, z],
+    colour: STEEL_BRUSHED,
+    rotation: [-0.45, 0, 0],
+  })
 
   for (let s = 0; s < 4; s++) {
     const sy = floor + 0.18 + s * 0.66

@@ -1,6 +1,6 @@
 # Bureau de la famille Cha-R — fidélisation des chapitres 379 & 380
 
-Le repaire opérationnel de la famille mafieuse Cha-R au Pont 5 (`tier-5-cha-r-family-office`) est fidélisé d'après les planches des chapitres 379 et 380 de Yoshihiro Togashi (*Hunter x Hunter*, volume 36).
+Le repaire opérationnel de la famille mafieuse Cha-R au Pont 5 (`tier-5-cha-r-family-office`) est fidélisé d'après les planches des chapitres 379 et 380 de Yoshihiro Togashi (_Hunter x Hunter_, volume 36).
 
 ---
 
@@ -11,9 +11,9 @@ Dans les chapitres 379 et 380, la Brigade Fantôme (Phinks, Feitan, Nobunaga) s'
 1. **Salle principale à l'emblème** (`tier-5-cha-r-family-office-main-office`) :
    - **Écusson mural Cha-R** (Ch. 379, p. 14–15) : imposant panneau mural laqué noir à bordure moulurée et équerres d'angle en laiton poli. Médaillon central en losange étagé (bronze et or) portant les barres héraldiques en relief. Éclairé par un double projecteur halogène plafonnier.
    - **Les trois portes spécifiques** sur le mur ouest (Ch. 379, p. 15) :
-     - *Porte blindée à motif de coffre-fort* (`tier-5-cha-r-family-office-strongbox`) : vantail lourd en acier biseauté, panneau central en relief à renforts horizontaux, volant de coffre rotatif à trois branches et moyeu en laiton moleté, cadran à combinaison chiffrée, gonds cylindriques massifs et pênes de verrouillage périmétriques.
-     - *Porte à tête de robot* (`tier-5-cha-r-family-office-robot-door`) : porte d'acier affleurante portant 4 encoches sombres caractéristiques disposées comme les yeux et la bouche d'un robot rétro, avec fente de badge magnétique et rainures dissimulant le passage secret.
-     - *Porte en bois* (`tier-5-cha-r-family-office-wooden-door`) : porte d'ébénisterie à quatre caissons moulurés profonds, architrave sculptée, béquille et plaque de propreté en laiton patiné, et plaque de pied en laiton.
+     - _Porte blindée à motif de coffre-fort_ (`tier-5-cha-r-family-office-strongbox`) : vantail lourd en acier biseauté, panneau central en relief à renforts horizontaux, volant de coffre rotatif à trois branches et moyeu en laiton moleté, cadran à combinaison chiffrée, gonds cylindriques massifs et pênes de verrouillage périmétriques.
+     - _Porte à tête de robot_ (`tier-5-cha-r-family-office-robot-door`) : porte d'acier affleurante portant 4 encoches sombres caractéristiques disposées comme les yeux et la bouche d'un robot rétro, avec fente de badge magnétique et rainures dissimulant le passage secret.
+     - _Porte en bois_ (`tier-5-cha-r-family-office-wooden-door`) : porte d'ébénisterie à quatre caissons moulurés profonds, architrave sculptée, béquille et plaque de propreté en laiton patiné, et plaque de pied en laiton.
    - **Bureau de commandement** (`tier-5-cha-r-family-office-desk`) : table en acajou massif à double caisson de tiroirs avec poignées en laiton, sous-main en cuir cousu, téléphone rotatif lourd, lampe banquier col-de-cygne en laiton, dossiers d'archives manille avec feuillets, cendrier en laiton avec cigarette allumée et braise incandescente, plateau d'argent avec carafe à whisky en cristal et verres. Fauteuil de direction capitonné en cuir sombre et chaises visiteurs en bois sombre.
    - **Sol & Plafond** : tôle larmée d'acier avec cordons de soudure, incrustation centrale de parquet en acajou foncé délimitée par des profilés de transition en laiton poli. Plafond industriel à poutres en I d'acier, gaines de ventilation galvanisées à brides, chemins de câbles perforés et luminaires fluorescents protégés par des grilles grillagées.
    - **Surveillance discrète** : mini-dôme de caméra espionne au coin du plafond.

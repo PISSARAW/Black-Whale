@@ -32,9 +32,7 @@ const triangles = (root: THREE.Group) =>
 
 describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
   it('satisfies the shared blueprint invariants for interior-cineplex', () => {
-    expect(
-      validateBlueprint().filter((issue) => issue.includes('interior-cineplex')),
-    ).toEqual([])
+    expect(validateBlueprint().filter((issue) => issue.includes('interior-cineplex'))).toEqual([])
   })
 
   it('identifies the canonical spaces of the Cineplex concourse', () => {
@@ -119,9 +117,7 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     const surfaced = cineplexSurfacePlan(plan, false)
     expect(surfaced.structures.some(hasCineplexModel)).toBe(false)
     // Retains other structures such as screening rooms seats
-    expect(
-      surfaced.structures.some((s) => s.id.includes('screen-1-seat-row')),
-    ).toBe(true)
+    expect(surfaced.structures.some((s) => s.id.includes('screen-1-seat-row'))).toBe(true)
 
     // In reveal mode, all blueprint structures are preserved
     const revealed = cineplexSurfacePlan(plan, true)

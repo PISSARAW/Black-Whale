@@ -121,11 +121,12 @@ export function computeDoorPlacement(plan: TierPlan, door: Doorway): DoorPlaceme
   const angle = Math.atan2(dz, dx)
 
   const floor = floorOf(baseSpace, plan.tier)
-  const height = openingHeights({
-    space: baseSpace,
-    other: otherSpace,
-    tier: plan.tier,
-  }).bottom - floor
+  const height =
+    openingHeights({
+      space: baseSpace,
+      other: otherSpace,
+      tier: plan.tier,
+    }).bottom - floor
 
   const openSign = resolveSwingSign({
     spaceA: baseSpace,

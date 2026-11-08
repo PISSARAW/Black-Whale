@@ -3,10 +3,7 @@ import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { banquetWallRuns, wallPoint } from './banquetWallLayout'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import type { Space } from './types'
-import {
-  UNMA_GOLD,
-  UNMA_WOOD,
-} from './queenUnmaDetailSurface'
+import { UNMA_GOLD, UNMA_WOOD } from './queenUnmaDetailSurface'
 
 export interface ArchitectureContext {
   THREE: typeof Three
@@ -229,12 +226,21 @@ function grandChandelier(context: ArchitectureContext): void {
   const center: [number, number, number] = [-65.06, floor + ceil - 1.4, -34.0]
 
   // Ceiling rosette and golden suspension chain
-  into.cylinder({ radius: 0.32, height: 0.04 }, { at: [-65.06, floor + ceil - 0.1, -34.0], colour: UNMA_GOLD })
-  into.cylinder({ radius: 0.018, height: 1.2 }, { at: [-65.06, floor + ceil - 0.7, -34.0], colour: UNMA_GOLD })
+  into.cylinder(
+    { radius: 0.32, height: 0.04 },
+    { at: [-65.06, floor + ceil - 0.1, -34.0], colour: UNMA_GOLD },
+  )
+  into.cylinder(
+    { radius: 0.018, height: 1.2 },
+    { at: [-65.06, floor + ceil - 0.7, -34.0], colour: UNMA_GOLD },
+  )
 
   // Central turned baluster spindle
   into.sphere([0.12, 0.16, 0.12], { at: center, colour: UNMA_GOLD })
-  into.cylinder({ radius: 0.06, height: 0.35 }, { at: [center[0], center[1] + 0.15, center[2]], colour: UNMA_GOLD })
+  into.cylinder(
+    { radius: 0.06, height: 0.35 },
+    { at: [center[0], center[1] + 0.15, center[2]], colour: UNMA_GOLD },
+  )
 
   // 6 radial curved arms with glowing candle lights and crystals
   const numArms = 6
@@ -276,8 +282,14 @@ function nurseryLantern(context: ArchitectureContext): void {
   const center: [number, number, number] = [-70.429, floor + ceil - 1.8, -24.41]
 
   // Ceiling plate & suspension rod
-  into.cylinder({ radius: 0.18, height: 0.03 }, { at: [-70.429, floor + ceil - 0.1, -24.41], colour: UNMA_GOLD })
-  into.cylinder({ radius: 0.012, height: 1.6 }, { at: [-70.429, floor + ceil - 0.9, -24.41], colour: UNMA_GOLD })
+  into.cylinder(
+    { radius: 0.18, height: 0.03 },
+    { at: [-70.429, floor + ceil - 0.1, -24.41], colour: UNMA_GOLD },
+  )
+  into.cylinder(
+    { radius: 0.012, height: 1.6 },
+    { at: [-70.429, floor + ceil - 0.9, -24.41], colour: UNMA_GOLD },
+  )
 
   // Lantern cage in warm bronze
   into.box([0.28, 0.36, 0.28], { at: center, colour: UNMA_GOLD })
@@ -297,11 +309,14 @@ function alcoveBedsideLighting(context: ArchitectureContext): void {
   for (const zOffset of [-2.8, 2.8]) {
     const lampPos: [number, number, number] = [-71.85, floor + 1.8, -43.145 + zOffset]
     into.box([0.04, 0.14, 0.08], { at: lampPos, colour: UNMA_GOLD })
-    into.cylinder({ radius: 0.07, bottom: 0.11, height: 0.14 }, {
-      at: [lampPos[0] + 0.12, lampPos[1] + 0.05, lampPos[2]],
-      colour: 0xfdf2d8,
-      glow: true,
-    })
+    into.cylinder(
+      { radius: 0.07, bottom: 0.11, height: 0.14 },
+      {
+        at: [lampPos[0] + 0.12, lampPos[1] + 0.05, lampPos[2]],
+        colour: 0xfdf2d8,
+        glow: true,
+      },
+    )
   }
 }
 

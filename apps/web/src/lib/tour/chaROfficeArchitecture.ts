@@ -57,13 +57,22 @@ function ceilingDucts(into: BanquetDetailBuilder, topY: number, bounds: RoomBoun
   const midZ = (minZ + maxZ) / 2
 
   // Massive main galvanized ventilation trunk
-  into.box([lenX - 1.2, 0.44, 0.58], { at: [(minX + maxX) / 2, topY - 0.26, midZ], colour: DUCT_GALVANIZED })
+  into.box([lenX - 1.2, 0.44, 0.58], {
+    at: [(minX + maxX) / 2, topY - 0.26, midZ],
+    colour: DUCT_GALVANIZED,
+  })
   // Flanged connecting rings and suspension rods
   const step = 3.2
   for (let x = minX + 2.0; x < maxX - 1.0; x += step) {
     into.box([0.08, 0.52, 0.66], { at: [x, topY - 0.26, midZ], colour: DUCT_FLANGE })
-    into.cylinder({ radius: 0.012, height: 0.35, sides: 6 }, { at: [x, topY - 0.1, midZ - 0.25], colour: STEEL_BRUSHED })
-    into.cylinder({ radius: 0.012, height: 0.35, sides: 6 }, { at: [x, topY - 0.1, midZ + 0.25], colour: STEEL_BRUSHED })
+    into.cylinder(
+      { radius: 0.012, height: 0.35, sides: 6 },
+      { at: [x, topY - 0.1, midZ - 0.25], colour: STEEL_BRUSHED },
+    )
+    into.cylinder(
+      { radius: 0.012, height: 0.35, sides: 6 },
+      { at: [x, topY - 0.1, midZ + 0.25], colour: STEEL_BRUSHED },
+    )
   }
 }
 
@@ -73,10 +82,19 @@ function cableTrays(into: BanquetDetailBuilder, topY: number, bounds: RoomBounds
   const trayZ = (minZ + maxZ) / 2 + 1.8
 
   // Perforated cable tray
-  into.box([lenX - 2.0, 0.06, 0.36], { at: [(minX + maxX) / 2, topY - 0.18, trayZ], colour: TRAY_GALVANIZED })
+  into.box([lenX - 2.0, 0.06, 0.36], {
+    at: [(minX + maxX) / 2, topY - 0.18, trayZ],
+    colour: TRAY_GALVANIZED,
+  })
   // Black and orange high-voltage cable runs
-  into.box([lenX - 2.2, 0.04, 0.08], { at: [(minX + maxX) / 2, topY - 0.14, trayZ - 0.08], colour: CABLE_BLACK })
-  into.box([lenX - 2.2, 0.04, 0.06], { at: [(minX + maxX) / 2, topY - 0.14, trayZ + 0.06], colour: CABLE_ORANGE })
+  into.box([lenX - 2.2, 0.04, 0.08], {
+    at: [(minX + maxX) / 2, topY - 0.14, trayZ - 0.08],
+    colour: CABLE_BLACK,
+  })
+  into.box([lenX - 2.2, 0.04, 0.06], {
+    at: [(minX + maxX) / 2, topY - 0.14, trayZ + 0.06],
+    colour: CABLE_ORANGE,
+  })
 }
 
 /** Heavy industrial ceiling with structural I-beams, ducts, cable trays and caged lamps. */
@@ -89,8 +107,14 @@ export function dressIndustrialCeiling(context: CeilingContext): void {
   // Transverse structural steel I-beams spaced every 3.6m
   const beamPitch = 3.6
   for (let x = minX + 1.8; x < maxX; x += beamPitch) {
-    into.box([0.18, 0.36, lenZ - 0.8], { at: [x, topY - 0.18, (minZ + maxZ) / 2], colour: STEEL_I_BEAM })
-    into.box([0.32, 0.04, lenZ - 0.8], { at: [x, topY - 0.35, (minZ + maxZ) / 2], colour: STEEL_I_BEAM })
+    into.box([0.18, 0.36, lenZ - 0.8], {
+      at: [x, topY - 0.18, (minZ + maxZ) / 2],
+      colour: STEEL_I_BEAM,
+    })
+    into.box([0.32, 0.04, lenZ - 0.8], {
+      at: [x, topY - 0.35, (minZ + maxZ) / 2],
+      colour: STEEL_I_BEAM,
+    })
     // Gusset plates at beam ends
     into.box([0.22, 0.24, 0.08], { at: [x, topY - 0.22, minZ + 0.45], colour: STEEL_DARK })
     into.box([0.22, 0.24, 0.08], { at: [x, topY - 0.22, maxZ - 0.45], colour: STEEL_DARK })
@@ -126,8 +150,14 @@ export function dressTechnicalCeiling(context: CeilingContext): void {
 
   // Overhead sprinkler heads & smoke detectors
   for (let x = minX + 3.5; x < maxX - 2.5; x += 5.5) {
-    into.cylinder({ radius: 0.06, height: 0.04, sides: 12 }, { at: [x, topY - 0.03, (minZ + maxZ) / 2], colour: STEEL_BRUSHED })
-    into.sphere([0.015, 0.015, 0.015], { at: [x, topY - 0.05, (minZ + maxZ) / 2], colour: EXTINGUISHER_RED })
+    into.cylinder(
+      { radius: 0.06, height: 0.04, sides: 12 },
+      { at: [x, topY - 0.03, (minZ + maxZ) / 2], colour: STEEL_BRUSHED },
+    )
+    into.sphere([0.015, 0.015, 0.015], {
+      at: [x, topY - 0.05, (minZ + maxZ) / 2],
+      colour: EXTINGUISHER_RED,
+    })
   }
 }
 
@@ -153,7 +183,10 @@ export function dressMainOfficeFloor(options: { into: BanquetDetailBuilder; floo
 }
 
 /** Floor of the CCTV Monitor Room: raised anti-static technical computer tiles. */
-export function dressMonitorRoomFloor(options: { into: BanquetDetailBuilder; floor: number }): void {
+export function dressMonitorRoomFloor(options: {
+  into: BanquetDetailBuilder
+  floor: number
+}): void {
   const { into, floor } = options
 
   // Raised computer floor base
@@ -208,7 +241,10 @@ function wallEquipment(
   // Wall-mounted fire extinguisher & pressure gauge
   into.cylinder(
     { radius: 0.08, height: 0.48, sides: 12 },
-    { at: wallPoint(run, { along: along + 1.2, y: floor + 1.15, inset: 0.1 }), colour: EXTINGUISHER_RED },
+    {
+      at: wallPoint(run, { along: along + 1.2, y: floor + 1.15, inset: 0.1 }),
+      colour: EXTINGUISHER_RED,
+    },
   )
   into.sphere([0.02, 0.02, 0.02], {
     at: wallPoint(run, { along: along + 1.2, y: floor + 1.42, inset: 0.1 }),
@@ -247,7 +283,10 @@ export function dressOfficeWallRuns(context: WallContext): void {
       // Vertical conduit line running to ceiling
       into.cylinder(
         { radius: 0.016, height: 3.8, sides: 8 },
-        { at: wallPoint(run, { along: bay.along + 0.12, y: floor + 1.9, inset: 0.05 }), colour: STEEL_BRUSHED },
+        {
+          at: wallPoint(run, { along: bay.along + 0.12, y: floor + 1.9, inset: 0.05 }),
+          colour: STEEL_BRUSHED,
+        },
       )
     }
 

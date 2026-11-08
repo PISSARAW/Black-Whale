@@ -65,11 +65,7 @@ export class VvipRecreationSurface {
     )
   }
 
-  ring(
-    dim: { radius: number; tube: number },
-    offset: Point3,
-    colour: number,
-  ): void {
+  ring(dim: { radius: number; tube: number }, offset: Point3, colour: number): void {
     this.into.ring(dim, {
       at: [this.x + offset[0], this.y + offset[1], this.z + offset[2]],
       colour,
@@ -88,13 +84,22 @@ export interface BalusterOptions {
 export function drawTurnedBaluster(options: BalusterOptions): void {
   const { into, at, height, colour = PALETTE.darkWood } = options
   const [x, y, z] = at
-  into.cylinder({ radius: 0.032, height: height * 0.16, sides: 8 }, { at: [x, y + height * 0.08, z], colour })
-  into.cylinder({ radius: 0.048, height: height * 0.18, sides: 12 }, { at: [x, y + height * 0.25, z], colour })
+  into.cylinder(
+    { radius: 0.032, height: height * 0.16, sides: 8 },
+    { at: [x, y + height * 0.08, z], colour },
+  )
+  into.cylinder(
+    { radius: 0.048, height: height * 0.18, sides: 12 },
+    { at: [x, y + height * 0.25, z], colour },
+  )
   into.cylinder(
     { radius: 0.024, bottom: 0.042, height: height * 0.45, sides: 12 },
     { at: [x, y + height * 0.56, z], colour },
   )
-  into.cylinder({ radius: 0.038, height: height * 0.15, sides: 8 }, { at: [x, y + height * 0.86, z], colour })
+  into.cylinder(
+    { radius: 0.038, height: height * 0.15, sides: 8 },
+    { at: [x, y + height * 0.86, z], colour },
+  )
 }
 
 export interface ColumnOptions {
@@ -110,7 +115,10 @@ export function drawFlutedColumn(options: ColumnOptions): void {
   const [x, y, z] = at
   // Plinth and base
   into.box([radius * 2.5, 0.25, radius * 2.5], { at: [x, y + 0.125, z], colour: PALETTE.alabaster })
-  into.cylinder({ radius: radius * 1.18, height: 0.18, sides: 16 }, { at: [x, y + 0.34, z], colour: PALETTE.gold })
+  into.cylinder(
+    { radius: radius * 1.18, height: 0.18, sides: 16 },
+    { at: [x, y + 0.34, z], colour: PALETTE.gold },
+  )
 
   // Fluted column shaft
   into.flutedShaft(
@@ -123,7 +131,10 @@ export function drawFlutedColumn(options: ColumnOptions): void {
     { radius: radius * 1.25, bottom: radius, height: 0.35, sides: 16 },
     { at: [x, y + height - 0.35, z], colour: PALETTE.gold },
   )
-  into.box([radius * 2.6, 0.15, radius * 2.6], { at: [x, y + height - 0.075, z], colour: PALETTE.alabaster })
+  into.box([radius * 2.6, 0.15, radius * 2.6], {
+    at: [x, y + height - 0.075, z],
+    colour: PALETTE.alabaster,
+  })
 }
 
 /** Draws a monumental chandelier with cascading crystal prisms and warm lights. */
@@ -139,8 +150,14 @@ export function drawMonumentalChandelier(options: {
   } = options
 
   // Central gilded rod and canopy
-  into.cylinder({ radius: 0.04, height: 1.2, sides: 8 }, { at: [x, y - 0.6, z], colour: PALETTE.gold })
-  into.cylinder({ radius: 0.45, bottom: 0.15, height: 0.25, sides: 16 }, { at: [x, y - 0.15, z], colour: PALETTE.gold })
+  into.cylinder(
+    { radius: 0.04, height: 1.2, sides: 8 },
+    { at: [x, y - 0.6, z], colour: PALETTE.gold },
+  )
+  into.cylinder(
+    { radius: 0.45, bottom: 0.15, height: 0.25, sides: 16 },
+    { at: [x, y - 0.15, z], colour: PALETTE.gold },
+  )
 
   // 3 concentric crystal rings
   for (let tier = 0; tier < 3; tier++) {

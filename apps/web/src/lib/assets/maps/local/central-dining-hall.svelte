@@ -195,4 +195,3 @@
       : 'Six low boards · diners sit directly on the deck'}
   </text>
 </svg>
-

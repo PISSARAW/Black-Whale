@@ -31,8 +31,10 @@ export const MANGA_ZHANG_LEI_VIEWS: MangaView[] = [
     target: [7.5, -2.7],
     pitch: 0.02,
     pages: '10–12',
-    label: 'Zhang Lei’s formal dining room, the audience with Queen Oito across the long carved table',
-    labelFr: 'La salle à manger d’apparat de Zhang Lei, l’audience avec la reine Oito le long de la table sculptée',
+    label:
+      'Zhang Lei’s formal dining room, the audience with Queen Oito across the long carved table',
+    labelFr:
+      'La salle à manger d’apparat de Zhang Lei, l’audience avec la reine Oito le long de la table sculptée',
   }),
   view({
     ...source365,

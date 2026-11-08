@@ -98,7 +98,11 @@ function heroicFrame(surface: BenjaminRoomSurface): void {
     for (const sy of [-1, 1]) {
       const rx = (sx * (w - 0.14)) / 2
       const ry = h / 2 + (sy * (h - 0.14)) / 2
-      surface.cylinder({ radius: 0.06, height: 0.04, sides: 12 }, [rx, ry, z + 0.05], BENJAMIN_BRONZE)
+      surface.cylinder(
+        { radius: 0.06, height: 0.04, sides: 12 },
+        [rx, ry, z + 0.05],
+        BENJAMIN_BRONZE,
+      )
       surface.sphere([0.03, 0.03, 0.02], [rx, ry, z + 0.07], BENJAMIN_GOLD_TRIM)
     }
   }

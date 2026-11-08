@@ -380,7 +380,10 @@ function dressKitchenExhaustDrop(options: Ch378FixturesOptions): void {
   )
   for (const dy of [1.2, 2.8, 4.4]) {
     const bandY = ceiling - dy
-    into.cylinder({ radius: 0.37, height: 0.07, sides: 16 }, { at: [minX + 0.42, bandY, 23.5], colour: RIVET_STEEL })
+    into.cylinder(
+      { radius: 0.37, height: 0.07, sides: 16 },
+      { at: [minX + 0.42, bandY, 23.5], colour: RIVET_STEEL },
+    )
     into.box([0.42, 0.06, 0.12], { at: [minX + 0.21, bandY, 23.5], colour: DARK_STEEL })
   }
   into.box([0.84, 0.3, 1.4], { at: [minX + 0.42, floor + 2.35, 23.5], colour: STEEL })
@@ -411,8 +414,14 @@ interface BarrierOptions {
 function passageBarrier(options: BarrierOptions) {
   const { into, floor, z } = options
   for (const x of [28.25, 31.25]) {
-    into.cylinder({ radius: 0.04, height: 1.0, sides: 8 }, { at: [x, floor + 0.5, z], colour: STEEL })
-    into.cylinder({ radius: 0.1, height: 0.03, sides: 8 }, { at: [x, floor + 0.015, z], colour: DARK_STEEL })
+    into.cylinder(
+      { radius: 0.04, height: 1.0, sides: 8 },
+      { at: [x, floor + 0.5, z], colour: STEEL },
+    )
+    into.cylinder(
+      { radius: 0.1, height: 0.03, sides: 8 },
+      { at: [x, floor + 0.015, z], colour: DARK_STEEL },
+    )
   }
   into.box([1.65, 0.04, 0.04], { at: [27.425, floor + 0.85, z], colour: STEEL })
   into.box([1.65, 0.04, 0.04], { at: [27.425, floor + 0.45, z], colour: STEEL })
@@ -449,4 +458,3 @@ function cableTrays(options: CableTrayOptions) {
     into.box([0.42, 0.16, 0.08], { at: [x, y, maxZ - 0.04], colour: DARK_STEEL })
   }
 }
-

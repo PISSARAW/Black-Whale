@@ -1,9 +1,4 @@
-import {
-  wallBays,
-  wallBox,
-  wallPoint,
-  type WallSurface,
-} from './corridorWallLayout'
+import { wallBays, wallBox, wallPoint, type WallSurface } from './corridorWallLayout'
 
 const WEB_FRAME = 0x2e333a
 const GUSSET_STEEL = 0x24282f
@@ -33,11 +28,7 @@ function baseScupper(wall: WallSurface, floor: number): void {
   })
 }
 
-function webGussets(
-  wall: WallSurface,
-  along: number,
-  context: Tier5WallContext,
-): void {
+function webGussets(wall: WallSurface, along: number, context: Tier5WallContext): void {
   const { floor, ceiling } = context
   // Bottom triangular bracket gusset
   wallBox(wall, [0.14, 0.28, 0.18], {
@@ -68,10 +59,7 @@ function webGussets(
   })
 }
 
-function transverseWebFrames(
-  wall: WallSurface,
-  context: Tier5WallContext,
-): void {
+function transverseWebFrames(wall: WallSurface, context: Tier5WallContext): void {
   const { floor, ceiling } = context
   const height = ceiling - floor
   const pitch = 2.8
@@ -102,10 +90,7 @@ function transverseWebFrames(
   }
 }
 
-function horizontalGirdersAndCables(
-  wall: WallSurface,
-  context: Tier5WallContext,
-): void {
+function horizontalGirdersAndCables(wall: WallSurface, context: Tier5WallContext): void {
   const { floor, ceiling } = context
   const midY = floor + (ceiling - floor) * 0.45
   const { length } = wall.run
@@ -138,10 +123,7 @@ function horizontalGirdersAndCables(
   }
 }
 
-function massiveVentilationTrunk(
-  wall: WallSurface,
-  context: Tier5WallContext,
-): void {
+function massiveVentilationTrunk(wall: WallSurface, context: Tier5WallContext): void {
   const { ceiling } = context
   const { length } = wall.run
   // Colossal upper ventilation duct
@@ -164,11 +146,7 @@ function massiveVentilationTrunk(
   }
 }
 
-function slidingCargoGate(
-  wall: WallSurface,
-  along: number,
-  floor: number,
-): void {
+function slidingCargoGate(wall: WallSurface, along: number, floor: number): void {
   // Overhead heavy roller track
   wallBox(wall, [1.4, 0.1, 0.1], {
     along,
@@ -186,10 +164,7 @@ function slidingCargoGate(
 }
 
 /** Dresses a Tier 5 steerage/cargo passage with colossal web frames, stringers and ducts. */
-export function dressTier5CorridorWall(
-  wall: WallSurface,
-  context: Tier5WallContext,
-): void {
+export function dressTier5CorridorWall(wall: WallSurface, context: Tier5WallContext): void {
   const { floor } = context
   baseScupper(wall, floor)
   transverseWebFrames(wall, context)

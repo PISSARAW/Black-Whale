@@ -70,8 +70,14 @@ function parquetFlooring(context: ArchitectureContext): void {
   const border = 0.35
 
   // Outer dark mahogany border
-  into.box([w, 0.006, border], { at: [(minX + maxX) / 2, floor, minZ + border / 2], colour: 0x24140b })
-  into.box([w, 0.006, border], { at: [(minX + maxX) / 2, floor, maxZ - border / 2], colour: 0x24140b })
+  into.box([w, 0.006, border], {
+    at: [(minX + maxX) / 2, floor, minZ + border / 2],
+    colour: 0x24140b,
+  })
+  into.box([w, 0.006, border], {
+    at: [(minX + maxX) / 2, floor, maxZ - border / 2],
+    colour: 0x24140b,
+  })
   into.box([border, 0.006, d - border * 2], {
     at: [minX + border / 2, floor, (minZ + maxZ) / 2],
     colour: 0x24140b,

@@ -86,11 +86,7 @@ export interface WallSurface {
   run: CorridorWallRun
 }
 
-export function wallBox(
-  wall: WallSurface,
-  size: Point3,
-  options: WallBoxPlacement,
-): void {
+export function wallBox(wall: WallSurface, size: Point3, options: WallBoxPlacement): void {
   wall.into.box(size, {
     at: wallPoint(wall.run, {
       along: options.along,

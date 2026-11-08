@@ -7,22 +7,22 @@ La chambre 1002 de la princesse Camilla (deuxième enfant du roi Nasubi Hui Guo 
 La suite 1002 s'insère dans le gabarit standard d'appartement princier de la zone d'habitation du Pont 1 (`interior-room-1002`, chap. 363) et se déploie à travers trois espaces scéniques majeurs du manga :
 
 1. **Le salon formel tapissé (Chapitre 389) — `tier-1-royal-residential-sector-room-1002-living`** :
-   - *Rassemblement des Intouchables* : les gardes démunis de Camilla (*Have-Nots* / porteurs du sort kamikaze *Yomotsu Hegui* : Lisamsetta, Meshush, Mozbe, Sarahell, Umanma, Fukataki, Kako, etc.) sont réunis en cercle formel le long des parois du salon, assis sur des assises austères tournées vers le centre de la pièce.
-   - *Vaste tapis d'apparat central* : le centre du salon est entièrement dégagé et recouvert d'un immense tapis royal pourpre/bordeaux bordé de galons et broderies dorées.
-   - *Divan d'apparat / table de massage de Camilla* : la princesse Camilla trône sur une méridienne sculptée en acajou laqué ornée de volutes et de dorures, garnie d'un épais matelas de velours rose-pourpre capitonné, de traversins cylindriques en soie et de coussins moelleux. Elle y reçoit ses massages et y tient cour avec son autorité nonchalante. Un guéridon d'appoint supporte flacons d'onguents, parfums et service à thé en porcelaine fine.
-   - *Parures murales* : murs lambrissés d'acajou avec cimaises dorées, grandes tentures et tapisseries d'apparat damassées suspendues aux parois, et appliques murales néoclassiques.
+   - _Rassemblement des Intouchables_ : les gardes démunis de Camilla (_Have-Nots_ / porteurs du sort kamikaze _Yomotsu Hegui_ : Lisamsetta, Meshush, Mozbe, Sarahell, Umanma, Fukataki, Kako, etc.) sont réunis en cercle formel le long des parois du salon, assis sur des assises austères tournées vers le centre de la pièce.
+   - _Vaste tapis d'apparat central_ : le centre du salon est entièrement dégagé et recouvert d'un immense tapis royal pourpre/bordeaux bordé de galons et broderies dorées.
+   - _Divan d'apparat / table de massage de Camilla_ : la princesse Camilla trône sur une méridienne sculptée en acajou laqué ornée de volutes et de dorures, garnie d'un épais matelas de velours rose-pourpre capitonné, de traversins cylindriques en soie et de coussins moelleux. Elle y reçoit ses massages et y tient cour avec son autorité nonchalante. Un guéridon d'appoint supporte flacons d'onguents, parfums et service à thé en porcelaine fine.
+   - _Parures murales_ : murs lambrissés d'acajou avec cimaises dorées, grandes tentures et tapisseries d'apparat damassées suspendues aux parois, et appliques murales néoclassiques.
 
 2. **La salle à manger privée (Chapitre 366) — `tier-1-royal-residential-sector-room-1002-dining`** :
-   - *Dîner avec la reine Duazul* : Camilla dîne en tête-à-tête avec sa mère, la deuxième reine Duazul, abordant le choix de leurs robes avant d'annoncer froidement sa volonté d'éliminer Benjamin puis Halkenburg.
-   - *Table de réception intime* : grande table en bois noble nappée d'une étoffe claire brodée, dressée avec le couvert royal (assiettes en porcelaine, couverts d'argent ciselé, verres à pied en cristal et carafes de vin).
-   - *Chaires royales sculptées* : deux hautes chaises à dossier d'apparat sculpté (la chaise de la princesse Camilla et celle de la reine Duazul garnie de velours sombre).
-   - *Buffet dressoir et lustre* : dressoir mural d'ébénisterie supportant vaisselle et carafes, surmonté d'un plafonnier/lustre d'apparat.
+   - _Dîner avec la reine Duazul_ : Camilla dîne en tête-à-tête avec sa mère, la deuxième reine Duazul, abordant le choix de leurs robes avant d'annoncer froidement sa volonté d'éliminer Benjamin puis Halkenburg.
+   - _Table de réception intime_ : grande table en bois noble nappée d'une étoffe claire brodée, dressée avec le couvert royal (assiettes en porcelaine, couverts d'argent ciselé, verres à pied en cristal et carafes de vin).
+   - _Chaires royales sculptées_ : deux hautes chaises à dossier d'apparat sculpté (la chaise de la princesse Camilla et celle de la reine Duazul garnie de velours sombre).
+   - _Buffet dressoir et lustre_ : dressoir mural d'ébénisterie supportant vaisselle et carafes, surmonté d'un plafonnier/lustre d'apparat.
 
 3. **Le vestibule d'entrée et le poste de Musse (Chapitre 366) — `tier-1-royal-residential-sector-room-1002-entrance`** :
-   - *Poste de surveillance de la Première Armée* : Musse, soldat d'élite et officier de renseignement de Benjamin, est stationné au passage d'entrée de la suite pour espionner Camilla.
-   - *Mobilier militaire d'écoute* : bureau d'observation en chêne et armature métallique, fauteuil de veille ergonomique, téléphone d'écoute à cadran avec combiné et boîtier enregistreur/amplificateur d'interception.
-   - *Documents de renseignement* : chemises de surveillance, classeurs d'état-major et rapports de la Première Armée empilés sur le plan de travail.
-   - *Perchoir d'observation Nen* : perchoir discret évoquant l'oiseau de surveillance Nen de Musse (*Secret Window* / Fenêtre Secrète).
+   - _Poste de surveillance de la Première Armée_ : Musse, soldat d'élite et officier de renseignement de Benjamin, est stationné au passage d'entrée de la suite pour espionner Camilla.
+   - _Mobilier militaire d'écoute_ : bureau d'observation en chêne et armature métallique, fauteuil de veille ergonomique, téléphone d'écoute à cadran avec combiné et boîtier enregistreur/amplificateur d'interception.
+   - _Documents de renseignement_ : chemises de surveillance, classeurs d'état-major et rapports de la Première Armée empilés sur le plan de travail.
+   - _Perchoir d'observation Nen_ : perchoir discret évoquant l'oiseau de surveillance Nen de Musse (_Secret Window_ / Fenêtre Secrète).
 
 ## Architecture et mobilier détaillés
 

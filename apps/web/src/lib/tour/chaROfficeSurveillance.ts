@@ -35,7 +35,10 @@ export interface CornerCameraOptions {
   rotation?: [number, number, number]
 }
 
-function monitorGrid(into: BanquetDetailBuilder, origin: { x: number; y: number; z: number }): void {
+function monitorGrid(
+  into: BanquetDetailBuilder,
+  origin: { x: number; y: number; z: number },
+): void {
   const cols = 4
   const rows = 3
   const colW = 1.85
@@ -56,7 +59,10 @@ function monitorGrid(into: BanquetDetailBuilder, origin: { x: number; y: number;
       into.box([1.5, 0.4, 0.02], { at: [mx, my, origin.z + 0.49], colour: glowColour, glow: true })
 
       // Channel placard & status LEDs
-      into.box([0.22, 0.04, 0.02], { at: [mx - 0.55, my - 0.22, origin.z + 0.49], colour: STEEL_DARK })
+      into.box([0.22, 0.04, 0.02], {
+        at: [mx - 0.55, my - 0.22, origin.z + 0.49],
+        colour: STEEL_DARK,
+      })
       into.sphere([0.016, 0.016, 0.016], {
         at: [mx + 0.68, my - 0.22, origin.z + 0.5],
         colour: LED_RECORDING_RED,
@@ -91,19 +97,33 @@ export function dressCCTVMonitorBank(placement: SurveillancePlacement): void {
     into.box([0.7, 0.04, 0.02], { at: [x + b - 0.25, floor + 0.26, z + 0.44], colour: STEEL_DARK })
     into.cylinder(
       { radius: 0.04, height: 0.02, sides: 12 },
-      { at: [x + b + 0.45, floor + 0.22, z + 0.44], colour: CHROME_BRIGHT, rotation: [Math.PI / 2, 0, 0] },
+      {
+        at: [x + b + 0.45, floor + 0.22, z + 0.44],
+        colour: CHROME_BRIGHT,
+        rotation: [Math.PI / 2, 0, 0],
+      },
     )
-    into.sphere([0.012, 0.012, 0.012], { at: [x + b - 0.65, floor + 0.22, z + 0.44], colour: LED_AMBER, glow: true })
+    into.sphere([0.012, 0.012, 0.012], {
+      at: [x + b - 0.65, floor + 0.22, z + 0.44],
+      colour: LED_AMBER,
+      glow: true,
+    })
   }
 
   // Overhead cable management bridge routing cables into ceiling
   into.box([9.0, 0.12, 0.3], { at: [x, floor + 2.65, z], colour: STEEL_DARK })
   for (let c = -3.6; c <= 3.6; c += 1.8) {
-    into.cylinder({ radius: 0.035, height: 0.8, sides: 8 }, { at: [x + c, floor + 3.0, z], colour: CABLE_BLACK })
+    into.cylinder(
+      { radius: 0.035, height: 0.8, sides: 8 },
+      { at: [x + c, floor + 3.0, z], colour: CABLE_BLACK },
+    )
   }
 }
 
-function operatorScreens(into: BanquetDetailBuilder, deskCenter: { x: number; y: number; z: number }): void {
+function operatorScreens(
+  into: BanquetDetailBuilder,
+  deskCenter: { x: number; y: number; z: number },
+): void {
   const { x, y, z } = deskCenter
 
   // Two primary widescreen displays angled toward the operator
@@ -122,8 +142,14 @@ function operatorScreens(into: BanquetDetailBuilder, deskCenter: { x: number; y:
       glow: true,
     })
     // Heavy articulated gas-spring monitor stand
-    into.cylinder({ radius: 0.025, height: 0.32, sides: 8 }, { at: [sx, y + 0.16, z - 0.28], colour: CHROME_BRIGHT })
-    into.cylinder({ radius: 0.1, height: 0.02, sides: 12 }, { at: [sx, y + 0.01, z - 0.28], colour: STEEL_DARK })
+    into.cylinder(
+      { radius: 0.025, height: 0.32, sides: 8 },
+      { at: [sx, y + 0.16, z - 0.28], colour: CHROME_BRIGHT },
+    )
+    into.cylinder(
+      { radius: 0.1, height: 0.02, sides: 12 },
+      { at: [sx, y + 0.01, z - 0.28], colour: STEEL_DARK },
+    )
   }
 
   // Vertical auxiliary status readout screen
@@ -140,7 +166,10 @@ function operatorScreens(into: BanquetDetailBuilder, deskCenter: { x: number; y:
   })
 }
 
-function operatorControls(into: BanquetDetailBuilder, deskTop: { x: number; y: number; z: number }): void {
+function operatorControls(
+  into: BanquetDetailBuilder,
+  deskTop: { x: number; y: number; z: number },
+): void {
   const { x, y, z } = deskTop
 
   // Main backlit keyboard & palmrest
@@ -149,9 +178,16 @@ function operatorControls(into: BanquetDetailBuilder, deskTop: { x: number; y: n
 
   // PTZ surveillance joystick console with zoom knob
   into.box([0.32, 0.06, 0.28], { at: [x + 0.68, y + 0.03, z + 0.15], colour: PANEL_ENCLOSURE })
-  into.cylinder({ radius: 0.018, height: 0.14, sides: 8 }, { at: [x + 0.68, y + 0.12, z + 0.15], colour: CHROME_BRIGHT })
+  into.cylinder(
+    { radius: 0.018, height: 0.14, sides: 8 },
+    { at: [x + 0.68, y + 0.12, z + 0.15], colour: CHROME_BRIGHT },
+  )
   into.sphere([0.032, 0.032, 0.032], { at: [x + 0.68, y + 0.19, z + 0.15], colour: STEEL_DARK })
-  into.sphere([0.01, 0.01, 0.01], { at: [x + 0.6, y + 0.07, z + 0.22], colour: LED_CYAN, glow: true })
+  into.sphere([0.01, 0.01, 0.01], {
+    at: [x + 0.6, y + 0.07, z + 0.22],
+    colour: LED_CYAN,
+    glow: true,
+  })
 
   // Video switcher keypad unit & red emergency hot-line telephone
   into.box([0.48, 0.04, 0.24], { at: [x - 1.1, y + 0.02, z + 0.15], colour: PANEL_SWITCH })
@@ -182,7 +218,10 @@ export function dressWatchDesk(placement: SurveillancePlacement): void {
   // High-back ergonomic mesh swivel operator chair
   into.box([0.56, 0.08, 0.52], { at: [x, floor + 0.46, z + 0.72], colour: STEEL_GRAPHITE })
   into.box([0.52, 0.65, 0.08], { at: [x, floor + 0.78, z + 0.98], colour: STEEL_DARK })
-  into.cylinder({ radius: 0.04, height: 0.42, sides: 8 }, { at: [x, floor + 0.21, z + 0.72], colour: CHROME_BRIGHT })
+  into.cylinder(
+    { radius: 0.04, height: 0.42, sides: 8 },
+    { at: [x, floor + 0.21, z + 0.72], colour: CHROME_BRIGHT },
+  )
   // 5-star wheeled base
   for (let b = 0; b < 5; b++) {
     const angle = (b * Math.PI * 2) / 5
@@ -222,7 +261,11 @@ export function dressEntranceCameras(placement: SurveillancePlacement): void {
     // Optical lens element and infrared ring
     into.cylinder(
       { radius: 0.045, height: 0.02, sides: 12 },
-      { at: [cx, barY - 0.15, z + 0.46], colour: STEEL_DARK, rotation: [0.38, side < 0 ? -0.28 : 0.28, 0] },
+      {
+        at: [cx, barY - 0.15, z + 0.46],
+        colour: STEEL_DARK,
+        rotation: [0.38, side < 0 ? -0.28 : 0.28, 0],
+      },
     )
     into.sphere([0.016, 0.016, 0.016], {
       at: [cx, barY - 0.12, z + 0.48],
@@ -238,7 +281,10 @@ export function dressCornerCamera(options: CornerCameraOptions): void {
   const [x, y, z] = at
 
   // Ceiling/wall mounting base plate
-  into.cylinder({ radius: 0.08, height: 0.02, sides: 12 }, { at: [x, y, z], colour: STEEL_DARK, rotation })
+  into.cylinder(
+    { radius: 0.08, height: 0.02, sides: 12 },
+    { at: [x, y, z], colour: STEEL_DARK, rotation },
+  )
   // Smoked acrylic mini-dome
   into.sphere([0.055, 0.045, 0.055], { at: [x, y - 0.03, z], colour: MONITOR_HOUSING })
   // Blinking LED status indicator

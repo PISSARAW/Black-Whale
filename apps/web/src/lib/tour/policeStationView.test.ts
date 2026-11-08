@@ -10,10 +10,7 @@ import {
 } from './policeStationView'
 import { MANGA_POLICE_VIEWS } from './mangaPoliceViews'
 import { structureFootprint, pointInPolygon, polygonsOverlap } from './geometry'
-import {
-  policeFixtures,
-  policeSpotAnchors,
-} from '$lib/components/map/projection/policeStationPlan'
+import { policeFixtures, policeSpotAnchors } from '$lib/components/map/projection/policeStationPlan'
 
 const ship = theShip()
 const plan = ship.plans.get('interior-police-station')!

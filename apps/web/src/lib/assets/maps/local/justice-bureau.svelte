@@ -24,9 +24,7 @@
   const sideBookcase = justiceFixtures.find(({ id }) => id.endsWith('-deputy-side-bookcase'))
   const visitorChair1 = justiceFixtures.find(({ id }) => id.endsWith('-deputy-visitor-chair-01'))
   const visitorChair2 = justiceFixtures.find(({ id }) => id.endsWith('-deputy-visitor-chair-02'))
-  const visitationPartition = justiceFixtures.find(({ id }) =>
-    id.endsWith('-visitation-partition'),
-  )
+  const visitationPartition = justiceFixtures.find(({ id }) => id.endsWith('-visitation-partition'))
 </script>
 
 <svg
@@ -149,20 +147,11 @@
   {/each}
 
   <!-- Outer perimeter wall -->
-  <polygon
-    points="60,90 940,90 940,640 60,640"
-    class="wall"
-  />
+  <polygon points="60,90 940,90 940,640 60,640" class="wall" />
 
   <!-- Internal doorways from blueprint -->
   {#each justiceDoors as door, index (index)}
-    <line
-      x1={door.from.x}
-      y1={door.from.y}
-      x2={door.to.x}
-      y2={door.to.y}
-      class="door-line"
-    />
+    <line x1={door.from.x} y1={door.from.y} x2={door.to.x} y2={door.to.y} class="door-line" />
   {/each}
 
   <!-- 1. HALL D'ACCUEIL (LOBBY) -->
@@ -170,12 +159,41 @@
     <!-- Reception counter -->
     <polygon points={lobbyDesk.polygon} class="desk-top" />
     <!-- Guard/Clerk terminal and register -->
-    <rect x={lobbyDesk.point.x - 40} y={lobbyDesk.point.y - 7} width="22" height="14" fill="#181818" stroke="#777" />
-    <rect x={lobbyDesk.point.x + 10} y={lobbyDesk.point.y - 8} width="26" height="16" rx="2" fill="#d8d2c2" stroke="#555" />
+    <rect
+      x={lobbyDesk.point.x - 40}
+      y={lobbyDesk.point.y - 7}
+      width="22"
+      height="14"
+      fill="#181818"
+      stroke="#777"
+    />
+    <rect
+      x={lobbyDesk.point.x + 10}
+      y={lobbyDesk.point.y - 8}
+      width="26"
+      height="16"
+      rx="2"
+      fill="#d8d2c2"
+      stroke="#555"
+    />
     <!-- Security arch / turnstile into corridor -->
-    <rect x={justicePoint([-16, -3]).x - 18} y={justicePoint([-16, -3]).y - 6} width="36" height="12" fill="#333" stroke="#aaa" />
+    <rect
+      x={justicePoint([-16, -3]).x - 18}
+      y={justicePoint([-16, -3]).y - 6}
+      width="36"
+      height="12"
+      fill="#333"
+      stroke="#aaa"
+    />
     <!-- Waiting benches -->
-    <rect x={justicePoint([-20, -8]).x} y={justicePoint([-20, -8]).y - 30} width="16" height="60" rx="3" class="fixture" />
+    <rect
+      x={justicePoint([-20, -8]).x}
+      y={justicePoint([-20, -8]).y - 30}
+      width="16"
+      height="60"
+      rx="3"
+      class="fixture"
+    />
   {/if}
   <text x={justicePoint([-14.5, -6.5]).x} y={justicePoint([-14.5, -6.5]).y} class="label">
     {french ? 'Hall d’accueil' : 'Lobby'}
@@ -217,11 +235,32 @@
   {#if magistrateDesk}
     <polygon points={magistrateDesk.polygon} class="desk-top" />
     <!-- Desk accessories: Leather blotter, banker lamp, files -->
-    <rect x={magistrateDesk.point.x - 18} y={magistrateDesk.point.y - 8} width="36" height="16" fill="#1b241c" stroke="#5a705e" />
+    <rect
+      x={magistrateDesk.point.x - 18}
+      y={magistrateDesk.point.y - 8}
+      width="36"
+      height="16"
+      fill="#1b241c"
+      stroke="#5a705e"
+    />
     <circle cx={magistrateDesk.point.x - 16} cy={magistrateDesk.point.y + 4} r="3" fill="#c2a767" />
-    <rect x={magistrateDesk.point.x + 10} y={magistrateDesk.point.y - 6} width="12" height="14" fill="#d8d2c2" stroke="#888" />
+    <rect
+      x={magistrateDesk.point.x + 10}
+      y={magistrateDesk.point.y - 6}
+      width="12"
+      height="14"
+      fill="#d8d2c2"
+      stroke="#888"
+    />
     <!-- Magistrate leather armchair -->
-    <rect x={magistrateDesk.point.x - 12} y={magistrateDesk.point.y - 24} width="24" height="14" rx="4" class="leather-seat" />
+    <rect
+      x={magistrateDesk.point.x - 12}
+      y={magistrateDesk.point.y - 24}
+      width="24"
+      height="14"
+      rx="4"
+      class="leather-seat"
+    />
   {/if}
 
   <!-- Visitor chairs facing the desk -->
@@ -233,8 +272,23 @@
   {/if}
 
   <!-- Door 1010 plaque on corridor -->
-  <rect x={justicePoint([-0.5, -3]).x - 15} y={justicePoint([-0.5, -3]).y - 4} width="30" height="8" fill="#111" stroke="#ffd700" stroke-width="1.5" />
-  <text x={justicePoint([-0.5, -3]).x} y={justicePoint([-0.5, -3]).y + 2} text-anchor="middle" fill="#ffd700" font-size="7" font-weight="bold">1010</text>
+  <rect
+    x={justicePoint([-0.5, -3]).x - 15}
+    y={justicePoint([-0.5, -3]).y - 4}
+    width="30"
+    height="8"
+    fill="#111"
+    stroke="#ffd700"
+    stroke-width="1.5"
+  />
+  <text
+    x={justicePoint([-0.5, -3]).x}
+    y={justicePoint([-0.5, -3]).y + 2}
+    text-anchor="middle"
+    fill="#ffd700"
+    font-size="7"
+    font-weight="bold">1010</text
+  >
 
   <!-- Room 1010 labels (exact strings retained for tests) -->
   <text x={justicePoint([-0.5, -9.2]).x} y={justicePoint([-0.5, -9.2]).y} class="label">
@@ -244,7 +298,9 @@
     Room 1010 · judicial interrogation office
   </text>
   <text x={justicePoint([-0.5, -4.5]).x} y={justicePoint([-0.5, -4.5]).y} class="dim">
-    {french ? 'Bureau formel · chaises visiteurs · bibliothèques murales' : 'Formal desk · visitor chairs · wall bookcases'}
+    {french
+      ? 'Bureau formel · chaises visiteurs · bibliothèques murales'
+      : 'Formal desk · visitor chairs · wall bookcases'}
   </text>
 
   <!-- 3. SALLES D'INTERROGATOIRE SECONDAIRES -->
@@ -278,11 +334,26 @@
         stroke-width="1.5"
       />
       <!-- Communication interphone handset -->
-      <circle cx={justicePoint([boothX, 5.5]).x - 4} cy={justicePoint([boothX, 5.5]).y} r="3" fill="#c2a767" />
+      <circle
+        cx={justicePoint([boothX, 5.5]).x - 4}
+        cy={justicePoint([boothX, 5.5]).y}
+        r="3"
+        fill="#c2a767"
+      />
       <!-- Visitor seat (North side) -->
-      <circle cx={justicePoint([boothX - 2, 3.8]).x} cy={justicePoint([boothX - 2, 3.8]).y} r="7" class="leather-seat" />
+      <circle
+        cx={justicePoint([boothX - 2, 3.8]).x}
+        cy={justicePoint([boothX - 2, 3.8]).y}
+        r="7"
+        class="leather-seat"
+      />
       <!-- Protected/Detainee seat (South side) -->
-      <circle cx={justicePoint([boothX - 2, 7.2]).x} cy={justicePoint([boothX - 2, 7.2]).y} r="7" class="leather-seat" />
+      <circle
+        cx={justicePoint([boothX - 2, 7.2]).x}
+        cy={justicePoint([boothX - 2, 7.2]).y}
+        r="7"
+        class="leather-seat"
+      />
     {/each}
 
     <!-- Central sliding transfer drawer (tiroir de transfert métallique) -->
@@ -332,10 +403,12 @@
     {french ? 'Zone de protection des témoins VIP' : 'VIP Witness Protection Area'}
   </text>
   <text x={justicePoint([-11, 2.2]).x} y={justicePoint([-11, 2.2]).y} class="dim">
-    {french ? 'Plafond à caissons · lustre · miroir ovale' : 'Coffered ceiling · moulded walls · chandelier · oval mirror'}
+    {french
+      ? 'Plafond à caissons · lustre · miroir ovale'
+      : 'Coffered ceiling · moulded walls · chandelier · oval mirror'}
   </text>
   <!-- Bed, dining set, armchairs -->
-  {#each justiceFixtures.filter(({ spaceId }) => spaceId.includes('witness-protection')) as fixture (fixture.id)}
+  {#each justiceFixtures.filter( ({ spaceId }) => spaceId.includes('witness-protection') ) as fixture (fixture.id)}
     <polygon
       points={fixture.polygon}
       class={fixture.kind === 'seat' ? 'leather-seat' : 'fixture'}

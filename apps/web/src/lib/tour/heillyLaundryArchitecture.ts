@@ -47,7 +47,11 @@ function industrialMachine(into: BanquetDetailBuilder, placement: MachinePlaceme
   // Control dial & buttons
   into.cylinder(
     { radius: 0.045, height: 0.03, sides: 16 },
-    { at: [x - 0.25, floorY + height - 0.16, z + depth / 2 + 0.07], colour: STEEL_BRUSHED, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [x - 0.25, floorY + height - 0.16, z + depth / 2 + 0.07],
+      colour: STEEL_BRUSHED,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
   into.box([0.08, 0.04, 0.02], {
     at: [x + 0.2, floorY + height - 0.16, z + depth / 2 + 0.07],
@@ -62,7 +66,11 @@ function industrialMachine(into: BanquetDetailBuilder, placement: MachinePlaceme
   // Dark inner drum glass
   into.cylinder(
     { radius: 0.3, height: 0.02, sides: 20 },
-    { at: [x, floorY + 0.65, z + depth / 2 + 0.01], colour: 0x181e24, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [x, floorY + 0.65, z + depth / 2 + 0.01],
+      colour: 0x181e24,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
   // Handle latch
   into.box([0.04, 0.12, 0.03], {

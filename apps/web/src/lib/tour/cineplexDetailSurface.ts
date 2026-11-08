@@ -114,8 +114,14 @@ export function dressMoviePosterLightbox(options: PosterOptions): void {
 
 /** Brass stanchion post with heavy base and ball top */
 function dressSingleStanchion(into: BanquetDetailBuilder, at: Point3): void {
-  into.cylinder({ radius: 0.16, height: 0.04, sides: 12 }, { at: [at[0], at[1] + 0.02, at[2]], colour: CINE_BRASS })
-  into.cylinder({ radius: 0.03, height: 0.9, sides: 8 }, { at: [at[0], at[1] + 0.47, at[2]], colour: CINE_BRASS })
+  into.cylinder(
+    { radius: 0.16, height: 0.04, sides: 12 },
+    { at: [at[0], at[1] + 0.02, at[2]], colour: CINE_BRASS },
+  )
+  into.cylinder(
+    { radius: 0.03, height: 0.9, sides: 8 },
+    { at: [at[0], at[1] + 0.47, at[2]], colour: CINE_BRASS },
+  )
   into.sphere([0.06, 0.06, 0.06], { at: [at[0], at[1] + 0.94, at[2]], colour: CINE_BRASS })
 }
 
@@ -174,4 +180,3 @@ export function dressScreenPortalSign(
   // Backlit screen number plate
   into.box([1.3, 0.28, 0.16], { at, rotation, colour: CINE_NEON_AMBER, glow: true })
 }
-

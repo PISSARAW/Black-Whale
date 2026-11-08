@@ -16,7 +16,8 @@ export const MANGA_HOSPITAL_VIEWS: MangaView[] = [
     chapter: 358,
     volume: 35,
     label: 'The central medical clinic, ward beds, ECG monitors and nurses’ station',
-    labelFr: 'La clinique médicale centrale, ses lits d’hospitalisation, moniteurs ECG et poste des soins',
+    labelFr:
+      'La clinique médicale centrale, ses lits d’hospitalisation, moniteurs ECG et poste des soins',
   }),
   view({
     id: 'hospital-supplies-reserve',

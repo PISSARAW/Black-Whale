@@ -211,10 +211,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     pages: '4–6',
     label: "Guarded gate to the princes' quarters, registration desk and posted soldiers",
     labelFr: "Poste d'accès gardé des princes, comptoir d'enregistrement et soldats en faction",
-    triggerSpaceIds: [
-      'tier-1-princes-quarters-gate',
-      'tier-1-royal-residential-cross-gap-1',
-    ],
+    triggerSpaceIds: ['tier-1-princes-quarters-gate', 'tier-1-royal-residential-cross-gap-1'],
   }),
   view({
     id: 'princely-corridor-perspective',
@@ -234,4 +231,3 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     ],
   }),
 ]
-

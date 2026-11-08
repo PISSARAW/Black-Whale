@@ -114,9 +114,29 @@ export function zhangLeiTurnedBaluster(
 ): void {
   const { at, height, radius } = options
   const [x, y, z] = at
-  surface.cylinder({ radius: radius * 1.15, height: height * 0.12 }, [x, y + height * 0.06, z], ZHANG_LEI_WOOD)
-  surface.sphere([radius * 1.25, height * 0.14, radius * 1.25], [x, y + height * 0.28, z], ZHANG_LEI_WOOD)
-  surface.cylinder({ radius: radius * 0.7, height: height * 0.35 }, [x, y + height * 0.55, z], ZHANG_LEI_WOOD)
-  surface.sphere([radius * 1.1, height * 0.1, radius * 1.1], [x, y + height * 0.78, z], ZHANG_LEI_GOLD)
-  surface.cylinder({ radius: radius * 1.15, height: height * 0.12 }, [x, y + height * 0.94, z], ZHANG_LEI_WOOD)
+  surface.cylinder(
+    { radius: radius * 1.15, height: height * 0.12 },
+    [x, y + height * 0.06, z],
+    ZHANG_LEI_WOOD,
+  )
+  surface.sphere(
+    [radius * 1.25, height * 0.14, radius * 1.25],
+    [x, y + height * 0.28, z],
+    ZHANG_LEI_WOOD,
+  )
+  surface.cylinder(
+    { radius: radius * 0.7, height: height * 0.35 },
+    [x, y + height * 0.55, z],
+    ZHANG_LEI_WOOD,
+  )
+  surface.sphere(
+    [radius * 1.1, height * 0.1, radius * 1.1],
+    [x, y + height * 0.78, z],
+    ZHANG_LEI_GOLD,
+  )
+  surface.cylinder(
+    { radius: radius * 1.15, height: height * 0.12 },
+    [x, y + height * 0.94, z],
+    ZHANG_LEI_WOOD,
+  )
 }

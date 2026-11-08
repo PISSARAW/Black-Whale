@@ -45,6 +45,7 @@ de l'institution judiciaire :
 ## Modélisation 3D et visite virtuelle (`TierView`)
 
 Les éléments 3D sont construits avec le générateur fusionné `BanquetDetailBuilder` :
+
 - `dressOffice1010Architecture` : bibliothèques toute hauteur à travées multiples,
   plaque de porte 1010, boiseries d'appui.
 - `dressVisitationArchitecture` : paroi vitrée, montants de renfort, tiroir de

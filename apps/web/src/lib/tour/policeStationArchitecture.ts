@@ -64,8 +64,15 @@ function dressPoliceColonnade(options: ColonnadeOptions): void {
     const sconceY = floor + 3.4
     into.box([0.04, 0.38, 0.18], { at: [sconceX, sconceY, cy], colour: POLICE_BRASS })
     for (const side of [-0.14, 0.14]) {
-      into.cylinder({ radius: 0.015, height: 0.18 }, { at: [sconceX + inward * 0.1, sconceY + 0.05, cy + side], colour: POLICE_BRASS })
-      into.sphere([0.06, 0.1, 0.06], { at: [sconceX + inward * 0.1, sconceY + 0.16, cy + side], colour: POLICE_LIGHT_DIFFUSER, glow: true })
+      into.cylinder(
+        { radius: 0.015, height: 0.18 },
+        { at: [sconceX + inward * 0.1, sconceY + 0.05, cy + side], colour: POLICE_BRASS },
+      )
+      into.sphere([0.06, 0.1, 0.06], {
+        at: [sconceX + inward * 0.1, sconceY + 0.16, cy + side],
+        colour: POLICE_LIGHT_DIFFUSER,
+        glow: true,
+      })
     }
   }
 
@@ -119,7 +126,10 @@ function dressGalleryOfficeDoors(into: BanquetDetailBuilder, slabY: number): voi
       into.box([0.12, 2.2, 1.1], { at: [sideX, slabY + 1.1, y], colour: POLICE_OAK })
       into.box([0.16, 0.1, 1.3], { at: [sideX, slabY + 2.25, y], colour: POLICE_STONE })
       into.box([0.08, 0.6, 1.1], { at: [sideX, slabY + 2.6, y], colour: POLICE_GLASS })
-      into.box([0.02, 0.08, 0.02], { at: [sideX + (sideX > 0 ? -0.07 : 0.07), slabY + 1.1, y + 0.4], colour: POLICE_BRASS })
+      into.box([0.02, 0.08, 0.02], {
+        at: [sideX + (sideX > 0 ? -0.07 : 0.07), slabY + 1.1, y + 0.4],
+        colour: POLICE_BRASS,
+      })
     }
   }
 }
@@ -182,12 +192,25 @@ function dressPoliceLantern(options: ColonnadeOptions): void {
 
   for (const [px, pz] of pendantPositions) {
     // Steel suspension cable
-    into.cylinder({ radius: 0.015, height: 7.2 }, { at: [px, lanternY + 2.4 - 3.6, pz], colour: POLICE_METAL })
+    into.cylinder(
+      { radius: 0.015, height: 7.2 },
+      { at: [px, lanternY + 2.4 - 3.6, pz], colour: POLICE_METAL },
+    )
     // Industrial metal bell shade
-    into.cylinder({ radius: 0.44, bottom: 0.18, height: 0.36 }, { at: [px, floor + 11.2, pz], colour: POLICE_METAL })
-    into.cylinder({ radius: 0.16, height: 0.08 }, { at: [px, floor + 11.42, pz], colour: POLICE_BRASS })
+    into.cylinder(
+      { radius: 0.44, bottom: 0.18, height: 0.36 },
+      { at: [px, floor + 11.2, pz], colour: POLICE_METAL },
+    )
+    into.cylinder(
+      { radius: 0.16, height: 0.08 },
+      { at: [px, floor + 11.42, pz], colour: POLICE_BRASS },
+    )
     // Glowing diffuser lamp
-    into.sphere([0.34, 0.12, 0.34], { at: [px, floor + 11.08, pz], colour: POLICE_LIGHT_DIFFUSER, glow: true })
+    into.sphere([0.34, 0.12, 0.34], {
+      at: [px, floor + 11.08, pz],
+      colour: POLICE_LIGHT_DIFFUSER,
+      glow: true,
+    })
   }
 }
 
@@ -221,7 +244,10 @@ function dressPoliceMarqueeAndSigns(into: BanquetDetailBuilder, floor: number): 
   into.box([0.08, 0.9, 1.3], { at: [3.8, marqueeY - 0.2, 4.4], colour: POLICE_METAL })
 
   for (const lx of [-2.4, 0, 2.4]) {
-    into.cylinder({ radius: 0.02, height: 0.35 }, { at: [lx, marqueeY + 0.12, 4.2], colour: POLICE_METAL })
+    into.cylinder(
+      { radius: 0.02, height: 0.35 },
+      { at: [lx, marqueeY + 0.12, 4.2], colour: POLICE_METAL },
+    )
     into.box([0.22, 0.28, 0.22], { at: [lx, marqueeY - 0.1, 4.2], colour: POLICE_GOLD })
   }
 

@@ -80,10 +80,7 @@ function securityScreening(context: GateContext): void {
 
   // Turnstile stanchions
   for (const y of [-1.15, 1.15]) {
-    into.cylinder(
-      { radius: 0.08, height: 0.95 },
-      { at: [x, floor + 0.475, y], colour: STEEL },
-    )
+    into.cylinder({ radius: 0.08, height: 0.95 }, { at: [x, floor + 0.475, y], colour: STEEL })
     into.box([0.04, 0.03, 0.4], {
       at: [x, floor + 0.85, y + (y > 0 ? -0.2 : 0.2)],
       colour: BRONZE,

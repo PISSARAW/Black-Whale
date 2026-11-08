@@ -17,11 +17,7 @@ import type { Structure } from './types'
 
 export const ROYAL_ARMY_CONFERENCE_ROOM = 'tier-4-royal-army-conference-room-floor'
 
-function dressStructure(
-  into: BanquetDetailBuilder,
-  structure: Structure,
-  floor: number,
-): void {
+function dressStructure(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   if (structure.kind === 'painting') {
     if (structure.id.endsWith('screen')) {
       dressBriefingScreen(into, structure, floor)

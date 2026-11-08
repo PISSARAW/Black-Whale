@@ -134,14 +134,20 @@ function ceilingTacticalProjector(context: CeilingContext): void {
   const mountTopY = ceiling - 0.01
 
   // Drop-rod suspension column & ceiling flange plate
-  into.cylinder({ radius: 0.14, height: 0.03, sides: 12 }, {
-    at: [atX, mountTopY - 0.015, atZ],
-    colour: ARMY_STEEL,
-  })
-  into.cylinder({ radius: 0.028, height: 0.55, sides: 12 }, {
-    at: [atX, mountTopY - 0.3, atZ],
-    colour: ARMY_CHROME,
-  })
+  into.cylinder(
+    { radius: 0.14, height: 0.03, sides: 12 },
+    {
+      at: [atX, mountTopY - 0.015, atZ],
+      colour: ARMY_STEEL,
+    },
+  )
+  into.cylinder(
+    { radius: 0.028, height: 0.55, sides: 12 },
+    {
+      at: [atX, mountTopY - 0.3, atZ],
+      colour: ARMY_CHROME,
+    },
+  )
 
   // Heavy 4K laser projector chassis
   const bodyY = mountTopY - 0.6
@@ -164,11 +170,14 @@ function ceilingTacticalProjector(context: CeilingContext): void {
   }
 
   // Front optical lens barrel (facing north towards 7.5m screen)
-  into.cylinder({ radius: 0.065, height: 0.06, sides: 16 }, {
-    at: [atX + 0.12, bodyY, atZ - 0.28],
-    colour: ARMY_CHROME,
-    rotation: [Math.PI / 2, 0, 0],
-  })
+  into.cylinder(
+    { radius: 0.065, height: 0.06, sides: 16 },
+    {
+      at: [atX + 0.12, bodyY, atZ - 0.28],
+      colour: ARMY_CHROME,
+      rotation: [Math.PI / 2, 0, 0],
+    },
+  )
   // Glowing blue laser projection lens element
   into.sphere([0.045, 0.045, 0.015], {
     at: [atX + 0.12, bodyY, atZ - 0.31],
@@ -211,10 +220,13 @@ function ceilingSecurityCameras(context: CeilingContext): void {
 
   for (const [x, z] of corners) {
     // Mounting base plate
-    into.cylinder({ radius: 0.12, height: 0.025, sides: 12 }, {
-      at: [x, camY, z],
-      colour: ARMY_LIGHT_STEEL,
-    })
+    into.cylinder(
+      { radius: 0.12, height: 0.025, sides: 12 },
+      {
+        at: [x, camY, z],
+        colour: ARMY_LIGHT_STEEL,
+      },
+    )
     // Smoked acrylic dome half-sphere
     into.sphere([0.08, 0.06, 0.08], {
       at: [x, camY - 0.04, z],
@@ -238,10 +250,13 @@ function ceilingEmergencyExitSigns(context: CeilingContext): void {
   const signZ = 7.3
 
   // Suspension rod
-  into.cylinder({ radius: 0.015, height: 0.32, sides: 8 }, {
-    at: [0, ceiling - 0.16, signZ],
-    colour: ARMY_LIGHT_STEEL,
-  })
+  into.cylinder(
+    { radius: 0.015, height: 0.32, sides: 8 },
+    {
+      at: [0, ceiling - 0.16, signZ],
+      colour: ARMY_LIGHT_STEEL,
+    },
+  )
 
   // Double-sided illuminated green exit sign
   into.box([0.54, 0.24, 0.08], {

@@ -162,7 +162,11 @@
         stroke-width="2"
         filter="url(#momoze-glow)"
       >
-        <title>{french ? `Relais actif : âme de ${cable.prince?.nameFr}` : `Active relay: ${cable.prince?.name}’s life force`}</title>
+        <title
+          >{french
+            ? `Relais actif : âme de ${cable.prince?.nameFr}`
+            : `Active relay: ${cable.prince?.name}’s life force`}</title
+        >
       </circle>
       <circle cx={cable.node.x} cy={cable.node.y} r="3" fill="#ffffff" />
     {:else}
@@ -174,7 +178,11 @@
         stroke="#6b5e4a"
         stroke-width="1.2"
       >
-        <title>{french ? `Relais n°${cable.coffinNumber} (en attente : ${cable.prince?.nameFr})` : `Relay #${cable.coffinNumber} (awaiting: ${cable.prince?.name})`}</title>
+        <title
+          >{french
+            ? `Relais n°${cable.coffinNumber} (en attente : ${cable.prince?.nameFr})`
+            : `Relay #${cable.coffinNumber} (awaiting: ${cable.prince?.name})`}</title
+        >
       </circle>
     {/if}
   {/each}
@@ -189,7 +197,12 @@
       {@const ly2 = 400 + Math.sin(longAngle) * 85}
       {@const lx3 = 400 + Math.cos(longAngle + 0.07) * 40}
       {@const ly3 = 400 + Math.sin(longAngle + 0.07) * 40}
-      <polygon points="{lx1},{ly1} {lx2},{ly2} {lx3},{ly3}" fill="#26211a" stroke="#d4af37" stroke-width="1" />
+      <polygon
+        points="{lx1},{ly1} {lx2},{ly2} {lx3},{ly3}"
+        fill="#26211a"
+        stroke="#d4af37"
+        stroke-width="1"
+      />
 
       {@const shortAngle = longAngle + Math.PI / 14}
       {@const sx1 = 400 + Math.cos(shortAngle - 0.06) * 40}
@@ -198,20 +211,18 @@
       {@const sy2 = 400 + Math.sin(shortAngle) * 62}
       {@const sx3 = 400 + Math.cos(shortAngle + 0.06) * 40}
       {@const sy3 = 400 + Math.sin(shortAngle + 0.06) * 40}
-      <polygon points="{sx1},{sy1} {sx2},{sy2} {sx3},{sy3}" fill="#1a1816" stroke="#8c7d67" stroke-width="0.8" />
+      <polygon
+        points="{sx1},{sy1} {sx2},{sy2} {sx3},{sy3}"
+        fill="#1a1816"
+        stroke="#8c7d67"
+        stroke-width="0.8"
+      />
     {/each}
   </g>
 
   <!-- Central Reliquary Apparatus & 14 Cable Ports -->
   {#if burialReliquary}
-    <circle
-      cx="400"
-      cy="400"
-      r="44"
-      fill="#1c1917"
-      stroke="#d4af37"
-      stroke-width="2.5"
-    >
+    <circle cx="400" cy="400" r="44" fill="#1c1917" stroke="#d4af37" stroke-width="2.5">
       <title>{french ? burialReliquary.nameFr : burialReliquary.name}</title>
     </circle>
     <circle cx="400" cy="400" r="30" fill="#292524" stroke="#a88b4d" stroke-width="1.5" />
@@ -246,12 +257,12 @@
     >
       <title>
         {coffin.closed
-          ? (french
-              ? `Cercueil n°${coffin.coffinNumber} (scellé) · ${coffin.prince?.nameFr} · chap. ${coffin.prince?.chapter}`
-              : `Casket #${coffin.coffinNumber} (sealed) · ${coffin.prince?.name} · ch. ${coffin.prince?.chapter}`)
-          : (french
-              ? `Cercueil n°${coffin.coffinNumber} (ouvert · en attente) · ${coffin.prince?.nameFr}`
-              : `Casket #${coffin.coffinNumber} (open · awaiting) · ${coffin.prince?.name}`)}
+          ? french
+            ? `Cercueil n°${coffin.coffinNumber} (scellé) · ${coffin.prince?.nameFr} · chap. ${coffin.prince?.chapter}`
+            : `Casket #${coffin.coffinNumber} (sealed) · ${coffin.prince?.name} · ch. ${coffin.prince?.chapter}`
+          : french
+            ? `Cercueil n°${coffin.coffinNumber} (ouvert · en attente) · ${coffin.prince?.nameFr}`
+            : `Casket #${coffin.coffinNumber} (open · awaiting) · ${coffin.prince?.name}`}
       </title>
     </polygon>
 

@@ -1,11 +1,7 @@
 import type * as Three from 'three'
 import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
-import {
-  corridorWallRuns,
-  tierOfSpace,
-  type WallSurface,
-} from './corridorWallLayout'
+import { corridorWallRuns, tierOfSpace, type WallSurface } from './corridorWallLayout'
 import { dressTier1CorridorWall } from './corridorWallTier1'
 import { dressTier2CorridorWall } from './corridorWallTier2'
 import { dressTier3CorridorWall } from './corridorWallTier3'
@@ -71,9 +67,7 @@ function dressCorridorWallByTier(
 }
 
 /** Builds faithful 3D manga corridor wall architecture for the specified space according to its tier. */
-export function buildCorridorWallDetails(
-  options: CorridorDetailOptions,
-): Three.Group | null {
+export function buildCorridorWallDetails(options: CorridorDetailOptions): Three.Group | null {
   const { THREE, plan, spaceId } = options
   const space = plan.spaces.find((s) => s.id === spaceId)
   if (!space || !isCorridorSpace(space.id, space.category)) return null

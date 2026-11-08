@@ -1,10 +1,5 @@
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
-import {
-  CINE_CARPET,
-  CINE_CARPET_GOLD,
-  CINE_MARBLE,
-  CINE_BRASS,
-} from './cineplexDetailSurface'
+import { CINE_CARPET, CINE_CARPET_GOLD, CINE_MARBLE, CINE_BRASS } from './cineplexDetailSurface'
 
 export interface FloorBounds {
   xMin: number

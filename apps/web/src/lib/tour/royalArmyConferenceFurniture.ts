@@ -41,15 +41,30 @@ function lecternUpperHardware(surface: RoyalArmyConferenceSurface, h: number): v
   })
 
   // Flexible gooseneck LED reading task light
-  surface.cylinder({ radius: 0.006, height: 0.28, sides: 8 }, [0.36, h + 0.15, -0.15], ARMY_MIC_STEM)
+  surface.cylinder(
+    { radius: 0.006, height: 0.28, sides: 8 },
+    [0.36, h + 0.15, -0.15],
+    ARMY_MIC_STEM,
+  )
   surface.box([0.14, 0.025, 0.05], [0.36, h + 0.28, -0.08], ARMY_STEEL)
   surface.box([0.12, 0.015, 0.04], [0.36, h + 0.27, -0.08], { colour: ARMY_GLOW_LIGHT, glow: true })
 
   // Dual shock-mounted gooseneck conference microphones
   for (const offset of [-0.08, 0.08]) {
-    surface.cylinder({ radius: 0.007, height: 0.26, sides: 8 }, [offset, h + 0.15, 0.1], ARMY_MIC_STEM)
-    surface.cylinder({ radius: 0.014, height: 0.05, sides: 10 }, [offset, h + 0.28, 0.08], ARMY_STEEL)
-    surface.sphere([0.015, 0.006, 0.015], [offset, h + 0.27, 0.08], { colour: ARMY_MIC_LED, glow: true })
+    surface.cylinder(
+      { radius: 0.007, height: 0.26, sides: 8 },
+      [offset, h + 0.15, 0.1],
+      ARMY_MIC_STEM,
+    )
+    surface.cylinder(
+      { radius: 0.014, height: 0.05, sides: 10 },
+      [offset, h + 0.28, 0.08],
+      ARMY_STEEL,
+    )
+    surface.sphere([0.015, 0.006, 0.015], [offset, h + 0.27, 0.08], {
+      colour: ARMY_MIC_LED,
+      glow: true,
+    })
   }
 
   // Briefing folder and speaker order notes
@@ -87,11 +102,10 @@ export function dressLectern(
 
   // Front emblem panel & Kakin army gold medallion
   surface.box([w * 0.65, h * 0.52, 0.02], [0, 0.46, d * 0.38], ARMY_STEEL)
-  surface.cylinder(
-    { radius: 0.12, height: 0.015, sides: 16 },
-    [0, 0.52, d * 0.39],
-    { colour: ARMY_GOLD_CREST, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.12, height: 0.015, sides: 16 }, [0, 0.52, d * 0.39], {
+    colour: ARMY_GOLD_CREST,
+    rotation: [Math.PI / 2, 0, 0],
+  })
 
   lecternUpperHardware(surface, h)
 }
@@ -186,11 +200,10 @@ function dressDelegateStation(surface: RoyalArmyConferenceSurface, at: Point3): 
   // White notepad
   surface.box([0.32, 0.006, 0.24], [x - 0.04, y + 0.01, z], ARMY_PAPER)
   // Metal pen
-  surface.cylinder(
-    { radius: 0.004, height: 0.14, sides: 6 },
-    [x + 0.16, y + 0.01, z],
-    { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.004, height: 0.14, sides: 6 }, [x + 0.16, y + 0.01, z], {
+    colour: ARMY_CHROME,
+    rotation: [Math.PI / 2, 0, 0],
+  })
   // Confidential military dossier with top-secret red stripe
   drawDossierWithStripe(surface, [x - 0.32, y + 0.005, z + 0.02])
   // Official brass triangular desk nameplate
@@ -198,8 +211,16 @@ function dressDelegateStation(surface: RoyalArmyConferenceSurface, at: Point3): 
   // Gooseneck push-to-talk conference microphone
   drawDeskMicrophone(surface, [x + 0.28, y, z + 0.16])
   // Crystal water tumbler and polished coaster
-  surface.cylinder({ radius: 0.042, height: 0.004, sides: 12 }, [x - 0.28, y + 0.002, z + 0.18], ARMY_CHROME)
-  surface.cylinder({ radius: 0.035, height: 0.1, sides: 12 }, [x - 0.28, y + 0.05, z + 0.18], ARMY_GLASS)
+  surface.cylinder(
+    { radius: 0.042, height: 0.004, sides: 12 },
+    [x - 0.28, y + 0.002, z + 0.18],
+    ARMY_CHROME,
+  )
+  surface.cylinder(
+    { radius: 0.035, height: 0.1, sides: 12 },
+    [x - 0.28, y + 0.05, z + 0.18],
+    ARMY_GLASS,
+  )
 }
 
 function dressHeadTableAttendees(surface: RoyalArmyConferenceSurface): void {

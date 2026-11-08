@@ -25,7 +25,7 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
   en acier riveté ; disposition de tables basses et bancs selon deux orientations.
 - **Chapitre 378 (« Équilibre »)** : Vue en plongée isométrique du comptoir de service Ouest
   et gros plan canonique sur le plateau-repas de 5e classe :
-  - Plateau garni d'une **boîte burger en carton ouverte à clapet (*clamshell box*)**
+  - Plateau garni d'une **boîte burger en carton ouverte à clapet (_clamshell box_)**
     contenant un hamburger complet, un gobelet à paille et une coupelle de sauce/salade.
     Ce repas industriel de cafétéria s'oppose thématiquement au tournedos et verre à pied
     de Morena Prudo en 2e classe.

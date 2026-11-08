@@ -71,8 +71,14 @@ function hospitalBed(into: BanquetDetailBuilder, structure: Structure, floor: nu
   // IV drip stand beside the bed
   const ivX = x - w / 2 + 0.15
   const ivZ = z + d / 2 + 0.25
-  into.cylinder({ radius: 0.016, height: 1.85, sides: 10 }, { at: [ivX, floor + 0.925, ivZ], colour: CHROME })
-  into.cylinder({ radius: 0.22, height: 0.04, sides: 12 }, { at: [ivX, floor + 0.05, ivZ], colour: CHROME })
+  into.cylinder(
+    { radius: 0.016, height: 1.85, sides: 10 },
+    { at: [ivX, floor + 0.925, ivZ], colour: CHROME },
+  )
+  into.cylinder(
+    { radius: 0.22, height: 0.04, sides: 12 },
+    { at: [ivX, floor + 0.05, ivZ], colour: CHROME },
+  )
   // Dual top hooks
   into.box([0.22, 0.02, 0.04], { at: [ivX, floor + 1.84, ivZ], colour: CHROME })
   // Saline infusion bag
@@ -91,13 +97,20 @@ function hospitalBed(into: BanquetDetailBuilder, structure: Structure, floor: nu
   // Bedside vital signs ECG monitor on articulated arm
   const monX = x - w / 2 + 0.05
   const monZ = z - d / 2 - 0.22
-  into.cylinder({ radius: 0.02, height: 1.35, sides: 10 }, { at: [monX, floor + 0.675, monZ], colour: CHROME })
+  into.cylinder(
+    { radius: 0.02, height: 1.35, sides: 10 },
+    { at: [monX, floor + 0.675, monZ], colour: CHROME },
+  )
   // Monitor casing
   into.box([0.38, 0.28, 0.14], { at: [monX, floor + 1.45, monZ], colour: MONITOR_FRAME })
   // ECG display screen
   into.box([0.34, 0.24, 0.02], { at: [monX, floor + 1.45, monZ + 0.08], colour: 0x14181a })
   // Green ECG waveform bar
-  into.box([0.3, 0.02, 0.03], { at: [monX, floor + 1.45, monZ + 0.085], colour: MONITOR_ECG_GREEN, glow: true })
+  into.box([0.3, 0.02, 0.03], {
+    at: [monX, floor + 1.45, monZ + 0.085],
+    colour: MONITOR_ECG_GREEN,
+    glow: true,
+  })
 }
 
 function curtainTracks(into: BanquetDetailBuilder, floor: number): void {
@@ -145,8 +158,15 @@ function nursesStation(into: BanquetDetailBuilder, structure: Structure, floor: 
   for (const dx of [-0.9, 0.9]) {
     // Computer screen
     into.box([0.45, 0.32, 0.05], { at: [x + dx, floor + 0.98, z - 0.1], colour: MONITOR_FRAME })
-    into.box([0.41, 0.28, 0.02], { at: [x + dx, floor + 0.98, z - 0.07], colour: 0x223538, glow: true })
-    into.cylinder({ radius: 0.02, height: 0.16, sides: 10 }, { at: [x + dx, floor + 0.83, z - 0.1], colour: STEEL_DARK })
+    into.box([0.41, 0.28, 0.02], {
+      at: [x + dx, floor + 0.98, z - 0.07],
+      colour: 0x223538,
+      glow: true,
+    })
+    into.cylinder(
+      { radius: 0.02, height: 0.16, sides: 10 },
+      { at: [x + dx, floor + 0.83, z - 0.1], colour: STEEL_DARK },
+    )
     into.box([0.16, 0.02, 0.14], { at: [x + dx, floor + 0.76, z - 0.1], colour: STEEL_DARK })
   }
   // Medical chart binder rack
@@ -186,7 +206,10 @@ function emergencyCrashCart(into: BanquetDetailBuilder, at: Point3): void {
   // Four caster wheels
   for (const dx of [-0.3, 0.3]) {
     for (const dz of [-0.22, 0.22]) {
-      into.cylinder({ radius: 0.04, height: 0.08, sides: 10 }, { at: [x + dx, floorY + 0.04, z + dz], colour: STEEL_DARK })
+      into.cylinder(
+        { radius: 0.04, height: 0.08, sides: 10 },
+        { at: [x + dx, floorY + 0.04, z + dz], colour: STEEL_DARK },
+      )
     }
   }
 }

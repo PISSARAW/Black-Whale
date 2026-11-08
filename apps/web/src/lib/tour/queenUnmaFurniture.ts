@@ -46,7 +46,11 @@ function armchairBackrest(
   // Winged side ears (fauteuil à oreilles royal)
   for (const side of [-1, 1]) {
     surface.box([0.08, backH * 0.65, 0.22], [side * w * 0.41, backY + 0.05, backZ + 0.1], UNMA_WOOD)
-    surface.sphere([0.05, backH * 0.3, 0.1], [side * w * 0.39, backY + 0.05, backZ + 0.12], UNMA_VELVET)
+    surface.sphere(
+      [0.05, backH * 0.3, 0.1],
+      [side * w * 0.39, backY + 0.05, backZ + 0.12],
+      UNMA_VELVET,
+    )
   }
 
   // Sculpted top crest: shell rocaille & finial
@@ -99,7 +103,11 @@ function sideTable(surface: QueenUnmaSurface): void {
   surface.cylinder({ radius: r * 0.82, height: 0.01, sides: 20 }, [0, topY + 0.025, 0], 0x5a3e2c)
 
   // Turned central baluster & tripod base
-  surface.cylinder({ radius: 0.055, height: topY - 0.15 }, [0, (topY - 0.1) / 2 + 0.05, 0], UNMA_WOOD)
+  surface.cylinder(
+    { radius: 0.055, height: topY - 0.15 },
+    [0, (topY - 0.1) / 2 + 0.05, 0],
+    UNMA_WOOD,
+  )
   surface.sphere([0.08, 0.08, 0.08], [0, topY * 0.35, 0], UNMA_GOLD)
   surface.cylinder({ radius: r * 0.65, height: 0.06, sides: 16 }, [0, 0.04, 0], UNMA_WOOD)
 
@@ -149,7 +157,11 @@ function coffeeTable(surface: QueenUnmaSurface): void {
     for (const sz of [-1, 1]) {
       const legX = sx * (w / 2 - 0.09)
       const legZ = sz * (d / 2 - 0.09)
-      surface.cylinder({ radius: 0.04, height: topY - 0.04 }, [legX, topY / 2 - 0.02, legZ], UNMA_WOOD)
+      surface.cylinder(
+        { radius: 0.04, height: topY - 0.04 },
+        [legX, topY / 2 - 0.02, legZ],
+        UNMA_WOOD,
+      )
       surface.sphere([0.048, 0.048, 0.048], [legX, 0.06, legZ], UNMA_GOLD)
       surface.sphere([0.05, 0.05, 0.05], [legX, topY - 0.08, legZ], UNMA_GOLD)
     }
@@ -241,7 +253,11 @@ function nurseryCotSlats(
     surface.box([0.03, 0.03, d * 0.82], [x, 0.25, 0], UNMA_LIGHT_WOOD)
     for (let i = 0; i < slatCount; i++) {
       const z = -d * 0.36 + (i * d * 0.72) / (slatCount - 1)
-      surface.cylinder({ radius: 0.012, height: postH * 0.44 }, [x, postH * 0.47, z], UNMA_LIGHT_WOOD)
+      surface.cylinder(
+        { radius: 0.012, height: postH * 0.44 },
+        [x, postH * 0.47, z],
+        UNMA_LIGHT_WOOD,
+      )
     }
   }
 }
@@ -271,11 +287,18 @@ function cotMobile(surface: QueenUnmaSurface): void {
     const [px, py, pz] = pos
     surface.cylinder({ radius: 0.004, height: h * 0.2 }, [px, py + h * 0.1, pz], UNMA_GOLD)
     if (kind === 'star') {
-      surface.into.sphere([0.045, 0.045, 0.015], { at: surface.point(pos), colour: col, glow: isGlowing })
+      surface.into.sphere([0.045, 0.045, 0.015], {
+        at: surface.point(pos),
+        colour: col,
+        glow: isGlowing,
+      })
       surface.box([0.07, 0.015, 0.015], pos, col)
       surface.box([0.015, 0.07, 0.015], pos, col)
     } else if (kind === 'moon') {
-      surface.into.ring({ radius: 0.04, tube: 0.01 }, { at: surface.point(pos), colour: col, glow: isGlowing })
+      surface.into.ring(
+        { radius: 0.04, tube: 0.01 },
+        { at: surface.point(pos), colour: col, glow: isGlowing },
+      )
     } else {
       surface.sphere([0.04, 0.04, 0.04], pos, col)
     }

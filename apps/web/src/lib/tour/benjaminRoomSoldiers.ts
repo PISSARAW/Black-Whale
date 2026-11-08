@@ -17,7 +17,11 @@ interface SoldierPlacement {
 function soldierLegs(into: BanquetDetailBuilder, at: Point3, rotationY: number): void {
   const [x, y, z] = at
   // Boots (heels joined at attention)
-  into.box([0.18, 0.12, 0.24], { at: [x, y + 0.06, z], rotation: [0, rotationY, 0], colour: BENJAMIN_LEATHER_DARK })
+  into.box([0.18, 0.12, 0.24], {
+    at: [x, y + 0.06, z],
+    rotation: [0, rotationY, 0],
+    colour: BENJAMIN_LEATHER_DARK,
+  })
   // Legs in formal trousers
   for (const sx of [-0.05, 0.05]) {
     into.box([0.09, 0.76, 0.11], {
@@ -31,12 +35,28 @@ function soldierLegs(into: BanquetDetailBuilder, at: Point3, rotationY: number):
 function soldierTorso(into: BanquetDetailBuilder, at: Point3, rotationY: number): void {
   const [x, y, z] = at
   // Tunic lower skirt
-  into.box([0.32, 0.22, 0.18], { at: [x, y + 0.95, z], rotation: [0, rotationY, 0], colour: BENJAMIN_UNIFORM_GREEN })
+  into.box([0.32, 0.22, 0.18], {
+    at: [x, y + 0.95, z],
+    rotation: [0, rotationY, 0],
+    colour: BENJAMIN_UNIFORM_GREEN,
+  })
   // Belt with bronze buckle
-  into.box([0.33, 0.06, 0.19], { at: [x, y + 1.08, z], rotation: [0, rotationY, 0], colour: BENJAMIN_LEATHER_DARK })
-  into.box([0.08, 0.07, 0.2], { at: [x, y + 1.08, z], rotation: [0, rotationY, 0], colour: BENJAMIN_BRONZE })
+  into.box([0.33, 0.06, 0.19], {
+    at: [x, y + 1.08, z],
+    rotation: [0, rotationY, 0],
+    colour: BENJAMIN_LEATHER_DARK,
+  })
+  into.box([0.08, 0.07, 0.2], {
+    at: [x, y + 1.08, z],
+    rotation: [0, rotationY, 0],
+    colour: BENJAMIN_BRONZE,
+  })
   // Main chest & back (straight posture)
-  into.box([0.36, 0.42, 0.2], { at: [x, y + 1.3, z], rotation: [0, rotationY, 0], colour: BENJAMIN_UNIFORM_GREEN })
+  into.box([0.36, 0.42, 0.2], {
+    at: [x, y + 1.3, z],
+    rotation: [0, rotationY, 0],
+    colour: BENJAMIN_UNIFORM_GREEN,
+  })
 
   // Double-breasted buttons
   for (let b = 0; b < 3; b++) {
@@ -65,9 +85,17 @@ function soldierArmsAndHead(into: BanquetDetailBuilder, at: Point3, rotationY: n
   for (const side of [-1, 1]) {
     const ax = x + side * 0.21 * Math.cos(rotationY)
     const az = z - side * 0.21 * Math.sin(rotationY)
-    into.box([0.07, 0.58, 0.09], { at: [ax, y + 1.22, az], rotation: [0, rotationY, 0], colour: BENJAMIN_UNIFORM_GREEN })
+    into.box([0.07, 0.58, 0.09], {
+      at: [ax, y + 1.22, az],
+      rotation: [0, rotationY, 0],
+      colour: BENJAMIN_UNIFORM_GREEN,
+    })
     // Hands/gloves
-    into.box([0.06, 0.1, 0.08], { at: [ax, y + 0.88, az], rotation: [0, rotationY, 0], colour: BENJAMIN_SKIN })
+    into.box([0.06, 0.1, 0.08], {
+      at: [ax, y + 0.88, az],
+      rotation: [0, rotationY, 0],
+      colour: BENJAMIN_SKIN,
+    })
   }
 
   // Neck and head
@@ -75,7 +103,10 @@ function soldierArmsAndHead(into: BanquetDetailBuilder, at: Point3, rotationY: n
   into.sphere([0.09, 0.11, 0.1], { at: [x, y + 1.66, z], colour: BENJAMIN_SKIN })
 
   // Officer service cap (peaked visor cap)
-  into.cylinder({ radius: 0.11, bottom: 0.095, height: 0.09 }, { at: [x, y + 1.76, z], colour: BENJAMIN_UNIFORM_GREEN })
+  into.cylinder(
+    { radius: 0.11, bottom: 0.095, height: 0.09 },
+    { at: [x, y + 1.76, z], colour: BENJAMIN_UNIFORM_GREEN },
+  )
   into.box([0.16, 0.02, 0.08], {
     at: [x - 0.06 * Math.sin(rotationY), y + 1.73, z - 0.06 * Math.cos(rotationY)],
     rotation: [0.15, rotationY, 0],

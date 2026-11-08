@@ -58,7 +58,11 @@ function tableAccessories(surface: ZhangLeiSurface, topY: number): void {
     surface.sphere([0.045, 0.06, 0.045], [decX, topY + 0.07, 0], 0x6e1b24)
 
     // Wine glasses on gold stems
-    surface.cylinder({ radius: 0.006, height: 0.06 }, [decX + sx * 0.25, topY + 0.04, 0.12], ZHANG_LEI_GOLD)
+    surface.cylinder(
+      { radius: 0.006, height: 0.06 },
+      [decX + sx * 0.25, topY + 0.04, 0.12],
+      ZHANG_LEI_GOLD,
+    )
     surface.sphere([0.025, 0.04, 0.025], [decX + sx * 0.25, topY + 0.08, 0.12], 0xcfe0e8)
   }
 }
@@ -156,9 +160,17 @@ function statueAndStand(surface: ZhangLeiSurface): void {
   // Octagonal wooden pedestal with tiered base and capital moldings
   surface.cylinder({ radius: r, height: 0.1, sides: 8 }, [0, 0.05, 0], ZHANG_LEI_WOOD)
   surface.cylinder({ radius: r * 0.9, height: 0.04, sides: 8 }, [0, 0.12, 0], ZHANG_LEI_GOLD)
-  surface.cylinder({ radius: r * 0.75, height: standH - 0.24, sides: 8 }, [0, standH / 2, 0], ZHANG_LEI_WOOD)
+  surface.cylinder(
+    { radius: r * 0.75, height: standH - 0.24, sides: 8 },
+    [0, standH / 2, 0],
+    ZHANG_LEI_WOOD,
+  )
   surface.ring(r * 0.76, [0, standH * 0.5, 0], ZHANG_LEI_GOLD)
-  surface.cylinder({ radius: r * 0.9, height: 0.05, sides: 8 }, [0, standH - 0.06, 0], ZHANG_LEI_GOLD)
+  surface.cylinder(
+    { radius: r * 0.9, height: 0.05, sides: 8 },
+    [0, standH - 0.06, 0],
+    ZHANG_LEI_GOLD,
+  )
   surface.cylinder({ radius: r, height: 0.08, sides: 8 }, [0, standH, 0], ZHANG_LEI_WOOD)
 
   // Classical sculpted bust on plinth
@@ -221,10 +233,11 @@ function candelabrumBranches(surface: ZhangLeiSurface, hubY: number): void {
     )
     surface.cylinder({ radius: 0.04, height: 0.025 }, [armX, hubY + 0.11, armZ], ZHANG_LEI_GOLD)
     surface.cylinder({ radius: 0.018, height: 0.15 }, [armX, hubY + 0.19, armZ], ZHANG_LEI_CANDLE)
-    surface.into.sphere(
-      [0.025, 0.045, 0.025],
-      { at: surface.point([armX, hubY + 0.29, armZ]), colour: ZHANG_LEI_FLAME, glow: true },
-    )
+    surface.into.sphere([0.025, 0.045, 0.025], {
+      at: surface.point([armX, hubY + 0.29, armZ]),
+      colour: ZHANG_LEI_FLAME,
+      glow: true,
+    })
   }
 }
 
@@ -248,10 +261,11 @@ function branchedCandelabrum(surface: ZhangLeiSurface): void {
 
   // Raised central candle taper
   surface.cylinder({ radius: 0.022, height: 0.18 }, [0, hubY + 0.12, 0], ZHANG_LEI_CANDLE)
-  surface.into.sphere(
-    [0.028, 0.05, 0.028],
-    { at: surface.point([0, hubY + 0.24, 0]), colour: ZHANG_LEI_FLAME, glow: true },
-  )
+  surface.into.sphere([0.028, 0.05, 0.028], {
+    at: surface.point([0, hubY + 0.24, 0]),
+    colour: ZHANG_LEI_FLAME,
+    glow: true,
+  })
 }
 
 export function dressZhangLeiFurniture(surface: ZhangLeiSurface): void {

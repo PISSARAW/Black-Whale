@@ -37,9 +37,9 @@ function hasInfiniteCoords(root: THREE.Group): boolean {
 
 describe('Royal Army Conference Room reconstructed from Chapters 350 and 380', () => {
   it('satisfies the shared blueprint invariants for interior-royal-army-conference', () => {
-    expect(
-      validateBlueprint().filter((issue) => issue.includes('royal-army-conference')),
-    ).toEqual([])
+    expect(validateBlueprint().filter((issue) => issue.includes('royal-army-conference'))).toEqual(
+      [],
+    )
   })
 
   it('contains the 21 canonical structures defined in blueprint.json', () => {

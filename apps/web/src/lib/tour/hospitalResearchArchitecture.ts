@@ -45,7 +45,10 @@ function compoundMicroscope(into: BanquetDetailBuilder, at: Point3): void {
   // Specimen mechanical stage
   into.box([0.14, 0.02, 0.14], { at: [x, floorY + 0.16, z + 0.02], colour: 0x181c20 })
   // Rotating objective nosepiece turret
-  into.cylinder({ radius: 0.035, height: 0.06, sides: 12 }, { at: [x, floorY + 0.22, z + 0.02], colour: CHROME })
+  into.cylinder(
+    { radius: 0.035, height: 0.06, sides: 12 },
+    { at: [x, floorY + 0.22, z + 0.02], colour: CHROME },
+  )
   // Binocular inclined eyepieces
   into.cylinder(
     { radius: 0.015, height: 0.1, sides: 10 },

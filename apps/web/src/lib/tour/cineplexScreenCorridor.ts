@@ -111,7 +111,11 @@ export function dressConcoursePillar(surface: CineplexSurface): void {
 
   // Poster lightboxes on south (facing entrance) and north faces
   const posterSize: [number, number] = [w * 0.75, 1.8]
-  const southAt: Point3 = [surface.structure.at[0], surface.floor + 2.2, surface.structure.at[1] - d / 2 - 0.05]
+  const southAt: Point3 = [
+    surface.structure.at[0],
+    surface.floor + 2.2,
+    surface.structure.at[1] - d / 2 - 0.05,
+  ]
   dressMoviePosterLightbox({
     into: surface.into,
     at: southAt,
@@ -119,7 +123,11 @@ export function dressConcoursePillar(surface: CineplexSurface): void {
     artColour: CINE_POSTER_ART,
   })
 
-  const northAt: Point3 = [surface.structure.at[0], surface.floor + 2.2, surface.structure.at[1] + d / 2 + 0.05]
+  const northAt: Point3 = [
+    surface.structure.at[0],
+    surface.floor + 2.2,
+    surface.structure.at[1] + d / 2 + 0.05,
+  ]
   dressMoviePosterLightbox({
     into: surface.into,
     at: northAt,

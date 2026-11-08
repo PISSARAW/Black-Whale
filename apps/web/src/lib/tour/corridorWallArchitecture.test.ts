@@ -14,10 +14,7 @@ import { dressTier2CorridorWall } from './corridorWallTier2'
 import { dressTier3CorridorWall } from './corridorWallTier3'
 import { dressTier4CorridorWall } from './corridorWallTier4'
 import { dressTier5CorridorWall } from './corridorWallTier5'
-import {
-  buildCorridorWallDetails,
-  isCorridorSpace,
-} from './corridorWallView'
+import { buildCorridorWallDetails, isCorridorSpace } from './corridorWallView'
 
 const ship = theShip()
 

@@ -105,18 +105,9 @@ function counterSeat(into: BanquetDetailBuilder, structure: Structure, floor: nu
   const chairX = x + 0.65
 
   // Guard officer chair behind the desk
-  into.cylinder(
-    { radius: 0.22, height: 0.06 },
-    { at: [chairX, floor + 0.52, z], colour: MAHOGANY },
-  )
-  into.cylinder(
-    { radius: 0.03, height: 0.48 },
-    { at: [chairX, floor + 0.24, z], colour: STEEL },
-  )
-  into.cylinder(
-    { radius: 0.26, height: 0.03 },
-    { at: [chairX, floor + 0.015, z], colour: STEEL },
-  )
+  into.cylinder({ radius: 0.22, height: 0.06 }, { at: [chairX, floor + 0.52, z], colour: MAHOGANY })
+  into.cylinder({ radius: 0.03, height: 0.48 }, { at: [chairX, floor + 0.24, z], colour: STEEL })
+  into.cylinder({ radius: 0.26, height: 0.03 }, { at: [chairX, floor + 0.015, z], colour: STEEL })
   into.box([0.05, 0.42, 0.38], {
     at: [chairX + 0.18, floor + 0.76, z],
     colour: MAHOGANY,

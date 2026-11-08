@@ -35,9 +35,21 @@ function drawStraightRail(options: RailOptions): void {
 
   // Bottom plinth and handrail
   const rot: [number, number, number] = [0, angle, 0]
-  into.box([0.14, 0.08, length], { at: [mx, y1 + 0.04, mz], rotation: rot, colour: PALETTE.darkWood })
-  into.box([0.16, 0.08, length], { at: [mx, y1 + height, mz], rotation: rot, colour: PALETTE.mahogany })
-  into.box([0.06, 0.02, length], { at: [mx, y1 + height + 0.04, mz], rotation: rot, colour: PALETTE.gold })
+  into.box([0.14, 0.08, length], {
+    at: [mx, y1 + 0.04, mz],
+    rotation: rot,
+    colour: PALETTE.darkWood,
+  })
+  into.box([0.16, 0.08, length], {
+    at: [mx, y1 + height, mz],
+    rotation: rot,
+    colour: PALETTE.mahogany,
+  })
+  into.box([0.06, 0.02, length], {
+    at: [mx, y1 + height + 0.04, mz],
+    rotation: rot,
+    colour: PALETTE.gold,
+  })
 
   const balusterCount = options.stepCount ?? Math.max(2, Math.floor(length / 0.38))
   for (let i = 0; i <= balusterCount; i++) {
@@ -163,7 +175,10 @@ function dressCofferedCeiling(
   // Coffer ceiling rosettes
   for (const rx of [32.0, 38.0, 44.0, 50.0]) {
     for (const rz of [-27.75, -33.25, -38.75, -44.25]) {
-      into.cylinder({ radius: 0.45, height: 0.04, sides: 12 }, { at: [rx, topY - 0.02, rz], colour: PALETTE.gold })
+      into.cylinder(
+        { radius: 0.45, height: 0.04, sides: 12 },
+        { at: [rx, topY - 0.02, rz], colour: PALETTE.gold },
+      )
       into.box([4.8, 0.06, 4.4], { at: [rx, topY - 0.05, rz], colour: PALETTE.alabaster })
     }
   }

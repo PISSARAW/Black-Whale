@@ -1,9 +1,5 @@
 import { mangaView as view, type MangaCastStaging, type MangaView } from './mangaViewModel'
-import {
-  JUSTICE_DEPUTY_OFFICE,
-  JUSTICE_LOBBY,
-  JUSTICE_VISITATION,
-} from './justiceBureauView'
+import { JUSTICE_DEPUTY_OFFICE, JUSTICE_LOBBY, JUSTICE_VISITATION } from './justiceBureauView'
 
 const interrogationStaging: MangaCastStaging[] = [
   { characterId: 'melody', at: [-2.1, -5.8], heading: 0, pose: 'seated' },

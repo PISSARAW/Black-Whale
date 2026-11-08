@@ -16,7 +16,13 @@ const room = ship.spaces.get(BENJAMIN_ROOM_SPACE)!
 const structures = plan.structures.filter(({ spaceId }) => spaceId === BENJAMIN_ROOM_SPACE)
 const fixture = (suffix: string) => structures.find(({ id }) => id.endsWith(suffix))!
 const build = (overrides = {}) =>
-  buildBenjaminRoomDetails({ THREE, plan, spaceId: BENJAMIN_ROOM_SPACE, reveal: false, ...overrides })!
+  buildBenjaminRoomDetails({
+    THREE,
+    plan,
+    spaceId: BENJAMIN_ROOM_SPACE,
+    reveal: false,
+    ...overrides,
+  })!
 const triangles = (root: THREE.Group) =>
   (root.children as THREE.Mesh[]).reduce(
     (sum, mesh) => sum + mesh.geometry.getAttribute('position').count / 3,
@@ -98,7 +104,9 @@ describe('the room of Prince Benjamin reconstructed from chapters 362, 363 and 3
       }
       const benjamin = view.staging!.find(({ characterId }) => characterId === 'prince-benjamin')!
       expect(pointInPolygon(benjamin.at, room.footprint)).toBe(true)
-      const balsamilco = view.staging!.find(({ characterId }) => characterId === 'balsamilco-might')!
+      const balsamilco = view.staging!.find(
+        ({ characterId }) => characterId === 'balsamilco-might',
+      )!
       expect(pointInPolygon(balsamilco.at, room.footprint)).toBe(true)
     }
   })

@@ -32,7 +32,10 @@ function dressCCTVVideoWall(into: BanquetDetailBuilder, floor: number): void {
   for (const cx of cols) {
     for (const cy of rows) {
       // Monitor bezel frame
-      into.box([1.12, 0.98, 0.08], { at: [wallX + cx, cy, wallZ + 0.08], colour: POLICE_SCREEN_FRAME })
+      into.box([1.12, 0.98, 0.08], {
+        at: [wallX + cx, cy, wallZ + 0.08],
+        colour: POLICE_SCREEN_FRAME,
+      })
       // Glowing surveillance monitor face
       into.box([1.04, 0.9, 0.02], {
         at: [wallX + cx, cy, wallZ + 0.13],
@@ -55,9 +58,18 @@ function dressCCTVVideoWall(into: BanquetDetailBuilder, floor: number): void {
 
   // 3 operator command consoles with keyboard and PTZ joystick
   for (const ox of [-1.4, 0, 1.4]) {
-    into.box([0.5, 0.02, 0.2], { at: [wallX + ox, floor + 0.84, wallZ + 0.45], colour: POLICE_SCREEN_FRAME })
-    into.cylinder({ radius: 0.015, height: 0.12 }, { at: [wallX + ox + 0.35, floor + 0.88, wallZ + 0.45], colour: POLICE_GOLD })
-    into.sphere([0.025, 0.025, 0.025], { at: [wallX + ox + 0.35, floor + 0.94, wallZ + 0.45], colour: POLICE_ALERT_RED })
+    into.box([0.5, 0.02, 0.2], {
+      at: [wallX + ox, floor + 0.84, wallZ + 0.45],
+      colour: POLICE_SCREEN_FRAME,
+    })
+    into.cylinder(
+      { radius: 0.015, height: 0.12 },
+      { at: [wallX + ox + 0.35, floor + 0.88, wallZ + 0.45], colour: POLICE_GOLD },
+    )
+    into.sphere([0.025, 0.025, 0.025], {
+      at: [wallX + ox + 0.35, floor + 0.94, wallZ + 0.45],
+      colour: POLICE_ALERT_RED,
+    })
   }
 }
 
@@ -70,8 +82,14 @@ function dressAtriumStatusBoard(into: BanquetDetailBuilder, floor: number): void
   into.box([2.6, 0.52, 0.02], { at: [7.5, boardY, -5.89], colour: POLICE_GOLD, glow: true })
 
   // Suspension steel cables up to the gallery ceiling
-  into.cylinder({ radius: 0.01, height: 2.8 }, { at: [6.3, boardY + 1.4, -5.8], colour: POLICE_METAL })
-  into.cylinder({ radius: 0.01, height: 2.8 }, { at: [8.7, boardY + 1.4, -5.8], colour: POLICE_METAL })
+  into.cylinder(
+    { radius: 0.01, height: 2.8 },
+    { at: [6.3, boardY + 1.4, -5.8], colour: POLICE_METAL },
+  )
+  into.cylinder(
+    { radius: 0.01, height: 2.8 },
+    { at: [8.7, boardY + 1.4, -5.8], colour: POLICE_METAL },
+  )
 }
 
 /** Emergency dispatch radio telemetry racks in the community safety section */
@@ -119,7 +137,10 @@ export function dressPoliceXRayMonitor(options: ScreenOptions): void {
   const monY = floor + 1.55
 
   // Swivel mount pole from inspection tunnel
-  into.cylinder({ radius: 0.02, height: 0.4 }, { at: [monX, monY - 0.2, monZ], colour: POLICE_METAL })
+  into.cylinder(
+    { radius: 0.02, height: 0.4 },
+    { at: [monX, monY - 0.2, monZ], colour: POLICE_METAL },
+  )
   // Dual-display inspection monitor housing
   into.box([0.62, 0.44, 0.1], { at: [monX, monY, monZ], colour: POLICE_SCREEN_FRAME })
   // Illuminated X-ray color density screen

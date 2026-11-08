@@ -53,11 +53,7 @@ export function justiceSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   }
 }
 
-function dressSpaceStructures(
-  into: BanquetDetailBuilder,
-  plan: TierPlan,
-  spaceId: string,
-): void {
+function dressSpaceStructures(into: BanquetDetailBuilder, plan: TierPlan, spaceId: string): void {
   const space = plan.spaces.find((s) => s.id === spaceId)
   if (!space) return
   const floor = floorOf(space, plan.tier)

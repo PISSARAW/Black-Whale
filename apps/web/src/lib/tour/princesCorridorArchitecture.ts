@@ -77,11 +77,7 @@ function corridorCarpet(into: BanquetDetailBuilder, floor: number, b: CorridorBo
   }
 }
 
-function ceilingAndDucts(
-  into: BanquetDetailBuilder,
-  topY: number,
-  b: CorridorBounds,
-): void {
+function ceilingAndDucts(into: BanquetDetailBuilder, topY: number, b: CorridorBounds): void {
   const widthX = b.maxX - b.minX
   const widthY = b.maxY - b.minY
 

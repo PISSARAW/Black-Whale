@@ -20,11 +20,19 @@ export function dressHospitalHallArchitecture(context: HospitalContext): void {
   // 1. Continuous protective hospital bumper rails / handrails along both walls
   into.cylinder(
     { radius: 0.025, height: depthZ - 0.4, sides: 12 },
-    { at: [minX + 0.04, floor + 0.9, centreZ], colour: CLINICAL_TEAL, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [minX + 0.04, floor + 0.9, centreZ],
+      colour: CLINICAL_TEAL,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
   into.cylinder(
     { radius: 0.025, height: depthZ - 0.4, sides: 12 },
-    { at: [maxX - 0.04, floor + 0.9, centreZ], colour: CLINICAL_TEAL, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [maxX - 0.04, floor + 0.9, centreZ],
+      colour: CLINICAL_TEAL,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
 
   // 2. Suspended directional overhead department signboards

@@ -4,14 +4,14 @@ La salle de conférence de l'armée royale de Kakin (située au Pont 4, identifi
 
 ## 1. Cases relues et scénographie canonique
 
-La salle est le centre d'opération, de coordination de la sécurité générale et de commandement des forces militaires royales sur le *Black Whale* :
+La salle est le centre d'opération, de coordination de la sécurité générale et de commandement des forces militaires royales sur le _Black Whale_ :
 
 1. **Scène du briefing de sécurité militaire (Tome 36, Chapitre 380, p. 189)** :
-   - *L'estrade et le pupitre de conférence* : l'officier conférencier de l'armée royale se tient sur l'estrade de présentation, à côté d'un pupitre biseauté intégrant microphones col de cygne et dossiers de briefing opérationnel.
-   - *Le grand écran de projection vierge mural (`screen`)* : suspendu au mur nord immédiatement derrière l'orateur, un grand écran blanc de 7,5 m de large par 3 m de haut est logé dans un carter technique métallique à retombée motorisée.
-   - *Le tableau mural de cartes tactiques (`chart-board`)* : disposé sur la paroi latérale ouest à gauche de l'écran, un grand panneau d'affichage clair de 5 m de long sur 2,5 m de haut présente les cartes détaillées des cinq ponts du navire, des quadrillages métriques et des plans de zonage de sécurité.
-   - *La grande table de conférence en U (`table-head`, `table-port`, `table-starboard`)* : trois imposants segments de table en bois sombre et profilés d'acier forment un fer à cheval ouvert vers l'estrade et l'écran de projection. Chaque poste est équipé d'un micro de conférence encastré, de sous-mains de travail, de bloc-notes d'état-major et de carafes d'eau.
-   - *Les 15 fauteuils de conférence (`chair-01` à `chair-15`)* : quinze sièges ergonomiques de commandement à haut dossier rembourré, accoudoirs profilés et piètement à cinq roulettes entourent la table en U (5 le long de la table de tête face au sud, 4 sur l'aile bâbord face à l'est, 4 sur l'aile tribord face à l'ouest, et 2 aux extrémités sud).
+   - _L'estrade et le pupitre de conférence_ : l'officier conférencier de l'armée royale se tient sur l'estrade de présentation, à côté d'un pupitre biseauté intégrant microphones col de cygne et dossiers de briefing opérationnel.
+   - _Le grand écran de projection vierge mural (`screen`)_ : suspendu au mur nord immédiatement derrière l'orateur, un grand écran blanc de 7,5 m de large par 3 m de haut est logé dans un carter technique métallique à retombée motorisée.
+   - _Le tableau mural de cartes tactiques (`chart-board`)_ : disposé sur la paroi latérale ouest à gauche de l'écran, un grand panneau d'affichage clair de 5 m de long sur 2,5 m de haut présente les cartes détaillées des cinq ponts du navire, des quadrillages métriques et des plans de zonage de sécurité.
+   - _La grande table de conférence en U (`table-head`, `table-port`, `table-starboard`)_ : trois imposants segments de table en bois sombre et profilés d'acier forment un fer à cheval ouvert vers l'estrade et l'écran de projection. Chaque poste est équipé d'un micro de conférence encastré, de sous-mains de travail, de bloc-notes d'état-major et de carafes d'eau.
+   - _Les 15 fauteuils de conférence (`chair-01` à `chair-15`)_ : quinze sièges ergonomiques de commandement à haut dossier rembourré, accoudoirs profilés et piètement à cinq roulettes entourent la table en U (5 le long de la table de tête face au sud, 4 sur l'aile bâbord face à l'est, 4 sur l'aile tribord face à l'ouest, et 2 aux extrémités sud).
 
 2. **Réunion de crise et coordination inter-armes (Chapitre 350)** :
    - Les représentants des différents corps de sécurité et officiers d'état-major s'y réunissent pour analyser les menaces de rébellion, de meurtre et les mouvements suspects entre les ponts civils et militaires.
@@ -28,7 +28,7 @@ La salle est le centre d'opération, de coordination de la sécurité générale
   - Détails : toile blanche mate antireflet, bordure noire de cadrage 16:9, carter d'enroulement supérieur en aluminium brossé et support mural tubulaire.
 - **Panneau de cartes tactiques (`chart-board`)** :
   - Emprise : 0,22 m × 5,0 m, situé en `[-9.88, -3.0]`, base à 1,1 m, hauteur 2,5 m.
-  - Détails : tableau blanc/beige magnétique avec cadre d'aluminium profilé, carte stylisée des ponts du *Black Whale*, grille de coordonnées militaires, repères de secteurs et porte-feutres inférieur.
+  - Détails : tableau blanc/beige magnétique avec cadre d'aluminium profilé, carte stylisée des ponts du _Black Whale_, grille de coordonnées militaires, repères de secteurs et porte-feutres inférieur.
 - **Pupitre de conférencier (`lectern`)** :
   - Emprise : 1,0 m × 1,0 m, situé en `[-0.75, -3.25]`, hauteur 1,1 m.
   - Détails : caisson biseauté en chêne foncé et acier anthracite, plan incliné avec rebords pour documents, double micro col de cygne avec bonnette acoustique noire, voyant de contrôle et micro-enceinte de retour.

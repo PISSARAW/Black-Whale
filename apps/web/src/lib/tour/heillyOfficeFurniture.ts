@@ -55,12 +55,22 @@ function leadersDesk(into: BanquetDetailBuilder, structure: Structure, floor: nu
     colour: 0xded8c6,
   })
   // Brass desk lamp
-  into.cylinder({ radius: 0.07, height: 0.02, sides: 12 }, { at: [x + 1.2, floor + h + 0.01, z - 0.2], colour: 0xb59c6b })
-  into.cylinder({ radius: 0.015, height: 0.35, sides: 10 }, { at: [x + 1.2, floor + h + 0.18, z - 0.2], colour: 0xb59c6b })
+  into.cylinder(
+    { radius: 0.07, height: 0.02, sides: 12 },
+    { at: [x + 1.2, floor + h + 0.01, z - 0.2], colour: 0xb59c6b },
+  )
+  into.cylinder(
+    { radius: 0.015, height: 0.35, sides: 10 },
+    { at: [x + 1.2, floor + h + 0.18, z - 0.2], colour: 0xb59c6b },
+  )
   into.sphere([0.09, 0.06, 0.09], { at: [x + 1.15, floor + h + 0.36, z - 0.15], colour: 0x2e5c3e })
 }
 
-function cardNegotiationTable(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
+function cardNegotiationTable(
+  into: BanquetDetailBuilder,
+  structure: Structure,
+  floor: number,
+): void {
   const [x, z] = structure.at
   const [w, d] = structure.size
   const h = structure.height
@@ -105,8 +115,14 @@ function executiveChair(into: BanquetDetailBuilder, structure: Structure, floor:
   const seatY = floor + 0.48
 
   // Base with caster hub
-  into.cylinder({ radius: 0.06, height: 0.35, sides: 10 }, { at: [x, floor + 0.2, z], colour: CHROME })
-  into.cylinder({ radius: 0.3, height: 0.05, sides: 10 }, { at: [x, floor + 0.06, z], colour: STEEL_DARK })
+  into.cylinder(
+    { radius: 0.06, height: 0.35, sides: 10 },
+    { at: [x, floor + 0.2, z], colour: CHROME },
+  )
+  into.cylinder(
+    { radius: 0.3, height: 0.05, sides: 10 },
+    { at: [x, floor + 0.06, z], colour: STEEL_DARK },
+  )
   // Thick leather seat
   into.box([0.58, 0.12, 0.56], {
     at: [x, seatY, z],
@@ -189,7 +205,11 @@ function famicomConsole(into: BanquetDetailBuilder, structure: Structure, floor:
   })
 }
 
-function superFamicomConsole(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
+function superFamicomConsole(
+  into: BanquetDetailBuilder,
+  structure: Structure,
+  floor: number,
+): void {
   const [x, z] = structure.at
   const y = floor + structure.base
 

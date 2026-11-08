@@ -80,8 +80,14 @@ function placeBurgerClamshellMeal(into: BanquetDetailBuilder, at: Point3, trayCo
   // Hamburger inside clamshell box
   const bx = x + 0.05
   const bz = z + 0.02
-  into.cylinder({ radius: 0.052, height: 0.018, sides: 12 }, { at: [bx, y + 0.03, bz], colour: BURGER_BUN })
-  into.cylinder({ radius: 0.056, height: 0.022, sides: 12 }, { at: [bx, y + 0.045, bz], colour: BURGER_PATTY })
+  into.cylinder(
+    { radius: 0.052, height: 0.018, sides: 12 },
+    { at: [bx, y + 0.03, bz], colour: BURGER_BUN },
+  )
+  into.cylinder(
+    { radius: 0.056, height: 0.022, sides: 12 },
+    { at: [bx, y + 0.045, bz], colour: BURGER_PATTY },
+  )
   into.box([0.1, 0.008, 0.1], { at: [bx, y + 0.055, bz], colour: BURGER_GREENS })
   into.sphere([0.052, 0.026, 0.052], { at: [bx, y + 0.07, bz], colour: BURGER_BUN })
 

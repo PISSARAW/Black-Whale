@@ -17,7 +17,10 @@ interface OfficerOptions {
 
 /** Standard Kakin central police officer in uniform and peaked cap */
 function dressOfficerSilhouette(options: OfficerOptions): void {
-  const { into, at: [x, y, z] } = options
+  const {
+    into,
+    at: [x, y, z],
+  } = options
 
   // Shoes and trousers
   into.box([0.16, 0.1, 0.22], { at: [x - 0.1, y + 0.05, z], colour: POLICE_METAL })

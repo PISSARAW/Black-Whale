@@ -188,7 +188,11 @@ function nozzleCollar(into: BanquetDetailBuilder, floor: number): void {
 
     into.cylinder(
       { radius: 0.08, height: 0.22, sides: 12 },
-      { at: [nx, floor + 0.35, nz], colour: BRONZE, rotation: [Math.PI / 2, 0, -angle + Math.PI / 2] },
+      {
+        at: [nx, floor + 0.35, nz],
+        colour: BRONZE,
+        rotation: [Math.PI / 2, 0, -angle + Math.PI / 2],
+      },
     )
     into.ring(
       { radius: 0.07, tube: 0.012 },

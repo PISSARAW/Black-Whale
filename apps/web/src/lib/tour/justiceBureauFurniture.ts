@@ -135,7 +135,11 @@ export function dressInterrogationTable(surface: JusticeBureauSurface): void {
   surface.box([w, 0.05, d], [0, h - 0.025, 0], 0x3d4144)
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {
-      surface.box([0.05, h - 0.05, 0.05], [(sx * (w - 0.1)) / 2, (h - 0.05) / 2, (sz * (d - 0.1)) / 2], JUSTICE_STEEL)
+      surface.box(
+        [0.05, h - 0.05, 0.05],
+        [(sx * (w - 0.1)) / 2, (h - 0.05) / 2, (sz * (d - 0.1)) / 2],
+        JUSTICE_STEEL,
+      )
     }
   }
 

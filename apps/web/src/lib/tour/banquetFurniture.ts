@@ -14,7 +14,10 @@ const CLOTH_SEGMENTS = 24
 /** A small conical table lamp seen on banquet tables in chapter 359. */
 function dressTableLamp(into: BanquetDetailBuilder, at: Point3): void {
   const [x, y, z] = at
-  into.cylinder({ radius: 0.075, height: 0.014, sides: 5 }, { at: [x, y + 0.007, z], colour: BRASS })
+  into.cylinder(
+    { radius: 0.075, height: 0.014, sides: 5 },
+    { at: [x, y + 0.007, z], colour: BRASS },
+  )
   into.cylinder({ radius: 0.012, height: 0.22, sides: 4 }, { at: [x, y + 0.12, z], colour: BRASS })
   into.cylinder(
     { radius: 0.045, bottom: 0.135, height: 0.13, sides: 6, open: true },

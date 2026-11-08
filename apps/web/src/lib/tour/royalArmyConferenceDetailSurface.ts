@@ -98,7 +98,7 @@ export class RoyalArmyConferenceSurface {
     colourOrOptions: number | { colour: number; glow?: boolean },
   ): void {
     const colour = typeof colourOrOptions === 'number' ? colourOrOptions : colourOrOptions.colour
-    const glow = typeof colourOrOptions === 'object' ? colourOrOptions.glow ?? false : false
+    const glow = typeof colourOrOptions === 'object' ? (colourOrOptions.glow ?? false) : false
     this.into.box(size, {
       at: this.point(at),
       rotation: [0, this.angle, 0],
@@ -113,7 +113,7 @@ export class RoyalArmyConferenceSurface {
     colourOrOptions: number | { colour: number; glow?: boolean },
   ): void {
     const colour = typeof colourOrOptions === 'number' ? colourOrOptions : colourOrOptions.colour
-    const glow = typeof colourOrOptions === 'object' ? colourOrOptions.glow ?? false : false
+    const glow = typeof colourOrOptions === 'object' ? (colourOrOptions.glow ?? false) : false
     this.into.sphere(size, {
       at: this.point(at),
       rotation: [0, this.angle, 0],
@@ -146,11 +146,7 @@ export class RoyalArmyConferenceSurface {
     )
   }
 
-  add(
-    geometry: Three.BufferGeometry,
-    at: Point3,
-    colour: number,
-  ): void {
+  add(geometry: Three.BufferGeometry, at: Point3, colour: number): void {
     this.into.add(geometry, {
       at: this.point(at),
       rotation: [0, this.angle, 0],
@@ -160,10 +156,7 @@ export class RoyalArmyConferenceSurface {
 }
 
 /** Helper to draw a conference delegate microphone (gooseneck + base). */
-export function drawDeskMicrophone(
-  surface: RoyalArmyConferenceSurface,
-  at: Point3,
-): void {
+export function drawDeskMicrophone(surface: RoyalArmyConferenceSurface, at: Point3): void {
   const [x, y, z] = at
   // Base plate
   surface.box([0.12, 0.02, 0.12], [x, y + 0.01, z], ARMY_STEEL)
@@ -171,29 +164,32 @@ export function drawDeskMicrophone(
   // Push-to-talk button
   surface.box([0.025, 0.01, 0.025], [x, y + 0.03, z + 0.02], { colour: ARMY_MIC_LED, glow: true })
   // Gooseneck stem
-  surface.cylinder({ radius: 0.006, height: 0.22, sides: 8 }, [x, y + 0.12, z - 0.01], ARMY_MIC_STEM)
+  surface.cylinder(
+    { radius: 0.006, height: 0.22, sides: 8 },
+    [x, y + 0.12, z - 0.01],
+    ARMY_MIC_STEM,
+  )
   // Microphone head capsule
   surface.cylinder({ radius: 0.012, height: 0.04, sides: 10 }, [x, y + 0.24, z - 0.02], ARMY_STEEL)
   // Light ring at mic head
-  surface.sphere([0.014, 0.005, 0.014], [x, y + 0.23, z - 0.02], { colour: ARMY_MIC_LED, glow: true })
+  surface.sphere([0.014, 0.005, 0.014], [x, y + 0.23, z - 0.02], {
+    colour: ARMY_MIC_LED,
+    glow: true,
+  })
 }
 
 /** Helper to draw an attendee briefing notepad and pen. */
-export function drawAttendeePaper(
-  surface: RoyalArmyConferenceSurface,
-  at: Point3,
-): void {
+export function drawAttendeePaper(surface: RoyalArmyConferenceSurface, at: Point3): void {
   const [x, y, z] = at
   // Manila leather blotter / folder base
   surface.box([0.34, 0.008, 0.26], [x, y + 0.004, z], ARMY_FOLDER)
   // White notepad paper
   surface.box([0.28, 0.006, 0.2], [x, y + 0.01, z], ARMY_PAPER)
   // Metal pen
-  surface.cylinder(
-    { radius: 0.004, height: 0.14, sides: 6 },
-    [x + 0.16, y + 0.01, z],
-    { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.004, height: 0.14, sides: 6 }, [x + 0.16, y + 0.01, z], {
+    colour: ARMY_CHROME,
+    rotation: [Math.PI / 2, 0, 0],
+  })
 }
 
 /** Helper to draw an official brass/wood triangular desk nameplate. */
@@ -219,20 +215,19 @@ export function drawTacticalPin(
 ): void {
   const [x, y, z] = at
   // Flat magnetic disc
-  surface.cylinder({ radius: 0.022, height: 0.008, sides: 12 }, [x, y, z], { colour, rotation: [Math.PI / 2, 0, 0] })
+  surface.cylinder({ radius: 0.022, height: 0.008, sides: 12 }, [x, y, z], {
+    colour,
+    rotation: [Math.PI / 2, 0, 0],
+  })
   // Tapered grip pin
-  surface.cylinder(
-    { radius: 0.012, height: 0.02, sides: 10 },
-    [x, y, z + 0.012],
-    { colour: ARMY_CHROME, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.012, height: 0.02, sides: 10 }, [x, y, z + 0.012], {
+    colour: ARMY_CHROME,
+    rotation: [Math.PI / 2, 0, 0],
+  })
 }
 
 /** Helper to draw a confidential top-secret military folder with red diagonal stripe. */
-export function drawDossierWithStripe(
-  surface: RoyalArmyConferenceSurface,
-  at: Point3,
-): void {
+export function drawDossierWithStripe(surface: RoyalArmyConferenceSurface, at: Point3): void {
   const [x, y, z] = at
   // Charcoal/black heavy cardboard folder
   surface.box([0.32, 0.012, 0.24], [x, y + 0.006, z], ARMY_STEEL)
@@ -241,10 +236,8 @@ export function drawDossierWithStripe(
   // Diagonal warning stripe in red
   surface.box([0.31, 0.008, 0.04], [x, y + 0.012, z], ARMY_ALERT_RED)
   // Kakin military seal stamp
-  surface.cylinder(
-    { radius: 0.02, height: 0.004, sides: 10 },
-    [x + 0.08, y + 0.015, z],
-    { colour: ARMY_GOLD_CREST, rotation: [0, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.02, height: 0.004, sides: 10 }, [x + 0.08, y + 0.015, z], {
+    colour: ARMY_GOLD_CREST,
+    rotation: [0, 0, 0],
+  })
 }
-

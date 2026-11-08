@@ -45,7 +45,10 @@ export function dressPoliceFrontDesk(surface: PoliceStationSurface): void {
 }
 
 /** Solid oak waiting benches with leather cushions and queue stanchions in the atrium */
-export function dressPoliceAtriumBenchesAndStanchions(into: BanquetDetailBuilder, floor: number): void {
+export function dressPoliceAtriumBenchesAndStanchions(
+  into: BanquetDetailBuilder,
+  floor: number,
+): void {
   // 4 waiting benches placed along colonnade walkways
   const benchPositions: [number, number, number][] = [
     [-5.4, -3.18, 0],
@@ -55,22 +58,56 @@ export function dressPoliceAtriumBenchesAndStanchions(into: BanquetDetailBuilder
   ]
 
   for (const [bx, bz, angle] of benchPositions) {
-    into.box([2.2, 0.08, 0.65], { at: [bx, floor + 0.44, bz], rotation: [0, angle, 0], colour: POLICE_OAK })
+    into.box([2.2, 0.08, 0.65], {
+      at: [bx, floor + 0.44, bz],
+      rotation: [0, angle, 0],
+      colour: POLICE_OAK,
+    })
     for (const legX of [-0.95, 0.95]) {
-      into.box([0.1, 0.4, 0.55], { at: [bx + legX, floor + 0.2, bz], rotation: [0, angle, 0], colour: POLICE_OAK })
-      into.box([0.12, 0.05, 0.57], { at: [bx + legX, floor + 0.025, bz], rotation: [0, angle, 0], colour: POLICE_BRASS })
+      into.box([0.1, 0.4, 0.55], {
+        at: [bx + legX, floor + 0.2, bz],
+        rotation: [0, angle, 0],
+        colour: POLICE_OAK,
+      })
+      into.box([0.12, 0.05, 0.57], {
+        at: [bx + legX, floor + 0.025, bz],
+        rotation: [0, angle, 0],
+        colour: POLICE_BRASS,
+      })
     }
-    into.box([2.1, 0.1, 0.6], { at: [bx, floor + 0.52, bz], rotation: [0, angle, 0], colour: POLICE_LEATHER })
-    into.box([2.1, 0.32, 0.08], { at: [bx, floor + 0.76, bz - 0.28], rotation: [0, angle, 0], colour: POLICE_LEATHER })
-    into.box([0.06, 0.3, 0.04], { at: [bx - 0.7, floor + 0.65, bz - 0.28], rotation: [0, angle, 0], colour: POLICE_BRASS })
-    into.box([0.06, 0.3, 0.04], { at: [bx + 0.7, floor + 0.65, bz - 0.28], rotation: [0, angle, 0], colour: POLICE_BRASS })
+    into.box([2.1, 0.1, 0.6], {
+      at: [bx, floor + 0.52, bz],
+      rotation: [0, angle, 0],
+      colour: POLICE_LEATHER,
+    })
+    into.box([2.1, 0.32, 0.08], {
+      at: [bx, floor + 0.76, bz - 0.28],
+      rotation: [0, angle, 0],
+      colour: POLICE_LEATHER,
+    })
+    into.box([0.06, 0.3, 0.04], {
+      at: [bx - 0.7, floor + 0.65, bz - 0.28],
+      rotation: [0, angle, 0],
+      colour: POLICE_BRASS,
+    })
+    into.box([0.06, 0.3, 0.04], {
+      at: [bx + 0.7, floor + 0.65, bz - 0.28],
+      rotation: [0, angle, 0],
+      colour: POLICE_BRASS,
+    })
   }
 
   // Queue stanchions with brass posts and navy velvet ropes in front of the front desk
   const stanchionX = [5.2, 6.6, 8.0, 9.4]
   for (const sx of stanchionX) {
-    into.cylinder({ radius: 0.14, height: 0.04 }, { at: [sx, floor + 0.02, -5.6], colour: POLICE_BRASS })
-    into.cylinder({ radius: 0.025, height: 0.95 }, { at: [sx, floor + 0.5, -5.6], colour: POLICE_BRASS })
+    into.cylinder(
+      { radius: 0.14, height: 0.04 },
+      { at: [sx, floor + 0.02, -5.6], colour: POLICE_BRASS },
+    )
+    into.cylinder(
+      { radius: 0.025, height: 0.95 },
+      { at: [sx, floor + 0.5, -5.6], colour: POLICE_BRASS },
+    )
     into.sphere([0.045, 0.045, 0.045], { at: [sx, floor + 0.99, -5.6], colour: POLICE_BRASS })
   }
   for (let i = 0; i < stanchionX.length - 1; i++) {
@@ -79,10 +116,24 @@ export function dressPoliceAtriumBenchesAndStanchions(into: BanquetDetailBuilder
   }
 
   // Information directory pedestal stand near atrium entrance avenue
-  into.cylinder({ radius: 0.22, height: 0.06 }, { at: [2.6, floor + 0.03, 3.2], colour: POLICE_BRASS })
-  into.cylinder({ radius: 0.04, height: 0.95 }, { at: [2.6, floor + 0.5, 3.2], colour: POLICE_BRASS })
-  into.box([0.65, 0.45, 0.06], { at: [2.6, floor + 1.15, 3.2], rotation: [-0.4, 0, 0], colour: POLICE_NAVY })
-  into.box([0.58, 0.38, 0.02], { at: [2.6, floor + 1.16, 3.19], rotation: [-0.4, 0, 0], colour: POLICE_PAPER })
+  into.cylinder(
+    { radius: 0.22, height: 0.06 },
+    { at: [2.6, floor + 0.03, 3.2], colour: POLICE_BRASS },
+  )
+  into.cylinder(
+    { radius: 0.04, height: 0.95 },
+    { at: [2.6, floor + 0.5, 3.2], colour: POLICE_BRASS },
+  )
+  into.box([0.65, 0.45, 0.06], {
+    at: [2.6, floor + 1.15, 3.2],
+    rotation: [-0.4, 0, 0],
+    colour: POLICE_NAVY,
+  })
+  into.box([0.58, 0.38, 0.02], {
+    at: [2.6, floor + 1.16, 3.19],
+    rotation: [-0.4, 0, 0],
+    colour: POLICE_PAPER,
+  })
 }
 
 /** Community safety desk and citizen consultation counters (ch. 349, 378) */
@@ -139,7 +190,10 @@ export function dressPoliceSafetyArchives(into: BanquetDetailBuilder, floor: num
 
   // Water cooler dispenser for citizen consultation area
   into.box([0.38, 0.85, 0.38], { at: [-0.6, floor + 0.425, -10.8], colour: POLICE_PAPER })
-  into.cylinder({ radius: 0.15, height: 0.38 }, { at: [-0.6, floor + 1.04, -10.8], colour: POLICE_GLASS })
+  into.cylinder(
+    { radius: 0.15, height: 0.38 },
+    { at: [-0.6, floor + 1.04, -10.8], colour: POLICE_GLASS },
+  )
 }
 
 /** Complete security checkpoint in the entrance vestibule */
@@ -151,14 +205,29 @@ export function dressPoliceEntranceSecurity(into: BanquetDetailBuilder, floor: n
   into.box([0.18, 2.3, 0.7], { at: [0.65, floor + 1.15, archZ], colour: POLICE_METAL })
   into.box([1.48, 0.22, 0.7], { at: [0, floor + 2.35, archZ], colour: POLICE_METAL })
   into.box([0.4, 0.08, 0.04], { at: [0, floor + 2.35, archZ - 0.36], colour: POLICE_NAVY })
-  into.box([0.04, 0.04, 0.02], { at: [-0.55, floor + 2.35, archZ - 0.36], colour: POLICE_ALERT_GREEN, glow: true })
-  into.box([0.04, 0.04, 0.02], { at: [0.55, floor + 2.35, archZ - 0.36], colour: POLICE_ALERT_RED, glow: true })
+  into.box([0.04, 0.04, 0.02], {
+    at: [-0.55, floor + 2.35, archZ - 0.36],
+    colour: POLICE_ALERT_GREEN,
+    glow: true,
+  })
+  into.box([0.04, 0.04, 0.02], {
+    at: [0.55, floor + 2.35, archZ - 0.36],
+    colour: POLICE_ALERT_RED,
+    glow: true,
+  })
 
   // Security turnstiles with access barrier flaps
   for (const tx of [-1.8, 1.8]) {
     into.box([0.35, 0.98, 0.85], { at: [tx, floor + 0.49, archZ], colour: POLICE_METAL })
-    into.cylinder({ radius: 0.02, height: 0.55 }, { at: [tx, floor + 0.85, archZ], colour: POLICE_BRASS })
-    into.box([0.08, 0.02, 0.12], { at: [tx, floor + 0.99, archZ - 0.2], colour: POLICE_SCREEN_GLOW, glow: true })
+    into.cylinder(
+      { radius: 0.02, height: 0.55 },
+      { at: [tx, floor + 0.85, archZ], colour: POLICE_BRASS },
+    )
+    into.box([0.08, 0.02, 0.12], {
+      at: [tx, floor + 0.99, archZ - 0.2],
+      colour: POLICE_SCREEN_GLOW,
+      glow: true,
+    })
   }
 
   // Baggage X-ray scanner unit: tunnel housing, lead curtains, conveyor table

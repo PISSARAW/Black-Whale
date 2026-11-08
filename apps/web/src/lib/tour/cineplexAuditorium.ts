@@ -84,7 +84,10 @@ function dressSeatRow(
     into.box([0.46, 0.58, 0.12], { at: [sx, y + 0.72, z + 0.16], colour: CINE_SEAT_FABRIC })
     // Armrest with cup holder
     into.box([0.06, 0.06, 0.36], { at: [sx - 0.26, y + 0.56, z - 0.02], colour: CINE_SEAT_FRAME })
-    into.cylinder({ radius: 0.04, height: 0.08, sides: 8 }, { at: [sx - 0.26, y + 0.6, z - 0.16], colour: 0x2a2a2e })
+    into.cylinder(
+      { radius: 0.04, height: 0.08, sides: 8 },
+      { at: [sx - 0.26, y + 0.6, z - 0.16], colour: 0x2a2a2e },
+    )
   }
 }
 
@@ -139,7 +142,12 @@ function dressProjectionBooth(context: AuditoriumContext): void {
   // Glowing projector lens aperture
   into.cylinder(
     { radius: 0.12, height: 0.06, sides: 12 },
-    { at: [centerX, boothY, boothZ + 0.04], rotation: [Math.PI / 2, 0, 0], colour: 0xffffff, glow: true },
+    {
+      at: [centerX, boothY, boothZ + 0.04],
+      rotation: [Math.PI / 2, 0, 0],
+      colour: 0xffffff,
+      glow: true,
+    },
   )
 }
 
@@ -169,11 +177,7 @@ function dressAuditoriumWalls(context: AuditoriumContext): void {
   }
 
   // Emergency exit door at front east corner
-  dressEmergencyExitDoor(
-    into,
-    [centerX + halfW - 0.15, floor, 34.5],
-    [0, -Math.PI / 2, 0],
-  )
+  dressEmergencyExitDoor(into, [centerX + halfW - 0.15, floor, 34.5], [0, -Math.PI / 2, 0])
 
   // Velvet acoustic entrance door curtain
   into.box([1.8, 2.8, 0.18], {
@@ -183,7 +187,11 @@ function dressAuditoriumWalls(context: AuditoriumContext): void {
 }
 
 /** Complete Cinema Auditorium interior dressing for screens 1 through 8 */
-export function dressCinemaAuditorium(into: BanquetDetailBuilder, space: Space, floor: number): void {
+export function dressCinemaAuditorium(
+  into: BanquetDetailBuilder,
+  space: Space,
+  floor: number,
+): void {
   // Determine center X of auditorium from its footprint
   const xs = space.footprint.map(([x]) => x)
   const centerX = (Math.min(...xs) + Math.max(...xs)) / 2

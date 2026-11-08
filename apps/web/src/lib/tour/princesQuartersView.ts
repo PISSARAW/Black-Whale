@@ -26,8 +26,7 @@ export function isPrincesCorridor(spaceId: string): boolean {
 
 export function hasPrincesGateModel(structure: Structure): boolean {
   return (
-    structure.spaceId === PRINCES_GATE_SPACE &&
-    structure.id === 'tier-1-princes-quarters-gate-desk'
+    structure.spaceId === PRINCES_GATE_SPACE && structure.id === 'tier-1-princes-quarters-gate-desk'
   )
 }
 

@@ -69,7 +69,10 @@ function doctorConsultationDesk(
   // Doctor's executive chair
   into.box([0.54, 0.08, 0.52], { at: [x - 0.3, floor + 0.48, z + 0.55], colour: CHAIR_FABRIC })
   into.box([0.5, 0.5, 0.08], { at: [x - 0.3, floor + 0.75, z + 0.8], colour: CHAIR_FABRIC })
-  into.cylinder({ radius: 0.25, height: 0.44, sides: 10 }, { at: [x - 0.3, floor + 0.22, z + 0.55], colour: STEEL_DARK })
+  into.cylinder(
+    { radius: 0.25, height: 0.44, sides: 10 },
+    { at: [x - 0.3, floor + 0.22, z + 0.55], colour: STEEL_DARK },
+  )
 
   // Patient consultation chairs facing the desk
   for (const cx of [x - 0.5, x + 0.5]) {
@@ -119,7 +122,11 @@ function examinationCouch(into: BanquetDetailBuilder, at: Point3): void {
   // Paper roll runner dispenser at head
   into.cylinder(
     { radius: 0.05, height: d - 0.1, sides: 12 },
-    { at: [x - w / 2 - 0.06, floorY + h + 0.04, z], colour: CLINICAL_WHITE, rotation: [Math.PI / 2, 0, 0] },
+    {
+      at: [x - w / 2 - 0.06, floorY + h + 0.04, z],
+      colour: CLINICAL_WHITE,
+      rotation: [Math.PI / 2, 0, 0],
+    },
   )
   into.box([w * 0.8, 0.01, d - 0.14], {
     at: [x + 0.1, floorY + h + 0.05, z],
@@ -127,8 +134,14 @@ function examinationCouch(into: BanquetDetailBuilder, at: Point3): void {
   })
 
   // Rolling round doctor stool
-  into.cylinder({ radius: 0.2, height: 0.08, sides: 16 }, { at: [x, floorY + 0.5, z - 0.65], colour: 0x222e30 })
-  into.cylinder({ radius: 0.03, height: 0.46, sides: 10 }, { at: [x, floorY + 0.23, z - 0.65], colour: CHROME })
+  into.cylinder(
+    { radius: 0.2, height: 0.08, sides: 16 },
+    { at: [x, floorY + 0.5, z - 0.65], colour: 0x222e30 },
+  )
+  into.cylinder(
+    { radius: 0.03, height: 0.46, sides: 10 },
+    { at: [x, floorY + 0.23, z - 0.65], colour: CHROME },
+  )
 }
 
 function wallNegatoscope(into: BanquetDetailBuilder, at: Point3): void {

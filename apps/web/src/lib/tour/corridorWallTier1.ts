@@ -1,10 +1,4 @@
-import {
-  wallBays,
-  wallBox,
-  wallPoint,
-  type WallBay,
-  type WallSurface,
-} from './corridorWallLayout'
+import { wallBays, wallBox, wallPoint, type WallBay, type WallSurface } from './corridorWallLayout'
 
 const MAHOGANY = 0x3a1f18
 const MAHOGANY_DARK = 0x271913
@@ -123,10 +117,7 @@ function wallSconce(wall: WallSurface, bay: WallBay, floor: number): void {
 }
 
 /** Dresses a Tier 1 royal corridor wall run with classical wainscoting and sconces. */
-export function dressTier1CorridorWall(
-  wall: WallSurface,
-  context: Tier1WallContext,
-): void {
+export function dressTier1CorridorWall(wall: WallSurface, context: Tier1WallContext): void {
   const { floor, ceiling } = context
   wainscoting(wall, floor)
 

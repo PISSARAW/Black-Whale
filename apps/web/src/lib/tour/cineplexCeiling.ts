@@ -48,7 +48,11 @@ function dressCeilingDuct(options: DuctSegmentOptions): void {
 }
 
 /** Recessed coffered beam grid on concourse ceiling */
-function dressCofferBeams(into: BanquetDetailBuilder, bounds: CeilingBounds, ceilingY: number): void {
+function dressCofferBeams(
+  into: BanquetDetailBuilder,
+  bounds: CeilingBounds,
+  ceilingY: number,
+): void {
   const { xMin, xMax, zMin, zMax } = bounds
   const width = xMax - xMin
   const depth = zMax - zMin
@@ -79,7 +83,11 @@ function dressCofferBeams(into: BanquetDetailBuilder, bounds: CeilingBounds, cei
 }
 
 /** Downlights and ceiling surround speakers installed in coffer bays */
-function dressCeilingFixtures(into: BanquetDetailBuilder, bounds: CeilingBounds, ceilingY: number): void {
+function dressCeilingFixtures(
+  into: BanquetDetailBuilder,
+  bounds: CeilingBounds,
+  ceilingY: number,
+): void {
   const { xMin, xMax, zMin, zMax } = bounds
   for (let x = xMin + 5.0; x < xMax - 2.0; x += 5.0) {
     for (let z = zMin + 5.0; z < zMax - 2.0; z += 5.0) {
@@ -102,7 +110,11 @@ function dressCeilingFixtures(into: BanquetDetailBuilder, bounds: CeilingBounds,
 }
 
 /** Full concourse ceiling with coffered beams, HVAC ducting and luminaires */
-export function dressConcourseCeiling(into: BanquetDetailBuilder, bounds: CeilingBounds, ceilingY: number): void {
+export function dressConcourseCeiling(
+  into: BanquetDetailBuilder,
+  bounds: CeilingBounds,
+  ceilingY: number,
+): void {
   dressCofferBeams(into, bounds, ceilingY)
   dressCeilingFixtures(into, bounds, ceilingY)
 
@@ -130,7 +142,10 @@ function dressDirectionalBoxSign(
   accentColour: number,
 ): void {
   // Suspension rod
-  into.cylinder({ radius: 0.02, height: 0.8, sides: 6 }, { at: [at[0], at[1] + 0.45, at[2]], colour: 0x3d434a })
+  into.cylinder(
+    { radius: 0.02, height: 0.8, sides: 6 },
+    { at: [at[0], at[1] + 0.45, at[2]], colour: 0x3d434a },
+  )
   // Black casing
   into.box([2.8, 0.45, 0.16], { at, colour: CINE_POSTER_FRAME })
   // Backlit sign face

@@ -17,7 +17,13 @@ const room = ship.spaces.get(VVIP_RECREATION_HALL)!
 const structures = plan.structures.filter(({ spaceId }) => spaceId === VVIP_RECREATION_HALL)
 const fixture = (suffix: string) => structures.find(({ id }) => id.endsWith(suffix))!
 const build = (overrides = {}) =>
-  buildVvipRecreationDetails({ THREE, plan, spaceId: VVIP_RECREATION_HALL, reveal: false, ...overrides })!
+  buildVvipRecreationDetails({
+    THREE,
+    plan,
+    spaceId: VVIP_RECREATION_HALL,
+    reveal: false,
+    ...overrides,
+  })!
 const triangles = (root: THREE.Group) =>
   (root.children as THREE.Mesh[]).reduce(
     (sum, mesh) => sum + mesh.geometry.getAttribute('position').count / 3,

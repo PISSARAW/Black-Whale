@@ -21,7 +21,11 @@ export interface FountainOptions {
  * fluted pedestal column, upper spill bowl and ornamental bronze finial.
  */
 export function dressPoliceTieredFountain(options: FountainOptions): void {
-  const { into, center: [cx, cz], floor } = options
+  const {
+    into,
+    center: [cx, cz],
+    floor,
+  } = options
 
   // Level 1: Octagonal primary basin curb
   into.cylinder(
@@ -78,10 +82,7 @@ export function dressPoliceTieredFountain(options: FountainOptions): void {
     { radius: 0.1, height: 0.45 },
     { at: [cx, floor + 2.25 + 0.225, cz], colour: POLICE_BRASS },
   )
-  into.sphere(
-    [0.18, 0.25, 0.18],
-    { at: [cx, floor + 2.75, cz], colour: POLICE_GOLD },
-  )
+  into.sphere([0.18, 0.25, 0.18], { at: [cx, floor + 2.75, cz], colour: POLICE_GOLD })
   into.cylinder(
     { radius: 0.08, height: 0.6 },
     { at: [cx, floor + 2.9 + 0.3, cz], colour: POLICE_WATER },

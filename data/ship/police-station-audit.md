@@ -119,4 +119,3 @@ l'Association des Hunters au Niveau 3 du Black Whale :
   - Encapsulation des paramètres de fonction ($\le 3$ paramètres par fonction).
   - Zéro émoji dans le code, les commentaires et l'interface.
   - 100% rendu procédural Three.js sans textures matricielles externes.
-

@@ -36,23 +36,20 @@ function camillaChaiseMattress(surface: CamillaSurface): void {
 
 function camillaChaiseHeadrest(surface: CamillaSurface): void {
   // Arched scrolled headrest at the west end (X = -0.9)
-  surface.cylinder(
-    { radius: 0.24, height: 0.88, sides: 14 },
-    [-0.9, 0.62, 0],
-    { colour: CAMILLA_VELVET, rotation: [Math.PI / 2, 0, 0] },
-  )
-  surface.cylinder(
-    { radius: 0.26, height: 0.92, sides: 14 },
-    [-0.9, 0.62, 0],
-    { colour: CAMILLA_WOOD, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.24, height: 0.88, sides: 14 }, [-0.9, 0.62, 0], {
+    colour: CAMILLA_VELVET,
+    rotation: [Math.PI / 2, 0, 0],
+  })
+  surface.cylinder({ radius: 0.26, height: 0.92, sides: 14 }, [-0.9, 0.62, 0], {
+    colour: CAMILLA_WOOD,
+    rotation: [Math.PI / 2, 0, 0],
+  })
 
   // Cylindrical silk bolster cushion
-  surface.cylinder(
-    { radius: 0.12, height: 0.78, sides: 12 },
-    [-0.74, 0.64, 0],
-    { colour: CAMILLA_SILK, rotation: [Math.PI / 2, 0, 0] },
-  )
+  surface.cylinder({ radius: 0.12, height: 0.78, sides: 12 }, [-0.74, 0.64, 0], {
+    colour: CAMILLA_SILK,
+    rotation: [Math.PI / 2, 0, 0],
+  })
 
   // Decorative silk accent pillows
   surface.sphere([0.22, 0.14, 0.2], [-0.5, 0.58, -0.16], CAMILLA_SILK)
@@ -65,7 +62,11 @@ function camillaChaiseFrame(surface: CamillaSurface): void {
   const legZ = [-0.42, 0.42]
   for (const x of legX) {
     for (const z of legZ) {
-      surface.cylinder({ radius: 0.035, bottom: 0.02, height: 0.28, sides: 8 }, [x, 0.14, z], CAMILLA_WOOD)
+      surface.cylinder(
+        { radius: 0.035, bottom: 0.02, height: 0.28, sides: 8 },
+        [x, 0.14, z],
+        CAMILLA_WOOD,
+      )
       surface.sphere([0.03, 0.025, 0.03], [x, 0.02, z], CAMILLA_GOLD)
     }
   }
@@ -127,13 +128,17 @@ function diningTableSetting(surface: CamillaSurface): void {
   // Plates, cutlery, wine glasses and decanter
   const places: Point3[] = [
     [-0.55, 0.78, 0], // Camilla place
-    [0.55, 0.78, 0],  // Duazul place
+    [0.55, 0.78, 0], // Duazul place
   ]
   for (const at of places) {
     surface.cylinder({ radius: 0.16, height: 0.02, sides: 14 }, at, CAMILLA_PORCELAIN)
     surface.box([0.025, 0.01, 0.22], [at[0] - 0.22, at[1], at[2]], CAMILLA_SILVER)
     surface.box([0.02, 0.01, 0.22], [at[0] + 0.22, at[1], at[2]], CAMILLA_SILVER)
-    surface.cylinder({ radius: 0.035, height: 0.12, sides: 8 }, [at[0], at[1] + 0.06, at[2] - 0.26], 0xe8e8ea)
+    surface.cylinder(
+      { radius: 0.035, height: 0.12, sides: 8 },
+      [at[0], at[1] + 0.06, at[2] - 0.26],
+      0xe8e8ea,
+    )
   }
   // Central wine decanter
   surface.cylinder({ radius: 0.08, height: 0.26, sides: 10 }, [0, 0.9, 0], 0xdde2e8)
@@ -150,7 +155,11 @@ function courtChair(
   // 4 carved legs
   for (const sx of [-0.22, 0.22]) {
     for (const sz of [-0.22, 0.22]) {
-      surface.cylinder({ radius: 0.028, height: 0.44, sides: 8 }, [x + sx, y + 0.22, z + sz], CAMILLA_WOOD)
+      surface.cylinder(
+        { radius: 0.028, height: 0.44, sides: 8 },
+        [x + sx, y + 0.22, z + sz],
+        CAMILLA_WOOD,
+      )
     }
   }
   // Seat cushion
@@ -204,11 +213,10 @@ function musseDossiers(surface: CamillaSurface): void {
 function musseBirdPerch(surface: CamillaSurface): void {
   // Perch evoking Musse's "Secret Window" Nen bird
   surface.cylinder({ radius: 0.015, height: 1.6, sides: 8 }, [-0.75, 0.8, -0.2], MUSSE_METAL)
-  surface.cylinder(
-    { radius: 0.018, height: 0.38, sides: 8 },
-    [-0.75, 1.58, -0.2],
-    { colour: CAMILLA_WOOD, rotation: [0, 0, Math.PI / 2] },
-  )
+  surface.cylinder({ radius: 0.018, height: 0.38, sides: 8 }, [-0.75, 1.58, -0.2], {
+    colour: CAMILLA_WOOD,
+    rotation: [0, 0, Math.PI / 2],
+  })
   surface.sphere([0.04, 0.06, 0.05], [-0.75, 1.65, -0.2], 0x2e353f) // Stylised bird silhouette
 }
 

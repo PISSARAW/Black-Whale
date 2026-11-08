@@ -28,11 +28,7 @@ export const POLICE_ATRIUM = 'tier-3-central-police-station-atrium'
 export const POLICE_ENTRANCE = 'tier-3-central-police-station-entrance'
 export const POLICE_SAFETY = 'tier-3-central-police-station-safety-section'
 
-export const POLICE_SPACES = new Set<string>([
-  POLICE_ATRIUM,
-  POLICE_ENTRANCE,
-  POLICE_SAFETY,
-])
+export const POLICE_SPACES = new Set<string>([POLICE_ATRIUM, POLICE_ENTRANCE, POLICE_SAFETY])
 
 export function isPoliceStationSpace(spaceId: string): boolean {
   return POLICE_SPACES.has(spaceId)

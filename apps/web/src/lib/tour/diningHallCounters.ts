@@ -175,9 +175,18 @@ function dressCounterStools(options: StoolRowOptions): void {
   const [minZ, maxZ] = span
   const step = 2.0
   for (let z = minZ + 1.5; z <= maxZ - 1.5; z += step) {
-    into.cylinder({ radius: 0.14, height: 0.02, sides: 8 }, { at: [x, floor + 0.01, z], colour: STAINLESS })
-    into.cylinder({ radius: 0.035, height: 0.62, sides: 8 }, { at: [x, floor + 0.32, z], colour: STAINLESS })
-    into.cylinder({ radius: 0.22, height: 0.06, sides: 16 }, { at: [x, floor + 0.65, z], colour: 0x303338 })
+    into.cylinder(
+      { radius: 0.14, height: 0.02, sides: 8 },
+      { at: [x, floor + 0.01, z], colour: STAINLESS },
+    )
+    into.cylinder(
+      { radius: 0.035, height: 0.62, sides: 8 },
+      { at: [x, floor + 0.32, z], colour: STAINLESS },
+    )
+    into.cylinder(
+      { radius: 0.22, height: 0.06, sides: 16 },
+      { at: [x, floor + 0.65, z], colour: 0x303338 },
+    )
     into.ring(
       { radius: 0.22, tube: 0.015 },
       { at: [x, floor + 0.65, z], rotation: [Math.PI / 2, 0, 0], colour: STAINLESS },
@@ -201,7 +210,10 @@ function dressTrayReturnRack(options: TrayReturnOptions): void {
     into.box([0.84, 0.02, 0.7], { at: [x, floor + dy, z], colour: TRAY_SLIDE })
   }
   // Circular waste chute aperture with dark rim
-  into.cylinder({ radius: 0.16, height: 0.04, sides: 12 }, { at: [x, floor + 1.42, z], colour: 0x1a1c1e })
+  into.cylinder(
+    { radius: 0.16, height: 0.04, sides: 12 },
+    { at: [x, floor + 1.42, z], colour: 0x1a1c1e },
+  )
 }
 
 /** Suspended multi-section illuminated menu boards over the service counter. */

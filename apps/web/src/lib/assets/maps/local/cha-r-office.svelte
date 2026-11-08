@@ -149,17 +149,44 @@
     <g transform="translate(145 68)">
       <rect x="0" y="0" width="120" height="32" class="emblem-crest" rx="2" />
       <polygon points="60,6 74,16 60,26 46,16" fill="#cba048" />
-      <text x="60" y="19" font-family="serif" font-weight="bold" font-size="11" fill="#161210" text-anchor="middle">茶</text>
+      <text
+        x="60"
+        y="19"
+        font-family="serif"
+        font-weight="bold"
+        font-size="11"
+        fill="#161210"
+        text-anchor="middle">茶</text
+      >
       <text x="60" y="42" class="micro" fill="#cba048">
         {french ? 'Écusson mural Cha-R' : 'Cha-R Crest'}
       </text>
     </g>
 
     <!-- Parquet en acajou avec bordure laiton -->
-    <rect x="75" y="115" width="260" height="150" fill="#351d13" stroke="#cca64e" stroke-width="1.5" stroke-dasharray="6 4" rx="2" />
+    <rect
+      x="75"
+      y="115"
+      width="260"
+      height="150"
+      fill="#351d13"
+      stroke="#cca64e"
+      stroke-width="1.5"
+      stroke-dasharray="6 4"
+      rx="2"
+    />
 
     <!-- Bureau de commandement -->
-    <rect x="105" y="150" width="200" height="65" fill="#3d2014" stroke="#8d7335" stroke-width="2.5" rx="3" />
+    <rect
+      x="105"
+      y="150"
+      width="200"
+      height="65"
+      fill="#3d2014"
+      stroke="#8d7335"
+      stroke-width="2.5"
+      rx="3"
+    />
     <rect x="150" y="160" width="110" height="42" fill="#2c2e30" rx="2" />
     <!-- Fauteuil exécutif et chaises visiteurs -->
     <circle cx="205" cy="235" r="14" fill="#1f2123" stroke="#8d7335" stroke-width="1.5" />
@@ -231,14 +258,25 @@
       {french ? 'Compartiment des couchettes' : 'Bunk Compartment'}
     </text>
     <text x="205" y="392" class="micro" fill="#ffd700">
-      {french ? 'Interrogatoire mené par Feitan & Phinks (Chap. 379)' : 'Feitan & Phinks interrogation scene (Ch. 379)'}
+      {french
+        ? 'Interrogatoire mené par Feitan & Phinks (Chap. 379)'
+        : 'Feitan & Phinks interrogation scene (Ch. 379)'}
     </text>
 
     <!-- Lit superposé 1 (Interrogatoire Feitan/Phinks) -->
     <g transform="translate(45 405)">
       <rect x="0" y="0" width="90" height="90" class="bunk" rx="3" />
       <!-- Matelas et barreaux d'échelle -->
-      <rect x="8" y="10" width="74" height="70" fill="#3e4736" stroke="#252729" stroke-width="1.5" rx="2" />
+      <rect
+        x="8"
+        y="10"
+        width="74"
+        height="70"
+        fill="#3e4736"
+        stroke="#252729"
+        stroke-width="1.5"
+        rx="2"
+      />
       <rect x="12" y="14" width="66" height="20" fill="#d6d8dc" rx="2" />
       <line x1="8" y1="35" x2="82" y2="35" stroke="#5a5e62" stroke-width="1.5" />
       <line x1="8" y1="55" x2="82" y2="55" stroke="#5a5e62" stroke-width="1.5" />
@@ -250,7 +288,16 @@
     <!-- Lit superposé 2 -->
     <g transform="translate(155 405)">
       <rect x="0" y="0" width="90" height="90" class="bunk" rx="3" />
-      <rect x="8" y="10" width="74" height="70" fill="#292b2d" stroke="#252729" stroke-width="1.5" rx="2" />
+      <rect
+        x="8"
+        y="10"
+        width="74"
+        height="70"
+        fill="#292b2d"
+        stroke="#252729"
+        stroke-width="1.5"
+        rx="2"
+      />
       <rect x="12" y="14" width="66" height="20" fill="#d6d8dc" rx="2" />
       <line x1="8" y1="35" x2="82" y2="35" stroke="#5a5e62" stroke-width="1.5" />
       <line x1="8" y1="55" x2="82" y2="55" stroke="#5a5e62" stroke-width="1.5" />
@@ -261,7 +308,16 @@
 
     <!-- Étagères et armoires de stockage -->
     <g transform="translate(265 405)">
-      <rect x="0" y="0" width="105" height="90" fill="#2e1a12" stroke="#523e1e" stroke-width="2" rx="2" />
+      <rect
+        x="0"
+        y="0"
+        width="105"
+        height="90"
+        fill="#2e1a12"
+        stroke="#523e1e"
+        stroke-width="2"
+        rx="2"
+      />
       <line x1="10" y1="30" x2="95" y2="30" stroke="#7a6345" stroke-width="1.5" />
       <line x1="10" y1="60" x2="95" y2="60" stroke="#7a6345" stroke-width="1.5" />
       <rect x="15" y="8" width="22" height="18" fill="#7a6345" />
@@ -275,7 +331,16 @@
 
     <!-- Casiers métalliques -->
     <g transform="translate(145 352)">
-      <rect x="0" y="0" width="100" height="20" fill="#303439" stroke="#1f2123" stroke-width="1.5" rx="1" />
+      <rect
+        x="0"
+        y="0"
+        width="100"
+        height="20"
+        fill="#303439"
+        stroke="#1f2123"
+        stroke-width="1.5"
+        rx="1"
+      />
       <text x="50" y="14" class="micro" fill="#aaa">
         {french ? 'Casiers métalliques' : 'Steel Lockers'}
       </text>
@@ -289,7 +354,9 @@
     <rect
       role="button"
       tabindex="0"
-      aria-label={french ? 'Inspecter la salle de vidéosurveillance' : 'Inspect the CCTV monitor room'}
+      aria-label={french
+        ? 'Inspecter la salle de vidéosurveillance'
+        : 'Inspect the CCTV monitor room'}
       class="zone {activeArea === 'monitor-room' ? 'zone-active' : ''}"
       x="435"
       y="25"
@@ -302,11 +369,22 @@
       {french ? 'Salle de vidéosurveillance' : 'CCTV Monitor Room'}
     </text>
     <text x="635" y="72" class="sub">
-      {french ? 'Surveillance des zones clés du niveau 5 (Chap. 380)' : 'Live CCTV coverage of key Tier 5 areas (Ch. 380)'}
+      {french
+        ? 'Surveillance des zones clés du niveau 5 (Chap. 380)'
+        : 'Live CCTV coverage of key Tier 5 areas (Ch. 380)'}
     </text>
 
     <!-- Dalles de faux-plancher informatique -->
-    <rect x="445" y="85" width="380" height="420" fill="none" stroke="#23272a" stroke-width="1" stroke-dasharray="14 14" />
+    <rect
+      x="445"
+      y="85"
+      width="380"
+      height="420"
+      fill="none"
+      stroke="#23272a"
+      stroke-width="1"
+      stroke-dasharray="14 14"
+    />
 
     <!-- Mini-dômes caméras d'angle -->
     <circle cx="820" cy="40" r="5" fill="#333" stroke="#cc2222" stroke-width="1.5" />
@@ -327,7 +405,16 @@
     </g>
 
     <!-- Mur de 12 écrans CCTV en baie 4x3 -->
-    <rect x="480" y="95" width="310" height="190" fill="#181a1c" stroke="#333" stroke-width="2" rx="4" />
+    <rect
+      x="480"
+      y="95"
+      width="310"
+      height="190"
+      fill="#181a1c"
+      stroke="#333"
+      stroke-width="2"
+      rx="4"
+    />
     {#each Array(12) as _, i (i)}
       <g>
         <rect
@@ -347,12 +434,23 @@
       </g>
     {/each}
     <text x="635" y="275" class="micro" fill="#38825c">
-      {french ? 'Baie de 12 moniteurs CCTV actifs (Entrepôt, Coursives, Entrées)' : 'Bank of 12 live CCTV feeds (Warehouse, Hallways, Gates)'}
+      {french
+        ? 'Baie de 12 moniteurs CCTV actifs (Entrepôt, Coursives, Entrées)'
+        : 'Bank of 12 live CCTV feeds (Warehouse, Hallways, Gates)'}
     </text>
 
     <!-- Table de veille & Poste opérateur -->
     <g transform="translate(500 340)">
-      <rect x="0" y="0" width="270" height="75" fill="#2c2e30" stroke="#5a5e62" stroke-width="2" rx="3" />
+      <rect
+        x="0"
+        y="0"
+        width="270"
+        height="75"
+        fill="#2c2e30"
+        stroke="#5a5e62"
+        stroke-width="2"
+        rx="3"
+      />
       <!-- Deux moniteurs de bureau -->
       <rect x="35" y="10" width="45" height="26" class="screen-cctv-blue" rx="1.5" />
       <rect x="190" y="10" width="45" height="26" class="screen-cctv-green" rx="1.5" />

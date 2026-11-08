@@ -1,9 +1,4 @@
-import {
-  wallBays,
-  wallBox,
-  type WallBay,
-  type WallSurface,
-} from './corridorWallLayout'
+import { wallBays, wallBox, type WallBay, type WallSurface } from './corridorWallLayout'
 
 const BASEBOARD_DARK = 0x2b2420
 const HANDRAIL_WOOD = 0x543f30
@@ -117,11 +112,7 @@ function extinguisherStation(wall: WallSurface, along: number, floor: number): v
   })
 }
 
-function bayDecorations(
-  wall: WallSurface,
-  bay: WallBay,
-  context: Tier3WallContext,
-): void {
+function bayDecorations(wall: WallSurface, bay: WallBay, context: Tier3WallContext): void {
   const { floor, ceiling } = context
   cabinDoor(wall, bay.along, floor)
 
@@ -140,10 +131,7 @@ function bayDecorations(
 }
 
 /** Dresses a Tier 3 passenger circulation corridor with modular cabins and wayfinding. */
-export function dressTier3CorridorWall(
-  wall: WallSurface,
-  context: Tier3WallContext,
-): void {
+export function dressTier3CorridorWall(wall: WallSurface, context: Tier3WallContext): void {
   passengerRails(wall, context.floor)
   panelVerticalStrips(wall, context)
 

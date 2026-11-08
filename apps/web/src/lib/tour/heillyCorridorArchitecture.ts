@@ -34,7 +34,11 @@ export function dressHeillyCorridorArchitecture(context: CorridorContext): void 
   // Overhead industrial conduit running the length of the bunker corridor
   into.cylinder(
     { radius: 0.05, height: 32, sides: 12 },
-    { at: [-1.6, floor + ceilingHeight - 0.25, -3.5], colour: STEEL_BRUSHED, rotation: [0, 0, Math.PI / 2] },
+    {
+      at: [-1.6, floor + ceilingHeight - 0.25, -3.5],
+      colour: STEEL_BRUSHED,
+      rotation: [0, 0, Math.PI / 2],
+    },
   )
 
   // Caged ceiling bulkhead lamps

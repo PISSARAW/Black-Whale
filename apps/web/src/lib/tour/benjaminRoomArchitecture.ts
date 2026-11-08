@@ -68,8 +68,10 @@ function cofferedCeiling(context: ArchitectureContext): void {
 
   const xs = space.footprint.map(([x]) => x)
   const zs = space.footprint.map(([, z]) => z)
-  const minX = Math.min(...xs), maxX = Math.max(...xs)
-  const minZ = Math.min(...zs), maxZ = Math.max(...zs)
+  const minX = Math.min(...xs),
+    maxX = Math.max(...xs)
+  const minZ = Math.min(...zs),
+    maxZ = Math.max(...zs)
   const width = maxX - minX
   const depth = maxZ - minZ
 

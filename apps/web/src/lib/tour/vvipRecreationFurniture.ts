@@ -41,7 +41,11 @@ export function dressBilliardsTable(surface: VvipRecreationSurface): void {
   const legZ = halfD - 0.35
   for (const lx of [-legX, legX]) {
     for (const lz of [-legZ, legZ]) {
-      surface.cylinder({ radius: 0.14, bottom: 0.1, height: height - 0.18 }, [lx, (height - 0.18) / 2, lz], PALETTE.mahogany)
+      surface.cylinder(
+        { radius: 0.14, bottom: 0.1, height: height - 0.18 },
+        [lx, (height - 0.18) / 2, lz],
+        PALETTE.mahogany,
+      )
       surface.cylinder({ radius: 0.16, height: 0.05 }, [lx, height * 0.45, lz], PALETTE.gold)
     }
   }
@@ -83,7 +87,11 @@ export function dressLoungeSofa(surface: VvipRecreationSurface): void {
   surface.box([width - 0.3, 0.15, depth - 0.2], [0, 0.38, 0.05], PALETTE.burgundy)
 
   // Tufted backrest and rolled arms
-  surface.box([width, height - 0.35, 0.22], [0, 0.35 + (height - 0.35) / 2, -halfD + 0.11], PALETTE.burgundy)
+  surface.box(
+    [width, height - 0.35, 0.22],
+    [0, 0.35 + (height - 0.35) / 2, -halfD + 0.11],
+    PALETTE.burgundy,
+  )
   surface.box([0.22, 0.28, depth], [-halfW + 0.11, 0.52, 0], PALETTE.burgundy)
   surface.box([0.22, 0.28, depth], [halfW - 0.11, 0.52, 0], PALETTE.burgundy)
 
@@ -108,7 +116,11 @@ export function dressLoungeArmchair(surface: VvipRecreationSurface): void {
   surface.box([width - 0.24, 0.14, depth - 0.2], [0, 0.4, 0.05], PALETTE.leather)
 
   // Wingback profile
-  surface.box([width, height - 0.35, 0.18], [0, 0.35 + (height - 0.35) / 2, -halfD + 0.09], PALETTE.leather)
+  surface.box(
+    [width, height - 0.35, 0.18],
+    [0, 0.35 + (height - 0.35) / 2, -halfD + 0.09],
+    PALETTE.leather,
+  )
   surface.box([0.14, 0.32, depth], [-halfW + 0.07, 0.48, 0], PALETTE.leather)
   surface.box([0.14, 0.32, depth], [halfW - 0.07, 0.48, 0], PALETTE.leather)
 }
@@ -143,7 +155,11 @@ export function dressBarCounter(surface: VvipRecreationSurface): void {
 
   // Wooden base and fluted panels facing into the hall (east)
   surface.box([width - 0.15, height - 0.08, depth], [0, (height - 0.08) / 2, 0], PALETTE.mahogany)
-  surface.box([0.05, height - 0.15, depth - 0.4], [width / 2 - 0.08, (height - 0.15) / 2 + 0.04, 0], PALETTE.darkWood)
+  surface.box(
+    [0.05, height - 0.15, depth - 0.4],
+    [width / 2 - 0.08, (height - 0.15) / 2 + 0.04, 0],
+    PALETTE.darkWood,
+  )
   surface.box([0.06, 0.04, depth], [width / 2 - 0.06, height - 0.16, 0], PALETTE.gold)
 
   // Brass footrail along front
@@ -171,7 +187,11 @@ export function dressBarBackShelf(surface: VvipRecreationSurface): void {
 
   // Back panel and side uprights
   surface.box([width, height, depth], [0, height / 2, 0], PALETTE.darkWood)
-  surface.box([0.02, height - 0.2, depth - 0.2], [width / 2 - 0.01, height / 2, 0], PALETTE.alabaster) // mirror effect
+  surface.box(
+    [0.02, height - 0.2, depth - 0.2],
+    [width / 2 - 0.01, height / 2, 0],
+    PALETTE.alabaster,
+  ) // mirror effect
 
   // 3 Display shelves
   for (let tier = 1; tier <= 3; tier++) {
@@ -194,7 +214,11 @@ export function dressCardTable(surface: VvipRecreationSurface): void {
   const { width, height } = surface
 
   // Central carved pedestal and 4 scrolled feet
-  surface.cylinder({ radius: 0.15, height: height - 0.1 }, [0, (height - 0.1) / 2, 0], PALETTE.mahogany)
+  surface.cylinder(
+    { radius: 0.15, height: height - 0.1 },
+    [0, (height - 0.1) / 2, 0],
+    PALETTE.mahogany,
+  )
   for (let foot = 0; foot < 4; foot++) {
     const angle = (foot * Math.PI) / 2
     const fx = Math.cos(angle) * 0.35
@@ -203,9 +227,21 @@ export function dressCardTable(surface: VvipRecreationSurface): void {
   }
 
   // Octagonal table top with green baize center
-  surface.cylinder({ radius: width / 2, height: 0.06, sides: 8 }, [0, height - 0.03, 0], PALETTE.mahogany)
-  surface.cylinder({ radius: width / 2 - 0.12, height: 0.02, sides: 8 }, [0, height - 0.01, 0], PALETTE.emeraldFelt)
-  surface.cylinder({ radius: width / 2 - 0.1, height: 0.015, sides: 8 }, [0, height, 0], PALETTE.gold)
+  surface.cylinder(
+    { radius: width / 2, height: 0.06, sides: 8 },
+    [0, height - 0.03, 0],
+    PALETTE.mahogany,
+  )
+  surface.cylinder(
+    { radius: width / 2 - 0.12, height: 0.02, sides: 8 },
+    [0, height - 0.01, 0],
+    PALETTE.emeraldFelt,
+  )
+  surface.cylinder(
+    { radius: width / 2 - 0.1, height: 0.015, sides: 8 },
+    [0, height, 0],
+    PALETTE.gold,
+  )
 
   // 4 Bridge chairs around table
   const chairDist = width / 2 + 0.32

@@ -1,9 +1,7 @@
 import type * as Three from 'three'
 import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
-import {
-  CineplexSurface,
-} from './cineplexDetailSurface'
+import { CineplexSurface } from './cineplexDetailSurface'
 import { dressConcourseCeiling, dressSuspendedDirectionalSigns } from './cineplexCeiling'
 import { dressConcourseFloor } from './cineplexFloor'
 import { dressConcourseWallSpan, dressWallPosters } from './cineplexWalls'
@@ -77,7 +75,12 @@ interface SpaceDressContext {
   structures: Structure[]
 }
 
-function dressConcessionSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+function dressConcessionSpace({
+  into,
+  floor,
+  ceiling,
+  structures,
+}: SpaceDressContext): Three.Group | null {
   const bounds = { xMin: -25, xMax: -12.5, zMin: -7.5, zMax: 7.5 }
   dressConcourseFloor(into, bounds, floor)
   dressConcourseCeiling(into, bounds, ceiling)
@@ -92,7 +95,12 @@ function dressConcessionSpace({ into, floor, ceiling, structures }: SpaceDressCo
   return into.finish('cineplex-concession-manga-details')
 }
 
-function dressTicketDeskSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+function dressTicketDeskSpace({
+  into,
+  floor,
+  ceiling,
+  structures,
+}: SpaceDressContext): Three.Group | null {
   const bounds = { xMin: 12.5, xMax: 25, zMin: -7.5, zMax: 7.5 }
   dressConcourseFloor(into, bounds, floor)
   dressConcourseCeiling(into, bounds, ceiling)
@@ -106,7 +114,12 @@ function dressTicketDeskSpace({ into, floor, ceiling, structures }: SpaceDressCo
   return into.finish('cineplex-tickets-manga-details')
 }
 
-function dressScreenCorridorSpace({ into, floor, ceiling, structures }: SpaceDressContext): Three.Group | null {
+function dressScreenCorridorSpace({
+  into,
+  floor,
+  ceiling,
+  structures,
+}: SpaceDressContext): Three.Group | null {
   const bounds = { xMin: -7.5, xMax: 7.5, zMin: -5, zMax: 12.5 }
   dressConcourseCeiling(into, bounds, ceiling)
   dressSuspendedDirectionalSigns(into, ceiling)

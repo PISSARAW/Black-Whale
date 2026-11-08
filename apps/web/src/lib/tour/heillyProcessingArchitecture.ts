@@ -214,9 +214,15 @@ function floorDrain(into: BanquetDetailBuilder, at: Point3): void {
   const y = floorY + 0.005
 
   // Stainless outer ring flush with floor
-  into.ring({ radius: 0.28, tube: 0.02 }, { at: [x, y, z], rotation: [Math.PI / 2, 0, 0], colour: STEEL_BRUSHED })
+  into.ring(
+    { radius: 0.28, tube: 0.02 },
+    { at: [x, y, z], rotation: [Math.PI / 2, 0, 0], colour: STEEL_BRUSHED },
+  )
   // Recessed dark well
-  into.cylinder({ radius: 0.26, height: 0.02, sides: 16 }, { at: [x, y - 0.01, z], colour: 0x14181c })
+  into.cylinder(
+    { radius: 0.26, height: 0.02, sides: 16 },
+    { at: [x, y - 0.01, z], colour: 0x14181c },
+  )
   // Drain cross grating
   into.box([0.5, 0.006, 0.03], { at: [x, y, z], colour: STEEL_DARK })
   into.box([0.03, 0.006, 0.5], { at: [x, y, z], colour: STEEL_DARK })

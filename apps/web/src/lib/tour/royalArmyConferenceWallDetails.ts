@@ -165,17 +165,23 @@ function wallSynchronisedClocks(context: WallContext): void {
   const zPositions = [-2.0, 0, 2.0]
   for (const z of zPositions) {
     // Outer chrome bezel ring
-    into.cylinder({ radius: 0.28, height: 0.04, sides: 16 }, {
-      at: [wallX, clockY, z],
-      colour: ARMY_CHROME,
-      rotation: [0, 0, Math.PI / 2],
-    })
+    into.cylinder(
+      { radius: 0.28, height: 0.04, sides: 16 },
+      {
+        at: [wallX, clockY, z],
+        colour: ARMY_CHROME,
+        rotation: [0, 0, Math.PI / 2],
+      },
+    )
     // White dial face
-    into.cylinder({ radius: 0.25, height: 0.045, sides: 16 }, {
-      at: [wallX - 0.005, clockY, z],
-      colour: ARMY_PAPER,
-      rotation: [0, 0, Math.PI / 2],
-    })
+    into.cylinder(
+      { radius: 0.25, height: 0.045, sides: 16 },
+      {
+        at: [wallX - 0.005, clockY, z],
+        colour: ARMY_PAPER,
+        rotation: [0, 0, Math.PI / 2],
+      },
+    )
     // Clock hands
     into.box([0.01, 0.14, 0.015], {
       at: [wallX - 0.015, clockY + 0.06, z],

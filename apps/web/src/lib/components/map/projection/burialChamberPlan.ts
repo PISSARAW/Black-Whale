@@ -3,15 +3,17 @@ import { structureFootprint } from '$lib/tour/geometry'
 import type { Polygon, Vec2 } from '$lib/tour/types'
 
 const ship = theShip()
-const plan = ship.plans.get('interior-burial-chamber')!
+const plan = ship.plans.get('tier-1-c')!
 export const BURIAL_SPACE = 'tier-1-princes-burial-chamber-rotunda'
+/** Centre of the rotunda on deck 1-C; the local map is drawn around it. */
+const CENTER: Vec2 = [52, 25.48]
 
 export const BURIAL_VIEWBOX = { width: 800, height: 800 }
 export const BURIAL_SCALE = 34
 
 export const burialPoint = ([x, z]: Vec2) => ({
-  x: 400 + x * BURIAL_SCALE,
-  y: 400 + z * BURIAL_SCALE,
+  x: 400 + (x - CENTER[0]) * BURIAL_SCALE,
+  y: 400 + (z - CENTER[1]) * BURIAL_SCALE,
 })
 
 export const burialPolygon = (polygon: Polygon) =>
@@ -22,7 +24,7 @@ export const burialPolygon = (polygon: Polygon) =>
     })
     .join(' ')
 
-export const burialRooms = plan.spaces
+export const burialRooms = plan.spaces.filter(({ id }) => id === BURIAL_SPACE)
 export const burialFixtures = plan.structures
   .filter(({ spaceId }) => spaceId === BURIAL_SPACE)
   .map((structure) => ({
@@ -31,10 +33,12 @@ export const burialFixtures = plan.structures
     point: burialPoint(structure.at),
   }))
 
-export const burialDoors = plan.doorways.map((door) => ({
-  from: burialPoint(door.start),
-  to: burialPoint(door.end),
-}))
+export const burialDoors = plan.doorways
+  .filter(({ a, b }) => a === BURIAL_SPACE || b === BURIAL_SPACE)
+  .map((door) => ({
+    from: burialPoint(door.start),
+    to: burialPoint(door.end),
+  }))
 
 export interface PrinceInfo {
   rank: number
@@ -109,9 +113,12 @@ export const burialCoffins = burialFixtures
 export const burialReliquary = burialFixtures.find((fixture) => fixture.id.includes('reliquary'))
 
 export const burialCables = burialCoffins.map((coffin) => {
-  const center = burialPoint([0, 0])
+  const center = burialPoint(CENTER)
   const coffinEnd = burialPoint(coffin.at)
-  const nodeAt: Vec2 = [coffin.at[0] * 0.52, coffin.at[1] * 0.52]
+  const nodeAt: Vec2 = [
+    CENTER[0] + (coffin.at[0] - CENTER[0]) * 0.52,
+    CENTER[1] + (coffin.at[1] - CENTER[1]) * 0.52,
+  ]
   const nodePoint = burialPoint(nodeAt)
   const prince = coffin.prince
   return {
@@ -134,6 +141,6 @@ function spot(at: Vec2) {
 
 export const burialSpotAnchors = {
   occupants: {
-    'nasubi-hui-guo-rou': spot([2.75, 7.87]),
+    'nasubi-hui-guo-rou': spot([CENTER[0] + 2.75, CENTER[1] + 7.87]),
   },
 }

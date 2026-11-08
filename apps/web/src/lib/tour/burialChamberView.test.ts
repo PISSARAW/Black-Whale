@@ -19,7 +19,7 @@ import {
 } from '$lib/components/map/projection/burialChamberPlan'
 
 const ship = theShip()
-const plan = ship.plans.get('interior-burial-chamber')!
+const plan = ship.plans.get('tier-1-c')!
 const room = ship.spaces.get(BURIAL_SPACE)!
 const structures = plan.structures.filter(({ spaceId }) => spaceId === BURIAL_SPACE)
 
@@ -93,10 +93,10 @@ describe('the princes burial chamber reconstructed from chapter 371', () => {
     const floor = floorOf(room, plan.tier)
     expect(bounds.min.y).toBeGreaterThanOrEqual(floor)
     expect(bounds.max.y).toBeLessThanOrEqual(floor + room.ceiling! + 0.1)
-    expect(bounds.min.x).toBeGreaterThanOrEqual(-10.5)
-    expect(bounds.max.x).toBeLessThanOrEqual(10.5)
-    expect(bounds.min.z).toBeGreaterThanOrEqual(-10.5)
-    expect(bounds.max.z).toBeLessThanOrEqual(10.5)
+    expect(bounds.min.x).toBeGreaterThanOrEqual(52 - 10.5)
+    expect(bounds.max.x).toBeLessThanOrEqual(52 + 10.5)
+    expect(bounds.min.z).toBeGreaterThanOrEqual(25.48 - 10.5)
+    expect(bounds.max.z).toBeLessThanOrEqual(25.48 + 10.5)
 
     disposeBanquetDetails(root)
   })

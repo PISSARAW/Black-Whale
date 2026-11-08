@@ -452,14 +452,17 @@ describe('what stands in the rooms', () => {
   })
 
   it('leaves the way into the burial chamber open', () => {
-    const way = ship.links.find(
-      (link) => link.to === 'tier-1-princes-burial-chamber-rotunda' && link.kind === 'door',
-    )
+    const way = ship.plans
+      .get('tier-1-c')!
+      .doorways.find(
+        (door) =>
+          door.a === 'tier-1-princes-burial-chamber-rotunda' ||
+          door.b === 'tier-1-princes-burial-chamber-rotunda',
+      )
     expect(way, 'the burial chamber cannot be entered').toBeDefined()
 
-    // Step in from where the door puts you: a coffin on that axis would seal
-    // the room nothing else can be reached through.
-    const arrival = way!.atTo!
+    // Step in through the doorway: a coffin on that axis would seal the room.
+    const arrival: Vec2 = [(way!.start[0] + way!.end[0]) / 2, way!.start[1]]
     for (const step of [0, 1.5, 3]) {
       const inside: Vec2 = [arrival[0], arrival[1] - step]
       for (const coffin of inRoom('tier-1-princes-burial-chamber-rotunda')) {

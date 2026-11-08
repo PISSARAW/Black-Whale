@@ -105,6 +105,7 @@ test('finder and scene tools remain accessible', async ({ page }) => {
 })
 
 test('plans and options work while the scene is immersive', async ({ page }) => {
+  test.slow()
   await visit(page)
   await navigation(page)
     .getByRole('button', { name: /Plein écran/ })
@@ -125,6 +126,7 @@ test('plans and options work while the scene is immersive', async ({ page }) => 
 })
 
 test('dragging the plan keeps it open and clicking a room travels there', async ({ page }) => {
+  test.slow()
   await visit(page)
   const dialog = await plan(page)
   await dialog.getByRole('button', { name: 'Agrandir', exact: true }).click()

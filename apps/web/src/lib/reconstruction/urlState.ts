@@ -30,3 +30,42 @@ export function writeReconstructionUrl(state: ReconstructionUrlState): string {
   if (state.observer !== 'canon') entries.push(['observer', state.observer])
   return entries.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')
 }
+
+export function sortChronologicalEvents<
+  C extends { number: number; events: Array<{ ordinal?: number | null; sequence: number }> },
+>(chapters: C[]): Array<{ chapter: C; event: C['events'][number] }> {
+  return chapters
+    .flatMap((chapter) => chapter.events.map((event) => ({ chapter, event })))
+    .sort(
+      (a, b) =>
+        (a.event.ordinal ?? Number.MAX_SAFE_INTEGER) -
+          (b.event.ordinal ?? Number.MAX_SAFE_INTEGER) ||
+        a.chapter.number - b.chapter.number ||
+        a.event.sequence - b.event.sequence,
+    )
+}
+
+export function resolveInitialReconstructionParams<
+  C extends {
+    number: number
+    events: Array<{ id: string; ordinal?: number | null; sequence: number }>
+  },
+>(chapters: C[], searchParams: Pick<URLSearchParams, 'get'>) {
+  const requested = readReconstructionUrl(searchParams)
+  const events = sortChronologicalEvents(chapters)
+  const eventIndex = requested.eventId
+    ? events.findIndex((entry) => entry.event.id === requested.eventId)
+    : 0
+  const validCertainties = ['all', 'CONFIRMED', 'PROBABLE', 'LAST_KNOWN']
+  const certaintyFilter = validCertainties.includes(requested.certainty)
+    ? requested.certainty
+    : 'all'
+  return {
+    index: eventIndex >= 0 ? eventIndex : 0,
+    view: requested.view,
+    follow: requested.follow,
+    changeFilter: requested.changesOnly ? ('changed' as const) : ('all' as const),
+    certaintyFilter,
+    observer: requested.observer,
+  }
+}

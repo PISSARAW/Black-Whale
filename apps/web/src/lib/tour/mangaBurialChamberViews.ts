@@ -2,7 +2,7 @@ import { mangaView as view, type MangaCastStaging, type MangaView } from './mang
 import { BURIAL_SPACE } from './burialChamberView'
 
 const staging: MangaCastStaging[] = [
-  { characterId: 'nasubi-hui-guo-rou', at: [2.75, 7.87], heading: -2.8, pose: 'idle' },
+  { characterId: 'nasubi-hui-guo-rou', at: [54.75, 33.35], heading: -2.8, pose: 'idle' },
 ]
 
 const source = {
@@ -17,8 +17,8 @@ export const MANGA_BURIAL_CHAMBER_VIEWS: MangaView[] = [
   view({
     ...source,
     id: 'burial-rotunda-caskets',
-    at: [0, -8.2],
-    target: [1.8, 7.87],
+    at: [52, 17.28],
+    target: [53.8, 33.35],
     pitch: 0.06,
     pages: '18–20',
     label: 'The fourteen radial caskets of the succession-war burial chamber',
@@ -27,8 +27,8 @@ export const MANGA_BURIAL_CHAMBER_VIEWS: MangaView[] = [
   view({
     ...source,
     id: 'burial-nasubi-momoze-coffin',
-    at: [0.9, 6.0],
-    target: [2.75, 7.87],
+    at: [52.9, 31.48],
+    target: [54.75, 33.35],
     pitch: 0.08,
     eyeHeight: 1.5,
     pages: '20–21',
@@ -38,8 +38,8 @@ export const MANGA_BURIAL_CHAMBER_VIEWS: MangaView[] = [
   view({
     ...source,
     id: 'princes-burial-chamber-overhead',
-    at: [0, 4.5],
-    target: [0, 0],
+    at: [52, 29.98],
+    target: [52, 25.48],
     pitch: -1.45,
     eyeHeight: 26,
     pages: '18–19',

@@ -380,10 +380,20 @@ export function dressBurialArchitecture(options: {
   const floor = floorOf(space, plan.tier)
   const ceilingHeight = ceilingOf(space, plan.tier)
   const context: Context = { into, floor, ceilingHeight }
+  const xs = space.footprint.map(([x]) => x)
+  const zs = space.footprint.map(([, z]) => z)
+  const previous = into.origin
+  // The chamber is modelled around its own centre; place it on the deck.
+  into.origin = [
+    (Math.min(...xs) + Math.max(...xs)) / 2,
+    0,
+    (Math.min(...zs) + Math.max(...zs)) / 2,
+  ]
 
   ceilingAndRibs(context)
   outerWallPilasters(context)
   floorCircuits(into, floor)
   centralApparatus(into, floor)
   cablesAndRelayNodes(into, floor)
+  into.origin = previous
 }

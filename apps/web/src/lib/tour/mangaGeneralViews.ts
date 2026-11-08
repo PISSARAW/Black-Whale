@@ -234,4 +234,18 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
       'tier-1-princes-front-corridor-port',
     ],
   }),
+  view({
+    id: 'tier-5-hangar-entrance-gate',
+    spaceId: 'tier-5-hangar-entrance',
+    at: [0, 2.2],
+    target: [0, -2.85],
+    pitch: 0.05,
+    eyeHeight: 1.65,
+    chapter: 358,
+    volume: 34,
+    pages: '14–16',
+    label: 'Tier 5 hangar entrance and armored compartmental blast gate',
+    labelFr: 'Entrée du hangar du Tier 5 et porte blindée compartimentée',
+    triggerSpaceIds: ['tier-5-hangar-entrance'],
+  }),
 ]

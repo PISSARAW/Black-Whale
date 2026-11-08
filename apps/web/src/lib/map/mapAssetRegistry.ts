@@ -44,6 +44,7 @@ import ChaROffice from '$lib/assets/maps/local/cha-r-office.svelte'
 import Warehouse from '$lib/assets/maps/local/warehouse.svelte'
 import ScreeningRoom from '$lib/assets/maps/local/screening-room.svelte'
 import VvipRecreationHall from '$lib/assets/maps/local/vvip-recreation-hall.svelte'
+import HangarEntrance from '$lib/assets/maps/local/hangar-entrance.svelte'
 
 export const MAP_ASSETS = {
   'black-whale-overview': BlackWhaleOverview,
@@ -92,6 +93,7 @@ export const MAP_ASSETS = {
   warehouse: Warehouse,
   'screening-room': ScreeningRoom,
   'vvip-recreation-hall': VvipRecreationHall,
+  'hangar-entrance': HangarEntrance,
 } as const
 
 export type MapAssetKey = keyof typeof MAP_ASSETS
@@ -136,6 +138,8 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   't4-xiyu': 'xi-yu-office',
   't5-char': 'cha-r-office',
   't5-warehouses': 'warehouse',
+  'tier-5-hangar-entrance': 'hangar-entrance',
+  'hangar-entrance': 'hangar-entrance',
 }
 
 /// The deck SVGs name their clickable regions themselves, and those names are
@@ -195,6 +199,8 @@ const REGION_LOCATION_SLUGS: Record<string, string | null> = {
   't5-recycling': 'tier-4-recycling-sewage-facilities',
   't5-residential': 'tier-5-standard-cabins',
   't5-warehouses': 'tier-5-warehouse',
+  'hangar-entrance': 'tier-5-hangar-entrance',
+  'tier-5-hangar-entrance': 'tier-5-hangar-entrance',
 }
 
 /// Prince apartments are drawn from one shared asset, so their region ids carry

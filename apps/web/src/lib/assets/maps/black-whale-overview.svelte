@@ -1072,7 +1072,7 @@
       inferred: false,
     },
     {
-      id: 'tier-1-princes-burial-chamber',
+      id: 'tier-1-princes-burial-chamber-rotunda',
       tier: 'tier-1-c',
       region: 'princes-burial-chamber',
       x: 540.2,

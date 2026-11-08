@@ -86,7 +86,7 @@
 
 ## Chambre funéraire des princes — `tier-1-princes-burial-chamber`
 
-- **Pont :** tier-1-c, interior-burial-chamber
+- **Pont :** tier-1-c, tier-1-c
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 2
 - **Emprises relevées :** 15.92 × 15.36 m ; 20.54 × 20.54 m

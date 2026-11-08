@@ -19,6 +19,9 @@ export class BanquetDetailBuilder {
   private readonly surfaces = batch()
   private readonly lights = batch()
 
+  /** Added to every placement; lets a room be modelled around its own centre. */
+  origin: Point3 = [0, 0, 0]
+
   constructor(private readonly THREE: typeof Three) {}
 
   add(input: Three.BufferGeometry, placement: Placement): void {
@@ -27,7 +30,8 @@ export class BanquetDetailBuilder {
     if (geometry !== input) input.dispose()
     const rotation = placement.rotation ?? [0, 0, 0]
     geometry.rotateX(rotation[0]).rotateY(rotation[1]).rotateZ(rotation[2])
-    geometry.translate(...placement.at)
+    const [ox, oy, oz] = this.origin
+    geometry.translate(placement.at[0] + ox, placement.at[1] + oy, placement.at[2] + oz)
     const vertices = geometry.getAttribute('position')
     const normals = geometry.getAttribute('normal')
     const base = new THREE.Color(placement.colour)

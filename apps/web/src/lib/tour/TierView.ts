@@ -27,6 +27,7 @@ import { buildCorridorWallDetails } from './corridorWallView'
 import { buildDoorDetails } from './doorView'
 import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from './supremeCourtView'
 import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screeningRoomView'
+import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 
 export interface TierRoomView {
   spaceId: string
@@ -163,6 +164,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildCorridorWallDetails,
   buildSupremeCourtDetails,
   buildScreeningRoomDetails,
+  buildHangarEntranceDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
@@ -183,18 +185,21 @@ export class TierView {
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const basePlan = prisonSurfacePlan(plan, reveal)
-    const surfacePlan = screeningRoomSurfacePlan(
-      supremeCourtSurfacePlan(
-        podCabinSurfacePlan(
-          cineplexSurfacePlan(
-            hospitalSurfacePlan(
-              chaRSurfacePlan(
-                policeSurfacePlan(
-                  justiceSurfacePlan(
-                    heillySurfacePlan(
-                      benjaminSurfacePlan(
-                        burialSurfacePlan(
-                          casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+    const surfacePlan = hangarEntranceSurfacePlan(
+      screeningRoomSurfacePlan(
+        supremeCourtSurfacePlan(
+          podCabinSurfacePlan(
+            cineplexSurfacePlan(
+              hospitalSurfacePlan(
+                chaRSurfacePlan(
+                  policeSurfacePlan(
+                    justiceSurfacePlan(
+                      heillySurfacePlan(
+                        benjaminSurfacePlan(
+                          burialSurfacePlan(
+                            casinoSurfacePlan(princesSurfacePlan(basePlan, reveal), reveal),
+                            reveal,
+                          ),
                           reveal,
                         ),
                         reveal,

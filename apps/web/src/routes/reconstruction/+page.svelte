@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { onDestroy, untrack } from 'svelte'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
   import { createEmptyWorld, reduceWorld } from '@black-whale/canon-engine'
@@ -35,7 +35,11 @@
   import { visibleInPerspective } from '$lib/reconstruction/perspective'
   import { PerspectiveLoader } from '$lib/reconstruction/perspectiveLoader.svelte'
   import { mainSceneSpace } from '$lib/reconstruction/sceneEntry'
-  import { readReconstructionUrl, writeReconstructionUrl } from '$lib/reconstruction/urlState'
+  import {
+    resolveInitialReconstructionParams,
+    sortChronologicalEvents,
+    writeReconstructionUrl,
+  } from '$lib/reconstruction/urlState'
   import { shipHourOf } from '$lib/tour/hour'
   import { stationIn } from '$lib/tour/cast/stations'
   import type { Space, Vec2 } from '$lib/tour/types'
@@ -43,17 +47,8 @@
   let { data }: { data: PageData } = $props()
   const ship = theShip()
 
-  const chronologicalEvents = $derived(
-    data.chapters
-      .flatMap((chapter) => chapter.events.map((event) => ({ event, chapter })))
-      .sort(
-        (a, b) =>
-          (a.event.ordinal ?? Number.MAX_SAFE_INTEGER) -
-            (b.event.ordinal ?? Number.MAX_SAFE_INTEGER) ||
-          a.chapter.number - b.chapter.number ||
-          a.event.sequence - b.event.sequence,
-      ),
-  )
+  const chronologicalEvents = $derived(sortChronologicalEvents(data.chapters))
+  const initialParams = resolveInitialReconstructionParams(data.chapters, $page.url.searchParams)
 
   const engineEvents = $derived(
     data.worldEvents.map((record) => ({
@@ -74,22 +69,27 @@
     })) as unknown as WorldEvent[],
   )
 
-  let currentIndex = $state(0)
+  let currentIndex = $state(initialParams.index)
   let isPlaying = $state(false)
   let playbackInterval: ReturnType<typeof setInterval> | undefined
   let extras = $state<Apparition[]>([])
-  let viewMode = $state<'overview' | 'scene'>('overview')
+  let viewMode = $state<'overview' | 'scene'>(initialParams.view)
   let selectedBodyId = $state<string | null>(null)
-  let followedBodyId = $state<string | null>(null)
+  let followedBodyId = $state<string | null>(initialParams.follow)
   let eventQuery = $state('')
-  let changeFilter = $state<'all' | 'changed'>('all')
-  let certaintyFilter = $state<'all' | DisplayPresence['certainty']>('all')
-  let perspectiveCharacterId = $state('canon')
+  let changeFilter = $state<'all' | 'changed'>(initialParams.changeFilter)
+  let certaintyFilter = $state<'all' | DisplayPresence['certainty']>(
+    initialParams.certaintyFilter as 'all' | DisplayPresence['certainty'],
+  )
+  let perspectiveCharacterId = $state(initialParams.observer)
   const lens = new PerspectiveLoader()
   const perspective = $derived(lens.projection)
   const perspectiveLoading = $derived(lens.loading)
   const perspectiveError = $derived(lens.error)
-  let urlHydrated = $state(false)
+  let mounted = $state(false)
+  onMount(() => {
+    mounted = true
+  })
 
   let currentPresences = $state<DisplayPresence[]>([])
   let previousPresences = $state<DisplayPresence[]>([])
@@ -319,29 +319,7 @@
   let activeTechnique = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
 
   $effect(() => {
-    if (urlHydrated) return
-    const requested = readReconstructionUrl($page.url.searchParams)
-    const eventIndex = chronologicalEvents.findIndex(
-      (entry) => entry.event.id === requested.eventId,
-    )
-    if (eventIndex >= 0) currentIndex = eventIndex
-    viewMode = requested.view
-    followedBodyId = requested.follow
-    changeFilter = requested.changesOnly ? 'changed' : 'all'
-    if (['all', 'CONFIRMED', 'PROBABLE', 'LAST_KNOWN'].includes(requested.certainty)) {
-      certaintyFilter = requested.certainty as typeof certaintyFilter
-    }
-    if (
-      requested.observer === 'canon' ||
-      perspectiveCharacters.some((character) => character.id === requested.observer)
-    ) {
-      perspectiveCharacterId = requested.observer
-    }
-    urlHydrated = true
-  })
-
-  $effect(() => {
-    if (!urlHydrated) return
+    if (!mounted) return
     const query = writeReconstructionUrl({
       eventId: selectedEvent?.event.id ?? null,
       view: viewMode,

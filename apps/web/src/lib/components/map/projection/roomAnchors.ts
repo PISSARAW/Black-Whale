@@ -23,6 +23,7 @@ import { cineplexSpotAnchors } from './cineplexPlan'
 import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
 import { vvipRecreationSpotAnchors } from './vvipRecreationPlan'
 import { supremeCourtSpotAnchors } from './supremeCourtPlan'
+import { hangarEntranceSpotAnchors } from './hangarEntrancePlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -257,6 +258,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   },
   // The central dining hall follows the shared blueprint projection (ch. 371, 377, 379–380).
   'tier-5-central-dining-hall': diningHallSpotAnchors,
+  // The Tier 5 hangar entrance and cargo blast gate (ch. 358, 377, 390).
+  'tier-5-hangar-entrance': hangarEntranceSpotAnchors,
   // The Royal Army conference & briefing room (ch. 350, 380).
   'tier-4-royal-army-conference-room': royalArmyConferenceSpotAnchors,
   'tier-4-royal-army-conference-room-floor': royalArmyConferenceSpotAnchors,

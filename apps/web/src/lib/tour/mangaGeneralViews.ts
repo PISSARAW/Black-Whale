@@ -209,6 +209,10 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     chapter: 382,
     volume: 36,
     pages: '4–6',
+    staging: [
+      { characterId: 'coventoba', at: [15.2, -1.2], heading: 0, pose: 'idle' },
+      { characterId: 'sayird', at: [15.2, 1.2], heading: 0, pose: 'idle' },
+    ],
     label: "Guarded gate to the princes' quarters, registration desk and posted soldiers",
     labelFr: "Poste d'accès gardé des princes, comptoir d'enregistrement et soldats en faction",
     triggerSpaceIds: ['tier-1-princes-quarters-gate', 'tier-1-royal-residential-cross-gap-1'],

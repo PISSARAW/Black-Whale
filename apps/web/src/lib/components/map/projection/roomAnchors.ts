@@ -22,6 +22,7 @@ import { policeSpotAnchors } from './policeStationPlan'
 import { cineplexSpotAnchors } from './cineplexPlan'
 import { royalArmyConferenceSpotAnchors } from './royalArmyConferencePlan'
 import { vvipRecreationSpotAnchors } from './vvipRecreationPlan'
+import { supremeCourtSpotAnchors } from './supremeCourtPlan'
 
 /**
  * Room anchors inside a local map, as percentages of the local SVG box.
@@ -241,6 +242,8 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-vip-casino': {
     occupants: { hisoka: { x: 50.4, y: 34.5, inferred: true } },
   },
+  // The Supreme Court courtroom (ch. 349, 371, 376, 379).
+  'tier-1-supreme-court': supremeCourtSpotAnchors,
   // `local/cineplex.svelte`, 1000 × 800 (ch. 393).
   // Bonolenov watches from the seating island, wearing Hisoka's face, while Hisoka sits with popcorn.
   'tier-3-cineplex': cineplexSpotAnchors,

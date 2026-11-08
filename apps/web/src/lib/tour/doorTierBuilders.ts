@@ -1,3 +1,6 @@
+import type * as Three from 'three'
+import { BanquetDetailBuilder } from './banquetDetailBuilder'
+import type { AnimatedDoorLeaf } from './doorAnimator'
 import {
   doorBox,
   TIER_1_PALETTE,
@@ -6,6 +9,7 @@ import {
   TIER_4_PALETTE,
   TIER_5_PALETTE,
   type DoorDressContext,
+  type DoorPlacement,
 } from './doorDetailSurface'
 
 interface CasingStyle {
@@ -65,60 +69,145 @@ function dressCasing(context: DoorDressContext, style: CasingStyle): void {
   }
 }
 
-interface OpenLeafOptions {
+export interface LeafBuildOptions {
+  THREE: typeof Three
+  placement: DoorPlacement
+  tier: 1 | 2 | 3 | 4 | 5
+}
+
+interface SingleLeafSpec {
+  THREE: typeof Three
+  placement: DoorPlacement
   leafW: number
   leafD: number
   leafCol: number
   handleCol: number
   hingeSide: 1 | -1
+  tier: 1 | 2 | 3 | 4 | 5
 }
 
-function dressSingleLeaf(context: DoorDressContext, options: OpenLeafOptions): void {
-  const { into, placement } = context
-  const { width, height, openSign } = placement
-  const { leafW, leafD, leafCol, handleCol, hingeSide } = options
+function buildSingleAnimatedLeaf(spec: SingleLeafSpec): AnimatedDoorLeaf {
+  const { THREE, placement, leafW, leafD, leafCol, handleCol, hingeSide, tier } = spec
+  const { height, openSign, angle, floor, center, width } = placement
+  const dir = hingeSide === -1 ? 1 : -1
+  const leafBuilder = new BanquetDetailBuilder(THREE)
 
-  // Hinge anchor near the jamb
-  const hingeX = hingeSide * (width / 2 - 0.06)
-  const openAngle = openSign * hingeSide * 1.4 // ~80 degrees open
-  const cos = Math.cos(openAngle)
-  const sin = Math.sin(openAngle)
-
-  // Leaf center relative to door center
-  const leafCenterX = hingeX + hingeSide * (leafW / 2) * cos
-  const leafCenterZ = hingeSide * (leafW / 2) * sin
-
-  doorBox({
-    into,
-    placement,
-    size: [leafW, height - 0.04, leafD],
-    offset: [leafCenterX, height / 2, leafCenterZ],
+  // Leaf slab in local hinge coordinates
+  leafBuilder.box([leafW, height - 0.04, leafD], {
+    at: [dir * (leafW / 2), height / 2, 0],
     colour: leafCol,
-    extraYaw: openAngle,
   })
 
-  // Door handle near outer edge of leaf
-  const handleX = hingeX + hingeSide * (leafW - 0.08) * cos
-  const handleZ = hingeSide * (leafW - 0.08) * sin
-  doorBox({
-    into,
-    placement,
-    size: [0.06, 0.14, 0.06],
-    offset: [handleX, 0.98, handleZ],
+  // Door handle
+  leafBuilder.box([0.05, 0.16, 0.06], {
+    at: [dir * (leafW - 0.08), 1.0, 0],
     colour: handleCol,
-    extraYaw: openAngle,
   })
+
+  // Tier-specific leaf adornments
+  if (tier === 1) {
+    leafBuilder.box([leafW - 0.12, (height - 0.4) / 2, leafD + 0.01], {
+      at: [dir * (leafW / 2), height * 0.72, 0],
+      colour: TIER_1_PALETTE.gold,
+    })
+  } else if (tier === 3) {
+    leafBuilder.box([leafW - 0.04, 0.2, leafD + 0.01], {
+      at: [dir * (leafW / 2), 0.12, 0],
+      colour: TIER_3_PALETTE.aluminum,
+    })
+  } else if (tier === 4) {
+    leafBuilder.cylinder(
+      { radius: 0.14, height: leafD + 0.02, sides: 12 },
+      {
+        at: [dir * (leafW / 2), height * 0.65, 0],
+        colour: TIER_4_PALETTE.portholeGlass,
+        rotation: [Math.PI / 2, 0, 0],
+      },
+    )
+  } else if (tier === 5) {
+    leafBuilder.box([leafW, 0.08, leafD + 0.02], {
+      at: [dir * (leafW / 2), height * 0.35, 0],
+      colour: TIER_5_PALETTE.darkIron,
+    })
+  }
+
+  const leafGroup = leafBuilder.finish('door-leaf')
+  const cos = Math.cos(angle)
+  const sin = Math.sin(angle)
+  const hingeLocalX = hingeSide * (width / 2 - 0.05)
+  const hingeWorldX = center[0] + hingeLocalX * cos
+  const hingeWorldZ = center[1] + hingeLocalX * sin
+
+  const hingeGroup = new THREE.Group()
+  hingeGroup.name = `hinge-${hingeSide < 0 ? 'left' : 'right'}`
+  hingeGroup.position.set(hingeWorldX, floor, hingeWorldZ)
+  hingeGroup.rotation.y = -angle
+  hingeGroup.add(leafGroup)
+
+  const maxSwing = hingeSide * openSign * 1.4
+
+  return {
+    hingeGroup,
+    baseRotationY: -angle,
+    maxSwing,
+  }
 }
 
-function dressDoubleLeaves(context: DoorDressContext, options: OpenLeafOptions): void {
-  const halfLeafW = Math.min(1.2, (context.placement.width - 0.15) / 2)
-  dressSingleLeaf(context, { ...options, leafW: halfLeafW, hingeSide: -1 })
-  dressSingleLeaf(context, { ...options, leafW: halfLeafW, hingeSide: 1 })
+/** Builds moving door leaves (single or double) for a doorway. */
+export function buildTierDoorLeaves(options: LeafBuildOptions): AnimatedDoorLeaf[] {
+  const { THREE, placement, tier } = options
+  const isWide = placement.width >= 2.2
+
+  const palette = {
+    1: { col: TIER_1_PALETTE.mahogany, handle: TIER_1_PALETTE.brass, depth: 0.06 },
+    2: { col: TIER_2_PALETTE.steel, handle: TIER_2_PALETTE.stainless, depth: 0.055 },
+    3: { col: TIER_3_PALETTE.laminate, handle: TIER_3_PALETTE.aluminum, depth: 0.045 },
+    4: { col: TIER_4_PALETTE.heavySteel, handle: TIER_4_PALETTE.hazardBlack, depth: 0.06 },
+    5: { col: TIER_5_PALETTE.rawSteel, handle: TIER_5_PALETTE.darkIron, depth: 0.07 },
+  }[tier]
+
+  if (isWide) {
+    const halfLeafW = Math.min(1.2, (placement.width - 0.15) / 2)
+    const left = buildSingleAnimatedLeaf({
+      THREE,
+      placement,
+      leafW: halfLeafW,
+      leafD: palette.depth,
+      leafCol: palette.col,
+      handleCol: palette.handle,
+      hingeSide: -1,
+      tier,
+    })
+    const right = buildSingleAnimatedLeaf({
+      THREE,
+      placement,
+      leafW: halfLeafW,
+      leafD: palette.depth,
+      leafCol: palette.col,
+      handleCol: palette.handle,
+      hingeSide: 1,
+      tier,
+    })
+    return [left, right]
+  }
+
+  const singleLeafW = Math.min(1.1, placement.width - 0.12)
+  return [
+    buildSingleAnimatedLeaf({
+      THREE,
+      placement,
+      leafW: singleLeafW,
+      leafD: palette.depth,
+      leafCol: palette.col,
+      handleCol: palette.handle,
+      hingeSide: -1,
+      tier,
+    }),
+  ]
 }
 
-/** Tier 1: Royal Neoclassic door with carved mahogany, gold trims and brass handle. */
+/** Tier 1: Royal Neoclassic door casing with mahogany pediment and gold moulding. */
 export function dressTier1Door(context: DoorDressContext): void {
-  const isWide = context.placement.width >= 2.2
   dressCasing(context, {
     jambW: 0.14,
     jambD: 0.18,
@@ -127,7 +216,6 @@ export function dressTier1Door(context: DoorDressContext): void {
     sillCol: TIER_1_PALETTE.brass,
   })
 
-  // Classical pediment / entablature over lintel
   doorBox({
     into: context.into,
     placement: context.placement,
@@ -142,25 +230,10 @@ export function dressTier1Door(context: DoorDressContext): void {
     offset: [0, context.placement.height + 0.31, 0],
     colour: TIER_1_PALETTE.gold,
   })
-
-  const leafOptions = {
-    leafW: Math.min(1.05, context.placement.width - 0.12),
-    leafD: 0.06,
-    leafCol: TIER_1_PALETTE.mahogany,
-    handleCol: TIER_1_PALETTE.brass,
-    hingeSide: -1 as const,
-  }
-
-  if (isWide) {
-    dressDoubleLeaves(context, leafOptions)
-  } else {
-    dressSingleLeaf(context, leafOptions)
-  }
 }
 
-/** Tier 2: Institutional / security door with access reader and closer. */
+/** Tier 2: Institutional / security door casing with card reader and hydraulic closer. */
 export function dressTier2Door(context: DoorDressContext): void {
-  const isWide = context.placement.width >= 2.2
   dressCasing(context, {
     jambW: 0.1,
     jambD: 0.14,
@@ -168,7 +241,6 @@ export function dressTier2Door(context: DoorDressContext): void {
     sillCol: TIER_2_PALETTE.stainless,
   })
 
-  // Overhead hydraulic door closer
   doorBox({
     into: context.into,
     placement: context.placement,
@@ -177,7 +249,6 @@ export function dressTier2Door(context: DoorDressContext): void {
     colour: TIER_2_PALETTE.darkMetal,
   })
 
-  // Wall-mounted access badge reader with status LEDs
   const keypadX = context.placement.width / 2 + 0.18
   doorBox({
     into: context.into,
@@ -193,25 +264,10 @@ export function dressTier2Door(context: DoorDressContext): void {
     offset: [keypadX, 1.48, 0.025],
     colour: TIER_2_PALETTE.ledGreen,
   })
-
-  const leafOptions = {
-    leafW: Math.min(1.05, context.placement.width - 0.1),
-    leafD: 0.055,
-    leafCol: TIER_2_PALETTE.steel,
-    handleCol: TIER_2_PALETTE.stainless,
-    hingeSide: -1 as const,
-  }
-
-  if (isWide) {
-    dressDoubleLeaves(context, leafOptions)
-  } else {
-    dressSingleLeaf(context, leafOptions)
-  }
 }
 
-/** Tier 3: Standard passenger cabin door with room plate and indicator. */
+/** Tier 3: Standard passenger cabin door casing with status indicator and keycard plate. */
 export function dressTier3Door(context: DoorDressContext): void {
-  const isWide = context.placement.width >= 2.2
   dressCasing(context, {
     jambW: 0.08,
     jambD: 0.12,
@@ -219,7 +275,6 @@ export function dressTier3Door(context: DoorDressContext): void {
     sillCol: TIER_3_PALETTE.aluminum,
   })
 
-  // Lintel service status indicator lamp
   doorBox({
     into: context.into,
     placement: context.placement,
@@ -228,7 +283,6 @@ export function dressTier3Door(context: DoorDressContext): void {
     colour: TIER_3_PALETTE.ledGreen,
   })
 
-  // Keycard lock plate on the strike jamb
   doorBox({
     into: context.into,
     placement: context.placement,
@@ -236,25 +290,10 @@ export function dressTier3Door(context: DoorDressContext): void {
     offset: [context.placement.width / 2 - 0.04, 1.15, 0.02],
     colour: TIER_3_PALETTE.basePlate,
   })
-
-  const leafOptions = {
-    leafW: Math.min(1.0, context.placement.width - 0.08),
-    leafD: 0.045,
-    leafCol: TIER_3_PALETTE.laminate,
-    handleCol: TIER_3_PALETTE.aluminum,
-    hingeSide: -1 as const,
-  }
-
-  if (isWide) {
-    dressDoubleLeaves(context, leafOptions)
-  } else {
-    dressSingleLeaf(context, leafOptions)
-  }
 }
 
-/** Tier 4: Watertight marine bulkhead door with hazard threshold & dogging levers. */
+/** Tier 4: Watertight marine bulkhead casing with hazard stripes. */
 export function dressTier4Door(context: DoorDressContext): void {
-  const isWide = context.placement.width >= 2.2
   dressCasing(context, {
     jambW: 0.12,
     jambD: 0.16,
@@ -262,7 +301,6 @@ export function dressTier4Door(context: DoorDressContext): void {
     trimCol: TIER_4_PALETTE.darkSteel,
   })
 
-  // Raised watertight coaming sill with hazard stripes
   doorBox({
     into: context.into,
     placement: context.placement,
@@ -277,25 +315,10 @@ export function dressTier4Door(context: DoorDressContext): void {
     offset: [0, 0.08, 0],
     colour: TIER_4_PALETTE.hazardBlack,
   })
-
-  const leafOptions = {
-    leafW: Math.min(1.05, context.placement.width - 0.1),
-    leafD: 0.06,
-    leafCol: TIER_4_PALETTE.heavySteel,
-    handleCol: TIER_4_PALETTE.hazardBlack,
-    hingeSide: -1 as const,
-  }
-
-  if (isWide) {
-    dressDoubleLeaves(context, leafOptions)
-  } else {
-    dressSingleLeaf(context, leafOptions)
-  }
 }
 
-/** Tier 5: Massive cargo hold / freight door with steel ribs & cast plate. */
+/** Tier 5: Massive cargo hold casing with corner gusset plates. */
 export function dressTier5Door(context: DoorDressContext): void {
-  const isWide = context.placement.width >= 2.2
   dressCasing(context, {
     jambW: 0.16,
     jambD: 0.22,
@@ -304,7 +327,6 @@ export function dressTier5Door(context: DoorDressContext): void {
     sillCol: TIER_5_PALETTE.castPlate,
   })
 
-  // Corner reinforcement gussets on the head jamb
   for (const sx of [-context.placement.width / 2 + 0.12, context.placement.width / 2 - 0.12]) {
     doorBox({
       into: context.into,
@@ -314,18 +336,25 @@ export function dressTier5Door(context: DoorDressContext): void {
       colour: TIER_5_PALETTE.darkIron,
     })
   }
+}
 
-  const leafOptions = {
-    leafW: Math.min(1.3, context.placement.width - 0.12),
-    leafD: 0.07,
-    leafCol: TIER_5_PALETTE.rawSteel,
-    handleCol: TIER_5_PALETTE.darkIron,
-    hingeSide: -1 as const,
-  }
-
-  if (isWide) {
-    dressDoubleLeaves(context, leafOptions)
-  } else {
-    dressSingleLeaf(context, leafOptions)
+/** Builds static frame casing for any tier. */
+export function dressTierDoorCasing(context: DoorDressContext, tier: 1 | 2 | 3 | 4 | 5): void {
+  switch (tier) {
+    case 1:
+      dressTier1Door(context)
+      break
+    case 2:
+      dressTier2Door(context)
+      break
+    case 3:
+      dressTier3Door(context)
+      break
+    case 4:
+      dressTier4Door(context)
+      break
+    case 5:
+      dressTier5Door(context)
+      break
   }
 }

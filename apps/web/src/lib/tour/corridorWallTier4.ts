@@ -9,7 +9,6 @@ const HAZARD_YELLOW = 0xd9b329
 const HAZARD_BLACK = 0x1b1c1e
 const CAGE_METAL = 0x2e3237
 const LAMP_WARM = 0xffe6a3
-const DOG_LEVER = 0x767e88
 
 interface Tier4WallContext {
   floor: number
@@ -103,43 +102,6 @@ function hazardBands(wall: WallSurface, floor: number): void {
   }
 }
 
-function navalBulkheadDoor(wall: WallSurface, along: number, floor: number): void {
-  // Heavy watertight doorframe with rounded top
-  wallBox(wall, [0.94, 2.05, 0.05], {
-    along,
-    y: floor + 1.025,
-    colour: STEEL_STIFFENER,
-    inset: 0.025,
-  })
-  // Recessed door leaf
-  wallBox(wall, [0.82, 1.95, 0.04], {
-    along,
-    y: floor + 1.0,
-    colour: 0x2b3036,
-    inset: 0.03,
-  })
-  // Oval inspection window
-  wallBox(wall, [0.24, 0.32, 0.05], {
-    along,
-    y: floor + 1.5,
-    colour: 0x485863,
-    inset: 0.036,
-  })
-  // Watertight dogging levers (central wheel & dog levers)
-  wallBox(wall, [0.04, 0.16, 0.06], {
-    along: along - 0.32,
-    y: floor + 1.05,
-    colour: DOG_LEVER,
-    inset: 0.045,
-  })
-  wallBox(wall, [0.04, 0.16, 0.06], {
-    along: along + 0.32,
-    y: floor + 1.05,
-    colour: DOG_LEVER,
-    inset: 0.045,
-  })
-}
-
 function cagedMarineLamp(wall: WallSurface, along: number, floor: number): void {
   // Cast metal bulkhead box
   wallBox(wall, [0.1, 0.16, 0.05], {
@@ -184,11 +146,7 @@ export function dressTier4CorridorWall(wall: WallSurface, context: Tier4WallCont
 
   const bays = wallBays(wall.run, 3.6)
   for (const bay of bays) {
-    if (bay.index % 2 === 0) {
-      navalBulkheadDoor(wall, bay.along, floor)
-    } else {
-      pipeValve(wall, bay.along, floor)
-    }
+    pipeValve(wall, bay.along, floor)
     cagedMarineLamp(wall, bay.along, floor)
   }
 }

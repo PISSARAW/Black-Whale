@@ -97,10 +97,10 @@ l'Association des Hunters au Niveau 3 du Black Whale :
   - Scanner à bagages à rayons X complet : tunnel plombé avec rideaux de lamelles de plomb, convoyeur motorisé à rouleaux en inox, moniteur d'analyse.
   - Portique de détection électromagnétique multizone avec voyants LED de passage.
   - Tourniquets de contrôle d'accès à tripode et lecteurs de badges magnétiques.
-  - Pupitre d'émargement et de filtrage pour les sentinelles.
-- **Figures et factionnaires (`policeStationOfficers.ts`)** :
-  - Silhouette haute et reconnaissable de Mizaistom Nana (costume caractéristique, manteau long et chapeau melon).
-  - Officiers de police kakinois au poste d'accueil, à l'entrée, en patrouille de galerie et à la sécurité publique.
+- **Personnages canoniques (`mangaPoliceViews.ts` & `humanFigure`)** :
+  - Silhouette haute et reconnaissable de Mizaistom Nana (Zodiaque Bœuf / Crime Hunter) supervisant la sécurité du Niveau 3 depuis l'atrium.
+  - Botobai Gigante (Zodiaque Dragon / Juge & Procureur) au poste d'assistance citoyenne.
+  - Conforme à l'ADR-003 : aucun figurant anonyme ou PNJ générique factice n'est généré dans la géométrie.
 
 ## 3. Matériaux et conformité technique
 

@@ -21,7 +21,6 @@ import {
   dressPoliceSafetyArchives,
   dressPoliceSafetyDesk,
 } from './policeStationFurniture'
-import { dressPoliceOfficers } from './policeStationOfficers'
 import type { Structure } from './types'
 
 export const POLICE_ATRIUM = 'tier-3-central-police-station-atrium'
@@ -79,7 +78,6 @@ export function buildPoliceStationDetails(options: {
       dressPoliceFrontDesk(new PoliceStationSurface(into, frontDesk, floor))
     }
 
-    dressPoliceOfficers(into, floor)
     return into.finish('police-station-atrium-manga-details')
   }
 

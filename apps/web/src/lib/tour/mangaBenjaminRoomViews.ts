@@ -4,7 +4,12 @@ import { BENJAMIN_ROOM_SPACE } from './benjaminRoomView'
 const staging: MangaCastStaging[] = [
   { characterId: 'prince-benjamin', at: [-6.0, 0.5], heading: -Math.PI / 2, pose: 'idle' },
   { characterId: 'balsamilco-might', at: [1.0, -1.2], heading: 1.5, pose: 'idle' },
-  { characterId: 'furykov', at: [-1.5, 3.8], heading: -1.8, pose: 'idle' },
+  { characterId: 'furykov', at: [-2.5, 2.4], heading: Math.PI / 2, pose: 'idle' },
+  { characterId: 'babimyna', at: [-2.5, 1.6], heading: Math.PI / 2, pose: 'idle' },
+  { characterId: 'rihan', at: [-2.5, 0.8], heading: Math.PI / 2, pose: 'idle' },
+  { characterId: 'coventoba', at: [-2.5, 0.0], heading: Math.PI / 2, pose: 'idle' },
+  { characterId: 'musse', at: [-2.5, -0.8], heading: Math.PI / 2, pose: 'idle' },
+  { characterId: 'vincent', at: [-2.5, -1.6], heading: Math.PI / 2, pose: 'idle' },
 ]
 
 const source = {

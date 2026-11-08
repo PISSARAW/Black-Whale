@@ -1,4 +1,19 @@
-import { mangaView as view } from './mangaViewModel'
+import { mangaView as view, type MangaCastStaging } from './mangaViewModel'
+
+const hisokaIslandStaging: MangaCastStaging[] = [
+  { characterId: 'hisoka', at: [-17.0, 0], heading: 0, pose: 'seated' },
+  { characterId: 'hinrigh-biganduffno', at: [-14.5, 0.5], heading: -Math.PI, pose: 'idle' },
+  { characterId: 'lynch-fullbokko', at: [-14.5, -0.5], heading: -Math.PI, pose: 'idle' },
+]
+
+const rampStaging: MangaCastStaging[] = [
+  { characterId: 'hinrigh-biganduffno', at: [0, 2.5], heading: 0, pose: 'idle' },
+  { characterId: 'zakuro-custard', at: [0, 5.0], heading: 0, pose: 'idle' },
+]
+
+const auditoriumStaging: MangaCastStaging[] = [
+  { characterId: 'bonolenov-ndongo', at: [-24.5, 25.4], heading: 0, pose: 'seated' },
+]
 
 export const MANGA_CINEPLEX_VIEWS = [
   view({
@@ -9,6 +24,7 @@ export const MANGA_CINEPLEX_VIEWS = [
     pitch: 0.0,
     chapter: 393,
     volume: 38,
+    staging: hisokaIslandStaging,
     label: 'The confectionery counter and popcorn machine in the cineplex concourse',
     labelFr: 'Le comptoir de confiserie et la machine à pop-corn dans le hall du cinéma',
   }),
@@ -31,6 +47,7 @@ export const MANGA_CINEPLEX_VIEWS = [
     pitch: -0.04,
     chapter: 393,
     volume: 38,
+    staging: rampStaging,
     label: 'The descending ramp with guardrails leading to screens 1 through 8',
     labelFr: 'La rampe descendante avec garde-corps menant aux salles 1 à 8',
   }),
@@ -42,6 +59,7 @@ export const MANGA_CINEPLEX_VIEWS = [
     pitch: -0.08,
     chapter: 393,
     volume: 38,
+    staging: hisokaIslandStaging,
     label: 'The circular seating island where Hisoka waits with popcorn and soda',
     labelFr: "L'îlot circulaire de sièges où Hisoka attend avec pop-corn et soda",
   }),
@@ -53,6 +71,7 @@ export const MANGA_CINEPLEX_VIEWS = [
     pitch: 0.08,
     chapter: 393,
     volume: 38,
+    staging: auditoriumStaging,
     label: 'The giant curved projection screen and tiered velvet seating in the auditorium',
     labelFr: "L'écran géant de projection incurvé et les gradins en velours dans la salle",
   }),

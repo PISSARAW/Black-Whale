@@ -82,6 +82,7 @@
   - Chap. 383, p. 65 — le mât central s'élève d'un large socle circulaire sur le pont segmenté nu.
   - Chap. 383, p. 60 — une console d'instruments basse se trouve directement sous l'écoutille ronde ouverte.
   - Chap. 383, p. 60 — un meuble rectangulaire séparé se dresse à droite de la console de l'écoutille.
+  - Voir dossier dédié : [`pod-cabin-audit.md`](./pod-cabin-audit.md).
 
 ## Chambre funéraire des princes — `tier-1-princes-burial-chamber`
 
@@ -714,7 +715,7 @@
 - **Sources de la pièce :**
   - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 - **Sources du mobilier et des détails :**
-  - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
+  - Chap. 359 — le théâtre : scène surélevée (+1,1 m) avec parquet et escaliers d'accès, grand arc et piles de proscénium cannelées à chapiteaux dorés, rideau de velours carmin festonné et embrasses, écran panoramique avec cadre absorbant noir et structure acier, pupitre de briefing et feux de rampe, 4 galeries de loges suspendues à 4,4 m sur corbeaux avec balustrades dorées et fauteuils de club, parterre en 6 blocs de gradins avec allée centrale et fauteuils de cinéma rabattables, plafond à caissons monumentaux à 10 m avec 5 grands lustres étagés en cristal et laiton, lambris d'acajou, appliques murales et portes de secours avec blocs BAES.
 
 ## Zone de protection des témoins VIP — `tier-2-vip-witness-protection-area`
 

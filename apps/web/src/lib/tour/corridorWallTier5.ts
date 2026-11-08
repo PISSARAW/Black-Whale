@@ -1,4 +1,4 @@
-import { wallBays, wallBox, wallPoint, type WallSurface } from './corridorWallLayout'
+import { wallBox, wallPoint, type WallSurface } from './corridorWallLayout'
 
 const WEB_FRAME = 0x2e333a
 const GUSSET_STEEL = 0x24282f
@@ -7,7 +7,6 @@ const VENT_TRUNK = 0x485058
 const FLANGE_RING = 0x272c33
 const CABLE_BLACK = 0x181a1c
 const STRAP_METAL = 0x6e7680
-const SLIDING_DOOR = 0x2f343b
 const SCUPPER_BASE = 0x1f2328
 const LAMP_GREEN = 0x3a4539
 const LAMP_GLOW = 0xf9df9b
@@ -146,23 +145,6 @@ function massiveVentilationTrunk(wall: WallSurface, context: Tier5WallContext): 
   }
 }
 
-function slidingCargoGate(wall: WallSurface, along: number, floor: number): void {
-  // Overhead heavy roller track
-  wallBox(wall, [1.4, 0.1, 0.1], {
-    along,
-    y: floor + 2.3,
-    colour: WEB_FRAME,
-    inset: 0.09,
-  })
-  // Massive corrugated sliding door leaf
-  wallBox(wall, [1.1, 2.15, 0.06], {
-    along,
-    y: floor + 1.1,
-    colour: SLIDING_DOOR,
-    inset: 0.08,
-  })
-}
-
 /** Dresses a Tier 5 steerage/cargo passage with colossal web frames, stringers and ducts. */
 export function dressTier5CorridorWall(wall: WallSurface, context: Tier5WallContext): void {
   const { floor } = context
@@ -170,11 +152,4 @@ export function dressTier5CorridorWall(wall: WallSurface, context: Tier5WallCont
   transverseWebFrames(wall, context)
   horizontalGirdersAndCables(wall, context)
   massiveVentilationTrunk(wall, context)
-
-  const bays = wallBays(wall.run, 4.2)
-  for (const bay of bays) {
-    if (bay.index % 2 === 0) {
-      slidingCargoGate(wall, bay.along, floor)
-    }
-  }
 }

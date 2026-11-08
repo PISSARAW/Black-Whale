@@ -84,77 +84,6 @@ function wallRoyalArmyCrest(context: WallContext): void {
   })
 }
 
-function wallDoubleDoors(context: WallContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-  const doorZ = 7.42
-  const doorH = 2.8
-  const doorW = 2.4
-
-  // Outer heavy steel frame architrave
-  into.box([doorW + 0.2, doorH + 0.1, 0.14], {
-    at: [0, floor + doorH / 2, doorZ],
-    colour: ARMY_STEEL,
-  })
-
-  // Left & right door leaves
-  for (const side of [-1, 1]) {
-    const leafX = side * (doorW / 4)
-    into.box([doorW / 2 - 0.03, doorH - 0.04, 0.08], {
-      at: [leafX, floor + doorH / 2, doorZ],
-      colour: 0x24282c,
-    })
-    // Narrow vertical armored vision panel
-    into.box([0.16, 0.95, 0.09], {
-      at: [leafX, floor + 1.65, doorZ],
-      colour: ARMY_STEEL,
-    })
-    into.box([0.11, 0.9, 0.095], {
-      at: [leafX, floor + 1.65, doorZ],
-      colour: ARMY_GLASS,
-    })
-    // Horizontal stainless steel crash / panic bar
-    into.box([doorW / 2 - 0.18, 0.045, 0.07], {
-      at: [leafX, floor + 1.05, doorZ - 0.04],
-      colour: ARMY_CHROME,
-    })
-    // Heavy stainless steel kick plate
-    into.box([doorW / 2 - 0.08, 0.26, 0.085], {
-      at: [leafX, floor + 0.16, doorZ],
-      colour: ARMY_LIGHT_STEEL,
-    })
-  }
-
-  // Security card reader terminal on right wall jamb
-  into.box([0.12, 0.22, 0.05], {
-    at: [1.4, floor + 1.35, doorZ - 0.03],
-    colour: ARMY_STEEL,
-  })
-  into.box([0.08, 0.08, 0.055], {
-    at: [1.4, floor + 1.4, doorZ - 0.03],
-    colour: 0x181a1d,
-  })
-  into.sphere([0.008, 0.008, 0.008], {
-    at: [1.4 - 0.03, floor + 1.48, doorZ - 0.03],
-    colour: ARMY_EMERGENCY_GREEN,
-    glow: true,
-  })
-  into.sphere([0.008, 0.008, 0.008], {
-    at: [1.4 + 0.03, floor + 1.48, doorZ - 0.03],
-    colour: ARMY_ALERT_RED,
-  })
-
-  // "RESTRICTED AREA" warning plaque over the lintel
-  into.box([1.1, 0.14, 0.03], {
-    at: [0, floor + doorH + 0.18, doorZ - 0.03],
-    colour: ARMY_ALERT_RED,
-  })
-  into.box([0.98, 0.08, 0.035], {
-    at: [0, floor + doorH + 0.18, doorZ - 0.03],
-    colour: ARMY_PAPER,
-  })
-}
-
 function wallSynchronisedClocks(context: WallContext): void {
   const { into, space, plan } = context
   const floor = floorOf(space, plan.tier)
@@ -298,10 +227,9 @@ function wallAuxiliaryMonitors(context: WallContext): void {
   })
 }
 
-/** Complete ensemble of wall fixtures: crest, double doors, clocks, AV rack, and auxiliary monitors. */
+/** Complete ensemble of wall fixtures: crest, clocks, AV rack, and auxiliary monitors. */
 export function dressRoyalArmyConferenceWallDetails(context: WallContext): void {
   wallRoyalArmyCrest(context)
-  wallDoubleDoors(context)
   wallSynchronisedClocks(context)
   wallAvServerRack(context)
   wallAuxiliaryMonitors(context)

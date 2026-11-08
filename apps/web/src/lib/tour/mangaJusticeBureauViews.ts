@@ -6,6 +6,16 @@ const interrogationStaging: MangaCastStaging[] = [
   { characterId: 'kaiser', at: [1.1, -5.8], heading: 0, pose: 'seated' },
 ]
 
+const visitationStaging: MangaCastStaging[] = [
+  { characterId: 'prince-fugetsu', at: [10.5, 6.0], heading: -Math.PI, pose: 'seated' },
+  { characterId: 'melody', at: [10.5, 4.2], heading: 0, pose: 'idle' },
+]
+
+const lobbyStaging: MangaCastStaging[] = [
+  { characterId: 'botobai-gigante', at: [-14.5, -9.5], heading: 0, pose: 'idle' },
+  { characterId: 'kaiser', at: [-14.5, -7.5], heading: Math.PI, pose: 'idle' },
+]
+
 export const MANGA_JUSTICE_BUREAU_VIEWS: MangaView[] = [
   view({
     id: 'justice-office-1010-interrogation',
@@ -31,6 +41,7 @@ export const MANGA_JUSTICE_BUREAU_VIEWS: MangaView[] = [
     chapter: 400,
     volume: 38,
     pages: '194–195',
+    staging: visitationStaging,
     label: 'Visitation parlor: glass separation barrier, transfer drawer and recording booth',
     labelFr:
       'Parloir d’enregistrement : vitre de séparation, tiroir de transfert et cabine d’enregistrement',
@@ -44,6 +55,7 @@ export const MANGA_JUSTICE_BUREAU_VIEWS: MangaView[] = [
     chapter: 400,
     volume: 38,
     pages: '194',
+    staging: lobbyStaging,
     label: 'Justice Bureau lobby: official reception desk and security checkpoint',
     labelFr:
       'Hall d’accueil du Ministère de la Justice : comptoir d’enregistrement et poste de contrôle',

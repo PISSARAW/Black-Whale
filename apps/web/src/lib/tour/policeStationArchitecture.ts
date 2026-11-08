@@ -102,9 +102,6 @@ function dressPoliceGalleries(options: GalleryOptions): void {
     // Security balustrades along open edges (x = -7.1 and x = 7.1)
     dressGalleryBalustrade(into, -7.1, slabY)
     dressGalleryBalustrade(into, 7.1, slabY)
-
-    // Office doors along perimeter walls
-    dressGalleryOfficeDoors(into, slabY)
   }
 }
 
@@ -116,21 +113,6 @@ function dressGalleryBalustrade(into: BanquetDetailBuilder, edgeX: number, slabY
 
   for (let y = -9.5; y <= 4.7; y += 0.48) {
     into.box([0.03, 0.95, 0.03], { at: [edgeX, slabY + 0.55, y], colour: POLICE_METAL })
-  }
-}
-
-/** Office portals and lighted transom windows lining the galleries */
-function dressGalleryOfficeDoors(into: BanquetDetailBuilder, slabY: number): void {
-  for (let y = -8.0; y <= 3.0; y += 3.6) {
-    for (const sideX of [-10.9, 10.9]) {
-      into.box([0.12, 2.2, 1.1], { at: [sideX, slabY + 1.1, y], colour: POLICE_OAK })
-      into.box([0.16, 0.1, 1.3], { at: [sideX, slabY + 2.25, y], colour: POLICE_STONE })
-      into.box([0.08, 0.6, 1.1], { at: [sideX, slabY + 2.6, y], colour: POLICE_GLASS })
-      into.box([0.02, 0.08, 0.02], {
-        at: [sideX + (sideX > 0 ? -0.07 : 0.07), slabY + 1.1, y + 0.4],
-        colour: POLICE_BRASS,
-      })
-    }
   }
 }
 

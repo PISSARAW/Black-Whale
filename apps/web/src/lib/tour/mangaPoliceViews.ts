@@ -5,6 +5,10 @@ const atriumStaging: MangaCastStaging[] = [
   { characterId: 'mizaistom-nana', at: [1.2, -3.8], heading: 0.2, pose: 'idle' },
 ]
 
+const safetyStaging: MangaCastStaging[] = [
+  { characterId: 'botobai-gigante', at: [-5.5, -13.8], heading: 0, pose: 'idle' },
+]
+
 export const MANGA_POLICE_VIEWS: MangaView[] = [
   view({
     id: 'police-atrium-double-page',
@@ -59,6 +63,7 @@ export const MANGA_POLICE_VIEWS: MangaView[] = [
     at: [-5.5, -11.5],
     target: [-5.5, -14.6],
     pitch: -0.04,
+    staging: safetyStaging,
     label: 'Community safety desk and public citizen assistance counters',
     labelFr: "Guichet de sécurité publique et banque d'accueil citoyenne",
   }),

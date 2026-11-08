@@ -5,7 +5,6 @@ import { BenjaminRoomSurface } from './benjaminRoomDetailSurface'
 import { dressBenjaminRoomArchitecture } from './benjaminRoomArchitecture'
 import { dressBenjaminRoomPicture } from './benjaminRoomPictures'
 import { dressBenjaminRoomFurniture } from './benjaminRoomFurniture'
-import { dressBenjaminRoomSoldiers } from './benjaminRoomSoldiers'
 import type { Structure } from './types'
 
 export const BENJAMIN_ROOM_SPACE = 'tier-1-royal-residential-sector-room-1001-living'
@@ -54,8 +53,6 @@ export function buildBenjaminRoomDetails(options: {
       dressBenjaminRoomFurniture(surface)
     }
   })
-
-  dressBenjaminRoomSoldiers(into, floor)
 
   return into.finish('benjamin-room-manga-details')
 }

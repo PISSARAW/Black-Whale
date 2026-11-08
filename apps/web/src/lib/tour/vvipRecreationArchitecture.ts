@@ -184,23 +184,6 @@ function dressCofferedCeiling(
   }
 }
 
-function dressMonumentalDoors(into: BanquetDetailBuilder, floor: number): void {
-  // South double entrance door to Prince quarter (z = -25, x = 41)
-  const dy = floor + 1.8
-  into.box([4.2, 3.6, 0.22], { at: [41.0, dy, -25.0], colour: PALETTE.darkWood })
-  into.box([4.5, 0.25, 0.3], { at: [41.0, floor + 3.75, -25.0], colour: PALETTE.gold })
-  into.box([1.8, 3.2, 0.08], { at: [39.9, dy - 0.2, -25.08], colour: PALETTE.mahogany })
-  into.box([1.8, 3.2, 0.08], { at: [42.1, dy - 0.2, -25.08], colour: PALETTE.mahogany })
-  into.sphere([0.04, 0.08, 0.04], { at: [40.7, dy - 0.4, -25.15], colour: PALETTE.gold })
-  into.sphere([0.04, 0.08, 0.04], { at: [41.3, dy - 0.4, -25.15], colour: PALETTE.gold })
-
-  // North VIP exit door to corridor A (z = -50, x = 41)
-  into.box([4.2, 3.6, 0.22], { at: [41.0, dy, -50.0], colour: PALETTE.darkWood })
-  into.box([4.5, 0.25, 0.3], { at: [41.0, floor + 3.75, -50.0], colour: PALETTE.gold })
-  into.box([1.8, 3.2, 0.08], { at: [39.9, dy - 0.2, -49.92], colour: PALETTE.mahogany })
-  into.box([1.8, 3.2, 0.08], { at: [42.1, dy - 0.2, -49.92], colour: PALETTE.mahogany })
-}
-
 /** Dresses the monumental architecture, colonnades, railings, ceiling and lighting. */
 export function dressVvipRecreationArchitecture(context: ArchitectureContext): void {
   const { THREE, into, plan, space } = context
@@ -219,9 +202,6 @@ export function dressVvipRecreationArchitecture(context: ArchitectureContext): v
 
   // 4. Coffered ceiling beams and rosettes
   dressCofferedCeiling(into, floor, ceilingHeight)
-
-  // 5. Monumental grand doorways
-  dressMonumentalDoors(into, floor)
 
   // 6. Four grand crystal chandeliers suspended from the 8m ceiling
   const chandelierY = floor + ceilingHeight

@@ -8,10 +8,6 @@ const GOLD = 0xd4af37
 const STEEL = 0x889098
 const LUMEN_WARM = 0xfef5e0
 const CARPET_RED = 0x7a1818
-const GUARD_COAT = 0x283830
-const GUARD_CAP = 0x1e2824
-const GUARD_SKIN = 0xd0b49f
-const GUN_METAL = 0x2e3236
 
 interface ApproachContext {
   into: BanquetDetailBuilder
@@ -155,43 +151,10 @@ function approachSecurityAndRunner(
   }
 }
 
-function approachBodyguard(into: BanquetDetailBuilder, floor: number, geom: DoorGeometry): void {
-  const { doorX, doorY, sideSign } = geom
-  const guardX = doorX - (geom.isOdd ? 1.45 : -1.45)
-  const guardY = doorY - sideSign * 1.1
-
-  // Guard legs, coat, head, cap and weapon
-  into.box([0.22, 0.76, 0.32], {
-    at: [guardX, floor + 0.38, guardY],
-    colour: GUARD_COAT,
-  })
-  into.box([0.24, 0.62, 0.42], {
-    at: [guardX, floor + 1.05, guardY],
-    colour: GUARD_COAT,
-  })
-  into.box([0.26, 0.04, 0.46], {
-    at: [guardX, floor + 1.34, guardY],
-    colour: GOLD,
-  })
-  into.box([0.16, 0.18, 0.16], {
-    at: [guardX, floor + 1.48, guardY],
-    colour: GUARD_SKIN,
-  })
-  into.box([0.2, 0.09, 0.2], {
-    at: [guardX, floor + 1.6, guardY],
-    colour: GUARD_CAP,
-  })
-  into.box([0.05, 1.25, 0.04], {
-    at: [guardX + 0.1, floor + 0.625, guardY + 0.22],
-    colour: GUN_METAL,
-  })
-}
-
 export function dressApartmentEntrance(context: ApproachContext): void {
   const { into, space, floor } = context
   const geom = resolveDoorGeometry(space)
   royalDoubleDoor(into, floor, geom)
   doorEntablatureAndPlaque(into, floor, geom)
   approachSecurityAndRunner(into, floor, geom)
-  approachBodyguard(into, floor, geom)
 }

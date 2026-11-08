@@ -11,13 +11,6 @@ import {
   type RoomBounds,
 } from './chaROfficeArchitecture'
 import {
-  dressRobotFacedDoor,
-  dressSmartLockEntrance,
-  dressTreasureChestDoor,
-  dressWhiteDoor,
-  dressWoodenDoor,
-} from './chaROfficeDoors'
-import {
   dressBunkBed,
   dressChaREmblem,
   dressCommandDesk,
@@ -81,9 +74,6 @@ function dressMainOffice(context: RoomDressing): void {
   dressIndustrialCeiling({ into, floor, ceilingHeight, bounds: MAIN_OFFICE_BOUNDS })
   dressChaREmblem({ into, floor, at: [-11.25, 3.13] })
   dressCommandDesk({ into, floor, at: [-11, -6] })
-  dressTreasureChestDoor({ into, floor, at: [-19.4, -6] })
-  dressRobotFacedDoor({ into, floor, at: [-19.4, -2.5] })
-  dressWoodenDoor({ into, floor, at: [-19.4, 0.65] })
   dressCornerCamera({ into, floor, at: [-2.4, floor + ceilingHeight - 0.2, 3.0] })
 }
 
@@ -106,16 +96,13 @@ function dressMonitorRoom(context: RoomDressing): void {
   dressTechnicalCeiling({ into, floor, ceilingHeight, bounds: MONITOR_ROOM_BOUNDS })
   dressCCTVMonitorBank({ into, floor, at: [9.75, -10] })
   dressWatchDesk({ into, floor, at: [9.75, -7.5] })
-  dressWhiteDoor({ into, floor, at: [-0.75, -2] })
   dressCornerCamera({ into, floor, at: [19.8, floor + ceilingHeight - 0.2, 11.2] })
   dressCornerCamera({ into, floor, at: [19.8, floor + ceilingHeight - 0.2, -11.2] })
 }
 
 function dressHall(context: RoomDressing): void {
   const { into, floor, ceilingHeight } = context
-  dressSmartLockEntrance({ into, floor, at: [-1.5, -11.75] })
   dressEntranceCameras({ into, floor, at: [-1.5, -11.6] })
-  dressWhiteDoor({ into, floor, at: [-0.75, -2] })
   dressIndustrialCeiling({ into, floor, ceilingHeight, bounds: HALL_BOUNDS })
 }
 

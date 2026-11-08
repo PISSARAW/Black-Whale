@@ -1,15 +1,14 @@
 import type * as Three from 'three'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
+import { createAnimatedDoor, type AnimatedDoor } from './doorAnimator'
+import { computeDoorPlacement } from './doorDetailSurface'
+import { buildTierDoorLeaves, dressTierDoorCasing } from './doorTierBuilders'
 import type { RoomDetailOptions } from './TierView'
 import type { Doorway } from './types'
-import { computeDoorPlacement, type DoorDressContext } from './doorDetailSurface'
-import {
-  dressTier1Door,
-  dressTier2Door,
-  dressTier3Door,
-  dressTier4Door,
-  dressTier5Door,
-} from './doorTierBuilders'
+
+export interface DoorGroupWithAnimators extends Three.Group {
+  animatedDoors?: AnimatedDoor[]
+}
 
 /** Resolves ship tier (1 to 5) from space ID or deck tier fallback. */
 export function resolveTier(spaceId: string, tierIdFallback = 'tier-1'): 1 | 2 | 3 | 4 | 5 {
@@ -20,28 +19,21 @@ export function resolveTier(spaceId: string, tierIdFallback = 'tier-1'): 1 | 2 |
   return 1
 }
 
-function dressDoorByTier(context: DoorDressContext, tier: 1 | 2 | 3 | 4 | 5): void {
-  switch (tier) {
-    case 1:
-      dressTier1Door(context)
-      break
-    case 2:
-      dressTier2Door(context)
-      break
-    case 3:
-      dressTier3Door(context)
-      break
-    case 4:
-      dressTier4Door(context)
-      break
-    case 5:
-      dressTier5Door(context)
-      break
+function bindSentinel(sentinel: Three.Object3D, animatedDoors: AnimatedDoor[]): void {
+  let lastTime = 0
+  sentinel.onBeforeRender = (_renderer, _scene, camera) => {
+    const now = performance.now()
+    const dt = lastTime > 0 ? Math.min(0.1, (now - lastTime) / 1000) : 0.016
+    lastTime = now
+    const cam = camera as Three.Camera
+    for (const door of animatedDoors) {
+      door.update({ x: cam.position.x, z: cam.position.z, y: cam.position.y }, dt)
+    }
   }
 }
 
-/** Builds faithful 3D doors for any room based on its actual doorways and tier. */
-export function buildDoorDetails(options: RoomDetailOptions): Three.Group | null {
+/** Builds faithful 3D doors for any room with static casings and dynamic leaves. */
+export function buildDoorDetails(options: RoomDetailOptions): DoorGroupWithAnimators | null {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal) return null
 
@@ -50,12 +42,44 @@ export function buildDoorDetails(options: RoomDetailOptions): Three.Group | null
   if (doors.length === 0) return null
 
   const tier = resolveTier(spaceId, plan.tier.id)
-  const into = new BanquetDetailBuilder(THREE)
+  const casingBuilder = new BanquetDetailBuilder(THREE)
+  const animatedDoors: AnimatedDoor[] = []
 
   for (const door of doors) {
     const placement = computeDoorPlacement(plan, door)
-    dressDoorByTier({ into, door, placement }, tier)
+    dressTierDoorCasing({ into: casingBuilder, door, placement }, tier)
+    const leaves = buildTierDoorLeaves({ THREE, placement, tier })
+    const animatedDoor = createAnimatedDoor({
+      center: [placement.center[0], placement.center[1]],
+      floor: placement.floor,
+      height: placement.height,
+      leaves,
+    })
+    animatedDoors.push(animatedDoor)
   }
 
-  return into.finish(`doors-${spaceId}`)
+  const casingGroup = casingBuilder.finish(`doors-casing-${spaceId}`)
+  const rootGroup: DoorGroupWithAnimators = new THREE.Group()
+  rootGroup.name = `doors-${spaceId}`
+
+  // Ensure batched casing mesh is first child for efficient rendering & test compatibility
+  for (const child of casingGroup.children) {
+    rootGroup.add(child)
+  }
+
+  // Add animated hinge groups
+  for (const door of animatedDoors) {
+    for (const leaf of door.leaves) {
+      rootGroup.add(leaf.hingeGroup)
+    }
+  }
+
+  // Bind proximity animation on the sentinel mesh
+  const sentinel = rootGroup.children[0]
+  if (sentinel) {
+    bindSentinel(sentinel, animatedDoors)
+  }
+
+  rootGroup.animatedDoors = animatedDoors
+  return rootGroup
 }

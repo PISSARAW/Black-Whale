@@ -122,4 +122,99 @@ describe('doorView — buildDoorDetails', () => {
       if (group) disposeBanquetDetails(group)
     }).not.toThrow()
   })
+
+  it('provides animated doors that open on approach and close on retreat', () => {
+    const plan = ship.plans.get('tier-1')!
+    const group = buildDoorDetails({
+      THREE,
+      plan,
+      spaceId: 'tier-1-main-corridor',
+      reveal: false,
+    })
+    expect(group).not.toBeNull()
+    expect(group?.animatedDoors).toBeDefined()
+    expect(group?.animatedDoors?.length).toBeGreaterThan(0)
+
+    const door = group!.animatedDoors![0]
+    expect(door.openProgress).toBe(0)
+    expect(door.targetProgress).toBe(0)
+
+    // Initial rotation of leaves is at baseRotationY (closed)
+    for (const leaf of door.leaves) {
+      expect(leaf.hingeGroup.rotation.y).toBeCloseTo(leaf.baseRotationY, 4)
+    }
+
+    // Approach the door (closer than 2.4m)
+    door.update({ x: door.center[0] + 0.5, z: door.center[1] + 0.5, y: door.floor + 1.0 }, 0.5)
+    expect(door.targetProgress).toBe(1)
+    expect(door.openProgress).toBeGreaterThan(0)
+
+    // Complete the opening
+    for (let i = 0; i < 10; i++) {
+      door.update({ x: door.center[0] + 0.5, z: door.center[1] + 0.5, y: door.floor + 1.0 }, 0.1)
+    }
+    expect(door.openProgress).toBeCloseTo(1, 2)
+    for (const leaf of door.leaves) {
+      expect(leaf.hingeGroup.rotation.y).toBeCloseTo(leaf.baseRotationY + leaf.maxSwing, 2)
+    }
+
+    // Move far away (beyond 3.2m)
+    door.update({ x: door.center[0] + 5.0, z: door.center[1] + 5.0, y: door.floor + 1.0 }, 0.5)
+    expect(door.targetProgress).toBe(0)
+    for (let i = 0; i < 15; i++) {
+      door.update({ x: door.center[0] + 5.0, z: door.center[1] + 5.0, y: door.floor + 1.0 }, 0.1)
+    }
+    expect(door.openProgress).toBeCloseTo(0, 2)
+    for (const leaf of door.leaves) {
+      expect(leaf.hingeGroup.rotation.y).toBeCloseTo(leaf.baseRotationY, 2)
+    }
+  })
+
+  it('supports explicit setOpen and toggle controls', () => {
+    const plan = ship.plans.get('tier-1')!
+    const group = buildDoorDetails({
+      THREE,
+      plan,
+      spaceId: 'tier-1-main-corridor',
+      reveal: false,
+    })
+    const door = group!.animatedDoors![0]
+
+    door.setOpen(true)
+    expect(door.openProgress).toBe(1)
+    expect(door.targetProgress).toBe(1)
+
+    door.toggle()
+    expect(door.openProgress).toBe(0)
+    expect(door.targetProgress).toBe(0)
+
+    door.toggle()
+    expect(door.openProgress).toBe(1)
+    expect(door.targetProgress).toBe(1)
+  })
+
+  it('triggers proximity animation via onBeforeRender callback', () => {
+    const plan = ship.plans.get('tier-1')!
+    const group = buildDoorDetails({
+      THREE,
+      plan,
+      spaceId: 'tier-1-main-corridor',
+      reveal: false,
+    })
+    const door = group!.animatedDoors![0]
+    const sentinel = group!.children[0]
+    expect(sentinel.onBeforeRender).toBeDefined()
+
+    const camera = new THREE.PerspectiveCamera()
+    camera.position.set(door.center[0], door.floor + 1.0, door.center[1])
+
+    const renderer = {} as THREE.WebGLRenderer
+    const scene = new THREE.Scene()
+    const geometry = new THREE.BufferGeometry()
+    const material = new THREE.MeshBasicMaterial()
+    const renderGroup = new THREE.Group()
+
+    sentinel.onBeforeRender!(renderer, scene, camera, geometry, material, renderGroup)
+    expect(door.targetProgress).toBe(1)
+  })
 })

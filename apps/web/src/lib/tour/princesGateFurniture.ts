@@ -10,20 +10,12 @@ const MONITOR_DARK = 0x1a1a1c
 const MONITOR_GLOW = 0x4a7a8c
 const LUMEN_WARM = 0xfef5e0
 const PAPER_WHITE = 0xf5eedb
-const GUARD_COAT = 0x283830
-const GUARD_CAP = 0x1e2824
-const GUARD_SKIN = 0xd0b49f
 const GUN_METAL = 0x2e3236
 
 interface FurnitureContext {
   into: BanquetDetailBuilder
   structure: Structure
   floor: number
-}
-
-interface SentryPlacement {
-  at: readonly [number, number]
-  rotY: number
 }
 
 function counterBody(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
@@ -119,77 +111,6 @@ export function dressGateDesk(context: FurnitureContext): void {
   counterBody(into, structure, floor)
   counterEquipment(into, structure, floor)
   counterSeat(into, structure, floor)
-}
-
-function sentrySoldier(into: BanquetDetailBuilder, floor: number, pos: SentryPlacement): void {
-  const [x, z] = pos.at
-  const rotY = pos.rotY
-
-  // Legs in dark uniform trousers
-  for (const legOffset of [-0.09, 0.09]) {
-    into.box([0.12, 0.76, 0.14], {
-      at: [x, floor + 0.38, z + legOffset],
-      colour: GUARD_COAT,
-      rotation: [0, rotY, 0],
-    })
-  }
-
-  // Torso in Kakin royal military tunic
-  into.box([0.22, 0.62, 0.42], {
-    at: [x, floor + 1.05, z],
-    colour: GUARD_COAT,
-    rotation: [0, rotY, 0],
-  })
-  // Gold shoulder epaulettes
-  into.box([0.24, 0.04, 0.46], {
-    at: [x, floor + 1.34, z],
-    colour: GOLD,
-    rotation: [0, rotY, 0],
-  })
-
-  // Head and face
-  into.box([0.16, 0.18, 0.16], {
-    at: [x, floor + 1.48, z],
-    colour: GUARD_SKIN,
-    rotation: [0, rotY, 0],
-  })
-
-  // Military peaked cap
-  into.box([0.2, 0.09, 0.2], {
-    at: [x, floor + 1.6, z],
-    colour: GUARD_CAP,
-    rotation: [0, rotY, 0],
-  })
-  into.box([0.1, 0.02, 0.16], {
-    at: [x - 0.08, floor + 1.57, z],
-    colour: 0x111111,
-    rotation: [0, rotY, 0],
-  })
-
-  // Upright ceremonial rifle at side
-  into.box([0.05, 1.35, 0.04], {
-    at: [x + 0.06, floor + 0.675, z + 0.25],
-    colour: GUN_METAL,
-    rotation: [0, rotY, 0],
-  })
-  into.box([0.02, 0.24, 0.02], {
-    at: [x + 0.06, floor + 1.46, z + 0.25],
-    colour: STEEL,
-    rotation: [0, rotY, 0],
-  })
-}
-
-export function dressGateSentries(into: BanquetDetailBuilder, floor: number): void {
-  // 4 posted guards en faction (Chapter 382)
-  const sentries: SentryPlacement[] = [
-    { at: [15.2, -1.8], rotY: 0 },
-    { at: [15.2, 1.8], rotY: 0 },
-    { at: [14.75, -2.5], rotY: Math.PI / 2 },
-    { at: [14.75, 4.0], rotY: -Math.PI / 2 },
-  ]
-  for (const guard of sentries) {
-    sentrySoldier(into, floor, guard)
-  }
 }
 
 export function dressWeaponRack(into: BanquetDetailBuilder, floor: number): void {

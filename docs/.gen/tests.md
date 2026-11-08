@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 340
+Fichiers : 343
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1219,6 +1219,10 @@ Fichiers : 340
 
 - Emperor Time on the beat > spends the hour without touching the read-out
 
+## `apps/web/src/lib/tour/podCabinView.test.ts`
+
+- the Tier 1 escape pod cabin reconstructed from chapter 383 > satisfies blueprint invariants for the pod cabin space
+
 ## `apps/web/src/lib/tour/policeStationView.test.ts`
 
 - the central police station reconstructed from chapters 349, 378 and 393 > satisfies the shared blueprint invariants for the police spaces
@@ -1286,6 +1290,10 @@ Fichiers : 340
 
 - entering the walk after using page controls > hands the keyboard from the deck selector to the canvas before the mouse handler runs
 
+## `apps/web/src/lib/tour/screeningRoomView.test.ts`
+
+- Screening Room (Tier 2) reconstructed from Chapter 359 > satisfies blueprint invariants for the screening room space
+
 ## `apps/web/src/lib/tour/sea.test.ts`
 
 - where the water is > stands at the elevation of Tier 4, which is the first deck the canon leaves dry
@@ -1312,6 +1320,10 @@ Fichiers : 340
 ## `apps/web/src/lib/tour/soundPlace.test.ts`
 
 - where a cast at a body happened > puts it down the reticle, in the room the visitor is in
+
+## `apps/web/src/lib/tour/supremeCourtView.test.ts`
+
+- the Supreme Court reconstructed from chapters 349, 371, 376 and 379 > satisfies the shared blueprint invariants for the supreme court
 
 ## `apps/web/src/lib/tour/surfaceFinish.test.ts`
 

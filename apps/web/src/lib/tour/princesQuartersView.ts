@@ -2,7 +2,7 @@ import type * as Three from 'three'
 import { floorOf, ceilingOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { dressPrincesGateArchitecture } from './princesGateArchitecture'
-import { dressGateDesk, dressGateSentries, dressWeaponRack } from './princesGateFurniture'
+import { dressGateDesk, dressWeaponRack } from './princesGateFurniture'
 import { dressApartmentEntrance } from './princesApartmentEntrances'
 import { dressCorridorArchitecture } from './princesCorridorArchitecture'
 import type { Structure } from './types'
@@ -53,7 +53,6 @@ function buildGateDetails(options: {
   const ceilingHeight = ceilingOf(space, plan.tier)
 
   dressPrincesGateArchitecture({ into, space, floor, ceilingHeight })
-  dressGateSentries(into, floor)
   dressWeaponRack(into, floor)
 
   const desk = plan.structures.find(hasPrincesGateModel)

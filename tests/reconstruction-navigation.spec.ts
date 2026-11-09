@@ -136,6 +136,7 @@ test('zooms and drags without opening a character accidentally', async ({ page }
 
 test('exposes map filters and keeps them in the shareable URL', async ({ page }) => {
   await open(page)
+  const eventTitle = await page.locator('.event-strip strong').innerText()
   const panel = await drawer(page, 'Filtres')
   await panel.getByRole('checkbox', { name: 'Afficher les noms sur la carte' }).check()
   await panel
@@ -147,7 +148,7 @@ test('exposes map filters and keeps them in the shareable URL', async ({ page })
   await expect.poll(() => new URL(page.url()).searchParams.get('changes')).toBe('1')
   await expect.poll(() => new URL(page.url()).searchParams.get('certainty')).toBe('CONFIRMED')
   await page.reload()
-  await expect(page.locator('.event-strip strong')).toContainText('La classe catalogue')
+  await expect(page.locator('.event-strip strong')).toContainText(eventTitle)
   const reopened = await drawer(page, 'Filtres')
   await expect(
     reopened.getByRole('combobox', { name: 'Filtres de la carte', exact: true }),
@@ -214,16 +215,20 @@ test('opens the Nen chooser from filters with usable focus', async ({ page }) =>
 })
 
 test('restores an observer link and returns to the canonical map', async ({ page }) => {
-  const observer = 'fa336818-3380-4c71-8cfa-b8bd2a3ce5d6'
+  await open(page)
+  const observer = await page
+    .getByRole('combobox', { name: 'Point de vue', exact: true })
+    .locator('option:not([value="canon"])')
+    .first()
+    .getAttribute('value')
+  expect(observer).toBeTruthy()
   const response = page.waitForResponse((response) =>
     response.url().includes(`/reconstruction/perspective?observer=${observer}`),
   )
-  await page.goto(
-    `/fr/reconstruction?event=b3742695-aab4-46ce-a5a5-cba370b2e56a&observer=${observer}`,
-  )
+  await page.goto(`/fr/reconstruction?observer=${observer}`)
   expect((await response).ok()).toBe(true)
   const select = page.getByRole('combobox', { name: 'Point de vue', exact: true })
-  await expect(select).toHaveValue(observer)
+  await expect(select).toHaveValue(observer!)
   await expect(select).toHaveAttribute('aria-busy', 'false')
   await expect(page.locator('.perspective-status[role="alert"]')).toHaveCount(0)
   await select.selectOption('canon')

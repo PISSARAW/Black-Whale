@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, tick, untrack } from 'svelte'
+  import { onDestroy, onMount, tick, untrack } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
   import { locale } from '$lib/i18n'
@@ -100,6 +100,30 @@
     play('melody')
   }
 
+  function concertShortcut(event: KeyboardEvent): void {
+    const target = event.target
+    const editable =
+      target instanceof HTMLElement &&
+      (target.isContentEditable || target.closest('input, textarea, select') !== null)
+    if (
+      event.key.toLowerCase() !== 'j' ||
+      event.repeat ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      editable ||
+      !inHall ||
+      (locked && !performance.playing)
+    )
+      return
+    // J for "jouer" is deliberately outside movement, navigation and Nen keys.
+    // Claim it before the scene records held movement keys.
+    event.preventDefault()
+    event.stopImmediatePropagation()
+    if (performance.playing) stop()
+    else playFree()
+  }
+
   async function requestConcert(): Promise<void> {
     if (locked) return
     stop()
@@ -142,6 +166,10 @@
     if (!performance.playing) return
     if (!inHall || interrupted) untrack(() => stop(!inHall))
   })
+  onMount(() => {
+    window.addEventListener('keydown', concertShortcut, true)
+    return () => window.removeEventListener('keydown', concertShortcut, true)
+  })
   onDestroy(() => stop(true))
 </script>
 
@@ -169,8 +197,8 @@
             ? 'Promène-toi dans le paysage fleuri : la vision couvre toute la salle, jusqu’au bout de service.'
             : 'Walk through the flowered landscape: the vision fills the entire hall, including the service end.'}
         </p>
-        <button type="button" class="stop" onclick={() => stop()}
-          >{french ? 'Arrêter le concert' : 'Stop the concert'}</button
+        <button type="button" class="stop" onclick={() => stop()} aria-keyshortcuts="J"
+          >{french ? 'Arrêter le concert' : 'Stop the concert'} <kbd>J</kbd></button
         >
       {:else}
         <p>
@@ -181,13 +209,14 @@
         <div class="actions">
           <button
             type="button"
-            class="free"
+            class="play-melody"
             onclick={playFree}
             disabled={locked}
+            aria-keyshortcuts="J"
             title={french
               ? 'Lancer la performance de Melody en visite libre'
               : 'Play Melody’s performance with free navigation'}
-            >{french ? 'Performance libre' : 'Free performance'}</button
+            >{french ? 'Faire jouer Melody · 3 min' : 'Play Melody · 3 min'} <kbd>J</kbd></button
           >
           <button type="button" onclick={requestConcert} disabled={locked}
             >{french ? 'Demander le concert' : 'Request the concert'}</button
@@ -253,14 +282,14 @@
     grid-template-columns: 1fr 1fr;
     gap: 0.45rem;
   }
-  .actions .free {
+  .actions .play-melody {
     grid-column: 1 / -1;
     border-color: #877343;
     background: #2b2819;
     color: #f2d481;
     font-weight: 600;
   }
-  .actions .free:hover:not(:disabled) {
+  .actions .play-melody:hover:not(:disabled) {
     border-color: #e4c36f;
     background: #3b3620;
     color: #fff2a8;
@@ -301,5 +330,15 @@
   output {
     font-variant-numeric: tabular-nums;
     color: #f2d481;
+  }
+  kbd {
+    margin-left: 0.35rem;
+    padding: 0.08rem 0.3rem;
+    border: 1px solid #877343;
+    border-radius: 3px;
+    background: #111413;
+    color: #f8e6ae;
+    font: inherit;
+    font-size: 10px;
   }
 </style>

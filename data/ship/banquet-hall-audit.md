@@ -131,8 +131,10 @@ Le participant est nommé et sourcé ; ce preset explicite reste disponible
 lorsque la chronologie n'est pas chargée, et respecte la limite de lecture
 pour demander cette reconstitution.
 
-Deux commandes sont proposées dans « Concert de Melody » : demander sa
-prestation, ou prendre son hatsu et se placer sur scène pour jouer soi-même.
+Le panneau « Concert de Melody » propose un bouton principal pour faire jouer
+Melody immédiatement pendant la visite libre. Deux commandes secondaires
+permettent de demander sa prestation depuis une vue mise en scène, ou de prendre
+son hatsu et de se placer sur scène pour jouer soi-même.
 Dans le second cas, le hatsu et les restrictions Nen ordinaires restent ceux
 de la visite. La flûte portée utilise les axes de la caméra pour rester visible
 à tous les caps. Le morceau s'arrête à trois minutes, sur commande, à la sortie

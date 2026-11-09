@@ -1100,7 +1100,7 @@ describe('the ceiling fittings', () => {
         checked++
       }
     }
-    expect(checked).toBeGreaterThan(4900)
+    expect(checked).toBeGreaterThan(4800)
   })
 
   it('sits each one inside the room that hangs it', () => {

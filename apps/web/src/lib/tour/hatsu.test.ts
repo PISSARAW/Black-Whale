@@ -1857,7 +1857,10 @@ describe('what the walk remembers of itself', () => {
   it('reads the dial higher the closer the visitor is', () => {
     const world = door(EMPTY_WORLD, 'divination', roomA.id).world
     const near = dialReading(ship, world, { at: centreOf(roomA), standingIn: roomA.id })!
-    const far = dialReading(ship, world, { at: [900, 900], standingIn: elsewhere.id })!
+    const farRoom = [...ship.spaces.values()].find(
+      (space) => space.id !== roomA.id && space.tierId !== roomA.tierId,
+    )!
+    const far = dialReading(ship, world, { at: [900, 900], standingIn: farRoom.id })!
     expect(near.reading).toBe(100)
     expect(far.reading).toBeLessThan(near.reading)
   })
@@ -2504,23 +2507,24 @@ describe('the Guardian Spirit Beasts', () => {
 
   describe("Momoze's, which is a crowd rather than an animal", () => {
     it('looses a flock over the rooms nearest the cast, and calls it back in', () => {
+      const origin = busiest.space
       const loosed = castInTour(EMPTY_WORLD, 'solicitation', {
         ship,
-        targetId: furnished.id,
-        standingIn: furnished.id,
+        targetId: origin.id,
+        standingIn: origin.id,
         at: [0, 0],
       })
       expect(loosed.world.menagerie.length).toBe(FLOCK_ROOMS)
       // All of them on the deck the visitor is standing on: the flock goes
       // through bulkheads, not through decks.
       for (const id of loosed.world.menagerie) {
-        expect(ship.spaces.get(id)!.tierId).toBe(furnished.tierId)
+        expect(ship.spaces.get(id)!.tierId).toBe(origin.tierId)
       }
 
       const back = castInTour(loosed.world, 'solicitation', {
         ship,
-        targetId: furnished.id,
-        standingIn: furnished.id,
+        targetId: origin.id,
+        standingIn: origin.id,
         at: [0, 0],
       })
       expect(back.world.menagerie).toEqual([])

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from './$types'
-  import { onDestroy, onMount, untrack } from 'svelte'
+  import { onDestroy, onMount, tick, untrack } from 'svelte'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
   import { createEmptyWorld, reduceWorld } from '@black-whale/canon-engine'
@@ -89,7 +89,11 @@
   const perspectiveLoading = $derived(lens.loading)
   const perspectiveError = $derived(lens.error)
   let mounted = $state(false)
-  onMount(() => {
+  onMount(async () => {
+    // SvelteKit assigns its root component after the initial mount flush.
+    // Waiting one tick keeps URL synchronisation from calling replaceState
+    // while that root is still undefined.
+    await tick()
     mounted = true
   })
 

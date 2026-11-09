@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import { onDestroy, onMount, tick, untrack } from 'svelte'
+  import { browser } from '$app/environment'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
   import { createEmptyWorld, reduceWorld } from '@black-whale/canon-engine'
@@ -49,7 +50,10 @@
 
   const chronologicalEvents = $derived(sortChronologicalEvents(data.chapters))
   const initialParams = untrack(() =>
-    resolveInitialReconstructionParams(data.chapters, $page.url.searchParams),
+    resolveInitialReconstructionParams(
+      data.chapters,
+      browser ? new URLSearchParams(window.location.search) : $page.url.searchParams,
+    ),
   )
 
   const engineEvents = $derived(

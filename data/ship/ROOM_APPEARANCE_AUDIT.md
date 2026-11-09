@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 428 espaces, 1165 éléments modélisés.**
+**Couverture : 62 lieux, 427 espaces, 1165 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -83,19 +83,17 @@
   - Chap. 383, p. 60 — une console d'instruments basse se trouve directement sous l'écoutille ronde ouverte.
   - Chap. 383, p. 60 — un meuble rectangulaire séparé se dresse à droite de la console de l'écoutille.
 
-## Rotonde de la chambre funéraire des princes — `tier-1-princes-burial-chamber-rotunda`
+## Chambre funéraire des princes — `tier-1-princes-burial-chamber-rotunda`
 
-- **Pont :** tier-1-c, interior-burial-chamber
+- **Pont :** tier-1-c
 - **Preuve de l’enveloppe :** case du manga
-- **Sous-espaces :** 2
-- **Emprises relevées :** 15.92 × 15.36 m ; 20.54 × 20.54 m
+- **Sous-espaces :** 1
+- **Emprises relevées :** 20.54 × 20.54 m
 - **Hauteurs sous plafond :** 8 m
 - **Éléments modélisés :** 17 casket
 - **Objets directement visibles dans les cases :** 17/17
-- **Espaces internes :** Rotonde
 - **Sources de la pièce :**
-  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre. La rotonde est le espace fusionné combinant l'ancienne chambre extérieure et la rotonde intérieure.
-  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
+  - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre. La chambre est affectée au pont 1-C et replacée dans sa coque selon le choix de reconstruction.
 - **Sources du mobilier et des détails :**
   - Le chap. 358 montre la chambre ; le chap. 371 la dessine ronde, les quatorze cercueils disposés en rayons autour de son centre.
 
@@ -713,7 +711,7 @@
 - **Sources de la pièce :**
   - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 - **Sources du mobilier et des détails :**
-  - Chap. 359 — le théâtre : scène surélevée (+1,1 m) avec parquet de chêne et escaliers, grand arc et piles de proscénium cannelées à chapiteaux dorés, rideau de velours carmin festonné et embrasses, écran panoramique avec cadre absorbant noir et structure acier, pupitre de briefing et feux de rampe, pendillons de scène, pont d'éclairage scénique, colonnes de façade et enceintes surround, 4 galeries de loges suspendues à 4,4 m sur corbeaux avec balustrades dorées et fauteuils de club, parterre en 6 blocs de gradins avec grand tapis d'allée central et fauteuils rabattables, plafond à caissons monumentaux à 10 m avec 5 grands lustres étagés en cristal et laiton, lambris d'acajou, appliques murales et portes de secours avec blocs BAES.
+  - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 
 ## Zone de protection des témoins VIP — `tier-2-vip-witness-protection-area`
 
@@ -1093,7 +1091,7 @@
 - **Emprises relevées :** 112 × 49 m
 - **Hauteurs sous plafond :** 12 m
 - **Éléments modélisés :** 32 cabinet, 4 counter, 1 camera
-- **Objets directement visibles dans les cases :** 37/37
+- **Objets directement visibles dans les cases :** 0/37
 - **Sources de la pièce :**
   - Plan de l'entrepôt ; la cale sous contrôle Cha-R, ses rangées de caisses et son unique entrée gardée
 - **Sources du mobilier et des détails :**

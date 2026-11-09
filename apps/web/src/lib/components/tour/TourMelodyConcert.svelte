@@ -100,22 +100,28 @@
     play('melody')
   }
 
-  function concertShortcut(event: KeyboardEvent): void {
-    const target = event.target
-    const editable =
+  function isEditableTarget(target: EventTarget | null): boolean {
+    return (
       target instanceof HTMLElement &&
       (target.isContentEditable || target.closest('input, textarea, select') !== null)
-    if (
-      event.key.toLowerCase() !== 'j' ||
-      event.repeat ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.altKey ||
-      editable ||
-      !inHall ||
-      (locked && !performance.playing)
     )
-      return
+  }
+
+  function hasShortcutModifier(event: KeyboardEvent): boolean {
+    return event.repeat || event.metaKey || event.ctrlKey || event.altKey
+  }
+
+  function isConcertShortcut(event: KeyboardEvent): boolean {
+    return (
+      event.key.toLowerCase() === 'j' &&
+      !hasShortcutModifier(event) &&
+      !isEditableTarget(event.target)
+    )
+  }
+
+  function concertShortcut(event: KeyboardEvent): void {
+    if (!isConcertShortcut(event)) return
+    if (!inHall || (locked && !performance.playing)) return
     // J for "jouer" is deliberately outside movement, navigation and Nen keys.
     // Claim it before the scene records held movement keys.
     event.preventDefault()

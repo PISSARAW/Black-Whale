@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 344
+Fichiers : 345
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1358,6 +1358,10 @@ Fichiers : 344
 ## `apps/web/src/lib/tour/walkTargets.test.ts`
 
 - where the walk opens for a location on the map > answers what spaceForLocation would have answered, for every slug it holds
+
+## `apps/web/src/lib/tour/warehouseView.test.ts`
+
+- the Tier 5 Cha-R Warehouse reconstructed from chapters 378, 379 and 380 > satisfies the shared blueprint invariants for the warehouse
 
 ## `apps/web/src/lib/tour/zhangLeiView.test.ts`
 

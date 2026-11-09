@@ -2,7 +2,7 @@
 
 # Graphe des dépendances
 
-Nœuds : 23 · Arêtes uniques : 46
+Nœuds : 23 · Arêtes uniques : 47
 
 ## Arêtes
 
@@ -36,6 +36,7 @@ Nœuds : 23 · Arêtes uniques : 46
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
 | `lib:strategy` | `package:@black-whale/canon-engine` | 6 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 5 |
+| `lib:tour` | `lib:components` | 1 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 9 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 16 |

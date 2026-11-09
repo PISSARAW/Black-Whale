@@ -14,6 +14,13 @@ import type { Structure } from './types'
 
 export { disposeBanquetDetails }
 export const DINING_HALL_SPACE = 'tier-5-central-dining-hall'
+const CENTRAL_VIP_TABLE_IDS = new Set([
+  `${DINING_HALL_SPACE}-platform-north`,
+  `${DINING_HALL_SPACE}-platform-south`,
+])
+
+export const isCentralVIPTable = (structure: Structure): boolean =>
+  structure.kind === 'table' && CENTRAL_VIP_TABLE_IDS.has(structure.id)
 
 interface StructureContext {
   into: BanquetDetailBuilder
@@ -43,7 +50,7 @@ function dressTableOrSeat(context: StructureContext): void {
   const { structure } = context
   if (structure.id === `${DINING_HALL_SPACE}-franklin-table`) {
     dressFranklinTable(context)
-  } else if (structure.id.includes('-platform-')) {
+  } else if (isCentralVIPTable(structure)) {
     dressCentralVIPPlatform(context)
   } else if (structure.kind === 'seat') {
     dressDiningBench(context)

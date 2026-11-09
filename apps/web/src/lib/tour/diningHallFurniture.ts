@@ -32,6 +32,17 @@ interface FurnitureContext {
   floor: number
 }
 
+export function centralVIPTableLayout(size: readonly [number, number]) {
+  const [width, depth] = size
+  const placeSettings = [-0.34, -0.11, 0.11, 0.34].flatMap((depthRatio) =>
+    [-0.275, 0.275].map((widthRatio) => [width * widthRatio, depth * depthRatio] as const),
+  )
+  return {
+    runner: [width * 0.45, depth * 0.88] as const,
+    placeSettings,
+  }
+}
+
 /** Places a cafeteria meal tray with a bowl, cup and chopsticks. */
 function placeMealTray(into: BanquetDetailBuilder, at: Point3, trayColour = TRAY_RED) {
   const [x, y, z] = at
@@ -270,17 +281,17 @@ export function dressCentralVIPPlatform(context: FurnitureContext): void {
     colour: PLATFORM_BORDER,
   })
 
-  // Tablecloth runner down the centre of the VIP meeting table
-  into.box([w * 0.88, 0.02, d * 0.45], {
+  const layout = centralVIPTableLayout(structure.size)
+
+  // The runner follows the long axis of both central tables.
+  into.box([layout.runner[0], 0.02, layout.runner[1]], {
     at: [x, topY + 0.01, z],
     colour: 0xdedcd5,
   })
 
-  // Multiple trays & meal bowls for the 10 Spiders meeting
-  for (const dx of [-1.8, -0.6, 0.6, 1.8]) {
-    for (const dz of [-0.8, 0.8]) {
-      placeMealTray(into, [x + dx, topY + 0.02, z + dz], dx + dz > 0 ? TRAY_RED : TRAY_BROWN)
-    }
+  // Four settings on each long side, matching the orientation of the benches.
+  for (const [index, [dx, dz]] of layout.placeSettings.entries()) {
+    placeMealTray(into, [x + dx, topY + 0.02, z + dz], index % 2 ? TRAY_RED : TRAY_BROWN)
   }
 
   // Large shared central food platter & teapot
@@ -295,13 +306,11 @@ export function dressCentralVIPPlatform(context: FurnitureContext): void {
 
   // Condiment caddy and ceramic teacups for the 10 Spiders
   placeCondimentCaddy(into, [x - 0.5, topY + 0.02, z])
-  for (const dx of [-1.8, -0.6, 0.6, 1.8]) {
-    for (const dz of [-0.8, 0.8]) {
-      into.cylinder(
-        { radius: 0.035, bottom: 0.028, height: 0.05, sides: 8 },
-        { at: [x + dx + 0.24, topY + 0.045, z + dz * 0.8], colour: TEACUP },
-      )
-    }
+  for (const [dx, dz] of layout.placeSettings) {
+    into.cylinder(
+      { radius: 0.035, bottom: 0.028, height: 0.05, sides: 8 },
+      { at: [x + dx - Math.sign(dx) * 0.24, topY + 0.045, z + dz], colour: TEACUP },
+    )
   }
 }
 

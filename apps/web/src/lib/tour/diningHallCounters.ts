@@ -62,14 +62,6 @@ export function dressServiceCounter(context: CounterContext): void {
   // Stainless steel food warming insert wells (bains-marie) with hot dishes
   dressFoodWarmingWells({ into, x, topY, span: [z - sizeZ / 2, z + sizeZ / 2] })
 
-  // Fixed counter stools along customer-facing aisle (East face)
-  dressCounterStools({
-    into,
-    x: slideX + 0.45,
-    span: [z - sizeZ / 2, z + sizeZ / 2],
-    floor,
-  })
-
   // Tray return racks at the counter extremities
   dressTrayReturnRack({ into, at: [x, floor, z - sizeZ / 2 + 0.8], floor })
   dressTrayReturnRack({ into, at: [x, floor, z + sizeZ / 2 - 0.8], floor })
@@ -161,37 +153,6 @@ function dressBackOfCounterStorage(options: StorageOptions): void {
   into.box([0.34, 0.32, 0.42], { at: [14.35, floor + 0.51, z - 1.7], colour: 0x82694e })
   into.sphere([0.16, 0.28, 0.16], { at: [14.35, floor + 0.28, z + 1.8], colour: 0xb5ab9a })
   into.sphere([0.18, 0.25, 0.16], { at: [14.35, floor + 0.25, z + 2.3], colour: 0x9e9484 })
-}
-
-interface StoolRowOptions {
-  into: BanquetDetailBuilder
-  x: number
-  span: [number, number]
-  floor: number
-}
-
-function dressCounterStools(options: StoolRowOptions): void {
-  const { into, x, span, floor } = options
-  const [minZ, maxZ] = span
-  const step = 2.0
-  for (let z = minZ + 1.5; z <= maxZ - 1.5; z += step) {
-    into.cylinder(
-      { radius: 0.14, height: 0.02, sides: 8 },
-      { at: [x, floor + 0.01, z], colour: STAINLESS },
-    )
-    into.cylinder(
-      { radius: 0.035, height: 0.62, sides: 8 },
-      { at: [x, floor + 0.32, z], colour: STAINLESS },
-    )
-    into.cylinder(
-      { radius: 0.22, height: 0.06, sides: 16 },
-      { at: [x, floor + 0.65, z], colour: 0x303338 },
-    )
-    into.ring(
-      { radius: 0.22, tube: 0.015 },
-      { at: [x, floor + 0.65, z], rotation: [Math.PI / 2, 0, 0], colour: STAINLESS },
-    )
-  }
 }
 
 interface TrayReturnOptions {

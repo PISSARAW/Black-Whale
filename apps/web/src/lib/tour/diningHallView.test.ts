@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 import { theShip, floorOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
-import { buildDiningHallDetails, DINING_HALL_SPACE } from './diningHallView'
+import { buildDiningHallDetails, DINING_HALL_SPACE, isCentralVIPTable } from './diningHallView'
+import { centralVIPTableLayout } from './diningHallFurniture'
 import { MANGA_DINING_HALL_VIEWS } from './mangaDiningHallViews'
 import { structureFootprint, pointInPolygon, polygonsOverlap } from './geometry'
 import {
@@ -54,6 +55,23 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
           `${solid.id}/${other.id}`,
         ).toBe(false)
       }
+    }
+  })
+
+  it('aligns both central tablecloths and place settings with the long axis', () => {
+    const platforms = structures.filter(isCentralVIPTable)
+    const platformBenches = structures.filter(
+      (structure) => structure.id.includes('-platform-') && !isCentralVIPTable(structure),
+    )
+    expect(platforms).toHaveLength(2)
+    expect(platformBenches).toHaveLength(8)
+    expect(platformBenches.every(({ kind }) => kind === 'seat')).toBe(true)
+
+    for (const platform of platforms) {
+      const layout = centralVIPTableLayout(platform.size)
+      expect(layout.runner[1]).toBeGreaterThan(layout.runner[0])
+      expect(new Set(layout.placeSettings.map(([x]) => x))).toHaveLength(2)
+      expect(new Set(layout.placeSettings.map(([, z]) => z))).toHaveLength(4)
     }
   })
 

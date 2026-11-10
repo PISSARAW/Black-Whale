@@ -12,6 +12,7 @@ import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberVie
 import { buildQueenUnmaDetails } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails } from './camillaView'
+import { buildTserriednichRoomDetails } from './tserriednichRoomView'
 import { buildZhangLeiDetails } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
@@ -151,6 +152,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildQueenUnmaDetails,
   buildBenjaminRoomDetails,
   buildCamillaRoomDetails,
+  buildTserriednichRoomDetails,
   buildZhangLeiDetails,
   buildVvipRecreationDetails,
   buildPrincesQuartersDetails,

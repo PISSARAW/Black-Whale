@@ -17,3 +17,10 @@ déplacement.
 ## Lot MP — `markerProjection`
 
 - Rien à signaler : aucune envie de correction sur les 1 430 lignes déplacées.
+
+## Costume Silent Majority — `humanCostume`
+
+- Repéré, non corrigé : la coque `nen-zetsu-trace` (transparente, écrit la profondeur) entoure
+  le corps et masque, selon l'ordre de tri, tout tissu dessiné avec `glow(jacket, 0.98)` placé
+  loin de l'axe du corps. Les manches de Silent Majority prennent donc le noir opaque (`dark`) ;
+  le tissu à 0,98 des autres silhouettes reste exposé au même tri.

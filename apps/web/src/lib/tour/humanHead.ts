@@ -141,7 +141,7 @@ export function buildHumanHead({
   })
 
   if (seen.human?.role === 'silent-majority') {
-    addSilentMajorityMask({ THREE, geometry, glow, ink, head })
+    addSilentMajorityMask({ THREE, geometry, outlined, ink, pale: skin, head })
   }
   return head
 }

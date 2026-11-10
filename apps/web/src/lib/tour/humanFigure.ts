@@ -324,19 +324,6 @@ export function buildHumanFigure({
     armband.position.set(-0.3 * profile.shoulders, 1.23, 0)
     figure.add(armband)
   }
-  if (profile.clothing === 'ritual') {
-    addSilentMajorityCostume({
-      THREE,
-      geometry,
-      outlined,
-      figure,
-      cloth,
-      ink,
-      accent,
-      dark,
-      skin,
-    })
-  }
   if (profile.clothing === 'gown') {
     // Her marks belong to her. Anyone else the archive has actually drawn gets
     // the garment and not the person; anyone it has not drawn keeps exactly
@@ -411,6 +398,10 @@ export function buildHumanFigure({
   const knees = legs.map(
     (leg) => leg.children.find((child) => child.name.startsWith('knee')) as Group,
   )
+  if (profile.clothing === 'ritual') {
+    const worn = { figure, arms, knees, ink, accent, dark }
+    addSilentMajorityCostume({ THREE, geometry, outlined, ...worn })
+  }
 
   poseHuman({ pose, figure, head, arms, legs, elbows, knees })
 

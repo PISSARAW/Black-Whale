@@ -192,7 +192,7 @@ export function buildHumanFigure({
   const hairInk = glow(profile.hair, 1)
   const accent = glow(profile.accent, 1)
   const pose = legacyPose(seen)
-  const { pelvis, torso, width } = buildHumanTrunk({
+  const { pelvis, torso, width, shoulder } = buildHumanTrunk({
     THREE,
     geometry,
     outlined,
@@ -252,7 +252,7 @@ export function buildHumanFigure({
         geometry(THREE, 'clothes:epaulette', () => new THREE.BoxGeometry(0.14, 0.035, 0.18)),
         accent,
       )
-      epaulette.position.set(side * 0.25 * profile.shoulders, 1.4, 0)
+      epaulette.position.set(side * (shoulder - 0.03) * profile.shoulders, 1.4, 0)
       figure.add(epaulette)
     }
   }
@@ -276,7 +276,7 @@ export function buildHumanFigure({
       geometry(THREE, 'accessory:armband', () => new THREE.CylinderGeometry(0.07, 0.07, 0.06, 7)),
       accent,
     )
-    armband.position.set(-0.288 * profile.shoulders, 1.23, 0)
+    armband.position.set(-(shoulder + 0.008) * profile.shoulders, 1.23, 0)
     figure.add(armband)
   }
   if (profile.clothing === 'gown') {
@@ -300,6 +300,7 @@ export function buildHumanFigure({
     seen,
     profile,
     frame,
+    shoulder,
     materials: { ink, skin, dark },
   })
   if (profile.clothing === 'ritual') {

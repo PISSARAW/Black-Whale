@@ -27,6 +27,13 @@ export interface HumanTrunk {
   torso: Group
   /** The pelvis and belt multiplier: the build's width times the frame's. */
   width: number
+  /**
+   * Where the arm leaves the trunk, before the profile's own `shoulders`.
+   *
+   * Taken from the torso's widest line rather than fixed: an arm hung at one
+   * distance for every build stands off a slim chest like a puffed sleeve.
+   */
+  shoulder: number
 }
 
 /** Radius by height, belt to the root of the neck, about the torso's centre. */
@@ -124,5 +131,5 @@ export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
   neck.position.y = 1.51 * frame.neck
   figure.add(neck)
 
-  return { pelvis, torso, width }
+  return { pelvis, torso, width, shoulder: widest + 0.048 }
 }

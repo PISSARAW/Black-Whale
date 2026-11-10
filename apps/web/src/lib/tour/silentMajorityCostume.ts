@@ -189,14 +189,15 @@ function addSash({ THREE, geometry, outlined, figure, accent, ink }: SilentMajor
   // The gathered upper edge: a row of beads, which is what a ruffle is once it
   // is two values and a contour.
   for (let i = -3; i <= 3; i += 1) {
+    // Large enough to scallop the edge: seven lobes across the flat of the sash.
     const bead = outlined({
       THREE,
-      geometry: geometry(THREE, 'silent:sash-ruffle', () => new THREE.SphereGeometry(0.021, 7, 5)),
+      geometry: geometry(THREE, 'silent:sash-ruffle', () => new THREE.SphereGeometry(0.027, 8, 5)),
       material: accent,
       ink,
-      scale: 1.14,
+      scale: 1.1,
     })
-    bead.position.set(i * 0.034, 1.24, front - 0.012)
+    bead.position.set(i * 0.035, 1.244, front - 0.014)
     figure.add(bead)
   }
   // Its folds are drawn as waves, one under the other.
@@ -280,7 +281,7 @@ function addSocks({ THREE, geometry, knees, dark }: SilentMajorityBuild): void {
   // stays bare, which is the pale gap the drawing leaves below the hem.
   for (const knee of knees) {
     const sock = new THREE.Mesh(
-      geometry(THREE, 'silent:sock', () => new THREE.CapsuleGeometry(0.076, 0.33, 3, 8)),
+      geometry(THREE, 'silent:sock', () => new THREE.CapsuleGeometry(0.066, 0.33, 3, 8)),
       dark,
     )
     sock.name = 'silent-sock'

@@ -42,9 +42,9 @@ export function addSilentMajoritySleeves(build: SleeveBuild): void {
         // From the root of the neck, down a sloping shoulder, then out and
         // down to a cuff wider than the shoulder it hangs from.
         outline.moveTo(-0.2, 0.5)
-        outline.quadraticCurveTo(-0.04, 0.5, 0.005, 0.4)
-        outline.quadraticCurveTo(0.034, 0.36, 0.036, 0.3)
-        outline.lineTo(0.09, -0.48)
+        outline.quadraticCurveTo(-0.03, 0.5, 0.03, 0.4)
+        outline.quadraticCurveTo(0.06, 0.36, 0.062, 0.3)
+        outline.lineTo(0.112, -0.48)
         outline.lineTo(-0.095, -0.48)
         outline.lineTo(-0.095, 0.2)
         outline.closePath()
@@ -72,13 +72,13 @@ function addCrests(kit: Kit, { THREE, pale }: SleeveBuild, sleeve: Group): void 
     key: 'silent:crest-volute-shoulder',
     make: () => voluteGeometry(THREE, { radius: 0.06, turns: 2.6, thickness: 0.008 }),
     material: pale,
-    at: [-0.03, 0.25, CREST],
+    at: [-0.015, 0.25, CREST],
   })
   place(kit, sleeve, {
     key: 'silent:crest-volute-cuff',
     make: () => voluteGeometry(THREE, { radius: 0.08, turns: 2.6, thickness: 0.0085 }),
     material: pale,
-    at: [-0.004, -0.375, CREST],
+    at: [0.008, -0.375, CREST],
     turn: Math.PI,
     scale: [-1, 1],
   })

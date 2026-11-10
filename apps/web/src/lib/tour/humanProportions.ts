@@ -24,7 +24,6 @@ export const CANON = {
   hipY: 0.77,
   hipX: 0.11,
   shoulderY: 1.34,
-  shoulderX: 0.28,
   /** Hip to knee. */
   thigh: 0.44,
   /** Knee to the sole of the shoe. */

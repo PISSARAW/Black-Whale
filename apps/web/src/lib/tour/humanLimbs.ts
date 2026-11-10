@@ -28,6 +28,8 @@ export interface HumanLimbsBuild {
   seen: HumanLook
   profile: HumanProfile
   frame: FrameShape
+  /** Where the arm leaves the trunk: `HumanTrunk.shoulder`. */
+  shoulder: number
   materials: { ink: Material; skin: Material; dark: Material }
 }
 
@@ -45,6 +47,12 @@ const THIGH: Taper = [0.092, 0.088, 0.074, 0.062]
 const SHIN: Taper = [0.06, 0.068, 0.056, 0.042]
 const UPPER_ARM: Taper = [0.064, 0.06, 0.052, 0.047]
 const FOREARM: Taper = [0.048, 0.052, 0.042, 0.034]
+
+/**
+ * A build is a girth as well as a pair of shoulders: a slim body on the limbs
+ * of an average one reads as a heavy body with a narrow chest.
+ */
+const GIRTH = { slim: 0.86, average: 1, broad: 1.12 } as const
 
 const SHOE_HEIGHT = 0.1
 /** The shin stops at the ankle, the forearm at the wrist. */
@@ -70,7 +78,8 @@ function taperedGeometry(THREE: Three, length: number, taper: Taper): BufferGeom
 }
 
 function segment(build: HumanLimbsBuild, { key, length, taper, colour }: Segment): Group {
-  const { THREE, geometry, outlined, glow, materials } = build
+  const { THREE, geometry, outlined, glow, profile, materials } = build
+  const girth = GIRTH[profile.build]
   const limb = outlined({
     THREE,
     geometry: geometry(THREE, `limb:${key}`, () => taperedGeometry(THREE, length, taper)),
@@ -78,6 +87,7 @@ function segment(build: HumanLimbsBuild, { key, length, taper, colour }: Segment
     ink: materials.ink,
     scale: 1.072,
   })
+  limb.scale.set(girth, 1, girth)
   limb.position.y = -length / 2
   return limb
 }
@@ -171,11 +181,12 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
     material: glow(sleeve, 1),
     ink: materials.ink,
   })
-  cap.scale.y = 0.86
+  const girth = GIRTH[profile.build]
+  cap.scale.set(girth, 0.86, girth)
   cap.position.y = -0.012
   arm.add(cap)
   arm.scale.y = frame.limb
-  arm.position.set(side * CANON.shoulderX * profile.shoulders, CANON.shoulderY * frame.neck, 0)
+  arm.position.set(side * build.shoulder * profile.shoulders, CANON.shoulderY * frame.neck, 0)
   arm.rotation.z = side * -0.07
   return { arm, elbow }
 }

@@ -190,8 +190,6 @@ const AIRS: Record<
   },
 }
 
-export const MELODY_BLOOM_AIR = AIRS.bloom
-
 /** One air, played once. Which one is the visitor's decision, and their key. */
 export function playATune(tune: 'bloom' | 'scatter' | 'dance') {
   const g = hatsuAudioGraph()

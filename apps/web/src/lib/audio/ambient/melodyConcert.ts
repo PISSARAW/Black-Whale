@@ -1,5 +1,5 @@
 import { hatsuAudioGraph, midiToHz } from './mixer'
-import { MELODY_BLOOM_AIR } from '../hatsu/music'
+import { MELODY_CONCERT_AIR } from './concertAir'
 
 /** An original flute interpretation on the shared effects bus, with an owned,
  * cancellable output. No recording or score from the manga/anime is used. */
@@ -12,8 +12,8 @@ export function startMelodyConcert(): () => void {
   output.connect(graph.muffle)
   output.connect(graph.reverbSend)
   const voices = new Set<OscillatorNode>()
-  const air = MELODY_BLOOM_AIR
-  const phrase = 5
+  const air = MELODY_CONCERT_AIR
+  const phrase = air.length * air.beat
   let bar = context.currentTime + 0.04
   let index = 0
   let stopped = false
@@ -35,6 +35,7 @@ export function startMelodyConcert(): () => void {
       oscillator.connect(envelope)
       envelope.connect(output)
       voices.add(oscillator)
+      if (duration >= air.beat) vibrato(oscillator, at, duration)
       oscillator.onended = () => {
         voices.delete(oscillator)
         oscillator.disconnect()
@@ -43,6 +44,24 @@ export function startMelodyConcert(): () => void {
       oscillator.start(at)
       oscillator.stop(at + duration + 0.15)
     }
+  }
+
+  // A light waver, about five cents, on the notes held long enough to have one.
+  function vibrato(target: OscillatorNode, at: number, duration: number): void {
+    const lfo = context.createOscillator()
+    const depth = context.createGain()
+    lfo.frequency.value = 5
+    depth.gain.value = target.frequency.value * 0.003
+    lfo.connect(depth)
+    depth.connect(target.frequency)
+    voices.add(lfo)
+    lfo.onended = () => {
+      voices.delete(lfo)
+      lfo.disconnect()
+      depth.disconnect()
+    }
+    lfo.start(at + 0.2)
+    lfo.stop(at + duration + 0.15)
   }
 
   function schedule(): void {

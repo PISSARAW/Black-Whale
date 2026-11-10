@@ -7,6 +7,7 @@ import {
   TSERRIEDNICH_DARK_WOOD,
   TSERRIEDNICH_GOLD_TRIM,
   TSERRIEDNICH_PANEL_WOOD,
+  TSERRIEDNICH_REEDING_GROOVE,
 } from './tserriednichRoomDetailSurface'
 
 export interface TserriednichArchitectureContext {
@@ -16,17 +17,27 @@ export interface TserriednichArchitectureContext {
   space: Space
 }
 
-/** Moulded wall panels, chest-height, as behind Tserriednich in chs. 384-387. */
-function mouldedWallPanels(context: TserriednichArchitectureContext): void {
+/**
+ * The wall behind Tserriednich in chs. 384-387 isn't a few wide mouldings —
+ * it's continuous fine vertical reeding, floor to cornice, the full run of
+ * the wall. Close-pitched alternating strips read as fluting at a glance;
+ * widely spaced panels (the first attempt here) did not.
+ */
+function reededBoiserie(context: TserriednichArchitectureContext): void {
   const { into, plan, space } = context
   const floor = floorOf(space, plan.tier)
+  const ceiling = ceilingOf(space, plan.tier)
 
   for (const run of banquetWallRuns(plan, space)) {
     const baseboard: [number, number, number, number][] = [
       [0.12, 0.24, 0.07, TSERRIEDNICH_DARK_WOOD],
       [0.78, 0.045, 0.08, TSERRIEDNICH_GOLD_TRIM],
     ]
-    for (const [y, height, depth, colour] of baseboard) {
+    const cornice: [number, number, number, number][] = [
+      [ceiling - 0.3, 0.045, 0.08, TSERRIEDNICH_GOLD_TRIM],
+      [ceiling - 0.14, 0.2, 0.06, TSERRIEDNICH_DARK_WOOD],
+    ]
+    for (const [y, height, depth, colour] of [...baseboard, ...cornice]) {
       into.box([run.length, height, depth], {
         at: wallPoint(run, { along: run.length / 2, y: floor + y, inset: depth / 2 }),
         rotation: [0, run.angle, 0],
@@ -34,18 +45,16 @@ function mouldedWallPanels(context: TserriednichArchitectureContext): void {
       })
     }
 
-    const panelCount = Math.max(1, Math.floor(run.length / 1.6))
-    for (let i = 0; i < panelCount; i++) {
-      const along = ((i + 0.5) * run.length) / panelCount
-      into.box([1.05, 1.85, 0.03], {
-        at: wallPoint(run, { along, y: floor + 2.0, inset: 0.03 }),
+    const fluteHeight = ceiling - 0.9
+    const fluteY = floor + 0.82 + fluteHeight / 2
+    const pitch = 0.22
+    const count = Math.max(4, Math.round(run.length / pitch))
+    for (let i = 0; i < count; i++) {
+      const along = ((i + 0.5) * run.length) / count
+      into.box([pitch * 0.78, fluteHeight, 0.025], {
+        at: wallPoint(run, { along, y: fluteY, inset: 0.012 }),
         rotation: [0, run.angle, 0],
-        colour: TSERRIEDNICH_PANEL_WOOD,
-      })
-      into.box([0.9, 1.68, 0.035], {
-        at: wallPoint(run, { along, y: floor + 2.0, inset: 0.035 }),
-        rotation: [0, run.angle, 0],
-        colour: 0x241b13,
+        colour: i % 2 === 0 ? TSERRIEDNICH_PANEL_WOOD : TSERRIEDNICH_REEDING_GROOVE,
       })
     }
   }
@@ -80,6 +89,6 @@ function panelledCeiling(context: TserriednichArchitectureContext): void {
 }
 
 export function dressTserriednichRoomArchitecture(context: TserriednichArchitectureContext): void {
-  mouldedWallPanels(context)
+  reededBoiserie(context)
   panelledCeiling(context)
 }

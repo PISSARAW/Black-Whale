@@ -4,6 +4,7 @@ import type { Structure } from './types'
 
 export const TSERRIEDNICH_DARK_WOOD = 0x3a2b1f
 export const TSERRIEDNICH_PANEL_WOOD = 0x4d3a28
+export const TSERRIEDNICH_REEDING_GROOVE = 0x362716
 export const TSERRIEDNICH_GOLD_TRIM = 0xa98a52
 export const TSERRIEDNICH_STONE = 0x6b6760
 export const TSERRIEDNICH_CLOCK_FACE = 0xe9e2d0

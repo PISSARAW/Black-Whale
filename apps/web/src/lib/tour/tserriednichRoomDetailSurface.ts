@@ -13,6 +13,9 @@ export const TSERRIEDNICH_CANVAS = 0x2c3a33
 export const TSERRIEDNICH_FRIDGE_WHITE = 0xe4e2dc
 export const TSERRIEDNICH_FRIDGE_STEEL = 0xaaa9a4
 export const TSERRIEDNICH_COUNTER_STONE = 0xc9c4b8
+export const TSERRIEDNICH_GLASS = 0xb9c6c4
+export const TSERRIEDNICH_WICKER = 0xa9814f
+export const TSERRIEDNICH_URN = 0x5b6b63
 
 /** Local coordinate system bound to one structure, as `BenjaminRoomSurface` is. */
 export class TserriednichRoomSurface {

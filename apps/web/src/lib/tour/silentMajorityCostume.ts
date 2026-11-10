@@ -280,11 +280,11 @@ function addSocks({ THREE, geometry, knees, dark }: SilentMajorityBuild): void {
   // stays bare, which is the pale gap the drawing leaves below the hem.
   for (const knee of knees) {
     const sock = new THREE.Mesh(
-      geometry(THREE, 'silent:sock', () => new THREE.CapsuleGeometry(0.081, 0.2, 3, 8)),
+      geometry(THREE, 'silent:sock', () => new THREE.CapsuleGeometry(0.076, 0.33, 3, 8)),
       dark,
     )
     sock.name = 'silent-sock'
-    sock.position.y = -0.15
+    sock.position.y = -0.21
     knee.add(sock)
   }
 }

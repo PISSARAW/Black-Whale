@@ -1,4 +1,5 @@
 import type { Group, Object3D } from 'three'
+import { CANON } from './humanProportions'
 
 /** Solve the two arm bones towards the keys without breaking the shoulder joints. */
 export function poseFluteArms(rig: { head: Object3D; arms: Group[]; elbows: Group[] }): void {
@@ -9,8 +10,8 @@ export function poseFluteArms(rig: { head: Object3D; arms: Group[]; elbows: Grou
     const direction = target.clone().sub(shoulder)
     const distance = direction.length()
     direction.normalize()
-    const upper = 0.27,
-      lower = 0.25
+    const upper = CANON.upperArm,
+      lower = CANON.forearm
     const along = (upper * upper - lower * lower + distance * distance) / (2 * distance)
     const bend = Math.sqrt(Math.max(0, upper * upper - along * along))
     const normal = direction.clone().set(-direction.y, direction.x, 0).normalize()

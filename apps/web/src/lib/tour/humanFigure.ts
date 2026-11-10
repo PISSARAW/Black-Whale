@@ -3,10 +3,13 @@ import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-
 import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
-import { addPrisonBook, prisonFootMaterial, prisonFootGeometry } from './humanPrisonProps'
+import { addPrisonBook } from './humanPrisonProps'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
 import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
+import { buildHumanLimbs } from './humanLimbs'
+import { CANON, stance } from './humanProportions'
+import { buildHumanTrunk } from './humanTrunk'
 import { contactShadow } from './contactShadow'
 import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
@@ -162,26 +165,6 @@ function outlined({ THREE, geometry, material, ink, scale = 1.062 }: OutlinedSha
   return group
 }
 
-interface LimbShape extends HumanFigureBuild {
-  radius: number
-  length: number
-  colour: number
-}
-
-function limb({ THREE, glow, radius, length, colour }: LimbShape): Group {
-  return outlined({
-    THREE,
-    geometry: geometry(
-      THREE,
-      `limb:${radius}:${length}`,
-      () => new THREE.CapsuleGeometry(radius, length, 3, 7),
-    ),
-    material: glow(colour, 1),
-    ink: glow(INK, 1),
-    scale: 1.072,
-  })
-}
-
 export function buildHumanFigure({
   THREE,
   glow,
@@ -193,7 +176,10 @@ export function buildHumanFigure({
   const figure = new THREE.Group()
   const far = new THREE.Group()
   const profile = humanProfile(seen)
-  const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height
+  // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
+  const frame = frameShape(profile.frame)
+  const { lift, stature } = stance(frame)
+  const unit = (seen.kind === 'avatar' ? seen.size / 0.42 : seen.size) * profile.height * stature
   figure.scale.setScalar(unit)
   root.add(figure)
   root.add(far)
@@ -206,46 +192,15 @@ export function buildHumanFigure({
   const hairInk = glow(profile.hair, 1)
   const accent = glow(profile.accent, 1)
   const pose = legacyPose(seen)
-  // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
-  const frame = frameShape(profile.frame)
-  const arms: Group[] = []
-  const legs: Group[] = []
-
-  const pelvis = outlined({
+  const { pelvis, torso, width } = buildHumanTrunk({
     THREE,
-    geometry: geometry(THREE, 'pelvis', () => new THREE.SphereGeometry(0.2, 8, 6)),
-    material: cloth,
-    ink,
+    geometry,
+    outlined,
+    figure,
+    profile,
+    frame,
+    materials: { cloth, ink, skin, shirt: glow(profile.shirt || SHIRT, 1) },
   })
-  const buildWidth =
-    (profile.build === 'slim' ? 0.92 : profile.build === 'broad' ? 1.12 : 1) * frame.width
-  pelvis.scale.set(1.08 * buildWidth, 0.7, 0.76)
-  pelvis.position.y = 0.76 * frame.neck
-  figure.add(pelvis)
-
-  const torso = outlined({
-    THREE,
-    geometry: geometry(THREE, 'torso', () => new THREE.CylinderGeometry(0.22, 0.18, 0.58, 7)),
-    material: cloth,
-    ink,
-  })
-  torso.scale.set(profile.shoulders * buildWidth, 1, 0.72)
-  torso.position.y = 1.12 * frame.neck
-  figure.add(torso)
-
-  const collar = new THREE.Mesh(
-    geometry(THREE, 'collar', () => new THREE.CylinderGeometry(0.13, 0.17, 0.1, 7)),
-    glow(profile.shirt || SHIRT, 1),
-  )
-  collar.position.y = 1.43 * frame.neck
-  figure.add(collar)
-
-  const neck = new THREE.Mesh(
-    geometry(THREE, 'neck', () => new THREE.CylinderGeometry(0.075, 0.09, 0.14, 7)),
-    skin,
-  )
-  neck.position.y = 1.51 * frame.neck
-  figure.add(neck)
 
   const head = buildHumanHead({
     THREE,
@@ -256,7 +211,7 @@ export function buildHumanFigure({
     seen,
     materials: { ink, skin, hairInk },
   })
-  head.scale.setScalar(frame.head)
+  head.scale.setScalar(frame.head * CANON.headScale)
   head.position.y *= frame.neck
   figure.add(head)
 
@@ -280,7 +235,7 @@ export function buildHumanFigure({
     dark,
   )
   belt.position.y = 0.82 * frame.neck
-  belt.scale.x = buildWidth
+  belt.scale.x = 0.9 * width
   figure.add(belt)
   if (profile.clothing === 'suit') {
     const tie = new THREE.Mesh(
@@ -321,7 +276,7 @@ export function buildHumanFigure({
       geometry(THREE, 'accessory:armband', () => new THREE.CylinderGeometry(0.07, 0.07, 0.06, 7)),
       accent,
     )
-    armband.position.set(-0.3 * profile.shoulders, 1.23, 0)
+    armband.position.set(-0.288 * profile.shoulders, 1.23, 0)
     figure.add(armband)
   }
   if (profile.clothing === 'gown') {
@@ -336,73 +291,25 @@ export function buildHumanFigure({
     }
   }
 
-  for (const side of [-1, 1]) {
-    const leg = new THREE.Group()
-    leg.name = side < 0 ? 'hip-left' : 'hip-right'
-    const thigh = limb({ THREE, glow, seen, radius: 0.085, length: 0.25, colour: profile.trousers })
-    thigh.position.y = -0.15
-    leg.add(thigh)
-    const knee = new THREE.Group()
-    knee.name = side < 0 ? 'knee-left' : 'knee-right'
-    knee.position.y = -0.31
-    leg.add(knee)
-    const shin = limb({ THREE, glow, seen, radius: 0.07, length: 0.24, colour: profile.trousers })
-    shin.position.y = -0.14
-    knee.add(shin)
-    const shoe = outlined({
-      THREE,
-      geometry: prisonFootGeometry(
-        seen,
-        THREE,
-        geometry(THREE, 'shoe', () => new THREE.BoxGeometry(0.15, 0.09, 0.25)),
-      ),
-      material: prisonFootMaterial(seen, skin, dark),
-      ink,
-    })
-    shoe.position.set(0, -0.32, 0.055)
-    knee.add(shoe)
-    leg.scale.y = frame.limb
-    leg.position.set(side * 0.13, 0.77 * frame.neck, 0)
-    figure.add(leg)
-    legs.push(leg)
-
-    const arm = new THREE.Group()
-    arm.name = side < 0 ? 'shoulder-left' : 'shoulder-right'
-    const upper = limb({ THREE, glow, seen, radius: 0.062, length: 0.2, colour: profile.jacket })
-    upper.position.y = -0.13
-    arm.add(upper)
-    const elbow = new THREE.Group()
-    elbow.name = side < 0 ? 'elbow-left' : 'elbow-right'
-    elbow.position.y = -0.27
-    arm.add(elbow)
-    const forearm = limb({ THREE, glow, seen, radius: 0.052, length: 0.18, colour: profile.jacket })
-    forearm.position.y = -0.11
-    elbow.add(forearm)
-    const hand = new THREE.Mesh(
-      geometry(THREE, 'hand', () => new THREE.SphereGeometry(0.062, 7, 5)),
-      skin,
-    )
-    hand.name = side < 0 ? 'hand-left' : 'hand-right'
-    hand.position.y = -0.25
-    elbow.add(hand)
-    arm.scale.y = frame.limb
-    arm.position.set(side * 0.3 * profile.shoulders, 1.34 * frame.neck, 0)
-    arm.rotation.z = side * -0.1
-    figure.add(arm)
-    arms.push(arm)
-  }
-
-  const elbows = arms.map(
-    (arm) => arm.children.find((child) => child.name.startsWith('elbow')) as Group,
-  )
-  const knees = legs.map(
-    (leg) => leg.children.find((child) => child.name.startsWith('knee')) as Group,
-  )
+  const { arms, legs, elbows, knees } = buildHumanLimbs({
+    THREE,
+    geometry,
+    outlined,
+    glow,
+    figure,
+    seen,
+    profile,
+    frame,
+    materials: { ink, skin, dark },
+  })
   if (profile.clothing === 'ritual') {
     const worn = { figure, arms, knees, ink, accent, dark }
     addSilentMajorityCostume({ THREE, geometry, outlined, ...worn })
   }
 
+  // Standing bodies are raised by what their legs gained; a pose that puts the
+  // body somewhere else — a chair, a cushion, the floor — says so itself.
+  figure.position.y = lift * unit
   poseHuman({ pose, figure, head, arms, legs, elbows, knees })
 
   // Annexe B, last, because §2.2 says so: the gabarit, the hair and the palette
@@ -457,11 +364,11 @@ export function buildHumanFigure({
   // Three shapes past twenty-four metres, listed rather than spelled out: at
   // that distance a body is a mass, a face and a hair colour, and the loop is
   // the honest length of that statement.
-  const farHair = () => new THREE.SphereGeometry(0.185, 6, 3, 0, Math.PI * 2, 0, 1.2)
+  const farHair = () => new THREE.SphereGeometry(0.136, 6, 3, 0, Math.PI * 2, 0, 1.2)
   const FAR: ReadonlyArray<readonly [string, () => BufferGeometry, Material, number]> = [
-    ['far:body', () => new THREE.CylinderGeometry(0.2, 0.14, 1.2, 5), cloth, 0.72],
-    ['far:head', () => new THREE.SphereGeometry(0.18, 6, 4), skin, 1.52],
-    ['far:hair', farHair, hairInk, 1.54],
+    ['far:body', () => new THREE.CylinderGeometry(0.19, 0.12, 1.5, 5), cloth, 0.6],
+    ['far:head', () => new THREE.SphereGeometry(0.13, 6, 4), skin, CANON.headY],
+    ['far:hair', farHair, hairInk, CANON.headY + 0.015],
   ]
   for (const [key, make, material, y] of FAR) {
     const shape = new THREE.Mesh(geometry(THREE, key, make), material)

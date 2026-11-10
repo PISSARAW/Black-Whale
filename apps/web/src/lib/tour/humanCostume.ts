@@ -37,12 +37,12 @@ export function addCourtGown(build: CostumeBuild): void {
   const { THREE, geometry, outlined, figure, cloth, ink, accent } = build
   const skirt = outlined({
     THREE,
-    geometry: geometry(THREE, 'court:gown', () => new THREE.CylinderGeometry(0.24, 0.4, 1.0, 8)),
+    geometry: geometry(THREE, 'court:gown', () => new THREE.CylinderGeometry(0.24, 0.4, 1.27, 8)),
     material: cloth,
     ink,
   })
   skirt.name = 'court-gown'
-  skirt.position.y = 0.62
+  skirt.position.y = 0.485
   figure.add(skirt)
 
   const sash = new THREE.Mesh(
@@ -100,13 +100,13 @@ export function addMorenaDetails(build: MorenaBuild): void {
       geometry: geometry(
         THREE,
         'morena:gown',
-        () => new THREE.CylinderGeometry(0.23, 0.39, 1.02, 8),
+        () => new THREE.CylinderGeometry(0.23, 0.39, 1.32, 8),
       ),
       material: cloth,
       ink,
     })
     gown.name = 'morena-standing-gown'
-    gown.position.y = 0.66
+    gown.position.y = 0.51
     figure.add(gown)
   }
 
@@ -158,7 +158,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
     ink,
   })
   hairBack.position.set(0, 1.02, -0.16)
-  hairBack.scale.z = 0.55
+  hairBack.scale.set(0.8, 1, 0.55)
   figure.add(hairBack)
 
   // Two swept front panels expose the centre part and frame the stitch crown.
@@ -171,18 +171,18 @@ export function addMorenaDetails(build: MorenaBuild): void {
       ink,
       scale: 1.02,
     })
-    bang.position.set(side * 0.06, 1.78, 0.14)
+    bang.position.set(side * 0.06, 0.06, 0.14)
     bang.rotation.z = side * 0.5
     bang.rotation.x = -0.12
-    figure.add(bang)
+    head.add(bang)
     for (let strandIndex = 0; strandIndex < 3; strandIndex++) {
       const strand = new THREE.Mesh(
         geometry(THREE, 'morena:hair-strand', () => new THREE.PlaneGeometry(0.009, 0.14)),
         hairShade,
       )
-      strand.position.set(side * (0.06 + strandIndex * 0.02), 1.78 - strandIndex * 0.012, 0.205)
+      strand.position.set(side * (0.06 + strandIndex * 0.02), 0.06 - strandIndex * 0.012, 0.205)
       strand.rotation.z = side * (0.42 - strandIndex * 0.06)
-      figure.add(strand)
+      head.add(strand)
     }
   }
   for (const side of [-1, 1]) {
@@ -197,14 +197,14 @@ export function addMorenaDetails(build: MorenaBuild): void {
       ink,
       scale: 1.025,
     })
-    lock.position.set(side * 0.2, 1.17, 0.13)
+    lock.position.set(side * 0.165, 1.17, 0.13)
     lock.rotation.z = side * 0.1
     figure.add(lock)
     const curl = new THREE.Mesh(
       geometry(THREE, 'morena:hair-curl', () => new THREE.TorusGeometry(0.105, 0.045, 5, 12, 3.8)),
       accent,
     )
-    curl.position.set(side * 0.17, 1.06, 0.145)
+    curl.position.set(side * 0.14, 1.06, 0.145)
     curl.rotation.z = side < 0 ? -0.5 : Math.PI + 0.5
     figure.add(curl)
     for (let strandIndex = 0; strandIndex < 3; strandIndex++) {
@@ -212,7 +212,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
         geometry(THREE, 'morena:long-hair-strand', () => new THREE.PlaneGeometry(0.011, 0.55)),
         hairShade,
       )
-      strand.position.set(side * (0.165 + strandIndex * 0.025), 1.18, 0.207)
+      strand.position.set(side * (0.13 + strandIndex * 0.025), 1.18, 0.207)
       strand.rotation.z = side * (0.04 + strandIndex * 0.035)
       figure.add(strand)
     }

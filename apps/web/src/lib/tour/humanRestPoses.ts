@@ -2,6 +2,7 @@ import type { Group, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { HumanAppearance } from './humanAppearance'
 import { poseFluteArms } from './humanFlutePose'
+import { CANON } from './humanProportions'
 
 interface RestingHuman {
   figure: Group
@@ -14,7 +15,8 @@ interface RestingHuman {
 
 function seated(rig: RestingHuman): void {
   const { figure, arms, elbows, legs, knees } = rig
-  figure.position.y = -0.3
+  // Hips at the height of the shin, so the soles land on the floor.
+  figure.position.y = CANON.shin - CANON.hipY
   arms.forEach((arm, index) => {
     const side = index === 0 ? -1 : 1
     arm.position.set(side * 0.27, 1.34, 0.02)
@@ -36,8 +38,9 @@ function armAt(rig: RestingHuman, index: number, point: readonly [number, number
   const direction = target.clone().sub(shoulder)
   const distance = direction.length()
   direction.normalize()
-  const along = (0.27 ** 2 - 0.25 ** 2 + distance ** 2) / (2 * distance)
-  const bend = Math.sqrt(Math.max(0, 0.27 ** 2 - along ** 2))
+  const { upperArm, forearm: lowerArm } = CANON
+  const along = (upperArm ** 2 - lowerArm ** 2 + distance ** 2) / (2 * distance)
+  const bend = Math.sqrt(Math.max(0, upperArm ** 2 - along ** 2))
   const normal = direction.clone().set(-direction.y, direction.x, 0).normalize()
   const elbow = shoulder
     .clone()

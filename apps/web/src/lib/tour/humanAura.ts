@@ -50,10 +50,10 @@ export interface HumanAura {
 }
 
 const zonePositions: Record<HumanZone, [number, number, number]> = {
-  head: [0, 1.62, 0],
+  head: [0, 1.7, 0],
   torso: [0, 1.08, 0],
   hands: [0, 1.02, 0.24],
-  feet: [0, 0.14, 0.08],
+  feet: [0, -0.05, 0.08],
 }
 
 /**
@@ -215,11 +215,11 @@ export function buildHumanAura({
   if (auraVisible && nen.gyo) {
     for (const side of [-1, 1]) {
       const eyeAura = new THREE.Mesh(
-        geometry(THREE, 'aura:gyo-eye', () => new THREE.SphereGeometry(0.075, 10, 7)),
+        geometry(THREE, 'aura:gyo-eye', () => new THREE.SphereGeometry(0.055, 10, 7)),
         glow(seen.colour, 0.72),
       )
       eyeAura.name = side < 0 ? 'nen-gyo-left' : 'nen-gyo-right'
-      eyeAura.position.set(side * 0.075, 1.61, 0.17)
+      eyeAura.position.set(side * 0.05, 1.71, 0.125)
       eyeAura.userData.eyeSide = side
       eyeAuras.push(eyeAura)
       figure.add(eyeAura)

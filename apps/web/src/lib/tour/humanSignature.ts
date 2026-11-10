@@ -370,9 +370,9 @@ const GARMENTS: Partial<Record<Attire, Piece>> = {
   changshan: ({ THREE, body, paint }) => {
     body({
       key: 'attire:changshan',
-      make: () => new THREE.CylinderGeometry(0.23, 0.28, 0.92, 8),
+      make: () => new THREE.CylinderGeometry(0.23, 0.28, 1.13, 8),
       material: paint.cloth,
-      at: [0, 0.72, 0],
+      at: [0, 0.615, 0],
       name: 'attire-changshan',
     })
     // The standing collar is the difference between this and a dressing gown.
@@ -395,9 +395,9 @@ const GARMENTS: Partial<Record<Attire, Piece>> = {
   kimono: ({ THREE, body, paint }) => {
     body({
       key: 'attire:kimono',
-      make: () => new THREE.CylinderGeometry(0.24, 0.34, 0.98, 7),
+      make: () => new THREE.CylinderGeometry(0.24, 0.34, 1.25, 7),
       material: paint.cloth,
-      at: [0, 0.68, 0],
+      at: [0, 0.545, 0],
       name: 'attire-kimono',
     })
     // Crossed front, left over right, and the obi that holds it shut.

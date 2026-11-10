@@ -6,6 +6,7 @@ import type { HumanLook } from './humanFigure'
 /** Ink, the one colour the head shares with the rest of the figure. */
 const INK = 0x171318
 import type { HumanProfile } from './humanProfiles'
+import { CANON } from './humanProportions'
 
 type Three = typeof import('three')
 
@@ -42,7 +43,7 @@ export function buildHumanHead({
 }: HumanHeadBuild): Group {
   const { ink, skin, hairInk } = materials
   const head = new THREE.Group()
-  head.position.y = 1.72
+  head.position.y = CANON.headY
   const skull = outlined({
     THREE,
     geometry: geometry(THREE, 'skull', () => new THREE.SphereGeometry(0.19, 10, 8)),

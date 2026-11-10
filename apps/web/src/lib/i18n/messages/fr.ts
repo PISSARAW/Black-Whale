@@ -2782,6 +2782,13 @@ export const fr: Messages = {
     openRegistry: 'Ouvrir le registre des passagers',
     latestChapter: 'Dernier chapitre indexé',
     published: (date) => `Publié le ${date}`,
+    living: {
+      label: 'Personnages suivis en vie',
+      count: (alive, total) => `${alive} sur ${total}`,
+      latest: 'au dernier chapitre',
+      asOf: (chapter) => `au chapitre ${chapter}`,
+      unknown: (count) => `${count} au sort inconnu`,
+    },
     metricsLabel: 'Chiffres des archives',
     metrics: {
       tiers: 'Ponts du navire',

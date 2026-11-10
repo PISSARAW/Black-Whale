@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 345
+Fichiers : 346
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -688,6 +688,10 @@ Fichiers : 345
 
 - visualStateFor > reads a closed interval as outdated whatever the observer held
 - beliefStateFor > grades a bare belief by the confidence the archive stored
+
+## `apps/web/src/lib/server/living-count.test.ts`
+
+- countLiving > splits the catalogue into alive, dead and unknown with no cap
 
 ## `apps/web/src/lib/server/log.test.ts`
 

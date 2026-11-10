@@ -69,6 +69,20 @@
           </span>
         </a>
       {/if}
+
+      <p class="latest-record living-record">
+        <span class="record-label">{$t.home.living.label}</span>
+        <span class="record-body">
+          <strong>{$t.home.living.count(data.living.alive, data.living.total)}</strong>
+          <small
+            >{data.living.asOfChapter === null
+              ? $t.home.living.latest
+              : $t.home.living.asOf(data.living.asOfChapter)}{data.living.unknown
+              ? ` · ${$t.home.living.unknown(data.living.unknown)}`
+              : ''}</small
+          >
+        </span>
+      </p>
     </div>
 
     <div class="ship-visual">
@@ -162,6 +176,9 @@
     color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.75rem;
+  }
+  .living-record {
+    margin: 1rem 0 0;
   }
   .record-label {
     color: var(--text-muted);

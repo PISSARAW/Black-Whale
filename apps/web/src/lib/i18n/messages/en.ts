@@ -2985,6 +2985,13 @@ export const en = {
     openRegistry: 'Open passenger registry',
     latestChapter: 'Latest indexed chapter',
     published: (date: string) => `Published ${date}`,
+    living: {
+      label: 'Tracked characters alive',
+      count: (alive: number, total: number) => `${alive} of ${total}`,
+      latest: 'as of the latest chapter',
+      asOf: (chapter: number) => `as of chapter ${chapter}`,
+      unknown: (count: number) => `${count} whose fate is unknown`,
+    },
     metricsLabel: 'Archive metrics',
     metrics: {
       tiers: 'Ship tiers',

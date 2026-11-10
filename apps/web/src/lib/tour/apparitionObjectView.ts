@@ -1,6 +1,7 @@
 import type { Object3D } from 'three'
 import { BOOKMARK_RIBBON, type Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
+import { chainLinkGeometry } from './chainTipKit'
 import { buildChainTip } from './chainTips'
 import { buildDealer } from './dealer'
 import { FORGED_AURA } from './morena'
@@ -10,7 +11,7 @@ import { BONE, INK, modelKit } from './nenModelPrimitives'
 
 type Builder = (seen: Apparition, context: BasicApparitionContext) => Object3D | null
 
-const CHAIN_LINKS = 14
+const CHAIN_LINKS = 18
 
 function gum(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   const strand = new THREE.Mesh(
@@ -89,12 +90,9 @@ function puppet(seen: Apparition, { THREE, glow, root }: BasicApparitionContext)
 
 function chain(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   const steel = glow(seen.colour, 1)
-  root.add(buildChainTip(seen.stage, { THREE, steel, size: seen.size }))
-  for (let index = 0; index < CHAIN_LINKS; index++) {
-    root.add(
-      new THREE.Mesh(new THREE.TorusGeometry(seen.size * 0.4, seen.size * 0.12, 4, 8), steel),
-    )
-  }
+  root.add(buildChainTip(seen.stage, { THREE, steel, glow, size: seen.size }))
+  const link = chainLinkGeometry(THREE, seen.size)
+  for (let index = 0; index < CHAIN_LINKS; index++) root.add(new THREE.Mesh(link, steel))
   return null
 }
 

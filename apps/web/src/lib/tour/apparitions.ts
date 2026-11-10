@@ -321,13 +321,13 @@ const CHAIN = 0x8ecae6
  * between them by the tip alone, which is how the source distinguishes them
  * too: the archive's own entries name the cross on the thumb chain and the
  * blade on the judgment one, and the dock names the syringe on the index and
- * the shackle on the middle. The number is the tip `apparitionObjectView`
+ * the claw on the middle. The number is the tip `apparitionObjectView`
  * builds, and it is the whole of the vocabulary the two modules share.
  */
 const CHAIN_TIPS: Record<string, number> = {
   dowsing: 0, // the pendulum ball
   'chain-rule': 1, // Steal Chain's syringe
-  'chain-bind': 2, // Chain Jail's shackle
+  'chain-bind': 2, // Chain Jail's claw
   healing: 3, // Holy Chain's cross
   'heart-vow': 4, // Judgment Chain's blade
 }

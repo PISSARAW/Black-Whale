@@ -7,109 +7,180 @@
  * `apparitionObjectView.ts` and the tip is built here, one small function per
  * finger, and `Apparition.stage` is the whole of the vocabulary between them.
  *
+ * Each is drawn off the databook plate of the hand (thumb, middle, ring and
+ * little finger) and off the Steal Chain panels for the index, part for part:
+ * what the plate draws as a fitting is a fitting here, in the plate's colours.
+ *
  * Everything is drawn pointing down +Z, because that is the axis the scene
  * turns onto the run of the chain: a tip modelled along its own length comes out
  * of the hand aimed at whatever the chain is aimed at, with no per-tip
- * orientation to keep in step.
+ * orientation to keep in step. The flat of a flat tip faces ±Y.
  */
-import type { Group, MeshBasicMaterial } from 'three'
+import type { Group } from 'three'
+import {
+  CHAIN_DEEP,
+  CHAIN_GLASS,
+  CHAIN_GLINT,
+  CHAIN_NAVY,
+  CHAIN_SHADE,
+  CHAIN_SILVER,
+  tipKit,
+  type TipContext,
+  type TipKit,
+} from './chainTipKit'
 
-type Three = typeof import('three')
+export type { TipContext } from './chainTipKit'
 
-/** What one tip is built from: the three.js namespace, the steel, and the scale. */
-interface TipContext {
-  THREE: Three
-  steel: MeshBasicMaterial
-  /** The pendulum ball's diameter in metres — every tip is drawn to it. */
-  size: number
+/**
+ * The Dowsing Chain's pendulum: a plain ball, far darker than its chain, hung
+ * by an eye. The only tip that is not a point — it is meant to hang and swing
+ * rather than to go into anything.
+ */
+function pendulum(context: TipContext): Group {
+  const kit = tipKit(context)
+  kit.loop(0.1)
+  kit.ball(1, [0, 0, 1.18], context.glow(CHAIN_NAVY, 1))
+  // The one highlight the plate gives it, high on the shoulder of the ball.
+  kit.ball(0.24, [0.34, 0.74, 0.8], context.glow(CHAIN_GLINT, 1)).scale.set(1, 0.6, 1.5)
+  return kit.group
 }
 
 /**
- * The Dowsing Chain's pendulum: a plain weight, and the only tip that is not a
- * point. It is meant to hang and swing rather than to go into anything.
+ * Steal Chain's syringe, as the panel draws it: a wide ring, the flange, a
+ * glass barrel with the skull and crossed bones riding inside it, and a long
+ * bare needle.
  */
-function pendulum({ THREE, steel, size }: TipContext): Group {
-  const tip = new THREE.Group()
-  tip.add(new THREE.Mesh(new THREE.SphereGeometry(size, 12, 10), steel))
-  return tip
+function syringe(context: TipContext): Group {
+  const { steel, glow } = context
+  const kit = tipKit(context)
+  kit.loop(0.18, 0.26)
+  kit.rod({ from: 0.46, to: 0.56, radius: 0.42, material: steel })
+  kit.rod({ from: 0.56, to: 2, radius: 0.3, material: glow(CHAIN_GLASS, 0.4) })
+  kit.rod({ from: 0.56, to: 0.64, radius: 0.33, material: steel })
+  kit.rod({ from: 1.93, to: 2, radius: 0.33, material: steel })
+  kit.ball(0.1, [0, 0, 1.1], steel)
+  for (const lean of [-0.65, 0.65]) {
+    kit.box([0.055, 0.055, 0.5], [0, 0, 1.32], steel).rotation.y = lean
+  }
+  kit.rod({ from: 2, to: 2.2, radius: [0.3, 0.07], material: steel })
+  kit.rod({ from: 2.2, to: 3.25, radius: 0.03, material: steel })
+  kit.rod({ from: 3.25, to: 3.5, radius: [0.03, 0], material: steel })
+  kit.group.scale.setScalar(0.9)
+  return kit.group
 }
 
 /**
- * Steal Chain's syringe: the barrel, and the needle that goes into the body.
- *
- * The dock's own French names it the index syringe chain, and the profile's
- * instruction is to drive it into somebody — so the drawn end is a syringe and
- * not a spike.
+ * Chain Jail's claw: a blue ferrule with its rivet, and a pale talon curving
+ * off it to a point. Absolute restraint, drawn as the hook that takes hold —
+ * the plate draws no shackle on the middle finger, and neither does this.
  */
-function syringe({ THREE, steel, size }: TipContext): Group {
-  const tip = new THREE.Group()
-  const barrel = new THREE.Mesh(
-    new THREE.CylinderGeometry(size * 0.4, size * 0.4, size * 1.5, 8),
-    steel,
+function claw(context: TipContext): Group {
+  const { glow } = context
+  const kit = tipKit(context)
+  kit.loop(0.08)
+  kit.flat(
+    (shape) => {
+      shape.moveTo(-0.3, 0.5)
+      shape.quadraticCurveTo(-0.78, 1.9, 0.72, 2.5)
+      shape.quadraticCurveTo(-0.05, 1.6, 0.3, 0.5)
+      shape.closePath()
+    },
+    0.14,
+    glow(CHAIN_SILVER, 1),
   )
-  barrel.rotation.x = Math.PI / 2
-  barrel.position.z = size * 0.4
-  tip.add(barrel)
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(size * 0.46, size * 0.09, 4, 10), steel)
-  collar.position.z = -size * 0.32
-  tip.add(collar)
-  const needle = new THREE.Mesh(new THREE.ConeGeometry(size * 0.11, size * 1.15, 6), steel)
-  needle.rotation.x = Math.PI / 2
-  needle.position.z = size * 1.72
-  tip.add(needle)
-  return tip
+  kit.box([0.66, 0.24, 0.4], [0, 0, 0.44], glow(CHAIN_DEEP, 1)).rotation.y = 0.08
+  kit.stud(0.07, 0.44, glow(CHAIN_SHADE, 1))
+  return kit.group
 }
 
-/**
- * Chain Jail's shackle: a ring wide enough to close on somebody, with the barb
- * that carries it there ahead of it. Absolute restraint, drawn as the thing that
- * does the restraining.
- */
-function shackle({ THREE, steel, size }: TipContext): Group {
-  const tip = new THREE.Group()
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(size * 0.95, size * 0.16, 6, 16), steel)
-  ring.position.z = size * 0.6
-  tip.add(ring)
-  const barb = new THREE.Mesh(new THREE.ConeGeometry(size * 0.34, size * 1.1, 6), steel)
-  barb.rotation.x = Math.PI / 2
-  barb.position.z = size * 1.7
-  tip.add(barb)
-  return tip
+interface CrossArm {
+  angle: number
+  length: number
+}
+
+/** One arm of the Holy Chain's cross: flared, slotted, and capped in blue. */
+function crossArm(hub: TipKit, { angle, length }: CrossArm, context: TipContext) {
+  const arm = hub.spoke(angle, 0)
+  arm.rod({ from: 0.12, to: length, radius: [0.11, 0.17], material: context.steel })
+  arm.box([0.04, 0.27, length * 0.4], [0, 0, length * 0.55], context.glow(CHAIN_SHADE, 1))
+  arm.ball(0.19, [0, 0, length], context.glow(CHAIN_DEEP, 1)).scale.set(1, 1, 0.7)
 }
 
 /**
  * Holy Chain's cross, which the archive names outright: the cross-tipped thumb
- * chain. Nothing on it is pointed, because nothing about it goes in.
+ * chain. Four round arms flaring to blue caps, a slot down each, and a boss
+ * with a stone in it. Nothing on it is pointed, because nothing about it goes in.
  */
-function cross({ THREE, steel, size }: TipContext): Group {
-  const tip = new THREE.Group()
-  const upright = new THREE.Mesh(new THREE.BoxGeometry(size * 0.26, size * 0.26, size * 1.9), steel)
-  upright.position.z = size * 0.75
-  tip.add(upright)
-  const arm = new THREE.Mesh(new THREE.BoxGeometry(size * 1.2, size * 0.24, size * 0.24), steel)
-  arm.position.z = size * 0.5
-  tip.add(arm)
-  return tip
+function cross(context: TipContext): Group {
+  const kit = tipKit(context)
+  kit.loop(0.1)
+  const hub = kit.spoke(0, 1.02)
+  const arms: CrossArm[] = [
+    { angle: 0, length: 1 },
+    { angle: Math.PI, length: 0.72 },
+    { angle: Math.PI / 2, length: 0.72 },
+    { angle: -Math.PI / 2, length: 0.72 },
+  ]
+  for (const arm of arms) crossArm(hub, arm, context)
+  hub.box([0.34, 0.3, 0.34], [0, 0, 0], context.steel)
+  hub.stud(0.1, 0, context.glow(CHAIN_DEEP, 1))
+  return kit.group
+}
+
+/** One arm of the dagger's guard: a flared blue bar ending in two lobes. */
+function guardArm(hub: TipKit, { angle, length }: CrossArm, context: TipContext) {
+  const deep = context.glow(CHAIN_DEEP, 1)
+  const arm = hub.spoke(angle, 0)
+  arm.rod({ from: 0.08, to: length, radius: [0.08, 0.15], material: deep })
+  for (const side of [-1, 1]) arm.ball(0.11, [side * 0.1, 0, length], deep)
 }
 
 /**
- * Judgment Chain's blade, which the archive names as plainly: a blade and a
- * chain, implanted around a heart. Flat, and the only tip with an edge.
+ * Judgment Chain's dagger, which the archive names as plainly: a blade and a
+ * chain, implanted around a heart. A block marked with a cross, a guard of four
+ * flared blue arms, a collar, and a long kite of a blade with a ridge down it —
+ * flat, and the only tip with an edge.
  */
-function blade({ THREE, steel, size }: TipContext): Group {
-  const tip = new THREE.Group()
-  const stake = new THREE.Mesh(new THREE.ConeGeometry(size * 0.5, size * 2.1, 4), steel)
-  stake.rotation.x = Math.PI / 2
-  stake.scale.x = 0.34
-  stake.position.z = size * 1.15
-  tip.add(stake)
-  const guard = new THREE.Mesh(new THREE.BoxGeometry(size * 0.9, size * 0.18, size * 0.18), steel)
-  tip.add(guard)
-  return tip
+function blade(context: TipContext): Group {
+  const { steel, glow } = context
+  const deep = glow(CHAIN_DEEP, 1)
+  const shade = glow(CHAIN_SHADE, 1)
+  const kit = tipKit(context)
+  kit.loop(0.08)
+  kit.box([0.4, 0.3, 0.36], [0, 0, 0.42], steel)
+  kit.box([0.26, 0.33, 0.07], [0, 0, 0.42], deep)
+  kit.box([0.07, 0.33, 0.26], [0, 0, 0.42], deep)
+  kit.rod({ from: 0.6, to: 0.8, radius: 0.08, material: steel })
+  const hub = kit.spoke(0, 0.98)
+  const arms: CrossArm[] = [
+    { angle: Math.PI / 2, length: 0.62 },
+    { angle: -Math.PI / 2, length: 0.62 },
+    { angle: Math.PI, length: 0.26 },
+    { angle: 0, length: 0.26 },
+  ]
+  for (const arm of arms) guardArm(hub, arm, context)
+  hub.box([0.26, 0.32, 0.26], [0, 0, 0], deep)
+  hub.box([0.12, 0.35, 0.12], [0, 0, 0], shade)
+  kit.rod({ from: 1.24, to: 1.34, radius: 0.15, material: steel })
+  kit.flat(
+    (shape) => {
+      shape.moveTo(0.1, 1.32)
+      shape.lineTo(0.42, 1.58)
+      shape.lineTo(0, 3.1)
+      shape.lineTo(-0.42, 1.58)
+      shape.lineTo(-0.1, 1.32)
+      shape.closePath()
+    },
+    0.1,
+    glow(CHAIN_SILVER, 1),
+  )
+  kit.box([0.03, 0.12, 1.25], [0, 0, 2.25], shade)
+  kit.group.scale.setScalar(0.82)
+  return kit.group
 }
 
 /** In the order `apparitions.ts` numbers them, which is the order of the fingers. */
-const TIPS: ((context: TipContext) => Group)[] = [pendulum, syringe, shackle, cross, blade]
+const TIPS: ((context: TipContext) => Group)[] = [pendulum, syringe, claw, cross, blade]
 
 /**
  * The end of the chain the visitor is holding.

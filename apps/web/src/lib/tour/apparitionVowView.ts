@@ -1,12 +1,14 @@
-import type { MeshBasicMaterial, Object3D, TorusGeometry } from 'three'
+import type { BufferGeometry, MeshBasicMaterial, Object3D } from 'three'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { VOW_CHAIN, type Apparition } from './apparitions'
+import { chainLinkGeometry } from './chainTipKit'
+import { buildChainTip } from './chainTips'
 
 const CHAIN_LINKS = 14
 
 interface ChainBandContext {
   THREE: BasicApparitionContext['THREE']
-  geometry: TorusGeometry
+  geometry: BufferGeometry
   material: MeshBasicMaterial
 }
 
@@ -50,23 +52,18 @@ export function buildVowApparition(
   if (seen.stage === 0) return flesh
 
   const steel = glow(VOW_CHAIN, 1)
-  const geometry = new THREE.TorusGeometry(seen.size * 0.17, seen.size * 0.055, 4, 8)
+  // The same link as the hand's, laid along the band instead of along the run.
+  const geometry = chainLinkGeometry(THREE, seen.size * 0.72).rotateZ(Math.PI / 2)
   const context = { THREE, geometry, material: steel }
   root.add(chainBand([0.28, 0], seen.size * 1.02, context))
   root.add(chainBand([1.15, 0.9], seen.size * 0.98, context))
   root.add(chainBand([-0.75, 2.1], seen.size * 0.94, context))
 
-  const lock = new THREE.Mesh(
-    new THREE.BoxGeometry(seen.size * 0.3, seen.size * 0.26, seen.size * 0.12),
-    steel,
-  )
-  const shackle = new THREE.Mesh(
-    new THREE.TorusGeometry(seen.size * 0.12, seen.size * 0.035, 4, 10, Math.PI),
-    steel,
-  )
-  shackle.position.y = seen.size * 0.13
-  lock.add(shackle)
-  lock.position.set(0, seen.size * 0.1, seen.size * 1.05)
-  root.add(lock)
+  // What holds the vow is not a lock: the source hangs Judgment Chain's own
+  // dagger off the links, point down over the heart, flat to whoever looks.
+  const dagger = buildChainTip(4, { THREE, steel, glow, size: seen.size * 0.38 })
+  dagger.rotation.x = Math.PI / 2
+  dagger.position.set(0, seen.size * 0.62, seen.size * 1.05)
+  root.add(dagger)
   return flesh
 }

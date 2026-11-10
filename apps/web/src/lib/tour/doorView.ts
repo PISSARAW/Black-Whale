@@ -3,6 +3,8 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { createAnimatedDoor, type AnimatedDoor } from './doorAnimator'
 import { computeDoorPlacement } from './doorDetailSurface'
 import { buildTierDoorLeaves, dressTierDoorCasing } from './doorTierBuilders'
+import { buildTserriednichDoorLeaves, dressTserriednichDoorCasing } from './tserriednichDoorStyle'
+import { TSERRIEDNICH_ROOM_1004 } from './tserriednichRoomView'
 import type { RoomDetailOptions } from './TierView'
 import type { Doorway } from './types'
 
@@ -42,13 +44,20 @@ export function buildDoorDetails(options: RoomDetailOptions): DoorGroupWithAnima
   if (doors.length === 0) return null
 
   const tier = resolveTier(spaceId, plan.tier.id)
+  const isTserriednichRoom = spaceId.startsWith(TSERRIEDNICH_ROOM_1004)
   const casingBuilder = new BanquetDetailBuilder(THREE)
   const animatedDoors: AnimatedDoor[] = []
 
   for (const door of doors) {
     const placement = computeDoorPlacement(plan, door)
-    dressTierDoorCasing({ into: casingBuilder, door, placement }, tier)
-    const leaves = buildTierDoorLeaves({ THREE, placement, tier })
+    if (isTserriednichRoom) {
+      dressTserriednichDoorCasing({ into: casingBuilder, door, placement })
+    } else {
+      dressTierDoorCasing({ into: casingBuilder, door, placement }, tier)
+    }
+    const leaves = isTserriednichRoom
+      ? buildTserriednichDoorLeaves({ THREE, placement })
+      : buildTierDoorLeaves({ THREE, placement, tier })
     const animatedDoor = createAnimatedDoor({
       center: [placement.center[0], placement.center[1]],
       floor: placement.floor,

@@ -32,12 +32,27 @@ function coffeeTable(surface: TserriednichRoomSurface): void {
   }
 }
 
-/** The sideboard built into the salon wall, left of the mantel. */
+/** The tall double-door cabinet against the salon wall: a carcass, two panelled
+ * door leaves with brass pulls, a plinth base and a moulded cornice — not a
+ * flat box, which read as a slab rather than a piece of furniture. */
 function sideboard(surface: TserriednichRoomSurface): void {
   const h = surface.structure.height
-  surface.box([surface.width, h, surface.depth], [0, h / 2, 0], TSERRIEDNICH_PANEL_WOOD)
-  surface.box([surface.width * 0.92, h * 0.3, surface.depth * 0.5], [0, h * 0.78, 0], TSERRIEDNICH_DARK_WOOD)
-  surface.box([surface.width * 0.98, 0.03, surface.depth * 0.6], [0, h + 0.02, 0], TSERRIEDNICH_GOLD_TRIM)
+  const front = surface.depth / 2
+
+  surface.box([surface.width, h, surface.depth], [0, h / 2, 0], TSERRIEDNICH_DARK_WOOD)
+  surface.box([surface.width * 0.96, 0.08, surface.depth * 0.92], [0, 0.04, 0], TSERRIEDNICH_DARK_WOOD)
+  surface.box([surface.width * 1.04, 0.06, surface.depth * 1.08], [0, h + 0.03, 0], TSERRIEDNICH_GOLD_TRIM)
+
+  for (const side of [-1, 1]) {
+    const doorX = (side * surface.width) / 4
+    surface.box([surface.width * 0.46, h * 0.86, 0.02], [doorX, h * 0.46, front + 0.01], TSERRIEDNICH_PANEL_WOOD)
+    surface.box([surface.width * 0.36, h * 0.64, 0.025], [doorX, h * 0.46, front + 0.015], TSERRIEDNICH_DARK_WOOD)
+    surface.sphere(
+      [0.025, 0.025, 0.025],
+      [doorX - side * surface.width * 0.17, h * 0.46, front + 0.03],
+      TSERRIEDNICH_GOLD_TRIM,
+    )
+  }
 }
 
 /** The clock on the mantel from chs. 384-387, with a pendulum case beneath it. */

@@ -12,7 +12,7 @@ import {
   type DoorPlacement,
 } from './doorDetailSurface'
 
-interface CasingStyle {
+export interface CasingStyle {
   jambW: number
   jambD: number
   frameCol: number
@@ -20,7 +20,7 @@ interface CasingStyle {
   sillCol?: number
 }
 
-function dressCasing(context: DoorDressContext, style: CasingStyle): void {
+export function dressCasing(context: DoorDressContext, style: CasingStyle): void {
   const { into, placement } = context
   const { width, height } = placement
   const { jambW, jambD, frameCol, trimCol, sillCol } = style
@@ -75,7 +75,7 @@ export interface LeafBuildOptions {
   tier: 1 | 2 | 3 | 4 | 5
 }
 
-interface SingleLeafSpec {
+export interface SingleLeafSpec {
   THREE: typeof Three
   placement: DoorPlacement
   leafW: number
@@ -86,7 +86,7 @@ interface SingleLeafSpec {
   tier: 1 | 2 | 3 | 4 | 5
 }
 
-function buildSingleAnimatedLeaf(spec: SingleLeafSpec): AnimatedDoorLeaf {
+export function buildSingleAnimatedLeaf(spec: SingleLeafSpec): AnimatedDoorLeaf {
   const { THREE, placement, leafW, leafD, leafCol, handleCol, hingeSide, tier } = spec
   const { height, openSign, angle, floor, center, width } = placement
   const dir = hingeSide === -1 ? 1 : -1

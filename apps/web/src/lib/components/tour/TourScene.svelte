@@ -70,6 +70,7 @@
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
+  import { shownState } from '$lib/tour/apparitionShown'
   import type { HumanPose } from '$lib/tour/humanAnimation'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
   import { cardFaceSvg } from '$lib/tour/cardArt'
@@ -2104,19 +2105,10 @@
             held.flown = previous?.flown
           },
           update: (held, seen) => {
-            held.y = seen.y
-            held.at = seen.at
-            held.stage = seen.stage
-            held.spread = seen.spread ?? 0
-            held.size = seen.size
-            held.tierId = seen.tierId
-            held.pair = seen.pair
-            held.humanPose = seen.human?.pose
-            held.humanHeading = seen.heading
+            Object.assign(held, shownState(seen, seconds))
             held.root.userData.heading = seen.heading
-            held.pick = seen.pick ?? false
             if (!held.positioned) {
-              held.root.position.set(seen.at[0], seen.y, seen.at[1])
+              held.root.position.set(held.at[0], held.y, held.at[1])
               held.positioned = true
             }
           },

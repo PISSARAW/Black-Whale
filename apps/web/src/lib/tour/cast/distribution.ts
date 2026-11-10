@@ -18,6 +18,7 @@ import type { Ship } from '../blueprint'
 import { AVATAR } from '../apparitions'
 import type { Apparition } from '../apparitions'
 import type { Space } from '../types'
+import { paceFor } from './pace'
 import { drawable } from './presence'
 import { interiorOf, roomWithin, standingIn, standingOutsideDoor } from './quarters'
 import { spaceAmong } from './stations'
@@ -190,6 +191,7 @@ export function castApparitions(
     const plan = ship.plans.get(post.tierId)
     const space = ship.spaces.get(post.spaceId)
     if (!plan || !space) continue
+    const pace = paceFor(plan, space, post)
     found.push({
       id: `cast:${post.member.characterId}`,
       kind: 'avatar',
@@ -202,7 +204,7 @@ export function castApparitions(
       colour: AVATAR,
       stage: 0,
       hidden: false,
-      human: drawnAs(post, look(post)),
+      human: { ...drawnAs(post, look(post)), ...(pace ? { pace } : {}) },
     })
   }
   return found

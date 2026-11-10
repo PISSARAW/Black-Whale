@@ -1,4 +1,5 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
+import type { Pace } from './cast/pace'
 
 export interface HumanAppearance {
   role:
@@ -41,4 +42,6 @@ export interface HumanAppearance {
   /** Stable identity seed: named character when known, otherwise apparition id. */
   identity?: string
   alert?: boolean
+  /** The beat this body walks, when it does not simply stand. See `cast/pace.ts`. */
+  pace?: Pace
 }

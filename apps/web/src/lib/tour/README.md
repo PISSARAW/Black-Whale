@@ -44,6 +44,7 @@ decisions: [adr-003, adr-005, adr-006]
 - Pour une nouvelle salle : `docs/geste/une-salle.md`.
 - Pour un nouveau son de Hatsu : `docs/geste/un-hatsu.md` + `apps/web/src/lib/audio/hatsu/`.
 - Pour un nouvel effet visuel : cette fiche + `docs/carte/05-la-visite.md`.
+- Pour faire marcher un personnage : une entrée dans `BEATS` de `apps/web/src/lib/tour/cast/pace.ts`. Le trajet part du poste, s'arrête avant tout mur ou meuble, et le personnage reste immobile si la pièce n'offre pas 1,6 m dégagés.
 
 ## Navigation de la visite
 

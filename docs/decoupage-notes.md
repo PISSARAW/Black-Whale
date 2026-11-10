@@ -24,3 +24,9 @@ déplacement.
   le corps et masque, selon l'ordre de tri, tout tissu dessiné avec `glow(jacket, 0.98)` placé
   loin de l'axe du corps. Les manches de Silent Majority prennent donc le noir opaque (`dark`) ;
   le tissu à 0,98 des autres silhouettes reste exposé au même tri.
+
+## Postes devant une porte — `cast/quarters.ts`
+
+- Repéré, non corrigé : `standingOutsideDoor` range les gardes par `seedOf(id) % 5`, donc deux
+  gardes de la même porte peuvent tomber sur le même point. C'est le cas de Bladge et Nagmum
+  devant la 1012 : ils sont dessinés l'un dans l'autre tant que Bladge ne marche pas.

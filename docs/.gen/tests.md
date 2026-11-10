@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 346
+Fichiers : 347
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -886,6 +886,10 @@ Fichiers : 346
 - who carries an aura > gives nothing at all to a body the catalogue does not call a user
 - the conduct at a post > holds Ten and nothing else where nothing has happened
 - the conduct when something happens > raises Ren, looks with Gyo and covers with Ryu when the visitor casts here
+
+## `apps/web/src/lib/tour/cast/pace.test.ts`
+
+- a beat > stands at the post, walks out, stands, and walks back
 
 ## `apps/web/src/lib/tour/cast/pain.test.ts`
 

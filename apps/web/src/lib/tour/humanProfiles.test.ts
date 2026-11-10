@@ -51,7 +51,7 @@ describe('shared human profiles', () => {
     expect(first).toEqual(second)
     expect(first).toMatchObject({
       build: 'slim',
-      hairStyle: 'bob',
+      hairStyle: 'shaved',
       clothing: 'ritual',
       accent: 0xf0ece4,
     })

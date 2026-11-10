@@ -39,11 +39,14 @@ export function addSilentMajoritySleeves(build: SleeveBuild): void {
       THREE,
       geometry: geometry(THREE, 'silent:sleeve', () => {
         const outline = new THREE.Shape()
-        outline.moveTo(-0.1, 0.36)
-        outline.quadraticCurveTo(-0.1, 0.42, -0.02, 0.42)
-        outline.quadraticCurveTo(0.09, 0.42, 0.1, 0.33)
-        outline.lineTo(0.135, -0.42)
-        outline.lineTo(-0.1, -0.42)
+        // From the root of the neck, down a sloping shoulder, then out and
+        // down to a cuff wider than the shoulder it hangs from.
+        outline.moveTo(-0.2, 0.5)
+        outline.quadraticCurveTo(-0.04, 0.5, 0.005, 0.4)
+        outline.quadraticCurveTo(0.034, 0.36, 0.036, 0.3)
+        outline.lineTo(0.09, -0.48)
+        outline.lineTo(-0.095, -0.48)
+        outline.lineTo(-0.095, 0.2)
         outline.closePath()
         const made = new THREE.ExtrudeGeometry(outline, { depth: FRONT * 2, bevelEnabled: false })
         made.translate(0, 0, -FRONT)
@@ -66,26 +69,26 @@ export function addSilentMajoritySleeves(build: SleeveBuild): void {
 function addCrests(kit: Kit, { THREE, pale }: SleeveBuild, sleeve: Group): void {
   // Shoulder and cuff carry the two large volutes; they wind opposite ways.
   place(kit, sleeve, {
-    key: 'silent:crest-volute',
-    make: () => voluteGeometry(THREE, { radius: 0.085, turns: 2.6, thickness: 0.0085 }),
+    key: 'silent:crest-volute-shoulder',
+    make: () => voluteGeometry(THREE, { radius: 0.06, turns: 2.6, thickness: 0.008 }),
     material: pale,
-    at: [0.005, 0.27, CREST],
+    at: [-0.03, 0.25, CREST],
   })
   place(kit, sleeve, {
-    key: 'silent:crest-volute',
-    make: () => voluteGeometry(THREE, { radius: 0.085, turns: 2.6, thickness: 0.0085 }),
+    key: 'silent:crest-volute-cuff',
+    make: () => voluteGeometry(THREE, { radius: 0.08, turns: 2.6, thickness: 0.0085 }),
     material: pale,
-    at: [0.03, -0.31, CREST],
+    at: [-0.004, -0.375, CREST],
     turn: Math.PI,
     scale: [-1, 1],
   })
   // Between them, the flames the drawing lets fall from the shoulder: hooks,
   // each a little lower and turned a little further than the last.
   const hooks: Array<[x: number, y: number, turn: number]> = [
-    [-0.04, 0.13, 0.4],
-    [0.05, 0.11, 2.2],
-    [0.065, -0.02, -0.6],
-    [0.05, -0.13, 2.9],
+    [-0.055, 0.14, 0.4],
+    [0.005, 0.115, 2.2],
+    [0.03, -0.02, -0.6],
+    [0.02, -0.13, 2.9],
   ]
   for (const [x, y, turn] of hooks) {
     place(kit, sleeve, {
@@ -100,7 +103,7 @@ function addCrests(kit: Kit, { THREE, pale }: SleeveBuild, sleeve: Group): void 
     key: 'silent:crest-eye',
     make: () => new THREE.RingGeometry(0.014, 0.027, 14),
     material: pale,
-    at: [0.07, 0.045, CREST],
+    at: [0.035, 0.045, CREST],
   })
 }
 
@@ -114,6 +117,6 @@ function addFist({ THREE, geometry, outlined, ink, pale }: SleeveBuild, sleeve: 
   })
   fist.name = 'silent-fist'
   fist.scale.set(0.9, 1.05, 0.8)
-  fist.position.set(-0.045, -0.175, FRONT - 0.005)
+  fist.position.set(-0.05, -0.25, FRONT - 0.005)
   sleeve.add(fist)
 }

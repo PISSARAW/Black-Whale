@@ -56,7 +56,7 @@ function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: Sile
   const bodice = outlined({
     THREE,
     geometry: geometry(THREE, 'silent:bodice', () => {
-      const made = new THREE.CylinderGeometry(0.235, 0.235, 0.5, 6)
+      const made = new THREE.CylinderGeometry(0.235, 0.235, 0.38, 6)
       made.rotateY(Math.PI / 6)
       return graded(THREE, made, [0.5, 0.42])
     }),
@@ -66,13 +66,13 @@ function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: Sile
   })
   bodice.name = 'silent-bodice'
   bodice.scale.set(0.9, 1, 0.95)
-  bodice.position.y = 1.17
+  bodice.position.y = 1.28
   figure.add(bodice)
 
   const skirt = outlined({
     THREE,
     geometry: geometry(THREE, 'silent:skirt', () => {
-      const made = new THREE.CylinderGeometry(0.225, 0.3, 0.47, 6)
+      const made = new THREE.CylinderGeometry(0.225, 0.31, 0.62, 6)
       made.rotateY(Math.PI / 6)
       return graded(THREE, made, [0.42, 0.07])
     }),
@@ -82,27 +82,27 @@ function addTunic({ THREE, geometry, outlined, figure, accent, dark, ink }: Sile
   })
   skirt.name = 'silent-skirt'
   skirt.scale.set(0.9, 1, 0.8)
-  skirt.position.y = 0.775
+  skirt.position.y = 0.77
   figure.add(skirt)
 
   // The neck is wrapped: nothing pale shows between the plate and the collar.
   const scarf = new THREE.Mesh(
-    geometry(THREE, 'silent:scarf', () => new THREE.CylinderGeometry(0.1, 0.12, 0.14, 8)),
+    geometry(THREE, 'silent:scarf', () => new THREE.CylinderGeometry(0.095, 0.115, 0.12, 8)),
     dark,
   )
-  scarf.position.y = 1.5
+  scarf.position.y = 1.53
   figure.add(scarf)
 }
 
 function addCollar({ THREE, geometry, figure, accent }: SilentMajorityBuild): void {
   const kit: Kit = { THREE, geometry }
-  // Two broad bands that cross low on the chest and run on past the crossing.
+  // Two short bands crossed high, under the chin, between the shoulder studs.
   for (const side of [-1, 1]) {
     place(kit, figure, {
       key: 'silent:collar-band',
-      make: () => new THREE.PlaneGeometry(0.078, 0.37),
+      make: () => new THREE.PlaneGeometry(0.068, 0.2),
       material: accent,
-      at: [side * 0.012, 1.305, ORNAMENT + 0.004 + (side + 1) * 0.001],
+      at: [side * 0.008, 1.43, ORNAMENT + 0.004 + (side + 1) * 0.001],
       turn: side * -0.78,
     })
   }
@@ -110,16 +110,16 @@ function addCollar({ THREE, geometry, figure, accent }: SilentMajorityBuild): vo
 
 function addStudFrame({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild): void {
   const kit: Kit = { THREE, geometry }
-  const half = 0.094
-  const rows = [1.32, 1.15]
-  for (const y of rows) {
-    place(kit, figure, {
-      key: 'silent:frame-rail',
-      make: () => new THREE.PlaneGeometry(half * 2, 0.016),
-      material: accent,
-      at: [0, y, ORNAMENT],
-    })
-  }
+  // Two straps from the shoulders to the sash, a stud at each end, and one
+  // rail between the lower pair: the upper pair is joined by the collar.
+  const half = 0.096
+  const rows = [1.45, 1.285]
+  place(kit, figure, {
+    key: 'silent:frame-rail',
+    make: () => new THREE.PlaneGeometry(half * 2, 0.016),
+    material: accent,
+    at: [0, rows[1], ORNAMENT],
+  })
   for (const side of [-1, 1]) {
     place(kit, figure, {
       key: 'silent:frame-post',
@@ -172,7 +172,7 @@ function addSash({ THREE, geometry, outlined, figure, accent, ink }: SilentMajor
   const sash = outlined({
     THREE,
     geometry: geometry(THREE, 'silent:sash', () => {
-      const made = new THREE.CylinderGeometry(0.25, 0.25, 0.17, 6)
+      const made = new THREE.CylinderGeometry(0.25, 0.25, 0.16, 6)
       made.rotateY(Math.PI / 6)
       return graded(THREE, made, [1, 0.9])
     }),
@@ -182,7 +182,7 @@ function addSash({ THREE, geometry, outlined, figure, accent, ink }: SilentMajor
   })
   sash.name = 'silent-sash'
   sash.scale.set(0.9, 1, 0.95)
-  sash.position.y = 1
+  sash.position.y = 1.155
   figure.add(sash)
   const front = 0.25 * Math.cos(Math.PI / 6) * 0.95 + 0.004
 
@@ -196,11 +196,11 @@ function addSash({ THREE, geometry, outlined, figure, accent, ink }: SilentMajor
       ink,
       scale: 1.14,
     })
-    bead.position.set(i * 0.034, 1.088, front - 0.012)
+    bead.position.set(i * 0.034, 1.24, front - 0.012)
     figure.add(bead)
   }
   // Its folds are drawn as waves, one under the other.
-  for (const y of [1.045, 1.005, 0.965]) {
+  for (const y of [1.2, 1.16, 1.12]) {
     place(kit, figure, {
       key: 'silent:sash-fold',
       make: () => {
@@ -229,18 +229,18 @@ function addTabard({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild
   // Hung from under the sash and leaning with the skirt it lies on.
   const tabard = new THREE.Group()
   tabard.name = 'silent-tabard'
-  tabard.position.set(0, 0.935, 0.176)
-  tabard.rotation.x = -0.1
+  tabard.position.set(0, 1.08, 0.17)
+  tabard.rotation.x = -0.095
   figure.add(tabard)
   place(kit, tabard, {
     key: 'silent:tabard-border',
-    make: banner(0.1, 0.24),
+    make: banner(0.1, 0.39),
     material: accent,
     at: [0, 0, 0],
   })
   place(kit, tabard, {
     key: 'silent:tabard-field',
-    make: banner(0.087, 0.232),
+    make: banner(0.087, 0.382),
     material: ink,
     at: [0, 0, 0.002],
   })
@@ -250,9 +250,9 @@ function addTabard({ THREE, geometry, figure, accent, ink }: SilentMajorityBuild
       key: `silent:tabard-serpent:${side}`,
       make: () =>
         waveGeometry(THREE, {
-          length: 0.2,
+          length: 0.34,
           sway: 0.024,
-          periods: 3.25,
+          periods: 5.25,
           thickness: 0.0065,
           mirrored: side > 0,
         }),

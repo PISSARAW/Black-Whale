@@ -269,7 +269,9 @@ const ROLE_PROFILES: Record<
     shoulders: 0.94,
     skin: 0xf0ece4,
     hair: 0x141414,
-    hairStyle: 'bob',
+    // The puppet's helmet is its own shape — `silentMajorityHair` — and a cap
+    // under it would only show through the opening left for the mask.
+    hairStyle: 'shaved',
     face: 'narrow',
     expression: 'neutral',
     jacket: 0x171717,

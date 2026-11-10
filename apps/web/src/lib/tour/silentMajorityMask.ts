@@ -7,6 +7,7 @@ import {
   type Outlined,
   type Three,
 } from './silentMajorityParts'
+import { addSilentMajorityHair, FRINGE } from './silentMajorityHair'
 
 export interface MaskBuild {
   THREE: Three
@@ -45,8 +46,9 @@ export function addSilentMajorityMask(build: MaskBuild): void {
       outline.lineTo(-0.05, -0.222)
       outline.lineTo(-0.108, -0.07)
       outline.closePath()
-      const made = new THREE.ExtrudeGeometry(outline, { depth: 0.06, bevelEnabled: false })
-      made.translate(0, 0, -0.03)
+      // Thin: in profile the plate should lie on the face, not stand off it.
+      const made = new THREE.ExtrudeGeometry(outline, { depth: 0.03, bevelEnabled: false })
+      made.translate(0, 0, -0.015)
       // One value: a plate has no jaw to shade.
       return graded(THREE, made, [1, 1])
     }),
@@ -55,17 +57,11 @@ export function addSilentMajorityMask(build: MaskBuild): void {
     scale: 1.03,
   })
   plate.name = 'silent-mask'
-  plate.position.z = FACE - 0.03
+  plate.position.z = FACE - 0.015
   head.add(plate)
 
   // The fringe comes down to the crosses: the plate has no forehead of its own.
-  const fringe = new THREE.Mesh(
-    geometry(THREE, 'silent:fringe', () => new THREE.BoxGeometry(0.31, 0.1, 0.14)),
-    ink,
-  )
-  // Flush with the plate it rests on, so that in profile it is hair and not a visor.
-  fringe.position.set(0, 0.158, FACE - 0.07)
-  head.add(fringe)
+  addSilentMajorityHair({ THREE, geometry, outlined, ink, head })
 
   addCrosses(kit, build)
   addBand(kit, build)
@@ -78,7 +74,7 @@ function addCrosses(kit: Kit, { THREE, ink, pale, head }: MaskBuild): void {
         key: 'silent:mask-cross',
         make: () => new THREE.PlaneGeometry(0.072, 0.026),
         material: ink,
-        at: [side * 0.07, 0.035, MARK],
+        at: [side * 0.07, FRINGE - 0.048, MARK],
         turn,
       })
       // The pale line inside the stroke is what makes it a drawn cross rather
@@ -87,21 +83,23 @@ function addCrosses(kit: Kit, { THREE, ink, pale, head }: MaskBuild): void {
         key: 'silent:mask-cross-line',
         make: () => new THREE.PlaneGeometry(0.058, 0.007),
         material: pale,
-        at: [side * 0.07, 0.035, MARK + 0.002],
+        at: [side * 0.07, FRINGE - 0.048, MARK + 0.002],
         turn,
       })
     }
   }
 }
 
-function addBand(kit: Kit, { THREE, ink, head }: MaskBuild): void {
+function addBand(kit: Kit, { THREE, ink, pale, head }: MaskBuild): void {
+  // The band is the dark value and its key pattern the pale one: the drawing
+  // reads as a black strip down the face before it reads as a pattern.
+  place(kit, head, {
+    key: 'silent:mask-band',
+    make: () => new THREE.PlaneGeometry(0.05, 0.31),
+    material: ink,
+    at: [0, -0.065, MARK],
+  })
   for (const side of [-1, 1]) {
-    place(kit, head, {
-      key: 'silent:mask-band-edge',
-      make: () => new THREE.PlaneGeometry(0.006, 0.3),
-      material: ink,
-      at: [side * 0.026, -0.065, MARK],
-    })
     place(kit, head, {
       key: 'silent:mask-cheek-line',
       make: () => new THREE.PlaneGeometry(0.005, 0.11),
@@ -125,14 +123,14 @@ function addBand(kit: Kit, { THREE, ink, head }: MaskBuild): void {
     place(kit, head, {
       key: 'silent:mask-rung',
       make: () => new THREE.PlaneGeometry(0.03, 0.006),
-      material: ink,
-      at: [0, y, MARK],
+      material: pale,
+      at: [0, y, MARK + 0.002],
     })
     place(kit, head, {
       key: 'silent:mask-tick',
       make: () => new THREE.PlaneGeometry(0.006, 0.02),
-      material: ink,
-      at: [side * 0.012, y - 0.013, MARK],
+      material: pale,
+      at: [side * 0.012, y - 0.013, MARK + 0.002],
     })
   }
 }

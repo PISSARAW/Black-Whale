@@ -56,6 +56,7 @@
   import { infiltrationHatsuManifestations } from '$lib/infiltration/hatsuPresentation'
   import { playInfiltrationHatsuSound } from '$lib/audio/infiltrationHatsuSounds'
   import { buildInfiltrationEnvironment } from '$lib/infiltration/environment'
+  import { dialogueOptions } from '$lib/infiltration/social/dialogue'
 
   const modeNen = new ModeNenState()
   const ship = theShip()
@@ -135,6 +136,9 @@
   )
   let nearbyHatsuTargets = $derived(
     game.witnesses.filter((witness) => witness.spaceId === currentSpace?.id),
+  )
+  let challengeDialogue = $derived(
+    game.challenge ? dialogueOptions(game, game.challenge.witnessId) : [],
   )
   let needsHatsuTarget = $derived(
     ['secret-window', 'bloody-mary', 'body-and-soul'].includes(game.hatsu.id),
@@ -261,11 +265,13 @@
     }
     if (manualOpen) return // Block game inputs while manual is open
     if (game.challenge && event.code === 'Digit1') {
-      send({ type: 'ANSWER', answer: 'workOrder' })
+      const option = challengeDialogue[0]
+      if (option?.available) send({ type: 'ANSWER', answer: option.answer })
       event.preventDefault()
       return
     } else if (game.challenge && event.code === 'Digit2') {
-      send({ type: 'ANSWER', answer: 'bluff' })
+      const option = challengeDialogue[1]
+      if (option?.available) send({ type: 'ANSWER', answer: option.answer })
       event.preventDefault()
       return
     } else if (briefing && ['Digit1', 'Digit2', 'Digit3'].includes(event.code)) {
@@ -556,26 +562,19 @@
               {Math.ceil(game.challenge.left)}<span class="text-lg text-red-500/50">s</span>
             </p>
             <div class="mt-8 grid gap-3">
-              <button
-                aria-keyshortcuts="1"
-                onclick={() => send({ type: 'ANSWER', answer: 'workOrder' })}
-                class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60"
-              >
-                <span
-                  class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
-                ></span>
-                <span class="text-red-100">{$t.infiltration.workOrder}</span>
-              </button>
-              <button
-                aria-keyshortcuts="2"
-                onclick={() => send({ type: 'ANSWER', answer: 'bluff' })}
-                class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all hover:border-red-400 hover:bg-red-900/60"
-              >
-                <span
-                  class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
-                ></span>
-                <span class="text-red-100">{$t.infiltration.bluff}</span>
-              </button>
+              {#each challengeDialogue as option, index (option.id)}
+                <button
+                  aria-keyshortcuts={index < 2 ? String(index + 1) : undefined}
+                  disabled={!option.available}
+                  onclick={() => send({ type: 'ANSWER', answer: option.answer })}
+                  class="group relative overflow-hidden rounded-sm border border-red-500/30 bg-red-950/40 px-5 py-4 text-left text-sm font-semibold transition-all enabled:hover:border-red-400 enabled:hover:bg-red-900/60 disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  <span
+                    class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 transition-opacity group-hover:opacity-100"
+                  ></span>
+                  <span class="text-red-100">{option.label[$locale]}</span>
+                </button>
+              {/each}
             </div>
           </div>
         </section>

@@ -1,5 +1,6 @@
 import { mangaView as view, type MangaView } from './mangaViewModel'
 import { PRINCE_VIEW_SPACE } from './gangwayView'
+import { zhangLeiStaging } from './mangaZhangLeiViews'
 
 export const MANGA_GENERAL_VIEWS: MangaView[] = [
   view({
@@ -21,6 +22,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     id: 'supreme-court-camilla-hearing',
     chapter: 376,
     eventSequence: 1,
+    eventTitle: 'The two camps plead before the Supreme Court',
     spaceId: 'tier-1-supreme-court',
     label: 'Supreme Court hearing regarding the arrest of Prince Camilla',
     labelFr: "Audience de la Cour suprême concernant l'arrestation de la Princesse Camilla",
@@ -33,10 +35,20 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     id: 'kacho-fugetsu-vestibule-farewell',
     chapter: 359,
     eventSequence: 4,
+    eventTitle: 'The inaugural banquet gathers the royal family',
     spaceId: 'tier-1-banquet-hall-vestibule',
-    label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
-    labelFr:
-      'Kacho et Fugetsu se disant au revoir à travers les portes du sas de la salle des fêtes',
+    staging: [
+      { characterId: 'prince-kacho', at: [9.7, -15.25], heading: 0, pose: 'idle' },
+      {
+        characterId: 'prince-fugetsu',
+        spaceId: 'tier-1-banquet-hall',
+        at: [10.7, -13.7],
+        heading: Math.PI,
+        pose: 'idle',
+      },
+    ],
+    label: 'Kacho and Fugetsu forced to leave the inaugural banquet one at a time',
+    labelFr: 'Kacho et Fugetsu contraintes de quitter séparément le banquet inaugural',
     at: [10.7, -15.7],
     target: [10.7, -13.7],
     pitch: 0,
@@ -97,7 +109,10 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     target: [7.2, -2.8],
     pitch: -0.04,
     chapter: 365,
+    eventSequence: 1,
+    eventTitle: 'Zhang Lei and Tubeppa approach room 1014',
     volume: 35,
+    staging: zhangLeiStaging,
     label: 'Zhang Lei receiving Queen Oito across the long dining table',
     labelFr: 'Zhang Lei recevant la reine Oito devant la longue table sculptée',
   }),

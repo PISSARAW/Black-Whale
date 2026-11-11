@@ -255,6 +255,22 @@ describe('manga photo viewpoints', () => {
     })
   })
 
+  it('populates every legacy view whose caption names its manga cast', () => {
+    expect(mangaViewById('kacho-fugetsu-vestibule-farewell')?.staging).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ characterId: 'prince-kacho' }),
+        expect.objectContaining({ characterId: 'prince-fugetsu' }),
+      ]),
+    )
+    expect(mangaViewById('zhang-lei-dining-oito')).toMatchObject({
+      eventSequence: 1,
+      eventTitle: 'Zhang Lei and Tubeppa approach room 1014',
+    })
+    expect(
+      mangaViewById('zhang-lei-dining-oito')?.staging?.map(({ characterId }) => characterId),
+    ).toEqual(expect.arrayContaining(['prince-zhanglei', 'queen-oito', 'prince-woble']))
+  })
+
   it('offers the published Xi-Yu office plan from both Tier 4 rooms', () => {
     const plan = mangaViewById('xi-yu-office-aerial-plan')
 

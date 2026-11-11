@@ -139,4 +139,33 @@ describe('the chapter 420 casino reconstruction', () => {
       ).toBe(true)
     }
   })
+
+  it('stages the chapter 420 encounter and flags the patrol bodies that cannot be identified', () => {
+    const entrance = mangaViewById('casino-420-gaming-floor')!
+    const encounter = mangaViewById('casino-420-swamp-ball')!
+
+    expect(entrance.eventTitle).toBe(
+      'Tserriednich discovers the casino patrols killed without gunfire',
+    )
+    expect(entrance.label).toContain('unidentified patrol bodies are not reconstructed')
+    expect(entrance.staging?.map(({ characterId }) => characterId)).toEqual(['prince-tserriednich'])
+    expect(encounter.eventTitle).toBe('Tserriednich encounters Hisoka in the VIP casino')
+    expect(encounter.staging).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ characterId: 'hisoka', pose: 'seated' }),
+        expect.objectContaining({ characterId: 'prince-tserriednich' }),
+      ]),
+    )
+
+    for (const actor of [...entrance.staging!, ...encounter.staging!]) {
+      const actorSpace = ship.spaces.get(actor.spaceId ?? CASINO_SPACE)!
+      expect(pointInPolygon(actor.at, actorSpace.footprint), actor.characterId).toBe(true)
+      expect(
+        plan.structures
+          .filter(({ spaceId }) => spaceId === actorSpace.id)
+          .some((solid) => pointInPolygon(actor.at, structureFootprint(solid))),
+        actor.characterId,
+      ).toBe(false)
+    }
+  })
 })

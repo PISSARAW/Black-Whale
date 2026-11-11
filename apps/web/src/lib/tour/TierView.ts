@@ -31,6 +31,7 @@ import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from './supremeCour
 import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screeningRoomView'
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
+import { buildHullSuspensionDetails, hullSuspensionSurfacePlan } from './hullSuspensionView'
 
 export interface TierRoomView {
   spaceId: string
@@ -170,6 +171,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildScreeningRoomDetails,
   buildHangarEntranceDetails,
   buildWarehouseDetails,
+  buildHullSuspensionDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
@@ -230,7 +232,11 @@ export class TierView {
       ),
       reveal,
     )
-    const mesh = buildTierMesh(diningHallSurfacePlan(surfacePlan, reveal), {
+    const detailedPlan = hullSuspensionSurfacePlan(
+      diningHallSurfacePlan(surfacePlan, reveal),
+      reveal,
+    )
+    const mesh = buildTierMesh(detailedPlan, {
       reveal,
     })
     const shared = this.attributes(mesh)

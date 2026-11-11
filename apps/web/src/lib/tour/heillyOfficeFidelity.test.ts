@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the registered Heil-Ly office', () => {
   it('keeps the published office and entrance sparse', () => {
@@ -11,5 +11,6 @@ describe('the registered Heil-Ly office', () => {
       ['tier-3-heilly-family-office-desk', 'plan'],
       ['tier-3-heilly-family-office-files', 'plan'],
     ])
+    expect(certificationIssuesFor('tier-3-heilly-family-office')).toEqual([])
   })
 })

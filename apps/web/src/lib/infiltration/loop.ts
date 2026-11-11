@@ -10,6 +10,7 @@ import { activeTraces } from './traces'
 import { remember } from './actors/memory'
 import { applySecurityProcedures, securityPolicy } from './security'
 import { inspectForgery, recognizesDisguise, type InspectionMethod } from './hatsuSpatial'
+import type { InfiltrationEnvironment } from './environment'
 
 export const INFILTRATION_DT = 1 / 30
 const REPORT_THRESHOLD = 72
@@ -17,6 +18,7 @@ export interface InfiltrationWorld {
   dt: number
   graph: NavGraph
   arena: Arena
+  environment?: InfiltrationEnvironment
 }
 
 export function updateInfiltration(
@@ -221,7 +223,13 @@ function moveWitness(
 ): Witness {
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
   if (distracted) return { ...witness, investigating: state.diversion!.spaceId }
-  const heard = hearingStrength(witness, state.player, world.graph) >= 0.2
+  const heard =
+    hearingStrength(
+      witness,
+      state.player,
+      world.graph,
+      world.environment?.get(state.player.spaceId ?? ''),
+    ) >= 0.2
   const informed = heard ? { ...witness, investigating: state.player.spaceId } : witness
   return patrolWitness(informed, world)
 }
@@ -271,7 +279,16 @@ function challengeFor(
 function observe(state: InfiltrationState, witness: Witness, world: InfiltrationWorld): Witness {
   const dt = world.dt
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
-  if (distracted || !canSee(witness, state.player, world.arena.walls)) return cool(witness, dt)
+  if (
+    distracted ||
+    !canSee(
+      witness,
+      state.player,
+      world.arena.walls,
+      world.environment?.get(state.player.spaceId ?? ''),
+    )
+  )
+    return cool(witness, dt)
 
   const auraHidden = state.player.nen === 'zetsu'
   const sociallyWrong =

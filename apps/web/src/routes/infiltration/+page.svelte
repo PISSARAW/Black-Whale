@@ -54,11 +54,13 @@
   } from '$lib/infiltration/campaign'
   import { infiltrationHatsuManifestations } from '$lib/infiltration/hatsuPresentation'
   import { playInfiltrationHatsuSound } from '$lib/audio/infiltrationHatsuSounds'
+  import { buildInfiltrationEnvironment } from '$lib/infiltration/environment'
 
   const modeNen = new ModeNenState()
   const ship = theShip()
   const arena = buildArena()
   const graph = buildNavGraph(arena)
+  const environment = buildInfiltrationEnvironment(arena)
   let plan = $state(ship.plans.get(arena.tierId)!)
   const extraction = arena.spaces[0]
   const defaultSeed = seedFromText('black-whale-v2')
@@ -296,7 +298,7 @@
       speed: elapsed > 0 ? moved / elapsed : 0,
     })
     while (owed >= INFILTRATION_DT && game.outcome === 'playing') {
-      game = updateInfiltration(game, { dt: INFILTRATION_DT, graph, arena })
+      game = updateInfiltration(game, { dt: INFILTRATION_DT, graph, arena, environment })
       owed -= INFILTRATION_DT
     }
   }

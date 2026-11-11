@@ -1,5 +1,6 @@
 import type { WallSegment, Vec2 } from '../tour/types'
 import type { Witness } from './state'
+import type { PerceptionEnvironment } from './environment'
 
 export const VISION_HALF_ANGLE = Math.PI / 3
 
@@ -7,12 +8,13 @@ export function canSee(
   witness: Witness,
   target: { position: Vec2; spaceId: string | null },
   walls: WallSegment[],
+  environment?: PerceptionEnvironment,
 ): boolean {
   if (!target.spaceId || witness.spaceId !== target.spaceId) return false
   const dx = target.position[0] - witness.position[0]
   const dz = target.position[1] - witness.position[1]
   const distance = Math.hypot(dx, dz)
-  if (distance > witness.sight) return false
+  if (distance > witness.sight * (environment?.visibility ?? 1)) return false
   if (angleBetween(Math.atan2(dx, dz), witness.heading) > VISION_HALF_ANGLE) return false
   return !walls.some((wall) =>
     intersects([witness.position, target.position], [wall.start, wall.end]),

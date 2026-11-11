@@ -1,4 +1,5 @@
 <script lang="ts">
+  import MarayamApartment from './marayam-apartment.svelte'
   import MomozeApartment from './momoze-apartment.svelte'
   import FugetsuApartment from './fugetsu-apartment.svelte'
   import { t } from '$lib/i18n'
@@ -83,6 +84,8 @@
   <FugetsuApartment />
 {:else if roomNumber === '1012'}
   <MomozeApartment />
+{:else if roomNumber === '1013'}
+  <MarayamApartment />
 {:else}
   <svg
     viewBox="0 0 800 800"

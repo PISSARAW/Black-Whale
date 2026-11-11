@@ -147,10 +147,10 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-royal-residential-sector-room-1012': {
     occupants: { 'prince-momoze': { x: 25.83, y: 80.88 } },
   },
-  // Hanzo leaves his body on the bed while his Nen double hunts Tuffdy, ch. 372,
+  // Hanzo rests on an upper bunk, ch. 372; this follows the reconstructed walked layout,
   // and climbs back into it there in ch. 375.
   'tier-1-royal-residential-sector-room-1013': {
-    occupants: { hanzo: { x: 78, y: 72 } },
+    occupants: { hanzo: { x: 12.08, y: 19.85 } },
   },
   // 1014 is the room the arc stages most often, so it carries the most spots.
   // Kurapika stands at the front of the Nen class facing the students, who keep

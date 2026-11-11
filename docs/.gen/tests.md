@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 392
+Fichiers : 393
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1305,6 +1305,10 @@ Fichiers : 392
 ## `apps/web/src/lib/tour/mangaViews.test.ts`
 
 - manga photo viewpoints > has a unique, bilingual, traceable entry for every panel view
+
+## `apps/web/src/lib/tour/marayamView.test.ts`
+
+- Marayam’s apartment against the reception and bedroom panels > keeps a valid walked plan and distinguishes panel props from four reconstructed rooms
 
 ## `apps/web/src/lib/tour/melodyConcert.test.ts`
 

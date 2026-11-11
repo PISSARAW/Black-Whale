@@ -43,6 +43,7 @@ export function roomDoorStyle(options: {
       'interior-room-1010',
       'interior-room-1011',
       'interior-room-1012',
+      'interior-room-1013',
     ].includes(options.tierId)
   ) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }

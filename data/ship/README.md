@@ -849,6 +849,16 @@ Six autres pièces restent des reconstitutions `map` ; le découpage parcourable
 hérité diffère de la coupe non cotée du chapitre 368, et la carte 2D l’annonce
 explicitement. Voir [l’audit du 1012](momoze-room-audit.md).
 
+Dans le **1013**, le chapitre 366 (page de lecture 1) précise la table de
+repas haute, les sièges, la crédence, le vase et le tableau. Le chapitre 372
+(page 16) montre les jouets sur un tapis au sol et les lits superposés ; le
+chapitre 375 (pages 10–11) précise la couchette de Hanzo, son meuble et le lit
+à barreaux de Marayam. La grille haute suit le chapitre 367 (page 19).
+Quatre autres pièces et le mobilier non établi restent des reconstitutions
+`map`. Les affectations et le découpage parcourable ne sont pas un relevé de
+la coupe du chapitre 368 ; la carte locale l’annonce et partage les emprises
+de la visite. Voir [l’audit du 1013](marayam-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

@@ -100,17 +100,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Zhang Lei recevant la reine Oito devant la longue table sculptée',
   }),
   view({
-    id: 'marayam-living-vent',
-    spaceId: 'tier-1-royal-residential-sector-room-1013-living',
-    at: [3.7, 4.7],
-    target: [-9.5, -0.7],
-    pitch: 0.03,
-    chapter: 367,
-    volume: 35,
-    label: "Marayam's living room and the watched ventilation grille",
-    labelFr: "Le salon de Marayam et la grille d'aération sous surveillance",
-  }),
-  view({
     id: 'woble-kitchen-counter',
     spaceId: 'tier-1-royal-residential-sector-room-1014-kitchen',
     at: [2.15, -6.3],

@@ -60,7 +60,7 @@ const expectedDetails: Readonly<Record<number, readonly string[]>> = {
   ],
   1011: ['bedroom-clock-and-photos', 'bedroom-book-stack'],
   1012: ['bedroom-vent-15', 'living-table-05', 'living-palm', 'living-basket'],
-  1013: ['living-vent-15', 'living-child-table', 'living-toy-chest', 'living-framed-painting'],
+  1013: ['living-vent-15', 'living-child-table', 'dining-framed-painting', 'bedroom-child-crib'],
   1014: ['living-telephone-15', 'living-painting-21', 'dining-table-25', 'kitchen-cabinet-24'],
 }
 

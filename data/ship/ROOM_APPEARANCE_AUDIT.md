@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1221 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1228 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -487,22 +487,27 @@
 ## Chambre 1013 (Marayam) — `tier-1-royal-residential-sector-room-1013`
 
 - **Pont :** tier-1, interior-room-1013
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, reconstruction cartographique
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 painting, 1 seat, 1 vent
-- **Objets directement visibles dans les cases :** 19/19
+- **Éléments modélisés :** 6 cabinet, 4 basin, 4 bed, 3 seat, 2 counter, 2 painting, 2 table, 1 platform, 1 vent, 1 window
+- **Objets directement visibles dans les cases :** 15/26
 - **Espaces internes :** Quartiers des domestiques — 1013 (Marayam) ; WC du personnel — 1013 (Marayam) ; Vestibule d'entrée — 1013 (Marayam) ; Cuisine — 1013 (Marayam) ; Salle à manger — 1013 (Marayam) ; Salon — 1013 (Marayam) ; Chambre du prince — 1013 (Marayam) ; Bain et WC — 1013 (Marayam)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 372, page de lecture 16 ; chap. 375, page de lecture 10 : lits superposés à montants carrés, garde-corps et échelles ; Hanzo repose en haut. Petit meuble à tiroirs avec pile de papiers et tasse. Attribution à la zone du personnel et implantation métrique reconstituées.
+  - Reconstitution du plan de visite du 1013. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation héritée à huit espaces. Mobilier non montré, fonctions, dimensions et finitions reconstitués.
+  - Chap. 366, page de lecture 1 : table de repas haute sculptée, deux sièges à haut dossier cintré, crédence avec vase, tableau encadré et panneaux vitrés derrière Sevanti et Marayam. Attribution à la zone de repas et implantation métrique reconstituées.
+  - Chap. 367, page de lecture 19 ; chap. 372, page de lecture 16 ; chap. 375, page de lecture 11 : grille haute à lames horizontales, fauteuil, petits meubles périphériques et aire de jeu au sol bordée avec voitures, blocs et papier plié. Implantation métrique et motifs originaux simplifiés reconstitués.
+  - Chap. 375, page de lecture 11 : lit à barreaux de Marayam à côté d’un lit adulte partiellement visible. Attribution à la chambre, dimensions et parties non montrées du mobilier adulte reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 367 — le réseau d'égouts sous la zone d'habitation et les grilles à persiennes par lesquelles il débouche dans les appartements : le cafard de Bill est lâché dans les égouts et gagne ainsi un prince après l'autre. Les pièces du prince Marayam sont les premières qu'il observe d'en haut, juste sous le plafond.
-  - Chap. 366 — la chambre protégée de Marayam contient le mobilier de jeu bas où sont gardées ses voitures miniatures et ses briques, tandis que domestiques et gardes veillent sur lui.
-  - Chap. 366 — des voitures miniatures et des briques de construction identifient la chambre protégée de Marayam comme l'espace de vie d'un enfant.
-  - Chap. 366 — le tableau encadré derrière la reine Sevanti et Marayam appartient au salon meublé montré avant que la pièce ne soit isolée par le Nen.
+  - Chap. 375, page de lecture 11 : lit à barreaux de Marayam à côté d’un lit adulte partiellement visible. Attribution à la chambre, dimensions et parties non montrées du mobilier adulte reconstituées.
+  - Reconstitution du plan de visite du 1013. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation héritée à huit espaces. Mobilier non montré, fonctions, dimensions et finitions reconstitués.
+  - Chap. 367, page de lecture 19 ; chap. 372, page de lecture 16 ; chap. 375, page de lecture 11 : grille haute à lames horizontales, fauteuil, petits meubles périphériques et aire de jeu au sol bordée avec voitures, blocs et papier plié. Implantation métrique et motifs originaux simplifiés reconstitués.
+  - Chap. 366, page de lecture 1 : table de repas haute sculptée, deux sièges à haut dossier cintré, crédence avec vase, tableau encadré et panneaux vitrés derrière Sevanti et Marayam. Attribution à la zone de repas et implantation métrique reconstituées.
+  - Chap. 372, page de lecture 16 ; chap. 375, page de lecture 10 : lits superposés à montants carrés, garde-corps et échelles ; Hanzo repose en haut. Petit meuble à tiroirs avec pile de papiers et tasse. Attribution à la zone du personnel et implantation métrique reconstituées.
+  - Chap. 375, page de lecture 10 : calendrier mural à côté de la couchette et du meuble. Cases abstraites originales ; dimensions et placement reconstitués.
 
 ## Chambre 1014 (Woble) — `tier-1-royal-residential-sector-room-1014`
 

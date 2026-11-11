@@ -7,6 +7,7 @@ import {
   isCineplexSpace,
   cineplexSurfacePlan,
   CINEPLEX_CONCESSION,
+  CINEPLEX_ENTRANCE,
   CINEPLEX_SCREEN_CORRIDOR,
   CINEPLEX_TICKET_DESK,
   CINEPLEX_FOYER_PORT,
@@ -40,6 +41,7 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
 
   it('identifies the canonical spaces of the Cineplex concourse', () => {
     expect(isCineplexSpace(CINEPLEX_CONCESSION)).toBe(true)
+    expect(isCineplexSpace(CINEPLEX_ENTRANCE)).toBe(true)
     expect(isCineplexSpace(CINEPLEX_SCREEN_CORRIDOR)).toBe(true)
     expect(isCineplexSpace(CINEPLEX_TICKET_DESK)).toBe(true)
     expect(isCineplexSpace(CINEPLEX_FOYER_PORT)).toBe(true)
@@ -53,7 +55,7 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
 
   it('keeps the Chapter 393 concourse open from food counter to ticket desks', () => {
     const openings = plan.doorways.filter(({ a, b }) => isCineplexHallOpening(a, b))
-    expect(openings).toHaveLength(5)
+    expect(openings).toHaveLength(10)
 
     for (const opening of openings) {
       const space = ship.spaces.get(opening.a)!
@@ -171,6 +173,9 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
 
   it('frames every zone visible in the Cineplex establishing panel', () => {
     const establishing = mangaViewById('cineplex-establishing-shot')!
+    expect(establishing.spaceId).toBe(CINEPLEX_ENTRANCE)
+    expect(establishing.at).toEqual([0, -12.2])
+    expect(establishing.cameraDistance).toBe(3)
     expect(establishing.visibleSpaceIds).toEqual([...CINEPLEX_HALL_SPACES])
   })
 

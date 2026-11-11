@@ -17,6 +17,7 @@ import { dressCinemaAuditorium } from './cineplexAuditorium'
 import type { Space, Structure } from './types'
 
 export const CINEPLEX_CONCESSION = 'tier-3-cineplex-concession'
+export const CINEPLEX_ENTRANCE = 'tier-3-cineplex-entrance-concourse'
 export const CINEPLEX_SCREEN_CORRIDOR = 'tier-3-cineplex-screen-corridor'
 export const CINEPLEX_TICKET_DESK = 'tier-3-cineplex-ticket-desk'
 export const CINEPLEX_FOYER_PORT = 'tier-3-cineplex-foyer-port'
@@ -35,6 +36,7 @@ export const CINEPLEX_SCREENS = [
 ] as const
 
 const CINEPLEX_SPACES = new Set<string>([
+  CINEPLEX_ENTRANCE,
   CINEPLEX_CONCESSION,
   CINEPLEX_SCREEN_CORRIDOR,
   CINEPLEX_TICKET_DESK,
@@ -85,7 +87,6 @@ function dressConcessionSpace({
   dressConcourseFloor(into, bounds, floor)
   dressConcourseCeiling(into, bounds, ceiling)
   dressConcourseWallSpan({ into, from: [-25, -7.5], to: [-25, 7.5], floor, ceiling })
-  dressConcourseWallSpan({ into, from: [-25, -7.5], to: [-12.5, -7.5], floor, ceiling })
 
   for (const structure of structures) {
     const surface = new CineplexSurface(into, structure, floor)
@@ -105,7 +106,6 @@ function dressTicketDeskSpace({
   dressConcourseFloor(into, bounds, floor)
   dressConcourseCeiling(into, bounds, ceiling)
   dressConcourseWallSpan({ into, from: [25, 7.5], to: [25, -7.5], floor, ceiling })
-  dressConcourseWallSpan({ into, from: [12.5, -7.5], to: [25, -7.5], floor, ceiling })
 
   for (const structure of structures) {
     const surface = new CineplexSurface(into, structure, floor)
@@ -141,6 +141,23 @@ function dressFoyerPortSpace({ into, floor, ceiling }: SpaceDressContext): Three
   return into.finish('cineplex-foyer-port-manga-details')
 }
 
+function dressEntranceSpace({
+  into,
+  floor,
+  ceiling,
+  structures,
+}: SpaceDressContext): Three.Group | null {
+  const bounds = { xMin: -25, xMax: 25, zMin: -12.5, zMax: -7.5 }
+  dressConcourseFloor(into, bounds, floor)
+  dressConcourseCeiling(into, bounds, ceiling)
+  for (const structure of structures) {
+    const surface = new CineplexSurface(into, structure, floor)
+    if (structure.id.endsWith('-seating-island')) dressSeatingIsland(surface)
+    else if (structure.id.endsWith('-concourse-pillar')) dressConcoursePillar(surface)
+  }
+  return into.finish('cineplex-entrance-concourse-manga-details')
+}
+
 function dressFoyerStarboardSpace({ into, floor, ceiling }: SpaceDressContext): Three.Group | null {
   const bounds = { xMin: 7.5, xMax: 12.5, zMin: -7.5, zMax: 7.5 }
   dressConcourseFloor(into, bounds, floor)
@@ -162,6 +179,7 @@ function dressAuditoriumSpace({ into, space, floor }: SpaceDressContext): Three.
 }
 
 const SPACE_BUILDERS: Record<string, (ctx: SpaceDressContext) => Three.Group | null> = {
+  [CINEPLEX_ENTRANCE]: dressEntranceSpace,
   [CINEPLEX_CONCESSION]: dressConcessionSpace,
   [CINEPLEX_TICKET_DESK]: dressTicketDeskSpace,
   [CINEPLEX_SCREEN_CORRIDOR]: dressScreenCorridorSpace,

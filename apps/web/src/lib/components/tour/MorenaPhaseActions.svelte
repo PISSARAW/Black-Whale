@@ -4,27 +4,25 @@
   import {
     CARD_COLOURS,
     DEALER_COLOUR,
-    askMorena,
     cssInk,
     lastCard,
     needsAChoice,
-    refuseTheDeal,
-    settle,
-    takeTheDeal,
     type AnswerCard,
     type MorenaGame,
     type QuestionCard,
   } from '$lib/tour/morena'
+  import type { MorenaCommand } from '$lib/tour/morenaCommands'
   import MorenaCard from './MorenaCard.svelte'
 
   interface Props {
     game: MorenaGame
     choice?: AnswerCard | null
     nameOfCard: (card: AnswerCard) => string
-    random?: () => number
+    onCommand: (command: MorenaCommand) => void
+    onChoice: (choice: AnswerCard | null) => void
   }
 
-  let { game = $bindable(), choice = $bindable(null), nameOfCard, random }: Props = $props()
+  let { game, choice = null, nameOfCard, onCommand, onChoice }: Props = $props()
   const copy = $derived($t.tour.morena)
   const settlement = $derived(needsAChoice(game))
   let actionHeading = $state<HTMLHeadingElement | null>(null)
@@ -38,14 +36,9 @@
     void tick().then(() => actionHeading?.focus())
   })
 
-  function ask(question: QuestionCard) {
-    game = askMorena(game, question, { random })
-  }
-
   function play() {
     if (settlement && !choice) return
-    game = settle(game, choice ?? undefined)
-    choice = null
+    onCommand({ kind: 'settle', choice: choice ?? undefined })
   }
 </script>
 
@@ -67,7 +60,7 @@
       {#each game.graveyard as card (card)}
         <button
           class="rounded border border-[#d94f68] p-1.5 hover:bg-[#d94f68]/30"
-          onclick={() => (game = takeTheDeal(game, card))}
+          onclick={() => onCommand({ kind: 'accept-deal', card })}
           title="{copy.deal.take} · {nameOfCard(card)}"
         >
           <MorenaCard face={card} label={nameOfCard(card)} ink={cssInk(CARD_COLOURS[card])} />
@@ -75,7 +68,7 @@
       {/each}
       <button
         class="rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0] hover:border-[#FFD700]"
-        onclick={() => (game = refuseTheDeal(game))}>{copy.deal.refuse}</button
+        onclick={() => onCommand({ kind: 'decline-deal' })}>{copy.deal.refuse}</button
       >
     </div>
   </div>
@@ -94,7 +87,7 @@
         <li>
           <button
             class="flex w-full items-center gap-3 rounded border border-[#333] p-2 text-left text-sm text-[#FFFFF0]/85 hover:border-[#d94f68] hover:text-[#FFFFF0]"
-            onclick={() => ask(question)}
+            onclick={() => onCommand({ kind: 'ask', question })}
           >
             <MorenaCard
               face={question}
@@ -124,7 +117,7 @@
             class="rounded border p-1.5 {choice === side
               ? 'border-[#FFD700] bg-[#FFD700]/10'
               : 'border-[#444] hover:border-[#FFD700]/60'}"
-            onclick={() => (choice = side)}
+            onclick={() => onChoice(side)}
             title={nameOfCard(side)}
           >
             <MorenaCard face={side} label={nameOfCard(side)} ink={cssInk(CARD_COLOURS[side])} />
@@ -139,7 +132,7 @@
             class="rounded border p-1.5 {choice === card
               ? 'border-[#FFD700] bg-[#FFD700]/10'
               : 'border-[#444] hover:border-[#FFD700]/60'}"
-            onclick={() => (choice = card)}
+            onclick={() => onChoice(card)}
             title={nameOfCard(card)}
           >
             <MorenaCard face={card} label={nameOfCard(card)} ink={cssInk(CARD_COLOURS[card])} />

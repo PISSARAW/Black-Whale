@@ -13,14 +13,9 @@
  * publishes. Pure, and keyed on the same `id`s `tableauOf` lays out — the two
  * are one table, and a card that can be pointed at is a card that is drawn.
  */
-import {
-  askMorena,
-  needsAChoice,
-  refuseTheDeal,
-  settle,
-  takeTheDeal,
-} from '@black-whale/ability-modules'
+import { needsAChoice } from '@black-whale/ability-modules'
 import type { AnswerCard, MorenaGame, QuestionCard } from '@black-whale/ability-modules'
+import { applyMorenaCommand, type MorenaCommand } from './morenaCommands'
 
 /**
  * One thing a pair of hands can do at that table.
@@ -103,6 +98,24 @@ export function gesturesAt(game: MorenaGame): Record<string, TableGesture> {
 /** The same table, as the set the scene wants: what may be taken hold of. */
 export const withinReach = (game: MorenaGame): Set<string> => new Set(Object.keys(gesturesAt(game)))
 
+/** Translate a physical table gesture into the session command used by every UI. */
+export function commandForGesture(gesture: TableGesture): MorenaCommand {
+  switch (gesture.kind) {
+    case 'ask':
+      return { kind: 'ask', question: gesture.question }
+    case 'kiss':
+      return { kind: 'accept-deal', card: gesture.card }
+    case 'decline':
+      return { kind: 'decline-deal' }
+    case 'point':
+      return { kind: 'settle', choice: gesture.side }
+    case 'reach':
+      return { kind: 'settle', choice: gesture.card }
+    case 'play':
+      return { kind: 'settle' }
+  }
+}
+
 /**
  * Play a gesture, which is to say: hand it to the rules.
  *
@@ -116,18 +129,5 @@ export function playGesture(
   gesture: TableGesture,
   options: { random?: () => number } = {},
 ): MorenaGame {
-  switch (gesture.kind) {
-    case 'ask':
-      return askMorena(game, gesture.question, options)
-    case 'kiss':
-      return takeTheDeal(game, gesture.card)
-    case 'decline':
-      return refuseTheDeal(game)
-    case 'point':
-      return settle(game, gesture.side)
-    case 'reach':
-      return settle(game, gesture.card)
-    case 'play':
-      return settle(game)
-  }
+  return applyMorenaCommand(game, commandForGesture(gesture), options)
 }

@@ -9,6 +9,7 @@
     cheats?: boolean
     locked?: boolean
     carried: HatsuProfile | null
+    onCheatsChange: (cheats: boolean) => void
     onDeal: () => void
     onRules: () => void
     onBack: () => void
@@ -16,9 +17,10 @@
 
   let {
     mode,
-    cheats = $bindable(true),
+    cheats = true,
     locked = false,
     carried,
+    onCheatsChange,
     onDeal,
     onRules,
     onBack,
@@ -58,7 +60,14 @@
           <label
             class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
           >
-            <input type="radio" class="mt-1" bind:group={cheats} value={true} disabled={locked} />
+            <input
+              type="radio"
+              class="mt-1"
+              name="morena-deal"
+              checked={cheats}
+              disabled={locked}
+              onchange={() => onCheatsChange(true)}
+            />
             <span
               ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.marked}</span>
               <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60"
@@ -69,7 +78,14 @@
           <label
             class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
           >
-            <input type="radio" class="mt-1" bind:group={cheats} value={false} disabled={locked} />
+            <input
+              type="radio"
+              class="mt-1"
+              name="morena-deal"
+              checked={!cheats}
+              disabled={locked}
+              onchange={() => onCheatsChange(false)}
+            />
             <span
               ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.clean}</span>
               <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60"

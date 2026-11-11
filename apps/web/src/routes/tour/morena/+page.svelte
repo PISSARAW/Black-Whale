@@ -9,7 +9,7 @@
    * from the same blueprint, the visitor is put in the chair the chapters put
    * Borksen in, and the legs stop answering.
    *
-   * The rules live in `$lib/tour/morena` and are pure: this route holds a game
+   * The rules live in `$lib/tour/morena` and are pure: one session holds the game
    * and hands it to two consumers — the DOM, which is where the cards are
    * legible, and `TourScene`, which lays the same cards on the table in front
    * of you. Nothing about the negotiation is decided here.
@@ -35,17 +35,7 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { page } from '$app/stores'
   import { link, locale, t } from '$lib/i18n'
-  import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { get } from 'svelte/store'
-  import {
-    EMPEROR_TIME_LIFE_LIMIT_HOURS,
-    activeHatsu,
-    closeHatsuGate,
-    emperorTimeLifeHours,
-    openHatsuGate,
-    spendEmperorTimeHours,
-  } from '$lib/nen/hatsuState'
-  import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
+  import { activeHatsu, emperorTimeLifeHours } from '$lib/nen/hatsuState'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
@@ -54,32 +44,22 @@
     HIDEOUT_OFFICE,
     HIDEOUT_TIER,
     SEATED_EYE,
-    dealTheGame,
     eyeFeed,
-    leaveTheTable,
-    livePages,
-    moveFor,
     REWIND_BLUE,
-    openTheBookHere,
     owlFilm,
-    playTechnique,
-    sheWillNotPlay,
-    sitsAtTheTable,
     spentOn,
-    theEyesTakeYou,
-    castsItself,
     tableauOf,
-    worksAtTheTable,
     type AnswerCard,
-    type MorenaGame,
-    type TableKind,
   } from '$lib/tour/morena'
-  import { gesturesAt, playGesture, type TableGesture } from '$lib/tour/morenaHands'
+  import { commandForGesture, gesturesAt, type TableGesture } from '$lib/tour/morenaHands'
+  import { decodeMorenaChallenge } from '$lib/tour/morenaChallenge'
   import {
-    decodeMorenaChallenge,
-    morenaChallengeRandom,
-    newMorenaChallengeSeed,
-  } from '$lib/tour/morenaChallenge'
+    adaptMorenaHatsu,
+    advanceMorenaEmperorTime,
+    morenaLifeScorch,
+    syncMorenaHatsuGate,
+  } from '$lib/tour/morenaHatsuAdapter'
+  import { MorenaSession } from '$lib/tour/morenaSession.svelte'
 
   const ship = theShip()
   const modeNen = new ModeNenState()
@@ -100,23 +80,18 @@
    */
   const facing = Math.atan2(-(DEALER_AT[0] - GUEST_AT[0]), -(DEALER_AT[1] - GUEST_AT[1]))
 
-  /** The menu, the rules, or the table. The scene is under all three. */
-  let view = $state<'menu' | 'rules' | 'table'>('menu')
-  /** Whether Morena is dealing the hand she actually deals. */
-  let cheats = $state(true)
-  let game = $state<MorenaGame>(dealTheGame())
-  /** What a Back or a Joker is being pointed at, while it is being pointed. */
-  let choice = $state<AnswerCard | null>(null)
+  const session = new MorenaSession()
+  const view = $derived(session.view)
+  const cheats = $derived(session.cheats)
+  const game = $derived(session.game)
+  const choice = $derived(session.choice)
   const incomingChallenge = $derived(decodeMorenaChallenge($page.url.searchParams.get('challenge')))
-  let challengeConsumed = $state(false)
-  let currentChallengeSeed = $state(0)
-  let previousChallengeStreak = $state(0)
-  let drawFromChallenge = morenaChallengeRandom(0)
-  const challengeWaiting = $derived(Boolean(incomingChallenge && !challengeConsumed))
-  const randomAtTable = () => drawFromChallenge()
+  const challengeWaiting = $derived(session.challengeWaiting)
+  const currentChallengeSeed = $derived(session.currentChallengeSeed)
+  const previousChallengeStreak = $derived(session.previousChallengeStreak)
 
   $effect(() => {
-    if (challengeWaiting) cheats = incomingChallenge?.marked !== null
+    session.setChallenge(incomingChallenge)
   })
 
   let tierId = $state(HIDEOUT_TIER)
@@ -225,83 +200,13 @@
    * of what the page is for.
    */
   const carried = $derived($activeHatsu)
-  const tableKind = $derived(worksAtTheTable(carried?.kind) ? carried!.kind : null)
-  /**
-   * Whether what the dock is holding is the ribbon rather than a technique.
-   *
-   * Double Face is the one thing in the roster with no seat of its own and a
-   * great deal to say here anyway: it is not a move, it is *two other people's
-   * moves*, and which two is the only question it asks. So it is admitted to
-   * the table beside `worksAtTheTable`, and what it brings is a pair.
-   */
-  const carryingTheBook = $derived(carried?.kind === 'bookmark')
-
-  /**
-   * The technique's own published name, in the reader's language.
-   *
-   * Off the registry rather than out of the message file: the ability already
-   * has a name everywhere else on the site, and a second one here would be a
-   * second thing to keep true.
-   */
-  const nameOfTechnique = (kind: TableKind) =>
-    localizeHatsu(
-      HATSU_PROFILES.find((profile) => profile.id === moveFor(kind).hatsuId)!,
-      $locale,
-    ).name
-
-  /**
-   * What is live in front of the guest: one technique, or the book's two.
-   *
-   * Everything the panel says about an aura is said once per seat rather than
-   * once per game — the effect it buys, what it risks, how much of it is left —
-   * because a book with two pages open has two of every one of those, and they
-   * are not the same numbers. `livePages` is the rules' own answer to what can
-   * be played; this only dresses it.
-   */
-  const seats = $derived(
-    livePages(game).map((seat) => {
-      const move = moveFor(seat.kind)
-      return {
-        ...seat,
-        move,
-        name: nameOfTechnique(seat.kind),
-        usedUp: seat.spent >= move.uses,
-        unbidden: castsItself(seat.kind),
-      }
-    }),
-  )
-  /**
-   * The seats a key can play, in the order the keys play them.
-   *
-   * Not every live technique is one you press for. Lovely Ghostwriter writes by
-   * itself the moment Morena reaches into your hand — that is what automatic
-   * writing *is* — so it has a panel of its own and no key, and the book's
-   * other page keeps the one it would otherwise have shared.
-   */
-  const keyed = $derived(seats.filter((seat) => !seat.unbidden))
-  /** The two names the two keys play, when there are two. `null` otherwise. */
-  const hands = $derived(
-    keyed.length === 2 ? { first: keyed[0].name, second: keyed[1].name } : null,
-  )
+  const hatsu = $derived(adaptMorenaHatsu(game, carried, $locale))
+  const seats = $derived(hatsu.seats)
+  const keyed = $derived(hatsu.keyed)
+  const hands = $derived(hatsu.hands)
 
   function deal() {
-    // The book is opened at the table rather than carried open: which two of
-    // Chrollo's pages are live at any moment is exactly the sort of thing no
-    // record of the Black Whale settles, so it is a roll, and it is rolled
-    // again every deal.
-    const invitation = challengeWaiting ? incomingChallenge : null
-    currentChallengeSeed = invitation?.seed ?? newMorenaChallengeSeed()
-    previousChallengeStreak = invitation?.streak ?? 0
-    drawFromChallenge = morenaChallengeRandom(currentChallengeSeed)
-    challengeConsumed = true
-    const pages = carryingTheBook ? openTheBookHere() : null
-    game = dealTheGame({
-      marked: invitation ? invitation.marked : cheats ? 'back' : null,
-      technique: pages ? pages[0] : tableKind,
-      bookmark: pages ? pages[1] : null,
-    })
-    choice = null
-    view = 'table'
+    session.deal({ tableKind: hatsu.tableKind, carryingBook: hatsu.carryingBook })
   }
 
   /**
@@ -318,11 +223,11 @@
   ) {
     const seat = keyed[hand === 'second' ? 1 : 0]
     if (!seat || seat.usedUp) return
-    game = playTechnique(game, { page: seat.page, random: randomAtTable })
+    session.dispatch({ kind: 'play-technique', page: seat.page })
   }
 
   function walkOut() {
-    game = leaveTheTable(game)
+    session.dispatch({ kind: 'leave' })
   }
 
   // ── The same game, played with the hands ───────
@@ -365,10 +270,7 @@
   function takeHold(id: string) {
     const gesture = gesturesAt(game)[id]
     if (!gesture) return
-    game = playGesture(game, gesture, { random: randomAtTable })
-    // The panel's half-made choice is spent or void either way: the hand was
-    // settled by hand, or it moved on to a phase that has no use for it.
-    choice = null
+    session.dispatch(commandForGesture(gesture))
   }
 
   /**
@@ -406,33 +308,17 @@
    * year, they may have spent some of it walking the ship, and a page that kept
    * its own would let them spend it twice.
    */
-  const LIFE_PER_SECOND = 48
-  /**
-   * When she stands up: a third of the year, gone in front of her.
-   *
-   * She is a recruiter, and what she is watching is the thing she recruits
-   * being used up. This is the number at which the candidate stops being worth
-   * the hand — not a punishment, a decision, and the only end to this game that
-   * neither player had to earn.
-   */
-  const SHE_STANDS_AT = Math.round(EMPEROR_TIME_LIFE_LIMIT_HOURS / 3)
-
   /** Whether the eyes are open at this table, which is what starts the clock. */
   const burning = $derived(
     view === 'table' && game.phase !== 'over' && spentOn(game, 'scarlet') !== null,
   )
   /** How far through the year the visitor is, from nothing to all of it. */
-  const scorch = $derived(Math.min(1, $emperorTimeLifeHours / EMPEROR_TIME_LIFE_LIMIT_HOURS))
+  const scorch = $derived(morenaLifeScorch($emperorTimeLifeHours))
 
   $effect(() => {
     if (!burning) return
     const clock = setInterval(() => {
-      // Two things can end the hand here and they are different deaths: the
-      // year running out is the ability collecting, and her standing up is the
-      // candidate having become worthless. The first is checked first because
-      // a corpse has nothing left for anybody to decline.
-      if (spendEmperorTimeHours(LIFE_PER_SECOND)) game = theEyesTakeYou(game)
-      else if (get(emperorTimeLifeHours) >= SHE_STANDS_AT) game = sheWillNotPlay(game)
+      session.replaceGame(advanceMorenaEmperorTime(session.game))
     }, 1000)
     return () => clearInterval(clock)
   })
@@ -451,12 +337,7 @@
    * choosing a different technique for the next deal is one gesture again.
    */
   $effect(() => {
-    if (view !== 'table' || game.phase === 'over') {
-      closeHatsuGate()
-      return
-    }
-    openHatsuGate({ admits: sitsAtTheTable, reason: copy.hatsu.sealed })
-    return closeHatsuGate
+    return syncMorenaHatsuGate(view === 'table' && game.phase !== 'over', copy.hatsu.sealed)
   })
 
   /** What Morena said to the last question asked, for the panel's read-out. */
@@ -660,21 +541,23 @@
       {#if view === 'menu'}
         <MorenaSetupPanel
           mode="menu"
-          bind:cheats
+          {cheats}
           locked={challengeWaiting}
           {carried}
+          onCheatsChange={(value) => session.setCheats(value)}
           onDeal={deal}
-          onRules={() => (view = 'rules')}
-          onBack={() => (view = 'menu')}
+          onRules={() => session.showRules()}
+          onBack={() => session.showMenu()}
         />
       {:else if view === 'rules'}
         <MorenaSetupPanel
           mode="rules"
-          bind:cheats
+          {cheats}
           {carried}
+          onCheatsChange={(value) => session.setCheats(value)}
           onDeal={deal}
-          onRules={() => (view = 'rules')}
-          onBack={() => (view = 'menu')}
+          onRules={() => session.showRules()}
+          onBack={() => session.showMenu()}
         />
       {:else}
         <MorenaGameStatus {game} {nameOfCard} />
@@ -718,9 +601,15 @@
         {/if}
 
         {#if game.phase !== 'over'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
+          <MorenaPhaseActions
+            {game}
+            {choice}
+            {nameOfCard}
+            onCommand={(command) => session.dispatch(command)}
+            onChoice={(card) => session.choose(card)}
+          />
         {:else if game.verdict}
-          <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => (view = 'menu')} />
+          <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => session.showMenu()} />
           <MorenaChallengeCard
             {game}
             seed={currentChallengeSeed}

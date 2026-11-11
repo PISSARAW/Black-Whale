@@ -310,21 +310,21 @@ meubles, leurs couleurs et leurs détails particuliers.
 
 - **Volume 38, chapitre 393.** Dans les scènes du Tier 3 liées à la traque d'Heil-Ly, repérer la grande vue d'établissement du cinéma. La bonne case réunit dans un même espace la confiserie, les guichets et les accès ou panneaux des salles ; ne pas utiliser un dialogue cadré devant un seul comptoir.
 
-## 19. La chambre 3101 et le piège de la salle de bains
+## 19. La chambre 3101 et le piège de l'entrée
 
 **X — English**
 
-> Room 3101 looks ordinary—until its bathroom becomes a door into Heil-Ly's trap. Stand where the manga reveals the geometry of the ambush: https://exploreblackwhale.com/tour?mangaView=room-3101-bathroom-trap #HunterxHunter #HeilLy #BlackWhale #SuccessionWar
+> Room 3101 looks ordinary—until crossing its front entrance transfers the victim into Heil-Ly's trap. Stand where the manga reveals the geometry of the ambush: https://exploreblackwhale.com/tour?mangaView=room-3101-entrance-trap #HunterxHunter #HeilLy #BlackWhale #SuccessionWar
 
 **Instagram — français**
 
-> La chambre 3101 paraît ordinaire jusqu'à ce que sa salle de bains révèle le piège d'Heil-Ly. Placez-vous dans l'axe qui permet de comprendre toute la géométrie de l'embuscade : https://exploreblackwhale.com/tour?mangaView=room-3101-bathroom-trap
+> La chambre 3101 paraît ordinaire jusqu'à ce que le franchissement de son entrée transfère la victime dans le piège d'Heil-Ly. Placez-vous dans l'axe qui permet de comprendre toute la géométrie de l'embuscade : https://exploreblackwhale.com/tour?mangaView=room-3101-entrance-trap
 >
 > #HunterxHunter #HxH #HeilLy #Nobunaga #Hinrigh #BlackWhale #SuccessionWar #Manga
 
 **Case à retrouver**
 
-- **Volume 38, chapitre 398, pages 150–153 de l'édition de référence.** Chercher l'inspection de la chambre 3101 et l'axe vers la salle de bains utilisée par Heil-Ly. Retenir le plan assez large pour voir à la fois la pièce principale et l'ouverture du piège, plutôt qu'une case montrant uniquement un personnage ou la porte.
+- **Volume 38, chapitres 393–395.** Chercher la chambre meublée, la disparition de Tassi au franchissement de l'entrée, puis le contournement depuis la salle de bains voisine. Retenir un plan assez large pour voir la pièce principale et sa porte d'entrée, plutôt qu'une case montrant uniquement un personnage.
 
 ## 20. Le quartier princier vu du ciel
 

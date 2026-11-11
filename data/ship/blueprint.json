@@ -919,14 +919,14 @@
       "elevation": 72.6,
       "ceiling": 3.5,
       "provenance": "panel",
-      "source": "Ch. 393, pp. 64-67 \u2014 room 3101 is shown from both ends: two stacked bunks occupy one half of the back wall, an open wardrobe with hanging clothes, drawers and shelves occupies the other, and the bathroom door stands on the side wall; the exact partition depth is reconstructed.",
+      "source": "Chs. 393\u2013394 \u2014 room 3101 is shown from both ends with stacked bunks and open wall storage; Tassi then vanishes when he crosses its ordinary-looking entrance. The exact dimensions and partition depth are reconstructed.",
       "hull": [
         [-8, -6],
         [8, -6],
         [8, 6],
         [-8, 6]
       ],
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 la 3101 est une cabine ordinaire \u00e0 large sol d\u00e9gag\u00e9, avec rangement haut et salle de bains dont la porte sert de pi\u00e8ge de t\u00e9l\u00e9portation Heil-Ly ; la profondeur exacte de la cloison est reconstruite.",
+      "sourceFr": "Chap. 393\u2013394 \u2014 la 3101 est montr\u00e9e depuis ses deux extr\u00e9mit\u00e9s, avec des couchettes superpos\u00e9es et un rangement mural ouvert ; Tassi dispara\u00eet ensuite en franchissant son entr\u00e9e d'apparence ordinaire. Les dimensions exactes et la profondeur de la cloison sont reconstruites.",
       "parentTierId": null
     },
     {
@@ -5197,7 +5197,7 @@
       "nameFr": "Chambre 3101 (pi\u00e8ge Heil-Ly)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 398, pp. 150-153 \u2014 room 3101 and its bathroom-threshold teleport trap",
+      "source": "Chs. 393\u2013394 \u2014 room 3101 and the transfer trap on its entrance-door boundary",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -5206,7 +5206,7 @@
         [-91, -31.5],
         [-112, -31.5]
       ],
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 la chambre 3101 et son seuil de salle de bains pi\u00e9g\u00e9 par t\u00e9l\u00e9portation"
+      "sourceFr": "Chap. 393\u2013394 \u2014 la chambre 3101 et le pi\u00e8ge de transfert plac\u00e9 sur la limite de sa porte d'entr\u00e9e"
     },
     {
       "id": "tier-3-residential-standard",
@@ -8049,7 +8049,7 @@
       "nameFr": "S\u00e9jour",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 398, pp. 150-153 \u2014 room 3101 is an ordinary cabin with a broad clear floor, tall storage and a bathroom whose doorway is used as the Heil-Ly teleport trap; the exact partition depth is reconstructed.",
+      "source": "Chs. 393\u2013394 \u2014 room 3101 is shown with a broad clear floor, stacked bunks and open wall storage; its ordinary-looking front entrance is the Heil-Ly transfer boundary. The exact partition depth is reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -8058,17 +8058,17 @@
         [2, 4.5],
         [-7, 4.5]
       ],
-      "sourceFr": "Chap. 393, p. 64-67 \u2014 la 3101 est montr\u00e9e depuis ses deux extr\u00e9mit\u00e9s : deux couchettes superpos\u00e9es occupent une moiti\u00e9 du mur du fond, une penderie ouverte avec v\u00eatements suspendus, tiroirs et \u00e9tag\u00e8res occupe l'autre, et la porte de la salle de bains se trouve sur le mur lat\u00e9ral ; la profondeur exacte de la cloison est reconstruite."
+      "sourceFr": "Chap. 393\u2013394 \u2014 la 3101 est montr\u00e9e avec un large sol d\u00e9gag\u00e9, des couchettes superpos\u00e9es et un rangement mural ouvert ; son entr\u00e9e principale d'apparence ordinaire constitue la limite de transfert Heil-Ly. La profondeur exacte de la cloison est reconstruite."
     },
     {
       "id": "tier-3-residential-room-3101-bathroom",
       "tierId": "interior-room-3101",
       "locationId": "tier-3-residential-room-3101",
-      "name": "Anomalous Bathroom",
-      "nameFr": "Salle de bains anormale",
+      "name": "Bathroom",
+      "nameFr": "Salle de bains",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 398, pp. 150-153 \u2014 the bathroom threshold is the Heil-Ly trap: crossing it transfers the victim into the hideout instead of simply entering the washroom; the fixtures and partition are reconstructed from the cabin plan.",
+      "source": "Ch. 393 \u2014 the side doorway establishes room 3101's bathroom-side volume. Chs. 395 and 398 show the Troupe using the neighbouring bathroom wall to bypass the trapped front entrance; the fixtures and exact partition are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -8077,7 +8077,7 @@
         [7, 2.5],
         [2, 2.5]
       ],
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 le seuil de la salle de bains constitue le pi\u00e8ge Heil-Ly : le franchir transf\u00e8re la victime dans la planque au lieu de mener simplement \u00e0 la pi\u00e8ce d'eau ; les appareils et la cloison sont reconstruits d'apr\u00e8s le plan de la cabine."
+      "sourceFr": "Chap. 393 \u2014 la porte lat\u00e9rale \u00e9tablit le volume de salle de bains de la 3101. Les chap. 395 et 398 montrent la Brigade utilisant le mur de la salle de bains voisine pour contourner l'entr\u00e9e principale pi\u00e9g\u00e9e ; les appareils et la cloison exacte sont reconstruits."
     },
     {
       "id": "tier-3-central-police-station-atrium",
@@ -9745,8 +9745,8 @@
       "at": [-101.5, -36.75],
       "atTo": [-6, 3.5],
       "provenance": "panel",
-      "source": "Ch. 398, pp. 150-153 \u2014 the ordinary entrance opens into room 3101; the teleport trap is the separate bathroom threshold inside.",
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 l'entr\u00e9e ordinaire ouvre sur la 3101 ; le pi\u00e8ge de t\u00e9l\u00e9portation est le seuil distinct de la salle de bains, \u00e0 l'int\u00e9rieur."
+      "source": "Chs. 393\u2013394 \u2014 crossing room 3101's ordinary-looking entrance triggers the transfer; the bathroom route is later used to bypass it.",
+      "sourceFr": "Chap. 393\u2013394 \u2014 franchir l'entr\u00e9e d'apparence ordinaire de la 3101 d\u00e9clenche le transfert ; la voie des salles de bains sert ensuite \u00e0 la contourner."
     },
     {
       "from": "tier-3-central-police-station",
@@ -20398,9 +20398,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "plan",
-      "source": "Ch. 398, pp. 150-153 \u2014 the washroom lies beyond the trapped threshold; this fixture's exact placement is reconstructed from the cabin plan, not visible through the active portal.",
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 la pi\u00e8ce d'eau se trouve au-del\u00e0 du seuil pi\u00e9g\u00e9 ; la position exacte de cet appareil est reconstruite d'apr\u00e8s le plan de cabine, et non visible \u00e0 travers le portail actif."
+      "provenance": "inferred",
+      "source": "Fixture inferred from the cabin's washroom function; no source establishes its exact type or placement.",
+      "sourceFr": "Appareil d\u00e9duit de la fonction sanitaire de la cabine ; aucune source n'en \u00e9tablit le type ni la position exacte."
     },
     {
       "id": "tier-3-residential-room-3101-washstand",
@@ -20414,9 +20414,9 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "plan",
-      "source": "Ch. 398, pp. 150-153 \u2014 the washroom lies beyond the trapped threshold; this fixture's exact placement is reconstructed from the cabin plan, not visible through the active portal.",
-      "sourceFr": "Chap. 398, p. 150-153 \u2014 la pi\u00e8ce d'eau se trouve au-del\u00e0 du seuil pi\u00e9g\u00e9 ; la position exacte de cet appareil est reconstruite d'apr\u00e8s le plan de cabine, et non visible \u00e0 travers le portail actif."
+      "provenance": "inferred",
+      "source": "Fixture inferred from the cabin's washroom function; no source establishes its exact type or placement.",
+      "sourceFr": "Appareil d\u00e9duit de la fonction sanitaire de la cabine ; aucune source n'en \u00e9tablit le type ni la position exacte."
     },
     {
       "id": "tier-3-central-police-station-fountain",

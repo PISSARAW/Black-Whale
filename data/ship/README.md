@@ -650,7 +650,7 @@ coque du chap. 406, dont les ressorts font trois fois la hauteur d'un pont. Le
 pont 4 en ajoute deux du même ordre : la salle de conférence de l'Armée royale,
 à qui le pont réserve 52 × 52 m quand son plan dessine une salle de 20 × 15
 autour d'une seule table, et le bureau Xi-Yu et son entrée gardée. Le pont 3 en
-ajoute quatre : la chambre 3101 et sa salle de bains anormale, le poste de
+ajoute quatre : la chambre 3101 et sa salle de bains reconstruite, le poste de
 police et sa fontaine, le tribunal, et le bureau Heil-Ly. Le pont 2 en ajoute
 un : la planque des Heil-Ly, dont le plan donne cinq pièces derrière une porte
 que le chap. 356 dit dissimulée sans dire où. S'y ajoute un canot de

@@ -40,9 +40,9 @@
     </style>
   </defs>
 
-  <text x="400" y="30" class="label" font-size="24">Room 3101 · Heil-Ly Bathroom Trap</text>
+  <text x="400" y="30" class="label" font-size="24">Room 3101 · Heil-Ly Entrance Trap</text>
   <text x="400" y="52" class="label text-[11px] text-gray-400"
-    >Ch. 398 pp. 150–153 · ordinary cabin outside the trapped threshold</text
+    >Chs. 393–398 · ordinary cabin whose front-door boundary transfers entrants</text
   >
 
   <!-- Outer walls -->
@@ -53,32 +53,21 @@
 
   <text x="365" y="185" class="label">Living Area / Bedroom</text>
   <text x="365" y="207" class="label text-xs text-gray-400"
-    >Broad clear floor before the bathroom door</text
+    >Broad clear floor between the bunks, storage and bathroom</text
   >
 
   <!-- Furniture visible in the ordinary cabin around the trap. -->
   <rect x="225" y="125" width="90" height="145" rx="8" fill="#2d3748" stroke="#718096" />
-  <text x="270" y="290" class="label text-[11px]">Bed</text>
+  <text x="270" y="290" class="label text-[11px]">Stacked bunks</text>
   <rect x="500" y="125" width="75" height="115" fill="#2d3748" stroke="#718096" />
   <line x1="537" y1="125" x2="537" y2="240" stroke="#718096" />
-  <text x="537" y="260" class="label text-[11px]">Tall storage</text>
+  <text x="537" y="260" class="label text-[11px]">Open wall storage</text>
 
-  <!-- Ordinary entrance; the bathroom threshold, not this door, is the trap. -->
-  <rect x="380" y="490" width="40" height="20" fill="#2d3748" stroke="#ffd700" stroke-width="3" />
-  <text x="400" y="535" class="label text-xs text-[#ffd700]">Ordinary entrance</text>
-
-  <!-- Bathroom volume and its trapped threshold. -->
-  <rect x="430" y="340" width="170" height="160" fill="#2d3748" stroke="#718096" stroke-width="2" />
-  <text x="515" y="410" class="label text-xs">Bathroom</text>
-  <text x="515" y="430" class="label text-[10px] text-gray-400"
-    >Fixture positions reconstructed</text
-  >
-  <rect x="535" y="455" width="48" height="25" rx="8" fill="#1a202c" stroke="#718096" />
-  <circle cx="475" cy="470" r="16" fill="#1a202c" stroke="#718096" />
+  <!-- The trap is invisible in-world: red only communicates the interactive evidence overlay. -->
   <rect
     role="button"
     tabindex="0"
-    aria-label="Inspect map area"
+    aria-label="Inspect Room 3101 entrance transfer trap"
     onkeydown={(event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
@@ -86,26 +75,37 @@
       }
     }}
     class="trap"
-    x="420"
-    y="390"
-    width="20"
-    height="55"
+    x="380"
+    y="490"
+    width="40"
+    height="20"
     fill="#2d3748"
     onclick={handleTrapClick}
   />
   <text
     role="button"
     tabindex="0"
-    aria-label="Open the main door"
+    aria-label="Open the Heil-Ly hideout reached through Room 3101"
     onkeydown={(event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
         event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
       }
     }}
-    x="430"
-    y="325"
+    x="400"
+    y="535"
     class="label text-xs text-[#ff4444] cursor-pointer"
-    onclick={handleTrapClick}>Bathroom threshold = teleport trap</text
+    onclick={handleTrapClick}>Entrance boundary = teleport trap</text
   >
+
+  <!-- Ordinary bathroom-side opening; the neighbouring bathroom wall provides the bypass. -->
+  <rect x="430" y="340" width="170" height="160" fill="#2d3748" stroke="#718096" stroke-width="2" />
+  <text x="515" y="410" class="label text-xs">Bathroom</text>
+  <text x="515" y="430" class="label text-[10px] text-gray-400"
+    >Fixture positions reconstructed</text
+  >
+  <rect x="535" y="455" width="48" height="25" rx="8" fill="#1a202c" stroke="#718096" />
+  <circle cx="475" cy="470" r="16" fill="#1a202c" stroke="#718096" />
+  <rect x="420" y="390" width="20" height="55" fill="#2d3748" stroke="#ffd700" stroke-width="3" />
+  <text x="430" y="325" class="label text-xs text-[#ffd700]">Bathroom-side bypass</text>
 </svg>

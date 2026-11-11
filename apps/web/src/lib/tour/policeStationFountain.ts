@@ -1,7 +1,5 @@
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
-  POLICE_BRASS,
-  POLICE_GOLD,
   POLICE_GRANITE,
   POLICE_GRANITE_DARK,
   POLICE_STONE,
@@ -16,9 +14,9 @@ export interface FountainOptions {
 }
 
 /**
- * Ornate tiered monumental fountain of the Central Police Station atrium (ch. 392).
- * Modeled with octagonal primary basin, concentric intermediate tier,
- * fluted pedestal column, upper spill bowl and ornamental bronze finial.
+ * Low circular fountain in the middle of the Central Police Station atrium.
+ * The panel shows a broad stone lip and a compact, irregular sculptural spray;
+ * it is deliberately much lower than the surrounding people and columns.
  */
 export function dressPoliceTieredFountain(options: FountainOptions): void {
   const {
@@ -27,64 +25,36 @@ export function dressPoliceTieredFountain(options: FountainOptions): void {
     floor,
   } = options
 
-  // Level 1: Octagonal primary basin curb
+  // Broad, low outer bowl.
   into.cylinder(
-    { radius: 2.2, height: 0.65, sides: 8 },
-    { at: [cx, floor + 0.325, cz], colour: POLICE_GRANITE_DARK },
+    { radius: 1.55, height: 0.28, sides: 16 },
+    { at: [cx, floor + 0.14, cz], colour: POLICE_GRANITE_DARK },
   )
   into.cylinder(
-    { radius: 2.05, height: 0.15, sides: 8 },
-    { at: [cx, floor + 0.65 + 0.075, cz], colour: POLICE_STONE },
+    { radius: 1.48, height: 0.16, sides: 16 },
+    { at: [cx, floor + 0.34, cz], colour: POLICE_STONE },
   )
-
-  // Primary water pool
   into.cylinder(
-    { radius: 1.85, height: 0.1, sides: 8 },
-    { at: [cx, floor + 0.52, cz], colour: POLICE_WATER },
+    { radius: 1.25, height: 0.06, sides: 16 },
+    { at: [cx, floor + 0.39, cz], colour: POLICE_WATER },
   )
 
-  // Level 2: Intermediate tiered basin with overflow spillways
+  // The small stepped rock/sculpture at the centre replaces the invented tall
+  // chalice and finial. Slightly offset blocks keep its silhouette organic.
   into.cylinder(
-    { radius: 1.25, height: 0.45, sides: 8 },
-    { at: [cx, floor + 0.65 + 0.225, cz], colour: POLICE_GRANITE },
+    { radius: 0.7, height: 0.24, sides: 10 },
+    { at: [cx, floor + 0.51, cz], colour: POLICE_GRANITE },
   )
-  into.cylinder(
-    { radius: 1.35, height: 0.12, sides: 8 },
-    { at: [cx, floor + 1.1 + 0.06, cz], colour: POLICE_STONE },
-  )
-  into.cylinder(
-    { radius: 1.1, height: 0.08, sides: 8 },
-    { at: [cx, floor + 1.14, cz], colour: POLICE_WATER },
-  )
-
-  // Level 3: Fluted central pedestal
-  into.cylinder(
-    { radius: 0.42, height: 0.8 },
-    { at: [cx, floor + 1.2 + 0.4, cz], colour: POLICE_STONE },
-  )
-  into.cylinder(
-    { radius: 0.5, height: 0.12 },
-    { at: [cx, floor + 1.2 + 0.06, cz], colour: POLICE_GRANITE_DARK },
-  )
-
-  // Level 4: Upper chalice bowl
-  into.cylinder(
-    { radius: 0.85, height: 0.25, bottom: 0.42 },
-    { at: [cx, floor + 2.0 + 0.125, cz], colour: POLICE_STONE },
-  )
-  into.cylinder(
-    { radius: 0.72, height: 0.06 },
-    { at: [cx, floor + 2.2 + 0.03, cz], colour: POLICE_WATER },
-  )
-
-  // Top finial & water spray jet
-  into.cylinder(
-    { radius: 0.1, height: 0.45 },
-    { at: [cx, floor + 2.25 + 0.225, cz], colour: POLICE_BRASS },
-  )
-  into.sphere([0.18, 0.25, 0.18], { at: [cx, floor + 2.75, cz], colour: POLICE_GOLD })
-  into.cylinder(
-    { radius: 0.08, height: 0.6 },
-    { at: [cx, floor + 2.9 + 0.3, cz], colour: POLICE_WATER },
-  )
+  into.sphere([0.48, 0.42, 0.42], {
+    at: [cx - 0.18, floor + 0.78, cz + 0.08],
+    colour: POLICE_STONE,
+  })
+  into.sphere([0.34, 0.5, 0.32], {
+    at: [cx + 0.2, floor + 1.02, cz - 0.05],
+    colour: POLICE_GRANITE,
+  })
+  into.sphere([0.18, 0.3, 0.18], {
+    at: [cx + 0.05, floor + 1.35, cz],
+    colour: POLICE_WATER,
+  })
 }

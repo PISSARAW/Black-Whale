@@ -47,9 +47,9 @@ describe('the central police station reconstructed from chapters 349, 378 and 39
     const marquee = fixture('-marquee')
 
     expect(fountain.kind).toBe('basin')
-    expect(fountain.sides).toBe(8)
+    expect(fountain.sides).toBe(16)
     expect(frontDesk.kind).toBe('counter')
-    expect(safetyDesk.kind).toBe('counter')
+    expect(safetyDesk.kind).toBe('table')
     expect(marquee.kind).toBe('platform')
     expect(marquee.base).toBeGreaterThanOrEqual(3.5)
 
@@ -120,10 +120,10 @@ describe('the central police station reconstructed from chapters 349, 378 and 39
     disposeBanquetDetails(entranceDetails!)
   })
 
-  it('includes high-fidelity floor paving, screens, roof coffers and security apparatus', () => {
+  it('includes the panel-specific paving, solid galleries, skylight and safety office', () => {
     const atriumRoot = build()
     expect(atriumRoot.children).toHaveLength(2)
-    expect(triangles(atriumRoot)).toBeGreaterThan(10_000)
+    expect(triangles(atriumRoot)).toBeGreaterThan(6_000)
     disposeBanquetDetails(atriumRoot)
 
     const safetyRoot = buildPoliceStationDetails({
@@ -132,7 +132,7 @@ describe('the central police station reconstructed from chapters 349, 378 and 39
       spaceId: POLICE_SAFETY,
       reveal: false,
     })!
-    expect(safetyRoot.children).toHaveLength(2)
+    expect(safetyRoot.children).toHaveLength(1)
     expect(triangles(safetyRoot)).toBeGreaterThan(2_000)
     disposeBanquetDetails(safetyRoot)
 

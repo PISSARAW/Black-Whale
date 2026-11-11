@@ -6,7 +6,7 @@ const atriumStaging: MangaCastStaging[] = [
 ]
 
 const safetyStaging: MangaCastStaging[] = [
-  { characterId: 'botobai-gigante', at: [-5.5, -13.8], heading: 0, pose: 'idle' },
+  { characterId: 'mizaistom-nana', at: [-5.5, -12.15], heading: Math.PI, pose: 'idle' },
 ]
 
 export const MANGA_POLICE_VIEWS: MangaView[] = [
@@ -17,9 +17,9 @@ export const MANGA_POLICE_VIEWS: MangaView[] = [
     chapter: 378,
     eventSequence: 1,
     pages: '124–125',
-    at: [0, 3.2],
-    target: [0, -3.5],
-    pitch: 0.12,
+    at: [0, -9.0],
+    target: [0, 4.4],
+    pitch: 0.1,
     eyeHeight: 1.7,
     staging: atriumStaging,
     label: 'Monumental 4-tier atrium of the Central Police Station and central stepped fountain',
@@ -60,11 +60,11 @@ export const MANGA_POLICE_VIEWS: MangaView[] = [
     chapter: 350,
     eventSequence: 1,
     pages: '18–19',
-    at: [-5.5, -11.5],
-    target: [-5.5, -14.6],
-    pitch: -0.04,
+    at: [-5.5, -10.55],
+    target: [-5.5, -13.65],
+    pitch: -0.12,
     staging: safetyStaging,
-    label: 'Community safety desk and public citizen assistance counters',
-    labelFr: "Guichet de sécurité publique et banque d'accueil citoyenne",
+    label: 'Compact interview office of the Community Safety Section',
+    labelFr: "Bureau d'entretien compact de la section de sécurité publique",
   }),
 ]

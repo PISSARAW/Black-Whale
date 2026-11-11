@@ -7,6 +7,7 @@ import {
   POLICE_GRANITE,
   POLICE_GRANITE_DARK,
   POLICE_LEATHER,
+  POLICE_LIGHT_DIFFUSER,
   POLICE_METAL,
   POLICE_NAVY,
   POLICE_OAK,
@@ -136,64 +137,115 @@ export function dressPoliceAtriumBenchesAndStanchions(
   })
 }
 
-/** Community safety desk and citizen consultation counters (ch. 349, 378) */
+/** Plain interview table in the Community Safety Section panel. */
 export function dressPoliceSafetyDesk(surface: PoliceStationSurface): void {
   const { width: w, depth: d } = surface
 
-  // Continuous consultation counter
-  surface.box([w, 0.1, d], [0, 0.05, 0], POLICE_METAL)
-  surface.box([w * 0.98, 0.95, d * 0.92], [0, 0.58, 0], POLICE_OAK)
-  surface.box([w + 0.08, 0.08, d + 0.08], [0, 1.11, 0], POLICE_GRANITE)
-
-  // Acrylic desk dividers separating citizen consultation bays
-  for (const bx of [-w * 0.28, w * 0.28]) {
-    surface.box([0.03, 0.65, d * 0.95], [bx, 1.48, 0], POLICE_GLASS)
-  }
-
-  // Consultation bay equipment: computer terminals, document trays and phones
-  for (const bx of [-w * 0.36, 0, w * 0.36]) {
-    surface.box([0.42, 0.32, 0.05], [bx, 1.36, d * 0.18], POLICE_SCREEN_FRAME)
-    surface.box([0.38, 0.28, 0.02], [bx, 1.36, d * 0.16], POLICE_SCREEN_GLOW)
-    surface.box([0.3, 0.15, 0.22], [bx + 0.28, 1.23, d * 0.15], POLICE_METAL)
-    surface.box([0.22, 0.08, 0.18], [bx - 0.28, 1.2, d * 0.15], POLICE_METAL)
-  }
-
-  // Citizen visitor chairs in front of the counter
-  for (const cx of [-w * 0.36, 0, w * 0.36]) {
-    surface.box([0.48, 0.08, 0.46], [cx, 0.46, -d * 0.8], POLICE_LEATHER)
-    surface.box([0.48, 0.42, 0.06], [cx, 0.72, -d * 0.8 - 0.2], POLICE_LEATHER)
-    surface.cylinder({ radius: 0.02, height: 0.44 }, [cx - 0.18, 0.22, -d * 0.8], POLICE_METAL)
-    surface.cylinder({ radius: 0.02, height: 0.44 }, [cx + 0.18, 0.22, -d * 0.8], POLICE_METAL)
-  }
-}
-
-/** Filing archives, bulletin notice board and citizen amenities in safety section */
-export function dressPoliceSafetyArchives(into: BanquetDetailBuilder, floor: number): void {
-  // Bank of metal filing cabinets along the back wall
-  for (let fx = -8.2; fx <= -2.8; fx += 1.35) {
-    into.box([1.1, 1.85, 0.65], { at: [fx, floor + 0.925, -15.6], colour: POLICE_METAL })
-    for (let drawer = 0; drawer < 4; drawer++) {
-      const dy = floor + 0.25 + drawer * 0.42
-      into.box([0.98, 0.36, 0.04], { at: [fx, dy, -15.26], colour: POLICE_SCREEN_FRAME })
-      into.box([0.16, 0.03, 0.04], { at: [fx, dy, -15.22], colour: POLICE_BRASS })
-      into.box([0.08, 0.05, 0.02], { at: [fx, dy + 0.1, -15.23], colour: POLICE_PAPER })
+  surface.box([w, 0.12, d], [0, 0.78, 0], POLICE_OAK)
+  for (const x of [-w * 0.43, w * 0.43]) {
+    for (const z of [-d * 0.36, d * 0.36]) {
+      surface.box([0.09, 0.76, 0.09], [x, 0.38, z], POLICE_METAL)
     }
   }
 
-  // Official notice board with pinned bulletins and wanted posters
-  into.box([3.2, 1.4, 0.06], { at: [-5.5, floor + 2.7, -15.85], colour: POLICE_OAK })
-  into.box([3.08, 1.28, 0.02], { at: [-5.5, floor + 2.7, -15.81], colour: 0xb5996e })
-  for (let px = -6.6; px <= -4.4; px += 0.55) {
-    into.box([0.38, 0.48, 0.01], { at: [px, floor + 2.7, -15.79], colour: POLICE_PAPER })
-    into.sphere([0.015, 0.015, 0.015], { at: [px, floor + 2.92, -15.78], colour: POLICE_ALERT_RED })
+  surface.box([0.5, 0.035, 0.34], [-0.55, 0.86, 0.05], POLICE_PAPER)
+  surface.box([0.34, 0.055, 0.24], [0.85, 0.87, 0.12], POLICE_GRANITE)
+  surface.cylinder({ radius: 0.025, height: 0.18 }, [0.56, 0.96, 0.08], POLICE_BRASS)
+}
+
+function dressSafetyChair(
+  into: BanquetDetailBuilder,
+  floor: number,
+  at: [number, number],
+  heading = 0,
+): void {
+  const [x, z] = at
+  const backZ = z + Math.cos(heading) * 0.3
+  const backX = x + Math.sin(heading) * 0.3
+
+  into.box([0.72, 0.1, 0.68], {
+    at: [x, floor + 0.56, z],
+    rotation: [0, heading, 0],
+    colour: POLICE_LEATHER,
+  })
+  into.box([0.7, 0.72, 0.12], {
+    at: [backX, floor + 1.02, backZ],
+    rotation: [0, heading, 0],
+    colour: POLICE_LEATHER,
+  })
+  into.cylinder({ radius: 0.07, height: 0.48 }, { at: [x, floor + 0.28, z], colour: POLICE_METAL })
+  for (let spoke = 0; spoke < 5; spoke++) {
+    const angle = heading + (spoke * Math.PI * 2) / 5
+    into.box([0.5, 0.045, 0.045], {
+      at: [x + Math.sin(angle) * 0.2, floor + 0.055, z + Math.cos(angle) * 0.2],
+      rotation: [0, angle, 0],
+      colour: POLICE_METAL,
+    })
+    into.sphere([0.055, 0.055, 0.055], {
+      at: [x + Math.sin(angle) * 0.43, floor + 0.04, z + Math.cos(angle) * 0.43],
+      colour: POLICE_METAL,
+    })
+  }
+}
+
+/** Compact office fittings copied from the Community Safety Section panel. */
+export function dressPoliceSafetyOffice(
+  into: BanquetDetailBuilder,
+  floor: number,
+  ceiling: number,
+): void {
+  for (const x of [-8.2, -5.5, -2.8]) {
+    into.box([1.4, 0.05, 0.65], {
+      at: [x, floor + ceiling - 0.04, -13.0],
+      colour: POLICE_LIGHT_DIFFUSER,
+    })
+  }
+  for (const x of [-7.0, -4.0]) {
+    into.cylinder(
+      { radius: 0.1, height: 0.04, sides: 16 },
+      { at: [x, floor + ceiling - 0.03, -11.5], colour: POLICE_LIGHT_DIFFUSER },
+    )
   }
 
-  // Water cooler dispenser for citizen consultation area
-  into.box([0.38, 0.85, 0.38], { at: [-0.6, floor + 0.425, -10.8], colour: POLICE_PAPER })
+  for (const x of [-8.6, -7.3, -3.7, -2.4]) {
+    into.box([1.1, 1.0, 0.55], { at: [x, floor + 0.5, -15.62], colour: POLICE_GRANITE })
+    into.box([0.08, 0.03, 0.04], { at: [x, floor + 0.55, -15.31], colour: POLICE_METAL })
+  }
+
   into.cylinder(
-    { radius: 0.15, height: 0.38 },
-    { at: [-0.6, floor + 1.04, -10.8], colour: POLICE_GLASS },
+    { radius: 0.22, height: 0.06, sides: 24 },
+    {
+      at: [-4.0, floor + 2.15, -15.9],
+      rotation: [Math.PI / 2, 0, 0],
+      colour: POLICE_PAPER,
+    },
   )
+  into.box([0.025, 0.15, 0.03], { at: [-4.0, floor + 2.2, -15.86], colour: POLICE_METAL })
+  into.box([0.12, 0.025, 0.03], { at: [-3.95, floor + 2.15, -15.86], colour: POLICE_METAL })
+
+  dressSafetyChair(into, floor, [-5.5, -12.15], Math.PI)
+  dressSafetyChair(into, floor, [-5.5, -15.0], 0)
+  dressSafetyChair(into, floor, [-2.3, -13.35], -0.35)
+
+  into.cylinder(
+    { radius: 0.28, bottom: 0.38, height: 0.52, sides: 12 },
+    { at: [-9.25, floor + 0.26, -10.65], colour: POLICE_OAK },
+  )
+  into.cylinder(
+    { radius: 0.045, height: 1.45 },
+    { at: [-9.25, floor + 1.05, -10.65], colour: POLICE_OAK },
+  )
+  for (const [dx, dy, dz] of [
+    [-0.2, 1.35, 0],
+    [0.2, 1.55, 0.05],
+    [-0.1, 1.75, -0.05],
+    [0.18, 1.9, 0],
+  ] as const) {
+    into.sphere([0.28, 0.42, 0.18], {
+      at: [-9.25 + dx, floor + dy, -10.65 + dz],
+      colour: POLICE_ALERT_GREEN,
+    })
+  }
 }
 
 /** Complete security checkpoint in the entrance vestibule */

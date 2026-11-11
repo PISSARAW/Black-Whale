@@ -17,8 +17,8 @@ interface FloorOptions {
 function dressFountainPavingRing(into: BanquetDetailBuilder, floor: number): void {
   const cx = 0
   const cz = -2.5
-  const outerR = 3.1
-  const innerR = 2.45
+  const outerR = 2.05
+  const innerR = 1.62
   const ringY = floor + 0.008
 
   // 8 segments forming an octagonal border band
@@ -53,28 +53,20 @@ function dressFountainPavingRing(into: BanquetDetailBuilder, floor: number): voi
   )
 }
 
-/** Central processional avenue and colonnade stylobate paving bands */
+/** Long black-and-pale inlay lines that lead the eye toward the entrance facade. */
 function dressAtriumPavingAvenues(into: BanquetDetailBuilder, floor: number): void {
   const avenueY = floor + 0.006
 
-  // Central promenade running north-south through the atrium
-  for (let z = -9.2; z <= 4.2; z += 1.8) {
-    if (z > -4.5 && z < -0.5) continue // Clear space around fountain
-    const isDark = Math.round(z * 10) % 4 === 0
-    into.box([4.4, 0.006, 1.6], {
-      at: [0, avenueY, z],
-      colour: isDark ? POLICE_TILES_DARK : POLICE_TILES_LIGHT,
-    })
+  into.box([4.2, 0.006, 14.0], { at: [0, avenueY, -2.5], colour: POLICE_TILES_LIGHT })
+  into.box([0.22, 0.01, 5.0], { at: [-2.0, avenueY, 1.9], colour: POLICE_TILES_DARK })
+  into.box([0.22, 0.01, 5.0], { at: [2.0, avenueY, 1.9], colour: POLICE_TILES_DARK })
+  into.box([0.22, 0.01, 5.0], { at: [-2.0, avenueY, -6.9], colour: POLICE_TILES_DARK })
+  into.box([0.22, 0.01, 5.0], { at: [2.0, avenueY, -6.9], colour: POLICE_TILES_DARK })
+
+  // Broad dark edge strips frame the two side promenades in the source panel.
+  for (const x of [-8.2, -6.2, 6.2, 8.2]) {
+    into.box([0.18, 0.01, 14.0], { at: [x, avenueY, -2.5], colour: POLICE_TILES_DARK })
   }
-
-  // Flanking colonnade walkway bands connecting pillar bases
-  into.box([2.4, 0.008, 13.5], { at: [-5.4, avenueY, -3.1], colour: POLICE_TILES_DARK })
-  into.box([2.4, 0.008, 11.5], { at: [5.4, avenueY, -1.75], colour: POLICE_TILES_DARK })
-
-  // Brass demarcation line in front of front desk
-  into.box([5.2, 0.01, 0.06], { at: [7.5, floor + 0.009, -5.6], colour: POLICE_BRASS })
-  into.box([0.06, 0.01, 1.2], { at: [4.9, floor + 0.009, -6.2], colour: POLICE_BRASS })
-  into.box([0.06, 0.01, 1.2], { at: [10.1, floor + 0.009, -6.2], colour: POLICE_BRASS })
 }
 
 /** Perimeter border frame around the 22x15m atrium floor */
@@ -113,7 +105,7 @@ export function dressPoliceEntranceFloor(options: FloorOptions): void {
   into.box([9.8, 0.012, 0.12], { at: [0, floor + 0.008, 5.0], colour: POLICE_BRASS })
 }
 
-/** Safety section floor with granite grid and consultation demarcation */
+/** Plain office floor with only the subtle perimeter strips visible in the panel. */
 export function dressPoliceSafetyFloor(options: FloorOptions): void {
   const { into, floor } = options
   const tileY = floor + 0.006
@@ -122,9 +114,6 @@ export function dressPoliceSafetyFloor(options: FloorOptions): void {
   into.box([10.6, 0.007, 0.4], { at: [-5.5, tileY, -15.8], colour: POLICE_GRANITE })
   into.box([10.6, 0.007, 0.4], { at: [-5.5, tileY, -10.2], colour: POLICE_GRANITE })
 
-  // Inlaid waiting demarcation line in front of safety counter
-  into.box([6.4, 0.01, 0.06], { at: [-5.5, floor + 0.009, -13.6], colour: POLICE_BRASS })
-
-  // Brass threshold at entry threshold z = -10.0
-  into.box([7.8, 0.012, 0.1], { at: [-5.5, floor + 0.008, -10.0], colour: POLICE_BRASS })
+  into.box([0.4, 0.007, 5.6], { at: [-10.8, tileY, -13.0], colour: POLICE_GRANITE })
+  into.box([0.4, 0.007, 5.6], { at: [-0.2, tileY, -13.0], colour: POLICE_GRANITE })
 }

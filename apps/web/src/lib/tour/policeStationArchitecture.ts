@@ -34,7 +34,7 @@ interface GalleryOptions {
 }
 
 const PORT_COLUMN_Y = [-7.84, -4.74, -1.63, 1.47] as const
-const STARBOARD_COLUMN_Y = [-5.5, -3.0, -0.5, 2.0] as const
+const STARBOARD_COLUMN_Y = PORT_COLUMN_Y
 const GALLERY_LEVELS = [3.4, 6.8, 10.2, 13.6] as const
 
 /** Colonnade of 8 monumental 16m pillars with classical sconces supporting architrave */
@@ -82,37 +82,69 @@ function dressPoliceColonnade(options: ColonnadeOptions): void {
   into.box([0.9, 0.4, 10.5], { at: [5.4, beamY, -1.75], colour: POLICE_STONE })
 }
 
-/** Open gallery walkways across 4 levels with railings and office portals */
+/** Four stacked galleries with the broad, graphic parapets visible in the panel. */
 function dressPoliceGalleries(options: GalleryOptions): void {
   const { into, floor } = options
 
   for (const baseH of GALLERY_LEVELS) {
     const slabY = floor + baseH
 
-    // Port and starboard gallery slabs
-    into.box([3.8, 0.3, 14.6], { at: [-9.0, slabY - 0.15, -2.4], colour: POLICE_GRANITE })
-    into.box([3.8, 0.3, 14.6], { at: [9.0, slabY - 0.15, -2.4], colour: POLICE_GRANITE })
+    for (const side of [-1, 1]) {
+      const wallX = side * 9
+      const edgeX = side * 7.1
+
+      into.box([3.8, 0.3, 14.6], {
+        at: [wallX, slabY - 0.15, -2.4],
+        colour: POLICE_GRANITE,
+      })
+      dressGalleryParapet(into, edgeX, slabY)
+
+      // Pale recessed office fronts repeat behind every balcony, separated by
+      // the same heavy vertical piers that dominate the manga elevation.
+      for (const bayZ of [-7.84, -4.74, -1.63, 1.47]) {
+        into.box([0.08, 2.45, 2.35], {
+          at: [side * 10.86, slabY + 1.65, bayZ],
+          colour: POLICE_GLASS,
+        })
+        into.box([0.16, 2.75, 0.34], {
+          at: [side * 10.72, slabY + 1.55, bayZ - 1.34],
+          colour: POLICE_GRANITE_DARK,
+        })
+      }
+    }
 
     // Cantilever corbels underneath each gallery
     for (let y = -9.0; y <= 4.0; y += 3.25) {
       into.box([0.4, 0.6, 0.5], { at: [-7.3, slabY - 0.45, y], colour: POLICE_STONE })
       into.box([0.4, 0.6, 0.5], { at: [7.3, slabY - 0.45, y], colour: POLICE_STONE })
     }
-
-    // Security balustrades along open edges (x = -7.1 and x = 7.1)
-    dressGalleryBalustrade(into, -7.1, slabY)
-    dressGalleryBalustrade(into, 7.1, slabY)
   }
 }
 
-/** Continuous balustrade with brass handrail and vertical security balusters */
-function dressGalleryBalustrade(into: BanquetDetailBuilder, edgeX: number, slabY: number): void {
-  into.box([0.08, 0.08, 14.6], { at: [edgeX, slabY + 1.05, -2.4], colour: POLICE_BRASS })
-  into.box([0.1, 0.08, 14.6], { at: [edgeX, slabY + 0.04, -2.4], colour: POLICE_METAL })
-  into.box([0.04, 0.04, 14.6], { at: [edgeX, slabY + 0.55, -2.4], colour: POLICE_METAL })
+/** Solid balcony fronts marked by the panel's dark horizontal bars and crosses. */
+function dressGalleryParapet(into: BanquetDetailBuilder, edgeX: number, slabY: number): void {
+  into.box([0.22, 0.95, 14.6], {
+    at: [edgeX, slabY + 0.48, -2.4],
+    colour: POLICE_STONE,
+  })
+  into.box([0.28, 0.12, 14.6], {
+    at: [edgeX, slabY + 0.58, -2.4],
+    colour: POLICE_GRANITE_DARK,
+  })
+  into.box([0.3, 0.12, 14.6], {
+    at: [edgeX, slabY + 0.98, -2.4],
+    colour: POLICE_METAL,
+  })
 
-  for (let y = -9.5; y <= 4.7; y += 0.48) {
-    into.box([0.03, 0.95, 0.03], { at: [edgeX, slabY + 0.55, y], colour: POLICE_METAL })
+  for (const bayZ of [-7.84, -4.74, -1.63, 1.47]) {
+    into.box([0.32, 0.72, 0.18], {
+      at: [edgeX, slabY + 0.5, bayZ],
+      colour: POLICE_METAL,
+    })
+    into.box([0.32, 0.16, 1.5], {
+      at: [edgeX, slabY + 0.5, bayZ],
+      colour: POLICE_METAL,
+    })
   }
 }
 
@@ -159,8 +191,12 @@ function dressPoliceLantern(options: ColonnadeOptions): void {
     into.box([0.06, 2.3, 0.14], { at: [x, lanternY + 1.35, 1.45], colour: POLICE_METAL })
   }
 
-  // Lantern ceiling cap and cross-trusses
-  into.box([12.6, 0.3, 8.4], { at: [0, lanternY + 2.6, -2.5], colour: POLICE_GRANITE_DARK })
+  // Luminous skylight cap and the two heavy cross-trusses visible through it.
+  into.box([12.6, 0.18, 8.4], {
+    at: [0, lanternY + 2.6, -2.5],
+    colour: POLICE_LIGHT_DIFFUSER,
+    glow: true,
+  })
   into.box([0.2, 0.3, 8.0], { at: [-2.0, lanternY + 2.4, -2.5], colour: POLICE_METAL })
   into.box([0.2, 0.3, 8.0], { at: [2.0, lanternY + 2.4, -2.5], colour: POLICE_METAL })
 

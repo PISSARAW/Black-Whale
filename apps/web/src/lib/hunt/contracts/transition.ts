@@ -45,5 +45,6 @@ export function carryIntoStage(previous: HuntState, fresh: HuntState): HuntState
     log: previous.log,
     nextId: previous.nextId,
     traces: previous.traces,
+    social: previous.social,
   }
 }

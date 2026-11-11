@@ -31,6 +31,7 @@ import type { SealedExit } from './environment'
 import type { HuntTerrainId } from './arena'
 import { appendTrace, type HuntTrace } from './traces'
 import { updateBelief } from './hunter/belief'
+import { initialHuntSocial, reactToTrace, type HuntSocialState, type HuntWitness } from './social'
 import {
   acceptVow,
   applyShu,
@@ -82,6 +83,7 @@ export interface HuntState {
   advancedNen: AdvancedNenState
   terrain: HuntTerrainId | null
   traces: HuntTrace[]
+  social: HuntSocialState
 }
 
 export type HuntAction =
@@ -106,6 +108,7 @@ export interface HuntSetup {
   hatsu?: HuntHatsuId
   hunterProfile?: HunterProfileId
   terrain?: HuntTerrainId
+  witnesses?: HuntWitness[]
 }
 
 export function initialHuntState(setup: HuntSetup): HuntState {
@@ -137,6 +140,7 @@ export function initialHuntState(setup: HuntSetup): HuntState {
     advancedNen: initialAdvancedNen(),
     terrain: setup.terrain ?? null,
     traces: [],
+    social: initialHuntSocial(setup.witnesses),
   }
 }
 
@@ -154,19 +158,18 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
                 where: action.player.spaceId,
               })
             : state.log,
-        traces:
-          action.player.spaceId && action.player.spaceId !== state.player.spaceId
-            ? appendTrace(state.traces, {
-                kind: 'footstep',
-                actor: 'player',
-                terrain: state.terrain,
-                spaceId: action.player.spaceId,
-                position: action.player.position ?? state.player.position,
-                createdAt: state.clock,
-                strength: state.player.atRest ? 0.4 : 1,
-                falseTrail: false,
-              })
-            : state.traces,
+        ...(action.player.spaceId && action.player.spaceId !== state.player.spaceId
+          ? traceState(state, {
+              kind: 'footstep',
+              actor: 'player',
+              terrain: state.terrain,
+              spaceId: action.player.spaceId,
+              position: action.player.position ?? state.player.position,
+              createdAt: state.clock,
+              strength: state.player.atRest ? 0.4 : 1,
+              falseTrail: false,
+            })
+          : { traces: state.traces, social: state.social }),
         hatsu:
           action.player.atRest === false && state.hatsu.probableBearing
             ? { ...state.hatsu, probableBearing: null }
@@ -233,8 +236,8 @@ function sweep(state: HuntState): HuntState {
   return {
     ...state,
     ledger: { ...state.ledger, pool },
-    traces: state.player.spaceId
-      ? appendTrace(state.traces, {
+    ...(state.player.spaceId
+      ? traceState(state, {
           kind: 'aura',
           actor: 'player',
           terrain: state.terrain,
@@ -244,7 +247,7 @@ function sweep(state: HuntState): HuntState {
           strength: 1,
           falseTrail: false,
         })
-      : state.traces,
+      : { traces: state.traces, social: state.social }),
     hunter: heardSweep(state, cast),
     // Their own sweep going out. Fifteen points leave the body whether or not
     // it finds anything, and that is worth seeing happen.
@@ -306,7 +309,7 @@ function lay(state: HuntState): HuntState {
   return {
     ...state,
     ledger,
-    traces: appendTrace(state.traces, {
+    ...traceState(state, {
       kind: 'trap',
       actor: 'player',
       terrain: state.terrain,
@@ -407,4 +410,11 @@ export function entraveCost(state: HuntState): number {
 /** The reservoir as it stands, for the gauge and for the junction. */
 export function poolOfPlayer(state: HuntState): AuraPool {
   return state.duel ? state.duel.player.pool : state.ledger.pool
+}
+
+function traceState(
+  state: Pick<HuntState, 'traces' | 'social'>,
+  trace: HuntTrace,
+): Pick<HuntState, 'traces' | 'social'> {
+  return { traces: appendTrace(state.traces, trace), social: reactToTrace(state.social, trace) }
 }

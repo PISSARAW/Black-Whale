@@ -101,6 +101,28 @@ describe('the player’s own En', () => {
     expect(swept.hunter.belief.at).toBeNull()
     expect(swept.ledger.pool.available).toBe(100 - EN_COST)
   })
+
+  it('alerts a local witness without informing remote factions', () => {
+    const witnessed = initialHuntState({
+      playerAt: { position: [0, 0], spaceId: 'salon' },
+      hunterAt: { position: [50, 0], spaceId: 'chambre' },
+      targetSpaceId: 'chambre',
+      terrain: 'tserriednich',
+      witnesses: [
+        {
+          id: 'guard',
+          factionId: 'royal-security',
+          terrain: 'tserriednich',
+          spaceId: 'salon',
+          reliability: 1,
+        },
+      ],
+    })
+    const swept = huntReducer(witnessed, { type: 'SWEEP' })
+    expect(swept.social.reports).toHaveLength(1)
+    expect(swept.social.alertByFaction['royal-security']).toBe(2)
+    expect(swept.social.alertByFaction.mafia).toBe(0)
+  })
 })
 
 describe('Ten and Zetsu', () => {

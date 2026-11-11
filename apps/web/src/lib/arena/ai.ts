@@ -119,31 +119,43 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
 
 function rememberObservedStrike(state: CombatState): CombatState {
   const event = state.lastEvent
-  if (
-    !event ||
-    event.attacker !== 'player' ||
-    event.at === state.opponentMemory.observedEventAt ||
-    (state.player.in && !state.opponent.gyo)
-  )
+  if (!event || event.attacker !== 'player' || event.at === state.opponentMemory.observedEventAt)
     return state
+  const concealed = state.player.in && !state.opponent.gyo
+  const zones = concealed
+    ? state.opponentMemory.zones
+    : {
+        ...state.opponentMemory.zones,
+        [event.zone]: state.opponentMemory.zones[event.zone] + 1,
+      }
+  const ranked = BODY_ZONES.map((zone) => [zone, zones[zone]] as const).sort(
+    (left, right) => right[1] - left[1],
+  )
+  const observations = Object.values(zones).reduce((sum, count) => sum + count, 0)
+  const visibleHatsu =
+    state.lastHatsuBySide.player && !state.player.in ? state.lastHatsuBySide.player : null
   return {
     ...state,
     opponentMemory: {
       observedEventAt: event.at,
-      zones: {
-        ...state.opponentMemory.zones,
-        [event.zone]: state.opponentMemory.zones[event.zone] + 1,
+      zones,
+      hypothesis: {
+        preferredZone: observations > 0 ? ranked[0][0] : null,
+        confidence: observations > 0 ? ranked[0][1] / observations : 0,
+        concealedAttacks:
+          state.opponentMemory.hypothesis.concealedAttacks + Number(concealed),
+        knownHatsuIds: visibleHatsu
+          ? [...new Set([...state.opponentMemory.hypothesis.knownHatsuIds, visibleHatsu])]
+          : state.opponentMemory.hypothesis.knownHatsuIds,
       },
     },
   }
 }
 
 function learnedGuard(state: CombatState): BodyZone | null {
-  const entries = BODY_ZONES.map((zone) => [zone, state.opponentMemory.zones[zone]] as const)
-  const best = entries.reduce((current, candidate) =>
-    candidate[1] > current[1] ? candidate : current,
-  )
-  return best[1] > 0 ? best[0] : null
+  return state.opponentMemory.hypothesis.confidence >= 0.5
+    ? state.opponentMemory.hypothesis.preferredZone
+    : null
 }
 
 function shouldCastHatsu(state: CombatState, doctrine: OpponentDoctrine, gap: number): boolean {

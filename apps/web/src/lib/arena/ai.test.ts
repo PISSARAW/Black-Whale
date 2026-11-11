@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MIN_SEPARATION } from '../combat/reducer'
+import { combatReducer, MIN_SEPARATION } from '../combat/reducer'
 import { initialCombatState } from '../combat/types'
 import { advanceArena } from './ai'
 
@@ -100,5 +100,26 @@ describe('the arena opponent', () => {
     state = advanceArena(state, 0.02, { doctrine: 'deceiver' })
     expect(state.opponent.in).toBe(true)
     expect(state.opponent.intent ?? state.opponent.feint).not.toBeNull()
+  })
+
+  it('builds hypotheses from visible attacks without learning concealed zones', () => {
+    let state = initialCombatState()
+    state = {
+      ...state,
+      player: { ...state.player, position: [0, 0], in: true },
+      opponent: { ...state.opponent, position: [1.5, 0], gyo: false },
+    }
+    state = combatReducer(state, { type: 'STRIKE', side: 'player', zone: 'head' })
+    state = advanceArena(state, 0.01)
+    expect(state.opponentMemory.hypothesis.concealedAttacks).toBe(1)
+    expect(state.opponentMemory.hypothesis.preferredZone).toBeNull()
+
+    state = { ...state, player: { ...state.player, in: false, cooldown: 0 } }
+    state = combatReducer(state, { type: 'STRIKE', side: 'player', zone: 'arms' })
+    state = advanceArena(state, 0.01)
+    expect(state.opponentMemory.hypothesis).toMatchObject({
+      preferredZone: 'arms',
+      confidence: 1,
+    })
   })
 })

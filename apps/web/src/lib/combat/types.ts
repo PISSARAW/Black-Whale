@@ -105,6 +105,12 @@ export interface CombatState {
 export interface OpponentMemory {
   observedEventAt: number | null
   zones: Record<BodyZone, number>
+  hypothesis: {
+    preferredZone: BodyZone | null
+    confidence: number
+    concealedAttacks: number
+    knownHatsuIds: string[]
+  }
 }
 
 export interface CombatTerrainPhysics {
@@ -193,6 +199,12 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     opponentMemory: {
       observedEventAt: null,
       zones: { head: 0, torso: 0, arms: 0, legs: 0 },
+      hypothesis: {
+        preferredZone: null,
+        confidence: 0,
+        concealedAttacks: 0,
+        knownHatsuIds: [],
+      },
     },
     lastHatsuBySide: { player: null, opponent: null },
   }

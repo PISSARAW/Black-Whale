@@ -26,7 +26,7 @@ import { ceilingOf } from './blueprint'
 import type { Ship } from './blueprint'
 import { extentOf } from './describe'
 import { structureFootprint } from './geometry'
-import type { TourDetailTag } from './detailTag'
+import type { ReconstructionRole, TourDetailTag } from './detailTag'
 import type { Provenance, Space, Structure, StructureKind } from './types'
 
 /** How the card is worded, in the language being read. */
@@ -66,6 +66,8 @@ export interface Exhibit {
   title: string
   /** The badge, and the value behind it so a caller can colour by it. */
   provenance: Provenance
+  /** How the renderer transformed the evidence, when known for this exact target. */
+  reconstructionRole?: ReconstructionRole
   badge: string
   /** The chapter and what it draws, in the visitor's language. */
   source: string
@@ -85,6 +87,8 @@ export function solidExhibit(ship: Ship, structure: Structure, words: ExhibitWor
     id: structure.id,
     title: words.nameOf(structure),
     provenance: structure.provenance,
+    reconstructionRole:
+      structure.provenance === 'inferred' ? 'functional-reconstruction' : 'attested',
     badge: words.badge(structure.provenance),
     source: words.sourceOf(structure),
     claim: words.claim(structure.kind),
@@ -122,6 +126,7 @@ export function detailExhibit(ship: Ship, detail: TourDetailTag, words: ExhibitW
     id: detail.id,
     title: words.nameOf(detail),
     provenance: detail.provenance,
+    reconstructionRole: detail.reconstructionRole,
     badge: words.badge(detail.provenance),
     source: words.sourceOf(detail),
     claim: words.detailClaim,

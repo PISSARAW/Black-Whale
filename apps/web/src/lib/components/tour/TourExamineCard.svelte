@@ -99,6 +99,16 @@
       </p>
 
       <dl class="mt-3 space-y-2.5 text-xs leading-snug">
+        {#if exhibit.reconstructionRole}
+          <div>
+            <dt class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
+              {$t.tour.examine.treatmentHeading}
+            </dt>
+            <dd class="mt-0.5 text-[#FFFFF0]/80">
+              {$t.tour.reconstructionRole[exhibit.reconstructionRole]}
+            </dd>
+          </div>
+        {/if}
         <div>
           <dt class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
             {$t.tour.examine.claimHeading}

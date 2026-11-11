@@ -452,6 +452,12 @@ export const fr: Messages = {
       scaleHelp:
         "Les plans des ponts sont schématiques. La reconstruction les met à l'échelle pour que les pièces fassent la taille que les planches impliquent — ce n'est pas une mesure du vaisseau.",
     },
+    reconstructionRole: {
+      attested: 'Élément attesté',
+      'metric-estimate': 'Estimation métrique',
+      'functional-reconstruction': 'Reconstruction fonctionnelle',
+      'connective-inference': 'Liaison inférée',
+    },
     reveal: {
       toggle: 'Preuves',
       help: 'Peindre le pont selon ce que chaque surface vaut comme preuve, et montrer les cloisons et les portes que la reconstruction a déclarées.',
@@ -714,13 +720,14 @@ export const fr: Messages = {
       close: 'Reposer',
       nothing: 'Rien devant vous dont le plan donne la source.',
       claimHeading: 'Ce que cela affirme',
+      treatmentHeading: 'Ce qui a été reconstruit',
       sourceHeading: 'D’où cela vient',
       measured: (long, wide, height) => `${long} × ${wide} m, ${height} m de haut`,
       standingIn: (room) => `Se tient dans ${room}`,
       standingAbout: (room) => `Quelque part dans ${room}`,
       room: 'Une pièce que les plans de pont dessinent, arpentée à la taille qu’ils lui donnent.',
       detail:
-        'Un détail visible de la case, conservé comme surface documentée sans être transformé en meuble ou obstacle du plan.',
+        'Un détail de surface portant sa propre preuve et son rôle de reconstruction, distinct des meubles et obstacles du plan.',
       person: {
         since: (chapter) => `Ici depuis le ch. ${chapter}`,
         sinceUnknown: 'Le catalogue ne date cette position d’aucun chapitre.',

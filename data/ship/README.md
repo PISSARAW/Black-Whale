@@ -723,15 +723,14 @@ Quelques-uns en portent davantage, et c'est l'ordre d'autorité qui le veut : l�
 où une planche entre dans une pièce, elle l'emporte sur le plan, et ce qu'elle
 montre s'ajoute au jeu commun pour ce seul appartement.
 
-- Le **1014**, celui de Woble : le chap. 360 montre son salon tel que Kurapika
-  le trouve — le téléphone mural par lequel il appelle Biscuit, l'armoire et la
-  table de présentation le long du mur tribord, le fauteuil canné, les deux
-  sellettes à sculpture, les tableaux encadrés du mur lambrissé. Le chap. 367
-  descend dans sa cuisine — le plan de travail sous ses éléments hauts vitrés,
-  et un plancher là où le reste de l'appartement est carrelé — et le chap. 371
-  se tient dans sa salle à manger pendant que Kurapika y arrête une servante :
-  deux longues tables couvertes de plateaux-repas, et non la petite table du
-  plan. Là aussi la planche **corrige** au lieu d'ajouter.
+- Le **1014**, celui de Woble : le chap. 360 montre le téléphone mural,
+  l'armoire vitrée, la table carrée portant deux sculptures, le fauteuil canné,
+  une sellette séparée et les tableaux. Le chap. 367 précise le plan de travail
+  droit, ses bouteilles, les éléments hauts vitrés et le plancher. Les chapitres
+  360 et 371 montrent une grande table sculptée couverte de plateaux-repas :
+  les cases relues n'établissent pas deux tables parallèles séparées. Le chapitre
+  371 montre aussi Woble dans le grand lit à colonnes et rideaux ouverts auprès
+  d'Oito ; aucun berceau distinct n'est ajouté.
 - Le **1010**, celui de Kacho : le chap. 376 dessine sa cuisine deux fois — les
   éléments hauts au-dessus du plan, la plaque et son four encastré, le retour de
   plan le long du mur tribord — et son salon, où on la fait asseoir sur ses
@@ -858,6 +857,14 @@ Quatre autres pièces et le mobilier non établi restent des reconstitutions
 `map`. Les affectations et le découpage parcourable ne sont pas un relevé de
 la coupe du chapitre 368 ; la carte locale l’annonce et partage les emprises
 de la visite. Voir [l’audit du 1013](marayam-room-audit.md).
+
+Dans le **1014**, cinq espaces reprennent les éléments visibles aux chapitres
+359, 360, 367 et 371 : salon, salle à manger, cuisine, chambre et cuvette du
+compartiment de Woody. Les autres sanitaires, le mobilier non établi et trois
+pièces restent des reconstitutions `map`. Le centre du salon reste dégagé pour
+le cours de Nen. La carte 2D partage les murs et emprises de la visite ; le
+plan parcourable hérité n'est pas un relevé métrique de la coupe du chapitre
+368. Voir [l'audit du 1014](woble-room-audit.md).
 
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de

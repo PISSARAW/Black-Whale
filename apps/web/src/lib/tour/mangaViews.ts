@@ -12,6 +12,7 @@ import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
 import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
 import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
 import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
+import { MANGA_WOBLE_VIEWS } from './mangaWobleViews'
 import { MANGA_MARAYAM_VIEWS } from './mangaMarayamViews'
 import { MANGA_MOMOZE_VIEWS } from './mangaMomozeViews'
 import { MANGA_FUGETSU_VIEWS } from './mangaFugetsuViews'
@@ -49,17 +50,6 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_JUSTICE_BUREAU_VIEWS,
   ...MANGA_CINEPLEX_VIEWS,
   ...MANGA_SCREENING_ROOM_VIEWS,
-  view({
-    id: 'woble-dining-guards',
-    spaceId: 'tier-1-royal-residential-sector-room-1014-dining',
-    at: [2.15, -4.95],
-    target: [8.3, -2.6],
-    pitch: -0.04,
-    chapter: 371,
-    volume: 36,
-    label: "Woble's guards gathered around the two meal-covered tables",
-    labelFr: 'Les gardes de Woble réunis autour des deux longues tables de repas',
-  }),
   ...MANGA_ROYAL_SALON_VIEWS,
   ...MANGA_BENJAMIN_ROOM_VIEWS,
   view({
@@ -174,6 +164,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_FUGETSU_VIEWS,
   ...MANGA_MOMOZE_VIEWS,
   ...MANGA_MARAYAM_VIEWS,
+  ...MANGA_WOBLE_VIEWS,
   ...MANGA_VVIP_RECREATION_VIEWS,
   ...MANGA_CHA_R_VIEWS,
   ...MANGA_HEILLY_VIEWS,

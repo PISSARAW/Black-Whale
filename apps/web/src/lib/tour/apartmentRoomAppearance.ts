@@ -1,6 +1,7 @@
 import type { Space } from './types'
 import type { RoomAppearance } from './roomAppearanceTypes'
 import { camillaAppearanceOf } from './camillaAppearance'
+import { wobleAppearanceOf } from './wobleAppearance'
 import { marayamAppearanceOf } from './marayamAppearance'
 import { momozeAppearanceOf } from './momozeAppearance'
 import { fugetsuAppearanceOf } from './fugetsuAppearance'
@@ -27,6 +28,7 @@ const PALETTES = [
   fugetsuAppearanceOf,
   momozeAppearanceOf,
   marayamAppearanceOf,
+  wobleAppearanceOf,
   princeApartmentAppearanceOf,
 ] as const
 

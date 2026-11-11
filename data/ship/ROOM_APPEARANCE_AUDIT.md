@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1228 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1229 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -512,23 +512,28 @@
 ## Chambre 1014 (Woble) — `tier-1-royal-residential-sector-room-1014`
 
 - **Pont :** tier-1, interior-room-1014
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, reconstruction cartographique
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 8 cabinet, 4 table, 3 basin, 3 bed, 3 painting, 2 counter, 2 seat, 1 telephone
-- **Objets directement visibles dans les cases :** 26/26
+- **Éléments modélisés :** 7 seat, 6 cabinet, 4 basin, 3 bed, 3 painting, 2 table, 1 counter, 1 telephone
+- **Objets directement visibles dans les cases :** 19/27
 - **Espaces internes :** Quartiers des domestiques — 1014 (Woble) ; WC du personnel — 1014 (Woble) ; Vestibule d'entrée — 1014 (Woble) ; Cuisine — 1014 (Woble) ; Salle à manger — 1014 (Woble) ; Salon — 1014 (Woble) ; Chambre du prince — 1014 (Woble) ; Bain et WC — 1014 (Woble)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362. Le chap. 367 se tient dedans : le plan de travail contre la cloison avant sous ses éléments hauts vitrés, et un plancher là où le reste de l'appartement est dessiné carrelé.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362. Le chap. 371 s'y tient : deux longues tables couvertes de plateaux-repas sous un plafond à caissons, les murs lambrissés du côté public de l'appartement, et au bout la porte de la cuisine.
+  - Reconstitution du plan de visite du 1014. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation héritée à huit espaces. Mobilier non montré, dimensions et implantations reconstitués.
+  - Chap. 367, page de lecture 1 : plan de travail droit, bouteilles, éléments hauts vitrés et plancher. Aucun îlot central ni plaque de cuisson non montrée ajouté. Dimensions et implantation métrique reconstituées.
+  - Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4–5 : large table sculptée, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parallèles séparées ne sont pas établies par ces cases. Six couverts et implantation métrique reconstitués.
+  - Chap. 360, pages de lecture 1 et 14–17 : téléphone mural, armoire vitrée, table carrée portant deux sculptures, fauteuil canné, petit piédestal et cadres. Sol central dégagé pour le cours de Nen. Dimensions, teintes et implantation métrique reconstituées.
+  - Chap. 371, page de lecture 4 : Woble dort sur un large lit clair à côté d’Oito, entouré de colonnes, de rideaux ouverts attachés et d’un lambrequin festonné. Aucun berceau séparé n’est établi par cette case. Dimensions et implantation reconstituées.
+  - Chap. 359, page de lecture 8 : cuvette, abattant ouvert et porte-papier dans le compartiment où Woody est retrouvé. Reste de la salle de bains et implantation métrique reconstitués ; inspection du décor sans corps.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 371 — la salle à manger dressée pour la maison, où Kurapika arrête une servante entre les tables et lui pose ses deux questions : deux longues tables la traversent sous un plafond à caissons, couvertes de plateaux-repas, chaises à haut dossier le long de leurs côtés, et entre elles une allée où l'on sert. Le plan du chap. 363 n'y met qu'une petite table ; la planche, elle, montre la pièce.
-  - Chap. 360 — les appartements du prince Woble tels que Kurapika les trouve : le téléphone mural par lequel il appelle Biscuit, l'armoire et la table de présentation le long du mur tribord, le fauteuil canné, les deux sellettes à sculpture, et les tableaux encadrés le long du mur lambrissé.
-  - Chap. 367 — la cuisine du prince Woble vue depuis le sol : le plan de travail contre la cloison avant, les éléments hauts vitrés portés au-dessus, les bouteilles posées sur le plan, et le plancher où attendent les gardes du corps.
+  - Chap. 371, page de lecture 4 : Woble dort sur un large lit clair à côté d’Oito, entouré de colonnes, de rideaux ouverts attachés et d’un lambrequin festonné. Aucun berceau séparé n’est établi par cette case. Dimensions et implantation reconstituées.
+  - Reconstitution du plan de visite du 1014. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation héritée à huit espaces. Mobilier non montré, dimensions et implantations reconstitués.
+  - Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4–5 : large table sculptée, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parallèles séparées ne sont pas établies par ces cases. Six couverts et implantation métrique reconstitués.
+  - Chap. 367, page de lecture 1 : plan de travail droit, bouteilles, éléments hauts vitrés et plancher. Aucun îlot central ni plaque de cuisson non montrée ajouté. Dimensions et implantation métrique reconstituées.
+  - Chap. 360, pages de lecture 1 et 14–17 : téléphone mural, armoire vitrée, table carrée portant deux sculptures, fauteuil canné, petit piédestal et cadres. Sol central dégagé pour le cours de Nen. Dimensions, teintes et implantation métrique reconstituées.
+  - Chap. 359, page de lecture 8 : cuvette, abattant ouvert et porte-papier dans le compartiment où Woody est retrouvé. Reste de la salle de bains et implantation métrique reconstitués ; inspection du décor sans corps.
 
 ## Passage gardé vers les ponts inférieurs — `tier-1-soldiers-living-quarters`
 

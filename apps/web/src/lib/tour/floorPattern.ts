@@ -5,7 +5,7 @@
  * invented change of level. The catalogue also records Tserriednich's polished
  * geometric training floor and Halkenburg's broad tiled reception room.
  */
-import { clipSegment, plateSeams } from './geometry'
+import { plateSeams } from './geometry'
 import type { Polygon, Space, Vec2 } from './types'
 
 export type FloorPatternKind = 'geometric-inlay' | 'radial-deck' | 'floorboards' | 'tile' | 'plain'
@@ -111,22 +111,6 @@ function radialDeck(polygon: Polygon): [Vec2, Vec2][] {
   return polygon.map((corner) => [centre, corner])
 }
 
-/** Narrow boards running along the kitchen's long axis, with staggered ends. */
-function floorboards(polygon: Polygon): [Vec2, Vec2][] {
-  const { minX, maxX, minZ, maxZ } = boundsOf(polygon)
-  const segments: [Vec2, Vec2][] = []
-  const pitch = 0.32
-  let row = 0
-  for (let z = minZ + pitch; z < maxZ; z += pitch, row++) {
-    segments.push(...clipSegment(polygon, [minX - 1, z], [maxX + 1, z]))
-    const phase = row % 2 ? 1.2 : 0.2
-    for (let x = minX + phase; x < maxX; x += 2) {
-      segments.push(...clipSegment(polygon, [x, z - pitch], [x, z]))
-    }
-  }
-  return segments
-}
-
 const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 const modelledFloor = (space: Space) =>
@@ -141,6 +125,7 @@ const modelledFloor = (space: Space) =>
     'interior-room-1011',
     'interior-room-1012',
     'interior-room-1013',
+    'interior-room-1014',
   ].includes(space.tierId)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
@@ -152,11 +137,6 @@ export function floorPatternOf(space: Space): FloorPattern | null {
   }
   if (space.id === 'tier-1-lifeboats-port-pod-cabin') {
     return { kind: 'radial-deck', style: 'joint', segments: radialDeck(space.footprint) }
-  }
-  if (space.tierId === 'interior-room-1014') {
-    return space.id.endsWith('-kitchen')
-      ? { kind: 'floorboards', style: 'joint', segments: floorboards(space.footprint) }
-      : { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
   if (space.id === 'tier-2-heilly-secret-hideout-processing') {
     return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }

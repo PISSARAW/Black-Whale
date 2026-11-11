@@ -78,19 +78,9 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
     occupants: { 'prince-camilla': { x: 27, y: 33.33 } },
   },
 
-  // Rooms 1001–1010 use `local/prince-apartment.svelte`. Rooms 1011–1014 use
-  // the distinct ch. 368 cutaway in `local/junior-prince-apartment.svelte`;
-  // their coordinates below therefore follow that second drawing. The shared
-  // plan draws a bed at (20, 550)
-  // 100 × 110 in the master bedroom, a living-room table at (300, 350) 80 × 60,
-  // and the asset adds one per-room fixture where canon seats a prince on
-  // something of his own. No fallback is declared for any of them — the centred
-  // grid already drops an unplaced passenger in the living room, which is where
-  // an apartment holds everyone canon does not seat.
-  //
-  // A spot is the passenger's habitual place across the arc, not a freeze-frame:
-  // Tserriednich stands over the water glass in ch. 376 and is on his training
-  // floor in seven other chapters, so the training floor is what the room shows.
+  // The junior-apartment assets project the explicitly reconstructed walked plans.
+  // Their metric placements are interpretations, not measured chapter-368 cutaways.
+  // No fallback is declared: unplaced passengers keep the centred grid.
 
   // Benjamin takes his reports from the command post, ch. 363, 366 and 413.
   'tier-1-royal-residential-sector-room-1001': {
@@ -152,31 +142,22 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-royal-residential-sector-room-1013': {
     occupants: { hanzo: { x: 12.08, y: 19.85 } },
   },
-  // 1014 is the room the arc stages most often, so it carries the most spots.
-  // Kurapika stands at the front of the Nen class facing the students, who keep
-  // the centred grid above him; the guarded side of the room — cradle, queen,
-  // her two bodyguards — sits between the class and the master bedroom. Two
-  // bodies never leave the places they fell in: Woody on the bathroom floor
-  // (ch. 359) and Vincent by the entrance (ch. 364).
+  // The 1014 projection uses the walked plan. Ch. 371 p. 4 shows Woble on Oito's
+  // large bed; no separate cradle is established by that panel. Other positions
+  // keep the classroom and private wing distinct, with guards explicitly inferred.
   'tier-1-royal-residential-sector-room-1014': {
     occupants: {
-      kurapika: { x: 69, y: 39 },
-      // Oito swapped the babies, so the cradle holds whichever one the archive
-      // currently believes is in it.
-      'prince-woble': { x: 29, y: 27 },
-      'oito-nephew-fake-woble': { x: 29, y: 27 },
-      'queen-oito': { x: 37, y: 39 },
-      // The two bodyguards keep the protected side of the room. Canon says
-      // that much and never places them against a fixture.
-      bill: { x: 45, y: 43, inferred: true },
-      shimanu: { x: 55, y: 43, inferred: true },
-      longhi: { x: 37, y: 78 },
-      woody: { x: 72, y: 78 },
-      vincent: { x: 50, y: 83 },
-      // Silent Majority drops these two on the classroom floor itself, in front
-      // of the students it is hiding among — ch. 369 and ch. 370.
-      barrigen: { x: 64, y: 48 },
-      myuhan: { x: 76, y: 48 },
+      kurapika: { x: 54.17, y: 47.43 },
+      'prince-woble': { x: 25.83, y: 80.88 },
+      'oito-nephew-fake-woble': { x: 25.83, y: 80.88 },
+      'queen-oito': { x: 35.83, y: 78.68 },
+      bill: { x: 52.08, y: 73.9, inferred: true },
+      shimanu: { x: 58.33, y: 77.94, inferred: true },
+      longhi: { x: 51.25, y: 79.41 },
+      woody: { x: 86.25, y: 82.72 },
+      vincent: { x: 50, y: 37.87 },
+      barrigen: { x: 50.83, y: 55.51 },
+      myuhan: { x: 58.33, y: 59.19 },
     },
   },
 

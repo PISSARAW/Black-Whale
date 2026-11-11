@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 393
+Fichiers : 396
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1302,6 +1302,10 @@ Fichiers : 393
 
 - Luzurus’s apartment against the salon panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
+## `apps/web/src/lib/tour/mangaEvent.test.ts`
+
+- manga event selection > selects the exact sequence named by a populated panel
+
 ## `apps/web/src/lib/tour/mangaViews.test.ts`
 
 - manga photo viewpoints > has a unique, bilingual, traceable entry for every panel view
@@ -1570,6 +1574,10 @@ Fichiers : 393
 
 - the Tier 5 Cha-R Warehouse reconstructed from chapters 378, 379 and 380 > satisfies the shared blueprint invariants for the warehouse
 
+## `apps/web/src/lib/tour/wobleView.test.ts`
+
+- Woble’s apartment against the reception and bedroom panels > keeps a valid walked plan and distinguishes panel props from three reconstructed rooms
+
 ## `apps/web/src/lib/tour/zhangLeiApartmentView.test.ts`
 
 - Zhang Lei’s complete apartment > keeps every room’s furniture on a valid shared plan, with honest reconstruction provenance
@@ -1681,6 +1689,10 @@ Fichiers : 393
 - matching a name to a catalogue entry > ignores accents, punctuation and case
 - adding the passengers the catalogue is missing > skips whoever is already known under any name
 - enriching a template entry > files the employer and stations the body in the prince it guards
+
+## `packages/canon-compiler/test/map-events.spec.ts`
+
+- map event index > chooses the earliest ordinal when chapter sequences are tied
 
 ## `packages/canon-compiler/test/presence-choice.spec.ts`
 

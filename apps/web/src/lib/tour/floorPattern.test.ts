@@ -19,8 +19,9 @@ describe('audited floor patterns', () => {
       'geometric-inlay',
     )
     expect(floorPatternOf(space('tier-1-lifeboats-port-pod-cabin'))?.kind).toBe('radial-deck')
+    // The detailed 1014 kitchen supplies its own floorboards, avoiding a second generic overlay.
     expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1014-kitchen'))?.kind).toBe(
-      'floorboards',
+      'plain',
     )
     expect(floorPatternOf(space('tier-2-heilly-secret-hideout-processing'))?.kind).toBe('tile')
     expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1004-living'))?.kind).toBe(
@@ -31,13 +32,13 @@ describe('audited floor patterns', () => {
     )
   })
 
-  it('tiles Woble’s apartment except for the panel-shown kitchen floorboards', () => {
+  it('leaves Woble’s detailed room models in charge of floor markings', () => {
     const rooms = ship.blueprint.spaces.filter(
       (candidate) => candidate.tierId === 'interior-room-1014',
     )
     expect(rooms).toHaveLength(8)
     expect(rooms.map((room) => [room.id, floorPatternOf(room)?.kind])).toEqual(
-      rooms.map((room) => [room.id, room.id.endsWith('-kitchen') ? 'floorboards' : 'tile']),
+      rooms.map((room) => [room.id, 'plain']),
     )
   })
 

@@ -15,12 +15,12 @@ export const MANGA_APARTMENT_VIEWS: MangaView[] = Array.from({ length: 14 }, (_,
     chapter: hasChapter368Cutaway ? 368 : 363,
     volume: 35,
     pages: hasChapter368Cutaway ? '149–150' : '49–50',
-    label: ['1011', '1012', '1013'].includes(room)
+    label: ['1011', '1012', '1013', '1014'].includes(room)
       ? `Room ${room} walked-layout reconstruction — not a metric reproduction of the chapter 368 cutaway`
       : hasChapter368Cutaway
         ? `Chapter 368 cutaway of princely apartment ${room}`
         : `Chapter 363 programme-type for princely apartment ${room}`,
-    labelFr: ['1011', '1012', '1013'].includes(room)
+    labelFr: ['1011', '1012', '1013', '1014'].includes(room)
       ? `Implantation de visite reconstituée du ${room} — la coupe du chapitre 368 ne fournit pas de relevé métrique`
       : hasChapter368Cutaway
         ? `Coupe du chapitre 368 de l’appartement princier ${room}`

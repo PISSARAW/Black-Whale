@@ -45,6 +45,7 @@ export {
 } from './fighter'
 import { HATSU_COST } from './fighter'
 import type { Vec2 } from '../tour/types'
+import { addPersistentNenEffect, advancePersistentNenEffects } from './effects'
 import {
   initialCombatState,
   otherSide,
@@ -104,7 +105,10 @@ function tick(state: CombatState, dt: number): CombatState {
     player: advanceFighter(state.player, state.opponent, context),
     opponent: advanceFighter(state.opponent, state.player, context),
   }
-  return ringOut(landReadyKo(landReadyIntent(advanceTethers(advanced, dt))))
+  return advancePersistentNenEffects(
+    ringOut(landReadyKo(landReadyIntent(advanceTethers(advanced, dt)))),
+    dt,
+  )
 }
 
 /** The whole of a HATSU action, which is what `castHatsu` reads anyway. */
@@ -295,7 +299,18 @@ function blackWhaleHatsu(
 
   switch (hatsuId) {
     case 'biohazard-hinrigh':
-      return target({ bound: Math.max(rival.bound, 1.2) }, { empowered: 4, cooldown: 0.7 })
+      return addPersistentNenEffect(
+        target({ bound: Math.max(rival.bound, 1.2) }, { empowered: 4, cooldown: 0.7 }),
+        {
+          id: `biohazard-${side}`,
+          kind: 'TRANSFORMED_OBJECT',
+          owner: side,
+          target: rivalSide,
+          sourceHatsuId: hatsuId,
+          remaining: null,
+          detail: state.terrain.id,
+        },
+      )
     case 'rihan-predator':
       return target(
         { empowered: 0, in: false, ken: false, cooldown: 2 },
@@ -378,13 +393,38 @@ function blackWhaleHatsu(
     case 'silent-majority':
       return rival.gyo
         ? hit(0.7, 8)
-        : target({ bound: 1.5, aura: Math.max(0, rival.aura - 18) }, { in: true, cooldown: 1.4 })
+        : addPersistentNenEffect(
+            target(
+              { bound: 1.5, aura: Math.max(0, rival.aura - 18) },
+              { in: true, cooldown: 1.4 },
+            ),
+            {
+              id: `silent-majority-${side}`,
+              kind: 'HIDDEN_TRAP',
+              owner: side,
+              target: rivalSide,
+              sourceHatsuId: hatsuId,
+              remaining: 6,
+              detail: null,
+            },
+          )
     case 'steal-chain':
       return gap > 3.2
         ? state
-        : target(
-            { aura: Math.max(0, rival.aura - 24), mode: 'zetsu', empowered: 0 },
-            { aura: Math.min(paid.capacity, paid.aura + 12), cooldown: 1.5 },
+        : addPersistentNenEffect(
+            target(
+              { aura: Math.max(0, rival.aura - 24), mode: 'zetsu', empowered: 0 },
+              { aura: Math.min(paid.capacity, paid.aura + 12), cooldown: 1.5 },
+            ),
+            {
+              id: `steal-chain-${side}`,
+              kind: 'CAPTURED_ABILITY',
+              owner: side,
+              target: rivalSide,
+              sourceHatsuId: hatsuId,
+              remaining: null,
+              detail: state.lastHatsuBySide[rivalSide],
+            },
           )
     case 'stealth-dolphin':
       return self({

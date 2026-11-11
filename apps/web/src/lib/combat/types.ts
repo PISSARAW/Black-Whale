@@ -36,6 +36,16 @@ export interface ElasticTether {
   remaining: number
 }
 
+export interface PersistentNenEffect {
+  id: string
+  kind: 'TRANSFORMED_OBJECT' | 'CAPTURED_ABILITY' | 'HIDDEN_TRAP'
+  owner: CombatSide
+  target: CombatSide | null
+  sourceHatsuId: string
+  remaining: number | null
+  detail: string | null
+}
+
 export interface FighterState {
   aura: number
   capacity: number
@@ -87,6 +97,7 @@ export interface CombatState {
   lastEvent: CombatEvent | null
   terrain: CombatTerrainPhysics
   tethers: ElasticTether[]
+  nenEffects: PersistentNenEffect[]
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
 }
@@ -178,6 +189,7 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
     lastEvent: null,
     terrain: setup.terrain,
     tethers: [],
+    nenEffects: [],
     opponentMemory: {
       observedEventAt: null,
       zones: { head: 0, torso: 0, arms: 0, legs: 0 },

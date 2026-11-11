@@ -1,211 +1,174 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
-import { theShip, validateBlueprint } from './blueprint'
-import { disposeBanquetDetails } from './banquetDetailBuilder'
+import { floorOf, ceilingOf, theShip, validateBlueprint } from './blueprint'
+import { disposeBanquetDetails, BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
   buildCamillaRoomDetails,
+  camillaSurfacePlan,
+  hasCamillaModel,
   CAMILLA_DINING,
   CAMILLA_ENTRANCE,
   CAMILLA_LIVING,
-  CAMILLA_ROOM_1002,
 } from './camillaView'
+import { CamillaSurface } from './camillaDetailSurface'
+import { dressCamillaFurniture } from './camillaFurniture'
+import { dressCamillaPicture } from './camillaPictures'
 import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
-import { MANGA_VIEWS } from './mangaViews'
+import { pointInPolygon, structureFootprint, polygonsOverlap } from './geometry'
 import {
-  camillaDiningSpotAnchors,
-  camillaEntranceSpotAnchors,
-  camillaLivingSpotAnchors,
+  camillaFixtures,
   camillaPoint,
   camillaSpotAnchors,
   CAMILLA_VIEWBOX,
+  camillaLivingSpotAnchors,
 } from '$lib/components/map/projection/camillaPlan'
-import { spotAnchorFor } from '$lib/components/map/projection/roomAnchors'
-import type { MapMarker } from '$lib/components/map/projection/types'
 
-const ship = theShip()
-const plan = ship.plans.get('interior-room-1002')!
+const ship = theShip(),
+  plan = ship.plans.get('interior-room-1002')!
+const spaces = [CAMILLA_LIVING, CAMILLA_DINING, CAMILLA_ENTRANCE]
+const build = (spaceId = CAMILLA_LIVING, overrides = {}) =>
+  buildCamillaRoomDetails({ THREE, plan, spaceId, reveal: false, ...overrides })!
+const vertices = (root: THREE.Group) =>
+  (root.children as THREE.Mesh[]).reduce((n, m) => n + m.geometry.attributes.position.count, 0)
 
-const triangles = (root: THREE.Group) =>
-  (root.children as THREE.Mesh[]).reduce(
-    (sum, mesh) => sum + mesh.geometry.getAttribute('position').count / 3,
-    0,
-  )
-
-function hasInfiniteCoords(root: THREE.Group): boolean {
-  for (const child of root.children as THREE.Mesh[]) {
-    const pos = child.geometry.getAttribute('position')
-    for (let i = 0; i < pos.count * 3; i++) {
-      if (!Number.isFinite(pos.array[i])) return true
-    }
-  }
-  return false
+function fixtureGeometry(structure: (typeof plan.structures)[number]): THREE.Group {
+  const into = new BanquetDetailBuilder(THREE)
+  const surface = new CamillaSurface(into, THREE, { structure, floor: 0 })
+  if (structure.kind === 'painting') dressCamillaPicture(surface)
+  else dressCamillaFurniture(surface)
+  return into.finish()
 }
 
-describe('Princess Camilla Room 1002 reconstructed from chapters 366, 389 and 413', () => {
-  it('satisfies the shared blueprint invariants for Room 1002', () => {
+describe('Camilla’s actual apartment, distinct from her VVIP detention room', () => {
+  it('satisfies the shared plan and keeps the floor furniture clear of each other', () => {
     expect(validateBlueprint().filter((issue) => issue.includes('1002'))).toEqual([])
-  })
-
-  it('contains the 8 interior spaces of apartment 1002 in the blueprint', () => {
-    const spaces = plan.spaces.filter(({ id }) => id.startsWith(CAMILLA_ROOM_1002))
-    expect(spaces.length).toBe(8)
-    expect(spaces.some(({ id }) => id === CAMILLA_LIVING)).toBe(true)
-    expect(spaces.some(({ id }) => id === CAMILLA_DINING)).toBe(true)
-    expect(spaces.some(({ id }) => id === CAMILLA_ENTRANCE)).toBe(true)
-  })
-
-  it('builds finite 3D geometry without lights for the living room', () => {
-    const root = buildCamillaRoomDetails({
-      THREE,
-      plan,
-      spaceId: CAMILLA_LIVING,
-      reveal: false,
-    })
-    expect(root).not.toBeNull()
-    expect(hasInfiniteCoords(root!)).toBe(false)
-    expect(root!.children.some((c) => (c as unknown as { isLight?: boolean }).isLight)).toBe(false)
-    expect(triangles(root!)).toBeLessThan(80_000)
-    expect(root!.children.length).toBeLessThanOrEqual(2)
-  })
-
-  it('builds finite 3D geometry without lights for the dining room', () => {
-    const root = buildCamillaRoomDetails({
-      THREE,
-      plan,
-      spaceId: CAMILLA_DINING,
-      reveal: false,
-    })
-    expect(root).not.toBeNull()
-    expect(hasInfiniteCoords(root!)).toBe(false)
-    expect(root!.children.some((c) => (c as unknown as { isLight?: boolean }).isLight)).toBe(false)
-    expect(triangles(root!)).toBeLessThan(50_000)
-    expect(root!.children.length).toBeLessThanOrEqual(2)
-  })
-
-  it('builds finite 3D geometry without lights for the entrance surveillance post', () => {
-    const root = buildCamillaRoomDetails({
-      THREE,
-      plan,
-      spaceId: CAMILLA_ENTRANCE,
-      reveal: false,
-    })
-    expect(root).not.toBeNull()
-    expect(hasInfiniteCoords(root!)).toBe(false)
-    expect(root!.children.some((c) => (c as unknown as { isLight?: boolean }).isLight)).toBe(false)
-    expect(triangles(root!)).toBeLessThan(30_000)
-    expect(root!.children.length).toBeLessThanOrEqual(2)
-  })
-
-  it('fits the entire suite within the Three.js rendering budget (<150k triangles)', () => {
-    const living = buildCamillaRoomDetails({ THREE, plan, spaceId: CAMILLA_LIVING, reveal: false })!
-    const dining = buildCamillaRoomDetails({ THREE, plan, spaceId: CAMILLA_DINING, reveal: false })!
-    const entrance = buildCamillaRoomDetails({
-      THREE,
-      plan,
-      spaceId: CAMILLA_ENTRANCE,
-      reveal: false,
-    })!
-
-    const totalTriangles = triangles(living) + triangles(dining) + triangles(entrance)
-    expect(totalTriangles).toBeLessThan(150_000)
-  })
-
-  it('returns null in reveal mode or for unrelated rooms', () => {
-    expect(
-      buildCamillaRoomDetails({ THREE, plan, spaceId: CAMILLA_LIVING, reveal: true }),
-    ).toBeNull()
-    expect(
-      buildCamillaRoomDetails({
-        THREE,
-        plan,
-        spaceId: 'tier-1-royal-residential-sector-room-1004',
-        reveal: false,
-      }),
-    ).toBeNull()
-    expect(
-      buildCamillaRoomDetails({
-        THREE,
-        plan,
-        spaceId: 'tier-1-royal-residential-sector-room-1002-bedroom',
-        reveal: false,
-      }),
-    ).toBeNull()
-  })
-
-  it('exposes the 4 canonical manga views with appropriate cast staging', () => {
-    expect(MANGA_CAMILLA_VIEWS).toHaveLength(4)
-    const [circle, couch, dining, musse] = MANGA_CAMILLA_VIEWS
-
-    expect(circle!.id).toBe('camilla-untouchables-circle')
-    expect(circle!.spaceId).toBe(CAMILLA_LIVING)
-    expect(circle!.chapter).toBe(389)
-    expect(circle!.staging?.some((s) => s.characterId === 'prince-camilla')).toBe(true)
-    expect(circle!.staging?.some((s) => s.characterId === 'lisamsetta')).toBe(true)
-    expect(circle!.staging?.some((s) => s.characterId === 'mozbe')).toBe(true)
-
-    expect(couch!.id).toBe('camilla-massage-couch')
-    expect(couch!.spaceId).toBe(CAMILLA_LIVING)
-    expect(couch!.staging?.some((s) => s.characterId === 'prince-camilla')).toBe(true)
-
-    expect(dining!.id).toBe('camilla-duazul-dining')
-    expect(dining!.spaceId).toBe(CAMILLA_DINING)
-    expect(dining!.chapter).toBe(366)
-    expect(dining!.staging?.some((s) => s.characterId === 'duazul-hui-guo-rou')).toBe(true)
-    expect(dining!.staging?.some((s) => s.characterId === 'prince-camilla')).toBe(true)
-
-    expect(musse!.id).toBe('musse-surveillance-post')
-    expect(musse!.spaceId).toBe(CAMILLA_ENTRANCE)
-    expect(musse!.chapter).toBe(366)
-    expect(musse!.staging?.some((s) => s.characterId === 'musse')).toBe(true)
-
-    for (const view of MANGA_CAMILLA_VIEWS) {
-      expect(MANGA_VIEWS.some((v) => v.id === view.id)).toBe(true)
+    const solids = plan.structures.filter((s) => hasCamillaModel(s) && s.base === 0)
+    for (const s of solids) {
+      for (const other of solids.filter((o) => o.spaceId === s.spaceId && o.id > s.id)) {
+        expect(
+          polygonsOverlap(structureFootprint(s), structureFootprint(other)),
+          `${s.id}/${other.id}`,
+        ).toBe(false)
+      }
     }
   })
 
-  it('maps 2D room points and anchors occupants accurately', () => {
-    const centerPoint = camillaPoint([0, 0])
-    expect(centerPoint.x).toBeGreaterThan(0)
-    expect(centerPoint.x).toBeLessThan(CAMILLA_VIEWBOX.width)
-    expect(centerPoint.y).toBeGreaterThan(0)
-    expect(centerPoint.y).toBeLessThan(CAMILLA_VIEWBOX.height)
-
-    expect(camillaSpotAnchors.occupants['prince-camilla']).toBeDefined()
-    expect(camillaSpotAnchors.occupants['duazul-hui-guo-rou']).toBeDefined()
-    expect(camillaSpotAnchors.occupants['musse']).toBeDefined()
-    expect(camillaSpotAnchors.occupants['lisamsetta']).toBeDefined()
-
-    expect(camillaLivingSpotAnchors.occupants['prince-camilla']).toBeDefined()
-    expect(camillaDiningSpotAnchors.occupants['duazul-hui-guo-rou']).toBeDefined()
-    expect(camillaEntranceSpotAnchors.occupants['musse']).toBeDefined()
-
-    const camillaAnchor = spotAnchorFor({
-      characterSlug: 'prince-camilla',
-      locationId: CAMILLA_ROOM_1002,
-    } as unknown as MapMarker)
-    expect(camillaAnchor).not.toBeNull()
-    expect(camillaAnchor?.exact).toBe(true)
-
-    const duazulAnchor = spotAnchorFor({
-      characterSlug: 'duazul-hui-guo-rou',
-      locationId: CAMILLA_DINING,
-    } as unknown as MapMarker)
-    expect(duazulAnchor).not.toBeNull()
-
-    const musseAnchor = spotAnchorFor({
-      characterSlug: 'musse',
-      locationId: CAMILLA_ENTRANCE,
-    } as unknown as MapMarker)
-    expect(musseAnchor).not.toBeNull()
+  it('fits each complete furniture model within its collision volume, including turned chairs', () => {
+    for (const s of plan.structures.filter(
+      (item) => hasCamillaModel(item) && spaces.includes(item.spaceId),
+    )) {
+      const root = fixtureGeometry(s)
+      const footprint = structureFootprint(s)
+      for (const mesh of root.children as THREE.Mesh[]) {
+        const p = mesh.geometry.attributes.position
+        for (let i = 0; i < p.count; i++) {
+          expect(pointInPolygon([p.getX(i), p.getZ(i)], footprint), s.id).toBe(true)
+          expect(p.getY(i), s.id).toBeGreaterThanOrEqual(s.base - 0.001)
+          expect(p.getY(i), s.id).toBeLessThanOrEqual(s.base + s.height + 0.001)
+        }
+      }
+      disposeBanquetDetails(root)
+    }
   })
 
-  it('disposes all detail geometries and materials cleanly', () => {
-    const root = buildCamillaRoomDetails({
-      THREE,
-      plan,
-      spaceId: CAMILLA_LIVING,
-      reveal: false,
-    })!
-    expect(() => disposeBanquetDetails(root)).not.toThrow()
+  it('keeps each room finite, inside its floor and ceiling, without extra lights or draw calls', () => {
+    let total = 0
+    for (const id of spaces) {
+      const root = build(id),
+        room = ship.spaces.get(id)!
+      expect(root.children.length).toBeLessThanOrEqual(2)
+      total += vertices(root) / 3
+      root.traverse((o) => expect(o instanceof THREE.Light).toBe(false))
+      for (const child of root.children as THREE.Mesh[]) {
+        expect(Array.from(child.geometry.attributes.position.array).every(Number.isFinite)).toBe(
+          true,
+        )
+      }
+      const bounds = new THREE.Box3().setFromObject(root),
+        floor = floorOf(room, plan.tier)
+      expect(bounds.min.y).toBeGreaterThanOrEqual(floor - 0.001)
+      expect(bounds.max.y).toBeLessThanOrEqual(floor + ceilingOf(room, plan.tier) + 0.001)
+      disposeBanquetDetails(root)
+    }
+    expect(total).toBeLessThan(150_000)
+  })
+
+  it('replaces the coarse surface only in normal rendering and keeps the walked plan intact', () => {
+    const surface = camillaSurfacePlan(plan, false)
+    expect(surface.structures.some(hasCamillaModel)).toBe(false)
+    expect(plan.structures.some(hasCamillaModel)).toBe(true)
+    expect(surface.walls).toBe(plan.walls)
+    expect(camillaSurfacePlan(plan, true)).toBe(plan)
+    expect(build(CAMILLA_LIVING, { reveal: true })).toBeNull()
+    expect(build('tier-1-royal-residential-sector-room-1003-bedroom')).toBeNull()
+  })
+
+  it('removes furniture decorations with their solid instead of leaving phantom seats or desks', () => {
+    for (const id of spaces) {
+      const full = build(id),
+        empty = build(id, { plan: { ...plan, structures: [] } })
+      expect(vertices(full)).toBeGreaterThan(vertices(empty))
+      disposeBanquetDetails(full)
+      disposeBanquetDetails(empty)
+    }
+  })
+
+  it('moves and rotates the entire desk with a Hatsu-modified structure', () => {
+    const desk = plan.structures.find((s) => s.id.endsWith('-living-guard-desk'))!
+    const root = fixtureGeometry({ ...desk, at: [30, 20], rotation: 90 })
+    const bounds = new THREE.Box3().setFromObject(root)
+    expect(bounds.min.x).toBeGreaterThan(29)
+    expect(bounds.max.x).toBeLessThan(31)
+    expect(bounds.min.z).toBeGreaterThan(19)
+    expect(bounds.max.z).toBeLessThan(21)
+    disposeBanquetDetails(root)
+  })
+
+  it('stages standing guards in 389, and Camilla with Duazul only at their chapter 366 meal', () => {
+    for (const view of MANGA_CAMILLA_VIEWS.filter((v) => v.chapter === 389)) {
+      expect(view.staging?.some((s) => s.characterId === 'prince-camilla') ?? false).toBe(false)
+      expect(view.staging?.every((s) => s.pose === 'idle') ?? true).toBe(true)
+    }
+    const meal = MANGA_CAMILLA_VIEWS.find((v) => v.id === 'camilla-duazul-dining')!
+    expect(meal).toMatchObject({ chapter: 366, volume: 35, eventSequence: 3 })
+    for (const s of meal.staging!) {
+      const chair = plan.structures.find(
+        (o) => o.kind === 'seat' && o.at[0] === s.at[0] && o.at[1] === s.at[1],
+      )
+      expect(chair, s.characterId).toBeDefined()
+    }
+    expect(MANGA_CAMILLA_VIEWS.some((v) => v.id === 'camilla-massage-couch')).toBe(false)
+  })
+
+  it('keeps manga camera anchors in their room and outside all furniture footprints', () => {
+    for (const view of MANGA_CAMILLA_VIEWS) {
+      const room = ship.spaces.get(view.spaceId)!
+      expect(pointInPolygon(view.at, room.footprint), view.id).toBe(true)
+      for (const s of plan.structures.filter((s) => s.spaceId === view.spaceId && s.base === 0)) {
+        expect(pointInPolygon(view.at, structureFootprint(s)), `${view.id}/${s.id}`).toBe(false)
+      }
+    }
+  })
+
+  it('projects the current walked furniture and scene positions into the 2D plan', () => {
+    expect(camillaFixtures.map((s) => s.id)).toEqual(
+      plan.structures.filter(hasCamillaModel).map((s) => s.id),
+    )
+    const at = camillaPoint([3.6, -4.42])
+    expect(camillaSpotAnchors.occupants['prince-camilla']).toEqual({
+      x: Number(((at.x / CAMILLA_VIEWBOX.width) * 100).toFixed(2)),
+      y: Number(((at.y / CAMILLA_VIEWBOX.height) * 100).toFixed(2)),
+    })
+    expect(camillaLivingSpotAnchors.occupants['prince-camilla']).toBeUndefined()
+  })
+
+  it('disposes the detail buffers and materials with the room', () => {
+    const root = build()
+    const disposals = (root.children as THREE.Mesh[]).flatMap((m) => [
+      vi.spyOn(m.geometry, 'dispose'),
+      vi.spyOn(m.material as THREE.Material, 'dispose'),
+    ])
+    disposeBanquetDetails(root)
+    for (const dispose of disposals) expect(dispose).toHaveBeenCalledOnce()
   })
 })

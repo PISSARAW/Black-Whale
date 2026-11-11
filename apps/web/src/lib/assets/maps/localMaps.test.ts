@@ -216,7 +216,7 @@ describe('room appearance evidence', () => {
     )
 
     expect(processing.filter((entry) => entry.kind === 'vent')).toHaveLength(2)
-    expect(laundry.some((entry) => entry.id.endsWith('work-table-02'))).toBe(true)
+    expect(laundry.some((entry) => entry.id.endsWith('disposal-body-tray'))).toBe(true)
     expect(communalChairs.length).toBeGreaterThanOrEqual(8)
     expect(auditoriumRows).toHaveLength(48)
     expect(auditoriumRows.every((entry) => entry.provenance === 'inferred')).toBe(true)

@@ -1,4 +1,5 @@
 import { ceilingOf, floorOf } from './blueprint'
+import { isCineplexHallOpening } from './cineplexHallLayout'
 import { DOOR_HEIGHT } from './geometry'
 import type { Space, Tier, Provenance } from './types'
 
@@ -13,7 +14,9 @@ export function openingHeights(options: { space: Space; other: Space; tier: Tier
   const { space, other, tier } = options
   const base = floorOf(space, tier)
   const top = Math.max(base + ceilingOf(space, tier), floorOf(other, tier) + ceilingOf(other, tier))
-  const continuous = banquetZones.has(space.id) && banquetZones.has(other.id)
+  const continuous =
+    (banquetZones.has(space.id) && banquetZones.has(other.id)) ||
+    isCineplexHallOpening(space.id, other.id)
   const provenance =
     space.provenance === 'inferred' || other.provenance === 'inferred'
       ? 'inferred'

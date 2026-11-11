@@ -15,6 +15,9 @@ import {
   CINEPLEX_SCREENS,
 } from './cineplexView'
 import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
+import { CINEPLEX_HALL_SPACES, isCineplexHallOpening } from './cineplexHallLayout'
+import { mangaViewById } from './mangaViews'
+import { openingHeights } from './openingHeights'
 import {
   cineplexPoint,
   cineplexSpotAnchors,
@@ -46,6 +49,18 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
       expect(isCineplexSpace(screenId)).toBe(true)
     }
     expect(isCineplexSpace('tier-3-observation-deck')).toBe(false)
+  })
+
+  it('keeps the Chapter 393 concourse open from food counter to ticket desks', () => {
+    const openings = plan.doorways.filter(({ a, b }) => isCineplexHallOpening(a, b))
+    expect(openings).toHaveLength(5)
+
+    for (const opening of openings) {
+      const space = ship.spaces.get(opening.a)!
+      const other = ship.spaces.get(opening.b)!
+      const heights = openingHeights({ space, other, tier: plan.tier })
+      expect(heights.bottom).toBe(heights.top)
+    }
   })
 
   it('builds high-fidelity 3D details for concession, tickets, ramp corridor, screens hall and auditoriums', () => {
@@ -152,6 +167,11 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
       expect(view.label).toBeDefined()
       expect(view.labelFr).toBeDefined()
     }
+  })
+
+  it('frames every zone visible in the Cineplex establishing panel', () => {
+    const establishing = mangaViewById('cineplex-establishing-shot')!
+    expect(establishing.visibleSpaceIds).toEqual([...CINEPLEX_HALL_SPACES])
   })
 
   it('maps 2D SVG coordinates within the viewBox and anchors key characters', () => {

@@ -774,6 +774,8 @@ export const en = {
       standingIn: (room: string) => `Stands in ${room}`,
       standingAbout: (room: string) => `Somewhere in ${room}`,
       room: 'A room the deck plans draw, walked at the size they give it.',
+      detail:
+        'A visible detail from the panel, kept as sourced surface evidence without turning it into blueprint furniture or an obstacle.',
       /**
        * The card for a person, which the walk owed the moment it had any.
        *

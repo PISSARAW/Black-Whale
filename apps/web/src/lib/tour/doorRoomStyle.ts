@@ -2,6 +2,7 @@ import { buildBenjaminDoorLeaves, dressBenjaminDoorCasing } from './benjaminRoom
 import { buildTierDoorLeaves, dressTierDoorCasing, type LeafBuildOptions } from './doorTierBuilders'
 import { buildTserriednichDoorLeaves, dressTserriednichDoorCasing } from './tserriednichDoorStyle'
 import type { DoorDressContext } from './doorDetailSurface'
+import { buildCamillaDoorLeaves, dressCamillaDoorCasing } from './camillaDoorStyle'
 
 /** Room-specific source panels override the deck's generic door palette. */
 export function roomDoorStyle(options: {
@@ -11,6 +12,9 @@ export function roomDoorStyle(options: {
 }) {
   if (options.tierId === 'interior-room-1001') {
     return { casing: dressBenjaminDoorCasing, leaves: buildBenjaminDoorLeaves }
+  }
+  if (options.tierId === 'interior-room-1002') {
+    return { casing: dressCamillaDoorCasing, leaves: buildCamillaDoorLeaves }
   }
   if (options.spaceId.startsWith('tier-1-royal-residential-sector-room-1004')) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }

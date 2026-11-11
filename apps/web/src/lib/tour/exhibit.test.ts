@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { en } from '$lib/i18n/messages/en'
 import { fr } from '$lib/i18n/messages/fr'
 import { theShip } from './blueprint'
-import { examine, solidExhibit, spaceExhibit, type ExhibitWords } from './exhibit'
+import type { TourDetailTag } from './detailTag'
+import { detailExhibit, examine, solidExhibit, spaceExhibit, type ExhibitWords } from './exhibit'
 
 const ship = theShip()
 
@@ -13,12 +14,22 @@ const words: ExhibitWords = {
   badge: (provenance) => `badge:${provenance}`,
   claim: (kind) => `claim:${kind}`,
   roomClaim: 'claim:room',
+  detailClaim: 'claim:detail',
   measured: (long, wide, height) => `${long}x${wide}x${height}`,
   standingIn: (room) => `in:${room}`,
 }
 
 const throne = ship.structures.find((structure) => structure.kind === 'casket')!
 const hall = ship.spaces.get('tier-1-banquet-hall')!
+const tile: TourDetailTag = {
+  id: `${hall.id}-tile`,
+  spaceId: hall.id,
+  name: 'Stained tile',
+  nameFr: 'Carreau souillé',
+  provenance: 'panel',
+  source: 'Ch. 398 panel',
+  sourceFr: 'Case du chap. 398',
+}
 
 describe('the exhibit for a solid', () => {
   it('carries the badge, the chapter and the claim of its kind', () => {
@@ -65,10 +76,26 @@ describe('the exhibit for a room', () => {
   })
 })
 
+describe('the exhibit for a tagged model detail', () => {
+  it('carries its own bilingual evidence without becoming a solid', () => {
+    const card = detailExhibit(ship, tile, words)
+    expect(card.id).toBe(tile.id)
+    expect(card.claim).toBe('claim:detail')
+    expect(card.source).toBe(tile.source)
+    expect(card.measured).toBeNull()
+    expect(card.standingIn).toBe(`in:${hall.name}`)
+  })
+})
+
 describe('what the visitor is handed for asking', () => {
   it('prefers the solid: aiming at a thing is how you say which you meant', () => {
     const card = examine(ship, { solid: throne, space: hall }, words)
     expect(card?.id).toBe(throne.id)
+  })
+
+  it('prefers the exact tagged surface over a coarse solid or room hit', () => {
+    const card = examine(ship, { detail: tile, solid: throne, space: hall }, words)
+    expect(card?.id).toBe(tile.id)
   })
 
   it('falls back to the room, which has a chapter behind it too', () => {

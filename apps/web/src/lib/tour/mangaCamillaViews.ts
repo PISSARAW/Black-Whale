@@ -1,78 +1,93 @@
 import { mangaView as view, type MangaCastStaging, type MangaView } from './mangaViewModel'
 import { CAMILLA_DINING, CAMILLA_ENTRANCE, CAMILLA_LIVING } from './camillaView'
+import { MANGA_CAMILLA_APARTMENT_VIEWS } from './mangaCamillaApartmentViews'
 
-const untouchablesStaging: MangaCastStaging[] = [
-  { characterId: 'lisamsetta', at: [-8.2, 0.2], heading: Math.PI / 2, pose: 'seated' },
-  { characterId: 'meshush', at: [-8.2, 1.8], heading: Math.PI / 2, pose: 'seated' },
-  { characterId: 'mozbe', at: [-8.2, 3.4], heading: Math.PI / 2, pose: 'seated' },
-  { characterId: 'sarahell', at: [-3.8, 4.7], heading: Math.PI, pose: 'seated' },
-  { characterId: 'umanma', at: [-1.2, 4.7], heading: Math.PI, pose: 'seated' },
-  { characterId: 'fukataki', at: [1.4, 4.7], heading: Math.PI, pose: 'seated' },
-  { characterId: 'kako', at: [4.0, 4.7], heading: Math.PI, pose: 'seated' },
-  { characterId: 'prince-camilla', at: [-5.5, 2.0], heading: 0, pose: 'seated' },
+/** Chapter 389: the briefing is standing, while Camilla is detained in the VVIP area. */
+export const camillaGuardStaging: MangaCastStaging[] = [
+  { characterId: 'sarahell', at: [1, 3.6], heading: Math.PI, pose: 'idle' },
+  ...[
+    'lisamsetta',
+    'meshush',
+    'mozbe',
+    'umanma',
+    'kako',
+    'cavic',
+    'nukuocon',
+    'bucket',
+    'burvena',
+    'hignori',
+    'moswana',
+    'taler',
+  ].map((characterId, index) => {
+    const at = [-0.8 + (index % 4) * 0.9, 0.85 + Math.floor(index / 4) * 0.85] as const
+    return { characterId, at, heading: Math.atan2(1 - at[0], 3.6 - at[1]), pose: 'idle' as const }
+  }),
 ]
-
-const couchStaging: MangaCastStaging[] = [
-  { characterId: 'prince-camilla', at: [-5.5, 2.0], heading: 0, pose: 'seated' },
+export const camillaDiningStaging: MangaCastStaging[] = [
+  { characterId: 'prince-camilla', at: [3.6, -4.42], heading: 0, pose: 'seated' },
+  { characterId: 'duazul-hui-guo-rou', at: [3.6, -0.98], heading: Math.PI, pose: 'seated' },
 ]
-
-const diningStaging: MangaCastStaging[] = [
-  { characterId: 'prince-camilla', at: [4.65, -2.7], heading: Math.PI / 2, pose: 'seated' },
-  { characterId: 'duazul-hui-guo-rou', at: [7.35, -2.7], heading: -Math.PI / 2, pose: 'seated' },
-]
-
-const musseStaging: MangaCastStaging[] = [
-  { characterId: 'musse', at: [0.4, -5.88], heading: 0, pose: 'seated' },
+export const musseStaging: MangaCastStaging[] = [
+  { characterId: 'musse', at: [0.55, -5.65], heading: Math.PI, pose: 'seated' },
 ]
 
 export const MANGA_CAMILLA_VIEWS: MangaView[] = [
   view({
-    id: 'camilla-untouchables-circle',
+    id: 'camilla-untouchables-circle', // Retained for existing links; the corrected scene is standing.
     spaceId: CAMILLA_LIVING,
     chapter: 389,
+    eventSequence: 1,
     volume: 37,
-    staging: untouchablesStaging,
-    at: [-0.5, -1.8],
-    target: [-0.5, 3.5],
-    pitch: -0.05,
-    label: 'The Have-Not guards seated in a circle along the salon walls around Camilla',
-    labelFr: 'Les gardes Intouchables réunis en cercle le long des murs du salon autour de Camilla',
+    pages: '16–17 (chapitre)',
+    staging: camillaGuardStaging,
+    at: [-3.8, -1.7],
+    target: [0.85, 3.6],
+    eyeHeight: 3.1,
+    pitch: -0.28,
+    label: 'The Have-Not guards standing for their briefing in Room 1002',
+    labelFr: 'Les gardes Intouchables debout pour leur réunion dans la suite 1002',
   }),
   view({
-    id: 'camilla-massage-couch',
+    id: 'camilla-salon-panelling',
+    staging: camillaGuardStaging,
     spaceId: CAMILLA_LIVING,
     chapter: 389,
+    eventSequence: 1,
     volume: 37,
-    staging: couchStaging,
-    at: [-3.0, 2.0],
-    target: [-5.5, 2.0],
-    pitch: -0.06,
-    label: 'Princess Camilla reclining on her carved state chaise-longue',
-    labelFr: 'La princesse Camilla trônant sur sa méridienne d’apparat sculptée',
+    pages: '16–17 (chapitre)',
+    at: [-2.8, 2.8],
+    target: [0.85, 5.25],
+    pitch: 0.17,
+    label: 'Room 1002’s framed walls, peripheral seating and stepped ceiling',
+    labelFr: 'Les murs moulurés, sièges périphériques et plafond en retrait de la suite 1002',
   }),
   view({
     id: 'camilla-duazul-dining',
     spaceId: CAMILLA_DINING,
     chapter: 366,
-    volume: 36,
-    staging: diningStaging,
-    at: [6.0, -4.6],
-    target: [6.0, -2.7],
-    pitch: -0.06,
-    label: 'Princess Camilla and Queen Duazul dining in the private royal dining room',
-    labelFr: 'La princesse Camilla et la reine Duazul dînant dans la salle à manger privée',
+    eventSequence: 3,
+    volume: 35,
+    pages: '14–15 (chapitre)',
+    staging: camillaDiningStaging,
+    at: [7.4, -3.5],
+    target: [3.6, -2.7],
+    pitch: -0.07,
+    label: 'Camilla and Duazul facing one another over flowers and short candles',
+    labelFr: 'Camilla et Duazul face à face, de part et d’autre des fleurs et des bougies courtes',
   }),
   view({
     id: 'musse-surveillance-post',
     spaceId: CAMILLA_ENTRANCE,
     chapter: 366,
-    volume: 36,
+    eventSequence: 3,
+    volume: 35,
+    pages: '14–15 (chapitre)',
     staging: musseStaging,
-    at: [0.4, -4.8],
-    target: [0.4, -6.5],
-    pitch: -0.05,
-    label: 'Musse stationed at his surveillance desk and telephone post in the entrance passage',
-    labelFr:
-      'Musse posté à son bureau de surveillance et téléphone d’écoute dans le vestibule d’entrée',
+    at: [-0.9, -8.4],
+    target: [0.55, -6.3],
+    pitch: -0.12,
+    label: 'Musse at his separate passage desk with an open laptop and papers',
+    labelFr: 'Musse à son bureau séparé du passage, avec ordinateur ouvert et papiers',
   }),
+  ...MANGA_CAMILLA_APARTMENT_VIEWS,
 ]

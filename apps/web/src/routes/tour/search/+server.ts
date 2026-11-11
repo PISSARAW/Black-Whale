@@ -32,7 +32,8 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
   if (typeof body?.query !== 'string') {
     return json({ keywords: [], reason: 'rejected' }, { status: 400, headers: NO_STORE })
   }
-  const locale = typeof body.locale === 'string' && isLocale(body.locale) ? body.locale : DEFAULT_LOCALE
+  const locale =
+    typeof body.locale === 'string' && isLocale(body.locale) ? body.locale : DEFAULT_LOCALE
 
   if (config) {
     const verdict = rateLimit(`tour:search:${getClientAddress()}`, ASK_LIMIT, ASK_WINDOW_MS)

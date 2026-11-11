@@ -1,14 +1,32 @@
-import type { Vec2 } from '$lib/tour/types'
+import { theShip } from '$lib/tour/blueprint'
+import { structureFootprint } from '$lib/tour/geometry'
+import type { Polygon, Vec2 } from '$lib/tour/types'
+import { hasCamillaModel } from '$lib/tour/camillaView'
+import {
+  camillaGuardStaging,
+  camillaDiningStaging,
+  musseStaging,
+} from '$lib/tour/mangaCamillaViews'
 
 export const CAMILLA_VIEWBOX = { width: 800, height: 800 }
-export const CAMILLA_SCALE = 700 / 21 // 33.333 px per metre
-
-/** Maps room-1002 metric coordinates (X: -10.5 to 10.5, Z: -10.2 to 10.2) to SVG box. */
+export const CAMILLA_SCALE = 700 / 21
 export const camillaPoint = ([x, z]: Vec2) => ({
   x: 50 + (x + 10.5) * CAMILLA_SCALE,
   y: 82 + (z + 10.2) * CAMILLA_SCALE,
 })
-
+export const camillaLocalPolygon = (polygon: Polygon) =>
+  polygon
+    .map((at) => {
+      const p = camillaPoint(at)
+      return `${p.x - 50},${p.y - 82}`
+    })
+    .join(' ')
+export const camillaFixtures = theShip()
+  .structures.filter(hasCamillaModel)
+  .map((s) => ({
+    ...s,
+    polygon: camillaLocalPolygon(structureFootprint(s)),
+  }))
 function spot(at: Vec2) {
   const p = camillaPoint(at)
   return {
@@ -16,47 +34,16 @@ function spot(at: Vec2) {
     y: Number(((p.y / CAMILLA_VIEWBOX.height) * 100).toFixed(2)),
   }
 }
-
-/** Chapter 389: Have-Nots gathered in salon; Chapter 366: Camilla & Duazul dining, Musse at entrance. */
+function anchors(staging: readonly { characterId: string; at: Vec2 }[]) {
+  return { occupants: Object.fromEntries(staging.map((s) => [s.characterId, spot(s.at)])) }
+}
+export const camillaLivingSpotAnchors = anchors(camillaGuardStaging)
+export const camillaDiningSpotAnchors = anchors(camillaDiningStaging)
+export const camillaEntranceSpotAnchors = anchors(musseStaging)
 export const camillaSpotAnchors = {
   occupants: {
-    'prince-camilla': spot([-5.5, 2.0]),
-    'duazul-hui-guo-rou': spot([7.35, -2.7]),
-    musse: spot([0.4, -6.5]),
-    lisamsetta: spot([-8.2, 0.2]),
-    meshush: spot([-8.2, 1.8]),
-    mozbe: spot([-8.2, 3.4]),
-    sarahell: spot([-3.8, 4.7]),
-    umanma: spot([-1.2, 4.7]),
-    fukataki: spot([1.4, 4.7]),
-    kako: spot([4.0, 4.7]),
-    moswana: spot([-6.4, 4.7]),
-  },
-}
-
-export const camillaLivingSpotAnchors = {
-  occupants: {
-    'prince-camilla': spot([-5.5, 2.0]),
-    lisamsetta: spot([-8.2, 0.2]),
-    meshush: spot([-8.2, 1.8]),
-    mozbe: spot([-8.2, 3.4]),
-    sarahell: spot([-3.8, 4.7]),
-    umanma: spot([-1.2, 4.7]),
-    fukataki: spot([1.4, 4.7]),
-    kako: spot([4.0, 4.7]),
-    moswana: spot([-6.4, 4.7]),
-  },
-}
-
-export const camillaDiningSpotAnchors = {
-  occupants: {
-    'prince-camilla': spot([4.65, -2.7]),
-    'duazul-hui-guo-rou': spot([7.35, -2.7]),
-  },
-}
-
-export const camillaEntranceSpotAnchors = {
-  occupants: {
-    musse: spot([0.4, -6.5]),
+    ...camillaLivingSpotAnchors.occupants,
+    ...camillaDiningSpotAnchors.occupants,
+    ...camillaEntranceSpotAnchors.occupants,
   },
 }

@@ -8,7 +8,7 @@
 import { clipSegment, plateSeams } from './geometry'
 import type { Polygon, Space, Vec2 } from './types'
 
-export type FloorPatternKind = 'geometric-inlay' | 'radial-deck' | 'floorboards' | 'tile'
+export type FloorPatternKind = 'geometric-inlay' | 'radial-deck' | 'floorboards' | 'tile' | 'plain'
 
 export interface FloorPattern {
   kind: FloorPatternKind
@@ -181,6 +181,9 @@ function floorboards(polygon: Polygon): [Vec2, Vec2][] {
 const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
+  if (space.id === 'tier-1-royal-residential-sector-room-1002-living') {
+    return { kind: 'plain', style: 'joint', segments: [] }
+  }
   if (space.id === 'tier-1-king-living-quarters-living') {
     return { kind: 'geometric-inlay', style: 'inlay', segments: royalSalonInlay(space.footprint) }
   }

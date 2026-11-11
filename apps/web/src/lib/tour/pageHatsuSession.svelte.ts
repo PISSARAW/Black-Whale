@@ -75,6 +75,10 @@ export class TourHatsuSession {
     ...awakeningAvailability(this.awakened),
   })
 
+  /** Whether a Hatsu may be used: nodes open first, then the mode `hatsuMode.ts` asks for. */
+  canUse = (kind: HatsuInteractionKind | null): boolean =>
+    this.awakened && canUseTourHatsu(this.nen, kind)
+
   /** The visitor as a perceiver: their Nen and whether it is open. */
   get perceiver() {
     return { nen: this.nen, awakened: this.awakened }
@@ -104,7 +108,7 @@ export class TourHatsuSession {
       this.activationKind = context.activeKind
       if (changedKind && context.activeKind === 'future' && !this.futureArmed)
         parallelFutureVisible.set(false)
-      if (!context.hasAura || !canUseTourHatsu(this.nen, context.activeKind)) {
+      if (!context.hasAura || !this.canUse(context.activeKind)) {
         if (context.activeKind === 'future') parallelFutureVisible.set(false)
         const world = untrack(() => this.options.read().world)
         this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
@@ -152,7 +156,7 @@ export class TourHatsuSession {
       if (
         !this.unsubscribeFuture ||
         get(activeHatsu)?.id !== 'parallel-future' ||
-        !canUseTourHatsu(this.nen, 'future')
+        !this.canUse('future')
       )
         return
       this.futureArmed = true
@@ -211,7 +215,7 @@ export class TourHatsuSession {
       this.awakened = true
       saveAwakened()
     }
-    if (!canUseTourHatsu(this.nen, this.options.read().activeKind)) {
+    if (!this.canUse(this.options.read().activeKind)) {
       if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)
       const world = this.options.read().world
       this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })

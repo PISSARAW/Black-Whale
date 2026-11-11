@@ -15,6 +15,7 @@ import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
 import { MANGA_VVIP_RECREATION_VIEWS } from './mangaVvipRecreationViews'
 import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
 import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
+import { CINEPLEX_HALL_SPACES } from './cineplexHallLayout'
 import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
 import { MANGA_POLICE_VIEWS } from './mangaPoliceViews'
 import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
@@ -102,8 +103,10 @@ export const MANGA_VIEWS: MangaView[] = [
     id: 'cineplex-establishing-shot',
     spaceId: 'tier-3-cineplex-screen-corridor',
     triggerSpaceIds: ['tier-3-cineplex-concession', 'tier-3-cineplex-ticket-desk'],
+    visibleSpaceIds: [...CINEPLEX_HALL_SPACES],
     at: [0, -4.25],
     target: [0, 9.8],
+    cameraDistance: 2,
     pitch: 0.02,
     chapter: 393,
     volume: 38,

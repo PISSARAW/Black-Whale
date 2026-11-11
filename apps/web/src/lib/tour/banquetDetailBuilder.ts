@@ -1,4 +1,5 @@
 import type * as Three from 'three'
+import { DETAIL_TAGS_KEY, type DetailTagRange, type TourDetailTag } from './detailTag'
 
 export type Point3 = readonly [number, number, number]
 interface Placement {
@@ -7,13 +8,16 @@ interface Placement {
   rotation?: Point3
   glow?: boolean
   glass?: boolean
+  /** Evidence for this exact run of triangles, when it is not a blueprint solid. */
+  tag?: TourDetailTag
 }
 interface SurfaceBatch {
   positions: number[]
   normals: number[]
   colours: number[]
+  tags: DetailTagRange[]
 }
-const batch = (): SurfaceBatch => ({ positions: [], normals: [], colours: [] })
+const batch = (): SurfaceBatch => ({ positions: [], normals: [], colours: [], tags: [] })
 
 /** At most three buffers per room: opaque surfaces, lights and transparent panes. */
 export class BanquetDetailBuilder {
@@ -38,6 +42,7 @@ export class BanquetDetailBuilder {
     const normals = geometry.getAttribute('normal')
     const base = new THREE.Color(placement.colour)
     const into = placement.glass ? this.panes : placement.glow ? this.lights : this.surfaces
+    const firstFace = into.positions.length / 9
     for (let index = 0; index < vertices.count; index++) {
       const nx = normals.getX(index),
         ny = normals.getY(index),
@@ -48,6 +53,15 @@ export class BanquetDetailBuilder {
       into.positions.push(vertices.getX(index), vertices.getY(index), vertices.getZ(index))
       into.normals.push(nx, ny, nz)
       into.colours.push(base.r * shade, base.g * shade, base.b * shade)
+    }
+    if (placement.tag) {
+      const count = into.positions.length / 9 - firstFace
+      const previous = into.tags.at(-1)
+      if (previous?.tag.id === placement.tag.id && previous.start + previous.count === firstFace) {
+        previous.count += count
+      } else {
+        into.tags.push({ start: firstFace, count, tag: placement.tag })
+      }
     }
     geometry.dispose()
   }
@@ -153,7 +167,9 @@ export class BanquetDetailBuilder {
     geometry.setAttribute('normal', new this.THREE.Float32BufferAttribute(data.normals, 3))
     geometry.setAttribute('color', new this.THREE.Float32BufferAttribute(data.colours, 3))
     geometry.computeBoundingSphere()
-    root.add(new this.THREE.Mesh(geometry, material))
+    const mesh = new this.THREE.Mesh(geometry, material)
+    if (data.tags.length) mesh.userData[DETAIL_TAGS_KEY] = data.tags
+    root.add(mesh)
   }
 }
 

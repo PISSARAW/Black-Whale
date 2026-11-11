@@ -36,6 +36,7 @@
       | 'heading'
       | 'aimedAt'
       | 'aimedSolidAt'
+      | 'aimedDetailAt'
     > & {
       /** The visitor's aura reserve, drawn here because the scene does not own it. */
       reserve?: number
@@ -92,6 +93,7 @@
     bind:lookPitch={navigation.lookPitch}
     bind:aimedAt={navigation.aimedAt}
     bind:aimedSolidAt={navigation.aimedSolidAt}
+    bind:aimedDetailAt={navigation.aimedDetailAt}
     bind:takeScreenshot
     {gyoMode}
     {...sceneProps}

@@ -11,16 +11,7 @@ import { SKIN_TIME } from './humanAuraSkin'
  * still, and a figure walking in Zetsu is.
  */
 export function animateHumanAura(aura: HumanAura): (seconds: number) => void {
-  const {
-    onFlames,
-    renFlames,
-    eyeAuras,
-    koPoints,
-    ryuPoints,
-    enFields,
-    onCore,
-    auraGlass,
-  } = aura
+  const { onFlames, renFlames, eyeAuras, koPoints, ryuPoints, enFields, onCore, auraGlass } = aura
   return (seconds: number) => {
     // The shell breathes by scale and never by material. Its material is shared
     // across every figure wearing the same bend — one upload for a deck of

@@ -105,6 +105,9 @@ describe('createInterpreter', () => {
       .mockResolvedValueOnce(reply(['cuisine']))
     const interpret = createInterpreter(ask)
     expect(await interpret('où peut-on se restaurer', 'fr')).toEqual({ status: 'busy' })
-    expect(await interpret('où peut-on se restaurer', 'fr')).toEqual({ status: 'ok', keywords: ['cuisine'] })
+    expect(await interpret('où peut-on se restaurer', 'fr')).toEqual({
+      status: 'ok',
+      keywords: ['cuisine'],
+    })
   })
 })

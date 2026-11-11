@@ -14,5 +14,9 @@ export function dressTserriednichRoomPicture(surface: TserriednichRoomSurface): 
     y: 0,
     z: 0.02,
   })
-  surface.box([surface.width + 0.08, 0.05, 0.05], [0, surface.structure.height / 2 + 0.06, 0.03], TSERRIEDNICH_GOLD_TRIM)
+  surface.box(
+    [surface.width + 0.08, 0.05, 0.05],
+    [0, surface.structure.height / 2 + 0.06, 0.03],
+    TSERRIEDNICH_GOLD_TRIM,
+  )
 }

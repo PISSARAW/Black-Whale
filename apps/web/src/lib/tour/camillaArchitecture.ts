@@ -3,221 +3,113 @@ import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { banquetWallRuns, wallPoint } from './banquetWallLayout'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import type { Space } from './types'
+import { CAMILLA_SALON_LAMP } from './camillaLighting'
 import {
-  CAMILLA_CARPET,
-  CAMILLA_CARPET_BORDER,
-  CAMILLA_GOLD,
-  CAMILLA_TAPESTRY_BLUE,
-  CAMILLA_WOOD,
+  CAMILLA_GOLD as GOLD,
+  CAMILLA_STONE as STONE,
+  CAMILLA_WOOD as WOOD,
 } from './camillaDetailSurface'
 
-export interface ArchitectureContext {
+interface ArchitectureContext {
   THREE: typeof Three
   into: BanquetDetailBuilder
   plan: TierPlan
   space: Space
 }
 
-function salonCarpet(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-  const atY = floor + 0.008
-  const cx = -0.5
-  const cz = 2.4
-  const w = 12.0
-  const d = 4.8
-
-  // Main burgundy velvet carpet
-  into.box([w, 0.015, d], {
-    at: [cx, atY, cz],
-    colour: CAMILLA_CARPET,
-  })
-
-  // Gold embroidered borders
-  const trim = 0.12
-  for (const side of [-1, 1]) {
-    into.box([w, 0.018, trim], {
-      at: [cx, atY + 0.002, cz + (side * (d - trim)) / 2],
-      colour: CAMILLA_CARPET_BORDER,
-    })
-    into.box([trim, 0.018, d - trim * 2], {
-      at: [cx + (side * (w - trim)) / 2, atY + 0.002, cz],
-      colour: CAMILLA_CARPET_BORDER,
-    })
-  }
-}
-
-function wallMouldings(context: ArchitectureContext): void {
+/** Plain framed wall panels and a stepped cornice, ch. 389, reading pp. 16–17. */
+function mouldings(context: ArchitectureContext): void {
   const { into, plan, space } = context
-  const floor = floorOf(space, plan.tier)
-
+  const floor = floorOf(space, plan.tier),
+    height = ceilingOf(space, plan.tier)
   for (const run of banquetWallRuns(plan, space)) {
-    // Plinth, dado rail and cornice
-    const mouldings: Array<[number, number, number, number]> = [
-      [0.15, 0.28, 0.08, CAMILLA_WOOD],
-      [0.9, 0.06, 0.09, CAMILLA_WOOD],
-      [0.94, 0.02, 0.095, CAMILLA_GOLD],
-      [2.6, 0.04, 0.06, CAMILLA_GOLD],
-      [3.82, 0.14, 0.16, CAMILLA_WOOD],
-      [3.94, 0.04, 0.18, CAMILLA_GOLD],
-    ]
-    for (const [y, height, depth, col] of mouldings) {
-      into.box([run.length, height, depth], {
-        at: wallPoint(run, { along: run.length / 2, y: floor + y, inset: depth / 2 }),
+    const box = (
+      size: readonly [number, number, number],
+      p: { along: number; y: number; inset?: number },
+      colour: number,
+    ) => {
+      into.box(size, {
+        at: wallPoint(run, { ...p, y: floor + p.y }),
         rotation: [0, run.angle, 0],
-        colour: col,
+        colour,
       })
     }
-
-    // Repeated vertical panels
-    const panelCount = Math.max(1, Math.floor(run.length / 1.8))
-    for (let i = 0; i < panelCount; i++) {
-      const along = ((i + 0.5) * run.length) / panelCount
-      into.box([0.95, 1.25, 0.035], {
-        at: wallPoint(run, { along, y: floor + 1.8, inset: 0.04 }),
-        rotation: [0, run.angle, 0],
-        colour: CAMILLA_WOOD,
-      })
-      into.box([0.85, 1.15, 0.04], {
-        at: wallPoint(run, { along, y: floor + 1.8, inset: 0.045 }),
-        rotation: [0, run.angle, 0],
-        colour: CAMILLA_GOLD,
-      })
+    for (const [y, h, depth] of [
+      [0.1, 0.16, 0.1],
+      [0.87, 0.07, 0.08],
+      [height - 0.3, 0.09, 0.13],
+      [height - 0.13, 0.11, 0.18],
+    ]) {
+      box([run.length, h, depth], { along: run.length / 2, y, inset: depth / 2 }, STONE)
+    }
+    const count = Math.max(1, Math.floor(run.length / 1.65)),
+      pitch = run.length / count
+    for (let i = 0; i < count; i++) {
+      const along = (i + 0.5) * pitch,
+        width = Math.min(1.3, pitch - 0.2)
+      for (const y of [0.27, 0.71]) box([width, 0.03, 0.03], { along, y }, GOLD)
+      for (const side of [-1, 1]) {
+        box([0.03, 0.44, 0.03], { along: along + (side * width) / 2, y: 0.49 }, GOLD)
+        box([0.045, 2.32, 0.04], { along: along + (side * width) / 2, y: 2.18 }, STONE)
+      }
+      for (const y of [1.02, 3.34]) box([width, 0.045, 0.04], { along, y }, STONE)
     }
   }
 }
 
-function wallTapestry(context: ArchitectureContext, runIndex: number): void {
+function salonCeiling(context: ArchitectureContext): void {
   const { into, plan, space } = context
-  const runs = banquetWallRuns(plan, space)
-  if (runIndex >= runs.length) return
-  const run = runs[runIndex]!
-  const floor = floorOf(space, plan.tier)
-  const mid = run.length / 2
-  const tapW = Math.min(3.2, run.length * 0.7)
-  const tapH = 1.9
-
-  // Gilded hanging rod & finials
-  into.cylinder(
-    { radius: 0.025, height: tapW + 0.3, sides: 12 },
-    {
-      at: wallPoint(run, { along: mid, y: floor + 3.1, inset: 0.08 }),
-      rotation: [0, run.angle, Math.PI / 2],
-      colour: CAMILLA_GOLD,
-    },
-  )
-  for (const side of [-1, 1]) {
-    into.sphere([0.05, 0.05, 0.05], {
-      at: wallPoint(run, { along: mid + (side * (tapW + 0.3)) / 2, y: floor + 3.1, inset: 0.08 }),
-      colour: CAMILLA_GOLD,
+  const top = floorOf(space, plan.tier) + ceilingOf(space, plan.tier)
+  const [x, z] = CAMILLA_SALON_LAMP
+  for (const inset of [0, 0.18, 0.35]) {
+    const w = 8 - inset * 2,
+      d = 4 - inset * 2
+    for (const side of [-1, 1]) {
+      into.box([w, 0.06, 0.06], {
+        at: [x, top - 0.13 + inset * 0.18, z + (side * d) / 2],
+        colour: STONE,
+      })
+      into.box([0.06, 0.06, d], {
+        at: [x + (side * w) / 2, top - 0.13 + inset * 0.18, z],
+        colour: STONE,
+      })
+    }
+  }
+  // The chandelier belongs to the assembly room; no low dining chandelier is inferred.
+  const y = top - 0.85
+  into.cylinder({ radius: 0.02, height: 0.65 }, { at: [x, top - 0.35, z], colour: GOLD })
+  into.sphere([0.14, 0.18, 0.14], { at: [x, y, z], colour: GOLD })
+  for (let arm = 0; arm < 6; arm++) {
+    const a = (arm * Math.PI) / 3,
+      dx = Math.cos(a),
+      dz = Math.sin(a)
+    into.curve(
+      [
+        [x, y, z],
+        [x + dx * 0.32, y - 0.17, z + dz * 0.32],
+        [x + dx * 0.56, y - 0.07, z + dz * 0.56],
+        [x + dx * 0.56, y + 0.13, z + dz * 0.56],
+      ],
+      0.022,
+      { at: [0, 0, 0], colour: GOLD },
+    )
+    into.sphere([0.04, 0.09, 0.04], {
+      at: [x + dx * 0.56, y + 0.23, z + dz * 0.56],
+      colour: 0xf0e5ca,
+      glow: true,
     })
   }
-
-  // Woven damask tapestry body
-  into.box([tapW, tapH, 0.03], {
-    at: wallPoint(run, { along: mid, y: floor + 3.1 - tapH / 2 - 0.03, inset: 0.07 }),
-    rotation: [0, run.angle, 0],
-    colour: CAMILLA_TAPESTRY_BLUE,
-  })
-
-  // Lower golden fringe
-  into.box([tapW, 0.08, 0.035], {
-    at: wallPoint(run, { along: mid, y: floor + 3.1 - tapH - 0.04, inset: 0.075 }),
-    rotation: [0, run.angle, 0],
-    colour: CAMILLA_GOLD,
-  })
 }
 
-function diningChandelier(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-  const ceiling = ceilingOf(space, plan.tier)
-  const at = [6.0, floor, -2.7] as const
-
-  // Downrod
-  const rodH = ceiling - floor - 1.1
-  into.cylinder(
-    { radius: 0.02, height: rodH, sides: 8 },
-    {
-      at: [at[0], floor + 1.1 + rodH / 2, at[2]],
-      colour: CAMILLA_GOLD,
-    },
-  )
-
-  // Circular crown & glass droplets
-  into.ring({ radius: 0.65, tube: 0.03 }, { at: [at[0], floor + 1.1, at[2]], colour: CAMILLA_GOLD })
-  into.sphere([0.22, 0.12, 0.22], { at: [at[0], floor + 1.05, at[2]], colour: CAMILLA_GOLD })
-  for (let i = 0; i < 8; i++) {
-    const angle = (i * Math.PI * 2) / 8
-    const dx = Math.cos(angle) * 0.65
-    const dz = Math.sin(angle) * 0.65
-    into.cylinder(
-      { radius: 0.015, height: 0.18, sides: 6 },
-      {
-        at: [at[0] + dx, floor + 0.98, at[2] + dz],
-        colour: 0xffffff,
-      },
-    )
+function corridorFloor(context: ArchitectureContext): void {
+  const floor = floorOf(context.space, context.plan.tier)
+  for (let z = -9.75; z < -3; z += 0.85) {
+    context.into.box([2.74, 0.009, 0.04], { at: [0, floor + 0.008, z], colour: WOOD })
   }
-}
-
-export function dressCamillaLivingArchitecture(context: ArchitectureContext): void {
-  salonCarpet(context)
-  wallMouldings(context)
-  wallTapestry(context, 0)
-  wallTapestry(context, 1)
-}
-
-export function dressCamillaDiningArchitecture(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-
-  // Dining rug under table
-  into.box([3.8, 0.012, 4.6], {
-    at: [6.0, floor + 0.006, -2.7],
-    colour: CAMILLA_CARPET,
-  })
-  into.box([3.9, 0.015, 0.08], {
-    at: [6.0, floor + 0.008, -2.7 - 2.25],
-    colour: CAMILLA_CARPET_BORDER,
-  })
-  into.box([3.9, 0.015, 0.08], {
-    at: [6.0, floor + 0.008, -2.7 + 2.25],
-    colour: CAMILLA_CARPET_BORDER,
-  })
-
-  wallMouldings(context)
-  diningChandelier(context)
-}
-
-export function dressCamillaEntranceArchitecture(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-  const ceiling = ceilingOf(space, plan.tier)
-
-  // Subtle floor runner in the entrance corridor
-  into.box([1.4, 0.01, 6.2], {
-    at: [0.0, floor + 0.005, -6.45],
-    colour: 0x2b2b32,
-  })
-
-  // Surveillance ceiling fixture
-  into.cylinder(
-    { radius: 0.16, height: 0.06, sides: 12 },
-    {
-      at: [0.4, ceiling - 0.03, -6.5],
-      colour: 0x888888,
-    },
-  )
 }
 
 export function dressCamillaArchitecture(context: ArchitectureContext): void {
-  const { space } = context
-  if (space.id.endsWith('-living')) {
-    dressCamillaLivingArchitecture(context)
-  } else if (space.id.endsWith('-dining')) {
-    dressCamillaDiningArchitecture(context)
-  } else if (space.id.endsWith('-entrance')) {
-    dressCamillaEntranceArchitecture(context)
-  }
+  mouldings(context)
+  if (context.space.id.endsWith('-living')) salonCeiling(context)
+  if (context.space.id.endsWith('-entrance')) corridorFloor(context)
 }

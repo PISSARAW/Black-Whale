@@ -698,6 +698,8 @@ export const fr: Messages = {
       standingIn: (room) => `Se tient dans ${room}`,
       standingAbout: (room) => `Quelque part dans ${room}`,
       room: 'Une pièce que les plans de pont dessinent, arpentée à la taille qu’ils lui donnent.',
+      detail:
+        'Un détail visible de la case, conservé comme surface documentée sans être transformé en meuble ou obstacle du plan.',
       person: {
         since: (chapter) => `Ici depuis le ch. ${chapter}`,
         sinceUnknown: 'Le catalogue ne date cette position d’aucun chapitre.',

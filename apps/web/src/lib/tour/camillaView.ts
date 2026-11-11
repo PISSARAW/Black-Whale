@@ -1,93 +1,55 @@
 import type * as Three from 'three'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { floorOf, type TierPlan } from './blueprint'
-import {
-  dressCamillaDiningArchitecture,
-  dressCamillaEntranceArchitecture,
-  dressCamillaLivingArchitecture,
-} from './camillaArchitecture'
+import { dressCamillaArchitecture } from './camillaArchitecture'
 import { CamillaSurface } from './camillaDetailSurface'
-import {
-  dressCamillaChaise,
-  dressCamillaTable,
-  dressDiningTable,
-  dressMusseSurveillanceDesk,
-  dressUntouchablesSeats,
-} from './camillaFurniture'
+import { dressCamillaFurniture } from './camillaFurniture'
+import { dressCamillaPicture } from './camillaPictures'
+import type { Structure } from './types'
+import { buildCamillaApartmentDetails, CAMILLA_PRIVATE_SPACES } from './camillaApartmentView'
 
 export const CAMILLA_ROOM_1002 = 'tier-1-royal-residential-sector-room-1002'
-export const CAMILLA_LIVING = 'tier-1-royal-residential-sector-room-1002-living'
-export const CAMILLA_DINING = 'tier-1-royal-residential-sector-room-1002-dining'
-export const CAMILLA_ENTRANCE = 'tier-1-royal-residential-sector-room-1002-entrance'
+export const CAMILLA_LIVING = `${CAMILLA_ROOM_1002}-living`
+export const CAMILLA_DINING = `${CAMILLA_ROOM_1002}-dining`
+export const CAMILLA_ENTRANCE = `${CAMILLA_ROOM_1002}-entrance`
+export const CAMILLA_SPACES = [CAMILLA_LIVING, CAMILLA_DINING, CAMILLA_ENTRANCE]
 
-function buildLiving(options: {
-  THREE: typeof Three
-  plan: TierPlan
-  space: ReturnType<TierPlan['spaces']['find']> & object
-}): Three.Group | null {
-  const { THREE, plan, space } = options
-  const into = new BanquetDetailBuilder(THREE)
-  const floor = floorOf(space, plan.tier)
-
-  dressCamillaLivingArchitecture({ THREE, into, plan, space })
-  dressCamillaChaise(new CamillaSurface(into, [-5.5, 0, 2.0], { floor }))
-  dressCamillaTable(new CamillaSurface(into, [-3.9, 0, 2.0], { floor }))
-  dressUntouchablesSeats(new CamillaSurface(into, [0, 0, 0], { floor }))
-
-  return into.finish('camilla-living-details')
+export function hasCamillaModel(s: Structure): boolean {
+  return (
+    (CAMILLA_SPACES.includes(s.spaceId) &&
+      ['seat', 'table', 'cabinet', 'painting'].includes(s.kind)) ||
+    (CAMILLA_PRIVATE_SPACES.includes(s.spaceId) &&
+      ['bed', 'cabinet', 'counter', 'basin'].includes(s.kind))
+  )
 }
 
-function buildDining(options: {
-  THREE: typeof Three
-  plan: TierPlan
-  space: ReturnType<TierPlan['spaces']['find']> & object
-}): Three.Group | null {
-  const { THREE, plan, space } = options
-  const into = new BanquetDetailBuilder(THREE)
-  const floor = floorOf(space, plan.tier)
-
-  dressCamillaDiningArchitecture({ THREE, into, plan, space })
-  dressDiningTable(new CamillaSurface(into, [6.0, 0, -2.7], { floor }))
-
-  return into.finish('camilla-dining-details')
+/** Replace only the drawing of solids, retaining the complete walked collision plan. */
+export function camillaSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal || plan.tier.id !== 'interior-room-1002') return plan
+  return { ...plan, structures: plan.structures.filter((s) => !hasCamillaModel(s)) }
 }
 
-function buildEntrance(options: {
-  THREE: typeof Three
-  plan: TierPlan
-  space: ReturnType<TierPlan['spaces']['find']> & object
-}): Three.Group | null {
-  const { THREE, plan, space } = options
-  const into = new BanquetDetailBuilder(THREE)
-  const floor = floorOf(space, plan.tier)
-
-  dressCamillaEntranceArchitecture({ THREE, into, plan, space })
-  dressMusseSurveillanceDesk(new CamillaSurface(into, [0.4, 0, -6.5], { floor }))
-
-  return into.finish('camilla-entrance-details')
-}
-
-/** Reconstructed suite 1002 for Princess Camilla from chapters 366, 389 and 413. */
+/** Ch. 366, reading pp. 14–15; ch. 389, reading pp. 16–17. See the room audit. */
 export function buildCamillaRoomDetails(options: {
   THREE: typeof Three
   plan: TierPlan
   spaceId: string
   reveal: boolean
 }): Three.Group | null {
-  const { reveal, spaceId, plan, THREE } = options
-  if (reveal || !spaceId.startsWith(CAMILLA_ROOM_1002)) return null
-
-  const space = plan.spaces.find((candidate) => candidate.id === spaceId)
+  const { THREE, plan, spaceId, reveal } = options
+  if (reveal) return null
+  if (!CAMILLA_SPACES.includes(spaceId)) return buildCamillaApartmentDetails(options)
+  const space = plan.spaces.find((s) => s.id === spaceId)
   if (!space) return null
-
-  if (spaceId === CAMILLA_LIVING) {
-    return buildLiving({ THREE, plan, space })
+  const into = new BanquetDetailBuilder(THREE)
+  const floor = floorOf(space, plan.tier)
+  dressCamillaArchitecture({ THREE, into, plan, space })
+  for (const structure of plan.structures.filter(
+    (s) => s.spaceId === spaceId && hasCamillaModel(s),
+  )) {
+    const surface = new CamillaSurface(into, THREE, { structure, floor })
+    if (structure.kind === 'painting') dressCamillaPicture(surface)
+    else dressCamillaFurniture(surface)
   }
-  if (spaceId === CAMILLA_DINING) {
-    return buildDining({ THREE, plan, space })
-  }
-  if (spaceId === CAMILLA_ENTRANCE) {
-    return buildEntrance({ THREE, plan, space })
-  }
-  return null
+  return into.finish(`camilla-${spaceId.split('-').at(-1)}-details`)
 }

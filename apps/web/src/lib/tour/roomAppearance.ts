@@ -9,6 +9,7 @@
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { banquetAppearanceOf } from './banquetAppearance'
 import { benjaminAppearanceOf } from './benjaminApartmentAppearance'
+import { camillaAppearanceOf } from './camillaAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
@@ -419,13 +420,7 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   const benjamin = benjaminAppearanceOf(space, appearance)
   if (benjamin) return benjamin
 
-  // Ch. 389 distinguishes Camilla's formal meeting salon by its continuous
-  // carpet. Keep the rest of Apartment 1002 on the shared princely finish.
-  if (space.id === 'tier-1-royal-residential-sector-room-1002-living') {
-    return { ...appearance, floor: 0x553238 }
-  }
-
-  return appearance
+  return camillaAppearanceOf(space, appearance) ?? appearance
 }
 
 /** Material families keep audited objects legible without changing their shape. */

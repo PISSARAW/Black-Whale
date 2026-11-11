@@ -51,10 +51,7 @@ const HOLLOW = new Set([
 
 /** Accents folded and case dropped, so "refectoire" meets "Réfectoire". */
 export function foldWord(word: string): string {
-  return word
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+  return word.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
 }
 
 /** A text cut into its words: letters and digits, nothing else. */

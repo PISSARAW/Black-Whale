@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 358
+Fichiers : 365
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -838,9 +838,13 @@ Fichiers : 358
 
 - the inaugural banquet reconstruction > keeps round tables within the reshaped hall, clear of one another and of the central aisle
 
+## `apps/web/src/lib/tour/benjaminApartmentView.test.ts`
+
+- the programme-type rooms of Benjamin’s apartment > labels the seven rooms and their furniture as map-based reconstructions
+
 ## `apps/web/src/lib/tour/benjaminRoomView.test.ts`
 
-- the room of Prince Benjamin reconstructed from chapters 362, 363 and 366 > satisfies the shared blueprint invariants for Benjamin’s room
+- the room of Prince Benjamin reconstructed from chapters 363 and 366 > satisfies the shared blueprint invariants for Benjamin’s room
 
 ## `apps/web/src/lib/tour/blueprint.test.ts`
 
@@ -858,9 +862,13 @@ Fichiers : 358
 
 - the princes burial chamber reconstructed from chapter 371 > satisfies the shared blueprint invariants for the burial rotunda
 
+## `apps/web/src/lib/tour/camillaApartmentView.test.ts`
+
+- Camilla’s programme-type rooms and source-panel staging > lights the salon from its chandelier without generic ceiling panels
+
 ## `apps/web/src/lib/tour/camillaRoom1002View.test.ts`
 
-- Princess Camilla Room 1002 reconstructed from chapters 366, 389 and 413 > satisfies the shared blueprint invariants for Room 1002
+- Camilla’s actual apartment, distinct from her VVIP detention room > satisfies the shared plan and keeps the floor furniture clear of each other
 
 ## `apps/web/src/lib/tour/casinoView.test.ts`
 
@@ -917,7 +925,7 @@ Fichiers : 358
 
 ## `apps/web/src/lib/tour/cast/mangaStage.test.ts`
 
-- manga panel cast staging > uses the panel positions and keeps unrelated rooms untouched
+- manga panel cast staging > keeps an explicitly unpopulated programme-type room empty
 
 ## `apps/web/src/lib/tour/cast/nen.test.ts`
 
@@ -1016,6 +1024,14 @@ Fichiers : 358
 - solidsIn > counts a long run rather than naming each of it
 - describeSpace > says what a room is, where it is, how big and what is in it
 
+## `apps/web/src/lib/tour/diningHallLighting.test.ts`
+
+- refectory suspended lighting and open steelwork > uses the eighteen suspended fixtures for the bake, without duplicate ceiling quads
+
+## `apps/web/src/lib/tour/diningHallSurfaces.test.ts`
+
+- readable refectory furniture, service glass and wall openings > replaces the coarse furniture only in the drawing and keeps the physical plan intact
+
 ## `apps/web/src/lib/tour/diningHallView.test.ts`
 
 - the central dining hall reconstructed from chapters 371, 377 and 379-380 > satisfies the shared blueprint invariants for the dining hall
@@ -1042,12 +1058,13 @@ Fichiers : 358
 
 - the exhibit for a solid > carries the badge, the chapter and the claim of its kind
 - the exhibit for a room > says what a room asserts, and gives its ceiling as the third figure
+- the exhibit for a tagged model detail > carries its own bilingual evidence without becoming a solid
 - what the visitor is handed for asking > prefers the solid: aiming at a thing is how you say which you meant
 - the claims table covers the ship > states what every kind of solid actually on board asserts
 
 ## `apps/web/src/lib/tour/floorPattern.test.ts`
 
-- audited floor patterns > draws the panel-attested treatments the audit names
+- audited floor patterns > keeps Camilla’s continuous salon floor free of generic metal deck seams
 
 ## `apps/web/src/lib/tour/footing.test.ts`
 
@@ -1141,9 +1158,13 @@ Fichiers : 358
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
+## `apps/web/src/lib/tour/heillyDisposalView.test.ts`
+
+- the chapter 394 Heil-Ly disposal room > uses the supplied panel composition instead of invented laundry machines
+
 ## `apps/web/src/lib/tour/heillyHideoutView.test.ts`
 
-- the Heil-Ly secret hideout reconstructed from chapters 398, 399 and 407 > satisfies blueprint invariants for all rooms of the hideout
+- the Heil-Ly secret hideout reconstructed from chapters 394, 398, 399 and 407 > satisfies blueprint invariants for all rooms of the hideout
 
 ## `apps/web/src/lib/tour/hospitalView.test.ts`
 
@@ -1152,6 +1173,10 @@ Fichiers : 358
 ## `apps/web/src/lib/tour/hour.test.ts`
 
 - shipHourOf > takes the hour canon states
+
+## `apps/web/src/lib/tour/hullSuspensionView.test.ts`
+
+- the chapter 406 hull suspension bay > replaces every coarse spring with a complete batched mounting
 
 ## `apps/web/src/lib/tour/humanAnimation.test.ts`
 
@@ -1223,7 +1248,7 @@ Fichiers : 358
 - which way the surfaces face > faces every wall of a room into the room it belongs to
 - the deck plating > lays a course under every room with a floor
 - the depth of a doorway > gives every opening two cheeks, in the list collision reads
-- the ceiling fittings > hangs one over every room, on the grid the bake pools from
+- the ceiling fittings > draws fallback fittings on the light grid and leaves modelled fixtures to their room
 - the observation-deck window > types the observation-deck opening, drawn by a panel
 
 ## `apps/web/src/lib/tour/morena.test.ts`
@@ -1232,7 +1257,7 @@ Fichiers : 358
 - spending a question > answers it first and takes a card afterwards
 - the card she marked > hands her the answer the moment you reach for it
 - a whole hand, played the way ch. 410 plays it > ends on the card she marked, with a Yes that was not given
-- what the walk lays on the table > stands the room, the table and both chairs where the game needs them
+- what the walk lays on the table > stands the room, striped desk, carved chair and sofa where the game needs them
 - the woman opposite > deals, leans in for the kiss, and sits back when it is played out
 - the roster of what can be played across the table > names an ability that exists for every one of them
 - Lovely Ghostwriter, which nobody plays > sits the beast at the guest’s elbow from the deal
@@ -1272,6 +1297,11 @@ Fichiers : 358
 ## `apps/web/src/lib/tour/nenCreatureFigure.test.ts`
 
 - Nen creature figure > covers beasts used by the tour and Morena without styling props or people
+
+## `apps/web/src/lib/tour/nenPress.test.ts`
+
+- controlled Nen feedback > keeps arena and hunt refusals distinct from success or no verdict
+- Ten before and after awakening > requests awakening even when the starting state already holds Ten
 
 ## `apps/web/src/lib/tour/outputPass.test.ts`
 

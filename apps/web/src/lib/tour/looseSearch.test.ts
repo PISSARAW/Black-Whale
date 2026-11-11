@@ -61,9 +61,9 @@ describe('groundKeywords', () => {
   it('does not take the grammar of a question for a place', () => {
     expect(vocabulary).toContain('est')
     expect(groundKeywords({ query: 'quelle heure est-il', proposed: [], vocabulary })).toEqual([])
-    expect(groundKeywords({ query: 'quelle heure est-il', proposed: ['est'], vocabulary })).toEqual([
-      'est',
-    ])
+    expect(groundKeywords({ query: 'quelle heure est-il', proposed: ['est'], vocabulary })).toEqual(
+      ['est'],
+    )
   })
 
   it('never keeps more of the model than it was allowed to say', () => {

@@ -768,6 +768,13 @@ volumes et finitions sont une reconstitution du programme-type, tandis que le
 salon conserve les références directes aux cases. La carte locale et les
 collisions utilisent les mêmes emprises.
 
+Dans le **1002**, les cases des chapitres 366 et 389 distinguent le repas,
+le bureau de Musse et la réunion debout des Intouchables. Le meuble arqué et
+les doubles portes du salon sont restitués ; la scène de massage appartient
+à la détention VVIP. Les cinq pièces privées conservent les cloisons du plan
+publié au chapitre 363, avec un mobilier de reconstitution `map` et des points
+de vue explicitement légendés. Voir [l’audit du 1002](camilla-room-1002-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

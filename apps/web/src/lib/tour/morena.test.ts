@@ -365,17 +365,15 @@ describe('what the walk lays on the table', () => {
   const office = ship.spaces.get(HIDEOUT_OFFICE)!
   const floor = floorOf(office, ship.plans.get(HIDEOUT_TIER)!.tier)
 
-  it('stands the room, the table and both chairs where the game needs them', () => {
+  it('stands the room, striped desk, carved chair and sofa where the game needs them', () => {
     const structures = ship.structures.filter((solid) => solid.spaceId === HIDEOUT_OFFICE)
     const table = structures.find((solid) => solid.id.endsWith('-card-table'))!
     expect(table.kind).toBe('table')
     expect(table.at).toEqual([...TABLE_AT])
     expect(table.height).toBe(TABLE_HEIGHT)
-    expect(
-      structures.filter(
-        (solid) => solid.id.endsWith('-dealer-chair') || solid.id.endsWith('-guest-chair'),
-      ),
-    ).toHaveLength(2)
+    expect(structures.some((solid) => solid.id.endsWith('-dealer-chair'))).toBe(true)
+    expect(structures.some((solid) => solid.id.endsWith('-office-couch'))).toBe(true)
+    expect(structures.some((solid) => solid.id.endsWith('-office-wall-bench'))).toBe(true)
   })
 
   it('seats both players inside the room they are playing in', () => {

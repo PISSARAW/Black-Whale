@@ -80,11 +80,17 @@ function panelledCeiling(context: TserriednichArchitectureContext): void {
   const rows = 3
   for (let i = 0; i <= cols; i++) {
     const x = minX + (i * width) / cols
-    into.box([0.14, 0.16, depth], { at: [x, topY - 0.08, (minZ + maxZ) / 2], colour: TSERRIEDNICH_GOLD_TRIM })
+    into.box([0.14, 0.16, depth], {
+      at: [x, topY - 0.08, (minZ + maxZ) / 2],
+      colour: TSERRIEDNICH_GOLD_TRIM,
+    })
   }
   for (let j = 0; j <= rows; j++) {
     const z = minZ + (j * depth) / rows
-    into.box([width, 0.14, 0.14], { at: [(minX + maxX) / 2, topY - 0.07, z], colour: TSERRIEDNICH_GOLD_TRIM })
+    into.box([width, 0.14, 0.14], {
+      at: [(minX + maxX) / 2, topY - 0.07, z],
+      colour: TSERRIEDNICH_GOLD_TRIM,
+    })
   }
 }
 

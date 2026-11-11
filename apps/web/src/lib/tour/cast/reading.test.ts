@@ -60,7 +60,9 @@ describe('what an aura tells you about a body', () => {
   it('gives an unawakened visitor only the pressure of a raised aura', () => {
     expect(reading({ awakened: false, aura: 'ren' })).toEqual(['pressure'])
     expect(reading({ awakened: false, aura: 'ten' })).toEqual(['blind'])
-    expect(reading({ awakened: false, aura: 'zetsu', visitor: visitor({ type: 'GYO', on: true }) })).toEqual(['blind'])
+    expect(
+      reading({ awakened: false, aura: 'zetsu', visitor: visitor({ type: 'GYO', on: true }) }),
+    ).toEqual(['blind'])
   })
 
   it('feels a raised aura and a held one, and says which', () => {

@@ -55,7 +55,7 @@
     >Heil-Ly Secret Hideout · Tier 2</text
   >
   <text x="550" y="58" class="sub"
-    >Ch. 398–399 panel details · physical links between rooms remain partly unknown</text
+    >Ch. 394 and 398–399 panel details · physical links between rooms remain partly unknown</text
   >
   <g transform="translate(55 95)">
     <rect
@@ -70,9 +70,9 @@
       onclick={() => inspect('processing-room')}
       onkeydown={(event) => inspectWithKeyboard(event, 'processing-room')}
     />
-    <text x="175" y="135" class="label">Processing / Shower Room</text>
+    <text x="175" y="135" class="label">Processing Room</text>
     <text x="175" y="152" class="sub">Tiled · Nen-protected walls · seven doors</text>
-    <text x="175" y="170" class="sub">showers · floor drains · maintenance shelves</text>
+    <text x="175" y="170" class="sub">four far doors · tiled frame · coiled hose</text>
     {#each [0, 1, 2, 3, 4] as i (i)}<rect
         class="door"
         x={65 + i * 48}
@@ -103,16 +103,22 @@
       onkeydown={(event) => inspectWithKeyboard(event, 'laundry-disposal')}
     />
     <text x="175" y="455" class="label">Laundry / Disposal Room</text>
-    <text x="175" y="478" class="sub">Industrial washers/dryers · sinks · lockers</text>
-    <text x="175" y="496" class="sub">wall supplies · drains · two metal worktables</text>
-    <rect x="40" y="520" width="54" height="58" fill="#302f34" stroke="#777" />
-    <circle cx="67" cy="549" r="17" fill="#111" stroke="#777" />
-    <rect x="100" y="520" width="54" height="58" fill="#302f34" stroke="#777" />
-    <circle cx="127" cy="549" r="17" fill="#111" stroke="#777" />
-    <rect x="164" y="515" width="126" height="28" fill="#332c2c" stroke="#777" />
-    <rect x="164" y="550" width="126" height="28" fill="#332c2c" stroke="#777" />
-    <rect x="285" y="500" width="28" height="75" fill="#242424" stroke="#777" />
-    <rect x="42" y="492" width="108" height="18" fill="#242424" stroke="#777" />
+    <text x="175" y="478" class="sub">Ch. 394 · body tray · control wall · cold cabinet</text>
+    <text x="175" y="496" class="sub">processing tanks · bag racks · hanging work cloths</text>
+    <rect x="112" y="515" width="126" height="42" fill="#7b7e7d" stroke="#cbd0d2" />
+    <ellipse cx="175" cy="536" rx="42" ry="11" fill="#525755" stroke="#aaa" />
+    <rect x="49" y="507" width="46" height="72" fill="#d8d7cc" stroke="#777" />
+    <rect x="250" y="510" width="42" height="66" fill="#242424" stroke="#777" />
+    {#each [0, 1, 2] as i (i)}
+      <circle cx="271" cy={520 + i * 23} r="9" fill="#8c9292" stroke="#333" />
+    {/each}
+    {#each [0, 1, 2] as i (i)}
+      <ellipse cx={245 + i * 23} cy="583" rx="12" ry="8" fill="#656159" stroke="#333" />
+    {/each}
+    <line x1="104" y1="505" x2="225" y2="505" stroke="#777" stroke-width="3" />
+    {#each [0, 1, 2, 3] as i (i)}
+      <rect x={108 + i * 29} y="505" width="21" height={14 + (i % 2) * 7} fill="#aaa79b" />
+    {/each}
 
     <rect
       role="button"
@@ -151,11 +157,15 @@
       onclick={() => inspect('leader-office')}
       onkeydown={(event) => inspectWithKeyboard(event, 'leader-office')}
     />
-    <text x="895" y="430" class="label">Leader's Office</text>
-    <text x="895" y="455" class="sub">Desk · facing couch</text>
-    <text x="895" y="475" class="sub">TV · consoles · games</text>
-    <rect x="840" y="500" width="110" height="42" fill="#302f34" stroke="#777" />
-    <rect x="850" y="555" width="90" height="25" fill="#171717" stroke="#777" />
+    <text x="895" y="430" class="label">Morena Prudo's Office</text>
+    <text x="895" y="455" class="sub">Striped desk · central three-seat sofa</text>
+    <text x="895" y="475" class="sub">Panelled doors · wall bench · TV behind Morena</text>
+    <rect x="835" y="535" width="120" height="34" fill="#302f34" stroke="#777" />
+    <rect x="845" y="480" width="100" height="32" fill="#3d291e" stroke="#8b6546" />
+    {#each [0, 1, 2, 3] as i (i)}
+      <line x1="850" y1={486 + i * 7} x2="940" y2={486 + i * 7} stroke="#8b6546" />
+    {/each}
+    <rect x="958" y="390" width="16" height="60" fill="#393236" stroke="#777" />
 
     <rect
       role="button"

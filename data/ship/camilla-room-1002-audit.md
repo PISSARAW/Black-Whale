@@ -1,69 +1,108 @@
-# Chambre 1002 (Princesse Camilla) — fidélisation des chapitres 366, 389 et 413
+# Suite 1002 — Camilla, deuxième prince
 
-La chambre 1002 de la princesse Camilla (deuxième enfant du roi Nasubi Hui Guo Rou, fille aînée de la deuxième reine Duazul) reçoit le traitement d'excellence et de rigueur appliqué au salon du Roi Nasubi et à la chambre de la reine Unma : relecture des cases, vérification de l'emprise partagée du gros œuvre d'appartement royal, et modélisation procédurale soignée du mobilier d'apparat, des tentures, du cercle des gardes Intouchables et du poste d'écoute de Musse. Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 35, 36, 37, 39, 40 ; chapitres 363, 366, 389, 413.
+Relecture du 11 novembre 2026 à partir des chapitres 366 et 389 de Yoshihiro
+Togashi / Shueisha. Les finitions et objets sont des volumes originaux ; aucun
+scan ni texture du manga n'est embarqué.
 
-## Cases relues et scénographie canonique
+## Les trois scènes effectivement montrées
 
-La suite 1002 s'insère dans le gabarit standard d'appartement princier de la zone d'habitation du Pont 1 (`interior-room-1002`, chap. 363) et se déploie à travers trois espaces scéniques majeurs du manga :
+- **Repas avec Duazul, chapitre 366, page de lecture 14 (tome 35).** Deux
+  personnes se font face aux extrémités d'une table rectangulaire nappée. Deux
+  couverts, des verres hauts, des bougies courtes sur soucoupes et un bouquet
+  bas occupent le plateau. Les dossiers des chaises sont hauts et encadrés.
+- **Musse au bureau, chapitre 366, page de lecture 15.** Le soldat est assis dans
+  un passage, devant un ordinateur portable ouvert et des papiers. Son oiseau
+  appartient au Nen : cette case n'établit aucun perchoir physique ni poste
+  téléphonique d'interception. Ces accessoires de la première version sont
+  retirés. L'ancien identifiant `living-guard-desk` est conservé, mais le meuble
+  appartient désormais au sous-espace d'entrée qu'il habille réellement.
+- **Réunion des Intouchables, chapitre 389, pages de lecture 16–17 (tome 37).**
+  Les gardes sont debout autour de Sarahell. Des sièges bordent les murs ; les
+  panneaux moulurés, petits tableaux, meubles périphériques, plafond en retrait
+  et lustre encadrent un centre dégagé. Les positions individuelles des gardes
+  dans le modèle restent une reconstruction de ce rassemblement.
+  Le meuble haut à sommet arqué près des doubles portes est restitué sans lui
+  inventer de fonction ni de contenu. Sarahell fait face au groupe ; Fukataki,
+  appelée après ce briefing, n'est pas placée dans les rangs de cette vue.
 
-1. **Le salon formel tapissé (Chapitre 389) — `tier-1-royal-residential-sector-room-1002-living`** :
-   - _Rassemblement des Intouchables_ : les gardes démunis de Camilla (_Have-Nots_ / porteurs du sort kamikaze _Yomotsu Hegui_ : Lisamsetta, Meshush, Mozbe, Sarahell, Umanma, Fukataki, Kako, etc.) sont réunis en cercle formel le long des parois du salon, assis sur des assises austères tournées vers le centre de la pièce.
-   - _Vaste tapis d'apparat central_ : le centre du salon est entièrement dégagé et recouvert d'un immense tapis royal pourpre/bordeaux bordé de galons et broderies dorées.
-   - _Divan d'apparat / table de massage de Camilla_ : la princesse Camilla trône sur une méridienne sculptée en acajou laqué ornée de volutes et de dorures, garnie d'un épais matelas de velours rose-pourpre capitonné, de traversins cylindriques en soie et de coussins moelleux. Elle y reçoit ses massages et y tient cour avec son autorité nonchalante. Un guéridon d'appoint supporte flacons d'onguents, parfums et service à thé en porcelaine fine.
-   - _Parures murales_ : murs lambrissés d'acajou avec cimaises dorées, grandes tentures et tapisseries d'apparat damassées suspendues aux parois, et appliques murales néoclassiques.
+La comparaison à l'écran a corrigé l'orientation des deux convives et de Musse,
+la hauteur des assises et la déformation des objets ronds sur la table
+rectangulaire. Les assiettes, verres hauts et bougies restent circulaires ; le
+bouquet bas comporte des roses et du feuillage. Le sol continu du salon ne
+porte plus les joints métalliques du pont générique. Les doubles portes ont
+des panneaux encadrés, plutôt que des vantaux d'or massif.
+Le lustre modélisé porte aussi la source de l'éclairage calculé du salon : les
+panneaux lumineux rectangulaires génériques ne se superposent plus à ce décor.
 
-2. **La salle à manger privée (Chapitre 366) — `tier-1-royal-residential-sector-room-1002-dining`** :
-   - _Dîner avec la reine Duazul_ : Camilla dîne en tête-à-tête avec sa mère, la deuxième reine Duazul, abordant le choix de leurs robes avant d'annoncer froidement sa volonté d'éliminer Benjamin puis Halkenburg.
-   - _Table de réception intime_ : grande table en bois noble nappée d'une étoffe claire brodée, dressée avec le couvert royal (assiettes en porcelaine, couverts d'argent ciselé, verres à pied en cristal et carafes de vin).
-   - _Chaires royales sculptées_ : deux hautes chaises à dossier d'apparat sculpté (la chaise de la princesse Camilla et celle de la reine Duazul garnie de velours sombre).
-   - _Buffet dressoir et lustre_ : dressoir mural d'ébénisterie supportant vaisselle et carafes, surmonté d'un plafonnier/lustre d'apparat.
+## Correction de la confusion avec la détention VVIP
 
-3. **Le vestibule d'entrée et le poste de Musse (Chapitre 366) — `tier-1-royal-residential-sector-room-1002-entrance`** :
-   - _Poste de surveillance de la Première Armée_ : Musse, soldat d'élite et officier de renseignement de Benjamin, est stationné au passage d'entrée de la suite pour espionner Camilla.
-   - _Mobilier militaire d'écoute_ : bureau d'observation en chêne et armature métallique, fauteuil de veille ergonomique, téléphone d'écoute à cadran avec combiné et boîtier enregistreur/amplificateur d'interception.
-   - _Documents de renseignement_ : chemises de surveillance, classeurs d'état-major et rapports de la Première Armée empilés sur le plan de travail.
-   - _Perchoir d'observation Nen_ : perchoir discret évoquant l'oiseau de surveillance Nen de Musse (_Secret Window_ / Fenêtre Secrète).
+La page de lecture 13 du chapitre 389 nomme explicitement les quartiers VVIP où
+Camilla est retenue. La scène de toilette et de massage de cette page ne situe
+pas une méridienne dans la suite 1002. Le modèle précédent ajoutait à tort une
+chaise longue et quatorze coussins au sol, puis plaçait Camilla au milieu des
+gardes du chapitre 389. Ces ajouts sont retirés. L'ancien angle
+`camilla-massage-couch` est remplacé par une vue des parois du salon ; le lien
+`camilla-untouchables-circle` est maintenu, avec un libellé et une mise en scène
+corrigés. Camilla ne figure pas dans la réunion alors qu'elle est détenue.
 
-## Architecture et mobilier détaillés
+Les tapisseries damassées, tapis à broderies d'or, parfums, carafe de vin et
+lustre très bas au-dessus du repas n'étaient pas établis par les cases relues.
+Ils ne sont plus présentés comme des détails certains de cet appartement.
 
-- **Salon formel (`-living`)** :
-  - Tapis central : 12 × 5 m, bordures or, épaisseur fine au sol.
-  - Méridienne d'apparat : 2.2 × 0.95 m, hauteur 0.85 m, piètement galbé acajou, matelas capitonné velours pourpre, traversin en soie, coussins d'ornement.
-  - Guéridon de Camilla : plateau circulaire mouluré, pied tripode, flacons et nécessaire à thé.
-  - Assises des Intouchables : 14 assises périphériques (coussins formels / tabourets bas austères) réparties le long des murs face au centre.
-  - Tapisseries d'apparat : grandes toiles murales tissées damassées sur les parois nord et ouest.
-  - Lambris muraux d'ébénisterie et cimaises dorées.
-- **Salle à manger (`-dining`)** :
-  - Table de repas royale : plateau 2.4 × 1.6 m, nappe blanche à retombée souple, vaisselle d'apparat complète.
-  - 2 fauteuils de table de cour à haut dossier sculpté (Camilla et Duazul).
-  - Buffet dressoir bas en acajou avec carafes et plats d'argent.
-  - Lustre d'apparat suspendu au plafond.
-- **Vestibule d'entrée (`-entrance`)** :
-  - Bureau de surveillance de Musse : plateau 1.4 × 0.8 m avec caisson de tiroirs.
-  - Fauteuil de bureau ergonomique.
-  - Téléphone d'écoute militaire à cadran, combiné et fil d'interception.
-  - Piles de dossiers de renseignement militaire.
-  - Perchoir stylisé d'observation Nen.
+## Plan, rendu et circulation
 
-## Cohérence technique et intégration à la visite
+L'encart du chapitre 363, page de lecture 2, publie le plan des appartements
+1002, 1004 et 1006 : les cloisons et le programme du 1002 gardent donc leur
+provenance `panel`. Les cinq pièces sans perspective intérieure détaillée
+reçoivent un mobilier reconstruit de provenance `map` : lit double et rangements,
+cuisine en L, deux lits du personnel, WC séparé, baignoire et sanitaires. Les
+finitions et dimensions ne sont pas établies par ce seul plan. Cinq points de
+vue portent explicitement la mention « reconstitution » et restent sans
+personnages. Le canapé et les meubles
+périphériques du salon sont replacés hors du centre ; leur métrique et leur
+identification détaillée restent reconstruites. Les sièges ne bouchent plus les
+accès à la chambre et à la salle d'eau. La table et les deux chaises du repas,
+le bureau et la chaise de Musse ainsi que les cadres ont des structures dans
+le même plan que les collisions. Le plan 2D projette ces structures, au lieu
+d'un cercle de coussins codé en dur.
 
-- **Intégration TierView** :
-  - Les décors 3D sont rattachés aux sous-espaces de la suite (`-living`, `-dining`, `-entrance`) via `buildCamillaRoomDetails(options)` appelé dans `roomDetails`.
-  - Fusion sous `BanquetDetailBuilder` en 2 batches maximum par pièce (surfaces opaques et points de lumière/dorures).
-  - Zéro source lumineuse `THREE.Light` permanente.
-  - Moins de 150 000 triangles au total et libération complète de toutes les ressources GPU via `disposeBanquetDetails`.
-  - Masquage en mode analyse des structures (`reveal = true`).
-- **Plan 2D et projection cartographique** :
-  - Projection géométrique précise (`camillaPlan.ts`) positionnant le cercle des Intouchables, le divan de Camilla, la table de repas et le poste de Musse.
-  - Ancrages dans `roomAnchors.ts` pour `tier-1-royal-residential-sector-room-1002` et ses sous-espaces (`-living`, `-dining`, `-entrance`) positionnant Camilla, Duazul, Musse et les Intouchables.
-  - Enrichissement du composant SVG `prince-apartment.svelte` pour afficher distinctement les agencements de la chambre 1002.
-- **Vues Manga scénarisées** :
-  - 4 angles de caméra canoniques (`mangaCamillaViews.ts`) :
-    1. `camilla-untouchables-circle` (Chapitre 389) : Plan d'ensemble du salon formel montrant les gardes Intouchables en cercle le long des murs autour du tapis central et du divan de Camilla.
-    2. `camilla-massage-couch` (Chapitre 389, 413) : Cadrage resserré sur la méridienne de massage, les soieries et le guéridon d'appoint de Camilla.
-    3. `camilla-duazul-dining` (Chapitre 366) : Vue de la salle à manger privée où Camilla et la reine Duazul dînent en tête-à-tête.
-    4. `musse-surveillance-post` (Chapitre 366) : Vue du vestibule d'entrée cadrant Musse à son bureau d'écoute téléphonique.
+Les détails se construisent depuis les structures du plan parcouru : un meuble
+retiré, déplacé ou tourné par un Hatsu emporte tout son décor. Seul son volume
+grossier est remplacé dans le rendu normal. La vue des provenances conserve
+ce volume, sans ornements. Chaque pièce utilise deux lots maximum et aucune
+nouvelle lumière permanente ; les ressources sont libérées avec le pont.
+Les éléments courants des cinq pièces utilisent les mêmes constructeurs que
+ceux du 1001, extraits sans changement de son rendu.
 
-## Limites d'interprétation
+## Contrôle du rendu
 
-Les dimensions métriques précises des meubles, les détails du câblage du téléphone de surveillance et les motifs ornementaux des tapisseries constituent une reconstitution fidèle et raisonnée à partir des cases dessinées en noir et blanc par Yoshihiro Togashi. Aucun fac-similé ou scan d'œuvre protégée n'est intégré dans le code.
+Neuf captures relues dans `test-results/camilla-apartment-visual/` : les quatre
+angles des scènes montrées, puis chambre, cuisine, pièce du personnel, WC du
+personnel et salle de bains. Aucun échec JavaScript pendant ces navigations.
+Les silhouettes et volumes sont comparés aux cases citées ; le mobilier des
+cinq pièces privées est seulement contrôlé contre le plan et ses circulations.
+
+Validation : 87 tests ciblés (Camilla, régression Benjamin, portes, sol, lumière,
+finitions et vues manga), 13 contrôles de structure et documentation, ESLint
+ciblé, compilation de production et contrôle de types sans erreur ni avertissement.
+L'invariant global du navire signale sept anomalies dans le repaire Heil-Ly en
+cours de modification ; aucune ne concerne le 1002, dont l'invariant filtré passe.
+
+## Limites et références
+
+La hauteur de quatre mètres, les dimensions et les positions métriques, le
+nombre exact de sièges périphériques, le rythme des panneaux et la silhouette
+simplifiée du lustre sont des estimations. La couleur de la moquette, des
+boiseries et des tissus est interprétée d'après une source en noir et blanc.
+Les sujets des petits tableaux et le détail des fleurs sont des interprétations
+originales, pas des reproductions des œuvres dessinées.
+Les silhouettes des personnages proviennent du catalogue existant ; les
+gardes sans ressemblance déclarée conservent son uniforme et son visage
+approximatifs. Le contrôle de la pièce ne vaut pas validation de ces costumes.
+
+Consultation : [repas du chapitre 366](https://www.scan-vf.net/hunter-x-hunter/chapitre-366/14),
+[bureau de Musse](https://www.scan-vf.net/hunter-x-hunter/chapitre-366/15),
+[détention VVIP](https://www.scan-vf.net/hunter-x-hunter/chapitre-389/13),
+[réunion des gardes](https://www.scan-vf.net/hunter-x-hunter/chapitre-389/16).
+La source éditoriale reste Yoshihiro Togashi / Shueisha ;
+[chapitre 389 chez VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-389/chapter/16685).

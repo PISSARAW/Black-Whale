@@ -37,7 +37,6 @@
   import { examine, type Exhibit } from '$lib/tour/exhibit'
   import { scarletWashOf, TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
-  import { canUseTourHatsu } from '$lib/tour/hatsuMode'
   import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
@@ -103,6 +102,7 @@
   const heading = $derived(navigation.heading)
   const aimedAt = $derived(navigation.aimedAt)
   const aimedSolidAt = $derived(navigation.aimedSolidAt)
+  const aimedDetailAt = $derived(navigation.aimedDetailAt)
   const plan = $derived(ship.plans.get(tierId)!)
   const deck = $derived(deckOf(ship, tierId))
   const insideInterior = $derived(plan.tier.kind === 'interior')
@@ -212,13 +212,14 @@
       })
     return examine(
       ship,
-      { solid: aimedSolidAt, space: aimedAt ?? currentSpace },
+      { detail: aimedDetailAt, solid: aimedSolidAt, space: aimedAt ?? currentSpace },
       {
         nameOf,
         sourceOf,
         badge: (provenance) => $t.tour.provenance[provenance],
         claim: (kind) => $t.tour.examine.claims[kind],
         roomClaim: $t.tour.examine.room,
+        detailClaim: $t.tour.examine.detail,
         measured: $t.tour.examine.measured,
         standingIn: $t.tour.examine.standingIn,
       },
@@ -372,18 +373,18 @@
     hand: CastHand = 'first',
   ) => {
     const kind = technique?.kind ?? null
-    if (!canUseTourHatsu(hatsuSession.nen, kind)) return null
+    if (!hatsuSession.canUse(kind)) return null
     const castReport = casting.castOn(spaceId, solidId, hand)
     if (castReport?.kind === 'foreseen') hatsuSession.armFutureVision()
     return castReport
   }
   const castPage = (kind: HatsuInteractionKind) => {
-    if (!canUseTourHatsu(hatsuSession.nen, kind)) return
+    if (!hatsuSession.canUse(kind)) return
     casting.castPage(kind)
   }
   const castHand = (hand: CastHand) => {
     const kind = technique?.kind ?? null
-    if (!canUseTourHatsu(hatsuSession.nen, kind)) return
+    if (!hatsuSession.canUse(kind)) return
     const castReport = casting.castHand(hand)
     if (castReport?.kind === 'foreseen') hatsuSession.armFutureVision()
   }
@@ -408,7 +409,7 @@
     solidId: string | null = null,
     hand: CastHand = 'first',
   ) => {
-    if (!canUseTourHatsu(hatsuSession.nen, technique?.kind ?? null)) return
+    if (!hatsuSession.canUse(technique?.kind ?? null)) return
     return bodyView.reach(Date.now()) ? undefined : castOn(spaceId, solidId, hand)
   }
   const fishEat = ticker.fishEat
@@ -470,6 +471,7 @@
       onSolids,
       aimedAt,
       aimedSolidAt,
+      aimedDetailAt,
       color: technique?.color ?? null,
       touch,
       engaged,
@@ -1006,7 +1008,7 @@
         {navigation}
         bind:world
         bind:performance={concert}
-        allowed={canUseTourHatsu(hatsuSession.nen, 'melody')}
+        allowed={hatsuSession.canUse('melody')}
         cap={cast.spoilerLimit}
       />
     {/snippet}

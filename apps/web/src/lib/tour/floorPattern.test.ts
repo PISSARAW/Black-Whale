@@ -7,6 +7,13 @@ const ship = buildShip()
 const space = (id: string) => ship.spaces.get(id)!
 
 describe('audited floor patterns', () => {
+  it('keeps Camilla’s continuous salon floor free of generic metal deck seams', () => {
+    expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1002-living'))).toEqual({
+      kind: 'plain',
+      style: 'joint',
+      segments: [],
+    })
+  })
   it('draws the panel-attested treatments the audit names', () => {
     expect(floorPatternOf(space('tier-1-king-living-quarters-living'))?.kind).toBe(
       'geometric-inlay',
@@ -49,6 +56,10 @@ describe('audited floor patterns', () => {
     for (const room of ship.blueprint.spaces) {
       const pattern = floorPatternOf(room)
       if (!pattern) continue
+      if (pattern.kind === 'plain') {
+        expect(pattern.segments).toEqual([])
+        continue
+      }
       expect(pattern.segments.length, `${room.id} has no visible marking`).toBeGreaterThan(0)
       for (const [from, to] of pattern.segments) {
         const middle: [number, number] = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2]

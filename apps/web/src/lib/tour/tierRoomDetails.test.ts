@@ -44,6 +44,10 @@ describe('manga details outside the princely apartments', () => {
     )
 
     expect(details.get('tier-2-heilly-secret-hideout-office-couch')?.provenance).toBe('panel')
+    expect(details.get('tier-2-heilly-secret-hideout-card-table')?.name).toBe(
+      "Morena's Striped Desk",
+    )
+    expect(details.get('tier-2-heilly-secret-hideout-office-wall-bench')?.provenance).toBe('panel')
     expect(details.get('tier-2-heilly-secret-hideout-console')?.colour).toBe(0x1c1d20)
     expect(details.get('tier-2-heilly-secret-hideout-famicom')?.colour).toBe(0xe5dfcf)
     expect(details.get('tier-2-heilly-secret-hideout-super-famicom')?.colour).toBe(0xbebfbd)

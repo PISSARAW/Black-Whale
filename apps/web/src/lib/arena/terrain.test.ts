@@ -32,7 +32,7 @@ describe('a combat terrain from the Black Whale', () => {
     const screening = buildCombatTerrain(SCREENING_ROOM_ID)
     expect(screening.space.provenance).toBe('panel')
     expect(screening.tierId).toBe('tier-2')
-    expect(screening.structures).toHaveLength(15)
+    expect(screening.structures).toHaveLength(31)
     expect(screening.footprint).not.toEqual(terrain.footprint)
     expect(screening.spawns).not.toEqual(terrain.spawns)
   })

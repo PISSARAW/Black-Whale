@@ -36,10 +36,10 @@ export function heillySurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
 }
 
 /**
- * Reconstructed Heil-Ly Secret Hideout from chapters 398, 399, and 407.
+ * Reconstructed Heil-Ly Secret Hideout from chapters 394, 398, 399, and 407.
  *
- * Implements the white-tiled Nen-barrier processing room with seven doors and shower hoses,
- * the industrial laundry and disposal banks, the communal meeting room with surveillance screens,
+ * Implements the stained tiled processing room with seven sourced doors and a coiled hose,
+ * the body-processing disposal room, the lived-in communal room with bookcase and kitchenette,
  * and Morena Prudo's office with the negotiation card game, TV console and vintage consoles.
  */
 export function buildHeillyHideoutDetails(options: {

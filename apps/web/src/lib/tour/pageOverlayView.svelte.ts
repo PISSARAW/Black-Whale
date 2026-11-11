@@ -1,6 +1,7 @@
 import type { HatsuKey } from '$lib/tour/hatsu'
 import { aimReadout, controlReadouts, locationReadout, statusReadout } from '$lib/tour/pageReadouts'
 import type { Space, Structure } from '$lib/tour/types'
+import type { TourDetailTag } from '$lib/tour/detailTag'
 
 interface OverlayContext {
   muted: boolean
@@ -12,6 +13,7 @@ interface OverlayContext {
   onSolids: boolean
   aimedAt: Space | null
   aimedSolidAt: Structure | null
+  aimedDetailAt: TourDetailTag | null
   color: string | null
   touch: boolean
   engaged: boolean
@@ -77,18 +79,25 @@ export class TourOverlayView {
   get aim() {
     const context = this.options.read()
     const labels = this.options.labels()
+    const detail = context.aimedDetailAt
     const solid = context.onSolids ? context.aimedSolidAt : null
     return aimReadout({
       muted: context.muted,
       color: context.color,
       text: this.aimText(context, labels),
-      evidence: solid
+      evidence: detail
         ? {
-            badge: this.options.badgeOf(solid),
-            badgeClass: this.options.badgeClassOf(solid),
-            source: this.options.sourceOf(solid) || labels.noSource,
+            badge: this.options.badgeOf(detail),
+            badgeClass: this.options.badgeClassOf(detail),
+            source: this.options.sourceOf(detail) || labels.noSource,
           }
-        : null,
+        : solid
+          ? {
+              badge: this.options.badgeOf(solid),
+              badgeClass: this.options.badgeClassOf(solid),
+              source: this.options.sourceOf(solid) || labels.noSource,
+            }
+          : null,
     })
   }
 
@@ -117,6 +126,7 @@ export class TourOverlayView {
   }
 
   private aimText(context: OverlayContext, labels: OverlayLabels) {
+    if (context.aimedDetailAt) return labels.aimingSolid(this.options.nameOf(context.aimedDetailAt))
     if (context.onSolids) {
       return context.aimedSolidAt
         ? labels.aimingSolid(this.options.nameOf(context.aimedSolidAt))

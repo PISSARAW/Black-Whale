@@ -26,6 +26,7 @@ import { ceilingOf } from './blueprint'
 import type { Ship } from './blueprint'
 import { extentOf } from './describe'
 import { structureFootprint } from './geometry'
+import type { TourDetailTag } from './detailTag'
 import type { Provenance, Space, Structure, StructureKind } from './types'
 
 /** How the card is worded, in the language being read. */
@@ -45,6 +46,8 @@ export interface ExhibitWords {
   claim: (kind: StructureKind) => string
   /** What a room asserts, for the case where nothing solid is in front of you. */
   roomClaim: string
+  /** What a tagged model surface asserts without pretending it is a blueprint solid. */
+  detailClaim: string
   /** "9,2 × 2,4 m, 1,1 m tall" */
   measured: (long: number, wide: number, height: number) => string
   /** "Tier 1 — Banquet Hall" */
@@ -112,6 +115,21 @@ export function spaceExhibit(ship: Ship, space: Space, words: ExhibitWords): Exh
   }
 }
 
+/** The evidence card for a sourced model surface such as tile, dirt or a door leaf. */
+export function detailExhibit(ship: Ship, detail: TourDetailTag, words: ExhibitWords): Exhibit {
+  const room = ship.spaces.get(detail.spaceId)
+  return {
+    id: detail.id,
+    title: words.nameOf(detail),
+    provenance: detail.provenance,
+    badge: words.badge(detail.provenance),
+    source: words.sourceOf(detail),
+    claim: words.detailClaim,
+    measured: null,
+    standingIn: room ? words.standingIn(words.nameOf(room)) : null,
+  }
+}
+
 /**
  * What the visitor gets for asking, given what they are aiming at.
  *
@@ -122,9 +140,10 @@ export function spaceExhibit(ship: Ship, space: Space, words: ExhibitWords): Exh
  */
 export function examine(
   ship: Ship,
-  aim: { solid: Structure | null; space: Space | null },
+  aim: { detail?: TourDetailTag | null; solid: Structure | null; space: Space | null },
   words: ExhibitWords,
 ): Exhibit | null {
+  if (aim.detail) return detailExhibit(ship, aim.detail, words)
   if (aim.solid) return solidExhibit(ship, aim.solid, words)
   if (aim.space) return spaceExhibit(ship, aim.space, words)
   return null

@@ -58,54 +58,47 @@
     </style>
   </defs>
 
-  <text x="400" y="42" class="label" font-size="24">Heil-Ly Processing / Shower Room</text>
+  <text x="400" y="42" class="label" font-size="24">Heil-Ly Processing Room</text>
   <text x="400" y="67" class="label text-[11px] text-gray-400"
     >Ch. 398 pp. 158–167 · tiled room · Nen barrier inside the walls</text
   >
 
-  <!-- Main Room (Square) -->
-  <rect x="150" y="150" width="500" height="500" class="zone" />
-  <rect x="150" y="150" width="500" height="500" class="wall" />
-  <rect x="145" y="145" width="510" height="510" class="nen-reinforced" />
-  {#each [200, 250, 300, 350, 400, 450, 500, 550, 600] as p (p)}
-    <line x1={p} y1="150" x2={p} y2="650" class="tile" />
-    <line x1="150" y1={p} x2="650" y2={p} class="tile" />
+  <!-- Wide room proportions and dense square tile grid from the establishing panel. -->
+  <rect x="100" y="200" width="600" height="300" class="zone" />
+  <rect x="100" y="200" width="600" height="300" class="wall" />
+  <rect x="95" y="195" width="610" height="310" class="nen-reinforced" />
+  {#each [130, 160, 190, 220, 250, 280, 310, 340, 370, 400, 430, 460, 490, 520, 550, 580, 610, 640, 670] as x (x)}
+    <line x1={x} y1="200" x2={x} y2="500" class="tile" />
+  {/each}
+  {#each [230, 260, 290, 320, 350, 380, 410, 440, 470] as y (y)}
+    <line x1="100" y1={y} x2="700" y2={y} class="tile" />
   {/each}
 
-  <text x="400" y="400" class="label text-[#9f7aea]">Heil-Ly processing / shower room</text>
-  <text x="400" y="420" class="label text-xs text-gray-400"
-    >Seven doors · exact door-to-fixture order is not published</text
+  <text x="400" y="340" class="label text-[#9f7aea]">Heil-Ly processing room</text>
+  <text x="400" y="360" class="label text-xs text-gray-400"
+    >Four far-wall doors · one on each side · portal route behind the camera</text
   >
 
-  <!-- Blood stains -->
-  <path class="blood" d="M 300 300 Q 320 350, 350 320 T 400 300 Z" />
-  <path class="blood" d="M 500 450 Q 480 500, 520 520 T 550 480 Z" />
+  <path class="blood" d="M 165 215 Q 175 250, 185 285 T 205 310 Z" />
+  <path class="blood" d="M 520 420 Q 500 450, 535 465 T 575 445 Z" />
 
-  <!-- Toilettes séparées & Baignoire (Corners) -->
-  <rect x="150" y="150" width="100" height="100" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
-  <text x="200" y="205" class="label text-[10px]">Shower / Wash Area</text>
-
-  <rect x="550" y="150" width="100" height="100" fill="#2d3748" stroke="#4a5568" stroke-width="2" />
-  <text x="600" y="205" class="label text-[10px]">Restrooms</text>
-
-  <!-- Open-room details visible before the seven doors are explained. -->
-  <path d="M185 300 q18 -40 36 0 v75" fill="none" stroke="#77a7b8" stroke-width="5" />
-  <path d="M245 300 q18 -40 36 0 v75" fill="none" stroke="#77a7b8" stroke-width="5" />
-  <text x="233" y="397" class="label text-[10px]">wall shower hoses</text>
-  <circle cx="355" cy="525" r="14" fill="#111" stroke="#718096" stroke-width="3" />
-  <circle cx="445" cy="525" r="14" fill="#111" stroke="#718096" stroke-width="3" />
-  <text x="400" y="555" class="label text-[10px]">floor drains</text>
-  <rect x="548" y="470" width="72" height="105" fill="#242b33" stroke="#718096" stroke-width="3" />
-  <line x1="555" y1="500" x2="613" y2="500" stroke="#718096" />
-  <line x1="555" y1="530" x2="613" y2="530" stroke="#718096" />
-  <text x="584" y="595" class="label text-[10px]">maintenance shelves</text>
+  <path
+    d="M680 300 q-32 -35 -45 0 q-12 35 18 54 q32 18 35 -18"
+    fill="none"
+    stroke="#77a7b8"
+    stroke-width="5"
+  />
+  <text x="624" y="380" class="label text-[10px]">coiled service hose</text>
+  <circle cx="355" cy="430" r="12" fill="#111" stroke="#718096" stroke-width="3" />
+  <circle cx="445" cy="430" r="12" fill="#111" stroke="#718096" stroke-width="3" />
+  <text x="400" y="462" class="label text-[10px]">floor drains</text>
 
   <text x="400" y="700" class="label text-[11px] text-gray-400"
     >Door functions: 3 toilets · bath · shower cubicle · maintenance · portal route</text
   >
 
-  <!-- Seven canonical doors: five together, one on the adjacent wall, one opposite. -->
-  {#each [0, 1, 2, 3, 4] as i (i)}
+  <!-- Four doors on the far wall, one on each side, and the portal route behind camera. -->
+  {#each [0, 1, 2, 3] as i (i)}
     <rect
       role="button"
       tabindex="0"
@@ -117,13 +110,30 @@
         }
       }}
       class="door"
-      x={210 + i * 80}
-      y="140"
-      width="50"
+      x={155 + i * 155}
+      y="190"
+      width="60"
       height="20"
       onclick={() => handleDoorClick(i + 1)}
     />
   {/each}
+  <rect
+    role="button"
+    tabindex="0"
+    aria-label="Inspect door 5"
+    onkeydown={(event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      }
+    }}
+    class="door"
+    x="90"
+    y="320"
+    width="20"
+    height="50"
+    onclick={() => handleDoorClick(5)}
+  />
   <rect
     role="button"
     tabindex="0"
@@ -135,8 +145,8 @@
       }
     }}
     class="door"
-    x="140"
-    y="375"
+    x="690"
+    y="320"
     width="20"
     height="50"
     onclick={() => handleDoorClick(6)}
@@ -152,9 +162,9 @@
       }
     }}
     class="door"
-    x="375"
-    y="640"
-    width="50"
+    x="220"
+    y="490"
+    width="60"
     height="20"
     onclick={() => handleDoorClick(7)}
   />

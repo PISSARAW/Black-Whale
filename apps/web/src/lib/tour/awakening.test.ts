@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  awakeningAvailability,
-  awakensWith,
-  NODES_SHUT,
-  refusedBeforeAwakening,
-} from './awakening'
+import { awakeningAvailability, awakensWith, NODES_SHUT, refusedBeforeAwakening } from './awakening'
 
 describe('opening the nodes', () => {
   it('is done by Ten or Ren, and by nothing else', () => {

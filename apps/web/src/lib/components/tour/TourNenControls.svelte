@@ -17,6 +17,8 @@
      * the panel and the T key never disagree about which press comes next.
      */
     restingAuraShown?: boolean
+    /** Whether the visitor's nodes are open. See `$lib/tour/awakening`. */
+    awakened?: boolean
     onAction: (action: NenTechniqueAction) => void
     /** Ten as a toggle. Falls back to the plain transition where none is given. */
     onTen?: () => void
@@ -32,6 +34,7 @@
     hatsuAllowedInZetsu = false,
     hatsuRequiresZetsu = false,
     restingAuraShown = true,
+    awakened = true,
     onAction,
     onTen,
     onSelectZone,
@@ -70,10 +73,12 @@
       <button
         disabled={!enabled('ten')}
         title={reason('ten') ??
-          (nenState.mode === 'ten' && restingAuraShown
+          (!awakened
+            ? 'Ouvrir vos nœuds : l’aura des autres cesse d’être une simple pression.'
+            : nenState.mode === 'ten' && restingAuraShown
             ? 'Reposer le Ten : l’aura reste levée, elle cesse de se voir.'
             : undefined)}
-        class:active={nenState.mode === 'ten' && restingAuraShown}
+        class:active={awakened && nenState.mode === 'ten' && restingAuraShown}
         onclick={() => (onTen ? onTen() : onAction({ type: 'TEN' }))}>Ten</button
       >
       <button
@@ -125,6 +130,8 @@
       >
       {#each [['head', '1 Tête'], ['torso', '2 Torse'], ['hands', '3 Mains'], ['feet', '4 Pieds']] as zone (zone[0])}
         <button
+          disabled={!awakened}
+          title={!awakened ? 'Éveillez le Nen avec Ten.' : undefined}
           class:active={selectedZone === zone[0]}
           onclick={() => onSelectZone?.(zone[0] as NenBodyZone)}>{zone[1]}</button
         >
@@ -167,24 +174,28 @@
       >
       <button
         class="col-span-2"
-        disabled={!enabled('hatsu') || !onHatsu || hatsuBlockedByMode()}
+        disabled={!enabled('hatsu') || !awakened || !onHatsu || hatsuBlockedByMode()}
         title={reason('hatsu') ??
-          (hatsuRequiresZetsu && nenState.mode !== 'zetsu'
-            ? 'Ce Hatsu exige le Zetsu.'
-            : nenState.mode === 'zetsu' && !hatsuAllowedInZetsu
-              ? 'Le Zetsu ferme ce Hatsu.'
-              : undefined)}
+          (!awakened
+            ? 'Éveillez le Nen avec Ten.'
+            : hatsuRequiresZetsu && nenState.mode !== 'zetsu'
+              ? 'Ce Hatsu exige le Zetsu.'
+              : nenState.mode === 'zetsu' && !hatsuAllowedInZetsu
+                ? 'Le Zetsu ferme ce Hatsu.'
+                : undefined)}
         onclick={() => onHatsu?.()}>Hatsu</button
       >
       <button
         class="col-span-3"
-        disabled={!enabled('action') || !aimedObjectId || nenState.mode === 'zetsu'}
+        disabled={!enabled('action') || !awakened || !aimedObjectId || nenState.mode === 'zetsu'}
         title={reason('action') ??
-          (!aimedObjectId
-            ? 'Visez un objet.'
-            : nenState.mode === 'zetsu'
-              ? 'Le Zetsu ferme l’aura.'
-              : undefined)}
+          (!awakened
+            ? 'Éveillez le Nen avec Ten.'
+            : !aimedObjectId
+              ? 'Visez un objet.'
+              : nenState.mode === 'zetsu'
+                ? 'Le Zetsu ferme l’aura.'
+                : undefined)}
         onclick={() => onInteract?.()}>Agir sur l'objet</button
       >
       <p class="col-span-3 mt-1 text-[9px] leading-snug text-[#FFFFF0]/40">

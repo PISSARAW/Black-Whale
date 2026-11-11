@@ -20,6 +20,7 @@ export class TourNavigationState {
   lookPitch = $state(0)
   aimedAt = $state<Space | null>(null)
   aimedSolidAt = $state<import('$lib/tour/types').Structure | null>(null)
+  aimedDetailAt = $state<import('$lib/tour/detailTag').TourDetailTag | null>(null)
 
   constructor(
     private readonly ship: Ship,

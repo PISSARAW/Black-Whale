@@ -104,6 +104,7 @@
   } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
+  import { detailTagAt, type TourDetailTag } from '$lib/tour/detailTag'
   import { distanceToBoundary } from '$lib/tour/geometry'
   import { reporter } from '$lib/tour/reporting'
   import { footingOf } from '$lib/tour/footing'
@@ -178,6 +179,7 @@
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import { auraSightOf } from '$lib/tour/auraSight'
+  import { pressTen, wasRefused, type NenOutcome } from '$lib/tour/nenPress'
   import TourNenControls from './TourNenControls.svelte'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
@@ -252,7 +254,7 @@
     /** Visible-but-disabled principles for modes that intentionally implement a subset. */
     nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean | string>>
     /** Controlled modes receive every accepted standard Nen action here. */
-    onNenChange?: (action: NenTechniqueAction) => void
+    onNenChange?: (action: NenTechniqueAction) => NenOutcome
     /** Canonical F delegated to a mode when it is not a scene-object action. */
     onPhysicalNenAction?: () => void
     /**
@@ -419,6 +421,8 @@
     aimedAt?: Space | null
     /** The solid down the reticle, for the techniques that work on solids. */
     aimedSolidAt?: Structure | null
+    /** A sourced visual surface under the reticle; never treated as a movable solid. */
+    aimedDetailAt?: TourDetailTag | null
     /**
      * Fired when the visitor casts on what they are facing.
      *
@@ -611,6 +615,7 @@
     tint = null,
     aimedAt = $bindable(null),
     aimedSolidAt = $bindable(null),
+    aimedDetailAt = $bindable(null),
     aimedExtra = $bindable(null),
     castOnClick = true,
     onPick,
@@ -656,9 +661,9 @@
   function useNen(action: NenTechniqueAction) {
     const result = transitionNen(effectiveNen, action)
     if (!result.accepted) return
-    playNenTechniqueSound(action)
     if (nen === undefined) localNen = result.state
-    onNenChange?.(action)
+    if (wasRefused(onNenChange?.(action))) return
+    playNenTechniqueSound(action)
   }
 
   /**
@@ -676,30 +681,8 @@
     $comfort.restingAura || !isAuraAtRest(effectiveNen) ? effectiveNen : null,
   )
 
-  /**
-   * T, twice: raise the Ten, then put it back down.
-   *
-   * The key used to be one-way — from a Ren or a Zetsu it dropped you into Ten,
-   * and from a Ten it did nothing at all, which is a key that stops answering
-   * once you have pressed it. So the second press is the way out, and what it
-   * puts down is the *showing* of the skin rather than the skin: the visitor
-   * goes on holding Ten, because a body that stops holding it is in Zetsu and
-   * Zetsu is X. See `Comfort.restingAura` for why that is the honest half to
-   * hand a key.
-   *
-   * Raising always shows again, so the two presses are a true toggle from
-   * wherever the aura was. Otherwise a T out of Ren would land on a skin the
-   * visitor had put down an hour ago and the next press would do nothing —
-   * the same dead key, one state further along.
-   */
-  function toggleTen() {
-    if (awakened && isAuraAtRest(effectiveNen) && $comfort.restingAura) {
-      setComfort({ restingAura: false })
-      return
-    }
-    setComfort({ restingAura: true })
-    useNen({ type: 'TEN' })
-  }
+  const toggleTen = () =>
+    pressTen({ awakened, nen: effectiveNen, restingAura: $comfort.restingAura, setComfort, useNen })
 
   $effect(() => {
     setStepsAuraQuiet(effectiveNen.mode === 'zetsu')
@@ -3155,7 +3138,7 @@
       }
 
       interactWithNen = () => {
-        if (effectiveNen.mode === 'zetsu') return
+        if (effectiveNen.mode === 'zetsu' || !awakened) return
         const aimed = aimedSolidAt ?? facingSolid()
         if (!aimed) return
         const target = solidById(ship, world, aimed.id) ?? aimed
@@ -3245,6 +3228,16 @@
           }
         }
         return null
+      }
+
+      /** The sourced wall, stain or fitting under the reticle, if one was tagged. */
+      function detailUnder(aim: import('three').Vector2): TourDetailTag | null {
+        if (!visible) return null
+        const roots = visible.rooms.flatMap((room) => (room.details ? [room.details] : []))
+        if (!roots.length) return null
+        picker.setFromCamera(aim, camera)
+        const [hit] = picker.intersectObjects(roots, true)
+        return hit ? detailTagAt(hit) : null
       }
 
       /** Take hold of what is under a gesture, and say whether anything was. */
@@ -4715,11 +4708,18 @@
             aimedSolidId = solid?.id ?? null
             aimedSolidAt = solid
           }
-        } else if (!aiming && !nenCanTarget && aimedId !== null) {
+          const detail = detailUnder(RETICLE)
+          if ((detail?.id ?? null) !== (aimedDetailAt?.id ?? null)) aimedDetailAt = detail
+        } else if (
+          !aiming &&
+          !nenCanTarget &&
+          (aimedId !== null || aimedSolidId !== null || aimedDetailAt !== null)
+        ) {
           aimedId = null
           aimedAt = null
           aimedSolidId = null
           aimedSolidAt = null
+          aimedDetailAt = null
         }
 
         // And the card, on the same slow poll and for the same reason: a hand
@@ -5021,6 +5021,7 @@
         {hatsuAllowedInZetsu}
         {hatsuRequiresZetsu}
         restingAuraShown={$comfort.restingAura}
+        {awakened}
         onAction={useNen}
         onTen={toggleTen}
         onInteract={() => interactWithNen?.()}

@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 427 espaces, 1165 éléments modélisés.**
+**Couverture : 62 lieux, 427 espaces, 1202 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -265,16 +265,19 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 4 seat, 3 basin, 3 bed, 3 table, 2 counter
-- **Objets directement visibles dans les cases :** 19/19
+- **Éléments modélisés :** 7 seat, 5 cabinet, 4 basin, 3 bed, 3 painting, 3 table, 2 counter
+- **Objets directement visibles dans les cases :** 15/27
 - **Espaces internes :** Quartiers des domestiques — 1002 (Camilla) ; WC du personnel — 1002 (Camilla) ; Vestibule d'entrée — 1002 (Camilla) ; Cuisine — 1002 (Camilla) ; Salle à manger — 1002 (Camilla) ; Salon — 1002 (Camilla) ; Chambre du prince — 1002 (Camilla) ; Bain et WC — 1002 (Camilla)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
+  - Chap. 363, plan publié pour les suites 1002, 1004 et 1006 : cloisons et programme des pièces. Aucune case individuelle en perspective ne précise les finitions de cette pièce ; son mobilier détaillé est reconstitué à partir du programme-type et du plan local /ship.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 389 — les gardes Intouchables de Camilla se réunissent dans un salon formel tapissé, assis le long des murs autour d'un vaste centre dégagé.
-  - Chap. 366 — Camilla mange avec la reine Duazul tandis que Musse occupe un bureau séparé dans le passage de la chambre 1002.
+  - Reconstitution du 1002 à partir du programme-type du chapitre 363 et du plan local /ship. Il ne s’agit pas d’une case intérieure individuelle de la pièce privée de Camilla ; dimensions, placement et finitions sont reconstitués.
+  - Chap. 366, page de lecture 14 — Camilla et la reine Duazul sont face à face à une table rectangulaire nappée, avec deux couverts, bougies courtes et fleurs basses. Dimensions et placement reconstruits.
+  - Chap. 366, page de lecture 15 — Musse est assis à un bureau séparé dans le passage, avec ordinateur ouvert et papiers. Cette case ne prouve ni perchoir physique pour son oiseau Nen ni téléphone d’interception ; placement détaillé reconstruit.
+  - Chap. 389, pages de lecture 16–17 — les Intouchables sont debout pour leur réunion en 1002. Panneaux moulurés, sièges périphériques, console, petits tableaux et lustre entourent un centre dégagé ; dimensions et implantations détaillées reconstruites.
+  - Chap. 389, p. de lecture 16 — le salon des Intouchables comporte un meuble haut à sommet arqué près de la double porte. Dimensions et placement métriques dans le programme-type reconstitués.
 
 ## Chambre 1003 (Zhang Lei) — `tier-1-royal-residential-sector-room-1003`
 
@@ -302,8 +305,8 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat
-- **Objets directement visibles dans les cases :** 17/17
+- **Éléments modélisés :** 8 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 2 seat, 1 painting
+- **Objets directement visibles dans les cases :** 22/22
 - **Espaces internes :** Quartiers des domestiques — 1004 (Tserriednich) ; WC du personnel — 1004 (Tserriednich) ; Vestibule d'entrée — 1004 (Tserriednich) ; Cuisine — 1004 (Tserriednich) ; Salle à manger — 1004 (Tserriednich) ; Salon — 1004 (Tserriednich) ; Chambre du prince — 1004 (Tserriednich) ; Bain et WC — 1004 (Tserriednich)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
@@ -311,6 +314,11 @@
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
   - Chap. 384–387 — le salon presque vide où Tserriednich s'entraîne au Nen présente un sol géométrique poli, de hautes portes à panneaux, des murs moulurés, un cadre et une pendule sur le manteau.
+  - Chap. 384–387 — mobilier d'arrière-plan contre le mur ouest du salon de Tserriednich, près de la porte du personnel : une vitrine vitrée.
+  - Chap. 384–387 — une haute armoire fermée se tient plus loin sur le mur ouest du salon, entre la vitrine et le buffet.
+  - Chap. 384–387 — une étagère ouverte se trouve sur le mur est, au sud du manteau et de la pendule.
+  - Chap. 384–387 — un fauteuil en rotin tressé se tient près du canapé et de la table basse.
+  - Chap. 384–387 — une vasque décorative sur un socle se tient près de l'entrée, visible derrière Tserriednich et le majordome.
 
 ## Chambre 1005 (Tubeppa) — `tier-1-royal-residential-sector-room-1005`
 
@@ -656,19 +664,19 @@
 - **Sous-espaces :** 6
 - **Emprises relevées :** 26.25 × 52.5 m ; 10.52 × 5.25 m ; 33.63 × 6.3 m ; 10.52 × 8.05 m ; 10.51 × 8.05 m ; 6.3 × 8.05 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 12 seat, 10 cabinet, 5 table, 3 basin, 3 vent, 1 duct
-- **Objets directement visibles dans les cases :** 29/34
+- **Éléments modélisés :** 12 cabinet, 12 seat, 4 table, 2 basin, 2 vent, 1 counter, 1 duct
+- **Objets directement visibles dans les cases :** 31/34
 - **Espaces internes :** Salle de traitement / douches ; Couloir de bunker ; Buanderie / élimination ; Salle commune ; Bureau du chef
 - **Sources de la pièce :**
   - Chap. 356 — dissimulée dans le bloc VIP ; la pièce exacte n'est pas montrée.
   - Chap. 398, p. 158-167 — grande salle de traitement carrelée, protégée par une barrière de Nen dans les murs, avec sept portes, flexibles de douche, siphons de sol, petits luminaires muraux et placard de maintenance ouvert ; les portes desservent trois WC, un bain, une cabine de douche, la maintenance et la voie du portail.
   - Reconstruit pour que les pièces dessinées communiquent ; un couloir de bunker est dessiné, mais pas son tracé.
-  - Chap. 399, p. 168-169 — la buanderie / salle d'élimination : batteries de lave-linge et sèche-linge industriels frontaux, linge suspendu, étagères murales chargées de cartons et fournitures pliées, éviers, casiers hauts, flexibles techniques, siphons de sol et plusieurs tables métalliques centrales.
+  - Chap. 394, case fournie — la salle d'élimination : table mortuaire roulante portant Tassi, paroi de commande, cuves cylindriques, sacs noués, armoire froide, paravent et linge de travail suspendu. Dimensions et circulation reconstruites.
   - Chap. 399, p. 170-175 — la salle commune : longue table centrale entourée d'au moins huit chaises, tuyaux et chemins de câbles apparents au plafond, étagères et casiers muraux, poubelles, fontaine à eau, petits appareils, horloge et avis encadrés.
   - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
 - **Sources du mobilier et des détails :**
   - Chap. 398, p. 158-167 — la salle de traitement carrelée montre des flexibles de douche et siphons dans l'espace ouvert, un placard de maintenance ouvert avec étagères, et une barrière de Nen parcourant ses murs.
-  - Chap. 399, p. 168-169 — la buanderie / salle d'élimination contient visiblement des machines industrielles frontales, éviers, rangements muraux, casiers, siphons, flexibles et au moins deux tables métalliques centrales.
+  - Chap. 394, case fournie — table mortuaire centrale, corps de Tassi, paroi technique arrière, trois cuves, rayonnages de sacs, armoire à deux portes, paravent roulant et linge suspendu ; aucun lave-linge frontal n'est visible.
   - Chap. 399, p. 170-175 — la salle commune contient visiblement la longue table et au moins huit chaises, des rangements muraux, une fontaine à eau et les réseaux apparents du plafond.
   - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
   - Chap. 407 — le grand téléviseur sombre et son meuble bas occupent le mur derrière la chaise de bureau de Morena.
@@ -708,11 +716,14 @@
 - **Sous-espaces :** 1
 - **Emprises relevées :** 87.5 × 45.5 m
 - **Hauteurs sous plafond :** 10 m
-- **Éléments modélisés :** 6 seat, 5 platform, 2 painting, 2 pillar
-- **Objets directement visibles dans les cases :** 15/15
+- **Éléments modélisés :** 12 seat, 11 platform, 4 counter, 2 painting, 2 pillar
+- **Objets directement visibles dans les cases :** 25/31
 - **Sources de la pièce :**
   - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 - **Sources du mobilier et des détails :**
+  - Chap. 359, case du théâtre fournie — balustres tournés au-dessus des loges basses à panneaux. Implantation métrique reconstruite.
+  - Chap. 359, case du théâtre fournie — rangées de dossiers rembourrés tournés vers la scène. Six paires de blocs, nombre de fauteuils, espacement et allée centrale dégagée sont estimés.
+  - Accès à la scène reconstruit, non situé par la case fournie. Six marches rejoignent la scène existante à 1,30 m ; dimensions et implantation estimées.
   - Chap. 359 — le théâtre : une scène à cadre sous son rideau, des loges le long des murs latéraux, et l'écran posé sur la scène.
 
 ## Zone de protection des témoins VIP — `tier-2-vip-witness-protection-area`

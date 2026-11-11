@@ -8,6 +8,7 @@
  * that into a failing test instead of a room nobody can reach.
  */
 import blueprintJson from '../../../../../data/ship/blueprint.json'
+import { cineplexHallDoorOverrides } from './cineplexHallLayout'
 import { columnsForRooms, roomColumnPositions } from './roomColumns'
 import {
   COLUMN_HALF_WIDTH,
@@ -123,8 +124,14 @@ export function buildShip(source: Blueprint = blueprint): Ship {
   const plans = new Map<string, TierPlan>()
   const adjacency = new Map<string, string[]>()
   const sealed = new Set((source.seals ?? []).map((seal) => sealKey(seal.a, seal.b)))
+  const authoredDoors = [...(source.doors ?? [])]
+  const authoredDoorKeys = new Set(authoredDoors.map((door) => sealKey(door.a, door.b)))
+  for (const door of cineplexHallDoorOverrides()) {
+    const applies = spaces.has(door.a) && spaces.has(door.b)
+    if (applies && !authoredDoorKeys.has(sealKey(door.a, door.b))) authoredDoors.push(door)
+  }
   const overrides = new Map<string, DoorOverride>(
-    (source.doors ?? []).map((door) => [sealKey(door.a, door.b), door]),
+    authoredDoors.map((door) => [sealKey(door.a, door.b), door]),
   )
 
   const connect = (from: string, to: string) => {
@@ -210,7 +217,7 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     plans,
     links: source.links,
     seals: source.seals ?? [],
-    doors: source.doors ?? [],
+    doors: authoredDoors,
     structures: allStructures,
     adjacency,
   }

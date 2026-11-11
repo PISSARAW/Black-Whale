@@ -68,7 +68,7 @@ describe('room appearance', () => {
     const bedroom = ship.spaces.get('tier-1-royal-residential-sector-room-1002-bedroom')!
     const tier = ship.plans.get(salon.tierId)!.tier
 
-    expect(appearanceOf(salon, tier).floor).toBe(0x553238)
+    expect(appearanceOf(salon, tier).floor).toBe(0x858176)
     expect(appearanceOf(salon, tier).floor).not.toBe(appearanceOf(bedroom, tier).floor)
   })
 

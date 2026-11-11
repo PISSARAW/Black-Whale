@@ -2,12 +2,21 @@ import * as THREE from 'three'
 import { describe, expect, it } from 'vitest'
 import { buildShip, ceilingOf, floorOf } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
-import { buildPrinceApartmentEnvelope } from './princeApartmentEnvelope'
+import {
+  buildPrinceApartmentEnvelope,
+  isCommonApartmentFixture,
+  princeApartmentSurfacePlan,
+} from './princeApartmentEnvelope'
 
 const ship = buildShip()
 const rooms = ship.blueprint.spaces.filter((space) =>
   /^interior-room-10(0[1-9]|1[0-4])$/.test(space.tierId),
 )
+const vertices = (root: THREE.Group): number =>
+  (root.children as THREE.Mesh[]).reduce(
+    (total, mesh) => total + mesh.geometry.getAttribute('position').count,
+    0,
+  )
 
 describe('the shared manga envelope of the princely apartments', () => {
   it('covers every internal room of all fourteen princes', () => {
@@ -44,5 +53,44 @@ describe('the shared manga envelope of the princely apartments', () => {
         reveal: false,
       }),
     ).toBeNull()
+  })
+
+  it('replaces common furniture blocks in apartments 1005–1014 and preserves named props', () => {
+    for (let roomNumber = 1005; roomNumber <= 1014; roomNumber++) {
+      const plan = ship.plans.get(`interior-room-${roomNumber}`)!
+      const common = plan.structures.filter(isCommonApartmentFixture)
+      const named = plan.structures.filter((structure) => !isCommonApartmentFixture(structure))
+      const surface = princeApartmentSurfacePlan(plan, false)
+
+      expect(common.length, String(roomNumber)).toBeGreaterThan(0)
+      expect(surface.structures, String(roomNumber)).toEqual(named)
+      expect(princeApartmentSurfacePlan(plan, true)).toBe(plan)
+    }
+  })
+
+  it('draws detailed furniture in every fallback room that owns a common fixture', () => {
+    for (const room of rooms.filter((candidate) => Number(candidate.tierId.slice(-4)) >= 1005)) {
+      const plan = ship.plans.get(room.tierId)!
+      const fixtures = plan.structures.filter(
+        (structure) => structure.spaceId === room.id && isCommonApartmentFixture(structure),
+      )
+      if (!fixtures.length) continue
+
+      const furnished = buildPrinceApartmentEnvelope({
+        THREE,
+        plan,
+        spaceId: room.id,
+        reveal: false,
+      })!
+      const empty = buildPrinceApartmentEnvelope({
+        THREE,
+        plan: { ...plan, structures: [] },
+        spaceId: room.id,
+        reveal: false,
+      })!
+      expect(vertices(furnished), room.id).toBeGreaterThan(vertices(empty))
+      disposeBanquetDetails(furnished)
+      disposeBanquetDetails(empty)
+    }
   })
 })

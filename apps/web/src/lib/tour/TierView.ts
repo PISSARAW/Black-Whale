@@ -17,7 +17,7 @@ import { buildTserriednichRoomDetails } from './tserriednichRoomView'
 import { buildZhangLeiDetails, zhangLeiSurfacePlan } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
-import { buildPrinceApartmentEnvelope } from './princeApartmentEnvelope'
+import { buildPrinceApartmentEnvelope, princeApartmentSurfacePlan } from './princeApartmentEnvelope'
 import { buildHeillyHideoutDetails, heillySurfacePlan } from './heillyHideoutView'
 import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauView'
 import { buildPoliceStationDetails, policeSurfacePlan } from './policeStationView'
@@ -193,8 +193,11 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const basePlan = zhangLeiSurfacePlan(
-      camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal),
+    const basePlan = princeApartmentSurfacePlan(
+      zhangLeiSurfacePlan(
+        camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal),
+        reveal,
+      ),
       reveal,
     )
     const surfacePlan = warehouseSurfacePlan(

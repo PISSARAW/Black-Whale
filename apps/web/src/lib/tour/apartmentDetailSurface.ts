@@ -56,6 +56,14 @@ export class ApartmentSurface {
     )
   }
 
+  flatRing(size: { radius: number; tube: number }, at: Point3, colour: number): void {
+    this.into.ring(size, {
+      at: this.point(at),
+      rotation: [Math.PI / 2, this.angle, 0],
+      colour,
+    })
+  }
+
   curve(points: readonly Point3[], radius: number, colour: number): void {
     this.into.curve(
       points.map((p) => this.point(p)),

@@ -45,6 +45,12 @@ import type {
 import { strategyMovementGraph, type StrategyMovementGraph } from './movement'
 import { blockingReactions, resolveSimultaneousOrders } from './simultaneous'
 import { rememberDiplomacy, type PoliticalMemory } from './intrigue'
+import {
+  advanceShipLogistics,
+  commandCapacityForLogistics,
+  initialShipLogistics,
+  type ShipLogistics,
+} from './logistics'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -89,6 +95,7 @@ export function createSimulationStore() {
   let movementGraph: StrategyMovementGraph = new Map()
   let rewardedObjectiveIds = $state<string[]>([])
   let politicalMemory = $state<PoliticalMemory>({})
+  let logistics = $state<ShipLogistics>(initialShipLogistics())
 
   /** Everything a fresh campaign needs, in one argument. */
   function init({
@@ -119,6 +126,7 @@ export function createSimulationStore() {
     movementGraph = strategyMovementGraph(loadedLocations.map((location) => location.id))
     rewardedObjectiveIds = []
     politicalMemory = {}
+    logistics = initialShipLogistics()
     selectedFactionId = null
     intel = {}
     victoryPoints = 0
@@ -253,8 +261,9 @@ export function createSimulationStore() {
 
     const playerFaction = factions.find((faction) => faction.id === playerFactionId)
     if (!playerFaction) throw new StrategyInputError(copy.errors.factionUnknown)
-    if (planCost(playerOrders) + diplomacyCost(diplomacyOrders) > COMMAND_POINTS_PER_TURN) {
-      throw new StrategyInputError(copy.errors.commandPointsExceeded(COMMAND_POINTS_PER_TURN))
+    const commandCapacity = commandCapacityForLogistics(logistics, COMMAND_POINTS_PER_TURN)
+    if (planCost(playerOrders) + diplomacyCost(diplomacyOrders) > commandCapacity) {
+      throw new StrategyInputError(copy.errors.commandPointsExceeded(commandCapacity))
     }
 
     const allowedCharacters = new Set(playerFaction.members.map((member) => member.character.id))
@@ -380,6 +389,14 @@ export function createSimulationStore() {
       hatsuCooldowns[abilityId] = currentTurn + (abilityCooldownTurns[abilityId] ?? 2)
     currentTurn += 1
     const scenarioEvent = scenarioEventForTurn(completedTurn, activeScenario)
+    logistics = advanceShipLogistics(logistics, {
+      eventKind: scenarioEvent?.kind,
+      conflictCount: conflict.reports.length,
+      movementCount: resolvedPlayerEvents.length + resolvedAIEvents.length,
+      incapacitatedCount: Object.keys(conflict.causedBy).filter(
+        (id) => conflict.conditions[id] === 'ELIMINATED',
+      ).length,
+    })
     refreshIntel(scenarioEvent?.kind === 'BLACKOUT' ? [] : scoutedLocations, guardedLocations)
     const friendlyIds = new Set(factionEntityIds(playerFactionId))
     const discoveries = Object.values(intel).filter(
@@ -493,6 +510,9 @@ export function createSimulationStore() {
     },
     get politicalMemory() {
       return politicalMemory
+    },
+    get logistics() {
+      return logistics
     },
     get unitConditions() {
       return unitConditions

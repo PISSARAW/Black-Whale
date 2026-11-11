@@ -44,6 +44,7 @@ import type {
 } from './types'
 import { strategyMovementGraph, type StrategyMovementGraph } from './movement'
 import { blockingReactions, resolveSimultaneousOrders } from './simultaneous'
+import { rememberDiplomacy, type PoliticalMemory } from './intrigue'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -87,6 +88,7 @@ export function createSimulationStore() {
   let hatsuCueSequence = 0
   let movementGraph: StrategyMovementGraph = new Map()
   let rewardedObjectiveIds = $state<string[]>([])
+  let politicalMemory = $state<PoliticalMemory>({})
 
   /** Everything a fresh campaign needs, in one argument. */
   function init({
@@ -116,6 +118,7 @@ export function createSimulationStore() {
     locations = loadedLocations
     movementGraph = strategyMovementGraph(loadedLocations.map((location) => location.id))
     rewardedObjectiveIds = []
+    politicalMemory = {}
     selectedFactionId = null
     intel = {}
     victoryPoints = 0
@@ -219,7 +222,7 @@ export function createSimulationStore() {
     })
   }
 
-  function currentObjective(): StrategyObjective | null {
+  function currentObjective(visibility: 'PUBLIC' | 'SECRET' = 'PUBLIC'): StrategyObjective | null {
     if (!currentState || !selectedFactionId) return null
     const friendlyIds = new Set(factionEntityIds(selectedFactionId))
     const friendlyLocations = [...friendlyIds].map(
@@ -232,6 +235,7 @@ export function createSimulationStore() {
       characterLocations: friendlyLocations,
       confirmedHostiles,
       scenario: activeScenario,
+      visibility,
     })
   }
 
@@ -341,6 +345,7 @@ export function createSimulationStore() {
     const result = engine.applyEvents(branch.id, [...resolvedPlayerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     relationships = nextRelationships
+    politicalMemory = rememberDiplomacy(politicalMemory, diplomacyOrders, currentTurn)
     const playerIds = factionEntityIds(playerFactionId)
     const conflict = resolveLocationConflicts({
       conditions: unitConditions,
@@ -393,10 +398,14 @@ export function createSimulationStore() {
         .map((sighting) => sighting.locationId),
     ).size
     const objective = currentObjective()
+    const secretObjective = currentObjective('SECRET')
     victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + hatsuInfluence)
     const objectiveReward = claimObjectiveReward(objective, rewardedObjectiveIds)
     rewardedObjectiveIds = objectiveReward.rewardedObjectiveIds
     if (objectiveReward.rewarded) victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + 1)
+    const secretReward = claimObjectiveReward(secretObjective, rewardedObjectiveIds)
+    rewardedObjectiveIds = secretReward.rewardedObjectiveIds
+    if (secretReward.rewarded) victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + 1)
     if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
     if (!gameWon && completedTurn >= activeScenario.maxTurns) gameLost = true
     if (factionEliminated(playerIds, unitConditions)) gameLost = true
@@ -416,7 +425,7 @@ export function createSimulationStore() {
         interceptions: interceptedEvents.length,
         hostileContacts,
         victoryPoints,
-        objectiveComplete: objectiveReward.rewarded,
+        objectiveComplete: objectiveReward.rewarded || secretReward.rewarded,
         gameWon,
         gameLost,
         scoutedLocations: scoutedLocations.length,
@@ -455,6 +464,9 @@ export function createSimulationStore() {
     get objective() {
       return currentObjective()
     },
+    get secretObjective() {
+      return currentObjective('SECRET')
+    },
     get victoryPoints() {
       return victoryPoints
     },
@@ -478,6 +490,9 @@ export function createSimulationStore() {
     },
     get relationships() {
       return relationships
+    },
+    get politicalMemory() {
+      return politicalMemory
     },
     get unitConditions() {
       return unitConditions

@@ -59,15 +59,21 @@ export interface ScenarioStanding {
   characterLocations: readonly (string | undefined)[]
   confirmedHostiles: number
   scenario?: StrategyScenarioV2
+  visibility?: 'PUBLIC' | 'SECRET'
 }
 
 export function evaluateScenarioObjective(
   factionId: string,
-  { characterLocations, confirmedHostiles, scenario = ACTIVE_SCENARIO }: ScenarioStanding,
+  {
+    characterLocations,
+    confirmedHostiles,
+    scenario = ACTIVE_SCENARIO,
+    visibility = 'PUBLIC',
+  }: ScenarioStanding,
 ): StrategyObjective {
   const config = scenarioFactionConfig(factionId, scenario)
   if (!config) throw new Error(`Faction missing from scenario: ${factionId}`)
-  const objective = config.publicObjective
+  const objective = visibility === 'SECRET' ? config.secretObjective : config.publicObjective
   const occupied = characterLocations.filter((id): id is string => Boolean(id))
   let current = new Set(occupied).size
   if (objective.kind === 'CONFIRM_HOSTILES') current = confirmedHostiles

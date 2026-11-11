@@ -41,7 +41,7 @@ export interface MangaView {
   label: string
   /** Description of the scene in French */
   labelFr: string
-  /** Character blocking visible in the source panel, when it is explicit. */
+  /** Explicit blocking; an empty array keeps the viewed level free of inferred bodies, including adjoining rooms. */
   staging?: readonly MangaCastStaging[]
   /** Other zones of the same continuous room from which this view is offered. */
   triggerSpaceIds?: readonly string[]

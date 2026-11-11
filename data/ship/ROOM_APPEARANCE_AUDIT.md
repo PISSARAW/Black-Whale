@@ -241,18 +241,20 @@
 ## Chambre 1001 (Benjamin) — `tier-1-royal-residential-sector-room-1001`
 
 - **Pont :** tier-1, interior-room-1001
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, reconstruction cartographique
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat, 1 telephone
-- **Objets directement visibles dans les cases :** 17/17
+- **Éléments modélisés :** 11 seat, 4 basin, 3 bed, 3 cabinet, 2 counter, 2 table, 1 painting, 1 telephone
+- **Objets directement visibles dans les cases :** 14/27
 - **Espaces internes :** Quartiers des domestiques — 1001 (Benjamin) ; WC du personnel — 1001 (Benjamin) ; Vestibule d'entrée — 1001 (Benjamin) ; Cuisine — 1001 (Benjamin) ; Salle à manger — 1001 (Benjamin) ; Salon — 1001 (Benjamin) ; Chambre du prince — 1001 (Benjamin) ; Bain et WC — 1001 (Benjamin)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
+  - Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués.
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués.
+  - Chap. 363, p. 13 du chapitre — vue plongeante sur la longue table, les chaises à haut dossier et les soldats debout le long des côtés. Dimensions et placement dans l’enveloppe du programme-type reconstitués.
   - Chap. 366 — le passage dans la chambre 1001 montre Balsamilco au téléphone près de la porte de Benjamin, tandis que Furykov se tient dans le salon de réception.
   - Chap. 363 — le discours de Benjamin à ses soldats est cadré par le grand tableau accroché dans son salon de réception.
 

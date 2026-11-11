@@ -1,6 +1,7 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
   import BenjaminReceptionPlan from './BenjaminReceptionPlan.svelte'
+  import BenjaminApartmentFixtures from './BenjaminApartmentFixtures.svelte'
   import { mapState } from '$lib/state/mapState.svelte'
 
   // Extract room number, e.g. "room-1014" -> "1014"
@@ -157,7 +158,9 @@
     <!-- Servants Toilet -->
     <line class="thin-wall" x1="220" y1="130" x2="300" y2="130" />
     <line class="thin-wall" x1="220" y1="130" x2="220" y2="200" />
-    <circle cx="260" cy="165" r="15" class="furniture" />
+    {#if roomNumber !== '1001'}
+      <circle cx="260" cy="165" r="15" class="furniture" />
+    {/if}
 
     <!-- Kitchen (Top Right) -->
     <!-- Bounds: x: 400 to 700, y: 0 to 150 -->
@@ -181,12 +184,14 @@
     <line class="wall" x1="400" y1="0" x2="400" y2="350" />
     <line class="wall" x1="400" y1="150" x2="700" y2="150" />
     <text x="600" y="75" class="label">{$t.map.localMaps.princeApartment.kitchen}</text>
-    <!-- Counters/Stoves -->
-    <rect x="420" y="20" width="80" height="60" class="furniture" />
-    <circle cx="440" cy="40" r="10" class="furniture" />
-    <circle cx="480" cy="40" r="10" class="furniture" />
-    <circle cx="440" cy="60" r="10" class="furniture" />
-    <circle cx="480" cy="60" r="10" class="furniture" />
+    {#if roomNumber !== '1001'}
+      <!-- Counters/Stoves -->
+      <rect x="420" y="20" width="80" height="60" class="furniture" />
+      <circle cx="440" cy="40" r="10" class="furniture" />
+      <circle cx="480" cy="40" r="10" class="furniture" />
+      <circle cx="440" cy="60" r="10" class="furniture" />
+      <circle cx="480" cy="60" r="10" class="furniture" />
+    {/if}
 
     <!-- Dining (Middle Right, below Kitchen) -->
     <!-- Bounds: x: 400 to 700, y: 150 to 350 -->
@@ -211,7 +216,7 @@
     <line class="door" x1="600" y1="350" x2="650" y2="310" />
     <!-- Door to Living -->
     <text x="550" y="250" class="label">{$t.map.localMaps.princeApartment.dining}</text>
-    {#if roomNumber !== '1003'}
+    {#if !['1001', '1003'].includes(roomNumber)}
       <rect x="510" y="220" width="80" height="40" class="furniture" />
       <!-- Dining table from the ch. 363 programme-type. -->
     {/if}
@@ -241,7 +246,9 @@
     <line class="wall" x1="500" y1="530" x2="500" y2="680" />
     <text x="250" y="600" class="label">{$t.map.localMaps.princeApartment.princes}</text>
     <text x="250" y="625" class="label">{$t.map.localMaps.princeApartment.masterBedroom}</text>
-    <rect x="20" y="550" width="100" height="110" class="furniture" />
+    {#if roomNumber !== '1001'}
+      <rect x="20" y="550" width="100" height="110" class="furniture" />
+    {/if}
     <!-- Bed -->
 
     <!-- Bathroom / Toilet (Bottom Right) -->
@@ -267,15 +274,18 @@
     <!-- Bathroom door is inside the living room leading to a small corridor maybe? Let's add a door at 550,530 -->
     <line class="door" x1="530" y1="530" x2="580" y2="490" />
     <text x="600" y="600" class="label">{$t.map.localMaps.princeApartment.bathWc}</text>
-    <rect x="520" y="580" width="50" height="80" class="furniture" rx="10" />
-    <!-- Bathtub -->
-    <circle cx="650" cy="580" r="15" class="furniture" />
-    <!-- Toilet -->
+    {#if roomNumber !== '1001'}
+      <rect x="520" y="580" width="50" height="80" class="furniture" rx="10" />
+      <!-- Bathtub -->
+      <circle cx="650" cy="580" r="15" class="furniture" />
+      <!-- Toilet -->
+    {/if}
 
     <!-- Apartment-specific fixtures. Event props
       (gifts, cake, chair circles) are not made permanent. -->
     {#if roomNumber === '1001'}
       <BenjaminReceptionPlan />
+      <BenjaminApartmentFixtures />
     {:else if roomNumber === '1002'}
       <!-- Salon formel tapissé avec cercle des Intouchables et divan de Camilla (ch. 389, 413) -->
       <rect x="170" y="325" width="360" height="155" rx="6" class="fixed" />

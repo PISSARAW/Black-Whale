@@ -1,6 +1,6 @@
 import { theShip } from '$lib/tour/blueprint'
 import { structureFootprint } from '$lib/tour/geometry'
-import type { Polygon, Vec2 } from '$lib/tour/types'
+import type { Polygon, Vec2, Structure } from '$lib/tour/types'
 
 const ship = theShip()
 const plan = ship.plans.get('interior-room-1001')!
@@ -26,13 +26,19 @@ export const benjaminPolygon = (polygon: Polygon) =>
 
 export const benjaminRoom = plan.spaces.find(({ id }) => id === BENJAMIN_ROOM_SPACE)
 
+const projectFixture = (structure: Structure) => ({
+  ...structure,
+  polygon: benjaminPolygon(structureFootprint(structure)),
+  point: benjaminPoint(structure.at),
+})
+
 export const benjaminFixtures = plan.structures
   .filter(({ spaceId }) => spaceId === BENJAMIN_ROOM_SPACE)
-  .map((structure) => ({
-    ...structure,
-    polygon: benjaminPolygon(structureFootprint(structure)),
-    point: benjaminPoint(structure.at),
-  }))
+  .map(projectFixture)
+
+export const benjaminApartmentFixtures = plan.structures
+  .filter(({ spaceId }) => spaceId !== BENJAMIN_ROOM_SPACE)
+  .map(projectFixture)
 
 export const benjaminDoors = plan.doorways
   .filter((door) => door.a === BENJAMIN_ROOM_SPACE || door.b === BENJAMIN_ROOM_SPACE)

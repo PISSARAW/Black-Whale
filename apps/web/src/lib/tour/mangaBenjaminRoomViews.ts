@@ -1,5 +1,6 @@
 import { mangaView as view, type MangaCastStaging, type MangaView } from './mangaViewModel'
 import { BENJAMIN_ROOM_SPACE } from './benjaminRoomView'
+import { MANGA_BENJAMIN_APARTMENT_VIEWS } from './mangaBenjaminApartmentViews'
 
 const briefing: MangaCastStaging[] = [
   { characterId: 'prince-benjamin', at: [-5.8, 4.6], heading: 0, pose: 'idle' },
@@ -60,4 +61,5 @@ export const MANGA_BENJAMIN_ROOM_VIEWS: MangaView[] = [
     label: 'Balsamilco at the wall telephone beside the panelled doorway',
     labelFr: 'Balsamilco au téléphone mural près de la porte à panneaux',
   }),
+  ...MANGA_BENJAMIN_APARTMENT_VIEWS,
 ]

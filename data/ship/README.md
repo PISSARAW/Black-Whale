@@ -761,6 +761,13 @@ aménagements propres montrés dans les chapitres. Elle retire aussi ce qu'une
 scène rend seulement circonstanciel : les cadeaux de l'anniversaire de Tyson et
 le cercle de chaises autour de Shikaku ne deviennent pas des fixtures.
 
+Dans le **1001**, les sept pièces hors du salon disposent aussi d’un habillage
+parcourable : chambre, cuisine en L, salle à manger, pièce du personnel, WC du
+personnel, salle de bains et vestibule. Elles gardent la provenance `map` : les
+volumes et finitions sont une reconstitution du programme-type, tandis que le
+salon conserve les références directes aux cases. La carte locale et les
+collisions utilisent les mêmes emprises.
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

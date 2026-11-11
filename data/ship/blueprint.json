@@ -1652,11 +1652,11 @@
       "id": "tier-1-royal-residential-sector-room-1001-servants",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Servants' Quarters \u2014 1001 (Benjamin)",
-      "nameFr": "Quartiers des domestiques \u2014 1001 (Benjamin)",
+      "name": "Servants' Quarters — 1001 (Benjamin)",
+      "nameFr": "Quartiers des domestiques — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1669,17 +1669,17 @@
         [-1.5, -2.7],
         [-10.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-servants-wc",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Servants' WC \u2014 1001 (Benjamin)",
-      "nameFr": "WC du personnel \u2014 1001 (Benjamin)",
+      "name": "Servants' WC — 1001 (Benjamin)",
+      "nameFr": "WC du personnel — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1688,17 +1688,17 @@
         [-1.5, -4.2],
         [-3.9, -4.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-entrance",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Entrance Hall \u2014 1001 (Benjamin)",
-      "nameFr": "Vestibule d'entr\u00e9e \u2014 1001 (Benjamin)",
+      "name": "Entrance Hall — 1001 (Benjamin)",
+      "nameFr": "Vestibule d'entrée — 1001 (Benjamin)",
       "category": "corridor",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1707,17 +1707,17 @@
         [1.5, -2.7],
         [-1.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-kitchen",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Kitchen \u2014 1001 (Benjamin)",
-      "nameFr": "Cuisine \u2014 1001 (Benjamin)",
+      "name": "Kitchen — 1001 (Benjamin)",
+      "nameFr": "Cuisine — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1726,17 +1726,17 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-dining",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Dining Room \u2014 1001 (Benjamin)",
-      "nameFr": "Salle \u00e0 manger \u2014 1001 (Benjamin)",
+      "name": "Dining Room — 1001 (Benjamin)",
+      "nameFr": "Salle à manger — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1745,7 +1745,7 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-living",
@@ -1772,11 +1772,11 @@
       "id": "tier-1-royal-residential-sector-room-1001-bedroom",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Prince's Master Bedroom \u2014 1001 (Benjamin)",
-      "nameFr": "Chambre du prince \u2014 1001 (Benjamin)",
+      "name": "Prince's Master Bedroom — 1001 (Benjamin)",
+      "nameFr": "Chambre du prince — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1785,17 +1785,17 @@
         [4.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-bathroom",
       "tierId": "interior-room-1001",
       "locationId": "tier-1-royal-residential-sector-room-1001",
-      "name": "Bath & WC \u2014 1001 (Benjamin)",
-      "nameFr": "Bain et WC \u2014 1001 (Benjamin)",
+      "name": "Bath & WC — 1001 (Benjamin)",
+      "nameFr": "Bain et WC — 1001 (Benjamin)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -1804,7 +1804,7 @@
         [10.5, 10.2],
         [4.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1002",
@@ -14004,15 +14004,15 @@
       "kind": "bed",
       "name": "Bed",
       "nameFr": "Lit",
-      "at": [-8, 8.4],
+      "at": [-9.3, 7],
       "size": [2, 2.1],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-bedroom-cabinet-02",
@@ -14020,15 +14020,15 @@
       "kind": "cabinet",
       "name": "Bedside Table",
       "nameFr": "Table de chevet",
-      "at": [-6.5, 7.4],
+      "at": [-7.7, 6.35],
       "size": [0.6, 0.6],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-bedroom-cabinet-03",
@@ -14038,13 +14038,13 @@
       "nameFr": "Armoire",
       "at": [0, 9.7],
       "size": [2.4, 0.7],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 2.1,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-living-briefing-table",
@@ -14276,16 +14276,16 @@
       "spaceId": "tier-1-royal-residential-sector-room-1001-dining",
       "kind": "table",
       "name": "Dining Table",
-      "nameFr": "Table \u00e0 manger",
+      "nameFr": "Table à manger",
       "at": [5, -2.7],
       "size": [1.6, 2.4],
       "rotation": 0,
       "base": 0,
       "height": 0.75,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-kitchen-counter-08",
@@ -14293,31 +14293,31 @@
       "kind": "counter",
       "name": "Kitchen Counter",
       "nameFr": "Plan de travail",
-      "at": [6, -9.8],
-      "size": [7, 0.7],
+      "at": [6.175, -9.85],
+      "size": [7.95, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-kitchen-counter-09",
       "spaceId": "tier-1-royal-residential-sector-room-1001-kitchen",
       "kind": "counter",
-      "name": "Kitchen Island",
-      "nameFr": "\u00celot de cuisine",
-      "at": [6, -7.6],
-      "size": [2.4, 0.9],
-      "rotation": 0,
+      "name": "Kitchen return counter",
+      "nameFr": "Retour du plan de travail",
+      "at": [1.85, -8.5],
+      "size": [3.4, 0.7],
+      "rotation": -90,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-servants-bed-10",
@@ -14325,15 +14325,15 @@
       "kind": "bed",
       "name": "Servant's Bed 1",
       "nameFr": "Lit de domestique 1",
-      "at": [-9.3, -8.5],
+      "at": [-9.3, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-servants-bed-11",
@@ -14341,15 +14341,15 @@
       "kind": "bed",
       "name": "Servant's Bed 2",
       "nameFr": "Lit de domestique 2",
-      "at": [-7.2, -8.5],
+      "at": [-7.2, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-servants-cabinet-12",
@@ -14363,9 +14363,9 @@
       "base": 0,
       "height": 2,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-servants-wc-pan",
@@ -14375,13 +14375,13 @@
       "nameFr": "Cuvette du personnel",
       "at": [-1.85, -5.25],
       "size": [0.6, 0.6],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.45,
+      "height": 0.85,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-bathroom-basin-13",
@@ -14395,9 +14395,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1001-bathroom-basin-14",
@@ -14411,9 +14411,25 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1001-bathroom-wc-pan",
+      "spaceId": "tier-1-royal-residential-sector-room-1001-bathroom",
+      "kind": "basin",
+      "name": "Toilet",
+      "nameFr": "WC",
+      "at": [10.05, 8.25],
+      "size": [0.7, 0.8],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "map",
+      "source": "Apartment 1001 reconstruction from the chapter 363 programme-type and the /ship local map. The panel does not publish Benjamin’s individual layout for this room; furniture positions, dimensions and finishes are reconstructed.",
+      "sourceFr": "Reconstitution du 1001 à partir du programme-type du chapitre 363 et de la carte locale /ship. La case ne publie pas l’aménagement individuel de Benjamin pour cette pièce ; placement, dimensions et finitions du mobilier sont reconstitués."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1002-bedroom-bed-01",

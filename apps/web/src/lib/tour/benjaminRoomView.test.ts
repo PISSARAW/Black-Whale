@@ -108,9 +108,9 @@ describe('the room of Prince Benjamin reconstructed from chapters 363 and 366', 
     disposeBanquetDetails(root)
   })
 
-  it('omits the interpretation in evidence mode and in other rooms', () => {
+  it('omits the interpretation in evidence mode and in other apartments', () => {
     expect(build({ reveal: true })).toBeNull()
-    expect(build({ spaceId: 'tier-1-royal-residential-sector-room-1001-bedroom' })).toBeNull()
+    expect(build({ spaceId: 'tier-1-royal-residential-sector-room-1002-bedroom' })).toBeNull()
   })
 
   it('rebuilds the ornament with the current furniture instead of leaving ghosts behind', () => {
@@ -126,6 +126,7 @@ describe('the room of Prince Benjamin reconstructed from chapters 363 and 366', 
 
   it('places Prince Benjamin and Balsamilco in all camera views clear of solids', () => {
     for (const view of MANGA_BENJAMIN_ROOM_VIEWS) {
+      if (view.spaceId !== BENJAMIN_ROOM_SPACE) continue
       expect(pointInPolygon(view.at, room.footprint)).toBe(true)
       for (const solid of structures.filter(({ base }) => base === 0)) {
         expect(pointInPolygon(view.at, structureFootprint(solid)), `${view.id}/${solid.id}`).toBe(

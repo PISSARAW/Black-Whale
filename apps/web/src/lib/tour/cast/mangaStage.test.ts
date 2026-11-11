@@ -21,6 +21,18 @@ const post = (characterId: string, spaceId = 'salon'): Post => ({
 })
 
 describe('manga panel cast staging', () => {
+  it('keeps an explicitly unpopulated programme-type room empty', () => {
+    const view = { spaceId: 'salon', staging: [] } as unknown as MangaView
+    const posts = [
+      post('prince'),
+      post('neighbour', 'kitchen'),
+      { ...post('elsewhere', 'hall'), tierId: 'other-tier' },
+    ]
+    expect(stagePostsForMangaView(posts, view, 'interior')).toEqual([posts[2]])
+    expect(stagePostsForMangaView(posts, { ...view, staging: undefined }, 'interior')).toEqual(
+      posts,
+    )
+  })
   it('uses the panel positions and keeps unrelated rooms untouched', () => {
     const view = {
       id: 'panel',

@@ -53,3 +53,37 @@ position des meubles dans cette enveloppe et les couleurs sont des choix de
 reconstitution. Le motif exact du paysage et des panneaux mouchetés reste peu
 lisible : le rendu évoque leurs masses sans prétendre identifier des personnages,
 armoiries ou faits historiques. Aucune estrade ni pupitre tactique n’est attesté.
+
+## Autres pièces de l’appartement
+
+Les sept autres pièces sont traitées comme des **reconstitutions du programme-type**,
+avec la provenance `map`, et non comme des intérieurs individuels publiés du 1001.
+Leur référence est l’encart du chapitre 363, p. 2, repris par le plan local `/ship`.
+
+| Pièce                | Traitement                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chambre du prince    | Lit avec sommier, matelas, linge et oreillers ; chevet et armoire à portes. Lit rapproché de la paroi, portes de l’armoire orientées vers la pièce.                 |
+| Cuisine              | Deux segments de comptoir en L contre les parois ; retrait de l’îlot générique. Portes basses, évier et quatre foyers, conformément aux symboles du programme-type. |
+| Salle à manger       | Plateau et piètement de la table existante ; aucun service de table ni décor circonstanciel ajouté.                                                                 |
+| Pièce du personnel   | Deux lits simples, linge sobre et armoire. Les têtes de lit sont rapprochées de la paroi.                                                                           |
+| WC du personnel      | Cuvette et réservoir distincts du bloc générique.                                                                                                                   |
+| Salle de bains et WC | Baignoire creuse, lavabo et WC ; le symbole WC de la carte locale est reporté dans le plan parcouru.                                                                |
+| Vestibule            | Sol et plinthes continus, portes à panneaux ; aucun poste de travail ajouté.                                                                                        |
+
+Les finitions des pièces sèches prolongent la palette claire du salon. Les pièces
+d’eau ont un carrelage et des surfaces claires : ces matériaux sont des choix de
+reconstitution. Les détails suivent les structures du plan parcouru et disparaissent
+en mode Sources. La projection locale utilise les mêmes emprises pour tous les meubles.
+Sept points de visite portent explicitement « reconstitution » dans leur légende ;
+leurs pièces sont laissées vides de personnages dans ces vues, puisque le plan-type
+n’en dessine aucun. Le salon conserve ses trois cadrages issus des cases.
+
+Contrôle visuel des sept pièces effectué. La vérification de la cuisine a révélé
+un personnage provenant d’une pièce voisine, visible au-dessus du retour de
+comptoir : les vues vides du programme-type suppriment maintenant les figurants
+de tout l’intérieur, y compris à travers les portes ouvertes. La marche ordinaire
+et les scènes peuplées du salon gardent leur distribution temporelle.
+Les captures sont conservées dans `test-results/benjamin-apartment-visual/`.
+Validation du prolongement : 103 tests ciblés passent, compilation réussie et
+typage global sans erreur ni avertissement. Le dernier ajustement des figurants
+est couvert par les tests de mise en scène et revérifié à l’écran.

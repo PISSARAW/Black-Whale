@@ -118,7 +118,7 @@ export class TourCastView {
     const posts = concert
       ? concertCast(all, { ship: this.options.ship, performance: concert, cap: cast.spoilerLimit })
       : all
-    if (!mangaView?.staging?.length) {
+    if (!mangaView?.staging) {
       return posts.filter((post) => post.tierId === tierId)
     }
     const viewTierId = this.options.ship.spaces.get(mangaView.spaceId)?.tierId

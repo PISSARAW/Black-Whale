@@ -7,7 +7,8 @@
  * active, the stronger panel evidence wins — including relocating a body whose
  * event-level projection only remembers where it went after the panel. Bodies
  * not drawn in the source panel are left out of that room's shot, but posts
- * elsewhere on the ship are untouched.
+ * elsewhere on the ship are untouched. An explicitly empty plan keeps its
+ * whole viewed level unpopulated, including rooms seen through open doorways.
  */
 import type { MangaView } from '../mangaViews'
 import type { Post } from './types'
@@ -17,7 +18,9 @@ export function stagePostsForMangaView(
   view: MangaView | null,
   viewTierId: string,
 ): Post[] {
-  if (!view?.staging?.length) return [...posts]
+  if (!view?.staging) return [...posts]
+  // An empty apartment plan also leaves its adjoining rooms unpopulated through open doors.
+  if (view.staging.length === 0) return posts.filter((post) => post.tierId !== viewTierId)
 
   const staging = new Map(view.staging.map((entry) => [entry.characterId, entry]))
   return posts.flatMap((post) => {

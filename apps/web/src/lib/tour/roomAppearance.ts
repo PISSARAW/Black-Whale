@@ -8,6 +8,7 @@
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { banquetAppearanceOf } from './banquetAppearance'
+import { benjaminAppearanceOf } from './benjaminApartmentAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
@@ -415,17 +416,8 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   const banquet = banquetAppearanceOf(space.id, appearance)
   if (banquet) return banquet
 
-  // Ch. 363 p. 13: a light boarded floor and framed wall panels above timber wainscot.
-  if (space.id === 'tier-1-royal-residential-sector-room-1001-living') {
-    return {
-      ...appearance,
-      floor: 0xaaa08a,
-      wall: 0xb6b3a5,
-      ceiling: 0xbcb9ab,
-      wood: 0x382d24,
-      metal: 0x8a7a58,
-    }
-  }
+  const benjamin = benjaminAppearanceOf(space, appearance)
+  if (benjamin) return benjamin
 
   // Ch. 389 distinguishes Camilla's formal meeting salon by its continuous
   // carpet. Keep the rest of Apartment 1002 on the shared princely finish.

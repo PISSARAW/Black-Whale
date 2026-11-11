@@ -44,6 +44,7 @@ import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screening
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
 import { buildHullSuspensionDetails, hullSuspensionSurfacePlan } from './hullSuspensionView'
+import { buildRoom3101Details, room3101SurfacePlan } from './room3101View'
 import {
   buildSourceBoundInteriorDetails,
   sourceBoundInteriorSurfacePlan,
@@ -205,6 +206,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildHangarEntranceDetails,
   buildWarehouseDetails,
   buildHullSuspensionDetails,
+  buildRoom3101Details,
   buildSourceBoundInteriorDetails,
 ]
 
@@ -305,10 +307,13 @@ export class TierView {
       reveal,
     )
     const detailedPlan = sourceBoundInteriorSurfacePlan(
-      hullSuspensionSurfacePlan(
-        queenUnmaSurfacePlan(
-          queenApartmentSurfacePlan(
-            royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+      room3101SurfacePlan(
+        hullSuspensionSurfacePlan(
+          queenUnmaSurfacePlan(
+            queenApartmentSurfacePlan(
+              royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+              reveal,
+            ),
             reveal,
           ),
           reveal,

@@ -121,9 +121,9 @@ describe('packMarkersForZoom', () => {
     } as MapMarker
     const [placed] = packMarkersForZoom([momoze], 'LOCAL')
 
-    // The bed in the left-hand private room of the ch. 368 cutaway.
-    expect(placed.x).toBeCloseTo(21)
-    expect(placed.y).toBeCloseTo(35)
+    // The bed in the explicitly reconstructed 1012 walked plan, projected to the local map.
+    expect(placed.x).toBeCloseTo(25.83)
+    expect(placed.y).toBeCloseTo(80.88)
   })
 
   it('lays the twins side by side on the one bed they share', () => {

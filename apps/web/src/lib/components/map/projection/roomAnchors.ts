@@ -143,9 +143,9 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
       'prince-kacho': { x: 28.83, y: 81.25 },
     },
   },
-  // Momoze is asleep in her bed in ch. 361, which is where Tuffdy kills her.
+  // Ch. 366 shows Momoze in bed; this anchor follows the reconstructed walked plan.
   'tier-1-royal-residential-sector-room-1012': {
-    occupants: { 'prince-momoze': { x: 21, y: 35 } },
+    occupants: { 'prince-momoze': { x: 25.83, y: 80.88 } },
   },
   // Hanzo leaves his body on the bed while his Nen double hunts Tuffdy, ch. 372,
   // and climbs back into it there in ch. 375.

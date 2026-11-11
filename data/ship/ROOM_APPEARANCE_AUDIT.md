@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1219 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1221 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -466,21 +466,23 @@
 ## Chambre 1012 (Momoze) — `tier-1-royal-residential-sector-room-1012`
 
 - **Pont :** tier-1, interior-room-1012
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, reconstruction cartographique
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat, 1 telephone, 1 vent
-- **Objets directement visibles dans les cases :** 18/18
+- **Éléments modélisés :** 5 cabinet, 4 basin, 3 bed, 3 seat, 2 counter, 2 table, 1 vent
+- **Objets directement visibles dans les cases :** 8/20
 - **Espaces internes :** Quartiers des domestiques — 1012 (Momoze) ; WC du personnel — 1012 (Momoze) ; Vestibule d'entrée — 1012 (Momoze) ; Cuisine — 1012 (Momoze) ; Salle à manger — 1012 (Momoze) ; Salon — 1012 (Momoze) ; Chambre du prince — 1012 (Momoze) ; Bain et WC — 1012 (Momoze)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Reconstitution du plan de visite du 1012. Le chapitre 368, page de lecture 2, montre une coupe distincte non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Mobilier et finitions hors salon et chambre reconstitués.
+  - Chap. 361, pages de lecture 18–19 : table de réception du 1012, lampes à abat-jour, fleurs, sièges, grande plante, fauteuil rembourré courbe de Momoze et panier tressé au sol. Motifs originaux simplifiés ; dimensions, couleurs et implantation métrique reconstituées.
+  - Chap. 366, page de lecture 2 ; chap. 368, pages de lecture 3 et 9 : baldaquin sculpté et rideaux, tête de lit chantournée capitonnée, deux oreillers, linge clair ample et grille haute à lames horizontales. Rideaux ouverts pour l’inspection du décor. Dimensions, couleurs et implantation métrique reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 367 — le même réseau, un appartement plus loin : le cafard sort des égouts par la grille de la grande chambre du prince Momoze et surplombe le lit. C'est par cette grille que la reine Oito assiste au meurtre de Momoze au chap. 368.
-  - Chap. 373 — les gardes armés refusent l'accès à la chambre 1012 scellée, même lorsqu'un visiteur demande seulement à utiliser le téléphone qui se trouve à l'intérieur.
-  - Chap. 366 à 368 — Momoze dort dans un grand lit à rideaux, hauts montants et baldaquin ; la grille de service domine cette tête de lit caractéristique.
+  - Chap. 366, page de lecture 2 ; chap. 368, pages de lecture 3 et 9 : baldaquin sculpté et rideaux, tête de lit chantournée capitonnée, deux oreillers, linge clair ample et grille haute à lames horizontales. Rideaux ouverts pour l’inspection du décor. Dimensions, couleurs et implantation métrique reconstituées.
+  - Reconstitution du plan de visite du 1012. Le chapitre 368, page de lecture 2, montre une coupe distincte non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Mobilier et finitions hors salon et chambre reconstitués.
+  - Chap. 361, pages de lecture 18–19 : table de réception du 1012, lampes à abat-jour, fleurs, sièges, grande plante, fauteuil rembourré courbe de Momoze et panier tressé au sol. Motifs originaux simplifiés ; dimensions, couleurs et implantation métrique reconstituées.
+  - Chap. 368, page de lecture 3 : grille haute à lames horizontales et séparation centrale. Oito observe par un cafard ; ce n’est pas une entrée attestée de l’assassin. Implantation métrique reconstituée.
 
 ## Chambre 1013 (Marayam) — `tier-1-royal-residential-sector-room-1013`
 

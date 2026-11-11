@@ -100,17 +100,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Zhang Lei recevant la reine Oito devant la longue table sculptée',
   }),
   view({
-    id: 'momoze-bedroom-vent',
-    spaceId: 'tier-1-royal-residential-sector-room-1012-bedroom',
-    at: [3.7, 6.35],
-    target: [-7.5, 8.45],
-    pitch: -0.07,
-    chapter: 367,
-    volume: 35,
-    label: "Momoze's bed and the ventilation grille used by her attacker",
-    labelFr: "Le lit de Momoze et la grille d'aération empruntée par son assassin",
-  }),
-  view({
     id: 'marayam-living-vent',
     spaceId: 'tier-1-royal-residential-sector-room-1013-living',
     at: [3.7, 4.7],

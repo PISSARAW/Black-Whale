@@ -839,6 +839,16 @@ Les sept autres pièces restent des reconstitutions `map`. La coupe du chapitre
 locale projette désormais ce même découpage et l’annonce comme reconstitution,
 avec les jumelles repositionnées sur le lit. Voir [l’audit du 1011](fugetsu-room-audit.md).
 
+Dans le **1012**, le chapitre 361 (pages de lecture 18–19) précise le salon :
+table, lampes à abat-jour, fleurs, palmier, sièges et panier tressé au sol.
+Les chapitres 366 (page 2) et 368 (pages 3 et 9) précisent le baldaquin sculpté,
+la tête de lit capitonnée et la grille à lames horizontales de la chambre.
+La grille est le point d’observation du cafard d’Oito, pas une entrée attestée
+de l’assassin. Le doublon de tête de lit et le téléphone non localisé sont retirés.
+Six autres pièces restent des reconstitutions `map` ; le découpage parcourable
+hérité diffère de la coupe non cotée du chapitre 368, et la carte 2D l’annonce
+explicitement. Voir [l’audit du 1012](momoze-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

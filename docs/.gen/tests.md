@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 391
+Fichiers : 392
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1320,6 +1320,10 @@ Fichiers : 391
 - the depth of a doorway > gives every opening two cheeks, in the list collision reads
 - the ceiling fittings > draws fallback fittings on the light grid and leaves modelled fixtures to their room
 - the observation-deck window > types the observation-deck opening, drawn by a panel
+
+## `apps/web/src/lib/tour/momozeView.test.ts`
+
+- Momoze’s apartment against the reception and bedroom panels > keeps a valid walked plan and distinguishes panel props from six reconstructed rooms
 
 ## `apps/web/src/lib/tour/morena.test.ts`
 

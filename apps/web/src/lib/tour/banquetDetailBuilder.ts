@@ -6,6 +6,7 @@ interface Placement {
   colour: number
   rotation?: Point3
   glow?: boolean
+  glass?: boolean
 }
 interface SurfaceBatch {
   positions: number[]
@@ -14,10 +15,11 @@ interface SurfaceBatch {
 }
 const batch = (): SurfaceBatch => ({ positions: [], normals: [], colours: [] })
 
-/** Two buffers per room, regardless of the number of folds or crystal drops. */
+/** At most three buffers per room: opaque surfaces, lights and transparent panes. */
 export class BanquetDetailBuilder {
   private readonly surfaces = batch()
   private readonly lights = batch()
+  private readonly panes = batch()
 
   /** Added to every placement; lets a room be modelled around its own centre. */
   origin: Point3 = [0, 0, 0]
@@ -35,7 +37,7 @@ export class BanquetDetailBuilder {
     const vertices = geometry.getAttribute('position')
     const normals = geometry.getAttribute('normal')
     const base = new THREE.Color(placement.colour)
-    const into = placement.glow ? this.lights : this.surfaces
+    const into = placement.glass ? this.panes : placement.glow ? this.lights : this.surfaces
     for (let index = 0; index < vertices.count; index++) {
       const nx = normals.getX(index),
         ny = normals.getY(index),
@@ -127,6 +129,17 @@ export class BanquetDetailBuilder {
     root.name = name
     this.mesh(this.surfaces, new this.THREE.MeshLambertMaterial({ vertexColors: true }), root)
     this.mesh(this.lights, new this.THREE.MeshBasicMaterial({ vertexColors: true }), root)
+    this.mesh(
+      this.panes,
+      new this.THREE.MeshLambertMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.18,
+        depthWrite: false,
+        side: this.THREE.DoubleSide,
+      }),
+      root,
+    )
     return root
   }
 

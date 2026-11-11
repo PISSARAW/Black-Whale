@@ -4,10 +4,10 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { JusticeBureauSurface } from './justiceBureauDetailSurface'
 import {
   dressOffice1010Architecture,
-  dressVisitationArchitecture,
   dressLobbyArchitecture,
   dressHallArchitecture,
 } from './justiceBureauArchitecture'
+import { dressVisitationArchitecture } from './justiceBureauVisitation'
 import {
   dressMagistrateDesk,
   dressVisitorChair,
@@ -40,7 +40,7 @@ export function hasJusticeBureauModel(structure: Structure): boolean {
     structure.id === 'tier-2-ministry-of-justice-deputy-visitor-chair-01' ||
     structure.id === 'tier-2-ministry-of-justice-deputy-visitor-chair-02' ||
     structure.id === 'tier-2-ministry-of-justice-lobby-desk' ||
-    structure.id === 'tier-2-ministry-of-justice-visitation-partition'
+    structure.spaceId === JUSTICE_VISITATION
   )
 }
 

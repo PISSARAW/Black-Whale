@@ -7,8 +7,8 @@ const interrogationStaging: MangaCastStaging[] = [
 ]
 
 const visitationStaging: MangaCastStaging[] = [
-  { characterId: 'prince-fugetsu', at: [10.5, 6.0], heading: -Math.PI, pose: 'seated' },
-  { characterId: 'melody', at: [10.5, 4.2], heading: 0, pose: 'idle' },
+  { characterId: 'prince-fugetsu', at: [10, 7.25], heading: -Math.PI, pose: 'seated' },
+  { characterId: 'melody', at: [13.5, 4.05], heading: 0, pose: 'idle' },
 ]
 
 const lobbyStaging: MangaCastStaging[] = [
@@ -35,16 +35,15 @@ export const MANGA_JUSTICE_BUREAU_VIEWS: MangaView[] = [
   view({
     id: 'justice-visitation-partition',
     spaceId: JUSTICE_VISITATION,
-    at: [10.5, 3.0],
+    at: [10.5, -0.5],
     target: [10.5, 7.5],
     pitch: 0.04,
     chapter: 400,
     volume: 38,
     pages: '194–195',
     staging: visitationStaging,
-    label: 'Visitation parlor: glass separation barrier, transfer drawer and recording booth',
-    labelFr:
-      'Parloir d’enregistrement : vitre de séparation, tiroir de transfert et cabine d’enregistrement',
+    label: 'Visitation room: open L-shaped glass enclosure, long counter and side clerk station',
+    labelFr: 'Parloir : enceinte vitrée ouverte en L, long comptoir et poste de greffe latéral',
   }),
   view({
     id: 'justice-lobby-reception',

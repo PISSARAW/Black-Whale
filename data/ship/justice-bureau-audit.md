@@ -18,14 +18,12 @@ de l'institution judiciaire :
    filtrage avant l'accès au couloir intérieur.
 
 2. **Parloir d'enregistrement (`tier-2-ministry-of-justice-visitation`)** :
-   Le parloir de visite officiel prévu pour des entretiens réglementés de 10
-   minutes. Il est barré par une haute paroi vitrée de séparation acoustique
-   et blindée reposant sur un comptoir maçonné, munie au centre d'un tiroir
-   de transfert métallique coulissant à double poignée pour faire passer
-   documents et pièces autorisées sans contact direct. Des cabines d'audition
-   équipées d'interphones de communication et de microphones d'enregistrement
-   accueillent les visiteurs d'un côté et les personnes protégées / détenus
-   de l'autre.
+   Les deux cases de référence montrent une seule enceinte vitrée ouverte en L,
+   et non une rangée de cabines. Une longue banque sépare les visiteurs de la
+   zone protégée ; deux tabourets ronds sont disposés devant elle. À l'intérieur,
+   une chaise pivotante fait face au comptoir. Un poste de greffe avec bureau,
+   chaise et meuble à tiroirs occupe le côté droit, tandis qu'une porte et un
+   grand panneau encadré structurent le mur du fond. Le centre reste dégagé.
 
 3. **Bureau judiciaire / salle d'interrogatoire 1010 (`tier-2-ministry-of-justice-deputy-office`)** :
    La pièce porte la plaque officielle extérieure « 1010 » sur le couloir
@@ -48,8 +46,9 @@ Les éléments 3D sont construits avec le générateur fusionné `BanquetDetailB
 
 - `dressOffice1010Architecture` : bibliothèques toute hauteur à travées multiples,
   plaque de porte 1010, boiseries d'appui.
-- `dressVisitationArchitecture` : paroi vitrée, montants de renfort, tiroir de
-  transfert métallique, séparateurs acoustiques et combinés d'interphone.
+- `dressVisitationArchitecture` : vitrage transparent en L avec montants fins,
+  longue banque, deux tabourets visiteurs, chaise protégée, bureau latéral,
+  meuble à tiroirs, porte et éclairage fluorescent.
 - `dressLobbyArchitecture` : portique scanner de sécurité, tourniquets, banquettes
   d'attente et tableau d'affichage officiel.
 - `dressMagistrateDesk`, `dressVisitorChair`, `dressReceptionCounter` : mobilier
@@ -69,7 +68,7 @@ de provenance du blueprint reprennent leur place.
 - Trois nouveaux cadrages manga (`MANGA_JUSTICE_BUREAU_VIEWS`) permettent de se
   placer dans l'angle exact des cases :
   - `justice-office-1010-interrogation` : vue sur le bureau de magistrat et les bibliothèques.
-  - `justice-visitation-partition` : vue sur la vitre de séparation et le tiroir de transfert.
+  - `justice-visitation-partition` : vue frontale sur la banque et l'enceinte vitrée en L.
   - `justice-lobby-reception` : vue sur l'accueil et le poste de contrôle.
 
 ## Limites d'interprétation

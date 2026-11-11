@@ -12,6 +12,7 @@ import {
   JUSTICE_VISITATION,
 } from './justiceBureauView'
 import { MANGA_JUSTICE_BUREAU_VIEWS } from './mangaJusticeBureauViews'
+import { VISITATION_LAYOUT } from './justiceBureauVisitation'
 import {
   justicePoint,
   justiceSpotAnchors,
@@ -62,6 +63,11 @@ describe('the Justice Bureau reconstructed from chapter 400', () => {
     expect(visitationGroup).toBeDefined()
     expect(visitationGroup.name).toBe('justice-visitation-manga-details')
     expect(triangles(visitationGroup)).toBeGreaterThan(200)
+    const transparentMeshes = (visitationGroup.children as THREE.Mesh[]).filter((mesh) => {
+      const material = mesh.material as THREE.Material
+      return material.transparent && material.opacity < 0.3
+    })
+    expect(transparentMeshes).toHaveLength(1)
 
     const lobbyGroup = buildJusticeBureauDetails({
       THREE,
@@ -81,6 +87,21 @@ describe('the Justice Bureau reconstructed from chapter 400', () => {
     })!
     expect(hallGroup).toBeDefined()
     expect(hallGroup.name).toBe('justice-hall-manga-details')
+  })
+
+  it('matches the sparse chapter 400 visitation layout', () => {
+    const fixtures = plan.structures.filter(({ spaceId }) => spaceId === JUSTICE_VISITATION)
+    const partition = fixtures.find(({ id }) => id.endsWith('-visitation-partition'))!
+    const stools = fixtures.filter(({ id }) => id.includes('-visitor-stool-'))
+    const secureChair = fixtures.find(({ id }) => id.endsWith('-secure-chair'))!
+    const clerkDesk = fixtures.find(({ id }) => id.endsWith('-clerk-desk'))!
+
+    expect(partition.at).toEqual(VISITATION_LAYOUT.partition.at)
+    expect(partition.size).toEqual(VISITATION_LAYOUT.partition.size)
+    expect(stools.map(({ at }) => at)).toEqual(VISITATION_LAYOUT.visitorStools)
+    expect(secureChair.at).toEqual(VISITATION_LAYOUT.secureChair)
+    expect(clerkDesk.at).toEqual(VISITATION_LAYOUT.clerkDesk)
+    expect(fixtures).toHaveLength(7)
   })
 
   it('suppresses coarse blueprint models in normal walk via justiceSurfacePlan', () => {

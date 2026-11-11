@@ -3,6 +3,9 @@
 `blueprint.json` est le vaisseau en tant que **géométrie**, et non en tant que
 dessin. C'est ce que parcourt la visite virtuelle ([`/tour`](../../apps/web/src/routes/tour)).
 
+Les limites documentaires des onze intérieurs détaillés sans perspective publiée sont
+recensées dans [`SOURCE_BOUND_INTERIORS.md`](./SOURCE_BOUND_INTERIORS.md).
+
 Il ne remplace pas les plans SVG de `apps/web/src/lib/assets/maps` : ceux-ci
 répondent à _qui est où à tel événement_, celui-ci à _comment le vaisseau est
 bâti_. Aucun passager, aucun chapitre, aucune chronologie n'entre ici. Les deux

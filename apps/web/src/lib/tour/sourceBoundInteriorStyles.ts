@@ -107,6 +107,20 @@ const STYLES: SourceBoundInteriorStyle[] = [
     ceilingPattern: 'services',
     programme: 'office',
   },
+  {
+    locationId: 'tier-4-recycling-sewage-facilities',
+    name: 'recycling-facilities',
+    floor: 0x303432,
+    wall: 0x525957,
+    ceiling: 0x2b302e,
+    wood: 0x403c34,
+    metal: 0x76817d,
+    fabric: 0x4e5955,
+    accent: 0xb1843e,
+    floorPattern: 'plates',
+    ceilingPattern: 'services',
+    programme: 'recycling',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

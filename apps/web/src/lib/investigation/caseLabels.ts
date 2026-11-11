@@ -111,6 +111,15 @@ export function caseUi(locale: Locale) {
           intro: 'Sélectionnez deux témoins. Une divergence précise peut devenir une déduction.',
           action: 'Confronter les versions',
         },
+        relations: {
+          title: 'Carte spatiale et relationnelle',
+          intro: 'Le carnet ne relie que les personnes et les pièces déjà examinées.',
+          edges: {
+            'present-at': 'se trouvait dans',
+            'source-of': 'étaye',
+            observed: 'a observé',
+          },
+        },
         report: {
           final: 'Rapport final',
           close: 'Fermer le rapport',
@@ -259,6 +268,15 @@ export function caseUi(locale: Locale) {
           title: 'Compare two statements',
           intro: 'Select two witnesses. A precise discrepancy may become a deduction.',
           action: 'Compare accounts',
+        },
+        relations: {
+          title: 'Spatial and relational map',
+          intro: 'The notebook links only people and evidence already examined.',
+          edges: {
+            'present-at': 'was present at',
+            'source-of': 'supports',
+            observed: 'observed',
+          },
         },
         report: {
           final: 'Final report',

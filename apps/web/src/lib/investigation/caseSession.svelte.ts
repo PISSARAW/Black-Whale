@@ -41,6 +41,7 @@ import {
 import type { InvestigationCaseDefinition } from './definition'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { assessComposedConclusion } from './conclusion'
+import { buildNotebookGraph } from './notebookGraph'
 
 /**
  * One visitor's passage through one case file.
@@ -112,6 +113,18 @@ export class CaseSession {
   )
   discoveredEvidence = $derived(
     this.investigation.evidence.filter((evidence) => this.discoveredIds.includes(evidence.id)),
+  )
+  reviewedSubjectIds = $derived(
+    this.investigation.subjects
+      .filter((subject) => this.subjectReviewed(subject))
+      .map((subject) => subject.id),
+  )
+  notebookGraph = $derived(
+    buildNotebookGraph({
+      definition: this.definition,
+      discoveredEvidenceIds: this.discoveredIds,
+      reviewedSubjectIds: this.reviewedSubjectIds,
+    }),
   )
   /** Whether the visitor has learned something from this person: evidence, or an answer. */
   subjectReviewed = (subject: InvestigationSubject) =>

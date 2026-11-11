@@ -29,6 +29,27 @@
     </button>
   {/each}
 </div>
+{#if session.notebookGraph.nodes.length > 1}
+  <section class="mt-8 border-t border-white/10 pt-6">
+    <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
+      {ui.relations.title}
+    </p>
+    <p class="mt-2 text-sm text-white/45">{ui.relations.intro}</p>
+    <div class="mt-4 grid gap-2 sm:grid-cols-2">
+      {#each session.notebookGraph.edges as edge (`${edge.kind}:${edge.from}:${edge.to}`)}
+        {@const from = session.notebookGraph.nodes.find((node) => node.id === edge.from)}
+        {@const to = session.notebookGraph.nodes.find((node) => node.id === edge.to)}
+        {#if from && to}
+          <div class="border border-white/10 bg-white/[0.025] px-3 py-2 text-xs text-white/60">
+            <span class="text-white">{from.label}</span>
+            <span class="mx-2 text-[#d6b35a]">{ui.relations.edges[edge.kind]}</span>
+            <span class="text-white">{to.label}</span>
+          </div>
+        {/if}
+      {/each}
+    </div>
+  </section>
+{/if}
 <section class="mt-8 border-t border-white/10 pt-6">
   <p class="text-[10px] font-bold uppercase tracking-widest text-[#d6b35a]">
     {ui.confrontation.title}

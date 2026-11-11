@@ -3,6 +3,11 @@ import { strategyScenarioById } from '../scenario/registry'
 import type { UnitCondition } from '../conflict'
 import type { StrategyCampaignOutcome, StrategyCampaignV3, StrategyReputation } from './types'
 import type { Locale } from '$lib/i18n/config'
+import {
+  advanceAutonomousThreads,
+  autonomousChronicleEntries,
+  initialAutonomousThreads,
+} from './autonomy'
 
 export const DEFAULT_CAMPAIGN_SCENARIOS = [
   'succession-guards-359',
@@ -25,6 +30,7 @@ export function createStrategyCampaign(seed: string, locale: Locale = 'en'): Str
     chronicle: [
       locale === 'fr' ? 'La campagne du Black Whale commence.' : 'The Black Whale campaign begins.',
     ],
+    autonomousThreads: initialAutonomousThreads(),
     completed: false,
   }
 }
@@ -91,6 +97,8 @@ export function completeCampaignScenario(
     throw new Error(`Expected campaign scenario ${expected?.id ?? 'none'}`)
   const outcomes = [...campaign.outcomes, structuredClone(outcome)]
   const nextIndex = campaign.currentScenarioIndex + 1
+  const previousThreads = campaign.autonomousThreads ?? initialAutonomousThreads()
+  const autonomousThreads = advanceAutonomousThreads(previousThreads, outcome)
   return {
     ...campaign,
     currentScenarioIndex: nextIndex,
@@ -98,7 +106,12 @@ export function completeCampaignScenario(
     relationships: mergeRelationships(campaign.relationships, outcome.relationships),
     unitConditions: mergeConditions(campaign.unitConditions, outcome.unitConditions),
     reputation: reputationFor(outcomes),
-    chronicle: [...campaign.chronicle, chronicleEntry(outcome, locale)],
+    chronicle: [
+      ...campaign.chronicle,
+      ...autonomousChronicleEntries(previousThreads, autonomousThreads, locale),
+      chronicleEntry(outcome, locale),
+    ],
+    autonomousThreads,
     completed: nextIndex >= campaign.scenarioIds.length,
   }
 }

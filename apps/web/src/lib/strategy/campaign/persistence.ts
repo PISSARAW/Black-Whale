@@ -53,6 +53,7 @@ function validCampaign(campaign: unknown): campaign is StrategyCampaignV3 {
     Array.isArray(value.scenarioIds) &&
     Array.isArray(value.outcomes) &&
     Array.isArray(value.chronicle) &&
+    (value.autonomousThreads === undefined || Array.isArray(value.autonomousThreads)) &&
     typeof value.relationships === 'object' &&
     typeof value.unitConditions === 'object' &&
     typeof value.completed === 'boolean'

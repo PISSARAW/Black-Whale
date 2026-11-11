@@ -169,7 +169,7 @@ export type InfiltrationAction =
 export interface MissionEvent {
   id: string
   at: number
-  type: InfiltrationAction['type'] | 'ALERT_CHANGED'
+  type: InfiltrationAction['type'] | 'ALERT_CHANGED' | 'HATSU_COUNTERED'
   actor: 'player' | WitnessId | 'system'
   sourceId?: string
   payload?: string

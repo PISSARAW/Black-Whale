@@ -12,6 +12,7 @@ import { applySecurityProcedures, securityPolicy } from './security'
 import { inspectForgery, recognizesDisguise, type InspectionMethod } from './hatsuSpatial'
 import type { InfiltrationEnvironment } from './environment'
 import { circulateFactionReport } from './factions'
+import { counterNenManifestation } from './nenCounter'
 
 export const INFILTRATION_DT = 1 / 30
 const REPORT_THRESHOLD = 72
@@ -43,7 +44,10 @@ export function updateInfiltration(
     witnesses: moved,
     traces: activeTraces(challenged.traces, clock),
   })
-  const witnesses = searched.witnesses.map((witness) => observe(searched, witness, world))
+  const observed = searched.witnesses.map((witness) => observe(searched, witness, world))
+  let countered = { ...searched, witnesses: observed }
+  for (const witness of observed) countered = counterNenManifestation(countered, witness.id).state
+  const witnesses = countered.witnesses
   const reports = witnesses.reduce((all, witness, index) => {
     if (!witness.belief.reported || challenged.witnesses[index].belief.reported) return all
     return [...all, { witnessId: witness.id, at: clock, certainty: witness.belief.certainty }]
@@ -72,8 +76,8 @@ export function updateInfiltration(
     witnesses.filter((witness) => witness.belief.identity === 'intruder').length,
   ).level
   const alertChanged = alertLevel !== state.alertLevel
-  let memories = searched.memories
-  let factionKnowledge = searched.factionKnowledge
+  let memories = countered.memories
+  let factionKnowledge = countered.factionKnowledge
   for (const report of reports.slice(searched.reports.length)) {
     memories = {
       ...memories,
@@ -106,7 +110,7 @@ export function updateInfiltration(
     return count + Math.max(0, (trace.discoveredBy?.length ?? 0) - before)
   }, 0)
   return {
-    ...searched,
+    ...countered,
     clock,
     diversion: diversion?.left ? diversion : null,
     witnesses,

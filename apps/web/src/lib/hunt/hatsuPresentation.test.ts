@@ -17,11 +17,26 @@ describe('Hunt Hatsu presentation through TourScene', () => {
   })
 
   it('raises and aims the native Dowsing Chain after a successful reading', () => {
-    const ready = game('dowsing-chain')
+    const ready = {
+      ...game('dowsing-chain'),
+      terrain: 'tserriednich' as const,
+      traces: [
+        {
+          kind: 'footstep' as const,
+          actor: 'hunter' as const,
+          terrain: 'tserriednich' as const,
+          spaceId: 'vestibule',
+          position: [0, 5] as [number, number],
+          createdAt: 0,
+          strength: 1,
+          falseTrail: false,
+        },
+      ],
+    }
     const read = huntReducer(ready, { type: 'HATSU' })
     expect(presentHatsu(read).world).toMatchObject({
       holding: 'dowsing',
-      dowsing: read.hunter.spaceId,
+      dowsing: 'vestibule',
     })
   })
 

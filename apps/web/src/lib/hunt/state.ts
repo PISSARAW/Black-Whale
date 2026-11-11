@@ -29,7 +29,7 @@ import type { DuelState } from './duel/state'
 import type { HunterProfileId } from './hunter/profiles'
 import type { SealedExit } from './environment'
 import type { HuntTerrainId } from './arena'
-import { appendTrace, type HuntTrace } from './traces'
+import { appendTrace, dowsingTrace, type HuntTrace } from './traces'
 import { updateBelief } from './hunter/belief'
 import { initialHuntSocial, reactToTrace, type HuntSocialState, type HuntWitness } from './social'
 import {
@@ -350,7 +350,7 @@ function useHatsu(state: HuntState): HuntState {
   }
 
   if (state.player.nen !== 'ten' || !state.player.atRest) return state
-  return withHatsuUse(state, readDowsing(state.hatsu, directionToHunter(state)))
+  return withHatsuUse(state, readDowsing(state.hatsu, directionFromDowsingEvidence(state)))
 }
 
 function withHatsuUse(state: HuntState, hatsu: HuntHatsuState): HuntState {
@@ -366,9 +366,11 @@ function withHatsuUse(state: HuntState, hatsu: HuntHatsuState): HuntState {
   }
 }
 
-function directionToHunter(state: HuntState): Vec2 | null {
-  const dx = state.hunter.position[0] - state.player.position[0]
-  const dz = state.hunter.position[1] - state.player.position[1]
+function directionFromDowsingEvidence(state: HuntState): Vec2 | null {
+  const trace = dowsingTrace(state.traces, { terrain: state.terrain, now: state.clock })
+  if (!trace) return null
+  const dx = trace.position[0] - state.player.position[0]
+  const dz = trace.position[1] - state.player.position[1]
   const gap = Math.hypot(dx, dz)
   return gap === 0 ? null : [dx / gap, dz / gap]
 }

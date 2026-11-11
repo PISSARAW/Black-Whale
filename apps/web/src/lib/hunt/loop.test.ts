@@ -14,6 +14,7 @@ import { huntReducer, initialHuntState, type HuntState } from './state'
 import { interiorPoint } from '../tour/geometry'
 import { GAME_LENGTH, playerWon } from './outcome'
 import { initialDuelState } from './duel/state'
+import { initialBelief } from './hunter/belief'
 
 const arena = buildArena()
 const graph = buildNavGraph(arena)
@@ -196,12 +197,23 @@ describe('misdirection', () => {
         ...state.hunter,
         mode: 'search' as const,
         belief: {
+          ...initialBelief(),
           at,
           spaceId: state.hunter.spaceId,
           from: 'sound' as const,
           sharp: false,
           age: 0,
           cleared: [],
+          hypotheses: [
+            {
+              at,
+              spaceId: state.hunter.spaceId,
+              from: 'sound' as const,
+              sharp: false,
+              age: 0,
+              confidence: 0.55,
+            },
+          ],
         },
       },
     }

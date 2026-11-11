@@ -23,12 +23,23 @@ describe('strategic hunter planner', () => {
     const informed = {
       ...perception,
       belief: {
+        ...initialBelief(),
         at: [4, 2] as const,
         spaceId: 'bedroom',
         from: 'sound' as const,
         sharp: false,
         age: 2,
         cleared: [],
+        hypotheses: [
+          {
+            at: [4, 2] as const,
+            spaceId: 'bedroom',
+            from: 'sound' as const,
+            sharp: false,
+            age: 2,
+            confidence: 0.55,
+          },
+        ],
       },
     }
     expect(strategicPlanner('containment').plan(informed)).toEqual({

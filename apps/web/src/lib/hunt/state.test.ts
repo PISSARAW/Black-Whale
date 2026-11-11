@@ -48,15 +48,32 @@ describe('distinct Hatsu loadouts', () => {
     expect(huntReducer(hidden, { type: 'HATSU' }).hatsu.window).toBe(10)
   })
 
-  it('dowses only while still in Ten and returns no room id', () => {
-    const dowsing = initialHuntState({
+  it('dowses only residual evidence and never the hunter’s live position', () => {
+    const base = initialHuntState({
       playerAt: { position: [0, 0], spaceId: 'salon' },
       hunterAt: { position: [5, 0], spaceId: 'cuisine' },
       targetSpaceId: 'chambre',
       hatsu: 'dowsing-chain',
+      terrain: 'tserriednich',
     })
+    expect(huntReducer(base, { type: 'HATSU' }).hatsu.probableBearing).toBeNull()
+    const dowsing = {
+      ...base,
+      traces: [
+        {
+          kind: 'footstep' as const,
+          actor: 'hunter' as const,
+          terrain: 'tserriednich' as const,
+          spaceId: 'hall',
+          position: [0, 5] as [number, number],
+          createdAt: 0,
+          strength: 1,
+          falseTrail: false,
+        },
+      ],
+    }
     const read = huntReducer(dowsing, { type: 'HATSU' })
-    expect(read.hatsu.probableBearing).toEqual([1, 0])
+    expect(read.hatsu.probableBearing).toEqual([0, 1])
     expect(read.hatsu.forecastSpaceId).toBeNull()
   })
 

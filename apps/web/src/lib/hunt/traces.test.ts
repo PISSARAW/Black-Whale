@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { appendTrace, liveTraces, MAX_HUNT_TRACES, traceStrength, type HuntTrace } from './traces'
+import {
+  appendTrace,
+  dowsingTrace,
+  liveTraces,
+  MAX_HUNT_TRACES,
+  traceStrength,
+  type HuntTrace,
+} from './traces'
 
 const trace = (createdAt: number, kind: HuntTrace['kind'] = 'footstep'): HuntTrace => ({
   kind,
@@ -25,5 +32,12 @@ describe('persistent Hunt traces', () => {
       traces = appendTrace(traces, trace(index))
     expect(traces).toHaveLength(MAX_HUNT_TRACES)
     expect(traces[0].createdAt).toBe(1)
+  })
+
+  it('gives Dowsing residual evidence rather than a live target', () => {
+    const hunter = { ...trace(20, 'aura'), actor: 'hunter' as const }
+    const player = trace(30, 'aura')
+    expect(dowsingTrace([player, hunter], { terrain: 'tserriednich', now: 30 })).toBe(hunter)
+    expect(dowsingTrace([hunter], { terrain: 'tubeppa', now: 30 })).toBeNull()
   })
 })

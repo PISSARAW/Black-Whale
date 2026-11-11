@@ -85,7 +85,11 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     if (fighter.mode === 'zetsu') return state
     return replace(state, action.side, {
       ...fighter,
-      shuObjectId: action.on ? action.objectId : fighter.shuObjectId === action.objectId ? null : fighter.shuObjectId,
+      shuObjectId: action.on
+        ? action.objectId
+        : fighter.shuObjectId === action.objectId
+          ? null
+          : fighter.shuObjectId,
     })
   }
   if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
@@ -193,7 +197,9 @@ function castHatsu(
     return state
   if (
     hatsuId === 'rihan-predator' &&
-    (preparation?.id !== hatsuId || preparation.observations < 3 || preparation.expiresAt < state.clock)
+    (preparation?.id !== hatsuId ||
+      preparation.observations < 3 ||
+      preparation.expiresAt < state.clock)
   )
     return state
   const sequenceCost =
@@ -413,10 +419,7 @@ function blackWhaleHatsu(
       return rival.gyo
         ? hit(0.7, 8)
         : addPersistentNenEffect(
-            target(
-              { bound: 1.5, aura: Math.max(0, rival.aura - 18) },
-              { in: true, cooldown: 1.4 },
-            ),
+            target({ bound: 1.5, aura: Math.max(0, rival.aura - 18) }, { in: true, cooldown: 1.4 }),
             {
               id: `silent-majority-${side}`,
               kind: 'HIDDEN_TRAP',

@@ -4,7 +4,13 @@
   import { breadcrumbSchema } from '$lib/seo/schema'
 
   const modes = $derived([
-    { key: 'free', href: '/tour', number: '01', accent: '#FFD700', copy: $t.tour.modes.free },
+    {
+      key: 'free',
+      href: '/tour?world=free',
+      number: '01',
+      accent: '#FFD700',
+      copy: $t.tour.modes.free,
+    },
     {
       key: 'morena',
       href: '/tour/morena',

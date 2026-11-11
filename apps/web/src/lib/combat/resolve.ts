@@ -1,5 +1,6 @@
 import type { WallSegment } from '../tour/types'
 import type { BodyZone, CombatEvent, CombatSide, FighterState, Impact } from './types'
+import { ryuDistribution } from './ryu'
 
 export const STRIKE_RANGE = 2.2
 
@@ -99,7 +100,7 @@ export function offensiveAura(fighter: FighterState, technique: 'strike' | 'ko' 
  * comes back the moment the Ko lands or is abandoned.
  */
 function committedShare(fighter: FighterState): number {
-  return fighter.ko ? 1 : fighter.attackShare
+  return ryuDistribution(fighter).attack
 }
 
 export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
@@ -109,9 +110,10 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
   const output = fighter.mode === 'ren' ? 1 : 0.65
   if (fighter.ken) return output * (fighter.guardWindow > 0 ? 0.92 : 0.72)
 
-  const reserve = output * (1 - committedShare(fighter))
-  if (zone === fighter.guard) return reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
-  return reserve * 0.45
+  const distribution = ryuDistribution(fighter)
+  const reserve = Object.values(distribution.defence).reduce((sum, share) => sum + share, 0)
+  if (zone === fighter.guard) return output * reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
+  return output * reserve * 0.45
 }
 
 export function impactOf(offence: number, defence: number): Impact {

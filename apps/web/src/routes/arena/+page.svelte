@@ -69,6 +69,7 @@
   import { arenaNen } from '$lib/nen/tourAdapters'
   import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
+  import { ryuDistribution } from '$lib/combat/ryu'
 
   let { data }: { data: PageData } = $props()
 
@@ -230,6 +231,7 @@
       : null,
   )
   let hatsuCost = $derived(hatsuDefinition?.cost ?? 18)
+  let detailedRyu = $derived(ryuDistribution(game.player))
 
   function objectiveLabel(objective: ChallengeObjective): string {
     if (objective.kind === 'win') return $t.arena.ui.objective.win
@@ -374,10 +376,7 @@
       (game.player.hatsuPreparation?.id !== carriedHatsu.id ||
         (carriedHatsu.id === 'rihan-predator' && game.player.hatsuPreparation.observations < 3))
     ) {
-      command(
-        { type: 'PREPARE_HATSU', side: 'player', hatsuId: carriedHatsu.id },
-        'hatsu',
-      )
+      command({ type: 'PREPARE_HATSU', side: 'player', hatsuId: carriedHatsu.id }, 'hatsu')
       return
     }
     const accepted = command(
@@ -664,7 +663,8 @@
 
   function applyMatchFormat(state: typeof game): typeof game {
     const format = resolveArenaExperience({ formatId, opponentId }).format
-    const usedRequiredAction = !format.requiredAction || Boolean(actionCounts[format.requiredAction])
+    const usedRequiredAction =
+      !format.requiredAction || Boolean(actionCounts[format.requiredAction])
     return { ...state, outcome: formatOutcome(format, state, usedRequiredAction) }
   }
 
@@ -906,6 +906,8 @@
             class:guarded={game.player.guard === zone}
             class:incoming={game.player.ryuShift?.guard === zone}
             data-zone={$t.arena.zone[zone]}
+            title={`${$t.arena.zone[zone]} · ${Math.round(detailedRyu.defence[zone] * 100)}%`}
+            style:opacity={0.35 + detailedRyu.defence[zone] * 2}
           ></i>
         {/each}
       </div>

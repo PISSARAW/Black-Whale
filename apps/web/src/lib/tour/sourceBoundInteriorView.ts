@@ -6,7 +6,7 @@ import {
   sourceBoundBoundsOf,
   type SourceBoundRoomContext,
 } from './sourceBoundInteriorContext'
-import { dressInferredProgramme, dressSourceBoundStructure } from './sourceBoundInteriorFurnishings'
+import { dressSourceBoundStructure } from './sourceBoundInteriorFurnishings'
 import { sourceBoundStyleFor } from './sourceBoundInteriorStyles'
 import type { Space } from './types'
 
@@ -196,6 +196,5 @@ export function buildSourceBoundInteriorDetails(options: {
   for (const structure of plan.structures.filter((item) => item.spaceId === spaceId)) {
     dressSourceBoundStructure(context, structure)
   }
-  dressInferredProgramme(context)
   return context.into.finish(`source-bound-${style.name}`)
 }

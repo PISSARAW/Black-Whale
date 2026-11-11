@@ -45,6 +45,7 @@ import {
 } from '@black-whale/nen-engine'
 import type { BodyMark } from './bodies'
 import type { CastLook } from './distribution'
+import { contactWith, type Contact } from './sensing'
 import type { Post } from './types'
 
 /** The four parts the shared figure lights, and the only ones. */
@@ -75,23 +76,9 @@ export const WATCH_EN_RADIUS = 4
 const GUARDED: Partial<Record<Part, number>> = { torso: 0.5, hands: 0.3, head: 0.12, feet: 0.08 }
 
 /** What has just happened in a room, as far as a body standing in it can tell. */
-export interface Situation {
-  /** The room the visitor is in, if the walk has put them in one. */
-  visitorIn: string | null
-  /** Whether the visitor has aura up: a raised technique is felt, not seen. */
-  visitorCasting: boolean
+export interface Situation extends Contact {
   /** Rooms something hostile is standing in — the walk's own apparitions. */
   hostileRooms: readonly string[]
-  /**
-   * Who the visitor has their aura levelled at, personally.
-   *
-   * The room already knew that somebody was casting in it; ADR-004 adds that a
-   * technique can be pointed at *you*, and being pointed at is not the same
-   * event as being nearby when something happens. Only a raised aura carries —
-   * `readingIsFelt` decides that, not this module — so a visitor merely looking
-   * hard at a guard through Gyo does not put the corridor on edge.
-   */
-  aimedAt: string | null
   /**
    * What is currently held on which body, by character id.
    *
@@ -119,8 +106,10 @@ export interface Situation {
 export const CALM: Situation = {
   visitorIn: null,
   visitorCasting: false,
+  visitorHidden: false,
   hostileRooms: [],
   aimedAt: null,
+  sensedBy: {},
   holds: {},
   drained: [],
 }
@@ -201,15 +190,12 @@ function isWatching(post: Post): boolean {
 /**
  * How far the visitor's own doing has reached this body.
  *
- * Two answers rather than one, and the difference is the whole of the Gyo rule
- * below: `felt` is aura at *you* — levelled at you personally, or raised in the
- * room you are standing in — and `alarmed` adds what is merely visible in it. A
- * body looks harder only at what it felt and cannot see.
+ * `felt` and `looking` are `sensing.ts`'s; `alarmed` adds what is merely
+ * visible in the room. A body looks harder only at what it cannot yet see.
  */
-function alarmOf(post: Post, situation: Situation): { felt: boolean; alarmed: boolean } {
-  const aimed = situation.aimedAt === post.member.characterId
-  const felt = aimed || (situation.visitorCasting && situation.visitorIn === post.spaceId)
-  return { felt, alarmed: felt || situation.hostileRooms.includes(post.spaceId) }
+function alarmOf(post: Post, situation: Situation) {
+  const { felt, looking } = contactWith(post, situation)
+  return { looking, alarmed: felt || situation.hostileRooms.includes(post.spaceId) }
 }
 
 /**
@@ -240,12 +226,12 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
   if (showsNothing(post, situation)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
   const held = situation.holds[post.member.characterId] ?? null
   if (held) return underHold(held)
-  const { felt, alarmed } = alarmOf(post, situation)
+  const { looking, alarmed } = alarmOf(post, situation)
   const aura = alarmed ? 'ren' : 'ten'
   const nen = stateFor({
     mode: aura,
     en: isWatching(post) ? WATCH_EN_RADIUS : null,
-    gyo: felt,
+    gyo: looking,
     ...(alarmed ? { ryu: GUARDED } : {}),
   })
   return { aura, nen, ...(alarmed ? { alert: true } : {}) }

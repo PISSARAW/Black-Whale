@@ -1,0 +1,125 @@
+import { createNenTechniqueState, transitionNen } from '@black-whale/nen-engine'
+import { describe, expect, it } from 'vitest'
+import { auraFor, CALM, WATCH_EN_RADIUS } from './nen'
+import { contactWith, sensedBy, sensesFromKey, sensesKey, type Visitor } from './sensing'
+import type { CastMember, Post } from './types'
+
+const ROOM = 'tier-1-royal-residential-sector-room-1014'
+
+function post(characterId: string, role = 'Royal Bodyguard for Prince Woble'): Post {
+  const member: CastMember = {
+    name: characterId,
+    characterId,
+    locations: [ROOM],
+    role,
+    since: 'ch-358',
+    nen: true,
+    hatsu: [],
+    beast: null,
+  }
+  return { member, spaceId: ROOM, tierId: 'tier-1', at: [0, 0], costume: { role: 'guard' } }
+}
+
+const nenOf = (each: Post) => auraFor(each, CALM).nen
+
+function visitor(at: number, ...actions: Parameters<typeof transitionNen>[1][]): Visitor {
+  const nen = actions.reduce(
+    (state, action) => transitionNen(state, action).state,
+    createNenTechniqueState(),
+  )
+  return { at: [at, 0], nen }
+}
+
+describe('what a sweep finds', () => {
+  const guard = post('sakata')
+
+  it('feels an aura in Ten inside the radius', () => {
+    expect(sensedBy([guard], visitor(WATCH_EN_RADIUS - 1), nenOf)).toEqual({ sakata: 'aura' })
+  })
+
+  it('feels only a body when the visitor is in Zetsu', () => {
+    const quiet = visitor(1, { type: 'ZETSU' })
+    expect(sensedBy([guard], quiet, nenOf)).toEqual({ sakata: 'body' })
+  })
+
+  it('finds nobody past the radius', () => {
+    expect(sensedBy([guard], visitor(WATCH_EN_RADIUS + 1), nenOf)).toEqual({})
+  })
+
+  it('does not sweep for a body whose role is not to watch', () => {
+    expect(sensedBy([post('kurapika', 'Nen teacher')], visitor(0), nenOf)).toEqual({})
+  })
+
+  /** In hides from sight. A sweep is not sight. */
+  it('feels an aura under In all the same', () => {
+    const hidden = visitor(1, { type: 'IN', on: true })
+    expect(sensedBy([guard], hidden, nenOf)).toEqual({ sakata: 'aura' })
+  })
+})
+
+describe('the key a reactive caller stops at', () => {
+  it('round-trips and does not depend on order', () => {
+    const senses = { b: 'body', a: 'aura' } as const
+    expect(sensesKey(senses)).toBe(sensesKey({ a: 'aura', b: 'body' }))
+    expect(sensesFromKey(sensesKey(senses))).toEqual(senses)
+    expect(sensesFromKey('')).toEqual({})
+  })
+})
+
+describe('how far the visitor reaches a body', () => {
+  const guard = post('sakata')
+  const casting = { ...CALM, visitorIn: ROOM, visitorCasting: true }
+
+  it('is felt when an aura is in the sweep, even with nothing raised', () => {
+    expect(contactWith(guard, { ...CALM, sensedBy: { sakata: 'aura' } })).toEqual({
+      felt: true,
+      looking: true,
+    })
+  })
+
+  it('makes a body in Zetsu worth a look and not an alarm', () => {
+    expect(contactWith(guard, { ...CALM, sensedBy: { sakata: 'body' } })).toEqual({
+      felt: false,
+      looking: true,
+    })
+  })
+
+  it('hides a technique raised under In from a body that is not looking', () => {
+    expect(contactWith(guard, { ...casting, visitorHidden: true }).felt).toBe(false)
+    expect(contactWith(guard, { ...CALM, aimedAt: 'sakata', visitorHidden: true }).felt).toBe(false)
+  })
+
+  it('stops hiding it once the body has the visitor in its sweep', () => {
+    const near = { ...casting, visitorHidden: true, sensedBy: { sakata: 'body' as const } }
+    expect(contactWith(guard, near).felt).toBe(true)
+  })
+})
+
+describe('the conduct it produces', () => {
+  const guard = post('sakata')
+
+  it('raises Ren and alarms the body that feels an aura', () => {
+    const look = auraFor(guard, { ...CALM, sensedBy: { sakata: 'aura' } })
+    expect(look.aura).toBe('ren')
+    expect(look.alert).toBe(true)
+    expect(look.nen?.gyo).toBe(true)
+  })
+
+  it('holds Ten and looks, unalarmed, at a body with nothing on it', () => {
+    const look = auraFor(guard, { ...CALM, sensedBy: { sakata: 'body' } })
+    expect(look.aura).toBe('ten')
+    expect(look.alert).toBeUndefined()
+    expect(look.nen?.gyo).toBe(true)
+    expect(look.nen?.en).toEqual({ radius: WATCH_EN_RADIUS })
+  })
+
+  it('keeps a room calm when the technique raised in it is under In', () => {
+    const look = auraFor(guard, {
+      ...CALM,
+      visitorIn: ROOM,
+      visitorCasting: true,
+      visitorHidden: true,
+    })
+    expect(look.aura).toBe('ten')
+  })
+})

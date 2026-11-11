@@ -123,7 +123,7 @@ describe('the inaugural banquet reconstruction', () => {
   })
 
   it('offers the opening-chapter views from both parts of the banquet hall', () => {
-    for (const id of ['banquet-inaugural-hall', 'banquet-royal-dais']) {
+    for (const id of ['banquet-inaugural-hall', 'banquet-throne-panorama', 'banquet-royal-dais']) {
       const view = mangaViewById(id)!
       expect(view.chapter).toBeLessThanOrEqual(362)
       for (const spaceId of [BANQUET_SPACE, BANQUET_SERVICE])
@@ -144,6 +144,18 @@ describe('the inaugural banquet reconstruction', () => {
         expect.objectContaining({ characterId: 'prince-benjamin' }),
       ]),
     )
+  })
+
+  it('offers the supplied panorama from behind the throne toward the performance stage', () => {
+    const view = mangaViewById('banquet-throne-panorama')!
+    const dais = plan.structures.find(({ id }) => id === `${BANQUET_SPACE}-throne-dais`)!
+    const stage = plan.structures.find(({ id }) => id === `${BANQUET_SPACE}-stage`)!
+
+    expect(view.at[1]).toBeLessThan(dais.at[1])
+    expect(view.heading).toBeCloseTo(Math.PI)
+    expect(view.eyeHeight).toBeGreaterThan(2)
+    expect(stage.at[1]).toBeGreaterThan(view.at[1] + 50)
+    expect(pointInPolygon(view.at, hall.footprint)).toBe(true)
   })
 
   it('separates the performance stage from the royal dais and preserves the backstage crossing', () => {

@@ -71,4 +71,14 @@ describe('room appearance', () => {
     expect(appearanceOf(salon, tier).floor).toBe(0x553238)
     expect(appearanceOf(salon, tier).floor).not.toBe(appearanceOf(bedroom, tier).floor)
   })
+
+  it('keeps the banquet panorama pale without recolouring the other gilded halls', () => {
+    const banquet = ship.spaces.get('tier-1-banquet-hall')!
+    const recreation = ship.spaces.get('tier-1-vvip-recreation-hall')!
+    const tier = ship.plans.get(banquet.tierId)!.tier
+
+    expect(appearanceOf(banquet, tier).floor).toBe(0x81796c)
+    expect(appearanceOf(banquet, tier).wall).toBe(0xd0c9b9)
+    expect(appearanceOf(banquet, tier).floor).not.toBe(appearanceOf(recreation, tier).floor)
+  })
 })

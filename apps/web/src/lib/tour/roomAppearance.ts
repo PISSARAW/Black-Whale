@@ -7,6 +7,7 @@
  * bulkheads, ceiling and solids a visual register appropriate to the place.
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
+import { banquetAppearanceOf } from './banquetAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
@@ -410,6 +411,9 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   const appearance = finish
     ? FINISHES[finish]
     : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
+
+  const banquet = banquetAppearanceOf(space.id, appearance)
+  if (banquet) return banquet
 
   // Ch. 363 p. 13: a light boarded floor and framed wall panels above timber wainscot.
   if (space.id === 'tier-1-royal-residential-sector-room-1001-living') {

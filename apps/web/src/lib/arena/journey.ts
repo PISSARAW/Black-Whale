@@ -8,12 +8,14 @@ export type ArenaJourneyControl =
   | 'desktop-guard'
   | 'mobile-guard'
 
+type ArenaJourneyAction = Extract<CombatAction, { type: 'GUARD' | 'STRIKE' }>
+
 /** Shared command contract exercised by both keyboard and touch journeys. */
 export function actionForArenaControl(
   control: ArenaJourneyControl,
   state: CombatState,
   zone: BodyZone = 'head',
-): CombatAction {
+): ArenaJourneyAction {
   if (control.endsWith('guard')) return { type: 'GUARD', side: 'player' }
   return {
     type: 'STRIKE',

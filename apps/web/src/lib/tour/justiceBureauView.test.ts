@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
-import { theShip, validateBlueprint } from './blueprint'
+import { floorOf, theShip, validateBlueprint } from './blueprint'
 import {
   buildJusticeBureauDetails,
   hasJusticeBureauModel,
@@ -77,7 +77,14 @@ describe('the Justice Bureau reconstructed from chapter 400', () => {
     })!
     expect(lobbyGroup).toBeDefined()
     expect(lobbyGroup.name).toBe('justice-lobby-manga-details')
-    expect(triangles(lobbyGroup)).toBeGreaterThan(150)
+    expect(triangles(lobbyGroup)).toBeGreaterThan(700)
+
+    const lobbyBounds = new THREE.Box3().setFromObject(lobbyGroup)
+    const lobby = plan.spaces.find(({ id }) => id === JUSTICE_LOBBY)!
+    expect(lobbyBounds.min.x).toBeLessThanOrEqual(-20.5)
+    expect(lobbyBounds.max.x).toBeGreaterThanOrEqual(-8.5)
+    expect(lobbyBounds.max.y).toBeGreaterThan(floorOf(lobby, plan.tier) + 3.9)
+    expect(lobbyBounds.max.y).toBeLessThanOrEqual(floorOf(lobby, plan.tier) + 4)
 
     const hallGroup = buildJusticeBureauDetails({
       THREE,

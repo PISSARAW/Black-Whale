@@ -20,6 +20,112 @@ export interface ArchitectureOptions {
   space: Space
 }
 
+/**
+ * Monumental entrance visible in the exterior Justice Bureau panel: a glazed
+ * central portal under a deep horizontal canopy, framed by heavy piers and an
+ * overhead structural grid.  The lobby is only one walkable storey, so the
+ * upper floors are suggested by a clerestory rather than by inaccessible
+ * geometry above the room envelope.
+ */
+export function dressJusticeAtriumEntrance(options: ArchitectureOptions): void {
+  const { into, space, plan } = options
+  const floor = floorOf(space, plan.tier)
+  const ceiling = ceilingOf(space, plan.tier)
+  const centreX = -14.5
+  const frontZ = -3.08
+
+  // Deep concrete canopy and the two massive facade piers from the panel.
+  into.box([12.1, 0.34, 0.9], {
+    at: [centreX, floor + 3.22, frontZ - 0.12],
+    colour: JUSTICE_STONE,
+  })
+  for (const x of [-20.15, -8.85]) {
+    into.box([0.62, 3.55, 0.72], {
+      at: [x, floor + 1.775, frontZ],
+      colour: JUSTICE_STONE,
+    })
+    into.box([0.78, 0.2, 0.86], {
+      at: [x, floor + 3.5, frontZ],
+      colour: JUSTICE_STONE,
+    })
+  }
+
+  // Three glazed entrance bays.  The centre bay reads as a double door while
+  // the lateral bays reproduce the broad glazed frontage in the manga panel.
+  const bayCentres = [-17.85, centreX, -11.15]
+  for (const x of bayCentres) {
+    into.box([3.05, 2.65, 0.035], {
+      at: [x, floor + 1.34, frontZ - 0.02],
+      colour: JUSTICE_GLASS,
+    })
+    for (const mullionX of [x - 1.5, x, x + 1.5]) {
+      into.box([0.09, 2.72, 0.12], {
+        at: [mullionX, floor + 1.36, frontZ],
+        colour: JUSTICE_STEEL,
+      })
+    }
+    into.box([3.08, 0.09, 0.12], {
+      at: [x, floor + 2.68, frontZ],
+      colour: JUSTICE_STEEL,
+    })
+    into.box([3.08, 0.07, 0.1], {
+      at: [x, floor + 1.48, frontZ],
+      colour: JUSTICE_STEEL,
+    })
+  }
+
+  // Door leaves, central meeting stile and paired pull handles.
+  into.box([0.08, 2.55, 0.13], {
+    at: [centreX, floor + 1.28, frontZ - 0.01],
+    colour: JUSTICE_STEEL,
+  })
+  for (const side of [-1, 1]) {
+    into.box([0.035, 0.58, 0.07], {
+      at: [centreX + side * 0.16, floor + 1.14, frontZ - 0.09],
+      colour: JUSTICE_BRASS,
+    })
+  }
+
+  // Clerestory behind the canopy evokes the stacked office galleries without
+  // inventing additional walkable floors above the four-metre lobby.
+  into.box([10.5, 0.62, 0.035], {
+    at: [centreX, floor + 3.62, frontZ - 0.02],
+    colour: JUSTICE_GLASS,
+  })
+  for (let x = centreX - 5.25; x <= centreX + 5.25; x += 1.5) {
+    into.box([0.055, 0.66, 0.1], {
+      at: [x, floor + 3.62, frontZ],
+      colour: JUSTICE_STEEL,
+    })
+  }
+
+  // Coffered/skylight grid, the strongest silhouette in the supplied panel.
+  const gridY = floor + ceiling - 0.08
+  for (let x = -20; x <= -9; x += 1.55) {
+    into.box([0.045, 0.06, 8.8], {
+      at: [x, gridY, -7.7],
+      colour: JUSTICE_STEEL,
+    })
+  }
+  for (let z = -11.9; z <= -3.5; z += 1.4) {
+    into.box([11.1, 0.06, 0.045], {
+      at: [centreX, gridY, z],
+      colour: JUSTICE_STEEL,
+    })
+  }
+
+  // Blank oval institutional medallion centred above the reception counter,
+  // matching the panel without inventing a logo or wording absent from it.
+  into.sphere([0.58, 0.82, 0.045], {
+    at: [centreX, floor + 2.62, -12.39],
+    colour: JUSTICE_WOOD,
+  })
+  into.sphere([0.5, 0.72, 0.05], {
+    at: [centreX, floor + 2.62, -12.34],
+    colour: JUSTICE_STONE,
+  })
+}
+
 /** Full-height multi-tier bookcase extending to the ceiling with books & dossiers */
 export function dressFullHeightBookcase(
   surface: JusticeBureauSurface,
@@ -122,6 +228,8 @@ export function dressOffice1010Architecture(options: ArchitectureOptions): void 
 export function dressLobbyArchitecture(options: ArchitectureOptions): void {
   const { into, space, plan } = options
   const floor = floorOf(space, plan.tier)
+
+  dressJusticeAtriumEntrance(options)
 
   // Security arch / metal detector at exit to hall
   into.box([0.16, 2.3, 0.6], { at: [-16.9, floor + 1.15, -3.0], colour: 0x333b42 })

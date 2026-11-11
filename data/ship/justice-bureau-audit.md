@@ -15,7 +15,10 @@ de l'institution judiciaire :
 1. **Hall d'accueil (`tier-2-ministry-of-justice-lobby`)** :
    Le hall public d'entrée avec comptoir d'accueil et d'enregistrement,
    registre d'émargement officiel, poste de contrôle de sécurité et
-   filtrage avant l'accès au couloir intérieur.
+   filtrage avant l'accès au couloir intérieur. La façade monumentale reprend
+   désormais le cadrage de référence : trois travées vitrées autour des portes
+   centrales, piles massives, auvent horizontal profond, claire-voie haute,
+   plafond quadrillé et médaillon institutionnel ovale laissé sans inscription.
 
 2. **Parloir d'enregistrement (`tier-2-ministry-of-justice-visitation`)** :
    Les deux cases de référence montrent une seule enceinte vitrée ouverte en L,
@@ -50,7 +53,8 @@ Les éléments 3D sont construits avec le générateur fusionné `BanquetDetailB
   longue banque, deux tabourets visiteurs, chaise protégée, bureau latéral,
   meuble à tiroirs, porte et éclairage fluorescent.
 - `dressLobbyArchitecture` : portique scanner de sécurité, tourniquets, banquettes
-  d'attente et tableau d'affichage officiel.
+  d'attente, tableau d'affichage officiel et atrium d'entrée fidèle à la façade
+  de référence (vitrage, piles, auvent, claire-voie et plafond quadrillé).
 - `dressMagistrateDesk`, `dressVisitorChair`, `dressReceptionCounter` : mobilier
   détaillé avec garnitures, accessoires et assises.
 

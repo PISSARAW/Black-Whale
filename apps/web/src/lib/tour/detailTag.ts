@@ -1,6 +1,9 @@
 import type * as Three from 'three'
 import type { Provenance } from './types'
 
+export type ReconstructionRole =
+  'attested' | 'metric-estimate' | 'functional-reconstruction' | 'connective-inference'
+
 /**
  * Evidence attached to a modelled surface that is not a blueprint solid.
  *
@@ -18,6 +21,8 @@ export interface TourDetailTag {
   provenance: Provenance
   source: string
   sourceFr: string
+  /** What was reconstructed even when the underlying room or object is attested. */
+  reconstructionRole?: ReconstructionRole
 }
 
 /** A half-open run of non-indexed triangle faces carrying one detail tag. */

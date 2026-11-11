@@ -1,7 +1,7 @@
 import type { Provenance } from './types'
+import type { ReconstructionRole } from './detailTag'
 
-export type ReconstructionRole =
-  'attested' | 'metric-estimate' | 'functional-reconstruction' | 'connective-inference'
+export type { ReconstructionRole } from './detailTag'
 
 export interface SourceBoundEvidence {
   provenance: Provenance

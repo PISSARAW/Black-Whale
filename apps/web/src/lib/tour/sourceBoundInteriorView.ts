@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
+import type { TourDetailTag } from './detailTag'
 import { sourceBoundStyleFor, type SourceBoundInteriorStyle } from './sourceBoundInteriorStyles'
 import type { Space, Structure } from './types'
 
@@ -37,6 +38,47 @@ const boundsOf = (space: Space): Bounds => {
 const countAcross = (length: number, spacing: number): number =>
   Math.max(1, Math.min(7, Math.floor(length / spacing)))
 
+function reconstructionTag(options: {
+  space: Space
+  style: SourceBoundInteriorStyle
+  id: string
+  name: string
+  nameFr: string
+  layer: 'envelope' | 'finish' | 'furniture'
+}): TourDetailTag {
+  const { space, style, id, name, nameFr, layer } = options
+  const role = style.roles[layer]
+  const inferred = role !== 'attested'
+  return {
+    id: `${space.id}-${id}`,
+    spaceId: space.id,
+    name,
+    nameFr,
+    provenance: inferred ? 'inferred' : style.evidence.provenance,
+    source: inferred
+      ? `Visual reconstruction (${role}). ${style.evidence.source}`
+      : style.evidence.source,
+    sourceFr: inferred
+      ? `Reconstruction visuelle (${role}). ${style.evidence.sourceFr}`
+      : style.evidence.sourceFr,
+    reconstructionRole: role,
+  }
+}
+
+function structureTag(structure: Structure): TourDetailTag {
+  return {
+    id: structure.id,
+    spaceId: structure.spaceId,
+    name: structure.name,
+    nameFr: structure.nameFr,
+    provenance: structure.provenance,
+    source: structure.source,
+    sourceFr: structure.sourceFr,
+    reconstructionRole:
+      structure.provenance === 'inferred' ? 'functional-reconstruction' : 'attested',
+  }
+}
+
 function dressFloor(
   into: BanquetDetailBuilder,
   space: Space,
@@ -46,9 +88,26 @@ function dressFloor(
 ): void {
   const insetWidth = Math.max(0.2, bounds.width - 0.32)
   const insetDepth = Math.max(0.2, bounds.depth - 0.32)
+  const envelopeTag = reconstructionTag({
+    space,
+    style,
+    id: 'floor-envelope',
+    name: 'Floor envelope',
+    nameFr: 'Emprise du sol',
+    layer: 'envelope',
+  })
+  const finishTag = reconstructionTag({
+    space,
+    style,
+    id: 'floor-finish',
+    name: 'Floor finish',
+    nameFr: 'Finition du sol',
+    layer: 'finish',
+  })
   into.polygon(space.footprint, {
     at: [0, floor + 0.012, 0],
     colour: style.floor,
+    tag: envelopeTag,
   })
 
   if (!isAxisAlignedRectangle(space)) return
@@ -60,6 +119,7 @@ function dressFloor(
     into.box([0.025, 0.022, insetDepth], {
       at: [x, floor + 0.025, bounds.centreZ],
       colour: style.accent,
+      tag: finishTag,
     })
   }
   if (style.floorPattern !== 'bands') {
@@ -68,6 +128,7 @@ function dressFloor(
       into.box([insetWidth, 0.022, 0.025], {
         at: [bounds.centreX, floor + 0.025, z],
         colour: style.accent,
+        tag: finishTag,
       })
     }
   }
@@ -81,6 +142,14 @@ function dressWalls(
   style: SourceBoundInteriorStyle,
 ): void {
   const y = floor + 0.17
+  const tag = reconstructionTag({
+    space,
+    style,
+    id: 'wall-plinth',
+    name: 'Wall plinth',
+    nameFr: 'Plinthe murale',
+    layer: 'finish',
+  })
   for (let index = 0; index < space.footprint.length; index++) {
     const start = space.footprint[index]!
     const end = space.footprint[(index + 1) % space.footprint.length]!
@@ -97,6 +166,7 @@ function dressWalls(
       at: [centreX + (towardX / towardLength) * 0.06, y, centreZ + (towardZ / towardLength) * 0.06],
       colour: style.wall,
       rotation: [0, -Math.atan2(dz, dx), 0],
+      tag,
     })
   }
 }
@@ -120,11 +190,28 @@ function dressCeiling(
   style: SourceBoundInteriorStyle,
 ): void {
   const y = floor + ceiling - 0.12
+  const envelopeTag = reconstructionTag({
+    space,
+    style,
+    id: 'ceiling-envelope',
+    name: 'Ceiling envelope',
+    nameFr: 'Emprise du plafond',
+    layer: 'envelope',
+  })
+  const finishTag = reconstructionTag({
+    space,
+    style,
+    id: 'ceiling-finish',
+    name: 'Ceiling finish and services',
+    nameFr: 'Finition et équipements du plafond',
+    layer: 'finish',
+  })
   into.polygon(
     space.footprint,
     {
       at: [0, floor + ceiling - 0.015, 0],
       colour: style.ceiling,
+      tag: envelopeTag,
     },
     'down',
   )
@@ -133,6 +220,7 @@ function dressCeiling(
       at: [bounds.centreX, y - 0.14, bounds.centreZ],
       colour: style.accent,
       glow: true,
+      tag: finishTag,
     })
     return
   }
@@ -142,6 +230,7 @@ function dressCeiling(
     into.box([0.12, 0.18, Math.max(0.2, bounds.depth - 0.2)], {
       at: [x, y, bounds.centreZ],
       colour: style.ceiling,
+      tag: finishTag,
     })
   }
   if (style.ceilingPattern !== 'beams') {
@@ -149,6 +238,7 @@ function dressCeiling(
     into.box([Math.max(0.2, bounds.width - 0.3), 0.1, 0.18], {
       at: [bounds.centreX, y - 0.12, serviceZ],
       colour: style.metal,
+      tag: finishTag,
     })
   }
   const lights = countAcross(bounds.width, 4)
@@ -158,6 +248,7 @@ function dressCeiling(
       at: [x, y - 0.14, bounds.centreZ],
       colour: style.accent,
       glow: true,
+      tag: finishTag,
     })
   }
 }
@@ -189,6 +280,7 @@ function boxOn(
     at: [x, options.floor + structure.base + options.y, z],
     colour: options.colour,
     rotation: [0, rotationOf(structure), 0],
+    tag: structureTag(structure),
   })
 }
 
@@ -329,11 +421,20 @@ function dressStructure(
 
 function dressInferredProgramme(
   into: BanquetDetailBuilder,
+  space: Space,
   bounds: Bounds,
   floor: number,
   style: SourceBoundInteriorStyle,
 ): void {
   if (!style.programme) return
+  const tag = reconstructionTag({
+    space,
+    style,
+    id: `${style.programme}-programme`,
+    name: `${style.programme} programme furniture`,
+    nameFr: `Mobilier fonctionnel : ${style.programme}`,
+    layer: 'furniture',
+  })
   const width = Math.max(1, Math.min(2.1, bounds.width * 0.24))
   const depth = Math.max(1.6, Math.min(2.5, bounds.depth * 0.32))
   const left = bounds.minX + width * 0.65
@@ -346,41 +447,48 @@ function dressInferredProgramme(
         into.box([width, 0.16, depth], {
           at: [x, floor + y, back],
           colour: style.metal,
+          tag,
         })
         into.box([width * 0.9, 0.14, depth * 0.9], {
           at: [x, floor + y + 0.15, back],
           colour: style.fabric,
+          tag,
         })
       }
       into.box([0.08, 1.75, 0.08], {
         at: [x - width * 0.42, floor + 0.88, back + depth * 0.42],
         colour: style.metal,
+        tag,
       })
       into.box([0.08, 1.75, 0.08], {
         at: [x + width * 0.42, floor + 0.88, back + depth * 0.42],
         colour: style.metal,
+        tag,
       })
     }
   } else if (style.programme === 'office') {
     into.box([Math.min(3.2, bounds.width * 0.5), 0.12, Math.min(1.5, bounds.depth * 0.3)], {
       at: [bounds.centreX, floor + 0.78, bounds.centreZ],
       colour: style.wood,
+      tag,
     })
     into.box([Math.min(3, bounds.width * 0.45), 0.66, 0.12], {
       at: [bounds.centreX, floor + 0.39, bounds.centreZ + Math.min(0.55, bounds.depth * 0.12)],
       colour: style.wood,
+      tag,
     })
     for (const x of [left, right]) {
       into.box([width * 0.8, 1.7, 0.45], {
         at: [x, floor + 0.85, bounds.maxZ - 0.3],
         colour: style.metal,
+        tag,
       })
     }
   } else if (style.programme === 'recycling') {
     for (const x of [left, bounds.centreX, right]) {
       into.cylinder(
         { radius: Math.min(0.8, width * 0.4), height: 2.4, sides: 20 },
-        { at: [x, floor + 1.2, bounds.centreZ], colour: style.metal },
+        { at: [x, floor + 1.2, bounds.centreZ], colour: style.metal, tag },
       )
       into.cylinder(
         { radius: 0.08, height: Math.max(1.4, bounds.depth * 0.65) },
@@ -388,6 +496,7 @@ function dressInferredProgramme(
           at: [x, floor + 2.65, bounds.centreZ],
           colour: style.accent,
           rotation: [Math.PI / 2, 0, 0],
+          tag,
         },
       )
     }
@@ -396,15 +505,18 @@ function dressInferredProgramme(
       into.box([width, 0.7, depth], {
         at: [x, floor + 0.42, back],
         colour: style.metal,
+        tag,
       })
       into.box([width * 0.92, 0.12, depth * 0.92], {
         at: [x, floor + 0.82, back],
         colour: style.fabric,
+        tag,
       })
     }
     into.box([Math.min(2.4, bounds.width * 0.3), 1.8, 0.5], {
       at: [bounds.centreX, floor + 0.9, bounds.maxZ - 0.35],
       colour: style.wood,
+      tag,
     })
   }
 }
@@ -442,6 +554,6 @@ export function buildSourceBoundInteriorDetails(options: {
   for (const structure of plan.structures.filter((item) => item.spaceId === spaceId)) {
     dressStructure(into, structure, floor, style)
   }
-  dressInferredProgramme(into, bounds, floor, style)
+  dressInferredProgramme(into, space, bounds, floor, style)
   return into.finish(`source-bound-${style.name}`)
 }

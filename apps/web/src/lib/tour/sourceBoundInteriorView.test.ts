@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { describe, expect, it } from 'vitest'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { buildShip } from './blueprint'
+import { detailTagRangesOf } from './detailTag'
 import {
   buildSourceBoundInteriorDetails,
   sourceBoundInteriorSurfacePlan,
@@ -39,6 +40,16 @@ describe('source-bound interiors without published perspective panels', () => {
           expect(Number.isFinite(positions.getY(index))).toBe(true)
           expect(Number.isFinite(positions.getZ(index))).toBe(true)
         }
+        let nextFace = 0
+        for (const range of detailTagRangesOf(mesh)) {
+          expect(range.start).toBe(nextFace)
+          expect(range.count).toBeGreaterThan(0)
+          expect(range.tag.source.length).toBeGreaterThan(10)
+          expect(range.tag.sourceFr.length).toBeGreaterThan(10)
+          expect(range.tag.reconstructionRole).toBeDefined()
+          nextFace += range.count
+        }
+        expect(nextFace).toBe(positions.count / 3)
       })
       const footprint = new BanquetDetailBuilder(THREE)
       footprint.polygon(space.footprint, { at: [0, 0, 0], colour: style.floor })

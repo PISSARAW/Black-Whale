@@ -30,6 +30,7 @@ export function decodeTourSimulation(serialized: string | null): TourSimulationV
       !Array.isArray(value.witnesses) ||
       !Array.isArray(value.incidents)
       || typeof value.activities !== 'object'
+      || typeof value.shipSystems !== 'object'
     )
       return null
     return value as TourSimulationV1

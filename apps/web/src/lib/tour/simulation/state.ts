@@ -34,6 +34,18 @@ export interface TourSimulationV1 {
       data: Record<string, string | number | boolean>
     }
   >
+  shipSystems: Record<
+    string,
+    {
+      power: number
+      lighting: number
+      ventilation: number
+      noise: number
+      circulation: number
+      doorsLocked: boolean
+      fire: boolean
+    }
+  >
 }
 
 export function createTourSimulation(input: {
@@ -61,6 +73,7 @@ export function createTourSimulation(input: {
     witnesses: [],
     incidents: [],
     activities: {},
+    shipSystems: {},
   }
 }
 

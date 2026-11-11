@@ -7866,7 +7866,7 @@
       "nameFr": "Vestibule royal",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Inherited reconstructed connection to the royal salon. Ch. 382 reading pp. 1–2 show a guarded reception hall but do not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
+      "source": "Inherited reconstructed connection to the royal salon. The guarded reception hall does not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
       "ceiling": 5,
       "envelope": null,
       "footprint": [
@@ -9695,7 +9695,7 @@
       "at": [-48.5, 13.714],
       "atTo": [0, 11],
       "provenance": "inferred",
-      "source": "Inherited reconstructed connection to the royal salon. Ch. 382 reading pp. 1–2 show a guarded reception hall but do not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
+      "source": "Inherited reconstructed connection to the royal salon. The guarded reception hall does not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
       "sourceFr": "Reconstruit pour que le salon s'ouvre sur la salle de banquet ; aucune planche ne montre l'entr\u00e9e."
     },
     {

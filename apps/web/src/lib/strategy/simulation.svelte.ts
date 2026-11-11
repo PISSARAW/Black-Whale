@@ -15,7 +15,6 @@ import { advanceIntel } from './intel'
 import { resolvePlayerOrders, StrategyInputError } from './playerOrders'
 import type { StrategyHatsuCue } from './hatsuPresentation'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
-import { partitionBlockedMoves } from './tacticalAI'
 import { planOpposition } from './opposition'
 import { triggerCatsName } from './catsName'
 import {
@@ -44,6 +43,7 @@ import type {
   StrategyTurnResult,
 } from './types'
 import { strategyMovementGraph, type StrategyMovementGraph } from './movement'
+import { resolveSimultaneousOrders } from './simultaneous'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -330,12 +330,28 @@ export function createSimulationStore() {
     const aiDeniedLocations = opposition.deniedLocations
     const aiHatsuActivations = opposition.hatsuActivations
 
-    const aiResolution = partitionBlockedMoves(aiEvents, [...guardedLocations, ...deniedLocations])
-    const playerResolution = partitionBlockedMoves(playerEvents, aiDeniedLocations)
-    const interceptedEvents = aiResolution.blocked
-    const resolvedAIEvents = aiResolution.resolved
-    const blockedPlayerEvents = playerResolution.blocked
-    const resolvedPlayerEvents = playerResolution.resolved
+    const simultaneous = resolveSimultaneousOrders({
+      player: playerEvents,
+      opposition: aiEvents,
+      reactions: [
+        ...[...guardedLocations, ...deniedLocations].map((locationId) => ({
+          owner: 'PLAYER' as const,
+          trigger: 'HOSTILE_MOVE' as const,
+          locationId,
+          effect: 'BLOCK' as const,
+        })),
+        ...aiDeniedLocations.map((locationId) => ({
+          owner: 'OPPOSITION' as const,
+          trigger: 'HOSTILE_MOVE' as const,
+          locationId,
+          effect: 'BLOCK' as const,
+        })),
+      ],
+    })
+    const interceptedEvents = simultaneous.blockedOpposition
+    const resolvedAIEvents = simultaneous.opposition
+    const blockedPlayerEvents = simultaneous.blockedPlayer
+    const resolvedPlayerEvents = simultaneous.player
     const result = engine.applyEvents(branch.id, [...resolvedPlayerEvents, ...resolvedAIEvents])
     currentState = result.snapshot
     relationships = nextRelationships

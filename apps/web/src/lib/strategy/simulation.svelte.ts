@@ -51,6 +51,7 @@ import {
   initialShipLogistics,
   type ShipLogistics,
 } from './logistics'
+import type { FactionAIMemory } from './aiIntent'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -96,6 +97,7 @@ export function createSimulationStore() {
   let rewardedObjectiveIds = $state<string[]>([])
   let politicalMemory = $state<PoliticalMemory>({})
   let logistics = $state<ShipLogistics>(initialShipLogistics())
+  let aiMemory = $state<Record<string, FactionAIMemory>>({})
 
   /** Everything a fresh campaign needs, in one argument. */
   function init({
@@ -127,6 +129,7 @@ export function createSimulationStore() {
     rewardedObjectiveIds = []
     politicalMemory = {}
     logistics = initialShipLogistics()
+    aiMemory = {}
     selectedFactionId = null
     intel = {}
     victoryPoints = 0
@@ -337,10 +340,12 @@ export function createSimulationStore() {
       turn: currentTurn,
       scenario: activeScenario,
       movementGraph,
+      aiMemory,
     })
     const aiEvents = opposition.events
     const aiDeniedLocations = opposition.deniedLocations
     const aiHatsuActivations = opposition.hatsuActivations
+    aiMemory = opposition.aiMemory
 
     const simultaneous = resolveSimultaneousOrders({
       player: playerEvents,
@@ -513,6 +518,9 @@ export function createSimulationStore() {
     },
     get logistics() {
       return logistics
+    },
+    get aiMemory() {
+      return aiMemory
     },
     get unitConditions() {
       return unitConditions

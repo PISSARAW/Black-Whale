@@ -2,12 +2,23 @@ import { resolveControlledEntity } from '@black-whale/simulation-engine'
 import type { ProposedWorldEvent, WorldState } from '@black-whale/canon-engine'
 import type { FactionRelationship } from './diplomacy'
 import type { UnitCondition } from './conflict'
-import { scenarioDoctrineForFaction } from './scenario'
+import {
+  evaluateScenarioObjective,
+  scenarioDoctrineForFaction,
+  scenarioFactionConfig,
+} from './scenario'
 import type { StrategyScenarioV2 } from './scenario/types'
 import { factionEntityIds } from './selectors'
 import { generateFactionAIOperations, projectFactionAIPerspective } from './tacticalAI'
 import type { StrategyFaction, StrategyLocation } from './types'
 import type { StrategyMovementGraph } from './movement'
+import {
+  initialFactionAIMemory,
+  planFactionAIIntent,
+  rememberAIObservations,
+  type FactionAIMemory,
+  type FactionAIIntent,
+} from './aiIntent'
 
 /**
  * What every faction that is not the player does this turn.
@@ -33,18 +44,23 @@ export interface OppositionPlan {
   turn: number
   scenario: StrategyScenarioV2
   movementGraph: StrategyMovementGraph
+  aiMemory: Record<string, FactionAIMemory>
 }
 
 export interface OppositionOperations {
   events: ProposedWorldEvent[]
   deniedLocations: string[]
   hatsuActivations: number
+  intents: Record<string, FactionAIIntent>
+  aiMemory: Record<string, FactionAIMemory>
 }
 
 export function planOpposition(plan: OppositionPlan): OppositionOperations {
   const aiEvents: ProposedWorldEvent[] = []
   const aiDeniedLocations: string[] = []
   let aiHatsuActivations = 0
+  const intents: Record<string, FactionAIIntent> = {}
+  const aiMemory = { ...plan.aiMemory }
   const claimed = new Set(plan.claimedCharacters)
   const claimedEntities = new Set(plan.claimedEntities)
   const { destinationIds } = plan
@@ -74,13 +90,38 @@ export function planOpposition(plan: OppositionPlan): OppositionOperations {
       opposingEntityIds,
       unitConditions: plan.unitConditions,
     })
+    const ownLocations = members
+      .map((id) => resolveControlledEntity(perspective.state, id))
+      .map((entity) => (entity ? perspective.state.presences[entity.id]?.locationId : undefined))
+      .filter((id): id is string => Boolean(id))
+    const memory = rememberAIObservations(
+      aiMemory[faction.id] ?? initialFactionAIMemory(),
+      perspective.knownOpponentLocations,
+      plan.turn,
+    )
+    const objective = evaluateScenarioObjective(faction.id, {
+      characterLocations: ownLocations,
+      confirmedHostiles: Object.keys(memory.observedOpponentLocations).length,
+      scenario: plan.scenario,
+    })
+    const objectiveKind = scenarioFactionConfig(faction.id, plan.scenario)!.publicObjective.kind
+    const intent = planFactionAIIntent({
+      doctrine: scenarioDoctrineForFaction(faction.id, plan.scenario),
+      objectiveKind,
+      objective,
+      ownLocationIds: ownLocations,
+      destinationIds,
+      memory,
+    })
+    aiMemory[faction.id] = { ...memory, lastIntent: intent.kind }
+    intents[faction.id] = intent
     const aiPlan = generateFactionAIOperations({
       state: perspective.state,
       faction,
       doctrine: scenarioDoctrineForFaction(faction.id, plan.scenario),
       memberCharacterIds: members,
       unitConditions: plan.unitConditions,
-      destinationIds,
+      destinationIds: intent.preferredDestinationIds,
       destinationTypes,
       knownOpponentLocations: perspective.knownOpponentLocations,
       pact: plan.relationships[faction.id]?.pact ?? false,
@@ -97,5 +138,7 @@ export function planOpposition(plan: OppositionPlan): OppositionOperations {
     events: aiEvents,
     deniedLocations: aiDeniedLocations,
     hatsuActivations: aiHatsuActivations,
+    intents,
+    aiMemory,
   }
 }

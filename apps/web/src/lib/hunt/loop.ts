@@ -24,7 +24,7 @@ import { entravesUnderfoot, springEntraves } from './nen/entrave'
 import { markSeen, type Ledger } from './nen/placed'
 import { inspectRoom, INSPECT_COST } from './hunter/inspect'
 import { updateHunter, type HunterIntents, type HunterState } from './hunter/patrol'
-import type { Percept } from './hunter/belief'
+import { updateBelief, type Percept } from './hunter/belief'
 import { playHunter } from './hunter/duel'
 import { duelReducer } from './duel/reducer'
 import { openDuel } from './duel/inherit'
@@ -220,16 +220,14 @@ function resolveSweep(state: HuntState, intents: HunterIntents, graph: NavGraph)
 function believeSweep(state: HuntState, sweep: EnSweep, graph: NavGraph): HunterState['belief'] {
   if (!sweep.found.includes('player')) return state.hunter.belief
   const sharp = sweep.auraRead.includes('player')
-  return {
+  return updateBelief(state.hunter.belief, 0, {
     at: sharp
       ? state.player.position
       : vagueLocation(state.player.spaceId, state.player.position, graph),
     spaceId: state.player.spaceId,
-    from: 'en',
+    kind: 'en',
     sharp,
-    age: 0,
-    cleared: [],
-  }
+  })
 }
 
 function journalSweep(state: HuntState, sweep: EnSweep): TelemetryEvent[] {

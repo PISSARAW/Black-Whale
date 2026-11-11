@@ -30,6 +30,7 @@ import type { HunterProfileId } from './hunter/profiles'
 import type { SealedExit } from './environment'
 import type { HuntTerrainId } from './arena'
 import { appendTrace, type HuntTrace } from './traces'
+import { updateBelief } from './hunter/belief'
 import {
   acceptVow,
   applyShu,
@@ -262,15 +263,12 @@ function heardSweep(state: HuntState, cast: EnSweep): HunterState {
   if (!cast.felt.includes('hunter')) return state.hunter
   return {
     ...state.hunter,
-    belief: {
-      ...state.hunter.belief,
+    belief: updateBelief(state.hunter.belief, 0, {
       at: cast.origin,
       spaceId: state.player.spaceId,
-      from: 'en',
+      kind: 'en',
       sharp: true,
-      age: 0,
-      cleared: [],
-    },
+    }),
   }
 }
 

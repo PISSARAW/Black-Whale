@@ -30,11 +30,12 @@ describe('what the hunter believes', () => {
     expect(updateBelief(initialBelief(), 0, vague).sharp).toBe(false)
   })
 
-  it('lets a newer percept overwrite an older one', () => {
+  it('keeps competing hypotheses instead of overwriting earlier evidence', () => {
     const first = updateBelief(initialBelief(), 0, sharp)
     const second = updateBelief(first, 1, vague)
-    expect(second.at).toEqual([9, 1])
-    expect(second.age).toBe(0)
+    expect(second.hypotheses).toHaveLength(2)
+    expect(second.hypotheses.map((hypothesis) => hypothesis.spaceId)).toEqual(['salon', 'cuisine'])
+    expect(second.at).toEqual([3, 4])
   })
 })
 
@@ -62,6 +63,14 @@ describe('rooms already searched', () => {
     const belief = clearRoom(updateBelief(initialBelief(), 0, sharp), 'salon')
     expect(belief.cleared).toEqual(['salon'])
     expect(belief.at).toBeNull()
+  })
+
+  it('promotes an alternative after the leading room is cleared', () => {
+    const first = updateBelief(initialBelief(), 0, sharp)
+    const competing = updateBelief(first, 1, vague)
+    const cleared = clearRoom(competing, 'salon')
+    expect(cleared.spaceId).toBe('cuisine')
+    expect(cleared.at).toEqual([9, 1])
   })
 
   it('does not list the same room twice, or a room that is nowhere', () => {

@@ -35,13 +35,33 @@ export interface HunterBelief {
   age: number
   /** Rooms searched since the last percept — he does not walk them twice. */
   cleared: string[]
+  /** Competing explanations retained until evidence or a search rules them out. */
+  hypotheses: BeliefHypothesis[]
+}
+
+export interface BeliefHypothesis {
+  at: Vec2
+  spaceId: string | null
+  from: PerceptKind
+  sharp: boolean
+  age: number
+  confidence: number
 }
 
 /** After this long with nothing, he goes back to patrolling. */
 export const BELIEF_FADES_AFTER = 30
+export const MAX_BELIEF_HYPOTHESES = 4
 
 export function initialBelief(): HunterBelief {
-  return { at: null, spaceId: null, from: null, sharp: false, age: 0, cleared: [] }
+  return {
+    at: null,
+    spaceId: null,
+    from: null,
+    sharp: false,
+    age: 0,
+    cleared: [],
+    hypotheses: [],
+  }
 }
 
 export function updateBelief(
@@ -49,31 +69,90 @@ export function updateBelief(
   dt: number,
   percept: Percept | null,
 ): HunterBelief {
+  const aged = hypothesesOf(belief).map((hypothesis) => ({
+    ...hypothesis,
+    age: hypothesis.age + dt,
+  }))
   if (percept) {
-    return {
+    const hypothesis: BeliefHypothesis = {
       at: percept.at,
       spaceId: percept.spaceId,
       from: percept.kind,
       sharp: percept.sharp,
       age: 0,
-      cleared: [],
+      confidence: confidenceFor(percept),
     }
+    const alternatives = aged.filter(
+      (candidate) => candidate.spaceId !== hypothesis.spaceId || candidate.from !== hypothesis.from,
+    )
+    return selectPrimary([hypothesis, ...alternatives], [])
   }
-  if (!belief.at) return belief
-  return { ...belief, age: belief.age + dt }
+  return selectPrimary(aged, belief.cleared)
 }
 
 export function beliefIsStale(belief: HunterBelief): boolean {
-  return !belief.at || belief.age >= BELIEF_FADES_AFTER
+  return !belief.hypotheses.some((hypothesis) => hypothesis.age < BELIEF_FADES_AFTER)
 }
 
 /** He has been there and found nothing. It stops being somewhere to go back to. */
 export function clearRoom(belief: HunterBelief, spaceId: string | null): HunterBelief {
   if (!spaceId || belief.cleared.includes(spaceId)) return belief
-  return { ...belief, cleared: [...belief.cleared, spaceId], at: null, spaceId: null }
+  return selectPrimary(
+    hypothesesOf(belief).filter((hypothesis) => hypothesis.spaceId !== spaceId),
+    [...belief.cleared, spaceId],
+  )
 }
 
 /** Drops the belief entirely — used when it has gone stale. */
 export function forget(belief: HunterBelief): HunterBelief {
-  return { ...initialBelief(), cleared: belief.cleared }
+  return selectPrimary(
+    hypothesesOf(belief).filter((hypothesis) => hypothesis.age < BELIEF_FADES_AFTER),
+    belief.cleared,
+  )
+}
+
+function hypothesesOf(belief: HunterBelief): BeliefHypothesis[] {
+  if (belief.hypotheses) return belief.hypotheses
+  if (!belief.at || !belief.from) return []
+  return [
+    {
+      at: belief.at,
+      spaceId: belief.spaceId,
+      from: belief.from,
+      sharp: belief.sharp,
+      age: belief.age,
+      confidence: belief.sharp ? 1 : 0.55,
+    },
+  ]
+}
+
+function confidenceFor(percept: Percept): number {
+  if (percept.kind === 'en') return percept.sharp ? 1 : 0.75
+  if (percept.kind === 'entrave') return 0.85
+  return percept.sharp ? 0.7 : 0.55
+}
+
+function selectPrimary(
+  hypotheses: readonly BeliefHypothesis[],
+  cleared: readonly string[],
+): HunterBelief {
+  const ranked = hypotheses
+    .filter((hypothesis) => hypothesis.age < BELIEF_FADES_AFTER)
+    .sort(
+      (left, right) =>
+        right.confidence -
+        right.age / BELIEF_FADES_AFTER -
+        (left.confidence - left.age / BELIEF_FADES_AFTER),
+    )
+    .slice(0, MAX_BELIEF_HYPOTHESES)
+  const primary = ranked[0]
+  return {
+    at: primary?.at ?? null,
+    spaceId: primary?.spaceId ?? null,
+    from: primary?.from ?? null,
+    sharp: primary?.sharp ?? false,
+    age: primary?.age ?? 0,
+    cleared: [...cleared],
+    hypotheses: ranked,
+  }
 }

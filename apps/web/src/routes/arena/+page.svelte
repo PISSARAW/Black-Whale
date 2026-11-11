@@ -37,6 +37,9 @@
   import { replayFromUrl } from '$lib/arena/replay/share'
   import { eventsFromReplay, playReplay } from '$lib/arena/replay/player'
   import { arenaRyuAction, auraPercent, strikeTarget } from '$lib/arena/controls'
+  import { resolveArenaExperience, type ArenaOpponentId } from '$lib/arena/experience'
+  import { formatOutcome, type ArenaFormatId } from '$lib/arena/formats'
+  import { loadReplayLibrary } from '$lib/arena/replay/library'
   import { ARENA_MANUAL_CONTROLS } from '$lib/arena/manual'
   import { safeStorageGet, safeStorageSet } from '$lib/arena/storage'
   import { readAura } from '$lib/combat/perception'
@@ -143,9 +146,13 @@
   const initialDoctrine = untrack(() => data.doctrine)
   const initialDifficulty = untrack(() => data.difficulty)
   const initialChallengeId = untrack(() => data.challengeId)
+  const initialFormatId = untrack(() => data.formatId)
+  const initialOpponentId = untrack(() => data.opponentId)
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
+  let formatId = $state<ArenaFormatId>(initialFormatId)
+  let opponentId = $state<ArenaOpponentId>(initialOpponentId)
   let recorder = new ArenaRecorder({
     setup: combatSetup(),
     doctrine: initialDoctrine,
@@ -251,6 +258,7 @@
     const previousGame = game
     const previous = game.lastEvent
     game = combatReducer(game, action)
+    game = applyMatchFormat(game)
     const accepted =
       action.type === 'TICK'
         ? game !== previousGame
@@ -438,6 +446,7 @@
       owed -= DT
       const previous = game.lastEvent
       game = advanceArena(game, DT, { doctrine: opponentDoctrine, difficulty })
+      game = applyMatchFormat(game)
       recorder.advance()
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
       finishRun()
@@ -582,6 +591,8 @@
     if (selectedChallengeId) search.set('challenge', selectedChallengeId)
     search.set('doctrine', opponentDoctrine)
     search.set('difficulty', difficulty)
+    search.set('format', formatId)
+    search.set('opponent', opponentId)
     return `?${search}`
   }
 
@@ -590,11 +601,25 @@
   }
 
   function applyOptions() {
+    const experience = resolveArenaExperience({
+      formatId,
+      opponentId,
+      history: typeof localStorage === 'undefined' ? [] : loadReplayLibrary(localStorage),
+    })
+    opponentDoctrine = experience.doctrine
+    difficulty = experience.difficulty
     restart()
     persistOptions()
   }
 
   onMount(() => {
+    const experience = resolveArenaExperience({
+      formatId,
+      opponentId,
+      history: loadReplayLibrary(localStorage),
+    })
+    opponentDoctrine = experience.doctrine
+    difficulty = experience.difficulty
     const sharedReplay = replayFromUrl(window.location.href)
     if (sharedReplay) {
       if (sharedReplay.setup.terrain.id !== terrain.id) {
@@ -625,6 +650,12 @@
     window.addEventListener('keydown', onKeyDown)
     frame = requestAnimationFrame(tick)
   })
+
+  function applyMatchFormat(state: typeof game): typeof game {
+    const format = resolveArenaExperience({ formatId, opponentId }).format
+    const usedRequiredAction = !format.requiredAction || Boolean(actionCounts[format.requiredAction])
+    return { ...state, outcome: formatOutcome(format, state, usedRequiredAction) }
+  }
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
@@ -787,6 +818,8 @@
     bind:selectedChallengeId
     bind:difficulty
     bind:opponentDoctrine
+    bind:formatId
+    bind:opponentId
     progress={challengeProgress}
     {objectiveLabel}
     onChange={applyOptions}

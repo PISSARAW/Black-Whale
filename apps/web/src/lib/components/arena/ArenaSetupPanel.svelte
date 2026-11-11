@@ -3,6 +3,9 @@
   import type { ChallengeObjective, ChallengeResult } from '$lib/arena/challenges/types'
   import { OPPONENT_DOCTRINES, type ArenaDifficulty, type OpponentDoctrine } from '$lib/arena/ai'
   import { difficultyLabel } from '$lib/arena/progression'
+  import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
+  import { V3_OPPONENTS } from '$lib/arena/adaptation'
+  import type { ArenaOpponentId } from '$lib/arena/experience'
   import { locale, t } from '$lib/i18n'
 
   interface Props {
@@ -11,6 +14,8 @@
     selectedChallengeId: string | null
     difficulty: ArenaDifficulty
     opponentDoctrine: OpponentDoctrine
+    formatId: ArenaFormatId
+    opponentId: ArenaOpponentId
     progress: ChallengeResult | null
     objectiveLabel: (objective: ChallengeObjective) => string
     onChange: () => void
@@ -22,6 +27,8 @@
     selectedChallengeId = $bindable(),
     difficulty = $bindable(),
     opponentDoctrine = $bindable(),
+    formatId = $bindable(),
+    opponentId = $bindable(),
     progress,
     objectiveLabel,
     onChange,
@@ -82,6 +89,17 @@
   <select bind:value={opponentDoctrine} onchange={onChange} aria-label={$t.arena.ui.opponent}>
     {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine] (id)}
       <option value={id}>{doctrine.name}</option>
+    {/each}
+  </select>
+  <select bind:value={formatId} onchange={onChange} aria-label="Arena format">
+    {#each ARENA_FORMATS as format (format.id)}
+      <option value={format.id}>{$locale === 'fr' ? format.titleFr : format.titleEn}</option>
+    {/each}
+  </select>
+  <select bind:value={opponentId} onchange={onChange} aria-label="Arena opponent profile">
+    <option value="adaptive">{$locale === 'fr' ? 'Adversaire adaptatif' : 'Adaptive opponent'}</option>
+    {#each V3_OPPONENTS as opponent (opponent.id)}
+      <option value={opponent.id}>{$locale === 'fr' ? opponent.nameFr : opponent.nameEn}</option>
     {/each}
   </select>
   {#if selected}

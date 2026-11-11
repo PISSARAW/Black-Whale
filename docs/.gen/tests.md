@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 370
+Fichiers : 371
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1235,6 +1235,10 @@ Fichiers : 370
 - worthAsking > asks about a question, not about one mistyped word
 - groundKeywords > drops what the ship does not have and restores the accents it does
 - findByKeywords > finds nothing without keywords
+
+## `apps/web/src/lib/tour/luzurusView.test.ts`
+
+- Luzurus’s apartment against the salon panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/mangaViews.test.ts`
 

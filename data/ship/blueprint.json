@@ -2716,11 +2716,11 @@
       "id": "tier-1-royal-residential-sector-room-1007-servants",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Servants' Quarters \u2014 1007 (Luzurus)",
-      "nameFr": "Quartiers des domestiques \u2014 1007 (Luzurus)",
+      "name": "Servants' Quarters — 1007 (Luzurus)",
+      "nameFr": "Quartiers des domestiques — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2733,17 +2733,17 @@
         [-1.5, -2.7],
         [-10.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-servants-wc",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Servants' WC \u2014 1007 (Luzurus)",
-      "nameFr": "WC du personnel \u2014 1007 (Luzurus)",
+      "name": "Servants' WC — 1007 (Luzurus)",
+      "nameFr": "WC du personnel — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2752,17 +2752,17 @@
         [-1.5, -4.2],
         [-3.9, -4.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-entrance",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Entrance Hall \u2014 1007 (Luzurus)",
-      "nameFr": "Vestibule d'entr\u00e9e \u2014 1007 (Luzurus)",
+      "name": "Entrance Hall — 1007 (Luzurus)",
+      "nameFr": "Vestibule d'entrée — 1007 (Luzurus)",
       "category": "corridor",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2771,17 +2771,17 @@
         [1.5, -2.7],
         [-1.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-kitchen",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Kitchen \u2014 1007 (Luzurus)",
-      "nameFr": "Cuisine \u2014 1007 (Luzurus)",
+      "name": "Kitchen — 1007 (Luzurus)",
+      "nameFr": "Cuisine — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2790,17 +2790,17 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-dining",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Dining Room \u2014 1007 (Luzurus)",
-      "nameFr": "Salle \u00e0 manger \u2014 1007 (Luzurus)",
+      "name": "Dining Room — 1007 (Luzurus)",
+      "nameFr": "Salle à manger — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2809,17 +2809,17 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Living Room \u2014 1007 (Luzurus)",
-      "nameFr": "Salon \u2014 1007 (Luzurus)",
+      "name": "Living Room — 1007 (Luzurus)",
+      "nameFr": "Salon — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed. Ch. 366, reading p. 7: Luzurus and Basho around a hookah, low tables and floor cushions. A raised tatami platform is not established; the metric corner is reconstructed alongside the later salon layout.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2830,17 +2830,17 @@
         [10.5, 5.7],
         [-10.5, 5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées. Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bedroom",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Prince's Master Bedroom \u2014 1007 (Luzurus)",
-      "nameFr": "Chambre du prince \u2014 1007 (Luzurus)",
+      "name": "Prince's Master Bedroom — 1007 (Luzurus)",
+      "nameFr": "Chambre du prince — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2849,17 +2849,17 @@
         [4.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bathroom",
       "tierId": "interior-room-1007",
       "locationId": "tier-1-royal-residential-sector-room-1007",
-      "name": "Bath & WC \u2014 1007 (Luzurus)",
-      "nameFr": "Bain et WC \u2014 1007 (Luzurus)",
+      "name": "Bath & WC — 1007 (Luzurus)",
+      "nameFr": "Bain et WC — 1007 (Luzurus)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior perspective.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2868,7 +2868,7 @@
         [10.5, 10.2],
         [4.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1008",
@@ -16014,15 +16014,15 @@
       "kind": "bed",
       "name": "Bed",
       "nameFr": "Lit",
-      "at": [-8, 8.4],
+      "at": [-9.3, 7],
       "size": [2, 2.1],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bedroom-cabinet-02",
@@ -16030,15 +16030,15 @@
       "kind": "cabinet",
       "name": "Bedside Table",
       "nameFr": "Table de chevet",
-      "at": [-6.5, 7.4],
+      "at": [-7.7, 6.35],
       "size": [0.6, 0.6],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bedroom-cabinet-03",
@@ -16048,29 +16048,29 @@
       "nameFr": "Armoire",
       "at": [0, 9.7],
       "size": [2.4, 0.7],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 2.1,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-seat-04",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "seat",
       "name": "Sofa",
-      "nameFr": "Canap\u00e9",
-      "at": [-7, 3.5],
+      "nameFr": "Canapé",
+      "at": [-6, 1.4],
       "size": [2.6, 0.95],
-      "rotation": 180,
+      "rotation": 90,
       "base": 0,
-      "height": 0.8,
+      "height": 0.95,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-table-05",
@@ -16078,15 +16078,15 @@
       "kind": "table",
       "name": "Coffee Table",
       "nameFr": "Table basse",
-      "at": [-7, 4.5],
-      "size": [1.3, 0.8],
-      "rotation": 0,
+      "at": [-8.3, 1.4],
+      "size": [1.7, 1.1],
+      "rotation": 90,
       "base": 0,
-      "height": 0.42,
+      "height": 0.48,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-cabinet-06",
@@ -16101,24 +16101,24 @@
       "height": 0.9,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-dining-table-07",
       "spaceId": "tier-1-royal-residential-sector-room-1007-dining",
       "kind": "table",
       "name": "Dining Table",
-      "nameFr": "Table \u00e0 manger",
+      "nameFr": "Table à manger",
       "at": [5, -2.7],
       "size": [1.6, 2.4],
       "rotation": 0,
       "base": 0,
       "height": 0.75,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-kitchen-counter-08",
@@ -16126,31 +16126,31 @@
       "kind": "counter",
       "name": "Kitchen Counter",
       "nameFr": "Plan de travail",
-      "at": [6, -9.8],
-      "size": [7, 0.7],
+      "at": [6.175, -9.85],
+      "size": [7.95, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-kitchen-counter-09",
       "spaceId": "tier-1-royal-residential-sector-room-1007-kitchen",
       "kind": "counter",
       "name": "Kitchen Island",
-      "nameFr": "\u00celot de cuisine",
-      "at": [6, -7.6],
-      "size": [2.4, 0.9],
-      "rotation": 0,
+      "nameFr": "Îlot de cuisine",
+      "at": [1.85, -8.5],
+      "size": [3.4, 0.7],
+      "rotation": -90,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-servants-bed-10",
@@ -16158,15 +16158,15 @@
       "kind": "bed",
       "name": "Servant's Bed 1",
       "nameFr": "Lit de domestique 1",
-      "at": [-9.3, -8.5],
+      "at": [-9.3, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-servants-bed-11",
@@ -16174,15 +16174,15 @@
       "kind": "bed",
       "name": "Servant's Bed 2",
       "nameFr": "Lit de domestique 2",
-      "at": [-7.2, -8.5],
+      "at": [-7.2, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-servants-cabinet-12",
@@ -16196,9 +16196,9 @@
       "base": 0,
       "height": 2,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-servants-wc-pan",
@@ -16208,13 +16208,13 @@
       "nameFr": "Cuvette du personnel",
       "at": [-1.85, -5.25],
       "size": [0.6, 0.6],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.45,
+      "height": 0.85,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bathroom-basin-13",
@@ -16228,9 +16228,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-bathroom-basin-14",
@@ -16244,9 +16244,9 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1008-bedroom-bed-01",
@@ -26170,17 +26170,17 @@
       "id": "tier-1-royal-residential-sector-room-1007-living-deep-sofa",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "seat",
-      "name": "Deep Upholstered Sofa",
-      "nameFr": "Canap\u00e9 profond rembourr\u00e9",
-      "at": [-2, 2.5],
-      "size": [2.8, 1.1],
-      "rotation": 0,
+      "name": "Deep buttoned salon sofa",
+      "nameFr": "Canapé capitonné profond du salon",
+      "at": [6.9, 2.8],
+      "size": [2.1, 1.15],
+      "rotation": 90,
       "base": 0,
-      "height": 0.9,
+      "height": 1.05,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-side-table",
@@ -26188,48 +26188,48 @@
       "kind": "table",
       "name": "Bottle-Covered Side Table",
       "nameFr": "Table d'appoint couverte de bouteilles",
-      "at": [-2, 1],
-      "size": [0.9, 0.9],
+      "at": [5.2, 2.8],
+      "size": [0.8, 0.8],
       "rotation": 0,
       "base": 0,
-      "height": 0.65,
+      "height": 0.55,
       "sides": 12,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-shelving",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "cabinet",
-      "name": "Crowded Shelving and Plants",
-      "nameFr": "\u00c9tag\u00e8res encombr\u00e9es et plantes",
-      "at": [10.05, 3.4],
-      "size": [0.65, 2.8],
+      "name": "Stocked open shelving",
+      "nameFr": "Rayonnage ouvert rempli",
+      "at": [10.05, 4.35],
+      "size": [0.65, 2],
       "rotation": 0,
       "base": 0,
       "height": 2.3,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-television",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "painting",
       "name": "Television Screen",
-      "nameFr": "\u00c9cran de t\u00e9l\u00e9vision",
-      "at": [-7, 5.58],
-      "size": [2.8, 0.18],
+      "nameFr": "Écran de télévision",
+      "at": [-10.43, 3.1],
+      "size": [0.1, 3.8],
       "rotation": 0,
-      "base": 1.1,
-      "height": 1.55,
+      "base": 1.15,
+      "height": 1.9,
       "sides": null,
       "colour": 2106406,
       "provenance": "panel",
-      "source": "Ch. 414 \u2014 Luzurus watches a film in Room 1007 with Rice and Basho; the screen belongs to the crowded salon shown earlier.",
-      "sourceFr": "Chap. 414 \u2014 Luzurus regarde un film dans la chambre 1007 avec Rice et Basho ; l'\u00e9cran appartient au salon encombr\u00e9 montr\u00e9 auparavant."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1008-bedroom-party-table",
@@ -27869,33 +27869,33 @@
       "id": "tier-1-royal-residential-sector-room-1007-living-topiary-left",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "cabinet",
-      "name": "Left Potted Topiary",
-      "nameFr": "Topiaire en pot gauche",
-      "at": [-3.8, 3.4],
-      "size": [0.6, 0.6],
+      "name": "Leafy potted plant",
+      "nameFr": "Plante feuillue en pot",
+      "at": [8.7, 1.9],
+      "size": [0.65, 0.65],
       "rotation": 0,
       "base": 0,
-      "height": 1.6,
+      "height": 1.25,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 386 \u2014 the full view into Luzurus's salon shows matching round topiary trees flanking the upholstered seating.",
-      "sourceFr": "Chap. 386 \u2014 la vue d'ensemble du salon de Luzurus montre deux topiaires ronds assortis encadrant les si\u00e8ges rembourr\u00e9s."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-topiary-right",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "cabinet",
-      "name": "Right Potted Topiary",
-      "nameFr": "Topiaire en pot droit",
-      "at": [-0.2, 3.4],
-      "size": [0.6, 0.6],
+      "name": "Leafy potted plant",
+      "nameFr": "Plante feuillue en pot",
+      "at": [8.7, 4.8],
+      "size": [0.65, 0.65],
       "rotation": 0,
       "base": 0,
-      "height": 1.6,
+      "height": 1.25,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 386 \u2014 the full view into Luzurus's salon shows matching round topiary trees flanking the upholstered seating.",
-      "sourceFr": "Chap. 386 \u2014 la vue d'ensemble du salon de Luzurus montre deux topiaires ronds assortis encadrant les si\u00e8ges rembourr\u00e9s."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-painting-left",
@@ -27903,16 +27903,16 @@
       "kind": "painting",
       "name": "Left Salon Painting",
       "nameFr": "Tableau gauche du salon",
-      "at": [-4, 5.58],
+      "at": [-7, 5.58],
       "size": [1.45, 0.18],
-      "rotation": 0,
+      "rotation": 180,
       "base": 1.35,
       "height": 1.45,
       "sides": null,
       "colour": 8084808,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's crowded salon is lined with large framed pictures above and between its seats and cabinets.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon encombr\u00e9 de Luzurus est bord\u00e9 de grands tableaux encadr\u00e9s au-dessus et entre les si\u00e8ges et les meubles."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-painting-centre",
@@ -27920,16 +27920,16 @@
       "kind": "painting",
       "name": "Central Salon Painting",
       "nameFr": "Tableau central du salon",
-      "at": [-2, 5.58],
+      "at": [-4.5, 5.58],
       "size": [1.45, 0.18],
-      "rotation": 0,
+      "rotation": 180,
       "base": 1.5,
       "height": 1.2,
       "sides": null,
       "colour": 4743531,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's crowded salon is lined with large framed pictures above and between its seats and cabinets.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon encombr\u00e9 de Luzurus est bord\u00e9 de grands tableaux encadr\u00e9s au-dessus et entre les si\u00e8ges et les meubles."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-painting-right",
@@ -27937,16 +27937,16 @@
       "kind": "painting",
       "name": "Right Salon Painting",
       "nameFr": "Tableau droit du salon",
-      "at": [0, 5.58],
+      "at": [-2, 5.58],
       "size": [1.45, 0.18],
-      "rotation": 0,
+      "rotation": 180,
       "base": 1.35,
       "height": 1.45,
       "sides": null,
       "colour": 7688297,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's crowded salon is lined with large framed pictures above and between its seats and cabinets.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon encombr\u00e9 de Luzurus est bord\u00e9 de grands tableaux encadr\u00e9s au-dessus et entre les si\u00e8ges et les meubles."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1008-bedroom-entertainment-console",
@@ -28098,64 +28098,48 @@
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "seat",
       "name": "Rear Two-Seater Sofa",
-      "nameFr": "Canap\u00e9 deux places arri\u00e8re",
-      "at": [-7, -1],
+      "nameFr": "Canapé deux places arrière",
+      "at": [-1, 4.2],
       "size": [1.8, 0.9],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
-      "height": 0.8,
+      "height": 0.95,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-rear-table",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "table",
       "name": "Rear Coffee Table",
-      "nameFr": "Table basse arri\u00e8re",
-      "at": [-7, 0],
-      "size": [1.2, 0.7],
+      "nameFr": "Table basse arrière",
+      "at": [-1, 2.7],
+      "size": [1.4, 0.9],
       "rotation": 0,
       "base": 0,
-      "height": 0.45,
+      "height": 0.48,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 386 and 389 \u2014 Luzurus's lived-in salon is crowded with deep upholstered seating, side tables, bottles, plants, shelves and ornament.",
-      "sourceFr": "Chap. 386 et 389 \u2014 le salon habit\u00e9 de Luzurus est encombr\u00e9 de si\u00e8ges profond\u00e9ment rembourr\u00e9s, de tables d'appoint, de bouteilles, de plantes, d'\u00e9tag\u00e8res et d'ornements."
-    },
-    {
-      "id": "tier-1-royal-residential-sector-room-1007-living-smoking-platform",
-      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
-      "kind": "platform",
-      "name": "Raised Smoking Platform",
-      "nameFr": "Estrade fumeur",
-      "at": [6, 3],
-      "size": [3, 2.5],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.15,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
-      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-smoking-table",
       "spaceId": "tier-1-royal-residential-sector-room-1007-living",
       "kind": "table",
       "name": "Low Hookah Table",
-      "nameFr": "Table basse \u00e0 narguil\u00e9",
-      "at": [6, 3],
+      "nameFr": "Table basse à narguilé",
+      "at": [2.8, 2.8],
       "size": [1.4, 0.7],
       "rotation": 0,
-      "base": 0.15,
-      "height": 0.25,
+      "base": 0,
+      "height": 0.28,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
-      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+      "source": "Ch. 366, reading p. 7: Luzurus and Basho around a hookah, low tables and floor cushions. A raised tatami platform is not established; the metric corner is reconstructed alongside the later salon layout.",
+      "sourceFr": "Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-cushion-luzurus",
@@ -28163,15 +28147,15 @@
       "kind": "seat",
       "name": "Floor Cushion",
       "nameFr": "Coussin de sol",
-      "at": [6, 2.2],
+      "at": [2.8, 1.9],
       "size": [0.7, 0.7],
       "rotation": 0,
-      "base": 0.15,
-      "height": 0.1,
+      "base": 0,
+      "height": 0.16,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
-      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+      "source": "Ch. 366, reading p. 7: Luzurus and Basho around a hookah, low tables and floor cushions. A raised tatami platform is not established; the metric corner is reconstructed alongside the later salon layout.",
+      "sourceFr": "Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-cushion-basho",
@@ -28179,15 +28163,15 @@
       "kind": "seat",
       "name": "Floor Cushion",
       "nameFr": "Coussin de sol",
-      "at": [6, 3.8],
+      "at": [2.8, 3.7],
       "size": [0.7, 0.7],
       "rotation": 0,
-      "base": 0.15,
-      "height": 0.1,
+      "base": 0,
+      "height": 0.16,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 359 \u2014 Luzurus and Basho smoke hookah in a distinct area of the room featuring a raised floor, cushions, and low tables.",
-      "sourceFr": "Chap. 359 \u2014 Luzurus et Basho fument le narguil\u00e9 dans un espace distinct de la pi\u00e8ce, avec un sol sur\u00e9lev\u00e9, des coussins et des tables basses."
+      "source": "Ch. 366, reading p. 7: Luzurus and Basho around a hookah, low tables and floor cushions. A raised tatami platform is not established; the metric corner is reconstructed alongside the later salon layout.",
+      "sourceFr": "Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon."
     },
     {
       "id": "tier-1-supreme-court-bench",
@@ -31467,6 +31451,55 @@
       "provenance": "map",
       "source": "Room 1006 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture or finishes of this private room.",
       "sourceFr": "Reconstitution du 1006 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-shelving-west",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "cabinet",
+      "name": "Stocked open shelving",
+      "nameFr": "Rayonnage ouvert rempli",
+      "at": [-10.05, -0.9],
+      "size": [0.65, 2.8],
+      "height": 2.3,
+      "rotation": 0,
+      "base": 0,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-living-calligraphic-backdrop",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-living",
+      "kind": "painting",
+      "name": "Large brushwork picture",
+      "nameFr": "Grand tableau à traits peints",
+      "at": [10.43, 2.1],
+      "size": [0.1, 3],
+      "height": 2.1,
+      "rotation": 0,
+      "base": 1.1,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 386, reading p. 8: Luzurus crowded salon, deep upholstered seating, television, bottles on low tables, stocked shelves, leafy plants, framed pictures, floral wall panels and rectangular floor grid. Dimensions and metric placements are reconstructed.",
+      "sourceFr": "Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées.",
+      "colour": 13748656
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1007-bathroom-wc-pan",
+      "spaceId": "tier-1-royal-residential-sector-room-1007-bathroom",
+      "kind": "basin",
+      "name": "Toilet",
+      "nameFr": "WC",
+      "at": [10.05, 8.25],
+      "size": [0.7, 0.8],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "map",
+      "source": "Room 1007 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes this private room detailed furniture and finishes.",
+      "sourceFr": "Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée."
     }
   ]
 }

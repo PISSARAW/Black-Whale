@@ -802,6 +802,13 @@ surprise de Giuliano est porté par Tyson ; le faux présentoir central et les
 meubles de cadeaux non attestés sont retirés. Les sept pièces privées restent
 des reconstitutions `map`. Voir [l’audit du 1006](tyson-room-audit.md).
 
+Dans le **1007**, le chapitre 386 (page de lecture 8) précise les assises
+capitonnées, la télévision, les rayonnages remplis, les bouteilles, les plantes
+feuillues, les cadres et les cartouches supérieurs du salon de Luzurus.
+Le coin narguilé est repris du chapitre 366 (page 7), sans l’ancienne estrade
+non établie. Les sept pièces privées sont des reconstitutions `map` et le plan
+local partage leurs emprises avec la visite. Voir [l’audit du 1007](luzurus-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

@@ -359,19 +359,17 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 7 cabinet, 5 seat, 5 table, 4 painting, 3 basin, 3 bed, 2 counter, 1 platform
-- **Objets directement visibles dans les cases :** 30/30
+- **Éléments modélisés :** 8 cabinet, 5 painting, 5 seat, 5 table, 4 basin, 3 bed, 2 counter
+- **Objets directement visibles dans les cases :** 19/32
 - **Espaces internes :** Quartiers des domestiques — 1007 (Luzurus) ; WC du personnel — 1007 (Luzurus) ; Vestibule d'entrée — 1007 (Luzurus) ; Cuisine — 1007 (Luzurus) ; Salle à manger — 1007 (Luzurus) ; Salon — 1007 (Luzurus) ; Chambre du prince — 1007 (Luzurus) ; Bain et WC — 1007 (Luzurus)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle.
+  - Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées. Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 386 et 389 — le salon habité de Luzurus est encombré de sièges profondément rembourrés, de tables d'appoint, de bouteilles, de plantes, d'étagères et d'ornements.
-  - Chap. 414 — Luzurus regarde un film dans la chambre 1007 avec Rice et Basho ; l'écran appartient au salon encombré montré auparavant.
-  - Chap. 386 — la vue d'ensemble du salon de Luzurus montre deux topiaires ronds assortis encadrant les sièges rembourrés.
-  - Chap. 386 et 389 — le salon encombré de Luzurus est bordé de grands tableaux encadrés au-dessus et entre les sièges et les meubles.
-  - Chap. 359 — Luzurus et Basho fument le narguilé dans un espace distinct de la pièce, avec un sol surélevé, des coussins et des tables basses.
+  - Reconstitution du 1007 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée.
+  - Chap. 386, page de lecture 8 : salon chargé de Luzurus, sièges capitonnés, télévision, bouteilles sur tables basses, rayonnages remplis, plantes feuillues, tableaux, panneaux muraux à motifs et sol quadrillé. Dimensions et implantation métrique reconstituées.
+  - Chap. 366, page de lecture 7 : Luzurus et Basho autour d’un narguilé, de tables basses et de coussins de sol. Une estrade en tatami n’est pas établie ; le coin métrique est reconstitué à côté de l’agencement ultérieur du salon.
 
 ## Chambre 1008 (Salé-salé) — `tier-1-royal-residential-sector-room-1008`
 

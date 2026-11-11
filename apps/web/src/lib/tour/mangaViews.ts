@@ -12,6 +12,7 @@ import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
 import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
 import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
 import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
+import { MANGA_KACHO_VIEWS } from './mangaKachoViews'
 import { MANGA_HALKENBURG_VIEWS } from './mangaHalkenburgViews'
 import { MANGA_SALESALE_VIEWS } from './mangaSalesaleViews'
 import { MANGA_LUZURUS_VIEWS } from './mangaLuzurusViews'
@@ -55,28 +56,6 @@ export const MANGA_VIEWS: MangaView[] = [
     volume: 36,
     label: "Woble's guards gathered around the two meal-covered tables",
     labelFr: 'Les gardes de Woble réunis autour des deux longues tables de repas',
-  }),
-  view({
-    id: 'kacho-living-homework',
-    spaceId: 'tier-1-royal-residential-sector-room-1010-living',
-    at: [0.8, 4.75],
-    target: [-7.8, -2.35],
-    pitch: -0.01,
-    chapter: 376,
-    volume: 36,
-    label: 'Kacho studying beneath the coffered ceiling',
-    labelFr: 'Kacho travaillant sous le plafond à caissons',
-  }),
-  view({
-    id: 'kacho-kitchen-cabinet',
-    spaceId: 'tier-1-royal-residential-sector-room-1010-kitchen',
-    at: [2.15, -6.3],
-    target: [6.8, -9.65],
-    pitch: -0.05,
-    chapter: 376,
-    volume: 36,
-    label: "Kacho's kitchen and the lower cupboard named in Melody's Morse code",
-    labelFr: 'La cuisine de Kacho et le placard bas désigné par le morse de Senritsu',
   }),
   ...MANGA_ROYAL_SALON_VIEWS,
   ...MANGA_BENJAMIN_ROOM_VIEWS,
@@ -186,6 +165,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_LUZURUS_VIEWS,
   ...MANGA_SALESALE_VIEWS,
   ...MANGA_HALKENBURG_VIEWS,
+  ...MANGA_KACHO_VIEWS,
   ...MANGA_VVIP_RECREATION_VIEWS,
   ...MANGA_CHA_R_VIEWS,
   ...MANGA_HEILLY_VIEWS,

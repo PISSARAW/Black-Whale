@@ -823,12 +823,19 @@ chapitre 386 (page 13) remplacent le cercle de six fauteuils. Les six autres
 pièces sont des reconstitutions ; les emprises 2D et 3D sont communes.
 Voir [l’audit du 1009](halkenburg-room-audit.md).
 
+Dans le **1010**, le chapitre 376 (pages de lecture 10–11) précise le poste
+d'étude, son grand fauteuil, le livre, la calculatrice et la bouteille, ainsi
+que la cuisine en L : cuisson à gauche, évier et placards au fond,
+réfrigérateur à droite. La table de repas suit le chapitre 366 (page 4).
+La commode et le tabouret attribués à tort au chapitre 374 sont retirés.
+Les cinq autres pièces restent des reconstitutions et les emprises 2D/3D sont
+communes. Voir [l’audit du 1010](kacho-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),
 la chambre festive de Salé-salé (chap. 366, 381 et 382), le centre dégagé et les
-meubles muraux de Halkenburg (chap. 382 et 386), et le salon de Kacho (chap. 374
-et 376). Les scènes uniques restent affichables, mais leur légende ne les fait
+meubles muraux de Halkenburg (chap. 382 et 386), et le poste d'étude de Kacho (chap. 376). Les scènes uniques restent affichables, mais leur légende ne les fait
 pas passer pour une confirmation répétée : salon formel de Camilla (chap. 389),
 cabinet scientifique de Tubeppa (chap. 366), grande réception de Tyson
 (chap. 389) et cuisine de Kacho (chap. 376).

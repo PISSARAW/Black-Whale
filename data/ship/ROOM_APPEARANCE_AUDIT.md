@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1218 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1219 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -425,23 +425,24 @@
 ## Chambre 1010 (Kacho) — `tier-1-royal-residential-sector-room-1010`
 
 - **Pont :** tier-1, interior-room-1010
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 3 counter, 2 painting, 2 seat, 2 table
-- **Objets directement visibles dans les cases :** 21/21
+- **Éléments modélisés :** 6 cabinet, 4 basin, 3 bed, 3 seat, 2 counter, 2 painting, 2 table
+- **Objets directement visibles dans les cases :** 11/22
 - **Espaces internes :** Quartiers des domestiques — 1010 (Kacho) ; WC du personnel — 1010 (Kacho) ; Vestibule d'entrée — 1010 (Kacho) ; Cuisine — 1010 (Kacho) ; Salle à manger — 1010 (Kacho) ; Salon — 1010 (Kacho) ; Chambre du prince — 1010 (Kacho) ; Bain et WC — 1010 (Kacho)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362. Le chap. 376 s'y tient : le plan de travail sous ses éléments hauts, la plaque et son four encastré, le retour de plan le long du mur tribord, et les placards bas que le morse de Senritsu dénombre.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362. Le chap. 376 le montre : Kacho sur ses devoirs sous le plafond à caissons, le mur lambrissé derrière elle et ses tableaux encadrés, et dehors la porte du 1010.
+  - Chap. 363 : programme-type publié des appartements. Cloisons conservées ; mobilier et finitions individuels reconstitués.
+  - Chap. 376, page de lecture 11 : cuisine en L, cuisinière et four encastré sur le retour gauche, casserole couverte, hotte, évier et placards bas au fond, éléments hauts et réfrigérateur à droite. Le morse désigne un rangement bas et son fond, sans préciser de porte ni montrer son contenu. Dimensions et implantation métrique reconstituées.
+  - Chap. 366, page de lecture 4 : Kacho à une grande table rectangulaire à bordure intérieure et piètement sculpté, sièges à haut dossier, sol à lames quadrillées. Le repas jeté est un événement ponctuel, pas un décor permanent. Dimensions et positions reconstituées.
+  - Chap. 376, pages de lecture 10–11 : Kacho à sa table de travail, grand fauteuil rembourré, livre ouvert, calculatrice et bouteille ; panneaux à motifs, cadres supérieurs, soubassement strié, quadrillage du sol et du plafond. Implantation métrique et couleurs reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 376 — la cuisine de la princesse Kacho, dessinée deux fois : le plan de travail sous ses éléments hauts, la plaque de cuisson avec sa casserole et le four encastré dessous, le retour de plan le long du mur tribord, et la rangée de placards bas sous les deux. Le morse de Senritsu en désigne un exactement — cuisine, placard de gauche, en bas, au fond.
-  - Chap. 376 — le salon de la princesse Kacho, où on la fait asseoir sur ses devoirs : le mur lambrissé derrière elle et ses tableaux encadrés, sous le plafond à caissons commun aux appartements.
-  - Chap. 374 — Kacho est contrainte de travailler dans un salon d'apparat meublé d'une commode basse sous les tableaux et d'un petit tabouret rond placé à côté.
+  - Reconstitution du 1010 à partir du programme-type du chapitre 363 et du plan local /ship. Le mobilier et les finitions individuels ne sont pas établis par une case de cette pièce.
+  - Chap. 366, page de lecture 4 : Kacho à une grande table rectangulaire à bordure intérieure et piètement sculpté, sièges à haut dossier, sol à lames quadrillées. Le repas jeté est un événement ponctuel, pas un décor permanent. Dimensions et positions reconstituées.
+  - Chap. 376, page de lecture 11 : cuisine en L, cuisinière et four encastré sur le retour gauche, casserole couverte, hotte, évier et placards bas au fond, éléments hauts et réfrigérateur à droite. Le morse désigne un rangement bas et son fond, sans préciser de porte ni montrer son contenu. Dimensions et implantation métrique reconstituées.
+  - Chap. 376, pages de lecture 10–11 : Kacho à sa table de travail, grand fauteuil rembourré, livre ouvert, calculatrice et bouteille ; panneaux à motifs, cadres supérieurs, soubassement strié, quadrillage du sol et du plafond. Implantation métrique et couleurs reconstituées.
 
 ## Chambre 1011 (Fugetsu) — `tier-1-royal-residential-sector-room-1011`
 

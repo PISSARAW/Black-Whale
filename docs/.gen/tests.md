@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 389
+Fichiers : 390
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1268,6 +1268,10 @@ Fichiers : 389
 ## `apps/web/src/lib/tour/justiceBureauView.test.ts`
 
 - the Justice Bureau reconstructed from chapter 400 > satisfies the shared blueprint invariants for interior-justice-bureau
+
+## `apps/web/src/lib/tour/kachoView.test.ts`
+
+- Kacho’s apartment against the study, dining and kitchen panels > keeps a valid walked plan and distinguishes panel props from five reconstructed rooms
 
 ## `apps/web/src/lib/tour/light.test.ts`
 

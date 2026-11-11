@@ -1,6 +1,7 @@
 import type { Space } from './types'
 import type { RoomAppearance } from './roomAppearanceTypes'
 import { camillaAppearanceOf } from './camillaAppearance'
+import { kachoAppearanceOf } from './kachoAppearance'
 import { halkenburgAppearanceOf } from './halkenburgAppearance'
 import { salesaleAppearanceOf } from './salesaleAppearance'
 import { luzurusAppearanceOf } from './luzurusAppearance'
@@ -10,21 +11,27 @@ import { tserriednichAppearanceOf } from './tserriednichAppearance'
 import { zhangLeiAppearanceOf } from './zhangLeiAppearance'
 import { princeApartmentAppearanceOf } from './princeApartmentAppearance'
 
+const PALETTES = [
+  camillaAppearanceOf,
+  zhangLeiAppearanceOf,
+  tserriednichAppearanceOf,
+  tubeppaAppearanceOf,
+  tysonAppearanceOf,
+  luzurusAppearanceOf,
+  salesaleAppearanceOf,
+  halkenburgAppearanceOf,
+  kachoAppearanceOf,
+  princeApartmentAppearanceOf,
+] as const
+
 /** Panel-specific apartment palettes precede the shared programme-type fallback. */
 export function apartmentRoomAppearanceOf(
   space: Space,
   appearance: RoomAppearance,
 ): RoomAppearance {
-  return (
-    camillaAppearanceOf(space, appearance) ??
-    zhangLeiAppearanceOf(space, appearance) ??
-    tserriednichAppearanceOf(space, appearance) ??
-    tubeppaAppearanceOf(space, appearance) ??
-    tysonAppearanceOf(space, appearance) ??
-    luzurusAppearanceOf(space, appearance) ??
-    salesaleAppearanceOf(space, appearance) ??
-    halkenburgAppearanceOf(space, appearance) ??
-    princeApartmentAppearanceOf(space, appearance) ??
-    appearance
-  )
+  for (const palette of PALETTES) {
+    const result = palette(space, appearance)
+    if (result) return result
+  }
+  return appearance
 }

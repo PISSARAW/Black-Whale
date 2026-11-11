@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the Ei-I office cutaway', () => {
   it('separates its plan-established volume from inferred office furniture', () => {
@@ -16,5 +16,6 @@ describe('the Ei-I office cutaway', () => {
       'seat',
       'table',
     ])
+    expect(certificationIssuesFor('tier-4-ei-i-family-office')).toEqual([])
   })
 })

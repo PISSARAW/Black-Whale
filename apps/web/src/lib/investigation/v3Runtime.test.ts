@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { room1014Case } from './case'
-import { assessHypothesesFromEvidence } from './v3Runtime'
+import { assessHypothesesFromEvidence, assessPlayableHypothesis } from './v3Runtime'
 
 describe('investigation V3 runtime adapter', () => {
   it('exposes partial progress before a hypothesis is established', () => {
@@ -26,5 +26,15 @@ describe('investigation V3 runtime adapter', () => {
       viewerId: 'kurapika',
     })
     expect(assessments[hypothesis.id].status).toBe('established')
+  })
+
+  it('drives the playable verdict from the epistemic assessment', () => {
+    const verdict = assessPlayableHypothesis(room1014Case, 'ordinary-weapon', [
+      'wounds',
+      'loberry-vision',
+    ])
+
+    expect(verdict.status).toBe('contradicted')
+    expect(verdict.contradictions.map((item) => item.id)).toEqual(['loberry-vision'])
   })
 })

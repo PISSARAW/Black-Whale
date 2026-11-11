@@ -1,6 +1,7 @@
 // Mirrors the domain vocabulary while keeping this client-only vertical slice
 // runnable before the workspace packages have been built.
 import type { InterviewStance } from './interview'
+import { assessPlayableHypothesis } from './v3Runtime'
 
 type AcquisitionMethod =
   | 'DIRECT_OBSERVATION'
@@ -105,28 +106,5 @@ export function evaluateHypothesis(
   hypothesisId: string,
   selectedEvidenceIds: Iterable<string>,
 ): Verdict {
-  const hypothesis = investigation.hypotheses.find((item) => item.id === hypothesisId)
-  if (!hypothesis) throw new Error(`Unknown hypothesis: ${hypothesisId}`)
-
-  const selected = new Set(selectedEvidenceIds)
-  const evidenceById = new Map(investigation.evidence.map((item) => [item.id, item]))
-  const supporting = hypothesis.requiredEvidenceIds
-    .filter((id) => selected.has(id))
-    .map((id) => evidenceById.get(id)!)
-  const missing = hypothesis.requiredEvidenceIds
-    .filter((id) => !selected.has(id))
-    .map((id) => evidenceById.get(id)!)
-  const contradictions = hypothesis.contradictionEvidenceIds
-    .filter((id) => selected.has(id))
-    .map((id) => evidenceById.get(id)!)
-
-  if (contradictions.length > 0) {
-    return { status: 'contradicted', supporting, missing, contradictions }
-  }
-  if (missing.length > 0) {
-    const status = supporting.length > 0 ? 'plausible' : 'insufficient'
-    return { status, supporting, missing, contradictions }
-  }
-  const status = hypothesis.id === investigation.canonicalHypothesisId ? 'solved' : 'plausible'
-  return { status, supporting, missing, contradictions }
+  return assessPlayableHypothesis(investigation, hypothesisId, selectedEvidenceIds)
 }

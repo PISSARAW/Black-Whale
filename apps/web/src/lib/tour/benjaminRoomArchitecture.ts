@@ -1,173 +1,144 @@
 import type * as Three from 'three'
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
-import { banquetWallRuns, wallPoint } from './banquetWallLayout'
+import { banquetWallRuns, wallPoint, type BanquetWallRun } from './banquetWallLayout'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
-import type { Space } from './types'
-import {
-  BENJAMIN_BRONZE,
-  BENJAMIN_DARK_WOOD,
-  BENJAMIN_STONE,
-  BENJAMIN_GOLD_TRIM,
-} from './benjaminRoomDetailSurface'
+import { clipSegment } from './geometry'
+import type { Space, Vec2 } from './types'
+import { BENJAMIN_DARK_WOOD, BENJAMIN_BRONZE } from './benjaminRoomDetailSurface'
 
-export interface ArchitectureContext {
+interface ArchitectureContext {
   THREE: typeof Three
   into: BanquetDetailBuilder
   plan: TierPlan
   space: Space
 }
 
-function wallMouldings(context: ArchitectureContext): void {
+/** Ch. 363 p. 13 and 366 p. 16: low timber wainscot, tall light framed wall panels. */
+function wallPanelling(context: ArchitectureContext, run: BanquetWallRun): void {
   const { into, plan, space } = context
   const floor = floorOf(space, plan.tier)
-
-  for (const run of banquetWallRuns(plan, space)) {
-    const trims: [number, number, number, number][] = [
-      [0.15, 0.28, 0.08, BENJAMIN_DARK_WOOD],
-      [0.85, 0.05, 0.09, BENJAMIN_DARK_WOOD],
-      [0.88, 0.02, 0.095, BENJAMIN_BRONZE],
-      [2.6, 0.035, 0.06, BENJAMIN_BRONZE],
-      [3.82, 0.12, 0.14, BENJAMIN_DARK_WOOD],
-      [3.92, 0.04, 0.16, BENJAMIN_BRONZE],
-    ]
-    for (const [y, height, depth, col] of trims) {
-      into.box([run.length, height, depth], {
-        at: wallPoint(run, { along: run.length / 2, y: floor + y, inset: depth / 2 }),
-        rotation: [0, run.angle, 0],
-        colour: col,
-      })
-    }
-
-    const panelCount = Math.max(1, Math.floor(run.length / 1.8))
-    for (let i = 0; i < panelCount; i++) {
-      const along = ((i + 0.5) * run.length) / panelCount
-      into.box([1.1, 1.4, 0.03], {
-        at: wallPoint(run, { along, y: floor + 1.8, inset: 0.035 }),
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_DARK_WOOD,
-      })
-      into.box([0.98, 1.28, 0.035], {
-        at: wallPoint(run, { along, y: floor + 1.8, inset: 0.04 }),
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_BRONZE,
-      })
-      into.box([0.9, 1.2, 0.04], {
-        at: wallPoint(run, { along, y: floor + 1.8, inset: 0.045 }),
-        rotation: [0, run.angle, 0],
-        colour: 0x27211b,
-      })
-    }
+  const box = (
+    size: readonly [number, number, number],
+    placement: { along: number; y: number; inset: number; colour: number },
+  ) => {
+    into.box(size, {
+      at: wallPoint(run, { ...placement, y: floor + placement.y }),
+      rotation: [0, run.angle, 0],
+      colour: placement.colour,
+    })
   }
-}
-
-function cofferedCeiling(context: ArchitectureContext): void {
-  const { into, space, plan } = context
-  const floor = floorOf(space, plan.tier)
-  const ceiling = ceilingOf(space, plan.tier)
-  const topY = floor + ceiling
-
-  const xs = space.footprint.map(([x]) => x)
-  const zs = space.footprint.map(([, z]) => z)
-  const minX = Math.min(...xs),
-    maxX = Math.max(...xs)
-  const minZ = Math.min(...zs),
-    maxZ = Math.max(...zs)
-  const width = maxX - minX
-  const depth = maxZ - minZ
-
-  const xBeams = 7
-  for (let i = 0; i <= xBeams; i++) {
-    const x = minX + (i * width) / xBeams
-    into.box([0.22, 0.25, depth], {
-      at: [x, topY - 0.125, (minZ + maxZ) / 2],
+  box([run.length, 0.85, 0.055], {
+    along: run.length / 2,
+    y: 0.425,
+    inset: 0.033,
+    colour: 0x9c8c75,
+  })
+  for (let along = 0.2; along < run.length; along += 0.22) {
+    box([0.012, 0.73, 0.025], { along, y: 0.43, inset: 0.065, colour: 0x665c4c })
+  }
+  for (const [y, h, depth] of [
+    [0.08, 0.16, 0.08],
+    [0.89, 0.08, 0.09],
+    [3.72, 0.08, 0.12],
+    [3.84, 0.08, 0.15],
+  ]) {
+    box([run.length, h, depth], {
+      along: run.length / 2,
+      y,
+      inset: depth / 2 + 0.01,
       colour: BENJAMIN_DARK_WOOD,
     })
-    into.box([0.26, 0.04, depth], {
-      at: [x, topY - 0.23, (minZ + maxZ) / 2],
-      colour: BENJAMIN_BRONZE,
-    })
   }
-
-  const zBeams = 5
-  for (let j = 0; j <= zBeams; j++) {
-    const z = minZ + (j * depth) / zBeams
-    into.box([width, 0.22, 0.2], {
-      at: [(minX + maxX) / 2, topY - 0.11, z],
-      colour: BENJAMIN_DARK_WOOD,
-    })
-    into.box([width, 0.035, 0.24], {
-      at: [(minX + maxX) / 2, topY - 0.21, z],
-      colour: BENJAMIN_BRONZE,
-    })
-  }
-}
-
-function wallPilasters(context: ArchitectureContext): void {
-  const { into, plan, space } = context
-  const floor = floorOf(space, plan.tier)
-
-  for (const run of banquetWallRuns(plan, space)) {
-    const count = Math.max(1, Math.round(run.length / 3.5))
-    for (let i = 0; i <= count; i++) {
-      const along = (i * run.length) / count
-      const at = wallPoint(run, { along, y: floor + 2.0, inset: 0.12 })
-      into.box([0.28, 4.0, 0.16], {
-        at,
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_DARK_WOOD,
-      })
-      into.box([0.34, 0.25, 0.2], {
-        at: [at[0], floor + 0.13, at[2]],
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_STONE,
-      })
-      into.box([0.34, 0.18, 0.2], {
-        at: [at[0], floor + 3.9, at[2]],
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_BRONZE,
+  const count = Math.max(1, Math.floor(run.length / 1.2)),
+    pitch = run.length / count
+  for (let index = 0; index < count; index++) {
+    const along = (index + 0.5) * pitch
+    box([pitch - 0.08, 2.65, 0.035], { along, y: 2.28, inset: 0.035, colour: 0xbbb7a8 })
+    box([pitch - 0.2, 2.5, 0.035], { along, y: 2.28, inset: 0.06, colour: 0x797a70 })
+    box([pitch - 0.3, 2.4, 0.025], { along, y: 2.28, inset: 0.08, colour: 0xa6a396 })
+    // Irregular small tonal marks evoke the printed mottling without inventing a crest.
+    for (let mark = 0; mark < 24; mark++) {
+      const phase = Math.sin(index * 43 + mark * 17) * 437.1
+      const fraction = phase - Math.floor(phase)
+      box([0.025 + fraction * 0.035, 0.04, 0.008], {
+        along: along + (fraction - 0.5) * (pitch - 0.38),
+        y: 1.14 + (mark / 24) * 2.25,
+        inset: 0.097,
+        colour: 0x817e70,
       })
     }
   }
 }
 
-function militarySconces(context: ArchitectureContext): void {
-  const { into, plan, space } = context
-  const floor = floorOf(space, plan.tier)
+function roomLine(
+  context: ArchitectureContext,
+  ends: readonly [Vec2, Vec2],
+  style: { y: number; width: number; height: number; colour: number },
+): void {
+  for (const [a, b] of clipSegment(context.space.footprint, ...ends)) {
+    const dx = b[0] - a[0],
+      dz = b[1] - a[1]
+    context.into.box([Math.hypot(dx, dz), style.height, style.width], {
+      at: [(a[0] + b[0]) / 2, style.y, (a[1] + b[1]) / 2],
+      rotation: [0, -Math.atan2(dz, dx), 0],
+      colour: style.colour,
+    })
+  }
+}
 
-  for (const run of banquetWallRuns(plan, space)) {
-    if (run.length < 2.5) continue
-    const count = Math.max(1, Math.floor(run.length / 4.0))
-    for (let i = 0; i < count; i++) {
-      const along = ((i + 0.5) * run.length) / count
-      const back = wallPoint(run, { along, y: floor + 2.4, inset: 0.05 })
-      const front = wallPoint(run, { along, y: floor + 2.4, inset: 0.22 })
-
-      into.box([0.14, 0.32, 0.04], {
-        at: back,
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_BRONZE,
-      })
-      into.box([0.04, 0.04, 0.18], {
-        at: [(back[0] + front[0]) / 2, floor + 2.32, (back[2] + front[2]) / 2],
-        rotation: [0, run.angle, 0],
-        colour: BENJAMIN_BRONZE,
-      })
-      into.cylinder(
-        { radius: 0.07, bottom: 0.05, height: 0.12 },
-        { at: [front[0], floor + 2.42, front[2]], colour: BENJAMIN_GOLD_TRIM },
-      )
-      into.sphere([0.04, 0.05, 0.04], {
-        at: [front[0], floor + 2.5, front[2]],
-        colour: 0xffe2a0,
-        glow: true,
-      })
-    }
+/** Every strip is clipped to the L-shaped walked room; nothing crosses into neighbouring rooms. */
+function floorAndCeiling(context: ArchitectureContext): void {
+  const floor = floorOf(context.space, context.plan.tier)
+  const ceiling = floor + ceilingOf(context.space, context.plan.tier)
+  for (let x = -10.4; x < 10.5; x += 0.24) {
+    roomLine(
+      context,
+      [
+        [x, -2.7],
+        [x, 5.7],
+      ],
+      { y: floor + 0.008, width: 0.012, height: 0.01, colour: 0x746b59 },
+    )
+  }
+  for (let x = -10.4; x < 10.5; x += 1.6) {
+    roomLine(
+      context,
+      [
+        [x, -2.7],
+        [x, 5.7],
+      ],
+      { y: floor + 0.016, width: 0.07, height: 0.012, colour: 0x393a35 },
+    )
+    roomLine(
+      context,
+      [
+        [x, -2.7],
+        [x, 5.7],
+      ],
+      { y: ceiling - 0.055, width: 0.07, height: 0.08, colour: 0x8d887b },
+    )
+  }
+  for (let z = -2.7; z <= 5.7; z += 1.4) {
+    roomLine(
+      context,
+      [
+        [-10.5, z],
+        [10.5, z],
+      ],
+      { y: floor + 0.017, width: 0.07, height: 0.012, colour: 0x393a35 },
+    )
+    roomLine(
+      context,
+      [
+        [-10.5, z],
+        [10.5, z],
+      ],
+      { y: ceiling - 0.055, width: 0.07, height: 0.08, colour: BENJAMIN_BRONZE },
+    )
   }
 }
 
 export function dressBenjaminRoomArchitecture(context: ArchitectureContext): void {
-  wallMouldings(context)
-  cofferedCeiling(context)
-  wallPilasters(context)
-  militarySconces(context)
+  for (const run of banquetWallRuns(context.plan, context.space)) wallPanelling(context, run)
+  floorAndCeiling(context)
 }

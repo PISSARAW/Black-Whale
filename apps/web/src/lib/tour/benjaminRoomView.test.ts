@@ -2,7 +2,11 @@ import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 import { theShip, floorOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
-import { buildBenjaminRoomDetails, BENJAMIN_ROOM_SPACE } from './benjaminRoomView'
+import {
+  buildBenjaminRoomDetails,
+  benjaminSurfacePlan,
+  BENJAMIN_ROOM_SPACE,
+} from './benjaminRoomView'
 import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
 import { structureFootprint, pointInPolygon, polygonsOverlap } from './geometry'
 import {
@@ -29,7 +33,7 @@ const triangles = (root: THREE.Group) =>
     0,
   )
 
-describe('the room of Prince Benjamin reconstructed from chapters 362, 363 and 366', () => {
+describe('the room of Prince Benjamin reconstructed from chapters 363 and 366', () => {
   it('satisfies the shared blueprint invariants for Benjamin’s room', () => {
     expect(validateBlueprint().filter((issue) => issue.includes(BENJAMIN_ROOM_SPACE))).toEqual([])
   })
@@ -41,6 +45,32 @@ describe('the room of Prince Benjamin reconstructed from chapters 362, 363 and 3
     expect(painting.size[0]).toBeGreaterThan(painting.size[1])
     expect(telephone.kind).toBe('telephone')
     expect(telephone.base).toBeGreaterThan(0.5)
+  })
+
+  it('replaces the generic lounge with the long briefing table and eleven separate chairs', () => {
+    const table = fixture('-briefing-table')
+    expect(table.size[1] / table.size[0]).toBeGreaterThan(2)
+    expect(structures.filter(({ kind }) => kind === 'seat')).toHaveLength(11)
+    expect(structures.some(({ id }) => /seat-04|table-05|cabinet-06/.test(id))).toBe(false)
+    const surfaces = benjaminSurfacePlan(plan, false)
+    expect(surfaces.structures.some(({ spaceId }) => spaceId === room.id)).toBe(false)
+    expect(surfaces.walls).toBe(plan.walls)
+    expect(benjaminSurfacePlan(plan, true)).toBe(plan)
+  })
+
+  it('keeps ceiling ornament inside the L-shaped room instead of spanning its bounding box', () => {
+    const root = build()
+    for (const mesh of root.children as THREE.Mesh[]) {
+      const position = mesh.geometry.getAttribute('position')
+      for (let vertex = 0; vertex < position.count; vertex++) {
+        // The notch belongs to the dining room, not to this room's ceiling grid.
+        if (position.getY(vertex) < floorOf(room, plan.tier) + 3.5) continue
+        const x = position.getX(vertex),
+          z = position.getZ(vertex)
+        expect(x > 1.55 && z < 0.25, `ceiling at ${x},${z}`).toBe(false)
+      }
+    }
+    disposeBanquetDetails(root)
   })
 
   it('keeps the floor furniture within the room and clear of other collision volumes', () => {

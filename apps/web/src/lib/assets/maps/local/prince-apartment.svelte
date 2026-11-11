@@ -1,5 +1,6 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
+  import BenjaminReceptionPlan from './BenjaminReceptionPlan.svelte'
   import { mapState } from '$lib/state/mapState.svelte'
 
   // Extract room number, e.g. "room-1014" -> "1014"
@@ -118,9 +119,11 @@
       points="0,250 400,250 400,350 700,350 700,530 0,530"
       onclick={() => handleElementClick('living')}
     />
-    <text x="250" y="390" class="label" font-size="24"
-      >{$t.map.localMaps.princeApartment.living}</text
-    >
+    {#if roomNumber !== '1001'}
+      <text x="250" y="390" class="label" font-size="24"
+        >{$t.map.localMaps.princeApartment.living}</text
+      >
+    {/if}
     {#if !['1001', '1002', '1004', '1007', '1009', '1010'].includes(roomNumber)}
       <rect x="300" y="350" width="80" height="60" class="furniture" />
       <!-- Default programme-type table; removed where a panel contradicts it. -->
@@ -272,22 +275,7 @@
     <!-- Apartment-specific fixtures. Event props
       (gifts, cake, chair circles) are not made permanent. -->
     {#if roomNumber === '1001'}
-      <!-- Reception room seen in ch. 362, 363 and 366. -->
-      <!-- Large mural painting on the rear wall dominating the salon -->
-      <rect x="70" y="270" width="150" height="18" class="fixed" />
-      <text x="145" y="310" class="sublabel">{$t.map.localMaps.princeApartment.largePainting}</text>
-
-      <!-- Command telephone console near private quarters door -->
-      <rect x="410" y="315" width="28" height="24" rx="4" class="fixed" />
-      <circle cx="424" cy="327" r="4" class="fixed" />
-      <text x="515" y="330" class="sublabel">{$t.map.localMaps.princeApartment.telephone}</text>
-
-      <!-- Private guard formation at attention in two disciplined rows (ch. 362, 363) -->
-      {#each [200, 260, 320, 380, 440] as gx (gx)}
-        <rect x={gx} y="375" width="16" height="16" rx="2" class="fixed" />
-        <rect x={gx} y="425" width="16" height="16" rx="2" class="fixed" />
-      {/each}
-      <text x="320" y="470" class="sublabel">Gardes au garde-à-vous · ch. 362/363</text>
+      <BenjaminReceptionPlan />
     {:else if roomNumber === '1002'}
       <!-- Salon formel tapissé avec cercle des Intouchables et divan de Camilla (ch. 389, 413) -->
       <rect x="170" y="325" width="360" height="155" rx="6" class="fixed" />

@@ -12,13 +12,11 @@ export const BENJAMIN_ROOM_SPACE = 'tier-1-royal-residential-sector-room-1001-li
 export function hasBenjaminCoarseModel(structure: Structure): boolean {
   return (
     structure.spaceId === BENJAMIN_ROOM_SPACE &&
-    (structure.id.endsWith('-seat-04') ||
-      structure.id.endsWith('-table-05') ||
-      structure.id.endsWith('-cabinet-06'))
+    ['table', 'seat', 'telephone', 'painting'].includes(structure.kind)
   )
 }
 
-/** Omit generic civil furniture from walked plan, retaining full collision and canonical fixtures. */
+/** Detailed furniture replaces the opaque blocks; walked collisions remain in plan.walls. */
 export function benjaminSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   if (reveal || !plan.spaces.some(({ id }) => id === BENJAMIN_ROOM_SPACE)) return plan
   return {
@@ -27,7 +25,7 @@ export function benjaminSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   }
 }
 
-/** Chapter 362, 363 and 366; austere military reception room of 1st Prince Benjamin. */
+/** Chapters 363 and 366: Benjamin's furnished reception and briefing room. */
 export function buildBenjaminRoomDetails(options: {
   THREE: typeof Three
   plan: TierPlan
@@ -45,10 +43,10 @@ export function buildBenjaminRoomDetails(options: {
 
   dressBenjaminRoomArchitecture({ THREE, into, plan, space })
 
-  structures.forEach((structure, index) => {
+  structures.forEach((structure) => {
     const surface = new BenjaminRoomSurface(into, structure, floor)
     if (structure.kind === 'painting') {
-      dressBenjaminRoomPicture(THREE, surface, index)
+      dressBenjaminRoomPicture(THREE, surface)
     } else {
       dressBenjaminRoomFurniture(surface)
     }

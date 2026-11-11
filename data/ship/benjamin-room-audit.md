@@ -1,95 +1,55 @@
-# Chambre 1001 (Prince Benjamin) — fidélisation des chapitres 362, 363 et 366
+# Chambre 1001 — salon de réception de Benjamin
 
-Le salon de réception et quartier général du 1er Prince Benjamin reçoit le même traitement
-d'excellence et de rigueur que le salon du Roi Nasubi et la chambre de la reine Unma :
-relecture méticuleuse des cases du manga, respect strict des emprises du plan partagé, et
-habillage volumétrique détaillé rattaché aux objets de la visite.
+Sources : Yoshihiro Togashi / Shueisha, tome 35, chapitres 363 et 366.
+[Catalogue de l’édition officielle](https://www.viz.com/shonenjump/chapters/hunter-x-hunter).
+Les pages ci-dessous désignent la pagination du chapitre, pas celle du tome.
 
-Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 35 et 36 (chapitres 362, 363 et 366).
-[Édition officielle chez VIZ](https://www.viz.com/shonenjump/chapters/hunter-x-hunter).
+## Cases et corrections
 
-## 1. Cases relues et scénographie canonique
+| Case                               | Ce qui est visible                                                                                                                                                                   | Traduction dans la visite                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 363, p. 13, vue plongeante         | Longue table rectangulaire bordée, cinq chaises à dossier droit sur chaque côté, fauteuil à une extrémité, petits objets répétés au centre ; les soldats se tiennent près des côtés. | Table, onze sièges et ornements centraux. Suppression du canapé, de la table basse et du buffet du programme-type, y compris de leurs collisions.               |
+| 363, p. 13, mur du fond            | Paysage encadré avec petit cartel, panneaux muraux hauts et soubassement de bois vertical. Sol clair à longues lames et quadrillage sombre.                                          | Paysage géométrique sobre, cadre rectangulaire, lambris bas, panneaux clairs et lignes au sol. Retrait de la cavalerie, des bannières et de l’écusson inventés. |
+| 366, p. 16, première case à droite | Benjamin assis, Balsamilco près d’une porte à panneaux, petit téléphone accroché au mur.                                                                                             | Téléphone vertical à combiné et cordon, sans console, classeurs ni voyants de transmission. Benjamin est assis dans cette vue.                                  |
 
-Les chapitres 362, 363 et 366 établissent l'espace de vie et de commandement du premier prince de
-Kakin dans la chambre 1001 du secteur résidentiel royal (`tier-1-royal-residential-sector-room-1001-living`) :
+Le chapitre 362 montre d’autres appartements, mais ne justifie pas l’ancien cadrage
+d’un discours dans le 1001. Le cadrage `benjamin-living-guards` référence maintenant
+le chapitre 363, événement 3. `benjamin-living-mural` conserve son identifiant pour
+les liens existants et montre le paysage ; `benjamin-living-telephone` référence le
+chapitre 366, événement 1. Les personnages sont ceux du catalogue temporel :
+aucun soldat anonyme n’est ajouté au décor permanent.
 
-1. **Le salon de réception austère et martial (chapitres 362 et 363)** :
-   - Contrairement aux suites princières dotées d'un aménagement de repos civil ou mondain, la
-     pièce principale de Benjamin est dépouillée de tout superflu.
-   - Les cloisons sont habillées de boiseries sombres et de pilastres sobres, couronnées par un
-     plafond à caissons et solives transversales sombres.
-   - Un parquet militaire rectiligne et des plinthes renforcées structurent la pièce.
+## Plan partagé et rendu
 
-2. **Le grand tableau mural monumental (chapitres 362 et 363)** :
-   - En arrière-plan de l'espace de commandement, le mur du fond est dominé par un grand tableau
-     d'apparat (`tier-1-royal-residential-sector-room-1001-living-reception-painting`).
-   - Cette toile imposante, enserrée dans un cadre mouluré lourd en bronze patiné et bois noble,
-     illustre une fresque héroïque martiale et dynastique (cavalerie, bannières et ciel tourmenté).
-   - Togashi cadre expressément le discours solennel de Benjamin à ses troupes sous la domination
-     visuelle de cette toile.
+La table, les sièges, le tableau et le téléphone sont des structures du plan partagé.
+Leurs emprises alimentent les collisions et la carte locale, qui projette directement
+ces structures au lieu de dessiner des rangs de gardes comme du mobilier fixe.
+L’habillage utilise le plan parcouru : retirer ou déplacer un objet déplace son modèle.
+Les volumes génériques sont remplacés par les détails dans la visite ; le mode
+Sources conserve les structures documentaires sans l’habillage interprété.
 
-3. **L'alignement des soldats au garde-à-vous (chapitres 362 et 363)** :
-   - Face au prince, ses soldats et officiers de la garde privée se tiennent immobiles en deux rangs
-     parfaitement ordonnés au garde-à-vous.
-   - Leur tenue d'apparat reflète la discipline de fer de l'armée de Kakin : vareuse militaire sombre
-     à col montant, épaulettes droites, double rangée de boutons métalliques, ceinturon à boucle,
-     pantalon à pli et casquette militaire à visière d'officier.
+Les bandes du sol et du plafond sont découpées selon le contour réel en L.
+Le plafond ne déborde donc pas sur la salle à manger voisine. Aucun éclairage
+supplémentaire, scan ou texture du manga n’est incorporé. Les géométries sont
+fusionnées en deux lots au maximum et libérées au déchargement.
 
-4. **Le poste de commandement téléphonique et Balsamilco (chapitre 366)** :
-   - À proximité immédiate de l'accès aux appartements privés de Benjamin, un meuble console
-     accueille le téléphone de commandement (`tier-1-royal-residential-sector-room-1001-living-telephone`).
-   - Le capitaine Balsamilco, éminence grise et chef d'état-major du prince, s'y tient en permanence
-     pour centraliser les communications avec les gardes envoyés infiltrer les suites des autres
-     princes (Vincent, Babimyna, Furykov, etc.).
-   - Furykov y monte également la garde en faction dans le salon de réception.
+Les portes du 1001 ont deux panneaux rectangulaires en retrait, conformément au
+chapitre 366, p. 16. Leur cadre et leurs panneaux remplacent les aplats dorés du
+modèle générique ; ils restent attachés aux vantaux animés. Ce style s’applique
+uniquement à l’intérieur du 1001.
 
-## 2. Architecture et mobilier modélisés
+Contrôle effectué sur les trois vues de la visite : réunion, paysage et téléphone.
+Le dernier cadrage montre Benjamin assis et Balsamilco près du téléphone ; Furykov
+n’est pas ajouté au premier plan d’une case qui ne le dessine pas. Les captures
+locales sont conservées dans `test-results/benjamin-visual/` (hors versionnement).
+La compilation et les 104 tests ciblés, dont les invariants du plan partagé,
+passent. Les cadrages ont été revérifiés après leur dernier ajustement.
 
-- **Enveloppe et boiseries militaires** :
-  - Plafond à poutres apparentes et caissons rectangulaires en noyer sombre.
-  - Plinthes biseautées, lambris bas à panneaux en retrait et corniches d'architrave.
-  - Pilastres verticaux rythmant les parois et encadrant les embrasures.
-  - Appliques murales à déflecteur en laiton sombre.
-- **Grand tableau mural (`tier-1-royal-residential-sector-room-1001-living-reception-painting`)** :
-  - Châssis architectural à moulures biseautées et écoinçons en bronze.
-  - Composition en bas-relief procédural figurant une charge de cavalerie et des étendards sous un ciel d'orage.
-  - Respect scrupuleux de l'interdiction de textures matricielles ou de scans manga.
-- **Poste téléphonique de commandement (`tier-1-royal-residential-sector-room-1001-living-telephone`)** :
-  - Pupitre lourd en chêne massif et garnitures métalliques d'angle.
-  - Boîtier téléphonique d'état-major avec platine, touches/cadran, combiné et cordon spiralé.
-  - Râtelier de transmission et classeurs tactiques.
-- **Soldats de la garde privée** :
-  - Deux rangées de gardes en posture d'honneur stricte au garde-à-vous (garde-à-vous réglementaire :
-    talons joints, buste droit, bras le long des cuisses, regard horizontal).
-  - Vareuses à col officier fermé, baudrier, casquette rigide à visière et insigne de Kakin.
-- **Estrade et pupitre tactique de Benjamin** :
-  - Démarcation d'autorité au sol matérialisant l'axe de commandement face aux rangs de gardes.
+## Limites
 
-## 3. Cohérence technique et intégration à la visite
-
-- **Intégration TierView** :
-  - Décor attaché au nœud de la pièce dans `TierView`.
-  - Fusion géométrique sous `BanquetDetailBuilder` en 2 batches maximum (surfaces opaques Lambert
-    et accents lumineux/métalliques).
-  - Triangle budget strictement inférieur à 150 000 triangles (moins de 35 000 triangles requis).
-  - Zéro source lumineuse Three.js dynamique additionnelle.
-  - Mode documentaire respecté (`reveal: true`) : effacement strict des détails de reconstitution.
-  - Libération intégrale des géométries et matériaux avec `disposeBanquetDetails`.
-  - Filtrage `benjaminSurfacePlan` omettant le mobilier civil générique (`seat-04`, `table-05`,
-    `cabinet-06`) du plan-type en mode visite standard.
-- **Plan local 2D et cartographie** :
-  - Fichier de projection dédié `benjaminRoomPlan.ts` calculant les positions exactes des fixtures.
-  - Ancrage des personnages dans `roomAnchors.ts` (`prince-benjamin`, `balsamilco-might`, `furykov`).
-  - Plan SVG enrichi dans `prince-apartment.svelte` pour la chambre 1001.
-- **Vues Manga canoniques** :
-  - Trois cadrages issus des tomes 35 et 36 avec `MangaCastStaging` complet :
-    1. `benjamin-living-guards` (chapitre 362) : plan large sur la ligne de soldats et Benjamin.
-    2. `benjamin-living-mural` (chapitre 363) : Benjamin devant la fresque monumentale.
-    3. `benjamin-living-telephone` (chapitre 366) : Balsamilco au téléphone de commandement.
-
-## 4. Limites d'interprétation
-
-Les dimensions métriques précises de la pièce (21 × 8,4 m dans le plan type), l'épaisseur des
-moulures, les motifs exacts des armoiries militaires et les teintes sombres (vert-de-gris martial,
-bronze patiné, chêne fumé) constituent une interprétation respectueuse à partir des cases noir et blanc
-de Togashi. Aucun matériau sous droit d'auteur n'est introduit dans le dépôt.
+L’enveloppe conserve les cloisons du programme-type du chapitre 363 : le manga ne
+publie pas un relevé métrique individuel complet du 1001. Les dimensions, la
+position des meubles dans cette enveloppe et les couleurs sont des choix de
+reconstitution. Le motif exact du paysage et des panneaux mouchetés reste peu
+lisible : le rendu évoque leurs masses sans prétendre identifier des personnages,
+armoiries ou faits historiques. Aucune estrade ni pupitre tactique n’est attesté.

@@ -54,9 +54,9 @@ const telephone = benjaminFixtures.find(({ id }) => id.endsWith('-telephone'))!
 
 export const benjaminSpotAnchors = {
   occupants: {
-    'prince-benjamin': benjaminSpot([-6.0, 0.5]),
-    'balsamilco-might': benjaminSpot(telephone ? telephone.at : [1.2, -1.5]),
-    furykov: benjaminSpot([-1.5, 2.0]),
+    'prince-benjamin': benjaminSpot([-5.8, 4.6]),
+    'balsamilco-might': benjaminSpot([0.55, -1.35]),
+    furykov: benjaminSpot([-0.8, 0.5]),
   },
   painting: painting ? benjaminSpot(painting.at) : benjaminSpot([-8.4, -2.58]),
   telephone: telephone ? benjaminSpot(telephone.at) : benjaminSpot([1.2, -1.5]),

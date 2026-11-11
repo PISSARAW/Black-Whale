@@ -419,12 +419,13 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
     ? FINISHES[finish]
     : { ...LEGACY, floor: CATEGORY_FLOOR[space.category] }
 
-  // Ch. 362–366 establish Benjamin's austere military reception room.
+  // Ch. 363 p. 13: a light boarded floor and framed wall panels above timber wainscot.
   if (space.id === 'tier-1-royal-residential-sector-room-1001-living') {
     return {
       ...appearance,
-      floor: 0x272420,
-      wall: 0x484d47,
+      floor: 0xaaa08a,
+      wall: 0xb6b3a5,
+      ceiling: 0xbcb9ab,
       wood: 0x382d24,
       metal: 0x8a7a58,
     }

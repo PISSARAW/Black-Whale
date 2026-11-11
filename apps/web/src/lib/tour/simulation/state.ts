@@ -1,4 +1,5 @@
 import type { TourWorldMode } from './mode'
+import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/nen-engine'
 
 export interface SimulatedActorState {
   spaceId: string
@@ -18,6 +19,7 @@ export interface TourSimulationV1 {
     aura: number
     inventory: string[]
     knowledge: string[]
+    nen: NenTechniqueState<string>
   }
   actors: Record<string, SimulatedActorState>
   reputation: Record<string, number>
@@ -51,6 +53,7 @@ export function createTourSimulation(input: {
       aura: 100,
       inventory: [],
       knowledge: [],
+      nen: createNenTechniqueState<string>(),
     },
     actors: {},
     reputation: {},

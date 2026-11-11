@@ -8,7 +8,7 @@ import type { InfiltrationState, Witness } from './state'
 import { assessAlert } from './alerts'
 import { activeTraces } from './traces'
 import { remember } from './actors/memory'
-import { securityPolicy } from './security'
+import { applySecurityProcedures, securityPolicy } from './security'
 import { inspectForgery, recognizesDisguise, type InspectionMethod } from './hatsuSpatial'
 
 export const INFILTRATION_DT = 1 / 30
@@ -30,9 +30,13 @@ export function updateInfiltration(
   const diversion = challenged.diversion
     ? { ...challenged.diversion, left: Math.max(0, challenged.diversion.left - dt) }
     : null
-  const moved = challenged.witnesses.map((witness) => moveWitness(challenged, witness, world))
-  const searched = discoverTraces({
+  const secured = {
     ...challenged,
+    witnesses: applySecurityProcedures(challenged.witnesses, challenged.security),
+  }
+  const moved = secured.witnesses.map((witness) => moveWitness(secured, witness, world))
+  const searched = discoverTraces({
+    ...secured,
     witnesses: moved,
     traces: activeTraces(challenged.traces, clock),
   })
@@ -231,7 +235,12 @@ function challengeFor(
     return { ...state.challenge, left: state.challenge.left - dt }
   }
   const challenger = witnesses.find((witness) => {
-    if (!witness.social || witness.challenged || witness.spaceId !== state.player.spaceId)
+    const checkpoint = state.security.checkpointSpaces.includes(witness.spaceId)
+    if (
+      (!witness.social && !checkpoint) ||
+      witness.challenged ||
+      witness.spaceId !== state.player.spaceId
+    )
       return false
     if (activeDisguise(state)) {
       const knowsModel =

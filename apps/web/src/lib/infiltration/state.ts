@@ -392,6 +392,7 @@ function divert(state: InfiltrationState): InfiltrationState {
 function extract(state: InfiltrationState): InfiltrationState {
   if (
     state.player.spaceId !== state.extractionSpaceId ||
+    state.security.lockedExits.includes(state.extractionSpaceId) ||
     !objectivesPermitExtraction(state.objectives)
   ) {
     return state

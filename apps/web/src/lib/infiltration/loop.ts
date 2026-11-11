@@ -11,6 +11,7 @@ import { remember } from './actors/memory'
 import { applySecurityProcedures, securityPolicy } from './security'
 import { inspectForgery, recognizesDisguise, type InspectionMethod } from './hatsuSpatial'
 import type { InfiltrationEnvironment } from './environment'
+import { circulateFactionReport } from './factions'
 
 export const INFILTRATION_DT = 1 / 30
 const REPORT_THRESHOLD = 72
@@ -72,6 +73,7 @@ export function updateInfiltration(
   ).level
   const alertChanged = alertLevel !== state.alertLevel
   let memories = searched.memories
+  let factionKnowledge = searched.factionKnowledge
   for (const report of reports.slice(searched.reports.length)) {
     memories = {
       ...memories,
@@ -84,6 +86,19 @@ export function updateInfiltration(
         value: 'intruder',
         certainty: report.certainty,
       }),
+    }
+    const witness = witnesses.find((candidate) => candidate.id === report.witnessId)
+    if (witness) {
+      factionKnowledge = circulateFactionReport(
+        factionKnowledge,
+        {
+          id: `report:${report.witnessId}:${report.at.toFixed(3)}`,
+          witnessId: report.witnessId,
+          spaceId: witness.belief.lastSpaceId,
+          certainty: report.certainty,
+        },
+        witness,
+      )
     }
   }
   const newlyDiscovered = searched.traces.reduce((count, trace, index) => {
@@ -98,6 +113,7 @@ export function updateInfiltration(
     alert,
     alertLevel,
     memories,
+    factionKnowledge,
     security: securityPolicy(alertLevel, searched.extractionSpaceId),
     journal: alertChanged
       ? [

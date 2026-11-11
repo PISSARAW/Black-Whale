@@ -44,6 +44,7 @@ export function missionSetup({ selection, arena, graph }: MissionGround): Missio
         sight: definition.sight,
         social: definition.social,
         usesEn: definition.usesEn,
+        faction: definition.faction,
         route: [space.id, ...rotated],
       }
     }),

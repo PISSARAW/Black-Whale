@@ -1,5 +1,6 @@
 import type { WitnessId } from '../state'
 import type { HuntTerrainId } from '../../hunt/arena'
+import type { InfiltrationFactionId } from '../factions'
 
 export type MissionId =
   | 'missing-report'
@@ -28,6 +29,7 @@ export interface WitnessDefinition {
   social: boolean
   usesEn: boolean
   sight: number
+  faction: InfiltrationFactionId
 }
 
 export interface MissionVariant {

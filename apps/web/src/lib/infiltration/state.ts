@@ -23,6 +23,11 @@ import { createTrace } from './traces'
 import { emptyMemory, type ActorMemory } from './actors/memory'
 import type { CoverProfile } from './social/cover'
 import { securityPolicy, type SecurityPolicy } from './security'
+import {
+  emptyFactionKnowledge,
+  type FactionKnowledge,
+  type InfiltrationFactionId,
+} from './factions'
 
 export type WitnessId = 'steward' | 'guard' | 'nenGuard'
 export type MissionOutcome = 'playing' | 'escaped' | 'identified' | 'timeUp'
@@ -43,6 +48,7 @@ export interface Witness {
   sight: number
   social: boolean
   usesEn: boolean
+  faction: InfiltrationFactionId
   belief: Belief
   route: string[]
   routeIndex: number
@@ -106,6 +112,7 @@ export interface InfiltrationState {
   memories: Record<WitnessId, ActorMemory>
   cover: CoverProfile
   security: SecurityPolicy
+  factionKnowledge: FactionKnowledge
   journal: MissionEvent[]
   hatsu: {
     id: InfiltrationHatsuId
@@ -133,7 +140,10 @@ export interface MissionSetup {
   playerAt: { position: Vec2; spaceId: string }
   objectiveSpaceId: string
   extractionSpaceId: string
-  witnesses: Omit<Witness, 'belief' | 'routeIndex' | 'investigating' | 'challenged'>[]
+  witnesses: (Omit<
+    Witness,
+    'belief' | 'routeIndex' | 'investigating' | 'challenged' | 'faction'
+  > & { faction?: InfiltrationFactionId })[]
   selection?: MissionSelection
 }
 
@@ -180,6 +190,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
     player: { ...setup.playerAt, nen: 'ten', moving: false, speed: 0 },
     witnesses: setup.witnesses.map((witness) => ({
       ...witness,
+      faction: witness.faction ?? defaultFaction(witness.id),
       belief: noBelief(),
       routeIndex: 0,
       investigating: null,
@@ -223,6 +234,7 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       obligations: ['inspect-service-panel'],
     },
     security: securityPolicy('normal', setup.extractionSpaceId),
+    factionKnowledge: emptyFactionKnowledge(),
     journal: [],
     hatsu: {
       id: 'little-eye',
@@ -239,6 +251,12 @@ export function initialInfiltrationState(setup: MissionSetup): InfiltrationState
       targetSpaceId: null,
     },
   }
+}
+
+function defaultFaction(witnessId: WitnessId): InfiltrationFactionId {
+  if (witnessId === 'steward') return 'royal-staff'
+  if (witnessId === 'guard') return 'security'
+  return 'hunter-association'
 }
 
 export function infiltrationReducer(

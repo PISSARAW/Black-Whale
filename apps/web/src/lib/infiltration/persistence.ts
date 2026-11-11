@@ -1,6 +1,7 @@
 import type { InfiltrationState } from './state'
 import { emptyMemory } from './actors/memory'
 import { securityPolicy } from './security'
+import { emptyFactionKnowledge } from './factions'
 
 export const INFILTRATION_SAVE_VERSION = 3
 export interface InfiltrationSave {
@@ -52,6 +53,17 @@ export function decodeSave(raw: string): InfiltrationSave | null {
     state.hatsu.effect ??= null
     state.hatsu.targetWitnessId ??= null
     state.hatsu.targetSpaceId ??= null
+    state.factionKnowledge ??= emptyFactionKnowledge()
+    state.witnesses = state.witnesses.map((witness) => ({
+      ...witness,
+      faction:
+        witness.faction ??
+        (witness.id === 'steward'
+          ? 'royal-staff'
+          : witness.id === 'guard'
+            ? 'security'
+            : 'hunter-association'),
+    }))
     return { version: 3, savedAt: value.savedAt ?? new Date(0).toISOString(), state }
   } catch {
     return null

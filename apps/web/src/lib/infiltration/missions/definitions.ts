@@ -2,9 +2,16 @@ import type { MissionDefinition, MissionId, MissionSelection } from './types'
 import { seededRandom } from './random'
 
 const commonWitnesses: MissionDefinition['witnesses'] = [
-  { id: 'steward', spaceIndex: 2, social: true, usesEn: false, sight: 8 },
-  { id: 'guard', spaceIndex: 4, social: false, usesEn: false, sight: 9 },
-  { id: 'nenGuard', spaceIndex: 7, social: true, usesEn: true, sight: 11 },
+  { id: 'steward', spaceIndex: 2, social: true, usesEn: false, sight: 8, faction: 'royal-staff' },
+  { id: 'guard', spaceIndex: 4, social: false, usesEn: false, sight: 9, faction: 'security' },
+  {
+    id: 'nenGuard',
+    spaceIndex: 7,
+    social: true,
+    usesEn: true,
+    sight: 11,
+    faction: 'hunter-association',
+  },
 ]
 
 const variants = (prefix: string): MissionDefinition['variants'] => [

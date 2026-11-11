@@ -22,8 +22,6 @@ import {
   syncPosition,
   toggle,
 } from './fighter'
-// Re-exported: the constants describe the arena's economy, and callers have
-// always read them from here.
 export {
   EVADE_COST,
   EVADE_DISTANCE,

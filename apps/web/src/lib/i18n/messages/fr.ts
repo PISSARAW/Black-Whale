@@ -802,7 +802,8 @@ export const fr: Messages = {
       aimingNobody: 'Personne dans l’axe',
       readingTitle: 'Ce que votre aura en dit',
       reading: {
-        blind: 'Sans aura, vous n’en sentez rien.',
+        blind: 'Vos nœuds sont encore fermés : vous n’en sentez rien.',
+        pressure: 'Vos nœuds sont encore fermés, mais quelque chose pèse sur vous depuis lui.',
         ren: 'Son aura est levée : vous la sentez d’ici.',
         ten: 'Il tient son aura contre lui.',
         still:

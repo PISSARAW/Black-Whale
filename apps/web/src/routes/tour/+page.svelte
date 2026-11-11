@@ -596,7 +596,7 @@
       spaceId: currentSpace?.id ?? null,
       position,
       heading,
-      nen: hatsuSession.nen,
+      ...hatsuSession.perceiver,
       activeKind: technique?.kind ?? null,
       beastFor: castView.beastFor,
       auraFor: castView.auraOf,

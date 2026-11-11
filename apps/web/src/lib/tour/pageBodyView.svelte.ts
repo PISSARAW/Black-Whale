@@ -50,6 +50,8 @@ interface BodyContext {
   heading: number
   /** The visitor's own Nen: what they can read with, and what is felt. */
   nen: NenTechniqueState
+  /** Whether the visitor's nodes are open. See `awakening.ts`. */
+  awakened: boolean
   /** The technique they are holding, or null. */
   activeKind: HatsuInteractionKind | null
   /** The beast standing with each body, resolved by the cast view. */
@@ -156,6 +158,7 @@ export class TourBodyView {
       aura: context.auraFor(person),
       beast: context.beastFor(person.member.characterId),
       visitor: context.nen,
+      awakened: context.awakened,
       range: Math.hypot(person.at[0] - context.position[0], person.at[1] - context.position[1]),
     })
   })

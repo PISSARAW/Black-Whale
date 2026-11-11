@@ -28,6 +28,13 @@ import {
   reserveAvailability,
   RESERVE_MAX,
 } from '$lib/tour/auraReserve'
+import {
+  awakeningAvailability,
+  awakensWith,
+  loadAwakened,
+  refusedBeforeAwakening,
+  saveAwakened,
+} from '$lib/tour/awakening'
 import type { Vec2 } from '$lib/tour/types'
 
 interface ActivationContext {
@@ -60,13 +67,24 @@ export class TourHatsuSession {
   nen = $state<NenTechniqueState>(loadTourNen())
   /** What the visitor has left to spend. See `auraReserve.ts`. */
   reserve = $state(RESERVE_MAX)
-  /** What the Nen panel greys out because the reserve cannot pay for it. */
-  availability = $derived(reserveAvailability(this.reserve, this.nen))
+  /** Whether the visitor's nodes are open. See `awakening.ts`. */
+  awakened = $state(loadAwakened())
+  /** What the Nen panel greys out: shut nodes first, then what the reserve cannot pay. */
+  availability = $derived({
+    ...reserveAvailability(this.reserve, this.nen),
+    ...awakeningAvailability(this.awakened),
+  })
+
+  /** The visitor as a perceiver: their Nen and whether it is open. */
+  get perceiver() {
+    return { nen: this.nen, awakened: this.awakened }
+  }
 
   /** What the stage needs of the visitor's Nen, as one spread into `scene`. */
   get scene() {
     return {
       nen: this.nen,
+      awakened: this.awakened,
       onNenChange: this.useNen,
       nenAvailability: this.availability,
       reserve: this.reserve,
@@ -179,12 +197,19 @@ export class TourHatsuSession {
   }
 
   useNen = (action: NenTechniqueAction): NenTransition => {
-    if (refusedByReserve(this.reserve, this.nen, action))
+    if (
+      refusedBeforeAwakening(this.awakened, action) ||
+      refusedByReserve(this.reserve, this.nen, action)
+    )
       return { state: this.nen, accepted: false }
     const result = transitionNen(this.nen, action)
     if (result.accepted) {
       this.nen = result.state
       saveTourNen(this.nen)
+    }
+    if (!this.awakened && awakensWith(action)) {
+      this.awakened = true
+      saveAwakened()
     }
     if (!canUseTourHatsu(this.nen, this.options.read().activeKind)) {
       if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)

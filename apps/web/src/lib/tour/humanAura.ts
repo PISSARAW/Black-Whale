@@ -33,6 +33,8 @@ export interface HumanAuraBuild {
   nen: NenTechniqueState<HumanZone>
   /** False when the aura is concealed with In and the observer has no Gyo. */
   auraVisible: boolean
+  /** True wherever the air bends around it, light or not. See `auraSight.ts`. */
+  auraFelt: boolean
   /** Whether the observer is in Gyo, which reads the fine grain and the Zetsu trace. */
   observerGyo: boolean
   figure: Group
@@ -90,6 +92,7 @@ export function buildHumanAura({
   seen,
   nen,
   auraVisible,
+  auraFelt,
   observerGyo,
   figure,
   root,
@@ -116,7 +119,7 @@ export function buildHumanAura({
   // the whole of the argument in `auraRefraction`: seen from across a room, an
   // aura displaces the corridor behind it rather than adding a halo to it.
   // Not under Ko: the rest of the body is bare, so there is no volume to bend.
-  const worn = auraVisible && !nen.ko ? auraGlassFor(nen) : null
+  const worn = auraFelt && !nen.ko ? auraGlassFor(nen) : null
   const glassMaterial = worn && glass ? glass(worn) : null
   if (glassMaterial) {
     const shell = new THREE.Mesh(

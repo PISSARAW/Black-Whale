@@ -1,5 +1,4 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
-import { createNenTechniqueState, isAuraVisibleTo, transitionNen } from '@black-whale/nen-engine'
 import type { Apparition } from './apparitions'
 import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
@@ -14,6 +13,7 @@ import { contactShadow } from './contactShadow'
 import { addHumanSignatures } from './humanSignature'
 import { buildHumanAura, nenState, type Glass } from './humanAura'
 import { animateHumanAura } from './humanAuraAnimation'
+import { auraLayersFor, type AuraSight } from './auraSight'
 type Three = typeof import('three')
 export type HumanLook = Apparition & { kind: 'avatar' | 'combatant' }
 export interface HumanFigureBuild {
@@ -22,7 +22,8 @@ export interface HumanFigureBuild {
   /** The refractive shell an aura wears. Absent on the `low` palier. */
   glass?: Glass
   seen: HumanLook
-  observerGyo?: boolean
+  /** What the visitor can see of aura. Absent is plain sight. See `auraSight.ts`. */
+  observerSight?: AuraSight
 }
 export interface HumanFigure {
   root: Group
@@ -170,7 +171,7 @@ export function buildHumanFigure({
   glow,
   glass,
   seen,
-  observerGyo = false,
+  observerSight = 'sight',
 }: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
@@ -346,10 +347,7 @@ export function buildHumanFigure({
   }
 
   const nen = nenState(seen)
-  const observer = observerGyo
-    ? transitionNen(createNenTechniqueState(), { type: 'GYO', on: true }).state
-    : createNenTechniqueState()
-  const auraVisible = isAuraVisibleTo(nen, observer)
+  const layers = auraLayersFor(nen, observerSight)
   const aura = buildHumanAura({
     THREE,
     geometry,
@@ -357,8 +355,9 @@ export function buildHumanFigure({
     ...(glass ? { glass } : {}),
     seen,
     nen,
-    auraVisible,
-    observerGyo,
+    auraVisible: layers.light,
+    auraFelt: layers.felt,
+    observerGyo: layers.gyo,
     figure,
     root,
   })

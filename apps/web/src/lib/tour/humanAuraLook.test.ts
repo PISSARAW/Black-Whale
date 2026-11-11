@@ -24,6 +24,7 @@ function figureSeenBy(
   observerGyo: boolean,
   actions: NenTechniqueAction<HumanZone>[],
   aura?: 'zetsu' | 'none',
+  awakened = true,
 ) {
   const nen = actions.reduce(
     (state, action) => transitionNen(state, action).state,
@@ -42,7 +43,8 @@ function figureSeenBy(
     hidden: false,
     human: { role: 'guard', pose: 'guard', identity: 'sakata', aura: aura ?? nen.mode, nen },
   }
-  return buildHumanFigure({ THREE, glow, glass, seen, observerGyo }).root
+  const observerSight = !awakened ? 'pressure' : observerGyo ? 'gyo' : 'sight'
+  return buildHumanFigure({ THREE, glow, glass, seen, observerSight }).root
 }
 
 const named = (root: THREE.Object3D, prefix: string) => {
@@ -81,6 +83,21 @@ describe('the aura as a skin on the body', () => {
     ).toBeGreaterThan(5)
     const nobody = figureSeenBy(true, [{ type: 'ZETSU' }], 'none')
     expect(named(nobody, 'nen-skin-')).toHaveLength(0)
+  })
+})
+
+describe('a visitor whose nodes are still shut', () => {
+  /** Wing's Ren on Gon and Killua: a weight in the air, and nothing to see. */
+  it('bends the air around a raised aura without drawing any of it', () => {
+    const root = figureSeenBy(false, [{ type: 'REN' }], undefined, false)
+    expect(root.getObjectByName('nen-aura-glass')).toBeDefined()
+    expect(named(root, 'nen-skin-')).toHaveLength(0)
+    expect(root.getObjectByName('nen-ren-flame')).toBeUndefined()
+  })
+
+  it('feels nothing of an aura veiled with In', () => {
+    const root = figureSeenBy(false, [{ type: 'REN' }, { type: 'IN', on: true }], undefined, false)
+    expect(root.getObjectByName('nen-aura-glass')).toBeUndefined()
   })
 })
 

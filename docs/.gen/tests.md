@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 354
+Fichiers : 358
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -818,9 +818,17 @@ Fichiers : 354
 - an emptied body > drops to Ten and lets go of every shaping that spends
 - what the reserve refuses > refuses nothing above the threshold
 
+## `apps/web/src/lib/tour/auraSight.test.ts`
+
+- the level of sight a visitor has > is only pressure before the nodes are open, Gyo or not
+
 ## `apps/web/src/lib/tour/auraTouch.test.ts`
 
 - what a touch of aura does to a solid > pushes hardest under On, even though On weights the hands and feet
+
+## `apps/web/src/lib/tour/awakening.test.ts`
+
+- opening the nodes > is done by Ten or Ren, and by nothing else
 
 ## `apps/web/src/lib/tour/banquetSurroundings.test.ts`
 
@@ -940,8 +948,12 @@ Fichiers : 354
 
 ## `apps/web/src/lib/tour/cast/reading.test.ts`
 
-- what an aura tells you about a body > tells a visitor who has put their own aura away nothing at all
+- what an aura tells you about a body > still reads a body for a visitor in Zetsu
 - whether the body can tell it is being read > is felt from a raised aura, and from the two that impose one
+
+## `apps/web/src/lib/tour/cast/residue.test.ts`
+
+- aura left where a technique forced a seam > leaves one trace, hidden from all but Gyo, for a cut wall
 
 ## `apps/web/src/lib/tour/cast/roster.test.ts`
 
@@ -1144,6 +1156,13 @@ Fichiers : 354
 ## `apps/web/src/lib/tour/humanAnimation.test.ts`
 
 - humanAnimation > changes a combatant pose without rebuilding its rig
+
+## `apps/web/src/lib/tour/humanAuraLook.test.ts`
+
+- the aura as a skin on the body > wraps a body in Ten in a thin skin and no bubble
+- a visitor whose nodes are still shut > bends the air around a raised aura without drawing any of it
+- Ko > leaves the rest of the body bare, with no skin and no bending volume
+- En > keeps the rings on the floor and raises a dome over them
 
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 

@@ -94,6 +94,14 @@
   import { positionHeldFlute } from '$lib/tour/heldFlute'
   import type { ConcertPerformance } from '$lib/tour/melodyConcert'
   import { walkingHeadMotion, easeWalkingGround } from '$lib/tour/walkingCamera'
+  import {
+    EYE_HEIGHT,
+    LOOK_SENSITIVITY,
+    MAX_PITCH,
+    NEAR_PLANE,
+    TAP_SLOP,
+    VIEW_DISTANCE,
+  } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { distanceToBoundary } from '$lib/tour/geometry'
@@ -169,6 +177,7 @@
   import { buildAnimalApparition } from '$lib/tour/apparitionAnimalView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
+  import { auraSightOf } from '$lib/tour/auraSight'
   import TourNenControls from './TourNenControls.svelte'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
@@ -548,6 +557,8 @@
     takeScreenshot?: (() => Promise<Blob | null>) | null
     /** Gyo mode toggle */
     gyoMode?: boolean
+    /** Whether the visitor's nodes are open. Before that, aura is only a pressure. */
+    awakened?: boolean
   }
 
   let {
@@ -621,6 +632,7 @@
     gumOn = null,
     hour = NO_HOUR,
     gyoMode = false,
+    awakened = true,
   }: Props = $props()
 
   let localNen = $state<NenTechniqueState>(createNenTechniqueState())
@@ -638,6 +650,7 @@
     return [touchLabels.cast]
   })
   const effectiveNen = $derived(nen ?? localNen)
+  const sight = $derived(auraSightOf(effectiveNen, awakened))
   const hatsuBlockedByMode = () =>
     effectiveNen.mode === 'zetsu' ? !hatsuAllowedInZetsu : hatsuRequiresZetsu
   function useNen(action: NenTechniqueAction) {
@@ -680,7 +693,7 @@
    * the same dead key, one state further along.
    */
   function toggleTen() {
-    if (isAuraAtRest(effectiveNen) && $comfort.restingAura) {
+    if (awakened && isAuraAtRest(effectiveNen) && $comfort.restingAura) {
       setComfort({ restingAura: false })
       return
     }
@@ -693,51 +706,6 @@
   })
 
   $effect(() => (shownNen ? sustainNenSound(shownNen) : undefined))
-
-  /**
-   * How high the visitor's eye is off the floor.
-   *
-   * `HORIZON` in `$lib/tour/mesh` is the same number and has to stay it: the sea
-   * is cut into the two panes at the height the eye looking through them meets
-   * the horizon, and the pane is baked once while this is read every frame.
-   */
-  const EYE_HEIGHT = 1.7
-  /** Radians of yaw per pixel of pointer movement, before the visitor's own multiplier. */
-  const LOOK_SENSITIVITY = 0.0022
-  const MAX_PITCH = Math.PI / 2 - 0.05
-
-  /**
-   * How far the camera sees, in metres.
-   *
-   * Once the air started being read off the room — see `fogDensityOf` — one
-   * number stopped being able to do this. A cabin fogs at arm's length and a
-   * hall is drawn nearly clear, and at the thinnest air the ship holds a surface
-   * 130 m off still shows two fifths of itself: the far plane was cutting the far
-   * wall of the largest rooms out of the picture, and the fog was not hiding the
-   * cut. It is the biggest room on board that sets this, not the fog — the King's
-   * living room is 193 m across, and you can stand at one end of it.
-   *
-   * The cost of the extra range is depth precision and nothing else: what is
-   * drawn is decided by `visibleSpaces`, room by room, not by this plane.
-   */
-  const VIEW_DISTANCE = 220
-
-  /**
-   * How close, in metres.
-   *
-   * Raised with the far plane rather than left alone. A depth buffer is spread by
-   * the *ratio* of the two, so pushing the far plane out at an unchanged near
-   * plane is what makes two surfaces a few centimetres apart start fighting —
-   * which on this deck is every wall line, every plate seam and every window pane,
-   * all of them deliberately offset by three centimetres or less.
-   *
-   * Fifteen centimetres is closer than anything can be got to: the visitor is
-   * stopped `VISITOR_RADIUS` from every wall, which is 40 cm.
-   */
-  const NEAR_PLANE = 0.15
-
-  /** A finger that moved less than this, in pixels, was a tap and not a drag. */
-  const TAP_SLOP = 12
 
   let canvas = $state<HTMLCanvasElement | null>(null)
   let container = $state<HTMLDivElement | null>(null)
@@ -1956,7 +1924,7 @@
           ...(glass ? { glass } : {}),
           root,
           skin,
-          observerGyo: effectiveNen.gyo,
+          observerSight: sight,
         })
         if (basic) {
           turns = basic.turns
@@ -2096,7 +2064,7 @@
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
           keyOf: (seen) =>
-            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|gyo:${effectiveNen.gyo}`,
+            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
           build: buildApparition,
           preserve: (held) => ({ facing: held.facing, flown: held.flown }),
           restore: (held, saved) => {

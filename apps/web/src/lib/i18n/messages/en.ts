@@ -894,7 +894,8 @@ export const en = {
       aimingNobody: 'Nobody in the line',
       readingTitle: 'What your aura tells you',
       reading: {
-        blind: 'With no aura out, you sense nothing of them.',
+        blind: 'Your nodes are still shut: you sense nothing of them.',
+        pressure: 'Your nodes are still shut, but something presses on you from them.',
         ren: 'Their aura is up: you feel it from here.',
         ten: 'They are holding their aura close.',
         still:

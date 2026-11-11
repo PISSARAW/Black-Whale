@@ -51,9 +51,16 @@ const reading = (overrides: Partial<ReadingInput> = {}) =>
   })
 
 describe('what an aura tells you about a body', () => {
-  /** Zetsu closes the envelope, and the sense that comes with it goes too. */
-  it('tells a visitor who has put their own aura away nothing at all', () => {
-    expect(reading({ visitor: visitor({ type: 'ZETSU' }) })).toEqual(['blind'])
+  /** Zetsu shuts the visitor's own nodes, not their eyes. */
+  it('still reads a body for a visitor in Zetsu', () => {
+    expect(reading({ visitor: visitor({ type: 'ZETSU' }), aura: 'ren' })).toEqual(['ren'])
+  })
+
+  /** Before awakening, aura is a weight on the visitor and never a sight. */
+  it('gives an unawakened visitor only the pressure of a raised aura', () => {
+    expect(reading({ awakened: false, aura: 'ren' })).toEqual(['pressure'])
+    expect(reading({ awakened: false, aura: 'ten' })).toEqual(['blind'])
+    expect(reading({ awakened: false, aura: 'zetsu', visitor: visitor({ type: 'GYO', on: true }) })).toEqual(['blind'])
   })
 
   it('feels a raised aura and a held one, and says which', () => {

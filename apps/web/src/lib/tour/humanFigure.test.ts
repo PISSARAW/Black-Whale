@@ -3,6 +3,7 @@ import { MeshBasicMaterial, MeshPhysicalMaterial } from 'three'
 import * as THREE from 'three'
 import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
+import type { AuraSight } from './auraSight'
 import { auraFor, CALM } from './cast/nen'
 import type { CastMember, Post } from './cast/types'
 
@@ -63,7 +64,7 @@ describe('the aura a passenger of the walk is wearing', () => {
     role: string,
     situation: Parameters<typeof auraFor>[1],
     refracts = true,
-    observerGyo = true,
+    observerSight: AuraSight = 'gyo',
   ) {
     const member: CastMember = {
       characterId: 'sakata',
@@ -95,7 +96,7 @@ describe('the aura a passenger of the walk is wearing', () => {
       hidden: false,
       human: { role: 'guard', pose: 'guard', identity: 'sakata', ...auraFor(post, situation) },
     }
-    return buildHumanFigure({ THREE, glow, ...(refracts ? { glass } : {}), seen, observerGyo })
+    return buildHumanFigure({ THREE, glow, ...(refracts ? { glass } : {}), seen, observerSight })
   }
 
   const CALM_ROOM = CALM
@@ -109,7 +110,7 @@ describe('the aura a passenger of the walk is wearing', () => {
 
   /** The sweep is the fine grain of an aura: without Gyo, the floor is just a floor. */
   it("keeps a guard's En, Ryu and Gyo out of sight of a visitor not in Gyo", () => {
-    const alarmed = figureOf('Royal Bodyguard for Prince Woble', CASTING, true, false)
+    const alarmed = figureOf('Royal Bodyguard for Prince Woble', CASTING, true, 'sight')
     expect(alarmed.root.getObjectByName('nen-en-0')).toBeUndefined()
     expect(alarmed.root.getObjectByName('nen-en-dome')).toBeUndefined()
     expect(alarmed.root.getObjectByName('nen-gyo-left')).toBeUndefined()

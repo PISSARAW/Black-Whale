@@ -3,6 +3,7 @@ import type { Apparition } from './apparitions'
 import type { CardFace } from './morena'
 import { buildHumanFigure, type HumanFigure } from './humanFigure'
 import type { Glass } from './humanAura'
+import { seesConcealed, type AuraSight } from './auraSight'
 import { residue } from './apparitionResidue'
 
 type Three = typeof import('three')
@@ -15,7 +16,8 @@ export interface BasicApparitionContext {
   glass?: Glass
   root: Group
   skin: MeshBasicMaterial
-  observerGyo?: boolean
+  /** What the visitor can see of aura. See `auraSight.ts`. */
+  observerSight?: AuraSight
   cardFace?: (face: CardFace, ink: string) => MeshBasicMaterial
 }
 
@@ -83,14 +85,14 @@ function owl(seen: Apparition, { THREE, glow, root, skin }: BasicApparitionConte
 
 function human(
   seen: Apparition,
-  { THREE, glow, glass, root, observerGyo }: BasicApparitionContext,
+  { THREE, glow, glass, root, observerSight }: BasicApparitionContext,
 ) {
   const figure = buildHumanFigure({
     THREE,
     glow,
     ...(glass ? { glass } : {}),
     seen: seen as Apparition & { kind: 'avatar' | 'combatant' },
-    observerGyo,
+    ...(observerSight ? { observerSight } : {}),
   })
   root.add(figure.root)
   return { turns: figure.turns, humanLod: figure.lod, humanAnimate: figure.animate }
@@ -206,7 +208,7 @@ export const BIRD_TETHER = 'bird-tether'
  * part of it a reconstruction can actually show: the birds are ordinary, the
  * bundle of threads is not.
  */
-function bird(seen: Apparition, { THREE, root, skin, observerGyo }: BasicApparitionContext) {
+function bird(seen: Apparition, { THREE, root, skin, observerSight }: BasicApparitionContext) {
   const body = new THREE.Mesh(
     new THREE.CapsuleGeometry(seen.size * 0.34, seen.size * 0.75, 4, 8),
     skin,
@@ -245,7 +247,7 @@ function bird(seen: Apparition, { THREE, root, skin, observerGyo }: BasicApparit
   const tether = new THREE.Line(thread, new THREE.LineBasicMaterial({ color: seen.colour }))
   tether.name = BIRD_TETHER
   tether.frustumCulled = false
-  tether.visible = Boolean(observerGyo)
+  tether.visible = seesConcealed(observerSight ?? 'sight')
   root.add(tether)
 
   // No `turns`: the whole bird is aimed along its own orbit by the loop, which

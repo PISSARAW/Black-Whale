@@ -15,6 +15,11 @@
  * a catalogue field and call it a perception, which is exactly the kind of
  * quiet promotion the whole archive is built to refuse.
  *
+ * Before the nodes are open (`../awakening.ts`) there is no reading at all,
+ * only the weight of a raised aura — what Gon and Killua feel of Wing's Ren
+ * before either can see it. Zetsu, on the other hand, does not blind: it shuts
+ * the visitor's own nodes, not their eyes.
+ *
  * Two refusals worth naming:
  *
  * - **Zetsu is not distinguishable from having no aura.** A body that is
@@ -31,8 +36,10 @@ import type { CastBeast, Post } from './types'
 
 /** One thing the visitor can tell about the body they are aiming at. */
 export type ReadingTell =
-  /** No aura out: nothing is read, because nothing is being used to read with. */
+  /** Nodes still shut: nothing is read, because nothing is open to read with. */
   | 'blind'
+  /** Nodes still shut, and a raised aura in front of them: felt, never seen. */
+  | 'pressure'
   /** An aura is on them, and it is up: Ren is felt across a room. */
   | 'ren'
   /** An aura is on them, held in. */
@@ -58,17 +65,8 @@ export interface ReadingInput {
   visitor: NenTechniqueState
   /** How far away the body is, in metres, for En. */
   range: number
-}
-
-/**
- * Whether the visitor has anything out to read with.
- *
- * Zetsu closes the envelope entirely, which is the whole point of it: a visitor
- * who has dropped their aura to move unnoticed has also dropped the sense that
- * comes with it, and the walk should not quietly keep the second.
- */
-function canRead(visitor: NenTechniqueState): boolean {
-  return visitor.mode !== 'zetsu'
+  /** Whether the visitor's nodes are open. Absent means they are. */
+  awakened?: boolean
 }
 
 /** Whether this body is inside the sphere the visitor is sweeping. */
@@ -85,7 +83,7 @@ function insideEn(input: ReadingInput): boolean {
  * what it is hiding. An empty list is impossible — `blind` is an answer.
  */
 export function readBody(input: ReadingInput): ReadingTell[] {
-  if (!canRead(input.visitor)) return ['blind']
+  if (input.awakened === false) return [input.aura === 'ren' ? 'pressure' : 'blind']
 
   const tells: ReadingTell[] = []
   if (insideEn(input)) tells.push('en')

@@ -61,12 +61,29 @@ export interface ReportDefinition {
   unknowns: string[]
 }
 
+export interface ConclusionOption {
+  id: string
+  label: string
+  hypothesisIds: string[]
+}
+
+export interface ConclusionDimension {
+  id: string
+  label: string
+  options: ConclusionOption[]
+}
+
+export interface ConclusionDefinition {
+  dimensions: ConclusionDimension[]
+}
+
 export interface InvestigationCaseDefinition {
   schemaVersion: number
   metadata: CaseMetadata
   content: InvestigationCase
   scene: SceneDefinition
   confrontations: ConfrontationDefinition[]
+  conclusion: ConclusionDefinition
   hatsuRules: InvestigationHatsuRule[]
   replay: ReplayFrame[]
   report: ReportDefinition

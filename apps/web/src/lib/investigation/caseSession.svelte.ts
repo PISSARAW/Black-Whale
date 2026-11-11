@@ -40,6 +40,7 @@ import {
 } from './case'
 import type { InvestigationCaseDefinition } from './definition'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+import { assessComposedConclusion } from './conclusion'
 
 /**
  * One visitor's passage through one case file.
@@ -81,6 +82,7 @@ export class CaseSession {
   discoveredIds = $state<string[]>([])
   selectedEvidenceIds = $state<string[]>([])
   selectedHypothesisId = $state<string | null>(null)
+  conclusionSelections = $state<Record<string, string>>({})
   verdict = $state<Verdict | null>(null)
   briefingOpen = $state(true)
   solved = $state(false)
@@ -129,6 +131,14 @@ export class CaseSession {
     visibleSightLines(this.scenePhenomenon, this.definition.scene.sightLines),
   )
   replayFrame = $derived(this.definition.replay[this.replaySecond] ?? this.definition.replay[0])
+  composedConclusion = $derived(
+    assessComposedConclusion({
+      investigation: this.investigation,
+      definition: this.definition.conclusion,
+      selections: this.conclusionSelections,
+      evidenceIds: this.selectedEvidenceIds,
+    }),
+  )
   reportVerdict = $derived(
     this.solved
       ? evaluateHypothesis(
@@ -173,6 +183,13 @@ export class CaseSession {
     )
       ? saved.selectedHypothesisId
       : null
+    this.conclusionSelections = Object.fromEntries(
+      Object.entries(saved.conclusionSelections).filter(([dimensionId, optionId]) =>
+        this.definition.conclusion.dimensions
+          .find((dimension) => dimension.id === dimensionId)
+          ?.options.some((option) => option.id === optionId),
+      ),
+    )
     this.solved = saved.solved
     this.hatsuUseKeys = saved.hatsuUseKeys
     this.askedQuestionKeys = saved.askedQuestionKeys
@@ -199,6 +216,7 @@ export class CaseSession {
         discoveredIds: this.discoveredIds,
         selectedEvidenceIds: this.selectedEvidenceIds,
         selectedHypothesisId: this.selectedHypothesisId,
+        conclusionSelections: this.conclusionSelections,
         solved: this.solved,
         hatsuUseKeys: this.hatsuUseKeys,
         askedQuestionKeys: this.askedQuestionKeys,
@@ -287,13 +305,17 @@ export class CaseSession {
     this.persist()
   }
 
+  chooseConclusionOption = (dimensionId: string, optionId: string) => {
+    this.conclusionSelections = { ...this.conclusionSelections, [dimensionId]: optionId }
+    this.verdict = null
+    this.persist()
+  }
+
   submitVerdict = () => {
-    if (!this.selectedHypothesisId) return
-    this.verdict = evaluateHypothesis(
-      this.investigation,
-      this.selectedHypothesisId,
-      this.selectedEvidenceIds,
-    )
+    const composed = this.composedConclusion
+    if (!composed.hypothesisId || !composed.verdict) return
+    this.selectedHypothesisId = composed.hypothesisId
+    this.verdict = composed.verdict
     if (this.verdict.status === 'solved') this.solved = true
     this.addLog({
       id: `verdict:${this.log.filter((entry) => entry.kind === 'VERDICT').length + 1}`,
@@ -436,6 +458,7 @@ export class CaseSession {
     this.discoveredIds = []
     this.selectedEvidenceIds = []
     this.selectedHypothesisId = null
+    this.conclusionSelections = {}
     this.verdict = null
     this.solved = false
     this.log = []

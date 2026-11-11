@@ -23,27 +23,33 @@
     {ui.deduction.intro}
   </p>
 
-  <div class="mt-6 space-y-3">
-    {#each investigation.hypotheses as hypothesis (hypothesis.id)}
-      <button
-        class="w-full overflow-hidden rounded-xl border p-4 text-left transition-all {session.selectedHypothesisId ===
-        hypothesis.id
-          ? 'border-sky-400 bg-sky-900/50 shadow-[0_0_15px_rgba(56,189,248,0.3)]'
-          : 'border-sky-800/30 bg-[#0a0f1c]/50 hover:border-sky-500/50 hover:bg-sky-900/20'}"
-        onclick={() => session.chooseHypothesis(hypothesis.id)}
-      >
-        <span class="flex items-center gap-4"
-          ><span
-            class="flex h-4 w-4 items-center justify-center rounded-full border {session.selectedHypothesisId ===
-            hypothesis.id
-              ? 'border-sky-400 bg-sky-400 shadow-[0_0_8px_#38bdf8]'
-              : 'border-sky-700/50'}"
-            ><span class="h-1.5 w-1.5 rounded-full bg-[#0a0f1c]"></span></span
-          ><span class="flex-1 font-black text-lg text-white">{hypothesis.label}</span>
-        </span>
-      </button>
+  <div class="mt-6 space-y-5">
+    {#each session.definition.conclusion.dimensions as dimension (dimension.id)}
+      <fieldset>
+        <legend class="mb-2 text-[10px] font-bold uppercase tracking-widest text-sky-400/70">
+          {dimension.label}
+        </legend>
+        <div class="grid gap-2 sm:grid-cols-3">
+          {#each dimension.options as option (option.id)}
+            <button
+              class="rounded-lg border p-3 text-left text-xs transition-all {session
+                .conclusionSelections[dimension.id] === option.id
+                ? 'border-sky-400 bg-sky-900/50 text-white'
+                : 'border-sky-800/30 bg-[#0a0f1c]/50 text-sky-100/60 hover:border-sky-500/50'}"
+              onclick={() => session.chooseConclusionOption(dimension.id, option.id)}
+              >{option.label}</button
+            >
+          {/each}
+        </div>
+      </fieldset>
     {/each}
   </div>
+
+  {#if session.composedConclusion.complete && !session.composedConclusion.hypothesisId}
+    <p class="mt-4 rounded border border-red-400/30 bg-red-950/40 p-3 text-xs text-red-200">
+      {ui.deduction.incoherent}
+    </p>
+  {/if}
 
   <p class="mt-8 text-[10px] font-bold uppercase tracking-widest text-sky-500/60">
     {ui.deduction.evidence(session.selectedEvidenceIds.length)}
@@ -86,7 +92,7 @@
 
   <button
     class="mt-8 w-full rounded-xl bg-sky-400 px-5 py-4 text-xs font-black uppercase tracking-[0.18em] text-[#020617] shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all enabled:hover:bg-sky-300 enabled:hover:shadow-[0_0_25px_rgba(56,189,248,0.6)] disabled:cursor-not-allowed disabled:opacity-30 disabled:shadow-none"
-    disabled={!session.selectedHypothesisId || session.selectedEvidenceIds.length === 0}
+    disabled={!session.composedConclusion.hypothesisId || session.selectedEvidenceIds.length === 0}
     onclick={session.submitVerdict}>{ui.deduction.submit}</button
   >
 

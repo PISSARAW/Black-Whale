@@ -42,6 +42,7 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
     checkRefs(objective.requiredEvidenceIds, evidenceIds, `objectives.${objective.id}`)
   }
   validateHypotheses({ definition, evidenceIds, add, checkRefs })
+  validateConclusion(definition, add, checkRefs)
   for (const confrontation of definition.confrontations) {
     checkRefs(confrontation.subjectIds, subjectIds, `confrontations.${confrontation.id}.subjects`)
     checkRefs(
@@ -53,6 +54,21 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   }
   validateHatsuRules({ definition, evidenceIds, subjectIds, add, checkRefs })
   return issues
+}
+
+function validateConclusion(
+  definition: InvestigationCaseDefinition,
+  add: AddIssue,
+  checkRefs: ReturnType<typeof referenceChecker>,
+) {
+  const hypothesisIds = new Set(definition.content.hypotheses.map((item) => item.id))
+  if (definition.conclusion.dimensions.length === 0) add('conclusion', 'dimension required')
+  for (const dimension of definition.conclusion.dimensions) {
+    if (dimension.options.length === 0) add(`conclusion.${dimension.id}`, 'option required')
+    for (const option of dimension.options) {
+      checkRefs(option.hypothesisIds, hypothesisIds, `conclusion.${dimension.id}.${option.id}`)
+    }
+  }
 }
 
 function validateQuestion(

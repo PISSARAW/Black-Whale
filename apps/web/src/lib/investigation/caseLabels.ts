@@ -78,7 +78,9 @@ export function caseUi(locale: Locale) {
           eyebrow: 'Construire la conclusion',
           title: 'Que s’est-il passé pendant ces onze secondes ?',
           intro:
-            'Choisissez une hypothèse puis uniquement les éléments qui la soutiennent. Le verdict évaluera aussi les contradictions.',
+            'Composez le mécanisme, le mode opératoire et l’attribution, puis versez les éléments qui soutiennent votre reconstruction.',
+          incoherent:
+            'Ces facettes se contredisent. Ajustez la reconstruction avant de la soumettre.',
           evidence: (count: number) => `Pièces versées au raisonnement · ${count}`,
           submit: 'Soumettre',
           analysis: 'Analyse du raisonnement',
@@ -230,7 +232,9 @@ export function caseUi(locale: Locale) {
           eyebrow: 'Build the conclusion',
           title: 'What happened during those eleven seconds?',
           intro:
-            'Choose a hypothesis, then only the evidence supporting it. The verdict will also assess contradictions.',
+            'Compose the mechanism, operation and attribution, then submit only the evidence supporting your reconstruction.',
+          incoherent:
+            'These facets contradict one another. Adjust the reconstruction before submitting it.',
           evidence: (count: number) => `Evidence submitted for reasoning · ${count}`,
           submit: 'Submit',
           analysis: 'Reasoning analysis',

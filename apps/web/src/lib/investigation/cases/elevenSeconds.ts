@@ -4,6 +4,7 @@ import { ROOM_1014_SIGHT_LINES } from '../geometry'
 import { frameAt } from '../replay'
 import { elevenSecondsConfrontations } from './elevenSecondsConfrontations'
 import { elevenSecondsReport } from './elevenSecondsReport'
+import { elevenSecondsConclusion } from './elevenSecondsConclusion'
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from '../definition'
 
 export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefinition {
@@ -34,6 +35,7 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
       sightLines: ROOM_1014_SIGHT_LINES,
     },
     confrontations: elevenSecondsConfrontations(locale),
+    conclusion: elevenSecondsConclusion(locale),
     hatsuRules: [
       {
         id: 'dowsing-witnesses',

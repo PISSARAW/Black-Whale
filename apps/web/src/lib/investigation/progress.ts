@@ -1,7 +1,7 @@
 import type { InvestigationTab } from './case'
 import type { WitnessDisposition } from './interview'
 
-export const INVESTIGATION_PROGRESS_VERSION = 6
+export const INVESTIGATION_PROGRESS_VERSION = 7
 export const LEGACY_INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
@@ -17,6 +17,7 @@ export interface InvestigationProgress {
   discoveredIds: string[]
   selectedEvidenceIds: string[]
   selectedHypothesisId: string | null
+  conclusionSelections: Record<string, string>
   solved: boolean
   hatsuUseKeys: string[]
   askedQuestionKeys: string[]
@@ -36,6 +37,7 @@ export function freshProgress(caseId: string): InvestigationProgress {
     discoveredIds: [],
     selectedEvidenceIds: [],
     selectedHypothesisId: null,
+    conclusionSelections: {},
     solved: false,
     hatsuUseKeys: [],
     askedQuestionKeys: [],
@@ -65,6 +67,7 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
       selectedEvidenceIds: stringArray(value.selectedEvidenceIds),
       selectedHypothesisId:
         typeof value.selectedHypothesisId === 'string' ? value.selectedHypothesisId : null,
+      conclusionSelections: parseStringRecord(value.conclusionSelections),
       solved: value.solved === true,
       hatsuUseKeys: stringArray(value.hatsuUseKeys),
       askedQuestionKeys: stringArray(value.askedQuestionKeys),
@@ -110,6 +113,15 @@ function stringArray(value: unknown): string[] {
   return Array.isArray(value)
     ? [...new Set(value.filter((item): item is string => typeof item === 'string'))]
     : []
+}
+
+function parseStringRecord(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string',
+    ),
+  )
 }
 
 function isSupportedVersion(value: unknown): value is number {

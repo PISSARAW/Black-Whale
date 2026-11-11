@@ -52,7 +52,11 @@ export function oddsOfSpotting(from: Vec2, placement: Placement): number {
  * generator advanced, and the ids he spotted — the caller marks them, because
  * the placements belong to the player's ledger and not to the hunter.
  */
-export function inspectRoom(inspector: Inspector, placements: readonly Placement[]): Inspection {
+export function inspectRoom(
+  inspector: Inspector,
+  placements: readonly Placement[],
+  vision = 1,
+): Inspection {
   const { pool, rng, position, spaceId } = inspector
   if (!spaceId || !canAfford(pool, INSPECT_COST)) return { pool, rng, found: [] }
 
@@ -64,7 +68,7 @@ export function inspectRoom(inspector: Inspector, placements: readonly Placement
   let roll = rng
   const found: string[] = []
   for (const placement of candidates) {
-    const drawn = chanceIn(roll, oddsOfSpotting(position, placement))
+    const drawn = chanceIn(roll, oddsOfSpotting(position, placement) * vision)
     roll = drawn.rng
     if (drawn.hit) found.push(placement.id)
   }

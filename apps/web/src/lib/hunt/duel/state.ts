@@ -13,6 +13,7 @@
 import { fullPool, poolOf, type AuraPool } from '../aura'
 import type { Rng } from '../random'
 import { seedRng } from '../random'
+import type { Vec2 } from '../../tour/types'
 
 export type BodyZone = 'head' | 'torso' | 'arms' | 'legs'
 
@@ -62,6 +63,8 @@ export interface DuelState {
   clock: number
   /** The room the contact happened in — where the inherited entraves are. */
   spaceId: string | null
+  /** Contact point, used to decide which set entrave can actually be touched. */
+  playerPosition: Vec2 | null
   /** Seconds of unread Zetsu accumulated towards breaking away. */
   breaking: number
   outcome: DuelOutcome
@@ -89,6 +92,7 @@ export interface DuelOpening {
   player: AuraPool
   hunter: AuraPool
   spaceId?: string | null
+  playerPosition?: Vec2 | null
   seed?: number
 }
 
@@ -98,6 +102,7 @@ export function initialDuelState(opening: DuelOpening = defaultOpening()): DuelS
     hunter: initialDuelist(opening.hunter),
     clock: 0,
     spaceId: opening.spaceId ?? null,
+    playerPosition: opening.playerPosition ?? null,
     breaking: 0,
     outcome: 'playing',
     rng: seedRng(opening.seed ?? 0xd0e1),

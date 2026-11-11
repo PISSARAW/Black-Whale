@@ -1,6 +1,7 @@
 import type { HuntTerrainId } from '../arena'
 import type { HuntState } from '../state'
 import type { HuntContractV3 } from './types'
+import { forfeit } from '../aura'
 
 export interface ContractStage {
   index: number
@@ -23,11 +24,18 @@ export function nextStage(contract: HuntContractV3, current: number): ContractSt
 
 /** Carries decisions across a scene transition; positions come from the new stage. */
 export function carryIntoStage(previous: HuntState, fresh: HuntState): HuntState {
+  // A new terrain has no floor on which old placements can still exist. Their
+  // aura is spent in the abandoned scene, so it no longer lowers the ceiling.
+  const pool = previous.ledger.placements.reduce(
+    (current, placement) =>
+      placement.state === 'set' ? forfeit(current, placement.cost) : current,
+    previous.ledger.pool,
+  )
   return {
     ...fresh,
     hatsu: previous.hatsu,
     advancedNen: previous.advancedNen,
-    ledger: { ...fresh.ledger, pool: previous.ledger.pool, placements: previous.ledger.placements },
+    ledger: { ...fresh.ledger, pool, placements: [] },
     hunter: {
       ...fresh.hunter,
       pool: previous.hunter.pool,

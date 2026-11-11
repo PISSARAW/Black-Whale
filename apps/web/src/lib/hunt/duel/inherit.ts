@@ -4,8 +4,8 @@
  * Two things cross from the hunt into the duel, and nothing else does. The
  * reservoirs are the ones the hunt left — not a fixed hundred each, so ten
  * minutes of sweeping and ten minutes of being made to search are both already
- * on the board before the first tick. And any entrave still set in the room the
- * contact happened in springs on the way in, so the hunter opens the duel held:
+ * on the board before the first tick. And one entrave still set in the room the
+ * contact happened in — one he has not spotted — springs on the way in, so the hunter opens the duel held:
  * covering nothing, for six seconds, while the player has a Ko in hand.
  *
  * If four minutes of preparation cannot be felt through those two channels,
@@ -15,11 +15,13 @@ import type { AuraPool } from '../aura'
 import { ENTRAVE_HOLD, springEntraves } from '../nen/entrave'
 import { liveOf, type Ledger, type Placement } from '../nen/placed'
 import { initialDuelState, type DuelState } from './state'
+import type { Vec2 } from '../../tour/types'
 
 export interface Contact {
   /** The hunter's reservoir as the hunt left it. The player's comes from the ledger. */
   hunterPool: AuraPool
   spaceId: string | null
+  playerPosition?: Vec2
   /** Seconds an entrave already had him for when the contact happened. */
   hunterHeld?: number
   seed?: number
@@ -41,8 +43,18 @@ export function entravesInRoom(
   return liveOf(placements).filter((placement) => placement.spaceId === spaceId)
 }
 
+/**
+ * The one that springs on the way in. A hold does not stack, so springing every
+ * entrave in the room burnt the rest for nothing — and left none for T4.3 to
+ * take back. One he has spotted he steps over here as he does in the hunt.
+ */
+function springsOnEntry(placements: readonly Placement[], spaceId: string | null): Placement[] {
+  const unseen = entravesInRoom(placements, spaceId).find((placement) => !placement.seen)
+  return unseen ? [unseen] : []
+}
+
 export function openDuel(ledger: Ledger, contact: Contact): Junction {
-  const waiting = entravesInRoom(ledger.placements, contact.spaceId)
+  const waiting = springsOnEntry(ledger.placements, contact.spaceId)
   // Springing first, so the pool the player walks in with is the one the firing
   // left them — the entrave is spent, and the ceiling it was holding down is not.
   const after = springEntraves(ledger, waiting).ledger
@@ -51,6 +63,7 @@ export function openDuel(ledger: Ledger, contact: Contact): Junction {
     player: after.pool,
     hunter: contact.hunterPool,
     spaceId: contact.spaceId,
+    playerPosition: contact.playerPosition,
     seed: contact.seed,
   })
 

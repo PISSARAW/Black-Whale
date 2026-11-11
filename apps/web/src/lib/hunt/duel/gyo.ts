@@ -1,9 +1,9 @@
 /**
- * Gyo: five a second to see where the other one's aura is.
+ * Gyo: five a second to see where the other one's aura is, even under In.
  *
- * It reads the guard and whether a Ko is gathered, which is exactly the
- * information needed to answer either. It is also the only reason In is worth
- * paying for — a duel where nobody looks is a duel where nobody can be fooled.
+ * An unhidden guard is plain to the naked eye; In hides it, and Gyo is what
+ * reads it anyway. The two are a pair: In is worth paying for only against a
+ * looker without Gyo, and Gyo only against a target holding In.
  *
  * The reading is returned as data rather than drawn, so the hunter's AI reads
  * the player through this same function and gets exactly what the player gets
@@ -18,10 +18,8 @@ export interface Reading {
   /** Which zone the aura is gathered on. This is what Gyo buys, and In sells. */
   guard: BodyZone | null
   /**
-   * That a Ko is being gathered. Not what Gyo is for: aura pulling into a point
-   * an arm's length away is felt rather than read, so this is true whoever is
-   * looking and whatever In is doing. Gyo tells you *where* it is going, which
-   * is a different and cheaper question than whether something is coming.
+   * That a Ko is being gathered. It is plain unless In conceals the gathering;
+   * Gyo restores both the warning and the zone in that case.
    */
   koCharged: boolean
   /**
@@ -40,12 +38,15 @@ export function payForGyo(duelist: DuelistState, dt: number): DuelistState {
 }
 
 /**
- * What a looker learns about a target. The gathered blow and the raised Ken are
- * plain to anyone standing there; the zone is what has to be paid for, and what
- * In takes back.
+ * What a looker learns about a target. In takes the concentration and its tell
+ * away together; Gyo gives both back.
  */
 export function readAura(looker: DuelistState, target: DuelistState): Reading {
-  const plain = { guard: null, koCharged: target.ko !== null, ken: target.ken }
-  if (!looker.gyo) return { ...plain, hidden: target.in }
-  return { ...plain, guard: target.guard, hidden: false }
+  const plain = { ken: target.ken }
+  // An aura nobody is hiding shows where it sits to anyone standing there. In
+  // takes that away from the naked eye; Gyo gives it back. Without the first
+  // branch In hid a guard nothing could see anyway, and cost five a second for
+  // nothing.
+  if (!looker.gyo && target.in) return { ...plain, guard: null, koCharged: false, hidden: true }
+  return { ...plain, guard: target.guard, koCharged: target.ko !== null, hidden: false }
 }

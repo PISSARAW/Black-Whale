@@ -30,4 +30,11 @@ describe('continuous contract transitions', () => {
     expect(carried.hunter.pool.available).toBe(41)
     expect(carried.log).toHaveLength(previous.log.length)
   })
+
+  it('forfeits set placements left on the old terrain instead of carrying ghosts', () => {
+    const previous = huntReducer(setup('a'), { type: 'LAY' })
+    const carried = carryIntoStage(previous, setup('b'))
+    expect(carried.ledger.placements).toEqual([])
+    expect(carried.ledger.pool).toEqual({ available: 75, committed: 0 })
+  })
 })

@@ -6,6 +6,7 @@ import { chargeKo } from './ko'
 import { resolveStrike } from './resolve'
 import { setRyu, STRIKE_THRESHOLD } from './ryu'
 import { entravesInRoom, openDuel, tickHolds } from './inherit'
+import { recoverInDuel } from './recover'
 
 function ledgerWith(rooms: string[]): Ledger {
   return rooms.reduce<Ledger>(
@@ -103,5 +104,34 @@ describe('the hold running down', () => {
       },
     )
     expect(tickHolds(duel, 1)).toBe(duel)
+  })
+})
+
+describe('what the junction leaves on the floor', () => {
+  it('springs one entrave, not every one in the room — a hold does not stack', () => {
+    const { sprung, ledger } = openDuel(ledgerWith(['salon', 'salon']), {
+      hunterPool: fullPool(),
+      spaceId: 'salon',
+    })
+    expect(sprung.map((p) => p.id)).toEqual(['e0'])
+    expect(entravesInRoom(ledger.placements, 'salon').map((p) => p.id)).toEqual(['e1'])
+  })
+
+  it('steps over one he has spotted, as he does during the hunt', () => {
+    const before = ledgerWith(['salon'])
+    const spotted = { ...before, placements: before.placements.map((p) => ({ ...p, seen: true })) }
+    const { duel, sprung } = openDuel(spotted, { hunterPool: fullPool(), spaceId: 'salon' })
+    expect(sprung).toEqual([])
+    expect(duel.hunter.held).toBe(0)
+  })
+
+  it('leaves what did not spring to be taken back mid-duel — T4.3 through the junction', () => {
+    const { duel, ledger } = openDuel(ledgerWith(['salon', 'salon']), {
+      hunterPool: fullPool(),
+      spaceId: 'salon',
+    })
+    const taken = recoverInDuel(ledger, duel)
+    expect(taken.recovered).toEqual(['e1'])
+    expect(taken.duel.player.pool.available).toBe(duel.player.pool.available + ENTRAVE_COST)
   })
 })

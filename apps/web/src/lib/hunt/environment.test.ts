@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { canSealExit, environmentModifiers, graphWithSeals } from './environment'
+import {
+  canSealExit,
+  canSeeAtDistance,
+  environmentModifiers,
+  graphWithSeals,
+  wallsForSeals,
+} from './environment'
 import type { NavGraph } from './navmesh'
 
 const graph: NavGraph = {
@@ -30,9 +36,23 @@ describe('Hunt V3 environment', () => {
     expect(graph.edges.get('a')).toEqual(['b'])
   })
 
-  it('only seals real exits when the contract permits it', () => {
+  it('only seals real exits when the contract permits it and the map stays connected', () => {
     expect(
       canSealExit({ lighting: 'normal', acoustics: 'clear', sealableExits: true }, graph, {
+        a: 'a',
+        b: 'b',
+      }),
+    ).toBe(false)
+    const cycle = {
+      ...graph,
+      edges: new Map([
+        ['a', ['b', 'c']],
+        ['b', ['a', 'c']],
+        ['c', ['a', 'b']],
+      ]),
+    }
+    expect(
+      canSealExit({ lighting: 'normal', acoustics: 'clear', sealableExits: true }, cycle, {
         a: 'a',
         b: 'b',
       }),
@@ -43,5 +63,13 @@ describe('Hunt V3 environment', () => {
         b: 'b',
       }),
     ).toBe(false)
+  })
+
+  it('turns seals into player collision and makes blackout sight close-range without Gyo', () => {
+    const doorway = { tierId: 't', a: 'a', b: 'b', start: [0, 0], end: [0, 2], width: 2 } as const
+    expect(wallsForSeals([doorway], [{ a: 'a', b: 'b' }])).toHaveLength(1)
+    const blackout = { lighting: 'blackout', acoustics: 'clear', sealableExits: true } as const
+    expect(canSeeAtDistance(blackout, 3, false)).toBe(false)
+    expect(canSeeAtDistance(blackout, 30, true)).toBe(true)
   })
 })

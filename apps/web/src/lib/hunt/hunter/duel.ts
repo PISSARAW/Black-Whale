@@ -65,6 +65,11 @@ function decide(state: DuelState, dt: number): DuelState {
   // standoff neither side can be made to leave is not a duel.
   if (reading.ken && state.hunter.waiting < PATIENCE) return settle(state, dt)
 
+  // Zetsu used as a rupture is an absence, not a glowing target. A hunter who
+  // was already looking with Gyo catches it; one who was not loses the line
+  // long enough for `tickDisengage` to make the timing gamble meaningful.
+  if (state.player.zetsu && !state.hunter.gyo) return settle(state, dt)
+
   // Nothing to answer: held, spent, or standing there in Zetsu. He commits.
   if (isOpen(state.player)) return commit(state, null)
 

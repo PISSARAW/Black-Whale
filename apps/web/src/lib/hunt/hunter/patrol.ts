@@ -190,6 +190,12 @@ function pay(state: HunterState, dt: number, intents: HunterIntents): HunterStat
 
 function walk(state: HunterState, world: HunterWorld): HunterState {
   if (state.mode === 'listen') return listen(state, world.dt)
+  if (
+    state.mode === 'patrol' &&
+    state.path[0] &&
+    !world.graph.edges.get(state.spaceId ?? '')?.includes(state.path[0])
+  )
+    return route({ ...state, path: [] }, world.graph)
   const goal = goalOf(state, world.graph)
   if (!goal) return route(state, world.graph)
   return advance(state, goal, world)
@@ -203,7 +209,12 @@ function listen(state: HunterState, dt: number): HunterState {
 
 /** The point he is walking to: the belief if he has one, else the next room on the route. */
 function goalOf(state: HunterState, graph: NavGraph): Vec2 | null {
-  if (state.mode === 'search') return state.belief.at
+  if (state.mode === 'search') {
+    if (!state.belief.sharp && state.belief.spaceId) {
+      return graph.centers.get(state.belief.spaceId) ?? state.belief.at
+    }
+    return state.belief.at
+  }
   const next = state.path[0]
   return next ? (graph.centers.get(next) ?? null) : null
 }
@@ -211,10 +222,11 @@ function goalOf(state: HunterState, graph: NavGraph): Vec2 | null {
 /** Picks a fresh room to walk to — one he has not just cleared, if there is one. */
 function route(state: HunterState, graph: NavGraph): HunterState {
   if (!state.spaceId) return state
-  const elsewhere = graph.nodes.filter(
-    (id) => id !== state.spaceId && !state.belief.cleared.includes(id),
+  const reachable = graph.nodes.filter(
+    (id) => id !== state.spaceId && shortestPath(graph, state.spaceId!, id) !== null,
   )
-  const drawn = pick(state.rng, elsewhere.length > 0 ? elsewhere : graph.nodes)
+  const fresh = reachable.filter((id) => !state.belief.cleared.includes(id))
+  const drawn = pick(state.rng, fresh.length > 0 ? fresh : reachable)
   if (!drawn.item) return { ...state, rng: drawn.rng }
   const path = shortestPath(graph, state.spaceId, drawn.item)
   return { ...state, rng: drawn.rng, path: path ? path.slice(1) : [] }

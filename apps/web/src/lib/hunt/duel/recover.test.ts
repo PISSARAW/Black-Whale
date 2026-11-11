@@ -26,6 +26,17 @@ describe('backing into your own traps — T4.3', () => {
     expect(nearestSet(ledgerIn('cuisine'), duelIn('salon'))).toBeNull()
   })
 
+  it('chooses the physically nearest set rather than insertion order', () => {
+    let ledger = ledgerIn('salon')
+    ledger = placeAura(ledger, {
+      id: 'near',
+      cost: ENTRAVE_COST,
+      at: { position: [9, 0], spaceId: 'salon', clock: 1 },
+    }).ledger
+    ledger.placements[0] = { ...ledger.placements[0], position: [0, 0] }
+    expect(nearestSet(ledger, { ...duelIn('salon'), playerPosition: [10, 0] })).toBe('near')
+  })
+
   it('puts the twenty-five back in the body at once', () => {
     const { duel, recovered } = recoverInDuel(ledgerIn('salon'), duelIn('salon'))
     expect(recovered).toEqual(['a'])

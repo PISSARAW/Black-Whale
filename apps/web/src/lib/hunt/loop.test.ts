@@ -9,10 +9,11 @@
 import { describe, it, expect } from 'vitest'
 import { buildArena } from './arena'
 import { buildNavGraph } from './navmesh'
-import { HUNT_DT, updateHunt, type HuntWorld } from './loop'
+import { HUNT_DT, huntIsOver, updateHunt, type HuntWorld } from './loop'
 import { huntReducer, initialHuntState, type HuntState } from './state'
 import { interiorPoint } from '../tour/geometry'
 import { GAME_LENGTH, playerWon } from './outcome'
+import { initialDuelState } from './duel/state'
 
 const arena = buildArena()
 const graph = buildNavGraph(arena)
@@ -132,6 +133,19 @@ describe('what the hunter is allowed to know — invariant I5', () => {
     expect(after.hunter.belief.sharp).toBe(false)
   })
 
+  it('turns footsteps into a room-scale clue rather than copying the exact position', () => {
+    let state = sameRoom()
+    const centre = graph.centers.get(state.player.spaceId!)!
+    state = {
+      ...state,
+      player: { ...state.player, position: [centre[0] + 2, centre[1]], atRest: false },
+      hunter: { ...state.hunter, position: [centre[0] + 6, centre[1]] },
+    }
+    const after = updateHunt(state, world)
+    expect(after.hunter.belief.at).toEqual(centre)
+    expect(after.hunter.belief.at).not.toEqual(state.player.position)
+  })
+
   it('hears nothing from a room that is neither his nor next to his', () => {
     const apart = rooms.find((id) => !graph.edges.get(rooms[0])?.includes(id) && id !== rooms[0])
     if (!apart) return
@@ -172,6 +186,29 @@ describe('the hunter’s reservoir — T4.4', () => {
   })
 })
 
+describe('misdirection', () => {
+  it('records a false trail when a searched clue is cleared', () => {
+    const state = game(rooms[0], rooms[rooms.length - 1])
+    const at = state.hunter.position
+    const misled = {
+      ...state,
+      hunter: {
+        ...state.hunter,
+        mode: 'search' as const,
+        belief: {
+          at,
+          spaceId: state.hunter.spaceId,
+          from: 'sound' as const,
+          sharp: false,
+          age: 0,
+          cleared: [],
+        },
+      },
+    }
+    expect(updateHunt(misled, world).log.some((event) => event.kind === 'lostTheTrail')).toBe(true)
+  })
+})
+
 describe('the junction', () => {
   it('opens the duel on contact, with the reservoirs the hunt left', () => {
     const spent = huntReducer(sameRoom(), { type: 'SWEEP' })
@@ -200,10 +237,18 @@ describe('the junction', () => {
     expect(['caught', 'eliminated', 'playing']).toContain(finished.outcome)
     expect(finished.duel?.outcome ?? 'over').not.toBe('playing')
   })
+
+  it('turns a lost duel into a persistent localized wound', () => {
+    const state = game()
+    const duel = { ...initialDuelState(), outcome: 'lost' as const }
+    const lost = updateHunt({ ...state, duel, outcome: 'contact' }, world)
+    expect(lost.outcome).toBe('caught')
+    expect(lost.advancedNen.wounds).toHaveLength(1)
+  })
 })
 
 describe('strategic exit sealing', () => {
-  it('closes one perceived exit when the contract permits it', () => {
+  it('does not sever the only route through a tree-shaped apartment', () => {
     const state = game(rooms[0], rooms[1])
     const listening = {
       ...state,
@@ -213,8 +258,7 @@ describe('strategic exit sealing', () => {
       ...world,
       environment: { lighting: 'normal', acoustics: 'clear', sealableExits: true },
     })
-    expect(sealed.sealedExits).toHaveLength(1)
-    expect(sealed.log.at(-1)?.kind).toBe('sealedExit')
+    expect(sealed.sealedExits).toEqual([])
   })
 
   it('cannot close an exit in an ordinary contract', () => {
@@ -231,6 +275,11 @@ describe('the endings', () => {
   it('stops at ten minutes', () => {
     const state = { ...game(rooms[0], rooms[rooms.length - 1]), clock: GAME_LENGTH - 0.5 }
     expect(run(state, 1).outcome).toBe('timeUp')
+  })
+
+  it('uses the contract duration instead of the ten-minute fallback', () => {
+    const state = { ...game(rooms[0], rooms[rooms.length - 1]), clock: 89.9 }
+    expect(updateHunt(state, { ...world, dt: 0.2, durationSeconds: 90 }).outcome).toBe('timeUp')
   })
 
   it('is won by reaching the marked room', () => {
@@ -253,6 +302,19 @@ describe('the endings', () => {
     const late = run({ ...met, clock: GAME_LENGTH - 0.5 }, 1)
     expect(late.outcome).toBe('timeUp')
     expect(playerWon(late.outcome)).toBe(false)
+  })
+
+  it('closes the duel journal when its contract clock expires', () => {
+    const met = updateHunt(touching(sameRoom()), world)
+    const late = updateHunt({ ...met, clock: 89.9 }, { ...world, dt: 0.2, durationSeconds: 90 })
+    expect(late.outcome).toBe('timeUp')
+    expect(late.log.at(-1)?.kind).toBe('duelClosed')
+  })
+
+  it('shows a lost duel as an ending, so the page leaves the frozen duel for the debrief', () => {
+    expect(huntIsOver('caught')).toBe(true)
+    expect(huntIsOver('contact')).toBe(false)
+    expect(huntIsOver('playing')).toBe(false)
   })
 
   it('does nothing more once it is over', () => {

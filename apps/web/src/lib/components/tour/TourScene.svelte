@@ -250,6 +250,8 @@
     nen?: NenTechniqueState
     /** Modes with their own Nen HUD still use the shared renderer without duplicating controls. */
     showNenControls?: boolean
+    /** Freezes movement and scene shortcuts while a modal owned by the page is open. */
+    inputDisabled?: boolean
     concert?: ConcertPerformance
     /** Visible-but-disabled principles for modes that intentionally implement a subset. */
     nenAvailability?: Partial<Record<NenTechnique | 'hatsu' | 'action', boolean | string>>
@@ -354,6 +356,8 @@
     extras?: Apparition[]
     /** Moving solids supplied by a game layered over the walk. */
     collisionWalls?: WallSegment[]
+    /** Mode-owned injury or boost applied to ordinary walking pace. */
+    paceMultiplier?: number
     /**
      * What a camera the page has put in the room is looking at.
      *
@@ -596,6 +600,7 @@
     onNenChange,
     onPhysicalNenAction,
     showNenControls = true,
+    inputDisabled = false,
     concert = { mode: null, playing: false },
     nenAvailability = {},
     flash = null,
@@ -610,6 +615,7 @@
     seated = null,
     extras = [],
     collisionWalls = [],
+    paceMultiplier = 1,
     feed = null,
     record = null,
     tint = null,
@@ -659,6 +665,7 @@
   const hatsuBlockedByMode = () =>
     effectiveNen.mode === 'zetsu' ? !hatsuAllowedInZetsu : hatsuRequiresZetsu
   function useNen(action: NenTechniqueAction) {
+    if (inputDisabled) return
     const result = transitionNen(effectiveNen, action)
     if (!result.accepted) return
     if (nen === undefined) localNen = result.state
@@ -3476,7 +3483,7 @@
       }
 
       function cast(hand: 'first' | 'second' | 'third' = 'first') {
-        if (hatsuBlockedByMode()) return
+        if (inputDisabled || hatsuBlockedByMode()) return
         onCast?.(facing()?.id ?? null, facingSolid()?.id ?? null, hand)
         if (swings) throwThread()
       }
@@ -3490,6 +3497,7 @@
        * reticle costs nothing and says the one thing the second hand is for.
        */
       function useHatsu(hand: 'first' | 'second' | 'third') {
+        if (inputDisabled) return
         // The second place on the wheel is a word rather than a cast, under the
         // ones that have something already standing out there to be told.
         if (orders && hand === 'second') {
@@ -3612,6 +3620,7 @@
           document.exitPointerLock()
           return
         }
+        if (inputDisabled) return
         if (sceneKeyIsForElsewhere(event, canvas)) return
         if (event.code === NEN_KEYS.hatsu && beginHatsu(event)) return
         const wheelZone = nenZoneIndex(event.code)
@@ -4307,6 +4316,13 @@
           stick,
         )
 
+        if (inputDisabled) {
+          moving = false
+          advance = 0
+          strafe = 0
+          running = false
+        }
+
         // Sat down: the legs stop answering. Whatever the keys and the stick
         // said this frame is dropped on the floor, and the body is put back on
         // its chair — a seat is not a place you drift out of.
@@ -4335,7 +4351,7 @@
         const cos = Math.cos(yaw)
 
         // The thread has the visitor: the legs are not what is moving them.
-        ridTheThread(delta, loose)
+        if (!inputDisabled) ridTheThread(delta, loose)
 
         /**
          * The walk, as a velocity the visitor leans on rather than a position.
@@ -4346,8 +4362,12 @@
          * meaning exactly — Kurton and the Enhancer multiply the speed being
          * leaned towards, not the position — and so does the visitor's own dial.
          */
-        const walking = !arc && !$comfort.jumpOnly
-        const pace = (running ? SPRINT_SPEED : WALK_SPEED) * paceOf(world.body) * $comfort.walkPace
+        const walking = !inputDisabled && !arc && !$comfort.jumpOnly
+        const pace =
+          (running ? SPRINT_SPEED : WALK_SPEED) *
+          paceOf(world.body) *
+          $comfort.walkPace *
+          paceMultiplier
         let wanted: Vec2 =
           walking && moving
             ? [(advance * -sin + strafe * cos) * pace, (advance * -cos + strafe * -sin) * pace]
@@ -4932,6 +4952,7 @@
   }
 
   function openOrCastHatsu() {
+    if (inputDisabled) return
     if (hatsuVariants.length > 1) {
       hatsuVariantIndex = lastHatsuVariant
       hatsuWheelOpen = true

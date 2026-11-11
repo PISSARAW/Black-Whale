@@ -17,15 +17,26 @@ describe('advanced Nen for Hunt V3', () => {
   })
 
   it('charges Shu once and names the object carrying aura', () => {
-    const result = applyShu(initialAdvancedNen(), fullPool(), 'pipe-1')
+    const result = applyShu(initialAdvancedNen(), fullPool(), { itemId: 'pipe-1' })
     expect(result.state.shuItem).toBe('pipe-1')
     expect(result.pool.available).toBe(90)
+    expect(applyShu(result.state, result.pool, { itemId: 'pipe-1' }).pool.available).toBe(90)
+    expect(
+      applyShu(result.state, result.pool, { itemId: 'pipe-1', on: false }).state.shuItem,
+    ).toBeNull()
   })
 
   it('turns wounds into verbs lost rather than damage points', () => {
     let state = wound(initialAdvancedNen(), 'left-leg')
     state = wound(state, 'right-arm')
     expect(capabilitiesOf(state)).toMatchObject({ movementMultiplier: 0.65, canUseTwoHands: false })
+  })
+
+  it('makes Ren faster and Shu improve placed-aura efficiency', () => {
+    const ren = toggleRen(initialAdvancedNen())
+    expect(capabilitiesOf(ren).movementMultiplier).toBeGreaterThan(1)
+    const shu = applyShu(initialAdvancedNen(), fullPool(), { itemId: 'floor' }).state
+    expect(capabilitiesOf(shu).placedAuraEfficiency).toBeGreaterThan(1)
   })
 
   it('accepts a vow only before play and enforces its restriction', () => {

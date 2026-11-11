@@ -25,7 +25,18 @@ export interface Recovery {
 /** The one nearest the player, or null when the room holds none. */
 export function nearestSet(ledger: Ledger, state: DuelState): string | null {
   const inRoom = entravesInRoom(ledger.placements, state.spaceId)
-  return inRoom.length > 0 ? inRoom[0].id : null
+  if (!state.playerPosition) return inRoom[0]?.id ?? null
+  return (
+    [...inRoom].sort(
+      (left, right) =>
+        distance(left.position, state.playerPosition!) -
+        distance(right.position, state.playerPosition!),
+    )[0]?.id ?? null
+  )
+}
+
+function distance(left: readonly [number, number], right: readonly [number, number]): number {
+  return Math.hypot(left[0] - right[0], left[1] - right[1])
 }
 
 /**

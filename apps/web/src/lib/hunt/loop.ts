@@ -28,7 +28,7 @@ import type { Percept } from './hunter/belief'
 import { playHunter } from './hunter/duel'
 import { duelReducer } from './duel/reducer'
 import { openDuel } from './duel/inherit'
-import { GAME_LENGTH, judgeHunt, type HuntOutcome } from './outcome'
+import { GAME_LENGTH, isOver, judgeHunt, type HuntOutcome } from './outcome'
 import { record, type TelemetryEvent } from './telemetry'
 import type { HuntState } from './state'
 import { tickHatsu } from './hatsu'
@@ -40,7 +40,8 @@ import {
 } from './environment'
 import type { ContractEnvironment } from './contracts/types'
 import { strategicPlanner } from './hunter/strategy'
-import { tickRen } from './nen/advanced'
+import { tickRen, wound, type WoundedLimb } from './nen/advanced'
+import { hunterProfile } from './hunter/profiles'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -50,11 +51,12 @@ export interface HuntWorld {
   arena: Arena
   graph: NavGraph
   environment?: ContractEnvironment
+  durationSeconds?: number
 }
 
 export function updateHunt(state: HuntState, world: HuntWorld): HuntState {
   if (state.outcome !== 'playing' && state.outcome !== 'contact') return state
-  if (state.duel) return advanceDuel(state, world.dt)
+  if (state.duel) return advanceDuel(state, world.dt, world.durationSeconds ?? GAME_LENGTH)
 
   const breathing = breathe(state, world.dt)
   const ren = tickRen(state.advancedNen, breathing.pool, world.dt)
@@ -81,8 +83,9 @@ function breathe(state: HuntState, dt: number): Ledger {
  */
 function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
   const strategic = executeStrategicSeal(state, world)
+  const environment = world.environment ?? NORMAL_ENVIRONMENT
   const graph = graphWithSeals(world.graph, strategic.sealedExits)
-  const heard = overheard(strategic, graph, world.environment ?? NORMAL_ENVIRONMENT)
+  const heard = overheard(strategic, graph, environment)
   const { hunter, intents } = updateHunter(strategic.hunter, { ...world, graph, percept: heard })
 
   const movedLog =
@@ -93,8 +96,16 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
           where: hunter.spaceId,
         })
       : strategic.log
-  const swept = resolveSweep({ ...strategic, hunter, log: movedLog }, intents)
-  return resolveInspection(swept, intents)
+  const lostTrail =
+    strategic.hunter.belief.at && !hunter.belief.at
+      ? record(movedLog, strategic.clock, {
+          actor: 'hunter',
+          kind: 'lostTheTrail',
+          where: strategic.hunter.belief.spaceId,
+        })
+      : movedLog
+  const swept = resolveSweep({ ...strategic, hunter, log: lostTrail }, intents, graph)
+  return resolveInspection(swept, intents, environment)
 }
 
 function executeStrategicSeal(state: HuntState, world: HuntWorld): HuntState {
@@ -109,7 +120,8 @@ function executeStrategicSeal(state: HuntState, world: HuntWorld): HuntState {
       (seal) => [seal.a, seal.b].sort().join('|') === [spaceId, to].sort().join('|'),
     ),
   }))
-  const intent = strategicPlanner('containment').plan({
+  const doctrine = hunterProfile(state.hunter.profileId).doctrine
+  const intent = strategicPlanner(doctrine).plan({
     selfSpaceId: spaceId,
     belief: state.hunter.belief,
     visibleExits,
@@ -117,7 +129,11 @@ function executeStrategicSeal(state: HuntState, world: HuntWorld): HuntState {
     aura: state.hunter.pool.available,
     sinceSweep: state.hunter.sinceSweep,
   })
-  if (intent.kind !== 'seal' || !canSealExit(environment, world.graph, intent.exit)) return state
+  if (
+    intent.kind !== 'seal' ||
+    !canSealExit(environment, world.graph, { ...intent.exit, existing: state.sealedExits })
+  )
+    return state
   return {
     ...state,
     sealedExits: [...state.sealedExits, intent.exit],
@@ -145,10 +161,15 @@ function overheard(
   const nearness = Math.max(0, 1 - gap / hearingRange) * (reach === 'adjacent' ? THROUGH_A_WALL : 1)
   if (nearness <= 0.15) return null
 
-  return { kind: 'sound', at: state.player.position, spaceId: state.player.spaceId, sharp: false }
+  return {
+    kind: 'sound',
+    at: vagueLocation(state.player.spaceId, state.player.position, graph),
+    spaceId: state.player.spaceId,
+    sharp: false,
+  }
 }
 
-function resolveSweep(state: HuntState, intents: HunterIntents): HuntState {
+function resolveSweep(state: HuntState, intents: HunterIntents, graph: NavGraph): HuntState {
   if (!intents.sweep) return state
 
   const { pool, sweep } = sweepEn(state.hunter.pool, {
@@ -158,7 +179,7 @@ function resolveSweep(state: HuntState, intents: HunterIntents): HuntState {
   })
   if (!sweep) return state
 
-  const hunter = { ...state.hunter, pool, belief: believeSweep(state, sweep) }
+  const hunter = { ...state.hunter, pool, belief: believeSweep(state, sweep, graph) }
   return {
     ...state,
     hunter,
@@ -182,13 +203,16 @@ function resolveSweep(state: HuntState, intents: HunterIntents): HuntState {
  * looking for a place rather than for a person, and he has spent the same
  * fifteen either way.
  */
-function believeSweep(state: HuntState, sweep: EnSweep): HunterState['belief'] {
+function believeSweep(state: HuntState, sweep: EnSweep, graph: NavGraph): HunterState['belief'] {
   if (!sweep.found.includes('player')) return state.hunter.belief
+  const sharp = sweep.auraRead.includes('player')
   return {
-    at: state.player.position,
+    at: sharp
+      ? state.player.position
+      : vagueLocation(state.player.spaceId, state.player.position, graph),
     spaceId: state.player.spaceId,
     from: 'en',
-    sharp: sweep.auraRead.includes('player'),
+    sharp,
     age: 0,
     cleared: [],
   }
@@ -212,7 +236,11 @@ function journalSweep(state: HuntState, sweep: EnSweep): TelemetryEvent[] {
 }
 
 /** His Gyo, on a floor he has a reason to distrust. He does not find them all. */
-function resolveInspection(state: HuntState, intents: HunterIntents): HuntState {
+function resolveInspection(
+  state: HuntState,
+  intents: HunterIntents,
+  environment: ContractEnvironment,
+): HuntState {
   if (!intents.inspect) return state
 
   const looked = inspectRoom(
@@ -223,6 +251,7 @@ function resolveInspection(state: HuntState, intents: HunterIntents): HuntState 
       rng: state.hunter.rng,
     },
     state.ledger.placements,
+    environmentModifiers(environment).vision,
   )
 
   const hunter = { ...state.hunter, pool: looked.pool, rng: looked.rng }
@@ -282,6 +311,7 @@ function conclude(state: HuntState, world: HuntWorld): HuntState {
   const sensed = { ...state, echoes, feedback: senseFor({ ...state, echoes }, world.graph) }
   const outcome = judgeHunt({
     clock: sensed.clock,
+    durationSeconds: world.durationSeconds,
     gap: distance(sensed.player.position, sensed.hunter.position),
     playerSpaceId: sensed.player.spaceId,
     targetSpaceId: sensed.targetSpaceId,
@@ -310,6 +340,7 @@ function handOver(state: HuntState): HuntState {
     hunterPool: state.hunter.pool,
     hunterHeld: state.hunter.held,
     spaceId: state.player.spaceId,
+    playerPosition: state.player.position,
     seed: state.hunter.rng.seed,
   })
 
@@ -340,7 +371,7 @@ function handOver(state: HuntState): HuntState {
  * reservoir the duel left, which is the point of a rupture: it is a retreat,
  * not a reset.
  */
-function advanceDuel(state: HuntState, dt: number): HuntState {
+function advanceDuel(state: HuntState, dt: number, durationSeconds: number): HuntState {
   const duel = playHunter(duelReducer(state.duel!, { type: 'TICK', dt }), dt)
   const carried = { ...state, clock: state.clock + dt, duel }
 
@@ -350,12 +381,27 @@ function advanceDuel(state: HuntState, dt: number): HuntState {
   // the room they have not reached. Without this the clock was suspended the
   // moment the two of them met, and a player content to cover could stand there
   // for the rest of time.
-  if (carried.clock >= GAME_LENGTH) return { ...carried, outcome: 'timeUp' }
+  if (carried.clock >= durationSeconds) {
+    return {
+      ...carried,
+      outcome: 'timeUp',
+      log: record(carried.log, carried.clock, {
+        actor: 'player',
+        kind: 'duelClosed',
+        where: duel.spaceId,
+      }),
+    }
+  }
 
   if (duel.outcome === 'playing') return carried
   if (duel.outcome === 'broke') return backToTheHunt(carried)
+  const advancedNen =
+    duel.outcome === 'lost'
+      ? wound(carried.advancedNen, woundFor(duel.rng.seed))
+      : carried.advancedNen
   return {
     ...carried,
+    advancedNen,
     outcome: duel.outcome === 'won' ? 'eliminated' : 'caught',
     log: record(carried.log, carried.clock, {
       actor: 'player',
@@ -363,6 +409,16 @@ function advanceDuel(state: HuntState, dt: number): HuntState {
       where: duel.spaceId,
     }),
   }
+}
+
+function vagueLocation(spaceId: string | null, fallback: Vec2, graph: NavGraph): Vec2 {
+  return (spaceId && graph.centers.get(spaceId)) || fallback
+}
+
+const WOUNDS: readonly WoundedLimb[] = ['left-arm', 'right-arm', 'left-leg', 'right-leg']
+
+function woundFor(seed: number): WoundedLimb {
+  return WOUNDS[Math.abs(seed) % WOUNDS.length]
 }
 
 function backToTheHunt(state: HuntState): HuntState {
@@ -395,7 +451,11 @@ function distance(a: Vec2, b: Vec2): number {
   return Math.hypot(a[0] - b[0], a[1] - b[1])
 }
 
-/** Whether the game is showing its ending rather than being played. */
+/**
+ * Whether the game is showing its ending rather than being played. A lost duel
+ * (`caught`) is an ending like the others: `updateHunt` stops on it, so leaving
+ * it out here froze the page on a dead duel with no debrief.
+ */
 export function huntIsOver(outcome: HuntOutcome): boolean {
-  return outcome === 'reached' || outcome === 'timeUp' || outcome === 'eliminated'
+  return isOver(outcome)
 }

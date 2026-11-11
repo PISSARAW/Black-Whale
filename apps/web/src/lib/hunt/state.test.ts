@@ -4,6 +4,7 @@ import { EN_COST } from './nen/en'
 import { ENTRAVE_COST } from './nen/entrave'
 import { ledgerBalances, liveOf } from './nen/placed'
 import { countOf, spentBy } from './telemetry'
+import { initialDuelState } from './duel/state'
 
 function game(): HuntState {
   return initialHuntState({
@@ -178,9 +179,28 @@ describe('advanced Nen actions', () => {
     expect(huntReducer(vowed, { type: 'SWEEP' })).toBe(vowed)
   })
 
+  it('applies the silent-hunt efficiency bonus to aura actually placed', () => {
+    const vowed = huntReducer(game(), { type: 'VOW', vow: 'silent-hunt' })
+    const laid = huntReducer(vowed, { type: 'LAY' })
+    expect(laid.ledger.placements[0].cost).toBeCloseTo(ENTRAVE_COST / 1.35)
+  })
+
   it('records localized wounds as lost capabilities', () => {
     const wounded = huntReducer(game(), { type: 'WOUND', limb: 'left-leg' })
     expect(wounded.advancedNen.wounds).toEqual(['left-leg'])
+  })
+
+  it('makes an arm wound remove the two-handed Ko verb', () => {
+    const base = game()
+    const wounded = huntReducer(
+      { ...base, duel: initialDuelState() },
+      { type: 'WOUND', limb: 'left-arm' },
+    )
+    const attempted = huntReducer(wounded, {
+      type: 'DUEL',
+      action: { type: 'KO', side: 'player', zone: 'head' },
+    })
+    expect(attempted).toBe(wounded)
   })
 })
 

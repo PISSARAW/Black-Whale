@@ -266,7 +266,7 @@ export default tseslint.config(
       'apps/web/src/routes/characters/+page.svelte', // 768
       'apps/web/src/routes/characters/\\[slug\\]/+page.svelte', // 1194
       'apps/web/src/routes/compare/+page.svelte', // 1074
-      'apps/web/src/routes/hunt/+page.svelte', // 811
+      'apps/web/src/routes/hunt/+page.svelte', // 755
       'apps/web/src/routes/infiltration/+page.svelte', // 948
       'apps/web/src/routes/reconstruction/+page.svelte', // 1700
       'apps/web/src/routes/reconstruction/v3/+page.svelte', // 589

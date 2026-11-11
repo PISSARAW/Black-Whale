@@ -21,6 +21,11 @@ export interface NenCapabilities {
 export const REN_DRAIN_PER_SECOND = 4
 export const SHU_COST = 10
 
+export interface ShuRequest {
+  itemId: string
+  on?: boolean
+}
+
 export function initialAdvancedNen(): AdvancedNenState {
   return { ren: false, shuItem: null, vow: null, wounds: [] }
 }
@@ -45,8 +50,14 @@ export function toggleRen(state: AdvancedNenState): AdvancedNenState {
 export function applyShu(
   state: AdvancedNenState,
   pool: AuraPool,
-  itemId: string,
+  request: ShuRequest,
 ): { state: AdvancedNenState; pool: AuraPool } {
+  const { itemId, on = true } = request
+  if (!on) {
+    return state.shuItem === itemId ? { state: { ...state, shuItem: null }, pool } : { state, pool }
+  }
+  // Holding Shu on the same object is not a fresh purchase every key repeat.
+  if (state.shuItem === itemId) return { state, pool }
   if (!itemId || pool.available < SHU_COST) return { state, pool }
   return { state: { ...state, shuItem: itemId }, pool: spend(pool, SHU_COST) }
 }
@@ -63,10 +74,10 @@ export function capabilitiesOf(state: AdvancedNenState): NenCapabilities {
   const legs = state.wounds.filter((limb) => limb.endsWith('leg')).length
   const arms = state.wounds.filter((limb) => limb.endsWith('arm')).length
   return {
-    movementMultiplier: legs === 0 ? 1 : legs === 1 ? 0.65 : 0.35,
+    movementMultiplier: (legs === 0 ? 1 : legs === 1 ? 0.65 : 0.35) * (state.ren ? 1.2 : 1),
     canUseTwoHands: arms === 0,
     canSweepEn: state.vow !== 'silent-hunt',
     canBreakAway: state.vow !== 'no-retreat',
-    placedAuraEfficiency: state.vow === 'silent-hunt' ? 1.35 : 1,
+    placedAuraEfficiency: (state.vow === 'silent-hunt' ? 1.35 : 1) * (state.shuItem ? 1.5 : 1),
   }
 }

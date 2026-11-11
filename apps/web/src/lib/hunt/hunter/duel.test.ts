@@ -102,6 +102,22 @@ describe('winning without ever attacking — invariant I3', () => {
   })
 })
 
+describe('breaking contact', () => {
+  it('can slip away in Zetsu when the hunter was not already watching with Gyo', () => {
+    const hidden = duelReducer(opening(), { type: 'ZETSU', on: true })
+    expect(play(hidden, 4).outcome).toBe('broke')
+  })
+
+  it('is caught when the attempt starts under an existing Gyo read', () => {
+    const openingUnderGyo = {
+      ...opening(),
+      hunter: { ...opening().hunter, gyo: true },
+    }
+    const hidden = duelReducer(openingUnderGyo, { type: 'ZETSU', on: true })
+    expect(play(hidden, 4).outcome).not.toBe('broke')
+  })
+})
+
 describe('the hunter’s own economy', () => {
   it('stops looking when he cannot afford to', () => {
     const thin = initialDuelState({ player: poolOf(100), hunter: poolOf(14), seed: 3 })

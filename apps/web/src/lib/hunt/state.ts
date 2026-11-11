@@ -89,14 +89,14 @@ export type HuntAction =
   | { type: 'TAKE_IN_DUEL' }
   | { type: 'HATSU' }
   | { type: 'REN' }
-  | { type: 'SHU'; itemId: string }
+  | { type: 'SHU'; itemId: string; on?: boolean }
   | { type: 'VOW'; vow: HuntVow }
   | { type: 'WOUND'; limb: WoundedLimb }
 
 export interface HuntSetup {
   playerAt: { position: Vec2; spaceId: string }
   hunterAt: { position: Vec2; spaceId: string }
-  targetSpaceId: string
+  targetSpaceId: string | null
   seed?: number
   hatsu?: HuntHatsuId
   hunterProfile?: HunterProfileId
@@ -163,6 +163,13 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
       if (action.action.type === 'ZETSU' && !capabilitiesOf(state.advancedNen).canBreakAway) {
         return state
       }
+      if (
+        action.action.type === 'KO' &&
+        action.action.side === 'player' &&
+        !capabilitiesOf(state.advancedNen).canUseTwoHands
+      ) {
+        return state
+      }
       return state.duel ? { ...state, duel: duelReducer(state.duel, action.action) } : state
     case 'TAKE_IN_DUEL':
       return takeInDuel(state)
@@ -171,7 +178,8 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
     case 'REN':
       return { ...state, advancedNen: toggleRen(state.advancedNen) }
     case 'SHU': {
-      const result = applyShu(state.advancedNen, state.ledger.pool, action.itemId)
+      if (!capabilitiesOf(state.advancedNen).canUseTwoHands) return state
+      const result = applyShu(state.advancedNen, state.ledger.pool, action)
       return {
         ...state,
         advancedNen: result.state,
@@ -252,9 +260,10 @@ function lay(state: HuntState): HuntState {
   // floor is that surface; Zetsu makes the first condition false.
   if (state.hatsu.id !== 'bungee-gum' || !state.player.spaceId || state.player.nen === 'zetsu')
     return state
+  const cost = entraveCost(state)
   const { ledger, placed } = placeAura(state.ledger, {
     id: `entrave-${state.nextId}`,
-    cost: ENTRAVE_COST,
+    cost,
     at: {
       position: state.player.position,
       spaceId: state.player.spaceId,
@@ -270,7 +279,7 @@ function lay(state: HuntState): HuntState {
     log: record(state.log, state.clock, {
       actor: 'player',
       kind: 'laidEntrave',
-      cost: ENTRAVE_COST,
+      cost,
       where: placed.spaceId,
     }),
   }
@@ -333,7 +342,8 @@ function take(state: HuntState): HuntState {
 function takeInDuel(state: HuntState): HuntState {
   if (!state.duel) return state
   const { duel, ledger, recovered } = recoverInDuel(state.ledger, state.duel)
-  if (recovered.length === 0) return state
+  const placement = state.ledger.placements.find((candidate) => candidate.id === recovered[0])
+  if (!placement) return state
 
   return {
     ...state,
@@ -342,10 +352,15 @@ function takeInDuel(state: HuntState): HuntState {
     log: record(state.log, state.clock, {
       actor: 'player',
       kind: 'tookEntraveBack',
-      cost: -ENTRAVE_COST,
+      cost: -placement.cost,
       where: duel.spaceId,
     }),
   }
+}
+
+/** Aura actually committed by the next entrave after vows and Shu. */
+export function entraveCost(state: HuntState): number {
+  return ENTRAVE_COST / capabilitiesOf(state.advancedNen).placedAuraEfficiency
 }
 
 /** The reservoir as it stands, for the gauge and for the junction. */

@@ -1,31 +1,15 @@
 <script lang="ts">
-  /**
-   * The hunt: a game played inside the reconstruction, on its own route.
-   *
-   * It reads `lib/tour` and changes nothing in it (I7). `TourScene` walks the
-   * body, collides it against the apartment's own bulkheads and reports where it
-   * ended up; everything this page adds — the reservoir, the hunter, what either
-   * of them can perceive — is simulated in `lib/hunt` at a fixed step and drawn
-   * on top. Nothing here extends `blueprint.json` (I6): the arena is a selection
-   * of eight rooms that are already in it.
-   *
-   * The loop is an accumulator on the frame callback rather than an interval:
-   * the simulation must advance in fixed ticks whatever the display is doing,
-   * and a tab left in the background must not come back owing four thousand of
-   * them.
-   */
   import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import HuntScene from '$lib/components/hunt/HuntScene.svelte'
   import TourModeFullscreen from '$lib/components/tour/TourModeFullscreen.svelte'
-  import { theShip, crossingsOn } from '$lib/tour/blueprint'
+  import { theShip, crossingsOn, floorOf } from '$lib/tour/blueprint'
   import type { TourFlash } from '$lib/tour/apparitions'
   import { interiorPoint } from '$lib/tour/geometry'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import type { Space, Vec2 } from '$lib/tour/types'
-
   import {
     DEFAULT_HUNT_TERRAIN,
     HUNT_TERRAINS,
@@ -34,16 +18,16 @@
   } from '$lib/hunt/arena'
   import { buildNavGraph, shortestPath } from '$lib/hunt/navmesh'
   import { HUNT_DT, huntIsOver, updateHunt, type HuntWorld } from '$lib/hunt/loop'
-  import { huntReducer, initialHuntState, type HuntAction } from '$lib/hunt/state'
-  import { BODY_ZONES, type BodyZone } from '$lib/hunt/duel/state'
+  import { entraveCost, huntReducer, initialHuntState, type HuntAction } from '$lib/hunt/state'
+  import { HUNT_MANUAL_CONTROLS, HUNT_PAGE_KEYS } from '$lib/hunt/manualControls'
   import { STRIKE_THRESHOLD } from '$lib/hunt/duel/ryu'
+  import { ryuFromController } from '$lib/hunt/duel/controllerRyu'
   import { liveOf } from '$lib/hunt/nen/placed'
   import { cuesFor } from '$lib/hunt/veil'
   import { explorationNen, huntDuelNen } from '$lib/nen/tourAdapters'
-  import { isNenControlCode, NEN_KEYS, nenZoneIndex } from '$lib/nen/controls'
+  import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { sightings } from '$lib/hunt/sighting'
-  import { floorOf } from '$lib/tour/blueprint'
   import { prefersReducedMotion } from '$lib/tour/comfort'
   import NenVeil from '$lib/components/hunt/NenVeil.svelte'
   import HuntHud from '$lib/components/hunt/HuntHud.svelte'
@@ -63,7 +47,9 @@
   import { huntContractById, listHuntContracts } from '$lib/hunt/contracts/registry'
   import { contractMessages } from '$lib/hunt/contracts/messages'
   import { carryIntoStage, nextStage } from '$lib/hunt/contracts/transition'
-  import type { HuntVow } from '$lib/hunt/nen/advanced'
+  import { capabilitiesOf, type HuntVow } from '$lib/hunt/nen/advanced'
+  import { canSeeAtDistance, wallsForSeals } from '$lib/hunt/environment'
+  import * as huntSession from '$lib/hunt/session'
   import {
     completeCampaignRun,
     initialCampaign,
@@ -95,7 +81,6 @@
     PARALLEL_FUTURE_HUNT,
     type HuntHatsuId,
   } from '$lib/hunt/hatsu'
-
   const ship = theShip()
   let selectedTerrain = $state<HuntTerrainId>(DEFAULT_HUNT_TERRAIN)
   const initialArena = buildArena()
@@ -104,12 +89,6 @@
   let plan = $state.raw(ship.plans.get(initialArena.tierId)!)
   let graph = $state.raw(initialGraph)
   let world = $state.raw<HuntWorld>({ dt: HUNT_DT, arena: initialArena, graph: initialGraph })
-
-  /**
-   * Player and hunter start as far apart as the apartment allows, and the room
-   * to reach is the far one — measured on the doorway graph rather than in
-   * metres, because what matters is how many rooms have to be crossed.
-   */
   const initialOpening = farthestApart()
   let opening = $state.raw(initialOpening)
 
@@ -142,6 +121,7 @@
   let activeHatsuFlash = $state.raw<(TourFlash & { seq: number }) | null>(null)
   let selectedHunter = $state<HunterProfileId>(DEFAULT_HUNTER_PROFILE)
   let selectedVow = $state<HuntVow | null>(null)
+  let runSeed = $state(0x5eed)
   let campaign = $state.raw(initialCampaign())
   let campaignRecorded = false
   const replayKey = 'black-whale:hunt-v3-last-replay'
@@ -167,12 +147,15 @@
     const fresh = initialHuntState({
       playerAt: { position: interiorPoint(opening.from.footprint), spaceId: opening.from.id },
       hunterAt: { position: interiorPoint(opening.to.footprint), spaceId: opening.to.id },
-      targetSpaceId: opening.to.id,
-      seed: 0x5eed,
+      targetSpaceId: huntSession.targetForStage(activeContract, selectedTerrain, opening.to.id),
+      seed: runSeed,
       hatsu: selectedHatsu,
       hunterProfile: selectedHunter,
     })
-    return selectedVow ? huntReducer(fresh, { type: 'VOW', vow: selectedVow }) : fresh
+    let prepared = selectedVow ? huntReducer(fresh, { type: 'VOW', vow: selectedVow }) : fresh
+    for (const limb of campaign.persistentWounds)
+      prepared = huntReducer(prepared, { type: 'WOUND', limb })
+    return prepared
   }
 
   let game = $state(freshGame())
@@ -197,9 +180,6 @@
     return null
   })
 
-  // Bound out of TourScene: the walk is its job, not this page's. Seeded from
-  // the spawn rather than from `game`, which is where it came from anyway — the
-  // binding takes over on the first frame.
   let position = $state<Vec2>(interiorPoint(initialOpening.from.footprint))
   let heading = $state(0)
   let currentSpace = $state<Space | null>(null)
@@ -209,14 +189,6 @@
   const nameOf = (entity: Space | { name: string; nameFr: string } | undefined) => {
     if (!entity) return ''
     return $locale === 'fr' ? entity.nameFr : entity.name
-  }
-
-  function selectTier(id: string) {
-    tierId = id
-    const newPlan = ship.plans.get(id)
-    if (newPlan) {
-      plan = newPlan
-    }
   }
 
   const crossings = $derived(crossingsOn(ship, tierId))
@@ -235,7 +207,13 @@
     arena = buildArena(id)
     plan = ship.plans.get(arena.tierId)!
     graph = buildNavGraph(arena)
-    world = { dt: HUNT_DT, arena, graph, environment: activeContract.environment }
+    world = {
+      dt: HUNT_DT,
+      arena,
+      graph,
+      environment: activeContract.environment,
+      durationSeconds: activeContract.durationSeconds,
+    }
     opening = farthestApart()
     position = interiorPoint(opening.from.footprint)
     heading = 0
@@ -271,8 +249,6 @@
   let inDuel = $derived(game.duel !== null)
   let finished = $derived(huntIsOver(game.outcome))
 
-  // Read once, on mount: this drives whether the veil moves, and a visitor who
-  // has asked for less movement should not have it re-decided mid-game.
   let calm = $state(false)
   let briefed = $state(false)
   let manualOpen = $state(false)
@@ -280,9 +256,6 @@
   let lesson = $derived(tutorialStep(game))
   let duelSeat = $state<{ at: Vec2; heading: number; eye: number } | null>(null)
 
-  // `TourScene` already owns the one trustworthy way to immobilise a body
-  // while leaving the head free. Capture the contact point once: rebuilding
-  // this object every tick would also reset the player's gaze every tick.
   $effect(() => {
     if (game.duel && !duelSeat) {
       duelSeat = { at: [...game.player.position], heading: game.player.heading, eye: 1.7 }
@@ -291,23 +264,23 @@
     }
   })
 
-  /**
-   * What the principles currently look like. Derived from the same state the
-   * HUD reads, and from nothing else — see the note at the top of `veil.ts` for
-   * why that constraint matters more than the effect does.
-   */
-  /**
-   * The hunter's body. Handed to the scene as an ordinary apparition so the
-   * walk's own depth test decides when he is visible: down the line of a
-   * doorway, yes; through a bulkhead, no. Nothing here works that out.
-   */
   let figures = $derived.by(() => {
-    const visible = sightings({
-      hunter: game.hunter,
-      tierId: arena.tierId,
-      floor: floorOf(spaceById(game.hunter.spaceId) ?? arena.spaces[0], plan.tier),
-      duel: game.duel,
-    })
+    const gap = Math.hypot(
+      game.player.position[0] - game.hunter.position[0],
+      game.player.position[1] - game.hunter.position[1],
+    )
+    const visible = canSeeAtDistance(
+      activeContract.environment,
+      gap,
+      game.duel?.player.gyo ?? false,
+    )
+      ? sightings({
+          hunter: game.hunter,
+          tierId: arena.tierId,
+          floor: floorOf(spaceById(game.hunter.spaceId) ?? arena.spaces[0], plan.tier),
+          duel: game.duel,
+        })
+      : []
     const frame = lastReplay?.terrain === selectedTerrain ? ghostAt(lastReplay, game.clock) : null
     const ghost = ghostFigure(frame, {
       tierId: arena.tierId,
@@ -329,6 +302,9 @@
     game.duel ? huntDuelNen(game.duel.player) : explorationNen(game.player.nen, game.advancedNen),
   )
   let hatsuPresentation = $derived(presentHatsu(game))
+  let sealedWalls = $derived(wallsForSeals(arena.doorways, game.sealedExits))
+  let capabilities = $derived(capabilitiesOf(game.advancedNen))
+  let strikeNotice = $state('')
 
   function send(action: HuntAction) {
     const before = game
@@ -351,7 +327,7 @@
   let canLay = $derived(
     game.hatsu.id === 'bungee-gum' &&
       game.player.spaceId !== null &&
-      game.ledger.pool.available >= 25 &&
+      game.ledger.pool.available >= entraveCost(game) &&
       game.player.nen === 'ten',
   )
   let canTake = $derived(
@@ -360,76 +336,30 @@
     ),
   )
 
-  // ── Input ────────────────────────────────────────────────────────────────
-  //
-  // Every key here is one `TourScene` does not already spend on walking: it owns
-  // WASD and ZQSD both, the arrows, Shift, Tab and E. Taking one of those back
-  // would mean editing the tour, and the tour is not to be edited (I7).
-
-  const HUNT_KEYS: Record<string, HuntAction> = {
-    KeyF: { type: 'SWEEP' },
-    KeyX: { type: 'ZETSU' },
-    KeyV: { type: 'LAY' },
-    KeyR: { type: 'TAKE' },
-    KeyN: { type: 'REN' },
-  }
-
   function onKeyDown(event: KeyboardEvent) {
     if (!briefed || finished || event.repeat || event.metaKey || event.ctrlKey) return
-    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+    if (event.key === '?') {
       manualOpen = !manualOpen
       event.preventDefault()
       return
     }
-    if (manualOpen) return // Block game inputs while manual is open
-    if (isNenControlCode(event.code)) return
+    if (manualOpen || isNenControlCode(event.code)) return
     const handled = game.duel ? duelKey(event.code) : huntKey(event.code)
     if (handled) event.preventDefault()
   }
 
   function huntKey(code: string): boolean {
-    if (code === 'KeyU' && game.player.spaceId) {
-      send({ type: 'SHU', itemId: `room:${game.player.spaceId}` })
-      return true
-    }
-    const action = HUNT_KEYS[code]
-    if (!action) return false
-    send(action)
+    if (code === HUNT_PAGE_KEYS.lay) send({ type: 'LAY' })
+    else if (code === HUNT_PAGE_KEYS.take) send({ type: 'TAKE' })
+    else return false
     return true
   }
 
   function duelKey(code: string): boolean {
-    const zone = zoneFor(code)
-    if (zone) return duel({ type: 'RYU', side: 'player', setting: { guard: zone } })
-
-    switch (code) {
-      case NEN_KEYS.ryuDown:
-        return shiftRyu(-0.15)
-      case NEN_KEYS.ryuUp:
-        return shiftRyu(0.15)
-      case NEN_KEYS.gyo:
-        return duel({ type: 'GYO', side: 'player', on: !game.duel!.player.gyo })
-      case NEN_KEYS.in:
-        return duel({ type: 'IN', side: 'player', on: !game.duel!.player.in })
-      case NEN_KEYS.ken:
-        return duel({ type: 'KEN', side: 'player', on: !game.duel!.player.ken })
-      case NEN_KEYS.zetsu:
-        return duel({ type: 'ZETSU', on: !game.duel!.player.zetsu })
-      case 'KeyR':
-        send({ type: 'TAKE_IN_DUEL' })
-        return true
-      case 'Space':
-        return strike()
-      case NEN_KEYS.ko:
-        return strike()
-      default:
-        return false
-    }
-  }
-
-  function zoneFor(code: string): BodyZone | null {
-    const index = nenZoneIndex(code)
-    return index === null ? null : BODY_ZONES[index]
+    if (code === 'Space') return strike()
+    if (code !== HUNT_PAGE_KEYS.take) return false
+    send({ type: 'TAKE_IN_DUEL' })
+    return true
   }
 
   function duel(action: Extract<HuntAction, { type: 'DUEL' }>['action']): boolean {
@@ -437,27 +367,18 @@
     return true
   }
 
-  function shiftRyu(by: number): boolean {
-    return duel({
-      type: 'RYU',
-      side: 'player',
-      setting: { attack: game.duel!.player.attack + by },
-    })
-  }
-
-  /**
-   * Space gathers; the blow lands by itself when the wind-up is done. There is
-   * no second key for throwing, because there is no decision left to make: from
-   * the moment it is gathered, three of your zones are open and the other one
-   * has under a second to notice.
-   */
   function strike(): boolean {
     const player = game.duel!.player
-    if (player.attack < STRIKE_THRESHOLD) return true
+    if (player.attack < STRIKE_THRESHOLD || !capabilities.canUseTwoHands) {
+      strikeNotice =
+        $locale === 'fr'
+          ? 'Ko exige plus de Ryu vers l’attaque et l’usage des deux bras.'
+          : 'Ko needs more Ryu in attack and the use of both arms.'
+      return false
+    }
+    strikeNotice = ''
     return duel({ type: 'KO', side: 'player', zone: player.guard })
   }
-
-  // ── The fixed step ───────────────────────────────────────────────────────
 
   let frame = 0
   let owed = 0
@@ -468,8 +389,6 @@
     const elapsed = last === 0 ? 0 : (now - last) / 1000
     last = now
 
-    // A backgrounded tab comes back owing a quarter of a second at most: the
-    // hunter does not get to cross the apartment while nobody was looking.
     owed = safeFrameDebt(owed, elapsed)
 
     if (!briefed) {
@@ -482,11 +401,15 @@
       owed -= HUNT_DT
       const beforeTick = game
       game = updateHunt(game, world)
-      // Move immediately if we found them
       if (game.outcome === 'reached' && advanceContractZone()) {
         playHuntCue('nen')
         continue
       }
+      if (
+        !huntIsOver(game.outcome) &&
+        huntSession.contractIsComplete(activeContract, selectedTerrain, game)
+      )
+        game = huntSession.completeContract(game)
       if (!beforeTick.duel && game.duel) playHuntCue('contact')
       if (!huntIsOver(beforeTick.outcome) && huntIsOver(game.outcome)) playHuntCue('outcome')
       if (huntIsOver(game.outcome) && !campaignRecorded) recordCampaignRun()
@@ -497,7 +420,6 @@
     }
   }
 
-  /** Standing still is what regeneration is paid for, so it has to be observed. */
   function reportWalk() {
     const moved = Math.hypot(
       position[0] - game.player.position[0],
@@ -568,7 +490,8 @@
         send({ type: 'ZETSU' })
       if (action.type === 'REN') send({ type: 'REN' })
       if (action.type === 'EN' && action.radius !== null) send({ type: 'SWEEP' })
-      if (action.type === 'SHU' && action.objectId) send({ type: 'SHU', itemId: action.objectId })
+      if (action.type === 'SHU' && action.objectId)
+        send({ type: 'SHU', itemId: action.objectId, on: action.on })
       return
     }
     if (action.type === 'TEN' && game.duel.player.zetsu) return duel({ type: 'ZETSU', on: false })
@@ -576,36 +499,55 @@
     if (action.type === 'GYO' || action.type === 'IN' || action.type === 'KEN')
       return duel({ type: action.type, side: 'player', on: action.on })
     if (action.type === 'KO' && action.zone) return strike()
-    if (action.type === 'RYU')
-      return duel({
-        type: 'RYU',
-        side: 'player',
-        setting: { attack: Number(action.distribution.hands ?? game.duel.player.attack) },
-      })
+    if (action.type === 'RYU') {
+      const setting = ryuFromController(action.distribution, game.duel.player.attack)
+      return duel({ type: 'RYU', side: 'player', setting })
+    }
   }
 
   function again() {
     campaignRecorded = false
     if (replay) lastReplay = replay
-    replay = null
-    game = freshGame()
+    contractStage = 0
+    runSeed = huntSession.seedForAttempt(
+      activeContract.seed,
+      campaign.contracts[selectedContract]?.attempts ?? 0,
+    )
+    selectTerrain(activeContract.terrainSequence[0])
+    replay = newReplay()
+    lastReplayMovementAt = -Infinity
     position = game.player.position
     owed = 0
     last = 0
   }
 
   function begin() {
-    replay = createReplay({
+    runSeed = huntSession.seedForAttempt(
+      activeContract.seed,
+      campaign.contracts[selectedContract]?.attempts ?? 0,
+    )
+    world = {
+      ...world,
+      environment: activeContract.environment,
+      durationSeconds: activeContract.durationSeconds,
+    }
+    game = freshGame()
+    position = game.player.position
+    replay = newReplay()
+    lastReplayMovementAt = -Infinity
+    briefed = true
+  }
+
+  function newReplay() {
+    return createReplay({
       schemaVersion: 3,
       contractId: selectedContract,
-      seed: activeContract.seed,
+      seed: runSeed,
       terrain: selectedTerrain,
       hatsu: selectedHatsu,
       hunter: selectedHunter,
       actions: [],
     })
-    lastReplayMovementAt = -Infinity
-    briefed = true
   }
 </script>
 
@@ -628,14 +570,10 @@
     {decks}
     {crossings}
     {nameOf}
-    onSelectDeck={selectTier}
-    onSelectPlan={(space) => {
-      position = interiorPoint(space.footprint)
-      currentSpace = space
-    }}
   />
   <HuntAudioControl locale={$locale} />
   <div class="sr-only" aria-live="polite" aria-atomic="true">
+    {strikeNotice}
     {#if finished}
       {$t.hunt.outcome[
         game.outcome === 'playing' || game.outcome === 'contact' ? 'timeUp' : game.outcome
@@ -662,6 +600,9 @@
     tint={hatsuPresentation.tint}
     flash={activeHatsuFlash}
     nen={playerNen}
+    collisionWalls={sealedWalls}
+    paceMultiplier={capabilities.movementMultiplier}
+    inputDisabled={manualOpen || finished}
     showNenControls={true}
     onNenChange={useStandardNen}
     onPhysicalNenAction={() => game.duel && strike()}
@@ -806,29 +747,9 @@
     open={manualOpen}
     title="Hunt Mode"
     titleFr="Mode Hunt"
-    objective="Hunt down the target using Nen. Manage your aura pool, use Gyo to see hidden traps, and survive."
-    objectiveFr="Traquez la cible en utilisant le Nen. Gérez votre aura, utilisez Gyo pour voir les pièges cachés et survivez."
-    controls={[
-      { keys: ['W', 'A', 'S', 'D'], description: 'Move / Walk', descriptionFr: 'Se déplacer' },
-      { keys: ['X'], description: 'Zetsu (Hide aura)', descriptionFr: "Zetsu (Cacher l'aura)" },
-      {
-        keys: ['N'],
-        description: 'Ren (Ready for action)',
-        descriptionFr: "Ren (Prêt à l'action)",
-      },
-      { keys: ['F'], description: 'En (Sweep area)', descriptionFr: 'En (Balayer la zone)' },
-      { keys: ['U'], description: 'Shu (Imbue object)', descriptionFr: 'Shu (Imprégner objet)' },
-      { keys: ['V'], description: 'Lay trap (Hatsu)', descriptionFr: 'Poser piège (Hatsu)' },
-      { keys: ['R'], description: 'Recover trap', descriptionFr: 'Récupérer piège' },
-      { keys: ['Space'], description: 'Strike (Duel)', descriptionFr: 'Frapper (Duel)' },
-      {
-        keys: ['I'],
-        description: 'In (Hide traps)',
-        descriptionFr: "In (Cacher l'aura des objets)",
-      },
-      { keys: ['O'], description: 'Gyo (See In)', descriptionFr: 'Gyo (Voir In)' },
-      { keys: ['P'], description: 'Ken (Guard all)', descriptionFr: 'Ken (Garde totale)' },
-    ]}
+    objective="Reach the marked room before the hunter reaches you. One aura pool pays for En, entraves and the duel."
+    objectiveFr="Atteignez la pièce marquée avant que le chasseur ne vous atteigne. Une seule réserve d'aura paie En, les entraves et le duel."
+    controls={HUNT_MANUAL_CONTROLS}
     onClose={() => (manualOpen = false)}
   />
 </div>

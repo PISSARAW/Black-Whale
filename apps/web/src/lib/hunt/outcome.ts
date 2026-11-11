@@ -23,6 +23,8 @@ export const CONTACT_RANGE = 1.5
 
 export interface Standing {
   clock: number
+  /** Contract-specific limit; the original ten minutes remain the fallback. */
+  durationSeconds?: number
   /** Metres between the two bodies. */
   gap: number
   playerSpaceId: string | null
@@ -37,7 +39,7 @@ export function judgeHunt(standing: Standing): HuntOutcome {
   if (standing.hunterSpent && standing.hunterHeld) return 'eliminated'
   if (standing.gap <= CONTACT_RANGE) return 'contact'
   if (standing.targetSpaceId && standing.playerSpaceId === standing.targetSpaceId) return 'reached'
-  if (standing.clock >= GAME_LENGTH) return 'timeUp'
+  if (standing.clock >= (standing.durationSeconds ?? GAME_LENGTH)) return 'timeUp'
   return 'playing'
 }
 

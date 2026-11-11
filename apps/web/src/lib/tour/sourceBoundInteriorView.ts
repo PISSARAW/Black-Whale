@@ -39,17 +39,19 @@ const countAcross = (length: number, spacing: number): number =>
 
 function dressFloor(
   into: BanquetDetailBuilder,
+  space: Space,
   bounds: Bounds,
   floor: number,
   style: SourceBoundInteriorStyle,
 ): void {
   const insetWidth = Math.max(0.2, bounds.width - 0.32)
   const insetDepth = Math.max(0.2, bounds.depth - 0.32)
-  into.box([insetWidth, 0.018, insetDepth], {
-    at: [bounds.centreX, floor + 0.012, bounds.centreZ],
+  into.polygon(space.footprint, {
+    at: [0, floor + 0.012, 0],
     colour: style.floor,
   })
 
+  if (!isAxisAlignedRectangle(space)) return
   const spacing = style.floorPattern === 'plates' ? 2.4 : style.floorPattern === 'grid' ? 1.8 : 3.2
   const xCount = countAcross(bounds.width, spacing)
   const zCount = countAcross(bounds.depth, spacing)
@@ -73,37 +75,67 @@ function dressFloor(
 
 function dressWalls(
   into: BanquetDetailBuilder,
+  space: Space,
   bounds: Bounds,
   floor: number,
   style: SourceBoundInteriorStyle,
 ): void {
   const y = floor + 0.17
-  into.box([bounds.width, 0.32, 0.08], {
-    at: [bounds.centreX, y, bounds.minZ + 0.05],
-    colour: style.wall,
-  })
-  into.box([bounds.width, 0.32, 0.08], {
-    at: [bounds.centreX, y, bounds.maxZ - 0.05],
-    colour: style.wall,
-  })
-  into.box([0.08, 0.32, bounds.depth], {
-    at: [bounds.minX + 0.05, y, bounds.centreZ],
-    colour: style.wall,
-  })
-  into.box([0.08, 0.32, bounds.depth], {
-    at: [bounds.maxX - 0.05, y, bounds.centreZ],
-    colour: style.wall,
-  })
+  for (let index = 0; index < space.footprint.length; index++) {
+    const start = space.footprint[index]!
+    const end = space.footprint[(index + 1) % space.footprint.length]!
+    const dx = end[0] - start[0]
+    const dz = end[1] - start[1]
+    const length = Math.hypot(dx, dz)
+    if (length < 0.1) continue
+    const centreX = (start[0] + end[0]) / 2
+    const centreZ = (start[1] + end[1]) / 2
+    const towardX = bounds.centreX - centreX
+    const towardZ = bounds.centreZ - centreZ
+    const towardLength = Math.hypot(towardX, towardZ) || 1
+    into.box([Math.max(0.05, length - 0.08), 0.32, 0.08], {
+      at: [centreX + (towardX / towardLength) * 0.06, y, centreZ + (towardZ / towardLength) * 0.06],
+      colour: style.wall,
+      rotation: [0, -Math.atan2(dz, dx), 0],
+    })
+  }
+}
+
+function isAxisAlignedRectangle(space: Space): boolean {
+  if (space.footprint.length !== 4) return false
+  for (let index = 0; index < 4; index++) {
+    const start = space.footprint[index]!
+    const end = space.footprint[(index + 1) % 4]!
+    if (Math.abs(start[0] - end[0]) > 0.001 && Math.abs(start[1] - end[1]) > 0.001) return false
+  }
+  return true
 }
 
 function dressCeiling(
   into: BanquetDetailBuilder,
+  space: Space,
   bounds: Bounds,
   floor: number,
   ceiling: number,
   style: SourceBoundInteriorStyle,
 ): void {
   const y = floor + ceiling - 0.12
+  into.polygon(
+    space.footprint,
+    {
+      at: [0, floor + ceiling - 0.015, 0],
+      colour: style.ceiling,
+    },
+    'down',
+  )
+  if (!isAxisAlignedRectangle(space)) {
+    into.box([0.7, 0.06, 0.22], {
+      at: [bounds.centreX, y - 0.14, bounds.centreZ],
+      colour: style.accent,
+      glow: true,
+    })
+    return
+  }
   const count = countAcross(bounds.width, style.ceilingPattern === 'coffers' ? 3.4 : 2.6)
   for (let index = 1; index <= count; index++) {
     const x = bounds.minX + (bounds.width * index) / (count + 1)
@@ -404,9 +436,9 @@ export function buildSourceBoundInteriorDetails(options: {
   const into = new BanquetDetailBuilder(THREE)
   const floor = floorOf(space, plan.tier)
   const bounds = boundsOf(space)
-  dressFloor(into, bounds, floor, style)
-  dressWalls(into, bounds, floor, style)
-  dressCeiling(into, bounds, floor, ceilingOf(space, plan.tier), style)
+  dressFloor(into, space, bounds, floor, style)
+  dressWalls(into, space, bounds, floor, style)
+  dressCeiling(into, space, bounds, floor, ceilingOf(space, plan.tier), style)
   for (const structure of plan.structures.filter((item) => item.spaceId === spaceId)) {
     dressStructure(into, structure, floor, style)
   }

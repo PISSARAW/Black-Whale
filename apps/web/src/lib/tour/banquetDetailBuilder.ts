@@ -103,6 +103,24 @@ export class BanquetDetailBuilder {
     this.add(new this.THREE.BoxGeometry(...size), placement)
   }
 
+  /** A flat polygon in the XZ plane, used when an authored room is not rectangular. */
+  polygon(
+    points: readonly (readonly [number, number])[],
+    placement: Placement,
+    facing: 'up' | 'down' = 'up',
+  ): void {
+    const shape = new this.THREE.Shape()
+    points.forEach(([x, z], index) => {
+      if (index === 0) shape.moveTo(x, z)
+      else shape.lineTo(x, z)
+    })
+    shape.closePath()
+    const geometry = new this.THREE.ShapeGeometry(shape)
+    if (facing === 'up') geometry.scale(1, 1, -1)
+    geometry.rotateX(Math.PI / 2)
+    this.add(geometry, placement)
+  }
+
   cylinder(
     size: { radius: number; height: number; bottom?: number; sides?: number; open?: boolean },
     placement: Placement,

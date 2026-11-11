@@ -1,11 +1,13 @@
 import * as THREE from 'three'
 import { describe, expect, it } from 'vitest'
+import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { buildShip } from './blueprint'
 import {
   buildSourceBoundInteriorDetails,
   sourceBoundInteriorSurfacePlan,
 } from './sourceBoundInteriorView'
 import { SOURCE_BOUND_INTERIOR_STYLES } from './sourceBoundInteriorStyles'
+import { distanceToBoundary, pointInPolygon } from './geometry'
 
 const ship = buildShip()
 
@@ -38,6 +40,18 @@ describe('source-bound interiors without published perspective panels', () => {
           expect(Number.isFinite(positions.getZ(index))).toBe(true)
         }
       })
+      const footprint = new BanquetDetailBuilder(THREE)
+      footprint.polygon(space.footprint, { at: [0, 0, 0], colour: style.floor })
+      const floorMesh = footprint.finish().children[0] as THREE.Mesh
+      const floorPositions = floorMesh.geometry.getAttribute('position')
+      for (let index = 0; index < floorPositions.count; index++) {
+        const point = [floorPositions.getX(index), floorPositions.getZ(index)] as const
+        expect(
+          pointInPolygon(point, space.footprint) ||
+            distanceToBoundary(point, space.footprint) < 0.001,
+          `${style.name}: ${point.join(',')}`,
+        ).toBe(true)
+      }
       expect(
         buildSourceBoundInteriorDetails({ THREE, plan, spaceId: space.id, reveal: true }),
       ).toBeNull()

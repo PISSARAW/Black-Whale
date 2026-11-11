@@ -69,12 +69,14 @@ prennent la bande que les rangées de caisses de la cale laissent libre le long
 de la coursive transversale. La taille suit la place disponible, et c'est dit
 dans la `source` de chacune.
 
-Une pièce n'a pas été déplacée bien que la page semble l'appeler : la **salle de
-conférence de l'armée royale** du pont 4. Son plan à elle est le briefing que
-Mizaistom donne au chap. 350, son slug de catalogue porte `tier-4-` et
-quatre-vingt-cinq enregistrements s'y accrochent, et rien ne dit que la pièce que
-la page nomme est celle-là. La page nomme un **lieu** sur le niveau 3 : la
-reconstruction gagne le lieu, elle ne déménage pas la pièce.
+La **salle de conférence de l'armée royale** conserve son rattachement hérité au
+pont 4. Son intérieur reprend le briefing de Mizaistom au **chapitre 380**,
+pages de lecture 1–3 et 6 ; l'ancienne attribution au chapitre 350 est erronée.
+Le U clair s'ouvre vers l'estrade, les chaises sont à cadre simple, le public
+occupe des rangées séparées et l'écran reste blanc. Les équipements tactiques
+non établis sont retirés. Les métriques, les effectifs schématiques de sièges
+et la localisation du volume sur le pont restent reconstitués.
+Voir [l'audit de la salle](royal-army-conference-audit.md).
 
 ## Repère et échelle
 

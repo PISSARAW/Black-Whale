@@ -1619,7 +1619,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
 
-- Royal Army Conference Room reconstructed from Chapters 350 and 380 > satisfies the shared blueprint invariants for interior-royal-army-conference
+- Army Conference Floor corrected against chapter 380, pages 1–6 > satisfies the blueprint invariants and distinguishes the committee and audience groups
 
 ## `apps/web/src/lib/tour/royalPrecinct.test.ts`
 

@@ -44,6 +44,10 @@ import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screening
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
 import { buildHullSuspensionDetails, hullSuspensionSurfacePlan } from './hullSuspensionView'
+import {
+  buildSourceBoundInteriorDetails,
+  sourceBoundInteriorSurfacePlan,
+} from './sourceBoundInteriorView'
 
 export interface TierRoomView {
   spaceId: string
@@ -201,6 +205,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildHangarEntranceDetails,
   buildWarehouseDetails,
   buildHullSuspensionDetails,
+  buildSourceBoundInteriorDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
@@ -299,10 +304,13 @@ export class TierView {
       ),
       reveal,
     )
-    const detailedPlan = hullSuspensionSurfacePlan(
-      queenUnmaSurfacePlan(
-        queenApartmentSurfacePlan(
-          royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+    const detailedPlan = sourceBoundInteriorSurfacePlan(
+      hullSuspensionSurfacePlan(
+        queenUnmaSurfacePlan(
+          queenApartmentSurfacePlan(
+            royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+            reveal,
+          ),
           reveal,
         ),
         reveal,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
-import { theShip, validateBlueprint } from './blueprint'
+import { theShip, validateBlueprint, floorOf, ceilingOf } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
 import { screeningRoomSpotAnchors } from '../components/map/projection/screeningRoomPlan'
@@ -11,6 +11,9 @@ import {
   screeningRoomSurfacePlan,
   SCREENING_ROOM_SPACE,
 } from './screeningRoomView'
+
+import { SurfaceWalker } from './SurfaceWalker'
+import { pointInPolygon, structureFootprint } from './geometry'
 
 const ship = theShip()
 const plan = ship.plans.get('tier-2')!
@@ -38,17 +41,17 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
     )
   })
 
-  it('contains the 15 canonical structures in blueprint.json', () => {
+  it('represents the shown architecture with paired seating banks and a real stage access', () => {
     const structures = plan.structures.filter(
       (structure) => structure.spaceId === SCREENING_ROOM_SPACE,
     )
-    expect(structures).toHaveLength(15)
+    expect(structures).toHaveLength(31)
 
-    // Stage, proscenium piers, curtain, screen, 4 boxes, 6 seating blocks
-    expect(structures.filter((s) => s.kind === 'platform')).toHaveLength(5)
+    // Counts describe this reconstruction, not a published survey of the theatre.
+    expect(structures.filter((s) => s.kind === 'platform')).toHaveLength(11)
     expect(structures.filter((s) => s.kind === 'pillar')).toHaveLength(2)
     expect(structures.filter((s) => s.kind === 'painting')).toHaveLength(2)
-    expect(structures.filter((s) => s.kind === 'seat')).toHaveLength(6)
+    expect(structures.filter((s) => s.kind === 'seat')).toHaveLength(12)
 
     expect(structures.some((s) => s.id === 'tier-2-screening-room-stage')).toBe(true)
     expect(structures.some((s) => s.id === 'tier-2-screening-room-proscenium-port')).toBe(true)
@@ -79,7 +82,7 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
     expect(root!.children.length).toBeLessThanOrEqual(2)
 
     const triCount = triangles(root!)
-    // Rich theater model with proscenium arch, boxes, chandeliers, raked stalls
+    // Detailed theatre model with proscenium, boxes, pleated curtain and seated stalls.
     expect(triCount).toBeGreaterThan(15_000)
     expect(triCount).toBeLessThan(150_000)
 
@@ -122,7 +125,7 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
     expect(screeningStructures).toHaveLength(0)
 
     const preserved = screeningRoomSurfacePlan(plan, true)
-    expect(preserved.structures.filter((s) => s.spaceId === SCREENING_ROOM_SPACE)).toHaveLength(15)
+    expect(preserved).toBe(plan)
   })
 
   it('exposes canonical manga viewpoints positioned inside the auditorium', () => {
@@ -154,13 +157,13 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
   })
 
   it('defines 2D/3D projection anchors for key theater fixtures and occupants', () => {
-    expect(screeningRoomSpotAnchors.occupants.briefingOfficer).toBeDefined()
+    expect(screeningRoomSpotAnchors.occupants.presenter).toBeDefined()
     expect(screeningRoomSpotAnchors.occupants.stallsCenter).toBeDefined()
     expect(screeningRoomSpotAnchors.occupants.vipPort).toBeDefined()
     expect(screeningRoomSpotAnchors.stage).toBeDefined()
     expect(screeningRoomSpotAnchors.screen).toBeDefined()
     expect(screeningRoomSpotAnchors.curtain).toBeDefined()
-    expect(screeningRoomSpotAnchors.projectionBooth).toBeDefined()
+    expect(screeningRoomSpotAnchors).not.toHaveProperty('projectionBooth')
     expect(screeningRoomSpotAnchors.centralAisle).toBeDefined()
 
     // Check anchor coordinates are percentage values between 0 and 100
@@ -170,5 +173,74 @@ describe('Screening Room (Tier 2) reconstructed from Chapter 359', () => {
       expect(coord.y).toBeGreaterThan(0)
       expect(coord.y).toBeLessThan(100)
     }
+  })
+  it('keeps the entire model inside the theatre, from the floor to its ceiling', () => {
+    const root = buildScreeningRoomDetails({
+      THREE,
+      plan,
+      spaceId: SCREENING_ROOM_SPACE,
+      reveal: false,
+    })!
+    const space = ship.spaces.get(SCREENING_ROOM_SPACE)!,
+      bounds = new THREE.Box3().setFromObject(root)
+    expect(bounds.min.x).toBeGreaterThanOrEqual(-87.5)
+    expect(bounds.max.x).toBeLessThanOrEqual(0)
+    expect(bounds.min.z).toBeGreaterThanOrEqual(7)
+    expect(bounds.max.z).toBeLessThanOrEqual(52.5)
+    expect(bounds.min.y).toBeGreaterThanOrEqual(floorOf(space, plan.tier) - 0.001)
+    expect(bounds.max.y).toBeLessThanOrEqual(
+      floorOf(space, plan.tier) + ceilingOf(space, plan.tier) + 0.001,
+    )
+    disposeBanquetDetails(root)
+  })
+
+  it('lets the actual walker cross the central aisle and reach the stage by its steps', () => {
+    const walker = new SurfaceWalker()
+    const floor = floorOf(ship.spaces.get(SCREENING_ROOM_SPACE)!, plan.tier)
+    walker.reset(plan, [-12, 29.75])
+    const through = walker.move(plan, {
+      from: [-12, 29.75],
+      to: [-76.4, 29.75],
+      extras: [],
+      ghost: false,
+    })
+    expect(through[0]).toBeCloseTo(-76.4)
+    expect(through[1]).toBeCloseTo(29.75)
+    let at: readonly [number, number] = [-76.3, 43.5]
+    walker.reset(plan, at)
+    for (let i = 0; i < 28; i++)
+      at = walker.move(plan, { from: at, to: [at[0] - 0.1, at[1]], extras: [], ghost: false })
+    expect(at[0]).toBeLessThan(-78.3)
+    expect(walker.floor(plan, at)).toBeCloseTo(floor + 1.3)
+    expect(plan.columns.get(SCREENING_ROOM_SPACE) ?? []).toEqual([])
+  })
+
+  it('keeps the screen in front of its pleated backdrop and the ordinary cameras clear of furniture', () => {
+    const screen = plan.structures.find((s) => s.id.endsWith('screening-room-screen'))!
+    const curtain = plan.structures.find((s) => s.id.endsWith('screening-room-curtain'))!
+    expect(screen.at[0]).toBeGreaterThan(curtain.at[0] + curtain.size[0])
+    expect(curtain.base).toBeCloseTo(1.3)
+    for (const view of MANGA_SCREENING_ROOM_VIEWS.filter((v) => v.eyeHeight === undefined)) {
+      expect(
+        plan.structures.some(
+          (s) =>
+            s.spaceId === SCREENING_ROOM_SPACE && pointInPolygon(view.at, structureFootprint(s)),
+        ),
+        view.id,
+      ).toBe(false)
+    }
+  })
+
+  it('does not leave hard-coded seats behind when Nen removes a seating bank', () => {
+    const build = (p: typeof plan) =>
+      buildScreeningRoomDetails({ THREE, plan: p, spaceId: SCREENING_ROOM_SPACE, reveal: false })!
+    const original = build(plan),
+      without = build({
+        ...plan,
+        structures: plan.structures.filter((s) => s.id !== 'tier-2-screening-room-seating-01'),
+      })
+    expect(triangles(original) - triangles(without)).toBeGreaterThan(1000)
+    disposeBanquetDetails(original)
+    disposeBanquetDetails(without)
   })
 })

@@ -7,6 +7,7 @@ import { CASINO_SPACE, casinoColumnPositions } from './casinoLayout'
  * Their metric spacing remains an estimate inside the reconstructed plan.
  */
 export function roomColumnPositions(space: Space): Vec2[] {
+  if (space.id === 'tier-2-screening-room') return []
   if (space.id === CASINO_SPACE) return casinoColumnPositions()
   if (space.id !== 'tier-1-banquet-hall') return columnPositions(space.footprint)
   const xs = space.footprint.map(([x]) => x)

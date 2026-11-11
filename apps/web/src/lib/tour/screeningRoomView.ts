@@ -21,7 +21,7 @@ export function hasScreeningRoomModel(structure: Structure): boolean {
   )
 }
 
-/** Reconstructed Tier 2 Screening Room / Theatre from Chapter 359 with full architectural fidelity. */
+/** Chapter 359, checked against the supplied theatre panel. Dimensions remain estimated. */
 export function buildScreeningRoomDetails(options: {
   THREE: typeof Three
   plan: TierPlan
@@ -37,22 +37,14 @@ export function buildScreeningRoomDetails(options: {
   const into = new BanquetDetailBuilder(THREE)
   const surface = new ScreeningRoomSurface(into)
   const floor = floorOf(space, plan.tier)
-  const ceilingHeight = ceilingOf(space, plan.tier) ?? 10
+  const ceilingHeight = ceilingOf(space, plan.tier)
+  const structures = plan.structures.filter((s) => s.spaceId === spaceId)
 
-  // 1. Classical architecture, wall damask panels, pilasters, emergency exits, projection booth
-  dressScreeningRoomArchitecture({ surface, floor, ceilingHeight })
-
-  // 2. Proscenium stage, piers, gilded arch, grand velvet drape, screen and podium
-  dressScreeningRoomStage({ surface, floor, ceilingHeight })
-
-  // 3. Elevated private VIP boxes with corbels, balustrades and armchairs
-  dressScreeningRoomBoxes({ surface, floor })
-
-  // 4. Stalls seating blocks on stepped raked risers with aisles
-  dressScreeningRoomSeats({ surface, floor })
-
-  // 5. Monumental coffered ceiling grid and grand chandeliers
-  dressScreeningRoomCeiling({ surface, floor, ceilingHeight })
+  dressScreeningRoomArchitecture({ surface, floor, ceilingHeight, plan, space })
+  dressScreeningRoomStage({ THREE, surface, floor, structures })
+  dressScreeningRoomBoxes({ surface, floor, structures })
+  dressScreeningRoomSeats({ surface, floor, structures })
+  dressScreeningRoomCeiling({ surface, floor, ceilingHeight, space })
 
   return into.finish('screening-room-details')
 }

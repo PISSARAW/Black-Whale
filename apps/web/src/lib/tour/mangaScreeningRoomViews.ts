@@ -4,14 +4,15 @@ export const MANGA_SCREENING_ROOM_VIEWS: MangaView[] = [
   view({
     id: 'screening-room-overview',
     spaceId: 'tier-2-screening-room',
-    at: [-12.0, 29.75],
-    target: [-79.0, 29.75],
-    pitch: 0.05,
+    at: [-48.0, 29.75],
+    target: [-81.5, 29.75],
+    pitch: 0.08,
     chapter: 359,
     volume: 34,
-    label: 'Screening room overview — monumental proscenium stage, lateral boxes, and screen',
+    label:
+      'Screening room overview — supplied-panel framing of the proscenium, lateral boxes, and screen',
     labelFr:
-      "Vue d'ensemble de la salle de projection — scène monumentale à proscénium, loges latérales et écran",
+      "Vue d'ensemble de la salle de projection — cadrage de la case sur le proscénium, les loges latérales et l'écran",
   }),
   view({
     id: 'screening-room-stage-proscenium',
@@ -21,8 +22,8 @@ export const MANGA_SCREENING_ROOM_VIEWS: MangaView[] = [
     pitch: 0.06,
     chapter: 359,
     volume: 34,
-    label: 'The raised stage, briefing lectern, and illuminated projection screen',
-    labelFr: "L'estrade surélevée, le pupitre de briefing et l'écran de projection illuminé",
+    label: 'The raised stage, pleated backdrop and projection screen',
+    labelFr: "L'estrade surélevée, le rideau plissé et l'écran de projection",
   }),
   view({
     id: 'screening-room-vip-box',
@@ -30,23 +31,24 @@ export const MANGA_SCREENING_ROOM_VIEWS: MangaView[] = [
     at: [-62.0, 8.6],
     target: [-75.0, 29.75],
     pitch: -0.14,
-    eyeHeight: 5.6,
+    eyeHeight: 6.2,
     chapter: 359,
     volume: 34,
-    label: 'View from the elevated private VIP boxes over the stalls and proscenium',
-    labelFr: 'Vue plongeante depuis les loges privatives VIP sur le parterre et le proscénium',
+    label: 'Upper gallery overlooking the stalls and proscenium (reconstructed framing)',
+    labelFr: 'Galerie haute, vue sur le parterre et le cadre de scène (cadrage reconstitué)',
   }),
   view({
     id: 'screening-room-stage-looking-back',
     spaceId: 'tier-2-screening-room',
-    at: [-78.5, 16.5],
+    at: [-79.0, 40.0],
     target: [-12.0, 29.75],
     pitch: 0.02,
-    eyeHeight: 2.7,
+    eyeHeight: 3.0,
     chapter: 359,
     volume: 34,
-    label: 'View from the stage lectern facing the raked stalls, chandeliers, and projection booth',
+    label:
+      'View from the stage facing the rows of seats and side galleries (reconstructed framing)',
     labelFr:
-      'Vue depuis le pupitre de scène face aux gradins, aux lustres et à la cabine de projection',
+      'Vue depuis le plateau face aux rangées de sièges et aux galeries (cadrage reconstitué)',
   }),
 ]

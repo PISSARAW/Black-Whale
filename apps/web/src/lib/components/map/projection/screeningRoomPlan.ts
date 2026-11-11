@@ -3,7 +3,8 @@ import { structureFootprint } from '$lib/tour/geometry'
 import type { Vec2 } from '$lib/tour/types'
 
 const ship = theShip()
-const plan = ship.plans.get('tier-2')
+const plan = ship.plans.get('tier-2')!
+export const screeningRoom = ship.spaces.get('tier-2-screening-room')!
 
 export const SCREENING_VIEWBOX = { width: 1000, height: 560 }
 
@@ -12,6 +13,10 @@ export const screeningPoint = ([x, z]: Vec2) => ({
   x: (x + 87.5) * 10 + 60,
   y: (z - 7) * 10 + 75,
 })
+
+export const screeningDoors = plan.doorways
+  .filter((d) => [d.a, d.b].includes(screeningRoom.id))
+  .map((d) => ({ ...d, from: screeningPoint(d.start), to: screeningPoint(d.end) }))
 
 export function screeningSpot(at: Vec2) {
   const pt = screeningPoint(at)
@@ -48,7 +53,7 @@ const prosceniumStarboard = screeningFixtures.find(({ id }) => id.endsWith('-pro
 
 export const screeningRoomSpotAnchors = {
   occupants: {
-    briefingOfficer: screeningSpot([-79.2, 16.5]),
+    presenter: screeningSpot([-79.2, 16.5]),
     stallsCenter: screeningSpot([-43.75, 29.75]),
     vipPort: screeningSpot([-62.0, 8.6]),
     vipStarboard: screeningSpot([-62.0, 51.4]),
@@ -56,8 +61,6 @@ export const screeningRoomSpotAnchors = {
   stage: stage ? screeningSpot(stage.at) : screeningSpot([-81.6, 29.75]),
   screen: screen ? screeningSpot(screen.at) : screeningSpot([-84.6, 24.0]),
   curtain: curtain ? screeningSpot(curtain.at) : screeningSpot([-77.6, 29.75]),
-  lectern: screeningSpot([-79.2, 16.5]),
-  projectionBooth: screeningSpot([-0.4, 29.75]),
   prosceniumPort: prosceniumPort ? screeningSpot(prosceniumPort.at) : screeningSpot([-76.0, 12.0]),
   prosceniumStarboard: prosceniumStarboard
     ? screeningSpot(prosceniumStarboard.at)

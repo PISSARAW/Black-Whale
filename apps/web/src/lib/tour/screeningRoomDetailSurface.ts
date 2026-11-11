@@ -1,10 +1,12 @@
 import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
 
+export const SCREENING_STONE = 0xcec8b7
+export const SCREENING_RECESS = 0x77786f
 export const SCREENING_CARPET = 0x241c28
 export const SCREENING_WALL_FABRIC = 0x4d354e
 export const SCREENING_WOOD_MAHOGANY = 0x35221b
 export const SCREENING_WOOD_TRIM = 0x4a3227
-export const SCREENING_GOLD_LEAF = 0xd4af37
+export const SCREENING_GOLD_LEAF = 0xada184
 export const SCREENING_BRASS = 0xbe9c48
 export const SCREENING_CURTAIN_CRIMSON = 0x6d1323
 export const SCREENING_CURTAIN_DARK = 0x4a0d18

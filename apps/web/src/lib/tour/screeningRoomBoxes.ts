@@ -1,151 +1,112 @@
+import type { Structure } from './types'
 import {
-  SCREENING_CARPET,
+  SCREENING_STONE,
+  SCREENING_RECESS,
   SCREENING_GOLD_LEAF,
-  SCREENING_SEAT_FRAME,
-  SCREENING_SEAT_VELVET,
-  SCREENING_WARM_GLOW,
-  SCREENING_WOOD_MAHOGANY,
-  SCREENING_WOOD_TRIM,
   type ScreeningRoomSurface,
 } from './screeningRoomDetailSurface'
+import { screeningScroll } from './screeningRoomOrnaments'
 
-export interface BoxesContext {
+interface BoxesContext {
   surface: ScreeningRoomSurface
   floor: number
+  structures: Structure[]
 }
 
-interface BoxGalleryDef {
-  x: number
-  z: number
-  length: number
-  width: number
-  isPort: boolean
-}
-
-function corbelBracket(
-  surface: ScreeningRoomSurface,
-  at: [number, number, number],
-  isPort: boolean,
-): void {
-  const [x, y, z] = at
-  const dz = isPort ? 0.4 : -0.4
-  // Upper bracket horizontal plate
-  surface.box([0.3, 0.12, 0.9], [x, y - 0.06, z + dz], SCREENING_WOOD_MAHOGANY)
-  // Diagonal carved scroll strut
-  surface.box([0.22, 0.65, 0.22], [x, y - 0.4, z + dz * 0.7], SCREENING_GOLD_LEAF)
-  // Wall mount plinth
-  surface.box([0.32, 0.8, 0.1], [x, y - 0.45, z + (isPort ? -0.1 : 0.1)], SCREENING_WOOD_TRIM)
-}
-
-function vipArmchair(surface: ScreeningRoomSurface, at: [number, number, number]): void {
-  const [x, y, z] = at
-  // Plinth legs
-  surface.box([0.55, 0.08, 0.55], [x, y + 0.04, z], SCREENING_SEAT_FRAME)
-  // Plush seat cushion
-  surface.box([0.52, 0.16, 0.5], [x, y + 0.28, z], SCREENING_SEAT_VELVET)
-  // Deep buttoned velvet backrest
-  surface.box([0.14, 0.52, 0.48], [x - 0.2, y + 0.58, z], SCREENING_SEAT_VELVET)
-  // Padded arms
-  for (const dz of [-0.26, 0.26]) {
-    surface.box([0.48, 0.22, 0.08], [x, y + 0.44, z + dz], SCREENING_SEAT_VELVET)
-    surface.box([0.49, 0.03, 0.09], [x, y + 0.56, z + dz], SCREENING_WOOD_TRIM)
+function balustrade(context: BoxesContext, rail: Structure): void {
+  const { surface, floor } = context,
+    [x, z] = rail.at,
+    [length, depth] = rail.size,
+    y = floor + rail.base
+  for (const h of [0.04, rail.height - 0.06])
+    surface.box([length, 0.08, depth], [x, y + h, z], SCREENING_STONE)
+  const count = Math.floor((length - 0.3) / 0.6),
+    pitch = (length - 0.3) / count
+  for (let i = 0; i <= count; i++) {
+    const bx = x - length / 2 + 0.15 + i * pitch
+    for (const [radius, bottom, h, cy] of [
+      [0.045, 0.065, 0.18, 0.17],
+      [0.06, 0.035, 0.3, 0.41],
+      [0.035, 0.06, 0.18, 0.65],
+    ]) {
+      surface.cylinder({ radius, bottom, height: h, sides: 8 }, [bx, y + cy, z], {
+        colour: SCREENING_STONE,
+      })
+    }
   }
 }
 
-function logePartition(
-  surface: ScreeningRoomSurface,
-  at: [number, number, number],
-  width: number,
-): void {
-  const [x, y, z] = at
-  // Low dividing wall between loges
-  surface.box([0.12, 0.9, width - 0.1], [x, y + 0.45, z], SCREENING_WOOD_MAHOGANY)
-  surface.box([0.14, 0.08, width], [x, y + 0.92, z], SCREENING_GOLD_LEAF)
-}
+function lowerLoges(context: BoxesContext, gallery: Structure): void {
+  const { surface, floor } = context,
+    [x, z] = gallery.at,
+    length = gallery.size[0]
+  const inward = z < 29.75 ? 1 : -1,
+    face = z + (inward * gallery.size[1]) / 2,
+    bays = Math.max(1, Math.round(length / 5.2)),
+    pitch = length / bays
+  const top = gallery.base,
+    bottom = 0.65
+  for (let i = 0; i < bays; i++) {
+    const bx = x - length / 2 + (i + 0.5) * pitch
+    // Dark framed upper openings sit behind the turned balusters, as in the panel.
+    const upper = floor + gallery.base + gallery.height
+    surface.box([pitch - 0.45, 4.65, 0.035], [bx, upper + 2.4, z], SCREENING_RECESS)
+    for (const sign of [-1, 1]) {
+      surface.box(
+        [0.2, 4.65, 0.2],
+        [bx + sign * (pitch / 2 - 0.1), upper + 2.4, face],
+        SCREENING_STONE,
+      )
+      surface.box(
+        [0.3, 0.16, 0.27],
+        [bx + sign * (pitch / 2 - 0.1), upper + 4.65, face],
+        SCREENING_GOLD_LEAF,
+      )
+    }
+    surface.box([pitch, 0.15, 0.2], [bx, upper + 4.72, face], SCREENING_STONE)
 
-function dressGalleryBalustrade(
-  surface: ScreeningRoomSurface,
-  gallery: BoxGalleryDef,
-  boxY: number,
-): void {
-  const { x, z, length, width, isPort } = gallery
-  const frontZ = z + (isPort ? width / 2 : -width / 2)
-
-  // Balustrade base rail
-  surface.box([length, 0.1, 0.14], [x, boxY + 0.05, frontZ], SCREENING_WOOD_MAHOGANY)
-
-  // Turned gold balusters along the gallery front
-  const numBalusters = Math.floor(length / 0.7)
-  const stepX = length / numBalusters
-  for (let i = 0; i <= numBalusters; i++) {
-    const bx = x - length / 2 + i * stepX
-    surface.cylinder({ radius: 0.035, height: 0.72, sides: 8 }, [bx, boxY + 0.46, frontZ], {
-      colour: SCREENING_GOLD_LEAF,
-    })
-  }
-
-  // Top velvet-padded handrail
-  surface.box([length + 0.1, 0.12, 0.2], [x, boxY + 0.88, frontZ], SCREENING_SEAT_VELVET)
-  surface.box([length + 0.1, 0.03, 0.22], [x, boxY + 0.82, frontZ], SCREENING_GOLD_LEAF)
-}
-
-function dressSingleBoxGallery(
-  surface: ScreeningRoomSurface,
-  gallery: BoxGalleryDef,
-  floor: number,
-): void {
-  const { x, z, length, width, isPort } = gallery
-  const boxY = floor + 4.4
-
-  // Main box floor platform (carpeted top, mahogany soffit)
-  surface.box([length, 0.18, width], [x, boxY - 0.09, z], SCREENING_WOOD_MAHOGANY)
-  surface.box([length - 0.1, 0.02, width - 0.1], [x, boxY + 0.01, z], SCREENING_CARPET)
-
-  // Corbel brackets supporting gallery from the lateral wall
-  const bracketCount = Math.floor(length / 3.4)
-  const bracketStep = length / bracketCount
-  for (let i = 0; i <= bracketCount; i++) {
-    const corbelX = x - length / 2 + i * bracketStep
-    corbelBracket(surface, [corbelX, boxY, z], isPort)
-    // Under-gallery soffit downlight
-    surface.glowingSphere([0.05, 0.05, 0.05], [corbelX, boxY - 0.18, z], SCREENING_WARM_GLOW)
-  }
-
-  // Front ornate balustrade
-  dressGalleryBalustrade(surface, gallery, boxY)
-
-  // Partitions dividing into 5 individual private loges
-  const loges = 5
-  const logeStep = length / loges
-  for (let i = 0; i <= loges; i++) {
-    logePartition(surface, [x - length / 2 + i * logeStep, boxY, z], width)
-  }
-
-  // VIP armchairs and cocktail tables inside each loge
-  for (let i = 0; i < loges; i++) {
-    const logeCenterX = x - length / 2 + (i + 0.5) * logeStep
-    vipArmchair(surface, [logeCenterX - 0.7, boxY, z])
-    vipArmchair(surface, [logeCenterX + 0.7, boxY, z])
-    // Small mahogany drink table
-    surface.cylinder({ radius: 0.18, height: 0.48, sides: 12 }, [logeCenterX, boxY + 0.24, z], {
-      colour: SCREENING_WOOD_MAHOGANY,
-    })
-    surface.box([0.42, 0.02, 0.42], [logeCenterX, boxY + 0.49, z], SCREENING_GOLD_LEAF)
+    surface.box(
+      [pitch - 0.45, top - bottom, 0.035],
+      [bx, floor + (top + bottom) / 2, z],
+      SCREENING_RECESS,
+    )
+    surface.box([pitch - 0.42, 0.72, 0.12], [bx, floor + bottom + 0.36, face], SCREENING_STONE)
+    for (const h of [bottom + 0.06, bottom + 0.66])
+      surface.box(
+        [pitch - 0.6, 0.045, 0.06],
+        [bx, floor + h, face + inward * 0.09],
+        SCREENING_GOLD_LEAF,
+      )
+    surface.into.ring(
+      { radius: 0.12, tube: 0.018 },
+      { at: [bx, floor + bottom + 0.36, face + inward * 0.1], colour: SCREENING_GOLD_LEAF },
+    )
+    for (const sign of [-1, 1]) {
+      surface.box(
+        [0.17, top - 0.08, 0.22],
+        [bx + sign * (pitch / 2 - 0.1), floor + top / 2, face],
+        SCREENING_STONE,
+      )
+      screeningScroll(surface, [bx + sign * 0.45, floor + bottom + 0.36, face + inward * 0.09], {
+        scale: 0.35,
+        side: sign,
+        front: false,
+      })
+    }
+    surface.box([pitch, 0.18, 0.35], [bx, floor + top - 0.14, face], SCREENING_STONE)
   }
 }
 
-/** Complete elevated private boxes (loges) lining both lateral walls of the Screening Room. */
 export function dressScreeningRoomBoxes(context: BoxesContext): void {
-  const { surface, floor } = context
-
-  const galleries: readonly BoxGalleryDef[] = [
-    { x: -62, z: 8, length: 26, width: 1.2, isPort: true },
-    { x: -27, z: 8, length: 26, width: 1.2, isPort: true },
-    { x: -62, z: 51.5, length: 26, width: 1.2, isPort: false },
-    { x: -27, z: 51.5, length: 26, width: 1.2, isPort: false },
-  ]
-
-  for (const gallery of galleries) {
-    dressSingleBoxGallery(surface, gallery, floor)
+  for (const s of context.structures) {
+    if (s.id.includes('-boxes-')) {
+      context.surface.box(
+        [s.size[0], s.height, s.size[1]],
+        [s.at[0], context.floor + s.base + s.height / 2, s.at[1]],
+        SCREENING_STONE,
+      )
+      lowerLoges(context, s)
+    }
+    if (s.id.includes('-balustrade-')) balustrade(context, s)
   }
 }

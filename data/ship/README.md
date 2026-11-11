@@ -826,7 +826,9 @@ Le second : **ce qu'une planche montre est ce que la pièce est** —
   désigne ; la reconstruction le place à l'avant et l'écrit ;
 - le pont des canots est les capsules alignées sur leurs berceaux (chap. 383) ;
 - la salle de projection est sa scène à cadre sous rideau, ses loges et son
-  parterre (chap. 359) ;
+  parterre (chap. 359). La relecture de la case fournie, les loges à deux
+  registres et les accès parcourus sont détaillés dans
+  [`screening-room-audit.md`](screening-room-audit.md) ;
 - une salle du cinéplexe est son **écran** : le plan n'en dessine pas
   l'intérieur, mais il nomme les huit salles d'après l'écran qu'elles portent,
   et une salle appelée « Screen 4 » sans écran serait une pièce vide. L'écran se

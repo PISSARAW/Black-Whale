@@ -1,4 +1,6 @@
 import type { MissionId } from './missions/types'
+import type { InfiltrationState } from './state'
+import { securityPolicy } from './security'
 
 export interface CampaignState {
   version: 1
@@ -47,5 +49,34 @@ export function applyConsequences(
       ...campaign.sources,
       ...(result.recruitedSource ? [result.recruitedSource] : []),
     ]),
+  }
+}
+
+/** Applies remembered operational consequences before the next mission starts. */
+export function applyCampaignContext(
+  state: InfiltrationState,
+  campaign: CampaignState,
+): InfiltrationState {
+  const coverCompromised = campaign.compromisedRoles.includes(state.cover.role)
+  const knownProcedure = campaign.procedures.at(-1)
+  const startingLevel =
+    coverCompromised || knownProcedure === 'identified'
+      ? 'doubt'
+      : knownProcedure === 'lockdown'
+        ? 'search'
+        : 'normal'
+  if (!coverCompromised && startingLevel === 'normal') return state
+
+  return {
+    ...state,
+    coverIntegrity: coverCompromised ? 65 : state.coverIntegrity,
+    alertLevel: startingLevel,
+    security: securityPolicy(startingLevel, state.extractionSpaceId),
+    witnesses: state.witnesses.map((witness) => ({
+      ...witness,
+      belief: coverCompromised
+        ? { ...witness.belief, certainty: 15, identity: 'unknown' }
+        : witness.belief,
+    })),
   }
 }

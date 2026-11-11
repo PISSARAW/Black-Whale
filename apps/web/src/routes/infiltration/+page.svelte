@@ -49,6 +49,7 @@
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
   import {
     applyConsequences,
+    applyCampaignContext,
     initialCampaign,
     type CampaignState,
   } from '$lib/infiltration/campaign'
@@ -90,7 +91,10 @@
 
   function freshGame() {
     const selection = selectMission(selectedMission, defaultSeed)
-    return initialInfiltrationState(missionSetup({ selection, arena, graph }))
+    return applyCampaignContext(
+      initialInfiltrationState(missionSetup({ selection, arena, graph })),
+      campaign,
+    )
   }
 
   let game = $state(freshGame())

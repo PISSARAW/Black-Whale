@@ -44,15 +44,15 @@
     type Impact,
   } from '$lib/combat/types'
   import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
-  import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
+  import { EMPTY_WORLD } from '$lib/tour/hatsu'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { activeHatsu, closeHatsuGate, hatsuPanelOpen, openHatsuGate } from '$lib/nen/hatsuState'
   import { ModeNenState } from '$lib/nen/modeState.svelte'
   import type { Apparition } from '$lib/tour/apparitions'
-  import type { Space, Vec2, WallSegment } from '$lib/tour/types'
-  import type { Structure } from '$lib/tour/types'
-  import { structureFootprint } from '$lib/tour/geometry'
+  import type { Space, Structure, Vec2 } from '$lib/tour/types'
+  import { reconcileWalk } from '$lib/arena/walkSync'
+  import { blockerAt, distance, facing, isMovement, solidCentre } from '$lib/arena/sceneGeometry'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import './arena.css'
@@ -91,9 +91,7 @@
   function selectTier(id: string) {
     tierId = id
     const newPlan = ship.plans.get(id)
-    if (newPlan) {
-      plan = newPlan
-    }
+    if (newPlan) plan = newPlan
   }
 
   const crossings = $derived(crossingsOn(ship, tierId))
@@ -107,6 +105,8 @@
   let jumpTo = $state<string | null>(terrain.id)
   let jumpAt = $state<Vec2 | null>(terrain.spawns[0])
   let jumpHeading = $state<number | null>(facing(terrain.spawns[0], terrain.spawns[1]))
+  let jumpPitch = $state<number | null>(null)
+  let agreed: Vec2 = terrain.spawns[0]
   let frame = 0
   let owed = 0
   let last = 0
@@ -202,7 +202,7 @@
       pick: true,
     },
   ])
-  let opponentWalls = $derived(blockerAt(game.opponent.position))
+  let opponentWalls = $derived(blockerAt(game.opponent.position, terrain.id))
   let selectedChallenge = $derived(
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
   )
@@ -219,14 +219,6 @@
     if (objective.kind === 'blocks')
       return `${$locale === 'fr' ? 'Blocages réussis' : 'Successful blocks'} × ${objective.count}`
     return `${$locale === 'fr' ? 'Utiliser' : 'Use'} ${objective.action} × ${objective.count}`
-  }
-
-  function polygonCentre(points: Vec2[]): Vec2 {
-    const sum = points.reduce<Vec2>(
-      (total, point) => [total[0] + point[0], total[1] + point[1]],
-      [0, 0],
-    )
-    return [sum[0] / points.length, sum[1] / points.length]
   }
 
   function freshGame() {
@@ -347,9 +339,7 @@
         hatsuId: carriedHatsu?.id,
         cost: hatsuDefinition?.cost,
         targetAt:
-          carriedHatsu?.id === 'bungee-gum' && aimedSolidAt
-            ? polygonCentre(structureFootprint(aimedSolidAt))
-            : undefined,
+          carriedHatsu?.id === 'bungee-gum' && aimedSolidAt ? solidCentre(aimedSolidAt) : undefined,
       },
       'hatsu',
     )
@@ -383,29 +373,19 @@
     event.preventDefault()
   }
 
-  function isMovement(code: string): boolean {
-    return [
-      'KeyW',
-      'KeyZ',
-      'KeyS',
-      'KeyA',
-      'KeyQ',
-      'KeyD',
-      'ArrowUp',
-      'ArrowDown',
-      'ArrowLeft',
-      'ArrowRight',
-    ].includes(code)
-  }
-
   function reportWalk() {
-    if (Math.abs(heading - game.player.facing) > 0.001) {
-      send({ type: 'FACE', side: 'player', heading })
-    }
-    if (distance(position, game.player.position) >= 0.001) {
-      started = true
-      send({ type: 'SYNC_POSITION', side: 'player', position })
-    }
+    const frame = { camera: [position[0], position[1]] as Vec2, heading, state: game, agreed }
+    const correction = reconcileWalk(frame, (action) => {
+      send(action)
+      return game
+    })
+    agreed = [game.player.position[0], game.player.position[1]]
+    if (!correction) return
+    position = [correction[0], correction[1]]
+    jumpTo = terrain.id
+    jumpAt = position
+    jumpHeading = heading
+    jumpPitch = lookPitch
   }
 
   function tick(now: number) {
@@ -556,29 +536,6 @@
     motionTimers.add(timer)
   }
 
-  function blockerAt(at: Vec2): WallSegment[] {
-    const radius = 0.55
-    const corners: Vec2[] = [
-      [at[0] - radius, at[1] - radius],
-      [at[0] + radius, at[1] - radius],
-      [at[0] + radius, at[1] + radius],
-      [at[0] - radius, at[1] + radius],
-    ]
-    return corners.map((start, index) => ({
-      spaceId: terrain.id,
-      start,
-      end: corners[(index + 1) % corners.length],
-    }))
-  }
-
-  function facing(from: Vec2, to: Vec2): number {
-    return Math.atan2(from[0] - to[0], from[1] - to[1])
-  }
-
-  function distance(a: Vec2, b: Vec2): number {
-    return Math.hypot(a[0] - b[0], a[1] - b[1])
-  }
-
   onMount(() => {
     const sharedReplay = replayFromUrl(window.location.href)
     if (sharedReplay) {
@@ -631,10 +588,6 @@
     {crossings}
     {nameOf}
     onSelectDeck={selectTier}
-    onSelectPlan={(space) => {
-      position = centroid(space)
-      currentSpace = space
-    }}
   />
   <h1 class="sr-only">{$t.arena.title}</h1>
 
@@ -703,9 +656,9 @@
     bind:jumpTo
     bind:jumpAt
     bind:jumpHeading
+    bind:jumpPitch
     world={EMPTY_WORLD}
     nen={playerNen}
-    showNenControls={true}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
     extras={opponentActor}

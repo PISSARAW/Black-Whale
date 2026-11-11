@@ -39,6 +39,19 @@ const STYLES: SourceBoundInteriorStyle[] = [
     floorPattern: 'bands',
     ceilingPattern: 'coffers',
   },
+  {
+    locationId: 'tier-3-heilly-family-office',
+    name: 'registered-heilly-office',
+    floor: 0x2c2926,
+    wall: 0x504a43,
+    ceiling: 0x292622,
+    wood: 0x3c2b22,
+    metal: 0x67645f,
+    fabric: 0x463832,
+    accent: 0x8b5f3f,
+    floorPattern: 'grid',
+    ceilingPattern: 'services',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

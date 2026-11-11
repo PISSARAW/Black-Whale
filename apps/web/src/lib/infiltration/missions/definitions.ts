@@ -16,6 +16,7 @@ const variants = (prefix: string): MissionDefinition['variants'] => [
 export const MISSIONS: Record<MissionId, MissionDefinition> = {
   'missing-report': {
     id: 'missing-report',
+    terrain: 'tserriednich',
     duration: 10 * 60,
     witnesses: commonWitnesses,
     teaching: ['movement', 'vision', 'sound', 'social', 'nen', 'traces', 'hatsu'],
@@ -28,6 +29,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
   },
   courier: {
     id: 'courier',
+    terrain: 'tubeppa',
     duration: 15 * 60,
     witnesses: commonWitnesses,
     teaching: ['vision', 'sound', 'social', 'hatsu'],
@@ -40,6 +42,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
   },
   'listening-device': {
     id: 'listening-device',
+    terrain: 'tserriednich',
     duration: 12 * 60,
     witnesses: commonWitnesses,
     teaching: ['sound', 'social', 'traces', 'nen'],
@@ -52,6 +55,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
   },
   'compromised-shift': {
     id: 'compromised-shift',
+    terrain: 'tubeppa',
     duration: 16 * 60,
     witnesses: commonWitnesses,
     teaching: ['social', 'traces', 'nen', 'hatsu'],
@@ -64,6 +68,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
   },
   'impossible-witness': {
     id: 'impossible-witness',
+    terrain: 'tserriednich',
     duration: 18 * 60,
     witnesses: commonWitnesses,
     teaching: ['social', 'vision', 'sound', 'traces'],
@@ -77,6 +82,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
   },
   'three-princes': {
     id: 'three-princes',
+    terrain: 'tubeppa',
     duration: 20 * 60,
     witnesses: commonWitnesses,
     teaching: ['social', 'nen', 'traces', 'hatsu'],

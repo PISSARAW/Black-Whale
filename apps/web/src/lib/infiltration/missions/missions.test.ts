@@ -10,6 +10,7 @@ import {
 } from './objectives'
 import { seedFromText } from './random'
 import { validateMission } from './validate'
+import { groundForMission } from './setup'
 
 describe('infiltration V2 missions', () => {
   it('defines three valid missions with three variants each', () => {
@@ -21,6 +22,13 @@ describe('infiltration V2 missions', () => {
   it('replays a seed exactly', () => {
     const seed = seedFromText('publication-run')
     expect(selectMission('courier', seed)).toEqual(selectMission('courier', seed))
+  })
+  it('places missions on their declared ship terrain', () => {
+    const report = groundForMission(selectMission('missing-report', 1))
+    const courier = groundForMission(selectMission('courier', 1))
+    expect(report.arena.id).toBe('tserriednich')
+    expect(courier.arena.id).toBe('tubeppa')
+    expect(courier.graph.nodes.length).toBeGreaterThan(0)
   })
   it('keeps material completion separate from truth', () => {
     let objectives = initialObjectives(MISSIONS['missing-report'].objectives)

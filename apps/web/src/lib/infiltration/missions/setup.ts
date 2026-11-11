@@ -1,5 +1,5 @@
-import type { Arena } from '../../hunt/arena'
-import type { NavGraph } from '../../hunt/navmesh'
+import { buildArena, type Arena } from '../../hunt/arena'
+import { buildNavGraph, type NavGraph } from '../../hunt/navmesh'
 import { centroid } from '../../tour/hatsu'
 import { interiorPoint } from '../../tour/geometry'
 import type { MissionSetup } from '../state'
@@ -9,6 +9,11 @@ export interface MissionGround {
   selection: MissionSelection
   arena: Arena
   graph: NavGraph
+}
+
+export function groundForMission(selection: MissionSelection): MissionGround {
+  const arena = buildArena(selection.definition.terrain)
+  return { selection, arena, graph: buildNavGraph(arena) }
 }
 
 /**

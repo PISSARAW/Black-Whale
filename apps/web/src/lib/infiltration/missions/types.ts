@@ -1,4 +1,5 @@
 import type { WitnessId } from '../state'
+import type { HuntTerrainId } from '../../hunt/arena'
 
 export type MissionId =
   | 'missing-report'
@@ -39,6 +40,7 @@ export interface MissionVariant {
 
 export interface MissionDefinition {
   id: MissionId
+  terrain: HuntTerrainId
   duration: number
   objectives: ObjectiveDefinition[]
   witnesses: WitnessDefinition[]

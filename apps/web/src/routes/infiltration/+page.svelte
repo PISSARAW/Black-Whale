@@ -58,16 +58,16 @@
 
   const modeNen = new ModeNenState()
   const ship = theShip()
-  const arena = buildArena()
-  const graph = buildNavGraph(arena)
-  const environment = buildInfiltrationEnvironment(arena)
-  let plan = $state(ship.plans.get(arena.tierId)!)
-  const extraction = arena.spaces[0]
   const defaultSeed = seedFromText('black-whale-v2')
   const forgerySurfaces: ForgerySurface[] = ['work-order', 'door-sign', 'register-copy']
   const disguiseIdentities: CoverRole[] = ['maintenance', 'security', 'service', 'messenger']
   let selectedMission = $state<MissionId>('missing-report')
   let campaign = $state<CampaignState>(initialCampaign())
+  let arena = $derived(buildArena(MISSIONS[selectedMission].terrain))
+  let graph = $derived(buildNavGraph(arena))
+  let environment = $derived(buildInfiltrationEnvironment(arena))
+  let plan = $derived(ship.plans.get(arena.tierId)!)
+  let extraction = $derived(arena.spaces[0])
 
   const roomName = (space: Space | undefined | null) =>
     space ? ($locale === 'fr' ? space.nameFr : space.name) : '—'
@@ -77,7 +77,7 @@
     return $locale === 'fr' ? entity.nameFr : entity.name
   }
 
-  let tierId = $state(arena.tierId)
+  let tierId = $derived(arena.tierId)
 
   const crossings = $derived(crossingsOn(ship, tierId))
   // The mission is played on one deck: the minimap shows it, and offers no

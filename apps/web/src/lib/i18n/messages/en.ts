@@ -2513,6 +2513,8 @@ export const en = {
       identify: 'Confirm the target identity.',
       follow: 'Follow the target to the handoff point.',
       plant: 'Plant the listening device in the target area.',
+      escort: 'Escort the witness to safety.',
+      duty: 'Complete the assigned operational duty.',
       extract: 'Reach the extraction point.',
     },
     v3: {

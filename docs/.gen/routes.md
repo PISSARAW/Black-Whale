@@ -18,8 +18,8 @@
 | `hunt` | `+page.svelte` |
 | `hunt/editor` | `+page.svelte` |
 | `infiltration` | `+page.svelte` |
-| `investigation` | `+page.svelte` |
-| `investigation/[caseId]` | `+page.svelte`, `+page.ts` |
+| `investigation` | `+page.server.ts`, `+page.svelte` |
+| `investigation/[caseId]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `knowledge/[character]` | `+page.server.ts`, `+page.svelte` |
 | `perspectives` | `+page.server.ts`, `+page.svelte` |
 | `perspectives/[character]` | `+page.server.ts`, `+page.svelte` |

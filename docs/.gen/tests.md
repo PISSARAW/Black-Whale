@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 396
+Fichiers : 425
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -259,6 +259,10 @@ Fichiers : 396
 
 - Hunt hatsu adapters > takes its identity from the authoritative ability module
 
+## `apps/web/src/lib/hunt/hatsuIntel.test.ts`
+
+- unknown Hatsu identification > does not narrow hypotheses from weak testimony
+
 ## `apps/web/src/lib/hunt/hatsuPresentation.test.ts`
 
 - Hunt Hatsu presentation through TourScene > projects live Bungee Gum placements as native gum traps
@@ -356,6 +360,10 @@ Fichiers : 396
 - the figure handed to the scene > stands where he stands, with his feet on the floor of the room
 - what it deliberately does not do > says nothing about what he believes
 
+## `apps/web/src/lib/hunt/social.test.ts`
+
+- reactive Hunt factions > turns a witnessed Nen manifestation into a sourced report and alert
+
 ## `apps/web/src/lib/hunt/state.test.ts`
 
 - the game state > starts full, in Ten, with nothing laid down
@@ -370,6 +378,10 @@ Fichiers : 396
 
 - the journal > extracts each actor room trajectory without frame noise
 - the ceiling on it > holds a whole game and then stops rather than dropping the opening
+
+## `apps/web/src/lib/hunt/traces.test.ts`
+
+- persistent Hunt traces > ages signatures according to their nature
 
 ## `apps/web/src/lib/hunt/tutorial.test.ts`
 
@@ -423,9 +435,17 @@ Fichiers : 396
 
 - causal debrief > keeps material success, information and cover independent
 
+## `apps/web/src/lib/infiltration/environment.test.ts`
+
+- shared infiltration environment > shortens sight in dim rooms without defeating geometry
+
 ## `apps/web/src/lib/infiltration/expandedHatsu.test.ts`
 
 - Black Whale infiltration Hatsu > exposes only the thirteen supported onboard abilities
+
+## `apps/web/src/lib/infiltration/factions.test.ts`
+
+- faction-scoped infiltration knowledge > shares a steward report with ship security but not unrelated Hunters
 
 ## `apps/web/src/lib/infiltration/hatsuSpatial.test.ts`
 
@@ -434,6 +454,18 @@ Fichiers : 396
 ## `apps/web/src/lib/infiltration/missions/missions.test.ts`
 
 - infiltration V2 missions > defines three valid missions with three variants each
+
+## `apps/web/src/lib/infiltration/missions/reference.test.ts`
+
+- reference infiltration mission > covers every core system and offers multiple routes
+
+## `apps/web/src/lib/infiltration/nenContracts.test.ts`
+
+- shared Nen contracts in infiltration > takes executable costs and conditions from ability modules when available
+
+## `apps/web/src/lib/infiltration/nenCounter.test.ts`
+
+- Nen counter-infiltration > lets En neutralize a scout in range without locating its user
 
 ## `apps/web/src/lib/infiltration/patrol.test.ts`
 
@@ -461,6 +493,10 @@ Fichiers : 396
 
 - composable cover > explains permissions and contradictions independently
 
+## `apps/web/src/lib/infiltration/social/dialogue.test.ts`
+
+- bounded contextual NPC dialogue > offers only claims backed by the current cover
+
 ## `apps/web/src/lib/infiltration/sound.test.ts`
 
 - infiltration sound > makes running louder than walking
@@ -485,9 +521,17 @@ Fichiers : 396
 
 - investigation case registry > loads a localized case by stable slug
 
+## `apps/web/src/lib/investigation/conclusion.test.ts`
+
+- composed investigation conclusions > resolves a coherent set of independent facets
+
 ## `apps/web/src/lib/investigation/confrontation.test.ts`
 
 - witness confrontation > deduces separate visibility rules from Loberry and Furykov
+
+## `apps/web/src/lib/investigation/continuity.test.ts`
+
+- linked investigation cases > keeps a linked case locked until every prerequisite is solved
 
 ## `apps/web/src/lib/investigation/definition.test.ts`
 
@@ -524,6 +568,10 @@ Fichiers : 396
 ## `apps/web/src/lib/investigation/logLabels.test.ts`
 
 - notebook log labels > reads entries written in French back in the current language
+
+## `apps/web/src/lib/investigation/notebookGraph.test.ts`
+
+- spatial and relational investigation notebook > never exposes an undiscovered evidence node
 
 ## `apps/web/src/lib/investigation/portfolio.test.ts`
 
@@ -801,6 +849,10 @@ Fichiers : 396
 
 - Strategy Hatsu audiovisual presentation > gives every playable Hatsu a manifestation, sound and lifetime
 
+## `apps/web/src/lib/strategy/movement.test.ts`
+
+- strategy movement routes > finds a deterministic route and respects closed passages
+
 ## `apps/web/src/lib/strategy/rules.test.ts`
 
 - strategy rules > prices a mixed plan against the command budget
@@ -812,6 +864,10 @@ Fichiers : 396
 ## `apps/web/src/lib/strategy/scenario/scenario-v2.test.ts`
 
 - StrategyScenarioV2 > registers the versioned guards scenario
+
+## `apps/web/src/lib/strategy/simultaneous.test.ts`
+
+- simultaneous strategy orders > reveals both plans before a conditional guard reacts
 
 ## `apps/web/src/lib/strategy/tacticalAI.test.ts`
 
@@ -1036,6 +1092,10 @@ Fichiers : 396
 
 - the world state, in slug space > turns a body’s owner into the id the catalogue files them under
 
+## `apps/web/src/lib/tour/centralCourthouseFidelity.test.ts`
+
+- the Central Courthouse plan > keeps only the six fixtures named by the courtroom plan
+
 ## `apps/web/src/lib/tour/chaROfficeView.test.ts`
 
 - the Cha-R family office reconstructed from chapters 379 and 380 > satisfies blueprint invariants for all rooms of the office
@@ -1102,6 +1162,10 @@ Fichiers : 396
 - how the dust moves > rises, and puts a mote that reaches the deckhead back on the floor
 - the dust registering that someone went through it > moves the motes a shove reaches and leaves the rest alone
 
+## `apps/web/src/lib/tour/eiIOfficeFidelity.test.ts`
+
+- the Ei-I office cutaway > keeps the plan-established volume empty
+
 ## `apps/web/src/lib/tour/emperor.test.ts`
 
 - the ledger, which is the ability > starts at nothing and spends the canon’s own rate
@@ -1115,6 +1179,10 @@ Fichiers : 396
 - the exhibit for a tagged model detail > carries its own bilingual evidence without becoming a solid
 - what the visitor is handed for asking > prefers the solid: aiming at a thing is how you say which you meant
 - the claims table covers the ship > states what every kind of solid actually on board asserts
+
+## `apps/web/src/lib/tour/firstClassResidentialFidelity.test.ts`
+
+- the published first-class residential plan > keeps six cabins, six WC cells and only the drawn beds and storage
 
 ## `apps/web/src/lib/tour/floorPattern.test.ts`
 
@@ -1162,7 +1230,7 @@ Fichiers : 396
 ## `apps/web/src/lib/tour/godRays.test.ts`
 
 - where the light is taken to come from > anchors on the middle of the opening in plan
-- which decks have shafts at all > finds the observation-deck opening the manga draws, and no second
+- which decks have shafts at all > finds every opening the manga draws
 - how hard the shafts blow > is at full strength with the window dead ahead
 
 ## `apps/web/src/lib/tour/gum.test.ts`
@@ -1227,6 +1295,10 @@ Fichiers : 396
 ## `apps/web/src/lib/tour/heillyHideoutView.test.ts`
 
 - the Heil-Ly secret hideout reconstructed from chapters 394, 398, 399 and 407 > satisfies blueprint invariants for all rooms of the hideout
+
+## `apps/web/src/lib/tour/heillyOfficeFidelity.test.ts`
+
+- the registered Heil-Ly office > keeps the published office and entrance sparse
 
 ## `apps/web/src/lib/tour/hospitalView.test.ts`
 
@@ -1327,7 +1399,7 @@ Fichiers : 396
 - the deck plating > lays a course under every room with a floor
 - the depth of a doorway > gives every opening two cheeks, in the list collision reads
 - the ceiling fittings > draws fallback fittings on the light grid and leaves modelled fixtures to their room
-- the observation-deck window > types the observation-deck opening, drawn by a panel
+- the ship windows > types every panel-sourced opening
 
 ## `apps/web/src/lib/tour/momozeView.test.ts`
 
@@ -1357,11 +1429,19 @@ Fichiers : 396
 
 - Morena shared challenges > round-trips a compact, language-neutral invitation
 
+## `apps/web/src/lib/tour/morenaCommands.test.ts`
+
+- Morena commands > uses the same deterministic reducer path for DOM and 3D questions
+
 ## `apps/web/src/lib/tour/morenaHands.test.ts`
 
 - what the hands can reach > offers her seven questions while there are questions to spend
 - playing by hand > spends the question the card in her fan is
 - the table, marked for a pair of hands > marks exactly the cards the rules say are moves
+
+## `apps/web/src/lib/tour/morenaSession.test.ts`
+
+- Morena session > owns the menu, setup choice and live game
 
 ## `apps/web/src/lib/tour/navigation.test.ts`
 
@@ -1410,6 +1490,10 @@ Fichiers : 396
 
 - the Tier 1 escape pod cabin reconstructed from chapter 383 > satisfies blueprint invariants for the pod cabin space
 
+## `apps/web/src/lib/tour/policeDormFidelity.test.ts`
+
+- the Central Police dorm room > does not invent an interior for the catalogue-only room
+
 ## `apps/web/src/lib/tour/policeStationView.test.ts`
 
 - the central police station reconstructed from chapters 349, 378 and 393 > satisfies the shared blueprint invariants for the police spaces
@@ -1448,6 +1532,10 @@ Fichiers : 396
 - the visitor overruling the detection > defers to the detection on auto
 - what a palier switches on > turns off everything that costs a second pass over the frame, on low
 
+## `apps/web/src/lib/tour/queenApartmentView.test.ts`
+
+- the other queens share a reconstructed residential programme > keeps the common programme separate from Camilla’s published dining scene and Unma’s nursery
+
 ## `apps/web/src/lib/tour/queenUnmaView.test.ts`
 
 - the room of Queen Unma reconstructed from chapter 403 > satisfies the shared blueprint invariants for Queen Unma’s room
@@ -1455,6 +1543,10 @@ Fichiers : 396
 ## `apps/web/src/lib/tour/reachSound.test.ts`
 
 - what a cast at a person sounds like > gives Bungee Gum on a body the same voice it has on a cabinet
+
+## `apps/web/src/lib/tour/recyclingFacilitiesFidelity.test.ts`
+
+- the recycling and sewage facilities > keeps both plan volumes free of invented machinery
 
 ## `apps/web/src/lib/tour/regime.test.ts`
 
@@ -1516,9 +1608,17 @@ Fichiers : 396
 - shipTimeOfDay > follows the projection when the visitor has not overruled it
 - timeOfDayOf > puts the horn at noon and chapter 374 in the small hours
 
+## `apps/web/src/lib/tour/soldiersQuartersFidelity.test.ts`
+
+- the published soldiers’ quarters plan > keeps eight plan rooms and their ninety-six mapped bunks without panel claims
+
 ## `apps/web/src/lib/tour/soundPlace.test.ts`
 
 - where a cast at a body happened > puts it down the reticle, in the room the visitor is in
+
+## `apps/web/src/lib/tour/standardResidentialFidelity.test.ts`
+
+- the Tier 3 standard-cabin plan > keeps twelve cabins with one plan bed and cupboard each
 
 ## `apps/web/src/lib/tour/supremeCourtView.test.ts`
 
@@ -1532,6 +1632,14 @@ Fichiers : 396
 
 - the limit stated with the technique > refuses the round solids, which offer no flat face
 - the plaque, which is a flat limited surface with writing on it > puts a neighbour’s number on the door
+
+## `apps/web/src/lib/tour/tier5ClinicFidelity.test.ts`
+
+- the Tier 5 medical clinic > keeps the plan-established clinic free of invented equipment
+
+## `apps/web/src/lib/tour/tier5StandardCabinsFidelity.test.ts`
+
+- the Tier 5 standard-cabin plan > keeps twelve forward cabins with one plan bed and cupboard each
 
 ## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
 
@@ -1578,6 +1686,10 @@ Fichiers : 396
 
 - Woble’s apartment against the reception and bedroom panels > keeps a valid walked plan and distinguishes panel props from three reconstructed rooms
 
+## `apps/web/src/lib/tour/xiYuOfficeFidelity.test.ts`
+
+- the published Xi-Yu office plan > keeps its guarded entrance and sole plan table
+
 ## `apps/web/src/lib/tour/zhangLeiApartmentView.test.ts`
 
 - Zhang Lei’s complete apartment > keeps every room’s furniture on a valid shared plan, with honest reconstruction provenance
@@ -1589,6 +1701,10 @@ Fichiers : 396
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
 - the abilities page and the reader who asked not to be spoiled > lists the whole catalogue when no cap is set
+
+## `apps/web/src/routes/investigation/[caseId]/page.server.test.ts`
+
+- investigation case spoiler boundary > opens a case when the reader reached its required chapter
 
 ## `apps/web/src/routes/spoiler-limit/spoiler-limit.test.ts`
 

@@ -9695,7 +9695,7 @@
       "at": [-48.5, 13.714],
       "atTo": [0, 11],
       "provenance": "inferred",
-      "source": "Inherited reconstructed connection to the royal salon. The guarded reception hall does not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
+      "source": "Inherited reconstructed connection to the royal salon. The guarded reception hall does not establish this vestibule\u2019s metric shape or its precise connection to the Banquet Hall.",
       "sourceFr": "Reconstruit pour que le salon s'ouvre sur la salle de banquet ; aucune planche ne montre l'entr\u00e9e."
     },
     {
@@ -25993,7 +25993,7 @@
       "sourceFr": "Chap. 359, page de lecture 8 : cuvette, abattant ouvert et porte-papier dans le compartiment où Woody est retrouvé. Reste de la salle de bains et implantation métrique reconstitués ; inspection du décor sans corps."
     },
     {
-      "id": "tier-1-royal-residential-sector-room-1014-dining-chair--1-0",
+      "id": "tier-1-royal-residential-sector-room-1014-dining-chair-minus-1-0",
       "spaceId": "tier-1-royal-residential-sector-room-1014-dining",
       "kind": "seat",
       "name": "Tall meal chair",
@@ -26005,11 +26005,11 @@
       "height": 1.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4–5: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
-      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4–5 : large table sculptée, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parallèles séparées ne sont pas établies par ces cases. Six couverts et implantation métrique reconstitués."
+      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4\u20135: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
+      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4\u20135 : large table sculpt\u00e9e, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parall\u00e8les s\u00e9par\u00e9es ne sont pas \u00e9tablies par ces cases. Six couverts et implantation m\u00e9trique reconstitu\u00e9s."
     },
     {
-      "id": "tier-1-royal-residential-sector-room-1014-dining-chair--1-1",
+      "id": "tier-1-royal-residential-sector-room-1014-dining-chair-minus-1-1",
       "spaceId": "tier-1-royal-residential-sector-room-1014-dining",
       "kind": "seat",
       "name": "Tall meal chair",
@@ -26021,11 +26021,11 @@
       "height": 1.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4–5: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
-      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4–5 : large table sculptée, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parallèles séparées ne sont pas établies par ces cases. Six couverts et implantation métrique reconstitués."
+      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4\u20135: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
+      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4\u20135 : large table sculpt\u00e9e, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parall\u00e8les s\u00e9par\u00e9es ne sont pas \u00e9tablies par ces cases. Six couverts et implantation m\u00e9trique reconstitu\u00e9s."
     },
     {
-      "id": "tier-1-royal-residential-sector-room-1014-dining-chair--1-2",
+      "id": "tier-1-royal-residential-sector-room-1014-dining-chair-minus-1-2",
       "spaceId": "tier-1-royal-residential-sector-room-1014-dining",
       "kind": "seat",
       "name": "Tall meal chair",
@@ -26037,8 +26037,8 @@
       "height": 1.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4–5: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
-      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4–5 : large table sculptée, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parallèles séparées ne sont pas établies par ces cases. Six couverts et implantation métrique reconstitués."
+      "source": "Ch. 360, reading p. 6; ch. 371, reading pp. 4\u20135: broad carved table, high chairs, flowers and meal trays. A continuous tabletop is visible; two separate parallel tables are not established by these panels. Six settings and metric placement reconstructed.",
+      "sourceFr": "Chap. 360, page de lecture 6 ; chap. 371, pages de lecture 4\u20135 : large table sculpt\u00e9e, chaises hautes, fleurs et plateaux-repas. Un plateau continu est visible ; deux tables parall\u00e8les s\u00e9par\u00e9es ne sont pas \u00e9tablies par ces cases. Six couverts et implantation m\u00e9trique reconstitu\u00e9s."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1014-dining-chair-1-0",

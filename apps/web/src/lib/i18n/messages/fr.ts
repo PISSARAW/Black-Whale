@@ -2323,6 +2323,8 @@ export const fr: Messages = {
       identify: 'Confirmer l’identité de la cible.',
       follow: 'Suivre la cible jusqu’au point de transmission.',
       plant: "Poser le dispositif d'écoute dans la zone cible.",
+      escort: 'Escorter le témoin en lieu sûr.',
+      duty: 'Accomplir la tâche opérationnelle assignée.',
       extract: 'Rejoindre le point d’extraction.',
     },
     v3: {

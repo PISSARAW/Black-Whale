@@ -2,7 +2,7 @@
 
 # Graphe des dépendances
 
-Nœuds : 24 · Arêtes uniques : 50
+Nœuds : 24 · Arêtes uniques : 52
 
 ## Arêtes
 
@@ -21,12 +21,13 @@ Nœuds : 24 · Arêtes uniques : 50
 | `lib:components` | `package:@black-whale/domain` | 9 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
 | `lib:hunt` | `lib:nen` | 1 |
-| `lib:hunt` | `lib:tour` | 27 |
-| `lib:hunt` | `package:@black-whale/ability-modules` | 2 |
+| `lib:hunt` | `lib:tour` | 28 |
+| `lib:hunt` | `package:@black-whale/ability-modules` | 3 |
 | `lib:hunt` | `package:@black-whale/nen-engine` | 3 |
-| `lib:infiltration` | `lib:hunt` | 15 |
-| `lib:infiltration` | `lib:nen` | 1 |
-| `lib:infiltration` | `lib:tour` | 10 |
+| `lib:infiltration` | `lib:arena` | 2 |
+| `lib:infiltration` | `lib:hunt` | 20 |
+| `lib:infiltration` | `lib:nen` | 2 |
+| `lib:infiltration` | `lib:tour` | 12 |
 | `lib:nen` | `package:@black-whale/ability-modules` | 2 |
 | `lib:nen` | `package:@black-whale/nen-engine` | 9 |
 | `lib:reconstruction` | `package:@black-whale/canon-engine` | 1 |
@@ -37,10 +38,11 @@ Nœuds : 24 · Arêtes uniques : 50
 | `lib:server` | `package:@black-whale/domain` | 2 |
 | `lib:server` | `package:@black-whale/nen-engine` | 1 |
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
-| `lib:strategy` | `package:@black-whale/canon-engine` | 8 |
+| `lib:strategy` | `package:@black-whale/ability-modules` | 1 |
+| `lib:strategy` | `package:@black-whale/canon-engine` | 11 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 1 |
-| `lib:tour` | `package:@black-whale/ability-modules` | 9 |
+| `lib:tour` | `package:@black-whale/ability-modules` | 12 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 26 |
 | `lib:utils` | `lib:state` | 1 |

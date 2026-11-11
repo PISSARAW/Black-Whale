@@ -244,12 +244,10 @@ function moveWitness(
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
   if (distracted) return { ...witness, investigating: state.diversion!.spaceId }
   const heard =
-    hearingStrength(
-      witness,
-      state.player,
-      world.graph,
-      world.environment?.get(state.player.spaceId ?? ''),
-    ) >= 0.2
+    hearingStrength(witness, state.player, {
+      graph: world.graph,
+      environment: world.environment?.get(state.player.spaceId ?? ''),
+    }) >= 0.2
   const informed = heard ? { ...witness, investigating: state.player.spaceId } : witness
   return patrolWitness(informed, world)
 }
@@ -301,12 +299,10 @@ function observe(state: InfiltrationState, witness: Witness, world: Infiltration
   const distracted = state.diversion?.spaceId === witness.spaceId && state.diversion.left > 0
   if (
     distracted ||
-    !canSee(
-      witness,
-      state.player,
-      world.arena.walls,
-      world.environment?.get(state.player.spaceId ?? ''),
-    )
+    !canSee(witness, state.player, {
+      walls: world.arena.walls,
+      environment: world.environment?.get(state.player.spaceId ?? ''),
+    })
   )
     return cool(witness, dt)
 

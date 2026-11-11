@@ -8,19 +8,18 @@ const MAX_DOORS = 2
 export function hearingStrength(
   witness: Pick<Witness, 'position' | 'spaceId'>,
   player: InfiltrationState['player'],
-  graph: NavGraph,
-  environment?: PerceptionEnvironment,
+  context: { graph: NavGraph; environment?: PerceptionEnvironment },
 ): number {
   if (!player.moving || !player.spaceId) return 0
-  const doors = doorDistance(graph, witness.spaceId, player.spaceId)
+  const doors = doorDistance(context.graph, witness.spaceId, player.spaceId)
   if (doors === null || doors > MAX_DOORS) return 0
   const distance = Math.max(
     1,
     Math.hypot(player.position[0] - witness.position[0], player.position[1] - witness.position[1]),
   )
-  const pace = Math.min(1.5, player.speed / 2.1) * (environment?.surfaceNoise ?? 1)
+  const pace = Math.min(1.5, player.speed / 2.1) * (context.environment?.surfaceNoise ?? 1)
   const signal = (pace * Math.pow(DOOR_ATTENUATION, doors)) / Math.sqrt(distance / 3)
-  return Math.min(1, Math.max(0, signal - (environment?.ambientNoise ?? 0)))
+  return Math.min(1, Math.max(0, signal - (context.environment?.ambientNoise ?? 0)))
 }
 
 function doorDistance(graph: NavGraph, from: string, to: string): number | null {

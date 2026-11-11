@@ -1214,15 +1214,14 @@ describe('the ceiling fittings', () => {
       // One value per vertex, written to three channels: the relation, not a colour.
       expect(mesh.paneColors.length).toBe(mesh.panes.length)
     }
-    // Only the observation-deck bay has an outside. The large rectangle behind
-    // Nasubi is the battle painting visible on pp. 29–30, not glazing.
-    expect(glazed).toBe(1)
+    // The observation deck and Marayam's dining room have panel-sourced glazing.
+    // The large rectangle behind Nasubi remains the battle painting on pp. 29–30.
+    expect(glazed).toBe(2)
   })
 })
 
 /**
- * The observation-deck window, the only place on the ship where the outside
- * exists.
+ * The panel-sourced windows where the outside exists.
  *
  * Every other source on board is a filament on a ceiling grid, derived. These are
  * declared: `kind: 'window'` in `blueprint.json`, on the structure a panel draws.
@@ -1230,7 +1229,7 @@ describe('the ceiling fittings', () => {
  * light and not as lacquer, that it is drawn where the light is computed from, and
  * that being the exception costs every other room nothing.
  */
-describe('the observation-deck window', () => {
+describe('the ship windows', () => {
   const windows = ship.structures.filter((entry) => entry.kind === 'window')
 
   /** The room a window stands in, and the deck that room is on. */
@@ -1242,15 +1241,16 @@ describe('the observation-deck window', () => {
     throw new Error(`${structure.id} stands in no room`)
   }
 
-  it('types the observation-deck opening, drawn by a panel', () => {
-    // The King's apparent opening is the monumental battle painting on
-    // pp. 29–30; only the observation deck is actually a way of seeing out.
-    expect(windows.map((entry) => entry.id)).toEqual(['tier-3-observation-deck-window'])
+  it('types every panel-sourced opening', () => {
+    expect(windows.map((entry) => entry.id).sort()).toEqual([
+      'tier-1-royal-residential-sector-room-1013-dining-glazed-panels',
+      'tier-3-observation-deck-window',
+    ])
     for (const entry of windows) {
       expect(entry.provenance, `${entry.id} is not drawn`).toBe('panel')
-      // Hung off the floor and taller than a person: this is a bay, not a porthole.
+      // Hung off the floor and substantial: these are bays, not portholes.
       expect(entry.base).toBeGreaterThan(0)
-      expect(entry.height).toBeGreaterThan(2)
+      expect(entry.height).toBeGreaterThan(1.5)
     }
   })
 
@@ -1267,13 +1267,15 @@ describe('the observation-deck window', () => {
       const y = plan.tier.elevation + structure.base + structure.height / 2
       for (const source of sources) expect(source[1]).toBeCloseTo(y, 6)
 
-      // Spread over the glass rather than piled at one end of it.
-      const spread = Math.hypot(
-        sources[0][0] - sources[sources.length - 1][0],
-        sources[0][2] - sources[sources.length - 1][2],
-      )
-      expect(spread).toBeGreaterThan(span * 0.7)
-      expect(spread).toBeLessThan(span)
+      if (sources.length > 1) {
+        // Long panes spread their samples rather than piling them at one end.
+        const spread = Math.hypot(
+          sources[0][0] - sources[sources.length - 1][0],
+          sources[0][2] - sources[sources.length - 1][2],
+        )
+        expect(spread).toBeGreaterThan(span * 0.7)
+        expect(spread).toBeLessThan(span)
+      }
     }
   })
 

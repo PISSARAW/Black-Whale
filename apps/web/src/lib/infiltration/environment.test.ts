@@ -25,23 +25,27 @@ const player = {
 describe('shared infiltration environment', () => {
   it('shortens sight in dim rooms without defeating geometry', () => {
     expect(
-      canSee(witness as never, player, [], { visibility: 1, ambientNoise: 0, surfaceNoise: 1 }),
+      canSee(witness as never, player, {
+        walls: [],
+        environment: { visibility: 1, ambientNoise: 0, surfaceNoise: 1 },
+      }),
     ).toBe(true)
     expect(
-      canSee(witness as never, player, [], { visibility: 0.5, ambientNoise: 0, surfaceNoise: 1 }),
+      canSee(witness as never, player, {
+        walls: [],
+        environment: { visibility: 0.5, ambientNoise: 0, surfaceNoise: 1 },
+      }),
     ).toBe(false)
   })
 
   it('lets machinery mask a metal floor without making movement silent', () => {
-    const quiet = hearingStrength(witness, player, graph, {
-      visibility: 1,
-      ambientNoise: 0.05,
-      surfaceNoise: 1.25,
+    const quiet = hearingStrength(witness, player, {
+      graph,
+      environment: { visibility: 1, ambientNoise: 0.05, surfaceNoise: 1.25 },
     })
-    const machinery = hearingStrength(witness, player, graph, {
-      visibility: 1,
-      ambientNoise: 0.7,
-      surfaceNoise: 1.25,
+    const machinery = hearingStrength(witness, player, {
+      graph,
+      environment: { visibility: 1, ambientNoise: 0.7, surfaceNoise: 1.25 },
     })
     expect(machinery).toBeLessThan(quiet)
     expect(machinery).toBeGreaterThanOrEqual(0)

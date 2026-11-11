@@ -48,17 +48,22 @@ describe('where the light is taken to come from', () => {
 })
 
 describe('which decks have shafts at all', () => {
-  it('finds the observation-deck opening the manga draws, and no second', () => {
+  const expectedWindows = [
+    'tier-1-royal-residential-sector-room-1013-dining-glazed-panels',
+    'tier-3-observation-deck-window',
+  ]
+
+  it('finds every opening the manga draws', () => {
     const found = [...ship.plans.values()].flatMap((plan) => shaftAnchors(plan))
-    expect(found.map((anchor) => anchor.structureId)).toEqual(['tier-3-observation-deck-window'])
+    expect(found.map((anchor) => anchor.structureId).sort()).toEqual(expectedWindows)
   })
 
-  it('leaves every other deck without one', () => {
+  it('leaves every other level without one', () => {
     // The doctrine the whole effect hangs on: there is no daylight inside the
     // hull, so a shaft anywhere but these two rooms would be light arriving
     // from an outside that does not exist.
     const withShafts = [...ship.plans.values()].filter((plan) => shaftAnchors(plan).length)
-    expect(withShafts).toHaveLength(1)
+    expect(withShafts).toHaveLength(expectedWindows.length)
   })
 })
 

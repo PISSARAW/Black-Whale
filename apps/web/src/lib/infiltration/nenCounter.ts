@@ -12,50 +12,60 @@ export function counterNenManifestation(
 ): NenCounterResult {
   const witness = state.witnesses.find((candidate) => candidate.id === witnessId)
   if (!witness?.usesEn) return { state, countered: null }
-  const scoutPresent = state.hatsu.scout?.active && state.hatsu.scout.spaceId === witness.spaceId
-  const networkPresent =
-    state.hatsu.effect?.kind === 'paper-network' && state.hatsu.effect.spaceId === witness.spaceId
-  if (!scoutPresent && !networkPresent) return { state, countered: null }
-
-  const certainty = Math.min(100, witness.belief.certainty + (scoutPresent ? 42 : 28))
-  const countered = scoutPresent ? 'scout' : 'surveillance'
+  const countered = counteredKind(state, witness)
+  if (!countered) return { state, countered: null }
+  const certainty = Math.min(100, witness.belief.certainty + (countered === 'scout' ? 42 : 28))
   return {
     countered,
-    state: {
-      ...state,
-      witnesses: state.witnesses.map((candidate) =>
-        candidate.id === witness.id
-          ? {
-              ...candidate,
-              belief: {
-                ...candidate.belief,
-                identity: 'intruder',
-                certainty,
-                lastSpaceId: witness.spaceId,
-                reported: candidate.belief.reported || certainty >= 72,
-              },
-            }
-          : candidate,
-      ),
-      hatsu: {
-        ...state.hatsu,
-        scout:
-          scoutPresent && state.hatsu.scout
-            ? { ...state.hatsu.scout, active: false }
-            : state.hatsu.scout,
-        effect: networkPresent ? null : state.hatsu.effect,
-      },
-      journal: [
-        ...state.journal,
-        {
-          id: `nen-counter:${witness.id}:${state.clock.toFixed(3)}`,
-          at: state.clock,
-          type: 'HATSU_COUNTERED',
-          actor: witness.id,
-          sourceId: state.hatsu.id,
-          payload: countered,
-        },
-      ],
+    state: applyCounter(state, witness, { countered, certainty }),
+  }
+}
+
+function counteredKind(state: InfiltrationState, witness: Witness): NenCounterResult['countered'] {
+  if (state.hatsu.scout?.active && state.hatsu.scout.spaceId === witness.spaceId) return 'scout'
+  if (state.hatsu.effect?.kind !== 'paper-network') return null
+  return state.hatsu.effect.spaceId === witness.spaceId ? 'surveillance' : null
+}
+
+function applyCounter(
+  state: InfiltrationState,
+  witness: Witness,
+  result: { countered: Exclude<NenCounterResult['countered'], null>; certainty: number },
+): InfiltrationState {
+  return {
+    ...state,
+    witnesses: state.witnesses.map((candidate) =>
+      candidate.id === witness.id
+        ? {
+            ...candidate,
+            belief: {
+              ...candidate.belief,
+              identity: 'intruder',
+              certainty: result.certainty,
+              lastSpaceId: witness.spaceId,
+              reported: candidate.belief.reported || result.certainty >= 72,
+            },
+          }
+        : candidate,
+    ),
+    hatsu: {
+      ...state.hatsu,
+      scout:
+        result.countered === 'scout' && state.hatsu.scout
+          ? { ...state.hatsu.scout, active: false }
+          : state.hatsu.scout,
+      effect: result.countered === 'surveillance' ? null : state.hatsu.effect,
     },
+    journal: [
+      ...state.journal,
+      {
+        id: `nen-counter:${witness.id}:${state.clock.toFixed(3)}`,
+        at: state.clock,
+        type: 'HATSU_COUNTERED',
+        actor: witness.id,
+        sourceId: state.hatsu.id,
+        payload: result.countered,
+      },
+    ],
   }
 }

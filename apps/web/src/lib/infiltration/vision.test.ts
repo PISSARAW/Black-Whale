@@ -10,6 +10,7 @@ const witness: Witness = {
   sight: 10,
   social: false,
   usesEn: false,
+  faction: 'security',
   route: ['room'],
   routeIndex: 0,
   investigating: null,
@@ -19,13 +20,13 @@ const witness: Witness = {
 
 describe('infiltration vision', () => {
   it('sees inside its oriented field', () => {
-    expect(canSee(witness, { position: [0, 5], spaceId: 'room' }, [])).toBe(true)
+    expect(canSee(witness, { position: [0, 5], spaceId: 'room' }, { walls: [] })).toBe(true)
   })
   it('does not see behind itself', () => {
-    expect(canSee(witness, { position: [0, -5], spaceId: 'room' }, [])).toBe(false)
+    expect(canSee(witness, { position: [0, -5], spaceId: 'room' }, { walls: [] })).toBe(false)
   })
   it('does not see through a bulkhead', () => {
     const wall = { spaceId: 'room', start: [-2, 2], end: [2, 2] } as const
-    expect(canSee(witness, { position: [0, 5], spaceId: 'room' }, [wall])).toBe(false)
+    expect(canSee(witness, { position: [0, 5], spaceId: 'room' }, { walls: [wall] })).toBe(false)
   })
 })

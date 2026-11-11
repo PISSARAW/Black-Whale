@@ -14,6 +14,20 @@ export interface SimultaneousResolution {
   blockedOpposition: ProposedWorldEvent[]
 }
 
+export function blockingReactions(
+  playerLocations: Iterable<string>,
+  oppositionLocations: Iterable<string>,
+): ConditionalReaction[] {
+  const reactions = (owner: ConditionalReaction['owner'], locations: Iterable<string>) =>
+    [...locations].map((locationId) => ({
+      owner,
+      trigger: 'HOSTILE_MOVE' as const,
+      locationId,
+      effect: 'BLOCK' as const,
+    }))
+  return [...reactions('PLAYER', playerLocations), ...reactions('OPPOSITION', oppositionLocations)]
+}
+
 /** Reveals both sealed plans together, then applies only declared reactions. */
 export function resolveSimultaneousOrders(input: {
   player: readonly ProposedWorldEvent[]

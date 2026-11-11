@@ -9,9 +9,9 @@ describe('strategy movement routes', () => {
       ['c', ['b']],
       ['isolated', []],
     ])
-    expect(findStrategyRoute(graph, 'a', 'c')).toEqual(['a', 'b', 'c'])
-    expect(findStrategyRoute(graph, 'a', 'c', new Set(['b']))).toBeNull()
-    expect(findStrategyRoute(graph, 'a', 'isolated')).toBeNull()
+    expect(findStrategyRoute(graph, { from: 'a', to: 'c' })).toEqual(['a', 'b', 'c'])
+    expect(findStrategyRoute(graph, { from: 'a', to: 'c', blocked: new Set(['b']) })).toBeNull()
+    expect(findStrategyRoute(graph, { from: 'a', to: 'isolated' })).toBeNull()
   })
 
   it('uses the shared ship graph for royal rooms', () => {
@@ -21,11 +21,10 @@ describe('strategy movement routes', () => {
       'tier-1-royal-residential-sector-room-1001',
       'tier-1-royal-residential-sector-room-1014',
     ])
-    const route = findStrategyRoute(
-      graph,
-      'tier-1-royal-residential-sector-room-1001',
-      'tier-1-royal-residential-sector-room-1014',
-    )
+    const route = findStrategyRoute(graph, {
+      from: 'tier-1-royal-residential-sector-room-1001',
+      to: 'tier-1-royal-residential-sector-room-1014',
+    })
     expect(route?.[0]).toBe('tier-1-royal-residential-sector-room-1001')
     expect(route?.at(-1)).toBe('tier-1-royal-residential-sector-room-1014')
     expect(route!.length).toBeGreaterThan(2)

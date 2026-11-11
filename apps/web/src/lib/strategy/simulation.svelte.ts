@@ -43,7 +43,7 @@ import type {
   StrategyTurnResult,
 } from './types'
 import { strategyMovementGraph, type StrategyMovementGraph } from './movement'
-import { resolveSimultaneousOrders } from './simultaneous'
+import { blockingReactions, resolveSimultaneousOrders } from './simultaneous'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -55,7 +55,6 @@ export type {
 
 export { StrategyInputError } from './playerOrders'
 
-/** Everything `init` needs to start a campaign. */
 export interface StrategySetup {
   baseState: WorldState
   factions: StrategyFaction[]
@@ -333,20 +332,7 @@ export function createSimulationStore() {
     const simultaneous = resolveSimultaneousOrders({
       player: playerEvents,
       opposition: aiEvents,
-      reactions: [
-        ...[...guardedLocations, ...deniedLocations].map((locationId) => ({
-          owner: 'PLAYER' as const,
-          trigger: 'HOSTILE_MOVE' as const,
-          locationId,
-          effect: 'BLOCK' as const,
-        })),
-        ...aiDeniedLocations.map((locationId) => ({
-          owner: 'OPPOSITION' as const,
-          trigger: 'HOSTILE_MOVE' as const,
-          locationId,
-          effect: 'BLOCK' as const,
-        })),
-      ],
+      reactions: blockingReactions([...guardedLocations, ...deniedLocations], aiDeniedLocations),
     })
     const interceptedEvents = simultaneous.blockedOpposition
     const resolvedAIEvents = simultaneous.opposition

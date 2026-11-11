@@ -25,7 +25,7 @@ import {
 } from './interview'
 import { buildFinalReport } from './report'
 import { sceneNodes, visibleSightLines, type ScenePhenomenon } from './geometry'
-import { caseProgressStorageKey, forgetCaseStanding, recordCaseStanding } from './portfolio'
+import { caseProgressStorageKey, recordCaseStanding } from './portfolio'
 import {
   freshProgress,
   loadProgress,
@@ -42,21 +42,9 @@ import type { InvestigationCaseDefinition } from './definition'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
 import { assessComposedConclusion } from './conclusion'
 import { buildNotebookGraph } from './notebookGraph'
+import { resetCaseSession } from './caseSessionReset'
 
-/**
- * One visitor's passage through one case file.
- *
- * Everything here is the visitor's, not the case's: what they have found, whom
- * they have questioned and how, which hypothesis they are building, how far
- * into the eleven seconds they have scrubbed. The case itself — evidence,
- * testimony, objectives — is read through `definition`, and read rather than
- * held because it is localized: switching language rebuilds it, and a session
- * that had copied it would go on logging in the language the visitor left.
- *
- * It lived inside `InvestigationCaseView` as twenty-eight `$state` bindings and
- * the twenty functions that move them, which is what made the component
- * unopenable. The panels now take this object and call it.
- */
+/** One visitor's localized, mutable passage through one case file. */
 export class CaseSession {
   #definition: () => InvestigationCaseDefinition
   #labels: () => { refused: string }
@@ -467,37 +455,7 @@ export class CaseSession {
   }
 
   resetInvestigation = () => {
-    this.stopReplay()
-    this.replaySecond = 0
-    this.activeTab = 'evidence'
-    this.interviewStance = 'neutral'
-    this.scenePhenomenon = 'doll'
-    this.hatsuEffectKind = null
-    this.reportOpen = false
-    this.discoveredIds = []
-    this.selectedEvidenceIds = []
-    this.selectedHypothesisId = null
-    this.conclusionSelections = {}
-    this.verdict = null
-    this.solved = false
-    this.log = []
-    this.hatsuUseKeys = []
-    this.nenAuraRemaining = 100
-    this.hatsuResult = null
-    this.askedQuestionKeys = []
-    this.activeResponse = null
-    this.activeCooperation = null
-    this.witnessDispositions = {}
-    this.confrontationKeys = []
-    this.confrontationWitnessIds = []
-    this.confrontationResult = null
-    this.notebookOpen = false
-    this.activeSubjectId = null
-    this.briefingOpen = true
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(caseProgressStorageKey(this.investigation.id))
-      forgetCaseStanding(localStorage, this.definition.metadata.slug)
-    }
+    resetCaseSession(this)
   }
 
   stopReplay = () => {

@@ -203,7 +203,7 @@ export function resolvePlayerOrders(
     if (currentLocationId === destination.id) continue
     if (
       !currentLocationId ||
-      !findStrategyRoute(world.movementGraph, currentLocationId, destination.id)
+      !findStrategyRoute(world.movementGraph, { from: currentLocationId, to: destination.id })
     ) {
       throw new StrategyInputError(strategyMsg(world.locale).errors.unknownDestination)
     }

@@ -1,16 +1,20 @@
 import { theShip } from '$lib/tour/blueprint'
 
 export type StrategyMovementGraph = ReadonlyMap<string, readonly string[]>
+export interface StrategyRouteRequest {
+  from: string
+  to: string
+  blocked?: ReadonlySet<string>
+}
 
 /** Breadth-first route through authored doors and vertical links. */
 export function findStrategyRoute(
   graph: StrategyMovementGraph,
-  from: string,
-  to: string,
-  blocked: ReadonlySet<string> = new Set(),
+  request: StrategyRouteRequest,
 ): string[] | null {
+  const { from, to, blocked = new Set() } = request
   if (from === to) return [from]
-  if (blocked.has(from) || blocked.has(to) || !graph.has(from) || !graph.has(to)) return null
+  if (!routeEndpointsAreOpen(graph, request)) return null
   const previous = new Map<string, string | null>([[from, null]])
   const queue = [from]
   for (let index = 0; index < queue.length; index += 1) {
@@ -18,19 +22,38 @@ export function findStrategyRoute(
     for (const next of graph.get(current) ?? []) {
       if (blocked.has(next) || previous.has(next)) continue
       previous.set(next, current)
-      if (next === to) {
-        const route = [to]
-        let cursor: string | null = current
-        while (cursor) {
-          route.push(cursor)
-          cursor = previous.get(cursor) ?? null
-        }
-        return route.reverse()
-      }
+      if (next === to) return reconstructRoute(previous, current, to)
       queue.push(next)
     }
   }
   return null
+}
+
+function routeEndpointsAreOpen(
+  graph: StrategyMovementGraph,
+  request: StrategyRouteRequest,
+): boolean {
+  const blocked = request.blocked ?? new Set()
+  return (
+    !blocked.has(request.from) &&
+    !blocked.has(request.to) &&
+    graph.has(request.from) &&
+    graph.has(request.to)
+  )
+}
+
+function reconstructRoute(
+  previous: ReadonlyMap<string, string | null>,
+  beforeDestination: string,
+  destination: string,
+): string[] {
+  const route = [destination]
+  let cursor: string | null = beforeDestination
+  while (cursor) {
+    route.push(cursor)
+    cursor = previous.get(cursor) ?? null
+  }
+  return route.reverse()
 }
 
 /**

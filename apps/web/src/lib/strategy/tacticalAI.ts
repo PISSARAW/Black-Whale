@@ -194,7 +194,7 @@ export function generateFactionAIOperations(input: {
     const currentLocationId = input.state.presences[entity.id]?.locationId
     const reachableDestinations = currentLocationId
       ? destinations.filter((id) =>
-          Boolean(findStrategyRoute(input.movementGraph, currentLocationId, id)),
+          Boolean(findStrategyRoute(input.movementGraph, { from: currentLocationId, to: id })),
         )
       : []
     const destination = chooseStrategicDestination(input.doctrine, {

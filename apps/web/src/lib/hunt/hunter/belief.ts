@@ -136,7 +136,22 @@ function selectPrimary(
   hypotheses: readonly BeliefHypothesis[],
   cleared: readonly string[],
 ): HunterBelief {
-  const ranked = hypotheses
+  const ranked = rankHypotheses(hypotheses)
+  const primary = ranked[0]
+  if (!primary) return { ...initialBelief(), cleared: [...cleared] }
+  return {
+    at: primary.at,
+    spaceId: primary.spaceId,
+    from: primary.from,
+    sharp: primary.sharp,
+    age: primary.age,
+    cleared: [...cleared],
+    hypotheses: ranked,
+  }
+}
+
+function rankHypotheses(hypotheses: readonly BeliefHypothesis[]): BeliefHypothesis[] {
+  return hypotheses
     .filter((hypothesis) => hypothesis.age < BELIEF_FADES_AFTER)
     .sort(
       (left, right) =>
@@ -145,14 +160,4 @@ function selectPrimary(
         (left.confidence - left.age / BELIEF_FADES_AFTER),
     )
     .slice(0, MAX_BELIEF_HYPOTHESES)
-  const primary = ranked[0]
-  return {
-    at: primary?.at ?? null,
-    spaceId: primary?.spaceId ?? null,
-    from: primary?.from ?? null,
-    sharp: primary?.sharp ?? false,
-    age: primary?.age ?? 0,
-    cleared: [...cleared],
-    hypotheses: ranked,
-  }
 }

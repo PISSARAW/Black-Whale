@@ -30,6 +30,7 @@ const witness: Witness = {
   sight: 8,
   social: false,
   usesEn: false,
+  faction: 'security',
   belief: { identity: 'unknown', certainty: 0, lastSpaceId: null, reported: false },
   route: ['b'],
   routeIndex: 0,

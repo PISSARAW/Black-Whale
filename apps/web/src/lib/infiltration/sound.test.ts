@@ -27,20 +27,20 @@ const player = (spaceId: string, speed: number) =>
 
 describe('infiltration sound', () => {
   it('makes running louder than walking', () => {
-    expect(hearingStrength(witness, player('a', 4.2), graph)).toBeGreaterThan(
-      hearingStrength(witness, player('a', 2.1), graph),
+    expect(hearingStrength(witness, player('a', 4.2), { graph })).toBeGreaterThan(
+      hearingStrength(witness, player('a', 2.1), { graph }),
     )
   })
   it('attenuates through each doorway', () => {
-    expect(hearingStrength(witness, player('a', 2.1), graph)).toBeGreaterThan(
-      hearingStrength(witness, player('b', 2.1), graph),
+    expect(hearingStrength(witness, player('a', 2.1), { graph })).toBeGreaterThan(
+      hearingStrength(witness, player('b', 2.1), { graph }),
     )
-    expect(hearingStrength(witness, player('b', 2.1), graph)).toBeGreaterThan(
-      hearingStrength(witness, player('c', 2.1), graph),
+    expect(hearingStrength(witness, player('b', 2.1), { graph })).toBeGreaterThan(
+      hearingStrength(witness, player('c', 2.1), { graph }),
     )
   })
   it('does not confuse Zetsu with silence', () => {
     const inZetsu = { ...player('a', 2.1), nen: 'zetsu' as const }
-    expect(hearingStrength(witness, inZetsu, graph)).toBeGreaterThan(0)
+    expect(hearingStrength(witness, inZetsu, { graph })).toBeGreaterThan(0)
   })
 })

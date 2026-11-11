@@ -863,8 +863,7 @@ Dans le **1014**, cinq espaces reprennent les éléments visibles aux chapitres
 compartiment de Woody. Les autres sanitaires, le mobilier non établi et trois
 pièces restent des reconstitutions `map`. Le centre du salon reste dégagé pour
 le cours de Nen. La carte 2D partage les murs et emprises de la visite ; le
-plan parcourable hérité n'est pas un relevé métrique de la coupe du chapitre
-368. Voir [l'audit du 1014](woble-room-audit.md).
+plan parcourable hérité n'est pas un relevé métrique de la coupe du chapitre 368. Voir [l'audit du 1014](woble-room-audit.md).
 
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de

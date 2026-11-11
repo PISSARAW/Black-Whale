@@ -43,6 +43,12 @@ export interface ConfrontationDefinition {
   subjectIds: [string, string]
   requiredEvidenceIds: string[]
   evidenceIds: string[]
+  /** What the cross-examination yields: a new deduction, or two accounts that agree. */
+  tone: 'deduction' | 'corroboration'
+  title: string
+  finding: string
+  /** Said when the declarations to compare have not been gathered yet. */
+  incompleteFinding: string
 }
 
 export interface ReportDefinition {

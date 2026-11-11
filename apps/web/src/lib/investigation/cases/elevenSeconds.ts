@@ -2,6 +2,7 @@ import type { Locale } from '$lib/i18n'
 import { localizedRoom1014Case } from '../localizedCase'
 import { ROOM_1014_SIGHT_LINES } from '../geometry'
 import { frameAt } from '../replay'
+import { elevenSecondsConfrontations } from './elevenSecondsConfrontations'
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from '../definition'
 
 export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefinition {
@@ -31,20 +32,7 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
       phenomena: ['doll', 'snakes'],
       sightLines: ROOM_1014_SIGHT_LINES,
     },
-    confrontations: [
-      {
-        id: 'loberry-furykov-visibility',
-        subjectIds: ['loberry', 'furykov'],
-        requiredEvidenceIds: ['loberry-vision', 'bill-testimony'],
-        evidenceIds: ['visibility-split'],
-      },
-      {
-        id: 'bill-sakata-corroboration',
-        subjectIds: ['bill', 'sakata'],
-        requiredEvidenceIds: ['bill-testimony'],
-        evidenceIds: [],
-      },
-    ],
+    confrontations: elevenSecondsConfrontations(locale),
     hatsuRules: [
       {
         id: 'dowsing-witnesses',

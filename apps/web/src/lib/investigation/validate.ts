@@ -1,4 +1,5 @@
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from './definition'
+import { validateHypotheses, type AddIssue } from './validateHypotheses'
 
 export interface ValidationIssue {
   path: string
@@ -11,7 +12,6 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   const checkRefs = referenceChecker(add)
   const evidenceIds = new Set(definition.content.evidence.map((item) => item.id))
   const subjectIds = new Set(definition.content.subjects.map((item) => item.id))
-  const hypothesisIds = new Set(definition.content.hypotheses.map((item) => item.id))
 
   if (definition.schemaVersion !== INVESTIGATION_SCHEMA_VERSION) {
     add('schemaVersion', `expected ${INVESTIGATION_SCHEMA_VERSION}`)
@@ -39,20 +39,7 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   for (const objective of definition.content.objectives) {
     checkRefs(objective.requiredEvidenceIds, evidenceIds, `objectives.${objective.id}`)
   }
-  for (const hypothesis of definition.content.hypotheses) {
-    checkRefs(hypothesis.requiredEvidenceIds, evidenceIds, `hypotheses.${hypothesis.id}.required`)
-    checkRefs(
-      hypothesis.contradictionEvidenceIds,
-      evidenceIds,
-      `hypotheses.${hypothesis.id}.contradictions`,
-    )
-  }
-  if (!hypothesisIds.has(definition.content.canonicalHypothesisId)) {
-    add('canonicalHypothesisId', 'unknown canonical hypothesis')
-  }
-  if (!hypothesisIds.has(definition.report.requiredHypothesisId)) {
-    add('report.requiredHypothesisId', 'unknown report hypothesis')
-  }
+  validateHypotheses({ definition, evidenceIds, add, checkRefs })
   for (const confrontation of definition.confrontations) {
     checkRefs(confrontation.subjectIds, subjectIds, `confrontations.${confrontation.id}.subjects`)
     checkRefs(
@@ -86,7 +73,7 @@ export function assertValidCaseDefinition(
  * sites: the collector is the same object every time, and passing it around was
  * the only reason this took four arguments.
  */
-function referenceChecker(add: (path: string, message: string) => void) {
+function referenceChecker(add: AddIssue) {
   return (refs: readonly string[], known: Set<string>, path: string) => {
     for (const id of refs) if (!known.has(id)) add(`${path}.${id}`, 'unknown reference')
   }

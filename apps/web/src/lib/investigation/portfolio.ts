@@ -49,6 +49,45 @@ export function updateCasePortfolio(
   }
 }
 
+type PortfolioStorage = Pick<Storage, 'getItem' | 'setItem'>
+
+/** Where one visitor's passage through a case stands, as the case room reads it. */
+export interface CaseStanding {
+  /** The catalogue slug — the key the case room looks entries up by. */
+  caseId: string
+  started: boolean
+  solved: boolean
+  conclusionId: string | null
+}
+
+/** Records a case's standing in the device's portfolio, never downgrading a solved case. */
+export function recordCaseStanding(storage: PortfolioStorage, standing: CaseStanding) {
+  const portfolio = parsePortfolio(storage.getItem(INVESTIGATION_PORTFOLIO_KEY))
+  const status: CaseProgressStatus = standing.solved
+    ? 'solved'
+    : standing.started
+      ? 'in-progress'
+      : 'available'
+  const next = updateCasePortfolio(portfolio, {
+    caseId: standing.caseId,
+    status,
+    bestConclusionId: standing.solved
+      ? standing.conclusionId
+      : (portfolio.cases[standing.caseId]?.bestConclusionId ?? null),
+    optionalEvidenceIds: portfolio.cases[standing.caseId]?.optionalEvidenceIds ?? [],
+  })
+  storage.setItem(INVESTIGATION_PORTFOLIO_KEY, JSON.stringify(next))
+}
+
+/** Drops a case from the portfolio, so a reset case reads as available again. */
+export function forgetCaseStanding(storage: PortfolioStorage, caseId: string) {
+  const portfolio = parsePortfolio(storage.getItem(INVESTIGATION_PORTFOLIO_KEY))
+  if (!portfolio.cases[caseId]) return
+  const cases = { ...portfolio.cases }
+  delete cases[caseId]
+  storage.setItem(INVESTIGATION_PORTFOLIO_KEY, JSON.stringify({ ...portfolio, cases }))
+}
+
 export function parsePortfolio(raw: string | null): InvestigationPortfolio {
   if (!raw) return freshPortfolio()
   try {

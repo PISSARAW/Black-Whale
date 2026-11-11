@@ -21,4 +21,18 @@ describe('investigation editorial validator', () => {
     definition.report.requiredHypothesisId = 'missing'
     expect(() => assertValidCaseDefinition(definition)).toThrow('eleven-seconds')
   })
+
+  it('refuses a hypothesis that rests on no evidence', () => {
+    const definition = elevenSecondsDefinition('fr')
+    definition.content = {
+      ...definition.content,
+      hypotheses: definition.content.hypotheses.map((hypothesis) =>
+        hypothesis.id === 'accident' ? { ...hypothesis, requiredEvidenceIds: [] } : hypothesis,
+      ),
+    }
+    expect(validateCaseDefinition(definition)).toContainEqual({
+      path: 'hypotheses.accident.required',
+      message: 'at least one required evidence',
+    })
+  })
 })

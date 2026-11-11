@@ -18,7 +18,7 @@ import { resolveInterview, type InterviewStance, type WitnessDisposition } from 
 import { assessHypothesesFromEvidence } from './v3Runtime'
 import { buildFinalReport } from './report'
 import { sceneNodes, visibleSightLines, type ScenePhenomenon } from './geometry'
-import { caseProgressStorageKey } from './portfolio'
+import { caseProgressStorageKey, forgetCaseStanding, recordCaseStanding } from './portfolio'
 import {
   freshProgress,
   loadProgress,
@@ -226,6 +226,12 @@ export class CaseSession {
         log: this.log,
       }),
     )
+    recordCaseStanding(localStorage, {
+      caseId: this.definition.metadata.slug,
+      started,
+      solved: this.solved,
+      conclusionId: this.investigation.canonicalHypothesisId,
+    })
   }
 
   addLog = (entry: InvestigationLogEntry) => {
@@ -396,7 +402,11 @@ export class CaseSession {
   }
 
   performConfrontation = () => {
-    const result = confrontWitnesses(this.confrontationWitnessIds, this.discoveredIds)
+    const result = confrontWitnesses(
+      this.confrontationWitnessIds,
+      this.discoveredIds,
+      this.definition.confrontations,
+    )
     this.confrontationResult = result
     if (result.tone === 'insufficient' || this.confrontationKeys.includes(result.key)) return
     this.confrontationKeys = [...this.confrontationKeys, result.key]
@@ -430,6 +440,7 @@ export class CaseSession {
     this.briefingOpen = true
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem(caseProgressStorageKey(this.investigation.id))
+      forgetCaseStanding(localStorage, this.definition.metadata.slug)
     }
   }
 

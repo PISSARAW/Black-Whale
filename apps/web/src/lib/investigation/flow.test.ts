@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { evaluateHypothesis, room1014Case } from './case'
 import { confrontWitnesses } from './confrontation'
+import { elevenSecondsConfrontations } from './cases/elevenSecondsConfrontations'
 import { questionIsAvailable } from './interrogation'
 import { buildFinalReport } from './report'
 
@@ -23,7 +24,11 @@ describe('complete investigation flow', () => {
     ask('loberry', 'loberry-figure')
     inspect('kurapika')
 
-    const confrontation = confrontWitnesses(['loberry', 'furykov'], discovered)
+    const confrontation = confrontWitnesses(
+      ['loberry', 'furykov'],
+      discovered,
+      elevenSecondsConfrontations('fr'),
+    )
     confrontation.evidenceIds.forEach((id) => discovered.add(id))
 
     const verdict = evaluateHypothesis(room1014Case, 'hidden-nen', discovered)

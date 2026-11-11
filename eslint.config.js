@@ -319,7 +319,6 @@ export default tseslint.config(
       'apps/web/src/lib/investigation/hatsuSystem.ts', // 15
       'apps/web/src/lib/investigation/progress.ts', // 11
       'apps/web/src/lib/investigation/reasoning.ts', // 11
-      'apps/web/src/lib/investigation/validate.ts', // 13
       'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 32
       'apps/web/src/lib/nen/hatsuInteractions.ts', // 23
       'apps/web/src/lib/nen/prophecySheets.ts', // 20

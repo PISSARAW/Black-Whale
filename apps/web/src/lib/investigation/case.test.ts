@@ -49,4 +49,11 @@ describe('investigation verdict', () => {
     expect(verdict.status).toBe('contradicted')
     expect(verdict.contradictions).toHaveLength(1)
   })
+
+  it('does not let unrelated evidence carry the Loberry hypothesis', () => {
+    const verdict = evaluateHypothesis(room1014Case, 'accident', ['six-nen-users'])
+
+    expect(verdict.status).toBe('insufficient')
+    expect(verdict.missing.map((evidence) => evidence.id)).toEqual(['loberry-vision'])
+  })
 })

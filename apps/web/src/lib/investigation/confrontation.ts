@@ -1,3 +1,5 @@
+import type { ConfrontationDefinition } from './definition'
+
 export interface ConfrontationResult {
   key: string
   title: string
@@ -6,14 +8,20 @@ export interface ConfrontationResult {
   tone: 'deduction' | 'corroboration' | 'insufficient'
 }
 
-const pairKey = (ids: string[]) => [...ids].sort().join(':')
+const pairKey = (ids: readonly string[]) => [...ids].sort().join(':')
 
+/**
+ * Puts two witnesses' declarations side by side under the case's own rules.
+ *
+ * The key stays the sorted pair of witness ids, whichever confrontation the
+ * pair matches, so keys saved before the rules moved into the case still count.
+ */
 export function confrontWitnesses(
   witnessIds: string[],
   discoveredEvidenceIds: Iterable<string>,
+  confrontations: readonly ConfrontationDefinition[],
 ): ConfrontationResult {
   const key = pairKey(witnessIds)
-  const discovered = new Set(discoveredEvidenceIds)
 
   if (witnessIds.length !== 2) {
     return {
@@ -25,52 +33,34 @@ export function confrontWitnesses(
     }
   }
 
-  if (key === 'furykov:loberry') {
-    if (!discovered.has('loberry-vision') || !discovered.has('bill-testimony')) {
-      return {
-        key,
-        title: 'Déclarations incomplètes',
-        finding: "Interrogez d'abord Loberry sur la poupée et un témoin sur les créatures.",
-        evidenceIds: [],
-        tone: 'insufficient',
-      }
-    }
+  const confrontation = confrontations.find((item) => pairKey(item.subjectIds) === key)
+  if (!confrontation) {
     return {
       key,
-      title: 'Deux règles de visibilité',
+      title: 'Aucune contradiction exploitable',
       finding:
-        'Loberry voit la poupée derrière Furykov; Furykov ne la voit pas. Tous voient ensuite les créatures. La poupée et les attaquants obéissent donc à deux conditions de perception distinctes.',
-      evidenceIds: ['visibility-split'],
-      tone: 'deduction',
+        'Ces deux déclarations ne portent pas sur le même fait précis. Elles ne suffisent pas à produire une nouvelle déduction.',
+      evidenceIds: [],
+      tone: 'insufficient',
     }
   }
 
-  if (key === 'bill:sakata') {
-    if (!discovered.has('bill-testimony')) {
-      return {
-        key,
-        title: 'Déclarations incomplètes',
-        finding: "Recueillez d'abord ce que Bill ou Sakata a vu pendant l'attaque.",
-        evidenceIds: [],
-        tone: 'insufficient',
-      }
-    }
+  const discovered = new Set(discoveredEvidenceIds)
+  if (!confrontation.requiredEvidenceIds.every((id) => discovered.has(id))) {
     return {
       key,
-      title: 'Observation corroborée',
-      finding:
-        'Leurs récits concordent: les quatre créatures étaient matérielles, visibles et assez solides pour être visées et saisies.',
+      title: 'Déclarations incomplètes',
+      finding: confrontation.incompleteFinding,
       evidenceIds: [],
-      tone: 'corroboration',
+      tone: 'insufficient',
     }
   }
 
   return {
     key,
-    title: 'Aucune contradiction exploitable',
-    finding:
-      'Ces deux déclarations ne portent pas sur le même fait précis. Elles ne suffisent pas à produire une nouvelle déduction.',
-    evidenceIds: [],
-    tone: 'insufficient',
+    title: confrontation.title,
+    finding: confrontation.finding,
+    evidenceIds: [...confrontation.evidenceIds],
+    tone: confrontation.tone,
   }
 }

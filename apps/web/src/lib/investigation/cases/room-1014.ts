@@ -348,7 +348,7 @@ export const room1014Case: InvestigationCase = {
       label: 'Loberry a elle-même tué Barrigen',
       explanation:
         "Son témoignage est central, mais voir la poupée ne démontre pas qu'elle contrôle les créatures.",
-      requiredEvidenceIds: [],
+      requiredEvidenceIds: ['loberry-vision'],
       contradictionEvidenceIds: ['bill-testimony', 'nen-residue'],
     },
     {

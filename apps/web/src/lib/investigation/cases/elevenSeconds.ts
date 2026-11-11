@@ -43,6 +43,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         subjectIds: ['bill', 'loberry'],
         evidenceIds: ['bill-testimony', 'loberry-vision'],
         lifeHours: 0,
+        auraCost: 8,
+        countermeasureEvidenceIds: [],
         outcome: 'corroboration',
       },
       {
@@ -51,6 +53,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         subjectIds: ['body', 'kurapika'],
         evidenceIds: ['death-window', 'nen-residue'],
         lifeHours: 3,
+        auraCost: 25,
+        countermeasureEvidenceIds: [],
         outcome: 'evidence',
       },
       {
@@ -59,6 +63,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         subjectIds: ['loberry'],
         evidenceIds: [],
         lifeHours: 0,
+        auraCost: 10,
+        countermeasureEvidenceIds: ['death-window'],
         outcome: 'limited',
       },
       {
@@ -69,6 +75,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
           .map((subject) => subject.id),
         evidenceIds: [],
         lifeHours: 0,
+        auraCost: 20,
+        countermeasureEvidenceIds: [],
         outcome: 'forbidden',
       },
       {
@@ -79,6 +87,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         // confirms the signature without entering the dossier.
         evidenceIds: [],
         lifeHours: 0,
+        auraCost: 15,
+        countermeasureEvidenceIds: ['nen-residue'],
         outcome: 'limited',
       },
     ],

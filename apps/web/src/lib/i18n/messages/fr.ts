@@ -4320,11 +4320,15 @@ export const fr: Messages = {
         `${name} ne peut établir aucune information sur cette cible.`,
       usageDenied: 'Usage refusé',
       impossibleCost: 'Coût impossible',
+      countered: 'Contre-mesure active',
       corroboratedSignal: 'Signal corroboré',
       conclusiveAnalysis: 'Analyse concluante',
       limitedResult: 'Résultat limité',
       requiresLifeHours: (hours: number) =>
         `Cette analyse exige ${hours} heures de vie disponibles.`,
+      requiresAura: (aura: number) => `Cette analyse exige ${aura} points d’aura disponibles.`,
+      countermeasureActive:
+        'Un élément déjà établi neutralise cette méthode dans les conditions présentes.',
       ethicalOrProceduralConditions:
         'Les conditions éthiques ou procédurales interdisent cet usage.',
       confirmsLimits: 'La capacité confirme ses propres limites sans produire de nouvelle preuve.',

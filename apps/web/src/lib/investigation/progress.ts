@@ -1,7 +1,7 @@
 import type { InvestigationTab } from './case'
 import type { WitnessDisposition } from './interview'
 
-export const INVESTIGATION_PROGRESS_VERSION = 7
+export const INVESTIGATION_PROGRESS_VERSION = 8
 export const LEGACY_INVESTIGATION_STORAGE_KEY = 'black-whale:investigation:room-1014'
 
 export interface InvestigationLogEntry {
@@ -20,6 +20,7 @@ export interface InvestigationProgress {
   conclusionSelections: Record<string, string>
   solved: boolean
   hatsuUseKeys: string[]
+  nenAuraRemaining: number
   askedQuestionKeys: string[]
   confrontationKeys: string[]
   activeTab: InvestigationTab
@@ -40,6 +41,7 @@ export function freshProgress(caseId: string): InvestigationProgress {
     conclusionSelections: {},
     solved: false,
     hatsuUseKeys: [],
+    nenAuraRemaining: 100,
     askedQuestionKeys: [],
     confrontationKeys: [],
     activeTab: 'evidence',
@@ -70,6 +72,10 @@ export function parseProgress(raw: string | null, caseId: string): Investigation
       conclusionSelections: parseStringRecord(value.conclusionSelections),
       solved: value.solved === true,
       hatsuUseKeys: stringArray(value.hatsuUseKeys),
+      nenAuraRemaining:
+        typeof value.nenAuraRemaining === 'number' && Number.isFinite(value.nenAuraRemaining)
+          ? Math.max(0, Math.min(100, value.nenAuraRemaining))
+          : 100,
       askedQuestionKeys: stringArray(value.askedQuestionKeys),
       confrontationKeys: stringArray(value.confrontationKeys),
       activeTab: isInvestigationTab(value.activeTab) ? value.activeTab : 'evidence',

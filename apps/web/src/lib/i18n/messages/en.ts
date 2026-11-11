@@ -4540,10 +4540,14 @@ export const en = {
         `${name} cannot establish any information on this target.`,
       usageDenied: 'Usage denied',
       impossibleCost: 'Cost unaffordable',
+      countered: 'Countermeasure active',
       corroboratedSignal: 'Corroborated signal',
       conclusiveAnalysis: 'Conclusive analysis',
       limitedResult: 'Limited result',
       requiresLifeHours: (hours: number) => `This analysis requires ${hours} life hours available.`,
+      requiresAura: (aura: number) => `This analysis requires ${aura} aura points available.`,
+      countermeasureActive:
+        'Evidence already established neutralizes this method under the present conditions.',
       ethicalOrProceduralConditions: 'Ethical or procedural conditions forbid this usage.',
       confirmsLimits: 'The ability confirms its own limits without producing new evidence.',
       reinforcesInfo:

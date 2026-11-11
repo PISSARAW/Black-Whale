@@ -135,6 +135,11 @@
             >
               {ui.lifeConsumed(session.hatsuResult.lifeHours, $emperorTimeLifeHours)}
             </p>{/if}
+          {#if session.hatsuResult.auraCost > 0}<p
+              class="mt-2 font-mono text-[9px] uppercase tracking-wider text-sky-200"
+            >
+              {ui.auraConsumed(session.hatsuResult.auraCost, session.nenAuraRemaining)}
+            </p>{/if}
         </div>
       {/if}
     </div>

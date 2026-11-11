@@ -69,4 +69,15 @@ describe('investigation progress', () => {
     const parsed = parseProgress('{"version":5,"caseId":"case-a","started":true}', 'case-a')
     expect(parsed.witnessDispositions).toEqual({})
   })
+
+  it('restores and bounds the investigation aura reserve', () => {
+    expect(
+      parseProgress('{"version":8,"caseId":"case-a","nenAuraRemaining":35}', 'case-a')
+        .nenAuraRemaining,
+    ).toBe(35)
+    expect(
+      parseProgress('{"version":8,"caseId":"case-a","nenAuraRemaining":120}', 'case-a')
+        .nenAuraRemaining,
+    ).toBe(100)
+  })
 })

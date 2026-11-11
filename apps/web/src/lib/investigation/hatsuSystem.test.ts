@@ -29,6 +29,24 @@ describe('investigation V3 systemic Hatsu', () => {
     expect(result.title).toBe('Cost unaffordable')
   })
 
+  it('spends aura and respects evidence-backed countermeasures', () => {
+    const costly = resolveInvestigationHatsu(profile('dowsing-chain'), {
+      subjectId: 'bill',
+      rules,
+      context: { availableEvidenceIds: [], remainingAura: 7 },
+    })
+    expect(costly.usable).toBe(false)
+    expect(costly.auraCost).toBe(0)
+
+    const countered = resolveInvestigationHatsu(profile('little-eye'), {
+      subjectId: 'loberry',
+      rules,
+      context: { availableEvidenceIds: ['death-window'], remainingAura: 100 },
+    })
+    expect(countered.countered).toBe(true)
+    expect(countered.usable).toBe(false)
+  })
+
   it('returns an explicit limitation for an unsupported target', () => {
     const result = resolveInvestigationHatsu(profile('little-eye'), {
       subjectId: 'bill',

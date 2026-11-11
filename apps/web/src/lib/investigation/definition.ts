@@ -35,6 +35,8 @@ export interface InvestigationHatsuRule {
   subjectIds: string[]
   evidenceIds: string[]
   lifeHours: number
+  auraCost: number
+  countermeasureEvidenceIds: string[]
   outcome: 'evidence' | 'corroboration' | 'limited' | 'forbidden'
 }
 

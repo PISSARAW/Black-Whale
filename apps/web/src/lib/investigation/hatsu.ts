@@ -17,6 +17,7 @@ export interface InvestigationHatsuUse {
   finding: string
   evidenceIds: string[]
   lifeHours: number
+  auraCost: number
   tone: 'success' | 'limited' | 'forbidden'
 }
 
@@ -37,6 +38,7 @@ export function investigationHatsuUse(
           : "Le témoignage de Bill concorde avec les traces physiques. La chaîne renforce sa fiabilité sans identifier l'utilisateur.",
       evidenceIds: [subjectId === 'loberry' ? 'loberry-vision' : 'bill-testimony'],
       lifeHours: 0,
+      auraCost: 8,
       tone: 'success',
     }
   }
@@ -49,6 +51,7 @@ export function investigationHatsuUse(
         'Emperor Time permet de relier la matérialisation, la coordination des quatre créatures et la fenêtre létale. Cette lecture coûte trois heures de vie.',
       evidenceIds: ['death-window', 'nen-residue'],
       lifeHours: 3,
+      auraCost: 25,
       tone: 'success',
     }
   }
@@ -61,6 +64,7 @@ export function investigationHatsuUse(
         'Une capacité de surveillance peut observer la suite, pas recréer les onze secondes déjà écoulées. Le témoignage demeure la seule source sur la poupée.',
       evidenceIds: [],
       lifeHours: 0,
+      auraCost: 10,
       tone: 'limited',
     }
   }
@@ -73,6 +77,7 @@ export function investigationHatsuUse(
         "Frapper un témoin protégé n'est ni proportionné ni autorisé dans ce dossier. Une vérité obtenue ainsi détruirait aussi la procédure.",
       evidenceIds: [],
       lifeHours: 0,
+      auraCost: 0,
       tone: 'forbidden',
     }
   }
@@ -85,6 +90,7 @@ export function investigationHatsuUse(
         "La manifestation reproduit exactement les perforations et le drainage observés. C'est une reconstitution de vérité lecteur, pas une connaissance accessible à Kurapika au chapitre 370.",
       evidenceIds: ['wounds', 'death-window'],
       lifeHours: 0,
+      auraCost: 15,
       tone: 'limited',
     }
   }
@@ -96,6 +102,7 @@ export function investigationHatsuUse(
     finding: msg.cannotEstablishNewInfo(profile.name),
     evidenceIds: [],
     lifeHours: 0,
+    auraCost: 0,
     tone: 'limited',
   }
 }

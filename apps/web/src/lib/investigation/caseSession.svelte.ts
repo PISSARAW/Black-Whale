@@ -89,6 +89,7 @@ export class CaseSession {
   solved = $state(false)
   log = $state<InvestigationLogEntry[]>([])
   hatsuUseKeys = $state<string[]>([])
+  nenAuraRemaining = $state(100)
   hatsuResult = $state<InvestigationHatsuUse | null>(null)
   hatsuEffectKind = $state<HatsuInteractionKind | null>(null)
   hatsuEffectSequence = $state(0)
@@ -205,6 +206,7 @@ export class CaseSession {
     )
     this.solved = saved.solved
     this.hatsuUseKeys = saved.hatsuUseKeys
+    this.nenAuraRemaining = saved.nenAuraRemaining
     this.askedQuestionKeys = saved.askedQuestionKeys
     this.confrontationKeys = saved.confrontationKeys
     this.activeTab = saved.activeTab
@@ -232,6 +234,7 @@ export class CaseSession {
         conclusionSelections: this.conclusionSelections,
         solved: this.solved,
         hatsuUseKeys: this.hatsuUseKeys,
+        nenAuraRemaining: this.nenAuraRemaining,
         askedQuestionKeys: this.askedQuestionKeys,
         confrontationKeys: this.confrontationKeys,
         activeTab: this.activeTab,
@@ -357,6 +360,7 @@ export class CaseSession {
       context: {
         availableEvidenceIds: this.discoveredIds,
         remainingLifeHours: get(emperorTimeLifeHours),
+        remainingAura: this.nenAuraRemaining,
       },
       locale: get(locale),
     })
@@ -370,6 +374,7 @@ export class CaseSession {
     if (result.usable && !alreadyUsed) {
       this.hatsuUseKeys = [...this.hatsuUseKeys, result.key]
       if (result.lifeHours > 0) spendEmperorTimeHours(result.lifeHours)
+      this.nenAuraRemaining = Math.max(0, this.nenAuraRemaining - result.auraCost)
       this.discover(result.evidenceIds)
       this.addLog({
         id: `hatsu:${result.key}`,
@@ -476,6 +481,7 @@ export class CaseSession {
     this.solved = false
     this.log = []
     this.hatsuUseKeys = []
+    this.nenAuraRemaining = 100
     this.hatsuResult = null
     this.askedQuestionKeys = []
     this.activeResponse = null

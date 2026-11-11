@@ -172,6 +172,8 @@ export function caseUi(locale: Locale) {
         },
         lifeConsumed: (hours: number, total: number) =>
           `Vie consommée · +${hours} h · total ${total} h`,
+        auraConsumed: (aura: number, remaining: number) =>
+          `Aura consommée · ${aura} · réserve ${remaining}/100`,
         hatsuGateReason:
           'Seules les techniques capables d’observer, d’analyser ou de reproduire la scène ont une prise sur ce dossier.',
       }
@@ -326,6 +328,8 @@ export function caseUi(locale: Locale) {
         },
         lifeConsumed: (hours: number, total: number) =>
           `Life consumed · +${hours} h · total ${total} h`,
+        auraConsumed: (aura: number, remaining: number) =>
+          `Aura consumed · ${aura} · reserve ${remaining}/100`,
         hatsuGateReason:
           'Only techniques able to observe, analyze or reproduce the scene can affect this case.',
       }

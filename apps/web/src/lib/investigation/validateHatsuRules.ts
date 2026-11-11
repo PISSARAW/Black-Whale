@@ -25,6 +25,8 @@ export function validateHatsuRules({
   for (const rule of definition.hatsuRules) {
     checkRefs(rule.subjectIds, subjectIds, `hatsuRules.${rule.id}.subjects`)
     checkRefs(rule.evidenceIds, evidenceIds, `hatsuRules.${rule.id}.evidence`)
+    checkRefs(rule.countermeasureEvidenceIds, evidenceIds, `hatsuRules.${rule.id}.countermeasures`)
+    if (rule.auraCost < 0) add(`hatsuRules.${rule.id}.auraCost`, 'must be positive')
     const establishesNothing = rule.outcome === 'limited' || rule.outcome === 'forbidden'
     if (establishesNothing && rule.evidenceIds.length > 0) {
       add(`hatsuRules.${rule.id}.evidence`, `a ${rule.outcome} rule grants no evidence`)

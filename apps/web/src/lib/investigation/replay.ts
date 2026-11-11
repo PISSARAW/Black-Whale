@@ -20,8 +20,8 @@ export function frameAt(second: number, locale: Locale = 'en'): ReplayFrame {
     return {
       second: time,
       stage: 'warning',
-      title: 'Doll appears',
-      description: 'Loberry alone sees the masked figure behind Furykov.',
+      title: msg.dollAppears.title,
+      description: msg.dollAppears.description,
       activeSubjectIds: ['loberry', 'furykov'],
       snakes: 0,
       bloodLevel: 100,

@@ -57,6 +57,11 @@ export function caseUi(locale: Locale) {
         perspective: 'Perspective',
         approach: 'Posture',
         refused: 'Le témoin se referme. Changez de posture ou présentez un élément pertinent.',
+        cooperation: {
+          refused: 'Refus de répondre',
+          guarded: 'Réponse réservée',
+          open: 'Témoignage en confiance',
+        },
         stances: {
           neutral: 'Neutre',
           empathetic: 'Empathique',
@@ -64,6 +69,8 @@ export function caseUi(locale: Locale) {
           accusatory: 'Accusatrice',
         },
         binder: 'Carnet d’enquête',
+        binderEyebrow: 'Classeur',
+        book: 'CARNET',
         binderSections: 'Sections du carnet',
         investigationObjectives: 'Objectifs d’enquête',
         start: 'COMMENCER',
@@ -114,6 +121,11 @@ export function caseUi(locale: Locale) {
           signed: 'Signé',
           review: 'Revoir les pièces (CARNET)',
           back: 'Retour à la scène',
+          groups: {
+            established: 'Faits établis',
+            deductions: 'Déductions',
+            testimony: 'Témoignages',
+          },
         },
         timeline: {
           second: 'seconde',
@@ -197,6 +209,11 @@ export function caseUi(locale: Locale) {
         perspective: 'Perspective',
         approach: 'Approach',
         refused: 'The witness shuts down. Change approach or present relevant evidence.',
+        cooperation: {
+          refused: 'Refuses to answer',
+          guarded: 'Guarded answer',
+          open: 'Open testimony',
+        },
         stances: {
           neutral: 'Neutral',
           empathetic: 'Empathetic',
@@ -204,6 +221,8 @@ export function caseUi(locale: Locale) {
           accusatory: 'Accusatory',
         },
         binder: 'Investigation binder',
+        binderEyebrow: 'Binder',
+        book: 'BOOK',
         binderSections: 'Notebook sections',
         investigationObjectives: 'Investigation objectives',
         start: 'BEGIN',
@@ -249,6 +268,11 @@ export function caseUi(locale: Locale) {
           signed: 'Signed',
           review: 'Review evidence (BOOK)',
           back: 'Back to scene',
+          groups: {
+            established: 'Established facts',
+            deductions: 'Deductions',
+            testimony: 'Testimony',
+          },
         },
         timeline: {
           second: 'second',

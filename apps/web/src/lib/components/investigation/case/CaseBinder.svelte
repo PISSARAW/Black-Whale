@@ -63,7 +63,7 @@
           <p
             class="text-[10px] font-bold uppercase tracking-[0.25em] text-sky-400 drop-shadow-[0_0_5px_rgba(56,189,248,0.5)]"
           >
-            {investigation.investigator} · BINDER
+            {investigation.investigator} · {ui.binderEyebrow}
           </p>
           <h2 class="mt-1 font-black tracking-tight text-3xl text-white drop-shadow-md sm:text-4xl">
             {investigation.subtitle}

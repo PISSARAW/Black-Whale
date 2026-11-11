@@ -212,8 +212,7 @@
     >
       <div class="absolute -left-1 top-1/2 h-8 w-2 -translate-y-1/2 rounded-r bg-sky-400"></div>
       <p class="text-[10px] font-bold uppercase tracking-normal text-sky-300">
-        {ui.dossier}
-        {investigation.id} · {ui.chapter}
+        {ui.dossier} · {investigation.subtitle} · {ui.chapter}
         {investigation.chapter}
       </p>
       <h1 class="mt-1 font-black text-2xl leading-none text-white sm:text-4xl">
@@ -253,7 +252,7 @@
         ></span>
         <span class="relative z-10 flex items-center justify-between gap-3">
           <span class="block text-[9px] font-bold uppercase tracking-normal text-sky-300">
-            BOOK
+            {ui.book}
           </span>
           <span
             class="flex h-5 w-5 items-center justify-center rounded-full border border-sky-300/50 bg-sky-400/20 text-[10px] text-sky-100"

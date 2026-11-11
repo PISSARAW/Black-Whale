@@ -1,10 +1,15 @@
 <script lang="ts">
+  import { locale } from '$lib/i18n'
+  import { describeVerdict } from '$lib/investigation/verdictCopy'
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
   import type { caseUi } from '$lib/investigation/caseLabels'
 
   let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 
   const investigation = $derived(session.investigation)
+  const verdictText = $derived(
+    session.verdict ? describeVerdict(session.verdict, investigation, $locale) : null,
+  )
 </script>
 
 <div class="max-w-2xl">
@@ -103,8 +108,8 @@
       >
         {ui.deduction.analysis}
       </p>
-      <h4 class="mt-2 font-black text-2xl text-white">{session.verdict.title}</h4>
-      <p class="mt-3 text-sm leading-relaxed text-white/80">{session.verdict.summary}</p>
+      <h4 class="mt-2 font-black text-2xl text-white">{verdictText?.title}</h4>
+      <p class="mt-3 text-sm leading-relaxed text-white/80">{verdictText?.summary}</p>
       {#if session.verdict.contradictions.length > 0}<p
           class="mt-4 rounded bg-red-900/40 p-3 text-xs font-medium text-red-200"
         >

@@ -3,7 +3,7 @@ import type { InvestigationCase } from './case'
 import type { ScenePhenomenon, SightLine } from './geometry'
 import type { ReplayFrame } from './replay'
 
-export const INVESTIGATION_SCHEMA_VERSION = 2
+export const INVESTIGATION_SCHEMA_VERSION = 3
 
 export type CaseDifficulty = 'introductory' | 'intermediate' | 'advanced'
 export type InvestigationMode = '2d' | '3d'
@@ -53,6 +53,11 @@ export interface ConfrontationDefinition {
 
 export interface ReportDefinition {
   requiredHypothesisId: string
+  /** The closing line of the report: what is established, and what is not. */
+  disposition: string
+  /** The reconstruction retained, step by step. */
+  mechanism: string[]
+  /** What the case cannot answer, said plainly. */
   unknowns: string[]
 }
 

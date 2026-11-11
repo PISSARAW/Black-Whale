@@ -55,7 +55,7 @@
               stance
                 ? 'border-[#d6b35a] bg-[#d6b35a]/15 text-[#f2d98c]'
                 : 'border-white/10 text-white/45 hover:border-white/30 hover:text-white/75'}"
-              onclick={() => (session.interviewStance = stance as InterviewStance)}
+              onclick={() => session.setInterviewStance(stance as InterviewStance)}
               >{ui.stances[stance as InterviewStance]}</button
             >
           {/each}
@@ -89,6 +89,16 @@
         class="mt-3 border-l-2 border-[#d6b35a] bg-[#d6b35a]/[0.06] px-4 py-3 text-sm leading-relaxed text-white/70"
         aria-live="polite"
       >
+        {#if session.activeCooperation}<p
+            class="mb-1 text-[9px] font-bold uppercase tracking-[0.18em] {session.activeCooperation ===
+            'open'
+              ? 'text-emerald-200'
+              : session.activeCooperation === 'guarded'
+                ? 'text-amber-200'
+                : 'text-red-200'}"
+          >
+            {ui.cooperation[session.activeCooperation]}
+          </p>{/if}
         « {session.activeResponse} »
       </div>
     {/if}

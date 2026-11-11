@@ -31,7 +31,7 @@
             <p
               class="text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"
             >
-              {ui.report.final} · {session.finalReport.caseId}
+              {ui.report.final} · {session.finalReport.subtitle}
             </p>
           </div>
           <h2 class="mt-4 font-black text-4xl text-white drop-shadow-md sm:text-5xl">
@@ -74,10 +74,10 @@
           </ol>
 
           <div class="mt-10 grid gap-4 sm:grid-cols-3">
-            {#each session.reportGroups as group (group.label)}
+            {#each session.reportGroups as group (group.kind)}
               <div class="rounded-xl border border-sky-900/40 bg-sky-950/20 p-4">
                 <p class="text-[9px] font-bold uppercase tracking-wider {group.tone}">
-                  {group.label} · {group.evidence.length}
+                  {ui.report.groups[group.kind]} · {group.evidence.length}
                 </p>
                 <ul class="mt-3 space-y-2">
                   {#each group.evidence as evidence (evidence.id)}<li

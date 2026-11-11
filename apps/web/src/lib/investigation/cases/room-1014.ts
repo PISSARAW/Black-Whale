@@ -33,8 +33,14 @@ export const room1014Case: InvestigationCase = {
           prompt: 'Que peut-on déjà affirmer sur la capacité ?',
           response:
             "Les créatures sont matérialisées et dirigées. La poupée obéit à une autre règle de visibilité. Ce sont des propriétés, pas l'identité de l'utilisateur.",
+          cooperativeResponse:
+            "Les témoignages concordent : les créatures sont matérialisées et téléguidées, tandis que la poupée obéit à une condition de perception distincte. Cela décrit deux fonctions d'une même attaque, jamais l'identité de son utilisateur.",
+          preferredStances: ['neutral'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 75,
           requiredEvidenceIds: ['bill-testimony', 'loberry-vision'],
           evidenceIds: ['nen-residue'],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -54,16 +60,28 @@ export const room1014Case: InvestigationCase = {
           prompt: 'Qu’avez-vous vu au moment de l’attaque ?',
           response:
             'Quatre formes blanches autour du cou de Barrigen. Elles étaient visibles et les gardes ont essayé de les arracher.',
+          cooperativeResponse:
+            "Je les ai vues apparaître ensemble autour de son cou. Sakata a tiré et d'autres gardes ont tenté de les arracher : ce n'était ni une illusion isolée, ni une attaque portée par quelqu'un dans la pièce.",
+          preferredStances: ['neutral'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 45,
           requiredEvidenceIds: [],
           evidenceIds: ['bill-testimony'],
+          cooperativeEvidenceIds: [],
         },
         {
           id: 'bill-duration',
           prompt: 'Combien de temps avons-nous eu pour réagir ?',
           response:
             "Presque rien. Onze secondes au plus entre l'apparition des créatures et sa mort.",
+          cooperativeResponse:
+            "Onze secondes au plus. Je comptais les réactions autour de moi : l'apparition, les tirs, nos tentatives pour les retirer, puis l'effondrement. Tout s'est produit dans cette fenêtre.",
+          preferredStances: ['pressing'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 50,
           requiredEvidenceIds: ['wounds'],
           evidenceIds: ['death-window'],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -83,16 +101,28 @@ export const room1014Case: InvestigationCase = {
           prompt: 'Décrivez exactement la présence masquée.',
           response:
             "Une petite fille décorative avec un masque. Elle se tenait derrière Furykov. Quand je l'ai montrée, personne ne regardait au bon endroit.",
+          cooperativeResponse:
+            "Elle ressemblait à une petite fille décorative masquée, immobile derrière Furykov. Je sentais sa présence comme une pression qui m'obligeait à la regarder ; quand j'ai crié, tous les regards se sont détournés de Barrigen.",
+          preferredStances: ['empathetic'],
+          resistedStances: ['pressing', 'accusatory'],
+          requiredTrust: 45,
           requiredEvidenceIds: [],
           evidenceIds: ['loberry-vision'],
+          cooperativeEvidenceIds: [],
         },
         {
           id: 'loberry-control',
           prompt: 'La contrôliez-vous ?',
           response:
             "Non. Je ne pouvais que la voir. Elle s'est imposée à moi et ma panique a attiré tous les regards.",
+          cooperativeResponse:
+            "Je ne la contrôlais pas. Elle a forcé mon attention, puis ma peur a fait le reste : j'ai désigné Furykov et détourné la classe au moment exact où Barrigen était attaqué.",
+          preferredStances: ['empathetic'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 55,
           requiredEvidenceIds: ['loberry-vision'],
           evidenceIds: [],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -113,8 +143,14 @@ export const room1014Case: InvestigationCase = {
           prompt: 'La poupée se trouvait-elle derrière vous ?',
           response:
             "Loberry l'affirme. Moi, je n'ai rien vu derrière mon dos. Cela indique une condition de perception, pas une absence.",
+          cooperativeResponse:
+            "Je n'ai rien vu, même après l'alerte de Loberry. Pourtant sa réaction était trop précise pour être feinte. Si une poupée se trouvait là, sa visibilité devait être conditionnelle et distincte de celle des créatures.",
+          preferredStances: ['pressing'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 50,
           requiredEvidenceIds: ['loberry-vision'],
           evidenceIds: [],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -134,8 +170,14 @@ export const room1014Case: InvestigationCase = {
           prompt: 'Combien de participants savent utiliser le Nen ?',
           response:
             'Six selon le décompte entendu dans la salle. Furykov et moi nous sommes déclarés; quatre autres se taisent.',
+          cooperativeResponse:
+            "Le décompte donne six utilisateurs. Furykov et moi nous sommes déclarés ; quatre autres ont choisi le silence. Ce fait élargit la liste des possibilités, mais n'autorise à accuser aucun d'entre eux.",
+          preferredStances: ['neutral'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 45,
           requiredEvidenceIds: [],
           evidenceIds: ['six-nen-users'],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -155,16 +197,28 @@ export const room1014Case: InvestigationCase = {
           prompt: 'Sur quoi avez-vous tiré ?',
           response:
             "Sur les créatures blanches. Mes tirs les atteignaient; elles n'étaient donc ni une hallucination de Loberry, ni invisibles.",
+          cooperativeResponse:
+            "J'ai aligné les formes blanches au cou, puis tiré. Les impacts les ont atteintes et les autres gardes les saisissaient aussi : elles avaient une présence matérielle que nous pouvions tous percevoir.",
+          preferredStances: ['pressing'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 50,
           requiredEvidenceIds: ['loberry-vision'],
           evidenceIds: ['bill-testimony'],
+          cooperativeEvidenceIds: [],
         },
         {
           id: 'sakata-time',
           prompt: 'Auriez-vous pu sauver Barrigen en tirant plus tôt ?',
           response:
             "Non. Leur action combinée était trop rapide; nous n'avions qu'environ onze secondes.",
+          cooperativeResponse:
+            "Non. Même en réagissant dès leur apparition, il fallait viser sans toucher Barrigen pendant que les autres essayaient de les arracher. Leur action combinée l'a vidé de son sang en onze secondes environ.",
+          preferredStances: ['empathetic'],
+          resistedStances: ['accusatory'],
+          requiredTrust: 55,
           requiredEvidenceIds: ['wounds'],
           evidenceIds: ['death-window'],
+          cooperativeEvidenceIds: [],
         },
       ],
     },
@@ -371,6 +425,8 @@ export const room1014Case: InvestigationCase = {
     },
   ],
   canonicalHypothesisId: 'hidden-nen',
+  solvedSummary:
+    "Les faits établissent une attaque de Nen matérialisée et commandée à distance, mais l'identité de l'utilisateur reste inconnue à ce stade.",
   objectives: [
     {
       id: 'inspect-victim',

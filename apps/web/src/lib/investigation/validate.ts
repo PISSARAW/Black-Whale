@@ -1,4 +1,5 @@
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from './definition'
+import type { InvestigationQuestion } from './case'
 import { validateHypotheses, type AddIssue } from './validateHypotheses'
 import { validateHatsuRules } from './validateHatsuRules'
 
@@ -13,6 +14,7 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   const checkRefs = referenceChecker(add)
   const evidenceIds = new Set(definition.content.evidence.map((item) => item.id))
   const subjectIds = new Set(definition.content.subjects.map((item) => item.id))
+  const questionChecks = { evidenceIds, add, checkRefs }
 
   if (definition.schemaVersion !== INVESTIGATION_SCHEMA_VERSION) {
     add('schemaVersion', `expected ${INVESTIGATION_SCHEMA_VERSION}`)
@@ -33,8 +35,7 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   for (const subject of definition.content.subjects) {
     checkRefs(subject.evidenceIds, evidenceIds, `subjects.${subject.id}.evidenceIds`)
     for (const question of subject.questions) {
-      checkRefs(question.requiredEvidenceIds, evidenceIds, `questions.${question.id}.required`)
-      checkRefs(question.evidenceIds, evidenceIds, `questions.${question.id}.evidence`)
+      validateQuestion(question, questionChecks)
     }
   }
   for (const objective of definition.content.objectives) {
@@ -52,6 +53,31 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
   }
   validateHatsuRules({ definition, evidenceIds, subjectIds, add, checkRefs })
   return issues
+}
+
+function validateQuestion(
+  question: InvestigationQuestion,
+  {
+    evidenceIds,
+    add,
+    checkRefs,
+  }: {
+    evidenceIds: Set<string>
+    add: AddIssue
+    checkRefs: ReturnType<typeof referenceChecker>
+  },
+) {
+  checkRefs(question.requiredEvidenceIds, evidenceIds, `questions.${question.id}.required`)
+  checkRefs(question.evidenceIds, evidenceIds, `questions.${question.id}.evidence`)
+  checkRefs(
+    question.cooperativeEvidenceIds,
+    evidenceIds,
+    `questions.${question.id}.cooperativeEvidence`,
+  )
+  if (question.preferredStances.length === 0)
+    add(`questions.${question.id}.preferredStances`, 'at least one useful approach is required')
+  if (question.requiredTrust < 0 || question.requiredTrust > 100)
+    add(`questions.${question.id}.requiredTrust`, 'must be between 0 and 100')
 }
 
 export function assertValidCaseDefinition(

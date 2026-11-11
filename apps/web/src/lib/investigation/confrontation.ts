@@ -1,4 +1,5 @@
 import type { ConfrontationDefinition } from './definition'
+import type { ConfrontationCopy } from './confrontationCopy'
 
 export interface ConfrontationResult {
   key: string
@@ -10,24 +11,32 @@ export interface ConfrontationResult {
 
 const pairKey = (ids: readonly string[]) => [...ids].sort().join(':')
 
+export interface ConfrontationAttempt {
+  witnessIds: string[]
+  discoveredEvidenceIds: Iterable<string>
+  confrontations: readonly ConfrontationDefinition[]
+  /** The words for a confrontation that yields nothing, from `confrontationCopy`. */
+  copy: ConfrontationCopy
+}
+
 /**
  * Puts two witnesses' declarations side by side under the case's own rules.
  *
  * The key stays the sorted pair of witness ids, whichever confrontation the
  * pair matches, so keys saved before the rules moved into the case still count.
  */
-export function confrontWitnesses(
-  witnessIds: string[],
-  discoveredEvidenceIds: Iterable<string>,
-  confrontations: readonly ConfrontationDefinition[],
-): ConfrontationResult {
+export function confrontWitnesses({
+  witnessIds,
+  discoveredEvidenceIds,
+  confrontations,
+  copy,
+}: ConfrontationAttempt): ConfrontationResult {
   const key = pairKey(witnessIds)
 
   if (witnessIds.length !== 2) {
     return {
       key,
-      title: 'Deux témoignages requis',
-      finding: 'Sélectionnez exactement deux personnes pour confronter leurs déclarations.',
+      ...copy.needTwo,
       evidenceIds: [],
       tone: 'insufficient',
     }
@@ -37,9 +46,7 @@ export function confrontWitnesses(
   if (!confrontation) {
     return {
       key,
-      title: 'Aucune contradiction exploitable',
-      finding:
-        'Ces deux déclarations ne portent pas sur le même fait précis. Elles ne suffisent pas à produire une nouvelle déduction.',
+      ...copy.unrelated,
       evidenceIds: [],
       tone: 'insufficient',
     }
@@ -49,7 +56,7 @@ export function confrontWitnesses(
   if (!confrontation.requiredEvidenceIds.every((id) => discovered.has(id))) {
     return {
       key,
-      title: 'Déclarations incomplètes',
+      title: copy.incompleteTitle,
       finding: confrontation.incompleteFinding,
       evidenceIds: [],
       tone: 'insufficient',

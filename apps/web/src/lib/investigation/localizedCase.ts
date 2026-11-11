@@ -47,50 +47,71 @@ const subjectCopy: Record<string, Partial<InvestigationCase['subjects'][number]>
   },
 }
 
-const questionCopy: Record<string, { prompt: string; response: string }> = {
+const questionCopy: Record<
+  string,
+  { prompt: string; response: string; cooperativeResponse: string }
+> = {
   'kurapika-method': {
     prompt: 'What can we already establish about the ability?',
     response:
       'The creatures are materialised and controlled. The doll follows another visibility rule. Those are properties, not the user’s identity.',
+    cooperativeResponse:
+      'The testimony agrees: the creatures are materialised and remotely controlled, while the doll follows a separate perception condition. That describes two functions of one attack, never the user’s identity.',
   },
   'bill-seen': {
     prompt: 'What did you see when the attack happened?',
     response:
       'Four white shapes around Barrigen’s neck. They were visible and the guards tried to tear them away.',
+    cooperativeResponse:
+      'I saw them appear together around his neck. Sakata fired and other guards tried to tear them away: this was neither an isolated illusion nor an attack delivered by someone in the room.',
   },
   'bill-duration': {
     prompt: 'How long did we have to react?',
     response:
       'Almost no time. Eleven seconds at most between the creatures appearing and his death.',
+    cooperativeResponse:
+      'Eleven seconds at most. I was tracking the reactions around me: the appearance, the shots, our attempts to remove them, then the collapse. Everything happened inside that window.',
   },
   'loberry-figure': {
     prompt: 'Describe the masked presence exactly.',
     response:
       'A small decorative girl wearing a mask. She stood behind Furykov. When I pointed her out, nobody was looking in the right place.',
+    cooperativeResponse:
+      'She looked like a small masked decorative girl, motionless behind Furykov. I felt her presence as pressure forcing me to look; when I shouted, every eye turned away from Barrigen.',
   },
   'loberry-control': {
     prompt: 'Were you controlling her?',
     response:
       'No. I could only see her. She forced herself on me, and my panic drew everyone’s attention.',
+    cooperativeResponse:
+      'I was not controlling her. She forced my attention, then my fear did the rest: I pointed at Furykov and diverted the class at the exact moment Barrigen was attacked.',
   },
   'furykov-doll': {
     prompt: 'Was the doll behind you?',
     response:
       'Loberry says so. I saw nothing behind my back. That suggests a perception condition, not an absence.',
+    cooperativeResponse:
+      'I saw nothing, even after Loberry raised the alarm. Her reaction was too precise to be feigned, though. If a doll was there, its visibility had to be conditional and separate from the creatures’ visibility.',
   },
   'belerainte-users': {
     prompt: 'How many participants know Nen?',
     response:
       'Six, according to the count in the room. Furykov and I declared ourselves; four others remain silent.',
+    cooperativeResponse:
+      'The count gives six users. Furykov and I declared ourselves; four others chose silence. That widens the possibilities, but it does not justify accusing any of them.',
   },
   'sakata-shots': {
     prompt: 'What did you fire at?',
     response:
       'The white creatures. My shots hit them; they were neither Loberry’s hallucination nor invisible.',
+    cooperativeResponse:
+      'I lined up the white shapes at his neck, then fired. The shots struck them and other guards were grabbing them too: they had a material presence all of us could perceive.',
   },
   'sakata-time': {
     prompt: 'Could you have saved Barrigen by firing sooner?',
     response: 'No. Their combined action was too fast; we only had about eleven seconds.',
+    cooperativeResponse:
+      'No. Even reacting the instant they appeared, I had to aim without hitting Barrigen while the others tried to tear them away. Together they drained his blood in about eleven seconds.',
   },
 }
 
@@ -166,6 +187,8 @@ export function localizedRoom1014Case(locale: Locale): InvestigationCase {
     subtitle: 'Room 1014 incident',
     location: 'Tier 1 · Apartment 1014',
     objective: 'Establish how the attack worked without claiming to know the assassin.',
+    solvedSummary:
+      'The facts establish a materialised, remotely controlled Nen attack, but the user’s identity remains unknown at this stage.',
     subjects: room1014Case.subjects.map((subject) => ({
       ...subject,
       ...subjectCopy[subject.id],

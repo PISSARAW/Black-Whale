@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { logEntryLabel } from '$lib/investigation/logLabels'
   import type { Evidence } from '$lib/investigation/case'
   import type { CaseSession } from '$lib/investigation/caseSession.svelte'
   import type { caseUi } from '$lib/investigation/caseLabels'
@@ -106,7 +107,7 @@
         <li class="flex items-center gap-3 text-xs text-sky-100/50">
           <span class="w-20 shrink-0 font-mono text-[9px] uppercase tracking-wider text-sky-400/70"
             >{ui.evidence.logKinds[entry.kind]}</span
-          ><span>{entry.label}</span>
+          ><span>{logEntryLabel(entry, session.investigation)}</span>
         </li>
       {/each}
     </ol>

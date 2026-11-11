@@ -13,11 +13,14 @@ import { resolveInvestigationHatsu } from './hatsuSystem'
 import { playInvestigationHatsuSound } from './hatsuPresentation'
 import type { ConfrontationResult } from './confrontation'
 import { confrontWitnesses } from './confrontation'
+import { confrontationCopy } from './confrontationCopy'
+import { describeVerdict } from './verdictCopy'
 import { questionIsAvailable } from './interrogation'
 import {
   openingDisposition,
   resolveInterview,
   type InterviewStance,
+  type InterviewOutcome,
   type WitnessDisposition,
 } from './interview'
 import { buildFinalReport } from './report'
@@ -89,6 +92,7 @@ export class CaseSession {
   hatsuEffectTarget = $state('')
   askedQuestionKeys = $state<string[]>([])
   activeResponse = $state<string | null>(null)
+  activeCooperation = $state<InterviewOutcome['cooperation'] | null>(null)
   interviewStance = $state<InterviewStance>('neutral')
   witnessDispositions = $state<Record<string, WitnessDisposition>>({})
   confrontationKeys = $state<string[]>([])
@@ -136,20 +140,17 @@ export class CaseSession {
   )
   finalReport = $derived(
     this.reportVerdict && this.reportVerdict.status === 'solved'
-      ? buildFinalReport(this.investigation, this.reportVerdict)
+      ? buildFinalReport(this.definition, this.reportVerdict)
       : null,
   )
+  /** The report's evidence by kind; the panel names each kind in the visitor's language. */
   reportGroups = $derived(
     this.finalReport
-      ? [
-          {
-            label: 'Faits établis',
-            evidence: this.finalReport.established,
-            tone: 'text-emerald-200',
-          },
-          { label: 'Déductions', evidence: this.finalReport.deductions, tone: 'text-amber-100' },
-          { label: 'Témoignages', evidence: this.finalReport.testimony, tone: 'text-sky-200' },
-        ]
+      ? ([
+          { kind: 'established', evidence: this.finalReport.established, tone: 'text-emerald-200' },
+          { kind: 'deductions', evidence: this.finalReport.deductions, tone: 'text-amber-100' },
+          { kind: 'testimony', evidence: this.finalReport.testimony, tone: 'text-sky-200' },
+        ] as const)
       : [],
   )
 
@@ -239,6 +240,8 @@ export class CaseSession {
     this.activeSubjectId = id
     this.hatsuResult = null
     this.activeResponse = null
+    this.activeCooperation = null
+    this.interviewStance = 'neutral'
     this.discover(subject.evidenceIds)
     this.persist()
   }
@@ -249,6 +252,8 @@ export class CaseSession {
     this.activeSubjectId = id
     this.hatsuResult = null
     this.activeResponse = null
+    this.activeCooperation = null
+    this.interviewStance = 'neutral'
     this.discover(subject.evidenceIds)
     this.persist()
   }
@@ -293,7 +298,7 @@ export class CaseSession {
     this.addLog({
       id: `verdict:${this.log.filter((entry) => entry.kind === 'VERDICT').length + 1}`,
       kind: 'VERDICT',
-      label: this.verdict.title,
+      label: describeVerdict(this.verdict, this.investigation, get(locale)).title,
     })
     this.persist()
     if (this.verdict.status === 'solved') {
@@ -340,6 +345,12 @@ export class CaseSession {
     }
   }
 
+  setInterviewStance = (stance: InterviewStance) => {
+    this.interviewStance = stance
+    this.activeResponse = null
+    this.activeCooperation = null
+  }
+
   askQuestion = (questionId: string) => {
     const subject = this.activeSubject
     if (!subject) return
@@ -354,10 +365,12 @@ export class CaseSession {
       {
         questionId,
         stance: this.interviewStance,
+        preferredStances: question.preferredStances,
+        resistedStances: question.resistedStances,
         leverageEvidenceIds: question.requiredEvidenceIds,
-        requiredTrust: 45,
+        requiredTrust: question.requiredTrust,
         baseEvidenceIds: question.evidenceIds,
-        cooperativeEvidenceIds: [],
+        cooperativeEvidenceIds: question.cooperativeEvidenceIds,
       },
       this.discoveredIds,
     )
@@ -365,18 +378,23 @@ export class CaseSession {
       ...this.witnessDispositions,
       [subject.id]: outcome.nextDisposition,
     }
+    this.activeCooperation = outcome.cooperation
     this.activeResponse =
-      outcome.cooperation === 'refused' ? this.#labels().refused : question.response
+      outcome.cooperation === 'refused'
+        ? this.#labels().refused
+        : outcome.cooperation === 'open'
+          ? question.cooperativeResponse
+          : question.response
     if (outcome.cooperation === 'refused') {
       this.persist()
       return
     }
+    this.discover(outcome.revealedEvidenceIds)
     if (!this.askedQuestionKeys.includes(key)) {
       this.askedQuestionKeys = [...this.askedQuestionKeys, key]
-      this.discover(outcome.revealedEvidenceIds)
       this.addLog({ id: `question:${key}`, kind: 'DISCOVERY', label: question.prompt })
-      this.persist()
     }
+    this.persist()
   }
 
   toggleConfrontationWitness = (id: string) => {
@@ -388,11 +406,12 @@ export class CaseSession {
   }
 
   performConfrontation = () => {
-    const result = confrontWitnesses(
-      this.confrontationWitnessIds,
-      this.discoveredIds,
-      this.definition.confrontations,
-    )
+    const result = confrontWitnesses({
+      witnessIds: this.confrontationWitnessIds,
+      discoveredEvidenceIds: this.discoveredIds,
+      confrontations: this.definition.confrontations,
+      copy: confrontationCopy(get(locale)),
+    })
     this.confrontationResult = result
     if (result.tone === 'insufficient' || this.confrontationKeys.includes(result.key)) return
     this.confrontationKeys = [...this.confrontationKeys, result.key]
@@ -424,6 +443,7 @@ export class CaseSession {
     this.hatsuResult = null
     this.askedQuestionKeys = []
     this.activeResponse = null
+    this.activeCooperation = null
     this.witnessDispositions = {}
     this.confrontationKeys = []
     this.confrontationWitnessIds = []

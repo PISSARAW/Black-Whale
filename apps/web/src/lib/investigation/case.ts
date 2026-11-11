@@ -1,5 +1,7 @@
 // Mirrors the domain vocabulary while keeping this client-only vertical slice
 // runnable before the workspace packages have been built.
+import type { InterviewStance } from './interview'
+
 type AcquisitionMethod =
   | 'DIRECT_OBSERVATION'
   | 'TOLD_BY_OTHER'
@@ -51,8 +53,13 @@ export interface InvestigationQuestion {
   id: string
   prompt: string
   response: string
+  cooperativeResponse: string
+  preferredStances: InterviewStance[]
+  resistedStances: InterviewStance[]
+  requiredTrust: number
   requiredEvidenceIds: string[]
   evidenceIds: string[]
+  cooperativeEvidenceIds: string[]
 }
 
 export interface Hypothesis {
@@ -75,13 +82,17 @@ export interface InvestigationCase {
   evidence: Evidence[]
   hypotheses: Hypothesis[]
   canonicalHypothesisId: string
+  /** What the verdict says once the canonical hypothesis is fully supported. */
+  solvedSummary: string
   objectives: { id: string; label: string; requiredEvidenceIds: string[] }[]
 }
 
+/**
+ * What the evidence does to a hypothesis. Facts only: the words for it are
+ * the visitor's language, and `describeVerdict` in `verdictCopy` supplies them.
+ */
 export interface Verdict {
   status: 'insufficient' | 'plausible' | 'contradicted' | 'solved'
-  title: string
-  summary: string
   supporting: Evidence[]
   missing: Evidence[]
   contradictions: Evidence[]
@@ -110,36 +121,12 @@ export function evaluateHypothesis(
     .map((id) => evidenceById.get(id)!)
 
   if (contradictions.length > 0) {
-    return {
-      status: 'contradicted',
-      title: 'Hypothèse contredite',
-      summary: `${contradictions.length} élément${contradictions.length > 1 ? 's' : ''} résiste à cette reconstruction.`,
-      supporting,
-      missing,
-      contradictions,
-    }
+    return { status: 'contradicted', supporting, missing, contradictions }
   }
-
   if (missing.length > 0) {
-    return {
-      status: supporting.length > 0 ? 'plausible' : 'insufficient',
-      title: supporting.length > 0 ? 'Piste plausible, preuve incomplète' : 'Dossier insuffisant',
-      summary: `Il manque ${missing.length} élément${missing.length > 1 ? 's' : ''} nécessaire${missing.length > 1 ? 's' : ''} pour soutenir cette conclusion.`,
-      supporting,
-      missing,
-      contradictions,
-    }
+    const status = supporting.length > 0 ? 'plausible' : 'insufficient'
+    return { status, supporting, missing, contradictions }
   }
-
-  const isCanonical = hypothesis.id === investigation.canonicalHypothesisId
-  return {
-    status: isCanonical ? 'solved' : 'plausible',
-    title: isCanonical ? 'Conclusion démontrée' : 'Conclusion possible',
-    summary: isCanonical
-      ? "Les faits établissent une attaque de Nen matérialisée et commandée à distance, mais l'identité de l'utilisateur reste inconnue à ce stade."
-      : 'Cette hypothèse est compatible avec les éléments choisis, sans constituer la meilleure explication du dossier.',
-    supporting,
-    missing,
-    contradictions,
-  }
+  const status = hypothesis.id === investigation.canonicalHypothesisId ? 'solved' : 'plausible'
+  return { status, supporting, missing, contradictions }
 }

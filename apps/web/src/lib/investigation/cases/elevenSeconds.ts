@@ -3,6 +3,7 @@ import { localizedRoom1014Case } from '../localizedCase'
 import { ROOM_1014_SIGHT_LINES } from '../geometry'
 import { frameAt } from '../replay'
 import { elevenSecondsConfrontations } from './elevenSecondsConfrontations'
+import { elevenSecondsReport } from './elevenSecondsReport'
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from '../definition'
 
 export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefinition {
@@ -79,10 +80,7 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         outcome: 'limited',
       },
     ],
-    replay: Array.from({ length: 12 }, (_, second) => frameAt(second)),
-    report: {
-      requiredHypothesisId: content.canonicalHypothesisId,
-      unknowns: ['silent-majority-user', 'silent-majority-affiliation', 'silent-majority-motive'],
-    },
+    replay: Array.from({ length: 12 }, (_, second) => frameAt(second, locale)),
+    report: elevenSecondsReport(locale, content.canonicalHypothesisId),
   }
 }

@@ -15,4 +15,9 @@ describe('eleven-second replay', () => {
   it('ends with Barrigen exsanguinated', () => {
     expect(frameAt(11)).toMatchObject({ stage: 'death', bloodLevel: 0 })
   })
+
+  it('opens on the doll in the visitor’s language', () => {
+    expect(frameAt(0, 'fr').title).toBe('La poupée apparaît')
+    expect(frameAt(0, 'en').title).toBe('Doll appears')
+  })
 })

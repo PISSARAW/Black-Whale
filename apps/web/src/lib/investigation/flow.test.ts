@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { evaluateHypothesis, room1014Case } from './case'
 import { confrontWitnesses } from './confrontation'
-import { elevenSecondsConfrontations } from './cases/elevenSecondsConfrontations'
+import { confrontationCopy } from './confrontationCopy'
+import { elevenSecondsDefinition } from './cases/elevenSeconds'
 import { questionIsAvailable } from './interrogation'
 import { buildFinalReport } from './report'
 
@@ -29,15 +30,17 @@ describe('complete investigation flow', () => {
     ask('loberry', 'loberry-figure')
     ask('kurapika', 'kurapika-method')
 
-    const confrontation = confrontWitnesses(
-      ['loberry', 'furykov'],
-      discovered,
-      elevenSecondsConfrontations('fr'),
-    )
+    const definition = elevenSecondsDefinition('fr')
+    const confrontation = confrontWitnesses({
+      witnessIds: ['loberry', 'furykov'],
+      discoveredEvidenceIds: discovered,
+      confrontations: definition.confrontations,
+      copy: confrontationCopy('fr'),
+    })
     confrontation.evidenceIds.forEach((id) => discovered.add(id))
 
     const verdict = evaluateHypothesis(room1014Case, 'hidden-nen', discovered)
     expect(verdict.status).toBe('solved')
-    expect(buildFinalReport(room1014Case, verdict).disposition).toContain('auteur non identifié')
+    expect(buildFinalReport(definition, verdict).disposition).toContain('auteur non identifié')
   })
 })

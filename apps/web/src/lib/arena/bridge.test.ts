@@ -1,0 +1,38 @@
+import { describe, expect, it } from 'vitest'
+import { initialCombatState } from '../combat/reducer'
+import { applyArenaHandoff, saveArenaHandoffResult, type ArenaHandoff } from './bridge'
+
+describe('Arena cross-mode handoff', () => {
+  it('carries prior aura, injuries, knowledge and narrative context into combat', () => {
+    const handoff: ArenaHandoff = {
+      version: 1,
+      id: 'infiltration-encounter',
+      sourceMode: 'INFILTRATION',
+      context: 'NARRATIVE',
+      playerAura: 42,
+      opponentAura: 75,
+      playerCondition: 'staggered',
+      opponentCondition: 'ready',
+      knownOpponentHatsuIds: ['secret-window'],
+      nenEffects: [],
+    }
+    const state = applyArenaHandoff(initialCombatState(), handoff)
+    expect(state.player).toMatchObject({ aura: 42, condition: 'staggered' })
+    expect(state.opponentMemory.hypothesis.knownHatsuIds).toEqual(['secret-window'])
+    expect(state.environment.context).toBe('NARRATIVE')
+  })
+
+  it('exports consequences for the source mode', () => {
+    const values = new Map<string, string>()
+    const storage = {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+      removeItem: (key: string) => values.delete(key),
+    }
+    const state = { ...initialCombatState(), outcome: 'won' as const }
+    expect(saveArenaHandoffResult(storage, 'hunt-duel', state)).toMatchObject({
+      handoffId: 'hunt-duel',
+      outcome: 'won',
+    })
+  })
+})

@@ -71,6 +71,12 @@
   import { isNenControlCode } from '$lib/nen/controls'
   import type { NenTechniqueAction } from '@black-whale/nen-engine'
   import { ryuDistribution } from '$lib/combat/ryu'
+  import {
+    applyArenaHandoff,
+    consumeArenaHandoff,
+    saveArenaHandoffResult,
+    type ArenaHandoff,
+  } from '$lib/arena/bridge'
 
   let { data }: { data: PageData } = $props()
 
@@ -166,6 +172,7 @@
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
   let selectedChallengeId = $state<string | null>(initialChallengeId)
+  let sourceHandoff = $state<ArenaHandoff | null>(null)
   // Bookkeeping, not state: nothing renders from it, it only holds timer
   // handles so they can be cleared on teardown.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -542,6 +549,7 @@
     if (graded || game.outcome === 'playing') return
     graded = true
     lastReplay = recorder.finish(game)
+    if (sourceHandoff) saveArenaHandoffResult(sessionStorage, sourceHandoff.id, game)
     safeStorageSet(sessionStorage, 'black-whale:arena-last-replay', serializeReplay(lastReplay))
     const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
     const order = ['C', 'B', 'A', 'S']
@@ -643,6 +651,8 @@
   }
 
   onMount(() => {
+    sourceHandoff = consumeArenaHandoff(sessionStorage)
+    if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     const experience = resolveArenaExperience({
       formatId,
       opponentId,

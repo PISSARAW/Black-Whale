@@ -46,6 +46,7 @@ export {
 import { HATSU_COST } from './fighter'
 import type { Vec2 } from '../tour/types'
 import { addPersistentNenEffect, advancePersistentNenEffects } from './effects'
+import { advanceEnvironment, reactEnvironment } from './environment'
 import {
   initialCombatState,
   otherSide,
@@ -94,15 +95,19 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'PREPARE_HATSU') return prepareHatsu(state, action.side, action.hatsuId)
-  if (action.type === 'HATSU') return castHatsu(state, action)
+  if (action.type === 'HATSU') {
+    const cast = castHatsu(state, action)
+    return cast === state ? state : reactEnvironment(cast, action)
+  }
   if (action.type === 'STRIKE') {
-    return strike({
+    const struck = strike({
       state,
       side: action.side,
       zone: action.zone,
       technique: 'strike',
       targetAt: action.targetAt,
     })
+    return struck === state ? state : reactEnvironment(struck, action)
   }
   if (action.type === 'KO') return chargeKo(state, action.side, action.zone)
   return state
@@ -118,8 +123,11 @@ function tick(state: CombatState, dt: number): CombatState {
     player: advanceFighter(state.player, state.opponent, context),
     opponent: advanceFighter(state.opponent, state.player, context),
   }
-  return advancePersistentNenEffects(
-    ringOut(landReadyKo(landReadyIntent(advanceTethers(advanced, dt)))),
+  return advanceEnvironment(
+    advancePersistentNenEffects(
+      ringOut(landReadyKo(landReadyIntent(advanceTethers(advanced, dt)))),
+      dt,
+    ),
     dt,
   )
 }

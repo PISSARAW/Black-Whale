@@ -19,6 +19,7 @@ export function stateChecksum(state: CombatState): string {
     })),
     nenEffects: state.nenEffects,
     lastHatsuBySide: state.lastHatsuBySide,
+    environment: state.environment,
     opponentMemory: state.opponentMemory,
   })
   let hash = 0x811c9dc5

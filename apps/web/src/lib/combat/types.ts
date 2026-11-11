@@ -7,6 +7,7 @@ export type FighterCondition = 'ready' | 'staggered' | 'down' | 'ko'
 export type Impact = 'miss' | 'blocked' | 'clean' | 'critical' | 'knockdown' | 'ko'
 export type MatchOutcome = 'playing' | 'won' | 'lost'
 export type ArenaHatsuEffect = 'bind' | 'impact' | 'barrage' | 'restore' | 'enhance'
+export type ArenaDuelContext = 'REGULATED' | 'CLANDESTINE' | 'NARRATIVE'
 
 export const BODY_ZONES: readonly BodyZone[] = ['head', 'torso', 'arms', 'legs']
 
@@ -102,6 +103,14 @@ export interface CombatState {
   nenEffects: PersistentNenEffect[]
   opponentMemory: OpponentMemory
   lastHatsuBySide: Record<CombatSide, string | null>
+  environment: {
+    context: ArenaDuelContext
+    noise: number
+    witnesses: number
+    securityAlert: number
+    interventionIn: number | null
+    intervened: boolean
+  }
 }
 
 export interface OpponentMemory {
@@ -125,6 +134,7 @@ export interface CombatSetup {
   playerAt: Vec2
   opponentAt: Vec2
   terrain: CombatTerrainPhysics
+  context?: ArenaDuelContext
 }
 
 export type CombatAction =
@@ -213,6 +223,14 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
       },
     },
     lastHatsuBySide: { player: null, opponent: null },
+    environment: {
+      context: setup.context ?? 'REGULATED',
+      noise: 0,
+      witnesses: 0,
+      securityAlert: 0,
+      interventionIn: null,
+      intervened: false,
+    },
   }
 }
 

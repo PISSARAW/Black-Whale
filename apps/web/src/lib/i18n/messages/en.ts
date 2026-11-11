@@ -489,6 +489,8 @@ export const en = {
       placeholder: 'Banquet hall, 1004, kitchen, cell…',
       showing: (shown: number, total: number) => `Showing ${shown} of ${total}`,
       noMatch: 'Nothing of that name in the ship',
+      asking: 'Nothing of that name — reading the question…',
+      understood: (keywords: string) => `Understood as: ${keywords}`,
       level: 'Level',
       close: 'Esc',
       hint: '↑ ↓ to choose · Enter to go · Esc to close',

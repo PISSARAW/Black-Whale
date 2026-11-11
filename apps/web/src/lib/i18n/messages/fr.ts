@@ -464,6 +464,8 @@ export const fr: Messages = {
       placeholder: 'Salle du banquet, 1004, cuisine, cellule…',
       showing: (shown, total) => `${shown} affichés sur ${total}`,
       noMatch: 'Rien de ce nom dans le vaisseau',
+      asking: 'Rien de ce nom — interprétation de la question…',
+      understood: (keywords) => `Compris comme : ${keywords}`,
       level: 'Niveau',
       close: 'Échap',
       hint: '↑ ↓ pour choisir · Entrée pour y aller · Échap pour fermer',

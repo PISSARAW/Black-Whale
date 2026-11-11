@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import type { Crossing, Ship, TierPlan } from '$lib/tour/blueprint'
   import { PROVENANCE_CLASS } from '$lib/tour/pagePresentation'
   import type { Naming } from '$lib/tour/search'
@@ -73,11 +73,14 @@
   {ship}
   bind:open={finderOpen}
   words={naming}
+  locale={$locale}
   labels={{
     title: $t.tour.find.title,
     placeholder: $t.tour.find.placeholder,
     showing: $t.tour.find.showing,
     noMatch: $t.tour.find.noMatch,
+    asking: $t.tour.find.asking,
+    understood: $t.tour.find.understood,
     action: $t.tour.jumpTo,
     level: $t.tour.find.level,
     close: $t.tour.find.close,

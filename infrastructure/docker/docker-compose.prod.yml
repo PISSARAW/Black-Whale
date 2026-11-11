@@ -60,6 +60,13 @@ services:
       XFF_DEPTH: '1'
       BODY_SIZE_LIMIT: '512K'
       DATABASE_URL: postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-black_whale}
+      # Optional language model for the walk's finder. Empty means there is
+      # none and the finder searches by name only, exactly as before.
+      OLLAMA_URL: ${OLLAMA_URL:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+    # Ollama runs on the host, not in this stack: this name is how the
+    # container reaches it. See infrastructure/hetzner/README.md.
+    extra_hosts: ['host.docker.internal:host-gateway']
     expose: ['3000']
     healthcheck:
       test: [CMD, wget, -qO-, http://127.0.0.1:3000/health]

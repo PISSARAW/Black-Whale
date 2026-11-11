@@ -12,9 +12,15 @@
    * On the walk, ⌘K finds a room rather than opening the site's own palette. The
    * shortcut is claimed in the capture phase so the layout's handler never sees
    * it — one key, one meaning, decided by where you are standing.
+   *
+   * When nothing carries the words typed and they read as a question, the
+   * server's language model is asked what kind of room is meant
+   * (`lib/tour/looseSearch.ts`). It may not answer; the list then stays empty.
    */
   import { onMount, tick } from 'svelte'
   import type { Ship } from '$lib/tour/blueprint'
+  import { findByKeywords } from '$lib/tour/looseSearch'
+  import { LooseSearch } from '$lib/tour/pageLooseSearch.svelte'
   import { findPlaces, type Naming } from '$lib/tour/search'
   import type { Provenance } from '$lib/tour/types'
 
@@ -23,12 +29,18 @@
     open?: boolean
     /** How places are named, in the language being read. */
     words: Naming
+    /** The language the question is asked in, for the server's interpreter. */
+    locale: string
     labels: {
       title: string
       placeholder: string
       /** "Showing 40 of 112" — a cap that says so is not a silent truncation. */
       showing: (shown: number, total: number) => string
       noMatch: string
+      /** Shown while the question is being interpreted. */
+      asking: string
+      /** "Understood as: kitchen, prince" — what the list below was found by. */
+      understood: (keywords: string) => string
       /** What Enter does: walk there, or aim the technique at it. */
       action: string
       level: string
@@ -44,6 +56,7 @@
     ship,
     open = $bindable(false),
     words,
+    locale,
     labels,
     provenanceLabel,
     provenanceClass,
@@ -58,6 +71,22 @@
   let dialog = $state<HTMLDialogElement | null>(null)
 
   const found = $derived(findPlaces(ship, words, { text: query, limit: LIMIT }))
+
+  const loose = new LooseSearch()
+  const guessed = $derived(findByKeywords(ship, words, { keywords: loose.keywords, limit: LIMIT }))
+  /** The name search when it found something; the interpreted one otherwise. */
+  const rows = $derived(found.total ? found.shown : guessed.shown)
+  const status = $derived.by(() => {
+    if (found.total) return labels.showing(found.shown.length, found.total)
+    if (loose.pending) return labels.asking
+    if (guessed.total) return labels.understood(loose.keywords.join(', '))
+    return labels.noMatch
+  })
+
+  $effect(() => {
+    if (open && !found.total) loose.ask(query, locale)
+    else loose.clear()
+  })
 
   /** A new query is a new list; the highlight cannot stay on its ninth row. */
   const retype = () => {
@@ -86,7 +115,6 @@
   }
 
   function onInputKeydown(event: KeyboardEvent) {
-    const rows = found.shown
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       if (!rows.length) return
@@ -150,11 +178,11 @@
   </div>
 
   <p class="px-3 py-1.5 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40" aria-live="polite">
-    {found.total ? labels.showing(found.shown.length, found.total) : labels.noMatch}
+    {status}
   </p>
 
   <ul class="max-h-[52vh] overflow-y-auto border-t border-[#222]">
-    {#each found.shown as place, index (place.id)}
+    {#each rows as place, index (place.id)}
       <li>
         <button
           type="button"

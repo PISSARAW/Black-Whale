@@ -21,6 +21,7 @@ export type HuntTerrainId = 'tserriednich' | 'tubeppa' | 'woble'
 export interface HuntTerrain {
   id: HuntTerrainId
   tierId: string
+  attestedRoomCount: number
   name: { en: string; fr: string }
   description: { en: string; fr: string }
 }
@@ -29,6 +30,7 @@ export const HUNT_TERRAINS: HuntTerrain[] = [
   {
     id: 'tserriednich',
     tierId: 'interior-room-1004',
+    attestedRoomCount: 8,
     name: { en: "Tserriednich's apartment", fr: 'Appartement de Tserriednich' },
     description: {
       en: 'A balanced chain of private and reception rooms.',
@@ -38,6 +40,7 @@ export const HUNT_TERRAINS: HuntTerrain[] = [
   {
     id: 'tubeppa',
     tierId: 'interior-room-1005',
+    attestedRoomCount: 8,
     name: { en: "Tubeppa's apartment", fr: 'Appartement de Tubeppa' },
     description: {
       en: 'Long approaches reward patient information gathering.',
@@ -47,6 +50,7 @@ export const HUNT_TERRAINS: HuntTerrain[] = [
   {
     id: 'woble',
     tierId: 'interior-room-1014',
+    attestedRoomCount: 5,
     name: { en: "Woble's apartment", fr: 'Appartement de Woble' },
     description: {
       en: 'Tight domestic rooms make every encounter feel close.',
@@ -82,8 +86,10 @@ export function buildArena(id: HuntTerrainId = DEFAULT_HUNT_TERRAIN): Arena {
   if (!plan) throw new Error(`Arena tier ${terrain.tierId} is not in the blueprint`)
 
   const spaces = plan.spaces.filter((space) => space.provenance === 'panel')
-  if (spaces.length !== ARENA_ROOM_COUNT) {
-    throw new Error(`Arena expects ${ARENA_ROOM_COUNT} attested spaces, found ${spaces.length}`)
+  if (spaces.length !== terrain.attestedRoomCount) {
+    throw new Error(
+      `Arena expects ${terrain.attestedRoomCount} attested spaces, found ${spaces.length}`,
+    )
   }
 
   const ids = new Set(spaces.map((space) => space.id))

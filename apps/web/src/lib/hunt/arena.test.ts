@@ -62,7 +62,7 @@ describe('the arena', () => {
     for (const terrain of HUNT_TERRAINS) {
       const variant = buildArena(terrain.id)
       expect(variant.tierId).toBe(terrain.tierId)
-      expect(variant.spaces).toHaveLength(ARENA_ROOM_COUNT)
+      expect(variant.spaces).toHaveLength(terrain.attestedRoomCount)
       expect(variant.spaces.every((space) => space.provenance === 'panel')).toBe(true)
       expect(variant.doorways.length).toBeGreaterThan(0)
     }

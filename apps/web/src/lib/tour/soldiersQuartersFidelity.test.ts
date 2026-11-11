@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the published soldiers’ quarters plan', () => {
   it('keeps eight plan rooms and their ninety-six mapped bunks without panel claims', () => {
@@ -11,5 +11,6 @@ describe('the published soldiers’ quarters plan', () => {
     expect(structures.every(({ kind, provenance }) => kind === 'bed' && provenance === 'map')).toBe(
       true,
     )
+    expect(certificationIssuesFor('tier-1-soldiers-living-quarters')).toEqual([])
   })
 })

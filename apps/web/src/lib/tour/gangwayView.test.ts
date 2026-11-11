@@ -116,6 +116,7 @@ describe('royal liner exterior', () => {
     expect(panorama.volume).toBeUndefined()
     expect(panorama.visibleSpaceIds).toEqual([])
     expect(panorama.labelFr).toContain('cadrage reconstitué')
+    expect(pointInPolygon(panorama.at, ship.spaces.get(PRINCE_VIEW_SPACE)!.footprint)).toBe(true)
     for (const link of ship.links.filter((candidate) => candidate.retractable)) {
       expect(viewsForSpace(link.from)).toContain(panorama)
     }

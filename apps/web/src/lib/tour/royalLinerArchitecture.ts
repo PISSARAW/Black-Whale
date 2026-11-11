@@ -49,17 +49,54 @@ export function addRoyalArchitecture(draw: RoyalDrawing, ship: Ship, hull: Polyg
       bevelEnabled: false,
     })
     geometry.rotateX(-Math.PI / 2).translate(0, bottom, 0)
-    draw.solid(geometry, 0xe2e3da).name = `royal-liner-terrace-${level}`
-    draw.plate(outline, top + 0.025, 0xaab8b9)
+    draw.solid(geometry, 0xaeb9b8).name = `royal-liner-terrace-${level}`
+    draw.plate(outline, top + 0.025, 0x77898d)
+    addRoofField(draw, outline, top + 0.06)
     draw.rail(outline, top + 0.025)
     terraceWindows(draw, { outline, y: bottom + 1.65 }, { windows, frames: windowFrames })
     terraceBand(draw, outline, { y: bottom + 0.35, height: 0.22, colour: 0x526575 })
     terraceBand(draw, outline, { y: top - 0.2, height: 0.18, colour: 0xf4eee0 })
   }
   instances(draw, windowFrames, { colour: 0x132c3a, gain: 1, name: 'royal-window-recesses' })
-  instances(draw, windows, { colour: 0xffedc5, gain: 2.6, name: 'royal-lit-windows' })
+  instances(draw, windows, { colour: 0xffedc5, gain: 1.65, name: 'royal-lit-windows' })
   addCrown(draw, [58, highest.elevation + highest.ceiling, 0])
   addForedeck(draw, royal.elevation)
+}
+
+/**
+ * The exterior panel does not show blank white roofs: every setback carries a
+ * dense, dark rectangular field crossed by regular ribs.  These are facade
+ * rhythm, not invented rooms, and the inset keeps them safely inside the
+ * clipped supporting deck.
+ */
+function addRoofField(draw: RoyalDrawing, outline: Polygon, y: number) {
+  const xs = outline.map(([x]) => x)
+  const zs = outline.map(([, z]) => z)
+  const x0 = Math.min(...xs) + 8
+  const x1 = Math.max(...xs) - 8
+  const z0 = Math.min(...zs) + 5
+  const z1 = Math.max(...zs) - 5
+  if (x1 <= x0 || z1 <= z0) return
+  draw.plate(
+    [
+      [x0, z0],
+      [x0, z1],
+      [x1, z1],
+      [x1, z0],
+    ],
+    y,
+    0x263a42,
+  )
+  const rows = Math.max(3, Math.floor((z1 - z0) / 4.2))
+  for (let row = 0; row <= rows; row++) {
+    const z = z0 + ((z1 - z0) * row) / rows
+    draw.box([x1 - x0, 0.045, 0.1], [(x0 + x1) / 2, y + 0.035, z], 0x9aa5a1)
+  }
+  const columns = Math.max(4, Math.floor((x1 - x0) / 13))
+  for (let column = 0; column <= columns; column++) {
+    const x = x0 + ((x1 - x0) * column) / columns
+    draw.box([0.1, 0.045, z1 - z0], [x, y + 0.036, (z0 + z1) / 2], 0x65777b)
+  }
 }
 
 function terraceBand(
@@ -227,7 +264,10 @@ function addFloodlights(draw: RoyalDrawing, context: { floor: number; water: num
         ),
       )
     const light = new THREE.Vector3(x, y + 8.5, z)
-    const target = new THREE.Vector3(x * 0.7, context.floor + 23, z * 0.54)
+    // The cones rake the hull below the royal deck.  Aiming them at the roofs
+    // made every beam overlap on the pale superstructure and erased all five
+    // setbacks in a white bloom.
+    const target = new THREE.Vector3(x * 0.7, context.floor + 11.5, z * 0.54)
     const delta = light.clone().sub(target)
     cones.push(
       new THREE.Matrix4().compose(
@@ -236,7 +276,7 @@ function addFloodlights(draw: RoyalDrawing, context: { floor: number; water: num
           new THREE.Vector3(0, 1, 0),
           delta.clone().normalize(),
         ),
-        new THREE.Vector3(8, delta.length(), 8),
+        new THREE.Vector3(4.5, delta.length(), 4.5),
       ),
     )
   }
@@ -249,7 +289,7 @@ function addFloodlights(draw: RoyalDrawing, context: { floor: number; water: num
     vertexShader:
       'varying float vAlong; void main(){ vAlong=1.0-uv.y; gl_Position=projectionMatrix*modelViewMatrix*instanceMatrix*vec4(position,1.0); }',
     fragmentShader:
-      'varying float vAlong; void main(){ float a=0.075*pow(1.0-vAlong,1.3); gl_FragColor=vec4(1.7,1.85,2.0,a); }',
+      'varying float vAlong; void main(){ float a=0.03*pow(1.0-vAlong,1.3); gl_FragColor=vec4(1.35,1.5,1.7,a); }',
   })
   draw.geometries.add(geometry)
   draw.materials.add(material)

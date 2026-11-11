@@ -233,10 +233,14 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
     geometry.setIndex(indices)
     geometry.computeVertexNormals()
-    const hull = solid(geometry, 0xc6d0d2, true)
+    // The night exteriors read the liner as a dark mass picked out by its
+    // openings and deck edge, not as a white cruise-ship hull.  Keeping the
+    // hull below the superstructure in value also preserves the long flank in
+    // the oblique prince view instead of turning the bow into one white slab.
+    const hull = solid(geometry, 0x43545d, true)
     hull.material = hullSurface
     hull.name = 'royal-liner-hull'
-    const deck = plate(royalHull, royal.elevation - 0.48, 0xc9c9b9)
+    const deck = plate(royalHull, royal.elevation - 0.48, 0x7f8e8e)
     deck.material = hullSurface
     deck.name = 'royal-liner-main-deck'
     rail(royalHull, royal.elevation)
@@ -244,7 +248,7 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
   addHull()
 
   function addHullWindows() {
-    for (const y of [royal.elevation - 5.5, royal.elevation - 10]) {
+    for (const y of [royal.elevation - 4.2, royal.elevation - 7.2, royal.elevation - 10.2]) {
       const fraction = (y - (royal.elevation - 10)) / 9.5
       const sx = 0.94 + 0.06 * fraction
       const sz = 0.95 + 0.05 * fraction
@@ -257,21 +261,41 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
         const dx = bx - ax
         const dz = (b[1] - a[1]) * sz
         const length = Math.hypot(dx, dz)
-        const count = Math.floor(length / 6)
+        const count = Math.floor(length / 4.8)
         for (let pane = 0; pane < count; pane++) {
           const along = (pane + 0.5) / count
           const mesh = box(
-            [1.8, 0.9, 0.14],
+            [1.2, 0.58, 0.14],
             [
               ax + dx * along - (dz / length) * 0.08,
               y,
               a[1] * sz + dz * along + (dx / length) * 0.08,
             ],
-            0x233d46,
+            0xd8cda8,
           )
           mesh.rotation.y = -Math.atan2(dz, dx)
         }
       }
+    }
+
+    // A pale sheer line separates the occupied upper decks from the dark
+    // flank in the reference exterior and makes the taper legible at night.
+    for (let index = 0; index < royalHull.length; index++) {
+      const a = royalHull[index]
+      const b = royalHull[(index + 1) % royalHull.length]
+      const dx = b[0] - a[0]
+      const dz = b[1] - a[1]
+      const length = Math.hypot(dx, dz)
+      const mesh = box(
+        [length, 0.22, 0.18],
+        [
+          (a[0] + b[0]) / 2 - (dz / length) * 0.1,
+          royal.elevation - 1.45,
+          (a[1] + b[1]) / 2 + (dx / length) * 0.1,
+        ],
+        0xc7cbbf,
+      )
+      mesh.rotation.y = -Math.atan2(dz, dx)
     }
   }
   addHullWindows()

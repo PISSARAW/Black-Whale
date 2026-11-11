@@ -4,6 +4,9 @@ import type { BufferGeometry } from 'three'
 import { auraGlassFor, type AuraGlass } from './auraRefraction'
 import type { Apparition } from './apparitions'
 import type { HumanLook } from './humanFigure'
+import { buildEnDome, unitDome } from './humanAuraDome'
+import { buildRenFlames } from './humanAuraFlames'
+import { skinLevelOf, wrapInAura } from './humanAuraSkin'
 
 type Three = typeof import('three')
 
@@ -43,8 +46,8 @@ export interface HumanAura {
   enFields: Mesh[]
   onCore: Mesh | null
   zetsuTrace: Mesh | null
-  auraShell: Mesh | null
-  kenMantle: Mesh | null
+  /** Ten, Ren or Ken as a layer on the body's own meshes. See `humanAuraSkin`. */
+  skin: Mesh[]
   /** The volume the aura occupies, seen from outside. See `auraRefraction`. */
   auraGlass: Mesh | null
 }
@@ -97,9 +100,10 @@ export function buildHumanAura({
   const enFields: Mesh[] = []
   let onCore: Mesh | null = null
   let zetsuTrace: Mesh | null = null
-  let auraShell: Mesh | null = null
-  let kenMantle: Mesh | null = null
   let auraGlass: Mesh | null = null
+  // The skin wraps the body as it stands, so it goes on before any aura mesh.
+  const level = skinLevelOf(nen)
+  const skin = auraVisible && level ? wrapInAura(THREE, figure, { colour: seen.colour, level }) : []
 
   // The shell goes on before anything else so that the flames, the mantle and
   // the Ko point are all *inside* it: the aura is one volume, and a Ren whose
@@ -107,7 +111,8 @@ export function buildHumanAura({
   // same body. It is the only thing here that is not additive light, which is
   // the whole of the argument in `auraRefraction`: seen from across a room, an
   // aura displaces the corridor behind it rather than adding a halo to it.
-  const worn = auraVisible ? auraGlassFor(nen) : null
+  // Not under Ko: the rest of the body is bare, so there is no volume to bend.
+  const worn = auraVisible && !nen.ko ? auraGlassFor(nen) : null
   const glassMaterial = worn && glass ? glass(worn) : null
   if (glassMaterial) {
     const shell = new THREE.Mesh(
@@ -163,54 +168,9 @@ export function buildHumanAura({
       figure.add(flame)
     }
   }
-  if (auraVisible && nen.mode !== 'zetsu' && !nen.ken && !nen.on) {
-    const shell = new THREE.Mesh(
-      geometry(
-        THREE,
-        `aura:${nen.mode}`,
-        () => new THREE.SphereGeometry(nen.mode === 'ren' ? 0.9 : 0.72, 18, 12),
-      ),
-      glow(seen.colour, nen.mode === 'ren' ? 0.16 : 0.07),
-    )
-    shell.name = 'nen-ten-ren'
-    shell.scale.y = 1.35
-    shell.position.y = 0.9
-    figure.add(shell)
-    auraShell = shell
-    if (nen.mode === 'ren') {
-      for (let index = 0; index < 12; index++) {
-        const flame = new THREE.Mesh(
-          geometry(
-            THREE,
-            `aura:ren-flame:${index % 3}`,
-            () => new THREE.ConeGeometry(0.1 + (index % 3) * 0.025, 0.55, 7),
-          ),
-          glow(seen.colour, 0.2),
-        )
-        const angle = (index / 12) * Math.PI * 2
-        flame.name = 'nen-ren-flame'
-        flame.position.set(Math.cos(angle) * 0.55, 0.5 + (index % 4) * 0.28, Math.sin(angle) * 0.55)
-        flame.rotation.z = Math.cos(angle) * -0.22
-        flame.rotation.x = Math.sin(angle) * 0.22
-        flame.userData.auraAngle = angle
-        flame.userData.auraLayer = index % 4
-        renFlames.push(flame)
-        figure.add(flame)
-      }
-    }
-  }
-
-  if (auraVisible && nen.ken) {
-    const mantle = new THREE.Mesh(
-      geometry(THREE, 'aura:ken', () => new THREE.SphereGeometry(0.96, 22, 16)),
-      glow(seen.colour, 0.28),
-    )
-    mantle.name = 'nen-ken'
-    mantle.scale.y = 1.42
-    mantle.position.y = 0.9
-    figure.add(mantle)
-    kenMantle = mantle
-  }
+  // Ten, Ren and Ken follow the body; Ren's tongues rise off it. `humanAuraSkin`.
+  if (auraVisible && level === 'ren')
+    renFlames.push(...buildRenFlames({ THREE, geometry, glow, colour: seen.colour, figure }))
 
   if (auraVisible && nen.gyo) {
     for (const side of [-1, 1]) {
@@ -251,6 +211,8 @@ export function buildHumanAura({
       enFields.push(field)
       root.add(field)
     }
+    const dome = geometry(THREE, 'aura:en-dome', () => unitDome(THREE))
+    buildEnDome(THREE, root, { colour: seen.colour, radius, geometry: dome })
   }
 
   if (auraVisible && nen.ko) {
@@ -296,8 +258,7 @@ export function buildHumanAura({
     enFields,
     onCore,
     zetsuTrace,
-    auraShell,
-    kenMantle,
+    skin,
     auraGlass,
   }
 }

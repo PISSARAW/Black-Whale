@@ -1,6 +1,7 @@
 import type { MeshBasicMaterial } from 'three'
-import type { NenTechniqueState } from '@black-whale/nen-engine'
-import type { HumanAura, HumanZone } from './humanAura'
+import type { HumanAura } from './humanAura'
+import { placeRenFlame } from './humanAuraFlames'
+import { SKIN_TIME } from './humanAuraSkin'
 
 /**
  * Moves the aura meshes `buildHumanAura` produced.
@@ -9,10 +10,7 @@ import type { HumanAura, HumanZone } from './humanAura'
  * Nen state rather than the pose: a figure standing still with Ren up is not
  * still, and a figure walking in Zetsu is.
  */
-export function animateHumanAura(
-  aura: HumanAura,
-  nen: NenTechniqueState<HumanZone>,
-): (seconds: number) => void {
+export function animateHumanAura(aura: HumanAura): (seconds: number) => void {
   const {
     onFlames,
     renFlames,
@@ -22,8 +20,6 @@ export function animateHumanAura(
     enFields,
     onCore,
     zetsuTrace,
-    auraShell,
-    kenMantle,
     auraGlass,
   } = aura
   return (seconds: number) => {
@@ -41,33 +37,9 @@ export function animateHumanAura(
       ;(zetsuTrace.material as MeshBasicMaterial).opacity =
         0.003 + Math.max(0, Math.sin(seconds * 0.65)) * 0.004
     }
-    if (auraShell) {
-      const stable = 1 + Math.sin(seconds * 1.8) * (nen.mode === 'ten' ? 0.012 : 0.025)
-      auraShell.scale.set(stable, 1.35 * stable, stable)
-      ;(auraShell.material as MeshBasicMaterial).opacity =
-        nen.mode === 'ten'
-          ? 0.064 + Math.sin(seconds * 1.8) * 0.006
-          : 0.14 + Math.sin(seconds * 4.2) * 0.025
-    }
-    renFlames.forEach((flame, index) => {
-      const phase = seconds * (3.4 + (index % 3) * 0.28) + index * 1.37
-      const angle = Number(flame.userData.auraAngle) + seconds * -0.14 + Math.sin(phase) * 0.16
-      const rise = ((seconds * (0.62 + (index % 2) * 0.09) + index / 4) % 1) * 0.38
-      const radius = 0.52 + Math.sin(phase * 0.73) * 0.1
-      flame.position.set(
-        Math.cos(angle) * radius,
-        0.34 + Number(flame.userData.auraLayer) * 0.31 + rise,
-        Math.sin(angle) * radius,
-      )
-      flame.rotation.set(Math.sin(angle) * 0.3, -angle, Math.cos(angle) * -0.3)
-      flame.scale.set(0.72 + Math.sin(phase) * 0.22, 0.9 + Math.sin(phase * 1.41) * 0.32, 0.72)
-      ;(flame.material as MeshBasicMaterial).opacity = 0.16 + Math.max(0, Math.sin(phase)) * 0.13
-    })
-    if (kenMantle) {
-      const pressure = 1 + Math.sin(seconds * 3.2) * 0.014 + Math.sin(seconds * 7.4) * 0.006
-      kenMantle.scale.set(pressure, 1.42 * pressure, pressure)
-      ;(kenMantle.material as MeshBasicMaterial).opacity = 0.25 + Math.sin(seconds * 5) * 0.025
-    }
+    // The skin and the En dome move in their shaders, on one shared clock.
+    SKIN_TIME.value = seconds
+    renFlames.forEach((flame, index) => placeRenFlame(flame, seconds, index))
     eyeAuras.forEach((eye, index) => {
       const focus = 1 + Math.sin(seconds * 11 + index * Math.PI) * 0.14
       eye.scale.set(1.45 * focus, 0.68 * focus, 1.15 * focus)

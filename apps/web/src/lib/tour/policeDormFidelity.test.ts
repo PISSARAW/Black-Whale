@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the Central Police dorm room', () => {
   it('keeps its minimal functional programme explicitly inferred', () => {
@@ -11,5 +11,6 @@ describe('the Central Police dorm room', () => {
     expect(structures.every(({ provenance }) => provenance === 'inferred')).toBe(true)
     expect(structures.filter(({ kind }) => kind === 'bed')).toHaveLength(4)
     expect(structures.filter(({ kind }) => kind === 'cabinet')).toHaveLength(2)
+    expect(certificationIssuesFor('tier-3-residential-units')).toEqual([])
   })
 })

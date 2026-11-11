@@ -37,4 +37,13 @@ describe('continuous contract transitions', () => {
     expect(carried.ledger.placements).toEqual([])
     expect(carried.ledger.pool).toEqual({ available: 75, committed: 0 })
   })
+
+  it('keeps physical evidence from earlier zones', () => {
+    const walked = huntReducer(setup('a'), {
+      type: 'WALKED',
+      player: { position: [2, 3], spaceId: 'a-hall', atRest: false },
+    })
+    const carried = carryIntoStage(walked, setup('b'))
+    expect(carried.traces).toEqual(walked.traces)
+  })
 })

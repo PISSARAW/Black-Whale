@@ -151,6 +151,7 @@
       seed: runSeed,
       hatsu: selectedHatsu,
       hunterProfile: selectedHunter,
+      terrain: selectedTerrain,
     })
     let prepared = selectedVow ? huntReducer(fresh, { type: 'VOW', vow: selectedVow }) : fresh
     for (const limb of campaign.persistentWounds)

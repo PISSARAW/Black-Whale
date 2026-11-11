@@ -42,6 +42,7 @@ import type { ContractEnvironment } from './contracts/types'
 import { strategicPlanner } from './hunter/strategy'
 import { tickRen, wound, type WoundedLimb } from './nen/advanced'
 import { hunterProfile } from './hunter/profiles'
+import { appendTrace } from './traces'
 
 export const HUNT_TICK_RATE = 60
 export const HUNT_DT = 1 / HUNT_TICK_RATE
@@ -96,6 +97,19 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
           where: hunter.spaceId,
         })
       : strategic.log
+  const traces =
+    hunter.spaceId && hunter.spaceId !== state.hunter.spaceId
+      ? appendTrace(strategic.traces, {
+          kind: 'footstep',
+          actor: 'hunter',
+          terrain: strategic.terrain,
+          spaceId: hunter.spaceId,
+          position: hunter.position,
+          createdAt: strategic.clock,
+          strength: 1,
+          falseTrail: false,
+        })
+      : strategic.traces
   const lostTrail =
     strategic.hunter.belief.at && !hunter.belief.at
       ? record(movedLog, strategic.clock, {
@@ -104,7 +118,7 @@ function advanceHunter(state: HuntState, world: HuntWorld): HuntState {
           where: strategic.hunter.belief.spaceId,
         })
       : movedLog
-  const swept = resolveSweep({ ...strategic, hunter, log: lostTrail }, intents, graph)
+  const swept = resolveSweep({ ...strategic, hunter, traces, log: lostTrail }, intents, graph)
   return resolveInspection(swept, intents, environment)
 }
 

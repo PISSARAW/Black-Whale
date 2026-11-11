@@ -12,28 +12,31 @@ export function encodeTourSimulation(state: TourSimulationV1): string {
   return JSON.stringify(state)
 }
 
+function isTourSimulation(value: Partial<TourSimulationV1>): value is TourSimulationV1 {
+  const validMode = ['FREE_LIFE', 'ALTERNATE_SIMULATION'].includes(String(value.mode))
+  return [
+    value.version === 1,
+    typeof value.id === 'string',
+    validMode,
+    Number.isInteger(value.revision),
+    typeof value.clock === 'number',
+    Boolean(value.player),
+    typeof value.actors === 'object',
+    typeof value.reputation === 'object',
+    Array.isArray(value.permissions),
+    Array.isArray(value.witnesses),
+    Array.isArray(value.incidents),
+    typeof value.activities === 'object',
+    typeof value.shipSystems === 'object',
+  ].every(Boolean)
+}
+
 export function decodeTourSimulation(serialized: string | null): TourSimulationV1 | null {
   if (!serialized || new TextEncoder().encode(serialized).length > MAX_TOUR_SIMULATION_BYTES)
     return null
   try {
     const value = JSON.parse(serialized) as Partial<TourSimulationV1>
-    if (
-      value.version !== 1 ||
-      typeof value.id !== 'string' ||
-      (value.mode !== 'FREE_LIFE' && value.mode !== 'ALTERNATE_SIMULATION') ||
-      !Number.isInteger(value.revision) ||
-      typeof value.clock !== 'number' ||
-      !value.player ||
-      typeof value.actors !== 'object' ||
-      typeof value.reputation !== 'object' ||
-      !Array.isArray(value.permissions) ||
-      !Array.isArray(value.witnesses) ||
-      !Array.isArray(value.incidents)
-      || typeof value.activities !== 'object'
-      || typeof value.shipSystems !== 'object'
-    )
-      return null
-    return value as TourSimulationV1
+    return isTourSimulation(value) ? value : null
   } catch {
     return null
   }

@@ -34,6 +34,33 @@ const ACTION_COST: Partial<Record<NenTechniqueAction['type'], number>> = {
   REN: 2,
 }
 
+function gyoObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'GYO' || !action.on) return []
+  return (context.traces ?? []).map((trace) => `aura-trace:${trace.id}`)
+}
+
+function enObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'EN' || action.radius === null) return []
+  return (context.presences ?? [])
+    .filter((presence) => presence.distance <= action.radius!)
+    .map((presence) => `presence:${presence.id}:unidentified`)
+}
+
+function zetsuObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'ZETSU') return []
+  return (context.presences ?? [])
+    .filter((presence) => presence.physicallyVisible)
+    .map((presence) => `visible-body:${presence.id}`)
+}
+
+function observationsFor(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  return [
+    ...gyoObservations(action, context),
+    ...enObservations(action, context),
+    ...zetsuObservations(action, context),
+  ]
+}
+
 /** Apply shared Nen rules, then project only information the technique can justify. */
 export function useSystemicNen(
   state: TourSimulationV1,
@@ -41,27 +68,12 @@ export function useSystemicNen(
   context: TourNenContext = {},
 ): TourNenResolution {
   const transition = transitionNen(state.player.nen, action)
-  if (!transition.accepted) return { state, accepted: false, observations: [], reason: transition.reason }
+  if (!transition.accepted)
+    return { state, accepted: false, observations: [], reason: transition.reason }
   const cost = ACTION_COST[action.type] ?? 0
   if (state.player.aura < cost)
     return { state, accepted: false, observations: [], reason: 'INSUFFICIENT_AURA' }
-  const observations: string[] = []
-
-  if (action.type === 'GYO' && action.on)
-    for (const trace of context.traces ?? []) observations.push(`aura-trace:${trace.id}`)
-
-  if (action.type === 'EN' && action.radius !== null) {
-    for (const presence of context.presences ?? []) {
-      if (presence.distance > action.radius) continue
-      // En establishes a presence, not an identity or exact intention.
-      observations.push(`presence:${presence.id}:unidentified`)
-    }
-  }
-
-  // Zetsu erases the aura signature, never the physically visible body.
-  if (action.type === 'ZETSU')
-    for (const presence of context.presences ?? [])
-      if (presence.physicallyVisible) observations.push(`visible-body:${presence.id}`)
+  const observations = observationsFor(action, context)
 
   const next = evolveTourSimulation(state, (draft) => {
     draft.player.nen = transition.state

@@ -121,6 +121,19 @@ const STYLES: SourceBoundInteriorStyle[] = [
     ceilingPattern: 'services',
     programme: 'recycling',
   },
+  {
+    locationId: 'tier-4-xi-yu-family-office',
+    name: 'xi-yu-office',
+    floor: 0x343638,
+    wall: 0x555b60,
+    ceiling: 0x303438,
+    wood: 0x40342d,
+    metal: 0x747e84,
+    fabric: 0x4b555d,
+    accent: 0x8aa0aa,
+    floorPattern: 'bands',
+    ceilingPattern: 'coffers',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

@@ -7,6 +7,7 @@ import type { StrategyScenarioV2 } from './scenario/types'
 import { factionEntityIds } from './selectors'
 import { generateFactionAIOperations, projectFactionAIPerspective } from './tacticalAI'
 import type { StrategyFaction, StrategyLocation } from './types'
+import type { StrategyMovementGraph } from './movement'
 
 /**
  * What every faction that is not the player does this turn.
@@ -31,6 +32,7 @@ export interface OppositionPlan {
   relationships: Record<string, FactionRelationship>
   turn: number
   scenario: StrategyScenarioV2
+  movementGraph: StrategyMovementGraph
 }
 
 export interface OppositionOperations {
@@ -85,6 +87,7 @@ export function planOpposition(plan: OppositionPlan): OppositionOperations {
       turn: plan.turn,
       seed: `${plan.branchId}:${plan.turn}:${faction.id}`,
       scenario: plan.scenario,
+      movementGraph: plan.movementGraph,
     })
     aiEvents.push(...aiPlan.events)
     aiDeniedLocations.push(...aiPlan.deniedLocations)

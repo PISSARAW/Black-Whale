@@ -8,6 +8,7 @@ import type { StrategyScenarioV2 } from './scenario/types'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
 import { strategicRoleForHatsu } from './rules'
 import { strategyHatsuResolution } from './hatsu'
+import { findStrategyRoute, type StrategyMovementGraph } from './movement'
 
 export type AIPersonality = 'CAUTIOUS' | 'AGGRESSIVE' | 'OPPORTUNIST'
 
@@ -126,6 +127,7 @@ export function generateFactionAIOperations(input: {
   turn: number
   seed: string
   scenario?: StrategyScenarioV2
+  movementGraph: StrategyMovementGraph
 }): { events: ProposedWorldEvent[]; deniedLocations: string[]; hatsuActivations: number } {
   const random = seededScenarioRandom(input.seed)
   const entities = input.memberCharacterIds
@@ -190,9 +192,15 @@ export function generateFactionAIOperations(input: {
       }
     }
     if (random() >= moveChance) continue
+    const currentLocationId = input.state.presences[entity.id]?.locationId
+    const reachableDestinations = currentLocationId
+      ? destinations.filter((id) =>
+          Boolean(findStrategyRoute(input.movementGraph, currentLocationId, id)),
+        )
+      : []
     const destination = chooseStrategicDestination(input.doctrine, {
       currentLocationId: input.state.presences[entity.id]?.locationId,
-      availableLocationIds: destinations,
+      availableLocationIds: reachableDestinations,
       occupiedLocationIds: occupied,
       opposingLocationIds: input.knownOpponentLocations,
       roll: random(),

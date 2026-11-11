@@ -42,6 +42,7 @@ import type {
   StrategyMoveOrder,
   StrategyTurnResult,
 } from './types'
+import { strategyMovementGraph, type StrategyMovementGraph } from './movement'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -84,6 +85,7 @@ export function createSimulationStore() {
   let activeLocale: Locale = 'en'
   let hatsuCues = $state<StrategyHatsuCue[]>([])
   let hatsuCueSequence = 0
+  let movementGraph: StrategyMovementGraph = new Map()
 
   /** Everything a fresh campaign needs, in one argument. */
   function init({
@@ -111,6 +113,7 @@ export function createSimulationStore() {
     currentTurn = 1
     factions = loadedFactions
     locations = loadedLocations
+    movementGraph = strategyMovementGraph(loadedLocations.map((location) => location.id))
     selectedFactionId = null
     intel = {}
     victoryPoints = 0
@@ -286,6 +289,7 @@ export function createSimulationStore() {
       turn: currentTurn,
       locale: activeLocale,
       abilityIdsForCharacter,
+      movementGraph,
     })
     playerEvents.push(...plan.events)
     for (const id of plan.entityIds) playerEntityIds.add(id)
@@ -316,6 +320,7 @@ export function createSimulationStore() {
       relationships: nextRelationships,
       turn: currentTurn,
       scenario: activeScenario,
+      movementGraph,
     })
     const aiEvents = opposition.events
     const aiDeniedLocations = opposition.deniedLocations

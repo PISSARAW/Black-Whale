@@ -8,6 +8,7 @@ import { strategyHatsuResolution } from './hatsu'
 import type { StrategyHatsuCue } from './hatsuPresentation'
 import { strategicRoleForHatsu } from './rules'
 import type { StrategyFaction, StrategyIntel, StrategyLocation, StrategyMoveOrder } from './types'
+import { findStrategyRoute, type StrategyMovementGraph } from './movement'
 
 function strategyMsg(locale: Locale) {
   return messagesFor(locale).strategy
@@ -33,6 +34,7 @@ export interface OrderWorld {
   turn: number
   locale: Locale
   abilityIdsForCharacter: (characterId: string) => string[]
+  movementGraph: StrategyMovementGraph
 }
 
 /** What a turn's orders amount to, once every rule has had its say. */
@@ -197,7 +199,14 @@ export function resolvePlayerOrders(
       if (guarded) plan.guarded.push(guarded)
       continue
     }
-    if (world.state.presences[entity.id]?.locationId === destination.id) continue
+    const currentLocationId = world.state.presences[entity.id]?.locationId
+    if (currentLocationId === destination.id) continue
+    if (
+      !currentLocationId ||
+      !findStrategyRoute(world.movementGraph, currentLocationId, destination.id)
+    ) {
+      throw new StrategyInputError(strategyMsg(world.locale).errors.unknownDestination)
+    }
     plan.events.push({
       type: 'ENTITY_MOVED',
       payload: {

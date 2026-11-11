@@ -26,6 +26,7 @@ import { ceilingLamps } from './geometry'
 import { diningHallLamplight } from './diningHallLighting'
 import { camillaLamplight } from './camillaLighting'
 import { sourceBoundStyleFor } from './sourceBoundInteriorStyles'
+import { cineplexLamplight } from './cineplexLighting'
 
 /** A colour in the renderer's working space, linear, `[r, g, b]`. */
 export type Rgb = readonly [number, number, number]
@@ -267,15 +268,18 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
   // it burns. Picked the other way round, a cold lamp would read as a dim one.
   const peak = Math.max(...colour) || 1
   const burn = (LAMP_PEAK * power) / peak
-  const light = camillaLamplight(
-    space.id,
-    diningHallLamplight(space.id, {
-      spacing,
-      reach: spacing * REACH_RATIO,
-      glow: [colour[0] * burn, colour[1] * burn, colour[2] * burn],
-      power,
-      dead: clamp01(deck.dead),
-    }),
+  const light = cineplexLamplight(
+    space,
+    camillaLamplight(
+      space.id,
+      diningHallLamplight(space.id, {
+        spacing,
+        reach: spacing * REACH_RATIO,
+        glow: [colour[0] * burn, colour[1] * burn, colour[2] * burn],
+        power,
+        dead: clamp01(deck.dead),
+      }),
+    ),
   )
   if (!sourceBoundStyleFor(space.locationId)) return light
   return {

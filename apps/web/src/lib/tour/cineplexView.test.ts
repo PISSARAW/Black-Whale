@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
-import { theShip, validateBlueprint } from './blueprint'
+import { spawnFacing, spawnPoint, theShip, validateBlueprint } from './blueprint'
 import {
   buildCineplexDetails,
   hasCineplexModel,
@@ -19,6 +19,9 @@ import { MANGA_CINEPLEX_VIEWS } from './mangaCineplexViews'
 import { CINEPLEX_HALL_SPACES, isCineplexHallOpening } from './cineplexHallLayout'
 import { mangaViewById } from './mangaViews'
 import { openingHeights } from './openingHeights'
+import { CINEPLEX_FORMATS } from './cineplexFormats'
+import { lamplightOf, lampsOf } from './light'
+import { SurfaceWalker } from './SurfaceWalker'
 import {
   cineplexPoint,
   cineplexSpotAnchors,
@@ -130,11 +133,53 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     expect(triangles(auditoriumGroup)).toBeGreaterThan(200)
   })
 
+  it('gives all eight auditoriums a distinct premium programme and physical treatment', () => {
+    expect(CINEPLEX_FORMATS).toHaveLength(8)
+    expect(new Set(CINEPLEX_FORMATS.map(({ label }) => label)).size).toBe(8)
+    const triangleCounts = CINEPLEX_FORMATS.map(({ screenId }) =>
+      triangles(buildCineplexDetails({ THREE, plan, spaceId: screenId, reveal: false })!),
+    )
+    expect(new Set(triangleCounts).size).toBeGreaterThanOrEqual(6)
+  })
+
+  it('floods the public hall with fittings while keeping projection rooms controlled', () => {
+    const entrance = plan.spaces.find(({ id }) => id === CINEPLEX_ENTRANCE)!
+    const projector = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[0])!
+    const onyx = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[7])!
+    const hallLight = lamplightOf(entrance, plan.tier)
+    const projectorLight = lamplightOf(projector, plan.tier)
+    const onyxLight = lamplightOf(onyx, plan.tier)
+
+    expect(lampsOf(entrance.footprint, hallLight).length).toBeGreaterThan(10)
+    expect(hallLight.power).toBeGreaterThan(onyxLight.power)
+    expect(onyxLight.power).toBeGreaterThan(projectorLight.power)
+  })
+
+  it('arrives beside the rear aisle facing the screen instead of inside a chair row', () => {
+    const auditorium = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[3])!
+    const at = spawnPoint(auditorium, plan.structures)
+    expect(at[1]).toBeLessThan(20.2)
+    expect(spawnFacing(auditorium, at)).toBe(Math.PI)
+  })
+
+  it('walks up the central stairs and along every seating tier', () => {
+    const auditorium = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[3])!
+    const walker = new SurfaceWalker()
+    let at = spawnPoint(auditorium, plan.structures)
+    walker.reset(plan, at)
+    const xs = auditorium.footprint.map(([x]) => x)
+    const centerX = (Math.min(...xs) + Math.max(...xs)) / 2
+    at = walker.move(plan, { from: at, to: [centerX, at[1]], extras: [], ghost: false })
+    for (let z = at[1] + 0.08; z <= 34.4; z += 0.08) {
+      at = walker.move(plan, { from: at, to: [at[0], z], extras: [], ghost: false })
+    }
+    expect(at[1]).toBeGreaterThan(34)
+  })
+
   it('suppresses coarse blueprint models in normal walk via cineplexSurfacePlan', () => {
     const surfaced = cineplexSurfacePlan(plan, false)
     expect(surfaced.structures.some(hasCineplexModel)).toBe(false)
-    // Retains other structures such as screening rooms seats
-    expect(surfaced.structures.some((s) => s.id.includes('screen-1-seat-row'))).toBe(true)
+    expect(surfaced.structures.some((s) => s.id.includes('screen-1-seat-row'))).toBe(false)
 
     // In reveal mode, all blueprint structures are preserved
     const revealed = cineplexSurfacePlan(plan, true)

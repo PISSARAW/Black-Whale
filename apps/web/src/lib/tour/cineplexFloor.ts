@@ -1,5 +1,5 @@
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
-import { CINE_CARPET, CINE_CARPET_GOLD, CINE_MARBLE, CINE_BRASS } from './cineplexDetailSurface'
+import { CINE_CARPET_GOLD, CINE_MARBLE, CINE_BRASS } from './cineplexDetailSurface'
 
 export interface FloorBounds {
   xMin: number
@@ -15,16 +15,9 @@ export function dressCinemaCarpetPattern(
   floorY: number,
 ): void {
   const { xMin, xMax, zMin, zMax } = bounds
-  const width = xMax - xMin
-  const depth = zMax - zMin
-  const midX = (xMin + xMax) / 2
-  const midZ = (zMin + zMax) / 2
 
-  // Base plush carpet bed
-  into.box([width, 0.015, depth], {
-    at: [midX, floorY + 0.008, midZ],
-    colour: CINE_CARPET,
-  })
+  // The baked room floor remains visible: it carries the actual pools of light.
+  // Covering it with a detail slab made a brightly lit lobby read as black.
 
   // Repeating geometric gold/amber motifs
   const stepX = 2.4

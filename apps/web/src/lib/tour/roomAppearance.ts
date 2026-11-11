@@ -14,6 +14,7 @@ import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
 import type { Finish, RoomAppearance } from './roomAppearanceTypes'
+import { cineplexAppearanceOf } from './cineplexAppearance'
 
 export type { Finish, RoomAppearance } from './roomAppearanceTypes'
 
@@ -409,6 +410,8 @@ export function hasAuthoredAppearance(locationId: string): boolean {
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   if (space.tierId === 'interior-beyond-cell') return { ...FINISHES.secure, ...PRISON_APPEARANCE }
+  const cineplex = cineplexAppearanceOf(space)
+  if (cineplex) return cineplex
   const finish = space.locationId ? authoredFinishOf(space.locationId) : undefined
   const appearance = finish
     ? FINISHES[finish]

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { CINEPLEX_FORMATS } from '$lib/tour/cineplexFormats'
+
   // Room interactions keep their keyboard and click affordances so behaviour
   // can be attached in one place when it exists.
   function handleElementClick(_elementId: string) {}
@@ -183,18 +185,43 @@
 
     <!-- Portails d'accès aux 8 auditoriums -->
     <g transform="translate(290, 375)">
-      {#each [1, 2, 3, 4, 5, 6, 7, 8] as num (num)}
+      {#each CINEPLEX_FORMATS as format (format.screenId)}
         <rect
-          x={(num - 1) * 52}
+          x={(format.number - 1) * 52}
           y="0"
           width="46"
           height="20"
           rx="3"
           fill="#141418"
-          stroke="#d4af37"
+          stroke={'#' + format.accent.toString(16).padStart(6, '0')}
           stroke-width="1.2"
         />
-        <text x={(num - 1) * 52 + 23} y="14" class="sublabel" font-size="9">S{num}</text>
+        <text x={(format.number - 1) * 52 + 23} y="13" class="sublabel" font-size="7.5"
+          >{format.shortLabel}</text
+        >
+      {/each}
+    </g>
+    <g transform="translate(310, 418)">
+      <rect x="0" y="0" width="380" height="116" rx="7" fill="#0b0b0e" stroke="#444" />
+      <text x="190" y="18" class="sublabel" font-size="10">PROGRAMME DES 8 SALLES</text>
+      {#each CINEPLEX_FORMATS as format (format.screenId)}
+        {@const column = (format.number - 1) % 2}
+        {@const row = Math.floor((format.number - 1) / 2)}
+        <rect
+          x={14 + column * 188}
+          y={29 + row * 20}
+          width="7"
+          height="7"
+          rx="1"
+          fill={'#' + format.accent.toString(16).padStart(6, '0')}
+        />
+        <text
+          x={28 + column * 188}
+          y={36 + row * 20}
+          fill="#fffff0"
+          font-size="9"
+          text-anchor="start">S{format.number} · {format.labelFr}</text
+        >
       {/each}
     </g>
 

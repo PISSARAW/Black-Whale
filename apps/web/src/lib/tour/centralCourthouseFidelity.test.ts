@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the Central Courthouse plan', () => {
   it('keeps only the six fixtures named by the courtroom plan', () => {
@@ -19,5 +19,6 @@ describe('the Central Courthouse plan', () => {
         'tier-3-central-courthouse-dock',
       ]),
     )
+    expect(certificationIssuesFor('tier-3-central-courthouse')).toEqual([])
   })
 })

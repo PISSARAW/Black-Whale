@@ -59,6 +59,8 @@ export interface FighterState {
   gyo: boolean
   in: boolean
   ken: boolean
+  en: number | null
+  shuObjectId: string | null
   ko: KoCharge | null
   ryuShift: RyuShift | null
   guardWindow: number
@@ -136,6 +138,8 @@ export type CombatAction =
   | { type: 'GYO'; side: CombatSide; on: boolean }
   | { type: 'IN'; side: CombatSide; on: boolean }
   | { type: 'KEN'; side: CombatSide; on: boolean }
+  | { type: 'EN'; side: CombatSide; radius: number | null }
+  | { type: 'SHU'; side: CombatSide; objectId: string; on: boolean }
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
@@ -169,6 +173,8 @@ export function initialFighter(position: Vec2): FighterState {
     gyo: false,
     in: false,
     ken: false,
+    en: null,
+    shuObjectId: null,
     ko: null,
     ryuShift: null,
     guardWindow: 0,

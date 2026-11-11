@@ -8,10 +8,17 @@ export interface AuraReading {
   intentZone: BodyZone | null
   intentRemaining: number | null
   feintZone: BodyZone | null
+  presenceDetected: boolean
 }
 
 /** In conceals the distribution; Gyo reveals it rather than being defeated by it. */
 export function readAura(observer: FighterState, target: FighterState): AuraReading {
+  const inEn =
+    observer.en !== null &&
+    Math.hypot(
+      observer.position[0] - target.position[0],
+      observer.position[1] - target.position[1],
+    ) <= observer.en
   if (!observer.gyo) {
     return {
       guard: null,
@@ -21,6 +28,7 @@ export function readAura(observer: FighterState, target: FighterState): AuraRead
       intentZone: target.in ? null : (target.intent?.zone ?? null),
       intentRemaining: target.in ? null : (target.intent?.remaining ?? null),
       feintZone: target.in ? null : target.feint,
+      presenceDetected: !target.in || inEn,
     }
   }
   return {
@@ -31,5 +39,6 @@ export function readAura(observer: FighterState, target: FighterState): AuraRead
     intentZone: target.intent?.zone ?? null,
     intentRemaining: target.intent?.remaining ?? null,
     feintZone: target.feint,
+    presenceDetected: true,
   }
 }

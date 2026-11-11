@@ -293,8 +293,14 @@
   }
 
   function useStandardNen(action: NenTechniqueAction) {
-    if (action.type === 'EN' || action.type === 'SHU' || action.type === 'ON')
-      return extendedNen.use(action)
+    if (action.type === 'EN')
+      return command({ type: 'EN', side: 'player', radius: action.radius }, 'gyo')
+    if (action.type === 'SHU')
+      return command(
+        { type: 'SHU', side: 'player', objectId: action.objectId, on: action.on },
+        'hatsu',
+      )
+    if (action.type === 'ON') return extendedNen.use(action)
     if (action.type === 'TEN' || action.type === 'REN' || action.type === 'ZETSU')
       return command(
         {

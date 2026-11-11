@@ -17,6 +17,8 @@ export function arenaNen(fighter: FighterState): TourNenState {
   state.in = fighter.in
   state.gyo = fighter.gyo
   state.ken = fighter.ken
+  state.en = fighter.en === null ? null : { radius: fighter.en }
+  state.shu = fighter.shuObjectId ? [fighter.shuObjectId] : []
   state.ko = fighter.ko ? zone(fighter.ko.zone) : null
   const attack = Math.max(0, Math.min(1, fighter.attackShare))
   state.ryu = state.ko ? { [state.ko]: 1 } : { hands: attack, [zone(fighter.guard)]: 1 - attack }

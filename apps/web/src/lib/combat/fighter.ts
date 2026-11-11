@@ -22,6 +22,8 @@ export const REN_PER_SECOND = 1.5
 export const GYO_PER_SECOND = 4
 export const IN_PER_SECOND = 4
 export const KEN_PER_SECOND = 6
+export const EN_PER_METRE_SECOND = 0.35
+export const SHU_PER_SECOND = 2
 export const ZETSU_RECOVERY = 7
 export const KO_COST = 18
 export const KO_WINDUP = 0.8
@@ -86,6 +88,8 @@ export function chargeContinuous(fighter: FighterState, dt: number): FighterStat
       gyo: false,
       in: false,
       ken: false,
+      en: null,
+      shuObjectId: null,
       ko: null,
     }
   }
@@ -94,10 +98,22 @@ export function chargeContinuous(fighter: FighterState, dt: number): FighterStat
     (fighter.mode === 'ren' ? REN_PER_SECOND : 0) +
     (fighter.gyo ? GYO_PER_SECOND : 0) +
     (fighter.in ? IN_PER_SECOND : 0) +
-    (fighter.ken ? KEN_PER_SECOND : 0)
+    (fighter.ken ? KEN_PER_SECOND : 0) +
+    (fighter.en ? fighter.en * EN_PER_METRE_SECOND : 0) +
+    (fighter.shuObjectId ? SHU_PER_SECOND : 0)
   const cost = rate * dt
   if (cost <= fighter.aura) return { ...fighter, aura: fighter.aura - cost }
-  return { ...fighter, aura: 0, mode: 'ten', gyo: false, in: false, ken: false, ko: null }
+  return {
+    ...fighter,
+    aura: 0,
+    mode: 'ten',
+    gyo: false,
+    in: false,
+    ken: false,
+    en: null,
+    shuObjectId: null,
+    ko: null,
+  }
 }
 
 export function move(
@@ -125,7 +141,16 @@ export function move(
 
 export function setMode(fighter: FighterState, mode: FighterState['mode']): FighterState {
   if (mode === 'zetsu') {
-    return { ...fighter, mode, gyo: false, in: false, ken: false, ko: null }
+    return {
+      ...fighter,
+      mode,
+      gyo: false,
+      in: false,
+      ken: false,
+      en: null,
+      shuObjectId: null,
+      ko: null,
+    }
   }
   return { ...fighter, mode }
 }

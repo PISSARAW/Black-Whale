@@ -91,7 +91,8 @@ export function offensiveAura(fighter: FighterState, technique: 'strike' | 'ko' 
   const output = fighter.mode === 'ren' ? 1 : 0.65
   if (technique === 'ko') return output * 1.8
   const kenPenalty = fighter.ken ? 0.55 : 1
-  return output * committedShare(fighter) * kenPenalty
+  const shuBonus = fighter.shuObjectId && technique === 'strike' ? 1.18 : 1
+  return output * committedShare(fighter) * kenPenalty * shuBonus
 }
 
 /**

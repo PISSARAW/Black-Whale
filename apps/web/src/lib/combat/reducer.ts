@@ -76,6 +76,19 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     return replace(state, action.side, toggle(state[action.side], 'in', action.on))
   if (action.type === 'KEN')
     return replace(state, action.side, setKen(state[action.side], action.on))
+  if (action.type === 'EN') {
+    const fighter = state[action.side]
+    if (fighter.mode === 'zetsu' || (action.radius !== null && action.radius <= 0)) return state
+    return replace(state, action.side, { ...fighter, en: action.radius })
+  }
+  if (action.type === 'SHU') {
+    const fighter = state[action.side]
+    if (fighter.mode === 'zetsu') return state
+    return replace(state, action.side, {
+      ...fighter,
+      shuObjectId: action.on ? action.objectId : fighter.shuObjectId === action.objectId ? null : fighter.shuObjectId,
+    })
+  }
   if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))

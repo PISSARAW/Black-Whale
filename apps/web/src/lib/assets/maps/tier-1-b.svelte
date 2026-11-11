@@ -29,17 +29,6 @@
 
   const regions: Region[] = [
     {
-      id: 'tier-1-vip-casino-emergency-stair',
-      region: 'casino',
-      points: '357.14,450.0 368.57,450.0 368.57,460.0 357.14,460.0',
-      label: '',
-      size: 0,
-      at: [362.9, 455.0],
-      turned: false,
-      through: true,
-      inferred: true,
-    },
-    {
       id: 'tier-1-jail-block-walkway',
       region: null,
       points: '835.0,250.0 850.0,250.0 850.0,350.0 835.0,350.0',

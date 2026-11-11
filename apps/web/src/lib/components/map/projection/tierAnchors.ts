@@ -25,6 +25,7 @@ export const locationCoordinates: Record<string, Record<string, TierAnchor>> = {
   'tier-1': {
     'tier-1': { x: 500, y: 300 },
     'tier-1-vvip-recreation-hall': { x: 617.1, y: 192.9 },
+    'tier-1-exterior-main-deck': { x: 357.1, y: 477.1 },
     'tier-1-banquet-hall': { x: 497.1, y: 300.0 },
     'tier-1-king-living-quarters': { x: 361.4, y: 300.0 },
     'tier-1-vvip-living-quarters': { x: 262.8, y: 300.0, small: true },

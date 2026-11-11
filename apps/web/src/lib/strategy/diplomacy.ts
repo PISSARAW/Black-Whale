@@ -90,7 +90,11 @@ export function resolveDiplomacyPlan(input: {
   locale?: Locale
 }): { relationships: Record<string, FactionRelationship>; reports: string[]; error?: string } {
   const copy = messagesFor(input.locale ?? 'en').strategy.reports.diplomacy
-  const relationships = structuredClone(input.relationships)
+  // A plain copy, not structuredClone: the store hands its reactive state in,
+  // and a Svelte proxy cannot be cloned — every turn used to fail here.
+  const relationships = Object.fromEntries(
+    Object.entries(input.relationships).map(([id, relationship]) => [id, { ...relationship }]),
+  )
   const reports: string[] = []
   const addressed = new Set<string>()
   for (const order of input.orders) {

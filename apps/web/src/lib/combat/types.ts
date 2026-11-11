@@ -124,7 +124,7 @@ export type CombatAction =
       cost?: number
       targetAt?: Vec2
     }
-  | { type: 'STRIKE'; side: CombatSide; zone: BodyZone }
+  | { type: 'STRIKE'; side: CombatSide; zone: BodyZone; targetAt?: Vec2 }
   | { type: 'KO'; side: CombatSide; zone: BodyZone }
 
 export function otherSide(side: CombatSide): CombatSide {

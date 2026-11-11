@@ -153,12 +153,15 @@ export function dressPoliceSafetyDesk(surface: PoliceStationSurface): void {
   surface.cylinder({ radius: 0.025, height: 0.18 }, [0.56, 0.96, 0.08], POLICE_BRASS)
 }
 
-function dressSafetyChair(
-  into: BanquetDetailBuilder,
-  floor: number,
-  at: [number, number],
-  heading = 0,
-): void {
+interface SafetyChairPlacement {
+  into: BanquetDetailBuilder
+  floor: number
+  at: [number, number]
+  heading?: number
+}
+
+function dressSafetyChair(options: SafetyChairPlacement): void {
+  const { into, floor, at, heading = 0 } = options
   const [x, z] = at
   const backZ = z + Math.cos(heading) * 0.3
   const backX = x + Math.sin(heading) * 0.3
@@ -223,9 +226,9 @@ export function dressPoliceSafetyOffice(
   into.box([0.025, 0.15, 0.03], { at: [-4.0, floor + 2.2, -15.86], colour: POLICE_METAL })
   into.box([0.12, 0.025, 0.03], { at: [-3.95, floor + 2.15, -15.86], colour: POLICE_METAL })
 
-  dressSafetyChair(into, floor, [-5.5, -12.15], Math.PI)
-  dressSafetyChair(into, floor, [-5.5, -15.0], 0)
-  dressSafetyChair(into, floor, [-2.3, -13.35], -0.35)
+  dressSafetyChair({ into, floor, at: [-5.5, -12.15], heading: Math.PI })
+  dressSafetyChair({ into, floor, at: [-5.5, -15.0] })
+  dressSafetyChair({ into, floor, at: [-2.3, -13.35], heading: -0.35 })
 
   into.cylinder(
     { radius: 0.28, bottom: 0.38, height: 0.52, sides: 12 },

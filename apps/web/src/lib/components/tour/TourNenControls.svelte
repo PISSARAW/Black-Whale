@@ -76,8 +76,8 @@
           (!awakened
             ? 'Ouvrir vos nœuds : l’aura des autres cesse d’être une simple pression.'
             : nenState.mode === 'ten' && restingAuraShown
-            ? 'Reposer le Ten : l’aura reste levée, elle cesse de se voir.'
-            : undefined)}
+              ? 'Reposer le Ten : l’aura reste levée, elle cesse de se voir.'
+              : undefined)}
         class:active={awakened && nenState.mode === 'ten' && restingAuraShown}
         onclick={() => (onTen ? onTen() : onAction({ type: 'TEN' }))}>Ten</button
       >

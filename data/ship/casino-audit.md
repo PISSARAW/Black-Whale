@@ -2,8 +2,10 @@
 
 La reprise suit la méthode du banquet : relire les cases, corriger le plan commun,
 puis habiller les volumes parcourus. La source éditoriale est Yoshihiro Togashi /
-Shueisha, chapitres 405 et 420. Le casino est distinct de la salle de loisirs VVIP
-du chapitre 419.
+Shueisha, chapitres 405, 419 et 420. Le casino est distinct de la salle de loisirs
+VVIP du chapitre 419. La chronologie est importante : au chapitre 419,
+Tserriednich trouve la Route A rétractée puis atteint le casino par les couloirs
+évacués ; il n'emprunte l'escalier de secours qu'après la rencontre, au chapitre 420.
 
 ## Références relues
 
@@ -44,7 +46,10 @@ reposent sur cette dalle et leurs panneaux suivent les structures du plan. Les
 parapets en gradins, les corniches, la moquette, les caissons et les lustres
 évoquent les motifs visibles. Les 8 m sous plafond, la dalle à 4,20 m et tous les
 profils métriques sont estimés. Cette reprise ne déduit pas un nouvel escalier de
-galerie d’une case qui ne le situe pas ; la liaison de secours existante est conservée.
+galerie d’une case qui ne le situe pas. L'escalier en colimaçon attesté au chapitre
+420 relie désormais le fond du casino à un palier reconstitué, puis au pont
+extérieur principal montré après la descente. Le dénivelé et la position métrique
+de ces deux raccords restent des estimations.
 
 Les couleurs ivoire, laiton et bordeaux interprètent le noir et blanc. Les lustres
 réutilisent la modélisation du banquet ; leur répétition suit la grille de lumière
@@ -57,6 +62,13 @@ Le plan local projette les structures, portes, colonnes et accès de secours de
 `blueprint.json` au lieu de recopier des positions de mobilier. Deux cadrages du
 chapitre 420 sont accessibles dans la visite : vue de la salle et vue de SWAMP
 BALL. Leurs positions sont reconstituées et ne portent aucun numéro de tome.
+
+Le mode guidé « parcours Tserriednich, chap. 419–420 » part de la chambre 1004,
+signale séparément les étapes attestées et les raccords reconstitués, passe par
+la salle de loisirs et la Route A rétractée, puis conduit de l'entrée du casino
+à SWAMP BALL, à la salle de secours, à l'escalier et au pont extérieur. Les
+jalons dans la salle suivent les cadrages observés ; ils ne prétendent pas donner
+des distances canoniques.
 
 L’habillage reçoit le plan réellement parcouru : une borne retirée par un Hatsu
 ne laisse pas son modèle sur place. Les enveloppes visuelles remplacées sont

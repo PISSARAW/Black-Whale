@@ -55,11 +55,12 @@ function decide(state: CombatState, doctrine: OpponentDoctrine, cadence: number)
   ] as const
   const gap = Math.hypot(delta[0], delta[1])
   if (shouldCastHatsu(state, doctrine, gap)) {
+    const reading = readAura(state.opponent, state.player)
     return combatReducer(state, {
       type: 'HATSU',
       side: 'opponent',
       effect: OPPONENT_DOCTRINES[doctrine].hatsu,
-      zone: openZone(state.player.guard, Math.floor(state.clock / THINK_EVERY)),
+      zone: openZone(reading.guard, Math.floor(state.clock / THINK_EVERY)),
     })
   }
   if (gap > STRIKE_RANGE - 0.2) {

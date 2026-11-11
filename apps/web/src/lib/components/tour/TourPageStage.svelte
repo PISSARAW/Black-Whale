@@ -8,12 +8,14 @@
   import TourDialogueCard from './TourDialogueCard.svelte'
   import TourFrameBudget from './TourFrameBudget.svelte'
   import TourAuraReserve from './TourAuraReserve.svelte'
+  import TourRouteGuide from './TourRouteGuide.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
   type ExamineProps = ComponentProps<typeof TourExamineCard>
   type AddressProps = ComponentProps<typeof TourAddressCard>
   type DialogueProps = ComponentProps<typeof TourDialogueCard>
+  type RouteProps = ComponentProps<typeof TourRouteGuide>
 
   interface Props {
     immersive: boolean
@@ -57,6 +59,7 @@
     takeScreenshot?: (() => Promise<Blob | null>) | null
     gyoMode?: boolean
     concertPanel?: Snippet
+    route?: RouteProps | null
   }
 
   let {
@@ -70,6 +73,7 @@
     takeScreenshot = $bindable(null),
     gyoMode = false,
     concertPanel,
+    route = null,
   }: Props = $props()
   const { reserve, ...sceneProps } = $derived(scene)
 </script>
@@ -100,6 +104,7 @@
   />
   {#if reserve !== undefined}<TourAuraReserve {reserve} />{/if}
   <TourSceneOverlay {...overlay} tools={concertPanel} />
+  {#if route}<TourRouteGuide {...route} />{/if}
   <TourExamineCard {...examine} />
   <TourDialogueCard {...dialogue} />
   <TourAddressCard {...address} />

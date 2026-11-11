@@ -22,7 +22,7 @@ export const CHAPTER_419: ChapterScenes = {
       participants: [['prince-tserriednich', 'OBSERVER']],
     },
     {
-      event: 'Tserriednich enters the VIP casino through the emergency route',
+      event: 'Tserriednich reaches the VIP casino after Route A is retracted',
       location: 'tier-1-vip-casino',
       participants: [['prince-tserriednich', 'ACTIVE']],
     },

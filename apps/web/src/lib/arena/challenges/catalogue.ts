@@ -23,7 +23,11 @@ export const ARENA_CHALLENGES: ArenaChallenge[] = [
     id: 'ko',
     titleFr: 'Punir Ko',
     titleEn: 'Punish Ko',
-    objectives: [{ kind: 'accuracy', minimum: 0.6 }, { kind: 'win' }],
+    objectives: [
+      { kind: 'use', action: 'KO', count: 1 },
+      { kind: 'accuracy', minimum: 0.6 },
+      { kind: 'win' },
+    ],
   },
   {
     id: 'zetsu',

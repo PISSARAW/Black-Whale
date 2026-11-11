@@ -6,6 +6,7 @@ import type { Link, Polygon, Vec2 } from './types'
 import { addRoyalArchitecture, addRoyalQuay, type RoyalDrawing } from './royalLinerArchitecture'
 import { gangwayPaths, GANGWAY_WIDTH } from './gangwayNavigation'
 import { gangwayHullMaterial } from './gangwayGates'
+import { TSERRIEDNICH_EXTERIOR } from './tserriednichRoute'
 
 export const PRINCE_VIEW_SPACE = 'tier-2-port-promenade'
 
@@ -88,7 +89,7 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
   const root = new THREE.Group()
   root.name = 'royal-liner-exterior'
   root.visible = false
-  const spaceIds = new Set(routes.map((route) => route.from))
+  const spaceIds = new Set([...routes.map((route) => route.from), TSERRIEDNICH_EXTERIOR])
   const visibleFrom = new Set([
     ...spaceIds,
     ...routes.flatMap((route) => ship.adjacency.get(route.from) ?? []),
@@ -114,7 +115,7 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     const normal = new THREE.Vector3()
     for (let index = 0; index < normals.count; index++) {
       normal.fromBufferAttribute(normals, index)
-      const shade = 1.9 + Math.max(0, normal.dot(lightDirection)) * 1.5
+      const shade = 0.55 + Math.max(0, normal.dot(lightDirection)) * 0.55
       colours.set([base.r * shade, base.g * shade, base.b * shade], index * 3)
     }
     geometry.setAttribute('color', new THREE.BufferAttribute(colours, 3))
@@ -288,6 +289,13 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
   }
   addRoyalArchitecture(drawing, ship, royalHull)
   addRoyalQuay(drawing, { outline: royalHull, floor: tier.elevation, water: waterY })
+  const exteriorDeck = ship.spaces.get(TSERRIEDNICH_EXTERIOR)
+  if (exteriorDeck) {
+    const walkingSurface = plate(exteriorDeck.footprint, royal.elevation + 0.01, 0x34464c)
+    walkingSurface.name = 'tserriednich-exterior-walking-surface'
+  }
+  const floodlightBeams = root.getObjectByName('royal-quay-light-beams')
+  const floodlights = root.getObjectByName('royal-quay-floodlights')
 
   function addAccessPier(route: Link, y: number) {
     const end: Vec2 = route.from.endsWith('route-b')
@@ -411,6 +419,8 @@ export function buildGangwayView(THREE: typeof Three, ship: Ship): GangwayView |
     setLocation(spaceId, panorama) {
       root.visible = isOutside(spaceId, panorama) || (spaceId !== null && visibleFrom.has(spaceId))
       lookout.visible = panorama && spaceId === PRINCE_VIEW_SPACE
+      if (floodlightBeams) floodlightBeams.visible = spaceId !== TSERRIEDNICH_EXTERIOR
+      if (floodlights) floodlights.visible = spaceId !== TSERRIEDNICH_EXTERIOR
     },
     setExtended(extended) {
       // Scale a child, anchored at the quay: no height or heading jump.

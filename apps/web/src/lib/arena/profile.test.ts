@@ -47,4 +47,14 @@ describe('Arena V3 profile', () => {
     expect(second.bestGrades.ryu).toBe('A')
     expect(second.replayIds).toHaveLength(1)
   })
+
+  it('does not throw when browser persistence is unavailable', () => {
+    const storage = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('quota')
+      },
+    }
+    expect(saveArenaProfile(storage, freshArenaProfile())).toBe(false)
+  })
 })

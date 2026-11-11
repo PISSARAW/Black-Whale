@@ -81,7 +81,13 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
   if (action.type === 'HATSU') return castHatsu(state, action)
   if (action.type === 'STRIKE') {
-    return strike({ state, side: action.side, zone: action.zone, technique: 'strike' })
+    return strike({
+      state,
+      side: action.side,
+      zone: action.zone,
+      technique: 'strike',
+      targetAt: action.targetAt,
+    })
   }
   if (action.type === 'KO') return chargeKo(state, action.side, action.zone)
   return state

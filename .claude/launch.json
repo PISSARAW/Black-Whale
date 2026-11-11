@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@black-whale/web", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "web-3100",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@black-whale/web",
+        "exec",
+        "vite",
+        "dev",
+        "--port",
+        "3100",
+        "--strictPort"
+      ],
+      "port": 3100
+    }
+  ]
+}

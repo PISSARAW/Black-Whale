@@ -2,16 +2,16 @@
 
 # Graphe des dépendances
 
-Nœuds : 23 · Arêtes uniques : 47
+Nœuds : 24 · Arêtes uniques : 50
 
 ## Arêtes
 
 | Source | Cible | Occurrences |
 | ------ | ----- | ----------- |
-| `lib:arena` | `lib:combat` | 30 |
-| `lib:arena` | `lib:nen` | 7 |
-| `lib:arena` | `lib:tour` | 4 |
-| `lib:arena` | `package:@black-whale/nen-engine` | 3 |
+| `lib:arena` | `lib:combat` | 36 |
+| `lib:arena` | `lib:nen` | 8 |
+| `lib:arena` | `lib:tour` | 10 |
+| `lib:arena` | `package:@black-whale/nen-engine` | 4 |
 | `lib:assets` | `lib:components` | 1 |
 | `lib:assets` | `lib:map` | 2 |
 | `lib:assets` | `lib:tour` | 6 |
@@ -20,22 +20,25 @@ Nœuds : 23 · Arêtes uniques : 47
 | `lib:combat` | `lib:tour` | 8 |
 | `lib:components` | `package:@black-whale/domain` | 9 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
-| `lib:hunt` | `lib:tour` | 24 |
+| `lib:hunt` | `lib:nen` | 1 |
+| `lib:hunt` | `lib:tour` | 27 |
 | `lib:hunt` | `package:@black-whale/ability-modules` | 2 |
 | `lib:hunt` | `package:@black-whale/nen-engine` | 3 |
-| `lib:infiltration` | `lib:hunt` | 11 |
+| `lib:infiltration` | `lib:hunt` | 15 |
 | `lib:infiltration` | `lib:nen` | 1 |
-| `lib:infiltration` | `lib:tour` | 8 |
+| `lib:infiltration` | `lib:tour` | 10 |
 | `lib:nen` | `package:@black-whale/ability-modules` | 2 |
 | `lib:nen` | `package:@black-whale/nen-engine` | 9 |
+| `lib:reconstruction` | `package:@black-whale/canon-engine` | 1 |
+| `lib:reconstruction` | `package:@black-whale/database` | 1 |
 | `lib:server` | `package:@black-whale/ability-modules` | 2 |
-| `lib:server` | `package:@black-whale/canon-engine` | 5 |
+| `lib:server` | `package:@black-whale/canon-engine` | 7 |
 | `lib:server` | `package:@black-whale/database` | 1 |
 | `lib:server` | `package:@black-whale/domain` | 2 |
 | `lib:server` | `package:@black-whale/nen-engine` | 1 |
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
-| `lib:strategy` | `package:@black-whale/canon-engine` | 6 |
-| `lib:strategy` | `package:@black-whale/simulation-engine` | 5 |
+| `lib:strategy` | `package:@black-whale/canon-engine` | 8 |
+| `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 1 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 9 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |

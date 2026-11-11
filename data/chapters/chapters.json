@@ -3139,7 +3139,7 @@
         "location": "Black Whale 1 - Tier 1"
       },
       {
-        "event": "Tserriednich enters the VIP casino through the emergency route",
+        "event": "Tserriednich reaches the VIP casino after Route A is retracted",
         "storyDate": "≈ Day 12",
         "charactersInvolved": ["prince-tserriednich"],
         "location": "Black Whale 1 - Tier 1 - VIP Casino"
@@ -3151,7 +3151,7 @@
       "People entering the field after activation are not deceived",
       "Leaving the field or ending Zetsu resets the illusion",
       "Special martial law seals Tier 1 and retracts the bridges to lower tiers",
-      "Tserriednich reroutes through the casino's emergency spiral staircase"
+      "Route A is retracted, forcing Tserriednich through the sealed VVIP corridors to the casino"
     ],
     "description": "Tserriednich leaves room 1004 and experiments with Laplace's Devil in the royal and VVIP passages. The ability's range is measured at roughly 36 metres, and the royal army responds to the unexplained massacre by sealing Tier 1, retracting the bridges and ordering a search. Tserriednich reaches the VIP casino."
   },
@@ -3181,19 +3181,20 @@
         "location": "Black Whale 1 - Tier 1 - VIP Casino"
       },
       {
-        "event": "The casino exit is surrounded and Tserriednich plans to recharge",
+        "event": "Tserriednich descends the emergency stair and reaches the exterior deck",
         "storyDate": "≈ Day 12",
         "charactersInvolved": ["prince-tserriednich"],
-        "location": "Black Whale 1 - Tier 1 - VIP Casino"
+        "location": "Black Whale 1 - Tier 1 - Exterior Main Deck"
       }
     ],
-    "location": "Black Whale 1 - Tier 1 - VIP Casino",
+    "location": "Black Whale 1 - Tier 1 - VIP Casino and Exterior Main Deck",
     "keyEvents": [
       "Hisoka is confirmed to have remained in the Tier 1 casino since chapter 405",
       "Hisoka's massacre of the casino patrols is discovered",
       "Laplace's Devil lets Tserriednich survive a lethal encounter and feed Hisoka a false corpse",
-      "The casino exit is surrounded by the royal army"
+      "Tserriednich follows the bodies to the emergency room, descends the spiral stair and reaches the exterior deck",
+      "The exterior deck is occupied by soldiers and the connecting bridges are gone"
     ],
-    "description": "The casino is empty except for dead royal patrols and Hisoka at a gaming machine. Tserriednich tests Laplace's Devil against him, sees a predicted death and survives while Hisoka attacks an illusion. The army surrounds the liner, ending the casino escape and leaving Tserriednich with one deliberate use of the ability."
+    "description": "The casino is empty except for dead royal patrols and Hisoka at a gaming machine. Tserriednich tests Laplace's Devil against him, sees a predicted death and survives while Hisoka attacks an illusion. He then follows the bodies to the emergency room, descends the spiral stair and reaches the exterior main deck, where soldiers and the missing bridges stop his escape and leave him with one deliberate use of the ability."
   }
 ]

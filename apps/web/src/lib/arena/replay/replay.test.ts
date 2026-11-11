@@ -93,4 +93,29 @@ describe('deterministic Arena replay', () => {
   it('rejects tampered and unknown replay payloads', () => {
     expect(() => parseReplay('{"version":99}')).toThrow('Invalid Arena replay')
   })
+
+  it('coalesces camera reports made during the same simulation tick', () => {
+    const state = initialCombatState()
+    const recorder = new ArenaRecorder({
+      setup: {
+        playerAt: state.player.position,
+        opponentAt: state.opponent.position,
+        terrain: state.terrain,
+      },
+      doctrine: 'counter',
+      difficulty: 'fighter',
+    })
+    recorder.record({ type: 'SYNC_POSITION', side: 'player', position: [1, 0] })
+    recorder.record({ type: 'SYNC_POSITION', side: 'player', position: [2, 0] })
+    const replay = recorder.finish(
+      combatReducer(state, { type: 'SYNC_POSITION', side: 'player', position: [2, 0] }),
+    )
+    expect(replay.commands).toHaveLength(1)
+    expect(replay.commands[0].action).toEqual({
+      type: 'SYNC_POSITION',
+      side: 'player',
+      position: [2, 0],
+    })
+    expect(playReplay(replay).checksum).toBe(replay.checksum)
+  })
 })

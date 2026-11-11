@@ -4611,8 +4611,7 @@
         // threshold like everything else the air does — see `$lib/tour/regime`.
         const outside =
           gangwayWalk !== null ||
-          (currentTierId === 'tier-2' &&
-            gangwayView?.isOutside(standing?.id ?? null, authoredVisibleSpaceIds !== null))
+          Boolean(gangwayView?.isOutside(standing?.id ?? null, authoredVisibleSpaceIds !== null))
         const air = (outside ? 0.0015 : fogTarget) * hourView.density
         fog.density =
           authoredEyeHeight === null
@@ -4632,7 +4631,7 @@
           gangwayView.setLocation(
             gangwayWalk
               ? gangwayWalk.path.link.from
-              : currentTierId === 'tier-2'
+              : currentTierId === 'tier-2' || outside
                 ? (standing?.id ?? null)
                 : null,
             authoredVisibleSpaceIds !== null,

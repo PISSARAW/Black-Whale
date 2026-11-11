@@ -1,4 +1,4 @@
-import { SimulationEngine, resolveControlledEntity } from '@black-whale/simulation-engine'
+import { SimulationEngine } from '@black-whale/simulation-engine'
 import type { ProposedWorldEvent, WorldBranch, WorldState } from '@black-whale/canon-engine'
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'
@@ -17,6 +17,7 @@ import type { StrategyHatsuCue } from './hatsuPresentation'
 import { characterAbilityIds, factionEntityIds as selectFactionEntityIds } from './selectors'
 import { partitionBlockedMoves } from './tacticalAI'
 import { planOpposition } from './opposition'
+import { triggerCatsName } from './catsName'
 import {
   ACTIVE_SCENARIO,
   buildScenarioRoster,
@@ -350,36 +351,19 @@ export function createSimulationStore() {
       random: seededScenarioRandom(`${branch.id}:${currentTurn}:conflicts`),
       locale: activeLocale,
     })
-    const camilla = resolveControlledEntity(currentState, 'prince-camilla')
-    if (
-      camilla &&
-      abilityIdsForCharacter('prince-camilla').includes('cats-name') &&
-      unitConditions[camilla.id] !== 'ELIMINATED' &&
-      conflict.conditions[camilla.id] === 'ELIMINATED'
-    ) {
-      const locationId = currentState.presences[camilla.id]?.locationId
-      const killer = activeFactionIds
+    const catsNameCue = triggerCatsName({
+      state: currentState,
+      conflict,
+      previousConditions: unitConditions,
+      hasCatsName: abilityIdsForCharacter('prince-camilla').includes('cats-name'),
+      opposingEntityIds: activeFactionIds
         .filter((id) => id !== 'prince-camilla')
-        .flatMap((id) => factionEntityIds(id))
-        .filter((id) => currentState!.presences[id]?.locationId === locationId)
-        .sort()[0]
-      if (killer) {
-        conflict.conditions[camilla.id] = 'READY'
-        conflict.conditions[killer] = 'ELIMINATED'
-        conflict.reports.push(copy.reports.catsName)
-        hatsuCues = [
-          ...hatsuCues,
-          {
-            seq: ++hatsuCueSequence,
-            abilityId: 'cats-name',
-            sourceCharacterId: 'prince-camilla',
-            sourceLocationId: locationId ?? '',
-            targetLocationId: locationId ?? '',
-            report: copy.reports.catsNameShort,
-          },
-        ].slice(-20)
-      }
-    }
+        .flatMap((id) => factionEntityIds(id)),
+      report: copy.reports.catsName,
+      shortReport: copy.reports.catsNameShort,
+    })
+    if (catsNameCue)
+      hatsuCues = [...hatsuCues, { ...catsNameCue, seq: ++hatsuCueSequence }].slice(-20)
     unitConditions = conflict.conditions
     const completedTurn = currentTurn
     for (const abilityId of activatedAbilityIds)
@@ -415,8 +399,8 @@ export function createSimulationStore() {
     turnHistory = [
       ...turnHistory,
       {
-        orders: structuredClone([...playerOrders]),
-        diplomacy: structuredClone([...diplomacyOrders]),
+        orders: $state.snapshot([...playerOrders]),
+        diplomacy: $state.snapshot([...diplomacyOrders]),
       },
     ]
     turnReports = [

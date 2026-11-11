@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../../combat/types'
 import { ArenaRecorder } from '../replay/recorder'
-import { evaluateChallenge } from './evaluate'
+import { EMPTY_STATS } from '../progression'
+import { evaluateChallenge, evaluateChallengeProgress } from './evaluate'
 
 describe('Arena challenges', () => {
   it('evaluates mastery from replay commands rather than UI state', () => {
@@ -29,5 +30,19 @@ describe('Arena challenges', () => {
     )
     expect(result.complete).toBe(true)
     expect(result.grade).toBe('S')
+  })
+
+  it('reports accepted live progress before the duel ends', () => {
+    const state = initialCombatState()
+    const result = evaluateChallengeProgress(
+      {
+        id: 'live',
+        titleFr: '',
+        titleEn: '',
+        objectives: [{ kind: 'use', action: 'RYU', count: 2 }],
+      },
+      { state, actions: { RYU: 2 }, stats: { ...EMPTY_STATS } },
+    )
+    expect(result.complete).toBe(true)
   })
 })

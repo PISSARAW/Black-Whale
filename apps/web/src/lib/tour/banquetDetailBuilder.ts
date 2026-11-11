@@ -19,6 +19,54 @@ interface SurfaceBatch {
 }
 const batch = (): SurfaceBatch => ({ positions: [], normals: [], colours: [], tags: [] })
 
+function selectBatch(options: {
+  placement: Placement
+  panes: SurfaceBatch
+  lights: SurfaceBatch
+  surfaces: SurfaceBatch
+}): SurfaceBatch {
+  const { placement, panes, lights, surfaces } = options
+  return placement.glass ? panes : placement.glow ? lights : surfaces
+}
+
+function writeVertices(options: {
+  geometry: Three.BufferGeometry
+  into: SurfaceBatch
+  base: Three.Color
+  glow: boolean
+}): void {
+  const { geometry, into, base, glow } = options
+  const vertices = geometry.getAttribute('position')
+  const normals = geometry.getAttribute('normal')
+  for (let index = 0; index < vertices.count; index++) {
+    const nx = normals.getX(index),
+      ny = normals.getY(index),
+      nz = normals.getZ(index)
+    // Local modelling shade supplements the tour's existing lights; no new
+    // ambient light leaks from the banquet into the rest of the ship.
+    const shade = glow ? 1 : 0.72 + Math.max(0, ny * 0.8 - nx * 0.3 + nz * 0.3) * 0.28
+    into.positions.push(vertices.getX(index), vertices.getY(index), vertices.getZ(index))
+    into.normals.push(nx, ny, nz)
+    into.colours.push(base.r * shade, base.g * shade, base.b * shade)
+  }
+}
+
+function appendTag(options: {
+  into: SurfaceBatch
+  tag: TourDetailTag | undefined
+  firstFace: number
+}): void {
+  const { into, tag, firstFace } = options
+  if (!tag) return
+  const count = into.positions.length / 9 - firstFace
+  const previous = into.tags.at(-1)
+  if (previous?.tag.id === tag.id && previous.start + previous.count === firstFace) {
+    previous.count += count
+    return
+  }
+  into.tags.push({ start: firstFace, count, tag })
+}
+
 /** At most three buffers per room: opaque surfaces, lights and transparent panes. */
 export class BanquetDetailBuilder {
   private readonly surfaces = batch()
@@ -38,31 +86,16 @@ export class BanquetDetailBuilder {
     geometry.rotateX(rotation[0]).rotateY(rotation[1]).rotateZ(rotation[2])
     const [ox, oy, oz] = this.origin
     geometry.translate(placement.at[0] + ox, placement.at[1] + oy, placement.at[2] + oz)
-    const vertices = geometry.getAttribute('position')
-    const normals = geometry.getAttribute('normal')
     const base = new THREE.Color(placement.colour)
-    const into = placement.glass ? this.panes : placement.glow ? this.lights : this.surfaces
+    const into = selectBatch({
+      placement,
+      panes: this.panes,
+      lights: this.lights,
+      surfaces: this.surfaces,
+    })
     const firstFace = into.positions.length / 9
-    for (let index = 0; index < vertices.count; index++) {
-      const nx = normals.getX(index),
-        ny = normals.getY(index),
-        nz = normals.getZ(index)
-      // Local modelling shade supplements the tour's existing lights; no new
-      // ambient light leaks from the banquet into the rest of the ship.
-      const shade = placement.glow ? 1 : 0.72 + Math.max(0, ny * 0.8 - nx * 0.3 + nz * 0.3) * 0.28
-      into.positions.push(vertices.getX(index), vertices.getY(index), vertices.getZ(index))
-      into.normals.push(nx, ny, nz)
-      into.colours.push(base.r * shade, base.g * shade, base.b * shade)
-    }
-    if (placement.tag) {
-      const count = into.positions.length / 9 - firstFace
-      const previous = into.tags.at(-1)
-      if (previous?.tag.id === placement.tag.id && previous.start + previous.count === firstFace) {
-        previous.count += count
-      } else {
-        into.tags.push({ start: firstFace, count, tag: placement.tag })
-      }
-    }
+    writeVertices({ geometry, into, base, glow: placement.glow === true })
+    appendTag({ into, tag: placement.tag, firstFace })
     geometry.dispose()
   }
 

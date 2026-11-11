@@ -1,0 +1,70 @@
+import { mangaView, type MangaView } from './mangaViewModel'
+import { MANGA_SALESALE_APARTMENT_VIEWS } from './mangaSalesaleApartmentViews'
+import { SALESALE_BEDROOM } from './salesaleView'
+
+export const MANGA_SALESALE_VIEWS: MangaView[] = [
+  mangaView({
+    id: 'salesale-bedroom-party',
+    spaceId: SALESALE_BEDROOM,
+    at: [-0.9, 6.4],
+    target: [-4, 8.7],
+    pitch: -0.1,
+    chapter: 366,
+    eventSequence: 3,
+    volume: 35,
+    pages: '6 (chapitre)',
+    staging: [],
+    beastStaging: [{ ownerId: 'prince-salesale', omit: true }],
+    label:
+      'Salé-salé’s broad bed, sculpted head rail and flanking screens — unpopulated decor inspection',
+    labelFr:
+      'Grand lit de Salé-salé, tête sculptée et écrans latéraux — inspection du décor sans personnages',
+  }),
+  mangaView({
+    id: 'salesale-headboard-drapery',
+    spaceId: SALESALE_BEDROOM,
+    at: [-1.6, 7.2],
+    target: [-4, 9.6],
+    pitch: 0.02,
+    chapter: 381,
+    eventSequence: 1,
+    volume: 37,
+    pages: '15 (chapitre)',
+    staging: [],
+    beastStaging: [{ ownerId: 'prince-salesale', omit: true }],
+    label: 'Curved head rail, tall rear posts and loosely draped cloth',
+    labelFr: 'Traverse courbe, hauts montants arrière et étoffe retombante',
+  }),
+  mangaView({
+    id: 'salesale-bedding-floor',
+    spaceId: SALESALE_BEDROOM,
+    at: [-3.2, 6.9],
+    target: [-4, 8.4],
+    pitch: -0.35,
+    chapter: 381,
+    eventSequence: 1,
+    volume: 37,
+    pages: '15 (chapitre)',
+    staging: [],
+    beastStaging: [{ ownerId: 'prince-salesale', omit: true }],
+    label: 'Rumpled bedding, floor cushions and drinks tray — approximate textile folds',
+    labelFr:
+      'Literie froissée, coussins au sol et plateau de boissons — plis textiles approximatifs',
+  }),
+  mangaView({
+    id: 'salesale-audiovisual-corner',
+    spaceId: SALESALE_BEDROOM,
+    at: [-7.5, 7.9],
+    target: [-7.15, 9.7],
+    pitch: -0.18,
+    chapter: 381,
+    eventSequence: 1,
+    volume: 37,
+    pages: '15 (chapitre)',
+    staging: [],
+    beastStaging: [{ ownerId: 'prince-salesale', omit: true }],
+    label: 'Side screen and low equipment cabinet — blank screen, no inferred programme',
+    labelFr: 'Écran latéral et meuble bas d’équipement — écran neutre, sans programme supposé',
+  }),
+  ...MANGA_SALESALE_APARTMENT_VIEWS,
+]

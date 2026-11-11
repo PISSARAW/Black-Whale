@@ -12,6 +12,7 @@ import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
 import { MANGA_BENJAMIN_ROOM_VIEWS } from './mangaBenjaminRoomViews'
 import { MANGA_CAMILLA_VIEWS } from './mangaCamillaViews'
 import { MANGA_ZHANG_LEI_VIEWS } from './mangaZhangLeiViews'
+import { MANGA_SALESALE_VIEWS } from './mangaSalesaleViews'
 import { MANGA_LUZURUS_VIEWS } from './mangaLuzurusViews'
 import { MANGA_TYSON_VIEWS } from './mangaTysonViews'
 import { MANGA_TUBEPPA_VIEWS } from './mangaTubeppaViews'
@@ -182,6 +183,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_TUBEPPA_VIEWS,
   ...MANGA_TYSON_VIEWS,
   ...MANGA_LUZURUS_VIEWS,
+  ...MANGA_SALESALE_VIEWS,
   ...MANGA_VVIP_RECREATION_VIEWS,
   ...MANGA_CHA_R_VIEWS,
   ...MANGA_HEILLY_VIEWS,

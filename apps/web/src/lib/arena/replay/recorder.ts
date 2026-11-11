@@ -28,6 +28,16 @@ export class ArenaRecorder {
   }
 
   record(action: ReplayCommand) {
+    const previous = this.commands.at(-1)
+    if (
+      previous?.tick === this.tick &&
+      (action.type === 'SYNC_POSITION' || action.type === 'FACE') &&
+      previous.action.type === action.type &&
+      previous.action.side === action.side
+    ) {
+      previous.action = structuredClone(action)
+      return
+    }
     this.commands.push({ tick: this.tick, action: structuredClone(action) })
   }
 

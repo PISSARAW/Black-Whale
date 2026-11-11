@@ -6,6 +6,9 @@ export const MAX_REPLAY_URL_BYTES = 100_000
 
 export function replayShareUrl(replay: ArenaReplay, currentUrl: string): string {
   const url = new URL(currentUrl)
+  url.searchParams.set('terrain', replay.setup.terrain.id)
+  url.searchParams.set('doctrine', replay.doctrine)
+  url.searchParams.set('difficulty', replay.difficulty)
   url.hash = `replay=${encodeReplay(replay)}`
   if (new TextEncoder().encode(url.href).length > MAX_REPLAY_URL_BYTES) {
     throw new Error('Arena replay URL exceeds 100 KB')

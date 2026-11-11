@@ -24,3 +24,9 @@ export function characterAbilityIds(state: WorldState, characterId: string): str
     ]),
   ].filter((abilityId) => Boolean(hatsuById(abilityId)))
 }
+
+/**
+ * The entity the page draws for a character. The route used to carry its own
+ * copy of the engine's `resolveControlledEntity`, line for line; it now uses it.
+ */
+export { resolveControlledEntity as entityForCharacter }

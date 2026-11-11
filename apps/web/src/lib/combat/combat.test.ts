@@ -118,6 +118,18 @@ describe('qualitative exchanges', () => {
     expect(state.player.position[0]).toBeLessThan(0.75)
   })
 
+  it('misses an ordinary strike aimed away from the opponent', () => {
+    let state = initialCombatState()
+    state = { ...state, opponent: { ...state.opponent, position: [1.5, 0] } }
+    state = combatReducer(state, {
+      type: 'STRIKE',
+      side: 'player',
+      zone: 'torso',
+      targetAt: [0, 2],
+    })
+    expect(state.lastEvent?.impact).toBe('miss')
+  })
+
   it('makes a large Ryu read take time instead of teleporting aura', () => {
     let state = initialCombatState()
     state = combatReducer(state, { type: 'RYU', side: 'player', attackShare: 0.9, guard: 'head' })

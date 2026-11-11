@@ -14,6 +14,7 @@ import { buildQueenUnmaDetails } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
 import { buildTserriednichRoomDetails, tserriednichSurfacePlan } from './tserriednichRoomView'
+import { buildSalesaleDetails, salesaleSurfacePlan } from './salesaleView'
 import { buildLuzurusDetails, luzurusSurfacePlan } from './luzurusView'
 import { buildTysonDetails, tysonSurfacePlan } from './tysonView'
 import { buildTubeppaDetails, tubeppaSurfacePlan } from './tubeppaView'
@@ -163,6 +164,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildTubeppaDetails,
   buildTysonDetails,
   buildLuzurusDetails,
+  buildSalesaleDetails,
   buildPrinceApartmentEnvelope,
   buildVvipRecreationDetails,
   buildPrincesQuartersDetails,
@@ -209,7 +211,10 @@ export class TierView {
       ),
       reveal,
     )
-    const basePlan = luzurusSurfacePlan(tysonSurfacePlan(apartmentPlan, reveal), reveal)
+    const basePlan = salesaleSurfacePlan(
+      luzurusSurfacePlan(tysonSurfacePlan(apartmentPlan, reveal), reveal),
+      reveal,
+    )
     const surfacePlan = warehouseSurfacePlan(
       hangarEntranceSurfacePlan(
         screeningRoomSurfacePlan(

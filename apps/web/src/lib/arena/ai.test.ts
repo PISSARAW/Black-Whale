@@ -51,6 +51,26 @@ describe('the arena opponent', () => {
     expect(shelled.lastEvent?.technique).toBe('hatsu')
   })
 
+  it('does not read the player guard for Hatsu targeting without Gyo', () => {
+    const base = initialCombatState()
+    const state = {
+      ...base,
+      clock: 3.14,
+      player: { ...base.player, position: [0, 0] as [number, number], guard: 'head' as const },
+      opponent: {
+        ...base.opponent,
+        position: [7, 0] as [number, number],
+        gyo: false,
+      },
+    }
+    const blind = advanceArena(state, 0.02, { doctrine: 'artillery' })
+    const seeing = advanceArena({ ...state, opponent: { ...state.opponent, gyo: true } }, 0.02, {
+      doctrine: 'artillery',
+    })
+    expect(blind.lastEvent?.zone).toBe('legs')
+    expect(seeing.lastEvent?.zone).toBe('arms')
+  })
+
   it('cannot react to a feint hidden with In without Gyo', () => {
     const base = initialCombatState()
     const state = {

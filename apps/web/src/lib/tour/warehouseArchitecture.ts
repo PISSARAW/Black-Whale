@@ -16,13 +16,16 @@ export interface WarehouseArchitectureOptions {
 const TRUSS_XS = [-25, -10, 5, 20, 35, 50, 65]
 const MID_Z = -21
 
-function diagonalMember(
-  into: BanquetDetailBuilder,
-  floor: number,
-  x: number,
-  z: number,
-  direction: -1 | 1,
-): void {
+interface DiagonalMemberOptions {
+  into: BanquetDetailBuilder
+  floor: number
+  x: number
+  z: number
+  direction: -1 | 1
+}
+
+function diagonalMember(options: DiagonalMemberOptions): void {
+  const { into, floor, x, z, direction } = options
   into.box([0.16, 0.16, 11.4], {
     at: [x, floor + 10.95, z],
     rotation: [direction * 0.115, 0, 0],
@@ -47,8 +50,8 @@ function dressRoofFrames(into: BanquetDetailBuilder, floor: number): void {
       rotation: [-0.058, 0, 0],
       colour: WAREHOUSE_STEEL_DARK,
     })
-    diagonalMember(into, floor, x, -32.4, 1)
-    diagonalMember(into, floor, x, -9.6, -1)
+    diagonalMember({ into, floor, x, z: -32.4, direction: 1 })
+    diagonalMember({ into, floor, x, z: -9.6, direction: -1 })
     into.box([0.18, 1.35, 0.18], {
       at: [x, floor + 11.1, MID_Z],
       colour: WAREHOUSE_STEEL_PANEL,

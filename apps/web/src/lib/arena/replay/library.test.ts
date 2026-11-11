@@ -57,4 +57,18 @@ describe('Arena V3 replay library', () => {
       auraDelta: 0,
     })
   })
+
+  it('drops old entries on quota errors instead of breaking match completion', () => {
+    const item = replay()
+    let writes = 0
+    const storage = {
+      getItem: () => JSON.stringify([serializeReplay(item), serializeReplay(item)]),
+      setItem: (_key: string, value: string) => {
+        writes += 1
+        if ((JSON.parse(value) as string[]).length > 1) throw new Error('quota')
+      },
+    }
+    expect(saveReplayToLibrary(storage, { ...item, checksum: 'new' })).toHaveLength(1)
+    expect(writes).toBeGreaterThan(1)
+  })
 })

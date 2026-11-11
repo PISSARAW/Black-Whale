@@ -27,8 +27,8 @@ export const CHAPTER_420: ChapterScenes = {
       ],
     },
     {
-      event: 'The casino exit is surrounded and Tserriednich plans to recharge',
-      location: 'tier-1-vip-casino',
+      event: 'Tserriednich descends the emergency stair and reaches the exterior deck',
+      location: 'tier-1-exterior-main-deck',
       participants: [['prince-tserriednich', 'ACTIVE']],
     },
   ],

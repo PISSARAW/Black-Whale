@@ -28,6 +28,16 @@ describe('a combat terrain from the Black Whale', () => {
     for (const wall of structureWalls(table)) expect(terrain.walls).toContainEqual(wall)
   })
 
+  it('closes every footprint edge while a duel is running', () => {
+    for (let index = 0; index < terrain.footprint.length; index += 1) {
+      expect(terrain.walls).toContainEqual({
+        spaceId: terrain.id,
+        start: terrain.footprint[index],
+        end: terrain.footprint[(index + 1) % terrain.footprint.length],
+      })
+    }
+  })
+
   it('offers the attested Tier 2 screening room as a distinct second terrain', () => {
     const screening = buildCombatTerrain(SCREENING_ROOM_ID)
     expect(screening.space.provenance).toBe('panel')

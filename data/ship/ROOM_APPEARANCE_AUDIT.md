@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 427 espaces, 1202 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1224 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -38,6 +38,18 @@
   - Chap. 358, panorama du banquet inaugural — galeries latérales en mezzanine, parapets pleins à panneaux, sous-faces à caissons et deux escaliers latéraux. Hauteur, épaisseur, nombre de marches et positions métriques estimés.
   - Chap. 359
   - Escalier bas inféré pour accéder à la scène des spectacles. Sept marches, implantation et dimensions métriques estimées ; aucune case ne situe cette volée.
+
+## Pont extérieur principal du niveau 1 — `tier-1-exterior-main-deck`
+
+- **Pont :** tier-1
+- **Preuve de l’enveloppe :** case du manga
+- **Sous-espaces :** 1
+- **Emprises relevées :** 40 × 12 m
+- **Éléments modélisés :** aucun objet non attesté
+- **Objets directement visibles dans les cases :** 0/0
+- **Sources de la pièce :**
+  - Chap. 420 — Tserriednich y débouche après avoir descendu l’escalier de secours du casino ; des soldats occupent le pont ouvert et les passerelles de liaison ont disparu. Les dimensions de la terrasse praticable sont reconstituées.
+- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
 
 ## Quartiers du Roi — `tier-1-king-living-quarters`
 
@@ -374,21 +386,20 @@
 ## Chambre 1008 (Salé-salé) — `tier-1-royal-residential-sector-room-1008`
 
 - **Pont :** tier-1, interior-room-1008
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 painting, 1 seat
-- **Objets directement visibles dans les cases :** 18/18
+- **Éléments modélisés :** 5 cabinet, 4 basin, 3 bed, 3 seat, 2 counter, 2 painting, 2 table, 1 platform
+- **Objets directement visibles dans les cases :** 8/22
 - **Espaces internes :** Quartiers des domestiques — 1008 (Salé-salé) ; WC du personnel — 1008 (Salé-salé) ; Vestibule d'entrée — 1008 (Salé-salé) ; Cuisine — 1008 (Salé-salé) ; Salle à manger — 1008 (Salé-salé) ; Salon — 1008 (Salé-salé) ; Chambre du prince — 1008 (Salé-salé) ; Bain et WC — 1008 (Salé-salé)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle.
+  - Chap. 366, page de lecture 6 ; chap. 381, page de lecture 15 ; chap. 382, page de lecture 17 : grand lit, tête courbe ornée, montants arrière et étoffes, literie froissée, écrans latéraux et meubles bas d’équipement, coussins et boissons au sol. Dimensions et implantation métrique reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 366 et 382 — Salé-salé reste couché avec deux compagnes dans le large lit qui transforme sa chambre en pièce de fête informelle ; Predator et Stand By Me l'atteignent tous deux à côté de ce lit.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 366 et 382 — la chambre au large lit de Salé-salé sert aussi de pièce de fête informelle, avec ses compagnes et les boissons gardées près du lit.
-  - Chap. 362 et 382 — la chambre de Salé-salé sert de salle de fête : un ensemble audiovisuel et des enceintes fait face au grand lit, parmi nourriture, bouteilles et coussins.
+  - Chap. 366, page de lecture 6 ; chap. 381, page de lecture 15 ; chap. 382, page de lecture 17 : grand lit, tête courbe ornée, montants arrière et étoffes, literie froissée, écrans latéraux et meubles bas d’équipement, coussins et boissons au sol. Dimensions et implantation métrique reconstituées.
+  - Reconstitution du 1008 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce.
 
 ## Chambre 1009 (Halkenburg) — `tier-1-royal-residential-sector-room-1009`
 
@@ -544,7 +555,7 @@
 
 ## Casino VIP — `tier-1-vip-casino`
 
-- **Pont :** tier-1-c, tier-1-b
+- **Pont :** tier-1-c, tier-1
 - **Preuve de l’enveloppe :** case du manga, liaison déduite
 - **Sous-espaces :** 2
 - **Emprises relevées :** 17.5 × 52.5 m ; 4 × 3.5 m
@@ -554,7 +565,7 @@
 - **Espaces internes :** Escalier en colimaçon de secours du casino VIP
 - **Sources de la pièce :**
   - Ch. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus ; les chap. 419-420 confirment le casino comme voie de fuite et lieu de la rencontre sous loi martiale.
-  - Palier inférieur reconstruit pour l’escalier de secours en colimaçon du casino. Ni son emprise ni son affectation au pont 1-B ne sont attestées.
+  - Palier inférieur reconstruit pour l’escalier de secours en colimaçon du casino. Son emprise, son dénivelé et son palier précis sont estimés.
 - **Sources du mobilier et des détails :**
   - Chap. 420 — parapet clair de la mezzanine à motifs carrés en gradins. Dimensions et implantation sur la dalle reconstruite estimées.
   - Chap. 405 — la salle de jeu, les boutiques autour et la mezzanine au-dessus.
@@ -655,30 +666,39 @@
 ## Planque secrète Heil-Ly — `tier-2-heilly-secret-hideout`
 
 - **Pont :** tier-2, interior-heilly-hideout
-- **Preuve de l’enveloppe :** case du manga, plan publié, liaison déduite
+- **Preuve de l’enveloppe :** case du manga, liaison déduite
 - **Sous-espaces :** 6
 - **Emprises relevées :** 26.25 × 52.5 m ; 10.52 × 5.25 m ; 33.63 × 6.3 m ; 10.52 × 8.05 m ; 10.51 × 8.05 m ; 6.3 × 8.05 m
-- **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 12 cabinet, 12 seat, 4 table, 2 basin, 2 vent, 1 counter, 1 duct
-- **Objets directement visibles dans les cases :** 31/34
-- **Espaces internes :** Salle de traitement / douches ; Couloir de bunker ; Buanderie / élimination ; Salle commune ; Bureau du chef
+- **Hauteurs sous plafond :** 3.4, 4 m
+- **Éléments modélisés :** 12 seat, 11 cabinet, 3 table, 2 vent, 1 counter, 1 duct
+- **Objets directement visibles dans les cases :** 28/30
+- **Espaces internes :** Salle de traitement ; Couloir de bunker ; Buanderie / élimination ; Salle commune ; Bureau de Morena Prudo
 - **Sources de la pièce :**
   - Chap. 356 — dissimulée dans le bloc VIP ; la pièce exacte n'est pas montrée.
-  - Chap. 398, p. 158-167 — grande salle de traitement carrelée, protégée par une barrière de Nen dans les murs, avec sept portes, flexibles de douche, siphons de sol, petits luminaires muraux et placard de maintenance ouvert ; les portes desservent trois WC, un bain, une cabine de douche, la maintenance et la voie du portail.
+  - Chap. 398, case fournie de la salle de traitement — vaste pièce carrelée et souillée, avec ossature d'acier apparente, quatre portes sur le mur du fond, une sur chaque côté, une septième voie hors champ, un flexible de service enroulé, de petits luminaires muraux, des siphons de sol et des raccords brisés dispersés. Les dimensions exactes et l'emplacement de la porte invisible sont reconstruits.
   - Reconstruit pour que les pièces dessinées communiquent ; un couloir de bunker est dessiné, mais pas son tracé.
-  - Chap. 394, case fournie — la salle d'élimination : table mortuaire roulante portant Tassi, paroi de commande, cuves cylindriques, sacs noués, armoire froide, paravent et linge de travail suspendu. Dimensions et circulation reconstruites.
+  - Chap. 394, case fournie de la salle d'élimination — une table mortuaire roulante se dresse devant une paroi de commande dense ; une armoire froide et du linge de travail suspendu occupent la gauche, tandis que des cuves cylindriques, des sacs noués et des déchets en vrac remplissent les rayonnages de droite. Dimensions et circulation reconstruites.
   - Chap. 399, p. 170-175 — la salle commune : longue table centrale entourée d'au moins huit chaises, tuyaux et chemins de câbles apparents au plafond, étagères et casiers muraux, poubelles, fontaine à eau, petits appareils, horloge et avis encadrés.
-  - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
+  - Case fournie du bureau de Morena Prudo — un grand bureau rayé et un fauteuil sculpté font face à un canapé central à trois places ; une banquette murale et des doubles portes moulurées encadrent un large espace d'audience dégagé. Le chap. 407 établit ensuite le téléviseur et les consoles derrière Morena.
 - **Sources du mobilier et des détails :**
-  - Chap. 398, p. 158-167 — la salle de traitement carrelée montre des flexibles de douche et siphons dans l'espace ouvert, un placard de maintenance ouvert avec étagères, et une barrière de Nen parcourant ses murs.
-  - Chap. 394, case fournie — table mortuaire centrale, corps de Tassi, paroi technique arrière, trois cuves, rayonnages de sacs, armoire à deux portes, paravent roulant et linge suspendu ; aucun lave-linge frontal n'est visible.
+  - Chap. 398, case fournie de la salle de traitement — siphon dans le sol carrelé souillé. Son diamètre et son emplacement exacts sont reconstruits.
+  - Chap. 394, case fournie de la salle d'élimination — trois hautes cuves cylindriques occupent le rayonnage supérieur droit. Dimensions et implantation reconstruites.
+  - Chap. 394, case fournie de la salle d'élimination — une haute armoire à deux portes se dresse contre le mur gauche. Sa fonction frigorifique est déduite du contexte de la salle.
+  - Chap. 394, case fournie de la salle d'élimination — la pièce s'organise autour d'une table métallique surélevée portant le corps de Tassi. Dimensions des roues et du châssis reconstruites.
+  - Chap. 394, case fournie de la salle d'élimination — les deux niveaux inférieurs du rayonnage droit sont chargés de grands sacs noués et de paquets irréguliers.
+  - Chap. 394, case fournie de la salle d'élimination — un large paravent blanc sur roulettes masque la zone de travail au premier plan gauche.
+  - Chap. 394, case fournie de la salle d'élimination — des sacs et déchets irréguliers sont entassés sous le rayonnage droit, au premier plan.
   - Chap. 399, p. 170-175 — la salle commune contient visiblement la longue table et au moins huit chaises, des rangements muraux, une fontaine à eau et les réseaux apparents du plafond.
+  - Chap. 394, case fournie de la salle d'élimination — la paroi du fond est occupée par des armoires de commande superposées, des cadrans, des boutons et un afficheur sombre.
+  - Chap. 394, case fournie de la salle d'élimination — des tabliers, serviettes et linges de travail pendent sur la partie gauche du mur du fond.
   - Plan de la planque Heil-Ly ; les sept portes de la salle de traitement, la buanderie, la salle commune et le bureau du chef
   - Chap. 407 — le grand téléviseur sombre et son meuble bas occupent le mur derrière la chaise de bureau de Morena.
-  - Chap. 399, p. 3 — le flanc d’un canapé est visible contre le mur du bureau lorsque Hinrigh ouvre la porte de la planque ; le chap. 407 le montre en face de la table de Morena.
+  - Case fournie du bureau de Morena Prudo — le canapé à trois places occupe le centre entre l'audience et le bureau de Morena.
   - Chap. 407 — une Famicom repose sur le meuble du téléviseur derrière Morena ; sa coque claire se détache de l’écran sombre.
   - Chap. 407 — une Super Famicom est posée à côté de la Famicom sur le meuble du téléviseur derrière Morena.
-  - Chap. 407-410 — la table sur laquelle Morena Prudo et Borksen jouent la partie de négociation, et une chaise de chaque côté, dans le bureau du chef que dessine le plan de la planque.
+  - Case fournie du bureau de Morena Prudo — le large bureau rayé porte papiers, cartes et petits objets ; le chap. 407-410 utilise ensuite son plateau pour le jeu de négociation.
+  - Case fournie du bureau de Morena Prudo — le fauteuil sculpté à haut dossier de Morena se tient derrière le bureau rayé.
+  - Case fournie du bureau de Morena Prudo — une fine banquette rembourrée longe les panneaux moulurés du mur droit.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Ministère de la Justice — `tier-2-ministry-of-justice`
@@ -688,20 +708,26 @@
 - **Sous-espaces :** 6
 - **Emprises relevées :** 63 × 45.5 m ; 12.5 × 9.5 m ; 13.5 × 9.5 m ; 20.25 × 13.5 m ; 41.5 × 1.75 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 3 table, 2 cabinet, 2 counter, 2 seat
-- **Objets directement visibles dans les cases :** 5/9
+- **Éléments modélisés :** 6 seat, 4 table, 3 cabinet, 2 counter
+- **Objets directement visibles dans les cases :** 12/15
 - **Espaces internes :** Hall d’accueil ; Bureau du vice-ministre ; Salles d'interrogatoire ; Parloir ; Couloir du bureau
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
   - Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées
   - Chap. 400, p. 194-199 et 206 — le bureau judiciaire / salle d'interrogatoire 1010, signalé sur la porte, avec bureau formel, sièges visiteurs et bibliothèques toute hauteur sur les murs du fond et latéraux.
-  - Plan du bureau de la Justice ; paroi vitrée, visites enregistrées de dix minutes, tiroir de transfert
+  - Chap. 400, p. 194-195 — le parloir : une enceinte vitrée ouverte en L, un long comptoir, deux tabourets ronds côté visiteurs, une chaise côté protégé et un poste de greffe latéral.
   - Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite.
 - **Sources du mobilier et des détails :**
   - Plan du bureau de la Justice ; une institution de cinq étages, schématisée à partir des pièces confirmées
   - Chap. 400, p. 194-199 et 206 — le bureau utilisé pour l'interrogatoire judiciaire dans la pièce 1010 signalée.
   - Chap. 400, p. 194-199 et 206 — des bibliothèques toute hauteur, chargées de dossiers et volumes, bordent le bureau judiciaire derrière et à côté de la table.
   - Chap. 400, p. 194-199 et 206 — la pièce 1010 signalée contient un bureau face aux chaises visiteurs et des murs de bibliothèques toute hauteur.
+  - Chap. 400, p. 194-195 — long comptoir sous la paroi vitrée principale.
+  - Chap. 400, p. 194-195 — deux tabourets ronds sont placés côté visiteurs devant le comptoir vitré.
+  - Chap. 400, p. 194-195 — une chaise pivotante fait face au comptoir depuis l'intérieur de l'enceinte vitrée.
+  - Chap. 400, p. 194-195 — bureau administratif latéral derrière le retour vitré.
+  - Chap. 400, p. 194-195 — chaise de bureau au poste administratif latéral.
+  - Chap. 400, p. 194-195 — meuble à tiroirs le long du mur droit.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Salle de projection — `tier-2-screening-room`
@@ -778,30 +804,33 @@
 - **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 4
 - **Emprises relevées :** 35 × 45.5 m ; 22 × 15 m ; 10 × 4 m ; 11 × 6 m
-- **Hauteurs sous plafond :** 16, 6 m
-- **Éléments modélisés :** 9 platform, 8 pillar, 2 counter, 2 painting, 1 basin
-- **Objets directement visibles dans les cases :** 20/22
+- **Hauteurs sous plafond :** 16, 6, 3.2 m
+- **Éléments modélisés :** 9 platform, 8 pillar, 2 painting, 1 basin, 1 counter, 1 table
+- **Objets directement visibles dans les cases :** 21/22
 - **Espaces internes :** Atrium principal ; Entrée ; Section de sécurité publique
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
   - La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond.
   - Plan du poste de police ; l'atrium et sa fontaine, le guichet de sécurité publique
+  - La case de la section de sécurité publique : un bureau d'entretien compact avec une table simple, trois fauteuils pivotants, des plafonniers encastrés, des meubles bas, une horloge murale et une plante près de la porte.
 - **Sources du mobilier et des détails :**
   - La double page de l'atrium du poste de police : quatre niveaux de galerie le long de chaque mur latéral, la colonnade qui se dresse dessous, la fontaine à gradins au sol et la façade d'entrée au fond, ses portes sous une marquise entre deux enseignes suspendues, et le lanternon soulevé au milieu du plafond.
   - Plan du poste de police ; l'atrium et sa fontaine, le guichet de sécurité publique
+  - La case de la section de sécurité publique montre une simple table d'entretien rectangulaire, et non un comptoir public compartimenté.
 
 ## Cinéplexe — `tier-3-cineplex`
 
 - **Pont :** tier-3, interior-cineplex
 - **Preuve de l’enveloppe :** case du manga, plan publié, reconstruction cartographique, liaison déduite
-- **Sous-espaces :** 15
-- **Emprises relevées :** 52.5 × 42 m ; 12.5 × 15 m ; 5 × 15 m ; 15 × 17.5 m ; 56 × 5 m ; 7 × 20 m
+- **Sous-espaces :** 16
+- **Emprises relevées :** 52.5 × 42 m ; 50 × 7.5 m ; 12.5 × 15 m ; 5 × 15 m ; 15 × 17.5 m ; 56 × 5 m ; 7 × 20 m
 - **Hauteurs sous plafond :** 8, 6 m
 - **Éléments modélisés :** 48 seat, 9 painting, 2 counter, 1 pillar, 1 platform
 - **Objets directement visibles dans les cases :** 4/61
-- **Espaces internes :** Confiserie ; Foyer (bâbord) ; Couloir des salles (salles 1 à 8) ; Foyer (tribord) ; Billetterie ; Hall des salles ; Salle 1 ; Salle 2 ; Salle 3 ; Salle 4 ; Salle 5 ; Salle 6 ; Salle 7 ; Salle 8
+- **Espaces internes :** Avant-hall du cinéma ; Confiserie ; Foyer (bâbord) ; Couloir des salles (salles 1 à 8) ; Foyer (tribord) ; Billetterie ; Hall des salles ; Salle 1 ; Salle 2 ; Salle 3 ; Salle 4 ; Salle 5 ; Salle 6 ; Salle 7 ; Salle 8
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349 — huit salles
+  - Chap. 393 — le sol au premier plan ouvre sans cloison sur la confiserie, l'allée centrale et les guichets.
   - Chap. 393 — le hall : le stand de restauration, les guichets et l'allée qui descend vers les salles.
   - Les pièces sont dessinées, aucun passage entre elles ne l'est ; cette circulation est reconstruite.
   - Reconstruit pour desservir les huit salles nommées depuis le hall ; aucun dessin ne le montre.

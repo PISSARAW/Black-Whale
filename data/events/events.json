@@ -1712,9 +1712,9 @@
     "chapter": 419,
     "chapterTitle": "Implementation",
     "sequence": 5,
-    "title": "Tserriednich enters the VIP casino through the emergency route",
-    "summary": "Tserriednich reroutes through the VVIP entertainment district and reaches the casino's emergency staircase entrance.",
-    "legacyTitles": [],
+    "title": "Tserriednich reaches the VIP casino after Route A is retracted",
+    "summary": "After finding Route A retracted, Tserriednich crosses the evacuated VVIP corridors and enters the deserted casino. He has not yet used its emergency stair.",
+    "legacyTitles": ["Tserriednich enters the VIP casino through the emergency route"],
     "occursAfterTitle": "The royal army locks down Tier 1 and retracts the bridges",
     "occurredAt": {
       "basis": "derived",
@@ -1734,7 +1734,7 @@
       "day": 12
     },
     "occurredAtLabel": "≈ Day 12",
-    "occursAfterTitle": "Tserriednich enters the VIP casino through the emergency route"
+    "occursAfterTitle": "Tserriednich reaches the VIP casino after Route A is retracted"
   },
   {
     "chapter": 420,
@@ -1768,9 +1768,12 @@
     "chapter": 420,
     "chapterTitle": "Encounter",
     "sequence": 4,
-    "title": "The casino exit is surrounded and Tserriednich plans to recharge",
-    "summary": "The royal army surrounds the liner and blocks the casino exit. Tserriednich plans to end Zetsu in a safe place to recharge, preserving one final use of his ability.",
-    "legacyTitles": ["The casino exit is surrounded and Tserriednich drops Zetsu"],
+    "title": "Tserriednich descends the emergency stair and reaches the exterior deck",
+    "summary": "Tserriednich follows the dead patrols to the casino emergency room, descends the spiral stair and emerges on Tier 1's exterior main deck. Soldiers fill the open area and the connecting bridges are gone, so he considers retreating to recharge.",
+    "legacyTitles": [
+      "The casino exit is surrounded and Tserriednich plans to recharge",
+      "The casino exit is surrounded and Tserriednich drops Zetsu"
+    ],
     "occursAfterTitle": "Hisoka kills the patrols while Tserriednich escapes the predicted death",
     "occurredAt": {
       "basis": "derived",

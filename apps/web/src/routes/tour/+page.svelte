@@ -16,7 +16,7 @@
   import { activeHatsu } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { link, t } from '$lib/i18n'
+  import { link, parsePathname, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
   import { loadComfort, prefersReducedMotion } from '$lib/tour/comfort'
@@ -68,6 +68,11 @@
   import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
   import { NO_HOUR } from '$lib/tour/hour'
   import { mangaViewById, viewsForSpace, type MangaView } from '$lib/tour/mangaViews'
+  import {
+    TSERRIEDNICH_ROUTE_ID,
+    TSERRIEDNICH_ROUTE_START,
+    tserriednichRouteUrl,
+  } from '$lib/tour/tserriednichRoute'
   import type { PageData } from './$types'
 
   // The walk is no longer only a ship: the server hands it the cast of the
@@ -93,6 +98,11 @@
   let activeMangaView = $state<MangaView | null>(untrack(() => requestedMangaView))
   const initialTierId = untrack(() => initialTierForRequest(ship, $page.url))
   const navigation = new TourNavigationState(ship, initialTierId)
+  const routeActive = $derived($page.url.searchParams.get('route') === TSERRIEDNICH_ROUTE_ID)
+  const routeHref = $derived.by(() => {
+    const url = tserriednichRouteUrl($page.url)
+    return $link(`${parsePathname(url.pathname).path}${url.search}`)
+  })
   const tierId = $derived(navigation.tierId)
   const currentSpace = $derived(navigation.currentSpace)
   const availableLink = $derived(navigation.availableLink)
@@ -121,6 +131,15 @@
   const touchUseLabel = $derived(promptFor($t.tour.touch))
   const goToSpace = navigation.goToSpace
   const selectTier = navigation.selectTier
+  const restartTserriednichRoute = () => {
+    const start = ship.spaces.get(TSERRIEDNICH_ROUTE_START)
+    if (start) navigation.goToSpace(start)
+  }
+  const closeTserriednichRoute = () => {
+    const url = new URL($page.url)
+    url.searchParams.delete('route')
+    void goto(url.toString(), { keepFocus: true, noScroll: true })
+  }
   watchMangaRequest({
     navigation,
     read: () => ({ space: requestedSpace, deck: requestedDeck, view: requestedMangaView }),
@@ -810,7 +829,7 @@
 
 <svelte:window onkeydown={keyboard.onKeydown} />
 
-<TourPageIntro {ship} />
+<TourPageIntro {ship} {routeHref} />
 
 <TourWorkspace
   immersive={chrome.immersive}
@@ -892,6 +911,15 @@
     {navigation}
     bind:takeScreenshot
     {gyoMode}
+    route={routeActive
+      ? {
+          currentSpaceId: currentSpace?.id ?? null,
+          position,
+          french,
+          onRestart: restartTserriednichRoute,
+          onClose: closeTserriednichRoute,
+        }
+      : null}
     scene={{
       ship,
       world: sceneWorld,

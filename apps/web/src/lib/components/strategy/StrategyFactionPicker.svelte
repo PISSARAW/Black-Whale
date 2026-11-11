@@ -2,18 +2,22 @@
   import type { StrategyFaction } from '$lib/strategy/types'
   import type { StrategySave } from '$lib/strategy/persistence'
   import { scenarioDoctrineForFaction } from '$lib/strategy/scenario'
+  import type { StrategyScenarioV2 } from '$lib/strategy/scenario/types'
   import { doctrineLabel } from '$lib/strategy/localization'
   import { locale, t } from '$lib/i18n'
 
   let {
     chapterNumber,
     factions,
+    scenario,
     saved,
     onselect,
     onresume,
   }: {
     chapterNumber?: number
     factions: StrategyFaction[]
+    /** The scenario on screen; without it the doctrines came from the default one. */
+    scenario?: StrategyScenarioV2
     saved: StrategySave | null
     onselect: (id: string) => void
     onresume: () => void
@@ -36,7 +40,7 @@
           <strong>{faction.name}</strong>
           <span class="members">{$t.strategy.ui.picker.activeUnits(faction.members.length)}</span>
           <span class="doctrine"
-            >{doctrineLabel(scenarioDoctrineForFaction(faction.id), $locale)}</span
+            >{doctrineLabel(scenarioDoctrineForFaction(faction.id, scenario), $locale)}</span
           >
           <span class="begin">{$t.strategy.ui.picker.begin} <span aria-hidden="true">→</span></span>
         </button>

@@ -15,7 +15,9 @@ describe('Arena replay URL sharing', () => {
     const recorder = new ArenaRecorder({ setup, doctrine: 'deceiver', difficulty: 'master' })
     const replay = recorder.finish(initialCombatState(setup))
     const url = replayShareUrl(replay, 'https://example.test/arena?terrain=tier-2-screening-room')
-    expect(url).toContain('?terrain=tier-2-screening-room#replay=')
+    expect(url).toContain(
+      '?terrain=tier-1-banquet-hall&doctrine=deceiver&difficulty=master#replay=',
+    )
     expect(replayFromUrl(url)).toEqual(replay)
   })
 

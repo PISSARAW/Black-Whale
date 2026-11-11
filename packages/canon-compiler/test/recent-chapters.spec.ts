@@ -37,14 +37,15 @@ describe('the 411–420 publication batch', () => {
     }
   })
 
-  it('places Tserriednich in the casino only after his arrival, with Hisoka already there', () => {
+  it('moves Tserriednich from the casino to the exterior deck, with Hisoka left inside', () => {
     const prince = catalogue.characters.find(({ id }) => id === 'prince-tserriednich')!
     const hisoka = catalogue.characters.find(({ id }) => id === 'hisoka')!
     const route = planTrajectory(prince.mapTrajectory!)
-    expect(route.slice(-3).map(({ location, from }) => ({ location, from }))).toEqual([
+    expect(route.slice(-4).map(({ location, from }) => ({ location, from }))).toEqual([
       { location: 'tier-1-royal-residential-sector-room-1004', from: 'ch-363' },
       { location: 'black-whale-unknown', from: 'ch-419.1' },
       { location: 'tier-1-vip-casino', from: 'ch-419.5' },
+      { location: 'tier-1-exterior-main-deck', from: 'ch-420.4' },
     ])
     expect(hisoka.mapTrajectory?.at(-1)).toMatchObject({
       location: 'tier-1-vip-casino',

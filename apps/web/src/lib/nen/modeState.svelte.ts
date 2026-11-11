@@ -1,4 +1,5 @@
 import {
+  createNenTechniqueState,
   transitionNen,
   type NenTechniqueAction,
   type NenTechniqueState,
@@ -16,5 +17,10 @@ export class ModeNenState {
       saveTourNen(this.value)
     }
     return transition
+  }
+
+  reset = () => {
+    this.value = createNenTechniqueState()
+    saveTourNen(this.value)
   }
 }

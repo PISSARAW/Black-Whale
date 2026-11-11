@@ -228,7 +228,10 @@
       },
       "attire": "suit",
       "signatures": ["glasses-thin"],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362", "ch-366", "ch-388"], "status": "partial" },
+      "verified": {
+        "chapterIds": ["ch-349", "ch-358", "ch-362", "ch-366", "ch-388"],
+        "status": "partial"
+      },
       "note": "Les cases du bureau montrent des lunettes rectangulaires, une coupe courte sombre et une blouse claire. Le gabarit de veste existant évoque la blouse sans en reproduire exactement la longueur ; les teintes restent choisies. Aucun gant ajouté."
     },
     {

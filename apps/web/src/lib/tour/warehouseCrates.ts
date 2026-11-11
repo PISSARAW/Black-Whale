@@ -9,29 +9,28 @@ import {
 
 const CARTON_COLOURS = [WAREHOUSE_WOOD_LIGHT, 0x7d6b52, 0x8b7b63, 0x665b4c, 0x94836a]
 
-/** A tall double-sided archive rack packed with individually labelled cartons. */
-function dressArchiveRack(surface: WarehouseDetailSurface, rackIndex: number): void {
-  const w = surface.width
-  const d = surface.depth
-  const h = 8.7
-  const columns = 5
-  const tiers = 7
-  const colW = (w - 0.28) / columns
-  const tierH = (h - 0.24) / tiers
+interface ArchiveGrid {
+  width: number
+  depth: number
+  columns: number
+  tiers: number
+  columnWidth: number
+  tierHeight: number
+}
 
-  for (let column = 0; column <= columns; column++) {
-    const x = -w / 2 + 0.14 + column * colW
-    for (const z of [-d / 2 + 0.09, d / 2 - 0.09]) {
-      surface.box([0.12, h, 0.12], [x, h / 2, z], WAREHOUSE_STEEL_DARK)
-    }
-  }
-  for (let tier = 0; tier <= tiers; tier++) {
-    const y = 0.12 + tier * tierH
-    surface.box([w, 0.1, d], [0, y, 0], WAREHOUSE_STEEL_PANEL)
-    surface.box([w + 0.08, 0.06, 0.08], [0, y + 0.04, d / 2], WAREHOUSE_STEEL_LIGHT)
-    surface.box([w + 0.08, 0.06, 0.08], [0, y + 0.04, -d / 2], WAREHOUSE_STEEL_LIGHT)
-  }
-
+function dressCartons(
+  surface: WarehouseDetailSurface,
+  options: ArchiveGrid & { rackIndex: number },
+): void {
+  const {
+    width: w,
+    depth: d,
+    columns,
+    tiers,
+    columnWidth: colW,
+    tierHeight: tierH,
+    rackIndex,
+  } = options
   for (const face of [-1, 1] as const) {
     for (let tier = 0; tier < tiers; tier++) {
       for (let column = 0; column < columns; column++) {
@@ -61,6 +60,40 @@ function dressArchiveRack(surface: WarehouseDetailSurface, rackIndex: number): v
       }
     }
   }
+}
+
+/** A tall double-sided archive rack packed with individually labelled cartons. */
+function dressArchiveRack(surface: WarehouseDetailSurface, rackIndex: number): void {
+  const w = surface.width
+  const d = surface.depth
+  const h = 8.7
+  const columns = 5
+  const tiers = 7
+  const colW = (w - 0.28) / columns
+  const tierH = (h - 0.24) / tiers
+
+  for (let column = 0; column <= columns; column++) {
+    const x = -w / 2 + 0.14 + column * colW
+    for (const z of [-d / 2 + 0.09, d / 2 - 0.09]) {
+      surface.box([0.12, h, 0.12], [x, h / 2, z], WAREHOUSE_STEEL_DARK)
+    }
+  }
+  for (let tier = 0; tier <= tiers; tier++) {
+    const y = 0.12 + tier * tierH
+    surface.box([w, 0.1, d], [0, y, 0], WAREHOUSE_STEEL_PANEL)
+    surface.box([w + 0.08, 0.06, 0.08], [0, y + 0.04, d / 2], WAREHOUSE_STEEL_LIGHT)
+    surface.box([w + 0.08, 0.06, 0.08], [0, y + 0.04, -d / 2], WAREHOUSE_STEEL_LIGHT)
+  }
+
+  dressCartons(surface, {
+    width: w,
+    depth: d,
+    columns,
+    tiers,
+    columnWidth: colW,
+    tierHeight: tierH,
+    rackIndex,
+  })
 
   for (const face of [-1, 1] as const) {
     surface.box([w - 0.18, 0.46, 0.055], [0, 0.34, face * (d / 2 + 0.025)], WAREHOUSE_STEEL_PANEL)

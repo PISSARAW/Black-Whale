@@ -3272,7 +3272,7 @@
     },
     "shipLocation": {
       "tier": 1,
-      "room": "Casino VIP",
+      "room": "Tier 1 exterior main deck",
       "status": "actif",
       "role": "prince / Nen training"
     },
@@ -3742,7 +3742,13 @@
       {
         "location": "tier-1-vip-casino",
         "fromChapterId": "ch-419.5",
-        "note": "Reaches the casino through the emergency route at the end of chapter 419, then encounters Hisoka in chapter 420."
+        "untilChapterId": "ch-420.3",
+        "note": "Reaches the deserted casino after finding Route A retracted, then encounters Hisoka in chapter 420."
+      },
+      {
+        "location": "tier-1-exterior-main-deck",
+        "fromChapterId": "ch-420.4",
+        "note": "Descends the casino emergency spiral stair and emerges onto the exterior main deck."
       }
     ],
     "guardianBeast": {

@@ -58,6 +58,7 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
   const walls = [
     ...plan.walls.filter((wall) => wall.spaceId === space.id),
     ...structures.flatMap(structureWalls),
+    ...boundaryWalls(space.id, space.footprint),
   ]
   const spawns = spawnPair(space.footprint, walls)
   return {
@@ -70,6 +71,15 @@ export function buildCombatTerrain(spaceId = BANQUET_HALL_ID): CombatTerrain {
     spawns,
     bounds: boundsOf(space.footprint),
   }
+}
+
+/** Arena exits are closed for the duration of a duel, including authored door gaps. */
+export function boundaryWalls(spaceId: string, footprint: Polygon): WallSegment[] {
+  return footprint.map((start, index) => ({
+    spaceId,
+    start,
+    end: footprint[(index + 1) % footprint.length],
+  }))
 }
 
 export function arenaTerrainId(value: string | null | undefined): ArenaTerrainId {

@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 371
+Fichiers : 388
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -88,6 +88,10 @@ Fichiers : 371
 ## `apps/web/src/lib/arena/v3-release.test.ts`
 
 - Arena V3 release acceptance > keeps every campaign reference executable
+
+## `apps/web/src/lib/arena/walkSync.test.ts`
+
+- arena camera and duel body > offers a walk to the rules and leaves the camera where it is
 
 ## `apps/web/src/lib/assets/maps/localMaps.test.ts`
 
@@ -201,15 +205,21 @@ Fichiers : 371
 
 - run explanation > calls out preparation, information and misdirection
 
+## `apps/web/src/lib/hunt/duel/controllerRyu.test.ts`
+
+- shared Ryu controller adapter > keeps both the selected guard zone and its forward share
+
 ## `apps/web/src/lib/hunt/duel/gyo.test.ts`
 
 - Gyo against In > cannot read an aura distribution with the naked eye
+- In against the naked eye > lets anyone read a guard nobody is hiding
 
 ## `apps/web/src/lib/hunt/duel/inherit.test.ts`
 
 - the gauges the hunt leaves — T4.2 > opens the duel with the reservoirs the hunt ended on, not with a fixed hundred
 - an entrave waiting in the room — T4.1 > finds the ones set in the contact room and no others
 - the hold running down > counts towards zero and stops there
+- what the junction leaves on the floor > springs one entrave, not every one in the room — a hold does not stack
 
 ## `apps/web/src/lib/hunt/duel/recover.test.ts`
 
@@ -265,6 +275,7 @@ Fichiers : 371
 - an intact hunter — invariant I4 > is not beaten by a player swinging at him from the first second
 - a hunter the hunt has already emptied > is beaten by the same player doing the same thing
 - winning without ever attacking — invariant I3 > is possible against a hunter the hunt left short, by holding Ken
+- breaking contact > can slip away in Zetsu when the hunter was not already watching with Gyo
 - the hunter’s own economy > stops looking when he cannot afford to
 
 ## `apps/web/src/lib/hunt/hunter/inspect.test.ts`
@@ -290,8 +301,9 @@ Fichiers : 371
 - regeneration > gives aura back at a standstill only
 - what the hunter is allowed to know — invariant I5 > never identifies a player in Zetsu, however often he sweeps
 - the hunter’s reservoir — T4.4 > falls as he looks, and the journal says what it went on
+- misdirection > records a false trail when a searched clue is cleared
 - the junction > opens the duel on contact, with the reservoirs the hunt left
-- strategic exit sealing > closes one perceived exit when the contract permits it
+- strategic exit sealing > does not sever the only route through a tree-shaped apartment
 - the endings > stops at ten minutes
 
 ## `apps/web/src/lib/hunt/metrics.test.ts`
@@ -332,6 +344,10 @@ Fichiers : 371
 ## `apps/web/src/lib/hunt/replay.test.ts`
 
 - Hunt V3 replay > records typed commands and round-trips a share payload
+
+## `apps/web/src/lib/hunt/session.test.ts`
+
+- hunt page sessions > uses different reproducible seeds for successive attempts
 
 ## `apps/web/src/lib/hunt/sighting.test.ts`
 
@@ -423,6 +439,11 @@ Fichiers : 371
 
 - infiltration patrol > walks to the shared doorway before entering the next room
 
+## `apps/web/src/lib/infiltration/perception.test.ts`
+
+- infiltration perception > does not raise the alarm on an aide seen doing nothing wrong
+- cover checks > answers each witness as it expects without contradicting itself
+
 ## `apps/web/src/lib/infiltration/persistence.test.ts`
 
 - versioned infiltration saves > round-trips a V2 mission
@@ -500,6 +521,10 @@ Fichiers : 371
 
 - investigation V3 knowledge ledger > combines independent claims into an established proposition
 
+## `apps/web/src/lib/investigation/logLabels.test.ts`
+
+- notebook log labels > reads entries written in French back in the current language
+
 ## `apps/web/src/lib/investigation/portfolio.test.ts`
 
 - investigation portfolio > uses an isolated save key for every case
@@ -527,6 +552,10 @@ Fichiers : 371
 ## `apps/web/src/lib/investigation/validate.test.ts`
 
 - investigation editorial validator > accepts the complete Eleven seconds definition
+
+## `apps/web/src/lib/investigation/verdictCopy.test.ts`
+
+- verdict copy > agrees in number in French
 
 ## `apps/web/src/lib/map/mapAssetRegistry.test.ts`
 
@@ -572,6 +601,10 @@ Fichiers : 371
 
 - ReconstructionClaim > normalizes identifiers and deduplicates sources
 
+## `apps/web/src/lib/reconstruction/eventSources.test.ts`
+
+- reconstruction event sources > indexes world and presence evidence under the narrative event id
+
 ## `apps/web/src/lib/reconstruction/evidence.test.ts`
 
 - reconstruction evidence > always anchors a scene to its chapter and deduplicates transition sources
@@ -588,6 +621,14 @@ Fichiers : 371
 
 - observer request ownership > does not let an aborted observer replace the current projection or clear its loading state
 
+## `apps/web/src/lib/reconstruction/presenceChanges.test.ts`
+
+- presence changes between two moments > names arrivals, moves, the unchanged and departures
+
+## `apps/web/src/lib/reconstruction/reconstructAt.test.ts`
+
+- reconstruction at a narrative moment > compares world events by chapter and sequence, not an unrelated ordinal scale
+
 ## `apps/web/src/lib/reconstruction/sceneEntry.test.ts`
 
 - living reconstruction scene entry > opens an apartment event in its main living room
@@ -595,6 +636,10 @@ Fichiers : 371
 ## `apps/web/src/lib/reconstruction/sceneLocation.test.ts`
 
 - catalogue scene locations > accepts a precise scene whose wording changed
+
+## `apps/web/src/lib/reconstruction/serverProjection.test.ts`
+
+- reconstruction server spoiler projection > filters every independently revealable record at the database boundary
 
 ## `apps/web/src/lib/reconstruction/sourceView.test.ts`
 
@@ -607,6 +652,7 @@ Fichiers : 371
 ## `apps/web/src/lib/reconstruction/urlState.test.ts`
 
 - reconstruction URL state > uses stable defaults for a bare URL
+- reconstruction chronology > keeps an unnumbered event in its chapter instead of appending it to the timeline
 
 ## `apps/web/src/lib/reconstruction/v3/causalGraph.test.ts`
 
@@ -716,6 +762,10 @@ Fichiers : 371
 
 - Reconstruction V3 SimulationStore adapter > creates a real rule-compatible branch at the fork
 
+## `apps/web/src/lib/server/spoilerWorld.test.ts`
+
+- applySpoilerFilters > keeps only revealed characters
+
 ## `apps/web/src/lib/server/tourSearch.test.ts`
 
 - ollamaConfig > is absent unless both the address and the model are set
@@ -741,7 +791,7 @@ Fichiers : 371
 
 ## `apps/web/src/lib/strategy/diplomacy.test.ts`
 
-- strategy diplomacy > builds trust before accepting a pact
+- strategy diplomacy > accepts the store’s reactive relationships, which structuredClone refuses
 
 ## `apps/web/src/lib/strategy/hatsu.test.ts`
 
@@ -1344,6 +1394,14 @@ Fichiers : 371
 
 - postcard stamp legibility > keeps every ink readable against the scene-independent paper backing
 
+## `apps/web/src/lib/tour/princeApartmentEnvelope.test.ts`
+
+- the shared manga envelope of the princely apartments > covers every internal room of all fourteen princes
+
+## `apps/web/src/lib/tour/princeBedroomDetails.test.ts`
+
+- the royal bedrooms of the fourteen princes > builds rich, finite and room-bounded geometry for every prince
+
 ## `apps/web/src/lib/tour/princeRoomDetails.test.ts`
 
 - manga details in every prince apartment > gives every princely wall picture an intentional material colour
@@ -1398,6 +1456,10 @@ Fichiers : 371
 ## `apps/web/src/lib/tour/royalSalonView.test.ts`
 
 - the royal salon reconstructed from chapter 382 > satisfies the shared blueprint invariants for the royal salon
+
+## `apps/web/src/lib/tour/salesaleView.test.ts`
+
+- Salé-salé’s apartment against the bedroom panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/sceneInput.test.ts`
 
@@ -1454,6 +1516,10 @@ Fichiers : 371
 ## `apps/web/src/lib/tour/tserriednichRoomView.test.ts`
 
 - Tserriednich’s apartment against the training panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/tserriednichRoute.test.ts`
+
+- the chapters 419–420 walk > only names spaces that exist in the walkable ship
 
 ## `apps/web/src/lib/tour/tubeppaView.test.ts`
 

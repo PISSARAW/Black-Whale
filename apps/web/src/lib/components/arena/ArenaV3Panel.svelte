@@ -12,6 +12,7 @@
   import { loadReplayLibrary, saveReplayToLibrary } from '$lib/arena/replay/library'
   import type { ArenaReplay } from '$lib/arena/replay/types'
   import type { ChallengeResult } from '$lib/arena/challenges/types'
+  import { safeStorageGet, safeStorageSet } from '$lib/arena/storage'
 
   interface Props {
     replay: ArenaReplay | null
@@ -31,16 +32,18 @@
       return
     }
     const marker = `black-whale:arena-profile-recorded:${replay.checksum}`
-    if (!sessionStorage.getItem(marker)) {
+    if (!safeStorageGet(sessionStorage, marker)) {
       profile = recordArenaResult(profile, { replay, challengeId, result })
-      saveArenaProfile(localStorage, profile)
-      sessionStorage.setItem(marker, '1')
+      if (saveArenaProfile(localStorage, profile)) safeStorageSet(sessionStorage, marker, '1')
     }
     replayCount = saveReplayToLibrary(localStorage, replay).length
   })
 </script>
 
-<section class="arena-v3-panel" aria-label="Arena V3">
+<section
+  class="arena-v3-panel"
+  aria-label={locale === 'fr' ? 'Progression de l’arène' : 'Arena progression'}
+>
   <header>
     <div>
       <small>ARENA V3</small><strong

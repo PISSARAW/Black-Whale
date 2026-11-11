@@ -77,8 +77,14 @@ export function loadArenaProfile(storage: ProfileStorage): ArenaProfile {
   }
 }
 
-export function saveArenaProfile(storage: ProfileStorage, profile: ArenaProfile): void {
-  storage.setItem(ARENA_PROFILE_KEY, JSON.stringify(profile))
+export function saveArenaProfile(storage: ProfileStorage, profile: ArenaProfile): boolean {
+  try {
+    storage.setItem(ARENA_PROFILE_KEY, JSON.stringify(profile))
+    return true
+  } catch {
+    // A full or unavailable browser store must not abort the end-of-match UI.
+    return false
+  }
 }
 
 /** The bout being recorded: what was played, against which challenge, and how it went. */

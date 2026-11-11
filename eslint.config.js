@@ -253,7 +253,6 @@ export default tseslint.config(
       'apps/web/src/lib/components/tour/TourScene.svelte', // 4661
       'apps/web/src/lib/nen/GlobalHatsuEffects.svelte', // 3166
       'apps/web/src/lib/nen/hatsuInteractions.ts', // 2735
-      'apps/web/src/lib/strategy/simulation.svelte.ts', // 506
       'apps/web/src/lib/tour/NenSceneAura.ts', // 508
       'apps/web/src/lib/tour/apparitions.ts', // 1827
       'apps/web/src/lib/tour/blueprint.ts', // 758
@@ -314,7 +313,6 @@ export default tseslint.config(
       'apps/web/src/lib/infiltration/missions/validate.ts', // 11
       'apps/web/src/lib/infiltration/persistence.ts', // 15
       'apps/web/src/lib/infiltration/state.ts', // 21
-      'apps/web/src/lib/investigation/case.ts', // 12
       'apps/web/src/lib/investigation/hatsu.ts', // 16
       'apps/web/src/lib/investigation/hatsuSystem.ts', // 15
       'apps/web/src/lib/investigation/progress.ts', // 11

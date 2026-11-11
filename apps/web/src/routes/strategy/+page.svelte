@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
   import type { Location, Presence } from '@black-whale/domain'
-  import type { WorldEntity, WorldState } from '@black-whale/canon-engine'
+  import { entityForCharacter } from '$lib/strategy/selectors'
   import type { PageData } from './$types'
   import './strategy.css'
   import StrategyBattlefield from '$lib/components/strategy/StrategyBattlefield.svelte'
@@ -29,7 +29,6 @@
   import {
     STRATEGY_SAVE_KEY,
     LEGACY_STRATEGY_SAVE_KEY,
-    createStrategySave,
     decodeStrategySave,
     encodeStrategySave,
     type StrategySave,
@@ -49,6 +48,8 @@
   } from '$lib/strategy/rules'
   import { link, locale, t } from '$lib/i18n'
   import { localizeStrategyScenario } from '$lib/strategy/localization'
+  import { scenarioSaveFor } from '$lib/strategy/scenarioSave'
+  import StrategyOperationNav from '$lib/components/strategy/StrategyOperationNav.svelte'
   import { displayName } from '$lib/utils/displayNames'
   let { data }: { data: PageData } = $props()
   const simStore = createSimulationStore()
@@ -70,9 +71,6 @@
   let localizedScenario = $derived(
     data.scenario ? localizeStrategyScenario(data.scenario, $locale) : null,
   )
-  let localizedScenarios = $derived(
-    data.scenarios.map((scenario) => localizeStrategyScenario(scenario, $locale)),
-  )
   let playableFactions = $derived(
     data.factions.filter((faction) =>
       data.scenario ? isPlayableScenarioFaction(faction.id, data.scenario) : false,
@@ -93,18 +91,6 @@
   let playableLocations = $derived(
     simStore.scenarioLocations.length ? simStore.scenarioLocations : data.locations,
   )
-  function entityForCharacter(state: WorldState, characterId: string): WorldEntity | undefined {
-    const direct = state.entities[characterId]
-    if (direct && state.presences[direct.id]) return direct
-    return (
-      Object.values(state.entities).find(
-        (entity) =>
-          entity.kind === 'BODY' &&
-          entity.originalCharacterId === characterId &&
-          Boolean(state.presences[entity.id]),
-      ) ?? direct
-    )
-  }
 
   let controlledEntities = $derived.by(() => {
     const state = simStore.currentState
@@ -265,15 +251,15 @@
     if (!campaignSave || !data.scenario || !playerFactionId) return
     if (currentCampaignScenario(campaignSave.campaign)?.id !== data.scenario.id) return
     const campaign = completeCampaignScenario(
-      campaignSave.campaign,
+      $state.snapshot(campaignSave.campaign),
       {
         scenarioId: data.scenario.id,
         selectedFactionId: playerFactionId,
         won: simStore.gameWon,
         turnsPlayed: Math.min(simStore.currentTurn - 1, data.scenario.maxTurns),
         victoryPoints: simStore.victoryPoints,
-        relationships: structuredClone(simStore.relationships),
-        unitConditions: structuredClone(simStore.unitConditions),
+        relationships: $state.snapshot(simStore.relationships),
+        unitConditions: $state.snapshot(simStore.unitConditions),
       },
       $locale,
     )
@@ -360,24 +346,14 @@
       simStore.endTurn(playerFactionId, pendingOrders, pendingDiplomacy)
       pendingOrders = []
       pendingDiplomacy = []
-      localStorage.setItem(
-        STRATEGY_SAVE_KEY,
-        encodeStrategySave(
-          createStrategySave(
-            {
-              savedAt: new Date().toISOString(),
-              seed: `${data.cutoff?.eventId ?? 'unknown'}:${playerFactionId}`,
-              baseEventId: data.cutoff?.eventId ?? '',
-              selectedFactionId: playerFactionId,
-              turns: structuredClone(simStore.turnHistory).map((turn, index) => ({
-                ...turn,
-                turn: index + 1,
-              })),
-            },
-            data.scenario ?? undefined,
-          ),
-        ),
-      )
+      const save = scenarioSaveFor({
+        savedAt: new Date().toISOString(),
+        cutoffEventId: data.cutoff?.eventId,
+        factionId: playerFactionId,
+        turnHistory: $state.snapshot(simStore.turnHistory),
+        scenario: data.scenario ?? undefined,
+      })
+      localStorage.setItem(STRATEGY_SAVE_KEY, encodeStrategySave(save))
     } catch (error) {
       errorMessage =
         error instanceof StrategyInputError ? error.message : $t.strategy.errors.turnFailed
@@ -420,33 +396,11 @@
       </div>
     </section>
   {:else if !playerFactionId}
-    <nav
-      class="mx-auto mt-8 grid w-full max-w-5xl grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3"
-      aria-label={$t.strategy.ui.campaignOperations}
-    >
-      {#each localizedScenarios as operation, index (operation.id)}
-        <a
-          href={$link(`/strategy?scenario=${operation.id}`)}
-          aria-current={data.scenario?.id === operation.id ? 'page' : undefined}
-          class="group flex flex-col gap-2 rounded-sm border border-sky-900/40 bg-[#0a0f1c]/80 p-5 transition-all hover:border-sky-400 hover:bg-sky-900/30 aria-[current=page]:border-amber-500/60 aria-[current=page]:bg-amber-950/20"
-        >
-          <span
-            class="text-[9px] font-bold uppercase tracking-widest text-sky-500/60 group-aria-[current=page]:text-amber-500/80"
-            >{$t.strategy.ui.operation(index + 1, operation.chapterNumber)}</span
-          >
-          <strong class="font-black text-lg text-white group-aria-[current=page]:text-amber-300"
-            >{operation.title}</strong
-          >
-          <small
-            class="text-xs leading-relaxed text-sky-200/50 group-aria-[current=page]:text-amber-100/70"
-            >{operation.description}</small
-          >
-        </a>
-      {/each}
-    </nav>
+    <StrategyOperationNav scenarios={data.scenarios} currentId={data.scenario?.id} />
     <StrategyFactionPicker
       chapterNumber={data.cutoff?.chapterNumber}
       factions={playableFactions}
+      scenario={data.scenario ?? undefined}
       saved={availableSave}
       onselect={selectFaction}
       onresume={resumeScenario}

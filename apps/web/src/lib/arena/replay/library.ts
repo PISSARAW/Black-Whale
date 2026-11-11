@@ -41,7 +41,14 @@ export function saveReplayToLibrary(storage: ReplayStorage, replay: ArenaReplay)
     replay,
     ...loadReplayLibrary(storage).filter(({ checksum }) => checksum !== replay.checksum),
   ].slice(0, REPLAY_LIBRARY_LIMIT)
-  storage.setItem(REPLAY_LIBRARY_KEY, JSON.stringify(next.map(serializeReplay)))
+  while (next.length > 0) {
+    try {
+      storage.setItem(REPLAY_LIBRARY_KEY, JSON.stringify(next.map(serializeReplay)))
+      return next
+    } catch {
+      next.pop()
+    }
+  }
   return next
 }
 

@@ -809,10 +809,17 @@ Le coin narguilé est repris du chapitre 366 (page 7), sans l’ancienne estrade
 non établie. Les sept pièces privées sont des reconstitutions `map` et le plan
 local partage leurs emprises avec la visite. Voir [l’audit du 1007](luzurus-room-audit.md).
 
+Dans le **1008**, les chapitres 366 (page de lecture 6) et 381 (page 15),
+recoupés avec le chapitre 382 (page 17), précisent le grand lit, sa traverse
+courbe et ses étoffes, les écrans latéraux sur meubles d’équipement, la literie
+froissée et les objets au sol. Les sept autres pièces restent des reconstitutions
+`map` ; la carte locale projette les mêmes emprises que la visite.
+Voir [l’audit du 1008](salesale-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),
-la chambre festive de Salé-salé (chap. 362, 366 et 382), le centre dégagé et les
+la chambre festive de Salé-salé (chap. 366, 381 et 382), le centre dégagé et les
 meubles muraux de Halkenburg (chap. 382 et 386), et le salon de Kacho (chap. 374
 et 376). Les scènes uniques restent affichables, mais leur légende ne les fait
 pas passer pour une confirmation répétée : salon formel de Camilla (chap. 389),
@@ -995,6 +1002,12 @@ les passagers ordinaires. Les trois passerelles figurent dans le modèle. Le
 schéma du chapitre 418 place A et C sur les flancs opposés, et B à l’arrière.
 Le couloir en U entoure la pièce anonyme derrière le quartier princier ;
 les quartiers des gardes restent sur le pont 1-B reconstruit.
+
+Le parcours des chapitres 419–420 est praticable de bout en bout dans `/tour` :
+chambre 1004, couloirs des princes, salle de loisirs, Route A rétractée, raccord
+reconstitué vers le casino, SWAMP BALL, salle de secours, escalier en colimaçon
+et pont extérieur principal. Le guide distingue les jalons montrés en case des
+raccords métriques nécessaires à la visite.
 
 ### Vue schématique du pont 1-A
 

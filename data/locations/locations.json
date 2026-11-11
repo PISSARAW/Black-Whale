@@ -205,7 +205,17 @@
     "parentLocationId": "tier-1",
     "deck": 1,
     "zoneType": "public",
-    "description": "Casino reserved for Tier 1 passengers. The real Hisoka plays SQ-X there on the eleventh day of the trip, remains there through the martial-law search and kills the royal patrols before chapter 420's encounter with Tserriednich. Chapter 419 also establishes its emergency spiral-staircase exit, while chapter 420 shows the surrounding liner under floodlights, vehicles and troops.",
+    "description": "Casino reserved for Tier 1 passengers. The real Hisoka plays SQ-X there on the eleventh day of the trip, remains there through the martial-law search and kills the royal patrols before chapter 420's encounter with Tserriednich. Chapter 419 brings Tserriednich into the deserted casino after Route A is found retracted; chapter 420 establishes the emergency spiral stair as his way out after the encounter.",
+    "entrances": [],
+    "exits": []
+  },
+  {
+    "id": "tier-1-exterior-main-deck",
+    "name": "Tier 1 Exterior Main Deck",
+    "parentLocationId": "tier-1",
+    "deck": 1,
+    "zoneType": "public",
+    "description": "Open main deck outside the Tier 1 liner. In chapter 420, Tserriednich reaches it after descending the casino's emergency spiral stair and finds the floodlit area occupied by soldiers, with the connecting bridges withdrawn under martial law. Its exact metric connection to the casino is reconstructed for the walk.",
     "entrances": [],
     "exits": []
   },

@@ -30,3 +30,11 @@ déplacement.
 - Repéré, non corrigé : `standingOutsideDoor` range les gardes par `seedOf(id) % 5`, donc deux
   gardes de la même porte peuvent tomber sur le même point. C'est le cas de Bladge et Nagmum
   devant la 1012 : ils sont dessinés l'un dans l'autre tant que Bladge ne marche pas.
+
+## Mode Stratégie — `simulation.svelte.ts`, `+page.svelte`
+
+- Repéré, non corrigé : Cat's Name (`strategy/catsName.ts`) désigne comme meurtrier la première
+  unité adverse du lieu par ordre d'identifiant, pas celle qui a frappé Camilla.
+- Le reste de l'audit du mode (objectif « confirmer des hostiles » qui compte les passants,
+  « Rompre le pacte » sans pacte qui marque traître, retour aux factions sans `init`, garde
+  invincible, unité éliminée sélectionnable en français…) attend son propre lot.

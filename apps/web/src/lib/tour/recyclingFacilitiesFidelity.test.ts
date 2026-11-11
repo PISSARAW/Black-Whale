@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the recycling and sewage facilities', () => {
   it('marks the minimal machinery in both plan volumes as inferred', () => {
@@ -10,5 +10,6 @@ describe('the recycling and sewage facilities', () => {
     expect(structures).toHaveLength(6)
     expect(structures.every(({ provenance }) => provenance === 'inferred')).toBe(true)
     expect(structures.every(({ sides }) => sides === 20)).toBe(true)
+    expect(certificationIssuesFor('tier-4-recycling-sewage-facilities')).toEqual([])
   })
 })

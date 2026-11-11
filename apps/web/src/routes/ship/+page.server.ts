@@ -7,11 +7,10 @@ import { theShip } from '$lib/tour/blueprint'
 import { walkTargetsByLocation } from '$lib/tour/walkTargets'
 import { trimEventsForTimeline, trimWorldStateForMap } from '$lib/server/mapPayload'
 import { timeline } from '$lib/server/timeline'
+import { applySpoilerFilters } from '$lib/server/spoilerWorld'
 import {
   activeFactionTypesAt,
-  filterPresencesByBodies,
   readLegacySequence,
-  resolveVisibleBodyIds,
   selectEvent,
   type WorldSnapshot,
 } from '@black-whale/canon-engine'
@@ -36,21 +35,6 @@ import type { BeyondLineageStatus } from '$lib/beyondLineage'
 const catalogIndex = buildCatalogIndex(characterCatalog as CatalogCharacter[])
 const hatsuIndex = buildHatsuIndex(abilityCatalog)
 const walkTargets = walkTargetsByLocation(theShip())
-
-/**
- * Applies both spoiler filters to a world state: characters outside the
- * reader's allow-list drop out, and presences follow only bodies that remain
- * visible. Used for the present world *and* the next-chapter preview — sending
- * the future state unfiltered would leak names, positions and hatsu of
- * characters whose reveal sits past the cap.
- */
-function applySpoilerFilters(worldState: WorldSnapshot, allowedCharacterIds: Set<string> | null) {
-  const characters = allowedCharacterIds
-    ? worldState.characters.filter((character) => allowedCharacterIds.has(character.id))
-    : worldState.characters
-  const bodyIds = resolveVisibleBodyIds(worldState, new Set(characters.map((c) => c.id)))
-  return { characters, presences: filterPresencesByBodies(worldState.presences, bodyIds) }
-}
 
 export const load: PageServerLoad = localizedLoad(
   async ({ url, cookies }: Parameters<PageServerLoad>[0]) => {
@@ -237,12 +221,12 @@ export const load: PageServerLoad = localizedLoad(
       // the map reads there.
       worldState: trimWorldStateForMap({
         characters: visibleCharacters,
-        bodies: rawWorldState.bodies,
-        consciousnesses: rawWorldState.consciousnesses,
+        bodies: presentWorld.bodies,
+        consciousnesses: presentWorld.consciousnesses,
         presences: visiblePresences,
-        occupancies: rawWorldState.occupancies,
-        appearances: rawWorldState.appearances,
-        bodyStates: rawWorldState.bodyStates,
+        occupancies: presentWorld.occupancies,
+        appearances: presentWorld.appearances,
+        bodyStates: presentWorld.bodyStates,
         locations: visibleLocations,
       }),
       nextChapterState: nextChapterVisible
@@ -261,12 +245,12 @@ export const load: PageServerLoad = localizedLoad(
                 ...(beyondLineage ? { beyondLineage } : {}),
               }
             }),
-            bodies: nextChapterWorldState?.bodies ?? [],
-            consciousnesses: nextChapterWorldState?.consciousnesses ?? [],
+            bodies: nextChapterVisible.bodies,
+            consciousnesses: nextChapterVisible.consciousnesses,
             presences: nextChapterVisible.presences,
-            occupancies: nextChapterWorldState?.occupancies ?? [],
-            appearances: nextChapterWorldState?.appearances ?? [],
-            bodyStates: nextChapterWorldState?.bodyStates ?? {},
+            occupancies: nextChapterVisible.occupancies,
+            appearances: nextChapterVisible.appearances,
+            bodyStates: nextChapterVisible.bodyStates,
             locations: visibleLocations,
           })
         : null,

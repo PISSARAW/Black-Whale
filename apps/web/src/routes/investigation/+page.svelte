@@ -9,7 +9,8 @@
     type InvestigationPortfolio,
   } from '$lib/investigation/portfolio'
 
-  const cases = $derived(listCases($locale))
+  let { data } = $props()
+  const cases = $derived(listCases($locale, data.spoilerLimit ?? undefined))
   let portfolio = $state<InvestigationPortfolio>(freshPortfolio())
 
   const copy = $derived(

@@ -14,4 +14,9 @@ describe('investigation case registry', () => {
   it('lists lightweight metadata in publication order', () => {
     expect(listCases('fr').map((item) => item.slug)).toEqual(['eleven-seconds'])
   })
+
+  it('withholds cases beyond the reader spoiler limit', () => {
+    expect(listCases('fr', 369)).toEqual([])
+    expect(listCases('fr', 370).map((item) => item.slug)).toEqual(['eleven-seconds'])
+  })
 })

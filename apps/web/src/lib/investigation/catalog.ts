@@ -12,10 +12,15 @@ export function caseById(id: string, locale: Locale): InvestigationCaseDefinitio
   return definition ? assertValidCaseDefinition(definition) : null
 }
 
-export function listCases(locale: Locale): CaseMetadata[] {
+export function listCases(locale: Locale, spoilerLimit?: number): CaseMetadata[] {
   return [...loaders.values()]
     .map((load) => assertValidCaseDefinition(load(locale)).metadata)
+    .filter((metadata) => caseVisibleAtChapter(metadata, spoilerLimit))
     .sort((a, b) => a.order - b.order)
+}
+
+export function caseVisibleAtChapter(metadata: CaseMetadata, spoilerLimit?: number): boolean {
+  return spoilerLimit === undefined || metadata.requiredChapter <= spoilerLimit
 }
 
 export const DEFAULT_INVESTIGATION_CASE_ID = 'eleven-seconds'

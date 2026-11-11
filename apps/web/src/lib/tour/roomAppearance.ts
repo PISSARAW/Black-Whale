@@ -48,14 +48,14 @@ const CATEGORY_FLOOR: Record<SpaceCategory, number> = {
 const FINISHES: Record<Finish, RoomAppearance> = {
   legacy: LEGACY,
   'royal-salon': {
-    floor: 0xb4ad98,
-    wall: 0x8b816e,
-    ceiling: 0x706a5e,
-    column: 0xbeb49f,
-    wood: 0x4b281d,
-    metal: 0xb08a4a,
-    fabric: 0x697166,
-    accent: 0xb18b4f,
+    floor: 0x725842,
+    wall: 0xc8bdab,
+    ceiling: 0xa89e8d,
+    column: 0xd8cdb8,
+    wood: 0x39251e,
+    metal: 0xc5a25f,
+    fabric: 0x642f35,
+    accent: 0xc5a25f,
   },
   'gilded-hall': {
     floor: 0x393634,

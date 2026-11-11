@@ -86,6 +86,73 @@ function geometricInlay(polygon: Polygon): [Vec2, Vec2][] {
   return segments
 }
 
+/** The King's salon is read down a strict central axis, not as an undifferentiated lattice. */
+function royalSalonInlay(polygon: Polygon): [Vec2, Vec2][] {
+  const { minX, maxX, minZ, maxZ } = boundsOf(polygon)
+  const segments: [Vec2, Vec2][] = []
+  const x0 = minX + 0.72,
+    x1 = maxX - 0.72,
+    z0 = minZ + 0.72,
+    z1 = maxZ - 0.72
+
+  for (const inset of [0, 0.38]) {
+    segments.push(
+      [
+        [x0 + inset, z0 + inset],
+        [x1 - inset, z0 + inset],
+      ],
+      [
+        [x1 - inset, z0 + inset],
+        [x1 - inset, z1 - inset],
+      ],
+      [
+        [x1 - inset, z1 - inset],
+        [x0 + inset, z1 - inset],
+      ],
+      [
+        [x0 + inset, z1 - inset],
+        [x0 + inset, z0 + inset],
+      ],
+    )
+  }
+
+  for (const x of [-4.7, -1.35, 1.35, 4.7])
+    segments.push([
+      [x, z0],
+      [x, z1],
+    ])
+  for (let z = z0 + 1.75; z < z1; z += 2.8)
+    segments.push([
+      [-4.7, z],
+      [4.7, z],
+    ])
+
+  for (const side of [-1, 1]) {
+    const centreX = side * 7.6
+    for (let z = z0 + 1.6; z < z1 - 0.4; z += 3.5) {
+      segments.push(
+        [
+          [centreX, z - 1.15],
+          [centreX + 1.15, z],
+        ],
+        [
+          [centreX + 1.15, z],
+          [centreX, z + 1.15],
+        ],
+        [
+          [centreX, z + 1.15],
+          [centreX - 1.15, z],
+        ],
+        [
+          [centreX - 1.15, z],
+          [centreX, z - 1.15],
+        ],
+      )
+    }
+  }
+  return segments
+}
+
 /** The sixteen hull panels meet the broad base at the cabin's centre. */
 function radialDeck(polygon: Polygon): [Vec2, Vec2][] {
   const centre: Vec2 = [
@@ -114,10 +181,10 @@ function floorboards(polygon: Polygon): [Vec2, Vec2][] {
 const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
-  if (
-    space.id === 'tier-1-king-living-quarters-living' ||
-    space.id === 'tier-1-royal-residential-sector-room-1004-living'
-  ) {
+  if (space.id === 'tier-1-king-living-quarters-living') {
+    return { kind: 'geometric-inlay', style: 'inlay', segments: royalSalonInlay(space.footprint) }
+  }
+  if (space.id === 'tier-1-royal-residential-sector-room-1004-living') {
     return { kind: 'geometric-inlay', style: 'inlay', segments: geometricInlay(space.footprint) }
   }
   if (space.id === 'tier-1-lifeboats-port-pod-cabin') {

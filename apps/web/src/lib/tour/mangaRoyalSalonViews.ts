@@ -2,8 +2,8 @@ import { mangaView as view, type MangaCastStaging, type MangaView } from './mang
 import { ROYAL_SALON } from './royalSalonView'
 
 const staging: MangaCastStaging[] = [
-  { characterId: 'nasubi-hui-guo-rou', at: [-5, -0.15], heading: 0, pose: 'seated' },
-  { characterId: 'prince-halkenburg', at: [5.1, -1.35], heading: -1.45, pose: 'idle' },
+  { characterId: 'nasubi-hui-guo-rou', at: [0, -1.1], heading: 0, pose: 'seated' },
+  { characterId: 'prince-halkenburg', at: [-3.2, 2.15], heading: 0, pose: 'idle' },
 ]
 const source = { spaceId: ROYAL_SALON, chapter: 382, eventSequence: 1, volume: 37, staging }
 

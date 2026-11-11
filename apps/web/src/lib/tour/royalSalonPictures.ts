@@ -27,7 +27,23 @@ function landscape(THREE: typeof Three, surface: SalonSurface): void {
   const w = surface.width * 0.46,
     h = surface.structure.height
   const z = surface.depth / 2 + 0.04
-  surface.box([w * 2, h * 0.91, 0.015], [0, h / 2, z], 0xa6b3a0)
+  surface.glowBox([w * 2, h * 0.91, 0.015], {
+    at: [0, h / 2, z],
+    colour: 0xa9c7ce,
+  })
+  surface.glowBox([w * 2, h * 0.38, 0.017], {
+    at: [0, h * 0.24, z + 0.01],
+    colour: 0x668b78,
+  })
+  for (let ripple = 0; ripple < 7; ripple++) {
+    const width = w * (1.55 - ripple * 0.11)
+    surface.box(
+      [width, 0.012, 0.012],
+      [(ripple % 2 ? -1 : 1) * w * 0.07, h * (0.11 + ripple * 0.035), z + 0.035],
+      ripple % 2 ? 0xb9d5cc : 0x456c5d,
+    )
+  }
+  surface.sphere([h * 0.055, h * 0.055, 0.015], [w * 0.32, h * 0.7, z + 0.025], 0xe7d69a)
   for (let layer = 0; layer < 3; layer++) {
     const line: [number, number][] = Array.from({ length: 17 }, (_, index) => {
       const x = -w + (index * w) / 8
@@ -37,8 +53,17 @@ function landscape(THREE: typeof Three, surface: SalonSurface): void {
     silhouette(THREE, surface, {
       points: [[-w, h * 0.05], [w, h * 0.05], ...line.reverse()],
       z: z + 0.015 + (3 - layer) * 0.008,
-      colour: [0x364839, 0x566b50, 0x7d8e71][layer],
+      colour: [0x244a32, 0x426b48, 0x698563][layer],
     })
+  }
+  for (const side of [-1, 1]) {
+    for (let crown = 0; crown < 5; crown++) {
+      surface.sphere(
+        [w * 0.16, h * 0.11, 0.018],
+        [side * w * (0.48 + crown * 0.09), h * (0.48 + (crown % 2) * 0.08), z + 0.045],
+        crown % 2 ? 0x315b39 : 0x24482f,
+      )
+    }
   }
 }
 

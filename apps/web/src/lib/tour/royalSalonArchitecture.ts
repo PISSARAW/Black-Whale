@@ -3,6 +3,8 @@ import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import { banquetWallRuns, wallPoint } from './banquetWallLayout'
 import { floorPatternOf } from './floorPattern'
+import { dressRoyalSalonFloor } from './royalSalonFloor'
+import { dressRoyalSalonGallery } from './royalSalonGallery'
 import type { Space } from './types'
 import { SALON_GOLD, SALON_STONE, SALON_WOOD, SalonSurface } from './royalSalonDetailSurface'
 
@@ -161,4 +163,6 @@ export function dressRoyalSalonArchitecture(context: Architecture): void {
   wallMouldings(context)
   piers(context)
   inlay(context)
+  dressRoyalSalonFloor(context)
+  dressRoyalSalonGallery(context)
 }

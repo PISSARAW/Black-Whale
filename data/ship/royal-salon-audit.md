@@ -21,8 +21,10 @@ ou sa fonction d'écran : elle empêche surtout de créer une ouverture extérie
 et une lumière du jour que la case n'établit pas. Le paysage procédural reste
 une interprétation originale et simplifiée.
 
-Le fauteuil de repos large est ajouté face à ce panneau. Les deux enceintes,
-le manteau et les sellettes sont placés de façon à lire la même disposition.
+Le fauteuil de repos large est placé sur l'axe du panneau paysager, conformément
+au plan frontal fourni : Nasubi ferme la perspective et Halkenburg l'approche
+par la gauche. Les deux enceintes encadrent immédiatement le panneau ; le manteau
+et les sellettes restent sur le mur latéral perpendiculaire.
 Les sièges gardent une assise basse, leur dossier et leurs accoudoirs rembourrés
 étant dessinés au-dessus. Les tableaux secondaires sont de formats différents.
 Les meubles latéraux et les piles laissent libres les passages et les caméras.
@@ -37,12 +39,17 @@ Les meubles latéraux et les piles laissent libres les passages et les caméras.
 - Cadres à plusieurs profils, petits ornements d'angle et sujets en silhouettes
   originales : paysage, portraits et évocation équestre du tableau de bataille.
   Ces sujets ne sont pas des fac-similés des œuvres dessinées par Togashi.
+- Galerie haute de petits portraits sur les deux murs latéraux, afin de retrouver
+  la densité de cadres du grand plan sans réduire la largeur de circulation.
+- Panneau paysager élargi, avec ciel, eau, arbres en relief et encadrement
+  architectural symétrique entre les deux enceintes.
 - Manteau avec ouverture sombre, jambages, corniche, petits cadres,
   vases et ornement central en forme d'horloge. Aucun foyer allumé n'est ajouté.
 - Sièges rembourrés avec accoudoirs courbes, coussins et boutons ; buffets et
   tables basses ; enceinte à trois haut-parleurs ; desserte nappée avec
   bouteilles et verres.
-- Incrustations géométriques rendues en bandes sur le motif du plan existant.
+- Incrustations géométriques organisées autour de quatre longues bandes axiales,
+  de traverses sombres et de losanges latéraux ; le centre reste largement libre.
 
 Le catafalque du chapitre 413 reste identifié séparément sur le plan, comme
 avant cette intervention. Sa présence dans le modèle architectural n'est pas
@@ -67,7 +74,7 @@ voûte. Le roi est placé sur son fauteuil dans chacun d'eux.
 
 L'emprise de 24 × 16,64 m, la hauteur de 7 m, la courbure de la voûte, le nombre
 et la position métrique des piles, les formats et placements individuels des
-petits tableaux restent des estimations. Les couleurs pierre, bois, laiton et
-vert grisé interprètent une source en noir et blanc. Les petits profils,
+petits tableaux restent des estimations. Les couleurs ivoire, noyer, laiton,
+bordeaux et vert paysager interprètent une source en noir et blanc. Les petits profils,
 l'ornement d'horloge et les sujets des œuvres sont simplifiés. Aucun scan,
 extrait ou texture du manga n'est embarqué dans l'application.

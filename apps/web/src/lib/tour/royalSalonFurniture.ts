@@ -4,6 +4,7 @@ import {
   SALON_STONE,
   SALON_WOOD,
   SalonSurface,
+  salonBouquet,
   salonFrame,
   salonVase,
 } from './royalSalonDetailSurface'
@@ -36,6 +37,13 @@ function upholstery(surface: SalonSurface): void {
       [(button - 1) * w * 0.22, top + 0.5, d * 0.31 - 0.16],
       SALON_GOLD,
     )
+  }
+  if (structure.id.endsWith('-royal-chaise')) {
+    surface.sphere([w * 0.47, 0.62, 0.18], [0, top + 0.76, d * 0.34], SALON_WOOD)
+    surface.sphere([w * 0.4, 0.54, 0.15], [0, top + 0.76, d * 0.3], SALON_FABRIC)
+    for (const x of [-0.28, 0, 0.28]) {
+      surface.sphere([0.055, 0.055, 0.04], [x * w, top + 1.3 - Math.abs(x), d * 0.32], SALON_GOLD)
+    }
   }
 }
 
@@ -106,7 +114,7 @@ function cabinet(surface: SalonSurface): void {
   for (const side of [-1, 1]) {
     surface.sphere([0.035, 0.035, 0.04], [side * w * 0.15, y * 0.55, d / 2 + 0.06], SALON_GOLD)
   }
-  salonVase(surface, [0, y + 0.05, 0], 0.9)
+  salonBouquet(surface, [0, y + 0.05, 0], 0.9)
 }
 
 function bottle(surface: SalonSurface, at: Point3): void {
@@ -148,7 +156,7 @@ function table(surface: SalonSurface): void {
   const { width: w, depth: d, structure } = surface
   surface.box([w + 0.035, 0.04, d + 0.035], [0, structure.height + 0.02, 0], SALON_WOOD)
   surface.box([w * 0.83, 0.012, d * 0.83], [0, structure.height + 0.047, 0], 0x7e806a)
-  salonVase(surface, [0, structure.height + 0.06, 0], 0.45)
+  salonBouquet(surface, [0, structure.height + 0.06, 0], 0.55)
 }
 
 export function dressRoyalSalonFurniture(surface: SalonSurface): void {

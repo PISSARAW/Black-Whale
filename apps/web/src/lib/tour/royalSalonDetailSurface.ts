@@ -2,10 +2,10 @@ import type * as Three from 'three'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Structure } from './types'
 
-export const SALON_STONE = 0xbeb49f
-export const SALON_GOLD = 0xb89a62
-export const SALON_WOOD = 0x49352a
-export const SALON_FABRIC = 0x697166
+export const SALON_STONE = 0xd8cdb8
+export const SALON_GOLD = 0xc5a25f
+export const SALON_WOOD = 0x39251e
+export const SALON_FABRIC = 0x642f35
 
 /** Local +Z faces the room; structure rotations are degrees in the ground plane. */
 export class SalonSurface {
@@ -39,6 +39,15 @@ export class SalonSurface {
 
   box(size: Point3, at: Point3, colour: number): void {
     this.into.box(size, { at: this.point(at), rotation: [0, this.angle, 0], colour })
+  }
+
+  glowBox(size: Point3, placement: { at: Point3; colour: number }): void {
+    this.into.box(size, {
+      at: this.point(placement.at),
+      rotation: [0, this.angle, 0],
+      colour: placement.colour,
+      glow: true,
+    })
   }
 
   sphere(size: Point3, at: Point3, colour: number): void {
@@ -115,4 +124,33 @@ export function salonVase(surface: SalonSurface, at: Point3, scale = 1): void {
       colour: SALON_GOLD,
     },
   )
+}
+
+/** Dense flower heads keep the side furniture rich without narrowing the walkable aisle. */
+export function salonBouquet(surface: SalonSurface, at: Point3, scale = 1): void {
+  const [x, y, z] = at
+  salonVase(surface, at, scale * 0.72)
+  const stemTop = y + 0.82 * scale
+  for (const [offset, colour] of [
+    [-0.22, 0x7c2637],
+    [-0.11, 0xe2c9b2],
+    [0, 0x9c3550],
+    [0.12, 0xe8ddd0],
+    [0.23, 0x6e2938],
+  ] as const) {
+    surface.curve(
+      [
+        [x, y + 0.36 * scale, z],
+        [x + offset * 0.45 * scale, y + 0.6 * scale, z],
+        [x + offset * scale, stemTop - Math.abs(offset) * scale, z],
+      ],
+      0.012 * scale,
+      0x405b36,
+    )
+    surface.sphere(
+      [0.1 * scale, 0.12 * scale, 0.08 * scale],
+      [x + offset * scale, stemTop - Math.abs(offset) * scale, z],
+      colour,
+    )
+  }
 }

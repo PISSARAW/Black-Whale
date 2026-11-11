@@ -98,7 +98,12 @@ describe('the royal salon reconstructed from chapter 382', () => {
     for (const object of [root, removed, empty]) disposeBanquetDetails(object)
   })
 
-  it('places the king on his chair and keeps all three camera anchors clear', () => {
+  it('centres the king on the landscape axis and keeps all three camera anchors clear', () => {
+    const chaise = fixture('-royal-chaise')
+    const landscape = fixture('-landscape-panel')
+    expect(chaise.at[0]).toBe(0)
+    expect(landscape.at[0]).toBe(0)
+    expect(fixture('-floor-speaker').at[0]).toBe(-fixture('-floor-speaker-starboard').at[0])
     for (const view of MANGA_ROYAL_SALON_VIEWS) {
       expect(pointInPolygon(view.at, room.footprint)).toBe(true)
       for (const solid of structures.filter(({ base }) => base === 0)) {
@@ -107,7 +112,7 @@ describe('the royal salon reconstructed from chapter 382', () => {
         )
       }
       const king = view.staging!.find(({ characterId }) => characterId === 'nasubi-hui-guo-rou')!
-      expect(king.at).toEqual(fixture('-royal-chaise').at)
+      expect(king.at).toEqual(chaise.at)
     }
   })
 

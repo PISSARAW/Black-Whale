@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 390
+Fichiers : 391
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1129,6 +1129,10 @@ Fichiers : 390
 - the ceilings > gives the light palier the looser interval and the tighter geometry
 - reading a window against its budget > says nothing when every line is under
 - the meter > says nothing until a window is up
+
+## `apps/web/src/lib/tour/fugetsuView.test.ts`
+
+- Fugetsu’s apartment against the bedroom panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/gangwayNavigation.test.ts`
 

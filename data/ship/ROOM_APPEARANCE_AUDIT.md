@@ -447,20 +447,21 @@
 ## Chambre 1011 (Fugetsu) — `tier-1-royal-residential-sector-room-1011`
 
 - **Pont :** tier-1, interior-room-1011
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, reconstruction cartographique
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 seat
-- **Objets directement visibles dans les cases :** 17/17
+- **Éléments modélisés :** 5 cabinet, 4 basin, 3 bed, 2 counter, 2 table, 1 seat
+- **Objets directement visibles dans les cases :** 4/17
 - **Espaces internes :** Quartiers des domestiques — 1011 (Fugetsu) ; WC du personnel — 1011 (Fugetsu) ; Vestibule d'entrée — 1011 (Fugetsu) ; Cuisine — 1011 (Fugetsu) ; Salle à manger — 1011 (Fugetsu) ; Salon — 1011 (Fugetsu) ; Chambre du prince — 1011 (Fugetsu) ; Bain et WC — 1011 (Fugetsu)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases.
+  - Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 366 et 374 — Fugetsu regarde des photographies dans son lit ; lorsque Magical Worm s'ouvre, le réveil numérique à côté d'elle indique mardi, 01 h 27.
-  - Chap. 366 et 374 — le grand lit de Fugetsu est entouré de livres et de photographies éparses ; elle étale les clichés sur la couverture avant l'ouverture de Magical Worm.
+  - Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée.
+  - Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases.
+  - Chap. 374, page de lecture 9 : le réveil numérique indique mardi, 01 h 27. Dimensions du support et position reconstituées ; les photos restent sur le linge, sans cadres dressés inventés.
 
 ## Chambre 1012 (Momoze) — `tier-1-royal-residential-sector-room-1012`
 

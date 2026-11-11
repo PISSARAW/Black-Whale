@@ -135,12 +135,12 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   'tier-1-royal-residential-sector-room-1010': {
     occupants: { 'prince-kacho': { x: 15, y: 85.15 } },
   },
-  // Ch. 400 puts both twins in Fugetsu's bed, so they lie side by side on it:
+  // The 1011 map follows the reconstructed walked layout; ch. 400 puts both twins on its bed:
   // the same fixture, offset by half its width rather than stacked.
   'tier-1-royal-residential-sector-room-1011': {
     occupants: {
-      'prince-fugetsu': { x: 69, y: 35 },
-      'prince-kacho': { x: 75, y: 35 },
+      'prince-fugetsu': { x: 22.83, y: 81.25 },
+      'prince-kacho': { x: 28.83, y: 81.25 },
     },
   },
   // Momoze is asleep in her bed in ch. 361, which is where Tuffdy kills her.

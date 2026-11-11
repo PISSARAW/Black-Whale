@@ -36,7 +36,14 @@ export function roomDoorStyle(options: {
   if (options.tierId === 'interior-room-1006') {
     return { casing: dressTysonDoorCasing, leaves: buildTysonDoorLeaves }
   }
-  if (['interior-room-1004', 'interior-room-1005', 'interior-room-1010'].includes(options.tierId)) {
+  if (
+    [
+      'interior-room-1004',
+      'interior-room-1005',
+      'interior-room-1010',
+      'interior-room-1011',
+    ].includes(options.tierId)
+  ) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }
   }
   return {

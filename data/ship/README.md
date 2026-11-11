@@ -831,6 +831,14 @@ La commode et le tabouret attribués à tort au chapitre 374 sont retirés.
 Les cinq autres pièces restent des reconstitutions et les emprises 2D/3D sont
 communes. Voir [l’audit du 1010](kacho-room-audit.md).
 
+Dans le **1011**, les chapitres 366 (page de lecture 3) et 374 (pages 9–11)
+précisent le lit à colonnes et rideaux, les albums et photographies sur le linge,
+la boîte de mouchoirs, le réveil à 01 h 27 et l’armoire vitrée ornée.
+Les sept autres pièces restent des reconstitutions `map`. La coupe du chapitre
+368 ne correspond pas métriquement au découpage parcourable hérité : la carte
+locale projette désormais ce même découpage et l’annonce comme reconstitution,
+avec les jumelles repositionnées sur le lit. Voir [l’audit du 1011](fugetsu-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

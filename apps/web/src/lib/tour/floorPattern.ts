@@ -138,6 +138,7 @@ const modelledFloor = (space: Space) =>
     'interior-room-1007',
     'interior-room-1009',
     'interior-room-1010',
+    'interior-room-1011',
   ].includes(space.tierId)
 
 export function floorPatternOf(space: Space): FloorPattern | null {

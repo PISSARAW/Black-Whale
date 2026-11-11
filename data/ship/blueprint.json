@@ -3443,11 +3443,11 @@
       "id": "tier-1-royal-residential-sector-room-1011-servants",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Servants' Quarters \u2014 1011 (Fugetsu)",
-      "nameFr": "Quartiers des domestiques \u2014 1011 (Fugetsu)",
+      "name": "Servants' Quarters — 1011 (Fugetsu)",
+      "nameFr": "Quartiers des domestiques — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3460,17 +3460,17 @@
         [-1.5, -2.7],
         [-10.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-servants-wc",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Servants' WC \u2014 1011 (Fugetsu)",
-      "nameFr": "WC du personnel \u2014 1011 (Fugetsu)",
+      "name": "Servants' WC — 1011 (Fugetsu)",
+      "nameFr": "WC du personnel — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3479,17 +3479,17 @@
         [-1.5, -4.2],
         [-3.9, -4.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-entrance",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Entrance Hall \u2014 1011 (Fugetsu)",
-      "nameFr": "Vestibule d'entr\u00e9e \u2014 1011 (Fugetsu)",
+      "name": "Entrance Hall — 1011 (Fugetsu)",
+      "nameFr": "Vestibule d'entrée — 1011 (Fugetsu)",
       "category": "corridor",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3498,17 +3498,17 @@
         [1.5, -2.7],
         [-1.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-kitchen",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Kitchen \u2014 1011 (Fugetsu)",
-      "nameFr": "Cuisine \u2014 1011 (Fugetsu)",
+      "name": "Kitchen — 1011 (Fugetsu)",
+      "nameFr": "Cuisine — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3517,17 +3517,17 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-dining",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Dining Room \u2014 1011 (Fugetsu)",
-      "nameFr": "Salle \u00e0 manger \u2014 1011 (Fugetsu)",
+      "name": "Dining Room — 1011 (Fugetsu)",
+      "nameFr": "Salle à manger — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3536,17 +3536,17 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-living",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Living Room \u2014 1011 (Fugetsu)",
-      "nameFr": "Salon \u2014 1011 (Fugetsu)",
+      "name": "Living Room — 1011 (Fugetsu)",
+      "nameFr": "Salon — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3557,17 +3557,17 @@
         [10.5, 5.7],
         [-10.5, 5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-bedroom",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Prince's Master Bedroom \u2014 1011 (Fugetsu)",
-      "nameFr": "Chambre du prince \u2014 1011 (Fugetsu)",
+      "name": "Prince's Master Bedroom — 1011 (Fugetsu)",
+      "nameFr": "Chambre du prince — 1011 (Fugetsu)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 366, reading p. 3; ch. 374, reading pp. 9–11: broad bed with columns and curtains, pale rumpled covers, albums, loose photographs and tissue box on the bed, digital clock and ornate wardrobe. Dimensions, colours and metric placement reconstructed. Magical Worm is not a permanent fixture or an added exit.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3576,17 +3576,17 @@
         [4.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-bathroom",
       "tierId": "interior-room-1011",
       "locationId": "tier-1-royal-residential-sector-room-1011",
-      "name": "Bath & WC \u2014 1011 (Fugetsu)",
-      "nameFr": "Bain et WC \u2014 1011 (Fugetsu)",
+      "name": "Bath & WC — 1011 (Fugetsu)",
+      "nameFr": "Bain et WC — 1011 (Fugetsu)",
       "category": "quarters",
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -3595,7 +3595,7 @@
         [10.5, 10.2],
         [4.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1012",
@@ -17073,33 +17073,17 @@
       "id": "tier-1-royal-residential-sector-room-1011-bedroom-bed-01",
       "spaceId": "tier-1-royal-residential-sector-room-1011-bedroom",
       "kind": "bed",
-      "name": "Bed",
-      "nameFr": "Lit",
-      "at": [-8, 8.4],
-      "size": [2, 2.1],
-      "rotation": 0,
+      "name": "Column bed with open curtains",
+      "nameFr": "Lit à colonnes et rideaux ouverts",
+      "at": [-5.8, 8.5],
+      "size": [3.1, 2.65],
+      "rotation": 180,
       "base": 0,
-      "height": 0.55,
+      "height": 0.68,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
-    },
-    {
-      "id": "tier-1-royal-residential-sector-room-1011-bedroom-cabinet-02",
-      "spaceId": "tier-1-royal-residential-sector-room-1011-bedroom",
-      "kind": "cabinet",
-      "name": "Bedside Table",
-      "nameFr": "Table de chevet",
-      "at": [-6.5, 7.4],
-      "size": [0.6, 0.6],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.55,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "source": "Ch. 366, reading p. 3; ch. 374, reading pp. 9–11: broad bed with columns and curtains, pale rumpled covers, albums, loose photographs and tissue box on the bed, digital clock and ornate wardrobe. Dimensions, colours and metric placement reconstructed. Magical Worm is not a permanent fixture or an added exit.",
+      "sourceFr": "Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-bedroom-cabinet-03",
@@ -17107,31 +17091,31 @@
       "kind": "cabinet",
       "name": "Wardrobe",
       "nameFr": "Armoire",
-      "at": [0, 9.7],
-      "size": [2.4, 0.7],
+      "at": [-10.05, 8.25],
+      "size": [0.65, 2.4],
       "rotation": 0,
       "base": 0,
-      "height": 2.1,
+      "height": 2.6,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "source": "Ch. 366, reading p. 3; ch. 374, reading pp. 9–11: broad bed with columns and curtains, pale rumpled covers, albums, loose photographs and tissue box on the bed, digital clock and ornate wardrobe. Dimensions, colours and metric placement reconstructed. Magical Worm is not a permanent fixture or an added exit.",
+      "sourceFr": "Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-living-seat-04",
       "spaceId": "tier-1-royal-residential-sector-room-1011-living",
       "kind": "seat",
       "name": "Sofa",
-      "nameFr": "Canap\u00e9",
-      "at": [-6, 1.5],
+      "nameFr": "Canapé",
+      "at": [-6, 1.4],
       "size": [2.6, 0.95],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.8,
+      "height": 0.95,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-living-table-05",
@@ -17139,15 +17123,15 @@
       "kind": "table",
       "name": "Coffee Table",
       "nameFr": "Table basse",
-      "at": [-6, 3.1],
-      "size": [1.3, 0.8],
-      "rotation": 0,
+      "at": [-8.3, 1.4],
+      "size": [1.7, 1.1],
+      "rotation": 90,
       "base": 0,
-      "height": 0.42,
+      "height": 0.48,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-living-cabinet-06",
@@ -17155,31 +17139,31 @@
       "kind": "cabinet",
       "name": "Sideboard",
       "nameFr": "Buffet",
-      "at": [-10.1, 3],
+      "at": [-10, 4.6],
       "size": [0.6, 2.2],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-dining-table-07",
       "spaceId": "tier-1-royal-residential-sector-room-1011-dining",
       "kind": "table",
       "name": "Dining Table",
-      "nameFr": "Table \u00e0 manger",
+      "nameFr": "Table à manger",
       "at": [5, -2.7],
       "size": [1.6, 2.4],
       "rotation": 0,
       "base": 0,
       "height": 0.75,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-kitchen-counter-08",
@@ -17187,31 +17171,31 @@
       "kind": "counter",
       "name": "Kitchen Counter",
       "nameFr": "Plan de travail",
-      "at": [6, -9.8],
-      "size": [7, 0.7],
+      "at": [6.175, -9.85],
+      "size": [7.95, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-kitchen-counter-09",
       "spaceId": "tier-1-royal-residential-sector-room-1011-kitchen",
       "kind": "counter",
       "name": "Kitchen Island",
-      "nameFr": "\u00celot de cuisine",
-      "at": [6, -7.6],
-      "size": [2.4, 0.9],
-      "rotation": 0,
+      "nameFr": "Îlot de cuisine",
+      "at": [1.85, -8.5],
+      "size": [3.4, 0.7],
+      "rotation": -90,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-servants-bed-10",
@@ -17219,15 +17203,15 @@
       "kind": "bed",
       "name": "Servant's Bed 1",
       "nameFr": "Lit de domestique 1",
-      "at": [-9.3, -8.5],
+      "at": [-9.3, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-servants-bed-11",
@@ -17235,15 +17219,15 @@
       "kind": "bed",
       "name": "Servant's Bed 2",
       "nameFr": "Lit de domestique 2",
-      "at": [-7.2, -8.5],
+      "at": [-7.2, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-servants-cabinet-12",
@@ -17257,9 +17241,9 @@
       "base": 0,
       "height": 2,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-servants-wc-pan",
@@ -17269,13 +17253,13 @@
       "nameFr": "Cuvette du personnel",
       "at": [-1.85, -5.25],
       "size": [0.6, 0.6],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.45,
+      "height": 0.85,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-bathroom-basin-13",
@@ -17289,9 +17273,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1011-bathroom-basin-14",
@@ -17305,9 +17289,9 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1012-bedroom-bed-01",
@@ -26318,17 +26302,17 @@
       "id": "tier-1-royal-residential-sector-room-1011-bedroom-clock-and-photos",
       "spaceId": "tier-1-royal-residential-sector-room-1011-bedroom",
       "kind": "cabinet",
-      "name": "Digital Clock and Photographs",
-      "nameFr": "R\u00e9veil num\u00e9rique et photographies",
-      "at": [-5.5, 7.35],
+      "name": "Digital clock on bedside stand",
+      "nameFr": "Réveil numérique sur chevet",
+      "at": [-3.25, 9.2],
       "size": [0.8, 0.65],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 0.7,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 366 and 374 \u2014 Fugetsu looks through photographs in bed; when Magical Worm opens, the digital clock beside her reads Tuesday 01:27 AM.",
-      "sourceFr": "Chap. 366 et 374 \u2014 Fugetsu regarde des photographies dans son lit ; lorsque Magical Worm s'ouvre, le r\u00e9veil num\u00e9rique \u00e0 c\u00f4t\u00e9 d'elle indique mardi, 01 h 27."
+      "source": "Ch. 374, reading p. 9: the digital clock reads Tuesday 01:27 AM. Clock stand dimensions and placement reconstructed; loose photos remain on the covers, not in invented standing frames.",
+      "sourceFr": "Chap. 374, page de lecture 9 : le réveil numérique indique mardi, 01 h 27. Dimensions du support et position reconstituées ; les photos restent sur le linge, sans cadres dressés inventés."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1012-bedroom-telephone",
@@ -28004,17 +27988,33 @@
       "id": "tier-1-royal-residential-sector-room-1011-bedroom-book-stack",
       "spaceId": "tier-1-royal-residential-sector-room-1011-bedroom",
       "kind": "cabinet",
-      "name": "Bedside Books and Photographs",
-      "nameFr": "Livres et photographies pr\u00e8s du lit",
-      "at": [-4.2, 7.2],
-      "size": [0.65, 0.65],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.35,
+      "name": "Albums, photos and tissue box on the covers",
+      "nameFr": "Albums, photos et boîte de mouchoirs sur le linge",
+      "at": [-5.55, 8.1],
+      "size": [0.8, 0.6],
+      "rotation": 180,
+      "base": 0.82,
+      "height": 0.22,
       "sides": null,
       "provenance": "panel",
-      "source": "Chs. 366 and 374 \u2014 Fugetsu's broad bed is surrounded by books and loose photographs; she spreads the photographs across the covers before Magical Worm opens.",
-      "sourceFr": "Chap. 366 et 374 \u2014 le grand lit de Fugetsu est entour\u00e9 de livres et de photographies \u00e9parses ; elle \u00e9tale les clich\u00e9s sur la couverture avant l'ouverture de Magical Worm."
+      "source": "Ch. 366, reading p. 3; ch. 374, reading pp. 9–11: broad bed with columns and curtains, pale rumpled covers, albums, loose photographs and tissue box on the bed, digital clock and ornate wardrobe. Dimensions, colours and metric placement reconstructed. Magical Worm is not a permanent fixture or an added exit.",
+      "sourceFr": "Chap. 366, page de lecture 3 ; chap. 374, pages de lecture 9–11 : grand lit à colonnes et rideaux, linge clair froissé, albums, photos éparses et boîte de mouchoirs sur le lit, réveil numérique et armoire ornée. Dimensions, couleurs et implantation métrique reconstituées. Magical Worm n’est ni un meuble permanent ni une sortie ajoutée."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1011-bathroom-wc-pan",
+      "spaceId": "tier-1-royal-residential-sector-room-1011-bathroom",
+      "kind": "basin",
+      "name": "Toilet",
+      "nameFr": "WC",
+      "at": [10.05, 8.25],
+      "size": [0.7, 0.8],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "map",
+      "source": "Room 1011 walked-layout reconstruction. Ch. 368, reading p. 2 shows an unmeasured cutaway, not a metric match to this inherited eight-space visit layout. Individual furniture and finishes outside the bedroom are not established by those panels.",
+      "sourceFr": "Reconstitution du plan de visite du 1011. Le chapitre 368, page de lecture 2, montre une coupe non cotée, sans correspondance métrique établie avec cette implantation de visite héritée à huit espaces. Le mobilier et les finitions hors chambre ne sont pas établis par ces cases."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1012-bedroom-canopy-headboard",

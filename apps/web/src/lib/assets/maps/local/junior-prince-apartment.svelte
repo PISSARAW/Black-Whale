@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FugetsuApartment from './fugetsu-apartment.svelte'
   import { t } from '$lib/i18n'
   import { mapState } from '$lib/state/mapState.svelte'
 
@@ -77,110 +78,114 @@
   const layout = $derived(layouts[roomNumber])
 </script>
 
-<svg
-  viewBox="0 0 800 800"
-  class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
-  aria-label={`Prince's Apartment ${roomNumber}, based on chapter 368 cutaway`}
->
-  <defs>
-    <style>
-      .outer {
-        fill: rgba(255, 215, 0, 0.025);
-        stroke: #fffff0;
-        stroke-width: 6;
-      }
-      .wall {
-        stroke: #fffff0;
-        stroke-width: 5;
-        stroke-linecap: square;
-      }
-      .door {
-        stroke: #ffd700;
-        stroke-width: 7;
-      }
-      .title {
-        fill: #ffd700;
-        font-family: sans-serif;
-        font-size: 28px;
-        font-weight: 700;
-        text-anchor: middle;
-      }
-      .caption {
-        fill: #fffff0;
-        font-family: sans-serif;
-        font-size: 14px;
-        text-anchor: middle;
-      }
-      .source {
-        fill: #999;
-        font-family: sans-serif;
-        font-size: 12px;
-        text-anchor: middle;
-      }
-      .unknown {
-        fill: none;
-        stroke: #777;
-        stroke-width: 2;
-        stroke-dasharray: 8 8;
-      }
-      .fixed {
-        stroke: #ffd700;
-        stroke-width: 2;
-        fill: rgba(255, 215, 0, 0.09);
-        pointer-events: none;
-      }
-      .sublabel {
-        fill: #ffd700;
-        font-size: 12px;
-        font-family: sans-serif;
-        pointer-events: none;
-        text-anchor: middle;
-      }
-    </style>
-    <pattern id="uncertain" width="12" height="12" patternUnits="userSpaceOnUse">
-      <path d="M-3 3 L3 -3 M0 12 L12 0 M9 15 L15 9" class="unknown" />
-    </pattern>
-  </defs>
-
-  <text x="400" y="42" class="title"
-    >{$t.map.localMaps.juniorPrinceApartment.title(roomNumber)}</text
+{#if roomNumber === '1011'}
+  <FugetsuApartment />
+{:else}
+  <svg
+    viewBox="0 0 800 800"
+    class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
+    aria-label={`Prince's Apartment ${roomNumber}, based on chapter 368 cutaway`}
   >
-  <text x="400" y="70" class="source">Chap. 368 · rooms 1011 to 1014 cutaway</text>
-  <rect x="50" y="100" width="700" height="600" class="outer" />
+    <defs>
+      <style>
+        .outer {
+          fill: rgba(255, 215, 0, 0.025);
+          stroke: #fffff0;
+          stroke-width: 6;
+        }
+        .wall {
+          stroke: #fffff0;
+          stroke-width: 5;
+          stroke-linecap: square;
+        }
+        .door {
+          stroke: #ffd700;
+          stroke-width: 7;
+        }
+        .title {
+          fill: #ffd700;
+          font-family: sans-serif;
+          font-size: 28px;
+          font-weight: 700;
+          text-anchor: middle;
+        }
+        .caption {
+          fill: #fffff0;
+          font-family: sans-serif;
+          font-size: 14px;
+          text-anchor: middle;
+        }
+        .source {
+          fill: #999;
+          font-family: sans-serif;
+          font-size: 12px;
+          text-anchor: middle;
+        }
+        .unknown {
+          fill: none;
+          stroke: #777;
+          stroke-width: 2;
+          stroke-dasharray: 8 8;
+        }
+        .fixed {
+          stroke: #ffd700;
+          stroke-width: 2;
+          fill: rgba(255, 215, 0, 0.09);
+          pointer-events: none;
+        }
+        .sublabel {
+          fill: #ffd700;
+          font-size: 12px;
+          font-family: sans-serif;
+          pointer-events: none;
+          text-anchor: middle;
+        }
+      </style>
+      <pattern id="uncertain" width="12" height="12" patternUnits="userSpaceOnUse">
+        <path d="M-3 3 L3 -3 M0 12 L12 0 M9 15 L15 9" class="unknown" />
+      </pattern>
+    </defs>
 
-  {#each layout.walls as wall (`${wall[0]}-${wall[1]}-${wall[2]}-${wall[3]}`)}
-    <line x1={wall[0]} y1={wall[1]} x2={wall[2]} y2={wall[3]} class="wall" />
-  {/each}
+    <text x="400" y="42" class="title"
+      >{$t.map.localMaps.juniorPrinceApartment.title(roomNumber)}</text
+    >
+    <text x="400" y="70" class="source">Chap. 368 · rooms 1011 to 1014 cutaway</text>
+    <rect x="50" y="100" width="700" height="600" class="outer" />
 
-  <!-- The cutaway shows the entrance on the front face without revealing the exact door placement. -->
-  <line x1="365" y1="700" x2="435" y2="700" class="door" />
+    {#each layout.walls as wall (`${wall[0]}-${wall[1]}-${wall[2]}-${wall[3]}`)}
+      <line x1={wall[0]} y1={wall[1]} x2={wall[2]} y2={wall[3]} class="wall" />
+    {/each}
 
-  {#if roomNumber === '1011' || roomNumber === '1012'}
-    <rect x="55" y="105" width="690" height="590" fill="url(#uncertain)" opacity="0.08" />
-  {/if}
+    <!-- The cutaway shows the entrance on the front face without revealing the exact door placement. -->
+    <line x1="365" y1="700" x2="435" y2="700" class="door" />
 
-  <!-- Specific room markers -->
-  {#if roomNumber === '1012'}
-    <rect x="70" y="640" width="40" height="30" rx="3" class="fixed" />
-    <text x="90" y="685" class="sublabel" font-size="10">Vent grille · Little Eye</text>
-  {:else if roomNumber === '1013'}
-    <rect x="70" y="120" width="180" height="80" rx="5" class="fixed" />
-    <text x="160" y="165" class="sublabel">Long meeting table</text>
-    <text x="400" y="400" class="sublabel">Guarded salon</text>
-    <text x="625" y="620" class="sublabel">Bedroom · Marayam</text>
-  {:else if roomNumber === '1014'}
-    <rect x="70" y="110" width="120" height="130" rx="4" class="fixed" />
-    <line class="fixed" x1="70" y1="110" x2="70" y2="240" stroke-width="6" />
-    <line class="fixed" x1="190" y1="110" x2="190" y2="240" stroke-width="6" />
-    <line class="fixed" x1="70" y1="110" x2="190" y2="110" stroke-width="6" />
-    <text x="130" y="180" class="sublabel">Canopy bed</text>
-  {/if}
+    {#if roomNumber === '1011' || roomNumber === '1012'}
+      <rect x="55" y="105" width="690" height="590" fill="url(#uncertain)" opacity="0.08" />
+    {/if}
 
-  <text x="400" y="742" class="caption"
-    >{$t.map.localMaps.juniorPrinceApartment.layoutNote(layout.note)}</text
-  >
-  <text x="400" y="764" class="source"
-    >{$t.map.localMaps.juniorPrinceApartment.layoutEvidence(layout.evidence)}</text
-  >
-  <text x="400" y="786" class="source">Unlabeled functions: undetermined.</text>
-</svg>
+    <!-- Specific room markers -->
+    {#if roomNumber === '1012'}
+      <rect x="70" y="640" width="40" height="30" rx="3" class="fixed" />
+      <text x="90" y="685" class="sublabel" font-size="10">Vent grille · Little Eye</text>
+    {:else if roomNumber === '1013'}
+      <rect x="70" y="120" width="180" height="80" rx="5" class="fixed" />
+      <text x="160" y="165" class="sublabel">Long meeting table</text>
+      <text x="400" y="400" class="sublabel">Guarded salon</text>
+      <text x="625" y="620" class="sublabel">Bedroom · Marayam</text>
+    {:else if roomNumber === '1014'}
+      <rect x="70" y="110" width="120" height="130" rx="4" class="fixed" />
+      <line class="fixed" x1="70" y1="110" x2="70" y2="240" stroke-width="6" />
+      <line class="fixed" x1="190" y1="110" x2="190" y2="240" stroke-width="6" />
+      <line class="fixed" x1="70" y1="110" x2="190" y2="110" stroke-width="6" />
+      <text x="130" y="180" class="sublabel">Canopy bed</text>
+    {/if}
+
+    <text x="400" y="742" class="caption"
+      >{$t.map.localMaps.juniorPrinceApartment.layoutNote(layout.note)}</text
+    >
+    <text x="400" y="764" class="source"
+      >{$t.map.localMaps.juniorPrinceApartment.layoutEvidence(layout.evidence)}</text
+    >
+    <text x="400" y="786" class="source">Unlabeled functions: undetermined.</text>
+  </svg>
+{/if}

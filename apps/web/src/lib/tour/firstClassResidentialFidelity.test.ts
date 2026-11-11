@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the published first-class residential plan', () => {
   it('keeps six cabins, six WC cells and only the drawn beds and storage', () => {
@@ -12,5 +12,6 @@ describe('the published first-class residential plan', () => {
     )
     expect(structures).toHaveLength(12)
     expect(structures.every(({ provenance }) => provenance === 'plan')).toBe(true)
+    expect(certificationIssuesFor('tier-3-residential-first-class')).toEqual([])
   })
 })

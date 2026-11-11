@@ -36,6 +36,7 @@
   import { serializeReplay } from '$lib/arena/replay/codec'
   import { replayFromUrl } from '$lib/arena/replay/share'
   import { eventsFromReplay, playReplay } from '$lib/arena/replay/player'
+  import { forkReplayAtTick } from '$lib/arena/replay/branch'
   import { arenaRyuAction, auraPercent, strikeTarget } from '$lib/arena/controls'
   import { resolveArenaExperience, type ArenaOpponentId } from '$lib/arena/experience'
   import { formatOutcome, type ArenaFormatId } from '$lib/arena/formats'
@@ -489,6 +490,19 @@
     })
     owed = 0
     last = 0
+  }
+
+  function resumeReplay(tick: number) {
+    if (!lastReplay) return
+    const branch = forkReplayAtTick(lastReplay, tick)
+    game = branch.state
+    recorder = branch.recorder
+    position = game.player.position
+    agreed = game.player.position
+    lastReplay = null
+    graded = false
+    started = false
+    briefingOpen = false
   }
 
   function actorStage(): number {
@@ -1012,7 +1026,7 @@
           </div>
         </section>
       {/if}
-      {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} />{/if}
+      {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} onResume={resumeReplay} />{/if}
       <ArenaV3Panel
         replay={lastReplay}
         challengeId={selectedChallengeId}

@@ -8,11 +8,13 @@ export interface ArenaRecording {
   doctrine: OpponentDoctrine
   difficulty: ArenaDifficulty
   tickRate?: number
+  initialTick?: number
+  initialCommands?: ArenaReplay['commands']
 }
 
 export class ArenaRecorder {
-  private tick = 0
-  private readonly commands: ArenaReplay['commands'] = []
+  private tick: number
+  private readonly commands: ArenaReplay['commands']
 
   private readonly setup: CombatSetup
   private readonly doctrine: OpponentDoctrine
@@ -20,11 +22,20 @@ export class ArenaRecorder {
   private readonly tickRate: number
 
   /** Everything a replay has to restate to be re-playable, in one argument. */
-  constructor({ setup, doctrine, difficulty, tickRate = 60 }: ArenaRecording) {
+  constructor({
+    setup,
+    doctrine,
+    difficulty,
+    tickRate = 60,
+    initialTick = 0,
+    initialCommands = [],
+  }: ArenaRecording) {
     this.setup = setup
     this.doctrine = doctrine
     this.difficulty = difficulty
     this.tickRate = tickRate
+    this.tick = initialTick
+    this.commands = structuredClone(initialCommands)
   }
 
   record(action: ReplayCommand) {

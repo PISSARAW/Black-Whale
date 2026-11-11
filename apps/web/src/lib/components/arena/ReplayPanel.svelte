@@ -8,9 +8,10 @@
   interface Props {
     replay: ArenaReplay
     locale: 'fr' | 'en'
+    onResume?: (tick: number) => void
   }
 
-  let { replay, locale }: Props = $props()
+  let { replay, locale, onResume }: Props = $props()
   let tick = $state(untrack(() => replay.ticks))
   let perspective = $state<ReplayPerspective>('player')
   let frame = $derived(projectFrame(stateAtTick(replay, tick), perspective))
@@ -60,6 +61,9 @@
     <button onclick={() => seek(1)}>+1</button>
     <button onclick={() => seek(replay.tickRate)}>+1s</button>
     <button onclick={share}>{locale === 'fr' ? 'Partager' : 'Share'}</button>
+    {#if onResume}
+      <button onclick={() => onResume?.(tick)}>{locale === 'fr' ? 'Reprendre' : 'Resume'}</button>
+    {/if}
   </nav>
   {#if shareStatus}<output aria-live="polite">{shareStatus}</output>{/if}
   <div class="readings">

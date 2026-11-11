@@ -18,12 +18,22 @@ export interface ReplayComparison {
 }
 
 export function loadReplayLibrary(storage: ReplayStorage): ArenaReplay[] {
+  let entries: unknown
   try {
-    const entries = JSON.parse(storage.getItem(REPLAY_LIBRARY_KEY) ?? '[]') as string[]
-    return entries.map(parseReplay)
+    entries = JSON.parse(storage.getItem(REPLAY_LIBRARY_KEY) ?? '[]')
   } catch {
     return []
   }
+  if (!Array.isArray(entries)) return []
+  // One replay that no longer verifies is dropped on its own: it must not
+  // take the rest of the library down with it on the next save.
+  return entries.flatMap((entry) => {
+    try {
+      return [parseReplay(String(entry))]
+    } catch {
+      return []
+    }
+  })
 }
 
 export function saveReplayToLibrary(storage: ReplayStorage, replay: ArenaReplay): ArenaReplay[] {

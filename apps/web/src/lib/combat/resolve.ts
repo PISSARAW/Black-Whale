@@ -90,7 +90,16 @@ export function offensiveAura(fighter: FighterState, technique: 'strike' | 'ko' 
   const output = fighter.mode === 'ren' ? 1 : 0.65
   if (technique === 'ko') return output * 1.8
   const kenPenalty = fighter.ken ? 0.55 : 1
-  return output * fighter.attackShare * kenPenalty
+  return output * committedShare(fighter) * kenPenalty
+}
+
+/**
+ * A Ko being gathered puts the whole aura in one point, so the body reads as
+ * all attack. The fighter's own Ryu split is left untouched underneath and
+ * comes back the moment the Ko lands or is abandoned.
+ */
+function committedShare(fighter: FighterState): number {
+  return fighter.ko ? 1 : fighter.attackShare
 }
 
 export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
@@ -100,7 +109,7 @@ export function defensiveAura(fighter: FighterState, zone: BodyZone): number {
   const output = fighter.mode === 'ren' ? 1 : 0.65
   if (fighter.ken) return output * (fighter.guardWindow > 0 ? 0.92 : 0.72)
 
-  const reserve = output * (1 - fighter.attackShare)
+  const reserve = output * (1 - committedShare(fighter))
   if (zone === fighter.guard) return reserve * (fighter.guardWindow > 0 ? 2.15 : 1.5)
   return reserve * 0.45
 }

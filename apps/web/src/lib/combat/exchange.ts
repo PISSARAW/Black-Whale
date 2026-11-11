@@ -205,7 +205,6 @@ export function chargeKo(state: CombatState, side: CombatSide, zone: BodyZone): 
   return replace(state, side, {
     ...fighter,
     aura: fighter.aura - KO_COST,
-    attackShare: 1,
     guard: zone,
     ko: { zone, remaining: KO_WINDUP },
   })

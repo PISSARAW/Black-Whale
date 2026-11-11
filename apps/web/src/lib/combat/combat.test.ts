@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { readAura } from './perception'
-import { impactOf } from './resolve'
+import { defensiveAura, impactOf } from './resolve'
 import {
   combatReducer,
   HATSU_COST,
@@ -60,9 +60,19 @@ describe('qualitative exchanges', () => {
     state = combatReducer(state, { type: 'MODE', side: 'player', mode: 'ren' })
     state = combatReducer(state, { type: 'KO', side: 'player', zone: 'head' })
     expect(state.player.aura).toBe(100 - KO_COST)
-    expect(state.player.attackShare).toBe(1)
+    expect(defensiveAura(state.player, 'legs')).toBe(0)
     state = combatReducer(state, { type: 'TICK', dt: 1 })
     expect(state.lastEvent?.technique).toBe('ko')
+  })
+
+  it('gives the Ryu split back once a Ko has landed', () => {
+    let state = initialCombatState()
+    state = { ...state, opponent: { ...state.opponent, position: [1.5, 0] } }
+    state = combatReducer(state, { type: 'KO', side: 'player', zone: 'head' })
+    state = combatReducer(state, { type: 'TICK', dt: 1 })
+    expect(state.player.ko).toBeNull()
+    expect(state.player.attackShare).toBe(0.5)
+    expect(defensiveAura(state.player, 'legs')).toBeGreaterThan(0)
   })
 
   it('ends a match at the arena score limit', () => {

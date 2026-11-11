@@ -63,6 +63,33 @@ describe('deterministic Arena replay', () => {
     ).toBe('legs')
   })
 
+  it('replays the player blow that ends the match after the last tick', () => {
+    const setup = { playerAt: [0, 0] as const, opponentAt: [1.5, 0] as const }
+    const combatSetup = { ...setup, terrain: initialCombatState().terrain }
+    const recorder = new ArenaRecorder({
+      setup: combatSetup,
+      doctrine: 'counter',
+      difficulty: 'initiate',
+    })
+    let state = initialCombatState(combatSetup)
+    for (let tick = 0; tick < 20_000 && state.outcome === 'playing'; tick += 1) {
+      if (state.player.cooldown <= 0 && state.player.condition === 'ready') {
+        const action = { type: 'STRIKE', side: 'player', zone: 'head' } as const
+        recorder.record(action)
+        state = combatReducer(state, action)
+        if (state.outcome !== 'playing') break
+      }
+      state = advanceArena(state, 1 / 60, { doctrine: 'counter', difficulty: 'initiate' })
+      recorder.advance()
+    }
+
+    const replay = recorder.finish(state)
+    expect(state.outcome).toBe('won')
+    expect(replay.commands.at(-1)?.tick).toBe(replay.ticks)
+    expect(playReplay(replay).state.outcome).toBe('won')
+    expect(parseReplay(serializeReplay(replay))).toEqual(replay)
+  })
+
   it('rejects tampered and unknown replay payloads', () => {
     expect(() => parseReplay('{"version":99}')).toThrow('Invalid Arena replay')
   })

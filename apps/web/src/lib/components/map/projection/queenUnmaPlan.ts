@@ -12,7 +12,7 @@ export const UNMA_SCALE = 32
 /** Maps room coordinates (X: -72 to -61, Z: -50 to -20) into 2D viewbox. */
 export const queenUnmaPoint = ([x, z]: Vec2) => ({
   x: 250 + (x - -66.5) * UNMA_SCALE,
-  y: 950 + (z - -20) * UNMA_SCALE,
+  y: 1020 + (z - -20) * UNMA_SCALE,
 })
 
 export const queenUnmaPolygon = (polygon: Polygon) =>
@@ -48,7 +48,7 @@ function spot(at: Vec2) {
   }
 }
 
-const armchair = unmaFixtures.find(({ id }) => id.includes('armchair'))!
+const armchair = unmaFixtures.find(({ id }) => id === `${QUEEN_UNMA_ROOM}-armchair`)!
 const crib = unmaFixtures.find(({ id }) => id.includes('crib'))!
 
 export const queenUnmaSpotAnchors = {
@@ -56,4 +56,14 @@ export const queenUnmaSpotAnchors = {
     'unma-hui-guo-rou': spot(armchair.at),
   },
   nursery: spot(crib.at),
+}
+
+/** The block embeds the same 500 × 1100 projection in its 135 × 150 Room 01 inset. */
+export const queenUnmaBlockSpotAnchors = {
+  occupants: {
+    'unma-hui-guo-rou': {
+      x: ((110 + (queenUnmaPoint(armchair.at).x / 500) * 135) / 800) * 100,
+      y: ((110 + (queenUnmaPoint(armchair.at).y / 1100) * 150) / 600) * 100,
+    },
+  },
 }

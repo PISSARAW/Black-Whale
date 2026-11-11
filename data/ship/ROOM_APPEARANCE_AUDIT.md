@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1229 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1237 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -120,18 +120,15 @@
 - **Preuve de l’enveloppe :** case du manga
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 3 table, 2 bed, 2 painting, 1 mobile, 1 seat
-- **Objets directement visibles dans les cases :** 8/9
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 5 table, 4 cabinet, 3 painting, 2 bed, 2 seat, 1 mobile
+- **Objets directement visibles dans les cases :** 13/17
 - **Sources de la pièce :**
-  - Le chap. 403 montre le salon richement lambrissé de la reine Unma et la nursery derrière sa porte ouverte ; le plan des quartiers des reines sur /ship fournit l’emprise de la chambre 01 dans le bloc de huit chambres.
+  - Chap. 403, page de lecture 10 (image 11 avec une page de crédits) : fauteuil sculpté d’Unma, guéridon au téléphone, table à thé, console haute, table ronde fleurie, siège invité et petite table, manteau et cadres ; nursery entrevue au-delà de l’ouverture. Formes simplifiées ; teintes, implantation métrique, profondeur et parties non montrées reconstituées.
 - **Sources du mobilier et des détails :**
+  - Chap. 403, page de lecture 10 (image 11 avec une page de crédits) : fauteuil sculpté d’Unma, guéridon au téléphone, table à thé, console haute, table ronde fleurie, siège invité et petite table, manteau et cadres ; nursery entrevue au-delà de l’ouverture. Formes simplifiées ; teintes, implantation métrique, profondeur et parties non montrées reconstituées.
+  - Le chap. 403 p. 10 montre une ouverture et des colonnes. Dimensions, hauteur et position métrique de la cloison reconstituées dans l’emprise héritée de la chambre 01.
   - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
-  - Chap. 403 — la porte ouverte derrière la reine Unma laisse voir un berceau au fond de la chambre 01.
-  - Chap. 403 — un mobile suspendu est visible directement au-dessus du berceau dans la nursery de la reine Unma.
-  - Chap. 403 — la reine Unma est assise dans un haut fauteuil orné au milieu de son salon richement lambrissé.
-  - Chap. 403 — un petit guéridon sculpté se tient de chaque côté du fauteuil de la reine Unma.
-  - Chap. 403 — une table basse rectangulaire sculptée se tient devant le fauteuil de la reine Unma.
-  - Chap. 403 — des tableaux encadrés sont suspendus dans les panneaux moulurés derrière le fauteuil de la reine Unma.
 
 ## Chambre de reine 02 — `tier-1-queens-living-quarters-room-02`
 

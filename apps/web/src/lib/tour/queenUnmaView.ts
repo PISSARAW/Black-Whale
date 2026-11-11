@@ -8,6 +8,12 @@ import { dressQueenUnmaPicture } from './queenUnmaPictures'
 
 export const QUEEN_UNMA_ROOM = 'tier-1-queens-living-quarters-room-01'
 
+/** The original plan continues to supply collisions; detailed meshes replace only its visual blocks. */
+export function queenUnmaSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal) return plan
+  return { ...plan, structures: plan.structures.filter((s) => s.spaceId !== QUEEN_UNMA_ROOM) }
+}
+
 /** Chapter 403; measurements, finishes and simplified profiles are interpretations. */
 export function buildQueenUnmaDetails(options: {
   THREE: typeof Three

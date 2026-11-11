@@ -7,7 +7,7 @@ import { salonSpotAnchors } from './royalSalonPlan'
 import { prisonSpotAnchors } from './prisonPlan'
 import { diningHallSpotAnchors } from './diningHallPlan'
 import { burialSpotAnchors } from './burialChamberPlan'
-import { queenUnmaSpotAnchors } from './queenUnmaPlan'
+import { queenUnmaSpotAnchors, queenUnmaBlockSpotAnchors } from './queenUnmaPlan'
 import { zhangLeiSpotAnchors } from './zhangLeiPlan'
 import { benjaminSpotAnchors } from './benjaminRoomPlan'
 import {
@@ -182,11 +182,7 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
   // Nasubi stands by Momoze's coffin in the secret rotunda (ch. 371).
   'tier-1-princes-burial-chamber-rotunda': burialSpotAnchors,
   // Queen Unma sits in her carved armchair in Room 01, ch. 403.
-  'tier-1-queens-living-quarters': {
-    occupants: {
-      'unma-hui-guo-rou': { x: 22.19, y: 34.17 },
-    },
-  },
+  'tier-1-queens-living-quarters': queenUnmaBlockSpotAnchors,
   'tier-1-queens-living-quarters-room-01': queenUnmaSpotAnchors,
   // `local/heilly-hideout.svelte`, 1100 × 760, contents offset by (55, 95).
   // Morena runs Heil-Ly from the head of the communal table, ch. 378 onward, and

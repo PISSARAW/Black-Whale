@@ -2,10 +2,10 @@ import type * as Three from 'three'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Structure } from './types'
 
-export const UNMA_WOOD = 0x3d2b20
+export const UNMA_WOOD = 0x75654f
 export const UNMA_LIGHT_WOOD = 0x8a6c4f
 export const UNMA_GOLD = 0xbda267
-export const UNMA_VELVET = 0x482736
+export const UNMA_VELVET = 0x9e8c84
 export const UNMA_FABRIC_PALE = 0xe4ded3
 export const UNMA_STONE = 0xc5baa3
 

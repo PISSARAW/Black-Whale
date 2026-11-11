@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 import { theShip, floorOf, validateBlueprint } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
-import { buildQueenUnmaDetails, QUEEN_UNMA_ROOM } from './queenUnmaView'
+import { buildQueenUnmaDetails, QUEEN_UNMA_ROOM, queenUnmaSurfacePlan } from './queenUnmaView'
 import { MANGA_QUEEN_UNMA_VIEWS } from './mangaQueenUnmaViews'
 import { structureFootprint, pointInPolygon, polygonsOverlap } from './geometry'
 import {
@@ -44,7 +44,7 @@ describe('the room of Queen Unma reconstructed from chapter 403', () => {
     expect(coffeeTable.kind).toBe('table')
     expect(crib.kind).toBe('bed')
     expect(mobile.kind).toBe('mobile')
-    expect(structures.filter(({ kind }) => kind === 'painting')).toHaveLength(2)
+    expect(structures.filter(({ kind }) => kind === 'painting')).toHaveLength(3)
   })
 
   it('keeps the floor furniture within the room and clear of other collision volumes', () => {
@@ -102,14 +102,15 @@ describe('the room of Queen Unma reconstructed from chapter 403', () => {
     for (const object of [root, removed, empty]) disposeBanquetDetails(object)
   })
 
-  it('places Queen Unma on her armchair in all three camera views clear of solids', () => {
+  it('places Queen Unma on her armchair in the three legacy views and keeps all eight cameras clear of solids', () => {
     for (const v of MANGA_QUEEN_UNMA_VIEWS) {
       expect(pointInPolygon(v.at, room.footprint)).toBe(true)
       for (const solid of structures.filter(({ base }) => base === 0)) {
         expect(pointInPolygon(v.at, structureFootprint(solid)), `${v.id}/${solid.id}`).toBe(false)
       }
-      const unma = v.staging!.find(({ characterId }) => characterId === 'unma-hui-guo-rou')!
-      expect(unma.at).toEqual(fixture('-armchair').at)
+      const unma = v.staging?.find(({ characterId }) => characterId === 'unma-hui-guo-rou')
+      if (unma) expect(unma.at).toEqual(fixture('-armchair').at)
+      else expect(v.staging).toEqual([])
     }
   })
 
@@ -120,6 +121,29 @@ describe('the room of Queen Unma reconstructed from chapter 403', () => {
       x: (chair.x / QUEEN_UNMA_VIEWBOX.width) * 100,
       y: (chair.y / QUEEN_UNMA_VIEWBOX.height) * 100,
     })
+  })
+
+  it('keeps the nursery compact, the inferred partition collidable and unseen fittings absent', () => {
+    expect(fixture('-crib').size[1]).toBeLessThan(2)
+    expect(structures.find((s) => s.id.endsWith('-bed'))!.provenance).toBe('map')
+    expect(structures.filter((s) => s.id.includes('-partition-'))).toHaveLength(3)
+    expect(
+      queenUnmaSurfacePlan(plan, false).structures.some((s) => s.spaceId === QUEEN_UNMA_ROOM),
+    ).toBe(false)
+    expect(
+      queenUnmaSurfacePlan(plan, false).structures.filter((s) => s.spaceId !== QUEEN_UNMA_ROOM),
+    ).toEqual(plan.structures.filter((s) => s.spaceId !== QUEEN_UNMA_ROOM))
+    expect(queenUnmaSurfacePlan(plan, true)).toBe(plan)
+    expect(MANGA_QUEEN_UNMA_VIEWS).toHaveLength(8)
+    expect(MANGA_QUEEN_UNMA_VIEWS.filter((v) => v.staging?.length)).toHaveLength(3)
+    const nursery = build({
+      plan: {
+        ...plan,
+        structures: structures.filter((s) => s.id.endsWith('-crib') || s.kind === 'mobile'),
+      },
+    })
+    expect(nursery.children).toHaveLength(1)
+    disposeBanquetDetails(nursery)
   })
 
   it('releases the GPU resources when the room is unloaded', () => {

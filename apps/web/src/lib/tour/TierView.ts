@@ -10,7 +10,7 @@ import { diningHallSurfacePlan } from './diningHallSurfacePlan'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
-import { buildQueenUnmaDetails } from './queenUnmaView'
+import { buildQueenUnmaDetails, queenUnmaSurfacePlan } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
 import { buildTserriednichRoomDetails, tserriednichSurfacePlan } from './tserriednichRoomView'
@@ -298,7 +298,10 @@ export class TierView {
       reveal,
     )
     const detailedPlan = hullSuspensionSurfacePlan(
-      royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+      queenUnmaSurfacePlan(
+        royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+        reveal,
+      ),
       reveal,
     )
     const mesh = buildTierMesh(detailedPlan, {

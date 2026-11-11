@@ -114,6 +114,7 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   'princes-burial-chamber': 'princes-burial-chamber',
   'vvip-living-quarters': 'vvip-living-quarters',
   'queens-living-quarters': 'queens-living-quarters',
+  'tier-1-queens-living-quarters-room-01': 'queens-living-quarters',
   'soldiers-living-quarters': 'soldiers-living-quarters',
   casino: 'casino',
   'room-37564': 'room-37564',

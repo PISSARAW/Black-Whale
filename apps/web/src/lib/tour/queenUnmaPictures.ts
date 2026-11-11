@@ -1,11 +1,5 @@
 import type * as Three from 'three'
-import {
-  QueenUnmaSurface,
-  UNMA_GOLD,
-  UNMA_WOOD,
-  UNMA_STONE,
-  unmaFrame,
-} from './queenUnmaDetailSurface'
+import { QueenUnmaSurface, UNMA_WOOD, UNMA_STONE, unmaFrame } from './queenUnmaDetailSurface'
 
 function silhouette(
   THREE: typeof Three,
@@ -20,43 +14,6 @@ function silhouette(
   options.points.forEach(([x, y], index) => (index ? shape.lineTo(x, y) : shape.moveTo(x, y)))
   shape.closePath()
   surface.add(new THREE.ShapeGeometry(shape), [0, 0, options.z], options.colour)
-}
-
-function dynasticCrestCanvas(THREE: typeof Three, surface: QueenUnmaSurface, z: number): void {
-  const w = surface.width * 0.4
-  const h = surface.structure.height
-  const midY = h * 0.52
-
-  // Central shield
-  silhouette(THREE, surface, {
-    points: [
-      [-w * 0.45, midY + h * 0.22],
-      [w * 0.45, midY + h * 0.22],
-      [w * 0.45, midY - h * 0.05],
-      [0, midY - h * 0.25],
-      [-w * 0.45, midY - h * 0.05],
-    ],
-    z: z + 0.015,
-    colour: 0x6e2534,
-  })
-
-  // Golden eagle / crest crown
-  silhouette(THREE, surface, {
-    points: [
-      [-w * 0.25, midY + h * 0.22],
-      [-w * 0.35, midY + h * 0.32],
-      [-w * 0.1, midY + h * 0.26],
-      [0, midY + h * 0.36],
-      [w * 0.1, midY + h * 0.26],
-      [w * 0.35, midY + h * 0.32],
-      [w * 0.25, midY + h * 0.22],
-    ],
-    z: z + 0.02,
-    colour: UNMA_GOLD,
-  })
-
-  // Inner heraldic star / diamond
-  surface.sphere([w * 0.12, h * 0.12, 0.015], [0, midY, z + 0.025], UNMA_GOLD)
 }
 
 function landscapeCanvas(THREE: typeof Three, surface: QueenUnmaSurface, z: number): void {
@@ -87,7 +44,7 @@ function landscapeCanvas(THREE: typeof Three, surface: QueenUnmaSurface, z: numb
 export function dressQueenUnmaPicture(
   THREE: typeof Three,
   surface: QueenUnmaSurface,
-  index: number,
+  _index: number,
 ): void {
   const { width: w, structure } = surface
   const h = structure.height
@@ -108,30 +65,17 @@ export function dressQueenUnmaPicture(
     colour: UNMA_STONE,
   })
 
-  // Hanging chain / cord to ceiling
-  surface.box([0.018, 0.65, 0.01], [0, h + 0.32, z + 0.01], UNMA_GOLD)
-
-  // Brass picture light fixture mounted above frame
-  const lightZ = z + 0.16
-  surface.box([0.02, 0.02, 0.14], [-w * 0.18, h * 0.98, z + 0.08], UNMA_GOLD)
-  surface.box([0.02, 0.02, 0.14], [w * 0.18, h * 0.98, z + 0.08], UNMA_GOLD)
-  surface.into.cylinder(
-    { radius: 0.024, height: w * 0.52, sides: 12 },
-    {
-      at: surface.point([0, h * 0.98, lightZ]),
-      rotation: [0, surface.angle, Math.PI / 2],
-      colour: UNMA_GOLD,
-    },
-  )
-  surface.into.box([w * 0.48, 0.014, 0.018], {
-    at: surface.point([0, h * 0.965, lightZ]),
-    colour: 0xfff4da,
-    glow: true,
-  })
-
-  if (index === 0 || structure.id.includes('centre')) {
-    dynasticCrestCanvas(THREE, surface, z)
-  } else {
-    landscapeCanvas(THREE, surface, z)
-  }
+  if (structure.id.endsWith('-mantel-frame')) {
+    surface.box([w * 0.84, h * 0.83, 0.018], [0, h * 0.5, z + 0.025], 0xa6afa6)
+    for (const side of [-1, 1])
+      surface.curve(
+        [
+          [side * w * 0.3, h * 0.18, z + 0.04],
+          [side * w * 0.12, h * 0.6, z + 0.04],
+          [side * w * 0.05, h * 0.8, z + 0.04],
+        ],
+        0.012,
+        UNMA_STONE,
+      )
+  } else landscapeCanvas(THREE, surface, z)
 }

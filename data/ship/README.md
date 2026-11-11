@@ -886,6 +886,15 @@ centimètre — la reconstruction garde le compte et les rangées, et écarte le
 allées de quoi passer, exactement comme elle donne un pas de six mètres aux
 tables du banquet.
 
+Le **01 d'Unma** reprend le salon visible au chapitre 403, page de lecture
+10 : fauteuil sculpté, téléphone sur son guéridon, table à thé, console haute,
+table ronde fleurie, siège invité, manteau et cadres. La nursery entrevue est
+ramenée à un berceau compact avec une suspension simple non lumineuse. Le
+couchage non montré reste `map`, comme le tracé de la cloison intérieure.
+La carte individuelle et la miniature du bloc partagent les emprises de la
+visite ; l'implantation et la hauteur restent reconstituées.
+Voir [l'audit du 01 d'Unma](unma-quarters-audit.md).
+
 Le **salon de Nasubi** reprend la double page du chapitre 382 : fauteuil de
 repos allongé, salon latéral, desserte drapée, table basse devant le manteau,
 buste, photographies, horloge et vases. Le paysage encadré et le grand tableau

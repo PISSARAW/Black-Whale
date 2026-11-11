@@ -93,6 +93,20 @@ const STYLES: SourceBoundInteriorStyle[] = [
     ceilingPattern: 'services',
     programme: 'dorm',
   },
+  {
+    locationId: 'tier-4-ei-i-family-office',
+    name: 'ei-i-office',
+    floor: 0x332c35,
+    wall: 0x594d5c,
+    ceiling: 0x302a32,
+    wood: 0x47343d,
+    metal: 0x746c78,
+    fabric: 0x574857,
+    accent: 0x9b6e88,
+    floorPattern: 'grid',
+    ceilingPattern: 'services',
+    programme: 'office',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

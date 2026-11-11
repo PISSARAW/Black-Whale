@@ -1,6 +1,6 @@
 import type { InvestigationMode } from './definition'
 
-export const INVESTIGATION_PORTFOLIO_VERSION = 1
+export const INVESTIGATION_PORTFOLIO_VERSION = 2
 export const INVESTIGATION_PORTFOLIO_KEY = 'black-whale:investigation:portfolio'
 
 export type CaseProgressStatus = 'available' | 'in-progress' | 'solved'
@@ -11,6 +11,7 @@ export interface CasePortfolioEntry {
   lastActiveAt: string
   bestConclusionId: string | null
   optionalEvidenceIds: string[]
+  consequenceIds: string[]
 }
 
 export interface InvestigationPortfolio {
@@ -29,7 +30,10 @@ export function caseProgressStorageKey(caseId: string) {
 
 export function updateCasePortfolio(
   portfolio: InvestigationPortfolio,
-  update: Omit<CasePortfolioEntry, 'lastActiveAt'> & { lastActiveAt?: string },
+  update: Omit<CasePortfolioEntry, 'lastActiveAt' | 'consequenceIds'> & {
+    lastActiveAt?: string
+    consequenceIds?: string[]
+  },
 ): InvestigationPortfolio {
   const previous = portfolio.cases[update.caseId]
   const rank: Record<CaseProgressStatus, number> = { available: 0, 'in-progress': 1, solved: 2 }
@@ -44,6 +48,9 @@ export function updateCasePortfolio(
         status,
         lastActiveAt: update.lastActiveAt ?? new Date().toISOString(),
         optionalEvidenceIds: [...new Set(update.optionalEvidenceIds)],
+        consequenceIds: [
+          ...new Set([...(previous?.consequenceIds ?? []), ...(update.consequenceIds ?? [])]),
+        ],
       },
     },
   }
@@ -58,6 +65,7 @@ export interface CaseStanding {
   started: boolean
   solved: boolean
   conclusionId: string | null
+  consequenceIds?: string[]
 }
 
 /** Records a case's standing in the device's portfolio, never downgrading a solved case. */
@@ -75,6 +83,7 @@ export function recordCaseStanding(storage: PortfolioStorage, standing: CaseStan
       ? standing.conclusionId
       : (portfolio.cases[standing.caseId]?.bestConclusionId ?? null),
     optionalEvidenceIds: portfolio.cases[standing.caseId]?.optionalEvidenceIds ?? [],
+    consequenceIds: standing.solved ? standing.consequenceIds : undefined,
   })
   storage.setItem(INVESTIGATION_PORTFOLIO_KEY, JSON.stringify(next))
 }
@@ -92,11 +101,17 @@ export function parsePortfolio(raw: string | null): InvestigationPortfolio {
   if (!raw) return freshPortfolio()
   try {
     const value = JSON.parse(raw) as Partial<InvestigationPortfolio>
-    if (value.version !== INVESTIGATION_PORTFOLIO_VERSION || !value.cases) return freshPortfolio()
+    if ((value.version !== 1 && value.version !== INVESTIGATION_PORTFOLIO_VERSION) || !value.cases)
+      return freshPortfolio()
     return {
       version: INVESTIGATION_PORTFOLIO_VERSION,
       preferredMode: value.preferredMode === '2d' ? '2d' : '3d',
-      cases: value.cases,
+      cases: Object.fromEntries(
+        Object.entries(value.cases).map(([caseId, entry]) => [
+          caseId,
+          { ...entry, consequenceIds: entry.consequenceIds ?? [] },
+        ]),
+      ),
     }
   } catch {
     return freshPortfolio()

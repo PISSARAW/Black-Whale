@@ -31,6 +31,7 @@ describe('investigation portfolio', () => {
       status: 'solved',
       bestConclusionId: 'canonical',
       optionalEvidenceIds: [],
+      consequenceIds: ['established-a'],
     })
     portfolio = updateCasePortfolio(portfolio, {
       caseId: 'a',
@@ -39,6 +40,7 @@ describe('investigation portfolio', () => {
       optionalEvidenceIds: [],
     })
     expect(portfolio.cases.a.status).toBe('solved')
+    expect(portfolio.cases.a.consequenceIds).toEqual(['established-a'])
   })
 
   it('isolates corrupt global state', () => {
@@ -55,12 +57,18 @@ describe('investigation portfolio', () => {
       bestConclusionId: null,
     })
 
-    recordCaseStanding(storage, { ...standing, started: true, solved: true })
+    recordCaseStanding(storage, {
+      ...standing,
+      started: true,
+      solved: true,
+      consequenceIds: ['mechanism-established'],
+    })
     recordCaseStanding(storage, { ...standing, started: true, solved: false })
     portfolio = parsePortfolio(storage.getItem(INVESTIGATION_PORTFOLIO_KEY))
     expect(portfolio.cases['eleven-seconds']).toMatchObject({
       status: 'solved',
       bestConclusionId: 'hidden-nen',
+      consequenceIds: ['mechanism-established'],
     })
   })
 

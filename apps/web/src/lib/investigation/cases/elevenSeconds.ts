@@ -26,6 +26,8 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
       estimatedMinutes: 20,
       modes: ['2d', '3d'],
       order: 1,
+      prerequisiteCaseIds: [],
+      consequenceIds: ['silent-majority-mechanism-established'],
     },
     content,
     scene: {

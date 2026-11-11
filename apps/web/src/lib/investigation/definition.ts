@@ -20,6 +20,8 @@ export interface CaseMetadata {
   estimatedMinutes: number
   modes: InvestigationMode[]
   order: number
+  prerequisiteCaseIds: string[]
+  consequenceIds: string[]
 }
 
 export interface SceneDefinition {

@@ -249,6 +249,7 @@ export class CaseSession {
       started,
       solved: this.solved,
       conclusionId: this.investigation.canonicalHypothesisId,
+      consequenceIds: this.definition.metadata.consequenceIds,
     })
   }
 

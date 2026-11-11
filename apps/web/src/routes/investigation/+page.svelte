@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { link, locale } from '$lib/i18n'
   import { listCases } from '$lib/investigation/catalog'
+  import { caseIsUnlocked } from '$lib/investigation/continuity'
   import {
     INVESTIGATION_PORTFOLIO_KEY,
     freshPortfolio,
@@ -10,8 +11,12 @@
   } from '$lib/investigation/portfolio'
 
   let { data } = $props()
-  const cases = $derived(listCases($locale, data.spoilerLimit ?? undefined))
   let portfolio = $state<InvestigationPortfolio>(freshPortfolio())
+  const cases = $derived(
+    listCases($locale, data.spoilerLimit ?? undefined).filter((metadata) =>
+      caseIsUnlocked(metadata, portfolio),
+    ),
+  )
 
   const copy = $derived(
     $locale === 'fr'

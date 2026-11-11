@@ -19,6 +19,12 @@
  * - **Gyo sees through In.** A body that has sensed the visitor is looking, and
  *   a body that is looking sees what In hides — which is the escalation: get
  *   close in Ten, and your hidden technique stops being hidden.
+ * - **Shu leaves aura where the visitor is not.** An object wrapped in Shu
+ *   carries the visitor's aura for as long as they hold it there, so a sweep
+ *   that reaches the object feels an aura even when the visitor is out of range.
+ *   It never outlasts a Zetsu: the engine lets every Shu go with the aura.
+ *   In does not cover it from En, for the same reason it does not cover the
+ *   visitor: a sweep is not sight. Marking the room is a trace one leaves.
  */
 import { detectWithEn, type NenTechniqueState } from '@black-whale/nen-engine'
 import type { Vec2 } from '../types'
@@ -34,6 +40,8 @@ export type Senses = Readonly<Record<string, Sense>>
 export interface Visitor {
   at: Vec2
   nen: NenTechniqueState
+  /** Where the objects the visitor holds in Shu stand. Absent reads as none. */
+  marks?: readonly Vec2[]
 }
 
 /** The part of a room's situation that is about the visitor in particular. */
@@ -68,14 +76,26 @@ export function sensedBy(
   nenOf: (post: Post) => NenTechniqueState | undefined,
 ): Senses {
   const senses: Record<string, Sense> = {}
-  const presence = [{ id: 'visitor', at: visitor.at, nen: visitor.nen }]
+  const presence = presencesOf(visitor)
   for (const post of posts) {
     const nen = nenOf(post)
     if (!nen?.en) continue
-    const [hit] = detectWithEn({ at: post.at, nen }, presence)
-    if (hit) senses[post.member.characterId] = hit.auraSignature ? 'aura' : 'body'
+    const hits = detectWithEn({ at: post.at, nen }, presence)
+    if (hits.length)
+      senses[post.member.characterId] = hits.some((hit) => hit.auraSignature) ? 'aura' : 'body'
   }
   return senses
+}
+
+/** The visitor's body, and every object carrying their aura through Shu. */
+function presencesOf(visitor: Visitor) {
+  const held = visitor.nen.mode === 'zetsu' ? [] : (visitor.marks ?? [])
+  const marks = held.map((at, index) => ({
+    id: `shu:${index}`,
+    at,
+    nen: visitor.nen,
+  }))
+  return [{ id: 'visitor', at: visitor.at, nen: visitor.nen }, ...marks]
 }
 
 /**

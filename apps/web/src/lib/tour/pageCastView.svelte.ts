@@ -6,7 +6,7 @@ import {
 } from '$lib/audio/hatsuSounds'
 import type { Ship } from '$lib/tour/blueprint'
 import type { Apparition } from '$lib/tour/apparitions'
-import type { TourWorld } from '$lib/tour/hatsu'
+import { solidById, type TourWorld } from '$lib/tour/hatsu'
 import type { MangaView } from '$lib/tour/mangaViews'
 import {
   auraFor,
@@ -153,7 +153,14 @@ export class TourCastView {
   private hidden = $derived.by(() => this.options.readVisitor().nen.in)
   private sensed = $derived.by(() => {
     const visitor = this.options.readVisitor()
-    return sensesKey(sensedBy(this.walking, visitor, (post) => auraFor(post, this.ground).nen))
+    const { world } = this.options.read()
+    const marks = visitor.nen.shu.flatMap((id) => {
+      const solid = solidById(this.options.ship, world, id)
+      return solid ? [solid.at] : []
+    })
+    return sensesKey(
+      sensedBy(this.walking, { ...visitor, marks }, (post) => auraFor(post, this.ground).nen),
+    )
   })
 
   situation = $derived.by<Situation>(() => ({

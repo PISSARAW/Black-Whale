@@ -57,6 +57,44 @@ describe('what a sweep finds', () => {
   })
 })
 
+describe('what a sweep finds of a Shu left behind', () => {
+  const guard = post('sakata')
+  const far = WATCH_EN_RADIUS + 5
+  const marked = (at: number, ...actions: Parameters<typeof transitionNen>[1][]) => ({
+    ...visitor(far, { type: 'SHU', objectId: 'crate', on: true }, ...actions),
+    marks: [[at, 0]] as const,
+  })
+
+  it('feels the aura of a marked object with the visitor out of range', () => {
+    expect(sensedBy([guard], marked(1), nenOf)).toEqual({ sakata: 'aura' })
+  })
+
+  it('feels nothing of a marked object past the radius', () => {
+    expect(sensedBy([guard], marked(WATCH_EN_RADIUS + 1), nenOf)).toEqual({})
+  })
+
+  /** In hides from sight; the object carries aura into the sweep all the same. */
+  it('feels the object under In all the same', () => {
+    expect(sensedBy([guard], marked(1, { type: 'IN', on: true }), nenOf)).toEqual({
+      sakata: 'aura',
+    })
+  })
+
+  it('lets the aura win over the bare body of the visitor nearer by', () => {
+    const near = {
+      ...visitor(1, { type: 'SHU', objectId: 'crate', on: true }),
+      marks: [[2, 0]] as const,
+    }
+    expect(sensedBy([guard], near, nenOf)).toEqual({ sakata: 'aura' })
+  })
+
+  /** Zetsu lets every Shu go, so a stale list of marks leaves nothing behind. */
+  it('leaves no trace once Zetsu has let the Shu go', () => {
+    const quiet = { ...visitor(far, { type: 'ZETSU' }), marks: [[1, 0]] as const }
+    expect(sensedBy([guard], quiet, nenOf)).toEqual({})
+  })
+})
+
 describe('the key a reactive caller stops at', () => {
   it('round-trips and does not depend on order', () => {
     const senses = { b: 'body', a: 'aura' } as const

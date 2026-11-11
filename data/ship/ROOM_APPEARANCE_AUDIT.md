@@ -533,7 +533,7 @@
 ## Passage gardé vers les ponts inférieurs — `tier-1-soldiers-living-quarters`
 
 - **Pont :** tier-1-b
-- **Preuve de l’enveloppe :** plan publié
+- **Preuve de l’enveloppe :** reconstruction cartographique, liaison déduite
 - **Sous-espaces :** 9
 - **Emprises relevées :** 45 × 5.5 m ; 10 × 7.5 m
 - **Hauteurs sous plafond :** 3.5 m
@@ -541,10 +541,11 @@
 - **Objets directement visibles dans les cases :** 0/96
 - **Espaces internes :** Caserne de l'armée royale 1 ; Caserne de l'armée royale 2 ; Caserne de l'armée royale 3 ; Caserne de l'armée royale 4 ; Quartiers des Hunters provisoires 1 ; Quartiers des Hunters provisoires 2 ; Quartiers des Hunters provisoires 3 ; Quartiers des Hunters provisoires 4
 - **Sources de la pièce :**
-  - Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite. Le plan dessine le passage plus étroit que les salles qu’il dessert.
-  - Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires
+  - Passage reconstitué entre les salles militaires et celles des associés, vers l’accès aux ponts inférieurs. Sa largeur métrique et son tracé sont estimés, sans intérieur attesté.
+  - Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambrée et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rangées, et donne aux allées de quoi passer.
+  - Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués.
+- **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Cour suprême — `tier-1-supreme-court`
 

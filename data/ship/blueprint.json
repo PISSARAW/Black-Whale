@@ -6308,10 +6308,10 @@
       "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Guarded Passageway to the Lower Tiers",
-      "nameFr": "Passage gard\u00e9 vers les ponts inf\u00e9rieurs",
+      "nameFr": "Passage gardé vers les ponts inférieurs",
       "category": "corridor",
-      "provenance": "plan",
-      "source": "The room plan draws the rooms but no way between them; this passage is reconstructed. The plan draws the passage narrower than the rooms it serves.",
+      "provenance": "inferred",
+      "source": "Reconstructed companion passage between the military and associate rooms, leading towards the lower-deck access. Its metric width and routing are estimates, not an attested interior.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6320,17 +6320,17 @@
         [70, 32.5],
         [25, 32.5]
       ],
-      "sourceFr": "Le plan dessine les pi\u00e8ces mais aucun passage entre elles ; cette circulation est reconstruite. Le plan dessine le passage plus \u00e9troit que les salles qu\u2019il dessert."
+      "sourceFr": "Passage reconstitué entre les salles militaires et celles des associés, vers l’accès aux ponts inférieurs. Sa largeur métrique et son tracé sont estimés, sans intérieur attesté."
     },
     {
       "id": "tier-1-soldiers-living-quarters-barracks-1",
       "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Royal Army Barracks 1",
-      "nameFr": "Caserne de l'arm\u00e9e royale 1",
+      "nameFr": "Caserne de l'armée royale 1",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6339,17 +6339,17 @@
         [36, 27],
         [26, 27]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-barracks-2",
       "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Royal Army Barracks 2",
-      "nameFr": "Caserne de l'arm\u00e9e royale 2",
+      "nameFr": "Caserne de l'armée royale 2",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6358,17 +6358,17 @@
         [47, 27],
         [37, 27]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-barracks-3",
       "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Royal Army Barracks 3",
-      "nameFr": "Caserne de l'arm\u00e9e royale 3",
+      "nameFr": "Caserne de l'armée royale 3",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6377,17 +6377,17 @@
         [58, 27],
         [48, 27]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-barracks-4",
       "tierId": "tier-1-b",
       "locationId": "tier-1-soldiers-living-quarters",
       "name": "Royal Army Barracks 4",
-      "nameFr": "Caserne de l'arm\u00e9e royale 4",
+      "nameFr": "Caserne de l'armée royale 4",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6396,7 +6396,7 @@
         [69, 27],
         [59, 27]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-hunters-1",
@@ -6405,8 +6405,8 @@
       "name": "Provisional Hunters Quarters 1",
       "nameFr": "Quartiers des Hunters provisoires 1",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6415,7 +6415,7 @@
         [36, 40],
         [26, 40]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-hunters-2",
@@ -6424,8 +6424,8 @@
       "name": "Provisional Hunters Quarters 2",
       "nameFr": "Quartiers des Hunters provisoires 2",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6434,7 +6434,7 @@
         [47, 40],
         [37, 40]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-hunters-3",
@@ -6443,8 +6443,8 @@
       "name": "Provisional Hunters Quarters 3",
       "nameFr": "Quartiers des Hunters provisoires 3",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6453,7 +6453,7 @@
         [58, 40],
         [48, 40]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-living-quarters-hunters-4",
@@ -6462,8 +6462,8 @@
       "name": "Provisional Hunters Quarters 4",
       "nameFr": "Quartiers des Hunters provisoires 4",
       "category": "military",
-      "provenance": "plan",
-      "source": "Soldiers' quarters plan; Kakin soldiers and some 150 Provisional Hunters",
+      "provenance": "map",
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
       "ceiling": 3.5,
       "envelope": null,
       "footprint": [
@@ -6472,7 +6472,7 @@
         [69, 40],
         [59, 40]
       ],
-      "sourceFr": "Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires"
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-2-ministry-of-justice-lobby",
@@ -8873,10 +8873,10 @@
       "tierId": "tier-3",
       "locationId": null,
       "name": "Royal Army Local Section",
-      "nameFr": "Section locale de l\u2019arm\u00e9e royale",
+      "nameFr": "Section locale de l’armée royale",
       "category": "military",
       "provenance": "panel",
-      "source": "Ch. 358 \u2014 the annotated cutaway files a local section of the royal army under the level 3 government zone, beside the political law-enforcement body and the central police. The page names it and points at it; no plan draws it, so it takes the berth the medical zone leaves and the size of the court beside it.",
+      "source": "Ch. 380, annotated cutaway (reading p. 10), not Ch. 358: Royal Army branch in the Tier 3 political ward beside the central police and law-enforcement agencies. No individual room plan or furniture is drawn. The footprint, dimensions and access are inherited reconstruction estimates; no central-police reception furniture is borrowed.",
       "ceiling": null,
       "envelope": null,
       "footprint": [
@@ -8885,7 +8885,7 @@
         [35, -7],
         [-35, -7]
       ],
-      "sourceFr": "Chap. 358 \u2014 la coupe annot\u00e9e range une section locale de l\u2019arm\u00e9e royale dans la zone gouvernementale du niveau 3, \u00e0 c\u00f4t\u00e9 de l\u2019organisme d\u2019application des lois politiques et de la police centrale. La page la nomme et la pointe ; aucun plan ne la dessine, elle prend donc la place que la zone m\u00e9dicale lib\u00e8re et la taille du tribunal voisin."
+      "sourceFr": "Chap. 380, coupe annotée (page de lecture 10), et non 358 : section de l’armée royale dans la zone gouvernementale du pont 3 près de la police centrale et des organismes d’application des lois. Aucun plan de pièce ni mobilier n’est dessiné. Emprise, métriques et accès restent les estimations héritées de la reconstruction ; aucun meuble d’accueil du commissariat n’est emprunté."
     },
     {
       "id": "tier-3-forward-port-floor",
@@ -23839,11 +23839,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-02",
@@ -23855,11 +23855,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-03",
@@ -23871,11 +23871,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-04",
@@ -23887,11 +23887,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-05",
@@ -23903,11 +23903,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-06",
@@ -23919,11 +23919,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-07",
@@ -23935,11 +23935,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-08",
@@ -23951,11 +23951,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-09",
@@ -23967,11 +23967,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-10",
@@ -23983,11 +23983,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-11",
@@ -23999,11 +23999,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-1-bunk-12",
@@ -24015,11 +24015,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-01",
@@ -24031,11 +24031,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-02",
@@ -24047,11 +24047,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-03",
@@ -24063,11 +24063,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-04",
@@ -24079,11 +24079,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-05",
@@ -24095,11 +24095,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-06",
@@ -24111,11 +24111,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-07",
@@ -24127,11 +24127,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-08",
@@ -24143,11 +24143,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-09",
@@ -24159,11 +24159,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-10",
@@ -24175,11 +24175,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-11",
@@ -24191,11 +24191,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-2-bunk-12",
@@ -24207,11 +24207,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-01",
@@ -24223,11 +24223,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-02",
@@ -24239,11 +24239,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-03",
@@ -24255,11 +24255,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-04",
@@ -24271,11 +24271,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-05",
@@ -24287,11 +24287,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-06",
@@ -24303,11 +24303,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-07",
@@ -24319,11 +24319,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-08",
@@ -24335,11 +24335,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-09",
@@ -24351,11 +24351,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-10",
@@ -24367,11 +24367,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-11",
@@ -24383,11 +24383,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-3-bunk-12",
@@ -24399,11 +24399,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-01",
@@ -24415,11 +24415,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-02",
@@ -24431,11 +24431,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-03",
@@ -24447,11 +24447,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-04",
@@ -24463,11 +24463,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-05",
@@ -24479,11 +24479,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-06",
@@ -24495,11 +24495,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-07",
@@ -24511,11 +24511,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-08",
@@ -24527,11 +24527,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-09",
@@ -24543,11 +24543,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-10",
@@ -24559,11 +24559,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-11",
@@ -24575,11 +24575,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-barracks-4-bunk-12",
@@ -24591,11 +24591,11 @@
       "size": [0.8, 1.9],
       "rotation": 0,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-01",
@@ -24604,14 +24604,14 @@
       "name": "Bunk 1",
       "nameFr": "Couchette 1",
       "at": [28.25, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-02",
@@ -24620,14 +24620,14 @@
       "name": "Bunk 2",
       "nameFr": "Couchette 2",
       "at": [31, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-03",
@@ -24636,14 +24636,14 @@
       "name": "Bunk 3",
       "nameFr": "Couchette 3",
       "at": [33.75, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-04",
@@ -24652,14 +24652,14 @@
       "name": "Bunk 4",
       "nameFr": "Couchette 4",
       "at": [28.25, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-05",
@@ -24668,14 +24668,14 @@
       "name": "Bunk 5",
       "nameFr": "Couchette 5",
       "at": [31, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-06",
@@ -24684,14 +24684,14 @@
       "name": "Bunk 6",
       "nameFr": "Couchette 6",
       "at": [33.75, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-07",
@@ -24700,14 +24700,14 @@
       "name": "Bunk 7",
       "nameFr": "Couchette 7",
       "at": [28.25, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-08",
@@ -24716,14 +24716,14 @@
       "name": "Bunk 8",
       "nameFr": "Couchette 8",
       "at": [31, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-09",
@@ -24732,14 +24732,14 @@
       "name": "Bunk 9",
       "nameFr": "Couchette 9",
       "at": [33.75, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-10",
@@ -24748,14 +24748,14 @@
       "name": "Bunk 10",
       "nameFr": "Couchette 10",
       "at": [28.25, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-11",
@@ -24764,14 +24764,14 @@
       "name": "Bunk 11",
       "nameFr": "Couchette 11",
       "at": [31, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-1-bunk-12",
@@ -24780,14 +24780,14 @@
       "name": "Bunk 12",
       "nameFr": "Couchette 12",
       "at": [33.75, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-01",
@@ -24796,14 +24796,14 @@
       "name": "Bunk 1",
       "nameFr": "Couchette 1",
       "at": [39.25, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-02",
@@ -24812,14 +24812,14 @@
       "name": "Bunk 2",
       "nameFr": "Couchette 2",
       "at": [42, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-03",
@@ -24828,14 +24828,14 @@
       "name": "Bunk 3",
       "nameFr": "Couchette 3",
       "at": [44.75, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-04",
@@ -24844,14 +24844,14 @@
       "name": "Bunk 4",
       "nameFr": "Couchette 4",
       "at": [39.25, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-05",
@@ -24860,14 +24860,14 @@
       "name": "Bunk 5",
       "nameFr": "Couchette 5",
       "at": [42, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-06",
@@ -24876,14 +24876,14 @@
       "name": "Bunk 6",
       "nameFr": "Couchette 6",
       "at": [44.75, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-07",
@@ -24892,14 +24892,14 @@
       "name": "Bunk 7",
       "nameFr": "Couchette 7",
       "at": [39.25, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-08",
@@ -24908,14 +24908,14 @@
       "name": "Bunk 8",
       "nameFr": "Couchette 8",
       "at": [42, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-09",
@@ -24924,14 +24924,14 @@
       "name": "Bunk 9",
       "nameFr": "Couchette 9",
       "at": [44.75, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-10",
@@ -24940,14 +24940,14 @@
       "name": "Bunk 10",
       "nameFr": "Couchette 10",
       "at": [39.25, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-11",
@@ -24956,14 +24956,14 @@
       "name": "Bunk 11",
       "nameFr": "Couchette 11",
       "at": [42, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-2-bunk-12",
@@ -24972,14 +24972,14 @@
       "name": "Bunk 12",
       "nameFr": "Couchette 12",
       "at": [44.75, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-01",
@@ -24988,14 +24988,14 @@
       "name": "Bunk 1",
       "nameFr": "Couchette 1",
       "at": [50.25, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-02",
@@ -25004,14 +25004,14 @@
       "name": "Bunk 2",
       "nameFr": "Couchette 2",
       "at": [53, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-03",
@@ -25020,14 +25020,14 @@
       "name": "Bunk 3",
       "nameFr": "Couchette 3",
       "at": [55.75, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-04",
@@ -25036,14 +25036,14 @@
       "name": "Bunk 4",
       "nameFr": "Couchette 4",
       "at": [50.25, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-05",
@@ -25052,14 +25052,14 @@
       "name": "Bunk 5",
       "nameFr": "Couchette 5",
       "at": [53, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-06",
@@ -25068,14 +25068,14 @@
       "name": "Bunk 6",
       "nameFr": "Couchette 6",
       "at": [55.75, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-07",
@@ -25084,14 +25084,14 @@
       "name": "Bunk 7",
       "nameFr": "Couchette 7",
       "at": [50.25, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-08",
@@ -25100,14 +25100,14 @@
       "name": "Bunk 8",
       "nameFr": "Couchette 8",
       "at": [53, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-09",
@@ -25116,14 +25116,14 @@
       "name": "Bunk 9",
       "nameFr": "Couchette 9",
       "at": [55.75, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-10",
@@ -25132,14 +25132,14 @@
       "name": "Bunk 10",
       "nameFr": "Couchette 10",
       "at": [50.25, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-11",
@@ -25148,14 +25148,14 @@
       "name": "Bunk 11",
       "nameFr": "Couchette 11",
       "at": [53, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-3-bunk-12",
@@ -25164,14 +25164,14 @@
       "name": "Bunk 12",
       "nameFr": "Couchette 12",
       "at": [55.75, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-01",
@@ -25180,14 +25180,14 @@
       "name": "Bunk 1",
       "nameFr": "Couchette 1",
       "at": [61.25, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-02",
@@ -25196,14 +25196,14 @@
       "name": "Bunk 2",
       "nameFr": "Couchette 2",
       "at": [64, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-03",
@@ -25212,14 +25212,14 @@
       "name": "Bunk 3",
       "nameFr": "Couchette 3",
       "at": [66.75, 34.25],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-04",
@@ -25228,14 +25228,14 @@
       "name": "Bunk 4",
       "nameFr": "Couchette 4",
       "at": [61.25, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-05",
@@ -25244,14 +25244,14 @@
       "name": "Bunk 5",
       "nameFr": "Couchette 5",
       "at": [64, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-06",
@@ -25260,14 +25260,14 @@
       "name": "Bunk 6",
       "nameFr": "Couchette 6",
       "at": [66.75, 35.85],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-07",
@@ -25276,14 +25276,14 @@
       "name": "Bunk 7",
       "nameFr": "Couchette 7",
       "at": [61.25, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-08",
@@ -25292,14 +25292,14 @@
       "name": "Bunk 8",
       "nameFr": "Couchette 8",
       "at": [64, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-09",
@@ -25308,14 +25308,14 @@
       "name": "Bunk 9",
       "nameFr": "Couchette 9",
       "at": [66.75, 37.45],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-10",
@@ -25324,14 +25324,14 @@
       "name": "Bunk 10",
       "nameFr": "Couchette 10",
       "at": [61.25, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-11",
@@ -25340,14 +25340,14 @@
       "name": "Bunk 11",
       "nameFr": "Couchette 11",
       "at": [64, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-soldiers-hunters-4-bunk-12",
@@ -25356,14 +25356,14 @@
       "name": "Bunk 12",
       "nameFr": "Couchette 12",
       "at": [66.75, 39.05],
-      "size": [1.9, 0.8],
-      "rotation": 0,
+      "size": [0.8, 1.9],
+      "rotation": 90,
       "base": 0,
-      "height": 1.7,
+      "height": 0.66,
       "sides": null,
       "provenance": "map",
-      "source": "The /ship soldiers' quarters plan draws twelve bunks in each barrack room and each hunters' room; the reconstruction keeps that count and those rows, and sets the aisles wide enough to walk.",
-      "sourceFr": "Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambr\u00e9e et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rang\u00e9es, et donne aux all\u00e9es de quoi passer."
+      "source": "Ch. 363 locates the soldiers/associates quarters by an arrow beside the princes’ block; it does not draw their interior. Eight rooms and twelve bed symbols per room are inherited from the /ship map, not an attested manga census. Dimensions, access and bed profiles are reconstructed.",
+      "sourceFr": "Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués."
     },
     {
       "id": "tier-1-queens-living-quarters-room-01-bed",

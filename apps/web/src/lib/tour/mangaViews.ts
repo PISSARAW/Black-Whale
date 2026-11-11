@@ -31,6 +31,7 @@ import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
 import { MANGA_POLICE_VIEWS } from './mangaPoliceViews'
 import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
 import { MANGA_ROYAL_ARMY_CONFERENCE_VIEWS } from './mangaRoyalArmyConferenceViews'
+import { MANGA_ROYAL_ARMY_ROOMS_VIEWS } from './mangaRoyalArmyRoomsViews'
 import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
@@ -170,6 +171,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_POLICE_VIEWS,
   ...MANGA_HOSPITAL_VIEWS,
   ...MANGA_ROYAL_ARMY_CONFERENCE_VIEWS,
+  ...MANGA_ROYAL_ARMY_ROOMS_VIEWS,
   view({
     id: 'heilly-hideout-aerial-plan',
     spaceId: 'tier-2-heilly-secret-hideout-corridor',

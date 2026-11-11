@@ -3,7 +3,7 @@
 `blueprint.json` est le vaisseau en tant que **géométrie**, et non en tant que
 dessin. C'est ce que parcourt la visite virtuelle ([`/tour`](../../apps/web/src/routes/tour)).
 
-Les limites documentaires des onze intérieurs détaillés sans perspective publiée sont
+Les limites documentaires des douze programmes détaillés sans perspective publiée sont
 recensées dans [`SOURCE_BOUND_INTERIORS.md`](./SOURCE_BOUND_INTERIORS.md).
 
 Il ne remplace pas les plans SVG de `apps/web/src/lib/assets/maps` : ceux-ci
@@ -36,7 +36,7 @@ Le corollaire vaut dans l'autre sens : quand la visite tient plus que la carte
 parce qu'une planche le montre — la salle de projection et ses quinze volumes
 contre un rectangle — c'est **la carte** qu'il faut refaire.
 
-### Le chap. 358 dit _où_
+### Le chap. 380 dit _où_
 
 La coupe annotée du quatrième jour de traversée est la seule page qui **situe**
 des pièces : elle en nomme onze et pointe chacune d'un trait. Un plan de pont
@@ -77,6 +77,13 @@ occupe des rangées séparées et l'écran reste blanc. Les équipements tactiqu
 non établis sont retirés. Les métriques, les effectifs schématiques de sièges
 et la localisation du volume sur le pont restent reconstitués.
 Voir [l'audit de la salle](royal-army-conference-audit.md).
+
+Les autres locaux de l’armée royale distinguent les indications du manga des
+choix du plan du projet : le chapitre 363 nomme les quartiers des soldats sans
+dessiner leurs chambrées ; les huit salles et quatre-vingt-seize couchettes
+restent de provenance `map`. La section locale du pont 3 est située par la
+coupe du **chapitre 380**, sans mobilier attesté. Les finitions restent sobres
+et reconstituées. Voir [l’audit de ces locaux](royal-army-rooms-audit.md).
 
 ## Repère et échelle
 

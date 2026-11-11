@@ -7,12 +7,16 @@ import {
   sourceBoundInteriorSurfacePlan,
 } from './sourceBoundInteriorView'
 import { sourceBoundStyleFor } from './sourceBoundInteriorStyles'
+import type { Space, Structure } from './types'
 
 const ship = buildShip()
+const sourceKey = (space: Space): string => space.locationId ?? space.id
+const hasSources = (structure: Structure): boolean =>
+  Boolean(structure.source && structure.sourceFr)
 
 /** Blueprint evidence attached to one catalogue location. */
 export const evidenceFor = (locationId: string) => {
-  const spaces = ship.blueprint.spaces.filter((space) => space.locationId === locationId)
+  const spaces = ship.blueprint.spaces.filter((space) => sourceKey(space) === locationId)
   const spaceIds = new Set(spaces.map((space) => space.id))
   const structures = ship.structures.filter((structure) => spaceIds.has(structure.spaceId))
 
@@ -74,8 +78,7 @@ export function certificationIssuesFor(locationId: string): string[] {
   }
 
   for (const structure of structures) {
-    if (!structure.source || !structure.sourceFr)
-      issues.push(`${structure.id}: missing bilingual source`)
+    if (!hasSources(structure)) issues.push(`${structure.id}: missing bilingual source`)
   }
   return issues
 }

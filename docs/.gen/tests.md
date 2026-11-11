@@ -1666,11 +1666,15 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/soldiersQuartersFidelity.test.ts`
 
-- the published soldiers’ quarters plan > keeps eight plan rooms and their ninety-six mapped bunks without panel claims
+- the map reconstruction of the soldiers’ quarters > keeps eight mapped rooms and ninety-six bed symbols without published-plan claims
 
 ## `apps/web/src/lib/tour/soundPlace.test.ts`
 
 - where a cast at a body happened > puts it down the reticle, in the room the visitor is in
+
+## `apps/web/src/lib/tour/sourceBoundInteriorCertification.test.ts`
+
+- source-bound interior certification > covers exactly the twelve declared programmes
 
 ## `apps/web/src/lib/tour/standardResidentialFidelity.test.ts`
 

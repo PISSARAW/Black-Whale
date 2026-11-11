@@ -1,19 +1,19 @@
-# Quartiers des soldats — fidélité au plan publié
+# Quartiers des soldats — limites documentaires
 
-## Autorité disponible
+Le schéma résidentiel initial du **chapitre 363** indique les quartiers des
+soldats et associés par une flèche, ainsi que l’accès aux ponts inférieurs.
+Il ne donne ni plan intérieur de chambrée, ni nombre de salles, ni nombre de lits.
 
-Le plan des quartiers des soldats établit quatre chambrées de l’armée royale,
-quatre salles pour les Hunters provisoires et douze couchettes dans chacune.
-Il ne montre aucun intérieur en perspective et ne donne ni matériau, ni couleur,
-ni petit mobilier.
+Les quatre chambrées militaires, les quatre salles de Hunters provisoires et
+leurs douze symboles de couchettes par salle viennent du plan local **du projet
+`/ship`**. Les quatre-vingt-seize couchettes sont conservées comme données `map`,
+sans les attribuer à une planche publiée par Togashi. Les dimensions, profils,
+hauteurs, finitions et éclairages sont reconstitués. Le passage est `inferred`.
 
-## Reconstruction retenue
+La carte lit les mêmes emprises que la visite et les collisions. Les lits des
+Hunters sont orientés sur leur longueur, les profils détaillés sont étiquetés
+comme estimations, et le passage ne reprend plus de boiseries dorées génériques.
+Aucun mobilier supplémentaire ni occupant n’est ajouté sans référence.
 
-- Les huit salles et le passage qui les dessert conservent leurs emprises du plan.
-- Les quatre-vingt-seize couchettes gardent le compte et les rangées du schéma.
-- L’écartement métrique des allées reste une reconstruction praticable.
-- Aucun casier, arme, uniforme, table ou occupant n’est ajouté sans case.
-- Les couchettes restent de provenance `map`, jamais `panel`.
-
-La fidélisation consiste ici à rendre exactement le programme publié tout en
-refusant de transformer un symbole de plan en décor canonique inventé.
+Voir [l’audit des autres locaux de l’armée royale](royal-army-rooms-audit.md)
+pour les références vérifiées, les corrections et le contrôle visuel.

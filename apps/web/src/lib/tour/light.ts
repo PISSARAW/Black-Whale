@@ -281,7 +281,7 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
       }),
     ),
   )
-  if (!sourceBoundStyleFor(space.locationId)) return light
+  if (!sourceBoundStyleFor(space.locationId ?? space.id)) return light
   return {
     ...light,
     positions: ceilingLamps(space.footprint, light.spacing),

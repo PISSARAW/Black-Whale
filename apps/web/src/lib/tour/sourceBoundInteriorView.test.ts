@@ -20,9 +20,11 @@ describe('source-bound interiors without published perspective panels', () => {
       expect(style.evidence.sourceFr.length).toBeGreaterThan(20)
       expect(style.triangleBudget).toBeGreaterThan(0)
       const plan = [...ship.plans.values()].find((candidate) =>
-        candidate.spaces.some(({ locationId }) => locationId === style.locationId),
+        candidate.spaces.some(({ locationId, id }) => (locationId ?? id) === style.locationId),
       )!
-      const space = plan.spaces.find(({ locationId }) => locationId === style.locationId)!
+      const space = plan.spaces.find(
+        ({ locationId, id }) => (locationId ?? id) === style.locationId,
+      )!
       const root = buildSourceBoundInteriorDetails({
         THREE,
         plan,

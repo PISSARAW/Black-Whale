@@ -4,6 +4,7 @@ import { SOURCE_BOUND_INTERIOR_STYLES } from './sourceBoundInteriorStyles'
 
 const CERTIFIED_LOCATIONS = [
   'tier-1-soldiers-living-quarters',
+  'tier-3-royal-army-local-section',
   'tier-3-central-courthouse',
   'tier-3-heilly-family-office',
   'tier-3-residential-first-class',
@@ -17,7 +18,7 @@ const CERTIFIED_LOCATIONS = [
 ] as const
 
 describe('source-bound interior certification', () => {
-  it('covers exactly the eleven declared locations', () => {
+  it('covers exactly the twelve declared programmes', () => {
     expect(SOURCE_BOUND_INTERIOR_STYLES.map(({ locationId }) => locationId).sort()).toEqual(
       [...CERTIFIED_LOCATIONS].sort(),
     )

@@ -369,6 +369,17 @@
       hatsuPanelOpen.set(true)
       return
     }
+    if (
+      (carriedHatsu?.id === 'parallel-future' || carriedHatsu?.id === 'rihan-predator') &&
+      (game.player.hatsuPreparation?.id !== carriedHatsu.id ||
+        (carriedHatsu.id === 'rihan-predator' && game.player.hatsuPreparation.observations < 3))
+    ) {
+      command(
+        { type: 'PREPARE_HATSU', side: 'player', hatsuId: carriedHatsu.id },
+        'hatsu',
+      )
+      return
+    }
     const accepted = command(
       {
         type: 'HATSU',

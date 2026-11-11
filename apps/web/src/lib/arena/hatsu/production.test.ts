@@ -35,14 +35,44 @@ describe('production treatment for 24 Black Whale Hatsu', () => {
 
   it('preserves signature tactical differences', () => {
     const base = scenario('base')
-    const future = cast(base, 'parallel-future')
-    const predator = cast(base, 'rihan-predator')
+    const future = cast(scenario('parallel-future'), 'parallel-future')
+    const predator = cast(scenario('rihan-predator'), 'rihan-predator')
     const steal = cast(base, 'steal-chain')
     expect(future.player.position).not.toEqual(base.player.position)
     expect(future.player.mode).toBe('zetsu')
     expect(predator.opponent.empowered).toBe(0)
     expect(steal.opponent.mode).toBe('zetsu')
     expect(steal.opponent.aura).toBeLessThan(base.opponent.aura)
+  })
+
+  it('requires canonical preparation for future sight and Predator', () => {
+    const base = scenario('base')
+    expect(cast(base, 'parallel-future')).toEqual(base)
+    expect(cast(base, 'rihan-predator')).toEqual(base)
+
+    let future: CombatState = { ...base, player: { ...base.player, mode: 'zetsu' } }
+    future = combatReducer(future, {
+      type: 'PREPARE_HATSU',
+      side: 'player',
+      hatsuId: 'parallel-future',
+    })
+    future = { ...future, player: { ...future.player, cooldown: 0 } }
+    expect(cast(future, 'parallel-future').player.position).not.toEqual(base.player.position)
+
+    let predator: CombatState = {
+      ...base,
+      lastHatsuBySide: { player: null, opponent: 'bungee-gum' },
+    }
+    for (let observation = 0; observation < 3; observation += 1) {
+      predator = { ...predator, player: { ...predator.player, cooldown: 0 } }
+      predator = combatReducer(predator, {
+        type: 'PREPARE_HATSU',
+        side: 'player',
+        hatsuId: 'rihan-predator',
+      })
+    }
+    predator = { ...predator, player: { ...predator.player, cooldown: 0 } }
+    expect(cast(predator, 'rihan-predator')).not.toEqual(predator)
   })
 })
 
@@ -76,5 +106,33 @@ function scenario(id: string): CombatState {
   if (id === 'cats-name')
     return { ...state, player: { ...state.player, condition: 'down', recovery: 2, aura: 10 } }
   if (id === 'pain-packer') return { ...state, player: { ...state.player, aura: 35 } }
+  if (id === 'parallel-future')
+    return {
+      ...state,
+      player: {
+        ...state.player,
+        mode: 'zetsu',
+        hatsuPreparation: {
+          id,
+          observations: 1,
+          targetHatsuId: null,
+          expiresAt: 2,
+        },
+      },
+    }
+  if (id === 'rihan-predator')
+    return {
+      ...state,
+      player: {
+        ...state.player,
+        hatsuPreparation: {
+          id,
+          observations: 3,
+          targetHatsuId: 'bungee-gum',
+          expiresAt: 20,
+        },
+      },
+      lastHatsuBySide: { player: null, opponent: 'bungee-gum' },
+    }
   return state
 }

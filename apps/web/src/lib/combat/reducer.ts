@@ -79,6 +79,7 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
   if (action.type === 'FEINT')
     return replace(state, action.side, feint(state[action.side], action.zone))
   if (action.type === 'PREPARE_STRIKE') return prepareStrike(state, action.side, action.zone)
+  if (action.type === 'PREPARE_HATSU') return prepareHatsu(state, action.side, action.hatsuId)
   if (action.type === 'HATSU') return castHatsu(state, action)
   if (action.type === 'STRIKE') {
     return strike({
@@ -116,11 +117,62 @@ interface HatsuCast {
   cost?: number
 }
 
+function prepareHatsu(
+  state: CombatState,
+  side: CombatSide,
+  hatsuId: 'parallel-future' | 'rihan-predator',
+): CombatState {
+  const fighter = state[side]
+  if (fighter.condition !== 'ready' || fighter.cooldown > 0) return state
+  if (hatsuId === 'parallel-future') {
+    if (fighter.mode !== 'zetsu') return state
+    return replace(state, side, {
+      ...fighter,
+      hatsuPreparation: {
+        id: hatsuId,
+        observations: 1,
+        targetHatsuId: null,
+        expiresAt: state.clock + 2,
+      },
+      movement: [0, 0],
+      cooldown: 0.35,
+    })
+  }
+  const targetHatsuId = state.lastHatsuBySide[otherSide(side)]
+  if (!targetHatsuId) return state
+  const previous = fighter.hatsuPreparation
+  const observations =
+    previous?.id === hatsuId && previous.targetHatsuId === targetHatsuId
+      ? previous.observations + 1
+      : 1
+  return replace(state, side, {
+    ...fighter,
+    hatsuPreparation: {
+      id: hatsuId,
+      observations,
+      targetHatsuId,
+      expiresAt: state.clock + 20,
+    },
+    cooldown: 0.25,
+  })
+}
+
 function castHatsu(
   state: CombatState,
   { side, effect, zone, hatsuId, targetAt, cost: requestedCost }: HatsuCast,
 ): CombatState {
   const fighter = state[side]
+  const preparation = fighter.hatsuPreparation
+  if (
+    hatsuId === 'parallel-future' &&
+    (fighter.mode !== 'zetsu' || preparation?.id !== hatsuId || preparation.expiresAt < state.clock)
+  )
+    return state
+  if (
+    hatsuId === 'rihan-predator' &&
+    (preparation?.id !== hatsuId || preparation.observations < 3 || preparation.expiresAt < state.clock)
+  )
+    return state
   const sequenceCost =
     requestedCost ??
     (hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter' ? 6 : HATSU_COST)
@@ -131,7 +183,10 @@ function castHatsu(
   )
     return state
   const paid = { ...fighter, aura: fighter.aura - sequenceCost, intent: null }
-  let current = replace(state, side, paid)
+  let current = {
+    ...replace(state, side, { ...paid, hatsuPreparation: null }),
+    lastHatsuBySide: { ...state.lastHatsuBySide, [side]: hatsuId ?? null },
+  }
   const rivalSide = otherSide(side)
 
   if (hatsuId === 'ripper-cyclotron' || hatsuId === 'battle-cantabile-jupiter') {

@@ -58,6 +58,12 @@ export interface FighterState {
   bound: number
   empowered: number
   hatsuSequence: { id: string; count: number; lastAt: number } | null
+  hatsuPreparation: {
+    id: 'parallel-future' | 'rihan-predator'
+    observations: number
+    targetHatsuId: string | null
+    expiresAt: number
+  } | null
   cooldown: number
   condition: FighterCondition
   recovery: number
@@ -82,6 +88,7 @@ export interface CombatState {
   terrain: CombatTerrainPhysics
   tethers: ElasticTether[]
   opponentMemory: OpponentMemory
+  lastHatsuBySide: Record<CombatSide, string | null>
 }
 
 export interface OpponentMemory {
@@ -115,6 +122,7 @@ export type CombatAction =
   | { type: 'GUARD'; side: CombatSide }
   | { type: 'FEINT'; side: CombatSide; zone: BodyZone }
   | { type: 'PREPARE_STRIKE'; side: CombatSide; zone: BodyZone }
+  | { type: 'PREPARE_HATSU'; side: CombatSide; hatsuId: 'parallel-future' | 'rihan-predator' }
   | {
       type: 'HATSU'
       side: CombatSide
@@ -153,6 +161,7 @@ export function initialFighter(position: Vec2): FighterState {
     bound: 0,
     empowered: 0,
     hatsuSequence: null,
+    hatsuPreparation: null,
     cooldown: 0,
     condition: 'ready',
     recovery: 0,
@@ -173,6 +182,7 @@ export function initialCombatState(setup: CombatSetup = defaultSetup()): CombatS
       observedEventAt: null,
       zones: { head: 0, torso: 0, arms: 0, legs: 0 },
     },
+    lastHatsuBySide: { player: null, opponent: null },
   }
 }
 

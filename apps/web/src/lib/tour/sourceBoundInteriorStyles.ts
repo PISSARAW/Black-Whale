@@ -134,6 +134,20 @@ const STYLES: SourceBoundInteriorStyle[] = [
     floorPattern: 'bands',
     ceilingPattern: 'coffers',
   },
+  {
+    locationId: 'tier-5-medical-clinic',
+    name: 'tier-5-clinic',
+    floor: 0x47504f,
+    wall: 0x697a78,
+    ceiling: 0x46504f,
+    wood: 0x58605d,
+    metal: 0x8a9997,
+    fabric: 0x768c87,
+    accent: 0xa7c2ba,
+    floorPattern: 'grid',
+    ceilingPattern: 'services',
+    programme: 'clinic',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

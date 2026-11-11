@@ -20,7 +20,6 @@
 
   <div class="mt-6 space-y-3">
     {#each investigation.hypotheses as hypothesis (hypothesis.id)}
-      {@const assessment = session.hypothesisAssessments[hypothesis.id]}
       <button
         class="w-full overflow-hidden rounded-xl border p-4 text-left transition-all {session.selectedHypothesisId ===
         hypothesis.id
@@ -36,20 +35,7 @@
               : 'border-sky-700/50'}"
             ><span class="h-1.5 w-1.5 rounded-full bg-[#0a0f1c]"></span></span
           ><span class="flex-1 font-black text-lg text-white">{hypothesis.label}</span>
-          <span
-            class="font-mono text-[10px] uppercase tracking-wider {session.selectedHypothesisId ===
-            hypothesis.id
-              ? 'text-sky-300'
-              : 'text-sky-500/40'}"
-          >
-            {assessment.status} · {assessment.score}%
-          </span></span
-        >
-        {#if assessment.missingPropositionIds.length > 0}
-          <span class="mt-3 block pl-8 text-[10px] uppercase tracking-widest text-amber-300/60">
-            {ui.deduction.propositionsMissing(assessment.missingPropositionIds.length)}
-          </span>
-        {/if}
+        </span>
       </button>
     {/each}
   </div>

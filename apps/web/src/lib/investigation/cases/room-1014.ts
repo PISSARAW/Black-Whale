@@ -25,7 +25,8 @@ export const room1014Case: InvestigationCase = {
       posOffset: [2.4, 0],
       dialogue:
         'Une attaque a eu lieu au milieu du groupe. Ne confondons pas ce que nous soupçonnons avec ce que nous pouvons prouver.',
-      evidenceIds: ['nen-residue'],
+      // His analysis comes from the testimony, or from Emperor Time, not from a glance.
+      evidenceIds: [],
       questions: [
         {
           id: 'kurapika-method',
@@ -104,7 +105,8 @@ export const room1014Case: InvestigationCase = {
       posOffset: [-1.5, -1.7],
       dialogue:
         "Je n'ai vu aucune fille masquée derrière moi. En revanche, les créatures fixées au cou de Barrigen étaient matérialisées et visibles de tous.",
-      evidenceIds: ['bill-testimony'],
+      // What the creatures looked like is Bill's and Sakata's to tell.
+      evidenceIds: [],
       questions: [
         {
           id: 'furykov-doll',
@@ -176,7 +178,8 @@ export const room1014Case: InvestigationCase = {
       isDead: true,
       dialogue:
         'Le corps est exsangue. Quatre créatures blanches se sont fixées à son cou; les gardes ont pu les voir et tenter de les arracher.',
-      evidenceIds: ['wounds', 'death-window'],
+      // The body shows the wounds; how fast they killed is the witnesses' account.
+      evidenceIds: ['wounds'],
       questions: [],
     },
   ],

@@ -11,6 +11,18 @@
   let { session, ui }: { session: CaseSession; ui: ReturnType<typeof caseUi> } = $props()
 
   const investigation = $derived(session.investigation)
+
+  /** Erasing the case cannot be undone, so it takes a second, deliberate click. */
+  let confirmingReset = $state(false)
+
+  function reset() {
+    if (!confirmingReset) {
+      confirmingReset = true
+      return
+    }
+    confirmingReset = false
+    session.resetInvestigation()
+  }
 </script>
 
 {#if session.notebookOpen}
@@ -106,8 +118,12 @@
       <span>{ui.perspective} · {investigation.investigator}</span>
       <span class="flex items-center gap-5"
         ><button
-          class="text-sky-400/50 transition-colors hover:text-red-400"
-          onclick={session.resetInvestigation}>{ui.reset}</button
+          class="transition-colors hover:text-red-400 {confirmingReset
+            ? 'text-red-400'
+            : 'text-sky-400/50'}"
+          onclick={reset}
+          onblur={() => (confirmingReset = false)}
+          >{confirmingReset ? ui.resetConfirm : ui.reset}</button
         ><span>{ui.spoilers} · ch. {investigation.chapter}</span></span
       >
     </footer>

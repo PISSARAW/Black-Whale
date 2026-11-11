@@ -1,5 +1,6 @@
 import { INVESTIGATION_SCHEMA_VERSION, type InvestigationCaseDefinition } from './definition'
 import { validateHypotheses, type AddIssue } from './validateHypotheses'
+import { validateHatsuRules } from './validateHatsuRules'
 
 export interface ValidationIssue {
   path: string
@@ -49,10 +50,7 @@ export function validateCaseDefinition(definition: InvestigationCaseDefinition):
     )
     checkRefs(confrontation.evidenceIds, evidenceIds, `confrontations.${confrontation.id}.evidence`)
   }
-  for (const rule of definition.hatsuRules) {
-    checkRefs(rule.subjectIds, subjectIds, `hatsuRules.${rule.id}.subjects`)
-    checkRefs(rule.evidenceIds, evidenceIds, `hatsuRules.${rule.id}.evidence`)
-  }
+  validateHatsuRules({ definition, evidenceIds, subjectIds, add, checkRefs })
   return issues
 }
 

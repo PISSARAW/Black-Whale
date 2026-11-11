@@ -21,6 +21,9 @@
   let { open, title, titleFr, objective, objectiveFr, controls, onClose }: Props = $props()
 
   function handleKeydown(event: KeyboardEvent) {
+    // The page toggles the manual itself on ? / H and claims the key: closing
+    // here as well would shut the manual on the very press that opened it.
+    if (event.defaultPrevented) return
     if (
       open &&
       (event.key === 'Escape' || event.key === 'h' || event.key === 'H' || event.key === '?')

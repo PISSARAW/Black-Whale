@@ -14,8 +14,12 @@ import { playInvestigationHatsuSound } from './hatsuPresentation'
 import type { ConfrontationResult } from './confrontation'
 import { confrontWitnesses } from './confrontation'
 import { questionIsAvailable } from './interrogation'
-import { resolveInterview, type InterviewStance, type WitnessDisposition } from './interview'
-import { assessHypothesesFromEvidence } from './v3Runtime'
+import {
+  openingDisposition,
+  resolveInterview,
+  type InterviewStance,
+  type WitnessDisposition,
+} from './interview'
 import { buildFinalReport } from './report'
 import { sceneNodes, visibleSightLines, type ScenePhenomenon } from './geometry'
 import { caseProgressStorageKey, forgetCaseStanding, recordCaseStanding } from './portfolio'
@@ -33,23 +37,6 @@ import {
 } from './case'
 import type { InvestigationCaseDefinition } from './definition'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-
-/**
- * How a witness stands before the first question is put to them.
- *
- * The investigator trusts the investigation; a body trusts nothing and feels
- * nothing; everyone else starts halfway and under some strain. Nobody answers
- * an accusation well.
- */
-function openingDisposition(subject: InvestigationSubject): WitnessDisposition {
-  return {
-    subjectId: subject.id,
-    trust: subject.isDead ? 0 : subject.role === 'Enquêteur' ? 80 : 50,
-    stress: subject.isDead ? 0 : 35,
-    preferredStances: subject.role === 'Enquêteur' ? ['neutral'] : ['neutral', 'empathetic'],
-    resistedStances: ['accusatory'],
-  }
-}
 
 /**
  * One visitor's passage through one case file.
@@ -120,14 +107,10 @@ export class CaseSession {
   discoveredEvidence = $derived(
     this.investigation.evidence.filter((evidence) => this.discoveredIds.includes(evidence.id)),
   )
-  hypothesisAssessments = $derived(
-    assessHypothesesFromEvidence({
-      hypotheses: this.investigation.hypotheses,
-      evidence: this.investigation.evidence,
-      discoveredEvidenceIds: this.discoveredIds,
-      viewerId: this.investigation.investigator,
-    }),
-  )
+  /** Whether the visitor has learned something from this person: evidence, or an answer. */
+  subjectReviewed = (subject: InvestigationSubject) =>
+    subject.evidenceIds.some((id) => this.discoveredIds.includes(id)) ||
+    this.askedQuestionKeys.some((key) => key.startsWith(`${subject.id}:`))
   progress = $derived(
     Math.round((this.discoveredIds.length / this.investigation.evidence.length) * 100),
   )
@@ -343,7 +326,8 @@ export class CaseSession {
     this.hatsuEffectTarget = subject.name
     this.hatsuEffectSequence += 1
     playInvestigationHatsuSound(hatsu.kind, result)
-    if (!alreadyUsed) {
+    // A refused or unaffordable use costs nothing and stays open to a retry.
+    if (result.usable && !alreadyUsed) {
       this.hatsuUseKeys = [...this.hatsuUseKeys, result.key]
       if (result.lifeHours > 0) spendEmperorTimeHours(result.lifeHours)
       this.discover(result.evidenceIds)
@@ -362,7 +346,9 @@ export class CaseSession {
     const question = subject.questions.find((item) => item.id === questionId)
     if (!question || !questionIsAvailable(question, this.discoveredIds)) return
     const key = `${subject.id}:${question.id}`
-    const disposition = this.witnessDispositions[subject.id] ?? openingDisposition(subject)
+    const disposition =
+      this.witnessDispositions[subject.id] ??
+      openingDisposition(subject, this.definition.metadata.investigatorId)
     const outcome = resolveInterview(
       disposition,
       {
@@ -421,6 +407,13 @@ export class CaseSession {
   }
 
   resetInvestigation = () => {
+    this.stopReplay()
+    this.replaySecond = 0
+    this.activeTab = 'evidence'
+    this.interviewStance = 'neutral'
+    this.scenePhenomenon = 'doll'
+    this.hatsuEffectKind = null
+    this.reportOpen = false
     this.discoveredIds = []
     this.selectedEvidenceIds = []
     this.selectedHypothesisId = null

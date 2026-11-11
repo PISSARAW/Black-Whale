@@ -35,4 +35,15 @@ describe('investigation editorial validator', () => {
       message: 'at least one required evidence',
     })
   })
+
+  it('refuses a limited Hatsu rule that hands evidence to the dossier', () => {
+    const definition = elevenSecondsDefinition('fr')
+    definition.hatsuRules = definition.hatsuRules.map((rule) =>
+      rule.id === 'reader-truth-signature' ? { ...rule, evidenceIds: ['wounds'] } : rule,
+    )
+    expect(validateCaseDefinition(definition)).toContainEqual({
+      path: 'hatsuRules.reader-truth-signature.evidence',
+      message: 'a limited rule grants no evidence',
+    })
+  })
 })

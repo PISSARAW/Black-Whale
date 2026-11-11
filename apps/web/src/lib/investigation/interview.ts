@@ -1,3 +1,5 @@
+import type { InvestigationSubject } from './case'
+
 export type InterviewStance = 'neutral' | 'empathetic' | 'pressing' | 'accusatory'
 
 export interface WitnessDisposition {
@@ -69,4 +71,26 @@ function clamp(value: number) {
 
 function clampDelta(value: number) {
   return Math.max(-25, Math.min(25, Math.round(value)))
+}
+
+/**
+ * How a witness stands before the first question is put to them.
+ *
+ * The investigator trusts the investigation; a body trusts nothing and feels
+ * nothing; everyone else starts halfway and under some strain. Nobody answers
+ * an accusation well. The investigator is recognised by id, never by the role
+ * label, which changes with the language.
+ */
+export function openingDisposition(
+  subject: InvestigationSubject,
+  investigatorId: string,
+): WitnessDisposition {
+  const investigator = subject.id === investigatorId
+  return {
+    subjectId: subject.id,
+    trust: subject.isDead ? 0 : investigator ? 80 : 50,
+    stress: subject.isDead ? 0 : 35,
+    preferredStances: investigator ? ['neutral'] : ['neutral', 'empathetic'],
+    resistedStances: ['accusatory'],
+  }
 }

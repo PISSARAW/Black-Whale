@@ -1,5 +1,11 @@
+import { elevenSecondsDefinition } from './cases/elevenSeconds'
 import { describe, expect, it } from 'vitest'
-import { resolveInterview, type InterviewExchange, type WitnessDisposition } from './interview'
+import {
+  openingDisposition,
+  resolveInterview,
+  type InterviewExchange,
+  type WitnessDisposition,
+} from './interview'
 
 const bill: WitnessDisposition = {
   subjectId: 'bill',
@@ -37,5 +43,14 @@ describe('investigation V3 interviews', () => {
     expect(outcome.cooperation).toBe('refused')
     expect(outcome.nextDisposition.trust).toBeLessThan(bill.trust)
     expect(outcome.nextDisposition.stress).toBeGreaterThan(bill.stress)
+  })
+
+  it('recognises the investigator by id in every language', () => {
+    for (const locale of ['fr', 'en'] as const) {
+      const kurapika = elevenSecondsDefinition(locale).content.subjects.find(
+        (subject) => subject.id === 'kurapika',
+      )!
+      expect(openingDisposition(kurapika, 'kurapika').trust).toBe(80)
+    }
   })
 })

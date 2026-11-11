@@ -52,6 +52,7 @@ export function caseUi(locale: Locale) {
         sourceCaution: 'Une source n’est pas nécessairement une certitude.',
         emptyNotebook: 'Le carnet est vide. Examinez la scène et interrogez les témoins.',
         reset: 'Réinitialiser',
+        resetConfirm: 'Tout effacer ? Confirmer',
         spoilers: 'Spoilers',
         perspective: 'Perspective',
         approach: 'Posture',
@@ -71,8 +72,6 @@ export function caseUi(locale: Locale) {
           title: 'Que s’est-il passé pendant ces onze secondes ?',
           intro:
             'Choisissez une hypothèse puis uniquement les éléments qui la soutiennent. Le verdict évaluera aussi les contradictions.',
-          propositionsMissing: (count: number) =>
-            `${count} proposition${count === 1 ? '' : 's'} à établir`,
           evidence: (count: number) => `Pièces versées au raisonnement · ${count}`,
           submit: 'Soumettre',
           analysis: 'Analyse du raisonnement',
@@ -193,6 +192,7 @@ export function caseUi(locale: Locale) {
         sourceCaution: 'A source is not necessarily a certainty.',
         emptyNotebook: 'The notebook is empty. Examine the scene and question the witnesses.',
         reset: 'Reset',
+        resetConfirm: 'Erase everything? Confirm',
         spoilers: 'Spoilers',
         perspective: 'Perspective',
         approach: 'Approach',
@@ -212,8 +212,6 @@ export function caseUi(locale: Locale) {
           title: 'What happened during those eleven seconds?',
           intro:
             'Choose a hypothesis, then only the evidence supporting it. The verdict will also assess contradictions.',
-          propositionsMissing: (count: number) =>
-            `${count} proposition${count === 1 ? '' : 's'} still to establish`,
           evidence: (count: number) => `Evidence submitted for reasoning · ${count}`,
           submit: 'Submit',
           analysis: 'Reasoning analysis',

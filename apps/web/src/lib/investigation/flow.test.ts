@@ -20,9 +20,14 @@ describe('complete investigation flow', () => {
     }
 
     inspect('body')
-    ask('bill', 'bill-seen')
-    ask('loberry', 'loberry-figure')
     inspect('kurapika')
+    inspect('furykov')
+    expect([...discovered]).toEqual(['wounds'])
+
+    ask('bill', 'bill-seen')
+    ask('bill', 'bill-duration')
+    ask('loberry', 'loberry-figure')
+    ask('kurapika', 'kurapika-method')
 
     const confrontation = confrontWitnesses(
       ['loberry', 'furykov'],

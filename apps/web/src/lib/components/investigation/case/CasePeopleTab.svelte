@@ -20,15 +20,11 @@
       <h3 class="mt-1 font-serif text-xl text-white">{subject.name}</h3>
       <p class="mt-1 text-xs text-white/45">{subject.status}</p>
       <p
-        class="mt-4 text-[10px] uppercase tracking-wider {session.discoveredIds.some((id) =>
-          subject.evidenceIds.includes(id),
-        )
+        class="mt-4 text-[10px] uppercase tracking-wider {session.subjectReviewed(subject)
           ? 'text-emerald-200'
           : 'text-white/30'}"
       >
-        {session.discoveredIds.some((id) => subject.evidenceIds.includes(id))
-          ? ui.confrontation.reviewed
-          : ui.confrontation.examine}
+        {session.subjectReviewed(subject) ? ui.confrontation.reviewed : ui.confrontation.examine}
       </p>
     </button>
   {/each}

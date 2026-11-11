@@ -72,7 +72,9 @@ export function elevenSecondsDefinition(locale: Locale): InvestigationCaseDefini
         id: 'reader-truth-signature',
         kinds: ['snakes'],
         subjectIds: ['body'],
-        evidenceIds: ['wounds', 'death-window'],
+        // Reader truth, not something Kurapika can know at chapter 370: it
+        // confirms the signature without entering the dossier.
+        evidenceIds: [],
         lifeHours: 0,
         outcome: 'limited',
       },

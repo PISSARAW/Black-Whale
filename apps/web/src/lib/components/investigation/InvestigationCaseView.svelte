@@ -123,7 +123,8 @@
         pose: 'idle',
         aura: 'none',
       },
-      hidden: false,
+      // Only Loberry and its user see the doll; the visitor needs Gyo to catch it.
+      hidden: true,
       pick: false,
     }
     return [...people, doll]
@@ -280,8 +281,8 @@
     <div class="grid grid-cols-2 gap-1.5">
       {#each investigation.subjects as subject (subject.id)}
         <button
-          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left transition {session.discoveredIds.some(
-            (id) => subject.evidenceIds.includes(id),
+          class="pointer-events-auto border bg-black/70 px-3 py-2 text-left transition {session.subjectReviewed(
+            subject,
           )
             ? 'border-[#d6b35a]/60'
             : 'border-white/15 hover:border-white/40'}"
@@ -341,12 +342,14 @@
         description: 'Inspect object / Speak to witness',
         descriptionFr: 'Inspecter objet / Parler au témoin',
       },
-      { keys: ['H'], description: 'Open Hatsu Panel', descriptionFr: 'Ouvrir le panneau Hatsu' },
+      { keys: ['?', 'H'], description: 'Show this manual', descriptionFr: 'Afficher ce manuel' },
       {
-        keys: ['N'],
-        description: 'Use Ren/Gyo (Toggle aura)',
-        descriptionFr: 'Utiliser Ren/Gyo (Activer aura)',
+        keys: ['G'],
+        description: 'Gyo (See what is hidden)',
+        descriptionFr: 'Gyo (Voir ce qui est caché)',
       },
+      { keys: ['R'], description: 'Ren (Raise aura)', descriptionFr: "Ren (Intensifier l'aura)" },
+      { keys: ['N'], description: 'En (Sweep area)', descriptionFr: 'En (Balayer la zone)' },
       {
         keys: ['Esc'],
         description: 'Close current panel',

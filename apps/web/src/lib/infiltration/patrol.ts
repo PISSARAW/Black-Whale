@@ -1,4 +1,4 @@
-import type { NavGraph } from '../hunt/navmesh'
+import { shortestPath, type NavGraph } from '../hunt/navmesh'
 import type { Arena } from '../hunt/arena'
 import { resolveMovement } from '../tour/navigation'
 import type { Vec2 } from '../tour/types'
@@ -7,6 +7,8 @@ import type { Witness } from './state'
 export const PATROL_SPEED = 1.25
 export const WITNESS_RADIUS = 0.42
 const ARRIVAL = 0.3
+/** Below this share of the intended step, the witness is pushing a wall. */
+const STALLED = 0.1
 
 export interface PatrolWorld {
   graph: NavGraph
@@ -16,10 +18,12 @@ export interface PatrolWorld {
 
 export function patrolWitness(witness: Witness, world: PatrolWorld): Witness {
   const goalId = witness.investigating ?? witness.route[witness.routeIndex]
-  const goal = waypoint(witness, goalId, world)
-  if (!goal) return witness
+  const hop = nextRoom(witness.spaceId, goalId, world.graph)
+  const goal = hop ? waypoint(witness, hop, world) : null
+  // A goal no door leads to is dropped rather than stared at forever.
+  if (!hop || !goal) return witness.investigating ? { ...witness, investigating: null } : witness
   const gap = distance(witness.position, goal)
-  if (gap <= ARRIVAL) return arrive(witness, goalId)
+  if (gap <= ARRIVAL) return arrive(witness, hop)
   const amount = Math.min(gap, PATROL_SPEED * world.dt)
   const target: Vec2 = [
     witness.position[0] + ((goal[0] - witness.position[0]) / gap) * amount,
@@ -34,11 +38,22 @@ export function patrolWitness(witness: Witness, world: PatrolWorld): Witness {
     walls: world.arena.walls,
     radius: WITNESS_RADIUS,
   })
+  // A room's centre can fall inside its furniture (the dining table holds
+  // the dining room's): pressed against it, the witness has arrived.
+  if (hop === witness.spaceId && distance(position, witness.position) < amount * STALLED) {
+    return arrive(witness, hop)
+  }
   return {
     ...witness,
     position,
     heading: Math.atan2(goal[0] - witness.position[0], goal[1] - witness.position[1]),
   }
+}
+
+/** The next room on the shortest walk, so a goal need not share a door. */
+function nextRoom(from: string, to: string, graph: NavGraph): string | null {
+  if (from === to) return to
+  return shortestPath(graph, from, to)?.[1] ?? null
 }
 
 function waypoint(witness: Witness, goalId: string, world: PatrolWorld): Vec2 | null {

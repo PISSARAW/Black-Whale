@@ -55,8 +55,13 @@ export function updateInfiltration(
         return sum + (witness.belief.identity === 'intruder' ? witness.belief.certainty * 0.34 : 0)
       }, 0),
   )
+  // A witness who reported and kept watching grows surer: judge on what each
+  // reporter believes now, not on the certainty it had when it first spoke.
+  const standing = witnesses
+    .filter((witness) => witness.belief.reported && witness.belief.identity === 'intruder')
+    .map((witness) => ({ witnessId: witness.id, certainty: witness.belief.certainty }))
   const alertLevel = assessAlert(
-    reports,
+    [...reports, ...standing],
     witnesses.filter((witness) => witness.belief.identity === 'intruder').length,
   ).level
   const alertChanged = alertLevel !== state.alertLevel
@@ -108,7 +113,12 @@ export function updateInfiltration(
       maxAlert: Math.max(searched.metrics.maxAlert, alert),
       tracesDiscovered: searched.metrics.tracesDiscovered + newlyDiscovered,
     },
-    outcome: clock >= searched.mission.duration ? 'timeUp' : state.outcome,
+    outcome:
+      alertLevel === 'identified'
+        ? 'identified'
+        : clock >= searched.mission.duration
+          ? 'timeUp'
+          : state.outcome,
   }
 }
 
@@ -261,6 +271,9 @@ function observe(state: InfiltrationState, witness: Witness, world: Infiltration
     !state.cover.allowedSpaces.includes(state.player.spaceId)
   const nenWrong = witness.usesEn && !auraHidden
   const identity = sociallyWrong || nenWrong ? 'intruder' : 'maintenance'
+  // Seeing the visitor behave does not erase a suspicion already formed; it
+  // only stops feeding it.
+  if (identity === 'maintenance' && witness.belief.identity === 'intruder') return cool(witness, dt)
   const rate = identity === 'intruder' ? 24 : 7
   const certainty = Math.min(100, witness.belief.certainty + rate * dt)
   return {
@@ -269,7 +282,9 @@ function observe(state: InfiltrationState, witness: Witness, world: Infiltration
       identity,
       certainty,
       lastSpaceId: state.player.spaceId,
-      reported: witness.belief.reported || certainty >= REPORT_THRESHOLD,
+      // Only a suspicion is reported: being sure the aide is an aide is not news.
+      reported:
+        witness.belief.reported || (identity === 'intruder' && certainty >= REPORT_THRESHOLD),
     },
   }
 }

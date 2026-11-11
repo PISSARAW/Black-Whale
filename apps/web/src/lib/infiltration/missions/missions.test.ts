@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { MISSIONS, selectMission } from './definitions'
 import {
+  completeObjective,
   initialObjectives,
   objectiveTruth,
   objectivesPermitExtraction,
@@ -26,5 +27,23 @@ describe('infiltration V2 missions', () => {
     expect(objectivesPermitExtraction(objectives)).toBe(true)
     objectives = setObjective(objectives, 'confirm-author', 'invalidated')
     expect(objectiveTruth(objectives)).toEqual({ acquired: 2, confirmed: 0, false: 1 })
+  })
+  it('lets the copy and verify actions open extraction in every mission', () => {
+    for (const mission of Object.values(MISSIONS)) {
+      let objectives = initialObjectives(mission.objectives)
+      objectives = completeObjective(objectives, ['copy', 'plant', 'follow'], 'believed')
+      objectives = completeObjective(objectives, ['identify'], 'confirmed')
+      expect(objectivesPermitExtraction(objectives), mission.id).toBe(true)
+    }
+  })
+
+  it('never lets an optional duty take the place of the required one', () => {
+    const objectives = completeObjective(
+      initialObjectives(MISSIONS['compromised-shift'].objectives),
+      ['copy', 'plant', 'follow'],
+      'believed',
+    )
+    expect(objectives.find((item) => item.id === 'replace-register')?.state).toBe('believed')
+    expect(objectives.find((item) => item.id === 'perform-duty')?.state).toBe('unknown')
   })
 })

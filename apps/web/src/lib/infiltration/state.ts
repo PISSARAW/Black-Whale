@@ -10,9 +10,14 @@ import {
   type InfiltrationHatsuId,
 } from './hatsu'
 import type { CoverRole } from './social/cover'
+import { answerChallenge } from './social/challenge'
 import type { LittleEyeScout } from './hatsuSpatial'
 import { selectMission } from './missions/definitions'
-import { initialObjectives, objectivesPermitExtraction, setObjective } from './missions/objectives'
+import {
+  completeObjective,
+  initialObjectives,
+  objectivesPermitExtraction,
+} from './missions/objectives'
 import type { MissionId, MissionObjective, MissionSelection } from './missions/types'
 import { createTrace } from './traces'
 import { emptyMemory, type ActorMemory } from './actors/memory'
@@ -238,7 +243,9 @@ export function infiltrationReducer(
 ): InfiltrationState {
   if (state.outcome !== 'playing') return state
   const reduced = reduceAction(state, action)
-  if (reduced === state) return state
+  // A walk is sent every frame: journaling it buried the debrief under
+  // thousands of steps and grew the save past what local storage holds.
+  if (reduced === state || action.type === 'WALKED') return reduced
   return {
     ...reduced,
     journal: [
@@ -333,53 +340,6 @@ function useHatsu(state: InfiltrationState): InfiltrationState {
   }
 }
 
-function answerChallenge(
-  state: InfiltrationState,
-  answer: 'workOrder' | 'bluff',
-): InfiltrationState {
-  if (!state.challenge) return state
-  const prior = state.claims.at(-1)
-  const contradiction = !!prior && prior.answer !== answer
-  const documentSupport =
-    state.hatsu.forgedOrder &&
-    (state.hatsu.forgerySurface === 'work-order' ||
-      state.hatsu.forgerySurface === 'register-copy') &&
-    answer === 'workOrder'
-  const verification =
-    documentSupport && state.hatsu.forgerySurface === 'work-order'
-      ? { witnessId: state.challenge.witnessId, left: 15 }
-      : state.verification
-  const witnesses = state.witnesses.map((witness) => {
-    if (witness.id !== state.challenge?.witnessId) return witness
-    const correct =
-      !contradiction &&
-      (documentSupport ? true : answer === (witness.usesEn ? 'bluff' : 'workOrder'))
-    return {
-      ...witness,
-      challenged: true,
-      belief: {
-        ...witness.belief,
-        identity: correct ? ('maintenance' as const) : ('intruder' as const),
-        certainty: correct
-          ? Math.max(10, witness.belief.certainty - 30)
-          : Math.min(100, witness.belief.certainty + 48),
-      },
-    }
-  })
-  return {
-    ...state,
-    witnesses,
-    challenge: null,
-    verification,
-    claims: [...state.claims, { witnessId: state.challenge.witnessId, answer, at: state.clock }],
-    metrics: {
-      ...state.metrics,
-      challenges: state.metrics.challenges + 1,
-      contradictions: state.metrics.contradictions + (contradiction ? 1 : 0),
-    },
-  }
-}
-
 function copyDocument(state: InfiltrationState): InfiltrationState {
   if (state.player.spaceId !== state.objectiveSpaceId || state.documentCopied) return state
   return {
@@ -408,15 +368,6 @@ function verifyInformation(state: InfiltrationState): InfiltrationState {
     authorConfirmed: true,
     objectives: completeObjective(state.objectives, ['identify'], 'confirmed'),
   }
-}
-
-function completeObjective(
-  objectives: MissionObjective[],
-  kinds: MissionObjective['kind'][],
-  result: MissionObjective['state'],
-): MissionObjective[] {
-  const objective = objectives.find((candidate) => kinds.includes(candidate.kind))
-  return objective ? setObjective(objectives, objective.id, result) : objectives
 }
 
 function divert(state: InfiltrationState): InfiltrationState {

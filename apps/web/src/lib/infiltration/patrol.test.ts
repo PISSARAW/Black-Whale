@@ -60,4 +60,43 @@ describe('infiltration patrol', () => {
     expect(moved.position[0]).toBeLessThan(1)
     expect(moved.spaceId).toBe('a')
   })
+  it('walks through an intermediate room to reach one that shares no door', () => {
+    const line: NavGraph = {
+      nodes: ['a', 'b', 'c'],
+      edges: new Map([
+        ['a', ['b']],
+        ['b', ['a', 'c']],
+        ['c', ['b']],
+      ]),
+      centers: new Map([
+        ['a', [0, 0]],
+        ['b', [2, 0]],
+        ['c', [4, 0]],
+      ]),
+    }
+    const corridor: Arena = {
+      ...arena,
+      doorways: [
+        ...arena.doorways,
+        { tierId: 'test', a: 'b', b: 'c', start: [3, -0.5], end: [3, 0.5], width: 1 },
+      ],
+    }
+    let walker: Witness = { ...witness, route: ['c'] }
+    for (let step = 0; step < 200; step++) {
+      walker = patrolWitness(walker, { graph: line, arena: corridor, dt: 0.05 })
+    }
+    expect(walker.spaceId).toBe('c')
+  })
+
+  it('counts a centre buried in furniture as reached', () => {
+    const table: Arena = {
+      ...arena,
+      walls: [{ spaceId: 'a', start: [-0.5, -0.5], end: [-0.5, 0.5] }],
+    }
+    const pinned: Witness = { ...witness, position: [-1, 0], route: ['a', 'b'], routeIndex: 0 }
+    let next = pinned
+    for (let step = 0; step < 5; step++)
+      next = patrolWitness(next, { graph, arena: table, dt: 0.1 })
+    expect(next.routeIndex).toBe(1)
+  })
 })

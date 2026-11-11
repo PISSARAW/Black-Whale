@@ -44,6 +44,8 @@ export function decodeSave(raw: string): InfiltrationSave | null {
       state.security = securityPolicy(state.alertLevel, state.extractionSpaceId)
       state.journal = []
     }
+    // Saves written before walks left the journal carry one entry per frame.
+    state.journal = (state.journal ?? []).filter((event) => event.type !== 'WALKED')
     state.hatsu.scout ??= null
     state.hatsu.forgerySurface ??= 'work-order'
     state.hatsu.disguiseIdentity ??= 'maintenance'

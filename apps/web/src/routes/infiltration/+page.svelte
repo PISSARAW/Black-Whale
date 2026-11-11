@@ -15,7 +15,6 @@
   import { buildNavGraph } from '$lib/hunt/navmesh'
   import { floorOf, theShip, crossingsOn } from '$lib/tour/blueprint'
   import { centroid, EMPTY_WORLD } from '$lib/tour/hatsu'
-  import { interiorPoint } from '$lib/tour/geometry'
   import TourMinimapPanel from '$lib/components/tour/TourMinimapPanel.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
@@ -35,7 +34,15 @@
   import { MISSIONS, selectMission } from '$lib/infiltration/missions/definitions'
   import { seedFromText } from '$lib/infiltration/missions/random'
   import type { MissionId } from '$lib/infiltration/missions/types'
-  import { decodeSave, encodeSave } from '$lib/infiltration/persistence'
+  import { missionSetup } from '$lib/infiltration/missions/setup'
+  import { objectivesPermitExtraction } from '$lib/infiltration/missions/objectives'
+  import {
+    clearGame,
+    loadCampaign,
+    loadGame,
+    saveCampaign,
+    saveGame,
+  } from '$lib/infiltration/storage'
   import { causalTimeline, debriefAxes } from '$lib/infiltration/debrief'
   import {
     applyConsequences,
@@ -67,62 +74,26 @@
 
   let tierId = $state(arena.tierId)
 
-  function selectTier(id: string) {
-    tierId = id
-    const newPlan = ship.plans.get(id)
-    if (newPlan) {
-      plan = newPlan
-      const newArena = buildArena()
-      if (newArena.tierId === id) {
-        const newSpace =
-          newArena.spaces.find((s) => s.id === currentSpace?.id) ?? newArena.spaces[0]
-        position = centroid(newSpace)
-        currentSpace = newSpace
-      }
-    }
-  }
-
   const crossings = $derived(crossingsOn(ship, tierId))
+  // The mission is played on one deck: the minimap shows it, and offers no
+  // other to jump to.
   const decks = $derived(
-    ship.decks.map((tier) => ({
-      id: tier.id,
-      label: nameOf(tier),
-      active: tier.id === tierId,
-    })),
+    ship.decks
+      .filter((tier) => tier.id === arena.tierId)
+      .map((tier) => ({ id: tier.id, label: nameOf(tier), active: true })),
   )
 
   function freshGame() {
     const selection = selectMission(selectedMission, defaultSeed)
-    const objective = arena.spaces[selection.variant.objectiveIndex]
-    return initialInfiltrationState({
-      playerAt: { position: interiorPoint(extraction.footprint), spaceId: extraction.id },
-      objectiveSpaceId: objective.id,
-      extractionSpaceId: extraction.id,
-      selection,
-      witnesses: selection.definition.witnesses.map((definition, index) => {
-        const space = arena.spaces[definition.spaceIndex]
-        const neighbours = graph.edges.get(space.id) ?? []
-        const rotated = neighbours.map(
-          (_, routeIndex) =>
-            neighbours[(routeIndex + selection.variant.routeOffset) % neighbours.length],
-        )
-        return {
-          id: definition.id,
-          position: centroid(space),
-          heading: index % 2 === 0 ? 0 : Math.PI,
-          spaceId: space.id,
-          sight: definition.sight,
-          social: definition.social,
-          usesEn: definition.usesEn,
-          route: [space.id, ...rotated],
-        }
-      }),
-    })
+    return initialInfiltrationState(missionSetup({ selection, arena, graph }))
   }
 
-  const spawn = interiorPoint(extraction.footprint)
   let game = $state(freshGame())
-  let position = $state<Vec2>(spawn)
+  let position = $state<Vec2>(game.player.position)
+  // The scene lands the visitor at the deck's entrance unless told otherwise:
+  // these put them where the mission (or the save) says they stand.
+  let jumpTo = $state<string | null>(game.player.spaceId)
+  let jumpAt = $state<Vec2 | null>(game.player.position)
   let heading = $state(0)
   let currentSpace = $state<Space | null>(extraction)
   let engaged = $state(false)
@@ -139,7 +110,9 @@
   let canVerify = $derived(
     currentSpace?.id === objective.id && game.documentCopied && !game.authorConfirmed,
   )
-  let canExtract = $derived(currentSpace?.id === extraction.id && game.documentCopied)
+  let canExtract = $derived(
+    currentSpace?.id === extraction.id && objectivesPermitExtraction(game.objectives),
+  )
   let report = $derived(reconstruction(game))
   let hatsuPlan = $derived(planHatsu(game))
   let balance = $derived(evaluateRun(game))
@@ -239,7 +212,7 @@
         compromisedRole: game.coverIntegrity < 50 ? game.cover.role : undefined,
         learnedProcedure: game.security.level !== 'normal' ? game.security.level : undefined,
       })
-      localStorage.setItem('black-whale:infiltration:campaign:v1', JSON.stringify(campaign))
+      saveCampaign(campaign)
     }
   }
 
@@ -257,7 +230,7 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (finished || event.repeat) return
-    if (event.key === '?' || event.key === 'h' || event.key === 'H') {
+    if (event.key === '?') {
       if (!briefing) {
         manualOpen = !manualOpen
         event.preventDefault()
@@ -293,7 +266,7 @@
     frame = requestAnimationFrame(tick)
     const elapsed = last === 0 ? 0 : (now - last) / 1000
     last = now
-    if (briefing || finished) return
+    if (briefing || finished || manualOpen) return
     owed = Math.min(0.25, owed + elapsed)
     const moved = Math.hypot(
       position[0] - game.player.position[0],
@@ -315,6 +288,8 @@
   function again() {
     game = freshGame()
     position = game.player.position
+    jumpTo = game.player.spaceId
+    jumpAt = game.player.position
     briefing = true
     owed = 0
     last = 0
@@ -324,34 +299,26 @@
     selectedMission = id
     game = freshGame()
     position = game.player.position
+    jumpTo = game.player.spaceId
+    jumpAt = game.player.position
     currentSpace = extraction
     resetClock()
   }
 
   onMount(() => {
-    try {
-      const storedCampaign = JSON.parse(
-        localStorage.getItem('black-whale:infiltration:campaign:v1') ?? 'null',
-      )
-      if (storedCampaign?.version === 1) campaign = storedCampaign
-    } catch {
-      /* A corrupt campaign never blocks a mission. */
-    }
-    const saved = decodeSave(
-      localStorage.getItem('black-whale:infiltration:v3') ??
-        localStorage.getItem('black-whale:infiltration:v2') ??
-        '',
-    )
-    if (saved?.state.outcome === 'playing') {
+    campaign = loadCampaign() ?? campaign
+    const saved = loadGame()
+    if (saved) {
       game = saved.state
       selectedMission = saved.state.mission.id
       position = saved.state.player.position
+      jumpTo = saved.state.player.spaceId
+      jumpAt = saved.state.player.position
       currentSpace =
         arena.spaces.find((space) => space.id === saved.state.player.spaceId) ?? extraction
     }
     autosave = setInterval(() => {
-      if (game.outcome === 'playing' && !briefing)
-        localStorage.setItem('black-whale:infiltration:v3', encodeSave(game))
+      if (game.outcome === 'playing' && !briefing) saveGame(game)
     }, 3000)
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetClock)
@@ -369,6 +336,10 @@
     last = 0
     owed = 0
   }
+
+  $effect(() => {
+    if (finished) clearGame()
+  })
 </script>
 
 <Seo
@@ -390,11 +361,6 @@
     {decks}
     {crossings}
     {nameOf}
-    onSelectDeck={selectTier}
-    onSelectPlan={(space) => {
-      position = centroid(space)
-      currentSpace = space
-    }}
   />
   <p class="sr-only" aria-live="polite">
     {$t.infiltration.alert}
@@ -408,6 +374,8 @@
     bind:heading
     bind:currentSpace
     bind:engaged
+    bind:jumpTo
+    bind:jumpAt
     world={EMPTY_WORLD}
     nen={modeNen.value}
     showNenControls={true}
@@ -514,7 +482,7 @@
               : $t.infiltration.extract}</button
         >{/if}
       <button
-        onclick={() => send({ type: 'ZETSU' })}
+        onclick={() => useStandardNen({ type: game.player.nen === 'zetsu' ? 'TEN' : 'ZETSU' })}
         aria-keyshortcuts="X"
         class="rounded-sm border border-cyan-500/30 bg-cyan-950/30 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-900/50"
         >X · Ten/Zetsu</button

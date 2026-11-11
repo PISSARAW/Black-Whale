@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { selectMission } from './missions/definitions'
 import { decodeSave, encodeSave } from './persistence'
-import { initialInfiltrationState } from './state'
+import { infiltrationReducer, initialInfiltrationState } from './state'
 
 const state = initialInfiltrationState({
   playerAt: { position: [0, 0], spaceId: 'a' },
@@ -20,5 +20,19 @@ describe('versioned infiltration saves', () => {
     legacy.version = 2
     delete legacy.state.journal
     expect(decodeSave(JSON.stringify(legacy))?.version).toBe(3)
+  })
+  it('keeps the walk out of the journal, and out of the save', () => {
+    let walked = state
+    for (let frame = 0; frame < 600; frame++) {
+      walked = infiltrationReducer(walked, {
+        type: 'WALKED',
+        position: [frame / 100, 0],
+        spaceId: 'a',
+        moving: true,
+      })
+    }
+    expect(walked.journal).toHaveLength(0)
+    const bloated = { ...state, journal: [{ id: 'w', at: 0, type: 'WALKED', actor: 'player' }] }
+    expect(decodeSave(encodeSave(bloated as typeof state))?.state.journal).toEqual([])
   })
 })

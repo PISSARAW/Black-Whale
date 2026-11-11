@@ -28,3 +28,24 @@ export function objectiveTruth(objectives: MissionObjective[]) {
     false: acquired.filter((objective) => objective.state === 'invalidated').length,
   }
 }
+
+/**
+ * Settles the objective an action stands for. `kinds` is in order of
+ * preference, but an open required objective always wins over an optional
+ * one: a mission whose optional duty shares the action's kind (the
+ * compromised shift's `perform-duty`) cannot swallow the required one.
+ */
+export function completeObjective(
+  objectives: MissionObjective[],
+  kinds: MissionObjective['kind'][],
+  result: ObjectiveState,
+): MissionObjective[] {
+  const open = objectives.filter((objective) => objective.state === 'unknown')
+  const pick = (required: boolean) =>
+    kinds
+      .map((kind) => open.find((item) => item.kind === kind && item.required === required))
+      .find(Boolean)
+  const objective =
+    pick(true) ?? pick(false) ?? objectives.find((item) => kinds.includes(item.kind))
+  return objective ? setObjective(objectives, objective.id, result) : objectives
+}

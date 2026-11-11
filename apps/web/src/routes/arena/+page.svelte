@@ -859,6 +859,7 @@
 
   {#if touch && game.outcome === 'playing'}
     <nav class="touch-combat" aria-label={$t.arena.ui.quickActions}>
+      <button class="primary" onclick={strike}>{$t.arena.action.strike}</button>
       <button onclick={guard}>{$t.arena.ui.guard}</button>
       <button onclick={feint}>{$t.arena.ui.feint}</button>
       <button onclick={() => evade(-1)}>↙</button>

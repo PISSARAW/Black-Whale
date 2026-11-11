@@ -1,7 +1,7 @@
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { TourDetailTag } from './detailTag'
 import type { SourceBoundInteriorStyle } from './sourceBoundInteriorStyles'
-import type { Space, Structure } from './types'
+import type { Space, Structure, Vec2 } from './types'
 
 export interface SourceBoundBounds {
   minX: number
@@ -20,6 +20,7 @@ export interface SourceBoundRoomContext {
   bounds: SourceBoundBounds
   floor: number
   ceiling: number
+  lampPositions: readonly Vec2[]
   style: SourceBoundInteriorStyle
 }
 

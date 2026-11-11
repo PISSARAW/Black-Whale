@@ -1048,8 +1048,9 @@ describe('the ceiling fittings', () => {
       }
       expect(mesh.fittings.length % 18, `${tierId} has a fitting that is not a quad`).toBe(0)
     }
-    // 2 489 fittings on the ship: 4 978 triangles against the 341 000 it draws.
-    expect(total).toBeGreaterThan(2400)
+    // Detailed rooms model their own fixtures, while the rest of the ship still
+    // carries well over two thousand fallback fittings.
+    expect(total).toBeGreaterThan(2000)
   })
 
   it('hangs each one at the height its own light comes from', () => {
@@ -1102,7 +1103,7 @@ describe('the ceiling fittings', () => {
         checked++
       }
     }
-    expect(checked).toBeGreaterThan(4800)
+    expect(checked).toBeGreaterThan(4000)
   })
 
   it('sits each one inside the room that hangs it', () => {
@@ -1168,7 +1169,11 @@ describe('the ceiling fittings', () => {
     // quad drawn as a light answers nothing: the fittings are derived, like the
     // columns, and they belong to the walk rather than to the sources.
     for (const [tierId, plan] of ship.plans) {
-      expect(buildTierMesh(plan).fittings.length, `${tierId} lights nothing`).toBeGreaterThan(0)
+      const normal = buildTierMesh(plan).fittings.length
+      const allFixturesModelled = plan.spaces.every(
+        (space) => lamplightOf(space, plan.tier).modelled,
+      )
+      expect(normal > 0 || allFixturesModelled, `${tierId} lights nothing`).toBe(true)
       expect(
         buildTierMesh(plan, { reveal: true }).fittings.length,
         `${tierId} lights the doctrine`,

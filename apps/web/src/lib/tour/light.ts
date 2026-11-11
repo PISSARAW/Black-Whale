@@ -25,6 +25,7 @@ import type { Polygon, Space, SpaceCategory, Tier, Vec2 } from './types'
 import { ceilingLamps } from './geometry'
 import { diningHallLamplight } from './diningHallLighting'
 import { camillaLamplight } from './camillaLighting'
+import { sourceBoundStyleFor } from './sourceBoundInteriorStyles'
 
 /** A colour in the renderer's working space, linear, `[r, g, b]`. */
 export type Rgb = readonly [number, number, number]
@@ -266,7 +267,7 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
   // it burns. Picked the other way round, a cold lamp would read as a dim one.
   const peak = Math.max(...colour) || 1
   const burn = (LAMP_PEAK * power) / peak
-  return camillaLamplight(
+  const light = camillaLamplight(
     space.id,
     diningHallLamplight(space.id, {
       spacing,
@@ -276,6 +277,12 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
       dead: clamp01(deck.dead),
     }),
   )
+  if (!sourceBoundStyleFor(space.locationId)) return light
+  return {
+    ...light,
+    positions: ceilingLamps(space.footprint, light.spacing),
+    modelled: true,
+  }
 }
 
 /**

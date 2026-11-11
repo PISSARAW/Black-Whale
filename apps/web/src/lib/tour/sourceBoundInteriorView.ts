@@ -6,7 +6,8 @@ import {
   sourceBoundBoundsOf,
   type SourceBoundRoomContext,
 } from './sourceBoundInteriorContext'
-import { dressInferredProgramme, dressSourceBoundStructure } from './sourceBoundInteriorFurnishings'
+import { dressSourceBoundStructure } from './sourceBoundInteriorFurnishings'
+import { lamplightOf, lampsOf } from './light'
 import { sourceBoundStyleFor } from './sourceBoundInteriorStyles'
 import type { Space } from './types'
 
@@ -102,7 +103,7 @@ function dressWalls(context: SourceBoundRoomContext): void {
 }
 
 function dressCeiling(context: SourceBoundRoomContext): void {
-  const { into, space, bounds, floor, ceiling, style } = context
+  const { into, space, bounds, floor, ceiling, lampPositions, style } = context
   const y = floor + ceiling - 0.12
   const envelopeTag = reconstructionTag(context, {
     id: 'ceiling-envelope',
@@ -121,36 +122,27 @@ function dressCeiling(context: SourceBoundRoomContext): void {
     { at: [0, floor + ceiling - 0.015, 0], colour: style.ceiling, tag: envelopeTag },
     'down',
   )
-  if (!isAxisAlignedRectangle(space)) {
-    into.box([0.7, 0.06, 0.22], {
-      at: [bounds.centreX, y - 0.14, bounds.centreZ],
-      colour: style.accent,
-      glow: true,
-      tag: finishTag,
-    })
-    return
+  if (isAxisAlignedRectangle(space)) {
+    const count = countAcross(bounds.width, style.ceilingPattern === 'coffers' ? 3.4 : 2.6)
+    for (let index = 1; index <= count; index++) {
+      const x = bounds.minX + (bounds.width * index) / (count + 1)
+      into.box([0.12, 0.18, Math.max(0.2, bounds.depth - 0.2)], {
+        at: [x, y, bounds.centreZ],
+        colour: style.ceiling,
+        tag: finishTag,
+      })
+    }
+    if (style.ceilingPattern !== 'beams') {
+      into.box([Math.max(0.2, bounds.width - 0.3), 0.1, 0.18], {
+        at: [bounds.centreX, y - 0.12, bounds.minZ + Math.min(0.45, bounds.depth * 0.2)],
+        colour: style.metal,
+        tag: finishTag,
+      })
+    }
   }
-  const count = countAcross(bounds.width, style.ceilingPattern === 'coffers' ? 3.4 : 2.6)
-  for (let index = 1; index <= count; index++) {
-    const x = bounds.minX + (bounds.width * index) / (count + 1)
-    into.box([0.12, 0.18, Math.max(0.2, bounds.depth - 0.2)], {
-      at: [x, y, bounds.centreZ],
-      colour: style.ceiling,
-      tag: finishTag,
-    })
-  }
-  if (style.ceilingPattern !== 'beams') {
-    into.box([Math.max(0.2, bounds.width - 0.3), 0.1, 0.18], {
-      at: [bounds.centreX, y - 0.12, bounds.minZ + Math.min(0.45, bounds.depth * 0.2)],
-      colour: style.metal,
-      tag: finishTag,
-    })
-  }
-  const lights = countAcross(bounds.width, 4)
-  for (let index = 1; index <= lights; index++) {
-    const x = bounds.minX + (bounds.width * index) / (lights + 1)
+  for (const [x, z] of lampPositions) {
     into.box([0.75, 0.06, 0.22], {
-      at: [x, y - 0.14, bounds.centreZ],
+      at: [x, y - 0.14, z],
       colour: style.accent,
       glow: true,
       tag: finishTag,
@@ -181,6 +173,7 @@ export function buildSourceBoundInteriorDetails(options: {
   const space = plan.spaces.find(({ id }) => id === spaceId)
   const style = sourceBoundStyleFor(space?.locationId)
   if (!space || !style) return null
+  const lamplight = lamplightOf(space, plan.tier)
 
   const context: SourceBoundRoomContext = {
     into: new BanquetDetailBuilder(THREE),
@@ -188,6 +181,7 @@ export function buildSourceBoundInteriorDetails(options: {
     bounds: sourceBoundBoundsOf(space),
     floor: floorOf(space, plan.tier),
     ceiling: ceilingOf(space, plan.tier),
+    lampPositions: lampsOf(space.footprint, lamplight),
     style,
   }
   dressFloor(context)
@@ -196,6 +190,5 @@ export function buildSourceBoundInteriorDetails(options: {
   for (const structure of plan.structures.filter((item) => item.spaceId === spaceId)) {
     dressSourceBoundStructure(context, structure)
   }
-  dressInferredProgramme(context)
   return context.into.finish(`source-bound-${style.name}`)
 }

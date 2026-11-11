@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evidenceFor } from './sourceBoundRoomTestSupport'
+import { certificationIssuesFor, evidenceFor } from './sourceBoundRoomTestSupport'
 
 describe('the published Xi-Yu office plan', () => {
   it('keeps its guarded entrance and sole plan table', () => {
@@ -10,5 +10,6 @@ describe('the published Xi-Yu office plan', () => {
     expect(structures.map(({ id, provenance }) => [id, provenance])).toEqual([
       ['tier-4-xi-yu-family-office-meeting-room-meeting-desk', 'plan'],
     ])
+    expect(certificationIssuesFor('tier-4-xi-yu-family-office')).toEqual([])
   })
 })

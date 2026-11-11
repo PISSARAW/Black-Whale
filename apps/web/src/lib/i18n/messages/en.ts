@@ -462,6 +462,12 @@ export const en = {
       scaleHelp:
         'The deck plans are schematic. The reconstruction scales them so the rooms come out the size the panels imply, which is not a measurement of the ship.',
     },
+    reconstructionRole: {
+      attested: 'Attested element',
+      'metric-estimate': 'Metric estimate',
+      'functional-reconstruction': 'Functional reconstruction',
+      'connective-inference': 'Inferred connection',
+    },
     /**
      * The reveal. The walk already tints a surface by its provenance, which is
      * enough to notice and not enough to read; this drops the categories and
@@ -787,6 +793,7 @@ export const en = {
       close: 'Put it back',
       nothing: 'Nothing in front of you the blueprint has a source for.',
       claimHeading: 'What this asserts',
+      treatmentHeading: 'What was reconstructed',
       sourceHeading: 'Where it comes from',
       measured: (long: number, wide: number, height: number) =>
         `${long} × ${wide} m, ${height} m tall`,
@@ -794,7 +801,7 @@ export const en = {
       standingAbout: (room: string) => `Somewhere in ${room}`,
       room: 'A room the deck plans draw, walked at the size they give it.',
       detail:
-        'A visible detail from the panel, kept as sourced surface evidence without turning it into blueprint furniture or an obstacle.',
+        'A visible surface detail with its own evidence and reconstruction role, kept separate from blueprint furniture and obstacles.',
       /**
        * The card for a person, which the walk owed the moment it had any.
        *

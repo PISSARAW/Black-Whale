@@ -27,6 +27,7 @@ const tile: TourDetailTag = {
   name: 'Stained tile',
   nameFr: 'Carreau souillé',
   provenance: 'panel',
+  reconstructionRole: 'metric-estimate',
   source: 'Ch. 398 panel',
   sourceFr: 'Case du chap. 398',
 }
@@ -82,6 +83,7 @@ describe('the exhibit for a tagged model detail', () => {
     expect(card.id).toBe(tile.id)
     expect(card.claim).toBe('claim:detail')
     expect(card.source).toBe(tile.source)
+    expect(card.reconstructionRole).toBe('metric-estimate')
     expect(card.measured).toBeNull()
     expect(card.standingIn).toBe(`in:${hall.name}`)
   })

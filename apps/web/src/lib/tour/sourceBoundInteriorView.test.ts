@@ -9,6 +9,7 @@ import {
 } from './sourceBoundInteriorView'
 import { SOURCE_BOUND_INTERIOR_STYLES } from './sourceBoundInteriorStyles'
 import { distanceToBoundary, pointInPolygon } from './geometry'
+import { fittingLampsOf, lamplightOf, lampsOf } from './light'
 
 const ship = buildShip()
 
@@ -28,9 +29,17 @@ describe('source-bound interiors without published perspective panels', () => {
         spaceId: space.id,
         reveal: false,
       })!
+      const lamplight = lamplightOf(space, plan.tier)
+      const lamps = lampsOf(space.footprint, lamplight)
 
       expect(root.children.length).toBeGreaterThan(0)
       expect(root.children.length).toBeLessThanOrEqual(3)
+      expect(lamplight.modelled).toBe(true)
+      expect(fittingLampsOf(space.footprint, lamplight)).toEqual([])
+      const fixtures = root.children.find(
+        (object) => (object as THREE.Mesh).material instanceof THREE.MeshBasicMaterial,
+      ) as THREE.Mesh
+      expect(fixtures.geometry.getAttribute('position').count / 36).toBe(lamps.length)
       root.traverse((object) => {
         const mesh = object as THREE.Mesh
         if (!mesh.isMesh) return

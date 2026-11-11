@@ -33,6 +33,12 @@ import { appendTrace, type HuntTrace } from './traces'
 import { updateBelief } from './hunter/belief'
 import { initialHuntSocial, reactToTrace, type HuntSocialState, type HuntWitness } from './social'
 import {
+  initialHatsuIntel,
+  recordHatsuEvidence,
+  type HatsuEvidence,
+  type HuntHatsuIntel,
+} from './hatsuIntel'
+import {
   acceptVow,
   applyShu,
   capabilitiesOf,
@@ -84,6 +90,7 @@ export interface HuntState {
   terrain: HuntTerrainId | null
   traces: HuntTrace[]
   social: HuntSocialState
+  hatsuIntel: HuntHatsuIntel
 }
 
 export type HuntAction =
@@ -99,6 +106,7 @@ export type HuntAction =
   | { type: 'SHU'; itemId: string; on?: boolean }
   | { type: 'VOW'; vow: HuntVow }
   | { type: 'WOUND'; limb: WoundedLimb }
+  | { type: 'HATSU_CLUE'; evidence: HatsuEvidence }
 
 export interface HuntSetup {
   playerAt: { position: Vec2; spaceId: string }
@@ -141,6 +149,7 @@ export function initialHuntState(setup: HuntSetup): HuntState {
     terrain: setup.terrain ?? null,
     traces: [],
     social: initialHuntSocial(setup.witnesses),
+    hatsuIntel: initialHatsuIntel(),
   }
 }
 
@@ -214,6 +223,8 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
       return { ...state, advancedNen: acceptVow(state.advancedNen, action.vow, state.clock) }
     case 'WOUND':
       return { ...state, advancedNen: wound(state.advancedNen, action.limb) }
+    case 'HATSU_CLUE':
+      return { ...state, hatsuIntel: recordHatsuEvidence(state.hatsuIntel, action.evidence) }
     default:
       return state
   }

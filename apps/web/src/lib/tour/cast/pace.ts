@@ -11,7 +11,7 @@
  * clock and nothing else. Nobody here looks for a path, which is why nobody
  * here can be found halfway through a table.
  */
-import type { TierPlan } from '../blueprint'
+import type { Ship, TierPlan } from '../blueprint'
 import { closestPointOnSegment, pointInPolygon } from '../geometry'
 import type { Space, Vec2 } from '../types'
 import { seedOf } from './stations'
@@ -151,4 +151,31 @@ export function pacedAt(pace: Pace, seconds: number): PaceStep {
   t -= span
   if (t < pace.rest) return { at: pace.to, walking: false }
   return { at: between(pace.to, pace.from, (t - pace.rest) / span), walking: true }
+}
+
+/** Beats already worked out, by post: a post is rebuilt only when the cast is. */
+const LAID = new WeakMap<Post, Pace | null>()
+
+/** The beat a post walks on the ship it stands on, worked out once per post. */
+export function paceOf(ship: Ship, post: Post): Pace | null {
+  if (LAID.has(post)) return LAID.get(post)!
+  const plan = ship.plans.get(post.tierId)
+  const space = ship.spaces.get(post.spaceId)
+  const pace = plan && space ? paceFor(plan, space, post) : null
+  LAID.set(post, pace)
+  return pace
+}
+
+/**
+ * The posts, each pacing body moved to where its beat has taken it.
+ *
+ * For whatever has to find a body rather than a post — the reticle, above
+ * all. A body that stands is handed back as it came, so only the walkers are
+ * new objects.
+ */
+export function pacedPosts(ship: Ship, posts: readonly Post[], seconds: number): Post[] {
+  return posts.map((post) => {
+    const pace = paceOf(ship, post)
+    return pace ? { ...post, at: pacedAt(pace, seconds).at } : post
+  })
 }

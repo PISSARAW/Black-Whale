@@ -2,6 +2,7 @@ import type { Euler, Group, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import { raiseConcertFlute } from './humanFlutePose'
 import { HUMAN_REST_POSES } from './humanRestPoses'
+import { rememberHang, stride } from './humanWalk'
 
 export type HumanPose = NonNullable<Apparition['human']>['pose']
 
@@ -37,6 +38,7 @@ interface AnimatedHuman {
  */
 export function poseHuman(rig: PosedHuman): void {
   const { pose, figure, head, arms, legs, elbows, knees } = rig
+  arms.forEach(rememberHang)
   const rest = HUMAN_REST_POSES[pose]
   if (rest) {
     rest(rig)
@@ -111,13 +113,7 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
     rig.pelvis.position.x = pelvisBaseX + Math.sin(seconds * 0.8) * 0.012
 
     if (pose === 'walk') {
-      const stride = Math.sin(seconds * 5.2) * 0.42
-      rig.arms[0].rotation.x = shoulderBase[0].x - stride * 0.7
-      rig.arms[1].rotation.x = shoulderBase[1].x + stride * 0.7
-      rig.legs[0].rotation.x = hipBase[0].x + stride
-      rig.legs[1].rotation.x = hipBase[1].x - stride
-      rig.knees[0].rotation.x = Math.max(0, -stride) * 0.7
-      rig.knees[1].rotation.x = Math.max(0, stride) * 0.7
+      stride(rig, { seconds, hips: hipBase.map((hip) => hip.x) })
     } else if (pose === 'guard') {
       const rise = Math.sin(seconds * 2.4) * 0.035
       rig.arms.forEach((arm, index) => {

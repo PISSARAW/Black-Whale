@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { theShip } from '../blueprint'
 import { closestPointOnSegment, pointInPolygon } from '../geometry'
 import { castApparitions, distribute } from './distribution'
-import { pacedAt, type Pace } from './pace'
+import { pacedAt, pacedPosts, type Pace } from './pace'
 import type { CastMember } from './types'
 
 const ship = theShip()
@@ -102,5 +102,24 @@ describe('who walks one', () => {
     ])
     expect(seen?.human).toBeDefined()
     expect(seen?.human?.pace).toBeUndefined()
+  })
+})
+
+describe('the posts as the reticle finds them', () => {
+  const sakata = member({
+    characterId: 'sakata',
+    locations: ['tier-1-royal-residential-sector-room-1014'],
+  })
+
+  it('moves a walker along its beat and hands a standing body back as it came', () => {
+    const posts = distribute(ship, [WALKERS[1]!, sakata])
+    const [{ human }] = castApparitions(ship, [posts[0]!])
+    const pace = human!.pace!
+    const span = Math.hypot(pace.to[0] - pace.from[0], pace.to[1] - pace.from[1]) / pace.speed
+    const halfway = pace.rest + span / 2 - pace.offset
+    const [walker, standing] = pacedPosts(ship, posts, halfway)
+    expect(walker!.at).toEqual(pacedAt(pace, halfway).at)
+    expect(walker!.at).not.toEqual(posts[0]!.at)
+    expect(standing).toBe(posts[1])
   })
 })

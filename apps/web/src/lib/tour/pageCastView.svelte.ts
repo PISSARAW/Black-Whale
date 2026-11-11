@@ -19,14 +19,19 @@ import {
   hostileRooms,
   intentsFor,
   runConduct,
+  sensedBy,
+  sensesFromKey,
+  sensesKey,
   type BeastVoice,
   type BodyMark,
   type CastBeast,
   type CastPayload,
   type Post,
   type Situation,
+  type Visitor,
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
+import { pacedPosts } from '$lib/tour/cast/pace'
 import { concertCast, type ConcertPerformance } from './melodyConcert'
 
 /** What the page knows that the distribution needs. */
@@ -71,6 +76,13 @@ interface CastViewOptions {
   read: () => CastContext
   /** What is being done to the people, from the body view. See above. */
   readBodies: () => BodiesContext
+  /**
+   * Where the visitor stands and what aura they carry, for the sweeps.
+   *
+   * A third closure because it changes every frame: folded into `read`, every
+   * derived value here — the distribution first — would rerun at frame rate.
+   */
+  readVisitor: () => Visitor
   updateWorld: (world: TourWorld) => void
 }
 
@@ -85,6 +97,18 @@ interface CastViewOptions {
  */
 export class TourCastView {
   constructor(private readonly options: CastViewOptions) {}
+
+  /**
+   * The walk's clock, as the scene keeps it, read once a beat.
+   *
+   * `step` sets it, on the page's one-second clock. The scene's own clock is
+   * `requestAnimationFrame`'s, which counts from the same origin, so a body
+   * pacing its beat is found within a second of where it is drawn.
+   */
+  private clock = $state(0)
+
+  /** The same posts, each pacing body where its beat has taken it. See `cast/pace.ts`. */
+  walking = $derived.by<Post[]>(() => pacedPosts(this.options.ship, this.posts, this.clock))
 
   /** Where everyone on this deck stands, at the event the server selected. */
   posts = $derived.by<Post[]>(() => {
@@ -110,18 +134,32 @@ export class TourCastView {
    * a single body have to agree about whether a guard is alarmed, and two
    * constructions of the same situation is exactly how they would stop agreeing.
    */
-  situation = $derived.by<Situation>(() => {
+  private ground = $derived.by<Situation>(() => {
     const { world, visitorIn, casting } = this.options.read()
     const { aimedAt, holds, drained } = this.options.readBodies()
     return {
       visitorIn,
       visitorCasting: casting,
+      visitorHidden: this.hidden,
       hostileRooms: hostileRooms(this.options.ship, world),
       aimedAt,
       holds,
       drained,
+      sensedBy: {},
     }
   })
+
+  /** Booleans and strings stop the frame-rate visitor here. See `cast/sensing.ts`. */
+  private hidden = $derived.by(() => this.options.readVisitor().nen.in)
+  private sensed = $derived.by(() => {
+    const visitor = this.options.readVisitor()
+    return sensesKey(sensedBy(this.walking, visitor, (post) => auraFor(post, this.ground).nen))
+  })
+
+  situation = $derived.by<Situation>(() => ({
+    ...this.ground,
+    sensedBy: sensesFromKey(this.sensed),
+  }))
 
   /**
    * The people and the beasts, as the scene draws them.
@@ -203,6 +241,7 @@ export class TourCastView {
    * does the rest, with the same refusals it gives the visitor.
    */
   step = (tick: number) => {
+    this.clock = performance.now() / 1000
     const { cast, world, visitorIn } = this.options.read()
     if (!visitorIn || cast.chapterNumber === null) return
     const intents = intentsFor(this.posts, {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Group, Object3D } from 'three'
-import { humanAnimation } from './humanAnimation'
+import { humanAnimation, poseHuman } from './humanAnimation'
 
 function rig() {
   const arms = [new Group(), new Group()]
@@ -35,5 +35,20 @@ describe('humanAnimation', () => {
     animate(1, 'idle')
     expect(human.figure.rotation.z).toBe(0)
     expect(human.arms[1].rotation.z).toBe(0)
+  })
+
+  it('lets a guard set walking drop their arms to how they hung', () => {
+    const human = { ...rig(), pose: 'guard' as const }
+    const elbows = human.arms.map((arm) => arm.children[1] as Group)
+    poseHuman({ ...human, elbows })
+    const animate = humanAnimation(human)
+
+    animate(1, 'walk')
+    expect(human.arms[0].rotation.z).toBeCloseTo(0)
+    expect(human.arms[0].children[1]!.rotation.x).toBeCloseTo(0)
+    expect(human.arms[0].rotation.x).not.toBeCloseTo(human.arms[1].rotation.x)
+
+    animate(1, 'guard')
+    expect(human.arms[0].rotation.z).toBeCloseTo(0.64)
   })
 })

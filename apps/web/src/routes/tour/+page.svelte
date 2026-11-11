@@ -31,11 +31,11 @@
   import { hearTheRoom } from '$lib/tour/cast/hearing'
   import { punchRuns } from '$lib/tour/punch'
   import { daysLeft } from '$lib/tour/decipher'
-  import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
+  import { keepTheBeat } from '$lib/tour/pageBeat.svelte'
   import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
-  import { TourWorldTicker } from '$lib/tour/pageWorldTicker'
+  import { scarletWashOf, TourWorldTicker } from '$lib/tour/pageWorldTicker'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
   import { canUseTourHatsu } from '$lib/tour/hatsuMode'
   import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
@@ -193,7 +193,7 @@
    * exactly as before.
    */
   const examineAim = (): Exhibit | null => {
-    const person = aimedPerson(castView.posts, {
+    const person = aimedPerson(castView.walking, {
       from: position,
       heading,
       spaceId: currentSpace?.id ?? null,
@@ -556,21 +556,9 @@
   let note = $state<{ line: string; until: number } | null>(null)
   const bodyNote = $derived(note && note.until > now ? note.line : null)
 
-  /**
-   * Emperor Time over the scene, deepening with what it has spent.
-   *
-   * The walk's own ledger rather than the global store `/nen` keeps: the hours
-   * are counted in `TourWorld` on the page's own beat — see `emperor.ts` — and a
-   * wash driven by anything else would be the picture and the panel quoting two
-   * different years.
-   */
+  // Emperor Time over the scene: see `scarletWashOf` in `pageWorldTicker`.
   const scarletWash = $derived(
-    world.scarlet
-      ? {
-          share: Math.min(1, world.scarlet.hours / HOURS_IN_A_YEAR),
-          label: $t.nen.lifeConsumed(world.scarlet.hours.toLocaleString($locale)),
-        }
-      : null,
+    scarletWashOf(world.scarlet, (hours) => $t.nen.lifeConsumed(hours.toLocaleString($locale))),
   )
 
   const castView: TourCastView = new TourCastView({
@@ -584,17 +572,14 @@
       mangaView: activeMangaView,
       concert,
     }),
-    // What the visitor is doing to one body in particular (ADR-004): the
-    // conduct answers being aimed at personally, and being held, differently
-    // from a technique merely going off in the room. Only a raised aura is
-    // felt — `readingIsFelt` — so looking hard through Gyo alarms nobody.
+    // ADR-004: aim and holds, documented on `Contact.aimedAt` in `cast/sensing`.
     readBodies: () => ({
       aimedAt: readingIsFelt(hatsuSession.nen) ? bodyView.aimedId : null,
       holds: bodyView.marks,
-      // Not a hold, and it outlasts every one of them: a body Steal Chain has
-      // emptied has no aura for as long as the book has its ability.
+      // Not a hold: emptied by Steal Chain for as long as the book has it.
       drained: world.book.stolenFrom ? [world.book.stolenFrom] : [],
     }),
+    readVisitor: () => ({ at: position, nen: hatsuSession.nen }),
     updateWorld: (next) => (world = next),
   })
   /**
@@ -607,7 +592,7 @@
   const bodyView: TourBodyView = new TourBodyView({
     read: () => ({
       cast,
-      posts: castView.posts,
+      posts: castView.walking,
       spaceId: currentSpace?.id ?? null,
       position,
       heading,
@@ -696,24 +681,15 @@
       }
     },
   })
-  // The conduct runs on the walk's own clock, a second at a time: the page
-  // already keeps one, and the walk is only ever allowed one. The holds expire
-  // on the same beat, for the same reason.
-  $effect(() => {
-    const beat = setInterval(() => {
-      castView.step(Math.floor(Date.now() / 1000))
-      bodyView.step(Date.now())
-      // The console counts on the walk's own beat, never on the reader's clock.
-      ticker.consoleDay()
-      // And Emperor Time spends on it: an hour of life a second, held or not
-      // touched, which is the only way a price can be one.
-      ticker.scarletSecond()
-      // And a copy lasts a day, on the same exchange: the second of the walk
-      // is worth an hour, so twenty-four of them and the fake is gone.
-      ticker.copyHour()
-    }, 1000)
-    return () => clearInterval(beat)
-  })
+  // The walk's one clock: what hangs on it, and why, is `pageBeat.svelte.ts`.
+  keepTheBeat([
+    () => castView.step(Math.floor(Date.now() / 1000)),
+    () => bodyView.step(Date.now()),
+    ticker.consoleDay,
+    ticker.scarletSecond,
+    ticker.copyHour,
+    hatsuSession.breathe,
+  ])
   /**
    * Everybody is let go of when the aura comes down.
    *
@@ -738,7 +714,7 @@
    */
   const strandOn = $derived.by(() => {
     if (!bodyView.strandOn) return null
-    const post = castView.posts.find((each) => each.member.characterId === bodyView.strandOn)
+    const post = castView.walking.find((each) => each.member.characterId === bodyView.strandOn)
     return post ? { spaceId: post.spaceId, at: post.at } : null
   })
 
@@ -920,8 +896,7 @@
       concert,
       flash,
       auraColour: technique?.color ?? null,
-      nen: hatsuSession.nen,
-      onNenChange: hatsuSession.useNen,
+      ...hatsuSession.scene,
       aiming: Boolean(technique),
       selfCastable,
       reveal: chrome.reveal,

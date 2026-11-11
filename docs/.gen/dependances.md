@@ -12,7 +12,7 @@ Nœuds : 23 · Arêtes uniques : 47
 | `lib:arena` | `lib:nen` | 7 |
 | `lib:arena` | `lib:tour` | 4 |
 | `lib:arena` | `package:@black-whale/nen-engine` | 3 |
-| `lib:assets` | `lib:components` | 1 |
+| `lib:assets` | `lib:components` | 2 |
 | `lib:assets` | `lib:map` | 2 |
 | `lib:assets` | `lib:tour` | 6 |
 | `lib:audio` | `lib:infiltration` | 1 |

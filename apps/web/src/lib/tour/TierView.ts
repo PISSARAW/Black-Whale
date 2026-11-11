@@ -30,6 +30,10 @@ import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from './supremeCour
 import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screeningRoomView'
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
+import {
+  buildCentralCourthouseDetails,
+  centralCourthouseSurfacePlan,
+} from './centralCourthouseView'
 
 export interface TierRoomView {
   spaceId: string
@@ -169,6 +173,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildScreeningRoomDetails,
   buildHangarEntranceDetails,
   buildWarehouseDetails,
+  buildCentralCourthouseDetails,
 ]
 
 /** Builds and disposes the shared-buffer visual representation of a deck. */
@@ -188,7 +193,7 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const basePlan = prisonSurfacePlan(plan, reveal)
+    const basePlan = centralCourthouseSurfacePlan(prisonSurfacePlan(plan, reveal), reveal)
     const surfacePlan = warehouseSurfacePlan(
       hangarEntranceSurfacePlan(
         screeningRoomSurfacePlan(

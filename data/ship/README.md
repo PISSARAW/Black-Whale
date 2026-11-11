@@ -925,6 +925,17 @@ francophone sous forme de prose anglaise au milieu du panneau.
 
 ## Modifier le vaisseau
 
+### Le tribunal central du niveau 3
+
+La [fidélisation du chapitre 359](central-courthouse-audit.md) reprend le siège
+dégagé de Botobai, son maillet, les deux pupitres à droite et les tentures. Son
+intérieur est reconstruit à une échelle estimée de 12 × 10 × 4,2 m ; le cadrage
+ne fournit pas de dimensions absolues. Le plan local de `/ship` projette directement
+les mêmes volumes que `/tour`, et la vue manga `central-courthouse-hearing` les cadre
+depuis l’espace d’audience. La position de l’accès hors champ reste déduite.
+
+### Vérifier une modification
+
 Ce fichier s'édite à la main, comme le reste de `data/`. Après toute
 modification :
 

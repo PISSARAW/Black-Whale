@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 62 lieux, 427 espaces, 1165 éléments modélisés.**
+**Couverture : 62 lieux, 427 espaces, 1169 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -300,8 +300,8 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 5 cabinet, 3 basin, 3 bed, 2 counter, 2 table, 1 painting, 1 seat
-- **Objets directement visibles dans les cases :** 17/17
+- **Éléments modélisés :** 8 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 2 seat, 1 painting
+- **Objets directement visibles dans les cases :** 22/22
 - **Espaces internes :** Quartiers des domestiques — 1004 (Tserriednich) ; WC du personnel — 1004 (Tserriednich) ; Vestibule d'entrée — 1004 (Tserriednich) ; Cuisine — 1004 (Tserriednich) ; Salle à manger — 1004 (Tserriednich) ; Salon — 1004 (Tserriednich) ; Chambre du prince — 1004 (Tserriednich) ; Bain et WC — 1004 (Tserriednich)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
@@ -309,6 +309,11 @@
 - **Sources du mobilier et des détails :**
   - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
   - Chap. 384–387 — le salon presque vide où Tserriednich s'entraîne au Nen présente un sol géométrique poli, de hautes portes à panneaux, des murs moulurés, un cadre et une pendule sur le manteau.
+  - Chap. 384–387 — mobilier d'arrière-plan contre le mur ouest du salon de Tserriednich, près de la porte du personnel : une vitrine vitrée.
+  - Chap. 384–387 — une haute armoire fermée se tient plus loin sur le mur ouest du salon, entre la vitrine et le buffet.
+  - Chap. 384–387 — une étagère ouverte se trouve sur le mur est, au sud du manteau et de la pendule.
+  - Chap. 384–387 — un fauteuil en rotin tressé se tient près du canapé et de la table basse.
+  - Chap. 384–387 — une vasque décorative sur un socle se tient près de l'entrée, visible derrière Tserriednich et le majordome.
 
 ## Chambre 1005 (Tubeppa) — `tier-1-royal-residential-sector-room-1005`
 
@@ -731,18 +736,18 @@
 ## Palais de justice central — `tier-3-central-courthouse`
 
 - **Pont :** tier-3, interior-courthouse
-- **Preuve de l’enveloppe :** plan publié
+- **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 2
-- **Emprises relevées :** 35 × 59.5 m ; 24 × 18 m
-- **Hauteurs sous plafond :** 8 m
-- **Éléments modélisés :** 3 table, 2 counter, 1 platform
-- **Objets directement visibles dans les cases :** 0/6
+- **Emprises relevées :** 35 × 59.5 m ; 12 × 10 m
+- **Hauteurs sous plafond :** 8, 4.2 m
+- **Éléments modélisés :** 2 counter, 1 painting, 1 pillar, 1 seat
+- **Objets directement visibles dans les cases :** 5/5
 - **Espaces internes :** Salle d’audience
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
-  - Plan du tribunal ; le siège du magistrat, les greffiers, le parquet et la défense
+  - Chap. 359, tome 34 ; case du Tribunal central fournie le 11 novembre 2026 : siège dégagé de Botobai, maillet à long manche posé au sol, deux pupitres décalés à droite et tentures au fond. Emprise, hauteurs et espacements estimés pour la reconstruction.
 - **Sources du mobilier et des détails :**
-  - Plan du tribunal ; le siège du magistrat, les greffiers, le parquet et la défense
+  - Chap. 359, tome 34 ; case du Tribunal central fournie le 11 novembre 2026 : siège dégagé de Botobai, maillet à long manche posé au sol, deux pupitres décalés à droite et tentures au fond. Emprise, hauteurs et espacements estimés pour la reconstruction.
 
 ## Hôpital central — `tier-3-central-hospital`
 

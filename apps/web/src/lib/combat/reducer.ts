@@ -134,7 +134,6 @@ function tick(state: CombatState, dt: number): CombatState {
   )
 }
 
-/** The whole of a HATSU action, which is what `castHatsu` reads anyway. */
 interface HatsuCast {
   side: CombatSide
   effect: ArenaHatsuEffect
@@ -300,7 +299,6 @@ function castHatsu(
   })
 }
 
-/** The named contracts, resolved after the cost has already been taken. */
 interface BlackWhaleCast {
   side: CombatSide
   zone: BodyZone

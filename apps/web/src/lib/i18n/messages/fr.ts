@@ -1695,6 +1695,19 @@ export const fr: Messages = {
       askedLabel: 'Vous demandez',
       answerLabel: 'Elle répond',
 
+      announcements: {
+        started: 'La partie commence. Choisissez une question à poser à Morena.',
+        turn: (question, answer, card) =>
+          `Vous demandez : ${question} Morena répond : ${answer} Morena retire ${card}.`,
+        offer: 'Morena propose un baiser en échange d’une carte du cimetière.',
+        declined: 'Vous refusez le baiser. La main actuelle reste en jeu.',
+        recovered: (card) => `Vous acceptez le baiser et récupérez ${card}.`,
+        settled: (card) => `Vous jouez ${card}.`,
+        narrowed: 'La Manipulation réduit désormais la réponse possible à Oui ou Non.',
+        verdict: (result) => `La négociation est terminée. Réponse finale : ${result}.`,
+        updated: 'L’état de la négociation a changé.',
+      },
+
       // La table jouée à la main : ce que ferait la carte visée si on la
       // prenait. Chacun de ces gestes est un coup que le panneau propose aussi —
       // la salle est une seconde paire de mains sur la même partie.

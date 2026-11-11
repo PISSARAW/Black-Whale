@@ -1836,6 +1836,19 @@ export const en = {
       askedLabel: 'You asked',
       answerLabel: 'She said',
 
+      announcements: {
+        started: 'Game started. Choose a question for Morena.',
+        turn: (question: string, answer: string, card: string) =>
+          `You asked: ${question} Morena answered: ${answer} Morena removed ${card}.`,
+        offer: 'Morena offers a kiss in exchange for one discarded card.',
+        declined: 'You refused the kiss. The current hand remains in play.',
+        recovered: (card: string) => `You accepted the kiss and recovered ${card}.`,
+        settled: (card: string) => `You played ${card}.`,
+        narrowed: 'Manipulation has narrowed the possible answer to Yes or No.',
+        verdict: (result: string) => `The negotiation is over. Final answer: ${result}.`,
+        updated: 'The negotiation state changed.',
+      },
+
       // The table played with the hands: what the card under the reticle would
       // do if it were taken hold of. Every one of these is a move the panel
       // beside it also offers — the room is a second pair of hands on the same

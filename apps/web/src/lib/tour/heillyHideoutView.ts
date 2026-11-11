@@ -6,6 +6,7 @@ import { dressHeillyCorridorArchitecture } from './heillyCorridorArchitecture'
 import { dressHeillyLaundryArchitecture } from './heillyLaundryArchitecture'
 import { dressHeillyOffice } from './heillyOfficeFurniture'
 import { dressHeillyProcessingArchitecture } from './heillyProcessingArchitecture'
+import type { RoomDetailMode } from './TierView'
 import type { Structure } from './types'
 
 export const HEILLY_PROCESSING = 'tier-2-heilly-secret-hideout-processing'
@@ -47,6 +48,7 @@ export function buildHeillyHideoutDetails(options: {
   plan: TierPlan
   spaceId: string
   reveal: boolean
+  detailMode?: RoomDetailMode
 }): Three.Group | null {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal || !HEILLY_SPACES.has(spaceId)) return null

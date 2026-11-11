@@ -42,6 +42,7 @@
       class="mt-3 rounded border border-[#333] p-3 {index === 0 && seats.length === 1
         ? 'mt-5'
         : ''}"
+      data-testid="morena-hatsu-seat"
       style:border-color={auraColor}
     >
       <div class="flex items-baseline justify-between gap-2">

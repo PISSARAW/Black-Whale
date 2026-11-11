@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte'
   import { t } from '$lib/i18n'
   import { infectionAfter, type MorenaGame } from '$lib/tour/morena'
 
@@ -11,6 +12,7 @@
   let { game, onAgain, onLeave }: Props = $props()
   const copy = $derived($t.tour.morena)
   const conditions = $derived(infectionAfter(game))
+  let verdictHeading = $state<HTMLHeadingElement | null>(null)
   const verdictCopy = $derived(
     game.verdict
       ? (copy.verdicts as Record<string, { title: string; body: string }>)[game.verdict]
@@ -18,11 +20,26 @@
   )
   const aftermathLabel = (consequence: string) =>
     (copy.hatsu.aftermath as Record<string, string>)[consequence] ?? consequence
+
+  $effect(() => {
+    const verdict = game.verdict
+    if (!verdict) return
+    void tick().then(() => verdictHeading?.focus())
+  })
 </script>
 
 {#if game.verdict}
-  <div class="mt-4 rounded border border-[#d94f68]/60 bg-[#d94f68]/10 p-3">
-    <h2 class="text-base font-semibold text-[#FFFFF0]">{verdictCopy?.title}</h2>
+  <div
+    class="mt-4 rounded border border-[#d94f68]/60 bg-[#d94f68]/10 p-3"
+    data-testid="morena-verdict"
+  >
+    <h2
+      class="text-base font-semibold text-[#FFFFF0] outline-none"
+      bind:this={verdictHeading}
+      tabindex="-1"
+    >
+      {verdictCopy?.title}
+    </h2>
     <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/75">{verdictCopy?.body}</p>
   </div>
 

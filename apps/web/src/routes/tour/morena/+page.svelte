@@ -461,6 +461,27 @@
 
   /** What Morena said to the last question asked, for the panel's read-out. */
   const lastAsked = $derived(game.asked.length ? game.asked[game.asked.length - 1] : null)
+  /** The complete turn result, announced without requiring the WebGL table. */
+  const liveAnnouncement = $derived.by(() => {
+    if (view !== 'table') return ''
+    if (game.verdict) return copy.announcements.verdict(copy.verdicts[game.verdict].title)
+
+    const beat = game.log[game.log.length - 1]
+    if (!beat || beat.kind === 'marked') return copy.announcements.started
+    if (beat.kind === 'taken' && lastAsked) {
+      return copy.announcements.turn(
+        copy.questions[lastAsked].title,
+        copy.questions[lastAsked].morena,
+        nameOfCard(beat.card),
+      )
+    }
+    if (beat.kind === 'offered') return copy.announcements.offer
+    if (beat.kind === 'declined') return copy.announcements.declined
+    if (beat.kind === 'recovered') return copy.announcements.recovered(nameOfCard(beat.card))
+    if (beat.kind === 'settled') return copy.announcements.settled(nameOfCard(beat.card))
+    if (beat.kind === 'narrowed') return copy.announcements.narrowed
+    return copy.announcements.updated
+  })
 </script>
 
 <Seo
@@ -474,6 +495,16 @@
 />
 
 <svelte:window onkeydown={onWindowKeydown} />
+
+<p
+  class="sr-only"
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+  data-testid="morena-announcement"
+>
+  {liveAnnouncement}
+</p>
 
 <div class="mx-auto max-w-[1600px] px-4 py-8 sm:px-8" data-hatsu-pass>
   <header class="archive-page-heading mb-6">
@@ -665,11 +696,7 @@
           </div>
         {/if}
 
-        {#if game.phase === 'deal'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
-        {:else if game.phase === 'asking'}
-          <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
-        {:else if game.phase === 'settling'}
+        {#if game.phase !== 'over'}
           <MorenaPhaseActions bind:game bind:choice {nameOfCard} random={randomAtTable} />
         {:else if game.verdict}
           <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => (view = 'menu')} />

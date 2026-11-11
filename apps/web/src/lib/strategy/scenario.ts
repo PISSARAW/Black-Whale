@@ -77,6 +77,7 @@ export function evaluateScenarioObjective(
     current = Math.max(0, ...groups.values())
   }
   return {
+    id: objective.id,
     doctrine: config.doctrine,
     title: objective.title,
     description: objective.description,

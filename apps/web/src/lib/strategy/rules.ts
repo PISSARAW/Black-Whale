@@ -20,6 +20,7 @@ export const VICTORY_POINTS_TARGET = 3
 export type StrategyDoctrine = 'EXPANSION' | 'CONSOLIDATION' | 'INTELLIGENCE'
 
 export interface StrategyObjective {
+  id: string
   doctrine: StrategyDoctrine
   title: string
   description: string
@@ -121,6 +122,7 @@ export function evaluateObjective(
     const current = Math.max(0, ...groups.values())
     const target = Math.min(2, Math.max(1, occupied.length))
     return {
+      id: `doctrine:${doctrine}`,
       doctrine,
       title: 'Form a Bastion',
       description: `Gather ${target} units in the same location by the end of the turn.`,
@@ -132,6 +134,7 @@ export function evaluateObjective(
   if (doctrine === 'INTELLIGENCE') {
     const target = 2
     return {
+      id: `doctrine:${doctrine}`,
       doctrine,
       title: 'Clear the Fog',
       description: `Confirm the position of ${target} hostile units.`,
@@ -142,10 +145,24 @@ export function evaluateObjective(
   }
   const progress = objectiveProgress(characterLocations, occupied.length)
   return {
+    id: `doctrine:${doctrine}`,
     doctrine,
     title: 'Extend Your Presence',
     description: `Occupy ${progress.target} distinct locations with your units.`,
     ...progress,
+  }
+}
+
+export function claimObjectiveReward(
+  objective: Pick<StrategyObjective, 'id' | 'complete'> | null,
+  rewardedObjectiveIds: readonly string[],
+): { rewarded: boolean; rewardedObjectiveIds: string[] } {
+  if (!objective?.complete || rewardedObjectiveIds.includes(objective.id)) {
+    return { rewarded: false, rewardedObjectiveIds: [...rewardedObjectiveIds] }
+  }
+  return {
+    rewarded: true,
+    rewardedObjectiveIds: [...rewardedObjectiveIds, objective.id],
   }
 }
 

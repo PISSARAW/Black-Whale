@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   COMMAND_POINTS_PER_TURN,
   chooseStrategicDestination,
+  claimObjectiveReward,
   doctrineForFaction,
   evaluateObjective,
   intelCertainty,
@@ -46,6 +47,19 @@ describe('strategy rules', () => {
     expect(evaluateObjective('EXPANSION', ['a', 'b', 'c'], 0).complete).toBe(true)
     expect(evaluateObjective('CONSOLIDATION', ['a', 'a', 'b'], 0).complete).toBe(true)
     expect(evaluateObjective('INTELLIGENCE', ['a'], 2).complete).toBe(true)
+  })
+
+  it('awards each completed objective only once', () => {
+    const objective = evaluateObjective('EXPANSION', ['a', 'b', 'c'], 0)
+    const first = claimObjectiveReward(objective, [])
+    expect(first).toEqual({
+      rewarded: true,
+      rewardedObjectiveIds: ['doctrine:EXPANSION'],
+    })
+    expect(claimObjectiveReward(objective, first.rewardedObjectiveIds)).toEqual({
+      rewarded: false,
+      rewardedObjectiveIds: ['doctrine:EXPANSION'],
+    })
   })
 
   it('makes AI destinations follow doctrine priorities', () => {

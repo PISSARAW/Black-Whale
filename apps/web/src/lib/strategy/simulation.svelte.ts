@@ -32,6 +32,7 @@ import type { StrategyScenarioV2 } from './scenario/types'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
+  claimObjectiveReward,
   planCost,
   type StrategyObjective,
 } from './rules'
@@ -86,6 +87,7 @@ export function createSimulationStore() {
   let hatsuCues = $state<StrategyHatsuCue[]>([])
   let hatsuCueSequence = 0
   let movementGraph: StrategyMovementGraph = new Map()
+  let rewardedObjectiveIds = $state<string[]>([])
 
   /** Everything a fresh campaign needs, in one argument. */
   function init({
@@ -114,6 +116,7 @@ export function createSimulationStore() {
     factions = loadedFactions
     locations = loadedLocations
     movementGraph = strategyMovementGraph(loadedLocations.map((location) => location.id))
+    rewardedObjectiveIds = []
     selectedFactionId = null
     intel = {}
     victoryPoints = 0
@@ -125,6 +128,7 @@ export function createSimulationStore() {
     relationships = {}
     unitConditions = {}
     turnHistory = []
+    rewardedObjectiveIds = []
     hatsuCues = []
     hatsuCueSequence = 0
     turnReports = [messagesFor(activeLocale).strategy.reports.initialized]
@@ -388,11 +392,10 @@ export function createSimulationStore() {
     ).size
     const objective = currentObjective()
     victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + hatsuInfluence)
+    const objectiveReward = claimObjectiveReward(objective, rewardedObjectiveIds)
+    rewardedObjectiveIds = objectiveReward.rewardedObjectiveIds
+    if (objectiveReward.rewarded) victoryPoints = Math.min(VICTORY_POINTS_TARGET, victoryPoints + 1)
     if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
-    if (objective?.complete && !gameWon) {
-      victoryPoints += 1
-      if (victoryPoints >= VICTORY_POINTS_TARGET) gameWon = true
-    }
     if (!gameWon && completedTurn >= activeScenario.maxTurns) gameLost = true
     if (factionEliminated(playerIds, unitConditions)) gameLost = true
     turnHistory = [
@@ -411,7 +414,7 @@ export function createSimulationStore() {
         interceptions: interceptedEvents.length,
         hostileContacts,
         victoryPoints,
-        objectiveComplete: objective?.complete ?? false,
+        objectiveComplete: objectiveReward.rewarded,
         gameWon,
         gameLost,
         scoutedLocations: scoutedLocations.length,

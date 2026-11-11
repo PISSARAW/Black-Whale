@@ -6,6 +6,7 @@ import {
   objectiveTruth,
   objectivesPermitExtraction,
   setObjective,
+  nextObjectiveAction,
 } from './objectives'
 import { seedFromText } from './random'
 import { validateMission } from './validate'
@@ -28,11 +29,21 @@ describe('infiltration V2 missions', () => {
     objectives = setObjective(objectives, 'confirm-author', 'invalidated')
     expect(objectiveTruth(objectives)).toEqual({ acquired: 2, confirmed: 0, false: 1 })
   })
-  it('lets the copy and verify actions open extraction in every mission', () => {
+  it('gives every mission its own objective actions', () => {
     for (const mission of Object.values(MISSIONS)) {
       let objectives = initialObjectives(mission.objectives)
-      objectives = completeObjective(objectives, ['copy', 'plant', 'follow'], 'believed')
-      objectives = completeObjective(objectives, ['identify'], 'confirmed')
+      while (nextObjectiveAction(objectives)) {
+        const action = nextObjectiveAction(objectives)!
+        const kind = {
+          COPY: 'copy',
+          VERIFY: 'identify',
+          FOLLOW: 'follow',
+          PLANT: 'plant',
+          ESCORT: 'escort',
+          PERFORM_DUTY: 'duty',
+        }[action] as (typeof objectives)[number]['kind']
+        objectives = completeObjective(objectives, [kind], 'confirmed')
+      }
       expect(objectivesPermitExtraction(objectives), mission.id).toBe(true)
     }
   })
@@ -40,7 +51,7 @@ describe('infiltration V2 missions', () => {
   it('never lets an optional duty take the place of the required one', () => {
     const objectives = completeObjective(
       initialObjectives(MISSIONS['compromised-shift'].objectives),
-      ['copy', 'plant', 'follow'],
+      ['copy'],
       'believed',
     )
     expect(objectives.find((item) => item.id === 'replace-register')?.state).toBe('believed')

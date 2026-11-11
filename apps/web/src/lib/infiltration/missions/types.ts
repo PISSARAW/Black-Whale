@@ -8,7 +8,7 @@ export type MissionId =
   | 'impossible-witness'
   | 'three-princes'
 export type ObjectiveState = 'unknown' | 'believed' | 'confirmed' | 'invalidated'
-export type ObjectiveKind = 'copy' | 'identify' | 'follow' | 'plant' | 'extract'
+export type ObjectiveKind = 'copy' | 'identify' | 'follow' | 'plant' | 'escort' | 'duty' | 'extract'
 
 export interface ObjectiveDefinition {
   id: string

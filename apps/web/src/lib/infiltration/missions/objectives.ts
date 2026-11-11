@@ -1,5 +1,29 @@
 import type { MissionObjective, ObjectiveState } from './types'
 
+export type MissionObjectiveAction =
+  'COPY' | 'VERIFY' | 'FOLLOW' | 'PLANT' | 'ESCORT' | 'PERFORM_DUTY'
+
+const ACTION_BY_KIND: Partial<Record<MissionObjective['kind'], MissionObjectiveAction>> = {
+  copy: 'COPY',
+  identify: 'VERIFY',
+  follow: 'FOLLOW',
+  plant: 'PLANT',
+  escort: 'ESCORT',
+  duty: 'PERFORM_DUTY',
+}
+
+export function nextObjectiveAction(objectives: MissionObjective[]): MissionObjectiveAction | null {
+  const required = objectives.find(
+    (objective) =>
+      objective.required && objective.kind !== 'extract' && objective.state === 'unknown',
+  )
+  const optional = objectives.find(
+    (objective) =>
+      !objective.required && objective.kind !== 'extract' && objective.state === 'unknown',
+  )
+  return ACTION_BY_KIND[(required ?? optional)?.kind ?? 'extract'] ?? null
+}
+
 export function initialObjectives(
   definitions: Omit<MissionObjective, 'state'>[],
 ): MissionObjective[] {

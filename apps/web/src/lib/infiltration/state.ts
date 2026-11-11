@@ -142,6 +142,10 @@ export type InfiltrationAction =
   | { type: 'ZETSU' }
   | { type: 'COPY' }
   | { type: 'VERIFY' }
+  | { type: 'FOLLOW' }
+  | { type: 'PLANT' }
+  | { type: 'ESCORT' }
+  | { type: 'PERFORM_DUTY' }
   | { type: 'DIVERT' }
   | { type: 'ANSWER'; answer: 'workOrder' | 'bluff' }
   | { type: 'SELECT_HATSU'; id: InfiltrationHatsuId }
@@ -291,6 +295,14 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
       return copyDocument(state)
     case 'VERIFY':
       return verifyInformation(state)
+    case 'FOLLOW':
+      return performObjective(state, 'follow')
+    case 'PLANT':
+      return performObjective(state, 'plant')
+    case 'ESCORT':
+      return performObjective(state, 'escort')
+    case 'PERFORM_DUTY':
+      return performObjective(state, 'duty')
     case 'DIVERT':
       return divert(state)
     case 'ANSWER':
@@ -345,7 +357,7 @@ function copyDocument(state: InfiltrationState): InfiltrationState {
   return {
     ...state,
     documentCopied: true,
-    objectives: completeObjective(state.objectives, ['copy', 'plant', 'follow'], 'believed'),
+    objectives: completeObjective(state.objectives, ['copy'], 'believed'),
     traces: [
       ...state.traces,
       createTrace({
@@ -358,6 +370,34 @@ function copyDocument(state: InfiltrationState): InfiltrationState {
         allegedAuthor: 'maintenance',
       }),
     ],
+  }
+}
+
+function performObjective(
+  state: InfiltrationState,
+  kind: 'follow' | 'plant' | 'escort' | 'duty',
+): InfiltrationState {
+  if (state.player.spaceId !== state.objectiveSpaceId) return state
+  const objective = state.objectives.find((item) => item.kind === kind && item.state === 'unknown')
+  if (!objective) return state
+  const leavesTrace = kind === 'plant' || kind === 'duty'
+  return {
+    ...state,
+    documentCopied: true,
+    objectives: completeObjective(state.objectives, [kind], 'believed'),
+    traces: leavesTrace
+      ? [
+          ...state.traces,
+          createTrace({
+            kind: kind === 'plant' ? 'document' : 'door',
+            spaceId: state.objectiveSpaceId,
+            position: state.player.position,
+            at: state.clock,
+            strength: kind === 'plant' ? 30 : 12,
+            duration: 180,
+          }),
+        ]
+      : state.traces,
   }
 }
 

@@ -35,7 +35,10 @@
   import { seedFromText } from '$lib/infiltration/missions/random'
   import type { MissionId } from '$lib/infiltration/missions/types'
   import { missionSetup } from '$lib/infiltration/missions/setup'
-  import { objectivesPermitExtraction } from '$lib/infiltration/missions/objectives'
+  import {
+    nextObjectiveAction,
+    objectivesPermitExtraction,
+  } from '$lib/infiltration/missions/objectives'
   import {
     clearGame,
     loadCampaign,
@@ -106,9 +109,8 @@
 
   let finished = $derived(game.outcome !== 'playing')
   let objective = $derived(arena.spaces.find((space) => space.id === game.objectiveSpaceId)!)
-  let canCopy = $derived(currentSpace?.id === objective.id && !game.documentCopied)
-  let canVerify = $derived(
-    currentSpace?.id === objective.id && game.documentCopied && !game.authorConfirmed,
+  let missionAction = $derived(
+    currentSpace?.id === objective.id ? nextObjectiveAction(game.objectives) : null,
   )
   let canExtract = $derived(
     currentSpace?.id === extraction.id && objectivesPermitExtraction(game.objectives),
@@ -223,9 +225,23 @@
   }
 
   function act() {
-    if (canCopy) send({ type: 'COPY' })
-    else if (canVerify) send({ type: 'VERIFY' })
+    if (missionAction) send({ type: missionAction })
     else if (canExtract) send({ type: 'EXTRACT' })
+  }
+
+  function missionActionLabel(action: typeof missionAction) {
+    if (action === 'COPY') return $t.infiltration.copy
+    if (action === 'VERIFY') return $t.infiltration.verify
+    const labels =
+      $locale === 'fr'
+        ? {
+            FOLLOW: 'Suivre',
+            PLANT: 'Poser',
+            ESCORT: 'Escorter',
+            PERFORM_DUTY: 'Effectuer la tâche',
+          }
+        : { FOLLOW: 'Follow', PLANT: 'Plant', ESCORT: 'Escort', PERFORM_DUTY: 'Perform duty' }
+    return action ? labels[action as keyof typeof labels] : $t.infiltration.extract
   }
 
   function onKeyDown(event: KeyboardEvent) {
@@ -472,14 +488,10 @@
           >{$t.infiltration.hatsuInteractive.recall}</button
         >
       {/if}
-      {#if canCopy || canVerify || canExtract}<button
+      {#if missionAction || canExtract}<button
           onclick={act}
           class="rounded-sm border border-amber-400/50 bg-amber-950/50 px-5 py-2.5 text-xs font-bold tracking-wide text-amber-300 transition-all hover:border-amber-400 hover:bg-amber-900/70"
-          >F · {canCopy
-            ? $t.infiltration.copy
-            : canVerify
-              ? $t.infiltration.verify
-              : $t.infiltration.extract}</button
+          >F · {missionActionLabel(missionAction)}</button
         >{/if}
       <button
         onclick={() => useStandardNen({ type: game.player.nen === 'zetsu' ? 'TEN' : 'ZETSU' })}

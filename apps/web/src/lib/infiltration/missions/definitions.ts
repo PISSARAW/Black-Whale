@@ -56,7 +56,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     witnesses: commonWitnesses,
     teaching: ['social', 'traces', 'nen', 'hatsu'],
     objectives: [
-      { id: 'perform-duty', kind: 'plant', required: false },
+      { id: 'perform-duty', kind: 'duty', required: false },
       { id: 'replace-register', kind: 'copy', required: true },
       { id: 'extract', kind: 'extract', required: true },
     ],
@@ -69,7 +69,7 @@ export const MISSIONS: Record<MissionId, MissionDefinition> = {
     teaching: ['social', 'vision', 'sound', 'traces'],
     objectives: [
       { id: 'gain-trust', kind: 'identify', required: true },
-      { id: 'escort-witness', kind: 'follow', required: true },
+      { id: 'escort-witness', kind: 'escort', required: true },
       { id: 'false-narrative', kind: 'plant', required: false, secret: true },
       { id: 'extract', kind: 'extract', required: true },
     ],

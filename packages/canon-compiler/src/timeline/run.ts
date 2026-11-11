@@ -24,6 +24,34 @@ export interface CompileTimeline {
   events: readonly CanonEvent[]
 }
 
+interface EventCandidate {
+  id: string
+  _count: Record<string, number>
+}
+
+function referenceCount(event: EventCandidate): number {
+  return Object.values(event._count).reduce((total, count) => total + count, 0)
+}
+
+async function eventToUpdate(
+  prisma: PrismaClient,
+  titles: readonly string[],
+): Promise<{ event: EventCandidate | null; orphans: EventCandidate[] }> {
+  const candidates = (await prisma.narrativeEvent.findMany({
+    where: { title: { in: [...titles] } },
+    include: { _count: true },
+  })) as EventCandidate[]
+  const event = [...candidates].sort(
+    (left, right) => referenceCount(right) - referenceCount(left),
+  )[0]
+  return {
+    event: event ?? null,
+    orphans: candidates.filter(
+      (candidate) => candidate.id !== event?.id && referenceCount(candidate) === 0,
+    ),
+  }
+}
+
 /** Write one declared event, matching on its title or any it used to carry. */
 async function syncEvent(
   prisma: PrismaClient,
@@ -36,7 +64,7 @@ async function syncEvent(
   })
 
   const titles = [definition.title, ...(definition.legacyTitles ?? [])]
-  const existing = await prisma.narrativeEvent.findFirst({ where: { title: { in: titles } } })
+  const { event: existing, orphans } = await eventToUpdate(prisma, titles)
 
   if (existing) {
     await prisma.narrativeEvent.update({
@@ -52,6 +80,9 @@ async function syncEvent(
           : { occursOnBlackWhale: definition.occursOnBlackWhale }),
       },
     })
+    for (const orphan of orphans) {
+      await prisma.narrativeEvent.delete({ where: { id: orphan.id } })
+    }
     return 'updated'
   }
 

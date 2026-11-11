@@ -10,9 +10,47 @@ describe('reconstruction evidence', () => {
         sourceIds: ['panel-1', 'panel-1'],
       }),
     ).toEqual([
-      { id: 'chapter-401', level: 'attested', label: 'Chapter 401', detail: 'event-1' },
-      { id: 'panel-1', level: 'attested', label: 'panel-1', detail: null },
+      { id: 'chapter-401', level: 'attested', subject: { kind: 'chapter', chapter: 401 } },
+      {
+        id: 'panel-1',
+        level: 'derived',
+        subject: { kind: 'source', chapter: null, page: null, description: null, href: null },
+      },
     ])
+  })
+
+  it('never puts an internal id where a reader will read it', () => {
+    const evidence = evidenceForEvent({ chapterNumber: 401, eventId: 'c860f365-uuid' })
+    expect(JSON.stringify(evidence.map((item) => item.subject))).not.toContain('c860f365')
+  })
+
+  it('reads a resolved source instead of its id', () => {
+    const [, source] = evidenceForEvent({
+      chapterNumber: 401,
+      eventId: 'event-1',
+      sourceIds: ['panel-1'],
+      sources: [
+        {
+          id: 'panel-1',
+          chapterNumber: 401,
+          page: 12,
+          description: 'Kurapika at the door',
+          kind: 'manga',
+          href: '/timeline?chapter=401',
+        },
+      ],
+    })
+    expect(source).toEqual({
+      id: 'panel-1',
+      level: 'attested',
+      subject: {
+        kind: 'source',
+        chapter: 401,
+        page: 12,
+        description: 'Kurapika at the door',
+        href: '/timeline?chapter=401',
+      },
+    })
   })
 
   it('distinguishes stated, derived and uncertain spatial claims', () => {
@@ -21,9 +59,12 @@ describe('reconstruction evidence', () => {
         chapterNumber: 401,
         eventId: 'event-1',
         occurredAtBasis: 'derived',
-        occurredAtSource: 'weekly-banquet',
+        occurredAtSource: 'community',
       })[1],
-    ).toMatchObject({ level: 'derived', detail: 'weekly-banquet' })
+    ).toMatchObject({
+      level: 'derived',
+      subject: { kind: 'time', basis: 'derived', source: 'community' },
+    })
     expect(claimLevel('CONFIRMED', 'EXACT_ROOM')).toBe('attested')
     expect(claimLevel('CONFIRMED', 'TIER')).toBe('derived')
     expect(claimLevel('PROBABLE', 'EXACT_ROOM')).toBe('inferred')

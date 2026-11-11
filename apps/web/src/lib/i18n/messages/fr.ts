@@ -98,6 +98,25 @@ export const fr: Messages = {
       derived: 'Dérivé',
       inferred: 'Inféré',
     },
+    evidence: {
+      chapter: (chapter) => `Chapitre ${chapter}`,
+      time: (basis) =>
+        basis === 'stated'
+          ? 'Heure indiquée par la source'
+          : basis === 'derived'
+            ? 'Heure déduite de la source'
+            : 'Heure reconstruite',
+      timeSource: (source) =>
+        source === 'community'
+          ? 'Chronologie communautaire'
+          : source === 'manga'
+            ? 'Chronologie du manga'
+            : 'Chronologie secondaire',
+      source: (chapter, page) =>
+        chapter
+          ? `Chapitre ${chapter}${page ? ` · page ${page}` : ''}`
+          : 'Source pas encore résolue',
+    },
     perspective: 'Point de vue',
     canonicalPerspective: 'Canon objectif',
     loadingPerspective: 'Reconstruction du savoir du personnage…',
@@ -139,6 +158,7 @@ export const fr: Messages = {
     previousTrace: 'Trace précédente',
     nextTrace: 'Trace suivante',
     hatsuLens: 'Lentille de Nen',
+    hatsuApplied: 'Effet appliqué à cette reconstruction.',
     noHatsu: 'Aucune technique ne lit la reconstruction.',
     chooseHatsu: 'Choisir un Hatsu',
     hatsuReadings: {
@@ -161,6 +181,7 @@ export const fr: Messages = {
     noCharacters: 'Aucun personnage nommé n’est consigné pour cette scène.',
     watchCharacter: (name) => `Regarder ${name}`,
     unknownPosition: 'La position exacte de ce personnage est inconnue dans cette scène.',
+    unknownCharacter: 'Personnage inconnu',
     roles: {
       ACTIVE: 'actif',
       PASSIVE: 'présent',

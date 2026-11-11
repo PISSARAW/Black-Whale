@@ -1,7 +1,8 @@
 <script lang="ts">
   import { tick } from 'svelte'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import { reconstructionWords } from '$lib/reconstruction/workspaceWords'
+  import { eventTitle } from '$lib/utils/displayNames'
   interface Entry {
     index: number
     event: { id: string; title: string; occurredAtLabel: string | null }
@@ -56,7 +57,7 @@
             >{$t.common.chapterShort(entry.chapter.number)}{entry.event.occurredAtLabel
               ? ` · ${entry.event.occurredAtLabel}`
               : ''}</small
-          ><strong>{entry.event.title}</strong></span
+          ><strong>{eventTitle(entry.event.title, $locale)}</strong></span
         >
       </button>
     {:else}<p>{$reconstructionWords.noEvents}</p>{/each}

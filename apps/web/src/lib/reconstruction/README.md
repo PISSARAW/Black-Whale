@@ -34,8 +34,24 @@ La comparaison utilise `window.location` : cette version de `replaceState` ne
 met pas à jour `$page.url`, et une comparaison avec ce store crée une boucle.
 
 `PerspectiveLoader` empêche une ancienne réponse annulée de remplacer la
-projection courante ou d’interrompre son indicateur de chargement. La carte
-masque les présences pendant le changement de point de vue.
+projection courante ou d’interrompre son indicateur de chargement.
+`observedBy` applique le point de vue partout : carte, liste des personnages
+et avatars de la scène 3D. Tant que la projection d’un personnage est absente
+(chargement ou échec), il ne voit personne : jamais de repli sur le canon.
+
+Les preuves (`evidence.ts`) portent des faits (chapitre, base de datation,
+source résolue), jamais une phrase ni un identifiant interne. L’inspecteur les
+formule dans la langue du lecteur.
+
+`reconstructAt.ts` réunit la projection temporelle hors de la page Svelte. Les
+événements du moteur y sont bornés par chapitre et séquence locale, car leur
+ordinal appartient à une autre branche que celui des événements narratifs. La
+résolution d’un pont remonte la hiérarchie des lieux une seule fois par état.
+
+Le chargement serveur applique la limite de spoilers aux débuts et fins de
+présence, aux premières apparitions des lieux et au chapitre de révélation des
+événements du monde. Il construit aussi l’index des sources par identifiant
+d’événement narratif avant d’envoyer les données au navigateur.
 
 Les scénarios navigateur sont dans `tests/reconstruction-navigation.spec.ts` :
 carte, panneaux, recherche, suivi, zoom, filtres, scène 3D, plein écran, lecture et

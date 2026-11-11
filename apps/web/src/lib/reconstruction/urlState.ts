@@ -36,13 +36,11 @@ export function sortChronologicalEvents<
 >(chapters: C[]): Array<{ chapter: C; event: C['events'][number] }> {
   return chapters
     .flatMap((chapter) => chapter.events.map((event) => ({ chapter, event })))
-    .sort(
-      (a, b) =>
-        (a.event.ordinal ?? Number.MAX_SAFE_INTEGER) -
-          (b.event.ordinal ?? Number.MAX_SAFE_INTEGER) ||
-        a.chapter.number - b.chapter.number ||
-        a.event.sequence - b.event.sequence,
-    )
+    .sort((a, b) => {
+      if (a.event.ordinal != null && b.event.ordinal != null)
+        return a.event.ordinal - b.event.ordinal
+      return a.chapter.number - b.chapter.number || a.event.sequence - b.event.sequence
+    })
 }
 
 export function resolveInitialReconstructionParams<

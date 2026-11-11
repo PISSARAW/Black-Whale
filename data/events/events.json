@@ -1192,6 +1192,22 @@
     "chapter": 390,
     "chapterTitle": "Clash: Part 1",
     "sequence": 1,
+    "title": "Coventoba and Tenftory continue examining Zhang Lei's coin",
+    "summary": "In room 1003, Coventoba and Tenftory continue examining the Nen coin produced by Zhang Lei's Guardian Spirit Beast.",
+    "legacyTitles": []
+  },
+  {
+    "chapter": 390,
+    "chapterTitle": "Clash: Part 1",
+    "sequence": 2,
+    "title": "Zhang Lei travels under guard to speak with Onior Longbao",
+    "summary": "Zhang Lei leaves room 1003 under guard and crosses the royal and VVIP corridors to meet Onior in the Xi-Yu patriarch's apartment.",
+    "legacyTitles": ["Début du chapitre 390"]
+  },
+  {
+    "chapter": 390,
+    "chapterTitle": "Clash: Part 1",
+    "sequence": 3,
     "title": "Xi-Yu clashes with Heil-Ly on Tier 3",
     "summary": "After Zhang Lei visits Onior and the Xi-Yu issue their orders, Hinrigh, Lynch and Zakuro descend to Tier 3, interrogate suspects and confront Heil-Ly members in the food court.",
     "legacyTitles": []
@@ -1359,7 +1375,8 @@
     "sequence": 1,
     "title": "Kanjidol attacks Luzurus's guards before martial law",
     "summary": "Inside room 1007's break room, Kanjidol begins killing Luzurus's guards five minutes before the declaration and Ridge catches him in the act.",
-    "legacyTitles": ["Benjamin's soldiers begin their martial-law operations"]
+    "legacyTitles": ["Benjamin's soldiers begin their martial-law operations"],
+    "occursAfterTitle": "Kurapika and Oito prepare a message for the mainland"
   },
   {
     "chapter": 414,
@@ -1409,7 +1426,7 @@
     "sequence": 2,
     "title": "Martial law reaches Camilla and rooms 1003 through 1006",
     "summary": "Camilla hears the proclamation in detention; Coventoba remains in room 1003 without Zhang Lei; Salkov watches Tserriednich maintain Zetsu in room 1004; Rihan orders Tubeppa out of room 1005; and Tyson leaves room 1006 under escort.",
-    "legacyTitles": [],
+    "legacyTitles": ["The royal camps respond to special martial law"],
     "occursAfterTitle": "Benjamin proclaims martial law",
     "occurredAt": {
       "basis": "derived",

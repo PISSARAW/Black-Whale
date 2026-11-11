@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit'
-import { buildPerspective } from '$lib/server/perspectives'
+import { buildPerspective, perspectiveTargetStatus } from '$lib/server/perspectives'
 import type { RequestHandler } from './$types'
 import { log, describeError } from '$lib/server/log'
 import { readSpoilerLimit } from '$lib/server/spoiler'
@@ -24,6 +24,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
     return json({ error: 'observer and event are required' }, { status: 400 })
 
   try {
+    const target = await perspectiveTargetStatus(observer, event, spoiler)
+    if (target !== 'ok') return json({ error: target }, { status: 404 })
     const view = await buildPerspective(observer, event, spoiler)
     return json({
       visibleBodyIds: view.visibleBodies,

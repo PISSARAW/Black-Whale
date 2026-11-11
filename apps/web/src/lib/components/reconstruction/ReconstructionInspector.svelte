@@ -82,9 +82,25 @@
 {:else}
   <h3>{$t.reconstruction.sources}</h3>
   <ul class="evidence">
-    {#each event.evidence as item (item.id)}<li data-evidence={item.level}>
-        <small>{$t.reconstruction.evidenceLevels[item.level]}</small><strong>{item.label}</strong
-        >{#if item.detail}<code>{item.detail}</code>{/if}
+    {#each event.evidence as item (item.id)}{@const subject = item.subject}
+      <li data-evidence={item.level}>
+        <small>{$t.reconstruction.evidenceLevels[item.level]}</small>
+        {#if subject.kind === 'chapter'}<strong
+            >{$t.reconstruction.evidence.chapter(subject.chapter)}</strong
+          >
+        {:else if subject.kind === 'time'}<strong
+            >{$t.reconstruction.evidence.time(subject.basis)}</strong
+          >{#if subject.source}<span>{$t.reconstruction.evidence.timeSource(subject.source)}</span
+            >{/if}
+        {:else}<strong
+            >{#if subject.href}<a href={subject.href}
+                >{$t.reconstruction.evidence.source(subject.chapter, subject.page)}</a
+              >{:else}{$t.reconstruction.evidence.source(
+                subject.chapter,
+                subject.page,
+              )}{/if}</strong
+          >{#if subject.description}<span>{subject.description}</span>{/if}
+        {/if}
       </li>{/each}
   </ul>
   <h3 class="state-heading">{$t.reconstruction.shipState} · {statistics.total}</h3>
@@ -205,13 +221,6 @@
     color: #a6b5bc;
     font-size: 0.8rem;
     line-height: 1.5;
-  }
-  code {
-    display: block;
-    overflow-wrap: anywhere;
-    margin-top: 0.3rem;
-    color: #8c9da5;
-    font-size: 0.7rem;
   }
   .state-heading {
     margin-top: 1.5rem;

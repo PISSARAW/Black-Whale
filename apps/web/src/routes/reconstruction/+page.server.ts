@@ -1,30 +1,18 @@
 import { localizedLoad } from '$lib/server/localized-load'
 import { prisma } from '$lib/server/db'
-import type { Prisma } from '@black-whale/database'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import { resolveReconstructionSources } from '$lib/reconstruction/sourceView'
-import { buildReconstructionClaimIndex } from '$lib/reconstruction/claimIndex'
+import { sourceIdsByEvent } from '$lib/reconstruction/eventSources'
+import {
+  capPresenceEnds,
+  locationSpoilerWhere,
+  presenceSpoilerWhere,
+  worldEventSpoilerWhere,
+} from '$lib/reconstruction/serverProjection'
 import { catalogSceneLocation, type CatalogChapterScenes } from '$lib/reconstruction/sceneLocation'
 import { readDataFile } from '$lib/server/data-files'
 import type { PageServerLoad } from './$types'
 import { log, describeError } from '$lib/server/log'
-
-/**
- * The presences the reader may see.
- *
- * The cap applies here or not at all: this table is the whole spatial
- * chronology of the canon, labels and real names and chapter/page sources
- * included, so an uncapped read would hand the visitor every movement of every
- * character whatever their limit. A presence is visible once its first event is.
- */
-function visiblePresences(maxChapter: number | undefined): Prisma.PresenceWhereInput {
-  return {
-    entityType: 'BODY',
-    ...(maxChapter !== undefined
-      ? { fromEvent: { chapter: { number: { lte: maxChapter } } } }
-      : {}),
-  }
-}
 
 export const load: PageServerLoad = localizedLoad(
   async ({ cookies }: Parameters<PageServerLoad>[0]) => {
@@ -50,14 +38,11 @@ export const load: PageServerLoad = localizedLoad(
       const [worldEvents, presences, locations, participations, participantCharacters] =
         await Promise.all([
           prisma.worldEventRecord.findMany({
-            where: {
-              branchId: 'canon',
-              ...(maxChapter !== undefined ? { chapterNumber: { lte: maxChapter } } : {}),
-            },
+            where: worldEventSpoilerWhere(maxChapter),
             orderBy: { ordinal: 'asc' },
           }),
           prisma.presence.findMany({
-            where: visiblePresences(maxChapter),
+            where: presenceSpoilerWhere(maxChapter),
             select: {
               id: true,
               entityId: true,
@@ -92,13 +77,13 @@ export const load: PageServerLoad = localizedLoad(
             },
           }),
           prisma.location.findMany({
+            where: locationSpoilerWhere(maxChapter),
             select: {
               id: true,
               slug: true,
               name: true,
               type: true,
               parentLocationId: true,
-              firstVisibleEventId: true,
               mapElementId: true,
             },
           }),
@@ -123,9 +108,10 @@ export const load: PageServerLoad = localizedLoad(
           }),
         ])
 
+      const visiblePresenceRows = capPresenceEnds(presences, maxChapter)
       const referencedSourceIds = [
         ...worldEvents.flatMap((event) => event.sourceIds),
-        ...presences.flatMap((presence) => presence.sources.map((source) => source.id)),
+        ...visiblePresenceRows.flatMap((presence) => presence.sources.map((source) => source.id)),
       ]
       const sourceRecords = referencedSourceIds.length
         ? await prisma.source.findMany({
@@ -134,7 +120,7 @@ export const load: PageServerLoad = localizedLoad(
           })
         : []
       const sources = resolveReconstructionSources(referencedSourceIds, sourceRecords)
-      const claimIndex = buildReconstructionClaimIndex(presences, worldEvents)
+      const eventSourceIds = sourceIdsByEvent(chapters, worldEvents, visiblePresenceRows)
 
       const locationSlugs = Object.fromEntries(
         locations.map((location) => [location.id, location.slug]),
@@ -185,7 +171,7 @@ export const load: PageServerLoad = localizedLoad(
       const sceneCharacterKeys = new Set(
         sceneCharacters.map((character) => `${character.eventId}:${character.characterId}`),
       )
-      for (const presence of presences) {
+      for (const presence of visiblePresenceRows) {
         const character = presence.body?.character
         if (!character) continue
         const key = `${presence.fromEvent.id}:${character.id}`
@@ -203,12 +189,12 @@ export const load: PageServerLoad = localizedLoad(
       return {
         chapters: locatedChapters,
         worldEvents,
-        presences,
+        presences: visiblePresenceRows,
         sceneCharacters,
         locationSlugs,
         locations,
         sources,
-        claimIndex,
+        sourceIdsByEvent: eventSourceIds,
         spoilerLimit: maxChapter,
       }
     } catch (err: unknown) {
@@ -224,7 +210,7 @@ export const load: PageServerLoad = localizedLoad(
         locationSlugs: {},
         locations: [],
         sources: [],
-        claimIndex: { claims: [], byEvent: {} },
+        sourceIdsByEvent: {} as Record<string, string[]>,
         spoilerLimit: maxChapter,
       }
     }

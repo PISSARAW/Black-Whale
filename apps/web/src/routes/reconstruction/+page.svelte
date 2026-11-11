@@ -4,8 +4,6 @@
   import { browser } from '$app/environment'
   import { replaceState } from '$app/navigation'
   import { page } from '$app/stores'
-  import { createEmptyWorld, reduceWorld } from '@black-whale/canon-engine'
-  import type { StoryCursor, WorldEvent } from '@black-whale/canon-engine'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import ReconstructionHeader from '$lib/components/reconstruction/ReconstructionHeader.svelte'
@@ -14,16 +12,13 @@
   import ReconstructionTimeline from '$lib/components/reconstruction/ReconstructionTimeline.svelte'
   import ReconstructionInspector from '$lib/components/reconstruction/ReconstructionInspector.svelte'
   import ReconstructionFilters from '$lib/components/reconstruction/ReconstructionFilters.svelte'
-  import type {
-    DisplayPresence,
-    PresenceChange,
-    SceneTarget,
-  } from '$lib/reconstruction/workspaceTypes'
+  import type { DisplayPresence, SceneTarget } from '$lib/reconstruction/workspaceTypes'
+  import { diffPresences } from '$lib/reconstruction/presenceChanges'
   import ReconstructionOverview from '$lib/components/reconstruction/ReconstructionOverview.svelte'
   import { activeHatsu, hatsuPanelOpen } from '$lib/nen/hatsuState'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { floorOf, spaceForLocation, theShip } from '$lib/tour/blueprint'
-  import { AVATAR, flashFor, type Apparition, type TourFlash } from '$lib/tour/apparitions'
+  import { theShip } from '$lib/tour/blueprint'
+  import { flashFor, type Apparition, type TourFlash } from '$lib/tour/apparitions'
   import { EMPTY_WORLD, type TourReport, type TourWorld } from '$lib/tour/hatsu'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
@@ -31,11 +26,12 @@
   import type { CastHand } from '$lib/tour/pageCasting'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
-  import { displayName } from '$lib/utils/displayNames'
+  import { displayName, eventTitle } from '$lib/utils/displayNames'
   import { evidenceForEvent } from '$lib/reconstruction/evidence'
-  import { visibleInPerspective } from '$lib/reconstruction/perspective'
+  import { observedBy } from '$lib/reconstruction/perspective'
   import { PerspectiveLoader } from '$lib/reconstruction/perspectiveLoader.svelte'
   import { mainSceneSpace } from '$lib/reconstruction/sceneEntry'
+  import { reconstructAt } from '$lib/reconstruction/reconstructAt'
   import {
     resolveInitialReconstructionParams,
     sortChronologicalEvents,
@@ -56,28 +52,9 @@
     ),
   )
 
-  const engineEvents = $derived(
-    data.worldEvents.map((record) => ({
-      id: record.id,
-      type: record.type,
-      schemaVersion: record.schemaVersion,
-      branchId: record.branchId,
-      cursor: {
-        branchId: record.branchId,
-        ordinal: record.ordinal,
-        chapterNumber: record.chapterNumber,
-        localSequence: record.localSequence,
-        eventId: record.id,
-      },
-      payload: record.payload,
-      sourceIds: record.sourceIds,
-      revealedAtChapter: record.revealedAtChapter ?? undefined,
-    })) as unknown as WorldEvent[],
-  )
-
   let currentIndex = $state(initialParams.index)
   let isPlaying = $state(false)
-  let playbackInterval: ReturnType<typeof setInterval> | undefined
+  let playbackTimer: ReturnType<typeof setTimeout> | undefined
   let extras = $state<Apparition[]>([])
   let viewMode = $state<'overview' | 'scene'>(initialParams.view)
   let selectedBodyId = $state<string | null>(null)
@@ -202,50 +179,37 @@
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
 
+  // A character's point of view hides, in the scene as on the map, every body
+  // their projection does not name — and everybody while it is still loading.
+  const observerView = $derived({ observer: perspectiveCharacterId, projection: perspective })
+  const visibleExtras = $derived(
+    observedBy(extras, observerView, (shown) => shown.id.slice('avatar-'.length)),
+  )
   let sceneCharacters = $derived(
-    data.sceneCharacters
-      .filter((character) => character.eventId === chronologicalEvents[currentIndex]?.event.id)
-      .map((character) => ({
-        ...character,
-        name: displayName(character.canonicalName, $locale),
-        shown: extras.find((extra) => extra.id === `avatar-${character.bodyId}`) ?? null,
-      }))
-      .sort((left, right) => left.name.localeCompare(right.name, $locale)),
+    observedBy(
+      data.sceneCharacters
+        .filter((character) => character.eventId === chronologicalEvents[currentIndex]?.event.id)
+        .map((character) => ({
+          ...character,
+          name: displayName(character.canonicalName, $locale),
+          shown: visibleExtras.find((extra) => extra.id === `avatar-${character.bodyId}`) ?? null,
+        })),
+      observerView,
+      (character) => character.bodyId,
+    ).sort((left, right) => left.name.localeCompare(right.name, $locale)),
   )
 
   let activeBodyIds = $derived(new Set(sceneCharacters.map((character) => character.bodyId)))
-  let presenceChanges = $derived.by(() => {
-    const previousById = new Map(previousPresences.map((presence) => [presence.entityId, presence]))
-    const currentById = new Map(currentPresences.map((presence) => [presence.entityId, presence]))
-    const changes: PresenceChange[] = currentPresences.map((presence) => {
-      const previous = previousById.get(presence.entityId)
-      const moved =
-        previous &&
-        (previous.locationId !== presence.locationId || previous.precision !== presence.precision)
-      return {
-        ...presence,
-        change: previous ? (moved ? 'moved' : 'unchanged') : 'arrived',
-        previousLocationLabel: previous?.locationLabel ?? null,
-        previousTierId: previous?.tierId ?? null,
-      }
-    })
-    for (const previous of previousPresences) {
-      if (currentById.has(previous.entityId)) continue
-      changes.push({
-        ...previous,
-        change: 'departed',
-        previousLocationLabel: previous.locationLabel,
-        previousTierId: previous.tierId,
-      })
-    }
-    return changes
-  })
+  let presenceChanges = $derived(diffPresences(previousPresences, currentPresences))
+  let visiblePresenceChanges = $derived(
+    observedBy(presenceChanges, observerView, (presence) => presence.entityId),
+  )
 
   let changedPresences = $derived(
-    presenceChanges.filter((presence) => presence.change !== 'unchanged'),
+    visiblePresenceChanges.filter((presence) => presence.change !== 'unchanged'),
   )
   let overviewMarkers = $derived(
-    visibleInPerspective(presenceChanges, perspectiveCharacterId === 'canon' ? null : perspective)
+    visiblePresenceChanges
       .filter((presence) => presence.tierId)
       .filter((presence) => changeFilter === 'all' || presence.change !== 'unchanged')
       .filter((presence) => certaintyFilter === 'all' || presence.certainty === certaintyFilter)
@@ -262,16 +226,22 @@
         previousTierId: presence.previousTierId,
       })),
   )
+  const visibleCurrentPresences = $derived(
+    observedBy(currentPresences, observerView, (presence) => presence.entityId),
+  )
   let perspectiveCharacters = $derived.by(() => {
     const characters: Record<string, string> = {}
+    const eventId = chronologicalEvents[currentIndex]?.event.id
     for (const character of data.sceneCharacters) {
+      if (character.eventId !== eventId && character.characterId !== perspectiveCharacterId)
+        continue
       characters[character.characterId] = displayName(character.canonicalName, $locale)
     }
     return Object.entries(characters)
       .map(([id, name]) => ({ id, name }))
       .sort((a, b) => a.name.localeCompare(b.name, $locale))
   })
-  let unknownPresences = $derived(currentPresences.filter((presence) => !presence.tierId))
+  let unknownPresences = $derived(visibleCurrentPresences.filter((presence) => !presence.tierId))
   let filteredEvents = $derived(
     chronologicalEvents
       .map((entry, index) => ({ ...entry, index }))
@@ -279,7 +249,7 @@
         const query = eventQuery.trim().toLocaleLowerCase($locale)
         return (
           !query ||
-          entry.event.title.toLocaleLowerCase($locale).includes(query) ||
+          eventTitle(entry.event.title, $locale).toLocaleLowerCase($locale).includes(query) ||
           entry.event.summary.toLocaleLowerCase($locale).includes(query) ||
           String(entry.chapter.number).includes(query)
         )
@@ -289,19 +259,14 @@
   let selectedHour = $derived(shipHourOf(selectedEvent?.event ?? {}))
   let selectedEvidence = $derived.by(() => {
     if (!selectedEvent) return []
-    const sourceIds = data.worldEvents
-      .filter(
-        (record) =>
-          record.chapterNumber === selectedEvent.chapter.number &&
-          record.localSequence === selectedEvent.event.sequence,
-      )
-      .flatMap((record) => record.sourceIds)
+    const { chapter, event } = selectedEvent
     return evidenceForEvent({
-      chapterNumber: selectedEvent.chapter.number,
-      eventId: selectedEvent.event.id,
-      occurredAtBasis: selectedEvent.event.occurredAtBasis,
-      occurredAtSource: selectedEvent.event.occurredAtSource,
-      sourceIds,
+      chapterNumber: chapter.number,
+      eventId: event.id,
+      occurredAtBasis: event.occurredAtBasis,
+      occurredAtSource: event.occurredAtSource,
+      sourceIds: data.sourceIdsByEvent[event.id] ?? [],
+      sources: data.sources,
     })
   })
   let followedName = $derived(followedBodyId ? presenceName(followedBodyId) : null)
@@ -327,6 +292,16 @@
     return indexes
   })
   let activeTechnique = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+
+  let hatsuMomentId: string | null = null
+  $effect(() => {
+    const eventId = selectedEvent?.event.id ?? null
+    if (eventId === hatsuMomentId) return
+    hatsuMomentId = eventId
+    hatsuWorld = EMPTY_WORLD
+    hatsuReport = null
+    hatsuFlash = null
+  })
 
   $effect(() => {
     if (!mounted) return
@@ -380,236 +355,46 @@
     }
   })
 
-  type NarrativePosition = {
-    id: string
-    ordinal: number | null
-    sequence: number
-    chapter: { number: number }
-  }
-
-  function comparePosition(left: NarrativePosition, right: NarrativePosition): number {
-    if (left.ordinal !== null && right.ordinal !== null) return left.ordinal - right.ordinal
-    return left.chapter.number - right.chapter.number || left.sequence - right.sequence
-  }
-
-  function isLegacyPresenceActive(
-    presence: PageData['presences'][number],
-    event: NarrativePosition,
-  ): boolean {
-    return (
-      comparePosition(presence.fromEvent, event) <= 0 &&
-      (!presence.untilEvent || comparePosition(event, presence.untilEvent) < 0)
-    )
-  }
-
-  function avatar(
-    entityId: string,
-    locationId: string,
-    event: { id: string; locationId: string | null },
-  ): Apparition | null {
-    const locationSlug = (data.locationSlugs as Record<string, string>)[locationId] ?? locationId
-    const eventLocationSlug = event.locationId
-      ? ((data.locationSlugs as Record<string, string>)[event.locationId] ?? event.locationId)
-      : null
-    const space =
-      locationId === event.locationId
-        ? mainSceneSpace(ship, eventLocationSlug)
-        : spaceForLocation(ship, locationSlug)
-    if (!space) return null
-    const plan = ship.plans.get(space.tierId)
-    if (!plan) return null
-    const station = stationIn(space, `${event.id}:${entityId}`)
-    return {
-      id: `avatar-${entityId}`,
-      kind: 'avatar',
-      spaceId: space.id,
-      tierId: space.tierId,
-      at: station.at,
-      heading: station.heading,
-      y: floorOf(space, plan.tier),
-      colour: AVATAR,
-      size: 0.9,
-      stage: 0,
-      hidden: false,
-    }
-  }
-
   function presenceName(entityId: string): string {
     const legacy = data.presences.find((presence) => presence.entityId === entityId)
-    const canonicalName = legacy?.body?.character?.canonicalName ?? legacy?.body?.label ?? entityId
+    const canonicalName =
+      legacy?.body?.character?.canonicalName ??
+      legacy?.body?.label ??
+      $t.reconstruction.unknownCharacter
     return displayName(canonicalName, $locale)
   }
 
-  function displayPresence(
-    entityId: string,
-    presence: {
-      locationId?: string | null
-      precision: string
-      certainty: string
-    },
-  ): DisplayPresence {
-    const location =
-      data.locations.find((candidate) => candidate.id === presence.locationId) ?? null
-    const locationsById = new Map(data.locations.map((candidate) => [candidate.id, candidate]))
-    let cursor = location
-    let resolvedTier: string | null = null
-    for (let depth = 0; cursor && depth < 8; depth += 1) {
-      const preciseSpace = presence.locationId
-        ? spaceForLocation(
-            ship,
-            (data.locationSlugs as Record<string, string>)[presence.locationId] ??
-              presence.locationId,
-          )
-        : null
-      if (preciseSpace) {
-        resolvedTier = preciseSpace.tierId
-        break
-      }
-      const tier = cursor.slug.match(/^(tier-[1-5])(?:-|$)/)?.[1]
-      if (tier) {
-        resolvedTier = tier
-        break
-      }
-      cursor = cursor.parentLocationId ? (locationsById.get(cursor.parentLocationId) ?? null) : null
-    }
-    return {
-      entityId,
-      locationId: presence.locationId ?? null,
-      locationLabel: location?.name ?? null,
-      precision: presence.precision as DisplayPresence['precision'],
-      certainty: presence.certainty as DisplayPresence['certainty'],
-      tierId: resolvedTier,
-      name: presenceName(entityId),
-    }
-  }
-
-  function reconstructAt(index: number): { extras: Apparition[]; presences: DisplayPresence[] } {
-    const currentMangaEvent = chronologicalEvents[index]
-    if (!currentMangaEvent) {
-      return { extras: [], presences: [] }
-    }
-
-    const target = currentMangaEvent.event
-    const targetPosition: NarrativePosition = {
-      id: target.id,
-      ordinal: target.ordinal,
-      sequence: target.sequence,
-      chapter: { number: currentMangaEvent.chapter.number },
-    }
-    const eventsToApply = engineEvents.filter((event) =>
-      target.ordinal !== null
-        ? event.cursor.ordinal <= target.ordinal
-        : event.cursor.chapterNumber < currentMangaEvent.chapter.number ||
-          (event.cursor.chapterNumber === currentMangaEvent.chapter.number &&
-            event.cursor.localSequence <= target.sequence),
-    )
-
-    const firstCursor = eventsToApply[0]?.cursor
-    const initialCursor: StoryCursor = {
-      branchId: firstCursor?.branchId ?? 'canon',
-      ordinal: (firstCursor?.ordinal ?? 0) - 1,
-      eventId: 'reconstruction-origin',
-      chapterNumber: firstCursor?.chapterNumber ?? 0,
-      localSequence: (firstCursor?.localSequence ?? 0) - 1,
-    }
-    let state = createEmptyWorld(initialCursor)
-    for (const event of eventsToApply) {
-      try {
-        state = reduceWorld(state, event)
-      } catch (error) {
-        console.warn('Failed to reduce world event', event.id, error)
-      }
-    }
-
-    // Older events do not all have their main room backfilled on the event
-    // itself. Their participating bodies still carry exact presences, so the
-    // room shared by the largest part of the cast is the best available scene
-    // location. A tie deliberately keeps source order instead of inventing a
-    // more precise claim.
-    const exactLocationByEntity: Record<string, string> = {}
-    for (const presence of data.presences) {
-      if (
-        isLegacyPresenceActive(presence, targetPosition) &&
-        presence.precision === 'EXACT_ROOM' &&
-        presence.locationId
-      ) {
-        exactLocationByEntity[presence.entityId] = presence.locationId
-      }
-    }
-    for (const [entityId, presence] of Object.entries(state.presences)) {
-      if (presence.precision === 'EXACT_ROOM' && presence.locationId) {
-        exactLocationByEntity[entityId] = presence.locationId
-      } else {
-        delete exactLocationByEntity[entityId]
-      }
-    }
-    const participantBodyIds = new Set(
-      data.sceneCharacters
-        .filter((character) => character.eventId === target.id)
-        .map((character) => character.bodyId),
-    )
-    const locationCounts: Record<string, number> = {}
-    for (const bodyId of participantBodyIds) {
-      const locationId = exactLocationByEntity[bodyId]
-      if (locationId) locationCounts[locationId] = (locationCounts[locationId] ?? 0) + 1
-    }
-    const inferredEventLocationId = Object.entries(locationCounts).reduce<string | null>(
-      (best, [locationId, count]) => (!best || count > locationCounts[best]! ? locationId : best),
-      null,
-    )
-    const sceneLocationId = target.locationId ?? inferredEventLocationId
-
-    // Temporal Presence rows establish the canonical baseline. A backfilled
-    // world event for the same entity takes precedence over that baseline.
-    const byEntity: Record<string, Apparition> = {}
-    const presenceByEntity: Record<string, DisplayPresence> = {}
-    for (const presence of data.presences) {
-      if (!isLegacyPresenceActive(presence, targetPosition)) continue
-      presenceByEntity[presence.entityId] = displayPresence(presence.entityId, presence)
-      if (presence.precision !== 'EXACT_ROOM' || !presence.locationId) continue
-      const shown = avatar(presence.entityId, presence.locationId, {
-        id: target.id,
-        locationId: sceneLocationId,
-      })
-      if (shown) byEntity[presence.entityId] = shown
-    }
-    for (const [entityId, presence] of Object.entries(state.presences)) {
-      presenceByEntity[entityId] = displayPresence(entityId, presence)
-      if (presence.precision !== 'EXACT_ROOM' || !presence.locationId) {
-        delete byEntity[entityId]
-        continue
-      }
-      const shown = avatar(entityId, presence.locationId, {
-        id: target.id,
-        locationId: sceneLocationId,
-      })
-      if (shown) byEntity[entityId] = shown
-    }
-
-    return {
-      extras: Object.values(byEntity),
-      presences: Object.values(presenceByEntity).sort((left, right) =>
-        left.name.localeCompare(right.name, $locale),
-      ),
-    }
+  function momentAt(index: number) {
+    return reconstructAt({
+      index,
+      chronologicalEvents,
+      worldEvents: data.worldEvents,
+      presences: data.presences,
+      sceneCharacters: data.sceneCharacters,
+      locations: data.locations,
+      locationSlugs: data.locationSlugs,
+      ship,
+      nameOf: presenceName,
+    })
   }
 
   $effect(() => {
-    const current = reconstructAt(currentIndex)
-    const previous = reconstructAt(currentIndex - 1)
+    const current = momentAt(currentIndex)
+    const previous = momentAt(currentIndex - 1)
     extras = current.extras
     currentPresences = current.presences
     previousPresences = previous.presences
 
-    // Stay on the visitor's chosen deck while it has a known presence. If it
-    // does not, follow the timeline to a populated deck instead of showing an
-    // apparently empty reconstruction.
+    // When the moment or the followed person changes, stay on the visitor's deck
+    // if it has a known presence, else go to a populated one. The deck is read
+    // untracked: a visitor walking to an empty deck is not sent back.
+    const deck = untrack(() => tierId)
     const followed = followedBodyId
       ? current.extras.find((shown) => shown.id === `avatar-${followedBodyId}`)
       : null
     const focus =
-      followed ?? current.extras.find((shown) => shown.tierId === tierId) ?? current.extras[0]
-    if (focus && focus.tierId !== tierId) {
+      followed ?? current.extras.find((shown) => shown.tierId === deck) ?? current.extras[0]
+    if (focus && focus.tierId !== deck) {
       tierId = focus.tierId
       jumpTo = focus.spaceId
       jumpAt = focus.at
@@ -618,8 +403,8 @@
 
   function stopPlayback() {
     isPlaying = false
-    if (playbackInterval) clearInterval(playbackInterval)
-    playbackInterval = undefined
+    if (playbackTimer) clearTimeout(playbackTimer)
+    playbackTimer = undefined
   }
 
   function togglePlay() {
@@ -633,8 +418,13 @@
   }
 
   function schedulePlayback() {
-    const delay = Math.min(5000, 1200 + changedPresences.length * 240)
-    playbackInterval = setTimeout(() => {
+    const next = momentAt(currentIndex + 1)
+    const nextChanges = diffPresences(currentPresences, next.presences)
+    const delay = Math.min(
+      5000,
+      1200 + nextChanges.filter((change) => change.change !== 'unchanged').length * 240,
+    )
+    playbackTimer = setTimeout(() => {
       if (currentIndex < chronologicalEvents.length - 1) currentIndex++
       else stopPlayback()
       if (isPlaying) schedulePlayback()
@@ -655,8 +445,13 @@
       ? ((data.locationSlugs as Record<string, string>)[event.locationId] ?? event.locationId)
       : null
     const primary = mainSceneSpace(ship, locationSlug)
-    const shownParticipants = sceneCharacters.flatMap((character) =>
-      character.shown ? [character.shown] : [],
+    const participantBodyIds = new Set(
+      data.sceneCharacters
+        .filter((character) => character.eventId === event.id)
+        .map((character) => character.bodyId),
+    )
+    const shownParticipants = extras.filter((shown) =>
+      participantBodyIds.has(shown.id.slice('avatar-'.length)),
     )
     const countsBySpace: Record<string, number> = {}
     for (const shown of shownParticipants) {
@@ -681,11 +476,10 @@
   $effect(() => {
     const eventId = viewMode === 'scene' ? (selectedEvent?.event.id ?? null) : null
     if (!eventId) return
-    // Include the resolved cast spaces so an older event whose room is inferred
-    // can settle once reconstruction has replaced the previous event's extras.
-    const sceneKey = `${eventId}:${selectedEvent?.event.locationId ?? ''}:${sceneCharacters
-      .map((character) => character.shown?.spaceId ?? '')
-      .join('|')}`
+    // The cast spaces let an inferred room settle once the extras are replaced;
+    // sorted, so the language's name order never reads as a new scene.
+    const spaces = extras.map((shown) => shown.spaceId).toSorted()
+    const sceneKey = `${eventId}:${selectedEvent?.event.locationId ?? ''}:${spaces.join('|')}`
     if (sceneKey === lastAutomaticallyEnteredSceneKey) return
     lastAutomaticallyEnteredSceneKey = sceneKey
     enterSelectedScene()
@@ -752,7 +546,7 @@
       observers={perspectiveCharacters}
       event={{
         chapter: selectedEvent.chapter.number,
-        title: selectedEvent.event.title,
+        title: eventTitle(selectedEvent.event.title, $locale),
         time: selectedEvent.event.occurredAtLabel,
       }}
       index={currentIndex}
@@ -814,7 +608,7 @@
               nen={hatsuSession.nen}
               onNenChange={hatsuSession.useNen}
               onArrive={hatsuSession.arrived}
-              {extras}
+              extras={visibleExtras}
               touchLabels={{ move: $t.tour.touch.move, cast: $t.tour.touch.cast }}
               soundLabels={{ silence: $t.tour.sound.silence, restore: $t.tour.sound.restore }}
               hour={selectedHour}
@@ -824,7 +618,7 @@
             {#if hatsuReport}
               <output class="scene-hatsu-report" aria-live="polite">
                 <strong>{activeTechnique?.name ?? $t.reconstruction.hatsuLens}</strong>
-                <span>{hatsuReport.kind}</span>
+                <span>{$t.reconstruction.hatsuApplied}</span>
               </output>
             {/if}
           </div>
@@ -845,7 +639,7 @@
           {initial}
           event={{
             chapter: selectedEvent.chapter.number,
-            title: selectedEvent.event.title,
+            title: eventTitle(selectedEvent.event.title, $locale),
             summary: selectedEvent.event.summary,
             time: selectedEvent.event.occurredAtLabel,
             evidence: selectedEvidence,
@@ -854,11 +648,8 @@
           people={{
             initialDeck: deck,
             cast: sceneCharacters,
-            avatars: extras,
-            presences: visibleInPerspective(
-              currentPresences,
-              perspectiveCharacterId === 'canon' ? null : perspective,
-            ),
+            avatars: visibleExtras,
+            presences: visibleCurrentPresences,
             selectedId: selectedBodyId,
             followedId: followedBodyId,
             onSelect: selectOverviewCharacter,
@@ -867,9 +658,9 @@
             onDone: dismiss,
           }}
           statistics={{
-            total: currentPresences.length,
-            exact: extras.length,
-            approximate: currentPresences.filter(
+            total: visibleCurrentPresences.length,
+            exact: visibleExtras.length,
+            approximate: visibleCurrentPresences.filter(
               (presence) => presence.tierId && presence.precision !== 'EXACT_ROOM',
             ).length,
             unlocated: unknownPresences,

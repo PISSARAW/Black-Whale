@@ -9,6 +9,30 @@ export const perspectiveEngine = new PerspectiveEngine(
   new KnowledgeEngine(prisma),
 )
 
+export type PerspectiveTargetStatus = 'ok' | 'observer-not-found' | 'event-not-found'
+
+export async function perspectiveTargetStatus(
+  observerCharacterId: string,
+  eventId: string,
+  spoilerLimit?: number,
+): Promise<PerspectiveTargetStatus> {
+  const chapterLimit =
+    spoilerLimit === undefined ? {} : { chapter: { number: { lte: spoilerLimit } } }
+  const [observer, event] = await Promise.all([
+    prisma.character.findFirst({
+      where: { id: observerCharacterId, firstVisibleEvent: chapterLimit },
+      select: { id: true },
+    }),
+    prisma.narrativeEvent.findFirst({
+      where: { id: eventId, occursOnBlackWhale: true, ...chapterLimit },
+      select: { id: true },
+    }),
+  ])
+  if (!observer) return 'observer-not-found'
+  if (!event) return 'event-not-found'
+  return 'ok'
+}
+
 /**
  * Build a character's view of the world at an event. `spoilerLimit` is the
  * reader's own cap, not the character's; omit it to reveal everything the

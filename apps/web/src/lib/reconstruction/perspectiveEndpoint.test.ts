@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { GET } from '../../routes/reconstruction/perspective/+server'
-import { buildPerspective } from '$lib/server/perspectives'
+import { buildPerspective, perspectiveTargetStatus } from '$lib/server/perspectives'
 
 vi.mock('$lib/server/perspectives', () => ({
   buildPerspective: vi.fn(async () => ({ visibleBodies: ['body'], knownFacts: [], beliefs: [] })),
+  perspectiveTargetStatus: vi.fn(async () => 'ok'),
 }))
 afterEach(() => vi.clearAllMocks())
 
@@ -31,4 +32,17 @@ describe('reconstruction perspective cap', () => {
       beliefCount: 0,
     })
   })
+
+  it.each(['observer-not-found', 'event-not-found'] as const)(
+    'returns 404 for %s instead of an empty view or an engine error',
+    async (status) => {
+      vi.mocked(perspectiveTargetStatus).mockResolvedValueOnce(status)
+      const response = await GET({
+        url: new URL('http://localhost/reconstruction/perspective?observer=missing&event=missing'),
+        cookies: { get: () => undefined },
+      } as unknown as Parameters<typeof GET>[0])
+      expect(response.status).toBe(404)
+      expect(buildPerspective).not.toHaveBeenCalled()
+    },
+  )
 })

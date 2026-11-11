@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readReconstructionUrl, writeReconstructionUrl } from './urlState'
+import { readReconstructionUrl, sortChronologicalEvents, writeReconstructionUrl } from './urlState'
 
 describe('reconstruction URL state', () => {
   it('uses stable defaults for a bare URL', () => {
@@ -29,5 +29,15 @@ describe('reconstruction URL state', () => {
       changesOnly: true,
       observer: 'kurapika',
     })
+  })
+})
+
+describe('reconstruction chronology', () => {
+  it('keeps an unnumbered event in its chapter instead of appending it to the timeline', () => {
+    const ordered = sortChronologicalEvents([
+      { number: 390, events: [{ id: '390', ordinal: null, sequence: 2 }] },
+      { number: 391, events: [{ id: '391', ordinal: 97, sequence: 1 }] },
+    ])
+    expect(ordered.map((entry) => entry.event.id)).toEqual(['390', '391'])
   })
 })

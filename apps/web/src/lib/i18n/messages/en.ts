@@ -103,6 +103,23 @@ export const en = {
       derived: 'Derived',
       inferred: 'Inferred',
     },
+    evidence: {
+      chapter: (chapter: number) => `Chapter ${chapter}`,
+      time: (basis: string): string =>
+        basis === 'stated'
+          ? 'Time stated in the source'
+          : basis === 'derived'
+            ? 'Time derived from the source'
+            : 'Reconstructed time',
+      timeSource: (source: string): string =>
+        source === 'community'
+          ? 'Community chronology'
+          : source === 'manga'
+            ? 'Manga chronology'
+            : 'Secondary chronology',
+      source: (chapter: number | null, page: number | null): string =>
+        chapter ? `Chapter ${chapter}${page ? ` · page ${page}` : ''}` : 'Source not yet resolved',
+    },
     perspective: 'Point of view',
     canonicalPerspective: 'Objective canon',
     loadingPerspective: 'Reconstructing the character’s knowledge…',
@@ -144,6 +161,7 @@ export const en = {
     previousTrace: 'Previous trace',
     nextTrace: 'Next trace',
     hatsuLens: 'Nen lens',
+    hatsuApplied: 'Effect applied to this reconstruction.',
     noHatsu: 'No technique is reading the reconstruction.',
     chooseHatsu: 'Choose a Hatsu',
     hatsuReadings: {
@@ -166,6 +184,7 @@ export const en = {
     noCharacters: 'No named character is recorded for this scene.',
     watchCharacter: (name: string) => `Watch ${name}`,
     unknownPosition: 'This character’s exact position is not known in this scene.',
+    unknownCharacter: 'Unknown character',
     roles: {
       ACTIVE: 'active',
       PASSIVE: 'present',

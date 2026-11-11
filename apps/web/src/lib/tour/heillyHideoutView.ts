@@ -66,7 +66,10 @@ export function buildHeillyHideoutDetails(options: {
   } else if (spaceId === HEILLY_COMMUNAL) {
     dressHeillyCommunalArchitecture({ into, floor, ceilingHeight, space, structures })
   } else if (spaceId === HEILLY_OFFICE) {
-    dressHeillyOffice({ into, floor, ceilingHeight, space, structures })
+    dressHeillyOffice(
+      { into, floor, ceilingHeight, space, structures },
+      options.detailMode ?? 'default',
+    )
   } else if (spaceId === HEILLY_CORRIDOR) {
     dressHeillyCorridorArchitecture({ into, floor, ceilingHeight, space })
   }

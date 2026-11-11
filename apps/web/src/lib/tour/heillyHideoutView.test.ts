@@ -14,6 +14,7 @@ import {
 import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
 import { pointInPolygon } from './geometry'
 import { HEILLY_PROCESSING_DETAIL_TAGS } from './heillyProcessingArchitecture'
+import { heillyOfficeLayout } from './heillyOfficeFurniture'
 
 const ship = theShip()
 const plan = ship.plans.get('interior-heilly-hideout')!
@@ -121,6 +122,27 @@ describe('the Heil-Ly secret hideout reconstructed from chapters 394, 398, 399 a
     expect(bench.at).toEqual([14.7, 6.15])
     expect(fixtures.some(({ id }) => id.endsWith('-guest-chair'))).toBe(false)
     expect(fixtures.some(({ id }) => id.endsWith('-hideout-desk'))).toBe(false)
+  })
+
+  it('keeps the ordinary office and the negotiation game as separate published states', () => {
+    expect(heillyOfficeLayout('default')).toEqual({
+      deskItems: true,
+      audienceSeat: 'sofa',
+    })
+    expect(heillyOfficeLayout('morena-game')).toEqual({
+      deskItems: false,
+      audienceSeat: 'guest-chair',
+    })
+
+    const game = buildHeillyHideoutDetails({
+      THREE,
+      plan,
+      spaceId: HEILLY_OFFICE,
+      reveal: false,
+      detailMode: 'morena-game',
+    })
+    expect(game).not.toBeNull()
+    disposeBanquetDetails(game!)
   })
 
   it('includes camera viewpoints for processing, laundry, and communal rooms', () => {

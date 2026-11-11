@@ -51,6 +51,7 @@ import {
 } from './morena'
 import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { pointInPolygon } from './geometry'
+import { MORENA_DESK_INLAY_RISE } from './heillyOfficeFurniture'
 
 const ship = buildShip()
 
@@ -400,7 +401,7 @@ describe('what the walk lays on the table', () => {
     const seen = tableauOf(dealTheGame(), floor)
     for (const thing of seen) {
       if (thing.kind !== 'game-card') continue
-      expect(thing.y).toBeGreaterThan(floor + TABLE_HEIGHT)
+      expect(thing.y).toBeGreaterThan(floor + TABLE_HEIGHT + MORENA_DESK_INLAY_RISE)
       expect(thing.y).toBeLessThan(floor + TABLE_HEIGHT + 0.2)
     }
   })

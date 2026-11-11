@@ -1,4 +1,5 @@
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
+import type { RoomDetailMode } from './TierView'
 import type { Space, Structure } from './types'
 import {
   FAMICOM_CREAM,
@@ -25,8 +26,16 @@ const UPHOLSTERY = 0x393236
 const PAPER = 0xded8c6
 const PANEL_WALL = 0xe8e1d9
 const PANEL_FLOOR = 0xbcb5ae
+/** The wood inlay is flush enough to stay below cards laid 1 cm above the desk. */
+export const MORENA_DESK_INLAY_RISE = 0.004
 
-function morenaDesk(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
+function morenaDesk(options: {
+  into: BanquetDetailBuilder
+  structure: Structure
+  floor: number
+  deskItems: boolean
+}): void {
+  const { into, structure, floor, deskItems } = options
   const [x, z] = structure.at
   const [width, depth] = structure.size
   const height = structure.height
@@ -36,8 +45,8 @@ function morenaDesk(into: BanquetDetailBuilder, structure: Structure, floor: num
     colour: WOOD_MAFIA,
   })
   for (const stripe of [-0.43, -0.18, 0.18, 0.43]) {
-    into.box([width - 0.18, 0.014, 0.045], {
-      at: [x, floor + height + 0.008, z + stripe * depth],
+    into.box([width - 0.18, MORENA_DESK_INLAY_RISE, 0.045], {
+      at: [x, floor + height + MORENA_DESK_INLAY_RISE / 2, z + stripe * depth],
       colour: WOOD_INLAY,
     })
   }
@@ -60,25 +69,27 @@ function morenaDesk(into: BanquetDetailBuilder, structure: Structure, floor: num
     colour: WOOD_DARK,
   })
 
-  for (const [dx, dz, angle] of [
-    [-0.55, 0.02, -0.08],
-    [-0.28, 0.04, 0.04],
-    [0.02, 0.02, -0.03],
-  ] as const) {
-    into.box([0.24, 0.012, 0.34], {
-      at: [x + dx, floor + height + 0.018, z + dz],
-      rotation: [0, angle, 0],
-      colour: PAPER,
-    })
+  if (deskItems) {
+    for (const [dx, dz, angle] of [
+      [-0.55, 0.02, -0.08],
+      [-0.28, 0.04, 0.04],
+      [0.02, 0.02, -0.03],
+    ] as const) {
+      into.box([0.24, 0.012, 0.34], {
+        at: [x + dx, floor + height + 0.018, z + dz],
+        rotation: [0, angle, 0],
+        colour: PAPER,
+      })
+    }
+    into.cylinder(
+      { radius: 0.055, height: 0.22, sides: 14 },
+      { at: [x + 0.8, floor + height + 0.11, z + 0.04], colour: 0xa5a19a },
+    )
+    into.cylinder(
+      { radius: 0.07, height: 0.1, sides: 14, open: true },
+      { at: [x + 1.12, floor + height + 0.05, z + 0.08], colour: 0xc6c1b7 },
+    )
   }
-  into.cylinder(
-    { radius: 0.055, height: 0.22, sides: 14 },
-    { at: [x + 0.8, floor + height + 0.11, z + 0.04], colour: 0xa5a19a },
-  )
-  into.cylinder(
-    { radius: 0.07, height: 0.1, sides: 14, open: true },
-    { at: [x + 1.12, floor + height + 0.05, z + 0.08], colour: 0xc6c1b7 },
-  )
 }
 
 function morenaChair(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
@@ -117,6 +128,30 @@ function morenaChair(into: BanquetDetailBuilder, structure: Structure, floor: nu
     at: [x, seatY + 0.91, z - 0.25],
     colour: WOOD_INLAY,
   })
+}
+
+/** Borksen's upholstered chair in ch. 407, opposite Morena during the game. */
+function guestChair(into: BanquetDetailBuilder, floor: number): void {
+  const x = 12.08
+  const z = 3.7
+  const seatY = floor + 0.44
+
+  into.box([0.72, 0.16, 0.66], { at: [x, seatY, z], colour: UPHOLSTERY })
+  into.box([0.76, 0.86, 0.16], {
+    at: [x, seatY + 0.43, z + 0.29],
+    rotation: [-0.08, 0, 0],
+    colour: UPHOLSTERY,
+  })
+  for (const side of [-1, 1]) {
+    into.box([0.16, 0.22, 0.62], {
+      at: [x + side * 0.42, seatY + 0.16, z],
+      colour: UPHOLSTERY,
+    })
+    into.box([0.08, 0.4, 0.08], {
+      at: [x + side * 0.3, floor + 0.2, z + 0.18],
+      colour: WOOD_DARK,
+    })
+  }
 }
 
 function centralSofa(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
@@ -289,9 +324,22 @@ function roomArchitecture(context: OfficeContext): void {
 const find = (structures: Structure[], ending: string): Structure | undefined =>
   structures.find(({ id }) => id.endsWith(ending))
 
-/** The supplied panel's sparse audience layout, while retaining the later TV evidence. */
-export function dressHeillyOffice(context: OfficeContext): void {
+export interface HeillyOfficeLayout {
+  deskItems: boolean
+  audienceSeat: 'sofa' | 'guest-chair'
+}
+
+/** The office has two published states: ordinary audiences and the ch. 407 game. */
+export function heillyOfficeLayout(mode: RoomDetailMode): HeillyOfficeLayout {
+  return mode === 'morena-game'
+    ? { deskItems: false, audienceSeat: 'guest-chair' }
+    : { deskItems: true, audienceSeat: 'sofa' }
+}
+
+/** The supplied office panel, or the cleared negotiation setup from ch. 407. */
+export function dressHeillyOffice(context: OfficeContext, mode: RoomDetailMode = 'default'): void {
   const { into, floor, structures } = context
+  const layout = heillyOfficeLayout(mode)
   roomArchitecture(context)
 
   const desk = find(structures, '-card-table')
@@ -302,9 +350,13 @@ export function dressHeillyOffice(context: OfficeContext): void {
   const famicom = find(structures, '-famicom')
   const superFamicom = find(structures, '-super-famicom')
 
-  if (desk) morenaDesk(into, desk, floor)
+  if (desk) morenaDesk({ into, structure: desk, floor, deskItems: layout.deskItems })
   if (dealerChair) morenaChair(into, dealerChair, floor)
-  if (couch) centralSofa(into, couch, floor)
+  if (layout.audienceSeat === 'sofa') {
+    if (couch) centralSofa(into, couch, floor)
+  } else {
+    guestChair(into, floor)
+  }
   if (bench) wallBench(into, bench, floor)
   if (television) televisionConsole(into, television, floor)
   if (famicom) retroConsole({ into, structure: famicom, floor, superFamicom: false })

@@ -95,6 +95,8 @@ interface TierBuild {
   world: TourWorld
   tierId: string
   reveal: boolean
+  /** Optional room dressing selected by a mode layered over the shared tour. */
+  detailMode?: RoomDetailMode
   /**
    * What share of a room's motes to hang, from the quality palier.
    *
@@ -111,6 +113,8 @@ interface DeckContext {
   reveal: boolean
   dustScale: number
 }
+
+export type RoomDetailMode = 'default' | 'morena-game'
 
 interface GeometrySlice {
   position: Three.BufferAttribute
@@ -148,6 +152,7 @@ export interface RoomDetailOptions {
   plan: ReturnType<typeof walkedPlan>
   spaceId: string
   reveal: boolean
+  detailMode?: RoomDetailMode
 }
 
 type RoomDetailBuilder = (options: RoomDetailOptions) => Three.Group | null
@@ -205,7 +210,14 @@ export class TierView {
     private readonly materials: TierMaterials,
   ) {}
 
-  build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
+  build({
+    ship,
+    world,
+    tierId,
+    reveal,
+    detailMode = 'default',
+    dustScale = 1,
+  }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const apartmentPlan = tubeppaSurfacePlan(
       princeApartmentSurfacePlan(
@@ -288,6 +300,7 @@ export class TierView {
         plan,
         spaceId: group.spaceId,
         reveal,
+        detailMode,
       }
       room.details = roomDetails(detailsOptions)
       if (room.details) room.mesh.add(room.details)

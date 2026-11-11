@@ -507,6 +507,7 @@
     >
       <TourScene
         {ship}
+        roomDetailMode="morena-game"
         bind:tierId
         bind:engaged
         seated={seat}

@@ -151,7 +151,7 @@
   import { SceneInsets } from '$lib/tour/sceneInsets'
   import { listenToSceneInput, sceneKeyIsForElsewhere } from '$lib/tour/sceneInput'
   import { PortalRenderer } from '$lib/tour/PortalRenderer'
-  import { TierView, type BuiltTierView } from '$lib/tour/TierView'
+  import { TierView, type BuiltTierView, type RoomDetailMode } from '$lib/tour/TierView'
   import {
     AURA_LIGHT_INTENSITY,
     NIGHT_LIGHT_INTENSITY,
@@ -332,6 +332,8 @@
      * walls, the same solids — only what the surfaces say about themselves.
      */
     reveal?: boolean
+    /** Context-specific room dressing for a mode that reuses the tour renderer. */
+    roomDetailMode?: RoomDetailMode
     /**
      * Where the visitor has sat down, if they have.
      *
@@ -612,6 +614,7 @@
     orders = null,
     onOrder,
     reveal = false,
+    roomDetailMode = 'default',
     seated = null,
     extras = [],
     collisionWalls = [],
@@ -1107,6 +1110,7 @@
           world,
           tierId: nextTierId,
           reveal,
+          detailMode: roomDetailMode,
           dustScale: quality.dustScale,
         })
       }

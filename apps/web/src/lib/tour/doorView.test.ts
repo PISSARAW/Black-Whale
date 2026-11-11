@@ -4,6 +4,7 @@ import { theShip } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import { computeDoorPlacement } from './doorDetailSurface'
 import { buildDoorDetails, resolveTier } from './doorView'
+import { princeApartmentDoorNumber } from './princeApartmentDoorNumbers'
 
 const ship = theShip()
 
@@ -108,6 +109,51 @@ describe('doorView — buildDoorDetails', () => {
       })
       expect(lights).toBe(0)
     }
+  })
+
+  it('numbers the fourteen inner-bulkhead doors from 1 to 14', () => {
+    const plan = ship.plans.get('tier-1')!
+    const numberedDoors = plan.doorways
+      .map(princeApartmentDoorNumber)
+      .filter((number): number is number => number !== null)
+
+    expect(numberedDoors.sort((a, b) => a - b)).toEqual(
+      Array.from({ length: 14 }, (_, index) => index + 1),
+    )
+
+    for (let number = 1; number <= 14; number++) {
+      const spaceId = `tier-1-royal-residential-approach-${1000 + number}`
+      const group = buildDoorDetails({ THREE, plan, spaceId, reveal: false })!
+      const badge = group.getObjectByName(`prince-apartment-door-number-${number}`)
+      expect(badge, `door ${number}`).toBeDefined()
+      disposeBanquetDetails(group)
+    }
+  })
+
+  it('keeps numbers on the animated outer leaf, not the apartment door behind it', () => {
+    const plan = ship.plans.get('tier-1')!
+    const approachId = 'tier-1-royal-residential-approach-1001'
+    const approach = buildDoorDetails({
+      THREE,
+      plan,
+      spaceId: approachId,
+      reveal: false,
+    })!
+    const badge = approach.getObjectByName('prince-apartment-door-number-1')
+    const numberedLeaf = approach.animatedDoors
+      ?.flatMap((door) => door.leaves)
+      .find((leaf) => leaf.hingeGroup.getObjectByName(badge!.name))
+    expect(numberedLeaf).toBeDefined()
+
+    const apartmentId = 'tier-1-royal-residential-sector-room-1001'
+    const apartmentDoor = plan.doorways.find(
+      (door) =>
+        (door.a === approachId && door.b === apartmentId) ||
+        (door.a === apartmentId && door.b === approachId),
+    )
+    expect(apartmentDoor).toBeDefined()
+    expect(princeApartmentDoorNumber(apartmentDoor!)).toBeNull()
+    disposeBanquetDetails(approach)
   })
 
   it('disposes GPU buffers cleanly without memory leaks', () => {

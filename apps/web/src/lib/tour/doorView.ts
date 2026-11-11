@@ -3,6 +3,10 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { createAnimatedDoor, type AnimatedDoor } from './doorAnimator'
 import { computeDoorPlacement } from './doorDetailSurface'
 import { roomDoorStyle } from './doorRoomStyle'
+import {
+  dressPrinceApartmentDoorNumber,
+  princeApartmentDoorNumber,
+} from './princeApartmentDoorNumbers'
 import type { RoomDetailOptions } from './TierView'
 import type { Doorway } from './types'
 
@@ -50,6 +54,15 @@ export function buildDoorDetails(options: RoomDetailOptions): DoorGroupWithAnima
     const placement = computeDoorPlacement(plan, door)
     style.casing({ into: casingBuilder, door, placement })
     const leaves = style.leaves({ THREE, placement })
+    const apartmentNumber = princeApartmentDoorNumber(door)
+    if (apartmentNumber !== null && leaves[0]) {
+      dressPrinceApartmentDoorNumber({
+        THREE,
+        leaf: leaves[0],
+        placement,
+        number: apartmentNumber,
+      })
+    }
     const animatedDoor = createAnimatedDoor({
       center: [placement.center[0], placement.center[1]],
       floor: placement.floor,

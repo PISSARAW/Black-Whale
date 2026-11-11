@@ -20,7 +20,7 @@ export function roomDoorStyle(options: {
   if (options.tierId === 'interior-room-1003') {
     return { casing: dressZhangLeiDoorCasing, leaves: buildZhangLeiDoorLeaves }
   }
-  if (options.spaceId.startsWith('tier-1-royal-residential-sector-room-1004')) {
+  if (['interior-room-1004', 'interior-room-1005'].includes(options.tierId)) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }
   }
   return {

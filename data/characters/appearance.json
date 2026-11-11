@@ -216,20 +216,20 @@
       "head": { "face": "narrow", "hairStyle": "bowl", "expression": "severe" },
       "colours": {
         "basis": "chosen",
-        "source": "planches ch. 349, 358, 362 et couleurs officielles ; coupe au bol blonde, tenue stricte de laboratoire",
+        "source": "Chap. 366, page de lecture 9, et chap. 388, page de lecture 16 : cheveux courts sombres, lunettes rectangulaires et blouse claire. Teintes choisies à partir des valeurs monochromes.",
         "skin": "0xe3c6a8",
-        "hair": "0xd8bd72",
+        "hair": "0x35332e",
         "attire": {
-          "jacket": "0x2f3b42",
+          "jacket": "0xdad8cb",
           "shirt": "0xeceae2",
           "trousers": "0x212a30",
           "accent": "0x8fa6ad"
         }
       },
       "attire": "suit",
-      "signatures": [],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362"], "status": "partial" },
-      "note": "Visage fermé de chimiste, cernes et coupe au bol blonde. Les gants restent à confirmer et ne sont donc pas déclarés : une pièce dont on n'est pas sûr est une pièce qu'on ne dessine pas."
+      "signatures": ["glasses-thin"],
+      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-362", "ch-366", "ch-388"], "status": "partial" },
+      "note": "Les cases du bureau montrent des lunettes rectangulaires, une coupe courte sombre et une blouse claire. Le gabarit de veste existant évoque la blouse sans en reproduire exactement la longueur ; les teintes restent choisies. Aucun gant ajouté."
     },
     {
       "id": "prince-tyson",

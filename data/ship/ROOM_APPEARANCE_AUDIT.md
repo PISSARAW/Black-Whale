@@ -322,15 +322,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 4 cabinet, 3 basin, 3 bed, 3 painting, 3 table, 2 counter, 2 seat
-- **Objets directement visibles dans les cases :** 20/20
+- **Éléments modélisés :** 4 basin, 4 cabinet, 3 bed, 3 table, 2 counter, 2 painting, 2 seat
+- **Objets directement visibles dans les cases :** 4/20
 - **Espaces internes :** Quartiers des domestiques — 1005 (Tubeppa) ; WC du personnel — 1005 (Tubeppa) ; Vestibule d'entrée — 1005 (Tubeppa) ; Cuisine — 1005 (Tubeppa) ; Salle à manger — 1005 (Tubeppa) ; Salon — 1005 (Tubeppa) ; Chambre du prince — 1005 (Tubeppa) ; Bain et WC — 1005 (Tubeppa)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle.
+  - Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 366 — les appartements de la princesse Tubeppa rendus à son travail : le bureau où elle s'assied devant son ordinateur, son siège, les tableaux blancs couverts d'équations le long du mur tribord, et le panneau de feuilles épinglées à côté d'eux.
+  - Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce.
+  - Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées.
 
 ## Chambre 1006 (Tyson) — `tier-1-royal-residential-sector-room-1006`
 

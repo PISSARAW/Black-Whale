@@ -14,6 +14,7 @@ import { buildQueenUnmaDetails } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
 import { buildTserriednichRoomDetails, tserriednichSurfacePlan } from './tserriednichRoomView'
+import { buildTubeppaDetails, tubeppaSurfacePlan } from './tubeppaView'
 import { buildZhangLeiDetails, zhangLeiSurfacePlan } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
@@ -157,6 +158,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildCamillaRoomDetails,
   buildTserriednichRoomDetails,
   buildZhangLeiDetails,
+  buildTubeppaDetails,
   buildPrinceApartmentEnvelope,
   buildVvipRecreationDetails,
   buildPrincesQuartersDetails,
@@ -193,9 +195,12 @@ export class TierView {
 
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
-    const basePlan = princeApartmentSurfacePlan(
-      tserriednichSurfacePlan(
-        zhangLeiSurfacePlan(camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), reveal),
+    const basePlan = tubeppaSurfacePlan(
+      princeApartmentSurfacePlan(
+        tserriednichSurfacePlan(
+          zhangLeiSurfacePlan(camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), reveal),
+          reveal,
+        ),
         reveal,
       ),
       reveal,

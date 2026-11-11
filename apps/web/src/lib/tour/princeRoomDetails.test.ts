@@ -19,7 +19,7 @@ const expectedDetails: Readonly<Record<number, readonly string[]>> = {
   1002: ['living-wall-chair-1', 'living-wall-chair-2', 'living-wall-chair-3', 'living-guard-desk'],
   1003: ['dining-chair-head', 'dining-credenza', 'dining-framed-document', 'dining-candelabrum'],
   1004: ['living-mantel-clock', 'living-framed-decoration'],
-  1005: ['living-desk', 'living-whiteboard-1', 'living-whiteboard-2', 'living-noticeboard'],
+  1005: ['living-desk', 'living-whiteboard-1', 'living-noticeboard'],
   1006: ['living-birthday-table', 'living-gift-display-1', 'living-gift-display-2'],
   1007: [
     'living-deep-sofa',
@@ -86,10 +86,9 @@ describe('manga details in every prince apartment', () => {
     }
   })
 
-  it('renders Tubeppa’s writing surfaces as white enamel and cork', () => {
+  it('renders Tubeppa’s writing surfaces as white enamel and a neutral memo backing', () => {
     const byId = new Map(structuresForPrince(1005).map((structure) => [structure.id, structure]))
     expect(byId.get(`${roomPrefix(1005)}-living-whiteboard-1`)?.colour).toBe(0xf2f2ea)
-    expect(byId.get(`${roomPrefix(1005)}-living-whiteboard-2`)?.colour).toBe(0xf2f2ea)
-    expect(byId.get(`${roomPrefix(1005)}-living-noticeboard`)?.colour).toBe(0xa87543)
+    expect(byId.get(`${roomPrefix(1005)}-living-noticeboard`)?.colour).toBe(0xc3c0b1)
   })
 })

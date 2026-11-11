@@ -2361,11 +2361,11 @@
       "id": "tier-1-royal-residential-sector-room-1005-servants",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Servants' Quarters \u2014 1005 (Tubeppa)",
-      "nameFr": "Quartiers des domestiques \u2014 1005 (Tubeppa)",
+      "name": "Servants' Quarters — 1005 (Tubeppa)",
+      "nameFr": "Quartiers des domestiques — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2378,17 +2378,17 @@
         [-1.5, -2.7],
         [-10.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-servants-wc",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Servants' WC \u2014 1005 (Tubeppa)",
-      "nameFr": "WC du personnel \u2014 1005 (Tubeppa)",
+      "name": "Servants' WC — 1005 (Tubeppa)",
+      "nameFr": "WC du personnel — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2397,17 +2397,17 @@
         [-1.5, -4.2],
         [-3.9, -4.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-entrance",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Entrance Hall \u2014 1005 (Tubeppa)",
-      "nameFr": "Vestibule d'entr\u00e9e \u2014 1005 (Tubeppa)",
+      "name": "Entrance Hall — 1005 (Tubeppa)",
+      "nameFr": "Vestibule d'entrée — 1005 (Tubeppa)",
       "category": "corridor",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2416,17 +2416,17 @@
         [1.5, -2.7],
         [-1.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-kitchen",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Kitchen \u2014 1005 (Tubeppa)",
-      "nameFr": "Cuisine \u2014 1005 (Tubeppa)",
+      "name": "Kitchen — 1005 (Tubeppa)",
+      "nameFr": "Cuisine — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2435,17 +2435,17 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-dining",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Dining Room \u2014 1005 (Tubeppa)",
-      "nameFr": "Salle \u00e0 manger \u2014 1005 (Tubeppa)",
+      "name": "Dining Room — 1005 (Tubeppa)",
+      "nameFr": "Salle à manger — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2454,17 +2454,17 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Living Room \u2014 1005 (Tubeppa)",
-      "nameFr": "Salon \u2014 1005 (Tubeppa)",
+      "name": "Living Room — 1005 (Tubeppa)",
+      "nameFr": "Salon — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 366, reading p. 9; ch. 388, reading p. 16: Tubeppa at an open laptop, high-backed office chair, bottle, files and adjacent writing boards. Dimensions and placement within the published apartment plan are reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2475,17 +2475,17 @@
         [10.5, 5.7],
         [-10.5, 5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bedroom",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Prince's Master Bedroom \u2014 1005 (Tubeppa)",
-      "nameFr": "Chambre du prince \u2014 1005 (Tubeppa)",
+      "name": "Prince's Master Bedroom — 1005 (Tubeppa)",
+      "nameFr": "Chambre du prince — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2494,17 +2494,17 @@
         [4.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bathroom",
       "tierId": "interior-room-1005",
       "locationId": "tier-1-royal-residential-sector-room-1005",
-      "name": "Bath & WC \u2014 1005 (Tubeppa)",
-      "nameFr": "Bain et WC \u2014 1005 (Tubeppa)",
+      "name": "Bath & WC — 1005 (Tubeppa)",
+      "nameFr": "Bain et WC — 1005 (Tubeppa)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published apartment programme-type. Partitions retained; detailed furniture and finishes reconstructed without an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2513,7 +2513,7 @@
         [10.5, 10.2],
         [4.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1006",
@@ -15534,15 +15534,15 @@
       "kind": "bed",
       "name": "Bed",
       "nameFr": "Lit",
-      "at": [-8, 8.4],
+      "at": [-9.3, 7],
       "size": [2, 2.1],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bedroom-cabinet-02",
@@ -15550,15 +15550,15 @@
       "kind": "cabinet",
       "name": "Bedside Table",
       "nameFr": "Table de chevet",
-      "at": [-6.5, 7.4],
+      "at": [-7.7, 6.35],
       "size": [0.6, 0.6],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bedroom-cabinet-03",
@@ -15568,29 +15568,29 @@
       "nameFr": "Armoire",
       "at": [0, 9.7],
       "size": [2.4, 0.7],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 2.1,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-seat-04",
       "spaceId": "tier-1-royal-residential-sector-room-1005-living",
       "kind": "seat",
       "name": "Sofa",
-      "nameFr": "Canap\u00e9",
+      "nameFr": "Canapé",
       "at": [-6, 1.5],
       "size": [2.6, 0.95],
       "rotation": 0,
       "base": 0,
       "height": 0.8,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-table-05",
@@ -15604,9 +15604,9 @@
       "base": 0,
       "height": 0.42,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-cabinet-06",
@@ -15620,25 +15620,25 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-dining-table-07",
       "spaceId": "tier-1-royal-residential-sector-room-1005-dining",
       "kind": "table",
       "name": "Dining Table",
-      "nameFr": "Table \u00e0 manger",
+      "nameFr": "Table à manger",
       "at": [5, -2.7],
       "size": [1.6, 2.4],
       "rotation": 0,
       "base": 0,
       "height": 0.75,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-kitchen-counter-08",
@@ -15646,31 +15646,31 @@
       "kind": "counter",
       "name": "Kitchen Counter",
       "nameFr": "Plan de travail",
-      "at": [6, -9.8],
-      "size": [7, 0.7],
+      "at": [6.175, -9.85],
+      "size": [7.95, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-kitchen-counter-09",
       "spaceId": "tier-1-royal-residential-sector-room-1005-kitchen",
       "kind": "counter",
       "name": "Kitchen Island",
-      "nameFr": "\u00celot de cuisine",
-      "at": [6, -7.6],
-      "size": [2.4, 0.9],
-      "rotation": 0,
+      "nameFr": "Îlot de cuisine",
+      "at": [1.85, -8.5],
+      "size": [3.4, 0.7],
+      "rotation": -90,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-servants-bed-10",
@@ -15678,15 +15678,15 @@
       "kind": "bed",
       "name": "Servant's Bed 1",
       "nameFr": "Lit de domestique 1",
-      "at": [-9.3, -8.5],
+      "at": [-9.3, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-servants-bed-11",
@@ -15694,15 +15694,15 @@
       "kind": "bed",
       "name": "Servant's Bed 2",
       "nameFr": "Lit de domestique 2",
-      "at": [-7.2, -8.5],
+      "at": [-7.2, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-servants-cabinet-12",
@@ -15716,9 +15716,9 @@
       "base": 0,
       "height": 2,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-servants-wc-pan",
@@ -15728,13 +15728,13 @@
       "nameFr": "Cuvette du personnel",
       "at": [-1.85, -5.25],
       "size": [0.6, 0.6],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.45,
+      "height": 0.85,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bathroom-basin-13",
@@ -15748,9 +15748,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-bathroom-basin-14",
@@ -15764,9 +15764,9 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1006-bedroom-bed-01",
@@ -26575,82 +26575,65 @@
       "kind": "table",
       "name": "Work Desk",
       "nameFr": "Bureau de travail",
-      "at": [8.2, 3],
-      "size": [0.9, 2.4],
-      "rotation": 0,
+      "at": [7.65, 3],
+      "size": [2.6, 1.1],
+      "rotation": 90,
       "base": 0,
       "height": 0.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 366 \u2014 Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
-      "sourceFr": "Chap. 366 \u2014 les appartements de la princesse Tubeppa rendus \u00e0 son travail : le bureau o\u00f9 elle s'assied devant son ordinateur, son si\u00e8ge, les tableaux blancs couverts d'\u00e9quations le long du mur tribord, et le panneau de feuilles \u00e9pingl\u00e9es \u00e0 c\u00f4t\u00e9 d'eux."
+      "source": "Ch. 366, reading p. 9; ch. 388, reading p. 16: Tubeppa at an open laptop, high-backed office chair, bottle, files and adjacent writing boards. Dimensions and placement within the published apartment plan are reconstructed.",
+      "sourceFr": "Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-desk-chair",
       "spaceId": "tier-1-royal-residential-sector-room-1005-living",
       "kind": "seat",
       "name": "Desk Chair",
-      "nameFr": "Si\u00e8ge de bureau",
-      "at": [9.5, 3],
-      "size": [0.7, 0.7],
-      "rotation": 0,
+      "nameFr": "Siège de bureau",
+      "at": [9.05, 3],
+      "size": [0.8, 0.8],
+      "rotation": 90,
       "base": 0,
-      "height": 1.1,
-      "sides": 12,
+      "height": 1.23,
+      "sides": null,
       "provenance": "panel",
-      "source": "Ch. 366 \u2014 Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
-      "sourceFr": "Chap. 366 \u2014 les appartements de la princesse Tubeppa rendus \u00e0 son travail : le bureau o\u00f9 elle s'assied devant son ordinateur, son si\u00e8ge, les tableaux blancs couverts d'\u00e9quations le long du mur tribord, et le panneau de feuilles \u00e9pingl\u00e9es \u00e0 c\u00f4t\u00e9 d'eux."
+      "source": "Ch. 366, reading p. 9; ch. 388, reading p. 16: Tubeppa at an open laptop, high-backed office chair, bottle, files and adjacent writing boards. Dimensions and placement within the published apartment plan are reconstructed.",
+      "sourceFr": "Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-whiteboard-1",
       "spaceId": "tier-1-royal-residential-sector-room-1005-living",
       "kind": "painting",
-      "name": "Whiteboard (forward)",
-      "nameFr": "Tableau blanc (avant)",
-      "at": [10.4, 1.8],
-      "size": [0.15, 2.6],
+      "name": "Equation-covered whiteboard",
+      "nameFr": "Tableau blanc couvert d’équations",
+      "at": [10.36, 4.05],
+      "size": [0.12, 2.8],
       "rotation": 0,
-      "base": 0.9,
+      "base": 0.95,
       "height": 1.6,
       "sides": null,
       "colour": 15921898,
       "provenance": "panel",
-      "source": "Ch. 366 \u2014 Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
-      "sourceFr": "Chap. 366 \u2014 les appartements de la princesse Tubeppa rendus \u00e0 son travail : le bureau o\u00f9 elle s'assied devant son ordinateur, son si\u00e8ge, les tableaux blancs couverts d'\u00e9quations le long du mur tribord, et le panneau de feuilles \u00e9pingl\u00e9es \u00e0 c\u00f4t\u00e9 d'eux."
-    },
-    {
-      "id": "tier-1-royal-residential-sector-room-1005-living-whiteboard-2",
-      "spaceId": "tier-1-royal-residential-sector-room-1005-living",
-      "kind": "painting",
-      "name": "Whiteboard (aft)",
-      "nameFr": "Tableau blanc (arri\u00e8re)",
-      "at": [10.4, 4.6],
-      "size": [0.15, 2.2],
-      "rotation": 0,
-      "base": 0.9,
-      "height": 1.6,
-      "sides": null,
-      "colour": 15921898,
-      "provenance": "panel",
-      "source": "Ch. 366 \u2014 Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
-      "sourceFr": "Chap. 366 \u2014 les appartements de la princesse Tubeppa rendus \u00e0 son travail : le bureau o\u00f9 elle s'assied devant son ordinateur, son si\u00e8ge, les tableaux blancs couverts d'\u00e9quations le long du mur tribord, et le panneau de feuilles \u00e9pingl\u00e9es \u00e0 c\u00f4t\u00e9 d'eux."
+      "source": "Ch. 366, reading p. 9; ch. 388, reading p. 16: Tubeppa at an open laptop, high-backed office chair, bottle, files and adjacent writing boards. Dimensions and placement within the published apartment plan are reconstructed.",
+      "sourceFr": "Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-noticeboard",
       "spaceId": "tier-1-royal-residential-sector-room-1005-living",
       "kind": "painting",
       "name": "Board of Pinned Papers",
-      "nameFr": "Panneau de feuilles \u00e9pingl\u00e9es",
-      "at": [8, 5.6],
-      "size": [2, 0.15],
+      "nameFr": "Panneau de feuilles épinglées",
+      "at": [10.36, 1.55],
+      "size": [0.15, 2],
       "rotation": 0,
-      "base": 0.9,
+      "base": 0.95,
       "height": 1.6,
       "sides": null,
-      "colour": 11040067,
+      "colour": 12828849,
       "provenance": "panel",
-      "source": "Ch. 366 \u2014 Prince Tubeppa's rooms given over to her work: the desk she sits at with her laptop, its chair, the whiteboards of equations down the starboard wall, and the board of pinned papers beside them.",
-      "sourceFr": "Chap. 366 \u2014 les appartements de la princesse Tubeppa rendus \u00e0 son travail : le bureau o\u00f9 elle s'assied devant son ordinateur, son si\u00e8ge, les tableaux blancs couverts d'\u00e9quations le long du mur tribord, et le panneau de feuilles \u00e9pingl\u00e9es \u00e0 c\u00f4t\u00e9 d'eux."
+      "source": "Ch. 366, reading p. 9; ch. 388, reading p. 16: Tubeppa at an open laptop, high-backed office chair, bottle, files and adjacent writing boards. Dimensions and placement within the published apartment plan are reconstructed.",
+      "sourceFr": "Chap. 366, page de lecture 9 ; chap. 388, page de lecture 16 : Tubeppa devant un ordinateur ouvert, siège de bureau à haut dossier, bouteille, dossiers et tableaux contigus. Dimensions et implantation dans le plan publié reconstituées."
     },
     {
       "id": "tier-3-central-police-station-gallery-port-2",
@@ -31436,6 +31419,22 @@
       "provenance": "map",
       "source": "Room 1004 reconstruction from the chapter 363 programme-type and local /ship plan. Detailed furniture and finishes of this room are not established by an individual interior panel.",
       "sourceFr": "Reconstitution du 1004 à partir du programme-type du chapitre 363 et du plan local /ship. Le mobilier détaillé et les finitions de cette pièce ne sont pas établis par une case intérieure individuelle."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1005-bathroom-wc-pan",
+      "spaceId": "tier-1-royal-residential-sector-room-1005-bathroom",
+      "kind": "basin",
+      "name": "Toilet",
+      "nameFr": "WC",
+      "at": [10.05, 8.25],
+      "size": [0.7, 0.8],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "map",
+      "source": "Room 1005 reconstruction from the chapter 363 programme-type and local /ship plan. No individual panel establishes the detailed furniture and finishes of this room.",
+      "sourceFr": "Reconstitution du 1005 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     }
   ]
 }

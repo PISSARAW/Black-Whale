@@ -99,7 +99,12 @@ describe('shared human profiles', () => {
       hair: 0x231f28,
       hairStyle: 'bob',
     })
-    expect(humanProfile(person('prince-tubeppa', 'witness')).hairStyle).toBe('bowl')
+    expect(humanProfile(person('prince-tubeppa', 'witness'))).toMatchObject({
+      hairStyle: 'bowl',
+      hair: 0x35332e,
+      jacket: 0xdad8cb,
+      signatures: ['glasses-thin'],
+    })
   })
 
   it('leaves an undeclared body exactly as it was', () => {

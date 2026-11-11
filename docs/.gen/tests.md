@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 368
+Fichiers : 369
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1450,6 +1450,10 @@ Fichiers : 368
 ## `apps/web/src/lib/tour/tserriednichRoomView.test.ts`
 
 - Tserriednich’s apartment against the training panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/tubeppaView.test.ts`
+
+- Tubeppa’s apartment against the workstation panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/visibility.test.ts`
 

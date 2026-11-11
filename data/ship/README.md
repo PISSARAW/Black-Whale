@@ -788,6 +788,12 @@ portes biseautées. La pendule repose sur un meuble bas ; les assises restent
 périphériques et le centre de l’entraînement est libre. Les sept autres pièces
 portent un mobilier de reconstitution `map`. Voir [l’audit du 1004](tserriednich-room-audit.md).
 
+Dans le **1005**, le bureau de Tubeppa suit le chapitre 366 (page de lecture 9),
+recoupé avec le chapitre 388 (page 16) : ordinateur ouvert, dossiers, bouteille,
+siège à haut dossier et deux tableaux contigus derrière le poste de travail.
+Les sept autres pièces et les meubles périphériques non établis dans ces vues
+restent des reconstitutions `map`. Voir [l’audit du 1005](tubeppa-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

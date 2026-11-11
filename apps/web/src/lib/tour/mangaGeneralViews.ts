@@ -133,17 +133,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Zhang Lei recevant la reine Oito devant la longue table sculptée',
   }),
   view({
-    id: 'tubeppa-living-workstation',
-    spaceId: 'tier-1-royal-residential-sector-room-1005-living',
-    at: [2.8, 4.7],
-    target: [9.3, 2.9],
-    pitch: 0,
-    chapter: 366,
-    volume: 35,
-    label: "Tubeppa's workstation and equation-covered boards",
-    labelFr: 'Le poste de travail de Tubeppa et ses tableaux couverts d’équations',
-  }),
-  view({
     id: 'momoze-bedroom-vent',
     spaceId: 'tier-1-royal-residential-sector-room-1012-bedroom',
     at: [3.7, 6.35],

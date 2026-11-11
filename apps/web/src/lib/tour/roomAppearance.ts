@@ -8,11 +8,8 @@
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
 import { banquetAppearanceOf } from './banquetAppearance'
+import { apartmentRoomAppearanceOf } from './apartmentRoomAppearance'
 import { benjaminAppearanceOf } from './benjaminApartmentAppearance'
-import { camillaAppearanceOf } from './camillaAppearance'
-import { tserriednichAppearanceOf } from './tserriednichAppearance'
-import { zhangLeiAppearanceOf } from './zhangLeiAppearance'
-import { princeApartmentAppearanceOf } from './princeApartmentAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
@@ -423,13 +420,7 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   const benjamin = benjaminAppearanceOf(space, appearance)
   if (benjamin) return benjamin
 
-  return (
-    camillaAppearanceOf(space, appearance) ??
-    zhangLeiAppearanceOf(space, appearance) ??
-    tserriednichAppearanceOf(space, appearance) ??
-    princeApartmentAppearanceOf(space, appearance) ??
-    appearance
-  )
+  return apartmentRoomAppearanceOf(space, appearance)
 }
 
 /** Material families keep audited objects legible without changing their shape. */

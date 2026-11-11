@@ -779,6 +779,14 @@ export const fr: Messages = {
       withheld: (count) =>
         `${count} étape${count === 1 ? '' : 's'} de sa trajectoire ${count === 1 ? 'est' : 'sont'} au-delà de votre chapitre.`,
       unsealed: 'Le corps a répondu à sa place',
+      ask: {
+        label: 'Lui poser une question',
+        placeholder: 'Posez-lui une question…',
+        submit: 'Demander',
+        pending: 'Recherche de la ligne qui y répond…',
+        answeredBy: (question) => `L’archive y répond par : ${question}`,
+        none: 'L’archive n’a aucune ligne pour cela. Elle ne répond qu’aux six questions ci-dessous.',
+      },
     },
 
     dialogue: {

@@ -37,8 +37,10 @@
 | `strategy` | `+page.server.ts`, `+page.svelte`, `strategy.css` |
 | `timeline` | `+page.server.ts`, `+page.svelte` |
 | `tour` | `+page.server.ts`, `+page.svelte` |
+| `tour/ask` | `+server.ts` |
 | `tour/modes` | `+page.svelte` |
 | `tour/morena` | `+page.svelte` |
+| `tour/search` | `+server.ts` |
 | `tour/sources` | `+page.svelte` |
 
 ## apps/admin

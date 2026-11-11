@@ -865,6 +865,14 @@ export const en = {
       withheld: (count: number) =>
         `${count} step${count === 1 ? '' : 's'} of their route ${count === 1 ? 'is' : 'are'} past your chapter.`,
       unsealed: 'The body answered in their place',
+      ask: {
+        label: 'Ask them something',
+        placeholder: 'Ask them something…',
+        submit: 'Ask',
+        pending: 'Looking for the line that answers…',
+        answeredBy: (question: string) => `The archive answers with: ${question}`,
+        none: 'The archive holds no line for that. It can only answer the six questions below.',
+      },
     },
 
     dialogue: {

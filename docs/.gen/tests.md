@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 347
+Fichiers : 351
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -648,6 +648,11 @@ Fichiers : 347
 - abilityFirstVisibleChapter > prefers the chapter the catalogue declares
 - loadAbilityVisibility > withholds nothing when the reader has no cap
 
+## `apps/web/src/lib/server/castQuestion.test.ts`
+
+- routerQuestion > gives the model the typed line and the topics, and nothing about the body
+- createRouter > settles a phrase without the model, even when none is configured
+
 ## `apps/web/src/lib/server/character-profile.test.ts`
 
 - buildCharacterProfile > normalises every missing list to an empty array
@@ -710,6 +715,13 @@ Fichiers : 347
 ## `apps/web/src/lib/server/reconstruction-v3.test.ts`
 
 - Reconstruction V3 SimulationStore adapter > creates a real rule-compatible branch at the fork
+
+## `apps/web/src/lib/server/tourSearch.test.ts`
+
+- ollamaConfig > is absent unless both the address and the model are set
+- parseKeywords > reads the keywords and nothing else
+- interpreterQuestion > confines the reply to the vocabulary
+- createInterpreter > is off without a model and never asks
 
 ## `apps/web/src/lib/strategy/balance.test.ts`
 
@@ -840,6 +852,13 @@ Fichiers : 347
 - the six questions > asks every one of them, in the order they are asked
 - the route as an answer > reads the steps in order, named in the visitor’s own language
 - what Body and Soul takes > gives the two undated lines when the reader was sent them
+
+## `apps/web/src/lib/tour/cast/askRouting.test.ts`
+
+- foldQuestion > drops accents, case and punctuation
+- worthRouting > needs letters and a bounded length
+- parseTopic > keeps a topic out of the list
+- readTopic > accepts only a listed word
 
 ## `apps/web/src/lib/tour/cast/bodies.test.ts`
 
@@ -1143,6 +1162,13 @@ Fichiers : 347
 ## `apps/web/src/lib/tour/likenessGrid.test.ts`
 
 - the reference grid > draws every declared likeness the way it drew it last time
+
+## `apps/web/src/lib/tour/looseSearch.test.ts`
+
+- vocabularyOf > holds the words rooms are named with, and none of the hollow ones
+- worthAsking > asks about a question, not about one mistyped word
+- groundKeywords > drops what the ship does not have and restores the accents it does
+- findByKeywords > finds nothing without keywords
 
 ## `apps/web/src/lib/tour/mangaViews.test.ts`
 

@@ -17,6 +17,7 @@
    *   route would let a capped reader believe they had the whole of it.
    */
   import { fly } from 'svelte/transition'
+  import TourAddressAsk from './TourAddressAsk.svelte'
   import { t } from '$lib/i18n'
   import { prefersReducedMotion } from '$lib/tour/comfort'
   import type { Answer, Interview } from '$lib/tour/cast'
@@ -61,6 +62,10 @@
 
     <h2 class="text-lg font-semibold leading-tight text-[#FFFFF0]">{talk.name}</h2>
     <p class="mt-0.5 text-[11px] text-[#FFFFF0]/50">{$t.tour.address.lead(talk.name)}</p>
+
+    {#key talk.characterId}
+      <TourAddressAsk answers={talk.answers} />
+    {/key}
 
     {#if reading.length > 0 || held}
       <div class="mt-3 rounded border border-[#333] bg-[#FFFFF0]/[0.03] p-2">

@@ -132,6 +132,24 @@ Trois règles closent la porte aux abus :
    première personne au-delà de la phrase-cadre traduite : la ligne affichée est
    la valeur du catalogue.
 
+**Complément (2026-11) — la question peut être libre, la réponse non.** La carte
+d'adresse accepte une question tapée (`TourAddressAsk.svelte`). Ce qu'on tape ne
+fait que _choisir_ laquelle des six réponses ci-dessus est citée :
+
+- des phrases repérées dans le navigateur (`cast/askRouting.ts`) règlent la
+  plupart des questions sans réseau ;
+- sinon `/tour/ask` interroge le modèle local (`server/castQuestion.ts`), qui ne
+  reçoit que la ligne tapée et la liste des sujets — ni nom, ni dossier, ni
+  chapitre — et ne peut répondre qu'un mot de cette liste ou `none`, revérifié
+  à la lecture.
+
+Le modèle connaît le manga entier, et c'est précisément pourquoi il n'écrit
+rien : une réponse en prose pourrait porter ce qu'il sait au-delà du cap, une
+étiquette parmi sept ne le peut pas. Les deux sujets scellés n'y figurent
+jamais ; Body and Soul reste la seule porte. Sans modèle, ou s'il tarde, la
+carte renvoie aux six questions. Une reformulation « dans la voix » du
+personnage reste exclue et demanderait un nouvel ADR.
+
 **Body and Soul, seule exception, et elle est la démonstration.** La technique
 de Lynch extrait ce qu'un corps ne dirait pas : dans la marche, elle descelle
 les deux lignes de la règle 2 — et seulement pour un lecteur sans cap, qui est

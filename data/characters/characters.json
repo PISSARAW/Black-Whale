@@ -11771,8 +11771,9 @@
     "aliases": [],
     "description": "Tactician officer of 1st Prince Benjamin. Manages the application of Martial Law.",
     "factionId": "prince-benjamin",
-    "firstAppearanceChapterId": "ch-363",
+    "firstAppearanceChapterId": "ch-358",
     "canonStatus": "canon",
+    "replaceMapPresenceHistory": true,
     "shipLocation": {
       "tier": 2,
       "room": "Justice Bureau",
@@ -26502,6 +26503,7 @@
     "description": "Provisional Hunter (PH).",
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
+    "replaceMapPresenceHistory": true,
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -26910,6 +26912,7 @@
     "description": "Provisional Hunter (PH).",
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
+    "replaceMapPresenceHistory": true,
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -27318,6 +27321,7 @@
     "description": "Provisional Hunter (PH).",
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-389",
+    "replaceMapPresenceHistory": true,
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -44582,7 +44586,7 @@
     "aliases": [],
     "description": "Royal Bodyguard for Prince Woble Hui Guo Rou. Kakin Empire ; Zhang Lei Hui Guo Rou.",
     "factionId": "prince-zhanglei",
-    "firstAppearanceChapterId": "ch-366",
+    "firstAppearanceChapterId": "ch-365",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -44592,6 +44596,7 @@
     },
     "mapPresenceFromChapterId": "ch-366",
     "mapPresenceUntilChapterId": null,
+    "replaceMapPresenceHistory": true,
     "mangaAppearances": [],
     "mapTrajectory": [
       {
@@ -45239,6 +45244,7 @@
     },
     "mapPresenceFromChapterId": "ch-358",
     "mapPresenceUntilChapterId": "ch-364",
+    "replaceMapPresenceHistory": true,
     "mangaAppearances": [],
     "mapTrajectory": [
       {

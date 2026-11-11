@@ -19,13 +19,65 @@ describe('manga photo viewpoints', () => {
   })
 
   it('stages only characters that the canonical catalogue can render', () => {
-    const characterIds = new Set(characterCatalog.map(({ id }) => id))
+    const characters = characterCatalog as Array<{
+      id: string
+      firstAppearanceChapterId?: string | null
+      replaceMapPresenceHistory?: boolean
+    }>
+    const characterIds = new Set(characters.map(({ id }) => id))
+    const firstAppearance = new Map(
+      characters.map(({ id, firstAppearanceChapterId }) => [
+        id,
+        Number(firstAppearanceChapterId?.match(/\d+/)?.[0] ?? 0),
+      ]),
+    )
 
     for (const view of MANGA_VIEWS) {
       for (const staged of view.staging ?? []) {
         expect(characterIds.has(staged.characterId), `${view.id}: ${staged.characterId}`).toBe(true)
+        expect(
+          firstAppearance.get(staged.characterId),
+          `${view.id}: ${staged.characterId}`,
+        ).toBeLessThanOrEqual(view.chapter)
       }
     }
+  })
+
+  it('keeps panel-critical identities renderable from their first manga event', () => {
+    const characters = new Map(
+      (
+        characterCatalog as Array<{
+          id: string
+          firstAppearanceChapterId?: string | null
+          replaceMapPresenceHistory?: boolean
+        }>
+      ).map((character) => [character.id, character]),
+    )
+
+    expect(characters.get('balsamilco-might')).toMatchObject({
+      firstAppearanceChapterId: 'ch-358',
+      replaceMapPresenceHistory: true,
+    })
+    expect(characters.get('sakata')).toMatchObject({
+      firstAppearanceChapterId: 'ch-365',
+      replaceMapPresenceHistory: true,
+    })
+    for (const characterId of ['vincent', 'lisamsetta', 'meshush', 'mozbe']) {
+      expect(characters.get(characterId), characterId).toMatchObject({
+        replaceMapPresenceHistory: true,
+      })
+    }
+  })
+
+  it('stages Camilla’s room briefing without borrowing Moswana from the VVIP scene', () => {
+    const view = mangaViewById('camilla-untouchables-circle')
+    const staged = view?.staging?.map(({ characterId }) => characterId)
+
+    expect(view).toMatchObject({
+      eventTitle: "Camilla's Have-Nots compare their curse assignments",
+    })
+    expect(staged).toContain('fukataki')
+    expect(staged).not.toContain('moswana')
   })
 
   it('lands every camera inside the room named by the manga view', () => {

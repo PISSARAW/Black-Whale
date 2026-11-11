@@ -33,6 +33,8 @@ export interface MangaView {
   chapter: number
   /** Event order inside the chapter when the panel reproduces a populated scene. */
   eventSequence?: number
+  /** Exact event title when a chapter contains more than one event at the same sequence. */
+  eventTitle?: string
   /** Collected edition, when available; recent chapters may be uncollected. */
   volume?: number
   /** Printed page(s), when the edition exposes a stable reference. */

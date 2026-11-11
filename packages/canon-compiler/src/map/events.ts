@@ -45,7 +45,7 @@ export class EventIndex {
     })
     const existing = await this.prisma.narrativeEvent.findFirst({
       where: { chapterId: chapter.id, ...(sequence === null ? {} : { sequence }) },
-      orderBy: { sequence: 'asc' },
+      orderBy: [{ sequence: 'asc' }, { ordinal: 'asc' }],
     })
     if (existing) return { id: existing.id, sequence: existing.sequence, chapter: { number } }
 

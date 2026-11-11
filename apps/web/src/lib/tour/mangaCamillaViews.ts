@@ -16,7 +16,7 @@ export const camillaGuardStaging: MangaCastStaging[] = [
     'bucket',
     'burvena',
     'hignori',
-    'moswana',
+    'fukataki',
     'taler',
   ].map((characterId, index) => {
     const at = [-0.8 + (index % 4) * 0.9, 0.85 + Math.floor(index / 4) * 0.85] as const
@@ -37,6 +37,7 @@ export const MANGA_CAMILLA_VIEWS: MangaView[] = [
     spaceId: CAMILLA_LIVING,
     chapter: 389,
     eventSequence: 1,
+    eventTitle: "Camilla's Have-Nots compare their curse assignments",
     volume: 37,
     pages: '16–17 (chapitre)',
     staging: camillaGuardStaging,
@@ -53,6 +54,7 @@ export const MANGA_CAMILLA_VIEWS: MangaView[] = [
     spaceId: CAMILLA_LIVING,
     chapter: 389,
     eventSequence: 1,
+    eventTitle: "Camilla's Have-Nots compare their curse assignments",
     volume: 37,
     pages: '16–17 (chapitre)',
     at: [-2.8, 2.8],

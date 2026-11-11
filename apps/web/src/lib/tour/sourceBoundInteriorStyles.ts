@@ -65,6 +65,19 @@ const STYLES: SourceBoundInteriorStyle[] = [
     floorPattern: 'bands',
     ceilingPattern: 'coffers',
   },
+  {
+    locationId: 'tier-3-residential-standard',
+    name: 'tier-3-standard-residential',
+    floor: 0x383735,
+    wall: 0x5e5d59,
+    ceiling: 0x383836,
+    wood: 0x4b4034,
+    metal: 0x777b79,
+    fabric: 0x555853,
+    accent: 0x8d856e,
+    floorPattern: 'grid',
+    ceilingPattern: 'beams',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

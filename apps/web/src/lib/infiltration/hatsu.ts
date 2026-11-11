@@ -3,6 +3,7 @@ import type { InfiltrationState } from './state'
 import { createTrace } from './traces'
 import { deployScout, moveScout, type ScoutMove } from './hatsuSpatial'
 import type { CoverRole } from './social/cover'
+import { arenaDefinition } from '../arena/hatsu/contract'
 
 export type InfiltrationHatsuId =
   | 'little-eye'
@@ -39,6 +40,10 @@ export interface InfiltrationHatsu {
   uses: number
   role: HatsuRole
   rule: string
+  canonicalCost: string
+  activationCondition: string
+  risk: string
+  contractSource: 'ability-module' | 'infiltration-adapter'
 }
 
 export interface HatsuPlan {
@@ -118,13 +123,22 @@ export const INFILTRATION_HATSU: InfiltrationHatsu[] = [
 
 function fromProfile(
   profile: HatsuProfile,
-  config: Omit<InfiltrationHatsu, 'id' | 'name' | 'rule'>,
+  config: Omit<
+    InfiltrationHatsu,
+    'id' | 'name' | 'rule' | 'canonicalCost' | 'activationCondition' | 'risk' | 'contractSource'
+  >,
 ): InfiltrationHatsu {
+  const moduleContract = arenaDefinition(profile)
   return {
     id: profile.id as InfiltrationHatsuId,
     name: profile.name,
     rule: profile.rule,
     ...config,
+    cost: moduleContract?.cost ?? config.cost,
+    canonicalCost: profile.cost,
+    activationCondition: moduleContract?.condition ?? profile.rule,
+    risk: moduleContract?.risk ?? profile.cost,
+    contractSource: moduleContract ? 'ability-module' : 'infiltration-adapter',
   }
 }
 

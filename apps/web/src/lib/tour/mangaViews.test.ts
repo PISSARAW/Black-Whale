@@ -163,6 +163,13 @@ describe('manga photo viewpoints', () => {
     )
   })
 
+  it('gives every aerial plan an explicit cast instead of inheriting ambient bodies', () => {
+    const plans = MANGA_VIEWS.filter(({ id }) => id.endsWith('-aerial-plan'))
+
+    expect(plans.length).toBeGreaterThan(20)
+    for (const plan of plans) expect(plan.staging, plan.id).toBeDefined()
+  })
+
   it('keeps the inferred Heil-Ly connector out of the published Tier 2 plan', () => {
     const plan = mangaViewById('heilly-hideout-aerial-plan')
 

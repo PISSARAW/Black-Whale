@@ -24,6 +24,14 @@ export interface TourSimulationV1 {
   permissions: string[]
   witnesses: string[]
   incidents: string[]
+  activities: Record<
+    string,
+    {
+      stage: string
+      status: 'AVAILABLE' | 'ACTIVE' | 'RESOLVED' | 'FAILED'
+      data: Record<string, string | number | boolean>
+    }
+  >
 }
 
 export function createTourSimulation(input: {
@@ -49,6 +57,7 @@ export function createTourSimulation(input: {
     permissions: [],
     witnesses: [],
     incidents: [],
+    activities: {},
   }
 }
 

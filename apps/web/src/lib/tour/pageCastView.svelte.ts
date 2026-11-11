@@ -32,6 +32,7 @@ import {
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
 import { pacedPosts } from '$lib/tour/cast/pace'
+import { residueApparitions } from '$lib/tour/cast/residue'
 import { concertCast, type ConcertPerformance } from './melodyConcert'
 
 /** What the page knows that the distribution needs. */
@@ -178,9 +179,11 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast } = this.options.read()
+    const { cast, world, tierId } = this.options.read()
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
+      // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
+      ...residueApparitions({ ship: this.options.ship, vestiges: world.vestiges, tierId }),
       ...beastApparitions(this.options.ship, this.posts, {
         standing: cast.beasts,
         chapter: cast.chapterNumber,
@@ -197,8 +200,10 @@ export class TourCastView {
    * which is the silence `reading.ts` calls `still`.
    */
   auraOf = (post: Post): 'ten' | 'ren' | 'zetsu' | null => {
-    const aura = auraFor(post, this.situation).aura ?? null
-    return aura === 'none' ? null : aura
+    const look = auraFor(post, this.situation)
+    // An aura veiled with In reads as nothing at all until the visitor is in Gyo.
+    if (look.nen?.in && !this.options.readVisitor().nen.gyo) return null
+    return look.aura === 'none' ? null : (look.aura ?? null)
   }
 
   /** Who is standing in the room the visitor is in, for the readouts. */

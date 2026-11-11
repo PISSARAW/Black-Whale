@@ -19,7 +19,6 @@ export function animateHumanAura(aura: HumanAura): (seconds: number) => void {
     ryuPoints,
     enFields,
     onCore,
-    zetsuTrace,
     auraGlass,
   } = aura
   return (seconds: number) => {
@@ -30,12 +29,6 @@ export function animateHumanAura(aura: HumanAura): (seconds: number) => void {
     if (auraGlass) {
       const swell = 1 + Math.sin(seconds * 1.15) * 0.02 + Math.sin(seconds * 2.7) * 0.008
       auraGlass.scale.set(swell, 1.5 * swell, swell)
-    }
-    if (zetsuTrace) {
-      const remnant = 0.985 + Math.sin(seconds * 0.8) * 0.008
-      zetsuTrace.scale.set(0.72 * remnant, 1.32, 0.72 * remnant)
-      ;(zetsuTrace.material as MeshBasicMaterial).opacity =
-        0.003 + Math.max(0, Math.sin(seconds * 0.65)) * 0.004
     }
     // The skin and the En dome move in their shaders, on one shared clock.
     SKIN_TIME.value = seconds

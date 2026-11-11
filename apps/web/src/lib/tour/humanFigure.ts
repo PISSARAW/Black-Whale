@@ -358,6 +358,7 @@ export function buildHumanFigure({
     seen,
     nen,
     auraVisible,
+    observerGyo,
     figure,
     root,
   })

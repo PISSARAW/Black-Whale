@@ -33,6 +33,8 @@ export interface HumanAuraBuild {
   nen: NenTechniqueState<HumanZone>
   /** False when the aura is concealed with In and the observer has no Gyo. */
   auraVisible: boolean
+  /** Whether the observer is in Gyo, which reads the fine grain and the Zetsu trace. */
+  observerGyo: boolean
   figure: Group
   root: Group
 }
@@ -45,7 +47,6 @@ export interface HumanAura {
   ryuPoints: Mesh[]
   enFields: Mesh[]
   onCore: Mesh | null
-  zetsuTrace: Mesh | null
   /** Ten, Ren or Ken as a layer on the body's own meshes. See `humanAuraSkin`. */
   skin: Mesh[]
   /** The volume the aura occupies, seen from outside. See `auraRefraction`. */
@@ -89,6 +90,7 @@ export function buildHumanAura({
   seen,
   nen,
   auraVisible,
+  observerGyo,
   figure,
   root,
 }: HumanAuraBuild): HumanAura {
@@ -99,11 +101,13 @@ export function buildHumanAura({
   const ryuPoints: Mesh[] = []
   const enFields: Mesh[] = []
   let onCore: Mesh | null = null
-  let zetsuTrace: Mesh | null = null
   let auraGlass: Mesh | null = null
   // The skin wraps the body as it stands, so it goes on before any aura mesh.
   const level = skinLevelOf(nen)
   const skin = auraVisible && level ? wrapInAura(THREE, figure, { colour: seen.colour, level }) : []
+  // Under Gyo, a declared user in Zetsu shows the trace of nodes kept shut.
+  if (observerGyo && seen.human?.aura === 'zetsu')
+    skin.push(...wrapInAura(THREE, figure, { colour: seen.colour, level: 'zetsu' }))
 
   // The shell goes on before anything else so that the flames, the mantle and
   // the Ko point are all *inside* it: the aura is one volume, and a Ren whose
@@ -126,17 +130,6 @@ export function buildHumanAura({
     auraGlass = shell
   }
 
-  if (nen.mode === 'zetsu') {
-    const trace = new THREE.Mesh(
-      geometry(THREE, 'aura:zetsu', () => new THREE.SphereGeometry(0.69, 16, 10)),
-      glow(seen.colour, 0.012),
-    )
-    trace.name = 'nen-zetsu-trace'
-    trace.scale.y = 1.32
-    trace.position.y = 0.9
-    figure.add(trace)
-    zetsuTrace = trace
-  }
   if (auraVisible && nen.on) {
     const core = new THREE.Mesh(
       geometry(THREE, 'aura:on-core', () => new THREE.SphereGeometry(0.92, 22, 16)),
@@ -172,7 +165,8 @@ export function buildHumanAura({
   if (auraVisible && level === 'ren')
     renFlames.push(...buildRenFlames({ THREE, geometry, glow, colour: seen.colour, figure }))
 
-  if (auraVisible && nen.gyo) {
+  // En, Ryu and another's Gyo are the fine grain of an aura: Gyo reads them.
+  if (auraVisible && observerGyo && nen.gyo) {
     for (const side of [-1, 1]) {
       const eyeAura = new THREE.Mesh(
         geometry(THREE, 'aura:gyo-eye', () => new THREE.SphereGeometry(0.055, 10, 7)),
@@ -186,7 +180,7 @@ export function buildHumanAura({
     }
   }
 
-  if (auraVisible && nen.en) {
+  if (auraVisible && observerGyo && nen.en) {
     // Keyed on the radius, and shared: the cast now sweeps at one constant
     // radius (`WATCH_EN_RADIUS`), so a deck of guards on watch is three ring
     // geometries in total rather than three per body.
@@ -231,7 +225,7 @@ export function buildHumanAura({
     }
   }
 
-  if (auraVisible && !nen.ko) {
+  if (auraVisible && observerGyo && !nen.ko) {
     for (const [zone, share] of Object.entries(nen.ryu) as [HumanZone, number][]) {
       if (!share) continue
       const [x, y, z] = zonePositions[zone]
@@ -257,7 +251,6 @@ export function buildHumanAura({
     ryuPoints,
     enFields,
     onCore,
-    zetsuTrace,
     skin,
     auraGlass,
   }

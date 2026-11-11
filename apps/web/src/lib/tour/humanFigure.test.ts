@@ -59,7 +59,12 @@ describe('shared human figure', () => {
  * builder and were unreachable from a body standing in a room.
  */
 describe('the aura a passenger of the walk is wearing', () => {
-  function figureOf(role: string, situation: Parameters<typeof auraFor>[1], refracts = true) {
+  function figureOf(
+    role: string,
+    situation: Parameters<typeof auraFor>[1],
+    refracts = true,
+    observerGyo = true,
+  ) {
     const member: CastMember = {
       characterId: 'sakata',
       name: 'Sakata',
@@ -90,7 +95,7 @@ describe('the aura a passenger of the walk is wearing', () => {
       hidden: false,
       human: { role: 'guard', pose: 'guard', identity: 'sakata', ...auraFor(post, situation) },
     }
-    return buildHumanFigure({ THREE, glow, ...(refracts ? { glass } : {}), seen })
+    return buildHumanFigure({ THREE, glow, ...(refracts ? { glass } : {}), seen, observerGyo })
   }
 
   const CALM_ROOM = CALM
@@ -100,6 +105,15 @@ describe('the aura a passenger of the walk is wearing', () => {
     const guard = figureOf('Royal Bodyguard for Prince Woble', CALM_ROOM)
     expect(guard.root.getObjectByName('nen-en-0')).toBeTruthy()
     expect(guard.root.getObjectByName('nen-en-2')).toBeTruthy()
+  })
+
+  /** The sweep is the fine grain of an aura: without Gyo, the floor is just a floor. */
+  it("keeps a guard's En, Ryu and Gyo out of sight of a visitor not in Gyo", () => {
+    const alarmed = figureOf('Royal Bodyguard for Prince Woble', CASTING, true, false)
+    expect(alarmed.root.getObjectByName('nen-en-0')).toBeUndefined()
+    expect(alarmed.root.getObjectByName('nen-en-dome')).toBeUndefined()
+    expect(alarmed.root.getObjectByName('nen-gyo-left')).toBeUndefined()
+    expect(alarmed.root.getObjectByName('nen-ryu-torso')).toBeUndefined()
   })
 
   it('lights the eyes and the covered zones of a body the visitor has alarmed', () => {

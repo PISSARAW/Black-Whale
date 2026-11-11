@@ -145,15 +145,14 @@ export type ApparitionKind =
   /**
    * Morena Prudo, seated behind her fan in the hideout's office.
    *
-   * The only apparition in the walk that is a person rather than a technique —
-   * which is exactly what she is in the manga, a game master who does nothing
-   * at all until you sit down. Laid out by `$lib/tour/morena`, not by
-   * `apparitionsOn`: the negotiation is its own state and is not something the
-   * ship is holding.
+   * A person rather than a technique, as in the manga: a game master who does
+   * nothing until you sit down. Laid out by `$lib/tour/morena`, not here.
    */
   | 'dealer'
   /** One card of that game, face up or face down on the table between them. */
   | 'game-card'
+  /** Aura left on a seam a technique forced, seen only in Gyo. `cast/residue`. */
+  | 'residue'
   /**
    * The visitor's own heart, worn where it is, with the vow wound round it.
    *

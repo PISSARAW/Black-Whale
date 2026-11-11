@@ -222,3 +222,22 @@ describe('the body Steal Chain emptied', () => {
     expect(auraFor(sayird, drained(['someone-else'])).aura).not.toBe('zetsu')
   })
 })
+
+describe('a body that veils its aura', () => {
+  const spy = post({ characterId: 'spy', role: 'infiltrateur dans la garde du prince' })
+
+  /** A spy has to work: Zetsu would stop it standing its post, so it uses In. */
+  it('keeps its Ten and hides it under In, where an assassin closes it in Zetsu', () => {
+    const look = auraFor(spy)
+    expect(look.aura).toBe('ten')
+    expect(look.nen?.in).toBe(true)
+    expect(auraFor(post({ characterId: 'a', role: 'assassin' })).aura).toBe('zetsu')
+  })
+
+  it('keeps the veil when it raises its aura', () => {
+    const loud = { ...CALM, visitorIn: ROOM, visitorCasting: true }
+    const look = auraFor(spy, loud)
+    expect(look.aura).toBe('ren')
+    expect(look.nen?.in).toBe(true)
+  })
+})

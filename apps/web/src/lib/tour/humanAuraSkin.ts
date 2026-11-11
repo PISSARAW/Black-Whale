@@ -23,7 +23,12 @@ import type { Group, Mesh, Object3D, ShaderMaterial } from 'three'
 
 type Three = typeof import('three')
 
-export type SkinLevel = 'ten' | 'ren' | 'ken'
+/**
+ * `zetsu` is not an aura but its absence held on purpose: the faint trace of
+ * nodes kept shut that only Gyo picks out, and the one thing that tells a Nen
+ * user hiding in Zetsu apart from a person with no aura at all.
+ */
+export type SkinLevel = 'ten' | 'ren' | 'ken' | 'zetsu'
 
 /** How each level reads: inflation in body units, rim strength, rise speed. */
 const LEVELS: Record<SkinLevel, { inflate: number; opacity: number; flow: number; band: number }> =
@@ -31,6 +36,7 @@ const LEVELS: Record<SkinLevel, { inflate: number; opacity: number; flow: number
     ten: { inflate: 0.018, opacity: 0.32, flow: 1.6, band: 0.35 },
     ren: { inflate: 0.038, opacity: 0.55, flow: 3.2, band: 0.45 },
     ken: { inflate: 0.06, opacity: 0.7, flow: 0.8, band: 0.12 },
+    zetsu: { inflate: 0.006, opacity: 0.16, flow: 0.6, band: 0.7 },
   }
 
 /** One clock for every skin aboard: the aura loop writes it, the shader reads it. */

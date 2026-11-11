@@ -17,6 +17,14 @@ const glass = (worn: { ior: number; thickness: number; roughness: number }) =>
   new MeshPhysicalMaterial({ transmission: 1, ...worn })
 
 function figure(...actions: NenTechniqueAction<HumanZone>[]) {
+  return figureSeenBy(true, actions)
+}
+
+function figureSeenBy(
+  observerGyo: boolean,
+  actions: NenTechniqueAction<HumanZone>[],
+  aura?: 'zetsu' | 'none',
+) {
   const nen = actions.reduce(
     (state, action) => transitionNen(state, action).state,
     createNenTechniqueState<HumanZone>(),
@@ -32,9 +40,9 @@ function figure(...actions: NenTechniqueAction<HumanZone>[]) {
     colour: 0x8ecae6,
     stage: 0,
     hidden: false,
-    human: { role: 'guard', pose: 'guard', identity: 'sakata', aura: nen.mode, nen },
+    human: { role: 'guard', pose: 'guard', identity: 'sakata', aura: aura ?? nen.mode, nen },
   }
-  return buildHumanFigure({ THREE, glow, glass, seen }).root
+  return buildHumanFigure({ THREE, glow, glass, seen, observerGyo }).root
 }
 
 const named = (root: THREE.Object3D, prefix: string) => {
@@ -62,8 +70,17 @@ describe('the aura as a skin on the body', () => {
       expect((skin as THREE.Mesh).geometry).toBe((skin.parent as THREE.Mesh).geometry)
   })
 
-  it('wears nothing in Zetsu', () => {
-    expect(named(figure({ type: 'ZETSU' }), 'nen-skin-')).toHaveLength(0)
+  it('wears nothing in Zetsu to a visitor not in Gyo', () => {
+    expect(named(figureSeenBy(false, [{ type: 'ZETSU' }], 'zetsu'), 'nen-skin-')).toHaveLength(0)
+  })
+
+  /** What tells a Nen user hiding in Zetsu apart from a person with no aura. */
+  it('shows Gyo the trace of a declared user holding Zetsu, and nothing on anyone else', () => {
+    expect(
+      named(figureSeenBy(true, [{ type: 'ZETSU' }], 'zetsu'), 'nen-skin-zetsu').length,
+    ).toBeGreaterThan(5)
+    const nobody = figureSeenBy(true, [{ type: 'ZETSU' }], 'none')
+    expect(named(nobody, 'nen-skin-')).toHaveLength(0)
   })
 })
 

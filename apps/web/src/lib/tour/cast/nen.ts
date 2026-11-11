@@ -128,6 +128,8 @@ interface Conduct {
   ryu?: Partial<Record<Part, number>>
   /** Covering the whole body evenly, which replaces any distribution. */
   ken?: boolean
+  /** Veiling what is raised, so only Gyo sees it. */
+  in?: boolean
 }
 
 const MODE_ACTIONS: Record<NenAuraMode, NenTechniqueAction<Part>> = {
@@ -155,6 +157,7 @@ function stateFor(conduct: Conduct): NenTechniqueState<Part> {
   if (conduct.gyo) actions.push({ type: 'GYO', on: true })
   if (conduct.ryu) actions.push({ type: 'RYU', distribution: conduct.ryu })
   if (conduct.ken) actions.push({ type: 'KEN', on: true })
+  if (conduct.in) actions.push({ type: 'IN', on: true })
   return actions.reduce(
     (state, action) => transitionNen(state, action).state,
     createNenTechniqueState<Part>(),
@@ -165,13 +168,24 @@ function stateFor(conduct: Conduct): NenTechniqueState<Part> {
  * Whether this body is keeping itself unfindable.
  *
  * Zetsu is what somebody hiding does, and the archive says who is hiding in the
- * one place it can: the role. An assassin working under a false identity and a
- * spy planted in another prince's detail are both bodies whose whole position is
- * not being read, and the catalogue names them as such.
+ * one place it can: the role. An assassin waiting for the moment is a body
+ * whose whole position is not being read, and the catalogue names it as such.
  */
 function isHiding(post: Post): boolean {
+  return post.member.role.toLowerCase().includes('assassin')
+}
+
+/**
+ * Whether this body hides its aura rather than closing it.
+ *
+ * A spy planted in another prince's detail has to work — stand a post, answer
+ * a guard, use what it has — and a body in Zetsu can do none of that. So it
+ * keeps its Ten and veils it with In: to everyone without Gyo it is an ordinary
+ * guard with no aura, and only Gyo shows what it is carrying.
+ */
+function isVeiled(post: Post): boolean {
   const role = post.member.role.toLowerCase()
-  return role.includes('assassin') || role.includes('undercover') || role.includes('infiltrateur')
+  return role.includes('undercover') || role.includes('infiltrateur') || role.includes('spy')
 }
 
 /** Roles the catalogue writes in two languages for the same standing order. */
@@ -244,6 +258,7 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
     mode: aura,
     en: isWatching(post) ? WATCH_EN_RADIUS : null,
     gyo: looking,
+    in: isVeiled(post),
     ...guarding(alarmed, menaced),
   })
   return { aura, nen, ...(alarmed ? { alert: true } : {}) }

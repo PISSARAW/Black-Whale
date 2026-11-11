@@ -3,6 +3,7 @@ import type { Apparition } from './apparitions'
 import type { CardFace } from './morena'
 import { buildHumanFigure, type HumanFigure } from './humanFigure'
 import type { Glass } from './humanAura'
+import { residue } from './apparitionResidue'
 
 type Three = typeof import('three')
 type Glow = (colour: number, opacity: number) => MeshBasicMaterial
@@ -278,6 +279,7 @@ const BUILDERS: Partial<Record<Apparition['kind'], Builder>> = {
   'sun-mark': sun,
   'moon-mark': moon,
   star,
+  residue,
 }
 
 export function buildBasicApparition(

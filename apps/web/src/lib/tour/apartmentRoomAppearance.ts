@@ -1,3 +1,4 @@
+import { queenApartmentAppearanceOf } from './queenApartmentAppearance'
 import { queenUnmaAppearanceOf } from './queenUnmaAppearance'
 import type { Space } from './types'
 import type { RoomAppearance } from './roomAppearanceTypes'
@@ -18,6 +19,7 @@ import { princeApartmentAppearanceOf } from './princeApartmentAppearance'
 
 const PALETTES = [
   queenUnmaAppearanceOf,
+  queenApartmentAppearanceOf,
   camillaAppearanceOf,
   zhangLeiAppearanceOf,
   tserriednichAppearanceOf,

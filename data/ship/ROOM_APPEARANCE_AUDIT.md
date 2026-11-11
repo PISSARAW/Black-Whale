@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1237 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1307 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -136,12 +136,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés. Le 02 est attribué à Duazul selon son rang ; le repas du chapitre 366 est explicitement situé chez Camilla, en 1002.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 03 — `tier-1-queens-living-quarters-room-03`
 
@@ -149,12 +150,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 04 — `tier-1-queens-living-quarters-room-04`
 
@@ -162,12 +164,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 05 — `tier-1-queens-living-quarters-room-05`
 
@@ -175,12 +178,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 06 — `tier-1-queens-living-quarters-room-06`
 
@@ -188,12 +192,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 07 — `tier-1-queens-living-quarters-room-07`
 
@@ -201,12 +206,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Chambre de reine 08 — `tier-1-queens-living-quarters-room-08`
 
@@ -214,12 +220,13 @@
 - **Preuve de l’enveloppe :** reconstruction cartographique
 - **Sous-espaces :** 1
 - **Emprises relevées :** 11 × 30 m
-- **Éléments modélisés :** 1 bed
-- **Objets directement visibles dans les cases :** 0/1
+- **Hauteurs sous plafond :** 4.4 m
+- **Éléments modélisés :** 4 cabinet, 4 table, 2 seat, 1 bed
+- **Objets directement visibles dans les cases :** 0/11
 - **Sources de la pièce :**
-  - Le plan des quartiers des reines sur /ship dessine le bloc en huit chambres ; leur ordre le long du couloir est celui de la reconstruction.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des reines sur /ship dessine un lit dans chacune des huit chambres, adossé au mur opposé à la porte du couloir.
+  - Programme résidentiel commun extrapolé du salon et du couchage d'Unma à la demande de l'utilisateur : sièges sobres, tables, téléphone, thé, console, lit, armoire et cloison d'intimité. Mobilier, implantation, profils, finitions, plafond de 4,4 m et ordre des chambres sont reconstitués ; aucune case examinée n'établit cet intérieur privé. La nursery et le décor d'apparat d'Unma ne sont pas transposés.
 
 ## Coursive arrière en U (bâbord) — `tier-1-royal-residential-sector`
 

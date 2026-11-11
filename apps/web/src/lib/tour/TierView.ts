@@ -10,6 +10,7 @@ import { diningHallSurfacePlan } from './diningHallSurfacePlan'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
+import { buildQueenApartmentDetails, queenApartmentSurfacePlan } from './queenApartmentView'
 import { buildQueenUnmaDetails, queenUnmaSurfacePlan } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
@@ -168,6 +169,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildCasinoDetails,
   buildBurialChamberDetails,
   buildQueenUnmaDetails,
+  buildQueenApartmentDetails,
   buildBenjaminRoomDetails,
   buildCamillaRoomDetails,
   buildTserriednichRoomDetails,
@@ -299,7 +301,10 @@ export class TierView {
     )
     const detailedPlan = hullSuspensionSurfacePlan(
       queenUnmaSurfacePlan(
-        royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+        queenApartmentSurfacePlan(
+          royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+          reveal,
+        ),
         reveal,
       ),
       reveal,

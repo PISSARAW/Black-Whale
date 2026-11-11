@@ -115,6 +115,12 @@ const LOCATION_ASSETS: Record<string, MapAssetKey> = {
   'vvip-living-quarters': 'vvip-living-quarters',
   'queens-living-quarters': 'queens-living-quarters',
   'tier-1-queens-living-quarters-room-01': 'queens-living-quarters',
+  ...Object.fromEntries(
+    Array.from({ length: 7 }, (_, i) => [
+      `tier-1-queens-living-quarters-room-0${i + 2}`,
+      'queens-living-quarters' as const,
+    ]),
+  ),
   'soldiers-living-quarters': 'soldiers-living-quarters',
   casino: 'casino',
   'room-37564': 'room-37564',

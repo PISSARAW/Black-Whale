@@ -895,6 +895,14 @@ La carte individuelle et la miniature du bloc partagent les emprises de la
 visite ; l'implantation et la hauteur restent reconstituées.
 Voir [l'audit du 01 d'Unma](unma-quarters-audit.md).
 
+Les **chambres 02 à 08 des reines** partagent un programme résidentiel minimal
+extrapolé d'Unma à la demande de l'utilisateur : couchage, rangement, salon,
+téléphone, service à thé et séparation d'intimité. Ces volumes portent tous
+`map` : ce sont des reconstitutions, sans nursery ni décor d'apparat copié
+d'Unma. Le repas de Duazul au chapitre 366 reste situé chez Camilla, en 1002.
+Les plans individuels et les miniatures suivent les mêmes emprises que la visite.
+Voir [l'audit de Duazul et du programme commun](duazul-quarters-audit.md).
+
 Le **salon de Nasubi** reprend la double page du chapitre 382 : fauteuil de
 repos allongé, salon latéral, desserte drapée, table basse devant le manteau,
 buste, photographies, horloge et vases. Le paysage encadré et le grand tableau

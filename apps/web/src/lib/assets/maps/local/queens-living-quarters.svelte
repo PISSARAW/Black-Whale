@@ -1,8 +1,9 @@
 <script lang="ts">
+  import QueenApartmentPlan from './queen-apartment.svelte'
   import QueenUnmaPlan from './queen-unma.svelte'
   import { mapState } from '$lib/state/mapState.svelte'
   function handleElementClick(elementId: string) {
-    if (elementId === 'queens-living-quarters-room-01')
+    if (/^queens-living-quarters-room-0[1-8]$/.test(elementId))
       mapState.selectLocation(`tier-1-${elementId}`)
   }
 
@@ -23,6 +24,8 @@
 
 {#if mapState.selectedLocationId === 'tier-1-queens-living-quarters-room-01'}
   <QueenUnmaPlan />
+{:else if /^tier-1-queens-living-quarters-room-0[2-8]$/.test(mapState.selectedLocationId ?? '')}
+  <QueenApartmentPlan roomId={mapState.selectedLocationId!} />
 {:else}
   <svg
     viewBox="0 0 800 600"
@@ -151,10 +154,13 @@
           {#if room.number === '01'}
             <QueenUnmaPlan compact />
           {:else}
-            <rect x="40" y={room.isNorth ? 20 : 100} width="55" height="30" class="furniture" />
-            <!-- Bed -->
-            <text x="67.5" y="80" class="label text-gray-400">Queen's Room</text>
-            <text x="67.5" y="100" class="sublabel text-yellow-200">{room.number}</text>
+            <QueenApartmentPlan
+              compact
+              roomId={`tier-1-queens-living-quarters-room-${room.number}`}
+            />
+          {/if}
+          {#if room.number !== '01'}
+            <text x="67.5" y="95" class="sublabel">{room.number}</text>
           {/if}
         </g>
       {/each}

@@ -12,14 +12,24 @@
     game?: MorenaGame | null
     incoming?: MorenaChallenge | null
     seed?: number
+    detectionSeed?: number
     previousStreak?: number
     path: string
   }
 
-  let { game = null, incoming = null, seed = 0, previousStreak = 0, path }: Props = $props()
+  let {
+    game = null,
+    incoming = null,
+    seed = 0,
+    detectionSeed,
+    previousStreak = 0,
+    path,
+  }: Props = $props()
   const copy = $derived($t.tour.morena.challenge)
   const outcome = $derived(game ? challengeOutcome(game) : 'unfinished')
-  const next = $derived(game ? nextMorenaChallenge(game, seed, previousStreak) : null)
+  const next = $derived(
+    game ? nextMorenaChallenge(game, seed, { previousStreak, detectionSeed }) : null,
+  )
   let shared = $state(false)
 
   async function share() {

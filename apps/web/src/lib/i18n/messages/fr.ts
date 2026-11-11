@@ -1683,6 +1683,19 @@ export const fr: Messages = {
         walk: 'Visiter la planque plutôt',
       },
 
+      lab: {
+        eyebrow: 'Débloqué après la négociation canonique',
+        title: 'Laboratoire Nen',
+        intro:
+          'Rejouez la table avec une technique de Nen. Commencez par six archétypes distincts, ou ouvrez le catalogue complet lorsque vous savez quoi tester.',
+        archetypes: 'Six archétypes de départ',
+        catalog: (count: number) => `Les ${count} techniques de table`,
+        deal: 'Conditions de la donne',
+        selected: (name: string) => `Technique choisie — ${name}`,
+        play: 'Lancer la partie de laboratoire',
+        open: 'Ouvrir le laboratoire Nen',
+      },
+
       table: {
         fan: 'Ses questions',
         asked: 'Posées',

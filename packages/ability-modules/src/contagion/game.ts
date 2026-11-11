@@ -527,7 +527,7 @@ function unspool(played: MorenaGame): MorenaGame {
  */
 export function playTechnique(
   game: MorenaGame,
-  options: { random?: () => number; page?: TablePage } = {},
+  options: { random?: () => number; detectionRandom?: () => number; page?: TablePage } = {},
 ): MorenaGame {
   if (game.phase === 'over') return unchanged(game)
   const second = options.page === 'second'
@@ -547,7 +547,8 @@ export function playTechnique(
   if (move.effect === 'rewind' && !game.previous) return unchanged(game)
 
   const random = options.random ?? Math.random
-  const seen = move.fraud && random() < exposureNow(move, game)
+  const detectionRandom = options.detectionRandom ?? random
+  const seen = move.fraud && detectionRandom() < exposureNow(move, game)
 
   // The count goes on the page that was played, and on that one only: two live
   // pages are two separate one-shots, and a book that spent them out of one
@@ -607,7 +608,11 @@ export function playTechnique(
 export function askMorena(
   game: MorenaGame,
   question: QuestionCard,
-  options: { random?: () => number } = {},
+  options: {
+    random?: () => number
+    drawRandom?: () => number
+    detectionRandom?: () => number
+  } = {},
 ): MorenaGame {
   if (game.phase !== 'asking') return unchanged(game)
   if (!game.questions.includes(question)) return unchanged(game)
@@ -615,6 +620,7 @@ export function askMorena(
   if (game.hand.length <= 1) return unchanged(game)
 
   const random = options.random ?? Math.random
+  const drawRandom = options.drawRandom ?? random
   const log: Beat[] = [...game.log, { kind: 'asked', round: game.round, question }]
 
   // She is not choosing at all while the ten seconds are being caught up: the
@@ -631,7 +637,7 @@ export function askMorena(
   const wanted = repeats ?? foreseen
   const reach = wanted
     ? game.hand.indexOf(wanted)
-    : Math.min(game.hand.length - 1, Math.max(0, Math.floor(random() * game.hand.length)))
+    : Math.min(game.hand.length - 1, Math.max(0, Math.floor(drawRandom() * game.hand.length)))
   const taken = game.hand[reach]
   // `indexOf` answers -1 for a card she wanted and no longer holds — the guest
   // may have conjured it away since. There is nothing to take then, and the
@@ -669,11 +675,11 @@ export function askMorena(
     next.dealt = true
     next.phase = 'deal'
     next.log = [...log, { kind: 'offered', round: next.round }]
-    return writeTheProphecy(next, random)
+    return writeTheProphecy(next, random, options.detectionRandom)
   }
 
   next.phase = next.hand.length <= 1 ? 'settling' : 'asking'
-  return writeTheProphecy(next, random)
+  return writeTheProphecy(next, random, options.detectionRandom)
 }
 
 /**
@@ -688,10 +694,14 @@ export function askMorena(
  * Written once. The prophecy does not revise itself, which is the whole reason
  * a prophecy is worth anything: it was set down before the branch was taken.
  */
-function writeTheProphecy(game: MorenaGame, random: () => number): MorenaGame {
+function writeTheProphecy(
+  game: MorenaGame,
+  random: () => number,
+  detectionRandom?: () => number,
+): MorenaGame {
   const seat = livePages(game).find((page) => page.kind === 'prophecy')
   if (!seat || seat.spent > 0) return game
-  return playTechnique(game, { random, page: seat.page })
+  return playTechnique(game, { random, detectionRandom, page: seat.page })
 }
 
 /**

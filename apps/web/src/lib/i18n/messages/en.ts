@@ -1824,6 +1824,19 @@ export const en = {
         walk: 'Walk the hideout instead',
       },
 
+      lab: {
+        eyebrow: 'Unlocked after the canonical negotiation',
+        title: 'Nen Lab',
+        intro:
+          'Replay the table with one Nen technique. Start with six distinct archetypes, or open the complete catalogue when you know what you want to test.',
+        archetypes: 'Six starting archetypes',
+        catalog: (count: number) => `All ${count} table techniques`,
+        deal: 'Deal conditions',
+        selected: (name: string) => `Technique selected — ${name}`,
+        play: 'Start laboratory game',
+        open: 'Open the Nen Lab',
+      },
+
       table: {
         fan: 'Her questions',
         asked: 'Asked',

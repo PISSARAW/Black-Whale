@@ -19,7 +19,7 @@
    * second roster to keep in step, and picking an aura up before walking in
    * here is the whole gesture.
    */
-  import { onDestroy } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import Seo from '$lib/components/Seo.svelte'
   import TourScene from '$lib/components/tour/TourScene.svelte'
   import MorenaPiles from '$lib/components/tour/MorenaPiles.svelte'
@@ -30,12 +30,13 @@
   import MorenaVerdictPanel from '$lib/components/tour/MorenaVerdictPanel.svelte'
   import MorenaChallengeCard from '$lib/components/tour/MorenaChallengeCard.svelte'
   import MorenaHatsuSeats from '$lib/components/tour/MorenaHatsuSeats.svelte'
+  import MorenaLabPanel from '$lib/components/tour/MorenaLabPanel.svelte'
   import MorenaTranscript from '$lib/components/tour/MorenaTranscript.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { page } from '$app/stores'
   import { link, locale, t } from '$lib/i18n'
-  import { activeHatsu, emperorTimeLifeHours } from '$lib/nen/hatsuState'
+  import { emperorTimeLifeHours } from '$lib/nen/hatsuState'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
@@ -55,7 +56,10 @@
   import { decodeMorenaChallenge } from '$lib/tour/morenaChallenge'
   import {
     adaptMorenaHatsu,
+    activateMorenaLabHatsu,
     advanceMorenaEmperorTime,
+    morenaLabLoadout,
+    morenaLabTechniques,
     morenaLifeScorch,
     syncMorenaHatsuGate,
   } from '$lib/tour/morenaHatsuAdapter'
@@ -82,17 +86,19 @@
 
   const session = new MorenaSession()
   const view = $derived(session.view)
-  const cheats = $derived(session.cheats)
   const game = $derived(session.game)
   const choice = $derived(session.choice)
   const incomingChallenge = $derived(decodeMorenaChallenge($page.url.searchParams.get('challenge')))
   const challengeWaiting = $derived(session.challengeWaiting)
   const currentChallengeSeed = $derived(session.currentChallengeSeed)
   const previousChallengeStreak = $derived(session.previousChallengeStreak)
+  const labTechniques = $derived(morenaLabTechniques($locale))
 
   $effect(() => {
     session.setChallenge(incomingChallenge)
   })
+
+  onMount(() => session.hydrateLab())
 
   let tierId = $state(HIDEOUT_TIER)
 
@@ -199,14 +205,20 @@
    * a punch is a punch and this is a card game — and saying so plainly is part
    * of what the page is for.
    */
-  const carried = $derived($activeHatsu)
-  const hatsu = $derived(adaptMorenaHatsu(game, carried, $locale))
+  const hatsu = $derived(adaptMorenaHatsu(game, $locale))
   const seats = $derived(hatsu.seats)
   const keyed = $derived(hatsu.keyed)
   const hands = $derived(hatsu.hands)
 
-  function deal() {
-    session.deal({ tableKind: hatsu.tableKind, carryingBook: hatsu.carryingBook })
+  function dealCanonical() {
+    session.setCheats(true)
+    session.deal({ tableKind: null, carryingBook: false }, 'canonical')
+  }
+
+  function dealLab() {
+    activateMorenaLabHatsu(session.labHatsuId)
+    session.setCheats(!session.labClean)
+    session.deal(morenaLabLoadout(session.labHatsuId), 'lab')
   }
 
   /**
@@ -446,7 +458,7 @@
         onHatsu={cast}
         nen={modeNen.value}
         onNenChange={modeNen.use}
-        auraColour={carried?.color ?? null}
+        auraColour={hatsu.auraColor}
         castOnClick={false}
         touchLabels={{
           move: $t.tour.touch.move,
@@ -485,7 +497,7 @@
           effect: copy.hatsu.effects[seat.move.effect],
           usedUp: seat.usedUp,
         }))}
-        auraColor={carried?.color ?? null}
+        auraColor={hatsu.auraColor}
         {immersive}
         onFullscreen={toggleFullscreen}
       />
@@ -541,22 +553,35 @@
       {#if view === 'menu'}
         <MorenaSetupPanel
           mode="menu"
-          {cheats}
-          locked={challengeWaiting}
-          {carried}
-          onCheatsChange={(value) => session.setCheats(value)}
-          onDeal={deal}
+          onDeal={dealCanonical}
           onRules={() => session.showRules()}
           onBack={() => session.showMenu()}
         />
+        {#if session.labUnlocked}
+          <button
+            type="button"
+            data-testid="morena-open-lab"
+            class="mt-3 w-full rounded border border-[#805ad5]/70 bg-[#140f20] px-4 py-3 text-sm font-semibold text-[#cbb6ff] transition hover:border-[#a78bfa] hover:bg-[#1d1530]"
+            onclick={() => session.showLab()}
+          >
+            {copy.lab.open}
+          </button>
+        {/if}
       {:else if view === 'rules'}
         <MorenaSetupPanel
           mode="rules"
-          {cheats}
-          {carried}
-          onCheatsChange={(value) => session.setCheats(value)}
-          onDeal={deal}
+          onDeal={dealCanonical}
           onRules={() => session.showRules()}
+          onBack={() => session.showMenu()}
+        />
+      {:else if view === 'lab'}
+        <MorenaLabPanel
+          techniques={labTechniques}
+          selectedId={session.labHatsuId}
+          clean={session.labClean}
+          onSelect={(id) => session.selectLabHatsu(id)}
+          onCleanChange={(clean) => session.setLabClean(clean)}
+          onDeal={dealLab}
           onBack={() => session.showMenu()}
         />
       {:else}
@@ -609,10 +634,16 @@
             onChoice={(card) => session.choose(card)}
           />
         {:else if game.verdict}
-          <MorenaVerdictPanel {game} onAgain={deal} onLeave={() => session.showMenu()} />
+          <MorenaVerdictPanel
+            {game}
+            onAgain={() => session.replay()}
+            onLeave={() => session.showMenu()}
+            onLab={session.labUnlocked ? () => session.showLab() : undefined}
+          />
           <MorenaChallengeCard
             {game}
             seed={currentChallengeSeed}
+            detectionSeed={session.currentDetectionSeed}
             previousStreak={previousChallengeStreak}
             path={$link('/tour/morena')}
           />
@@ -634,7 +665,7 @@
               {game}
               {seats}
               {keyed}
-              auraColor={carried?.color ?? null}
+              auraColor={hatsu.auraColor}
               onCast={(hand) => cast(null, null, hand)}
             />
 

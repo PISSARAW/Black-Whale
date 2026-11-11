@@ -1,10 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { AbilityContext } from '@black-whale/nen-engine'
 import { createEmptyWorld, InMemoryBranchEngine, type WorldState } from '@black-whale/canon-engine'
 import {
   contagion,
   CONTAGION_LIMITS,
   dealTheGame,
+  playTechnique,
   sheWillNotPlay,
   takeTheDeal,
   theEyesTakeYou,
@@ -152,6 +153,22 @@ describe('the Manipulation, recorded where a reader can see it', () => {
    */
   const cheating = () =>
     withGame({ ...dealTheGame({ marked: null, technique: 'truth-punch' }), watch: 1 })
+
+  it('draws the technique effect and its detection from separate streams', () => {
+    const game = { ...dealTheGame({ marked: null, technique: 'dowsing' }), watch: 1 }
+    const effectRandom = vi.fn(() => 0)
+    const detectionRandom = vi.fn(() => 0.99)
+    const hidden = playTechnique(game, { random: effectRandom, detectionRandom })
+    const caught = playTechnique(game, { random: () => 0, detectionRandom: () => 0 })
+
+    expect(effectRandom).toHaveBeenCalledOnce()
+    expect(detectionRandom).toHaveBeenCalledOnce()
+    expect(hidden.foreseen).toBe('yes')
+    expect(hidden.log.at(-1)).toMatchObject({ kind: 'played', seen: false })
+    expect(caught.log.at(-2)).toMatchObject({ kind: 'played', seen: true })
+    expect(hidden.manipulated).toBe(false)
+    expect(caught.manipulated).toBe(true)
+  })
 
   it('triggers the effect and constrains the candidate to two words', () => {
     const caught = run('play-technique', { effectId: 'game-1' }, cheating())

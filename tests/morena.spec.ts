@@ -55,9 +55,10 @@ test.describe("Morena's negotiation critical path", () => {
     page,
     isMobile,
   }) => {
+    test.slow()
     const start = page.getByRole('button', { name: 'Sit down opposite Morena', exact: true })
     await expect(start).toBeVisible()
-    await expect(page.getByTestId('morena-options')).not.toHaveAttribute('open', '')
+    await expect(page.getByTestId('morena-lab')).toHaveCount(0)
     if (isMobile) {
       const box = await start.boundingBox()
       const viewport = page.viewportSize()
@@ -98,6 +99,17 @@ test.describe("Morena's negotiation critical path", () => {
     await expect(verdict).toBeVisible()
     await expect(announcement).toContainText('Final answer')
     if (!isMobile) await expect(verdict.getByRole('heading', { level: 2 })).toBeFocused()
+
+    const openLab = page.getByRole('button', { name: 'Open the Nen Lab', exact: true })
+    await expect(openLab).toBeVisible()
+    if (isMobile) await openLab.tap()
+    else {
+      await openLab.focus()
+      await openLab.press('Enter')
+    }
+    await expect(page.getByTestId('morena-lab')).toBeVisible()
+    await expect(page.getByTestId('morena-lab-archetype')).toHaveCount(6)
+    await expect(page.getByTestId('morena-lab-catalog')).toContainText('All 37 table techniques')
 
     const width = await page.evaluate(() => ({
       page: document.documentElement.scrollWidth,
@@ -143,9 +155,14 @@ test.describe("Morena's negotiation critical path", () => {
 
   test('stops the Emperor Time clock after navigation', async ({ page, isMobile }) => {
     test.skip(isMobile, 'Global lifecycle cleanup is covered once in Chromium.')
-    await page.addInitScript(() => sessionStorage.setItem('black-whale:hatsu', 'emperor-time'))
+    await page.addInitScript(() => {
+      sessionStorage.setItem('black-whale:morena-lab', 'true')
+      sessionStorage.setItem('black-whale:hatsu', 'emperor-time')
+    })
     await page.reload()
-    await enterGame(page, false)
+    await page.getByRole('button', { name: 'Open the Nen Lab', exact: true }).click()
+    await page.getByTestId('morena-lab-archetype').filter({ hasText: 'Emperor Time' }).click()
+    await page.getByRole('button', { name: 'Start laboratory game', exact: true }).click()
 
     await page.getByTestId('morena-analysis').locator('summary').click()
     const emperorTime = page.getByTestId('morena-hatsu-seat')

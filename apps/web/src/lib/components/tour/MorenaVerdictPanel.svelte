@@ -7,9 +7,10 @@
     game: MorenaGame
     onAgain: () => void
     onLeave: () => void
+    onLab?: () => void
   }
 
-  let { game, onAgain, onLeave }: Props = $props()
+  let { game, onAgain, onLeave, onLab }: Props = $props()
   const copy = $derived($t.tour.morena)
   const conditions = $derived(infectionAfter(game))
   let verdictHeading = $state<HTMLHeadingElement | null>(null)
@@ -79,6 +80,12 @@
       class="rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] hover:bg-[#e8697f]"
       onclick={onAgain}>{copy.again}</button
     >
+    {#if onLab}
+      <button
+        class="rounded border border-[#FFD700]/60 px-4 py-2 text-sm text-[#FFD700] hover:bg-[#FFD700]/10"
+        onclick={onLab}>{copy.lab.open}</button
+      >
+    {/if}
     <button
       class="rounded border border-[#444] px-4 py-2 text-sm text-[#FFFFF0] hover:border-[#FFD700]"
       onclick={onLeave}>{copy.menu.leave}</button

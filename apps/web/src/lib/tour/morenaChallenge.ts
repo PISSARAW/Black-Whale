@@ -1,15 +1,23 @@
-import type { AnswerCard, MorenaGame, Verdict } from '@black-whale/ability-modules'
+import { TABLE_KINDS } from '@black-whale/ability-modules'
+import type { AnswerCard, MorenaGame, TableKind, Verdict } from '@black-whale/ability-modules'
 
-const VERSION = 1
+const VERSION = 2
 const MAX_STREAK = 999
 const MAX_ROUNDS = 99
 
 export type MorenaChallengeVerdict = Extract<Verdict, 'infected' | 'forced'>
 
+export interface MorenaChallengeLoadout {
+  technique: TableKind | null
+  bookmark: TableKind | null
+}
+
 export interface MorenaChallenge {
   v: typeof VERSION
-  /** The deterministic draw shared by every player in this chain. */
+  /** Deterministic card removals and non-detection technique effects. */
   seed: number
+  /** A separate stream for LSDF detection checks. */
+  detectionSeed: number
   /** Consecutive players Morena has beaten before the recipient sits down. */
   streak: number
   /** How long the player who sent the invitation lasted. */
@@ -18,6 +26,12 @@ export interface MorenaChallenge {
   verdict: MorenaChallengeVerdict
   /** The original table may be canonical or clean; the recipient gets the same one. */
   marked: AnswerCard | null
+  /** The exact technique pages carried by the sender. */
+  loadout: MorenaChallengeLoadout
+}
+
+interface LegacyMorenaChallenge extends Omit<MorenaChallenge, 'v' | 'detectionSeed' | 'loadout'> {
+  v: 1
 }
 
 export type MorenaChallengeOutcome = 'morena' | 'player' | 'abandoned' | 'unfinished'
@@ -32,16 +46,21 @@ export function challengeOutcome(game: MorenaGame): MorenaChallengeOutcome {
 export function nextMorenaChallenge(
   game: MorenaGame,
   seed: number,
-  previousStreak: number,
+  options: { previousStreak: number; detectionSeed?: number },
 ): MorenaChallenge | null {
   if (challengeOutcome(game) !== 'morena') return null
   return {
     v: VERSION,
     seed: seed >>> 0,
-    streak: Math.min(MAX_STREAK, Math.max(0, previousStreak) + 1),
+    detectionSeed: (options.detectionSeed ?? morenaDetectionSeed(seed)) >>> 0,
+    streak: Math.min(MAX_STREAK, Math.max(0, options.previousStreak) + 1),
     rounds: Math.min(MAX_ROUNDS, Math.max(1, Math.trunc(game.round))),
     verdict: game.verdict as MorenaChallengeVerdict,
     marked: game.marked,
+    loadout: {
+      technique: game.technique,
+      bookmark: game.bookmark?.kind ?? null,
+    },
   }
 }
 
@@ -71,8 +90,28 @@ function isAnswerCard(value: unknown): value is AnswerCard | null {
   )
 }
 
+function isTableKind(value: unknown): value is TableKind | null {
+  return value === null || TABLE_KINDS.includes(value as TableKind)
+}
+
+function isLoadout(value: unknown): value is MorenaChallengeLoadout {
+  if (!value || typeof value !== 'object') return false
+  const loadout = value as Partial<MorenaChallengeLoadout>
+  return isTableKind(loadout.technique) && isTableKind(loadout.bookmark)
+}
+
 function isMorenaChallenge(value: Partial<MorenaChallenge>): value is MorenaChallenge {
   if (value.v !== VERSION) return false
+  if (!integerInRange(value.seed, 0, 0xffffffff)) return false
+  if (!integerInRange(value.detectionSeed, 0, 0xffffffff)) return false
+  if (!integerInRange(value.streak, 1, MAX_STREAK)) return false
+  if (!integerInRange(value.rounds, 1, MAX_ROUNDS)) return false
+  if (!isChallengeVerdict(value.verdict)) return false
+  return isAnswerCard(value.marked) && isLoadout(value.loadout)
+}
+
+function isLegacyChallenge(value: Partial<LegacyMorenaChallenge>): value is LegacyMorenaChallenge {
+  if (value.v !== 1) return false
   if (!integerInRange(value.seed, 0, 0xffffffff)) return false
   if (!integerInRange(value.streak, 1, MAX_STREAK)) return false
   if (!integerInRange(value.rounds, 1, MAX_ROUNDS)) return false
@@ -80,15 +119,26 @@ function isMorenaChallenge(value: Partial<MorenaChallenge>): value is MorenaChal
   return isAnswerCard(value.marked)
 }
 
+/** Stable second stream for old links and newly generated challenges alike. */
+export const morenaDetectionSeed = (seed: number): number =>
+  (Math.imul(seed >>> 0, 0x9e3779b1) ^ 0xa5a5a5a5) >>> 0
+
 export function decodeMorenaChallenge(encoded: string | null): MorenaChallenge | null {
-  if (!encoded || encoded.length > 256) return null
+  if (!encoded || encoded.length > 512) return null
   try {
     const padded = encoded
       .replaceAll('-', '+')
       .replaceAll('_', '/')
       .padEnd(encoded.length + ((4 - (encoded.length % 4)) % 4), '=')
-    const value = JSON.parse(atob(padded)) as Partial<MorenaChallenge>
-    return isMorenaChallenge(value) ? value : null
+    const value = JSON.parse(atob(padded)) as Record<string, unknown>
+    if (isMorenaChallenge(value)) return value
+    if (!isLegacyChallenge(value)) return null
+    return {
+      ...value,
+      v: VERSION,
+      detectionSeed: morenaDetectionSeed(value.seed),
+      loadout: { technique: null, bookmark: null },
+    }
   } catch {
     return null
   }

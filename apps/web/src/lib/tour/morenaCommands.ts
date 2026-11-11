@@ -27,7 +27,11 @@ export type MorenaCommand =
 export function applyMorenaCommand(
   game: MorenaGame,
   command: MorenaCommand,
-  options: { random?: () => number } = {},
+  options: {
+    random?: () => number
+    drawRandom?: () => number
+    detectionRandom?: () => number
+  } = {},
 ): MorenaGame {
   switch (command.kind) {
     case 'ask':
@@ -39,7 +43,11 @@ export function applyMorenaCommand(
     case 'settle':
       return settle(game, command.choice)
     case 'play-technique':
-      return playTechnique(game, { page: command.page, random: options.random })
+      return playTechnique(game, {
+        page: command.page,
+        random: options.random ?? options.drawRandom,
+        detectionRandom: options.detectionRandom,
+      })
     case 'leave':
       return leaveTheTable(game)
   }

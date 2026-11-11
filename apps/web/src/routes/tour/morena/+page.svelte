@@ -461,6 +461,14 @@
 
   /** What Morena said to the last question asked, for the panel's read-out. */
   const lastAsked = $derived(game.asked.length ? game.asked[game.asked.length - 1] : null)
+  /** The answer card removed during that exchange, shown beside Morena's reply. */
+  const lastRemoved = $derived.by(() => {
+    for (let index = game.log.length - 1; index >= 0; index -= 1) {
+      const beat = game.log[index]
+      if (beat.kind === 'taken') return beat.card
+    }
+    return null
+  })
   /** The complete turn result, announced without requiring the WebGL table. */
   const liveAnnouncement = $derived.by(() => {
     if (view !== 'table') return ''
@@ -514,7 +522,9 @@
       {copy.breadcrumb}
     </p>
     <h1 class="mt-2 text-3xl font-bold tracking-tight text-[#FFFFF0] sm:text-4xl">{copy.title}</h1>
-    <p class="mt-2 max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70">{copy.intro}</p>
+    <p class="mt-2 hidden max-w-3xl text-sm leading-relaxed text-[#FFFFF0]/70 sm:block">
+      {copy.intro}
+    </p>
   </header>
 
   <!-- Full screen is this grid over everything else rather than the canvas
@@ -532,9 +542,10 @@
   >
     <!-- The room, drawn by the walk's own engine off the walk's own blueprint. -->
     <section
-      class="relative overflow-hidden {immersive
+      class="relative order-2 overflow-hidden lg:order-1 {immersive
         ? 'h-full min-h-0'
-        : 'h-[65svh] min-h-[360px] rounded-sm border border-[#333]'}"
+        : 'h-[36dvh] min-h-[260px] rounded-sm border border-[#333] lg:h-[65svh] lg:min-h-[360px]'}"
+      data-testid="morena-scene"
     >
       <TourScene
         {ship}
@@ -614,9 +625,10 @@
 
     <!-- The game, where the cards are legible. -->
     <section
-      class="flex flex-col overflow-y-auto border-[#333] bg-[#0b0b0d] p-4 {immersive
-        ? `min-h-0 border-l ${panelOpen ? '' : 'hidden'}`
-        : 'max-h-[70vh] rounded-lg border'}"
+      class="order-1 flex flex-col border-[#333] bg-[#0b0b0d] p-4 lg:order-2 {immersive
+        ? `min-h-0 overflow-y-auto border-l ${panelOpen ? '' : 'hidden'}`
+        : 'overflow-visible rounded-lg border'}"
+      data-testid="morena-panel"
     >
       <!-- Folding the hand away is offered only where it buys something: full
            screen, where what it uncovers is the table itself. -->
@@ -682,7 +694,10 @@
              recording is — and the corner of the room is showing the same
              footage as a picture. -->
         {#if lastAsked}
-          <div class="mt-3 rounded border border-[#3a2b33] bg-[#140f13] p-3">
+          <div
+            class="mt-3 rounded border border-[#3a2b33] bg-[#140f13] p-3"
+            data-testid="morena-turn-result"
+          >
             <p class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">
               {copy.askedLabel}
             </p>
@@ -693,6 +708,12 @@
             <p class="mt-1 text-sm italic leading-relaxed text-[#FFFFF0]/80">
               {copy.questions[lastAsked].morena}
             </p>
+            {#if lastRemoved}
+              <p class="mt-3 border-t border-[#3a2b33] pt-2 text-xs text-[#FFFFF0]/55">
+                <span class="text-[#d94f68]">{copy.removedLabel}</span>
+                {nameOfCard(lastRemoved)}
+              </p>
+            {/if}
           </div>
         {/if}
 
@@ -708,46 +729,56 @@
           />
         {/if}
 
-        <MorenaHatsuSeats
-          {game}
-          {seats}
-          {keyed}
-          auraColor={carried?.color ?? null}
-          onCast={(hand) => cast(null, null, hand)}
-        />
+        <details
+          class="mt-5 rounded border border-[#292929] bg-[#080808]"
+          data-testid="morena-analysis"
+        >
+          <summary
+            class="cursor-pointer list-none px-3 py-2 text-xs font-semibold text-[#FFFFF0]/65 marker:hidden hover:text-[#FFFFF0]"
+          >
+            {copy.analysis.title}
+          </summary>
+          <div class="border-t border-[#222] p-3">
+            <p class="text-xs leading-relaxed text-[#FFFFF0]/45">{copy.analysis.hint}</p>
 
-        <!-- Walking out. Canon puts it under the same sanction as cheating, so
-             it is offered as a move rather than as a way out. -->
-        {#if game.phase !== 'over'}
-          <div class="mt-4 border-t border-[#222] pt-3">
-            <p class="text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.leaveWarning}</p>
-            <p class="mt-2 text-[11px] text-[#FFFFF0]/40">
-              {game.watch > 0 ? copy.hatsu.watching : copy.hatsu.unwatched}
-            </p>
-            <button
-              class="mt-2 rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0]/80 hover:border-[#ef3340] hover:text-[#ef8a90]"
-              onclick={walkOut}
-            >
-              {copy.hatsu.leave}
-            </button>
+            <MorenaHatsuSeats
+              {game}
+              {seats}
+              {keyed}
+              auraColor={carried?.color ?? null}
+              onCast={(hand) => cast(null, null, hand)}
+            />
+
+            <!-- Walking out. Canon puts it under the same sanction as cheating, so
+                 it is offered as a move rather than as a way out. -->
+            {#if game.phase !== 'over'}
+              <div class="mt-4 border-t border-[#222] pt-3">
+                <p class="text-[11px] leading-snug text-[#FFFFF0]/45">
+                  {copy.hatsu.leaveWarning}
+                </p>
+                <p class="mt-2 text-[11px] text-[#FFFFF0]/40">
+                  {game.watch > 0 ? copy.hatsu.watching : copy.hatsu.unwatched}
+                </p>
+                <button
+                  class="mt-2 rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0]/80 hover:border-[#ef3340] hover:text-[#ef8a90]"
+                  onclick={walkOut}
+                >
+                  {copy.hatsu.leave}
+                </button>
+              </div>
+            {/if}
+
+            <div class="mt-5 border-t border-[#222] pt-4">
+              <MorenaPiles {game} {copy} />
+            </div>
+
+            <div class="mt-5">
+              <ContagionDashboard {game} />
+            </div>
+
+            <MorenaTranscript {game} {nameOfCard} />
           </div>
-        {/if}
-
-        <!-- What is on the table, in the same three piles the scene lays out —
-             and as cards, because that is how the chapters show them. -->
-        <div class="mt-5 border-t border-[#222] pt-4">
-          <MorenaPiles {game} {copy} />
-        </div>
-
-        <!-- Contagion, read rather than cast: the network, the negotiation and
-             the frieze of what was played under an aura to get there. The
-             ability module has declared this component key since it was
-             written; `$lib/nen/abilityComponents` is what finally resolves it. -->
-        <div class="mt-5">
-          <ContagionDashboard {game} />
-        </div>
-
-        <MorenaTranscript {game} {nameOfCard} />
+        </details>
       {/if}
     </section>
   </div>

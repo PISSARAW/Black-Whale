@@ -7,7 +7,7 @@ async function activate(locator: Locator, touch: boolean) {
 }
 
 async function enterGame(page: Page, touch: boolean) {
-  const start = page.getByRole('button', { name: 'Sit down', exact: true })
+  const start = page.getByRole('button', { name: 'Sit down opposite Morena', exact: true })
   await expect(start).toBeVisible({ timeout: 20_000 })
   await activate(start, touch)
   const action = page.getByTestId('morena-action')
@@ -55,9 +55,28 @@ test.describe("Morena's negotiation critical path", () => {
     page,
     isMobile,
   }) => {
+    const start = page.getByRole('button', { name: 'Sit down opposite Morena', exact: true })
+    await expect(start).toBeVisible()
+    await expect(page.getByTestId('morena-options')).not.toHaveAttribute('open', '')
+    if (isMobile) {
+      const box = await start.boundingBox()
+      const viewport = page.viewportSize()
+      expect(box && viewport && box.y + box.height).toBeLessThanOrEqual(viewport?.height ?? 0)
+    }
+
     const action = await enterGame(page, isMobile)
     const heading = action.getByRole('heading', { level: 2 })
     if (!isMobile) await expect(heading).toBeFocused()
+    await expect(page.getByTestId('morena-analysis')).not.toHaveAttribute('open', '')
+    expect(
+      await page.getByTestId('morena-panel').evaluate((panel) => getComputedStyle(panel).overflowY),
+    ).not.toMatch(/auto|scroll/)
+    if (isMobile) {
+      const sceneHeight = await page
+        .getByTestId('morena-scene')
+        .evaluate((scene) => scene.getBoundingClientRect().height)
+      expect(sceneHeight).toBeLessThanOrEqual((page.viewportSize()?.height ?? 0) * 0.45)
+    }
 
     const announcement = page.getByTestId('morena-announcement')
     await expect(announcement).toContainText('Game started')
@@ -68,6 +87,7 @@ test.describe("Morena's negotiation critical path", () => {
       await firstQuestion.press('Enter')
     }
     await expect(announcement).toContainText('Morena removed')
+    await expect(page.getByTestId('morena-turn-result')).toContainText('Morena removed')
     if (!isMobile) {
       await expect(
         page.getByTestId('morena-action').getByRole('heading', { level: 2 }),
@@ -127,6 +147,7 @@ test.describe("Morena's negotiation critical path", () => {
     await page.reload()
     await enterGame(page, false)
 
+    await page.getByTestId('morena-analysis').locator('summary').click()
     const emperorTime = page.getByTestId('morena-hatsu-seat')
     await expect(emperorTime).toContainText('Emperor Time')
     await emperorTime.getByRole('button').click()

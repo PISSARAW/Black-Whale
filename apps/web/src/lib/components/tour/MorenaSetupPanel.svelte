@@ -32,64 +32,9 @@
 </script>
 
 {#if mode === 'menu'}
-  <h2 class="text-lg font-semibold text-[#FFFFF0]">{copy.menu.deck}</h2>
-  <div class="mt-4 space-y-3">
-    <label
-      class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
-    >
-      <input type="radio" class="mt-1" bind:group={cheats} value={true} disabled={locked} />
-      <span
-        ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.marked}</span>
-        <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60">{copy.menu.markedNote}</span
-        ></span
-      >
-    </label>
-    <label
-      class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
-    >
-      <input type="radio" class="mt-1" bind:group={cheats} value={false} disabled={locked} />
-      <span
-        ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.clean}</span>
-        <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60">{copy.menu.cleanNote}</span
-        ></span
-      >
-    </label>
-  </div>
-
-  <h3 class="mt-6 text-[10px] uppercase tracking-widest text-[#FFD700]/70">{copy.hatsu.title}</h3>
-  {#if tableKind && move}
-    <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
-      <p class="text-sm font-semibold" style:color={carried?.color}>
-        {localizeHatsu(carried!, $locale).name}
-      </p>
-      <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
-        <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>{copy.hatsu.techniques[tableKind]
-          .buys}
-      </p>
-      <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">
-        <span class="text-[#FFFFF0]/40">{copy.hatsu.costs} — </span>{copy.hatsu.techniques[
-          tableKind
-        ].costs}
-      </p>
-    </div>
-  {:else if carryingBook}
-    <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
-      <p class="text-sm font-semibold" style:color={carried?.color}>
-        {localizeHatsu(carried!, $locale).name}
-      </p>
-      <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
-        <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>{copy.hatsu.book.body}
-      </p>
-    </div>
-  {:else if carried}
-    <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/50">
-      {copy.hatsu.useless(localizeHatsu(carried, $locale).name)}
-    </p>
-  {:else}
-    <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/50">{copy.hatsu.none}</p>
-  {/if}
-
-  <div class="mt-5 flex flex-wrap gap-2">
+  <h2 class="text-lg font-semibold text-[#FFFFF0]">{copy.menu.canonicalTitle}</h2>
+  <p class="mt-2 text-sm leading-relaxed text-[#FFFFF0]/65">{copy.menu.quickRule}</p>
+  <div class="mt-4 flex flex-wrap gap-2">
     <button
       class="rounded bg-[#d94f68] px-4 py-2 text-sm font-semibold text-[#0b0b0d] hover:bg-[#e8697f]"
       onclick={onDeal}>{copy.menu.play}</button
@@ -99,11 +44,85 @@
       onclick={onRules}>{copy.menu.rules}</button
     >
   </div>
-  <p class="mt-6 text-xs leading-snug text-[#FFFFF0]/50">{copy.source}</p>
-  <a
-    class="mt-3 text-xs text-[#FFD700]/80 underline hover:text-[#FFD700]"
-    href="{$link('/tour')}?space={HIDEOUT_OFFICE}">{copy.menu.walk}</a
-  >
+
+  <details class="mt-5 rounded border border-[#2c2c2c] bg-[#080808]" data-testid="morena-options">
+    <summary
+      class="cursor-pointer list-none px-3 py-2 text-xs font-semibold text-[#FFFFF0]/65 marker:hidden hover:text-[#FFFFF0]"
+    >
+      {copy.menu.advanced}
+    </summary>
+    <div class="space-y-4 border-t border-[#222] p-3">
+      <div>
+        <h3 class="text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.menu.deck}</h3>
+        <div class="mt-2 space-y-2">
+          <label
+            class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
+          >
+            <input type="radio" class="mt-1" bind:group={cheats} value={true} disabled={locked} />
+            <span
+              ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.marked}</span>
+              <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60"
+                >{copy.menu.markedNote}</span
+              ></span
+            >
+          </label>
+          <label
+            class="flex cursor-pointer gap-3 rounded border border-[#333] p-3 hover:border-[#d94f68]"
+          >
+            <input type="radio" class="mt-1" bind:group={cheats} value={false} disabled={locked} />
+            <span
+              ><span class="block text-sm font-semibold text-[#FFFFF0]">{copy.menu.clean}</span>
+              <span class="mt-1 block text-xs leading-snug text-[#FFFFF0]/60"
+                >{copy.menu.cleanNote}</span
+              ></span
+            >
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-[10px] uppercase tracking-widest text-[#FFD700]/70">{copy.hatsu.title}</h3>
+        {#if tableKind && move}
+          <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
+            <p class="text-sm font-semibold" style:color={carried?.color}>
+              {localizeHatsu(carried!, $locale).name}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
+              <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>{copy.hatsu.techniques[
+                tableKind
+              ].buys}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/55">
+              <span class="text-[#FFFFF0]/40">{copy.hatsu.costs} — </span>{copy.hatsu.techniques[
+                tableKind
+              ].costs}
+            </p>
+          </div>
+        {:else if carryingBook}
+          <div class="mt-2 rounded border border-[#333] p-3" style:border-color={carried?.color}>
+            <p class="text-sm font-semibold" style:color={carried?.color}>
+              {localizeHatsu(carried!, $locale).name}
+            </p>
+            <p class="mt-1 text-xs leading-snug text-[#FFFFF0]/70">
+              <span class="text-[#FFFFF0]/40">{copy.hatsu.buys} — </span>{copy.hatsu.book.body}
+            </p>
+          </div>
+        {:else if carried}
+          <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/50">
+            {copy.hatsu.useless(localizeHatsu(carried, $locale).name)}
+          </p>
+        {:else}
+          <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/50">{copy.hatsu.none}</p>
+        {/if}
+      </div>
+
+      <p class="text-xs leading-snug text-[#FFFFF0]/50">{copy.source}</p>
+      <a
+        class="block text-xs text-[#FFD700]/80 underline hover:text-[#FFD700]"
+        href="{$link('/tour')}?space={HIDEOUT_OFFICE}">{copy.menu.walk}</a
+      >
+    </div>
+  </details>
 {:else}
   <h2 class="text-lg font-semibold text-[#FFFFF0]">{copy.rules.title}</h2>
   <ol class="mt-3 space-y-3">

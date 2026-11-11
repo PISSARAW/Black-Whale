@@ -1806,8 +1806,12 @@ export const en = {
         'This table needs WebGL, which this browser is not offering. The rules below are the whole of the game and can be read without it.',
 
       menu: {
-        play: 'Sit down',
+        canonicalTitle: 'Replay the canonical negotiation',
+        quickRule:
+          'Choose one question. Morena answers it, then removes one of your answers at random. The last answer left is yours.',
+        play: 'Sit down opposite Morena',
         rules: 'Read the rules',
+        advanced: 'Advanced options',
         back: 'Back to the table',
         leave: 'Leave the table',
         deck: 'The deal',
@@ -1835,6 +1839,12 @@ export const en = {
       askHint: 'She answers it, and then she takes one of your cards. You do not choose which.',
       askedLabel: 'You asked',
       answerLabel: 'She said',
+      removedLabel: 'Morena removed —',
+
+      analysis: {
+        title: 'Game analysis',
+        hint: 'Card piles, Nen techniques, Contagion state and the complete transcript.',
+      },
 
       announcements: {
         started: 'Game started. Choose a question for Morena.',

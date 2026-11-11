@@ -1665,8 +1665,12 @@ export const fr: Messages = {
         'Cette table demande WebGL, que ce navigateur ne propose pas. Les règles ci-dessous sont tout le jeu et se lisent sans lui.',
 
       menu: {
-        play: 'S’asseoir',
+        canonicalTitle: 'Rejouer la négociation canonique',
+        quickRule:
+          'Choisissez une question. Morena y répond, puis retire au hasard une de vos réponses. La dernière réponse restante sera la vôtre.',
+        play: 'S’asseoir face à Morena',
         rules: 'Lire les règles',
+        advanced: 'Options avancées',
         back: 'Revenir à la table',
         leave: 'Quitter la table',
         deck: 'La donne',
@@ -1694,6 +1698,12 @@ export const fr: Messages = {
       askHint: 'Elle y répond, puis elle prend une de vos cartes. Vous ne choisissez pas laquelle.',
       askedLabel: 'Vous demandez',
       answerLabel: 'Elle répond',
+      removedLabel: 'Morena retire —',
+
+      analysis: {
+        title: 'Analyse de la partie',
+        hint: 'Piles de cartes, techniques de Nen, état de Contagion et journal complet.',
+      },
 
       announcements: {
         started: 'La partie commence. Choisissez une question à poser à Morena.',

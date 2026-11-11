@@ -20,7 +20,12 @@ const expectedDetails: Readonly<Record<number, readonly string[]>> = {
   1003: ['dining-chair-head', 'dining-credenza', 'dining-framed-document', 'dining-candelabrum'],
   1004: ['living-mantel-clock', 'living-framed-decoration'],
   1005: ['living-desk', 'living-whiteboard-1', 'living-noticeboard'],
-  1006: ['living-birthday-table', 'living-gift-display-1', 'living-gift-display-2'],
+  1006: [
+    'living-armchair-west',
+    'living-armchair-east',
+    'living-service-table',
+    'living-potted-plant',
+  ],
   1007: [
     'living-deep-sofa',
     'living-side-table',

@@ -1,6 +1,7 @@
 import type { Space } from './types'
 import type { RoomAppearance } from './roomAppearanceTypes'
 import { camillaAppearanceOf } from './camillaAppearance'
+import { tysonAppearanceOf } from './tysonAppearance'
 import { tubeppaAppearanceOf } from './tubeppaAppearance'
 import { tserriednichAppearanceOf } from './tserriednichAppearance'
 import { zhangLeiAppearanceOf } from './zhangLeiAppearance'
@@ -16,6 +17,7 @@ export function apartmentRoomAppearanceOf(
     zhangLeiAppearanceOf(space, appearance) ??
     tserriednichAppearanceOf(space, appearance) ??
     tubeppaAppearanceOf(space, appearance) ??
+    tysonAppearanceOf(space, appearance) ??
     princeApartmentAppearanceOf(space, appearance) ??
     appearance
   )

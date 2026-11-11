@@ -340,16 +340,17 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 6 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 1 seat
-- **Objets directement visibles dans les cases :** 18/18
+- **Éléments modélisés :** 5 cabinet, 4 basin, 3 bed, 3 seat, 3 table, 2 counter
+- **Objets directement visibles dans les cases :** 6/20
 - **Espaces internes :** Quartiers des domestiques — 1006 (Tyson) ; WC du personnel — 1006 (Tyson) ; Vestibule d'entrée — 1006 (Tyson) ; Cuisine — 1006 (Tyson) ; Salle à manger — 1006 (Tyson) ; Salon — 1006 (Tyson) ; Chambre du prince — 1006 (Tyson) ; Bain et WC — 1006 (Tyson)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier et finitions reconstitués sans perspective intérieure individuelle.
+  - Chap. 375, page de lecture 1 ; chap. 389, page de lecture 10 : salon de Tyson, panneaux muraux à motifs, soubassement strié, quadrillage rectangulaire du sol, sièges rembourrés et tables basses carrées. Dimensions et implantation dans le programme-type publié reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 389 — Tyson entre par de hautes portes à panneaux dans une réception d'anniversaire ornée ; un gâteau et des cadeaux occupent la table centrale tandis que les assistants longent les murs.
-  - Chap. 389 — la réception d'anniversaire de Tyson est garnie de cadeaux emballés autour de son présentoir central.
+  - Reconstitution du 1006 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case individuelle ne précise le mobilier détaillé ni les finitions de cette pièce privée.
+  - Chap. 375, page de lecture 1 ; chap. 389, page de lecture 10 : salon de Tyson, panneaux muraux à motifs, soubassement strié, quadrillage rectangulaire du sol, sièges rembourrés et tables basses carrées. Dimensions et implantation dans le programme-type publié reconstituées.
+  - Rangement périphérique du 1006 reconstitué depuis le plan local de l’appartement ; aucune case précise ne permet d’attester ce buffet.
 
 ## Chambre 1007 (Luzurus) — `tier-1-royal-residential-sector-room-1007`
 

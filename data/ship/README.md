@@ -794,6 +794,14 @@ siège à haut dossier et deux tableaux contigus derrière le poste de travail.
 Les sept autres pièces et les meubles périphériques non établis dans ces vues
 restent des reconstitutions `map`. Voir [l’audit du 1005](tubeppa-room-audit.md).
 
+Dans le **1006**, le salon de Tyson suit la vue du chapitre 375 (page de
+lecture 1), recoupée avec le chapitre 389 (page 10) : sièges rembourrés, table
+basse carrée avec livre et bouquet, tapis latéral à damier, sol quadrillé,
+panneaux muraux à motifs et soubassement strié. Le gâteau de l’anniversaire
+surprise de Giuliano est porté par Tyson ; le faux présentoir central et les
+meubles de cadeaux non attestés sont retirés. Les sept pièces privées restent
+des reconstitutions `map`. Voir [l’audit du 1006](tyson-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

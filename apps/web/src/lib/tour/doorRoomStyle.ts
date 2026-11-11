@@ -1,3 +1,4 @@
+import { buildTysonDoorLeaves, dressTysonDoorCasing } from './tysonDoorStyle'
 import { buildBenjaminDoorLeaves, dressBenjaminDoorCasing } from './benjaminRoomDoors'
 import { buildTierDoorLeaves, dressTierDoorCasing, type LeafBuildOptions } from './doorTierBuilders'
 import { buildTserriednichDoorLeaves, dressTserriednichDoorCasing } from './tserriednichDoorStyle'
@@ -19,6 +20,9 @@ export function roomDoorStyle(options: {
   }
   if (options.tierId === 'interior-room-1003') {
     return { casing: dressZhangLeiDoorCasing, leaves: buildZhangLeiDoorLeaves }
+  }
+  if (options.tierId === 'interior-room-1006') {
+    return { casing: dressTysonDoorCasing, leaves: buildTysonDoorLeaves }
   }
   if (['interior-room-1004', 'interior-room-1005'].includes(options.tierId)) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }

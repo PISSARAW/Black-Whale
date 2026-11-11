@@ -100,17 +100,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Le salon de Woble, du téléphone mural au mobilier de présentation',
   }),
   view({
-    id: 'tyson-living-audience',
-    spaceId: 'tier-1-royal-residential-sector-room-1006-living',
-    at: [0.4, 4.7],
-    target: [-6, 1.7],
-    pitch: -0.03,
-    chapter: 362,
-    volume: 35,
-    label: "Tyson's audience room",
-    labelFr: "Le salon d'audience de Tyson",
-  }),
-  view({
     id: 'luzurus-living-sofa',
     spaceId: 'tier-1-royal-residential-sector-room-1007-living',
     at: [-0.2, 4.8],

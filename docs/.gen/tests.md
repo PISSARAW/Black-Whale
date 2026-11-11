@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 369
+Fichiers : 370
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1454,6 +1454,10 @@ Fichiers : 369
 ## `apps/web/src/lib/tour/tubeppaView.test.ts`
 
 - Tubeppa’s apartment against the workstation panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
+
+## `apps/web/src/lib/tour/tysonView.test.ts`
+
+- Tyson’s apartment against the salon panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/visibility.test.ts`
 

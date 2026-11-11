@@ -1,5 +1,6 @@
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'
+import { abilityModules } from '@black-whale/ability-modules'
 
 export type StrategyHatsuEffect = 'RECON' | 'DENIAL' | 'GUARD' | 'MOBILITY' | 'INFLUENCE'
 
@@ -35,6 +36,8 @@ export interface StrategyHatsuResolution {
 }
 
 type Adapter = (context: StrategyHatsuContext) => StrategyHatsuResolution
+
+const NEN_MODULE_IDS = new Set(abilityModules.map((module) => module.manifest.id))
 
 const accepted = (
   effects: StrategyHatsuEffect[],
@@ -141,6 +144,9 @@ export function strategyHatsuResolution(
   context: StrategyHatsuContext,
   locale: Locale = 'en',
 ): StrategyHatsuResolution | null {
+  // Strategy may narrow a module to board-scale effects, but it may never
+  // invent a playable Hatsu that the authoritative Nen catalogue cannot run.
+  if (!NEN_MODULE_IDS.has(context.abilityId)) return null
   // The context carries its own locale for callers that build one; the second
   // argument is the fallback, not an override — it used to silently win.
   const adapterContext = { ...context, locale: context.locale ?? locale }
@@ -148,5 +154,5 @@ export function strategyHatsuResolution(
 }
 
 export function hasStrategyHatsuAdapter(abilityId: string): boolean {
-  return Boolean(ADAPTERS[abilityId])
+  return NEN_MODULE_IDS.has(abilityId) && Boolean(ADAPTERS[abilityId])
 }

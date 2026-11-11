@@ -23,6 +23,11 @@ describe('Strategy Hatsu adapters', () => {
       expect(hasStrategyHatsuAdapter(id), id).toBe(true)
   })
 
+  it('refuses generic tactical fallbacks without a Nen module and adapter', () => {
+    expect(hasStrategyHatsuAdapter('unimplemented-hatsu')).toBe(false)
+    expect(resolve('unimplemented-hatsu')).toBeNull()
+  })
+
   it('keeps passive and vow-restricted abilities honest', () => {
     expect(resolve('cats-name').accepted).toBe(false)
     // Asserted against the message table rather than a literal: the refusal is

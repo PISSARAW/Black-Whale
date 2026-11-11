@@ -6,7 +6,6 @@ import { scenarioMoveChance, seededScenarioRandom } from './scenario'
 import type { StrategyFaction } from './types'
 import type { StrategyScenarioV2 } from './scenario/types'
 import { hatsuById } from '$lib/nen/hatsuRegistry'
-import { strategicRoleForHatsu } from './rules'
 import { strategyHatsuResolution } from './hatsu'
 import { findStrategyRoute, type StrategyMovementGraph } from './movement'
 
@@ -170,10 +169,10 @@ export function generateFactionAIOperations(input: {
         })
       : null
     const usesHatsu =
-      profile && (adapted?.accepted ?? true) && (input.turn + entity.id.length) % 3 === 0
+      profile && adapted?.accepted === true && (input.turn + entity.id.length) % 3 === 0
     if (usesHatsu) {
       hatsuActivations += 1
-      const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
+      const effects = adapted.effects
       if (
         (effects.includes('DENIAL') || effects.includes('GUARD')) &&
         input.state.presences[entity.id]?.locationId

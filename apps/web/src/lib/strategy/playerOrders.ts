@@ -6,7 +6,6 @@ import type { Locale } from '$lib/i18n/config'
 import type { UnitCondition } from './conflict'
 import { strategyHatsuResolution } from './hatsu'
 import type { StrategyHatsuCue } from './hatsuPresentation'
-import { strategicRoleForHatsu } from './rules'
 import type { StrategyFaction, StrategyIntel, StrategyLocation, StrategyMoveOrder } from './types'
 import { findStrategyRoute, type StrategyMovementGraph } from './movement'
 
@@ -152,11 +151,12 @@ export function resolvePlayerOrders(
         },
         world.locale,
       )
-      if (adapted && !adapted.accepted)
+      if (!adapted) throw new StrategyInputError(strategyMsg(world.locale).errors.unknownHatsu)
+      if (!adapted.accepted)
         throw new StrategyInputError(
           adapted.error ?? strategyMsg(world.locale).errors.hatsuCannotBeActivated,
         )
-      const effects = adapted?.effects ?? [strategicRoleForHatsu(profile.kind)]
+      const effects = adapted.effects
       if (effects.includes('RECON')) plan.scouted.push(destination.id)
       if (effects.includes('DENIAL')) plan.denied.push(destination.id)
       if (effects.includes('GUARD')) plan.guarded.push(destination.id)
@@ -178,15 +178,15 @@ export function resolvePlayerOrders(
         })
       }
       plan.activatedAbilityIds.push(order.abilityId)
-      plan.cooldownTurns[order.abilityId] = adapted?.cooldownTurns ?? 2
-      plan.activatedHatsu.push(`${profile.name} · ${adapted?.report ?? destination.name}`)
+      plan.cooldownTurns[order.abilityId] = adapted.cooldownTurns
+      plan.activatedHatsu.push(`${profile.name} · ${adapted.report}`)
       plan.cues.push({
         seq: plan.cues.length + 1,
         abilityId: order.abilityId,
         sourceCharacterId: order.characterId,
         sourceLocationId: world.state.presences[entity.id]?.locationId ?? destination.id,
         targetLocationId: destination.id,
-        report: adapted?.report ?? profile.name,
+        report: adapted.report,
       })
       continue
     }

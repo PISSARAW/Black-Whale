@@ -7,16 +7,27 @@ describe('strategy conflicts', () => {
     expect(worsenCondition('WOUNDED')).toBe('ELIMINATED')
   })
 
-  it('gives a defended position the advantage', () => {
+  it('gives a defended position an advantage without forcing victory', () => {
     const result = resolveEncounter({
       conditions: { player: 'READY', enemy: 'READY' },
       playerIds: ['player'],
       hostileIds: ['enemy'],
       defended: true,
-      roll: 0,
+      roll: 0.3,
     })
     expect(result.conditions.enemy).toBe('WOUNDED')
     expect(result.conditions.player).toBe('READY')
+    expect(result.causedBy.enemy).toBe('player')
+
+    const brokenGuard = resolveEncounter({
+      conditions: { player: 'READY', enemy: 'READY' },
+      playerIds: ['player'],
+      hostileIds: ['enemy'],
+      defended: true,
+      roll: 0.29,
+    })
+    expect(brokenGuard.conditions.player).toBe('WOUNDED')
+    expect(brokenGuard.causedBy.player).toBe('enemy')
   })
 
   it('detects the loss of an entire faction', () => {

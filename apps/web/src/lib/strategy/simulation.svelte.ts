@@ -356,9 +356,6 @@ export function createSimulationStore() {
       conflict,
       previousConditions: unitConditions,
       hasCatsName: abilityIdsForCharacter('prince-camilla').includes('cats-name'),
-      opposingEntityIds: activeFactionIds
-        .filter((id) => id !== 'prince-camilla')
-        .flatMap((id) => factionEntityIds(id)),
       report: copy.reports.catsName,
       shortReport: copy.reports.catsNameShort,
     })

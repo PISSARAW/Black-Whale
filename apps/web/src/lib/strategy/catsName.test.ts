@@ -25,21 +25,24 @@ function board(): WorldState {
 function check(conditions: Record<string, UnitCondition>, previous: Record<string, UnitCondition>) {
   return {
     state: board(),
-    conflict: { conditions, reports: [] as string[] },
+    conflict: {
+      conditions,
+      reports: [] as string[],
+      causedBy: { 'prince-camilla': 'guard-b' } as Record<string, string>,
+    },
     previousConditions: previous,
     hasCatsName: true,
-    opposingEntityIds: ['guard-b', 'guard-a', 'elsewhere'],
     report: 'long',
     shortReport: 'short',
   }
 }
 
 describe("Camilla's Cat's Name", () => {
-  it('revives Camilla and consumes the first opposing unit beside her', () => {
+  it('revives Camilla and consumes the unit that directly killed her', () => {
     const input = check({ 'prince-camilla': 'ELIMINATED' }, { 'prince-camilla': 'WOUNDED' })
     const cue = triggerCatsName(input)
     expect(input.conflict.conditions['prince-camilla']).toBe('READY')
-    expect(input.conflict.conditions['guard-a']).toBe('ELIMINATED')
+    expect(input.conflict.conditions['guard-b']).toBe('ELIMINATED')
     expect(input.conflict.reports).toEqual(['long'])
     expect(cue).toMatchObject({ abilityId: 'cats-name', targetLocationId: 'room-1002' })
   })
@@ -48,5 +51,11 @@ describe("Camilla's Cat's Name", () => {
     expect(triggerCatsName(check({ 'prince-camilla': 'WOUNDED' }, {}))).toBeNull()
     const dead = { 'prince-camilla': 'ELIMINATED' } as const
     expect(triggerCatsName(check({ ...dead }, { ...dead }))).toBeNull()
+  })
+
+  it('does not guess a killer when the causal record is absent', () => {
+    const input = check({ 'prince-camilla': 'ELIMINATED' }, { 'prince-camilla': 'WOUNDED' })
+    input.conflict.causedBy = {}
+    expect(triggerCatsName(input)).toBeNull()
   })
 })

@@ -4,6 +4,8 @@ export interface EncounterResolution {
   conditions: Record<string, UnitCondition>
   playerCasualtyId?: string
   hostileCasualtyId?: string
+  /** Direct actor responsible for the condition change, used by causal Hatsu. */
+  causedBy: Record<string, string>
 }
 
 export function worsenCondition(condition: UnitCondition): UnitCondition {
@@ -21,18 +23,29 @@ export function resolveEncounter(input: {
   const activePlayers = input.playerIds.filter((id) => input.conditions[id] !== 'ELIMINATED')
   const activeHostiles = input.hostileIds.filter((id) => input.conditions[id] !== 'ELIMINATED')
   if (!activePlayers.length || !activeHostiles.length)
-    return { conditions: { ...input.conditions } }
+    return { conditions: { ...input.conditions }, causedBy: {} }
   const next = { ...input.conditions }
   const playerId =
     activePlayers[Math.floor(input.roll * activePlayers.length) % activePlayers.length]
   const hostileId =
     activeHostiles[Math.floor(input.roll * activeHostiles.length) % activeHostiles.length]
-  if (input.defended || input.roll >= 0.5) {
+  // Guarding is a visible advantage, not an automatic win. It shifts the
+  // deterministic roll by 20 percentage points while leaving room for a
+  // prepared attacker to break the position.
+  if (input.roll + (input.defended ? 0.2 : 0) >= 0.5) {
     next[hostileId] = worsenCondition(next[hostileId] ?? 'READY')
-    return { conditions: next, hostileCasualtyId: hostileId }
+    return {
+      conditions: next,
+      hostileCasualtyId: hostileId,
+      causedBy: { [hostileId]: playerId },
+    }
   }
   next[playerId] = worsenCondition(next[playerId] ?? 'READY')
-  return { conditions: next, playerCasualtyId: playerId }
+  return {
+    conditions: next,
+    playerCasualtyId: playerId,
+    causedBy: { [playerId]: hostileId },
+  }
 }
 
 export function factionEliminated(
@@ -56,10 +69,15 @@ export function resolveLocationConflicts(input: {
   guardedLocations: string[]
   random: () => number
   locale?: Locale
-}): { conditions: Record<string, UnitCondition>; reports: string[] } {
+}): {
+  conditions: Record<string, UnitCondition>
+  reports: string[]
+  causedBy: Record<string, string>
+} {
   const copy = messagesFor(input.locale ?? 'en').strategy.reports
   let conditions = { ...input.conditions }
   const reports: string[] = []
+  const causedBy: Record<string, string> = {}
   for (const opponent of input.opponents) {
     if (opponent.pact) continue
     const sharedLocations = new Set(
@@ -80,11 +98,12 @@ export function resolveLocationConflicts(input: {
         roll: input.random(),
       })
       conditions = resolution.conditions
+      Object.assign(causedBy, resolution.causedBy)
       if (resolution.playerCasualtyId) reports.push(copy.alliedHit(location))
       if (resolution.hostileCasualtyId) reports.push(copy.hostileHit(location))
     }
   }
-  return { conditions, reports }
+  return { conditions, reports, causedBy }
 }
 import { messagesFor } from '$lib/i18n'
 import type { Locale } from '$lib/i18n/config'

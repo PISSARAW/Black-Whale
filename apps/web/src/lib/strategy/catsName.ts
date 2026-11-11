@@ -5,21 +5,21 @@ import type { StrategyHatsuCue } from './hatsuPresentation'
 
 /**
  * Camilla's Cat's Name, the one passive Hatsu on the board: when the turn's
- * fighting eliminates her, she comes back and an opposing unit standing with
- * her is consumed in her place.
- *
- * Moved out of the store's `endTurn` as it was; the rule still picks the
- * killer by sorted id rather than by who struck (see docs/decoupage-notes.md).
+ * fighting eliminates her, she comes back and the recorded direct killer is
+ * consumed in her place. Environmental or unattributed deaths do not invent a
+ * target for the counterattack.
  */
 export interface CatsNameCheck {
   state: WorldState
   /** The turn's conflict outcome; mutated in place when the Hatsu triggers. */
-  conflict: { conditions: Record<string, UnitCondition>; reports: string[] }
+  conflict: {
+    conditions: Record<string, UnitCondition>
+    reports: string[]
+    causedBy: Record<string, string>
+  }
   /** Conditions before the turn's fighting. */
   previousConditions: Record<string, UnitCondition>
   hasCatsName: boolean
-  /** Living units of every active faction other than Camilla's. */
-  opposingEntityIds: readonly string[]
   report: string
   shortReport: string
 }
@@ -35,9 +35,7 @@ export function triggerCatsName(check: CatsNameCheck): Omit<StrategyHatsuCue, 's
   )
     return null
   const locationId = state.presences[camilla.id]?.locationId
-  const killer = check.opposingEntityIds
-    .filter((id) => state.presences[id]?.locationId === locationId)
-    .sort()[0]
+  const killer = conflict.causedBy[camilla.id]
   if (!killer) return null
   conflict.conditions[camilla.id] = 'READY'
   conflict.conditions[killer] = 'ELIMINATED'

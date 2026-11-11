@@ -1,5 +1,6 @@
 <script lang="ts">
   import { t, locale } from '$lib/i18n'
+  import { tserriednichApartmentFixtures } from '$lib/components/map/projection/tserriednichApartmentPlan'
   import { zhangLeiApartmentFixtures } from '$lib/components/map/projection/zhangLeiApartmentPlan'
   import { camillaFixtures } from '$lib/components/map/projection/camillaPlan'
   import BenjaminReceptionPlan from './BenjaminReceptionPlan.svelte'
@@ -160,7 +161,7 @@
     <!-- Servants Toilet -->
     <line class="thin-wall" x1="220" y1="130" x2="300" y2="130" />
     <line class="thin-wall" x1="220" y1="130" x2="220" y2="200" />
-    {#if !['1001', '1002', '1003'].includes(roomNumber)}
+    {#if !['1001', '1002', '1003', '1004'].includes(roomNumber)}
       <circle cx="260" cy="165" r="15" class="furniture" />
     {/if}
 
@@ -186,7 +187,7 @@
     <line class="wall" x1="400" y1="0" x2="400" y2="350" />
     <line class="wall" x1="400" y1="150" x2="700" y2="150" />
     <text x="600" y="75" class="label">{$t.map.localMaps.princeApartment.kitchen}</text>
-    {#if !['1001', '1002', '1003'].includes(roomNumber)}
+    {#if !['1001', '1002', '1003', '1004'].includes(roomNumber)}
       <!-- Counters/Stoves -->
       <rect x="420" y="20" width="80" height="60" class="furniture" />
       <circle cx="440" cy="40" r="10" class="furniture" />
@@ -218,7 +219,7 @@
     <line class="door" x1="600" y1="350" x2="650" y2="310" />
     <!-- Door to Living -->
     <text x="550" y="250" class="label">{$t.map.localMaps.princeApartment.dining}</text>
-    {#if !['1001', '1002', '1003'].includes(roomNumber)}
+    {#if !['1001', '1002', '1003', '1004'].includes(roomNumber)}
       <rect x="510" y="220" width="80" height="40" class="furniture" />
       <!-- Dining table from the ch. 363 programme-type. -->
     {/if}
@@ -248,7 +249,7 @@
     <line class="wall" x1="500" y1="530" x2="500" y2="680" />
     <text x="250" y="600" class="label">{$t.map.localMaps.princeApartment.princes}</text>
     <text x="250" y="625" class="label">{$t.map.localMaps.princeApartment.masterBedroom}</text>
-    {#if !['1001', '1002', '1003'].includes(roomNumber)}
+    {#if !['1001', '1002', '1003', '1004'].includes(roomNumber)}
       <rect x="20" y="550" width="100" height="110" class="furniture" />
     {/if}
     <!-- Bed -->
@@ -276,7 +277,7 @@
     <!-- Bathroom door is inside the living room leading to a small corridor maybe? Let's add a door at 550,530 -->
     <line class="door" x1="530" y1="530" x2="580" y2="490" />
     <text x="600" y="600" class="label">{$t.map.localMaps.princeApartment.bathWc}</text>
-    {#if !['1001', '1002', '1003'].includes(roomNumber)}
+    {#if !['1001', '1002', '1003', '1004'].includes(roomNumber)}
       <rect x="520" y="580" width="50" height="80" class="furniture" rx="10" />
       <!-- Bathtub -->
       <circle cx="650" cy="580" r="15" class="furniture" />
@@ -297,11 +298,12 @@
       {/each}
       <text x="340" y="420" class="evidence">1002 · chap. 366 / 389</text>
     {:else if roomNumber === '1004'}
-      <!-- Same clear training room in ch. 384–387. -->
-      <rect x="610" y="370" width="65" height="24" class="fixed" />
-      <circle cx="642" cy="382" r="6" class="fixed" />
-      <text x="350" y="405" class="sublabel">{$t.map.localMaps.princeApartment.clearTraining}</text>
-      <text x="642" y="420" class="sublabel">{$t.map.localMaps.princeApartment.coatClock}</text>
+      {#each tserriednichApartmentFixtures as fixture (fixture.id)}
+        <polygon points={fixture.polygon} class="fixed">
+          <title>{$locale === 'fr' ? fixture.nameFr : fixture.name}</title>
+        </polygon>
+      {/each}
+      <text x="345" y="430" class="evidence">1004 · chap. 366 / 385</text>
     {:else if roomNumber === '1003'}
       {#each zhangLeiApartmentFixtures as fixture (fixture.id)}
         <polygon points={fixture.polygon} class="fixed">

@@ -782,6 +782,12 @@ ajoutés sans preuve sont retirés. Les sept autres pièces sont des
 reconstitutions signalées du programme-type. Le mobilier 2D et la visite
 partagent les mêmes emprises. Voir [l’audit du 1003](zhang-lei-room-audit.md).
 
+Dans le **1004**, les cases des chapitres 366 et 385 corrigent les panneaux
+à motifs, le soubassement strié, le quadrillage rectangulaire du sol et les
+portes biseautées. La pendule repose sur un meuble bas ; les assises restent
+périphériques et le centre de l’entraînement est libre. Les sept autres pièces
+portent un mobilier de reconstitution `map`. Voir [l’audit du 1004](tserriednich-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

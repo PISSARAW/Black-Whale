@@ -100,17 +100,6 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
     labelFr: 'Le salon de Woble, du téléphone mural au mobilier de présentation',
   }),
   view({
-    id: 'tserriednich-living-training',
-    spaceId: 'tier-1-royal-residential-sector-room-1004-living',
-    at: [0.2, 4.8],
-    target: [-6.1, 1.7],
-    pitch: -0.04,
-    chapter: 362,
-    volume: 35,
-    label: "Tserriednich's Nen training room",
-    labelFr: "La pièce d'entraînement au Nen de Tserriednich",
-  }),
-  view({
     id: 'tyson-living-audience',
     spaceId: 'tier-1-royal-residential-sector-room-1006-living',
     at: [0.4, 4.7],

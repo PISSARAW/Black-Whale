@@ -4,10 +4,12 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { TserriednichRoomSurface } from './tserriednichRoomDetailSurface'
 import { dressTserriednichRoomArchitecture } from './tserriednichRoomArchitecture'
 import { dressTserriednichRoomPicture } from './tserriednichRoomPictures'
+import { dressTserriednichLivingFurniture } from './tserriednichRoomFurniture'
 import {
-  dressTserriednichKitchenFurniture,
-  dressTserriednichLivingFurniture,
-} from './tserriednichRoomFurniture'
+  buildTserriednichApartmentDetails,
+  TSERRIEDNICH_PRIVATE_SPACES,
+} from './tserriednichApartmentView'
+import type { Structure } from './types'
 import type { Space } from './types'
 
 export const TSERRIEDNICH_ROOM_1004 = 'tier-1-royal-residential-sector-room-1004'
@@ -31,17 +33,20 @@ function buildLiving(options: { THREE: typeof Three; plan: TierPlan; space: Spac
   return into.finish('tserriednich-living-details')
 }
 
-function buildKitchen(options: { THREE: typeof Three; plan: TierPlan; space: Space }): Three.Group {
-  const { THREE, plan, space } = options
-  const into = new BanquetDetailBuilder(THREE)
-  const floor = floorOf(space, plan.tier)
-  const structures = plan.structures.filter((structure) => structure.spaceId === space.id)
+export function hasTserriednichModel(structure: Structure): boolean {
+  return (
+    structure.spaceId === TSERRIEDNICH_LIVING ||
+    (TSERRIEDNICH_PRIVATE_SPACES.includes(structure.spaceId) &&
+      ['bed', 'seat', 'table', 'cabinet', 'counter', 'basin'].includes(structure.kind))
+  )
+}
 
-  for (const structure of structures) {
-    dressTserriednichKitchenFurniture(new TserriednichRoomSurface(into, structure, floor))
+export function tserriednichSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal || plan.tier.id !== 'interior-room-1004') return plan
+  return {
+    ...plan,
+    structures: plan.structures.filter((structure) => !hasTserriednichModel(structure)),
   }
-
-  return into.finish('tserriednich-kitchen-details')
 }
 
 /** Reconstructed suite 1004 for Prince Tserriednich, chs. 362-363 and 384-387. */
@@ -58,6 +63,5 @@ export function buildTserriednichRoomDetails(options: {
   if (!space) return null
 
   if (spaceId === TSERRIEDNICH_LIVING) return buildLiving({ THREE, plan, space })
-  if (spaceId === TSERRIEDNICH_KITCHEN) return buildKitchen({ THREE, plan, space })
-  return null
+  return buildTserriednichApartmentDetails(options)
 }

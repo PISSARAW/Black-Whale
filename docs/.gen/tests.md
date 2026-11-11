@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 367
+Fichiers : 368
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1446,6 +1446,10 @@ Fichiers : 367
 ## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
 
 - manga details outside the princely apartments > keeps Queen Unma’s crib, mobile and formal salon on Tier 1
+
+## `apps/web/src/lib/tour/tserriednichRoomView.test.ts`
+
+- Tserriednich’s apartment against the training panels > keeps a valid walked plan and distinguishes panel props from seven reconstructed rooms
 
 ## `apps/web/src/lib/tour/visibility.test.ts`
 

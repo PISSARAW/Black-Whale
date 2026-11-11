@@ -24,7 +24,7 @@ describe('audited floor patterns', () => {
     )
     expect(floorPatternOf(space('tier-2-heilly-secret-hideout-processing'))?.kind).toBe('tile')
     expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1004-living'))?.kind).toBe(
-      'geometric-inlay',
+      'plain',
     )
     expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1009-living'))?.kind).toBe(
       'tile',

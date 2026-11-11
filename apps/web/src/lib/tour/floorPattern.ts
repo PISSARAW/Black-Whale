@@ -35,57 +35,6 @@ function boundsOf(polygon: Polygon): Bounds {
   }
 }
 
-/** A clipped diagonal lattice within two inset borders. */
-function geometricInlay(polygon: Polygon): [Vec2, Vec2][] {
-  const { minX, maxX, minZ, maxZ } = boundsOf(polygon)
-  const segments: [Vec2, Vec2][] = []
-  const border = (inset: number) => {
-    const x0 = minX + inset
-    const x1 = maxX - inset
-    const z0 = minZ + inset
-    const z1 = maxZ - inset
-    segments.push(
-      [
-        [x0, z0],
-        [x1, z0],
-      ],
-      [
-        [x1, z0],
-        [x1, z1],
-      ],
-      [
-        [x1, z1],
-        [x0, z1],
-      ],
-      [
-        [x0, z1],
-        [x0, z0],
-      ],
-    )
-  }
-  border(0.65)
-  border(1.05)
-
-  const reach = maxX - minX + maxZ - minZ
-  const centreX = (minX + maxX) / 2
-  const centreZ = (minZ + maxZ) / 2
-  for (let offset = -reach; offset <= reach; offset += 3.2) {
-    segments.push(
-      ...clipSegment(
-        polygon,
-        [centreX - reach, centreZ + offset - reach],
-        [centreX + reach, centreZ + offset + reach],
-      ),
-      ...clipSegment(
-        polygon,
-        [centreX - reach, centreZ + offset + reach],
-        [centreX + reach, centreZ + offset - reach],
-      ),
-    )
-  }
-  return segments
-}
-
 /** The King's salon is read down a strict central axis, not as an undifferentiated lattice. */
 function royalSalonInlay(polygon: Polygon): [Vec2, Vec2][] {
   const { minX, maxX, minZ, maxZ } = boundsOf(polygon)
@@ -182,7 +131,7 @@ const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 const modelledFloor = (space: Space) =>
   space.id === 'tier-1-royal-residential-sector-room-1002-living' ||
-  space.tierId === 'interior-room-1003'
+  ['interior-room-1003', 'interior-room-1004'].includes(space.tierId)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
   if (modelledFloor(space)) {
@@ -190,9 +139,6 @@ export function floorPatternOf(space: Space): FloorPattern | null {
   }
   if (space.id === 'tier-1-king-living-quarters-living') {
     return { kind: 'geometric-inlay', style: 'inlay', segments: royalSalonInlay(space.footprint) }
-  }
-  if (space.id === 'tier-1-royal-residential-sector-room-1004-living') {
-    return { kind: 'geometric-inlay', style: 'inlay', segments: geometricInlay(space.footprint) }
   }
   if (space.id === 'tier-1-lifeboats-port-pod-cabin') {
     return { kind: 'radial-deck', style: 'joint', segments: radialDeck(space.footprint) }

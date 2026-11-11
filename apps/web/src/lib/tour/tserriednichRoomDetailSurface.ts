@@ -1,11 +1,9 @@
-import type * as Three from 'three'
-import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
-import type { Structure } from './types'
+import { ApartmentSurface as TserriednichRoomSurface } from './apartmentDetailSurface'
 
-export const TSERRIEDNICH_DARK_WOOD = 0x3a2b1f
-export const TSERRIEDNICH_PANEL_WOOD = 0x4d3a28
-export const TSERRIEDNICH_REEDING_GROOVE = 0x362716
-export const TSERRIEDNICH_GOLD_TRIM = 0xa98a52
+export const TSERRIEDNICH_DARK_WOOD = 0x695d4d
+export const TSERRIEDNICH_PANEL_WOOD = 0xaaa087
+export const TSERRIEDNICH_REEDING_GROOVE = 0x635d50
+export const TSERRIEDNICH_GOLD_TRIM = 0xab9871
 export const TSERRIEDNICH_STONE = 0x6b6760
 export const TSERRIEDNICH_CLOCK_FACE = 0xe9e2d0
 export const TSERRIEDNICH_CLOCK_HAND = 0x1c1915
@@ -17,58 +15,7 @@ export const TSERRIEDNICH_GLASS = 0xb9c6c4
 export const TSERRIEDNICH_WICKER = 0xa9814f
 export const TSERRIEDNICH_URN = 0x5b6b63
 
-/** Local coordinate system bound to one structure, as `BenjaminRoomSurface` is. */
-export class TserriednichRoomSurface {
-  readonly width: number
-  readonly depth: number
-  readonly angle: number
-
-  constructor(
-    readonly into: BanquetDetailBuilder,
-    readonly structure: Structure,
-    readonly floor: number,
-  ) {
-    const wallFacing = structure.kind === 'painting' || structure.kind === 'cabinet'
-    const sideWall = wallFacing && structure.size[1] > structure.size[0]
-    this.width = sideWall ? structure.size[1] : structure.size[0]
-    this.depth = sideWall ? structure.size[0] : structure.size[1]
-    this.angle =
-      -(structure.rotation * Math.PI) / 180 +
-      (sideWall ? (structure.at[0] > 0 ? -Math.PI / 2 : Math.PI / 2) : 0)
-  }
-
-  point([x, y, z]: Point3): Point3 {
-    const cos = Math.cos(this.angle)
-    const sin = Math.sin(this.angle)
-    return [
-      this.structure.at[0] + x * cos + z * sin,
-      this.floor + this.structure.base + y,
-      this.structure.at[1] - x * sin + z * cos,
-    ]
-  }
-
-  box(size: Point3, at: Point3, colour: number): void {
-    this.into.box(size, { at: this.point(at), rotation: [0, this.angle, 0], colour })
-  }
-
-  cylinder(
-    size: { radius: number; height: number; bottom?: number; sides?: number },
-    at: Point3,
-    colour: number,
-  ): void {
-    this.into.cylinder(size, { at: this.point(at), rotation: [0, this.angle, 0], colour })
-  }
-
-  sphere(size: Point3, at: Point3, styling: number | { colour: number; glow?: boolean }): void {
-    const colour = typeof styling === 'number' ? styling : styling.colour
-    const glow = typeof styling === 'number' ? false : styling.glow
-    this.into.sphere(size, { at: this.point(at), rotation: [0, this.angle, 0], colour, glow })
-  }
-
-  add(geometry: Three.BufferGeometry, at: Point3, colour: number): void {
-    this.into.add(geometry, { at: this.point(at), rotation: [0, this.angle, 0], colour })
-  }
-}
+export { ApartmentSurface as TserriednichRoomSurface } from './apartmentDetailSurface'
 
 export function tserriednichMouldedFrame(
   surface: TserriednichRoomSurface,

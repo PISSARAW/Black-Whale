@@ -304,20 +304,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 8 cabinet, 3 basin, 3 bed, 3 table, 2 counter, 2 seat, 1 painting
-- **Objets directement visibles dans les cases :** 22/22
+- **Éléments modélisés :** 10 cabinet, 4 basin, 4 table, 3 bed, 3 seat, 2 counter, 1 painting
+- **Objets directement visibles dans les cases :** 14/27
 - **Espaces internes :** Quartiers des domestiques — 1004 (Tserriednich) ; WC du personnel — 1004 (Tserriednich) ; Vestibule d'entrée — 1004 (Tserriednich) ; Cuisine — 1004 (Tserriednich) ; Salle à manger — 1004 (Tserriednich) ; Salon — 1004 (Tserriednich) ; Chambre du prince — 1004 (Tserriednich) ; Bain et WC — 1004 (Tserriednich)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : plan publié du programme-type des appartements. Cloisons conservées ; mobilier détaillé et finitions reconstitués sans perspective individuelle de cette pièce.
+  - Chap. 366, page de lecture 10 ; chap. 385, pages 1, 5–7 : salon d’entraînement au centre dégagé, assises périphériques, meubles bas, pendule de meuble et cadres. Dimensions et implantation dans le programme-type reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 384–387 — le salon presque vide où Tserriednich s'entraîne au Nen présente un sol géométrique poli, de hautes portes à panneaux, des murs moulurés, un cadre et une pendule sur le manteau.
-  - Chap. 384–387 — mobilier d'arrière-plan contre le mur ouest du salon de Tserriednich, près de la porte du personnel : une vitrine vitrée.
-  - Chap. 384–387 — une haute armoire fermée se tient plus loin sur le mur ouest du salon, entre la vitrine et le buffet.
-  - Chap. 384–387 — une étagère ouverte se trouve sur le mur est, au sud du manteau et de la pendule.
-  - Chap. 384–387 — un fauteuil en rotin tressé se tient près du canapé et de la table basse.
-  - Chap. 384–387 — une vasque décorative sur un socle se tient près de l'entrée, visible derrière Tserriednich et le majordome.
+  - Reconstitution du 1004 à partir du programme-type du chapitre 363 et du plan local /ship. Le mobilier détaillé et les finitions de cette pièce ne sont pas établis par une case intérieure individuelle.
+  - Chap. 366, page de lecture 10 ; chap. 385, pages 1, 5–7 : salon d’entraînement au centre dégagé, assises périphériques, meubles bas, pendule de meuble et cadres. Dimensions et implantation dans le programme-type reconstituées.
 
 ## Chambre 1005 (Tubeppa) — `tier-1-royal-residential-sector-room-1005`
 

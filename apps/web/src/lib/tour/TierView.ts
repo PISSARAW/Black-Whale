@@ -13,7 +13,7 @@ import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberVie
 import { buildQueenUnmaDetails } from './queenUnmaView'
 import { buildBenjaminRoomDetails, benjaminSurfacePlan } from './benjaminRoomView'
 import { buildCamillaRoomDetails, camillaSurfacePlan } from './camillaView'
-import { buildTserriednichRoomDetails } from './tserriednichRoomView'
+import { buildTserriednichRoomDetails, tserriednichSurfacePlan } from './tserriednichRoomView'
 import { buildZhangLeiDetails, zhangLeiSurfacePlan } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
@@ -194,8 +194,8 @@ export class TierView {
   build({ ship, world, tierId, reveal, dustScale = 1 }: TierBuild): BuiltTierView {
     const plan = walkedPlan(ship, world, tierId)
     const basePlan = princeApartmentSurfacePlan(
-      zhangLeiSurfacePlan(
-        camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal),
+      tserriednichSurfacePlan(
+        zhangLeiSurfacePlan(camillaSurfacePlan(prisonSurfacePlan(plan, reveal), reveal), reveal),
         reveal,
       ),
       reveal,

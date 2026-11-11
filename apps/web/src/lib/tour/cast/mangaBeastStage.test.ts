@@ -24,6 +24,12 @@ describe('source-panel guardian blocking', () => {
       { ...beast, at: [2.75, -2.7], heading: Math.PI / 2 },
     ])
   })
+  it('omits only the guardian explicitly absent from a Zetsu panel', () => {
+    const omitted = { ...view, beastStaging: [{ ownerId: 'prince-zhanglei', omit: true }] }
+    expect(stageBeastsForMangaView([beast], omitted)).toEqual([])
+    const elsewhere = { ...beast, spaceId: 'another-room' }
+    expect(stageBeastsForMangaView([elsewhere], omitted)).toEqual([elsewhere])
+  })
   it('never creates an absent or spoiler-hidden guardian', () => {
     expect(stageBeastsForMangaView([], view)).toEqual([])
   })

@@ -8,9 +8,10 @@ export function stageBeastsForMangaView(
 ): Apparition[] {
   if (!view?.beastStaging) return beasts
   const staging = new Map(view.beastStaging.map((entry) => [`cast-beast:${entry.ownerId}`, entry]))
-  return beasts.map((beast) => {
+  return beasts.flatMap((beast) => {
     const placement = staging.get(beast.id)
-    if (!placement || beast.spaceId !== view.spaceId) return beast
-    return { ...beast, at: placement.at, heading: placement.heading ?? beast.heading }
+    if (!placement || beast.spaceId !== view.spaceId) return [beast]
+    if (placement.omit) return []
+    return [{ ...beast, at: placement.at ?? beast.at, heading: placement.heading ?? beast.heading }]
   })
 }

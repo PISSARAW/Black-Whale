@@ -10,6 +10,7 @@ import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './typ
 import { banquetAppearanceOf } from './banquetAppearance'
 import { benjaminAppearanceOf } from './benjaminApartmentAppearance'
 import { camillaAppearanceOf } from './camillaAppearance'
+import { tserriednichAppearanceOf } from './tserriednichAppearance'
 import { zhangLeiAppearanceOf } from './zhangLeiAppearance'
 import { princeApartmentAppearanceOf } from './princeApartmentAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
@@ -425,6 +426,7 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   return (
     camillaAppearanceOf(space, appearance) ??
     zhangLeiAppearanceOf(space, appearance) ??
+    tserriednichAppearanceOf(space, appearance) ??
     princeApartmentAppearanceOf(space, appearance) ??
     appearance
   )

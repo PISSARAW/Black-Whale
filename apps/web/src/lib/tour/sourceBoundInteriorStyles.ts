@@ -10,6 +10,7 @@ export interface SourceBoundInteriorStyle {
   accent: number
   floorPattern: 'bands' | 'grid' | 'plates'
   ceilingPattern: 'beams' | 'coffers' | 'services'
+  programme?: 'dorm' | 'office' | 'recycling' | 'clinic'
 }
 
 const STYLES: SourceBoundInteriorStyle[] = [
@@ -77,6 +78,20 @@ const STYLES: SourceBoundInteriorStyle[] = [
     accent: 0x8d856e,
     floorPattern: 'grid',
     ceilingPattern: 'beams',
+  },
+  {
+    locationId: 'tier-3-residential-units',
+    name: 'central-police-dorm',
+    floor: 0x4a5155,
+    wall: 0x727b80,
+    ceiling: 0x444a4d,
+    wood: 0x4d4841,
+    metal: 0x899399,
+    fabric: 0x59656b,
+    accent: 0x9eb0b7,
+    floorPattern: 'plates',
+    ceilingPattern: 'services',
+    programme: 'dorm',
   },
 ]
 

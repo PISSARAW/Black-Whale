@@ -148,6 +148,19 @@ const STYLES: SourceBoundInteriorStyle[] = [
     ceilingPattern: 'services',
     programme: 'clinic',
   },
+  {
+    locationId: 'tier-5-standard-cabins',
+    name: 'tier-5-standard-cabins',
+    floor: 0x343331,
+    wall: 0x53514c,
+    ceiling: 0x302f2d,
+    wood: 0x443b31,
+    metal: 0x70736f,
+    fabric: 0x50534d,
+    accent: 0x8d8065,
+    floorPattern: 'plates',
+    ceilingPattern: 'beams',
+  },
 ]
 
 export const SOURCE_BOUND_INTERIOR_STYLES: readonly SourceBoundInteriorStyle[] = STYLES

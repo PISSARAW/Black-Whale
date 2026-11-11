@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1224 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1218 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -404,20 +404,23 @@
 ## Chambre 1009 (Halkenburg) — `tier-1-royal-residential-sector-room-1009`
 
 - **Pont :** tier-1, interior-room-1009
-- **Preuve de l’enveloppe :** case du manga
+- **Preuve de l’enveloppe :** case du manga, plan publié
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 7 cabinet, 7 seat, 3 basin, 3 bed, 2 counter, 2 table
-- **Objets directement visibles dans les cases :** 24/24
+- **Éléments modélisés :** 6 cabinet, 4 basin, 3 bed, 2 counter, 2 seat, 1 table
+- **Objets directement visibles dans les cases :** 6/18
 - **Espaces internes :** Quartiers des domestiques — 1009 (Halkenburg) ; WC du personnel — 1009 (Halkenburg) ; Vestibule d'entrée — 1009 (Halkenburg) ; Cuisine — 1009 (Halkenburg) ; Salle à manger — 1009 (Halkenburg) ; Salon — 1009 (Halkenburg) ; Chambre du prince — 1009 (Halkenburg) ; Bain et WC — 1009 (Halkenburg)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
+  - Chap. 363 : programme-type publié des appartements. Cloisons conservées ; mobilier et finitions individuels reconstitués.
+  - Chap. 382, page de lecture 11 : salon dégagé, quadrillage rectangulaire du sol, panneaux muraux à motifs, cadres supérieurs, bibliothèques et élément central cintré partiellement masqué. Implantation métrique reconstituée ; la fonction de l’élément central sombre n’est pas affirmée.
+  - Chap. 366, page de lecture 5 : Halkenburg dans un lit à tête courbe sculptée, oreillers clairs, linge ample et rideaux derrière la tête. Dimensions, couleurs et implantation reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 382 et 386 — le salon de Halkenburg laisse un vaste centre carrelé dégagé, les chaises étant disposées en cercle autour du corps de Shikaku occupé.
-  - Chap. 386 — les vues larges du salon de Halkenburg montrent des bibliothèques et vitrines longeant le mur autour du manteau central, derrière le cercle de chaises.
+  - Chap. 366, page de lecture 5 : Halkenburg dans un lit à tête courbe sculptée, oreillers clairs, linge ample et rideaux derrière la tête. Dimensions, couleurs et implantation reconstituées.
+  - Reconstitution du 1009 à partir du programme-type du chapitre 363 et du plan local /ship. Le mobilier individuel, les finitions et les positions métriques ne sont pas établis par une case de cette pièce.
+  - Chap. 386, page de lecture 13 : Halkenburg et Sumidori se font face sur deux chaises pliantes, entourés de gardes debout. Aucun cercle rituel de six chaises n’est montré. La disposition mobile et les positions métriques sont reconstituées.
+  - Chap. 382, page de lecture 11 : salon dégagé, quadrillage rectangulaire du sol, panneaux muraux à motifs, cadres supérieurs, bibliothèques et élément central cintré partiellement masqué. Implantation métrique reconstituée ; la fonction de l’élément central sombre n’est pas affirmée.
 
 ## Chambre 1010 (Kacho) — `tier-1-royal-residential-sector-room-1010`
 

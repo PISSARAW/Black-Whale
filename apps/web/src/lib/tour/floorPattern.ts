@@ -131,9 +131,13 @@ const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
 const modelledFloor = (space: Space) =>
   space.id === 'tier-1-royal-residential-sector-room-1002-living' ||
-  ['interior-room-1003', 'interior-room-1004', 'interior-room-1006', 'interior-room-1007'].includes(
-    space.tierId,
-  )
+  [
+    'interior-room-1003',
+    'interior-room-1004',
+    'interior-room-1006',
+    'interior-room-1007',
+    'interior-room-1009',
+  ].includes(space.tierId)
 
 export function floorPatternOf(space: Space): FloorPattern | null {
   if (modelledFloor(space)) {
@@ -151,9 +155,6 @@ export function floorPatternOf(space: Space): FloorPattern | null {
       : { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
   if (space.id === 'tier-2-heilly-secret-hideout-processing') {
-    return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
-  }
-  if (space.id === 'tier-1-royal-residential-sector-room-1009-living') {
     return { kind: 'tile', style: 'joint', segments: tiles(space.footprint) }
   }
   if (space.id === 'tier-5-central-dining-hall') {

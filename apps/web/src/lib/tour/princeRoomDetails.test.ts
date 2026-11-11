@@ -46,10 +46,6 @@ const expectedDetails: Readonly<Record<number, readonly string[]>> = {
   1009: [
     'living-circle-chair-1',
     'living-circle-chair-2',
-    'living-circle-chair-3',
-    'living-circle-chair-4',
-    'living-circle-chair-5',
-    'living-circle-chair-6',
     'living-bookcase-left',
     'living-mantel',
     'living-bookcase-right',

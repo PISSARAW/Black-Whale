@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 388
+Fichiers : 389
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1165,6 +1165,10 @@ Fichiers : 388
 
 - what a strand is holding > reads nothing until the visitor has moved off what they stuck
 - where a thing comes to rest when the gum brings it in > stops it short of the visitor rather than inside them
+
+## `apps/web/src/lib/tour/halkenburgView.test.ts`
+
+- Halkenburg’s apartment against the reception and bedroom panels > keeps a valid walked plan and distinguishes panel props from six reconstructed rooms
 
 ## `apps/web/src/lib/tour/hangarEntranceView.test.ts`
 

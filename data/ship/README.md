@@ -816,6 +816,13 @@ froissée et les objets au sol. Les sept autres pièces restent des reconstituti
 `map` ; la carte locale projette les mêmes emprises que la visite.
 Voir [l’audit du 1008](salesale-room-audit.md).
 
+Dans le **1009**, le chapitre 366 (page de lecture 5) précise le lit à tête
+courbe et ses rideaux ; le chapitre 382 (page 11) établit le salon dégagé,
+les rayonnages et son quadrillage. Les deux chaises pliantes face à face du
+chapitre 386 (page 13) remplacent le cercle de six fauteuils. Les six autres
+pièces sont des reconstitutions ; les emprises 2D et 3D sont communes.
+Voir [l’audit du 1009](halkenburg-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

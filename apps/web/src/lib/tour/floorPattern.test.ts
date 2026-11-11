@@ -27,7 +27,7 @@ describe('audited floor patterns', () => {
       'plain',
     )
     expect(floorPatternOf(space('tier-1-royal-residential-sector-room-1009-living'))?.kind).toBe(
-      'tile',
+      'plain',
     )
   })
 

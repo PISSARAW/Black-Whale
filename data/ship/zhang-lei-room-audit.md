@@ -1,67 +1,105 @@
-# Chambre 1003 — Prince Zhang Lei (salle à manger d'apparat) — fidélisation des chapitres 365 et 366
+# Suite 1003 — Zhang Lei, troisième prince
 
-La salle à manger d'apparat de la chambre 1003 (Prince Zhang Lei, 3ᵉ prince de Kakin) reçoit le même traitement d'excellence que le salon du Roi Nasubi et la suite de la Reine Unma : relecture scrupuleuse des planches, vérification des emprises métriques dans le plan partagé, et modélisation détaillée du mobilier et de l'architecture intérieure. Source éditoriale : Yoshihiro Togashi / Shueisha, tomes 35 et 36, chapitres 365 et 366. [Édition officielle chez VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-365/chapter/16691).
+Relecture du 11 novembre 2026 à partir du chapitre 365, pages de lecture 16–19
+(tome 35), de Yoshihiro Togashi / Shueisha. Le chapitre 363 fournit le
+programme-type des appartements. Le chapitre 390, page 1, confirme le fauteuil
+et la présence de la bête gardienne ; il ne précise pas les sept autres pièces.
+Les scans servent uniquement à la comparaison, sans texture ni fac-similé
+embarqué dans le projet.
 
-## 1. Cases relues et scénographie canonique
+## Ce que montre l’audience
 
-Aux chapitres 365 et 366, le prince Zhang Lei reçoit en audience solennelle la reine Oito (tenant le prince nourrisson Woble dans ses bras), escortée de Kurapika et de sa suivante Shimanu :
+La page 16 présente la table rectangulaire sculptée, les deux fauteuils clairs
+à dossier haut et crête chantournée, et le mur derrière Zhang Lei. On y voit une
+crédence, une pendule ornementale, un grand paysage encadré, un petit document
+encadré et une sculpture en pied sur une sellette. La précédente version
+inversait la disposition du fond et transformait la sculpture en buste et le
+grand paysage en décret officiel. Ces interprétations sont corrigées ; le
+contenu du petit document reste illisible et n’est pas identifié.
 
-1. **La très longue table en bois sculpté (`dining-table-07`)** :
-   - Une imposante table d'ébénisterie rectangulaire (4,2 × 1,6 m) trône au centre de la salle d'audience.
-   - Plateau épais en bois massif foncé aux chants chanfreinés et moulurés, supporté par un piètement robuste composé de balustres sculptés et de consoles à volutes reliées par une entretoise basse.
-   - Un chemin de table d'apparat court sur l'axe longitudinal, soulignant la solennité de l'échange diplomatique.
+Les pages 16, 17 et 19 montrent deux candélabres **sur le plateau**, avec des
+pots à couvercle et des tasses. Le haut candélabre isolé au sol, le chemin de
+table, la coupe de fruits, les carafes à vin et leur service de verres ajoutés
+au premier modèle ne sont pas établis par ces cases et sont retirés. Les pieds
+courbes et le tablier sculpté de la table remplacent les simples balustres.
 
-2. **Les deux fauteuils d'apparat à haut dossier aux extrémités (`dining-chair-head` et `dining-chair-foot`)** :
-   - Deux fauteuils cérémoniels jumeaux se font face aux deux extrémités de la table : le prince Zhang Lei siège au bout bâbord (`head`, `[3.2, -2.7]`), tandis que la reine Oito est installée au bout opposé (`foot`, `[8.8, -2.7]`).
-   - Dossier rectangulaire très haut, se dressant verticalement et couronné d'une crête ouvragée à volutes baroques et fleuron central doré.
-   - Garniture rembourrée en velours sombre capitonné à boutons d'or, accotoirs chantournés en bois verni et pieds tournés à sabot doré.
+Les parois ont des encadrements clairs et des panneaux à motifs sombres, avec
+un soubassement finement strié. Les motifs procéduraux évoquent cette densité
+sans recopier le dessin imprimé. Le sol clair comporte des lames et des bandes
+sombres perpendiculaires ; le damier de cases de bois foncé et les joints de
+pont génériques disparaissent. Le plafond à caissons précédemment présenté
+comme certain n’est pas établi par la vue intérieure : la corniche suffit.
+Les portes à panneaux moulurés restent une restitution simplifiée.
 
-3. **La crédence d'apparat (`dining-credenza`)** :
-   - Disposée le long du mur tribord (`[10.1, -3.3]`), cette crédence basse d'ébénisterie comporte des vantaux moulurés à panneaux en retrait, des tiroirs à ferrures et anneaux de tirage en bronze doré.
-   - Son plateau supérieur accueille des pièces de vaisselle noble, des coupes et une carafe de cristal taillé pour le service des hôtes princiers.
+## Personnages et angles de contrôle
 
-4. **La statue sur sellette (`dining-statue-stand`)** :
-   - Placée près de la crédence le long de la paroi tribord (`[10.05, -5.15]`), une sellette haute octogonale à montants moulurés élève une sculpture classique : un buste d'art en bronze patiné reposant sur un socle en pierre noble.
+Zhang Lei et Oito font face à la table ; leurs orientations initiales étaient
+inversées, comme celles de leurs fauteuils. La mise en scène précise aussi
+Kurapika et les gardes, avec Woble dans la posture tenue au niveau des bras
+d’Oito lorsque son poste est fourni par le catalogue. La roue gardienne,
+lorsqu’elle est présente et autorisée par le cap de lecture, se trouve derrière
+Zhang Lei comme à la page 18 ; cette correction ne crée aucune bête absente.
+Les positions métriques restent reconstruites.
 
-5. **Le guéridon d'entrée (`dining-pedestal-table`)** :
-   - Positionné près du dégagement d'entrée (`[2.1, -4.9]`), un guéridon circulaire à plateau mouluré repose sur un fût central tourné en balustre et un piétement tripode galbé.
+Les silhouettes et costumes restent ceux du catalogue existant : ce travail
+sur la pièce ne valide pas leur ressemblance exacte aux personnages des cases.
+L’angle principal est déplacé pour ne plus être masqué par un vantail ouvert.
+L’angle de la sculpture et de la crédence est une inspection **sans personnages**
+pour rendre visibles les objets autrement cachés par les gardes et la bête.
+Les liens existants sont conservés, y compris celui du candélabre, dont la
+référence est corrigée vers le chapitre 365, tome 35. Les pages 7–8 du chapitre
+366 montrent d’autres princes et ne justifient pas son ancien candélabre au sol.
 
-6. **Le haut candélabre à branches (`dining-candelabrum`)** :
-   - Isolé dans le passage du chapitre 366 (`[9.8, -1]`), ce candélabre d'apparat en laiton et bronze doré s'élève sur un pied tripode mouluré. Son mât élancé se ramifie en branches curvascendantes portant des bobèches ciselées, des bougies de cire claire et des flammes chaudes lumineuses.
+## Les sept autres pièces
 
-7. **Le grand cadre mural officiel (`dining-framed-document`)** :
-   - Accroché sur le mur intérieur (`[3, -5.6]`), un grand cadre doré à moulures étagées présente une charte dynastique ou décret calligraphié sur parchemin patiné.
+Salon, vestibule, chambre, cuisine, pièce du personnel, WC du personnel et
+salle de bains reçoivent un habillage parcourable du programme-type : canapé
+et table basse, rangements, lit double, deux lits simples, cuisine en L,
+baignoire, lavabo et WC séparés. Les cloisons du plan publié sont conservées.
+Le mobilier détaillé porte la provenance `map` et ces sept points de vue
+portent explicitement la mention « reconstitution ». Aucune perspective des
+planches relues ne prouve leurs finitions ou leurs positions au centimètre.
+Ces vues du plan restent sans personnages, y compris dans les pièces voisines.
 
-## 2. Architecture intérieure et ébénisterie
+## Cohérence du modèle
 
-- **Lambris et boiseries d'inspiration classique** :
-  - Plinthe haute moulurée au sol, cimaise profilée à mi-hauteur et corniche étagée sous plafond.
-  - Panneaux muraux verticaux réguliers avec moulures en encadrement et filets d'or intérieurs.
-- **Parquet en marqueterie** :
-  - Assemblage géométrique au sol en damier et bandes de bois précieux, ceinturé d'une frise de bordure plus sombre.
-- **Plafond à caissons** :
-  - Caissons réguliers en léger relief, scandés de moulures transversales et de filets dorés en harmonie avec le mobilier d'apparat.
-- **Portes et passages** :
-  - Baies de communication vers le salon et la cuisine traitées avec des chambranles d'ébénisterie moulurés, des entablements classiques et des vantaux battants à poignées de bronze.
+La carte locale projette les mêmes structures que la visite, au lieu de garder
+une seconde disposition en SVG. Le volume grossier des meubles est masqué dans
+le rendu normal, mais conservé pour les collisions et pour la vue des preuves.
+Un objet déplacé ou supprimé emporte ses détails. Les candélabres, les pots et
+la pendule ont leur propre support dans le plan. Les détails sont fusionnés en
+deux lots maximum par pièce et n’ajoutent aucune lumière Three.js permanente.
+Les sept pièces de reconstitution utilisent les constructeurs communs aux
+appartements de Benjamin et Camilla.
 
-## 3. Cohérence technique et intégration à la visite
+## Contrôle visuel et validation
 
-- **Intégration TierView** :
-  - Décor attaché au nœud de la salle à manger 1003 (`tier-1-royal-residential-sector-room-1003-dining`) dans `TierView`.
-  - Fusion géométrique sous `BanquetDetailBuilder` en 2 lots maximum (surfaces opaques et points de lumière/dorures).
-  - Strictement aucun ajout de source lumineuse Three.js permanente pour préserver la performance et l'obscurité relative des pièces voisines.
-  - Respect du budget : moins de 150 000 triangles et libération complète de toutes les ressources GPU via `disposeBanquetDetails`.
-  - Masquage automatique en mode analyse des structures (`reveal = true`).
-- **Plan 2D et projection cartographique** :
-  - Module `zhangLeiPlan.ts` pour projeter fidèlement les cloisons, les ouvertures, la table, les deux fauteuils, la crédence, la sellette, le candélabre et le guéridon.
-  - Ancrages canoniques d'audience dans `roomAnchors.ts` positionnant Zhang Lei (`prince-zhanglei`), la reine Oito (`queen-oito`) et Kurapika (`kurapika`).
-  - Mise à jour du plan SVG local (`local/prince-apartment.svelte`) pour distinguer la chambre 1003 et représenter son aménagement d'apparat au lieu d'une table ordinaire.
-- **Vues Manga scénarisées** :
-  - Trois angles de caméra canoniques des chapitres 365 et 366 (`mangaZhangLeiViews.ts`) :
-    1. `zhanglei-dining-audience` : Plan principal du chapitre 365 montrant l'audience solennelle à travers la longueur de la table sculptée, Zhang Lei faisant face à la reine Oito et Kurapika.
-    2. `zhanglei-dining-statue-credenza` : Perspective cadrant la crédence d'ébénisterie, la statue sur sellette et le cadre officiel.
-    3. `zhanglei-dining-candelabrum` : Cadrage atmosphérique du chapitre 366 centré sur le haut candélabre à branches et la table d'apparat.
+Dix vues ont été capturées et relues dans
+`test-results/zhang-lei-apartment-visual/` : trois angles de la salle d’audience
+et les sept pièces du programme-type. Les captures de l’état initial sont
+conservées dans le sous-dossier `before/`. Le contrôle a notamment corrigé le
+vantail masquant l’audience et les rebords du guéridon et des pots, qui étaient
+dessinés verticalement. La vue sans personnages permet de contrôler la pendule,
+les cadres, la crédence et la silhouette de la sculpture en pied.
 
-## 4. Limites d'interprétation
+Les navigations ne produisent aucune erreur JavaScript. Les 71 tests ciblés
+passent, ainsi que les 13 contrôles de structure et documentation et l’invariant
+global du plan. Les tests géométriques des huit pièces ont aussi été relancés
+après la dernière correction des rebords. ESLint ciblé, compilation de production
+et contrôle de types passent ; le typage ne signale aucun avertissement.
 
-L'emprise métrique (9 × 6 m), la hauteur sous plafond (4 m), le profil exact des balustres et sculptures, ainsi que les teintes exactes (acajou sombre, bronze, laiton patiné, velours vert impérial et or) constituent une reconstitution fidèle et raisonnée à partir du dessin original en noir et blanc de Yoshihiro Togashi. Aucun fac-similé ou scan d'œuvre protégée n'est intégré dans le code.
+## Limites et références
+
+La hauteur de quatre mètres, les dimensions, l’implantation dans le
+programme-type, le rythme des motifs et les profils sculptés restent des
+estimations. Les couleurs sont interprétées d’après des sources en noir et
+blanc. Le paysage est une composition originale simplifiée ; aucune œuvre
+identifiée ni aucun texte canonique n’est inventé pour les cadres.
+
+Références de lecture : [audience du chapitre 365, page 16](https://www.scan-vf.net/hunter-x-hunter/chapitre-365/16),
+[service de table, page 17](https://www.scan-vf.net/hunter-x-hunter/chapitre-365/17),
+[roue gardienne, page 18](https://www.scan-vf.net/hunter-x-hunter/chapitre-365/18),
+[vue du fond, page 19](https://www.scan-vf.net/hunter-x-hunter/chapitre-365/19),
+[chapitre 390, page 1](https://www.scan-vf.net/hunter-x-hunter/chapitre-390/1).
+Source éditoriale : Yoshihiro Togashi / Shueisha,
+[chapitre 365 chez VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-365/chapter/16691).

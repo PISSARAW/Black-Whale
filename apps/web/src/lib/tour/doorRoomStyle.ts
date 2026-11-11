@@ -3,6 +3,7 @@ import { buildTierDoorLeaves, dressTierDoorCasing, type LeafBuildOptions } from 
 import { buildTserriednichDoorLeaves, dressTserriednichDoorCasing } from './tserriednichDoorStyle'
 import type { DoorDressContext } from './doorDetailSurface'
 import { buildCamillaDoorLeaves, dressCamillaDoorCasing } from './camillaDoorStyle'
+import { buildZhangLeiDoorLeaves, dressZhangLeiDoorCasing } from './zhangLeiDoorStyle'
 
 /** Room-specific source panels override the deck's generic door palette. */
 export function roomDoorStyle(options: {
@@ -15,6 +16,9 @@ export function roomDoorStyle(options: {
   }
   if (options.tierId === 'interior-room-1002') {
     return { casing: dressCamillaDoorCasing, leaves: buildCamillaDoorLeaves }
+  }
+  if (options.tierId === 'interior-room-1003') {
+    return { casing: dressZhangLeiDoorCasing, leaves: buildZhangLeiDoorLeaves }
   }
   if (options.spaceId.startsWith('tier-1-royal-residential-sector-room-1004')) {
     return { casing: dressTserriednichDoorCasing, leaves: buildTserriednichDoorLeaves }

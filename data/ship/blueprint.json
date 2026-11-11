@@ -2006,11 +2006,11 @@
       "id": "tier-1-royal-residential-sector-room-1003-servants",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Servants' Quarters \u2014 1003 (Zhang Lei)",
-      "nameFr": "Quartiers des domestiques \u2014 1003 (Zhang Lei)",
+      "name": "Servants' Quarters — 1003 (Zhang Lei)",
+      "nameFr": "Quartiers des domestiques — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2023,17 +2023,17 @@
         [-1.5, -2.7],
         [-10.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-servants-wc",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Servants' WC \u2014 1003 (Zhang Lei)",
-      "nameFr": "WC du personnel \u2014 1003 (Zhang Lei)",
+      "name": "Servants' WC — 1003 (Zhang Lei)",
+      "nameFr": "WC du personnel — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2042,17 +2042,17 @@
         [-1.5, -4.2],
         [-3.9, -4.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-entrance",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Entrance Hall \u2014 1003 (Zhang Lei)",
-      "nameFr": "Vestibule d'entr\u00e9e \u2014 1003 (Zhang Lei)",
+      "name": "Entrance Hall — 1003 (Zhang Lei)",
+      "nameFr": "Vestibule d'entrée — 1003 (Zhang Lei)",
       "category": "corridor",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2061,17 +2061,17 @@
         [1.5, -2.7],
         [-1.5, -2.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-kitchen",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Kitchen \u2014 1003 (Zhang Lei)",
-      "nameFr": "Cuisine \u2014 1003 (Zhang Lei)",
+      "name": "Kitchen — 1003 (Zhang Lei)",
+      "nameFr": "Cuisine — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2080,17 +2080,17 @@
         [10.5, -5.7],
         [1.5, -5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Dining Room \u2014 1003 (Zhang Lei)",
-      "nameFr": "Salle \u00e0 manger \u2014 1003 (Zhang Lei)",
+      "name": "Dining Room — 1003 (Zhang Lei)",
+      "nameFr": "Salle à manger — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 365 and 366 \u2014 Prince Zhang Lei's state dining room, venue of his formal audience with Queen Oito: long carved wood table, high-backed armchairs at the ends, credenza, statue on its stand, entrance pedestal table and tall branched candelabrum. Dedicated audit: see `zhang-lei-room-audit.md`.",
+      "source": "Ch. 365, reading pp. 16–19: audience with Oito, Woble and Kurapika. Carved table, two high-backed chairs, two tabletop candelabra, lidded jars and cups; credenza, mantel clock, large landscape and standing sculpture behind Zhang Lei. Dimensions and placement in the chapter 363 programme-type remain reconstructed.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2099,17 +2099,17 @@
         [10.5, 0.3],
         [1.5, 0.3]
       ],
-      "sourceFr": "Chap. 365 et 366 \u2014 la salle \u00e0 manger d'apparat du prince Zhang Lei, lieu de l'audience avec la reine Oito : tr\u00e8s longue table en bois sculpt\u00e9, fauteuils \u00e0 haut dossier aux extr\u00e9mit\u00e9s, cr\u00e9dence, statue sur sellette, gu\u00e9ridon d'entr\u00e9e et haut cand\u00e9labre \u00e0 branches. Audit d\u00e9di\u00e9 : voir `zhang-lei-room-audit.md`."
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience avec Oito, Woble et Kurapika. Table sculptée, deux fauteuils hauts, deux candélabres de table, pots à couvercle et tasses ; crédence, pendule, grand paysage et sculpture en pied derrière Zhang Lei. Dimensions et implantation dans le programme-type du chapitre 363 reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-living",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Living Room \u2014 1003 (Zhang Lei)",
-      "nameFr": "Salon \u2014 1003 (Zhang Lei)",
+      "name": "Living Room — 1003 (Zhang Lei)",
+      "nameFr": "Salon — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2120,17 +2120,17 @@
         [10.5, 5.7],
         [-10.5, 5.7]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bedroom",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Prince's Master Bedroom \u2014 1003 (Zhang Lei)",
-      "nameFr": "Chambre du prince \u2014 1003 (Zhang Lei)",
+      "name": "Prince's Master Bedroom — 1003 (Zhang Lei)",
+      "nameFr": "Chambre du prince — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2139,17 +2139,17 @@
         [4.5, 10.2],
         [-10.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bathroom",
       "tierId": "interior-room-1003",
       "locationId": "tier-1-royal-residential-sector-room-1003",
-      "name": "Bath & WC \u2014 1003 (Zhang Lei)",
-      "nameFr": "Bain et WC \u2014 1003 (Zhang Lei)",
+      "name": "Bath & WC — 1003 (Zhang Lei)",
+      "nameFr": "Bain et WC — 1003 (Zhang Lei)",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
+      "source": "Ch. 363: published princely apartment programme-type. Partitions retained; detailed furniture and finishes in this room are reconstructed, not shown by an individual interior panel.",
       "ceiling": 4,
       "envelope": null,
       "footprint": [
@@ -2158,7 +2158,7 @@
         [10.5, 10.2],
         [4.5, 10.2]
       ],
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "sourceFr": "Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1004",
@@ -15054,15 +15054,15 @@
       "kind": "bed",
       "name": "Bed",
       "nameFr": "Lit",
-      "at": [-8, 8.4],
+      "at": [-9.3, 7],
       "size": [2, 2.1],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bedroom-cabinet-02",
@@ -15070,15 +15070,15 @@
       "kind": "cabinet",
       "name": "Bedside Table",
       "nameFr": "Table de chevet",
-      "at": [-6.5, 7.4],
+      "at": [-7.7, 6.35],
       "size": [0.6, 0.6],
       "rotation": 0,
       "base": 0,
       "height": 0.55,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bedroom-cabinet-03",
@@ -15088,29 +15088,29 @@
       "nameFr": "Armoire",
       "at": [0, 9.7],
       "size": [2.4, 0.7],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 2.1,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-living-seat-04",
       "spaceId": "tier-1-royal-residential-sector-room-1003-living",
       "kind": "seat",
       "name": "Sofa",
-      "nameFr": "Canap\u00e9",
+      "nameFr": "Canapé",
       "at": [-6, 1.5],
       "size": [2.6, 0.95],
       "rotation": 0,
       "base": 0,
       "height": 0.8,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-living-table-05",
@@ -15124,9 +15124,9 @@
       "base": 0,
       "height": 0.42,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-living-cabinet-06",
@@ -15140,16 +15140,16 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-table-07",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "table",
       "name": "Dining Table",
-      "nameFr": "Table de la salle \u00e0 manger",
+      "nameFr": "Table de la salle à manger",
       "at": [6, -2.7],
       "size": [4.2, 1.6],
       "rotation": 0,
@@ -15157,8 +15157,8 @@
       "height": 0.78,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-kitchen-counter-08",
@@ -15166,31 +15166,31 @@
       "kind": "counter",
       "name": "Kitchen Counter",
       "nameFr": "Plan de travail",
-      "at": [6, -9.8],
-      "size": [7, 0.7],
+      "at": [6.175, -9.85],
+      "size": [7.95, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-kitchen-counter-09",
       "spaceId": "tier-1-royal-residential-sector-room-1003-kitchen",
       "kind": "counter",
       "name": "Kitchen Island",
-      "nameFr": "\u00celot de cuisine",
-      "at": [6, -7.6],
-      "size": [2.4, 0.9],
-      "rotation": 0,
+      "nameFr": "Îlot de cuisine",
+      "at": [1.85, -8.5],
+      "size": [3.4, 0.7],
+      "rotation": -90,
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-servants-bed-10",
@@ -15198,15 +15198,15 @@
       "kind": "bed",
       "name": "Servant's Bed 1",
       "nameFr": "Lit de domestique 1",
-      "at": [-9.3, -8.5],
+      "at": [-9.3, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-servants-bed-11",
@@ -15214,15 +15214,15 @@
       "kind": "bed",
       "name": "Servant's Bed 2",
       "nameFr": "Lit de domestique 2",
-      "at": [-7.2, -8.5],
+      "at": [-7.2, -9.1],
       "size": [0.9, 2],
       "rotation": 0,
       "base": 0,
       "height": 0.5,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-servants-cabinet-12",
@@ -15236,9 +15236,9 @@
       "base": 0,
       "height": 2,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-servants-wc-pan",
@@ -15248,13 +15248,13 @@
       "nameFr": "Cuvette du personnel",
       "at": [-1.85, -5.25],
       "size": [0.6, 0.6],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 0.45,
+      "height": 0.85,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bathroom-basin-13",
@@ -15268,9 +15268,9 @@
       "base": 0,
       "height": 0.6,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-bathroom-basin-14",
@@ -15284,9 +15284,9 @@
       "base": 0,
       "height": 0.9,
       "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 363 \u2014 the plan of a prince's apartment, inset on the double page of the residential zone: staff room, kitchen, dining room, salon, the prince's bedroom and bath behind one door, and the rooms shown for Benjamin, Tserriednich and Luzurus from ch. 362 on.",
-      "sourceFr": "Chap. 363 \u2014 le plan d'un appartement princier, encart\u00e9 sur la double page de la zone d'habitation : salle du personnel, cuisine, salle \u00e0 manger, salon, chambre du prince et salle d'eau derri\u00e8re une seule porte, et les pi\u00e8ces montr\u00e9es pour Benjamin, Tserriednich et Luzurus \u00e0 partir du chap. 362."
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1004-bedroom-bed-01",
@@ -26477,97 +26477,97 @@
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "seat",
       "name": "High-Backed Chair (head)",
-      "nameFr": "Fauteuil \u00e0 haut dossier (bout)",
+      "nameFr": "Fauteuil à haut dossier (bout)",
       "at": [3.2, -2.7],
       "size": [0.7, 0.9],
-      "rotation": 0,
+      "rotation": -90,
       "base": 0,
-      "height": 1.35,
+      "height": 1.55,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-chair-foot",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "seat",
       "name": "High-Backed Chair (foot)",
-      "nameFr": "Fauteuil \u00e0 haut dossier (autre bout)",
+      "nameFr": "Fauteuil à haut dossier (autre bout)",
       "at": [8.8, -2.7],
       "size": [0.7, 0.9],
-      "rotation": 0,
+      "rotation": 90,
       "base": 0,
-      "height": 1.35,
+      "height": 1.55,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-credenza",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "cabinet",
       "name": "Credenza",
-      "nameFr": "Cr\u00e9dence",
-      "at": [10.1, -3.3],
-      "size": [0.6, 2.4],
+      "nameFr": "Crédence",
+      "at": [1.88, -2.7],
+      "size": [0.76, 3.2],
       "rotation": 0,
       "base": 0,
       "height": 1.05,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-statue-stand",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "cabinet",
-      "name": "Statue on its Stand",
-      "nameFr": "Statue sur sa sellette",
-      "at": [10.05, -5.15],
-      "size": [0.65, 0.65],
+      "name": "Standing sculpture on a pedestal",
+      "nameFr": "Sculpture en pied sur sellette",
+      "at": [2, -4.85],
+      "size": [0.68, 0.68],
       "rotation": 0,
       "base": 0,
-      "height": 1.6,
+      "height": 2.3,
       "sides": 8,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-framed-document",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "painting",
-      "name": "Framed Document",
-      "nameFr": "Cadre",
-      "at": [3, -5.6],
-      "size": [1.7, 0.18],
+      "name": "Small framed document",
+      "nameFr": "Petit document encadré",
+      "at": [1.63, -0.55],
+      "size": [0.25, 1.1],
       "rotation": 0,
-      "base": 1.5,
-      "height": 1.2,
+      "base": 1.75,
+      "height": 0.85,
       "sides": null,
       "colour": 14274744,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1003-dining-pedestal-table",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "table",
       "name": "Pedestal Table",
-      "nameFr": "Gu\u00e9ridon",
-      "at": [2.1, -4.9],
-      "size": [0.8, 0.8],
+      "nameFr": "Guéridon",
+      "at": [2.1, -0.3],
+      "size": [0.7, 0.7],
       "rotation": 0,
       "base": 0,
       "height": 0.8,
       "sides": 12,
       "provenance": "panel",
-      "source": "Ch. 365 \u2014 Prince Zhang Lei's dining room, where he receives Queen Oito: the long carved table, a high-backed chair at either end of it, the credenza and the statue on its stand down the starboard wall, the framed document on the wall and the pedestal table by the door.",
-      "sourceFr": "Chap. 365 \u2014 la salle \u00e0 manger du prince Zhang Lei, o\u00f9 il re\u00e7oit la reine Oito : la longue table sculpt\u00e9e, un fauteuil \u00e0 haut dossier \u00e0 chacun de ses bouts, la cr\u00e9dence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le gu\u00e9ridon pr\u00e8s de la porte."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1005-living-desk",
@@ -27918,17 +27918,17 @@
       "id": "tier-1-royal-residential-sector-room-1003-dining-candelabrum",
       "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
       "kind": "cabinet",
-      "name": "Ceremonial Candelabrum",
-      "nameFr": "Cand\u00e9labre d'apparat",
-      "at": [9.8, -1],
-      "size": [0.55, 0.55],
+      "name": "Three-branch tabletop candelabrum",
+      "nameFr": "Candélabre de table à trois branches",
+      "at": [5.5, -3.17],
+      "size": [0.56, 0.5],
       "rotation": 0,
-      "base": 0,
-      "height": 1.75,
+      "base": 0.78,
+      "height": 0.82,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 366 \u2014 the sweep through Room 1003 isolates the tall branched candelabrum that stands beside Zhang Lei's formal dining table.",
-      "sourceFr": "Chap. 366 \u2014 le passage dans la chambre 1003 isole le haut cand\u00e9labre \u00e0 branches plac\u00e9 pr\u00e8s de la table d'apparat de Zhang Lei."
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées."
     },
     {
       "id": "tier-1-royal-residential-sector-room-1007-living-topiary-left",
@@ -31276,6 +31276,86 @@
       "provenance": "panel",
       "source": "Ch. 358 \u2014 Industrial fluid drums on spill containment staging along eastern bulkhead.",
       "sourceFr": "Chap. 358 \u2014 F\u00fbts de fluides industriels sur bac de r\u00e9tention le long de la cloison est."
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003-dining-candelabrum-pair",
+      "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
+      "kind": "cabinet",
+      "name": "Second tabletop candelabrum",
+      "nameFr": "Second candélabre de table",
+      "provenance": "panel",
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées.",
+      "at": [6.5, -2.23],
+      "size": [0.56, 0.5],
+      "rotation": 0,
+      "height": 0.82,
+      "base": 0.78,
+      "sides": null
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003-dining-landscape",
+      "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
+      "kind": "painting",
+      "name": "Large framed landscape",
+      "nameFr": "Grand paysage encadré",
+      "provenance": "panel",
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées.",
+      "at": [1.57, -2.7],
+      "size": [0.12, 2.6],
+      "rotation": 0,
+      "height": 1.35,
+      "base": 1.65,
+      "sides": null
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003-dining-mantel-clock",
+      "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
+      "kind": "cabinet",
+      "name": "Ornamental mantel clock",
+      "nameFr": "Pendule ornementale sur la crédence",
+      "provenance": "panel",
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées.",
+      "at": [1.92, -1.85],
+      "size": [0.5, 0.6],
+      "rotation": 0,
+      "height": 0.55,
+      "base": 1.08,
+      "sides": null
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003-dining-service",
+      "spaceId": "tier-1-royal-residential-sector-room-1003-dining",
+      "kind": "cabinet",
+      "name": "Lidded jars and cups",
+      "nameFr": "Pots à couvercle et tasses",
+      "provenance": "panel",
+      "source": "Ch. 365, reading pp. 16–19: Zhang Lei’s audience with Oito. Room metrics and placement in the programme-type remain reconstructed.",
+      "sourceFr": "Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées.",
+      "at": [4.4, -2.7],
+      "size": [0.72, 0.72],
+      "rotation": 0,
+      "height": 0.28,
+      "base": 0.78,
+      "sides": null
+    },
+    {
+      "id": "tier-1-royal-residential-sector-room-1003-bathroom-wc-pan",
+      "spaceId": "tier-1-royal-residential-sector-room-1003-bathroom",
+      "kind": "basin",
+      "name": "Toilet",
+      "nameFr": "WC",
+      "at": [10.05, 8.25],
+      "size": [0.7, 0.8],
+      "rotation": 90,
+      "base": 0,
+      "height": 0.85,
+      "sides": null,
+      "provenance": "map",
+      "source": "Reconstruction of Room 1003 from the chapter 363 apartment programme-type and local /ship plan. No individual perspective establishes this private room’s detailed furniture or finishes.",
+      "sourceFr": "Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce."
     }
   ]
 }

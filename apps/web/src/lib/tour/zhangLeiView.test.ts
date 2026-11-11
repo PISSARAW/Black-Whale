@@ -25,12 +25,12 @@ const triangles = (root: THREE.Group) =>
     0,
   )
 
-describe('state dining room of Prince Zhang Lei reconstructed from chapters 365 and 366', () => {
+describe('state dining room of Prince Zhang Lei reconstructed from chapter 365', () => {
   it('satisfies the shared blueprint invariants for Room 1003 state dining', () => {
     expect(validateBlueprint().filter((issue) => issue.includes(ZHANG_LEI_DINING))).toEqual([])
   })
 
-  it('holds Zhang Lei’s ceremonial table, high-backed chairs, credenza, statue, candelabrum, guéridon and framed decree', () => {
+  it('holds Zhang Lei’s ceremonial table, high-backed chairs, credenza, standing statue, tabletop candelabra, guéridon and wall frames', () => {
     const table = fixture('-dining-table-07')
     const chairHead = fixture('-dining-chair-head')
     const chairFoot = fixture('-dining-chair-foot')
@@ -91,7 +91,7 @@ describe('state dining room of Prince Zhang Lei reconstructed from chapters 365 
 
   it('omits the interpretation in evidence mode and in other rooms', () => {
     expect(build({ reveal: true })).toBeNull()
-    expect(build({ spaceId: 'tier-1-royal-residential-sector-room-1003-living' })).toBeNull()
+    expect(build({ spaceId: 'tier-1-royal-residential-sector-room-1004-living' })).toBeNull()
   })
 
   it('rebuilds the ornament with the current furniture instead of leaving ghosts behind', () => {
@@ -105,13 +105,14 @@ describe('state dining room of Prince Zhang Lei reconstructed from chapters 365 
     for (const object of [root, removed, empty]) disposeBanquetDetails(object)
   })
 
-  it('places Zhang Lei, Queen Oito and Kurapika in all three camera views clear of solids', () => {
-    for (const v of MANGA_ZHANG_LEI_VIEWS) {
+  it('keeps dining cameras clear of solids and places the audience in populated views', () => {
+    for (const v of MANGA_ZHANG_LEI_VIEWS.filter((view) => view.spaceId === ZHANG_LEI_DINING)) {
       expect(pointInPolygon(v.at, room.footprint)).toBe(true)
       for (const solid of structures.filter(({ base }) => base === 0)) {
         expect(pointInPolygon(v.at, structureFootprint(solid)), `${v.id}/${solid.id}`).toBe(false)
       }
-      const zhanglei = v.staging!.find(({ characterId }) => characterId === 'prince-zhanglei')!
+      if (!v.staging?.length) continue
+      const zhanglei = v.staging.find(({ characterId }) => characterId === 'prince-zhanglei')!
       expect(zhanglei.at).toEqual(fixture('-dining-chair-head').at)
       const oito = v.staging!.find(({ characterId }) => characterId === 'queen-oito')!
       expect(oito.at).toEqual(fixture('-dining-chair-foot').at)

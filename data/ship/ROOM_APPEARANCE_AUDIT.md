@@ -286,17 +286,16 @@
 - **Sous-espaces :** 9
 - **Emprises relevées :** 4.95 × 17.39 m ; 9 × 7.5 m ; 2.4 × 2.1 m ; 3 × 7.5 m ; 9 × 4.5 m ; 9 × 6 m ; 21 × 8.4 m ; 15 × 4.5 m ; 6 × 4.5 m
 - **Hauteurs sous plafond :** 4 m
-- **Éléments modélisés :** 7 cabinet, 3 basin, 3 bed, 3 seat, 3 table, 2 counter, 1 painting
-- **Objets directement visibles dans les cases :** 22/22
+- **Éléments modélisés :** 10 cabinet, 4 basin, 3 bed, 3 seat, 3 table, 2 counter, 2 painting
+- **Objets directement visibles dans les cases :** 12/27
 - **Espaces internes :** Quartiers des domestiques — 1003 (Zhang Lei) ; WC du personnel — 1003 (Zhang Lei) ; Vestibule d'entrée — 1003 (Zhang Lei) ; Cuisine — 1003 (Zhang Lei) ; Salle à manger — 1003 (Zhang Lei) ; Salon — 1003 (Zhang Lei) ; Chambre du prince — 1003 (Zhang Lei) ; Bain et WC — 1003 (Zhang Lei)
 - **Sources de la pièce :**
   - Chap. 363 — la double page de la zone d'habitation : quatorze appartements isolés en deux rangées de sept à l’intérieur de la cloison intérieure, impairs à tribord, chacun avec son unique porte face à la porte numérotée qui lui est assignée ; les numéros de chambre viennent du chap. 349.
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 365 et 366 — la salle à manger d'apparat du prince Zhang Lei, lieu de l'audience avec la reine Oito : très longue table en bois sculpté, fauteuils à haut dossier aux extrémités, crédence, statue sur sellette, guéridon d'entrée et haut candélabre à branches. Audit dédié : voir `zhang-lei-room-audit.md`.
+  - Chap. 363 : plan publié du programme-type princier. Cloisons conservées ; mobilier détaillé et finitions de cette pièce reconstitués, sans case intérieure individuelle.
+  - Chap. 365, pages de lecture 16–19 : audience avec Oito, Woble et Kurapika. Table sculptée, deux fauteuils hauts, deux candélabres de table, pots à couvercle et tasses ; crédence, pendule, grand paysage et sculpture en pied derrière Zhang Lei. Dimensions et implantation dans le programme-type du chapitre 363 reconstituées.
 - **Sources du mobilier et des détails :**
-  - Chap. 363 — le plan d'un appartement princier, encarté sur la double page de la zone d'habitation : salle du personnel, cuisine, salle à manger, salon, chambre du prince et salle d'eau derrière une seule porte, et les pièces montrées pour Benjamin, Tserriednich et Luzurus à partir du chap. 362.
-  - Chap. 365 — la salle à manger du prince Zhang Lei, où il reçoit la reine Oito : la longue table sculptée, un fauteuil à haut dossier à chacun de ses bouts, la crédence et la statue sur sa sellette le long du mur tribord, le cadre au mur et le guéridon près de la porte.
-  - Chap. 366 — le passage dans la chambre 1003 isole le haut candélabre à branches placé près de la table d'apparat de Zhang Lei.
+  - Reconstitution du 1003 à partir du programme-type du chapitre 363 et du plan local /ship. Aucune case intérieure individuelle ne précise le mobilier détaillé ni les finitions de cette pièce.
+  - Chap. 365, pages de lecture 16–19 : audience de Zhang Lei avec Oito. Dimensions et implantation dans le programme-type reconstituées.
 
 ## Chambre 1004 (Tserriednich) — `tier-1-royal-residential-sector-room-1004`
 

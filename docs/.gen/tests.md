@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 365
+Fichiers : 367
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -923,6 +923,10 @@ Fichiers : 365
 
 - which rooms are dangerous to stand in > finds none in a ship nothing has been done to
 
+## `apps/web/src/lib/tour/cast/mangaBeastStage.test.ts`
+
+- source-panel guardian blocking > locates an existing guardian behind Zhang Lei, without changing its height or visibility
+
 ## `apps/web/src/lib/tour/cast/mangaStage.test.ts`
 
 - manga panel cast staging > keeps an explicitly unpopulated programme-type room empty
@@ -1464,9 +1468,13 @@ Fichiers : 365
 
 - the Tier 5 Cha-R Warehouse reconstructed from chapters 378, 379 and 380 > satisfies the shared blueprint invariants for the warehouse
 
+## `apps/web/src/lib/tour/zhangLeiApartmentView.test.ts`
+
+- Zhang Lei’s complete apartment > keeps every room’s furniture on a valid shared plan, with honest reconstruction provenance
+
 ## `apps/web/src/lib/tour/zhangLeiView.test.ts`
 
-- state dining room of Prince Zhang Lei reconstructed from chapters 365 and 366 > satisfies the shared blueprint invariants for Room 1003 state dining
+- state dining room of Prince Zhang Lei reconstructed from chapter 365 > satisfies the shared blueprint invariants for Room 1003 state dining
 
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 

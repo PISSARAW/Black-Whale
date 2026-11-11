@@ -43,6 +43,8 @@ export interface MangaView {
   labelFr: string
   /** Explicit blocking; an empty array keeps the viewed level free of inferred bodies, including adjoining rooms. */
   staging?: readonly MangaCastStaging[]
+  /** A panel may locate a guardian more precisely than its default corner of the room. */
+  beastStaging?: readonly { ownerId: string; at: Vec2; heading?: number }[]
   /** Other zones of the same continuous room from which this view is offered. */
   triggerSpaceIds?: readonly string[]
 }

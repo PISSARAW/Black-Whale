@@ -1,14 +1,11 @@
+import { dressZhangLeiTableObjects } from './zhangLeiTableObjects'
 import {
   ZHANG_LEI_BRONZE,
-  ZHANG_LEI_CANDLE,
-  ZHANG_LEI_FABRIC_PALE,
-  ZHANG_LEI_FLAME,
   ZHANG_LEI_GOLD,
   ZHANG_LEI_STONE,
   ZHANG_LEI_VELVET,
   ZHANG_LEI_WOOD,
   ZhangLeiSurface,
-  zhangLeiTurnedBaluster,
 } from './zhangLeiDetailSurface'
 
 function stateDiningTable(surface: ZhangLeiSurface): void {
@@ -20,17 +17,38 @@ function stateDiningTable(surface: ZhangLeiSurface): void {
   surface.box([w + 0.03, 0.02, d + 0.03], [0, topY - 0.01, 0], ZHANG_LEI_GOLD)
   surface.box([w * 0.96, 0.015, d * 0.94], [0, topY + 0.005, 0], 0x482d1c)
 
-  // Long ceremonial silk table runner
-  surface.box([w * 0.9, 0.008, d * 0.42], [0, topY + 0.01, 0], ZHANG_LEI_FABRIC_PALE)
-  surface.box([w * 0.92, 0.006, 0.03], [0, topY + 0.012, d * 0.2], ZHANG_LEI_GOLD)
-  surface.box([w * 0.92, 0.006, 0.03], [0, topY + 0.012, -d * 0.2], ZHANG_LEI_GOLD)
-
-  // 4 Carved corner baluster legs and center support
+  // Ch. 365 p. 16: curved carved corner legs and a moulded apron.
   for (const sx of [-1, 1]) {
     for (const sz of [-1, 1]) {
       const legX = sx * (w / 2 - 0.25)
       const legZ = sz * (d / 2 - 0.25)
-      zhangLeiTurnedBaluster(surface, { at: [legX, 0, legZ], height: topY - 0.065, radius: 0.075 })
+      surface.curve(
+        [
+          [legX, topY - 0.08, legZ],
+          [legX + sx * 0.07, 0.53, legZ + sz * 0.04],
+          [legX - sx * 0.09, 0.3, legZ - sz * 0.07],
+          [legX, 0.08, legZ],
+        ],
+        0.075,
+        ZHANG_LEI_WOOD,
+      )
+      surface.sphere([0.12, 0.1, 0.1], [legX, 0.59, legZ], ZHANG_LEI_GOLD)
+    }
+  }
+  for (const side of [-1, 1]) {
+    const z = side * (d / 2 - 0.07)
+    surface.box([w - 0.3, 0.14, 0.08], [0, topY - 0.13, z], ZHANG_LEI_WOOD)
+    for (let i = 0; i < 9; i++) {
+      const x = ((i - 4) * (w - 0.65)) / 9
+      surface.curve(
+        [
+          [x - 0.1, 0.64, z],
+          [x, 0.58, z + side * 0.04],
+          [x + 0.1, 0.66, z],
+        ],
+        0.018,
+        ZHANG_LEI_GOLD,
+      )
     }
   }
 
@@ -38,37 +56,11 @@ function stateDiningTable(surface: ZhangLeiSurface): void {
   surface.box([w - 0.5, 0.04, 0.06], [0, 0.12, 0], ZHANG_LEI_WOOD)
   surface.box([0.06, 0.04, d - 0.5], [0, 0.12, 0], ZHANG_LEI_WOOD)
   surface.sphere([0.07, 0.1, 0.07], [0, 0.18, 0], ZHANG_LEI_GOLD)
-
-  tableAccessories(surface, topY)
-}
-
-function tableAccessories(surface: ZhangLeiSurface, topY: number): void {
-  // Central silver epergne / decorative fruit centerpiece
-  surface.cylinder({ radius: 0.16, height: 0.03 }, [0, topY + 0.02, 0], ZHANG_LEI_GOLD)
-  surface.cylinder({ radius: 0.035, height: 0.12 }, [0, topY + 0.08, 0], ZHANG_LEI_GOLD)
-  surface.sphere([0.18, 0.06, 0.18], [0, topY + 0.16, 0], ZHANG_LEI_GOLD)
-  surface.sphere([0.14, 0.05, 0.14], [0, topY + 0.2, 0], 0x8a3832)
-
-  // Pair of cut-crystal wine decanters flanking the centerpiece
-  for (const sx of [-1, 1]) {
-    const decX = sx * 1.1
-    surface.cylinder({ radius: 0.055, height: 0.14 }, [decX, topY + 0.08, 0], 0x8ea2a8)
-    surface.cylinder({ radius: 0.022, height: 0.09 }, [decX, topY + 0.18, 0], 0x8ea2a8)
-    surface.sphere([0.03, 0.035, 0.03], [decX, topY + 0.24, 0], ZHANG_LEI_GOLD)
-    surface.sphere([0.045, 0.06, 0.045], [decX, topY + 0.07, 0], 0x6e1b24)
-
-    // Wine glasses on gold stems
-    surface.cylinder(
-      { radius: 0.006, height: 0.06 },
-      [decX + sx * 0.25, topY + 0.04, 0.12],
-      ZHANG_LEI_GOLD,
-    )
-    surface.sphere([0.025, 0.04, 0.025], [decX + sx * 0.25, topY + 0.08, 0.12], 0xcfe0e8)
-  }
 }
 
 function chairBackrest(surface: ZhangLeiSurface, dim: { w: number; d: number; h: number }): void {
-  const { w, d, h } = dim
+  const { w, d } = dim
+  const h = dim.h - 0.22
   const backY = 0.45 + (h - 0.45) / 2
   const backZ = -d * 0.38
   const backH = h - 0.45
@@ -79,17 +71,6 @@ function chairBackrest(surface: ZhangLeiSurface, dim: { w: number; d: number; h:
 
   // Rich padded velvet backrest cushion
   surface.sphere([w * 0.36, backH * 0.44, 0.08], [0, backY, backZ + 0.04], ZHANG_LEI_VELVET)
-
-  // Diamond button tufting
-  for (let row = 0; row < 4; row++) {
-    for (let col = -1; col <= 1; col++) {
-      surface.sphere(
-        [0.02, 0.02, 0.02],
-        [col * w * 0.2, backY - 0.28 + row * 0.2, backZ + 0.085],
-        ZHANG_LEI_GOLD,
-      )
-    }
-  }
 
   // Sculpted baroque top crest and royal finial
   surface.sphere([w * 0.3, 0.14, 0.08], [0, h + 0.06, backZ], ZHANG_LEI_WOOD)
@@ -143,19 +124,13 @@ function credenza(surface: ZhangLeiSurface): void {
     surface.box([w * 0.18, h * 0.58, 0.025], [panelX, h * 0.44, d / 2 + 0.012], ZHANG_LEI_GOLD)
     surface.sphere([0.02, 0.02, 0.02], [panelX, h * 0.52, d / 2 + 0.03], ZHANG_LEI_BRONZE)
   }
-
-  // Tableware display on top
-  surface.box([0.45, 0.025, 0.28], [0, h + 0.035, 0], ZHANG_LEI_GOLD)
-  surface.sphere([0.09, 0.07, 0.09], [0, h + 0.09, 0], 0xded9c8)
-  surface.cylinder({ radius: 0.03, height: 0.16 }, [-0.65, h + 0.1, 0], 0x8ea2a8)
-  surface.cylinder({ radius: 0.03, height: 0.16 }, [0.65, h + 0.1, 0], 0x8ea2a8)
 }
 
 function statueAndStand(surface: ZhangLeiSurface): void {
   const { width: w, structure } = surface
   const h = structure.height
   const r = (w * 0.85) / 2
-  const standH = h * 0.65
+  const standH = h * 0.48
 
   // Octagonal wooden pedestal with tiered base and capital moldings
   surface.cylinder({ radius: r, height: 0.1, sides: 8 }, [0, 0.05, 0], ZHANG_LEI_WOOD)
@@ -173,14 +148,14 @@ function statueAndStand(surface: ZhangLeiSurface): void {
   )
   surface.cylinder({ radius: r, height: 0.08, sides: 8 }, [0, standH, 0], ZHANG_LEI_WOOD)
 
-  // Classical sculpted bust on plinth
-  const bustY = standH + 0.04
-  surface.box([r * 0.9, 0.06, r * 0.9], [0, bustY + 0.03, 0], ZHANG_LEI_STONE)
-  surface.cylinder({ radius: 0.07, height: 0.08 }, [0, bustY + 0.09, 0], ZHANG_LEI_STONE)
-  // Sculpted bronze shoulders and head
-  surface.sphere([0.18, 0.12, 0.12], [0, bustY + 0.22, 0], ZHANG_LEI_BRONZE)
-  surface.sphere([0.09, 0.13, 0.1], [0, bustY + 0.36, 0], ZHANG_LEI_BRONZE)
-  surface.box([0.14, 0.05, 0.12], [0, bustY + 0.45, 0], ZHANG_LEI_BRONZE)
+  // A complete standing figure is visible in ch. 365 p. 16, not just a bust.
+  const y = standH + 0.08
+  for (const side of [-1, 1]) {
+    surface.cylinder({ radius: 0.045, height: 0.3 }, [side * 0.055, y + 0.15, 0], ZHANG_LEI_STONE)
+    surface.sphere([0.035, 0.13, 0.04], [side * 0.14, y + 0.43, 0], ZHANG_LEI_STONE)
+  }
+  surface.sphere([0.11, 0.18, 0.07], [0, y + 0.43, 0], ZHANG_LEI_STONE)
+  surface.sphere([0.065, 0.085, 0.06], [0, y + 0.68, 0], ZHANG_LEI_STONE)
 }
 
 function pedestalTable(surface: ZhangLeiSurface): void {
@@ -214,60 +189,6 @@ function pedestalTable(surface: ZhangLeiSurface): void {
   surface.ring(0.12, [0, topY + 0.04, 0], ZHANG_LEI_GOLD)
 }
 
-function candelabrumBranches(surface: ZhangLeiSurface, hubY: number): void {
-  const armRadius = 0.22
-  for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 2
-    const cos = Math.cos(angle)
-    const sin = Math.sin(angle)
-    const armX = cos * armRadius
-    const armZ = sin * armRadius
-    surface.curve(
-      [
-        [0, hubY, 0],
-        [cos * armRadius * 0.6, hubY - 0.04, sin * armRadius * 0.6],
-        [armX, hubY + 0.1, armZ],
-      ],
-      0.016,
-      ZHANG_LEI_GOLD,
-    )
-    surface.cylinder({ radius: 0.04, height: 0.025 }, [armX, hubY + 0.11, armZ], ZHANG_LEI_GOLD)
-    surface.cylinder({ radius: 0.018, height: 0.15 }, [armX, hubY + 0.19, armZ], ZHANG_LEI_CANDLE)
-    surface.into.sphere([0.025, 0.045, 0.025], {
-      at: surface.point([armX, hubY + 0.29, armZ]),
-      colour: ZHANG_LEI_FLAME,
-      glow: true,
-    })
-  }
-}
-
-function branchedCandelabrum(surface: ZhangLeiSurface): void {
-  const { structure } = surface
-  const h = structure.height
-
-  // Tripod bronze base with scrolled paw feet
-  surface.cylinder({ radius: 0.16, height: 0.08, sides: 12 }, [0, 0.04, 0], ZHANG_LEI_BRONZE)
-  surface.cylinder({ radius: 0.13, height: 0.04, sides: 12 }, [0, 0.1, 0], ZHANG_LEI_GOLD)
-
-  // Tall fluted column with decorative knops
-  surface.cylinder({ radius: 0.032, height: h * 0.7 }, [0, h * 0.42, 0], ZHANG_LEI_GOLD)
-  surface.sphere([0.065, 0.065, 0.065], [0, h * 0.35, 0], ZHANG_LEI_GOLD)
-  surface.sphere([0.065, 0.065, 0.065], [0, h * 0.72, 0], ZHANG_LEI_GOLD)
-
-  // Multi-branched arm cluster
-  const hubY = h * 0.76
-  surface.sphere([0.08, 0.06, 0.08], [0, hubY, 0], ZHANG_LEI_GOLD)
-  candelabrumBranches(surface, hubY)
-
-  // Raised central candle taper
-  surface.cylinder({ radius: 0.022, height: 0.18 }, [0, hubY + 0.12, 0], ZHANG_LEI_CANDLE)
-  surface.into.sphere([0.028, 0.05, 0.028], {
-    at: surface.point([0, hubY + 0.24, 0]),
-    colour: ZHANG_LEI_FLAME,
-    glow: true,
-  })
-}
-
 export function dressZhangLeiFurniture(surface: ZhangLeiSurface): void {
   const { id } = surface.structure
   if (id.includes('table-07')) stateDiningTable(surface)
@@ -275,5 +196,5 @@ export function dressZhangLeiFurniture(surface: ZhangLeiSurface): void {
   else if (id.includes('credenza')) credenza(surface)
   else if (id.includes('statue-stand')) statueAndStand(surface)
   else if (id.includes('pedestal-table')) pedestalTable(surface)
-  else if (id.includes('candelabrum')) branchedCandelabrum(surface)
+  else dressZhangLeiTableObjects(surface)
 }

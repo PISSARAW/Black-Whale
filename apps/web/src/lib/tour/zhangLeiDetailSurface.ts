@@ -2,9 +2,9 @@ import type * as Three from 'three'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Structure } from './types'
 
-export const ZHANG_LEI_WOOD = 0x3a2215
-export const ZHANG_LEI_GOLD = 0xc9a458
-export const ZHANG_LEI_VELVET = 0x24352b
+export const ZHANG_LEI_WOOD = 0x69523a
+export const ZHANG_LEI_GOLD = 0xa99265
+export const ZHANG_LEI_VELVET = 0xc3bea7
 export const ZHANG_LEI_STONE = 0x92887a
 export const ZHANG_LEI_BRONZE = 0x483e35
 export const ZHANG_LEI_FABRIC_PALE = 0xe2decb
@@ -65,7 +65,7 @@ export class ZhangLeiSurface {
       { radius, tube: 0.018 },
       {
         at: this.point(at),
-        rotation: [0, this.angle, 0],
+        rotation: [Math.PI / 2, this.angle, 0],
         colour,
       },
     )

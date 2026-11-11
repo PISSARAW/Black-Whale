@@ -775,6 +775,13 @@ les doubles portes du salon sont restitués ; la scène de massage appartient
 publié au chapitre 363, avec un mobilier de reconstitution `map` et des points
 de vue explicitement légendés. Voir [l’audit du 1002](camilla-room-1002-audit.md).
 
+Dans le **1003**, la relecture du chapitre 365 (pages 16–19) corrige le fond
+de l’audience : crédence, pendule, paysage et sculpture en pied. Deux
+candélabres occupent le plateau ; les carafes à vin et le chemin de table
+ajoutés sans preuve sont retirés. Les sept autres pièces sont des
+reconstitutions signalées du programme-type. Le mobilier 2D et la visite
+partagent les mêmes emprises. Voir [l’audit du 1003](zhang-lei-room-audit.md).
+
 Les ajouts les plus solides sont la réception de Benjamin (chap. 363 et 366),
 la salle à manger de Zhang Lei (chap. 365 et 366), le salon d'entraînement de
 Tserriednich (chap. 384 à 387), le salon encombré de Luzurus (chap. 386 et 389),

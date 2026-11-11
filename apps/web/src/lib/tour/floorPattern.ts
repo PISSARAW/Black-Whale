@@ -180,8 +180,12 @@ function floorboards(polygon: Polygon): [Vec2, Vec2][] {
 
 const tiles = (polygon: Polygon): [Vec2, Vec2][] => plateSeams(polygon, 0.8)
 
+const modelledFloor = (space: Space) =>
+  space.id === 'tier-1-royal-residential-sector-room-1002-living' ||
+  space.tierId === 'interior-room-1003'
+
 export function floorPatternOf(space: Space): FloorPattern | null {
-  if (space.id === 'tier-1-royal-residential-sector-room-1002-living') {
+  if (modelledFloor(space)) {
     return { kind: 'plain', style: 'joint', segments: [] }
   }
   if (space.id === 'tier-1-king-living-quarters-living') {

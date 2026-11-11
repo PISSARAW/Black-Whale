@@ -31,6 +31,7 @@ import {
   type Visitor,
 } from '$lib/tour/cast'
 import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
+import { stageBeastsForMangaView } from '$lib/tour/cast/mangaBeastStage'
 import { pacedPosts } from '$lib/tour/cast/pace'
 import { residueApparitions } from '$lib/tour/cast/residue'
 import { concertCast, type ConcertPerformance } from './melodyConcert'
@@ -179,15 +180,18 @@ export class TourCastView {
    * separate passes.
    */
   apparitions = $derived.by<Apparition[]>(() => {
-    const { cast, world, tierId } = this.options.read()
+    const { cast, world, tierId, mangaView } = this.options.read()
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
       ...residueApparitions({ ship: this.options.ship, vestiges: world.vestiges, tierId }),
-      ...beastApparitions(this.options.ship, this.posts, {
-        standing: cast.beasts,
-        chapter: cast.chapterNumber,
-      }),
+      ...stageBeastsForMangaView(
+        beastApparitions(this.options.ship, this.posts, {
+          standing: cast.beasts,
+          chapter: cast.chapterNumber,
+        }),
+        mangaView,
+      ),
     ]
   })
 

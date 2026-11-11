@@ -1,5 +1,6 @@
 import { ApartmentSurface } from './apartmentDetailSurface'
 import { dressApartmentSeat } from './apartmentSeating'
+import { dressPrinceBedroomBed } from './princeBedroomBed'
 
 const WOOD = 0x6a5845,
   EDGE = 0x403a30,
@@ -113,7 +114,7 @@ function table(surface: ApartmentSurface): void {
 
 export function dressApartmentFurniture(surface: ApartmentSurface): void {
   if (surface.structure.kind === 'seat') dressApartmentSeat(surface)
-  if (surface.structure.kind === 'bed') bed(surface)
+  if (surface.structure.kind === 'bed' && !dressPrinceBedroomBed(surface)) bed(surface)
   if (surface.structure.kind === 'cabinet') cabinet(surface)
   if (surface.structure.kind === 'table') table(surface)
 }

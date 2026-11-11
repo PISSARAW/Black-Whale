@@ -5,6 +5,8 @@ import { dressApartmentArchitecture } from './apartmentArchitecture'
 import { ApartmentSurface } from './apartmentDetailSurface'
 import { dressApartmentFurniture } from './apartmentFurniture'
 import { dressApartmentUtilities } from './apartmentUtilities'
+import { dressPrinceBedroomDecor } from './princeBedroomDecor'
+import { dressPrinceBedroomMangaProp, isPrinceBedroomMangaFixture } from './princeBedroomMangaProps'
 import { isPrinceApartmentSpace } from './princeApartmentAppearance'
 import type { Structure } from './types'
 
@@ -20,12 +22,15 @@ const COMMON_APARTMENT_TIER = /^interior-room-10(0[5-9]|1[0-4])$/
 export const isCommonApartmentFixture = (structure: Structure): boolean =>
   COMMON_SUFFIX.test(structure.id)
 
-/** Hide only programme-type blocks; named manga props remain in the source mesh. */
+export const isDetailedApartmentFixture = (structure: Structure): boolean =>
+  isCommonApartmentFixture(structure) || isPrinceBedroomMangaFixture(structure)
+
+/** Hide blocks replaced by detailed furniture; unrelated named manga props remain untouched. */
 export function princeApartmentSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   if (reveal || !COMMON_APARTMENT_TIER.test(plan.tier.id)) return plan
   return {
     ...plan,
-    structures: plan.structures.filter((structure) => !isCommonApartmentFixture(structure)),
+    structures: plan.structures.filter((structure) => !isDetailedApartmentFixture(structure)),
   }
 }
 
@@ -43,11 +48,15 @@ export function buildPrinceApartmentEnvelope(options: {
   const into = new BanquetDetailBuilder(options.THREE)
   dressApartmentArchitecture({ into, plan: options.plan, space })
   for (const structure of options.plan.structures.filter(
-    (item) => item.spaceId === space.id && isCommonApartmentFixture(item),
+    (item) => item.spaceId === space.id && isDetailedApartmentFixture(item),
   )) {
     const surface = new ApartmentSurface(into, structure, floorOf(space, options.plan.tier))
-    dressApartmentFurniture(surface)
-    dressApartmentUtilities(surface)
+    if (isPrinceBedroomMangaFixture(structure)) dressPrinceBedroomMangaProp(surface)
+    else {
+      dressApartmentFurniture(surface)
+      dressApartmentUtilities(surface)
+    }
   }
+  dressPrinceBedroomDecor({ into, plan: options.plan, space })
   return into.finish(`prince-apartment-envelope-${space.id}`)
 }

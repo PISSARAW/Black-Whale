@@ -5,6 +5,8 @@ import { ApartmentSurface } from './apartmentDetailSurface'
 import { dressApartmentArchitecture } from './apartmentArchitecture'
 import { dressApartmentFurniture } from './apartmentFurniture'
 import { dressApartmentUtilities } from './apartmentUtilities'
+import { dressPrinceBedroomDecor } from './princeBedroomDecor'
+import { dressPrinceBedroomMangaProp, isPrinceBedroomMangaFixture } from './princeBedroomMangaProps'
 
 /** Furniture from a programme-type plan; room-specific panel models take precedence. */
 export function buildApartmentReconstruction(options: {
@@ -22,8 +24,12 @@ export function buildApartmentReconstruction(options: {
   dressApartmentArchitecture({ into, plan, space })
   for (const structure of plan.structures.filter((item) => item.spaceId === spaceId)) {
     const surface = new ApartmentSurface(into, structure, floorOf(space, plan.tier))
-    dressApartmentFurniture(surface)
-    dressApartmentUtilities(surface)
+    if (isPrinceBedroomMangaFixture(structure)) dressPrinceBedroomMangaProp(surface)
+    else {
+      dressApartmentFurniture(surface)
+      dressApartmentUtilities(surface)
+    }
   }
+  dressPrinceBedroomDecor({ into, plan, space })
   return into.finish(options.name)
 }

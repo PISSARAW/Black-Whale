@@ -4,6 +4,7 @@ import { buildShip, ceilingOf, floorOf } from './blueprint'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import {
   buildPrinceApartmentEnvelope,
+  isDetailedApartmentFixture,
   isCommonApartmentFixture,
   princeApartmentSurfacePlan,
 } from './princeApartmentEnvelope'
@@ -55,15 +56,17 @@ describe('the shared manga envelope of the princely apartments', () => {
     ).toBeNull()
   })
 
-  it('replaces common furniture blocks in apartments 1005–1014 and preserves named props', () => {
+  it('replaces detailed furniture blocks in apartments 1005–1014 and preserves other named props', () => {
     for (let roomNumber = 1005; roomNumber <= 1014; roomNumber++) {
       const plan = ship.plans.get(`interior-room-${roomNumber}`)!
       const common = plan.structures.filter(isCommonApartmentFixture)
-      const named = plan.structures.filter((structure) => !isCommonApartmentFixture(structure))
+      const preserved = plan.structures.filter(
+        (structure) => !isDetailedApartmentFixture(structure),
+      )
       const surface = princeApartmentSurfacePlan(plan, false)
 
       expect(common.length, String(roomNumber)).toBeGreaterThan(0)
-      expect(surface.structures, String(roomNumber)).toEqual(named)
+      expect(surface.structures, String(roomNumber)).toEqual(preserved)
       expect(princeApartmentSurfacePlan(plan, true)).toBe(plan)
     }
   })

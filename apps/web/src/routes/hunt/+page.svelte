@@ -270,11 +270,11 @@
       game.player.position[0] - game.hunter.position[0],
       game.player.position[1] - game.hunter.position[1],
     )
-    const visible = canSeeAtDistance(
-      activeContract.environment,
-      gap,
-      game.duel?.player.gyo ?? false,
-    )
+    const visible = canSeeAtDistance(activeContract.environment, {
+      distance: gap,
+      gyo: game.duel?.player.gyo ?? false,
+      targetAuraVisible: true,
+    })
       ? sightings({
           hunter: game.hunter,
           tierId: arena.tierId,

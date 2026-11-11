@@ -30,15 +30,21 @@ export function environmentModifiers(environment: ContractEnvironment): Environm
   }
 }
 
-/** Reliable visual range in the contract's light; Gyo defeats a blackout. */
-export function canSeeAtDistance(
-  environment: ContractEnvironment,
-  distance: number,
-  gyo: boolean,
-): boolean {
+export interface HuntSightCheck {
+  distance: number
+  gyo: boolean
+  /** Gyo reveals aura under In; it does not illuminate an aura-less body. */
+  targetAuraVisible: boolean
+}
+
+export const GYO_AURA_RANGE = 8
+
+/** Reliable physical sight plus the separate, bounded aura reading of Gyo. */
+export function canSeeAtDistance(environment: ContractEnvironment, check: HuntSightCheck): boolean {
   const modifiers = environmentModifiers(environment)
-  if (gyo) return true
-  return distance <= 12 * modifiers.vision && (!modifiers.gyoRequired || distance <= 2)
+  const physicalRange = modifiers.gyoRequired ? 2 : 12 * modifiers.vision
+  if (check.distance <= physicalRange) return true
+  return check.gyo && check.targetAuraVisible && check.distance <= GYO_AURA_RANGE
 }
 
 export function graphWithSeals(graph: NavGraph, seals: readonly SealedExit[]): NavGraph {

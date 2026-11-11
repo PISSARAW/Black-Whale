@@ -69,7 +69,17 @@ describe('Hunt V3 environment', () => {
     const doorway = { tierId: 't', a: 'a', b: 'b', start: [0, 0], end: [0, 2], width: 2 } as const
     expect(wallsForSeals([doorway], [{ a: 'a', b: 'b' }])).toHaveLength(1)
     const blackout = { lighting: 'blackout', acoustics: 'clear', sealableExits: true } as const
-    expect(canSeeAtDistance(blackout, 3, false)).toBe(false)
-    expect(canSeeAtDistance(blackout, 30, true)).toBe(true)
+    expect(canSeeAtDistance(blackout, { distance: 3, gyo: false, targetAuraVisible: true })).toBe(
+      false,
+    )
+    expect(canSeeAtDistance(blackout, { distance: 3, gyo: true, targetAuraVisible: true })).toBe(
+      true,
+    )
+    expect(canSeeAtDistance(blackout, { distance: 30, gyo: true, targetAuraVisible: true })).toBe(
+      false,
+    )
+    expect(canSeeAtDistance(blackout, { distance: 3, gyo: true, targetAuraVisible: false })).toBe(
+      false,
+    )
   })
 })

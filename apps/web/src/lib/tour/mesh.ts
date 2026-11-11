@@ -24,8 +24,10 @@ import {
   triangulate,
 } from './geometry'
 import { ceilingOf, floorOf } from './blueprint'
-import { hex, lampFalloff, lamplightOf, lampsOf } from './light'
+import { hex, lampFalloff, lamplightOf, lampsOf, fittingLampsOf } from './light'
 import { floorPatternOf } from './floorPattern'
+import { fittingHeight } from './fittingHeight'
+export { fittingHeight } from './fittingHeight'
 import { openingHeights } from './openingHeights'
 import { structureSheenOf } from './surfaceFinish'
 import { appearanceOf, authoredStructureColourOf } from './roomAppearance'
@@ -356,22 +358,6 @@ const LIGHT = {
  */
 
 /**
- * How high a room's fittings hang, in world Y.
- *
- * Shared rather than computed twice, and that sharing is the whole point: this is
- * the height `RoomLight` throws its pools from *and* the height the quads in
- * `fittings` are drawn at, so a fitting you can see is the fitting that is
- * lighting the floor under it. Derive them separately and the ship gets lamps
- * that glow where nothing brightens, which is worse than no lamps at all.
- *
- * A little under the ceiling, and never below head height in a room whose
- * ceiling is low — the lowest on the ship is 2,6 m, which leaves 35 cm.
- */
-export function fittingHeight(floorY: number, ceilingY: number): number {
-  return Math.max(floorY + 2, ceilingY - 0.35)
-}
-
-/**
  * How wide a fitting is drawn, in metres.
  *
  * Nothing in the blueprint gives a size, so this is the smallest that still
@@ -606,7 +592,7 @@ class RoomLight {
     this.floorY = floorY
     this.ceilingY = ceilingY
 
-    const hang = fittingHeight(floorY, ceilingY)
+    const hang = fittingHeight(floorY, ceilingY, lamplight.drop)
     const { spacing } = lamplight
     let inradius = 0
     for (const [x, z] of lampsOf(footprint, lamplight)) {
@@ -1587,15 +1573,15 @@ export function buildTierMesh(plan: TierPlan, options: { reveal?: boolean } = {}
      * doctrine.
      */
     if (!reveal) {
-      const hang = fittingHeight(base, top)
       // The room's own lamp, not the ship's: a fitting is drawn in the colour and
       // at the strength the bake under it was computed from, so the row of lamps
       // over a Tier 1 corridor is visibly a warmer and closer row than the one
       // over the same corridor five decks down. Draw one glow for all of them and
       // the class system would be in the floor and denied by the ceiling.
       const lamplight = lamplightOf(space, tier)
+      const hang = fittingHeight(base, top, lamplight.drop)
       const glow: Rgb = lamplight.glow
-      for (const [x, z] of lampsOf(space.footprint, lamplight)) fitting([x, hang, z], glow)
+      for (const [x, z] of fittingLampsOf(space.footprint, lamplight)) fitting([x, hang, z], glow)
 
       // And the sky, in the two rooms that have any: a buffer of its own,
       // because a fitting burns at a value this bake settles and the glass burns

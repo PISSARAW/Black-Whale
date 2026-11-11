@@ -3,12 +3,14 @@ import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Space, Structure } from './types'
 import { dressDiningHallWalls } from './diningHallWallDetails'
+import { roofTruss, catwalk } from './diningHallRoof'
+import { DINING_LAMPS, DINING_LAMP_DROP } from './diningHallLighting'
 
 export const STEEL = 0x5a5c60
 export const DARK_STEEL = 0x3d3f44
 export const RIVET_STEEL = 0x76787d
 export const CATWALK = 0x494b50
-export const LAMP_GLOW = 0xffeab3
+export const LAMP_GLOW = 0xf3f1df
 export const LAMP_CAGE = 0x2d2e30
 
 interface DiningArchitectureContext {
@@ -27,94 +29,6 @@ function boundsOfFootprint(space: Space) {
     minZ: Math.min(...zs),
     maxZ: Math.max(...zs),
   }
-}
-
-interface TrussOptions {
-  z: number
-  span: [number, number]
-  top: number
-}
-
-/** Open-web steel roof trusses spanning the 31.5 m refectory below the 9 m ceiling. */
-function roofTruss(into: BanquetDetailBuilder, options: TrussOptions) {
-  const { z, span, top } = options
-  const [minX, maxX] = span
-  const width = maxX - minX
-  const midX = (minX + maxX) / 2
-  const bottomY = top - 0.95
-  const topY = top - 0.15
-
-  // Upper and lower chords
-  into.box([width, 0.12, 0.16], { at: [midX, topY, z], colour: STEEL })
-  into.box([width, 0.1, 0.14], { at: [midX, bottomY, z], colour: DARK_STEEL })
-
-  // Structural wall bearing corbel shoes supporting truss ends at room boundaries
-  into.box([0.28, 1.1, 0.28], { at: [minX + 0.14, (topY + bottomY) / 2, z], colour: DARK_STEEL })
-  into.box([0.28, 1.1, 0.28], { at: [maxX - 0.14, (topY + bottomY) / 2, z], colour: DARK_STEEL })
-  into.box([0.34, 0.08, 0.32], { at: [minX + 0.17, bottomY - 0.08, z], colour: RIVET_STEEL })
-  into.box([0.34, 0.08, 0.32], { at: [maxX - 0.17, bottomY - 0.08, z], colour: RIVET_STEEL })
-
-  // Vertical web posts and diagonals every 3.5 metres
-  const step = 3.5
-  const count = Math.floor(width / step)
-  for (let index = 0; index <= count; index++) {
-    const px = minX + index * step
-    into.box([0.08, 0.7, 0.08], { at: [px, (topY + bottomY) / 2, z], colour: STEEL })
-    if (index < count) {
-      const nextX = px + step
-      const diagMidX = (px + nextX) / 2
-      const diagLen = Math.hypot(step, topY - bottomY)
-      const angle = Math.atan2(topY - bottomY, step) * (index % 2 === 0 ? 1 : -1)
-      into.box([diagLen, 0.06, 0.06], {
-        at: [diagMidX, (topY + bottomY) / 2, z],
-        rotation: [0, 0, angle],
-        colour: DARK_STEEL,
-      })
-    }
-  }
-}
-
-interface CatwalkOptions {
-  x: number
-  span: [number, number]
-  y: number
-  ceiling: number
-}
-
-/** Longitudinal maintenance catwalks with open grating, safety rails and ceiling hangers. */
-function catwalk(into: BanquetDetailBuilder, options: CatwalkOptions) {
-  const { x, span, y, ceiling } = options
-  const [minZ, maxZ] = span
-  const length = maxZ - minZ
-  const midZ = (minZ + maxZ) / 2
-
-  // Grated walkway platform
-  into.box([0.9, 0.06, length], { at: [x, y, midZ], colour: CATWALK })
-
-  // Tubular railings on both sides
-  for (const side of [-0.42, 0.42]) {
-    into.box([0.04, 0.04, length], { at: [x + side, y + 0.95, midZ], colour: STEEL })
-    into.box([0.03, 0.03, length], { at: [x + side, y + 0.5, midZ], colour: STEEL })
-    for (let pz = minZ + 2; pz < maxZ; pz += 3.5) {
-      into.box([0.04, 0.95, 0.04], { at: [x + side, y + 0.475, pz], colour: STEEL })
-    }
-  }
-
-  // Vertical steel hanger rods suspended from 9 m ceiling every 3.5 m
-  const hangerHeight = ceiling - (y + 0.95)
-  const hangerMidY = y + 0.95 + hangerHeight / 2
-  for (let pz = minZ + 2.5; pz < maxZ; pz += 3.5) {
-    for (const side of [-0.42, 0.42]) {
-      into.box([0.04, hangerHeight, 0.04], {
-        at: [x + side, hangerMidY, pz],
-        colour: STEEL,
-      })
-    }
-  }
-
-  // Heavy steel wall bearing shoes anchoring platform ends to North and South walls
-  into.box([1.0, 0.35, 0.16], { at: [x, y - 0.15, minZ + 0.08], colour: DARK_STEEL })
-  into.box([1.0, 0.35, 0.16], { at: [x, y - 0.15, maxZ - 0.08], colour: DARK_STEEL })
 }
 
 function dressLadderCrinoline(options: {
@@ -176,13 +90,27 @@ function industrialLamp(options: { into: BanquetDetailBuilder; at: Point3; ceili
   )
   // Industrial reflector hood
   into.cylinder(
-    { radius: 0.35, bottom: 0.12, height: 0.18, sides: 12 },
+    { radius: 0.12, bottom: 0.35, height: 0.18, sides: 12 },
     { at: [x, y, z], colour: STEEL },
   )
   // Wire protective cage
-  into.cylinder(
-    { radius: 0.16, height: 0.22, sides: 8, open: true },
-    { at: [x, y - 0.15, z], colour: LAMP_CAGE },
+  for (let index = 0; index < 4; index++) {
+    const angle = (index * Math.PI) / 2
+    into.cylinder(
+      { radius: 0.008, height: 0.22, sides: 4 },
+      {
+        at: [x + Math.cos(angle) * 0.16, y - 0.15, z + Math.sin(angle) * 0.16],
+        colour: LAMP_CAGE,
+      },
+    )
+  }
+  into.ring(
+    { radius: 0.16, tube: 0.008 },
+    {
+      at: [x, y - 0.26, z],
+      rotation: [Math.PI / 2, 0, 0],
+      colour: LAMP_CAGE,
+    },
   )
   // Glowing warm bulb
   into.sphere([0.09, 0.12, 0.09], { at: [x, y - 0.12, z], colour: LAMP_GLOW, glow: true })
@@ -300,10 +228,8 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
   dressCatwalkLadder({ into, x: 23.5, z: bounds.maxZ - 0.18, floor, topY: ceiling - 1.35 })
 
   // 3. Industrial pendant lamps beneath the catwalks and trusses
-  for (const z of [16.5, 21.0, 25.5, 30.0, 34.5, 39.0]) {
-    for (const x of [20.0, 29.75, 39.5]) {
-      industrialLamp({ into, at: [x, ceiling - 1.6, z], ceiling })
-    }
+  for (const [x, z] of DINING_LAMPS) {
+    industrialLamp({ into, at: [x, ceiling - DINING_LAMP_DROP + 0.12, z], ceiling })
   }
 
   // 4. Detailed ducts & structural pillars

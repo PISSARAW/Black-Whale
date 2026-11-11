@@ -7,6 +7,7 @@
  * bulkheads, ceiling and solids a visual register appropriate to the place.
  */
 import type { Space, SpaceCategory, Structure, StructureKind, Tier } from './types'
+import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
 import type { Finish, RoomAppearance } from './roomAppearanceTypes'
@@ -345,16 +346,7 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     fabric: 0x413b34,
     accent: 0x765637,
   },
-  'mess-hall': {
-    floor: 0x2d2921,
-    wall: 0x514d42,
-    ceiling: 0x0f0d0a,
-    column: 0x696357,
-    wood: 0x433724,
-    metal: 0x74746b,
-    fabric: 0x494238,
-    accent: 0x7d6038,
-  },
+  'mess-hall': DINING_HALL_APPEARANCE,
   'cha-r-office': {
     floor: 0x2e211e,
     wall: 0x59433c,

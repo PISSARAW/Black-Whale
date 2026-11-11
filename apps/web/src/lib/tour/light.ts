@@ -23,6 +23,7 @@
  */
 import type { Polygon, Space, SpaceCategory, Tier, Vec2 } from './types'
 import { ceilingLamps } from './geometry'
+import { diningHallLamplight } from './diningHallLighting'
 
 /** A colour in the renderer's working space, linear, `[r, g, b]`. */
 export type Rgb = readonly [number, number, number]
@@ -178,6 +179,10 @@ export const LAMP_THROW = 0.55
 
 /** How lit a room is, everything the bake and the lamp quads both need. */
 export interface Lamplight {
+  /** Optional authored layout and suspension shared with a detailed room model. */
+  positions?: readonly Vec2[]
+  drop?: number
+  modelled?: boolean
   /** How far apart the lamps hang, in metres. */
   spacing: number
   /**
@@ -260,13 +265,13 @@ export function lamplightOf(space: Space, tier: Tier): Lamplight {
   // it burns. Picked the other way round, a cold lamp would read as a dim one.
   const peak = Math.max(...colour) || 1
   const burn = (LAMP_PEAK * power) / peak
-  return {
+  return diningHallLamplight(space.id, {
     spacing,
     reach: spacing * REACH_RATIO,
     glow: [colour[0] * burn, colour[1] * burn, colour[2] * burn],
     power,
     dead: clamp01(deck.dead),
-  }
+  })
 }
 
 /**
@@ -343,8 +348,13 @@ function scatter(x: number, z: number): number {
  * with no light at all, and the hold is meant to be badly lit, not sealed.
  */
 export function lampsOf(footprint: Polygon, light: Lamplight): Vec2[] {
-  const all = ceilingLamps(footprint, light.spacing)
+  const all = light.positions ? [...light.positions] : ceilingLamps(footprint, light.spacing)
   if (light.dead <= 0) return all
   const lit = all.filter(([x, z]) => scatter(x, z) >= light.dead)
   return lit.length ? lit : [all[0]]
+}
+
+/** Detailed fixtures replace the fallback quads, while their light still reaches the bake. */
+export function fittingLampsOf(footprint: Polygon, light: Lamplight): Vec2[] {
+  return light.modelled ? [] : lampsOf(footprint, light)
 }

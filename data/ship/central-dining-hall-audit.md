@@ -77,11 +77,12 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
   - Batterie de distributeurs automatiques sur le mur Est (`dispensers`) : carrosseries
     sombres, vitrines de sélection lumineuses, fentes de paiement et réceptacles.
 - **Tables, bancs et vie du réfectoire** :
-  - Estrades centrales VIP (`platform-north`, `platform-south`) : encadrement avec
-    marche biseautée, tables entourées de bancs sur quatre faces et garnies de plateaux
-    repas, bols de ramen/bouillon, gobelets, baguettes, théière centrale, coupes en
-    céramique pour les membres de la Brigade et ménagère de condiments. Les nappes et
-    les couverts suivent l'axe long de chaque table, comme les bancs latéraux.
+  - Grandes tables centrales (`platform-north`, `platform-south`) : la vue du chapitre 377
+    montre un plateau de bois nu, très dégagé, entouré de bancs. Les nappes, le service
+    de thé et les huit plateaux systématiques de la version précédente ont été retirés.
+    Les plateaux sont désormais assemblés en planches distinctes, avec fixations sombres,
+    ceinture et appuis en bois. Leur construction détaillée et leurs dimensions restent
+    une interprétation : les deux emprises du plan commun sont conservées.
   - Table isolée de Franklin (`franklin-table`) : plateau de cantine, grande chope,
     ménagère et bancs face aux distributeurs.
   - Tables communes et bancs : piètements tubulaires métalliques, plateaux stratifiés
@@ -118,3 +119,26 @@ Les teintes métalliques, stratifiées et plastiques interprètent les nuances d
 noir et blanc. Les géométries procédurales sont simplifiées et vérifiées avec un budget
 de triangles ; la fluidité dépend de la machine. Aucun scan ni texture raster n'est
 incorporé, préservant la souveraineté du moteur vectoriel et géométrique du projet.
+
+## 5. Relecture des tables, de la charpente et de la lumière
+
+Référence directement consultée : la vue d'ensemble du chapitre 377, reproduite dans
+[la galerie du réfectoire](https://hunterxhunter.fandom.com/wiki/File:Chap_377_-_Central_Dining_Hall.png).
+Le plateau central est en bois nu ; les couleurs ne sont pas fournies par le manga.
+
+Les membrures des fermes possèdent maintenant une âme et deux semelles ; les
+assemblages et les appuis muraux restent estimés. Les deux passerelles ont un
+caillebotis réellement ajouré, et non une dalle opaque. Les cages des lampes
+laissent voir l'ampoule au lieu de l'entourer d'un cylindre opaque.
+
+Le sol et les parois prennent des gris mats plus clairs, avec un bois brut plus
+lisible et un plafond métallique gardant de la profondeur. Les joints de sol
+existants sont conservés, sans ajouter de revêtement décoratif ni de dénivelé.
+
+Les dix-huit suspensions visibles et l'éclairage calculé du sol partagent leurs
+positions et leur hauteur, à 1,72 m sous le plafond. Les anciens carrés lumineux
+près du plafond s'effacent dans cette salle : leurs points de lumière sont ceux
+des luminaires détaillés. La portée reste compatible avec la grille de calcul
+du moteur. Ce réglage interprète l'éclairage d'un réfectoire public en service ;
+il ne modifie ni les couloirs ni les autres pièces du pont 5, et n'ajoute aucune
+lumière ambiante globale. Les teintes et les intensités restent une reconstruction.

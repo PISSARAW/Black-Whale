@@ -58,7 +58,7 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
     }
   })
 
-  it('aligns both central tablecloths and place settings with the long axis', () => {
+  it('lays bare timber boards across both central tables', () => {
     const platforms = structures.filter(isCentralVIPTable)
     const platformBenches = structures.filter(
       (structure) => structure.id.includes('-platform-') && !isCentralVIPTable(structure),
@@ -69,9 +69,9 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
 
     for (const platform of platforms) {
       const layout = centralVIPTableLayout(platform.size)
-      expect(layout.runner[1]).toBeGreaterThan(layout.runner[0])
-      expect(new Set(layout.placeSettings.map(([x]) => x))).toHaveLength(2)
-      expect(new Set(layout.placeSettings.map(([, z]) => z))).toHaveLength(4)
+      expect(layout.plankCount * layout.plankWidth).toBeCloseTo(platform.size[0])
+      expect(layout.plankCount).toBeGreaterThanOrEqual(6)
+      expect(layout.topThickness).toBeGreaterThan(0.05)
     }
   })
 
@@ -156,7 +156,7 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
     expect(build({ spaceId: 'tier-5-hangar-entrance' })).toBeNull()
   })
 
-  it('separates each central tabletop from its body instead of rendering two coplanar faces', () => {
+  it('supports each central tabletop on trestles without coplanar faces', () => {
     const root = build()
     root.updateMatrixWorld(true)
     for (const platform of structures.filter(isCentralVIPTable)) {
@@ -170,8 +170,10 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
         new THREE.Vector3(0, -1, 0),
       )
       const hits = ray.intersectObject(root, true)
-      expect(hits.length).toBeGreaterThanOrEqual(2)
-      expect(hits[1].distance - hits[0].distance).toBeGreaterThan(0.04)
+      expect(hits.length).toBeGreaterThanOrEqual(1)
+      expect(hits[0].distance).toBeCloseTo(0.3, 3)
+      const remaining = hits.slice(1)
+      expect(remaining.every((hit) => hit.distance - hits[0].distance > 0.04)).toBe(true)
     }
     disposeBanquetDetails(root)
   })

@@ -32,16 +32,7 @@ interface FurnitureContext {
   floor: number
 }
 
-export function centralVIPTableLayout(size: readonly [number, number]) {
-  const [width, depth] = size
-  const placeSettings = [-0.34, -0.11, 0.11, 0.34].flatMap((depthRatio) =>
-    [-0.275, 0.275].map((widthRatio) => [width * widthRatio, depth * depthRatio] as const),
-  )
-  return {
-    runner: [width * 0.45, depth * 0.88] as const,
-    placeSettings,
-  }
-}
+export { centralVIPTableLayout, dressCentralVIPPlatform } from './diningHallCentralTables'
 
 /** Places a cafeteria meal tray with a bowl, cup and chopsticks. */
 function placeMealTray(into: BanquetDetailBuilder, at: Point3, trayColour = TRAY_RED) {
@@ -236,7 +227,7 @@ export function dressDiningBench(context: FurnitureContext): void {
   // Wooden bench plank
   into.box([w, 0.04, d], {
     at: [x, topY - 0.02, z],
-    colour: BENCH_WOOD,
+    colour: structure.id.includes('-platform-') ? 0x96825e : BENCH_WOOD,
   })
 
   // Stanchion support legs
@@ -258,60 +249,6 @@ export function dressDiningBench(context: FurnitureContext): void {
       at: [lx, y + 0.01, lz],
       colour: TABLE_LEGS,
     })
-  }
-}
-
-/** Central VIP raised platforms where the Phantom Troupe gathers. */
-export function dressCentralVIPPlatform(context: FurnitureContext): void {
-  const { into, structure, floor } = context
-  const [x, z] = structure.at
-  const [w, d] = structure.size
-  const y = floor + structure.base
-  const topY = y + structure.height
-
-  // Raised platform deck
-  const bodyHeight = Math.max(0.01, structure.height - 0.06)
-  into.box([w, bodyHeight, d], {
-    at: [x, y + bodyHeight / 2, z],
-    colour: PLATFORM_RISER,
-  })
-
-  // Perimeter bevel trim
-  into.box([w + 0.12, 0.06, d + 0.12], {
-    at: [x, topY - 0.03, z],
-    colour: PLATFORM_BORDER,
-  })
-
-  const layout = centralVIPTableLayout(structure.size)
-
-  // The runner follows the long axis of both central tables.
-  into.box([layout.runner[0], 0.02, layout.runner[1]], {
-    at: [x, topY + 0.01, z],
-    colour: 0xdedcd5,
-  })
-
-  // Four settings on each long side, matching the orientation of the benches.
-  for (const [index, [dx, dz]] of layout.placeSettings.entries()) {
-    placeMealTray(into, [x + dx, topY + 0.02, z + dz], index % 2 ? TRAY_RED : TRAY_BROWN)
-  }
-
-  // Large shared central food platter & teapot
-  into.cylinder(
-    { radius: 0.28, height: 0.04, sides: 16 },
-    { at: [x, topY + 0.04, z], colour: 0xe6e3dc },
-  )
-  into.cylinder(
-    { radius: 0.1, height: 0.18, sides: 10 },
-    { at: [x + 0.45, topY + 0.11, z], colour: 0x3d3a36 },
-  )
-
-  // Condiment caddy and ceramic teacups for the 10 Spiders
-  placeCondimentCaddy(into, [x - 0.5, topY + 0.02, z])
-  for (const [dx, dz] of layout.placeSettings) {
-    into.cylinder(
-      { radius: 0.035, bottom: 0.028, height: 0.05, sides: 8 },
-      { at: [x + dx - Math.sign(dx) * 0.24, topY + 0.045, z + dz], colour: TEACUP },
-    )
   }
 }
 

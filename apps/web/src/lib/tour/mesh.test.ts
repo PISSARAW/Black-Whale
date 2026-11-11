@@ -16,7 +16,7 @@ import {
   structureFootprint,
   toClockwise,
 } from './geometry'
-import { lamplightOf, lampsOf } from './light'
+import { lamplightOf, lampsOf, fittingLampsOf } from './light'
 import { VISITOR_RADIUS } from './navigation'
 import {
   HORIZON,
@@ -1028,21 +1028,23 @@ const fittingTriangles = (group: MeshGroup): number => group.fittingCount / 3
  * gets lamps that glow where nothing brightens, and no picture would show it.
  */
 describe('the ceiling fittings', () => {
-  it('hangs one over every room, on the grid the bake pools from', () => {
+  it('draws fallback fittings on the light grid and leaves modelled fixtures to their room', () => {
     let total = 0
     for (const [tierId, plan] of ship.plans) {
       const mesh = buildTierMesh(plan)
       for (const group of mesh.groups) {
         const space = plan.spaces.find((entry) => entry.id === group.spaceId)!
-        const lamps = lampsOf(space.footprint, lamplightOf(space, plan.tier))
+        const light = lamplightOf(space, plan.tier)
+        const lamps = lampsOf(space.footprint, light)
+        const drawn = fittingLampsOf(space.footprint, light)
         // Two triangles, six vertices, one fitting — and nothing else in the
         // buffer, now that the glass has one of its own.
         expect(
           fittingTriangles(group) / 2,
           `${group.spaceId} draws a different number of fittings than it lights by`,
-        ).toBe(lamps.length)
+        ).toBe(drawn.length)
         expect(lamps.length, `${group.spaceId} has no light in it`).toBeGreaterThan(0)
-        total += lamps.length
+        total += drawn.length
       }
       expect(mesh.fittings.length % 18, `${tierId} has a fitting that is not a quad`).toBe(0)
     }

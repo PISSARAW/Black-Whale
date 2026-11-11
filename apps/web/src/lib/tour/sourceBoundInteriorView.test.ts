@@ -12,6 +12,9 @@ const ship = buildShip()
 describe('source-bound interiors without published perspective panels', () => {
   for (const style of SOURCE_BOUND_INTERIOR_STYLES) {
     it(`builds bounded batched architecture for ${style.name}`, () => {
+      expect(style.evidence.source.length).toBeGreaterThan(20)
+      expect(style.evidence.sourceFr.length).toBeGreaterThan(20)
+      expect(style.triangleBudget).toBeGreaterThan(0)
       const plan = [...ship.plans.values()].find((candidate) =>
         candidate.spaces.some(({ locationId }) => locationId === style.locationId),
       )!

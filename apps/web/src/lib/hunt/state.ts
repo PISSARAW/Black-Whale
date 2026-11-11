@@ -298,6 +298,7 @@ function lay(state: HuntState): HuntState {
       position: state.player.position,
       spaceId: state.player.spaceId,
       clock: state.clock,
+      terrain: state.terrain,
     },
   })
   if (!placed) return state

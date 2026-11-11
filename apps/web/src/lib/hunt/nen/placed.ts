@@ -16,6 +16,7 @@
  */
 import type { Vec2 } from '../../tour/types'
 import { commit, forfeit, release, type AuraPool } from '../aura'
+import type { HuntTerrainId } from '../arena'
 
 export type PlacementState = 'set' | 'sprung' | 'recovered'
 
@@ -29,6 +30,8 @@ export interface Placement {
   placedAt: number
   /** Whether the hunter has spotted it. Seen placements are walked around. */
   seen: boolean
+  /** Zone owning the physical point, so it survives a contract transition. */
+  terrain: HuntTerrainId | null
 }
 
 export interface Ledger {
@@ -39,7 +42,7 @@ export interface Ledger {
 export interface PlacementRequest {
   id: string
   cost: number
-  at: { position: Vec2; spaceId: string; clock: number }
+  at: { position: Vec2; spaceId: string; clock: number; terrain?: HuntTerrainId | null }
 }
 
 /** Only placements still holding aura count against the pool. */
@@ -74,6 +77,7 @@ export function placeAura(
     state: 'set',
     placedAt: request.at.clock,
     seen: false,
+    terrain: request.at.terrain ?? null,
   }
 
   return {

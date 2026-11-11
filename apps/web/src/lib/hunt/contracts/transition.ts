@@ -1,7 +1,6 @@
 import type { HuntTerrainId } from '../arena'
 import type { HuntState } from '../state'
 import type { HuntContractV3 } from './types'
-import { forfeit } from '../aura'
 
 export interface ContractStage {
   index: number
@@ -22,20 +21,20 @@ export function nextStage(contract: HuntContractV3, current: number): ContractSt
   return current + 1 < contract.terrainSequence.length ? stageOf(contract, current + 1) : null
 }
 
+export function previousStage(contract: HuntContractV3, current: number): ContractStage | null {
+  return current > 0 ? stageOf(contract, current - 1) : null
+}
+
 /** Carries decisions across a scene transition; positions come from the new stage. */
 export function carryIntoStage(previous: HuntState, fresh: HuntState): HuntState {
-  // A new terrain has no floor on which old placements can still exist. Their
-  // aura is spent in the abandoned scene, so it no longer lowers the ceiling.
-  const pool = previous.ledger.placements.reduce(
-    (current, placement) =>
-      placement.state === 'set' ? forfeit(current, placement.cost) : current,
-    previous.ledger.pool,
-  )
   return {
     ...fresh,
     hatsu: previous.hatsu,
     advancedNen: previous.advancedNen,
-    ledger: { ...fresh.ledger, pool, placements: [] },
+    // The same body and the same ship continue across the loading boundary.
+    // Placements remain committed at their authored terrain and can be found
+    // again if a later route returns to that zone.
+    ledger: previous.ledger,
     hunter: {
       ...fresh.hunter,
       pool: previous.hunter.pool,

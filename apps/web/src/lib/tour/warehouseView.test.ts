@@ -73,9 +73,24 @@ describe('the Tier 5 Cha-R Warehouse reconstructed from chapters 378, 379 and 38
     expect(root.name).toBe('warehouse-cha-r-details')
 
     const count = triangles(root)
-    expect(count).toBeGreaterThan(1000)
+    expect(count).toBeGreaterThan(30_000)
+
+    const bounds = new THREE.Box3().setFromObject(root)
+    const floor = floorOf(space, plan.tier)
+    expect(bounds.max.y).toBeGreaterThan(floor + 8.5)
+    expect(bounds.max.y).toBeLessThanOrEqual(floor + 12.1)
 
     disposeBanquetDetails(root)
+  })
+
+  it('offers a manga view down the tall carton-rack aisle rather than a container terminal', async () => {
+    const { MANGA_CHA_R_VIEWS } = await import('./mangaChaRViews')
+    const view = MANGA_CHA_R_VIEWS.find(({ id }) => id === 'cha-r-warehouse-crate-canyon')!
+    expect(view).toBeDefined()
+    expect(view.spaceId).toBe(WAREHOUSE_SPACE)
+    expect(view.eyeHeight).toBeCloseTo(1.72)
+    expect(view.label).toContain('carton racks')
+    expect(view.label).not.toContain('gantry cranes')
   })
 
   it('returns null when in reveal mode or for an unrecognised space', () => {

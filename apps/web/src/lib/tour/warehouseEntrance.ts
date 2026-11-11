@@ -98,8 +98,8 @@ function dressFreightRollingShutter(into: BanquetDetailBuilder, floor: number): 
 function dressLockedBackDoor(into: BanquetDetailBuilder, floor: number): void {
   const doorX = -34.85
   const doorZ = -21.0
-  const doorH = 2.4
-  const doorW = 1.3
+  const doorH = 3.2
+  const doorW = 3.4
 
   // Heavy steel architrave set into west perimeter bulkhead
   into.box([0.18, doorH + 0.2, doorW + 0.2], {
@@ -107,15 +107,26 @@ function dressLockedBackDoor(into: BanquetDetailBuilder, floor: number): void {
     colour: WAREHOUSE_STEEL_DARK,
   })
 
-  // Solid steel door leaf with reinforced ribbing
+  // Pair of plain steel leaves matching the panel's end-of-aisle exit.
   into.box([0.08, doorH, doorW], {
     at: [doorX + 0.04, floor + doorH / 2, doorZ],
-    colour: 0x2b3035,
+    colour: WAREHOUSE_STEEL_PANEL,
   })
 
+  into.box([0.12, doorH, 0.1], {
+    at: [doorX + 0.1, floor + doorH / 2, doorZ],
+    colour: WAREHOUSE_STEEL_DARK,
+  })
+  for (const side of [-1, 1]) {
+    into.box([0.11, 0.08, doorW * 0.42], {
+      at: [doorX + 0.1, floor + 1.15, doorZ + side * doorW * 0.25],
+      colour: WAREHOUSE_STEEL_DARK,
+    })
+  }
+
   // Heavy slide deadbolt and padlock hasp
-  into.box([0.12, 0.08, 0.25], {
-    at: [doorX + 0.09, floor + 1.15, doorZ],
+  into.box([0.16, 0.12, 0.72], {
+    at: [doorX + 0.14, floor + 1.25, doorZ],
     colour: WAREHOUSE_STEEL_LIGHT,
   })
   into.cylinder(
@@ -123,14 +134,15 @@ function dressLockedBackDoor(into: BanquetDetailBuilder, floor: number): void {
     { at: [doorX + 0.1, floor + 1.1, doorZ], colour: 0xb58900 },
   )
 
-  // "RESTRICTED AREA - LOCKED" warning plaque over the lintel
-  into.box([0.04, 0.18, 0.8], {
-    at: [doorX + 0.08, floor + doorH + 0.15, doorZ],
-    colour: WAREHOUSE_ALERT_RED,
+  // Horizontal bulkhead lamp directly above the doors.
+  into.box([0.16, 0.42, 2.4], {
+    at: [doorX + 0.12, floor + doorH + 0.75, doorZ],
+    colour: WAREHOUSE_STEEL_DARK,
   })
-  into.box([0.05, 0.09, 0.68], {
-    at: [doorX + 0.085, floor + doorH + 0.15, doorZ],
-    colour: 0xf5f5f5,
+  into.box([0.2, 0.22, 2.05], {
+    at: [doorX + 0.19, floor + doorH + 0.75, doorZ],
+    colour: 0xe8e3d7,
+    glow: true,
   })
 }
 

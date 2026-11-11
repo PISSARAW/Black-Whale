@@ -50,7 +50,7 @@ export interface WarehouseViewOptions {
   reveal: boolean
 }
 
-/** Chapter 378, 379, 380: High-fidelity Tier 5 Cha-R Controlled Warehouse */
+/** Chapter 378: high-fidelity Tier 5 warehouse guarded by the Cha-R family. */
 export function buildWarehouseDetails(options: WarehouseViewOptions): Three.Group | null {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal || spaceId !== WAREHOUSE_SPACE) return null
@@ -61,7 +61,7 @@ export function buildWarehouseDetails(options: WarehouseViewOptions): Three.Grou
   const into = new BanquetDetailBuilder(THREE)
   const floor = floorOf(space, plan.tier)
 
-  // 1. High-bay 12m industrial architecture, Warren trusses, gantry cranes and ducts
+  // 1. Tall archive hall, shallow roof trusses, pendant lamps and wall conduits
   dressWarehouseArchitecture({ THREE, into, floor })
 
   // 2. Concrete slab expansion joints, diamond steel plates, and hazard markings
@@ -70,7 +70,7 @@ export function buildWarehouseDetails(options: WarehouseViewOptions): Three.Grou
   // 3. Rolling freight shutter, locked service door, and Luini's spatial portal
   dressWarehouseEntranceFeatures({ into, floor })
 
-  // 4. Dress the 37 blueprint structures (32 crates, 4 guard posts, 1 camera)
+  // 4. Dress the 37 blueprint structures (32 tall carton racks, 4 guard posts, 1 camera)
   const structures = plan.structures.filter((s) => s.spaceId === spaceId)
   for (const structure of structures) {
     dressStructure(into, structure, floor)

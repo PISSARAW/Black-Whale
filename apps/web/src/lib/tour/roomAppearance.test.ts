@@ -72,6 +72,20 @@ describe('room appearance', () => {
     expect(appearanceOf(salon, tier).floor).not.toBe(appearanceOf(bedroom, tier).floor)
   })
 
+  it('gives all 112 princely rooms the pale walls and ceilings shown in the manga', () => {
+    const rooms = ship.blueprint.spaces.filter((space) =>
+      /^interior-room-10(0[1-9]|1[0-4])$/.test(space.tierId),
+    )
+
+    expect(rooms).toHaveLength(112)
+    for (const room of rooms) {
+      const appearance = appearanceOf(room, ship.plans.get(room.tierId)!.tier)
+      expect(appearance.wall, room.id).toBeGreaterThanOrEqual(0x796d60)
+      expect(appearance.ceiling, room.id).toBeGreaterThanOrEqual(0xb8b0a2)
+      expect(appearance.floor, room.id).toBeGreaterThanOrEqual(0x858176)
+    }
+  })
+
   it('keeps the banquet panorama pale without recolouring the other gilded halls', () => {
     const banquet = ship.spaces.get('tier-1-banquet-hall')!
     const recreation = ship.spaces.get('tier-1-vvip-recreation-hall')!

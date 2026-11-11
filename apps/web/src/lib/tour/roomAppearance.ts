@@ -11,6 +11,7 @@ import { banquetAppearanceOf } from './banquetAppearance'
 import { benjaminAppearanceOf } from './benjaminApartmentAppearance'
 import { camillaAppearanceOf } from './camillaAppearance'
 import { zhangLeiAppearanceOf } from './zhangLeiAppearance'
+import { princeApartmentAppearanceOf } from './princeApartmentAppearance'
 import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
@@ -422,7 +423,10 @@ export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   if (benjamin) return benjamin
 
   return (
-    camillaAppearanceOf(space, appearance) ?? zhangLeiAppearanceOf(space, appearance) ?? appearance
+    camillaAppearanceOf(space, appearance) ??
+    zhangLeiAppearanceOf(space, appearance) ??
+    princeApartmentAppearanceOf(space, appearance) ??
+    appearance
   )
 }
 

@@ -17,6 +17,7 @@ import { buildTserriednichRoomDetails } from './tserriednichRoomView'
 import { buildZhangLeiDetails, zhangLeiSurfacePlan } from './zhangLeiView'
 import { buildVvipRecreationDetails } from './vvipRecreationView'
 import { buildPrincesQuartersDetails, princesSurfacePlan } from './princesQuartersView'
+import { buildPrinceApartmentEnvelope } from './princeApartmentEnvelope'
 import { buildHeillyHideoutDetails, heillySurfacePlan } from './heillyHideoutView'
 import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauView'
 import { buildPoliceStationDetails, policeSurfacePlan } from './policeStationView'
@@ -156,6 +157,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildCamillaRoomDetails,
   buildTserriednichRoomDetails,
   buildZhangLeiDetails,
+  buildPrinceApartmentEnvelope,
   buildVvipRecreationDetails,
   buildPrincesQuartersDetails,
   buildHeillyHideoutDetails,

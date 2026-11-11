@@ -78,7 +78,7 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
   it('batches finite geometry within the envelope and the detail budget', () => {
     const root = build()
     expect(root.children.length).toBeGreaterThan(0)
-    expect(root.children.length).toBeLessThanOrEqual(2)
+    expect(root.children.length).toBeLessThanOrEqual(3)
     expect(triangles(root)).toBeLessThan(150_000)
     expect(root.children.some((child) => child instanceof THREE.Light)).toBe(false)
 
@@ -154,6 +154,26 @@ describe('the central dining hall reconstructed from chapters 371, 377 and 379-3
   it('omits the interpretation in evidence mode and in unrelated rooms', () => {
     expect(build({ reveal: true })).toBeNull()
     expect(build({ spaceId: 'tier-5-hangar-entrance' })).toBeNull()
+  })
+
+  it('separates each central tabletop from its body instead of rendering two coplanar faces', () => {
+    const root = build()
+    root.updateMatrixWorld(true)
+    for (const platform of structures.filter(isCentralVIPTable)) {
+      const top = floorOf(room, plan.tier) + platform.base + platform.height
+      const ray = new THREE.Raycaster(
+        new THREE.Vector3(
+          platform.at[0] + platform.size[0] / 2 - 0.1,
+          top + 0.3,
+          platform.at[1] + platform.size[1] / 2 - 0.1,
+        ),
+        new THREE.Vector3(0, -1, 0),
+      )
+      const hits = ray.intersectObject(root, true)
+      expect(hits.length).toBeGreaterThanOrEqual(2)
+      expect(hits[1].distance - hits[0].distance).toBeGreaterThan(0.04)
+    }
+    disposeBanquetDetails(root)
   })
 
   it('rebuilds the furnishings with the current plan instead of leaving ghosts behind', () => {

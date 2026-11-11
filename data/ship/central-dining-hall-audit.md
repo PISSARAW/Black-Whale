@@ -92,7 +92,8 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
 
 - Le décor est rattaché au groupe de la salle dans `TierView`.
 - Il utilise le constructeur fusionné `BanquetDetailBuilder` :
-  - Exactement deux appels de rendu (surfaces opaques Lambert + éléments émissifs Basic).
+  - Deux lots fusionnés (surfaces opaques Lambert + éléments émissifs Basic),
+    auxquels s'ajoute une seule vitre transparente pour le pare-haleine du comptoir.
   - Budget de rendu strictement inférieur à 150 000 triangles.
   - Aucune source lumineuse Three.js dynamique supplémentaire susceptible de fuiter.
 - Respect du mode preuve (`reveal`) : les fioritures architecturales s'effacent pour
@@ -104,7 +105,16 @@ Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36 et 37 (chapitr
 
 ## 4. Limites
 
+La passe visuelle retire les anciens volumes pleins des tables, bancs et meubles
+qu'elle remplace : les pieds tubulaires et l'espace sous les bancs restent visibles.
+Le plan physique, les collisions et les données communes avec `/ship` sont conservés.
+Un meuble tourné par un hatsu garde son volume générique correctement orienté.
+Les plinthes et joints de tôle suivent les ouvertures calculées par le plan ; aucune
+bande de décor ne barre les seuils. Ces joints sont une interprétation de finition
+industrielle, pas un relevé supplémentaire du manga. Le plateau des tables centrales
+ne partage plus une face coplanaire avec son soubassement.
+
 Les teintes métalliques, stratifiées et plastiques interprètent les nuances du manga
-noir et blanc. Les géométries procédurales sont simplifiées pour garantir une fluidité
-à 60 images par seconde lors de la déambulation. Aucun scan ni texture raster n'est
+noir et blanc. Les géométries procédurales sont simplifiées et vérifiées avec un budget
+de triangles ; la fluidité dépend de la machine. Aucun scan ni texture raster n'est
 incorporé, préservant la souveraineté du moteur vectoriel et géométrique du projet.

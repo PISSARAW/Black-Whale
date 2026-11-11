@@ -89,10 +89,6 @@ function dressCounterSneezeGuard(options: SneezeGuardOptions): void {
       colour: STAINLESS,
     })
   }
-  into.box([0.04, 0.35, sizeZ - 1], {
-    at: [x, topY + 0.25, z],
-    colour: 0xd8e4e8,
-  })
   // Stainless steel top clamping rail securing the continuous screen
   into.box([0.05, 0.03, sizeZ - 1], {
     at: [x, topY + 0.44, z],
@@ -207,6 +203,13 @@ export function dressMenuBoards(context: CounterContext): void {
       colour: MENU_TEXT_GLOW,
       glow: true,
     })
+    dressMenuRows(into, {
+      x: x + sizeX / 2 + 0.045,
+      y,
+      z: pz,
+      width: panelLen - 0.35,
+      height: structure.height,
+    })
   }
 
   // Vertical steel hanger columns extending to 9 m ceiling and horizontal wall cantilevers
@@ -237,6 +240,31 @@ export function dressMenuBoards(context: CounterContext): void {
     into.box([0.02, 0.45, 0.14], {
       at: [14.01, y, pz],
       colour: 0x3d3f44,
+    })
+  }
+}
+
+/** Abstract dish/price strokes, without inventing readable manga menu text. */
+function dressMenuRows(
+  into: BanquetDetailBuilder,
+  panel: {
+    x: number
+    y: number
+    z: number
+    width: number
+    height: number
+  },
+): void {
+  for (let row = 0; row < 5; row++) {
+    const y = panel.y + panel.height * (0.12 - row * 0.12)
+    const length = panel.width * (0.36 + (row % 3) * 0.07)
+    into.box([0.015, 0.015, length], {
+      at: [panel.x, y, panel.z - panel.width * 0.28 + length / 2],
+      colour: 0xc9c8b7,
+    })
+    into.box([0.015, 0.015, panel.width * 0.1], {
+      at: [panel.x, y, panel.z + panel.width * 0.35],
+      colour: 0xd8d2b8,
     })
   }
 }

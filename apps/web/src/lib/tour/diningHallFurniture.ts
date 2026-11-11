@@ -270,8 +270,9 @@ export function dressCentralVIPPlatform(context: FurnitureContext): void {
   const topY = y + structure.height
 
   // Raised platform deck
-  into.box([w, structure.height, d], {
-    at: [x, y + structure.height / 2, z],
+  const bodyHeight = Math.max(0.01, structure.height - 0.06)
+  into.box([w, bodyHeight, d], {
+    at: [x, y + bodyHeight / 2, z],
     colour: PLATFORM_RISER,
   })
 

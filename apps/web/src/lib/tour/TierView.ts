@@ -6,6 +6,7 @@ import type { Ship } from './blueprint'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 import { buildRoyalSalonDetails } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
+import { diningHallSurfacePlan } from './diningHallSurfacePlan'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
 import { buildCasinoDetails, casinoSurfacePlan } from './casinoView'
 import { buildBurialChamberDetails, burialSurfacePlan } from './burialChamberView'
@@ -229,7 +230,7 @@ export class TierView {
       ),
       reveal,
     )
-    const mesh = buildTierMesh(surfacePlan, {
+    const mesh = buildTierMesh(diningHallSurfacePlan(surfacePlan, reveal), {
       reveal,
     })
     const shared = this.attributes(mesh)

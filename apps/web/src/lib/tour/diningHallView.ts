@@ -11,6 +11,8 @@ import {
 import { dressMenuBoards, dressServiceCounter, dressVendingMachines } from './diningHallCounters'
 
 import type { Structure } from './types'
+import { hasDiningHallModel } from './diningHallSurfacePlan'
+import { buildDiningHallGlazing } from './diningHallGlazing'
 
 export { disposeBanquetDetails }
 export const DINING_HALL_SPACE = 'tier-5-central-dining-hall'
@@ -92,10 +94,13 @@ export function buildDiningHallDetails(options: {
   dressDiningHallArchitecture({ THREE, into, plan, space })
 
   // 2. Specific furniture, counters and tableware
-  const structures = plan.structures.filter((structure) => structure.spaceId === spaceId)
+  const structures = plan.structures.filter(hasDiningHallModel)
   for (const structure of structures) {
     dressDiningHallStructure({ into, structure, floor, ceiling })
   }
 
-  return into.finish('central-dining-hall-manga-details')
+  const root = into.finish('central-dining-hall-manga-details')
+  const glass = buildDiningHallGlazing(THREE, plan)
+  if (glass) root.add(glass)
+  return root
 }

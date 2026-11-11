@@ -2,6 +2,7 @@ import type * as Three from 'three'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Space, Structure } from './types'
+import { dressDiningHallWalls } from './diningHallWallDetails'
 
 export const STEEL = 0x5a5c60
 export const DARK_STEEL = 0x3d3f44
@@ -309,25 +310,8 @@ export function dressDiningHallArchitecture(context: DiningArchitectureContext):
   dressDucts(context, floor, ceiling)
   dressPillars(context, floor, ceiling)
 
-  // 5. Perimeter protective steel dado plinth (0.45 m high)
-  const widthX = bounds.maxX - bounds.minX
-  const lengthZ = bounds.maxZ - bounds.minZ
-  into.box([widthX, 0.45, 0.08], {
-    at: [(bounds.minX + bounds.maxX) / 2, floor + 0.225, bounds.minZ + 0.04],
-    colour: DARK_STEEL,
-  })
-  into.box([widthX, 0.45, 0.08], {
-    at: [(bounds.minX + bounds.maxX) / 2, floor + 0.225, bounds.maxZ - 0.04],
-    colour: DARK_STEEL,
-  })
-  into.box([0.08, 0.45, lengthZ], {
-    at: [bounds.minX + 0.04, floor + 0.225, (bounds.minZ + bounds.maxZ) / 2],
-    colour: DARK_STEEL,
-  })
-  into.box([0.08, 0.45, lengthZ], {
-    at: [bounds.maxX - 0.04, floor + 0.225, (bounds.minZ + bounds.maxZ) / 2],
-    colour: DARK_STEEL,
-  })
+  // Steel lining follows the same openings as the walked room.
+  dressDiningHallWalls({ into, plan, space })
 
   // 6. Buor toll passage guide stanchions and guard station (ch. 358)
   passageBarrier({ into, floor, z: bounds.minZ + 0.4 })

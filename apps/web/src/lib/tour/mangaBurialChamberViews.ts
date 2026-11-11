@@ -9,7 +9,7 @@ const source = {
   spaceId: BURIAL_SPACE,
   chapter: 371,
   volume: 36,
-  eventSequence: 1,
+  eventSequence: 3,
   staging,
 }
 

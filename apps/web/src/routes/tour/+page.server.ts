@@ -22,6 +22,7 @@ import {
 import type { CastMember, CastPayload } from '$lib/tour/cast'
 import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
 import { mangaViewById } from '$lib/tour/mangaViews'
+import { mangaEventFor } from '$lib/tour/mangaEvent'
 import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import abilityUseCatalog from '../../../../../data/abilities/uses.json'
@@ -173,13 +174,8 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
     include: { chapter: true },
   })
   const mangaView = mangaViewById(url.searchParams.get('mangaView'))
-  const mangaEvent = mangaView
-    ? events.find(
-        (candidate) =>
-          candidate.chapter.number === mangaView.chapter &&
-          (mangaView.eventSequence === undefined || candidate.sequence === mangaView.eventSequence),
-      )
-    : null
+  const mangaEvent = mangaEventFor(events, mangaView)
+  if (mangaView && !mangaEvent) return { cast: empty(cap), hour: NO_HOUR }
   const { event } = selectEvent(events, {
     eventId: mangaEvent?.id ?? url.searchParams.get('eventId'),
   })

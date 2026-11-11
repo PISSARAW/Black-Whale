@@ -19,7 +19,8 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
   }),
   view({
     id: 'supreme-court-camilla-hearing',
-    chapter: 379,
+    chapter: 376,
+    eventSequence: 1,
     spaceId: 'tier-1-supreme-court',
     label: 'Supreme Court hearing regarding the arrest of Prince Camilla',
     labelFr: "Audience de la Cour suprême concernant l'arrestation de la Princesse Camilla",
@@ -31,6 +32,7 @@ export const MANGA_GENERAL_VIEWS: MangaView[] = [
   view({
     id: 'kacho-fugetsu-vestibule-farewell',
     chapter: 359,
+    eventSequence: 4,
     spaceId: 'tier-1-banquet-hall-vestibule',
     label: 'Kacho and Fugetsu waving goodbye across the banquet hall vestibule doors',
     labelFr:

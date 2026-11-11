@@ -44,7 +44,7 @@ export const MANGA_POLICE_VIEWS: MangaView[] = [
     spaceId: POLICE_ATRIUM,
     volume: 36,
     chapter: 378,
-    eventSequence: 3,
+    eventSequence: 2,
     pages: '125',
     at: [0, 1.2],
     target: [0, 4.8],

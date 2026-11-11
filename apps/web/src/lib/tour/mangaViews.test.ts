@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { theShip } from './blueprint'
 import { pointInPolygon, structureFootprint } from './geometry'
 import { MANGA_VIEWS, mangaViewById, viewsForSpace } from './mangaViews'
+import characterCatalog from '../../../../../data/characters/characters.json'
 
 describe('manga photo viewpoints', () => {
   const ship = theShip()
@@ -14,6 +15,16 @@ describe('manga photo viewpoints', () => {
       expect(view.labelFr.trim(), view.id).not.toBe('')
       expect(view.chapter, view.id).toBeGreaterThanOrEqual(350)
       if (view.volume !== undefined) expect(view.volume, view.id).toBeGreaterThanOrEqual(34)
+    }
+  })
+
+  it('stages only characters that the canonical catalogue can render', () => {
+    const characterIds = new Set(characterCatalog.map(({ id }) => id))
+
+    for (const view of MANGA_VIEWS) {
+      for (const staged of view.staging ?? []) {
+        expect(characterIds.has(staged.characterId), `${view.id}: ${staged.characterId}`).toBe(true)
+      }
     }
   })
 
@@ -171,6 +182,25 @@ describe('manga photo viewpoints', () => {
     expect(viewsForSpace('tier-4-royal-army-conference-room-floor')).toContain(view)
     expect(view?.pages).toBe('189')
     expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
+  })
+
+  it('binds populated establishing views to their canonical event', () => {
+    expect(mangaViewById('supreme-court-camilla-hearing')).toMatchObject({
+      chapter: 376,
+      eventSequence: 1,
+    })
+    expect(mangaViewById('kacho-fugetsu-vestibule-farewell')).toMatchObject({
+      chapter: 359,
+      eventSequence: 4,
+    })
+    expect(mangaViewById('burial-nasubi-momoze-coffin')).toMatchObject({
+      chapter: 371,
+      eventSequence: 3,
+    })
+    expect(mangaViewById('casino-420-swamp-ball')).toMatchObject({
+      chapter: 420,
+      eventSequence: 2,
+    })
   })
 
   it('offers the published Xi-Yu office plan from both Tier 4 rooms', () => {

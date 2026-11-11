@@ -27,14 +27,8 @@ function landscape(THREE: typeof Three, surface: SalonSurface): void {
   const w = surface.width * 0.46,
     h = surface.structure.height
   const z = surface.depth / 2 + 0.04
-  surface.glowBox([w * 2, h * 0.91, 0.015], {
-    at: [0, h / 2, z],
-    colour: 0xa9c7ce,
-  })
-  surface.glowBox([w * 2, h * 0.38, 0.017], {
-    at: [0, h * 0.24, z + 0.01],
-    colour: 0x668b78,
-  })
+  surface.box([w * 2, h * 0.91, 0.015], [0, h / 2, z], 0xa9c7ce)
+  surface.box([w * 2, h * 0.38, 0.017], [0, h * 0.24, z + 0.01], 0x668b78)
   for (let ripple = 0; ripple < 7; ripple++) {
     const width = w * (1.55 - ripple * 0.11)
     surface.box(

@@ -173,7 +173,7 @@ const localSpotAnchors: Record<string, { occupants: Record<string, Spot>; fallba
     fallback: { x: 28, y: 67.86, inferred: true },
   },
 
-  // The royal chair and the ch. 413 bier follow the same plan as the walk.
+  // The royal chair and Halkenburg's ch. 382 standing position share the walked plan.
   'tier-1-king-living-quarters': salonSpotAnchors,
   // The shared banquet projection keeps the king on the drawn dais.
   'tier-1-banquet-hall': banquetSpotAnchors,

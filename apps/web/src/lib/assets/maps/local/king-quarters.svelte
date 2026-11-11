@@ -76,15 +76,12 @@
   <text x="330" y="324" text-anchor="middle" fill="#dac28b" font-size="11">
     {french ? 'Fauteuil du roi' : 'King’s reclining chair'}
   </text>
-  <text x="450" y="451" text-anchor="middle" fill="#b1a58d" font-size="11">
-    {french ? 'Catafalque · chap. 413' : 'Bier · ch. 413'}
-  </text>
   <text x="450" y="554" text-anchor="middle" fill="#b1a58d" font-size="12">
     {french ? 'Vestibule reconstitué' : 'Reconstructed vestibule'}
   </text>
   <text x="450" y="621" text-anchor="middle" fill="#9b9689" font-size="11">
     {french
-      ? 'Dimensions, couleurs et placement détaillé estimés.'
-      : 'Estimated dimensions, colours and detailed placement.'}
+      ? 'Chap. 382 pp. 3–11 · dimensions et placement reconstitués · vestibule non relevé'
+      : 'Ch. 382 pp. 3–11 · reconstructed dimensions and placement · vestibule unmeasured'}
   </text>
 </svg>

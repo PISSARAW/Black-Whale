@@ -1,8 +1,11 @@
+import type * as Three from 'three'
+import type { Vec2 } from './types'
 import { floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { Space } from './types'
 
 interface RoyalSalonFloorOptions {
+  THREE: typeof Three
   into: BanquetDetailBuilder
   plan: TierPlan
   space: Space
@@ -24,9 +27,44 @@ export function dressRoyalSalonFloor(options: RoyalSalonFloorOptions): void {
     into.box([9.58, 0.012, 0.18], { at: [0, y + 0.001, z], colour: EBONY })
   }
 
-  for (const z of [-4.8, -2, 0.8, 3.6]) {
-    into.box([2.35, 0.01, 2.45], { at: [0, y, z], colour: z === 0.8 ? IVORY : WALNUT })
+  axialFields(options, y)
+  sideFields(options, y)
+}
+
+function axialFields(options: RoyalSalonFloorOptions, y: number): void {
+  const { into } = options
+  for (const [row, z] of [-6.2, -3.4, -0.6, 2.2, 5].entries()) {
+    into.box([2.5, 0.01, 2.55], { at: [0, y, z + 1.4], colour: row % 2 ? WALNUT : IVORY })
+    for (const side of [-1, 1]) {
+      triangle(options, {
+        points: [
+          [side * 1.45, z + 0.12],
+          [side * 4.6, z + 0.12],
+          [side * 1.45, z + 2.68],
+        ],
+        colour: row % 2 ? IVORY : WALNUT,
+      })
+      triangle(options, {
+        points: [
+          [side * 4.6, z + 0.12],
+          [side * 4.6, z + 2.68],
+          [side * 1.45, z + 2.68],
+        ],
+        colour: row % 2 ? WALNUT : IVORY,
+      })
+      const dx = side * 3.15,
+        dz = -2.56
+      into.box([Math.hypot(dx, dz), 0.014, 0.15], {
+        at: [side * 3.025, y + 0.012, z + 1.4],
+        rotation: [0, -Math.atan2(dz, dx), 0],
+        colour: EBONY,
+      })
+    }
   }
+}
+
+function sideFields(options: RoyalSalonFloorOptions, y: number): void {
+  const { into } = options
   for (const side of [-1, 1]) {
     for (const z of [-5, -1.5, 2, 5.5]) {
       into.box([1.55, 0.01, 1.55], {
@@ -41,4 +79,31 @@ export function dressRoyalSalonFloor(options: RoyalSalonFloorOptions): void {
       })
     }
   }
+}
+
+function triangle(
+  options: RoyalSalonFloorOptions,
+  patch: { points: Vec2[]; colour: number },
+): void {
+  const { THREE, into, plan, space } = options,
+    y = floorOf(space, plan.tier) + 0.026
+  const vertices = patch.points.map(([x, z]) => [x, y, z])
+  const geometry = new THREE.BufferGeometry()
+  // Both winding orders keep the thin horizontal inlay visible from above.
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(
+      [
+        ...vertices[0],
+        ...vertices[1],
+        ...vertices[2],
+        ...vertices[2],
+        ...vertices[1],
+        ...vertices[0],
+      ],
+      3,
+    ),
+  )
+  geometry.computeVertexNormals()
+  into.add(geometry, { at: [0, 0, 0], colour: patch.colour })
 }

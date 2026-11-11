@@ -133,7 +133,7 @@ export function floorPatternOf(space: Space): FloorPattern | null {
     return { kind: 'plain', style: 'joint', segments: [] }
   }
   if (space.id === 'tier-1-king-living-quarters-living') {
-    return { kind: 'geometric-inlay', style: 'inlay', segments: royalSalonInlay(space.footprint) }
+    return { kind: 'geometric-inlay', style: 'joint', segments: royalSalonInlay(space.footprint) }
   }
   if (space.id === 'tier-1-lifeboats-port-pod-cabin') {
     return { kind: 'radial-deck', style: 'joint', segments: radialDeck(space.footprint) }

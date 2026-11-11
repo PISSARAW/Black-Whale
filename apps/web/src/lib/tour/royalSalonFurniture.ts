@@ -1,5 +1,5 @@
+import { dressRoyalSalonSeat } from './royalSalonSeating'
 import {
-  SALON_FABRIC,
   SALON_GOLD,
   SALON_STONE,
   SALON_WOOD,
@@ -10,41 +10,15 @@ import {
 } from './royalSalonDetailSurface'
 import type { Point3 } from './banquetDetailBuilder'
 
-function upholstery(surface: SalonSurface): void {
-  const { width: w, depth: d, structure } = surface
-  const top = structure.height
-  surface.sphere([w * 0.45, 0.13, d * 0.44], [0, top + 0.08, 0], SALON_FABRIC)
-  surface.sphere([w * 0.46, 0.43, 0.16], [0, top + 0.41, d * 0.36], SALON_WOOD)
-  surface.sphere([w * 0.4, 0.35, 0.17], [0, top + 0.42, d * 0.31], SALON_FABRIC)
-  for (const side of [-1, 1]) {
-    surface.sphere([0.13, 0.12, d * 0.43], [side * w * 0.43, top + 0.28, 0], SALON_WOOD)
-    surface.curve(
-      [
-        [side * w * 0.43, top + 0.25, -d * 0.35],
-        [side * w * 0.48, top + 0.5, -d * 0.37],
-        [side * w * 0.42, top + 0.53, -d * 0.2],
-      ],
-      0.037,
-      SALON_GOLD,
-    )
-    for (const z of [-d * 0.35, d * 0.35]) {
-      surface.sphere([0.06, 0.17, 0.06], [side * w * 0.39, 0.18, z], SALON_GOLD)
-    }
-  }
-  for (let button = 0; button < 3; button++) {
-    surface.sphere(
-      [0.025, 0.025, 0.025],
-      [(button - 1) * w * 0.22, top + 0.5, d * 0.31 - 0.16],
-      SALON_GOLD,
-    )
-  }
-  if (structure.id.endsWith('-royal-chaise')) {
-    surface.sphere([w * 0.47, 0.62, 0.18], [0, top + 0.76, d * 0.34], SALON_WOOD)
-    surface.sphere([w * 0.4, 0.54, 0.15], [0, top + 0.76, d * 0.3], SALON_FABRIC)
-    for (const x of [-0.28, 0, 0.28]) {
-      surface.sphere([0.055, 0.055, 0.04], [x * w, top + 1.3 - Math.abs(x), d * 0.32], SALON_GOLD)
-    }
-  }
+function clockAtRight(surface: SalonSurface, y: number): void {
+  const original = surface.structure
+  const at = surface.point([surface.width * 0.23, 0, 0])
+  const clockSurface = new SalonSurface(
+    surface.into,
+    { ...original, at: [at[0], at[2]] },
+    surface.floor,
+  )
+  clock(clockSurface, y)
 }
 
 function clock(surface: SalonSurface, y: number): void {
@@ -85,10 +59,17 @@ function mantel(surface: SalonSurface): void {
     )
   }
   surface.box([w + 0.04, 0.075, d + 0.035], [0, top + 0.02, 0], SALON_STONE)
-  clock(surface, top + 0.06)
+  surface.box([w * 0.9, 0.13, d], [0, 0.11, 0], SALON_WOOD)
+  bust(surface, [-w * 0.1, top + 0.06, 0], 0.8)
+  clockAtRight(surface, top + 0.06)
 }
 
 function speaker(surface: SalonSurface): void {
+  surface.box(
+    [surface.width, surface.structure.height, surface.depth],
+    [0, surface.structure.height / 2, 0],
+    SALON_WOOD,
+  )
   const z = surface.depth / 2 + 0.025
   surface.box(
     [surface.width * 0.9, surface.structure.height * 0.96, 0.025],
@@ -109,12 +90,16 @@ function speaker(surface: SalonSurface): void {
 function cabinet(surface: SalonSurface): void {
   const { width: w, depth: d, structure } = surface
   const y = structure.height
+  surface.box([w, y * 0.85, d], [0, y * 0.55, 0], SALON_WOOD)
+  for (const x of [-w * 0.38, w * 0.38])
+    surface.box([0.07, y * 0.2, d * 0.75], [x, y * 0.1, 0], SALON_GOLD)
   surface.box([w + 0.025, 0.055, d + 0.025], [0, y + 0.015, 0], SALON_WOOD)
   salonFrame(surface, { width: w * 0.81, height: y * 0.65, y: y / 2, z: d / 2 + 0.03 })
   for (const side of [-1, 1]) {
     surface.sphere([0.035, 0.035, 0.04], [side * w * 0.15, y * 0.55, d / 2 + 0.06], SALON_GOLD)
   }
-  salonBouquet(surface, [0, y + 0.05, 0], 0.9)
+  if (structure.id.includes('-display-')) bust(surface, [0, y + 0.05, 0], 0.75)
+  else salonBouquet(surface, [0, y + 0.05, 0], 0.9)
 }
 
 function bottle(surface: SalonSurface, at: Point3): void {
@@ -129,6 +114,9 @@ function drinks(surface: SalonSurface): void {
   const { width: w, depth: d, structure } = surface
   const top = structure.height
   surface.box([w + 0.025, 0.02, d + 0.025], [0, top + 0.015, 0], 0xd3cbb6)
+  for (const x of [-w * 0.38, w * 0.38])
+    for (const z of [-d * 0.38, d * 0.38])
+      surface.box([0.07, top - 0.06, 0.07], [x, (top - 0.06) / 2, z], SALON_WOOD)
   // Hem and folds stay on the current table, including after a Hatsu rebuild.
   for (const side of [-1, 1]) {
     for (let fold = 0; fold < 12; fold++) {
@@ -156,12 +144,42 @@ function table(surface: SalonSurface): void {
   const { width: w, depth: d, structure } = surface
   surface.box([w + 0.035, 0.04, d + 0.035], [0, structure.height + 0.02, 0], SALON_WOOD)
   surface.box([w * 0.83, 0.012, d * 0.83], [0, structure.height + 0.047, 0], 0x7e806a)
-  salonBouquet(surface, [0, structure.height + 0.06, 0], 0.55)
+  for (const x of [-w * 0.38, w * 0.38])
+    for (const z of [-d * 0.38, d * 0.38]) {
+      surface.box(
+        [0.065, structure.height - 0.04, 0.065],
+        [x, (structure.height - 0.04) / 2, z],
+        SALON_WOOD,
+      )
+      surface.sphere([0.05, 0.035, 0.05], [x, 0.04, z], SALON_GOLD)
+    }
+  if (structure.id.endsWith('-long-table')) {
+    for (const z of [-d * 0.14, d * 0.14]) salonVase(surface, [0, structure.height + 0.06, z], 0.5)
+    surface.box([w * 0.35, 0.045, d * 0.25], [0, structure.height + 0.07, -d * 0.3], SALON_STONE)
+  } else salonBouquet(surface, [0, structure.height + 0.06, 0], 0.55)
+}
+
+/** Simplified draped bust and stepped plinth visible among the mantel ornaments. */
+function bust(s: SalonSurface, at: Point3, scale: number): void {
+  const [x, y, z] = at
+  s.box([0.42 * scale, 0.08 * scale, 0.3 * scale], [x, y + 0.04 * scale, z], SALON_STONE)
+  s.cylinder(
+    { radius: 0.14 * scale, bottom: 0.22 * scale, height: 0.35 * scale },
+    [x, y + 0.25 * scale, z],
+    SALON_STONE,
+  )
+  s.sphere([0.26 * scale, 0.16 * scale, 0.15 * scale], [x, y + 0.43 * scale, z], SALON_STONE)
+  s.sphere([0.115 * scale, 0.15 * scale, 0.11 * scale], [x, y + 0.66 * scale, z], SALON_STONE)
+  s.sphere(
+    [0.045 * scale, 0.05 * scale, 0.055 * scale],
+    [x, y + 0.67 * scale, z + 0.1 * scale],
+    SALON_STONE,
+  )
 }
 
 export function dressRoyalSalonFurniture(surface: SalonSurface): void {
   const { structure } = surface
-  if (structure.kind === 'seat') upholstery(surface)
+  if (structure.kind === 'seat') dressRoyalSalonSeat(surface)
   else if (structure.id.endsWith('-mantel')) mantel(surface)
   else if (structure.id.includes('-floor-speaker')) speaker(surface)
   else if (structure.kind === 'cabinet') cabinet(surface)

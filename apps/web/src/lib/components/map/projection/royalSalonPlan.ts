@@ -35,11 +35,10 @@ function spot(at: Vec2) {
   return { x: (point.x / SALON_VIEWBOX.width) * 100, y: (point.y / SALON_VIEWBOX.height) * 100 }
 }
 const chaise = salonFixtures.find(({ id }) => id.endsWith('-royal-chaise'))!
-const bier = salonFixtures.find(({ id }) => id.endsWith('-bier'))!
 
 export const salonSpotAnchors = {
   occupants: {
     'nasubi-hui-guo-rou': spot(chaise.at),
-    'prince-halkenburg': spot(bier.at),
+    'prince-halkenburg': spot([-3.2, 2.15]),
   },
 }

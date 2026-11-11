@@ -58,23 +58,14 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 47 × 32 m ; 24 × 16.64 m
 - **Hauteurs sous plafond :** 7 m
-- **Éléments modélisés :** 10 painting, 7 cabinet, 6 pillar, 4 seat, 3 table, 1 platform
+- **Éléments modélisés :** 10 painting, 7 cabinet, 6 pillar, 5 seat, 3 table
 - **Objets directement visibles dans les cases :** 31/31
 - **Espaces internes :** Salon royal
 - **Sources de la pièce :**
-  - Chap. 382, p. 29–32 — le salon à double hauteur du Roi : voûte en berceau à caissons sur piles carrées, sol géométrique incrusté, œuvre monumentale et nombreux petits cadres, manteau garni d'objets, sièges rembourrés, tables basses, buffets, plantes, sculpture et desserte de boissons.
+  - Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués.
 - **Sources du mobilier et des détails :**
-  - Chap. 382, p. 28–30 — un grand panneau paysager encadré fait face au Roi assis, distinct du tableau de bataille au-dessus du manteau latéral ; il ne prouve pas une baie extérieure.
-  - Chap. 382, p. 29–30 — Nasubi est allongé dans un large fauteuil rembourré face au panneau paysager.
-  - Chap. 382, p. 28 — une grande enceinte sombre borde chaque côté du grand panneau paysager.
-  - Chap. 382, p. 29–30 — des piles carrées claires à panneaux sombres portent la voûte à caissons ; nombre et implantation métrique reconstruits.
-  - Chap. 382, p. 29–30 — le tableau de bataille et le manteau occupent le mur latéral, perpendiculaire au grand panneau paysager face au Roi.
-  - Chap. 382, p. 28–30 — le salon orné : tableaux encadrés, sièges rembourrés, tables basses et meubles d’exposition ; placement détaillé et dimensions reconstruits.
-  - Chap. 382, p. 29–30 — un long manteau sous le tableau de bataille monumental porte des photographies encadrées, des vases et un ornement central évoquant une horloge.
-  - Chap. 382, p. 29–30 — des meubles d'exposition et objets ornementaux bordent les deux côtés du manteau central.
-  - Chap. 382, p. 29–30 — une grande enceinte étroite à trois haut-parleurs circulaires se dresse près du mur de tableaux bâbord.
-  - Chap. 382, p. 29–30 — bouteilles, verres et récipients couvrent une desserte drapée près du groupe de sièges du Roi.
-  - Chap. 413 — Halkenburg exposé dans le salon de son père, le Roi debout à son chevet.
+  - Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués.
+  - Chap. 382, pages de lecture 3–4 : une grande enceinte de chaque côté du paysage encadré. Implantation métrique reconstituée.
 
 ## Pont des canots (bâbord) — `tier-1-lifeboats`
 

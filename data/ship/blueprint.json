@@ -819,14 +819,14 @@
       "elevation": 128,
       "ceiling": 7,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201332 \u2014 the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
       "hull": [
         [-14, -10.5],
         [14, -10.5],
         [14, 14.5],
         [-14, 14.5]
       ],
-      "sourceFr": "Chap. 382, p. 29\u201332 \u2014 le salon \u00e0 double hauteur du Roi : vo\u00fbte \u00e0 caissons, sol g\u00e9om\u00e9trique, tableau de bataille monumental au-dessus du manteau, nombreux petits cadres et mobilier de r\u00e9ception.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués.",
       "parentTierId": null
     },
     {
@@ -1099,7 +1099,7 @@
       "nameFr": "Quartiers du Roi",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201332 \u2014 the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
       "ceiling": 7,
       "envelope": null,
       "footprint": [
@@ -1108,7 +1108,7 @@
         [-25, 16],
         [-72, 16]
       ],
-      "sourceFr": "Chap. 382, p. 29\u201332 \u2014 le salon \u00e0 double hauteur du Roi : vo\u00fbte en berceau \u00e0 caissons sur piles carr\u00e9es, sol g\u00e9om\u00e9trique incrust\u00e9, \u0153uvre monumentale et nombreux petits cadres, manteau garni d'objets, si\u00e8ges rembourr\u00e9s, tables basses, buffets, plantes, sculpture et desserte de boissons."
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-princes-burial-chamber-rotunda",
@@ -7847,7 +7847,7 @@
       "nameFr": "Salon royal",
       "category": "quarters",
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201332 \u2014 the King's double-height salon: a coffered barrel vault on square piers, geometric inlaid floor, monumental framed art and many smaller pictures, a mantel with display objects, upholstered seating, low tables, sideboards, plants, sculpture and drinks service.",
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
       "ceiling": 7,
       "envelope": null,
       "footprint": [
@@ -7856,7 +7856,7 @@
         [12, 8.32],
         [-12, 8.32]
       ],
-      "sourceFr": "Chap. 382, p. 29\u201332 \u2014 le salon \u00e0 double hauteur du Roi : vo\u00fbte en berceau \u00e0 caissons sur piles carr\u00e9es, sol g\u00e9om\u00e9trique incrust\u00e9, \u0153uvre monumentale et nombreux petits cadres, manteau garni d'objets, si\u00e8ges rembourr\u00e9s, tables basses, buffets, plantes, sculpture et desserte de boissons."
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-vestibule",
@@ -7866,7 +7866,7 @@
       "nameFr": "Vestibule royal",
       "category": "corridor",
       "provenance": "inferred",
-      "source": "Reconstructed so the living room opens onto the Banquet Hall; no panel shows the way in.",
+      "source": "Inherited reconstructed connection to the royal salon. Ch. 382 reading pp. 1–2 show a guarded reception hall but do not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
       "ceiling": 5,
       "envelope": null,
       "footprint": [
@@ -9695,7 +9695,7 @@
       "at": [-48.5, 13.714],
       "atTo": [0, 11],
       "provenance": "inferred",
-      "source": "Reconstructed so the living room opens onto the Banquet Hall; no panel shows the way in.",
+      "source": "Inherited reconstructed connection to the royal salon. Ch. 382 reading pp. 1–2 show a guarded reception hall but do not establish this vestibule’s metric shape or its precise connection to the Banquet Hall.",
       "sourceFr": "Reconstruit pour que le salon s'ouvre sur la salle de banquet ; aucune planche ne montre l'entr\u00e9e."
     },
     {
@@ -11956,6 +11956,22 @@
     }
   ],
   "structures": [
+    {
+      "id": "tier-1-king-living-quarters-living-armchair-starboard",
+      "spaceId": "tier-1-king-living-quarters-living",
+      "kind": "seat",
+      "name": "Side armchair",
+      "nameFr": "Fauteuil latéral",
+      "at": [7.3, 5.4],
+      "size": [1.1, 1.1],
+      "rotation": 270,
+      "base": 0,
+      "height": 0.44,
+      "sides": null,
+      "provenance": "panel",
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
+    },
     {
       "id": "tier-2-screening-room-balustrade-port-forward",
       "spaceId": "tier-2-screening-room",
@@ -18067,7 +18083,7 @@
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "painting",
       "name": "Large Framed Landscape Panel",
-      "nameFr": "Grand panneau paysager encadr\u00e9",
+      "nameFr": "Grand panneau paysager encadré",
       "at": [0, -8.18],
       "size": [10.2, 0.2],
       "rotation": 0,
@@ -18075,8 +18091,8 @@
       "height": 4,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 a large framed landscape panel faces the seated King, distinct from the battle painting over the side-wall mantel; it does not establish exterior glazing.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 un grand panneau paysager encadr\u00e9 fait face au Roi assis, distinct du tableau de bataille au-dessus du manteau lat\u00e9ral ; il ne prouve pas une baie ext\u00e9rieure."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-royal-chaise",
@@ -18091,8 +18107,8 @@
       "height": 0.44,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 Nasubi reclines in a broad upholstered chair facing the landscape panel.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 Nasubi est allong\u00e9 dans un large fauteuil rembourr\u00e9 face au panneau paysager."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-floor-speaker-starboard",
@@ -18107,15 +18123,15 @@
       "height": 2.7,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 28 \u2014 a tall dark loudspeaker stands on either side of the large landscape panel.",
-      "sourceFr": "Chap. 382, p. 28 \u2014 une grande enceinte sombre borde chaque c\u00f4t\u00e9 du grand panneau paysager."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-01",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [-11.59, -7.85],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18123,15 +18139,15 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-02",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [-11.59, 7.85],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18139,15 +18155,15 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-03",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [11.59, -7.85],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18155,15 +18171,15 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-04",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [11.59, -6.15],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18171,15 +18187,15 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-05",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [11.59, 2.6],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18187,15 +18203,15 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-wall-pier-06",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "pillar",
       "name": "Square Wall Pier",
-      "nameFr": "Pile murale carr\u00e9e",
+      "nameFr": "Pile murale carrée",
       "at": [11.59, 7.85],
       "size": [0.8, 0.8],
       "rotation": 0,
@@ -18203,8 +18219,8 @@
       "height": 4.75,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 pale square piers with dark inset plaques support the coffered vault; count and metric placement reconstructed.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des piles carr\u00e9es claires \u00e0 panneaux sombres portent la vo\u00fbte \u00e0 caissons ; nombre et implantation m\u00e9trique reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-great-window",
@@ -18219,15 +18235,15 @@
       "height": 2.4,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 29\u201330 \u2014 the battle painting and ornamented mantel occupy the side wall, perpendicular to the large framed landscape panel facing the King.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 le tableau de bataille et le manteau occupent le mur lat\u00e9ral, perpendiculaire au grand panneau paysager face au Roi."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-port-01",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "painting",
       "name": "Painting (port 1)",
-      "nameFr": "Tableau (b\u00e2bord 1)",
+      "nameFr": "Tableau (bâbord 1)",
       "at": [-11.85, -4.9],
       "size": [0.18, 1.9],
       "rotation": 0,
@@ -18235,8 +18251,8 @@
       "height": 2.2,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-starboard-01",
@@ -18251,15 +18267,15 @@
       "height": 1.3,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-port-02",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "painting",
       "name": "Painting (port 2)",
-      "nameFr": "Tableau (b\u00e2bord 2)",
+      "nameFr": "Tableau (bâbord 2)",
       "at": [-11.85, -1.7],
       "size": [0.18, 1.5],
       "rotation": 0,
@@ -18267,8 +18283,8 @@
       "height": 1.8,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-starboard-02",
@@ -18283,15 +18299,15 @@
       "height": 1.7,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-port-03",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "painting",
       "name": "Painting (port 3)",
-      "nameFr": "Tableau (b\u00e2bord 3)",
+      "nameFr": "Tableau (bâbord 3)",
       "at": [-11.85, 1.5],
       "size": [0.18, 1.6],
       "rotation": 0,
@@ -18299,8 +18315,8 @@
       "height": 2.1,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-starboard-03",
@@ -18315,15 +18331,15 @@
       "height": 1.5,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-port-04",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "painting",
       "name": "Painting (port 4)",
-      "nameFr": "Tableau (b\u00e2bord 4)",
+      "nameFr": "Tableau (bâbord 4)",
       "at": [-11.85, 5.1],
       "size": [0.18, 1.7],
       "rotation": 0,
@@ -18331,8 +18347,8 @@
       "height": 2.2,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-painting-starboard-04",
@@ -18347,15 +18363,15 @@
       "height": 0.7,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-sofa",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "seat",
       "name": "Sofa",
-      "nameFr": "Canap\u00e9",
+      "nameFr": "Canapé",
       "at": [-7.8, 0],
       "size": [2.8, 1],
       "rotation": 90,
@@ -18363,8 +18379,8 @@
       "height": 0.42,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-armchair-01",
@@ -18374,20 +18390,20 @@
       "nameFr": "Fauteuil (avant)",
       "at": [-7.7, -2.5],
       "size": [0.95, 0.95],
-      "rotation": 0,
+      "rotation": 180,
       "base": 0,
       "height": 0.44,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-armchair-02",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "seat",
       "name": "Armchair (aft)",
-      "nameFr": "Fauteuil (arri\u00e8re)",
+      "nameFr": "Fauteuil (arrière)",
       "at": [-7.7, 2.5],
       "size": [0.95, 0.95],
       "rotation": 0,
@@ -18395,8 +18411,8 @@
       "height": 0.44,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-low-table",
@@ -18411,24 +18427,24 @@
       "height": 0.45,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-long-table",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "table",
-      "name": "Long Table",
-      "nameFr": "Table longue",
-      "at": [7, 0],
-      "size": [1.2, 4],
+      "name": "Low display table",
+      "nameFr": "Table basse de présentation",
+      "at": [8.5, -1.9],
+      "size": [1.2, 3.1],
       "rotation": 0,
       "base": 0,
-      "height": 0.78,
+      "height": 0.48,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-sideboard-01",
@@ -18443,15 +18459,15 @@
       "height": 0.95,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-sideboard-02",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "cabinet",
       "name": "Sideboard (aft)",
-      "nameFr": "Buffet (arri\u00e8re)",
+      "nameFr": "Buffet (arrière)",
       "at": [-11.3, 3.7],
       "size": [0.6, 2.4],
       "rotation": 0,
@@ -18459,15 +18475,15 @@
       "height": 0.95,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, pp. 28\u201330 \u2014 the ornate salon: framed pictures, upholstered seating, low tables and display furniture; detailed placement and dimensions reconstructed.",
-      "sourceFr": "Chap. 382, p. 28\u201330 \u2014 le salon orn\u00e9 : tableaux encadr\u00e9s, si\u00e8ges rembourr\u00e9s, tables basses et meubles d\u2019exposition ; placement d\u00e9taill\u00e9 et dimensions reconstruits."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-mantel",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "cabinet",
       "name": "Ornamented Mantel",
-      "nameFr": "Manteau ornement\u00e9",
+      "nameFr": "Manteau ornementé",
       "at": [11.35, -1.9],
       "size": [0.65, 6.3],
       "rotation": 0,
@@ -18475,15 +18491,15 @@
       "height": 1.35,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 29\u201330 \u2014 a long mantel below the monumental battle picture carries framed photographs, vessels and a central clock-like ornament.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 un long manteau sous le tableau de bataille monumental porte des photographies encadr\u00e9es, des vases et un ornement central \u00e9voquant une horloge."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-display-port",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "cabinet",
       "name": "Display Pedestal (port)",
-      "nameFr": "Sellette d'exposition (b\u00e2bord)",
+      "nameFr": "Sellette d'exposition (bâbord)",
       "at": [11.3, -7],
       "size": [0.8, 0.72],
       "rotation": 0,
@@ -18491,8 +18507,8 @@
       "height": 1.15,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 29\u201330 \u2014 display furniture and ornamental objects line both sides of the central mantel.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des meubles d'exposition et objets ornementaux bordent les deux c\u00f4t\u00e9s du manteau central."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-display-starboard",
@@ -18507,8 +18523,8 @@
       "height": 1.15,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 29\u201330 \u2014 display furniture and ornamental objects line both sides of the central mantel.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 des meubles d'exposition et objets ornementaux bordent les deux c\u00f4t\u00e9s du manteau central."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-king-living-quarters-living-floor-speaker",
@@ -18523,15 +18539,15 @@
       "height": 2.7,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 29\u201330 \u2014 a tall narrow loudspeaker with three circular drivers stands by the port picture wall.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 une grande enceinte \u00e9troite \u00e0 trois haut-parleurs circulaires se dresse pr\u00e8s du mur de tableaux b\u00e2bord."
+      "source": "Ch. 382, reading pp. 3–4: one tall loudspeaker on each side of the framed landscape. Metric placement reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–4 : une grande enceinte de chaque côté du paysage encadré. Implantation métrique reconstituée."
     },
     {
       "id": "tier-1-king-living-quarters-living-drinks-cart",
       "spaceId": "tier-1-king-living-quarters-living",
       "kind": "table",
       "name": "Drinks Service Table",
-      "nameFr": "Desserte \u00e0 boissons",
+      "nameFr": "Desserte à boissons",
       "at": [-9.5, 4.5],
       "size": [1.2, 1.8],
       "rotation": 0,
@@ -18539,24 +18555,8 @@
       "height": 0.85,
       "sides": null,
       "provenance": "panel",
-      "source": "Ch. 382, p. 29\u201330 \u2014 bottles, glasses and vessels cover a cloth-draped drinks table beside the King's seating group.",
-      "sourceFr": "Chap. 382, p. 29\u201330 \u2014 bouteilles, verres et r\u00e9cipients couvrent une desserte drap\u00e9e pr\u00e8s du groupe de si\u00e8ges du Roi."
-    },
-    {
-      "id": "tier-1-king-living-quarters-living-bier",
-      "spaceId": "tier-1-king-living-quarters-living",
-      "kind": "platform",
-      "name": "Bier",
-      "nameFr": "Catafalque",
-      "at": [0, 6.4],
-      "size": [2.2, 1],
-      "rotation": 0,
-      "base": 0,
-      "height": 0.75,
-      "sides": null,
-      "provenance": "panel",
-      "source": "Ch. 413 \u2014 Halkenburg laid out in his father's living room, the King standing over him.",
-      "sourceFr": "Chap. 413 \u2014 Halkenburg expos\u00e9 dans le salon de son p\u00e8re, le Roi debout \u00e0 son chevet."
+      "source": "Ch. 382, reading pp. 3–11 (p. 4 is a double spread): coffered vault, square piers, geometric inlaid floor, framed landscape and perpendicular battle painting, furnished mantel, upholstered chairs, low tables, display cupboards and drinks service. Dimensions, colours, counts outside the framing and metric placements reconstructed.",
+      "sourceFr": "Chap. 382, pages de lecture 3–11 (page 4 en double planche) : voûte à caissons, piles carrées, sol géométrique, paysage encadré et bataille sur un mur perpendiculaire, manteau garni, sièges rembourrés, tables basses, meubles d’exposition et desserte. Dimensions, teintes, comptes hors cadrage et implantations métriques reconstitués."
     },
     {
       "id": "tier-1-vip-jail-cell-first-class-bunk",

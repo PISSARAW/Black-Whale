@@ -44,21 +44,21 @@ function sidePicture(
   })
 }
 
-function upperGallery(options: RoyalSalonGalleryOptions): void {
+function wallGallery(options: RoyalSalonGalleryOptions): void {
   const floor = floorOf(options.space, options.plan.tier)
   const pictures = [
-    { z: -6.35, width: 1.55, height: 1.55, y: 4.85 },
-    { z: -4.05, width: 1.25, height: 1.8, y: 4.65 },
-    { z: -1.65, width: 1.55, height: 1.45, y: 4.95 },
-    { z: 0.75, width: 1.2, height: 1.7, y: 4.7 },
-    { z: 3.05, width: 1.5, height: 1.55, y: 4.85 },
-    { z: 5.65, width: 1.65, height: 1.7, y: 4.75 },
+    { side: -1, z: -6.5, width: 0.9, height: 0.9, y: 3.2 },
+    { side: -1, z: -3.3, width: 1, height: 0.65, y: 2.3 },
+    { side: -1, z: -0.2, width: 0.8, height: 0.65, y: 2.2 },
+    { side: -1, z: 3.2, width: 1, height: 0.8, y: 2.7 },
+    { side: -1, z: 6.6, width: 0.9, height: 1, y: 3 },
+    { side: 1, z: 3.8, width: 1, height: 0.65, y: 1.7 },
+    { side: 1, z: 5.8, width: 0.8, height: 0.7, y: 3.8 },
+    { side: 1, z: -7, width: 0.6, height: 0.8, y: 3.4 },
   ]
-  for (const side of [-1, 1] as const) {
-    pictures.forEach((picture, index) =>
-      sidePicture({ into: options.into, floor }, { side, index, ...picture }),
-    )
-  }
+  pictures.forEach((picture, index) =>
+    sidePicture({ into: options.into, floor }, { ...picture, side: picture.side as -1 | 1, index }),
+  )
 }
 
 function landscapeSurround(options: RoyalSalonGalleryOptions): void {
@@ -89,6 +89,7 @@ function landscapeSurround(options: RoyalSalonGalleryOptions): void {
 }
 
 export function dressRoyalSalonGallery(options: RoyalSalonGalleryOptions): void {
-  landscapeSurround(options)
-  upperGallery(options)
+  if (options.plan.structures.some((s) => s.id.endsWith('-landscape-panel')))
+    landscapeSurround(options)
+  wallGallery(options)
 }

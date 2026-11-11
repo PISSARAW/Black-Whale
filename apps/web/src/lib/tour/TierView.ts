@@ -4,7 +4,7 @@ import { walkedPlan, type TourWorld } from './hatsu'
 import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
-import { buildRoyalSalonDetails } from './royalSalonView'
+import { buildRoyalSalonDetails, royalSalonSurfacePlan } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
 import { diningHallSurfacePlan } from './diningHallSurfacePlan'
 import { buildPrisonDetails, prisonSurfacePlan } from './prisonView'
@@ -298,7 +298,7 @@ export class TierView {
       reveal,
     )
     const detailedPlan = hullSuspensionSurfacePlan(
-      diningHallSurfacePlan(surfacePlan, reveal),
+      royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
       reveal,
     )
     const mesh = buildTierMesh(detailedPlan, {

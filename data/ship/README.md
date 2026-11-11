@@ -886,8 +886,17 @@ centimètre — la reconstruction garde le compte et les rangées, et écarte le
 allées de quoi passer, exactement comme elle donne un pas de six mètres aux
 tables du banquet.
 
+Le **salon de Nasubi** reprend la double page du chapitre 382 : fauteuil de
+repos allongé, salon latéral, desserte drapée, table basse devant le manteau,
+buste, photographies, horloge et vases. Le paysage encadré et le grand tableau
+de bataille occupent deux murs perpendiculaires. Les blocs de collision sont
+masqués au rendu et remplacés par des meubles complets. Le catafalque attribué
+au chapitre 413 est retiré : les pages relues le situent dans la chambre
+funéraire distincte. Le vestibule et les métriques restent reconstitués ; aucune
+chambre privée non montrée n'est ajoutée. Voir [l'audit du salon royal](nasubi-quarters-audit.md).
+
 Il vaut aussi pour ce qu'une **planche** meuble : le salon du Roi et ses sièges
-appariés, ses tableaux et sa baie (chap. 382), la couchette, le lavabo et le
+appariés et ses œuvres encadrées (chap. 382), la couchette, le lavabo et le
 cabinet de la cellule de première classe (chap. 373), la couchette de la
 cellule de haute sécurité et la table basse où repose la boisson de Beyond,
 avec, de l'autre côté des barreaux, le banc de la garde, sa table, son étagère

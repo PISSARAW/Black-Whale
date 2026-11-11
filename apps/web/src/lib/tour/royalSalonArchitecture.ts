@@ -1,3 +1,4 @@
+import { dressRoyalSalonWallPaper } from './royalSalonWallPaper'
 import type * as Three from 'three'
 import { ceilingOf, floorOf, type TierPlan } from './blueprint'
 import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
@@ -160,6 +161,7 @@ function inlay(context: Architecture): void {
 
 export function dressRoyalSalonArchitecture(context: Architecture): void {
   vault(context)
+  dressRoyalSalonWallPaper(context)
   wallMouldings(context)
   piers(context)
   inlay(context)

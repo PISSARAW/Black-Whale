@@ -5,8 +5,16 @@ import { SalonSurface } from './royalSalonDetailSurface'
 import { dressRoyalSalonArchitecture } from './royalSalonArchitecture'
 import { dressRoyalSalonFurniture } from './royalSalonFurniture'
 import { dressRoyalSalonPicture } from './royalSalonPictures'
+import { buildApartmentReconstruction } from './apartmentReconstruction'
 
 export const ROYAL_SALON = 'tier-1-king-living-quarters-living'
+export const ROYAL_VESTIBULE = 'tier-1-king-living-quarters-vestibule'
+
+/** Detailed furniture replaces visual blocks; the original plan still supplies collisions. */
+export function royalSalonSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal || plan.tier.id !== 'interior-king-quarters') return plan
+  return { ...plan, structures: plan.structures.filter((s) => s.spaceId !== ROYAL_SALON) }
+}
 
 /** Chapter 382; measurements, finishes and simplified profiles are interpretations. */
 export function buildRoyalSalonDetails(options: {
@@ -16,6 +24,8 @@ export function buildRoyalSalonDetails(options: {
   reveal: boolean
 }): Three.Group | null {
   const { THREE, plan, spaceId, reveal } = options
+  if (!reveal && spaceId === ROYAL_VESTIBULE)
+    return buildApartmentReconstruction({ ...options, name: 'nasubi-vestibule-reconstruction' })
   if (reveal || spaceId !== ROYAL_SALON) return null
   const space = plan.spaces.find((candidate) => candidate.id === spaceId)
   if (!space) return null

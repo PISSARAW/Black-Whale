@@ -27,7 +27,6 @@ import {
   selectScenarioLocationIds,
 } from './scenario'
 import { doctrineLabel } from './localization'
-import type { StrategyScenarioV2 } from './scenario/types'
 import {
   COMMAND_POINTS_PER_TURN,
   VICTORY_POINTS_TARGET,
@@ -53,24 +52,12 @@ import {
 } from './logistics'
 import type { FactionAIMemory } from './aiIntent'
 import { abilitiesRevealedByChapter } from './chapterGate'
+import { createStrategyStoreApi, type StrategySetup } from './simulationStoreApi'
 export type { StrategyOrder, StrategyOrderType } from './rules'
-export type {
-  StrategyFaction,
-  StrategyIntel,
-  StrategyLocation,
-  StrategyMoveOrder,
-  StrategyTurnResult,
-} from './types'
+export type { StrategyMoveOrder } from './types'
 
 export { StrategyInputError } from './playerOrders'
 
-export interface StrategySetup {
-  baseState: WorldState
-  factions: StrategyFaction[]
-  locations: StrategyLocation[]
-  scenario?: StrategyScenarioV2
-  locale?: Locale
-}
 export function createSimulationStore() {
   let engine = new SimulationEngine()
   let branch = $state<WorldBranch | null>(null)
@@ -476,74 +463,35 @@ export function createSimulationStore() {
     }
   }
 
-  return {
-    get currentState() {
-      return currentState
+  return createStrategyStoreApi(
+    () => ({
+      currentState,
+      currentTurn,
+      turnReports,
+      intel,
+      objective: currentObjective(),
+      secretObjective: currentObjective('SECRET'),
+      victoryPoints,
+      gameWon,
+      gameLost,
+      activeFactions: factions.filter((faction) => activeFactionIds.includes(faction.id)),
+      scenarioLocations: locations.filter((location) => scenarioLocationIds.includes(location.id)),
+      scenarioEvent: scenarioEventForTurn(currentTurn, activeScenario),
+      relationships,
+      politicalMemory,
+      logistics,
+      aiMemory,
+      unitConditions,
+      turnHistory,
+      hatsuCooldowns,
+      hatsuCues,
+    }),
+    {
+      abilityIdsForCharacter,
+      init,
+      selectFaction,
+      restoreCampaignState,
+      endTurn,
     },
-    get currentTurn() {
-      return currentTurn
-    },
-    get turnReports() {
-      return turnReports
-    },
-    get intel() {
-      return intel
-    },
-    get objective() {
-      return currentObjective()
-    },
-    get secretObjective() {
-      return currentObjective('SECRET')
-    },
-    get victoryPoints() {
-      return victoryPoints
-    },
-    get gameWon() {
-      return gameWon
-    },
-    get gameLost() {
-      return gameLost
-    },
-    get gameOver() {
-      return gameWon || gameLost
-    },
-    get activeFactions() {
-      return factions.filter((faction) => activeFactionIds.includes(faction.id))
-    },
-    get scenarioLocations() {
-      return locations.filter((location) => scenarioLocationIds.includes(location.id))
-    },
-    get scenarioEvent() {
-      return scenarioEventForTurn(currentTurn, activeScenario)
-    },
-    get relationships() {
-      return relationships
-    },
-    get politicalMemory() {
-      return politicalMemory
-    },
-    get logistics() {
-      return logistics
-    },
-    get aiMemory() {
-      return aiMemory
-    },
-    get unitConditions() {
-      return unitConditions
-    },
-    get turnHistory() {
-      return turnHistory
-    },
-    get hatsuCooldowns() {
-      return hatsuCooldowns
-    },
-    get hatsuCues() {
-      return hatsuCues
-    },
-    abilityIdsForCharacter,
-    init,
-    selectFaction,
-    restoreCampaignState,
-    endTurn,
-  }
+  )
 }

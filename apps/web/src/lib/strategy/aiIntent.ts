@@ -25,10 +25,34 @@ export function rememberAIObservations(
   turn: number,
 ): FactionAIMemory {
   const recent = Object.fromEntries(
-    Object.entries(current.observedOpponentLocations).filter(([, seenTurn]) => seenTurn >= turn - 2),
+    Object.entries(current.observedOpponentLocations).filter(
+      ([, seenTurn]) => seenTurn >= turn - 2,
+    ),
   )
   for (const locationId of observedLocations) recent[locationId] = turn
   return { ...current, observedOpponentLocations: recent }
+}
+
+type IntentInput = Parameters<typeof planFactionAIIntent>[0]
+
+function consolidateIntent(input: IntentInput): FactionAIIntent {
+  const counts = new Map<string, number>()
+  for (const id of input.ownLocationIds) counts.set(id, (counts.get(id) ?? 0) + 1)
+  const stronghold = [...counts].sort((left, right) => right[1] - left[1])[0]?.[0]
+  return {
+    kind: 'CONSOLIDATE',
+    preferredDestinationIds: stronghold ? [stronghold] : [...input.destinationIds],
+    rationale: 'OBJECTIVE',
+  }
+}
+
+function expansionIntent(input: IntentInput): FactionAIIntent {
+  const unoccupied = input.destinationIds.filter((id) => !input.ownLocationIds.includes(id))
+  return {
+    kind: input.objectiveKind === 'CONFIRM_HOSTILES' ? 'INVESTIGATE' : 'EXPAND',
+    preferredDestinationIds: unoccupied.length ? unoccupied : [...input.destinationIds],
+    rationale: 'OBJECTIVE',
+  }
 }
 
 export function planFactionAIIntent(input: {
@@ -58,19 +82,7 @@ export function planFactionAIIntent(input: {
     }
   }
   if (input.objectiveKind === 'FORM_BASTION' || input.doctrine === 'CONSOLIDATION') {
-    const counts = new Map<string, number>()
-    for (const id of input.ownLocationIds) counts.set(id, (counts.get(id) ?? 0) + 1)
-    const stronghold = [...counts].sort((left, right) => right[1] - left[1])[0]?.[0]
-    return {
-      kind: 'CONSOLIDATE',
-      preferredDestinationIds: stronghold ? [stronghold] : [...input.destinationIds],
-      rationale: 'OBJECTIVE',
-    }
+    return consolidateIntent(input)
   }
-  const unoccupied = input.destinationIds.filter((id) => !input.ownLocationIds.includes(id))
-  return {
-    kind: input.objectiveKind === 'CONFIRM_HOSTILES' ? 'INVESTIGATE' : 'EXPAND',
-    preferredDestinationIds: unoccupied.length ? unoccupied : [...input.destinationIds],
-    rationale: 'OBJECTIVE',
-  }
+  return expansionIntent(input)
 }

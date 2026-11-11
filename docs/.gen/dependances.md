@@ -8,7 +8,7 @@ Nœuds : 24 · Arêtes uniques : 52
 
 | Source | Cible | Occurrences |
 | ------ | ----- | ----------- |
-| `lib:arena` | `lib:combat` | 36 |
+| `lib:arena` | `lib:combat` | 44 |
 | `lib:arena` | `lib:nen` | 8 |
 | `lib:arena` | `lib:tour` | 10 |
 | `lib:arena` | `package:@black-whale/nen-engine` | 4 |
@@ -39,7 +39,7 @@ Nœuds : 24 · Arêtes uniques : 52
 | `lib:server` | `package:@black-whale/nen-engine` | 1 |
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
 | `lib:strategy` | `package:@black-whale/ability-modules` | 1 |
-| `lib:strategy` | `package:@black-whale/canon-engine` | 11 |
+| `lib:strategy` | `package:@black-whale/canon-engine` | 12 |
 | `lib:strategy` | `package:@black-whale/simulation-engine` | 6 |
 | `lib:tour` | `lib:components` | 1 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 12 |

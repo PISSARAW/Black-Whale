@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 425
+Fichiers : 440
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -33,6 +33,10 @@ Fichiers : 425
 
 - the arena opponent > closes distance without walking through the other fighter
 
+## `apps/web/src/lib/arena/bridge.test.ts`
+
+- Arena cross-mode handoff > carries prior aura, injuries, knowledge and narrative context into combat
+
 ## `apps/web/src/lib/arena/campaign.test.ts`
 
 - Arena V3 campaign > starts with foundations and exposes deterministic mission presets
@@ -40,6 +44,10 @@ Fichiers : 425
 ## `apps/web/src/lib/arena/challenges/evaluate.test.ts`
 
 - Arena challenges > evaluates mastery from replay commands rather than UI state
+
+## `apps/web/src/lib/arena/experience.test.ts`
+
+- Arena experience > connects named opponents to their doctrine and difficulty
 
 ## `apps/web/src/lib/arena/formats.test.ts`
 
@@ -57,6 +65,10 @@ Fichiers : 425
 
 - production treatment for 24 Black Whale Hatsu > assigns a TourSense visual and a dedicated two-tone sound to every Hatsu
 
+## `apps/web/src/lib/arena/journey.test.ts`
+
+- Arena journey controls > maps desktop and mobile guard to the same authoritative action
+
 ## `apps/web/src/lib/arena/profile.test.ts`
 
 - Arena V3 profile > persists versioned progression and recovers from invalid data
@@ -64,6 +76,14 @@ Fichiers : 425
 ## `apps/web/src/lib/arena/progression.test.ts`
 
 - Arena progression > grades efficient wins above missed exchanges
+
+## `apps/web/src/lib/arena/pvp/serverMatch.test.ts`
+
+- authoritative Arena PvP match > accepts ordered commands only for the side owned by the sender
+
+## `apps/web/src/lib/arena/replay/branch.test.ts`
+
+- interactive replay branch > resumes from a selected tick and produces a valid divergent replay
 
 ## `apps/web/src/lib/arena/replay/library.test.ts`
 
@@ -145,6 +165,22 @@ Fichiers : 425
 
 - Nen perception > lets Gyo reveal a Ryu distribution concealed with In
 - qualitative exchanges > resolves impacts without health or damage fields
+
+## `apps/web/src/lib/combat/effects.test.ts`
+
+- persistent Nen effects > keeps transformed objects in the duel after Biohazard resolves
+
+## `apps/web/src/lib/combat/enShu.test.ts`
+
+- Arena En and Shu > detects a concealed presence inside En without revealing its Ryu
+
+## `apps/web/src/lib/combat/environment.test.ts`
+
+- reactive Arena environment > alerts witnesses and schedules guards after noisy clandestine Hatsu
+
+## `apps/web/src/lib/combat/ryu.test.ts`
+
+- detailed Ryu distribution > conserves aura while exposing unguarded zones
 
 ## `apps/web/src/lib/components/map/mapViewport.test.ts`
 
@@ -821,9 +857,17 @@ Fichiers : 425
 - interpreterQuestion > confines the reply to the vocabulary
 - createInterpreter > is off without a model and never asks
 
+## `apps/web/src/lib/strategy/aiIntent.test.ts`
+
+- strategy AI intent > pursues only hostile locations that entered faction memory
+
 ## `apps/web/src/lib/strategy/balance.test.ts`
 
 - complete strategy campaign balance > makes every doctrine achievable by a three-unit faction
+
+## `apps/web/src/lib/strategy/campaign/autonomy.test.ts`
+
+- autonomous campaign threads > advances several off-screen plots after the same player scenario
 
 ## `apps/web/src/lib/strategy/campaign/engine.test.ts`
 
@@ -832,6 +876,10 @@ Fichiers : 425
 ## `apps/web/src/lib/strategy/campaign/persistence.test.ts`
 
 - Strategy campaign persistence V3 > round-trips a checksummed campaign
+
+## `apps/web/src/lib/strategy/chapterGate.test.ts`
+
+- Strategy chapter gate > does not expose abilities before their canonical reveal
 
 ## `apps/web/src/lib/strategy/conflict.test.ts`
 
@@ -848,6 +896,14 @@ Fichiers : 425
 ## `apps/web/src/lib/strategy/hatsuPresentation.test.ts`
 
 - Strategy Hatsu audiovisual presentation > gives every playable Hatsu a manifestation, sound and lifetime
+
+## `apps/web/src/lib/strategy/intrigue.test.ts`
+
+- strategy intrigue > scores the faction secret objective independently of its public objective
+
+## `apps/web/src/lib/strategy/logistics.test.ts`
+
+- strategy logistics > lets ship incidents damage persistent infrastructure
 
 ## `apps/web/src/lib/strategy/movement.test.ts`
 

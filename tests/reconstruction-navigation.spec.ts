@@ -10,17 +10,25 @@ test.afterEach(({ page }) => {
   expect(runtimeErrors.get(page), 'no browser runtime errors').toEqual([])
 })
 
-async function open(page: Page) {
-  await page.goto('/fr/reconstruction?event=b3742695-aab4-46ce-a5a5-cba370b2e56a')
-  await expect(page.locator('.event-strip strong')).not.toBeEmpty()
-  await expect(page.locator('.overview .deck-group').first()).toBeVisible({ timeout: 30_000 })
-}
 const actions = (page: Page) => page.locator('.workspace-actions')
 async function drawer(page: Page, name: string) {
   await actions(page).getByRole('button', { name, exact: true }).click()
   const panel = page.getByRole('dialog', { name, exact: true })
   await expect(panel).toBeVisible()
   return panel
+}
+async function open(page: Page) {
+  await page.goto('/fr/reconstruction')
+  await expect(page.locator('.event-strip strong')).not.toBeEmpty()
+  const panel = await drawer(page, 'Chronologie')
+  await panel.getByRole('searchbox').fill('359')
+  await panel
+    .getByRole('navigation', { name: 'Chronologie du voyage' })
+    .getByRole('button')
+    .first()
+    .click()
+  await expect(panel).toBeHidden()
+  await expect(page.locator('.overview .deck-group').first()).toBeVisible({ timeout: 30_000 })
 }
 
 test('keeps the map wide and secondary information behind panels', async ({ page }, testInfo) => {
@@ -216,6 +224,8 @@ test('opens the Nen chooser from filters with usable focus', async ({ page }) =>
 
 test('restores an observer link and returns to the canonical map', async ({ page }) => {
   await open(page)
+  const event = new URL(page.url()).searchParams.get('event')
+  expect(event).toBeTruthy()
   const observer = await page
     .getByRole('combobox', { name: 'Point de vue', exact: true })
     .locator('option:not([value="canon"])')
@@ -225,7 +235,7 @@ test('restores an observer link and returns to the canonical map', async ({ page
   const response = page.waitForResponse((response) =>
     response.url().includes(`/reconstruction/perspective?observer=${observer}`),
   )
-  await page.goto(`/fr/reconstruction?observer=${observer}`)
+  await page.goto(`/fr/reconstruction?event=${event}&observer=${observer}`)
   expect((await response).ok()).toBe(true)
   const select = page.getByRole('combobox', { name: 'Point de vue', exact: true })
   await expect(select).toHaveValue(observer!)

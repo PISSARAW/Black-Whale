@@ -1,129 +1,144 @@
 <script lang="ts">
-  // Room interactions are not wired up yet. The elements keep their click
-  // and keyboard affordances so the behaviour can be attached in one place
-  // when it exists; until then this must not log on a public page.
-  function handleElementClick(_elementId: string) {}
+  import { locale } from '$lib/i18n'
+  import {
+    COURTHOUSE_SCALE,
+    courthouseRoom,
+    courthouseFixtures,
+    courthousePolygon,
+    courthouseEntry,
+  } from '$lib/components/map/projection/centralCourthousePlan'
+
+  const french = $derived($locale === 'fr')
+  const seat = courthouseFixtures.find(({ id }) => id.endsWith('-seat'))!
+  const gavel = courthouseFixtures.find(({ id }) => id.endsWith('-gavel'))!
+  const curtain = courthouseFixtures.find(({ id }) => id.endsWith('-curtain'))!
+  const desks = courthouseFixtures.filter(({ id }) => id.endsWith('-desk'))
 </script>
 
 <svg
-  viewBox="0 0 800 600"
+  viewBox="0 0 800 700"
+  role="img"
+  aria-label={french
+    ? 'Plan du Tribunal central du niveau 3 : siège dégagé, maillet et deux pupitres à droite'
+    : 'Tier 3 Central Courthouse plan: exposed seat, gavel and two desks on the right'}
   class="w-full h-full text-[#FFFFF0] bg-[#050505] rounded-lg border border-[#333]"
 >
   <defs>
+    <pattern id="central-courthouse-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#393b3b" stroke-width="0.75" />
+    </pattern>
     <style>
       .wall {
-        stroke: #fffff0;
-        stroke-width: 6;
-        fill: none;
+        fill: url(#central-courthouse-grid);
+        stroke: #d1cdc1;
+        stroke-width: 4;
       }
-      .zone {
-        fill: rgba(255, 215, 0, 0.05);
-        transition: fill 0.2s;
-        cursor: pointer;
+      .fixture {
+        fill: #4b4338;
+        stroke: #c7b79b;
+        stroke-width: 2;
       }
-      .zone:hover {
-        fill: rgba(255, 215, 0, 0.15);
+      .seat {
+        fill: #65594a;
+        stroke: #e4d7bd;
+        stroke-width: 2;
+      }
+      .drapery {
+        fill: #8a867b;
+        stroke: #e0d9c8;
+        stroke-width: 2;
       }
       .label {
         fill: #fffff0;
-        font-family: sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        pointer-events: none;
+        font: 600 14px sans-serif;
         text-anchor: middle;
       }
-      .sublabel {
-        fill: #ffd700;
-        font-size: 12px;
-        pointer-events: none;
+      .sub {
+        fill: #c2bcae;
+        font: 12px sans-serif;
         text-anchor: middle;
       }
-      .furniture {
-        fill: #222;
-        stroke: #666;
-        stroke-width: 3;
+      .note {
+        fill: #9ca6ad;
+        font: 11px sans-serif;
+        text-anchor: middle;
+      }
+      .construction {
+        fill: none;
+        stroke: #8597a4;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 4;
       }
     </style>
   </defs>
 
-  <text x="400" y="40" class="label" font-size="28" fill="#FFD700">Tribunal Central</text>
+  <text x="400" y="36" class="label" style="font-size: 24px">
+    {french ? 'Tribunal central · Niveau 3' : 'Central Courthouse · Tier 3'}
+  </text>
+  <text x="400" y="61" class="sub">
+    {french
+      ? 'Chapitre 359 · Tome 34 · audience de Botobai'
+      : 'Chapter 359 · Volume 34 · Botobai’s hearing'}
+  </text>
+  <text x="400" y="83" class="note">
+    {french
+      ? '12 × 10 m · plafond 4,2 m · dimensions estimées'
+      : '12 × 10 m · 4.2 m ceiling · estimated dimensions'}
+  </text>
 
-  <g transform="translate(50, 80)">
-    <!-- Room Walls -->
-    <rect x="0" y="0" width="700" height="500" class="wall" />
+  <!-- The footprint and every solid below are projected from the shared blueprint. -->
+  <polygon points={courthousePolygon(courthouseRoom.footprint)} class="wall" />
 
-    <!-- Judge's Dais (Top) -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="200"
-      y="0"
-      width="300"
-      height="200"
-      onclick={() => handleElementClick('judges-bench')}
+  <polygon points={curtain.polygon} class="drapery" />
+  <text x={curtain.point.x} y={curtain.point.y + 27} class="sub">
+    {french ? curtain.nameFr : curtain.name}
+  </text>
+
+  {#each desks as desk (desk.id)}
+    <polygon points={desk.polygon} class="fixture" />
+    <line
+      x1={desk.point.x - (desk.size[0] * COURTHOUSE_SCALE) / 2 + 4}
+      y1={desk.point.y + (desk.size[1] * COURTHOUSE_SCALE) / 2 - 5}
+      x2={desk.point.x + (desk.size[0] * COURTHOUSE_SCALE) / 2 - 4}
+      y2={desk.point.y + (desk.size[1] * COURTHOUSE_SCALE) / 2 - 5}
+      stroke="#e0cfac"
+      stroke-width="2"
     />
-    <rect x="220" y="120" width="260" height="60" class="furniture" />
-    <!-- Bench -->
+    <text x={desk.point.x} y={desk.point.y + 4} class="sub">
+      {french ? desk.nameFr : desk.name}
+    </text>
+  {/each}
 
-    <rect x="310" y="20" width="80" height="100" class="furniture" />
-    <text x="350" y="160" class="label text-white">Magistrate's Seat</text>
+  <!-- Open-legged seat, not a desk or a raised judicial platform. -->
+  <polygon points={seat.polygon} class="seat" />
+  <text x={seat.point.x} y={seat.point.y + 56} class="sub">
+    {french ? seat.nameFr : seat.name}
+  </text>
+  <polygon points={gavel.polygon} class="fixture" />
+  <circle cx={gavel.point.x} cy={gavel.point.y} r="4" fill="#ded1b7" />
+  <text x={gavel.point.x - 53} y={gavel.point.y + 4} class="sub">
+    {french ? 'Maillet' : 'Gavel'}
+  </text>
 
-    <!-- Clerk's Desk (Right) -->
-    <rect x="550" y="180" width="100" height="60" class="furniture" />
-    <circle cx="600" cy="160" r="12" fill="#ddd" />
-    <text x="600" y="220" class="sublabel">Clerks</text>
+  <!-- The people in the panel belong to event projection, never to fixed room furniture. -->
+  <text x="400" y="451" class="sub">
+    {french ? 'Espace d’audience dégagé' : 'Open hearing floor'}
+  </text>
+  <text x="400" y="473" class="note">
+    {french ? 'Présences selon l’événement sélectionné' : 'Occupants follow the selected event'}
+  </text>
 
-    <!-- Defendant's Stand (Center) -->
-    <rect
-      role="button"
-      tabindex="0"
-      aria-label="Inspect map area"
-      onkeydown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          event.currentTarget.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-        }
-      }}
-      class="zone"
-      x="300"
-      y="300"
-      width="100"
-      height="100"
-      onclick={() => handleElementClick('defendant-stand')}
-    />
-    <rect x="310" y="310" width="80" height="40" class="furniture" />
-    <circle cx="350" cy="370" r="12" fill="#ddd" />
-    <!-- Defendant -->
-    <line x1="335" y1="380" x2="365" y2="380" stroke="#fff" stroke-width="2" />
-    <!-- Hands bound -->
-    <text x="350" y="340" class="label text-gray-400">Defendant</text>
-
-    <!-- Armed Guards -->
-    <circle cx="150" cy="350" r="15" fill="#4a5568" />
-    <!-- Guard Left -->
-    <line x1="150" y1="320" x2="160" y2="280" stroke="#111" stroke-width="4" />
-    <!-- Rifle -->
-
-    <circle cx="550" cy="350" r="15" fill="#4a5568" />
-    <!-- Guard Right -->
-    <line x1="550" y1="320" x2="540" y2="280" stroke="#111" stroke-width="4" />
-    <!-- Rifle -->
-
-    <text x="150" y="385" class="sublabel text-gray-500">Kakin Army</text>
-    <text x="550" y="385" class="sublabel text-gray-500">Kakin Army</text>
-
-    <!-- Prosecutor / Attorney (Front right) -->
-    <circle cx="500" cy="450" r="12" fill="#ddd" />
-    <rect x="490" y="470" width="20" height="10" fill="#fff" />
-    <!-- Document -->
-    <text x="500" y="495" class="sublabel">Prosecutor</text>
-  </g>
+  <!-- Navigation anchor is inferred; it does not claim a visible doorway in the panel. -->
+  <circle cx={courthouseEntry.x} cy={courthouseEntry.y} r="10" class="construction" />
+  <path d={`M ${courthouseEntry.x} ${courthouseEntry.y + 12} v 17`} class="construction" />
+  <text x="400" y="638" class="note">
+    {french
+      ? 'Accès hors champ · position reconstruite'
+      : 'Off-frame access · reconstructed position'}
+  </text>
+  <text x="400" y="665" class="note">
+    {french
+      ? 'Pupitres à droite · lambris, frise, tentures et plafond quadrillé dans la visite'
+      : 'Desks to the right · wall panels, frieze, drapery and ceiling grid in the tour'}
+  </text>
 </svg>

@@ -2,6 +2,12 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { blueprint, buildShip } from '../../tour/blueprint'
 import type { Space } from '../../tour/types'
+import {
+  COURTHOUSE_SCALE,
+  courthouseFixtures,
+  courthousePolygon,
+  courthouseRoom,
+} from '../../components/map/projection/centralCourthousePlan'
 
 /**
  * The hand-drawn room plans, held to the blueprint the way the deck plans are.
@@ -112,42 +118,39 @@ describe('the observation deck plan', () => {
 })
 
 describe('the central courthouse plan', () => {
-  it('keeps the clerks’ desk at the position and size drawn on the right', () => {
+  it('draws the exposed seat and the two offset right-hand desks from the walked blueprint', () => {
     const court = readFileSync(
       new URL('./local/central-courthouse.svelte', import.meta.url),
       'utf8',
     )
-    const rectAfter = (label: string) => {
-      const rect = court.split(`<!-- ${label} -->`)[1]?.match(/<rect\s+([^>]+)\/>/)
-      if (!rect) throw new Error(`${label} is not drawn`)
-      const values = Object.fromEntries(
-        [...rect[1].matchAll(/(x|y|width|height)="([\d.]+)"/g)].map((match) => [
-          match[1],
-          Number(match[2]),
-        ]),
-      )
-      return values
-    }
-    const room = rectAfter('Room Walls')
-    const desk = rectAfter("Clerk's Desk (Right)")
-    const space = ship.spaces.get('tier-3-central-courthouse-courtroom')!
-    const clerks = ship.structures.find((entry) => entry.id === 'tier-3-central-courthouse-clerks')!
-    const xs = space.footprint.map(([x]) => x)
-    const zs = space.footprint.map(([, z]) => z)
-    const scaleX = (Math.max(...xs) - Math.min(...xs)) / room.width
-    const scaleZ = (Math.max(...zs) - Math.min(...zs)) / room.height
+    const seat = courthouseFixtures.find(({ id }) => id.endsWith('-seat'))!
+    const gavel = courthouseFixtures.find(({ id }) => id.endsWith('-gavel'))!
+    const rear = courthouseFixtures.find(({ id }) => id.endsWith('-rear-desk'))!
+    const front = courthouseFixtures.find(({ id }) => id.endsWith('-front-desk'))!
 
-    // Compare with the authored SVG, so moving either version alone fails.
-    expect(clerks.at[0]).toBeCloseTo(
-      Math.min(...xs) + (desk.x + desk.width / 2 - room.x) * scaleX,
-      4,
-    )
-    expect(clerks.at[1]).toBeCloseTo(
-      Math.min(...zs) + (desk.y + desk.height / 2 - room.y) * scaleZ,
-      4,
-    )
-    expect(clerks.size[0]).toBeCloseTo(desk.width * scaleX, 4)
-    expect(clerks.size[1]).toBeCloseTo(desk.height * scaleZ, 4)
+    // The actual SVG consumes these polygons, rather than carrying an independent
+    // set of rectangles that can drift away from the walked courtroom.
+    expect(court).toContain('points={courthousePolygon(courthouseRoom.footprint)}')
+    expect(court).toContain('points={seat.polygon}')
+    expect(court).toContain('points={gavel.polygon}')
+    expect(court).toContain('points={desk.polygon}')
+    expect(courthouseRoom).toEqual(ship.spaces.get('tier-3-central-courthouse-courtroom'))
+    expect(courthouseFixtures).toHaveLength(5)
+
+    expect(gavel.point.x).toBeLessThan(seat.point.x)
+    expect(front.point.x).toBeGreaterThan(seat.point.x)
+    expect(rear.point.x).toBeGreaterThan(seat.point.x)
+    expect(rear.point.y).toBeLessThan(front.point.y)
+    expect(rear.size[0]).toBeGreaterThan(front.size[0])
+    expect(rear.height).toBeGreaterThan(front.height)
+
+    const corners = courthousePolygon(courthouseRoom.footprint)
+      .split(' ')
+      .map((point) => point.split(',').map(Number))
+    expect(corners[1][0] - corners[0][0]).toBe(12 * COURTHOUSE_SCALE)
+    expect(corners[2][1] - corners[1][1]).toBe(10 * COURTHOUSE_SCALE)
+    expect(court).not.toContain('defendant-stand')
+    expect(court).not.toContain('judges-bench')
   })
 })
 

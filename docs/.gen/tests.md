@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 358
+Fichiers : 359
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -92,7 +92,7 @@ Fichiers : 358
 ## `apps/web/src/lib/assets/maps/localMaps.test.ts`
 
 - the observation deck plan > draws the room the blueprint puts at the bow, corner for corner
-- the central courthouse plan > keeps the clerks’ desk at the position and size drawn on the right
+- the central courthouse plan > draws the exposed seat and the two offset right-hand desks from the walked blueprint
 - room appearance evidence > never changes a room layout or its occupants at random
 
 ## `apps/web/src/lib/assets/maps/sectionMap.test.ts`
@@ -973,6 +973,10 @@ Fichiers : 358
 ## `apps/web/src/lib/tour/cast/worldState.test.ts`
 
 - the world state, in slug space > turns a body’s owner into the id the catalogue files them under
+
+## `apps/web/src/lib/tour/centralCourthouseView.test.ts`
+
+- the Tier 3 Central Courthouse reconstructed from the supplied panel > keeps the reconstructed interior connected and geometrically valid
 
 ## `apps/web/src/lib/tour/chaROfficeView.test.ts`
 

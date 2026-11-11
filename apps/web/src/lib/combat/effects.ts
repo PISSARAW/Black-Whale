@@ -16,7 +16,8 @@ export function advancePersistentNenEffects(state: CombatState, dt: number): Com
     const remaining = effect.remaining - dt
     return remaining > 0 ? [{ ...effect, remaining }] : []
   })
-  return nenEffects.length === state.nenEffects.length && nenEffects.every((effect, index) => effect === state.nenEffects[index])
+  return nenEffects.length === state.nenEffects.length &&
+    nenEffects.every((effect, index) => effect === state.nenEffects[index])
     ? state
     : { ...state, nenEffects }
 }

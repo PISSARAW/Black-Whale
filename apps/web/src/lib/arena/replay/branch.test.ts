@@ -9,7 +9,16 @@ describe('interactive replay branch', () => {
     const setup = {
       playerAt: [0, 0] as [number, number],
       opponentAt: [1.5, 0] as [number, number],
-      terrain: { id: 'branch', footprint: [[-5, -5], [5, -5], [5, 5], [-5, 5]] as [number, number][], walls: [] },
+      terrain: {
+        id: 'branch',
+        footprint: [
+          [-5, -5],
+          [5, -5],
+          [5, 5],
+          [-5, 5],
+        ] as [number, number][],
+        walls: [],
+      },
     }
     let state = initialCombatState(setup)
     const original = new ArenaRecorder({ setup, doctrine: 'counter', difficulty: 'fighter' })

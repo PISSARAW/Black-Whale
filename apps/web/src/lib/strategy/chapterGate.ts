@@ -21,6 +21,7 @@ export function abilitiesRevealedByChapter(
   chapterNumber: number,
 ): string[] {
   return abilityIds.filter(
-    (abilityId) => (STRATEGY_ABILITY_REVEAL_CHAPTER[abilityId] ?? Number.POSITIVE_INFINITY) <= chapterNumber,
+    (abilityId) =>
+      (STRATEGY_ABILITY_REVEAL_CHAPTER[abilityId] ?? Number.POSITIVE_INFINITY) <= chapterNumber,
   )
 }

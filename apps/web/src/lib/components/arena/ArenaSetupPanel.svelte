@@ -97,7 +97,9 @@
     {/each}
   </select>
   <select bind:value={opponentId} onchange={onChange} aria-label="Arena opponent profile">
-    <option value="adaptive">{$locale === 'fr' ? 'Adversaire adaptatif' : 'Adaptive opponent'}</option>
+    <option value="adaptive"
+      >{$locale === 'fr' ? 'Adversaire adaptatif' : 'Adaptive opponent'}</option
+    >
     {#each V3_OPPONENTS as opponent (opponent.id)}
       <option value={opponent.id}>{$locale === 'fr' ? opponent.nameFr : opponent.nameEn}</option>
     {/each}

@@ -2,10 +2,7 @@ import { combatReducer, initialCombatState } from '../../combat/reducer'
 import type { CombatAction, CombatSetup, CombatSide, CombatState } from '../../combat/types'
 import { stateChecksum } from '../replay/checksum'
 
-type NetworkAction = Exclude<
-  CombatAction,
-  { type: 'TICK' } | { type: 'SYNC_POSITION' }
->
+type NetworkAction = Exclude<CombatAction, { type: 'TICK' } | { type: 'SYNC_POSITION' }>
 
 export interface ArenaPlayerCommand {
   matchId: string
@@ -22,11 +19,7 @@ export interface ArenaServerSnapshot {
 }
 
 export type ArenaCommandRejection =
-  | 'MATCH_MISMATCH'
-  | 'UNKNOWN_PLAYER'
-  | 'OUT_OF_ORDER'
-  | 'WRONG_SIDE'
-  | 'MATCH_FINISHED'
+  'MATCH_MISMATCH' | 'UNKNOWN_PLAYER' | 'OUT_OF_ORDER' | 'WRONG_SIDE' | 'MATCH_FINISHED'
 
 export class AuthoritativeArenaMatch {
   private state: CombatState
@@ -43,7 +36,9 @@ export class AuthoritativeArenaMatch {
     this.sequenceByPlayer.set(players.opponent, 0)
   }
 
-  submit(command: ArenaPlayerCommand): { accepted: true } | { accepted: false; reason: ArenaCommandRejection } {
+  submit(
+    command: ArenaPlayerCommand,
+  ): { accepted: true } | { accepted: false; reason: ArenaCommandRejection } {
     if (command.matchId !== this.id) return { accepted: false, reason: 'MATCH_MISMATCH' }
     const side = this.sideFor(command.playerId)
     if (!side) return { accepted: false, reason: 'UNKNOWN_PLAYER' }

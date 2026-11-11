@@ -17,10 +17,10 @@ describe('Arena experience', () => {
   })
 
   it('uses recent bouts for the adaptive opponent', () => {
-    const history = Array.from({ length: 4 }, () =>
-      replay({ type: 'GUARD', side: 'player' }),
-    )
-    expect(resolveArenaExperience({ formatId: 'survival', opponentId: 'adaptive', history })).toMatchObject({
+    const history = Array.from({ length: 4 }, () => replay({ type: 'GUARD', side: 'player' }))
+    expect(
+      resolveArenaExperience({ formatId: 'survival', opponentId: 'adaptive', history }),
+    ).toMatchObject({
       doctrine: 'artillery',
       difficulty: 'master',
       observedBouts: 4,

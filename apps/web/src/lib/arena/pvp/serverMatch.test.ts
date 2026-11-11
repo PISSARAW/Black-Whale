@@ -6,7 +6,12 @@ const setup = {
   opponentAt: [1.5, 0] as [number, number],
   terrain: {
     id: 'pvp-room',
-    footprint: [[-5, -5], [5, -5], [5, 5], [-5, 5]] as [number, number][],
+    footprint: [
+      [-5, -5],
+      [5, -5],
+      [5, 5],
+      [-5, 5],
+    ] as [number, number][],
     walls: [],
   },
 }

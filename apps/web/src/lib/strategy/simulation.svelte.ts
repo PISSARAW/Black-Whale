@@ -52,6 +52,7 @@ import {
   type ShipLogistics,
 } from './logistics'
 import type { FactionAIMemory } from './aiIntent'
+import { abilitiesRevealedByChapter } from './chapterGate'
 export type { StrategyOrder, StrategyOrderType } from './rules'
 export type {
   StrategyFaction,
@@ -220,7 +221,12 @@ export function createSimulationStore() {
   }
 
   function abilityIdsForCharacter(characterId: string): string[] {
-    return currentState ? characterAbilityIds(currentState, characterId) : []
+    return currentState
+      ? abilitiesRevealedByChapter(
+          characterAbilityIds(currentState, characterId),
+          activeScenario.chapterNumber,
+        )
+      : []
   }
 
   function refreshIntel(scoutedLocations: readonly string[], guardedLocations: readonly string[]) {

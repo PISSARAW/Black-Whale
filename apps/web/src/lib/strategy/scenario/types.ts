@@ -59,6 +59,8 @@ export interface StrategyScenarioValidationContext {
   characterIds: ReadonlySet<string>
   locationIds: ReadonlySet<string>
   sourceIds?: ReadonlySet<string>
+  chapterNumbers?: ReadonlySet<number>
+  characterFirstChapter?: Readonly<Record<string, number>>
 }
 
 export interface StrategyScenarioValidationIssue {

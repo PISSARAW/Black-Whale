@@ -16,6 +16,8 @@ export function validateStrategyScenario(
   const add = (path: string, message: string) => issues.push({ path, message })
   if (scenario.schemaVersion !== 2) add('schemaVersion', 'must be 2')
   if (!scenario.id.trim()) add('id', 'must not be empty')
+  if (context.chapterNumbers && !context.chapterNumbers.has(scenario.chapterNumber))
+    add('chapterNumber', `unknown chapter ${scenario.chapterNumber}`)
   if (scenario.maxTurns < 2) add('maxTurns', 'must be at least 2')
   if (scenario.playableFactions.length < 2)
     add('playableFactions', 'requires at least two factions')
@@ -37,6 +39,11 @@ export function validateStrategyScenario(
     for (const characterId of entry.requiredCharacterIds)
       if (!context.characterIds.has(characterId))
         add(`playableFactions.${index}.requiredCharacterIds`, `unknown character ${characterId}`)
+      else if ((context.characterFirstChapter?.[characterId] ?? 0) > scenario.chapterNumber)
+        add(
+          `playableFactions.${index}.requiredCharacterIds`,
+          `${characterId} is not revealed until chapter ${context.characterFirstChapter![characterId]}`,
+        )
     for (const objective of [entry.publicObjective, entry.secretObjective])
       if (objective.target < 1) add(`objectives.${objective.id}.target`, 'must be positive')
   }
@@ -50,9 +57,12 @@ export function validateStrategyScenario(
     if (event.aiMoveMultiplier < 0)
       add(`events.${event.id}.aiMoveMultiplier`, 'must be non-negative')
   }
-  for (const source of scenario.provenance)
+  for (const source of scenario.provenance) {
     if (context.sourceIds && !context.sourceIds.has(source.sourceId))
       add('provenance', `unknown source ${source.sourceId}`)
+    if (source.chapter > scenario.chapterNumber)
+      add('provenance', `chapter ${source.chapter} leaks beyond scenario chapter`)
+  }
   return issues
 }
 

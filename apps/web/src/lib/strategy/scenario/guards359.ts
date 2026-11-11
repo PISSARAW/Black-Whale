@@ -16,7 +16,9 @@ export const GUARDS_359_SCENARIO: StrategyScenarioV2 = {
   title: 'Guard War',
   description:
     'On the first day of the voyage, three factions move their guards, test their adversaries, and seek an advantage without triggering open war.',
-  chapterNumber: 359,
+  // The operation starts from the chapter 359 layout, but its complete roster
+  // is not canonically visible until Musse, Sarahell and Moswana appear.
+  chapterNumber: 363,
   maxTurns: 8,
   defaultDifficulty: 'NORMAL',
   playableFactions: [
@@ -130,6 +132,11 @@ export const GUARDS_359_SCENARIO: StrategyScenarioV2 = {
       sourceId: 'chapter-359',
       chapter: 359,
       note: 'Departure from Black Whale, initial distribution of princes and their guards.',
+    },
+    {
+      sourceId: 'chapter-363',
+      chapter: 363,
+      note: 'First canonical appearance of the complete Benjamin and Camilla guard roster.',
     },
   ],
 }

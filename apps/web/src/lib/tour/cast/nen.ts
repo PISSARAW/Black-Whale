@@ -27,6 +27,8 @@
  *   Ren   — a body that has just been given a reason.
  *   Gyo   — a body looking at the aura it has just felt raised beside it.
  *   Ryu   — that same body putting its aura where a blow would land.
+ *   Ken   — that same body, when what it felt was On: a threat does not tell
+ *           you where the blow will land, so you cover everything at once.
  *
  * Ko is deliberately absent. Ko is every other zone emptied into one, which is
  * a commitment to a strike, and nothing the walk can do to a body is a strike:
@@ -107,6 +109,7 @@ export const CALM: Situation = {
   visitorIn: null,
   visitorCasting: false,
   visitorHidden: false,
+  visitorMenacing: false,
   hostileRooms: [],
   aimedAt: null,
   sensedBy: {},
@@ -123,6 +126,8 @@ interface Conduct {
   gyo?: boolean
   /** Where the aura is put, or absent for a body that has not distributed it. */
   ryu?: Partial<Record<Part, number>>
+  /** Covering the whole body evenly, which replaces any distribution. */
+  ken?: boolean
 }
 
 const MODE_ACTIONS: Record<NenAuraMode, NenTechniqueAction<Part>> = {
@@ -149,6 +154,7 @@ function stateFor(conduct: Conduct): NenTechniqueState<Part> {
   if (conduct.en) actions.push({ type: 'EN', radius: conduct.en })
   if (conduct.gyo) actions.push({ type: 'GYO', on: true })
   if (conduct.ryu) actions.push({ type: 'RYU', distribution: conduct.ryu })
+  if (conduct.ken) actions.push({ type: 'KEN', on: true })
   return actions.reduce(
     (state, action) => transitionNen(state, action).state,
     createNenTechniqueState<Part>(),
@@ -194,8 +200,14 @@ function isWatching(post: Post): boolean {
  * visible in the room. A body looks harder only at what it cannot yet see.
  */
 function alarmOf(post: Post, situation: Situation) {
-  const { felt, looking } = contactWith(post, situation)
-  return { looking, alarmed: felt || situation.hostileRooms.includes(post.spaceId) }
+  const { felt, looking, menaced } = contactWith(post, situation)
+  return { looking, menaced, alarmed: felt || situation.hostileRooms.includes(post.spaceId) }
+}
+
+/** How an alarmed body covers itself: Ken against On, Ryu against anything else. */
+function guarding(alarmed: boolean, menaced: boolean): Pick<Conduct, 'ken' | 'ryu'> {
+  if (menaced) return { ken: true }
+  return alarmed ? { ryu: GUARDED } : {}
 }
 
 /**
@@ -226,13 +238,13 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
   if (showsNothing(post, situation)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
   const held = situation.holds[post.member.characterId] ?? null
   if (held) return underHold(held)
-  const { looking, alarmed } = alarmOf(post, situation)
+  const { looking, menaced, alarmed } = alarmOf(post, situation)
   const aura = alarmed ? 'ren' : 'ten'
   const nen = stateFor({
     mode: aura,
     en: isWatching(post) ? WATCH_EN_RADIUS : null,
     gyo: looking,
-    ...(alarmed ? { ryu: GUARDED } : {}),
+    ...guarding(alarmed, menaced),
   })
   return { aura, nen, ...(alarmed ? { alert: true } : {}) }
 }

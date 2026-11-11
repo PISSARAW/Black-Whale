@@ -112,6 +112,7 @@ describe('how far the visitor reaches a body', () => {
     expect(contactWith(guard, { ...CALM, sensedBy: { sakata: 'aura' } })).toEqual({
       felt: true,
       looking: true,
+      menaced: false,
     })
   })
 
@@ -119,6 +120,7 @@ describe('how far the visitor reaches a body', () => {
     expect(contactWith(guard, { ...CALM, sensedBy: { sakata: 'body' } })).toEqual({
       felt: false,
       looking: true,
+      menaced: false,
     })
   })
 

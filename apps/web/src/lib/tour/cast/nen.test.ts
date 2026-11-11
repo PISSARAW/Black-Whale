@@ -77,6 +77,34 @@ describe('the conduct when something happens', () => {
     expect(shares.reduce((sum, share) => sum + share, 0)).toBeCloseTo(1)
   })
 
+  it('answers On with Ken rather than a distribution', () => {
+    const menacing = { ...casting, visitorMenacing: true }
+    const look = auraFor(post({ characterId: 'kurapika', role: 'Nen teacher' }), menacing)
+    expect(look.aura).toBe('ren')
+    expect(look.alert).toBe(true)
+    expect(look.nen?.ken).toBe(true)
+    expect(look.nen?.gyo).toBe(true)
+  })
+
+  it('keeps Ryu, not Ken, for an ordinary Ren in the room', () => {
+    const look = auraFor(post({ characterId: 'kurapika', role: 'Nen teacher' }), casting)
+    expect(look.nen?.ken).toBe(false)
+  })
+
+  it('does not brace against an On it cannot feel', () => {
+    const elsewhere = { ...casting, visitorIn: 'tier-5-engine-room', visitorMenacing: true }
+    const look = auraFor(post({ characterId: 'kurapika', role: 'Nen teacher' }), elsewhere)
+    expect(look.aura).toBe('ten')
+    expect(look.nen?.ken).toBe(false)
+  })
+
+  it('braces against an On hidden under In only once it has been sensed', () => {
+    const hidden = { ...casting, visitorHidden: true, visitorMenacing: true }
+    const guard = post({ characterId: 'sakata' })
+    expect(auraFor(guard, hidden).nen?.ken).toBe(false)
+    expect(auraFor(guard, { ...hidden, sensedBy: { sakata: 'aura' } }).nen?.ken).toBe(true)
+  })
+
   it('is not felt in the next room along', () => {
     const elsewhere = {
       ...CALM,

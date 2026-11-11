@@ -9,10 +9,10 @@
    * timeline, and nothing here touches the `/ship` map — the two views share the
    * catalogue and nothing else.
    *
-   * three.js is pulled in on mount rather than imported at the top of the
-   * module so the server never has to evaluate a WebGL library to render a page.
+   * three.js is pulled in on mount so the server never evaluates WebGL to render a page.
    */
   import { onMount, untrack } from 'svelte'
+  import { touchForce, touchKind, touchTurn } from '$lib/tour/auraTouch'
   import {
     createNenTechniqueState,
     isAuraAtRest,
@@ -3191,15 +3191,7 @@
         const aimed = aimedSolidAt ?? facingSolid()
         if (!aimed) return
         const target = solidById(ship, world, aimed.id) ?? aimed
-        const attackShare = Number(effectiveNen.ryu.hands ?? 0) + Number(effectiveNen.ryu.feet ?? 0)
-        const kind =
-          effectiveNen.ko || attackShare >= 0.6
-            ? 'strike'
-            : effectiveNen.on || effectiveNen.mode === 'ren'
-              ? 'pressure'
-              : effectiveNen.gyo || effectiveNen.en
-                ? 'sense'
-                : 'channel'
+        const kind = touchKind(effectiveNen)
         if (kind === 'channel' && !effectiveNen.shu.includes(target.id)) {
           useNen({ type: 'SHU', objectId: target.id, on: true })
         }
@@ -3207,21 +3199,12 @@
           const dx = target.at[0] - pointer[0]
           const dz = target.at[1] - pointer[1]
           const distance = Math.max(0.001, Math.hypot(dx, dz))
-          const force =
-            kind === 'strike'
-              ? 0.9
-              : kind === 'pressure'
-                ? effectiveNen.on
-                  ? 1.25
-                  : 0.55
-                : effectiveNen.ken
-                  ? 0.32
-                  : 0.18
+          const force = touchForce(kind, effectiveNen)
           const held = world.solids[target.id] ?? {}
           world.solids[target.id] = {
             ...held,
             at: [target.at[0] + (dx / distance) * force, target.at[1] + (dz / distance) * force],
-            rotation: target.rotation + (kind === 'strike' ? 7 : kind === 'pressure' ? 3 : 1),
+            rotation: target.rotation + touchTurn(kind),
           }
         }
         playNenObjectSound(kind)

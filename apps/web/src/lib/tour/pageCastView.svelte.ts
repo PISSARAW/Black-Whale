@@ -141,6 +141,7 @@ export class TourCastView {
       visitorIn,
       visitorCasting: casting,
       visitorHidden: this.hidden,
+      visitorMenacing: this.menacing,
       hostileRooms: hostileRooms(this.options.ship, world),
       aimedAt,
       holds,
@@ -151,6 +152,7 @@ export class TourCastView {
 
   /** Booleans and strings stop the frame-rate visitor here. See `cast/sensing.ts`. */
   private hidden = $derived.by(() => this.options.readVisitor().nen.in)
+  private menacing = $derived.by(() => this.options.readVisitor().nen.on)
   private sensed = $derived.by(() => {
     const visitor = this.options.readVisitor()
     const { world } = this.options.read()

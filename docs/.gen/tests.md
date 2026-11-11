@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 353
+Fichiers : 354
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -817,6 +817,10 @@ Fichiers : 353
 - one beat > never goes past the ceiling or below zero
 - an emptied body > drops to Ten and lets go of every shaping that spends
 - what the reserve refuses > refuses nothing above the threshold
+
+## `apps/web/src/lib/tour/auraTouch.test.ts`
+
+- what a touch of aura does to a solid > pushes hardest under On, even though On weights the hands and feet
 
 ## `apps/web/src/lib/tour/banquetSurroundings.test.ts`
 

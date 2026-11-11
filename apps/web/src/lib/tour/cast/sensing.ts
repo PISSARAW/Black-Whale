@@ -53,6 +53,13 @@ export interface Contact {
   /** Whether the visitor is holding In over what they raise. */
   visitorHidden: boolean
   /**
+   * Whether what the visitor has raised is On.
+   *
+   * On is a Ren with intent in it, and a body that feels one is not being told
+   * that somebody is casting nearby: it is being told what that somebody means.
+   */
+  visitorMenacing: boolean
+  /**
    * Who the visitor has their aura levelled at, personally (ADR-004).
    *
    * Being pointed at is not the same event as being nearby when something
@@ -124,12 +131,22 @@ export function sensesFromKey(key: string): Senses {
  * the visitor's In. `looking` adds a body in your sweep with nothing on it:
  * worth a Gyo, not worth a Ren.
  */
-export function contactWith(post: Post, contact: Contact): { felt: boolean; looking: boolean } {
+export function contactWith(post: Post, contact: Contact): ContactReach {
   const id = post.member.characterId
   const sense = contact.sensedBy[id]
   const sees = !contact.visitorHidden || sense !== undefined
   const aimed = contact.aimedAt === id
   const inRoom = contact.visitorCasting && contact.visitorIn === post.spaceId
   const felt = sense === 'aura' || (sees && (aimed || inRoom))
-  return { felt, looking: felt || sense === 'body' }
+  return { felt, looking: felt || sense === 'body', menaced: felt && contact.visitorMenacing }
+}
+
+/** How far the visitor has reached one body. */
+export interface ContactReach {
+  /** Aura at this body: in its sweep, raised in its room, or levelled at it. */
+  felt: boolean
+  /** Worth a Gyo: felt, or a body in its sweep with nothing on it. */
+  looking: boolean
+  /** Felt, and the aura felt is On: a threat rather than a technique. */
+  menaced: boolean
 }

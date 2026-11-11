@@ -11,6 +11,89 @@ import { strategyHatsuResolution } from './hatsu'
 
 export type AIPersonality = 'CAUTIOUS' | 'AGGRESSIVE' | 'OPPORTUNIST'
 
+export interface StrategyAIPerspective {
+  /** A redacted world: locations, the faction's own units, and observed opponents only. */
+  state: WorldState
+  knownOpponentLocations: string[]
+}
+
+/**
+ * Build the sole world view accepted by the tactical AI. An opposing unit is
+ * observed only when it currently shares a location with one of the faction's
+ * living units; hidden entities, abilities and effects are removed entirely.
+ */
+export function projectFactionAIPerspective(input: {
+  state: WorldState
+  memberCharacterIds: readonly string[]
+  opposingEntityIds: readonly string[]
+  unitConditions: Readonly<Record<string, UnitCondition>>
+}): StrategyAIPerspective {
+  const ownEntities = input.memberCharacterIds
+    .map((id) => resolveControlledEntity(input.state, id))
+    .filter(
+      (entity): entity is WorldEntity =>
+        Boolean(entity) && input.unitConditions[entity!.id] !== 'ELIMINATED',
+    )
+  const ownIds = new Set(ownEntities.map((entity) => entity.id))
+  const ownLocations = new Set(
+    ownEntities
+      .map((entity) => input.state.presences[entity.id]?.locationId)
+      .filter((id): id is string => Boolean(id)),
+  )
+  const visibleOpponentIds = new Set(
+    input.opposingEntityIds.filter((id) => {
+      const locationId = input.state.presences[id]?.locationId
+      return (
+        input.unitConditions[id] !== 'ELIMINATED' &&
+        Boolean(locationId) &&
+        ownLocations.has(locationId!)
+      )
+    }),
+  )
+  const visibleIds = new Set([...ownIds, ...visibleOpponentIds])
+  const keepEntity = ([id, entity]: [string, WorldEntity]) =>
+    entity.kind === 'LOCATION' || visibleIds.has(id)
+  const entities = Object.fromEntries(Object.entries(input.state.entities).filter(keepEntity))
+  const presences = Object.fromEntries(
+    Object.entries(input.state.presences).filter(([id]) => visibleIds.has(id)),
+  )
+  const ownOwnerIds = new Set([
+    ...input.memberCharacterIds,
+    ...ownEntities.map((entity) => entity.id),
+  ])
+
+  return {
+    state: {
+      ...input.state,
+      entities,
+      presences,
+      bodyStates: Object.fromEntries(
+        Object.entries(input.state.bodyStates).filter(([id]) => visibleIds.has(id)),
+      ),
+      consciousnessByBody: Object.fromEntries(
+        Object.entries(input.state.consciousnessByBody).filter(([id]) => visibleIds.has(id)),
+      ),
+      abilitiesByOwner: Object.fromEntries(
+        Object.entries(input.state.abilitiesByOwner).filter(([id]) => ownOwnerIds.has(id)),
+      ),
+      effects: Object.fromEntries(
+        Object.entries(input.state.effects).filter(([, effect]) =>
+          visibleIds.has(effect.source.id),
+        ),
+      ),
+      knowledgeByObserver: Object.fromEntries(
+        Object.entries(input.state.knowledgeByObserver).filter(([id]) => ownOwnerIds.has(id)),
+      ),
+      vestiges: Object.fromEntries(
+        Object.entries(input.state.vestiges).filter(([id]) => ownOwnerIds.has(id)),
+      ),
+    },
+    knownOpponentLocations: [...visibleOpponentIds]
+      .map((id) => input.state.presences[id]?.locationId)
+      .filter((id): id is string => Boolean(id)),
+  }
+}
+
 export function partitionBlockedMoves(
   events: readonly ProposedWorldEvent[],
   blockedLocationIds: readonly string[],
@@ -38,7 +121,7 @@ export function generateFactionAIOperations(input: {
   unitConditions: Record<string, UnitCondition>
   destinationIds: string[]
   destinationTypes: Record<string, 'TIER' | 'ZONE' | 'ROOM' | 'CORRIDOR' | 'UNKNOWN'>
-  playerLocations: string[]
+  knownOpponentLocations: string[]
   pact: boolean
   turn: number
   seed: string
@@ -55,7 +138,7 @@ export function generateFactionAIOperations(input: {
     .map((entity) => input.state.presences[entity.id]?.locationId)
     .filter((id): id is string => Boolean(id))
   const destinations = input.pact
-    ? input.destinationIds.filter((id) => !input.playerLocations.includes(id))
+    ? input.destinationIds.filter((id) => !input.knownOpponentLocations.includes(id))
     : input.destinationIds
   const events: ProposedWorldEvent[] = []
   const deniedLocations: string[] = []
@@ -76,7 +159,7 @@ export function generateFactionAIOperations(input: {
           sourceLocationId,
           targetLocationId: sourceLocationId ?? input.destinationIds[0] ?? '',
           confirmedHostilesAtTarget:
-            sourceLocationId && input.playerLocations.includes(sourceLocationId) ? 1 : 0,
+            sourceLocationId && input.knownOpponentLocations.includes(sourceLocationId) ? 1 : 0,
           eliminatedAllies: input.memberCharacterIds.filter((id) => {
             const ally = resolveControlledEntity(input.state, id)
             return ally && input.unitConditions[ally.id] === 'ELIMINATED'
@@ -94,10 +177,10 @@ export function generateFactionAIOperations(input: {
         input.state.presences[entity.id]?.locationId
       )
         deniedLocations.push(input.state.presences[entity.id].locationId!)
-      if (effects.includes('MOBILITY') && input.playerLocations.length) {
+      if (effects.includes('MOBILITY') && input.knownOpponentLocations.length) {
         events.push(
           ...generateAIOperations(input.state, [entity.originalCharacterId ?? entity.id], {
-            destinationIds: [input.playerLocations[0]],
+            destinationIds: [input.knownOpponentLocations[0]],
             destinationTypes: input.destinationTypes,
             moveChance: 1,
             random: () => 0,
@@ -111,7 +194,7 @@ export function generateFactionAIOperations(input: {
       currentLocationId: input.state.presences[entity.id]?.locationId,
       availableLocationIds: destinations,
       occupiedLocationIds: occupied,
-      opposingLocationIds: input.playerLocations,
+      opposingLocationIds: input.knownOpponentLocations,
       roll: random(),
     })
     if (!destination) continue

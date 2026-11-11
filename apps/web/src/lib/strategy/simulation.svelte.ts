@@ -310,9 +310,6 @@ export function createSimulationStore() {
       playerFactionId,
       claimedCharacters: allowedCharacters,
       claimedEntities: playerEntityIds,
-      playerLocations: factionEntityIds(playerFactionId)
-        .map((entityId) => currentState!.presences[entityId]?.locationId)
-        .filter((id): id is string => Boolean(id)),
       destinationIds: scenarioLocationIds,
       locations,
       unitConditions,

@@ -4,7 +4,8 @@ import type { FactionRelationship } from './diplomacy'
 import type { UnitCondition } from './conflict'
 import { scenarioDoctrineForFaction } from './scenario'
 import type { StrategyScenarioV2 } from './scenario/types'
-import { generateFactionAIOperations } from './tacticalAI'
+import { factionEntityIds } from './selectors'
+import { generateFactionAIOperations, projectFactionAIPerspective } from './tacticalAI'
 import type { StrategyFaction, StrategyLocation } from './types'
 
 /**
@@ -24,7 +25,6 @@ export interface OppositionPlan {
   /** Units the player has already committed; the opposition may not claim them. */
   claimedCharacters: Set<string>
   claimedEntities: Set<string>
-  playerLocations: string[]
   destinationIds: string[]
   locations: StrategyLocation[]
   unitConditions: Record<string, UnitCondition>
@@ -46,6 +46,7 @@ export function planOpposition(plan: OppositionPlan): OppositionOperations {
   const claimed = new Set(plan.claimedCharacters)
   const claimedEntities = new Set(plan.claimedEntities)
   const { destinationIds } = plan
+  const opposingEntityIds = factionEntityIds(plan.state, plan.factions, plan.playerFactionId)
   const destinationTypes = Object.fromEntries(
     plan.locations.map((location) => [
       location.id,
@@ -65,15 +66,21 @@ export function planOpposition(plan: OppositionPlan): OppositionOperations {
         return true
       })
 
-    const aiPlan = generateFactionAIOperations({
+    const perspective = projectFactionAIPerspective({
       state: plan.state,
+      memberCharacterIds: members,
+      opposingEntityIds,
+      unitConditions: plan.unitConditions,
+    })
+    const aiPlan = generateFactionAIOperations({
+      state: perspective.state,
       faction,
       doctrine: scenarioDoctrineForFaction(faction.id, plan.scenario),
       memberCharacterIds: members,
       unitConditions: plan.unitConditions,
       destinationIds,
       destinationTypes,
-      playerLocations: plan.playerLocations,
+      knownOpponentLocations: perspective.knownOpponentLocations,
       pact: plan.relationships[faction.id]?.pact ?? false,
       turn: plan.turn,
       seed: `${plan.branchId}:${plan.turn}:${faction.id}`,

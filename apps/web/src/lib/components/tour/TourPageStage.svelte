@@ -7,6 +7,7 @@
   import TourAddressCard from './TourAddressCard.svelte'
   import TourDialogueCard from './TourDialogueCard.svelte'
   import TourFrameBudget from './TourFrameBudget.svelte'
+  import TourAuraReserve from './TourAuraReserve.svelte'
 
   type SceneProps = ComponentProps<typeof TourScene>
   type OverlayProps = ComponentProps<typeof TourSceneOverlay>
@@ -35,7 +36,10 @@
       | 'heading'
       | 'aimedAt'
       | 'aimedSolidAt'
-    >
+    > & {
+      /** The visitor's aura reserve, drawn here because the scene does not own it. */
+      reserve?: number
+    }
     overlay: OverlayProps
     /**
      * The evidence card, over the canvas rather than beside it: it answers a
@@ -66,6 +70,7 @@
     gyoMode = false,
     concertPanel,
   }: Props = $props()
+  const { reserve, ...sceneProps } = $derived(scene)
 </script>
 
 <section id="tour-stage-container" class="tour-stage" class:immersive>
@@ -89,8 +94,9 @@
     bind:aimedSolidAt={navigation.aimedSolidAt}
     bind:takeScreenshot
     {gyoMode}
-    {...scene}
+    {...sceneProps}
   />
+  {#if reserve !== undefined}<TourAuraReserve {reserve} />{/if}
   <TourSceneOverlay {...overlay} tools={concertPanel} />
   <TourExamineCard {...examine} />
   <TourDialogueCard {...dialogue} />

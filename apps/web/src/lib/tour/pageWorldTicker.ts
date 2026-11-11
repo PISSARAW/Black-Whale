@@ -1,4 +1,5 @@
 import type { Ship } from '$lib/tour/blueprint'
+import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
 import { wormExit, type TourReport, type TourWorld } from '$lib/tour/hatsu'
 import {
   stepBeast,
@@ -14,6 +15,23 @@ import {
   type WorldStep,
 } from '$lib/tour/pageWorldSteps'
 import type { Vec2 } from '$lib/tour/types'
+
+/**
+ * Emperor Time over the scene, deepening with what it has spent.
+ *
+ * The walk's own ledger rather than the global store `/nen` keeps: the hours
+ * are counted in `TourWorld` on the page's own beat — see `emperor.ts` — and a
+ * wash driven by anything else would be the picture and the panel quoting two
+ * different years.
+ */
+export function scarletWashOf(
+  scarlet: TourWorld['scarlet'],
+  label: (hours: number) => string,
+): { share: number; label: string } | null {
+  return scarlet
+    ? { share: Math.min(1, scarlet.hours / HOURS_IN_A_YEAR), label: label(scarlet.hours) }
+    : null
+}
 
 interface TickerContext {
   world: TourWorld

@@ -21,6 +21,13 @@ import {
 import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
 import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
 import { canUseTourHatsu } from '$lib/tour/hatsuMode'
+import {
+  breathe,
+  exhaustionActions,
+  refusedByReserve,
+  reserveAvailability,
+  RESERVE_MAX,
+} from '$lib/tour/auraReserve'
 import type { Vec2 } from '$lib/tour/types'
 
 interface ActivationContext {
@@ -51,6 +58,20 @@ export class TourHatsuSession {
   penalty = $state<string | null>(null)
   /** TourSense reads and mutates the same Nen contract as every other surface. */
   nen = $state<NenTechniqueState>(loadTourNen())
+  /** What the visitor has left to spend. See `auraReserve.ts`. */
+  reserve = $state(RESERVE_MAX)
+  /** What the Nen panel greys out because the reserve cannot pay for it. */
+  availability = $derived(reserveAvailability(this.reserve, this.nen))
+
+  /** What the stage needs of the visitor's Nen, as one spread into `scene`. */
+  get scene() {
+    return {
+      nen: this.nen,
+      onNenChange: this.useNen,
+      nenAvailability: this.availability,
+      reserve: this.reserve,
+    }
+  }
   private wasFutureVisible = false
   private futureArmed = false
   private activationKind: HatsuInteractionKind | null = null
@@ -150,7 +171,16 @@ export class TourHatsuSession {
     this.options.show(result.report)
   }
 
+  /** One second of the walk's beat: the reserve moves, and an empty body lets go. */
+  breathe = () => {
+    this.reserve = breathe(this.reserve, this.nen)
+    if (this.reserve > 0) return
+    for (const action of exhaustionActions(this.nen)) this.useNen(action)
+  }
+
   useNen = (action: NenTechniqueAction): NenTransition => {
+    if (refusedByReserve(this.reserve, this.nen, action))
+      return { state: this.nen, accepted: false }
     const result = transitionNen(this.nen, action)
     if (result.accepted) {
       this.nen = result.state

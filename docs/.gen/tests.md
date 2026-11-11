@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 351
+Fichiers : 353
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -811,6 +811,13 @@ Fichiers : 351
 - how much aura is out > bends nothing when there is no scene to read
 - the shell an aura is seen as from outside > gives a body in Zetsu nothing to wear
 
+## `apps/web/src/lib/tour/auraReserve.test.ts`
+
+- what each state does to the reserve > rests fastest in Zetsu, keeps in Ten, spends in Ren
+- one beat > never goes past the ceiling or below zero
+- an emptied body > drops to Ten and lets go of every shaping that spends
+- what the reserve refuses > refuses nothing above the threshold
+
 ## `apps/web/src/lib/tour/banquetSurroundings.test.ts`
 
 - the banquet walls and mezzanines > places every wall face inside its room and bounds panel frames to the doorway-cut run
@@ -935,6 +942,13 @@ Fichiers : 351
 ## `apps/web/src/lib/tour/cast/roster.test.ts`
 
 - the roster > reads a body out of the world state, with its room and its chapter
+
+## `apps/web/src/lib/tour/cast/sensing.test.ts`
+
+- what a sweep finds > feels an aura in Ten inside the radius
+- the key a reactive caller stops at > round-trips and does not depend on order
+- how far the visitor reaches a body > is felt when an aura is in the sweep, even with nothing raised
+- the conduct it produces > raises Ren and alarms the body that feels an aura
 
 ## `apps/web/src/lib/tour/cast/wardrobe.test.ts`
 

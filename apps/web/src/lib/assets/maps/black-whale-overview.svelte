@@ -989,7 +989,7 @@
       at: [548.5, 172.2],
       cut: false,
       through: true,
-      inferred: false,
+      inferred: true,
     },
     {
       id: 'tier-1-banquet-side-room-port',

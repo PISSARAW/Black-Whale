@@ -66,7 +66,7 @@ export const MANGA_CINEPLEX_VIEWS = [
   view({
     id: 'cineplex-auditorium-screen',
     spaceId: 'tier-3-cineplex-screen-1',
-    at: [-24.5, 18.8],
+    at: [-25.2, 18.8],
     target: [-24.5, 36.8],
     pitch: 0.08,
     chapter: 393,

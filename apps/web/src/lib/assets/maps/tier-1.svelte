@@ -746,7 +746,7 @@
     },
     {
       id: 'tier-1-queens-living-quarters-room-01',
-      region: 'queens-living-quarters',
+      region: 'tier-1-queens-living-quarters-room-01',
       points: '294.29,157.14 325.71,157.14 325.71,242.86 294.29,242.86',
       label: '',
       size: 0,

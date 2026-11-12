@@ -51,5 +51,5 @@ apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, 
 
 - **Aucune lumière ambiante** : Un couloir sans luminaire est noir. La seule lumière naturelle passe par deux ouvertures.
 - **La marche est à 2,1 m/s** : L'échelle vient de la reconstruction, pas d'un réglage de confort.
-- **Sons synthétisés** : Aucun fichier audio externe, tout passe par la Web Audio API.
+- **Audio commun** : Les effets sont synthétisés. L'enregistrement original du concert de Melody est l'unique asset ; il passe lui aussi par le contexte et les bus Web Audio communs.
 - **Validation stricte** : `validateBlueprint` est le garde-fou contre les salles orphelines.

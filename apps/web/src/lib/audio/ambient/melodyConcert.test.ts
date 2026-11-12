@@ -11,8 +11,6 @@ function gain() {
   return {
     gain: {
       value: 0,
-      setValueAtTime: vi.fn(),
-      linearRampToValueAtTime: vi.fn(),
       setTargetAtTime: vi.fn(),
     },
     connect: vi.fn(),
@@ -26,47 +24,49 @@ beforeEach(() => {
 })
 afterEach(() => {
   held.graph = null
+  vi.unstubAllGlobals()
   vi.useRealTimers()
 })
 
-describe('the original concert flute', () => {
-  it('cancels its scheduler and pending notes without closing the shared audio context', () => {
+describe('the recorded Melody concert', () => {
+  it('streams through the shared graph and releases its media source when stopped', () => {
     const output = gain()
-    const oscillators: Array<{ stop: ReturnType<typeof vi.fn>; onended?: () => void }> = []
+    const mediaSource = { connect: vi.fn(), disconnect: vi.fn() }
+    const recording = {
+      preload: '',
+      currentTime: 17,
+      play: vi.fn().mockResolvedValue(undefined),
+      pause: vi.fn(),
+    }
+    const Audio = vi.fn(() => recording)
+    vi.stubGlobal('Audio', Audio)
     const context = {
-      get currentTime() {
-        return Date.now() / 1000
-      },
-      createGain: vi.fn().mockReturnValueOnce(output).mockImplementation(gain),
-      createOscillator: vi.fn(() => {
-        const oscillator = {
-          type: '',
-          frequency: { value: 0 },
-          detune: { value: 0 },
-          connect: vi.fn(),
-          disconnect: vi.fn(),
-          start: vi.fn(),
-          stop: vi.fn(),
-        }
-        oscillators.push(oscillator)
-        return oscillator
-      }),
+      currentTime: 12,
+      createGain: vi.fn(() => output),
+      createMediaElementSource: vi.fn(() => mediaSource),
       close: vi.fn(),
     }
-    const graph = { context, muffle: {}, reverbSend: {} }
+    const graph = { context, muffle: {} }
     held.graph = graph
+
     const stop = startMelodyConcert()
-    vi.advanceTimersByTime(2500)
-    const notes = oscillators.length
-    expect(notes).toBeGreaterThan(2)
+
+    expect(Audio).toHaveBeenCalledWith('/audio/melody-concert.mp3')
+    expect(recording.preload).toBe('auto')
+    expect(context.createMediaElementSource).toHaveBeenCalledWith(recording)
+    expect(mediaSource.connect).toHaveBeenCalledWith(output)
     expect(output.connect).toHaveBeenCalledWith(graph.muffle)
+    expect(recording.play).toHaveBeenCalledOnce()
+
     stop()
     stop()
-    vi.advanceTimersByTime(10000)
-    expect(oscillators).toHaveLength(notes)
-    expect(vi.getTimerCount()).toBe(0)
+    expect(output.gain.setTargetAtTime).toHaveBeenCalledWith(0, 12, 0.025)
+    vi.advanceTimersByTime(1000)
+    expect(recording.pause).toHaveBeenCalledOnce()
+    expect(recording.currentTime).toBe(0)
+    expect(mediaSource.disconnect).toHaveBeenCalledOnce()
     expect(output.disconnect).toHaveBeenCalledOnce()
-    for (const oscillator of oscillators) expect(oscillator.stop).toHaveBeenCalledTimes(2)
+    expect(vi.getTimerCount()).toBe(0)
     expect(context.close).not.toHaveBeenCalled()
   })
 })

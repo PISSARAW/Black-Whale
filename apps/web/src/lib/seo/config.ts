@@ -1,6 +1,6 @@
 export const SITE_URL = 'https://exploreblackwhale.com'
 export const SITE_NAME = 'Black Whale'
-export const DEFAULT_IMAGE = `${SITE_URL}/og-default.png?v=3`
+export const DEFAULT_IMAGE = `${SITE_URL}/og-default.png?v=4`
 
 export const TWITTER_CARD = 'summary_large_image'
 

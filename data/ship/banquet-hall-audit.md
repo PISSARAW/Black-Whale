@@ -149,11 +149,11 @@ les murs et les escaliers ne bloquent pas cette marche. À l'arrêt, la visite
 retrouve la position physique laissée dans la salle. Le plan du navire et les
 effets antérieurs restent intacts ; la flûte ou Melody restent visibles dans
 le paysage selon le mode choisi. La musique est une interprétation originale
-synthétisée à la flûte, issue de l'air doux déjà
-présent dans l'application : le manga ne fournit ni enregistrement ni partition.
-L'audio utilise le contexte et le bus d'effets communs, avec une sortie annulable.
-L'arrêt libère la programmation sonore et retire les effets ajoutés par le
-concert en conservant les effets présents auparavant.
+de trois minutes créée pour cette reconstruction : le manga ne fournit ni
+enregistrement ni partition. Son enregistrement stéréo est diffusé par le
+contexte et le bus d'effets communs, avec une sortie annulable. L'arrêt libère
+la source sonore et retire les effets ajoutés par le concert en conservant les
+effets présents auparavant.
 
 ## Limites de la reconstruction
 

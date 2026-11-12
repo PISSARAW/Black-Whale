@@ -72,12 +72,12 @@ describe('manga details outside the princely apartments', () => {
     }
   })
 
-  it('keeps the pale briefing boards and fifteen chairs shown on Tier 4', () => {
+  it('keeps pale briefing boards, committee seating and audience rows on Tier 4', () => {
     const details = byLocation('tier-4-royal-army-conference-room')
     const byId = new Map(details.map((detail) => [detail.id, detail]))
     const chairs = details.filter((detail) => detail.id.includes('-chair-'))
 
-    expect(chairs).toHaveLength(15)
+    expect(chairs).toHaveLength(30)
     expect(chairs.every((chair) => chair.kind === 'seat' && chair.provenance === 'panel')).toBe(
       true,
     )

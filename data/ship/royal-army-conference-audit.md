@@ -1,58 +1,52 @@
-# Salle de conférence de l'armée royale de Kakin — fidélisation des chapitres 350 et 380
+# Army Conference Floor — contrôle des cases du chapitre 380
 
-La salle de conférence de l'armée royale de Kakin (située au Pont 4, identifiant spatial `tier-4-royal-army-conference-room` / intérieur `interior-royal-army-conference` / sous-espace `tier-4-royal-army-conference-room-floor`) bénéficie du traitement de fidélisation canonique de référence appliqué au salon du Roi Nasubi (chap. 382), à la chambre de la reine Unma (chap. 403) et à la chambre 1002 de la princesse Camilla (chap. 366, 389) : relecture approfondie des cases du manga, respect strict de l'emprise architecturale militaire et modélisation procédurale soignée de l'ensemble du mobilier de commandement et d'analyse tactique. Sources éditoriales : Yoshihiro Togashi / Shueisha, tomes 34, 36, chapitres 350 et 380.
+## Références
 
-## 1. Cases relues et scénographie canonique
+La salle est identifiée par `tier-4-royal-army-conference-room-floor`, dans l'intérieur `interior-royal-army-conference`. Les références principales sont les **pages de lecture 1, 2, 3 et 6 du chapitre 380**, tome 36 : présentation du briefing, contrechamp sur les officiers et vue oblique du U. La page imprimée « 189 » de l'ancien modèle n'a pas été vérifiée dans une édition identifiée ; les vues donnent désormais les pages du chapitre.
 
-La salle est le centre d'opération, de coordination de la sécurité générale et de commandement des forces militaires royales sur le _Black Whale_ :
+La relecture du chapitre **350** ne montre pas ce briefing militaire. Ses références dans les anciennes vues et descriptions sont retirées. Le récit de Kurapika avant le départ ne documente pas l'intérieur de cette salle.
 
-1. **Scène du briefing de sécurité militaire (Tome 36, Chapitre 380, p. 189)** :
-   - _L'estrade et le pupitre de conférence_ : l'officier conférencier de l'armée royale se tient sur l'estrade de présentation, à côté d'un pupitre biseauté intégrant microphones col de cygne et dossiers de briefing opérationnel.
-   - _Le grand écran de projection vierge mural (`screen`)_ : suspendu au mur nord immédiatement derrière l'orateur, un grand écran blanc de 7,5 m de large par 3 m de haut est logé dans un carter technique métallique à retombée motorisée.
-   - _Le tableau mural de cartes tactiques (`chart-board`)_ : disposé sur la paroi latérale ouest à gauche de l'écran, un grand panneau d'affichage clair de 5 m de long sur 2,5 m de haut présente les cartes détaillées des cinq ponts du navire, des quadrillages métriques et des plans de zonage de sécurité.
-   - _La grande table de conférence en U (`table-head`, `table-port`, `table-starboard`)_ : trois imposants segments de table en bois sombre et profilés d'acier forment un fer à cheval ouvert vers l'estrade et l'écran de projection. Chaque poste est équipé d'un micro de conférence encastré, de sous-mains de travail, de bloc-notes d'état-major et de carafes d'eau.
-   - _Les 15 fauteuils de conférence (`chair-01` à `chair-15`)_ : quinze sièges ergonomiques de commandement à haut dossier rembourré, accoudoirs profilés et piètement à cinq roulettes entourent la table en U (5 le long de la table de tête face au sud, 4 sur l'aile bâbord face à l'est, 4 sur l'aile tribord face à l'ouest, et 2 aux extrémités sud).
+Sources : [chapitre 380, édition officielle VIZ](https://www.viz.com/shonenjump/hunter-x-hunter-chapter-380/chapter/12040), [lecteur du chapitre 380](https://ww3.mangafreak.me/Read1_Hunter_X_Hunter_380), [chapitre 350 relu pour vérification](https://ww3.mangafreak.me/Read1_Hunter_X_Hunter_350). Aucun scan n'est intégré aux textures ni aux assets du dépôt.
 
-2. **Réunion de crise et coordination inter-armes (Chapitre 350)** :
-   - Les représentants des différents corps de sécurité et officiers d'état-major s'y réunissent pour analyser les menaces de rébellion, de meurtre et les mouvements suspects entre les ponts civils et militaires.
-   - Éclairage fonctionnel intense assuré par des rangées de plafonniers néons techniques industriels.
-   - Goulottes techniques et chemins de câbles au sol assurant l'interconnexion sécurisée des terminaux.
+## Ce que montrent les cases et corrections
 
-## 2. Relevé métrique et architecture 3D
+| Élément | Ancien modèle | Correction d'après les pages examinées |
+| --- | --- | --- |
+| Table du comité | U sombre fermé du côté de l'orateur | Plateau clair, U ouvert vers Mizaistom, traverse fermée du côté du public, tablier à traits verticaux |
+| Sièges | Fauteuils ergonomiques, appuie-tête et roulettes | Chaises sobres à cadre rectangulaire, dossier partiellement ouvert et quatre pieds |
+| Public | Absent du plan | Rangées derrière le comité avec allée centrale |
+| Écran | Interface bleue, télémétrie, silhouette du navire et points radar | Surface blanche encadrée |
+| Petit tableau | Tableau de cartes tactiques sur le mur latéral | Petit panneau clair dans la zone avant gauche, sans carte lisible ; implantation et profils cachés reconstitués |
+| Sol | Moquette sombre et bordure en laiton | Quadrillage de dalles claires |
+| Pupitre | Médaillon, écran de contrôle, lampe et doubles microphones | Petit pupitre en caisson avec tablette et rangement ouverts du côté de l'orateur |
+| Estrade | Volume visuel sans support de marche | Plateforme basse inscrite dans le blueprint et utilisée par les collisions ; pupitre et Mizaistom à sa hauteur |
+| Murs et plafond | Armoiries, horloges, rack, écrans auxiliaires, caméras, projecteur laser | Parois simples à grands panneaux, grille basse entrevue à droite et plafond uni reconstitué |
 
-- **Volume de la pièce** :
-  - Dimensions : 20 m de largeur (axe X : `[-10, 10]`) × 15 m de profondeur (axe Y : `[-7.5, 7.5]`).
-  - Hauteur sous plafond : 5,0 m (axe Z : `[0, 5.0]`).
-- **Écran de projection mural (`screen`)** :
-  - Emprise : 7,5 m × 0,22 m, centré en `[0, -7.38]`, base à 1,0 m, hauteur 3,0 m (sommet à 4,0 m).
-  - Détails : toile blanche mate antireflet, bordure noire de cadrage 16:9, carter d'enroulement supérieur en aluminium brossé et support mural tubulaire.
-- **Panneau de cartes tactiques (`chart-board`)** :
-  - Emprise : 0,22 m × 5,0 m, situé en `[-9.88, -3.0]`, base à 1,1 m, hauteur 2,5 m.
-  - Détails : tableau blanc/beige magnétique avec cadre d'aluminium profilé, carte stylisée des ponts du _Black Whale_, grille de coordonnées militaires, repères de secteurs et porte-feutres inférieur.
-- **Pupitre de conférencier (`lectern`)** :
-  - Emprise : 1,0 m × 1,0 m, situé en `[-0.75, -3.25]`, hauteur 1,1 m.
-  - Détails : caisson biseauté en chêne foncé et acier anthracite, plan incliné avec rebords pour documents, double micro col de cygne avec bonnette acoustique noire, voyant de contrôle et micro-enceinte de retour.
-- **Table en U (3 éléments)** :
-  - `table-head` : 7,5 m × 1,2 m × 0,75 m centré en `[0, -0.65]`.
-  - `table-port` : 2,5 m × 3,6 m × 0,75 m centré en `[-2.5, 1.95]`.
-  - `table-starboard` : 2,5 m × 3,6 m × 0,75 m centré en `[2.5, 1.95]`.
-  - Finitions : plateau en chêne foncé à chanfrein acier, bande centrale passe-câbles avec trappes escamotables, micros de conférence individuels col de cygne et dossiers de briefing.
-- **Les 15 sièges de conférence (`chair-01` à `chair-15`)** :
-  - Emprise : 0,7 m × 0,7 m × 1,05 m pour chaque fauteuil.
-  - Structure : colonne centrale pneumatique sur piètement étoile à 5 branches avec roulettes, assise et dossier haut galbé en cuir texturé anthracite, accoudoirs incurvés en métal brossé.
+Aucun microphone, dossier marqué « confidentiel », sous-main, plaque nominative, verre ni tableau tactique n'est ajouté aux tables : ces équipements ne sont pas établis par les vues examinées. Les anciens voyants et bandes lumineuses décoratives sont retirés.
 
-## 3. Conformité technique et intégration
+## Limites de la reconstruction
 
-- **TierView** :
-  - Prise en charge dans `roomDetails` pour `tier-4-royal-army-conference-room-floor` via `buildRoyalArmyConferenceDetails(options)`.
-  - Regroupement des géométries avec `BanquetDetailBuilder` en 2 batches maximum.
-  - Respect strict du budget Three.js (< 150 000 triangles, zéro lumière permanente `THREE.Light`, libération complète GPU via `disposeBanquetDetails`).
-- **Vues manga scénarisées** :
-  - `royal-army-briefing-audience` : vue d'ensemble depuis l'assemblée vers l'estrade, l'écran et le tableau de cartes (chap. 380, p. 189).
-  - `royal-army-lectern-stage` : vue rapprochée sur l'orateur, le pupitre et ses micros col de cygne devant l'écran géant.
-  - `royal-army-tactical-maps` : cadrage focalisé sur le panneau de cartes tactiques du navire.
-  - `royal-army-u-table-command` : vue plongeante valorisant la disposition d'état-major en fer à cheval et les 15 postes d'officiers.
-- **Cartographie 2D et SVG** :
-  - `royalArmyConferencePlan.ts` fournissant la projection géométrique exacte et `royalArmyConferenceSpotAnchors`.
-  - Ancrages dans `roomAnchors.ts` raccordant les officiers et l'orateur.
-  - Composant SVG `royal-army-office.svelte` enrichi des 15 sièges, de la forme en U exacte, du pupitre et des panneaux muraux.
+L'emprise intérieure héritée reste de **20 × 15 m**, sous 5 m ; ce n'est pas un relevé métrique du manga. La hauteur de l'estrade (0,16 m), les profils cachés, les couleurs, les pas du quadrillage et les dimensions des meubles sont interprétés.
+
+Les **douze places du comité et dix-huit places du public** constituent une implantation schématique des groupes visibles, pas un décompte canonique exhaustif. Les structures restent de provenance `panel` pour la nature des objets dessinés, avec cette limite explicitée dans leur source.
+
+Le rattachement extérieur au **pont 4**, son emprise sur le plan général et son accès arrière restent ceux de `/ship`. Ces pages ne donnent pas de localisation métrique de la salle sur le navire ; aucune autre zone n'est déplacée dans cette correction.
+
+Les volumes simples du blueprint assurent toujours les collisions et le mode de preuve. Le rendu normal les remplace par les meubles détaillés ; il ne les superpose plus aux chaises et aux tables.
+
+## Carte et cadrages
+
+Le plan 2D projette directement les 37 structures du blueprint : trois parties du U, trente chaises, écran, petit tableau, pupitre et estrade. Les ancrages de Mizaistom suivent sa position sur l'estrade. L'échelle et le nombre de sièges reconstitués sont indiqués sur le plan.
+
+Les quatre anciens liens de vue sont conservés, avec références et descriptions corrigées. Le lien `royal-army-tactical-maps` montre désormais le petit tableau vierge ; son identifiant est conservé pour compatibilité. Une cinquième vue, `royal-army-briefing-decor`, permet de contrôler le décor sans personnage. Les vues d'ensemble surélevées sont signalées comme telles.
+
+## Vérification
+
+- **24 tests ciblés réussis** : sept tests propres à cette salle, six sur les détails des intérieurs et onze sur les apparences. Ils contrôlent le sens du U, les collisions, les emprises, l'allée centrale, la marche sur l'estrade, le mode de preuve et les ancrages de carte.
+- **58 tests du blueprint réussis** lors de la dernière passe de régression générale. Un test global des vues manga rencontre encore une caméra dans un escalier du Cineplex, modifié simultanément hors de cette salle.
+- **Typage : zéro erreur**, quatre avertissements préexistants dans la route d'infiltration. ESLint ciblé réussi.
+- **Compilation de production réussie** pour les meubles, l'architecture et les cadrages. Les deux derniers ajustements (orientation de l'orateur et ordre des couches SVG) ont été recompilés et contrôlés dans une prévisualisation stable sans HMR.
+- Les cinq cadrages sont inspectés après comparaison avec les pages 1–3 et 6. Les captures sont conservées hors du dépôt : vue d'ensemble sans occupants, vue oblique du U avec les rangées, tableau vierge, pupitre et briefing avec l'orateur.
+- La carte `/ship` projette les mêmes 37 structures ; l'estrade est dessinée avant les meubles pour laisser écran, petit tableau et pupitre visibles.
+
+La représentation de Mizaistom reste l'avatar existant du moteur. Cette passe corrige sa position, sa hauteur et son orientation face au public, sans prétendre refaire son visage, son costume ou les effets de Nen du moteur.

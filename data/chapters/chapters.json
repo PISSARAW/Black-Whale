@@ -2133,12 +2133,12 @@
     "timeline": [
       {
         "eventId": "day10-tassi-room3101-threshold",
-        "event": "Tassi crosses the bathroom threshold in room 3101",
+        "event": "Tassi crosses the entrance threshold into room 3101",
         "storyDate": "Time not printed",
         "charactersInvolved": ["tassi"],
         "location": "Black Whale 1 - Tier 3 - Room 3101",
         "locationId": "tier-3-residential-room-3101",
-        "movement": "Room 3101 bathroom → trapped threshold → Heil-Ly secret hideout"
+        "movement": "Room 3101 entrance → transfer boundary → Heil-Ly secret hideout"
       },
       {
         "eventId": "day10-tassi-heilly-transfer",
@@ -2160,11 +2160,11 @@
     ],
     "location": "Black Whale 1 - Tiers 1 to 3",
     "keyEvents": [
-      "Room 3101's bathroom threshold is a transfer trap",
+      "Room 3101's entrance-door boundary is a transfer trap",
       "The victim's room-3101 presence ends before the hideout killing begins",
       "The Tserriednich panels are a flashback, not shared space"
     ],
-    "description": "The trap supplies a clean before-and-after position: Tassi is first alone in room 3101, then crosses the bathroom threshold and appears inside the Heil-Ly processing room with Morena's group. The Tserriednich training material is explicitly treated as a flashback and cannot establish co-presence with either location."
+    "description": "The trap supplies a clean before-and-after position: Tassi crosses the ordinary-looking entrance into room 3101 and appears inside the Heil-Ly processing room with Morena's group. The bathroom threshold is not the trigger. The Tserriednich training material is explicitly treated as a flashback and cannot establish co-presence with either location."
   },
   {
     "id": "ch-395",
@@ -2278,7 +2278,7 @@
     "timeline": [
       {
         "eventId": "day10-room3101-entry",
-        "event": "Hinrigh and Nobunaga enter room 3101",
+        "event": "Hinrigh and Nobunaga reach room 3101 through the bathroom-side breach",
         "storyDate": "Time not printed",
         "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama"],
         "location": "Black Whale 1 - Tier 3 - Room 3101",
@@ -2295,12 +2295,12 @@
       },
       {
         "eventId": "day10-hinrigh-nobunaga-heilly-entry",
-        "event": "Hinrigh passes the trapped bathroom threshold and plants the transmitter in the hideout",
+        "event": "Hinrigh crosses room 3101's transfer boundary and plants the transmitter in the hideout",
         "storyDate": "Minutes later; no clock shown",
         "charactersInvolved": ["hinrigh-biganduffno", "nobunaga-hazama"],
         "location": "Black Whale 1 - Tier 2 - Heil-Ly Secret Hideout - Processing room",
         "locationId": "tier-2-heilly-secret-hideout",
-        "movement": "Room 3101 bathroom → Nen threshold → Heil-Ly processing room"
+        "movement": "Room 3101 entrance trap → Nen transfer → Heil-Ly processing room"
       },
       {
         "eventId": "day10-heilly-monitoring-room",
@@ -2313,11 +2313,11 @@
     ],
     "location": "Black Whale 1 - Tiers 2 and 3",
     "keyEvents": [
-      "The bathroom door in 3101 is confirmed as the transfer threshold",
+      "The bathroom-side breach bypasses 3101's trapped front entrance",
       "Hinrigh's transmitter crosses into the actual hideout",
       "Phinks and Ken'i outside 3101 are not inside the hideout event"
     ],
-    "description": "The chapter distinguishes the decoy room from the base. The group first shares the 3101 sector, but only Hinrigh and Nobunaga cross into the tiled processing room. The transmitter later proves the destination is physically on Tier 2; room 3101 remains a Tier 3 entrance, not the hideout."
+    "description": "The chapter distinguishes the decoy room from the base. Hinrigh and Nobunaga approach 3101 through the breach made from the neighbouring bathroom, avoiding the trapped front entrance, before deliberately crossing the transfer boundary into the tiled processing room. The transmitter later proves the destination is physically on Tier 2; room 3101 remains a Tier 3 entrance, not the hideout."
   },
   {
     "id": "ch-399",

@@ -31,6 +31,7 @@ import { MANGA_HEILLY_VIEWS } from './mangaHeillyViews'
 import { MANGA_POLICE_VIEWS } from './mangaPoliceViews'
 import { MANGA_HOSPITAL_VIEWS } from './mangaHospitalViews'
 import { MANGA_ROYAL_ARMY_CONFERENCE_VIEWS } from './mangaRoyalArmyConferenceViews'
+import { MANGA_ROYAL_ARMY_ROOMS_VIEWS } from './mangaRoyalArmyRoomsViews'
 import { MANGA_SCREENING_ROOM_VIEWS } from './mangaScreeningRoomViews'
 import { mangaView as view, type MangaView } from './mangaViewModel'
 
@@ -109,16 +110,15 @@ export const MANGA_VIEWS: MangaView[] = [
     labelFr: 'La chambre 3101 face au lit superposé et au rangement mural ouvert',
   }),
   view({
-    id: 'room-3101-bathroom-trap',
+    id: 'room-3101-entrance-trap',
     spaceId: 'tier-3-residential-room-3101-living',
-    at: [-4.7, 2.8],
-    target: [2, 0],
+    at: [-1.5, 0],
+    target: [-6.9, 3.5],
     pitch: -0.03,
-    chapter: 398,
+    chapter: 394,
     volume: 38,
-    pages: '150–153',
-    label: 'Room 3101 facing the Heil-Ly bathroom trap',
-    labelFr: 'La chambre 3101 face au piège Heil-Ly de la salle de bains',
+    label: 'Room 3101 facing the ordinary-looking entrance transfer trap',
+    labelFr: "La chambre 3101 face au piège de transfert de l'entrée d'apparence ordinaire",
   }),
   view({
     id: 'first-class-cabins-aerial-plan',
@@ -171,6 +171,7 @@ export const MANGA_VIEWS: MangaView[] = [
   ...MANGA_POLICE_VIEWS,
   ...MANGA_HOSPITAL_VIEWS,
   ...MANGA_ROYAL_ARMY_CONFERENCE_VIEWS,
+  ...MANGA_ROYAL_ARMY_ROOMS_VIEWS,
   view({
     id: 'heilly-hideout-aerial-plan',
     spaceId: 'tier-2-heilly-secret-hideout-corridor',

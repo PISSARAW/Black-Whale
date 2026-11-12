@@ -1,23 +1,46 @@
 import { localizedLoad } from '$lib/server/localized-load'
 import { visibleLineage } from '$lib/beyondLineage'
+import { isVisibleAtSpoilerLimit } from '$lib/server/character-profile'
 import { readDataFile, type CatalogCharacter } from '$lib/server/data-files'
 import { readSpoilerLimit } from '$lib/server/spoiler'
 import type { PageServerLoad } from './$types'
 
+interface CatalogChapter {
+  number: number
+}
+
 export const load: PageServerLoad = localizedLoad(
   async ({ cookies }: Parameters<PageServerLoad>[0]) => {
-    const characters = await readDataFile<CatalogCharacter[]>('characters/characters.json')
+    const [characters, chapters] = await Promise.all([
+      readDataFile<CatalogCharacter[]>('characters/characters.json'),
+      readDataFile<CatalogChapter[]>('chapters/chapters.json'),
+    ])
     const spoilerLimit = readSpoilerLimit(cookies)
+    const latestChapter = chapters.reduce((latest, chapter) => Math.max(latest, chapter.number), 0)
+    const isCapped = spoilerLimit !== undefined && spoilerLimit < latestChapter
 
-    // Beyond's lineage is stripped rather than flagged: the registry filter runs in
-    // the browser, so anything still attached here would be readable in the payload
-    // by a reader who asked not to be spoiled.
-    const visible: CatalogCharacter[] = characters.map((character): CatalogCharacter => {
-      const lineage = visibleLineage(character.beyondLineage, spoilerLimit)
-      if (lineage === character.beyondLineage) return character
-      const { beyondLineage: _dropped, ...rest } = character
-      return lineage ? { ...rest, beyondLineage: lineage } : rest
-    })
+    // Filtering must happen before serialization: hiding a card in the browser
+    // would still leak its name and description in the page payload. Undated
+    // catalogue prose is withheld while the archive is genuinely capped; there
+    // is no honest chapter boundary at which it can be truncated.
+    const visible: CatalogCharacter[] = characters
+      .filter((character) => isVisibleAtSpoilerLimit(character, spoilerLimit))
+      .map((character): CatalogCharacter => {
+        const lineage = visibleLineage(character.beyondLineage, spoilerLimit)
+        if (!isCapped) {
+          if (lineage === character.beyondLineage) return character
+          const { beyondLineage: _dropped, ...rest } = character
+          return lineage ? { ...rest, beyondLineage: lineage } : rest
+        }
+
+        return {
+          id: character.id,
+          canonicalName: character.canonicalName,
+          firstAppearanceChapterId: character.firstAppearanceChapterId,
+          canonStatus: character.canonStatus,
+          ...(lineage ? { beyondLineage: lineage } : {}),
+        }
+      })
 
     return { characters: visible, spoilerLimit }
   },

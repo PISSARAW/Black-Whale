@@ -221,8 +221,8 @@ describe('room appearance evidence', () => {
     expect(auditoriumRows).toHaveLength(48)
     expect(auditoriumRows.every((entry) => entry.provenance === 'inferred')).toBe(true)
 
-    expect(room3101).toContain('Bathroom threshold = teleport trap')
-    expect(room3101).toContain('Ordinary entrance')
+    expect(room3101).toContain('Entrance boundary = teleport trap')
+    expect(room3101).toContain('Bathroom-side bypass')
     expect(cineplex).toContain('Unidentified auditorium')
     expect(heillyHideout).toContain('at least eight chairs')
     expect(justiceBureau).toContain('Room 1010 · judicial interrogation office')

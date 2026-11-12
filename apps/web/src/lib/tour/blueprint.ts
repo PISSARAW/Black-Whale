@@ -9,14 +9,13 @@
  */
 import blueprintJson from '../../../../../data/ship/blueprint.json'
 import { cineplexHallDoorOverrides } from './cineplexHallLayout'
+import { cineplexWalkStructures } from './cineplexWalkStructures'
+import { spawnFacing, spawnPoint } from './spawn'
 import { columnsForRooms, roomColumnPositions } from './roomColumns'
 import {
-  COLUMN_HALF_WIDTH,
-  COLUMN_SPACING,
   EPSILON,
   deriveDoorways,
   doorJambs,
-  interiorPoint,
   longestSharedWall,
   MIN_DOOR_WIDTH,
   STEP_UP,
@@ -45,6 +44,7 @@ import type {
 } from './types'
 
 export const blueprint = blueprintJson as unknown as Blueprint
+export { spawnFacing, spawnPoint }
 
 /** One deck, resolved: its spaces, the doorways between them, its walls. */
 export interface TierPlan {
@@ -140,7 +140,7 @@ export function buildShip(source: Blueprint = blueprint): Ship {
     else adjacency.set(from, [to])
   }
 
-  const allStructures = source.structures ?? []
+  const allStructures = cineplexWalkStructures(source.structures ?? [])
 
   for (const tier of tiers) {
     const tierSpaces = source.spaces.filter((space) => space.tierId === tier.id)
@@ -258,81 +258,6 @@ export { crossingsOn, type Crossing } from './crossings'
 /** The space a point falls in on a given tier, or `null` out in the hull. */
 export function spaceAt(plan: TierPlan, point: Vec2): Space | null {
   return plan.spaces.find((space) => pointInPolygon(point, space.footprint)) ?? null
-}
-
-/**
- * Where the visitor stands when they arrive on a tier or jump to a space.
- *
- * The natural centre of a large room is exactly where a column tends to be, so
- * a spawn that lands on one is nudged clear rather than dropping the visitor
- * inside a pillar. The same holds for anything else standing in the room: the
- * middle of the burial chamber is the middle of the reliquary, and the middle
- * of the spring bay is a spring.
- */
-export function spawnPoint(space: Space, structures: Structure[] = []): Vec2 {
-  const point = interiorPoint(space.footprint)
-  const clearance = COLUMN_HALF_WIDTH + 1.2
-
-  let candidate = point
-  for (const centre of roomColumnPositions(space)) {
-    const dx = point[0] - centre[0]
-    const dz = point[1] - centre[1]
-    if (Math.abs(dx) > clearance || Math.abs(dz) > clearance) continue
-    const shifted: Vec2 = [centre[0] + COLUMN_SPACING / 2, centre[1]]
-    candidate = pointInPolygon(shifted, space.footprint)
-      ? shifted
-      : [centre[0], centre[1] + clearance]
-    break
-  }
-
-  const solids = structures
-    .filter((structure) => structure.spaceId === space.id && blocksTheFloor(structure))
-    .map((structure) => structureFootprint(structure))
-  const clear = (at: Vec2) =>
-    pointInPolygon(at, space.footprint) && !solids.some((solid) => pointInPolygon(at, solid))
-  if (clear(candidate)) return candidate
-
-  // Step outwards in a ring until the floor is free. Rooms with something in
-  // the middle are exactly the ones worth arriving in facing it.
-  for (const distance of [2, 4, 6, 8, 12]) {
-    for (let step = 0; step < 8; step++) {
-      const angle = (step * Math.PI) / 4
-      const at: Vec2 = [
-        candidate[0] + Math.cos(angle) * distance,
-        candidate[1] + Math.sin(angle) * distance,
-      ]
-      if (clear(at)) return at
-    }
-  }
-
-  return candidate
-}
-
-/**
- * Which way to face on arriving in a space, as a camera yaw in radians.
- *
- * Dropping in on a fixed bearing tends to put the visitor's nose against
- * whichever wall happens to be north, so this looks down the room's long axis,
- * towards the far end of it. It matches how you actually enter a hall.
- */
-export function spawnFacing(space: Space, at: Vec2): number {
-  const xs = space.footprint.map((point) => point[0])
-  const zs = space.footprint.map((point) => point[1])
-  const minX = Math.min(...xs)
-  const maxX = Math.max(...xs)
-  const minZ = Math.min(...zs)
-  const maxZ = Math.max(...zs)
-
-  let dx = 0
-  let dz = 0
-  if (maxX - minX >= maxZ - minZ) {
-    dx = at[0] - minX > maxX - at[0] ? minX - at[0] : maxX - at[0]
-  } else {
-    dz = at[1] - minZ > maxZ - at[1] ? minZ - at[1] : maxZ - at[1]
-  }
-
-  // The camera looks along (-sin yaw, -cos yaw).
-  return Math.atan2(-dx, -dz)
 }
 
 /**
@@ -674,7 +599,11 @@ export function validateBlueprint(source: Blueprint = blueprint): string[] {
         // Only what stands on the floor can shut a door. A solid hung clear of
         // the head is the case `blocksTheFloor` already exists for: the casino
         // mezzanine over its shops, the marquee over the police-station doors.
-        if (!blocksTheFloor(structure)) continue
+        if (
+          !blocksTheFloor(structure) ||
+          (structure.kind === 'platform' && /-stair-/.test(structure.id))
+        )
+          continue
         const outline = structureFootprint(structure)
         for (const step of [-1.2, 1.2]) {
           const at: Vec2 = [middle[0] + normal[0] * step, middle[1] + normal[1] * step]

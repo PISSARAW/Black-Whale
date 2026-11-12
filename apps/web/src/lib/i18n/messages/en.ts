@@ -3097,7 +3097,7 @@ export const en = {
 
   home: {
     seoDescription:
-      'Navigate the people, decks, knowledge and Nen systems of the Black Whale Succession War — an interactive Hunter × Hunter archive.',
+      'Explore the people, decks, knowledge and Nen of the Black Whale Succession War in an interactive Hunter × Hunter archive.',
     eyebrow: 'Kakin Royal Expedition · Voyage 001',
     titleLead: 'Enter the',
     titleBrand: 'Black Whale',

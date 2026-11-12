@@ -1,4 +1,4 @@
-import { readDataFile, type CatalogCharacter } from './data-files'
+import { readDataFile } from './data-files'
 
 /**
  * The ability catalogue as `data/abilities/abilities.json` declares it. Only the
@@ -21,35 +21,31 @@ interface CatalogChapter {
   number: number
 }
 
+interface CatalogAbilityUse {
+  abilityId: string
+  chapter: number
+}
+
 /**
  * The chapter at which an ability becomes speakable, or `null` when nothing in
  * the catalogue dates it.
  *
- * There is no per-ability chapter in `data/` yet, so the fallback is the
- * earliest appearance of anyone the ability is attributed to: a technique
- * cannot be known before its user is. That is a lower bound, not the truth —
- * a character can appear long before their Hatsu is shown — so the catalogue's
- * own `firstVisibleChapterId` wins whenever it is set, and ADR-001's chantier 2
- * is where that field becomes required rather than optional.
+ * The catalogue declaration wins, followed by the earliest dated canonical
+ * use. A character's first appearance is deliberately not a fallback: knowing
+ * Kurapika exists does not make every technique he reveals later safe to name.
+ * `null` therefore means "not enough evidence" and is withheld under a cap.
  */
 export function abilityFirstVisibleChapter(
   ability: CatalogAbilityVisibility,
   chapterNumberById: ReadonlyMap<string, number>,
-  firstAppearanceByCharacterId: ReadonlyMap<string, number>,
+  earliestUseByAbilityId: ReadonlyMap<string, number>,
 ): number | null {
   const declared = ability.firstVisibleChapterId
     ? chapterNumberById.get(ability.firstVisibleChapterId)
     : undefined
   if (declared !== undefined) return declared
 
-  const attributed = [ability.ownerId, ...(ability.userIds ?? [])].filter((id): id is string =>
-    Boolean(id),
-  )
-  const appearances = attributed
-    .map((id) => firstAppearanceByCharacterId.get(id))
-    .filter((number): number is number => number !== undefined)
-
-  return appearances.length ? Math.min(...appearances) : null
+  return earliestUseByAbilityId.get(ability.id) ?? null
 }
 
 export interface AbilityVisibilityIndex {
@@ -67,25 +63,26 @@ export interface AbilityVisibilityIndex {
  * ship the name to a reader who asked not to see it.
  */
 export async function loadAbilityVisibility(): Promise<AbilityVisibilityIndex> {
-  const [abilities, characters, chapters] = await Promise.all([
+  const [abilities, uses, chapters] = await Promise.all([
     readDataFile<CatalogAbilityVisibility[]>('abilities/abilities.json'),
-    readDataFile<CatalogCharacter[]>('characters/characters.json'),
+    readDataFile<CatalogAbilityUse[]>('abilities/uses.json'),
     readDataFile<CatalogChapter[]>('chapters/chapters.json'),
   ])
 
   const chapterNumberById = new Map(chapters.map((chapter) => [chapter.id, chapter.number]))
-  const firstAppearanceByCharacterId = new Map<string, number>()
-  for (const character of characters) {
-    const number = character.firstAppearanceChapterId
-      ? chapterNumberById.get(character.firstAppearanceChapterId)
-      : undefined
-    if (number !== undefined) firstAppearanceByCharacterId.set(character.id, number)
+  const latestChapter = chapters.reduce((latest, chapter) => Math.max(latest, chapter.number), 0)
+  const earliestUseByAbilityId = new Map<string, number>()
+  for (const use of uses) {
+    const previous = earliestUseByAbilityId.get(use.abilityId)
+    if (previous === undefined || use.chapter < previous) {
+      earliestUseByAbilityId.set(use.abilityId, use.chapter)
+    }
   }
 
   const byAbilityId = new Map<string, number | null>(
     abilities.map((ability) => [
       ability.id,
-      abilityFirstVisibleChapter(ability, chapterNumberById, firstAppearanceByCharacterId),
+      abilityFirstVisibleChapter(ability, chapterNumberById, earliestUseByAbilityId),
     ]),
   )
 
@@ -93,8 +90,9 @@ export async function loadAbilityVisibility(): Promise<AbilityVisibilityIndex> {
     firstVisibleChapter: (abilityId) => byAbilityId.get(abilityId) ?? null,
     isVisible: (abilityId, maxChapter) => {
       if (maxChapter === undefined) return true
+      if (maxChapter >= latestChapter) return true
       const chapter = byAbilityId.get(abilityId)
-      return chapter === null || chapter === undefined || chapter <= maxChapter
+      return chapter !== null && chapter !== undefined && chapter <= maxChapter
     },
   }
 }

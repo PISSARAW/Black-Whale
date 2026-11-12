@@ -1,4 +1,5 @@
 import type { Provenance } from './types'
+import { ROYAL_ARMY_ROOM_STYLES } from './royalArmyRoomsStyle'
 import type { ReconstructionRole } from './detailTag'
 
 export type { ReconstructionRole } from './detailTag'
@@ -26,38 +27,13 @@ export interface SourceBoundInteriorStyle {
   metal: number
   fabric: number
   accent: number
-  floorPattern: 'bands' | 'grid' | 'plates'
-  ceilingPattern: 'beams' | 'coffers' | 'services'
+  floorPattern: 'bands' | 'grid' | 'plates' | 'plain'
+  ceilingPattern: 'beams' | 'coffers' | 'services' | 'plain'
   programme?: 'dorm' | 'office' | 'recycling' | 'clinic'
 }
 
 const STYLES: SourceBoundInteriorStyle[] = [
-  {
-    locationId: 'tier-1-soldiers-living-quarters',
-    name: 'soldiers-quarters',
-    evidence: {
-      provenance: 'plan',
-      source:
-        "Published soldiers' quarters plan: four Royal Army barracks, four provisional Hunter rooms and twelve bunks in each room.",
-      sourceFr:
-        "Plan publié des quartiers des soldats : quatre chambrées de l'armée royale, quatre salles de Hunters provisoires et douze couchettes par salle.",
-    },
-    roles: {
-      envelope: 'attested',
-      furniture: 'metric-estimate',
-      finish: 'functional-reconstruction',
-    },
-    triangleBudget: 150_000,
-    floor: 0x303733,
-    wall: 0x59635c,
-    ceiling: 0x303733,
-    wood: 0x4a4231,
-    metal: 0x7d8780,
-    fabric: 0x596257,
-    accent: 0x9c8b55,
-    floorPattern: 'plates',
-    ceilingPattern: 'services',
-  },
+  ...ROYAL_ARMY_ROOM_STYLES,
   {
     locationId: 'tier-3-central-courthouse',
     name: 'central-courthouse',

@@ -9,6 +9,7 @@ import {
   buildAffiliations,
   buildCharacterProfile,
   buildRoleHistory,
+  maskUndatedCharacterProfile,
   readFirstAppearanceChapter,
   type AbilityRecord,
   type CatalogCharacterRecord,
@@ -147,17 +148,22 @@ export const load: PageServerLoad = localizedLoad(
       chapterTrajectory = chapterTrajectory.filter((entry) => entry.chapter <= spoilerLimit)
 
     // Prophecies carry no chapter anchor, so the spoiler limit cannot filter them;
-    // the sheet ships collapsed on the page instead of being withheld here.
-    const prophecy = prophecies.find((sheet) => sheet.subjectId === params.slug) ?? null
+    // withholding them server-side is the only safe behaviour for a capped reader.
+    const latestChapter = chapters.reduce((latest, chapter) => Math.max(latest, chapter.number), 0)
+    const isCapped = spoilerLimit !== null && spoilerLimit < latestChapter
+    const prophecy = isCapped
+      ? null
+      : (prophecies.find((sheet) => sheet.subjectId === params.slug) ?? null)
 
     // The catalogue's own chapter list is a chronology like any other: past the
     // cap it is hidden, exactly as the timeline above is.
-    const profile = buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber)
+    let profile = buildCharacterProfile(jsonCharacter, abilities, firstVisibleChapterNumber)
     if (spoilerLimit !== null) {
       profile.mangaAppearances = profile.mangaAppearances.filter(
         (appearance) => appearance.chapter <= spoilerLimit,
       )
     }
+    if (isCapped) profile = maskUndatedCharacterProfile(profile)
 
     return {
       character: profile,

@@ -60,7 +60,7 @@ describe('the abilities page and the reader who asked not to be spoiled', () => 
   })
 
   it('withholds strictly more as the cap falls', async () => {
-    const [everything, late, early] = await Promise.all([run(undefined), run(400), run(100)])
+    const [everything, late, early] = await Promise.all([run(undefined), run(417), run(400)])
 
     // Not just "fewer": each is a subset of the one above it, which is what
     // makes the cap a reading position rather than a filter with moods.

@@ -1,7 +1,6 @@
 import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
 import {
   CINE_WOOD,
-  CINE_ACOUSTIC_FABRIC,
   CINE_BRASS,
   CINE_GOLD_ACCENT,
   CINE_STEEL,
@@ -118,16 +117,10 @@ export function dressAcousticWallBays(options: WallSpanOptions): void {
   const length = Math.hypot(to[0] - from[0], to[1] - from[1])
   const angle = Math.atan2(to[0] - from[0], to[1] - from[1])
   const normalAngle = angle + Math.PI / 2
-  const midX = (from[0] + to[0]) / 2
-  const midZ = (from[1] + to[1]) / 2
   const height = ceiling - floor
 
-  // Full acoustic fabric wall backing
-  into.box([0.04, height - 0.4, length], {
-    at: [midX, floor + height / 2, midZ],
-    rotation: [0, angle, 0],
-    colour: CINE_ACOUSTIC_FABRIC,
-  })
+  // Keep the baked wall exposed between bays so the sconces' calculated light
+  // reaches the visible surface instead of being covered by a dark detail slab.
 
   // Vertical mahogany pilasters dividing acoustic bays
   const bayPitch = 3.6

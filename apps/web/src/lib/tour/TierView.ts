@@ -34,7 +34,10 @@ import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauVi
 import { buildPoliceStationDetails, policeSurfacePlan } from './policeStationView'
 import { buildChaROfficeDetails, chaRSurfacePlan } from './chaROfficeView'
 import { buildHospitalDetails, hospitalSurfacePlan } from './hospitalView'
-import { buildRoyalArmyConferenceDetails } from './royalArmyConferenceView'
+import {
+  buildRoyalArmyConferenceDetails,
+  royalArmyConferenceSurfacePlan,
+} from './royalArmyConferenceView'
 import { buildCineplexDetails, cineplexSurfacePlan } from './cineplexView'
 import { buildPodCabinDetails, podCabinSurfacePlan } from './podCabinView'
 import { buildCorridorWallDetails } from './corridorWallView'
@@ -44,6 +47,7 @@ import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from './screening
 import { buildHangarEntranceDetails, hangarEntranceSurfacePlan } from './hangarEntranceView'
 import { buildWarehouseDetails, warehouseSurfacePlan } from './warehouseView'
 import { buildHullSuspensionDetails, hullSuspensionSurfacePlan } from './hullSuspensionView'
+import { buildRoom3101Details, room3101SurfacePlan } from './room3101View'
 import {
   buildSourceBoundInteriorDetails,
   sourceBoundInteriorSurfacePlan,
@@ -205,6 +209,7 @@ const DETAIL_BUILDERS: readonly RoomDetailBuilder[] = [
   buildHangarEntranceDetails,
   buildWarehouseDetails,
   buildHullSuspensionDetails,
+  buildRoom3101Details,
   buildSourceBoundInteriorDetails,
 ]
 
@@ -305,10 +310,16 @@ export class TierView {
       reveal,
     )
     const detailedPlan = sourceBoundInteriorSurfacePlan(
-      hullSuspensionSurfacePlan(
-        queenUnmaSurfacePlan(
-          queenApartmentSurfacePlan(
-            royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+      room3101SurfacePlan(
+        hullSuspensionSurfacePlan(
+          queenUnmaSurfacePlan(
+            queenApartmentSurfacePlan(
+              royalArmyConferenceSurfacePlan(
+                royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+                reveal,
+              ),
+              reveal,
+            ),
             reveal,
           ),
           reveal,

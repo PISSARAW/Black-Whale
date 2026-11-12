@@ -229,9 +229,9 @@ describe('manga photo viewpoints', () => {
     ])
   })
 
-  it('offers both the furnished room and bathroom-trap compositions for room 3101', () => {
+  it('offers both the furnished room and entrance-trap compositions for room 3101', () => {
     expect(viewsForSpace('tier-3-residential-room-3101-living').map(({ id }) => id)).toEqual(
-      expect.arrayContaining(['room-3101-bunks-storage', 'room-3101-bathroom-trap']),
+      expect.arrayContaining(['room-3101-bunks-storage', 'room-3101-entrance-trap']),
     )
   })
 
@@ -239,7 +239,7 @@ describe('manga photo viewpoints', () => {
     const view = mangaViewById('royal-army-briefing-audience')
 
     expect(viewsForSpace('tier-4-royal-army-conference-room-floor')).toContain(view)
-    expect(view?.pages).toBe('189')
+    expect(view?.pages).toBe('1–2 (chapitre)')
     expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
   })
 

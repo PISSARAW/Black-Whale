@@ -1,7 +1,6 @@
 import type { BanquetDetailBuilder } from './banquetDetailBuilder'
 import {
   CINE_WOOD,
-  CINE_DARK_PANEL,
   CINE_DUCT_STEEL,
   CINE_POSTER_FRAME,
   CINE_NEON_AMBER,
@@ -59,11 +58,8 @@ function dressCofferBeams(
   const midX = (xMin + xMax) / 2
   const midZ = (zMin + zMax) / 2
 
-  // Background ceiling slab
-  into.box([width, 0.08, depth], {
-    at: [midX, ceilingY - 0.04, midZ],
-    colour: CINE_DARK_PANEL,
-  })
+  // The structural ceiling below already contains the baked light pools. Beams
+  // sit on it without another opaque slab hiding that illumination.
 
   // Longitudinal beams (along Z)
   for (let x = xMin + 2.5; x <= xMax - 2.0; x += 5.0) {
@@ -89,8 +85,12 @@ function dressCeilingFixtures(
   ceilingY: number,
 ): void {
   const { xMin, xMax, zMin, zMax } = bounds
-  for (let x = xMin + 5.0; x < xMax - 2.0; x += 5.0) {
-    for (let z = zMin + 5.0; z < zMax - 2.0; z += 5.0) {
+  const positions = (min: number, max: number) => {
+    const count = Math.max(1, Math.round((max - min) / 4.5))
+    return Array.from({ length: count }, (_, index) => min + ((index + 0.5) * (max - min)) / count)
+  }
+  for (const x of positions(xMin, xMax)) {
+    for (const z of positions(zMin, zMax)) {
       // Recessed spotlight fixture
       into.cylinder(
         { radius: 0.14, height: 0.04, sides: 10 },

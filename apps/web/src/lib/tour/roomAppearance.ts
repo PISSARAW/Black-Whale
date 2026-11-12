@@ -14,6 +14,8 @@ import { DINING_HALL_APPEARANCE } from './diningHallAppearance'
 import { authoredFinishOf, hasAuthoredFinish } from './roomAppearanceLocations'
 import { PRISON_APPEARANCE } from './prisonAppearance'
 import type { Finish, RoomAppearance } from './roomAppearanceTypes'
+import { cineplexAppearanceOf } from './cineplexAppearance'
+import { royalArmyRoomsAppearance } from './royalArmyRoomsStyle'
 
 export type { Finish, RoomAppearance } from './roomAppearanceTypes'
 
@@ -310,14 +312,14 @@ const FINISHES: Record<Finish, RoomAppearance> = {
     accent: 0x6f7048,
   },
   briefing: {
-    floor: 0x282e31,
-    wall: 0x505c61,
-    ceiling: 0x0e1214,
-    column: 0x69767b,
-    wood: 0x3b3933,
-    metal: 0x78848a,
-    fabric: 0x465155,
-    accent: 0x647064,
+    floor: 0xc2beb2,
+    wall: 0xd1cec2,
+    ceiling: 0xc9c6ba,
+    column: 0xaaa69a,
+    wood: 0xd3cfc1,
+    metal: 0x9e9b91,
+    fabric: 0xa7a494,
+    accent: 0x858177,
   },
   'ei-i-office': {
     floor: 0x2d2226,
@@ -409,6 +411,10 @@ export function hasAuthoredAppearance(locationId: string): boolean {
 
 export function appearanceOf(space: Space, _tier: Tier): RoomAppearance {
   if (space.tierId === 'interior-beyond-cell') return { ...FINISHES.secure, ...PRISON_APPEARANCE }
+  const army = royalArmyRoomsAppearance(space)
+  if (army) return army
+  const cineplex = cineplexAppearanceOf(space)
+  if (cineplex) return cineplex
   const finish = space.locationId ? authoredFinishOf(space.locationId) : undefined
   const appearance = finish
     ? FINISHES[finish]

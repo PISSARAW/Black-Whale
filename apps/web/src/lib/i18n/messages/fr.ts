@@ -2897,7 +2897,7 @@ export const fr: Messages = {
 
   home: {
     seoDescription:
-      'Parcourez les passagers, les ponts, les savoirs et les systèmes de Nen de la guerre de succession du Black Whale — une archive interactive de Hunter × Hunter.',
+      'Explorez les passagers, ponts, savoirs et pouvoirs de Nen du Black Whale dans une archive interactive de Hunter × Hunter.',
     eyebrow: 'Expédition royale de Kakin · Voyage 001',
     titleLead: 'Montez à bord du',
     titleBrand: 'Black Whale',

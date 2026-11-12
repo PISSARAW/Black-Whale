@@ -7,6 +7,7 @@ import { dressTier2CorridorWall } from './corridorWallTier2'
 import { dressTier3CorridorWall } from './corridorWallTier3'
 import { dressTier4CorridorWall } from './corridorWallTier4'
 import { dressTier5CorridorWall } from './corridorWallTier5'
+import { SOLDIERS_QUARTERS } from './royalArmyRoomsStyle'
 
 interface CorridorDetailOptions {
   THREE: typeof Three
@@ -70,7 +71,8 @@ function dressCorridorWallByTier(
 export function buildCorridorWallDetails(options: CorridorDetailOptions): Three.Group | null {
   const { THREE, plan, spaceId } = options
   const space = plan.spaces.find((s) => s.id === spaceId)
-  if (!space || !isCorridorSpace(space.id, space.category)) return null
+  if (!space || space.locationId === SOLDIERS_QUARTERS) return null
+  if (!isCorridorSpace(space.id, space.category)) return null
 
   const runs = corridorWallRuns(plan, space)
   if (runs.length === 0) return null

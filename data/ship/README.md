@@ -3,7 +3,7 @@
 `blueprint.json` est le vaisseau en tant que **géométrie**, et non en tant que
 dessin. C'est ce que parcourt la visite virtuelle ([`/tour`](../../apps/web/src/routes/tour)).
 
-Les limites documentaires des onze intérieurs détaillés sans perspective publiée sont
+Les limites documentaires des douze programmes détaillés sans perspective publiée sont
 recensées dans [`SOURCE_BOUND_INTERIORS.md`](./SOURCE_BOUND_INTERIORS.md).
 
 Il ne remplace pas les plans SVG de `apps/web/src/lib/assets/maps` : ceux-ci
@@ -36,7 +36,7 @@ Le corollaire vaut dans l'autre sens : quand la visite tient plus que la carte
 parce qu'une planche le montre — la salle de projection et ses quinze volumes
 contre un rectangle — c'est **la carte** qu'il faut refaire.
 
-### Le chap. 358 dit _où_
+### Le chap. 380 dit _où_
 
 La coupe annotée du quatrième jour de traversée est la seule page qui **situe**
 des pièces : elle en nomme onze et pointe chacune d'un trait. Un plan de pont
@@ -69,12 +69,21 @@ prennent la bande que les rangées de caisses de la cale laissent libre le long
 de la coursive transversale. La taille suit la place disponible, et c'est dit
 dans la `source` de chacune.
 
-Une pièce n'a pas été déplacée bien que la page semble l'appeler : la **salle de
-conférence de l'armée royale** du pont 4. Son plan à elle est le briefing que
-Mizaistom donne au chap. 350, son slug de catalogue porte `tier-4-` et
-quatre-vingt-cinq enregistrements s'y accrochent, et rien ne dit que la pièce que
-la page nomme est celle-là. La page nomme un **lieu** sur le niveau 3 : la
-reconstruction gagne le lieu, elle ne déménage pas la pièce.
+La **salle de conférence de l'armée royale** conserve son rattachement hérité au
+pont 4. Son intérieur reprend le briefing de Mizaistom au **chapitre 380**,
+pages de lecture 1–3 et 6 ; l'ancienne attribution au chapitre 350 est erronée.
+Le U clair s'ouvre vers l'estrade, les chaises sont à cadre simple, le public
+occupe des rangées séparées et l'écran reste blanc. Les équipements tactiques
+non établis sont retirés. Les métriques, les effectifs schématiques de sièges
+et la localisation du volume sur le pont restent reconstitués.
+Voir [l'audit de la salle](royal-army-conference-audit.md).
+
+Les autres locaux de l’armée royale distinguent les indications du manga des
+choix du plan du projet : le chapitre 363 nomme les quartiers des soldats sans
+dessiner leurs chambrées ; les huit salles et quatre-vingt-seize couchettes
+restent de provenance `map`. La section locale du pont 3 est située par la
+coupe du **chapitre 380**, sans mobilier attesté. Les finitions restent sobres
+et reconstituées. Voir [l’audit de ces locaux](royal-army-rooms-audit.md).
 
 ## Repère et échelle
 
@@ -650,7 +659,7 @@ coque du chap. 406, dont les ressorts font trois fois la hauteur d'un pont. Le
 pont 4 en ajoute deux du même ordre : la salle de conférence de l'Armée royale,
 à qui le pont réserve 52 × 52 m quand son plan dessine une salle de 20 × 15
 autour d'une seule table, et le bureau Xi-Yu et son entrée gardée. Le pont 3 en
-ajoute quatre : la chambre 3101 et sa salle de bains anormale, le poste de
+ajoute quatre : la chambre 3101 et sa salle de bains reconstruite, le poste de
 police et sa fontaine, le tribunal, et le bureau Heil-Ly. Le pont 2 en ajoute
 un : la planque des Heil-Ly, dont le plan donne cinq pièces derrière une porte
 que le chap. 356 dit dissimulée sans dire où. S'y ajoute un canot de

@@ -9,7 +9,7 @@ import {
   CINE_POSTER_GOLD,
   CINE_NEON_AMBER,
   CINE_NEON_BLUE,
-  CINE_CARPET,
+  CINE_HALL_CARPET,
 } from './cineplexDetailSurface'
 import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
 
@@ -63,7 +63,7 @@ export function dressDescendingRamp(into: BanquetDetailBuilder, floor: number): 
   into.box([12.6, 0.02, 11.0], {
     at: [0, floor + 0.01, 6.5],
     rotation: [0, 0, 0],
-    colour: CINE_CARPET,
+    colour: CINE_HALL_CARPET,
   })
 
   // Transverse glowing aisle guide markers embedded in floor

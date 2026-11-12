@@ -1,6 +1,6 @@
 # Source-bound interiors
 
-These eleven locations have a detailed walkable rendering even when the manga only supplies a plan, a cutaway, or a name. “Detailed” does not mean that every visible choice is canon.
+These twelve programmes have a detailed walkable rendering even when the manga only supplies a plan, a cutaway, or a name. “Detailed” does not mean that every visible choice is canon.
 
 ## Reading the reconstruction
 
@@ -17,7 +17,8 @@ Any object that occupies the floor is a structure in `blueprint.json`. Inferred 
 
 | Location                        | Strongest evidence                            | Furniture                                | Known limit                                                         |
 | ------------------------------- | --------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------- |
-| Soldiers’ quarters              | Published plan                                | 96 mapped bunks                          | Finishes, heights, and detailed profiles are reconstructed.         |
+| Soldiers’ quarters              | Ch. 363 names the zone; project /ship map supplies rooms | 96 mapped bed symbols | Eight rooms and twelve beds per room are not a manga census; profiles and finishes are reconstructed. |
+| Royal Army local section | Ch. 380 annotated cutaway names the Tier 3 service | None | No room plan or furniture is shown; envelope and lights are reconstructed. |
 | Central courthouse              | Published courtroom plan                      | Six plan fixtures                        | Materials, colours, and exact profiles are reconstructed.           |
 | Registered Heil-Ly office       | Published plan                                | Desk and files from the plan             | This is not the secret hideout or room 302 shown in later chapters. |
 | First-class residential block   | Published cabin plan                          | Six beds and six storage units           | The companionway and all finishes are reconstructed.                |

@@ -2,9 +2,8 @@ import type { BanquetDetailBuilder, Point3 } from './banquetDetailBuilder'
 import {
   CINE_WOOD,
   CINE_VELVET,
-  CINE_CARPET,
+  CINE_HALL_CARPET,
   CINE_POSTER_FRAME,
-  CINE_POSTER_ART,
   CINE_NEON_AMBER,
   CINE_NEON_BLUE,
   CINE_STEEL,
@@ -12,25 +11,23 @@ import {
   dressExitLightBox,
 } from './cineplexDetailSurface'
 import { dressEmergencyExitDoor } from './cineplexWalls'
+import { CINEPLEX_FORMATS, type CineplexFormat } from './cineplexFormats'
 
-const SCREEN_POSITIONS: readonly { num: number; x: number }[] = [
-  { num: 1, x: -24.5 },
-  { num: 2, x: -17.5 },
-  { num: 3, x: -10.5 },
-  { num: 4, x: -3.5 },
-  { num: 5, x: 3.5 },
-  { num: 6, x: 10.5 },
-  { num: 7, x: 17.5 },
-  { num: 8, x: 24.5 },
-]
+const SCREEN_POSITIONS = CINEPLEX_FORMATS.map((format) => ({
+  format,
+  x: -24.5 + (format.number - 1) * 7,
+}))
+
+interface ScreenPortalOptions {
+  into: BanquetDetailBuilder
+  format: CineplexFormat
+  x: number
+  floor: number
+}
 
 /** Architectural portal around an auditorium entrance with illuminated sign and velvet curtains */
-function dressScreenPortal(
-  into: BanquetDetailBuilder,
-  screen: { num: number; x: number },
-  floor: number,
-): void {
-  const { num, x } = screen
+function dressScreenPortal(options: ScreenPortalOptions): void {
+  const { into, format, x, floor } = options
   const doorZ = 17.45
   const portalW = 2.4
   const portalH = 2.8
@@ -53,7 +50,7 @@ function dressScreenPortal(
   }
 
   // Overhead illuminated screen sign ("SCREEN X")
-  dressScreenPortalSign(into, [x, floor + portalH + 0.35, doorZ + 0.05])
+  dressScreenPortalSign(into, [x, floor + portalH + 0.35, doorZ + 0.05], format.accent)
 
   // Mini digital "Now Showing" poster box beside the door
   into.box([0.7, 1.0, 0.08], {
@@ -62,11 +59,16 @@ function dressScreenPortal(
   })
   into.box([0.62, 0.9, 0.09], {
     at: [x - portalW / 2 - 0.55, floor + 1.8, doorZ + 0.01],
-    colour: num % 2 === 0 ? CINE_POSTER_ART : 0x7a3036,
+    colour: format.accent,
   })
   into.box([0.5, 0.08, 0.11], {
     at: [x - portalW / 2 - 0.55, floor + 1.25, doorZ + 0.02],
     colour: CINE_NEON_AMBER,
+    glow: true,
+  })
+  into.box([portalW - 0.28, 0.055, 0.2], {
+    at: [x, floor + 0.08, doorZ + 0.04],
+    colour: format.accent,
     glow: true,
   })
 }
@@ -109,7 +111,7 @@ export function dressScreensHallConcourse(into: BanquetDetailBuilder, floor: num
   // Main corridor carpet runner
   into.box([55.0, 0.015, 4.4], {
     at: [0, floor + 0.008, 15.0],
-    colour: CINE_CARPET,
+    colour: CINE_HALL_CARPET,
   })
 
   // Transverse glowing step markers along the corridor
@@ -122,7 +124,7 @@ export function dressScreensHallConcourse(into: BanquetDetailBuilder, floor: num
 
   // Dress the 8 individual screening portals
   for (const screen of SCREEN_POSITIONS) {
-    dressScreenPortal(into, screen, floor)
+    dressScreenPortal({ into, format: screen.format, x: screen.x, floor })
   }
 
   // Signage and amenities

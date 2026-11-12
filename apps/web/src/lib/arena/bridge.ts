@@ -91,7 +91,9 @@ export function saveArenaHandoffResult(
     opponentAura: state.opponent.aura,
     playerCondition: state.player.condition,
     opponentCondition: state.opponent.condition,
-    revealedHatsuIds: [...new Set(Object.values(state.lastHatsuBySide).filter((id): id is string => Boolean(id)))],
+    revealedHatsuIds: [
+      ...new Set(Object.values(state.lastHatsuBySide).filter((id): id is string => Boolean(id))),
+    ],
     nenEffects: structuredClone(state.nenEffects),
     intervention: state.environment.intervened,
   }

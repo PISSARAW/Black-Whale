@@ -27,10 +27,7 @@ export function initialShipLogistics(): ShipLogistics {
 }
 
 /** Persist the operational consequences of alerts, violence and troop movement. */
-export function advanceShipLogistics(
-  current: ShipLogistics,
-  turn: LogisticsTurn,
-): ShipLogistics {
+export function advanceShipLogistics(current: ShipLogistics, turn: LogisticsTurn): ShipLogistics {
   let { security, communications, medical, supply, witnessPressure } = current
 
   if (turn.eventKind === 'ALERT') security += 1
@@ -59,7 +56,10 @@ export function advanceShipLogistics(
 }
 
 /** Damaged communications, shortages and witnesses reduce the orders a faction can coordinate. */
-export function commandCapacityForLogistics(logistics: ShipLogistics, baseCapacity: number): number {
+export function commandCapacityForLogistics(
+  logistics: ShipLogistics,
+  baseCapacity: number,
+): number {
   const penalties =
     Number(logistics.communications <= 1) +
     Number(logistics.supply <= 1) +

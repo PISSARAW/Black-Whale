@@ -18,16 +18,20 @@ describe('autonomous Tour NPC routines', () => {
       repeatsEvery: 24,
       stops: [{ at: 0, spaceId: 'clinic', activity: 'escort-medicines' }],
     }
-    state = advanceNPCRoutines(state, [routine], graph, 1)
+    state = advanceNPCRoutines(state, { routines: [routine], graph, dt: 1 })
     expect(state.actors.guard.spaceId).toBe('corridor')
-    state = advanceNPCRoutines(state, [routine], graph, 1)
+    state = advanceNPCRoutines(state, { routines: [routine], graph, dt: 1 })
     expect(state.actors.guard.spaceId).toBe('clinic')
   })
 
   it('interrupts a schedule when an actor notices an incident', () => {
     let state = createTourSimulation({ id: 'incident' })
     state.actors.guard = { spaceId: 'post', objective: 'watch', memory: [], nextDecisionAt: 0 }
-    state = interruptNPCRoutine(state, 'guard', 'door-open', 'warehouse')
+    state = interruptNPCRoutine(state, {
+      actorId: 'guard',
+      incidentId: 'door-open',
+      responseSpaceId: 'warehouse',
+    })
     expect(state.actors.guard).toMatchObject({
       spaceId: 'warehouse',
       objective: 'respond:door-open',

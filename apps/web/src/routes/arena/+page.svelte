@@ -1042,7 +1042,11 @@
           </div>
         </section>
       {/if}
-      {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} onResume={resumeReplay} />{/if}
+      {#if lastReplay}<ReplayPanel
+          replay={lastReplay}
+          locale={$locale}
+          onResume={resumeReplay}
+        />{/if}
       <ArenaV3Panel
         replay={lastReplay}
         challengeId={selectedChallengeId}

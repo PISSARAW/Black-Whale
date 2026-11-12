@@ -6,10 +6,7 @@ const chapters = new Map([
   ['ch-360', 360],
   ['ch-390', 390],
 ])
-const appearances = new Map([
-  ['hisoka', 340],
-  ['morena', 360],
-])
+const appearances = new Map([['a', 360]])
 
 describe('abilityFirstVisibleChapter', () => {
   it('prefers the chapter the catalogue declares', () => {
@@ -21,19 +18,19 @@ describe('abilityFirstVisibleChapter', () => {
     expect(chapter).toBe(390)
   })
 
-  it('falls back to the earliest appearance among owner and users', () => {
+  it('falls back to the earliest dated canonical use', () => {
     const chapter = abilityFirstVisibleChapter(
       { id: 'a', ownerId: 'morena', userIds: ['hisoka'] },
       chapters,
       appearances,
     )
-    expect(chapter).toBe(340)
+    expect(chapter).toBe(360)
   })
 
   it('returns null when nothing dates the ability', () => {
-    expect(abilityFirstVisibleChapter({ id: 'a', ownerId: 'ghost' }, chapters, appearances)).toBe(
-      null,
-    )
+    expect(
+      abilityFirstVisibleChapter({ id: 'unknown', ownerId: 'ghost' }, chapters, appearances),
+    ).toBe(null)
   })
 })
 
@@ -43,16 +40,21 @@ describe('loadAbilityVisibility', () => {
     expect(visibility.isVisible('bungee-gum', undefined)).toBe(true)
   })
 
-  it('withholds an ability whose users all appear after the cap', async () => {
+  it('withholds an explicitly dated ability until its reveal chapter', async () => {
     const visibility = await loadAbilityVisibility()
-    const chapter = visibility.firstVisibleChapter('bungee-gum')
-    expect(chapter).not.toBe(null)
-    expect(visibility.isVisible('bungee-gum', chapter! - 1)).toBe(false)
-    expect(visibility.isVisible('bungee-gum', chapter!)).toBe(true)
+    expect(visibility.firstVisibleChapter('stand-by-me')).toBe(414)
+    expect(visibility.isVisible('stand-by-me', 413)).toBe(false)
+    expect(visibility.isVisible('stand-by-me', 414)).toBe(true)
   })
 
-  it('never withholds an ability the catalogue cannot date', async () => {
+  it('withholds an ability the catalogue cannot date while a cap is active', async () => {
     const visibility = await loadAbilityVisibility()
-    expect(visibility.isVisible('not-a-real-ability', 0)).toBe(true)
+    expect(visibility.isVisible('not-a-real-ability', 400)).toBe(false)
+    expect(visibility.isVisible('not-a-real-ability', undefined)).toBe(true)
+  })
+
+  it('does not reveal a later technique merely because its owner is already known', async () => {
+    const visibility = await loadAbilityVisibility()
+    expect(visibility.isVisible('stealth-dolphin', 340)).toBe(false)
   })
 })

@@ -13,7 +13,6 @@ import {
 } from './cineplexDetailSurface'
 import { cineplexFormatFor, type CineplexFormat } from './cineplexFormats'
 import { dressCineplexSeatRow } from './cineplexSeats'
-import { dressAuditoriumTechnology } from './cineplexAuditoriumTech'
 import { dressEmergencyExitDoor } from './cineplexWalls'
 
 interface AuditoriumContext {
@@ -156,7 +155,7 @@ function dressAuditoriumWalls(context: AuditoriumContext): void {
   })
 }
 
-/** Eight distinct premium rooms fitted inside the eight envelopes established by the deck plan. */
+/** One shared auditorium reconstruction fitted inside the eight plan-established envelopes. */
 export function dressCinemaAuditorium(
   into: BanquetDetailBuilder,
   space: Space,
@@ -175,5 +174,4 @@ export function dressCinemaAuditorium(
   dressRakedSeating(context)
   dressProjectionBooth(context)
   dressAuditoriumWalls(context)
-  dressAuditoriumTechnology(context)
 }

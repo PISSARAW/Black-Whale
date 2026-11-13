@@ -133,20 +133,29 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     expect(triangles(auditoriumGroup)).toBeGreaterThan(200)
   })
 
-  it('gives all eight auditoriums a distinct premium programme and physical treatment', () => {
+  it('does not assign unsourced premium technologies to the eight auditoriums', () => {
     expect(CINEPLEX_FORMATS).toHaveLength(8)
-    expect(new Set(CINEPLEX_FORMATS.map(({ label }) => label)).size).toBe(8)
+    expect(new Set(CINEPLEX_FORMATS.map(({ seatKind }) => seatKind))).toEqual(new Set(['standard']))
+    expect(new Set(CINEPLEX_FORMATS.map(({ screenKind }) => screenKind))).toEqual(
+      new Set(['projection']),
+    )
+    expect(CINEPLEX_FORMATS.some(({ sideProjection }) => sideProjection)).toBe(false)
+    expect(CINEPLEX_FORMATS.some(({ environmentalEffects }) => environmentalEffects)).toBe(false)
+    expect(CINEPLEX_FORMATS.some(({ lightVibes }) => lightVibes)).toBe(false)
     const triangleCounts = CINEPLEX_FORMATS.map(({ screenId }) =>
       triangles(buildCineplexDetails({ THREE, plan, spaceId: screenId, reveal: false })!),
     )
-    expect(new Set(triangleCounts).size).toBeGreaterThanOrEqual(6)
+    expect(new Set(triangleCounts).size).toBe(1)
   })
 
   it('floods the public hall with fittings while keeping every auditorium equally controlled', () => {
     const entrance = plan.spaces.find(({ id }) => id === CINEPLEX_ENTRANCE)!
     const hallLight = lamplightOf(entrance, plan.tier)
     const auditoriumLights = CINEPLEX_SCREENS.map((screenId) =>
-      lamplightOf(plan.spaces.find(({ id }) => id === screenId)!, plan.tier),
+      lamplightOf(
+        plan.spaces.find(({ id }) => id === screenId)!,
+        plan.tier,
+      ),
     )
 
     expect(lampsOf(entrance.footprint, hallLight).length).toBeGreaterThan(10)

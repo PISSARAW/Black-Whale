@@ -63,7 +63,10 @@ describe('the aura as a skin on the body', () => {
       THREE.Mesh | undefined
     expect((body?.material as THREE.Material | undefined)?.transparent).toBe(false)
     expect(
-      named(root, 'nen-skin-zetsu').every((skin) => !(skin as THREE.Mesh).material.depthWrite),
+      named(root, 'nen-skin-zetsu').every((skin) => {
+        const material = (skin as THREE.Mesh).material
+        return !Array.isArray(material) && !material.depthWrite
+      }),
     ).toBe(true)
   })
 

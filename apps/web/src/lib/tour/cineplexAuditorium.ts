@@ -24,19 +24,15 @@ interface AuditoriumContext {
 
 const ROWS = [20.2, 22.8, 25.4, 28.0, 30.6, 33.2] as const
 
-function screenDimensions(format: CineplexFormat): { width: number; height: number; y: number } {
-  if (format.screenKind === 'imax') return { width: 6.35, height: 4.65, y: 2.55 }
-  if (format.screenKind === 'vision') return { width: 5.9, height: 3.35, y: 2.35 }
-  if (format.screenKind === 'led') return { width: 5.8, height: 3.25, y: 2.35 }
+function screenDimensions(): { width: number; height: number; y: number } {
   return { width: 5.65, height: 3.2, y: 2.3 }
 }
 
 function dressAuditoriumScreen(context: AuditoriumContext): void {
-  const { into, centerX, floor, format } = context
+  const { into, centerX, floor } = context
   const screenZ = 36.92
-  const dimensions = screenDimensions(format)
+  const dimensions = screenDimensions()
   const screenY = floor + dimensions.y
-  const glow = format.screenKind === 'led' ? 0xc5f7ff : CINE_SCREEN_GLOW
 
   into.box([dimensions.width + 0.7, 0.36, 1.25], {
     at: [centerX, floor + 0.18, screenZ - 0.58],
@@ -48,23 +44,13 @@ function dressAuditoriumScreen(context: AuditoriumContext): void {
   })
   into.box([dimensions.width, dimensions.height, 0.1], {
     at: [centerX, screenY, screenZ - 0.04],
-    colour: format.screenKind === 'led' ? glow : CINE_SCREEN_SURFACE,
-    glow: format.screenKind === 'led',
+    colour: CINE_SCREEN_SURFACE,
   })
-  if (format.screenKind !== 'led') {
-    into.box([dimensions.width * 0.94, dimensions.height * 0.92, 0.045], {
-      at: [centerX, screenY, screenZ - 0.1],
-      colour: glow,
-      glow: true,
-    })
-  } else {
-    for (const offset of [-1.45, 0, 1.45]) {
-      into.box([0.025, dimensions.height, 0.03], {
-        at: [centerX + offset, screenY, screenZ - 0.11],
-        colour: 0x17252b,
-      })
-    }
-  }
+  into.box([dimensions.width * 0.94, dimensions.height * 0.92, 0.045], {
+    at: [centerX, screenY, screenZ - 0.1],
+    colour: CINE_SCREEN_GLOW,
+    glow: true,
+  })
 
   for (const side of [-1, 1]) {
     into.box([0.64, 0.48, 0.38], {

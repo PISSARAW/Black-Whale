@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 454
+Fichiers : 456
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -1345,6 +1345,10 @@ Fichiers : 454
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
+## `apps/web/src/lib/tour/hatsuTechniqueGuide.test.ts`
+
+- the stable Hatsu guide > stays absent for a one-step technique
+
 ## `apps/web/src/lib/tour/heillyDisposalView.test.ts`
 
 - the chapter 394 Heil-Ly disposal room > uses the supplied panel composition instead of invented laundry machines
@@ -2075,4 +2079,8 @@ Fichiers : 454
 ## `scripts/silhouettes.test.ts`
 
 - the Nen creature silhouettes > are the same shapes in the contracts and in the walk
+
+## `scripts/tour-lazy-boundary.test.ts`
+
+- the tour loading boundary > keeps the blueprint-bearing experience out of the route entry
 

@@ -36,7 +36,7 @@
 | `spoiler-limit` | `+server.ts`, `spoiler-limit.test.ts` |
 | `strategy` | `+page.server.ts`, `+page.svelte`, `strategy.css` |
 | `timeline` | `+page.server.ts`, `+page.svelte` |
-| `tour` | `+page.server.ts`, `+page.svelte` |
+| `tour` | `+page.server.ts`, `+page.svelte`, `TourPageExperience.svelte` |
 | `tour/ask` | `+server.ts` |
 | `tour/modes` | `+page.svelte` |
 | `tour/morena` | `+page.svelte` |

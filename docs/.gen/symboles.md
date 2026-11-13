@@ -407,6 +407,7 @@ Entrées analysées : 11
 | `buildCanonicalPositions` | `packages/canon-engine/src/timeline/snapshot.ts:93` |
 | `cloneValue` | `packages/canon-engine/src/world/state.ts:115` |
 | `cloneWorld` | `packages/canon-engine/src/world/state.ts:111` |
+| `compareEventOrder` | `packages/domain/dist/ordering.d.ts:30` |
 | `compareStoryPosition` | `packages/canon-engine/src/world/cursor.ts:18` |
 | `createEmptyWorld` | `packages/canon-engine/src/world/state.ts:96` |
 | `createSnapshotStore` | `packages/canon-engine/src/timeline/snapshotStore.ts:40` |
@@ -415,6 +416,7 @@ Entrées analysées : 11
 | `filterTemporalRecords` | `packages/canon-engine/src/spoiler/index.ts:49` |
 | `filterVisible` | `packages/canon-engine/src/spoiler/index.ts:34` |
 | `getSpoilerFilter` | `packages/canon-engine/src/spoiler/index.ts:16` |
+| `isRevealed` | `packages/domain/dist/ordering.d.ts:32` |
 | `listCanonicalEvents` | `packages/canon-engine/src/timeline/index.ts:437` |
 | `maskFutureEnds` | `packages/canon-engine/src/spoiler/index.ts:63` |
 | `projectMapScene` | `packages/canon-engine/src/world/projections.ts:83` |

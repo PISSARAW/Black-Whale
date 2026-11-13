@@ -4804,7 +4804,7 @@
               neighbour: lastRoomNeighbour,
             })
           : null
-        if (standing && audioKey !== lastRoomAudioKey) {
+        if (standing && audioKey !== null && audioKey !== lastRoomAudioKey) {
           lastRoomAudioKey = audioKey
           const condition = conditionFor(standing, plan.tier)
           // Sabine on the volume the blueprint already gives, crossfaded over the

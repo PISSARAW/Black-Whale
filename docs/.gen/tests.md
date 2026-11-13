@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 440
+Fichiers : 454
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -127,7 +127,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/audio/ambient/melodyConcert.test.ts`
 
-- the original concert flute > cancels its scheduler and pending notes without closing the shared audio context
+- the recorded Melody concert > streams through the shared graph and releases its media source when stopped
 
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
@@ -786,6 +786,7 @@ Fichiers : 440
 ## `apps/web/src/lib/server/character-profile.test.ts`
 
 - buildCharacterProfile > normalises every missing list to an empty array
+- maskUndatedCharacterProfile > keeps dated identity and appearances but removes unbounded narrative fields
 - buildRoleHistory > merges roles and official assignments
 - buildAffiliations > flattens a membership to the chapters it spans
 - readFirstAppearanceChapter > reads the number out of a chapter id
@@ -1287,7 +1288,7 @@ Fichiers : 440
 
 - where the light is taken to come from > anchors on the middle of the opening in plan
 - which decks have shafts at all > finds every opening the manga draws
-- how hard the shafts blow > is at full strength with the window dead ahead
+- how hard the shafts blow > keeps the actual window pane above the source threshold
 
 ## `apps/web/src/lib/tour/gum.test.ts`
 
@@ -1374,7 +1375,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/humanAuraLook.test.ts`
 
-- the aura as a skin on the body > wraps a body in Ten in a thin skin and no bubble
+- the aura as a skin on the body > keeps the body opaque underneath a transparent Zetsu trace
 - a visitor whose nodes are still shut > bends the air around a raised aura without drawing any of it
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
@@ -1617,6 +1618,10 @@ Fichiers : 440
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
 
+## `apps/web/src/lib/tour/room3101View.test.ts`
+
+- Room 3101 manga fidelity > keeps panel furniture separate from inferred bathroom fixtures
+
 ## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
 
 - Army Conference Floor corrected against chapter 380, pages 1–6 > satisfies the blueprint invariants and distinguishes the committee and audience groups
@@ -1657,6 +1662,46 @@ Fichiers : 440
 ## `apps/web/src/lib/tour/sheen.test.ts`
 
 - applySheen > reads the eye and the normal the material already carries
+
+## `apps/web/src/lib/tour/simulation/dialogue.test.ts`
+
+- contextual NPC dialogue boundary > sends only the actor memory and current objective to the model
+
+## `apps/web/src/lib/tour/simulation/events.test.ts`
+
+- dynamic Tour events > lets an incident trigger an off-screen security response later
+
+## `apps/web/src/lib/tour/simulation/mode.test.ts`
+
+- Tour world modes > keeps the canonical reconstruction immutable
+
+## `apps/web/src/lib/tour/simulation/persistence.test.ts`
+
+- persistent Tour simulation > round-trips a versioned world with its consequences
+
+## `apps/web/src/lib/tour/simulation/routines.test.ts`
+
+- autonomous Tour NPC routines > finds and walks inter-room routes one step at a time
+
+## `apps/web/src/lib/tour/simulation/shipSystems.test.ts`
+
+- simulated Black Whale systems > turns a blackout and lockdown into visibility and access constraints
+
+## `apps/web/src/lib/tour/simulation/social.test.ts`
+
+- Tour social simulation > tracks faction-specific reputation and rival reactions
+
+## `apps/web/src/lib/tour/simulation/systemicNen.test.ts`
+
+- systemic Nen in Free Tour > lets Gyo reveal an In-hidden aura trace without revealing unrelated facts
+
+## `apps/web/src/lib/tour/simulation/tier5Loop.test.ts`
+
+- playable Tier 5 free-life loop > supports discovery, Nen investigation, a social choice and persistent return
+
+## `apps/web/src/lib/tour/simulation/worldJourney.test.ts`
+
+- complete Free Tour simulation journey > explores, reacts, changes activity and returns to an evolved persistent world
 
 ## `apps/web/src/lib/tour/sky.test.ts`
 
@@ -1761,6 +1806,10 @@ Fichiers : 440
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
 - the abilities page and the reader who asked not to be spoiled > lists the whole catalogue when no cap is set
+
+## `apps/web/src/routes/characters/page.server.test.ts`
+
+- the character registry spoiler boundary > does not serialize characters introduced after the reader cap
 
 ## `apps/web/src/routes/investigation/[caseId]/page.server.test.ts`
 

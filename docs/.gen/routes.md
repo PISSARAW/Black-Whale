@@ -10,7 +10,7 @@
 | `abilities` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `arena` | `+page.svelte`, `+page.ts`, `arena.css` |
 | `bodies/[id]` | `+page.server.ts`, `+page.svelte` |
-| `characters` | `+page.server.ts`, `+page.svelte` |
+| `characters` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `characters/[slug]` | `+page.server.ts`, `+page.svelte` |
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |

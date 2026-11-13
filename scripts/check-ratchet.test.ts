@@ -22,6 +22,7 @@ import { describe, expect, it } from 'vitest'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const CONFIG = 'eslint.config.js'
 const SELF = 'scripts/check-ratchet.test.ts'
+const LINE_CEILINGS = 'scripts/ratchet-lines.json'
 
 const RATCHETS = ['max-lines', 'complexity'] as const
 
@@ -68,6 +69,24 @@ function baselineRef(): string {
 const current = readFileSync(ROOT + CONFIG, 'utf8')
 const baseline = git(['show', `${baselineRef()}:${CONFIG}`])
 
+type LineCeilings = Record<string, number>
+
+function lineCount(path: string): number {
+  return readFileSync(ROOT + path, 'utf8')
+    .replace(/\r?\n$/, '')
+    .split(/\r?\n/).length
+}
+
+function baselineCeilings(): LineCeilings | null {
+  try {
+    return JSON.parse(git(['show', `${baselineRef()}:${LINE_CEILINGS}`])) as LineCeilings
+  } catch {
+    // The file introduces this stricter half of the ratchet. Once it is on
+    // main, every branch is compared with it like the exemption lists above.
+    return null
+  }
+}
+
 describe('ADR-002 ratchet', () => {
   it.each(RATCHETS)('the %s exemption list can only shrink', (ratchet) => {
     const now = entriesOf(current, ratchet)
@@ -100,5 +119,26 @@ describe('ADR-002 ratchet', () => {
       })
 
     expect(offenders, 'these files silence a ratchet rule in place').toEqual([])
+  })
+
+  it('grandfathered tour files cannot grow past their recorded ceiling', () => {
+    const ceilings = JSON.parse(readFileSync(ROOT + LINE_CEILINGS, 'utf8')) as LineCeilings
+    const over = Object.entries(ceilings)
+      .filter(([path, ceiling]) => !existsSync(ROOT + path) || lineCount(path) > ceiling)
+      .map(
+        ([path, ceiling]) =>
+          `${path}: ${existsSync(ROOT + path) ? lineCount(path) : 'missing'} > ${ceiling}`,
+      )
+    expect(over, 'split the file or lower its line count; never raise the ceiling').toEqual([])
+  })
+
+  it('recorded line ceilings can only shrink', () => {
+    const before = baselineCeilings()
+    if (!before) return
+    const now = JSON.parse(readFileSync(ROOT + LINE_CEILINGS, 'utf8')) as LineCeilings
+    const raised = Object.entries(now)
+      .filter(([path, ceiling]) => !(path in before) || ceiling > before[path]!)
+      .map(([path]) => path)
+    expect(raised, 'line ceilings were added or raised').toEqual([])
   })
 })

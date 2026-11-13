@@ -17,6 +17,7 @@ export interface ArenaRecording {
   initialTick?: number
   initialCommands?: ArenaReplay['commands']
   match?: ArenaReplayMatch
+  initialState?: CombatState
 }
 
 export class ArenaRecorder {
@@ -28,6 +29,7 @@ export class ArenaRecorder {
   private readonly difficulty: ArenaDifficulty
   private readonly tickRate: number
   private readonly match: ArenaReplayMatch
+  private readonly initialState: CombatState | undefined
 
   /** Everything a replay has to restate to be re-playable, in one argument. */
   constructor({
@@ -38,12 +40,14 @@ export class ArenaRecorder {
     initialTick = 0,
     initialCommands = [],
     match = { ...DEFAULT_REPLAY_MATCH, legacyRules: true },
+    initialState,
   }: ArenaRecording) {
     this.setup = setup
     this.doctrine = doctrine
     this.difficulty = difficulty
     this.tickRate = tickRate
     this.match = structuredClone(match)
+    this.initialState = initialState ? structuredClone(initialState) : undefined
     this.tick = initialTick
     this.commands = structuredClone(initialCommands)
   }
@@ -75,6 +79,7 @@ export class ArenaRecorder {
       doctrine: this.doctrine,
       difficulty: this.difficulty,
       match: structuredClone(this.match),
+      ...(this.initialState ? { initialState: structuredClone(this.initialState) } : {}),
       commands: structuredClone(this.commands),
       checksum: stateChecksum(state),
     }

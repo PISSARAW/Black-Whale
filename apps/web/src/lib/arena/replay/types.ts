@@ -40,6 +40,8 @@ export interface ArenaReplay {
   doctrine: OpponentDoctrine
   difficulty: ArenaDifficulty
   match: ArenaReplayMatch
+  /** Non-default opening used by a cross-mode handoff. */
+  initialState?: CombatState
   commands: RecordedCommand[]
   checksum: string
 }

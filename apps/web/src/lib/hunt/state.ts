@@ -14,7 +14,7 @@
  * second game handed the first one's numbers.
  */
 import type { Vec2 } from '../tour/types'
-import { fullPool, type AuraPool } from './aura'
+import { fullPool, MAX_AURA, type AuraPool } from './aura'
 import { noEchoes, quietFeedback, ring, type Echoes, type HuntFeedback } from './feedback'
 import { initialHunterState, type HunterState } from './hunter/patrol'
 import { EN_COST, sweepEn, type EnSweep } from './nen/en'
@@ -57,6 +57,7 @@ import {
   type HuntHatsuId,
   type HuntHatsuState,
 } from './hatsu'
+import type { ArenaHandoffResult } from '../arena/bridge'
 
 export interface PlayerState {
   position: Vec2
@@ -107,6 +108,7 @@ export type HuntAction =
   | { type: 'VOW'; vow: HuntVow }
   | { type: 'WOUND'; limb: WoundedLimb }
   | { type: 'HATSU_CLUE'; evidence: HatsuEvidence }
+  | { type: 'ARENA_DUEL_RESOLVED'; result: ArenaHandoffResult; durationSeconds: number }
 
 export interface HuntSetup {
   playerAt: { position: Vec2; spaceId: string }
@@ -225,8 +227,53 @@ export function huntReducer(state: HuntState, action: HuntAction): HuntState {
       return { ...state, advancedNen: wound(state.advancedNen, action.limb) }
     case 'HATSU_CLUE':
       return { ...state, hatsuIntel: recordHatsuEvidence(state.hatsuIntel, action.evidence) }
+    case 'ARENA_DUEL_RESOLVED':
+      return resolveArenaDuel(state, action.result, action.durationSeconds)
     default:
       return state
+  }
+}
+
+const ARENA_WOUNDS: readonly WoundedLimb[] = ['left-arm', 'right-arm', 'left-leg', 'right-leg']
+
+/** Closes a Hunt contact resolved by Arena while preserving Hunt's one-reservoir rules. */
+export function resolveArenaDuel(
+  state: HuntState,
+  result: ArenaHandoffResult,
+  durationSeconds: number,
+): HuntState {
+  if (!state.duel || state.duel.outcome !== 'playing') return state
+
+  const clock = state.clock + Math.max(0, result.elapsedSeconds)
+  const playerPool = {
+    ...state.duel.player.pool,
+    available: Math.min(
+      Math.max(0, MAX_AURA - state.duel.player.pool.committed),
+      Math.max(0, result.playerAura),
+    ),
+  }
+  const hunterPool = {
+    ...state.duel.hunter.pool,
+    available: Math.min(MAX_AURA, Math.max(0, result.opponentAura)),
+  }
+  const timedOut = clock >= durationSeconds
+  const lost = !timedOut && result.outcome === 'lost'
+
+  return {
+    ...state,
+    clock,
+    duel: null,
+    ledger: { ...state.ledger, pool: playerPool },
+    hunter: { ...state.hunter, pool: hunterPool },
+    outcome: timedOut ? 'timeUp' : result.outcome === 'won' ? 'eliminated' : 'caught',
+    advancedNen: lost
+      ? wound(state.advancedNen, ARENA_WOUNDS[Math.abs(state.duel.rng.seed) % ARENA_WOUNDS.length])
+      : state.advancedNen,
+    log: record(state.log, clock, {
+      actor: 'player',
+      kind: 'duelClosed',
+      where: state.duel.spaceId,
+    }),
   }
 }
 

@@ -11,7 +11,9 @@ export function playReplay(replay: ArenaReplay): ReplayResult {
 }
 
 export function stateAtTick(replay: ArenaReplay, requestedTick: number) {
-  let state = initialArenaMatchState(replay.setup, replay.match)
+  let state = replay.initialState
+    ? structuredClone(replay.initialState)
+    : initialArenaMatchState(replay.setup, replay.match)
   let actions = {}
   let commandIndex = 0
   const end = Math.max(0, Math.min(replay.ticks, Math.floor(requestedTick)))

@@ -1178,6 +1178,15 @@
     text-transform: uppercase;
   }
 
+  .verdict .handoff-return {
+    margin-top: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid #d4b76b;
+    color: #e6d29c;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
   .verdict .replay-panel,
   .verdict .arena-v3-panel {
     width: min(90vw, 48rem);

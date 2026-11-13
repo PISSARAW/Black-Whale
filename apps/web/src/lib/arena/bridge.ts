@@ -16,6 +16,8 @@ export interface ArenaHandoff {
   opponentCondition: FighterCondition
   knownOpponentHatsuIds: string[]
   nenEffects: PersistentNenEffect[]
+  /** Internal route to resume once the Arena verdict has been recorded. */
+  returnHref?: string
 }
 
 export interface ArenaHandoffResult {
@@ -29,6 +31,8 @@ export interface ArenaHandoffResult {
   revealedHatsuIds: string[]
   nenEffects: PersistentNenEffect[]
   intervention: boolean
+  /** Time spent in the Arena, so source modes can keep their own clock honest. */
+  elapsedSeconds: number
 }
 
 interface HandoffStorage {
@@ -96,9 +100,16 @@ export function saveArenaHandoffResult(
     ],
     nenEffects: structuredClone(state.nenEffects),
     intervention: state.environment.intervened,
+    elapsedSeconds: state.clock,
   }
   storage.setItem(ARENA_HANDOFF_RESULT_KEY, JSON.stringify(result))
   return result
+}
+
+/** Accept only same-origin application paths from the session handoff. */
+export function arenaReturnHref(handoff: ArenaHandoff | null): string | null {
+  const href = handoff?.returnHref
+  return href && href.startsWith('/') && !href.startsWith('//') ? href : null
 }
 
 export function consumeArenaHandoffResult(storage: HandoffStorage): ArenaHandoffResult | null {

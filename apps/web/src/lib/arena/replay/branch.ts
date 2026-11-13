@@ -20,6 +20,7 @@ export function forkReplayAtTick(replay: ArenaReplay, requestedTick: number) {
       doctrine: replay.doctrine,
       difficulty: replay.difficulty,
       match: replay.match,
+      initialState: replay.initialState,
       tickRate: replay.tickRate,
       initialTick: tick,
       initialCommands: commands,

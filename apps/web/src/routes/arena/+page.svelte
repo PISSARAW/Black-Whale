@@ -81,6 +81,7 @@
   import { ryuDistribution } from '$lib/combat/ryu'
   import {
     applyArenaHandoff,
+    arenaReturnHref,
     consumeArenaHandoff,
     saveArenaHandoffResult,
     type ArenaHandoff,
@@ -189,6 +190,7 @@
   let graded = $state(false)
   let selectedChallengeId = $state<string | null>(initialChallengeId)
   let sourceHandoff = $state<ArenaHandoff | null>(null)
+  let returnHref = $derived(arenaReturnHref(sourceHandoff))
   let missionId = $state<string | null>(initialMissionId)
   let replayOrigin = $state<'local' | 'shared' | null>(null)
   // Bookkeeping, not state: nothing renders from it, it only holds timer
@@ -532,6 +534,7 @@
 
   function restart() {
     game = freshGame(replayMatch())
+    if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     extendedNen.reset()
     tierId = terrain.tierId
     plan = ship.plans.get(terrain.tierId)!
@@ -555,6 +558,7 @@
       doctrine: opponentDoctrine,
       difficulty,
       match: replayMatch(),
+      initialState: sourceHandoff ? game : undefined,
     })
     owed = 0
     last = 0
@@ -736,7 +740,16 @@
       match: replayMatch(),
     })
     sourceHandoff = consumeArenaHandoff(sessionStorage)
-    if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
+    if (sourceHandoff) {
+      game = applyArenaHandoff(game, sourceHandoff)
+      recorder = new ArenaRecorder({
+        setup: combatSetup(),
+        doctrine: opponentDoctrine,
+        difficulty,
+        match: replayMatch(),
+        initialState: game,
+      })
+    }
     const sharedReplay = replayFromUrl(window.location.href)
     if (sharedReplay) {
       if (sharedReplay.setup.terrain.id !== terrain.id) {
@@ -1143,6 +1156,11 @@
         credit={replayOrigin === 'local'}
       />
       <button onclick={restart}>{$t.arena.action.restart}</button>
+      {#if returnHref}
+        <a class="handoff-return" href={returnHref}>
+          {$locale === 'fr' ? 'Retourner à la traque' : 'Return to the hunt'}
+        </a>
+      {/if}
       <div class="difficulty-picker" aria-label={$t.arena.ui.difficulty}>
         {#each ['initiate', 'fighter', 'master'] as level (level)}
           <button

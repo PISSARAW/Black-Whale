@@ -115,18 +115,36 @@ test.describe('the walk', () => {
     // Parsed rather than pattern-matched: `Intl` groups thousands with a narrow
     // no-break space, and a regex written against an ordinary one would pass on
     // a broken "0 tri" and fail on a healthy "41 203 tri".
-    const readout = (await meter.textContent()) ?? ''
-    const countBefore = (unit: string) => {
-      const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)${unit}`).exec(readout)?.[1] ?? ''
-      return Number(raw.replace(/\D/g, ''))
+    const counters = async () => {
+      const readout = (await meter.textContent()) ?? ''
+      const countBefore = (unit: string) => {
+        const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)(?:${unit})`).exec(readout)?.[1] ?? ''
+        return Number(raw.replace(/\D/g, ''))
+      }
+      return {
+        tier: /\blow\b/.test(readout) ? ('low' as const) : ('high' as const),
+        triangles: countBefore('tri'),
+        calls: countBefore('calls|appels'),
+      }
     }
-    const tier = /\blow\b/.test(readout) ? 'low' : 'high'
-    const triangles = countBefore('tri')
-    const calls = countBefore('appels')
-    expect(triangles).toBeGreaterThan(0)
-    expect(triangles).toBeLessThanOrEqual(BUDGETS[tier].triangles)
-    expect(calls).toBeGreaterThan(0)
-    expect(calls).toBeLessThanOrEqual(BUDGETS[tier].calls)
+
+    // The first half-second can still contain the deck's one-off upload and
+    // shader compilation. A budget describes the settled walk, so wait for a
+    // complete steady window rather than freezing that transitional sample.
+    await expect
+      .poll(
+        async () => {
+          const reading = await counters()
+          return (
+            reading.triangles > 0 &&
+            reading.triangles <= BUDGETS[reading.tier].triangles &&
+            reading.calls > 0 &&
+            reading.calls <= BUDGETS[reading.tier].calls
+          )
+        },
+        { timeout: 30_000 },
+      )
+      .toBe(true)
   })
 
   test('keeps the scene controls large enough to touch', async ({ page }) => {

@@ -22,6 +22,7 @@ export interface WindingFrame {
   eye: number
   yaw: number
   delta: number
+  reducedMotion: boolean
 }
 
 /**
@@ -63,7 +64,7 @@ export class HatsuWindingEffect {
   }
 
   update(frame: WindingFrame): void {
-    const { turns, at, eye, yaw, delta } = frame
+    const { turns, at, eye, yaw, delta, reducedMotion } = frame
     this.#ring.visible = turns > 0
     if (turns <= 0) {
       this.#spun = 0
@@ -73,7 +74,7 @@ export class HatsuWindingEffect {
     // and how brightly it sits there; how wide it is barely moves, because an
     // arm is the length of an arm however many times it has been round.
     const wound = Math.min(1, turns / ANT_TURNS)
-    this.#spun += delta * (3 + wound * 9)
+    if (!reducedMotion) this.#spun += delta * (3 + wound * 9)
     // A pace in front of the visitor and a little below the eye, which is where
     // an arm is: close enough to be unmistakably theirs, clear of the reticle.
     this.#ring.position.set(at[0] - Math.sin(yaw) * 1.15, eye - 0.45, at[1] - Math.cos(yaw) * 1.15)

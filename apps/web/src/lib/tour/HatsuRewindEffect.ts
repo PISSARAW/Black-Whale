@@ -18,6 +18,7 @@ export interface RewindFrame {
   yaw: number
   ground: number
   delta: number
+  reducedMotion: boolean
 }
 
 /** Records, rewinds and replays the visitor's predicted ten seconds. */
@@ -63,7 +64,9 @@ export class HatsuRewindEffect {
   update(frame: RewindFrame): void {
     this.record(frame)
     if (this.#reeling > 0) {
-      this.#reeling = Math.min(1, this.#reeling + frame.delta / REEL_SECONDS)
+      this.#reeling = frame.reducedMotion
+        ? 1
+        : Math.min(1, this.#reeling + frame.delta / REEL_SECONDS)
       if (this.#reeling >= 1) {
         this.#reeling = 0
         this.#rewound += REWIND_SECONDS
@@ -101,7 +104,9 @@ export class HatsuRewindEffect {
       this.#afterimage.visible = false
       return
     }
-    const seen = this.trackAt(REWIND_SECONDS - this.#after)
+    // A single fixed echo communicates the rewind without replaying a body
+    // across the deck when reduced motion is active.
+    const seen = this.trackAt(frame.reducedMotion ? REWIND_SECONDS : REWIND_SECONDS - this.#after)
     if (!seen) return
     this.#afterimage.visible = true
     this.#afterimage.position.set(seen.where[0], frame.ground, seen.where[1])

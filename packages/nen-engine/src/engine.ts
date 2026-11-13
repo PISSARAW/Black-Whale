@@ -204,6 +204,12 @@ export interface NenCycleStep {
 /** Governs whether an action is shown and how */
 export type ActionVisibility = 'available' | 'locked' | 'hidden' | 'unknown' | 'warning'
 
+export type CanonSourceRef =
+  | { kind: 'chapter'; chapter: number; label: string }
+  | { kind: 'databook'; label: string }
+  | { kind: 'interview'; label: string }
+  | { kind: 'other'; label: string }
+
 export interface NenActionWheelEntry {
   id: string
   label: string
@@ -212,6 +218,8 @@ export interface NenActionWheelEntry {
   hint?: string
   /** The ability this action belongs to — null means a base Nen action */
   abilityId: string | null
+  /** Structured provenance for shown and asserted module uses. */
+  source?: CanonSourceRef
 }
 
 // ──────────────────────────────────────────────
@@ -286,6 +294,30 @@ export interface AbilityUIComponent {
   /** Component identifier to dynamically import on the frontend */
   componentKey: string
   props?: Record<string, unknown>
+}
+
+/** One module-authored wheel entry and the neutral canon preview behind it. */
+export interface AbilityActionPresentation {
+  entry: NenActionWheelEntry
+  plan: AbilityActionPlan
+  availability: ActionAvailability
+}
+
+/**
+ * Client-safe projection of a module. Renderers consume this instead of
+ * maintaining their own action labels, refusals, costs or component tables.
+ */
+export interface AbilityPresentationProjection {
+  abilityId: string
+  identity: {
+    name: string
+    ownerId: string
+    category: string
+    version: string
+  }
+  interactionManifest: AbilityInteractionManifest | null
+  componentKey: string
+  actions: AbilityActionPresentation[]
 }
 
 export interface NenAbilityModule {

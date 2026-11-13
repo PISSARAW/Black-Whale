@@ -29,6 +29,7 @@ const SEAM_POINTS = 64
 type SequencedFlash = TourFlash & { seq: number }
 export interface FlashFrame {
   delta: number
+  reducedMotion: boolean
   camera: Three.PerspectiveCamera
   tierId: string
   blinded: boolean
@@ -273,7 +274,8 @@ export class HatsuSceneEffects {
       this.#played = null
       return
     }
-    this.animateFlash(played, through, frame)
+    // Static under reduced motion; lifetime still advances so it cannot stick.
+    this.animateFlash(played, frame.reducedMotion ? 0.5 : through, frame)
   }
 
   private animateFlash(played: SequencedFlash, through: number, frame: FlashFrame): void {

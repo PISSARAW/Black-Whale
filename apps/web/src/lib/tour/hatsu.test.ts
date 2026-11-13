@@ -11,6 +11,7 @@ import {
   STAMP_LIMIT,
   SUN_FLARE_METRES_PER_HIT,
   TOUR_HATSU_KINDS,
+  TOUR_KINDS,
   TWO_HANDED_KINDS,
   FAKE_HOURS,
   ageTheCopies,
@@ -115,13 +116,27 @@ describe('the technique roster', () => {
     // Black Voice takes a mind, and the walk has none — but it has things, and
     // it has the visitor, and the needle goes into either of those.
     const puppet = HATSU_PROFILES.find((profile) => profile.kind === 'puppet')!
-    const unheld = HATSU_PROFILES.find(
-      (profile) => !new Set<string>(TOUR_HATSU_KINDS).has(profile.kind),
-    )!
+    const unheld = HATSU_PROFILES.find((profile) => !TOUR_KINDS.has(profile.kind))!
     expect(worksInTour(teleport)).toBe(true)
     expect(worksInTour(puppet)).toBe(true)
     expect(worksInTour(unheld)).toBe(false)
     expect(worksInTour(null)).toBe(false)
+  })
+
+  it('opens the seven body-facing families from the catalogue in the walk', () => {
+    for (const kind of [
+      'training-shot',
+      'needle',
+      'postmortem-curse',
+      'truth-punch',
+      'damage-transfer',
+      'ability-lending',
+      'postmortem-host-succession',
+    ] as const) {
+      const profile = HATSU_PROFILES.find((candidate) => candidate.kind === kind)
+      expect(profile, kind).toBeTruthy()
+      expect(worksInTour(profile ?? null), kind).toBe(true)
+    }
   })
 })
 
@@ -142,9 +157,7 @@ describe('the keys a technique answers to', () => {
   })
 
   it('says nothing for a technique the walk cannot honour', () => {
-    const unheld = HATSU_PROFILES.find(
-      (profile) => !new Set<string>(TOUR_HATSU_KINDS).has(profile.kind),
-    )!
+    const unheld = HATSU_PROFILES.find((profile) => !TOUR_KINDS.has(profile.kind))!
     expect(hatsuKeys(unheld, CLOSED_BOOK)).toEqual([])
     expect(hatsuKeys(null, CLOSED_BOOK)).toEqual([])
   })

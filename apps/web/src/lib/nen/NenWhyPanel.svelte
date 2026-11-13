@@ -8,21 +8,21 @@
    * the module's own predicates and the effects are projected by running its
    * effect builders, so the panel cannot drift from what activation does.
    */
-  let { plan }: { plan: AbilityActionPlan } = $props()
+  let { plan, compact = false }: { plan: AbilityActionPlan; compact?: boolean } = $props()
 
   let STATUS_LABEL: Record<AbilityActionPlan['status'], string> = $derived($t.nen.planStatus)
 
   const MARK = { MET: '✓', UNMET: '✗', UNKNOWN: '?' }
 </script>
 
-<div class="why" data-status={plan.status}>
+<div class="why" class:compact data-status={plan.status}>
   <div class="head">
     <span class="tag">{$t.nen.why}</span>
     <span class="verdict">{STATUS_LABEL[plan.status]}</span>
   </div>
 
   <ul>
-    {#each plan.conditions as condition (condition.id)}
+    {#each plan.conditions as condition, index (`${condition.id}-${index}`)}
       <li data-status={condition.status}>
         <span class="mark">{MARK[condition.status]}</span>
         <span class="label">{condition.label}</span>
@@ -38,26 +38,27 @@
     </p>
   {/if}
 
-  <div class="projection">
-    <span class="tag">{$t.nen.projectedEffects}</span>
-    {#if plan.projectedEffects.length}
-      <ul class="effects">
-        {#each plan.projectedEffects as effect, index (`${effect.event}-${index}`)}
-          <li>
-            <!-- An aura effect names its kind; a knowledge grant or a move
+  {#if !compact}<div class="projection">
+      <span class="tag">{$t.nen.projectedEffects}</span>
+      {#if plan.projectedEffects.length}
+        <ul class="effects">
+          {#each plan.projectedEffects as effect, index (`${effect.event}-${index}`)}
+            <li>
+              <!-- An aura effect names its kind; a knowledge grant or a move
                  names the world event it would propose. -->
-            <strong>{effect.kind ?? effect.event}</strong>
-            {#if effect.state}<code>{effect.state}</code>{/if}
-            <span>{effect.targets.length ? effect.targets.join(', ') : $t.nen.noTarget}</span>
-            {#if effect.masked}<em title={$t.nen.maskedTitle}>{$t.nen.masked}</em>{/if}
-            {#if effect.postMortem}<em title={$t.nen.postMortemTitle}>{$t.nen.postMortem}</em>{/if}
-          </li>
-        {/each}
-      </ul>
-    {:else}
-      <p class="empty">{$t.nen.noProjectedEffects}</p>
-    {/if}
-  </div>
+              <strong>{effect.kind ?? effect.event}</strong>
+              {#if effect.state}<code>{effect.state}</code>{/if}
+              <span>{effect.targets.length ? effect.targets.join(', ') : $t.nen.noTarget}</span>
+              {#if effect.masked}<em title={$t.nen.maskedTitle}>{$t.nen.masked}</em>{/if}
+              {#if effect.postMortem}<em title={$t.nen.postMortemTitle}>{$t.nen.postMortem}</em
+                >{/if}
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p class="empty">{$t.nen.noProjectedEffects}</p>
+      {/if}
+    </div>{/if}
 </div>
 
 <style>
@@ -75,6 +76,10 @@
   }
   .why[data-status='UNKNOWN'] {
     border-left-color: var(--text-muted);
+  }
+  .why.compact {
+    gap: 0.6rem;
+    padding: 0.7rem;
   }
   .head {
     display: flex;

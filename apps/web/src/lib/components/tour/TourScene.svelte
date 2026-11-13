@@ -1691,6 +1691,10 @@
       let wakeKnown = false
 
       function driftMotes(delta: number, seconds: number) {
+        if ($reducedMotion) {
+          wakeKnown = false
+          return
+        }
         const clouds: Dust[] = []
         for (const deck of [visible, eyeDeck]) {
           if (!deck) continue
@@ -4241,6 +4245,11 @@
         // The Sun and Moon leaves are put where their things are *now*, and a
         // thing that wanders is somewhere new every frame.
         const clock = now / 1000 - hatsuEffects.rewindOffset
+        // Canon state keeps advancing, but decorative cycles do not. A fixed
+        // phase preserves the information carried by every manifestation
+        // without leaving birds orbiting, marks pulsing or dust swimming when
+        // the operating system asks for less movement.
+        const visualClock = $reducedMotion ? 0 : clock
 
         syncDeck()
         syncSolids()
@@ -4255,9 +4264,9 @@
         syncApparitions(clock)
         syncFlash()
         sweepStale()
-        driftSolids(clock)
-        driftMotes(delta, clock)
-        driftApparitions(clock, delta)
+        driftSolids(visualClock)
+        driftMotes(delta, visualClock)
+        driftApparitions(visualClock, delta)
         driftLeavingCards(delta)
         hatsuEffects.tickFlash({
           delta,
@@ -4271,7 +4280,7 @@
           gyo: effectiveNen.gyo,
         })
         runLash(delta)
-        syncGum(clock)
+        syncGum(visualClock)
         hatsuEffects.updateRewind({
           clock,
           position: pointer,
@@ -4578,7 +4587,10 @@
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
         camera.rotateX(pitch)
-        camera.rotateZ(bob.roll + (staggered ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0))
+        camera.rotateZ(
+          bob.roll +
+            (staggered && !$reducedMotion ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0),
+        )
         {
           nenAura.update(effectiveNen, camera, {
             ground,

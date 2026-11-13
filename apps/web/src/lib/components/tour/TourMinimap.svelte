@@ -314,6 +314,11 @@
     stroke: #ffd700;
     stroke-width: calc(var(--unit) * 2.5);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .zone {
+      transition: none;
+    }
+  }
   /* Aiming is not travelling, so the plan does not glow gold for it. */
   .aiming .zone.clickable:hover {
     fill: #2a2536;

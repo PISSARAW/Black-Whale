@@ -20,7 +20,7 @@
   import { link, parsePathname, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
-  import { loadComfort, prefersReducedMotion, reducedMotion } from '$lib/tour/comfort'
+  import { loadComfort, reducedMotion } from '$lib/tour/comfort'
   import { presentationFor, type AbilitySurfaceAdapter } from '$lib/nen/abilityPresentation'
   import {
     tourAbilitySurfaceAdapter,
@@ -264,9 +264,11 @@
   }
   onMount(() => {
     loadComfort()
-    chrome.calm = prefersReducedMotion()
     const requested = hatsuById(new URLSearchParams(window.location.search).get('hatsu'))
     if (requested) activateHatsu(requested)
+  })
+  $effect(() => {
+    chrome.calm = $reducedMotion
   })
   onDestroy(() => {
     chrome.dispose()

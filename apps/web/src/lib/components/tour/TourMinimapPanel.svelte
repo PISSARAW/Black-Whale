@@ -129,4 +129,9 @@
     background: rgba(255, 215, 0, 0.15);
     color: #ffd700;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .deck-button {
+      transition: none;
+    }
+  }
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fly } from 'svelte/transition'
   import { locale, t } from '$lib/i18n'
-  import { prefersReducedMotion } from '$lib/tour/comfort'
+  import { reducedMotion } from '$lib/tour/comfort'
   import type { ContextLine } from '$lib/tour/cast'
 
   interface Props {
@@ -11,7 +11,7 @@
   }
 
   let { conversation, onClose, onOpenArchive }: Props = $props()
-  const motion = $derived(prefersReducedMotion() ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
+  const motion = $derived($reducedMotion ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
 </script>
 
 {#if conversation}

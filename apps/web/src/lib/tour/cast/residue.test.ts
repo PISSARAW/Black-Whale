@@ -65,4 +65,33 @@ describe('aura left where a technique forced a seam', () => {
     )
     expect(residueApparitions({ ...input, awakened: false })).toEqual([])
   })
+
+  it('places an authored aura object on its real structure anchor', () => {
+    const structure = ship.structures[0]!
+    const anchoredSpace = ship.spaces.get(structure.spaceId!)!
+    const found = residueApparitions({
+      ship,
+      vestiges: {},
+      tierId: anchoredSpace.tierId,
+      objects: [
+        {
+          id: 'anchored-glass',
+          name: 'Glass',
+          locationId: anchoredSpace.locationId ?? anchoredSpace.id,
+          visibility: 'gyo',
+          kind: 'water-divination',
+          anchor: structure.id,
+          approximate: false,
+        },
+      ],
+    })
+    expect(found).toEqual([
+      expect.objectContaining({
+        id: 'aura-source:anchored-glass',
+        spaceId: anchoredSpace.id,
+        at: structure.at,
+        hidden: true,
+      }),
+    ])
+  })
 })

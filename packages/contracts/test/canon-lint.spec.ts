@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { canonLint, findDataRoot, formatFindings } from '../src/lint'
 import { INVARIANTS } from '../src/invariants'
 import { appearanceSchema } from '../src/appearance'
+import { characterSchema } from '../src/schemas'
 import type { Catalogue } from '../src/types'
 
 /**
@@ -58,6 +59,14 @@ describe('references-resolve', () => {
     })
     expect(found).toEqual([expect.objectContaining({ rule: 'character-faction' })])
   })
+
+  it('refuses an aura object sighting in an unknown location', () => {
+    const found = run('references-resolve', (copy) => {
+      const object = copy.objects.find((entry) => entry.aura)!
+      object.sightings[0]!.locationSlug = 'tier-9-nowhere'
+    })
+    expect(found).toEqual([expect.objectContaining({ rule: 'object-location' })])
+  })
 })
 
 describe('chapter-references-are-well-formed', () => {
@@ -80,6 +89,69 @@ describe('chapter-references-are-well-formed', () => {
       copy.characters[0]!.firstAppearanceChapterId = 'ch-9999'
     })
     expect(found[0]!.message).toContain('past the last catalogued chapter')
+  })
+
+  it('refuses an unknown dated Nen conduct chapter', () => {
+    const found = run('chapter-references-are-well-formed', (copy) => {
+      const character = copy.characters.find((entry) => entry.nen?.tourConduct?.length)!
+      character.nen!.tourConduct![0]!.fromChapterId = 'ch-9999'
+    })
+    expect(found).toEqual([
+      expect.objectContaining({ where: expect.stringContaining('.nen.tourConduct') }),
+    ])
+  })
+
+  it('refuses an aura object sourced from an unknown chapter', () => {
+    const found = run('chapter-references-are-well-formed', (copy) => {
+      const object = copy.objects.find((entry) => entry.aura)!
+      object.aura!.sourceChapterId = 'ch-9999'
+    })
+    expect(found).toEqual([
+      expect.objectContaining({ where: expect.stringContaining('.aura.sourceChapterId') }),
+    ])
+  })
+})
+
+describe('nen-conduct-is-coherent', () => {
+  it('refuses snapshots written out of chronological order', () => {
+    const found = run('nen-conduct-is-coherent', (copy) => {
+      const character = copy.characters.find((entry) => entry.nen?.tourConduct?.length)!
+      const first = character.nen!.tourConduct![0]!
+      character.nen!.tourConduct!.push({ ...first, fromChapterId: 'ch-397' })
+    })
+    expect(found).toEqual([
+      expect.objectContaining({ rule: 'nen-conduct', message: 'snapshot 1 is out of order' }),
+    ])
+  })
+
+  it('refuses an En radius when En is absent from the declared techniques', () => {
+    const found = run('nen-conduct-is-coherent', (copy) => {
+      const character = copy.characters.find((entry) =>
+        entry.nen?.tourConduct?.some((snapshot) => snapshot.enRadius !== null),
+      )!
+      character.nen!.techniques = character.nen!.techniques?.filter((name) => name !== 'En')
+    })
+    expect(found).toEqual([
+      expect.objectContaining({
+        rule: 'nen-conduct',
+        message: 'declares a tour En radius without En in nen.techniques',
+      }),
+    ])
+  })
+
+  it('refuses a non-positive En radius at the schema boundary', () => {
+    const character = structuredClone(
+      catalogue!.characters.find((entry) =>
+        entry.nen?.tourConduct?.some((snapshot) => snapshot.enRadius !== null),
+      )!,
+    )
+    character.nen!.tourConduct![0]!.enRadius = 0
+    const parsed = characterSchema.safeParse(character)
+    expect(parsed.success).toBe(false)
+    if (!parsed.success)
+      expect(parsed.error.issues).toEqual([
+        expect.objectContaining({ path: ['nen', 'tourConduct', 0, 'enRadius'] }),
+      ])
   })
 })
 

@@ -16,6 +16,16 @@ describe('persistent Tour simulation', () => {
     expect(state.revision).toBe(1)
   })
 
+  it('evolves a reactive proxy', () => {
+    const reactive = new Proxy(createTourSimulation({ id: 'reactive' }), {})
+    const next = evolveTourSimulation(reactive, (draft) => {
+      draft.player.spaceId = 'room-1014'
+    })
+
+    expect(next.player.spaceId).toBe('room-1014')
+    expect(next.revision).toBe(1)
+  })
+
   it('rejects malformed state and migrates the previous minimal save', () => {
     expect(decodeTourSimulation('{"version":99}')).toBeNull()
     expect(migrateLegacyTourSimulation({ room: 'tier-5-warehouse', aura: 43 })).toMatchObject({

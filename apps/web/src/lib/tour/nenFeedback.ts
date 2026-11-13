@@ -19,4 +19,7 @@ export const appendNenCause = (
   entries: readonly NenCauseEntry[],
   cause: NenCause,
   id = Date.now(),
-): NenCauseEntry[] => [...entries, { id, cause }].slice(-4)
+): NenCauseEntry[] => {
+  const nextId = Math.max(id, (entries.at(-1)?.id ?? id - 1) + 1)
+  return [...entries, { id: nextId, cause }].slice(-4)
+}

@@ -186,7 +186,7 @@ règle de rendu, bornée par le §2.3.
 | A. Répliques écrites par personnage (dans `data/` ou dans le site)           | ⛔ faits non sourcés, contredits par l'ADR-001 principe 1 et l'option C de l'ADR-003. Et 224 personnages à écrire, donc 224 occasions d'inventer                                                                           |
 | B. **Trois gestes, effets réels et éphémères, parole projetée du catalogue** | ✅ retenue                                                                                                                                                                                                                 |
 | C. Perception seule (les hatsu ne font que révéler)                          | ⛔ trop conservateur : rend inutiles quatre des cinq capacités que le §6.1 attendait, et ampute Chain Jail, Needle People, Nen Stitches de ce qu'elles sont                                                                |
-| D. Effets durables versés dans une branche de simulation                     | ⏸ pas maintenant, et pas contre : `cast/bodies.ts` est séparé exprès pour que ce soit un branchement et non une réécriture. Une branche demande une UI de branche (bandeau, retour au canon), c'est un chantier à soi      |
+| D. Effets durables versés dans une branche de simulation                     | ✅ branché uniquement en `FREE_LIFE` et `ALTERNATE_SIMULATION` : réputation, incidents et événements différés persistent ; la visite canonique conserve seulement ses réactions et son journal éphémères                   |
 | E. Parole par le knowledge-engine (« que savez-vous de X ? »)                | ⏸ doctrinalement le plus beau, mais la base porte cinq faits seedés : la quasi-totalité des corps n'aurait rien à dire. À reprendre quand `Fact`/`KnowledgeState` seront peuplés — l'interrogatoire du §2.4 est la même UI |
 
 ---
@@ -202,7 +202,7 @@ comme le reste de `cast/`.
 | Module                  | Responsabilité                                             |
 | ----------------------- | ---------------------------------------------------------- |
 | `lib/tour/bodyKinds.ts` | feuille : quels `kind` atteignent un corps                 |
-| `cast/dossier.ts`       | pur : catalogue × cap → la fiche que le serveur envoie     |
+| `cast/dossier.ts`       | pur : catalogue × événement × cap → la fiche envoyée       |
 | `cast/address.ts`       | pur : fiche → interrogatoire (question, réponse, chapitre) |
 | `cast/reading.ts`       | pur : (poste, Nen du visiteur) → ce qu'on lit du corps     |
 | `cast/bodies.ts`        | pur : les prises éphémères, leur pose et leur expiration   |
@@ -213,10 +213,11 @@ comme le reste de `cast/`.
 
 ## 5. Conséquences
 
-**Plus facile ensuite :** la branche de simulation (option D) n'a qu'à consommer
-`cast/bodies.ts` ; le knowledge-engine (option E) n'a qu'à ajouter des questions
-à `address.ts` ; la conduite de l'ADR-003 peut caster les cinq nouvelles
-techniques le jour où on le veut, sans rien apprendre.
+**Livré et extensible :** la branche de simulation (option D) consomme déjà les
+transitions Nen acceptées dans les deux modes persistants. Le knowledge-engine
+(option E) n'a qu'à ajouter des questions à `address.ts` ; la conduite de
+l'ADR-003 peut caster les cinq nouvelles techniques le jour où on le veut, sans
+rien apprendre.
 
 **Coûts :** la marche porte un second monde (petit, borné, expiré à chaque pas) ;
 le payload du tour grossit d'une fiche par corps dessiné, bornée au cap ; six

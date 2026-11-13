@@ -31,6 +31,18 @@ const ready = async (page: import('playwright/test').Page) => {
   return canvas
 }
 
+const ROYAL_NEN_SCENE =
+  '/tour?eventId=ch-369-the-princes-send-their-guards-to-the-first-nen-class&space=tier-1-royal-residential-sector-room-1014-entrance'
+const SIMULATION_KEY = 'black-whale:tour:simulation:v1'
+
+async function raiseRen(page: import('playwright/test').Page) {
+  await page.getByRole('button', { name: /^Nen ·/ }).click()
+  await page.getByRole('button', { name: 'Ten', exact: true }).click()
+  const ren = page.getByRole('button', { name: 'Ren', exact: true })
+  await expect(ren).toBeEnabled()
+  await ren.click()
+}
+
 test.describe('the walk', () => {
   test('boots the deck and says where the visitor is', async ({ page }) => {
     const response = await page.goto('/tour')
@@ -245,5 +257,51 @@ test.describe('the walk', () => {
     expect(sample.brightest).toBeGreaterThan(60)
     expect(sample.visibleShare).toBeGreaterThan(0.01)
     expect(shaderFailures).toEqual([])
+  })
+
+  test('persists witnessed hostile Nen only in simulated royal life', async ({ page }) => {
+    await page.goto('/')
+    await page.evaluate(() => localStorage.clear())
+    await page.goto(ROYAL_NEN_SCENE)
+    await ready(page)
+    await raiseRen(page)
+    await expect
+      .poll(() => page.evaluate((key) => localStorage.getItem(key), SIMULATION_KEY))
+      .toBeNull()
+
+    await page.evaluate(() => localStorage.clear())
+    await page.goto(`${ROYAL_NEN_SCENE}&world=free`)
+    await ready(page)
+    await raiseRen(page)
+
+    await expect
+      .poll(
+        () =>
+          page.evaluate((key) => {
+            const stored = localStorage.getItem(key)
+            if (!stored) return null
+            const state = JSON.parse(stored)
+            return state.incidents.find((entry: string) => entry.startsWith('hostile-nen:')) ?? null
+          }, SIMULATION_KEY),
+        { timeout: 20_000 },
+      )
+      .not.toBeNull()
+
+    await page.reload()
+    await ready(page)
+    await expect
+      .poll(() =>
+        page.evaluate((key) => {
+          const state = JSON.parse(localStorage.getItem(key) ?? 'null')
+          return state
+            ? {
+                incident: state.incidents.some((entry: string) => entry.startsWith('hostile-nen:')),
+                reputation: state.reputation['prince-woble'],
+                mode: state.player.nen.mode,
+              }
+            : null
+        }, SIMULATION_KEY),
+      )
+      .toEqual({ incident: true, reputation: -10, mode: 'ren' })
   })
 })

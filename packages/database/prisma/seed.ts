@@ -5,7 +5,7 @@ import {
   PresenceCertainty,
   BodyStateType,
   NarrativeImportance,
-  SubjectType,
+  FactSubjectType,
   TruthStatus,
   EpistemicState,
   AcquisitionMethod,
@@ -503,7 +503,7 @@ async function main() {
   const fact1 = await prisma.fact.create({
     data: {
       id: 'fact-kurapika-is-hunter',
-      subjectType: SubjectType.CHARACTER,
+      subjectType: FactSubjectType.CHARACTER,
       subjectId: kurapika.id,
       predicate: 'is',
       value: { role: 'Hunter', specialization: 'Blacklist Hunter' },
@@ -518,7 +518,7 @@ async function main() {
   const fact2 = await prisma.fact.create({
     data: {
       id: 'fact-benjamin-is-first-prince',
-      subjectType: SubjectType.CHARACTER,
+      subjectType: FactSubjectType.CHARACTER,
       subjectId: benjamin.id,
       predicate: 'is',
       value: { title: '1st Prince', family: 'Hui Guo Rou' },
@@ -533,7 +533,7 @@ async function main() {
   const fact3 = await prisma.fact.create({
     data: {
       id: 'fact-room-1014-is-vvip',
-      subjectType: SubjectType.LOCATION,
+      subjectType: FactSubjectType.LOCATION,
       subjectId: locRoom1014 || room1014?.id || '',
       predicate: 'isLocatedIn',
       value: { area: 'VVIP', tier: 1 },
@@ -548,7 +548,7 @@ async function main() {
   await prisma.fact.create({
     data: {
       id: 'fact-halkenburg-collapsed',
-      subjectType: SubjectType.CHARACTER,
+      subjectType: FactSubjectType.CHARACTER,
       subjectId: 'halkenburg',
       predicate: 'status',
       value: { state: 'COLLAPSED', location: locMedicalDistrict || medicalDistrict?.id || '' },

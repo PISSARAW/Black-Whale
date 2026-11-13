@@ -100,6 +100,8 @@
   let started = $state(false)
   let briefingOpen = $state(true)
   let manualOpen = $state(false)
+  type ArenaPanel = 'map' | 'status' | 'ryu' | 'keys' | 'match'
+  let arenaPanel = $state<ArenaPanel | null>(null)
   let position = $state<Vec2>(terrain.spawns[0])
   let heading = $state(0)
   let lookPitch = $state(0)
@@ -141,6 +143,7 @@
   type CombatMotion = 'idle' | 'guard' | 'hit' | 'down' | 'attack'
   let playerMotion = $state<CombatMotion>('idle')
   let opponentMotion = $state<CombatMotion>('idle')
+  let eventVisible = $state(false)
   let playerMotionSeq = 0
   let opponentMotionSeq = 0
   type CommandAnimation =
@@ -194,6 +197,11 @@
   let returnHref = $derived(arenaReturnHref(sourceHandoff))
   let missionId = $state<string | null>(initialMissionId)
   let replayOrigin = $state<'local' | 'shared' | null>(null)
+
+  function toggleArenaPanel(panel: ArenaPanel) {
+    arenaPanel = arenaPanel === panel ? null : panel
+    window.setTimeout(() => document.exitPointerLock?.(), 0)
+  }
 
   function returnLabel(): string {
     if (sourceHandoff?.sourceMode === 'INFILTRATION')
@@ -287,7 +295,6 @@
       ? evaluateChallengeProgress(selectedChallenge, { state: game, actions: actionCounts, stats })
       : null,
   )
-  let hatsuCost = $derived(hatsuDefinition?.cost ?? 18)
   let detailedRyu = $derived(ryuDistribution(game.player))
 
   function objectiveLabel(objective: ChallengeObjective): string {
@@ -485,12 +492,18 @@
 
   function onKeyDown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey) return
+    if (event.key === 'Escape' && arenaPanel) {
+      arenaPanel = null
+      event.preventDefault()
+      return
+    }
     if (event.key === '?') {
+      arenaPanel = null
       manualOpen = !manualOpen
       event.preventDefault()
       return
     }
-    if (manualOpen || briefingOpen) return
+    if (manualOpen || briefingOpen || arenaPanel) return
     if (isNenControlCode(event.code)) return
     if (isMovement(event.code)) {
       started = true
@@ -508,7 +521,7 @@
   }
 
   function reportWalk() {
-    if (briefingOpen || manualOpen || game.outcome !== 'playing') return
+    if (briefingOpen || manualOpen || arenaPanel || game.outcome !== 'playing') return
     const frame = { camera: [position[0], position[1]] as Vec2, heading, state: game, agreed }
     const correction = reconcileWalk(frame, (action) => {
       send(action)
@@ -528,7 +541,7 @@
     const elapsed = last === 0 ? 0 : (now - last) / 1000
     last = now
     owed = Math.min(owed + elapsed, 0.2)
-    if (briefingOpen || manualOpen) {
+    if (briefingOpen || manualOpen || arenaPanel) {
       owed = 0
       return
     }
@@ -562,6 +575,7 @@
     started = false
     playerMotion = 'idle'
     opponentMotion = 'idle'
+    eventVisible = false
     commandAnimation = null
     lesson = 0
     stats = { ...EMPTY_STATS }
@@ -616,6 +630,8 @@
   }
 
   function animateExchange(event: CombatEvent) {
+    eventVisible = true
+    later(() => (eventVisible = false), 1_800)
     stats = recordEvent(stats, event)
     playArenaImpact(event.impact)
     const defenderMotion = reactionFor(event.impact)
@@ -630,6 +646,7 @@
 
   function finishRun() {
     if (graded || game.outcome === 'playing') return
+    arenaPanel = null
     graded = true
     lastReplay = recorder.finish(game)
     replayOrigin = 'local'
@@ -834,16 +851,30 @@
   class:opponent-bound={game.opponent.bound > 0}
 >
   <TourModeFullscreen />
-  <TourMinimapPanel
-    {plan}
-    {position}
-    {heading}
-    currentSpaceId={currentSpace?.id ?? null}
-    {decks}
-    {crossings}
-    {nameOf}
-    onSelectDeck={selectTier}
-  />
+  {#if arenaPanel === 'map'}
+    <div
+      class="arena-map-panel"
+      role="dialog"
+      aria-label={$locale === 'fr' ? 'Plan du navire' : 'Ship map'}
+    >
+      <header>
+        <strong>{$locale === 'fr' ? 'Plan du navire' : 'Ship map'}</strong>
+        <button type="button" onclick={() => (arenaPanel = null)} aria-label={$t.tour.plan.close}
+          >×</button
+        >
+      </header>
+      <TourMinimapPanel
+        {plan}
+        {position}
+        {heading}
+        currentSpaceId={currentSpace?.id ?? null}
+        {decks}
+        {crossings}
+        {nameOf}
+        onSelectDeck={selectTier}
+      />
+    </div>
+  {/if}
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}
@@ -866,7 +897,7 @@
     bind:jumpPitch
     world={EMPTY_WORLD}
     nen={playerNen}
-    inputDisabled={briefingOpen || manualOpen || game.outcome !== 'playing'}
+    inputDisabled={briefingOpen || manualOpen || arenaPanel !== null || game.outcome !== 'playing'}
     onNenChange={useStandardNen}
     onPhysicalNenAction={strike}
     extras={opponentActor}
@@ -970,6 +1001,41 @@
     </div>
   </header>
 
+  {#if game.outcome === 'playing'}
+    <nav class="arena-tools" aria-label={$locale === 'fr' ? "Outils de l'arène" : 'Arena tools'}>
+      <button
+        type="button"
+        aria-pressed={arenaPanel === 'map'}
+        onclick={() => toggleArenaPanel('map')}
+      >
+        <span aria-hidden="true">▱</span><b>{$locale === 'fr' ? 'Plan' : 'Map'}</b>
+      </button>
+      <button
+        type="button"
+        aria-pressed={arenaPanel === 'status'}
+        onclick={() => toggleArenaPanel('status')}
+      >
+        <span aria-hidden="true">◫</span><b>{$locale === 'fr' ? 'Duel' : 'Status'}</b>
+      </button>
+      <button
+        type="button"
+        aria-pressed={arenaPanel === 'keys'}
+        onclick={() => toggleArenaPanel('keys')}
+      >
+        <span aria-hidden="true">⌨</span><b>{$locale === 'fr' ? 'Touches' : 'Keys'}</b>
+      </button>
+      <button
+        type="button"
+        onclick={() => {
+          arenaPanel = null
+          manualOpen = true
+        }}
+      >
+        <span aria-hidden="true">?</span><b>{$locale === 'fr' ? 'Aide' : 'Help'}</b>
+      </button>
+    </nav>
+  {/if}
+
   <ArenaSetupPanel
     terrainId={terrain.id}
     hrefFor={arenaHref}
@@ -981,41 +1047,81 @@
     progress={challengeProgress}
     {objectiveLabel}
     onChange={applyOptions}
+    open={arenaPanel === 'match'}
+    onOpenChange={(open) => {
+      if (open) {
+        document.exitPointerLock?.()
+        arenaPanel = 'match'
+      } else if (arenaPanel === 'match') arenaPanel = null
+    }}
   />
 
-  <div class="combat-keys" aria-label={$t.arena.keys.label}>
-    <span class:active={commandGroup(commandAnimation) === 'strike'}
-      ><kbd>{$t.arena.keys.strike}</kbd>{$t.arena.action.strike}</span
-    >
-    <span class:active={commandGroup(commandAnimation) === 'ko'}
-      ><kbd>{$t.arena.keys.ko}</kbd>{$t.arena.action.ko}</span
-    >
-    <span class:active={commandGroup(commandAnimation) === 'ryu'}
-      ><kbd>{$t.arena.keys.ryu}</kbd>Ryu</span
-    >
-    <span class:active={commandGroup(commandAnimation) === 'mode'}
-      ><kbd>{$t.arena.keys.modes}</kbd>Ten · Ren · Zetsu</span
-    >
-    <span class:active={commandGroup(commandAnimation) === 'gyo'}><kbd>G</kbd>Gyo</span>
-    <span class:active={commandGroup(commandAnimation) === 'in'}><kbd>I</kbd>In</span>
-    <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
-    <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
-    <span><kbd>V</kbd>{$t.arena.action.feint}</span>
-    <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
-  </div>
+  {#if arenaPanel === 'keys'}
+    <div class="combat-keys" aria-label={$t.arena.keys.label}>
+      <span class:active={commandGroup(commandAnimation) === 'strike'}
+        ><kbd>{$t.arena.keys.strike}</kbd>{$t.arena.action.strike}</span
+      >
+      <span class:active={commandGroup(commandAnimation) === 'ko'}
+        ><kbd>{$t.arena.keys.ko}</kbd>{$t.arena.action.ko}</span
+      >
+      <span class:active={commandGroup(commandAnimation) === 'ryu'}
+        ><kbd>{$t.arena.keys.ryu}</kbd>Ryu</span
+      >
+      <span class:active={commandGroup(commandAnimation) === 'mode'}
+        ><kbd>{$t.arena.keys.modes}</kbd>Ten · Ren · Zetsu</span
+      >
+      <span class:active={commandGroup(commandAnimation) === 'gyo'}><kbd>G</kbd>Gyo</span>
+      <span class:active={commandGroup(commandAnimation) === 'in'}><kbd>I</kbd>In</span>
+      <span class:active={commandGroup(commandAnimation) === 'ken'}><kbd>K</kbd>Ken</span>
+      <span><kbd>⇧</kbd>{$t.arena.action.guard}</span>
+      <span><kbd>V</kbd>{$t.arena.action.feint}</span>
+      <span class:active={commandGroup(commandAnimation) === 'hatsu'}><kbd>H</kbd>Hatsu</span>
+    </div>
+  {/if}
 
-  {#if touch && game.outcome === 'playing'}
-    <nav class="touch-combat" aria-label={$t.arena.ui.quickActions}>
-      <button class="primary" onclick={strike}>{$t.arena.action.strike}</button>
-      <button onclick={guard}>{$t.arena.ui.guard}</button>
-      <button onclick={feint}>{$t.arena.ui.feint}</button>
-      <button onclick={() => evade(-1)}>↙</button>
-      <button onclick={() => evade(1)}>↘</button>
-      <button onclick={castHatsu}>Hatsu</button>
+  {#if game.outcome === 'playing'}
+    <nav class="arena-action-dock" aria-label={$t.arena.ui.quickActions}>
+      <button
+        class="primary"
+        data-arena-action="strike"
+        onclick={() => {
+          arenaPanel = null
+          strike()
+        }}><kbd>{$t.arena.keys.strike}</kbd><span>{$t.arena.action.strike}</span></button
+      >
+      <button
+        data-arena-action="guard"
+        onclick={() => {
+          arenaPanel = null
+          guard()
+        }}><kbd>⇧</kbd><span>{$t.arena.ui.guard}</span></button
+      >
+      <button
+        class="ko-action"
+        data-arena-action="ko"
+        onclick={() => {
+          arenaPanel = null
+          gatherKo()
+        }}><kbd>{$t.arena.keys.ko}</kbd><span>{$t.arena.action.ko}</span></button
+      >
+      <button
+        class:active={arenaPanel === 'ryu'}
+        aria-expanded={arenaPanel === 'ryu'}
+        onclick={() => toggleArenaPanel('ryu')}
+        ><kbd>1–4</kbd><span>Ryu · {Math.round(game.player.attackShare * 100)}%</span></button
+      >
+      <button
+        class="hatsu-action"
+        data-arena-action="hatsu"
+        onclick={() => {
+          arenaPanel = null
+          castHatsu()
+        }}><kbd>H</kbd><span>{carriedHatsu?.name ?? 'Hatsu'}</span></button
+      >
     </nav>
   {/if}
 
-  {#if lesson < 4 && game.outcome === 'playing'}
+  {#if lesson < 4 && game.outcome === 'playing' && arenaPanel === null}
     <aside class="arena-lesson" aria-live="polite">
       <small>{$t.arena.training} · {lesson + 1}/4</small>
       <strong>{$t.arena.lesson[lesson].title}</strong>
@@ -1028,7 +1134,7 @@
   {/if}
 
   <section class="combat-console">
-    <article class="status-card">
+    <article class="status-card" class:expanded={arenaPanel === 'status'}>
       <header><strong>{$t.arena.you}</strong><span>{$t.arena.mode[game.player.mode]}</span></header>
       <div class="meter">
         <i style:width={`${auraPercent(game.player.aura, game.player.capacity)}%`}></i>
@@ -1042,61 +1148,64 @@
       </div>
     </article>
 
-    <article class="ryu-card" class:commanding={commandGroup(commandAnimation) === 'ryu'}>
-      <header><strong>Ryu</strong><span>{Math.round(game.player.attackShare * 100)}%</span></header>
-      <div class="flow" class:shifting={game.player.ryuShift}>
-        <i style:width="{game.player.attackShare * 100}%"></i>
-      </div>
-      <div class="aura-body" aria-label={$t.arena.auraDistribution}>
-        {#each BODY_ZONES as zone (zone)}
-          <i
-            class:guarded={game.player.guard === zone}
-            class:incoming={game.player.ryuShift?.guard === zone}
-            data-zone={$t.arena.zone[zone]}
-            title={`${$t.arena.zone[zone]} · ${Math.round(detailedRyu.defence[zone] * 100)}%`}
-            style:opacity={0.35 + detailedRyu.defence[zone] * 2}
-          ></i>
-        {/each}
-      </div>
-      <div class="zones">
-        {#each BODY_ZONES as zone, index (zone)}
-          <button
-            class:active={game.player.guard === zone}
-            class:pulsing={commandAnimation === `zone-${zone}`}
-            aria-pressed={game.player.guard === zone}
-            aria-label={`${$t.arena.ui.protect} ${$t.arena.zone[zone]}`}
-            onclick={() => setZone(zone)}
+    {#if arenaPanel === 'ryu'}
+      <article class="ryu-card" class:commanding={commandGroup(commandAnimation) === 'ryu'}>
+        <header>
+          <strong>Ryu</strong><span>{Math.round(game.player.attackShare * 100)}%</span>
+        </header>
+        <div class="flow" class:shifting={game.player.ryuShift}>
+          <i style:width="{game.player.attackShare * 100}%"></i>
+        </div>
+        <div class="aura-body" aria-label={$t.arena.auraDistribution}>
+          {#each BODY_ZONES as zone (zone)}
+            <i
+              class:guarded={game.player.guard === zone}
+              class:incoming={game.player.ryuShift?.guard === zone}
+              data-zone={$t.arena.zone[zone]}
+              title={`${$t.arena.zone[zone]} · ${Math.round(detailedRyu.defence[zone] * 100)}%`}
+              style:opacity={0.35 + detailedRyu.defence[zone] * 2}
+            ></i>
+          {/each}
+        </div>
+        <div class="zones">
+          {#each BODY_ZONES as zone, index (zone)}
+            <button
+              class:active={game.player.guard === zone}
+              class:pulsing={commandAnimation === `zone-${zone}`}
+              aria-pressed={game.player.guard === zone}
+              aria-label={`${$t.arena.ui.protect} ${$t.arena.zone[zone]}`}
+              onclick={() => setZone(zone)}
+            >
+              <kbd>{index + 1}</kbd>{$t.arena.zone[zone]}
+            </button>
+          {/each}
+        </div>
+        <div class="actions">
+          <button onclick={feint} disabled={game.outcome !== 'playing'}
+            >{$t.arena.action.feint}</button
           >
-            <kbd>{index + 1}</kbd>{$t.arena.zone[zone]}
+          <button onclick={() => evade(-1)} disabled={game.outcome !== 'playing'}>↙</button>
+          <button onclick={() => evade(1)} disabled={game.outcome !== 'playing'}>↘</button>
+          <button class="ko-action" onclick={gatherKo} disabled={game.outcome !== 'playing'}>
+            {$t.arena.action.ko}
           </button>
-        {/each}
-      </div>
-      <div class="actions">
-        <button onclick={strike} disabled={game.outcome !== 'playing'}
-          >{$t.arena.action.strike}</button
-        >
-        <button class="ko-action" onclick={gatherKo} disabled={game.outcome !== 'playing'}>
-          {$t.arena.action.ko}
-        </button>
-        <button onclick={guard} disabled={game.outcome !== 'playing'}
-          >{$t.arena.action.guard}</button
-        >
-        <button onclick={feint} disabled={game.outcome !== 'playing'}
-          >{$t.arena.action.feint}</button
-        >
-        <button
-          class="hatsu-action"
-          onclick={castHatsu}
-          disabled={game.outcome !== 'playing'}
-          title={carriedHatsu?.rule ?? ''}
-        >
-          {carriedHatsu?.name ?? $t.arena.ui.chooseHatsu}
-          {#if hatsuEffect}<small>H · {hatsuCost} AURA</small>{/if}
-        </button>
-      </div>
-    </article>
+          <button
+            class="hatsu-action"
+            onclick={castHatsu}
+            disabled={game.outcome !== 'playing'}
+            title={carriedHatsu?.rule ?? ''}
+          >
+            {carriedHatsu?.name ?? 'Hatsu'}
+          </button>
+        </div>
+      </article>
+    {/if}
 
-    <article class="status-card opponent-card" class:bound={game.opponent.bound > 0}>
+    <article
+      class="status-card opponent-card"
+      class:bound={game.opponent.bound > 0}
+      class:expanded={arenaPanel === 'status'}
+    >
       <header>
         <strong>{opponentDisplayName}</strong>
         <span
@@ -1124,14 +1233,12 @@
     </article>
   </section>
 
-  <div class="event-line" aria-live="polite">
-    {#if game.lastEvent}
+  {#if eventVisible && game.lastEvent}
+    <div class="event-line" aria-live="polite">
       <strong>{$t.arena.impact[game.lastEvent.impact]}</strong>
       <span>· {$t.arena.zone[game.lastEvent.zone]}</span>
-    {:else}
-      <span>{$t.arena.controls.move}</span>
-    {/if}
-  </div>
+    </div>
+  {/if}
 
   {#if game.outcome !== 'playing'}
     <div class="verdict">

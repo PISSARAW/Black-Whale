@@ -9,6 +9,15 @@ import {
 } from '@black-whale/simulation-engine'
 import { parseNenActionRequest, type AbilityActionPlan } from '@black-whale/nen-engine'
 import type { Location } from '@black-whale/domain'
+import {
+  ANSWER_CARDS,
+  QUESTION_CARDS,
+  TABLE_KINDS,
+  type AnswerCard,
+  type MorenaGame,
+  type QuestionCard,
+  type TableKind,
+} from '@black-whale/ability-modules'
 import { calculatePresencePosition } from '$lib/components/map/markerProjection'
 import { prisma } from '$lib/server/db'
 import { nenRuntime } from '$lib/server/nen'
@@ -63,6 +72,48 @@ interface Selection {
   actionId: string | null
   actorId: string
   targetId: string | null
+}
+
+function morenaState(snapshot: BranchSnapshot) {
+  const effects = Object.values(snapshot.effects)
+  const network = effects.find(
+    (entry) =>
+      entry.abilityId === 'contagion' &&
+      entry.attributes['cohortId'] === 'heil-ly-infected' &&
+      Array.isArray(entry.attributes['memberIds']),
+  )
+  const gameEffect = effects
+    .filter((entry) => entry.abilityId === 'contagion' && entry.attributes['game'])
+    .sort((left, right) => right.startedAt.ordinal - left.startedAt.ordinal)[0]
+  const game = (gameEffect?.attributes['game'] as MorenaGame | undefined) ?? null
+  const members = effects.flatMap((entry) => {
+    if (entry.abilityId !== 'contagion' || typeof entry.attributes['memberId'] !== 'string')
+      return []
+    return [
+      {
+        effectId: entry.id,
+        memberId: entry.attributes['memberId'] as string,
+        label:
+          snapshot.entities[entry.attributes['memberId'] as string]?.label ??
+          String(entry.attributes['memberId']),
+        level: Number(entry.attributes['level'] ?? 0),
+        kills: Number(entry.attributes['kills'] ?? 0),
+      },
+    ]
+  })
+  return {
+    networkEffectId: network?.id ?? null,
+    gameEffectId: gameEffect?.id ?? null,
+    gameEffectState: gameEffect?.state ?? null,
+    candidateId:
+      typeof gameEffect?.attributes['candidateId'] === 'string'
+        ? gameEffect.attributes['candidateId']
+        : null,
+    witnessed: gameEffect?.attributes['witnessedMurder'] === true,
+    game,
+    members,
+    tableKinds: TABLE_KINDS,
+  }
 }
 
 /**
@@ -210,6 +261,7 @@ export const load: PageServerLoad = localizedLoad(
       markers: [] as ReturnType<typeof sceneMarkers>['markers'],
       tier: null as string | null,
       branchError: null as string | null,
+      morena: null as ReturnType<typeof morenaState> | null,
     }
 
     const selection: Selection = {
@@ -241,7 +293,17 @@ export const load: PageServerLoad = localizedLoad(
       const plan = await planFor(branch.snapshot, resolved)
       const { markers, tier } = sceneMarkers(scene, branch.snapshot, locations)
 
-      return { ...base, branch, scene, plan, actions, markers, tier, selection: resolved }
+      return {
+        ...base,
+        branch,
+        scene,
+        plan,
+        actions,
+        markers,
+        tier,
+        selection: resolved,
+        morena: morenaState(branch.snapshot),
+      }
     } catch (error) {
       return { ...base, selection, branchError: message(error, 'Unable to load this branch.') }
     }
@@ -330,6 +392,136 @@ export const actions: Actions = {
       ...(targetId ? { target: targetId } : {}),
     })
     throw redirect(303, `/simulations?${query}`)
+  },
+
+  morena: async ({ request, url, getClientAddress }) => {
+    const throttle = rateLimit(`sim:action:${getClientAddress()}`, ACTION_LIMIT, RATE_WINDOW_MS)
+    if (!throttle.allowed) return fail(429, { message: 'Too many simulation actions.' })
+    const data = await request.formData()
+    const branchId = String(data.get('branchId') || url.searchParams.get('branch') || '')
+    const command = String(data.get('command') || '')
+    const actorId = String(data.get('actorId') || 'morena-prudo')
+    const targetId = String(data.get('targetId') || '')
+    const value = String(data.get('value') || '')
+    if (!branchId || !command || !actorId) return fail(400, { message: 'Missing Morena command.' })
+
+    try {
+      const branch = await simulationStore.getBranchState(branchId)
+      const state = morenaState(branch.snapshot)
+      const game = state.game
+      let actionId = command
+      let targets: string[] = targetId ? [targetId] : []
+      let parameters: Record<string, unknown> = {}
+
+      if (command === 'open-network') {
+        if (state.networkEffectId)
+          throw new SimulationInputError('The Contagion network is already open.')
+      } else if (command === 'open-game') {
+        if (!targetId) throw new SimulationInputError('Choose a candidate for the game.')
+        if (game && game.phase !== 'over')
+          throw new SimulationInputError('A Morena game is already active.')
+        if (value && !TABLE_KINDS.includes(value as TableKind))
+          throw new SimulationInputError('Unknown table technique.')
+        parameters = {
+          ...(value ? { technique: value } : {}),
+          ...(data.get('clean') === 'true' ? { clean: 'true' } : {}),
+        }
+      } else {
+        if (!game || !state.gameEffectId)
+          throw new SimulationInputError('No Morena game exists in this branch.')
+        targets = state.candidateId ? [state.candidateId] : targets
+        if (command === 'ask') {
+          if (
+            game.phase !== 'asking' ||
+            !QUESTION_CARDS.includes(value as QuestionCard) ||
+            !game.questions.includes(value as QuestionCard)
+          )
+            throw new SimulationInputError('That question cannot be asked now.')
+          parameters = { effectId: state.gameEffectId, question: value }
+        } else if (command === 'stake') {
+          if (
+            game.phase !== 'deal' ||
+            !ANSWER_CARDS.includes(value as AnswerCard) ||
+            !game.graveyard.includes(value as AnswerCard)
+          )
+            throw new SimulationInputError('That card cannot be recovered now.')
+          parameters = { effectId: state.gameEffectId, card: value }
+        } else if (command === 'refuse-stake') {
+          if (game.phase !== 'deal') throw new SimulationInputError('There is no kiss to refuse.')
+          parameters = { effectId: state.gameEffectId }
+        } else if (command === 'play-technique') {
+          if (game.phase === 'over' || !game.technique)
+            throw new SimulationInputError('No table technique can be played.')
+          parameters = { effectId: state.gameEffectId }
+        } else if (command === 'leave-table') {
+          if (game.phase === 'over') throw new SimulationInputError('The game is already over.')
+          parameters = { effectId: state.gameEffectId }
+        } else if (command === 'settle') {
+          if (game.phase !== 'settling')
+            throw new SimulationInputError('The last card is not ready.')
+          if (value && !ANSWER_CARDS.includes(value as AnswerCard))
+            throw new SimulationInputError('Unknown final choice.')
+          parameters = { effectId: state.gameEffectId, ...(value ? { choice: value } : {}) }
+        } else if (command === 'close-game') {
+          const eligible = game.kissed && (game.verdict === 'infected' || game.verdict === 'forced')
+          if (
+            game.phase !== 'over' ||
+            state.gameEffectState === 'ENDED' ||
+            (eligible && !state.witnessed)
+          )
+            throw new SimulationInputError('The game cannot be closed now.')
+          parameters = { effectId: state.gameEffectId }
+        } else if (command === 'witness-murder') {
+          if (game.phase !== 'over' || state.witnessed || state.gameEffectState === 'ENDED')
+            throw new SimulationInputError('The murder cannot be recorded now.')
+          parameters = { gameEffectId: state.gameEffectId }
+        } else if (command === 'infect') {
+          if (!state.networkEffectId || !state.witnessed || !state.candidateId)
+            throw new SimulationInputError('The three infection conditions are not complete.')
+          if (state.members.some((member) => member.memberId === state.candidateId))
+            throw new SimulationInputError('This candidate is already infected.')
+          parameters = { effectId: state.networkEffectId, gameEffectId: state.gameEffectId }
+          targets = [state.candidateId]
+        } else if (command === 'record-kill') {
+          const member = state.members.find(
+            (entry) => entry.effectId === String(data.get('memberEffectId') || ''),
+          )
+          if (!member || !['ordinary', 'nen-user', 'prince'].includes(value))
+            throw new SimulationInputError('Unknown member or victim status.')
+          parameters = {
+            effectId: member.effectId,
+            victimStatus: value,
+            victimId: String(
+              data.get('victimId') || `simulated-${branch.snapshot.cursor.ordinal + 1}`,
+            ),
+          }
+          targets = [member.memberId]
+        } else {
+          throw new SimulationInputError('Unknown Morena command.')
+        }
+      }
+
+      await simulationStore.applyAction(
+        branchId,
+        parseSimulationActionInput({
+          actionType: 'ACTIVATE_ABILITY',
+          payload: {
+            abilityId: 'contagion',
+            actorId,
+            interaction: actionId,
+            actionId,
+            targets,
+            parameters,
+          },
+        }),
+      )
+    } catch (error) {
+      return fail(400, { message: message(error, 'Morena action failed.') })
+    }
+    throw redirect(
+      303,
+      `/simulations?branch=${branchId}&ability=contagion&actor=${actorId}${targetId ? `&target=${targetId}` : ''}`,
+    )
   },
 
   /**

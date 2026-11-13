@@ -1,6 +1,9 @@
 import { MAX_REVERB, MIN_REVERB, impulseResponse, slapDelay } from '$lib/tour/atmosphere'
+import type { HeardNeighbour, RoomSoundProfile } from '$lib/tour/roomSound'
 
+import { listenerNow } from '../space'
 import { orientEnvironment, settleEnvironment } from './environment'
+import { orientRoomAmbience, settleRoomAmbience } from './roomAmbience'
 import {
   CROSSFADE,
   currentFacing,
@@ -34,19 +37,30 @@ function seedOf(id: string): number {
  * doorway; assigning it to the idle one and crossfading means the corridor rings
  * out while the hall opens up, which is what walking through a door sounds like.
  */
-export function enterRoom(id: string, reverb: number, wallDistance: number) {
+export interface RoomEntry {
+  id: string
+  /** Changes when a live input changes while the visitor remains in the room. */
+  key?: string
+  reverb: number
+  wallDistance: number
+  sound?: RoomSoundProfile
+  neighbour?: HeardNeighbour | null
+}
+
+export function enterRoom(entry: RoomEntry) {
   const g = currentGraph()
   if (!g) return
-  if (id === currentRoomKey()) return
-  setCurrentRoomKey(id)
+  const key = entry.key ?? entry.id
+  if (key === currentRoomKey()) return
+  setCurrentRoomKey(key)
 
   const next = g.current === 0 ? 1 : 0
-  const rt60 = Math.min(MAX_REVERB, Math.max(MIN_REVERB, reverb))
+  const rt60 = Math.min(MAX_REVERB, Math.max(MIN_REVERB, entry.reverb))
   const now = g.context.currentTime
 
   const response = impulseResponse(rt60, g.context.sampleRate, {
-    seed: seedOf(id),
-    reflections: [slapDelay(wallDistance), slapDelay(wallDistance * 2.4)],
+    seed: seedOf(entry.id),
+    reflections: [slapDelay(entry.wallDistance), slapDelay(entry.wallDistance * 2.4)],
   })
   const buffer = g.context.createBuffer(1, response.length, g.context.sampleRate)
   buffer.copyToChannel(response, 0)
@@ -62,7 +76,16 @@ export function enterRoom(id: string, reverb: number, wallDistance: number) {
   g.current = next
 
   g.slap.delayTime.cancelScheduledValues(now)
-  g.slap.delayTime.setTargetAtTime(slapDelay(wallDistance), now, CROSSFADE / 3)
+  g.slap.delayTime.setTargetAtTime(slapDelay(entry.wallDistance), now, CROSSFADE / 3)
+
+  if (entry.sound) {
+    settleRoomAmbience(
+      g.ambience,
+      entry.sound,
+      entry.neighbour ? { profile: entry.neighbour.profile, at: entry.neighbour.at } : null,
+    )
+    orientRoomAmbience(g.ambience, listenerNow())
+  }
 }
 
 /**

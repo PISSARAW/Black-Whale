@@ -14,9 +14,11 @@
  */
 import type * as Three from 'three'
 import { applySurfaceDetail } from './surfaceDetail'
+import { applySurfaceCondition } from './surfaceCondition'
 import { applySheen } from './sheen'
 import { applySkyPool } from './skyPool'
 import type { QualityProfile } from './quality'
+import { createLampAirMaterial } from './lampAir'
 
 /** Everything a deck is drawn with, and the pool's uniforms with them. */
 export interface DeckMaterials {
@@ -32,6 +34,8 @@ export interface DeckMaterials {
   fitting: Three.MeshBasicMaterial
   pane: Three.MeshBasicMaterial
   dust: Three.PointsMaterial
+  /** High-only additive haze around the fittings, or null on low. */
+  lampAir: Three.ShaderMaterial | null
 }
 
 /**
@@ -48,6 +52,7 @@ export interface DeckMaterials {
  */
 function dressSteel(material: Three.MeshLambertMaterial, quality: QualityProfile): void {
   if (quality.surfaceDetail) applySurfaceDetail(material)
+  if (quality.surfaceCondition) applySurfaceCondition(material)
   if (quality.sheen) applySheen(material)
 }
 
@@ -97,7 +102,14 @@ export function createDeckMaterials(THREE: typeof Three, quality: QualityProfile
   dressSteel(skylit, quality)
   const pool = applySkyPool(skylit)
 
-  return { surface, skylit, pool, ...trim(THREE), dust: createDust(THREE) }
+  return {
+    surface,
+    skylit,
+    pool,
+    ...trim(THREE),
+    dust: createDust(THREE),
+    lampAir: createLampAirMaterial(THREE, quality.lampAir),
+  }
 }
 
 /**

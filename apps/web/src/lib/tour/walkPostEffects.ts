@@ -33,11 +33,14 @@ export function updateWalkOptics(
     blinded: boolean
     outside: boolean | undefined
     lens: boolean
+    adaptation?: number
   },
 ): void {
   runtime.renderer.toneMappingExposure = frame.blinded
     ? SEALED_EXPOSURE
-    : frame.exposure * (frame.outside ? Math.max(1.15, frame.hour.exposure) : frame.hour.exposure)
+    : frame.exposure *
+      (frame.adaptation ?? 1) *
+      (frame.outside ? Math.max(1.15, frame.hour.exposure) : frame.hour.exposure)
   applyGrade(runtime.grade, {
     grade: frame.hour.grade,
     clock: frame.clock,

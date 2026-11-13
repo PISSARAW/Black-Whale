@@ -2,6 +2,16 @@ export * from './cast/kinds'
 export * from './cast/types'
 export * from './hatsuBook'
 export * from './hatsuRecord'
+export {
+  ageTheOwl,
+  doorExit,
+  eyeHeightIn,
+  fishBite,
+  flyTheEye,
+  flyTheOwl,
+  linkIsOpen,
+  wormExit,
+} from './hatsuTraversal'
 /**
  * Nen inside the walk: what a Hatsu does to the ship rather than to the page.
  *
@@ -25,7 +35,7 @@ export * from './hatsuRecord'
  */
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
-import { ceilingOf, type Ship, type TierPlan } from './blueprint'
+import type { Ship, TierPlan } from './blueprint'
 import {
   blocksTheFloor,
   centroid,
@@ -46,7 +56,6 @@ import type { Space, Structure, Vec2, WallSegment } from './types'
 import {
   BODY_HATSU_KINDS,
   EITHER_TARGET,
-  OWL_FILM_SECONDS,
   OWL_SECONDS,
   ROOM_OR_BODY,
   SOLID_HATSU_KINDS,
@@ -55,8 +64,6 @@ import { bodyAfterAuraEnds } from './cast/pain'
 import {
   EMPTY_WORLD,
   type DeckMoment,
-  type DoorOptions,
-  type Doors,
   type HeldSolid,
   type LoadedDeck,
   type Played,
@@ -79,6 +86,7 @@ import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
 import { perchFor } from './targeting'
 import { nextForgery, nextSign, takesAMask } from './texture'
 import { dialReading, identityOf, tenSecondsOn, unwalked, verseFor } from './hatsuRecord'
+import { filmOwlRoom, frameOf, lastTenSeconds, roomsFilmed } from './hatsuTraversal'
 
 export {
   injuryPace,
@@ -3396,13 +3404,6 @@ export function shellsFor(world: TourWorld, ship: Ship): string[] {
   return [...new Set(ids)].filter((id) => ship.spaces.has(id))
 }
 
-/** Eye height inside a room, for the remote eye's camera. */
-export function eyeHeightIn(space: Space, ship: Ship): number {
-  const tier = ship.tiers.find((candidate) => candidate.id === space.tierId)
-  if (!tier) return 1.7
-  return tier.elevation + Math.min(2.2, ceilingOf(space, tier) - 0.4)
-}
-
 /**
  * What happens because the visitor set foot somewhere.
  *
@@ -3476,7 +3477,7 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   // bird that travels without flying: the free one works its way through the
   // doors on the clock, and the third stays where it was thrown.
   if (next.owl && next.owlMode === 'shoulder' && next.owl !== spaceId) {
-    next = { ...next, owl: spaceId, owlFilm: filmed(next, spaceId) }
+    next = { ...next, owl: spaceId, owlFilm: filmOwlRoom(next, spaceId) }
   }
 
   // A droplet lasts a few arrivals and then dries up.
@@ -3603,228 +3604,6 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   }
 
   return { world: next, travelTo, report, punished }
-}
-
-/**
- * Where Fugetsu's tunnel puts someone who steps into one of its two ends.
- *
- * Unlike the hideout doors it wears out: the route is meant to be walked once
- * a night, and asking it again and again is what exhausts the worm. The third
- * crossing is the last, and the pair collapses behind it.
- */
-export function wormExit(
-  world: TourWorld,
-  spaceId: string | null,
-  arrivedFrom: string | null,
-): { to: string; world: TourWorld; report: TourReport } | null {
-  const worm = world.worm
-  if (!worm?.b || !spaceId || spaceId === arrivedFrom) return null
-  const to = spaceId === worm.a ? worm.b : spaceId === worm.b ? worm.a : null
-  if (!to) return null
-
-  const crossings = worm.crossings + 1
-  if (crossings >= 3) {
-    return { to, world: { ...world, worm: null }, report: { kind: 'worm-spent' } }
-  }
-  return {
-    to,
-    world: { ...world, worm: { ...worm, crossings } },
-    report: { kind: 'worm-crossed', spaceId: to, crossings },
-  }
-}
-
-/**
- * Whether a stairwell may be taken from where the visitor stands.
- *
- * A shut room is shut: its doorways are gone from the geometry, and the stair
- * out of it has to be refused separately, since a link carries its own
- * position and no wall stands between the visitor and it.
- */
-export const linkIsOpen = (world: TourWorld, spaceId: string | null): boolean =>
-  !spaceId || (!world.shut.includes(spaceId) && world.pinned !== spaceId)
-
-/**
- * Where the hideout doors put someone who steps into one of the pair.
- *
- * Walking past does nothing — this is only ever asked when the visitor has
- * just arrived in a room — and a pair that is only half armed does nothing
- * either. `arrivedFrom` is the room the last crossing delivered them to, so
- * stepping out of one door does not immediately fall back through the other.
- */
-export function doorExit(world: TourWorld, through: Doors, options: DoorOptions = {}) {
-  const { spaceId, arrivedFrom } = through
-  const { ship, random = Math.random } = options
-  if (!spaceId || spaceId === arrivedFrom) return null
-  if (world.doors.length === 2) {
-    const [a, b] = world.doors
-    if (spaceId === a) return b
-    if (spaceId === b) return a
-    return null
-  }
-
-  // The hideout is wired whether or not a route has been prepared in it: with
-  // the aura up and no pair armed, every frame in the ship is one of Voconte's,
-  // and what is on the other side of it is not where you were going. Passive by
-  // construction — nothing is aimed and nothing is cast, so the only way to
-  // stop coming out somewhere else is to put the technique down.
-  if (world.holding !== 'door-network' || !ship) return null
-  const elsewhere = [...ship.spaces.keys()].filter((id) => id !== spaceId)
-  if (!elsewhere.length) return null
-  return elsewhere[Math.min(elsewhere.length - 1, Math.floor(random() * elsewhere.length))]
-}
-
-/**
- * One bite. The fish eat what is in the room, a thing at a time.
- *
- * The technique's own rule is that the victim feels nothing while it lasts, so
- * for a long time nothing was taken until the visitor walked out — which from
- * inside the room meant a sealed room and no fish. They are drawn now, and a
- * fish that swims through a coffin and leaves it standing is not eating: this
- * is the walk letting them feed while you watch, on whatever the scene's clock
- * says. Everything else about them is unchanged, including that they only ever
- * eat inside a room that has been shut.
- */
-export function fishBite(
-  world: TourWorld,
-  ship: Ship,
-  spaceId: string | null,
-): TourCastResult | null {
-  if (!spaceId || !world.devouring.includes(spaceId)) return null
-  const eaten = [...ship.structures, ...world.copies].find(
-    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
-  )
-  if (!eaten) return null
-  return {
-    world: {
-      ...world,
-      solids: { ...world.solids, [eaten.id]: { ...world.solids[eaten.id], gone: true } },
-    },
-    report: { kind: 'fish-fed', spaceId, solidId: eaten.id },
-  }
-}
-
-/**
- * One hop of the free bird, which is the only one that moves on its own.
- *
- * It goes through a door rather than through the hull: the ship's own
- * adjacency is the list of where it may go next, and a room the chain has shut
- * is shut to a bird as much as to a visitor. A perch with nothing open off it
- * keeps the bird where it is, and says nothing.
- */
-export function flyTheOwl(
-  world: TourWorld,
-  ship: Ship,
-  random: () => number = Math.random,
-): TourCastResult | null {
-  if (!world.owl || world.owlMode !== 'wander') return null
-  const ways = (ship.adjacency.get(world.owl) ?? []).filter(
-    (id) => ship.spaces.has(id) && linkIsOpen(world, id),
-  )
-  if (!ways.length) return null
-  const spaceId = ways[Math.min(ways.length - 1, Math.floor(random() * ways.length))]
-  return {
-    world: { ...world, owl: spaceId, owlFilm: filmed(world, spaceId) },
-    report: { kind: 'owl-flown', spaceId },
-  }
-}
-
-/**
- * One hop of the insect, which moves on its own only when it is scouting.
- *
- * The same rule as the bird's, and for the same reason: it goes through a door
- * rather than through the hull, and a room the chain has shut is shut to a
- * cockroach as much as to a visitor. Piloted or filming, it stays where it was
- * put — those are the two orders that mean "do not wander off".
- */
-export function flyTheEye(
-  world: TourWorld,
-  ship: Ship,
-  random: () => number = Math.random,
-): TourCastResult | null {
-  if (!world.eye || world.eyeMode !== 'scout') return null
-  const ways = (ship.adjacency.get(world.eye) ?? []).filter(
-    (id) => ship.spaces.has(id) && linkIsOpen(world, id),
-  )
-  if (!ways.length) return null
-  const spaceId = ways[Math.min(ways.length - 1, Math.floor(random() * ways.length))]
-  return {
-    world: { ...world, eye: spaceId, eyeFilm: [...world.eyeFilm, frameOf(ship, world, spaceId)] },
-    report: { kind: 'eye-flown', spaceId },
-  }
-}
-
-/**
- * One frame of the feed: a room, and how much was standing in it.
- *
- * Counted as the aura currently leaves the room rather than as the blueprint
- * has it — a coffin Blinky swallowed is not something the insect can film — so
- * the film says what was actually there to see.
- */
-function frameOf(ship: Ship, world: TourWorld, spaceId: string): { spaceId: string; seen: number } {
-  // A room Blinky has been through is a room with nothing in it to film,
-  // whatever the blueprint still says stands there.
-  if (world.emptied.includes(spaceId)) return { spaceId, seen: 0 }
-  const seen = [...ship.structures, ...world.copies].filter(
-    (solid) => solid.spaceId === spaceId && !world.solids[solid.id]?.gone,
-  ).length
-  return { spaceId, seen }
-}
-
-/** How many rooms the film covers, however many times it passed through them. */
-const roomsFilmed = (film: TourWorld['eyeFilm']): number =>
-  new Set(film.map((frame) => frame.spaceId)).size
-
-/**
- * The film, with the room the bird has just reached written into it.
- *
- * Stamped with how far into the flight it got there, which is what the walk
- * plays the ten seconds back against. Kept whole while the bird is up: the cut
- * is made when it goes, because until then there is no telling which second
- * will turn out to be the last.
- */
-function filmed(world: TourWorld, spaceId: string): TourWorld['owlFilm'] {
-  const second = Math.max(0, OWL_SECONDS - world.owlLife)
-  return [...world.owlFilm, { spaceId, second }]
-}
-
-/**
- * The last ten seconds of a flight, as the bird hands them over.
- *
- * Everything from the cut on, and the room it was in *at* the cut — a film
- * that started in the middle of a corridor would open on nothing, so the
- * entry that was still running is kept and moved up to the cut itself.
- */
-function lastTenSeconds(film: TourWorld['owlFilm'], flown: number): TourWorld['owlFilm'] {
-  const cut = Math.max(0, flown - OWL_FILM_SECONDS)
-  const after = film.filter((frame) => frame.second >= cut)
-  const running = [...film].reverse().find((frame) => frame.second < cut)
-  const kept = running ? [{ spaceId: running.spaceId, second: cut }, ...after] : after
-  // Told from zero, so the film is ten seconds long rather than the tail of a
-  // twenty-second one: what is handed back is a recording, not a timestamp.
-  return kept.map((frame) => ({ ...frame, second: frame.second - cut }))
-}
-
-/**
- * One second of the twenty, and what is left of the bird after it.
- *
- * The only part of Secret Window that runs on the walk's clock rather than on
- * a cast: the owl is materialized for twenty seconds and then it is not there.
- * What it leaves behind is the last ten, cut to length and handed over — which
- * is the whole of what the technique promises and all it promises.
- */
-export function ageTheOwl(
-  world: TourWorld,
-  seconds = 1,
-): { world: TourWorld; report: TourReport | null } | null {
-  if (!world.owl) return null
-  const left = world.owlLife - seconds
-  if (left > 0) return { world: { ...world, owlLife: left }, report: null }
-
-  const film = lastTenSeconds(world.owlFilm, OWL_SECONDS)
-  return {
-    world: { ...world, owl: null, owlLife: 0, owlFilm: film },
-    report: { kind: 'owl-expired', rooms: new Set(film.map((frame) => frame.spaceId)).size },
-  }
 }
 
 /** How near the two have to come, in metres, before the pair goes off. */

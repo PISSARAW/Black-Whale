@@ -39,7 +39,8 @@
   {/if}
   {#each seats as seat, index (seat.page)}
     <div
-      class="mt-3 rounded border border-[#333] p-3 {index === 0 && seats.length === 1
+      class="relative z-20 mt-3 scroll-mt-24 rounded border border-[#333] bg-[#0b0b0d] p-3 {index ===
+        0 && seats.length === 1
         ? 'mt-5'
         : ''}"
       data-testid="morena-hatsu-seat"

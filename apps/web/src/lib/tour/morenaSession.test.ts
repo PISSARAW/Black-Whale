@@ -70,4 +70,59 @@ describe('Morena session', () => {
 
     expect(session.choice).toBe('no')
   })
+
+  it('restores a hand at the same random cursor and remembers discovered answers', () => {
+    const session = new MorenaSession()
+    session.deal({ tableKind: null, carryingBook: false })
+    session.dispatch({ kind: 'ask', question: 'goal' })
+    const restored = new MorenaSession()
+    restored.hydrate(session.snapshot())
+    restored.resume()
+
+    session.dispatch({ kind: 'ask', question: 'power' })
+    restored.dispatch({ kind: 'ask', question: 'power' })
+    expect(restored.game).toEqual(session.game)
+    expect(restored.discoveredQuestions).toEqual(['goal', 'power'])
+  })
+
+  it('lets a challenge take priority without replacing the resumable hand', () => {
+    const original = new MorenaSession()
+    original.deal({ tableKind: null, carryingBook: false })
+    original.dispatch({ kind: 'ask', question: 'goal' })
+    const savedHand = original.snapshot().active
+
+    const challenged = new MorenaSession()
+    challenged.hydrate(original.snapshot())
+    challenged.setChallenge(challenge)
+    challenged.deal({ tableKind: null, carryingBook: false })
+    challenged.dispatch({ kind: 'ask', question: challenged.game.questions[0] })
+
+    expect(challenged.currentMode).toBe('challenge')
+    expect(challenged.snapshot().active).toEqual(savedHand)
+    challenged.showMenu()
+    expect(challenged.resumeAvailable).toBe(true)
+    expect(challenged.game).toEqual(savedHand?.game)
+  })
+
+  it('completes the third condition once and persists the local recruit', () => {
+    const session = new MorenaSession()
+    session.deal({ tableKind: null, carryingBook: false })
+    session.replaceGame({
+      ...session.game,
+      phase: 'over',
+      verdict: 'infected',
+      kissed: true,
+      ending: 'played',
+    })
+    expect(session.epilogue).toBe('pending')
+    session.observeMurder()
+    session.recordKill('nen-user')
+    expect(session.progress.member).toMatchObject({ memberId: 'local-player', level: 10, kills: 1 })
+
+    const restored = new MorenaSession()
+    restored.hydrate(session.snapshot())
+    expect(restored.progress.member).toMatchObject({ memberId: 'local-player', level: 10 })
+    restored.observeMurder()
+    expect(restored.progress.member?.memberId).toBe('local-player')
+  })
 })

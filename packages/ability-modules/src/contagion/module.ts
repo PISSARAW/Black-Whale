@@ -1,10 +1,9 @@
 import {
   abilityGrant,
   attributeCounter,
-  belowCapacity,
   buildManifest,
   canUseNen,
-  checklist,
+  condition,
   controlLink,
   defineAbility,
   effect,
@@ -35,6 +34,7 @@ import {
   worksAtTheTable,
   type GameEnding,
   type QuestionCard,
+  type InfectionStep,
 } from './game.js'
 import {
   COHORT_ID,
@@ -51,6 +51,19 @@ import {
   moveTheGame,
   seededRandom,
 } from './limits.js'
+
+function isEligibleInfectionGame(
+  game: ReturnType<typeof dealTheGame> | undefined,
+  effectIsLive: boolean,
+): boolean {
+  if (!game) return false
+  return [
+    effectIsLive,
+    !game.proxied,
+    game.kissed,
+    game.verdict === 'infected' || game.verdict === 'forced',
+  ].every(Boolean)
+}
 
 /**
  * Contagion (Et tu, Juliet) — Morena Prudo
@@ -119,12 +132,24 @@ export const contagion = defineAbility({
       evidence: shown('ch. 375 — la triple condition : jeu gagné, baiser, meurtre observé'),
       conditions: [
         requiresTarget('Une cible est embrassée'),
-        checklist(
-          'infection',
+        condition(
+          'checklist-infection',
           'Les trois conditions d’infection sont remplies (jeu gagné en « Yes », baiser, meurtre observé)',
-          [...INFECTION_STEPS],
+          (ctx) => {
+            const gameEffectId = param(ctx, 'gameEffectId')
+            const steps = gameEffectId
+              ? ctx.worldState?.effects[gameEffectId]?.attributes['completedSteps']
+              : undefined
+            return Array.isArray(steps) && INFECTION_STEPS.every((step) => steps.includes(step))
+              ? 'MET'
+              : 'UNMET'
+          },
         ),
-        belowCapacity('memberCount', NETWORK_CAPACITY, 'Le réseau compte moins de 22 infectés'),
+        condition('capacity-memberCount', 'Le réseau compte moins de 22 infectés', (ctx) => {
+          const id = param(ctx, 'effectId')
+          const members = id ? ctx.worldState?.effects[id]?.attributes['memberIds'] : undefined
+          return Array.isArray(members) && members.length < NETWORK_CAPACITY ? 'MET' : 'UNMET'
+        }),
         effectIsLive('effectId', 'Le réseau est ouvert'),
       ],
       effects: [
@@ -179,7 +204,7 @@ export const contagion = defineAbility({
               rules: [
                 'Sept questions contre cinq réponses : Oui, Non, Retour, Joker, X.',
                 'Une question dépensée par tour, une réponse retirée au hasard.',
-                'Ce qui reste quand les questions s’épuisent est la réponse donnée.',
+                'La dernière carte-réponse restante est la réponse donnée.',
                 'Tricher ou abandonner limite la réponse à Oui ou Non.',
                 'La partie s’achève à la mort de Morena, à celle de la cible, ou quand elle est accomplie.',
               ],
@@ -288,6 +313,52 @@ export const contagion = defineAbility({
         },
       ],
       hint: 'Trois fins : accomplie, Morena morte, cible morte',
+    },
+
+    'witness-murder': {
+      label: 'Observer le meurtre',
+      evidence: shown('ch. 410 — la troisième condition est un meurtre observé après la partie'),
+      conditions: [
+        condition('eligible-game', 'La partie a produit Oui et le baiser', (ctx) => {
+          const id = param(ctx, 'gameEffectId')
+          const held = id ? ctx.worldState?.effects[id] : undefined
+          const game = held?.attributes['game'] as ReturnType<typeof dealTheGame> | undefined
+          return isEligibleInfectionGame(game, held?.state !== 'ENDED') ? 'MET' : 'UNMET'
+        }),
+      ],
+      effects: [
+        (ctx) => {
+          const id = param(ctx, 'gameEffectId')
+          if (!id) return []
+          const effect = ctx.worldState?.effects[id]
+          const existing = effect?.attributes['completedSteps']
+          const completedSteps = Array.isArray(existing)
+            ? (existing.filter((step): step is InfectionStep =>
+                INFECTION_STEPS.includes(step as InfectionStep),
+              ) as InfectionStep[])
+            : []
+          if (!completedSteps.includes('witnessed-murder')) completedSteps.push('witnessed-murder')
+          return [
+            {
+              type: 'EFFECT_ATTRIBUTE_CHANGED' as const,
+              payload: {
+                effectId: id,
+                attributes: { completedSteps, witnessedMurder: true },
+              },
+              revealedAtChapter: GAME_REVEALED_AT,
+            },
+            {
+              type: 'EFFECT_STATE_CHANGED' as const,
+              payload: {
+                effectId: id,
+                state: 'ENDED' as const,
+                attributes: { reason: 'game-completed' },
+              },
+              revealedAtChapter: GAME_REVEALED_AT,
+            },
+          ]
+        },
+      ],
     },
 
     'record-kill': {

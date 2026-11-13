@@ -1,18 +1,20 @@
 <script lang="ts">
   import { tick } from 'svelte'
   import { t } from '$lib/i18n'
-  import { infectionAfter, type MorenaGame } from '$lib/tour/morena'
+  import { infectionAfter, type InfectionProgress, type MorenaGame } from '$lib/tour/morena'
 
   interface Props {
     game: MorenaGame
     onAgain: () => void
     onLeave: () => void
     onLab?: () => void
+    progress?: InfectionProgress
+    knowsInfection?: boolean
   }
 
-  let { game, onAgain, onLeave, onLab }: Props = $props()
+  let { game, onAgain, onLeave, onLab, progress, knowsInfection = false }: Props = $props()
   const copy = $derived($t.tour.morena)
-  const conditions = $derived(infectionAfter(game))
+  const conditions = $derived(infectionAfter(game, progress))
   let verdictHeading = $state<HTMLHeadingElement | null>(null)
   const verdictCopy = $derived(
     game.verdict
@@ -44,22 +46,24 @@
     <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/75">{verdictCopy?.body}</p>
   </div>
 
-  <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
-    {copy.conditions.title}
-  </h3>
-  <ul class="mt-2 space-y-1 text-xs">
-    {#each [{ label: copy.conditions.said, met: conditions.said }, { label: copy.conditions.kissed, met: conditions.kissed }, { label: copy.conditions.witnessed, met: conditions.witnessed }] as condition (condition.label)}
-      <li class="flex justify-between gap-3">
-        <span class="text-[#FFFFF0]/70">{condition.label}</span>
-        <span class={condition.met ? 'text-[#7fc8a0]' : 'text-[#FFFFF0]/35'}>
-          {condition.met ? copy.conditions.met : copy.conditions.unmet}
-        </span>
-      </li>
-    {/each}
-  </ul>
-  <p class="mt-2 text-xs font-semibold text-[#FFD700]">
-    {conditions.level === null ? copy.conditions.none : copy.conditions.level(conditions.level)}
-  </p>
+  {#if knowsInfection || progress?.member}
+    <h3 class="mt-4 text-[10px] uppercase tracking-widest text-[#FFD700]/70">
+      {copy.conditions.title}
+    </h3>
+    <ul class="mt-2 space-y-1 text-xs">
+      {#each [{ label: copy.conditions.said, met: conditions.said }, { label: copy.conditions.kissed, met: conditions.kissed }, { label: copy.conditions.witnessed, met: conditions.witnessed }] as condition (condition.label)}
+        <li class="flex justify-between gap-3">
+          <span class="text-[#FFFFF0]/70">{condition.label}</span>
+          <span class={condition.met ? 'text-[#7fc8a0]' : 'text-[#FFFFF0]/35'}>
+            {condition.met ? copy.conditions.met : copy.conditions.unmet}
+          </span>
+        </li>
+      {/each}
+    </ul>
+    <p class="mt-2 text-xs font-semibold text-[#FFD700]">
+      {conditions.level === null ? copy.conditions.none : copy.conditions.level(conditions.level)}
+    </p>
+  {/if}
   {#if !conditions.said && conditions.kissed}
     <p class="mt-2 text-xs leading-snug text-[#FFFFF0]/60">{copy.conditions.kissedAnyway}</p>
   {/if}

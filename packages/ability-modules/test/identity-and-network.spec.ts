@@ -122,6 +122,27 @@ describe('Contagion', () => {
   })
 
   it('locks the network once twenty-two members are infected', () => {
+    const state = world()
+    state.effects['game'] = {
+      id: 'game',
+      kind: 'CUSTOM',
+      abilityId: 'contagion',
+      source: { id: 'morena-prudo', kind: 'CHARACTER' },
+      targets: [],
+      state: 'ENDED',
+      attributes: { completedSteps: ['game-won-yes', 'kiss', 'witnessed-murder'] },
+      startedAt: CURSOR,
+    }
+    state.effects['network'] = {
+      id: 'network',
+      kind: 'CUSTOM',
+      abilityId: 'contagion',
+      source: { id: 'morena-prudo', kind: 'CHARACTER' },
+      targets: [],
+      state: 'ACTIVE',
+      attributes: { memberIds: Array.from({ length: 22 }, (_, index) => `member-${index}`) },
+      startedAt: CURSOR,
+    }
     const full = contagion.plan(
       context({
         abilityId: 'contagion',
@@ -129,10 +150,10 @@ describe('Contagion', () => {
         actor: { id: 'morena-prudo', kind: 'CHARACTER' },
         actionId: 'infect',
         targets: ['guard-1'],
+        worldState: state,
         parameters: {
-          completedSteps: ['game-won-yes', 'kiss', 'witnessed-murder'],
-          memberCount: 22,
           effectId: 'network',
+          gameEffectId: 'game',
         },
       }),
     )

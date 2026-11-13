@@ -20,7 +20,9 @@
   import { link, parsePathname, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
-  import { loadComfort, prefersReducedMotion } from '$lib/tour/comfort'
+  import { loadComfort, prefersReducedMotion, reducedMotion } from '$lib/tour/comfort'
+  import { presentationFor, type AbilitySurfaceAdapter } from '$lib/nen/abilityPresentation'
+  import { tourAbilitySurfaceAdapter, type TourAbilityCommand } from '$lib/tour/abilitySurface'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { TourChromeState } from '$lib/tour/pageChrome.svelte'
@@ -840,6 +842,57 @@
     return post ? { spaceId: post.spaceId, at: post.at } : null
   })
 
+  const abilitySurfaceTargetId = $derived(
+    bodyView.aimedId ?? aimedSolidAt?.id ?? aimedAt?.id ?? null,
+  )
+  const abilitySurfaceWorldHolds = $derived(world.gumTraps.length + (world.gum ? 1 : 0))
+
+  function executeTourAbility(command: TourAbilityCommand) {
+    if (command === 'cast-body') {
+      bodyView.reach(Date.now())
+      return
+    }
+    if (command === 'cast-primary') {
+      castAt(aimedAt?.id ?? null, aimedSolidAt?.id ?? null)
+      return
+    }
+    if (command === 'release-bodies') {
+      bodyView.release()
+      return
+    }
+    hatsuSession.release()
+    bodyView.release()
+  }
+
+  /**
+   * Canonical module actions which the walk can currently hand to its existing
+   * body and ship reducers. All other uses stay in the wheel with an explicit
+   * media refusal instead of disappearing or acquiring a second implementation.
+   */
+  const abilityAdapter = $derived.by<AbilitySurfaceAdapter | null>(() => {
+    const profile = $activeHatsu
+    const presentation = presentationFor(profile?.id)
+    if (!profile || !presentation) return null
+    if (
+      presentation.abilityId !== 'bungee-gum' &&
+      presentation.abilityId !== 'illumi-needle-people'
+    )
+      return null
+
+    return tourAbilitySurfaceAdapter({
+      presentation,
+      name: localizeHatsu(profile, $locale).name,
+      owner: localizeHatsu(profile, $locale).owner,
+      reducedMotion: $reducedMotion,
+      targetId: abilitySurfaceTargetId,
+      concealed: hatsuSession.nen.in,
+      bodyHolds: bodyView.bodies.holds.length,
+      worldHolds: abilitySurfaceWorldHolds,
+      reasons: $t.abilities.surface,
+      execute: executeTourAbility,
+    })
+  })
+
   /**
    * What Melody's ear picks up in the room, or null when she is not the one
    * being held.
@@ -967,6 +1020,7 @@
         sourceOf,
         personName: bodyNameOf,
         heard,
+        abilityAdapter,
         onRelease: release,
         onCycleDouble: cycleDouble,
         onCycleOwl: cycleOwl,

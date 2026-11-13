@@ -353,18 +353,80 @@ describe('what the game hands back to the infection', () => {
       hand: ['yes'],
       kissed: true,
     })
+    const state = withGame(won)
+    state.effects['game-1']!.attributes.completedSteps = [
+      ...infectionStepsFrom(won),
+      'witnessed-murder',
+    ]
+    state.effects['network'] = {
+      id: 'network',
+      kind: 'CUSTOM',
+      abilityId: 'contagion',
+      source: { id: 'morena-prudo', kind: 'CHARACTER' },
+      targets: [],
+      state: 'ACTIVE',
+      attributes: { memberIds: ['one', 'two', 'three'] },
+      startedAt: CURSOR,
+    }
     const plan = contagion.plan(
       context({
         actionId: 'infect',
+        worldState: state,
         parameters: {
-          // Two of the three come off the table itself; the murder does not.
-          completedSteps: [...infectionStepsFrom(won), 'witnessed-murder'],
-          memberCount: 3,
           effectId: 'network',
+          gameEffectId: 'game-1',
         },
       }),
     )
     expect(plan.conditions.find((c) => c.id === 'checklist-infection')?.status).toBe('MET')
+  })
+
+  it('records the witnessed murder before creating the level-zero member', () => {
+    const won = settle({
+      ...dealTheGame({ marked: null }),
+      phase: 'settling',
+      hand: ['yes'],
+      kissed: true,
+    })
+    const state = withGame(won)
+    state.effects['game-1']!.attributes.completedSteps = infectionStepsFrom(won)
+    state.effects.network = {
+      id: 'network',
+      kind: 'CUSTOM',
+      abilityId: 'contagion',
+      source: { id: 'morena-prudo', kind: 'CHARACTER' },
+      targets: [],
+      state: 'ACTIVE',
+      attributes: { memberIds: [] },
+      startedAt: CURSOR,
+    }
+    const branches = new InMemoryBranchEngine()
+    branches.createBranch({
+      id: 'witness',
+      name: 'Witness',
+      kind: 'SIMULATION',
+      rulePolicy: 'RULE_COMPATIBLE',
+      baseState: state,
+    })
+    const witnessed = run('witness-murder', { gameEffectId: 'game-1' }, state)
+    branches.append('witness', witnessed.events ?? [])
+    const afterWitness = branches.getState('witness')
+    expect(afterWitness.effects['game-1']?.attributes['completedSteps']).toEqual([
+      'game-won-yes',
+      'kiss',
+      'witnessed-murder',
+    ])
+
+    const infected = contagion.execute(
+      context({
+        actionId: 'infect',
+        worldState: afterWitness,
+        targets: ['borksen'],
+        parameters: { effectId: 'network', gameEffectId: 'game-1' },
+      }),
+    )
+    expect(infected.allowed).toBe(true)
+    expect(infected.events?.some((event) => event.type === 'EFFECT_CREATED')).toBe(true)
   })
 })
 
@@ -381,6 +443,7 @@ describe('the game on the action wheel', () => {
       'leave-table',
       'settle',
       'close-game',
+      'witness-murder',
     ]) {
       expect(ids, `${move} is not on the wheel`).toContain(move)
     }

@@ -7,11 +7,13 @@
     selected,
     onSelect,
     onDispatch,
+    availability,
   }: {
     presentation: AbilityPresentationProjection
     selected: string | null
     onSelect: (actionId: string) => void
     onDispatch?: (actionId: string) => void
+    availability?: (actionId: string) => { executable: boolean; reason?: string }
   } = $props()
 
   const visible = $derived(
@@ -22,21 +24,24 @@
 <div class="wheel" role="list" aria-label={$t.abilities.actionWheel}>
   {#each visible as action (action.entry.id)}
     {@const locked = action.entry.visibility !== 'available'}
+    {@const surface = availability?.(action.entry.id)}
+    {@const disabled = locked || surface?.executable === false}
+    {@const reason = surface?.reason ?? action.entry.hint}
     <div role="listitem">
       <button
         type="button"
         class:current={selected === action.entry.id}
-        class:locked
-        aria-disabled={locked}
-        title={action.entry.hint}
+        class:locked={disabled}
+        aria-disabled={disabled}
+        title={reason}
         onclick={() => {
           onSelect(action.entry.id)
-          if (!locked) onDispatch?.(action.entry.id)
+          if (!disabled) onDispatch?.(action.entry.id)
         }}
       >
         <span>{action.entry.label}</span>
         {#if action.entry.source}<small class="source">{action.entry.source.label}</small>{/if}
-        {#if locked}<small>{action.entry.hint ?? $t.abilities.conditionUnmet}</small>{/if}
+        {#if disabled}<small>{reason ?? $t.abilities.conditionUnmet}</small>{/if}
       </button>
     </div>
   {/each}

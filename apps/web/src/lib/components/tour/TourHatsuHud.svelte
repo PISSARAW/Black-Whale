@@ -47,7 +47,11 @@
   import AbilityActionWheel from '$lib/nen/AbilityActionWheel.svelte'
   import AbilityViewHost from '$lib/nen/AbilityViewHost.svelte'
   import NenWhyPanel from '$lib/nen/NenWhyPanel.svelte'
-  import { presentationFor, previewSurfaceAdapter } from '$lib/nen/abilityPresentation'
+  import {
+    presentationFor,
+    previewSurfaceAdapter,
+    type AbilitySurfaceAdapter,
+  } from '$lib/nen/abilityPresentation'
   import { reducedMotion } from '$lib/tour/comfort'
 
   interface Props {
@@ -91,6 +95,8 @@
      * the panel has no cast of its own and is not being given one.
      */
     heard?: Heard | null
+    /** Live module bridge when the walk can execute this ability's canonical uses. */
+    abilityAdapter?: AbilitySurfaceAdapter | null
     onRelease: () => void
     /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
@@ -127,6 +133,7 @@
     sourceOf,
     personName,
     heard = null,
+    abilityAdapter = null,
     onRelease,
     onCycleDouble,
     onCycleOwl,
@@ -146,13 +153,17 @@
       presentation?.actions.find(({ entry }) => entry.visibility !== 'hidden') ??
       null,
   )
+  const surfaceAdapter = $derived(
+    abilityAdapter ??
+      previewSurfaceAdapter({
+        name: named.name,
+        owner: named.owner,
+        reducedMotion: $reducedMotion,
+      }),
+  )
   const abilityModel = $derived(
     presentation && selectedAction
-      ? previewSurfaceAdapter({
-          name: named.name,
-          owner: named.owner,
-          reducedMotion: $reducedMotion,
-        }).modelFor(presentation, selectedAction.entry.id)
+      ? surfaceAdapter.modelFor(presentation, selectedAction.entry.id)
       : null,
   )
   $effect(() => {
@@ -1241,6 +1252,8 @@
           {presentation}
           selected={selectedAction.entry.id}
           onSelect={(actionId) => (selectedActionId = actionId)}
+          availability={surfaceAdapter.availability}
+          onDispatch={(actionId) => surfaceAdapter.dispatch(actionId)}
         />
         <NenWhyPanel plan={selectedAction.plan} compact />
         {#if abilityModel}<AbilityViewHost model={abilityModel} />{/if}

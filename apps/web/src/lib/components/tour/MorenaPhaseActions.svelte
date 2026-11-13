@@ -20,9 +20,17 @@
     nameOfCard: (card: AnswerCard) => string
     onCommand: (command: MorenaCommand) => void
     onChoice: (choice: AnswerCard | null) => void
+    knowsInfection?: boolean
   }
 
-  let { game, choice = null, nameOfCard, onCommand, onChoice }: Props = $props()
+  let {
+    game,
+    choice = null,
+    nameOfCard,
+    onCommand,
+    onChoice,
+    knowsInfection = false,
+  }: Props = $props()
   const copy = $derived($t.tour.morena)
   const settlement = $derived(needsAChoice(game))
   let actionHeading = $state<HTMLHeadingElement | null>(null)
@@ -54,7 +62,9 @@
     >
       {copy.deal.title}
     </h2>
-    <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/70">{copy.deal.body}</p>
+    <p class="mt-1 text-xs leading-relaxed text-[#FFFFF0]/70">
+      {knowsInfection ? copy.deal.bodyKnown : copy.deal.body}
+    </p>
     <p class="mt-3 text-[10px] uppercase tracking-widest text-[#FFFFF0]/40">{copy.deal.pick}</p>
     <div class="mt-2 flex flex-wrap items-end gap-2">
       {#each game.graveyard as card (card)}

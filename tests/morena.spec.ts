@@ -204,6 +204,7 @@ test.describe("Morena's negotiation critical path", () => {
     context,
     isMobile,
   }) => {
+    test.slow()
     await context.addInitScript(() => sessionStorage.setItem('black-whale:hatsu', 'emperor-time'))
     await page.reload()
     const action = await enterGame(page, isMobile)
@@ -267,6 +268,7 @@ test.describe("Morena's negotiation critical path", () => {
     ]) {
       await askQuestion(page, question, isMobile)
     }
+    await expect(await finishGame(page, isMobile)).toBeVisible()
 
     const dossier = page.getByTestId('morena-dossier')
     await expect(dossier).toContainText('7 of 7 answers discovered')

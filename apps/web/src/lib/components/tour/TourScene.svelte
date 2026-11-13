@@ -109,8 +109,9 @@
   } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
   import { roomAudioBasisKey, roomAudioKey } from '$lib/tour/roomAudioKey'
-  import { roomConditionOf, type RoomCondition } from '$lib/tour/roomCondition'
+  import { RoomConditionCache } from '$lib/tour/roomCondition'
   import { heardNeighbourOf, roomSoundProfileOf } from '$lib/tour/roomSound'
+  import { liveShuTraces, shuTraceOf, type ShuTrace } from '$lib/tour/shuTrace'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { detailTagAt, type TourDetailTag } from '$lib/tour/detailTag'
   import { distanceToBoundary } from '$lib/tour/geometry'
@@ -674,7 +675,7 @@
   let hatsuVariantIndex = $state(0)
   let selectedNenZone = $state<NenBodyZone>('hands')
   let selectedEnRadius = $state(8)
-  let shuTraces = $state<Array<{ until: number; apparition: Apparition }>>([])
+  let shuTraces = $state<ShuTrace[]>([])
   let lastHatsuVariant = $state(0)
   const hatsuVariants = $derived.by(() => {
     if (tunes) return [tunes.first, tunes.second, tunes.third]
@@ -687,28 +688,9 @@
   const effectiveNen = $derived(nen ?? localNen)
   let previousShu: string[] = []
   const leaveShuTrace = (objectId: string) => {
-    const solid = solidById(ship, world, objectId)
-    const solidSpace = solid ? ship.spaces.get(solid.spaceId) : null
-    if (!solid || !solidSpace) return
-    const until = Date.now() + 10_000
-    shuTraces = [
-      ...shuTraces.filter((trace) => trace.until > Date.now()),
-      {
-        until,
-        apparition: {
-          id: `shu-trace:${objectId}:${until}`,
-          kind: 'residue',
-          spaceId: solid.spaceId,
-          tierId: solidSpace.tierId,
-          at: solid.at,
-          y: solid.base + solid.height * 0.5,
-          size: Math.max(0.25, Math.min(0.7, ...solid.size)),
-          colour: 0xb9a6ff,
-          stage: 0,
-          hidden: true,
-        },
-      },
-    ]
+    const now = Date.now()
+    const trace = shuTraceOf({ ship, world, objectId, now })
+    if (trace) shuTraces = [...liveShuTraces(shuTraces, now), trace]
   }
   $effect(() => {
     const current = effectiveNen.shu
@@ -2124,7 +2106,7 @@
             seconds,
           }),
           ...extras,
-          ...shuTraces.filter((trace) => trace.until > Date.now()).map((trace) => trace.apparition),
+          ...liveShuTraces(shuTraces).map((trace) => trace.apparition),
         ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
@@ -4030,26 +4012,14 @@
       /**
        * The air the current room wants, and the densities already measured.
        *
-       * A plain record rather than a Map, like the rest of the render loop's own
-       * state: the loop reads this sixty times a second and nothing in the markup
-       * depends on it, so it must stay out of Svelte's reactivity rather than
-       * drive it. Measured once per room — the longest chord of a sixty-corner
-       * promenade is not worth walking every frame.
+       * Measured once per room — the longest chord of a sixty-corner promenade
+       * is not worth walking every frame.
        */
       let fogTarget = 0.02
       const airOf: Record<string, number | undefined> = {}
-      const conditions: Record<
-        string,
-        { occupants: number; condition: RoomCondition } | undefined
-      > = {}
-      const conditionFor = (space: Space, roomTier: TierPlan['tier']): RoomCondition => {
-        const occupants = roomOccupancy[space.id] ?? 0
-        const held = conditions[space.id]
-        if (held?.occupants === occupants) return held.condition
-        const condition = roomConditionOf({ space, tier: roomTier, namedOccupants: occupants })
-        conditions[space.id] = { occupants, condition }
-        return condition
-      }
+      const roomConditions = new RoomConditionCache()
+      const conditionFor = (space: Space, roomTier: TierPlan['tier']) =>
+        roomConditions.get(space, roomTier, roomOccupancy[space.id] ?? 0)
 
       /** The room the door pair last delivered the visitor to. */
       let arrivedFrom: string | null = null

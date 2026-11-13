@@ -84,6 +84,14 @@ la marche** : `MeshLambertMaterial` + couleurs cuites par sommet pour la structu
 
 Tout item des deux proposals a été jugé là-contre, et contre l'état vérifié du code.
 
+**« Sourcé » ne veut pas dire uniquement « visible dans une case ».** Un plan publié ou
+un programme fonctionnel explicite peut autoriser une reconstruction quand la donnée
+porte une provenance `plan` ou `map`, décrit sans ambiguïté ce qui est reconstitué
+(implantation, dimensions, profils ou finitions) et présente cette limite au visiteur
+dans la carte de provenance. Cette voie autorise le nécessaire fonctionnel attesté ;
+elle n'autorise pas à déduire du seul nom d'une pièce un mobilier vraisemblable, ni à
+ajouter un décor générique. Sans plan, programme explicite ou case, le volume reste vide.
+
 ### État vérifié (2026-08-03)
 
 - `TourRenderer.ts` : `EffectComposer` + `RenderPass` + `UnrealBloomPass` gaté par

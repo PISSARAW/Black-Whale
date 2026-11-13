@@ -272,7 +272,7 @@ export default tseslint.config(
       'apps/web/src/routes/relationships/+page.svelte', // 756
       'apps/web/src/routes/strategy/+page.svelte', // 744
       'apps/web/src/routes/timeline/+page.svelte', // 873
-      'apps/web/src/routes/tour/+page.svelte', // 1063 — ceiling in scripts/ratchet-lines.json
+      'apps/web/src/routes/tour/TourPageExperience.svelte', // 1063 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/routes/tour/morena/+page.svelte', // 692
       'apps/web/src/routes/tour/sources/+page.svelte', // 765
       'packages/ability-modules/src/contagion/game.ts', // 1589

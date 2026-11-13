@@ -40,6 +40,7 @@ Le plan courant compte 429 espaces sur 46 niveaux, dont 35 niveaux intérieurs.
 - Aucune lumière ambiante : un couloir sans luminaire reste noir — `apps/web/src/lib/tour/light.test.ts`.
 - Les sons interactifs sont synthétisés. L'enregistrement original du concert de Melody est l'unique asset audio — `apps/web/src/lib/audio/ambient/melodyConcert.ts`.
 - La visite ne lit pas directement `data/ship/blueprint.json` — elle passe par `apps/web/src/lib/tour/blueprint.ts`.
+- La route rend une coque SSR légère puis charge `TourPageExperience.svelte` par `import()` ; le blueprint et la scène restent hors de son chunk initial — `scripts/tour-lazy-boundary.test.ts`.
 - La ligne de flottaison n'est pas un chiffre choisi : c'est l'élévation du pont 4, le premier que le canon ne place pas sous l'eau — `apps/web/src/lib/tour/sea.test.ts`.
 - Le palier `low` limite la visibilité à une porte et la CI joue la visite sur desktop et mobile — `apps/web/src/lib/tour/quality.ts`, `tests/tour.spec.ts`.
 

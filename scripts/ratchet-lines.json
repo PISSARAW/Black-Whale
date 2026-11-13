@@ -4,5 +4,5 @@
   "apps/web/src/lib/tour/apparitions.ts": 2059,
   "apps/web/src/lib/tour/hatsu.ts": 4177,
   "apps/web/src/lib/tour/mesh.ts": 1820,
-  "apps/web/src/routes/tour/+page.svelte": 1063
+  "apps/web/src/routes/tour/TourPageExperience.svelte": 1063
 }

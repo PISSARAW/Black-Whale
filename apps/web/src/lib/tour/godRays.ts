@@ -23,7 +23,7 @@
  * scene in black to know what is in front of the source. Here the frame already
  * separates them: a window pane is written above white (`WINDOW_GLOW`, up to
  * 1.28) and every wall in front of it is a true albedo well under it. A
- * luminance threshold above 1 selects the pane and nothing else, so what the
+ * luminance threshold just below the pane selects it and nothing else, so what the
  * shafts are made of is the light of the actual window, cut by the actual
  * geometry standing in front of it, at the cost of no extra draw call.
  */
@@ -51,6 +51,9 @@ const SAMPLES = 24
  * has to be checkable against the state that was here before it existed.
  */
 export const SHAFT_PEAK = 0.55
+
+/** Below the pane's 0.839 luminance, above the brightest lit wall. */
+export const SHAFT_THRESHOLD = 0.8
 
 /**
  * Where a window's light is taken to come from, in ship metres.
@@ -150,7 +153,7 @@ export function shaftUniforms() {
     /** Zero everywhere but the two rooms. The pass stays added and stays cheap. */
     uStrength: { value: 0 },
     /** Above what a lit steel wall can reach, below what a pane is written at. */
-    uThreshold: { value: 0.9 },
+    uThreshold: { value: SHAFT_THRESHOLD },
     /** How much of the way to the source the march covers. */
     uDensity: { value: 0.7 },
     uDecay: { value: 0.94 },

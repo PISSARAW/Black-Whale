@@ -187,7 +187,9 @@ export function buildHumanFigure({
   far.visible = false
 
   const ink = glow(INK, 1)
-  const cloth = glow(profile.jacket, 0.98)
+  // Clothing is solid. At 0.98 it entered three.js's transparent sort, where a
+  // later Zetsu trace could win the draw order and erase sleeves at some angles.
+  const cloth = glow(profile.jacket, 1)
   const skin = glow(profile.skin || SKIN, 1)
   const dark = glow(BOOTS, 1)
   const hairInk = glow(profile.hair, 1)

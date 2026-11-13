@@ -14,9 +14,9 @@ export type Tier5ParcelAction =
   | 'RETURN_TO_TIER5'
 
 type ParcelActivity = TourSimulationV1['activities'][string]
-type ParcelHandler = (state: TourSimulationV1, activity: ParcelActivity) => void
+type ParcelActionHandler = (state: TourSimulationV1, activity: ParcelActivity) => void
 
-const PARCEL_HANDLERS: Record<Tier5ParcelAction, ParcelHandler> = {
+const PARCEL_ACTIONS: Record<Tier5ParcelAction, ParcelActionHandler> = {
   HEAR_DISPUTE(state, activity) {
     if (activity.stage !== 'UNNOTICED') return
     activity.stage = 'INVESTIGATING'
@@ -58,6 +58,23 @@ const PARCEL_HANDLERS: Record<Tier5ParcelAction, ParcelHandler> = {
   },
 }
 
+function applySocialConsequence(
+  state: TourSimulationV1,
+  action: Tier5ParcelAction,
+  previousStage: string,
+): TourSimulationV1 {
+  if (previousStage !== 'CONTACT') return state
+  if (action === 'ACCEPT_MAFIA_OFFER')
+    return resolveSocialAction(state, {
+      kind: 'HELP',
+      factionId: 'mafia-xiyu',
+      rivalFactionIds: ['royal-army'],
+    })
+  if (action === 'REPORT_TO_POLICE')
+    return resolveSocialAction(state, { kind: 'HELP', factionId: 'royal-army' })
+  return state
+}
+
 export function startTier5ParcelLoop(state: TourSimulationV1): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     draft.activities[TIER5_PARCEL_ACTIVITY] ??= {
@@ -80,19 +97,12 @@ export function actOnTier5Parcel(
 ): TourSimulationV1 {
   const activity = state.activities[TIER5_PARCEL_ACTIVITY]
   if (!activity || activity.status === 'RESOLVED' || activity.status === 'FAILED') return state
-  let next = evolveTourSimulation(state, (draft) => {
+  const previousStage = activity.stage
+  const next = evolveTourSimulation(state, (draft) => {
     const current = draft.activities[TIER5_PARCEL_ACTIVITY]
-    PARCEL_HANDLERS[action](draft, current)
+    PARCEL_ACTIONS[action](draft, current)
   })
-  if (action === 'ACCEPT_MAFIA_OFFER' && activity.stage === 'CONTACT')
-    next = resolveSocialAction(next, {
-      kind: 'HELP',
-      factionId: 'mafia-xiyu',
-      rivalFactionIds: ['royal-army'],
-    })
-  if (action === 'REPORT_TO_POLICE' && activity.stage === 'CONTACT')
-    next = resolveSocialAction(next, { kind: 'HELP', factionId: 'royal-army' })
-  return next
+  return applySocialConsequence(next, action, previousStage)
 }
 
 export function advanceTier5ParcelLoop(state: TourSimulationV1, dt: number): TourSimulationV1 {

@@ -95,7 +95,7 @@ horloge ni événement ici — les tests lui donnent l'heure.
 - `uTint` des god rays = `glow` normalisé sur son canal le plus fort, comme
   aujourd'hui ; `peak` remplace la constante `SHAFT_PEAK` dans `aimShafts`.
 - La nuit n'éteint pas la fenêtre en dur : elle la descend sous le seuil des
-  shafts (0.9) et sous tout ce qu'un luminaire éclaire — la vitre devient ce
+  shafts (`SHAFT_THRESHOLD`, 0,8) et sous tout ce qu'un luminaire éclaire — la vitre devient ce
   qu'elle est la nuit, un rectangle à peine plus clair que sa laque (`0x14181e`).
 - L'aube et le soir sont chauds, ce que le manga ne dessine pas — mais qu'un ciel,
   même couvert, fait à ces heures. Même statut que `SEA_GLOW` : dérivé d'une
@@ -239,10 +239,10 @@ D. Flaque découplée (aSky)   ~1 j  ┘
 - **`SHAFT_PEAK` reste écrit.** Non plus lu par la marche, mais gardé comme la
   ligne 13 h de la table : l'état sourcé doit rester vérifiable contre ce qui
   était là avant la table.
-- **À vérifier sur un écran** : la luminance de `WINDOW_GLOW` est 0,839 en
-  linéaire, sous le seuil `uThreshold` de 0,9 du pass de shafts. Selon l'espace
-  colorimétrique de la cible du composer, la marche peut ne rien sommer du tout —
-  antérieur à ce plan, non touché ici, et à trancher devant le rendu.
+- **Vérifié le 2026-11-13** : le masque utilise `SHAFT_THRESHOLD = 0.8`, sous la
+  luminance linéaire 0,839 de `WINDOW_GLOW` et au-dessus des murs éclairés. Le test
+  `godRays.test.ts` tient désormais directement cette relation ; la nuit reste sous
+  le seuil et ne produit aucun rayon.
 
 Total ≈ 3 jours. A répond seul à la remarque d'origine ; B-E font que la lumière
 du bord raconte la traversée : au banquet la baie est un midi couvert, à la nuit

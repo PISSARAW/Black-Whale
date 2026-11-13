@@ -33,12 +33,11 @@ function finishTag(
   space: Space,
   finish: { id: string; name: string; nameFr: string },
 ): TourDetailTag {
-  const { id, name, nameFr } = finish
   return {
-    id: `${space.id}-${id}`,
+    id: `${space.id}-${finish.id}`,
     spaceId: space.id,
-    name,
-    nameFr,
+    name: finish.name,
+    nameFr: finish.nameFr,
     provenance: 'inferred',
     source:
       'Material, colour and metric finish reconstructed for the walk; no source establishes it.',

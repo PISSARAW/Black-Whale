@@ -1,4 +1,5 @@
 import { expect, test } from 'playwright/test'
+import { BUDGETS } from '../apps/web/src/lib/tour/frameBudget'
 
 /**
  * The walk, exercised on both projects.
@@ -89,12 +90,10 @@ test.describe('the walk', () => {
    * browser: `renderer.info` is a count of what three.js actually issued, so it
    * does not exist until something has been drawn.
    *
-   * What is asserted is the instrument, not a number. The runner draws on
-   * SwiftShader, so its frame rate is a fact about a software rasteriser and
-   * asserting on it would be the same mistake as a reference capture. The
-   * triangle and draw-call counts, though, are the GPU's only in the sense that
-   * it received them — they are decided by the mesh and by `visibility.ts`, so
-   * a count of zero on a booted deck is a real break wherever it is run.
+   * The runner draws on SwiftShader, so its frame rate is a fact about a
+   * software rasteriser and is deliberately not asserted. Triangle and
+   * draw-call counts are decided by the mesh and `visibility.ts`, though: they
+   * must be non-zero and remain inside the selected palier's explicit budget.
    */
   test('measures the frame only when asked, and counts what was drawn', async ({ page }) => {
     await page.goto('/tour')
@@ -116,9 +115,52 @@ test.describe('the walk', () => {
     // Parsed rather than pattern-matched: `Intl` groups thousands with a narrow
     // no-break space, and a regex written against an ordinary one would pass on
     // a broken "0 tri" and fail on a healthy "41 203 tri".
-    const readout = (await meter.textContent()) ?? ''
-    const drawn = /([\d\s\u202f\u00a0]+)tri/.exec(readout)?.[1] ?? ''
-    expect(Number(drawn.replace(/\D/g, ''))).toBeGreaterThan(0)
+    const counters = async () => {
+      const readout = (await meter.textContent()) ?? ''
+      const countBefore = (unit: string) => {
+        const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)(?:${unit})`).exec(readout)?.[1] ?? ''
+        return Number(raw.replace(/\D/g, ''))
+      }
+      return {
+        tier: /\blow\b/.test(readout) ? ('low' as const) : ('high' as const),
+        triangles: countBefore('tri'),
+        calls: countBefore('calls|appels'),
+      }
+    }
+
+    // The first half-second can still contain the deck's one-off upload and
+    // shader compilation. A budget describes the settled walk, so wait for a
+    // complete steady window rather than freezing that transitional sample.
+    await expect
+      .poll(
+        async () => {
+          const reading = await counters()
+          return (
+            reading.triangles > 0 &&
+            reading.triangles <= BUDGETS[reading.tier].triangles &&
+            reading.calls > 0 &&
+            reading.calls <= BUDGETS[reading.tier].calls
+          )
+        },
+        { timeout: 30_000 },
+      )
+      .toBe(true)
+  })
+
+  test('keeps the scene controls large enough to touch', async ({ page }) => {
+    await page.goto('/tour')
+    await ready(page)
+
+    const controls = [
+      page.getByRole('button', { name: /Examine|Examiner/ }),
+      page.getByRole('button', { name: /^Nen ·/ }),
+    ]
+    for (const control of controls) {
+      await expect(control).toBeVisible({ timeout: 30_000 })
+      const box = await control.boundingBox()
+      expect(box?.width ?? 0).toBeGreaterThanOrEqual(44)
+      expect(box?.height ?? 0).toBeGreaterThanOrEqual(44)
+    }
   })
 
   test('lets the visitor set the palier, and keeps it across a reload', async ({ page }) => {
@@ -142,5 +184,53 @@ test.describe('the walk', () => {
       'true',
       { timeout: 30_000 },
     )
+  })
+
+  test('keeps high-tier ambient occlusion from blanking the frame', async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== 'chromium', 'Regression specific to the Chrome/ANGLE render path')
+
+    await page.goto('/tour')
+    await ready(page)
+    await page.getByRole('button', { name: /Options$/ }).click()
+    const fuller = page.getByRole('button', { name: /^(Fuller|Complète)$/ })
+    await expect(fuller).toBeVisible({ timeout: 30_000 })
+    await fuller.click()
+
+    // Quality changes rebuild the renderer on the next visit. The frame meter
+    // proves this capture exercises the high chain, including its depth pass.
+    await page.goto('/tour?frames')
+    await ready(page)
+    await expect(page.locator('#tour-frame-budget')).toContainText(/\bhigh\b/, {
+      timeout: 30_000,
+    })
+
+    await page.locator('details.scene-tools > summary').click()
+    await page.getByRole('button', { name: /Clean photo|Photo sans interface/ }).click()
+    const image = page.getByRole('img', { name: /Tour screenshot|Capture de la visite/ })
+    await expect(image).toBeVisible({ timeout: 30_000 })
+
+    const sample = await image.evaluate((node: HTMLImageElement) => {
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.min(node.naturalWidth, 256)
+      canvas.height = Math.min(node.naturalHeight, 144)
+      const context = canvas.getContext('2d')
+      if (!context) return { brightest: 0, visibleShare: 0 }
+      context.drawImage(node, 0, 0, canvas.width, canvas.height)
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
+      let brightest = 0
+      let visible = 0
+      for (let offset = 0; offset < pixels.length; offset += 4) {
+        const light = pixels[offset] + pixels[offset + 1] + pixels[offset + 2]
+        brightest = Math.max(brightest, light)
+        if (light > 24) visible += 1
+      }
+      return { brightest, visibleShare: visible / (pixels.length / 4) }
+    })
+
+    expect(sample.brightest).toBeGreaterThan(60)
+    expect(sample.visibleShare).toBeGreaterThan(0.01)
   })
 })

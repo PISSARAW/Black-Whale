@@ -186,11 +186,23 @@ test.describe('the walk', () => {
     )
   })
 
-  test('keeps high-tier ambient occlusion from blanking the frame', async ({
+  test('compiles high-tier room shaders without blanking the frame', async ({
     page,
     browserName,
   }) => {
     test.skip(browserName !== 'chromium', 'Regression specific to the Chrome/ANGLE render path')
+
+    const shaderFailures: string[] = []
+    const isShaderFailure = (line: string) =>
+      /(WebGLProgram|GLSL|VALIDATE_STATUS|shader\s+(?:compile|error)|link program)/i.test(line)
+    page.on('console', (message) => {
+      if (message.type() === 'error' && isShaderFailure(message.text())) {
+        shaderFailures.push(message.text())
+      }
+    })
+    page.on('pageerror', (error) => {
+      if (isShaderFailure(error.message)) shaderFailures.push(error.message)
+    })
 
     await page.goto('/tour')
     await ready(page)
@@ -232,5 +244,6 @@ test.describe('the walk', () => {
 
     expect(sample.brightest).toBeGreaterThan(60)
     expect(sample.visibleShare).toBeGreaterThan(0.01)
+    expect(shaderFailures).toEqual([])
   })
 })

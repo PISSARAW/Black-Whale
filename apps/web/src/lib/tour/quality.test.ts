@@ -46,12 +46,14 @@ describe('what a palier switches on', () => {
     expect(light.surfaceDetail).toBe(false)
     expect(light.surfaceCondition).toBe(false)
     expect(light.lampAir).toBe(false)
+    expect(light.fittingFlicker).toBe(false)
   })
 
   it('reserves room condition surfaces and lamp air for the high palier', () => {
     const high = qualityProfile({ tier: 'high', coarse: false })
     expect(high.surfaceCondition).toBe(true)
     expect(high.lampAir).toBe(true)
+    expect(high.fittingFlicker).toBe(true)
   })
 
   it('keeps the grade on both paliers: it is one multiply-add', () => {

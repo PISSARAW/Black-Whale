@@ -18,31 +18,56 @@ const REPUTATION_DELTA: Record<SocialActionKind, number> = {
   ASSAULT: -35,
 }
 
+function appliedDelta(delta: number, witnessed: boolean): number {
+  return delta < 0 && !witnessed ? Math.ceil(delta / 3) : delta
+}
+
+function updateRivals(state: TourSimulationV1, action: SocialAction, delta: number): void {
+  if (delta <= 0) return
+  for (const rivalId of action.rivalFactionIds ?? [])
+    state.reputation[rivalId] = clampReputation(
+      (state.reputation[rivalId] ?? 0) - Math.ceil(delta / 2),
+    )
+}
+
+function rememberWitnesses(state: TourSimulationV1, witnessIds: readonly string[]): void {
+  for (const witnessId of witnessIds)
+    if (!state.witnesses.includes(witnessId)) state.witnesses.push(witnessId)
+}
+
+function updatePermission(
+  state: TourSimulationV1,
+  action: SocialAction,
+  outcome: { delta: number; witnessed: boolean },
+): void {
+  if (!action.permissionId) return
+  if (outcome.delta > 0 && !state.permissions.includes(action.permissionId))
+    state.permissions.push(action.permissionId)
+  if (outcome.delta < 0 && outcome.witnessed)
+    state.permissions = state.permissions.filter((id) => id !== action.permissionId)
+}
+
+function recordIncident(state: TourSimulationV1, action: SocialAction, witnessed: boolean): void {
+  const reportable = action.kind === 'TRESPASS' || action.kind === 'ASSAULT'
+  if (witnessed && reportable)
+    state.incidents.push(`${action.kind.toLowerCase()}:${action.factionId}`)
+}
+
 export function resolveSocialAction(
   state: TourSimulationV1,
   action: SocialAction,
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
-    const witnessed = Boolean(action.witnessIds?.length)
+    const witnessIds = action.witnessIds ?? []
+    const witnessed = witnessIds.length > 0
     const delta = REPUTATION_DELTA[action.kind]
     draft.reputation[action.factionId] = clampReputation(
-      (draft.reputation[action.factionId] ?? 0) + (delta < 0 && !witnessed ? Math.ceil(delta / 3) : delta),
+      (draft.reputation[action.factionId] ?? 0) + appliedDelta(delta, witnessed),
     )
-    if (delta > 0) {
-      for (const rivalId of action.rivalFactionIds ?? [])
-        draft.reputation[rivalId] = clampReputation((draft.reputation[rivalId] ?? 0) - Math.ceil(delta / 2))
-    }
-    for (const witnessId of action.witnessIds ?? []) {
-      if (!draft.witnesses.includes(witnessId)) draft.witnesses.push(witnessId)
-    }
-    if (action.permissionId) {
-      if (delta > 0 && !draft.permissions.includes(action.permissionId))
-        draft.permissions.push(action.permissionId)
-      if (delta < 0 && witnessed)
-        draft.permissions = draft.permissions.filter((id) => id !== action.permissionId)
-    }
-    if (witnessed && (action.kind === 'TRESPASS' || action.kind === 'ASSAULT'))
-      draft.incidents.push(`${action.kind.toLowerCase()}:${action.factionId}`)
+    updateRivals(draft, action, delta)
+    rememberWitnesses(draft, witnessIds)
+    updatePermission(draft, action, { delta, witnessed })
+    recordIncident(draft, action, witnessed)
   })
 }
 

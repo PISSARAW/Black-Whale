@@ -45,16 +45,15 @@ function scheduledStop(routine: NPCRoutine, clock: number): NPCRoutineStop | nul
 export function advanceNPCRoutines(
   state: TourSimulationV1,
   routines: readonly NPCRoutine[],
-  graph: TourNavigationGraph,
-  dt: number,
+  step: { graph: TourNavigationGraph; dt: number },
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
-    draft.clock += Math.max(0, dt)
+    draft.clock += Math.max(0, step.dt)
     for (const routine of routines) {
       const actor = draft.actors[routine.actorId]
       const stop = scheduledStop(routine, draft.clock)
       if (!actor || !stop || actor.nextDecisionAt > draft.clock) continue
-      const route = routeBetweenSpaces(graph, actor.spaceId, stop.spaceId)
+      const route = routeBetweenSpaces(step.graph, actor.spaceId, stop.spaceId)
       if (route?.[1]) actor.spaceId = route[1]
       actor.objective = stop.activity
       actor.nextDecisionAt = draft.clock + 1
@@ -65,15 +64,14 @@ export function advanceNPCRoutines(
 export function interruptNPCRoutine(
   state: TourSimulationV1,
   actorId: string,
-  incidentId: string,
-  responseSpaceId: string,
+  interruption: { incidentId: string; responseSpaceId: string },
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     const actor = draft.actors[actorId]
     if (!actor) return
-    actor.objective = `respond:${incidentId}`
-    actor.memory.push(incidentId)
-    actor.spaceId = responseSpaceId
+    actor.objective = `respond:${interruption.incidentId}`
+    actor.memory.push(interruption.incidentId)
+    actor.spaceId = interruption.responseSpaceId
     actor.nextDecisionAt = draft.clock + 5
   })
 }

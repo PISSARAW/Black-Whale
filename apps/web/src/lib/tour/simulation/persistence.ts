@@ -12,28 +12,52 @@ export function encodeTourSimulation(state: TourSimulationV1): string {
   return JSON.stringify(state)
 }
 
+type UnknownRecord = Record<string, unknown>
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === 'object' && value !== null
+}
+
+function hasSimulationIdentity(value: UnknownRecord): boolean {
+  const mode = value.mode
+  return (
+    value.version === 1 &&
+    typeof value.id === 'string' &&
+    (mode === 'FREE_LIFE' || mode === 'ALTERNATE_SIMULATION') &&
+    Number.isInteger(value.revision) &&
+    typeof value.clock === 'number'
+  )
+}
+
+function hasSimulationCollections(value: UnknownRecord): boolean {
+  return (
+    isRecord(value.actors) &&
+    isRecord(value.reputation) &&
+    Array.isArray(value.permissions) &&
+    Array.isArray(value.witnesses) &&
+    Array.isArray(value.incidents)
+  )
+}
+
+function hasSimulationWorld(value: UnknownRecord): boolean {
+  return isRecord(value.player) && isRecord(value.activities) && isRecord(value.shipSystems)
+}
+
+function isTourSimulation(value: unknown): value is TourSimulationV1 {
+  return (
+    isRecord(value) &&
+    hasSimulationIdentity(value) &&
+    hasSimulationCollections(value) &&
+    hasSimulationWorld(value)
+  )
+}
+
 export function decodeTourSimulation(serialized: string | null): TourSimulationV1 | null {
   if (!serialized || new TextEncoder().encode(serialized).length > MAX_TOUR_SIMULATION_BYTES)
     return null
   try {
-    const value = JSON.parse(serialized) as Partial<TourSimulationV1>
-    if (
-      value.version !== 1 ||
-      typeof value.id !== 'string' ||
-      (value.mode !== 'FREE_LIFE' && value.mode !== 'ALTERNATE_SIMULATION') ||
-      !Number.isInteger(value.revision) ||
-      typeof value.clock !== 'number' ||
-      !value.player ||
-      typeof value.actors !== 'object' ||
-      typeof value.reputation !== 'object' ||
-      !Array.isArray(value.permissions) ||
-      !Array.isArray(value.witnesses) ||
-      !Array.isArray(value.incidents)
-      || typeof value.activities !== 'object'
-      || typeof value.shipSystems !== 'object'
-    )
-      return null
-    return value as TourSimulationV1
+    const value: unknown = JSON.parse(serialized)
+    return isTourSimulation(value) ? value : null
   } catch {
     return null
   }

@@ -13,6 +13,68 @@ export type Tier5ParcelAction =
   | 'LEAVE_TIER'
   | 'RETURN_TO_TIER5'
 
+type ParcelActivity = TourSimulationV1['activities'][string]
+type ParcelActionHandler = (state: TourSimulationV1, activity: ParcelActivity) => void
+
+const PARCEL_ACTIONS: Record<Tier5ParcelAction, ParcelActionHandler> = {
+  HEAR_DISPUTE(state, activity) {
+    if (activity.stage !== 'UNNOTICED') return
+    activity.stage = 'INVESTIGATING'
+    activity.status = 'ACTIVE'
+    state.player.knowledge.push('medical-parcel-missing')
+  },
+  INSPECT_WITH_GYO(state, activity) {
+    if (activity.stage !== 'INVESTIGATING') return
+    activity.data.auraTrace = true
+    state.player.knowledge.push('parcel-aura-trace')
+  },
+  SENSE_WITH_EN(state, activity) {
+    if (activity.data.auraTrace !== true) return
+    activity.stage = 'CONTACT'
+    activity.data.hiddenPresence = true
+    state.player.knowledge.push('presence-behind-warehouse-wall')
+  },
+  ACCEPT_MAFIA_OFFER(_state, activity) {
+    if (activity.stage === 'CONTACT') activity.stage = 'MAFIA_CONTRACT'
+  },
+  REPORT_TO_POLICE(state, activity) {
+    if (activity.stage !== 'CONTACT') return
+    activity.stage = 'POLICE_RESOLUTION'
+    activity.status = 'RESOLVED'
+    state.permissions.push('tier-3-police-contact')
+  },
+  RETURN_TO_OWNER(state, activity) {
+    if (activity.stage !== 'CONTACT') return
+    activity.stage = 'OWNER_RESOLUTION'
+    activity.status = 'RESOLVED'
+    state.permissions.push('tier-5-medical-supply-access')
+  },
+  LEAVE_TIER(state, activity) {
+    activity.data.leftTier = true
+    state.player.spaceId = 'tier-3-central-police-station'
+  },
+  RETURN_TO_TIER5(state) {
+    state.player.spaceId = 'tier-5-warehouse'
+  },
+}
+
+function applySocialConsequence(
+  state: TourSimulationV1,
+  action: Tier5ParcelAction,
+  previousStage: string,
+): TourSimulationV1 {
+  if (previousStage !== 'CONTACT') return state
+  if (action === 'ACCEPT_MAFIA_OFFER')
+    return resolveSocialAction(state, {
+      kind: 'HELP',
+      factionId: 'mafia-xiyu',
+      rivalFactionIds: ['royal-army'],
+    })
+  if (action === 'REPORT_TO_POLICE')
+    return resolveSocialAction(state, { kind: 'HELP', factionId: 'royal-army' })
+  return state
+}
+
 export function startTier5ParcelLoop(state: TourSimulationV1): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     draft.activities[TIER5_PARCEL_ACTIVITY] ??= {
@@ -35,49 +97,12 @@ export function actOnTier5Parcel(
 ): TourSimulationV1 {
   const activity = state.activities[TIER5_PARCEL_ACTIVITY]
   if (!activity || activity.status === 'RESOLVED' || activity.status === 'FAILED') return state
-  let next = evolveTourSimulation(state, (draft) => {
+  const previousStage = activity.stage
+  const next = evolveTourSimulation(state, (draft) => {
     const current = draft.activities[TIER5_PARCEL_ACTIVITY]
-    if (action === 'HEAR_DISPUTE' && current.stage === 'UNNOTICED') {
-      current.stage = 'INVESTIGATING'
-      current.status = 'ACTIVE'
-      draft.player.knowledge.push('medical-parcel-missing')
-    }
-    if (action === 'INSPECT_WITH_GYO' && current.stage === 'INVESTIGATING') {
-      current.data.auraTrace = true
-      draft.player.knowledge.push('parcel-aura-trace')
-    }
-    if (action === 'SENSE_WITH_EN' && current.data.auraTrace === true) {
-      current.stage = 'CONTACT'
-      current.data.hiddenPresence = true
-      draft.player.knowledge.push('presence-behind-warehouse-wall')
-    }
-    if (action === 'LEAVE_TIER') {
-      current.data.leftTier = true
-      draft.player.spaceId = 'tier-3-central-police-station'
-    }
-    if (action === 'RETURN_TO_TIER5') draft.player.spaceId = 'tier-5-warehouse'
-    if (action === 'ACCEPT_MAFIA_OFFER' && current.stage === 'CONTACT')
-      current.stage = 'MAFIA_CONTRACT'
-    if (action === 'REPORT_TO_POLICE' && current.stage === 'CONTACT') {
-      current.stage = 'POLICE_RESOLUTION'
-      current.status = 'RESOLVED'
-      draft.permissions.push('tier-3-police-contact')
-    }
-    if (action === 'RETURN_TO_OWNER' && current.stage === 'CONTACT') {
-      current.stage = 'OWNER_RESOLUTION'
-      current.status = 'RESOLVED'
-      draft.permissions.push('tier-5-medical-supply-access')
-    }
+    PARCEL_ACTIONS[action](draft, current)
   })
-  if (action === 'ACCEPT_MAFIA_OFFER' && activity.stage === 'CONTACT')
-    next = resolveSocialAction(next, {
-      kind: 'HELP',
-      factionId: 'mafia-xiyu',
-      rivalFactionIds: ['royal-army'],
-    })
-  if (action === 'REPORT_TO_POLICE' && activity.stage === 'CONTACT')
-    next = resolveSocialAction(next, { kind: 'HELP', factionId: 'royal-army' })
-  return next
+  return applySocialConsequence(next, action, previousStage)
 }
 
 export function advanceTier5ParcelLoop(state: TourSimulationV1, dt: number): TourSimulationV1 {

@@ -29,12 +29,15 @@ function structureTag(structure: Structure): TourDetailTag {
   }
 }
 
-function finishTag(space: Space, id: string, name: string, nameFr: string): TourDetailTag {
+function finishTag(
+  space: Space,
+  finish: { id: string; name: string; nameFr: string },
+): TourDetailTag {
   return {
-    id: `${space.id}-${id}`,
+    id: `${space.id}-${finish.id}`,
     spaceId: space.id,
-    name,
-    nameFr,
+    name: finish.name,
+    nameFr: finish.nameFr,
     provenance: 'inferred',
     source:
       'Material, colour and metric finish reconstructed for the walk; no source establishes it.',
@@ -88,72 +91,55 @@ function boxOn(
   into: BanquetDetailBuilder,
   structure: Structure,
   floor: number,
-  size: Point3,
-  at: Point3,
-  colour: number,
-): void {
-  into.box(size, {
-    at: localPoint(structure, [at[0], floor + at[1], at[2]]),
-    rotation: [0, (structure.rotation * Math.PI) / 180, 0],
-    colour,
-    tag: structureTag(structure),
-  })
+): (size: Point3, at: Point3, colour: number) => void {
+  return (size, at, colour) => {
+    into.box(size, {
+      at: localPoint(structure, [at[0], floor + at[1], at[2]]),
+      rotation: [0, (structure.rotation * Math.PI) / 180, 0],
+      colour,
+      tag: structureTag(structure),
+    })
+  }
 }
 
 function dressBunk(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [width, depth] = structure.size
+  const box = boxOn(into, structure, floor)
   for (const x of [-width * 0.44, width * 0.44]) {
     for (const z of [-depth * 0.44, depth * 0.44]) {
-      boxOn(into, structure, floor, [0.07, 2.15, 0.07], [x, 1.075, z], DARK_STEEL)
+      box([0.07, 2.15, 0.07], [x, 1.075, z], DARK_STEEL)
     }
   }
   for (const y of [0.38, 1.42]) {
-    boxOn(into, structure, floor, [width, 0.12, depth], [0, y, 0], STEEL)
-    boxOn(into, structure, floor, [width * 0.92, 0.15, depth * 0.9], [0, y + 0.13, 0], FABRIC)
-    boxOn(
-      into,
-      structure,
-      floor,
-      [width * 0.68, 0.1, depth * 0.22],
-      [0, y + 0.26, -depth * 0.31],
-      SHEET,
-    )
+    box([width, 0.12, depth], [0, y, 0], STEEL)
+    box([width * 0.92, 0.15, depth * 0.9], [0, y + 0.13, 0], FABRIC)
+    box([width * 0.68, 0.1, depth * 0.22], [0, y + 0.26, -depth * 0.31], SHEET)
   }
   for (const y of [0.66, 1.7]) {
-    boxOn(into, structure, floor, [width, 0.05, 0.05], [0, y, depth * 0.48], DARK_STEEL)
+    box([width, 0.05, 0.05], [0, y, depth * 0.48], DARK_STEEL)
   }
 }
 
 function dressLadder(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [width, depth] = structure.size
+  const box = boxOn(into, structure, floor)
   for (const x of [-width * 0.35, width * 0.35])
-    boxOn(
-      into,
-      structure,
-      floor,
-      [0.045, structure.height, 0.045],
-      [x, structure.height / 2, 0],
-      STEEL,
-    )
+    box([0.045, structure.height, 0.045], [x, structure.height / 2, 0], STEEL)
   for (let y = 0.25; y < structure.height; y += 0.28)
-    boxOn(into, structure, floor, [width, 0.035, Math.max(0.04, depth * 0.2)], [0, y, 0], STEEL)
+    box([width, 0.035, Math.max(0.04, depth * 0.2)], [0, y, 0], STEEL)
 }
 
 function dressOpenWardrobe(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [width, depth] = structure.size
   const height = structure.height
-  boxOn(into, structure, floor, [0.06, height, depth], [-width / 2, height / 2, 0], CABINET)
-  for (const y of [0.04, height - 0.04])
-    boxOn(into, structure, floor, [width, 0.08, depth], [0, y, 0], CABINET)
-  for (const z of [-depth / 2, depth / 2])
-    boxOn(into, structure, floor, [width, height, 0.06], [0, height / 2, z], CABINET)
-  boxOn(into, structure, floor, [0.05, 0.05, depth * 0.8], [0, height - 0.32, 0], STEEL)
+  const box = boxOn(into, structure, floor)
+  box([0.06, height, depth], [-width / 2, height / 2, 0], CABINET)
+  for (const y of [0.04, height - 0.04]) box([width, 0.08, depth], [0, y, 0], CABINET)
+  for (const z of [-depth / 2, depth / 2]) box([width, height, 0.06], [0, height / 2, z], CABINET)
+  box([0.05, 0.05, depth * 0.8], [0, height - 0.32, 0], STEEL)
   for (let index = -2; index <= 2; index++) {
     const colour = index % 2 ? 0x55514d : 0x777169
-    boxOn(
-      into,
-      structure,
-      floor,
+    box(
       [width * 0.38, 0.72, depth * 0.11],
       [width * 0.08, height - 0.78, index * depth * 0.15],
       colour,
@@ -163,41 +149,21 @@ function dressOpenWardrobe(into: BanquetDetailBuilder, structure: Structure, flo
 
 function dressDrawers(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [width, depth] = structure.size
-  boxOn(
-    into,
-    structure,
-    floor,
-    [width, structure.height, depth],
-    [0, structure.height / 2, 0],
-    CABINET,
-  )
+  const box = boxOn(into, structure, floor)
+  box([width, structure.height, depth], [0, structure.height / 2, 0], CABINET)
   for (const y of [0.15, 0.44, 0.73]) {
-    boxOn(into, structure, floor, [0.025, 0.24, depth * 0.9], [width * 0.51, y, 0], DARK_STEEL)
-    boxOn(into, structure, floor, [0.04, 0.04, depth * 0.28], [width * 0.54, y, 0], STEEL)
+    box([0.025, 0.24, depth * 0.9], [width * 0.51, y, 0], DARK_STEEL)
+    box([0.04, 0.04, depth * 0.28], [width * 0.54, y, 0], STEEL)
   }
 }
 
 function dressShelves(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   const [width, depth] = structure.size
-  boxOn(
-    into,
-    structure,
-    floor,
-    [0.06, structure.height, depth],
-    [-width / 2, structure.height / 2, 0],
-    CABINET,
-  )
+  const box = boxOn(into, structure, floor)
+  box([0.06, structure.height, depth], [-width / 2, structure.height / 2, 0], CABINET)
   for (const z of [-depth / 2, depth / 2])
-    boxOn(
-      into,
-      structure,
-      floor,
-      [width, structure.height, 0.06],
-      [0, structure.height / 2, z],
-      CABINET,
-    )
-  for (const y of [0.05, 0.55, 1.05, 1.55, 2.05])
-    boxOn(into, structure, floor, [width, 0.07, depth], [0, y, 0], CABINET)
+    box([width, structure.height, 0.06], [0, structure.height / 2, z], CABINET)
+  for (const y of [0.05, 0.55, 1.05, 1.55, 2.05]) box([width, 0.07, depth], [0, y, 0], CABINET)
 }
 
 function dressBasin(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
@@ -226,15 +192,14 @@ function dressBasin(into: BanquetDetailBuilder, structure: Structure, floor: num
 function dressLivingArchitecture(
   into: BanquetDetailBuilder,
   space: Space,
-  floor: number,
-  ceiling: number,
+  elevation: { floor: number; ceiling: number },
 ): void {
-  const finish = finishTag(
-    space,
-    'finish',
-    'Room 3101 reconstructed finish',
-    'Finition reconstruite de la chambre 3101',
-  )
+  const { floor, ceiling } = elevation
+  const finish = finishTag(space, {
+    id: 'finish',
+    name: 'Room 3101 reconstructed finish',
+    nameFr: 'Finition reconstruite de la chambre 3101',
+  })
   into.polygon(space.footprint, { at: [0, floor + 0.012, 0], colour: 0x4b4a46, tag: finish })
   into.polygon(
     space.footprint,
@@ -262,10 +227,14 @@ function dressLivingArchitecture(
 function dressBathroomArchitecture(
   into: BanquetDetailBuilder,
   space: Space,
-  floor: number,
-  ceiling: number,
+  elevation: { floor: number; ceiling: number },
 ): void {
-  const finish = finishTag(space, 'tile', 'Bathroom tile', 'Carrelage de la salle de bains')
+  const { floor, ceiling } = elevation
+  const finish = finishTag(space, {
+    id: 'tile',
+    name: 'Bathroom tile',
+    nameFr: 'Carrelage de la salle de bains',
+  })
   into.polygon(space.footprint, { at: [0, floor + 0.012, 0], colour: TILE, tag: finish })
   into.polygon(
     space.footprint,
@@ -286,6 +255,15 @@ export function room3101SurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   }
 }
 
+function dressStructure(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
+  if (structure.id.endsWith('-bed')) dressBunk(into, structure, floor)
+  else if (structure.id.endsWith('-bunk-ladder')) dressLadder(into, structure, floor)
+  else if (structure.id.endsWith('-wardrobe')) dressOpenWardrobe(into, structure, floor)
+  else if (structure.id.endsWith('-drawers')) dressDrawers(into, structure, floor)
+  else if (structure.id.endsWith('-shelves')) dressShelves(into, structure, floor)
+  else if (structure.kind === 'basin') dressBasin(into, structure, floor)
+}
+
 export function buildRoom3101Details(options: {
   THREE: typeof Three
   plan: TierPlan
@@ -300,16 +278,12 @@ export function buildRoom3101Details(options: {
   const into = new BanquetDetailBuilder(THREE)
   const floor = floorOf(space, plan.tier)
   const ceiling = ceilingOf(space, plan.tier)
-  if (spaceId === ROOM_3101_LIVING) dressLivingArchitecture(into, space, floor, ceiling)
-  else dressBathroomArchitecture(into, space, floor, ceiling)
+  const elevation = { floor, ceiling }
+  if (spaceId === ROOM_3101_LIVING) dressLivingArchitecture(into, space, elevation)
+  else dressBathroomArchitecture(into, space, elevation)
 
   for (const structure of plan.structures.filter(({ spaceId: owner }) => owner === spaceId)) {
-    if (structure.id.endsWith('-bed')) dressBunk(into, structure, floor)
-    else if (structure.id.endsWith('-bunk-ladder')) dressLadder(into, structure, floor)
-    else if (structure.id.endsWith('-wardrobe')) dressOpenWardrobe(into, structure, floor)
-    else if (structure.id.endsWith('-drawers')) dressDrawers(into, structure, floor)
-    else if (structure.id.endsWith('-shelves')) dressShelves(into, structure, floor)
-    else if (structure.kind === 'basin') dressBasin(into, structure, floor)
+    dressStructure(into, structure, floor)
   }
   return into.finish(`room-3101-${spaceId}-details`)
 }

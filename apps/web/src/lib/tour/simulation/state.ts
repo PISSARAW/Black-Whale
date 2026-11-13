@@ -81,7 +81,9 @@ export function evolveTourSimulation(
   state: TourSimulationV1,
   update: (draft: TourSimulationV1) => void,
 ): TourSimulationV1 {
-  const next = structuredClone(state)
+  // Svelte wraps assigned objects in reactive proxies. The simulation is a
+  // JSON persistence contract, so this also safely unwraps those proxies.
+  const next = JSON.parse(JSON.stringify(state)) as TourSimulationV1
   update(next)
   next.revision = state.revision + 1
   return next

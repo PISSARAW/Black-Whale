@@ -34,6 +34,7 @@ export interface TourNenContext {
   presences?: TourNenPresence[]
   traces?: TourNenTrace[]
   witnesses?: TourNenWitness[]
+  spaceId?: string | null
 }
 
 export interface TourNenResolution {
@@ -71,6 +72,7 @@ export function useSystemicNen(
   const next = evolveTourSimulation(state, (draft) => {
     draft.player.nen = nen
     draft.player.aura = reserve
+    if (context.spaceId) draft.player.spaceId = context.spaceId
     for (const observation of observations)
       if (!draft.player.knowledge.includes(observation)) draft.player.knowledge.push(observation)
   })

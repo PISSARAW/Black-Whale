@@ -148,13 +148,17 @@ function vestigesThrough(selected: { id: string; chapter: { number: number }; se
  * whose entry has vanished from the catalogue simply has no dossier: the panel
  * shows what it has, which is the same thing the fiche has always done.
  */
-function dossiersFor(members: readonly CastMember[], cap: number | null) {
+function dossiersFor(
+  members: readonly CastMember[],
+  timing: { cap: number | null; chapter: number },
+) {
   const found: Record<string, CastDossier> = {}
   for (const member of members) {
     const character = dossierCatalogue.get(member.characterId)
     if (!character) continue
     found[member.characterId] = dossierFor(character, {
-      cap,
+      cap: timing.cap,
+      chapter: timing.chapter,
       factions: factionNames,
       abilities: dossierAbilities,
     })
@@ -251,7 +255,7 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
       spoilerLimit: cap,
       members: aboard,
       beasts,
-      dossiers: dossiersFor(aboard, cap),
+      dossiers: dossiersFor(aboard, { cap, chapter: event.chapter.number }),
       dialogue: contextLinesFor(aboard, {
         id: event.id,
         chapter: event.chapter.number,

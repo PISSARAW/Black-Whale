@@ -109,10 +109,20 @@ export interface DossierSealed {
 export interface DossierOptions {
   /** The reader's chapter, or null for a reader who has set none. */
   cap: number | null
+  /** The event chapter being reconstructed, independently of the reader's cap. */
+  chapter: number | null
   /** Faction names by id, resolved where the catalogue holds them. */
   factions: ReadonlyMap<string, string>
   /** Every ability in the catalogue, already marked for what the walk carries. */
   abilities: readonly DossierAbility[]
+}
+
+/** The latest chapter this dossier is allowed to know about. */
+function visibleChapter(options: DossierOptions): number | null {
+  const dated = [options.cap, options.chapter].filter(
+    (chapter): chapter is number => chapter !== null,
+  )
+  return dated.length > 0 ? Math.min(...dated) : null
 }
 
 /** `ch-358` and `ch-359.5` alike, as a number. Null for anything else. */
@@ -171,7 +181,8 @@ export function dossierFor(character: DossierCharacter, options: DossierOptions)
   const awakened = character.nen?.awakenedFromChapterId
     ? chapterOf(character.nen.awakenedFromChapterId)
     : null
-  const nenVisible = options.cap === null || awakened === null || awakened <= options.cap
+  const chapter = visibleChapter(options)
+  const nenVisible = awakened === null || chapter === null || awakened <= chapter
   return {
     characterId: character.id,
     role: character.shipLocation?.role ?? '',

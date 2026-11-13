@@ -47,7 +47,7 @@
     "status": "ACTIVATED",
     "auraTrace": {
       "locationId": "tier-2-heilly-secret-hideout",
-      "anchor": "seven-doors"
+      "anchor": "tier-2-heilly-secret-hideout-processing"
     },
     "occursOnBlackWhale": true,
     "note": "The room 3101 entrance reroutes the soldiers through the Heil-Ly door network."

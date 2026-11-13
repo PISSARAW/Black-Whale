@@ -41,6 +41,9 @@ export interface MarkerIdentityState {
   sourceLabel?: string
   sinceLabel?: string
   positionColor?: string
+  certainty?: string
+  /** Profile matching the identity this viewpoint is allowed to name. */
+  profileSlug?: string
   tierLabel?: string
   locationLabel?: string
   /**

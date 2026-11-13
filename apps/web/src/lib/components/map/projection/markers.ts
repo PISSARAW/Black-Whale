@@ -59,6 +59,17 @@ function ownerFields(owner: MapCharacter, followed: MapCharacter | undefined) {
   }
 }
 
+function visibleProfileSlug(
+  entities: PresenceEntities,
+  knowledge: KnowledgeView,
+  view: { followed: MapCharacter | undefined; perspectiveIsReader: boolean },
+) {
+  if (view.perspectiveIsReader || knowledge.isObserverBody)
+    return (view.followed || entities.ownerCharacter)?.slug
+  if (!knowledge.hasConfirmedKnowledge) return undefined
+  return (entities.structuralApparentCharacter || entities.biologicalOwner)?.slug
+}
+
 /** The words under the marker: which deck, which room, and since when. */
 function placeLabels(
   presence: MapPresence,
@@ -157,6 +168,11 @@ export function projectPresenceMarker(
     positionColor: temporalVisual.color,
     temporalLabel: temporalVisual.label,
     temporalDetail: temporalVisual.detail,
+    certainty: presence.certainty,
+    profileSlug: visibleProfileSlug(entities, knowledge, {
+      followed: followedCharacter,
+      perspectiveIsReader,
+    }),
     isFollowTarget: knowledge.isObserverBody,
     ...ownerFields(ownerCharacter, followedCharacter),
     futureChange: resolveFutureChange(presence, nextChapterState),
@@ -229,6 +245,8 @@ export function projectFutureMarker(
     appearance: name,
     perceivedIdentity: messages.futureIdentity(name, next.chapterNumber),
     knowledgeState: 'confirmed',
+    certainty: presence.certainty,
+    profileSlug: character.slug,
     positionColor: '#d598ff',
     ...futurePlaceLabels(loc, tierId, locale),
     temporalLabel: messages.parallelFuture,

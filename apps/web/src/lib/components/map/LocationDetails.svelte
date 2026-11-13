@@ -27,7 +27,9 @@
     canonicalName: string
   }
 
-  let locations = $derived(($page.data.worldState?.locations || []) as MapLocation[])
+  let locations = $derived(
+    ($page.data.locations || $page.data.worldState?.locations || []) as MapLocation[],
+  )
   let presences = $derived(($page.data.worldState?.presences || []) as MapPresence[])
   let bodies = $derived(($page.data.worldState?.bodies || []) as MapBody[])
   let characters = $derived(($page.data.worldState?.characters || []) as MapCharacter[])
@@ -114,59 +116,54 @@
 </script>
 
 {#if mapState.selectedLocationId && locationDetails}
-  <aside
-    class="location-panel absolute top-0 right-0 z-40 flex h-full w-[22rem] flex-col overflow-y-auto border-l border-[#FFD700] bg-[#1a1a1a] p-6 text-[#FFFFF0] shadow-2xl"
-    aria-label={$t.mapUi.locationDetails}
-  >
+  <aside class="location-panel" aria-label={$t.mapUi.locationDetails}>
     <button
       type="button"
       onclick={closePanel}
-      class="absolute top-2 right-2 grid h-11 w-11 place-items-center text-gray-400 hover:text-white"
+      class="close"
       aria-label={$t.mapUi.closeLocationDetails}
     >
       ✕
     </button>
 
-    <h2 class="mb-1 pr-8 text-xl font-bold tracking-wider text-[#FFD700] uppercase">
+    <h2>
       {locationDetails.name}
     </h2>
-    <p class="mb-6 text-sm text-gray-400">
+    <p class="context">
       {locationDetails.tier}{locationDetails.parent ? ` · ${locationDetails.parent}` : ''}
     </p>
 
     <section>
-      <h3 class="mb-2 border-b border-gray-700 pb-1 text-sm font-semibold tracking-wider uppercase">
+      <h3>
         {$t.mapUi.charactersHere}
       </h3>
       {#if locationDetails.presentCharacters.length > 0}
-        <ul class="space-y-2 text-sm text-gray-300">
+        <ul>
           {#each locationDetails.presentCharacters as character (character.id)}
-            <li class="flex items-center justify-between gap-3">
-              <span class="flex items-center">
-                <span class="mr-2 h-2 w-2 rounded-full bg-emerald-400"></span>
+            <li>
+              <span class="person">
+                <span class="dot"></span>
                 {character.name}
               </span>
-              <span class="text-[10px] tracking-wide text-gray-500 uppercase"
-                >{(character.certainty || 'UNKNOWN').replaceAll('_', ' ')}</span
+              <span class="certainty"
+                >{($t.mapUi.certainty as Record<string, string>)[character.certainty] ||
+                  $t.mapUi.certainty.UNKNOWN}</span
               >
             </li>
           {/each}
         </ul>
       {:else}
-        <p class="text-sm text-gray-400">{$t.mapUi.noCharacterHere}</p>
+        <p class="empty">{$t.mapUi.noCharacterHere}</p>
       {/if}
     </section>
 
     {#if walkHref}
-      <a
-        href={walkHref}
-        class="mt-6 inline-block rounded border border-[#FFD700]/60 px-3 py-1.5 text-center text-xs tracking-wider text-[#FFD700] uppercase transition-colors hover:bg-[#FFD700]/10"
-      >
+      <a href={walkHref} class="walk">
         {$t.mapUi.walkThere} →
       </a>
     {/if}
 
-    <p class="mt-auto pt-8 text-xs text-gray-500">
+    <p class="source">
       {$t.mapUi.derivedFrom}
     </p>
   </aside>
@@ -174,8 +171,115 @@
 
 <style>
   .location-panel {
+    position: absolute;
+    z-index: 40;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: 22rem;
     max-width: 100%;
+    height: 100%;
+    flex-direction: column;
+    overflow-y: auto;
+    border-left: 1px solid var(--accent-gold);
+    padding: 1.5rem;
+    background: var(--surface-panel);
+    color: var(--text-primary);
+    box-shadow: -1rem 0 2.5rem rgba(0, 0, 0, 0.45);
     overscroll-behavior: contain;
+  }
+  .close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .close:hover {
+    color: var(--text-primary);
+  }
+  h2 {
+    margin: 0 0 0.25rem;
+    padding-right: 2rem;
+    color: var(--accent-gold-bright);
+    font-size: 1.15rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .context,
+  .empty {
+    margin: 0 0 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+  h3 {
+    margin: 0 0 0.5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.35rem;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+  .person {
+    display: flex;
+    align-items: center;
+  }
+  .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background: var(--state-known);
+  }
+  .certainty {
+    color: var(--text-faint);
+    font: 0.52rem var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .walk {
+    display: block;
+    margin-top: 1.5rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.35rem;
+    padding: 0.55rem;
+    color: var(--accent-gold-bright);
+    text-align: center;
+    text-decoration: none;
+    font: 0.62rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .walk:hover {
+    background: rgba(200, 169, 86, 0.1);
+  }
+  .source {
+    margin: auto 0 0;
+    padding-top: 2rem;
+    color: var(--text-faint);
+    font-size: 0.62rem;
   }
   @media (max-width: 600px) {
     .location-panel {

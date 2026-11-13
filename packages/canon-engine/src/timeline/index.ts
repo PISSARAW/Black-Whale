@@ -91,6 +91,20 @@ export { compareEventOrder, isRevealed }
 /** A narrative event row as loaded here: orderable, and carrying its keys. */
 export type CanonicalEventRow = Orderable & { id: string; chapterId: string }
 
+/**
+ * Keep timeline reads independent from optional narrative metadata columns.
+ * Event ordering only needs these fields, and selecting the complete Prisma
+ * row makes reconstruction fail while an additive schema migration is still
+ * being rolled out.
+ */
+const canonicalEventSelect = {
+  id: true,
+  chapterId: true,
+  sequence: true,
+  ordinal: true,
+  chapter: { select: { number: true } },
+} as const
+
 /** A temporal row scoped to one body, as the reducers below read it. */
 type BodyStateRow = TemporalRecord & { bodyId: string; state: string }
 type OccupancyRow = TemporalRecord & { bodyId: string; consciousnessId?: string | null }
@@ -136,8 +150,8 @@ export class TimelineEngine implements ITimelineEngine {
     const visibleWhere = { firstVisibleEvent: revealedBound }
     const temporalWhere = { fromEvent: revealedBound }
     const temporalInclude = {
-      fromEvent: { include: { chapter: true } },
-      untilEvent: { include: { chapter: true } },
+      fromEvent: { select: canonicalEventSelect },
+      untilEvent: { select: canonicalEventSelect },
     }
 
     // The reveal check is repeated here on purpose: the SQL bound is an
@@ -161,15 +175,15 @@ export class TimelineEngine implements ITimelineEngine {
     ] = await Promise.all([
       this.prisma.character.findMany({
         where: visibleWhere,
-        include: { firstVisibleEvent: { include: { chapter: true } } },
+        include: { firstVisibleEvent: { select: canonicalEventSelect } },
       }),
       this.prisma.body.findMany({
         where: visibleWhere,
-        include: { firstVisibleEvent: { include: { chapter: true } } },
+        include: { firstVisibleEvent: { select: canonicalEventSelect } },
       }),
       this.prisma.consciousness.findMany({
         where: visibleWhere,
-        include: { firstVisibleEvent: { include: { chapter: true } } },
+        include: { firstVisibleEvent: { select: canonicalEventSelect } },
       }),
       this.prisma.presence.findMany({
         where: { entityType: 'BODY', ...temporalWhere },
@@ -228,7 +242,7 @@ export class TimelineEngine implements ITimelineEngine {
 
     const events = await this.prisma.narrativeEvent.findMany({
       where: { chapter: { number: { lte: revealedThroughChapter } } },
-      include: { chapter: true },
+      select: canonicalEventSelect,
     })
 
     return events
@@ -275,24 +289,24 @@ export class TimelineEngine implements ITimelineEngine {
         this.getWorldState({ ...point, eventId: targetEvent.id }),
         this.prisma.narrativeEvent.findMany({
           where: { chapter: { number: { lte: kernelRevealedThrough } } },
-          include: { chapter: true },
+          select: canonicalEventSelect,
         }),
         this.prisma.location.findMany({
           where: { firstVisibleEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
-          include: { firstVisibleEvent: { include: { chapter: true } } },
+          include: { firstVisibleEvent: { select: canonicalEventSelect } },
         }),
         this.prisma.bodyOccupancy.findMany({
           where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
           include: {
-            fromEvent: { include: { chapter: true } },
-            untilEvent: { include: { chapter: true } },
+            fromEvent: { select: canonicalEventSelect },
+            untilEvent: { select: canonicalEventSelect },
           },
         }),
         this.prisma.consciousnessState.findMany({
           where: { fromEvent: { chapter: { number: { lte: kernelRevealedThrough } } } },
           include: {
-            fromEvent: { include: { chapter: true } },
-            untilEvent: { include: { chapter: true } },
+            fromEvent: { select: canonicalEventSelect },
+            untilEvent: { select: canonicalEventSelect },
           },
         }),
       ])
@@ -404,7 +418,7 @@ export class TimelineEngine implements ITimelineEngine {
     if (point.eventId) {
       return this.prisma.narrativeEvent.findUnique({
         where: { id: point.eventId },
-        include: { chapter: true },
+        select: canonicalEventSelect,
       })
     }
 
@@ -412,7 +426,7 @@ export class TimelineEngine implements ITimelineEngine {
       return this.prisma.narrativeEvent.findFirst({
         where: { chapterId: point.chapterId },
         orderBy: { sequence: 'desc' },
-        include: { chapter: true },
+        select: canonicalEventSelect,
       })
     }
 
@@ -422,7 +436,7 @@ export class TimelineEngine implements ITimelineEngine {
       return this.prisma.narrativeEvent.findFirst({
         where: { sequence: point.sequence },
         orderBy: { chapter: { number: 'desc' } },
-        include: { chapter: true },
+        select: canonicalEventSelect,
       })
     }
 

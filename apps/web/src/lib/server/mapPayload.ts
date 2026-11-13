@@ -112,7 +112,9 @@ export interface MapLocation {
  */
 export interface TimelineEvent {
   id: string
+  chapterId: string
   sequence: number
+  ordinal?: number | null
   title: string
   isFlashback?: boolean
   /** The voyage clock's rendering of the hour, shown beside the title. */
@@ -178,7 +180,9 @@ export function trimEventsForTimeline(events: readonly Row[]): TimelineEvent[] {
     const chapter = event.chapter as { number?: number } | null | undefined
     return {
       id: String(event.id),
+      chapterId: String(event.chapterId ?? ''),
       sequence: Number(event.sequence ?? 0),
+      ordinal: event.ordinal == null ? null : Number(event.ordinal),
       title: String(event.title ?? ''),
       ...(event.isFlashback === undefined ? {} : { isFlashback: Boolean(event.isFlashback) }),
       occurredAtLabel: (event.occurredAtLabel as string | null) ?? null,

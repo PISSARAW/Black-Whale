@@ -109,6 +109,14 @@ interface Room {
 
 const source = readFileSync(new URL('./black-whale-overview.svelte', import.meta.url), 'utf8')
 
+describe('overview interaction density', () => {
+  it('offers exactly five tier controls and no room controls or room labels', () => {
+    expect(source).toContain("const levels = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5']")
+    expect(source).not.toContain('aria-label={room.name}')
+    expect(source).not.toContain('rooms.filter((room) => room.size > 0)')
+  })
+})
+
 const between = (open: string, close: string) => {
   const start = source.indexOf(open)
   expect(start, `${open} missing from the generated section`).toBeGreaterThan(-1)

@@ -13,6 +13,7 @@
   function explain() {
     const sighting = object.sighting
     mapState.openExplainPanel({
+      kind: 'object',
       subject: object.canonicalName,
       value: object.location?.name || $t.ship.objectTracking.unknownPosition,
       source: sighting?.note || object.description,
@@ -27,8 +28,10 @@
   type="button"
   class="object-marker"
   class:follow
+  class:tier-marker={mapState.currentZoomLevel === 'TIER'}
+  class:objects-only={mapState.filters.entityType === 'objects'}
   data-follow-target={follow ? 'true' : undefined}
-  style={`left:${x}%;top:${y}%;transform:translate(-50%, -50%);`}
+  style={`left:${x}%;top:${y}%;`}
   aria-label={$t.ship.objectTracking.markerAria(
     object.canonicalName,
     object.location?.name || $t.ship.objectTracking.unknownPosition,
@@ -58,7 +61,14 @@
     color: #ffd96a;
     cursor: pointer;
     pointer-events: auto;
+    transform: translate(-50%, -50%);
     filter: drop-shadow(0 0 7px rgba(255, 196, 65, 0.7));
+  }
+  .object-marker.tier-marker {
+    transform: translate(
+      calc(-50% + var(--marker-nudge-x, 0px)),
+      calc(-50% + var(--marker-nudge-y, 0px))
+    );
   }
   .core {
     position: relative;
@@ -137,6 +147,11 @@
   }
   @media (hover: none) {
     .tooltip {
+      display: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .tier-marker:not(.objects-only):not(.follow) {
       display: none;
     }
   }

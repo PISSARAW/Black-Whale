@@ -1,6 +1,7 @@
 <script lang="ts">
   import { mapState } from '$lib/state/mapState.svelte'
   import CharacterMarker from './CharacterMarker.svelte'
+  import CharacterMarkerGroup from './CharacterMarkerGroup.svelte'
   import ObjectMarker from './ObjectMarker.svelte'
   import { page } from '$app/stores'
   import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState.js'
@@ -21,14 +22,82 @@
   import type { PerspectiveState, Location } from '@black-whale/domain'
   import { locale } from '$lib/i18n'
   import type { TrackedObjectSnapshot } from '$lib/importantObjects'
+  import { groupMarkersForZoom } from './markerGroups'
+  import EventDeltaOverlay from './EventDeltaOverlay.svelte'
+  import type { ShipEventDelta } from '../../../routes/ship/shipDelta'
+  import { tick } from 'svelte'
+
+  type Box = { x: number; y: number; width: number; height: number }
+
+  const groupOffsets = [
+    [0, 28],
+    [38, 16],
+    [-38, 16],
+    [48, 0],
+    [-48, 0],
+    [38, -16],
+    [-38, -16],
+    [0, -28],
+    [64, 24],
+    [-64, 24],
+    [64, -24],
+    [-64, -24],
+    [82, 0],
+    [-82, 0],
+  ] as const
+  const objectOffsets = [
+    [-32, 0],
+    [32, 0],
+    [-40, -20],
+    [40, -20],
+    [-40, 20],
+    [40, 20],
+    [0, -32],
+    [0, 32],
+    [-64, 0],
+    [64, 0],
+  ] as const
+
+  function movedBox(box: Box, x: number, y: number): Box {
+    return { ...box, x: box.x + x, y: box.y + y }
+  }
+
+  function protectedCenter(box: DOMRect): Box {
+    const width = Math.min(36, box.width)
+    const height = Math.min(36, box.height)
+    return {
+      x: box.x + (box.width - width) / 2,
+      y: box.y + (box.height - height) / 2,
+      width,
+      height,
+    }
+  }
+
+  function overlaps(left: Box, right: Box, padding = 2) {
+    return !(
+      left.x + left.width + padding <= right.x ||
+      right.x + right.width + padding <= left.x ||
+      left.y + left.height + padding <= right.y ||
+      right.y + right.height + padding <= left.y
+    )
+  }
+
+  function inside(box: Box, bounds: DOMRect) {
+    return (
+      box.x >= bounds.x + 2 &&
+      box.y >= bounds.y + 2 &&
+      box.x + box.width <= bounds.right - 2 &&
+      box.y + box.height <= bounds.bottom - 2
+    )
+  }
 
   /**
    * `$page.data` is untyped across routes, so the shapes are asserted once here
    * rather than re-asserted at every read. Everything downstream is typed: the
    * projection takes a `MapWorldState` and a `PerspectiveState`.
    */
-  let world = $derived(
-    ($page.data.worldState || {
+  let world = $derived.by(() => {
+    const state = ($page.data.worldState || {
       characters: [],
       bodies: [],
       consciousnesses: [],
@@ -36,8 +105,9 @@
       occupancies: [],
       appearances: [],
       locations: [],
-    }) as MapWorldState,
-  )
+    }) as MapWorldState
+    return { ...state, locations: ($page.data.locations || state.locations || []) as Location[] }
+  })
   let perspective = $derived(($page.data.perspective || null) as PerspectiveState | null)
   let events = $derived(($page.data.events || []) as (MapEvent & { sequence?: number })[])
   let currentEvent = $derived(
@@ -49,6 +119,7 @@
   )
   let futureMode = $derived($activeHatsu?.id === 'parallel-future' && $parallelFutureVisible)
   let importantObjects = $derived(($page.data.importantObjects || []) as TrackedObjectSnapshot[])
+  let nextEventDelta = $derived(($page.data.nextEventDelta || []) as ShipEventDelta[])
 
   let dynamicCharacters = $derived(
     world.presences
@@ -136,6 +207,9 @@
 
     return packMarkersForZoom(filtered, mapState.currentZoomLevel, $locale)
   })
+  let visibleCharacterGroups = $derived(
+    groupMarkersForZoom(visibleCharacters, mapState.currentZoomLevel),
+  )
 
   function trackedObjectIsInScope(
     object: TrackedObjectSnapshot,
@@ -213,6 +287,49 @@
   let presenceLayer: HTMLDivElement | undefined = $state()
   let layerStyle = $state('inset: 0;')
 
+  function placeTierMarkers() {
+    if (mapState.currentZoomLevel !== 'TIER' || !presenceLayer) return
+    const parent = presenceLayer.parentElement
+    const svg = parent?.querySelector(':scope > svg')
+    if (!parent || !svg) return
+
+    const obstacles = [...svg.querySelectorAll<SVGGraphicsElement>('[role="button"]')].map(
+      (element) => protectedCenter(element.getBoundingClientRect()),
+    )
+    const markers = [
+      ...presenceLayer.querySelectorAll<HTMLElement>(
+        '.marker-group.offset-below-label, .object-marker.tier-marker',
+      ),
+    ]
+    for (const marker of markers) {
+      marker.style.removeProperty('--marker-nudge-x')
+      marker.style.removeProperty('--marker-nudge-y')
+    }
+
+    const bounds = presenceLayer.getBoundingClientRect()
+    const placed: Box[] = []
+    for (const marker of markers) {
+      const base = marker.getBoundingClientRect()
+      const offsets = marker.classList.contains('object-marker') ? objectOffsets : groupOffsets
+      const chosen =
+        offsets.find(([x, y]) => {
+          const candidate = movedBox(base, x, y)
+          return (
+            inside(candidate, bounds) &&
+            !obstacles.some((obstacle) => overlaps(candidate, obstacle)) &&
+            !placed.some((other) => overlaps(candidate, other))
+          )
+        }) ?? offsets[offsets.length - 1]
+      marker.style.setProperty('--marker-nudge-x', `${chosen[0]}px`)
+      marker.style.setProperty('--marker-nudge-y', `${chosen[1]}px`)
+      placed.push(movedBox(base, chosen[0], chosen[1]))
+    }
+  }
+
+  function scheduleTierMarkerLayout() {
+    requestAnimationFrame(placeTierMarkers)
+  }
+
   $effect(() => {
     // Bare reads: this is how a rune effect registers its dependencies.
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -243,12 +360,19 @@
       // rooms wide, so the overview's 184 of them close over the hull and the
       // ship is gone. Hand the scale down and let the markers read it.
       layerStyle = `left:${left}px;top:${top}px;width:${renderedWidth}px;height:${renderedHeight}px;--map-scale:${scale.toFixed(3)};`
+      scheduleTierMarkerLayout()
     }
 
     alignWithSvg()
     const observer = new ResizeObserver(alignWithSvg)
     observer.observe(parent)
     return () => observer.disconnect()
+  })
+
+  $effect(() => {
+    const layoutKey = `${visibleCharacterGroups.length}:${visibleObjects.length}:${mapState.currentZoomLevel}:${layerStyle}`
+    void layoutKey
+    void tick().then(placeTierMarkers)
   })
 </script>
 
@@ -258,12 +382,21 @@
   style={layerStyle}
   aria-label={`${visibleCharacters.length} visible characters, ${visibleObjects.length} visible objects`}
 >
+  {#if mapState.showEventChanges || mapState.playingTimeline}
+    <EventDeltaOverlay delta={nextEventDelta} {world} />
+  {/if}
   {#each futureCharacters as char (char.id)}
     <CharacterMarker character={char} future={true} />
   {/each}
-  {#each visibleCharacters as char (char.id)}
-    <CharacterMarker character={char} {futureMode} />
-  {/each}
+  <div class:tier-group-rail={mapState.currentZoomLevel === 'TIER'}>
+    {#each visibleCharacterGroups as group (group.id)}
+      <CharacterMarkerGroup
+        {group}
+        compact={mapState.currentZoomLevel === 'OVERVIEW'}
+        offsetBelowLabel={mapState.currentZoomLevel === 'TIER'}
+      />
+    {/each}
+  </div>
   {#each visibleObjects as marker (marker.object.id)}
     <ObjectMarker {...marker} />
   {/each}
@@ -272,5 +405,36 @@
 <style>
   .presence-layer {
     z-index: 5;
+  }
+  .tier-group-rail {
+    display: contents;
+  }
+  @media (max-width: 600px) {
+    .tier-group-rail {
+      position: absolute;
+      z-index: 20;
+      right: 0.35rem;
+      bottom: 0.35rem;
+      left: 0.35rem;
+      display: flex;
+      gap: 0.35rem;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.35rem;
+      background: color-mix(in srgb, var(--surface-panel) 88%, transparent);
+      pointer-events: auto;
+      scrollbar-width: none;
+    }
+    .tier-group-rail::-webkit-scrollbar {
+      display: none;
+    }
+    .tier-group-rail :global(.marker-group.offset-below-label) {
+      position: relative;
+      top: auto !important;
+      left: auto !important;
+      flex: 0 0 auto;
+      transform: none !important;
+    }
   }
 </style>

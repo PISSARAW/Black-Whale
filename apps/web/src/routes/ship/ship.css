@@ -222,23 +222,27 @@
 }
 @media (max-width: 600px) {
   .ship-page {
-    padding: 0.75rem 0.5rem 1rem;
+    padding: 0.35rem 0.35rem 0.75rem;
   }
   .ship-heading {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.35rem;
   }
   .ship-heading h1 {
-    font-size: 1.7rem;
+    font-size: 1.35rem;
   }
   .ship-heading p {
-    font-size: 0.7rem;
+    display: none;
   }
   .ship-heading-caption {
     display: none;
   }
   .ship-workspace {
-    height: max(39rem, calc(100dvh - 10rem));
+    height: auto;
+    min-height: calc(100dvh - 6.5rem);
     border-radius: 0.4rem;
+  }
+  .ship-map-body {
+    min-height: 50dvh;
   }
   .ship-toolbar {
     flex-wrap: wrap;
@@ -261,7 +265,9 @@
     gap: 0;
   }
   .ship-actions button {
-    font-size: 0.72rem;
+    min-width: 44px;
+    padding-inline: 0.42rem;
+    font-size: 0.66rem;
   }
   .ship-panel {
     inset: 0;

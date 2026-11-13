@@ -319,8 +319,9 @@ src = f'''<script lang="ts">
    * One unit is {round(1 / SCALE, 4)} m; the section has its own scale because 175 m of ship
    * and 77 m of freeboard do not fit the deck plans' 0.35 m per unit.
    *
-   * Rooms the cut passes through are solid, labelled where the label fits, and
-   * open their deck. Rooms it passes beside — everything to port or starboard —
+   * Rooms the cut passes through are solid but deliberately unlabelled here.
+   * The overview is a five-tier chooser; room names belong to deck maps where
+   * they remain legible. Rooms beside the cut — everything to port or starboard —
    * are drawn behind and dim: they are what fills the ship, and on the manga
    * page they are the strips of texture between the labelled callouts.
    *
@@ -338,7 +339,7 @@ src = f'''<script lang="ts">
    * Do not hand-edit — regenerate from the blueprint.
    */
   import {{ mapState }} from '$lib/state/mapState.svelte'
-  import {{ locale, t }} from '$lib/i18n'
+  import {{ t }} from '$lib/i18n'
 
   type Room = {{
     id: string
@@ -375,21 +376,19 @@ src = f'''<script lang="ts">
 {ts(decks_out, DECK_FIELDS)},
   ]
 
-  /**
-   * A deck carries both of its names, because the tabs are the only labels on
-   * the section that come from the ship's own data rather than the dictionary,
-   * and a single name means one of the two languages reads the other's.
-   */
-  const deckName = (deck: {{ name: string; nameFr: string }}) =>
-    $locale === 'fr' ? deck.nameFr : deck.name
+  const levels = ['tier-1', 'tier-2', 'tier-3', 'tier-4', 'tier-5'].map((id) => {{
+    const members = decks.filter((deck) => deck.id === id || deck.group === id)
+    const x = Math.min(...members.map((deck) => deck.x0))
+    const right = Math.max(...members.map((deck) => deck.x1))
+    const y = Math.min(...members.map((deck) => deck.ceiling))
+    const bottom = Math.max(...members.map((deck) => deck.floor))
+    return {{ id, x, y, width: right - x, height: bottom - y }}
+  }})
 
   /** The brackets that say a run of lettered decks is one tier. */
   const brackets = [
 {ts(brackets, BRACKET_FIELDS)},
   ]
-
-  /** Where the ticks and the letters hang, the same for every bracket. */
-  const bracketX = {BRACKET_X}
 
   const gaps = [
 {ts(gaps, GAP_FIELDS)},
@@ -420,31 +419,14 @@ src = f'''<script lang="ts">
 
   const waterline = {py(WATERLINE)}
 
-  /**
-   * A room on the section opens the deck it belongs to and then itself, which
-   * is the same two steps a reader takes by hand: the section is the way in to
-   * a deck, not a replacement for it.
-   */
-  function open(room: Room) {{
-    mapState.selectTier(room.tier)
-    if (room.region) mapState.selectLocation(room.region)
-  }}
-
-  function openWithKeyboard(event: KeyboardEvent, room: Room) {{
-    if (event.key !== 'Enter' && event.key !== ' ') return
-    event.preventDefault()
-    event.stopPropagation()
-    open(room)
-  }}
-
-  function openDeck(tierId: string) {{
+  function openLevel(tierId: string) {{
     mapState.selectTier(tierId)
   }}
 
-  function openDeckWithKeyboard(event: KeyboardEvent, tierId: string) {{
+  function openLevelWithKeyboard(event: KeyboardEvent, tierId: string) {{
     if (event.key !== 'Enter' && event.key !== ' ') return
     event.preventDefault()
-    openDeck(tierId)
+    openLevel(tierId)
   }}
 </script>
 
@@ -517,6 +499,26 @@ src = f'''<script lang="ts">
       .deck-tab:hover text {{
         fill: #fffff0;
       }}
+      .level-hit {{
+        fill: #ffd700;
+        fill-opacity: 0.035;
+        stroke: #ffd700;
+        stroke-opacity: 0.28;
+        cursor: pointer;
+      }}
+      .level-button:hover .level-hit,
+      .level-button:focus .level-hit {{
+        fill-opacity: 0.12;
+        stroke-opacity: 0.9;
+      }}
+      .level-title {{
+        fill: #ffd700;
+        font-family: sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        pointer-events: none;
+      }}
       .label {{
         fill: #fffff0;
         font-family: sans-serif;
@@ -575,41 +577,16 @@ src = f'''<script lang="ts">
 
   <g id="section-rooms">
     {{#each rooms as room (room.id)}}
-      {{#if room.cut && room.region}}
-        <g
-          role="button"
-          tabindex="0"
-          aria-label={{room.name}}
-          onclick={{() => open(room)}}
-          onkeydown={{(event) => openWithKeyboard(event, room)}}
-        >
-          <title>{{room.name}}</title>
-          <rect
-            class="room clickable"
-            class:through={{room.through}}
-            class:inferred={{room.inferred}}
-            x={{room.x}}
-            y={{room.y}}
-            width={{room.w}}
-            height={{room.h}}
-          />
-        </g>
-      {{:else}}
-        <rect
-          class="room"
-          class:behind={{!room.cut}}
-          class:through={{room.through}}
-          class:inferred={{room.inferred}}
-          x={{room.x}}
-          y={{room.y}}
-          width={{room.w}}
-          height={{room.h}}
-        />
-      {{/if}}
-    {{/each}}
-
-    {{#each rooms.filter((room) => room.size > 0) as room (room.id)}}
-      <text class="label" x={{room.at[0]}} y={{room.at[1]}} font-size={{room.size}}>{{room.label}}</text>
+      <rect
+        class="room"
+        class:behind={{!room.cut}}
+        class:through={{room.through}}
+        class:inferred={{room.inferred}}
+        x={{room.x}}
+        y={{room.y}}
+        width={{room.w}}
+        height={{room.h}}
+      />
     {{/each}}
   </g>
 
@@ -635,23 +612,19 @@ src = f'''<script lang="ts">
 
   {{#each decks as deck (deck.id)}}
     <line class="deck-rule" x1={{deck.x0}} y1={{deck.floor}} x2={{deck.x1}} y2={{deck.floor}} />
+  {{/each}}
+
+  {{#each levels as level, index (level.id)}}
     <g
-      class="deck-tab"
+      class="level-button"
       role="button"
       tabindex="0"
-      aria-label={{deckName(deck)}}
-      onclick={{() => openDeck(deck.id)}}
-      onkeydown={{(event) => openDeckWithKeyboard(event, deck.id)}}
+      aria-label={{$t.ship.workspace.level(index + 1)}}
+      onclick={{() => openLevel(level.id)}}
+      onkeydown={{(event) => openLevelWithKeyboard(event, level.id)}}
     >
-      {{#if deck.grouped}}
-        <line class="liner-tick" x1={{bracketX}} y1={{deck.floor}} x2={{bracketX + 7}} y2={{deck.floor}} />
-        <text x={{bracketX + 11}} y={{deck.floor + 3}} font-size="10">{{deck.letter}}</text>
-      {{:else}}
-        <text x="6" y={{deck.ceiling + 12}}>{{deckName(deck)}}</text>
-        <text x="6" y={{deck.ceiling + 25}} font-size="9" fill-opacity="0.55"
-          >{{deck.elevation}} m</text
-        >
-      {{/if}}
+      <rect class="level-hit" x={{level.x}} y={{level.y}} width={{level.width}} height={{level.height}} />
+      <text class="level-title" x={{level.x + 10}} y={{level.y + 16}}>{{$t.ship.workspace.level(index + 1)}}</text>
     </g>
   {{/each}}
 

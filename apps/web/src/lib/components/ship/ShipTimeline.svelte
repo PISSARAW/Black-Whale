@@ -1,16 +1,64 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
-  import { PUBLIC_FEATURES } from '$lib/config/features'
-  import PerspectiveTimeline from '$lib/components/perspective/PerspectiveTimeline.svelte'
+  import { mapState } from '$lib/state/mapState.svelte'
   import type { ShipController } from '../../../routes/ship/shipController.svelte'
   import type { PageData } from '../../../routes/ship/$types'
 
   let { data, ship }: { data: PageData; ship: ShipController } = $props()
   let expanded = $state(false)
+  let playing = $state(false)
   let progress = $derived(
     data.events.length < 2 ? 100 : (data.selectedEventIndex / (data.events.length - 1)) * 100,
   )
+
+  function stop() {
+    playing = false
+    mapState.playingTimeline = false
+  }
+
+  function step(index: number) {
+    stop()
+    void ship.selectEventIndex(index)
+  }
+
+  function editableTarget(target: EventTarget | null) {
+    const element = target as HTMLElement | null
+    return Boolean(
+      element?.matches('input, select, textarea, [contenteditable="true"]') ||
+      document.querySelector('[role="dialog"]'),
+    )
+  }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (editableTarget(event.target) || event.altKey || event.metaKey || event.ctrlKey) return
+    if (event.key === 'ArrowLeft' && data.selectedEventIndex > 0) {
+      event.preventDefault()
+      step(data.selectedEventIndex - 1)
+    } else if (event.key === 'ArrowRight' && data.selectedEventIndex < data.events.length - 1) {
+      event.preventDefault()
+      step(data.selectedEventIndex + 1)
+    }
+  }
+
+  function visibilityChanged() {
+    if (document.hidden) stop()
+  }
+
+  $effect(() => {
+    mapState.playingTimeline = playing
+    if (!playing) return
+    if (data.selectedEventIndex >= data.events.length - 1) {
+      stop()
+      return
+    }
+    const timer = window.setTimeout(() => {
+      void ship.selectEventIndex(data.selectedEventIndex + 1)
+    }, 2500)
+    return () => window.clearTimeout(timer)
+  })
 </script>
+
+<svelte:window onkeydown={handleKeydown} onvisibilitychange={visibilityChanged} />
 
 <footer class="timeline">
   <div class="timeline-bar">
@@ -30,7 +78,7 @@
         class="step"
         aria-label={$t.ship.workspace.previous}
         disabled={data.selectedEventIndex <= 0 || !data.events.length}
-        onclick={() => ship.selectEventIndex(data.selectedEventIndex - 1)}>←</button
+        onclick={() => step(data.selectedEventIndex - 1)}>←</button
       >
       <span class="event-meta">
         {$t.ship.chapterBadge} <strong>{ship.currentEvt?.chapter.number ?? '—'}</strong>
@@ -40,7 +88,21 @@
         class="step"
         aria-label={$t.ship.workspace.next}
         disabled={data.selectedEventIndex >= data.events.length - 1 || !data.events.length}
-        onclick={() => ship.selectEventIndex(data.selectedEventIndex + 1)}>→</button
+        onclick={() => step(data.selectedEventIndex + 1)}>→</button
+      >
+      <button
+        class="play"
+        aria-label={playing ? $t.ship.workspace.pause : $t.ship.workspace.play}
+        aria-pressed={playing}
+        disabled={data.selectedEventIndex >= data.events.length - 1 || !data.events.length}
+        onclick={() => (playing ? stop() : (playing = true))}>{playing ? 'Ⅱ' : '▶'}</button
+      >
+      <button
+        class="changes"
+        aria-label={$t.ship.workspace.showChanges}
+        aria-pressed={mapState.showEventChanges}
+        disabled={!data.nextEventDelta?.length}
+        onclick={() => (mapState.showEventChanges = !mapState.showEventChanges)}>△</button
       >
     </div>
   </div>
@@ -51,7 +113,7 @@
         <select
           id="ship-event"
           value={data.selectedEventIndex}
-          onchange={(event) => ship.selectEventIndex(Number(event.currentTarget.value))}
+          onchange={(event) => step(Number(event.currentTarget.value))}
         >
           {#each data.events as event, index (event.id)}
             <option value={index}
@@ -68,7 +130,7 @@
             min="0"
             max={data.events.length - 1}
             value={data.selectedEventIndex}
-            onchange={(event) => ship.selectEventIndex(Number(event.currentTarget.value))}
+            onchange={(event) => step(Number(event.currentTarget.value))}
           />
           <span>{$t.common.chapterShort(data.events[data.events.length - 1].chapter.number)}</span>
         </div>
@@ -76,18 +138,6 @@
           {#if ship.currentEvt?.isFlashback}{$t.ship.flashbackBadge}
           {/if}{ship.currentEvt?.occurredAtLabel || ''}
         </p>
-        {#if PUBLIC_FEATURES.perspectives}
-          <details>
-            <summary>{$t.ship.workspace.advancedTimeline}</summary>
-            <PerspectiveTimeline
-              reality={ship.timelinePoints.reality}
-              body={ship.timelinePoints.body}
-              consciousness={ship.timelinePoints.consciousness}
-              knowledge={ship.timelinePoints.knowledge}
-              currentIndex={data.selectedEventIndex || 0}
-            />
-          </details>
-        {/if}
       {:else}
         <p>{$t.ship.noEvents}</p>
       {/if}
@@ -148,6 +198,19 @@
     border-radius: 0.35rem;
     font-size: 1rem;
   }
+  .play,
+  .changes {
+    width: 44px;
+    border: 1px solid var(--line);
+    border-radius: 0.35rem;
+    font-size: 0.72rem;
+  }
+  .play[aria-pressed='true'],
+  .changes[aria-pressed='true'] {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold-bright);
+    background: rgba(200, 169, 86, 0.08);
+  }
   button:disabled {
     opacity: 0.25;
     cursor: default;
@@ -199,14 +262,9 @@
     accent-color: var(--accent-gold);
     cursor: pointer;
   }
-  p,
-  summary {
+  p {
     color: var(--text-muted);
     font-size: 0.7rem;
-  }
-  summary {
-    padding-block: 0.75rem;
-    cursor: pointer;
   }
   button:focus-visible,
   select:focus-visible,
@@ -216,16 +274,17 @@
   }
   @media (max-width: 600px) {
     .timeline-bar {
-      flex-wrap: wrap;
-      gap: 0.35rem;
+      gap: 0.25rem;
       padding: 0.5rem;
     }
     .timeline-toggle {
-      width: 100%;
+      flex: 1;
     }
     .event-navigation {
-      width: 100%;
-      justify-content: space-between;
+      gap: 0.2rem;
+    }
+    .event-meta {
+      display: none;
     }
   }
 </style>

@@ -91,6 +91,7 @@ describe('projectPresenceMarker', () => {
     expect(marker?.tierId).toBe('tier-1')
     expect(marker?.body).toBe('Kurapika')
     expect(marker?.locationLabel).toBe('Casino')
+    expect(marker?.profileSlug).toBe('kurapika')
     expect(marker?.factionTags).toEqual(['zodiacs'])
     expect(marker?.hatsuIds).toEqual(['chain-jail'])
   })
@@ -132,6 +133,7 @@ describe('projectPresenceMarker', () => {
     })
 
     expect(marker?.perceivedIdentity).toBe('Unknown individual')
+    expect(marker?.profileSlug).toBeUndefined()
     expect(marker?.knowledgeState).toBe('confirmed')
     // The structural name stays available for the reader-facing axes.
     expect(marker?.body).toBe('Kurapika')

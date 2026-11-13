@@ -28,9 +28,11 @@ export interface TrackedObjectSnapshot {
   location: Location | null
 }
 
-type LocationRow = Omit<Location, 'parentLocationId' | 'mapElementId'> & {
+type LocationRow = Pick<Location, 'id' | 'slug' | 'name'> & {
+  type: string
   parentLocationId?: string | null
   mapElementId?: string | null
+  firstVisibleEventId?: string
 }
 
 /** The latest sighting which is still valid at the selected chapter. */
@@ -70,8 +72,10 @@ export function objectSnapshotsAt(
       const location: Location | null = found
         ? {
             ...found,
+            type: found.type as Location['type'],
             parentLocationId: found.parentLocationId ?? undefined,
             mapElementId: found.mapElementId ?? undefined,
+            firstVisibleEventId: found.firstVisibleEventId ?? '',
           }
         : null
 

@@ -90,42 +90,6 @@ export function createShipController(source: ShipSource) {
     }),
   )
 
-  const timelinePoints = $derived.by(() => {
-    const baseSequence = data.selectedEventIndex || 0
-
-    return {
-      reality: [
-        { id: 'r0', label: copy.ship.timelinePoints.canonicalEvent, index: baseSequence - 2 },
-        { id: 'r1', label: currentEvt?.title || copy.ship.currentState, index: baseSequence },
-      ],
-      body: [
-        { id: 'b0', label: copy.ship.timelinePoints.bodyMovement, index: baseSequence - 1 },
-        { id: 'b1', label: copy.ship.timelinePoints.biologicalState, index: baseSequence },
-      ],
-      consciousness: [
-        { id: 'c0', label: copy.ship.timelinePoints.mentalAnchor, index: baseSequence - 1 },
-        {
-          id: 'c1',
-          label: copy.ship.timelinePoints.transfer,
-          index: baseSequence,
-          emphasis: contextState.hasAnomaly,
-        },
-      ],
-      knowledge: [
-        { id: 'k0', label: copy.ship.timelinePoints.informationReceived, index: baseSequence - 2 },
-        {
-          id: 'k1',
-          label: copy.ship.timelinePoints.perspectiveUpdate,
-          index: baseSequence,
-          detail:
-            selectedPerspective?.kind === 'reader'
-              ? copy.ship.timelinePoints.spoilerFiltered
-              : copy.ship.timelinePoints.subjectiveView,
-        },
-      ],
-    }
-  })
-
   const currentDeckLabel = $derived.by(() => {
     if (mapState.currentZoomLevel === 'OVERVIEW') return copy.ship.overview
     if (mapState.currentZoomLevel === 'LOCAL')
@@ -147,7 +111,9 @@ export function createShipController(source: ShipSource) {
 
   function tierForObject(object: TrackedObjectSnapshot): string | null {
     if (!object.location) return null
-    const worldLocations = (data.worldState?.locations || []) as unknown as Location[]
+    const worldLocations = (data.locations ||
+      data.worldState?.locations ||
+      []) as unknown as Location[]
     const locations = new Map<string, Location>(
       worldLocations.map((location) => [location.id, location]),
     )
@@ -204,7 +170,7 @@ export function createShipController(source: ShipSource) {
     const url = new URL(source.url())
     url.searchParams.set('eventId', selectedEvent.id)
     url.searchParams.delete('sequence')
-    goto(url.toString(), { keepFocus: true, replaceState: true })
+    return goto(url.toString(), { keepFocus: true, replaceState: true, noScroll: true })
   }
 
   function handlePerspectiveSelect(id: string) {
@@ -267,9 +233,6 @@ export function createShipController(source: ShipSource) {
     },
     get contextState() {
       return contextState
-    },
-    get timelinePoints() {
-      return timelinePoints
     },
     get currentDeckLabel() {
       return currentDeckLabel

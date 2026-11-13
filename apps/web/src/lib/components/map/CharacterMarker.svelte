@@ -16,14 +16,16 @@
 
   function explainMarker(marker: MarkerIdentityState) {
     mapState.openExplainPanel({
+      kind: 'character',
       subject: marker.perceivedIdentity,
-      value: marker.body,
+      location: marker.locationLabel || $t.perspectiveUi.unspecifiedLocation,
+      tier: marker.tierLabel || $t.perspectiveUi.outsideTier,
+      certainty: marker.certainty || 'UNKNOWN',
+      temporalLabel: marker.temporalLabel || $t.perspectiveUi.unknownStatus,
       source: marker.temporalLabel || marker.sourceLabel || $t.mapUi.directObservation,
       observedAt: marker.temporalDetail || marker.sinceLabel || 'unspecified event',
-      freshness:
-        marker.knowledgeState === 'outdated' ? 'not recently confirmed' : 'recent information',
       knowledgeState: marker.knowledgeState,
-      canonicalValue: `${marker.body} / ${marker.consciousness}`,
+      profileSlug: marker.profileSlug,
     })
   }
 </script>

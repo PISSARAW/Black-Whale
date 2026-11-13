@@ -13,7 +13,7 @@ function member(overrides: Partial<CastMember> & { characterId: string }): CastM
     locations: ['tier-1-royal-residential-sector-room-1014'],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: true,
+    nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } },
     hatsu: ['senses'],
     beast: null,
     ...overrides,
@@ -61,7 +61,7 @@ describe('the conduct', () => {
   })
 
   it('casts nothing for a body the catalogue gives no Nen', () => {
-    const standing = posts([member({ characterId: 'sakata', nen: false })])
+    const standing = posts([member({ characterId: 'sakata', nen: null })])
     const room = standing[0]!.spaceId
     expect(firstActiveTick(standing, room)).toBe(-1)
   })

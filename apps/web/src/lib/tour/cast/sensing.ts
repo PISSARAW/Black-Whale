@@ -40,6 +40,7 @@ export type Senses = Readonly<Record<string, Sense>>
 export interface Visitor {
   at: Vec2
   nen: NenTechniqueState
+  awakened?: boolean
   /** Where the objects the visitor holds in Shu stand. Absent reads as none. */
   marks?: readonly Vec2[]
 }
@@ -59,6 +60,8 @@ export interface Contact {
    * that somebody is casting nearby: it is being told what that somebody means.
    */
   visitorMenacing: boolean
+  /** The visitor's own body pressure, distinct from any selected Hatsu. */
+  visitorPressure: 'none' | 'ren' | 'on'
   /**
    * Who the visitor has their aura levelled at, personally (ADR-004).
    *
@@ -69,6 +72,8 @@ export interface Contact {
   aimedAt: string | null
   /** Who has the visitor inside their En right now, and what they feel. */
   sensedBy: Senses
+  /** Bodies touched by the visitor's En, by character id. */
+  sweptBy: readonly string[]
 }
 
 /**
@@ -137,8 +142,19 @@ export function contactWith(post: Post, contact: Contact): ContactReach {
   const sees = !contact.visitorHidden || sense !== undefined
   const aimed = contact.aimedAt === id
   const inRoom = contact.visitorCasting && contact.visitorIn === post.spaceId
-  const felt = sense === 'aura' || (sees && (aimed || inRoom))
+  const pressure = contact.visitorPressure !== 'none' && contact.visitorIn === post.spaceId
+  const swept = contact.sweptBy.includes(id)
+  const felt = sense === 'aura' || swept || (sees && (aimed || inRoom || pressure))
   return { felt, looking: felt || sense === 'body', menaced: felt && contact.visitorMenacing }
+}
+
+/** Every body physically touched by the visitor's own En. */
+export function sweptByVisitor(posts: readonly Post[], visitor: Visitor): string[] {
+  const radius = visitor.nen.en?.radius ?? 0
+  if (radius <= 0 || visitor.nen.mode === 'zetsu') return []
+  return posts
+    .filter((post) => Math.hypot(post.at[0] - visitor.at[0], post.at[1] - visitor.at[1]) <= radius)
+    .map((post) => post.member.characterId)
 }
 
 /** How far the visitor has reached one body. */

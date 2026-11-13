@@ -66,8 +66,10 @@ export interface CastMember {
   role: string
   /** The chapter this position starts at, for the provenance card. */
   since: string | null
-  /** Whether `data/` declares this person a Nen user. Nothing else grants aura. */
-  nen: boolean
+  /** Nen visible at this chapter; null before awakening or when the archive is silent. */
+  nen: CastNenProfile | null
+  /** Stable faction id, used only by non-canonical social simulations. */
+  factionId?: string | null
   /**
    * The techniques the canon gives this person, kept to the kinds the walk
    * already carries.
@@ -94,6 +96,16 @@ export interface CastMember {
    * the right room.
    */
   approximate?: boolean
+}
+
+export interface CastNenProfile {
+  techniques: string[]
+  awakenedFromChapter: number | null
+  conduct: {
+    mode: 'ten' | 'zetsu'
+    concealedWithIn: boolean
+    enRadius: number | null
+  }
 }
 
 /** A Guardian Spirit Beast, as declared in `data/` and placed by the walk. */
@@ -143,12 +155,31 @@ export interface CastPayload {
    * Grouped by locationId.
    */
   vestiges: Record<string, TourVestige[]>
+  auraTraces: TourAuraTrace[]
+  auraObjects: TourAuraObject[]
 }
 
 /** An environmental trace left by a past event. */
 export interface TourVestige {
   type: string
   metadata?: Record<string, string | number | boolean>
+}
+
+export interface TourAuraTrace {
+  id: string
+  locationId: string
+  anchor?: string
+  persistsUntilChapter?: number
+}
+
+export interface TourAuraObject {
+  id: string
+  name: string
+  locationId: string
+  visibility: 'awakened' | 'gyo'
+  kind: string
+  anchor?: string
+  approximate: boolean
 }
 
 /** A beast that keeps another body's position, resolved to that body. */
@@ -189,6 +220,8 @@ export const NO_CAST: CastPayload = {
   dialogue: {},
   eventHatsu: {},
   vestiges: {},
+  auraTraces: [],
+  auraObjects: [],
 }
 
 /**

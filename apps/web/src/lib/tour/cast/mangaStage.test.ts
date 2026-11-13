@@ -10,7 +10,7 @@ const post = (characterId: string, spaceId = 'salon'): Post => ({
     locations: [],
     role: 'Royal',
     since: 'ch-382',
-    nen: false,
+    nen: null,
     hatsu: [],
     beast: null,
   },

@@ -20,7 +20,7 @@ import type { Apparition } from '../apparitions'
 import { floorOf, type Ship } from '../blueprint'
 import { centroid } from '../geometry-movement'
 import type { Space, Vec2 } from '../types'
-import type { TourVestige } from './types'
+import type { TourAuraObject, TourAuraTrace, TourVestige } from './types'
 
 const AURA_DAMAGE = new Set(['wall_cut', 'door_broken'])
 
@@ -53,9 +53,26 @@ interface ResidueInput {
   vestiges: Readonly<Record<string, readonly TourVestige[]>>
   /** The deck being walked: traces elsewhere are not built. */
   tierId: string
+  traces?: readonly TourAuraTrace[]
+  objects?: readonly TourAuraObject[]
+  awakened?: boolean
 }
 
-export function residueApparitions({ ship, vestiges, tierId }: ResidueInput): Apparition[] {
+function hashOffset(id: string): Vec2 {
+  let hash = 0
+  for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) | 0
+  const angle = ((hash >>> 0) % 360) * (Math.PI / 180)
+  return [Math.cos(angle) * 0.45, Math.sin(angle) * 0.45]
+}
+
+export function residueApparitions({
+  ship,
+  vestiges,
+  tierId,
+  traces = [],
+  objects = [],
+  awakened = true,
+}: ResidueInput): Apparition[] {
   const found: Apparition[] = []
   for (const [key, list] of Object.entries(vestiges)) {
     const space = spaceFor(ship, key)
@@ -78,6 +95,29 @@ export function residueApparitions({ ship, vestiges, tierId }: ResidueInput): Ap
         stage: 0,
         hidden: true,
       })
+    })
+  }
+  for (const source of [
+    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' })),
+    ...objects,
+  ]) {
+    if (!awakened) continue
+    const space = spaceFor(ship, source.locationId)
+    const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
+    if (!space || !tier || space.tierId !== tierId) continue
+    const middle = centroid(space)
+    const offset = hashOffset(source.anchor ?? source.id)
+    found.push({
+      id: `aura-source:${source.id}`,
+      kind: 'residue',
+      spaceId: space.id,
+      tierId: space.tierId,
+      at: [middle[0] + offset[0], middle[1] + offset[1]],
+      y: floorOf(space, tier) + 0.9,
+      size: source.kind === 'trace' ? 0.42 : 0.32,
+      colour: RESIDUE_COLOUR,
+      stage: 0,
+      hidden: source.visibility === 'gyo',
     })
   }
   return found

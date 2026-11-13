@@ -1,10 +1,18 @@
 import { createNenTechniqueState, transitionNen } from '@black-whale/nen-engine'
 import { describe, expect, it } from 'vitest'
-import { auraFor, CALM, WATCH_EN_RADIUS } from './nen'
-import { contactWith, sensedBy, sensesFromKey, sensesKey, type Visitor } from './sensing'
+import { auraFor, CALM } from './nen'
+import {
+  contactWith,
+  sensedBy,
+  sensesFromKey,
+  sensesKey,
+  sweptByVisitor,
+  type Visitor,
+} from './sensing'
 import type { CastMember, Post } from './types'
 
 const ROOM = 'tier-1-royal-residential-sector-room-1014'
+const WATCH_EN_RADIUS = 4
 
 function post(characterId: string, role = 'Royal Bodyguard for Prince Woble'): Post {
   const member: CastMember = {
@@ -13,7 +21,11 @@ function post(characterId: string, role = 'Royal Bodyguard for Prince Woble'): P
     locations: [ROOM],
     role,
     since: 'ch-358',
-    nen: true,
+    nen: {
+      techniques: ['En'],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: WATCH_EN_RADIUS },
+    },
     hatsu: [],
     beast: null,
   }
@@ -46,14 +58,25 @@ describe('what a sweep finds', () => {
     expect(sensedBy([guard], visitor(WATCH_EN_RADIUS + 1), nenOf)).toEqual({})
   })
 
-  it('does not sweep for a body whose role is not to watch', () => {
-    expect(sensedBy([post('kurapika', 'Nen teacher')], visitor(0), nenOf)).toEqual({})
+  it('does not infer a sweep from the role', () => {
+    const teacher = post('kurapika', 'Nen teacher')
+    teacher.member.nen!.conduct.enRadius = null
+    expect(sensedBy([teacher], visitor(0), nenOf)).toEqual({})
   })
 
   /** In hides from sight. A sweep is not sight. */
   it('feels an aura under In all the same', () => {
     const hidden = visitor(1, { type: 'IN', on: true })
     expect(sensedBy([guard], hidden, nenOf)).toEqual({ sakata: 'aura' })
+  })
+
+  it('returns every body touched by the visitor En, independently of the reticle', () => {
+    const near = post('near')
+    const far = post('far')
+    near.at = [2, 0]
+    far.at = [9, 0]
+    expect(sweptByVisitor([near, far], visitor(0, { type: 'EN', radius: 5 }))).toEqual(['near'])
+    expect(contactWith(near, { ...CALM, sweptBy: ['near'], visitorHidden: true }).felt).toBe(true)
   })
 })
 

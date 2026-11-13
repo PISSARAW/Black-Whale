@@ -95,10 +95,8 @@ export function readBody(input: ReadingInput): ReadingTell[] {
   else if (input.aura === 'ten') tells.push('ten')
   else tells.push('still')
 
-  if (input.visitor.gyo) {
-    if (input.aura === 'zetsu') tells.push('zetsu')
-    if (input.beast) tells.push('beast')
-  }
+  if (input.visitor.gyo && input.aura === 'zetsu') tells.push('zetsu')
+  if (input.beast) tells.push('beast')
 
   return tells
 }

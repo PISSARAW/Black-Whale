@@ -19,6 +19,7 @@ export interface HumanAppearance {
     | 'search'
     | 'held'
     | 'guard'
+    | 'brace'
     | 'attack'
     | 'fallen'
     | 'seated'

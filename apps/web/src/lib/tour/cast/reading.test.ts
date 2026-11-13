@@ -24,7 +24,11 @@ function post(overrides: Partial<CastMember> = {}): Post {
     locations: [ROOM],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: true,
+    nen: {
+      techniques: [],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+    },
     hatsu: [],
     beast: null,
     ...overrides,
@@ -83,7 +87,7 @@ describe('what an aura tells you about a body', () => {
   })
 })
 
-describe('what Gyo adds, and only Gyo', () => {
+describe('what awakening and Gyo add', () => {
   const looking = visitor({ type: 'REN' }, { type: 'GYO', on: true })
 
   it('separates a body holding itself unfindable from an empty one', () => {
@@ -91,9 +95,10 @@ describe('what Gyo adds, and only Gyo', () => {
     expect(reading({ aura: null, visitor: looking })).not.toContain('zetsu')
   })
 
-  it('shows an animal standing with them, and shows it to nobody else', () => {
+  it('shows a guardian beast to every awakened visitor, without requiring Gyo', () => {
     expect(reading({ beast: BEAST, visitor: looking })).toContain('beast')
-    expect(reading({ beast: BEAST })).not.toContain('beast')
+    expect(reading({ beast: BEAST })).toContain('beast')
+    expect(reading({ beast: BEAST, awakened: false })).not.toContain('beast')
   })
 })
 

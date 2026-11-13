@@ -73,7 +73,7 @@ le cap du lecteur ne montre pas n'est pas une cible, parce qu'elle n'est pas là
   corps »), pas un silence.
 - **Adresser** (`cast/address.ts`) — la parole. Voir §2.4.
 
-### 2.3 Rien ne persiste, rien ne blesse — le monde des prises est à part
+### 2.3 Rien ne blesse ; la persistance appartient aux simulations
 
 Ce que les hatsu font aux corps vit dans `cast/bodies.ts`, **hors de
 `TourWorld`**, et ce n'est pas un détail d'implémentation : c'est la décision.
@@ -87,10 +87,13 @@ Ce que les hatsu font aux corps vit dans `cast/bodies.ts`, **hors de
   ne tue personne dans la marche : elle pose une malédiction visible et datée
   qui s'éteint, ce qui est la seule moitié de la technique que la visite puisse
   montrer sans mentir.
-- La marche reste une **visite**. Une conséquence qui survivrait au pas suivant
-  serait une branche de récit, et les branches de récit ont déjà leur moteur
-  (`simulation-engine`) et leur surface ; les y verser plus tard ne coûtera que
-  de brancher `cast/bodies.ts` dessus, précisément parce qu'il est séparé.
+- En visite canonique, les réactions corporelles, le trébuchement et le journal
+  causal sont éphémères. Ils ne modifient ni personnage, ni réputation, ni
+  incident et aucune simulation persistante n'est créée.
+- En `FREE_LIFE` et `ALTERNATE_SIMULATION`, une transition Nen déjà acceptée et
+  payée peut être projetée vers le moteur social : réputation, incident, rumeur
+  ou balayage de sécurité persistent. Cette projection ne possède aucune
+  seconde économie d'aura et ne change toujours aucun état de blessure.
 
 ### 2.4 La parole est une lecture du catalogue, jamais une réplique
 

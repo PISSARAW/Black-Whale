@@ -78,8 +78,15 @@ export {
   spacesForLocation,
   type CastLook,
 } from './distribution'
-export { auraFor, auraReader, CALM, WATCH_EN_RADIUS, type Situation } from './nen'
-export { sensedBy, sensesFromKey, sensesKey, type Sense, type Visitor } from './sensing'
+export { auraFor, auraReader, CALM, type Situation } from './nen'
+export {
+  sensedBy,
+  sensesFromKey,
+  sensesKey,
+  sweptByVisitor,
+  type Sense,
+  type Visitor,
+} from './sensing'
 export { hostileRooms, DISMISSAL_CARD } from './hostility'
 export { chapterNumberOf, drawable, isDrawable, sinceChapter } from './presence'
 export { aimedPerson, personExhibit, type PersonWords } from './provenance'
@@ -97,4 +104,12 @@ export { seedOf, spaceAmong, stationIn } from './stations'
 export { inSlugSpace } from './worldState'
 export { dressedRoles, wardrobeFor } from './wardrobe'
 export { NO_CAST } from './types'
-export type { CastBeast, CastMember, CastPayload, Costume, Post, StandingBeast } from './types'
+export type {
+  CastBeast,
+  CastMember,
+  CastNenProfile,
+  CastPayload,
+  Costume,
+  Post,
+  StandingBeast,
+} from './types'

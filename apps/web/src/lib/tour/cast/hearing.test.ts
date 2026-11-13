@@ -12,7 +12,7 @@ const post = (characterId: string, spaceId = HERE): Post => {
     locations: [spaceId],
     role: 'Hunter',
     since: null,
-    nen: true,
+    nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } },
     hatsu: [],
     beast: null,
   }

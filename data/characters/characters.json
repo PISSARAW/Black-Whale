@@ -3570,6 +3570,7 @@
     "nen": {
       "type": "specialist",
       "typeLabel": "Specialization",
+      "awakenedFromChapterId": "ch-362",
       "overview": "Tserriednich is a Nen genius. In less than a day, he learns to slightly control his aura and the basics of Gyo. In a few days, he achieved great mastery of Ten and Ren, closed his aura nodes on the first try, performed a perfect Zetsu for an hour on his third attempt and unconsciously developed a complete ability as well as a personal Nen Beast.",
       "waterDivination": "The leaf withers as the water boils and emits a putrid odor, revealing a Specialist with an extremely sinister aura.",
       "techniques": [
@@ -9041,6 +9042,7 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Kurapika forcibly opened Oito's aura nodes. She can see and sense aura and briefly used Little Eye through Stealth Dolphin, though Bill considers her a slow learner.",
+      "awakenedFromChapterId": "ch-361",
       "techniques": [
         "Aura perception",
         "Ten training",
@@ -16927,6 +16929,14 @@
         "Ren",
         "En",
         "Shu"
+      ],
+      "tourConduct": [
+        {
+          "fromChapterId": "ch-398",
+          "mode": "ten",
+          "concealedWithIn": false,
+          "enRadius": 4
+        }
       ],
       "combatProficiency": "His En extends four meters, matching the reach of his blade and defining a lethal response zone.",
       "abilityIds": []
@@ -27906,6 +27916,7 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Danjin had his aura nodes opened during Kurapika's class by receiving and using Bill's Erigeron through Stealth Dolphin. Erigeron was returned to Bill after that single use.",
+      "awakenedFromChapterId": "ch-388",
       "techniques": [
         "Borrowed Hatsu"
       ],
@@ -41669,7 +41680,16 @@
       ],
       "overview": "The exact affinity is not officially confirmed, but Silent Majority materializes snakes visible to all and appears to direct them from a distance by sight. The ability relies on strong restrictions and a curse that can backfire on its user.",
       "techniques": [
+        "Zetsu",
         "Hatsu"
+      ],
+      "tourConduct": [
+        {
+          "fromChapterId": "ch-369",
+          "mode": "zetsu",
+          "concealedWithIn": false,
+          "enRadius": null
+        }
       ],
       "combatProficiency": "Four coordinated snakes can drain a person of all blood in eleven seconds. The user favors targets without Nen, enclosed places and diversions which prevent assistance from reacting in time.",
       "abilityIds": [
@@ -44959,7 +44979,19 @@
     ],
     "nen": {
       "confirmed": true,
-      "overview": "Benjamin's private soldier posted over the Woble camp: a Nen user, category never revealed on panel."
+      "overview": "Benjamin's private soldier posted over the Woble camp: a Nen user, category never revealed on panel.",
+      "techniques": [
+        "En",
+        "Nen perception"
+      ],
+      "tourConduct": [
+        {
+          "fromChapterId": "ch-363",
+          "mode": "ten",
+          "concealedWithIn": false,
+          "enRadius": 4
+        }
+      ]
     },
     "modifiedAt": "2026-11-13",
     "sources": [

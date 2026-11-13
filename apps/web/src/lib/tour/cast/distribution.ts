@@ -170,6 +170,8 @@ export interface CastLook {
   aura?: NonNullable<Apparition['human']>['aura']
   nen?: NonNullable<Apparition['human']>['nen']
   alert?: boolean
+  /** A bodily response, deliberately separate from an aura state. */
+  reaction?: 'brace'
 }
 
 /**
@@ -215,7 +217,7 @@ function drawnAs(post: Post, look: CastLook): NonNullable<Apparition['human']> {
   return {
     role: post.costume.role,
     ...(post.costume.dress ? { dress: post.costume.dress } : {}),
-    pose: post.pose ?? poseOf(post.costume.role),
+    pose: look.reaction ?? post.pose ?? poseOf(post.costume.role),
     identity: post.member.characterId,
     ...(look.aura ? { aura: look.aura } : {}),
     ...(look.nen ? { nen: look.nen } : {}),

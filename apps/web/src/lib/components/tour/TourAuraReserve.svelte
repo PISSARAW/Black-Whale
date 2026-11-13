@@ -10,8 +10,9 @@
    */
   interface Props {
     reserve: number
+    french?: boolean
   }
-  let { reserve }: Props = $props()
+  let { reserve, french = false }: Props = $props()
   const share = $derived(Math.max(0, Math.min(1, reserve / RESERVE_MAX)))
   const low = $derived(reserve < RESUME_AT)
 </script>
@@ -20,11 +21,11 @@
   class="reserve"
   class:low
   role="meter"
-  aria-label="Réserve d’aura"
+  aria-label={french ? 'Réserve d’aura' : 'Aura reserve'}
   aria-valuemin={0}
   aria-valuemax={RESERVE_MAX}
   aria-valuenow={Math.round(reserve)}
-  title={`Réserve d’aura : ${Math.round(reserve)} / ${RESERVE_MAX}`}
+  title={`${french ? 'Réserve d’aura' : 'Aura reserve'}: ${Math.round(reserve)} / ${RESERVE_MAX}`}
 >
   <span class="fill" style:width={`${share * 100}%`}></span>
   <span class="notch" style:left={`${(RESUME_AT / RESERVE_MAX) * 100}%`}></span>

@@ -4,7 +4,7 @@ import {
   type NenTechniqueAction,
 } from '@black-whale/nen-engine'
 import { describe, expect, it } from 'vitest'
-import { touchForce, touchKind } from './auraTouch'
+import { pressureThroughShu, touchForce, touchKind } from './auraTouch'
 
 const state = (...actions: NenTechniqueAction[]) =>
   actions.reduce((nen, action) => transitionNen(nen, action).state, createNenTechniqueState())
@@ -37,5 +37,11 @@ describe('what a touch of aura does to a solid', () => {
     expect(touchForce('pressure', state({ type: 'REN' }))).toBeLessThan(
       touchForce('pressure', state(ON)),
     )
+  })
+
+  it('makes a Shu-wrapped solid transmit 1.75× force and take only 40%', () => {
+    const ren = state({ type: 'REN' })
+    expect(touchForce('pressure', ren, true)).toBeCloseTo(touchForce('pressure', ren) * 1.75)
+    expect(pressureThroughShu(10, true)).toBe(4)
   })
 })

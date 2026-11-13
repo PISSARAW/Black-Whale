@@ -63,7 +63,11 @@ describe('the roster', () => {
       name: 'Kurapika',
       role: 'Nen teacher/protector',
       since: 'ch-358',
-      nen: true,
+      nen: {
+        techniques: [],
+        awakenedFromChapter: null,
+        conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+      },
       hatsu: ['scarlet'],
     })
     expect(members[0]!.locations).toContain('tier-1-royal-residential-sector-room-1014')
@@ -193,5 +197,42 @@ describe('the roster', () => {
     const { members, beasts } = rosterFrom(wobleIsAboard)
     expect(members[0]!.beast).toMatchObject({ ownerId: 'prince-woble' })
     expect(beasts).toEqual([])
+  })
+
+  it('withholds Nen before awakening and resolves the last dated conduct afterwards', () => {
+    const timed = input({
+      chapterNumber: 387,
+      catalogue: CATALOGUE.map((character) =>
+        character.id === 'kurapika'
+          ? {
+              ...character,
+              nen: {
+                type: 'conjurer',
+                techniques: ['En'],
+                awakenedFromChapterId: 'ch-388',
+                tourConduct: [
+                  {
+                    fromChapterId: 'ch-388',
+                    mode: 'ten' as const,
+                    concealedWithIn: false,
+                    enRadius: null,
+                  },
+                  {
+                    fromChapterId: 'ch-390',
+                    mode: 'ten' as const,
+                    concealedWithIn: false,
+                    enRadius: 12,
+                  },
+                ],
+              },
+            }
+          : character,
+      ),
+    })
+    expect(rosterFrom(timed).members[0]!.nen).toBeNull()
+    expect(
+      rosterFrom({ ...timed, chapterNumber: 388 }).members[0]!.nen?.conduct.enRadius,
+    ).toBeNull()
+    expect(rosterFrom({ ...timed, chapterNumber: 391 }).members[0]!.nen?.conduct.enRadius).toBe(12)
   })
 })

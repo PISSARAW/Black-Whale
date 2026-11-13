@@ -63,8 +63,6 @@ type Part = 'head' | 'torso' | 'hands' | 'feet'
  * per-body number, which is what lets the ring geometry be shared by every
  * figure that sweeps instead of rebuilt per radius.
  */
-export const WATCH_EN_RADIUS = 4
-
 /**
  * Where an alarmed body puts its aura.
  *
@@ -113,6 +111,8 @@ export const CALM: Situation = {
   hostileRooms: [],
   aimedAt: null,
   sensedBy: {},
+  sweptBy: [],
+  visitorPressure: 'none',
   holds: {},
   drained: [],
 }
@@ -171,42 +171,6 @@ function stateFor(conduct: Conduct): NenTechniqueState<Part> {
  * one place it can: the role. An assassin waiting for the moment is a body
  * whose whole position is not being read, and the catalogue names it as such.
  */
-function isHiding(post: Post): boolean {
-  return post.member.role.toLowerCase().includes('assassin')
-}
-
-/**
- * Whether this body hides its aura rather than closing it.
- *
- * A spy planted in another prince's detail has to work — stand a post, answer
- * a guard, use what it has — and a body in Zetsu can do none of that. So it
- * keeps its Ten and veils it with In: to everyone without Gyo it is an ordinary
- * guard with no aura, and only Gyo shows what it is carrying.
- */
-function isVeiled(post: Post): boolean {
-  const role = post.member.role.toLowerCase()
-  return role.includes('undercover') || role.includes('infiltrateur') || role.includes('spy')
-}
-
-/** Roles the catalogue writes in two languages for the same standing order. */
-const WATCHING = ['guard', 'garde', 'bodyguard', 'sentinel', 'surveillant', 'escorte', 'escort']
-
-/**
- * Whether this body's job is to notice.
- *
- * Same shape of judgement as `isHiding`, and the same justification: the role
- * string is the only place the archive says what a body is *for*, and a guard
- * on a door who is a Nen user sweeps — that is what the technique is, and a
- * private guard who did not would be a guard drawn as decoration.
- *
- * It says nothing about whether the body has aura at all. A body without one in
- * `data/` never reaches here.
- */
-function isWatching(post: Post): boolean {
-  const role = post.member.role.toLowerCase()
-  return WATCHING.some((word) => role.includes(word))
-}
-
 /**
  * How far the visitor's own doing has reached this body.
  *
@@ -244,11 +208,16 @@ function guarding(alarmed: boolean, menaced: boolean): Pick<Conduct, 'ken' | 'ry
  * the emptiness is decided *before* the holds — it outlasts every one of them.
  */
 function showsNothing(post: Post, situation: Situation): boolean {
-  return isHiding(post) || situation.drained.includes(post.member.characterId)
+  return (
+    post.member.nen?.conduct.mode === 'zetsu' || situation.drained.includes(post.member.characterId)
+  )
 }
 
 export function auraFor(post: Post, situation: Situation = CALM): CastLook {
-  if (!post.member.nen) return {}
+  if (!post.member.nen) {
+    const pressured = situation.visitorPressure !== 'none' && situation.visitorIn === post.spaceId
+    return pressured ? { reaction: 'brace', alert: true } : {}
+  }
   if (showsNothing(post, situation)) return { aura: 'zetsu', nen: stateFor({ mode: 'zetsu' }) }
   const held = situation.holds[post.member.characterId] ?? null
   if (held) return underHold(held)
@@ -256,9 +225,9 @@ export function auraFor(post: Post, situation: Situation = CALM): CastLook {
   const aura = alarmed ? 'ren' : 'ten'
   const nen = stateFor({
     mode: aura,
-    en: isWatching(post) ? WATCH_EN_RADIUS : null,
+    en: post.member.nen.conduct.enRadius,
     gyo: looking,
-    in: isVeiled(post),
+    in: post.member.nen.conduct.concealedWithIn,
     ...guarding(alarmed, menaced),
   })
   return { aura, nen, ...(alarmed ? { alert: true } : {}) }

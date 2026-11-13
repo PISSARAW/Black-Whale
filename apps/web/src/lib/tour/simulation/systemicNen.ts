@@ -1,4 +1,6 @@
-import { transitionNen, type NenTechniqueAction } from '@black-whale/nen-engine'
+import type { NenTechniqueAction, NenTechniqueState } from '@black-whale/nen-engine'
+import { scheduleWorldEvent } from './events'
+import { resolveSocialAction } from './social'
 import { evolveTourSimulation, type TourSimulationV1 } from './state'
 
 export interface TourNenPresence {
@@ -13,38 +15,41 @@ export interface TourNenTrace {
   hiddenWithIn: boolean
 }
 
+export interface TourNenWitness {
+  id: string
+  factionId: string
+  spaceId: string
+  detectsConcealedVisitor: boolean
+  highSecurity?: boolean
+}
+
+export interface AppliedNenTransition {
+  action: NenTechniqueAction<string>
+  nen: NenTechniqueState<string>
+  reserve: number
+  pressureRising?: boolean
+}
+
 export interface TourNenContext {
   presences?: TourNenPresence[]
   traces?: TourNenTrace[]
+  witnesses?: TourNenWitness[]
 }
 
 export interface TourNenResolution {
   state: TourSimulationV1
-  accepted: boolean
+  accepted: true
   observations: string[]
-  reason?: string
+  scheduled: Array<'RUMOR_SPREAD' | 'SECURITY_SWEEP'>
 }
 
-const ACTION_COST: Partial<Record<NenTechniqueAction['type'], number>> = {
-  GYO: 2,
-  EN: 5,
-  SHU: 3,
-  KEN: 4,
-  KO: 12,
-  REN: 2,
-}
-
-/** Apply shared Nen rules, then project only information the technique can justify. */
+/** Project a transition already accepted and paid for by TourHatsuSession. */
 export function useSystemicNen(
   state: TourSimulationV1,
-  action: NenTechniqueAction<string>,
+  applied: AppliedNenTransition,
   context: TourNenContext = {},
 ): TourNenResolution {
-  const transition = transitionNen(state.player.nen, action)
-  if (!transition.accepted) return { state, accepted: false, observations: [], reason: transition.reason }
-  const cost = ACTION_COST[action.type] ?? 0
-  if (state.player.aura < cost)
-    return { state, accepted: false, observations: [], reason: 'INSUFFICIENT_AURA' }
+  const { action, nen, reserve } = applied
   const observations: string[] = []
 
   if (action.type === 'GYO' && action.on)
@@ -64,10 +69,42 @@ export function useSystemicNen(
       if (presence.physicallyVisible) observations.push(`visible-body:${presence.id}`)
 
   const next = evolveTourSimulation(state, (draft) => {
-    draft.player.nen = transition.state
-    draft.player.aura -= cost
+    draft.player.nen = nen
+    draft.player.aura = reserve
     for (const observation of observations)
       if (!draft.player.knowledge.includes(observation)) draft.player.knowledge.push(observation)
   })
-  return { state: next, accepted: true, observations }
+  let projected = next
+  const scheduled: TourNenResolution['scheduled'] = []
+  const pressure = action.type === 'REN' || (action.type === 'ON' && action.on)
+  if (pressure && applied.pressureRising) {
+    const visible = (context.witnesses ?? []).filter(
+      (witness) => !nen.in || witness.detectsConcealedVisitor,
+    )
+    const byFaction = new Map<string, TourNenWitness[]>()
+    for (const witness of visible)
+      byFaction.set(witness.factionId, [...(byFaction.get(witness.factionId) ?? []), witness])
+    for (const [factionId, witnesses] of byFaction)
+      projected = resolveSocialAction(projected, {
+        kind: 'INTIMIDATE',
+        factionId,
+        witnessIds: witnesses.map((witness) => witness.id),
+      })
+
+    for (const witness of visible) {
+      const incident = `hostile-nen:${witness.spaceId}`
+      if (projected.incidents.includes(incident)) continue
+      projected = evolveTourSimulation(projected, (draft) => draft.incidents.push(incident))
+      const kind = witness.highSecurity ? 'SECURITY_SWEEP' : 'RUMOR_SPREAD'
+      projected = scheduleWorldEvent(projected, {
+        id: incident,
+        kind,
+        dueAt: projected.clock + (kind === 'SECURITY_SWEEP' ? 10 : 30),
+        spaceId: witness.spaceId,
+        requiresIncident: incident,
+      })
+      scheduled.push(kind)
+    }
+  }
+  return { state: projected, accepted: true, observations, scheduled }
 }

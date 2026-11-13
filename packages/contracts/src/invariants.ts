@@ -1,6 +1,6 @@
 import { INHABITANT_INVARIANTS } from './inhabitants.js'
 import { LIKENESS_INVARIANTS } from './likeness.js'
-import { PUBLICATION_INVARIANTS } from './publication-invariants.js'
+import type { Blueprint } from './schemas.js'
 import type { Catalogue, Finding } from './types.js'
 
 /**
@@ -38,7 +38,15 @@ function chapterPosition(value: string | null | undefined): number | null {
   if (!match) return null
   return Number(match[1]) + Number(match[2] ?? 0) / 1000
 } /** Every `id` in a file is used once. A duplicate silently wins or loses. */
-const uniqueIds: Invariant = ({ characters, abilities, factions, locations, chapters }) => {
+const uniqueIds: Invariant = ({
+  characters,
+  abilities,
+  factions,
+  locations,
+  objects,
+  chapters,
+  events,
+}) => {
   const findings: Finding[] = []
   const check = (file: string, ids: readonly string[]) => {
     const seen = new Set<string>()
@@ -64,8 +72,16 @@ const uniqueIds: Invariant = ({ characters, abilities, factions, locations, chap
     locations.map((entry) => entry.id),
   )
   check(
+    'objects',
+    objects.map((entry) => entry.id),
+  )
+  check(
     'chapters',
     chapters.map((entry) => entry.id),
+  )
+  check(
+    'events',
+    events.map((entry) => entry.id),
   )
   return findings
 }
@@ -138,6 +154,14 @@ const referencesResolve: Invariant = (catalogue) => {
       known: locationIds,
     })
   }
+  for (const object of catalogue.objects)
+    for (const sighting of object.sightings)
+      ref({
+        rule: 'object-location',
+        where: `objects#${object.id}.sightings`,
+        value: sighting.locationSlug,
+        known: locationIds,
+      })
   return findings
 }
 
@@ -150,7 +174,13 @@ const referencesResolve: Invariant = (catalogue) => {
  * the end of the arc is a typo the compiler would turn into an invented
  * chapter, because `ensureEvent` creates whatever number it is handed.
  */
-const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chapters }) => {
+const chapterReferencesAreWellFormed: Invariant = ({
+  characters,
+  abilities,
+  objects,
+  events,
+  chapters,
+}) => {
   const findings: Finding[] = []
   const numbers = chapters.map((chapter) => chapter.number)
   const last = Math.max(...numbers)
@@ -180,9 +210,61 @@ const chapterReferencesAreWellFormed: Invariant = ({ characters, abilities, chap
       check(where, leg.fromChapterId)
       check(where, leg.untilChapterId)
     }
+    for (const source of character.sources) check(`${where}.sources`, source.chapterId)
+    check(`${where}.nen.awakenedFromChapterId`, character.nen?.awakenedFromChapterId)
+    for (const conduct of character.nen?.tourConduct ?? [])
+      check(`${where}.nen.tourConduct`, conduct.fromChapterId)
   }
   for (const ability of abilities) {
     check(`abilities#${ability.id}`, ability.firstVisibleChapterId)
+    for (const source of ability.sources) check(`abilities#${ability.id}.sources`, source.chapterId)
+  }
+  for (const object of objects)
+    check(`objects#${object.id}.aura.sourceChapterId`, object.aura?.sourceChapterId)
+  for (const event of events) {
+    for (const source of event.sources) check(`events#${event.id}.sources`, source.chapterId)
+  }
+  return findings
+}
+
+/** Dated tour conduct is ordered and never claims a technique the catalogue omits. */
+const nenConductIsCoherent: Invariant = ({ characters }) => {
+  const findings: Finding[] = []
+  for (const character of characters) {
+    const conduct = character.nen?.tourConduct ?? []
+    let previous = Number.NEGATIVE_INFINITY
+    for (const [index, snapshot] of conduct.entries()) {
+      const at = chapterPosition(snapshot.fromChapterId)
+      if (at !== null && at < previous)
+        findings.push(
+          finding('nen-conduct', `characters#${character.id}`, `snapshot ${index} is out of order`),
+        )
+      if (at !== null) previous = at
+      if (snapshot.enRadius !== null && !character.nen?.techniques?.includes('En'))
+        findings.push(
+          finding(
+            'nen-conduct',
+            `characters#${character.id}`,
+            'declares a tour En radius without En in nen.techniques',
+          ),
+        )
+      if (snapshot.concealedWithIn && !character.nen?.techniques?.includes('In'))
+        findings.push(
+          finding(
+            'nen-conduct',
+            `characters#${character.id}`,
+            'declares concealedWithIn without In in nen.techniques',
+          ),
+        )
+      if (snapshot.mode === 'zetsu' && !character.nen?.techniques?.includes('Zetsu'))
+        findings.push(
+          finding(
+            'nen-conduct',
+            `characters#${character.id}`,
+            'declares Zetsu conduct without Zetsu in nen.techniques',
+          ),
+        )
+    }
   }
   return findings
 }
@@ -436,12 +518,14 @@ const abilityUsesResolve: Invariant = ({
   characters,
   chapters,
   events,
+  locations,
 }) => {
   const findings: Finding[] = []
   const abilityIds = new Set(abilities.map((ability) => ability.id))
   const characterIds = new Set(characters.map((character) => character.id))
   const chapterNumbers = new Set(chapters.map((chapter) => chapter.number))
   const eventsByTitle = new Map(events.map((event) => [event.title, event]))
+  const locationIds = new Set(locations.map((location) => location.id))
   const seen = new Set<string>()
 
   for (const use of abilityUses) {
@@ -471,6 +555,14 @@ const abilityUsesResolve: Invariant = ({
         )
       }
     }
+    if (use.auraTrace && !locationIds.has(use.auraTrace.locationId))
+      findings.push(
+        finding('ability-use-trace', where, `unknown trace location ${use.auraTrace.locationId}`),
+      )
+    if (use.auraTrace && !['ACTIVATED', 'MAINTAINED'].includes(use.status))
+      findings.push(
+        finding('ability-use-trace', where, `a ${use.status} use cannot leave an aura trace`),
+      )
   }
   return findings
 }
@@ -479,6 +571,7 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'unique-ids', run: uniqueIds },
   { name: 'references-resolve', run: referencesResolve },
   { name: 'chapter-references-are-well-formed', run: chapterReferencesAreWellFormed },
+  { name: 'nen-conduct-is-coherent', run: nenConductIsCoherent },
   { name: 'events-are-ordered', run: eventsAreOrdered },
   { name: 'positions-name-a-room', run: positionsNameARoom },
   { name: 'ranked-claims-cite-a-source', run: rankedClaimsCiteASource },
@@ -494,5 +587,6 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   ...INHABITANT_INVARIANTS,
   // And the rules the drawn walk rests on — ADR-005, same arrangement.
   ...LIKENESS_INVARIANTS,
-  ...PUBLICATION_INVARIANTS,
 ]
+
+export type { Blueprint }

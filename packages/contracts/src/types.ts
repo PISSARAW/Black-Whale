@@ -6,6 +6,7 @@ import type {
   Chapter,
   Character,
   Faction,
+  ImportantObject,
   Location,
   Prophecy,
 } from './schemas.js'
@@ -21,6 +22,7 @@ export interface Catalogue {
   abilityUses: AbilityUse[]
   factions: Faction[]
   locations: Location[]
+  objects: ImportantObject[]
   events: CanonEvent[]
   prophecies: Prophecy[]
   blueprint: Blueprint

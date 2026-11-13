@@ -13,7 +13,7 @@ function member(overrides: Partial<CastMember> & { characterId: string }): CastM
     locations: [],
     role: 'guard',
     since: 'ch-358',
-    nen: false,
+    nen: null,
     hatsu: [],
     beast: null,
     ...overrides,

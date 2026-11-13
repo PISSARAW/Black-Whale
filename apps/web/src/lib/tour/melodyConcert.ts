@@ -38,7 +38,14 @@ export function concertCast(
     role: performer.role,
     locations: [BANQUET_SPACE],
     since: `ch-${fixture.chapter}`,
-    nen: performer.nen,
+    nen: performer.nen
+      ? {
+          techniques: [],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten' as const, concealedWithIn: false, enRadius: null },
+        }
+      : null,
+    factionId: null,
     hatsu: performer.hatsu,
     beast: null,
   }

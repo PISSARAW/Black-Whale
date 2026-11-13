@@ -22,6 +22,7 @@ import {
   sensedBy,
   sensesFromKey,
   sensesKey,
+  sweptByVisitor,
   type BeastVoice,
   type BodyMark,
   type CastBeast,
@@ -155,17 +156,24 @@ export class TourCastView {
       visitorCasting: casting,
       visitorHidden: this.hidden,
       visitorMenacing: this.menacing,
+      visitorPressure: this.pressure,
       hostileRooms: hostileRooms(this.options.ship, world),
       aimedAt,
       holds,
       drained,
       sensedBy: {},
+      sweptBy: [],
     }
   })
 
   /** Booleans and strings stop the frame-rate visitor here. See `cast/sensing.ts`. */
   private hidden = $derived.by(() => this.options.readVisitor().nen.in)
   private menacing = $derived.by(() => this.options.readVisitor().nen.on)
+  private pressure = $derived.by<'none' | 'ren' | 'on'>(() => {
+    const nen = this.options.readVisitor().nen
+    return nen.on ? 'on' : nen.mode === 'ren' ? 'ren' : 'none'
+  })
+  private swept = $derived.by(() => sweptByVisitor(this.walking, this.options.readVisitor()))
   private sensed = $derived.by(() => {
     const visitor = this.options.readVisitor()
     const { world } = this.options.read()
@@ -181,6 +189,7 @@ export class TourCastView {
   situation = $derived.by<Situation>(() => ({
     ...this.ground,
     sensedBy: sensesFromKey(this.sensed),
+    sweptBy: this.swept,
   }))
 
   /**
@@ -195,18 +204,38 @@ export class TourCastView {
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
-      ...residueApparitions({ ship: this.options.ship, vestiges: world.vestiges, tierId }),
-      ...stageBeastsForMangaView(
-        beastApparitions(this.options.ship, this.posts, {
-          standing: cast.beasts,
-          chapter: cast.chapterNumber,
-        }),
-        mangaView,
-      ),
+      ...residueApparitions({
+        ship: this.options.ship,
+        vestiges: world.vestiges,
+        tierId,
+        traces: cast.auraTraces,
+        objects: cast.auraObjects,
+        awakened: this.options.readVisitor().awakened !== false,
+      }),
+      ...(this.options.readVisitor().awakened === false
+        ? []
+        : stageBeastsForMangaView(
+            beastApparitions(this.options.ship, this.posts, {
+              standing: cast.beasts,
+              chapter: cast.chapterNumber,
+            }),
+            mangaView,
+          )),
       // Authored references only exist while the character that justifies them
       // is actually reconstructed in their catalogued place. In hides them.
       ...secretApparitions(this.options.ship, this.posts),
     ]
+  })
+
+  /** Hostile raised aura sharing the visitor's room, for pre-awakening pressure. */
+  pressureAtVisitor = $derived.by<'none' | 'ren'>(() => {
+    const room = this.options.read().visitorIn
+    if (!room) return 'none'
+    return this.posts.some(
+      (post) => post.spaceId === room && auraFor(post, this.situation).aura === 'ren',
+    )
+      ? 'ren'
+      : 'none'
   })
 
   /**

@@ -74,6 +74,16 @@ describe('standard Nen techniques', () => {
     expect(nenDefenceFactor(state)).toBe(0)
   })
 
+  it('concentrates Ko defence on its selected zone and exposes the rest', () => {
+    const state = transitionNen(createNenTechniqueState<Zone>(), {
+      type: 'KO',
+      zone: 'hands',
+    }).state
+    expect(nenDefenceFactor(state, 'hands')).toBe(1)
+    expect(nenDefenceFactor(state, 'torso')).toBe(0.1)
+    expect(nenDefenceFactor(state)).toBe(0.1)
+  })
+
   it('detects bodies inside En while distinguishing a Zetsu signature', () => {
     const observer = transitionNen(createNenTechniqueState(), { type: 'EN', radius: 5 }).state
     const zetsu = transitionNen(createNenTechniqueState(), { type: 'ZETSU' }).state

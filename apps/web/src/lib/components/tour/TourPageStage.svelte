@@ -102,7 +102,7 @@
     {gyoMode}
     {...sceneProps}
   />
-  {#if reserve !== undefined}<TourAuraReserve {reserve} />{/if}
+  {#if reserve !== undefined}<TourAuraReserve {reserve} french={scene.french ?? false} />{/if}
   <TourSceneOverlay {...overlay} tools={concertPanel} />
   {#if route}<TourRouteGuide {...route} />{/if}
   <TourExamineCard {...examine} />

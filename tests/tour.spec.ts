@@ -185,4 +185,52 @@ test.describe('the walk', () => {
       { timeout: 30_000 },
     )
   })
+
+  test('keeps high-tier ambient occlusion from blanking the frame', async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== 'chromium', 'Regression specific to the Chrome/ANGLE render path')
+
+    await page.goto('/tour')
+    await ready(page)
+    await page.getByRole('button', { name: /Options$/ }).click()
+    const fuller = page.getByRole('button', { name: /^(Fuller|Complète)$/ })
+    await expect(fuller).toBeVisible({ timeout: 30_000 })
+    await fuller.click()
+
+    // Quality changes rebuild the renderer on the next visit. The frame meter
+    // proves this capture exercises the high chain, including its depth pass.
+    await page.goto('/tour?frames')
+    await ready(page)
+    await expect(page.locator('#tour-frame-budget')).toContainText(/\bhigh\b/, {
+      timeout: 30_000,
+    })
+
+    await page.locator('details.scene-tools > summary').click()
+    await page.getByRole('button', { name: /Clean photo|Photo sans interface/ }).click()
+    const image = page.getByRole('img', { name: /Tour screenshot|Capture de la visite/ })
+    await expect(image).toBeVisible({ timeout: 30_000 })
+
+    const sample = await image.evaluate((node: HTMLImageElement) => {
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.min(node.naturalWidth, 256)
+      canvas.height = Math.min(node.naturalHeight, 144)
+      const context = canvas.getContext('2d')
+      if (!context) return { brightest: 0, visibleShare: 0 }
+      context.drawImage(node, 0, 0, canvas.width, canvas.height)
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
+      let brightest = 0
+      let visible = 0
+      for (let offset = 0; offset < pixels.length; offset += 4) {
+        const light = pixels[offset] + pixels[offset + 1] + pixels[offset + 2]
+        brightest = Math.max(brightest, light)
+        if (light > 24) visible += 1
+      }
+      return { brightest, visibleShare: visible / (pixels.length / 4) }
+    })
+
+    expect(sample.brightest).toBeGreaterThan(60)
+    expect(sample.visibleShare).toBeGreaterThan(0.01)
+  })
 })

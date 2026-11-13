@@ -99,11 +99,10 @@ describe('what a palier switches on', () => {
     expect(qualityProfile({ tier: 'high', coarse: false }).sheen).toBe(false)
   })
 
-  it('keeps depth-based occlusion and SSGI off on Chrome production drivers', () => {
-    for (const tier of ['low', 'high'] as const) {
-      const profile = qualityProfile({ tier, coarse: false })
-      expect(profile.occlusion).toBe(false)
-      expect(profile.ssgi).toBe(false)
-    }
+  it('gives only the high palier the depth-based occlusion pass', () => {
+    expect(qualityProfile({ tier: 'low', coarse: false }).occlusion).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).occlusion).toBe(true)
+    expect(qualityProfile({ tier: 'low', coarse: false }).ssgi).toBe(false)
+    expect(qualityProfile({ tier: 'high', coarse: false }).ssgi).toBe(false)
   })
 })

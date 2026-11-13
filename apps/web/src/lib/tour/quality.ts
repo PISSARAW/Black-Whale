@@ -192,10 +192,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     lens: true,
     // See the low tier: this is a driver-stability switch, not a quality knob.
     sheen: false,
-    // The depth-based occlusion pass returns an entirely black framebuffer on
-    // Chrome/ANGLE in production, even though its shader compiles. The baked
-    // room lighting remains the stable source of contact shading for now.
-    occlusion: false,
+    // The pass reads the composer's current depth buffer, after the room and
+    // before bloom. Low still has no depth target to offer it.
+    occlusion: true,
     // Disabled until the native depth texture is sampled correctly by the
     // Bokeh shader across browsers. On Chrome/ANGLE the pass currently turns
     // the completed frame entirely black.
@@ -208,7 +207,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // handful of genuinely reflective submeshes. Global screen-space
     // reflections would affect every surface instead.
     ssr: false,
-    // SSGI shares the same unstable depth pass as occlusion.
+    // The bounced-light branch is still experimental; SSAO alone is bounded
+    // and leaves the baked room colours authoritative.
     ssgi: false,
     lensDirt: true,
     dustScale: 1,

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../combat/reducer'
-import { applyArenaHandoff, saveArenaHandoffResult, type ArenaHandoff } from './bridge'
+import {
+  applyArenaHandoff,
+  consumeArenaHandoffResult,
+  saveArenaHandoffResult,
+  type ArenaHandoff,
+} from './bridge'
 
 describe('Arena cross-mode handoff', () => {
   it('carries prior aura, injuries, knowledge and narrative context into combat', () => {
@@ -34,5 +39,7 @@ describe('Arena cross-mode handoff', () => {
       handoffId: 'hunt-duel',
       outcome: 'won',
     })
+    expect(consumeArenaHandoffResult(storage)).toMatchObject({ handoffId: 'hunt-duel' })
+    expect(consumeArenaHandoffResult(storage)).toBeNull()
   })
 })

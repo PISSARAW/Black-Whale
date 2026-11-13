@@ -1,7 +1,13 @@
 import type { ArenaDifficulty, OpponentDoctrine } from '../ai'
 import type { CombatSetup, CombatState } from '../../combat/types'
 import { stateChecksum } from './checksum'
-import { ARENA_REPLAY_VERSION, type ArenaReplay, type ReplayCommand } from './types'
+import {
+  ARENA_REPLAY_VERSION,
+  DEFAULT_REPLAY_MATCH,
+  type ArenaReplay,
+  type ArenaReplayMatch,
+  type ReplayCommand,
+} from './types'
 
 export interface ArenaRecording {
   setup: CombatSetup
@@ -10,6 +16,7 @@ export interface ArenaRecording {
   tickRate?: number
   initialTick?: number
   initialCommands?: ArenaReplay['commands']
+  match?: ArenaReplayMatch
 }
 
 export class ArenaRecorder {
@@ -20,6 +27,7 @@ export class ArenaRecorder {
   private readonly doctrine: OpponentDoctrine
   private readonly difficulty: ArenaDifficulty
   private readonly tickRate: number
+  private readonly match: ArenaReplayMatch
 
   /** Everything a replay has to restate to be re-playable, in one argument. */
   constructor({
@@ -29,11 +37,13 @@ export class ArenaRecorder {
     tickRate = 60,
     initialTick = 0,
     initialCommands = [],
+    match = { ...DEFAULT_REPLAY_MATCH, legacyRules: true },
   }: ArenaRecording) {
     this.setup = setup
     this.doctrine = doctrine
     this.difficulty = difficulty
     this.tickRate = tickRate
+    this.match = structuredClone(match)
     this.tick = initialTick
     this.commands = structuredClone(initialCommands)
   }
@@ -64,6 +74,7 @@ export class ArenaRecorder {
       setup: structuredClone(this.setup),
       doctrine: this.doctrine,
       difficulty: this.difficulty,
+      match: structuredClone(this.match),
       commands: structuredClone(this.commands),
       checksum: stateChecksum(state),
     }

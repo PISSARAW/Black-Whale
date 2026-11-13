@@ -19,9 +19,10 @@
     challengeId: string | null
     result: ChallengeResult | null
     locale: 'fr' | 'en'
+    credit: boolean
   }
 
-  let { replay, challengeId, result, locale }: Props = $props()
+  let { replay, challengeId, result, locale, credit }: Props = $props()
   let profile = $state<ArenaProfile>(freshArenaProfile())
   let replayCount = $state(0)
 
@@ -32,7 +33,7 @@
       return
     }
     const marker = `black-whale:arena-profile-recorded:${replay.checksum}`
-    if (!safeStorageGet(sessionStorage, marker)) {
+    if (credit && !safeStorageGet(sessionStorage, marker)) {
       profile = recordArenaResult(profile, { replay, challengeId, result })
       if (saveArenaProfile(localStorage, profile)) safeStorageSet(sessionStorage, marker, '1')
     }
@@ -73,7 +74,8 @@
         aria-disabled={status === 'locked'}
         href={status === 'locked'
           ? undefined
-          : `?terrain=${mission.terrainId}&challenge=${mission.challengeId}&doctrine=${mission.doctrine}&difficulty=${mission.difficulty}`}
+          : `?terrain=${mission.terrainId}&challenge=${mission.challengeId}&doctrine=${mission.doctrine}&difficulty=${mission.difficulty}&format=${mission.formatId}&opponent=${mission.opponentId}&mission=${mission.id}`}
+        data-sveltekit-reload
       >
         <small>CH. {mission.chapter} · {status}</small>
         <strong>{locale === 'fr' ? mission.titleFr : mission.titleEn}</strong>

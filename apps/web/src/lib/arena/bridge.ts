@@ -91,10 +91,24 @@ export function saveArenaHandoffResult(
     opponentAura: state.opponent.aura,
     playerCondition: state.player.condition,
     opponentCondition: state.opponent.condition,
-    revealedHatsuIds: [...new Set(Object.values(state.lastHatsuBySide).filter((id): id is string => Boolean(id)))],
+    revealedHatsuIds: [
+      ...new Set(Object.values(state.lastHatsuBySide).filter((id): id is string => Boolean(id))),
+    ],
     nenEffects: structuredClone(state.nenEffects),
     intervention: state.environment.intervened,
   }
   storage.setItem(ARENA_HANDOFF_RESULT_KEY, JSON.stringify(result))
   return result
+}
+
+export function consumeArenaHandoffResult(storage: HandoffStorage): ArenaHandoffResult | null {
+  const serialized = storage.getItem(ARENA_HANDOFF_RESULT_KEY)
+  storage.removeItem(ARENA_HANDOFF_RESULT_KEY)
+  if (!serialized) return null
+  try {
+    const result = JSON.parse(serialized) as ArenaHandoffResult
+    return result.version === 1 && Boolean(result.handoffId) ? result : null
+  } catch {
+    return null
+  }
 }

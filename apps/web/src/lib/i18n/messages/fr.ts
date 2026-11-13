@@ -2609,7 +2609,7 @@ export const fr: Messages = {
     title: 'Arène du Black Whale',
     intro:
       'La salle, ses tables, sa scène et ses cloisons viennent directement de la reconstruction du navire. Contrôlez le flux d’aura, utilisez le décor et ne vous engagez que lorsque l’ouverture est réelle.',
-    firstTo: 'Premier à 10',
+    firstTo: 'Format du duel',
     you: 'Vous',
     opponent: 'Combattant d’étage',
     aura: 'Aura',
@@ -2675,7 +2675,7 @@ export const fr: Messages = {
       beforeFight: 'AVANT LE COMBAT',
       briefingTitle: 'Touchez votre adversaire avant qu’il ne vous touche',
       briefingGoal:
-        'Le premier à 10 points gagne. Une attaque ne touche que si vous êtes assez près : surveillez la distance en haut de l’écran.',
+        'Le format choisi fixe la condition de victoire. Une attaque ne touche que si vous êtes assez près.',
       moveKeys: 'ZQSD',
       approach: 'Approchez',
       approachSuffix: ' jusqu’à ce que le viseur devienne doré.',

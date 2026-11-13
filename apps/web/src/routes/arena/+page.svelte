@@ -39,13 +39,21 @@
   import { forkReplayAtTick } from '$lib/arena/replay/branch'
   import { arenaRyuAction, auraPercent, strikeTarget } from '$lib/arena/controls'
   import { resolveArenaExperience, type ArenaOpponentId } from '$lib/arena/experience'
-  import { formatOutcome, type ArenaFormatId } from '$lib/arena/formats'
+  import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
+  import { V3_OPPONENTS } from '$lib/arena/adaptation'
+  import {
+    applyArenaMatchRules,
+    countArenaAction,
+    initialArenaMatchState,
+    type ArenaActionCounts,
+  } from '$lib/arena/match'
+  import { DEFAULT_REPLAY_MATCH, type ArenaReplayMatch } from '$lib/arena/replay/types'
   import { loadReplayLibrary } from '$lib/arena/replay/library'
   import { ARENA_MANUAL_CONTROLS } from '$lib/arena/manual'
   import { safeStorageGet, safeStorageSet } from '$lib/arena/storage'
   import { readAura } from '$lib/combat/perception'
   import { STRIKE_RANGE } from '$lib/combat/resolve'
-  import { combatReducer, initialCombatState } from '$lib/combat/reducer'
+  import { combatReducer } from '$lib/combat/reducer'
   import {
     BODY_ZONES,
     type BodyZone,
@@ -156,6 +164,7 @@
   const initialChallengeId = untrack(() => data.challengeId)
   const initialFormatId = untrack(() => data.formatId)
   const initialOpponentId = untrack(() => data.opponentId)
+  const initialMissionId = untrack(() => data.missionId)
 
   let opponentDoctrine = $state<OpponentDoctrine>(initialDoctrine)
   let difficulty = $state<ArenaDifficulty>(initialDifficulty)
@@ -165,14 +174,23 @@
     setup: combatSetup(),
     doctrine: initialDoctrine,
     difficulty: initialDifficulty,
+    match: {
+      ...DEFAULT_REPLAY_MATCH,
+      formatId: initialFormatId,
+      opponentId: initialOpponentId,
+      challengeId: initialChallengeId,
+      missionId: initialMissionId,
+    },
   })
   let lastReplay = $state<ArenaReplay | null>(null)
   let stats = $state<ArenaStats>({ ...EMPTY_STATS })
-  let actionCounts = $state<Partial<Record<CombatAction['type'], number>>>({})
+  let actionCounts = $state<ArenaActionCounts>({})
   let bestGrade = $state<string | null>(null)
   let graded = $state(false)
   let selectedChallengeId = $state<string | null>(initialChallengeId)
   let sourceHandoff = $state<ArenaHandoff | null>(null)
+  let missionId = $state<string | null>(initialMissionId)
+  let replayOrigin = $state<'local' | 'shared' | null>(null)
   // Bookkeeping, not state: nothing renders from it, it only holds timer
   // handles so they can be cleared on teardown.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -184,7 +202,8 @@
   let hatsuDefinition = $derived(arenaDefinition($activeHatsu))
   let gap = $derived(distance(game.player.position, game.opponent.position))
   let inRange = $derived(gap <= STRIKE_RANGE)
-  let threatened = $derived(reading.intentRemaining !== null)
+  let hideOpponentIntent = $derived(replayMatch().bossRule === 'no-visible-intent')
+  let threatened = $derived(!hideOpponentIntent && reading.intentRemaining !== null)
   let aimedZone = $derived(zoneFromPitch(lookPitch))
   const extendedNen = new ModeNenState()
   let playerNen = $derived({
@@ -212,7 +231,7 @@
         pose:
           game.opponent.condition === 'down' || game.opponent.condition === 'ko'
             ? 'fallen'
-            : game.opponent.intent || opponentMotion === 'attack'
+            : (!hideOpponentIntent && game.opponent.intent) || opponentMotion === 'attack'
               ? 'attack'
               : opponentMotion === 'guard'
                 ? 'guard'
@@ -229,6 +248,17 @@
   let opponentWalls = $derived(blockerAt(game.opponent.position, terrain.id))
   let selectedChallenge = $derived(
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
+  )
+  let activeFormat = $derived(ARENA_FORMATS.find(({ id }) => id === formatId) ?? ARENA_FORMATS[0])
+  let remainingSeconds = $derived(
+    activeFormat.timeLimit === null ? null : Math.max(0, activeFormat.timeLimit - game.clock),
+  )
+  let waitingForRequiredAction = $derived(
+    Boolean(
+      activeFormat.requiredAction &&
+      game.player.score >= activeFormat.scoreToWin &&
+      !actionCounts[activeFormat.requiredAction],
+    ),
   )
   let challengeResult = $derived(
     selectedChallenge && lastReplay ? evaluateChallenge(selectedChallenge, lastReplay) : null,
@@ -250,8 +280,30 @@
     return `${$t.arena.ui.objective.use} ${objective.action} × ${objective.count}`
   }
 
-  function freshGame() {
-    return initialCombatState(combatSetup())
+  function formatGoal(): string {
+    if (activeFormat.timeLimit !== null) {
+      return $locale === 'fr'
+        ? `Prenez l’avantage avant la fin des ${activeFormat.timeLimit} secondes. Une attaque ne touche qu’à courte portée.`
+        : `Take the lead before ${activeFormat.timeLimit} seconds expire. Attacks only connect at close range.`
+    }
+    return $locale === 'fr'
+      ? `Le premier à ${activeFormat.scoreToWin} point${activeFormat.scoreToWin > 1 ? 's' : ''} gagne. Surveillez la distance en haut de l’écran.`
+      : `First to ${activeFormat.scoreToWin} point${activeFormat.scoreToWin > 1 ? 's' : ''} wins. Watch the distance at the top of the screen.`
+  }
+
+  function freshGame(match: ArenaReplayMatch = DEFAULT_REPLAY_MATCH) {
+    return initialArenaMatchState(combatSetup(), match)
+  }
+
+  function replayMatch(): ArenaReplayMatch {
+    const profile = V3_OPPONENTS.find(({ id }) => id === opponentId)
+    return {
+      formatId,
+      opponentId,
+      challengeId: selectedChallengeId,
+      missionId,
+      bossRule: profile?.bossRule ?? null,
+    }
   }
 
   function combatSetup() {
@@ -264,20 +316,21 @@
 
   function send(action: CombatAction): boolean {
     if (briefingOpen || manualOpen || game.outcome !== 'playing') return false
-    started = true
+    if (action.type !== 'FACE') started = true
     const previousGame = game
     const previous = game.lastEvent
-    game = combatReducer(game, action)
-    game = applyMatchFormat(game)
+    const reduced = combatReducer(game, action)
     const accepted =
       action.type === 'TICK'
-        ? game !== previousGame
-        : game[action.side] !== previousGame[action.side] || game.outcome !== previousGame.outcome
+        ? reduced !== previousGame
+        : reduced[action.side] !== previousGame[action.side] ||
+          reduced.outcome !== previousGame.outcome
     if (!accepted) return false
     if (action.type !== 'TICK') {
+      actionCounts = countArenaAction(actionCounts, action)
       recorder.record(action)
-      actionCounts = { ...actionCounts, [action.type]: (actionCounts[action.type] ?? 0) + 1 }
     }
+    game = applyArenaMatchRules(reduced, replayMatch(), actionCounts)
     advanceLesson(action)
     if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
     finishRun()
@@ -470,7 +523,7 @@
       owed -= DT
       const previous = game.lastEvent
       game = advanceArena(game, DT, { doctrine: opponentDoctrine, difficulty })
-      game = applyMatchFormat(game)
+      game = applyArenaMatchRules(game, replayMatch(), actionCounts)
       recorder.advance()
       if (game.lastEvent !== previous && game.lastEvent) animateExchange(game.lastEvent)
       finishRun()
@@ -478,7 +531,7 @@
   }
 
   function restart() {
-    game = freshGame()
+    game = freshGame(replayMatch())
     extendedNen.reset()
     tierId = terrain.tierId
     plan = ship.plans.get(terrain.tierId)!
@@ -496,10 +549,12 @@
     actionCounts = {}
     graded = false
     lastReplay = null
+    replayOrigin = null
     recorder = new ArenaRecorder({
       setup: combatSetup(),
       doctrine: opponentDoctrine,
       difficulty,
+      match: replayMatch(),
     })
     owed = 0
     last = 0
@@ -513,9 +568,17 @@
     position = game.player.position
     agreed = game.player.position
     lastReplay = null
+    replayOrigin = null
     graded = false
     started = false
     briefingOpen = false
+    stats = { ...EMPTY_STATS }
+    actionCounts = branch.actions
+    jumpTo = terrain.id
+    jumpAt = game.player.position
+    jumpHeading = game.player.facing
+    heading = game.player.facing
+    jumpPitch = 0
   }
 
   function actorStage(): number {
@@ -549,6 +612,7 @@
     if (graded || game.outcome === 'playing') return
     graded = true
     lastReplay = recorder.finish(game)
+    replayOrigin = 'local'
     if (sourceHandoff) saveArenaHandoffResult(sessionStorage, sourceHandoff.id, game)
     safeStorageSet(sessionStorage, 'black-whale:arena-last-replay', serializeReplay(lastReplay))
     const grade = gradeArena(stats, game.outcome === 'won', game.player.aura)
@@ -627,6 +691,7 @@
   function arenaHref(terrainId: string): string {
     const search = new SvelteURLSearchParams({ terrain: terrainId })
     if (selectedChallengeId) search.set('challenge', selectedChallengeId)
+    if (missionId && terrainId === terrain.id) search.set('mission', missionId)
     search.set('doctrine', opponentDoctrine)
     search.set('difficulty', difficulty)
     search.set('format', formatId)
@@ -639,9 +704,12 @@
   }
 
   function applyOptions() {
+    missionId = null
     const experience = resolveArenaExperience({
       formatId,
       opponentId,
+      doctrine: opponentDoctrine,
+      difficulty,
       history: typeof localStorage === 'undefined' ? [] : loadReplayLibrary(localStorage),
     })
     opponentDoctrine = experience.doctrine
@@ -651,15 +719,24 @@
   }
 
   onMount(() => {
-    sourceHandoff = consumeArenaHandoff(sessionStorage)
-    if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     const experience = resolveArenaExperience({
       formatId,
       opponentId,
+      doctrine: opponentDoctrine,
+      difficulty,
       history: loadReplayLibrary(localStorage),
     })
     opponentDoctrine = experience.doctrine
     difficulty = experience.difficulty
+    game = freshGame(replayMatch())
+    recorder = new ArenaRecorder({
+      setup: combatSetup(),
+      doctrine: opponentDoctrine,
+      difficulty,
+      match: replayMatch(),
+    })
+    sourceHandoff = consumeArenaHandoff(sessionStorage)
+    if (sourceHandoff) game = applyArenaHandoff(game, sourceHandoff)
     const sharedReplay = replayFromUrl(window.location.href)
     if (sharedReplay) {
       if (sharedReplay.setup.terrain.id !== terrain.id) {
@@ -667,6 +744,12 @@
         url.searchParams.set('terrain', sharedReplay.setup.terrain.id)
         url.searchParams.set('doctrine', sharedReplay.doctrine)
         url.searchParams.set('difficulty', sharedReplay.difficulty)
+        url.searchParams.set('format', sharedReplay.match.formatId)
+        url.searchParams.set('opponent', sharedReplay.match.opponentId)
+        if (sharedReplay.match.challengeId)
+          url.searchParams.set('challenge', sharedReplay.match.challengeId)
+        if (sharedReplay.match.missionId)
+          url.searchParams.set('mission', sharedReplay.match.missionId)
         window.location.replace(url)
         return
       }
@@ -676,8 +759,13 @@
       position = game.player.position
       opponentDoctrine = sharedReplay.doctrine
       difficulty = sharedReplay.difficulty
+      formatId = sharedReplay.match.formatId
+      opponentId = sharedReplay.match.opponentId
+      selectedChallengeId = sharedReplay.match.challengeId
+      missionId = sharedReplay.match.missionId
       stats = eventsFromReplay(sharedReplay).reduce(recordEvent, { ...EMPTY_STATS })
       graded = true
+      replayOrigin = 'shared'
     }
     bestGrade = safeStorageGet(localStorage, 'black-whale:arena-best-grade')
     openHatsuGate({
@@ -690,13 +778,6 @@
     window.addEventListener('keydown', onKeyDown)
     frame = requestAnimationFrame(tick)
   })
-
-  function applyMatchFormat(state: typeof game): typeof game {
-    const format = resolveArenaExperience({ formatId, opponentId }).format
-    const usedRequiredAction =
-      !format.requiredAction || Boolean(actionCounts[format.requiredAction])
-    return { ...state, outcome: formatOutcome(format, state, usedRequiredAction) }
-  }
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
@@ -735,7 +816,7 @@
   <h1 class="sr-only">{$t.arena.title}</h1>
 
   {#if briefingOpen}
-    <ArenaBriefing onStart={() => (briefingOpen = false)} />
+    <ArenaBriefing goal={formatGoal()} onStart={() => (briefingOpen = false)} />
   {/if}
   <TourScene
     {ship}
@@ -773,7 +854,7 @@
     <span>{$t.arena.zone[aimedZone]}</span>
   </div>
 
-  {#if game.opponent.intent || game.opponent.ko}
+  {#if (game.opponent.intent || game.opponent.ko) && !hideOpponentIntent}
     <div class="attack-telegraph" class:concealed={!threatened} aria-live="assertive">
       {#if reading.intentZone}
         <small>{$t.arena.ui.intentRead}</small>
@@ -847,9 +928,16 @@
       >
     </div>
     <div class="match-rule">
-      <span>{$t.arena.firstTo}</span>
+      <span>{$locale === 'fr' ? activeFormat.titleFr : activeFormat.titleEn}</span>
       <strong>{game.player.score} — {game.opponent.score}</strong>
       <small>{$t.arena.distance} · {gap.toFixed(1)} m</small>
+      {#if remainingSeconds !== null}<small>⏱ {remainingSeconds.toFixed(1)} s</small>{/if}
+      {#if waitingForRequiredAction}
+        <small
+          >{activeFormat.requiredAction}
+          {$locale === 'fr' ? 'requis pour valider' : 'required to finish'}</small
+        >
+      {/if}
     </div>
   </header>
 
@@ -998,7 +1086,7 @@
         {#if reading.guard}<span>Gyo · {$t.arena.zone[reading.guard]}</span>{/if}
         {#if reading.ken}<span>{$t.arena.state.ken}</span>{/if}
         {#if reading.koZone}<span>{$t.arena.state.ko} · {$t.arena.zone[reading.koZone]}</span>{/if}
-        {#if reading.intentZone}
+        {#if reading.intentZone && !hideOpponentIntent}
           <span class="threat-tag">
             {$t.arena.ui.attack} · {$t.arena.zone[reading.intentZone]}
           </span>
@@ -1042,12 +1130,17 @@
           </div>
         </section>
       {/if}
-      {#if lastReplay}<ReplayPanel replay={lastReplay} locale={$locale} onResume={resumeReplay} />{/if}
+      {#if lastReplay}<ReplayPanel
+          replay={lastReplay}
+          locale={$locale}
+          onResume={resumeReplay}
+        />{/if}
       <ArenaV3Panel
         replay={lastReplay}
         challengeId={selectedChallengeId}
         result={challengeResult}
         locale={$locale}
+        credit={replayOrigin === 'local'}
       />
       <button onclick={restart}>{$t.arena.action.restart}</button>
       <div class="difficulty-picker" aria-label={$t.arena.ui.difficulty}>
@@ -1055,6 +1148,8 @@
           <button
             class:active={difficulty === level}
             onclick={() => {
+              opponentId = 'custom'
+              missionId = null
               difficulty = level as ArenaDifficulty
               restart()
               persistOptions()
@@ -1067,6 +1162,8 @@
           <button
             class:active={opponentDoctrine === id}
             onclick={() => {
+              opponentId = 'custom'
+              missionId = null
               opponentDoctrine = id as OpponentDoctrine
               restart()
               persistOptions()

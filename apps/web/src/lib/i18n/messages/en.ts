@@ -2798,7 +2798,7 @@ export const en = {
     title: 'Black Whale Arena',
     intro:
       'The room, its tables, stage and bulkheads come directly from the ship reconstruction. Control aura flow, use the environment and commit only when the opening is real.',
-    firstTo: 'First to 10',
+    firstTo: 'Match format',
     you: 'You',
     opponent: 'Floor fighter',
     aura: 'Aura',
@@ -2858,7 +2858,7 @@ export const en = {
       beforeFight: 'BEFORE THE FIGHT',
       briefingTitle: 'Hit your opponent before they hit you',
       briefingGoal:
-        'First to 10 points wins. An attack only connects at close range: watch the distance at the top of the screen.',
+        'The selected format sets the win condition. An attack only connects at close range.',
       moveKeys: 'WASD',
       approach: 'Close in',
       approachSuffix: ' until the reticle turns gold.',

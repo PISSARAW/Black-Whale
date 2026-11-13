@@ -9,6 +9,10 @@ export function replayShareUrl(replay: ArenaReplay, currentUrl: string): string 
   url.searchParams.set('terrain', replay.setup.terrain.id)
   url.searchParams.set('doctrine', replay.doctrine)
   url.searchParams.set('difficulty', replay.difficulty)
+  url.searchParams.set('format', replay.match.formatId)
+  url.searchParams.set('opponent', replay.match.opponentId)
+  if (replay.match.challengeId) url.searchParams.set('challenge', replay.match.challengeId)
+  if (replay.match.missionId) url.searchParams.set('mission', replay.match.missionId)
   url.hash = `replay=${encodeReplay(replay)}`
   if (new TextEncoder().encode(url.href).length > MAX_REPLAY_URL_BYTES) {
     throw new Error('Arena replay URL exceeds 100 KB')

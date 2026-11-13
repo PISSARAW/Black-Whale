@@ -1,6 +1,7 @@
 export * from './cast/kinds'
 export * from './cast/types'
 export * from './hatsuBook'
+export * from './hatsuRecord'
 /**
  * Nen inside the walk: what a Hatsu does to the ship rather than to the page.
  *
@@ -50,13 +51,12 @@ import {
   ROOM_OR_BODY,
   SOLID_HATSU_KINDS,
 } from './cast/kinds'
-import { bodyAfterAuraEnds, paceOf } from './cast/pain'
+import { bodyAfterAuraEnds } from './cast/pain'
 import {
   EMPTY_WORLD,
   type DeckMoment,
   type DoorOptions,
   type Doors,
-  type Heading,
   type HeldSolid,
   type LoadedDeck,
   type Played,
@@ -78,6 +78,7 @@ import { punchRuns } from './punch'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
 import { perchFor } from './targeting'
 import { nextForgery, nextSign, takesAMask } from './texture'
+import { dialReading, identityOf, tenSecondsOn, unwalked, verseFor } from './hatsuRecord'
 
 export {
   injuryPace,
@@ -1957,110 +1958,6 @@ function castOnBody(
 /** A clear spot in a room to set something down, near where the visitor is. */
 function spawnPointNear(room: Space, at: Vec2): Vec2 {
   return pointInPolygon(at, room.footprint) ? at : centroid(room)
-}
-
-// ── The record ────────────────────────────────────────────────────────────
-//
-// The fourth noun is the only one that is not in the ship: what the walk
-// remembers of itself. Half of these techniques read it, the other half write
-// to it or predict it, and two of them are about what a room *is* rather than
-// where it stands.
-
-/**
- * A room as the walk should name it.
- *
- * Grimmel's arrow exchanges two souls, and the only thing a room has that
- * could be called one is its identity: what it is called, what stands behind
- * that claim, and how strong the claim is. The walls stay where they were —
- * this is not a room that moved, it is a room that woke up as another.
- */
-export function identityOf(ship: Ship, world: TourWorld, space: Space): Space {
-  for (const [a, b] of world.souls) {
-    const other = space.id === a ? b : space.id === b ? a : null
-    if (!other) continue
-    const soul = ship.spaces.get(other)
-    if (!soul) continue
-    return {
-      ...space,
-      name: soul.name,
-      nameFr: soul.nameFr,
-      category: soul.category,
-      provenance: soul.provenance,
-      source: soul.source,
-      sourceFr: soul.sourceFr,
-    }
-  }
-
-  // The plaque, which is the shallower of the two. The arrow above exchanged
-  // what two rooms *are*; this repaints a plate, so only the writing travels
-  // and the card the archive keeps is untouched. A reader in Gyo sees nothing
-  // either way — see `texture.ts`, where that is argued — and the one thing
-  // that gives it away is walking in.
-  const sign = world.signs[space.id]
-  const plate = sign ? ship.spaces.get(sign) : null
-  if (plate) return { ...space, name: plate.name, nameFr: plate.nameFr }
-
-  return space
-}
-
-/** How the dial reads, from a hundred at the door to nothing across the ship. */
-export function dialReading(ship: Ship, world: TourWorld, from: Stood) {
-  const { at, standingIn } = from
-  const wanted = world.dial ? ship.spaces.get(world.dial) : null
-  if (!wanted) return null
-  if (standingIn === wanted.id) return { spaceId: wanted.id, reading: 100 }
-  const { metres, decks } = distanceTo(ship, wanted, { at, standingIn })
-  const reading = Math.max(0, Math.round(100 - metres / 1.6 - decks * 12))
-  return { spaceId: wanted.id, reading }
-}
-
-/**
- * The verse the automatic writing sets down about a room.
- *
- * Numbers rather than text: which of the catalogue's lines were drawn, and the
- * page reads them out in the visitor's own language. Cryptic, but never false —
- * every line is chosen off the room's own record, which is the point of a
- * prophecy that has to come true.
- */
-export function verseFor(ship: Ship, space: Space): number[] {
-  const ways = ship.adjacency.get(space.id)?.length ?? 0
-  const standing = ship.structures.filter((solid) => solid.spaceId === space.id).length
-  return [
-    ['panel', 'plan', 'map', 'inferred'].indexOf(space.provenance),
-    ways === 0 ? 0 : ways === 1 ? 1 : ways < 4 ? 2 : 3,
-    standing === 0 ? 0 : standing < 4 ? 1 : standing < 12 ? 2 : 3,
-    space.tierId.length % 4,
-  ]
-}
-
-/** The rooms the walk has not set foot in, nearest first. */
-export function unwalked(ship: Ship, world: TourWorld, from: Stood) {
-  return [...ship.spaces.values()]
-    .filter((space) => !world.trail.includes(space.id))
-    .map((space) => ({ space, ...distanceTo(ship, space, from) }))
-    .sort((a, b) => a.metres + a.decks * 40 - (b.metres + b.decks * 40))
-}
-
-/**
- * Where the visitor will be in ten seconds if they carry on as they are.
- *
- * The prediction is taken once and never revised, which is the whole of the
- * technique: everyone else goes on seeing it even when the real walk diverges.
- */
-export function tenSecondsOn(
-  ship: Ship,
-  world: TourWorld,
-  from: Heading,
-): { spaceId: string; at: Vec2 } | null {
-  const { tierId, at, heading } = from
-  const plan = ship.plans.get(tierId)
-  if (!plan) return null
-  const reach = 6 * paceOf(world.body) * 10
-  const ahead: Vec2 = [at[0] - Math.sin(heading) * reach, at[1] - Math.cos(heading) * reach]
-  const landing = plan.spaces.find((space) => pointInPolygon(ahead, space.footprint))
-  const here = plan.spaces.find((space) => pointInPolygon(at, space.footprint))
-  const space = landing ?? here
-  return space ? { spaceId: space.id, at: landing ? ahead : at } : null
 }
 
 // ── The book ──────────────────────────────────────────────────────────────

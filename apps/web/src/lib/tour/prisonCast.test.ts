@@ -17,7 +17,7 @@ const post = (characterId: string): Post => ({
     locations: [],
     role: 'Hunter',
     since: 'ch-359',
-    nen: false,
+    nen: null,
     hatsu: [],
     beast: null,
   },

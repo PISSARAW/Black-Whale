@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-  import { tick } from 'svelte'
+  import { page } from '$app/state'
+  import { pushState, replaceState } from '$app/navigation'
+  import { tick, untrack } from 'svelte'
   import type { PageData } from './$types'
   import { createShipController } from './shipController.svelte'
   import MapContainer from '$lib/components/map/MapContainer.svelte'
@@ -12,6 +13,7 @@
   import ShipGuide from '$lib/components/ship/ShipGuide.svelte'
   import ShipTimeline from '$lib/components/ship/ShipTimeline.svelte'
   import WhyPanel from '$lib/components/perspective/WhyPanel.svelte'
+  import CharacterDetails from '$lib/components/map/CharacterDetails.svelte'
   import ConsciousnessTransferTransition from '$lib/components/perspective/ConsciousnessTransferTransition.svelte'
   import Seo from '$lib/components/Seo.svelte'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -20,13 +22,14 @@
   import { PUBLIC_FEATURES } from '$lib/config/features'
   import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
   import './ship.css'
+  import { readShipUrlState, writeShipUrlState } from './shipUrlState'
 
   let { data }: { data: PageData } = $props()
   const ship = createShipController({
     data: () => data,
     copy: () => $t,
     locale: () => $locale,
-    url: () => $page.url,
+    url: () => page.url,
   })
   type Panel = 'filters' | 'tracking' | 'guide'
   let panel: Panel | null = $state(null)
@@ -34,6 +37,8 @@
   let panelHeading: HTMLHeadingElement | undefined = $state()
   let panelTrigger: HTMLButtonElement | undefined
   let expandButton: HTMLButtonElement | undefined = $state()
+  let urlStateReady = $state(false)
+  let lastSpatialKey = $state('')
   let filterCount = $derived(
     Number(mapState.filters.entityType !== 'all') +
       mapState.filters.factions.length +
@@ -42,7 +47,7 @@
   let panelTitle = $derived(panel ? $t.ship.workspace[panel] : '')
   let profiles = $derived($t.ship.tiers as Record<string, { title: string }>)
   let locationName = $derived(
-    data.worldState.locations.find(
+    (data.locations || data.worldState.locations || []).find(
       (location) => location.slug === resolveRegionLocationSlug(mapState.selectedLocationId),
     )?.name || ship.currentDeckLabel,
   )
@@ -90,6 +95,43 @@
     return () => {
       document.body.style.overflow = previous
     }
+  })
+
+  $effect(() => {
+    const url = page.url
+    const locations = (data.locations || data.worldState.locations || []) as { slug: string }[]
+    const parsed = readShipUrlState(url, locations)
+    mapState.selectedTier = parsed.tier
+    mapState.selectedLocationId = parsed.location
+    mapState.currentZoomLevel = parsed.location ? 'LOCAL' : parsed.tier ? 'TIER' : 'OVERVIEW'
+    mapState.showEntities = parsed.showEntities
+    mapState.filters.entityType = parsed.entityType
+    mapState.filters.factions = parsed.factions
+    mapState.filters.beyondLineage = parsed.beyondLineage
+    mapState.filters.showUnknownPositions = parsed.showUnknownPositions
+    lastSpatialKey = `${parsed.tier || ''}|${parsed.location || ''}`
+    urlStateReady = true
+  })
+
+  $effect(() => {
+    if (!urlStateReady) return
+    const state = {
+      tier: mapState.selectedTier,
+      location: mapState.selectedLocationId,
+      showEntities: mapState.showEntities,
+      entityType: mapState.filters.entityType,
+      factions: [...mapState.filters.factions],
+      beyondLineage: mapState.filters.beyondLineage,
+      showUnknownPositions: mapState.filters.showUnknownPositions,
+    }
+    const current = untrack(() => page.url)
+    const next = writeShipUrlState(current, state)
+    const spatialKey = `${state.tier || ''}|${state.location || ''}`
+    if (next.toString() !== current.toString()) {
+      if (spatialKey !== lastSpatialKey) pushState(next, {})
+      else replaceState(next, {})
+    }
+    lastSpatialKey = spatialKey
   })
 </script>
 
@@ -202,18 +244,25 @@
     <div class="ship-map-body">
       <div class="ship-canvas">
         <MapContainer />
-        <WhyPanel
-          open={mapState.explainPanelOpen && !!mapState.explainTarget}
-          subject={mapState.explainTarget?.subject || ''}
-          displayedValue={mapState.explainTarget?.value || ''}
-          source={mapState.explainTarget?.source || ''}
-          observedAt={mapState.explainTarget?.observedAt || ''}
-          freshness={mapState.explainTarget?.freshness || ''}
-          state={mapState.explainTarget?.knowledgeState || 'unknown'}
-          revealReality={mapState.compareWithReader}
-          canonicalValue={mapState.explainTarget?.canonicalValue ?? null}
-          onClose={() => mapState.closeExplainPanel()}
-        />
+        {#if mapState.explainPanelOpen && mapState.explainTarget?.kind === 'character'}
+          <CharacterDetails
+            target={mapState.explainTarget}
+            onClose={() => mapState.closeExplainPanel()}
+          />
+        {:else if mapState.explainPanelOpen && mapState.explainTarget?.kind === 'object'}
+          <WhyPanel
+            open={true}
+            subject={mapState.explainTarget.subject}
+            displayedValue={mapState.explainTarget.value}
+            source={mapState.explainTarget.source}
+            observedAt={mapState.explainTarget.observedAt}
+            freshness={mapState.explainTarget.freshness}
+            state={mapState.explainTarget.knowledgeState}
+            revealReality={mapState.compareWithReader}
+            canonicalValue={mapState.explainTarget.canonicalValue ?? null}
+            onClose={() => mapState.closeExplainPanel()}
+          />
+        {/if}
         <LocationDetails />
         <UnknownPositions />
       </div>

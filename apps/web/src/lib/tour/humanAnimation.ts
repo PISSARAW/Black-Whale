@@ -51,6 +51,15 @@ export function poseHuman(rig: PosedHuman): void {
     })
     legs[0].rotation.z = -0.08
     legs[1].rotation.z = 0.08
+  } else if (pose === 'brace') {
+    figure.rotation.x = -0.08
+    arms.forEach((arm, index) => {
+      const side = index === 0 ? -1 : 1
+      arm.position.set(side * 0.2, 1.28, 0.12)
+      arm.rotation.set(-1.05, 0, side * -0.42)
+      elbows[index].rotation.x = -0.85
+    })
+    knees.forEach((knee) => (knee.rotation.x = 0.22))
   } else if (pose === 'attack') {
     arms[1].position.set(0.18, 1.3, 0.15)
     arms[1].rotation.set(-1.35, 0, -0.08)
@@ -124,6 +133,15 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
       })
       rig.legs[0].rotation.z = -0.08
       rig.legs[1].rotation.z = 0.08
+    } else if (pose === 'brace') {
+      rig.figure.rotation.x = -0.08 + Math.sin(seconds * 7) * 0.008
+      rig.arms.forEach((arm, index) => {
+        const side = index === 0 ? -1 : 1
+        arm.position.set(side * 0.2, 1.28, 0.12)
+        arm.rotation.set(-1.05, 0, side * -0.42)
+        arm.children[1].rotation.x = -0.85
+      })
+      rig.knees.forEach((knee) => (knee.rotation.x = 0.22))
     } else if (pose === 'listen') {
       rig.arms[1].rotation.set(0, 0, -2.15)
       rig.head.rotation.y = headBase.y + Math.sin(seconds * 0.65) * 0.28

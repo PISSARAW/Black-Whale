@@ -57,6 +57,8 @@ export interface HourStage {
   pane: Three.MeshBasicMaterial
   /** The motes of the great voids. */
   motes: Three.PointsMaterial
+  /** High-only additive air around fittings; its hue follows the fitting. */
+  lampAir: Three.ShaderMaterial | null
   /** The daylight pool's uniform block, from `applySkyPool`. */
   pool: ReturnType<typeof applySkyPool>
   shafts: PostPass | null
@@ -142,6 +144,8 @@ export class TourHourView {
     const { deck, fitting, motes } = this.regime
     for (const material of this.stage.decks) material.color.setRGB(deck[0], deck[1], deck[2])
     this.stage.fittings.color.setRGB(fitting[0], fitting[1], fitting[2])
+    const lampTint = this.stage.lampAir?.uniforms.uTint?.value as Three.Color | undefined
+    lampTint?.setRGB(fitting[0], fitting[1], fitting[2])
     // Clamped: the motes are additive, and an opacity past 1 is a mote that has
     // stopped being a suggestion of a mote.
     this.stage.motes.opacity = Math.min(1, this.moteOpacity * motes)

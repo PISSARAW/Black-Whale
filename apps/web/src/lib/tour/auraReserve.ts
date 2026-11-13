@@ -20,11 +20,13 @@
  * different games and share the engine's states, not each other's prices.
  */
 import {
+  nenDefenceFactor,
   transitionNen,
   type NenTechnique,
   type NenTechniqueAction,
   type NenTechniqueState,
 } from '@black-whale/nen-engine'
+import type { NenRefusalCode } from './nenRefusal'
 
 export const RESERVE_MAX = 100
 
@@ -73,8 +75,23 @@ function shapingCost(nen: NenTechniqueState): number {
 }
 
 /** One beat of the reserve, clamped to what a body can hold. */
-export function breathe(reserve: number, nen: NenTechniqueState, seconds = 1): number {
-  return Math.min(RESERVE_MAX, Math.max(0, reserve + flowOf(nen) * seconds))
+export type AuraPressure = 'none' | 'ren' | 'on'
+
+export function pressureCost(nen: NenTechniqueState, pressure: AuraPressure): number {
+  const maximum = pressure === 'on' ? 16 : pressure === 'ren' ? 10 : 0
+  return maximum * (1 - nenDefenceFactor(nen))
+}
+
+export function breathe(
+  reserve: number,
+  nen: NenTechniqueState,
+  seconds = 1,
+  pressure: AuraPressure = 'none',
+): number {
+  return Math.min(
+    RESERVE_MAX,
+    Math.max(0, reserve + (flowOf(nen) - pressureCost(nen, pressure)) * seconds),
+  )
 }
 
 /**
@@ -124,14 +141,14 @@ const PROBES: Partial<Record<NenTechnique, NenTechniqueAction>> = {
   ryu: { type: 'RYU', distribution: { hands: 0.55, torso: 0.45 } },
 }
 
-export const RESERVE_TOO_LOW = 'Réserve d’aura trop basse : reposez-vous en Ten ou en Zetsu.'
+export const RESERVE_TOO_LOW: NenRefusalCode = 'RESERVE_TOO_LOW'
 
 /** What the Nen panel should grey out, with the reason it shows on hover. */
 export function reserveAvailability(
   reserve: number,
   nen: NenTechniqueState,
-): Partial<Record<NenTechnique, string>> {
-  const blocked: Partial<Record<NenTechnique, string>> = {}
+): Partial<Record<NenTechnique, NenRefusalCode>> {
+  const blocked: Partial<Record<NenTechnique, NenRefusalCode>> = {}
   for (const [technique, action] of Object.entries(PROBES) as [NenTechnique, NenTechniqueAction][])
     if (refusedByReserve(reserve, nen, action)) blocked[technique] = RESERVE_TOO_LOW
   return blocked

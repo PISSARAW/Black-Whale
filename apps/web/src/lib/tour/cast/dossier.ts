@@ -34,7 +34,7 @@ export interface DossierCharacter {
   canonicalName: string
   factionId?: string | null
   shipLocation?: { role?: string } | null
-  nen?: { typeLabel?: string | null } | null
+  nen?: { typeLabel?: string | null; awakenedFromChapterId?: string } | null
   mapTrajectory?: readonly { location: string; fromChapterId: string }[] | null
   suspectedAllegiance?: string | null
   identity?: { description?: string | null } | null
@@ -168,15 +168,21 @@ function sealedOf(character: DossierCharacter, cap: number | null): DossierSeale
  */
 export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
   const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
+  const awakened = character.nen?.awakenedFromChapterId
+    ? chapterOf(character.nen.awakenedFromChapterId)
+    : null
+  const nenVisible = options.cap === null || awakened === null || awakened <= options.cap
   return {
     characterId: character.id,
     role: character.shipLocation?.role ?? '',
     faction: (character.factionId && options.factions.get(character.factionId)) || null,
     factionId: character.factionId ?? null,
-    category: character.nen?.typeLabel ?? null,
-    techniques: options.abilities
-      .filter((ability) => ability.ownerId === character.id)
-      .map((ability) => ({ name: ability.name, carried: ability.carried })),
+    category: nenVisible ? (character.nen?.typeLabel ?? null) : null,
+    techniques: nenVisible
+      ? options.abilities
+          .filter((ability) => ability.ownerId === character.id)
+          .map((ability) => ({ name: ability.name, carried: ability.carried }))
+      : [],
     route,
     withheld,
     sealed: sealedOf(character, options.cap),

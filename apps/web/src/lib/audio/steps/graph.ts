@@ -2,6 +2,7 @@ import type { Facing } from '../ears'
 import { sharedAudioContext } from '../context'
 import { outputBus } from '../output'
 import { buildEnvironment, type Environment } from './environment'
+import { buildRoomAmbience, type RoomAmbience } from './roomAmbience'
 
 /**
  * The walk's graph, and the state that has to survive it.
@@ -41,6 +42,8 @@ export type Graph = {
   grit: AudioBuffer
   /** The machinery and the water: continuous, placed, and not made in a room. */
   env: Environment
+  /** Ventilation, crowd pressure and one filtered room beyond a doorway. */
+  ambience: RoomAmbience
 }
 
 let graph: Graph | null = null
@@ -144,6 +147,7 @@ export function buildGraph(): Graph {
   // them too, and they are the one part of the graph that is placed in three
   // dimensions rather than mixed flat. See `./environment`.
   const env = buildEnvironment(context, muffle)
+  const ambience = buildRoomAmbience(context, muffle, send)
 
   return {
     context,
@@ -157,6 +161,7 @@ export function buildGraph(): Graph {
     current: 0,
     grit,
     env,
+    ambience,
   }
 }
 

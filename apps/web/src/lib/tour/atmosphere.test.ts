@@ -138,6 +138,11 @@ describe('how long a room rings', () => {
     expect(reverbTime(box(400, 400, 30), tier)).toBe(MAX_REVERB)
   })
 
+  it('lets a softer finish shorten the same room without changing its geometry', () => {
+    const room = box(18, 12)
+    expect(reverbTime(room, tier, 0.42)).toBeLessThan(reverbTime(room, tier, 0.08))
+  })
+
   it('separates the smallest room of the ship from the largest by ear', () => {
     const ship = buildShip()
     const timeOf = (space: Space) =>

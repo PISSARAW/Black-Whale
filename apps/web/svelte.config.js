@@ -2,11 +2,15 @@ import adapter from '@sveltejs/adapter-node'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import { publicTextPreprocess } from './i18n-preprocess.mjs'
 
+const outputDirectory = process.env.BLACK_WHALE_WEB_OUTPUT ?? 'build'
+const kitDirectory = process.env.BLACK_WHALE_SVELTE_OUTPUT ?? '.svelte-kit'
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   preprocess: [publicTextPreprocess(), vitePreprocess()],
   kit: {
-    adapter: adapter(),
+    adapter: adapter({ out: outputDirectory }),
+    outDir: kitDirectory,
     alias: {
       $lib: './src/lib',
     },

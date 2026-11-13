@@ -11,7 +11,7 @@
  * Pure, and deliberately so: the server hands in rows and a catalogue, this
  * hands back a payload, and the whole projection is testable without a database.
  */
-import type { CastBeast, CastMember, StandingBeast } from './types'
+import type { CastBeast, CastMember, CastNenProfile, StandingBeast } from './types'
 
 /** A body, as the world state gives it. */
 export interface RosterBody {
@@ -44,8 +44,21 @@ export interface RosterLocation {
 export interface RosterCharacter {
   id: string
   canonicalName: string
+  factionId?: string | null
   shipLocation?: { role?: string } | null
-  nen?: unknown
+  nen?: {
+    type?: string
+    typeLabel?: string
+    confirmed?: boolean
+    techniques?: string[]
+    awakenedFromChapterId?: string
+    tourConduct?: Array<{
+      fromChapterId: string
+      mode: 'ten' | 'zetsu'
+      concealedWithIn: boolean
+      enRadius: number | null
+    }>
+  } | null
   guardianBeast?: {
     silhouette: string
     sourceChapterId: string
@@ -72,6 +85,47 @@ export interface RosterInput {
   locations: readonly RosterLocation[]
   catalogue: readonly RosterCharacter[]
   abilities: readonly RosterAbility[]
+  /** The selected event chapter, already bounded by the reader's spoiler cap. */
+  chapterNumber?: number | null
+}
+
+function chapterOf(reference: string | undefined): number | null {
+  const match = /^ch-(\d+)(?:\.(\d+))?$/.exec(reference ?? '')
+  return match ? Number(match[1]) + Number(match[2] ?? 0) / 1000 : null
+}
+
+/** Project only the Nen this event is allowed to know about. */
+function nenAt(
+  character: RosterCharacter,
+  chapterNumber: number | null | undefined,
+): CastNenProfile | null {
+  if (!character.nen) return null
+  const awakenedFromChapter = chapterOf(character.nen.awakenedFromChapterId)
+  if (
+    chapterNumber !== null &&
+    chapterNumber !== undefined &&
+    awakenedFromChapter !== null &&
+    chapterNumber < awakenedFromChapter
+  )
+    return null
+  const visible = (character.nen.tourConduct ?? []).filter((snapshot) => {
+    const chapter = chapterOf(snapshot.fromChapterId)
+    return chapter !== null && (chapterNumber == null || chapter <= chapterNumber)
+  })
+  const conduct = visible.at(-1) ?? {
+    mode: 'ten' as const,
+    concealedWithIn: false,
+    enRadius: null,
+  }
+  return {
+    techniques: [...(character.nen.techniques ?? [])],
+    awakenedFromChapter,
+    conduct: {
+      mode: conduct.mode,
+      concealedWithIn: conduct.concealedWithIn,
+      enRadius: conduct.enRadius,
+    },
+  }
 }
 
 /**
@@ -167,6 +221,7 @@ function describe(
   character: RosterCharacter,
   presence: RosterPresence,
   indexes: ReturnType<typeof indexesOf>,
+  chapterNumber?: number | null,
 ): CastMember {
   const locations = indexes.under.get(presence.locationId ?? '') ?? []
   const outsideDoorOf = outsideDoorFor(character, presence, locations)
@@ -176,7 +231,8 @@ function describe(
     locations,
     role: character.shipLocation?.role ?? '',
     since: presence.fromEvent?.chapterId ?? null,
-    nen: Boolean(character.nen),
+    nen: nenAt(character, chapterNumber),
+    factionId: character.factionId ?? null,
     hatsu: indexes.repertoires.get(character.id) ?? [],
     beast: beastOf(character),
     ...(outsideDoorOf ? { outsideDoorOf } : {}),
@@ -214,11 +270,12 @@ function outsideDoorFor(
 function memberFrom(
   presence: RosterPresence,
   indexes: ReturnType<typeof indexesOf>,
+  chapterNumber?: number | null,
 ): CastMember | null {
   if (!PLACEABLE.has(presence.precision) || !presence.locationId) return null
   const characterId = identityOf(presence.entityId, indexes)
   const character = characterId ? indexes.catalogue.get(characterId) : undefined
-  return character ? describe(character, presence, indexes) : null
+  return character ? describe(character, presence, indexes, chapterNumber) : null
 }
 
 /**
@@ -236,7 +293,7 @@ export function rosterFrom(input: RosterInput): {
   const members: CastMember[] = []
   const placed = new Set<string>()
   for (const presence of input.presences) {
-    const member = memberFrom(presence, indexes)
+    const member = memberFrom(presence, indexes, input.chapterNumber)
     if (!member || placed.has(member.characterId)) continue
     placed.add(member.characterId)
     members.push(member)

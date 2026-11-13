@@ -36,4 +36,33 @@ describe('aura left where a technique forced a seam', () => {
     })
     expect(traces).toEqual([])
   })
+
+  it('places declared Hatsu traces and mapped aura objects deterministically', () => {
+    const input = {
+      ship,
+      vestiges: {},
+      tierId: space.tierId,
+      traces: [{ id: 'door-trace', locationId: space.id }],
+      objects: [
+        {
+          id: 'glass',
+          name: 'Glass',
+          locationId: space.id,
+          visibility: 'awakened' as const,
+          kind: 'water-divination',
+          approximate: true,
+        },
+      ],
+    }
+    const first = residueApparitions(input)
+    const second = residueApparitions(input)
+    expect(first.map((trace) => trace.at)).toEqual(second.map((trace) => trace.at))
+    expect(first).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'aura-source:door-trace', hidden: true }),
+        expect.objectContaining({ id: 'aura-source:glass', hidden: false }),
+      ]),
+    )
+    expect(residueApparitions({ ...input, awakened: false })).toEqual([])
+  })
 })

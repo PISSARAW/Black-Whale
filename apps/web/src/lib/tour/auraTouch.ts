@@ -42,11 +42,27 @@ export function touchKind(nen: NenTechniqueState): NenObjectInteraction {
 }
 
 /** How far a touch of this kind, in this state, moves the solid. */
-export function touchForce(kind: NenObjectInteraction, nen: NenTechniqueState): number {
-  if (kind === 'strike') return FORCE.strike
-  if (kind === 'pressure') return nen.on ? FORCE.on : FORCE.pressure
-  return nen.ken ? FORCE.ken : FORCE.channel
+export function touchForce(
+  kind: NenObjectInteraction,
+  nen: NenTechniqueState,
+  wrappedWithShu = false,
+): number {
+  const base =
+    kind === 'strike'
+      ? FORCE.strike
+      : kind === 'pressure'
+        ? nen.on
+          ? FORCE.on
+          : FORCE.pressure
+        : nen.ken
+          ? FORCE.ken
+          : FORCE.channel
+  return base * (wrappedWithShu ? 1.75 : 1)
 }
+
+/** A Shu-wrapped solid yields to only forty percent of incoming pressure. */
+export const pressureThroughShu = (force: number, wrappedWithShu: boolean) =>
+  force * (wrappedWithShu ? 0.4 : 1)
 
 /** How far a touch of this kind turns the solid. */
 export const touchTurn = (kind: NenObjectInteraction) => TURN[kind]

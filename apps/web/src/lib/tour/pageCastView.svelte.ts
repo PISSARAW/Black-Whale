@@ -22,6 +22,7 @@ import {
   sensedBy,
   sensesFromKey,
   sensesKey,
+  sweptByVisitor,
   type BeastVoice,
   type BodyMark,
   type CastBeast,
@@ -34,6 +35,7 @@ import { stagePostsForMangaView } from '$lib/tour/cast/mangaStage'
 import { stageBeastsForMangaView } from '$lib/tour/cast/mangaBeastStage'
 import { pacedPosts } from '$lib/tour/cast/pace'
 import { residueApparitions } from '$lib/tour/cast/residue'
+import { secretApparitions, secretForApparition, type TourSecret } from '$lib/tour/tourSecrets'
 import { concertCast, type ConcertPerformance } from './melodyConcert'
 
 /** What the page knows that the distribution needs. */
@@ -129,6 +131,16 @@ export class TourCastView {
     )
   })
 
+  /** Named canonical bodies by reconstructed room, for non-visual crowd pressure. */
+  occupancy = $derived.by<Record<string, number>>(() => {
+    const counts: Record<string, number> = {}
+    for (const post of this.posts) counts[post.spaceId] = (counts[post.spaceId] ?? 0) + 1
+    return counts
+  })
+
+  /** The sourced note behind the Gyo-only reference the visitor selected. */
+  secret = $state<TourSecret | null>(null)
+
   /**
    * What the room has just done, as a body standing in it can tell.
    *
@@ -144,17 +156,24 @@ export class TourCastView {
       visitorCasting: casting,
       visitorHidden: this.hidden,
       visitorMenacing: this.menacing,
+      visitorPressure: this.pressure,
       hostileRooms: hostileRooms(this.options.ship, world),
       aimedAt,
       holds,
       drained,
       sensedBy: {},
+      sweptBy: [],
     }
   })
 
   /** Booleans and strings stop the frame-rate visitor here. See `cast/sensing.ts`. */
   private hidden = $derived.by(() => this.options.readVisitor().nen.in)
   private menacing = $derived.by(() => this.options.readVisitor().nen.on)
+  private pressure = $derived.by<'none' | 'ren' | 'on'>(() => {
+    const nen = this.options.readVisitor().nen
+    return nen.on ? 'on' : nen.mode === 'ren' ? 'ren' : 'none'
+  })
+  private swept = $derived.by(() => sweptByVisitor(this.walking, this.options.readVisitor()))
   private sensed = $derived.by(() => {
     const visitor = this.options.readVisitor()
     const { world } = this.options.read()
@@ -170,6 +189,7 @@ export class TourCastView {
   situation = $derived.by<Situation>(() => ({
     ...this.ground,
     sensedBy: sensesFromKey(this.sensed),
+    sweptBy: this.swept,
   }))
 
   /**
@@ -184,15 +204,38 @@ export class TourCastView {
     return [
       ...castApparitions(this.options.ship, this.posts, auraReader(this.situation)),
       // Aura left where a technique forced a seam: hidden, so only Gyo draws it.
-      ...residueApparitions({ ship: this.options.ship, vestiges: world.vestiges, tierId }),
-      ...stageBeastsForMangaView(
-        beastApparitions(this.options.ship, this.posts, {
-          standing: cast.beasts,
-          chapter: cast.chapterNumber,
-        }),
-        mangaView,
-      ),
+      ...residueApparitions({
+        ship: this.options.ship,
+        vestiges: world.vestiges,
+        tierId,
+        traces: cast.auraTraces,
+        objects: cast.auraObjects,
+        awakened: this.options.readVisitor().awakened !== false,
+      }),
+      ...(this.options.readVisitor().awakened === false
+        ? []
+        : stageBeastsForMangaView(
+            beastApparitions(this.options.ship, this.posts, {
+              standing: cast.beasts,
+              chapter: cast.chapterNumber,
+            }),
+            mangaView,
+          )),
+      // Authored references only exist while the character that justifies them
+      // is actually reconstructed in their catalogued place. In hides them.
+      ...secretApparitions(this.options.ship, this.posts),
     ]
+  })
+
+  /** Hostile raised aura sharing the visitor's room, for pre-awakening pressure. */
+  pressureAtVisitor = $derived.by<'none' | 'ren'>(() => {
+    const room = this.options.read().visitorIn
+    if (!room) return 'none'
+    return this.posts.some(
+      (post) => post.spaceId === room && auraFor(post, this.situation).aura === 'ren',
+    )
+      ? 'ren'
+      : 'none'
   })
 
   /**
@@ -241,6 +284,11 @@ export class TourCastView {
    * would be an animal acting, and none of these is.
    */
   speak = (id: string) => {
+    const secret = secretForApparition(id)
+    if (secret) {
+      this.secret = secret
+      return
+    }
     const voices = {
       hiss: hissLikeASnake,
       roar: roarLikeADragon,

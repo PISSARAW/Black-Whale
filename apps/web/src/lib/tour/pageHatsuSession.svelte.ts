@@ -36,6 +36,9 @@ import {
   saveAwakened,
 } from '$lib/tour/awakening'
 import type { Vec2 } from '$lib/tour/types'
+import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nenFeedback'
+import type { AuraPressure } from '$lib/tour/auraReserve'
+import type { NenRefusalCode } from '$lib/tour/nenRefusal'
 
 interface ActivationContext {
   ship: Ship
@@ -49,6 +52,12 @@ interface SessionContext extends ActivationContext {
   world: TourWorld
 }
 
+export interface AppliedTourNenTransition {
+  action: NenTechniqueAction
+  nen: NenTechniqueState
+  reserve: number
+}
+
 interface SessionOptions {
   readActivation: () => ActivationContext
   read: () => SessionContext
@@ -59,6 +68,7 @@ interface SessionOptions {
   goToSpace: (spaceId: string) => void
   reboundText: () => string
   vowText: (spaceId: string) => string
+  onNenApplied?: (transition: AppliedTourNenTransition) => void
 }
 
 export class TourHatsuSession {
@@ -69,6 +79,8 @@ export class TourHatsuSession {
   reserve = $state(RESERVE_MAX)
   /** Whether the visitor's nodes are open. See `awakening.ts`. */
   awakened = $state(loadAwakened())
+  causes = $state<NenCauseEntry[]>([])
+  staggeredUntil = $state(0)
   /** What the Nen panel greys out: shut nodes first, then what the reserve cannot pay. */
   availability = $derived({
     ...reserveAvailability(this.reserve, this.nen),
@@ -92,6 +104,8 @@ export class TourHatsuSession {
       onNenChange: this.useNen,
       nenAvailability: this.availability,
       reserve: this.reserve,
+      nenCauses: this.causes,
+      staggered: Date.now() < this.staggeredUntil,
     }
   }
   private wasFutureVisible = false
@@ -194,22 +208,39 @@ export class TourHatsuSession {
   }
 
   /** One second of the walk's beat: the reserve moves, and an empty body lets go. */
-  breathe = () => {
-    this.reserve = breathe(this.reserve, this.nen)
-    if (this.reserve > 0) return
+  breathe = (pressure: AuraPressure = 'none') => {
+    const before = this.reserve
+    this.reserve = breathe(this.reserve, this.nen, 1, pressure)
+    if (this.reserve > 0 || before === 0) return
+    this.staggeredUntil = Date.now() + 1_500
+    this.note({ code: 'EXHAUSTED' })
     for (const action of exhaustionActions(this.nen)) this.useNen(action)
   }
 
   useNen = (action: NenTechniqueAction): NenTransition => {
-    if (
-      refusedBeforeAwakening(this.awakened, action) ||
-      refusedByReserve(this.reserve, this.nen, action)
-    )
+    const refusal: NenRefusalCode | null = refusedBeforeAwakening(this.awakened, action)
+      ? 'NODES_SHUT'
+      : refusedByReserve(this.reserve, this.nen, action)
+        ? 'RESERVE_TOO_LOW'
+        : null
+    if (refusal) {
+      this.note({ code: 'ACTION_REFUSED', action: action.type, reason: refusal })
       return { state: this.nen, accepted: false }
+    }
     const result = transitionNen(this.nen, action)
     if (result.accepted) {
       this.nen = result.state
       saveTourNen(this.nen)
+      this.note({ code: 'ACTION_ACCEPTED', action: action.type })
+      if (action.type === 'SHU' && !action.on)
+        this.note({ code: 'SHU_TRACE', objectId: action.objectId })
+      this.options.onNenApplied?.({ action, nen: this.nen, reserve: this.reserve })
+    } else if (result.reason) {
+      this.note({
+        code: 'ACTION_REFUSED',
+        action: action.type,
+        reason: result.reason as NenRefusalCode,
+      })
     }
     if (!this.awakened && awakensWith(action)) {
       this.awakened = true
@@ -222,6 +253,10 @@ export class TourHatsuSession {
       this.options.updateReport(null)
     }
     return result
+  }
+
+  note(cause: NenCause) {
+    this.causes = appendNenCause(this.causes, cause)
   }
 
   arrived = (spaceId: string | null) => {

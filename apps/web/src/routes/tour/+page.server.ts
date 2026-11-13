@@ -27,8 +27,15 @@ import characterCatalog from '../../../../../data/characters/characters.json'
 import abilityCatalog from '../../../../../data/abilities/abilities.json'
 import abilityUseCatalog from '../../../../../data/abilities/uses.json'
 import factionCatalog from '../../../../../data/factions/factions.json'
+import eventCatalog from '../../../../../data/events/events.json'
+import objectCatalog from '../../../../../data/objects/objects.json'
 import type { PageServerLoad } from './$types'
 import { log, describeError } from '$lib/server/log'
+import {
+  auraObjectsThrough,
+  auraTracesThrough,
+  type AuraObjectRecord,
+} from '$lib/tour/cast/auraSources'
 
 /**
  * Who is aboard while the visitor walks.
@@ -96,6 +103,43 @@ const catalogue = characterCatalog as unknown as RosterCharacter[]
 const dossierCatalogue = new Map(
   (characterCatalog as unknown as DossierCharacter[]).map((character) => [character.id, character]),
 )
+
+interface CatalogDomainEvent {
+  type: string
+  payload?: {
+    locationId?: string
+    vestigeType?: string
+    metadata?: Record<string, string | number | boolean>
+  }
+}
+
+interface CatalogEvent {
+  id: string
+  chapter: number
+  sequence: number
+  events?: CatalogDomainEvent[]
+}
+
+function vestigesThrough(selected: { id: string; chapter: { number: number }; sequence: number }) {
+  const found: Record<string, import('$lib/tour/cast/types').TourVestige[]> = {}
+  for (const event of eventCatalog as CatalogEvent[]) {
+    if (
+      event.chapter > selected.chapter.number ||
+      (event.chapter === selected.chapter.number && event.sequence > selected.sequence)
+    )
+      continue
+    for (const domain of event.events ?? []) {
+      const payload = domain.payload
+      if (domain.type !== 'ENVIRONMENT_ALTERED' || !payload?.locationId || !payload.vestigeType)
+        continue
+      found[payload.locationId] = [
+        ...(found[payload.locationId] ?? []),
+        { type: payload.vestigeType, metadata: payload.metadata },
+      ]
+    }
+  }
+  return found
+}
 
 /**
  * A dossier per body the walk will draw, cut at the reader's chapter.
@@ -193,11 +237,12 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
     locations,
     catalogue,
     abilities,
+    chapterNumber: event.chapter.number,
   })
 
   const aboard = allowed ? members.filter((member) => allowed.has(member.characterId)) : members
 
-  const vestiges: Record<string, import('$lib/tour/cast/types').TourVestige[]> = {}
+  const vestiges = vestigesThrough(event)
 
   return {
     cast: {
@@ -219,6 +264,11 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
         carried: CARRIED,
       }),
       vestiges,
+      auraTraces: auraTracesThrough(abilityUseCatalog, event.chapter.number),
+      auraObjects: auraObjectsThrough(
+        objectCatalog as unknown as AuraObjectRecord[],
+        event.chapter.number,
+      ),
     },
     // Read off the event rather than recomputed: the voyage clock runs once, at
     // compile time, and both the walk and `/ship` read what it stamped.
@@ -238,5 +288,7 @@ function empty(spoilerLimit: number | null): CastPayload {
     dialogue: {},
     eventHatsu: {},
     vestiges: {},
+    auraTraces: [],
+    auraObjects: [],
   }
 }

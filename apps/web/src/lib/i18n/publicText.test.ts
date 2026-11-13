@@ -94,4 +94,16 @@ describe('public text localization', () => {
     expect(result.body).toBe(body)
     expect(result.cursor).toBe(data.cursor)
   })
+
+  it('merges a nested layout dictionary into the page dictionary', async () => {
+    const load = localizedLoad(async (_event: { url: URL }) => ({
+      localizedContent: { inherited: 'hérité' },
+      title: 'Elastic Love',
+    }))
+    const result = await load({ url: new URL('https://example.test/fr/ship') })
+    expect(result.localizedContent).toMatchObject({
+      inherited: 'hérité',
+      'Elastic Love': 'Amour élastique',
+    })
+  })
 })

@@ -133,8 +133,8 @@ export const MAX_REVERB = 4
  * oldest result in architectural acoustics and it needs exactly what the
  * blueprint already has: a volume and a surface area.
  */
-export function reverbTime(space: Space, tier: Tier): number {
-  const absorption = roomSurface(space, tier) * ABSORPTION
+export function reverbTime(space: Space, tier: Tier, coefficient = ABSORPTION): number {
+  const absorption = roomSurface(space, tier) * Math.max(0, coefficient)
   if (absorption <= 0) return MIN_REVERB
   return clamp((0.161 * roomVolume(space, tier)) / absorption, MIN_REVERB, MAX_REVERB)
 }

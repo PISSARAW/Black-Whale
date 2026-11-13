@@ -226,8 +226,11 @@ export const canSeeIn = (state: NenTechniqueState) => state.gyo
 export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqueState) =>
   !source.in || observer.gyo
 /** Zetsu leaves the body with no aura defence against Hatsu or aura-clad blows. */
-export const nenDefenceFactor = (state: NenTechniqueState) =>
-  state.mode === 'zetsu' ? 0 : state.ken ? 1 : state.on ? 0.9 : state.mode === 'ren' ? 0.65 : 0.35
+export const nenDefenceFactor = (state: NenTechniqueState, zone?: string) => {
+  if (state.mode === 'zetsu') return 0
+  if (state.ko) return zone && zone === state.ko ? 1 : 0.1
+  return state.ken ? 1 : state.on ? 0.9 : state.mode === 'ren' ? 0.65 : 0.35
+}
 
 export interface EnPresence {
   id: string

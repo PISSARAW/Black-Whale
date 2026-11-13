@@ -16,7 +16,7 @@ function member(overrides: Partial<CastMember> & { characterId: string }): CastM
     locations: [ROOM_1014],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: false,
+    nen: null,
     hatsu: [],
     beast: null,
     ...overrides,
@@ -211,7 +211,7 @@ describe('what the scene is handed', () => {
 
   it('dresses a queen in her own clothes', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'oito', role: 'kakin royal family', nen: false }),
+      member({ characterId: 'oito', role: 'kakin royal family', nen: null }),
     ])
     const [seen] = castApparitions(ship, posts)
     expect(seen!.human).toMatchObject({ role: 'witness', dress: 'gown' })
@@ -220,8 +220,8 @@ describe('what the scene is handed', () => {
   /** §2.3: aura is a fact of the catalogue, never a fact of the post. */
   it('gives an aura to the declared user and none to the guard beside them', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: true }),
-      member({ characterId: 'sakata', nen: false }),
+      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
+      member({ characterId: 'sakata', nen: null }),
     ])
     const seen = castApparitions(ship, posts, auraReader())
     const kurapika = seen.find((one) => one.id === 'cast:kurapika')
@@ -232,7 +232,7 @@ describe('what the scene is handed', () => {
 
   it('raises the room to Ren when the visitor casts in it', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: true }),
+      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
     ])
     const alarmed = auraReader({
       ...CALM,

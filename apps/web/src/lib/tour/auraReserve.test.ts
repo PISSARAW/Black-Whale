@@ -8,6 +8,7 @@ import {
   breathe,
   exhaustionActions,
   flowOf,
+  pressureCost,
   refusedByReserve,
   RESERVE_MAX,
   RESERVE_TOO_LOW,
@@ -45,6 +46,18 @@ describe('one beat', () => {
   it('never goes past the ceiling or below zero', () => {
     expect(breathe(RESERVE_MAX, state({ type: 'ZETSU' }))).toBe(RESERVE_MAX)
     expect(breathe(1, state({ type: 'KEN', on: true }))).toBe(0)
+  })
+
+  it('charges hostile Ren and On through the current defence', () => {
+    expect(pressureCost(state({ type: 'ZETSU' }), 'ren')).toBe(10)
+    expect(pressureCost(state({ type: 'ZETSU' }), 'on')).toBe(16)
+    expect(pressureCost(state({ type: 'KEN', on: true }), 'ren')).toBe(0)
+    expect(breathe(100, state({ type: 'ZETSU' }), 1, 'ren')).toBe(96)
+  })
+
+  it('treats Ko as weak global protection outside its concentrated zone', () => {
+    const ko = state({ type: 'KO', zone: 'hands' })
+    expect(pressureCost(ko, 'ren')).toBe(9)
   })
 })
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { auraFor, CALM, WATCH_EN_RADIUS, type Situation } from './nen'
+import { auraFor, CALM, type Situation } from './nen'
 import type { CastMember, Post } from './types'
 
 const ROOM = 'tier-1-royal-residential-sector-room-1014'
@@ -10,7 +10,11 @@ function post(overrides: Partial<CastMember> & { characterId: string }): Post {
     locations: [ROOM],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: true,
+    nen: {
+      techniques: [],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+    },
     hatsu: [],
     beast: null,
     ...overrides,
@@ -21,12 +25,12 @@ function post(overrides: Partial<CastMember> & { characterId: string }): Post {
 /** The rule that decides who glows, and the only one. */
 describe('who carries an aura', () => {
   it('gives nothing at all to a body the catalogue does not call a user', () => {
-    expect(auraFor(post({ characterId: 'sakata', nen: false }))).toEqual({})
+    expect(auraFor(post({ characterId: 'sakata', nen: null }))).toEqual({})
   })
 
   it('gives nothing to an ordinary soldier even in a room the visitor is casting in', () => {
     const situation = { ...CALM, visitorIn: ROOM, visitorCasting: true, hostileRooms: [] }
-    expect(auraFor(post({ characterId: 'sakata', nen: false }), situation)).toEqual({})
+    expect(auraFor(post({ characterId: 'sakata', nen: null }), situation)).toEqual({})
   })
 })
 
@@ -40,9 +44,18 @@ describe('the conduct at a post', () => {
     expect(look.alert).toBeUndefined()
   })
 
-  it('sweeps a standing En when the role is to watch', () => {
-    const look = auraFor(post({ characterId: 'sakata', role: 'Royal Bodyguard for Prince Woble' }))
-    expect(look.nen?.en).toEqual({ radius: WATCH_EN_RADIUS })
+  it('sweeps only when the dated conduct declares En', () => {
+    const look = auraFor(
+      post({
+        characterId: 'sakata',
+        nen: {
+          techniques: ['En'],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten', concealedWithIn: false, enRadius: 4 },
+        },
+      }),
+    )
+    expect(look.nen?.en).toEqual({ radius: 4 })
   })
 
   it('sweeps nothing where the role is not to watch', () => {
@@ -50,9 +63,9 @@ describe('the conduct at a post', () => {
     expect(look.nen?.en).toBeNull()
   })
 
-  it('reads the French and the English the catalogue writes the same order in', () => {
+  it('never infers a technique from French or English role text', () => {
     for (const role of ['Private Guard of Prince Camilla', 'zodiaque / garde de Beyond']) {
-      expect(auraFor(post({ characterId: 'someone', role })).nen?.en).not.toBeNull()
+      expect(auraFor(post({ characterId: 'someone', role })).nen?.en).toBeNull()
     }
   })
 })
@@ -177,7 +190,15 @@ describe('the conduct of a body the visitor is doing something to', () => {
 })
 
 describe('a body that is hiding', () => {
-  const hidden = post({ characterId: 'illumi', role: 'undercover assassin / identity unknown' })
+  const hidden = post({
+    characterId: 'illumi',
+    role: 'undercover assassin / identity unknown',
+    nen: {
+      techniques: ['Zetsu'],
+      awakenedFromChapter: null,
+      conduct: { mode: 'zetsu', concealedWithIn: false, enRadius: null },
+    },
+  })
 
   it('holds Zetsu whatever the room does', () => {
     const loud = { ...CALM, visitorIn: ROOM, visitorCasting: true, hostileRooms: [ROOM] }
@@ -224,14 +245,22 @@ describe('the body Steal Chain emptied', () => {
 })
 
 describe('a body that veils its aura', () => {
-  const spy = post({ characterId: 'spy', role: 'infiltrateur dans la garde du prince' })
+  const spy = post({
+    characterId: 'spy',
+    role: 'infiltrateur dans la garde du prince',
+    nen: {
+      techniques: ['In'],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: true, enRadius: null },
+    },
+  })
 
   /** A spy has to work: Zetsu would stop it standing its post, so it uses In. */
   it('keeps its Ten and hides it under In, where an assassin closes it in Zetsu', () => {
     const look = auraFor(spy)
     expect(look.aura).toBe('ten')
     expect(look.nen?.in).toBe(true)
-    expect(auraFor(post({ characterId: 'a', role: 'assassin' })).aura).toBe('zetsu')
+    expect(auraFor(post({ characterId: 'a', role: 'assassin' })).aura).toBe('ten')
   })
 
   it('keeps the veil when it raises its aura', () => {
@@ -239,5 +268,18 @@ describe('a body that veils its aura', () => {
     const look = auraFor(spy, loud)
     expect(look.aura).toBe('ren')
     expect(look.nen?.in).toBe(true)
+  })
+})
+
+describe('an ordinary body under aura pressure', () => {
+  it('braces without ever gaining an aura state', () => {
+    const look = auraFor(post({ characterId: 'ordinary', nen: null }), {
+      ...CALM,
+      visitorIn: ROOM,
+      visitorPressure: 'ren',
+    })
+    expect(look).toMatchObject({ reaction: 'brace', alert: true })
+    expect(look.nen).toBeUndefined()
+    expect(look.aura).toBeUndefined()
   })
 })

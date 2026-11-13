@@ -13,7 +13,9 @@
   )
   let profile = $derived(profiles[mapState.selectedTier || 'overview'])
   let unknownCount = $derived.by(() => {
-    const locations = new Map(data.worldState.locations.map((location) => [location.id, location]))
+    const locations = new Map(
+      (data.locations || data.worldState.locations || []).map((location) => [location.id, location]),
+    )
     return data.worldState.presences.filter((presence) => {
       const location = presence.locationId ? locations.get(presence.locationId) : null
       return !location || location.type === 'UNKNOWN'

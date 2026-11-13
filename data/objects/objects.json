@@ -37,6 +37,12 @@
     "category": "kakin-sacred-treasure",
     "firstVisibleChapter": 349,
     "description": "Jarre sacrée utilisée lors de la cérémonie de succession pour faire naître les bêtes gardiennes des princes.",
+    "aura": {
+      "fromChapter": 349,
+      "kind": "succession-ritual",
+      "visibility": "gyo",
+      "sourceChapterId": "ch-349"
+    },
     "sightings": [
       {
         "fromChapter": 406,
@@ -44,6 +50,30 @@
         "precision": "TIER",
         "certainty": "PROBABLE",
         "note": "Chrollo confirme que les trois trésors sacrés sont gardés au Tier 1 ; leur salle exacte n'est pas révélée."
+      }
+    ]
+  },
+  {
+    "id": "woble-water-divination-glass",
+    "canonicalName": "Verre de divination par l'eau",
+    "aliases": ["Water Divination glass"],
+    "category": "nen-training-object",
+    "firstVisibleChapter": 388,
+    "description": "Verre utilisé pendant le cours de Nen de Kurapika dans les quartiers de Woble.",
+    "aura": {
+      "fromChapter": 388,
+      "kind": "water-divination",
+      "visibility": "gyo",
+      "sourceChapterId": "ch-388"
+    },
+    "sightings": [
+      {
+        "fromChapter": 388,
+        "locationSlug": "tier-1-royal-residential-sector-room-1014",
+        "precision": "EXACT_ROOM",
+        "certainty": "CONFIRMED",
+        "tourAnchor": "classroom-table",
+        "note": "Le verre est posé sur la table mobile de la salle de cours de Woble."
       }
     ]
   },

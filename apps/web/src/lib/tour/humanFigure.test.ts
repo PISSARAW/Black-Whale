@@ -5,7 +5,7 @@ import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
 import type { AuraSight } from './auraSight'
 import { auraFor, CALM } from './cast/nen'
-import type { CastMember, Post } from './cast/types'
+import type { CastMember, CastNenProfile, Post } from './cast/types'
 
 const glow = (colour: number, opacity: number) =>
   new MeshBasicMaterial({ color: colour, opacity, transparent: opacity < 1 })
@@ -65,6 +65,11 @@ describe('the aura a passenger of the walk is wearing', () => {
     situation: Parameters<typeof auraFor>[1],
     refracts = true,
     observerSight: AuraSight = 'gyo',
+    nen: CastNenProfile | null = {
+      techniques: [],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+    },
   ) {
     const member: CastMember = {
       characterId: 'sakata',
@@ -72,7 +77,7 @@ describe('the aura a passenger of the walk is wearing', () => {
       locations: ['tier-1-royal-residential-sector-room-1014'],
       role,
       since: 'ch-358',
-      nen: true,
+      nen,
       hatsu: [],
       beast: null,
     }
@@ -103,7 +108,11 @@ describe('the aura a passenger of the walk is wearing', () => {
   const CASTING = { ...CALM, visitorIn: 'room', visitorCasting: true }
 
   it('lays the standing En of a guard on the floor', () => {
-    const guard = figureOf('Royal Bodyguard for Prince Woble', CALM_ROOM)
+    const guard = figureOf('Royal Bodyguard for Prince Woble', CALM_ROOM, true, 'gyo', {
+      techniques: ['En'],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: 4 },
+    })
     expect(guard.root.getObjectByName('nen-en-0')).toBeTruthy()
     expect(guard.root.getObjectByName('nen-en-2')).toBeTruthy()
   })
@@ -138,7 +147,11 @@ describe('the aura a passenger of the walk is wearing', () => {
 
   /** A shimmer around a hidden body would be a detector for Zetsu itself. */
   it('wraps nothing around a body that has put its aura away', () => {
-    const hidden = figureOf('undercover assassin', CASTING)
+    const hidden = figureOf('undercover assassin', CASTING, true, 'gyo', {
+      techniques: ['Zetsu'],
+      awakenedFromChapter: null,
+      conduct: { mode: 'zetsu', concealedWithIn: false, enRadius: null },
+    })
     expect(hidden.root.getObjectByName('nen-aura-glass')).toBeUndefined()
     expect(hidden.root.getObjectByName('nen-en-0')).toBeUndefined()
   })

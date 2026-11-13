@@ -1,10 +1,17 @@
 import { defineConfig, devices } from 'playwright/test'
 
-// Not 3000/3002: those are the ports the dev scripts use, and an e2e run that
-// silently reuses whatever a developer happens to have open there is a run that
-// proves nothing. These are e2e-only.
-const WEB_PORT = 4173
-const ADMIN_PORT = 4174
+// Not 3000/3002: those are the ports the dev scripts use. The process-derived
+// pair also lets two Playwright commands run concurrently without sharing a
+// server or racing while rewriting the same adapter output.
+// Playwright reloads this config in its worker processes, so persist the first
+// PID in the inherited environment rather than recalculating it in each worker.
+const RUN_ID = process.env.BLACK_WHALE_E2E_RUN_ID ?? String(process.pid)
+process.env.BLACK_WHALE_E2E_RUN_ID = RUN_ID
+const PORT_OFFSET = Number(RUN_ID) % 1_000
+const WEB_PORT = 4_200 + PORT_OFFSET * 2
+const ADMIN_PORT = WEB_PORT + 1
+const WEB_OUTPUT = `build-e2e-${RUN_ID}`
+const SVELTE_OUTPUT = `.svelte-kit-e2e-${RUN_ID}`
 
 // The back-office refuses to start in production without a real one; in a test
 // run the value only has to be known to both sides.
@@ -42,7 +49,7 @@ export default defineConfig({
   // at 5.4s, against a dev server that swallowed that click outright.
   webServer: [
     {
-      command: `pnpm --filter @black-whale/web build && pnpm --filter @black-whale/web exec node build/index.js`,
+      command: `BLACK_WHALE_WEB_OUTPUT=${JSON.stringify(WEB_OUTPUT)} BLACK_WHALE_SVELTE_OUTPUT=${JSON.stringify(SVELTE_OUTPUT)} pnpm --filter @black-whale/web build && pnpm --filter @black-whale/web exec node ${JSON.stringify(`${WEB_OUTPUT}/index.js`)}`,
       url: `http://127.0.0.1:${WEB_PORT}/health`,
       reuseExistingServer: !process.env.CI,
       timeout: 300_000,

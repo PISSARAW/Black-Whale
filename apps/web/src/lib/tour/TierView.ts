@@ -1,8 +1,11 @@
 import type * as Three from 'three'
-import { buildTierMesh, type MeshGroup, type TierMesh } from './mesh'
+import { buildTierMesh, type MeshGroup } from './mesh'
 import { walkedPlan, type TourWorld } from './hatsu'
 import { dustOf, type Dust } from './dust'
 import type { Ship } from './blueprint'
+import { lampAirOf } from './lampAir'
+import { conditionedRoomSurface } from './surfaceCondition'
+import { tierAttributesOf, type TierAttributes } from './tierAttributes'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 import { buildRoyalSalonDetails, royalSalonSurfacePlan } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
@@ -76,6 +79,7 @@ export interface TierRoomView {
 export interface BuiltTierView {
   root: Three.Group
   rooms: TierRoomView[]
+  lampAir: Three.Points | null
 }
 export interface TierMaterials {
   surface: Three.Material
@@ -101,6 +105,7 @@ export interface TierMaterials {
    */
   skylit: Three.Material
   dust: Three.PointsMaterial
+  lampAir: Three.ShaderMaterial | null
 }
 interface TierBuild {
   ship: Ship
@@ -143,22 +148,6 @@ interface GeometrySlice {
  * these once and handing the same ones to three hundred geometries is what
  * makes a deck one upload rather than three hundred.
  */
-interface TierAttributes {
-  position: Three.BufferAttribute
-  normal: Three.BufferAttribute
-  color: Three.BufferAttribute
-  sheen: Three.BufferAttribute
-  edge: Three.BufferAttribute
-  seam: Three.BufferAttribute
-  pattern: Three.BufferAttribute
-  fitting: Three.BufferAttribute
-  fittingColor: Three.BufferAttribute
-  pane: Three.BufferAttribute
-  paneColor: Three.BufferAttribute
-  /** `null` on the three decks of five with no opening in them. */
-  sky: Three.BufferAttribute | null
-}
-
 export interface RoomDetailOptions {
   THREE: typeof Three
   plan: ReturnType<typeof walkedPlan>
@@ -331,7 +320,12 @@ export class TierView {
     const mesh = buildTierMesh(detailedPlan, {
       reveal,
     })
-    const shared = this.attributes(mesh)
+    const shared = tierAttributesOf({
+      THREE: this.THREE,
+      mesh,
+      plan: detailedPlan,
+      surface: this.materials.surface,
+    })
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
 
@@ -353,7 +347,16 @@ export class TierView {
       if (room.motes) root.add(room.motes)
       rooms.push(room)
     }
-    return { root, rooms }
+    const lampAir = reveal
+      ? null
+      : lampAirOf({
+          THREE: this.THREE,
+          mesh,
+          plan: detailedPlan,
+          material: this.materials.lampAir,
+        })
+    if (lampAir) root.add(lampAir)
+    return { root, rooms, lampAir }
   }
 
   /**
@@ -381,6 +384,7 @@ export class TierView {
     geometry.setAttribute('normal', shared.normal)
     geometry.setAttribute('color', shared.color)
     geometry.setAttribute('aSheen', shared.sheen)
+    if (shared.traffic) geometry.setAttribute('aTraffic', shared.traffic)
     // A room has a window exactly when it draws glass, so the same test picks
     // the attribute and the patched material — and picks neither under the
     // reveal, where the bake is off and there is no pool to put back.
@@ -391,9 +395,19 @@ export class TierView {
     const plan = ship.plans.get(tierId)
     const dust = space && plan && !reveal ? dustOf(space, plan.tier, dustScale) : null
 
+    const surfaceMaterial = glazed ? this.materials.skylit : this.materials.surface
+    const roomMesh = conditionedRoomSurface({
+      THREE: this.THREE,
+      geometry,
+      material: surfaceMaterial,
+      space,
+      plan,
+      reveal,
+    })
+
     return {
       spaceId: group.spaceId,
-      mesh: new this.THREE.Mesh(geometry, glazed ? this.materials.skylit : this.materials.surface),
+      mesh: roomMesh,
       edges: new this.THREE.LineSegments(
         this.geometry(slice(shared.edge, group.edgeStart, group.edgeCount)),
         this.materials.edge,
@@ -422,26 +436,6 @@ export class TierView {
       dust,
       details: null,
       doors: null,
-    }
-  }
-
-  /** The deck's buffers, made once and shared by every room of it. */
-  private attributes(mesh: TierMesh): TierAttributes {
-    const of = (data: Float32Array, size = 3) => new this.THREE.BufferAttribute(data, size)
-    return {
-      position: of(mesh.positions),
-      normal: of(mesh.normals),
-      color: of(mesh.colors),
-      sheen: of(mesh.sheens, 1),
-      edge: of(mesh.edges),
-      seam: of(mesh.seams),
-      pattern: of(mesh.patterns),
-      fitting: of(mesh.fittings),
-      fittingColor: of(mesh.fittingColors),
-      pane: of(mesh.panes),
-      paneColor: of(mesh.paneColors),
-      // Nothing is made, and nothing is uploaded, on a deck with no opening.
-      sky: mesh.skies.length ? of(mesh.skies, 1) : null,
     }
   }
 
@@ -485,6 +479,7 @@ export class TierView {
       if (room.details) disposeBanquetDetails(room.details)
       if (room.doors) disposeBanquetDetails(room.doors)
     }
+    built.lampAir?.geometry.dispose()
   }
 
   private geometry({ position, start, count, centre, radius }: GeometrySlice) {

@@ -24,7 +24,10 @@
   let unknownCharacters = $derived.by(() => {
     const worldState = $page.data.worldState
     const locations = new Map<string, MapLocation>(
-      ((worldState?.locations || []) as MapLocation[]).map((location) => [location.id, location]),
+      (($page.data.locations || worldState?.locations || []) as MapLocation[]).map((location) => [
+        location.id,
+        location,
+      ]),
     )
     const bodies = (worldState?.bodies || []) as MapBody[]
     const characters = (worldState?.characters || []) as MapCharacter[]

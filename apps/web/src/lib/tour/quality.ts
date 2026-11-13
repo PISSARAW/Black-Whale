@@ -104,6 +104,10 @@ export interface QualityProfile {
    * the geometry and the buffers are identical either way.
    */
   surfaceDetail: boolean
+  /** Per-room wear, grime, traffic polish and broken grazing reflection. */
+  surfaceCondition: boolean
+  /** Additive lamp halos whose radius follows the room's air load. */
+  lampAir: boolean
   /**
    * The lens artefacts inside the grade pass: the halation, the dispersion and
    * the grain. `high` only, and for one of the three — six extra taps per pixel
@@ -162,6 +166,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     godRays: false,
     auraDistortion: false,
     surfaceDetail: false,
+    surfaceCondition: false,
+    lampAir: false,
     lens: false,
     // The per-vertex sheen shader compiles on Chrome/ANGLE but leaves the
     // completed WebGL frame black on the production driver. Keep the material
@@ -184,6 +190,8 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     godRays: true,
     auraDistortion: true,
     surfaceDetail: true,
+    surfaceCondition: true,
+    lampAir: true,
     lens: true,
     // See the low tier: this is a driver-stability switch, not a quality knob.
     sheen: false,

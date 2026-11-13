@@ -191,10 +191,7 @@
     {/if}
 
     {#if isLocalZoom && hasDetailedMap}
-      <button
-        class="absolute top-4 left-4 px-3 py-1 bg-[#1a202c] text-[#e2e8f0] border border-[#4a5568] rounded shadow hover:bg-[#2d3748] z-10 font-bold pointer-events-auto"
-        onclick={() => mapState.selectLocation(null)}
-      >
+      <button class="back-to-tier" onclick={() => mapState.selectLocation(null)}>
         {$t.mapUi.backToTier}
       </button>
     {/if}
@@ -248,6 +245,26 @@
     border: 1px solid rgba(83, 105, 113, 0.28);
     border-radius: 0.65rem;
     background: #080c10;
+  }
+  .back-to-tier {
+    position: absolute;
+    z-index: 10;
+    top: 1rem;
+    left: 1rem;
+    min-height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: 0.35rem;
+    padding: 0.45rem 0.7rem;
+    background: var(--surface-panel);
+    color: var(--text-secondary);
+    font-weight: 700;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.28);
+  }
+  .back-to-tier:hover {
+    background: var(--surface-raised);
+    color: var(--accent-gold-bright);
   }
   .zoom-controls {
     position: absolute;

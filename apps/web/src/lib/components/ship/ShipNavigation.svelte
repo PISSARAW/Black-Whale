@@ -142,6 +142,10 @@
     .deck-row {
       padding-inline: 0.35rem;
     }
+    .deck-row:has(> p) {
+      display: none;
+      min-height: 0;
+    }
     .deck-row p {
       padding-inline: 0.5rem;
       font-size: 0.7rem;

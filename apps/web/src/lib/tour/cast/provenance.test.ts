@@ -25,7 +25,7 @@ function member(overrides: Partial<CastMember> & { characterId: string }): CastM
     locations: ['tier-1-royal-residential-sector-room-1014'],
     role: 'Nen teacher/protector',
     since: 'ch-358',
-    nen: true,
+    nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } },
     hatsu: [],
     beast: null,
     ...overrides,

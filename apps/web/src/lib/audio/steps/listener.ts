@@ -1,8 +1,9 @@
 import { distanceToBoundary } from '$lib/tour/geometry'
 import type { Space, Vec2 } from '$lib/tour/types'
 
-import { setFacing, setListener } from '../space'
+import { listenerNow, setFacing, setListener } from '../space'
 import { orientEnvironment } from './environment'
+import { orientRoomAmbience } from './roomAmbience'
 import { currentGraph, setCurrentFacing } from './graph'
 import { nearWall } from './rooms'
 
@@ -63,5 +64,8 @@ export function lookFrom(heading: number, pitch: number): void {
   // pointing the way it was left. See `setCurrentFacing`.
   setCurrentFacing(facing)
   const walk = currentGraph()
-  if (walk) orientEnvironment(walk.env, facing)
+  if (walk) {
+    orientEnvironment(walk.env, facing)
+    orientRoomAmbience(walk.ambience, listenerNow())
+  }
 }

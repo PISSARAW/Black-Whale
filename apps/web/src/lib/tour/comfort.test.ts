@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { get } from 'svelte/store'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   EXPOSURE_RANGE,
   FOV_RANGE,
@@ -8,8 +9,13 @@ import {
   SNAP_ANGLE_RANGE,
   WALK_PACE_RANGE,
   comfortDefaults,
+  comfort,
   readComfort,
+  reducedMotion,
+  watchReducedMotion,
 } from './comfort'
+
+afterEach(() => vi.unstubAllGlobals())
 
 describe('comfortDefaults', () => {
   it('starts the walk wide and continuous by default', () => {
@@ -48,6 +54,27 @@ describe('readComfort', () => {
     const stored = readComfort(JSON.stringify({ fov: 80, snapTurn: true }), false)
     expect(stored.fov).toBe(80)
     expect(stored.snapTurn).toBe(true)
+  })
+
+  it('lets the system preference override an older lively setting', () => {
+    const stored = readComfort(
+      JSON.stringify({
+        fov: FOV_RANGE[1],
+        sensitivity: SENSITIVITY_RANGE[1],
+        snapTurn: false,
+        jumpOnly: false,
+        headBob: HEAD_BOB_RANGE[1],
+        walkPace: WALK_PACE_RANGE[1],
+      }),
+      true,
+    )
+    const calm = comfortDefaults(true)
+    expect(stored.snapTurn).toBe(true)
+    expect(stored.jumpOnly).toBe(true)
+    expect(stored.headBob).toBe(0)
+    expect(stored.fov).toBeLessThanOrEqual(calm.fov)
+    expect(stored.sensitivity).toBeLessThanOrEqual(calm.sensitivity)
+    expect(stored.walkPace).toBeLessThanOrEqual(calm.walkPace)
   })
 
   it('fills in a field the stored entry does not carry', () => {
@@ -167,5 +194,31 @@ describe('readComfort', () => {
     // Never to nothing: an exposure of zero is a black screen, which is not a
     // comfort setting, it is the walk being broken by its own panel.
     expect(EXPOSURE_RANGE[0]).toBeGreaterThan(0)
+  })
+})
+
+describe('the live system preference', () => {
+  it('updates the store and reapplies the ceiling when matchMedia changes', () => {
+    let listener = () => {}
+    const query = {
+      matches: false,
+      addEventListener: (_type: string, next: () => void) => (listener = next),
+      removeEventListener: vi.fn(),
+    }
+    vi.stubGlobal('window', { matchMedia: () => query })
+    vi.stubGlobal('localStorage', {
+      getItem: () => JSON.stringify({ snapTurn: false, headBob: HEAD_BOB_RANGE[1] }),
+    })
+
+    const stop = watchReducedMotion()
+    expect(get(reducedMotion)).toBe(false)
+    expect(get(comfort).headBob).toBe(HEAD_BOB_RANGE[1])
+
+    query.matches = true
+    listener()
+    expect(get(reducedMotion)).toBe(true)
+    expect(get(comfort).snapTurn).toBe(true)
+    expect(get(comfort).headBob).toBe(0)
+    stop()
   })
 })

@@ -3,6 +3,7 @@ import type { AbilityContext } from '@black-whale/nen-engine'
 import { createEmptyWorld, type StoryCursor, type WorldState } from '@black-whale/canon-engine'
 import {
   asserted,
+  canonSource,
   defineAbility,
   elasticConnection,
   hypothesis,
@@ -86,6 +87,15 @@ const wheel = () => ability.getActionWheel(context('attach'))
 const entry = (id: string) => wheel().find((item) => item.id === id)
 
 describe('grammaire d’emploi', () => {
+  it('normalises legacy citations into structured canon sources', () => {
+    expect(canonSource('ch. 39 — le filament')).toEqual({
+      kind: 'chapter',
+      chapter: 39,
+      label: 'ch. 39 — le filament',
+    })
+    expect(canonSource('databook officiel')).toMatchObject({ kind: 'databook' })
+  })
+
   it('shows the source of a use the manga draws', () => {
     const conditions = ability.plan(context('attach')).conditions
     expect(conditions).toContainEqual(

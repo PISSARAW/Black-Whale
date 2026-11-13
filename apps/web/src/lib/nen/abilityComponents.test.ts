@@ -1,21 +1,16 @@
 import { describe, expect, it } from 'vitest'
-import { abilityModules } from '@black-whale/ability-modules'
 import { ABILITY_COMPONENTS, componentFor } from './abilityComponents'
+import { ABILITY_PRESENTATIONS } from './abilityPresentations.gen'
 
-/**
- * The keys the modules actually publish, in the shape `getUIComponent` gives
- * them. `defineAbility` invents `${id}-ui` for anything that does not declare
- * one, so most of these are placeholders and are expected to resolve to
- * nothing at all.
- */
-const declared = abilityModules.map((module) => ({
-  id: module.manifest.id,
-  key: module.getUIComponent().componentKey,
-  custom: module.getInteractionManifest()?.customComponent ?? null,
+/** The exhaustive keys the modules publish through `getUIComponent`. */
+const declared = ABILITY_PRESENTATIONS.map(({ abilityId, componentKey }) => ({
+  id: abilityId,
+  key: componentKey,
 }))
 
 describe('the map from a componentKey to the thing that draws it', () => {
-  it('resolves every key it holds, and nothing it does not', () => {
+  it('resolves all seventy declared composed views, and nothing else', () => {
+    expect(Object.keys(ABILITY_COMPONENTS)).toHaveLength(70)
     for (const key of Object.keys(ABILITY_COMPONENTS)) {
       expect(componentFor(key), `${key} maps to nothing`).toBeTruthy()
     }
@@ -27,23 +22,24 @@ describe('the map from a componentKey to the thing that draws it', () => {
   it('is not holding a key no ability asks for', () => {
     // A view nobody names is a view nobody reaches, which is worse than a
     // missing one: it looks finished and is not wired to anything.
-    const asked = new Set(declared.flatMap(({ key, custom }) => [key, custom].filter(Boolean)))
+    const asked = new Set(declared.map(({ key }) => key))
     for (const key of Object.keys(ABILITY_COMPONENTS)) {
       expect(asked.has(key), `nothing declares ${key}`).toBe(true)
     }
   })
 
-  it('draws Contagion, which is the ability that asked first', () => {
+  it('draws Contagion with the view its manifest names', () => {
     const contagion = declared.find((entry) => entry.id === 'contagion')!
     expect(contagion.key).toBe('ContagionDashboard')
-    expect(contagion.custom).toBe('ContagionDashboard')
     expect(componentFor(contagion.key)).toBeTruthy()
   })
 
-  it('leaves every other ability to the generic rendering', () => {
-    // Stated rather than assumed: the map is meant to be nearly empty, and a
-    // day when it is not is a day somebody should have to change this test.
-    const drawn = declared.filter((entry) => componentFor(entry.key) !== null)
-    expect(drawn.map((entry) => entry.id)).toEqual(['contagion'])
+  it('leaves no declared view unresolved', () => {
+    expect(declared.filter(({ key }) => componentFor(key) === null)).toEqual([])
   })
+
+  it('loads every declared view without an eager bundle registry', async () => {
+    const loaded = await Promise.all(Object.values(ABILITY_COMPONENTS).map((load) => load()))
+    expect(loaded.every(({ default: view }) => Boolean(view))).toBe(true)
+  }, 15_000)
 })

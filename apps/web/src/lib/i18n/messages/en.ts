@@ -973,6 +973,9 @@ export const en = {
           'Nothing but air between you and them. The blow travels in a surface; it does not cross a well.',
         'only-birds':
           'The manipulation takes birds. Aimed at a person it holds nothing — and a bird has nothing to deliver to somebody who is not expecting a Zodiac’s post.',
+        'allied-soldier': 'Stand By Me can only be lent to one of Benjamin’s allied soldiers.',
+        'benjamin-alive':
+          'Bohemian Rhapsody requires Benjamin’s death; the canonical tour does not simulate it.',
       },
       tells: {
         'declares-aura': 'The catalogue makes them a Nen user.',
@@ -1804,7 +1807,7 @@ export const en = {
       breadcrumb: "Morena's Game",
       title: "Morena's Game",
       intro:
-        'Ch. 407-410 sits Borksen down in the leader’s office of the Heil-Ly hideout and deals twelve cards between them. Seven of them are questions, and they are Morena’s. Five are answers, and they are yours. You spend a question a round to learn what you are agreeing to; she takes an answer a round at random. Whatever is left when the questions run out is the answer you gave.',
+        'Ch. 407-410 sits Borksen down in the leader’s office of the Heil-Ly hideout and deals twelve cards between them. Seven of them are questions, and they are Morena’s. Five are answers, and they are yours. You spend a question a round to learn what you are agreeing to; she takes an answer a round at random. The last answer card remaining is the answer you gave.',
       source:
         'Ch. 407-410 — the negotiation game, its twelve cards, the kiss traded for a card out of the graveyard, and the card Morena marked before dealing.',
       seat: 'The room is the hideout the deck plans draw. The table, and the chair on each side of it, are what the chapters put in it.',
@@ -1821,6 +1824,12 @@ export const en = {
         advanced: 'Advanced options',
         back: 'Back to the table',
         leave: 'Leave the table',
+        resumeTitle: 'A hand is waiting',
+        resumeBody: 'The table is exactly as you left it.',
+        resume: 'Resume the hand',
+        abandonSave: 'Abandon this hand',
+        carrying: (name: string) => `${name} will take a seat at this table.`,
+        incompatible: (name: string) => `${name} is in your dock, but has no move at this table.`,
         deck: 'The deal',
         marked: 'As she deals it — one card marked',
         markedNote:
@@ -1959,7 +1968,9 @@ export const en = {
 
       deal: {
         title: 'She leans across the table',
-        body: 'One kiss, and you may take any card back out of the graveyard. She does not say that the kiss is one of the three conditions of Contagion in its own right. It is.',
+        body: 'One kiss, and you may take any card back out of the graveyard.',
+        bodyKnown:
+          'One kiss, and you may take any card back out of the graveyard. You now know the kiss is one of Contagion’s three conditions.',
         take: 'Take the deal',
         refuse: 'Refuse it',
         pick: 'And take back',
@@ -1992,6 +2003,30 @@ export const en = {
           title: 'Yes — and you did not say it',
           body: 'You reached for the card she marked before she dealt it. The marking is the cheat, and cheating is what lets the manipulative half of Contagion in: the answer is narrowed to Yes or No, and she is the one who picks.',
         },
+      },
+
+      dossier: {
+        title: 'The seven-question dossier',
+        progress: (known: number) => `${known} of 7 answers discovered`,
+        unknown: 'Answer not yet known',
+      },
+
+      epilogue: {
+        title: 'The third condition',
+        body: 'The Yes and the kiss are secured. Morena opens another door and asks you to watch.',
+        witness: 'Witness the murder',
+        leave: 'Leave without watching',
+        left: 'You leave before the murder. The third condition remains empty.',
+        recruited: 'Contagion is complete. You now occupy one network slot at level 0.',
+        network: 'Contagion network',
+        you: 'You',
+        level: (level: number) => `Level ${level}`,
+        kills: (kills: number) => `${kills} kill${kills === 1 ? '' : 's'}`,
+        record: 'Record a later murder',
+        ordinary: 'Ordinary person · +1',
+        nenUser: 'Nen user · +10',
+        prince: 'Prince · +50',
+        ability: 'Unique ability unlocked at level 20.',
       },
 
       challenge: {
@@ -3534,6 +3569,24 @@ export const en = {
       `${identified} identified · ${unknown} unknown`,
     everyBodyMapped: 'Every tracked body has a mapped location at this event.',
     directObservation: 'Direct observation',
+    presenceGroup: (count: number, location: string) =>
+      `${count} ${count === 1 ? 'presence' : 'presences'} at ${location}`,
+    presenceList: 'People at this location',
+    characterDetails: 'Character position details',
+    presenceRecord: 'Presence record',
+    location: 'Location',
+    certaintyLabel: 'Certainty',
+    temporalStatus: 'Temporal status',
+    openCharacterProfile: 'Open character profile',
+    provenance: 'Provenance',
+    eventChanges: (count: number) => `${count} changes at the next event`,
+    delta: { moved: 'Moved', appeared: 'Entered', disappeared: 'Left', dead: 'Dead' },
+    certainty: {
+      CONFIRMED: 'Confirmed',
+      PROBABLE: 'Probable',
+      LAST_KNOWN: 'Last known',
+      UNKNOWN: 'Unknown',
+    },
   },
 
   perspectiveUi: {
@@ -3654,6 +3707,9 @@ export const en = {
       exitFocus: 'Exit expanded view',
       previous: 'Previous event',
       next: 'Next event',
+      play: 'Play timeline',
+      pause: 'Pause timeline',
+      showChanges: 'Show changes to the next event',
       selectEvent: 'Choose an event',
       advancedTimeline: 'Perspective timelines',
       activeFilters: (count: number) => `${count} active`,
@@ -4063,6 +4119,18 @@ export const en = {
     activateAria: (name: string) => `Activate ${name} across the site`,
     instructions: 'How to use',
     cost: (cost: string | number) => `Cost: ${cost}`,
+    search: 'Search an ability, owner, or rule',
+    allCategories: 'All categories',
+    allOwners: 'All owners',
+    sources: 'Source chapters',
+    uses: 'Uses',
+    preview: 'Canonical preview',
+    actionWheel: 'Hatsu uses',
+    conditionUnmet: 'Condition not met',
+    targets: 'Targets',
+    effects: 'Effects',
+    tryTour: 'Try in the tour',
+    results: (count: number) => `${count} ${count === 1 ? 'ability' : 'abilities'}`,
     empty: 'No abilities found.',
   },
 
@@ -4581,7 +4649,6 @@ export const en = {
         'Who maintains Black Whale, how Hunter × Hunter facts are verified, how uncertainty and spoilers are handled, and how to submit corrections.',
     },
   },
-
 
   investigation: {
     replay: {

@@ -6,6 +6,7 @@
   import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
   import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
   import TourMelodyConcert from '$lib/components/tour/TourMelodyConcert.svelte'
+  import TourSecretCard from '$lib/components/tour/TourSecretCard.svelte'
   import { concertWorld, type ConcertPerformance } from '$lib/tour/melodyConcert'
   import {
     applyMangaView,
@@ -13,8 +14,8 @@
     watchMangaRequest,
   } from '$lib/tour/mangaRequest.svelte'
   import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
-  import { activeHatsu } from '$lib/nen/hatsuState'
-  import { HATSU_PROFILES, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState'
+  import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { link, parsePathname, t } from '$lib/i18n'
   import { locale } from '$lib/i18n'
@@ -36,7 +37,10 @@
   import { TourKeyboardController } from '$lib/tour/pageKeyboard'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
   import { scarletWashOf, TourWorldTicker } from '$lib/tour/pageWorldTicker'
-  import { TourHatsuSession } from '$lib/tour/pageHatsuSession.svelte'
+  import {
+    TourHatsuSession,
+    type AppliedTourNenTransition,
+  } from '$lib/tour/pageHatsuSession.svelte'
   import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
   import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
   import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
@@ -74,6 +78,11 @@
     tserriednichRouteUrl,
   } from '$lib/tour/tserriednichRoute'
   import type { PageData } from './$types'
+  import { tourWorldMode } from '$lib/tour/simulation/mode'
+  import { createTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
+  import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
+  import { useSystemicNen } from '$lib/tour/simulation/systemicNen'
+  import { advanceDynamicEvents } from '$lib/tour/simulation/events'
 
   // The walk is no longer only a ship: the server hands it the cast of the
   // canon at the event under the reader's cap. See ADR-003.
@@ -98,6 +107,9 @@
   let activeMangaView = $state<MangaView | null>(untrack(() => requestedMangaView))
   const initialTierId = untrack(() => initialTierForRequest(ship, $page.url))
   const navigation = new TourNavigationState(ship, initialTierId)
+  const tourMode = $derived(tourWorldMode($page.url.searchParams.get('world')))
+  let simulation = $state<TourSimulationV1 | null>(null)
+  let previousPressure: 'none' | 'ren' | 'on' = 'none'
   const routeActive = $derived($page.url.searchParams.get('route') === TSERRIEDNICH_ROUTE_ID)
   const routeHref = $derived.by(() => {
     const url = tserriednichRouteUrl($page.url)
@@ -247,13 +259,15 @@
   onMount(() => {
     loadComfort()
     chrome.calm = prefersReducedMotion()
+    const requested = hatsuById(new URLSearchParams(window.location.search).get('hatsu'))
+    if (requested) activateHatsu(requested)
   })
   onDestroy(() => {
     chrome.dispose()
   })
   let world = $state<TourWorld>(EMPTY_WORLD)
   let concert = $state<ConcertPerformance>({ mode: null, playing: false })
-  const sceneWorld = $derived(concertWorld(world, concert))
+  const sceneWorld = $derived({ ...concertWorld(world, concert), vestiges: cast.vestiges })
   hatsuAudio.watch(() => sceneWorld)
   let now = $state(Date.now())
   $effect(() => {
@@ -317,7 +331,7 @@
   })
   const casting = new TourCastController({
     read: () => ({
-      world,
+      world: { ...world, vestiges: cast.vestiges },
       ship,
       activeKind: technique?.kind ?? null,
       pages: openPages,
@@ -339,6 +353,54 @@
       return [$t.tour.hatsu.vow.ruleA(subjectName), $t.tour.hatsu.vow.ruleB(subjectName)]
     },
   })
+  function projectNen(applied: AppliedTourNenTransition) {
+    const view = castView
+    const pressure = applied.nen.on ? 'on' : applied.nen.mode === 'ren' ? 'ren' : 'none'
+    const rising = previousPressure === 'none' && pressure !== 'none'
+    previousPressure = pressure
+    const here = view.walking.filter((post) => post.spaceId === currentSpace?.id)
+    if (applied.action.type === 'EN' && applied.action.radius !== null)
+      for (const post of view.walking) {
+        const distance = Math.hypot(post.at[0] - position[0], post.at[1] - position[1])
+        if (distance <= applied.action.radius)
+          hatsuSession.note({ code: 'EN_CONTACT', name: post.member.name })
+      }
+    if (rising)
+      for (const post of here)
+        hatsuSession.note({
+          code: 'PRESSURE_WITNESS',
+          name: post.member.name,
+          pressure: pressure === 'on' ? 'on' : 'ren',
+        })
+    if (!simulation) return
+    const result = useSystemicNen(
+      simulation,
+      { ...applied, pressureRising: rising },
+      {
+        witnesses: here.flatMap((post) =>
+          post.member.factionId
+            ? [
+                {
+                  id: post.member.characterId,
+                  factionId: post.member.factionId,
+                  spaceId: post.spaceId,
+                  detectsConcealedVisitor: Boolean(
+                    view.situation.sensedBy[post.member.characterId],
+                  ),
+                  highSecurity: post.tierId === 'tier-1' || post.spaceId.includes('security'),
+                },
+              ]
+            : [],
+        ),
+      },
+    )
+    simulation = result.state
+    for (const event of result.scheduled)
+      hatsuSession.note({
+        code: event,
+        spaceId: currentSpace?.id ?? simulation.player.spaceId,
+      })
+  }
   const hatsuSession = new TourHatsuSession({
     readActivation: () => ({
       ship,
@@ -368,9 +430,29 @@
       subjectId === 'self'
         ? $t.tour.hatsu.reports.vowBroken($t.tour.hatsu.vow.self)
         : $t.tour.hatsu.reports.vowBroken(nameOf(ship.spaces.get(subjectId)!)),
+    onNenApplied: projectNen,
   })
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
+  onMount(() => {
+    if (tourMode === 'CANONICAL_VISIT') return
+    const stored = loadTourSimulation(localStorage)
+    simulation =
+      stored?.mode === tourMode
+        ? stored
+        : createTourSimulation({
+            id: `${tourMode.toLowerCase()}:tour`,
+            mode: tourMode,
+            spaceId: currentSpace?.id,
+          })
+    hatsuSession.nen = simulation.player.nen
+    hatsuSession.reserve = simulation.player.aura
+    previousPressure = hatsuSession.nen.on ? 'on' : hatsuSession.nen.mode === 'ren' ? 'ren' : 'none'
+  })
+  $effect(() => {
+    if (typeof localStorage !== 'undefined' && simulation)
+      saveTourSimulation(localStorage, simulation)
+  })
   function cycleDouble() {
     hatsuSession.turn('guardian')
   }
@@ -410,6 +492,11 @@
   const turnTheRibbon = casting.turnRibbon
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
+    if (simulation && spaceId) {
+      simulation = structuredClone(simulation)
+      simulation.player.spaceId = spaceId
+      simulation.revision += 1
+    }
     // Walking out ends everything the walk was holding on anybody, and closes
     // the exchange with them: ADR-004 §2.3, kept by the mechanism rather than
     // by discipline.
@@ -582,11 +669,11 @@
     scarletWashOf(world.scarlet, (hours) => $t.nen.lifeConsumed(hours.toLocaleString($locale))),
   )
 
-  const castView: TourCastView = new TourCastView({
+  const castView = new TourCastView({
     ship,
     read: () => ({
       cast,
-      world,
+      world: { ...world, vestiges: cast.vestiges },
       tierId,
       visitorIn: currentSpace?.id ?? null,
       casting: Boolean(technique),
@@ -600,7 +687,7 @@
       // Not a hold: emptied by Steal Chain for as long as the book has it.
       drained: world.book.stolenFrom ? [world.book.stolenFrom] : [],
     }),
-    readVisitor: () => ({ at: position, nen: hatsuSession.nen }),
+    readVisitor: () => ({ at: position, nen: hatsuSession.nen, awakened: hatsuSession.awakened }),
     updateWorld: (next) => (world = next),
   })
   /**
@@ -709,7 +796,21 @@
     ticker.consoleDay,
     ticker.scarletSecond,
     ticker.copyHour,
-    hatsuSession.breathe,
+    () => hatsuSession.breathe(castView.pressureAtVisitor),
+    () => {
+      if (!simulation) return
+      const before = new Set(simulation.incidents)
+      const knowledgeBefore = new Set(simulation.player.knowledge)
+      simulation = advanceDynamicEvents(simulation, 1)
+      simulation.player.aura = hatsuSession.reserve
+      simulation.player.nen = hatsuSession.nen
+      for (const incident of simulation.incidents)
+        if (!before.has(incident) && incident.startsWith('security-sweep:'))
+          hatsuSession.note({ code: 'SECURITY_SWEEP', spaceId: incident.slice(15) })
+      for (const knowledge of simulation.player.knowledge)
+        if (!knowledgeBefore.has(knowledge) && knowledge.startsWith('rumor:'))
+          hatsuSession.note({ code: 'RUMOR_SPREAD', spaceId: knowledge.slice(6) })
+    },
   ])
   /**
    * Everybody is let go of when the aura comes down.
@@ -927,6 +1028,13 @@
       flash,
       auraColour: technique?.color ?? null,
       ...hatsuSession.scene,
+      french,
+      paceMultiplier:
+        hatsuSession.staggeredUntil > Date.now()
+          ? 0.45
+          : !hatsuSession.awakened && castView.pressureAtVisitor !== 'none'
+            ? 0.65
+            : 1,
       aiming: Boolean(technique),
       selfCastable,
       reveal: chrome.reveal,
@@ -958,6 +1066,7 @@
       loadingLabel: $t.tour.loading,
       unsupportedLabel: $t.tour.unsupported,
       extras: castView.apparitions,
+      roomOccupancy: castView.occupancy,
       // Taking hold of a beast is the one thing §2.4 lets one do: it answers,
       // and nothing else in the ship changes.
       onPick: (id) => castView.speak(id),
@@ -1061,3 +1170,7 @@
   onSelect={selectOnPlan}
   onGo={goToSpace}
 />
+
+{#if castView.secret}
+  <TourSecretCard secret={castView.secret} {french} onClose={() => (castView.secret = null)} />
+{/if}

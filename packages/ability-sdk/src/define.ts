@@ -210,6 +210,9 @@ export function defineAbility(def: AbilityDefinition): NenAbilityModule {
       abilityId: def.id,
       visibility: useVisibility(action),
       hint: action.hint ?? useHint(action),
+      ...(action.evidence && action.evidence.kind !== 'hypothesis'
+        ? { source: action.evidence.source }
+        : {}),
     }))
     if (fromActions.length > 0) return fromActions
     // An ability with a single undifferentiated effect still needs somewhere to

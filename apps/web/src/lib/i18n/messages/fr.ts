@@ -884,6 +884,9 @@ export const fr: Messages = {
           'Rien que de l’air entre vous et lui. Le coup circule dans une surface ; il ne traverse pas un vide.',
         'only-birds':
           'La manipulation ne prend que les oiseaux. Visant une personne, elle ne tient rien — et un oiseau n’a rien à remettre à quelqu’un qui n’attend pas le courrier d’un Zodiaque.',
+        'allied-soldier': 'Stand By Me ne peut être prêté qu’à un soldat allié de Benjamin.',
+        'benjamin-alive':
+          'Bohemian Rhapsody exige la mort de Benjamin ; la visite canonique ne la simule pas.',
       },
       tells: {
         'declares-aura': 'Le catalogue en fait un utilisateur de Nen.',
@@ -1663,7 +1666,7 @@ export const fr: Messages = {
       breadcrumb: 'Le jeu de Morena',
       title: 'Le jeu de Morena',
       intro:
-        'Les chap. 407-410 assoient Borksen dans le bureau du chef de la planque Heil-Ly et étalent douze cartes entre elles. Sept sont des questions, et elles sont à Morena. Cinq sont des réponses, et elles sont à vous. Vous dépensez une question par tour pour savoir à quoi vous consentez ; elle retire une réponse par tour, au hasard. Ce qui reste quand les questions s’épuisent est la réponse que vous avez donnée.',
+        'Les chap. 407-410 assoient Borksen dans le bureau du chef de la planque Heil-Ly et étalent douze cartes entre elles. Sept sont des questions, et elles sont à Morena. Cinq sont des réponses, et elles sont à vous. Vous dépensez une question par tour pour savoir à quoi vous consentez ; elle retire une réponse par tour, au hasard. La dernière carte-réponse restante est la réponse que vous avez donnée.',
       source:
         'Chap. 407-410 — la partie de négociation, ses douze cartes, le baiser échangé contre une carte du cimetière, et la carte que Morena a marquée avant de distribuer.',
       seat: 'La pièce est la planque que dessinent les plans de pont. La table, et la chaise de chaque côté, sont ce que les chapitres y mettent.',
@@ -1680,6 +1683,13 @@ export const fr: Messages = {
         advanced: 'Options avancées',
         back: 'Revenir à la table',
         leave: 'Quitter la table',
+        resumeTitle: 'Une main vous attend',
+        resumeBody: 'La table est restée exactement dans l’état où vous l’avez laissée.',
+        resume: 'Reprendre la main',
+        abandonSave: 'Abandonner cette main',
+        carrying: (name) => `${name} prendra place à cette table.`,
+        incompatible: (name) =>
+          `${name} est dans votre dock, mais n’a aucun coup à jouer à cette table.`,
         deck: 'La donne',
         marked: 'Telle qu’elle distribue — une carte marquée',
         markedNote:
@@ -1824,7 +1834,9 @@ export const fr: Messages = {
 
       deal: {
         title: 'Elle se penche par-dessus la table',
-        body: 'Un baiser, et vous reprenez la carte de votre choix dans le cimetière. Elle ne précise pas que le baiser est à lui seul l’une des trois conditions de Contagion. Il l’est.',
+        body: 'Un baiser, et vous reprenez la carte de votre choix dans le cimetière.',
+        bodyKnown:
+          'Un baiser, et vous reprenez la carte de votre choix dans le cimetière. Vous savez désormais que le baiser est l’une des trois conditions de Contagion.',
         take: 'Accepter le marché',
         refuse: 'Refuser',
         pick: 'Et reprendre',
@@ -1857,6 +1869,32 @@ export const fr: Messages = {
           title: 'Oui — et vous ne l’avez pas dit',
           body: 'Vous avez porté la main sur la carte qu’elle avait marquée avant de distribuer. Le marquage est la triche, et la triche est ce qui laisse entrer la composante manipulatrice de Contagion : la réponse est réduite à Oui ou Non, et c’est elle qui choisit.',
         },
+      },
+
+      dossier: {
+        title: 'Dossier des sept questions',
+        progress: (known) =>
+          `${known} réponse${known > 1 ? 's' : ''} sur 7 découverte${known > 1 ? 's' : ''}`,
+        unknown: 'Réponse encore inconnue',
+      },
+
+      epilogue: {
+        title: 'La troisième condition',
+        body: 'Le Oui et le baiser sont acquis. Morena ouvre une autre porte et vous demande de regarder.',
+        witness: 'Observer le meurtre',
+        leave: 'Partir sans regarder',
+        left: 'Vous partez avant le meurtre. La troisième condition reste vide.',
+        recruited:
+          'Contagion est complète. Vous occupez désormais une place du réseau au niveau 0.',
+        network: 'Réseau Contagion',
+        you: 'Vous',
+        level: (level) => `Niveau ${level}`,
+        kills: (kills) => `${kills} meurtre${kills > 1 ? 's' : ''}`,
+        record: 'Enregistrer un meurtre ultérieur',
+        ordinary: 'Personne ordinaire · +1',
+        nenUser: 'Utilisateur de Nen · +10',
+        prince: 'Prince · +50',
+        ability: 'Capacité unique débloquée au niveau 20.',
       },
 
       challenge: {
@@ -3328,6 +3366,23 @@ export const fr: Messages = {
     identifiedSplit: (identified, unknown) => `${identified} identifiés · ${unknown} inconnus`,
     everyBodyMapped: 'Chaque corps suivi a une position cartographiée à cet événement.',
     directObservation: 'Observation directe',
+    presenceGroup: (count, location) => `${count} présence${count > 1 ? 's' : ''} à ${location}`,
+    presenceList: 'Personnes présentes à cet endroit',
+    characterDetails: 'Détails de la position du personnage',
+    presenceRecord: 'Relevé de présence',
+    location: 'Lieu',
+    certaintyLabel: 'Certitude',
+    temporalStatus: 'État temporel',
+    openCharacterProfile: 'Ouvrir la fiche personnage',
+    provenance: 'Provenance',
+    eventChanges: (count) => `${count} changements à l’événement suivant`,
+    delta: { moved: 'Déplacés', appeared: 'Entrées', disappeared: 'Sorties', dead: 'Morts' },
+    certainty: {
+      CONFIRMED: 'Confirmée',
+      PROBABLE: 'Probable',
+      LAST_KNOWN: 'Dernière position connue',
+      UNKNOWN: 'Inconnue',
+    },
   },
 
   perspectiveUi: {
@@ -3446,6 +3501,9 @@ export const fr: Messages = {
       exitFocus: 'Quitter la vue agrandie',
       previous: 'Événement précédent',
       next: 'Événement suivant',
+      play: 'Lire la chronologie',
+      pause: 'Mettre la chronologie en pause',
+      showChanges: 'Afficher les changements vers l’événement suivant',
       selectEvent: 'Choisir un événement',
       advancedTimeline: 'Chronologies des points de vue',
       activeFilters: (count: number) => `${count} actif${count === 1 ? '' : 's'}`,
@@ -3846,6 +3904,18 @@ export const fr: Messages = {
     activateAria: (name) => `Activer ${name} sur tout le site`,
     instructions: 'Mode d’emploi',
     cost: (cost) => `Coût : ${cost}`,
+    search: 'Rechercher un pouvoir, un porteur ou une règle',
+    allCategories: 'Toutes les catégories',
+    allOwners: 'Tous les porteurs',
+    sources: 'Chapitres sources',
+    uses: 'Emplois',
+    preview: 'Aperçu canonique',
+    actionWheel: 'Emplois du Hatsu',
+    conditionUnmet: 'Condition non remplie',
+    targets: 'Cibles',
+    effects: 'Effets',
+    tryTour: 'Essayer dans la visite',
+    results: (count) => `${count} pouvoir${count > 1 ? 's' : ''}`,
     empty: 'Aucun pouvoir trouvé.',
   },
 
@@ -4361,7 +4431,6 @@ export const fr: Messages = {
         'Qui maintient Black Whale, comment les faits de Hunter × Hunter sont vérifiés, comment les incertitudes et spoilers sont gérés et comment proposer une correction.',
     },
   },
-
 
   investigation: {
     replay: {

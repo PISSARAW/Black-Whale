@@ -2,6 +2,7 @@ import type {
   AbilityConditionResult,
   AbilityContext,
   ActionVisibility,
+  CanonSourceRef,
 } from '@black-whale/nen-engine'
 
 /**
@@ -17,16 +18,42 @@ import type {
 /** The base techniques a use may be wrapped in, mapped onto engine primitives. */
 export type NenTechnique = 'in' | 'gyo' | 'shu' | 'ko' | 'ken' | 'ryu' | 'en' | 'ten' | 'zetsu'
 
+/** A machine-readable canon citation carried all the way to the catalogue UI. */
+export type { CanonSourceRef } from '@black-whale/nen-engine'
+
+/**
+ * Keep existing module declarations source-compatible while normalising their
+ * evidence immediately. New declarations may pass the structured form
+ * directly; the hundreds of existing `ch. N` citations become structured at
+ * the SDK boundary instead of being parsed independently by every renderer.
+ */
+export function canonSource(source: CanonSourceRef | string): CanonSourceRef {
+  if (typeof source !== 'string') return source
+  const chapter = /\bch\.\s*(\d+)/i.exec(source)
+  if (chapter) return { kind: 'chapter', chapter: Number(chapter[1]), label: source }
+  if (/databook/i.test(source)) return { kind: 'databook', label: source }
+  if (/interview/i.test(source)) return { kind: 'interview', label: source }
+  return { kind: 'other', label: source }
+}
+
+export const sourceLabel = (source: CanonSourceRef): string => source.label
+
 export type AbilityUseEvidence =
   /** Drawn in the manga: a normal wheel entry, with its source. */
-  | { kind: 'shown'; source: string }
+  | { kind: 'shown'; source: CanonSourceRef }
   /** Said in dialogue or in a data page, never drawn. */
-  | { kind: 'asserted'; source: string }
+  | { kind: 'asserted'; source: CanonSourceRef }
   /** Never shown nor asserted: simulation branches only, never a canon view. */
   | { kind: 'hypothesis'; note?: string }
 
-export const shown = (source: string): AbilityUseEvidence => ({ kind: 'shown', source })
-export const asserted = (source: string): AbilityUseEvidence => ({ kind: 'asserted', source })
+export const shown = (source: CanonSourceRef | string): AbilityUseEvidence => ({
+  kind: 'shown',
+  source: canonSource(source),
+})
+export const asserted = (source: CanonSourceRef | string): AbilityUseEvidence => ({
+  kind: 'asserted',
+  source: canonSource(source),
+})
 export const hypothesis = (note?: string): AbilityUseEvidence => ({ kind: 'hypothesis', note })
 
 /**
@@ -51,12 +78,16 @@ export function evidenceCondition(
   ctx: AbilityContext,
 ): AbilityConditionResult {
   if (evidence.kind === 'shown') {
-    return { id: 'use-shown', label: `Montré au manga — ${evidence.source}`, status: 'MET' }
+    return {
+      id: 'use-shown',
+      label: `Montré au manga — ${sourceLabel(evidence.source)}`,
+      status: 'MET',
+    }
   }
   if (evidence.kind === 'asserted') {
     return {
       id: 'use-asserted',
-      label: `Affirmé, non montré — ${evidence.source}`,
+      label: `Affirmé, non montré — ${sourceLabel(evidence.source)}`,
       status: 'MET',
     }
   }
@@ -112,7 +143,7 @@ export function useHint(input: UseVisibilityInput): string | undefined {
       : 'Hypothèse — accessible en branche de simulation uniquement'
   }
   if (input.evidence?.kind === 'asserted') {
-    return `Affirmé, non montré — ${input.evidence.source}`
+    return `Affirmé, non montré — ${sourceLabel(input.evidence.source)}`
   }
   return undefined
 }

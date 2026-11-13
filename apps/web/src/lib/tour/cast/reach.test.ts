@@ -14,7 +14,7 @@ function post(overrides: Partial<CastMember> = {}): Post {
     locations: [ROOM],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: true,
+    nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } },
     hatsu: [],
     beast: null,
     ...overrides,
@@ -87,7 +87,7 @@ describe('the refusals, which are canon conditions and not budgets', () => {
 
   /** Theta fires to test a Zetsu. Inventing an aura to test would invent a user. */
   it('has nothing to test on a body the archive gives no Nen', () => {
-    expect(reach({ kind: 'training-shot', target: post({ nen: false }) })).toMatchObject({
+    expect(reach({ kind: 'training-shot', target: post({ nen: null }) })).toMatchObject({
       outcome: 'refused',
       reason: 'no-aura',
     })
@@ -164,6 +164,28 @@ describe('what a hold looks like', () => {
     expect(reach({ kind: 'needle' })).toMatchObject({ hold: { mark: 'controlled' } })
     expect(reach({ kind: 'damage-transfer' })).toMatchObject({ hold: { mark: 'linked' } })
     expect(reach({ kind: 'curse' })).toMatchObject({ hold: { mark: 'marked' } })
+  })
+
+  describe('the two newly reachable succession uses', () => {
+    it('lends Stand By Me to Benjamin’s allied soldier and nobody else', () => {
+      expect(
+        reach({
+          kind: 'ability-lending',
+          dossier: dossier({ factionId: 'prince-benjamin' }),
+        }),
+      ).toMatchObject({ outcome: 'held', hold: { mark: 'linked' } })
+      expect(
+        reach({ kind: 'ability-lending', dossier: dossier({ factionId: 'prince-woble' }) }),
+      ).toMatchObject({ outcome: 'refused', reason: 'allied-soldier' })
+    })
+
+    it('keeps Bohemian Rhapsody behind Benjamin’s post-mortem condition', () => {
+      expect(reach({ kind: 'postmortem-host-succession' })).toEqual({
+        outcome: 'refused',
+        kind: 'postmortem-host-succession',
+        reason: 'benjamin-alive',
+      })
+    })
   })
 
   /** Ch. 357 draws Hisoka wearing a face that is not his — not a guard wearing

@@ -21,16 +21,19 @@
   import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
   import { CONTAGION_LIMITS } from '@black-whale/ability-modules'
   import { infectionAfter, infectionStepsFrom, moveFor } from '$lib/tour/morena'
-  import type { AnswerCard, MorenaGame, TableKind } from '$lib/tour/morena'
+  import type { AnswerCard, InfectionProgressLike, MorenaGame, TableKind } from '$lib/tour/morena'
   import type { CohortMember } from './cohort'
+  import type { AbilityViewModel } from './abilityPresentation'
 
   let {
-    game,
+    game = null,
     members = [],
     spoilerLimit = null,
+    progress,
+    model: _model,
   }: {
     /** The negotiation being watched, or `null` when none is running. */
-    game: MorenaGame | null
+    game?: MorenaGame | null
     /** What the cohort holds, newest last. */
     members?: CohortMember[]
     /**
@@ -41,6 +44,10 @@
      * twelve cards. `null` means no limit is being applied.
      */
     spoilerLimit?: number | null
+    progress?: InfectionProgressLike
+    /** Static catalogue/dock preview; live Morena surfaces continue to pass `game`. */
+    model?: AbilityViewModel
+    variant?: string
   } = $props()
 
   const copy = $derived($t.tour.morena)
@@ -73,8 +80,8 @@
     ),
   )
 
-  const conditions = $derived(game ? infectionAfter(game) : null)
-  const steps = $derived(game ? infectionStepsFrom(game) : [])
+  const conditions = $derived(game ? infectionAfter(game, progress) : null)
+  const steps = $derived(game ? infectionStepsFrom(game, progress) : [])
 
   /** Twenty-two slots, filled from the left. Capacity is canon, not a choice. */
   const slots = $derived(

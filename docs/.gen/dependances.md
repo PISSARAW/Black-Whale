@@ -48,7 +48,7 @@ Nœuds : 24 · Arêtes uniques : 54
 | `lib:tour` | `package:@black-whale/domain` | 1 |
 | `lib:tour` | `package:@black-whale/nen-engine` | 31 |
 | `lib:utils` | `lib:state` | 1 |
-| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 63 |
+| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 65 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/canon-engine` | 3 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/nen-engine` | 6 |

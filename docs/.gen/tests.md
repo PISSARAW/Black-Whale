@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 486
+Fichiers : 487
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -970,6 +970,7 @@ Fichiers : 486
 ## `apps/web/src/lib/tour/abilitySurface.test.ts`
 
 - the tour ability surface > routes all eight families to the existing ship and body reducers
+- complete body-family journeys > shows Needle People resistance and never executes through raised Ren
 
 ## `apps/web/src/lib/tour/ambientOcclusion.test.ts`
 
@@ -1686,6 +1687,10 @@ Fichiers : 486
 
 - Room 3101 manga fidelity > keeps panel furniture separate from inferred bathroom fixtures
 
+## `apps/web/src/lib/tour/roomAudioKey.test.ts`
+
+- room audio live-input key > is stable when the same active doors arrive in another order
+
 ## `apps/web/src/lib/tour/roomCondition.test.ts`
 
 - room condition > answers every finish in the closed vocabulary
@@ -1990,7 +1995,7 @@ Fichiers : 486
 
 ## `packages/ability-sdk/test/uses.spec.ts`
 
-- grammaire d’emploi > normalises legacy citations into structured canon sources
+- grammaire d’emploi > preserves structured canon sources without parsing free text
 
 ## `packages/canon-compiler/test/arena-contracts.spec.ts`
 

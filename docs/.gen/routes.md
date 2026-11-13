@@ -42,7 +42,7 @@
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
 | `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
-| `simulations` | `+page.server.ts`, `+page.svelte` |
+| `simulations` | `+page.server.ts`, `+page.svelte`, `morena.server.ts` |
 | `sitemap.xml` | `+server.ts`, `server.test.ts` |
 | `spoiler-limit` | `+server.ts`, `spoiler-limit.test.ts` |
 | `strategy` | `+page.server.ts`, `+page.svelte`, `strategy.css` |

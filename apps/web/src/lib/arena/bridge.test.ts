@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { initialCombatState } from '../combat/reducer'
-import { applyArenaHandoff, saveArenaHandoffResult, type ArenaHandoff } from './bridge'
+import {
+  applyArenaHandoff,
+  arenaReturnHref,
+  consumeArenaHandoffResult,
+  saveArenaHandoffResult,
+  type ArenaHandoff,
+} from './bridge'
 
 describe('Arena cross-mode handoff', () => {
   it('carries prior aura, injuries, knowledge and narrative context into combat', () => {
@@ -33,6 +39,28 @@ describe('Arena cross-mode handoff', () => {
     expect(saveArenaHandoffResult(storage, 'hunt-duel', state)).toMatchObject({
       handoffId: 'hunt-duel',
       outcome: 'won',
+      elapsedSeconds: 0,
     })
+    expect(consumeArenaHandoffResult(storage)).toMatchObject({ handoffId: 'hunt-duel' })
+    expect(consumeArenaHandoffResult(storage)).toBeNull()
+  })
+
+  it('only exposes internal return routes', () => {
+    const handoff = (returnHref: string): ArenaHandoff => ({
+      version: 1,
+      id: 'hunt-duel',
+      sourceMode: 'HUNT',
+      context: 'CLANDESTINE',
+      playerAura: 50,
+      opponentAura: 50,
+      playerCondition: 'ready',
+      opponentCondition: 'ready',
+      knownOpponentHatsuIds: [],
+      nenEffects: [],
+      returnHref,
+    })
+    expect(arenaReturnHref(handoff('/fr/hunt'))).toBe('/fr/hunt')
+    expect(arenaReturnHref(handoff('//outside.example'))).toBeNull()
+    expect(arenaReturnHref(handoff('https://outside.example'))).toBeNull()
   })
 })

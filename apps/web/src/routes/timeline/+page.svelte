@@ -2,7 +2,7 @@
   import type { PageData } from './$types'
   import VoyageProgress from '$lib/components/VoyageProgress.svelte'
   import Seo from '$lib/components/Seo.svelte'
-  import { breadcrumbSchema } from '$lib/seo/schema'
+  import { breadcrumbSchema, collectionSchema, publisherSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
 
   let { data }: { data: PageData } = $props()
@@ -110,10 +110,24 @@
 <Seo
   title={$t.timeline.seoTitle}
   description={$t.timeline.seoDescription}
-  jsonLd={breadcrumbSchema([
-    { name: $t.common.home, path: $link('/') },
-    { name: $t.timeline.breadcrumb, path: $link('/timeline') },
-  ])}
+  jsonLd={[
+    collectionSchema({
+      name: $t.timeline.title,
+      path: $link('/timeline'),
+      description: $t.timeline.seoDescription,
+      modifiedAt: data.modifiedAt,
+      items: data.chapters.flatMap((chapter) =>
+        chapter.events.flatMap((event) =>
+          event.publicId ? [{ name: event.title, path: $link(`/events/${event.publicId}`) }] : [],
+        ),
+      ),
+    }),
+    publisherSchema(),
+    breadcrumbSchema([
+      { name: $t.common.home, path: $link('/') },
+      { name: $t.timeline.breadcrumb, path: $link('/timeline') },
+    ]),
+  ]}
 />
 
 {#snippet eventTime(event: Event, flashbackLabel: string)}
@@ -272,8 +286,9 @@
               {#each chronologicalEvents as { event, chapter } (event.id)}
                 <li>
                   <a
-                    href={$link(`/ship?eventId=${event.id}`)}
-                    aria-label={$t.timeline.openOnMap(event.title)}
+                    href={event.publicId
+                      ? $link(`/events/${event.publicId}`)
+                      : $link(`/ship?eventId=${event.id}`)}
                   >
                     <span class="event-index">{event.ordinal ?? '—'}</span>
                     <span class="event-copy">
@@ -330,8 +345,9 @@
               {#each chapter.events as event, eventIndex (event.id)}
                 <li>
                   <a
-                    href={$link(`/ship?eventId=${event.id}`)}
-                    aria-label={$t.timeline.openOnMap(event.title)}
+                    href={event.publicId
+                      ? $link(`/events/${event.publicId}`)
+                      : $link(`/ship?eventId=${event.id}`)}
                   >
                     <span class="event-index">{String(eventIndex + 1).padStart(2, '0')}</span>
                     <span class="event-copy">

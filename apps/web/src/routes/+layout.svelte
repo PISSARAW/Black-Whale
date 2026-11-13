@@ -13,11 +13,15 @@
   import { ambientWasEnabled, startAmbient } from '$lib/audio/ambient'
   import type { LayoutData } from './$types'
   import { PUBLIC_FEATURES } from '$lib/config/features'
+  import { loadComfort } from '$lib/tour/comfort'
 
   export let data: LayoutData
 
   // Resume a saved audio preference even while its menu control is unmounted.
   onMount(() => {
+    // One reactive system preference for the dock, catalogue and tour. The tour
+    // may call this again when it mounts; the watcher replaces itself cleanly.
+    loadComfort()
     if (!ambientWasEnabled()) return
     // Autoplay is blocked until the visitor interacts, so a returning listener's
     // preference is honoured on their first click or key press, not on load.
@@ -56,6 +60,7 @@
     { href: '/tour', label: $t.nav.virtualTour },
     { href: '/tour/modes', label: $t.nav.tourModes },
     { href: '/tour/sources', label: $t.nav.shipSources },
+    { href: '/about', label: $t.discovery.about.nav },
     { href: '/arena', label: $t.nav.arena },
     { href: '/reconstruction', label: $t.nav.reconstruction },
   ]

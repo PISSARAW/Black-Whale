@@ -3,7 +3,7 @@
   import type { PageData } from './$types'
   import BlackWhaleVoyage from '$lib/components/home/BlackWhaleVoyage.svelte'
   import Seo from '$lib/components/Seo.svelte'
-  import { websiteSchema } from '$lib/seo/schema'
+  import { hunterWorkSchema, publisherSchema, websiteSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { LOCALE_TAGS } from '$lib/i18n/config'
   import { PUBLIC_FEATURES } from '$lib/config/features'
@@ -33,11 +33,15 @@
 
 <Seo
   description={$t.home.seoDescription}
-  jsonLd={websiteSchema({
-    description: $t.seo.siteDescription,
-    language: LOCALE_TAGS[$locale].html,
-    path: $link('/'),
-  })}
+  jsonLd={[
+    websiteSchema({
+      description: $t.seo.siteDescription,
+      language: LOCALE_TAGS[$locale].html,
+      path: $link('/'),
+    }),
+    publisherSchema(),
+    { '@context': 'https://schema.org', ...hunterWorkSchema() },
+  ]}
 />
 
 <div class="home-page">
@@ -46,6 +50,9 @@
       <p class="archive-label">{$t.layout.brandTagline}</p>
       <h1>{$t.home.titleBrand}</h1>
       <p class="lede">{$t.home.lede}</p>
+      <p class="scope-copy">
+        {$t.discovery.homeScope(data.coverage.first, data.coverage.last)}
+      </p>
 
       <div class="hero-actions">
         <a class="primary-action" href={$link('/ship')}
@@ -134,6 +141,13 @@
     color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.8;
+  }
+  .scope-copy {
+    max-width: 38rem;
+    margin: 1rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.7;
   }
   .hero-actions {
     display: flex;

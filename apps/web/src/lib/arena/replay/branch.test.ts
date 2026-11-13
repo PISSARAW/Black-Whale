@@ -31,6 +31,7 @@ describe('interactive replay branch', () => {
     const replay = original.finish(state)
 
     const branch = forkReplayAtTick(replay, 1)
+    expect(branch.actions).toEqual({ GUARD: 1 })
     const ryu = { type: 'RYU' as const, side: 'player' as const, attackShare: 0.8 }
     const changed = combatReducer(branch.state, ryu)
     branch.recorder.record(ryu)

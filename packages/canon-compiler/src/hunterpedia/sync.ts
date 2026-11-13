@@ -29,6 +29,13 @@ function template(id: string, canonicalName: string): WritableCharacter {
     factionId: null,
     firstAppearanceChapterId: 'ch-359',
     canonStatus: 'canon',
+    modifiedAt: new Date().toISOString().slice(0, 10),
+    sources: [
+      {
+        chapterId: 'ch-unknown',
+        note: 'Template imported from the Hunterpedia Black Whale passenger category; verify before publication.',
+      },
+    ],
     shipLocation: { tier: null, room: null, status: 'inconnu', role: 'passager nommé' },
     mapPresenceFromChapterId: 'ch-359',
     mapPresenceUntilChapterId: null,

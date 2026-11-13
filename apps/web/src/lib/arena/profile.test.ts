@@ -3,6 +3,7 @@ import { buildCombatTerrain } from './terrain'
 import { ArenaRecorder } from './replay/recorder'
 import { initialCombatState } from '../combat/reducer'
 import { freshArenaProfile, loadArenaProfile, recordArenaResult, saveArenaProfile } from './profile'
+import { DEFAULT_REPLAY_MATCH } from './replay/types'
 
 function replay() {
   const terrain = buildCombatTerrain()
@@ -56,5 +57,38 @@ describe('Arena V3 profile', () => {
       },
     }
     expect(saveArenaProfile(storage, freshArenaProfile())).toBe(false)
+  })
+
+  it('advances campaign only for the exact mission preset', () => {
+    const terrain = buildCombatTerrain('tier-1-banquet-hall')
+    const setup = {
+      playerAt: terrain.spawns[0],
+      opponentAt: terrain.spawns[1],
+      terrain: { id: terrain.id, footprint: terrain.footprint, walls: terrain.walls },
+    }
+    const recorder = new ArenaRecorder({
+      setup,
+      doctrine: 'counter',
+      difficulty: 'initiate',
+      match: {
+        ...DEFAULT_REPLAY_MATCH,
+        opponentId: 'counter-student',
+        challengeId: 'ryu',
+        missionId: 'initiation',
+      },
+    })
+    const valid = recorder.finish(initialCombatState(setup))
+    const result = { complete: true, satisfied: [true], grade: 'S' as const }
+    expect(
+      recordArenaResult(freshArenaProfile(), { replay: valid, challengeId: 'ryu', result })
+        .unlocked,
+    ).toContain('ryu')
+    expect(
+      recordArenaResult(freshArenaProfile(), {
+        replay: { ...valid, match: { ...valid.match, missionId: null } },
+        challengeId: 'ryu',
+        result,
+      }).unlocked,
+    ).not.toContain('ryu')
   })
 })

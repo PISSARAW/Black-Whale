@@ -48,6 +48,16 @@ export function formatOutcome(
   state: CombatState,
   usedRequiredAction = false,
 ): CombatState['outcome'] {
+  return state.outcome === 'playing'
+    ? playingFormatOutcome(format, state, usedRequiredAction)
+    : state.outcome
+}
+
+function playingFormatOutcome(
+  format: ArenaFormat,
+  state: CombatState,
+  usedRequiredAction: boolean,
+): CombatState['outcome'] {
   if (format.requiredAction && !usedRequiredAction && state.player.score >= format.scoreToWin)
     return 'playing'
   if (state.player.score >= format.scoreToWin) return 'won'

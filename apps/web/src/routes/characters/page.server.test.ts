@@ -37,4 +37,9 @@ describe('the character registry spoiler boundary', () => {
     expect(characters.some((character) => character.id === 'komiya')).toBe(true)
     expect(characters.some((character) => character.description)).toBe(true)
   })
+
+  it('keeps the serialized registry below the discovery payload budget', async () => {
+    const { characters } = await run()
+    expect(Buffer.byteLength(JSON.stringify(characters), 'utf8')).toBeLessThan(150_000)
+  })
 })

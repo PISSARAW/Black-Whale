@@ -1,6 +1,6 @@
 import { INHABITANT_INVARIANTS } from './inhabitants.js'
 import { LIKENESS_INVARIANTS } from './likeness.js'
-import type { Blueprint } from './schemas.js'
+import { PUBLICATION_INVARIANTS } from './publication-invariants.js'
 import type { Catalogue, Finding } from './types.js'
 
 /**
@@ -494,6 +494,5 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   ...INHABITANT_INVARIANTS,
   // And the rules the drawn walk rests on — ADR-005, same arrangement.
   ...LIKENESS_INVARIANTS,
+  ...PUBLICATION_INVARIANTS,
 ]
-
-export type { Blueprint }

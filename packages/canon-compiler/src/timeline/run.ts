@@ -26,6 +26,7 @@ export interface CompileTimeline {
 
 interface EventCandidate {
   id: string
+  sourceId: string | null
   _count: Record<string, number>
 }
 
@@ -35,8 +36,15 @@ function referenceCount(event: EventCandidate): number {
 
 async function eventToUpdate(
   prisma: PrismaClient,
+  sourceId: string,
   titles: readonly string[],
 ): Promise<{ event: EventCandidate | null; orphans: EventCandidate[] }> {
+  const bySource = (await prisma.narrativeEvent.findUnique({
+    where: { sourceId },
+    include: { _count: true },
+  })) as EventCandidate | null
+  if (bySource) return { event: bySource, orphans: [] }
+
   const candidates = (await prisma.narrativeEvent.findMany({
     where: { title: { in: [...titles] } },
     include: { _count: true },
@@ -64,12 +72,13 @@ async function syncEvent(
   })
 
   const titles = [definition.title, ...(definition.legacyTitles ?? [])]
-  const { event: existing, orphans } = await eventToUpdate(prisma, titles)
+  const { event: existing, orphans } = await eventToUpdate(prisma, definition.id, titles)
 
   if (existing) {
     await prisma.narrativeEvent.update({
       where: { id: existing.id },
       data: {
+        sourceId: definition.id,
         chapterId: chapter.id,
         sequence: definition.sequence,
         title: definition.title,
@@ -88,6 +97,7 @@ async function syncEvent(
 
   await prisma.narrativeEvent.create({
     data: {
+      sourceId: definition.id,
       chapterId: chapter.id,
       sequence: definition.sequence,
       title: definition.title,

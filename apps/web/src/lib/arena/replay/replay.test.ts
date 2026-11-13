@@ -90,6 +90,30 @@ describe('deterministic Arena replay', () => {
     expect(parseReplay(serializeReplay(replay))).toEqual(replay)
   })
 
+  it('replays a cross-mode match from its carried opening state', () => {
+    const base = initialCombatState()
+    const opening = {
+      ...base,
+      player: { ...base.player, aura: 41 },
+      opponent: { ...base.opponent, aura: 67 },
+      environment: { ...base.environment, context: 'CLANDESTINE' as const },
+    }
+    const recorder = new ArenaRecorder({
+      setup: {
+        playerAt: base.player.position,
+        opponentAt: base.opponent.position,
+        terrain: base.terrain,
+      },
+      doctrine: 'counter',
+      difficulty: 'initiate',
+      initialState: opening,
+    })
+
+    const replay = recorder.finish(opening)
+    expect(playReplay(replay).state).toEqual(opening)
+    expect(parseReplay(serializeReplay(replay))).toEqual(replay)
+  })
+
   it('rejects tampered and unknown replay payloads', () => {
     expect(() => parseReplay('{"version":99}')).toThrow('Invalid Arena replay')
   })

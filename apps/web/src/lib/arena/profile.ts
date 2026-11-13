@@ -1,6 +1,7 @@
 import type { ArenaReplay } from './replay/types'
 import type { ChallengeResult } from './challenges/types'
 import { playReplay } from './replay/player'
+import { ARENA_CAMPAIGN, missionMatchesReplay } from './campaign'
 
 export const ARENA_PROFILE_VERSION = 1
 export const NEN_MASTERIES = [
@@ -105,7 +106,15 @@ export function recordArenaResult(
     const technique = masteryFor(command.action)
     if (technique) mastery[technique] = Math.min(100, (mastery[technique] ?? 0) + 1)
   }
-  const completed = challengeId && result?.complete ? challengeId : null
+  const mission = ARENA_CAMPAIGN.find(({ id }) => id === replay.match.missionId)
+  const completed =
+    challengeId &&
+    result?.complete &&
+    replay.match.challengeId === challengeId &&
+    mission &&
+    missionMatchesReplay(mission, replay)
+      ? challengeId
+      : null
   const bestGrades = { ...profile.bestGrades }
   if (challengeId && result)
     bestGrades[challengeId] = betterGrade(bestGrades[challengeId], result.grade)

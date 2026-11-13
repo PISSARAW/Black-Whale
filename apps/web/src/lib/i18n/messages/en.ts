@@ -2798,7 +2798,7 @@ export const en = {
     title: 'Black Whale Arena',
     intro:
       'The room, its tables, stage and bulkheads come directly from the ship reconstruction. Control aura flow, use the environment and commit only when the opening is real.',
-    firstTo: 'First to 10',
+    firstTo: 'Match format',
     you: 'You',
     opponent: 'Floor fighter',
     aura: 'Aura',
@@ -2858,7 +2858,7 @@ export const en = {
       beforeFight: 'BEFORE THE FIGHT',
       briefingTitle: 'Hit your opponent before they hit you',
       briefingGoal:
-        'First to 10 points wins. An attack only connects at close range: watch the distance at the top of the screen.',
+        'The selected format sets the win condition. An attack only connects at close range.',
       moveKeys: 'WASD',
       approach: 'Close in',
       approachSuffix: ' until the reticle turns gold.',
@@ -4519,6 +4519,69 @@ export const en = {
       },
     },
   },
+
+  discovery: {
+    homeScope: (first: number, last: number) =>
+      `Black Whale is an unofficial, non-commercial Hunter × Hunter archive covering chapters ${first}–${last}. It turns the voyage, its characters, Nen abilities and chronology into source-linked records that can be read without JavaScript.`,
+    sources: 'Sources',
+    chapter: (number: string | number) => `Chapter ${number}`,
+    modified: (date: string) => `Last reviewed ${date}`,
+    ability: {
+      archive: 'Ability archive',
+      owner: 'Owner',
+      users: 'Known users',
+      category: 'Nen category',
+      aliases: 'Other names',
+      uses: 'Documented uses',
+      related: 'Related abilities',
+      activate: 'Activate this ability',
+      noUses: 'No voyage use is catalogued yet.',
+      sourceNote: 'The citations below identify the manga chapters used for this record.',
+      seoTitle: (name: string) => `${name} — Nen ability`,
+      seoDescription: (name: string, owner: string) =>
+        `${name}, a Nen ability associated with ${owner}: rules, limits, users and manga sources.`,
+    },
+    event: {
+      archive: 'Timeline',
+      chapter: 'Source chapter',
+      time: 'Voyage time',
+      location: 'Location',
+      participants: 'People involved',
+      abilities: 'Abilities used',
+      openTimeline: 'Open in the timeline',
+      openMap: 'Open on the ship map',
+      undated: 'No exact voyage time is established.',
+      unknownLocation: 'No precise location is catalogued.',
+      seoTitle: (name: string) => `${name} — event dossier`,
+      seoDescription: (name: string, chapter: number) =>
+        `${name}, a documented Hunter × Hunter event from chapter ${chapter}, with chronology and sources.`,
+    },
+    about: {
+      nav: 'About and method',
+      eyebrow: 'Editorial method',
+      title: 'About Black Whale',
+      lede: 'Black Whale is an unofficial, non-commercial Hunter × Hunter archive maintained by Ginks.',
+      scopeTitle: 'What the archive covers',
+      scope: (first: number, last: number) =>
+        `The public catalogue currently documents chapters ${first}–${last}, with an emphasis on the succession contest, the voyage and the people aboard the Black Whale.`,
+      methodTitle: 'How claims are checked',
+      method:
+        'Facts are declared in a structured catalogue, checked against the manga and compiled into the timeline, character dossiers and ship reconstruction. Visible chapter citations identify the evidence behind indexable summaries.',
+      uncertaintyTitle: 'Uncertainty and spoilers',
+      uncertainty:
+        'Inferences and community-sourced dates are labelled. The spoiler limit is enforced on the server, so hidden names and summaries are not sent to the browser.',
+      correctionsTitle: 'Corrections and reuse',
+      corrections:
+        'Corrections are reviewed in the public repository. Catalogue data and ship maps are licensed under CC BY 4.0; the source code is MIT licensed.',
+      shipSources: 'Read the reconstruction source register',
+      repository: 'Open the project repository',
+      disclaimer:
+        'Hunter × Hunter was created by Yoshihiro Togashi and is published by Shueisha. Black Whale is not affiliated with either rights holder and hosts no scans.',
+      seoDescription:
+        'Who maintains Black Whale, how Hunter × Hunter facts are verified, how uncertainty and spoilers are handled, and how to submit corrections.',
+    },
+  },
+
 
   investigation: {
     replay: {

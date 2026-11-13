@@ -35,6 +35,21 @@ Si une affiliation précise n'est pas connue mais qu'un camp est évident :
 
 Toujours utiliser des UUID (générés automatiquement par la DB).
 
+## Provenance et identifiants publics
+
+Toute fiche indexable porte une date ISO `modifiedAt` et au moins une entrée
+`sources`. La date change uniquement lorsqu'un fait publié ou sa formulation
+éditoriale change ; elle ne doit jamais être recalculée au démarrage ou au
+déploiement. Chaque `chapterId` doit désigner un chapitre du catalogue. Les
+fiches hors chronologie utilisent `ch-unknown` avec une note expliquant la
+provenance.
+
+L'identifiant `id` d'un événement est son slug éditorial public. Il est unique
+et immuable : corriger ou traduire le titre d'un événement ne doit jamais
+modifier cet identifiant. Le compilateur le conserve en base dans `sourceId`
+et ne retombe sur les anciens rapprochements par titre que pour migrer une
+entrée qui n'en possède pas encore.
+
 ## Dates de récit
 
 ### L'horloge du voyage

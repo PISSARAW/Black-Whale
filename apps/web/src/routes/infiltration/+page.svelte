@@ -57,6 +57,17 @@
   import { playInfiltrationHatsuSound } from '$lib/audio/infiltrationHatsuSounds'
   import { buildInfiltrationEnvironment } from '$lib/infiltration/environment'
   import { dialogueOptions } from '$lib/infiltration/social/dialogue'
+  import {
+    consumeInfiltrationArenaCheckpoint,
+    infiltrationArenaHandoff,
+    saveInfiltrationArenaCheckpoint,
+    type InfiltrationArenaCheckpoint,
+  } from '$lib/infiltration/arenaBridge'
+  import {
+    consumeArenaHandoffResult,
+    saveArenaHandoff,
+    type ArenaHandoffResult,
+  } from '$lib/arena/bridge'
 
   const modeNen = new ModeNenState()
   const ship = theShip()
@@ -143,6 +154,9 @@
   let needsHatsuTarget = $derived(
     ['secret-window', 'bloody-mary', 'body-and-soul'].includes(game.hatsu.id),
   )
+  let canFightToEscape = $derived(
+    game.outcome === 'identified' && objectivesPermitExtraction(game.objectives),
+  )
 
   const colours: Record<WitnessId, number> = {
     steward: 0x58a6ff,
@@ -213,11 +227,11 @@
   }
 
   function send(action: InfiltrationAction) {
-    const wasPlaying = game.outcome === 'playing'
+    const wasEscaped = game.outcome === 'escaped'
     const prior = game
     game = infiltrationReducer(game, action)
     if (action.type === 'CAST_HATSU' && game !== prior) playInfiltrationHatsuSound(game.hatsu.id)
-    if (wasPlaying && game.outcome === 'escaped') {
+    if (!wasEscaped && game.outcome === 'escaped') {
       campaign = applyConsequences(campaign, {
         missionId: game.mission.id,
         discoveredSpaces: [...new Set(game.witnesses.map((witness) => witness.spaceId))],
@@ -226,6 +240,27 @@
       })
       saveCampaign(campaign)
     }
+  }
+
+  function fightToEscape() {
+    const id = `infiltration-${crypto.randomUUID()}`
+    const handoff = infiltrationArenaHandoff(
+      game,
+      id,
+      `${window.location.pathname}${window.location.search}`,
+    )
+    if (!handoff) return
+    const checkpoint: InfiltrationArenaCheckpoint<{ selectedMission: MissionId }> = {
+      version: 1,
+      handoffId: id,
+      state: game,
+      context: { selectedMission },
+    }
+    saveInfiltrationArenaCheckpoint(sessionStorage, checkpoint)
+    saveArenaHandoff(sessionStorage, handoff)
+    window.location.assign(
+      $link('/arena?opponent=custom&doctrine=binder&difficulty=fighter&format=first-to-three'),
+    )
   }
 
   function useStandardNen(action: NenTechniqueAction) {
@@ -345,6 +380,10 @@
       currentSpace =
         arena.spaces.find((space) => space.id === saved.state.player.spaceId) ?? extraction
     }
+    const checkpoint = consumeInfiltrationArenaCheckpoint<{ selectedMission: MissionId }>(
+      sessionStorage,
+    )
+    if (checkpoint) restoreArenaCheckpoint(checkpoint, consumeArenaHandoffResult(sessionStorage))
     autosave = setInterval(() => {
       if (game.outcome === 'playing' && !briefing) saveGame(game)
     }, 3000)
@@ -352,6 +391,22 @@
     document.addEventListener('visibilitychange', resetClock)
     frame = requestAnimationFrame(tick)
   })
+
+  function restoreArenaCheckpoint(
+    checkpoint: InfiltrationArenaCheckpoint<{ selectedMission: MissionId }>,
+    result: ArenaHandoffResult | null,
+  ) {
+    selectedMission = checkpoint.context.selectedMission
+    game = checkpoint.state
+    position = game.player.position
+    jumpTo = game.player.spaceId
+    jumpAt = game.player.position
+    currentSpace = arena.spaces.find((space) => space.id === game.player.spaceId) ?? extraction
+    briefing = false
+    if (result?.handoffId === checkpoint.handoffId) {
+      send({ type: 'ARENA_ESCAPE_RESOLVED', result })
+    }
+  }
   onDestroy(() => {
     if (autosave) clearInterval(autosave)
     if (typeof window === 'undefined') return
@@ -915,6 +970,14 @@
                 ></span>
                 {$t.infiltration.again} ↻
               </button>
+              {#if canFightToEscape}
+                <button
+                  onclick={fightToEscape}
+                  class="rounded-sm border border-amber-400/60 bg-amber-950/40 px-8 py-3 text-sm font-bold tracking-wide text-amber-200 transition-all hover:bg-amber-900/60"
+                >
+                  {$locale === 'fr' ? 'Combattre pour sortir' : 'Fight your way out'} →
+                </button>
+              {/if}
             </div>
           </div>
         </div>

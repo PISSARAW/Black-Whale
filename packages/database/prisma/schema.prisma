@@ -304,6 +304,9 @@ model Chapter {
 
 model NarrativeEvent {
   id         String  @id @default(uuid())
+  /// Stable public identifier from data/events/events.json. Null only for
+  /// back-office events that have not been promoted to the public catalogue.
+  sourceId   String? @unique
   chapterId  String
   sequence   Int
   /// Global canonical order. Unlike sequence, this never resets between chapters.

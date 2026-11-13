@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { ARENA_CHALLENGES } from '$lib/arena/challenges/catalogue'
   import type { ChallengeObjective, ChallengeResult } from '$lib/arena/challenges/types'
   import { OPPONENT_DOCTRINES, type ArenaDifficulty, type OpponentDoctrine } from '$lib/arena/ai'
@@ -6,7 +7,9 @@
   import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
   import { V3_OPPONENTS } from '$lib/arena/adaptation'
   import type { ArenaOpponentId } from '$lib/arena/experience'
-  import { locale, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
+  import { ARENA_CAMPAIGN, missionStatus } from '$lib/arena/campaign'
+  import { freshArenaProfile, loadArenaProfile } from '$lib/arena/profile'
 
   interface Props {
     terrainId: string
@@ -37,6 +40,11 @@
   const selected = $derived(
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
   )
+  let profile = $state(freshArenaProfile())
+
+  onMount(() => {
+    profile = loadArenaProfile(localStorage)
+  })
 </script>
 
 <details class="arena-setup">
@@ -88,6 +96,29 @@
       >
     </nav>
 
+    <nav class="terrain-picker" aria-label="PvP">
+      <a href={$link('/arena/pvp')}>
+        {$locale === 'fr' ? 'PvP · Créer un duel privé' : 'PvP · Create a private duel'}
+      </a>
+    </nav>
+
+    <nav class="campaign-picker" aria-label={$locale === 'fr' ? 'Campagne' : 'Campaign'}>
+      {#each ARENA_CAMPAIGN as mission (mission.id)}
+        {@const status = missionStatus(mission, profile)}
+        <a
+          class:locked={status === 'locked'}
+          aria-disabled={status === 'locked'}
+          href={status === 'locked'
+            ? undefined
+            : `?terrain=${mission.terrainId}&challenge=${mission.challengeId}&doctrine=${mission.doctrine}&difficulty=${mission.difficulty}&format=${mission.formatId}&opponent=${mission.opponentId}&mission=${mission.id}`}
+          data-sveltekit-reload
+        >
+          <small>CH. {mission.chapter}</small>
+          <strong>{mission.titleFr && $locale === 'fr' ? mission.titleFr : mission.titleEn}</strong>
+        </a>
+      {/each}
+    </nav>
+
     <div class="setup-fields">
       <label>
         <span>{$t.arena.ui.challenges}</span>
@@ -102,7 +133,13 @@
       </label>
       <label>
         <span>{$t.arena.ui.difficulty}</span>
-        <select bind:value={difficulty} onchange={onChange}>
+        <select
+          bind:value={difficulty}
+          onchange={() => {
+            opponentId = 'custom'
+            onChange()
+          }}
+        >
           {#each ['initiate', 'fighter', 'master'] as level (level)}
             <option value={level}>{difficultyLabel(level as ArenaDifficulty, $locale)}</option>
           {/each}
@@ -110,7 +147,13 @@
       </label>
       <label>
         <span>{$t.arena.ui.opponent}</span>
-        <select bind:value={opponentDoctrine} onchange={onChange}>
+        <select
+          bind:value={opponentDoctrine}
+          onchange={() => {
+            opponentId = 'custom'
+            onChange()
+          }}
+        >
           {#each Object.entries(OPPONENT_DOCTRINES) as [id, doctrine] (id)}
             <option value={id}>{doctrine.name}</option>
           {/each}
@@ -127,6 +170,9 @@
       <label class="opponent-profile">
         <span>{$locale === 'fr' ? 'Profil adverse' : 'Opponent profile'}</span>
         <select bind:value={opponentId} onchange={onChange}>
+          <option value="custom"
+            >{$locale === 'fr' ? 'Configuration personnalisée' : 'Custom setup'}</option
+          >
           <option value="adaptive"
             >{$locale === 'fr' ? 'Adversaire adaptatif' : 'Adaptive opponent'}</option
           >
@@ -292,6 +338,37 @@
     border-color: rgb(255 215 0 / 60%);
     background: rgb(255 215 0 / 8%);
     color: #fffff0;
+  }
+
+  .campaign-picker {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 0.8rem;
+    overflow-x: auto;
+  }
+
+  .campaign-picker a {
+    display: grid;
+    min-width: 7.5rem;
+    gap: 0.15rem;
+    padding: 0.45rem;
+    border: 1px solid rgb(138 215 231 / 24%);
+    color: #e9f4f6;
+    text-decoration: none;
+  }
+
+  .campaign-picker a.locked {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .campaign-picker small {
+    color: #8ad7e7;
+    font-size: 0.5rem;
+  }
+
+  .campaign-picker strong {
+    font-size: 0.58rem;
   }
 
   .setup-fields {

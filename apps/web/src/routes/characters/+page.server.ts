@@ -27,10 +27,18 @@ export const load: PageServerLoad = localizedLoad(
       .filter((character) => isVisibleAtSpoilerLimit(character, spoilerLimit))
       .map((character): CatalogCharacter => {
         const lineage = visibleLineage(character.beyondLineage, spoilerLimit)
+        const card: CatalogCharacter = {
+          id: character.id,
+          canonicalName: character.canonicalName,
+          aliases: character.aliases,
+          description: character.description,
+          factionId: character.factionId,
+          firstAppearanceChapterId: character.firstAppearanceChapterId,
+          canonStatus: character.canonStatus,
+          ...(lineage ? { beyondLineage: lineage } : {}),
+        }
         if (!isCapped) {
-          if (lineage === character.beyondLineage) return character
-          const { beyondLineage: _dropped, ...rest } = character
-          return lineage ? { ...rest, beyondLineage: lineage } : rest
+          return card
         }
 
         return {

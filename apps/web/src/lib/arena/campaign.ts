@@ -1,6 +1,9 @@
 import type { ArenaDifficulty, OpponentDoctrine } from './ai'
 import type { ArenaProfile, NenMastery } from './profile'
 import type { ArenaTerrainId } from './terrain'
+import type { ArenaFormatId } from './formats'
+import type { ArenaOpponentId } from './experience'
+import type { ArenaReplay } from './replay/types'
 
 export interface CampaignRequirement {
   challenge?: string
@@ -16,6 +19,8 @@ export interface CampaignMission {
   doctrine: OpponentDoctrine
   difficulty: ArenaDifficulty
   terrainId: ArenaTerrainId
+  formatId: ArenaFormatId
+  opponentId: ArenaOpponentId
   boss?: boolean
   requires: CampaignRequirement
 }
@@ -30,6 +35,8 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
     doctrine: 'counter',
     difficulty: 'initiate',
     terrainId: 'tier-1-banquet-hall',
+    formatId: 'first-to-three',
+    opponentId: 'counter-student',
     requires: {},
   },
   {
@@ -41,6 +48,8 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
     doctrine: 'counter',
     difficulty: 'fighter',
     terrainId: 'tier-1-banquet-hall',
+    formatId: 'first-to-three',
+    opponentId: 'counter-student',
     requires: { challenge: 'ryu', mastery: { ryu: 3 } },
   },
   {
@@ -52,6 +61,8 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
     doctrine: 'deceiver',
     difficulty: 'fighter',
     terrainId: 'tier-2-screening-room',
+    formatId: 'first-to-three',
+    opponentId: 'in-examiner',
     requires: { challenge: 'guard', mastery: { gyo: 1 } },
   },
   {
@@ -63,6 +74,8 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
     doctrine: 'artillery',
     difficulty: 'master',
     terrainId: 'tier-2-screening-room',
+    formatId: 'sudden-death',
+    opponentId: 'silent-gunner',
     requires: { challenge: 'in-gyo', mastery: { ken: 1 } },
   },
   {
@@ -75,6 +88,8 @@ export const ARENA_CAMPAIGN: CampaignMission[] = [
       doctrine: 'binder',
       difficulty: 'master',
       terrainId: 'tier-1-banquet-hall',
+      formatId: 'forced-mastery',
+      opponentId: 'aura-auditor',
       requires: { challenge: 'ko', mastery: { ren: 3, ryu: 5, zetsu: 2 } },
     },
     boss: true,
@@ -101,4 +116,16 @@ export function unmetRequirements(mission: CampaignMission, profile: ArenaProfil
       unmet.push(`mastery:${technique}:${minimum}`)
   }
   return unmet
+}
+
+export function missionMatchesReplay(mission: CampaignMission, replay: ArenaReplay): boolean {
+  return (
+    replay.match.missionId === mission.id &&
+    replay.match.challengeId === mission.challengeId &&
+    replay.match.formatId === mission.formatId &&
+    replay.match.opponentId === mission.opponentId &&
+    replay.setup.terrain.id === mission.terrainId &&
+    replay.doctrine === mission.doctrine &&
+    replay.difficulty === mission.difficulty
+  )
 }

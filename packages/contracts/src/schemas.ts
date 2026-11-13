@@ -214,6 +214,17 @@ export const chapterSchema = z
   })
   .passthrough()
 
+/** A visible manga citation attached to an indexable public record. */
+export const sourceRefSchema = z
+  .object({
+    chapterId: chapterRef,
+    note: z.string().min(1).optional(),
+  })
+  .strict()
+
+/** Stable editorial dates, never process boot times. */
+const modifiedAt = z.iso.date()
+
 /**
  * A character, and everything the map compiler projects into the database.
  *
@@ -231,6 +242,8 @@ export const characterSchema = z
     factionId: slug.nullable().optional(),
     firstAppearanceChapterId: chapterRef.nullable().optional(),
     canonStatus: z.string().optional(),
+    modifiedAt,
+    sources: z.array(sourceRefSchema).min(1),
     shipLocation: shipLocationSchema.optional(),
     /** Declared, and the only thing that gives a silhouette an aura. */
     nen: nenSchema.optional(),
@@ -261,7 +274,9 @@ export const abilitySchema = z
      * Optional today, and the reason `ability-visibility.ts` has to infer a
      * date from the owner. Every entry that carries one is one fewer guess.
      */
-    firstVisibleChapterId: slug.nullable().optional(),
+    firstVisibleChapterId: chapterRef,
+    modifiedAt,
+    sources: z.array(sourceRefSchema).min(1),
   })
   .passthrough()
 
@@ -293,6 +308,8 @@ export const factionSchema = z
     id: slug,
     name: z.string().min(1),
     description: z.string().optional(),
+    modifiedAt: modifiedAt.optional(),
+    sources: z.array(sourceRefSchema).min(1).optional(),
   })
   .passthrough()
 
@@ -303,11 +320,14 @@ export const locationSchema = z
     deck: z.number().int().nullable().optional(),
     zoneType: z.string().optional(),
     parentLocationId: slug.nullable().optional(),
+    modifiedAt: modifiedAt.optional(),
+    sources: z.array(sourceRefSchema).min(1).optional(),
   })
   .passthrough()
 
 export const eventSchema = z
   .object({
+    id: slug,
     title: z.string().min(1),
     chapterTitle: z.string().min(1),
     chapter: z.number().int().positive(),
@@ -315,6 +335,8 @@ export const eventSchema = z
     // fraction of the chapter (`chapterPosition`): a wider sequence would
     // overflow the scale and order past the next chapter.
     sequence: z.number().int().nonnegative().max(999),
+    modifiedAt,
+    sources: z.array(sourceRefSchema).min(1),
     summary: z.string().optional(),
     /**
      * Titles a previous run wrote for this event. The timeline pass matches on

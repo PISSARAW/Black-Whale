@@ -1,7 +1,7 @@
 <script lang="ts">
   import { t } from '$lib/i18n'
 
-  let { onStart }: { onStart: () => void } = $props()
+  let { onStart, goal }: { onStart: () => void; goal: string } = $props()
 </script>
 
 <div
@@ -13,7 +13,7 @@
   <div class="briefing-card">
     <p class="briefing-kicker">{$t.arena.ui.beforeFight}</p>
     <h2 id="combat-briefing-title">{$t.arena.ui.briefingTitle}</h2>
-    <p class="briefing-goal">{$t.arena.ui.briefingGoal}</p>
+    <p class="briefing-goal">{goal}</p>
     <ol class="briefing-steps">
       <li>
         <kbd>{$t.arena.ui.moveKeys}</kbd>

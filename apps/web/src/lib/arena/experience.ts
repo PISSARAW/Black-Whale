@@ -3,7 +3,7 @@ import type { ArenaDifficulty, OpponentDoctrine } from './ai'
 import { ARENA_FORMATS, type ArenaFormat, type ArenaFormatId } from './formats'
 import type { ArenaReplay } from './replay/types'
 
-export type ArenaOpponentId = OpponentProfile['id'] | 'adaptive'
+export type ArenaOpponentId = OpponentProfile['id'] | 'adaptive' | 'custom'
 
 export interface ArenaExperience {
   format: ArenaFormat
@@ -16,9 +16,20 @@ export interface ArenaExperience {
 export function resolveArenaExperience(input: {
   formatId: ArenaFormatId
   opponentId: ArenaOpponentId
+  doctrine?: OpponentDoctrine
+  difficulty?: ArenaDifficulty
   history?: ArenaReplay[]
 }): ArenaExperience {
   const format = ARENA_FORMATS.find(({ id }) => id === input.formatId) ?? ARENA_FORMATS[0]
+  if (input.opponentId === 'custom') {
+    return {
+      format,
+      opponentId: 'custom',
+      doctrine: input.doctrine ?? 'counter',
+      difficulty: input.difficulty ?? 'fighter',
+      observedBouts: 0,
+    }
+  }
   if (input.opponentId === 'adaptive') {
     const adaptation = adaptOpponent(input.history ?? [])
     return {

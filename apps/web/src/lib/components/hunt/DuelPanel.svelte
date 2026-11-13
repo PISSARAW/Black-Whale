@@ -51,6 +51,8 @@
     onKo: () => void
     onBreakAway: () => void
     onRecover: () => void
+    arenaLabel: string
+    onArena: () => void
   }
 
   let {
@@ -65,6 +67,8 @@
     onKo,
     onBreakAway,
     onRecover,
+    arenaLabel,
+    onArena,
   }: Props = $props()
 
   let forward = $derived(duel.player.attack >= STRIKE_THRESHOLD)
@@ -191,6 +195,9 @@
         </button>
       {/if}
     </div>
+    <button class="duel-action arena mt-1.5 w-full" onclick={onArena}>
+      {arenaLabel}
+    </button>
   </section>
 </div>
 
@@ -220,6 +227,12 @@
   }
   .duel-action.danger {
     border-color: rgb(251 113 133 / 0.35);
+  }
+  .duel-action.arena {
+    border-color: rgb(212 183 107 / 0.55);
+    color: rgb(230 210 156);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
   .duel-action:disabled {
     opacity: 0.25;

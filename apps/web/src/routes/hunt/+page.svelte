@@ -81,7 +81,31 @@
     PARALLEL_FUTURE_HUNT,
     type HuntHatsuId,
   } from '$lib/hunt/hatsu'
+  import {
+    consumeHuntArenaCheckpoint,
+    huntArenaHandoff,
+    saveHuntArenaCheckpoint,
+    type HuntArenaCheckpoint,
+  } from '$lib/hunt/arenaBridge'
+  import {
+    consumeArenaHandoffResult,
+    saveArenaHandoff,
+    type ArenaHandoffResult,
+  } from '$lib/arena/bridge'
   const ship = theShip()
+
+  interface HuntArenaContext {
+    selectedTerrain: HuntTerrainId
+    selectedContract: string
+    contractStage: number
+    selectedHatsu: HuntHatsuId
+    selectedHunter: HunterProfileId
+    selectedVow: HuntVow | null
+    runSeed: number
+    customContract: HuntContractV3 | null
+    replay: HuntReplayV3 | null
+    lastReplayMovementAt: number
+  }
   let selectedTerrain = $state<HuntTerrainId>(DEFAULT_HUNT_TERRAIN)
   const initialArena = buildArena()
   const initialGraph = buildNavGraph(initialArena)
@@ -368,6 +392,37 @@
     return true
   }
 
+  function continueInArena() {
+    if (!game.duel) return
+    const id = `hunt-${crypto.randomUUID()}`
+    const handoff = huntArenaHandoff(
+      game,
+      id,
+      `${window.location.pathname}${window.location.search}`,
+    )
+    if (!handoff) return
+    const checkpoint: HuntArenaCheckpoint<HuntArenaContext> = {
+      version: 1,
+      handoffId: id,
+      state: game,
+      context: {
+        selectedTerrain,
+        selectedContract,
+        contractStage,
+        selectedHatsu,
+        selectedHunter,
+        selectedVow,
+        runSeed,
+        customContract,
+        replay,
+        lastReplayMovementAt,
+      },
+    }
+    saveHuntArenaCheckpoint(sessionStorage, checkpoint)
+    saveArenaHandoff(sessionStorage, handoff)
+    window.location.assign($link('/arena?opponent=custom&format=first-to-three'))
+  }
+
   function strike(): boolean {
     const player = game.duel!.player
     if (player.attack < STRIKE_THRESHOLD || !capabilities.canUseTwoHands) {
@@ -449,11 +504,44 @@
     }
     const storedReplay = localStorage.getItem(replayKey)
     lastReplay = storedReplay ? decodeReplay(storedReplay) : null
+    const checkpoint = consumeHuntArenaCheckpoint<HuntArenaContext>(sessionStorage)
+    if (checkpoint) restoreArenaCheckpoint(checkpoint, consumeArenaHandoffResult(sessionStorage))
     window.addEventListener('keydown', onKeyDown)
     document.addEventListener('visibilitychange', resetFrameClock)
     window.addEventListener('pagehide', closeHuntAudio)
     frame = requestAnimationFrame(tick)
   })
+
+  function restoreArenaCheckpoint(
+    checkpoint: HuntArenaCheckpoint<HuntArenaContext>,
+    result: ArenaHandoffResult | null,
+  ) {
+    const context = checkpoint.context
+    customContract = context.customContract
+    selectedContract = context.selectedContract
+    contractStage = context.contractStage
+    selectedHatsu = context.selectedHatsu
+    selectedHunter = context.selectedHunter
+    selectedVow = context.selectedVow
+    runSeed = context.runSeed
+    selectTerrain(context.selectedTerrain)
+    contractStage = context.contractStage
+    game = checkpoint.state
+    replay = context.replay
+    lastReplayMovementAt = context.lastReplayMovementAt
+    position = game.player.position
+    heading = game.player.heading
+    tierId = arena.tierId
+    briefed = true
+    if (result?.handoffId === checkpoint.handoffId) {
+      send({
+        type: 'ARENA_DUEL_RESOLVED',
+        result,
+        durationSeconds: activeContract.durationSeconds,
+      })
+      if (huntIsOver(game.outcome) && !campaignRecorded) recordCampaignRun()
+    }
+  }
 
   onDestroy(() => {
     if (typeof window === 'undefined') return
@@ -668,6 +756,8 @@
       onKo={() => strike()}
       onBreakAway={() => duel({ type: 'ZETSU', on: !game.duel!.player.zetsu })}
       onRecover={() => send({ type: 'TAKE_IN_DUEL' })}
+      arenaLabel={$locale === 'fr' ? 'Continuer dans Arena' : 'Continue in Arena'}
+      onArena={continueInArena}
     />
   {/if}
 

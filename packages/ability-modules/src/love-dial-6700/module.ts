@@ -52,7 +52,11 @@ export const loveDial6700 = defineAbility({
   actions: {
     dial: {
       label: 'Composer',
-      evidence: shown('ch. 366 — la recherche par critères, chiffre après chiffre'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 366,
+        label: 'ch. 366 — la recherche par critères, chiffre après chiffre',
+      }),
       conditions: [
         requiresParameter('criteria', 'Des critères de recherche sont fournis'),
         belowCapacity(
@@ -79,7 +83,11 @@ export const loveDial6700 = defineAbility({
 
     'narrow-down': {
       label: 'Resserrer la recherche',
-      evidence: shown('ch. 366 — le nombre guide resserre le cercle'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 366,
+        label: 'ch. 366 — le nombre guide resserre le cercle',
+      }),
       conditions: [effectIsLive('effectId', 'Une recherche est en cours')],
       effects: [
         attributeCounter({
@@ -100,12 +108,15 @@ export const loveDial6700 = defineAbility({
     'dial-past-quota': {
       label: 'Composer au-delà du quota',
       refusal: 'Le nombre d’appels par jour est fixé : le quota épuisé, l’appareil se tait',
-      evidence: asserted('le quota journalier énoncé avec la capacité'),
+      evidence: asserted({ kind: 'other', label: 'le quota journalier énoncé avec la capacité' }),
     },
 
     'reset-quota': {
       label: 'Attendre le jour suivant',
-      evidence: asserted('le quota est journalier : il revient avec le jour'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'le quota est journalier : il revient avec le jour',
+      }),
       effects: [attributeCounter({ increments: { callsToday: 0 }, attributes: { day: 'next' } })],
     },
   },

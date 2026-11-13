@@ -58,7 +58,11 @@ export const luiniSpatialTeleportation = defineAbility({
   actions: {
     anchor: {
       label: 'Ancrer la pièce',
-      evidence: shown('ch. 378 — la pièce close sert d’ancrage'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 378,
+        label: 'ch. 378 — la pièce close sert d’ancrage',
+      }),
       conditions: [
         requiresParameter('fromLocationId', 'Une pièce d’ancrage est choisie'),
         locationIsSealed('La porte de la pièce d’ancrage est fermée'),
@@ -80,7 +84,11 @@ export const luiniSpatialTeleportation = defineAbility({
 
     open: {
       label: 'Ouvrir un portail',
-      evidence: shown('ch. 378 — le portail vers un lieu déjà visité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 378,
+        label: 'ch. 378 — le portail vers un lieu déjà visité',
+      }),
       conditions: [
         requiresParameter('locationId', 'Une destination est choisie'),
         // The timeline is the activation condition: Luini can only reach a room
@@ -97,7 +105,11 @@ export const luiniSpatialTeleportation = defineAbility({
     'open-to-an-unvisited-room': {
       label: 'Ouvrir vers un lieu jamais visité',
       refusal: 'Le réseau ne dessert que les lieux où Luini est déjà allé',
-      evidence: shown('ch. 378 — la contrainte énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 378,
+        label: 'ch. 378 — la contrainte énoncée avec la capacité',
+      }),
     },
 
     'open-from-an-unsealed-room': {
@@ -107,7 +119,11 @@ export const luiniSpatialTeleportation = defineAbility({
 
     'burn-anchor': {
       label: 'La porte d’ancrage s’ouvre',
-      evidence: shown('ch. 378 — la pièce brûlée l’est définitivement'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 378,
+        label: 'ch. 378 — la pièce brûlée l’est définitivement',
+      }),
       conditions: [effectIsLive('effectId', 'Le réseau de portails existe')],
       effects: [
         // Canonical invalidation: not a cooldown, a permanent loss.

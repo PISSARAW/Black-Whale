@@ -59,7 +59,11 @@ export const parallelFuture = defineAbility({
   actions: {
     'open-window': {
       label: 'Ouvrir la fenêtre de 10 secondes',
-      evidence: shown('ch. 393 — Zetsu, yeux fermés, dix secondes d’avance'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 393,
+        label: 'ch. 393 — Zetsu, yeux fermés, dix secondes d’avance',
+      }),
       conditions: [inZetsu()],
       effects: [
         effect({
@@ -86,7 +90,11 @@ export const parallelFuture = defineAbility({
 
     hold: {
       label: 'Maintenir la vision',
-      evidence: shown('ch. 393 et 415 — la fenêtre glisse tant que le Zetsu tient'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 393,
+        label: 'ch. 393 et 415 — la fenêtre glisse tant que le Zetsu tient',
+      }),
       conditions: [inZetsu(), effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         attributeCounter({
@@ -99,7 +107,11 @@ export const parallelFuture = defineAbility({
     'act-on-the-prediction': {
       label: 'Agir avec dix secondes d’avance',
       // The dodge that reads as impossible: he is not faster, he already knows.
-      evidence: shown('ch. 393 et 416 — il agit autrement après avoir vu la prédiction'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 393,
+        label: 'ch. 393 et 416 — il agit autrement après avoir vu la prédiction',
+      }),
       conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         setEffectState({
@@ -112,7 +124,11 @@ export const parallelFuture = defineAbility({
     'use-nen-during-the-window': {
       label: 'Utiliser son aura pendant la vision',
       refusal: 'La vision demande le Zetsu : aucune aura tant que la fenêtre est ouverte',
-      evidence: shown('ch. 393 — le prix de la vision est d’être sans défense'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 393,
+        label: 'ch. 393 — le prix de la vision est d’être sans défense',
+      }),
     },
 
     'see-past-ten-seconds': {
@@ -122,7 +138,11 @@ export const parallelFuture = defineAbility({
 
     conclude: {
       label: 'Conclure — le futur prédit devient réel',
-      evidence: shown('ch. 393 et 416-417 — les autres vivent la fausse exécution prédite'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 393,
+        label: 'ch. 393 et 416-417 — les autres vivent la fausse exécution prédite',
+      }),
       conditions: [effectIsLive('effectId', 'La fenêtre est ouverte')],
       effects: [
         // The merge itself is a branch operation: the module records the

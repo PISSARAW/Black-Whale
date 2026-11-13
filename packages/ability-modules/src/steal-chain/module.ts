@@ -80,9 +80,12 @@ export const stealChain = defineAbility({
   actions: {
     steal: {
       label: 'Voler la capacité',
-      evidence: shown(
-        "dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)",
-      ),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label:
+          "dans le quartier de Woble, la chaîne du pouce s'enroule sur Sayird, le garde compromis ; Little Eye quitte son porteur et passe au pouce de Kurapika. (montré, ch. 369)",
+      }),
       conditions: [
         requiresTarget('Une victime est enchaînée'),
         requiresParameter('targetAbilityId', 'La capacité à voler est identifiée'),
@@ -104,18 +107,22 @@ export const stealChain = defineAbility({
 
     'drain-into-zetsu': {
       label: 'Vider la victime',
-      evidence: shown(
-        "l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)",
-      ),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label:
+          "l'aura de Sayird se vide entièrement : sous Gyo, son enveloppe s'éteint, Zetsu forcé jusqu'à nouvel ordre. (montré, ch. 369)",
+      }),
       conditions: [requiresTarget('Une victime est enchaînée')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { forcedZetsu: true } })],
     },
 
     'return-ability': {
       label: 'Rendre la capacité',
-      evidence: asserted(
-        'ce que le pouce tient, il peut le relâcher — c’est ce qui rend le prêt possible',
-      ),
+      evidence: asserted({
+        kind: 'other',
+        label: 'ce que le pouce tient, il peut le relâcher — c’est ce qui rend le prêt possible',
+      }),
       conditions: [effectIsLive('effectId', 'Une capacité est détenue')],
       effects: [setEffectState({ state: 'ENDED', attributes: { returned: true } })],
     },

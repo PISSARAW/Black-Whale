@@ -45,7 +45,11 @@ export const judgmentChain = defineAbility({
   actions: {
     plant: {
       label: 'Planter la chaîne',
-      evidence: shown('ch. 122 — la chaîne dans le cœur de Chrollo, deux règles dictées'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 122,
+        label: 'ch. 122 — la chaîne dans le cœur de Chrollo, deux règles dictées',
+      }),
       conditions: [requiresTarget('Un cœur est visé')],
       effects: [
         // The rules are dictated out loud at activation and are the whole
@@ -66,7 +70,11 @@ export const judgmentChain = defineAbility({
       label: 'Se planter la chaîne',
       // The vow's other half: the same finger enforces the restriction its
       // owner accepted, which is why the panel shows the rule on Kurapika too.
-      evidence: shown('ch. 84 — le majeur retourné contre lui-même'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 84,
+        label: 'ch. 84 — le majeur retourné contre lui-même',
+      }),
       effects: [
         effect({
           kind: 'CURSE',
@@ -83,7 +91,11 @@ export const judgmentChain = defineAbility({
 
     trigger: {
       label: 'Déclencher la sentence',
-      evidence: shown('ch. 84 — la sentence énoncée : le cœur est percé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 84,
+        label: 'ch. 84 — la sentence énoncée : le cœur est percé',
+      }),
       conditions: [effectIsLive('effectId', 'La chaîne visée est toujours en place')],
       effects: [
         setEffectState({ state: 'TRIGGERED', attributes: { violated: true } }),
@@ -97,12 +109,15 @@ export const judgmentChain = defineAbility({
     'declare-additional-rule': {
       label: 'Ajouter une règle',
       refusal: 'Les règles se dictent à la pose : la chaîne plantée ne se renégocie pas',
-      evidence: asserted('le contrat est énoncé une fois, à l’activation'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'le contrat est énoncé une fois, à l’activation',
+      }),
     },
 
     release: {
       label: 'Retirer la chaîne',
-      evidence: asserted('seul Kurapika peut retirer ce qu’il a planté'),
+      evidence: asserted({ kind: 'other', label: 'seul Kurapika peut retirer ce qu’il a planté' }),
       conditions: [effectIsLive('effectId', 'La chaîne visée est toujours en place')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

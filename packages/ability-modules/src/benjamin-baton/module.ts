@@ -61,7 +61,11 @@ export const benjaminBaton = defineAbility({
   actions: {
     'muster-army': {
       label: 'Constituer l’armée',
-      evidence: shown('ch. 361 — les quatre étoiles dans la paume, l’armée derrière'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 361,
+        label: 'ch. 361 — les quatre étoiles dans la paume, l’armée derrière',
+      }),
       effects: [
         spawnNenEntity({ id: COHORT_ID, kind: 'COHORT', label: 'Armée de Benjamin' }),
         effect({
@@ -85,7 +89,11 @@ export const benjaminBaton = defineAbility({
 
     enlist: {
       label: 'Enrôler un soldat',
-      evidence: shown('ch. 361 — les loyalistes diplômés de l’académie'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 361,
+        label: 'ch. 361 — les loyalistes diplômés de l’académie',
+      }),
       conditions: [
         requiresTarget('Un soldat est enrôlé'),
         effectIsLive('effectId', 'L’armée est constituée'),
@@ -98,13 +106,21 @@ export const benjaminBaton = defineAbility({
       // There is nothing to click: the reducer does this on BODY_STATE_CHANGED.
       // The entry exists so the wheel says who pays for the inheritance.
       refusal: 'L’héritage est automatique : il vient de la mort d’un homme, pas d’un geste',
-      evidence: shown('ch. 385 — la mort de Vincent, et Air Blow change de main'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — la mort de Vincent, et Air Blow change de main',
+      }),
     },
 
     'enlist-a-civilian': {
       label: 'Enrôler quelqu’un hors de l’académie',
       refusal: 'L’héritage ne prend que sur un loyaliste diplômé de l’académie militaire',
-      evidence: shown('ch. 361 — la condition énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 361,
+        label: 'ch. 361 — la condition énoncée avec la capacité',
+      }),
     },
   },
 

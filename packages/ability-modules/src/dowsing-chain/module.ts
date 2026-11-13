@@ -48,7 +48,11 @@ export const dowsingChain = defineAbility({
   actions: {
     dowse: {
       label: 'Sonder une position',
-      evidence: shown('ch. 369 — Kurapika situe ce qu’il cherche sans le voir'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label: 'ch. 369 — Kurapika situe ce qu’il cherche sans le voir',
+      }),
       conditions: [requiresTarget('Une cible est sondée')],
       effects: [
         combine(
@@ -65,7 +69,11 @@ export const dowsingChain = defineAbility({
 
     'dowse-object': {
       label: 'Sonder un objet',
-      evidence: shown('ch. 369 — la chaîne cherche ce qui a été perdu de vue'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label: 'ch. 369 — la chaîne cherche ce qui a été perdu de vue',
+      }),
       conditions: [requiresParameter('objectId', 'Un objet est sondé')],
       effects: [
         knowledgeGrant({
@@ -78,7 +86,11 @@ export const dowsingChain = defineAbility({
 
     'detect-lie': {
       label: 'Détecter un mensonge',
-      evidence: shown('ch. 85-86 — interrogatoire d’Uvogin ; ch. 380 — le pont 1'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 85,
+        label: 'ch. 85-86 — interrogatoire d’Uvogin ; ch. 380 — le pont 1',
+      }),
       conditions: [requiresTarget('Un interrogé est visé')],
       effects: [
         knowledgeGrant({
@@ -92,7 +104,11 @@ export const dowsingChain = defineAbility({
     strike: {
       label: 'Parer et frapper',
       // The ring finger is also a weapon: the same chain deflects and hits.
-      evidence: shown('ch. 76 — la chaîne pare et frappe pendant le combat'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 76,
+        label: 'ch. 76 — la chaîne pare et frappe pendant le combat',
+      }),
       conditions: [requiresTarget('Un adversaire est visé')],
       effects: [bodyState({ state: 'INJURED' })],
       hint: 'Emploi physique de la chaîne, hors divination',

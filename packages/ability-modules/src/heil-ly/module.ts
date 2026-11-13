@@ -58,7 +58,11 @@ export const voconteHideoutDoors = defineAbility({
   actions: {
     'open-door': {
       label: 'Créer une porte',
-      evidence: shown('ch. 383 — le repaire recombiné par ses portes'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le repaire recombiné par ses portes',
+      }),
       conditions: [
         requiresParameter('fromLocationId', 'Une pièce de départ est choisie'),
         requiresParameter('locationId', 'Une pièce d’arrivée est choisie'),
@@ -68,7 +72,11 @@ export const voconteHideoutDoors = defineAbility({
 
     'walk-through': {
       label: 'Franchir une porte',
-      evidence: shown('ch. 383 et 410 — le réseau absorbe les entrants de la chambre 3101'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 et 410 — le réseau absorbe les entrants de la chambre 3101',
+      }),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [
         moveEntity({ entity: (ctx) => ctx.actor ?? { id: ctx.actorId, kind: 'CHARACTER' } }),
@@ -78,12 +86,15 @@ export const voconteHideoutDoors = defineAbility({
     'open-outside-the-hideout': {
       label: 'Ouvrir une porte hors du repaire',
       refusal: 'Le réseau ne relie que les pièces du repaire',
-      evidence: asserted('la capacité est décrite sur le repaire, pas au-delà'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité est décrite sur le repaire, pas au-delà',
+      }),
     },
 
     'close-door': {
       label: 'Refermer une porte',
-      evidence: asserted('une porte créée se referme'),
+      evidence: asserted({ kind: 'other', label: 'une porte créée se referme' }),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -140,7 +151,11 @@ export const bloodyMary = defineAbility({
   actions: {
     bleed: {
       label: 'Ouvrir une plaie',
-      evidence: shown('ch. 383 — le sang versé pour servir'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le sang versé pour servir',
+      }),
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'bodyId') ?? ctx.actorId, state: 'INJURED' }),
         effect({
@@ -161,12 +176,20 @@ export const bloodyMary = defineAbility({
     'act-without-an-open-wound': {
       label: 'Agir sans plaie ouverte',
       refusal: 'Il faut du sang versé : sans plaie, la capacité n’a rien à manipuler',
-      evidence: shown('ch. 383 — la plaie précède toujours l’effet'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — la plaie précède toujours l’effet',
+      }),
     },
 
     restrain: {
       label: 'Entraver',
-      evidence: shown('ch. 383 — le sang manipulé immobilise'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le sang manipulé immobilise',
+      }),
       conditions: [
         requiresTarget('Une cible est entravée'),
         effectIsLive('effectId', 'Du sang est disponible'),
@@ -176,7 +199,11 @@ export const bloodyMary = defineAbility({
 
     'split-into-eyes': {
       label: 'Diviser en gouttes-yeux',
-      evidence: shown('ch. 383 — les gouttes qui regardent'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — les gouttes qui regardent',
+      }),
       conditions: [effectIsLive('effectId', 'Du sang est disponible')],
       effects: [
         controlLink({ vector: 'blood-droplet', mode: 'observe' }),
@@ -234,7 +261,11 @@ export const padailleWeaponTransformation = defineAbility({
   actions: {
     transform: {
       label: 'Transformer un membre',
-      evidence: shown('ch. 383 — le corps armé par la transformation'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le corps armé par la transformation',
+      }),
       conditions: [requiresParameter('tool', 'La forme prise par le membre est connue')],
       effects: [
         effect({
@@ -255,7 +286,11 @@ export const padailleWeaponTransformation = defineAbility({
 
     'strike-with-the-weapon': {
       label: 'Frapper avec l’arme',
-      evidence: shown('ch. 383 — le membre transformé sert d’arme'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le membre transformé sert d’arme',
+      }),
       conditions: [requiresTarget('Une cible est frappée')],
       effects: [bodyState({ state: 'INJURED' })],
     },
@@ -263,12 +298,15 @@ export const padailleWeaponTransformation = defineAbility({
     'transform-a-second-limb': {
       label: 'Transformer un second membre',
       refusal: 'Une partie du corps par arme : le reste demeure humain',
-      evidence: asserted('la limite énoncée avec la capacité'),
+      evidence: asserted({ kind: 'other', label: 'la limite énoncée avec la capacité' }),
     },
 
     revert: {
       label: 'Reprendre forme humaine',
-      evidence: asserted('la forme humaine revient quand le combat cesse'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la forme humaine revient quand le combat cesse',
+      }),
       conditions: [effectIsLive('effectId', 'Un membre est transformé')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -318,7 +356,11 @@ export const snakeArm = defineAbility({
   actions: {
     transform: {
       label: 'Transformer le bras',
-      evidence: shown('ch. 383 — le bras devient serpent'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le bras devient serpent',
+      }),
       effects: [
         spawnNenEntity({
           id: (ctx) => `gel-snake-${ctx.actorId}`,
@@ -331,7 +373,7 @@ export const snakeArm = defineAbility({
 
     'grip-with-the-snake': {
       label: 'Saisir avec le bras-serpent',
-      evidence: asserted('le bras allongé retient autant qu’il frappe'),
+      evidence: asserted({ kind: 'other', label: 'le bras allongé retient autant qu’il frappe' }),
       conditions: [requiresTarget('Une cible est saisie')],
       effects: [constraint({ rules: ['Le bras-serpent enserre la cible.'] })],
     },
@@ -344,7 +386,7 @@ export const snakeArm = defineAbility({
 
     bite: {
       label: 'Mordre',
-      evidence: shown('ch. 383 — le bras-serpent mord'),
+      evidence: shown({ kind: 'chapter', chapter: 383, label: 'ch. 383 — le bras-serpent mord' }),
       conditions: [requiresTarget('Une cible est mordue')],
       effects: [
         effect({

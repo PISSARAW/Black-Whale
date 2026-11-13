@@ -46,7 +46,11 @@ export const tserriednichGuardianLieMarks = defineAbility({
   actions: {
     mark: {
       label: 'Marquer un interrogé',
-      evidence: shown('ch. 391 — la marque posée sur l’interrogé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — la marque posée sur l’interrogé',
+      }),
       conditions: [requiresTarget('Un interrogé est marqué')],
       effects: [
         curse({
@@ -62,7 +66,11 @@ export const tserriednichGuardianLieMarks = defineAbility({
 
     'count-lie': {
       label: 'Compter un mensonge',
-      evidence: shown('ch. 391 — chaque mensonge ajoute sa marque'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — chaque mensonge ajoute sa marque',
+      }),
       conditions: [effectIsLive('effectId', 'Une marque est en place')],
       effects: [attributeCounter({ increments: { lieCount: 1 } })],
       cost: { label: 'Une marque de plus', amount: 1, unit: 'marque' },
@@ -70,7 +78,11 @@ export const tserriednichGuardianLieMarks = defineAbility({
 
     transform: {
       label: 'Troisième mensonge',
-      evidence: shown('ch. 391 — au troisième mensonge, la transformation'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — au troisième mensonge, la transformation',
+      }),
       conditions: [
         effectIsLive('effectId', 'Une marque est en place'),
         effectAttributeAtLeast({
@@ -86,7 +98,11 @@ export const tserriednichGuardianLieMarks = defineAbility({
       label: 'Afficher le compteur au porteur',
       // Theta knows exactly how many she has left: the interrogation lives under
       // that sword, and her perspective has to show it.
-      evidence: shown('ch. 391 — la porteuse sait où elle en est'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — la porteuse sait où elle en est',
+      }),
       conditions: [effectIsLive('effectId', 'Une marque est en place')],
       effects: [
         knowledgeGrant({

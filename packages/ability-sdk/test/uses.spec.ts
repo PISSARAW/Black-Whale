@@ -45,18 +45,18 @@ const ability = defineAbility({
   actions: {
     attach: {
       label: 'Attacher',
-      evidence: shown('ch. 39'),
+      evidence: shown({ kind: 'chapter', chapter: 39, label: 'ch. 39' }),
       effects: [elasticConnection()],
     },
     'set-trap': {
       label: 'Poser un piège (In)',
-      evidence: shown('ch. 359'),
+      evidence: shown({ kind: 'chapter', chapter: 359, label: 'ch. 359' }),
       gyo: 'le filament tendu en travers du couloir',
       effects: [masked(elasticConnection())],
     },
     'wall-run': {
       label: 'Courir sur les murs',
-      evidence: asserted('description du catalogue'),
+      evidence: asserted({ kind: 'other', label: 'description du catalogue' }),
       effects: [elasticConnection()],
     },
     'ko-strike': {
@@ -87,13 +87,15 @@ const wheel = () => ability.getActionWheel(context('attach'))
 const entry = (id: string) => wheel().find((item) => item.id === id)
 
 describe('grammaire d’emploi', () => {
-  it('normalises legacy citations into structured canon sources', () => {
-    expect(canonSource('ch. 39 — le filament')).toEqual({
+  it('preserves structured canon sources without parsing free text', () => {
+    expect(canonSource({ kind: 'chapter', chapter: 39, label: 'ch. 39 — le filament' })).toEqual({
       kind: 'chapter',
       chapter: 39,
       label: 'ch. 39 — le filament',
     })
-    expect(canonSource('databook officiel')).toMatchObject({ kind: 'databook' })
+    expect(canonSource({ kind: 'databook', label: 'databook officiel' })).toMatchObject({
+      kind: 'databook',
+    })
   })
 
   it('shows the source of a use the manga draws', () => {

@@ -54,7 +54,11 @@ export const erigeron = defineAbility({
   actions: {
     grow: {
       label: 'Accélérer la croissance',
-      evidence: shown('ch. 380 — la croissance accélérée à la paume'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — la croissance accélérée à la paume',
+      }),
       conditions: [requiresTarget('Un être vivant est visé')],
       effects: [
         effect({
@@ -70,7 +74,11 @@ export const erigeron = defineAbility({
 
     boost: {
       label: 'Amplifier une capacité',
-      evidence: shown('ch. 380 — le soutien discret du camp Woble'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — le soutien discret du camp Woble',
+      }),
       conditions: [
         requiresTarget('Un utilisateur est amplifié'),
         requiresParameter('targetAbilityId', 'La capacité amplifiée est identifiée'),
@@ -88,13 +96,21 @@ export const erigeron = defineAbility({
     'boost-at-a-distance': {
       label: 'Amplifier sans contact',
       refusal: 'La capacité passe par la paume : sans contact, rien ne se transmet',
-      evidence: shown('ch. 380 — le contact est montré à chaque usage'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — le contact est montré à chaque usage',
+      }),
     },
 
     'boost-an-untrained-user': {
       label: 'Amplifier un non-entraîné',
       // Not a refusal: it works, badly. The cost line says how badly.
-      evidence: shown('ch. 380 — le gain est marginal sur qui n’est pas entraîné'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — le gain est marginal sur qui n’est pas entraîné',
+      }),
       conditions: [requiresTarget('Un non-entraîné est amplifié')],
       effects: [auraModifier({ mode: 'BOOST', effectiveness: 'marginal' })],
       cost: { label: 'Gain marginal, aura dépensée pareil', unit: 'efficacité' },
@@ -102,7 +118,10 @@ export const erigeron = defineAbility({
 
     stop: {
       label: 'Cesser l’amplification',
-      evidence: asserted('l’amplification s’arrête quand il retire la main'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'l’amplification s’arrête quand il retire la main',
+      }),
       conditions: [effectIsLive('effectId', 'Une amplification est en cours')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

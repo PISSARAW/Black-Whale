@@ -77,7 +77,11 @@ export const comboMaster = defineAbility({
   actions: {
     conjure: {
       label: 'Invoquer le portable',
-      evidence: shown('ch. 413 — le portable conjuré, ses menus et son « ブーン »'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 413,
+        label: 'ch. 413 — le portable conjuré, ses menus et son « ブーン »',
+      }),
       effects: [
         spawnNenEntity({
           id: 'combo-master-console',
@@ -90,7 +94,11 @@ export const comboMaster = defineAbility({
 
     decipher: {
       label: 'Déchiffrer par co-présence',
-      evidence: shown('ch. 413 — le compteur de jours restants sur l’écran'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 413,
+        label: 'ch. 413 — le compteur de jours restants sur l’écran',
+      }),
       // Cumulative, and it survives interruption: the counter is on the
       // console and the console does not forget when he walks out.
       conditions: [requiresTarget('Une capacité est visée')],
@@ -106,7 +114,11 @@ export const comboMaster = defineAbility({
 
     'read-out': {
       label: 'Lire le déchiffrage',
-      evidence: shown('ch. 413 — les jours restants s’affichent'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 413,
+        label: 'ch. 413 — les jours restants s’affichent',
+      }),
       conditions: [effectIsLive('combo-master-decipher', 'Un déchiffrage est en cours')],
       effects: [
         knowledgeGrant({
@@ -118,7 +130,11 @@ export const comboMaster = defineAbility({
 
     fabricate: {
       label: 'Fabriquer l’équipement',
-      evidence: shown('ch. 413 et ch. 415 avant le voyage — SELECT → WEAPON / ARMOR / TOOL'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 413,
+        label: 'ch. 413 et ch. 415 avant le voyage — SELECT → WEAPON / ARMOR / TOOL',
+      }),
       // The asymmetry, declared rather than described: staying is the
       // condition, and there is no such condition on deciphering.
       conditions: [
@@ -139,7 +155,11 @@ export const comboMaster = defineAbility({
 
     'remove-curse': {
       label: 'Potion REMOVE CURSE',
-      evidence: shown('ch. 415, scène avant le voyage — 365 j pour décoder, 700 j pour contrer'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 415,
+        label: 'ch. 415, scène avant le voyage — 365 j pour décoder, 700 j pour contrer',
+      }),
       // The two attested numbers, carried as numbers and not as a rate. What
       // sits between them the manga does not say, and neither does this.
       conditions: [
@@ -158,7 +178,11 @@ export const comboMaster = defineAbility({
 
     'affected-users': {
       label: 'Alarme AFFECTED USERS',
-      evidence: shown('ch. 415, scène avant le voyage — alerte et liste des co-affectés'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 415,
+        label: 'ch. 415, scène avant le voyage — alerte et liste des co-affectés',
+      }),
       // Fires on any concealed Nen attack aimed at him — curse, disease,
       // staged manipulation — and lists whoever else carries the same thing.
       // An aura signature it cannot read is shown as a question mark rather

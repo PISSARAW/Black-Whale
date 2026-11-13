@@ -43,7 +43,11 @@ function defineStandByMe() {
     actions: {
       lend: {
         label: 'Prêter Stand By Me',
-        evidence: shown('ch. 414 — Yushohi prête Stand By Me à Chiyamasi'),
+        evidence: shown({
+          kind: 'chapter',
+          chapter: 414,
+          label: 'ch. 414 — Yushohi prête Stand By Me à Chiyamasi',
+        }),
         conditions: [requiresTarget('Un soldat allié reçoit la capacité')],
         effects: [
           abilityGrant({ abilityId: 'stand-by-me', ownerId: (ctx) => ctx.targets[0] }),
@@ -57,17 +61,29 @@ function defineStandByMe() {
       'use-unrevealed-effect': {
         label: 'Employer son effet au combat',
         refusal: "Le chapitre 414 montre le prêt, pas l'effet de la capacité",
-        evidence: shown('ch. 414 — seul le transfert à Chiyamasi est montré'),
+        evidence: shown({
+          kind: 'chapter',
+          chapter: 414,
+          label: 'ch. 414 — seul le transfert à Chiyamasi est montré',
+        }),
       },
       'state-unrevealed-duration': {
         label: 'Fixer la durée du prêt',
         refusal: "La durée de Stand By Me n'est pas révélée",
-        evidence: shown('ch. 414 — aucune durée n’est donnée avec le prêt'),
+        evidence: shown({
+          kind: 'chapter',
+          chapter: 414,
+          label: 'ch. 414 — aucune durée n’est donnée avec le prêt',
+        }),
       },
       'state-unrevealed-category': {
         label: 'Nommer la catégorie naturelle',
         refusal: "La catégorie de Nen de Yushohi n'est pas révélée",
-        evidence: shown('ch. 414 — le prêt ne révèle pas la catégorie'),
+        evidence: shown({
+          kind: 'chapter',
+          chapter: 414,
+          label: 'ch. 414 — le prêt ne révèle pas la catégorie',
+        }),
       },
     },
 

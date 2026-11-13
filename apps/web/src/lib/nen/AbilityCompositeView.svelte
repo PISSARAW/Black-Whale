@@ -7,13 +7,20 @@
     model,
     variant,
     family = 'target',
-  }: { model: AbilityViewModel; variant: string; family?: AbilityViewFamily } = $props()
+    accent = 'var(--accent-gold)',
+  }: {
+    model: AbilityViewModel
+    variant: string
+    family?: AbilityViewFamily
+    accent?: string
+  } = $props()
 </script>
 
 <section
   class="ability-view family-{family}"
   class:reduced={model.reducedMotion}
   data-component-key={variant}
+  style:--view={accent}
   aria-label={`${model.name} — ${model.action.label}`}
 >
   <div class="view-head">
@@ -57,7 +64,6 @@
 
 <style>
   .ability-view {
-    --view: var(--accent-gold);
     display: grid;
     gap: 0.7rem;
     padding: 0.8rem;

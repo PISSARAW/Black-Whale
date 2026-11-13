@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- The Zodiac abilities share one declarative module and source vocabulary. */
 import {
   asserted,
   buildManifest,
@@ -55,7 +56,7 @@ export const saiyuPriestStaff = defineAbility({
   actions: {
     conjure: {
       label: 'Matérialiser le bâton',
-      evidence: shown('ch. 349 — le bâton matérialisé'),
+      evidence: shown({ kind: 'chapter', chapter: 349, label: 'ch. 349 — le bâton matérialisé' }),
       effects: [
         spawnNenEntity({
           id: (ctx) => `saiyu-staff-${ctx.actorId}`,
@@ -68,7 +69,11 @@ export const saiyuPriestStaff = defineAbility({
 
     'lengthen-the-staff': {
       label: 'Allonger le bâton',
-      evidence: shown('ch. 349 — la longueur est ce qui se règle'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 349,
+        label: 'ch. 349 — la longueur est ce qui se règle',
+      }),
       effects: [
         constraint({
           rules: ['La longueur du bâton se règle à volonté.'],
@@ -79,7 +84,11 @@ export const saiyuPriestStaff = defineAbility({
 
     restrain: {
       label: 'Retenir un allié',
-      evidence: shown('ch. 349 — le bâton retient sans blesser'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 349,
+        label: 'ch. 349 — le bâton retient sans blesser',
+      }),
       conditions: [requiresTarget('Un allié est retenu')],
       effects: [
         constraint({
@@ -91,7 +100,11 @@ export const saiyuPriestStaff = defineAbility({
 
     strike: {
       label: 'Frapper à distance',
-      evidence: shown('ch. 349 — le bâton s’allonge jusqu’à la cible'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 349,
+        label: 'ch. 349 — le bâton s’allonge jusqu’à la cible',
+      }),
       conditions: [requiresTarget('Un adversaire est frappé')],
       effects: [
         constraint({
@@ -155,7 +168,10 @@ export const saiyuThreeMonkeys = defineAbility({
       'restore-a-sense',
       {
         label: 'Rendre un sens',
-        evidence: asserted('ce que les singes retirent, ils peuvent le rendre'),
+        evidence: asserted({
+          kind: 'other',
+          label: 'ce que les singes retirent, ils peuvent le rendre',
+        }),
         effects: [setEffectState({ state: 'ENDED' })],
       },
     ],
@@ -177,7 +193,11 @@ export const saiyuThreeMonkeys = defineAbility({
       `send-${monkey.id}`,
       {
         label: `Envoyer ${monkey.label}`,
-        evidence: shown('ch. 349 — les trois singes coupent chacun leur canal'),
+        evidence: shown({
+          kind: 'chapter',
+          chapter: 349,
+          label: 'ch. 349 — les trois singes coupent chacun leur canal',
+        }),
         conditions: [requiresTarget('Une cible est visée')],
         effects: [
           spawnNenEntity({
@@ -248,7 +268,7 @@ export const greatHaiku = defineAbility({
   actions: {
     compose: {
       label: 'Écrire un haïku',
-      evidence: asserted('trois vers, dont la qualité fixe la puissance'),
+      evidence: asserted({ kind: 'other', label: 'trois vers, dont la qualité fixe la puissance' }),
       conditions: [requiresParameter('haiku', 'Un haïku est écrit')],
       effects: [
         effect({
@@ -267,7 +287,7 @@ export const greatHaiku = defineAbility({
     'compose-without-a-season-word': {
       label: 'Écrire sans mot de saison',
       refusal: 'Le haïku obéit à sa forme : trois vers et le mot de saison',
-      evidence: asserted('la forme est la condition de la capacité'),
+      evidence: asserted({ kind: 'other', label: 'la forme est la condition de la capacité' }),
     },
 
     'invoke-twice': {
@@ -277,7 +297,7 @@ export const greatHaiku = defineAbility({
 
     invoke: {
       label: 'Invoquer l’effet',
-      evidence: asserted('l’effet suit le poème une fois écrit'),
+      evidence: asserted({ kind: 'other', label: 'l’effet suit le poème une fois écrit' }),
       conditions: [effectIsLive('effectId', 'Un haïku est écrit')],
       effects: [
         setEffectState({
@@ -332,7 +352,11 @@ export const birdManipulation = defineAbility({
   actions: {
     'gather-flock': {
       label: 'Rassembler la volée',
-      evidence: shown('ch. 320 — la volée rassemblée autour de Cheadle'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 320,
+        label: 'ch. 320 — la volée rassemblée autour de Cheadle',
+      }),
       effects: [
         spawnNenEntity({ id: 'cluck-flock', kind: 'COHORT', label: 'Volée de Cluck' }),
         controlLink({
@@ -346,7 +370,10 @@ export const birdManipulation = defineAbility({
 
     'scout-with-the-flock': {
       label: 'Faire observer par la volée',
-      evidence: asserted('des oiseaux menés en nuée voient ce qui se passe en dessous'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'des oiseaux menés en nuée voient ce qui se passe en dessous',
+      }),
       effects: [
         knowledgeGrant({
           factId: (ctx) => `seen-by-flock:${param(ctx, 'locationId') ?? 'zone'}`,
@@ -363,7 +390,11 @@ export const birdManipulation = defineAbility({
 
     deliver: {
       label: 'Livrer un pli',
-      evidence: shown('ch. 320 — les oiseaux portent les plis'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 320,
+        label: 'ch. 320 — les oiseaux portent les plis',
+      }),
       conditions: [
         effectIsLive('effectId', 'La volée est rassemblée'),
         requiresParameter('locationId', 'Une destination est choisie'),
@@ -422,7 +453,11 @@ export const leorioRemotePunch = defineAbility({
   actions: {
     'punch-around-a-corner': {
       label: 'Frapper hors de vue',
-      evidence: shown('ch. 385 — Leorio frappe ce qu’il ne voit pas directement'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — Leorio frappe ce qu’il ne voit pas directement',
+      }),
       conditions: [requiresParameter('surfaceId', 'Une surface est frappée')],
       effects: [
         effect({
@@ -436,12 +471,20 @@ export const leorioRemotePunch = defineAbility({
     'punch-through-a-gap': {
       label: 'Frapper à travers un vide',
       refusal: 'Il faut une surface continue : l’aura ne traverse pas le vide',
-      evidence: shown('ch. 385 — le coup passe par la matière, pas par l’air'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — le coup passe par la matière, pas par l’air',
+      }),
     },
 
     'choose-the-exit-point': {
       label: 'Choisir le point de sortie',
-      evidence: shown('ch. 385 — le poing ressort là où Leorio l’a décidé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — le poing ressort là où Leorio l’a décidé',
+      }),
       conditions: [requiresParameter('exitPoint', 'Un point de sortie est choisi')],
       effects: [
         effect({
@@ -454,7 +497,11 @@ export const leorioRemotePunch = defineAbility({
 
     punch: {
       label: 'Frapper à travers une surface',
-      evidence: shown('ch. 385 — l’uppercut qui traverse la cloison'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — l’uppercut qui traverse la cloison',
+      }),
       conditions: [
         requiresTarget('Une cible est visée'),
         requiresParameter('surfaceId', 'Une surface est frappée'),

@@ -56,7 +56,11 @@ export const surveillancePaperDolls = defineAbility({
   actions: {
     plant: {
       label: 'Poser une poupée',
-      evidence: shown('ch. 358 — la poupée posée là où l’on parle'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 358,
+        label: 'ch. 358 — la poupée posée là où l’on parle',
+      }),
       gyo: 'la figurine de papier et le lien d’écoute qui remonte vers Kalluto',
       conditions: [requiresTarget('Une cible est suivie')],
       effects: [
@@ -74,7 +78,11 @@ export const surveillancePaperDolls = defineAbility({
 
     report: {
       label: 'Écouter',
-      evidence: shown('ch. 358 — Kalluto rapporte ce que la poupée a entendu'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 358,
+        label: 'ch. 358 — Kalluto rapporte ce que la poupée a entendu',
+      }),
       conditions: [requiresParameter('locationId', 'Une pièce est écoutée')],
       effects: [
         (ctx) =>
@@ -90,7 +98,10 @@ export const surveillancePaperDolls = defineAbility({
 
     'plant-on-a-person': {
       label: 'Poser la poupée sur quelqu’un',
-      evidence: asserted('la figurine suit une cible aussi bien qu’une pièce'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la figurine suit une cible aussi bien qu’une pièce',
+      }),
       conditions: [requiresTarget('Une personne est suivie')],
       effects: [controlLink({ vector: 'paper-doll', mode: 'listen' })],
     },
@@ -102,7 +113,7 @@ export const surveillancePaperDolls = defineAbility({
 
     dismiss: {
       label: 'Retirer la poupée',
-      evidence: asserted('la figurine se reprend sans laisser de trace'),
+      evidence: asserted({ kind: 'other', label: 'la figurine se reprend sans laisser de trace' }),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },
@@ -155,7 +166,11 @@ export const danceOfTheSerpentsBite = defineAbility({
   actions: {
     mark: {
       label: 'Marquer de confettis',
-      evidence: shown('ch. 358 — les confettis déposés avant la frappe'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 358,
+        label: 'ch. 358 — les confettis déposés avant la frappe',
+      }),
       conditions: [requiresTarget('Une cible est marquée')],
       effects: [
         effect({
@@ -168,7 +183,11 @@ export const danceOfTheSerpentsBite = defineAbility({
 
     'swarm-blade': {
       label: 'Frapper en nuée',
-      evidence: shown('ch. 358 — l’essaim de papier tranche'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 358,
+        label: 'ch. 358 — l’essaim de papier tranche',
+      }),
       conditions: [requiresTarget('Une cible est prise dans la nuée')],
       effects: [bodyState({ state: 'INJURED' })],
     },
@@ -181,7 +200,11 @@ export const danceOfTheSerpentsBite = defineAbility({
 
     strike: {
       label: 'Frapper',
-      evidence: shown('ch. 358 — la cible marquée est atteinte'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 358,
+        label: 'ch. 358 — la cible marquée est atteinte',
+      }),
       conditions: [requiresTarget('Une cible marquée est frappée')],
       effects: [
         constraint({

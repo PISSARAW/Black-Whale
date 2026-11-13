@@ -58,7 +58,11 @@ export const secretWindow = defineAbility({
   actions: {
     'deploy-wandering': {
       label: 'Hibou Libre',
-      evidence: shown('ch. 363 — le hibou qui va où il veut'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — le hibou qui va où il veut',
+      }),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -79,7 +83,11 @@ export const secretWindow = defineAbility({
 
     'deploy-shoulder': {
       label: "Hibou d'Épaule",
-      evidence: shown('ch. 363 — le hibou posté sur l’épaule'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — le hibou posté sur l’épaule',
+      }),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -100,7 +108,11 @@ export const secretWindow = defineAbility({
 
     'deploy-random': {
       label: 'Hibou Aléatoire',
-      evidence: shown('ch. 363 — le hibou qui surgit ailleurs'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — le hibou qui surgit ailleurs',
+      }),
       conditions: [belowCapacity('secret-window-owls', 1, 'Un seul hibou autorisé à la fois')],
       effects: [
         spawnNenEntity({
@@ -121,7 +133,11 @@ export const secretWindow = defineAbility({
 
     perch: {
       label: 'Poster le hibou',
-      evidence: shown('ch. 363 — le hibou écoute à travers la cloison'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — le hibou écoute à travers la cloison',
+      }),
       conditions: [requiresParameter('locationId', 'Une pièce est choisie')],
       effects: [
         moveEntity({
@@ -132,7 +148,11 @@ export const secretWindow = defineAbility({
 
     replay: {
       label: 'Revoir les enregistrements',
-      evidence: shown('ch. 363 — les observations revues après coup'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — les observations revues après coup',
+      }),
       conditions: [requiresParameter('owlId', 'Un hibou est choisi')],
       effects: [
         // The replay grants what the owl observed (limited to last 10 seconds), dated to when it observed it:
@@ -154,13 +174,20 @@ export const secretWindow = defineAbility({
     'deploy-second-owl': {
       label: 'Déployer un deuxième hibou',
       refusal: 'Un seul hibou tient l’air à la fois : il faut attendre sa disparition',
-      evidence: asserted('la capacité en compte trois, jamais deux en vol'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité en compte trois, jamais deux en vol',
+      }),
     },
 
     'replay-beyond-the-window': {
       label: 'Remonter plus loin que la fenêtre',
       refusal: 'L’enregistrement ne rend que ses dix dernières secondes',
-      evidence: shown('ch. 363 — la fenêtre d’écoute est courte'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 363,
+        label: 'ch. 363 — la fenêtre d’écoute est courte',
+      }),
     },
   },
 

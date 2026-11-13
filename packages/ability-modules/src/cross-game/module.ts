@@ -47,7 +47,7 @@ export const crossGame = defineAbility({
   actions: {
     'blue-card': {
       label: 'Carte bleue — admission',
-      evidence: shown('ch. 352 — la carte bleue admet'),
+      evidence: shown({ kind: 'chapter', chapter: 352, label: 'ch. 352 — la carte bleue admet' }),
       conditions: [requiresTarget('Une personne est admise')],
       effects: [
         constraint({
@@ -59,7 +59,11 @@ export const crossGame = defineAbility({
 
     'yellow-card': {
       label: 'Carte jaune — avertissement',
-      evidence: shown('ch. 352 — l’avertissement précède toujours l’entrave'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 352,
+        label: 'ch. 352 — l’avertissement précède toujours l’entrave',
+      }),
       conditions: [requiresTarget('Une personne est avertie')],
       effects: [
         constraint({
@@ -77,7 +81,11 @@ export const crossGame = defineAbility({
 
     restraint: {
       label: 'Contrainte',
-      evidence: shown('ch. 352 — la cible ne bouge plus, elle parle encore'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 352,
+        label: 'ch. 352 — la cible ne bouge plus, elle parle encore',
+      }),
       conditions: [
         requiresTarget('Une personne est contrainte'),
         // Canon procedure: no restraint without a prior warning.
@@ -97,7 +105,7 @@ export const crossGame = defineAbility({
 
     'red-card': {
       label: 'Carte rouge — expulsion',
-      evidence: shown('ch. 352 — la carte rouge expulse'),
+      evidence: shown({ kind: 'chapter', chapter: 352, label: 'ch. 352 — la carte rouge expulse' }),
       conditions: [requiresTarget('Une personne est expulsée')],
       effects: [
         constraint({
@@ -110,12 +118,19 @@ export const crossGame = defineAbility({
     'restrain-without-warning': {
       label: 'Contraindre sans avertissement',
       refusal: 'La procédure exige un avertissement préalable : pas de carte jaune, pas d’entrave',
-      evidence: shown('ch. 352 — l’avertissement fait partie de la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 352,
+        label: 'ch. 352 — l’avertissement fait partie de la capacité',
+      }),
     },
 
     'restrain-a-crowd': {
       label: 'Contraindre plusieurs personnes',
-      evidence: asserted('la contrainte est brève, réitérable et vise plusieurs cibles'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la contrainte est brève, réitérable et vise plusieurs cibles',
+      }),
       conditions: [requiresTarget('Des personnes sont contraintes')],
       effects: [
         constraint({
@@ -132,7 +147,11 @@ export const crossGame = defineAbility({
 
     release: {
       label: 'Lever la contrainte',
-      evidence: shown('ch. 352 — la contrainte est brève et se lève'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 352,
+        label: 'ch. 352 — la contrainte est brève et se lève',
+      }),
       conditions: [effectIsLive('effectId', 'Une contrainte est en cours')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

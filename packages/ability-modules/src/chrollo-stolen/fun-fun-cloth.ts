@@ -45,7 +45,11 @@ export const funFunCloth = defineAbility({
   actions: {
     wrap: {
       label: 'Envelopper',
-      evidence: shown('ch. 372 — les corps emportés hors de l’arène'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — les corps emportés hors de l’arène',
+      }),
       conditions: [requiresTarget('Une cible est enveloppée')],
       effects: [
         effect({
@@ -64,7 +68,11 @@ export const funFunCloth = defineAbility({
       label: 'Emporter le paquet',
       // Transport of an entity by an entity: the target leaves the board and
       // comes back somewhere else, intact.
-      evidence: shown('ch. 372 — ce qui est enveloppé quitte la scène avec Chrollo'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — ce qui est enveloppé quitte la scène avec Chrollo',
+      }),
       conditions: [effectIsLive('effectId', 'Une cible est enveloppée')],
       effects: [
         moveEntity({
@@ -81,7 +89,7 @@ export const funFunCloth = defineAbility({
 
     unwrap: {
       label: 'Déballer',
-      evidence: shown('ch. 372 — la restitution intacte'),
+      evidence: shown({ kind: 'chapter', chapter: 372, label: 'ch. 372 — la restitution intacte' }),
       conditions: [effectIsLive('effectId', 'Une cible est enveloppée')],
       effects: [
         setEffectState({ state: 'ENDED' }),

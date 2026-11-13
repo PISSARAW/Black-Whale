@@ -54,7 +54,11 @@ export const illumiNeedlePeople = defineAbility({
   actions: {
     'plant-needle': {
       label: 'Planter une aiguille',
-      evidence: shown('ch. 288 — l’aiguille plantée, le corps devient jetable'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 288,
+        label: 'ch. 288 — l’aiguille plantée, le corps devient jetable',
+      }),
       gyo: 'l’aiguille et le lien de contrôle qui remonte vers Illumi',
       conditions: [requiresTarget('Une cible est piquée')],
       effects: [
@@ -72,7 +76,11 @@ export const illumiNeedlePeople = defineAbility({
 
     reshape: {
       label: 'Remodeler un visage',
-      evidence: shown('ch. 43 — Gittarackur, le visage tenu par les aiguilles'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 43,
+        label: 'ch. 43 — Gittarackur, le visage tenu par les aiguilles',
+      }),
       gyo: 'les aiguilles qui tiennent le visage en place',
       conditions: [requiresTarget('Un visage est remodelé')],
       effects: [
@@ -89,7 +97,11 @@ export const illumiNeedlePeople = defineAbility({
       label: 'Laisser une consigne à retardement',
       // The needle keeps its order without Illumi in the room, which is what
       // makes his puppets a threat on a ship he is not standing on.
-      evidence: shown('ch. 288 — la consigne tient sans lui'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 288,
+        label: 'ch. 288 — la consigne tient sans lui',
+      }),
       conditions: [effectIsLive('effectId', 'Une aiguille est plantée')],
       effects: [
         setEffectState({
@@ -106,7 +118,11 @@ export const illumiNeedlePeople = defineAbility({
 
     'remove-needle': {
       label: 'Retirer l’aiguille',
-      evidence: shown('ch. 288 — l’aiguille retirée rend le corps à lui-même'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 288,
+        label: 'ch. 288 — l’aiguille retirée rend le corps à lui-même',
+      }),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

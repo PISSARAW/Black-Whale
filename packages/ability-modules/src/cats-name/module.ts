@@ -55,7 +55,11 @@ export const catsName = defineAbility({
   actions: {
     arm: {
       label: 'Armer la contre-attaque',
-      evidence: shown('ch. 387 — la contre-attaque déjà en place, invisible'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 387,
+        label: 'ch. 387 — la contre-attaque déjà en place, invisible',
+      }),
       gyo: 'la malédiction dormante posée sur Camilla elle-même',
       effects: [
         // Permanent, dormant, invisible, and it must survive its own owner's
@@ -80,7 +84,11 @@ export const catsName = defineAbility({
 
     trigger: {
       label: 'Un agresseur tue Camilla',
-      evidence: shown('ch. 387 — le meurtrier meurt, Camilla revient'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 387,
+        label: 'ch. 387 — le meurtrier meurt, Camilla revient',
+      }),
       conditions: [
         effectIsLive('effectId', 'La contre-attaque est armée'),
         requiresParameter('killerId', 'Le meurtrier est identifié'),
@@ -102,14 +110,22 @@ export const catsName = defineAbility({
       label: 'Refuser de la tuer',
       // The canonical counter, and the reason the ability is a trap rather than
       // an armour: whoever declines to kill her takes nothing.
-      evidence: shown('ch. 387 — la parade est de ne pas la tuer'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 387,
+        label: 'ch. 387 — la parade est de ne pas la tuer',
+      }),
       effects: [setEffectState({ state: 'DORMANT', attributes: { defused: true } })],
     },
 
     'trigger-on-natural-death': {
       label: 'Se déclencher sans meurtrier',
       refusal: 'La contre-attaque veut un agresseur : sans meurtrier, rien ne part',
-      evidence: shown('ch. 387 — la condition énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 387,
+        label: 'ch. 387 — la condition énoncée avec la capacité',
+      }),
     },
   },
 

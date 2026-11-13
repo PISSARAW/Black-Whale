@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { AbilityActionPlan } from '@black-whale/nen-engine'
+  import type { AbilityActionPlan, AbilityActionPresentationText } from '@black-whale/nen-engine'
   import { t } from '$lib/i18n'
 
   /**
@@ -8,11 +8,23 @@
    * the module's own predicates and the effects are projected by running its
    * effect builders, so the panel cannot drift from what activation does.
    */
-  let { plan, compact = false }: { plan: AbilityActionPlan; compact?: boolean } = $props()
+  let {
+    plan,
+    text,
+    compact = false,
+  }: { plan: AbilityActionPlan; text?: AbilityActionPresentationText; compact?: boolean } = $props()
 
   let STATUS_LABEL: Record<AbilityActionPlan['status'], string> = $derived($t.nen.planStatus)
 
   const MARK = { MET: '✓', UNMET: '✗', UNKNOWN: '?' }
+  const conditions = $derived(
+    plan.conditions.map((condition, index) => ({
+      ...condition,
+      label: text?.conditions[index] ?? condition.label,
+    })),
+  )
+  const gyo = $derived(conditions.filter(({ id }) => id === 'use-gyo'))
+  const ordinary = $derived(conditions.filter(({ id }) => id !== 'use-gyo'))
 </script>
 
 <div class="why" class:compact data-status={plan.status}>
@@ -21,21 +33,48 @@
     <span class="verdict">{STATUS_LABEL[plan.status]}</span>
   </div>
 
-  <ul>
-    {#each plan.conditions as condition, index (`${condition.id}-${index}`)}
-      <li data-status={condition.status}>
-        <span class="mark">{MARK[condition.status]}</span>
-        <span class="label">{condition.label}</span>
-        {#if condition.reason}<small>{condition.reason}</small>{/if}
-      </li>
-    {/each}
-  </ul>
+  <section class="facts">
+    <span class="tag">{$t.nen.conditions}</span>
+    <ul>
+      {#each ordinary as condition, index (`${condition.id}-${index}`)}
+        <li data-status={condition.status}>
+          <span class="mark">{MARK[condition.status]}</span>
+          <span class="label">{condition.label}</span>
+          {#if condition.reason}<small>{condition.reason}</small>{/if}
+        </li>
+      {/each}
+    </ul>
+  </section>
 
   {#if plan.cost}
-    <p class="cost">
-      {$t.nen.cost(plan.cost.label)}{#if plan.cost.amount !== undefined}
-        — {plan.cost.amount}{plan.cost.unit ? ` ${plan.cost.unit}` : ''}{/if}
-    </p>
+    <section class="facts">
+      <span class="tag">{$t.nen.costAndVows}</span>
+      <p class="cost">
+        {$t.nen.cost(text?.cost ?? plan.cost.label)}{#if plan.cost.amount !== undefined}
+          — {plan.cost.amount}{plan.cost.unit ? ` ${plan.cost.unit}` : ''}{/if}
+      </p>
+    </section>
+  {/if}
+
+  {#if gyo.length}
+    <section class="facts">
+      <span class="tag">{$t.nen.gyoReading}</span>
+      <ul>
+        {#each gyo as condition, index (`${condition.id}-${index}`)}
+          <li data-status={condition.status}>
+            <span class="mark">{MARK[condition.status]}</span>
+            <span class="label">{condition.label}</span>
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
+
+  {#if text?.source}
+    <section class="facts provenance">
+      <span class="tag">{$t.nen.provenance}</span>
+      <p>{text.source}</p>
+    </section>
   {/if}
 
   {#if !compact}<div class="projection">
@@ -132,6 +171,15 @@
     margin: 0;
     color: var(--text-muted);
     font: 0.65rem var(--font-mono);
+  }
+  .facts {
+    display: grid;
+    gap: 0.45rem;
+  }
+  .provenance p {
+    margin: 0;
+    color: var(--text-muted);
+    font: 0.62rem/1.4 var(--font-mono);
   }
   .projection {
     display: grid;

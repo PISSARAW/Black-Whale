@@ -54,7 +54,11 @@ export const yomotsuHegui = defineAbility({
   actions: {
     prepare: {
       label: 'Commencer la préparation',
-      evidence: shown('ch. 394 — des mois de préparation rituelle'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 394,
+        label: 'ch. 394 — des mois de préparation rituelle',
+      }),
       gyo: 'le rituel en cours, que seule la vue omnisciente suivait jusque-là',
       conditions: [requiresParameter('curseTargetId', 'Une cible est désignée')],
       effects: [
@@ -80,7 +84,11 @@ export const yomotsuHegui = defineAbility({
 
     ripen: {
       label: 'Poursuivre le rituel',
-      evidence: shown('ch. 394 — la haine mûrit avec les jours'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 394,
+        label: 'ch. 394 — la haine mûrit avec les jours',
+      }),
       conditions: [effectIsLive('effectId', 'Une préparation est en cours')],
       effects: [
         attributeCounter({
@@ -91,7 +99,11 @@ export const yomotsuHegui = defineAbility({
 
     consummate: {
       label: 'Consommer le rituel',
-      evidence: shown('ch. 416 — Moswana achève le rituel et se donne la mort'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 416,
+        label: 'ch. 416 — Moswana achève le rituel et se donne la mort',
+      }),
       conditions: [
         effectIsLive('effectId', 'Une préparation est en cours'),
         declaredFlag('ritualCompleted', true, 'Objet brûlé, cendres bues, poignard prêt'),
@@ -126,7 +138,11 @@ export const yomotsuHegui = defineAbility({
       label: 'Se rapprocher de la cible',
       // Four factors decide how hard it lands, and this is the one the officiant
       // can still change on the day: distance, and looking her in the eye.
-      evidence: shown('ch. 416 — proximité et contact visuel renforcent la malédiction'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 416,
+        label: 'ch. 416 — proximité et contact visuel renforcent la malédiction',
+      }),
       effects: [
         attributeCounter({
           attributes: (ctx) => ({
@@ -140,7 +156,11 @@ export const yomotsuHegui = defineAbility({
     'curse-without-the-suicide': {
       label: 'Maudire sans se donner la mort',
       refusal: 'Le suicide est l’activation : sans lui, la malédiction ne part pas',
-      evidence: shown('ch. 394 — le rituel se conclut au poignard'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 394,
+        label: 'ch. 394 — le rituel se conclut au poignard',
+      }),
     },
 
     'be-seen-preparing': {

@@ -61,7 +61,7 @@ export const kurtonVehicleTransformation = defineAbility({
   actions: {
     transform: {
       label: 'Se transformer',
-      evidence: asserted('la capacité change son corps en véhicule'),
+      evidence: asserted({ kind: 'other', label: 'la capacité change son corps en véhicule' }),
       conditions: [requiresParameter('vehicle', 'La forme du véhicule est choisie')],
       effects: [
         effect({
@@ -80,12 +80,18 @@ export const kurtonVehicleTransformation = defineAbility({
     'board-a-sixth-passenger': {
       label: 'Embarquer un sixième passager',
       refusal: 'Cinq places : au-delà, le véhicule ne prend personne',
-      evidence: asserted('la capacité de cinq est donnée avec la capacité'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité de cinq est donnée avec la capacité',
+      }),
     },
 
     travel: {
       label: 'Se déplacer',
-      evidence: asserted('les passagers fournissent le carburant du trajet'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'les passagers fournissent le carburant du trajet',
+      }),
       conditions: [
         effectIsLive('effectId', 'Kurton est transformé'),
         requiresParameter('locationId', 'Une destination est choisie'),
@@ -100,7 +106,10 @@ export const kurtonVehicleTransformation = defineAbility({
 
     revert: {
       label: 'Reprendre forme humaine',
-      evidence: asserted('la forme humaine revient quand la course est finie'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la forme humaine revient quand la course est finie',
+      }),
       conditions: [effectIsLive('effectId', 'Kurton est transformé')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -150,7 +159,7 @@ export const transportPortals = defineAbility({
   actions: {
     'open-relay': {
       label: 'Ouvrir un relais',
-      evidence: asserted('les relais logistiques de l’expédition'),
+      evidence: asserted({ kind: 'other', label: 'les relais logistiques de l’expédition' }),
       conditions: [
         requiresParameter('fromLocationId', 'Un point de départ est choisi'),
         requiresParameter('locationId', 'Un point d’arrivée est choisi'),
@@ -161,7 +170,7 @@ export const transportPortals = defineAbility({
     'ship-in-one-hop': {
       label: 'Expédier d’un seul trajet',
       refusal: 'Le transport se fait par étapes, de relais en relais',
-      evidence: asserted('la logistique décrite avec la capacité'),
+      evidence: asserted({ kind: 'other', label: 'la logistique décrite avec la capacité' }),
     },
 
     'ship-a-person': {
@@ -174,7 +183,7 @@ export const transportPortals = defineAbility({
 
     ship: {
       label: 'Expédier des marchandises',
-      evidence: asserted('la cargaison passe de relais en relais'),
+      evidence: asserted({ kind: 'other', label: 'la cargaison passe de relais en relais' }),
       conditions: [effectIsLive('effectId', 'Un relais est ouvert')],
       effects: [
         moveEntity({
@@ -228,7 +237,11 @@ export const thetaAuraProjectile = defineAbility({
   actions: {
     'restore-after-the-shot': {
       label: 'Rendre l’action après le tir',
-      evidence: shown('ch. 391 — trois secondes d’immobilité parfaite, puis on reprend'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — trois secondes d’immobilité parfaite, puis on reprend',
+      }),
       effects: [setEffectState({ state: 'ENDED', attributes: { restoredAfterSeconds: 3 } })],
     },
 
@@ -236,7 +249,11 @@ export const thetaAuraProjectile = defineAbility({
       label: 'Garder l’information pour soi',
       // The shot's real output: Theta knows what the prince can do, and nobody
       // else does — the exact shape Predator's sole-observer condition wants.
-      evidence: shown('ch. 391 — elle ne rapporte pas ce qu’elle a compris'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — elle ne rapporte pas ce qu’elle a compris',
+      }),
       effects: [
         knowledgeGrant({
           factId: (ctx) => `nen-control-level:${ctx.targets[0] ?? 'student'}`,
@@ -253,7 +270,11 @@ export const thetaAuraProjectile = defineAbility({
 
     test: {
       label: 'Tester l’élève',
-      evidence: shown('ch. 391 — le tir d’exercice sur le prince en Zetsu'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 391,
+        label: 'ch. 391 — le tir d’exercice sur le prince en Zetsu',
+      }),
       conditions: [requiresTarget('Un élève est testé'), inZetsu()],
       effects: [
         auraModifier({ mode: 'PROJECTILE', strength: 'weak', purpose: 'zetsu-exercise' }),

@@ -28,6 +28,7 @@ import {
   type FactionKnowledge,
   type InfiltrationFactionId,
 } from './factions'
+import type { ArenaHandoffResult } from '../arena/bridge'
 
 export type WitnessId = 'steward' | 'guard' | 'nenGuard'
 export type MissionOutcome = 'playing' | 'escaped' | 'identified' | 'timeUp'
@@ -165,6 +166,7 @@ export type InfiltrationAction =
   | { type: 'SCOUT_MOVE'; position: Vec2; spaceId: string; visibleToGuard: boolean }
   | { type: 'SCOUT_RECALL' }
   | { type: 'EXTRACT' }
+  | { type: 'ARENA_ESCAPE_RESOLVED'; result: ArenaHandoffResult }
 
 export interface MissionEvent {
   id: string
@@ -263,7 +265,7 @@ export function infiltrationReducer(
   state: InfiltrationState,
   action: InfiltrationAction,
 ): InfiltrationState {
-  if (state.outcome !== 'playing') return state
+  if (state.outcome !== 'playing' && action.type !== 'ARENA_ESCAPE_RESOLVED') return state
   const reduced = reduceAction(state, action)
   // A walk is sent every frame: journaling it buried the debrief under
   // thousands of steps and grew the save past what local storage holds.
@@ -354,6 +356,29 @@ function reduceAction(state: InfiltrationState, action: InfiltrationAction): Inf
       return recallLittleEye(state)
     case 'EXTRACT':
       return extract(state)
+    case 'ARENA_ESCAPE_RESOLVED':
+      return resolveArenaEscape(state, action.result)
+  }
+}
+
+/** Resolves the last security cordon after an identified infiltrator enters Arena. */
+export function resolveArenaEscape(
+  state: InfiltrationState,
+  result: ArenaHandoffResult,
+): InfiltrationState {
+  if (state.outcome !== 'identified') return state
+  const escaped = result.outcome === 'won' && objectivesPermitExtraction(state.objectives)
+  return {
+    ...state,
+    clock: state.clock + Math.max(0, result.elapsedSeconds),
+    outcome: escaped ? 'escaped' : 'identified',
+    objectives: escaped
+      ? completeObjective(state.objectives, ['extract'], 'confirmed')
+      : state.objectives,
+    hatsu: {
+      ...state.hatsu,
+      aura: Math.min(100, Math.max(0, result.playerAura)),
+    },
   }
 }
 

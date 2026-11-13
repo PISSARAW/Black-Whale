@@ -193,6 +193,14 @@
   let returnHref = $derived(arenaReturnHref(sourceHandoff))
   let missionId = $state<string | null>(initialMissionId)
   let replayOrigin = $state<'local' | 'shared' | null>(null)
+
+  function returnLabel(): string {
+    if (sourceHandoff?.sourceMode === 'INFILTRATION')
+      return $locale === 'fr' ? "Retourner à l'infiltration" : 'Return to infiltration'
+    if (sourceHandoff?.sourceMode === 'INVESTIGATION')
+      return $locale === 'fr' ? "Retourner à l'enquête" : 'Return to investigation'
+    return $locale === 'fr' ? 'Retourner à la traque' : 'Return to the hunt'
+  }
   // Bookkeeping, not state: nothing renders from it, it only holds timer
   // handles so they can be cleared on teardown.
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -1158,7 +1166,7 @@
       <button onclick={restart}>{$t.arena.action.restart}</button>
       {#if returnHref}
         <a class="handoff-return" href={returnHref}>
-          {$locale === 'fr' ? 'Retourner à la traque' : 'Return to the hunt'}
+          {returnLabel()}
         </a>
       {/if}
       <div class="difficulty-picker" aria-label={$t.arena.ui.difficulty}>

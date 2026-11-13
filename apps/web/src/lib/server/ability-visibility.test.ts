@@ -18,6 +18,16 @@ describe('abilityFirstVisibleChapter', () => {
     expect(chapter).toBe(390)
   })
 
+  it('accepts a canonical chapter before the detailed voyage catalogue begins', () => {
+    expect(
+      abilityFirstVisibleChapter(
+        { id: 'classic', firstVisibleChapterId: 'ch-39' },
+        chapters,
+        appearances,
+      ),
+    ).toBe(39)
+  })
+
   it('falls back to the earliest dated canonical use', () => {
     const chapter = abilityFirstVisibleChapter(
       { id: 'a', ownerId: 'morena', userIds: ['hisoka'] },

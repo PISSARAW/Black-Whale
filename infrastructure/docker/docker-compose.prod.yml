@@ -64,6 +64,7 @@ services:
       # none and the finder searches by name only, exactly as before.
       OLLAMA_URL: ${OLLAMA_URL:-}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+      INDEXNOW_KEY: ${INDEXNOW_KEY:-}
     # Ollama runs on the host, not in this stack: this name is how the
     # container reaches it. See infrastructure/hetzner/README.md.
     extra_hosts: ['host.docker.internal:host-gateway']

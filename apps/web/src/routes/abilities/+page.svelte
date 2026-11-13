@@ -3,7 +3,7 @@
   import { hatsuById } from '$lib/nen/hatsuRegistry.js'
   import { activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
-  import { breadcrumbSchema } from '$lib/seo/schema'
+  import { breadcrumbSchema, collectionSchema, publisherSchema } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
 
@@ -37,10 +37,23 @@
 <Seo
   title={$t.abilities.seoTitle}
   description={$t.abilities.seoDescription}
-  jsonLd={breadcrumbSchema([
-    { name: $t.common.home, path: $link('/') },
-    { name: $t.abilities.breadcrumb, path: $link('/abilities') },
-  ])}
+  jsonLd={[
+    collectionSchema({
+      name: $t.abilities.title,
+      path: $link('/abilities'),
+      description: $t.abilities.seoDescription,
+      modifiedAt: data.modifiedAt,
+      items: abilities.map((ability) => ({
+        name: ability.name,
+        path: $link(`/abilities/${ability.id}`),
+      })),
+    }),
+    publisherSchema(),
+    breadcrumbSchema([
+      { name: $t.common.home, path: $link('/') },
+      { name: $t.abilities.breadcrumb, path: $link('/abilities') },
+    ]),
+  ]}
 />
 
 <div class="ability-page">
@@ -56,7 +69,7 @@
       <article data-hatsu-id={ability.id}>
         <div class="ability-heading">
           <div>
-            <h2>{ability.name}</h2>
+            <h2><a href={$link(`/abilities/${ability.id}`)}>{ability.name}</a></h2>
             <p class="owner">{ability.owner}</p>
           </div>
           <span class="category">{ability.category || $t.abilities.unknownCategory}</span>
@@ -125,6 +138,13 @@
   h2 {
     margin: 0;
     font: 600 1rem/1.5 var(--font-sans);
+  }
+  h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  h2 a:hover {
+    color: var(--accent-gold-bright);
   }
   .owner {
     margin: 0.35rem 0 0;

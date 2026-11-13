@@ -42,6 +42,7 @@ export const load: PageServerLoad = localizedLoad(
       (latest, chapter) => (latest === null || chapter.number > latest.number ? chapter : latest),
       null,
     )
+    const chapterNumbers = chapters.map((chapter) => chapter.number)
 
     // A cap at or past the latest chapter hides nothing, and reading it as no cap
     // lets the deaths the catalogue never dates count for that reader too.
@@ -61,6 +62,10 @@ export const load: PageServerLoad = localizedLoad(
         number: latestChapter.number,
         title: latestChapter.title,
         date: latestChapter.date,
+      },
+      coverage: {
+        first: Math.min(...chapterNumbers),
+        last: Math.max(...chapterNumbers),
       },
     }
   },

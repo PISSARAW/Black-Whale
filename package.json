@@ -22,7 +22,8 @@
     "canon-lint": "pnpm --filter @black-whale/contracts canon-lint:dev",
     "rooms:audit": "node scripts/generate-room-appearance-audit.mjs",
     "doc:gen": "tsx scripts/doc-gen/generate.ts",
-    "doc-lint": "tsx scripts/doc-lint.ts"
+    "doc-lint": "tsx scripts/doc-lint.ts",
+    "indexnow:submit": "node scripts/submit-indexnow.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

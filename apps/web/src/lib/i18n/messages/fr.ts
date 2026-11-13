@@ -4300,6 +4300,69 @@ export const fr: Messages = {
     },
   },
 
+  discovery: {
+    homeScope: (first: number, last: number) =>
+      `Black Whale est une archive Hunter × Hunter non officielle et non commerciale couvrant les chapitres ${first} à ${last}. Elle transforme le voyage, ses personnages, les pouvoirs de Nen et la chronologie en fiches sourcées lisibles sans JavaScript.`,
+    sources: 'Sources',
+    chapter: (number: string | number) => `Chapitre ${number}`,
+    modified: (date: string) => `Dernière vérification le ${date}`,
+    ability: {
+      archive: 'Archive des pouvoirs',
+      owner: 'Propriétaire',
+      users: 'Utilisateurs connus',
+      category: 'Catégorie de Nen',
+      aliases: 'Autres noms',
+      uses: 'Utilisations documentées',
+      related: 'Pouvoirs associés',
+      activate: 'Activer ce pouvoir',
+      noUses: 'Aucune utilisation pendant le voyage n’est encore cataloguée.',
+      sourceNote: 'Les références ci-dessous indiquent les chapitres utilisés pour cette fiche.',
+      seoTitle: (name: string) => `${name} — pouvoir de Nen`,
+      seoDescription: (name: string, owner: string) =>
+        `${name}, pouvoir de Nen associé à ${owner} : règles, limites, utilisateurs et sources manga.`,
+    },
+    event: {
+      archive: 'Chronologie',
+      chapter: 'Chapitre source',
+      time: 'Heure du voyage',
+      location: 'Lieu',
+      participants: 'Personnes impliquées',
+      abilities: 'Pouvoirs utilisés',
+      openTimeline: 'Ouvrir dans la chronologie',
+      openMap: 'Ouvrir sur la carte du navire',
+      undated: 'Aucune heure exacte du voyage n’est établie.',
+      unknownLocation: 'Aucun lieu précis n’est catalogué.',
+      seoTitle: (name: string) => `${name} — dossier événement`,
+      seoDescription: (name: string, chapter: number) =>
+        `${name}, événement documenté de Hunter × Hunter au chapitre ${chapter}, avec chronologie et sources.`,
+    },
+    about: {
+      nav: 'À propos et méthode',
+      eyebrow: 'Méthode éditoriale',
+      title: 'À propos de Black Whale',
+      lede: 'Black Whale est une archive Hunter × Hunter non officielle et non commerciale maintenue par Ginks.',
+      scopeTitle: 'Ce que couvre l’archive',
+      scope: (first: number, last: number) =>
+        `Le catalogue public documente actuellement les chapitres ${first} à ${last}, avec un accent sur la guerre de succession, le voyage et les personnes à bord du Black Whale.`,
+      methodTitle: 'Comment les faits sont vérifiés',
+      method:
+        'Les faits sont déclarés dans un catalogue structuré, confrontés au manga puis compilés dans la chronologie, les dossiers des personnages et la reconstruction du navire. Des références de chapitre visibles indiquent les preuves utilisées par les résumés indexables.',
+      uncertaintyTitle: 'Incertitude et spoilers',
+      uncertainty:
+        'Les inférences et les dates provenant de la communauté sont signalées. La limite de spoilers est appliquée sur le serveur : les noms et résumés masqués ne sont jamais envoyés au navigateur.',
+      correctionsTitle: 'Corrections et réutilisation',
+      corrections:
+        'Les corrections sont relues dans le dépôt public. Les données du catalogue et les cartes du navire sont sous licence CC BY 4.0 ; le code source est sous licence MIT.',
+      shipSources: 'Consulter le registre des sources de la reconstruction',
+      repository: 'Ouvrir le dépôt du projet',
+      disclaimer:
+        'Hunter × Hunter a été créé par Yoshihiro Togashi et est publié par Shueisha. Black Whale n’est affilié à aucun de ces ayants droit et n’héberge aucun scan.',
+      seoDescription:
+        'Qui maintient Black Whale, comment les faits de Hunter × Hunter sont vérifiés, comment les incertitudes et spoilers sont gérés et comment proposer une correction.',
+    },
+  },
+
+
   investigation: {
     replay: {
       dollAppears: {

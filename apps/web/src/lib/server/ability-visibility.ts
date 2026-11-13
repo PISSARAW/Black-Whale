@@ -41,9 +41,10 @@ export function abilityFirstVisibleChapter(
   earliestUseByAbilityId: ReadonlyMap<string, number>,
 ): number | null {
   const declared = ability.firstVisibleChapterId
-    ? chapterNumberById.get(ability.firstVisibleChapterId)
+    ? (chapterNumberById.get(ability.firstVisibleChapterId) ??
+      Number(ability.firstVisibleChapterId.match(/^ch-(\d+)/)?.[1]))
     : undefined
-  if (declared !== undefined) return declared
+  if (declared !== undefined && Number.isFinite(declared)) return declared
 
   return earliestUseByAbilityId.get(ability.id) ?? null
 }

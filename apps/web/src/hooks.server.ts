@@ -11,6 +11,36 @@ const WRITE_RATE_LIMITED_PATHS = new Set(['/simulations'])
 const WRITE_LIMIT = 10
 const WRITE_WINDOW_MS = 60_000
 
+const AI_CRAWLERS = ['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'PerplexityBot'] as const
+const AI_REFERRERS = ['chatgpt.com', 'perplexity.ai'] as const
+
+export function discoverySources(request: Request): Array<{
+  sourceType: 'crawler' | 'referral'
+  source: string
+}> {
+  const sources: Array<{ sourceType: 'crawler' | 'referral'; source: string }> = []
+  const userAgent = request.headers.get('user-agent') ?? ''
+  for (const crawler of AI_CRAWLERS) {
+    if (userAgent.toLowerCase().includes(crawler.toLowerCase())) {
+      sources.push({ sourceType: 'crawler', source: crawler })
+    }
+  }
+  const referrer = request.headers.get('referer')
+  if (referrer) {
+    try {
+      const hostname = new URL(referrer).hostname.toLowerCase()
+      for (const domain of AI_REFERRERS) {
+        if (hostname === domain || hostname.endsWith(`.${domain}`)) {
+          sources.push({ sourceType: 'referral', source: domain })
+        }
+      }
+    } catch {
+      // A malformed Referer header is untrusted input, not an application error.
+    }
+  }
+  return sources
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
   // The locale prefix is not part of the route, so the budget has to be keyed
   // on the stripped path — otherwise `/fr/simulations` would sidestep it.
@@ -26,6 +56,15 @@ export const handle: Handle = async ({ event, resolve }) => {
   const response = await resolve(event, {
     transformPageChunk: ({ html }) => html.replace('%lang%', LOCALE_TAGS[locale].html),
   })
+  for (const discovery of discoverySources(event.request)) {
+    log.info('discovery visit', {
+      ...discovery,
+      method: event.request.method,
+      path,
+      locale,
+      status: response.status,
+    })
+  }
   // Cacheability, decided once for the whole app. A route that already said
   // something for itself keeps it: `/sitemap.xml` and `/robots.txt` know their
   // own lifetimes, and `/health` must never be stored at all.

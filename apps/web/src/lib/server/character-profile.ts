@@ -28,6 +28,8 @@ export interface CharacterProfile {
   battles: NamedEncounter[]
   competitions: NamedEncounter[]
   abilities: AbilityRecord[]
+  modifiedAt: string
+  sources: Array<{ chapterId: string; note?: string }>
 }
 
 export interface CharacterIdentity {
@@ -97,6 +99,8 @@ export interface CatalogCharacterRecord {
   battles?: NamedEncounter[]
   competitions?: NamedEncounter[]
   firstAppearanceChapterId?: string | null
+  modifiedAt?: string
+  sources?: Array<{ chapterId: string; note?: string }>
 }
 
 export interface AbilityRecord {
@@ -163,6 +167,8 @@ export function buildCharacterProfile(
       (ability) =>
         ability.ownerId === jsonCharacter.id || ability.userIds?.includes(jsonCharacter.id),
     ),
+    modifiedAt: jsonCharacter.modifiedAt ?? '2026-11-13',
+    sources: jsonCharacter.sources ?? [],
   }
 }
 
@@ -189,6 +195,7 @@ export function maskUndatedCharacterProfile(profile: CharacterProfile): Characte
     battles: [],
     competitions: [],
     abilities: [],
+    sources: profile.sources.filter((source) => source.chapterId === 'ch-unknown'),
   }
 }
 

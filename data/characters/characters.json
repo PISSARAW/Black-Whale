@@ -2,7 +2,9 @@
   {
     "id": "kurapika",
     "canonicalName": "Kurapika",
-    "aliases": ["Rat"],
+    "aliases": [
+      "Rat"
+    ],
     "description": "Last survivor of the Kurta clan. Hunter Zodiac. Leads the faction of Queen Oito and Prince Woble. Maintains a status quo through the teaching of Nen.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-340",
@@ -24,11 +26,30 @@
     "nen": {
       "type": "conjurer",
       "typeLabel": "Conjuration",
-      "secondaryTypeLabels": ["Specialization"],
+      "secondaryTypeLabels": [
+        "Specialization"
+      ],
       "overview": "Normally a Conjurer, Kurapika becomes a Specialist when his eyes turn scarlet. Emperor Time then grants him perfect efficiency in every Nen category, at the price of one hour of life for each second of activation.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Gyo", "In", "En", "Shu", "Ko", "Ken", "Ryu", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Gyo",
+        "In",
+        "En",
+        "Shu",
+        "Ko",
+        "Ken",
+        "Ryu",
+        "Hatsu"
+      ],
       "combatProficiency": "His five chains are assigned to separate fingers and support combat, investigation and alliances. Chain Jail is restricted to the Phantom Troupe under a lethal vow, while Steal Chain and Stealth Dolphin let him borrow and transfer abilities.",
-      "abilityIds": ["emperor-time", "steal-chain", "chain-jail", "dowsing-chain"]
+      "abilityIds": [
+        "emperor-time",
+        "steal-chain",
+        "chain-jail",
+        "dowsing-chain"
+      ]
     },
     "mangaAppearances": [
       {
@@ -412,7 +433,10 @@
         "status": "absent"
       }
     ],
-    "battles": ["Kurapika vs. Sayird", "Kurapika and Bill vs. Vincent"],
+    "battles": [
+      "Kurapika vs. Sayird",
+      "Kurapika and Bill vs. Vincent"
+    ],
     "mapPresenceFromChapterId": "ch-415",
     "temporalIdentityManaged": true,
     "mapTrajectory": [
@@ -440,12 +464,43 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-366.4"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "hisoka",
     "canonicalName": "Hisoka Morrow",
-    "aliases": ["The Magician", "Grim Reaper", "Hisoka Morow"],
+    "aliases": [
+      "The Magician",
+      "Grim Reaper",
+      "Hisoka Morow"
+    ],
     "description": "Magician, Floor Master and elite Transmuter returned from the dead. The real Hisoka is in the Tier 1 casino, while Bonolenov usurps his appearance to fool the mafias.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-340",
@@ -479,11 +534,28 @@
     "nen": {
       "type": "transmuter",
       "typeLabel": "Transformation",
-      "secondaryTypeLabels": ["Materialization", "Emission", "Reinforcement"],
+      "secondaryTypeLabels": [
+        "Materialization",
+        "Emission",
+        "Reinforcement"
+      ],
       "overview": "Hisoka possesses a powerful and sinister aura. An accomplished transmuter, he precisely controls the shape and lengthening of his aura and also masters Materialization, Emission and probably Reinforcement. He knows post-mortem Nen, exorcism and memory overload phenomena.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Ken", "Gyo", "Hatsu", "Ko", "Shu", "In"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Hatsu",
+        "Ko",
+        "Shu",
+        "In"
+      ],
       "combatProficiency": "His Ken allows him to survive several explosions from The Sun and Moon. With Shu, his cards and even a severed head become destructive projectiles; with In, he hides Bungee Gum filaments and constructs multi-stage traps. After his death, he gave his aura an automatic command capable of restarting his heart and lungs.",
-      "abilityIds": ["bungee-gum", "texture-surprise"]
+      "abilityIds": [
+        "bungee-gum",
+        "texture-surprise"
+      ]
     },
     "mangaAppearances": [
       {
@@ -892,7 +964,9 @@
         "status": "appears"
       }
     ],
-    "battles": ["Hisoka Morow‡* vs. Chrollo Lucilfer"],
+    "battles": [
+      "Hisoka Morow‡* vs. Chrollo Lucilfer"
+    ],
     "mapTrajectory": [
       {
         "location": "black-whale-unknown",
@@ -924,12 +998,41 @@
         "fromChapterId": "ch-405",
         "note": "Chapter 420 confirms that the real Hisoka remained in the casino and killed the royal patrols before confronting Tserriednich."
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      },
+      {
+        "chapterId": "ch-420"
+      }
     ]
   },
   {
     "id": "illumi",
     "canonicalName": "Illumi Zoldyck",
-    "aliases": ["Gittarackur"],
+    "aliases": [
+      "Gittarackur"
+    ],
     "description": "Zoldyck assassin and newest member of the Phantom Troupe. He boards the Black Whale under a contract with Hisoka and is confined to Tier 3 with Kalluto.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-340",
@@ -951,9 +1054,17 @@
       "type": "manipulator",
       "typeLabel": "Manipulation",
       "overview": "Illumi pours aura into needles used to reshape or control living targets. His control ranges from subtle facial alteration to total domination that sacrifices the victim.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Gyo", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Gyo",
+        "Hatsu"
+      ],
       "combatProficiency": "His perfect Zetsu, assassination training and mass manipulation make him dangerous both alone and through proxies.",
-      "abilityIds": ["illumi-needle-people"]
+      "abilityIds": [
+        "illumi-needle-people"
+      ]
     },
     "mangaAppearances": [
       {
@@ -1348,13 +1459,30 @@
         "fromChapterId": "ch-381",
         "note": "Placé sous surveillance dans une chambre VIP"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "nasubi-hui-guo-rou",
-    "guardianBeast": { "silhouette": "nasubi-guardian", "sourceChapterId": "ch-349" },
+    "guardianBeast": {
+      "silhouette": "nasubi-guardian",
+      "sourceChapterId": "ch-349"
+    },
     "canonicalName": "Nasubi Hui Guo Rou",
-    "aliases": ["The King"],
+    "aliases": [
+      "The King"
+    ],
     "description": "King of the Kakin Empire. Orchestrated the War of Succession via the Urn of the Seed.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-340",
@@ -1375,7 +1503,9 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Nasubi can see Guardian Spirit Beasts, recognizes them as Nen beasts and understands the rules of the parasitic succession ritual. His own natural category is unknown.",
-      "techniques": ["Nen perception"],
+      "techniques": [
+        "Nen perception"
+      ],
       "abilityIds": []
     },
     "mangaAppearances": [
@@ -1768,13 +1898,45 @@
         "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-363.2"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-406"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "prince-benjamin",
-    "guardianBeast": { "silhouette": "benjamin-guardian", "sourceChapterId": "ch-362" },
+    "guardianBeast": {
+      "silhouette": "benjamin-guardian",
+      "sourceChapterId": "ch-362"
+    },
     "canonicalName": "Benjamin Hui Guo Rou",
-    "aliases": ["1st Prince"],
+    "aliases": [
+      "1st Prince"
+    ],
     "description": "Eldest son of Unma. Paramilitary leader who manages the application of Martial Law from room 1001.",
     "factionId": "prince-benjamin",
     "firstAppearanceChapterId": "ch-348",
@@ -1820,9 +1982,16 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Likely strengthening"],
+      "secondaryTypeLabels": [
+        "Likely strengthening"
+      ],
       "overview": "Benjamin masters Nen. His physical resistance suggests an affinity with Reinforcement, and his Ken allows him to escape several shots that would have injured Furykov unscathed.",
-      "techniques": ["Ten", "Ren", "Ken", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Ren",
+        "Ken",
+        "Hatsu"
+      ],
       "combatProficiency": "His Ken blocks several bullets at point blank range without the slightest injury. He considers himself clearly superior to Furykov even after the first symptoms of TSK-17 appeared.",
       "abilityIds": [
         "benjamin-aura",
@@ -2238,8 +2407,13 @@
       {
         "arc": "Succession Contest",
         "label": "Benjamin, Balsamilco Might et Furykov contre Camilla Hui Guo Rou",
-        "allies": ["Balsamilco Might", "Furykov"],
-        "opponents": ["Camilla Hui Guo Rou"],
+        "allies": [
+          "Balsamilco Might",
+          "Furykov"
+        ],
+        "opponents": [
+          "Camilla Hui Guo Rou"
+        ],
         "chapter": 373
       }
     ],
@@ -2284,12 +2458,41 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-417.5"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-416"
+      },
+      {
+        "chapterId": "ch-417"
+      }
     ]
   },
   {
     "id": "prince-camilla",
     "canonicalName": "Camilla Hui Guo Rou",
-    "aliases": ["2nd Princess"],
+    "aliases": [
+      "2nd Princess"
+    ],
     "description": "Duazul's eldest daughter. Attempted to murder Benjamin, tried and incarcerated in the VIP Jail of the Supreme Court.",
     "factionId": "prince-camilla",
     "firstAppearanceChapterId": "ch-349",
@@ -2327,10 +2530,18 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Possible reinforcement"],
+      "secondaryTypeLabels": [
+        "Possible reinforcement"
+      ],
       "overview": "Camilla is a powerful Nen user. Her knowledge of post-mortem Nen allows her to employ a counterattack ability that makes Benjamin himself reluctant to kill her. His rapid physical recovery could indicate an affinity with Strengthening.",
-      "techniques": ["Zetsu", "Hatsu", "Nen post-mortem"],
-      "abilityIds": ["cats-name"]
+      "techniques": [
+        "Zetsu",
+        "Hatsu",
+        "Nen post-mortem"
+      ],
+      "abilityIds": [
+        "cats-name"
+      ]
     },
     "guardianSpiritBeast": {
       "type": "Manipulation coercitive · Nen parasitaire",
@@ -2738,21 +2949,29 @@
         "arc": "Succession Contest",
         "label": "Camilla‡* contre Musse†",
         "allies": [],
-        "opponents": ["Musse"],
+        "opponents": [
+          "Musse"
+        ],
         "chapter": 373
       },
       {
         "arc": "Succession Contest",
         "label": "Camilla contre Furykov",
         "allies": [],
-        "opponents": ["Furykov"],
+        "opponents": [
+          "Furykov"
+        ],
         "chapter": 373
       },
       {
         "arc": "Succession Contest",
         "label": "Camilla contre Benjamin, Balsamilco Might et Furykov",
         "allies": [],
-        "opponents": ["Benjamin Hui Guo Rou", "Balsamilco Might", "Furykov"],
+        "opponents": [
+          "Benjamin Hui Guo Rou",
+          "Balsamilco Might",
+          "Furykov"
+        ],
         "chapter": 373
       }
     ],
@@ -2787,12 +3006,41 @@
     "guardianBeast": {
       "silhouette": "medusa",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-416"
+      },
+      {
+        "chapterId": "ch-417"
+      }
+    ]
   },
   {
     "id": "prince-zhanglei",
     "canonicalName": "Zhang Lei Hui Guo Rou",
-    "aliases": ["3rd Prince"],
+    "aliases": [
+      "3rd Prince"
+    ],
     "description": "Son of Tang Zhao Li. Maintains close ties with the Xi-Yu mafia to accumulate information.",
     "factionId": "prince-zhanglei",
     "firstAppearanceChapterId": "ch-349",
@@ -3255,12 +3503,41 @@
     "guardianBeast": {
       "silhouette": "wheel",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-415"
+      }
+    ]
   },
   {
     "id": "prince-tserriednich",
     "canonicalName": "Tserriednich Hui Guo Rou",
-    "aliases": ["4th Prince"],
+    "aliases": [
+      "4th Prince"
+    ],
     "description": "Fourth Prince of Kakin and son of Unma. Collector of Scarlet Eyes, sadistic murderer and prodigious Nen genius turned Specialist.",
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-345",
@@ -3295,9 +3572,17 @@
       "typeLabel": "Specialization",
       "overview": "Tserriednich is a Nen genius. In less than a day, he learns to slightly control his aura and the basics of Gyo. In a few days, he achieved great mastery of Ten and Ren, closed his aura nodes on the first try, performed a perfect Zetsu for an hour on his third attempt and unconsciously developed a complete ability as well as a personal Nen Beast.",
       "waterDivination": "The leaf withers as the water boils and emits a putrid odor, revealing a Specialist with an extremely sinister aura.",
-      "techniques": ["Ten", "Ren", "Zetsu", "Gyo", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Ren",
+        "Zetsu",
+        "Gyo",
+        "Hatsu"
+      ],
       "combatProficiency": "He possesses a large amount of aura and reduces his Zetsu activation time from over ten seconds to 3.496 seconds in a matter of days. Parallel Future notably allows him to escape a fatal shot from Theta.",
-      "abilityIds": ["parallel-future"]
+      "abilityIds": [
+        "parallel-future"
+      ]
     },
     "guardianSpiritBeast": {
       "type": "Unknown type · Parasitic Nen",
@@ -3754,12 +4039,41 @@
     "guardianBeast": {
       "silhouette": "chimera",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-416"
+      },
+      {
+        "chapterId": "ch-417"
+      },
+      {
+        "chapterId": "ch-418"
+      },
+      {
+        "chapterId": "ch-419"
+      },
+      {
+        "chapterId": "ch-420"
+      }
+    ]
   },
   {
     "id": "prince-tubeppa",
     "canonicalName": "Tubeppa Hui Guo Rou",
-    "aliases": ["5th Princess"],
+    "aliases": [
+      "5th Princess"
+    ],
     "description": "Fifth Princess of Kakin and daughter of Duazul. A methodical scientist, she favors alliances and the analysis of Nen's abilities.",
     "factionId": "prince-tubeppa",
     "firstAppearanceChapterId": "ch-349",
@@ -4213,12 +4527,41 @@
     "guardianBeast": {
       "silhouette": "toad",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-417"
+      }
+    ]
   },
   {
     "id": "prince-tyson",
     "canonicalName": "Tyson Hui Guo Rou",
-    "aliases": ["6th Princess"],
+    "aliases": [
+      "6th Princess"
+    ],
     "description": "Sixth Princess of Kakin and daughter of Katrono. Author of the Book of Tyson, she seeks to win succession through her doctrine of love.",
     "factionId": "prince-tyson",
     "firstAppearanceChapterId": "ch-349",
@@ -4674,12 +5017,41 @@
       "silhouette": "tyson-guardian",
       "sourceChapterId": "ch-375",
       "note": "Heart-shaped guardian with four wings and a central eye; the salon model uses the same anatomy as the active manifestation."
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-417"
+      }
+    ]
   },
   {
     "id": "prince-luzurus",
     "canonicalName": "Luzurus Hui Guo Rou",
-    "aliases": ["7th Prince"],
+    "aliases": [
+      "7th Prince"
+    ],
     "description": "Seventh Prince of Kakin and son of Duazul. Godfather of the Cha-R mafia family, he displays a relaxed attitude but is cautious and insightful.",
     "factionId": "prince-luzurus",
     "firstAppearanceChapterId": "ch-349",
@@ -5123,12 +5495,41 @@
     "guardianBeast": {
       "silhouette": "centipede",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      },
+      {
+        "chapterId": "ch-415"
+      }
+    ]
   },
   {
     "id": "prince-salesale",
     "canonicalName": "Salé-salé Hui Guo Rou",
-    "aliases": ["8th Prince"],
+    "aliases": [
+      "8th Prince"
+    ],
     "description": "Eighth Prince of Kakin and son of Swinko-swinko. An irresponsible party animal, he influenced those around him with the smoke of his Guardian Beast before his assassination.",
     "factionId": "prince-salesale",
     "firstAppearanceChapterId": "ch-349",
@@ -5565,13 +5966,45 @@
     "guardianBeast": {
       "silhouette": "mouths",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-385"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-387"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-413"
+      }
+    ]
   },
   {
     "id": "prince-halkenburg",
-    "guardianBeast": { "silhouette": "halkenburg-guardian", "sourceChapterId": "ch-349" },
+    "guardianBeast": {
+      "silhouette": "halkenburg-guardian",
+      "sourceChapterId": "ch-349"
+    },
     "canonicalName": "Halkenburg Hui Guo Rou",
-    "aliases": ["9th Prince"],
+    "aliases": [
+      "9th Prince"
+    ],
     "description": "Ninth Prince of Kakin, biological son of Unma adopted by Duazul. A pacifist turned fighter, his body is dead but his soul remains active in that of Balsamilco.",
     "factionId": "prince-halkenburg",
     "firstAppearanceChapterId": "ch-349",
@@ -5612,11 +6045,19 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Emission", "Handling", "Transformation possibles"],
+      "secondaryTypeLabels": [
+        "Emission",
+        "Handling",
+        "Transformation possibles"
+      ],
       "overview": "Halkenburg develops his own power after agreeing to fight in the succession. Balsamilco believes that his Guardian Beast granted him this. His aura combines with that of marked people sharing his will.",
-      "techniques": ["Hatsu"],
+      "techniques": [
+        "Hatsu"
+      ],
       "combatProficiency": "The collective aura forms an armor deemed invincible and an arrow impossible to block or dodge. Activation appears to require Halkenburg to be willing to risk his life with every shot.",
-      "abilityIds": ["grimmel-the-dissonance"]
+      "abilityIds": [
+        "grimmel-the-dissonance"
+      ]
     },
     "guardianSpiritBeast": {
       "type": "Enhancement · Collective symbiosis · Solicited Manipulation",
@@ -6050,12 +6491,41 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-417.5"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-406"
+      },
+      {
+        "chapterId": "ch-407"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "prince-kacho",
     "canonicalName": "Kacho Hui Guo Rou",
-    "aliases": ["10th Princess"],
+    "aliases": [
+      "10th Princess"
+    ],
     "description": "Tenth Princess of Kakin and daughter of Seiko. Died during her escape, she remains with Fugetsu in the form of his post-mortem Guardian Beast Without You.",
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-349",
@@ -6507,12 +6977,41 @@
         "fromChapterId": "ch-400",
         "note": "Without You in Kacho's form"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "prince-fugetsu",
     "canonicalName": "Fugetsu Hui Guo Rou",
-    "aliases": ["11th Princess"],
+    "aliases": [
+      "11th Princess"
+    ],
     "description": "Eleventh Princess of Kakin and twin of Kacho. His Guardian Beast creates Magical Worm's teleportation gates; it is currently seriously weakened by suspected enemy influence.",
     "factionId": "prince-fugetsu",
     "firstAppearanceChapterId": "ch-349",
@@ -6983,12 +7482,41 @@
         "location": "tier-2-vip-witness-protection-area",
         "fromChapterId": "ch-400"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
     "id": "prince-momoze",
     "canonicalName": "Momoze Hui Guo Rou",
-    "aliases": ["12th Princess"],
+    "aliases": [
+      "12th Princess"
+    ],
     "description": "Twelfth Princess of Kakin and daughter of Sevanti. Deprived of most of her guards and then exhausted by her Guardian Beast, she is strangled in room 1012.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-349",
@@ -7431,12 +7959,41 @@
     "guardianBeast": {
       "silhouette": "sprite",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-369"
+      },
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-413"
+      }
+    ]
   },
   {
     "id": "prince-marayam",
     "canonicalName": "Marayam Hui Guo Rou",
-    "aliases": ["13th Prince"],
+    "aliases": [
+      "13th Prince"
+    ],
     "description": "Thirteenth Prince of Kakin and son of Sevanti. His Guardian Beast has isolated the real room 1013 behind a one-way space-time barrier.",
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-349",
@@ -7890,12 +8447,41 @@
     "guardianBeast": {
       "silhouette": "dragon",
       "sourceChapterId": "ch-362"
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      }
+    ]
   },
   {
     "id": "prince-woble",
     "canonicalName": "Woble Hui Guo Rou",
-    "aliases": ["14th Princess"],
+    "aliases": [
+      "14th Princess"
+    ],
     "description": "True Fourteenth Princess of Kakin. Oito secretly exchanged his identity with that of his nephew; its location and situation remain unknown.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-358",
@@ -7937,12 +8523,28 @@
         "title": "Truth or Falsehood",
         "status": "mentioned"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-414"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
     "id": "oito-nephew-fake-woble",
     "canonicalName": "Oito's Nephew",
-    "aliases": ["Fake Woble", "Woble substituted", "Woble (boy)"],
+    "aliases": [
+      "Fake Woble",
+      "Woble substituted",
+      "Woble (boy)"
+    ],
     "description": "Infant nephew of Oito publicly introduced as the Fourteenth Princess Woble and protected in room 1014.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-358",
@@ -8384,12 +8986,41 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-366.4"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "queen-oito",
     "canonicalName": "Oito Hui Guo Rou",
-    "aliases": ["8th Queen"],
+    "aliases": [
+      "8th Queen"
+    ],
     "description": "Mother of Woble. Allies with Kurapika, learns Nen, uses 'Little Eye' (cockroaches) to spy.",
     "factionId": "prince-woble",
     "firstAppearanceChapterId": "ch-349",
@@ -8410,8 +9041,14 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Kurapika forcibly opened Oito's aura nodes. She can see and sense aura and briefly used Little Eye through Stealth Dolphin, though Bill considers her a slow learner.",
-      "techniques": ["Aura perception", "Ten training", "Borrowed Hatsu"],
-      "abilityIds": ["little-eye"]
+      "techniques": [
+        "Aura perception",
+        "Ten training",
+        "Borrowed Hatsu"
+      ],
+      "abilityIds": [
+        "little-eye"
+      ]
     },
     "mangaAppearances": [
       {
@@ -8822,6 +9459,33 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-366.4"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -8852,8 +9516,12 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "His experience in the Dark Continent, the need to have him monitored by three Zodiacs simultaneously, and his authority over many Nen users make his mastery of Nen almost certain. He claims that he could smash Kanzai's skull with a book, although this threat seems to have been made in a joking tone.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["beyond-sacrificial-curse"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "beyond-sacrificial-curse"
+      ]
     },
     "mangaAppearances": [
       {
@@ -9242,12 +9910,41 @@
         "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-408"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "mizaistom-nana",
     "canonicalName": "Mizaistom Nana",
-    "aliases": ["Ox"],
+    "aliases": [
+      "Ox"
+    ],
     "description": "Zodiac. Supervises the Tier 3 Central Police Station. Leads the large-scale criminal investigation.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
@@ -9262,9 +9959,14 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "His status as a former training partner of Isaac Netero testifies to Mizaistom's great mastery of Nen. Its ability is based on three colored cards comparable to penalty cards: the blue admits the target into the court, the yellow immobilizes him and the red expels him.",
-      "techniques": ["In", "Hatsu"],
+      "techniques": [
+        "In",
+        "Hatsu"
+      ],
       "combatProficiency": "Mizaistom can use at least one of his cards on multiple targets simultaneously while hiding his aura with In.",
-      "abilityIds": ["cross-game"]
+      "abilityIds": [
+        "cross-game"
+      ]
     },
     "mangaAppearances": [
       {
@@ -9672,12 +10374,41 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-410.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-318"
+      },
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-379"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-381"
+      },
+      {
+        "chapterId": "ch-410"
+      }
     ]
   },
   {
     "id": "botobai-gigante",
     "canonicalName": "Botobai Gigante",
-    "aliases": ["Dragon"],
+    "aliases": [
+      "Dragon"
+    ],
     "description": "Zodiac. Sits as a judge at the Central Court (Tier 3). Towering, wrinkled and white-haired under an outsized judicial wig — taller seated than most men standing, which is what makes him unmistakable on the bench.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
@@ -10078,12 +10809,41 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-410.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-318"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-410"
+      }
     ]
   },
   {
     "id": "gel",
     "canonicalName": "Gel",
-    "aliases": ["Snake"],
+    "aliases": [
+      "Snake"
+    ],
     "description": "Zodiac. Held clandestine meetings with the science team in Tier 3 cabins.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-318",
@@ -10478,20 +11238,53 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Gel is a highly proficient Nen user and former sparring partner of Isaac Netero. She has shown a partial bodily transformation, while the rest of her abilities remain undisclosed.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["snake-arm"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "snake-arm"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-318"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-404"
+      }
     ]
   },
   {
     "id": "melody",
     "canonicalName": "Melody",
-    "aliases": ["Senritsu"],
+    "aliases": [
+      "Senritsu"
+    ],
     "description": "Support Hunter affiliated with Kacho. Paralyzed the Tier 1 Banquet with his magic flute.",
     "factionId": "prince-kacho",
     "firstAppearanceChapterId": "ch-71",
@@ -10511,11 +11304,18 @@
     "nen": {
       "type": "emitter",
       "typeLabel": "Emission",
-      "secondaryTypeLabels": ["Manipulation"],
+      "secondaryTypeLabels": [
+        "Manipulation"
+      ],
       "overview": "Melody projects aura through musical performance. Her songs calm emotions, relieve fatigue, produce vivid sensations and can monopolize the attention of a vast audience.",
-      "techniques": ["Zetsu", "Hatsu"],
+      "techniques": [
+        "Zetsu",
+        "Hatsu"
+      ],
       "combatProficiency": "Her ability is non-lethal but exceptionally powerful for support, diversion and mass restraint.",
-      "abilityIds": ["melody-enchanting-music"]
+      "abilityIds": [
+        "melody-enchanting-music"
+      ]
     },
     "mangaAppearances": [
       {
@@ -10911,12 +11711,41 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-400"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-71"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-387"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      }
     ]
   },
   {
     "id": "biscuit-krueger",
     "canonicalName": "Biscuit Krueger",
-    "aliases": ["Bisky"],
+    "aliases": [
+      "Bisky"
+    ],
     "description": "Veteran Hunter, guard hired to protect the 13th Prince Marayam.",
     "factionId": "prince-marayam",
     "firstAppearanceChapterId": "ch-137",
@@ -10936,11 +11765,29 @@
     "nen": {
       "type": "transmuter",
       "typeLabel": "Transmutation",
-      "secondaryTypeLabels": ["Manipulation", "Emission", "Enhancement"],
+      "secondaryTypeLabels": [
+        "Manipulation",
+        "Emission",
+        "Enhancement"
+      ],
       "overview": "Biscuit is a master Transmuter with broad command of the other accessible categories. Her support ability summons Cookie, whose aura lotion and massages restore the body and compress rest time.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Gyo", "In", "Shu", "Ko", "Ken", "Ryu", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Gyo",
+        "In",
+        "Shu",
+        "Ko",
+        "Ken",
+        "Ryu",
+        "Hatsu"
+      ],
       "combatProficiency": "Her aura distribution, speed and raw strength are all at master level; her true form maximizes her striking power.",
-      "abilityIds": ["magical-esthetician-cookie", "biscuit-body-transformation"]
+      "abilityIds": [
+        "magical-esthetician-cookie",
+        "biscuit-body-transformation"
+      ]
     },
     "mangaAppearances": [
       {
@@ -11336,6 +12183,33 @@
         "fromChapterId": "ch-374",
         "note": "Isolée dans l'espace de Nen"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-137"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -11361,11 +12235,22 @@
     "nen": {
       "type": "transmuter",
       "typeLabel": "Transmutation",
-      "secondaryTypeLabels": ["Conjuration", "Manipulation", "Emission"],
+      "secondaryTypeLabels": [
+        "Conjuration",
+        "Manipulation",
+        "Emission"
+      ],
       "overview": "Hanzo is a Transmuter leaning toward Conjuration. His numbered fourth technique produces an astral double while his physical body remains asleep and vulnerable.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Hatsu"
+      ],
       "combatProficiency": "His projected double can pass through matter, fly, knock out guards and strangle a Nen user, but touch or speech directed at his body dispels it.",
-      "abilityIds": ["hanzo-skill-4"]
+      "abilityIds": [
+        "hanzo-skill-4"
+      ]
     },
     "mangaAppearances": [
       {
@@ -11744,7 +12629,9 @@
         "status": "absent"
       }
     ],
-    "battles": ["Hanzo vs. Momoze's murderer"],
+    "battles": [
+      "Hanzo vs. Momoze's murderer"
+    ],
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1012",
@@ -11762,6 +12649,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-373"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-5"
+      },
+      {
+        "chapterId": "ch-368"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-373"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-413"
       }
     ]
   },
@@ -11797,7 +12711,10 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Balsamilco is a knowledgeable Nen user. His Ken blocks Camilla's bullets and he understands Manipulation priority, Guardian Spirit Beast restrictions and aura-output analysis.",
-      "techniques": ["Ken", "Nen perception"],
+      "techniques": [
+        "Ken",
+        "Nen perception"
+      ],
       "combatProficiency": "His defense is strong enough to stop handgun fire at close range.",
       "abilityIds": []
     },
@@ -12183,7 +13100,9 @@
         "status": "appears"
       }
     ],
-    "battles": ["Balsamilco Might vs. Halkenburg and his followers"],
+    "battles": [
+      "Balsamilco Might vs. Halkenburg and his followers"
+    ],
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1001",
@@ -12200,6 +13119,33 @@
       {
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-417.5"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-417"
       }
     ]
   },
@@ -12603,10 +13549,17 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Musse creates owl-like Nen beasts for remote surveillance. One listens through barriers; another attaches by touch and transmits a target's actions and speech.",
-      "techniques": ["Hatsu", "Nen perception"],
-      "abilityIds": ["secret-window"]
+      "techniques": [
+        "Hatsu",
+        "Nen perception"
+      ],
+      "abilityIds": [
+        "secret-window"
+      ]
     },
-    "battles": ["Musse vs. Camilla Hui Guo Rou"],
+    "battles": [
+      "Musse vs. Camilla Hui Guo Rou"
+    ],
     "mapPresenceUntilChapterId": "ch-373",
     "mapTrajectory": [
       {
@@ -12621,6 +13574,33 @@
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-373",
         "note": "Couloir devant la 1001"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-366"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-373"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-413"
       }
     ]
   },
@@ -12647,11 +13627,18 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Conjuration"],
+      "secondaryTypeLabels": [
+        "Conjuration"
+      ],
       "overview": "Rihan conjures a counter-creature whose form and strength depend on his personal understanding of a chosen enemy ability.",
-      "techniques": ["Hatsu", "Nen perception"],
+      "techniques": [
+        "Hatsu",
+        "Nen perception"
+      ],
       "combatProficiency": "Predator can automatically neutralize a complex ability once fully adapted, but is poor against simple Enhancement or Emission and disables Rihan's Nen for 48 hours after success.",
-      "abilityIds": ["rihan-predator"]
+      "abilityIds": [
+        "rihan-predator"
+      ]
     },
     "mangaAppearances": [
       {
@@ -13050,12 +14037,41 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-383"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-381"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
     "id": "theta",
     "canonicalName": "Theta",
-    "aliases": ["Instructrice de Nen de Tserriednich"],
+    "aliases": [
+      "Instructrice de Nen de Tserriednich"
+    ],
     "description": "Tserriednich's personal guard, Hunter and Nen instructor. Marked by her Guardian Beast after attempting to kill the prince to prevent his power from growing.",
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-348",
@@ -13089,11 +14105,18 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Emission"],
+      "secondaryTypeLabels": [
+        "Emission"
+      ],
       "overview": "Theta sees the aura, uses Nen and knows how to teach it. Its natural affinity remains unknown. She has mastered Ren and Hatsu and can emit a weak aura projectile to test a student's concentration in Zetsu.",
-      "techniques": ["Ren", "Hatsu"],
+      "techniques": [
+        "Ren",
+        "Hatsu"
+      ],
       "combatProficiency": "Her skill is above all educational and tactical: she knows how to explain the four great principles, introduce advanced exercises and modulate her aura to test a practitioner without hurting them.",
-      "abilityIds": ["theta-aura-projectile"]
+      "abilityIds": [
+        "theta-aura-projectile"
+      ]
     },
     "mangaAppearances": [
       {
@@ -13477,12 +14500,41 @@
         "status": "mentioned"
       }
     ],
-    "battles": ["Theta vs. Tserriednich Hui Guo Rou"],
+    "battles": [
+      "Theta vs. Tserriednich Hui Guo Rou"
+    ],
     "temporalIdentityManaged": true,
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-387"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
       }
     ]
   },
@@ -13509,11 +14561,20 @@
     "nen": {
       "type": "conjurer",
       "typeLabel": "Conjuration",
-      "secondaryTypeLabels": ["Manipulation"],
+      "secondaryTypeLabels": [
+        "Manipulation"
+      ],
       "overview": "Biohazard transforms touched objects into living animals while preserving the object's function. Hinrigh can direct the creatures until their aura is depleted.",
-      "techniques": ["Ken", "En", "Shu", "Hatsu"],
+      "techniques": [
+        "Ken",
+        "En",
+        "Shu",
+        "Hatsu"
+      ],
       "combatProficiency": "His Ken and transformed objects withstand handgun fire; his En reaches at least five meters.",
-      "abilityIds": ["biohazard-hinrigh"]
+      "abilityIds": [
+        "biohazard-hinrigh"
+      ]
     },
     "mangaAppearances": [
       {
@@ -13921,7 +14982,34 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-399"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      }
+    ]
   },
   {
     "id": "keni-wang",
@@ -14341,12 +15429,42 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-384"
+      },
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-405"
+      }
+    ]
   },
   {
     "id": "morena-prudo",
     "canonicalName": "Morena Prudo",
-    "aliases": ["Member Zero", "Game Master"],
+    "aliases": [
+      "Member Zero",
+      "Game Master"
+    ],
     "description": "Revolutionary leader of the new Heil-Ly and Specialist. Contagion transforms up to twenty-two recruits into Nen users progressing through murder. Her introduction card gives her as level 45, born out of wedlock to a mistress of King Nasubi, and holding Prince Tserriednich by the throat.",
     "factionId": "mafia-heilly",
     "firstAppearanceChapterId": "ch-378",
@@ -14387,9 +15505,13 @@
         "Possible collective symbiosis"
       ],
       "overview": "Morena spontaneously awakened Nen. Member Zero and level 45 of Contagion, she benefits from an increased quantity and flow of aura and could have developed a second ability. Nobunaga suspects that she is creating or strengthening the Heil-Ly's indestructible cache.",
-      "techniques": ["Hatsu"],
+      "techniques": [
+        "Hatsu"
+      ],
       "combatProficiency": "Its main danger lies in the organization, monitoring and collective growth of its recruits rather than in known direct combat.",
-      "abilityIds": ["contagion"]
+      "abilityIds": [
+        "contagion"
+      ]
     },
     "mangaAppearances": [
       {
@@ -14777,6 +15899,33 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-399"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-407"
+      },
+      {
+        "chapterId": "ch-408"
+      },
+      {
+        "chapterId": "ch-409"
+      },
+      {
+        "chapterId": "ch-410"
+      }
     ]
   },
   {
@@ -14806,9 +15955,13 @@
       "type": "emitter",
       "typeLabel": "Emission",
       "overview": "Luini opens portals from a sealed room into a private transit space connected to locations he has visited. Opening the room's only door permanently resets that room as an anchor.",
-      "techniques": ["Hatsu"],
+      "techniques": [
+        "Hatsu"
+      ],
       "combatProficiency": "The ability is excellent for ambushes but requires a sealed single-door room and does not protect Luini while he exposes his body through a portal.",
-      "abilityIds": ["luini-spatial-teleportation"]
+      "abilityIds": [
+        "luini-spatial-teleportation"
+      ]
     },
     "mangaAppearances": [
       {
@@ -15187,7 +16340,9 @@
         "status": "absent"
       }
     ],
-    "battles": ["Luini vs. Nobunaga Hazama"],
+    "battles": [
+      "Luini vs. Nobunaga Hazama"
+    ],
     "mapTrajectory": [
       {
         "location": "tier-3-heilly-family-office",
@@ -15202,12 +16357,43 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-378"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-408"
+      },
+      {
+        "chapterId": "ch-410"
+      }
     ]
   },
   {
     "id": "chrollo-lucilfer",
     "canonicalName": "Chrollo Lucilfer",
-    "aliases": ["Danchou", "Kuroro Lucifer", "Boss"],
+    "aliases": [
+      "Danchou",
+      "Kuroro Lucifer",
+      "Boss"
+    ],
     "description": "Leader of the Phantom Troupe and Nen prodigy. At Tier 3, he uses Love Dial 6700 to find the ideal ability before facing Hisoka again and plans to steal Kakin's regalia.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-71",
@@ -15249,7 +16435,15 @@
       "type": "specialist",
       "typeLabel": "Specialization",
       "overview": "A Specialization prodigy, Chrollo constantly maintains Ten, possesses a near-perfect Zetsu, and has enough aura reserve to combine multiple stolen Hatsu. His knowledge of restrictions, contractual loopholes, and post-mortem Nen allows him to exploit each ability beyond its obvious use.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Ken", "Gyo", "Hatsu", "En"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Hatsu",
+        "En"
+      ],
       "combatProficiency": "He combines his abilities with remarkable tactical precision: against Hisoka, he prepared the ground, voluntarily explained his powers to influence his reasoning, created more than two hundred puppets and chained up to five stolen techniques around Skill Hunter and Double Face.",
       "abilityIds": [
         "skill-hunter",
@@ -15643,7 +16837,9 @@
         "status": "absent"
       }
     ],
-    "battles": ["Chrollo Lucilfer vs. Hisoka Morow‡*"],
+    "battles": [
+      "Chrollo Lucilfer vs. Hisoka Morow‡*"
+    ],
     "mapTrajectory": [
       {
         "location": "tier-5-central-dining-hall",
@@ -15668,6 +16864,33 @@
       {
         "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-71"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-396"
+      },
+      {
+        "chapterId": "ch-397"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      },
+      {
+        "chapterId": "ch-408"
       }
     ]
   },
@@ -15695,9 +16918,16 @@
     "nen": {
       "type": "enhancer",
       "typeLabel": "Enhancement",
-      "secondaryTypeLabels": ["Transmutation"],
+      "secondaryTypeLabels": [
+        "Transmutation"
+      ],
       "overview": "Nobunaga is an Enhancer leaning toward Transmutation. His revealed Nen centers on reinforcing his swordsmanship rather than a named Hatsu.",
-      "techniques": ["Ten", "Ren", "En", "Shu"],
+      "techniques": [
+        "Ten",
+        "Ren",
+        "En",
+        "Shu"
+      ],
       "combatProficiency": "His En extends four meters, matching the reach of his blade and defining a lethal response zone.",
       "abilityIds": []
     },
@@ -16120,7 +17350,34 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-71"
+      },
+      {
+        "chapterId": "ch-397"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-399"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      }
+    ]
   },
   {
     "id": "gantai",
@@ -16520,6 +17777,18 @@
       {
         "location": "black-whale-1",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-382"
+      },
+      {
+        "chapterId": "ch-383"
       }
     ]
   },
@@ -16922,6 +18191,18 @@
         "location": "black-whale-1",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-382"
+      },
+      {
+        "chapterId": "ch-383"
+      }
     ]
   },
   {
@@ -16930,7 +18211,7 @@
     "aliases": [],
     "description": "Theater Venue announcer.",
     "factionId": null,
-    "firstAppearanceChapterId": "ch-unknown",
+    "firstAppearanceChapterId": "ch-351",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 3,
@@ -16945,6 +18226,12 @@
       {
         "location": "tier-3-cineplex",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-351"
       }
     ]
   },
@@ -17348,12 +18635,41 @@
         "location": "tier-3-central-hospital",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-404"
+      }
     ]
   },
   {
     "id": "cluck",
     "canonicalName": "Cluck",
-    "aliases": ["Rooster"],
+    "aliases": [
+      "Rooster"
+    ],
     "description": "Zodiac. Flora and fauna team. Sits the departure logistics meeting in the Tier 3 first-class compartment.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -17748,10 +19064,16 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Manipulation"],
+      "secondaryTypeLabels": [
+        "Manipulation"
+      ],
       "overview": "Cluck is a powerful Nen user and former sparring partner of Isaac Netero. She can manipulate hundreds of birds simultaneously and apparently possesses other unrevealed abilities.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["bird-manipulation"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "bird-manipulation"
+      ]
     },
     "mapLocationCorrection": true,
     "mapTrajectory": [
@@ -17759,12 +19081,41 @@
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-342"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "ginta",
     "canonicalName": "Ginta",
-    "aliases": ["Sheep"],
+    "aliases": [
+      "Sheep"
+    ],
     "description": "Zodiac. Flora and fauna team. Sits the departure logistics meeting in the Tier 3 first-class compartment, and later supervises Illumi and Kalluto.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -18162,12 +19513,41 @@
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-342"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "piyon",
     "canonicalName": "Piyon",
-    "aliases": ["Boar"],
+    "aliases": [
+      "Boar"
+    ],
     "description": "Zodiac. The archive holds her from the chapter 380 cutaway, which posts her in the Level 3 governmental and political zone at ten on the morning of the fourth day, with Mizaistom, Botobai, Cluck and Ginta; her earlier appearances in the arc have not been catalogued.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-380",
@@ -18183,12 +19563,20 @@
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "kanzai",
     "canonicalName": "Kanzai",
-    "aliases": ["Tiger"],
+    "aliases": [
+      "Tiger"
+    ],
     "description": "Zodiac. Stands the watch outside Beyond Netero's Tier 1 cell alongside Saccho and Saiyu.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -18587,7 +19975,34 @@
         "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-412"
+      }
+    ]
   },
   {
     "id": "leorio-paradinight",
@@ -18988,23 +20403,59 @@
     "nen": {
       "type": "emitter",
       "typeLabel": "Emission",
-      "secondaryTypeLabels": ["Enhancement"],
+      "secondaryTypeLabels": [
+        "Enhancement"
+      ],
       "overview": "Leorio is an Emitter leaning toward Enhancement. He delayed advanced training for medical studies but later developed a remote strike.",
-      "techniques": ["Ten", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Hatsu"
+      ],
       "combatProficiency": "Remote Punch travels along a surface and emerges at a chosen point, allowing force to bypass the space between Leorio and his target.",
-      "abilityIds": ["leorio-remote-punch"]
+      "abilityIds": [
+        "leorio-remote-punch"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-3-central-hospital",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-343"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-347"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-404"
+      }
     ]
   },
   {
     "id": "pyon",
     "canonicalName": "Pyon",
-    "aliases": ["Rabbit"],
+    "aliases": [
+      "Rabbit"
+    ],
     "description": "Zodiac. Intelligence team. Holds the Tier 3 first-class compartment, where she chairs the Association meeting shown at the departure.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -19403,12 +20854,41 @@
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "saccho-kobayakawa",
     "canonicalName": "Saccho Kobayakawa",
-    "aliases": ["Horse"],
+    "aliases": [
+      "Horse"
+    ],
     "description": "Zodiac. Stands the watch outside Beyond Netero's Tier 1 cell alongside Saiyu and Kanzai.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -19807,12 +21287,41 @@
         "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-341"
+      },
+      {
+        "chapterId": "ch-342"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      }
+    ]
   },
   {
     "id": "saiyu",
     "canonicalName": "Saiyu",
-    "aliases": ["Monkey"],
+    "aliases": [
+      "Monkey"
+    ],
     "description": "Zodiac. Suspected of being Beyond's mole, and one of the three Zodiacs standing the watch outside his Tier 1 cell.",
     "factionId": "zodiacs",
     "firstAppearanceChapterId": "ch-340",
@@ -20209,10 +21718,17 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Conjuration"],
+      "secondaryTypeLabels": [
+        "Conjuration"
+      ],
       "overview": "Saiyu conjures an extendable staff and employs three Nen monkeys. Successful attacks remove sight, hearing and speech and can destabilize the target's ability.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["saiyu-priest-staff", "saiyu-three-monkeys"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "saiyu-priest-staff",
+        "saiyu-three-monkeys"
+      ]
     },
     "mapTrajectory": [
       {
@@ -20221,7 +21737,34 @@
         "outsideDoorOf": "tier-1-vvip-prison-beyond-cell"
       }
     ],
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-340"
+      },
+      {
+        "chapterId": "ch-342"
+      },
+      {
+        "chapterId": "ch-345"
+      },
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-412"
+      }
+    ]
   },
   {
     "id": "basho",
@@ -20229,7 +21772,7 @@
     "aliases": [],
     "description": "Hunter. Hired by Luzurus.",
     "factionId": "prince-luzurus",
-    "firstAppearanceChapterId": "ch-unknown",
+    "firstAppearanceChapterId": "ch-67",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -20246,9 +21789,14 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Basho writes haiku whose declared effect becomes real. The poem's quality and use of seasonal words strengthen the result.",
-      "techniques": ["Hatsu", "Nen perception"],
+      "techniques": [
+        "Hatsu",
+        "Nen perception"
+      ],
       "combatProficiency": "His verses have produced flames, punished a liar and created a lasting protective light against weak spirits.",
-      "abilityIds": ["great-haiku"]
+      "abilityIds": [
+        "great-haiku"
+      ]
     },
     "mangaAppearances": [
       {
@@ -20631,6 +22179,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-67"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
       }
     ]
   },
@@ -21035,7 +22610,9 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As a Pro Hunter, Belerainte can use Nen. His natural category and personal ability have not been revealed.",
-      "techniques": ["Nen perception"],
+      "techniques": [
+        "Nen perception"
+      ],
       "abilityIds": []
     },
     "mapTrajectory": [
@@ -21055,6 +22632,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-368"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-382"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
       }
     ]
   },
@@ -21092,9 +22696,17 @@
       "typeLabel": "Reinforcement",
       "overview": "Bill is one of the few male Enhancers known to possess supportive abilities. He knows how to identify parasitic-type Nen, a phenomenon Kurapika had never heard of, and he is competent enough to supervise Queen Oito's training.",
       "waterDivination": "Bill's water divination confirms his membership in the Strengthening.",
-      "techniques": ["Ten", "Ren", "Ken", "Gyo", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Hatsu"
+      ],
       "combatProficiency": "His Ken is powerful enough to block at least four bullets fired at close range, although he was still slightly injured.",
-      "abilityIds": ["erigeron"]
+      "abilityIds": [
+        "erigeron"
+      ]
     },
     "mangaAppearances": [
       {
@@ -21482,8 +23094,12 @@
       {
         "arc": "Succession Contest",
         "label": "Bill et Kurapika contre Vincent",
-        "allies": ["Kurapika"],
-        "opponents": ["Vincent"],
+        "allies": [
+          "Kurapika"
+        ],
+        "opponents": [
+          "Vincent"
+        ],
         "chapter": 364
       }
     ],
@@ -21502,6 +23118,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-360"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
       }
     ]
   },
@@ -21904,6 +23547,33 @@
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      }
     ]
   },
   {
@@ -21912,7 +23582,7 @@
     "aliases": [],
     "description": "Hunter. Master of Kurapika, hired by Tyson. Holds zone 6, where the chapter 362 sweep shows him at his post answering the princess about her Guardian Spirit Beast.",
     "factionId": "prince-tyson",
-    "firstAppearanceChapterId": "ch-unknown",
+    "firstAppearanceChapterId": "ch-83",
     "canonStatus": "canon",
     "shipLocation": {
       "tier": 1,
@@ -21929,7 +23599,13 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Izunavi is a proficient Nen user and teacher. He understands vows, restrictions, parasitic beasts and Manipulation, but his category and Hatsu remain unknown.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Gyo", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Gyo",
+        "Hatsu"
+      ],
       "abilityIds": []
     },
     "mangaAppearances": [
@@ -22313,6 +23989,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-83"
+      },
+      {
+        "chapterId": "ch-366"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-413"
       }
     ]
   },
@@ -22716,6 +24419,27 @@
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-381"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-400"
+      }
     ]
   },
   {
@@ -22737,8 +24461,12 @@
       "type": "conjuration",
       "typeLabel": "Materialization",
       "overview": "Kurton was a competent enough Materializer to have developed a Nen ability.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["kurton-vehicle-transformation"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "kurton-vehicle-transformation"
+      ]
     },
     "mangaAppearances": [
       {
@@ -23122,7 +24850,9 @@
         "arc": "Succession Contest",
         "label": "Kurton† contre Sayird*",
         "allies": [],
-        "opponents": ["Sayird"],
+        "opponents": [
+          "Sayird"
+        ],
         "chapter": 360
       }
     ],
@@ -23137,6 +24867,21 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-360"
+      },
+      {
+        "chapterId": "ch-361"
       }
     ]
   },
@@ -23546,6 +25291,30 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -23948,6 +25717,15 @@
         "location": "tier-3-central-hospital",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-346"
+      },
+      {
+        "chapterId": "ch-359"
+      }
     ]
   },
   {
@@ -23968,10 +25746,16 @@
     "nen": {
       "type": "emission",
       "typeLabel": "Emission",
-      "secondaryTypeLabels": ["Handling"],
+      "secondaryTypeLabels": [
+        "Handling"
+      ],
       "overview": "Sayird is an Emitter with a strong affinity for Manipulation. After using Kurapika's index finger chain, he was temporarily unable to use Nen and activate its ability for several hours.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["little-eye"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "little-eye"
+      ]
     },
     "mangaAppearances": [
       {
@@ -24355,14 +26139,18 @@
         "arc": "Succession Contest",
         "label": "Sayird* contre Kurton†",
         "allies": [],
-        "opponents": ["Kurton"],
+        "opponents": [
+          "Kurton"
+        ],
         "chapter": 360
       },
       {
         "arc": "Succession Contest",
         "label": "Sayird* contre Kurapika",
         "allies": [],
-        "opponents": ["Kurapika"],
+        "opponents": [
+          "Kurapika"
+        ],
         "chapter": 360
       }
     ],
@@ -24377,6 +26165,27 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-360"
+      },
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-364"
       }
     ]
   },
@@ -24779,6 +26588,18 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
+      }
     ]
   },
   {
@@ -25179,10 +27000,16 @@
     "nen": {
       "type": "unknown",
       "typeLabel": "Unknown type",
-      "secondaryTypeLabels": ["Emission"],
+      "secondaryTypeLabels": [
+        "Emission"
+      ],
       "overview": "Tokarine is a Pro Hunter with a transport-oriented Nen ability. Its exact natural category is unknown, but the ability is classified as Emission.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["transport-portals"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "transport-portals"
+      ]
     },
     "mapPresenceFromChapterId": "ch-359",
     "mapTrajectory": [
@@ -25190,12 +27017,21 @@
         "location": "tier-3-political-ward",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-359"
+      }
     ]
   },
   {
     "id": "borksen",
     "canonicalName": "Borksen",
-    "aliases": ["Bork", "Private First Class Borksen"],
+    "aliases": [
+      "Bork",
+      "Private First Class Borksen"
+    ],
     "description": "Private, Temporary Hunter and Specialist wanted by Morena. Removed from the secret cache between Tiers 2 and 3, she is forced to accept Contagion at level 0.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-394",
@@ -25614,7 +27450,9 @@
         "status": "absent"
       }
     ],
-    "competitions": ["Borksen vs. Morena Prudo — negotiation game"],
+    "competitions": [
+      "Borksen vs. Morena Prudo — negotiation game"
+    ],
     "mapTrajectory": [
       {
         "location": "black-whale-1",
@@ -25628,6 +27466,30 @@
       {
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-407"
+      },
+      {
+        "chapterId": "ch-408"
+      },
+      {
+        "chapterId": "ch-409"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
       }
     ]
   },
@@ -26044,8 +27906,12 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Danjin had his aura nodes opened during Kurapika's class by receiving and using Bill's Erigeron through Stealth Dolphin. Erigeron was returned to Bill after that single use.",
-      "techniques": ["Borrowed Hatsu"],
-      "abilityIds": ["erigeron"]
+      "techniques": [
+        "Borrowed Hatsu"
+      ],
+      "abilityIds": [
+        "erigeron"
+      ]
     },
     "mapTrajectory": [
       {
@@ -26059,6 +27925,33 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-416.4"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-416"
+      },
+      {
+        "chapterId": "ch-417"
       }
     ]
   },
@@ -26085,6 +27978,13 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-unknown",
+        "note": "No manga chapter is catalogued; the archive records this entry as undated."
       }
     ]
   },
@@ -26486,13 +28386,24 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
-      "techniques": ["Hatsu", "Post-mortem Nen"],
-      "abilityIds": ["yomotsu-hegui"]
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -26895,13 +28806,24 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
-      "techniques": ["Hatsu", "Post-mortem Nen"],
-      "abilityIds": ["yomotsu-hegui"]
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -27304,13 +29226,24 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
-      "techniques": ["Hatsu", "Post-mortem Nen"],
-      "abilityIds": ["yomotsu-hegui"]
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -27723,13 +29656,27 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As one of Camilla's Have-Nots, this guard is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. The natural aura category remains unknown.",
-      "techniques": ["Hatsu", "Post-mortem Nen"],
-      "abilityIds": ["yomotsu-hegui"]
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-416"
       }
     ]
   },
@@ -27756,6 +29703,13 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-unknown",
+        "note": "No manga chapter is catalogued; the archive records this entry as undated."
       }
     ]
   },
@@ -28158,6 +30112,30 @@
     ],
     "biography": [
       "Myuhan represents Camilla's faction in Kurapika's first Nen class. Silent Majority kills him, making his death another demonstration that the assassin is targeting students who have not mastered Nen."
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-369"
+      },
+      {
+        "chapterId": "ch-370"
+      },
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-411"
+      }
     ]
   },
   {
@@ -28185,7 +30163,10 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "Salkov can see aura and has used Zetsu since birth, suggesting that his aura nodes were opened in infancy. No personal ability has been shown.",
-      "techniques": ["Zetsu", "Aura perception"],
+      "techniques": [
+        "Zetsu",
+        "Aura perception"
+      ],
       "abilityIds": []
     },
     "mangaAppearances": [
@@ -28586,6 +30567,33 @@
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-416"
+      },
+      {
+        "chapterId": "ch-417"
+      }
     ]
   },
   {
@@ -28611,6 +30619,13 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-unknown",
+        "note": "No manga chapter is catalogued; the archive records this entry as undated."
       }
     ]
   },
@@ -29012,6 +31027,33 @@
       {
         "location": "tier-1-queens-living-quarters-room-01",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-366"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-413"
       }
     ]
   },
@@ -29422,6 +31464,33 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-382"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-373"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-401"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-411"
+      }
     ]
   },
   {
@@ -29823,6 +31892,18 @@
         "location": "tier-1-queens-living-quarters-room-03",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -30223,6 +32304,18 @@
       {
         "location": "tier-1-queens-living-quarters-room-04",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-400"
       }
     ]
   },
@@ -30628,6 +32721,30 @@
       {
         "location": "tier-1-royal-residential-sector-room-1008",
         "fromChapterId": "ch-366"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-350"
+      },
+      {
+        "chapterId": "ch-360"
+      },
+      {
+        "chapterId": "ch-366"
+      },
+      {
+        "chapterId": "ch-370"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-381"
       }
     ]
   },
@@ -31043,6 +33160,33 @@
       {
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-415.4"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-381"
+      },
+      {
+        "chapterId": "ch-388"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-415"
       }
     ]
   },
@@ -31465,7 +33609,34 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-373"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-375"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-413"
+      }
+    ]
   },
   {
     "id": "gipper",
@@ -31872,6 +34043,18 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      }
     ]
   },
   {
@@ -32274,6 +34457,21 @@
       {
         "location": "tier-1-soldiers-living-quarters",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-410"
       }
     ]
   },
@@ -32684,7 +34882,13 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-380"
+      }
+    ]
   },
   {
     "id": "momolly",
@@ -33087,12 +35291,26 @@
         "location": "tier-1-soldiers-living-quarters",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-407"
+      }
     ]
   },
   {
     "id": "otocin",
     "canonicalName": "Otocin",
-    "aliases": ["Otochin"],
+    "aliases": [
+      "Otochin"
+    ],
     "description": "Soldier of Kakin, former comrade of Tserriednich and member of Borksen's group. He investigates the Heil-Ly and the disappearance of his friend in Tier 3.",
     "factionId": "kakin-royal-army",
     "firstAppearanceChapterId": "ch-394",
@@ -33502,6 +35720,18 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-407"
+      }
     ]
   },
   {
@@ -33906,6 +36136,21 @@
       {
         "location": "tier-1-vvip-prison-beyond",
         "fromChapterId": "ch-412.3"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-376"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-412"
       }
     ]
   },
@@ -34320,6 +36565,33 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-402"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-372"
+      },
+      {
+        "chapterId": "ch-381"
+      },
+      {
+        "chapterId": "ch-386"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-411"
+      }
     ]
   },
   {
@@ -34723,6 +36995,18 @@
       {
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-402"
       }
     ]
   },
@@ -35129,6 +37413,30 @@
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-341"
+      },
+      {
+        "chapterId": "ch-342"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-402"
+      },
+      {
+        "chapterId": "ch-403"
+      }
     ]
   },
   {
@@ -35532,6 +37840,12 @@
         "location": "tier-3-central-courthouse",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-403"
+      }
     ]
   },
   {
@@ -35933,6 +38247,30 @@
         "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-349"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-382"
+      },
+      {
+        "chapterId": "ch-383"
+      },
+      {
+        "chapterId": "ch-413"
+      }
     ]
   },
   {
@@ -36333,6 +38671,12 @@
       {
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -36736,6 +39080,27 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-360"
+      },
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-364"
       }
     ]
   },
@@ -37146,6 +39511,33 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-360"
+      },
+      {
+        "chapterId": "ch-373"
+      },
+      {
+        "chapterId": "ch-374"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-411"
+      },
+      {
+        "chapterId": "ch-412"
+      },
+      {
+        "chapterId": "ch-413"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
@@ -37551,12 +39943,27 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-359"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "onior-longbao",
     "canonicalName": "Onior Longbao",
-    "aliases": ["Boss of Xi-Yu", "Nasubi's half-brother"],
+    "aliases": [
+      "Boss of Xi-Yu",
+      "Nasubi's half-brother"
+    ],
     "description": "Head of the Xi-Yu mafia family and half-brother of King Nasubi. Godfather of Zhang Lei, he runs the Tier 1 VVIP districts from there.",
     "factionId": "mafia-xiyu",
     "firstAppearanceChapterId": "ch-378",
@@ -37962,12 +40369,33 @@
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-378"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-384"
+      },
+      {
+        "chapterId": "ch-390"
+      },
+      {
+        "chapterId": "ch-410"
+      },
+      {
+        "chapterId": "ch-417"
+      }
     ]
   },
   {
     "id": "brocco-li",
     "canonicalName": "Brocco Li",
-    "aliases": ["Boss of the Cha-R", "Nasubi's half-brother"],
+    "aliases": [
+      "Boss of the Cha-R",
+      "Nasubi's half-brother"
+    ],
     "description": "Head of the Cha-R mafia family and half-brother of King Nasubi. Godfather of Luzurus, he resides in the VVIP Tier 1 districts.",
     "factionId": "mafia-char",
     "firstAppearanceChapterId": "ch-378",
@@ -38374,6 +40802,18 @@
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-384"
+      },
+      {
+        "chapterId": "ch-405"
+      }
     ]
   },
   {
@@ -38774,6 +41214,12 @@
       {
         "location": "tier-1-king-living-quarters",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-376"
       }
     ]
   },
@@ -39179,12 +41625,22 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-392"
+      }
+    ]
   },
   {
     "id": "silent-majority-user",
     "canonicalName": "Silent Majority User",
-    "aliases": ["Silent Majority User", "Assassin silencieux", "Unknown user"],
+    "aliases": [
+      "Silent Majority User",
+      "Assassin silencieux",
+      "Unknown user"
+    ],
     "description": "Nen assassin whose identity remains unknown. He infiltrates Kurapika's classes and eliminates his victims with a curse of materialized snakes.",
     "factionId": null,
     "firstAppearanceChapterId": "ch-369",
@@ -39208,11 +41664,17 @@
     "nen": {
       "type": "conjurer",
       "typeLabel": "Materialization",
-      "secondaryTypeLabels": ["Handling"],
+      "secondaryTypeLabels": [
+        "Handling"
+      ],
       "overview": "The exact affinity is not officially confirmed, but Silent Majority materializes snakes visible to all and appears to direct them from a distance by sight. The ability relies on strong restrictions and a curse that can backfire on its user.",
-      "techniques": ["Hatsu"],
+      "techniques": [
+        "Hatsu"
+      ],
       "combatProficiency": "Four coordinated snakes can drain a person of all blood in eleven seconds. The user favors targets without Nen, enclosed places and diversions which prevent assistance from reacting in time.",
-      "abilityIds": ["silent-majority"]
+      "abilityIds": [
+        "silent-majority"
+      ]
     },
     "mangaAppearances": [
       {
@@ -39596,12 +42058,25 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-369"
+      },
+      {
+        "chapterId": "ch-370"
+      }
     ]
   },
   {
     "id": "bonolenov-ndongo",
     "canonicalName": "Bonolenov Ndongo",
-    "aliases": ["Bonolenov", "Bono", "Member No. 10 of the Brigade"],
+    "aliases": [
+      "Bonolenov",
+      "Bono",
+      "Member No. 10 of the Brigade"
+    ],
     "description": "Member of the Phantom Troupe and Gyudondond warrior. In Tier 1, he transforms into Hisoka then into Owl to carry out Chrollo's plan.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-377",
@@ -39625,7 +42100,12 @@
       "type": "conjurer",
       "typeLabel": "Materialization",
       "overview": "Bonolenov materializes weapons, destructive masses or transformations using Battle Cantabile. His Hatsu are linked to his Gyudondond heritage: he dances and circulates air through the holes in his body to produce the necessary melodies. The duration or power seems to depend on the song, the dance and the number of holes exposed.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Hatsu"
+      ],
       "combatProficiency": "He fights by dancing, avoids attacks with grace and can perform convincing transformations. Metamorphosen allows him to imitate Hisoka, Zakuro, Lynch and then Owl, while Prologue and Jupiter give him a melee weapon and a massive pursuit attack respectively.",
       "abilityIds": [
         "battle-cantabile-prologue",
@@ -40030,12 +42510,36 @@
         "location": "tier-1-vip-casino",
         "fromChapterId": "ch-405"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      }
     ]
   },
   {
     "id": "shizuku-murasaki",
     "canonicalName": "Shizuku Murasaki",
-    "aliases": ["Shizuku", "Member No. 8 of the Brigade"],
+    "aliases": [
+      "Shizuku",
+      "Member No. 8 of the Brigade"
+    ],
     "description": "Member of the Phantom and Materializing Brigade. She accompanies Chrollo and Bonolenov in the search for Hisoka and is located at the central passage connecting Tiers 4 and 5.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-377",
@@ -40057,11 +42561,19 @@
     "nen": {
       "type": "conjurer",
       "typeLabel": "Materialization",
-      "secondaryTypeLabels": ["Reinforcement"],
+      "secondaryTypeLabels": [
+        "Reinforcement"
+      ],
       "overview": "Shizuku materializes Blinky, a vacuum cleaner with virtually unlimited absorption capacity. She masters Ten, Hatsu and Gyo, which she applies in particular to her eyes to protect against In.",
-      "techniques": ["Ten", "Gyo", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Gyo",
+        "Hatsu"
+      ],
       "combatProficiency": "Blinky serves as both a tool, a blunt weapon, and a means of exsanguination. The restriction that prevents her from sucking up living beings and Nen objects also allows Shizuku to spot certain traps.",
-      "abilityIds": ["blinky"]
+      "abilityIds": [
+        "blinky"
+      ]
     },
     "mangaAppearances": [
       {
@@ -40456,12 +42968,24 @@
         "fromChapterId": "ch-380",
         "note": "Forme un trio avec Chrollo et Bonolenov"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "franklin-bordeau",
     "canonicalName": "Franklin Bordeau",
-    "aliases": ["Franklin", "Member No. 7 of the Brigade"],
+    "aliases": [
+      "Franklin",
+      "Member No. 7 of the Brigade"
+    ],
     "description": "Member of the Phantom Troupe and Elite Transmitter. He waits for Hisoka to come to him in the central dining hall of Tier 5.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-371",
@@ -40485,11 +43009,17 @@
     "nen": {
       "type": "emitter",
       "typeLabel": "Emission",
-      "secondaryTypeLabels": ["Reinforcement"],
+      "secondaryTypeLabels": [
+        "Reinforcement"
+      ],
       "overview": "Franklin is an Emitter with a dual affinity to Reinforcement. He can project hundreds of aura bullets without visible fatigue and his stamina allowed him to escape a car explosion unscathed.",
-      "techniques": ["Hatsu"],
+      "techniques": [
+        "Hatsu"
+      ],
       "combatProficiency": "Double Machine Gun's cadence, speed, and power allow it to saturate a large area. The intentional mutilation of his fingers acts as a restriction and significantly strengthens each projectile.",
-      "abilityIds": ["double-machine-gun"]
+      "abilityIds": [
+        "double-machine-gun"
+      ]
     },
     "mangaAppearances": [
       {
@@ -40882,12 +43412,42 @@
         "fromChapterId": "ch-378",
         "note": "Reste à la cafétéria du Pont 5 pour servir d'appât"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-379"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-392"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-396"
+      },
+      {
+        "chapterId": "ch-397"
+      },
+      {
+        "chapterId": "ch-400"
+      }
     ]
   },
   {
     "id": "phinks-magcub",
     "canonicalName": "Phinks Magcub",
-    "aliases": ["Phinks", "Member No. 5 of the Brigade"],
+    "aliases": [
+      "Phinks",
+      "Member No. 5 of the Brigade"
+    ],
     "description": "Member of the Ghost Brigade and Enhancer. With Feitan, it progresses to the higher tiers through the recycling facilities located between Tiers 4 and 5.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-371",
@@ -40915,9 +43475,21 @@
       "type": "enhancer",
       "typeLabel": "Reinforcement",
       "overview": "Phinks is presented as an Enhancer mastering a wide range of techniques. His En works in small spaces but disintegrates when he moves, hears a voice, or senses movement, making him dangerous to use in a crowd.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Ken", "Gyo", "Ko", "Ryu", "En", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "Ko",
+        "Ryu",
+        "En",
+        "Hatsu"
+      ],
       "combatProficiency": "Ripper Cyclotron accumulates aura in his fist with each rotation of his arm. Fifteen rounds pulverized a resistant Chimera Ant, although Phinks estimates that half would have been enough and admits to having difficulty measuring its strength.",
-      "abilityIds": ["ripper-cyclotron"]
+      "abilityIds": [
+        "ripper-cyclotron"
+      ]
     },
     "mangaAppearances": [
       {
@@ -41334,12 +43906,42 @@
         "location": "tier-4-recycling-sewage-facilities",
         "fromChapterId": "ch-406"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-396"
+      },
+      {
+        "chapterId": "ch-397"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-400"
+      },
+      {
+        "chapterId": "ch-404"
+      },
+      {
+        "chapterId": "ch-405"
+      },
+      {
+        "chapterId": "ch-406"
+      }
     ]
   },
   {
     "id": "kalluto-zoldyck",
     "canonicalName": "Kalluto Zoldyck",
-    "aliases": ["Kalluto", "Member No. 4 of the Brigade"],
+    "aliases": [
+      "Kalluto",
+      "Member No. 4 of the Brigade"
+    ],
     "description": "Young Zoldyck assassin and member of the Phantom Troupe. After the Tier 5 meeting, he and Illumi are escorted to Tier 3 residential units.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-377",
@@ -41368,11 +43970,20 @@
     "nen": {
       "type": "manipulator",
       "typeLabel": "Handling",
-      "secondaryTypeLabels": ["Emission"],
+      "secondaryTypeLabels": [
+        "Emission"
+      ],
       "overview": "Kalluto is an Emission-oriented Manipulator. He controls confetti and paper dolls for espionage or attack purposes; the papers could be materialized, but they can also be concealed in one's clothing.",
-      "techniques": ["Zetsu", "Shu", "Hatsu"],
+      "techniques": [
+        "Zetsu",
+        "Shu",
+        "Hatsu"
+      ],
       "combatProficiency": "His Zetsu is described as perfect. In combat, it marks its target with a fragment then gathers the other papers into a piercing snake capable of gradually shredding a Chimera Ant.",
-      "abilityIds": ["surveillance-paper-dolls", "dance-of-the-serpents-bite"]
+      "abilityIds": [
+        "surveillance-paper-dolls",
+        "dance-of-the-serpents-bite"
+      ]
     },
     "mangaAppearances": [
       {
@@ -41767,12 +44378,24 @@
         "fromChapterId": "ch-381",
         "note": "Placé sous surveillance dans une chambre VIP avec Illumi"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "machi-komacine",
     "canonicalName": "Machi Komacine",
-    "aliases": ["Machi", "Member No. 3 of the Brigade"],
+    "aliases": [
+      "Machi",
+      "Member No. 3 of the Brigade"
+    ],
     "description": "Founding member of the Phantom and Transmuter Brigade. She searches for Hisoka from a standard cabin in Tier 5 after witnessing his resurrection.",
     "factionId": "phantom-troupe",
     "firstAppearanceChapterId": "ch-357",
@@ -41797,11 +44420,23 @@
     "nen": {
       "type": "transmuter",
       "typeLabel": "Transformation",
-      "secondaryTypeLabels": ["Reinforcement", "Emission"],
+      "secondaryTypeLabels": [
+        "Reinforcement",
+        "Emission"
+      ],
       "overview": "Machi transforms her aura into almost indestructible threads. She already possessed the ability to see aura during her childhood and has mastered Hatsu, In, Ren and Gyo, as well as probably Ten and Ken. She can keep her sons at a distance thanks to the Emission.",
-      "techniques": ["Ten", "Ren", "Ken", "Gyo", "In", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Ren",
+        "Ken",
+        "Gyo",
+        "In",
+        "Hatsu"
+      ],
       "combatProficiency": "The strength of a thread is inversely proportional to its length: a thread of less than a meter can lift a ton, while a thread long enough to encircle the Earth would not exceed the resistance of cotton. Their strength also diminishes when they leave his fingers.",
-      "abilityIds": ["nen-stitches"]
+      "abilityIds": [
+        "nen-stitches"
+      ]
     },
     "mangaAppearances": [
       {
@@ -42180,7 +44815,9 @@
         "status": "absent"
       }
     ],
-    "battles": ["Machi Komacine vs. Hisoka Morow"],
+    "battles": [
+      "Machi Komacine vs. Hisoka Morow"
+    ],
     "mapTrajectory": [
       {
         "location": "tier-5-central-dining-hall",
@@ -42191,6 +44828,30 @@
         "location": "tier-5-standard-cabins",
         "fromChapterId": "ch-378",
         "note": "Exploration du Pont 5 en solo"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-357"
+      },
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-377"
+      },
+      {
+        "chapterId": "ch-380"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-396"
+      },
+      {
+        "chapterId": "ch-397"
       }
     ]
   },
@@ -42216,6 +44877,12 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
+      }
     ]
   },
   {
@@ -42239,6 +44906,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-400"
       }
     ]
   },
@@ -42287,12 +44960,23 @@
     "nen": {
       "confirmed": true,
       "overview": "Benjamin's private soldier posted over the Woble camp: a Nen user, category never revealed on panel."
-    }
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-415"
+      }
+    ]
   },
   {
     "id": "bachaem",
     "canonicalName": "Bachaem",
-    "aliases": ["Bachaemu"],
+    "aliases": [
+      "Bachaemu"
+    ],
     "description": "Royal Bodyguard for Prince Fugetsu Hui Guo Rou. Kakin Empire ; Fugetsu Hui Guo Rou.",
     "factionId": "prince-fugetsu",
     "firstAppearanceChapterId": "ch-366",
@@ -42310,6 +44994,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -42341,6 +45031,15 @@
         "title": "Limits",
         "status": "death"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-368"
+      },
+      {
+        "chapterId": "ch-369"
+      }
     ]
   },
   {
@@ -42364,6 +45063,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -42389,6 +45094,12 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-386"
+      }
     ]
   },
   {
@@ -42413,12 +45124,20 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
     "id": "bladge",
     "canonicalName": "Bladge",
-    "aliases": ["Buraggi"],
+    "aliases": [
+      "Buraggi"
+    ],
     "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Tang Zhao Li Hui Guo Rou. The chapter 366 sweep puts him at her door.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-361",
@@ -42438,6 +45157,12 @@
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-358",
         "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-361"
       }
     ]
   },
@@ -42463,6 +45188,12 @@
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-373"
+      }
     ]
   },
   {
@@ -42486,6 +45217,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -42525,6 +45262,15 @@
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-416.4"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-416"
+      }
     ]
   },
   {
@@ -42554,6 +45300,12 @@
         "fromChapterId": "ch-380",
         "note": "Day 4, 10:00 cutaway: ordinary third-class cabins"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -42578,6 +45330,12 @@
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
+      }
     ]
   },
   {
@@ -42601,6 +45359,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -42640,6 +45404,15 @@
         "location": "tier-1-vvip-living-quarters",
         "fromChapterId": "ch-417.4"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-417"
+      }
     ]
   },
   {
@@ -42665,6 +45438,12 @@
       {
         "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -42718,6 +45497,18 @@
         "location": "tier-2-ministry-of-justice",
         "fromChapterId": "ch-417.5"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-415"
+      },
+      {
+        "chapterId": "ch-417"
+      }
     ]
   },
   {
@@ -42741,6 +45532,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -42766,6 +45563,12 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
+      }
     ]
   },
   {
@@ -42789,6 +45592,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -42814,6 +45623,12 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-386"
+      }
     ]
   },
   {
@@ -42837,9 +45652,18 @@
       "type": "transmuter",
       "typeLabel": "Transmutation",
       "overview": "Feitan transmutes his aura into heat and light. The pair of abilities is a single mechanism read in two directions: Pain Packer stores the damage he has taken, Rising Sun spends it, so his output is a function of how badly the fight has already gone for him.",
-      "techniques": ["Ten", "Zetsu", "Ren", "Ken", "Hatsu"],
+      "techniques": [
+        "Ten",
+        "Zetsu",
+        "Ren",
+        "Ken",
+        "Hatsu"
+      ],
       "combatProficiency": "Against Zazan he took heavy damage before donning Pain Packer, then released Rising Sun: the evolved Chimera Ant was reduced to ash and the ground scorched around her. The burst spares nobody nearby, so the Troupe treats it as a last resort rather than an opening move.",
-      "abilityIds": ["pain-packer", "rising-sun"]
+      "abilityIds": [
+        "pain-packer",
+        "rising-sun"
+      ]
     },
     "mangaAppearances": [
       {
@@ -42896,7 +45720,22 @@
       }
     ],
     "positionProvenance": "inferred",
-    "mapLocationCorrection": true
+    "mapLocationCorrection": true,
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-71"
+      },
+      {
+        "chapterId": "ch-371"
+      },
+      {
+        "chapterId": "ch-395"
+      },
+      {
+        "chapterId": "ch-400"
+      }
+    ]
   },
   {
     "id": "fukataki",
@@ -42926,6 +45765,15 @@
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
+      },
+      {
+        "chapterId": "ch-416"
+      }
     ]
   },
   {
@@ -42949,6 +45797,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -43016,8 +45870,19 @@
     "nen": {
       "confirmed": true,
       "overview": "Benjamin's private soldier and Nen analyst: a Nen user, category never revealed on panel.",
-      "abilityIds": ["combo-master"]
-    }
+      "abilityIds": [
+        "combo-master"
+      ]
+    },
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-416"
+      }
+    ]
   },
   {
     "id": "gadeau",
@@ -43045,6 +45910,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
+      }
     ]
   },
   {
@@ -43068,6 +45939,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -43097,6 +45974,12 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -43120,6 +46003,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
       }
     ]
   },
@@ -43145,6 +46034,12 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
+      }
     ]
   },
   {
@@ -43168,6 +46063,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -43193,6 +46094,12 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-388"
+      }
     ]
   },
   {
@@ -43216,6 +46123,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-373"
       }
     ]
   },
@@ -43241,6 +46154,12 @@
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
+      }
     ]
   },
   {
@@ -43264,6 +46183,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-400"
       }
     ]
   },
@@ -43293,6 +46218,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-369"
+      }
     ]
   },
   {
@@ -43318,6 +46249,12 @@
       {
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-379"
       }
     ]
   },
@@ -43347,6 +46284,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-386"
+      }
     ]
   },
   {
@@ -43371,6 +46314,12 @@
         "location": "black-whale-1",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-359"
+      }
     ]
   },
   {
@@ -43394,6 +46343,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -43430,6 +46385,15 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-414.1"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -43455,6 +46419,13 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-unknown",
+        "note": "No manga chapter is catalogued; the archive records this entry as undated."
+      }
     ]
   },
   {
@@ -43478,6 +46449,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -43503,6 +46480,12 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -43527,6 +46510,12 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
+      }
     ]
   },
   {
@@ -43550,6 +46539,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -43576,6 +46571,12 @@
       {
         "location": "tier-1-queens-living-quarters",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-374"
       }
     ]
   },
@@ -43605,12 +46606,20 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-369"
+      }
     ]
   },
   {
     "id": "laroc",
     "canonicalName": "Laroc",
-    "aliases": ["Larokku"],
+    "aliases": [
+      "Larokku"
+    ],
     "description": "Spy for Katrono Hui Guo Rou. Kakin Empire ; Katrono Hui Guo Rou.",
     "factionId": "kakin-royal-family",
     "firstAppearanceChapterId": "ch-366",
@@ -43633,6 +46642,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-366"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -43662,6 +46677,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-411"
+      }
     ]
   },
   {
@@ -43685,6 +46706,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1010",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -43710,7 +46737,13 @@
         "fromChapterId": "ch-358"
       }
     ],
-    "mangaAppearances": []
+    "mangaAppearances": [],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-369"
+      }
+    ]
   },
   {
     "id": "lynch-fullbokko",
@@ -43760,6 +46793,15 @@
         "fromChapterId": "ch-406",
         "note": "Dead body discovered"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-390"
+      },
+      {
+        "chapterId": "ch-393"
+      }
     ]
   },
   {
@@ -43784,6 +46826,12 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
+      }
     ]
   },
   {
@@ -43807,6 +46855,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
       }
     ]
   },
@@ -43843,6 +46897,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      }
     ]
   },
   {
@@ -43866,6 +46926,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -43891,6 +46957,12 @@
         "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-392"
+      }
     ]
   },
   {
@@ -43914,6 +46986,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -43939,6 +47017,12 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -43962,6 +47046,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -43996,13 +47086,27 @@
       "type": "unknown",
       "typeLabel": "Unknown type",
       "overview": "As one of Camilla's Have-Nots, Moswana is a Nen user capable of casting the long-prepared haunting curse Yomotsu Hegui. Her natural aura category remains unknown.",
-      "techniques": ["Hatsu", "Post-mortem Nen"],
-      "abilityIds": ["yomotsu-hegui"]
+      "techniques": [
+        "Hatsu",
+        "Post-mortem Nen"
+      ],
+      "abilityIds": [
+        "yomotsu-hegui"
+      ]
     },
     "mapTrajectory": [
       {
         "location": "tier-1-vip-jail",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      },
+      {
+        "chapterId": "ch-416"
       }
     ]
   },
@@ -44027,6 +47131,12 @@
       {
         "location": "tier-1-royal-residential-sector",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -44053,12 +47163,21 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-unknown",
+        "note": "No manga chapter is catalogued; the archive records this entry as undated."
+      }
     ]
   },
   {
     "id": "nagmum",
     "canonicalName": "Nagmum",
-    "aliases": ["Nagomamu"],
+    "aliases": [
+      "Nagomamu"
+    ],
     "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Seiko Hui Guo Rou. The chapter 366 sweep puts him at her door.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-366",
@@ -44078,6 +47197,12 @@
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-358",
         "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -44102,6 +47227,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
       }
     ]
   },
@@ -44131,6 +47262,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
+      }
     ]
   },
   {
@@ -44154,6 +47291,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -44179,12 +47322,20 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      }
     ]
   },
   {
     "id": "nipaper",
     "canonicalName": "Nipaper",
-    "aliases": ["Nipeibaa"],
+    "aliases": [
+      "Nipeibaa"
+    ],
     "description": "Royal Bodyguard for Prince Momoze Hui Guo Rou ; Spy for Queen Duazul Hui Guo Rou. The chapter 366 sweep puts him at her door.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-361",
@@ -44204,6 +47355,12 @@
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-358",
         "outsideDoorOf": "tier-1-royal-residential-sector-room-1012"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-361"
       }
     ]
   },
@@ -44229,6 +47386,12 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -44253,6 +47416,12 @@
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-373"
+      }
     ]
   },
   {
@@ -44276,6 +47445,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -44305,6 +47480,12 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -44329,6 +47510,12 @@
         "location": "tier-1-royal-residential-sector-room-1006",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      }
     ]
   },
   {
@@ -44352,6 +47539,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
       }
     ]
   },
@@ -44382,6 +47575,12 @@
         "fromChapterId": "ch-392",
         "note": "Combat contre Hinrigh"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -44405,6 +47604,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -44430,6 +47635,12 @@
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -44453,6 +47664,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -44478,6 +47695,12 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
+      }
     ]
   },
   {
@@ -44501,6 +47724,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-386"
       }
     ]
   },
@@ -44530,6 +47759,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
+      }
     ]
   },
   {
@@ -44554,6 +47789,12 @@
         "location": "tier-1-royal-residential-sector-room-1011",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
+      }
     ]
   },
   {
@@ -44577,6 +47818,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1005",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-415"
       }
     ]
   },
@@ -44603,6 +47850,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-365"
+      }
     ]
   },
   {
@@ -44627,6 +47880,12 @@
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      }
     ]
   },
   {
@@ -44650,6 +47909,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
       }
     ]
   },
@@ -44683,6 +47948,12 @@
         "location": "tier-1-royal-residential-sector-room-1007",
         "fromChapterId": "ch-415.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-369"
+      }
     ]
   },
   {
@@ -44706,6 +47977,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -44735,6 +48012,12 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-361"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      }
     ]
   },
   {
@@ -44763,6 +48046,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-365"
+      }
     ]
   },
   {
@@ -44786,6 +48075,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -44811,6 +48106,12 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -44834,6 +48135,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -44861,6 +48168,12 @@
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-377"
+      }
     ]
   },
   {
@@ -44884,6 +48197,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-375"
       }
     ]
   },
@@ -44911,6 +48230,12 @@
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-384"
+      }
     ]
   },
   {
@@ -44934,6 +48259,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-389"
       }
     ]
   },
@@ -44965,6 +48296,12 @@
         "location": "tier-4-xi-yu-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-394"
+      }
     ]
   },
   {
@@ -44993,6 +48330,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
+      }
     ]
   },
   {
@@ -45017,6 +48360,12 @@
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -45040,6 +48389,12 @@
       {
         "location": "tier-3-heilly-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
       }
     ]
   },
@@ -45068,6 +48423,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-411"
       }
     ]
   },
@@ -45099,12 +48460,20 @@
         "location": "tier-5-standard-cabins",
         "fromChapterId": "ch-377"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-380"
+      }
     ]
   },
   {
     "id": "tuffdy",
     "canonicalName": "Tuffdy",
-    "aliases": ["Tafudi"],
+    "aliases": [
+      "Tafudi"
+    ],
     "description": "Spy for Queen Swinko-swinko ; Royal Bodyguard for Prince Momoze. Kakin Empire ; Swinko-swinko Hui Guo Rou ; Momoze Hui Guo Rou.",
     "factionId": "prince-momoze",
     "firstAppearanceChapterId": "ch-366",
@@ -45122,6 +48491,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1012",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -45147,6 +48522,12 @@
         "location": "tier-1-royal-residential-sector-room-1002",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-373"
+      }
     ]
   },
   {
@@ -45170,6 +48551,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-363"
       }
     ]
   },
@@ -45202,6 +48589,15 @@
         "location": "tier-1-royal-residential-sector-room-1013",
         "fromChapterId": "ch-358"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-361"
+      },
+      {
+        "chapterId": "ch-415"
+      }
     ]
   },
   {
@@ -45225,6 +48621,12 @@
       {
         "location": "tier-5-cha-r-family-office",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-380"
       }
     ]
   },
@@ -45260,6 +48662,12 @@
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-361"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      }
     ]
   },
   {
@@ -45288,6 +48696,12 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -45311,6 +48725,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1001",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-373"
       }
     ]
   },
@@ -45340,6 +48760,12 @@
         "location": "tier-2-heilly-secret-hideout",
         "fromChapterId": "ch-407"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-378"
+      }
     ]
   },
   {
@@ -45363,6 +48789,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-358"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-362"
       }
     ]
   },
@@ -45391,6 +48823,12 @@
       {
         "location": "tier-1-royal-residential-sector-room-1014",
         "fromChapterId": "ch-411.3"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-366"
       }
     ]
   },
@@ -45423,8 +48861,12 @@
       "typeLabel": "Unknown type",
       "confirmed": true,
       "overview": "Yushohi is a Nen user in Benjamin's private army. His ability Stand By Me can be lent to an ally; its effect and complete conditions remain unrevealed.",
-      "techniques": ["Hatsu"],
-      "abilityIds": ["stand-by-me"]
+      "techniques": [
+        "Hatsu"
+      ],
+      "abilityIds": [
+        "stand-by-me"
+      ]
     },
     "mapTrajectory": [
       {
@@ -45443,12 +48885,24 @@
         "location": "tier-1-royal-residential-sector-room-1009",
         "fromChapterId": "ch-414.3"
       }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-358"
+      },
+      {
+        "chapterId": "ch-414"
+      }
     ]
   },
   {
     "id": "tserriednich-tattoo-artist",
     "canonicalName": "Tatoueur de Tserriednich",
-    "aliases": ["Tatoueur sans nom", "Tserriednich's Tattoo Artist"],
+    "aliases": [
+      "Tatoueur sans nom",
+      "Tserriednich's Tattoo Artist"
+    ],
     "description": "Tatoueur personnel sans nom de Tserriednich et ancien membre de la Heil-Ly. Il apparaît d'abord au chapitre 348 en train de tatouer une femme captive pendant l'appel entre Tserriednich et Benjamin. Borksen révèle au chapitre 394 qu'il a tatoué les marques d'unité de son groupe et que Tserriednich l'a retiré de la Heil-Ly avant la purge de Morena. Il réapparaît dans la chambre 1004 au chapitre 416. Sa ressemblance avec l'un des hommes accompagnant Risnorth dans le flashback de Sarasa est notable, mais leur identité commune n'est pas confirmée.",
     "factionId": "prince-tserriednich",
     "firstAppearanceChapterId": "ch-348",
@@ -45483,6 +48937,18 @@
         "location": "tier-1-royal-residential-sector-room-1004",
         "fromChapterId": "ch-416.4",
         "note": "Réapparaît dans les quartiers de Tserriednich ; aucune position antérieure à bord n'est confirmée"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-348"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-416"
       }
     ]
   },
@@ -45521,6 +48987,12 @@
       {
         "location": "tier-3-residential-standard",
         "fromChapterId": "ch-406"
+      }
+    ],
+    "modifiedAt": "2026-11-13",
+    "sources": [
+      {
+        "chapterId": "ch-390"
       }
     ]
   }

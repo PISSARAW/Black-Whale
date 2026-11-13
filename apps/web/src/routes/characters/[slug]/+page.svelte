@@ -6,8 +6,14 @@
   import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState.js'
   import Seo from '$lib/components/Seo.svelte'
   import ProphecyPoem from '$lib/components/ProphecyPoem.svelte'
-  import { breadcrumbSchema, characterSchema } from '$lib/seo/schema'
+  import {
+    articleSchema,
+    breadcrumbSchema,
+    characterSchema,
+    publisherSchema,
+  } from '$lib/seo/schema'
   import { link, locale, t } from '$lib/i18n'
+  import { LOCALE_TAGS } from '$lib/i18n/config'
 
   let { data }: { data: PageData } = $props()
   let character = $derived(data.character)
@@ -93,6 +99,12 @@
     const profile = hatsuById(abilityId)
     if (profile) activateHatsu(profile)
   }
+
+  const sourceChapter = (chapterId: string) => chapterId.replace(/^ch-/, '').split('.')[0]
+  const sourceLink = (chapterId: string) => {
+    const chapter = Number(sourceChapter(chapterId))
+    return Number.isFinite(chapter) && chapter >= 340 ? $link(`/timeline#chapter-${chapter}`) : null
+  }
 </script>
 
 <Seo
@@ -106,6 +118,16 @@
       description: metaDescription,
       affiliation: factionName,
     }),
+    articleSchema({
+      name: displayName,
+      path: $link(`/characters/${character.id}`),
+      description: metaDescription,
+      language: LOCALE_TAGS[$locale].html,
+      modifiedAt: character.modifiedAt,
+      type: 'ProfilePage',
+      mainEntity: { '@type': 'Person', name: displayName },
+    }),
+    publisherSchema(),
     breadcrumbSchema([
       { name: $t.common.home, path: $link('/') },
       { name: $t.nav.characters, path: $link('/characters') },
@@ -136,6 +158,7 @@
       <div class="hero-links">
         <a href={$link('/ship')}>{$t.characterDetail.locateOnShip} <span>⌖</span></a>
       </div>
+      {#if character.description}<p class="answer-summary">{character.description}</p>{/if}
     </div>
 
     <dl class="record-stats">
@@ -162,6 +185,28 @@
         </div>{/if}
     </dl>
   </header>
+
+  {#if character.sources.length}
+    <section class="summary-sources" aria-labelledby="summary-sources-title">
+      <h2 id="summary-sources-title">{$t.discovery.sources}</h2>
+      <ul>
+        {#each character.sources as source (source.chapterId)}
+          <li>
+            {#if source.chapterId === 'ch-unknown'}
+              <span>{$t.common.unknown}</span>
+            {:else if sourceLink(source.chapterId)}
+              <a href={sourceLink(source.chapterId) ?? undefined}
+                >{$t.discovery.chapter(sourceChapter(source.chapterId))}</a
+              >
+            {:else}
+              <span>{$t.discovery.chapter(sourceChapter(source.chapterId))}</span>
+            {/if}
+            {#if source.note}<small>{source.note}</small>{/if}
+          </li>
+        {/each}
+      </ul>
+    </section>
+  {/if}
 
   <div class="dossier-layout">
     <aside class="dossier-index">
@@ -420,6 +465,44 @@
 </div>
 
 <style>
+  .answer-summary {
+    max-width: 44rem;
+    margin: 1.5rem 0 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  .summary-sources {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.25rem var(--page-gutter);
+    border-top: 1px solid var(--line-default);
+    border-bottom: 1px solid var(--line-default);
+  }
+  .summary-sources h2 {
+    margin: 0;
+    font-size: 0.8rem;
+  }
+  .summary-sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .summary-sources li {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--line-default);
+    font-size: 0.75rem;
+  }
+  .summary-sources a {
+    color: var(--accent-gold-bright);
+  }
+  .summary-sources small {
+    display: block;
+    color: var(--text-muted);
+  }
   .dossier-page {
     max-width: 1280px;
     margin: auto;

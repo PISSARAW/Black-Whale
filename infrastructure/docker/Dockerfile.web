@@ -37,6 +37,9 @@ COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
 # Read from disk at request time by `lib/server/data-files.ts`, which walks up
 # from the working directory looking for it — hence /app, not /app/apps/web.
 COPY --from=builder /app/data ./data
+# Kept in the runtime image so deploy.sh can submit the changed catalogue URLs
+# through the same pinned Node release that serves the site.
+COPY --from=builder /app/scripts/submit-indexnow.mjs ./scripts/submit-indexnow.mjs
 
 ENV NODE_ENV=production
 ENV PORT=3000

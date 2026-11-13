@@ -162,6 +162,10 @@ export const load: PageServerLoad = localizedLoad(
       profile.mangaAppearances = profile.mangaAppearances.filter(
         (appearance) => appearance.chapter <= spoilerLimit,
       )
+      profile.sources = profile.sources.filter((source) => {
+        const chapter = Number(source.chapterId.match(/^ch-(\d+)/)?.[1])
+        return !Number.isFinite(chapter) || chapter <= spoilerLimit
+      })
     }
     if (isCapped) profile = maskUndatedCharacterProfile(profile)
 

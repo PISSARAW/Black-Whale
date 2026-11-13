@@ -108,6 +108,22 @@ fi
 compose up -d --remove-orphans
 compose ps
 
+# Discovery submission is deliberately after the healthy stack is live. The
+# key is public by design; if it is unset, search submission remains a manual
+# Webmaster Tools step and never blocks a deploy.
+indexnow_key="$(sed -n 's/^INDEXNOW_KEY=//p' "$env_file" | tail -n 1)"
+domain="$(sed -n 's/^DOMAIN=//p' "$env_file" | tail -n 1)"
+if [ -n "$indexnow_key" ] && [ -n "$domain" ]; then
+  indexnow_since="1970-01-01"
+  if [ -f "$history_file" ]; then
+    indexnow_since="$(tail -n 1 "$history_file" | awk '{print substr($2,1,10)}')"
+  fi
+  if ! compose exec -T -e INDEXNOW_SINCE="$indexnow_since" -e SITE_URL="https://$domain" \
+    web node scripts/submit-indexnow.mjs; then
+    echo "Warning: IndexNow submission failed; the deployed site remains healthy." >&2
+  fi
+fi
+
 # Recorded only once the stack is actually up, so a failed deploy never becomes
 # a rollback target.
 printf '%s %s\n' "$IMAGE_TAG" "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >>"$history_file"

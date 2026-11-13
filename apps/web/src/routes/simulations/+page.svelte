@@ -217,7 +217,7 @@
     {#if data.morena}
       <MorenaBranchPanel
         branchId={data.branch.branch.id}
-        actorId={data.selection.actorId || 'morena-prudo'}
+        actorId="morena-prudo"
         targetId={data.selection.targetId}
         {entities}
         state={data.morena}

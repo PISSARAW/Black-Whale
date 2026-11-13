@@ -48,6 +48,13 @@ async function finishGame(page: Page, touch: boolean) {
   throw new Error('Morena game did not reach a verdict in twelve actions')
 }
 
+async function askQuestion(page: Page, title: string, touch: boolean) {
+  const action = page.getByTestId('morena-action')
+  await expect(action.getByRole('heading', { level: 2 })).toHaveText('Spend a question')
+  await activate(action.getByRole('button', { name: title }), touch)
+  await expect(page.getByTestId('morena-turn-result')).toContainText(title)
+}
+
 test.describe("Morena's negotiation critical path", () => {
   test.beforeEach(async ({ page }) => {
     const response = await page.goto('/tour/morena')
@@ -192,14 +199,20 @@ test.describe("Morena's negotiation critical path", () => {
     expect(after - spent).toBeLessThan(10)
   })
 
-  test('resumes a persisted hand with its discovered question and canonical Hatsu', async ({
+  test('resumes across reload and tab closure with a playable canonical Hatsu', async ({
     page,
+    context,
     isMobile,
   }) => {
-    await page.addInitScript(() => sessionStorage.setItem('black-whale:hatsu', 'emperor-time'))
+    await context.addInitScript(() => sessionStorage.setItem('black-whale:hatsu', 'emperor-time'))
     await page.reload()
     const action = await enterGame(page, isMobile)
-    await expect(page.getByTestId('morena-hatsu-seat')).toContainText('Emperor Time')
+    const emperorTime = page.getByTestId('morena-hatsu-seat')
+    await expect(emperorTime).toContainText('Emperor Time')
+    const cast = emperorTime.getByRole('button', { name: 'Read her hand' })
+    await activate(cast, isMobile)
+    await expect(cast).toBeDisabled()
+    await expect(emperorTime).toContainText('Spent')
     await activate(action.getByRole('button').first(), isMobile)
     await page.reload()
 
@@ -208,6 +221,59 @@ test.describe("Morena's negotiation critical path", () => {
     await expect(page.getByTestId('morena-dossier')).toContainText('1 of 7 answers discovered')
     await activate(resume.getByRole('button', { name: 'Resume the hand' }), isMobile)
     await expect(page.getByTestId('morena-turn-result')).toBeVisible()
+
+    await activate(page.getByTestId('morena-action').getByRole('button').first(), isMobile)
+    await page.close()
+
+    const reopened = await context.newPage()
+    const response = await reopened.goto('/tour/morena')
+    expect(response?.status()).toBeLessThan(400)
+    await expect(reopened.getByTestId('morena-resume')).toBeVisible()
+    await expect(reopened.getByTestId('morena-dossier')).toContainText('2 of 7 answers discovered')
+    expect(
+      await reopened.evaluate(() => localStorage.getItem('black-whale:morena:save:v1')),
+    ).not.toBeNull()
+    await activate(
+      reopened.getByTestId('morena-resume').getByRole('button', { name: 'Resume the hand' }),
+      isMobile,
+    )
+    await expect(reopened.getByTestId('morena-turn-result')).toBeVisible()
+    await expect(reopened.getByTestId('morena-hatsu-seat')).toContainText('Emperor Time')
+  })
+
+  test('discovers all seven answers canonically over multiple games', async ({
+    page,
+    isMobile,
+  }) => {
+    test.slow()
+    await enterGame(page, isMobile)
+
+    for (const question of [
+      'What do you actually want?',
+      'What is it you would put in me?',
+      'What happens if I say yes?',
+    ]) {
+      await askQuestion(page, question, isMobile)
+    }
+    await activate(page.getByRole('button', { name: 'Refuse it', exact: true }), isMobile)
+    await expect(await finishGame(page, isMobile)).toBeVisible()
+    await expect(page.getByTestId('morena-dossier')).toContainText('4 of 7 answers discovered')
+
+    await activate(page.getByRole('button', { name: 'Deal again', exact: true }), isMobile)
+    for (const question of [
+      'What binds you to any of it?',
+      'Where did you come from?',
+      'What am I worth to you?',
+    ]) {
+      await askQuestion(page, question, isMobile)
+    }
+
+    const dossier = page.getByTestId('morena-dossier')
+    await expect(dossier).toContainText('7 of 7 answers discovered')
+    await activate(dossier.locator('summary'), isMobile)
+    await expect(dossier.getByText('Answer not yet known')).toHaveCount(0)
+    await expect(dossier).toContainText('Twenty-two of you at most')
+    await expect(dossier).toContainText('at level twenty')
   })
 
   test('continues a won and kissed game through the third condition and levels', async ({

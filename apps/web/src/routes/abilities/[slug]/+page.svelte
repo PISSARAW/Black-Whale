@@ -52,7 +52,9 @@
   </nav>
 
   <header>
-    <p class="category">{ability.category}</p>
+    <p class="category">
+      {ability.category === 'unknown' ? $t.abilities.unknownCategory : ability.category}
+    </p>
     <h1>{ability.name}</h1>
     {#if ability.alternateNames?.length}
       <p class="aliases">{ability.alternateNames.join(' · ')}</p>
@@ -86,7 +88,11 @@
     </div>
     <div>
       <dt>{$t.discovery.ability.category}</dt>
-      <dd>{[ability.category, ...(ability.secondaryCategories ?? [])].join(' · ')}</dd>
+      <dd>
+        {[ability.category, ...(ability.secondaryCategories ?? [])]
+          .map((category) => (category === 'unknown' ? $t.abilities.unknownCategory : category))
+          .join(' · ')}
+      </dd>
     </div>
   </dl>
 

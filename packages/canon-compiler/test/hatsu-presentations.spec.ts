@@ -19,6 +19,23 @@ describe('compiling client-safe ability presentations', () => {
         conclusion: 'canon-unrevealed',
       })
     }
+
+    const projected = new Map(result.presentations.map((item) => [item.abilityId, item.identity]))
+    for (const ability of unknown) {
+      expect(projected.get(ability.id)?.category, ability.id).toBe('unknown')
+    }
+  })
+
+  it('projects identity from the catalogue rather than module inferences', () => {
+    const catalogueById = new Map(catalogue.abilities.map((ability) => [ability.id, ability]))
+    for (const presentation of result.presentations) {
+      const ability = catalogueById.get(presentation.abilityId)!
+      expect(presentation.identity).toMatchObject({
+        name: ability.name,
+        ownerId: ability.ownerId,
+        category: ability.category,
+      })
+    }
   })
 
   it('projects every ability and all seventy composed view keys', () => {

@@ -24,4 +24,6 @@ Campaign links are full presets: terrain, challenge, doctrine, difficulty, forma
 
 ## Bridges and PvP
 
-`bridge.ts` defines the session handoff contract for Investigation, Hunt and Infiltration. `pvp/serverMatch.ts` is the authoritative state machine; transport, matchmaking and reconnect policy remain separate integration work.
+`bridge.ts` defines the session handoff contract. Hunt can hand an active duel to Arena; Infiltration can hand off an identified agent who has already completed the required objective. Investigation deliberately has no handoff: its confrontations compare testimony and do not identify a physical opponent.
+
+`/arena/pvp` creates an invite-only match. The HTTP transport authenticates each seat with an opaque session token, rejects client ticks and teleports, and polls snapshots from `AuthoritativeArenaMatch`. The token in session storage supports page reloads while the server process lives. The registry is intentionally in-process: horizontal deployment or restart-safe matches require a shared coordinator before PvP can span several Node processes.

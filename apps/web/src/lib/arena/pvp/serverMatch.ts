@@ -1,11 +1,15 @@
-import { combatReducer, initialCombatState } from '../../combat/reducer'
+import { combatReducer } from '../../combat/reducer'
 import type { CombatAction, CombatSetup, CombatSide, CombatState } from '../../combat/types'
 import { stateChecksum } from '../replay/checksum'
+import {
+  applyArenaMatchRules,
+  countArenaAction,
+  initialArenaMatchState,
+  type ArenaActionCounts,
+} from '../match'
+import { DEFAULT_REPLAY_MATCH, type ArenaReplayMatch } from '../replay/types'
 
-type NetworkAction = Exclude<
-  CombatAction,
-  { type: 'TICK' } | { type: 'SYNC_POSITION' }
->
+export type NetworkAction = Exclude<CombatAction, { type: 'TICK' } | { type: 'SYNC_POSITION' }>
 
 export interface ArenaPlayerCommand {
   matchId: string
@@ -22,28 +26,32 @@ export interface ArenaServerSnapshot {
 }
 
 export type ArenaCommandRejection =
-  | 'MATCH_MISMATCH'
-  | 'UNKNOWN_PLAYER'
-  | 'OUT_OF_ORDER'
-  | 'WRONG_SIDE'
-  | 'MATCH_FINISHED'
+  'MATCH_MISMATCH' | 'UNKNOWN_PLAYER' | 'OUT_OF_ORDER' | 'WRONG_SIDE' | 'MATCH_FINISHED'
+
+interface AuthoritativeArenaOptions {
+  players: Record<CombatSide, string>
+  match?: ArenaReplayMatch
+}
 
 export class AuthoritativeArenaMatch {
   private state: CombatState
   private tick = 0
   private readonly sequenceByPlayer = new Map<string, number>()
+  private actionCounts: ArenaActionCounts = {}
 
   constructor(
     readonly id: string,
     setup: CombatSetup,
-    private readonly players: Record<CombatSide, string>,
+    private readonly options: AuthoritativeArenaOptions,
   ) {
-    this.state = initialCombatState(setup)
-    this.sequenceByPlayer.set(players.player, 0)
-    this.sequenceByPlayer.set(players.opponent, 0)
+    this.state = initialArenaMatchState(setup, options.match ?? DEFAULT_REPLAY_MATCH)
+    this.sequenceByPlayer.set(options.players.player, 0)
+    this.sequenceByPlayer.set(options.players.opponent, 0)
   }
 
-  submit(command: ArenaPlayerCommand): { accepted: true } | { accepted: false; reason: ArenaCommandRejection } {
+  submit(
+    command: ArenaPlayerCommand,
+  ): { accepted: true } | { accepted: false; reason: ArenaCommandRejection } {
     if (command.matchId !== this.id) return { accepted: false, reason: 'MATCH_MISMATCH' }
     const side = this.sideFor(command.playerId)
     if (!side) return { accepted: false, reason: 'UNKNOWN_PLAYER' }
@@ -53,6 +61,12 @@ export class AuthoritativeArenaMatch {
     if ('side' in command.action && command.action.side !== side)
       return { accepted: false, reason: 'WRONG_SIDE' }
     this.state = combatReducer(this.state, command.action)
+    this.actionCounts = countArenaAction(this.actionCounts, command.action)
+    this.state = applyArenaMatchRules(
+      this.state,
+      this.options.match ?? DEFAULT_REPLAY_MATCH,
+      this.actionCounts,
+    )
     this.sequenceByPlayer.set(command.playerId, command.sequence + 1)
     return { accepted: true }
   }
@@ -60,6 +74,11 @@ export class AuthoritativeArenaMatch {
   advance(dt: number): ArenaServerSnapshot {
     if (this.state.outcome === 'playing') {
       this.state = combatReducer(this.state, { type: 'TICK', dt })
+      this.state = applyArenaMatchRules(
+        this.state,
+        this.options.match ?? DEFAULT_REPLAY_MATCH,
+        this.actionCounts,
+      )
       this.tick += 1
     }
     return this.snapshot()
@@ -74,9 +93,13 @@ export class AuthoritativeArenaMatch {
     }
   }
 
+  nextSequence(playerId: string): number | null {
+    return this.sequenceByPlayer.get(playerId) ?? null
+  }
+
   private sideFor(playerId: string): CombatSide | null {
-    if (this.players.player === playerId) return 'player'
-    if (this.players.opponent === playerId) return 'opponent'
+    if (this.options.players.player === playerId) return 'player'
+    if (this.options.players.opponent === playerId) return 'opponent'
     return null
   }
 }

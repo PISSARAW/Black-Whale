@@ -7,7 +7,7 @@
   import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
   import { V3_OPPONENTS } from '$lib/arena/adaptation'
   import type { ArenaOpponentId } from '$lib/arena/experience'
-  import { locale, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
   import { ARENA_CAMPAIGN, missionStatus } from '$lib/arena/campaign'
   import { freshArenaProfile, loadArenaProfile } from '$lib/arena/profile'
 
@@ -94,6 +94,12 @@
         href={hrefFor('tier-3-observation-deck')}
         data-sveltekit-reload>{$t.arena.ui.terrains.observation}</a
       >
+    </nav>
+
+    <nav class="terrain-picker" aria-label="PvP">
+      <a href={$link('/arena/pvp')}>
+        {$locale === 'fr' ? 'PvP · Créer un duel privé' : 'PvP · Create a private duel'}
+      </a>
     </nav>
 
     <nav class="campaign-picker" aria-label={$locale === 'fr' ? 'Campagne' : 'Campaign'}>

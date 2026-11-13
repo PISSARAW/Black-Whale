@@ -6,7 +6,12 @@ const setup = {
   opponentAt: [1.5, 0] as [number, number],
   terrain: {
     id: 'pvp-room',
-    footprint: [[-5, -5], [5, -5], [5, 5], [-5, 5]] as [number, number][],
+    footprint: [
+      [-5, -5],
+      [5, -5],
+      [5, 5],
+      [-5, 5],
+    ] as [number, number][],
     walls: [],
   },
 }
@@ -14,8 +19,7 @@ const setup = {
 describe('authoritative Arena PvP match', () => {
   it('accepts ordered commands only for the side owned by the sender', () => {
     const match = new AuthoritativeArenaMatch('match-1', setup, {
-      player: 'alice',
-      opponent: 'bob',
+      players: { player: 'alice', opponent: 'bob' },
     })
     expect(
       match.submit({
@@ -37,8 +41,7 @@ describe('authoritative Arena PvP match', () => {
 
   it('rejects replayed packets and advances time on the server only', () => {
     const match = new AuthoritativeArenaMatch('match-2', setup, {
-      player: 'alice',
-      opponent: 'bob',
+      players: { player: 'alice', opponent: 'bob' },
     })
     const command = {
       matchId: 'match-2',
@@ -56,8 +59,7 @@ describe('authoritative Arena PvP match', () => {
 
   it('returns cloned snapshots that clients cannot mutate', () => {
     const match = new AuthoritativeArenaMatch('match-3', setup, {
-      player: 'alice',
-      opponent: 'bob',
+      players: { player: 'alice', opponent: 'bob' },
     })
     const snapshot = match.snapshot()
     snapshot.state.player.aura = 0

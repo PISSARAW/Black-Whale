@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Contagion's action grammar is kept beside its single state machine. */
 import {
   abilityGrant,
   attributeCounter,
@@ -41,30 +40,16 @@ import {
   COHORT_ID,
   GAME_DISCRIMINATOR,
   GAME_REVEALED_AT,
-  KILL_VALUES,
-  MEMBER_ZERO_LEVEL,
   NETWORK_CAPACITY,
   UNIQUE_ABILITY_LEVEL,
   answerParam,
   gameInPlay,
+  isEligibleInfectionGame,
   killValue,
   moveAndCatch,
   moveTheGame,
   seededRandom,
 } from './limits.js'
-
-function isEligibleInfectionGame(
-  game: ReturnType<typeof dealTheGame> | undefined,
-  effectIsLive: boolean,
-): boolean {
-  if (!game) return false
-  return [
-    effectIsLive,
-    !game.proxied,
-    game.kissed,
-    game.verdict === 'infected' || game.verdict === 'forced',
-  ].every(Boolean)
-}
 
 /**
  * Contagion (Et tu, Juliet) — Morena Prudo
@@ -183,8 +168,6 @@ export const contagion = defineAbility({
       ],
       cost: { label: 'Une place du réseau', amount: 1, unit: 'slot sur 22' },
     },
-
-    // ── The negotiation game ──────────────────
 
     'open-game': {
       label: 'Ouvrir la partie',
@@ -514,14 +497,4 @@ export const contagion = defineAbility({
   }),
 })
 
-export const CONTAGION_LIMITS = {
-  cohortId: COHORT_ID,
-  capacity: NETWORK_CAPACITY,
-  uniqueAbilityLevel: UNIQUE_ABILITY_LEVEL,
-  memberZeroLevel: MEMBER_ZERO_LEVEL,
-  infectionSteps: INFECTION_STEPS,
-  killValues: KILL_VALUES,
-  /** Where a running negotiation is stored, for anything reading the branch. */
-  gameDiscriminator: GAME_DISCRIMINATOR,
-  gameRevealedAtChapter: GAME_REVEALED_AT,
-}
+export { CONTAGION_LIMITS } from './limits.js'

@@ -41,7 +41,7 @@
 | `reconstruction/v3/run` | `+server.ts` |
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
-| `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
+| `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.test.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
 | `simulations` | `+page.server.ts`, `+page.svelte`, `morena.server.ts` |
 | `sitemap.xml` | `+server.ts`, `server.test.ts` |
 | `spoiler-limit` | `+server.ts`, `spoiler-limit.test.ts` |

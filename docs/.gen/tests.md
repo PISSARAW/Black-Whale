@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 487
+Fichiers : 491
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -198,6 +198,10 @@ Fichiers : 487
 ## `apps/web/src/lib/components/map/markerGroups.test.ts`
 
 - map marker groups > uses safe, localized initials
+
+## `apps/web/src/lib/components/map/projection/eventDelta.test.ts`
+
+- event delta projection > projects every known tier in the overview
 
 ## `apps/web/src/lib/components/map/projection/markers.test.ts`
 
@@ -1286,6 +1290,10 @@ Fichiers : 487
 
 - the published first-class residential plan > keeps six cabins, six WC cells and only the drawn beds and storage
 
+## `apps/web/src/lib/tour/fittingFlicker.test.ts`
+
+- separate real-time fitting flicker > derives one phase/depth pair per fitting vertex and leaves most lamps steady
+
 ## `apps/web/src/lib/tour/floorPattern.test.ts`
 
 - audited floor patterns > keeps Camilla’s continuous salon floor free of generic metal deck seams
@@ -1827,6 +1835,10 @@ Fichiers : 487
 
 - the Tier 5 standard-cabin plan > keeps twelve forward cabins with one plan bed and cupboard each
 
+## `apps/web/src/lib/tour/tierQualityIntegration.test.ts`
+
+- deck condition quality integration > allocates no condition, halo or flicker buffers on low
+
 ## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
 
 - manga details outside the princely apartments > keeps Queen Unma’s crib, mobile and formal salon on Tier 1
@@ -1919,6 +1931,11 @@ Fichiers : 487
 ## `apps/web/src/routes/ship/shipDelta.test.ts`
 
 - adjacent ship event delta > reports movement, appearance, disappearance and death without stable rows
+
+## `apps/web/src/routes/ship/shipPage.server.test.ts`
+
+- the event-specific ship loader > keeps the catalog in the layout and returns only event-specific data
+- the localized ship page loader > merges inherited layout translations with translations derived from page data
 
 ## `apps/web/src/routes/ship/shipUrlState.test.ts`
 

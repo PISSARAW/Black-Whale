@@ -18,7 +18,7 @@ Nœuds : 24 · Arêtes uniques : 54
 | `lib:audio` | `lib:infiltration` | 1 |
 | `lib:audio` | `package:@black-whale/nen-engine` | 4 |
 | `lib:combat` | `lib:tour` | 8 |
-| `lib:components` | `package:@black-whale/domain` | 9 |
+| `lib:components` | `package:@black-whale/domain` | 10 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
 | `lib:hunt` | `lib:arena` | 3 |
 | `lib:hunt` | `lib:combat` | 1 |

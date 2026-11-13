@@ -2,6 +2,8 @@ node_modules/
 dist/
 build/
 .svelte-kit/
+apps/*/.svelte-kit-e2e-*/
+apps/*/build-e2e-*/
 .turbo/
 .pnpm-store/
 # .claude/ est partagé : settings.json et hooks/ sont versionnés (le cliquet ADR-002

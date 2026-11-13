@@ -1,7 +1,7 @@
 import { expect, test, type Locator, type Page } from 'playwright/test'
 
 const distanceOf = async (page: Page) => {
-  const text = await page.locator('.match-rule small').innerText()
+  const text = await page.locator('.match-rule small').filter({ hasText: /distance/i }).innerText()
   return Number(text.match(/[\d.]+/)?.[0] ?? Number.NaN)
 }
 
@@ -14,10 +14,10 @@ const control = (page: Page, mobile: boolean, action: 'guard' | 'strike'): Locat
   return page.locator(`.ryu-card .actions button:nth-child(${position})`)
 }
 
-const activate = async (button: Locator, mobile: boolean) => {
+const activate = async (button: Locator, mobile: boolean, timeout = 10_000) => {
   await expect(button).toBeVisible()
-  if (mobile) await button.tap()
-  else await button.click()
+  if (mobile) await button.tap({ timeout })
+  else await button.click({ timeout })
 }
 
 test.describe('Arena playable journey', () => {
@@ -48,12 +48,19 @@ test.describe('Arena playable journey', () => {
     const strike = control(page, isMobile, 'strike')
     const verdict = page.locator('.verdict')
     for (let attempt = 0; attempt < 24 && !(await verdict.isVisible()); attempt += 1) {
-      await activate(strike, isMobile)
+      try {
+        await activate(strike, isMobile, 2_000)
+      } catch (error) {
+        // The opponent can land the sudden-death blow between the visibility
+        // check above and this click, disabling the controls as the verdict is
+        // rendered. That is a successful end state, not a stuck control.
+        if (!(await verdict.isVisible())) throw error
+      }
       await page.waitForTimeout(450)
     }
 
     await expect(verdict).toBeVisible()
-    await expect(verdict.getByRole('button', { name: /Restart/i })).toBeVisible()
+    await expect(verdict.getByRole('button', { name: /Fight again|Recombattre/i })).toBeVisible()
   })
 
   test('honours custom URL options and exposes complete campaign presets', async ({
@@ -72,4 +79,42 @@ test.describe('Arena playable journey', () => {
       /terrain=.*challenge=.*doctrine=.*difficulty=.*format=.*opponent=.*mission=/,
     )
   })
+
+  test('creates an authoritative PvP invite and synchronises two players', async ({
+    browser,
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'one desktop project covers the two independent browser contexts')
+
+    await page.goto('/arena/pvp')
+    await page.getByRole('button', { name: 'Create duel' }).click()
+    await expect(page).toHaveURL(/\/arena\/pvp\/[0-9a-f-]+$/)
+    const invite = page.url()
+
+    const guestContext = await browser.newContext()
+    const guest = await guestContext.newPage()
+    try {
+      await guest.goto(invite)
+      await guest.getByRole('button', { name: 'Join duel' }).click()
+
+      await expect(page.getByText('First to 3', { exact: true })).toBeVisible()
+      await expect(guest.getByText('First to 3', { exact: true })).toBeVisible()
+      await expect(page.getByText(/You · player/i)).toBeVisible()
+      await expect(guest.getByText(/You · opponent/i)).toBeVisible()
+
+      const openingGap = await pvpGap(page)
+      await page.getByRole('button', { name: /Advance/i }).click()
+      await expect.poll(() => pvpGap(page), { timeout: 10_000 }).toBeLessThan(openingGap)
+      await expect.poll(() => pvpGap(guest), { timeout: 10_000 }).toBeLessThan(openingGap)
+    } finally {
+      await guestContext.close()
+    }
+  })
 })
+
+async function pvpGap(page: Page): Promise<number> {
+  const text = await page.getByText('First to 3', { exact: true }).locator('..').innerText()
+  const match = text.match(/([\d.]+)m/)
+  return Number(match?.[1] ?? Number.NaN)
+}

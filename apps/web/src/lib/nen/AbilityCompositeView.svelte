@@ -1,17 +1,13 @@
 <script lang="ts">
   import type { AbilityViewModel } from './abilityPresentation'
+  import type { AbilityViewFamily } from './abilityComponents'
   import { t } from '$lib/i18n'
 
-  let { model, variant }: { model: AbilityViewModel; variant: string } = $props()
-
-  const family = $derived.by(() => {
-    if (/Gauge|Counter|Armour|Burst|Heatmap/i.test(variant)) return 'gauge'
-    if (/Ledger|Roster|Book|Cards|Poem|Scroll/i.test(variant)) return 'ledger'
-    if (/Network|Tunnel|Flock|Crowd|Congregation/i.test(variant)) return 'network'
-    if (/Search|Scout|Hearing|Surveillance|Future|Prophecy|Senses/i.test(variant)) return 'sensor'
-    if (/Panel|Interaction|Control|Contract|Rule/i.test(variant)) return 'steps'
-    return 'state'
-  })
+  let {
+    model,
+    variant,
+    family = 'target',
+  }: { model: AbilityViewModel; variant: string; family?: AbilityViewFamily } = $props()
 </script>
 
 <section
@@ -31,14 +27,16 @@
       <i></i><i></i><i></i>
     {:else if family === 'ledger'}
       <i></i><i></i><i></i><i></i>
-    {:else if family === 'sensor'}
+    {:else if family === 'target'}
       <i></i>
+    {:else if family === 'map'}
+      <i></i><i></i><i></i>
+    {:else if family === 'timeline'}
+      <i></i><i></i><i></i><i></i>
     {:else if family === 'steps'}
       {#each model.plan.conditions as condition, index (`${condition.id}-${index}`)}<i
           data-status={condition.status}
         ></i>{/each}
-    {:else}
-      <i></i>
     {/if}
   </div>
   <dl>
@@ -126,10 +124,50 @@
   .family-network .visual i:nth-child(2) {
     transform: scale(1.4);
   }
-  .family-sensor .visual i {
+  .family-target .visual i {
     width: 2rem;
     height: 2rem;
     border-color: transparent var(--view) var(--view) transparent;
+  }
+  .family-map .visual {
+    align-items: stretch;
+    justify-content: stretch;
+    background-image:
+      linear-gradient(var(--line-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-subtle) 1px, transparent 1px);
+    background-size: 0.8rem 0.8rem;
+  }
+  .family-map .visual i {
+    position: absolute;
+    width: 0.45rem;
+    height: 0.45rem;
+  }
+  .family-map .visual i:nth-child(1) {
+    left: 20%;
+    top: 55%;
+  }
+  .family-map .visual i:nth-child(2) {
+    left: 52%;
+    top: 25%;
+  }
+  .family-map .visual i:nth-child(3) {
+    right: 15%;
+    bottom: 18%;
+  }
+  .family-timeline .visual::before {
+    position: absolute;
+    right: 12%;
+    left: 12%;
+    height: 1px;
+    background: var(--view);
+    content: '';
+    opacity: 0.45;
+  }
+  .family-timeline .visual i {
+    z-index: 1;
+    width: 0.48rem;
+    height: 0.48rem;
+    background: var(--surface-void);
   }
   .family-steps .visual {
     justify-content: flex-start;

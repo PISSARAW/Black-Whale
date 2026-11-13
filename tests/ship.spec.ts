@@ -144,12 +144,18 @@ test('spatial state and filters survive a reload and browser history', async ({ 
   )
 })
 
-test('the NEN dock never receives a timeline step click', async ({ page }) => {
+test('the NEN dock never receives a timeline step click with an active Hatsu', async ({ page }) => {
   const next = page.getByRole('button', { name: 'Événement suivant', exact: true })
   if (await next.isDisabled()) {
     await page.getByRole('button', { name: /^Chronologie/i }).click()
     await page.getByLabel('Choisir un événement', { exact: true }).selectOption('0')
   }
+
+  await page.evaluate(() => {
+    window.dispatchEvent(new CustomEvent('black-whale:activate-hatsu', { detail: 'bungee-gum' }))
+  })
+  await expect(page.getByRole('button', { name: 'Changer de Hatsu', exact: true })).toBeVisible()
+
   const hit = await next.evaluate((button) => {
     const box = button.getBoundingClientRect()
     return document
@@ -159,6 +165,59 @@ test('the NEN dock never receives a timeline step click', async ({ page }) => {
   expect(hit).toBe('Événement suivant')
   await next.click()
   await expect(page).toHaveURL(/eventId=/)
+})
+
+test('a grouped room opens an accessible presence list and character card', async ({
+  page,
+  isMobile,
+}) => {
+  const tiers = page.getByRole('navigation', { name: 'Ponts du Black Whale', exact: true })
+  let grouped = page
+    .locator('.group-badge')
+    .filter({ hasText: /^×\d+$/ })
+    .first()
+  let found = false
+
+  for (let tier = 1; tier <= 5; tier += 1) {
+    await tiers.getByRole('button', { name: `Niveau ${tier}`, exact: true }).click()
+    grouped = page
+      .locator('.group-badge')
+      .filter({ hasText: /^×\d+$/ })
+      .first()
+    try {
+      await expect(grouped).toBeVisible({ timeout: 1_500 })
+      found = true
+      break
+    } catch {
+      // Some tiers have only single occupants at the selected event.
+    }
+  }
+
+  expect(found).toBe(true)
+  await expect(grouped).toBeVisible()
+  if (isMobile) await grouped.tap()
+  else {
+    await grouped.focus()
+    await grouped.press('Enter')
+  }
+
+  const list = page.getByRole('region', { name: 'Personnes présentes à cet endroit' })
+  await expect(list).toBeVisible()
+  const person = list.locator('button.person').first()
+  await expect(person).toBeVisible()
+  if (isMobile) await person.tap()
+  else {
+    await person.focus()
+    await person.press('Enter')
+  }
+
+  const card = page.getByRole('complementary', {
+    name: 'Détails de la position du personnage',
+  })
+  await expect(card).toBeVisible()
+  await expect(card.getByText('Certitude', { exact: true })).toBeVisible()
+  await expect(card.getByText('État temporel', { exact: true })).toBeVisible()
+  await expect(card.getByText('Provenance', { exact: true })).toBeVisible()
 })
 
 test('keyboard, playback and adjacent changes drive the timeline', async ({ page }) => {
@@ -200,6 +259,35 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   const pausedAt = new URL(page.url()).searchParams.get('eventId')
   await page.waitForTimeout(3_000)
   expect(new URL(page.url()).searchParams.get('eventId')).toBe(pausedAt)
+
+  await eventSelect.selectOption('0')
+  await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).toBe(firstEvent)
+  await play.click()
+  await expect(pause).toBeVisible()
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true })
+    document.dispatchEvent(new Event('visibilitychange'))
+  })
+  await expect(page.getByRole('button', { name: 'Lire la chronologie', exact: true })).toBeVisible()
+  const hiddenAt = new URL(page.url()).searchParams.get('eventId')
+  await page.waitForTimeout(3_000)
+  expect(new URL(page.url()).searchParams.get('eventId')).toBe(hiddenAt)
+
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => false })
+    document.dispatchEvent(new Event('visibilitychange'))
+  })
+  const eventCount = await eventSelect.locator('option').count()
+  const beforeFinalStep = page.url()
+  await eventSelect.selectOption(String(eventCount - 2))
+  await expect.poll(() => page.url()).not.toBe(beforeFinalStep)
+  await play.click()
+  await expect
+    .poll(async () => Number(await eventSelect.inputValue()), { timeout: 5_000 })
+    .toBe(eventCount - 1)
+  const stoppedAtEnd = page.getByRole('button', { name: 'Lire la chronologie', exact: true })
+  await expect(stoppedAtEnd).toBeVisible()
+  await expect(stoppedAtEnd).toBeDisabled()
 })
 
 test('the ship still hands off to the 3D tour', async ({ page }) => {

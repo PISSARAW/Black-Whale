@@ -190,6 +190,29 @@ export class TourBodyView {
   aimedId = $derived(this.aimed?.member.characterId ?? null)
 
   /**
+   * Ask the body reducer what this cast would do, without applying its result.
+   *
+   * The action wheel uses this to expose canon refusals before dispatch. The
+   * real cast below consumes the exact same answer, so preview and execution
+   * cannot drift into two rule sets.
+   */
+  preview = (now: number): Reach => {
+    const context = this.options.read()
+    const person = this.aimed
+    return reachBody({
+      kind: context.activeKind,
+      target: person,
+      dossier: this.dossier,
+      aura: person ? context.auraFor(person) : null,
+      book: context.book,
+      speaking: this.talk !== null || this.conversation !== null,
+      throughMatter: person ? context.throughMatter(person.at) : false,
+      decipherDays: context.decipherDays,
+      now,
+    })
+  }
+
+  /**
    * Aim the held technique at the body in front of you.
    *
    * Returns whether anything was aimed at a person at all, so the caller can
@@ -197,24 +220,9 @@ export class TourBodyView {
    * still do to the ship what it has always done.
    */
   reach = (now: number): boolean => {
-    const context = this.options.read()
     const person = this.aimed
     if (!person) return false
-    const result = reachBody({
-      kind: context.activeKind,
-      target: person,
-      dossier: this.dossier,
-      aura: context.auraFor(person),
-      book: context.book,
-      // Melody hears a lie in a heart that is answering. The exchange being
-      // open is the walk's own record of somebody talking.
-      speaking: this.talk !== null || this.conversation !== null,
-      // The blow goes through matter, not through air — and the bulkhead
-      // between the visitor and this body is matter. See `punch.ts`.
-      throughMatter: context.throughMatter(person.at),
-      decipherDays: context.decipherDays,
-      now,
-    })
+    const result = this.preview(now)
     if (result.outcome === 'refused' && result.reason === 'not-a-body') return false
     this.settle(result, person)
     this.options.report(result)

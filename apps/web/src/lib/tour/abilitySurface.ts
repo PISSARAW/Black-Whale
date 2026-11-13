@@ -20,6 +20,8 @@ interface TourAbilitySurfaceOptions {
   owner: string
   reducedMotion: boolean
   targetId: string | null
+  bodyTargetId: string | null
+  bodyRefusal: string | null
   concealed: boolean
   bodyHolds: number
   worldHolds: number
@@ -27,23 +29,48 @@ interface TourAbilitySurfaceOptions {
   execute: (command: TourAbilityCommand) => void
 }
 
+const TOUR_COMMANDS = {
+  'bungee-gum': {
+    attach: 'cast-primary',
+    'set-trap': 'cast-primary',
+    detach: 'release-world',
+    release: 'release-world',
+  },
+  'illumi-needle-people': {
+    'plant-needle': 'cast-body',
+    'remove-needle': 'release-bodies',
+  },
+  'theta-aura-projectile': { test: 'cast-body' },
+  'yomotsu-hegui': { consummate: 'cast-body' },
+  'body-and-soul': { interrogate: 'cast-body' },
+  'damage-sweet-home': { link: 'cast-body' },
+  'stand-by-me': { lend: 'cast-body' },
+  'bohemian-rhapsody': { merge: 'cast-body' },
+} as const satisfies Record<string, Record<string, TourAbilityCommand>>
+
 export function tourCommandFor(abilityId: string, actionId: string): TourAbilityCommand | null {
-  if (abilityId === 'bungee-gum') {
-    if (actionId === 'attach' || actionId === 'set-trap') return 'cast-primary'
-    if (actionId === 'detach' || actionId === 'release') return 'release-world'
-    return null
-  }
-  if (abilityId === 'illumi-needle-people') {
-    if (actionId === 'plant-needle') return 'cast-body'
-    if (actionId === 'remove-needle') return 'release-bodies'
-  }
-  return null
+  const commands = TOUR_COMMANDS[abilityId as keyof typeof TOUR_COMMANDS]
+  return (commands as Record<string, TourAbilityCommand> | undefined)?.[actionId] ?? null
+}
+
+export const tourSupportsAbility = (abilityId: string): boolean => abilityId in TOUR_COMMANDS
+
+const TARGET_FIELD_BY_COMMAND: Partial<Record<TourAbilityCommand, 'targetId' | 'bodyTargetId'>> = {
+  'cast-primary': 'targetId',
+  'cast-body': 'bodyTargetId',
 }
 
 export function tourActionAvailability(
   options: Pick<
     TourAbilitySurfaceOptions,
-    'presentation' | 'targetId' | 'concealed' | 'bodyHolds' | 'worldHolds' | 'reasons'
+    | 'presentation'
+    | 'targetId'
+    | 'bodyTargetId'
+    | 'bodyRefusal'
+    | 'concealed'
+    | 'bodyHolds'
+    | 'worldHolds'
+    | 'reasons'
   >,
   actionId: string,
 ): AbilitySurfaceActionAvailability {
@@ -55,17 +82,31 @@ export function tourActionAvailability(
 function availabilityForCommand(
   options: Pick<
     TourAbilitySurfaceOptions,
-    'targetId' | 'concealed' | 'bodyHolds' | 'worldHolds' | 'reasons'
+    | 'targetId'
+    | 'bodyTargetId'
+    | 'bodyRefusal'
+    | 'concealed'
+    | 'bodyHolds'
+    | 'worldHolds'
+    | 'reasons'
   >,
   actionId: string,
   command: TourAbilityCommand,
 ): AbilitySurfaceActionAvailability {
   if (actionId === 'set-trap' && !options.concealed)
     return { executable: false, reason: options.reasons.inRequired }
-  if (command === 'cast-body' || command === 'cast-primary')
-    return options.targetId
-      ? { executable: true }
-      : { executable: false, reason: options.reasons.targetRequired }
+  const targetField = TARGET_FIELD_BY_COMMAND[command]
+  if (targetField && !options[targetField])
+    return { executable: false, reason: options.reasons.targetRequired }
+  if (command === 'cast-body' && options.bodyRefusal)
+    return { executable: false, reason: options.bodyRefusal }
+  return releaseAvailability(options, command)
+}
+
+function releaseAvailability(
+  options: Pick<TourAbilitySurfaceOptions, 'bodyHolds' | 'worldHolds' | 'reasons'>,
+  command: TourAbilityCommand,
+): AbilitySurfaceActionAvailability {
   if (command === 'release-bodies')
     return options.bodyHolds
       ? { executable: true }
@@ -91,9 +132,11 @@ export function tourAbilitySurfaceAdapter(
         bodyHolds: options.bodyHolds,
         worldHolds: options.worldHolds,
         concealed: options.concealed,
+        bodyRefused: options.bodyRefusal !== null,
       },
     }),
     availability: (actionId) => tourActionAvailability(options, actionId),
+    supports: (actionId) => tourCommandFor(options.presentation.abilityId, actionId) !== null,
     dispatch: (actionId) => {
       const state = tourActionAvailability(options, actionId)
       const command = tourCommandFor(options.presentation.abilityId, actionId)

@@ -31,6 +31,8 @@ export interface AbilitySurfaceAdapter {
   modelFor(presentation: AbilityPresentationProjection, actionId: string): AbilityViewModel | null
   dispatch(actionId: string): void | Promise<void>
   availability?(actionId: string): AbilitySurfaceActionAvailability
+  /** Whether this media has a real reducer path for the action, even if it is temporarily blocked. */
+  supports?(actionId: string): boolean
 }
 
 export interface AbilitySurfaceActionAvailability {
@@ -104,6 +106,7 @@ export function liveSurfaceAdapter(options: {
   snapshot: (actionId: string) => AbilitySurfaceSnapshot
   dispatch: (actionId: string) => void | Promise<void>
   availability?: (actionId: string) => AbilitySurfaceActionAvailability
+  supports?: (actionId: string) => boolean
 }): AbilitySurfaceAdapter {
   return {
     modelFor(presentation, actionId) {
@@ -126,5 +129,6 @@ export function liveSurfaceAdapter(options: {
     },
     dispatch: options.dispatch,
     availability: options.availability,
+    supports: options.supports,
   }
 }

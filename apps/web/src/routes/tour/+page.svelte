@@ -22,7 +22,11 @@
   import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
   import { loadComfort, prefersReducedMotion, reducedMotion } from '$lib/tour/comfort'
   import { presentationFor, type AbilitySurfaceAdapter } from '$lib/nen/abilityPresentation'
-  import { tourAbilitySurfaceAdapter, type TourAbilityCommand } from '$lib/tour/abilitySurface'
+  import {
+    tourAbilitySurfaceAdapter,
+    tourSupportsAbility,
+    type TourAbilityCommand,
+  } from '$lib/tour/abilitySurface'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
   import { describeSpace } from '$lib/tour/describe'
   import { TourChromeState } from '$lib/tour/pageChrome.svelte'
@@ -846,6 +850,11 @@
     bodyView.aimedId ?? aimedSolidAt?.id ?? aimedAt?.id ?? null,
   )
   const abilitySurfaceWorldHolds = $derived(world.gumTraps.length + (world.gum ? 1 : 0))
+  const abilitySurfaceBodyRefusal = $derived.by(() => {
+    if (!bodyView.aimedId) return null
+    const result = bodyView.preview(Date.now())
+    return result.outcome === 'refused' ? bodyWords.refusal(result.reason) : null
+  })
 
   function executeTourAbility(command: TourAbilityCommand) {
     if (command === 'cast-body') {
@@ -873,11 +882,7 @@
     const profile = $activeHatsu
     const presentation = presentationFor(profile?.id)
     if (!profile || !presentation) return null
-    if (
-      presentation.abilityId !== 'bungee-gum' &&
-      presentation.abilityId !== 'illumi-needle-people'
-    )
-      return null
+    if (!tourSupportsAbility(presentation.abilityId)) return null
 
     return tourAbilitySurfaceAdapter({
       presentation,
@@ -885,6 +890,8 @@
       owner: localizeHatsu(profile, $locale).owner,
       reducedMotion: $reducedMotion,
       targetId: abilitySurfaceTargetId,
+      bodyTargetId: bodyView.aimedId,
+      bodyRefusal: abilitySurfaceBodyRefusal,
       concealed: hatsuSession.nen.in,
       bodyHolds: bodyView.bodies.holds.length,
       worldHolds: abilitySurfaceWorldHolds,

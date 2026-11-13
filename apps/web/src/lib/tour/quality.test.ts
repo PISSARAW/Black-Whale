@@ -66,6 +66,11 @@ describe('what a palier switches on', () => {
     expect(share).toBeLessThan(1)
   })
 
+  it('reduces the rooms kept behind doorways on low', () => {
+    expect(qualityProfile({ tier: 'low', coarse: true }).viewDepth).toBe(1)
+    expect(qualityProfile({ tier: 'high', coarse: false }).viewDepth).toBe(2)
+  })
+
   it('keys the anti-aliasing on the pointer, not on the palier', () => {
     // The composer renders offscreen, so the canvas `antialias` never reaches
     // the screen: a `low` desktop needs SMAA exactly as much as a `high` one,

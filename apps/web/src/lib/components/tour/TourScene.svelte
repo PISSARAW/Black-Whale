@@ -1473,7 +1473,7 @@
       function applyVisibility(standingId: string | null) {
         const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
         const mouths = wormMouths(ship, world)
-        const key = `${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
+        const key = `${quality.viewDepth}::${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
           .map((mouth) => mouth.spaceId)
           .join(',')}`
         if (key === shownKey) return
@@ -1497,13 +1497,13 @@
               ? new Set()
               : (authoredVisibleSpaceIds ??
                   (authoredEyeHeight === null
-                    ? visibleSpaces(activePlan, standingId)
+                    ? visibleSpaces(activePlan, standingId, quality.viewDepth)
                     : new Set(activePlan.spaces.map((space) => space.id)))),
           )
         }
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
-          if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id))
+          if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id, quality.viewDepth))
         }
         // What a mouth of the tunnel looks out on: the far room and whatever
         // can be seen from it, on whichever deck that is.
@@ -1513,7 +1513,9 @@
             portalDecks.find((built) =>
               built.rooms.some((room) => room.spaceId === mouth.spaceId),
             ) ?? null
-          if (mouthPlan && deck) want(deck, visibleSpaces(mouthPlan, mouth.spaceId))
+          if (mouthPlan && deck) {
+            want(deck, visibleSpaces(mouthPlan, mouth.spaceId, quality.viewDepth))
+          }
         }
 
         for (const { deck, ids } of wanted) {

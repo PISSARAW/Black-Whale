@@ -210,7 +210,7 @@ jobs:
         run: pnpm exec playwright install chromium
 
       - name: Run end-to-end tests
-        run: pnpm test:e2e --project=chromium
+        run: pnpm test:e2e --project=chromium --project=mobile
 
       - uses: actions/upload-artifact@v4
         if: failure()

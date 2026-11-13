@@ -153,6 +153,8 @@ export interface QualityProfile {
   lensDirt: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
+  /** How many doorways away the renderer keeps rooms visible. */
+  viewDepth: number
 }
 
 const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'>> = {
@@ -177,6 +179,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
+    // A phone cannot afford the fourteen-room average of depth two. Adjacent
+    // rooms remain present; the room across a second doorway is the trade-off.
+    viewDepth: 1,
   },
   high: {
     bloom: true,
@@ -207,6 +212,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     ssgi: false,
     lensDirt: true,
     dustScale: 1,
+    viewDepth: 2,
   },
 }
 

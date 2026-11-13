@@ -1,4 +1,5 @@
 import { expect, test } from 'playwright/test'
+import { BUDGETS } from '../apps/web/src/lib/tour/frameBudget'
 
 /**
  * The walk, exercised on both projects.
@@ -89,12 +90,10 @@ test.describe('the walk', () => {
    * browser: `renderer.info` is a count of what three.js actually issued, so it
    * does not exist until something has been drawn.
    *
-   * What is asserted is the instrument, not a number. The runner draws on
-   * SwiftShader, so its frame rate is a fact about a software rasteriser and
-   * asserting on it would be the same mistake as a reference capture. The
-   * triangle and draw-call counts, though, are the GPU's only in the sense that
-   * it received them — they are decided by the mesh and by `visibility.ts`, so
-   * a count of zero on a booted deck is a real break wherever it is run.
+   * The runner draws on SwiftShader, so its frame rate is a fact about a
+   * software rasteriser and is deliberately not asserted. Triangle and
+   * draw-call counts are decided by the mesh and `visibility.ts`, though: they
+   * must be non-zero and remain inside the selected palier's explicit budget.
    */
   test('measures the frame only when asked, and counts what was drawn', async ({ page }) => {
     await page.goto('/tour')
@@ -117,8 +116,33 @@ test.describe('the walk', () => {
     // no-break space, and a regex written against an ordinary one would pass on
     // a broken "0 tri" and fail on a healthy "41 203 tri".
     const readout = (await meter.textContent()) ?? ''
-    const drawn = /([\d\s\u202f\u00a0]+)tri/.exec(readout)?.[1] ?? ''
-    expect(Number(drawn.replace(/\D/g, ''))).toBeGreaterThan(0)
+    const countBefore = (unit: string) => {
+      const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)${unit}`).exec(readout)?.[1] ?? ''
+      return Number(raw.replace(/\D/g, ''))
+    }
+    const tier = /\blow\b/.test(readout) ? 'low' : 'high'
+    const triangles = countBefore('tri')
+    const calls = countBefore('appels')
+    expect(triangles).toBeGreaterThan(0)
+    expect(triangles).toBeLessThanOrEqual(BUDGETS[tier].triangles)
+    expect(calls).toBeGreaterThan(0)
+    expect(calls).toBeLessThanOrEqual(BUDGETS[tier].calls)
+  })
+
+  test('keeps the scene controls large enough to touch', async ({ page }) => {
+    await page.goto('/tour')
+    await ready(page)
+
+    const controls = [
+      page.getByRole('button', { name: /Examine|Examiner/ }),
+      page.getByRole('button', { name: /^Nen ·/ }),
+    ]
+    for (const control of controls) {
+      await expect(control).toBeVisible({ timeout: 30_000 })
+      const box = await control.boundingBox()
+      expect(box?.width ?? 0).toBeGreaterThanOrEqual(44)
+      expect(box?.height ?? 0).toBeGreaterThanOrEqual(44)
+    }
   })
 
   test('lets the visitor set the palier, and keeps it across a reload', async ({ page }) => {

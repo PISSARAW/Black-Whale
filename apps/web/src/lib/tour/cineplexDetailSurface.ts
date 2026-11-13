@@ -2,9 +2,10 @@ import { BanquetDetailBuilder, type Point3 } from './banquetDetailBuilder'
 import type { Structure } from './types'
 
 export const CINE_CARPET = 0x241218
-export const CINE_WOOD = 0x36241b
-export const CINE_DARK_PANEL = 0x1f1b1a
-export const CINE_MARBLE = 0x2a2a2e
+export const CINE_HALL_CARPET = 0x5a2738
+export const CINE_WOOD = 0x604638
+export const CINE_DARK_PANEL = 0x383331
+export const CINE_MARBLE = 0x55555e
 export const CINE_BRASS = 0xd4af37
 export const CINE_STEEL = 0x768088
 export const CINE_GLASS = 0x88c0d0
@@ -26,6 +27,7 @@ export const CINE_SEAT_FRAME = 0x1c1c20
 export const CINE_GOLD_ACCENT = 0xd4af37
 export const CINE_DUCT_STEEL = 0x5a636c
 export const CINE_ACOUSTIC_FABRIC = 0x221a20
+export const CINE_HALL_ACOUSTIC_FABRIC = 0x4b3742
 export const CINE_CARPET_GOLD = 0xb5934e
 export const CINE_SPEAKER_BLACK = 0x18181c
 
@@ -173,10 +175,11 @@ export function dressExitLightBox(
 export function dressScreenPortalSign(
   into: BanquetDetailBuilder,
   at: Point3,
-  rotation: [number, number, number] = [0, 0, 0],
+  accent = CINE_NEON_AMBER,
 ): void {
+  const rotation: [number, number, number] = [0, 0, 0]
   // Beveled outer casing
   into.box([1.4, 0.35, 0.15], { at, rotation, colour: CINE_POSTER_FRAME })
   // Backlit screen number plate
-  into.box([1.3, 0.28, 0.16], { at, rotation, colour: CINE_NEON_AMBER, glow: true })
+  into.box([1.3, 0.28, 0.16], { at, rotation, colour: accent, glow: true })
 }

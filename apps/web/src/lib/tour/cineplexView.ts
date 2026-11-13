@@ -56,11 +56,14 @@ export function hasCineplexModel(structure: Structure): boolean {
     structure.id === 'tier-3-cineplex-seating-island' ||
     structure.id === 'tier-3-cineplex-screen-corridor-poster' ||
     structure.id === 'tier-3-cineplex-concourse-pillar' ||
-    structure.id === 'tier-3-cineplex-ticket-windows'
+    structure.id === 'tier-3-cineplex-ticket-windows' ||
+    /^tier-3-cineplex-screen-\d-(?:seat-row-\d{2}(?:-(?:riser|bank-(?:port|starboard)))?|screen|aisle-stair-\d{2})$/.test(
+      structure.id,
+    )
   )
 }
 
-/** Omit coarse blueprint blocks from walked plan while retaining collision */
+/** Omit coarse blueprint blocks from the visible mesh; the original plan retains collision. */
 export function cineplexSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   if (reveal || !plan.spaces.some(({ id }) => isCineplexSpace(id))) return plan
   return {

@@ -2,6 +2,7 @@ import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import type { TourDetailTag } from './detailTag'
 import type { SourceBoundInteriorStyle } from './sourceBoundInteriorStyles'
 import type { Space, Structure, Vec2 } from './types'
+import { SOLDIERS_QUARTERS } from './royalArmyRoomsStyle'
 
 export interface SourceBoundBounds {
   minX: number
@@ -73,6 +74,15 @@ export function reconstructionTag(
 }
 
 export function structureTag(structure: Structure): TourDetailTag {
+  if (structure.spaceId.startsWith(`${SOLDIERS_QUARTERS}-`)) {
+    return {
+      ...structure,
+      provenance: 'inferred',
+      source: `Reconstructed bed profile; the footprint and count come from /ship. ${structure.source}`,
+      sourceFr: `Profil de lit reconstitué ; emprise et compte issus de /ship. ${structure.sourceFr}`,
+      reconstructionRole: 'metric-estimate',
+    }
+  }
   return {
     id: structure.id,
     spaceId: structure.spaceId,

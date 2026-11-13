@@ -167,6 +167,32 @@ export function buildCharacterProfile(
 }
 
 /**
+ * Remove catalogue fields that have no chapter boundary.
+ *
+ * These values may summarize the character through the latest published
+ * chapter. Sending them and merely collapsing their sections in the browser is
+ * still a spoiler leak. Dated timelines, roles and appearances are filtered by
+ * their own loaders and therefore remain useful to a capped reader.
+ */
+export function maskUndatedCharacterProfile(profile: CharacterProfile): CharacterProfile {
+  return {
+    ...profile,
+    aliases: [],
+    identity: null,
+    shipLocation: null,
+    factionId: null,
+    description: null,
+    biography: [],
+    abilitiesAndPowers: null,
+    equipment: [],
+    nen: null,
+    battles: [],
+    competitions: [],
+    abilities: [],
+  }
+}
+
+/**
  * Roles and official assignments as one chronological list.
  *
  * They are separate tables but the same thing to a reader: what this person

@@ -34,7 +34,10 @@ import { buildJusticeBureauDetails, justiceSurfacePlan } from './justiceBureauVi
 import { buildPoliceStationDetails, policeSurfacePlan } from './policeStationView'
 import { buildChaROfficeDetails, chaRSurfacePlan } from './chaROfficeView'
 import { buildHospitalDetails, hospitalSurfacePlan } from './hospitalView'
-import { buildRoyalArmyConferenceDetails } from './royalArmyConferenceView'
+import {
+  buildRoyalArmyConferenceDetails,
+  royalArmyConferenceSurfacePlan,
+} from './royalArmyConferenceView'
 import { buildCineplexDetails, cineplexSurfacePlan } from './cineplexView'
 import { buildPodCabinDetails, podCabinSurfacePlan } from './podCabinView'
 import { buildCorridorWallDetails } from './corridorWallView'
@@ -311,7 +314,10 @@ export class TierView {
         hullSuspensionSurfacePlan(
           queenUnmaSurfacePlan(
             queenApartmentSurfacePlan(
-              royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+              royalArmyConferenceSurfacePlan(
+                royalSalonSurfacePlan(diningHallSurfacePlan(surfacePlan, reveal), reveal),
+                reveal,
+              ),
               reveal,
             ),
             reveal,

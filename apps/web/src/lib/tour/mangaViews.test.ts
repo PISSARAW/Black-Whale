@@ -239,7 +239,7 @@ describe('manga photo viewpoints', () => {
     const view = mangaViewById('royal-army-briefing-audience')
 
     expect(viewsForSpace('tier-4-royal-army-conference-room-floor')).toContain(view)
-    expect(view?.pages).toBe('189')
+    expect(view?.pages).toBe('1–2 (chapitre)')
     expect(view?.staging?.[0]?.characterId).toBe('mizaistom-nana')
   })
 

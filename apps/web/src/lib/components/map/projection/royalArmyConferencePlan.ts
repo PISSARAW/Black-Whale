@@ -1,45 +1,43 @@
-import type { Vec2 } from '$lib/tour/types'
+import { theShip } from '$lib/tour/blueprint'
+import { structureFootprint } from '$lib/tour/geometry'
+import type { Polygon, Vec2 } from '$lib/tour/types'
 
 export const ROYAL_ARMY_VIEWBOX = { width: 1000, height: 700 }
-export const ROYAL_ARMY_SCALE = 40 // 40 px per metre (800px / 20m, 600px / 15m)
+export const ROYAL_ARMY_SCALE = 40
+const roomId = 'tier-4-royal-army-conference-room-floor'
+const plan = theShip().plans.get('interior-royal-army-conference')!
+export const royalArmyConferenceRoom = plan.spaces.find(({ id }) => id === roomId)!
 
-/** Maps metric coordinates (X: -10 to 10, Z: -7.5 to 7.5) to local SVG box (1000 x 700). */
 export function royalArmyConferencePoint([x, z]: Vec2): { x: number; y: number } {
-  return {
-    x: 100 + (x + 10) * ROYAL_ARMY_SCALE,
-    y: 80 + (z + 7.5) * ROYAL_ARMY_SCALE,
-  }
+  return { x: 500 + x * ROYAL_ARMY_SCALE, y: 380 + z * ROYAL_ARMY_SCALE }
 }
+export function royalArmyConferencePolygon(shape: Polygon): string {
+  return shape
+    .map((at) => {
+      const p = royalArmyConferencePoint(at)
+      return `${p.x},${p.y}`
+    })
+    .join(' ')
+}
+export const royalArmyConferenceFixtures = plan.structures
+  .filter(({ spaceId }) => spaceId === roomId)
+  .map((item) => ({
+    ...item,
+    polygon: royalArmyConferencePolygon(structureFootprint(item)),
+    point: royalArmyConferencePoint(item.at),
+  }))
 
 function spot(at: Vec2): { x: number; y: number } {
   const p = royalArmyConferencePoint(at)
-  return {
-    x: Number(((p.x / ROYAL_ARMY_VIEWBOX.width) * 100).toFixed(2)),
-    y: Number(((p.y / ROYAL_ARMY_VIEWBOX.height) * 100).toFixed(2)),
-  }
+  return { x: (p.x / ROYAL_ARMY_VIEWBOX.width) * 100, y: (p.y / ROYAL_ARMY_VIEWBOX.height) * 100 }
 }
-
-/** Chapter 380, p. 189: Mizaistom Nana and Royal Army officers in briefing. */
+/** Speaker location from chapter 380; anonymous seat counts remain a schematic reconstruction. */
 export const royalArmyConferenceSpotAnchors = {
-  occupants: {
-    'mizaistom-nana': spot([0.8, -3.25]),
-  },
-  seats: {
-    'chair-01': spot([-2.8, -1.75]),
-    'chair-02': spot([-1.4, -1.75]),
-    'chair-03': spot([0, -1.75]),
-    'chair-04': spot([1.4, -1.75]),
-    'chair-05': spot([2.8, -1.75]),
-    'chair-06': spot([-4.5, 0.5]),
-    'chair-07': spot([-4.5, 1.6]),
-    'chair-08': spot([-4.5, 2.7]),
-    'chair-09': spot([-4.5, 3.8]),
-    'chair-10': spot([4.5, 0.5]),
-    'chair-11': spot([4.5, 1.6]),
-    'chair-12': spot([4.5, 2.7]),
-    'chair-13': spot([4.5, 3.8]),
-    'chair-14': spot([-2.2, 4.5]),
-    'chair-15': spot([2.2, 4.5]),
-  },
-  fallback: spot([0, 2.0]),
+  occupants: { 'mizaistom-nana': spot([0.5, -5.1]) },
+  seats: Object.fromEntries(
+    royalArmyConferenceFixtures
+      .filter(({ kind }) => kind === 'seat')
+      .map(({ id, at }) => [id.replace(`${roomId}-`, ''), spot(at)]),
+  ),
+  fallback: spot([0, 5.8]),
 }

@@ -46,7 +46,7 @@ function dressFloor(context: SourceBoundRoomContext): void {
     tag: envelopeTag,
   })
 
-  if (!isAxisAlignedRectangle(space)) return
+  if (style.floorPattern === 'plain' || !isAxisAlignedRectangle(space)) return
   const spacing = style.floorPattern === 'plates' ? 2.4 : style.floorPattern === 'grid' ? 1.8 : 3.2
   const xCount = countAcross(bounds.width, spacing)
   const zCount = countAcross(bounds.depth, spacing)
@@ -77,6 +77,7 @@ function dressWalls(context: SourceBoundRoomContext): void {
     nameFr: 'Plinthe murale',
     layer: 'finish',
   })
+  if (style.ceilingPattern === 'plain') return
   for (let index = 0; index < space.footprint.length; index++) {
     const start = space.footprint[index]!
     const end = space.footprint[(index + 1) % space.footprint.length]!
@@ -122,7 +123,7 @@ function dressCeiling(context: SourceBoundRoomContext): void {
     { at: [0, floor + ceiling - 0.015, 0], colour: style.ceiling, tag: envelopeTag },
     'down',
   )
-  if (isAxisAlignedRectangle(space)) {
+  if (style.ceilingPattern !== 'plain' && isAxisAlignedRectangle(space)) {
     const count = countAcross(bounds.width, style.ceilingPattern === 'coffers' ? 3.4 : 2.6)
     for (let index = 1; index <= count; index++) {
       const x = bounds.minX + (bounds.width * index) / (count + 1)
@@ -153,7 +154,9 @@ function dressCeiling(context: SourceBoundRoomContext): void {
 export function sourceBoundInteriorSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
   if (reveal) return plan
   const detailedSpaces = new Set(
-    plan.spaces.filter((space) => sourceBoundStyleFor(space.locationId)).map(({ id }) => id),
+    plan.spaces
+      .filter((space) => sourceBoundStyleFor(space.locationId ?? space.id))
+      .map(({ id }) => id),
   )
   if (!detailedSpaces.size) return plan
   return {
@@ -171,7 +174,7 @@ export function buildSourceBoundInteriorDetails(options: {
   const { THREE, plan, spaceId, reveal } = options
   if (reveal) return null
   const space = plan.spaces.find(({ id }) => id === spaceId)
-  const style = sourceBoundStyleFor(space?.locationId)
+  const style = sourceBoundStyleFor(space?.locationId ?? space?.id)
   if (!space || !style) return null
   const lamplight = lamplightOf(space, plan.tier)
 

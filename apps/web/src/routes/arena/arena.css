@@ -1,47 +1,51 @@
 .arena-world {
   position: relative;
   height: calc(100dvh - var(--header-height));
-  min-height: 42rem;
+  min-height: 32rem;
   overflow: hidden;
-  background: #020617;
+  background: #03070a;
   color: #edf5f7;
 }
 
 @scope (.arena-world) {
-  .challenge-panel {
-    position: absolute;
-    z-index: 11;
-    top: 6.2rem;
-    left: 1.25rem;
-    width: min(18rem, calc(100vw - 2.5rem));
-    max-width: calc(100vw - 2.5rem);
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid #8ad7e744;
-    border-radius: 0.4rem;
-    background: #061217dd;
-    color: #e2f0f2;
-    overflow: hidden;
-  }
-
   .combat-briefing {
     position: fixed;
     inset: 0;
     z-index: 100;
     display: grid;
     place-items: center;
-    padding: 24px;
-    background: rgb(3 8 12 / 82%);
-    backdrop-filter: blur(10px);
+    padding: clamp(1rem, 4vw, 3rem);
+    background:
+      linear-gradient(115deg, rgb(3 8 12 / 96%) 0 48%, rgb(3 8 12 / 72%) 70%),
+      radial-gradient(circle at 78% 45%, rgb(92 206 235 / 22%), transparent 36%);
+    backdrop-filter: blur(14px);
   }
 
   .briefing-card {
-    width: min(620px, 100%);
-    padding: clamp(24px, 5vw, 48px);
-    border: 1px solid var(--line-default);
-    background: var(--surface-deep);
-    box-shadow: none;
+    position: relative;
+    width: min(680px, 100%);
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    border: 1px solid rgb(255 255 240 / 18%);
+    border-left: 3px solid #ffd700;
+    background: linear-gradient(135deg, rgb(255 255 240 / 5%), transparent 45%), rgb(5 11 15 / 94%);
+    box-shadow: 0 2rem 6rem rgb(0 0 0 / 55%);
     color: #fffff0;
+    overflow: hidden;
+  }
+
+  .briefing-card::after {
+    position: absolute;
+    top: -5rem;
+    right: -4rem;
+    width: 15rem;
+    height: 15rem;
+    border: 1px solid rgb(138 215 231 / 18%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 2rem rgb(138 215 231 / 3%),
+      0 0 0 5rem rgb(138 215 231 / 2%);
+    content: '';
+    pointer-events: none;
   }
 
   .briefing-kicker {
@@ -54,9 +58,11 @@
   .briefing-card h2 {
     margin: 0;
     font-family: var(--font-display, serif);
-    font-size: clamp(27px, 5vw, 43px);
-    font-weight: 500;
-    line-height: 1.05;
+    font-size: clamp(2rem, 6vw, 4.2rem);
+    font-weight: 620;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
   }
 
   .briefing-goal {
@@ -67,7 +73,8 @@
 
   .briefing-steps {
     display: grid;
-    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.55rem;
     margin: 0 0 28px;
     padding: 0;
     list-style: none;
@@ -75,10 +82,11 @@
 
   .briefing-steps li {
     display: grid;
-    grid-template-columns: 92px 1fr;
-    align-items: center;
-    gap: 16px;
-    padding: 13px;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 0.65rem;
+    min-height: 7.5rem;
+    padding: 0.9rem;
     border: 1px solid rgb(255 255 240 / 10%);
     background: rgb(255 255 240 / 4%);
   }
@@ -86,7 +94,7 @@
   .briefing-steps kbd {
     color: #ffd700;
     font: 600 12px/1.2 monospace;
-    text-align: center;
+    text-align: left;
   }
 
   .briefing-steps span {
@@ -101,9 +109,10 @@
 
   .briefing-start {
     width: 100%;
-    padding: 14px 20px;
+    min-height: 3.25rem;
+    padding: 0.9rem 1.25rem;
     border: 1px solid #ffd700;
-    background: #ffd700;
+    background: linear-gradient(105deg, #ffd700 0 74%, #ffe95a 74%);
     color: #080d10;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -116,59 +125,6 @@
     background: #fffff0;
     outline: 2px solid #fffff0;
     outline-offset: 3px;
-  }
-
-  .terrain-picker {
-    position: absolute;
-    z-index: 11;
-    top: 1.25rem;
-    left: 50%;
-    display: flex;
-    gap: 0.25rem;
-    transform: translateX(-50%);
-    pointer-events: auto;
-  }
-  .terrain-picker a {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid #8ad7e733;
-    color: #aac4c8;
-    font-size: 0.66rem;
-    text-decoration: none;
-  }
-  .terrain-picker a.active {
-    border-color: #8ad7e7;
-    color: #fff;
-  }
-
-  .challenge-panel header,
-  .challenge-panel ol {
-    display: grid;
-    gap: 0.3rem;
-  }
-  .challenge-panel small {
-    color: #8ad7e7;
-    letter-spacing: 0.16em;
-  }
-  .challenge-panel select {
-    width: 100%;
-    max-width: 100%;
-    margin-top: 0.55rem;
-    padding: 0.35rem;
-    border: 1px solid #8ad7e744;
-    border-radius: 0.3rem;
-    background: #061217dd;
-    color: #e2f0f2;
-    font-size: 0.72rem;
-    cursor: pointer;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .challenge-panel ol {
-    margin: 0.65rem 0 0;
-    padding-left: 1.2rem;
-    font-size: 0.72rem;
-    overflow: hidden;
   }
 
   .challenge-result {
@@ -1229,6 +1185,12 @@
   }
 }
 
+@media (max-width: 800px) {
+  .arena-world .tour-minimap-panel {
+    display: none;
+  }
+}
+
 @keyframes arena-strike {
   0% {
     transform: rotate(18deg) translateY(2.4rem) scale(1);
@@ -1435,70 +1397,402 @@
 @scope (.arena-world) {
   .touch-combat {
     position: absolute;
-    z-index: 12;
-    right: 0.8rem;
-    bottom: 9.5rem;
+    z-index: 14;
+    right: 0.75rem;
+    bottom: 7.4rem;
     display: none;
-    grid-template-columns: repeat(3, minmax(4rem, 1fr));
-    gap: 0.35rem;
+    width: min(10.5rem, 45vw);
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
   }
 
   .touch-combat button {
-    min-height: 3.5rem;
-    border: 1px solid #8ad7e777;
-    border-radius: 0.45rem;
-    background: #061217f2;
+    min-height: 3.15rem;
+    padding: 0.35rem;
+    border: 1px solid rgb(138 215 231 / 45%);
+    border-radius: 0.2rem;
+    background: linear-gradient(145deg, rgb(14 29 37 / 94%), rgb(4 10 14 / 96%));
     color: #eafcff;
     font:
-      600 0.68rem 'IBM Plex Mono',
+      650 0.62rem 'IBM Plex Mono',
       monospace;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.03em;
+    box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 40%);
+    touch-action: manipulation;
+  }
+
+  .touch-combat button.primary {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, #ffd700, #b99b00);
+    color: #05090c;
+  }
+
+  .arena-overlay-header {
+    top: 1rem;
+    right: 1rem;
+    left: 4rem;
+    max-width: none;
+  }
+
+  .terrain-label,
+  .match-rule {
+    border-radius: 0;
+    background: linear-gradient(110deg, rgb(5 10 14 / 88%), rgb(8 18 23 / 68%));
+    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 22%);
+  }
+
+  .terrain-label {
+    max-width: min(22rem, 30vw);
+    border-left: 2px solid #ffd700;
+  }
+
+  .match-rule {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    min-width: 10rem;
+    border-top: 2px solid rgb(138 215 231 / 70%);
+    text-align: center;
+    transform: translateX(-50%);
+  }
+
+  .match-rule strong {
+    margin: 0.1rem 0;
+    font-size: 1.65rem;
+    letter-spacing: 0.08em;
+  }
+
+  .combat-keys {
+    top: auto;
+    bottom: 2.7rem;
+    left: 0.75rem;
+    max-width: min(19rem, 25vw);
+    gap: 0.22rem;
+  }
+
+  .combat-keys span {
+    padding: 0.26rem 0.38rem;
+    border-color: rgb(255 255 240 / 10%);
+    background: rgb(4 9 12 / 70%);
+    font-size: 0.49rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .status-card,
+  .ryu-card {
+    border-radius: 0;
+    background: linear-gradient(135deg, rgb(6 15 20 / 90%), rgb(3 8 11 / 76%));
+    box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 28%);
+    backdrop-filter: blur(12px);
+  }
+
+  .status-card {
+    top: 5.15rem;
+    left: 1rem;
+    width: min(19rem, 29vw);
+    border-left: 2px solid #65c8e7;
+    transform: none;
+  }
+
+  .status-card.opponent-card {
+    right: 1rem;
+    left: auto;
+    width: min(19rem, 29vw);
+    border-right: 2px solid #d66f68;
+    border-left-width: 1px;
+    background: linear-gradient(225deg, rgb(39 10 10 / 88%), rgb(8 5 5 / 78%));
+    transform: none;
+  }
+
+  .status-card.opponent-card header {
+    flex-direction: row;
+  }
+
+  .meter,
+  .flow {
+    border-radius: 0;
+  }
+
+  .ryu-card {
+    bottom: 2.7rem;
+    width: min(36rem, calc(100vw - 2rem));
+    padding: 0.85rem 1rem;
+    border-width: 1px;
+    border-top: 2px solid #65c8e7;
+    grid-template-columns: 4rem 1fr;
+    grid-template-areas: 'diagram header' 'diagram flow' 'zones zones' 'actions actions';
+    gap: 0.4rem 0.75rem;
+  }
+
+  .ryu-card .aura-body {
+    transform: scale(0.68);
+  }
+
+  .zones {
+    gap: 0.3rem;
+  }
+
+  .zones button {
+    min-height: 2.25rem;
+    padding: 0.25rem 0.15rem;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) 1.55fr;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+  }
+
+  .actions button {
+    min-height: 2.85rem;
+    aspect-ratio: auto;
+    padding: 0.35rem;
+    border-width: 1px;
+    border-radius: 0.15rem;
+    font-size: 0.65rem;
+  }
+
+  .actions button:hover:not(:disabled) {
+    transform: translateY(-0.2rem);
+  }
+
+  .actions .hatsu-action {
+    grid-column: auto;
+  }
+
+  .arena-lesson {
+    top: 10.5rem;
+    left: 1rem;
+    width: min(20rem, 29vw);
+    border-left-color: #ffd700;
+    background: linear-gradient(90deg, rgb(5 12 16 / 88%), rgb(5 12 16 / 52%) 78%, transparent);
+  }
+
+  .event-line {
+    min-height: 2.1rem;
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    background: linear-gradient(90deg, transparent, rgb(3 8 11 / 92%) 25% 75%, transparent);
+  }
+
+  .reticle {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-color: rgb(255 255 240 / 82%);
+    border-radius: 0;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 45%);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .reticle span {
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .reticle.locked span {
+    transform: translateX(-50%) rotate(-45deg);
   }
 
   @media (max-width: 800px) {
     .arena-overlay-header {
-      left: 3.5rem;
+      top: 0.55rem;
+      right: 3.9rem;
+      left: 0.55rem;
     }
 
-    .terrain-label small,
-    .terrain-label p {
+    .terrain-label {
       display: none;
     }
 
-    .combat-keys {
-      top: 7.8rem;
+    .match-rule {
+      position: relative;
+      left: 50%;
+      min-width: 8.75rem;
+      padding: 0.35rem 0.65rem;
+      transform: translateX(-50%);
     }
 
-    .combat-keys span:nth-child(n + 3) {
+    .match-rule span,
+    .match-rule small {
+      font-size: 0.48rem;
+    }
+
+    .match-rule strong {
+      font-size: 1.15rem;
+    }
+
+    .combat-keys {
       display: none;
     }
 
     .combat-console {
-      right: 0.5rem;
-      bottom: 2.35rem;
-      left: 0.5rem;
-      grid-template-columns: 1fr 1fr;
+      inset: 0;
     }
 
     .status-card {
+      top: 3.65rem;
+      left: 0.55rem;
+      display: block;
+      width: calc(50% - 0.8rem);
+      min-height: 0;
+      padding: 0.5rem 0.55rem;
+      pointer-events: none;
+    }
+
+    .status-card.opponent-card {
+      right: 0.55rem;
+      width: calc(50% - 0.8rem);
+    }
+
+    .status-card header {
+      gap: 0.35rem;
+      font-size: 0.52rem;
+    }
+
+    .status-card header strong,
+    .status-card header span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-card .meter {
+      height: 0.35rem;
+      margin: 0.35rem 0 0;
+    }
+
+    .status-card p,
+    .status-card .tags {
       display: none;
     }
 
     .ryu-card {
-      grid-column: 1 / -1;
+      top: 7rem;
+      bottom: auto;
+      width: calc(100vw - 1.1rem);
+      padding: 0.45rem 0.55rem 0.55rem;
+      grid-template-columns: auto minmax(5rem, 1fr);
+      grid-template-areas: 'header flow' 'zones zones';
+      gap: 0.35rem 0.6rem;
+      pointer-events: auto;
     }
 
-    .actions {
-      grid-template-columns: repeat(3, 1fr);
+    .ryu-card header {
+      gap: 0.35rem;
+      font-size: 0.56rem;
+    }
+
+    .ryu-card .flow {
+      align-self: center;
+      height: 0.35rem;
+    }
+
+    .ryu-card .aura-body,
+    .ryu-card .actions {
+      display: none;
+    }
+
+    .zones {
+      gap: 0.25rem;
+    }
+
+    .zones button {
+      min-height: 2.2rem;
+      padding: 0.25rem 0.1rem;
+      font-size: 0.52rem;
+      touch-action: manipulation;
+    }
+
+    .zones kbd {
+      display: none;
     }
 
     .arena-lesson {
-      top: 8.8rem;
-      max-width: calc(100vw - 1.5rem);
+      top: 11.5rem;
+      left: 0.55rem;
+      width: calc(100vw - 1.1rem);
+      max-width: none;
+      padding: 0.45rem 0.6rem;
+      background: linear-gradient(90deg, rgb(4 11 15 / 88%), rgb(4 11 15 / 48%));
     }
 
     .touch-combat {
       display: grid;
+    }
+
+    .enter-prompt {
+      top: 29%;
+      width: calc(100% - 2rem);
+      font-size: 0.58rem;
+    }
+
+    .combat-hands .hand {
+      bottom: 4.8rem;
+      opacity: 0.55;
+    }
+
+    .left-hand {
+      left: calc(50% - 7.5rem);
+    }
+
+    .right-hand {
+      right: calc(50% - 7.5rem);
+    }
+
+    .briefing-card {
+      padding: 1.35rem;
+    }
+
+    .briefing-goal {
+      margin: 0.8rem 0 1rem;
+      font-size: 0.85rem;
+    }
+
+    .briefing-steps {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .briefing-steps li {
+      grid-template-columns: 5rem 1fr;
+      grid-template-rows: auto;
+      min-height: 0;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem;
+    }
+
+    .briefing-steps span {
+      font-size: 0.7rem;
+    }
+  }
+
+  @media (max-width: 800px) and (max-height: 620px) {
+    .arena-lesson p,
+    .arena-lesson strong {
+      display: none;
+    }
+
+    .arena-lesson {
+      top: 10.7rem;
+      width: auto;
+    }
+
+    .touch-combat {
+      bottom: 3.25rem;
+    }
+
+    .touch-combat button {
+      min-height: 2.55rem;
+    }
+
+    .briefing-goal {
+      display: none;
+    }
+
+    .briefing-steps li {
+      padding: 0.45rem 0.6rem;
     }
   }
 

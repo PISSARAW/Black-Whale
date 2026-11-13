@@ -4,6 +4,7 @@ import {
   buildCharacterProfile,
   buildRoleHistory,
   isVisibleAtSpoilerLimit,
+  maskUndatedCharacterProfile,
   readFirstAppearanceChapter,
 } from './character-profile.js'
 
@@ -52,6 +53,38 @@ describe('buildCharacterProfile', () => {
     const abilities = [{ id: 'nen-beast', ownerId: 'tserriednich', userIds: ['kurapika'] }]
 
     expect(buildCharacterProfile({ id: 'kurapika' }, abilities, null).abilities).toEqual(abilities)
+  })
+})
+
+describe('maskUndatedCharacterProfile', () => {
+  it('keeps dated identity and appearances but removes unbounded narrative fields', () => {
+    const profile = buildCharacterProfile(
+      {
+        id: 'kurapika',
+        canonicalName: 'Kurapika',
+        aliases: ['Rat'],
+        description: 'Future summary',
+        biography: ['Future event'],
+        abilitiesAndPowers: 'Future technique',
+        mangaAppearances: [{ chapter: 340, status: 'appears' }],
+        battles: ['Future fight'],
+      },
+      [{ id: 'stealth-dolphin', ownerId: 'kurapika' }],
+      340,
+    )
+
+    expect(maskUndatedCharacterProfile(profile)).toMatchObject({
+      id: 'kurapika',
+      canonicalName: 'Kurapika',
+      firstVisibleChapter: 340,
+      mangaAppearances: [{ chapter: 340, status: 'appears' }],
+      aliases: [],
+      description: null,
+      biography: [],
+      abilitiesAndPowers: null,
+      battles: [],
+      abilities: [],
+    })
   })
 })
 

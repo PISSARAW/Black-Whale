@@ -11,8 +11,8 @@ decisions: [adr-006]
 
 # `apps/web/src/lib/audio` — sons du site
 
-**Promet :** fournir tous les sons du site via Web Audio API, sans fichier audio externe.
-**Refuse :** de charger des samples ou de déléguer à un moteur audio tiers.
+**Promet :** fournir tous les sons du site via Web Audio API ; le concert de Melody est l'unique enregistrement original servi.
+**Refuse :** de charger des samples tiers ou de déléguer à un moteur audio tiers.
 **Entrées publiques :** `apps/web/src/lib/audio/hatsuSounds.ts`, `apps/web/src/lib/audio/nenSounds.ts`, `apps/web/src/lib/audio/steps.ts`, `apps/web/src/lib/audio/ambient.ts`, `apps/web/src/lib/audio/space.ts`, `apps/web/src/lib/audio/output.ts`, `apps/web/src/lib/audio/veil.ts`, `apps/web/src/lib/audio/nen/perception.ts`.
 **Carte :** [05 la visite](../../../../../docs/carte/05-la-visite.md)
 
@@ -35,7 +35,7 @@ decisions: [adr-006]
 
 ## Invariants
 
-- Tout son est synthétisé côté client — aucun asset audio n'est servi.
+- Les sons interactifs sont synthétisés côté client. L'unique asset audio est l'interprétation originale complète du concert de Melody, routée dans le contexte et les bus communs.
 - **Un seul `AudioContext`**, dans `apps/web/src/lib/audio/context.ts`, jamais fermé : c'est lui qui permet à une technique d'entrer dans la réverbération de la salle, calculée par la marche. Personne n'appelle `new AudioContext`.
 - Tout se termine sur un bus de `apps/web/src/lib/audio/output.ts`, jamais sur `destination` : c'est là que sont le limiteur et les trois faders.
 - `apps/web/src/lib/audio/hatsu/` contient uniquement des sons one-shot ; les boucles continues vivent dans `apps/web/src/lib/audio/ambient.ts` — sauf les deux que le navire fait lui-même, moteurs et mer, qui sont dans `apps/web/src/lib/audio/steps/environment.ts` parce qu'elles appartiennent à la marche et non à la bande-son.
@@ -53,6 +53,6 @@ decisions: [adr-006]
 
 1. Identifier la famille : `apps/web/src/lib/audio/hatsu/impacts.ts`, `apps/web/src/lib/audio/hatsu/chains.ts`, `apps/web/src/lib/audio/hatsu/refusals.ts`, `apps/web/src/lib/audio/hatsu/beasts.ts`.
 2. Si aucune famille ne convient, créer un nouveau fichier dans `apps/web/src/lib/audio/hatsu/`.
-3. Le son doit être basé sur le manga, l'anime ou le geste. Tous les sons sont synthétisés.
+3. Le son doit être basé sur le manga, l'anime ou le geste. Les nouveaux effets sont synthétisés ; l'enregistrement original du concert de Melody reste l'unique exception.
 4. Mapper le rapport dans `apps/web/src/lib/tour/reportSound.ts`.
 5. Vérifier : `pnpm --filter @black-whale/web test tour/`.

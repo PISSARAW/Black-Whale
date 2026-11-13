@@ -1619,7 +1619,7 @@ Fichiers : 452
 
 ## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
 
-- Royal Army Conference Room reconstructed from Chapters 350 and 380 > satisfies the shared blueprint invariants for interior-royal-army-conference
+- Army Conference Floor corrected against chapter 380, pages 1–6 > satisfies the blueprint invariants and distinguishes the committee and audience groups
 
 ## `apps/web/src/lib/tour/royalPrecinct.test.ts`
 
@@ -1706,7 +1706,7 @@ Fichiers : 452
 
 ## `apps/web/src/lib/tour/soldiersQuartersFidelity.test.ts`
 
-- the published soldiers’ quarters plan > keeps eight plan rooms and their ninety-six mapped bunks without panel claims
+- the map reconstruction of the soldiers’ quarters > keeps eight mapped rooms and ninety-six bed symbols without published-plan claims
 
 ## `apps/web/src/lib/tour/soundPlace.test.ts`
 
@@ -1714,7 +1714,7 @@ Fichiers : 452
 
 ## `apps/web/src/lib/tour/sourceBoundInteriorCertification.test.ts`
 
-- source-bound interior certification > covers exactly the eleven declared locations
+- source-bound interior certification > covers exactly the twelve declared programmes
 
 ## `apps/web/src/lib/tour/standardResidentialFidelity.test.ts`
 

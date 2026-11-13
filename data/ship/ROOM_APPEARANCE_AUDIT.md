@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1307 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1323 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -533,7 +533,7 @@
 ## Passage gardé vers les ponts inférieurs — `tier-1-soldiers-living-quarters`
 
 - **Pont :** tier-1-b
-- **Preuve de l’enveloppe :** plan publié
+- **Preuve de l’enveloppe :** reconstruction cartographique, liaison déduite
 - **Sous-espaces :** 9
 - **Emprises relevées :** 45 × 5.5 m ; 10 × 7.5 m
 - **Hauteurs sous plafond :** 3.5 m
@@ -541,10 +541,11 @@
 - **Objets directement visibles dans les cases :** 0/96
 - **Espaces internes :** Caserne de l'armée royale 1 ; Caserne de l'armée royale 2 ; Caserne de l'armée royale 3 ; Caserne de l'armée royale 4 ; Quartiers des Hunters provisoires 1 ; Quartiers des Hunters provisoires 2 ; Quartiers des Hunters provisoires 3 ; Quartiers des Hunters provisoires 4
 - **Sources de la pièce :**
-  - Le plan dessine les pièces mais aucun passage entre elles ; cette circulation est reconstruite. Le plan dessine le passage plus étroit que les salles qu’il dessert.
-  - Plan des quartiers des soldats ; soldats de Kakin et quelque 150 Hunters provisoires
+  - Passage reconstitué entre les salles militaires et celles des associés, vers l’accès aux ponts inférieurs. Sa largeur métrique et son tracé sont estimés, sans intérieur attesté.
+  - Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués.
 - **Sources du mobilier et des détails :**
-  - Le plan des quartiers des soldats sur /ship dessine douze couchettes dans chaque chambrée et dans chaque salle des Hunters ; la reconstruction en garde le nombre et les rangées, et donne aux allées de quoi passer.
+  - Le chap. 363 situe les quartiers des soldats/associés par une flèche près du bloc princier, sans en dessiner l’intérieur. Huit salles et douze symboles de couchettes par salle sont hérités de la carte /ship, sans décompte attesté par le manga. Dimensions, accès et profils des lits reconstitués.
+- **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Cour suprême — `tier-1-supreme-court`
 
@@ -1000,18 +1001,14 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 52.5 × 52.5 m ; 20 × 15 m
 - **Hauteurs sous plafond :** 5 m
-- **Éléments modélisés :** 15 seat, 3 table, 2 painting, 1 counter
-- **Objets directement visibles dans les cases :** 21/21
+- **Éléments modélisés :** 30 seat, 3 table, 2 painting, 1 counter, 1 platform
+- **Objets directement visibles dans les cases :** 37/37
 - **Espaces internes :** Salle de conférence
 - **Sources de la pièce :**
-  - Chap. 350 — réunion de coordination de la sécurité
-  - Chap. 380, p. 189 — la salle de briefing de l'armée royale est montrée depuis le public : un pupitre se dresse devant un écran de projection vierge et un tableau de cartes, face à une table en U entourée de quinze sièges.
+  - Chap. 380, pages de lecture 1–3 et 6 : salle claire au sol quadrillé, table en U ouverte vers Mizaistom, chaises à cadre simple et rangées du public, estrade basse, pupitre sobre et écran blanc avec un petit tableau encadré. Dimensions, positions, douze sièges de comité, dix-huit sièges du public et finitions non montrées sont reconstitués, sans relevé exhaustif des sièges. Le chapitre 350 ne montre pas ce briefing. L'attribution au pont 4 et l'emprise extérieure sont héritées de /ship, sans localisation par ces cases.
+  - Chap. 380, pages de lecture 1–3 et 6 : salle claire au sol quadrillé, table en U ouverte vers Mizaistom, chaises à cadre simple et rangées du public, estrade basse, pupitre sobre et écran blanc avec un petit tableau encadré. Dimensions, positions, douze sièges de comité, dix-huit sièges du public et finitions non montrées sont reconstitués, sans relevé exhaustif des sièges. Le chapitre 350 ne montre pas ce briefing.
 - **Sources du mobilier et des détails :**
-  - Chap. 380, p. 189 — le grand écran de projection vierge est suspendu derrière l'orateur.
-  - Chap. 380, p. 189 — un tableau de cartes clair, plus petit, est suspendu à gauche de l'écran de projection.
-  - Chap. 380, p. 189 — l'orateur se tient à côté du pupitre, devant l'écran de projection.
-  - Chap. 380, p. 189 — trois éléments de table joints forment le U au centre de la salle de briefing.
-  - Chap. 380, p. 189 — quinze sièges entourent la table en U pendant le briefing de l'armée royale.
+  - Chap. 380, pages de lecture 1–3 et 6 : salle claire au sol quadrillé, table en U ouverte vers Mizaistom, chaises à cadre simple et rangées du public, estrade basse, pupitre sobre et écran blanc avec un petit tableau encadré. Dimensions, positions, douze sièges de comité, dix-huit sièges du public et finitions non montrées sont reconstitués, sans relevé exhaustif des sièges. Le chapitre 350 ne montre pas ce briefing.
 
 ## Bureau de la famille Xi-Yu — `tier-4-xi-yu-family-office`
 

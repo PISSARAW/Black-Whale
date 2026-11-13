@@ -9,6 +9,7 @@ import {
 import { dressRoyalArmyConferenceCeiling } from './royalArmyConferenceCeiling'
 import {
   dressConferenceChair,
+  dressConferencePlatform,
   dressConferenceTable,
   dressLectern,
 } from './royalArmyConferenceFurniture'
@@ -17,6 +18,15 @@ import type { Structure } from './types'
 
 export const ROYAL_ARMY_CONFERENCE_ROOM = 'tier-4-royal-army-conference-room-floor'
 
+/** Visual replacement only: original blueprint solids still supply collisions and evidence mode. */
+export function royalArmyConferenceSurfacePlan(plan: TierPlan, reveal: boolean): TierPlan {
+  if (reveal) return plan
+  return {
+    ...plan,
+    structures: plan.structures.filter((s) => s.spaceId !== ROYAL_ARMY_CONFERENCE_ROOM),
+  }
+}
+
 function dressStructure(into: BanquetDetailBuilder, structure: Structure, floor: number): void {
   if (structure.kind === 'painting') {
     if (structure.id.endsWith('screen')) {
@@ -24,6 +34,10 @@ function dressStructure(into: BanquetDetailBuilder, structure: Structure, floor:
     } else {
       dressTacticalChartBoard(into, structure, floor)
     }
+    return
+  }
+  if (structure.kind === 'platform') {
+    dressConferencePlatform(into, structure, floor)
     return
   }
   if (structure.kind === 'counter') {
@@ -39,7 +53,7 @@ function dressStructure(into: BanquetDetailBuilder, structure: Structure, floor:
   }
 }
 
-/** Reconstructed Royal Army Conference & Briefing Room from Chapters 350 and 380 with full architectural fidelity. */
+/** Chapter 380, reading pages 1–6; dimensions and unseen profiles remain reconstructed. */
 export function buildRoyalArmyConferenceDetails(options: {
   THREE: typeof Three
   plan: TierPlan
@@ -56,16 +70,16 @@ export function buildRoyalArmyConferenceDetails(options: {
   const floor = floorOf(space, plan.tier)
   const structures = plan.structures.filter((structure) => structure.spaceId === spaceId)
 
-  // Architectural flooring, wainscoting, and presenter dais
+  // Pale tiled floor and plain wall panels.
   dressRoyalArmyConferenceArchitecture({ THREE, into, plan, space })
 
-  // Suspended modular ceiling, troffers, projector, HVAC, security dome cameras, emergency signs
+  // Enclose the interpreted ceiling without unsupported technical equipment.
   dressRoyalArmyConferenceCeiling({ into, plan, space })
 
-  // Coat of arms, armored double entrance doors, synchronized clocks, AV rack, auxiliary monitors
+  // Lower wall grille visible beside the presentation area.
   dressRoyalArmyConferenceWallDetails({ into, plan, space })
 
-  // Furniture and tactical projection displays
+  // Plain furnishings and blank presentation surfaces.
   for (const structure of structures) {
     dressStructure(into, structure, floor)
   }

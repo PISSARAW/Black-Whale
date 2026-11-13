@@ -1,6 +1,14 @@
 export * from './cast/kinds'
 export * from './cast/types'
 export * from './hatsuBook'
+export {
+  emptiedOn,
+  heldSolidIds,
+  planSealed,
+  planWithout,
+  shellsFor,
+  walkedPlan,
+} from './hatsuPlan'
 export * from './hatsuRecord'
 export {
   ageTheOwl,
@@ -35,18 +43,14 @@ export {
  */
 import type { HatsuInteractionKind, HatsuProfile } from '$lib/nen/hatsuRegistry'
 import { acceptsFamily } from '$lib/nen/targeting'
-import type { Ship, TierPlan } from './blueprint'
+import type { Ship } from './blueprint'
 import {
   blocksTheFloor,
   centroid,
-  columnWalls,
-  deriveDoorways,
   distanceTo,
   pointInPolygon,
-  sealKey,
   structureFootprint,
   structureWalls,
-  wallSegments,
   wanderOffset,
 } from './geometry'
 import type { Space, Structure, Vec2, WallSegment } from './types'
@@ -85,6 +89,7 @@ import { punchRuns } from './punch'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
 import { perchFor } from './targeting'
 import { nextForgery, nextSign, takesAMask } from './texture'
+import { emptiedOn, landingIn } from './hatsuPlan'
 import { dialReading, identityOf, tenSecondsOn, unwalked, verseFor } from './hatsuRecord'
 import { filmOwlRoom, frameOf, lastTenSeconds, roomsFilmed } from './hatsuTraversal'
 
@@ -196,9 +201,6 @@ export function solidNow(structure: Structure, hold: SolidHold | undefined): Str
     aura: hold.aura ?? structure.aura,
   }
 }
-
-/** Solids the aura has lifted out of their deck, so the baked mesh drops them. */
-export const heldSolidIds = (world: TourWorld): string[] => Object.keys(world.solids)
 
 /**
  * How many things Snake Arm can hold at once, which is how many arms there are.
@@ -3210,198 +3212,6 @@ function runCast(
       landed: landingIn(target, { at, heading: input.heading }, result.world.landed),
     },
   }
-}
-
-/**
- * The point in a room the aura came down on.
- *
- * Walked along the aim ray rather than measured: the first step that is inside
- * the room's own footprint is where it landed. A cast made from inside the room
- * lands a few paces ahead of the visitor, which is where they were looking; one
- * made from outside it lands at the near edge, which is the part of the room
- * they can see. Falls back to the middle when the ray does not reach — an
- * unaimed cast from the index of rooms has no reticle to read.
- */
-function landingIn(
-  target: Space,
-  aim: { at: Vec2; heading?: number },
-  landed: Record<string, Vec2> = {},
-): Record<string, Vec2> {
-  const { at, heading = 0 } = aim
-  const sin = Math.sin(heading)
-  const cos = Math.cos(heading)
-  for (let metres = 1.5; metres <= 120; metres += 1.5) {
-    const point: Vec2 = [at[0] - sin * metres, at[1] - cos * metres]
-    if (pointInPolygon(point, target.footprint)) return { ...landed, [target.id]: point }
-  }
-  return { ...landed, [target.id]: centroid(target) }
-}
-
-/**
- * The deck with a room's doorways shut.
- *
- * The reconstruction derives its doorways from the walls two rooms share, and
- * takes a list of pairs to treat as blind — which is exactly what a technique
- * that shuts a room needs. So this is not a lock drawn over an opening: it is
- * the same derivation, told that these walls have no door in them, and the
- * opening stops being drawn and stops being walkable in one pass.
- *
- * A stairwell is not a doorway and is not closed by this. That is deliberate:
- * `linkUnderfoot` is what offers a stair, and the walk refuses that separately
- * for a room that is shut.
- */
-export function planSealed(
-  ship: Ship,
-  plan: TierPlan,
-  options: {
-    shut: readonly string[]
-    vestiges?: Record<string, import('./cast/types').TourVestige[]>
-  },
-): TierPlan {
-  const closed = new Set(options.shut.filter((id) => ship.spaces.get(id)?.tierId === plan.tier.id))
-  if (!closed.size) return plan
-
-  const brokenDoors = new Set<string>()
-  for (const [locationId, locationVestiges] of Object.entries(options.vestiges ?? {})) {
-    for (const vestige of locationVestiges) {
-      if (vestige.type === 'door_broken' && vestige.metadata?.target) {
-        brokenDoors.add(sealKey(locationId, String(vestige.metadata.target)))
-      }
-    }
-  }
-
-  const sealed = new Set(
-    [
-      ...ship.seals.map((seal) => sealKey(seal.a, seal.b)),
-      ...plan.doorways
-        .filter((door) => closed.has(door.a) || closed.has(door.b))
-        .map((door) => sealKey(door.a, door.b)),
-    ].filter((key) => !brokenDoors.has(key)),
-  )
-
-  // A declared door would re-open the wall the seal just closed, so the ones
-  // into a shut room are dropped with it.
-  const overrides = new Map(
-    ship.doors
-      .filter(
-        (door) =>
-          (!closed.has(door.a) && !closed.has(door.b)) || brokenDoors.has(sealKey(door.a, door.b)),
-      )
-      .map((door) => [sealKey(door.a, door.b), door] as const),
-  )
-
-  const cutWalls = new Set<string>()
-  for (const [locationId, locationVestiges] of Object.entries(options.vestiges ?? {})) {
-    for (const vestige of locationVestiges) {
-      if (vestige.type === 'wall_cut' && vestige.metadata?.target) {
-        cutWalls.add(sealKey(locationId, String(vestige.metadata.target)))
-      }
-    }
-  }
-
-  const doorways = deriveDoorways(plan.spaces, { sealed, overrides, cutWalls })
-
-  const walls = plan.spaces.flatMap((space) => wallSegments(space, doorways))
-  for (const [spaceId, centres] of plan.columns) {
-    for (const centre of centres) walls.push(...columnWalls(spaceId, centre))
-  }
-  for (const structure of plan.structures) {
-    if (blocksTheFloor(structure)) walls.push(...structureWalls(structure))
-  }
-  return { ...plan, doorways, walls }
-}
-
-/**
- * The deck as the visitor actually meets it: shut, emptied, and with whatever
- * the aura is holding lifted out of it.
- *
- * One place, so the renderer and the collision test cannot end up reading two
- * different ships.
- */
-export function walkedPlan(ship: Ship, world: TourWorld, tierId: string): TierPlan {
-  const plan = ship.plans.get(tierId)
-  if (!plan) throw new Error(`no plan for ${tierId}`)
-  return planWithout(
-    planSealed(ship, plan, { shut: world.shut, vestiges: world.vestiges }),
-    emptiedOn(world, tierId, ship),
-    heldSolidIds(world),
-  )
-}
-
-/**
- * A solid's outline with the box around it, so the reticle can dismiss it in
- * four comparisons instead of walking its edges.
- */
-/**
- * The deck as it stands once Nen has been through it.
- *
- * Emptied rooms lose what stands in them — both the solids the renderer raises
- * and the faces the collision test reads, so a swallowed coffin stops being
- * something to walk around at the same moment it stops being something to see.
- */
-export function planWithout(
-  plan: TierPlan,
-  emptied: readonly string[],
-  held: readonly string[] = [],
-): TierPlan {
-  if (!emptied.length && !held.length) return plan
-  const gone = new Set(emptied)
-  const lifted = new Set(held)
-  const structures = plan.structures.filter(
-    (structure) => !gone.has(structure.spaceId) && !lifted.has(structure.id),
-  )
-  if (structures.length === plan.structures.length) return plan
-
-  const standing = new Set(structures.map((structure) => structure.id))
-  return {
-    ...plan,
-    structures,
-    walls: plan.walls.filter((wall) => !wall.structureId || standing.has(wall.structureId)),
-  }
-}
-
-/**
- * Which rooms this deck should draw as emptied.
- *
- * Blinky's rooms always; the isolated room too, but only for an outsider — its
- * occupant keeps the real one until they walk out of it.
- */
-export function emptiedOn(world: TourWorld, tierId: string, ship: Ship): string[] {
-  const ids = [...world.emptied]
-  if (world.isolated && !world.isolated.occupant) ids.push(world.isolated.spaceId)
-  return [...new Set(ids)].filter((id) => ship.spaces.get(id)?.tierId === tierId)
-}
-
-/**
- * The rooms drawn as aura shells: an outline the hull does not hide, wherever
- * in the ship they are.
- *
- * This is the whole of "no matter where I am" made visible — a doll four decks
- * down keeps its outline, and Emperor Time lights every room at once.
- */
-export function shellsFor(world: TourWorld, ship: Ship): string[] {
-  if (world.laidOpen) return [...ship.spaces.keys()]
-  const ids = [
-    ...world.doors,
-    ...world.watched.map((doll) => doll.spaceId),
-    ...world.emptied,
-    ...world.dispatches,
-    ...(world.eye ? [world.eye] : []),
-    ...(world.dowsing ? [world.dowsing] : []),
-    ...(world.isolated ? [world.isolated.spaceId] : []),
-    // The record, drawn where it happened: what the owl kept, what was
-    // foreseen, what the poem strung together, what the droplets found.
-    ...(world.owl ? world.trail : []),
-    ...(world.foreseen ? [world.foreseen.spaceId] : []),
-    ...world.poem,
-    ...world.droplets.map((drop) => drop.spaceId),
-    ...(world.dial ? [world.dial] : []),
-    ...world.ninelives,
-    ...(world.curse ? [world.curse.victim] : []),
-    ...world.souls.flat(),
-    ...(world.body.projected ? [world.body.projected.spaceId] : []),
-  ]
-  return [...new Set(ids)].filter((id) => ship.spaces.has(id))
 }
 
 /**

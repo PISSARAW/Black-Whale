@@ -333,7 +333,8 @@ Ce qui suit du §2 a **survécu tel quel**, parce que c'était le raisonnement u
 ### 6.2 Les capacités
 
 Le §3 est implémenté comme une table de données —
-[`TABLE_TECHNIQUES`](../apps/web/src/lib/tour/morena.ts) — de vingt-six entrées, chacune
+[`TABLE_TECHNIQUES`](../packages/ability-modules/src/contagion/table.ts) — dont le nombre est
+dérivé de `TABLE_KINDS` (37 à cette révision), chacune
 réduite à un verbe (`read`, `foresee`, `pass`, `recover`, `forge`, `shield`, `hide`, `proxy`,
 `blind`, `rider`), une exposition de 0 à 1, et un drapeau `fraud`. Les cinq vecteurs du §3 sont
 les cinq groupes de la table.
@@ -440,18 +441,19 @@ que « procédure de recrutement inconnue ».
 Monté sur `/tour/morena`, où une vraie partie existe. Le composant ne décide rien : on lui
 passe un `MorenaGame` et une liste de membres, tous deux au format que le moteur écrit.
 
-### 6.5 Ce qui reste
+### 6.5 La branche et l'après-table
 
-Rien de la spec. Le seul manque est un endroit du site où une partie de Morena existe _dans une
-branche_ plutôt que dans la marche — `/simulations` est le candidat naturel, puisque
-`data.branch.snapshot.effects` y est déjà en portée et que `componentFor()` sait désormais quoi
-en faire.
+`/simulations` rend désormais l'effet `game` et traduit chaque geste de la table en action
+Contagion. La même branche peut clore la main, enregistrer le meurtre observé, infecter la cible
+au niveau zéro puis enregistrer ses meurtres. Dans la marche, cet après-table est conservé dans
+une sauvegarde locale versionnée avec le dossier des sept réponses et l'unique recrue « Vous ».
 
 ---
 
 ## 7. Les cinquante-quatre autres
 
-`TABLE_TECHNIQUES` compte **vingt-huit** entrées ; le catalogue en compte quatre-vingt-deux.
+À cette étape historique, `TABLE_TECHNIQUES` comptait **vingt-huit** entrées ; le catalogue en
+comptait quatre-vingt-deux.
 Le commentaire du code règle la question d'une phrase — « everything not in this list is a
 capability that has nothing to say to twelve cards and a chair, which is most of them, and
 saying so is part of the point » — mais cette phrase couvre en réalité **six** situations très
@@ -567,7 +569,8 @@ l'autre non — ce qui est la bonne forme pour ce jeu.
 
 ### 7.6 Les cinq sièges, ouverts
 
-Fait. `TABLE_TECHNIQUES` compte trente-trois entrées, et le verbe `evict` existe. Trois
+Fait. Cette étape a porté `TABLE_TECHNIQUES` à trente-trois entrées, avant les ajouts suivants,
+et le verbe `evict` existe. Trois
 décisions ont dû être prises que le tableau ne tranchait pas :
 
 - **Une fraude de procuration vue annule la procuration.** `proxy` remet `proxied` à `false`
@@ -591,7 +594,7 @@ passe-passe.
 
 ## 8. Le dock, pendant la main
 
-Une table où trente-trois techniques sur quatre-vingt-deux ont un siège, et un dock qui les
+Une table où `TABLE_KINDS` donne la liste courante des techniques admises, et un dock qui les
 propose toutes, ne fait pas un choix : il fait une recherche. Tant qu'une main est en cours,
 `/tour/morena` pose donc une **grille** sur le dock — `hatsuGate` dans
 `apps/web/src/lib/nen/hatsuState.ts` :

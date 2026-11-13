@@ -1,17 +1,30 @@
 import {
+  EMPTY_INFECTION_PROGRESS,
+  completeRecruitment,
   dealTheGame,
   openTheBookHere,
+  recordMemberKill,
+  witnessMurder,
   type AnswerCard,
+  type InfectionProgress,
   type MorenaGame,
+  type QuestionCard,
   type TableKind,
+  type VictimStatus,
 } from './morena'
 import {
   morenaDetectionSeed,
-  morenaChallengeRandom,
+  morenaChallengeValue,
   newMorenaChallengeSeed,
   type MorenaChallenge,
 } from './morenaChallenge'
 import { applyMorenaCommand, type MorenaCommand } from './morenaCommands'
+import {
+  MAX_MORENA_HISTORY,
+  type MorenaSavedHand,
+  type MorenaSaveV1,
+  type MorenaSavedResult,
+} from './morenaPersistence'
 
 export type MorenaView = 'menu' | 'rules' | 'lab' | 'table'
 export type MorenaMode = 'canonical' | 'lab' | 'challenge'
@@ -22,7 +35,6 @@ export interface MorenaLoadout {
   bookmark?: TableKind | null
 }
 
-const LAB_UNLOCKED_KEY = 'black-whale:morena-lab'
 const EMPTY_LOADOUT: MorenaLoadout = { tableKind: null, carryingBook: false }
 
 const markedForDeal = (invitation: MorenaChallenge | null, cheats: boolean): AnswerCard | null => {
@@ -91,16 +103,28 @@ export class MorenaSession {
   labHatsuId = $state<string | null>(null)
   labClean = $state(false)
   lastLoadout = $state<MorenaLoadout>({ ...EMPTY_LOADOUT })
-
-  #drawRandom = morenaChallengeRandom(0)
-  #detectionRandom = morenaChallengeRandom(morenaDetectionSeed(0))
+  drawCursor = $state(0)
+  detectionCursor = $state(0)
+  discoveredQuestions = $state<QuestionCard[]>([])
+  history = $state<MorenaSavedResult[]>([])
+  progress = $state<InfectionProgress>({ ...EMPTY_INFECTION_PROGRESS })
+  epilogue = $state<'pending' | 'left' | 'completed' | null>(null)
+  resumeAvailable = $state(false)
+  emperorTimeLifeHours = $state(0)
+  onChange: (() => void) | null = null
+  private protectedResume: MorenaSavedHand | null = null
 
   get challengeWaiting() {
     return Boolean(this.challenge && !this.challengeConsumed)
   }
 
-  readonly drawRandom = () => this.#drawRandom()
-  readonly detectionRandom = () => this.#detectionRandom()
+  readonly drawRandom = () => morenaChallengeValue(this.currentChallengeSeed, this.drawCursor++)
+  readonly detectionRandom = () =>
+    morenaChallengeValue(this.currentDetectionSeed, this.detectionCursor++)
+
+  private changed() {
+    this.onChange?.()
+  }
 
   setChallenge(challenge: MorenaChallenge | null) {
     if (challengeKey(challenge) === challengeKey(this.challenge)) return
@@ -115,48 +139,59 @@ export class MorenaSession {
 
   showRules() {
     this.view = 'rules'
+    this.changed()
   }
 
   showMenu() {
+    if (this.protectedResume) {
+      this.restoreHand(this.protectedResume)
+      this.protectedResume = null
+      this.resumeAvailable = true
+    } else {
+      this.resumeAvailable = false
+    }
     this.view = 'menu'
+    this.changed()
   }
 
   showLab() {
-    if (this.labUnlocked) this.view = 'lab'
-  }
-
-  hydrateLab() {
-    if (typeof sessionStorage !== 'undefined') {
-      this.labUnlocked = sessionStorage.getItem(LAB_UNLOCKED_KEY) === 'true'
+    if (this.labUnlocked) {
+      this.view = 'lab'
+      this.resumeAvailable = false
+      this.changed()
     }
   }
 
   unlockLab() {
     this.labUnlocked = true
-    if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(LAB_UNLOCKED_KEY, 'true')
+    this.changed()
   }
 
   selectLabHatsu(id: string) {
     this.labHatsuId = id
+    this.changed()
   }
 
   setLabClean(clean: boolean) {
     this.labClean = clean
     this.cheats = !clean
+    this.changed()
   }
 
   choose(card: AnswerCard | null) {
     this.choice = card
+    this.changed()
   }
 
   deal(loadout: MorenaLoadout, mode: Exclude<MorenaMode, 'challenge'> = 'canonical') {
     const invitation = this.challengeWaiting ? this.challenge : null
+    if (invitation && this.resumeAvailable) this.protectedResume = this.activeHand()
     const context = contextForDeal(invitation)
     this.currentChallengeSeed = context.seed
     this.currentDetectionSeed = context.detectionSeed
     this.previousChallengeStreak = context.previousStreak
-    this.#drawRandom = morenaChallengeRandom(this.currentChallengeSeed)
-    this.#detectionRandom = morenaChallengeRandom(this.currentDetectionSeed)
+    this.drawCursor = 0
+    this.detectionCursor = 0
     this.challengeConsumed = true
     const pages = pagesForDeal(invitation, loadout)
     this.currentMode = invitation ? 'challenge' : mode
@@ -167,30 +202,165 @@ export class MorenaSession {
       bookmark: pages[1],
     })
     this.choice = null
+    this.epilogue = null
+    this.resumeAvailable = false
     this.view = 'table'
+    this.changed()
   }
 
   dispatch(command: MorenaCommand) {
-    this.game = applyMorenaCommand(this.game, command, {
+    const before = this.game
+    this.game = applyMorenaCommand(before, command, {
       random: this.drawRandom,
       drawRandom: this.drawRandom,
       detectionRandom: this.detectionRandom,
     })
+    if (command.kind === 'ask' && this.game !== before) this.discover(command.question)
     this.choice = null
     this.recordCompletion()
+    this.changed()
     return this.game
   }
 
   replaceGame(game: MorenaGame) {
     this.game = game
     this.recordCompletion()
+    this.changed()
   }
 
   replay() {
     this.deal(this.lastLoadout, this.currentMode === 'canonical' ? 'canonical' : 'lab')
   }
 
+  discover(question: QuestionCard) {
+    if (!this.discoveredQuestions.includes(question)) {
+      this.discoveredQuestions = [...this.discoveredQuestions, question]
+    }
+  }
+
+  observeMurder() {
+    const witnessed = witnessMurder(this.game, this.progress)
+    this.progress = completeRecruitment(this.game, witnessed)
+    this.epilogue = this.progress.member ? 'completed' : 'left'
+    this.changed()
+  }
+
+  leaveEpilogue() {
+    this.epilogue = 'left'
+    this.changed()
+  }
+
+  recordKill(status: VictimStatus) {
+    if (!this.progress.member) return
+    this.progress = { ...this.progress, member: recordMemberKill(this.progress.member, status) }
+    this.changed()
+  }
+
+  setEmperorTimeLifeHours(hours: number) {
+    const next = Math.max(0, hours)
+    if (next === this.emperorTimeLifeHours) return
+    this.emperorTimeLifeHours = next
+    this.changed()
+  }
+
+  hydrate(save: MorenaSaveV1 | null) {
+    if (!save) return
+    this.labUnlocked = save.labUnlocked
+    this.labHatsuId = save.labHatsuId
+    this.discoveredQuestions = [...save.discoveredQuestions]
+    this.history = [...save.history]
+    this.progress = { ...save.progress, completedSteps: [...save.progress.completedSteps] }
+    if (!save.active) return
+    this.restoreHand(save.active)
+    this.resumeAvailable = true
+    this.view = 'menu'
+  }
+
+  resume() {
+    if (!this.resumeAvailable) return
+    this.resumeAvailable = false
+    this.view = 'table'
+    this.changed()
+  }
+
+  abandonResume() {
+    this.resumeAvailable = false
+    this.game = dealTheGame()
+    this.choice = null
+    this.epilogue = null
+    this.changed()
+  }
+
+  snapshot(): MorenaSaveV1 {
+    const active =
+      this.protectedResume ??
+      (this.view === 'table' || this.resumeAvailable ? this.activeHand() : null)
+    return {
+      version: 1,
+      savedAt: new Date().toISOString(),
+      active,
+      labUnlocked: this.labUnlocked,
+      labHatsuId: this.labHatsuId,
+      discoveredQuestions: [...this.discoveredQuestions],
+      history: this.history.slice(0, MAX_MORENA_HISTORY),
+      progress: $state.snapshot(this.progress),
+    }
+  }
+
+  private activeHand(): MorenaSavedHand {
+    return {
+      game: $state.snapshot(this.game),
+      choice: this.choice,
+      mode: this.currentMode,
+      seed: this.currentChallengeSeed,
+      detectionSeed: this.currentDetectionSeed,
+      drawCursor: this.drawCursor,
+      detectionCursor: this.detectionCursor,
+      previousStreak: this.previousChallengeStreak,
+      loadout: { ...this.lastLoadout },
+      epilogue: this.epilogue,
+      emperorTimeLifeHours: this.emperorTimeLifeHours,
+    }
+  }
+
+  private restoreHand(active: MorenaSavedHand) {
+    this.game = active.game
+    this.choice = active.choice
+    this.currentMode = active.mode
+    this.currentChallengeSeed = active.seed
+    this.currentDetectionSeed = active.detectionSeed
+    this.drawCursor = active.drawCursor
+    this.detectionCursor = active.detectionCursor
+    this.previousChallengeStreak = active.previousStreak
+    this.lastLoadout = { ...active.loadout }
+    this.epilogue = active.epilogue
+    this.emperorTimeLifeHours = active.emperorTimeLifeHours
+  }
+
   private recordCompletion() {
-    if (this.currentMode === 'canonical' && this.game.phase === 'over') this.unlockLab()
+    if (this.game.phase !== 'over') return
+    if (this.currentMode === 'canonical') this.labUnlocked = true
+    const id = `${this.currentMode}:${this.currentChallengeSeed}`
+    if (!this.history.some((result) => result.id === id)) {
+      this.history = [
+        {
+          id,
+          completedAt: new Date().toISOString(),
+          verdict: this.game.verdict,
+          asked: [...this.game.asked],
+          kissed: this.game.kissed,
+          technique: this.game.technique,
+        },
+        ...this.history,
+      ].slice(0, MAX_MORENA_HISTORY)
+    }
+    if (
+      !this.game.proxied &&
+      this.game.kissed &&
+      !this.progress.member &&
+      (this.game.verdict === 'infected' || this.game.verdict === 'forced')
+    ) {
+      this.epilogue = 'pending'
+    }
   }
 }

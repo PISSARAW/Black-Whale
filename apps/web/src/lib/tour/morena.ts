@@ -31,6 +31,7 @@ import type { Vec2 } from './types'
 // The rules, re-exported so the route and its tests have one import to make.
 export {
   ANSWER_CARDS,
+  EMPTY_INFECTION_PROGRESS,
   INFECTION_STEPS,
   QUESTION_CARDS,
   TABLE_KINDS,
@@ -41,6 +42,9 @@ export {
   exposureNow,
   infectionAfter,
   infectionStepsFrom,
+  completeRecruitment,
+  recordMemberKill,
+  witnessMurder,
   lastCard,
   leaveTheTable,
   livePages,
@@ -65,6 +69,9 @@ export type {
   GameEnding,
   GamePhase,
   InfectionStep,
+  InfectionProgress,
+  InfectionProgressLike,
+  ContagionMember,
   MorenaGame,
   QuestionCard,
   Rider,
@@ -74,6 +81,7 @@ export type {
   TablePage,
   TableSeat,
   Verdict,
+  VictimStatus,
 } from '@black-whale/ability-modules'
 
 /**

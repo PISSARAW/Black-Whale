@@ -144,16 +144,19 @@ export function decodeMorenaChallenge(encoded: string | null): MorenaChallenge |
   }
 }
 
+/** One addressable value in the deterministic stream, suitable for persistence. */
+export function morenaChallengeValue(seed: number, index: number): number {
+  const state = (seed + Math.imul(Math.max(0, Math.trunc(index)) + 1, 0x6d2b79f5)) >>> 0
+  let mixed = state
+  mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1)
+  mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61)
+  return ((mixed ^ (mixed >>> 14)) >>> 0) / 0x100000000
+}
+
 /** Small deterministic generator: the same invitation starts from the same draw. */
-export function morenaChallengeRandom(seed: number): () => number {
-  let state = seed >>> 0
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0
-    let mixed = state
-    mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1)
-    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61)
-    return ((mixed ^ (mixed >>> 14)) >>> 0) / 0x100000000
-  }
+export function morenaChallengeRandom(seed: number, offset = 0): () => number {
+  let index = Math.max(0, Math.trunc(offset))
+  return () => morenaChallengeValue(seed, index++)
 }
 
 export const newMorenaChallengeSeed = (random: () => number = Math.random): number =>

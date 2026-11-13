@@ -30,6 +30,18 @@ export interface AbilityViewModel {
 export interface AbilitySurfaceAdapter {
   modelFor(presentation: AbilityPresentationProjection, actionId: string): AbilityViewModel | null
   dispatch(actionId: string): void | Promise<void>
+  availability?(actionId: string): AbilitySurfaceActionAvailability
+}
+
+export interface AbilitySurfaceActionAvailability {
+  executable: boolean
+  reason?: string
+}
+
+export interface AbilitySurfaceSnapshot {
+  effects?: AbilityActionPlan['projectedEffects']
+  targets?: string[]
+  metrics?: Record<string, string | number | boolean | null>
 }
 
 export function previewViewModel(options: {
@@ -81,5 +93,38 @@ export function previewSurfaceAdapter(options: {
         reducedMotion: options.reducedMotion,
       }),
     dispatch: (actionId) => options.onDispatch?.(actionId),
+  }
+}
+
+/** Adapter for a playable surface whose reducer and state already exist. */
+export function liveSurfaceAdapter(options: {
+  name: string
+  owner: string
+  reducedMotion?: boolean
+  snapshot: (actionId: string) => AbilitySurfaceSnapshot
+  dispatch: (actionId: string) => void | Promise<void>
+  availability?: (actionId: string) => AbilitySurfaceActionAvailability
+}): AbilitySurfaceAdapter {
+  return {
+    modelFor(presentation, actionId) {
+      const preview = previewViewModel({
+        presentation,
+        actionId,
+        name: options.name,
+        owner: options.owner,
+        reducedMotion: options.reducedMotion,
+      })
+      if (!preview) return null
+      const live = options.snapshot(actionId)
+      return {
+        ...preview,
+        effects: live.effects ?? preview.effects,
+        targets: live.targets ?? preview.targets,
+        metrics: { ...preview.metrics, ...live.metrics },
+        preview: false,
+      }
+    },
+    dispatch: options.dispatch,
+    availability: options.availability,
   }
 }

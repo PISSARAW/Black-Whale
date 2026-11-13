@@ -32,11 +32,20 @@
   import MorenaHatsuSeats from '$lib/components/tour/MorenaHatsuSeats.svelte'
   import MorenaLabPanel from '$lib/components/tour/MorenaLabPanel.svelte'
   import MorenaTranscript from '$lib/components/tour/MorenaTranscript.svelte'
+  import MorenaQuestionDossier from '$lib/components/tour/MorenaQuestionDossier.svelte'
+  import MorenaEpilogue from '$lib/components/tour/MorenaEpilogue.svelte'
   import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
+  import AbilityActionWheel from '$lib/nen/AbilityActionWheel.svelte'
+  import NenWhyPanel from '$lib/nen/NenWhyPanel.svelte'
+  import { presentationFor } from '$lib/nen/abilityPresentation'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { page } from '$app/stores'
   import { link, locale, t } from '$lib/i18n'
   import { emperorTimeLifeHours } from '$lib/nen/hatsuState'
+  import { activeHatsu } from '$lib/nen/hatsuState'
+  import { hatsuById } from '$lib/nen/hatsuRegistry'
+  import { localizeHatsu } from '$lib/i18n/hatsu'
+  import { sitsAtTheTable } from '$lib/tour/morena'
   import { floorOf, theShip } from '$lib/tour/blueprint'
   import { Fullscreen } from '$lib/tour/fullscreen.svelte'
   import {
@@ -60,10 +69,14 @@
     advanceMorenaEmperorTime,
     morenaLabLoadout,
     morenaLabTechniques,
+    morenaDockLoadout,
     morenaLifeScorch,
     syncMorenaHatsuGate,
   } from '$lib/tour/morenaHatsuAdapter'
   import { MorenaSession } from '$lib/tour/morenaSession.svelte'
+  import { readMorenaSave, writeMorenaSave } from '$lib/tour/morenaPersistence'
+  import { reducedMotion } from '$lib/tour/comfort'
+  import { contagionSurfaceAdapter, type ContagionSurfaceCommand } from '$lib/tour/contagionSurface'
 
   const ship = theShip()
   const modeNen = new ModeNenState()
@@ -93,12 +106,39 @@
   const currentChallengeSeed = $derived(session.currentChallengeSeed)
   const previousChallengeStreak = $derived(session.previousChallengeStreak)
   const labTechniques = $derived(morenaLabTechniques($locale))
+  const dockHatsu = $derived($activeHatsu ? localizeHatsu($activeHatsu, $locale) : null)
+  const dockHatsuFits = $derived(Boolean($activeHatsu && sitsAtTheTable($activeHatsu.kind)))
+  const contagionProfile = hatsuById('contagion')!
+  const contagionNamed = $derived(localizeHatsu(contagionProfile, $locale))
+  const contagionPresentation = presentationFor('contagion')
+  let selectedContagionActionId = $state<string | null>('open-game')
+  const selectedContagionAction = $derived(
+    contagionPresentation?.actions.find(({ entry }) => entry.id === selectedContagionActionId) ??
+      contagionPresentation?.actions.find(({ entry }) => entry.visibility === 'available') ??
+      null,
+  )
+
+  $effect(() => {
+    if (!contagionPresentation) return
+    if (contagionPresentation.actions.some(({ entry }) => entry.id === selectedContagionActionId))
+      return
+    selectedContagionActionId =
+      contagionPresentation.actions.find(({ entry }) => entry.visibility === 'available')?.entry
+        .id ?? null
+  })
 
   $effect(() => {
     session.setChallenge(incomingChallenge)
   })
 
-  onMount(() => session.hydrateLab())
+  onMount(() => {
+    session.hydrate(readMorenaSave())
+    emperorTimeLifeHours.update((hours) => Math.max(hours, session.emperorTimeLifeHours))
+    session.onChange = () => writeMorenaSave(session.snapshot())
+    return () => {
+      session.onChange = null
+    }
+  })
 
   let tierId = $state(HIDEOUT_TIER)
 
@@ -209,10 +249,11 @@
   const seats = $derived(hatsu.seats)
   const keyed = $derived(hatsu.keyed)
   const hands = $derived(hatsu.hands)
+  const knowsInfection = $derived(session.discoveredQuestions.includes('if-yes'))
 
   function dealCanonical() {
     session.setCheats(true)
-    session.deal({ tableKind: null, carryingBook: false }, 'canonical')
+    session.deal(morenaDockLoadout(), 'canonical')
   }
 
   function dealLab() {
@@ -241,6 +282,45 @@
   function walkOut() {
     session.dispatch({ kind: 'leave' })
   }
+
+  const contagionAdapter = $derived(
+    contagionPresentation
+      ? contagionSurfaceAdapter({
+          presentation: contagionPresentation,
+          name: contagionNamed.name,
+          owner: contagionNamed.owner,
+          reducedMotion: $reducedMotion,
+          state: {
+            view,
+            game,
+            progress: session.progress,
+            choice,
+            techniquePage: keyed.find((seat) => !seat.usedUp)?.page ?? null,
+          },
+          reasons: $t.abilities.surface,
+          execute: (command: ContagionSurfaceCommand) => {
+            if (command.kind === 'open-game') {
+              dealCanonical()
+              return
+            }
+            if (command.kind === 'game') {
+              session.dispatch(command.command)
+              return
+            }
+            if (command.kind === 'witness-murder') {
+              session.observeMurder()
+              return
+            }
+            session.showMenu()
+          },
+        })
+      : null,
+  )
+  const contagionModel = $derived(
+    contagionPresentation && selectedContagionAction && contagionAdapter
+      ? contagionAdapter.modelFor(contagionPresentation, selectedContagionAction.entry.id)
+      : null,
+  )
 
   // ── The same game, played with the hands ───────
   /**
@@ -331,6 +411,7 @@
     if (!burning) return
     const clock = setInterval(() => {
       session.replaceGame(advanceMorenaEmperorTime(session.game))
+      session.setEmperorTimeLifeHours($emperorTimeLifeHours)
     }, 1000)
     return () => clearInterval(clock)
   })
@@ -546,17 +627,70 @@
         </div>
       {/if}
 
+      {#if contagionPresentation && selectedContagionAction && contagionAdapter}
+        <details
+          class="mb-4 rounded border border-[#d94f68]/30 bg-[#0b0b0d]"
+          data-module-wheel="contagion"
+        >
+          <summary
+            class="cursor-pointer list-none px-3 py-2 text-xs font-semibold uppercase tracking-widest text-[#d94f68] marker:hidden"
+          >
+            {contagionNamed.name} · {$t.abilities.actionWheel}
+          </summary>
+          <div class="grid gap-2 border-t border-[#d94f68]/20 p-3">
+            <AbilityActionWheel
+              presentation={contagionPresentation}
+              selected={selectedContagionAction.entry.id}
+              onSelect={(actionId) => (selectedContagionActionId = actionId)}
+              availability={contagionAdapter.availability}
+              onDispatch={(actionId) => contagionAdapter.dispatch(actionId)}
+            />
+            <NenWhyPanel plan={selectedContagionAction.plan} compact />
+          </div>
+        </details>
+      {/if}
+
       {#if (view === 'menu' || view === 'rules') && challengeWaiting}
         <MorenaChallengeCard incoming={incomingChallenge} path={$link('/tour/morena')} />
       {/if}
 
       {#if view === 'menu'}
+        {#if session.resumeAvailable && !challengeWaiting}
+          <section
+            class="mb-4 rounded border border-[#FFD700]/50 bg-[#171407] p-3"
+            data-testid="morena-resume"
+          >
+            <h2 class="text-sm font-semibold text-[#FFD700]">{copy.menu.resumeTitle}</h2>
+            <p class="mt-1 text-xs text-[#FFFFF0]/65">{copy.menu.resumeBody}</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button
+                class="rounded bg-[#FFD700] px-3 py-2 text-xs font-semibold text-black"
+                onclick={() => session.resume()}>{copy.menu.resume}</button
+              >
+              <button
+                class="rounded border border-[#555] px-3 py-2 text-xs text-[#FFFFF0]"
+                onclick={() => session.abandonResume()}>{copy.menu.abandonSave}</button
+              >
+            </div>
+          </section>
+        {/if}
         <MorenaSetupPanel
           mode="menu"
           onDeal={dealCanonical}
           onRules={() => session.showRules()}
           onBack={() => session.showMenu()}
         />
+        {#if dockHatsu}
+          <p
+            class="mt-3 rounded border border-[#333] px-3 py-2 text-xs {dockHatsuFits
+              ? 'text-[#8ecae6]'
+              : 'text-[#FFFFF0]/50'}"
+          >
+            {dockHatsuFits
+              ? copy.menu.carrying(dockHatsu.name)
+              : copy.menu.incompatible(dockHatsu.name)}
+          </p>
+        {/if}
         {#if session.labUnlocked}
           <button
             type="button"
@@ -566,6 +700,16 @@
           >
             {copy.lab.open}
           </button>
+        {/if}
+        <MorenaQuestionDossier discovered={session.discoveredQuestions} />
+        {#if session.progress.member}
+          <MorenaEpilogue
+            state={null}
+            progress={session.progress}
+            onWitness={() => session.observeMurder()}
+            onLeave={() => session.leaveEpilogue()}
+            onKill={(status) => session.recordKill(status)}
+          />
         {/if}
       {:else if view === 'rules'}
         <MorenaSetupPanel
@@ -626,20 +770,47 @@
         {/if}
 
         {#if game.phase !== 'over'}
+          {#if seats.length}
+            <MorenaHatsuSeats
+              {game}
+              {seats}
+              {keyed}
+              auraColor={hatsu.auraColor}
+              onCast={(hand) => cast(null, null, hand)}
+            />
+          {/if}
           <MorenaPhaseActions
             {game}
             {choice}
             {nameOfCard}
             onCommand={(command) => session.dispatch(command)}
             onChoice={(card) => session.choose(card)}
+            {knowsInfection}
           />
+          <div class="mt-4 border-t border-[#222] pt-3">
+            <p class="text-[11px] leading-snug text-[#FFFFF0]/45">{copy.hatsu.leaveWarning}</p>
+            <button
+              class="mt-2 rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0]/80 hover:border-[#ef3340]"
+              onclick={walkOut}>{copy.hatsu.leave}</button
+            >
+          </div>
         {:else if game.verdict}
           <MorenaVerdictPanel
             {game}
+            progress={session.progress}
+            {knowsInfection}
             onAgain={() => session.replay()}
             onLeave={() => session.showMenu()}
             onLab={session.labUnlocked ? () => session.showLab() : undefined}
           />
+          <MorenaEpilogue
+            state={session.epilogue}
+            progress={session.progress}
+            onWitness={() => session.observeMurder()}
+            onLeave={() => session.leaveEpilogue()}
+            onKill={(status) => session.recordKill(status)}
+          />
+          <MorenaQuestionDossier discovered={session.discoveredQuestions} />
           <MorenaChallengeCard
             {game}
             seed={currentChallengeSeed}
@@ -661,39 +832,26 @@
           <div class="border-t border-[#222] p-3">
             <p class="text-xs leading-relaxed text-[#FFFFF0]/45">{copy.analysis.hint}</p>
 
-            <MorenaHatsuSeats
-              {game}
-              {seats}
-              {keyed}
-              auraColor={hatsu.auraColor}
-              onCast={(hand) => cast(null, null, hand)}
-            />
-
-            <!-- Walking out. Canon puts it under the same sanction as cheating, so
-                 it is offered as a move rather than as a way out. -->
-            {#if game.phase !== 'over'}
-              <div class="mt-4 border-t border-[#222] pt-3">
-                <p class="text-[11px] leading-snug text-[#FFFFF0]/45">
-                  {copy.hatsu.leaveWarning}
-                </p>
-                <p class="mt-2 text-[11px] text-[#FFFFF0]/40">
-                  {game.watch > 0 ? copy.hatsu.watching : copy.hatsu.unwatched}
-                </p>
-                <button
-                  class="mt-2 rounded border border-[#444] px-3 py-1.5 text-xs text-[#FFFFF0]/80 hover:border-[#ef3340] hover:text-[#ef8a90]"
-                  onclick={walkOut}
-                >
-                  {copy.hatsu.leave}
-                </button>
-              </div>
-            {/if}
-
             <div class="mt-5 border-t border-[#222] pt-4">
               <MorenaPiles {game} {copy} />
             </div>
 
             <div class="mt-5">
-              <ContagionDashboard {game} />
+              <ContagionDashboard
+                {game}
+                model={contagionModel ?? undefined}
+                progress={session.progress}
+                members={session.progress.member
+                  ? [
+                      {
+                        memberId: session.progress.member.memberId,
+                        label: session.progress.member.label,
+                        level: session.progress.member.level,
+                        kills: session.progress.member.kills,
+                      },
+                    ]
+                  : []}
+              />
             </div>
 
             <MorenaTranscript {game} {nameOfCard} />

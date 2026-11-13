@@ -13,6 +13,41 @@ export type ZoomLevel = 'OVERVIEW' | 'TIER' | 'LOCAL'
 export type BeyondLineageFilter = 'all' | 'any' | BeyondLineageStatus
 export type TrackingTargetKind = 'reader' | 'character' | 'object'
 export type MapEntityFilter = 'all' | 'characters' | 'objects'
+export type KnowledgeState =
+  | 'known'
+  | 'confirmed'
+  | 'reported'
+  | 'believed'
+  | 'suspected'
+  | 'rumor'
+  | 'rejected'
+  | 'outdated'
+  | 'contradicted'
+  | 'unknown'
+
+export type ExplainTarget =
+  | {
+      kind: 'character'
+      subject: string
+      location: string
+      tier: string
+      certainty: string
+      temporalLabel: string
+      source: string
+      observedAt: string
+      knowledgeState: KnowledgeState
+      profileSlug?: string
+    }
+  | {
+      kind: 'object'
+      subject: string
+      value: string
+      source: string
+      observedAt: string
+      freshness: string
+      knowledgeState: KnowledgeState
+      canonicalValue?: string
+    }
 
 export const mapState = $state({
   currentZoomLevel: 'OVERVIEW' as ZoomLevel,
@@ -26,27 +61,11 @@ export const mapState = $state({
   followMode: 'consciousness' as FollowMode,
   compareWithReader: false,
   explainPanelOpen: false,
-  explainTarget: null as null | {
-    subject: string
-    value: string
-    source: string
-    observedAt: string
-    freshness: string
-    knowledgeState:
-      | 'known'
-      | 'confirmed'
-      | 'reported'
-      | 'believed'
-      | 'suspected'
-      | 'rumor'
-      | 'rejected'
-      | 'outdated'
-      | 'contradicted'
-      | 'unknown'
-    canonicalValue?: string
-  },
+  explainTarget: null as ExplainTarget | null,
   currentEventIndex: 0,
-  showEntities: false,
+  showEventChanges: false,
+  playingTimeline: false,
+  showEntities: true,
   filters: {
     entityType: 'all' as MapEntityFilter,
     factions: [] as string[],
@@ -97,25 +116,7 @@ export const mapState = $state({
     this.compareWithReader = nextValue
   },
 
-  openExplainPanel(payload: {
-    subject: string
-    value: string
-    source: string
-    observedAt: string
-    freshness: string
-    knowledgeState:
-      | 'known'
-      | 'confirmed'
-      | 'reported'
-      | 'believed'
-      | 'suspected'
-      | 'rumor'
-      | 'rejected'
-      | 'outdated'
-      | 'contradicted'
-      | 'unknown'
-    canonicalValue?: string
-  }) {
+  openExplainPanel(payload: ExplainTarget) {
     this.explainTarget = payload
     this.explainPanelOpen = true
   },

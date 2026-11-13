@@ -39,7 +39,9 @@ export function localizedLoad<Load extends (...args: never[]) => unknown>(load: 
     const url = (event as { url?: URL }).url
     const { locale } = parsePathname(url?.pathname ?? '/')
     const localizedContent = pageTranslations(data, locale)
-    return Object.keys(localizedContent).length ? { ...data, localizedContent } : data
+    if (!Object.keys(localizedContent).length) return data
+    const inherited = (data as { localizedContent?: Record<string, string> }).localizedContent || {}
+    return { ...data, localizedContent: { ...inherited, ...localizedContent } }
   }
   return localized as Load
 }

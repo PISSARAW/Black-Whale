@@ -74,7 +74,9 @@ test('tracking and time navigation preserve each other in the URL', async ({ pag
   await expect(page).toHaveURL(/target=object%3A/)
   const target = new URL(page.url()).searchParams.get('target')
   await page.getByRole('button', { name: 'Fermer le panneau', exact: true }).click()
-  const lowerTier = page.getByRole('button', { name: 'Niveau 5', exact: true })
+  const lowerTier = page
+    .getByRole('navigation', { name: 'Ponts du Black Whale', exact: true })
+    .getByRole('button', { name: 'Niveau 5', exact: true })
   await lowerTier.click()
   await expect(lowerTier).toHaveAttribute('aria-current', 'page')
   await page.getByRole('button', { name: 'Événement précédent', exact: true }).click()
@@ -113,12 +115,103 @@ test('expanded map, zoom reset and mobile panels stay usable', async ({ page }) 
   expect(dimensions.page).toBeLessThanOrEqual(dimensions.viewport)
 })
 
-test('the plan starts uncluttered and positions can be revealed on demand', async ({ page }) => {
+test('positions are visible by default and can be hidden with a shareable URL', async ({
+  page,
+}) => {
   const positions = page.getByRole('button', { name: 'Présences', exact: true })
-  await expect(positions).toHaveAttribute('aria-pressed', 'false')
-  await expect(page.locator('.presence-layer')).toHaveCount(0)
-  await positions.click()
+  await expect(positions).toHaveAttribute('aria-pressed', 'true')
   await expect(page.locator('.presence-layer')).toBeVisible()
   await positions.click()
   await expect(page.locator('.presence-layer')).toHaveCount(0)
+  await expect(page).toHaveURL(/positions=0/)
+  await page.reload()
+  await expect(positions).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('spatial state and filters survive a reload and browser history', async ({ page }) => {
+  const tiers = page.getByRole('navigation', { name: 'Ponts du Black Whale', exact: true })
+  await tiers.getByRole('button', { name: 'Niveau 3', exact: true }).click()
+  await expect(page).toHaveURL(/tier=tier-3/)
+  await page.getByRole('button', { name: 'Open Cineplex', exact: true }).click()
+  await expect(page).toHaveURL(/location=t3-cinema/)
+  await page.reload()
+  await expect(page.getByRole('complementary', { name: 'Détails du lieu' })).toBeVisible()
+  await page.goBack()
+  await expect(page).not.toHaveURL(/location=/)
+  await expect(tiers.getByRole('button', { name: 'Niveau 3', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+})
+
+test('the NEN dock never receives a timeline step click', async ({ page }) => {
+  const next = page.getByRole('button', { name: 'Événement suivant', exact: true })
+  if (await next.isDisabled()) {
+    await page.getByRole('button', { name: /^Chronologie/i }).click()
+    await page.getByLabel('Choisir un événement', { exact: true }).selectOption('0')
+  }
+  const hit = await next.evaluate((button) => {
+    const box = button.getBoundingClientRect()
+    return document
+      .elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)
+      ?.getAttribute('aria-label')
+  })
+  expect(hit).toBe('Événement suivant')
+  await next.click()
+  await expect(page).toHaveURL(/eventId=/)
+})
+
+test('keyboard, playback and adjacent changes drive the timeline', async ({ page }) => {
+  await page.getByRole('button', { name: /^Chronologie/i }).click()
+  const eventSelect = page.getByLabel('Choisir un événement', { exact: true })
+  await eventSelect.selectOption('0')
+  await expect(
+    page.getByRole('button', { name: 'Événement précédent', exact: true }),
+  ).toBeDisabled()
+
+  const firstEvent = new URL(page.url()).searchParams.get('eventId')
+  await page.getByRole('heading', { name: 'Black Whale 01' }).click()
+  await page.keyboard.press('ArrowRight')
+  await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).not.toBe(firstEvent)
+
+  const changes = page.getByRole('button', {
+    name: 'Afficher les changements vers l’événement suivant',
+    exact: true,
+  })
+  await expect(changes).toBeEnabled()
+  await changes.click()
+  await expect(page.locator('.delta-overlay')).toBeVisible()
+  await changes.click()
+
+  await eventSelect.selectOption('0')
+  await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).toBe(firstEvent)
+  const play = page.getByRole('button', { name: 'Lire la chronologie', exact: true })
+  const beforePlayback = new URL(page.url()).searchParams.get('eventId')
+  await play.click()
+  const pause = page.getByRole('button', {
+    name: 'Mettre la chronologie en pause',
+    exact: true,
+  })
+  await expect(pause).toBeVisible()
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get('eventId'), { timeout: 5_000 })
+    .not.toBe(beforePlayback)
+  await pause.click()
+  const pausedAt = new URL(page.url()).searchParams.get('eventId')
+  await page.waitForTimeout(3_000)
+  expect(new URL(page.url()).searchParams.get('eventId')).toBe(pausedAt)
+})
+
+test('the ship still hands off to the 3D tour', async ({ page }) => {
+  await page.getByRole('link', { name: 'Visite virtuelle', exact: true }).click()
+  await expect(page).toHaveURL(/\/fr\/tour$/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+})
+
+test('mobile keeps at least half the viewport for the map', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'mobile layout assertion')
+  const height = await page
+    .locator('.ship-map-body')
+    .evaluate((node) => node.getBoundingClientRect().height)
+  expect(height).toBeGreaterThanOrEqual(page.viewportSize()!.height * 0.5)
 })

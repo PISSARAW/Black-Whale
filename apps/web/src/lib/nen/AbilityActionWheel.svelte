@@ -30,6 +30,7 @@
     <div role="listitem">
       <button
         type="button"
+        data-action-id={action.entry.id}
         class:current={selected === action.entry.id}
         class:locked={disabled}
         aria-disabled={disabled}

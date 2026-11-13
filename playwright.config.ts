@@ -3,8 +3,8 @@ import { defineConfig, devices } from 'playwright/test'
 // Not 3000/3002: those are the ports the dev scripts use, and an e2e run that
 // silently reuses whatever a developer happens to have open there is a run that
 // proves nothing. These are e2e-only.
-const WEB_PORT = 4173
-const ADMIN_PORT = 4174
+const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 4173)
+const ADMIN_PORT = Number(process.env.E2E_ADMIN_PORT ?? 4174)
 
 // The back-office refuses to start in production without a real one; in a test
 // run the value only has to be known to both sides.

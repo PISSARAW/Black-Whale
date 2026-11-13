@@ -257,7 +257,7 @@ export default tseslint.config(
       'apps/web/src/lib/tour/apparitions.ts', // 2059 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/lib/tour/blueprint.ts', // 758
       'apps/web/src/lib/tour/geometry.ts', // 942
-      'apps/web/src/lib/tour/hatsu.ts', // 4177 — ceiling in scripts/ratchet-lines.json
+      'apps/web/src/lib/tour/hatsu.ts', // 3978 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/lib/tour/mesh.ts', // 1820 — ceiling in scripts/ratchet-lines.json
       'apps/web/src/lib/tour/morena.ts', // 1034
       'apps/web/src/routes/+layout.svelte', // 859

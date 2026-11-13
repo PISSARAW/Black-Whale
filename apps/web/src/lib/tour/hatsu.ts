@@ -1,5 +1,6 @@
 export * from './cast/kinds'
 export * from './cast/types'
+export * from './hatsuBook'
 /**
  * Nen inside the walk: what a Hatsu does to the ship rather than to the page.
  *
@@ -42,19 +43,15 @@ import type { Space, Structure, Vec2, WallSegment } from './types'
 // for everyone who reads them off `hatsu`, and this brings them into scope for
 // the reducers below, which is a different thing and needs saying separately.
 import {
-  aimsAtSolids,
   BODY_HATSU_KINDS,
   EITHER_TARGET,
   OWL_FILM_SECONDS,
   OWL_SECONDS,
   ROOM_OR_BODY,
   SOLID_HATSU_KINDS,
-  worksInTour,
-  worksOnTheBody,
 } from './cast/kinds'
 import { bodyAfterAuraEnds, paceOf } from './cast/pain'
 import {
-  CLOSED_BOOK,
   EMPTY_WORLD,
   type DeckMoment,
   type DoorOptions,
@@ -2139,202 +2136,6 @@ export function releaseHold(world: TourWorld, spaceId: string): TourWorld {
     foreseen: world.foreseen?.spaceId === spaceId ? null : world.foreseen,
     dowsing: world.dowsing === spaceId ? null : world.dowsing,
   }
-}
-
-/**
- * What a page costs to use.
- *
- * A stolen page stays in the book and can be cast again; a Culdcept card is
- * spent by being played, and so is the dolphin's loan. Nothing else about the
- * cast changes, so this is applied after it rather than woven into it.
- */
-export function spendPage(world: TourWorld, kind: HatsuInteractionKind): TourWorld {
-  const book = world.book
-  if (book.loan === kind) return { ...world, book: { ...book, loan: null } }
-  const card = book.cards.indexOf(kind)
-  if (card < 0) return world
-  return {
-    ...world,
-    book: { ...book, cards: book.cards.filter((_, index) => index !== card) },
-  }
-}
-
-/** The pages the visitor may actually cast from, in the order the panel lists them. */
-export function castablePages(book: TourBook): HatsuInteractionKind[] {
-  return [
-    ...(book.open ? [book.open] : []),
-    ...(book.bookmark && book.bookmark !== book.open ? [book.bookmark] : []),
-    ...book.cards,
-    ...(book.loan ? [book.loan] : []),
-  ]
-}
-
-/**
- * What Chrollo has already stolen by the time the walk begins.
- *
- * Double Face is not a theft — it is the bookmark, and a bookmark is worthless
- * without two pages under it. The walk cannot make the visitor steal twice
- * before the ability does anything, so the book is handed over already holding
- * a pair, drawn from what the archive has Chrollo carrying. Every one of them
- * is a technique the walk can actually cast, because a page that turned out to
- * be inert would be half the ability doing nothing.
- */
-export const DOUBLE_FACE_PAGES: readonly HatsuInteractionKind[] = [
-  'devour',
-  'pocket',
-  'teleport',
-  'polarity',
-  'command',
-  'identity-swap',
-  'divination',
-  'prophecy',
-  'clone',
-]
-
-/**
- * A book with two of them in it: one on the open page, one under the bookmark.
- *
- * Which two is the walk's own roll rather than the archive's — Chrollo's book
- * held over a hundred, and the two he has to hand at any moment is exactly the
- * kind of thing no record of the Black Whale settles.
- */
-export function openTheBook(random: () => number = Math.random): TourBook {
-  const left = DOUBLE_FACE_PAGES[Math.floor(random() * DOUBLE_FACE_PAGES.length)]
-  const rest = DOUBLE_FACE_PAGES.filter((page) => page !== left)
-  const right = rest[Math.floor(random() * rest.length)]
-  return { ...CLOSED_BOOK, pages: [left, right], open: left, bookmark: right }
-}
-
-/** The open page and the bookmarked one, in the order the two keys play them. */
-export function twoPages(book: TourBook): [HatsuInteractionKind, HatsuInteractionKind] | null {
-  if (!book.open || !book.bookmark || book.open === book.bookmark) return null
-  return [book.open, book.bookmark]
-}
-
-/** The book with the ribbon moved to the other page, which swaps the two keys. */
-export function turnTheBook(book: TourBook): TourBook {
-  const pair = twoPages(book)
-  return pair ? { ...book, open: pair[1], bookmark: pair[0] } : book
-}
-
-/**
- * The techniques cast with two hands rather than one.
- *
- * Genthru puts the sun on with one hand and the moon with the other, and the
- * walk has one key per technique to say it with. So the key alternates: the
- * first press is the sun, the next is the moon, and the pair the ability needs
- * is two presses of the same key rather than two keys the visitor has to be
- * told about. Nothing else in the roster casts twice like this yet — the set
- * is here so that when something does, the key already knows how.
- */
-export const TWO_HANDED_KINDS = new Set<HatsuInteractionKind>(['polarity'])
-
-/** The other hand. */
-export const otherHand = (mark: 'sun' | 'moon'): 'sun' | 'moon' => (mark === 'sun' ? 'moon' : 'sun')
-
-/**
- * The three techniques that are given an order rather than only cast.
- *
- * A double, a bird and an insect all keep doing something after the cast, and
- * what they are doing is a choice the visitor goes on making — so R walks each
- * of them on to its next watch instead of meaning what it means everywhere
- * else.
- */
-export const TAKES_ORDERS = new Set<HatsuInteractionKind>(['guardian', 'surveillance', 'scout'])
-
-/** What one key does under the technique in hand. */
-export type HatsuKeyAction =
-  | 'cast'
-  | 'castSolid'
-  | 'castSelf'
-  | 'castOnSelfInstead'
-  | 'sun'
-  | 'moon'
-  | 'alternate'
-  | 'openPage'
-  | 'markedPage'
-  | 'airDance'
-  | 'airBloom'
-  | 'airScatter'
-  | 'doubleWatch'
-  | 'owlFlight'
-  | 'insectOrders'
-
-export interface HatsuKey {
-  /** The key as it is printed on a keyboard. */
-  key: 'H' | 'H 2' | 'H 3'
-  action: HatsuKeyAction
-  /** Whether a click does the same thing, which only the casting hand has. */
-  click: boolean
-}
-
-/**
- * Every key the technique in hand answers to, and what each one does.
- *
- * A technique has one cast and, sometimes, a second or a third thing in it —
- * a page, an air, an order to a double, or the cast turned on the visitor
- * themselves. A quick H casts the first. Holding H opens the wheel, and
- * then the number of the one wanted: R and C are not free to be spent here,
- * because R is Ren and C is Ko everywhere in the ship and a key cannot mean
- * two things at once. A visitor who has just picked a technique out of the
- * dock has no way of knowing which of those they are holding, so the panel
- * says it, and this is the one place that decides. It mirrors the wheel in
- * `TourScene`, whose order is the same, and the tests hold the two together.
- */
-export function hatsuKeys(profile: HatsuProfile | null, book: TourBook): HatsuKey[] {
-  if (!worksInTour(profile)) return []
-  // Double Face is not cast itself: the two keys play the two live pages, and
-  // a page that is cast with two hands has to alternate on the key it was given.
-  const pages = profile.kind === 'bookmark' ? twoPages(book) : null
-  if (pages) {
-    return [
-      { key: 'H', action: pages[0] === 'polarity' ? 'alternate' : 'openPage', click: true },
-      { key: 'H 2', action: pages[1] === 'polarity' ? 'alternate' : 'markedPage', click: false },
-    ]
-  }
-  if (TWO_HANDED_KINDS.has(profile.kind)) {
-    return [
-      { key: 'H', action: 'sun', click: true },
-      { key: 'H 2', action: 'moon', click: false },
-    ]
-  }
-  // The one instrument aboard, and the only thing with three of anything: the
-  // lively air is the cast, and the other two are the second and third of the
-  // wheel. Which piece is played is still chosen at the moment of playing —
-  // holding H is the breath before the note.
-  if (profile.kind === 'melody') {
-    return [
-      { key: 'H', action: 'airDance', click: true },
-      { key: 'H 2', action: 'airBloom', click: false },
-      { key: 'H 3', action: 'airScatter', click: false },
-    ]
-  }
-  const onSolids = aimsAtSolids(profile) || profile.kind === 'mimicry'
-  const keys: HatsuKey[] = [
-    {
-      key: 'H',
-      action: onSolids ? 'castSolid' : worksOnTheBody(profile) ? 'castSelf' : 'cast',
-      click: true,
-    },
-  ]
-  if (TAKES_ORDERS.has(profile.kind)) {
-    keys.push({
-      key: 'H 2',
-      action:
-        profile.kind === 'guardian'
-          ? 'doubleWatch'
-          : profile.kind === 'surveillance'
-            ? 'owlFlight'
-            : 'insectOrders',
-      click: false,
-    })
-  } else if (worksOnTheBody(profile) && (aimsAtSolids(profile) || profile.kind === 'heart-vow')) {
-    // The ones on both sides of the line, and Judgment Chain: the reticle
-    // decides, and the second of the wheel is how the visitor says *me* rather
-    // than what is in front. A vow on the self needs no solid to land on.
-    keys.push({ key: 'H 2', action: 'castOnSelfInstead', click: false })
-  }
-  return keys
 }
 
 /**

@@ -1793,9 +1793,9 @@
         if (held) return held
         const made = new THREE.MeshBasicMaterial({
           color: colour,
-          transparent: true,
+          transparent: opacity < 1,
           opacity,
-          depthWrite: opacity > 0.9,
+          depthWrite: opacity >= 1,
           side: THREE.DoubleSide,
         })
         glowMaterials[key] = made

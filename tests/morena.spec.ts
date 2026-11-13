@@ -3,7 +3,10 @@ import { expect, test, type Locator, type Page } from 'playwright/test'
 async function activate(locator: Locator, touch: boolean) {
   await locator.scrollIntoViewIfNeeded()
   if (touch) await locator.tap()
-  else await locator.click()
+  else {
+    await locator.focus()
+    await locator.press('Enter')
+  }
 }
 
 async function enterGame(page: Page, touch: boolean) {
@@ -187,5 +190,54 @@ test.describe("Morena's negotiation critical path", () => {
     // The global Hatsu clock intentionally keeps charging one hour per second.
     // Morena's table must stop adding its separate 48-hour tick after unmount.
     expect(after - spent).toBeLessThan(10)
+  })
+
+  test('resumes a persisted hand with its discovered question and canonical Hatsu', async ({
+    page,
+    isMobile,
+  }) => {
+    await page.addInitScript(() => sessionStorage.setItem('black-whale:hatsu', 'emperor-time'))
+    await page.reload()
+    const action = await enterGame(page, isMobile)
+    await expect(page.getByTestId('morena-hatsu-seat')).toContainText('Emperor Time')
+    await activate(action.getByRole('button').first(), isMobile)
+    await page.reload()
+
+    const resume = page.getByTestId('morena-resume')
+    await expect(resume).toBeVisible()
+    await expect(page.getByTestId('morena-dossier')).toContainText('1 of 7 answers discovered')
+    await activate(resume.getByRole('button', { name: 'Resume the hand' }), isMobile)
+    await expect(page.getByTestId('morena-turn-result')).toBeVisible()
+  })
+
+  test('continues a won and kissed game through the third condition and levels', async ({
+    page,
+    isMobile,
+  }) => {
+    const challenge = Buffer.from(
+      JSON.stringify({
+        v: 2,
+        seed: 0,
+        detectionSeed: 0xa5a5a5a5,
+        streak: 1,
+        rounds: 3,
+        verdict: 'forced',
+        marked: 'back',
+        loadout: { technique: null, bookmark: null },
+      }),
+    ).toString('base64url')
+    await page.goto(`/tour/morena?challenge=${challenge}`)
+    let action = await enterGame(page, isMobile)
+    for (let turn = 0; turn < 3; turn += 1) {
+      await activate(action.getByRole('button').first(), isMobile)
+      action = page.getByTestId('morena-action')
+    }
+    await activate(action.locator('button[title*="Back"]'), isMobile)
+    await expect(page.getByTestId('morena-epilogue')).toBeVisible()
+    await activate(page.getByRole('button', { name: 'Witness the murder' }), isMobile)
+    const network = page.getByTestId('morena-network')
+    await expect(network).toContainText('Level 0')
+    await activate(network.getByRole('button', { name: 'Nen user · +10' }), isMobile)
+    await expect(network).toContainText('Level 10')
   })
 })

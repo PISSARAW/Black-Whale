@@ -44,6 +44,15 @@
     type HatsuInteractionKind,
     type HatsuProfile,
   } from '$lib/nen/hatsuRegistry'
+  import AbilityActionWheel from '$lib/nen/AbilityActionWheel.svelte'
+  import AbilityViewHost from '$lib/nen/AbilityViewHost.svelte'
+  import NenWhyPanel from '$lib/nen/NenWhyPanel.svelte'
+  import {
+    presentationFor,
+    previewSurfaceAdapter,
+    type AbilitySurfaceAdapter,
+  } from '$lib/nen/abilityPresentation'
+  import { reducedMotion } from '$lib/tour/comfort'
 
   interface Props {
     ship: Ship
@@ -86,6 +95,8 @@
      * the panel has no cast of its own and is not being given one.
      */
     heard?: Heard | null
+    /** Live module bridge when the walk can execute this ability's canonical uses. */
+    abilityAdapter?: AbilitySurfaceAdapter | null
     onRelease: () => void
     /** Walks the double on to her next watch — the wheel's second place. */
     onCycleDouble: () => void
@@ -122,6 +133,7 @@
     sourceOf,
     personName,
     heard = null,
+    abilityAdapter = null,
     onRelease,
     onCycleDouble,
     onCycleOwl,
@@ -133,6 +145,38 @@
   }: Props = $props()
 
   const named = $derived(localizeHatsu(profile, $locale))
+  const presentation = $derived(presentationFor(profile.id))
+  let selectedActionId = $state<string | null>(null)
+  const selectedAction = $derived(
+    presentation?.actions.find(({ entry }) => entry.id === selectedActionId) ??
+      presentation?.actions.find(({ entry }) => entry.visibility === 'available') ??
+      presentation?.actions.find(({ entry }) => entry.visibility !== 'hidden') ??
+      null,
+  )
+  const surfaceAdapter = $derived(
+    abilityAdapter ??
+      previewSurfaceAdapter({
+        name: named.name,
+        owner: named.owner,
+        reducedMotion: $reducedMotion,
+      }),
+  )
+  const abilityModel = $derived(
+    presentation && selectedAction
+      ? surfaceAdapter.modelFor(presentation, selectedAction.entry.id)
+      : null,
+  )
+  $effect(() => {
+    if (!presentation) {
+      selectedActionId = null
+      return
+    }
+    if (presentation.actions.some(({ entry }) => entry.id === selectedActionId)) return
+    selectedActionId =
+      presentation.actions.find(({ entry }) => entry.visibility === 'available')?.entry.id ??
+      presentation.actions.find(({ entry }) => entry.visibility !== 'hidden')?.entry.id ??
+      null
+  })
   const onSolids = $derived(aimsAtSolids(profile) || profile.kind === 'mimicry')
   /** Or whether it has no target at all, because the target is the visitor. */
   const onBody = $derived(worksOnTheBody(profile) && !onSolids)
@@ -1202,6 +1246,19 @@
         {aimedAt ? $t.tour.hatsu.aiming(nameOf(aimedAt)) : $t.tour.hatsu.aimingNothing}
       {/if}
     </p>
+    {#if presentation && selectedAction}
+      <div class="mt-3 grid gap-2" data-module-wheel={profile.id}>
+        <AbilityActionWheel
+          {presentation}
+          selected={selectedAction.entry.id}
+          onSelect={(actionId) => (selectedActionId = actionId)}
+          availability={surfaceAdapter.availability}
+          onDispatch={(actionId) => surfaceAdapter.dispatch(actionId)}
+        />
+        <NenWhyPanel plan={selectedAction.plan} compact />
+        {#if abilityModel}<AbilityViewHost model={abilityModel} />{/if}
+      </div>
+    {/if}
     <p class="mt-2 text-[10px] uppercase tracking-widest text-[#FFFFF0]/45">
       {$t.tour.hatsu.keys.title}
     </p>

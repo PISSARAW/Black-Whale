@@ -5,6 +5,8 @@
   import { NenWhyPanel } from '$lib/nen'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import { link, t } from '$lib/i18n'
+  import MorenaBranchPanel from '$lib/components/simulations/MorenaBranchPanel.svelte'
+  import ContagionDashboard from '$lib/nen/ContagionDashboard.svelte'
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
   let entities = $derived(Object.values(data.branch?.snapshot?.entities || {}))
@@ -211,6 +213,24 @@
         <button type="submit" disabled={!entities.length}>{$t.simulations.moveSubmit}</button>
       </form>
     </section>
+
+    {#if data.morena}
+      <MorenaBranchPanel
+        branchId={data.branch.branch.id}
+        actorId={data.selection.actorId || 'morena-prudo'}
+        targetId={data.selection.targetId}
+        {entities}
+        state={data.morena}
+      />
+      <ContagionDashboard
+        game={data.morena.game}
+        members={data.morena.members}
+        progress={{
+          witnessedMurder: data.morena.witnessed,
+          member: data.morena.members[0] ?? null,
+        }}
+      />
+    {/if}
 
     <section class="panel scene-panel">
       <div class="heading">

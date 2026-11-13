@@ -16,6 +16,9 @@
   import { HATSU_PROFILES, hatsuById } from './hatsuRegistry.js'
   import { locale, t } from '$lib/i18n'
   import { localizeHatsu, localizeHatsuList } from '$lib/i18n/hatsu'
+  import GlobalHatsuActiveDetails from './GlobalHatsuActiveDetails.svelte'
+  import { page } from '$app/stores'
+  import { parsePathname } from '$lib/i18n'
 
   let query = ''
   let now = Date.now()
@@ -27,6 +30,7 @@
   )
   $: activeProfile = $activeHatsu ? localizeHatsu($activeHatsu, $locale) : null
   $: zetsuRemaining = Math.max(0, $forcedZetsuUntil - now)
+  $: onShip = parsePathname($page.url.pathname).path === '/ship'
 
   // What the room in charge still admits. The dock does not know what that
   // room is — it shows the sentence the room handed it and disables the rest.
@@ -65,7 +69,7 @@
   })
 </script>
 
-<div class="hatsu-dock" data-hatsu-ui>
+<div class="hatsu-dock" class:on-ship={onShip} data-hatsu-ui>
   {#if zetsuRemaining > 0}
     <section class="zetsu-card" aria-live="polite">
       <span class="zetsu-mark">絶</span>
@@ -93,6 +97,11 @@
         <span class="instruction" class:sealed={activeIsBlocked}>
           {activeIsBlocked && $hatsuGate ? $hatsuGate.reason : activeProfile.instruction}
         </span>
+        <GlobalHatsuActiveDetails
+          abilityId={activeProfile.id}
+          name={activeProfile.name}
+          owner={activeProfile.owner}
+        />
       </div>
       <button type="button" class="release" data-hatsu-release onclick={deactivateHatsu}
         >{$t.nen.release}</button
@@ -165,6 +174,9 @@
     right: 1rem;
     bottom: 1rem;
     font-family: var(--font-sans);
+  }
+  .hatsu-dock.on-ship {
+    bottom: max(5rem, calc(4.5rem + env(safe-area-inset-bottom)));
   }
   .sigil {
     position: relative;
@@ -314,6 +326,16 @@
   .release:hover {
     border-color: var(--hatsu);
     color: #fff;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sigil:hover {
+      transform: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .hatsu-dock.on-ship {
+      bottom: max(8.25rem, calc(7.75rem + env(safe-area-inset-bottom)));
+    }
   }
   .backdrop {
     position: fixed;

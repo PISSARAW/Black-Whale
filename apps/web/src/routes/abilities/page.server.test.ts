@@ -25,7 +25,13 @@ function cookiesWith(cap: number | undefined): Cookies {
 
 /** What the loader hands the page, once the `$types` wrapper is unwrapped. */
 interface AbilitiesData {
-  abilities: { id: string }[]
+  abilities: { id: string; sources: number[] }[]
+  presentations: Array<{
+    abilityId: string
+    actions: Array<{
+      entry: { source?: { kind: string; chapter?: number } }
+    }>
+  }>
   spoilerLimit: number | null
 }
 
@@ -71,6 +77,26 @@ describe('the abilities page and the reader who asked not to be spoiled', () => 
     expect(someIds.size).toBeLessThanOrEqual(all.size)
     for (const id of fewIds) expect(someIds.has(id), id).toBe(true)
     for (const id of someIds) expect(all.has(id), id).toBe(true)
+  })
+
+  it('never sends a source chapter beyond the reader cap', async () => {
+    const cap = 400
+    const { abilities, presentations } = await run(cap)
+    for (const ability of abilities) {
+      expect(
+        ability.sources.every((chapter) => chapter <= cap),
+        ability.id,
+      ).toBe(true)
+      expect(ability.sources).toEqual([...ability.sources].sort((left, right) => left - right))
+    }
+    for (const presentation of presentations) {
+      expect(
+        presentation.actions.every(
+          ({ entry }) => entry.source?.kind !== 'chapter' || (entry.source.chapter ?? 0) <= cap,
+        ),
+        presentation.abilityId,
+      ).toBe(true)
+    }
   })
 
   it('treats a cookie that is not a chapter number as no cap at all', async () => {

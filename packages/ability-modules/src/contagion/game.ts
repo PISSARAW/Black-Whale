@@ -178,6 +178,12 @@ export interface MorenaGame {
   log: Beat[]
 }
 
+/** What happened after the cards left the table. */
+export interface InfectionProgressLike {
+  witnessedMurder: boolean
+  member?: { level: number } | null
+}
+
 export interface DealOptions {
   /** Which card Morena marks. Defaults to the one she marks in ch. 410. */
   marked?: AnswerCard | null
@@ -972,7 +978,10 @@ export function settle(game: MorenaGame, choice?: AnswerCard | 'yes' | 'no'): Mo
  * give. Reported rather than judged, because the interesting outcome is the
  * one where the guest walks out kissed and uninfected.
  */
-export function infectionAfter(game: MorenaGame): {
+export function infectionAfter(
+  game: MorenaGame,
+  progress?: InfectionProgressLike,
+): {
   said: boolean
   kissed: boolean
   witnessed: boolean
@@ -992,8 +1001,8 @@ export function infectionAfter(game: MorenaGame): {
   return {
     said,
     kissed: game.kissed && !game.proxied,
-    witnessed: false,
-    level: onMe ? 0 : null,
+    witnessed: Boolean(progress?.witnessedMurder) && onMe && game.kissed,
+    level: onMe ? (progress ? (progress.member?.level ?? null) : 0) : null,
     proxied: game.proxied,
     stolen,
   }
@@ -1023,11 +1032,17 @@ export type InfectionStep = (typeof INFECTION_STEPS)[number]
  * A proxied game establishes nothing either. The puppet said it and the puppet
  * was kissed; whoever cast it was never at the table to be infected.
  */
-export function infectionStepsFrom(game: MorenaGame): InfectionStep[] {
+export function infectionStepsFrom(
+  game: MorenaGame,
+  progress?: InfectionProgressLike,
+): InfectionStep[] {
   if (game.phase !== 'over' || game.proxied) return []
   const met: InfectionStep[] = []
   if (game.verdict === 'infected' || game.verdict === 'forced') met.push('game-won-yes')
   if (game.kissed) met.push('kiss')
+  if (progress?.witnessedMurder && met.includes('game-won-yes') && met.includes('kiss')) {
+    met.push('witnessed-murder')
+  }
   return met
 }
 

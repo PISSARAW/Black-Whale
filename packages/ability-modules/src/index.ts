@@ -107,6 +107,7 @@ export { contagion, CONTAGION_LIMITS } from './contagion/module.js'
 // both consume, and the first condition of Contagion in code rather than
 // as a checklist step somebody else ticks. See docs/jeu-de-morena.md.
 export * from './contagion/game.js'
+export * from './contagion/progression.js'
 export { magicalWorm } from './magical-worm/module.js'
 export { luiniSpatialTeleportation } from './luini-spatial-teleportation/module.js'
 export { marayamGuardianIsolation } from './marayam-guardian-isolation/module.js'

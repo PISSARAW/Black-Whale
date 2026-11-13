@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- Canon schemas are kept together for one exported catalogue contract. */
 import { z } from 'zod'
 import { appearanceFileSchema } from './appearance.js'
 import { chapterRef, slug } from './primitives.js'
@@ -190,6 +191,21 @@ const nenSchema = z
     overview: z.string().min(1).optional(),
     techniques: z.array(z.string()).optional(),
     abilityIds: z.array(slug).optional(),
+    /** First chapter at which the character may be projected as an awakened user. */
+    awakenedFromChapterId: chapterRef.optional(),
+    /** Full, dated snapshots of the posture the canonical tour may render. */
+    tourConduct: z
+      .array(
+        z
+          .object({
+            fromChapterId: chapterRef,
+            mode: z.enum(['ten', 'zetsu']),
+            concealedWithIn: z.boolean(),
+            enRadius: z.number().positive().nullable(),
+          })
+          .strict(),
+      )
+      .optional(),
   })
   .passthrough()
 
@@ -267,6 +283,15 @@ export const abilitySchema = z
     ownerId: slug.nullable().optional(),
     userIds: z.array(slug).optional(),
     category: z.string().min(1),
+    categoryAudit: z
+      .object({
+        reviewedAt: z.iso.date(),
+        conclusion: z.enum(['canon-unrevealed', 'explicitly-established']),
+        sourceChapterId: chapterRef.optional(),
+        note: z.string().min(1),
+      })
+      .strict()
+      .optional(),
     description: z.string().min(1),
     canonStatus: z.string().min(1),
     moduleKey: slug.nullable().optional(),
@@ -279,6 +304,15 @@ export const abilitySchema = z
     sources: z.array(sourceRefSchema).min(1),
   })
   .passthrough()
+  .superRefine((ability, context) => {
+    if (ability.category === 'unknown' && !ability.categoryAudit) {
+      context.addIssue({
+        code: 'custom',
+        path: ['categoryAudit'],
+        message: 'unknown categories must carry a completed canon audit',
+      })
+    }
+  })
 
 export const ABILITY_USE_STATUSES = [
   'ACTIVATED',
@@ -300,8 +334,51 @@ export const abilityUseSchema = z
     status: z.enum(ABILITY_USE_STATUSES),
     occursOnBlackWhale: z.boolean(),
     note: z.string().min(1),
+    /** A sourced residue the activation leaves for Gyo to find in the tour. */
+    auraTrace: z
+      .object({
+        locationId: slug,
+        anchor: slug.optional(),
+        persistsUntilChapter: z.number().int().positive().optional(),
+      })
+      .strict()
+      .optional(),
   })
   .strict()
+
+const importantObjectSchema = z
+  .object({
+    id: slug,
+    canonicalName: z.string().min(1),
+    aliases: z.array(z.string()).optional(),
+    category: z.string().min(1),
+    firstVisibleChapter: z.number().int().positive(),
+    description: z.string().min(1),
+    aura: z
+      .object({
+        fromChapter: z.number().int().positive(),
+        kind: z.string().min(1),
+        visibility: z.enum(['awakened', 'gyo']),
+        sourceChapterId: chapterRef,
+      })
+      .strict()
+      .optional(),
+    sightings: z.array(
+      z
+        .object({
+          fromChapter: z.number().int().positive(),
+          untilChapter: z.number().int().positive().optional(),
+          locationSlug: slug.nullable(),
+          precision: z.enum(['EXACT_ROOM', 'ZONE', 'TIER', 'UNKNOWN']),
+          certainty: z.enum(['CONFIRMED', 'PROBABLE', 'LAST_KNOWN', 'UNKNOWN']),
+          note: z.string().min(1),
+          /** Optional stable structure/apparition anchor inside the reconstructed room. */
+          tourAnchor: slug.optional(),
+        })
+        .strict(),
+    ),
+  })
+  .passthrough()
 
 export const factionSchema = z
   .object({
@@ -447,6 +524,7 @@ export const CATALOGUE_FILES = {
   'factions/factions.json': z.array(factionSchema).min(1),
   'locations/locations.json': z.array(locationSchema).min(1),
   'events/events.json': z.array(eventSchema).min(1),
+  'objects/objects.json': z.array(importantObjectSchema),
   'prophecies/prophecies.json': z.array(prophecySchema),
   'ship/blueprint.json': blueprintSchema,
 } as const
@@ -465,6 +543,7 @@ export type MangaAppearance = z.infer<typeof mangaAppearanceSchema>
 export type AppearanceStatus = (typeof APPEARANCE_STATUSES)[number]
 export type Ability = z.infer<typeof abilitySchema>
 export type AbilityUse = z.infer<typeof abilityUseSchema>
+export type ImportantObject = z.infer<typeof importantObjectSchema>
 export type AbilityUseStatus = (typeof ABILITY_USE_STATUSES)[number]
 export type Faction = z.infer<typeof factionSchema>
 export type Location = z.infer<typeof locationSchema>

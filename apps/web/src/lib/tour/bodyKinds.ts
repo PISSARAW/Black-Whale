@@ -37,6 +37,8 @@ export const PERSON_HATSU_KINDS = [
   'postmortem-curse',
   'truth-punch',
   'damage-transfer',
+  'ability-lending',
+  'postmortem-host-succession',
 ] as const satisfies readonly HatsuInteractionKind[]
 
 /**

@@ -9,11 +9,9 @@
  * settings survive a reload, because being made to dial them in again on every
  * visit is the same as not having them.
  *
- * `prefers-reduced-motion` sets the defaults rather than being layered over
- * them: a visitor who has asked their system for less movement gets a narrower
- * field of view, a slower look, snap turns and the walk already in jump-only
- * mode — and can still turn any of it back on, which a hard override would not
- * allow.
+ * `prefers-reduced-motion` is a ceiling, not merely an initial suggestion. A
+ * stored lively setting may never turn head bob or continuous movement back on
+ * while the operating system asks for less motion.
  */
 import { writable } from 'svelte/store'
 import type { QualitySetting } from './quality'
@@ -238,6 +236,22 @@ export function prefersReducedMotion(): boolean {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
 }
 
+export const reducedMotion = writable(false)
+
+/** Apply the system's non-negotiable motion ceiling without changing visual fidelity. */
+export function enforceReducedMotion(value: Comfort, reduced: boolean): Comfort {
+  if (!reduced) return value
+  return {
+    ...value,
+    fov: Math.min(value.fov, CALM.fov),
+    sensitivity: Math.min(value.sensitivity, CALM.sensitivity),
+    snapTurn: true,
+    jumpOnly: true,
+    headBob: 0,
+    walkPace: Math.min(value.walkPace, CALM.walkPace),
+  }
+}
+
 /** The defaults for this visitor, before anything they have set themselves. */
 export function comfortDefaults(reduced = prefersReducedMotion()): Comfort {
   return { ...(reduced ? CALM : LIVELY) }
@@ -282,37 +296,59 @@ export function readComfort(raw: string | null, reduced = prefersReducedMotion()
     return defaults
   }
   if (!stored || typeof stored !== 'object') return defaults
-  return {
-    fov: readNumber(stored.fov, FOV_RANGE, defaults.fov),
-    sensitivity: readNumber(stored.sensitivity, SENSITIVITY_RANGE, defaults.sensitivity),
-    snapTurn: readFlag(stored.snapTurn, defaults.snapTurn),
-    snapAngle: readNumber(stored.snapAngle, SNAP_ANGLE_RANGE, defaults.snapAngle),
-    jumpOnly: readFlag(stored.jumpOnly, defaults.jumpOnly),
-    nightLight: readNumber(stored.nightLight, NIGHT_LIGHT_RANGE, defaults.nightLight),
-    headBob: readNumber(stored.headBob, HEAD_BOB_RANGE, defaults.headBob),
-    walkPace: readNumber(stored.walkPace, WALK_PACE_RANGE, defaults.walkPace),
-    exposure: readNumber(stored.exposure, EXPOSURE_RANGE, defaults.exposure),
-    quality: readQuality(stored.quality, defaults.quality),
-    shipHour: readShipHour(stored.shipHour, defaults.shipHour),
-    restingAura: readFlag(stored.restingAura, defaults.restingAura),
-  }
+  return enforceReducedMotion(
+    {
+      fov: readNumber(stored.fov, FOV_RANGE, defaults.fov),
+      sensitivity: readNumber(stored.sensitivity, SENSITIVITY_RANGE, defaults.sensitivity),
+      snapTurn: readFlag(stored.snapTurn, defaults.snapTurn),
+      snapAngle: readNumber(stored.snapAngle, SNAP_ANGLE_RANGE, defaults.snapAngle),
+      jumpOnly: readFlag(stored.jumpOnly, defaults.jumpOnly),
+      nightLight: readNumber(stored.nightLight, NIGHT_LIGHT_RANGE, defaults.nightLight),
+      headBob: readNumber(stored.headBob, HEAD_BOB_RANGE, defaults.headBob),
+      walkPace: readNumber(stored.walkPace, WALK_PACE_RANGE, defaults.walkPace),
+      exposure: readNumber(stored.exposure, EXPOSURE_RANGE, defaults.exposure),
+      quality: readQuality(stored.quality, defaults.quality),
+      shipHour: readShipHour(stored.shipHour, defaults.shipHour),
+      restingAura: readFlag(stored.restingAura, defaults.restingAura),
+    },
+    reduced,
+  )
 }
 
 export const comfort = writable<Comfort>(comfortDefaults(false))
+
+let stopMotionWatch: (() => void) | null = null
+
+export function watchReducedMotion(): () => void {
+  stopMotionWatch?.()
+  if (typeof window === 'undefined' || !window.matchMedia) return () => {}
+  const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+  const sync = () => {
+    reducedMotion.set(query.matches)
+    const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(KEY)
+    comfort.set(readComfort(raw, query.matches))
+  }
+  query.addEventListener?.('change', sync)
+  sync()
+  stopMotionWatch = () => query.removeEventListener?.('change', sync)
+  return stopMotionWatch
+}
 
 /**
  * Reads the stored settings in. Called from the walk on mount, not at module
  * scope: the server has no `localStorage` and no media query to ask.
  */
 export function loadComfort() {
-  const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(KEY)
-  comfort.set(readComfort(raw))
+  watchReducedMotion()
 }
 
 export function setComfort(change: Partial<Comfort>) {
   comfort.update((current) => {
-    const next = { ...current, ...change }
-    if (typeof localStorage !== 'undefined') localStorage.setItem(KEY, JSON.stringify(next))
+    const requested = { ...current, ...change }
+    const next = enforceReducedMotion(requested, prefersReducedMotion())
+    // Store the request, not the capped value, so turning the OS preference off
+    // restores what the visitor chose without requiring another visit here.
+    if (typeof localStorage !== 'undefined') localStorage.setItem(KEY, JSON.stringify(requested))
     return next
   })
 }

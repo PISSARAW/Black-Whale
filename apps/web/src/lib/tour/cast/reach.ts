@@ -82,6 +82,10 @@ export type ReachRefusal =
    * character's ability.
    */
   | 'palm-only'
+  /** Stand By Me is lent inside Benjamin's allied military detail. */
+  | 'allied-soldier'
+  /** Bohemian Rhapsody cannot begin on the canonical visit while Benjamin lives. */
+  | 'benjamin-alive'
 
 /** What a technique told the visitor about the body, without holding it. */
 export type ReachTell =
@@ -280,6 +284,8 @@ const MARKS: Record<
   needle: 'controlled',
   'postmortem-curse': 'marked',
   'damage-transfer': 'linked',
+  'ability-lending': 'linked',
+  'postmortem-host-succession': 'marked',
   // And the twelve the ship already knew.
   elastic: 'bound',
   'chain-bind': 'bound',
@@ -335,6 +341,13 @@ const CONDITIONS: Partial<Record<BodyKind, (input: ReachInput) => ReachRefusal |
   // A needle overwrites autonomy. A body already holding its aura up is the one
   // case the walk will not claim it overwrites.
   needle: (input) => (input.aura === 'ren' ? 'resisted' : null),
+
+  'ability-lending': (input) =>
+    input.dossier?.factionId === 'prince-benjamin' ? null : 'allied-soldier',
+
+  // Benjamin is alive in the canonical walk. Keep the future transfer visible
+  // as a refusal instead of staging an unreached branch of the succession.
+  'postmortem-host-succession': () => 'benjamin-alive',
 
   // Leorio never sees the man he hits in ch. 385 — the blow crosses a bulkhead
   // to reach him. What it will not cross is nothing at all.

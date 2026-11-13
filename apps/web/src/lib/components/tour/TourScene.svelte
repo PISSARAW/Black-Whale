@@ -66,7 +66,7 @@
     type Apparition,
     type TourFlash,
   } from '$lib/tour/apparitions'
-  import { comfort, prefersReducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
+  import { comfort, reducedMotion, setComfort, type Comfort } from '$lib/tour/comfort'
   import { buildSolidMesh } from '$lib/tour/mesh'
   import { animateDealerFace } from '$lib/tour/dealer'
   import { HUMAN_LOD_DISTANCE, humanStateKey } from '$lib/tour/humanFigure'
@@ -89,6 +89,11 @@
   } from '$lib/tour/navigation'
   import { StairNavigator, type JumpArrival } from '$lib/tour/StairNavigator'
   import { SurfaceWalker } from '$lib/tour/SurfaceWalker'
+  import {
+    beginTierTransition,
+    stepTierTransition,
+    type TierTransition,
+  } from '$lib/tour/tierTransition'
   import { updateWalkOptics, WalkTemporalState, SEALED_EXPOSURE } from '$lib/tour/walkPostEffects'
   import { ConcertStageView } from '$lib/tour/ConcertStageView'
   import { positionHeldFlute } from '$lib/tour/heldFlute'
@@ -103,6 +108,8 @@
     VIEW_DISTANCE,
   } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
+  import { roomConditionOf, type RoomCondition } from '$lib/tour/roomCondition'
+  import { heardNeighbourOf, roomSoundProfileOf } from '$lib/tour/roomSound'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { detailTagAt, type TourDetailTag } from '$lib/tour/detailTag'
   import { distanceToBoundary } from '$lib/tour/geometry'
@@ -181,6 +188,8 @@
   import { auraSightOf } from '$lib/tour/auraSight'
   import { pressTen, wasRefused, type NenOutcome } from '$lib/tour/nenPress'
   import TourNenControls from './TourNenControls.svelte'
+  import TourNenJournal from './TourNenJournal.svelte'
+  import type { NenCauseEntry } from '$lib/tour/nenFeedback'
   import type { Link, Space, Structure, Vec2, WallSegment } from '$lib/tour/types'
 
   interface Props {
@@ -358,8 +367,13 @@
     extras?: Apparition[]
     /** Moving solids supplied by a game layered over the walk. */
     collisionWalls?: WallSegment[]
+    /** Named canonical bodies by room; sound may react without drawing a crowd. */
+    roomOccupancy?: Readonly<Record<string, number>>
     /** Mode-owned injury or boost applied to ordinary walking pace. */
     paceMultiplier?: number
+    nenCauses?: readonly NenCauseEntry[]
+    staggered?: boolean
+    french?: boolean
     /**
      * What a camera the page has put in the room is looking at.
      *
@@ -618,7 +632,11 @@
     seated = null,
     extras = [],
     collisionWalls = [],
+    roomOccupancy = {},
     paceMultiplier = 1,
+    nenCauses = [],
+    staggered = false,
+    french = false,
     feed = null,
     record = null,
     tint = null,
@@ -654,6 +672,8 @@
   let hatsuWheelOpen = $state(false)
   let hatsuVariantIndex = $state(0)
   let selectedNenZone = $state<NenBodyZone>('hands')
+  let selectedEnRadius = $state(8)
+  let shuTraces = $state<Array<{ until: number; apparition: Apparition }>>([])
   let lastHatsuVariant = $state(0)
   const hatsuVariants = $derived.by(() => {
     if (tunes) return [tunes.first, tunes.second, tunes.third]
@@ -664,6 +684,39 @@
     return [touchLabels.cast]
   })
   const effectiveNen = $derived(nen ?? localNen)
+  let previousShu: string[] = []
+  const leaveShuTrace = (objectId: string) => {
+    const solid = solidById(ship, world, objectId)
+    const solidSpace = solid ? ship.spaces.get(solid.spaceId) : null
+    if (!solid || !solidSpace) return
+    const until = Date.now() + 10_000
+    shuTraces = [
+      ...shuTraces.filter((trace) => trace.until > Date.now()),
+      {
+        until,
+        apparition: {
+          id: `shu-trace:${objectId}:${until}`,
+          kind: 'residue',
+          spaceId: solid.spaceId,
+          tierId: solidSpace.tierId,
+          at: solid.at,
+          y: solid.base + solid.height * 0.5,
+          size: Math.max(0.25, Math.min(0.7, ...solid.size)),
+          colour: 0xb9a6ff,
+          stage: 0,
+          hidden: true,
+        },
+      },
+    ]
+  }
+  $effect(() => {
+    const current = effectiveNen.shu
+    for (const objectId of previousShu) if (!current.includes(objectId)) leaveShuTrace(objectId)
+    previousShu = [...current]
+  })
+  $effect(() => {
+    if (effectiveNen.en) selectedEnRadius = effectiveNen.en.radius
+  })
   const sight = $derived(auraSightOf(effectiveNen, awakened))
   const hatsuBlockedByMode = () =>
     effectiveNen.mode === 'zetsu' ? !hatsuAllowedInZetsu : hatsuRequiresZetsu
@@ -974,6 +1027,7 @@
         fittings: fittingMaterial,
         pane: paneMaterial,
         motes: dustMaterial,
+        lampAir: paint.lampAir,
         pool: skyPool,
         shafts,
         windows: createShaftDecks(),
@@ -1093,6 +1147,7 @@
         pane: paneMaterial,
         skylit: skylitMaterial,
         dust: dustMaterial,
+        lampAir: paint.lampAir,
       })
 
       /**
@@ -1175,6 +1230,7 @@
       let authoredCameraDistance = 0
       let authoredVisibleSpaceIds: Set<string> | null = null
       let currentTierId = ''
+      let tierTransition: TierTransition | null = null
       const boardingPaths = gangwayPaths(ship)
       let gangwayWalk: GangwayWalk | null = null
 
@@ -1212,6 +1268,13 @@
         }
         const plan = ship.plans.get(tierIdToLoad)
         if (!plan) return
+
+        const previousElevation = currentTierId
+          ? ship.plans.get(currentTierId)?.tier.elevation
+          : undefined
+        if (previousElevation !== undefined) {
+          tierTransition = beginTierTransition(previousElevation, plan.tier.elevation)
+        }
 
         // The deck the eye is watching stays in the scene whether or not the
         // visitor is still standing on it: that is the whole of the remote feed.
@@ -1659,7 +1722,7 @@
         // touched anything. See `refractionAmount` for what "out" means here.
         const speed = delta > 0 ? travelled / delta : 0
         const wake = Math.min(0.22, speed * 0.1)
-        const aura = calmWalk ? 0 : refractionAmount(shownNen)
+        const aura = $reducedMotion ? 0 : refractionAmount(shownNen)
         const at: [number, number, number] = [here.x, here.y, here.z]
 
         for (const dust of clouds) {
@@ -2054,6 +2117,7 @@
             seconds,
           }),
           ...extras,
+          ...shuTraces.filter((trace) => trace.until > Date.now()).map((trace) => trace.apparition),
         ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
@@ -3161,7 +3225,7 @@
           const dx = target.at[0] - pointer[0]
           const dz = target.at[1] - pointer[1]
           const distance = Math.max(0.001, Math.hypot(dx, dz))
-          const force = touchForce(kind, effectiveNen)
+          const force = touchForce(kind, effectiveNen, effectiveNen.shu.includes(target.id))
           const held = world.solids[target.id] ?? {}
           world.solids[target.id] = {
             ...held,
@@ -3574,7 +3638,7 @@
         else if (event.code === NEN_KEYS.gyo) toggled('GYO', !effectiveNen.gyo)
         else if (event.code === NEN_KEYS.in) toggled('IN', !effectiveNen.in)
         else if (event.code === NEN_KEYS.en)
-          useNen({ type: 'EN', radius: effectiveNen.en ? null : 8 })
+          useNen({ type: 'EN', radius: effectiveNen.en ? null : selectedEnRadius })
         else if (event.code === NEN_KEYS.ken) toggled('KEN', !effectiveNen.ken)
         else if (event.code === NEN_KEYS.ko)
           useNen({ type: 'KO', zone: effectiveNen.ko === selectedNenZone ? null : selectedNenZone })
@@ -3957,15 +4021,6 @@
       const FOV_EASE = 0.25
 
       /**
-       * Whether this visitor has asked their system for less movement.
-       *
-       * Read once, and it is not the same question as the head-bob setting any
-       * more: that one is the visitor's dial and this one gates everything else
-       * in the walk that moves by itself.
-       */
-      const calmWalk = prefersReducedMotion()
-
-      /**
        * The air the current room wants, and the densities already measured.
        *
        * A plain record rather than a Map, like the rest of the render loop's own
@@ -3976,6 +4031,18 @@
        */
       let fogTarget = 0.02
       const airOf: Record<string, number | undefined> = {}
+      const conditions: Record<
+        string,
+        { occupants: number; condition: RoomCondition } | undefined
+      > = {}
+      const conditionFor = (space: Space, roomTier: TierPlan['tier']): RoomCondition => {
+        const occupants = roomOccupancy[space.id] ?? 0
+        const held = conditions[space.id]
+        if (held?.occupants === occupants) return held.condition
+        const condition = roomConditionOf({ space, tier: roomTier, namedOccupants: occupants })
+        conditions[space.id] = { occupants, condition }
+        return condition
+      }
 
       /** The room the door pair last delivered the visitor to. */
       let arrivedFrom: string | null = null
@@ -4194,6 +4261,7 @@
         driftLeavingCards(delta)
         hatsuEffects.tickFlash({
           delta,
+          reducedMotion: $reducedMotion,
           camera,
           tierId: currentTierId,
           blinded,
@@ -4204,7 +4272,14 @@
         })
         runLash(delta)
         syncGum(clock)
-        hatsuEffects.updateRewind({ clock, position: pointer, yaw, ground, delta })
+        hatsuEffects.updateRewind({
+          clock,
+          position: pointer,
+          yaw,
+          ground,
+          delta,
+          reducedMotion: $reducedMotion,
+        })
 
         // The fish feed on the clock rather than on a threshold: they are drawn
         // now, and a fish that swims through a coffin and leaves it standing is
@@ -4503,7 +4578,7 @@
         camera.rotation.set(0, 0, 0)
         camera.rotateY(yaw)
         camera.rotateX(pitch)
-        camera.rotateZ(bob.roll)
+        camera.rotateZ(bob.roll + (staggered ? Math.sin((now / 1_000) * Math.PI * 5) * 0.025 : 0))
         {
           nenAura.update(effectiveNen, camera, {
             ground,
@@ -4533,7 +4608,14 @@
         // And so is the arm, for as long as it is still turning: Ripper
         // Cyclotron's wind-up is the whole of its stated cost, and a cost the
         // ship does not show is a key that appears to do nothing.
-        hatsuEffects.syncWinding({ turns: world.windup, at: pointer, eye, yaw, delta })
+        hatsuEffects.syncWinding({
+          turns: world.windup,
+          at: pointer,
+          eye,
+          yaw,
+          delta,
+          reducedMotion: $reducedMotion,
+        })
 
         if (depthOfField) {
           picker.setFromCamera(RETICLE, camera)
@@ -4604,7 +4686,9 @@
         if (standing) {
           let density = airOf[standing.id]
           if (density === undefined) {
-            density = fogDensityOf(standing)
+            const condition = conditionFor(standing, plan.tier)
+            // Loaded air closes the far end a little sooner; its hue remains the regime's.
+            density = fogDensityOf(standing) * (0.94 + condition.airLoad * 0.18)
             airOf[standing.id] = density
           }
           fogTarget = density
@@ -4678,11 +4762,20 @@
           // Sabine on the volume the blueprint already gives, crossfaded over the
           // threshold: a cabin rings for half a second and the promenade for four.
           if (standing) {
-            enterRoom(
-              standing.id,
-              reverbTime(standing, plan.tier),
-              distanceToBoundary(pointer, standing.footprint),
-            )
+            const condition = conditionFor(standing, plan.tier)
+            enterRoom({
+              id: standing.id,
+              key: `${standing.id}:${roomOccupancy[standing.id] ?? 0}`,
+              reverb: reverbTime(standing, plan.tier, condition.absorption),
+              wallDistance: distanceToBoundary(pointer, standing.footprint),
+              sound: roomSoundProfileOf(standing, condition),
+              neighbour: heardNeighbourOf({
+                plan: activePlan ?? plan,
+                space: standing,
+                at: pointer,
+                namedOccupants: roomOccupancy,
+              }),
+            })
           }
           // The ship is handed in because the doors may be passive: with the
           // aura up and no route prepared, every threshold is one of Voconte's
@@ -4757,13 +4850,16 @@
 
         hourView.aim(plan, standing?.id ?? null)
 
+        const adaptation = stepTierTransition(tierTransition, delta)
+        tierTransition = adaptation.transition
         updateWalkOptics(runtime, {
           hour: hourView,
           exposure: $comfort.exposure,
+          adaptation: adaptation.exposure,
           blinded,
           outside,
           lens: quality.lens,
-          calm: calmWalk,
+          calm: $reducedMotion,
           nen: shownNen,
           clock,
           gyo: gyoMode,
@@ -4887,6 +4983,7 @@
         material.dispose()
         skylitMaterial.dispose()
         paneMaterial.dispose()
+        paint.lampAir?.dispose()
         disposeSceneRuntime(runtime)
       }
 
@@ -5046,11 +5143,18 @@
         {hatsuRequiresZetsu}
         restingAuraShown={$comfort.restingAura}
         {awakened}
+        enRadius={selectedEnRadius}
+        onEnRadius={(radius) => {
+          selectedEnRadius = Math.max(1, Math.min(50, Math.round(radius)))
+          if (effectiveNen.en) useNen({ type: 'EN', radius: selectedEnRadius })
+        }}
+        {french}
         onAction={useNen}
         onTen={toggleTen}
         onInteract={() => interactWithNen?.()}
         onHatsu={openOrCastHatsu}
       />
+      <TourNenJournal entries={nenCauses} {french} />
     {/if}
     {#if hatsuWheelOpen}
       <div

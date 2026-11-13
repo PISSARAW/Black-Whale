@@ -3,6 +3,7 @@ import { localizeHatsu } from '$lib/i18n/hatsu'
 import { HATSU_PROFILES, hatsuById } from '$lib/nen/hatsuRegistry'
 import {
   EMPEROR_TIME_LIFE_LIMIT_HOURS,
+  activeHatsu,
   activateHatsu,
   closeHatsuGate,
   emperorTimeLifeHours,
@@ -68,6 +69,13 @@ export function morenaLabLoadout(id: string | null) {
   const tableKind =
     profile && TABLE_KINDS.includes(profile.kind as TableKind) ? (profile.kind as TableKind) : null
   return { tableKind, carryingBook: false }
+}
+
+/** The loadout already held in the global dock when a canonical deal starts. */
+export function morenaDockLoadout() {
+  const profile = get(activeHatsu)
+  if (!profile) return { tableKind: null, carryingBook: false }
+  return morenaLabLoadout(profile.id)
 }
 
 export function activateMorenaLabHatsu(id: string | null) {

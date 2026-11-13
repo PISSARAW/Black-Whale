@@ -161,6 +161,12 @@
         reducedMotion: $reducedMotion,
       }),
   )
+  const preferredAction = $derived(
+    presentation?.actions.find(
+      ({ entry }) =>
+        entry.visibility === 'available' && (surfaceAdapter.supports?.(entry.id) ?? true),
+    ) ?? null,
+  )
   const abilityModel = $derived(
     presentation && selectedAction
       ? surfaceAdapter.modelFor(presentation, selectedAction.entry.id)
@@ -173,6 +179,7 @@
     }
     if (presentation.actions.some(({ entry }) => entry.id === selectedActionId)) return
     selectedActionId =
+      preferredAction?.entry.id ??
       presentation.actions.find(({ entry }) => entry.visibility === 'available')?.entry.id ??
       presentation.actions.find(({ entry }) => entry.visibility !== 'hidden')?.entry.id ??
       null

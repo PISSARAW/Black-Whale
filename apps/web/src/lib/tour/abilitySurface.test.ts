@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { presentationFor } from '$lib/nen/abilityPresentation'
-import { tourAbilitySurfaceAdapter, tourActionAvailability, tourCommandFor } from './abilitySurface'
+import {
+  tourAbilitySurfaceAdapter,
+  tourActionAvailability,
+  tourCommandFor,
+  tourSupportsAbility,
+} from './abilitySurface'
 
 const reasons = {
   unsupported: 'unsupported',
@@ -10,12 +15,20 @@ const reasons = {
 }
 
 describe('the tour ability surface', () => {
-  it('routes the pilot module actions to existing tour reducers', () => {
+  it('routes all eight families to the existing ship and body reducers', () => {
     expect(tourCommandFor('bungee-gum', 'attach')).toBe('cast-primary')
     expect(tourCommandFor('bungee-gum', 'release')).toBe('release-world')
     expect(tourCommandFor('illumi-needle-people', 'plant-needle')).toBe('cast-body')
     expect(tourCommandFor('illumi-needle-people', 'remove-needle')).toBe('release-bodies')
+    expect(tourCommandFor('theta-aura-projectile', 'test')).toBe('cast-body')
+    expect(tourCommandFor('yomotsu-hegui', 'consummate')).toBe('cast-body')
+    expect(tourCommandFor('body-and-soul', 'interrogate')).toBe('cast-body')
+    expect(tourCommandFor('damage-sweet-home', 'link')).toBe('cast-body')
+    expect(tourCommandFor('stand-by-me', 'lend')).toBe('cast-body')
+    expect(tourCommandFor('bohemian-rhapsody', 'merge')).toBe('cast-body')
     expect(tourCommandFor('bungee-gum', 'program-post-mortem')).toBeNull()
+    expect(tourSupportsAbility('stand-by-me')).toBe(true)
+    expect(tourSupportsAbility('contagion')).toBe(false)
   })
 
   it('keeps a non-representable use visible but inexecutable', () => {
@@ -25,6 +38,8 @@ describe('the tour ability surface', () => {
         {
           presentation,
           targetId: 'target',
+          bodyTargetId: 'target',
+          bodyRefusal: null,
           concealed: false,
           bodyHolds: 0,
           worldHolds: 0,
@@ -40,6 +55,8 @@ describe('the tour ability surface', () => {
     const gum = presentationFor('bungee-gum')!
     const state = {
       targetId: null,
+      bodyTargetId: null,
+      bodyRefusal: null,
       concealed: false,
       bodyHolds: 0,
       worldHolds: 0,
@@ -64,6 +81,8 @@ describe('the tour ability surface', () => {
       owner: 'Hisoka',
       reducedMotion: false,
       targetId: 'body-hisoka',
+      bodyTargetId: 'body-hisoka',
+      bodyRefusal: null,
       concealed: true,
       bodyHolds: 1,
       worldHolds: 2,
@@ -78,5 +97,45 @@ describe('the tour ability surface', () => {
     adapter.dispatch('program-post-mortem')
     expect(execute).toHaveBeenCalledOnce()
     expect(execute).toHaveBeenCalledWith('cast-primary')
+    expect(adapter.supports?.('attach')).toBe(true)
+    expect(adapter.supports?.('program-post-mortem')).toBe(false)
+  })
+
+  it('does not mistake a room target for a person required by a body action', () => {
+    const presentation = presentationFor('stand-by-me')!
+    expect(
+      tourActionAvailability(
+        {
+          presentation,
+          targetId: 'tier-1-room-1001',
+          bodyTargetId: null,
+          bodyRefusal: null,
+          concealed: false,
+          bodyHolds: 0,
+          worldHolds: 0,
+          reasons,
+        },
+        'lend',
+      ),
+    ).toEqual({ executable: false, reason: 'target required' })
+  })
+
+  it('publishes a canon body refusal before dispatching the action', () => {
+    const presentation = presentationFor('bohemian-rhapsody')!
+    expect(
+      tourActionAvailability(
+        {
+          presentation,
+          targetId: 'prince-zhang-lei',
+          bodyTargetId: 'prince-zhang-lei',
+          bodyRefusal: 'Benjamin is alive',
+          concealed: false,
+          bodyHolds: 0,
+          worldHolds: 0,
+          reasons,
+        },
+        'merge',
+      ),
+    ).toEqual({ executable: false, reason: 'Benjamin is alive' })
   })
 })

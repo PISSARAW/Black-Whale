@@ -118,7 +118,9 @@
       <span class="sr-only">{$t.abilities.allCategories}</span>
       <select bind:value={category}>
         <option value="">{$t.abilities.allCategories}</option>
-        {#each categories as item (item)}<option value={item}>{item}</option>{/each}
+        {#each categories as item (item)}<option value={item}
+            >{item === 'unknown' ? $t.abilities.unknownCategory : item}</option
+          >{/each}
       </select>
     </label>
     <label>
@@ -152,7 +154,11 @@
             <h2><a href={$link(`/abilities/${ability.id}`)}>{ability.name}</a></h2>
             <p class="owner">{ability.owner}</p>
           </div>
-          <span class="category">{ability.category || $t.abilities.unknownCategory}</span>
+          <span class="category"
+            >{ability.category === 'unknown'
+              ? $t.abilities.unknownCategory
+              : ability.category}</span
+          >
         </div>
         <p class="description">{ability.description || $t.abilities.noDescription}</p>
         {#if ability.sources.length}

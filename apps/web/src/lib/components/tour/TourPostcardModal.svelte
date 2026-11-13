@@ -2,6 +2,7 @@
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { fade, scale } from 'svelte/transition'
   import { t } from '$lib/i18n'
+  import { reducedMotion } from '$lib/tour/comfort'
   import { createPostcardBlob } from '$lib/tour/postcardExport'
   import {
     POSTCARD_STAMPS,
@@ -28,6 +29,11 @@
   let stampType = $state<PostcardStampId>('kakin')
   let activeStamp = $derived(postcardStamp(stampType))
   let activeStampCopy = $derived($t.tour.postcard.stamps[stampType])
+  const fadeMotion = $derived({ duration: $reducedMotion ? 0 : 200 })
+  const scaleMotion = $derived({
+    start: $reducedMotion ? 1 : 0.95,
+    duration: $reducedMotion ? 0 : 200,
+  })
 
   const stampCategories: PostcardStampCategory[] = ['official', 'royal', 'underworld', 'expedition']
 
@@ -94,12 +100,9 @@
 
 <div
   class="postcard-modal fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-4 lg:items-center lg:p-8"
-  transition:fade={{ duration: 200 }}
+  transition:fade={fadeMotion}
 >
-  <div
-    class="my-auto flex w-full max-w-4xl flex-col gap-6"
-    transition:scale={{ start: 0.95, duration: 200 }}
-  >
+  <div class="my-auto flex w-full max-w-4xl flex-col gap-6" transition:scale={scaleMotion}>
     <!-- Postcard preview -->
     <div class="relative flex justify-center items-center w-full min-h-[40vh]">
       <!-- The element that will be exported -->

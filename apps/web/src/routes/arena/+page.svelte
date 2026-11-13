@@ -39,6 +39,7 @@
   import { forkReplayAtTick } from '$lib/arena/replay/branch'
   import { arenaRyuAction, auraPercent, strikeTarget } from '$lib/arena/controls'
   import { resolveArenaExperience, type ArenaOpponentId } from '$lib/arena/experience'
+  import { ARENA_CAMPAIGN } from '$lib/arena/campaign'
   import { ARENA_FORMATS, type ArenaFormatId } from '$lib/arena/formats'
   import { V3_OPPONENTS } from '$lib/arena/adaptation'
   import {
@@ -260,6 +261,14 @@
     ARENA_CHALLENGES.find((challenge) => challenge.id === selectedChallengeId) ?? null,
   )
   let activeFormat = $derived(ARENA_FORMATS.find(({ id }) => id === formatId) ?? ARENA_FORMATS[0])
+  let activeOpponentProfile = $derived(V3_OPPONENTS.find(({ id }) => id === opponentId) ?? null)
+  let opponentDisplayName = $derived(
+    activeOpponentProfile
+      ? $locale === 'fr'
+        ? activeOpponentProfile.nameFr
+        : activeOpponentProfile.nameEn
+      : OPPONENT_DOCTRINES[opponentDoctrine].name,
+  )
   let remainingSeconds = $derived(
     activeFormat.timeLimit === null ? null : Math.max(0, activeFormat.timeLimit - game.clock),
   )
@@ -306,13 +315,12 @@
   }
 
   function replayMatch(): ArenaReplayMatch {
-    const profile = V3_OPPONENTS.find(({ id }) => id === opponentId)
     return {
       formatId,
       opponentId,
       challengeId: selectedChallengeId,
       missionId,
-      bossRule: profile?.bossRule ?? null,
+      bossRule: activeOpponentProfile?.bossRule ?? null,
     }
   }
 
@@ -731,12 +739,14 @@
   }
 
   onMount(() => {
+    const campaignPreset = ARENA_CAMPAIGN.find(({ id }) => id === missionId)
     const experience = resolveArenaExperience({
       formatId,
       opponentId,
       doctrine: opponentDoctrine,
       difficulty,
       history: loadReplayLibrary(localStorage),
+      matchPreset: campaignPreset,
     })
     opponentDoctrine = experience.doctrine
     difficulty = experience.difficulty
@@ -898,9 +908,7 @@
 
   {#if game.tethers.length > 0}
     <div class="elastic-readout" aria-live="polite">
-      BUNGEE GUM · {game.tethers[0].anchor
-        ? $t.arena.ui.scenery
-        : OPPONENT_DOCTRINES[opponentDoctrine].name}
+      BUNGEE GUM · {game.tethers[0].anchor ? $t.arena.ui.scenery : opponentDisplayName}
       · {game.tethers[0].remaining.toFixed(1)}s
     </div>
   {/if}
@@ -1090,7 +1098,7 @@
 
     <article class="status-card opponent-card" class:bound={game.opponent.bound > 0}>
       <header>
-        <strong>{OPPONENT_DOCTRINES[opponentDoctrine].name}</strong>
+        <strong>{opponentDisplayName}</strong>
         <span
           >{reading.concealed ? $t.arena.state.concealed : $t.arena.mode[game.opponent.mode]}</span
         >

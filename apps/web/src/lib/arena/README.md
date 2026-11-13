@@ -10,7 +10,7 @@ Arena is split into three deterministic layers:
 
 The page resolves the URL into one `ArenaReplayMatch`, creates the initial state with `initialArenaMatchState`, then calls `applyArenaMatchRules` after every accepted command and simulation tick. `finishRun` is the only local completion path.
 
-Named opponent profiles own their doctrine, difficulty and optional boss rule. The `custom` profile preserves explicit doctrine and difficulty values. Manual changes switch the page back to `custom`.
+Named opponent profiles own their default doctrine, difficulty and optional boss rule. An authored campaign mission overrides those defaults with its complete match preset; this lets the same named opponent appear at different campaign difficulty levels without invalidating the recorded mission. The `custom` profile preserves explicit doctrine and difficulty values. Manual changes switch the page back to `custom`.
 
 ## Replay V2
 

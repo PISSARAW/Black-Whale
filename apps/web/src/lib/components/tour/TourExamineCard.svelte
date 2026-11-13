@@ -24,7 +24,7 @@
    */
   import { fly } from 'svelte/transition'
   import { t } from '$lib/i18n'
-  import { prefersReducedMotion } from '$lib/tour/comfort'
+  import { reducedMotion } from '$lib/tour/comfort'
   import type { Exhibit } from '$lib/tour/exhibit'
   import type { Provenance } from '$lib/tour/types'
 
@@ -64,7 +64,7 @@
     inferred: 'border-[#2b3a4a] bg-[#2b3a4a]/30 text-[#9dc4e0]',
   }
 
-  const motion = $derived(prefersReducedMotion() ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
+  const motion = $derived($reducedMotion ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
 </script>
 
 {#if open}

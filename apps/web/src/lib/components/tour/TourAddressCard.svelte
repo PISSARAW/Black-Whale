@@ -19,7 +19,7 @@
   import { fly } from 'svelte/transition'
   import TourAddressAsk from './TourAddressAsk.svelte'
   import { t } from '$lib/i18n'
-  import { prefersReducedMotion } from '$lib/tour/comfort'
+  import { reducedMotion } from '$lib/tour/comfort'
   import type { Answer, Interview } from '$lib/tour/cast'
   import type { BodyMark } from '$lib/tour/cast'
   import type { ReadingTell } from '$lib/tour/cast'
@@ -38,7 +38,7 @@
 
   let { talk, extracted, reading, held, onClose }: Props = $props()
 
-  const motion = $derived(prefersReducedMotion() ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
+  const motion = $derived($reducedMotion ? { y: 0, duration: 0 } : { y: 10, duration: 180 })
 </script>
 
 {#if talk}

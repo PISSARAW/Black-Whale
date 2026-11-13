@@ -12,6 +12,7 @@ import {
   comfort,
   readComfort,
   reducedMotion,
+  setComfort,
   watchReducedMotion,
 } from './comfort'
 
@@ -220,5 +221,15 @@ describe('the live system preference', () => {
     expect(get(comfort).snapTurn).toBe(true)
     expect(get(comfort).headBob).toBe(0)
     stop()
+  })
+
+  it('does not let a manual setting lift the system ceiling', () => {
+    vi.stubGlobal('window', { matchMedia: () => ({ matches: true }) })
+    vi.stubGlobal('localStorage', { setItem: vi.fn() })
+    comfort.set(comfortDefaults(true))
+
+    setComfort({ snapTurn: false, jumpOnly: false, headBob: HEAD_BOB_RANGE[1] })
+
+    expect(get(comfort)).toMatchObject({ snapTurn: true, jumpOnly: true, headBob: 0 })
   })
 })

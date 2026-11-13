@@ -60,4 +60,9 @@
     height: 7px;
     background: rgb(255 255 240 / 0.45);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .fill {
+      transition: none;
+    }
+  }
 </style>

@@ -1,7 +1,10 @@
 import { expect, test, type Locator, type Page } from 'playwright/test'
 
 const distanceOf = async (page: Page) => {
-  const text = await page.locator('.match-rule small').filter({ hasText: /distance/i }).innerText()
+  const text = await page
+    .locator('.match-rule small')
+    .filter({ hasText: /distance/i })
+    .innerText()
   return Number(text.match(/[\d.]+/)?.[0] ?? Number.NaN)
 }
 
@@ -78,6 +81,13 @@ test.describe('Arena playable journey', () => {
       'href',
       /terrain=.*challenge=.*doctrine=.*difficulty=.*format=.*opponent=.*mission=/,
     )
+
+    await page.goto(
+      '/arena?terrain=tier-2-screening-room&challenge=in-gyo&doctrine=deceiver&difficulty=fighter&format=first-to-three&opponent=in-examiner&mission=hidden-aura',
+    )
+    await page.getByRole('button', { name: 'Enter the arena' }).click()
+    await expect(page.locator('.opponent-card strong')).toHaveText('In Examiner')
+    await expect(page.getByLabel('Difficulty')).toHaveValue('fighter')
   })
 
   test('creates an authoritative PvP invite and synchronises two players', async ({

@@ -54,9 +54,13 @@ export function compileAbilityPresentations({
     presentations.push({
       abilityId: ability.id,
       identity: {
-        name: module.manifest.name,
-        ownerId: module.manifest.ownerId,
-        category: module.manifest.category,
+        // Identity is canon data. A module may classify an unrevealed ability
+        // operationally so its reducer can choose effects, but that is not
+        // permission for the client projection to present the inference as a
+        // published Nen category.
+        name: ability.name,
+        ownerId: ability.ownerId ?? module.manifest.ownerId,
+        category: ability.category,
         version: module.manifest.version,
       },
       interactionManifest: module.getInteractionManifest(),

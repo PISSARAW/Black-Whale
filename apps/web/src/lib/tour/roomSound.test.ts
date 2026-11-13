@@ -24,6 +24,12 @@ describe('room sound signatures', () => {
     expect(roomSoundKindOf(ship.spaces.get('tier-1-main-corridor')!, 'royal-passage')).toBe('none')
   })
 
+  it('keeps sparse drips on rooms whose source names drains or sewage', () => {
+    expect(profile('tier-2-heilly-secret-hideout-processing').drip.level).toBeGreaterThan(0)
+    expect(profile('tier-4-recycling-sewage-facilities').drip.level).toBeGreaterThan(0)
+    expect(profile('tier-1-main-corridor').drip.level).toBe(0)
+  })
+
   it('makes lower-deck ventilation rougher and the crowd bed stronger', () => {
     const royal = profile('tier-1-main-corridor')
     const hold = profile('tier-5-main-corridor')

@@ -108,6 +108,7 @@
     VIEW_DISTANCE,
   } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
+  import { roomAudioBasisKey, roomAudioKey } from '$lib/tour/roomAudioKey'
   import { roomConditionOf, type RoomCondition } from '$lib/tour/roomCondition'
   import { heardNeighbourOf, roomSoundProfileOf } from '$lib/tour/roomSound'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
@@ -4053,6 +4054,9 @@
       /** The end of Fugetsu's tunnel the visitor was last delivered to. */
       let wormFrom: string | null = null
       let lastSpaceId: string | null = null
+      let lastRoomAudioBasisKey: string | null = null
+      let lastRoomAudioKey: string | null = null
+      let lastRoomNeighbour: ReturnType<typeof heardNeighbourOf> = null
       /** How long since the fish last took something, in seconds. */
       let sinceBite = 0
       /** A couple of seconds a mouthful: an aquarium, not a wood chipper. */
@@ -4769,26 +4773,52 @@
         // Setting foot in a room is the event the hideout doors and the paper
         // dolls both wait on. Walking about inside one is not.
         const standingId = standing?.id ?? null
-        if (standingId !== lastSpaceId) {
-          lastSpaceId = standingId
+        const auditoryPlan = activePlan ?? plan
+        const audioBasisKey = standing
+          ? roomAudioBasisKey({
+              spaceId: standing.id,
+              doorways: auditoryPlan.doorways,
+              namedOccupants: roomOccupancy,
+            })
+          : null
+        if (
+          standing &&
+          (stepped || standingId !== lastSpaceId || audioBasisKey !== lastRoomAudioBasisKey)
+        ) {
+          lastRoomNeighbour = heardNeighbourOf({
+            plan: auditoryPlan,
+            space: standing,
+            at: pointer,
+            namedOccupants: roomOccupancy,
+          })
+        } else if (!standing) lastRoomNeighbour = null
+        lastRoomAudioBasisKey = audioBasisKey
+
+        const audioKey = standing
+          ? roomAudioKey({
+              spaceId: standing.id,
+              doorways: auditoryPlan.doorways,
+              namedOccupants: roomOccupancy,
+              neighbour: lastRoomNeighbour,
+            })
+          : null
+        if (standing && audioKey !== lastRoomAudioKey) {
+          lastRoomAudioKey = audioKey
+          const condition = conditionFor(standing, plan.tier)
           // Sabine on the volume the blueprint already gives, crossfaded over the
           // threshold: a cabin rings for half a second and the promenade for four.
-          if (standing) {
-            const condition = conditionFor(standing, plan.tier)
-            enterRoom({
-              id: standing.id,
-              key: `${standing.id}:${roomOccupancy[standing.id] ?? 0}`,
-              reverb: reverbTime(standing, plan.tier, condition.absorption),
-              wallDistance: distanceToBoundary(pointer, standing.footprint),
-              sound: roomSoundProfileOf(standing, condition),
-              neighbour: heardNeighbourOf({
-                plan: activePlan ?? plan,
-                space: standing,
-                at: pointer,
-                namedOccupants: roomOccupancy,
-              }),
-            })
-          }
+          enterRoom({
+            id: standing.id,
+            key: audioKey,
+            reverb: reverbTime(standing, plan.tier, condition.absorption),
+            wallDistance: distanceToBoundary(pointer, standing.footprint),
+            sound: roomSoundProfileOf(standing, condition),
+            neighbour: lastRoomNeighbour,
+          })
+        } else if (!standing) lastRoomAudioKey = null
+
+        if (standingId !== lastSpaceId) {
+          lastSpaceId = standingId
           // The ship is handed in because the doors may be passive: with the
           // aura up and no route prepared, every threshold is one of Voconte's
           // and comes out somewhere in the hideout that is not where you meant.

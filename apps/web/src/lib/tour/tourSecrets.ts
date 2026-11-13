@@ -7,19 +7,39 @@ import type { Post } from './cast'
 
 export type SecretMedium = 'manga' | 'anime' | 'film'
 export type SecretCanonStatus = 'canon' | 'adaptation' | 'non-canon-homage'
+export type SecretAvailability = 'canonical' | 'simulation-only'
+
+interface SecretReferenceBase {
+  title: string
+  citation: string
+}
+
+export type SecretReference =
+  | (SecretReferenceBase & {
+      medium: 'manga'
+      canonStatus: 'canon'
+      locator: { chapters: number[] }
+    })
+  | (SecretReferenceBase & {
+      medium: 'anime'
+      canonStatus: 'adaptation' | 'non-canon-homage'
+      locator: { episodes: { from: number; to: number } }
+    })
+  | (SecretReferenceBase & {
+      medium: 'film'
+      canonStatus: 'non-canon-homage'
+      locator: { year: number }
+    })
 
 export interface TourSecret {
   id: string
   spaceId: string
+  /** Whether the ordinary canonical cast can reach it, or a simulation must project its witness. */
+  availability: SecretAvailability
   characterIds: string[]
   name: string
   nameFr: string
-  reference: {
-    medium: SecretMedium
-    title: string
-    citation: string
-    canonStatus: SecretCanonStatus
-  }
+  reference: SecretReference
   rationale: string
   rationaleFr: string
   colour: number
@@ -72,6 +92,45 @@ export function secretForApparition(id: string): TourSecret | null {
   return TOUR_SECRETS.find((secret) => secret.id === secretId) ?? null
 }
 
+const positiveIntegers = (values: readonly number[]) =>
+  values.length > 0 && values.every((value) => Number.isInteger(value) && value > 0)
+
+function mangaReferenceErrors(id: string, chapters: readonly number[]): string[] {
+  return positiveIntegers(chapters) ? [] : [`${id}: manga reference needs positive chapter numbers`]
+}
+
+function animeReferenceErrors(id: string, episodes: { from: number; to: number }): string[] {
+  return positiveIntegers([episodes.from, episodes.to]) && episodes.to >= episodes.from
+    ? []
+    : [`${id}: anime reference needs an ordered episode range`]
+}
+
+function filmReferenceErrors(id: string, year: number, canonStatus: SecretCanonStatus): string[] {
+  const errors =
+    Number.isInteger(year) && year >= 1998 && year <= 2100
+      ? []
+      : [`${id}: film reference needs a plausible release year`]
+  if (canonStatus !== 'non-canon-homage') {
+    errors.push(`${id}: film reference must be labelled non-canon-homage`)
+  }
+  return errors
+}
+
+function referenceErrors(secret: TourSecret): string[] {
+  const reference = secret.reference
+  const errors = reference.citation.trim() ? [] : [`${secret.id}: missing citation`]
+  if (reference.medium === 'manga') {
+    return [...errors, ...mangaReferenceErrors(secret.id, reference.locator.chapters)]
+  }
+  if (reference.medium === 'anime') {
+    return [...errors, ...animeReferenceErrors(secret.id, reference.locator.episodes)]
+  }
+  return [
+    ...errors,
+    ...filmReferenceErrors(secret.id, reference.locator.year, reference.canonStatus),
+  ]
+}
+
 function authoredSecretErrors(
   ship: Ship,
   characterIds: ReadonlySet<string>,
@@ -83,10 +142,10 @@ function authoredSecretErrors(
   for (const id of secret.characterIds) {
     if (!characterIds.has(id)) errors.push(`${secret.id}: unknown character ${id}`)
   }
-  if (!secret.reference.citation.trim()) errors.push(`${secret.id}: missing citation`)
-  if (secret.reference.medium === 'film' && secret.reference.canonStatus === 'canon') {
-    errors.push(`${secret.id}: film reference cannot silently claim canon status`)
+  if (!['canonical', 'simulation-only'].includes(secret.availability)) {
+    errors.push(`${secret.id}: invalid availability ${String(secret.availability)}`)
   }
+  errors.push(...referenceErrors(secret))
   return errors
 }
 
@@ -104,4 +163,18 @@ export function secretErrors(
     errors.push(...authoredSecretErrors(ship, characterIds, secret))
   }
   return errors
+}
+
+/** Canonical entries must be observable from an actual distribution, not only a synthetic post. */
+export function secretReachabilityErrors(
+  ship: Ship,
+  posts: readonly Post[],
+  secrets: readonly TourSecret[] = TOUR_SECRETS,
+): string[] {
+  const visible = new Set(secretApparitions(ship, posts).map((apparition) => apparition.id))
+  return secrets.flatMap((secret) =>
+    secret.availability === 'canonical' && !visible.has(`${APPARITION_PREFIX}${secret.id}`)
+      ? [`${secret.id}: unreachable from canonical distribution`]
+      : [],
+  )
 }

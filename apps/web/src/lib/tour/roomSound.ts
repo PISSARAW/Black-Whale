@@ -11,6 +11,8 @@ export interface RoomSoundProfile {
   ventilation: { level: number; cutoff: number; resonance: number; wobble: number }
   crowd: { level: number; cutoff: number }
   accent: { level: number; frequency: number; rate: number; cutoff: number }
+  /** Sparse liquid impacts, only where the blueprint names drains or sewage. */
+  drip: { level: number; cutoff: number; rate: number }
 }
 
 export interface HeardNeighbour {
@@ -29,6 +31,16 @@ const ACCENTS: Readonly<Record<RoomSoundKind, RoomSoundProfile['accent']>> = {
 }
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
+
+const dripProfileOf = (space: Pick<Space, 'id'>, finish: string): RoomSoundProfile['drip'] => {
+  if (space.id === 'tier-2-heilly-secret-hideout-processing') {
+    return { level: 0.018, cutoff: 1450, rate: 0.82 }
+  }
+  if (finish === 'recycling' || /recycling|sewage/.test(space.id)) {
+    return { level: 0.026, cutoff: 1080, rate: 0.68 }
+  }
+  return { level: 0, cutoff: 1200, rate: 0.75 }
+}
 
 /** A function named by the blueprint itself, never inferred from atmosphere. */
 export function roomSoundKindOf(
@@ -63,11 +75,12 @@ export function roomSoundProfileOf(space: Space, condition: RoomCondition): Room
       cutoff: 360 + condition.humanDensity * 720,
     },
     accent: ACCENTS[kind],
+    drip: dripProfileOf(space, condition.finish),
   }
 }
 
 export const soundEnergy = (profile: RoomSoundProfile): number =>
-  profile.ventilation.level + profile.crowd.level + profile.accent.level
+  profile.ventilation.level + profile.crowd.level + profile.accent.level + profile.drip.level
 
 const midpoint = (start: Vec2, end: Vec2): Vec2 => [
   (start[0] + end[0]) / 2,

@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { AbilityViewComponent } from './abilityComponents'
-  import { componentFor, familyFor } from './abilityComponents'
+  import { componentFor } from './abilityComponents'
   import type { AbilityViewModel } from './abilityPresentation'
 
   let { model }: { model: AbilityViewModel } = $props()
   let View = $state<AbilityViewComponent | null>(null)
-  const family = $derived(familyFor(model.componentKey))
 
   $effect(() => {
     const loader = componentFor(model.componentKey)
@@ -22,5 +21,5 @@
 </script>
 
 {#if View}
-  <View {model} variant={model.componentKey} family={family ?? undefined} />
+  <View {model} />
 {/if}

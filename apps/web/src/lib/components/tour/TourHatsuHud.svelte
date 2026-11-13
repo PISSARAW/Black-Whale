@@ -1044,7 +1044,7 @@
           availability={surfaceAdapter.availability}
           onDispatch={(actionId) => surfaceAdapter.dispatch(actionId)}
         />
-        <NenWhyPanel plan={selectedAction.plan} compact />
+        <NenWhyPanel plan={selectedAction.plan} text={selectedAction.text[$locale]} compact />
         {#if abilityModel}<AbilityViewHost model={abilityModel} />{/if}
       </div>
     {/if}

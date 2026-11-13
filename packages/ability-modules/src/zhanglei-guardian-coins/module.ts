@@ -48,7 +48,11 @@ export const zhangleiGuardianCoins = defineAbility({
   actions: {
     mint: {
       label: 'Frapper une pièce',
-      evidence: shown('ch. 395 — la pièce frappée et donnée'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 395,
+        label: 'ch. 395 — la pièce frappée et donnée',
+      }),
       conditions: [requiresParameter('serial', 'La pièce est identifiée')],
       effects: [
         spawnNenEntity({
@@ -73,7 +77,11 @@ export const zhangleiGuardianCoins = defineAbility({
 
     accrue: {
       label: 'Laisser mûrir',
-      evidence: shown('ch. 395 — une unité de valeur par jour'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 395,
+        label: 'ch. 395 — une unité de valeur par jour',
+      }),
       conditions: [effectIsLive('effectId', 'La pièce existe')],
       effects: [
         attributeCounter({ increments: (ctx) => ({ value: numberParam(ctx, 'days') ?? 1 }) }),
@@ -84,7 +92,11 @@ export const zhangleiGuardianCoins = defineAbility({
       label: 'Suivre une pièce',
       // A coin is an object on the map: where it went, and through whose hands,
       // is a thread the timeline can follow on its own.
-      evidence: shown('ch. 395+ — la pièce circule de main en main'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 395,
+        label: 'ch. 395+ — la pièce circule de main en main',
+      }),
       conditions: [effectIsLive('effectId', 'La pièce existe')],
       effects: [
         knowledgeGrant({
@@ -97,12 +109,20 @@ export const zhangleiGuardianCoins = defineAbility({
     'keep-the-value-through-a-transfer': {
       label: 'Transmettre la pièce sans perdre sa valeur',
       refusal: 'Le transfert remet la valeur à zéro : c’est le prix du don',
-      evidence: shown('ch. 395 — la règle énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 395,
+        label: 'ch. 395 — la règle énoncée avec la capacité',
+      }),
     },
 
     transfer: {
       label: 'Donner la pièce',
-      evidence: shown('ch. 395 — la pièce remise à Hisoka'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 395,
+        label: 'ch. 395 — la pièce remise à Hisoka',
+      }),
       conditions: [
         effectIsLive('effectId', 'La pièce existe'),
         requiresParameter('holderId', 'Un nouveau porteur est désigné'),

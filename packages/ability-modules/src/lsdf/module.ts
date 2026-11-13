@@ -60,7 +60,11 @@ export const lsdf = defineAbility({
   actions: {
     arm: {
       label: 'Armer la zone',
-      evidence: shown('ch. 383 — la zone protégée du repaire'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — la zone protégée du repaire',
+      }),
       conditions: [
         requiresParameter('locationId', 'Un lieu est protégé'),
         declaredFlag('morenaPresent', true, 'Morena est présente au repaire'),
@@ -84,7 +88,11 @@ export const lsdf = defineAbility({
 
     'spawn-guard': {
       label: 'Faire apparaître un garde',
-      evidence: shown('ch. 383 — le garde arrive au niveau du crime commis'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — le garde arrive au niveau du crime commis',
+      }),
       conditions: [
         effectIsLive('effectId', 'La zone est armée'),
         requiresParameter('crimeSeverity', 'La gravité du crime est établie'),
@@ -106,7 +114,11 @@ export const lsdf = defineAbility({
 
     expel: {
       label: 'Expulser l’intrus',
-      evidence: shown('ch. 383 — l’intrus est expulsé, pas blessé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — l’intrus est expulsé, pas blessé',
+      }),
       conditions: [effectIsLive('effectId', 'La zone est armée')],
       effects: [moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' })],
     },
@@ -114,18 +126,30 @@ export const lsdf = defineAbility({
     'harm-an-intruder': {
       label: 'Blesser un intrus',
       refusal: 'Les gardes expulsent sans blesser',
-      evidence: shown('ch. 383 — la règle énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — la règle énoncée avec la capacité',
+      }),
     },
 
     'hold-the-zone-without-morena': {
       label: 'Tenir la zone sans Morena',
       refusal: 'La zone est conditionnée à la présence de Morena au repaire',
-      evidence: shown('ch. 383 — la condition énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — la condition énoncée avec la capacité',
+      }),
     },
 
     disarm: {
       label: 'Désarmer la zone',
-      evidence: shown('ch. 383 — la zone tombe quand Morena quitte le repaire'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — la zone tombe quand Morena quitte le repaire',
+      }),
       conditions: [effectIsLive('effectId', 'La zone est armée')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { reason: 'owner-left-the-hideout' } }),

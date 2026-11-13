@@ -52,6 +52,44 @@ describe('compiling client-safe ability presentations', () => {
     ).toBe(true)
   })
 
+  it('generates exhaustive French and English action and view copy', () => {
+    for (const presentation of result.presentations) {
+      expect(presentation.viewLabel.en, presentation.abilityId).toBeTruthy()
+      expect(presentation.viewLabel.fr, presentation.abilityId).toBeTruthy()
+      for (const action of presentation.actions) {
+        for (const locale of ['en', 'fr'] as const) {
+          expect(
+            action.text[locale].label,
+            `${presentation.abilityId}/${action.entry.id}/${locale}`,
+          ).toBeTruthy()
+          expect(action.text[locale].conditions).toHaveLength(action.plan.conditions.length)
+          expect(
+            action.text[locale].conditions.every((label) => label.trim().length > 0),
+            `${presentation.abilityId}/${action.entry.id}/${locale}`,
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('rejects a shown use whose source is still a free string', () => {
+    const original = abilityModules[0]!
+    const malformed = {
+      ...original,
+      getActionWheel: (...args: Parameters<typeof original.getActionWheel>) =>
+        original
+          .getActionWheel(...args)
+          .map((entry, index) =>
+            index === 0 ? { ...entry, source: 'ch. 1 — free text' as never } : entry,
+          ),
+    }
+    const compiled = compileAbilityPresentations({
+      modules: abilityModules.map((module) => (module === original ? malformed : module)),
+      catalogue,
+    })
+    expect(compiled.problems).toContainEqual(expect.stringContaining('CanonSourceRef'))
+  })
+
   it('publishes at least four module-authored uses for every ability', () => {
     for (const presentation of result.presentations) {
       expect(presentation.actions.length, presentation.abilityId).toBeGreaterThanOrEqual(4)

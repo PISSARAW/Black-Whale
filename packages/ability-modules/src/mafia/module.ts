@@ -61,7 +61,11 @@ export const biohazardHinrigh = defineAbility({
   actions: {
     animate: {
       label: 'Changer un objet en animal',
-      evidence: shown('ch. 383 — l’objet devient vivant sans perdre sa fonction'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — l’objet devient vivant sans perdre sa fonction',
+      }),
       conditions: [requiresTarget('Un objet est touché')],
       effects: [
         spawnNenEntity({
@@ -93,7 +97,11 @@ export const biohazardHinrigh = defineAbility({
       label: 'Se servir de l’objet animé',
       // The canon detail worth an entry of its own: a living door is still a
       // door, so the object keeps doing its job while it moves.
-      evidence: shown('ch. 383 — l’objet garde sa fonction d’origine'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 383,
+        label: 'ch. 383 — l’objet garde sa fonction d’origine',
+      }),
       conditions: [effectIsLive('effectId', 'Un objet est animé')],
       effects: [
         effect({
@@ -106,7 +114,7 @@ export const biohazardHinrigh = defineAbility({
 
     revert: {
       label: 'Rendre l’objet inerte',
-      evidence: asserted('l’objet redevient inerte'),
+      evidence: asserted({ kind: 'other', label: 'l’objet redevient inerte' }),
       conditions: [effectIsLive('effectId', 'Un objet est animé')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -163,7 +171,11 @@ export const bodyAndSoul = defineAbility({
   actions: {
     interrogate: {
       label: 'Frapper après la question',
-      evidence: shown('ch. 380 — la question, puis le coup, puis la vérité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — la question, puis le coup, puis la vérité',
+      }),
       conditions: [
         requiresTarget('Un interrogé est frappé'),
         requiresParameter('question', 'Une question a été posée'),
@@ -191,7 +203,11 @@ export const bodyAndSoul = defineAbility({
       label: 'Comparer avec ce qui a été dit',
       // The whole interest of the ability on the site: the mouth's version and
       // the body's version live side by side, BELIEVED against KNOWN.
-      evidence: shown('ch. 380 — le corps répond même quand la bouche ment'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — le corps répond même quand la bouche ment',
+      }),
       conditions: [requiresParameter('question', 'Une question a été posée')],
       effects: [
         knowledgeGrant({
@@ -205,7 +221,11 @@ export const bodyAndSoul = defineAbility({
     'punch-without-asking': {
       label: 'Frapper sans avoir demandé',
       refusal: 'Sans question posée juste avant, le coup n’est qu’un coup',
-      evidence: shown('ch. 380 — la question précède toujours la frappe'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — la question précède toujours la frappe',
+      }),
     },
 
     'interrogate-at-distance': {
@@ -270,7 +290,11 @@ export const damageSweetHome = defineAbility({
   actions: {
     link: {
       label: 'Relier une source et un réceptacle',
-      evidence: shown('ch. 386 — la main gauche pose le report des dégâts'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la main gauche pose le report des dégâts',
+      }),
       conditions: [
         requiresParameter('sourceId', 'La source des dégâts est touchée'),
         requiresParameter('sinkId', 'Le réceptacle est touché'),
@@ -290,18 +314,30 @@ export const damageSweetHome = defineAbility({
     'link-without-touching': {
       label: 'Relier sans contact',
       refusal: 'Il faut avoir touché la source et le réceptacle',
-      evidence: shown('ch. 386 — les deux contacts précèdent le report'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — les deux contacts précèdent le report',
+      }),
     },
 
     'erase-the-damage': {
       label: 'Effacer les dégâts',
       refusal: 'Les dégâts sont déplacés, jamais annulés : quelqu’un les prend',
-      evidence: shown('ch. 386 — le report est un transfert, pas un soin'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — le report est un transfert, pas un soin',
+      }),
     },
 
     transfer: {
       label: 'Reporter les dégâts',
-      evidence: shown('ch. 386 — le coup part ailleurs que là où il a frappé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — le coup part ailleurs que là où il a frappé',
+      }),
       conditions: [effectIsLive('effectId', 'Un report est en place')],
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'sinkId'), state: 'INJURED' }),

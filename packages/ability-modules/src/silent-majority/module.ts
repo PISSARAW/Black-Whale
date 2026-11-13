@@ -68,7 +68,11 @@ export const silentMajority = defineAbility({
   actions: {
     summon: {
       label: 'Invoquer le pantin',
-      evidence: shown('ch. 386 — le pantin que seul son utilisateur voit'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — le pantin que seul son utilisateur voit',
+      }),
       gyo: 'le pantin lui-même — les serpents, eux, sont visibles de tous',
       effects: [
         spawnNenEntity({
@@ -100,7 +104,11 @@ export const silentMajority = defineAbility({
 
     bite: {
       label: 'Lancer les serpents',
-      evidence: shown('ch. 386 — les serpents lâchés sur la victime désignée'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — les serpents lâchés sur la victime désignée',
+      }),
       conditions: [
         requiresTarget('Une victime est désignée'),
         belowCapacity(
@@ -131,7 +139,11 @@ export const silentMajority = defineAbility({
 
     'abort-early': {
       label: 'Désactiver prématurément',
-      evidence: shown('ch. 386 — la malédiction se retourne sur qui l’interrompt'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la malédiction se retourne sur qui l’interrompt',
+      }),
       conditions: [effectIsLive('effectId', 'Le pantin est invoqué')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { abortedEarly: true } }),
@@ -149,7 +161,11 @@ export const silentMajority = defineAbility({
       label: 'Envoyer les quatre serpents',
       // Four snakes are eleven seconds instead of forty-four: the same curse,
       // spent faster.
-      evidence: shown('ch. 386 — onze secondes à quatre serpents'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — onze secondes à quatre serpents',
+      }),
       conditions: [effectIsLive('effectId', 'Le pantin est invoqué')],
       effects: [
         attributeCounter({
@@ -166,7 +182,11 @@ export const silentMajority = defineAbility({
     'follow-outside-nen-range': {
       label: 'Poursuivre hors de portée du Nen',
       refusal: 'Hors de portée, les serpents disparaissent',
-      evidence: shown('ch. 386 — la règle énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la règle énoncée avec la capacité',
+      }),
     },
   },
 

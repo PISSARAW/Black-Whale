@@ -78,14 +78,22 @@ export const bungeeGum = defineAbility({
   actions: {
     attach: {
       label: 'Attacher',
-      evidence: shown('ch. 39 — le filament attaché à distance'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 39,
+        label: 'ch. 39 — le filament attaché à distance',
+      }),
       conditions: [requiresTarget('Un point d’ancrage est visé')],
       effects: [elasticConnection()],
     },
 
     'set-trap': {
       label: 'Poser un piège (In)',
-      evidence: shown('ch. 359 — le piège posé et attendu'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 359,
+        label: 'ch. 359 — le piège posé et attendu',
+      }),
       gyo: 'le filament tendu en travers du passage, et son point d’ancrage',
       conditions: [requiresTarget('Une surface est visée')],
       // Real, invisible, and only revealed by the Gyo toggle.
@@ -95,7 +103,11 @@ export const bungeeGum = defineAbility({
 
     detach: {
       label: 'Détacher le filament',
-      evidence: shown('ch. 39 — le filament séparé du corps rompt au-delà de dix mètres'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 39,
+        label: 'ch. 39 — le filament séparé du corps rompt au-delà de dix mètres',
+      }),
       // Separated from his body, the filament breaks past ten metres.
       conditions: [maxDistance(10)],
       effects: [
@@ -108,7 +120,11 @@ export const bungeeGum = defineAbility({
 
     'program-post-mortem': {
       label: 'Programmer post-mortem',
-      evidence: shown('ch. 357 — cœur et poumons reprogrammés avant la mort'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — cœur et poumons reprogrammés avant la mort',
+      }),
       effects: [
         postMortem((ctx) =>
           elasticConnection()(ctx).map((event) =>
@@ -136,7 +152,11 @@ export const bungeeGum = defineAbility({
 
     rebound: {
       label: 'Renvoi',
-      evidence: shown('ch. 176 — les cartes et les projectiles renvoyés'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 176,
+        label: 'ch. 176 — les cartes et les projectiles renvoyés',
+      }),
       conditions: [requiresTarget('Un projectile ou attaque physique est visé')],
       effects: [elasticConnection()],
       hint: "Utilise l'élasticité pour renvoyer une attaque",
@@ -144,7 +164,11 @@ export const bungeeGum = defineAbility({
 
     propulsion: {
       label: 'Propulsion',
-      evidence: shown('ch. 39 — Hisoka se tire vers son ancrage'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 39,
+        label: 'ch. 39 — Hisoka se tire vers son ancrage',
+      }),
       conditions: [requiresTarget('Un point d’ancrage solide')],
       effects: [elasticConnection()],
       hint: 'Se propulser à grande vitesse',
@@ -152,7 +176,11 @@ export const bungeeGum = defineAbility({
 
     'false-tissue': {
       label: 'Faux tissu',
-      evidence: shown('ch. 357 — les plaies refermées pendant le combat'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — les plaies refermées pendant le combat',
+      }),
       // Worked on himself, so there is nothing to require of a target: `self()`
       // is one of the ability's targets, not a condition on this mode.
       effects: [bodyState({ state: 'STABILIZED' })],
@@ -161,7 +189,10 @@ export const bungeeGum = defineAbility({
 
     'wall-run': {
       label: 'Courir sur les murs',
-      evidence: asserted('la capacité sert aussi à se coller aux surfaces'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité sert aussi à se coller aux surfaces',
+      }),
       effects: [elasticConnection()],
     },
 
@@ -178,7 +209,7 @@ export const bungeeGum = defineAbility({
 
     release: {
       label: 'Relâcher',
-      evidence: asserted('ce qui est attaché se détache à volonté'),
+      evidence: asserted({ kind: 'other', label: 'ce qui est attaché se détache à volonté' }),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

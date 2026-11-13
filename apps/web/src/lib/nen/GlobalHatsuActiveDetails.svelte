@@ -1,6 +1,6 @@
 <script lang="ts">
   import { reducedMotion } from '$lib/tour/comfort'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
   import AbilityActionWheel from './AbilityActionWheel.svelte'
   import AbilityViewHost from './AbilityViewHost.svelte'
   import NenWhyPanel from './NenWhyPanel.svelte'
@@ -33,7 +33,7 @@
       selected={selectedAction.entry.id}
       onSelect={(actionId) => (selectedActionId = actionId)}
     />
-    <NenWhyPanel plan={selectedAction.plan} compact />
+    <NenWhyPanel plan={selectedAction.plan} text={selectedAction.text[$locale]} compact />
     {#if model}<AbilityViewHost {model} />{/if}
   </details>
 {/if}

@@ -65,7 +65,11 @@ export const skillHunter = defineAbility({
   actions: {
     steal: {
       label: 'Voler une capacité',
-      evidence: shown('ch. 106 — les quatre conditions, en moins d’une heure'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — les quatre conditions, en moins d’une heure',
+      }),
       conditions: [
         requiresTarget('Une victime est au contact'),
         requiresParameter('targetAbilityId', 'La capacité volée est identifiée'),
@@ -94,7 +98,11 @@ export const skillHunter = defineAbility({
 
     'creator-died': {
       label: 'Le créateur est mort',
-      evidence: shown('ch. 371 — Gallery Fake s’éteint avec Kortopi'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 371,
+        label: 'ch. 371 — Gallery Fake s’éteint avec Kortopi',
+      }),
       conditions: [effectIsLive('effectId', 'La page existe encore')],
       // A page whose creator died stops working — unless it was post-mortem, in
       // which case the world-engine invariant keeps it alive and this action is
@@ -113,7 +121,11 @@ export const skillHunter = defineAbility({
       label: 'Garder une page post-mortem',
       // The exception that makes the book worth scrolling through: Sun and Moon
       // outlives its creator, and the timeline shows the difference.
-      evidence: shown('ch. 371 — les marques posées continuent d’exister'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 371,
+        label: 'ch. 371 — les marques posées continuent d’exister',
+      }),
       conditions: [effectIsLive('effectId', 'La page existe encore')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { postMortem: true } })],
     },
@@ -122,7 +134,11 @@ export const skillHunter = defineAbility({
       label: 'Voler sans remplir les quatre conditions',
       refusal:
         'Voir la capacité, interroger, obtenir la réponse, toucher paume contre couverture — les quatre, en moins d’une heure',
-      evidence: shown('ch. 106 — les conditions énoncées par Chrollo'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — les conditions énoncées par Chrollo',
+      }),
     },
 
     'steal-from-the-dead': {
@@ -172,7 +188,11 @@ export const doubleFace = defineAbility({
   actions: {
     'run-two-abilities': {
       label: 'Employer les deux capacités',
-      evidence: shown('ch. 372 — les deux pages actives dans le même combat'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — les deux pages actives dans le même combat',
+      }),
       conditions: [effectIsLive('effectId', 'Le marque-page est posé')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { simultaneous: 2 } })],
     },
@@ -180,18 +200,30 @@ export const doubleFace = defineAbility({
     'bookmark-a-third': {
       label: 'Marquer une troisième capacité',
       refusal: 'Deux capacités au plus : le marque-page n’en tient pas davantage',
-      evidence: shown('ch. 372 — la limite énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — la limite énoncée avec la capacité',
+      }),
     },
 
     'keep-the-hands-free': {
       label: 'Garder les mains libres',
       refusal: 'Le livre occupe les deux mains tant que les pages tournent',
-      evidence: shown('ch. 372 — les mains prises par la lecture'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — les mains prises par la lecture',
+      }),
     },
 
     bookmark: {
       label: 'Poser le marque-page',
-      evidence: shown('ch. 372 — le marque-page tient deux capacités à la fois'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — le marque-page tient deux capacités à la fois',
+      }),
       conditions: [requiresParameter('targetAbilityId', 'Une page est marquée')],
       effects: [
         effect({

@@ -301,6 +301,16 @@ export interface AbilityActionPresentation {
   entry: NenActionWheelEntry
   plan: AbilityActionPlan
   availability: ActionAvailability
+  /** Exhaustive client copy, generated with the canon projection. */
+  text: Record<'en' | 'fr', AbilityActionPresentationText>
+}
+
+export interface AbilityActionPresentationText {
+  label: string
+  hint?: string
+  source?: string
+  conditions: string[]
+  cost?: string
 }
 
 /**
@@ -317,6 +327,7 @@ export interface AbilityPresentationProjection {
   }
   interactionManifest: AbilityInteractionManifest | null
   componentKey: string
+  viewLabel: Record<'en' | 'fr', string>
   actions: AbilityActionPresentation[]
 }
 

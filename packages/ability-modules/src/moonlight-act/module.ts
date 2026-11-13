@@ -49,7 +49,11 @@ export const moonlightAct = defineAbility({
   actions: {
     sign: {
       label: 'Signer le contrat',
-      evidence: shown('ch. 397 — le contrat énoncé terme par terme, puis accepté'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 397,
+        label: 'ch. 397 — le contrat énoncé terme par terme, puis accepté',
+      }),
       conditions: [
         requiresTarget('Un cocontractant est présent'),
         // Consent is the ability: without it there is no contract at all.
@@ -77,7 +81,11 @@ export const moonlightAct = defineAbility({
       label: 'Lire les termes',
       // The most literal rendering of "explainable conditions": the contract is
       // displayed as written, and the panel shows nothing else.
-      evidence: shown('ch. 397 — les termes sont énoncés avant la signature'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 397,
+        label: 'ch. 397 — les termes sont énoncés avant la signature',
+      }),
       effects: [
         knowledgeGrant({
           factId: (ctx) => `contract-terms:${param(ctx, 'contractId') ?? 'contract'}`,
@@ -88,25 +96,40 @@ export const moonlightAct = defineAbility({
 
     fulfil: {
       label: 'Exécuter le contrat',
-      evidence: shown('ch. 397 — la récompense suit l’exécution'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 397,
+        label: 'ch. 397 — la récompense suit l’exécution',
+      }),
       effects: [setEffectState({ state: 'ENDED', attributes: { outcome: 'fulfilled' } })],
     },
 
     'sign-without-consent': {
       label: 'Imposer un contrat',
       refusal: 'Le contrat est volontaire : sans accord libre, il n’y a pas de capacité',
-      evidence: shown('ch. 397 — le consentement est la condition d’entrée'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 397,
+        label: 'ch. 397 — le consentement est la condition d’entrée',
+      }),
     },
 
     'change-the-terms': {
       label: 'Changer les termes en cours',
       refusal: 'Les termes signés valent tels quels : ils ne se réécrivent pas',
-      evidence: asserted('la capacité exécute ce qui a été convenu, rien d’autre'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité exécute ce qui a été convenu, rien d’autre',
+      }),
     },
 
     breach: {
       label: 'Rompre le contrat',
-      evidence: shown('ch. 397 — la pénalité inscrite s’applique'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 397,
+        label: 'ch. 397 — la pénalité inscrite s’applique',
+      }),
       effects: [setEffectState({ state: 'TRIGGERED', attributes: { outcome: 'breached' } })],
       hint: 'Applique la pénalité inscrite au contrat',
     },

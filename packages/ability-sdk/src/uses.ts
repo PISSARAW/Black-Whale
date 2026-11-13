@@ -22,18 +22,12 @@ export type NenTechnique = 'in' | 'gyo' | 'shu' | 'ko' | 'ken' | 'ryu' | 'en' | 
 export type { CanonSourceRef } from '@black-whale/nen-engine'
 
 /**
- * Keep existing module declarations source-compatible while normalising their
- * evidence immediately. New declarations may pass the structured form
- * directly; the hundreds of existing `ch. N` citations become structured at
- * the SDK boundary instead of being parsed independently by every renderer.
+ * Deliberately does not accept a string. Provenance is canon data, not copy to
+ * parse heuristically at runtime: a declaration has to choose its source kind
+ * and, for manga evidence, provide the chapter as a number.
  */
-export function canonSource(source: CanonSourceRef | string): CanonSourceRef {
-  if (typeof source !== 'string') return source
-  const chapter = /\bch\.\s*(\d+)/i.exec(source)
-  if (chapter) return { kind: 'chapter', chapter: Number(chapter[1]), label: source }
-  if (/databook/i.test(source)) return { kind: 'databook', label: source }
-  if (/interview/i.test(source)) return { kind: 'interview', label: source }
-  return { kind: 'other', label: source }
+export function canonSource(source: CanonSourceRef): CanonSourceRef {
+  return source
 }
 
 export const sourceLabel = (source: CanonSourceRef): string => source.label
@@ -46,11 +40,11 @@ export type AbilityUseEvidence =
   /** Never shown nor asserted: simulation branches only, never a canon view. */
   | { kind: 'hypothesis'; note?: string }
 
-export const shown = (source: CanonSourceRef | string): AbilityUseEvidence => ({
+export const shown = (source: CanonSourceRef): AbilityUseEvidence => ({
   kind: 'shown',
   source: canonSource(source),
 })
-export const asserted = (source: CanonSourceRef | string): AbilityUseEvidence => ({
+export const asserted = (source: CanonSourceRef): AbilityUseEvidence => ({
   kind: 'asserted',
   source: canonSource(source),
 })

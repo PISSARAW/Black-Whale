@@ -53,7 +53,11 @@ export const salesaleGuardianSmoke = defineAbility({
   actions: {
     diffuse: {
       label: 'Diffuser la fumée',
-      evidence: shown('ch. 386 — la fumée de bienveillance emplit la pièce'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la fumée de bienveillance emplit la pièce',
+      }),
       conditions: [requiresParameter('locationId', 'Une pièce est enfumée')],
       effects: [
         spawnNenEntity({ id: COHORT_ID, kind: 'COHORT', label: 'Convertis de Salé-salé' }),
@@ -77,7 +81,11 @@ export const salesaleGuardianSmoke = defineAbility({
 
     convert: {
       label: 'Convertir un occupant',
-      evidence: shown('ch. 386 — la conversion vient avec le temps d’exposition'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la conversion vient avec le temps d’exposition',
+      }),
       conditions: [
         effectIsLive('effectId', 'La fumée est encore active'),
         declaredFlag('holdingBreath', false, 'La cible ne retient pas son souffle'),
@@ -97,7 +105,11 @@ export const salesaleGuardianSmoke = defineAbility({
     'spread-by-a-convert': {
       label: 'Propager par un converti',
       // Each convert carries a copy: the cohort grows without the guardian.
-      evidence: shown('ch. 386 — les convertis portent des copies qui propagent'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — les convertis portent des copies qui propagent',
+      }),
       conditions: [effectIsLive('effectId', 'Des convertis existent')],
       effects: [
         attributeCounter({
@@ -110,7 +122,11 @@ export const salesaleGuardianSmoke = defineAbility({
     'convert-through-held-breath': {
       label: 'Convertir quelqu’un qui retient son souffle',
       refusal: 'Retenir son souffle protège : la fumée ne prend pas',
-      evidence: shown('ch. 386 — la parade est énoncée dans la scène'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 386,
+        label: 'ch. 386 — la parade est énoncée dans la scène',
+      }),
     },
 
     'convert-at-a-distance': {

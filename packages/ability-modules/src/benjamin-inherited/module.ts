@@ -55,7 +55,10 @@ export const airBlow = defineAbility({
   actions: {
     'fire-at-a-single-target': {
       label: 'Viser une cible',
-      evidence: asserted('l’émission part de la paume vers ce qu’elle vise'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'l’émission part de la paume vers ce qu’elle vise',
+      }),
       conditions: [requiresTarget('Une cible est visée')],
       effects: [auraModifier({ emitter: 'left-palm', scope: 'target' })],
     },
@@ -73,7 +76,10 @@ export const airBlow = defineAbility({
 
     fire: {
       label: 'Émettre depuis la paume gauche',
-      evidence: asserted('l’émission part de la paume gauche ; le canon n’en dit pas plus'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'l’émission part de la paume gauche ; le canon n’en dit pas plus',
+      }),
       conditions: [requiresTarget('Une cible est visée')],
       effects: [
         auraModifier({
@@ -132,9 +138,10 @@ export const culdcept = defineAbility({
   actions: {
     capture: {
       label: 'Capturer une capacité',
-      evidence: asserted(
-        'la capacité prend une capacité en carte ; le manga n’en montre pas la réussite',
-      ),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité prend une capacité en carte ; le manga n’en montre pas la réussite',
+      }),
       conditions: [
         requiresTarget('Un utilisateur est visé'),
         requiresParameter('targetAbilityId', 'La capacité visée est identifiée'),
@@ -154,7 +161,10 @@ export const culdcept = defineAbility({
 
     'play-a-captured-card': {
       label: 'Jouer une carte capturée',
-      evidence: asserted('la carte rend la capacité disponible à son porteur'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la carte rend la capacité disponible à son porteur',
+      }),
       conditions: [requiresParameter('targetAbilityId', 'Une carte est choisie')],
       effects: [abilityGrant()],
     },
@@ -162,12 +172,20 @@ export const culdcept = defineAbility({
     'capture-an-invincible-arrow': {
       label: 'Capturer la flèche de Halkenburg',
       refusal: 'La flèche transperce le rectangle d’aura : la carte ne se ferme pas',
-      evidence: shown('ch. 411 — l’échec, montré comme tel'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 411,
+        label: 'ch. 411 — l’échec, montré comme tel',
+      }),
     },
 
     'capture-failed': {
       label: 'Capture avortée',
-      evidence: shown('ch. 411 — la capture échoue contre la flèche de Halkenburg'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 411,
+        label: 'ch. 411 — la capture échoue contre la flèche de Halkenburg',
+      }),
       conditions: [requiresParameter('targetAbilityId', 'La capacité visée est identifiée')],
       // The ch. 411 failure: an effect that exists only to be ended, because the
       // timeline should show the attempt.
@@ -231,13 +249,21 @@ export const benjaminAura = defineAbility({
   actions: {
     reinforce: {
       label: 'Renforcer le corps',
-      evidence: shown('ch. 361 — le corps tenu par le renforcement'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 361,
+        label: 'ch. 361 — le corps tenu par le renforcement',
+      }),
       effects: [auraModifier({ mode: 'REINFORCEMENT', scope: 'self' })],
     },
 
     'harden-against-a-blow': {
       label: 'Encaisser un coup',
-      evidence: shown('ch. 385 — le corps tient sous l’impact'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 385,
+        label: 'ch. 385 — le corps tient sous l’impact',
+      }),
       conditions: [effectIsLive('effectId', 'Le renforcement est actif')],
       effects: [auraModifier({ mode: 'REINFORCEMENT', braced: true })],
     },
@@ -249,7 +275,7 @@ export const benjaminAura = defineAbility({
 
     release: {
       label: 'Relâcher',
-      evidence: asserted('le renforcement se relâche à volonté'),
+      evidence: asserted({ kind: 'other', label: 'le renforcement se relâche à volonté' }),
       conditions: [effectIsLive('effectId', 'Le renforcement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

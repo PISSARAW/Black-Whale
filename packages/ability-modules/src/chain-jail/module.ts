@@ -69,7 +69,7 @@ export const chainJail = defineAbility({
   actions: {
     bind: {
       label: 'Emprisonner une Araignée',
-      evidence: shown('ch. 84 — capture d’Uvogin'),
+      evidence: shown({ kind: 'chapter', chapter: 84, label: 'ch. 84 — capture d’Uvogin' }),
       conditions: [requiresTarget('Une cible est enchaînée')],
       effects: [
         constraint({
@@ -81,7 +81,11 @@ export const chainJail = defineAbility({
 
     'hold-for-interrogation': {
       label: 'Maintenir pendant l’interrogatoire',
-      evidence: shown('ch. 85-86 — Uvogin interrogé, puis ch. 122 — Chrollo'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 85,
+        label: 'ch. 85-86 — Uvogin interrogé, puis ch. 122 — Chrollo',
+      }),
       conditions: [effectIsLive('effectId', 'La chaîne tient encore')],
       // The coupling the manga always shows: the jail holds while the Dowsing
       // Chain asks the questions.
@@ -91,7 +95,10 @@ export const chainJail = defineAbility({
 
     release: {
       label: 'Relâcher la chaîne',
-      evidence: asserted('la chaîne se retire à volonté ; elle ne cède à aucune autre main'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la chaîne se retire à volonté ; elle ne cède à aucune autre main',
+      }),
       conditions: [effectIsLive('effectId', 'La chaîne tient encore')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -99,7 +106,7 @@ export const chainJail = defineAbility({
     'bind-outsider': {
       label: 'Emprisonner hors Brigade',
       refusal: 'Serment : hors Brigade Fantôme, la Chaîne du Jugement tue Kurapika',
-      evidence: shown('ch. 84 — le serment énoncé'),
+      evidence: shown({ kind: 'chapter', chapter: 84, label: 'ch. 84 — le serment énoncé' }),
     },
 
     'bind-self': {

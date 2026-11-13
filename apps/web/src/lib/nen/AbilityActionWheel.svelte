@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { AbilityPresentationProjection } from '@black-whale/nen-engine'
-  import { t } from '$lib/i18n'
+  import { locale, t } from '$lib/i18n'
 
   let {
     presentation,
@@ -23,10 +23,11 @@
 
 <div class="wheel" role="list" aria-label={$t.abilities.actionWheel}>
   {#each visible as action (action.entry.id)}
+    {@const text = action.text[$locale]}
     {@const locked = action.entry.visibility !== 'available'}
     {@const surface = availability?.(action.entry.id)}
     {@const disabled = locked || surface?.executable === false}
-    {@const reason = surface?.reason ?? action.entry.hint}
+    {@const reason = surface?.reason ?? text.hint}
     <div role="listitem">
       <button
         type="button"
@@ -40,8 +41,8 @@
           if (!disabled) onDispatch?.(action.entry.id)
         }}
       >
-        <span>{action.entry.label}</span>
-        {#if action.entry.source}<small class="source">{action.entry.source.label}</small>{/if}
+        <span>{text.label}</span>
+        {#if text.source}<small class="source">{text.source}</small>{/if}
         {#if disabled}<small>{reason ?? $t.abilities.conditionUnmet}</small>{/if}
       </button>
     </div>

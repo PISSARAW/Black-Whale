@@ -40,7 +40,11 @@ export const bohemianRhapsody = defineAbility({
   actions: {
     merge: {
       label: 'Fusionner après la mort de Benjamin',
-      evidence: asserted('ch. 417 — Benjamin décrit le mécanisme ; la fusion reste future'),
+      evidence: asserted({
+        kind: 'chapter',
+        chapter: 417,
+        label: 'ch. 417 — Benjamin décrit le mécanisme ; la fusion reste future',
+      }),
       conditions: [
         declaredFlag('benjaminDead', true, 'Benjamin est mort'),
         requiresTarget('Un parent de sang est choisi comme hôte'),
@@ -62,17 +66,29 @@ export const bohemianRhapsody = defineAbility({
     'merge-before-death': {
       label: 'Fusionner avant la mort de Benjamin',
       refusal: "La mort de Benjamin est la condition d'activation",
-      evidence: asserted('ch. 417 — le plan ne commence qu’après sa mort'),
+      evidence: asserted({
+        kind: 'chapter',
+        chapter: 417,
+        label: 'ch. 417 — le plan ne commence qu’après sa mort',
+      }),
     },
     'choose-a-non-relative': {
       label: 'Choisir un hôte hors de la lignée',
       refusal: 'Le nouvel hôte doit être un parent de sang de Benjamin',
-      evidence: asserted('ch. 417 — la succession reste dans la lignée de Benjamin'),
+      evidence: asserted({
+        kind: 'chapter',
+        chapter: 417,
+        label: 'ch. 417 — la succession reste dans la lignée de Benjamin',
+      }),
     },
     'remain-in-the-contest': {
       label: 'Rester candidat après la fusion',
       refusal: 'La fusion retire Benjamin de la Guerre de Succession',
-      evidence: asserted('ch. 417 — la fusion lui fait perdre son éligibilité'),
+      evidence: asserted({
+        kind: 'chapter',
+        chapter: 417,
+        label: 'ch. 417 — la fusion lui fait perdre son éligibilité',
+      }),
     },
   },
 

@@ -47,7 +47,10 @@ export const indoorFish = defineAbility({
   actions: {
     release: {
       label: 'Lâcher les poissons',
-      evidence: asserted('les poissons ne survivent que dans une pièce close'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'les poissons ne survivent que dans une pièce close',
+      }),
       conditions: [
         requiresParameter('locationId', 'Une pièce est choisie'),
         locationIsSealed('La pièce est complètement close'),
@@ -82,7 +85,10 @@ export const indoorFish = defineAbility({
 
     'room-opened': {
       label: 'La pièce s’ouvre',
-      evidence: asserted('l’ouverture met fin à la capacité et rend les blessures'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'l’ouverture met fin à la capacité et rend les blessures',
+      }),
       conditions: [effectIsLive('effectId', 'Les poissons sont lâchés')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { reason: 'room-opened' } }),

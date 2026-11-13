@@ -51,7 +51,11 @@ export const chrolloTeleportation = defineAbility({
   actions: {
     displace: {
       label: 'Déplacer une personne',
-      evidence: shown('ch. 357 — Nobunaga écarté sans ligne de vue'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — Nobunaga écarté sans ligne de vue',
+      }),
       conditions: [
         requiresTarget('Une personne est déplacée'),
         requiresParameter('locationId', 'Une destination est choisie'),
@@ -77,14 +81,22 @@ export const chrolloTeleportation = defineAbility({
 
     'displace-through-a-wall': {
       label: 'Déplacer sans ligne de vue',
-      evidence: shown('ch. 357 — la cible part sans que rien ne la relie à Chrollo'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — la cible part sans que rien ne la relie à Chrollo',
+      }),
       conditions: [requiresTarget('Une personne est déplacée')],
       effects: [moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' })],
     },
 
     'displace-without-consent': {
       label: 'Déplacer sans accord',
-      evidence: shown('ch. 357 — la cible n’a rien à dire'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — la cible n’a rien à dire',
+      }),
       conditions: [requiresTarget('Une personne est déplacée')],
       effects: [moveEntity({ certainty: 'CONFIRMED', precision: 'EXACT_ROOM' })],
     },

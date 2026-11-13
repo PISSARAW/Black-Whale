@@ -51,7 +51,11 @@ export const marayamGuardianIsolation = defineAbility({
   actions: {
     isolate: {
       label: 'Isoler la pièce',
-      evidence: shown('ch. 390 — la chambre 1013 derrière sa barrière'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — la chambre 1013 derrière sa barrière',
+      }),
       conditions: [requiresParameter('locationId', 'La pièce isolée est identifiée')],
       effects: [
         spawnNenEntity({
@@ -99,7 +103,11 @@ export const marayamGuardianIsolation = defineAbility({
       // What an outsider actually reaches: an empty copy, and a certainty that
       // points at it. False certainty, which is exactly what the knowledge
       // engine is able to hold.
-      evidence: shown('ch. 390 — l’extérieur n’atteint qu’une pièce vide'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — l’extérieur n’atteint qu’une pièce vide',
+      }),
       conditions: [requiresParameter('locationId', 'La pièce isolée est identifiée')],
       effects: [
         moveEntity({ locationId: (ctx) => duplicateOf(param(ctx, 'locationId') ?? 'room') }),
@@ -108,7 +116,11 @@ export const marayamGuardianIsolation = defineAbility({
 
     maintain: {
       label: 'Maintenir l’isolement',
-      evidence: shown('ch. 415 — le camp refuse de quitter l’espace isolé de la chambre 1013'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 415,
+        label: 'ch. 415 — le camp refuse de quitter l’espace isolé de la chambre 1013',
+      }),
       conditions: [effectIsLive('effectId', 'L’isolement est actif')],
       effects: [
         effect({
@@ -122,12 +134,16 @@ export const marayamGuardianIsolation = defineAbility({
     'perceive-the-occupants': {
       label: 'Percevoir les occupants depuis l’extérieur',
       refusal: 'Depuis l’extérieur, les occupants réels ne sont plus perceptibles',
-      evidence: shown('ch. 390 — Vergei devant une pièce qu’il croit vide'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — Vergei devant une pièce qu’il croit vide',
+      }),
     },
 
     lift: {
       label: 'Lever l’isolement',
-      evidence: asserted('la barrière tombe quand le gardien la lève'),
+      evidence: asserted({ kind: 'other', label: 'la barrière tombe quand le gardien la lève' }),
       conditions: [effectIsLive('effectId', 'L’isolement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

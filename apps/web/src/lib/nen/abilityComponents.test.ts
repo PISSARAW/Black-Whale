@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { render } from 'svelte/server'
+import { readable } from 'svelte/store'
 import {
   ABILITY_COMPONENTS,
   ABILITY_VIEW_FAMILIES,
@@ -14,6 +15,20 @@ const declared = ABILITY_PRESENTATIONS.map(({ abilityId, componentKey }) => ({
   id: abilityId,
   key: componentKey,
 }))
+
+const renderContext = new Map([
+  [
+    '__svelte__',
+    {
+      page: readable({
+        url: new URL('https://black-whale.test/abilities'),
+        data: { localizedContent: {} },
+      }),
+      navigating: readable(null),
+      updated: readable(false),
+    },
+  ],
+])
 
 describe('the map from a componentKey to the thing that draws it', () => {
   it('resolves all seventy declared composed views, and nothing else', () => {
@@ -55,9 +70,11 @@ describe('the map from a componentKey to the thing that draws it', () => {
   it('loads every declared view without an eager bundle registry', async () => {
     const loaded = await Promise.all(Object.values(ABILITY_COMPONENTS).map((load) => load()))
     expect(loaded.every(({ default: view }) => Boolean(view))).toBe(true)
-  }, 15_000)
+    expect(new Set(loaded.map(({ default: view }) => view)).size).toBe(70)
+  }, 60_000)
 
   it('renders every ability from a canonical preview without live state', async () => {
+    const firstBodyByKey = new Map<string, string>()
     for (const presentation of ABILITY_PRESENTATIONS) {
       const model = previewViewModel({
         presentation,
@@ -65,15 +82,21 @@ describe('the map from a componentKey to the thing that draws it', () => {
         owner: presentation.identity.ownerId,
       })!
       const { default: view } = await componentFor(presentation.componentKey)!()
-      expect(() =>
-        render(view, {
-          props: {
-            model,
-            variant: presentation.componentKey,
-            family: familyFor(presentation.componentKey) ?? undefined,
-          },
-        }),
-      ).not.toThrow()
+      let body = ''
+      try {
+        body = render(view, { props: { model }, context: renderContext }).body
+      } catch (error) {
+        throw new Error(`${presentation.componentKey} failed to render`, { cause: error })
+      }
+      if (!firstBodyByKey.has(presentation.componentKey)) {
+        firstBodyByKey.set(presentation.componentKey, body)
+      }
     }
-  }, 15_000)
+    expect(firstBodyByKey.size).toBe(70)
+    const composed = [...firstBodyByKey]
+      .filter(([key]) => key !== 'ContagionDashboard')
+      .map(([, body]) => body)
+    expect(composed).toHaveLength(69)
+    expect(new Set(composed).size).toBe(69)
+  }, 60_000)
 })

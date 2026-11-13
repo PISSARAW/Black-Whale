@@ -48,7 +48,11 @@ export const orderStamp = defineAbility({
   actions: {
     animate: {
       label: 'Animer un objet',
-      evidence: shown('ch. 357 — les objets à tête animés dans l’arène'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — les objets à tête animés dans l’arène',
+      }),
       conditions: [requiresTarget('Un objet à tête est visé')],
       effects: [
         controlLink({
@@ -68,7 +72,11 @@ export const orderStamp = defineAbility({
 
     'animate-crowd': {
       label: 'Animer une foule',
-      evidence: shown('ch. 357 — plus de deux cents pantins en même temps'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — plus de deux cents pantins en même temps',
+      }),
       conditions: [requiresParameter('cohortId', 'Une cohorte de copies est visée')],
       effects: [
         spawnNenEntity({
@@ -94,7 +102,11 @@ export const orderStamp = defineAbility({
 
     behead: {
       label: 'Décapiter un pantin',
-      evidence: shown('ch. 357 — la décapitation annule l’animation'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — la décapitation annule l’animation',
+      }),
       conditions: [effectIsLive('effectId', 'Un pantin est animé')],
       effects: [setEffectState({ state: 'ENDED', attributes: { reason: 'beheaded' } })],
     },
@@ -102,7 +114,11 @@ export const orderStamp = defineAbility({
     'animate-a-corpse': {
       label: 'Animer un vrai cadavre',
       refusal: 'Le tampon n’anime que des objets à tête, jamais un corps véritable',
-      evidence: shown('ch. 357 — ce sont des copies qui se relèvent, pas les morts'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 357,
+        label: 'ch. 357 — ce sont des copies qui se relèvent, pas les morts',
+      }),
     },
 
     'give-a-complex-order': {

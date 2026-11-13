@@ -300,7 +300,20 @@ test.describe("Morena's negotiation critical path", () => {
     }
     await activate(action.locator('button[title*="Back"]'), isMobile)
     await expect(page.getByTestId('morena-epilogue')).toBeVisible()
-    await activate(page.getByRole('button', { name: 'Witness the murder' }), isMobile)
+
+    // Complete Contagion through the same canonical action wheel used by the
+    // catalogue and the main tour. This exercises the surface adapter all the
+    // way to the encounter reducer instead of bypassing it through the legacy
+    // epilogue shortcut.
+    const contagionWheel = page.locator('[data-module-wheel="contagion"]')
+    await contagionWheel.locator('summary').click()
+    const witness = contagionWheel.locator('button[data-action-id="witness-murder"]')
+    await expect(witness).toHaveAttribute('aria-disabled', 'false')
+    // Let Playwright resolve and act on the current button atomically: selecting
+    // a wheel action updates the Svelte tree, so a separate scroll step can hold
+    // the element just as that render replaces it.
+    if (isMobile) await witness.tap()
+    else await witness.click()
     const network = page.getByTestId('morena-network')
     await expect(network).toContainText('Level 0')
     await activate(network.getByRole('button', { name: 'Nen user · +10' }), isMobile)

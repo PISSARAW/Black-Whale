@@ -180,7 +180,11 @@
                   selected={selectedAction.entry.id}
                   onSelect={(actionId) => selectAction(ability.id, actionId)}
                 />
-                <NenWhyPanel plan={selectedAction.plan} compact />
+                <NenWhyPanel
+                  plan={selectedAction.plan}
+                  text={selectedAction.text[$locale]}
+                  compact
+                />
                 {#if viewModel}<AbilityViewHost model={viewModel} />{/if}
               {/if}
             </details>

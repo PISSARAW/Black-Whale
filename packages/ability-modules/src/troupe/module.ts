@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- The troupe abilities share one declarative module and source vocabulary. */
 import {
   asserted,
   attributeCounter,
@@ -56,14 +57,22 @@ export const battleCantabilePrologue = defineAbility({
     'play-without-preparation': {
       label: 'Jouer sans danse ni mélodie',
       refusal: 'La danse et la mélodie sont l’activation de tout le Battle Cantabile',
-      evidence: shown('ch. 355 — la préparation précède chaque pièce'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 355,
+        label: 'ch. 355 — la préparation précède chaque pièce',
+      }),
     },
 
     'keep-the-rhythm': {
       label: 'Tenir le rythme',
       // The armour lasts as long as the music does, so holding the beat is a
       // use in its own right.
-      evidence: shown('ch. 355 — l’armure tient tant que la pièce continue'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 355,
+        label: 'ch. 355 — l’armure tient tant que la pièce continue',
+      }),
       effects: [auraModifier({ form: 'armour', sustained: true })],
       cost: { label: 'Souffle et mouvement continus', unit: 'souffle' },
     },
@@ -71,12 +80,20 @@ export const battleCantabilePrologue = defineAbility({
     'fight-in-silence': {
       label: 'Combattre sans musique',
       refusal: 'Sans danse ni mélodie, Bonolenov n’a ni armure ni lance',
-      evidence: shown('ch. 355 — la musique porte la technique'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 355,
+        label: 'ch. 355 — la musique porte la technique',
+      }),
     },
 
     perform: {
       label: 'Danser et jouer',
-      evidence: shown('ch. 355 — la danse et la mélodie, puis l’armure'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 355,
+        label: 'ch. 355 — la danse et la mélodie, puis l’armure',
+      }),
       effects: [
         spawnNenEntity({
           id: (ctx) => `prologue-armour-${ctx.actorId}`,
@@ -141,14 +158,21 @@ export const battleCantabileJupiter = defineAbility({
   actions: {
     'aim-at-a-single-target': {
       label: 'Viser une seule cible',
-      evidence: shown('ch. 356 — la sphère tombe sur qui elle vise'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 356,
+        label: 'ch. 356 — la sphère tombe sur qui elle vise',
+      }),
       conditions: [requiresTarget('Une cible est visée')],
       effects: [bodyState({ state: 'INJURED' })],
     },
 
     'drop-on-a-zone': {
       label: 'Écraser une zone',
-      evidence: asserted('la sphère écrase ce qu’elle recouvre, pas seulement une cible'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la sphère écrase ce qu’elle recouvre, pas seulement une cible',
+      }),
       conditions: [requiresParameter('locationId', 'Une zone est visée')],
       effects: [
         effect({
@@ -162,12 +186,20 @@ export const battleCantabileJupiter = defineAbility({
     'summon-instantly': {
       label: 'Matérialiser sans préparation',
       refusal: 'La préparation est longue avant chaque usage : la sphère ne s’improvise pas',
-      evidence: shown('ch. 356 — la danse et la mélodie précèdent la sphère'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 356,
+        label: 'ch. 356 — la danse et la mélodie précèdent la sphère',
+      }),
     },
 
     perform: {
       label: 'Matérialiser la sphère',
-      evidence: shown('ch. 356 — la sphère tombe de tout son poids'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 356,
+        label: 'ch. 356 — la sphère tombe de tout son poids',
+      }),
       effects: [
         spawnNenEntity({
           id: (ctx) => `jupiter-sphere-${ctx.actorId}`,
@@ -246,7 +278,11 @@ export const blinky = defineAbility({
   actions: {
     absorb: {
       label: 'Aspirer',
-      evidence: shown('ch. 76 — la matière non vivante aspirée'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 76,
+        label: 'ch. 76 — la matière non vivante aspirée',
+      }),
       conditions: [requiresTarget('Un objet est aspiré')],
       effects: [
         effect({
@@ -267,13 +303,21 @@ export const blinky = defineAbility({
     'absorb-a-living-target': {
       label: 'Aspirer un être vivant',
       refusal: 'Le Nen refuse d’entrer dans le vivant : seule la matière inerte est aspirée',
-      evidence: shown('ch. 76 — la limite énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 76,
+        label: 'ch. 76 — la limite énoncée avec la capacité',
+      }),
     },
 
     'medical-use': {
       label: 'Aspirer un fluide sur un blessé',
       // The one canon exception in spirit: what is drawn out is not the person.
-      evidence: shown('ch. 316 — le sang retiré à un blessé'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 316,
+        label: 'ch. 316 — le sang retiré à un blessé',
+      }),
       conditions: [requiresTarget('Un blessé est traité')],
       effects: [effect({ kind: 'CUSTOM', discriminator: 'medical-suction' })],
     },
@@ -281,12 +325,20 @@ export const blinky = defineAbility({
     'let-someone-else-disgorge': {
       label: 'Faire ressortir par un tiers',
       refusal: 'Seule Shizuku peut ressortir ce que Blinky a avalé',
-      evidence: shown('ch. 76 — la règle énoncée avec la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 76,
+        label: 'ch. 76 — la règle énoncée avec la capacité',
+      }),
     },
 
     disgorge: {
       label: 'Recracher',
-      evidence: shown('ch. 76 — ce qui a été aspiré ressort par sa seule main'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 76,
+        label: 'ch. 76 — ce qui a été aspiré ressort par sa seule main',
+      }),
       conditions: [effectIsLive('effectId', 'Quelque chose est stocké')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -348,7 +400,7 @@ export const doubleMachineGun = defineAbility({
   actions: {
     'hold-the-fire': {
       label: 'Interrompre le barrage',
-      evidence: asserted('le tir s’arrête quand il cesse de projeter'),
+      evidence: asserted({ kind: 'other', label: 'le tir s’arrête quand il cesse de projeter' }),
       effects: [setEffectState({ state: 'ENDED', attributes: { reason: 'ceasefire' } })],
     },
 
@@ -356,19 +408,31 @@ export const doubleMachineGun = defineAbility({
       label: 'Tirer sans la mutilation',
       refusal:
         'La puissance vient de la restriction : sans les phalanges sectionnées, il n’y a pas de capacité',
-      evidence: shown('ch. 353 — la restriction volontaire est la capacité'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 353,
+        label: 'ch. 353 — la restriction volontaire est la capacité',
+      }),
     },
 
     'suppress-an-area': {
       label: 'Balayer une zone',
-      evidence: shown('ch. 353 — le barrage couvre tout un secteur'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 353,
+        label: 'ch. 353 — le barrage couvre tout un secteur',
+      }),
       conditions: [requiresParameter('locationId', 'Une zone est balayée')],
       effects: [auraModifier({ mode: 'BARRAGE', scope: 'zone' })],
     },
 
     fire: {
       label: 'Ouvrir le feu',
-      evidence: shown('ch. 353 — le barrage qui fauche les soldats'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 353,
+        label: 'ch. 353 — le barrage qui fauche les soldats',
+      }),
       conditions: [requiresTarget('Une cible est visée')],
       effects: [
         auraModifier({ mode: 'BARRAGE', restrictionBonus: true }),
@@ -432,13 +496,21 @@ export const ripperCyclotron = defineAbility({
   actions: {
     'wind-up': {
       label: 'Armer le bras',
-      evidence: shown('ch. 92 — le bras armé par la rotation'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 92,
+        label: 'ch. 92 — le bras armé par la rotation',
+      }),
       effects: [auraModifier({ charge: 0, rotationDirection: 'clockwise' })],
     },
 
     rotate: {
       label: 'Tourner',
-      evidence: shown('ch. 92 — la charge monte tour après tour'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 92,
+        label: 'ch. 92 — la charge monte tour après tour',
+      }),
       conditions: [effectIsLive('effectId', 'Le bras est armé')],
       effects: [
         attributeCounter({
@@ -451,12 +523,20 @@ export const ripperCyclotron = defineAbility({
     'release-early': {
       label: 'Relâcher avant d’être calibré',
       refusal: 'La charge est difficile à calibrer : relâchée trop tôt, elle part de travers',
-      evidence: shown('ch. 92 — la calibration est le point faible du hatsu'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 92,
+        label: 'ch. 92 — la calibration est le point faible du hatsu',
+      }),
     },
 
     strike: {
       label: 'Frapper',
-      evidence: shown('ch. 92 — toute la charge dans un seul coup'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 92,
+        label: 'ch. 92 — toute la charge dans un seul coup',
+      }),
       conditions: [
         requiresTarget('Une cible est frappée'),
         effectIsLive('effectId', 'Le bras est armé'),

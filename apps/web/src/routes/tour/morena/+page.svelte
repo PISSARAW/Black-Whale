@@ -645,7 +645,11 @@
               availability={contagionAdapter.availability}
               onDispatch={(actionId) => contagionAdapter.dispatch(actionId)}
             />
-            <NenWhyPanel plan={selectedContagionAction.plan} compact />
+            <NenWhyPanel
+              plan={selectedContagionAction.plan}
+              text={selectedContagionAction.text[$locale]}
+              compact
+            />
           </div>
         </details>
       {/if}

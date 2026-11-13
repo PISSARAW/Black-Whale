@@ -60,7 +60,11 @@ export const magicalEstheticianCookie = defineAbility({
   actions: {
     summon: {
       label: 'Invoquer Cookie',
-      evidence: shown('ch. 149 — Cookie invoquée pour le soin'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 149,
+        label: 'ch. 149 — Cookie invoquée pour le soin',
+      }),
       effects: [
         spawnNenEntity({
           id: (ctx) => `cookie-${ctx.actorId}`,
@@ -73,7 +77,11 @@ export const magicalEstheticianCookie = defineAbility({
 
     'treat-self': {
       label: 'Se faire masser',
-      evidence: shown('ch. 149 — Biscuit se soigne elle-même'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 149,
+        label: 'ch. 149 — Biscuit se soigne elle-même',
+      }),
       effects: [
         auraModifier({
           mode: 'RECOVERY',
@@ -86,7 +94,7 @@ export const magicalEstheticianCookie = defineAbility({
 
     dismiss: {
       label: 'Renvoyer Cookie',
-      evidence: asserted('la masseuse se range comme elle est venue'),
+      evidence: asserted({ kind: 'other', label: 'la masseuse se range comme elle est venue' }),
       conditions: [effectIsLive('effectId', 'Cookie est invoquée')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -94,12 +102,16 @@ export const magicalEstheticianCookie = defineAbility({
     'treat-during-combat': {
       label: 'Masser pendant un combat',
       refusal: 'Le soin demande une séance entière : rien d’offensif ne se mène pendant',
-      evidence: asserted('le soin occupe la masseuse et le patient'),
+      evidence: asserted({ kind: 'other', label: 'le soin occupe la masseuse et le patient' }),
     },
 
     treat: {
       label: 'Masser',
-      evidence: shown('ch. 149 — trente minutes de soin pour huit heures de sommeil'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 149,
+        label: 'ch. 149 — trente minutes de soin pour huit heures de sommeil',
+      }),
       conditions: [requiresTarget('Une personne est massée')],
       effects: [
         auraModifier({
@@ -163,7 +175,11 @@ export const biscuitBodyTransformation = defineAbility({
   actions: {
     'maintain-youthful-form': {
       label: 'Maintenir la forme juvénile',
-      evidence: shown('ch. 137 — la forme réduite portée en permanence'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 137,
+        label: 'ch. 137 — la forme réduite portée en permanence',
+      }),
       effects: [
         // The mask is the default state, not the exception.
         perceptionMask({
@@ -176,7 +192,11 @@ export const biscuitBodyTransformation = defineAbility({
 
     'reveal-true-form': {
       label: 'Révéler la forme réelle',
-      evidence: shown('ch. 154 — la forme réelle, le temps d’un coup'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 154,
+        label: 'ch. 154 — la forme réelle, le temps d’un coup',
+      }),
       conditions: [effectIsLive('effectId', 'La forme juvénile est maintenue')],
       effects: [
         setEffectState({ state: 'ENDED', attributes: { revealedBy: 'choice' } }),
@@ -194,12 +214,15 @@ export const biscuitBodyTransformation = defineAbility({
     'appear-as-someone-else': {
       label: 'Prendre l’apparence d’un tiers',
       refusal: 'La transformation ne change que son propre corps : ce n’est pas un déguisement',
-      evidence: asserted('l’identité sous la forme reste la sienne'),
+      evidence: asserted({ kind: 'other', label: 'l’identité sous la forme reste la sienne' }),
     },
 
     'hold-true-form': {
       label: 'Rester en forme réelle',
-      evidence: asserted('la forme juvénile est un choix maintenu, pas une contrainte'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la forme juvénile est un choix maintenu, pas une contrainte',
+      }),
       effects: [
         effect({
           kind: 'AURA_MODIFIER',

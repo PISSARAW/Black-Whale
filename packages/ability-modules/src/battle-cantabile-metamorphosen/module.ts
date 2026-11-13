@@ -52,7 +52,11 @@ export const battleCantabileMetamorphosen = defineAbility({
   actions: {
     transform: {
       label: 'Prendre l’apparence',
-      evidence: shown('ch. 388 — Bonolenov porte le visage d’un autre sur le Black Whale'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 388,
+        label: 'ch. 388 — Bonolenov porte le visage d’un autre sur le Black Whale',
+      }),
       conditions: [
         durationCondition(),
         requiresParameter('appearsAs', 'Le modèle imité est identifié'),
@@ -81,7 +85,10 @@ export const battleCantabileMetamorphosen = defineAbility({
 
     'transform-into-object': {
       label: 'Prendre la forme d’un objet',
-      evidence: asserted('la capacité change son apparence en une identité ou un objet choisi'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la capacité change son apparence en une identité ou un objet choisi',
+      }),
       conditions: [
         durationCondition(),
         requiresParameter('appearsAs', 'La forme visée est choisie'),
@@ -97,7 +104,11 @@ export const battleCantabileMetamorphosen = defineAbility({
     'transform-without-preparation': {
       label: 'Se transformer sans danse ni mélodie',
       refusal: 'La danse et la mélodie sont l’activation : sans elles, rien ne se produit',
-      evidence: shown('ch. 388 — la préparation précède toujours la forme'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 388,
+        label: 'ch. 388 — la préparation précède toujours la forme',
+      }),
     },
 
     'outlast-the-model': {
@@ -107,7 +118,10 @@ export const battleCantabileMetamorphosen = defineAbility({
 
     revert: {
       label: 'Reprendre son apparence',
-      evidence: asserted('la forme tombe d’elle-même quand son temps est écoulé'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'la forme tombe d’elle-même quand son temps est écoulé',
+      }),
       conditions: [effectIsLive('effectId', 'Un déguisement est actif')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

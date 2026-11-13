@@ -55,7 +55,11 @@ export const littleEye = defineAbility({
   actions: {
     attach: {
       label: 'Poser la sphère sur un insecte volant (ou petit animal)',
-      evidence: shown('ch. 369 — la sphère posée sur un hôte minuscule'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label: 'ch. 369 — la sphère posée sur un hôte minuscule',
+      }),
       conditions: [
         isConscious(),
         requiresParameter('animalId', 'Un petit animal est choisi (hamster au maximum)'),
@@ -86,7 +90,11 @@ export const littleEye = defineAbility({
 
     scout: {
       label: 'Faire avancer l’éclaireur (Vol)',
-      evidence: shown('ch. 390 — la ronde des cafards, pièce par pièce'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — la ronde des cafards, pièce par pièce',
+      }),
       // Deliberately no isConscious: the sphere keeps reporting even if its
       // holder passes out.
       conditions: [
@@ -117,7 +125,11 @@ export const littleEye = defineAbility({
 
     film: {
       label: 'Filmer les environs',
-      evidence: shown('ch. 390 — ce que voit l’hôte parvient à son porteur'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — ce que voit l’hôte parvient à son porteur',
+      }),
       conditions: [
         effectIsLive('effectId', 'La sphère est encore posée'),
         requiresParameter('locationId', 'Une pièce est choisie'),
@@ -138,7 +150,11 @@ export const littleEye = defineAbility({
 
     pilot: {
       label: 'Contrôler à distance',
-      evidence: shown('ch. 390 — Oito dirige l’éclaireur à distance'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — Oito dirige l’éclaireur à distance',
+      }),
       conditions: [
         effectIsLive('effectId', 'La sphère est encore posée'),
         requiresParameter('locationId', 'Une direction ou pièce cible'),
@@ -158,7 +174,11 @@ export const littleEye = defineAbility({
       label: 'Laisser courir pendant l’inconscience',
       // The canonical detail the module already encodes as a missing condition:
       // only the attachment needs a conscious user, not the link.
-      evidence: shown('ch. 369 — le lien survit à la perte de conscience du porteur'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 369,
+        label: 'ch. 369 — le lien survit à la perte de conscience du porteur',
+      }),
       conditions: [effectIsLive('effectId', 'La sphère est encore posée')],
       effects: [setEffectState({ state: 'ACTIVE', attributes: { survivesUnconsciousUser: true } })],
     },
@@ -166,18 +186,22 @@ export const littleEye = defineAbility({
     'attach-to-large-host': {
       label: 'Poser la sphère sur un grand animal',
       refusal: 'L’hôte doit rester minuscule : au-delà d’un hamster, la sphère ne prend pas',
-      evidence: asserted('la limite de taille énoncée avec la capacité'),
+      evidence: asserted({ kind: 'other', label: 'la limite de taille énoncée avec la capacité' }),
     },
 
     'survive-a-predator': {
       label: 'Échapper à un prédateur',
       refusal: 'L’hôte est fragile : mangé ou écrasé, l’éclaireur est perdu avec lui',
-      evidence: shown('ch. 390 — les insectes disparaissent avec leurs hôtes'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 390,
+        label: 'ch. 390 — les insectes disparaissent avec leurs hôtes',
+      }),
     },
 
     dismiss: {
       label: 'Rappeler la sphère',
-      evidence: asserted('la sphère se retire comme elle a été posée'),
+      evidence: asserted({ kind: 'other', label: 'la sphère se retire comme elle a été posée' }),
       conditions: [effectIsLive('effectId', 'La sphère est encore posée')],
       effects: [setEffectState({ state: 'ENDED' })],
     },

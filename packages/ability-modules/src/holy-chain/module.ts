@@ -61,20 +61,31 @@ export const holyChain = defineAbility({
   actions: {
     heal: {
       label: 'Soigner un blessé',
-      evidence: shown('ch. 380 — Kurapika referme les blessures autour de lui'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 380,
+        label: 'ch. 380 — Kurapika referme les blessures autour de lui',
+      }),
       conditions: [requiresTarget('Un blessé est soigné')],
       effects: [bodyState({ state: 'ALIVE' })],
     },
 
     'heal-self': {
       label: 'Se soigner',
-      evidence: asserted('l’auriculaire se retourne sur son porteur comme sur autrui'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'l’auriculaire se retourne sur son porteur comme sur autrui',
+      }),
       effects: [bodyState({ state: 'ALIVE' })],
     },
 
     'heal-instantly': {
       label: 'Soigner sous Emperor Time',
-      evidence: shown('ch. 373 — pleine efficacité de toutes les catégories'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 373,
+        label: 'ch. 373 — pleine efficacité de toutes les catégories',
+      }),
       conditions: [
         requiresTarget('Un blessé est soigné'),
         effectIsLive('emperorTimeEffectId', 'Emperor Time est actif'),
@@ -86,7 +97,10 @@ export const holyChain = defineAbility({
 
     stabilise: {
       label: 'Stabiliser sans refermer',
-      evidence: asserted('le soin accélère la guérison naturelle plutôt qu’il ne la remplace'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'le soin accélère la guérison naturelle plutôt qu’il ne la remplace',
+      }),
       conditions: [requiresTarget('Un blessé est stabilisé')],
       effects: [bodyState({ state: 'STABILIZED' })],
     },

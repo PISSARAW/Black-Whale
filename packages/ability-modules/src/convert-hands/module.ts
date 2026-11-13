@@ -45,7 +45,11 @@ export const convertHands = defineAbility({
   actions: {
     swap: {
       label: 'Échanger les apparences',
-      evidence: shown('ch. 372 — l’échange au contact pendant le combat de sumo'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — l’échange au contact pendant le combat de sumo',
+      }),
       conditions: [requiresTarget('Une cible est touchée')],
       effects: [
         // Right hand: the target looks like Chrollo.
@@ -65,7 +69,11 @@ export const convertHands = defineAbility({
       label: 'Échanger pour rompre le contact',
       // The use that matters on the Black Whale: the hunted wears the hunter's
       // face long enough to walk away.
-      evidence: shown('ch. 372 — Chrollo quitte la scène sous une autre apparence'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — Chrollo quitte la scène sous une autre apparence',
+      }),
       conditions: [requiresTarget('Une cible est touchée')],
       effects: [
         perceptionMask({
@@ -78,7 +86,11 @@ export const convertHands = defineAbility({
     'check-palms': {
       label: 'Vérifier les paumes',
       // The counter-use the manga hands to the other side: the marks betray.
-      evidence: shown('ch. 372 — les marques sur les paumes trahissent l’échange'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 372,
+        label: 'ch. 372 — les marques sur les paumes trahissent l’échange',
+      }),
       conditions: [requiresTarget('Une paume est examinée')],
       effects: [setEffectState({ state: 'ENDED', attributes: { revealedBy: 'palm-marks' } })],
     },
@@ -86,12 +98,15 @@ export const convertHands = defineAbility({
     'swap-at-distance': {
       label: 'Échanger à distance',
       refusal: 'L’échange se fait au contact : les deux mains doivent toucher',
-      evidence: asserted('une main pour chaque identité marquée'),
+      evidence: asserted({ kind: 'other', label: 'une main pour chaque identité marquée' }),
     },
 
     revert: {
       label: 'Rendre les apparences',
-      evidence: asserted('ce que les deux mains ont échangé, elles le rendent'),
+      evidence: asserted({
+        kind: 'other',
+        label: 'ce que les deux mains ont échangé, elles le rendent',
+      }),
       effects: [setEffectState({ state: 'ENDED' })],
     },
   },

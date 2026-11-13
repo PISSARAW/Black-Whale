@@ -45,7 +45,11 @@ export const blackVoice = defineAbility({
   actions: {
     'plant-antenna': {
       label: 'Planter une antenne',
-      evidence: shown('ch. 106 — l’antenne plantée dans la nuque'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — l’antenne plantée dans la nuque',
+      }),
       conditions: [requiresTarget('Une cible est piquée')],
       effects: [
         controlLink({
@@ -64,7 +68,11 @@ export const blackVoice = defineAbility({
     'threaten-with-a-second': {
       label: 'Menacer d’une seconde antenne',
       // Canon uses the antenna as leverage before it is ever planted.
-      evidence: shown('ch. 106 — la seconde antenne brandie comme menace'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — la seconde antenne brandie comme menace',
+      }),
       effects: [
         knowledgeGrant({
           factId: (ctx) => `threat:second-antenna:${ctx.targets[0] ?? 'target'}`,
@@ -75,7 +83,11 @@ export const blackVoice = defineAbility({
 
     'command-by-phone': {
       label: 'Commander par téléphone',
-      evidence: shown('ch. 106 — l’ordre passe par le combiné, à distance'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — l’ordre passe par le combiné, à distance',
+      }),
       conditions: [effectIsLive('effectId', 'Une antenne est plantée')],
       effects: [
         setEffectState({
@@ -92,7 +104,11 @@ export const blackVoice = defineAbility({
 
     command: {
       label: 'Donner un ordre',
-      evidence: shown('ch. 106 — le corps de la cible exécute l’ordre reçu'),
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 106,
+        label: 'ch. 106 — le corps de la cible exécute l’ordre reçu',
+      }),
       conditions: [effectIsLive('effectId', 'Une antenne est plantée')],
       // The controller acts with the target's body: actorId stays Chrollo.
       effects: [

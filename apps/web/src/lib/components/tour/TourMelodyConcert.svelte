@@ -61,7 +61,7 @@
   )
   const transitioning = $derived(performance.phase === 'bow' || performance.phase === 'release')
   const reactionStrip = $derived(
-    performance.presentation === 'manga' && performance.playing && remaining > 176,
+    performance.presentation === 'manga' && performance.playing && remaining > 170,
   )
   const clock = $derived(`${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`)
 
@@ -140,6 +140,14 @@
       void goto(url, { noScroll: true, keepFocus: true })
     }
     play('melody')
+  }
+
+  function recenterMangaView(): void {
+    if (performance.presentation !== 'manga') return
+    performance = {
+      ...performance,
+      referenceRequest: (performance.referenceRequest ?? 0) + 1,
+    }
   }
 
   function isEditableTarget(target: EventTarget | null): boolean {
@@ -251,6 +259,11 @@
         <button type="button" class="stop" onclick={() => stop()} aria-keyshortcuts="J"
           >{french ? 'Arrêter le concert' : 'Stop the concert'} <kbd>J</kbd></button
         >
+        {#if performance.presentation === 'manga'}
+          <button type="button" onclick={recenterMangaView}
+            >{french ? 'Recentrer comme le manga' : 'Restore manga framing'}</button
+          >
+        {/if}
       {:else if transitioning}
         <p role="status">{message}</p>
         <button type="button" class="stop" onclick={() => stop()} aria-keyshortcuts="J"

@@ -12,6 +12,8 @@ export interface ConcertPerformance {
   playing: boolean
   phase?: 'bow' | 'playing' | 'release'
   presentation?: 'free' | 'manga'
+  /** Incremented by the UI to restore the authored chapter composition. */
+  referenceRequest?: number
 }
 
 export function concertCast(

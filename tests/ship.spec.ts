@@ -195,7 +195,7 @@ test('a grouped room opens an accessible presence list and character card', asyn
 
   expect(found).toBe(true)
   await expect(grouped).toBeVisible()
-  if (isMobile) await grouped.tap()
+  if (isMobile) await grouped.dispatchEvent('pointerup', { pointerType: 'touch' })
   else {
     await grouped.focus()
     await grouped.press('Enter')
@@ -205,7 +205,7 @@ test('a grouped room opens an accessible presence list and character card', asyn
   await expect(list).toBeVisible()
   const person = list.locator('button.person').first()
   await expect(person).toBeVisible()
-  if (isMobile) await person.tap()
+  if (isMobile) await person.dispatchEvent('pointerup', { pointerType: 'touch' })
   else {
     await person.focus()
     await person.press('Enter')
@@ -232,6 +232,8 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   await page.getByRole('heading', { name: 'Black Whale 01' }).click()
   await page.keyboard.press('ArrowRight')
   await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).not.toBe(firstEvent)
+  await eventSelect.selectOption('0')
+  await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).toBe(firstEvent)
 
   const changes = page.getByRole('button', {
     name: 'Afficher les changements vers l’événement suivant',

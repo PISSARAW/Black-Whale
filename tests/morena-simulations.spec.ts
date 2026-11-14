@@ -71,6 +71,7 @@ test.describe('Morena in simulation branches', () => {
     expect(branchId).toBeTruthy()
     const rejected = await page.request.post('/simulations?/morena', {
       form: { branchId: branchId!, command: 'witness-murder', actorId: 'hisoka' },
+      headers: { origin: new URL(page.url()).origin },
     })
     expect(rejected.status()).toBe(400)
 

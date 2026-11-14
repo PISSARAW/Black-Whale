@@ -7,6 +7,7 @@ import {
   type TrainableNenCategory,
 } from './state'
 import type { NenCategory } from '@black-whale/domain'
+import { createTourNenEnvironment } from './nenEnvironment'
 
 export const TOUR_SIMULATION_KEY = 'black-whale:tour:simulation:v1'
 export const MAX_TOUR_SIMULATION_BYTES = 500_000
@@ -68,6 +69,9 @@ export function decodeTourSimulation(serialized: string | null): TourSimulationV
     if (!isTourSimulation(value)) return null
     const state = value
     state.player.nenProfile = normaliseNenProfile(state.player.nenProfile)
+    state.nenEnvironment ??= createTourNenEnvironment()
+    state.nenEnvironment.targets ??= {}
+    state.nenEnvironment.traces ??= {}
     return state
   } catch {
     return null

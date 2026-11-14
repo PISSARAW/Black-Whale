@@ -1,6 +1,7 @@
 import type { TourWorldMode } from './mode'
 import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/nen-engine'
 import type { NenCategory } from '@black-whale/domain'
+import { createTourNenEnvironment, type TourNenEnvironment } from './nenEnvironment'
 
 export const TOUR_NEN_PROFILE_VERSION = 1 as const
 
@@ -84,6 +85,7 @@ export interface TourSimulationV1 {
       fire: boolean
     }
   >
+  nenEnvironment: TourNenEnvironment
 }
 
 export function createTourSimulation(input: {
@@ -113,6 +115,7 @@ export function createTourSimulation(input: {
     incidents: [],
     activities: {},
     shipSystems: {},
+    nenEnvironment: createTourNenEnvironment(),
   }
 }
 

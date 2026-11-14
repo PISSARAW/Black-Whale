@@ -15,6 +15,7 @@ interface DreamFrame {
   yaw: number
   runtime?: SceneRuntime
   exposure?: number
+  blend?: number
 }
 
 /** Isolates the imagined world without changing furniture, rooms or Hatsu visibility. */
@@ -38,19 +39,32 @@ export class ConcertDreamView {
     this.background = new THREE.Color(0xe7eedf)
   }
 
-  apply(
-    frame: DreamFrame,
-    walk: ConcertLandscapeWalk,
-    performance: ConcertPerformance,
-    blend = 1,
-  ): void {
+  apply(frame: DreamFrame, walk: ConcertLandscapeWalk, performance: ConcertPerformance): void {
+    const blend = frame.blend ?? 1
     this.enter(frame.camera)
     this.restoreActors()
     this.restoreAudience()
     const id = performance.mode === 'self' ? 'flute' : 'cast:melody'
     const actor = frame.actors[id]?.root
     if (actor) this.include(actor)
-    if (blend < 0.82) this.reactAudience(frame.actors, id, blend, frame.seconds)
+    if (blend < 0.82) this.reactAudience(frame, id, blend)
+    this.positionCamera(frame, walk, performance)
+    if (frame.runtime) this.optics(frame, performance)
+    if (actor && performance.mode === 'self') {
+      positionHeldFlute(actor, frame.camera.position, {
+        yaw: frame.yaw,
+        seconds: frame.seconds,
+        playing: true,
+      })
+    }
+  }
+
+  private positionCamera(
+    frame: DreamFrame,
+    walk: ConcertLandscapeWalk,
+    performance: ConcertPerformance,
+  ): void {
+    const blend = frame.blend ?? 1
     frame.camera.position.set(walk.at[0], walk.floor + 1.7, walk.at[1])
     if (performance.presentation === 'manga') {
       frame.camera.rotation.set(0, 0, 0)
@@ -63,14 +77,6 @@ export class ConcertDreamView {
     frame.camera.updateProjectionMatrix()
     this.scene.fog = blend < 0.82 ? this.previousFog : this.fog
     this.scene.background = this.blendedBackground(blend)
-    if (frame.runtime) this.optics(frame, performance)
-    if (actor && performance.mode === 'self') {
-      positionHeldFlute(actor, frame.camera.position, {
-        yaw: frame.yaw,
-        seconds: frame.seconds,
-        playing: true,
-      })
-    }
   }
 
   private blendedBackground(blend: number): Three.Scene['background'] {
@@ -114,12 +120,8 @@ export class ConcertDreamView {
   }
 
   /** The room holds its breath before the listeners disappear into the vision. */
-  private reactAudience(
-    actors: DreamFrame['actors'],
-    performerId: string,
-    blend: number,
-    seconds: number,
-  ): void {
+  private reactAudience(frame: DreamFrame, performerId: string, blend: number): void {
+    const { actors, seconds } = frame
     const attention = Math.sin(Math.min(1, blend / 0.82) * Math.PI)
     for (const [id, item] of Object.entries(actors)) {
       if (!item || id === performerId || id === 'flute') continue

@@ -57,7 +57,7 @@ export class ConcertStageView {
 
   update(performance: ConcertPerformance, context: ConcertContext): void {
     const wanted =
-      !!this.spec && performance.playing && context.tierId === 'tier-1' && !context.reveal
+      !!this.spec && performance.playing && this.inHall(context)
     if (wanted && !this.root.children.length) this.build()
     const seconds = Math.min(0.1, Math.max(0, context.delta ?? 1 / 60))
     this.blend = Math.max(0, Math.min(1, this.blend + seconds * (wanted ? 0.9 : -1.35)))
@@ -85,7 +85,7 @@ export class ConcertStageView {
   }
 
   render(frame: Parameters<ConcertDreamView['apply']>[0], performance: ConcertPerformance): void {
-    if (this.active && this.walk) this.dream.apply(frame, this.walk, performance, this.blend)
+    if (this.active && this.walk) this.dream.apply({ ...frame, blend: this.blend }, this.walk, performance)
   }
 
   dispose(): void {
@@ -107,6 +107,10 @@ export class ConcertStageView {
     })
     disposeBanquetDetails(this.root)
     this.root.clear()
+  }
+
+  private inHall(context: ConcertContext): boolean {
+    return context.tierId === 'tier-1' && !context.reveal
   }
 
   private build(): void {

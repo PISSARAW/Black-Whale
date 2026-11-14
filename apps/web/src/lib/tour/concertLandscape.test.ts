@@ -226,10 +226,10 @@ describe('the three-minute flowered listening landscape', () => {
     listener.rotation.x = 0.1
     const walk = new ConcertLandscapeWalk(spec, spec.origin)
     const actors = { 'cast:melody': { root: melody }, 'cast:listener': { root: listener } }
-    dream.apply({ camera, actors, seconds: 1, yaw: 0 }, walk, playing, 0.4)
+    dream.apply({ camera, actors, seconds: 1, yaw: 0, blend: 0.4 }, walk, playing)
     expect(listener.rotation.x).toBeGreaterThan(0.1)
     expect(camera.layers.test(listener.layers)).toBe(true)
-    dream.apply({ camera, actors, seconds: 2, yaw: 0 }, walk, playing, 1)
+    dream.apply({ camera, actors, seconds: 2, yaw: 0, blend: 1 }, walk, playing)
     expect(listener.rotation.x).toBeCloseTo(0.1)
     expect(camera.layers.test(listener.layers)).toBe(false)
     dream.restore()

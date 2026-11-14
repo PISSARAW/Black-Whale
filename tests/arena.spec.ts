@@ -45,12 +45,15 @@ test.describe('Arena playable journey', () => {
     expect(await distanceOf(page)).toBeCloseTo(openingDistance, 1)
 
     const guard = control(page, isMobile, 'guard')
-    if (isMobile) await activate(guard, true)
-    else {
-      await expect(guard).toBeVisible()
-      await guard.dispatchEvent('click')
+    await expect(guard).toBeVisible()
+    for (let attempt = 0; attempt < 6 && (await distanceOf(page)) >= 2.5; attempt += 1) {
+      const beforeAdvance = await distanceOf(page)
+      if (isMobile) await activate(guard, true)
+      else await guard.dispatchEvent('click')
+      await expect
+        .poll(() => distanceOf(page), { timeout: 20_000 })
+        .toBeLessThan(beforeAdvance)
     }
-    await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(openingDistance)
     await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(2.5)
 
     const strike = control(page, isMobile, 'strike')

@@ -22,7 +22,12 @@ const character = (overrides: Partial<DossierCharacter> = {}): DossierCharacter 
   ...overrides,
 })
 
-const options = (cap: number | null) => ({ cap, factions: FACTIONS, abilities: ABILITIES })
+const options = (cap: number | null, chapter: number | null = cap) => ({
+  cap,
+  chapter,
+  factions: FACTIONS,
+  abilities: ABILITIES,
+})
 
 describe('what one body can be asked', () => {
   it('reads the role, the faction and the declared category out of the catalogue', () => {
@@ -92,6 +97,29 @@ describe('the route, cut at the reader’s chapter', () => {
     const dossier = dossierFor(undated, options(360))
     expect(dossier.route).toEqual([])
     expect(dossier.withheld).toBe(0)
+  })
+})
+
+describe('Nen dated at the reconstructed event', () => {
+  const student = character({
+    nen: { typeLabel: 'Conjurer', awakenedFromChapterId: 'ch-388' },
+  })
+
+  it('sends no category or technique before awakening, even without a spoiler cap', () => {
+    const dossier = dossierFor(student, options(null, 387))
+    expect(dossier.category).toBeNull()
+    expect(dossier.techniques).toEqual([])
+  })
+
+  it('reveals Nen at and after the initiation chapter', () => {
+    const dossier = dossierFor(student, options(null, 388))
+    expect(dossier.category).toBe('Conjurer')
+    expect(dossier.techniques.map((ability) => ability.name)).toEqual(['Chain Jail', 'Holy Chain'])
+  })
+
+  it('honours the stricter of the event chapter and spoiler cap', () => {
+    expect(dossierFor(student, options(387, 390)).category).toBeNull()
+    expect(dossierFor(student, options(390, 387)).category).toBeNull()
   })
 })
 

@@ -22,6 +22,7 @@ export class ConcertDreamView {
   private cameraMask = 1
   private cameraFar = 220
   private readonly masks = new Map<Three.Object3D, number>()
+  private readonly audiencePose = new Map<Three.Object3D, number>()
   private previousFog: Three.Scene['fog'] = null
   private previousBackground: Three.Scene['background'] = null
   private readonly fog: Three.FogExp2
@@ -36,18 +37,26 @@ export class ConcertDreamView {
     this.background = new THREE.Color(0xe7eedf)
   }
 
-  apply(frame: DreamFrame, walk: ConcertLandscapeWalk, performance: ConcertPerformance): void {
+  apply(
+    frame: DreamFrame,
+    walk: ConcertLandscapeWalk,
+    performance: ConcertPerformance,
+    blend = 1,
+  ): void {
     this.enter(frame.camera)
     this.restoreActors()
+    this.restoreAudience()
     const id = performance.mode === 'self' ? 'flute' : 'cast:melody'
     const actor = frame.actors[id]?.root
     if (actor) this.include(actor)
+    if (blend < 0.82) this.reactAudience(frame.actors, id, blend)
     frame.camera.position.set(walk.at[0], walk.floor + 1.7, walk.at[1])
-    frame.camera.layers.set(CONCERT_DREAM_LAYER)
+    frame.camera.layers.mask =
+      blend < 0.82 ? this.cameraMask | (1 << CONCERT_DREAM_LAYER) : 1 << CONCERT_DREAM_LAYER
     frame.camera.far = 420
     frame.camera.updateProjectionMatrix()
-    this.scene.fog = this.fog
-    this.scene.background = this.background
+    this.scene.fog = blend < 0.82 ? this.previousFog : this.fog
+    this.scene.background = this.blendedBackground(blend)
     if (frame.runtime) this.optics(frame)
     if (actor && performance.mode === 'self') {
       positionHeldFlute(actor, frame.camera.position, {
@@ -58,9 +67,15 @@ export class ConcertDreamView {
     }
   }
 
+  private blendedBackground(blend: number): Three.Scene['background'] {
+    if (!(this.previousBackground && 'isColor' in this.previousBackground)) return this.background
+    return (this.previousBackground as Three.Color).clone().lerp(this.background, blend)
+  }
+
   restore(): void {
     if (!this.camera) return
     this.restoreActors()
+    this.restoreAudience()
     this.camera.layers.mask = this.cameraMask
     this.camera.far = this.cameraFar
     this.camera.updateProjectionMatrix()
@@ -90,6 +105,26 @@ export class ConcertDreamView {
   private restoreActors(): void {
     for (const [object, mask] of this.masks) object.layers.mask = mask
     this.masks.clear()
+  }
+
+  /** The room holds its breath before the listeners disappear into the vision. */
+  private reactAudience(
+    actors: DreamFrame['actors'],
+    performerId: string,
+    blend: number,
+  ): void {
+    const attention = Math.sin(Math.min(1, blend / 0.82) * Math.PI) * 0.035
+    for (const [id, item] of Object.entries(actors)) {
+      if (!item || id === performerId || id === 'flute') continue
+      this.include(item.root)
+      if (!this.audiencePose.has(item.root)) this.audiencePose.set(item.root, item.root.rotation.x)
+      item.root.rotation.x = this.audiencePose.get(item.root)! + attention
+    }
+  }
+
+  private restoreAudience(): void {
+    for (const [root, rotationX] of this.audiencePose) root.rotation.x = rotationX
+    this.audiencePose.clear()
   }
 
   private optics(frame: DreamFrame): void {

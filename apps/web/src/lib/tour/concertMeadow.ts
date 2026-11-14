@@ -15,11 +15,84 @@ export function buildConcertMeadow(THREE: typeof Three, spec: ConcertLandscapeSp
   const near = new THREE.InstancedMesh(flower, flowerMaterial(THREE), 2800)
   near.name = 'concert-foreground-daisies'
   distribute(THREE, near, { spec, radius: 17, minimum: 0.65 })
+  bindWind(near)
   const far = new THREE.InstancedMesh(distantDaisy(THREE), distantMaterial(THREE), 10000)
   far.name = 'concert-distant-daisies'
   distribute(THREE, far, { spec, radius: 78, minimum: 17 })
-  root.add(near, far)
+  const wild = new THREE.InstancedMesh(wildflower(THREE), wildflowerMaterial(THREE), 1400)
+  wild.name = 'concert-mixed-wildflowers'
+  distribute(THREE, wild, { spec, radius: 58, minimum: 1.4 })
+  bindWind(wild)
+  const palette = [0xe8b7c8, 0xc7b6e8, 0xf2d68d, 0xb8d6ee]
+  for (let index = 0; index < wild.count; index++) {
+    wild.setColorAt(index, new THREE.Color(palette[Math.floor(sample(index + 90000) * palette.length)]))
+  }
+  wild.instanceColor!.needsUpdate = true
+  const grass = new THREE.InstancedMesh(grassBlade(THREE), grassMaterial(THREE), 2200)
+  grass.name = 'concert-varied-grass'
+  distribute(THREE, grass, { spec, radius: 64, minimum: 0.8 })
+  bindWind(grass)
+  root.add(near, far, wild, grass)
   return root
+}
+
+function bindWind(mesh: Three.InstancedMesh): void {
+  const material = mesh.material as Three.MeshBasicMaterial
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uConcertWind = { value: 0 }
+    material.userData.windShader = shader
+    shader.vertexShader = `uniform float uConcertWind;\n${shader.vertexShader}`
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <begin_vertex>',
+      `
+        #include <begin_vertex>
+        float concertTip = smoothstep(0.05, 0.48, position.y);
+        transformed.x += sin(uConcertWind * 1.35 + instanceMatrix[3].x * 0.31 + instanceMatrix[3].z * 0.23)
+          * 0.075 * concertTip;
+        transformed.z += cos(uConcertWind * 1.05 + instanceMatrix[3].x * 0.19)
+          * 0.045 * concertTip;
+      `,
+    )
+  }
+  material.customProgramCacheKey = () => 'concert-meadow-wind-v1'
+  mesh.onBeforeRender = () => {
+    const shader = material.userData.windShader
+    if (shader) shader.uniforms.uConcertWind.value = performance.now() / 1000
+  }
+}
+
+function wildflower(THREE: typeof Three): Three.BufferGeometry {
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute(
+    'position',
+    new THREE.Float32BufferAttribute(
+      [
+        -0.08, 0, 0, 0.08, 0, 0, 0.08, 0.42, 0, -0.08, 0, 0, 0.08, 0.42, 0,
+        -0.08, 0.42, 0, 0, 0, -0.08, 0, 0, 0.08, 0, 0.42, 0.08, 0, 0, -0.08, 0, 0.42,
+        0.08, 0, 0.42, -0.08,
+      ],
+      3,
+    ),
+  )
+  return geometry
+}
+
+function wildflowerMaterial(THREE: typeof Three): Three.MeshBasicMaterial {
+  const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide })
+  material.name = 'concert-wildflower-colours'
+  return material
+}
+
+function grassBlade(THREE: typeof Three): Three.BufferGeometry {
+  const geometry = new THREE.PlaneGeometry(0.07, 0.48, 1, 2)
+  geometry.translate(0, 0.24, 0)
+  return geometry
+}
+
+function grassMaterial(THREE: typeof Three): Three.MeshBasicMaterial {
+  const material = new THREE.MeshBasicMaterial({ color: 0x789459, side: THREE.DoubleSide })
+  material.name = 'concert-meadow-grass'
+  return material
 }
 
 function distribute(

@@ -57,6 +57,10 @@ async function playToVerdict(panel: Locator, touch: boolean) {
 
 test.describe('Morena in simulation branches', () => {
   test('plays from the network opening through a recorded kill', async ({ page, isMobile }) => {
+    test.skip(
+      isMobile,
+      'Morena touch interactions are covered in morena.spec; branch semantics need one browser.',
+    )
     test.slow()
     const response = await page.goto('/simulations')
     expect(response?.status()).toBeLessThan(400)

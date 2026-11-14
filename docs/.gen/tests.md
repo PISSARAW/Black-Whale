@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 440
+Fichiers : 454
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -127,7 +127,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/audio/ambient/melodyConcert.test.ts`
 
-- the original concert flute > cancels its scheduler and pending notes without closing the shared audio context
+- the recorded Melody concert > streams through the shared graph and releases its media source when stopped
 
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
@@ -786,6 +786,7 @@ Fichiers : 440
 ## `apps/web/src/lib/server/character-profile.test.ts`
 
 - buildCharacterProfile > normalises every missing list to an empty array
+- maskUndatedCharacterProfile > keeps dated identity and appearances but removes unbounded narrative fields
 - buildRoleHistory > merges roles and official assignments
 - buildAffiliations > flattens a membership to the chapters it spans
 - readFirstAppearanceChapter > reads the number out of a chapter id
@@ -1220,7 +1221,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/eiIOfficeFidelity.test.ts`
 
-- the Ei-I office cutaway > keeps the plan-established volume empty
+- the Ei-I office cutaway > separates its plan-established volume from inferred office furniture
 
 ## `apps/web/src/lib/tour/emperor.test.ts`
 
@@ -1548,7 +1549,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/policeDormFidelity.test.ts`
 
-- the Central Police dorm room > does not invent an interior for the catalogue-only room
+- the Central Police dorm room > keeps its minimal functional programme explicitly inferred
 
 ## `apps/web/src/lib/tour/policeStationView.test.ts`
 
@@ -1602,7 +1603,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/recyclingFacilitiesFidelity.test.ts`
 
-- the recycling and sewage facilities > keeps both plan volumes free of invented machinery
+- the recycling and sewage facilities > marks the minimal machinery in both plan volumes as inferred
 
 ## `apps/web/src/lib/tour/regime.test.ts`
 
@@ -1616,6 +1617,10 @@ Fichiers : 440
 
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
+
+## `apps/web/src/lib/tour/room3101View.test.ts`
+
+- Room 3101 manga fidelity > keeps panel furniture separate from inferred bathroom fixtures
 
 ## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
 
@@ -1658,6 +1663,46 @@ Fichiers : 440
 
 - applySheen > reads the eye and the normal the material already carries
 
+## `apps/web/src/lib/tour/simulation/dialogue.test.ts`
+
+- contextual NPC dialogue boundary > sends only the actor memory and current objective to the model
+
+## `apps/web/src/lib/tour/simulation/events.test.ts`
+
+- dynamic Tour events > lets an incident trigger an off-screen security response later
+
+## `apps/web/src/lib/tour/simulation/mode.test.ts`
+
+- Tour world modes > keeps the canonical reconstruction immutable
+
+## `apps/web/src/lib/tour/simulation/persistence.test.ts`
+
+- persistent Tour simulation > round-trips a versioned world with its consequences
+
+## `apps/web/src/lib/tour/simulation/routines.test.ts`
+
+- autonomous Tour NPC routines > finds and walks inter-room routes one step at a time
+
+## `apps/web/src/lib/tour/simulation/shipSystems.test.ts`
+
+- simulated Black Whale systems > turns a blackout and lockdown into visibility and access constraints
+
+## `apps/web/src/lib/tour/simulation/social.test.ts`
+
+- Tour social simulation > tracks faction-specific reputation and rival reactions
+
+## `apps/web/src/lib/tour/simulation/systemicNen.test.ts`
+
+- systemic Nen in Free Tour > lets Gyo reveal an In-hidden aura trace without revealing unrelated facts
+
+## `apps/web/src/lib/tour/simulation/tier5Loop.test.ts`
+
+- playable Tier 5 free-life loop > supports discovery, Nen investigation, a social choice and persistent return
+
+## `apps/web/src/lib/tour/simulation/worldJourney.test.ts`
+
+- complete Free Tour simulation journey > explores, reacts, changes activity and returns to an evolved persistent world
+
 ## `apps/web/src/lib/tour/sky.test.ts`
 
 - skyOf > is the drawn state, to the digit, at overcast noon
@@ -1695,7 +1740,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/tier5ClinicFidelity.test.ts`
 
-- the Tier 5 medical clinic > keeps the plan-established clinic free of invented equipment
+- the Tier 5 medical clinic > keeps its plan-established volume separate from inferred equipment
 
 ## `apps/web/src/lib/tour/tier5StandardCabinsFidelity.test.ts`
 
@@ -1761,6 +1806,10 @@ Fichiers : 440
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
 - the abilities page and the reader who asked not to be spoiled > lists the whole catalogue when no cap is set
+
+## `apps/web/src/routes/characters/page.server.test.ts`
+
+- the character registry spoiler boundary > does not serialize characters introduced after the reader cap
 
 ## `apps/web/src/routes/investigation/[caseId]/page.server.test.ts`
 

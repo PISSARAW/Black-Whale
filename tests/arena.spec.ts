@@ -46,7 +46,11 @@ test.describe('Arena playable journey', () => {
 
     const guard = control(page, isMobile, 'guard')
     await expect(guard).toBeVisible()
-    for (let attempt = 0; attempt < 6 && (await distanceOf(page)) >= 2.5; attempt += 1) {
+    for (
+      let attempt = 0;
+      attempt < 6 && (await distanceOf(page)) >= 2.5;
+      attempt += 1
+    ) {
       const beforeAdvance = await distanceOf(page)
       if (isMobile) await activate(guard, true)
       else await guard.dispatchEvent('click')

@@ -229,7 +229,7 @@ jobs:
         # GitHub-hosted runners already ship Chromium's system libraries.
         # Avoid apt here: transient Ubuntu mirror DNS failures otherwise block
         # the suite before Playwright can download the browser itself.
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Run end-to-end tests
         run: pnpm test:e2e --project=${{ matrix.project }} --shard=${{ matrix.shard }}

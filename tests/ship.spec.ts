@@ -249,7 +249,10 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
       break
     }
   }
-  expect(eventWithChanges, 'the timeline should expose at least one adjacent delta').toBeGreaterThanOrEqual(0)
+  expect(
+    eventWithChanges,
+    'the timeline should expose at least one adjacent delta',
+  ).toBeGreaterThanOrEqual(0)
   await changes.click()
   await expect(page.locator('.delta-overlay')).toBeVisible()
   await changes.click()

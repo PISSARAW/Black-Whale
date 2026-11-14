@@ -29,7 +29,10 @@ async function openNenPanel(page: Page) {
 test.describe('tour Hatsu deep links', () => {
   for (const [abilityId, actionId] of BODY_FAMILIES) {
     test(`opens ${abilityId} on its first representable use`, async ({ page, isMobile }) => {
-      test.skip(isMobile, 'The same responsive wheel is exercised once; Morena covers touch actions.')
+      test.skip(
+        isMobile,
+        'The same responsive wheel is exercised once; Morena covers touch actions.',
+      )
       test.slow()
 
       const response = await page.goto(`/tour?hatsu=${abilityId}`)

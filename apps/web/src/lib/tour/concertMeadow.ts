@@ -12,10 +12,14 @@ export function buildConcertMeadow(THREE: typeof Three, spec: ConcertLandscapeSp
   const root = new THREE.Group()
   root.name = 'concert-flower-field'
   const flower = daisy(THREE)
-  const near = new THREE.InstancedMesh(flower, flowerMaterial(THREE), 2800)
+  const near = new THREE.InstancedMesh(flower, flowerMaterial(THREE), 2360)
   near.name = 'concert-foreground-daisies'
   distribute(THREE, near, { spec, radius: 17, minimum: 0.65 })
   bindWind(near)
+  const foreground = new THREE.InstancedMesh(flower.clone(), flowerMaterial(THREE), 260)
+  foreground.name = 'concert-hero-flowers'
+  distributeForeground(THREE, foreground, spec)
+  bindWind(foreground)
   const far = new THREE.InstancedMesh(distantDaisy(THREE), distantMaterial(THREE), 10000)
   far.name = 'concert-distant-daisies'
   distribute(THREE, far, { spec, radius: 78, minimum: 17 })
@@ -32,8 +36,35 @@ export function buildConcertMeadow(THREE: typeof Three, spec: ConcertLandscapeSp
   grass.name = 'concert-varied-grass'
   distribute(THREE, grass, { spec, radius: 64, minimum: 0.8 })
   bindWind(grass)
-  root.add(near, far, wild, grass)
+  root.add(near, foreground, far, wild, grass)
   return root
+}
+
+/** Large overlapping blooms frame the fixed manga composition without blocking Melody. */
+function distributeForeground(
+  THREE: typeof Three,
+  mesh: Three.InstancedMesh,
+  spec: ConcertLandscapeSpec,
+): void {
+  const transform = new THREE.Object3D()
+  for (let index = 0; index < mesh.count; index++) {
+    const depth = sample(index + 110000)
+    const z = spec.origin[1] - 20 + depth * 26
+    const edge = 2.4 + (1 - depth) * 2.8
+    const side = sample(index + 112000) < 0.5 ? -1 : 1
+    const x =
+      spec.origin[0] +
+      side * (edge + Math.pow(sample(index + 114000), 0.7) * (10.5 - edge))
+    const scale = 1.45 + (1 - depth) * 2.2 + sample(index + 116000) * 0.7
+    transform.position.set(x, concertLandscapeHeight(spec, [x, z]), z)
+    transform.rotation.y = sample(index + 118000) * Math.PI * 2
+    transform.rotation.z = (sample(index + 120000) - 0.5) * 0.18
+    transform.scale.setScalar(scale)
+    transform.updateMatrix()
+    mesh.setMatrixAt(index, transform.matrix)
+  }
+  mesh.instanceMatrix.needsUpdate = true
+  mesh.computeBoundingSphere()
 }
 
 function bindWind(mesh: Three.InstancedMesh): void {

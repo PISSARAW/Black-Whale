@@ -4,6 +4,7 @@ import type { ConcertLandscapeWalk } from './concertLandscapeWalk'
 import { positionHeldFlute } from './heldFlute'
 import { applyGrade, LENS_OFF } from './postGrade'
 import type { SceneRuntime } from './TourRenderer'
+import { CONCERT_REFERENCE } from './concertReference'
 
 export const CONCERT_DREAM_LAYER = 27
 
@@ -51,6 +52,11 @@ export class ConcertDreamView {
     if (actor) this.include(actor)
     if (blend < 0.82) this.reactAudience(frame.actors, id, blend, frame.seconds)
     frame.camera.position.set(walk.at[0], walk.floor + 1.7, walk.at[1])
+    if (performance.presentation === 'manga') {
+      frame.camera.rotation.set(0, 0, 0)
+      frame.camera.rotateY(CONCERT_REFERENCE.heading)
+      frame.camera.rotateX(CONCERT_REFERENCE.pitch)
+    }
     frame.camera.layers.mask =
       blend < 0.82 ? this.cameraMask | (1 << CONCERT_DREAM_LAYER) : 1 << CONCERT_DREAM_LAYER
     frame.camera.far = 420

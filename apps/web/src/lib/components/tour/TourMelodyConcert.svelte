@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TourConcertAudience from './TourConcertAudience.svelte'
   import { onDestroy, onMount, tick, untrack } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -59,6 +60,9 @@
       (!onStage || !allowed || $activeHatsu?.kind !== 'melody' || world.body.playing !== 'bloom'),
   )
   const transitioning = $derived(performance.phase === 'bow' || performance.phase === 'release')
+  const reactionStrip = $derived(
+    performance.presentation === 'manga' && performance.playing && remaining > 176,
+  )
   const clock = $derived(`${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`)
 
   function stop(clearMode = false): void {
@@ -218,6 +222,9 @@
 </script>
 
 {#if inHall}
+  {#if reactionStrip}
+    <TourConcertAudience {french} />
+  {/if}
   <details class="concert" data-hatsu-pass open>
     <summary>{french ? 'Concert de Melody' : 'Melody’s concert'} <span>ch. 383</span></summary>
     <div class="concert-body">

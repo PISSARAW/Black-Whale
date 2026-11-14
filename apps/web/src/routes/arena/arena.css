@@ -1820,3 +1820,415 @@
     }
   }
 }
+
+/* Progressive HUD: the scene stays primary and exposes one secondary surface at a time. */
+@scope (.arena-world) {
+  .terrain-label {
+    display: none;
+  }
+
+  .arena-tools {
+    position: absolute;
+    z-index: 32;
+    top: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .arena-tools button,
+  .arena-action-dock button,
+  .arena-map-panel button {
+    min-width: 44px;
+    min-height: 44px;
+    border: 1px solid rgb(255 255 240 / 18%);
+    border-radius: 4px;
+    background: rgb(5 10 14 / 88%);
+    color: rgb(255 255 240 / 72%);
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 28%);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+  }
+
+  .arena-tools button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .arena-tools button[aria-pressed='true'],
+  .arena-tools button:hover,
+  .arena-action-dock button.active {
+    border-color: rgb(255 215 0 / 72%);
+    color: #ffd700;
+  }
+
+  .arena-tools button > span {
+    font-size: 1rem;
+  }
+
+  .arena-tools button > b {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .arena-overlay-header {
+    top: 0.75rem;
+    right: auto;
+    left: 50%;
+    width: auto;
+    max-width: none;
+    transform: translateX(-50%);
+  }
+
+  .match-rule {
+    position: static;
+    min-width: 9rem;
+    padding: 0.45rem 0.7rem;
+    transform: none;
+  }
+
+  .match-rule strong {
+    font-size: 1.25rem;
+  }
+
+  .status-card {
+    top: 0.75rem;
+    left: 50%;
+    width: min(13rem, 24vw);
+    padding: 0.55rem 0.65rem;
+    transform: translateX(calc(-100% - 6rem));
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .status-card.opponent-card {
+    top: 0.75rem;
+    right: 50%;
+    left: auto;
+    width: min(13rem, 24vw);
+    transform: translateX(calc(100% + 6rem));
+  }
+
+  .status-card:not(.expanded) p,
+  .status-card:not(.expanded) .tags {
+    display: none;
+  }
+
+  .status-card.expanded {
+    width: min(17rem, 28vw);
+    pointer-events: auto;
+  }
+
+  .status-card .meter {
+    height: 0.35rem;
+    margin: 0.35rem 0 0;
+  }
+
+  .arena-action-dock {
+    position: absolute;
+    z-index: 14;
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    left: 50%;
+    display: grid;
+    width: min(40rem, calc(100vw - 2rem));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.35rem;
+    transform: translateX(-50%);
+  }
+
+  .arena-action-dock button {
+    display: grid;
+    place-items: center;
+    gap: 0.15rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .arena-action-dock button.primary {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, #ffd700, #b99b00);
+    color: #05090c;
+  }
+
+  .arena-action-dock button.ko-action {
+    border-color: rgb(225 198 129 / 58%);
+    color: #e1c681;
+  }
+
+  .arena-action-dock button.hatsu-action {
+    display: grid;
+    grid-column: auto;
+    border-color: rgb(183 123 212 / 55%);
+    color: #ebd2fa;
+  }
+
+  .arena-action-dock kbd {
+    margin: 0;
+    color: currentColor;
+    font-size: 0.52rem;
+    opacity: 0.55;
+  }
+
+  .ryu-card {
+    top: auto;
+    bottom: 4.75rem;
+    width: min(32rem, calc(100vw - 2rem));
+    grid-template-columns: 4rem 1fr;
+    grid-template-areas: 'diagram header' 'diagram flow' 'zones zones' 'actions actions';
+    padding: 0.75rem;
+    border-width: 1px;
+    border-top: 2px solid #65c8e7;
+  }
+
+  .ryu-card .aura-body {
+    transform: scale(0.66);
+  }
+
+  .ryu-card .actions {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+  }
+
+  .ryu-card .actions button {
+    min-height: 44px;
+    aspect-ratio: auto;
+    padding: 0.35rem;
+    border-width: 1px;
+    font-size: 0.65rem;
+  }
+
+  .combat-keys {
+    top: 4.75rem;
+    bottom: auto;
+    left: 1rem;
+    max-width: min(22rem, calc(100% - 2rem));
+    padding: 0.45rem;
+    border: 1px solid rgb(255 255 240 / 14%);
+    border-radius: 4px;
+    background: rgb(4 9 12 / 88%);
+    pointer-events: auto;
+    backdrop-filter: blur(12px);
+  }
+
+  .arena-map-panel {
+    position: absolute;
+    z-index: 31;
+    top: 4.75rem;
+    left: 1rem;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 10rem);
+    padding: 0.75rem;
+    border: 1px solid rgb(255 255 240 / 16%);
+    border-radius: 6px;
+    background: rgb(4 9 12 / 94%);
+    box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 55%);
+    overflow: auto;
+  }
+
+  .arena-map-panel > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.65rem;
+    color: #ffd700;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .arena-map-panel > header button {
+    min-width: 44px;
+    padding: 0;
+    font-size: 1.25rem;
+  }
+
+  .arena-map-panel .tour-minimap-panel {
+    position: static;
+    display: flex;
+    max-width: none;
+  }
+
+  .arena-lesson {
+    top: auto;
+    bottom: 4.9rem;
+    left: 50%;
+    width: min(24rem, calc(100vw - 2rem));
+    transform: translateX(-50%);
+  }
+
+  .arena-lesson p {
+    display: none;
+  }
+
+  .event-line {
+    right: auto;
+    bottom: 4.9rem;
+    left: 50%;
+    min-height: 0;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgb(229 196 118 / 35%);
+    border-radius: 999px;
+    background: rgb(3 8 11 / 90%);
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 800px) {
+    :scope > button[aria-keyshortcuts='V'] {
+      display: none;
+    }
+
+    .arena-tools {
+      top: 0.55rem;
+      left: 0.55rem;
+    }
+
+    .arena-tools button {
+      width: 44px;
+      padding: 0;
+      justify-content: center;
+    }
+
+    .arena-tools button > b {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    .arena-tools button:nth-child(2),
+    .arena-tools button:nth-child(3) {
+      display: none;
+    }
+
+    .arena-overlay-header {
+      top: 0.55rem;
+      right: auto;
+      left: 50%;
+    }
+
+    .match-rule {
+      min-width: 7.5rem;
+      padding: 0.3rem 0.45rem;
+    }
+
+    .match-rule span,
+    .match-rule small {
+      font-size: 0.45rem;
+    }
+
+    .status-card,
+    .status-card.opponent-card {
+      top: 4.45rem;
+      width: calc(50% - 0.8rem);
+      transform: none;
+    }
+
+    .status-card {
+      left: 0.55rem;
+    }
+
+    .status-card.opponent-card {
+      right: 0.55rem;
+      left: auto;
+    }
+
+    .status-card.expanded,
+    .status-card.opponent-card.expanded {
+      width: calc(50% - 0.8rem);
+    }
+
+    .arena-action-dock {
+      bottom: calc(4.75rem + env(safe-area-inset-bottom));
+      width: calc(100vw - 1.1rem);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.25rem;
+    }
+
+    .arena-action-dock button {
+      min-width: 0;
+      min-height: 48px;
+      padding: 0.25rem 0.15rem;
+      font-size: 0.52rem;
+      touch-action: manipulation;
+    }
+
+    .arena-action-dock kbd {
+      display: none;
+    }
+
+    .arena-action-dock button.ko-action,
+    .arena-action-dock button.hatsu-action {
+      display: none;
+    }
+
+    .ryu-card {
+      top: auto;
+      bottom: calc(8.45rem + env(safe-area-inset-bottom));
+      width: calc(100vw - 1.1rem);
+      grid-template-columns: auto minmax(5rem, 1fr);
+      grid-template-areas: 'header flow' 'zones zones' 'actions actions';
+      padding: 0.55rem;
+    }
+
+    .ryu-card .aura-body {
+      display: none;
+    }
+
+    .ryu-card .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ryu-card .zones button,
+    .ryu-card .actions button {
+      min-height: 44px;
+    }
+
+    .combat-keys {
+      top: 3.9rem;
+      left: 0.55rem;
+      max-width: calc(100vw - 1.1rem);
+    }
+
+    .arena-map-panel {
+      inset: 3.9rem 0.55rem calc(8.45rem + env(safe-area-inset-bottom));
+      width: auto;
+      max-height: none;
+      overscroll-behavior: contain;
+    }
+
+    .arena-map-panel .tour-minimap-panel {
+      display: flex !important;
+    }
+
+    .arena-lesson {
+      top: 7.7rem;
+      bottom: auto;
+    }
+
+    .event-line {
+      bottom: calc(8.45rem + env(safe-area-inset-bottom));
+    }
+
+    .arena-lesson p {
+      display: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .arena-action-dock button span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

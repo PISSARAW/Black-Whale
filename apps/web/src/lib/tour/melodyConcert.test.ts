@@ -137,6 +137,13 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
         new THREE.MeshBasicMaterial({ color: colour, opacity, transparent: opacity < 1 }),
     })
     const flute = human.root.getObjectByName('signature-flute')!
+    expect(human.root.getObjectByName('melody-mouth')).toBeDefined()
+    expect(human.root.getObjectByName('melody-tooth-left')).toBeDefined()
+    expect(human.root.getObjectByName('melody-tooth-right')).toBeDefined()
+    expect(human.root.getObjectByName('melody-cheek-left')).toBeDefined()
+    expect(flute.getObjectByName('signature-flute-embouchure')).toBeDefined()
+    for (let index = 0; index < 6; index++)
+      expect(flute.getObjectByName(`signature-flute-key-${index}`)).toBeDefined()
     expect(flute.position.y).toBeGreaterThan(1.5)
     expect(flute.scale.y).toBeGreaterThan(2)
     human.root.updateMatrixWorld(true)
@@ -146,6 +153,21 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
       const point = hand.getWorldPosition(new THREE.Vector3())
       expect(tube.distanceToPoint(point), name).toBeLessThan(0.09)
     }
+  })
+
+  it('bows before the first note and lowers the flute after the last', () => {
+    const bow = concertCast([], {
+      ship,
+      cap: null,
+      performance: { mode: 'melody', playing: false, phase: 'bow' },
+    })
+    const release = concertCast([], {
+      ship,
+      cap: null,
+      performance: { mode: 'melody', playing: false, phase: 'release' },
+    })
+    expect(bow[0].pose).toBe('bow')
+    expect(release[0].pose).toBe('idle')
   })
 
   it('opens the alpine vision only during the concert and releases its geometry', () => {
@@ -163,6 +185,8 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
     const disposed: ReturnType<typeof vi.spyOn>[] = []
     view.root.traverse((object) => {
       if (object instanceof THREE.Mesh) disposed.push(vi.spyOn(object.geometry, 'dispose'))
+      if (object instanceof THREE.Points) disposed.push(vi.spyOn(object.geometry, 'dispose'))
+      if (object instanceof THREE.LineSegments) disposed.push(vi.spyOn(object.geometry, 'dispose'))
       if (object instanceof THREE.InstancedMesh) disposed.push(vi.spyOn(object, 'dispose'))
     })
     view.dispose()

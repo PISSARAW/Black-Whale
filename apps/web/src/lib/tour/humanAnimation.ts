@@ -85,11 +85,17 @@ export function poseHuman(rig: PosedHuman): void {
     arms[1].rotation.x = 0.32
     legs[0].rotation.x = 0.2
     legs[1].rotation.x = -0.2
+  } else if (pose === 'bow') {
+    figure.rotation.x = 0.28
+    head.rotation.x = -0.16
   }
 }
 
 export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
+  const flute = rig.figure.getObjectByName('signature-flute')
+  const fluteBasePosition = flute?.position.clone()
+  const fluteBaseRotation = flute?.rotation.clone()
   const figureBasePosition = rig.figure.position.clone()
   const figureBaseRotation = rig.figure.rotation.clone()
   const shoulderBasePosition = rig.arms.map((arm) => arm.position.clone())
@@ -121,7 +127,39 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
     rig.head.rotation.set(headBase.x, headBase.y + Math.sin(seconds * 0.37) * 0.08, headBase.z)
     rig.pelvis.position.x = pelvisBaseX + Math.sin(seconds * 0.8) * 0.012
 
-    if (pose === 'walk') {
+    if (pose === 'flute') {
+      const phrase = Math.sin(seconds * 1.15)
+      const breath = Math.sin(seconds * 3.7)
+      rig.figure.rotation.z = figureBaseRotation.z + phrase * 0.022
+      rig.figure.rotation.x = figureBaseRotation.x + Math.sin(seconds * 0.58) * 0.009
+      rig.head.rotation.set(
+        headBase.x + 0.04 + breath * 0.006,
+        headBase.y,
+        headBase.z - phrase * 0.018,
+      )
+      rig.arms.forEach((arm, index) => {
+        const side = index === 0 ? -1 : 1
+        arm.rotation.x = shoulderBase[index].x + breath * 0.014
+        arm.rotation.z = shoulderBase[index].z + side * phrase * 0.018
+        arm.children[1].rotation.x = elbowBase[index].x + side * Math.sin(seconds * 2.1) * 0.012
+      })
+      if (flute && fluteBasePosition && fluteBaseRotation) {
+        flute.position.copy(fluteBasePosition)
+        flute.position.y += breath * 0.004
+        flute.rotation.copy(fluteBaseRotation)
+        flute.rotation.x += breath * 0.008
+        for (let index = 0; index < 6; index++) {
+          const key = flute.getObjectByName(`signature-flute-key-${index}`)
+          if (key)
+            key.position.z =
+              0.017 - Math.max(0, Math.sin(seconds * (4.2 + index * 0.31) + index)) * 0.004
+        }
+      }
+    } else if (pose === 'bow') {
+      const settle = Math.sin(seconds * 2.2) * 0.012
+      rig.figure.rotation.x = figureBaseRotation.x + settle
+      rig.head.rotation.x = headBase.x - settle * 0.5
+    } else if (pose === 'walk') {
       stride(rig, { seconds, hips: hipBase.map((hip) => hip.x) })
     } else if (pose === 'guard') {
       const rise = Math.sin(seconds * 2.4) * 0.035

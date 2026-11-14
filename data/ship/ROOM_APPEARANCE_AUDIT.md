@@ -12,7 +12,7 @@
 - **Liaison déduite** : uniquement ce qui est nécessaire pour rendre le pont parcourable.
 - Une pièce vide dans le manga reste vide ici : une absence de meuble attesté est une information.
 
-**Couverture : 63 lieux, 429 espaces, 1323 éléments modélisés.**
+**Couverture : 63 lieux, 429 espaces, 1343 éléments modélisés.**
 
 ## Salle du banquet — `tier-1-banquet-hall`
 
@@ -949,10 +949,12 @@
 - **Preuve de l’enveloppe :** liaison déduite
 - **Sous-espaces :** 1
 - **Emprises relevées :** 35 × 14 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 4 bed, 2 cabinet
+- **Objets directement visibles dans les cases :** 0/6
 - **Sources de la pièce :**
   - Le catalogue situe le dortoir dans le commissariat ; rien n'en dessine la place.
+- **Sources du mobilier et des détails :**
+  - Programme fonctionnel de dortoir retenu d'après la seule fonction cataloguée de la pièce ; aucune source n'en établit le mobilier.
 - **Limite connue :** 1 liaison(s) ou volume(s) restent déduits pour assurer la continuité de la visite.
 
 ## Passage central ponts 4–5 — `tier-4-central-passage`
@@ -973,11 +975,12 @@
 - **Preuve de l’enveloppe :** plan publié
 - **Sous-espaces :** 1
 - **Emprises relevées :** 61.2 × 21 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 2 cabinet, 2 seat, 1 table
+- **Objets directement visibles dans les cases :** 0/5
 - **Sources de la pièce :**
   - Coupe du vaisseau, chap. 380 — la planche pose la pièce et n’en donne pas le dedans.
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+- **Sources du mobilier et des détails :**
+  - Programme fonctionnel de bureau retenu d'après la seule fonction cataloguée de la pièce ; aucune source n'en établit le mobilier.
 
 ## Installations de recyclage et d’assainissement — `tier-4-recycling-sewage-facilities`
 
@@ -986,13 +989,14 @@
 - **Sous-espaces :** 2
 - **Emprises relevées :** 255.5 × 15.75 m ; 210 × 17.5 m
 - **Hauteurs sous plafond :** 8 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 6 cabinet
+- **Objets directement visibles dans les cases :** 0/6
 - **Espaces internes :** Niveau technique et recyclage
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
   - Plan des ponts, chap. 349 — installations techniques vers le pont 4
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+- **Sources du mobilier et des détails :**
+  - Programme fonctionnel de recyclage retenu d'après la seule fonction cataloguée du volume ; aucune source n'en établit les machines.
 
 ## Salle de conférence de l'armée royale de Kakin — `tier-4-royal-army-conference-room`
 
@@ -1107,11 +1111,12 @@
 - **Preuve de l’enveloppe :** plan publié
 - **Sous-espaces :** 1
 - **Emprises relevées :** 24.5 × 31.5 m
-- **Éléments modélisés :** aucun objet non attesté
-- **Objets directement visibles dans les cases :** 0/0
+- **Éléments modélisés :** 2 bed, 1 cabinet
+- **Objets directement visibles dans les cases :** 0/3
 - **Sources de la pièce :**
   - Plan des ponts, chap. 349
-- **Limite connue :** aucune case ne justifie davantage de mobilier dans ce volume.
+- **Sources du mobilier et des détails :**
+  - Programme fonctionnel de clinique retenu d'après la seule fonction cataloguée de la pièce ; aucune source n'en établit l'équipement.
 
 ## Cabines standard du pont 5 (avant) — `tier-5-standard-cabins`
 

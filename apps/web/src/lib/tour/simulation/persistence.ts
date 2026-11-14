@@ -1,4 +1,12 @@
-import { createTourSimulation, type TourSimulationV1 } from './state'
+import {
+  createTourNenProfile,
+  createTourSimulation,
+  TOUR_NEN_PROFILE_VERSION,
+  type TourNenProfile,
+  type TourSimulationV1,
+  type TrainableNenCategory,
+} from './state'
+import type { NenCategory } from '@black-whale/domain'
 
 export const TOUR_SIMULATION_KEY = 'black-whale:tour:simulation:v1'
 export const MAX_TOUR_SIMULATION_BYTES = 500_000
@@ -57,10 +65,52 @@ export function decodeTourSimulation(serialized: string | null): TourSimulationV
     return null
   try {
     const value: unknown = JSON.parse(serialized)
-    return isTourSimulation(value) ? value : null
+    if (!isTourSimulation(value)) return null
+    const state = value
+    state.player.nenProfile = normaliseNenProfile(state.player.nenProfile)
+    return state
   } catch {
     return null
   }
+}
+
+const CATEGORIES: TrainableNenCategory[] = [
+  'enhancer',
+  'emitter',
+  'transmuter',
+  'conjurer',
+  'manipulator',
+  'specialist',
+]
+
+const AFFINITIES: NenCategory[] = [...CATEGORIES, 'unknown']
+
+function normaliseNenProfile(value: Partial<TourNenProfile> | undefined): TourNenProfile {
+  const affinity = AFFINITIES.includes(value?.naturalAffinity as NenCategory)
+    ? (value?.naturalAffinity as NenCategory)
+    : 'unknown'
+  const profile = createTourNenProfile(affinity)
+  profile.version = TOUR_NEN_PROFILE_VERSION
+  for (const category of CATEGORIES) {
+    const mastery = value?.mastery?.[category]
+    profile.mastery[category] =
+      typeof mastery === 'number' && Number.isFinite(mastery)
+        ? Math.max(0, Math.min(100, mastery))
+        : 0
+  }
+  profile.learnedAbilities = Array.isArray(value?.learnedAbilities)
+    ? [...new Set(value.learnedAbilities.filter((id): id is string => typeof id === 'string'))]
+    : []
+  profile.maintainedEffects = Array.isArray(value?.maintainedEffects)
+    ? value.maintainedEffects.filter(
+        (effect) =>
+          typeof effect?.abilityId === 'string' &&
+          typeof effect.targetId === 'string' &&
+          typeof effect.upkeep === 'number' &&
+          typeof effect.startedAt === 'number',
+      )
+    : []
+  return profile
 }
 
 export function loadTourSimulation(storage: StorageLike): TourSimulationV1 | null {

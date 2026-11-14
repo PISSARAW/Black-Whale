@@ -70,7 +70,13 @@ jobs:
         run: pnpm test:ratchet
 
       - name: Check formatting
-        run: pnpm format:check
+        run: |
+          if pnpm format:check; then
+            exit 0
+          fi
+          pnpm exec prettier --write . > /dev/null
+          git diff
+          exit 1
 
       - name: Type check
         run: pnpm typecheck

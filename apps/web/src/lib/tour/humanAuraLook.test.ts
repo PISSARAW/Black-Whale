@@ -54,6 +54,22 @@ const named = (root: THREE.Object3D, prefix: string) => {
 }
 
 describe('the aura as a skin on the body', () => {
+  it('keeps the body opaque underneath a transparent Zetsu trace', () => {
+    const root = figureSeenBy(true, [{ type: 'ZETSU' }], 'zetsu')
+    const torso = root.children[0]!.children.find(
+      (child) => child.type === 'Group' && child.position.y > 1,
+    ) as THREE.Group | undefined
+    const body = torso?.children.find((child) => (child as THREE.Mesh).isMesh) as
+      THREE.Mesh | undefined
+    expect((body?.material as THREE.Material | undefined)?.transparent).toBe(false)
+    expect(
+      named(root, 'nen-skin-zetsu').every((skin) => {
+        const material = (skin as THREE.Mesh).material
+        return !Array.isArray(material) && !material.depthWrite
+      }),
+    ).toBe(true)
+  })
+
   it('wraps a body in Ten in a thin skin and no bubble', () => {
     const root = figure()
     expect(named(root, 'nen-skin-ten').length).toBeGreaterThan(10)

@@ -68,7 +68,7 @@
       >
       <label
         >Table technique<select name="value"
-          ><option value="">None</option>{#each state.tableKinds as kind}<option value={kind}
+          ><option value="">None</option>{#each state.tableKinds as kind (kind)}<option value={kind}
               >{kind}</option
             >{/each}</select
         ></label
@@ -95,7 +95,7 @@
     </dl>
     {#if game.phase === 'asking'}
       <div class="actions">
-        {#each QUESTION_CARDS.filter((question) => game?.questions.includes(question)) as question}
+        {#each QUESTION_CARDS.filter( (question) => game?.questions.includes(question) ) as question (question)}
           <form method="POST" action="?/morena">
             <input type="hidden" name="branchId" value={branchId} /><input
               type="hidden"
@@ -111,7 +111,7 @@
       </div>
     {:else if game.phase === 'deal'}
       <div class="actions">
-        {#each game.graveyard as card}<form method="POST" action="?/morena">
+        {#each game.graveyard as card (card)}<form method="POST" action="?/morena">
             <input type="hidden" name="branchId" value={branchId} /><input
               type="hidden"
               name="actorId"
@@ -135,7 +135,7 @@
     {:else if game.phase === 'settling'}
       <div class="actions">
         {#if settlement === 'joker'}
-          {#each ['yes', 'no'] as choice}<form method="POST" action="?/morena">
+          {#each ['yes', 'no'] as choice (choice)}<form method="POST" action="?/morena">
               <input type="hidden" name="branchId" value={branchId} /><input
                 type="hidden"
                 name="actorId"
@@ -147,7 +147,7 @@
               /><button type="submit">Settle as {choice}</button>
             </form>{/each}
         {:else if settlement === 'back'}
-          {#each game.graveyard as choice}<form method="POST" action="?/morena">
+          {#each game.graveyard as choice (choice)}<form method="POST" action="?/morena">
               <input type="hidden" name="branchId" value={branchId} /><input
                 type="hidden"
                 name="actorId"
@@ -239,7 +239,7 @@
       <article class="member">
         <strong>{member.label}</strong> · level {member.level} · {member.kills} kills
         <div class="actions">
-          {#each [['ordinary', '+1'], ['nen-user', '+10'], ['prince', '+50']] as option}<form
+          {#each [['ordinary', '+1'], ['nen-user', '+10'], ['prince', '+50']] as option (option[0])}<form
               method="POST"
               action="?/morena"
             >

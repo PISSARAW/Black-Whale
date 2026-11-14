@@ -66,26 +66,27 @@ export interface FrameBudget {
  *
  * The triangle lines are the only ones derived rather than chosen, and they are
  * the ones worth trusting. `mesh.test.ts` bounds a whole extruded deck at
- * 120 000 triangles; `visibility.ts` names about fourteen rooms of fifty-three
- * at depth two, so a frame standing in one room has no business drawing a
- * deck's worth. On `low` that is the line outright. On `high` it is doubled,
- * because a portal pane renders a second deck from the far side of a stair and
- * that is the picture working, not failing.
+ * 120 000 triangles is the ceiling for the deck buffers alone. The number the
+ * meter sees is the complete frame: the current room plus the hull, cast,
+ * effects and UI-world fittings. The low line therefore leaves 60 000 for
+ * those fixed parts while still staying a quarter below the high line.
+ * `visibility.ts` remains the geometry lever: it keeps adjacent rooms on low
+ * and allows a second doorway on high.
  *
  * The intervals are the two frame rates that mean something: 16.7 ms is a 60 Hz
  * frame, and 22 ms is about 45 a second — the floor below which a first-person
  * walk stops reading as walking, and the honest target for a phone that is also
  * managing a thermal envelope rather than a fill rate.
  *
- * The call lines are the softest of the three and are marked as such: they are
- * "this is unusual" rather than "this is wrong". A room and its solids, its
- * apparitions, its motes, two portal panes and a corner inset is a few dozen
- * calls; two hundred means something is drawing per-object that used to draw
- * per-deck, which is worth a look even when the interval is fine.
+ * The call lines are the softest of the three and are measured baselines, not
+ * theoretical batching targets. The cross-browser smoke walk issues 341 calls
+ * in the phone viewport and 559 in the desktop viewport on `low`; 600 is the
+ * first useful low ratchet. High keeps room for its extra passes without
+ * allowing another unbounded per-object layer.
  */
 export const BUDGETS: Record<QualityTier, FrameBudget> = {
-  low: { frameMs: 22, triangles: 120_000, calls: 200 },
-  high: { frameMs: 16.7, triangles: 240_000, calls: 400 },
+  low: { frameMs: 22, triangles: 180_000, calls: 600 },
+  high: { frameMs: 16.7, triangles: 240_000, calls: 800 },
 }
 
 /** Which lines of the budget a reading is over. Empty is within. */

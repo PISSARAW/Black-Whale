@@ -120,22 +120,32 @@ interface CatalogEvent {
   events?: CatalogDomainEvent[]
 }
 
+function eventIsAfter(
+  event: CatalogEvent,
+  selected: { chapter: { number: number }; sequence: number },
+): boolean {
+  if (event.chapter !== selected.chapter.number) return event.chapter > selected.chapter.number
+  return event.sequence > selected.sequence
+}
+
+function catalogVestige(domain: CatalogDomainEvent) {
+  if (domain.type !== 'ENVIRONMENT_ALTERED') return null
+  const payload = domain.payload
+  if (!payload?.locationId || !payload.vestigeType) return null
+  return {
+    locationId: payload.locationId,
+    vestige: { type: payload.vestigeType, metadata: payload.metadata },
+  }
+}
+
 function vestigesThrough(selected: { id: string; chapter: { number: number }; sequence: number }) {
   const found: Record<string, import('$lib/tour/cast/types').TourVestige[]> = {}
   for (const event of eventCatalog as CatalogEvent[]) {
-    if (
-      event.chapter > selected.chapter.number ||
-      (event.chapter === selected.chapter.number && event.sequence > selected.sequence)
-    )
-      continue
+    if (eventIsAfter(event, selected)) continue
     for (const domain of event.events ?? []) {
-      const payload = domain.payload
-      if (domain.type !== 'ENVIRONMENT_ALTERED' || !payload?.locationId || !payload.vestigeType)
-        continue
-      found[payload.locationId] = [
-        ...(found[payload.locationId] ?? []),
-        { type: payload.vestigeType, metadata: payload.metadata },
-      ]
+      const entry = catalogVestige(domain)
+      if (!entry) continue
+      found[entry.locationId] = [...(found[entry.locationId] ?? []), entry.vestige]
     }
   }
   return found
@@ -148,13 +158,17 @@ function vestigesThrough(selected: { id: string; chapter: { number: number }; se
  * whose entry has vanished from the catalogue simply has no dossier: the panel
  * shows what it has, which is the same thing the fiche has always done.
  */
-function dossiersFor(members: readonly CastMember[], cap: number | null) {
+function dossiersFor(
+  members: readonly CastMember[],
+  timing: { cap: number | null; chapter: number },
+) {
   const found: Record<string, CastDossier> = {}
   for (const member of members) {
     const character = dossierCatalogue.get(member.characterId)
     if (!character) continue
     found[member.characterId] = dossierFor(character, {
-      cap,
+      cap: timing.cap,
+      chapter: timing.chapter,
       factions: factionNames,
       abilities: dossierAbilities,
     })
@@ -251,7 +265,7 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
       spoilerLimit: cap,
       members: aboard,
       beasts,
-      dossiers: dossiersFor(aboard, cap),
+      dossiers: dossiersFor(aboard, { cap, chapter: event.chapter.number }),
       dialogue: contextLinesFor(aboard, {
         id: event.id,
         chapter: event.chapter.number,

@@ -22,8 +22,6 @@ import {
   syncPosition,
   toggle,
 } from './fighter'
-// Re-exported: the constants describe the arena's economy, and callers have
-// always read them from here.
 export {
   EVADE_COST,
   EVADE_DISTANCE,
@@ -87,7 +85,11 @@ export function combatReducer(state: CombatState, action: CombatAction): CombatS
     if (fighter.mode === 'zetsu') return state
     return replace(state, action.side, {
       ...fighter,
-      shuObjectId: action.on ? action.objectId : fighter.shuObjectId === action.objectId ? null : fighter.shuObjectId,
+      shuObjectId: action.on
+        ? action.objectId
+        : fighter.shuObjectId === action.objectId
+          ? null
+          : fighter.shuObjectId,
     })
   }
   if (action.type === 'GUARD') return replace(state, action.side, activeGuard(state[action.side]))
@@ -132,7 +134,6 @@ function tick(state: CombatState, dt: number): CombatState {
   )
 }
 
-/** The whole of a HATSU action, which is what `castHatsu` reads anyway. */
 interface HatsuCast {
   side: CombatSide
   effect: ArenaHatsuEffect
@@ -195,7 +196,9 @@ function castHatsu(
     return state
   if (
     hatsuId === 'rihan-predator' &&
-    (preparation?.id !== hatsuId || preparation.observations < 3 || preparation.expiresAt < state.clock)
+    (preparation?.id !== hatsuId ||
+      preparation.observations < 3 ||
+      preparation.expiresAt < state.clock)
   )
     return state
   const sequenceCost =
@@ -296,7 +299,6 @@ function castHatsu(
   })
 }
 
-/** The named contracts, resolved after the cost has already been taken. */
 interface BlackWhaleCast {
   side: CombatSide
   zone: BodyZone
@@ -415,10 +417,7 @@ function blackWhaleHatsu(
       return rival.gyo
         ? hit(0.7, 8)
         : addPersistentNenEffect(
-            target(
-              { bound: 1.5, aura: Math.max(0, rival.aura - 18) },
-              { in: true, cooldown: 1.4 },
-            ),
+            target({ bound: 1.5, aura: Math.max(0, rival.aura - 18) }, { in: true, cooldown: 1.4 }),
             {
               id: `silent-majority-${side}`,
               kind: 'HIDDEN_TRAP',

@@ -3,42 +3,26 @@
   import { t } from '$lib/i18n'
   import type { ShipDeltaKind, ShipEventDelta } from '../../../routes/ship/shipDelta'
   import type { MapWorldState } from './markerProjection'
-  import { calculatePresencePosition, tierOverviewY } from './markerProjection'
+  import { resolveRegionLocationSlug } from '$lib/map/mapAssetRegistry'
+  import { projectEventDelta } from './projection/eventDelta'
 
-  let { delta, world }: { delta: ShipEventDelta[]; world: MapWorldState } = $props()
+  let {
+    delta,
+    world,
+    currentEventTitle = null,
+  }: { delta: ShipEventDelta[]; world: MapWorldState; currentEventTitle?: string | null } = $props()
   const deltaKinds: ShipDeltaKind[] = ['moved', 'appeared', 'disappeared', 'dead']
 
-  function point(entityId: string, locationId: string | null) {
-    if (!locationId || mapState.currentZoomLevel === 'LOCAL') return null
-    const presence = {
-      id: `delta:${entityId}`,
-      entityType: 'BODY' as const,
-      entityId,
-      locationId,
-      fromEventId: '',
-      precision: 'EXACT_ROOM' as const,
-      certainty: 'CONFIRMED' as const,
-    }
-    const projected = calculatePresencePosition(
-      presence,
-      [...world.presences, presence],
-      world.locations,
-    )
-    if (!projected.tierId) return null
-    if (mapState.currentZoomLevel === 'TIER' && projected.tierId !== mapState.selectedTier)
-      return null
-    if (mapState.currentZoomLevel === 'OVERVIEW') {
-      return { x: 50, y: tierOverviewY[projected.tierId] ?? 46 }
-    }
-    return { x: projected.x / 10, y: projected.y / 6 }
-  }
-
   let movements = $derived(
-    delta.map((change) => ({
-      ...change,
-      from: point(change.entityId, change.fromLocationId),
-      to: point(change.entityId, change.toLocationId),
-    })),
+    delta.map((change) =>
+      projectEventDelta(change, {
+        world,
+        zoom: mapState.currentZoomLevel,
+        selectedTier: mapState.selectedTier,
+        selectedLocationSlug: resolveRegionLocationSlug(mapState.selectedLocationId),
+        currentEventTitle,
+      }),
+    ),
   )
 </script>
 
@@ -50,18 +34,19 @@
       </marker>
     </defs>
     {#each movements as movement (movement.entityId)}
-      {#if movement.from && movement.to && movement.kind === 'moved'}
+      {#if movement.from && movement.to && movement.visual === 'route'}
         <line x1={movement.from.x} y1={movement.from.y} x2={movement.to.x} y2={movement.to.y} />
       {/if}
-      {#if movement.to}
+      {#if movement.to || movement.from}
+        {@const point = movement.to || movement.from!}
         <circle
-          class:arrival={movement.kind === 'appeared'}
-          cx={movement.to.x}
-          cy={movement.to.y}
+          class:arrival={movement.visual === 'arrival'}
+          class:departure={movement.visual === 'departure'}
+          class:dead={movement.kind === 'dead'}
+          cx={point.x}
+          cy={point.y}
           r="1.6"
         />
-      {:else if movement.from}
-        <circle class="departure" cx={movement.from.x} cy={movement.from.y} r="1.6" />
       {/if}
     {/each}
   </svg>
@@ -109,6 +94,10 @@
   circle.departure {
     stroke: #eb816c;
     stroke-dasharray: 1 1;
+  }
+  circle.dead {
+    fill: rgba(235, 95, 89, 0.26);
+    stroke: #eb5f59;
   }
   p {
     position: absolute;

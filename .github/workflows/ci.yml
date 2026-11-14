@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [main, develop]
   pull_request:
@@ -142,8 +143,27 @@ jobs:
           if-no-files-found: warn
 
   e2e:
-    name: End to end
+    name: End to end (${{ matrix.project }}, ${{ matrix.shard }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            shard: 1/3
+            artifact: chromium-1
+          - project: chromium
+            shard: 2/3
+            artifact: chromium-2
+          - project: chromium
+            shard: 3/3
+            artifact: chromium-3
+          - project: mobile
+            shard: 1/2
+            artifact: mobile-1
+          - project: mobile
+            shard: 2/2
+            artifact: mobile-2
     # The only check that exercises the site as a visitor meets it: server
     # render, hydration, the spoiler cookie, a Hatsu cast, the admin gate.
     # Nothing ran it before, so the single spec in the repo had drifted away
@@ -192,6 +212,11 @@ jobs:
       - name: Build packages
         run: pnpm build --filter "./packages/*"
 
+      # Playwright starts the production build directly. Generate SvelteKit's
+      # internal tsconfig first so this job is self-contained.
+      - name: Prepare SvelteKit
+        run: pnpm --filter "@black-whale/web" exec svelte-kit sync
+
       # The pages the smoke suite opens read the database, so the schema and
       # the catalogue both have to be there — the same two steps the deploy
       # runs, in the same order.
@@ -207,15 +232,15 @@ jobs:
         # GitHub-hosted runners already ship Chromium's system libraries.
         # Avoid apt here: transient Ubuntu mirror DNS failures otherwise block
         # the suite before Playwright can download the browser itself.
-        run: pnpm exec playwright install chromium
+        run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Run end-to-end tests
-        run: pnpm test:e2e --project=chromium
+        run: pnpm test:e2e --project=${{ matrix.project }} --shard=${{ matrix.shard }}
 
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.artifact }}
           path: |
             playwright-report
             test-results

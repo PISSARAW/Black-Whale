@@ -20,6 +20,7 @@ import type { Apparition } from '../apparitions'
 import { floorOf, type Ship } from '../blueprint'
 import { centroid } from '../geometry-movement'
 import type { Space, Vec2 } from '../types'
+import { auraSourcePlacement } from './auraPlacement'
 import type { TourAuraObject, TourAuraTrace, TourVestige } from './types'
 
 const AURA_DAMAGE = new Set(['wall_cut', 'door_broken'])
@@ -58,21 +59,11 @@ interface ResidueInput {
   awakened?: boolean
 }
 
-function hashOffset(id: string): Vec2 {
-  let hash = 0
-  for (const character of id) hash = (hash * 31 + character.charCodeAt(0)) | 0
-  const angle = ((hash >>> 0) % 360) * (Math.PI / 180)
-  return [Math.cos(angle) * 0.45, Math.sin(angle) * 0.45]
-}
-
-export function residueApparitions({
-  ship,
-  vestiges,
-  tierId,
-  traces = [],
-  objects = [],
-  awakened = true,
-}: ResidueInput): Apparition[] {
+function vestigeApparitions(
+  ship: Ship,
+  vestiges: Readonly<Record<string, readonly TourVestige[]>>,
+  tierId: string,
+): Apparition[] {
   const found: Apparition[] = []
   for (const [key, list] of Object.entries(vestiges)) {
     const space = spaceFor(ship, key)
@@ -97,23 +88,25 @@ export function residueApparitions({
       })
     })
   }
-  for (const source of [
-    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' })),
-    ...objects,
-  ]) {
-    if (!awakened) continue
-    const space = spaceFor(ship, source.locationId)
-    const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
-    if (!space || !tier || space.tierId !== tierId) continue
-    const middle = centroid(space)
-    const offset = hashOffset(source.anchor ?? source.id)
+  return found
+}
+
+function sourceApparitions(
+  ship: Ship,
+  sources: readonly (TourAuraObject | (TourAuraTrace & { visibility: 'gyo'; kind: 'trace' }))[],
+  tierId: string,
+): Apparition[] {
+  const found: Apparition[] = []
+  for (const source of sources) {
+    const placement = auraSourcePlacement({ ship, source, tierId })
+    if (!placement) continue
     found.push({
       id: `aura-source:${source.id}`,
       kind: 'residue',
-      spaceId: space.id,
-      tierId: space.tierId,
-      at: [middle[0] + offset[0], middle[1] + offset[1]],
-      y: floorOf(space, tier) + 0.9,
+      spaceId: placement.space.id,
+      tierId: placement.space.tierId,
+      at: placement.at,
+      y: placement.y,
       size: source.kind === 'trace' ? 0.42 : 0.32,
       colour: RESIDUE_COLOUR,
       stage: 0,
@@ -121,4 +114,21 @@ export function residueApparitions({
     })
   }
   return found
+}
+
+export function residueApparitions({
+  ship,
+  vestiges,
+  tierId,
+  traces = [],
+  objects = [],
+  awakened = true,
+}: ResidueInput): Apparition[] {
+  const residues = vestigeApparitions(ship, vestiges, tierId)
+  if (!awakened) return residues
+  const sources = [
+    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' as const })),
+    ...objects,
+  ]
+  return [...residues, ...sourceApparitions(ship, sources, tierId)]
 }

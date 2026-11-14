@@ -108,6 +108,8 @@ export interface QualityProfile {
   surfaceCondition: boolean
   /** Additive lamp halos whose radius follows the room's air load. */
   lampAir: boolean
+  /** Real-time dropout on a sparse subset of unstable lower-deck fittings. */
+  fittingFlicker: boolean
   /**
    * The lens artefacts inside the grade pass: the halation, the dispersion and
    * the grain. `high` only, and for one of the three — six extra taps per pixel
@@ -157,6 +159,8 @@ export interface QualityProfile {
   lensDirt: boolean
   /** What fraction of a room's motes are drawn. */
   dustScale: number
+  /** How many doorways away the renderer keeps rooms visible. */
+  viewDepth: number
 }
 
 const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'>> = {
@@ -168,6 +172,7 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     surfaceDetail: false,
     surfaceCondition: false,
     lampAir: false,
+    fittingFlicker: false,
     lens: false,
     // The per-vertex sheen shader compiles on Chrome/ANGLE but leaves the
     // completed WebGL frame black on the production driver. Keep the material
@@ -183,6 +188,9 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // Not zero. The dust is the only thing that makes a six-thousand-square-metre
     // hall read as a volume, and a phone is the screen that needs that most.
     dustScale: 0.45,
+    // A phone cannot afford the fourteen-room average of depth two. Adjacent
+    // rooms remain present; the room across a second doorway is the trade-off.
+    viewDepth: 1,
   },
   high: {
     bloom: true,
@@ -192,13 +200,13 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     surfaceDetail: true,
     surfaceCondition: true,
     lampAir: true,
+    fittingFlicker: true,
     lens: true,
     // See the low tier: this is a driver-stability switch, not a quality knob.
     sheen: false,
-    // The depth-based occlusion pass returns an entirely black framebuffer on
-    // Chrome/ANGLE in production, even though its shader compiles. The baked
-    // room lighting remains the stable source of contact shading for now.
-    occlusion: false,
+    // The pass reads the composer's current depth buffer, after the room and
+    // before bloom. Low still has no depth target to offer it.
+    occlusion: true,
     // Disabled until the native depth texture is sampled correctly by the
     // Bokeh shader across browsers. On Chrome/ANGLE the pass currently turns
     // the completed frame entirely black.
@@ -211,10 +219,12 @@ const PROFILES: Record<QualityTier, Omit<QualityProfile, 'tier' | 'smaa' | 'taa'
     // handful of genuinely reflective submeshes. Global screen-space
     // reflections would affect every surface instead.
     ssr: false,
-    // SSGI shares the same unstable depth pass as occlusion.
+    // The bounced-light branch is still experimental; SSAO alone is bounded
+    // and leaves the baked room colours authoritative.
     ssgi: false,
     lensDirt: true,
     dustScale: 1,
+    viewDepth: 2,
   },
 }
 

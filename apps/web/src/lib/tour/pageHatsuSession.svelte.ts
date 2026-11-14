@@ -210,48 +210,61 @@ export class TourHatsuSession {
   /** One second of the walk's beat: the reserve moves, and an empty body lets go. */
   breathe = (pressure: AuraPressure = 'none') => {
     const before = this.reserve
-    this.reserve = breathe(this.reserve, this.nen, 1, pressure)
+    this.reserve = breathe(this.reserve, this.nen, { seconds: 1, pressure })
     if (this.reserve > 0 || before === 0) return
     this.staggeredUntil = Date.now() + 1_500
     this.note({ code: 'EXHAUSTED' })
     for (const action of exhaustionActions(this.nen)) this.useNen(action)
   }
 
+  private refusalFor(action: NenTechniqueAction): NenRefusalCode | null {
+    if (refusedBeforeAwakening(this.awakened, action)) return 'NODES_SHUT'
+    if (refusedByReserve(this.reserve, this.nen, action)) return 'RESERVE_TOO_LOW'
+    return null
+  }
+
+  private recordTransition(action: NenTechniqueAction, result: NenTransition) {
+    if (!result.accepted) {
+      if (result.reason)
+        this.note({
+          code: 'ACTION_REFUSED',
+          action: action.type,
+          reason: result.reason as NenRefusalCode,
+        })
+      return
+    }
+    this.nen = result.state
+    saveTourNen(this.nen)
+    this.note({ code: 'ACTION_ACCEPTED', action: action.type })
+    if (action.type === 'SHU' && !action.on)
+      this.note({ code: 'SHU_TRACE', objectId: action.objectId })
+    this.options.onNenApplied?.({ action, nen: this.nen, reserve: this.reserve })
+  }
+
+  private applyAwakening(action: NenTechniqueAction) {
+    if (this.awakened || !awakensWith(action)) return
+    this.awakened = true
+    saveAwakened()
+  }
+
+  private releaseUnavailableHatsu() {
+    const context = this.options.read()
+    if (this.canUse(context.activeKind)) return
+    if (context.activeKind === 'future') parallelFutureVisible.set(false)
+    this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(context.world.body) })
+    this.options.updateReport(null)
+  }
+
   useNen = (action: NenTechniqueAction): NenTransition => {
-    const refusal: NenRefusalCode | null = refusedBeforeAwakening(this.awakened, action)
-      ? 'NODES_SHUT'
-      : refusedByReserve(this.reserve, this.nen, action)
-        ? 'RESERVE_TOO_LOW'
-        : null
+    const refusal = this.refusalFor(action)
     if (refusal) {
       this.note({ code: 'ACTION_REFUSED', action: action.type, reason: refusal })
       return { state: this.nen, accepted: false }
     }
     const result = transitionNen(this.nen, action)
-    if (result.accepted) {
-      this.nen = result.state
-      saveTourNen(this.nen)
-      this.note({ code: 'ACTION_ACCEPTED', action: action.type })
-      if (action.type === 'SHU' && !action.on)
-        this.note({ code: 'SHU_TRACE', objectId: action.objectId })
-      this.options.onNenApplied?.({ action, nen: this.nen, reserve: this.reserve })
-    } else if (result.reason) {
-      this.note({
-        code: 'ACTION_REFUSED',
-        action: action.type,
-        reason: result.reason as NenRefusalCode,
-      })
-    }
-    if (!this.awakened && awakensWith(action)) {
-      this.awakened = true
-      saveAwakened()
-    }
-    if (!this.canUse(this.options.read().activeKind)) {
-      if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)
-      const world = this.options.read().world
-      this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
-      this.options.updateReport(null)
-    }
+    this.recordTransition(action, result)
+    this.applyAwakening(action)
+    this.releaseUnavailableHatsu()
     return result
   }
 

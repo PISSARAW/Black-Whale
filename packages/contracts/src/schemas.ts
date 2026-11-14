@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Canon schemas are kept together for one exported catalogue contract. */
 import { z } from 'zod'
 import { appearanceFileSchema } from './appearance.js'
 import { chapterRef, slug } from './primitives.js'

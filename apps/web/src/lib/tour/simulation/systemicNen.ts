@@ -34,6 +34,7 @@ export interface TourNenContext {
   presences?: TourNenPresence[]
   traces?: TourNenTrace[]
   witnesses?: TourNenWitness[]
+  spaceId?: string | null
 }
 
 export interface TourNenResolution {
@@ -43,6 +44,91 @@ export interface TourNenResolution {
   scheduled: Array<'RUMOR_SPREAD' | 'SECURITY_SWEEP'>
 }
 
+function gyoObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'GYO' || !action.on) return []
+  return (context.traces ?? []).map(({ id }) => `aura-trace:${id}`)
+}
+
+function enObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'EN' || action.radius === null) return []
+  return (context.presences ?? [])
+    .filter(({ distance }) => distance <= action.radius!)
+    .map(({ id }) => `presence:${id}:unidentified`)
+}
+
+function zetsuObservations(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  if (action.type !== 'ZETSU') return []
+  return (context.presences ?? [])
+    .filter(({ physicallyVisible }) => physicallyVisible)
+    .map(({ id }) => `visible-body:${id}`)
+}
+
+function observationsFor(action: NenTechniqueAction<string>, context: TourNenContext): string[] {
+  return [
+    ...gyoObservations(action, context),
+    ...enObservations(action, context),
+    ...zetsuObservations(action, context),
+  ]
+}
+
+function rememberObservations(state: TourSimulationV1, observations: readonly string[]): void {
+  for (const observation of observations)
+    if (!state.player.knowledge.includes(observation)) state.player.knowledge.push(observation)
+}
+
+function pressureRises(applied: AppliedNenTransition): boolean {
+  const pressure =
+    applied.action.type === 'REN' || (applied.action.type === 'ON' && applied.action.on)
+  return pressure && Boolean(applied.pressureRising)
+}
+
+function visibleWitnesses(
+  context: TourNenContext,
+  nen: NenTechniqueState<string>,
+): TourNenWitness[] {
+  return (context.witnesses ?? []).filter((witness) => !nen.in || witness.detectsConcealedVisitor)
+}
+
+function applyWitnessReputation(
+  state: TourSimulationV1,
+  witnesses: readonly TourNenWitness[],
+): TourSimulationV1 {
+  const byFaction = new Map<string, TourNenWitness[]>()
+  for (const witness of witnesses)
+    byFaction.set(witness.factionId, [...(byFaction.get(witness.factionId) ?? []), witness])
+  let next = state
+  for (const [factionId, factionWitnesses] of byFaction)
+    next = resolveSocialAction(next, {
+      kind: 'INTIMIDATE',
+      factionId,
+      witnessIds: factionWitnesses.map((witness) => witness.id),
+    })
+  return next
+}
+
+function scheduleWitnessEvents(
+  state: TourSimulationV1,
+  witnesses: readonly TourNenWitness[],
+): { state: TourSimulationV1; scheduled: TourNenResolution['scheduled'] } {
+  let next = state
+  const scheduled: TourNenResolution['scheduled'] = []
+  for (const witness of witnesses) {
+    const incident = `hostile-nen:${witness.spaceId}`
+    if (next.incidents.includes(incident)) continue
+    next = evolveTourSimulation(next, (draft) => draft.incidents.push(incident))
+    const kind = witness.highSecurity ? 'SECURITY_SWEEP' : 'RUMOR_SPREAD'
+    next = scheduleWorldEvent(next, {
+      id: incident,
+      kind,
+      dueAt: next.clock + (kind === 'SECURITY_SWEEP' ? 10 : 30),
+      spaceId: witness.spaceId,
+      requiresIncident: incident,
+    })
+    scheduled.push(kind)
+  }
+  return { state: next, scheduled }
+}
+
 /** Project a transition already accepted and paid for by TourHatsuSession. */
 export function useSystemicNen(
   state: TourSimulationV1,
@@ -50,61 +136,18 @@ export function useSystemicNen(
   context: TourNenContext = {},
 ): TourNenResolution {
   const { action, nen, reserve } = applied
-  const observations: string[] = []
-
-  if (action.type === 'GYO' && action.on)
-    for (const trace of context.traces ?? []) observations.push(`aura-trace:${trace.id}`)
-
-  if (action.type === 'EN' && action.radius !== null) {
-    for (const presence of context.presences ?? []) {
-      if (presence.distance > action.radius) continue
-      // En establishes a presence, not an identity or exact intention.
-      observations.push(`presence:${presence.id}:unidentified`)
-    }
-  }
-
-  // Zetsu erases the aura signature, never the physically visible body.
-  if (action.type === 'ZETSU')
-    for (const presence of context.presences ?? [])
-      if (presence.physicallyVisible) observations.push(`visible-body:${presence.id}`)
+  const observations = observationsFor(action, context)
 
   const next = evolveTourSimulation(state, (draft) => {
     draft.player.nen = nen
     draft.player.aura = reserve
-    for (const observation of observations)
-      if (!draft.player.knowledge.includes(observation)) draft.player.knowledge.push(observation)
+    if (context.spaceId) draft.player.spaceId = context.spaceId
+    rememberObservations(draft, observations)
   })
-  let projected = next
-  const scheduled: TourNenResolution['scheduled'] = []
-  const pressure = action.type === 'REN' || (action.type === 'ON' && action.on)
-  if (pressure && applied.pressureRising) {
-    const visible = (context.witnesses ?? []).filter(
-      (witness) => !nen.in || witness.detectsConcealedVisitor,
-    )
-    const byFaction = new Map<string, TourNenWitness[]>()
-    for (const witness of visible)
-      byFaction.set(witness.factionId, [...(byFaction.get(witness.factionId) ?? []), witness])
-    for (const [factionId, witnesses] of byFaction)
-      projected = resolveSocialAction(projected, {
-        kind: 'INTIMIDATE',
-        factionId,
-        witnessIds: witnesses.map((witness) => witness.id),
-      })
+  if (!pressureRises(applied)) return { state: next, accepted: true, observations, scheduled: [] }
 
-    for (const witness of visible) {
-      const incident = `hostile-nen:${witness.spaceId}`
-      if (projected.incidents.includes(incident)) continue
-      projected = evolveTourSimulation(projected, (draft) => draft.incidents.push(incident))
-      const kind = witness.highSecurity ? 'SECURITY_SWEEP' : 'RUMOR_SPREAD'
-      projected = scheduleWorldEvent(projected, {
-        id: incident,
-        kind,
-        dueAt: projected.clock + (kind === 'SECURITY_SWEEP' ? 10 : 30),
-        spaceId: witness.spaceId,
-        requiresIncident: incident,
-      })
-      scheduled.push(kind)
-    }
-  }
-  return { state: projected, accepted: true, observations, scheduled }
+  const witnesses = visibleWitnesses(context, nen)
+  const projected = applyWitnessReputation(next, witnesses)
+  const scheduled = scheduleWitnessEvents(projected, witnesses)
+  return { state: scheduled.state, accepted: true, observations, scheduled: scheduled.scheduled }
 }

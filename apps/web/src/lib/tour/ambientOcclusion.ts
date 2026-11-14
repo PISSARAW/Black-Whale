@@ -239,7 +239,6 @@ export const OCCLUSION_SHADER = {
 
 export interface OcclusionBuild {
   camera: Three.PerspectiveCamera
-  depth: Three.DepthTexture
   ssgi: boolean
 }
 
@@ -259,6 +258,22 @@ export function projectionScale(camera: Three.PerspectiveCamera): [number, numbe
   return [elements[0] * 0.5, elements[5] * 0.5]
 }
 
+/** The depth and projection inputs belonging to the frame being read now. */
+export function occlusionFrame(
+  camera: Three.PerspectiveCamera,
+  readBuffer: Pick<Three.WebGLRenderTarget, 'width' | 'height' | 'depthTexture'>,
+) {
+  return {
+    depth: readBuffer.depthTexture,
+    texel: [1 / Math.max(1, readBuffer.width), 1 / Math.max(1, readBuffer.height)] as [
+      number,
+      number,
+    ],
+    inverseProjection: camera.projectionMatrixInverse,
+    projection: projectionScale(camera),
+  }
+}
+
 /**
  * The pass, which writes its own uniforms.
  *
@@ -272,7 +287,7 @@ export function projectionScale(camera: Three.PerspectiveCamera): [number, numbe
  */
 export async function createOcclusionPass(build: OcclusionBuild): Promise<PostPass> {
   const { ShaderPass } = await import('three/examples/jsm/postprocessing/ShaderPass.js')
-  const { camera, depth, ssgi } = build
+  const { camera, ssgi } = build
 
   /**
    * The frame's arguments taken whole rather than named.
@@ -297,12 +312,11 @@ export async function createOcclusionPass(build: OcclusionBuild): Promise<PostPa
       // Measured off the buffer it is about to read rather than off the
       // renderer: the composer's targets are the thing whose texels these are,
       // and asking the buffer costs no vector to allocate sixty times a second.
-      this.uniforms.uTexel.value = [
-        1 / Math.max(1, readBuffer.width),
-        1 / Math.max(1, readBuffer.height),
-      ]
-      this.uniforms.uInverseProjection.value = camera.projectionMatrixInverse
-      this.uniforms.uProjScale.value = projectionScale(camera)
+      const current = occlusionFrame(camera, readBuffer)
+      this.uniforms.tDepth.value = current.depth
+      this.uniforms.uTexel.value = current.texel
+      this.uniforms.uInverseProjection.value = current.inverseProjection
+      this.uniforms.uProjScale.value = current.projection
       super.render(...frame)
     }
   }
@@ -315,6 +329,5 @@ export async function createOcclusionPass(build: OcclusionBuild): Promise<PostPa
       ...(ssgi ? { USE_SSGI: '1' } : {}),
     },
   }) as unknown as PostPass
-  pass.uniforms.tDepth.value = depth
   return pass
 }

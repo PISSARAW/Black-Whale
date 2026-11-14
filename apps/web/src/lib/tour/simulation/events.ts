@@ -38,7 +38,11 @@ export function advanceDynamicEvents(state: TourSimulationV1, dt: number): TourS
       if (Number(event.data.dueAt) > draft.clock) continue
       const requirement = String(event.data.requiresIncident)
       if (requirement && !draft.incidents.includes(requirement)) continue
-      applyDynamicEvent(draft, String(event.data.kind) as DynamicEventKind, String(event.data.spaceId))
+      applyDynamicEvent(
+        draft,
+        String(event.data.kind) as DynamicEventKind,
+        String(event.data.spaceId),
+      )
       event.stage = 'OCCURRED'
       event.status = 'RESOLVED'
       event.data.occurredAt = draft.clock
@@ -46,11 +50,7 @@ export function advanceDynamicEvents(state: TourSimulationV1, dt: number): TourS
   })
 }
 
-function applyDynamicEvent(
-  state: TourSimulationV1,
-  kind: DynamicEventKind,
-  spaceId: string,
-): void {
+function applyDynamicEvent(state: TourSimulationV1, kind: DynamicEventKind, spaceId: string): void {
   if (kind === 'SECURITY_SWEEP') {
     state.incidents.push(`security-sweep:${spaceId}`)
     for (const actor of Object.values(state.actors))

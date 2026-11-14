@@ -14,6 +14,18 @@ export interface NPCRoutine {
   stops: NPCRoutineStop[]
 }
 
+interface AdvanceRoutinesInput {
+  routines: readonly NPCRoutine[]
+  graph: TourNavigationGraph
+  dt: number
+}
+
+interface InterruptRoutineInput {
+  actorId: string
+  incidentId: string
+  responseSpaceId: string
+}
+
 export function routeBetweenSpaces(
   graph: TourNavigationGraph,
   from: string,
@@ -44,17 +56,15 @@ function scheduledStop(routine: NPCRoutine, clock: number): NPCRoutineStop | nul
 /** Move every actor by one room per simulation step toward their scheduled activity. */
 export function advanceNPCRoutines(
   state: TourSimulationV1,
-  routines: readonly NPCRoutine[],
-  graph: TourNavigationGraph,
-  dt: number,
+  input: AdvanceRoutinesInput,
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
-    draft.clock += Math.max(0, dt)
-    for (const routine of routines) {
+    draft.clock += Math.max(0, input.dt)
+    for (const routine of input.routines) {
       const actor = draft.actors[routine.actorId]
       const stop = scheduledStop(routine, draft.clock)
       if (!actor || !stop || actor.nextDecisionAt > draft.clock) continue
-      const route = routeBetweenSpaces(graph, actor.spaceId, stop.spaceId)
+      const route = routeBetweenSpaces(input.graph, actor.spaceId, stop.spaceId)
       if (route?.[1]) actor.spaceId = route[1]
       actor.objective = stop.activity
       actor.nextDecisionAt = draft.clock + 1
@@ -64,16 +74,14 @@ export function advanceNPCRoutines(
 
 export function interruptNPCRoutine(
   state: TourSimulationV1,
-  actorId: string,
-  incidentId: string,
-  responseSpaceId: string,
+  input: InterruptRoutineInput,
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
-    const actor = draft.actors[actorId]
+    const actor = draft.actors[input.actorId]
     if (!actor) return
-    actor.objective = `respond:${incidentId}`
-    actor.memory.push(incidentId)
-    actor.spaceId = responseSpaceId
+    actor.objective = `respond:${input.incidentId}`
+    actor.memory.push(input.incidentId)
+    actor.spaceId = input.responseSpaceId
     actor.nextDecisionAt = draft.clock + 5
   })
 }

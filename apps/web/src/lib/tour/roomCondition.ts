@@ -132,3 +132,16 @@ export function roomConditionOf(options: {
     ventilationStability: clamp01(deck.ventilationStability - bias.airLoad * 0.45),
   }
 }
+
+/** Reuse a room's sensory bed until its named occupancy actually changes. */
+export class RoomConditionCache {
+  readonly #conditions = new Map<string, { occupants: number; condition: RoomCondition }>()
+
+  get(space: Space, tier: Tier, occupants = 0): RoomCondition {
+    const held = this.#conditions.get(space.id)
+    if (held?.occupants === occupants) return held.condition
+    const condition = roomConditionOf({ space, tier, namedOccupants: occupants })
+    this.#conditions.set(space.id, { occupants, condition })
+    return condition
+  }
+}

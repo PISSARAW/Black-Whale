@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { PerspectiveCamera } from 'three'
+import { DepthTexture, PerspectiveCamera, WebGLRenderTarget } from 'three'
 import {
   OCCLUSION_BIAS,
   OCCLUSION_REACH,
   OCCLUSION_RADIUS,
   OCCLUSION_STRENGTH,
+  occlusionFrame,
   occlusionUniforms,
   projectionScale,
 } from './ambientOcclusion'
@@ -43,6 +44,27 @@ describe('the occlusion pass', () => {
     // sensible value before there is a scene.
     expect(uniforms.tDepth.value).toBeNull()
     expect(uniforms.uInverseProjection.value).toBeNull()
+  })
+
+  it('reads depth from the composer buffer that owns the current frame', () => {
+    const camera = new PerspectiveCamera(60, 2, 0.1, 500)
+    camera.updateProjectionMatrix()
+    const first = new WebGLRenderTarget(800, 400)
+    const second = new WebGLRenderTarget(320, 200)
+    first.depthTexture = new DepthTexture(800, 400)
+    second.depthTexture = new DepthTexture(320, 200)
+
+    const firstFrame = occlusionFrame(camera, first)
+    const secondFrame = occlusionFrame(camera, second)
+
+    expect(firstFrame.depth).toBe(first.depthTexture)
+    expect(secondFrame.depth).toBe(second.depthTexture)
+    expect(secondFrame.depth).not.toBe(firstFrame.depth)
+    expect(firstFrame.texel).toEqual([1 / 800, 1 / 400])
+    expect(secondFrame.texel).toEqual([1 / 320, 1 / 200])
+
+    first.dispose()
+    second.dispose()
   })
 
   it('looks no further than the fog does', () => {

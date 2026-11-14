@@ -1,4 +1,13 @@
-import { createTourSimulation, type TourSimulationV1 } from './state'
+import {
+  createTourNenProfile,
+  createTourSimulation,
+  TOUR_NEN_PROFILE_VERSION,
+  type TourNenProfile,
+  type TourSimulationV1,
+  type TrainableNenCategory,
+} from './state'
+import type { NenCategory } from '@black-whale/domain'
+import { createTourNenEnvironment } from './nenEnvironment'
 
 export const TOUR_SIMULATION_KEY = 'black-whale:tour:simulation:v1'
 export const MAX_TOUR_SIMULATION_BYTES = 500_000
@@ -12,31 +21,114 @@ export function encodeTourSimulation(state: TourSimulationV1): string {
   return JSON.stringify(state)
 }
 
+type UnknownRecord = Record<string, unknown>
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === 'object' && value !== null
+}
+
+function hasSimulationIdentity(value: UnknownRecord): boolean {
+  const mode = value.mode
+  return (
+    value.version === 1 &&
+    typeof value.id === 'string' &&
+    (mode === 'FREE_LIFE' || mode === 'ALTERNATE_SIMULATION') &&
+    Number.isInteger(value.revision) &&
+    typeof value.clock === 'number'
+  )
+}
+
+function hasSimulationCollections(value: UnknownRecord): boolean {
+  return (
+    isRecord(value.actors) &&
+    isRecord(value.reputation) &&
+    Array.isArray(value.permissions) &&
+    Array.isArray(value.witnesses) &&
+    Array.isArray(value.incidents)
+  )
+}
+
+function hasSimulationWorld(value: UnknownRecord): boolean {
+  return isRecord(value.player) && isRecord(value.activities) && isRecord(value.shipSystems)
+}
+
+function isTourSimulation(value: unknown): value is TourSimulationV1 {
+  return (
+    isRecord(value) &&
+    hasSimulationIdentity(value) &&
+    hasSimulationCollections(value) &&
+    hasSimulationWorld(value)
+  )
+}
+
 export function decodeTourSimulation(serialized: string | null): TourSimulationV1 | null {
   if (!serialized || new TextEncoder().encode(serialized).length > MAX_TOUR_SIMULATION_BYTES)
     return null
   try {
-    const value = JSON.parse(serialized) as Partial<TourSimulationV1>
-    if (
-      value.version !== 1 ||
-      typeof value.id !== 'string' ||
-      (value.mode !== 'FREE_LIFE' && value.mode !== 'ALTERNATE_SIMULATION') ||
-      !Number.isInteger(value.revision) ||
-      typeof value.clock !== 'number' ||
-      !value.player ||
-      typeof value.actors !== 'object' ||
-      typeof value.reputation !== 'object' ||
-      !Array.isArray(value.permissions) ||
-      !Array.isArray(value.witnesses) ||
-      !Array.isArray(value.incidents)
-      || typeof value.activities !== 'object'
-      || typeof value.shipSystems !== 'object'
-    )
-      return null
-    return value as TourSimulationV1
+    const value: unknown = JSON.parse(serialized)
+    if (!isTourSimulation(value)) return null
+    const state = value
+    state.player.nenProfile = normaliseNenProfile(state.player.nenProfile)
+    state.nenEnvironment ??= createTourNenEnvironment()
+    state.nenEnvironment.targets ??= {}
+    state.nenEnvironment.traces ??= {}
+    state.witnessKnowledge ??= {}
+    return state
   } catch {
     return null
   }
+}
+
+const CATEGORIES: TrainableNenCategory[] = [
+  'enhancer',
+  'emitter',
+  'transmuter',
+  'conjurer',
+  'manipulator',
+  'specialist',
+]
+
+const AFFINITIES: NenCategory[] = [...CATEGORIES, 'unknown']
+
+const normaliseAffinity = (value: Partial<TourNenProfile> | undefined): NenCategory =>
+  AFFINITIES.includes(value?.naturalAffinity as NenCategory)
+    ? (value?.naturalAffinity as NenCategory)
+    : 'unknown'
+
+const masteryValue = (value: unknown) =>
+  typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0
+
+function normaliseMastery(value: Partial<TourNenProfile> | undefined) {
+  const mastery = createTourNenProfile().mastery
+  for (const category of CATEGORIES) mastery[category] = masteryValue(value?.mastery?.[category])
+  return mastery
+}
+
+const normaliseLearnedAbilities = (value: Partial<TourNenProfile> | undefined) =>
+  Array.isArray(value?.learnedAbilities)
+    ? [...new Set(value.learnedAbilities.filter((id): id is string => typeof id === 'string'))]
+    : []
+
+type MaintainedEffect = TourNenProfile['maintainedEffects'][number]
+
+const isMaintainedEffect = (
+  effect: Partial<MaintainedEffect> | undefined,
+): effect is MaintainedEffect =>
+  typeof effect?.abilityId === 'string' &&
+  typeof effect.targetId === 'string' &&
+  typeof effect.upkeep === 'number' &&
+  typeof effect.startedAt === 'number'
+
+const normaliseMaintainedEffects = (value: Partial<TourNenProfile> | undefined) =>
+  Array.isArray(value?.maintainedEffects) ? value.maintainedEffects.filter(isMaintainedEffect) : []
+
+function normaliseNenProfile(value: Partial<TourNenProfile> | undefined): TourNenProfile {
+  const profile = createTourNenProfile(normaliseAffinity(value))
+  profile.version = TOUR_NEN_PROFILE_VERSION
+  profile.mastery = normaliseMastery(value)
+  profile.learnedAbilities = normaliseLearnedAbilities(value)
+  profile.maintainedEffects = normaliseMaintainedEffects(value)
+  return profile
 }
 
 export function loadTourSimulation(storage: StorageLike): TourSimulationV1 | null {

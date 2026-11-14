@@ -6,7 +6,16 @@ describe('persistent Nen effects', () => {
     const state = initialCombatState({
       playerAt: [0, 0],
       opponentAt: [2, 0],
-      terrain: { id: 'room', footprint: [[-5, -5], [5, -5], [5, 5], [-5, 5]], walls: [] },
+      terrain: {
+        id: 'room',
+        footprint: [
+          [-5, -5],
+          [5, -5],
+          [5, 5],
+          [-5, 5],
+        ],
+        walls: [],
+      },
     })
     const next = combatReducer(state, {
       type: 'HATSU',
@@ -25,8 +34,24 @@ describe('persistent Nen effects', () => {
     const state = {
       ...initialCombatState(),
       nenEffects: [
-        { id: 'trap', kind: 'HIDDEN_TRAP' as const, owner: 'player' as const, target: 'opponent' as const, sourceHatsuId: 'silent-majority', remaining: 1, detail: null },
-        { id: 'capture', kind: 'CAPTURED_ABILITY' as const, owner: 'player' as const, target: 'opponent' as const, sourceHatsuId: 'steal-chain', remaining: null, detail: 'secret-window' },
+        {
+          id: 'trap',
+          kind: 'HIDDEN_TRAP' as const,
+          owner: 'player' as const,
+          target: 'opponent' as const,
+          sourceHatsuId: 'silent-majority',
+          remaining: 1,
+          detail: null,
+        },
+        {
+          id: 'capture',
+          kind: 'CAPTURED_ABILITY' as const,
+          owner: 'player' as const,
+          target: 'opponent' as const,
+          sourceHatsuId: 'steal-chain',
+          remaining: null,
+          detail: 'secret-window',
+        },
       ],
     }
     const next = combatReducer(state, { type: 'TICK', dt: 1.1 })

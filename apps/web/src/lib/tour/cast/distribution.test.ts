@@ -139,6 +139,19 @@ describe('the distribution', () => {
     expect(post!.inside).toBeUndefined()
   })
 
+  it('gives every guard posted at one door a distinct station', () => {
+    const posts = distribute(ship, [
+      member({ characterId: 'bladge', outsideDoorOf: 'tier-1-royal-residential-sector-room-1012' }),
+      member({ characterId: 'nagmum', outsideDoorOf: 'tier-1-royal-residential-sector-room-1012' }),
+    ])
+    expect(posts).toHaveLength(2)
+    expect(posts[0]!.spaceId).toBe('tier-1-royal-residential-approach-1012')
+    expect(posts[1]!.spaceId).toBe(posts[0]!.spaceId)
+    expect(
+      Math.hypot(posts[1]!.at[0] - posts[0]!.at[0], posts[1]!.at[1] - posts[0]!.at[1]),
+    ).toBeCloseTo(0.8)
+  })
+
   it('places Beyond’s attested watch on the corridor side of his cell door', () => {
     const location = 'tier-1-vvip-prison-beyond'
     const cell = 'tier-1-vvip-prison-beyond-cell'
@@ -220,7 +233,15 @@ describe('what the scene is handed', () => {
   /** §2.3: aura is a fact of the catalogue, never a fact of the post. */
   it('gives an aura to the declared user and none to the guard beside them', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
+      member({
+        characterId: 'kurapika',
+        role: 'Nen teacher/protector',
+        nen: {
+          techniques: [],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+        },
+      }),
       member({ characterId: 'sakata', nen: null }),
     ])
     const seen = castApparitions(ship, posts, auraReader())
@@ -232,7 +253,15 @@ describe('what the scene is handed', () => {
 
   it('raises the room to Ren when the visitor casts in it', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
+      member({
+        characterId: 'kurapika',
+        role: 'Nen teacher/protector',
+        nen: {
+          techniques: [],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+        },
+      }),
     ])
     const alarmed = auraReader({
       ...CALM,

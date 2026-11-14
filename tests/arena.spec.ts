@@ -54,14 +54,15 @@ test.describe('Arena playable journey', () => {
     await page.waitForTimeout(1_200)
     expect(await distanceOf(page)).toBeCloseTo(openingDistance, 1)
 
-    await activate(control(page, 'guard'), isMobile)
-    await expect.poll(() => distanceOf(page), { timeout: 15_000 }).toBeLessThan(openingDistance)
-    if (!isMobile) await page.keyboard.down('KeyW')
-    try {
-      await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(2.5)
-    } finally {
-      if (!isMobile) await page.keyboard.up('KeyW')
+    const guard = control(page, 'guard')
+    await expect(guard).toBeVisible()
+    for (let attempt = 0; attempt < 6 && (await distanceOf(page)) >= 2.5; attempt += 1) {
+      const beforeAdvance = await distanceOf(page)
+      if (isMobile) await activate(guard, true)
+      else await guard.dispatchEvent('click')
+      await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(beforeAdvance)
     }
+    await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(2.5)
 
     const strike = control(page, 'strike')
     const verdict = page.locator('.verdict')

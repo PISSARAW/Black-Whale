@@ -728,15 +728,15 @@ describe('the light baked into the deck', () => {
     expect(thin, `${thin.length} rooms have a floor the lamps never reach`).toEqual([])
   })
 
-  it('lights two rooms the plans drew alike alike', () => {
-    // The cineplex's eight screening rooms: 7 m by 20 m each, one category, one
-    // provenance, drawn from one panel. Under the ship's grid they were lit by
+  it('lights the screening rooms the plans drew alike alike', () => {
+    // The cineplex's eight screening rooms: 7 m by 20 m each, one category,
+    // one provenance, drawn from one panel. Under the ship's grid they were lit by
     // where they stood — screens 3 and 6 straddled no cell centre and took the
     // single fallback lamp while the other six took a grid — and a visitor
     // walking the row could see it with nothing about the ship explaining it.
     const floors = floorsOfShip()
     const row = [...floors.entries()].filter(([id]) => /^tier-3-cineplex-screen-\d+$/.test(id))
-    expect(row.length).toBeGreaterThan(6)
+    expect(row).toHaveLength(8)
 
     // Read as the shape of each floor's own distribution and not as its level:
     // a vertex colour is an albedo times a shade, and dividing the mean out is

@@ -10,6 +10,7 @@ process.env.BLACK_WHALE_E2E_RUN_ID = RUN_ID
 const PORT_OFFSET = Number(RUN_ID) % 1_000
 const WEB_PORT = 4_200 + PORT_OFFSET * 2
 const ADMIN_PORT = WEB_PORT + 1
+process.env.BLACK_WHALE_E2E_ADMIN_URL = `http://127.0.0.1:${ADMIN_PORT}`
 const WEB_OUTPUT = `build-e2e-${RUN_ID}`
 const SVELTE_OUTPUT = `.svelte-kit-e2e-${RUN_ID}`
 

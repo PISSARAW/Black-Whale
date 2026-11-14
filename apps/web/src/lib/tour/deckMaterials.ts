@@ -19,6 +19,7 @@ import { applySheen } from './sheen'
 import { applySkyPool } from './skyPool'
 import type { QualityProfile } from './quality'
 import { createLampAirMaterial } from './lampAir'
+import { applyFittingFlicker } from './fittingFlicker'
 
 /** Everything a deck is drawn with, and the pool's uniforms with them. */
 export interface DeckMaterials {
@@ -101,12 +102,14 @@ export function createDeckMaterials(THREE: typeof Three, quality: QualityProfile
   const skylit = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.FrontSide })
   dressSteel(skylit, quality)
   const pool = applySkyPool(skylit)
+  const trimmed = trim(THREE)
+  if (quality.fittingFlicker) applyFittingFlicker(trimmed.fitting)
 
   return {
     surface,
     skylit,
     pool,
-    ...trim(THREE),
+    ...trimmed,
     dust: createDust(THREE),
     lampAir: createLampAirMaterial(THREE, quality.lampAir),
   }

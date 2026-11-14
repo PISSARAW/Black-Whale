@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 440
+Fichiers : 487
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -77,6 +77,10 @@ Fichiers : 440
 
 - Arena progression > grades efficient wins above missed exchanges
 
+## `apps/web/src/lib/arena/pvp/protocol.test.ts`
+
+- Arena PvP public command protocol > accepts bounded combat commands
+
 ## `apps/web/src/lib/arena/pvp/serverMatch.test.ts`
 
 - authoritative Arena PvP match > accepts ordered commands only for the side owned by the sender
@@ -121,13 +125,14 @@ Fichiers : 440
 
 ## `apps/web/src/lib/assets/maps/sectionMap.test.ts`
 
+- overview interaction density > offers exactly five tier controls and no room controls or room labels
 - the longitudinal section > draws every room the walk holds on a deck, and no room it does not
 - the decks of the section > draws every deck the reconstruction walks, from the top down
 - the decks the reconstruction does not hold > bands the space between one deck and the next, and nothing else
 
 ## `apps/web/src/lib/audio/ambient/melodyConcert.test.ts`
 
-- the original concert flute > cancels its scheduler and pending notes without closing the shared audio context
+- the recorded Melody concert > streams through the shared graph and releases its media source when stopped
 
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
@@ -152,6 +157,10 @@ Fichiers : 440
 - where the ship puts its own two noises > holds the water over the visitor on Tier 5 and under them on Tier 1
 - turning the visitor > swings the engines across the head, because they are aft and not merely below
 - how much of each reaches a deck > is loudest in the machinery at the keel and loudest in the water at the waterline
+
+## `apps/web/src/lib/audio/steps/roomAmbience.test.ts`
+
+- persistent room ambience > settles nodes already built instead of replacing the graph
 
 ## `apps/web/src/lib/audio/veil.test.ts`
 
@@ -186,6 +195,10 @@ Fichiers : 440
 
 - fittedMapTransform > centres a small deck and fits its hull instead of its empty SVG margins
 
+## `apps/web/src/lib/components/map/markerGroups.test.ts`
+
+- map marker groups > uses safe, localized initials
+
 ## `apps/web/src/lib/components/map/projection/markers.test.ts`
 
 - projectPresenceMarker > places a presence on its tier with the owner it resolves
@@ -198,6 +211,10 @@ Fichiers : 440
 ## `apps/web/src/lib/hunt/arena.test.ts`
 
 - the arena > is the eight rooms of Tserriednich’s apartment
+
+## `apps/web/src/lib/hunt/arenaBridge.test.ts`
+
+- Hunt → Arena handoff > carries the live duel reservoirs and a safe return route
 
 ## `apps/web/src/lib/hunt/audio.test.ts`
 
@@ -459,6 +476,10 @@ Fichiers : 440
 
 - alert state machine > requires reports rather than an isolated percentage
 
+## `apps/web/src/lib/infiltration/arenaBridge.test.ts`
+
+- Infiltration → Arena handoff > opens only when an identified infiltrator has completed the operation
+
 ## `apps/web/src/lib/infiltration/balance.test.ts`
 
 - infiltration balance telemetry > distinguishes a ghost run from an exposed run
@@ -647,7 +668,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/nen/abilityComponents.test.ts`
 
-- the map from a componentKey to the thing that draws it > resolves every key it holds, and nothing it does not
+- the map from a componentKey to the thing that draws it > resolves all seventy declared composed views, and nothing else
 
 ## `apps/web/src/lib/nen/controls.test.ts`
 
@@ -773,10 +794,18 @@ Fichiers : 440
 - beyondLineageStatusFor > reports the catalogued status when the reader is past the reveal
 - hatsuNamesFor > collects every ability of one owner
 
+## `apps/web/src/lib/seo/schema.test.ts`
+
+- public discovery schemas > links pages to stable publisher and work authority nodes
+
 ## `apps/web/src/lib/server/ability-visibility.test.ts`
 
 - abilityFirstVisibleChapter > prefers the chapter the catalogue declares
 - loadAbilityVisibility > withholds nothing when the reader has no cap
+
+## `apps/web/src/lib/server/arenaPvp.test.ts`
+
+- Arena PvP transport registry > creates an invite, joins two authenticated seats and exposes one match
 
 ## `apps/web/src/lib/server/castQuestion.test.ts`
 
@@ -786,6 +815,7 @@ Fichiers : 440
 ## `apps/web/src/lib/server/character-profile.test.ts`
 
 - buildCharacterProfile > normalises every missing list to an empty array
+- maskUndatedCharacterProfile > keeps dated identity and appearances but removes unbounded narrative fields
 - buildRoleHistory > merges roles and official assignments
 - buildAffiliations > flattens a membership to the chapters it spans
 - readFirstAppearanceChapter > reads the number out of a chapter id
@@ -937,6 +967,11 @@ Fichiers : 440
 
 - TourAtmosphereView > starts on the reference hour the palette holds, and not on a copy of it
 
+## `apps/web/src/lib/tour/abilitySurface.test.ts`
+
+- the tour ability surface > routes all eight families to the existing ship and body reducers
+- complete body-family journeys > shows Needle People resistance and never executes through raised Ren
+
 ## `apps/web/src/lib/tour/ambientOcclusion.test.ts`
 
 - the occlusion pass > measures its disc in metres of ship, not in pixels
@@ -1049,6 +1084,10 @@ Fichiers : 440
 - parseTopic > keeps a topic out of the list
 - readTopic > accepts only a listed word
 
+## `apps/web/src/lib/tour/cast/auraSources.test.ts`
+
+- dated aura sources > keeps only active declared traces visible at the selected chapter
+
 ## `apps/web/src/lib/tour/cast/bodies.test.ts`
 
 - what the walk is holding on whom > lays a hold that already carries its own end
@@ -1098,6 +1137,7 @@ Fichiers : 440
 - who carries an aura > gives nothing at all to a body the catalogue does not call a user
 - the conduct at a post > holds Ten and nothing else where nothing has happened
 - the conduct when something happens > raises Ren, looks with Gyo and covers with Ryu when the visitor casts here
+- an ordinary body under aura pressure > braces without ever gaining an aura state
 
 ## `apps/web/src/lib/tour/cast/pace.test.ts`
 
@@ -1117,6 +1157,7 @@ Fichiers : 440
 - the refusals, which are canon conditions and not budgets > holds Kurapika to his vow: the Troupe, and nobody else
 - the three that ask rather than hold > reports a Zetsu that held under the shot, and an aura that did not
 - what a hold looks like > draws the thread, the order and the mark by what they do
+- the two newly reachable succession uses > lends Stand By Me to Benjamin’s allied soldier and nobody else
 - the flock, which carries rather than holds > puts what a bird carried into a Zodiac’s hand, and holds nobody
 - the blow that comes out of the deck, aimed at a person > takes a man off his feet through the bulkhead between you
 
@@ -1164,6 +1205,7 @@ Fichiers : 440
 
 - comfortDefaults > starts the walk wide and continuous by default
 - readComfort > falls back to the defaults with nothing stored
+- the live system preference > updates the store and reapplies the ceiling when matchMedia changes
 
 ## `apps/web/src/lib/tour/concertLandscape.test.ts`
 
@@ -1172,6 +1214,10 @@ Fichiers : 440
 ## `apps/web/src/lib/tour/contactShadow.test.ts`
 
 - contact shadow > multiplies the floor rather than painting over it
+
+## `apps/web/src/lib/tour/contagionSurface.test.ts`
+
+- the live Contagion surface > opens the encounter outside the table and asks the next live question at it
 
 ## `apps/web/src/lib/tour/corridorWallArchitecture.test.ts`
 
@@ -1287,7 +1333,7 @@ Fichiers : 440
 
 - where the light is taken to come from > anchors on the middle of the opening in plan
 - which decks have shafts at all > finds every opening the manga draws
-- how hard the shafts blow > is at full strength with the window dead ahead
+- how hard the shafts blow > keeps the actual window pane above the source threshold
 
 ## `apps/web/src/lib/tour/gum.test.ts`
 
@@ -1344,6 +1390,10 @@ Fichiers : 440
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
+## `apps/web/src/lib/tour/hatsuTechniqueGuide.test.ts`
+
+- the stable Hatsu guide > stays absent for a one-step technique
+
 ## `apps/web/src/lib/tour/heillyDisposalView.test.ts`
 
 - the chapter 394 Heil-Ly disposal room > uses the supplied panel composition instead of invented laundry machines
@@ -1374,7 +1424,7 @@ Fichiers : 440
 
 ## `apps/web/src/lib/tour/humanAuraLook.test.ts`
 
-- the aura as a skin on the body > wraps a body in Ten in a thin skin and no bubble
+- the aura as a skin on the body > keeps the body opaque underneath a transparent Zetsu trace
 - a visitor whose nodes are still shut > bends the air around a raised aura without drawing any of it
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
@@ -1404,6 +1454,10 @@ Fichiers : 440
 ## `apps/web/src/lib/tour/kachoView.test.ts`
 
 - Kacho’s apartment against the study, dining and kitchen panels > keeps a valid walked plan and distinguishes panel props from five reconstructed rooms
+
+## `apps/web/src/lib/tour/lampAir.test.ts`
+
+- air made visible around existing lamps > builds nothing for the low palier
 
 ## `apps/web/src/lib/tour/light.test.ts`
 
@@ -1495,6 +1549,14 @@ Fichiers : 440
 - playing by hand > spends the question the card in her fan is
 - the table, marked for a pair of hands > marks exactly the cards the rules say are moves
 
+## `apps/web/src/lib/tour/morenaHatsuAdapter.test.ts`
+
+- canonical Morena dock loadout > carries a compatible active Hatsu into the canonical deal
+
+## `apps/web/src/lib/tour/morenaPersistence.test.ts`
+
+- Morena save codec > round-trips a resumable deterministic hand
+
 ## `apps/web/src/lib/tour/morenaSession.test.ts`
 
 - Morena session > owns the menu, setup choice and live game
@@ -1515,6 +1577,10 @@ Fichiers : 440
 ## `apps/web/src/lib/tour/nenCreatureFigure.test.ts`
 
 - Nen creature figure > covers beasts used by the tour and Morena without styling props or people
+
+## `apps/web/src/lib/tour/nenFeedback.test.ts`
+
+- Nen cause log > keeps only the four latest typed causes
 
 ## `apps/web/src/lib/tour/nenPress.test.ts`
 
@@ -1617,6 +1683,22 @@ Fichiers : 440
 - the one figure ch. 92 gives > carries fifteen, which is what the blow that killed an ant was wound to
 - the calibration, which its own bearer calls the weak point > has nothing to let go of before the arm has turned
 
+## `apps/web/src/lib/tour/room3101View.test.ts`
+
+- Room 3101 manga fidelity > keeps panel furniture separate from inferred bathroom fixtures
+
+## `apps/web/src/lib/tour/roomAudioKey.test.ts`
+
+- room audio live-input key > is stable when the same active doors arrive in another order
+
+## `apps/web/src/lib/tour/roomCondition.test.ts`
+
+- room condition > answers every finish in the closed vocabulary
+
+## `apps/web/src/lib/tour/roomSound.test.ts`
+
+- room sound signatures > reads functions already named by the blueprint
+
 ## `apps/web/src/lib/tour/royalArmyConferenceView.test.ts`
 
 - Army Conference Floor corrected against chapter 380, pages 1–6 > satisfies the blueprint invariants and distinguishes the committee and audience groups
@@ -1658,6 +1740,46 @@ Fichiers : 440
 
 - applySheen > reads the eye and the normal the material already carries
 
+## `apps/web/src/lib/tour/simulation/dialogue.test.ts`
+
+- contextual NPC dialogue boundary > sends only the actor memory and current objective to the model
+
+## `apps/web/src/lib/tour/simulation/events.test.ts`
+
+- dynamic Tour events > lets an incident trigger an off-screen security response later
+
+## `apps/web/src/lib/tour/simulation/mode.test.ts`
+
+- Tour world modes > keeps the canonical reconstruction immutable
+
+## `apps/web/src/lib/tour/simulation/persistence.test.ts`
+
+- persistent Tour simulation > round-trips a versioned world with its consequences
+
+## `apps/web/src/lib/tour/simulation/routines.test.ts`
+
+- autonomous Tour NPC routines > finds and walks inter-room routes one step at a time
+
+## `apps/web/src/lib/tour/simulation/shipSystems.test.ts`
+
+- simulated Black Whale systems > turns a blackout and lockdown into visibility and access constraints
+
+## `apps/web/src/lib/tour/simulation/social.test.ts`
+
+- Tour social simulation > tracks faction-specific reputation and rival reactions
+
+## `apps/web/src/lib/tour/simulation/systemicNen.test.ts`
+
+- systemic Nen in Free Tour > lets Gyo reveal an In-hidden aura trace without revealing unrelated facts
+
+## `apps/web/src/lib/tour/simulation/tier5Loop.test.ts`
+
+- playable Tier 5 free-life loop > supports discovery, Nen investigation, a social choice and persistent return
+
+## `apps/web/src/lib/tour/simulation/worldJourney.test.ts`
+
+- complete Free Tour simulation journey > explores, reacts, changes activity and returns to an evolved persistent world
+
 ## `apps/web/src/lib/tour/sky.test.ts`
 
 - skyOf > is the drawn state, to the digit, at overcast noon
@@ -1684,6 +1806,10 @@ Fichiers : 440
 
 - the Supreme Court reconstructed from chapters 349, 371, 376 and 379 > satisfies the shared blueprint invariants for the supreme court
 
+## `apps/web/src/lib/tour/surfaceCondition.test.ts`
+
+- room condition on structural steel > keeps its three per-room controls outside the deck buffers
+
 ## `apps/web/src/lib/tour/surfaceFinish.test.ts`
 
 - surface finish by solid kind > keeps fabric and composite electronics matte
@@ -1704,6 +1830,18 @@ Fichiers : 440
 ## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
 
 - manga details outside the princely apartments > keeps Queen Unma’s crib, mobile and formal salon on Tier 1
+
+## `apps/web/src/lib/tour/tierSignature.test.ts`
+
+- the sensory signature of a deck > gets rougher, dirtier and more crowded towards the keel
+
+## `apps/web/src/lib/tour/tierTransition.test.ts`
+
+- the eye crossing a deck seam > flares while climbing into a brighter register and returns to neutral
+
+## `apps/web/src/lib/tour/tourSecrets.test.ts`
+
+- references veiled with In > validates every location, character and canon label in the authored registry
 
 ## `apps/web/src/lib/tour/tserriednichRoomView.test.ts`
 
@@ -1758,13 +1896,37 @@ Fichiers : 440
 
 - state dining room of Prince Zhang Lei reconstructed from chapter 365 > satisfies the shared blueprint invariants for Room 1003 state dining
 
+## `apps/web/src/routes/abilities/[slug]/page.server.test.ts`
+
+- ability detail publication boundary > serves a source-backed record with related entities
+
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
 - the abilities page and the reader who asked not to be spoiled > lists the whole catalogue when no cap is set
 
+## `apps/web/src/routes/characters/page.server.test.ts`
+
+- the character registry spoiler boundary > does not serialize characters introduced after the reader cap
+
 ## `apps/web/src/routes/investigation/[caseId]/page.server.test.ts`
 
 - investigation case spoiler boundary > opens a case when the reader reached its required chapter
+
+## `apps/web/src/routes/llms.txt/server.test.ts`
+
+- llms.txt > is a short, cached Markdown guide to the canonical indexes
+
+## `apps/web/src/routes/ship/shipDelta.test.ts`
+
+- adjacent ship event delta > reports movement, appearance, disappearance and death without stable rows
+
+## `apps/web/src/routes/ship/shipUrlState.test.ts`
+
+- ship URL state > reads valid spatial and filter state without accepting unknown values
+
+## `apps/web/src/routes/sitemap.xml/server.test.ts`
+
+- discovery documents > lists every localized ability and event with stable catalogue dates
 
 ## `apps/web/src/routes/spoiler-limit/spoiler-limit.test.ts`
 
@@ -1781,6 +1943,10 @@ Fichiers : 440
 ## `packages/ability-modules/test/canon-limits.spec.ts`
 
 - Bungee Gum, as the module enforces it > lets a detached filament hold at ten metres
+
+## `packages/ability-modules/test/contagion-progression.spec.ts`
+
+- Contagion progression after Morena’s table > requires the witnessed murder and creates the local member only once
 
 ## `packages/ability-modules/test/every-module.spec.ts`
 
@@ -1829,7 +1995,7 @@ Fichiers : 440
 
 ## `packages/ability-sdk/test/uses.spec.ts`
 
-- grammaire d’emploi > shows the source of a use the manga draws
+- grammaire d’emploi > preserves structured canon sources without parsing free text
 
 ## `packages/canon-compiler/test/arena-contracts.spec.ts`
 
@@ -2026,4 +2192,8 @@ Fichiers : 440
 ## `scripts/silhouettes.test.ts`
 
 - the Nen creature silhouettes > are the same shapes in the contracts and in the walk
+
+## `scripts/tour-lazy-boundary.test.ts`
+
+- the tour loading boundary > keeps the blueprint-bearing experience out of the route entry
 

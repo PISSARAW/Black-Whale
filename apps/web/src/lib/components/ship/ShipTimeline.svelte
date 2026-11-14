@@ -58,7 +58,8 @@
   })
 </script>
 
-<svelte:window onkeydown={handleKeydown} onvisibilitychange={visibilityChanged} />
+<svelte:window onkeydown={handleKeydown} />
+<svelte:document onvisibilitychange={visibilityChanged} />
 
 <footer class="timeline">
   <div class="timeline-bar">

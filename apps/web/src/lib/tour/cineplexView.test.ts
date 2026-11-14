@@ -133,26 +133,34 @@ describe('the Tier 3 Cineplex concourse reconstructed from chapter 393', () => {
     expect(triangles(auditoriumGroup)).toBeGreaterThan(200)
   })
 
-  it('gives all eight auditoriums a distinct premium programme and physical treatment', () => {
+  it('does not assign unsourced premium technologies to the eight auditoriums', () => {
     expect(CINEPLEX_FORMATS).toHaveLength(8)
-    expect(new Set(CINEPLEX_FORMATS.map(({ label }) => label)).size).toBe(8)
+    expect(new Set(CINEPLEX_FORMATS.map(({ seatKind }) => seatKind))).toEqual(new Set(['standard']))
+    expect(new Set(CINEPLEX_FORMATS.map(({ screenKind }) => screenKind))).toEqual(
+      new Set(['projection']),
+    )
+    expect(CINEPLEX_FORMATS.some(({ sideProjection }) => sideProjection)).toBe(false)
+    expect(CINEPLEX_FORMATS.some(({ environmentalEffects }) => environmentalEffects)).toBe(false)
+    expect(CINEPLEX_FORMATS.some(({ lightVibes }) => lightVibes)).toBe(false)
     const triangleCounts = CINEPLEX_FORMATS.map(({ screenId }) =>
       triangles(buildCineplexDetails({ THREE, plan, spaceId: screenId, reveal: false })!),
     )
-    expect(new Set(triangleCounts).size).toBeGreaterThanOrEqual(6)
+    expect(new Set(triangleCounts).size).toBe(1)
   })
 
-  it('floods the public hall with fittings while keeping projection rooms controlled', () => {
+  it('floods the public hall with fittings while keeping every auditorium equally controlled', () => {
     const entrance = plan.spaces.find(({ id }) => id === CINEPLEX_ENTRANCE)!
-    const projector = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[0])!
-    const onyx = plan.spaces.find(({ id }) => id === CINEPLEX_SCREENS[7])!
     const hallLight = lamplightOf(entrance, plan.tier)
-    const projectorLight = lamplightOf(projector, plan.tier)
-    const onyxLight = lamplightOf(onyx, plan.tier)
+    const auditoriumLights = CINEPLEX_SCREENS.map((screenId) =>
+      lamplightOf(
+        plan.spaces.find(({ id }) => id === screenId)!,
+        plan.tier,
+      ),
+    )
 
     expect(lampsOf(entrance.footprint, hallLight).length).toBeGreaterThan(10)
-    expect(hallLight.power).toBeGreaterThan(onyxLight.power)
-    expect(onyxLight.power).toBeGreaterThan(projectorLight.power)
+    expect(hallLight.power).toBeGreaterThan(auditoriumLights[0].power)
+    expect(new Set(auditoriumLights.map(({ power }) => power))).toEqual(new Set([0.82]))
   })
 
   it('arrives beside the rear aisle facing the screen instead of inside a chair row', () => {

@@ -82,7 +82,9 @@ test.describe('Morena in simulation branches', () => {
 
     const panel = page.getByTestId('morena-branch-panel')
     await expect(panel).toBeVisible()
-    await activate(panel.getByRole('button', { name: 'Open the 22-member network' }), isMobile)
+    const openNetwork = panel.getByRole('button', { name: 'Open the 22-member network' })
+    await expect(openNetwork).toBeEnabled()
+    await openNetwork.click({ force: isMobile })
     await expect(panel).toContainText('Network · 0 / 22')
 
     let eligible = false

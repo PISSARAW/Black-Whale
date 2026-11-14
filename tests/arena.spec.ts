@@ -8,19 +8,13 @@ const distanceOf = async (page: Page) => {
   return Number(text.match(/[\d.]+/)?.[0] ?? Number.NaN)
 }
 
-const control = (page: Page, mobile: boolean, action: 'guard' | 'strike'): Locator => {
-  if (mobile) {
-    const position = action === 'strike' ? 1 : 2
-    return page.locator(`.touch-combat button:nth-child(${position})`)
-  }
-  const position = action === 'strike' ? 1 : 3
-  return page.locator(`.ryu-card .actions button:nth-child(${position})`)
-}
+const control = (page: Page, action: 'guard' | 'strike'): Locator =>
+  page.locator(`[data-arena-action="${action}"]`)
 
 const activate = async (button: Locator, mobile: boolean, timeout = 10_000) => {
   await expect(button).toBeVisible()
-  if (mobile) await button.tap({ timeout })
-  else await button.click({ timeout })
+  if (mobile) await button.tap({ timeout, noWaitAfter: true })
+  else await button.click({ timeout, noWaitAfter: true })
 }
 
 test.describe('Arena playable journey', () => {
@@ -40,11 +34,27 @@ test.describe('Arena playable journey', () => {
     else await enter.click()
 
     await expect(page.locator('canvas')).toBeVisible({ timeout: 30_000 })
+    await expect(page.locator('.arena-action-dock')).toBeVisible()
+    await expect(page.locator('.arena-map-panel')).toHaveCount(0)
+    await expect(page.locator('.ryu-card')).toHaveCount(0)
+    for (const button of await page.locator('.arena-action-dock button:visible').all()) {
+      const box = await button.boundingBox()
+      expect(box?.height ?? 0).toBeGreaterThanOrEqual(44)
+      expect(box?.width ?? 0).toBeGreaterThanOrEqual(44)
+    }
+
+    const ryu = page.locator('.arena-action-dock button[aria-expanded]')
+    await activate(ryu, isMobile)
+    await expect(page.locator('.ryu-card')).toBeVisible()
+    await expect(page.locator('.arena-map-panel')).toHaveCount(0)
+    await activate(ryu, isMobile)
+    await expect(page.locator('.ryu-card')).toHaveCount(0)
+
     const openingDistance = await distanceOf(page)
     await page.waitForTimeout(1_200)
     expect(await distanceOf(page)).toBeCloseTo(openingDistance, 1)
 
-    const guard = control(page, isMobile, 'guard')
+    const guard = control(page, 'guard')
     await expect(guard).toBeVisible()
     for (let attempt = 0; attempt < 6 && (await distanceOf(page)) >= 2.5; attempt += 1) {
       const beforeAdvance = await distanceOf(page)
@@ -54,7 +64,7 @@ test.describe('Arena playable journey', () => {
     }
     await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(2.5)
 
-    const strike = control(page, isMobile, 'strike')
+    const strike = control(page, 'strike')
     const verdict = page.locator('.verdict')
     for (let attempt = 0; attempt < 24 && !(await verdict.isVisible()); attempt += 1) {
       try {
@@ -80,6 +90,12 @@ test.describe('Arena playable journey', () => {
     await page.goto('/arena?opponent=custom&doctrine=binder&difficulty=master')
     await page.getByRole('button', { name: 'Enter the arena' }).click()
     await expect(page.locator('.opponent-card strong')).toHaveText("L'Entraveuse")
+
+    await activate(page.getByRole('button', { name: 'Map' }), false)
+    await expect(page.locator('.arena-map-panel')).toBeVisible()
+    await activate(page.locator('.arena-action-dock button[aria-expanded]'), false)
+    await expect(page.locator('.arena-map-panel')).toHaveCount(0)
+    await expect(page.locator('.ryu-card')).toBeVisible()
 
     const firstMission = page.locator('.campaign-picker a').first()
     await expect(firstMission).toHaveAttribute('data-sveltekit-reload', '')

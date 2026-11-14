@@ -22,6 +22,8 @@
     progress: ChallengeResult | null
     objectiveLabel: (objective: ChallengeObjective) => string
     onChange: () => void
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
   }
 
   let {
@@ -35,6 +37,8 @@
     progress,
     objectiveLabel,
     onChange,
+    open = false,
+    onOpenChange,
   }: Props = $props()
 
   const selected = $derived(
@@ -47,7 +51,7 @@
   })
 </script>
 
-<details class="arena-setup">
+<details class="arena-setup" {open} ontoggle={(event) => onOpenChange?.(event.currentTarget.open)}>
   <summary aria-label={$locale === 'fr' ? 'Paramètres du duel' : 'Match setup'}>
     <span class="setup-mark" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="setup-title">
@@ -203,7 +207,7 @@
     position: absolute;
     z-index: 30;
     top: 1rem;
-    right: 1rem;
+    right: 7.5rem;
     width: min(21rem, calc(100vw - 2rem));
     color: #fffff0;
     font-family: var(--font-body, sans-serif);
@@ -224,6 +228,23 @@
     backdrop-filter: blur(14px);
     list-style: none;
     cursor: pointer;
+  }
+
+  details:not([open]) summary {
+    width: 3.1rem;
+    margin-left: auto;
+    grid-template-columns: 1fr;
+    padding: 0.45rem;
+    border-right-width: 1px;
+  }
+
+  details:not([open]) .setup-title,
+  details:not([open]) .setup-chevron {
+    display: none;
+  }
+
+  details[open] summary {
+    width: 100%;
   }
 
   summary::-webkit-details-marker {
@@ -438,31 +459,21 @@
   @media (max-width: 800px) {
     .arena-setup {
       top: 0.55rem;
-      right: 6.15rem;
-      width: min(19rem, calc(100vw - 1.1rem));
+      right: 0.55rem;
+      width: calc(100vw - 1.1rem);
     }
 
     .arena-setup[open] {
-      right: 5rem;
+      right: 0.55rem;
     }
 
     summary {
-      width: 3.1rem;
       min-height: 2.75rem;
-      margin-left: auto;
-      grid-template-columns: 1fr;
-      padding: 0.45rem;
-      border-right-width: 1px;
     }
 
     details[open] summary {
       width: 100%;
       grid-template-columns: 2rem minmax(0, 1fr) 1rem;
-    }
-
-    details:not([open]) .setup-title,
-    details:not([open]) .setup-chevron {
-      display: none;
     }
 
     .setup-drawer {

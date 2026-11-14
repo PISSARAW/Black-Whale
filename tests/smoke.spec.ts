@@ -29,6 +29,27 @@ test.describe('smoke — public archive', () => {
     await expect(page.locator('[data-hatsu-id]').first()).toBeVisible()
   })
 
+  test('source-backed entity pages and discovery files are server rendered', async ({
+    page,
+    request,
+  }) => {
+    for (const path of ['/abilities/bungee-gum', '/fr/abilities/bungee-gum']) {
+      const response = await page.goto(path)
+      expect(response?.status()).toBe(200)
+      await expect(page.locator('[data-ability-detail="bungee-gum"] h1')).toBeVisible()
+      await expect(page.getByRole('heading', { name: /Sources/i })).toBeVisible()
+    }
+
+    const llms = await request.get('/llms.txt')
+    expect(llms.status()).toBe(200)
+    expect(await llms.text()).toContain('# Black Whale')
+
+    const sitemap = await request.get('/sitemap.xml')
+    expect(await sitemap.text()).toContain(
+      '/events/ch-345-tserriednich-is-revealed-as-a-serial-killer',
+    )
+  })
+
   test('the tour boots its 3D bundle', async ({ page }) => {
     const response = await page.goto('/tour')
     expect(response?.status()).toBeLessThan(400)

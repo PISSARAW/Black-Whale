@@ -80,16 +80,28 @@ export function poseHuman(rig: PosedHuman): void {
     arms[1].rotation.z = -0.9
     elbows[0].rotation.x = -0.55
     knees[1].rotation.x = 0.65
-  } else if (pose === 'walk') {
+  } else {
+    poseTravel(rig)
+  }
+}
+
+function poseTravel({ pose, figure, head, arms, legs }: PosedHuman): void {
+  if (pose === 'walk') {
     arms[0].rotation.x = -0.32
     arms[1].rotation.x = 0.32
     legs[0].rotation.x = 0.2
     legs[1].rotation.x = -0.2
+  } else if (pose === 'bow') {
+    figure.rotation.x = 0.28
+    head.rotation.x = -0.16
   }
 }
 
 export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
+  const flute = rig.figure.getObjectByName('signature-flute')
+  const fluteBasePosition = flute?.position.clone()
+  const fluteBaseRotation = flute?.rotation.clone()
   const figureBasePosition = rig.figure.position.clone()
   const figureBaseRotation = rig.figure.rotation.clone()
   const shoulderBasePosition = rig.arms.map((arm) => arm.position.clone())
@@ -101,6 +113,93 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
   const headBase = rig.head.rotation.clone()
   const torsoBaseY = rig.torso.position.y
   const pelvisBaseX = rig.pelvis.position.x
+
+  const motions: Partial<Record<HumanPose, (seconds: number) => void>> = {
+    flute: (seconds) => {
+      const phrase = Math.sin(seconds * 1.15)
+      const breath = Math.sin(seconds * 3.7)
+      rig.figure.rotation.z = figureBaseRotation.z + phrase * 0.022
+      rig.figure.rotation.x = figureBaseRotation.x + Math.sin(seconds * 0.58) * 0.009
+      rig.head.rotation.set(
+        headBase.x + 0.04 + breath * 0.006,
+        headBase.y,
+        headBase.z - phrase * 0.018,
+      )
+      rig.arms.forEach((arm, index) => {
+        const side = index === 0 ? -1 : 1
+        arm.rotation.x = shoulderBase[index].x + breath * 0.014
+        arm.rotation.z = shoulderBase[index].z + side * phrase * 0.018
+        arm.children[1].rotation.x = elbowBase[index].x + side * Math.sin(seconds * 2.1) * 0.012
+      })
+      if (flute && fluteBasePosition && fluteBaseRotation) {
+        flute.position.copy(fluteBasePosition)
+        flute.position.y += breath * 0.004
+        flute.rotation.copy(fluteBaseRotation)
+        flute.rotation.x += breath * 0.008
+        for (let index = 0; index < 6; index++) {
+          const key = flute.getObjectByName(`signature-flute-key-${index}`)
+          if (key)
+            key.position.z =
+              0.017 - Math.max(0, Math.sin(seconds * (4.2 + index * 0.31) + index)) * 0.004
+        }
+      }
+    },
+    bow: (seconds) => {
+      const settle = Math.sin(seconds * 2.2) * 0.012
+      rig.figure.rotation.x = figureBaseRotation.x + settle
+      rig.head.rotation.x = headBase.x - settle * 0.5
+    },
+    walk: (seconds) => {
+      stride(rig, { seconds, hips: hipBase.map((hip) => hip.x) })
+    },
+    guard: (seconds) => {
+      const rise = Math.sin(seconds * 2.4) * 0.035
+      rig.arms.forEach((arm, index) => {
+        const side = index === 0 ? -1 : 1
+        arm.position.set(side * 0.22, 1.31, 0.08)
+        arm.rotation.set(-0.78 + side * rise, 0, side * -0.64)
+        arm.children[1].rotation.x = -1.05
+      })
+      rig.legs[0].rotation.z = -0.08
+      rig.legs[1].rotation.z = 0.08
+    },
+    brace: (seconds) => {
+      rig.figure.rotation.x = -0.08 + Math.sin(seconds * 7) * 0.008
+      rig.arms.forEach((arm, index) => {
+        const side = index === 0 ? -1 : 1
+        arm.position.set(side * 0.2, 1.28, 0.12)
+        arm.rotation.set(-1.05, 0, side * -0.42)
+        arm.children[1].rotation.x = -0.85
+      })
+      rig.knees.forEach((knee) => (knee.rotation.x = 0.22))
+    },
+    listen: (seconds) => {
+      rig.arms[1].rotation.set(0, 0, -2.15)
+      rig.head.rotation.y = headBase.y + Math.sin(seconds * 0.65) * 0.28
+    },
+    search: () => {
+      rig.figure.rotation.x = -0.12
+      rig.head.rotation.x = 0.22
+      rig.knees.forEach((knee) => (knee.rotation.x = 0.18))
+    },
+    attack: (seconds) => {
+      rig.arms[1].position.set(0.18, 1.3, 0.15)
+      rig.arms[1].rotation.set(-1.35 + Math.sin(seconds * 3.4) * 0.08, 0, -0.08)
+      rig.arms[1].children[1].rotation.x = -0.35
+    },
+    held: (seconds) => {
+      rig.figure.rotation.z = -0.24
+      rig.figure.position.x = 0.12 + Math.sin(seconds * 8) * 0.008
+    },
+    fallen: () => {
+      rig.figure.rotation.z = 1.3
+      rig.figure.position.y = 0.25
+      rig.arms[0].rotation.z = 0.7
+      rig.arms[1].rotation.z = -0.9
+      rig.arms[0].children[1].rotation.x = -0.55
+      rig.knees[1].rotation.x = 0.65
+    },
+  }
 
   return (seconds: number, pose = rig.pose) => {
     rig.figure.position.copy(figureBasePosition)
@@ -121,48 +220,6 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
     rig.head.rotation.set(headBase.x, headBase.y + Math.sin(seconds * 0.37) * 0.08, headBase.z)
     rig.pelvis.position.x = pelvisBaseX + Math.sin(seconds * 0.8) * 0.012
 
-    if (pose === 'walk') {
-      stride(rig, { seconds, hips: hipBase.map((hip) => hip.x) })
-    } else if (pose === 'guard') {
-      const rise = Math.sin(seconds * 2.4) * 0.035
-      rig.arms.forEach((arm, index) => {
-        const side = index === 0 ? -1 : 1
-        arm.position.set(side * 0.22, 1.31, 0.08)
-        arm.rotation.set(-0.78 + side * rise, 0, side * -0.64)
-        arm.children[1].rotation.x = -1.05
-      })
-      rig.legs[0].rotation.z = -0.08
-      rig.legs[1].rotation.z = 0.08
-    } else if (pose === 'brace') {
-      rig.figure.rotation.x = -0.08 + Math.sin(seconds * 7) * 0.008
-      rig.arms.forEach((arm, index) => {
-        const side = index === 0 ? -1 : 1
-        arm.position.set(side * 0.2, 1.28, 0.12)
-        arm.rotation.set(-1.05, 0, side * -0.42)
-        arm.children[1].rotation.x = -0.85
-      })
-      rig.knees.forEach((knee) => (knee.rotation.x = 0.22))
-    } else if (pose === 'listen') {
-      rig.arms[1].rotation.set(0, 0, -2.15)
-      rig.head.rotation.y = headBase.y + Math.sin(seconds * 0.65) * 0.28
-    } else if (pose === 'search') {
-      rig.figure.rotation.x = -0.12
-      rig.head.rotation.x = 0.22
-      rig.knees.forEach((knee) => (knee.rotation.x = 0.18))
-    } else if (pose === 'attack') {
-      rig.arms[1].position.set(0.18, 1.3, 0.15)
-      rig.arms[1].rotation.set(-1.35 + Math.sin(seconds * 3.4) * 0.08, 0, -0.08)
-      rig.arms[1].children[1].rotation.x = -0.35
-    } else if (pose === 'held') {
-      rig.figure.rotation.z = -0.24
-      rig.figure.position.x = 0.12 + Math.sin(seconds * 8) * 0.008
-    } else if (pose === 'fallen') {
-      rig.figure.rotation.z = 1.3
-      rig.figure.position.y = 0.25
-      rig.arms[0].rotation.z = 0.7
-      rig.arms[1].rotation.z = -0.9
-      rig.arms[0].children[1].rotation.x = -0.55
-      rig.knees[1].rotation.x = 0.65
-    }
+    motions[pose]?.(seconds)
   }
 }

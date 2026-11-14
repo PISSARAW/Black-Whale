@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TourConcertAudience from './TourConcertAudience.svelte'
   import { onDestroy, onMount, tick, untrack } from 'svelte'
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
@@ -43,6 +44,8 @@
   let timer: ReturnType<typeof setInterval> | null = null
   let silence: (() => void) | null = null
   let restore: PlayerConcertRestore | null = null
+  let playRequest = 0
+  let transition: ReturnType<typeof setTimeout> | null = null
   const french = $derived($locale === 'fr')
   const inHall = $derived(CONCERT_ROOMS.some((id) => id === navigation.currentSpace?.id))
   const stage = $derived(ship.structures.find(({ id }) => id === 'tier-1-banquet-hall-stage')!)
@@ -56,11 +59,18 @@
     performance.mode === 'self' &&
       (!onStage || !allowed || $activeHatsu?.kind !== 'melody' || world.body.playing !== 'bloom'),
   )
+  const transitioning = $derived(performance.phase === 'bow' || performance.phase === 'release')
+  const reactionStrip = $derived(
+    performance.presentation === 'manga' && performance.playing && remaining > 176,
+  )
   const clock = $derived(`${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`)
 
   function stop(clearMode = false): void {
+    playRequest += 1
     if (timer) clearInterval(timer)
     timer = null
+    if (transition) clearTimeout(transition)
+    transition = null
     silence?.()
     silence = null
     if (restore) world = endPlayerConcert(world, restore)
@@ -68,26 +78,58 @@
     performance = { mode: clearMode ? null : performance.mode, playing: false }
   }
 
-  function play(mode: 'melody' | 'self'): void {
+  function play(mode: 'melody' | 'self', presentation: 'free' | 'manga' = 'free'): void {
     if (mode === 'self' && (!onStage || !allowed || $activeHatsu?.kind !== 'melody')) return
     stop()
+    const request = playRequest
     message = ''
     if (mode === 'self') {
       const started = beginPlayerConcert(world, ship)
       restore = started.restore
       world = started.world
     }
-    performance = { mode, playing: true }
+    performance = { mode, playing: false, phase: 'bow', presentation }
     remaining = MELODY_CONCERT.durationSeconds
-    silence = startMelodyConcert()
-    const startedAt = Date.now()
-    timer = setInterval(() => {
-      remaining = Math.max(
-        0,
-        MELODY_CONCERT.durationSeconds - Math.floor((Date.now() - startedAt) / 1000),
-      )
-      if (remaining === 0) stop()
-    }, 250)
+    message = french ? 'Melody salue le roi…' : 'Melody bows to the King…'
+    transition = setTimeout(() => {
+      if (request !== playRequest) return
+      transition = null
+      message = french ? 'Préparation du concert…' : 'Preparing the concert…'
+      silence = startMelodyConcert({
+        onStarted: () => {
+          if (request !== playRequest) return
+          performance = { mode, playing: true, phase: 'playing', presentation }
+          message = ''
+          const startedAt = Date.now()
+          timer = setInterval(() => {
+            remaining = Math.max(
+              0,
+              MELODY_CONCERT.durationSeconds - Math.floor((Date.now() - startedAt) / 1000),
+            )
+            if (remaining === 0 && timer) {
+              clearInterval(timer)
+              timer = null
+            }
+          }, 250)
+        },
+        onEnded: () => {
+          if (request !== playRequest) return
+          if (timer) clearInterval(timer)
+          timer = null
+          performance = { mode, playing: false, phase: 'release', presentation }
+          message = french ? 'Melody abaisse sa flûte.' : 'Melody lowers her flute.'
+          transition = setTimeout(() => {
+            transition = null
+            if (request === playRequest) stop()
+          }, 650)
+        },
+        onError: () => {
+          if (request !== playRequest) return
+          stop()
+          message = french ? 'La lecture audio a échoué.' : 'Audio playback failed.'
+        },
+      })
+    }, 700)
   }
 
   function playFree(): void {
@@ -126,7 +168,7 @@
     // Claim it before the scene records held movement keys.
     event.preventDefault()
     event.stopImmediatePropagation()
-    if (performance.playing) stop()
+    if (performance.playing || transitioning) stop()
     else playFree()
   }
 
@@ -141,7 +183,7 @@
       await goto(url, { noScroll: true, keepFocus: true })
       applyMangaView(navigation, mangaViewById('banquet-melody-concert')!)
       await tick()
-      play('melody')
+      play('melody', 'manga')
     } catch {
       message = french ? 'Impossible de préparer le concert.' : 'Could not prepare the concert.'
     }
@@ -180,6 +222,9 @@
 </script>
 
 {#if inHall}
+  {#if reactionStrip}
+    <TourConcertAudience {french} />
+  {/if}
   <details class="concert" data-hatsu-pass open>
     <summary>{french ? 'Concert de Melody' : 'Melody’s concert'} <span>ch. 383</span></summary>
     <div class="concert-body">
@@ -205,6 +250,11 @@
         </p>
         <button type="button" class="stop" onclick={() => stop()} aria-keyshortcuts="J"
           >{french ? 'Arrêter le concert' : 'Stop the concert'} <kbd>J</kbd></button
+        >
+      {:else if transitioning}
+        <p role="status">{message}</p>
+        <button type="button" class="stop" onclick={() => stop()} aria-keyshortcuts="J"
+          >{french ? 'Annuler' : 'Cancel'} <kbd>J</kbd></button
         >
       {:else}
         <p>
@@ -245,7 +295,7 @@
               : 'Chapter 383 is beyond your reading limit.'}
           </p>{/if}
       {/if}
-      {#if message}<p role="status">{message}</p>{/if}
+      {#if message && !transitioning}<p role="status">{message}</p>{/if}
     </div>
   </details>
 {/if}

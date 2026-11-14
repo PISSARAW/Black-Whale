@@ -1,6 +1,7 @@
 import type { BufferGeometry, Group, Material, Object3D } from 'three'
 import type { Attire, Signature } from './humanProfiles'
 import { buildKakinCrown, buildKakinRobe } from './humanKakinRoyal'
+import { buildFluteSignature } from './humanFluteSignature'
 
 type Three = typeof import('three')
 type Geometry = (THREE: Three, key: string, make: () => BufferGeometry) => BufferGeometry
@@ -34,7 +35,7 @@ export interface HumanSignatureBuild {
 }
 
 /** A piece placed on one of the three mounts, in that mount's own space. */
-interface Placed {
+export interface Placed {
   key: string
   make: () => BufferGeometry
   material: Material
@@ -44,12 +45,12 @@ interface Placed {
   name?: string
 }
 
-interface Hang {
+export interface Hang {
   THREE: Three
-  head: (shape: Placed) => void
-  body: (shape: Placed) => void
+  head: (shape: Placed) => Object3D
+  body: (shape: Placed) => Object3D
   arms: (shape: Placed) => void
-  hand: (shape: Placed) => void
+  hand: (shape: Placed) => Object3D
   paint: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
 }
 
@@ -279,16 +280,7 @@ const PIECES: Record<Signature, Piece> = {
     })
   },
 
-  flute: ({ THREE, body, paint }) => {
-    body({
-      key: 'sig:flute',
-      make: () => new THREE.CylinderGeometry(0.014, 0.014, 0.3, 6),
-      material: paint.dark,
-      at: [0.19, 0.84, 0.1],
-      turn: [0, 0, 1.35],
-      name: 'signature-flute',
-    })
-  },
+  flute: buildFluteSignature,
 
   /** Rings down the limbs and the trunk: the whole of what Bonolenov shows. */
   'bandages-full': ({ THREE, body, paint }) => {
@@ -443,6 +435,7 @@ export function addHumanSignatures({
       // would be the walk asserting a technique nobody used.
       if (name?.startsWith('signature-chain')) mesh.visible = false
       target.add(mesh)
+      return mesh
     }
 
   const hang: Hang = {

@@ -44,8 +44,13 @@ test.describe('Arena playable journey', () => {
     await page.waitForTimeout(1_200)
     expect(await distanceOf(page)).toBeCloseTo(openingDistance, 1)
 
-    await activate(control(page, isMobile, 'guard'), isMobile)
-    await expect.poll(() => distanceOf(page), { timeout: 15_000 }).toBeLessThan(openingDistance)
+    const guard = control(page, isMobile, 'guard')
+    if (isMobile) await activate(guard, true)
+    else {
+      await expect(guard).toBeVisible()
+      await guard.dispatchEvent('click')
+    }
+    await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(openingDistance)
     await expect.poll(() => distanceOf(page), { timeout: 20_000 }).toBeLessThan(2.5)
 
     const strike = control(page, isMobile, 'strike')

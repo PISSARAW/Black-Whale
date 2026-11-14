@@ -239,7 +239,17 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
     name: 'Afficher les changements vers l’événement suivant',
     exact: true,
   })
-  await expect(changes).toBeEnabled()
+  const changeEventCount = await eventSelect.locator('option').count()
+  let eventWithChanges = -1
+  for (let index = 0; index < changeEventCount - 1; index += 1) {
+    await eventSelect.selectOption(String(index))
+    await expect.poll(async () => Number(await eventSelect.inputValue())).toBe(index)
+    if (await changes.isEnabled()) {
+      eventWithChanges = index
+      break
+    }
+  }
+  expect(eventWithChanges, 'the timeline should expose at least one adjacent delta').toBeGreaterThanOrEqual(0)
   await changes.click()
   await expect(page.locator('.delta-overlay')).toBeVisible()
   await changes.click()

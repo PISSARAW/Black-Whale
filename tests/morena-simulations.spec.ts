@@ -71,9 +71,14 @@ test.describe('Morena in simulation branches', () => {
     expect(branchId).toBeTruthy()
     const rejected = await page.request.post('/simulations?/morena', {
       form: { branchId: branchId!, command: 'witness-murder', actorId: 'hisoka' },
-      headers: { origin: new URL(page.url()).origin },
+      headers: {
+        origin: new URL(page.url()).origin,
+        accept: 'application/json',
+        'x-sveltekit-action': 'true',
+      },
     })
-    expect(rejected.status()).toBe(400)
+    expect(rejected.status()).toBe(200)
+    await expect(rejected.json()).resolves.toMatchObject({ type: 'failure', status: 400 })
 
     const panel = page.getByTestId('morena-branch-panel')
     await expect(panel).toBeVisible()

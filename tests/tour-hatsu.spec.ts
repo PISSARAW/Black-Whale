@@ -27,11 +27,11 @@ async function openNenPanel(page: Page) {
 }
 
 test.describe('tour Hatsu deep links', () => {
-  test('opens every body family on its first representable use', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'The same responsive wheel is exercised once; Morena covers touch actions.')
-    test.slow()
+  for (const [abilityId, actionId] of BODY_FAMILIES) {
+    test(`opens ${abilityId} on its first representable use`, async ({ page, isMobile }) => {
+      test.skip(isMobile, 'The same responsive wheel is exercised once; Morena covers touch actions.')
+      test.slow()
 
-    for (const [abilityId, actionId] of BODY_FAMILIES) {
       const response = await page.goto(`/tour?hatsu=${abilityId}`)
       expect(response?.status(), abilityId).toBeLessThan(400)
 
@@ -46,6 +46,6 @@ test.describe('tour Hatsu deep links', () => {
       // A use the medium cannot execute remains in the canonical wheel instead
       // of disappearing from the visit.
       await expect(wheel.locator('button[aria-disabled="true"]').first()).toBeVisible()
-    }
-  })
+    })
+  }
 })

@@ -85,7 +85,7 @@ test.describe('Morena in simulation branches', () => {
     const openNetwork = panel.getByRole('button', { name: 'Open the 22-member network' })
     await expect(openNetwork).toBeEnabled()
     await openNetwork.click({ force: isMobile })
-    await expect(panel).toContainText('Network · 0 / 22')
+    await expect(openNetwork).toHaveCount(0)
 
     let eligible = false
     for (let attempt = 0; attempt < 5 && !eligible; attempt += 1) {

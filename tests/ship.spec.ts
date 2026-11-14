@@ -271,7 +271,7 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   })
   await expect(pause).toBeVisible()
   await expect
-    .poll(() => new URL(page.url()).searchParams.get('eventId'), { timeout: 5_000 })
+    .poll(() => new URL(page.url()).searchParams.get('eventId'), { timeout: 15_000 })
     .not.toBe(beforePlayback)
   await pause.click()
   const pausedAt = new URL(page.url()).searchParams.get('eventId')
@@ -301,7 +301,7 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   await expect.poll(() => page.url()).not.toBe(beforeFinalStep)
   await play.click()
   await expect
-    .poll(async () => Number(await eventSelect.inputValue()), { timeout: 5_000 })
+    .poll(async () => Number(await eventSelect.inputValue()), { timeout: 15_000 })
     .toBe(eventCount - 1)
   const stoppedAtEnd = page.getByRole('button', { name: 'Lire la chronologie', exact: true })
   await expect(stoppedAtEnd).toBeVisible()

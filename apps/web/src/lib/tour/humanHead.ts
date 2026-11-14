@@ -50,10 +50,11 @@ export function buildHumanHead({
     material: skin,
     ink,
   })
+  const melody = seen.human?.identity === 'melody'
   skull.scale.set(
-    profile.face === 'narrow' ? 0.82 : profile.face === 'square' ? 0.98 : 0.9,
-    profile.face === 'round' ? 1.02 : 1.12,
-    0.94,
+    melody ? 1.12 : profile.face === 'narrow' ? 0.82 : profile.face === 'square' ? 0.98 : 0.9,
+    melody ? 0.94 : profile.face === 'round' ? 1.02 : 1.12,
+    melody ? 1.02 : 0.94,
   )
   head.add(skull)
 
@@ -107,6 +108,7 @@ export function buildHumanHead({
       skin,
     )
     ear.scale.y = 1.35
+    if (melody) ear.scale.set(1.35, 1.75, 1.15)
     ear.position.x = side * 0.185
     head.add(ear)
   }
@@ -116,6 +118,10 @@ export function buildHumanHead({
   )
   nose.rotation.x = Math.PI / 2
   nose.position.set(0, -0.018, 0.195)
+  if (melody) {
+    nose.scale.set(1.7, 1.55, 1.45)
+    nose.position.set(0, -0.026, 0.205)
+  }
   head.add(nose)
   const mouth = new THREE.Mesh(
     geometry(THREE, 'mouth', () => new THREE.PlaneGeometry(0.07, 0.01)),
@@ -123,8 +129,41 @@ export function buildHumanHead({
   )
   mouth.position.set(0, -0.09, 0.178)
   mouth.name = seen.human?.role === 'morena' ? 'face-mouth-base' : 'face-mouth'
-  mouth.visible = seen.human?.role !== 'morena'
+  mouth.visible = seen.human?.role !== 'morena' && !melody
   head.add(mouth)
+  if (melody) {
+    for (const side of [-1, 1]) {
+      const cheek = outlined({
+        THREE,
+        geometry: geometry(THREE, 'melody:cheek', () => new THREE.SphereGeometry(0.075, 7, 5)),
+        material: skin,
+        ink,
+        scale: 1.035,
+      })
+      cheek.name = side < 0 ? 'melody-cheek-left' : 'melody-cheek-right'
+      cheek.position.set(side * 0.095, -0.075, 0.13)
+      cheek.scale.set(1.12, 0.9, 0.72)
+      head.add(cheek)
+    }
+    const lip = new THREE.Mesh(
+      geometry(THREE, 'melody:lip', () => new THREE.TorusGeometry(0.054, 0.008, 4, 12, Math.PI)),
+      ink,
+    )
+    lip.name = 'melody-mouth'
+    lip.position.set(0, -0.105, 0.199)
+    lip.rotation.z = Math.PI
+    head.add(lip)
+    for (const side of [-1, 1]) {
+      const tooth = new THREE.Mesh(
+        geometry(THREE, 'melody:tooth', () => new THREE.BoxGeometry(0.034, 0.05, 0.012)),
+        glow(0xf4eee3, 1),
+      )
+      tooth.name = side < 0 ? 'melody-tooth-left' : 'melody-tooth-right'
+      tooth.position.set(side * 0.018, -0.126, 0.202)
+      tooth.rotation.z = side * 0.06
+      head.add(tooth)
+    }
+  }
   const jawShade = new THREE.Mesh(
     geometry(THREE, 'face:jaw-shadow', () => new THREE.PlaneGeometry(0.14, 0.045)),
     glow(INK, 0.18),

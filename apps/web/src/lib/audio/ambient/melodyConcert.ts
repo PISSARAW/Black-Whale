@@ -10,9 +10,18 @@ const RELEASE_MS = 180
  * roughly 70 MB stereo AudioBuffer. Its source still belongs to the shared Web
  * Audio graph, so the ship's output level and sealed-hearing filter apply to it.
  */
-export function startMelodyConcert(): () => void {
+export interface MelodyConcertEvents {
+  onStarted?: () => void
+  onEnded?: () => void
+  onError?: () => void
+}
+
+export function startMelodyConcert(events: MelodyConcertEvents = {}): () => void {
   const graph = hatsuAudioGraph()
-  if (!graph) return () => {}
+  if (!graph) {
+    queueMicrotask(() => events.onError?.())
+    return () => {}
+  }
 
   const { context } = graph
   const recording = new Audio(RECORDING)
@@ -37,7 +46,25 @@ export function startMelodyConcert(): () => void {
     output.disconnect()
   }
 
-  void recording.play().catch(release)
+  recording.addEventListener(
+    'ended',
+    () => {
+      if (stopped) return
+      stopped = true
+      events.onEnded?.()
+      release()
+    },
+    { once: true },
+  )
+  void recording
+    .play()
+    .then(() => {
+      if (!stopped) events.onStarted?.()
+    })
+    .catch(() => {
+      events.onError?.()
+      release()
+    })
 
   return () => {
     if (stopped) return

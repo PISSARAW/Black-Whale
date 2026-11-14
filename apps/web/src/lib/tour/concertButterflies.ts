@@ -151,7 +151,6 @@ export function buildConcertButterflies(
       uniform float uTime;
       attribute float aSeed;
       attribute float aWing;
-      attribute vec3 color;
       varying vec3 vColour;
       varying float vShade;
       void main() {

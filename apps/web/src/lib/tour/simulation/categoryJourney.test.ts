@@ -32,7 +32,7 @@ describe('Nen category pilot journey', () => {
   })
 
   it('blocks aura-fed actions in Zetsu and restores maintained effects', () => {
-    let state = configurePilotNenProfile(pilot(), 'transmuter')
+    const state = configurePilotNenProfile(pilot(), 'transmuter')
     state.player.nen.mode = 'zetsu'
     expect(
       previewTourNenAction(state, 'adhesive-link', {

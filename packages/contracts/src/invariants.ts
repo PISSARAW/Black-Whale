@@ -1,3 +1,4 @@
+import { CATALOGUE_INVARIANTS } from './catalogue-invariants.js'
 import { INHABITANT_INVARIANTS } from './inhabitants.js'
 import { LIKENESS_INVARIANTS } from './likeness.js'
 import type { Blueprint } from './schemas.js'
@@ -442,131 +443,6 @@ const linksJoinRealSpaces: Invariant = ({ blueprint }) => {
   return findings
 }
 
-/**
- * A structure stands on its floor and under its ceiling.
- *
- * A space with no ceiling of its own takes its tier's, which is what the tour
- * does when it builds the mesh — so that is the height checked against.
- */
-const structuresFitTheirSpace: Invariant = ({ blueprint }) => {
-  const findings: Finding[] = []
-  const tierCeilings = new Map(blueprint.tiers.map((tier) => [tier.id, tier.ceiling]))
-  const ceilings = new Map(
-    blueprint.spaces.map((space) => [
-      space.id,
-      space.ceiling ?? tierCeilings.get(space.tierId) ?? null,
-    ]),
-  )
-  for (const structure of blueprint.structures) {
-    const ceiling = ceilings.get(structure.spaceId)
-    if (ceiling === undefined || ceiling === null) continue
-    if (structure.base < 0) {
-      findings.push(finding('structure-fit', `ship#${structure.id}`, 'stands below its own floor'))
-    }
-    if (structure.base + structure.height > ceiling + 0.001) {
-      findings.push(
-        finding(
-          'structure-fit',
-          `ship#${structure.id}`,
-          `reaches ${structure.base + structure.height}m through a ${ceiling}m ceiling`,
-        ),
-      )
-    }
-  }
-  return findings
-}
-
-/**
- * Every character the site can show is either dated or explicitly undatable.
- *
- * Without `firstAppearanceChapterId` a reader capped at chapter 340 could be
- * shown someone who has not appeared yet, and no loader can tell. The one
- * honest exception is a passenger who appears in no chapter at all — Togashi's
- * databook sheets name several — and `positionProvenance: 'databook'` is how
- * `data/` already says so. Anything else has to carry a chapter.
- */
-const spoilerCoverage: Invariant = ({ characters }) => {
-  return characters
-    .filter(
-      (character) =>
-        !character.firstAppearanceChapterId &&
-        (character as { positionProvenance?: unknown }).positionProvenance !== 'databook',
-    )
-    .map((character) =>
-      finding(
-        'spoiler-coverage',
-        `characters#${character.id}`,
-        'no firstAppearanceChapterId and not marked databook: the spoiler cap cannot be applied',
-      ),
-    )
-}
-
-/** A blueprint space that claims a location has to name one the catalogue holds. */
-const shipMeetsTheCatalogue: Invariant = ({ blueprint, locations }) => {
-  const known = new Set(locations.map((location) => location.id))
-  return blueprint.spaces
-    .filter((space) => space.locationId && !known.has(space.locationId))
-    .map((space) =>
-      finding('ship-location', `ship#${space.id}`, `unknown location ${space.locationId}`),
-    )
-}
-
-/** Every chapter-level Hatsu claim resolves to the canon it annotates. */
-const abilityUsesResolve: Invariant = ({
-  abilityUses,
-  abilities,
-  characters,
-  chapters,
-  events,
-  locations,
-}) => {
-  const findings: Finding[] = []
-  const abilityIds = new Set(abilities.map((ability) => ability.id))
-  const characterIds = new Set(characters.map((character) => character.id))
-  const chapterNumbers = new Set(chapters.map((chapter) => chapter.number))
-  const eventsByTitle = new Map(events.map((event) => [event.title, event]))
-  const locationIds = new Set(locations.map((location) => location.id))
-  const seen = new Set<string>()
-
-  for (const use of abilityUses) {
-    const where = `ability-uses#${use.id}`
-    if (seen.has(use.id)) findings.push(finding('ability-use-id', where, 'duplicate id'))
-    seen.add(use.id)
-    if (!abilityIds.has(use.abilityId)) {
-      findings.push(finding('ability-use-ability', where, `unknown reference ${use.abilityId}`))
-    }
-    if (!characterIds.has(use.userId)) {
-      findings.push(finding('ability-use-user', where, `unknown reference ${use.userId}`))
-    }
-    if (!chapterNumbers.has(use.chapter)) {
-      findings.push(finding('ability-use-chapter', where, `unknown chapter ${use.chapter}`))
-    }
-    if (use.eventTitle) {
-      const event = eventsByTitle.get(use.eventTitle)
-      if (!event) {
-        findings.push(finding('ability-use-event', where, `unknown event ${use.eventTitle}`))
-      } else if (event.chapter !== use.chapter) {
-        findings.push(
-          finding(
-            'ability-use-event',
-            where,
-            `${use.eventTitle} belongs to chapter ${event.chapter}, not ${use.chapter}`,
-          ),
-        )
-      }
-    }
-    if (use.auraTrace && !locationIds.has(use.auraTrace.locationId))
-      findings.push(
-        finding('ability-use-trace', where, `unknown trace location ${use.auraTrace.locationId}`),
-      )
-    if (use.auraTrace && !['ACTIVATED', 'MAINTAINED'].includes(use.status))
-      findings.push(
-        finding('ability-use-trace', where, `a ${use.status} use cannot leave an aura trace`),
-      )
-  }
-  return findings
-}
-
 export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'unique-ids', run: uniqueIds },
   { name: 'references-resolve', run: referencesResolve },
@@ -577,10 +453,7 @@ export const INVARIANTS: ReadonlyArray<{ name: string; run: Invariant }> = [
   { name: 'ranked-claims-cite-a-source', run: rankedClaimsCiteASource },
   { name: 'spaces-stand-on-a-deck', run: spacesStandOnADeck },
   { name: 'links-join-real-spaces', run: linksJoinRealSpaces },
-  { name: 'structures-fit-their-space', run: structuresFitTheirSpace },
-  { name: 'spoiler-coverage', run: spoilerCoverage },
-  { name: 'ship-meets-the-catalogue', run: shipMeetsTheCatalogue },
-  { name: 'ability-uses-resolve', run: abilityUsesResolve },
+  ...CATALOGUE_INVARIANTS,
   // The rules the inhabited walk rests on. Kept in a file of their own so this
   // one stays under the 500 lines ADR-002 allows, and appended here so there is
   // still one list canon-lint runs.

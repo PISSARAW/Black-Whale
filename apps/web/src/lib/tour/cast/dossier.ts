@@ -109,10 +109,20 @@ export interface DossierSealed {
 export interface DossierOptions {
   /** The reader's chapter, or null for a reader who has set none. */
   cap: number | null
+  /** The event chapter being reconstructed, independently of the reader's cap. */
+  chapter: number | null
   /** Faction names by id, resolved where the catalogue holds them. */
   factions: ReadonlyMap<string, string>
   /** Every ability in the catalogue, already marked for what the walk carries. */
   abilities: readonly DossierAbility[]
+}
+
+/** The latest chapter this dossier is allowed to know about. */
+function visibleChapter(options: DossierOptions): number | null {
+  const dated = [options.cap, options.chapter].filter(
+    (chapter): chapter is number => chapter !== null,
+  )
+  return dated.length > 0 ? Math.min(...dated) : null
 }
 
 /** `ch-358` and `ch-359.5` alike, as a number. Null for anything else. */
@@ -166,23 +176,43 @@ function sealedOf(character: DossierCharacter, cap: number | null): DossierSeale
  * archive's silence rather than as an absence of aura, because those are two
  * different claims and only the first one is ours to make.
  */
-export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
-  const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
+function nenIsVisible(character: DossierCharacter, options: DossierOptions): boolean {
   const awakened = character.nen?.awakenedFromChapterId
     ? chapterOf(character.nen.awakenedFromChapterId)
     : null
-  const nenVisible = options.cap === null || awakened === null || awakened <= options.cap
+  const chapter = visibleChapter(options)
+  return awakened === null || chapter === null || awakened <= chapter
+}
+
+function visibleTechniques(character: DossierCharacter, options: DossierOptions) {
+  return options.abilities
+    .filter((ability) => ability.ownerId === character.id)
+    .map((ability) => ({ name: ability.name, carried: ability.carried }))
+}
+
+function visibleNen(character: DossierCharacter, options: DossierOptions) {
+  if (!nenIsVisible(character, options)) return { category: null, techniques: [] }
+  return {
+    category: character.nen?.typeLabel ?? null,
+    techniques: visibleTechniques(character, options),
+  }
+}
+
+function factionFor(character: DossierCharacter, options: DossierOptions): string | null {
+  if (!character.factionId) return null
+  return options.factions.get(character.factionId) ?? null
+}
+
+export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
+  const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
+  const nen = visibleNen(character, options)
   return {
     characterId: character.id,
     role: character.shipLocation?.role ?? '',
-    faction: (character.factionId && options.factions.get(character.factionId)) || null,
+    faction: factionFor(character, options),
     factionId: character.factionId ?? null,
-    category: nenVisible ? (character.nen?.typeLabel ?? null) : null,
-    techniques: nenVisible
-      ? options.abilities
-          .filter((ability) => ability.ownerId === character.id)
-          .map((ability) => ({ name: ability.name, carried: ability.carried }))
-      : [],
+    category: nen.category,
+    techniques: nen.techniques,
     route,
     withheld,
     sealed: sealedOf(character, options.cap),

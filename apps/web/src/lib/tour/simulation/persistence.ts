@@ -90,31 +90,44 @@ const CATEGORIES: TrainableNenCategory[] = [
 
 const AFFINITIES: NenCategory[] = [...CATEGORIES, 'unknown']
 
-function normaliseNenProfile(value: Partial<TourNenProfile> | undefined): TourNenProfile {
-  const affinity = AFFINITIES.includes(value?.naturalAffinity as NenCategory)
+const normaliseAffinity = (value: Partial<TourNenProfile> | undefined): NenCategory =>
+  AFFINITIES.includes(value?.naturalAffinity as NenCategory)
     ? (value?.naturalAffinity as NenCategory)
     : 'unknown'
-  const profile = createTourNenProfile(affinity)
-  profile.version = TOUR_NEN_PROFILE_VERSION
-  for (const category of CATEGORIES) {
-    const mastery = value?.mastery?.[category]
-    profile.mastery[category] =
-      typeof mastery === 'number' && Number.isFinite(mastery)
-        ? Math.max(0, Math.min(100, mastery))
-        : 0
-  }
-  profile.learnedAbilities = Array.isArray(value?.learnedAbilities)
+
+const masteryValue = (value: unknown) =>
+  typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0
+
+function normaliseMastery(value: Partial<TourNenProfile> | undefined) {
+  const mastery = createTourNenProfile().mastery
+  for (const category of CATEGORIES) mastery[category] = masteryValue(value?.mastery?.[category])
+  return mastery
+}
+
+const normaliseLearnedAbilities = (value: Partial<TourNenProfile> | undefined) =>
+  Array.isArray(value?.learnedAbilities)
     ? [...new Set(value.learnedAbilities.filter((id): id is string => typeof id === 'string'))]
     : []
-  profile.maintainedEffects = Array.isArray(value?.maintainedEffects)
-    ? value.maintainedEffects.filter(
-        (effect) =>
-          typeof effect?.abilityId === 'string' &&
-          typeof effect.targetId === 'string' &&
-          typeof effect.upkeep === 'number' &&
-          typeof effect.startedAt === 'number',
-      )
-    : []
+
+type MaintainedEffect = TourNenProfile['maintainedEffects'][number]
+
+const isMaintainedEffect = (
+  effect: Partial<MaintainedEffect> | undefined,
+): effect is MaintainedEffect =>
+  typeof effect?.abilityId === 'string' &&
+  typeof effect.targetId === 'string' &&
+  typeof effect.upkeep === 'number' &&
+  typeof effect.startedAt === 'number'
+
+const normaliseMaintainedEffects = (value: Partial<TourNenProfile> | undefined) =>
+  Array.isArray(value?.maintainedEffects) ? value.maintainedEffects.filter(isMaintainedEffect) : []
+
+function normaliseNenProfile(value: Partial<TourNenProfile> | undefined): TourNenProfile {
+  const profile = createTourNenProfile(normaliseAffinity(value))
+  profile.version = TOUR_NEN_PROFILE_VERSION
+  profile.mastery = normaliseMastery(value)
+  profile.learnedAbilities = normaliseLearnedAbilities(value)
+  profile.maintainedEffects = normaliseMaintainedEffects(value)
   return profile
 }
 

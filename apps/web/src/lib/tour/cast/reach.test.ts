@@ -14,7 +14,11 @@ function post(overrides: Partial<CastMember> = {}): Post {
     locations: [ROOM],
     role: 'Royal Bodyguard for Prince Woble Hui Guo Rou',
     since: 'ch-358',
-    nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } },
+    nen: {
+      techniques: [],
+      awakenedFromChapter: null,
+      conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+    },
     hatsu: [],
     beast: null,
     ...overrides,

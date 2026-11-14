@@ -83,53 +83,84 @@ export function categoryEfficiency(
 const positive = (value: number | undefined, fallback: number) =>
   typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : fallback
 
+interface Modulation {
+  selected: NenActionModulator
+  parameter: NenActionModulator
+  value: number
+  efficiency: number
+}
+
+const modulated = ({ selected, parameter, value, efficiency }: Modulation) =>
+  selected === parameter ? value * efficiency : value
+
+function resolvedValues(action: NenActionDefinition, efficiency: number): NenActionResolution {
+  const baseCost = positive(action.baseCost, 0)
+  const cost = action.modulates === 'cost' && efficiency > 0 ? baseCost / efficiency : baseCost
+  return {
+    accepted: true,
+    efficiency,
+    cost: Math.ceil(cost),
+    power: modulated({
+      selected: action.modulates,
+      parameter: 'power',
+      value: positive(action.basePower, 1),
+      efficiency,
+    }),
+    range: modulated({
+      selected: action.modulates,
+      parameter: 'range',
+      value: positive(action.baseRange, 0),
+      efficiency,
+    }),
+    duration: modulated({
+      selected: action.modulates,
+      parameter: 'duration',
+      value: positive(action.baseDuration, 0),
+      efficiency,
+    }),
+    upkeep: positive(action.upkeep, 0),
+  }
+}
+
+interface BlockContext {
+  profile: NenCategoryProfile
+  action: NenActionDefinition
+  context: NenActionContext
+  result: NenActionResolution
+}
+
+function targetBlock({ action, context }: BlockContext): NenActionBlock | undefined {
+  if (!action.requiresTargetKinds?.length) return undefined
+  if (!context.targetKind || !action.requiresTargetKinds.includes(context.targetKind))
+    return 'TARGET_INCOMPATIBLE'
+  return undefined
+}
+
+function environmentalBlock({ action, context, result }: BlockContext): NenActionBlock | undefined {
+  if (action.requiresPreparation && !context.preparations?.includes(action.requiresPreparation))
+    return 'PREPARATION_MISSING'
+  if (typeof context.distance === 'number' && context.distance > result.range) return 'OUT_OF_RANGE'
+  return undefined
+}
+
+function blockFor(block: BlockContext): NenActionBlock | undefined {
+  const { profile, action, context, result } = block
+  if (!profile.learnedAbilities.includes(action.abilityId)) return 'ABILITY_NOT_LEARNED'
+  if (!result.efficiency) return 'MASTERY_REQUIRED'
+  if ((action.requiresAura ?? true) && context.inZetsu) return 'ZETSU_HAS_NO_AURA'
+  const contextualBlock = targetBlock(block) ?? environmentalBlock(block)
+  if (contextualBlock) return contextualBlock
+  if (context.aura < result.cost) return 'INSUFFICIENT_AURA'
+  return undefined
+}
+
 export function resolveNenCategoryAction(
   profile: NenCategoryProfile,
   action: NenActionDefinition,
   context: NenActionContext,
 ): NenActionResolution {
   const efficiency = categoryEfficiency(profile, action.category)
-  const baseCost = positive(action.baseCost, 0)
-  const result: NenActionResolution = {
-    accepted: true,
-    efficiency,
-    cost:
-      action.modulates === 'cost' && efficiency > 0
-        ? Math.ceil(baseCost / efficiency)
-        : Math.ceil(baseCost),
-    power:
-      action.modulates === 'power'
-        ? positive(action.basePower, 1) * efficiency
-        : positive(action.basePower, 1),
-    range:
-      action.modulates === 'range'
-        ? positive(action.baseRange, 0) * efficiency
-        : positive(action.baseRange, 0),
-    duration:
-      action.modulates === 'duration'
-        ? positive(action.baseDuration, 0) * efficiency
-        : positive(action.baseDuration, 0),
-    upkeep: positive(action.upkeep, 0),
-  }
-
-  const reject = (reason: NenActionBlock): NenActionResolution => ({
-    ...result,
-    accepted: false,
-    reason,
-  })
-
-  if (!profile.learnedAbilities.includes(action.abilityId)) return reject('ABILITY_NOT_LEARNED')
-  if (!efficiency) return reject('MASTERY_REQUIRED')
-  if ((action.requiresAura ?? true) && context.inZetsu) return reject('ZETSU_HAS_NO_AURA')
-  if (
-    action.requiresTargetKinds?.length &&
-    (!context.targetKind || !action.requiresTargetKinds.includes(context.targetKind))
-  )
-    return reject('TARGET_INCOMPATIBLE')
-  if (action.requiresPreparation && !context.preparations?.includes(action.requiresPreparation))
-    return reject('PREPARATION_MISSING')
-  if (typeof context.distance === 'number' && context.distance > result.range)
-    return reject('OUT_OF_RANGE')
-  if (context.aura < result.cost) return reject('INSUFFICIENT_AURA')
-  return result
+  const result = resolvedValues(action, efficiency)
+  const reason = blockFor({ profile, action, context, result })
+  return reason ? { ...result, accepted: false, reason } : result
 }

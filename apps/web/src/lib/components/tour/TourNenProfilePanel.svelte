@@ -47,13 +47,13 @@
   {#if simulation.player.nenProfile.naturalAffinity === 'unknown'}
     <p>{french ? 'Choisir une affinité de simulation' : 'Choose a simulation affinity'}</p>
     <div class="affinities">
-      {#each affinities as affinity}
+      {#each affinities as affinity (affinity)}
         <button onclick={() => choose(affinity)}>{affinity}</button>
       {/each}
     </div>
   {:else}
     <p class="affinity">{simulation.player.nenProfile.naturalAffinity}</p>
-    {#each targets as target}
+    {#each targets as target (target.id)}
       <section>
         <b>{target.label}</b>
         {#if ['object', 'device'].includes(target.kind) && target.markedBy !== simulation.id}
@@ -61,7 +61,7 @@
             >{french ? 'Marquer · 2 aura' : 'Mark · 2 aura'}</button
           >
         {/if}
-        {#each actionsForNenTarget(simulation, target.id) as actionId}
+        {#each actionsForNenTarget(simulation, target.id) as actionId (actionId)}
           {@const preview = previewTourNenAction(simulation, actionId, {
             targetId: target.id,
             distance: 1,

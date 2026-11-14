@@ -6,10 +6,7 @@ import { hatsuTechniqueGuide } from './hatsuTechniqueGuide'
 const copy = messagesFor('en').tour.hatsu
 type GuideContext = Parameters<typeof hatsuTechniqueGuide>[0]
 
-function context(
-  kind: GuideContext['kind'],
-  world: TourWorld = EMPTY_WORLD,
-): GuideContext {
+function context(kind: GuideContext['kind'], world: TourWorld = EMPTY_WORLD): GuideContext {
   return {
     copy,
     kind,
@@ -37,9 +34,7 @@ describe('the stable Hatsu guide', () => {
       worm: { a: 'room-a', b: '', crossings: 0 },
     }
     const second = hatsuTechniqueGuide(context('portal', world))
-    expect(second?.status).toBe(
-      copy.guides.worm.second('room:room-a', copy.comboMaster.control),
-    )
+    expect(second?.status).toBe(copy.guides.worm.second('room:room-a', copy.comboMaster.control))
   })
 
   it('reports forced Zetsu before offering Emperor Time again', () => {

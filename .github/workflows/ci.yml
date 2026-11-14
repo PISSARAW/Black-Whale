@@ -192,6 +192,11 @@ jobs:
       - name: Build packages
         run: pnpm build --filter "./packages/*"
 
+      # Playwright starts the production build directly. Generate SvelteKit's
+      # internal tsconfig first so this job is self-contained.
+      - name: Prepare SvelteKit
+        run: pnpm --filter "@black-whale/web" exec svelte-kit sync
+
       # The pages the smoke suite opens read the database, so the schema and
       # the catalogue both have to be there — the same two steps the deploy
       # runs, in the same order.

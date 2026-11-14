@@ -46,29 +46,24 @@ describe('the three-minute flowered listening landscape', () => {
     scene.add(furniture, melody)
     const view = new ConcertStageView(THREE, scene, theShip())
     const at = [x, z] as const
-    view.move(playing, { ...context, at, velocity: [0, 3], delta: 2 })
+    for (let frame = 0; frame < 12; frame++)
+      view.move(playing, { ...context, at, velocity: [0, 3], delta: 0.1 })
     view.render(
       { camera, actors: { 'cast:melody': { root: melody } }, seconds: 3, yaw: 0 },
       playing,
     )
-    expect(camera.position.z).toBe(z + 6)
+    expect(camera.position.z).toBeCloseTo(z + 3.6)
     expect(camera.layers.mask).toBe(1 << CONCERT_DREAM_LAYER)
     expect(camera.layers.test(furniture.layers)).toBe(false)
     expect(camera.layers.test(child.layers)).toBe(true)
     expect(camera.far).toBe(420)
     expect(scene.fog).not.toBe(fog)
     expect(furniture.visible).toBe(true)
-    expect(
+    for (let frame = 0; frame < 8; frame++)
       view.move(
         { ...playing, playing: false },
-        {
-          ...context,
-          at,
-          velocity: [0, 3],
-          delta: 1,
-        },
-      ),
-    ).toEqual([0, 0])
+        { ...context, at, velocity: [0, 3], delta: 0.1 },
+      )
     expect(camera.layers.mask).toBe(mask)
     expect(camera.far).toBe(220)
     expect(child.layers.mask).toBe(1 << 3)
@@ -97,10 +92,20 @@ describe('the three-minute flowered listening landscape', () => {
       expect(Number.isFinite(bounds.min.y)).toBe(true)
       expect(Number.isFinite(bounds.max.y)).toBe(true)
     })
-    expect(flowers).toBeGreaterThan(12000)
+    expect(flowers).toBeGreaterThan(16000)
     expect(triangles).toBeLessThan(220000)
     expect(root.getObjectByName('concert-open-sky')).toBeDefined()
+    expect(root.getObjectByName('concert-swirling-clouds')).toBeDefined()
+    expect(root.getObjectByName('concert-veiled-sun')).toBeDefined()
+    expect(root.getObjectByName('concert-airborne-petals')).toBeDefined()
     expect(root.getObjectByName('concert-alpine-ridge-3')).toBeDefined()
+    expect(root.getObjectByName('concert-landmark-summit-4')).toBeDefined()
+    expect(root.getObjectByName('concert-mixed-wildflowers')).toBeDefined()
+    expect(root.getObjectByName('concert-varied-grass')).toBeDefined()
+    expect(
+      ((root.getObjectByName('concert-varied-grass') as THREE.InstancedMesh)
+        .material as THREE.Material).customProgramCacheKey(),
+    ).toBe('concert-meadow-wind-v1')
     disposeBanquetDetails(root)
   })
 
@@ -133,5 +138,23 @@ describe('the three-minute flowered listening landscape', () => {
     dream.restore()
     expect(pass.enabled).toBe(true)
     expect(flute.layers.mask).toBe(1)
+  })
+
+  it('holds the audience in a listening reaction during the opening dissolve', () => {
+    const scene = new THREE.Scene()
+    const dream = new ConcertDreamView(THREE, scene)
+    const camera = new THREE.PerspectiveCamera()
+    const melody = new THREE.Group()
+    const listener = new THREE.Group()
+    listener.rotation.x = 0.1
+    const walk = new ConcertLandscapeWalk(spec, spec.origin)
+    const actors = { 'cast:melody': { root: melody }, 'cast:listener': { root: listener } }
+    dream.apply({ camera, actors, seconds: 1, yaw: 0 }, walk, playing, 0.4)
+    expect(listener.rotation.x).toBeGreaterThan(0.1)
+    expect(camera.layers.test(listener.layers)).toBe(true)
+    dream.apply({ camera, actors, seconds: 2, yaw: 0 }, walk, playing, 1)
+    expect(listener.rotation.x).toBeCloseTo(0.1)
+    expect(camera.layers.test(listener.layers)).toBe(false)
+    dream.restore()
   })
 })

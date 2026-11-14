@@ -163,6 +163,7 @@ describe('Melody’s requested concert and the visitor’s performance', () => {
     const disposed: ReturnType<typeof vi.spyOn>[] = []
     view.root.traverse((object) => {
       if (object instanceof THREE.Mesh) disposed.push(vi.spyOn(object.geometry, 'dispose'))
+      if (object instanceof THREE.Points) disposed.push(vi.spyOn(object.geometry, 'dispose'))
       if (object instanceof THREE.InstancedMesh) disposed.push(vi.spyOn(object, 'dispose'))
     })
     view.dispose()

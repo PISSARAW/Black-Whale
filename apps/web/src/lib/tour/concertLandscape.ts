@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import { concertLandscapeHeight, type ConcertLandscapeSpec } from './concertLandscapeWalk'
 import { buildConcertMeadow } from './concertMeadow'
+import { buildConcertPetals } from './concertPetals'
 
 /** Chapter 383's flowered alpine valley; hues and navigable relief are interpretations. */
 export function buildConcertLandscape(
@@ -9,13 +10,131 @@ export function buildConcertLandscape(
 ): Three.Group {
   const root = new THREE.Group()
   root.name = 'melody-flowered-landscape'
-  root.add(terrain(THREE, spec), sky(THREE, spec), buildConcertMeadow(THREE, spec))
+  root.add(
+    terrain(THREE, spec),
+    sky(THREE, spec),
+    cloudBanks(THREE, spec),
+    sunDisc(THREE, spec),
+    buildConcertMeadow(THREE, spec),
+    buildConcertPetals(THREE, spec),
+  )
   for (let ridge = 0; ridge < 4; ridge++) root.add(mountains(THREE, spec, ridge))
+  root.add(landmarkMountains(THREE, spec))
   const sun = new THREE.DirectionalLight(0xfff8e7, 3.5)
   sun.position.set(-25, spec.floor + 60, 5)
   sun.target.position.set(...([spec.origin[0], spec.floor, spec.origin[1]] as const))
   root.add(sun, sun.target)
   return root
+}
+
+/** Dominant asymmetric summits keep the panorama composed like an illustration. */
+function landmarkMountains(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Group {
+  const root = new THREE.Group()
+  root.name = 'concert-landmark-summits'
+  const layouts = [
+    { angle: -2.45, radius: 112, width: 34, height: 49, lean: -7 },
+    { angle: -1.72, radius: 146, width: 51, height: 64, lean: 10 },
+    { angle: -0.92, radius: 126, width: 42, height: 54, lean: -5 },
+    { angle: 0.18, radius: 155, width: 60, height: 69, lean: 8 },
+    { angle: 1.02, radius: 118, width: 36, height: 46, lean: -9 },
+  ]
+  for (const [index, layout] of layouts.entries()) {
+    const x = spec.origin[0] + Math.cos(layout.angle) * layout.radius
+    const z = spec.origin[1] + Math.sin(layout.angle) * layout.radius
+    const tangentX = -Math.sin(layout.angle)
+    const tangentZ = Math.cos(layout.angle)
+    const half = layout.width / 2
+    const baseY = spec.floor - 6
+    const peak = [
+      x + tangentX * layout.lean,
+      baseY + layout.height,
+      z + tangentZ * layout.lean,
+    ] as const
+    const left = [x - tangentX * half, baseY, z - tangentZ * half] as const
+    const right = [x + tangentX * half, baseY, z + tangentZ * half] as const
+    const shoulder = [
+      x + tangentX * (layout.lean * 0.25),
+      baseY + layout.height * 0.58,
+      z + tangentZ * (layout.lean * 0.25),
+    ] as const
+    const geometry = new THREE.BufferGeometry()
+    geometry.setAttribute(
+      'position',
+      new THREE.Float32BufferAttribute([...left, ...peak, ...shoulder, ...shoulder, ...peak, ...right], 3),
+    )
+    const shade = new THREE.Color(index % 2 ? 0x8fa8a5 : 0xa9bdb6)
+    const snow = new THREE.Color(0xf9f4df)
+    geometry.setAttribute(
+      'color',
+      new THREE.Float32BufferAttribute(
+        [shade, snow, shade, shade, snow, shade].flatMap(({ r, g, b }) => [r, g, b]),
+        3,
+      ),
+    )
+    const mesh = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide }),
+    )
+    mesh.name = `concert-landmark-summit-${index}`
+    root.add(mesh)
+  }
+  return root
+}
+
+/** Layered, hand-composed clouds reproduce the chapter's deep, luminous sky. */
+function cloudBanks(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Group {
+  const root = new THREE.Group()
+  root.name = 'concert-swirling-clouds'
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xfffdf0,
+    transparent: true,
+    opacity: 0.68,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  })
+  const banks = [
+    { at: [-58, 43, -105], scale: [52, 13], roll: -0.12 },
+    { at: [54, 56, -126], scale: [66, 17], roll: 0.16 },
+    { at: [-92, 68, -158], scale: [74, 20], roll: 0.08 },
+    { at: [98, 35, -92], scale: [42, 11], roll: -0.2 },
+  ] as const
+  for (const [bank, layout] of banks.entries()) {
+    const cloud = new THREE.Group()
+    cloud.name = `concert-cloud-bank-${bank}`
+    for (let lobe = 0; lobe < 7; lobe++) {
+      const geometry = new THREE.CircleGeometry(1, 20)
+      const mesh = new THREE.Mesh(geometry, material)
+      const offset = lobe - 3
+      mesh.position.set(offset * 0.68, Math.sin(lobe * 1.7) * 0.18, lobe * -0.012)
+      mesh.scale.set(1.15 + (lobe % 3) * 0.22, 0.62 + ((lobe + 1) % 3) * 0.16, 1)
+      cloud.add(mesh)
+    }
+    cloud.position.set(
+      spec.origin[0] + layout.at[0],
+      spec.floor + layout.at[1],
+      spec.origin[1] + layout.at[2],
+    )
+    cloud.scale.set(layout.scale[0] / 7, layout.scale[1] / 2, 1)
+    cloud.rotation.z = layout.roll
+    cloud.lookAt(spec.origin[0], spec.floor + 24, spec.origin[1])
+    root.add(cloud)
+  }
+  return root
+}
+
+function sunDisc(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Mesh {
+  const geometry = new THREE.CircleGeometry(8, 48)
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xfff4c7,
+    transparent: true,
+    opacity: 0.82,
+    depthWrite: false,
+  })
+  const disc = new THREE.Mesh(geometry, material)
+  disc.name = 'concert-veiled-sun'
+  disc.position.set(spec.origin[0] - 58, spec.floor + 72, spec.origin[1] - 172)
+  disc.lookAt(spec.origin[0], spec.floor + 25, spec.origin[1])
+  return disc
 }
 
 function terrain(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Mesh {

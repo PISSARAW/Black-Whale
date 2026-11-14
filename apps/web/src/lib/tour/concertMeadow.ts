@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import { BanquetDetailBuilder } from './banquetDetailBuilder'
 import { concertLandscapeHeight, type ConcertLandscapeSpec } from './concertLandscapeWalk'
+import { CONCERT_REFERENCE } from './concertReference'
 
 const sample = (seed: number): number => {
   const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453
@@ -52,7 +53,11 @@ function distributeForeground(
   const transform = new THREE.Object3D()
   for (let index = 0; index < mesh.count; index++) {
     const depth = sample(index + 110000)
-    const z = spec.origin[1] - 20 + depth * 26
+    const z =
+      spec.origin[1] -
+      CONCERT_REFERENCE.distance +
+      0.55 +
+      depth * (CONCERT_REFERENCE.distance + 5.5)
     const edge = 2.4 + (1 - depth) * 2.8
     const side = sample(index + 112000) < 0.5 ? -1 : 1
     const spread = Math.pow(sample(index + 114000), 0.7) * (10.5 - edge)

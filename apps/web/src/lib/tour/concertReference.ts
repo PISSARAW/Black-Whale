@@ -6,12 +6,13 @@ import type { Vec2 } from './types'
  * foreground, with the valley opening behind her and both ranges framing her.
  */
 export const CONCERT_REFERENCE = {
-  distance: 21,
-  eyeHeight: 1.35,
+  distance: 7.2,
+  fov: 52,
+  eyeHeight: 1.25,
   /** Three.js looks down -Z, so PI faces the valley's authored +Z opening. */
   heading: Math.PI,
-  pitch: 0.035,
-  melodyScreenHeight: 0.31,
+  pitch: 0.02,
+  melodyScreenHeight: 0.23,
   horizonScreenHeight: 0.47,
 } as const
 

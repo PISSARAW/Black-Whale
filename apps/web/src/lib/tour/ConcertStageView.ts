@@ -26,6 +26,7 @@ export class ConcertStageView {
   private readonly dream: ConcertDreamView
   private walk: ConcertLandscapeWalk | null = null
   private bodyAt: Vec2 | null = null
+  private lastReferenceRequest = -1
   private blend = 0
 
   constructor(
@@ -66,6 +67,7 @@ export class ConcertStageView {
       this.dream.restore()
       this.walk = null
       this.bodyAt = null
+      this.lastReferenceRequest = -1
     }
   }
 
@@ -73,11 +75,20 @@ export class ConcertStageView {
     const wasActive = this.active
     this.update(performance, frame)
     if (!this.active || !this.spec) return wasActive ? [0, 0] : frame.velocity
-    if (!this.walk || this.bodyAt?.[0] !== frame.at[0] || this.bodyAt?.[1] !== frame.at[1]) {
+    const referenceRequest = performance.referenceRequest ?? 0
+    const recenter =
+      performance.presentation === 'manga' && referenceRequest !== this.lastReferenceRequest
+    if (
+      !this.walk ||
+      recenter ||
+      this.bodyAt?.[0] !== frame.at[0] ||
+      this.bodyAt?.[1] !== frame.at[1]
+    ) {
       const start =
         performance.presentation === 'manga' ? concertReferencePosition(this.spec) : frame.at
       this.walk = new ConcertLandscapeWalk(this.spec, start)
       this.bodyAt = [...frame.at]
+      this.lastReferenceRequest = referenceRequest
     }
     this.walk.move(frame.velocity, frame.delta)
     return frame.velocity

@@ -23,7 +23,9 @@ export class ConcertDreamView {
   private camera: Three.PerspectiveCamera | null = null
   private cameraMask = 1
   private cameraFar = 220
+  private cameraFov = 50
   private readonly masks = new Map<Three.Object3D, number>()
+  private readonly hiddenAura = new Map<Three.Object3D, boolean>()
   private readonly audiencePose = new Map<Three.Object3D, Three.Euler>()
   private previousFog: Three.Scene['fog'] = null
   private previousBackground: Three.Scene['background'] = null
@@ -46,7 +48,10 @@ export class ConcertDreamView {
     this.restoreAudience()
     const id = performance.mode === 'self' ? 'flute' : 'cast:melody'
     const actor = frame.actors[id]?.root
-    if (actor) this.include(actor)
+    if (actor) {
+      this.include(actor)
+      if (performance.presentation === 'manga') this.suppressAura(actor)
+    }
     if (blend < 0.82) this.reactAudience(frame, id, blend)
     this.positionCamera(frame, walk, performance)
     if (frame.runtime) this.optics(frame, performance)
@@ -67,6 +72,7 @@ export class ConcertDreamView {
     const blend = frame.blend ?? 1
     frame.camera.position.set(walk.at[0], walk.floor + 1.7, walk.at[1])
     if (performance.presentation === 'manga') {
+      frame.camera.fov = CONCERT_REFERENCE.fov
       frame.camera.rotation.set(0, 0, 0)
       frame.camera.rotateY(CONCERT_REFERENCE.heading)
       frame.camera.rotateX(CONCERT_REFERENCE.pitch)
@@ -90,6 +96,7 @@ export class ConcertDreamView {
     this.restoreAudience()
     this.camera.layers.mask = this.cameraMask
     this.camera.far = this.cameraFar
+    this.camera.fov = this.cameraFov
     this.camera.updateProjectionMatrix()
     this.scene.fog = this.previousFog
     this.scene.background = this.previousBackground
@@ -103,6 +110,7 @@ export class ConcertDreamView {
     this.camera = camera
     this.cameraMask = camera.layers.mask
     this.cameraFar = camera.far
+    this.cameraFov = camera.fov
     this.previousFog = this.scene.fog
     this.previousBackground = this.scene.background
   }
@@ -117,6 +125,17 @@ export class ConcertDreamView {
   private restoreActors(): void {
     for (const [object, mask] of this.masks) object.layers.mask = mask
     this.masks.clear()
+    for (const [object, visible] of this.hiddenAura) object.visible = visible
+    this.hiddenAura.clear()
+  }
+
+  /** The chapter shows one small light at Melody's heart, not her full Ten shell. */
+  private suppressAura(root: Three.Object3D): void {
+    root.traverse((object) => {
+      if (!object.name.startsWith('nen-')) return
+      if (!this.hiddenAura.has(object)) this.hiddenAura.set(object, object.visible)
+      object.visible = false
+    })
   }
 
   /** The room holds its breath before the listeners disappear into the vision. */
@@ -151,7 +170,7 @@ export class ConcertDreamView {
     const manga = performance.presentation === 'manga'
     applyGrade(runtime.grade, {
       grade: manga
-        ? { contrast: 1.32, saturation: 0.02, vignette: 0.18 }
+        ? { contrast: 1.18, saturation: 0.92, vignette: 0.1 }
         : { contrast: 1, saturation: 0.9, vignette: 0.06 },
       clock: frame.seconds,
       calm: true,

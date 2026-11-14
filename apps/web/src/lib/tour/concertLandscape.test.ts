@@ -5,7 +5,7 @@ import { ConcertStageView } from './ConcertStageView'
 import { ConcertDreamView, CONCERT_DREAM_LAYER } from './ConcertDreamView'
 import type { SceneRuntime } from './TourRenderer'
 import { ConcertLandscapeWalk, concertLandscapeHeight } from './concertLandscapeWalk'
-import { buildConcertLandscape } from './concertLandscape'
+import { buildConcertLandscape, MANGA_MOUNTAIN_PROFILES } from './concertLandscape'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
 import { CONCERT_REFERENCE, concertReferencePosition } from './concertReference'
 
@@ -27,9 +27,10 @@ describe('the three-minute flowered listening landscape', () => {
     expect(Math.hypot(walk.at[0] + 1, walk.at[1] - 27.25)).toBeCloseTo(64)
   })
 
-  it('anchors the chapter composition twenty-one metres behind Melody', () => {
-    expect(concertReferencePosition(spec)).toEqual([-1, 6.25])
-    expect(CONCERT_REFERENCE.melodyScreenHeight).toBeCloseTo(0.31)
+  it('anchors the chapter composition at Melody’s double-page scale', () => {
+    expect(concertReferencePosition(spec)).toEqual([-1, 20.05])
+    expect(CONCERT_REFERENCE.fov).toBe(52)
+    expect(CONCERT_REFERENCE.melodyScreenHeight).toBeCloseTo(0.23)
     expect(CONCERT_REFERENCE.horizonScreenHeight).toBeCloseTo(0.47)
   })
 
@@ -42,10 +43,29 @@ describe('the three-minute flowered listening landscape', () => {
       view.move(performance, { ...context, at: [-1, 22.5], velocity: [0, 0], delta: 0.1 })
     view.render({ camera, actors: {}, seconds: 2, yaw: 0 }, performance)
     expect(camera.position.x).toBeCloseTo(-1)
-    expect(camera.position.z).toBeCloseTo(6.25)
+    expect(camera.position.z).toBeCloseTo(20.05)
+    expect(camera.fov).toBe(52)
     const direction = camera.getWorldDirection(new THREE.Vector3())
     expect(direction.z).toBeGreaterThan(0.99)
+    view.move(performance, {
+      ...context,
+      at: [-1, 22.5],
+      velocity: [2, 0],
+      delta: 1,
+    })
+    view.render({ camera, actors: {}, seconds: 3, yaw: 0 }, performance)
+    expect(camera.position.x).toBeCloseTo(1)
+    const recentered = { ...performance, referenceRequest: 1 }
+    view.move(recentered, {
+      ...context,
+      at: [-1, 22.5],
+      velocity: [0, 0],
+      delta: 0.1,
+    })
+    view.render({ camera, actors: {}, seconds: 4, yaw: 0 }, recentered)
+    expect(camera.position.x).toBeCloseTo(-1)
     view.dispose()
+    expect(camera.fov).toBe(50)
   })
 
   it.each([
@@ -114,13 +134,15 @@ describe('the three-minute flowered listening landscape', () => {
     expect(flowers).toBeGreaterThan(16000)
     expect(triangles).toBeLessThan(220000)
     expect(root.getObjectByName('concert-open-sky')).toBeDefined()
-    expect(root.getObjectByName('concert-swirling-clouds')).toBeDefined()
-    expect(root.getObjectByName('concert-veiled-sun')).toBeDefined()
+    expect(root.getObjectByName('concert-sky-radial-ink')).toBeDefined()
+    expect(root.getObjectByName('concert-veiled-sun')).toBeUndefined()
+    expect(root.getObjectByName('concert-melody-heart-glow')).toBeDefined()
     expect(root.getObjectByName('concert-airborne-petals')).toBeDefined()
     expect(root.getObjectByName('concert-alpine-ridge-3')).toBeDefined()
     expect(root.getObjectByName('concert-landmark-summit-4')).toBeDefined()
     expect(root.getObjectByName('concert-valley-left-2')).toBeDefined()
     expect(root.getObjectByName('concert-valley-ink-right-2')).toBeDefined()
+    expect(root.getObjectByName('concert-valley-hatching-right-2')).toBeDefined()
     expect(root.getObjectByName('concert-panorama-ridge-1')).toBeDefined()
     expect(root.getObjectByName('concert-mixed-wildflowers')).toBeDefined()
     expect(root.getObjectByName('concert-varied-grass')).toBeDefined()
@@ -133,6 +155,15 @@ describe('the three-minute flowered listening landscape', () => {
       ).customProgramCacheKey(),
     ).toBe('concert-meadow-wind-v1')
     disposeBanquetDetails(root)
+  })
+
+  it('uses asymmetric authored mountain silhouettes instead of mirrored noise', () => {
+    expect(MANGA_MOUNTAIN_PROFILES.left).toHaveLength(4)
+    expect(MANGA_MOUNTAIN_PROFILES.right).toHaveLength(4)
+    expect(MANGA_MOUNTAIN_PROFILES.left[3]).not.toEqual(MANGA_MOUNTAIN_PROFILES.right[3])
+    expect(Math.max(...MANGA_MOUNTAIN_PROFILES.right[3])).toBeGreaterThan(
+      Math.max(...MANGA_MOUNTAIN_PROFILES.left[3]),
+    )
   })
 
   it('closes the alpine horizon across all four quadrants for free navigation', () => {
@@ -233,5 +264,21 @@ describe('the three-minute flowered listening landscape', () => {
     expect(listener.rotation.x).toBeCloseTo(0.1)
     expect(camera.layers.test(listener.layers)).toBe(false)
     dream.restore()
+  })
+
+  it('replaces Melody’s broad Ten shell with the chapter’s small heart light', () => {
+    const scene = new THREE.Scene()
+    const dream = new ConcertDreamView(THREE, scene)
+    const camera = new THREE.PerspectiveCamera(68, 1.6, 0.1, 220)
+    const melody = new THREE.Group()
+    const aura = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial())
+    aura.name = 'nen-aura-glass'
+    melody.add(aura)
+    const walk = new ConcertLandscapeWalk(spec, concertReferencePosition(spec))
+    const manga = { ...playing, presentation: 'manga' as const }
+    dream.apply({ camera, actors: { 'cast:melody': { root: melody } }, seconds: 1, yaw: 0 }, walk, manga)
+    expect(aura.visible).toBe(false)
+    dream.restore()
+    expect(aura.visible).toBe(true)
   })
 })

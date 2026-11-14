@@ -2,11 +2,7 @@ import { expect, test, type Locator } from 'playwright/test'
 
 async function activate(locator: Locator, touch: boolean) {
   await locator.scrollIntoViewIfNeeded()
-  if (touch) await locator.tap()
-  else {
-    await locator.focus()
-    await locator.press('Enter')
-  }
+  await locator.click({ force: touch })
 }
 
 async function openGame(panel: Locator, touch: boolean) {

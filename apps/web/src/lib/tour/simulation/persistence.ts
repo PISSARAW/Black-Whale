@@ -72,6 +72,7 @@ export function decodeTourSimulation(serialized: string | null): TourSimulationV
     state.nenEnvironment ??= createTourNenEnvironment()
     state.nenEnvironment.targets ??= {}
     state.nenEnvironment.traces ??= {}
+    state.witnessKnowledge ??= {}
     return state
   } catch {
     return null

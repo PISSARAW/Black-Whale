@@ -20,9 +20,7 @@ export interface TourNenProfile {
   }>
 }
 
-export function createTourNenProfile(
-  affinity: NenCategory = 'unknown',
-): TourNenProfile {
+export function createTourNenProfile(affinity: NenCategory = 'unknown'): TourNenProfile {
   return {
     version: TOUR_NEN_PROFILE_VERSION,
     naturalAffinity: affinity,
@@ -64,6 +62,7 @@ export interface TourSimulationV1 {
   reputation: Record<string, number>
   permissions: string[]
   witnesses: string[]
+  witnessKnowledge: Record<string, string[]>
   incidents: string[]
   activities: Record<
     string,
@@ -112,6 +111,7 @@ export function createTourSimulation(input: {
     reputation: {},
     permissions: [],
     witnesses: [],
+    witnessKnowledge: {},
     incidents: [],
     activities: {},
     shipSystems: {},

@@ -35,7 +35,7 @@ export interface TourNenEnvironment {
   traces: Record<string, PersistentNenTrace>
 }
 
-export const TIER_5_NEN_PILOT_SPACE = 'tier-5-service-pilot'
+export const TIER_5_NEN_PILOT_SPACE = 'tier-5-warehouse'
 
 const PILOT_TARGETS: readonly TourNenTarget[] = [
   {
@@ -89,9 +89,6 @@ export function ensureNenPilotZone(state: TourSimulationV1): TourSimulationV1 {
   })
 }
 
-export function targetsInNenSpace(
-  state: TourSimulationV1,
-  spaceId: string,
-): TourNenTarget[] {
+export function targetsInNenSpace(state: TourSimulationV1, spaceId: string): TourNenTarget[] {
   return Object.values(state.nenEnvironment.targets).filter((target) => target.spaceId === spaceId)
 }

@@ -84,10 +84,14 @@
     tserriednichRouteUrl,
   } from '$lib/tour/tserriednichRoute'
   import { tourWorldMode } from '$lib/tour/simulation/mode'
-  import { createTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
+  import { evolveTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
   import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
   import { useSystemicNen } from '$lib/tour/simulation/systemicNen'
   import { advanceDynamicEvents } from '$lib/tour/simulation/events'
+  import { pressureWitnesses, systemicNenWitnesses } from '$lib/tour/simulation/nenWitnesses'
+  import { nenSimulationFor } from '$lib/tour/simulation/nenSession'
+  import { ensureNenPilotZone } from '$lib/tour/simulation/nenEnvironment'
+  import TourNenProfilePanel from '$lib/components/tour/TourNenProfilePanel.svelte'
   import type { PageData } from './$types'
 
   // The walk is no longer only a ship: the server hands it the cast of the
@@ -379,7 +383,7 @@
 
   function notePressureWitnesses(rising: boolean, pressure: AuraPressure): void {
     if (!rising) return
-    for (const post of castView.walking.filter((post) => post.spaceId === currentSpace?.id))
+    for (const post of pressureWitnesses(postsHere(), castView.situation))
       hatsuSession.note({
         code: 'PRESSURE_WITNESS',
         name: post.member.name,
@@ -387,24 +391,12 @@
       })
   }
 
+  function postsHere() {
+    return castView.walking.filter((post) => post.spaceId === currentSpace?.id)
+  }
+
   function simulationWitnesses() {
-    return castView.walking
-      .filter((post) => post.spaceId === currentSpace?.id)
-      .flatMap((post) =>
-        post.member.factionId
-          ? [
-              {
-                id: post.member.characterId,
-                factionId: post.member.factionId,
-                spaceId: post.spaceId,
-                detectsConcealedVisitor: Boolean(
-                  castView.situation.sensedBy[post.member.characterId],
-                ),
-                highSecurity: post.tierId === 'tier-1' || post.spaceId.includes('security'),
-              },
-            ]
-          : [],
-      )
+    return systemicNenWitnesses(postsHere(), castView.situation)
   }
 
   function projectNen(applied: AppliedTourNenTransition) {
@@ -417,7 +409,7 @@
     const result = useSystemicNen(
       simulation,
       { ...applied, pressureRising: rising },
-      { witnesses: simulationWitnesses() },
+      { spaceId: currentSpace?.id, witnesses: simulationWitnesses() },
     )
     simulation = result.state
     for (const event of result.scheduled)
@@ -460,16 +452,13 @@
   hatsuSession.watchActivation()
   hatsuSession.watchFuture()
   onMount(() => {
-    if (tourMode === 'CANONICAL_VISIT') return
-    const stored = loadTourSimulation(localStorage)
-    simulation =
-      stored?.mode === tourMode
-        ? stored
-        : createTourSimulation({
-            id: `${tourMode.toLowerCase()}:tour`,
-            mode: tourMode,
-            spaceId: currentSpace?.id,
-          })
+    simulation = nenSimulationFor({
+      mode: tourMode,
+      stored: loadTourSimulation(localStorage),
+      spaceId: currentSpace?.id,
+    })
+    if (!simulation) return
+    simulation = ensureNenPilotZone(simulation)
     hatsuSession.nen = simulation.player.nen
     hatsuSession.reserve = simulation.player.aura
     previousPressure = hatsuSession.nen.on ? 'on' : hatsuSession.nen.mode === 'ren' ? 'ren' : 'none'
@@ -517,11 +506,10 @@
   const turnTheRibbon = casting.turnRibbon
   function arrived(spaceId: string | null) {
     hatsuSession.arrived(spaceId)
-    if (simulation && spaceId) {
-      simulation = structuredClone(simulation)
-      simulation.player.spaceId = spaceId
-      simulation.revision += 1
-    }
+    if (simulation && spaceId)
+      simulation = evolveTourSimulation(simulation, (draft) => {
+        draft.player.spaceId = spaceId
+      })
     // Walking out ends everything the walk was holding on anybody, and closes
     // the exchange with them: ADR-004 §2.3, kept by the mechanism rather than
     // by discipline.
@@ -1226,6 +1214,15 @@
     {/snippet}
   </TourPageStage>
 </TourWorkspace>
+
+{#if simulation}
+  <TourNenProfilePanel
+    {simulation}
+    spaceId={currentSpace?.id ?? null}
+    {french}
+    onChange={(next) => (simulation = next)}
+  />
+{/if}
 
 <TourPageDialogs
   bind:dialog={chrome.planDialog}

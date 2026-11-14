@@ -35,10 +35,8 @@ describe('persistent Tour simulation', () => {
   })
 
   it('adds a safe Nen profile to saves created before affinities existed', () => {
-    const legacy = createTourSimulation({ id: 'old-save' }) as ReturnType<
-      typeof createTourSimulation
-    > & { player: { nenProfile?: unknown } }
-    delete legacy.player.nenProfile
+    const legacy = createTourSimulation({ id: 'old-save' })
+    Reflect.deleteProperty(legacy.player, 'nenProfile')
 
     expect(decodeTourSimulation(JSON.stringify(legacy))?.player.nenProfile).toMatchObject({
       version: 1,

@@ -12,6 +12,13 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./categories": {
+      "development": "./src/categories.ts",
+      "import": "./dist/categories.js",
+      "types": "./dist/categories.d.ts",
+      "require": "./dist/categories.js",
+      "default": "./dist/categories.js"
     }
   },
   "scripts": {

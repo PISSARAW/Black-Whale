@@ -2,7 +2,7 @@ import {
   resolveNenCategoryAction,
   type NenActionDefinition,
   type NenActionResolution,
-} from '@black-whale/nen-engine'
+} from '@black-whale/nen-engine/categories'
 import type { NenCategory } from '@black-whale/domain'
 import { evolveTourSimulation, type TourSimulationV1, type TrainableNenCategory } from './state'
 

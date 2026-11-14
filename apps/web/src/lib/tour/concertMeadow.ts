@@ -29,7 +29,10 @@ export function buildConcertMeadow(THREE: typeof Three, spec: ConcertLandscapeSp
   bindWind(wild)
   const palette = [0xe8b7c8, 0xc7b6e8, 0xf2d68d, 0xb8d6ee]
   for (let index = 0; index < wild.count; index++) {
-    wild.setColorAt(index, new THREE.Color(palette[Math.floor(sample(index + 90000) * palette.length)]))
+    wild.setColorAt(
+      index,
+      new THREE.Color(palette[Math.floor(sample(index + 90000) * palette.length)]),
+    )
   }
   wild.instanceColor!.needsUpdate = true
   const grass = new THREE.InstancedMesh(grassBlade(THREE), grassMaterial(THREE), 2200)
@@ -53,8 +56,7 @@ function distributeForeground(
     const edge = 2.4 + (1 - depth) * 2.8
     const side = sample(index + 112000) < 0.5 ? -1 : 1
     const x =
-      spec.origin[0] +
-      side * (edge + Math.pow(sample(index + 114000), 0.7) * (10.5 - edge))
+      spec.origin[0] + side * (edge + Math.pow(sample(index + 114000), 0.7) * (10.5 - edge))
     const scale = 1.45 + (1 - depth) * 2.2 + sample(index + 116000) * 0.7
     transform.position.set(x, concertLandscapeHeight(spec, [x, z]), z)
     transform.rotation.y = sample(index + 118000) * Math.PI * 2
@@ -98,10 +100,19 @@ function wildflower(THREE: typeof Three): Three.BufferGeometry {
     'position',
     new THREE.Float32BufferAttribute(
       [
-        -0.08, 0, 0, 0.08, 0, 0, 0.08, 0.42, 0, -0.08, 0, 0, 0.08, 0.42, 0,
-        -0.08, 0.42, 0, 0, 0, -0.08, 0, 0, 0.08, 0, 0.42, 0.08, 0, 0, -0.08, 0, 0.42,
-        0.08, 0, 0.42, -0.08,
-      ],
+        [-0.08, 0, 0],
+        [0.08, 0, 0],
+        [0.08, 0.42, 0],
+        [-0.08, 0, 0],
+        [0.08, 0.42, 0],
+        [-0.08, 0.42, 0],
+        [0, 0, -0.08],
+        [0, 0, 0.08],
+        [0, 0.42, 0.08],
+        [0, 0, -0.08],
+        [0, 0.42, 0.08],
+        [0, 0.42, -0.08],
+      ].flat(),
       3,
     ),
   )

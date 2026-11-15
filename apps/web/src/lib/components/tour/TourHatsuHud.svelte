@@ -493,8 +493,32 @@
         return say.doorsPaired(roomName(report.spaceId), roomName(report.otherId))
       case 'doors-rearmed':
         return say.doorsRearmed(roomName(report.spaceId))
-      case 'phasing':
-        return report.on ? say.phasingOn : say.phasingOff
+      case 'spatial-anchor-refused':
+        if (report.reason === 'outside') return say.spatialOutside
+        if (report.reason === 'burned')
+          return say.spatialAnchorBurned(report.spaceId ? roomName(report.spaceId) : '')
+        if (report.reason === 'not-one-door')
+          return say.spatialNeedsOneDoor(
+            report.spaceId ? roomName(report.spaceId) : '',
+            report.doors ?? 0,
+          )
+        return say.spatialDoorOpen(report.spaceId ? roomName(report.spaceId) : '')
+      case 'spatial-anchored':
+        return say.spatialAnchored(roomName(report.spaceId))
+      case 'spatial-destination-refused':
+        if (report.reason === 'return-to-anchor')
+          return say.spatialReturnToAnchor(
+            world.spatial.anchorId ? roomName(world.spatial.anchorId) : '',
+          )
+        if (report.reason === 'unvisited')
+          return say.spatialUnvisited(report.spaceId ? roomName(report.spaceId) : '')
+        return say.spatialSameRoom
+      case 'spatial-opened':
+        return say.spatialOpened(roomName(report.anchorId), roomName(report.destinationId))
+      case 'spatial-crossed':
+        return say.spatialCrossed(roomName(report.fromId), roomName(report.toId))
+      case 'spatial-burned':
+        return say.spatialBurned(roomName(report.spaceId))
       case 'eye-sent':
         return say.eyeSent(roomName(report.spaceId))
       case 'eye-recalled':
@@ -1000,7 +1024,15 @@
     }
     for (const id of world.emptied) rows.push({ label: held.emptied, value: roomName(id) })
     if (world.dowsing) rows.push({ label: held.dowsing, value: roomName(world.dowsing) })
-    if (world.phasing) rows.push({ label: held.phasing, value: '—' })
+    if (world.spatial.anchorId)
+      rows.push({ label: held.spatialAnchor, value: roomName(world.spatial.anchorId) })
+    if (world.spatial.destinationId)
+      rows.push({ label: held.spatialExit, value: roomName(world.spatial.destinationId) })
+    if (world.spatial.burned.length)
+      rows.push({
+        label: held.spatialBurnedRooms,
+        value: world.spatial.burned.map(roomName).join(', '),
+      })
     if (world.sealed) {
       rows.push({
         label: held.sealed,

@@ -81,6 +81,7 @@ import { punchRuns } from './punch'
 import { ripperIsCharged, ripperReach, ripperShatters } from './ripper'
 import { perchFor } from './targeting'
 import { nextForgery, nextSign, takesAMask } from './texture'
+import { DOOR_OPEN_RADIUS } from './doorAnimator'
 
 export {
   injuryPace,
@@ -1417,12 +1418,11 @@ export const SUN_FLARE_METRES_PER_HIT = 4
 /**
  * Whether the visitor goes through walls rather than around them.
  *
- * Two techniques ask for it and mean different things by it — Luini steps
- * through, Hanzo's double was never solid in the first place — but the walk
- * has one answer to give.
+ * Hanzo's double was never solid in the first place. Luini is deliberately
+ * absent: Spatial Teleportation opens a local aperture and never turns the
+ * whole ship intangible.
  */
-export const walksThroughWalls = (world: TourWorld): boolean =>
-  world.phasing || Boolean(world.body.projected)
+export const walksThroughWalls = (world: TourWorld): boolean => Boolean(world.body.projected)
 
 /** Everything the aura is holding, named plainly, for Predator to work through. */
 export function holdsInWorld(world: TourWorld): string[] {
@@ -1433,7 +1433,7 @@ export function holdsInWorld(world: TourWorld): string[] {
     ...world.emptied.map((id) => `emptied:${id}`),
     ...(world.eye ? [`eye:${world.eye}`] : []),
     ...(world.sealed ? [`sealed:${world.sealed}`] : []),
-    ...(world.phasing ? ['phasing'] : []),
+    ...(world.spatial.anchorId ? [`spatial:${world.spatial.anchorId}`] : []),
     ...world.watched.map((doll) => `doll:${doll.spaceId}`),
     ...(world.dowsing ? [`dowsing:${world.dowsing}`] : []),
     // A gathered flock is a bird's worth of aura times however many came, all
@@ -2491,6 +2491,11 @@ function answerForTheCat(before: TourWorld, result: TourCastResult): TourCastRes
       // What the walk remembers of itself is not a hold, and is not taken.
       trail: result.world.trail,
       cameFrom: result.world.cameFrom,
+      spatial: {
+        ...EMPTY_WORLD.spatial,
+        visited: result.world.spatial.visited,
+        burned: result.world.spatial.burned,
+      },
     },
     report: { kind: 'counterattack', spaceId: killed, released },
   }
@@ -2515,12 +2520,164 @@ function pullBackTheBody(world: TourWorld): TourCastResult | null {
   }
 }
 
+export type SpatialAnchorRefusal =
+  | { reason: 'outside' | 'burned' | 'door-open'; doors?: number }
+  | { reason: 'not-one-door'; doors: number }
+
 /**
- * The four casts that need nothing to aim at.
+ * Whether the room under Luini's feet can become an anchor.
+ *
+ * The reconstruction's closed polygons are the impenetrable walls. Their
+ * derived doorway count supplies the single physical way out, and the same
+ * proximity radius as the animated leaf tells us whether that leaf is open.
+ */
+export function spatialAnchorRefusal(
+  world: TourWorld,
+  input: Pick<TourCastInput, 'ship' | 'standingIn' | 'at'>,
+): SpatialAnchorRefusal | null {
+  const { ship, standingIn: spaceId, at } = input
+  if (!spaceId) return { reason: 'outside' }
+  if (world.spatial.burned.includes(spaceId)) return { reason: 'burned' }
+  const space = ship.spaces.get(spaceId)
+  const plan = space ? ship.plans.get(space.tierId) : null
+  if (!space || !plan) return { reason: 'outside' }
+  const doors = plan.doorways.filter((door) => door.a === spaceId || door.b === spaceId)
+  const waysOut = new Set(ship.adjacency.get(spaceId) ?? []).size
+  if (doors.length !== 1 || waysOut !== 1) return { reason: 'not-one-door', doors: waysOut }
+  const door = doors[0]
+  const middle: Vec2 = [(door.start[0] + door.end[0]) / 2, (door.start[1] + door.end[1]) / 2]
+  if (Math.hypot(at[0] - middle[0], at[1] - middle[1]) <= DOOR_OPEN_RADIUS)
+    return { reason: 'door-open' }
+  return null
+}
+
+/** Spatial Teleportation's two deliberate gestures: establish, then connect. */
+function castSpatial(world: TourWorld, input: TourCastInput): TourCastResult {
+  const spatial = world.spatial
+  if (!spatial.anchorId) {
+    const refusal = spatialAnchorRefusal(world, input)
+    if (refusal) {
+      return {
+        world,
+        report: {
+          kind: 'spatial-anchor-refused',
+          spaceId: input.standingIn,
+          reason: refusal.reason,
+          doors: refusal.doors,
+        },
+      }
+    }
+    const anchorId = input.standingIn!
+    const visited = [...new Set([...spatial.visited, ...world.trail, anchorId])]
+    return {
+      world: {
+        ...world,
+        landed: { ...world.landed, [anchorId]: input.at },
+        spatial: { ...spatial, anchorId, destinationId: null, visited, transiting: null },
+      },
+      report: { kind: 'spatial-anchored', spaceId: anchorId },
+    }
+  }
+
+  if (input.standingIn !== spatial.anchorId) {
+    return {
+      world,
+      report: {
+        kind: 'spatial-destination-refused',
+        spaceId: input.standingIn,
+        reason: 'return-to-anchor',
+      },
+    }
+  }
+  if (!input.targetId || input.targetId === spatial.anchorId) {
+    return {
+      world,
+      report: {
+        kind: 'spatial-destination-refused',
+        spaceId: input.targetId,
+        reason: 'same-room',
+      },
+    }
+  }
+  const visited = new Set([...spatial.visited, ...world.trail, spatial.anchorId])
+  if (!visited.has(input.targetId)) {
+    return {
+      world,
+      report: {
+        kind: 'spatial-destination-refused',
+        spaceId: input.targetId,
+        reason: 'unvisited',
+      },
+    }
+  }
+  const target = input.ship.spaces.get(input.targetId)
+  if (!target) return { world, report: { kind: 'no-target' } }
+  return {
+    world: {
+      ...world,
+      landed: { ...world.landed, [target.id]: centroid(target) },
+      spatial: {
+        ...spatial,
+        destinationId: target.id,
+        visited: [...visited],
+        transiting: null,
+      },
+    },
+    report: {
+      kind: 'spatial-opened',
+      anchorId: spatial.anchorId,
+      destinationId: target.id,
+    },
+  }
+}
+
+/** Opening the anchor's physical door destroys that room as an anchor forever. */
+export function burnSpatialAnchor(
+  world: TourWorld,
+  spaceId: string,
+): { world: TourWorld; report: TourReport } | null {
+  if (world.spatial.anchorId !== spaceId) return null
+  return {
+    world: {
+      ...world,
+      spatial: {
+        ...world.spatial,
+        anchorId: null,
+        destinationId: null,
+        burned: [...new Set([...world.spatial.burned, spaceId])],
+        transiting: null,
+      },
+    },
+    report: { kind: 'spatial-burned', spaceId },
+  }
+}
+
+/** Crossing either localized aperture carries the visitor through the private route. */
+export function spatialPortalExit(
+  world: TourWorld,
+  spaceId: string | null,
+  arrivedFrom: string | null,
+): { to: string; world: TourWorld; report: TourReport } | null {
+  const { anchorId, destinationId } = world.spatial
+  if (!anchorId || !destinationId || !spaceId || spaceId === arrivedFrom) return null
+  const to = spaceId === anchorId ? destinationId : spaceId === destinationId ? anchorId : null
+  if (!to) return null
+  return {
+    to,
+    world: {
+      ...world,
+      spatial: { ...world.spatial, transiting: { from: spaceId, to } },
+    },
+    report: { kind: 'spatial-crossed', fromId: spaceId, toId: to },
+  }
+}
+
+/**
+ * The casts that need nothing to aim at.
  *
  * Emperor Time sweeps the whole ship, the monkeys work on the visitor's own
- * senses, phasing is a state rather than a place, and Chrollo's teleport draws
- * its destination rather than being pointed at one.
+ * senses, and Chrollo's teleport draws its destination rather than being
+ * pointed at one.
  */
 function castWithoutARoom(
   world: TourWorld,
@@ -2551,11 +2708,6 @@ function castWithoutARoom(
   if (kind === 'senses') {
     const sealed = (world.sealed + 1) % 4
     return { world: { ...world, sealed }, report: { kind: 'sealed', stage: sealed } }
-  }
-
-  if (kind === 'spatial') {
-    const phasing = !world.phasing
-    return { world: { ...world, phasing }, report: { kind: 'phasing', on: phasing } }
   }
 
   if (kind === 'teleport') {
@@ -3470,6 +3622,8 @@ function runCast(
     return { world, report: { kind: 'fingers-intact-refused' } }
   }
 
+  if (kind === 'spatial') return castSpatial(world, input)
+
   const untargeted = castWithoutARoom(world, kind, input)
   if (untargeted) return untargeted
 
@@ -3727,10 +3881,33 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
   const leaving = world.cameFrom
   if (spaceId === leaving) return { world }
 
-  let next: TourWorld = { ...world, cameFrom: spaceId }
   let report: TourReport | undefined
   let travelTo: string | undefined
   let punished = false
+  const completedTransit = Boolean(
+    world.spatial.transiting &&
+    world.spatial.transiting.from === leaving &&
+    world.spatial.transiting.to === spaceId,
+  )
+  let next: TourWorld = {
+    ...world,
+    cameFrom: spaceId,
+    spatial: {
+      ...world.spatial,
+      visited: spaceId ? [...new Set([...world.spatial.visited, spaceId])] : world.spatial.visited,
+      transiting: completedTransit ? null : world.spatial.transiting,
+    },
+  }
+
+  // A portal crossing never touches the physical leaf. Every other departure
+  // from the anchor does, and that single opening burns the room permanently.
+  if (leaving && leaving === world.spatial.anchorId && spaceId !== leaving && !completedTransit) {
+    const burned = burnSpatialAnchor(next, leaving)
+    if (burned) {
+      next = burned.world
+      report = burned.report
+    }
+  }
 
   /** The double takes one punishment and is spent doing it. */
   const intercept = () => {

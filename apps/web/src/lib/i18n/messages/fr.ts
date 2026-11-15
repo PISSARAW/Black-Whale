@@ -1128,8 +1128,25 @@ export const fr: Messages = {
         doorsPaired: (a, b) =>
           `${a} et ${b} ne font plus qu'un seuil · entrez par l'un, ressortez par l'autre`,
         doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
-        phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
-        phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
+        spatialOutside: 'Spatial Teleportation exige une pièce autour de vous',
+        spatialAnchorBurned: (room) =>
+          `${room} a déjà été descellée · elle ne pourra plus jamais servir d’ancre`,
+        spatialNeedsOneDoor: (room, doors) =>
+          `${room} possède ${doors} issues physiques · l’ancre en exige exactement une`,
+        spatialDoorOpen: (room) =>
+          `L’unique porte de ${room} est ouverte · fermez-la et éloignez-vous avant l’ancrage`,
+        spatialAnchored: (room) =>
+          `${room} est scellée comme ancre · choisissez une pièce déjà visitée`,
+        spatialReturnToAnchor: (room) =>
+          `La destination ne peut être changée que depuis ${room} · empruntez l’ouverture de retour`,
+        spatialSameRoom: 'Choisissez une pièce déjà visitée au-delà de l’ancre',
+        spatialUnvisited: (room) =>
+          `${room} n’a pas été visitée · aucun passage ne peut s’y ouvrir`,
+        spatialOpened: (anchor, destination) =>
+          `${anchor} s’ouvre à travers l’espace privé jusque dans ${destination}`,
+        spatialCrossed: (from, to) => `${from} → espace de transit privé → ${to}`,
+        spatialBurned: (room) =>
+          `La porte de ${room} s’est ouverte · le passage s’effondre et cette ancre est perdue à jamais`,
         eyeSent: (room) =>
           `La sphère est posée sur un hôte dans ${room} · son flux est dans le coin`,
         eyeRecalled: (rooms) =>
@@ -1650,7 +1667,9 @@ export const fr: Messages = {
         watched: 'Poupées de papier',
         emptied: 'Aspiré',
         dowsing: 'Le pendule désigne',
-        phasing: 'Traversée des murs',
+        spatialAnchor: 'Ancre spatiale',
+        spatialExit: 'Sortie spatiale ouverte',
+        spatialBurnedRooms: 'Ancres consumées',
         sealed: 'Sens scellés',
         sealedSenses: (count) => ['', 'vue', 'vue · ouïe', 'vue · ouïe · voix'][count] ?? '',
         dispatches: 'Dépêches',

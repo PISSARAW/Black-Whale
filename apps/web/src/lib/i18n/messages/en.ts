@@ -1234,8 +1234,25 @@ export const en = {
         doorsPaired: (a: string, b: string) =>
           `${a} and ${b} are one threshold now · step into either and come out at the other`,
         doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
-        phasingOn: 'Walls stopped being walls · walk through the ship',
-        phasingOff: 'Back inside the geometry · the walls hold again',
+        spatialOutside: 'Spatial Teleportation needs a room around you',
+        spatialAnchorBurned: (room: string) =>
+          `${room} was unsealed once · it can never be an anchor again`,
+        spatialNeedsOneDoor: (room: string, doors: number) =>
+          `${room} has ${doors} physical ways out · the anchor needs exactly one`,
+        spatialDoorOpen: (room: string) =>
+          `${room}'s sole door is open · close it and step away before anchoring`,
+        spatialAnchored: (room: string) =>
+          `${room} is sealed as the anchor · choose a room you have already visited`,
+        spatialReturnToAnchor: (room: string) =>
+          `The destination can only be changed from ${room} · take the return aperture`,
+        spatialSameRoom: 'Choose a previously visited room beyond the anchor',
+        spatialUnvisited: (room: string) =>
+          `${room} has not been visited · no route can open there`,
+        spatialOpened: (anchor: string, destination: string) =>
+          `${anchor} opens through the private space into ${destination}`,
+        spatialCrossed: (from: string, to: string) => `${from} → private transit space → ${to}`,
+        spatialBurned: (room: string) =>
+          `${room}'s door opened · the route collapsed and this anchor is lost forever`,
         eyeSent: (room: string) => `The sphere is on a host in ${room} · its feed is in the corner`,
         eyeRecalled: (rooms: number) =>
           `The insect is back with you · ${rooms} room${rooms === 1 ? '' : 's'} filmed`,
@@ -1784,7 +1801,9 @@ export const en = {
         watched: 'Paper dolls',
         emptied: 'Swallowed',
         dowsing: 'The chain points at',
-        phasing: 'Walking through walls',
+        spatialAnchor: 'Spatial anchor',
+        spatialExit: 'Open spatial exit',
+        spatialBurnedRooms: 'Burned anchors',
         sealed: 'Senses sealed',
         // Named rather than drawn: the panel used three emoji here, which said
         // "eye, ear, mouth" only to a reader whose font drew them in colour.

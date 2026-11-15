@@ -12,6 +12,7 @@ import type { Decipher, Fabrication } from '../decipher'
 import type { GumStrand } from '../gum'
 import type { ScarletEyes } from '../emperor'
 import type { SolidHold, TourBook, TourBody, VowState } from './worldPieces'
+import type { SpatialTeleportationState } from './spatial'
 
 /**
  * What Nen is currently doing to the ship.
@@ -88,8 +89,8 @@ export interface TourWorld {
   eyeFilm: { spaceId: string; seen: number }[]
   /** 0 nothing · 1 sight · 2 sight and hearing · 3 all three. */
   sealed: number
-  /** Whether the visitor is passing through walls. */
-  phasing: boolean
+  /** Luini's sealed-room anchor, private route, and permanently lost rooms. */
+  spatial: SpatialTeleportationState
   /** Rooms a paper doll is counting arrivals in. */
   watched: { spaceId: string; visits: number }[]
   /** What the flock has carried back, newest first. */

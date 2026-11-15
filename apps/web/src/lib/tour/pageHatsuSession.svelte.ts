@@ -40,6 +40,18 @@ import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nen
 import type { AuraPressure } from '$lib/tour/auraReserve'
 import type { NenRefusalCode } from '$lib/tour/nenRefusal'
 
+/** Aura ends; route memory and permanently burnt anchors do not. */
+const rememberedEmptyWorld = (world: TourWorld): TourWorld => ({
+  ...EMPTY_WORLD,
+  body: bodyAfterAuraEnds(world.body),
+  trail: world.trail,
+  spatial: {
+    ...EMPTY_WORLD.spatial,
+    visited: world.spatial.visited,
+    burned: world.spatial.burned,
+  },
+})
+
 interface ActivationContext {
   ship: Ship
   activeKind: HatsuInteractionKind | null
@@ -125,7 +137,7 @@ export class TourHatsuSession {
       if (!context.hasAura || !this.canUse(context.activeKind)) {
         if (context.activeKind === 'future') parallelFutureVisible.set(false)
         const world = untrack(() => this.options.read().world)
-        this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
+        this.options.updateWorld(rememberedEmptyWorld(world))
         this.options.updateReport(null)
         return
       }
@@ -249,7 +261,7 @@ export class TourHatsuSession {
     if (!this.canUse(this.options.read().activeKind)) {
       if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)
       const world = this.options.read().world
-      this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
+      this.options.updateWorld(rememberedEmptyWorld(world))
       this.options.updateReport(null)
     }
     return result

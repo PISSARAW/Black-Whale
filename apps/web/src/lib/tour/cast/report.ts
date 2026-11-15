@@ -19,7 +19,21 @@ export type TourReport =
   | { kind: 'door-armed'; spaceId: string }
   | { kind: 'doors-paired'; spaceId: string; otherId: string }
   | { kind: 'doors-rearmed'; spaceId: string }
-  | { kind: 'phasing'; on: boolean }
+  | {
+      kind: 'spatial-anchor-refused'
+      spaceId: string | null
+      reason: 'outside' | 'burned' | 'not-one-door' | 'door-open'
+      doors?: number
+    }
+  | { kind: 'spatial-anchored'; spaceId: string }
+  | {
+      kind: 'spatial-destination-refused'
+      spaceId: string | null
+      reason: 'return-to-anchor' | 'same-room' | 'unvisited'
+    }
+  | { kind: 'spatial-opened'; anchorId: string; destinationId: string }
+  | { kind: 'spatial-crossed'; fromId: string; toId: string }
+  | { kind: 'spatial-burned'; spaceId: string }
   | { kind: 'eye-sent'; spaceId: string }
   | { kind: 'eye-recalled'; rooms: number }
   | { kind: 'eye-mode-changed'; mode: TourEyeMode }

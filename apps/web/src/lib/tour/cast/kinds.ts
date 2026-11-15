@@ -356,7 +356,7 @@ const WORLD_QUIET_PREDICATES: ((world: TourWorld) => boolean)[] = [
   (w) => !w.hoover.length,
   (w) => !w.eye,
   (w) => !w.sealed,
-  (w) => !w.phasing,
+  (w) => !w.spatial.anchorId && !w.spatial.destinationId && !w.spatial.transiting,
   (w) => !w.watched.length,
   (w) => !w.dispatches.length,
   (w) => !w.flock,

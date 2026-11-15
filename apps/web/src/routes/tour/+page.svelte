@@ -534,6 +534,8 @@
   const scoutFlight = ticker.scoutFlight
   const owlSecond = ticker.owlSecond
   const crossWorm = ticker.crossWorm
+  const crossSpatial = ticker.crossSpatial
+  const openSpatialAnchorDoor = ticker.openSpatialAnchorDoor
 
   const targetView = new TourTargetView({
     ship,
@@ -1107,6 +1109,8 @@
       hatsuRequiresZetsu: technique?.kind === 'future',
       onArrive: arrived,
       onWorm: crossWorm,
+      onSpatial: crossSpatial,
+      onSpatialDoorOpen: openSpatialAnchorDoor,
       onFish: fishEat,
       onOwl: owlFlight,
       onOwlSecond: owlSecond,

@@ -220,6 +220,8 @@ export interface Apparition {
   hidden: boolean
   /** The other mouth of the tunnel, for the portal that has to see through it. */
   pair?: { spaceId: string; tierId: string; at: Vec2; y: number }
+  /** Fugetsu opens a door; Luini tears an oval aperture into wall or floor. */
+  portalKind?: 'worm' | 'spatial'
   /**
    * How far up something wound round a solid has to climb, in metres.
    *
@@ -290,6 +292,7 @@ const STAR = 0xffd166
  */
 export const DOUBLE = 0xf6b8d1
 const PORTAL = 0x80edc7
+const SPATIAL_PORTAL = 0x8a2be2
 const FISH = 0x78b6c9
 const PAPER = 0xefb9c8
 const CARGO = 0xe2b86e
@@ -1305,6 +1308,22 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     })
   }
 
+  const spatial = spatialMouths(ship, world)
+  for (const mouth of spatial) {
+    const other = spatial.find((end) => end.spaceId !== mouth.spaceId)
+    const space = spaceOf(mouth.spaceId)
+    if (!space) continue
+    place(`spatial:${mouth.spaceId}`, space, {
+      kind: 'portal',
+      height: PORTAL_RADIUS + 0.1,
+      size: PORTAL_RADIUS,
+      colour: SPATIAL_PORTAL,
+      y: mouth.y,
+      pair: other,
+      portalKind: 'spatial',
+    })
+  }
+
   // ── The Guardian Spirit Beasts ───────────────────────────────────────────
   //
   // Five animals, and the only apparitions in the walk with a body: everything
@@ -1763,6 +1782,34 @@ export function wormMouths(
   return mouths
 }
 
+/** The anchor and currently selected exit of Luini's private transit space. */
+export function spatialMouths(
+  ship: Ship,
+  world: TourWorld,
+): { spaceId: string; tierId: string; at: Vec2; y: number }[] {
+  const { anchorId, destinationId } = world.spatial
+  if (!anchorId || !destinationId) return []
+  const mouths: { spaceId: string; tierId: string; at: Vec2; y: number }[] = []
+  for (const id of [anchorId, destinationId]) {
+    const space = ship.spaces.get(id)
+    const measured = space ? room(ship, space) : null
+    if (!space || !measured) continue
+    mouths.push({
+      spaceId: space.id,
+      tierId: space.tierId,
+      at: world.landed[space.id] ?? measured.at,
+      y: Math.min(measured.floor + 0.65, measured.ceiling - 0.3),
+    })
+  }
+  return mouths
+}
+
+/** Every portal camera endpoint that requires its far deck in the scene. */
+export const portalMouths = (ship: Ship, world: TourWorld) => [
+  ...wormMouths(ship, world),
+  ...spatialMouths(ship, world),
+]
+
 /**
  * Which mouth of the tunnel the visitor has walked into, if either.
  *
@@ -1774,6 +1821,16 @@ export function wormMouths(
 export function wormMouthAt(ship: Ship, world: TourWorld, standing: Footing): string | null {
   const { at, tierId } = standing
   for (const mouth of wormMouths(ship, world)) {
+    if (mouth.tierId !== tierId) continue
+    if (Math.hypot(mouth.at[0] - at[0], mouth.at[1] - at[1]) <= PORTAL_REACH) return mouth.spaceId
+  }
+  return null
+}
+
+/** Which localized Spatial Teleportation aperture the visitor has entered. */
+export function spatialMouthAt(ship: Ship, world: TourWorld, standing: Footing): string | null {
+  const { at, tierId } = standing
+  for (const mouth of spatialMouths(ship, world)) {
     if (mouth.tierId !== tierId) continue
     if (Math.hypot(mouth.at[0] - at[0], mouth.at[1] - at[1]) <= PORTAL_REACH) return mouth.spaceId
   }

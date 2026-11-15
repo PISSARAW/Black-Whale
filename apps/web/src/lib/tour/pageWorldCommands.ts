@@ -76,6 +76,15 @@ export function releaseTourWorld(world: TourWorld): { world: TourWorld; rebound:
       body: bodyAfterAuraEnds(world.body),
       holding: world.holding,
       book: world.holding === 'bookmark' ? openTheBook() : EMPTY_WORLD.book,
+      // Luini cannot erase a burnt room by lowering his aura. The route and
+      // anchor fall, but memory of where he has been and what he has lost does
+      // not.
+      trail: world.trail,
+      spatial: {
+        ...EMPTY_WORLD.spatial,
+        visited: world.spatial.visited,
+        burned: world.spatial.burned,
+      },
     },
   }
 }

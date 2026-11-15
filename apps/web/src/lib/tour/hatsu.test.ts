@@ -73,6 +73,7 @@ import {
   reachOf,
   verseFor,
   walksThroughWalls,
+  spatialPortalExit,
   wanderOffset,
   worksInTour,
   wormExit,
@@ -104,6 +105,145 @@ const cast = (world: TourWorld, kind: Parameters<typeof castInTour>[1], targetId
     at: [0, 0],
     random: () => 0,
   })
+
+describe("Luini's sealed-room passage", () => {
+  const anchor = [...ship.spaces.values()].find((space) => {
+    const plan = ship.plans.get(space.tierId)
+    const doors = plan?.doorways.filter((door) => door.a === space.id || door.b === space.id) ?? []
+    if (doors.length !== 1) return false
+    const at = centroid(space)
+    const middle: Vec2 = [
+      (doors[0].start[0] + doors[0].end[0]) / 2,
+      (doors[0].start[1] + doors[0].end[1]) / 2,
+    ]
+    return Math.hypot(at[0] - middle[0], at[1] - middle[1]) > 3
+  })!
+  const destination = [...ship.spaces.values()].find((space) => space.id !== anchor.id)!
+
+  const spatialCast = (
+    world: TourWorld,
+    targetId: string | null,
+    standingIn = anchor.id,
+    at: Vec2 = centroid(anchor),
+  ) =>
+    castInTour(world, 'spatial', {
+      ship,
+      targetId,
+      standingIn,
+      at,
+    })
+
+  it('anchors only the closed, single-door room underfoot', () => {
+    const anchored = spatialCast(
+      { ...EMPTY_WORLD, cameFrom: anchor.id, trail: [destination.id] },
+      null,
+    )
+    expect(anchored.report).toEqual({ kind: 'spatial-anchored', spaceId: anchor.id })
+    expect(anchored.world.spatial.anchorId).toBe(anchor.id)
+    expect(anchored.world.spatial.visited).toEqual(
+      expect.arrayContaining([anchor.id, destination.id]),
+    )
+    expect(walksThroughWalls(anchored.world)).toBe(false)
+
+    const plan = ship.plans.get(anchor.tierId)!
+    const door = plan.doorways.find(
+      (candidate) => candidate.a === anchor.id || candidate.b === anchor.id,
+    )!
+    const atDoor: Vec2 = [(door.start[0] + door.end[0]) / 2, (door.start[1] + door.end[1]) / 2]
+    expect(spatialCast(EMPTY_WORLD, null, anchor.id, atDoor).report).toMatchObject({
+      kind: 'spatial-anchor-refused',
+      reason: 'door-open',
+    })
+  })
+
+  it('refuses an invalid room without burning it', () => {
+    const invalid = [...ship.spaces.values()].find((space) => {
+      const plan = ship.plans.get(space.tierId)
+      return (
+        (plan?.doorways.filter((door) => door.a === space.id || door.b === space.id).length ?? 0) >
+        1
+      )
+    })!
+    const refused = spatialCast(EMPTY_WORLD, null, invalid.id, centroid(invalid))
+    expect(refused.report).toMatchObject({
+      kind: 'spatial-anchor-refused',
+      reason: 'not-one-door',
+    })
+    expect(refused.world.spatial.burned).toEqual([])
+  })
+
+  it('opens only to visited rooms and renders a localized pair of apertures', () => {
+    const anchored = spatialCast({ ...EMPTY_WORLD, cameFrom: anchor.id }, null).world
+    const refused = spatialCast(anchored, destination.id)
+    expect(refused.report).toMatchObject({
+      kind: 'spatial-destination-refused',
+      reason: 'unvisited',
+    })
+
+    const remembered = {
+      ...anchored,
+      spatial: {
+        ...anchored.spatial,
+        visited: [anchor.id, destination.id],
+      },
+    }
+    const opened = spatialCast(remembered, destination.id)
+    expect(opened.report).toEqual({
+      kind: 'spatial-opened',
+      anchorId: anchor.id,
+      destinationId: destination.id,
+    })
+    const portals = apparitionsOn(ship, opened.world).filter(
+      (seen) => seen.kind === 'portal' && seen.portalKind === 'spatial',
+    )
+    expect(portals).toHaveLength(2)
+    expect(portals.every((portal) => portal.pair)).toBe(true)
+  })
+
+  it('crosses through the private route in both directions without opening the anchor door', () => {
+    const anchored = spatialCast(
+      {
+        ...EMPTY_WORLD,
+        cameFrom: anchor.id,
+        spatial: { ...EMPTY_WORLD.spatial, visited: [anchor.id, destination.id] },
+      },
+      null,
+    ).world
+    const opened = spatialCast(anchored, destination.id).world
+    const outward = spatialPortalExit(opened, anchor.id, null)!
+    expect(outward.to).toBe(destination.id)
+    const arrived = arriveInTour(outward.world, ship, destination.id)
+    expect(arrived.world.spatial.anchorId).toBe(anchor.id)
+    expect(arrived.world.spatial.transiting).toBeNull()
+
+    const homeward = spatialPortalExit(arrived.world, destination.id, null)!
+    expect(homeward.to).toBe(anchor.id)
+    const home = arriveInTour(homeward.world, ship, anchor.id)
+    expect(home.world.spatial.anchorId).toBe(anchor.id)
+    expect(home.world.spatial.burned).toEqual([])
+  })
+
+  it('burns the anchor forever when its physical door is used', () => {
+    const anchored = spatialCast(
+      { ...EMPTY_WORLD, cameFrom: anchor.id, trail: [destination.id] },
+      null,
+    ).world
+    const leftNormally = arriveInTour(anchored, ship, destination.id)
+    expect(leftNormally.report).toEqual({ kind: 'spatial-burned', spaceId: anchor.id })
+    expect(leftNormally.world.spatial.anchorId).toBeNull()
+    expect(leftNormally.world.spatial.burned).toContain(anchor.id)
+
+    const attemptedAgain = spatialCast(
+      { ...leftNormally.world, cameFrom: anchor.id },
+      null,
+      anchor.id,
+    )
+    expect(attemptedAgain.report).toMatchObject({
+      kind: 'spatial-anchor-refused',
+      reason: 'burned',
+    })
+  })
+})
 
 describe('the technique roster', () => {
   it('names only kinds the archive actually holds', () => {

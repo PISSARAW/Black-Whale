@@ -44,7 +44,9 @@ describe('where a report happened', () => {
   })
 
   it('places nothing for a cast that happened at the visitor', () => {
-    expect(placeOfReport({ kind: 'phasing', on: true })).toBeNull()
+    expect(
+      placeOfReport({ kind: 'spatial-anchor-refused', spaceId: null, reason: 'outside' }),
+    ).toBeNull()
     expect(placeOfReport({ kind: 'no-target' })).toBeNull()
   })
 

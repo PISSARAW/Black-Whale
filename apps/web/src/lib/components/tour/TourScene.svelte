@@ -61,6 +61,9 @@
     TENTACLES,
     apparitionsOn,
     coinAt,
+    portalMouths,
+    spatialMouthAt,
+    spatialMouths,
     wormMouthAt,
     wormMouths,
     type Apparition,
@@ -158,6 +161,7 @@
   import { SceneInsets } from '$lib/tour/sceneInsets'
   import { listenToSceneInput, sceneKeyIsForElsewhere } from '$lib/tour/sceneInput'
   import { PortalRenderer } from '$lib/tour/PortalRenderer'
+  import { DOOR_OPEN_RADIUS } from '$lib/tour/doorAnimator'
   import { TierView, type BuiltTierView, type RoomDetailMode } from '$lib/tour/TierView'
   import {
     AURA_LIGHT_INTENSITY,
@@ -563,6 +567,10 @@
      * when the visitor did not step into either of its ends.
      */
     onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
+    /** Asked when Luini enters either end of his localized spatial passage. */
+    onSpatial?: (spaceId: string | null, arrivedFrom: string | null) => string | null
+    /** The anchor's sole physical leaf has begun to open. */
+    onSpatialDoorOpen?: (spaceId: string) => void
     /**
      * What time it is aboard, at the event the walk is projecting.
      *
@@ -652,6 +660,8 @@
     hatsuRequiresZetsu = false,
     onArrive,
     onWorm,
+    onSpatial,
+    onSpatialDoorOpen,
     onFish,
     onOwl,
     onOwlSecond,
@@ -1476,33 +1486,6 @@
         paneMaterial.visible = !sealed
       }
 
-      /**
-       * Luini's walls, which the visitor is about to walk through.
-       *
-       * Phasing was a collision test that stopped being run: from inside the
-       * visitor's own head, the ship looked exactly as it always had until they
-       * happened to lean on a bulkhead. The steel goes half-transparent instead
-       * — the hull is still drawn, still lit, still there, and it has stopped
-       * being a boundary, which is the one thing the technique says.
-       */
-      let phased = false
-
-      function syncPhasing() {
-        if (world.phasing === phased) return
-        phased = world.phasing
-        // Both surface materials, because the two rooms with a window in them
-        // are steel like the rest of the deck: a hull that goes half
-        // transparent everywhere except the observation deck would be saying
-        // the bay is a different kind of wall, which it is not.
-        for (const steel of [material, skylitMaterial]) {
-          steel.transparent = phased
-          steel.opacity = phased ? 0.42 : 1
-          steel.depthWrite = !phased
-          steel.needsUpdate = true
-        }
-        edgeMaterial.opacity = phased ? 0.7 : 0.32
-      }
-
       /** Rebuilds the deck under the visitor when Nen has changed what is in it. */
       function syncDeck() {
         const key = worldKey(currentTierId)
@@ -1535,7 +1518,7 @@
 
       function applyVisibility(standingId: string | null) {
         const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
-        const mouths = wormMouths(ship, world)
+        const mouths = portalMouths(ship, world)
         const key = `${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
           .map((mouth) => mouth.spaceId)
           .join(',')}`
@@ -2243,7 +2226,7 @@
       let portalDeckKey = ''
 
       function syncPortalDecks() {
-        const mouths = wormMouths(ship, world)
+        const mouths = portalMouths(ship, world)
         const key = mouths.map((mouth) => `${mouth.spaceId}:${worldKey(mouth.tierId)}`).join('|')
         if (key === portalDeckKey) return
         portalDeckKey = key
@@ -4052,6 +4035,8 @@
       let arrivedFrom: string | null = null
       /** The end of Fugetsu's tunnel the visitor was last delivered to. */
       let wormFrom: string | null = null
+      let spatialFrom: string | null = null
+      let openedSpatialAnchor: string | null = null
       let lastSpaceId: string | null = null
       /** How long since the fish last took something, in seconds. */
       let sinceBite = 0
@@ -4257,7 +4242,6 @@
         syncEye()
         syncSight()
         hourView.setHour($comfort.shipHour, hour.hours)
-        syncPhasing()
         // The far deck first, so a mouth built this frame already has a room to
         // look at rather than a frame of void.
         syncPortalDecks()
@@ -4769,6 +4753,28 @@
         // Setting foot in a room is the event the hideout doors and the paper
         // dolls both wait on. Walking about inside one is not.
         const standingId = standing?.id ?? null
+
+        // The animated leaf and the rule share the same opening radius. Merely
+        // approaching the anchor's sole door is therefore enough to destroy
+        // the route; crossing the threshold is not required.
+        const anchorId = world.spatial.anchorId
+        if (!anchorId) openedSpatialAnchor = null
+        else if (standingId === anchorId && openedSpatialAnchor !== anchorId && activePlan) {
+          const door = activePlan.doorways.find(
+            (candidate) => candidate.a === anchorId || candidate.b === anchorId,
+          )
+          if (door) {
+            const middle: Vec2 = [
+              (door.start[0] + door.end[0]) / 2,
+              (door.start[1] + door.end[1]) / 2,
+            ]
+            if (Math.hypot(pointer[0] - middle[0], pointer[1] - middle[1]) <= DOOR_OPEN_RADIUS) {
+              openedSpatialAnchor = anchorId
+              onSpatialDoorOpen?.(anchorId)
+            }
+          }
+        }
+
         if (standingId !== lastSpaceId) {
           lastSpaceId = standingId
           // Sabine on the volume the blueprint already gives, crossfaded over the
@@ -4817,6 +4823,21 @@
             // Out of the far mouth rather than at the far room's door: a tunnel
             // whose exit was across the room would be a tunnel you fall out of.
             goTo(tunnel, { at: ends.find((end) => end.spaceId === tunnel)?.at })
+            return
+          }
+        }
+
+        // Luini's aperture is local too, but unlike Magical Worm it does not
+        // wear out: the sealed anchor is the price. The far mouth remains a
+        // route back until the physical anchor door is opened.
+        const spatialMouth = spatialMouthAt(ship, world, { at: pointer, tierId: currentTierId })
+        if (!spatialMouth) spatialFrom = null
+        else if (spatialMouth !== spatialFrom) {
+          const ends = spatialMouths(ship, world)
+          const passage = onSpatial?.(spatialMouth, spatialFrom)
+          if (passage) {
+            spatialFrom = passage
+            goTo(passage, { at: ends.find((end) => end.spaceId === passage)?.at })
             return
           }
         }

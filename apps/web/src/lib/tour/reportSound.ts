@@ -47,6 +47,10 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'worm-set': openAWormhole,
   'worm-open': openAWormhole,
   'worm-crossed': openAWormhole,
+  'spatial-anchored': openAWormhole,
+  'spatial-opened': openAWormhole,
+  'spatial-crossed': openAWormhole,
+  'spatial-burned': () => grindThroughSpace(false),
   teleported: skipThroughTime,
   watching: foldPaper,
   // Texture Surprise, which the walk played on a body and nowhere else. The
@@ -343,8 +347,6 @@ export function playTourReportSound(report: TourReport): void {
       return windTheArm(report.turns)
     case 'sealed':
       return strikeAGong(report.stage)
-    case 'phasing':
-      return grindThroughSpace(report.on)
     case 'tune-played':
       return playATune(report.tune)
     case 'dowsed':

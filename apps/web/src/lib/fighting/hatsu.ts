@@ -54,17 +54,24 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 1.35 : 1
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
-  return baton * risingSun * transformed * cyclotron * cantabile
+  const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
+  return baton * risingSun * transformed * cyclotron * cantabile * biohazard
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 0.68 : 1
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
-  return transformed * cantabile
+  const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
+  const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
+  return transformed * cantabile * biohazard * predator
 }
 
 export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
-  return fighter.hatsuEffects.futureSight > 0 || fighter.hatsuEffects.isolationFrames > 0
+  return (
+    fighter.hatsuEffects.futureSight > 0 ||
+    fighter.hatsuEffects.isolationFrames > 0 ||
+    fighter.hatsuEffects.cloneDodges > 0
+  )
 }
 
 export function consumeBaton(fighter: ArcadeFighter): ArcadeFighter {
@@ -85,9 +92,15 @@ export function consumeFutureSight(fighter: ArcadeFighter): ArcadeFighter {
 
 export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.hatsuEffects.futureSight > 0) return consumeFutureSight(fighter)
-  if (fighter.hatsuEffects.isolationFrames <= 0) return fighter
+  if (fighter.hatsuEffects.isolationFrames > 0) {
+    return {
+      ...fighter,
+      hatsuEffects: { ...fighter.hatsuEffects, isolationFrames: 0 },
+    }
+  }
+  if (fighter.hatsuEffects.cloneDodges <= 0) return fighter
   return {
     ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, isolationFrames: 0 },
+    hatsuEffects: { ...fighter.hatsuEffects, cloneDodges: fighter.hatsuEffects.cloneDodges - 1 },
   }
 }

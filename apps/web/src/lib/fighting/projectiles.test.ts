@@ -30,6 +30,12 @@ describe('ranged attacks', () => {
       'biscuit',
       'marayam',
       'phinks',
+      'shizuku',
+      'mizaistom',
+      'hanzo',
+      'rihan',
+      'zakuro',
+      'melody',
     ]
     for (const fighter of stoneThrowers) {
       expect(projectileProfile(fighter), fighter).toMatchObject({
@@ -43,6 +49,8 @@ describe('ranged attacks', () => {
     expect(projectileProfile('franklin').shape).toBe('bullet')
     expect(projectileProfile('illumi').shape).toBe('bullet')
     expect(projectileProfile('bonolenov').shape).toBe('orb')
+    expect(projectileProfile('hinrigh').shape).toBe('bullet')
+    expect(projectileProfile('leorio').shape).toBe('orb')
   })
 
   it('spawns a travelling projectile before applying damage', () => {

@@ -129,14 +129,13 @@ function special(rig: AnimatedHuman, fighter: FighterId, progress: number): void
   }
 }
 
-function extraSpecial(
-  rig: AnimatedHuman,
-  options: {
-    fighter: FighterId
-    gather: number
-    release: number
-  },
-): void {
+interface SpecialGesture {
+  fighter: FighterId
+  gather: number
+  release: number
+}
+
+function extraSpecial(rig: AnimatedHuman, options: SpecialGesture): void {
   const { fighter, gather, release } = options
   switch (fighter) {
     case 'feitan':
@@ -181,6 +180,46 @@ function extraSpecial(
       rig.figure.rotation.y -= 0.9 * gather - 1.3 * release
       rig.figure.rotation.z += 0.2 * gather
       rig.arms.forEach((arm) => (arm.rotation.x -= 1.15 * gather + 0.45 * release))
+      break
+    default:
+      secondWaveSpecial(rig, options)
+  }
+}
+
+function secondWaveSpecial(rig: AnimatedHuman, options: SpecialGesture): void {
+  const { fighter, gather, release } = options
+  switch (fighter) {
+    case 'shizuku':
+      rig.figure.rotation.y -= 0.7 * release
+      rig.arms[1].rotation.x -= 1.4 * gather
+      break
+    case 'hinrigh':
+      rig.figure.rotation.y += 0.6 * gather - 1.1 * release
+      rig.arms[0].rotation.z += 1.1 * gather
+      break
+    case 'mizaistom':
+      rig.arms[1].rotation.x -= 1.3 * release
+      rig.arms[0].rotation.z += 0.7 * gather
+      break
+    case 'leorio':
+      rig.figure.rotation.x += 0.3 * gather - 0.65 * release
+      rig.arms[1].rotation.x -= 1.7 * release
+      break
+    case 'hanzo':
+      rig.figure.rotation.y += 1.2 * gather - 1.6 * release
+      rig.knees.forEach((knee) => (knee.rotation.x += 0.4 * gather))
+      break
+    case 'rihan':
+      rig.head.rotation.y -= 0.35 * gather
+      rig.arms[1].rotation.x -= 1.15 * release
+      break
+    case 'zakuro':
+      rig.arms[0].rotation.z += 1.2 * gather
+      rig.arms[1].rotation.z -= 1.2 * gather
+      break
+    case 'melody':
+      rig.head.rotation.x += 0.2 * gather
+      rig.arms.forEach((arm) => (arm.rotation.z += 0.5 * gather))
       break
   }
 }

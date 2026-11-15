@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAttack, tickFight } from './engine'
-import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
+import {
+  consumeHatsuAvoidance,
+  hatsuAvoidsImpact,
+  hatsuDamageFactor,
+  hatsuDefenceFactor,
+} from './hatsu'
 import { hatsuFor } from './hatsu/registry'
 import { EMPTY_INPUT, type FightState } from './types'
 
@@ -249,5 +254,85 @@ describe('fighter Hatsu registry', () => {
     })
     expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
     expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
+  })
+
+  it('lets Shizuku drain a wounded target with Blinky', () => {
+    const ready = closeFight('shizuku', 'hisoka')
+    ready.player.health = 70
+    const struck = hatsuFor('shizuku').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'shizuku',
+      blocked: false,
+      concealed: false,
+    })
+    expect(struck.player.health).toBe(78)
+    expect(struck.opponent.health).toBe(92)
+    expect(struck.opponent.aura).toBeLessThan(ready.opponent.aura)
+  })
+
+  it('turns Hinrigh’s Biohazard into temporary attack and armour', () => {
+    const state = hatsuFor('hinrigh').onTrigger({
+      state: closeFight('hinrigh', 'hisoka'),
+      side: 'player',
+      source: 'hinrigh',
+    })
+    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
+    expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
+  })
+
+  it('gives Hanzo’s clone one complete dodge', () => {
+    const state = hatsuFor('hanzo').onTrigger({
+      state: closeFight('hanzo', 'hisoka'),
+      side: 'player',
+      source: 'hanzo',
+    })
+    expect(hatsuAvoidsImpact(state.player)).toBe(true)
+    expect(consumeHatsuAvoidance(state.player).hatsuEffects.cloneDodges).toBe(0)
+  })
+
+  it('lets Predator analyse and suppress an enemy Hatsu', () => {
+    const ready = closeFight('rihan', 'hisoka')
+    const struck = hatsuFor('rihan').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'rihan',
+      blocked: false,
+      concealed: false,
+    })
+    expect(struck.player.hatsuEffects.predatorFrames).toBe(180)
+    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(180)
+  })
+
+  it('applies the second wave’s three distinct control effects', () => {
+    const ready = closeFight('mizaistom', 'hisoka')
+    const impact = (source: 'mizaistom' | 'zakuro' | 'melody') =>
+      hatsuFor(source).onImpact({
+        state: ready,
+        side: 'player',
+        defenderSide: 'opponent',
+        source,
+        blocked: false,
+        concealed: false,
+      }).opponent.hatsuEffects
+    expect(impact('mizaistom').restrainedFrames).toBe(90)
+    expect(impact('zakuro').bloodBoundFrames).toBe(100)
+    expect(impact('melody').entrancedFrames).toBe(75)
+  })
+
+  it('makes Leorio’s remote fist add a second impact', () => {
+    const ready = closeFight('leorio', 'hisoka')
+    const struck = hatsuFor('leorio').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'leorio',
+      blocked: false,
+      concealed: false,
+    })
+    expect(struck.opponent.health).toBe(92)
+    expect(struck.opponent.hitStun).toBe(30)
   })
 })

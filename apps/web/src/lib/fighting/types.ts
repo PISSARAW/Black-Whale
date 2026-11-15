@@ -19,6 +19,14 @@ export type FighterId =
   | 'illumi'
   | 'kalluto'
   | 'bonolenov'
+  | 'shizuku'
+  | 'hinrigh'
+  | 'mizaistom'
+  | 'leorio'
+  | 'hanzo'
+  | 'rihan'
+  | 'zakuro'
+  | 'melody'
 
 export type FighterPose =
   'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'ranged' | 'hit' | 'ko'
@@ -106,6 +114,12 @@ export interface FighterHatsuEffects {
   needleFrames: number
   serpentMarks: number
   cantabileFrames: number
+  biohazardFrames: number
+  restrainedFrames: number
+  cloneDodges: number
+  predatorFrames: number
+  bloodBoundFrames: number
+  entrancedFrames: number
   lastHatsuReceived: FighterId | null
 }
 

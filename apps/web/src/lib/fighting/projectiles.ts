@@ -112,6 +112,22 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 11,
     size: [1.25, 1],
   }),
+  hinrigh: projectile({
+    labels: ['Arme Biohazard', 'Biohazard weapon'],
+    shape: 'bullet',
+    colour: '#34d399',
+    speed: 64,
+    damage: 10,
+    size: [0.85, 0.32],
+  }),
+  leorio: projectile({
+    labels: ['Poing émissif', 'Emissive fist'],
+    shape: 'orb',
+    colour: '#38bdf8',
+    speed: 68,
+    damage: 11,
+    size: [1, 0.75],
+  }),
 }
 
 const THROWN_STONE = projectile({

@@ -79,7 +79,7 @@ function extendedLightMove(options: NormalMoveOptions): boolean {
       rig.arms[1].rotation.x -= 0.75 * gather + 1.05 * extension
       return true
     default:
-      return false
+      return secondWaveLight(options)
   }
 }
 
@@ -131,8 +131,80 @@ function extendedHeavyMove(options: NormalMoveOptions): boolean {
       rig.legs[1].rotation.x -= 0.75 * chamber + 1.1 * extension
       return true
     default:
+      return secondWaveHeavy(options)
+  }
+}
+
+function secondWaveLight(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension } = beat
+  switch (fighter) {
+    case 'shizuku':
+      rig.arms[1].rotation.x -= 0.7 * gather + 1.1 * extension
+      break
+    case 'hinrigh':
+      rig.figure.rotation.y -= 0.55 * extension
+      break
+    case 'mizaistom':
+      rig.arms[1].rotation.x -= 0.9 * extension
+      break
+    case 'leorio':
+      rig.figure.rotation.x -= 0.35 * extension
+      break
+    case 'hanzo':
+      rig.figure.rotation.y += 0.9 * gather - 1.1 * extension
+      break
+    case 'rihan':
+      rig.arms[0].rotation.z += 0.75 * gather
+      rig.figure.rotation.y -= 0.25 * extension
+      break
+    case 'zakuro':
+      rig.arms[1].rotation.z -= 0.8 * gather + 0.4 * extension
+      rig.figure.rotation.z -= 0.18 * extension
+      break
+    case 'melody':
+      rig.figure.rotation.y -= 0.4 * extension
+      break
+    default:
       return false
   }
+  return true
+}
+
+function secondWaveHeavy(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension, chamber } = beat
+  switch (fighter) {
+    case 'shizuku':
+      rig.figure.rotation.y -= 0.8 * gather - 1.2 * extension
+      break
+    case 'hinrigh':
+      rig.legs[1].rotation.x -= 0.8 * chamber + 1.1 * extension
+      break
+    case 'mizaistom':
+      rig.figure.rotation.x += 0.2 * gather - 0.5 * extension
+      break
+    case 'leorio':
+      rig.arms[1].rotation.x -= 1.5 * gather + 1.2 * extension
+      break
+    case 'hanzo':
+      rig.legs[0].rotation.z += 0.75 * extension
+      rig.figure.rotation.y += 0.22 * extension
+      break
+    case 'rihan':
+      rig.figure.rotation.y += 0.65 * gather - 1.05 * extension
+      break
+    case 'zakuro':
+      rig.arms[0].rotation.z += 1.1 * gather
+      rig.figure.rotation.z -= 0.24 * extension
+      break
+    case 'melody':
+      rig.legs[1].rotation.x -= 0.6 * chamber + 0.8 * extension
+      break
+    default:
+      return false
+  }
+  return true
 }
 
 /** A character-specific quick attack, authored around the first active frame. */

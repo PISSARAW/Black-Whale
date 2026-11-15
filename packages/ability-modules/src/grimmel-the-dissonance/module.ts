@@ -52,6 +52,15 @@ export const grimmelTheDissonance = defineAbility({
     action: 'Gather collective will',
   },
 
+  arena: {
+    effect: 'impact',
+    cost: 32,
+    persistent: false,
+    condition: 'united-marked-supporters',
+    risk: 'life-and-random-soul',
+    mechanic: 'collective-arrow',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

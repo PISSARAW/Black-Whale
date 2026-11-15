@@ -5,7 +5,7 @@ import { HATSU_PROFILES, HATSU_VISUAL_SIGNATURE_BY_KIND } from '../../nen/hatsuR
 import { arenaHatsuAudioSignature } from '../audio'
 import { BLACK_WHALE_ARENA_CONTRACTS } from './blackWhale'
 
-describe('production treatment for 24 Black Whale Hatsu', () => {
+describe('production treatment for 32 Black Whale Hatsu', () => {
   it('assigns a TourSense visual and a dedicated two-tone sound to every Hatsu', () => {
     const sounds = new Set<string>()
     for (const contract of BLACK_WHALE_ARENA_CONTRACTS) {
@@ -15,7 +15,7 @@ describe('production treatment for 24 Black Whale Hatsu', () => {
       const sound = arenaHatsuAudioSignature(profile)
       sounds.add(`${sound.base}:${sound.accent}:${sound.duration}:${sound.wave}`)
     }
-    expect(sounds.size).toBe(24)
+    expect(sounds.size).toBe(32)
   })
 
   it('executes a specialized state interaction for every contract', () => {
@@ -43,6 +43,38 @@ describe('production treatment for 24 Black Whale Hatsu', () => {
     expect(predator.opponent.empowered).toBe(0)
     expect(steal.opponent.mode).toBe('zetsu')
     expect(steal.opponent.aura).toBeLessThan(base.opponent.aura)
+  })
+
+  it('gives the expanded roster distinct attack and defence tools', () => {
+    const emperor = cast(scenario('emperor-time'), 'emperor-time')
+    const chain = cast(scenario('chain-jail'), 'chain-jail')
+    const melody = cast(scenario('melody-enchanting-music'), 'melody-enchanting-music')
+    const paper = cast(scenario('dance-of-the-serpents-bite'), 'dance-of-the-serpents-bite')
+    const weapon = cast(
+      scenario('padaille-weapon-transformation'),
+      'padaille-weapon-transformation',
+    )
+    const snake = cast(scenario('snake-arm'), 'snake-arm')
+    const arrow = cast(scenario('grimmel-the-dissonance'), 'grimmel-the-dissonance')
+
+    expect(emperor.player).toMatchObject({ ken: true, gyo: true, empowered: 8 })
+    expect(chain.opponent).toMatchObject({ mode: 'zetsu', bound: 3.5 })
+    expect(melody.player.ken).toBe(true)
+    expect(melody.opponent.cooldown).toBeGreaterThanOrEqual(1.5)
+    expect(paper.lastEvent?.technique).toBe('hatsu')
+    expect(weapon.lastEvent?.technique).toBe('hatsu')
+    expect(snake.opponent.bound).toBe(2.8)
+    expect(arrow.lastEvent?.technique).toBe('hatsu')
+  })
+
+  it('requires Cross Game to warn before restraining', () => {
+    const warning = cast(scenario('cross-game'), 'cross-game')
+    const ready = { ...warning, player: { ...warning.player, cooldown: 0 } }
+    const restraint = cast(ready, 'cross-game')
+    expect(warning.player.hatsuSequence?.id).toBe('cross-game')
+    expect(warning.opponent.bound).toBe(0)
+    expect(restraint.player.hatsuSequence).toBeNull()
+    expect(restraint.opponent.bound).toBe(3)
   })
 
   it('requires canonical preparation for future sight and Predator', () => {

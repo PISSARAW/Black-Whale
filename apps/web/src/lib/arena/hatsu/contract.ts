@@ -6,7 +6,7 @@ import { ARENA_CONTRACTS } from './contracts.gen'
 /**
  * What the arena charges for a hatsu, and what the caster exposes by using it.
  *
- * These twenty-eight contracts used to be written here and in `blackWhale.ts`,
+ * The original twenty-eight contracts used to be written here and in `blackWhale.ts`,
  * beside modules that already enforced the very conditions they named — the
  * sixth declaration of the catalogue ADR-001 counts. They are now declared in
  * each module's `arena` block and compiled into `contracts.gen.ts`; what stays

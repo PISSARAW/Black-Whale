@@ -38,6 +38,15 @@ export const crossGame = defineAbility({
     action: 'Present the Blue card',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 12,
+    persistent: true,
+    condition: 'warning-before-restraint',
+    risk: 'brief-reusable-effect',
+    mechanic: 'judicial-restraint',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

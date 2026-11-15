@@ -4,10 +4,10 @@ import { arenaHatsuEffect, worksInArena } from '../hatsu'
 import { arenaDefinition } from './contract'
 import { BLACK_WHALE_ARENA_CONTRACTS } from './blackWhale'
 
-describe('the 24 Black Whale Arena Hatsu', () => {
-  it('registers exactly 24 distinct, canonical profiles', () => {
-    expect(BLACK_WHALE_ARENA_CONTRACTS).toHaveLength(24)
-    expect(new Set(BLACK_WHALE_ARENA_CONTRACTS.map(({ id }) => id)).size).toBe(24)
+describe('the 32 Black Whale Arena Hatsu', () => {
+  it('registers exactly 32 distinct, canonical profiles', () => {
+    expect(BLACK_WHALE_ARENA_CONTRACTS).toHaveLength(32)
+    expect(new Set(BLACK_WHALE_ARENA_CONTRACTS.map(({ id }) => id)).size).toBe(32)
     for (const contract of BLACK_WHALE_ARENA_CONTRACTS) {
       expect(
         HATSU_PROFILES.some(({ id }) => id === contract.id),
@@ -27,5 +27,19 @@ describe('the 24 Black Whale Arena Hatsu', () => {
         risk: expect.any(String),
       })
     }
+  })
+
+  it('adds combatants with both offensive and defensive Hatsu', () => {
+    const additions = [
+      'emperor-time',
+      'chain-jail',
+      'melody-enchanting-music',
+      'dance-of-the-serpents-bite',
+      'padaille-weapon-transformation',
+      'snake-arm',
+      'grimmel-the-dissonance',
+      'cross-game',
+    ]
+    expect(BLACK_WHALE_ARENA_CONTRACTS.filter(({ id }) => additions.includes(id))).toHaveLength(8)
   })
 })

@@ -100,13 +100,10 @@ describe('compiling the arena contracts', () => {
     })
 
     expect(problems).toEqual([])
-    expect(contracts).toHaveLength(29)
-    // Twenty-four individualised tactics, and the five the mode inherited from
-    // the earlier arcs, which bring none. Combo Master is the fifth: it came in
-    // after this count was written, and nothing said so because nothing in the
-    // repository ran this file — the package had no vitest config, so its whole
-    // suite answered "No test files found".
-    expect(contracts.filter((contract) => contract.mechanic)).toHaveLength(24)
+    expect(contracts).toHaveLength(37)
+    // Thirty-two individualised tactics, plus five abilities inherited from
+    // earlier arcs that keep their broad duel effect without a roster mechanic.
+    expect(contracts.filter((contract) => contract.mechanic)).toHaveLength(32)
     // The order a fighter sees is the catalogue's order, as in the registry.
     const catalogueOrder = CATALOGUE.abilities.map((ability) => ability.id)
     expect(contracts.map((contract) => contract.id)).toEqual(

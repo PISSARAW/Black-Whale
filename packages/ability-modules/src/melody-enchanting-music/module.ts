@@ -39,6 +39,15 @@ export const melodyEnchantingMusic = defineAbility({
     action: 'Play the first note',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 16,
+    persistent: true,
+    condition: 'target-can-hear-performance',
+    risk: 'interrupted-breath',
+    mechanic: 'pacification',
+  },
+
   conditions: [canUseNen()],
 
   targets: [zone()],

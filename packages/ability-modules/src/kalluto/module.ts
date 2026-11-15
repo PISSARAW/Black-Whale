@@ -157,6 +157,15 @@ export const danceOfTheSerpentsBite = defineAbility({
     action: 'Begin the paper dance',
   },
 
+  arena: {
+    effect: 'barrage',
+    cost: 14,
+    persistent: true,
+    condition: 'confetti-marked-target',
+    risk: 'sustained-paper-swarm',
+    mechanic: 'paper-swarm',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [person()],

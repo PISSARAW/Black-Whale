@@ -252,6 +252,15 @@ export const padailleWeaponTransformation = defineAbility({
     action: 'Swing whatever the arm became',
   },
 
+  arena: {
+    effect: 'impact',
+    cost: 12,
+    persistent: true,
+    condition: 'transformed-limb',
+    risk: 'random-weapon-shape',
+    mechanic: 'body-weapon',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],
@@ -345,6 +354,15 @@ export const snakeArm = defineAbility({
     cost: 'Maintained partial transformation',
     color: '#86c98a',
     action: 'Choose something to restrain',
+  },
+
+  arena: {
+    effect: 'bind',
+    cost: 14,
+    persistent: true,
+    condition: 'transformed-arm-contact',
+    risk: 'maintained-partial-transformation',
+    mechanic: 'serpent-restraint',
   },
 
   conditions: [canUseNen(), isConscious()],

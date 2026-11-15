@@ -47,6 +47,14 @@ export type ArenaMechanic =
   | 'vacuum'
   | 'threads'
   | 'manipulation'
+  | 'full-efficiency'
+  | 'chain-restraint'
+  | 'pacification'
+  | 'paper-swarm'
+  | 'body-weapon'
+  | 'serpent-restraint'
+  | 'collective-arrow'
+  | 'judicial-restraint'
 
 export interface AbilityArenaContract {
   effect: ArenaEffect

@@ -4,12 +4,14 @@ etage: 1
 couvre:
   - apps/web/src/lib/arena/**
   - apps/web/src/lib/combat/**
+  - apps/web/src/lib/fighting/**
   - apps/web/src/lib/hunt/**
   - apps/web/src/lib/infiltration/**
   - apps/web/src/lib/investigation/**
   - apps/web/src/lib/reconstruction/**
   - apps/web/src/lib/strategy/**
   - apps/web/src/routes/arena/**
+  - apps/web/src/routes/fighting/**
   - apps/web/src/routes/hunt/**
   - apps/web/src/routes/infiltration/**
   - apps/web/src/routes/investigation/**
@@ -28,12 +30,12 @@ decisions:
 
 # Les modes
 
-> Les six modes sont des tranches verticales jouables (le jeu de Morena, côté
+> Les sept modes sont des tranches verticales jouables (le jeu de Morena, côté
 > visite, a sa [fiche propre](../jeu-de-morena.md)). Ce territoire définit ce que "jouable" signifie ici et implémente le patron Morena : les règles vivent dans le module, le rendu dans la route.
 
 ## Promet
 
-- Implémenter des expériences autonomes (`arena`, `hunt`, `infiltration`, `investigation`, `reconstruction`, `strategy`).
+- Implémenter des expériences autonomes (`arena`, `fighting`, `hunt`, `infiltration`, `investigation`, `reconstruction`, `strategy`).
 - Fournir un moteur partagé de résolution de conflits au corps-à-corps via `combat`.
 - Maintenir un état isolé par mode avec son propre loop et ses propres règles d'avancement.
 
@@ -48,6 +50,7 @@ decisions:
 Le patron Morena est le même pour tous : les règles vivent dans le module, le rendu dans la route.
 
 - **Arena** : `apps/web/src/routes/arena/+page.ts` lit les paramètres → `apps/web/src/lib/arena/ai.ts` pilote → `apps/web/src/lib/combat/reducer.ts` → `apps/web/src/routes/arena/+page.svelte` rend le duel.
+- **Fighting** : `apps/web/src/lib/fighting/engine.ts` résout le duel arcade 2D → `apps/web/src/routes/fighting/+page.svelte` rend la sélection, la scène et les contrôles.
 - **Hunt** : Le joueur navigue via `TourScene` → Contact initié → `apps/web/src/lib/hunt/state.ts` → `apps/web/src/lib/hunt/duel/reducer.ts`.
 - **Infiltration** : Missions posées → `apps/web/src/lib/infiltration/loop.ts` fait avancer les témoins et l'alerte.
 - **Investigation** : Dossiers de `apps/web/src/lib/investigation/catalog.ts` listés → résolus dans `apps/web/src/lib/investigation/case.ts`.
@@ -58,6 +61,7 @@ Le patron Morena est le même pour tous : les règles vivent dans le module, le 
 
 - `apps/web/src/lib/arena` : Limité à un duel 1v1 contre une IA. Ne connaît pas la traque ni le vaisseau entier.
 - `apps/web/src/lib/combat` : Moteur pur de combat, ne rend rien et n'a aucune route associée.
+- `apps/web/src/lib/fighting` : Duel arcade 2D autonome contre une IA, sans campagne ni sauvegarde partagée avec Arena.
 - `apps/web/src/lib/hunt` : Gère l'évasion et les duels de contact. Ne réutilise pas `arena` et s'appuie sur `TourScene` pour le mouvement.
 - `apps/web/src/lib/infiltration` : Définit sa propre logique de furtivité et de témoins, séparée du graphe de navigation de `hunt`.
 - `apps/web/src/lib/investigation` : N'accède pas à la base canon en direct, les dossiers sont prédéfinis.

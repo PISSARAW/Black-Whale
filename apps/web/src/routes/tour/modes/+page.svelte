@@ -1,6 +1,6 @@
 <script lang="ts">
   import Seo from '$lib/components/Seo.svelte'
-  import { link, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
   import { breadcrumbSchema } from '$lib/seo/schema'
 
   const modes = $derived([
@@ -47,6 +47,26 @@
       number: '08',
       accent: '#facc15',
       copy: $t.tour.modes.strategy,
+    },
+    {
+      key: 'fighting',
+      href: '/fighting',
+      number: '09',
+      accent: '#d5ac42',
+      copy:
+        $locale === 'fr'
+          ? {
+              tag: 'Duel 2D · Nouveau',
+              title: 'Black Whale: Clash',
+              description:
+                'Choisissez un combattant du Black Whale et affrontez une IA dans un duel arcade au Nen.',
+            }
+          : {
+              tag: '2D duel · New',
+              title: 'Black Whale: Clash',
+              description:
+                'Choose a Black Whale fighter and face the AI in a Nen-powered arcade duel.',
+            },
     },
   ])
 </script>

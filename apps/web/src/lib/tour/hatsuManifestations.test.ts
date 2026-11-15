@@ -32,6 +32,23 @@ describe('physical Nen manifestations', () => {
     expect(active).toEqual(before)
   })
 
+  it("leaves Laplace Devil's beast at the activation point", () => {
+    const anchor: [number, number] = [visitor.at[0] + 2, visitor.at[1] - 1]
+    const active = world({
+      holding: 'future',
+      foreseen: {
+        spaceId: space.id,
+        at: visitor.at,
+        anchor: { spaceId: space.id, tierId: space.tierId, at: anchor },
+      },
+    })
+    const [beast] = hatsuManifestations(ship, active, {
+      visitor: { ...visitor, at: [visitor.at[0] + 8, visitor.at[1]] },
+    })
+    expect(beast.kind).toBe('tserriednich-second')
+    expect(beast.at).toEqual(anchor)
+  })
+
   it('does not summon a visible body for Woble even from a legacy ghost payload', () => {
     expect(
       beastApparitions(ship, [], {

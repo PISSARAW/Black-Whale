@@ -3351,7 +3351,7 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
 
   // Ten seconds on, taken once. The vision does not revise itself: that is
   // what makes diverging from it worth anything.
-  future: ({ world, ship, target, at, input }) => {
+  future: ({ world, ship, target, at, input, standingIn }) => {
     const seen = tenSecondsOn(ship, world, {
       tierId: target.tierId,
       at,
@@ -3359,7 +3359,13 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     })
     if (!seen) return { world, report: { kind: 'no-target' } }
     return {
-      world: { ...world, foreseen: seen },
+      world: {
+        ...world,
+        foreseen: {
+          ...seen,
+          anchor: { spaceId: standingIn ?? target.id, tierId: target.tierId, at: [...at] },
+        },
+      },
       report: { kind: 'foreseen', spaceId: seen.spaceId },
     }
   },

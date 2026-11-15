@@ -16,7 +16,7 @@ import {
 export const PARALLEL_FUTURE_WINDOW_SECONDS = 10
 
 /**
- * Parallel Future — Tserriednich Hui Guo Rou
+ * Laplace Devil — Tserriednich Hui Guo Rou
  *
  * Not an effect: a simulation branch. Activating forks ten seconds of predicted
  * events; holding slides that window; concluding merges the predicted branch
@@ -29,18 +29,18 @@ export const PARALLEL_FUTURE_WINDOW_SECONDS = 10
  */
 export const parallelFuture = defineAbility({
   id: 'parallel-future',
-  name: 'Parallel Future',
+  name: 'Laplace Devil',
   owner: 'prince-tserriednich',
   category: 'specialist',
 
   site: {
     kind: 'future',
     instruction:
-      'Observe next-chapter bodies for ten seconds and click possible actions to leave predicted afterimages while choosing a divergent reality.',
-    rule: 'Everyone except Tserriednich continues perceiving the immutable prediction even when his real actions change.',
-    cost: 'Complete Zetsu · ten-second vision',
+      'Walk the detached ten-second vision, then return to the activation point and diverge from the predicted afterimage.',
+    rule: 'The beast fixes the illusion to a 36-metre field; people outside it at activation are unaffected, and leaving it or releasing Zetsu ends the effect.',
+    cost: 'Complete Zetsu · stored aura · ten-second vision',
     color: '#7dd3fc',
-    action: 'Enter the ten-second future',
+    action: 'Activate Laplace Devil',
   },
 
   arena: {

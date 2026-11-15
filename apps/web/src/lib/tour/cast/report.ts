@@ -358,6 +358,7 @@ export type TourReport =
   | { kind: 'owl-recalled'; rooms: number }
   | { kind: 'foreseen'; spaceId: string }
   | { kind: 'vision-ended' }
+  | { kind: 'laplace-ended'; reason: 'range' | 'zetsu' | 'battery' }
   | { kind: 'diverged'; spaceId: string; wentTo: string }
   | { kind: 'written'; spaceId: string }
   | { kind: 'line-taken'; spaceId: string; lines: number }

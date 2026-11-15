@@ -15,11 +15,32 @@ type Model = {
 }
 const HELD_MODELS: Partial<Record<HatsuInteractionKind, Model>> = {
   restoration: { id: 'cookie', kind: 'cookie', size: 1, height: 0 },
-  future: { id: 'tserriednich-second', kind: 'tserriednich-second', size: 0.75, height: 0 },
   puppet: { id: 'black-voice-phone', kind: 'phone', size: 0.18, height: 1, carried: true },
   divination: { id: 'love-dial', kind: 'phone', size: 0.18, height: 1, carried: true, stage: 1 },
   staff: { id: 'priest-staff', kind: 'staff', size: 0.7, height: 1.1, carried: true },
   pocket: { id: 'fun-fun-cloth', kind: 'cloth', size: 0.5, height: 1, carried: true },
+}
+
+/** Laplace Devil leaves its beast at the point where the vision was activated. */
+function laplaceBeast(ship: Ship, world: TourWorld): Apparition[] {
+  const anchor = world.foreseen?.anchor
+  const space = anchor ? ship.spaces.get(anchor.spaceId) : null
+  const plan = anchor ? ship.plans.get(anchor.tierId) : null
+  if (!anchor || !space || !plan) return []
+  return [
+    {
+      id: 'tserriednich-second',
+      kind: 'tserriednich-second',
+      size: 0.75,
+      stage: 0,
+      spaceId: space.id,
+      tierId: anchor.tierId,
+      at: anchor.at,
+      y: floorOf(space, plan.tier),
+      colour: 0xd4cec6,
+      hidden: false,
+    },
+  ]
 }
 
 function hasDolphin(world: TourWorld): boolean {
@@ -149,6 +170,7 @@ export function hatsuManifestations(
 ): Apparition[] {
   return [
     ...visitorManifestations(ship, world, visitor),
+    ...laplaceBeast(ship, world),
     ...hanzoBody(ship, world),
     ...bloodSnakes(ship, world),
     ...biohazard(ship, world, seconds),

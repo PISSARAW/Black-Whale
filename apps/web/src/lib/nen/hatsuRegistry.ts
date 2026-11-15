@@ -179,7 +179,7 @@ export const HATSU_VISUAL_SIGNATURE_BY_KIND = {
     form: 'construct',
     motion: 'flicker',
   },
-  future: { glyph: '◫', manifestation: 'Parallel future frame', form: 'field', motion: 'flicker' },
+  future: { glyph: '◫', manifestation: 'Laplace Devil field', form: 'field', motion: 'flicker' },
   arrow: { glyph: '➶', manifestation: 'Grimmel soul arrow', form: 'weapon', motion: 'strike' },
   guardian: {
     glyph: '♙',

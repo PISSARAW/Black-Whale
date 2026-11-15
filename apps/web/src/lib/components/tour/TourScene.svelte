@@ -188,6 +188,7 @@
   import { buildVowApparition } from '$lib/tour/apparitionVowView'
   import { buildAnimalApparition } from '$lib/tour/apparitionAnimalView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
+  import { outsideLaplaceField } from '$lib/tour/LaplaceDevilEffect'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import { auraSightOf } from '$lib/tour/auraSight'
   import { pressTen, wasRefused, type NenOutcome } from '$lib/tour/nenPress'
@@ -283,6 +284,10 @@
      * an unchanged prop is not a second cast.
      */
     flash?: (TourFlash & { seq: number }) | null
+    /** The detached ten-second dream currently being walked. */
+    futureVisionActive?: boolean
+    /** The real visitor crossed the beast's fixed 36-metre field. */
+    onLaplaceEnd?: (reason: 'range') => void
     /** Whether a technique the walk answers to is active, so aiming is live. */
     aiming?: boolean
     /**
@@ -628,6 +633,8 @@
     concert = { mode: null, playing: false },
     nenAvailability = {},
     flash = null,
+    futureVisionActive = false,
+    onLaplaceEnd,
     aiming = false,
     selfCastable = false,
     hands = null,
@@ -3178,7 +3185,6 @@
       /** Starts whichever of the two the page has just handed over. */
       function syncFlash() {
         if (!flash || !hatsuEffects.play(flash)) return
-        if (flash.kind === 'rewind') hatsuEffects.startRewind()
         if (flash.kind === 'lash') {
           lashing = flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
         }
@@ -4224,12 +4230,12 @@
         if (!plan) return
 
         // One clock for everything the walk animates, and it is not the wall's:
-        // Parallel Future moves it back ten seconds, and the room does again
-        // exactly what it did — see `HatsuRewindEffect`.
+        // Laplace Devil's dream consumes ten seconds for the visitor but none
+        // for the ship, so the scene clock returns to its activation instant.
         // Read before anything is placed rather than after, because the marks
         // The Sun and Moon leaves are put where their things are *now*, and a
         // thing that wanders is somewhere new every frame.
-        const clock = now / 1000 - hatsuEffects.rewindOffset
+        const clock = now / 1000 - hatsuEffects.laplaceClockOffset
         // Canon state keeps advancing, but decorative cycles do not. A fixed
         // phase preserves the information carried by every manifestation
         // without leaving birds orbiting, marks pulsing or dust swimming when
@@ -4265,15 +4271,6 @@
         })
         runLash(delta)
         syncGum(visualClock)
-        hatsuEffects.updateRewind({
-          clock,
-          position: pointer,
-          yaw,
-          ground,
-          delta,
-          reducedMotion: $reducedMotion,
-        })
-
         // The fish feed on the clock rather than on a threshold: they are drawn
         // now, and a fish that swims through a coffin and leaves it standing is
         // not eating. What they take is still the pure layer's to decide.
@@ -4370,7 +4367,7 @@
         // it, and where the drift has it this instant.
         const loose = solidWalls(ship, world, {
           tierId: currentTierId,
-          seconds: now / 1000 - hatsuEffects.rewindOffset,
+          seconds: now / 1000 - hatsuEffects.laplaceClockOffset,
         })
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
@@ -4525,6 +4522,39 @@
             return
           }
         }
+
+        const laplaceReset = hatsuEffects.updateLaplace({
+          clock,
+          tierId: currentTierId,
+          position: pointer,
+          yaw,
+          pitch,
+          ground,
+          delta,
+          reducedMotion: $reducedMotion,
+          visionActive: futureVisionActive,
+          abilityActive: Boolean(world.foreseen),
+        })
+        if (laplaceReset) {
+          yaw = laplaceReset.yaw
+          pitch = laplaceReset.pitch
+          ground = laplaceReset.ground
+          if (laplaceReset.tierId !== currentTierId) {
+            loadTier(laplaceReset.tierId, laplaceReset.position, laplaceReset.ground)
+            report()
+            return
+          }
+          pointer = [...laplaceReset.position]
+          report()
+        }
+
+        const laplaceAnchor = world.foreseen?.anchor
+        if (
+          laplaceAnchor &&
+          !futureVisionActive &&
+          outsideLaplaceField(laplaceAnchor, { tierId: currentTierId, at: pointer })
+        )
+          onLaplaceEnd?.('range')
 
         if (world.puppet === puppetId && world.puppet && walking) {
           if (!world.solids[world.puppet]) world.solids[world.puppet] = {}

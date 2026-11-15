@@ -40,6 +40,9 @@ import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nen
 import type { AuraPressure } from '$lib/tour/auraReserve'
 import type { NenRefusalCode } from '$lib/tour/nenRefusal'
 
+/** A Tour-scale unit per beat; the manga leaves the beast's real depletion ratio unknown. */
+const LAPLACE_STORED_AURA_PER_SECOND = 1
+
 /** Aura ends; route memory and permanently burnt anchors do not. */
 const rememberedEmptyWorld = (world: TourWorld): TourWorld => ({
   ...EMPTY_WORLD,
@@ -122,6 +125,7 @@ export class TourHatsuSession {
   }
   private wasFutureVisible = false
   private futureArmed = false
+  private futureWorldSnapshot: TourWorld | null = null
   private activationKind: HatsuInteractionKind | null = null
   private unsubscribeFuture: (() => void) | null = null
 
@@ -135,7 +139,10 @@ export class TourHatsuSession {
       if (changedKind && context.activeKind === 'future' && !this.futureArmed)
         parallelFutureVisible.set(false)
       if (!context.hasAura || !this.canUse(context.activeKind)) {
-        if (context.activeKind === 'future') parallelFutureVisible.set(false)
+        if (context.activeKind === 'future') {
+          parallelFutureVisible.set(false)
+          this.futureWorldSnapshot = null
+        }
         const world = untrack(() => this.options.read().world)
         this.options.updateWorld(rememberedEmptyWorld(world))
         this.options.updateReport(null)
@@ -165,6 +172,8 @@ export class TourHatsuSession {
         this.futureArmed &&
         active?.id === 'parallel-future'
       ) {
+        if (this.futureWorldSnapshot) this.options.updateWorld(this.futureWorldSnapshot)
+        this.futureWorldSnapshot = null
         const report: TourReport = { kind: 'vision-ended' }
         this.options.updateReport(report)
         this.options.show(report)
@@ -177,6 +186,7 @@ export class TourHatsuSession {
   /** Starts a fresh ten-second window only after a valid Tour cast in Zetsu. */
   armFutureVision() {
     this.futureArmed = false
+    this.futureWorldSnapshot = structuredClone(this.options.read().world)
     parallelFutureVisible.set(false)
     queueMicrotask(() => {
       if (
@@ -194,6 +204,21 @@ export class TourHatsuSession {
     this.unsubscribeFuture?.()
     this.unsubscribeFuture = null
     this.futureArmed = false
+    this.futureWorldSnapshot = null
+  }
+
+  /** Ends the maintained illusion without choosing a different Nen mode. */
+  endFuture = (reason: 'range' | 'zetsu' | 'battery') => {
+    const world = this.options.read().world
+    if (!world.foreseen) return
+    const restored = this.futureWorldSnapshot ?? world
+    parallelFutureVisible.set(false)
+    this.futureArmed = false
+    this.futureWorldSnapshot = null
+    this.options.updateWorld({ ...restored, foreseen: null })
+    const report: TourReport = { kind: 'laplace-ended', reason }
+    this.options.updateReport(report)
+    this.options.show(report)
   }
 
   turn = (requested: HatsuInteractionKind) => {
@@ -222,6 +247,12 @@ export class TourHatsuSession {
   /** One second of the walk's beat: the reserve moves, and an empty body lets go. */
   breathe = (pressure: AuraPressure = 'none') => {
     const before = this.reserve
+    const context = this.options.read()
+    if (context.activeKind === 'future' && context.world.foreseen && this.nen.mode === 'zetsu') {
+      this.reserve = Math.max(0, this.reserve - LAPLACE_STORED_AURA_PER_SECOND)
+      if (before > 0 && this.reserve === 0) this.endFuture('battery')
+      return
+    }
     this.reserve = breathe(this.reserve, this.nen, 1, pressure)
     if (this.reserve > 0 || before === 0) return
     this.staggeredUntil = Date.now() + 1_500
@@ -259,7 +290,10 @@ export class TourHatsuSession {
       saveAwakened()
     }
     if (!this.canUse(this.options.read().activeKind)) {
-      if (this.options.read().activeKind === 'future') parallelFutureVisible.set(false)
+      if (this.options.read().activeKind === 'future') {
+        parallelFutureVisible.set(false)
+        this.futureWorldSnapshot = null
+      }
       const world = this.options.read().world
       this.options.updateWorld(rememberedEmptyWorld(world))
       this.options.updateReport(null)

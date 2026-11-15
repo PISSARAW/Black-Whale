@@ -1363,6 +1363,12 @@ export const en = {
         owlRecalled: (rooms: number) =>
           `The owl is off · ${rooms} kept anyway, as the walk always does`,
         foreseen: (room: string) => `Ten seconds on: ${room} · the vision does not revise itself`,
+        laplaceEnded: (reason: 'range' | 'zetsu' | 'battery'): string =>
+          reason === 'range'
+            ? "Laplace Devil breaks · you left the beast's 36-metre field"
+            : reason === 'battery'
+              ? "Laplace Devil breaks · the beast's reserve is empty"
+              : 'Laplace Devil breaks · Zetsu was released',
         diverged: (room: string, went: string) =>
           `The prediction still reads ${room}; you went to ${went}`,
         written: (room: string) => `The pen has written ${room} down`,
@@ -3540,7 +3546,7 @@ export const en = {
       UNKNOWN: 'Conditions not revealed by canon',
       FORBIDDEN: 'Action refused by the engine',
     },
-    parallelFuture: 'PARALLEL FUTURE',
+    parallelFuture: 'LAPLACE DEVIL',
     ended: 'ENDED',
     replayLastEvents: 'Replay the last five events',
     guardianLabel: 'KACHO · NEN POST-MORTEM',
@@ -3690,7 +3696,7 @@ export const en = {
     outsideTier: 'Outside tier',
     unknownPosition: 'Unknown position',
     unknownFuturePosition: 'Unknown future position',
-    parallelFuture: 'Parallel future',
+    parallelFuture: 'Laplace Devil',
     positionInChapter: (chapter: number | string | undefined) => `Position in chapter ${chapter}`,
     futureIdentity: (name: string, chapter: number | string | undefined) =>
       `${name} · Ch. ${chapter}`,

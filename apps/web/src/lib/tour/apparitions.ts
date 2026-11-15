@@ -2029,14 +2029,6 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
     }
   }
 
-  // Ten seconds, taken back. Nothing is drawn for it and nothing is placed:
-  // what the walk does with this is rewind its own clock, which is the scene's
-  // business and nobody else's — see `TourScene`. It is here because it is an
-  // event rather than a thing, like the blast and the punch.
-  if (report.kind === 'vision-ended') {
-    return { kind: 'rewind', tierId: '', at: from, y: 0, colour: SUN }
-  }
-
   // Halkenburg's arrow, drawn from where it was loosed to where it fell. The
   // exchange has already happened by the time this is read — the walk is
   // standing in the far room — so the streak is the archive showing what just

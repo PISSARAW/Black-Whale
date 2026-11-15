@@ -887,6 +887,8 @@
         return say.owlExpired(report.rooms)
       case 'foreseen':
         return say.foreseen(roomName(report.spaceId))
+      case 'laplace-ended':
+        return say.laplaceEnded(report.reason)
       case 'diverged':
         return say.diverged(roomName(report.spaceId), roomName(report.wentTo))
       case 'written':

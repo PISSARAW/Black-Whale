@@ -14,7 +14,7 @@
     watchMangaRequest,
   } from '$lib/tour/mangaRequest.svelte'
   import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
-  import { activeHatsu, activateHatsu } from '$lib/nen/hatsuState'
+  import { activeHatsu, activateHatsu, parallelFutureVisible } from '$lib/nen/hatsuState'
   import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
   import { localizeHatsu } from '$lib/i18n/hatsu'
   import { link, parsePathname, t } from '$lib/i18n'
@@ -1091,6 +1091,8 @@
       world: sceneWorld,
       concert,
       flash,
+      futureVisionActive: $parallelFutureVisible,
+      onLaplaceEnd: hatsuSession.endFuture,
       auraColour: technique?.color ?? null,
       ...hatsuSession.scene,
       french,

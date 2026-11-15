@@ -202,12 +202,12 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
     cost: 'Mains jointes · rectangle d’aura chargé',
   },
   'parallel-future': {
-    name: 'Parallel Future',
-    action: 'Entrer dans le futur à dix secondes',
+    name: 'Laplace Devil',
+    action: 'Activer Laplace Devil',
     instruction:
-      'Observez pendant dix secondes les corps du chapitre suivant et cliquez les actions possibles pour laisser des rémanences prédites tout en choisissant une réalité divergente.',
-    rule: 'Tout le monde sauf Tserriednich continue de percevoir la prédiction immuable, même quand ses actes réels changent.',
-    cost: 'Zetsu complet · vision de dix secondes',
+      'Parcourez la vision détachée de dix secondes, revenez au point d’activation puis divergez de la rémanence prédite.',
+    rule: 'La Bête fixe l’illusion dans un rayon de 36 mètres ; les personnes situées dehors à l’activation ne sont pas affectées, et sortir du champ ou rompre le Zetsu met fin à l’effet.',
+    cost: 'Zetsu complet · aura stockée · vision de dix secondes',
   },
   'grimmel-the-dissonance': {
     name: 'Grimmel the Dissonance',

@@ -307,8 +307,12 @@ export interface TourWorld {
    * from, which is the only part of it there is anything to see.
    */
   stars: string[]
-  /** Where the ten-second vision says the visitor will be. It does not update. */
-  foreseen: { spaceId: string; at: Vec2 } | null
+  /** The immutable landing and the beast's fixed point of activation. */
+  foreseen: {
+    spaceId: string
+    at: Vec2
+    anchor: { spaceId: string; tierId: string; at: Vec2 }
+  } | null
   /** What the automatic writing has set down, newest first. */
   verses: { spaceId: string; lines: number[] }[]
   /** The three rooms of the poem, and how well they read as one. */

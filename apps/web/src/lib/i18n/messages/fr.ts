@@ -1251,6 +1251,12 @@ export const fr: Messages = {
         owlRecalled: (rooms) =>
           `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
         foreseen: (room) => `Dix secondes plus tard : ${room} · la vision ne se corrige pas`,
+        laplaceEnded: (reason: 'range' | 'zetsu' | 'battery'): string =>
+          reason === 'range'
+            ? 'Laplace Devil se brise · vous avez quitté les 36 mètres autour de la Bête'
+            : reason === 'battery'
+              ? 'Laplace Devil se brise · la réserve de la Bête est épuisée'
+              : 'Laplace Devil se brise · le Zetsu a été rompu',
         diverged: (room, went) =>
           `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
         written: (room) => `La plume a écrit ${room}`,
@@ -3337,7 +3343,7 @@ export const fr: Messages = {
       UNKNOWN: 'Conditions non révélées par le canon',
       FORBIDDEN: 'Action refusée par le moteur',
     },
-    parallelFuture: 'FUTUR PARALLÈLE',
+    parallelFuture: 'LAPLACE DEVIL',
     ended: 'TERMINÉ',
     replayLastEvents: 'Rejouer les cinq derniers événements',
     guardianLabel: 'KACHO · NEN POST-MORTEM',
@@ -3484,7 +3490,7 @@ export const fr: Messages = {
     outsideTier: 'Hors des ponts',
     unknownPosition: 'Position inconnue',
     unknownFuturePosition: 'Position future inconnue',
-    parallelFuture: 'Futur parallèle',
+    parallelFuture: 'Laplace Devil',
     positionInChapter: (chapter) => `Position au chapitre ${chapter}`,
     futureIdentity: (name, chapter) => `${name} · Chap. ${chapter}`,
     assumedIdentity: 'Identité supposée',

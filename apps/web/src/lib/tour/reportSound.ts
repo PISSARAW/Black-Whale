@@ -297,6 +297,7 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'decipher-advanced': wakeTheMachine,
   diverged: skipThroughTime,
   'vision-ended': skipThroughTime,
+  'laplace-ended': skipThroughTime,
   pushed: landAPunch,
   'gum-stuck-on': stretchTheGum,
   'sacrifice-found': curseSet,

@@ -8,10 +8,12 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
 
   export let state: FightState
+  export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
 
   let canvas: HTMLCanvasElement
   let failed = false
@@ -41,6 +43,7 @@
       try {
         const THREE = await import('three')
         const { buildHumanFigure } = await import('$lib/tour/humanFigure')
+        const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         if (disposed || !canvas) return
 
         const renderer = new THREE.WebGLRenderer({
@@ -78,49 +81,16 @@
           return made
         }
 
-        const floor = new THREE.Mesh(geometry(new THREE.PlaneGeometry(16, 7)), glow(0x0b1015, 1))
-        floor.rotation.x = -Math.PI / 2
-        floor.position.set(0, -0.02, 1.15)
-        scene.add(floor)
-
-        const wall = new THREE.Mesh(geometry(new THREE.PlaneGeometry(18, 7)), glow(0x091821, 1))
-        wall.position.set(0, 2.75, -2.2)
-        scene.add(wall)
-
-        for (const x of [-5.2, -2.6, 0, 2.6, 5.2]) {
-          const rib = new THREE.Mesh(
-            geometry(new THREE.TorusGeometry(3.7, 0.055, 7, 28, Math.PI)),
-            glow(0x516875, 0.28),
-          )
-          rib.position.set(x, 3.65, -1.95)
-          rib.rotation.z = Math.PI / 2
-          rib.scale.set(1, 0.72, 1)
-          scene.add(rib)
+        const scenery = await buildFightScenery({ THREE, glow, geometry }, stageId)
+        if (disposed) {
+          scenery.dispose()
+          return
         }
-
-        const windowRing = new THREE.Mesh(
-          geometry(new THREE.TorusGeometry(1.25, 0.1, 10, 42)),
-          glow(0x59717f, 0.78),
-        )
-        windowRing.position.set(0, 3.05, -2.05)
-        scene.add(windowRing)
-        const windowGlass = new THREE.Mesh(
-          geometry(new THREE.CircleGeometry(1.16, 42)),
-          glow(0x0e3d50, 0.84),
-        )
-        windowGlass.position.set(0, 3.05, -2.08)
-        scene.add(windowGlass)
-
-        const stripeMaterial = glow(0xd2a52d, 0.55)
-        for (let x = -7; x <= 7; x += 0.6) {
-          const stripe = new THREE.Mesh(
-            geometry(new THREE.BoxGeometry(0.28, 0.018, 1.1)),
-            stripeMaterial,
-          )
-          stripe.position.set(x, 0.012, -0.9)
-          stripe.rotation.y = -0.5
-          scene.add(stripe)
-        }
+        renderer.localClippingEnabled = scenery.clipped
+        renderer.setClearColor(scenery.fog.colour, 1)
+        scene.fog = new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
+        camera.far = scenery.cameraFar
+        scene.add(scenery.root)
 
         const buildFighter = (fighter: ArcadeFighter) => {
           const definition = fighterDefinition(fighter.id)
@@ -301,6 +271,7 @@
           resize?.disconnect()
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
+          scenery.dispose()
           renderer.dispose()
         }
       } catch {

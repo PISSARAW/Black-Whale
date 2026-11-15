@@ -10,6 +10,7 @@ export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
+export type FightNenCommand = 'ten' | 'ren' | 'zetsu' | 'ken' | 'gyo' | 'ko' | 'ryu' | 'in' | 'en'
 
 export interface FighterDefinition {
   id: FighterId
@@ -60,6 +61,8 @@ export interface FightInput {
   jump: boolean
   down: boolean
   guard: boolean
+  /** Legacy/touch alias kept while the UI migrates to the guard/aura chord. */
+  block: boolean
   aura: boolean
 }
 
@@ -97,5 +100,6 @@ export const EMPTY_INPUT: FightInput = {
   jump: false,
   down: false,
   guard: false,
+  block: false,
   aura: false,
 }

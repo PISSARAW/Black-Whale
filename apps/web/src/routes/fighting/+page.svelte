@@ -3,22 +3,23 @@
   import Seo from '$lib/components/Seo.svelte'
   import FighterAvatar from '$lib/components/fighting/FighterAvatar.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
+  import StagePicker from '$lib/components/fighting/StagePicker.svelte'
   import { link, locale } from '$lib/i18n'
   import { breadcrumbSchema } from '$lib/seo/schema'
   import {
     beginFight,
     createFight,
     opponentAttack,
-    performAttack,
+    performAuraAttack,
     tickFight,
-    useNen,
   } from '$lib/fighting/engine'
+  import { fightingStyle } from '$lib/fighting/fightStyles'
   import { FIGHTING_ROSTER, fighterDefinition } from '$lib/fighting/roster'
+  import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import {
     EMPTY_INPUT,
     type AttackKind,
     type FightInput,
-    type FightNenCommand,
     type FightState,
     type FighterId,
   } from '$lib/fighting/types'
@@ -26,6 +27,7 @@
 
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
+  let selectedStage: FightStageId = DEFAULT_FIGHT_STAGE
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
   let aiClock = 0
@@ -51,9 +53,9 @@
           roster: 'Changer de combattants',
           controls: 'Commandes',
           movement: 'Q / D ou flèches : déplacement',
-          jump: 'Z ou ↑ : saut · S ou ↓ : garde',
+          jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
           attacks: 'J : rapide · K : puissante · L : Hatsu',
-          aura: '1–9 : Ten, Ren, Zetsu, Ken, Gyo, Ko, Ryu, In et En. Le Hatsu coûte 40 aura.',
+          aura: 'Espace : Aura. Maintenir pour Ren ; combiner avec garde, bas ou haut ; relâcher pendant un coup pour Ko.',
         }
       : {
           eyebrow: 'NEW MODE · 2D DUEL',
@@ -71,9 +73,9 @@
           roster: 'Change fighters',
           controls: 'Controls',
           movement: 'A / D or arrows: move',
-          jump: 'W or ↑: jump · S or ↓: block',
+          jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
           attacks: 'J: quick · K: heavy · L: Hatsu',
-          aura: '1–9: Ten, Ren, Zetsu, Ken, Gyo, Ko, Ryu, In and En. Hatsu costs 40 aura.',
+          aura: 'Space: Aura. Hold for Ren; combine with guard, down or up; release during a strike for Ko.',
         }
 
   function previewFighter(id: FighterId) {
@@ -105,11 +107,7 @@
   }
 
   function attack(kind: AttackKind) {
-    if (state) state = performAttack(state, 'player', kind)
-  }
-
-  function nen(command: FightNenCommand) {
-    if (state) state = useNen(state, 'player', command)
+    if (state) state = performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -130,26 +128,17 @@
     ArrowUp: 'jump',
     z: 'jump',
     w: 'jump',
-    ArrowDown: 'block',
-    s: 'block',
+    ArrowDown: 'down',
+    s: 'down',
+    Shift: 'guard',
+    i: 'guard',
+    ' ': 'aura',
   }
 
   const attackKeys: Record<string, AttackKind> = {
     j: 'light',
     k: 'heavy',
     l: 'special',
-  }
-
-  const nenKeys: Record<string, FightNenCommand> = {
-    '1': 'ten',
-    '2': 'ren',
-    '3': 'zetsu',
-    '4': 'ken',
-    '5': 'gyo',
-    '6': 'ko',
-    '7': 'ryu',
-    '8': 'in',
-    '9': 'en',
   }
 
   function handleKey(event: KeyboardEvent, active: boolean) {
@@ -164,8 +153,6 @@
     if (!active || event.repeat) return
     const attackKind = attackKeys[key]
     if (attackKind) attack(attackKind)
-    const nenCommand = nenKeys[key]
-    if (nenCommand) nen(nenCommand)
     if (key === 'Enter' && state.phase === 'ready') startFight()
   }
 
@@ -231,17 +218,23 @@
         <p class="selection-label"><span>01</span>{copy.player}</p>
         <div class="roster-grid">
           {#each FIGHTING_ROSTER as fighter (fighter.id)}
+            {@const style = fightingStyle(fighter.id)}
             <button
               type="button"
               class:selected={selectedPlayer === fighter.id}
               aria-pressed={selectedPlayer === fighter.id}
+              title={language === 'fr' ? style.descriptionFr : style.descriptionEn}
               onclick={() => (selectedPlayer = fighter.id)}
             >
               <span class="portrait"
                 ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
               >
               <strong>{fighter.name}</strong>
-              <small>{language === 'fr' ? fighter.titleFr : fighter.titleEn}</small>
+              <small
+                >{language === 'fr' ? fighter.titleFr : fighter.titleEn} · {language === 'fr'
+                  ? style.nameFr
+                  : style.nameEn}</small
+              >
             </button>
           {/each}
         </div>
@@ -253,22 +246,30 @@
         <p class="selection-label"><span>02</span>{copy.opponent}</p>
         <div class="roster-grid">
           {#each FIGHTING_ROSTER as fighter (fighter.id)}
+            {@const style = fightingStyle(fighter.id)}
             <button
               type="button"
               class:selected={selectedOpponent === fighter.id}
               aria-pressed={selectedOpponent === fighter.id}
+              title={language === 'fr' ? style.descriptionFr : style.descriptionEn}
               onclick={() => setOpponent(fighter.id)}
             >
               <span class="portrait"
                 ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
               >
               <strong>{fighter.name}</strong>
-              <small>{language === 'fr' ? fighter.specialFr : fighter.specialEn}</small>
+              <small
+                >{language === 'fr' ? style.nameFr : style.nameEn} · {language === 'fr'
+                  ? fighter.specialFr
+                  : fighter.specialEn}</small
+              >
             </button>
           {/each}
         </div>
       </div>
     </section>
+
+    <StagePicker selected={selectedStage} {language} onSelect={(id) => (selectedStage = id)} />
 
     <div class="selection-summary">
       <div>
@@ -284,7 +285,13 @@
     </div>
   {:else}
     <div class="stage-wrap">
-      <FightStage {state} {language} onAttack={attack} onControl={control} onNen={nen} />
+      <FightStage
+        {state}
+        {language}
+        stageId={selectedStage}
+        onAttack={attack}
+        onControl={control}
+      />
 
       {#if state.phase === 'ready'}
         <div class="match-overlay ready-overlay">

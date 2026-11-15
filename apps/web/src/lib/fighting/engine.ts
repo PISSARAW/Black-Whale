@@ -1,4 +1,3 @@
-import { canUseHatsu } from '@black-whale/nen-engine'
 import {
   activeHitbox,
   attackData,
@@ -13,20 +12,27 @@ import {
   otherSide,
   ROUND_FRAMES,
 } from './frameData'
+import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from './hatsu'
+import { chooseStyleAttack } from './fightStyles'
 import {
   advanceNen,
-  applyNenCommand,
-  consumeKo,
+  applyAuraContext,
   createFightingNen,
+  focusAttackRyu,
+  focusGuardRyu,
+  isCriticalAuraStrike,
   nenAttackFactor,
   nenDamageFactor,
+  releaseFocusedAura,
 } from './nen'
 import { fighterDefinition } from './roster'
+import { moveOpponent } from './opponentMovement'
+import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
   AttackKind,
   FightInput,
-  FightNenCommand,
+  FightNenZone,
   FightSide,
   FightState,
   FighterId,
@@ -39,6 +45,9 @@ const JUMP_SPEED = 48
 const MIN_X = 7
 const MAX_X = 93
 const MIN_GAP = 5
+const PARRY_WINDOW_FRAMES = 6
+const RYU_FOLLOW_UP_FRAMES = 10
+export const TOWER_WIN_SCORE = 10
 
 export function createFight(playerId: FighterId, opponentId: FighterId): FightState {
   return {
@@ -52,6 +61,7 @@ export function createFight(playerId: FighterId, opponentId: FighterId): FightSt
     hitstop: 0,
     rng: seedFor(playerId, opponentId),
     winner: null,
+    score: { player: 0, opponent: 0 },
     impact: null,
   }
 }
@@ -70,6 +80,9 @@ function createFighter(id: FighterId, x: number, facing: -1 | 1): ArcadeFighter 
     hitStun: 0,
     blockStun: 0,
     blocking: false,
+    guardFrames: 0,
+    ryuWindow: 0,
+    auraExhausted: false,
     attack: null,
     bufferedAttack: null,
   }
@@ -113,10 +126,16 @@ function stepFight(state: FightState, input: FightInput): FightState {
 }
 
 function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  let next = advanceFighter(fighter)
-  const blocking = input.block && canGuard(next)
-  next = { ...next, blocking }
-  if (input.jump && canMove(next) && next.y === GROUND) {
+  let next = applyAuraContext(advanceFighter(fighter), input)
+  const blocking = playerIsBlocking(next, input)
+  const releasedGuard = next.blocking && !blocking
+  next = {
+    ...next,
+    blocking,
+    guardFrames: blocking ? (next.blocking ? next.guardFrames + 1 : 1) : 0,
+    ryuWindow: releasedGuard ? RYU_FOLLOW_UP_FRAMES : next.ryuWindow,
+  }
+  if (playerCanJump(next, input)) {
     return poseFighter({ ...next, velocityY: JUMP_SPEED, pose: 'jump', blocking: false })
   }
   if (!canMove(next) || blocking) return poseFighter(next)
@@ -126,18 +145,18 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
   return poseFighter({ ...next, x, pose: direction === 0 ? 'idle' : 'walk' })
 }
 
+function playerIsBlocking(fighter: ArcadeFighter, input: FightInput): boolean {
+  if (!input.guard && !input.block) return false
+  if (!canGuard(fighter)) return false
+  return !input.aura || fighter.nen.ken
+}
+
+function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
+  return input.jump && !input.aura && canMove(fighter) && fighter.y === GROUND
+}
+
 function updateOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  let next = advanceFighter(fighter)
-  const gap = Math.abs(player.x - next.x)
-  const threatened = player.pose === 'heavy' || player.pose === 'special'
-  const blocking = threatened && gap < 18 && canGuard(next)
-  next = { ...next, blocking }
-  if (!canMove(next) || blocking) return poseFighter(next)
-  const direction = player.x < next.x ? -1 : 1
-  const retreat = gap < 7 && next.health < 35 ? -direction : direction
-  const speed = fighterDefinition(next.id).speed * 20
-  const x = clamp(next.x + retreat * speed * FIXED_STEP, MIN_X, MAX_X)
-  return poseFighter({ ...next, x, pose: 'walk' })
+  return poseFighter(moveOpponent(advanceFighter(fighter), player))
 }
 
 function advanceFighter(fighter: ArcadeFighter): ArcadeFighter {
@@ -150,10 +169,12 @@ function advanceFighter(fighter: ArcadeFighter): ArcadeFighter {
     velocityY: y === GROUND ? 0 : velocityY,
     hitStun: Math.max(0, fighter.hitStun - 1),
     blockStun: Math.max(0, fighter.blockStun - 1),
+    ryuWindow: Math.max(0, fighter.ryuWindow - 1),
   })
   next = advanceNen(next, FIXED_STEP)
-  if (!next.attack && next.bufferedAttack && canStartAttack(next, next.bufferedAttack)) {
-    next = startAttack({ ...next, bufferedAttack: null }, next.bufferedAttack)
+  if (!next.attack && next.bufferedAttack && canStartAttack(next, next.bufferedAttack.kind)) {
+    const buffered = next.bufferedAttack
+    next = startAttack({ ...next, bufferedAttack: null }, buffered.kind, buffered.auraCharged)
   }
   return next
 }
@@ -163,39 +184,56 @@ function advanceAttack(fighter: ArcadeFighter): ArcadeFighter {
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
   let next: ArcadeFighter = { ...fighter, attack: { ...fighter.attack, frame } }
-  if (!fighter.attack.impacted && frame >= data.startup + data.active) next = consumeKo(next)
-  return frame >= attackTotal(data) ? { ...next, attack: null } : next
-}
-
-export function useNen(state: FightState, side: FightSide, command: FightNenCommand): FightState {
-  if (state.phase !== 'fighting') return state
-  return { ...state, [side]: applyNenCommand(state[side], command) }
+  if (!fighter.attack.impacted && frame >= data.startup + data.active) {
+    next = releaseFocusedAura(next)
+  }
+  return frame >= attackTotal(data) ? { ...releaseFocusedAura(next), attack: null } : next
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
+  return performAuraAttack({ state, side, kind, auraCharged: false })
+}
+
+export function performAuraAttack(options: {
+  state: FightState
+  side: FightSide
+  kind: AttackKind
+  auraCharged: boolean
+}): FightState {
+  const { state, side, kind, auraCharged } = options
   if (state.phase !== 'fighting') return state
   const fighter = state[side]
-  if (canStartAttack(fighter, kind)) return { ...state, [side]: startAttack(fighter, kind) }
+  if (canStartAttack(fighter, kind)) {
+    return { ...state, [side]: startAttack(fighter, kind, auraCharged) }
+  }
   return canBufferAttack(fighter)
-    ? { ...state, [side]: { ...fighter, bufferedAttack: kind } }
+    ? { ...state, [side]: { ...fighter, bufferedAttack: { kind, auraCharged } } }
     : state
 }
 
-function startAttack(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
+function startAttack(
+  fighter: ArcadeFighter,
+  kind: AttackKind,
+  auraCharged: boolean,
+): ArcadeFighter {
   const data = attackData(kind, fighter)
+  const usesRyu = fighter.blocking || fighter.ryuWindow > 0
+  const focused = usesRyu ? focusAttackRyu(fighter, kind) : fighter
   return {
-    ...fighter,
+    ...focused,
     x: clamp(fighter.x + fighter.facing * data.lunge, MIN_X, MAX_X),
-    aura: kind === 'special' ? fighter.aura - 40 : Math.min(100, fighter.aura + 8),
+    aura: kind === 'special' ? fighter.aura - FIGHT_HATSU_AURA_COST : fighter.aura,
     pose: kind,
     blocking: false,
-    attack: { kind, frame: 0, impacted: false },
+    guardFrames: 0,
+    ryuWindow: usesRyu ? RYU_FOLLOW_UP_FRAMES : fighter.ryuWindow,
+    attack: { kind, frame: 0, impacted: false, auraCharged },
     bufferedAttack: null,
   }
 }
 
 function canStartAttack(fighter: ArcadeFighter, kind: AttackKind): boolean {
-  const specialReady = kind !== 'special' || (fighter.aura >= 40 && canUseHatsu(fighter.nen))
+  const specialReady = kind !== 'special' || canUseFightHatsu(fighter)
   return canAct(fighter) && fighter.attack === null && specialReady
 }
 
@@ -214,34 +252,75 @@ function resolveAttacks(state: FightState): FightState {
 
 function resolveAttack(state: FightState, side: FightSide): FightState {
   const attacker = state[side]
-  if (!attacker.attack || attacker.attack.impacted || attackPhase(attacker) !== 'active')
-    return state
+  if (!attackCanResolve(attacker)) return state
   const defenderSide = otherSide(side)
   const defender = state[defenderSide]
   const collision = attackCollision(attacker, defender)
   if (!collision) return state
   const data = attackData(attacker.attack.kind, attacker)
   const blocked = defender.blocking && defender.y === GROUND
-  const damage = attackDamage({ attacker, defender, base: data.damage, blocked })
-  const spent = consumeKo({ ...attacker, attack: { ...attacker.attack, impacted: true } })
-  const struck = strikeDefender({ fighter: defender, attacker, damage, blocked })
+  const parried = parryActive(defender, blocked)
+  const critical = isCriticalAuraStrike(attacker)
+  const defended = parried ? focusGuardRyu(defender, data.targetZone) : defender
+  const damage = parried
+    ? 0
+    : attackDamage({
+        attacker,
+        defender: defended,
+        base: data.damage,
+        blocked,
+        zone: data.targetZone,
+      })
+  const spent = releaseFocusedAura({
+    ...attacker,
+    attack: { ...attacker.attack, impacted: true, auraCharged: false },
+  })
+  const struck = strikeDefender({ fighter: defended, attacker, damage, blocked })
+  const points = scoreForImpact(blocked, critical)
+  const score = { ...state.score, [side]: state.score[side] + points }
   const impact = {
     sequence: (state.impact?.sequence ?? 0) + 1,
     attacker: side,
     kind: attacker.attack.kind,
     damage,
     blocked,
-    position: collision,
+    parried,
+    critical,
+    points,
+    zone: data.targetZone,
+    position: collision.position,
   }
-  const next = { ...state, [side]: spent, [defenderSide]: struck, impact, hitstop: data.hitstop }
-  return struck.health === 0 ? finishFight(next, side) : next
+  const next = {
+    ...state,
+    [side]: spent,
+    [defenderSide]: struck,
+    score,
+    impact,
+    hitstop: data.hitstop,
+  }
+  return struck.health === 0 || score[side] >= TOWER_WIN_SCORE ? finishFight(next, side) : next
+}
+
+function attackCanResolve(
+  fighter: ArcadeFighter,
+): fighter is ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> } {
+  return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
+}
+
+function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
+  return blocked && fighter.guardFrames > 0 && fighter.guardFrames <= PARRY_WINDOW_FRAMES
+}
+
+function scoreForImpact(blocked: boolean, critical: boolean): number {
+  if (blocked) return 0
+  return critical ? 2 : 1
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
   const hitbox = activeHitbox(attacker)
   if (!hitbox) return null
   const hurtbox = hurtboxes(defender).find((candidate) => boxesOverlap(hitbox, candidate))
-  return hurtbox ? contactPoint(hitbox, hurtbox) : null
+  return hurtbox ? { position: contactPoint(hitbox, hurtbox) } : null
 }
 
 interface DamageOptions {
@@ -249,15 +328,19 @@ interface DamageOptions {
   defender: ArcadeFighter
   base: number
   blocked: boolean
+  zone: FightNenZone
 }
 
-function attackDamage({ attacker, defender, base, blocked }: DamageOptions): number {
+function attackDamage({ attacker, defender, base, blocked, zone }: DamageOptions): number {
+  if (blocked && defender.nen.ken) return 0
   const power = fighterDefinition(attacker.id).power
   const guard = blocked ? 0.28 : 1
   const kind = attacker.attack?.kind ?? 'light'
   return Math.max(
     1,
-    Math.round(base * power * nenAttackFactor(attacker, kind) * nenDamageFactor(defender) * guard),
+    Math.round(
+      base * power * nenAttackFactor(attacker, kind) * nenDamageFactor(defender, zone) * guard,
+    ),
   )
 }
 
@@ -291,22 +374,29 @@ export function opponentAttack(state: FightState): FightState {
   const [rolled, chance] = randomValue(planned)
   const gap = Math.abs(rolled.player.x - rolled.opponent.x)
   const definition = fighterDefinition(rolled.opponent.id)
-  if (rolled.opponent.aura >= 40 && gap <= definition.specialRange && chance < 0.24) {
-    return performAttack(rolled, 'opponent', 'special')
-  }
-  if (gap <= definition.reach + 2) {
-    return performAttack(rolled, 'opponent', chance < 0.55 ? 'heavy' : 'light')
-  }
-  return rolled
+  const attack = chooseStyleAttack(rolled.opponent.id, {
+    canSpecial: canUseFightHatsu(rolled.opponent) && gap <= definition.specialRange,
+    inRange: gap <= definition.reach + 2,
+    roll: chance,
+  })
+  return attack ? performAttack(rolled, 'opponent', attack) : rolled
 }
 
 function planOpponentNen(state: FightState): FightState {
   const gap = Math.abs(state.player.x - state.opponent.x)
   const opponent = state.opponent
-  if (needsZetsu(opponent)) return useNen(state, 'opponent', 'zetsu')
-  if (canLeaveZetsu(opponent)) return useNen(state, 'opponent', 'ten')
-  if (needsKen(state, gap)) return useNen(state, 'opponent', 'ken')
-  return wantsRen(opponent, gap) ? useNen(state, 'opponent', 'ren') : state
+  if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
+  if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
+  if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
+  return wantsRen(opponent, gap) ? applyOpponentAura(state, { aura: true }) : state
+}
+
+function applyOpponentAura(
+  state: FightState,
+  partial: Partial<Pick<FightInput, 'aura' | 'down' | 'guard' | 'jump'>>,
+): FightState {
+  const input = { ...EMPTY_INPUT, ...partial }
+  return { ...state, opponent: applyAuraContext(state.opponent, input) }
 }
 
 const needsZetsu = (fighter: ArcadeFighter) => fighter.aura < 16 && fighter.nen.mode !== 'zetsu'
@@ -364,6 +454,9 @@ function finishFight(state: FightState, winner: FightSide): FightState {
 }
 
 function finishByTime(state: FightState): FightState {
+  if (state.score.player !== state.score.opponent) {
+    return finishFight(state, state.score.player > state.score.opponent ? 'player' : 'opponent')
+  }
   if (state.player.health === state.opponent.health) {
     return { ...state, phase: 'finished', winner: 'draw' }
   }

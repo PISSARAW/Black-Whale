@@ -1,4 +1,5 @@
 import type { AnimatedHuman, HumanMotion } from '$lib/tour/humanAnimation'
+import { heavyFightMove, lightFightMove } from './normalFightMoves'
 import type { ArcadeFighter, AttackKind, FighterId, FighterPose } from './types'
 
 export const FIGHT_MOVE_TIMING: Record<
@@ -21,42 +22,16 @@ const smooth = (value: number) => {
 }
 
 /** Three continuous beats: preparation, contact, recovery. */
-function beats(progress: number, impact = 0.55): { windup: number; strike: number; return: number } {
+function beats(
+  progress: number,
+  impact = 0.55,
+): { windup: number; strike: number; return: number } {
   const windupEnd = impact * 0.62
   return {
     windup: smooth(progress / windupEnd),
     strike: smooth((progress - windupEnd) / (impact - windupEnd)),
     return: smooth((progress - impact) / (1 - impact)),
   }
-}
-
-function jab(rig: AnimatedHuman, progress: number): void {
-  const beat = beats(progress, FIGHT_MOVE_TIMING.light.impact)
-  const gather = beat.windup * (1 - beat.return)
-  const extension = beat.strike * (1 - beat.return)
-  rig.figure.rotation.y -= 0.16 * gather - 0.28 * extension
-  rig.figure.rotation.x -= 0.06 * extension
-  rig.arms[1].rotation.x -= 0.58 * gather + 0.9 * extension
-  rig.arms[1].rotation.z -= 0.18 * gather
-  rig.arms[1].children[1].rotation.x -= 1.05 * gather * (1 - beat.strike)
-  rig.arms[0].rotation.set(-0.7 * gather, 0, 0.58 * gather)
-  rig.arms[0].children[1].rotation.x -= 0.85 * gather
-}
-
-function heavyKick(rig: AnimatedHuman, progress: number): void {
-  const beat = beats(progress, FIGHT_MOVE_TIMING.heavy.impact)
-  const gather = beat.windup * (1 - beat.return)
-  const extension = beat.strike * (1 - beat.return)
-  const chamber = gather * (1 - beat.strike)
-  rig.figure.rotation.y -= 0.48 * gather - 0.82 * extension
-  rig.figure.rotation.z += 0.11 * gather - 0.24 * extension
-  rig.figure.rotation.x -= 0.14 * extension
-  rig.legs[1].rotation.x -= 0.72 * chamber + 1.24 * extension
-  rig.legs[1].rotation.z -= 0.18 * extension
-  rig.knees[1].rotation.x += 1.05 * chamber - 0.7 * extension
-  rig.knees[0].rotation.x += 0.18 * gather
-  rig.arms[0].rotation.z += 0.72 * gather
-  rig.arms[1].rotation.z -= 0.8 * gather
 }
 
 function special(rig: AnimatedHuman, fighter: FighterId, progress: number): void {
@@ -156,8 +131,8 @@ export function fightMove(
   progress: number,
 ): HumanMotion | undefined {
   const value = clamp01(progress)
-  if (fighter.pose === 'light') return (rig) => jab(rig, value)
-  if (fighter.pose === 'heavy') return (rig) => heavyKick(rig, value)
+  if (fighter.pose === 'light') return (rig) => lightFightMove(rig, fighter.id, value)
+  if (fighter.pose === 'heavy') return (rig) => heavyFightMove(rig, fighter.id, value)
   if (fighter.pose === 'special') return (rig) => special(rig, fighter.id, value)
   if (fighter.pose === 'jump') return (rig) => jump(rig, value)
   if (fighter.pose === 'hit') return (rig) => recoil(rig, value)
@@ -166,7 +141,8 @@ export function fightMove(
 }
 
 export function fightMoveDuration(pose: FighterPose): number {
-  if (pose === 'light' || pose === 'heavy' || pose === 'special') return FIGHT_MOVE_TIMING[pose].duration
+  if (pose === 'light' || pose === 'heavy' || pose === 'special')
+    return FIGHT_MOVE_TIMING[pose].duration
   if (pose === 'hit') return HIT_DURATION
   if (pose === 'ko') return KO_DURATION
   return 0

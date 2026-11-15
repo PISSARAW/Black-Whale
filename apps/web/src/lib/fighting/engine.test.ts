@@ -1,11 +1,23 @@
 import { describe, expect, it, vi } from 'vitest'
-import { beginFight, createFight, opponentAttack, performAttack, tickFight, useNen } from './engine'
+import {
+  beginFight,
+  createFight,
+  opponentAttack,
+  performAttack,
+  performAuraAttack,
+  tickFight,
+} from './engine'
+import { applyAuraContext } from './nen'
 import { EMPTY_INPUT } from './types'
 
-function advance(state: ReturnType<typeof createFight>, seconds: number) {
+function advance(
+  state: ReturnType<typeof createFight>,
+  seconds: number,
+  input = EMPTY_INPUT,
+) {
   let next = state
   for (let elapsed = 0; elapsed < seconds; elapsed += 0.02) {
-    next = tickFight(next, EMPTY_INPUT, 0.02)
+    next = tickFight(next, input, 0.02)
   }
   return next
 }
@@ -84,15 +96,20 @@ describe('fighting engine', () => {
     vi.restoreAllMocks()
   })
 
-  it('starts in Ten and exposes the standard Nen techniques', () => {
+  it('derives Ren, Ken, Zetsu and Gyo from one held Aura input', () => {
     let state = beginFight(createFight('kurapika', 'hisoka'))
     expect(state.player.nen.mode).toBe('ten')
-    state = useNen(state, 'player', 'ren')
+    state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true })
     expect(state.player.nen.mode).toBe('ren')
-    state = useNen(state, 'player', 'gyo')
+    state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true, jump: true })
     expect(state.player.nen.gyo).toBe(true)
-    state = useNen(state, 'player', 'en')
-    expect(state.player.nen.en?.radius).toBe(12)
+    expect(state.player.y).toBe(0)
+    state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true, guard: true })
+    expect(state.player.nen.ken).toBe(true)
+    state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true, down: true })
+    expect(state.player.nen.mode).toBe('zetsu')
+    state = advance(state, 0.02)
+    expect(state.player.nen.mode).toBe('ten')
   })
 
   it('uses Zetsu to recover aura but prevents Hatsu', () => {
@@ -102,11 +119,12 @@ describe('fighting engine', () => {
       player: { ...state.player, x: 40, aura: 50 },
       opponent: { ...state.opponent, x: 58 },
     }
-    state = useNen(state, 'player', 'zetsu')
+    state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true, down: true })
     const denied = performAttack(state, 'player', 'special')
     expect(denied.opponent.health).toBe(100)
-    expect(tickFight(state, EMPTY_INPUT, 0.05).player.aura).toBeGreaterThan(50)
-    expect(useNen(state, 'player', 'ken').player.nen.ken).toBe(false)
+    expect(
+      tickFight(state, { ...EMPTY_INPUT, aura: true, down: true }, 0.05).player.aura,
+    ).toBeGreaterThan(state.player.aura)
   })
 
   it('makes Ken reduce incoming Nen damage', () => {
@@ -116,23 +134,39 @@ describe('fighting engine', () => {
       player: { ...exposed.player, x: 46 },
       opponent: { ...exposed.opponent, x: 52 },
     }
-    const guarded = useNen(exposed, 'opponent', 'ken')
+    const guarded = {
+      ...exposed,
+      opponent: applyAuraContext(exposed.opponent, {
+        ...EMPTY_INPUT,
+        aura: true,
+        guard: true,
+      }),
+    }
     const exposedHit = advance(performAttack(exposed, 'player', 'heavy'), 0.24)
     const guardedHit = advance(performAttack(guarded, 'player', 'heavy'), 0.24)
+    expect(guardedHit.impact!.damage).toBe(0)
     expect(guardedHit.impact!.damage).toBeLessThan(exposedHit.impact!.damage)
   })
 
-  it('concentrates Ko into the next strike, then releases it', () => {
+  it('commits Ko by releasing Aura during a strike, then exposes no lingering focus', () => {
     let base = beginFight(createFight('kurapika', 'hisoka'))
     base = {
       ...base,
       player: { ...base.player, x: 46, aura: 90 },
       opponent: { ...base.opponent, x: 52 },
     }
-    const focused = useNen(base, 'player', 'ko')
-    const normalHit = advance(performAttack(base, 'player', 'heavy'), 0.24)
-    const koHit = advance(performAttack(focused, 'player', 'heavy'), 0.24)
+    const normalHit = advance(performAttack(base, 'player', 'light'), 0.18)
+    let focused = advance(base, 0.02, { ...EMPTY_INPUT, aura: true })
+    focused = performAuraAttack({
+      state: focused,
+      side: 'player',
+      kind: 'light',
+      auraCharged: true,
+    })
+    const koHit = advance(focused, 0.18, EMPTY_INPUT)
     expect(koHit.impact!.damage).toBeGreaterThan(normalHit.impact!.damage)
+    expect(koHit.impact!.critical).toBe(true)
+    expect(koHit.impact!.points).toBe(2)
     expect(koHit.player.nen.ko).toBeNull()
     expect(koHit.player.nen.ryu).toEqual({})
   })

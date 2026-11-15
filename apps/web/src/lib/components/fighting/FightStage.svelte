@@ -2,18 +2,22 @@
   import FightScene from './FightScene.svelte'
   import FightHud from './FightHud.svelte'
   import FightNenControls from './FightNenControls.svelte'
+  import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from '$lib/fighting/hatsu'
   import { fighterDefinition } from '$lib/fighting/roster'
-  import type { AttackKind, FightInput, FightNenCommand, FightState } from '$lib/fighting/types'
+  import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import type { AttackKind, FightInput, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en'
+  export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
   export let onAttack: (kind: AttackKind) => void
   export let onControl: (key: keyof FightInput, active: boolean) => void
-  export let onNen: (command: FightNenCommand) => void
 
   $: playerDefinition = fighterDefinition(state.player.id)
   $: specialLabel = language === 'fr' ? playerDefinition.specialFr : playerDefinition.specialEn
-  $: sceneKey = `${state.player.id}:${state.opponent.id}:${JSON.stringify(state.player.nen)}:${JSON.stringify(state.opponent.nen)}`
+  $: hatsuReady = canUseFightHatsu(state.player)
+  $: hatsuHint = `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
+  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${JSON.stringify(state.player.nen)}:${JSON.stringify(state.opponent.nen)}`
 
   function hold(key: keyof FightInput, active: boolean) {
     onControl(key, active)
@@ -22,9 +26,13 @@
 
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
   <FightHud {state} />
-  <FightNenControls fighter={state.player} {language} {onNen} />
+  <FightNenControls
+    fighter={state.player}
+    {language}
+    onAura={(active) => onControl('aura', active)}
+  />
   {#key sceneKey}
-    <FightScene {state} />
+    <FightScene {state} {stageId} />
   {/key}
 
   <div class="fighter-name" style={`left:${state.player.x}%;bottom:${4 + state.player.y * 0.62}%`}>
@@ -41,7 +49,17 @@
     {#key state.impact.sequence}
       <div class:blocked={state.impact.blocked} class="impact-flash"></div>
       <div class="damage-callout" class:from-player={state.impact.attacker === 'player'}>
-        {state.impact.blocked ? (language === 'fr' ? 'GARDE' : 'BLOCK') : `-${state.impact.damage}`}
+        {state.impact.parried
+          ? language === 'fr'
+            ? 'PARADE · RYU'
+            : 'PARRY · RYU'
+          : state.impact.blocked
+            ? state.impact.damage === 0
+              ? 'KEN'
+              : language === 'fr'
+                ? 'GARDE'
+                : 'BLOCK'
+            : `${state.impact.critical ? 'CRIT · ' : ''}-${state.impact.damage} · +${state.impact.points}`}
       </div>
     {/key}
   {/if}
@@ -73,10 +91,17 @@
       >
       <button
         type="button"
+        aria-label={language === 'fr' ? 'Se baisser' : 'Crouch'}
+        onpointerdown={() => hold('down', true)}
+        onpointerup={() => hold('down', false)}
+        onpointercancel={() => hold('down', false)}>↓</button
+      >
+      <button
+        type="button"
         aria-label={language === 'fr' ? 'Garde' : 'Block'}
-        onpointerdown={() => hold('block', true)}
-        onpointerup={() => hold('block', false)}
-        onpointercancel={() => hold('block', false)}>G</button
+        onpointerdown={() => hold('guard', true)}
+        onpointerup={() => hold('guard', false)}
+        onpointercancel={() => hold('guard', false)}>G</button
       >
     </div>
     <div class="touch-group attack-controls">
@@ -85,10 +110,14 @@
       <button
         type="button"
         class="special-button"
-        disabled={state.player.aura < 40 || state.player.nen.mode === 'zetsu'}
-        aria-label={specialLabel}
-        onclick={() => onAttack('special')}>L</button
+        disabled={!hatsuReady}
+        aria-label={hatsuHint}
+        title={hatsuHint}
+        onclick={() => onAttack('special')}
       >
+        <kbd>L</kbd>
+        <span>{specialLabel}</span>
+      </button>
     </div>
   </div>
 </section>
@@ -182,8 +211,34 @@
     opacity: 0.35;
   }
   .special-button {
+    width: auto !important;
+    min-width: 112px;
+    grid-template-columns: auto 1fr;
+    gap: 0.45rem;
+    padding: 0 0.7rem;
+    border-radius: 24px !important;
     border-color: #6dd9ff !important;
     box-shadow: inset 0 0 14px rgb(72 188 238 / 25%);
+  }
+  .special-button kbd {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 1px solid rgb(109 217 255 / 55%);
+    border-radius: 50%;
+    color: #9be8ff;
+    font: 700 0.7rem/1 var(--font-mono);
+  }
+  .special-button span {
+    overflow: hidden;
+    max-width: 112px;
+    font: 700 0.54rem/1.05 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
   @keyframes flash {
     from {

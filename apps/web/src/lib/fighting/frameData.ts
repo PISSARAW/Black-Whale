@@ -1,11 +1,6 @@
 import { fighterDefinition } from './roster'
-import type {
-  ArcadeFighter,
-  AttackKind,
-  AttackPhase,
-  FightNenZone,
-  FightSide,
-} from './types'
+import { fightingStyle } from './fightStyles'
+import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
 
 export const FIGHT_FPS = 60
 export const FIXED_STEP = 1 / FIGHT_FPS
@@ -85,9 +80,45 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   const definition = fighterDefinition(fighter.id)
-  const right =
-    kind === 'special' ? definition.specialRange : definition.reach + (kind === 'heavy' ? 2 : 0)
-  return { ...ATTACK_DATA[kind], box: { ...ATTACK_DATA[kind].box, right } }
+  const base = ATTACK_DATA[kind]
+  const tuning = fightingStyle(fighter.id).attacks[kind]
+  const nativeReach = attackReach(kind, definition.reach, definition.specialRange)
+  return {
+    ...base,
+    startup: scaledFrames(base.startup, tuning.startup),
+    active: scaledFrames(base.active, tuning.active),
+    recovery: scaledFrames(base.recovery, tuning.recovery),
+    damage: scaledValue(base.damage, tuning.damage),
+    hitstun: scaledFrames(base.hitstun, tuning.hitstun),
+    blockstun: scaledFrames(base.blockstun, tuning.blockstun),
+    knockback: scaledValue(base.knockback, tuning.knockback),
+    lunge: scaledValue(base.lunge, tuning.lunge),
+    targetZone: valueOr(tuning.targetZone, base.targetZone),
+    auraZone: valueOr(tuning.auraZone, base.auraZone),
+    box: {
+      ...base.box,
+      right: nativeReach + valueOr(tuning.reach, 0),
+      bottom: valueOr(tuning.bottom, base.box.bottom),
+      top: valueOr(tuning.top, base.box.top),
+    },
+  }
+}
+
+function attackReach(kind: AttackKind, reach: number, specialRange: number): number {
+  if (kind === 'special') return specialRange
+  return kind === 'heavy' ? reach + 2 : reach
+}
+
+function scaledValue(value: number, scale?: number): number {
+  return value * valueOr(scale, 1)
+}
+
+function valueOr<T>(value: T | undefined, fallback: T): T {
+  return value === undefined ? fallback : value
+}
+
+function scaledFrames(value: number, scale = 1): number {
+  return Math.max(1, Math.round(value * scale))
 }
 
 export function attackTotal(data: AttackFrameData): number {

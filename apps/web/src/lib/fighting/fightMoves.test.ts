@@ -36,9 +36,31 @@ describe('fight moves', () => {
   })
 
   it('makes the heavy attack a kick rather than another raised arm', () => {
-    const human = apply('benjamin', 'heavy', FIGHT_MOVE_TIMING.heavy.impact)
+    const human = apply('kurapika', 'heavy', FIGHT_MOVE_TIMING.heavy.impact)
     expect(human.legs[1].rotation.x).toBeLessThan(-1)
     expect(Math.abs(human.figure.rotation.y)).toBeGreaterThan(0.3)
+  })
+
+  it('gives every fighter a distinct normal-move silhouette', () => {
+    for (const pose of ['light', 'heavy'] as const) {
+      const silhouettes = (
+        ['kurapika', 'hisoka', 'chrollo', 'morena', 'benjamin', 'tserriednich'] as FighterId[]
+      ).map((id) => {
+        const human = apply(id, pose, FIGHT_MOVE_TIMING[pose].impact)
+        return [
+          human.figure.rotation.x,
+          human.figure.rotation.y,
+          human.figure.rotation.z,
+          human.arms[0].rotation.x,
+          human.arms[1].rotation.x,
+          human.legs[0].rotation.x,
+          human.legs[1].rotation.x,
+        ]
+          .map((value) => value.toFixed(2))
+          .join(':')
+      })
+      expect(new Set(silhouettes).size).toBe(6)
+    }
   })
 
   it('gives each Hatsu a distinct silhouette', () => {

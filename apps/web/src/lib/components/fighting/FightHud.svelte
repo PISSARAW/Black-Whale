@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
-  import { nenStatus } from '$lib/fighting/nen'
+  import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
 
   export let state: FightState
@@ -16,12 +16,18 @@
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
   </div>
-  <div class="timer">{Math.ceil(state.time)}</div>
+  <div class="tower-score">
+    <strong>{state.score.player}<span>/10</span></strong>
+    <div class="timer">{Math.ceil(state.time)}</div>
+    <strong>{state.score.opponent}<span>/10</span></strong>
+  </div>
   <div class="fighter-meter opponent-meter">
     <div class="meter-label"><span>CPU</span><strong>{opponent.name}</strong></div>
     <div class="health"><span style={`width:${state.opponent.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.opponent.aura}%`}></span></div>
-    <div class="nen-status">{nenStatus(state.opponent).join(' · ')}</div>
+    <div class="nen-status">
+      {state.player.nen.gyo ? auraDistribution(state.opponent) : 'aura adverse masquée'}
+    </div>
   </div>
 </div>
 
@@ -97,6 +103,27 @@
   .opponent-meter .nen-status {
     text-align: right;
   }
+  .tower-score {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    color: #f1d36d;
+    font: 800 0.9rem/1 var(--font-display);
+  }
+  .tower-score > strong {
+    position: absolute;
+    top: 62px;
+  }
+  .tower-score > strong:first-child {
+    transform: translateX(-24px);
+  }
+  .tower-score > strong:last-child {
+    transform: translateX(24px);
+  }
+  .tower-score span {
+    color: #8998a1;
+    font: 600 0.45rem/1 var(--font-mono);
+  }
   .timer {
     display: grid;
     height: 58px;
@@ -116,6 +143,10 @@
     .timer {
       height: 45px;
       font-size: 1.4rem;
+    }
+    .tower-score > strong {
+      top: 49px;
+      font-size: 0.75rem;
     }
     .health {
       height: 13px;

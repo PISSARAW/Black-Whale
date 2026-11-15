@@ -7,6 +7,8 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
+- `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
+  ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
 - Les corps, visages, coiffures et costumes viennent du rig partagé de la visite
   (`tour/humanFigure.ts`) et des ressemblances déclarées dans `appearance.json`.
 - `engine.ts` est le moteur pur : simulation déterministe à 60 images/s, mouvement,
@@ -15,6 +17,10 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   son hitstop, son recul et sa fenêtre de buffer.
 - `FightScene.svelte` rend les deux rigs, le décor, les impacts et la caméra dans
   une seule scène WebGL. Les portraits de sélection restent des instantanés séparés.
+- `stages.ts` liste les terrains. La soute et la Tour Céleste sont dessinées ici
+  (`stageScenery.ts`, `stageHeavensArena.ts`) ; les salles du navire sont levées depuis
+  le plan de la visite (`stageShipRoom.ts`) et la bande de combat y est dérivée de
+  l'emprise et du mobilier (`stageLane.ts`). Un terrain ne change aucune règle.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
 - Une partie dure soixante secondes et se termine par K.-O. ou décision aux points
   de vie restants.

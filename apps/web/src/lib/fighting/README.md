@@ -7,18 +7,22 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
-- Le roster jouable compte cinquante-deux personnages. Feitan, Saiyu, Theta, Biscuit,
-  Marayam, Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh,
-  Mizaistom, Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
-  Lynch, Luini, Bill, Furykov, Cluck, Beyond, Fugetsu, Kacho, Luzurus, Momoze,
-  Sale-Sale, Zhang Lei, Gidal, Longhi, Musse, Padaille, Tubeppa, Tyson, Sayird,
-  Silent Majority, Terebellum, Voconte et Yokotani rejoignent les six combattants initiaux ;
-  Chrollo dispose désormais de
-  Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
+- Le roster jouable compte quarante et un personnages. Il exige au moins un atout
+  canonique utilisable en affrontement : aptitude martiale, arme, Hatsu offensif,
+  défensif ou tactique, ou pouvoir conceptuel activable pendant le combat. Une bête
+  gardienne passive, non maîtrisée par son prince, ne suffit pas à rendre ce prince
+  jouable. Les pouvoirs qui exigent une préparation incompatible avec un duel sont
+  exclus selon la même règle.
+- Kurapika, Hisoka, Chrollo, Benjamin, Tserriednich, Feitan, Saiyu, Theta, Biscuit,
+  Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh, Mizaistom,
+  Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel, Lynch,
+  Luini, Bill, Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
+  Silent Majority, Terebellum, Voconte et Yokotani satisfont ce contrat. Chrollo
+  dispose de Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
-  l'aura, la transformation de Biscuit renforce attaque et défense, et la chambre
-  1013 de Marayam annule le prochain impact.
+  l'aura, la transformation de Biscuit renforce attaque et défense, tandis que
+  Sweet Home et LSDF apportent des réponses défensives propres.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
   ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
 - Les corps, visages, coiffures et costumes viennent du rig partagé de la visite

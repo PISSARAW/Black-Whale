@@ -11,14 +11,6 @@ interface FighterSpec {
 
 const SPECS: readonly FighterSpec[] = [
   {
-    id: 'gidal',
-    modelId: 'gidal',
-    name: 'Gidal',
-    special: 'Yomotsu Hegui',
-    colours: ['#292524', '#dc2626'],
-    stats: [1.04, 0.96, 24],
-  },
-  {
     id: 'longhi',
     modelId: 'longhi',
     name: 'Longhi',
@@ -41,22 +33,6 @@ const SPECS: readonly FighterSpec[] = [
     special: 'I’m Coming to Get You',
     colours: ['#44403c', '#f97316'],
     stats: [1.12, 0.98, 18],
-  },
-  {
-    id: 'tubeppa',
-    modelId: 'prince-tubeppa',
-    name: 'Tubeppa',
-    special: 'Collaborative Drug Synthesis',
-    colours: ['#e5e7eb', '#22d3ee'],
-    stats: [0.94, 0.98, 24],
-  },
-  {
-    id: 'tyson',
-    modelId: 'prince-tyson',
-    name: 'Tyson',
-    special: 'Eye-wogs',
-    colours: ['#e4b7c4', '#ec4899'],
-    stats: [0.92, 0.94, 28],
   },
   {
     id: 'sayird',

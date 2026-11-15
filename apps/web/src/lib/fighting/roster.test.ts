@@ -3,6 +3,20 @@ import appearanceFile from '../../../../../data/characters/appearance.json'
 import characters from '../../../../../data/characters/characters.json'
 import { FIGHTING_ROSTER } from './roster'
 
+const PASSIVE_GUARDIAN_USERS = [
+  'prince-marayam',
+  'prince-fugetsu',
+  'prince-kacho',
+  'prince-luzurus',
+  'prince-momoze',
+  'prince-salesale',
+  'prince-zhanglei',
+  'prince-tubeppa',
+  'prince-tyson',
+] as const
+
+const NON_DUEL_HATSU_USERS = ['morena-prudo', 'gidal'] as const
+
 describe('fighting roster models', () => {
   it('uses catalogued identities and declared likenesses when available', () => {
     const declared = new Set(appearanceFile.declared.map((appearance) => appearance.id))
@@ -11,14 +25,12 @@ describe('fighting roster models', () => {
       'kurapika',
       'hisoka',
       'chrollo-lucilfer',
-      'morena-prudo',
       'prince-benjamin',
       'prince-tserriednich',
       'feitan-portor',
       'saiyu',
       'theta',
       'biscuit-krueger',
-      'prince-marayam',
       'phinks-magcub',
       'franklin-bordeau',
       'machi-komacine',
@@ -43,18 +55,9 @@ describe('fighting roster models', () => {
       'furykov',
       'cluck',
       'beyond-netero',
-      'prince-fugetsu',
-      'prince-kacho',
-      'prince-luzurus',
-      'prince-momoze',
-      'prince-salesale',
-      'prince-zhanglei',
-      'gidal',
       'longhi',
       'musse',
       'padaille',
-      'prince-tubeppa',
-      'prince-tyson',
       'sayird',
       'silent-majority-user',
       'terebellum',
@@ -66,5 +69,13 @@ describe('fighting roster models', () => {
         (fighter) => declared.has(fighter.modelId) || catalogued.has(fighter.modelId),
       ),
     ).toBe(true)
+  })
+
+  it('excludes characters without a field-usable personal combat asset', () => {
+    const rosterIds = new Set(FIGHTING_ROSTER.map((fighter) => fighter.modelId))
+    const exclusions = [...PASSIVE_GUARDIAN_USERS, ...NON_DUEL_HATSU_USERS]
+
+    expect(FIGHTING_ROSTER).toHaveLength(41)
+    expect(exclusions.every((modelId) => !rosterIds.has(modelId))).toBe(true)
   })
 })

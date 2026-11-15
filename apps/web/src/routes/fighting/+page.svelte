@@ -264,9 +264,15 @@
               title={language === 'fr' ? style.descriptionFr : style.descriptionEn}
               onclick={() => (selectedPlayer = fighter.id)}
             >
-              <span class="portrait"
-                ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
-              >
+              <span class="portrait">
+                {#if selectedPlayer === fighter.id}
+                  <FighterAvatar fighter={previewFighter(fighter.id)} preview />
+                {:else}
+                  <span class="roster-monogram" style={`--fighter:${fighter.colour}`}>
+                    {fighter.name.slice(0, 1)}
+                  </span>
+                {/if}
+              </span>
               <strong>{fighter.name}</strong>
               <small
                 >{language === 'fr' ? fighter.titleFr : fighter.titleEn} · {language === 'fr'
@@ -292,9 +298,15 @@
               title={language === 'fr' ? style.descriptionFr : style.descriptionEn}
               onclick={() => setOpponent(fighter.id)}
             >
-              <span class="portrait"
-                ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
-              >
+              <span class="portrait">
+                {#if selectedOpponent === fighter.id}
+                  <FighterAvatar fighter={previewFighter(fighter.id)} preview />
+                {:else}
+                  <span class="roster-monogram" style={`--fighter:${fighter.colour}`}>
+                    {fighter.name.slice(0, 1)}
+                  </span>
+                {/if}
+              </span>
               <strong>{fighter.name}</strong>
               <small
                 >{language === 'fr' ? style.nameFr : style.nameEn} · {language === 'fr'

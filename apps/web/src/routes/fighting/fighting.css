@@ -157,6 +157,21 @@
   pointer-events: none;
 }
 
+.roster-monogram {
+  display: grid;
+  width: 112px;
+  height: 154px;
+  place-items: center;
+  border-radius: 52% 52% 18% 18%;
+  background:
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--fighter) 84%, white) 0 18%, transparent 19%),
+    linear-gradient(110deg, transparent 20%, color-mix(in srgb, var(--fighter) 72%, #111) 21% 79%, transparent 80%);
+  color: rgb(255 255 255 / 68%);
+  font: 700 2.4rem/1 var(--font-display);
+  text-shadow: 0 2px 12px #000;
+  filter: drop-shadow(0 16px 9px rgb(0 0 0 / 55%));
+}
+
 .roster-grid strong,
 .roster-grid small {
   position: relative;
@@ -183,6 +198,10 @@
 
 .opponent-selection .portrait {
   transform: translateX(-50%) scaleX(-1);
+}
+
+.opponent-selection .roster-monogram {
+  transform: scaleX(-1);
 }
 
 .versus {

@@ -35,6 +35,25 @@ export type FighterId =
   | 'luini'
   | 'bill'
   | 'furykov'
+  | 'cluck'
+  | 'beyond'
+  | 'fugetsu'
+  | 'kacho'
+  | 'luzurus'
+  | 'momoze'
+  | 'salesale'
+  | 'zhanglei'
+  | 'gidal'
+  | 'longhi'
+  | 'musse'
+  | 'padaille'
+  | 'tubeppa'
+  | 'tyson'
+  | 'sayird'
+  | 'silentmajority'
+  | 'terebellum'
+  | 'voconte'
+  | 'yokotani'
 
 export type FighterPose =
   'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'ranged' | 'hit' | 'ko'
@@ -135,6 +154,25 @@ export interface FighterHatsuEffects {
   teleportDodges: number
   growthFrames: number
   comboFocusFrames: number
+  birdFrames: number
+  curseFrames: number
+  wormDodges: number
+  kachoGuards: number
+  desireFrames: number
+  momozeFrames: number
+  smokeFrames: number
+  coinCharges: number
+  gidalCurseFrames: number
+  contractFrames: number
+  secretWindowDodges: number
+  weaponFrames: number
+  synthesisFrames: number
+  eyeWogFrames: number
+  littleEyeDodges: number
+  silentMarks: number
+  sweetHomeCharges: number
+  doorDodges: number
+  lsdfGuards: number
   lastHatsuReceived: FighterId | null
 }
 

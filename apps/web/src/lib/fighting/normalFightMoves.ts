@@ -1,4 +1,5 @@
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
+import { fourthWaveHeavy, fourthWaveLight } from './fourthWaveMoves'
 import type { FighterId } from './types'
 
 interface StrikeBeat {
@@ -240,7 +241,7 @@ function thirdWaveLight(options: NormalMoveOptions): boolean {
       rig.arms[1].rotation.x -= 0.75 * gather + 1.1 * extension
       break
     default:
-      return false
+      return fourthWaveLight(rig, { fighter, gather, extension })
   }
   return true
 }
@@ -279,7 +280,7 @@ function thirdWaveHeavy(options: NormalMoveOptions): boolean {
       rig.arms[0].rotation.x -= 0.5 * gather
       break
     default:
-      return false
+      return fourthWaveHeavy(rig, { fighter, gather, extension, chamber })
   }
   return true
 }

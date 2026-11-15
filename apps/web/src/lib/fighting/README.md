@@ -7,10 +7,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
-- Le roster jouable compte trente-trois personnages. Feitan, Saiyu, Theta, Biscuit,
+- Le roster jouable compte cinquante-deux personnages. Feitan, Saiyu, Theta, Biscuit,
   Marayam, Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh,
   Mizaistom, Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
-  Lynch, Luini, Bill et Furykov rejoignent les six combattants initiaux ; Chrollo dispose désormais de
+  Lynch, Luini, Bill, Furykov, Cluck, Beyond, Fugetsu, Kacho, Luzurus, Momoze,
+  Sale-Sale, Zhang Lei, Gidal, Longhi, Musse, Padaille, Tubeppa, Tyson, Sayird,
+  Silent Majority, Terebellum, Voconte et Yokotani rejoignent les six combattants initiaux ;
+  Chrollo dispose désormais de
   Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise

@@ -136,6 +136,14 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 12,
     size: [1.1, 0.3],
   }),
+  cluck: projectile({
+    labels: ['Oiseau manipulé', 'Manipulated bird'],
+    shape: 'card',
+    colour: '#fbbf24',
+    speed: 62,
+    damage: 9,
+    size: [0.9, 0.55],
+  }),
 }
 
 const THROWN_STONE = projectile({

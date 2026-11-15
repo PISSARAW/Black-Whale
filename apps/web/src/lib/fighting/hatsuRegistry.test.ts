@@ -394,4 +394,135 @@ describe('fighter Hatsu registry', () => {
     expect(poisoned.opponent.hatsuEffects.venomFrames).toBe(180)
     expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
   })
+
+  it('turns Cluck’s flock and Zhang Lei’s coins into scaling buffs', () => {
+    const birds = hatsuFor('cluck').onTrigger({
+      state: closeFight('cluck', 'hisoka'),
+      side: 'player',
+      source: 'cluck',
+    })
+    let coins = closeFight('zhanglei', 'hisoka')
+    for (let charge = 0; charge < 3; charge += 1) {
+      coins = hatsuFor('zhanglei').onTrigger({ state: coins, side: 'player', source: 'zhanglei' })
+    }
+    expect(hatsuDamageFactor(birds.player)).toBeGreaterThan(1)
+    expect(hatsuDamageFactor(coins.player)).toBeGreaterThan(1.2)
+    expect(hatsuDefenceFactor(coins.player)).toBeLessThan(1)
+  })
+
+  it('applies Beyond’s sacrificial curse as a lasting vulnerability', () => {
+    const ready = closeFight('beyond', 'hisoka')
+    const cursed = hatsuFor('beyond').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'beyond',
+      blocked: false,
+      concealed: false,
+    })
+    expect(cursed.opponent.hatsuEffects.curseFrames).toBe(240)
+    expect(cursed.opponent.aura).toBeLessThan(ready.opponent.aura)
+    expect(hatsuDefenceFactor(cursed.opponent)).toBeGreaterThan(1)
+  })
+
+  it('gives Fugetsu and Kacho one protected passage', () => {
+    for (const source of ['fugetsu', 'kacho'] as const) {
+      const state = hatsuFor(source).onTrigger({
+        state: closeFight(source, 'hisoka'),
+        side: 'player',
+        source,
+      })
+      expect(hatsuAvoidsImpact(state.player)).toBe(true)
+      expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
+    }
+  })
+
+  it('distinguishes Desire Trap, Are You Free and aura smoke', () => {
+    const ready = closeFight('luzurus', 'hisoka')
+    const effect = (source: 'luzurus' | 'momoze' | 'salesale') =>
+      hatsuFor(source).onImpact({
+        state: ready,
+        side: 'player',
+        defenderSide: 'opponent',
+        source,
+        blocked: false,
+        concealed: false,
+      }).opponent.hatsuEffects
+    expect(effect('luzurus').desireFrames).toBe(90)
+    expect(effect('momoze').momozeFrames).toBe(120)
+    expect(effect('salesale').smokeFrames).toBe(180)
+  })
+
+  it('turns Damage Sweet Home and LSDF into one-hit defences', () => {
+    for (const source of ['terebellum', 'yokotani'] as const) {
+      const state = hatsuFor(source).onTrigger({
+        state: closeFight(source, 'hisoka'),
+        side: 'player',
+        source,
+      })
+      expect(hatsuAvoidsImpact(state.player)).toBe(true)
+      expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
+    }
+  })
+
+  it('lets Silent Majority execute its target on the third mark', () => {
+    let state = closeFight('silentmajority', 'hisoka')
+    for (let strike = 0; strike < 3; strike += 1) {
+      state = hatsuFor('silentmajority').onImpact({
+        state,
+        side: 'player',
+        defenderSide: 'opponent',
+        source: 'silentmajority',
+        blocked: false,
+        concealed: false,
+      })
+    }
+    expect(state.opponent.health).toBe(78)
+    expect(state.opponent.hatsuEffects.silentMarks).toBe(0)
+  })
+
+  it('applies the remaining curse, contract and support effects', () => {
+    const ready = closeFight('gidal', 'hisoka')
+    const curse = hatsuFor('gidal').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'gidal',
+      blocked: false,
+      concealed: false,
+    })
+    const contract = hatsuFor('longhi').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'longhi',
+      blocked: false,
+      concealed: false,
+    })
+    const synthesis = hatsuFor('tubeppa').onTrigger({
+      state: closeFight('tubeppa', 'hisoka'),
+      side: 'player',
+      source: 'tubeppa',
+    })
+    expect(curse.opponent.hatsuEffects.gidalCurseFrames).toBe(240)
+    expect(contract.opponent.hatsuEffects.contractFrames).toBe(120)
+    expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
+  })
+
+  it('arms Padaille and grants tactical dodges to Musse, Sayird and Voconte', () => {
+    const armed = hatsuFor('padaille').onTrigger({
+      state: closeFight('padaille', 'hisoka'),
+      side: 'player',
+      source: 'padaille',
+    })
+    expect(hatsuDamageFactor(armed.player)).toBeGreaterThan(1)
+    for (const source of ['musse', 'sayird', 'voconte'] as const) {
+      const state = hatsuFor(source).onTrigger({
+        state: closeFight(source, 'hisoka'),
+        side: 'player',
+        source,
+      })
+      expect(hatsuAvoidsImpact(state.player)).toBe(true)
+    }
+  })
 })

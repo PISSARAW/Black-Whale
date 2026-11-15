@@ -1,14 +1,30 @@
 import type { FighterHatsu } from './contract'
 import { benjaminHatsu } from './benjamin'
 import { bashoHatsu } from './basho'
+import { beyondHatsu } from './beyond'
 import { billHatsu } from './bill'
 import { bonolenovHatsu } from './bonolenov'
 import { chrolloHatsu } from './chrollo'
+import {
+  gidalHatsu,
+  longhiHatsu,
+  musseHatsu,
+  padailleHatsu,
+  sayirdHatsu,
+  silentMajorityHatsu,
+  terebellumHatsu,
+  tubeppaHatsu,
+  tysonHatsu,
+  voconteHatsu,
+  yokotaniHatsu,
+} from './combatCompletion'
 import { camillaHatsu } from './camilla'
+import { cluckHatsu } from './cluck'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
 import { franklinHatsu } from './franklin'
 import { furykovHatsu } from './furykov'
+import { fugetsuHatsu } from './fugetsu'
 import { gelHatsu } from './gel'
 import { halkenburgHatsu } from './halkenburg'
 import { hisokaHatsu } from './hisoka'
@@ -16,6 +32,7 @@ import { hanzoHatsu } from './hanzo'
 import { hinrighHatsu } from './hinrigh'
 import { illumiHatsu } from './illumi'
 import { kallutoHatsu } from './kalluto'
+import { kachoHatsu } from './kacho'
 import { kurapikaHatsu } from './kurapika'
 import { marayamHatsu } from './marayam'
 import { machiHatsu } from './machi'
@@ -25,13 +42,17 @@ import { morenaHatsu } from './morena'
 import { phinksHatsu } from './phinks'
 import { leorioHatsu } from './leorio'
 import { luiniHatsu } from './luini'
+import { luzurusHatsu } from './luzurus'
 import { lynchHatsu } from './lynch'
+import { momozeHatsu } from './momoze'
 import { rihanHatsu } from './rihan'
 import { saiyuHatsu } from './saiyu'
+import { salesaleHatsu } from './salesale'
 import { shizukuHatsu } from './shizuku'
 import { thetaHatsu } from './theta'
 import { tserriednichHatsu } from './tserriednich'
 import { zakuroHatsu } from './zakuro'
+import { zhangleiHatsu } from './zhanglei'
 import type { FightState, FighterId } from '../types'
 
 const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
@@ -68,6 +89,25 @@ const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
   luini: luiniHatsu,
   bill: billHatsu,
   furykov: furykovHatsu,
+  cluck: cluckHatsu,
+  beyond: beyondHatsu,
+  fugetsu: fugetsuHatsu,
+  kacho: kachoHatsu,
+  luzurus: luzurusHatsu,
+  momoze: momozeHatsu,
+  salesale: salesaleHatsu,
+  zhanglei: zhangleiHatsu,
+  gidal: gidalHatsu,
+  longhi: longhiHatsu,
+  musse: musseHatsu,
+  padaille: padailleHatsu,
+  tubeppa: tubeppaHatsu,
+  tyson: tysonHatsu,
+  sayird: sayirdHatsu,
+  silentmajority: silentMajorityHatsu,
+  terebellum: terebellumHatsu,
+  voconte: voconteHatsu,
+  yokotani: yokotaniHatsu,
 }
 
 export function hatsuFor(id: FighterId): FighterHatsu {

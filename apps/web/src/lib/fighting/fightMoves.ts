@@ -1,6 +1,7 @@
 import { variantMotion } from './variantMotion'
 import type { AnimatedHuman, HumanMotion } from '$lib/tour/humanAnimation'
 import { heavyFightMove, lightFightMove } from './normalFightMoves'
+import { fourthWaveSpecial } from './fourthWaveMoves'
 import type { ArcadeFighter, AttackKind, FighterId, FighterPose } from './types'
 
 export const FIGHT_MOVE_TIMING: Record<
@@ -259,6 +260,8 @@ function thirdWaveSpecial(rig: AnimatedHuman, options: SpecialGesture): void {
       rig.figure.rotation.x -= 0.4 * release
       rig.arms[1].rotation.x -= 1.45 * release
       break
+    default:
+      fourthWaveSpecial(rig, { fighter, gather, extension: release })
   }
 }
 

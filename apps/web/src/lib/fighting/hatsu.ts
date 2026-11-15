@@ -47,10 +47,7 @@ export function resolveHatsuImpact(options: {
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const baton = 1 + fighter.hatsuEffects.batonCharges * 0.12
-  const risingSun =
-    fighter.id === 'feitan' && fighter.attack?.kind === 'special'
-      ? 1 + ((100 - fighter.health) / 100) * 1.8
-      : 1
+  const risingSun = risingSunFactor(fighter)
   const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 1.35 : 1
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
@@ -58,9 +55,34 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
   const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
   const combo = fighter.hatsuEffects.comboFocusFrames > 0 ? 1.2 : 1
+  const birds = fighter.hatsuEffects.birdFrames > 0 ? 1.15 : 1
+  const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
+  const completion = completionDamageFactor(fighter)
   return (
-    baton * risingSun * transformed * cyclotron * cantabile * biohazard * haiku * growth * combo
+    baton *
+    risingSun *
+    transformed *
+    cyclotron *
+    cantabile *
+    biohazard *
+    haiku *
+    growth *
+    combo *
+    birds *
+    coins *
+    completion
   )
+}
+
+function risingSunFactor(fighter: ArcadeFighter): number {
+  if (fighter.id !== 'feitan' || fighter.attack?.kind !== 'special') return 1
+  return 1 + ((100 - fighter.health) / 100) * 1.8
+}
+
+function completionDamageFactor(fighter: ArcadeFighter): number {
+  const weapon = fighter.hatsuEffects.weaponFrames > 0 ? 1.25 : 1
+  const synthesis = fighter.hatsuEffects.synthesisFrames > 0 ? 1.12 : 1
+  return weapon * synthesis
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
@@ -70,17 +92,33 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
   const growth = fighter.hatsuEffects.growthFrames > 0 ? 0.82 : 1
   const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
-  return transformed * cantabile * biohazard * predator * growth * exposed
+  const cursed = fighter.hatsuEffects.curseFrames > 0 ? 1.2 : 1
+  const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
+  const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
+  const completion = completionDefenceFactor(fighter)
+  return (
+    transformed *
+    cantabile *
+    biohazard *
+    predator *
+    growth *
+    exposed *
+    cursed *
+    smoked *
+    coins *
+    completion
+  )
+}
+
+function completionDefenceFactor(fighter: ArcadeFighter): number {
+  const curse = fighter.hatsuEffects.gidalCurseFrames > 0 ? 1.25 : 1
+  const eyes = fighter.hatsuEffects.eyeWogFrames > 0 ? 1.1 : 1
+  const synthesis = fighter.hatsuEffects.synthesisFrames > 0 ? 0.88 : 1
+  return curse * eyes * synthesis
 }
 
 export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
-  return (
-    fighter.hatsuEffects.futureSight > 0 ||
-    fighter.hatsuEffects.isolationFrames > 0 ||
-    fighter.hatsuEffects.cloneDodges > 0 ||
-    fighter.hatsuEffects.catCounters > 0 ||
-    fighter.hatsuEffects.teleportDodges > 0
-  )
+  return AVOIDANCE_KEYS.some((key) => fighter.hatsuEffects[key] > 0)
 }
 
 export function consumeBaton(fighter: ArcadeFighter): ArcadeFighter {
@@ -120,12 +158,45 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
       hatsuEffects: { ...fighter.hatsuEffects, catCounters: fighter.hatsuEffects.catCounters - 1 },
     }
   }
-  if (fighter.hatsuEffects.teleportDodges <= 0) return fighter
+  return consumeStandardAvoidance(fighter)
+}
+
+type AvoidanceKey =
+  | 'futureSight'
+  | 'isolationFrames'
+  | 'cloneDodges'
+  | 'catCounters'
+  | 'teleportDodges'
+  | 'wormDodges'
+  | 'kachoGuards'
+  | 'secretWindowDodges'
+  | 'littleEyeDodges'
+  | 'sweetHomeCharges'
+  | 'doorDodges'
+  | 'lsdfGuards'
+
+const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
+  'futureSight',
+  'isolationFrames',
+  'cloneDodges',
+  'catCounters',
+  'teleportDodges',
+  'wormDodges',
+  'kachoGuards',
+  'secretWindowDodges',
+  'littleEyeDodges',
+  'sweetHomeCharges',
+  'doorDodges',
+  'lsdfGuards',
+]
+
+const STANDARD_AVOIDANCE_KEYS = AVOIDANCE_KEYS.slice(4)
+
+function consumeStandardAvoidance(fighter: ArcadeFighter): ArcadeFighter {
+  const key = STANDARD_AVOIDANCE_KEYS.find((candidate) => fighter.hatsuEffects[candidate] > 0)
+  if (!key) return fighter
   return {
     ...fighter,
-    hatsuEffects: {
-      ...fighter.hatsuEffects,
-      teleportDodges: Math.max(0, fighter.hatsuEffects.teleportDodges - 1),
-    },
+    hatsuEffects: { ...fighter.hatsuEffects, [key]: fighter.hatsuEffects[key] - 1 },
   }
 }

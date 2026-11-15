@@ -54,6 +54,7 @@
 
   $: secondaryNavigation = [
     { href: '/abilities', label: $t.nav.abilityArchive },
+    { href: '/nen-archive', label: $t.nav.nenArchive },
     ...(PUBLIC_FEATURES.compare ? [{ href: '/compare', label: $t.nav.comparePerspectives }] : []),
     { href: '/relationships', label: $t.nav.factionNetwork },
     { href: '/simulations', label: $t.nav.simulations },

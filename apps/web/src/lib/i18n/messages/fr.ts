@@ -60,6 +60,7 @@ export const fr: Messages = {
     characters: 'Personnages',
     knowledge: 'Savoirs',
     abilityArchive: 'Archive des pouvoirs',
+    nenArchive: 'NenDex',
     comparePerspectives: 'Comparer les points de vue',
     factionNetwork: 'Réseau des factions',
     simulations: 'Simulations',

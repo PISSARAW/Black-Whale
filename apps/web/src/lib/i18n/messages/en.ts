@@ -65,6 +65,7 @@ export const en = {
     characters: 'Characters',
     knowledge: 'Knowledge',
     abilityArchive: 'Ability Archive',
+    nenArchive: 'NenDex',
     comparePerspectives: 'Compare Perspectives',
     factionNetwork: 'Faction Network',
     simulations: 'Simulations',

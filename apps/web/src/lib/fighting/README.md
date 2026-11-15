@@ -7,8 +7,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
-- Le roster jouable compte onze personnages. Feitan, Saiyu, Theta, Biscuit et
-  Marayam rejoignent les six combattants initiaux ; Chrollo dispose désormais de
+- Le roster jouable compte dix-sept personnages. Feitan, Saiyu, Theta, Biscuit,
+  Marayam, Phinks, Franklin, Machi, Illumi, Kalluto et Bonolenov rejoignent les
+  six combattants initiaux ; Chrollo dispose désormais de
   Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
@@ -39,8 +40,10 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   tel quel (`stageRoomDetails.ts`) : une salle ajoutée que la visite habille doit y
   inscrire son constructeur. Un terrain ne change aucune règle.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
-- Une partie dure soixante secondes et se termine par K.-O., à dix points Tour
-  Céleste, ou par décision (points Tour puis vie restante).
+- Le type de combat est choisi avant le terrain : **Tour Céleste** se joue au
+  premier à trois coups non bloqués, **Combat K.-O.** à la vie (100 PV, décision
+  après 90 secondes), et **Arcade** conserve la règle historique à dix points ou
+  K.-O. en soixante secondes. Les conditions restent indépendantes du terrain.
 
 Le joueur utilise Q/D ou les flèches pour se déplacer, Z ou flèche haute pour
 sauter, S ou flèche basse pour se baisser, Maj/I pour garder, J/K pour les coups,

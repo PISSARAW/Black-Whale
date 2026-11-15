@@ -51,6 +51,33 @@ function extendedLightMove(options: NormalMoveOptions): boolean {
       rig.arms[0].rotation.z += 0.75 * gather
       rig.arms[1].rotation.x -= 0.5 * extension
       return true
+    case 'phinks':
+      rig.figure.rotation.x += 0.16 * gather - 0.38 * extension
+      rig.arms[1].rotation.x -= 0.8 * gather + 1.25 * extension
+      return true
+    case 'franklin':
+      rig.figure.rotation.x += 0.12 * gather
+      rig.arms[0].rotation.x -= 0.7 * extension
+      rig.arms[1].rotation.x -= 0.7 * extension
+      return true
+    case 'machi':
+      rig.figure.rotation.y -= 0.48 * extension
+      rig.arms[1].rotation.z -= 0.8 * gather + 0.45 * extension
+      return true
+    case 'illumi':
+      rig.figure.rotation.y += 0.35 * gather - 0.65 * extension
+      rig.arms[1].rotation.x -= 0.55 * gather + 0.95 * extension
+      return true
+    case 'kalluto':
+      rig.figure.rotation.y += 0.65 * gather - 0.95 * extension
+      rig.arms[0].rotation.z += 0.9 * gather
+      rig.arms[1].rotation.z -= 0.65 * extension
+      return true
+    case 'bonolenov':
+      rig.figure.rotation.y -= 0.45 * extension
+      rig.arms[0].rotation.z += 0.7 * gather
+      rig.arms[1].rotation.x -= 0.75 * gather + 1.05 * extension
+      return true
     default:
       return false
   }
@@ -74,6 +101,34 @@ function extendedHeavyMove(options: NormalMoveOptions): boolean {
       rig.figure.rotation.y += 0.6 * gather - 0.9 * extension
       rig.legs[1].rotation.x -= 0.5 * chamber + 0.75 * extension
       rig.arms[0].rotation.z += 0.9 * gather
+      return true
+    case 'phinks':
+      rig.figure.rotation.x += 0.24 * gather - 0.62 * extension
+      rig.arms[1].rotation.x -= 1.4 * gather + 1.25 * extension
+      rig.knees.forEach((knee) => (knee.rotation.x += 0.3 * gather))
+      return true
+    case 'franklin':
+      rig.figure.rotation.x += 0.3 * gather - 0.48 * extension
+      rig.arms.forEach((arm) => (arm.rotation.x -= 1.2 * gather + 0.6 * extension))
+      return true
+    case 'machi':
+      rig.figure.rotation.y -= 0.8 * gather - 1.15 * extension
+      rig.legs[1].rotation.x -= 0.7 * chamber + 1.05 * extension
+      return true
+    case 'illumi':
+      rig.figure.rotation.y += 0.7 * gather - 1.05 * extension
+      rig.arms[0].rotation.z += 0.8 * gather
+      rig.arms[1].rotation.x -= 1.1 * extension
+      return true
+    case 'kalluto':
+      rig.figure.rotation.y += 1.05 * gather - 1.4 * extension
+      rig.legs[0].rotation.z += 0.55 * extension
+      rig.arms[1].rotation.z -= 1.05 * gather
+      return true
+    case 'bonolenov':
+      rig.figure.rotation.y -= 0.9 * gather - 1.3 * extension
+      rig.figure.rotation.z += 0.24 * gather
+      rig.legs[1].rotation.x -= 0.75 * chamber + 1.1 * extension
       return true
     default:
       return false

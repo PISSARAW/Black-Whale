@@ -152,6 +152,36 @@ function extraSpecial(
       rig.arms[0].rotation.set(-0.7 * gather, 0, 1.1 * gather)
       rig.arms[1].rotation.set(-0.8 * gather - 0.9 * release, 0, -0.9 * gather)
       break
+    case 'phinks':
+      rig.figure.rotation.x += 0.28 * gather - 0.62 * release
+      rig.arms[1].rotation.x -= 1.8 * gather + 1.1 * release
+      rig.arms[1].children[1].rotation.x -= 0.9 * gather
+      break
+    case 'franklin':
+      rig.figure.rotation.x += 0.16 * gather
+      rig.arms[0].rotation.set(-1.3 * gather - 0.6 * release, 0, 0.35 * gather)
+      rig.arms[1].rotation.set(-1.3 * gather - 0.6 * release, 0, -0.35 * gather)
+      break
+    case 'machi':
+      rig.figure.rotation.y -= 0.7 * release
+      rig.arms[0].rotation.set(-0.5 * gather, 0, 1.15 * gather)
+      rig.arms[1].rotation.set(-0.45 * gather - 1.1 * release, 0, -0.9 * gather)
+      break
+    case 'illumi':
+      rig.figure.rotation.y += 0.45 * gather - 0.8 * release
+      rig.arms[0].rotation.z += 0.8 * gather
+      rig.arms[1].rotation.x -= 0.65 * gather + 1.3 * release
+      break
+    case 'kalluto':
+      rig.figure.rotation.y += 1.2 * gather - 1.55 * release
+      rig.arms[0].rotation.z += 1.25 * gather
+      rig.arms[1].rotation.z -= 1.25 * gather
+      break
+    case 'bonolenov':
+      rig.figure.rotation.y -= 0.9 * gather - 1.3 * release
+      rig.figure.rotation.z += 0.2 * gather
+      rig.arms.forEach((arm) => (arm.rotation.x -= 1.15 * gather + 0.45 * release))
+      break
   }
 }
 

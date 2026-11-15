@@ -3,6 +3,7 @@
   import Seo from '$lib/components/Seo.svelte'
   import FighterAvatar from '$lib/components/fighting/FighterAvatar.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
+  import FightFormatPicker from '$lib/components/fighting/FightFormatPicker.svelte'
   import StagePicker from '$lib/components/fighting/StagePicker.svelte'
   import { link, locale } from '$lib/i18n'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -15,6 +16,7 @@
     tickFight,
   } from '$lib/fighting/engine'
   import { fightingStyle } from '$lib/fighting/fightStyles'
+  import { type FightFormatId } from '$lib/fighting/formats'
   import { FIGHTING_ROSTER, fighterDefinition } from '$lib/fighting/roster'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import {
@@ -29,6 +31,7 @@
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
   let selectedStage: FightStageId = DEFAULT_FIGHT_STAGE
+  let selectedFormat: FightFormatId = 'heavens-arena'
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
   let aiClock = 0
@@ -90,7 +93,7 @@
   }
 
   function prepareFight() {
-    state = createFight(selectedPlayer, selectedOpponent)
+    state = createFight(selectedPlayer, selectedOpponent, selectedFormat)
     input = { ...EMPTY_INPUT }
     aiClock = 0
     paused = false
@@ -112,20 +115,29 @@
   }
 
   function attack(kind: AttackKind) {
-    if (state) state = performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
+    if (state && !paused) {
+      state = performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
+    }
   }
 
   function throwAttack() {
-    if (state) state = performThrow(state, 'player')
+    if (state && !paused) state = performThrow(state, 'player')
   }
 
   function control(key: keyof FightInput, active: boolean) {
+    if (paused) return
     input = { ...input, [key]: active }
   }
 
   function winnerLabel(current: FightState): string {
     if (current.winner === 'draw') return copy.draw
     return current.winner === 'player' ? copy.victory : copy.defeat
+  }
+
+  function finishLabel(current: FightState): string {
+    if (current.finishReason === 'time') return 'TIME'
+    if (current.finishReason === 'hits') return language === 'fr' ? '3 COUPS' : '3 HITS'
+    return 'K.O.'
   }
 
   const movementKeys: Record<string, keyof FightInput> = {
@@ -166,6 +178,7 @@
 
   function handleActionKey(key: string) {
     if (key === 'p' && state?.phase === 'fighting') return togglePause()
+    if (paused) return
     if (key === 'o') return throwAttack()
     const attackKind = attackKeys[key]
     if (attackKind) return attack(attackKind)
@@ -320,6 +333,11 @@
     </section>
 
     <StagePicker selected={selectedStage} {language} onSelect={(id) => (selectedStage = id)} />
+    <FightFormatPicker
+      selected={selectedFormat}
+      {language}
+      onSelect={(id) => (selectedFormat = id)}
+    />
 
     <div class="selection-summary">
       <div>
@@ -371,7 +389,7 @@
         </div>
       {:else if state.phase === 'finished'}
         <div class="match-overlay result-overlay">
-          <p>{state.winner === 'draw' ? 'TIME' : 'K.O.'}</p>
+          <p>{finishLabel(state)}</p>
           <h2>{winnerLabel(state)}</h2>
           <div>
             <button type="button" onclick={rematch}>{copy.rematch}</button>

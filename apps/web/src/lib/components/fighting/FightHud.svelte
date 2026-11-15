@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { fightFormat } from '$lib/fighting/formats'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
 
@@ -8,6 +9,7 @@
 
   $: player = fighterDefinition(state.player.id)
   $: opponent = fighterDefinition(state.opponent.id)
+  $: format = fightFormat(state.formatId)
   $: visibleBungee =
     state.bungeeGum &&
     (state.bungeeGum.owner === 'player' || !state.bungeeGum.hidden || state.player.nen.gyo)
@@ -30,9 +32,26 @@
     {/if}
   </div>
   <div class="tower-score">
-    <strong>{state.score.player}<span>/10</span></strong>
+    <small>{language === 'fr' ? format.titleFr : format.titleEn}</small>
+    <strong>
+      {format.hitTarget === null ? Math.ceil(state.player.health) : state.score.player}<span
+        >{format.hitTarget === null
+          ? language === 'fr'
+            ? ' PV'
+            : ' HP'
+          : `/${format.hitTarget}`}</span
+      >
+    </strong>
     <div class="timer">{Math.ceil(state.time)}</div>
-    <strong>{state.score.opponent}<span>/10</span></strong>
+    <strong>
+      {format.hitTarget === null ? Math.ceil(state.opponent.health) : state.score.opponent}<span
+        >{format.hitTarget === null
+          ? language === 'fr'
+            ? ' PV'
+            : ' HP'
+          : `/${format.hitTarget}`}</span
+      >
+    </strong>
   </div>
   <div class="fighter-meter opponent-meter">
     <div class="meter-label"><span>CPU</span><strong>{opponent.name}</strong></div>
@@ -138,6 +157,17 @@
   .tower-score > strong {
     position: absolute;
     top: 62px;
+  }
+  .tower-score > small {
+    position: absolute;
+    top: -0.1rem;
+    width: 8rem;
+    color: #f1d36d;
+    font: 700 0.46rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px #000;
   }
   .tower-score > strong:first-child {
     transform: translateX(-24px);

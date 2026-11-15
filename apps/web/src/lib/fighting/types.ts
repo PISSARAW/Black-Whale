@@ -1,4 +1,5 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
+import type { FightFormatId } from './formats'
 
 export type FighterId =
   | 'kurapika'
@@ -28,6 +29,7 @@ export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
+export type FightFinishReason = 'hits' | 'knockout' | 'time' | null
 
 export interface FighterDefinition {
   id: FighterId
@@ -164,6 +166,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  formatId: FightFormatId
   player: ArcadeFighter
   opponent: ArcadeFighter
   phase: FightPhase
@@ -174,6 +177,7 @@ export interface FightState {
   hitstop: number
   rng: number
   winner: FightSide | 'draw' | null
+  finishReason: FightFinishReason
   score: Record<FightSide, number>
   bungeeGum: BungeeGumAttachment | null
   projectiles: FightProjectile[]

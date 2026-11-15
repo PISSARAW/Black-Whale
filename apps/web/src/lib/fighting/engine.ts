@@ -1,5 +1,6 @@
 import { attackVariant } from './duelMoves'
-import { FIGHT_FPS, FIXED_STEP, ROUND_FRAMES } from './frameData'
+import { FIGHT_FPS, FIXED_STEP } from './frameData'
+import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import {
   advanceHatsuFrames,
   canUseFightHatsu,
@@ -41,18 +42,25 @@ const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 const IN_AURA_SURCHARGE = 12
 
-export function createFight(playerId: FighterId, opponentId: FighterId): FightState {
+export function createFight(
+  playerId: FighterId,
+  opponentId: FighterId,
+  formatId: FightFormatId = DEFAULT_FIGHT_FORMAT,
+): FightState {
+  const format = fightFormat(formatId)
   return {
-    player: createFighter(playerId, 22, 1),
-    opponent: createFighter(opponentId, 78, -1),
+    formatId,
+    player: createFighter({ id: playerId, x: 22, facing: 1, health: format.health }),
+    opponent: createFighter({ id: opponentId, x: 78, facing: -1, health: format.health }),
     phase: 'ready',
     frame: 0,
-    time: ROUND_FRAMES / FIGHT_FPS,
-    remainingFrames: ROUND_FRAMES,
+    time: format.roundFrames / FIGHT_FPS,
+    remainingFrames: format.roundFrames,
     frameAccumulator: 0,
     hitstop: 0,
     rng: seedFor(playerId, opponentId),
     winner: null,
+    finishReason: null,
     score: { player: 0, opponent: 0 },
     bungeeGum: null,
     projectiles: [],
@@ -61,13 +69,19 @@ export function createFight(playerId: FighterId, opponentId: FighterId): FightSt
   }
 }
 
-function createFighter(id: FighterId, x: number, facing: -1 | 1): ArcadeFighter {
+function createFighter(options: {
+  id: FighterId
+  x: number
+  facing: -1 | 1
+  health: number
+}): ArcadeFighter {
+  const { id, x, facing, health } = options
   return {
     id,
     x,
     y: GROUND,
     velocityY: 0,
-    health: 100,
+    health,
     aura: 55,
     nen: createFightingNen(),
     facing,
@@ -362,13 +376,22 @@ function separateFighters(
 }
 
 function finishByTime(state: FightState): FightState {
-  if (state.score.player !== state.score.opponent) {
-    return finishFight(state, state.score.player > state.score.opponent ? 'player' : 'opponent')
+  const format = fightFormat(state.formatId)
+  if (format.victory !== 'health' && state.score.player !== state.score.opponent) {
+    return finishFight(
+      state,
+      state.score.player > state.score.opponent ? 'player' : 'opponent',
+      'time',
+    )
   }
   if (state.player.health === state.opponent.health) {
-    return { ...state, phase: 'finished', winner: 'draw' }
+    return { ...state, phase: 'finished', winner: 'draw', finishReason: 'time' }
   }
-  return finishFight(state, state.player.health > state.opponent.health ? 'player' : 'opponent')
+  return finishFight(
+    state,
+    state.player.health > state.opponent.health ? 'player' : 'opponent',
+    'time',
+  )
 }
 
 function poseFighter(fighter: ArcadeFighter): ArcadeFighter {

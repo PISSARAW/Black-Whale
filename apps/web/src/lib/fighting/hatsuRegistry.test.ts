@@ -170,4 +170,84 @@ describe('fighter Hatsu registry', () => {
     expect(avoided.player.health).toBe(100)
     expect(avoided.player.hatsuEffects.isolationFrames).toBe(0)
   })
+
+  it('stores missed Ripper Cyclotron rotations until Phinks connects', () => {
+    const trigger = hatsuFor('phinks').onTrigger
+    let state = trigger({ state: closeFight('phinks', 'hisoka'), side: 'player', source: 'phinks' })
+    state = trigger({ state, side: 'player', source: 'phinks' })
+    expect(state.player.hatsuEffects.cyclotronTurns).toBe(2)
+    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1.4)
+    state = hatsuFor('phinks').onImpact({
+      state,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'phinks',
+      blocked: false,
+      concealed: false,
+    })
+    expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
+  })
+
+  it('adds Franklin’s machine-gun barrage to a confirmed hit', () => {
+    const ready = closeFight('franklin', 'hisoka')
+    const struck = hatsuFor('franklin').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'franklin',
+      blocked: false,
+      concealed: false,
+    })
+    expect(struck.opponent.health).toBe(ready.opponent.health - 10)
+  })
+
+  it('lets Machi and Illumi immobilize a target in distinct ways', () => {
+    const ready = closeFight('machi', 'hisoka')
+    const stitched = hatsuFor('machi').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'machi',
+      blocked: false,
+      concealed: false,
+    })
+    const needled = hatsuFor('illumi').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'illumi',
+      blocked: false,
+      concealed: false,
+    })
+    expect(stitched.opponent.hatsuEffects.stitchedFrames).toBe(90)
+    expect(needled.opponent.hatsuEffects.needleFrames).toBe(120)
+    expect(needled.opponent.aura).toBeLessThan(ready.opponent.aura)
+  })
+
+  it('converges Kalluto’s paper marks on the third strike', () => {
+    const impact = hatsuFor('kalluto').onImpact
+    let state = closeFight('kalluto', 'hisoka')
+    for (let strike = 0; strike < 3; strike += 1) {
+      state = impact({
+        state,
+        side: 'player',
+        defenderSide: 'opponent',
+        source: 'kalluto',
+        blocked: false,
+        concealed: false,
+      })
+    }
+    expect(state.opponent.health).toBe(82)
+    expect(state.opponent.hatsuEffects.serpentMarks).toBe(0)
+  })
+
+  it('arms Bonolenov with Battle Cantabile’s attack and armour', () => {
+    const state = hatsuFor('bonolenov').onTrigger({
+      state: closeFight('bonolenov', 'hisoka'),
+      side: 'player',
+      source: 'bonolenov',
+    })
+    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
+    expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
+  })
 })

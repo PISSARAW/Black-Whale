@@ -25,11 +25,13 @@ import {
   setIn,
 } from './nen'
 import { fighterDefinition } from './roster'
+import { fightFormat } from './formats'
 import type { ProjectileHit } from './projectiles'
 import type {
   ArcadeFighter,
   AttackKind,
   FightNenZone,
+  FightFinishReason,
   FightSide,
   FightState,
   FighterId,
@@ -75,7 +77,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const struck = defence.avoided
     ? defence.fighter
     : strikeDefender({ fighter: defence.fighter, attacker, damage, blocked: defence.blocked })
-  const points = defence.avoided ? 0 : scoreForImpact(defence.blocked, critical)
+  const points = defence.avoided ? 0 : scoreForImpact(state.formatId, defence.blocked, critical)
   const score = { ...state.score, [side]: state.score[side] + points }
   let next: FightState = {
     ...state,
@@ -171,7 +173,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
         damage,
         blocked: defence.blocked,
       })
-  const points = defence.avoided ? 0 : scoreForImpact(defence.blocked, false)
+  const points = defence.avoided ? 0 : scoreForImpact(state.formatId, defence.blocked, false)
   const score = { ...state.score, [side]: state.score[side] + points }
   const next = {
     ...state,
@@ -230,8 +232,13 @@ function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
   return blocked && fighter.guardFrames > 0 && fighter.guardFrames <= PARRY_WINDOW_FRAMES
 }
 
-function scoreForImpact(blocked: boolean, critical: boolean): number {
+function scoreForImpact(
+  formatId: FightState['formatId'],
+  blocked: boolean,
+  critical: boolean,
+): number {
   if (blocked) return 0
+  if (fightFormat(formatId).victory === 'hits') return 1
   return critical ? 2 : 1
 }
 
@@ -300,8 +307,33 @@ function finishAfterImpact(
   attackerSide: FightSide,
   defenderSide: FightSide,
 ): FightState {
-  const won = state[defenderSide].health === 0 || state.score[attackerSide] >= TOWER_WIN_SCORE
-  return won ? finishFight(state, attackerSide) : state
+  const durable = preserveHitFormatHealth(state, defenderSide)
+  const reason = lossReason(durable, defenderSide)
+  return reason ? finishFight(durable, attackerSide, reason) : durable
+}
+
+function lossReason(state: FightState, side: FightSide): Exclude<FightFinishReason, 'time'> {
+  const format = fightFormat(state.formatId)
+  if (format.victory !== 'hits' && state[side].health <= 0) return 'knockout'
+  if (
+    format.victory !== 'health' &&
+    format.hitTarget !== null &&
+    state.score[otherSide(side)] >= format.hitTarget
+  )
+    return 'hits'
+  return null
+}
+
+function preserveHitFormatHealth(state: FightState, side: FightSide): FightState {
+  const format = fightFormat(state.formatId)
+  if (
+    format.victory !== 'hits' ||
+    format.hitTarget === null ||
+    state.score[otherSide(side)] >= format.hitTarget ||
+    state[side].health > 0
+  )
+    return state
+  return { ...state, [side]: { ...state[side], health: 1 } }
 }
 
 interface StrikeOptions {
@@ -338,12 +370,17 @@ function struckFighter(
   }
 }
 
-export function finishFight(state: FightState, winner: FightSide): FightState {
+export function finishFight(
+  state: FightState,
+  winner: FightSide,
+  finishReason: Exclude<FightFinishReason, null> = 'knockout',
+): FightState {
   const loser = otherSide(winner)
   return {
     ...state,
     phase: 'finished',
     winner,
+    finishReason,
     [loser]: {
       ...state[loser],
       pose: 'ko',
@@ -388,11 +425,15 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
-  const playerLost = traded.player.health <= 0 || traded.score.opponent >= TOWER_WIN_SCORE
-  const opponentLost = traded.opponent.health <= 0 || traded.score.player >= TOWER_WIN_SCORE
-  if (playerLost && opponentLost) return { ...traded, phase: 'finished', winner: 'draw' }
-  if (opponentLost) return finishFight(traded, 'player')
-  return playerLost ? finishFight(traded, 'opponent') : traded
+  const durable = preserveHitFormatHealth(preserveHitFormatHealth(traded, 'player'), 'opponent')
+  const playerLost = lossReason(durable, 'player')
+  const opponentLost = lossReason(durable, 'opponent')
+  const finishReason =
+    playerLost === 'knockout' || opponentLost === 'knockout' ? 'knockout' : 'hits'
+  if (playerLost && opponentLost)
+    return { ...durable, phase: 'finished', winner: 'draw', finishReason }
+  if (opponentLost) return finishFight(durable, 'player', opponentLost)
+  return playerLost ? finishFight(durable, 'opponent', playerLost) : durable
 }
 
 function tradeFighter(options: {

@@ -17,6 +17,12 @@ describe('fighting roster models', () => {
       'theta',
       'biscuit-krueger',
       'prince-marayam',
+      'phinks-magcub',
+      'franklin-bordeau',
+      'machi-komacine',
+      'illumi',
+      'kalluto-zoldyck',
+      'bonolenov-ndongo',
     ])
     expect(FIGHTING_ROSTER.every((fighter) => declared.has(fighter.modelId))).toBe(true)
   })

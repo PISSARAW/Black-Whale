@@ -208,7 +208,7 @@ describe('fighting engine', () => {
     expect(exhausted.player.aura).toBeLessThan(18)
   })
 
-  it('ends a Heaven Arena round when a fighter reaches ten points', () => {
+  it('keeps the historical arcade rule at ten points', () => {
     let state = beginFight(createFight('kurapika', 'hisoka'))
     state = {
       ...state,
@@ -220,5 +220,56 @@ describe('fighting engine', () => {
     expect(ended.score.player).toBe(10)
     expect(ended.phase).toBe('finished')
     expect(ended.winner).toBe('player')
+  })
+
+  it('ends a Heavens Arena fight on the third unblocked hit', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka', 'heavens-arena'))
+    state = {
+      ...state,
+      score: { player: 2, opponent: 1 },
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52 },
+    }
+    const ended = advance(performAttack(state, 'player', 'light'), 0.18)
+    expect(ended.score.player).toBe(3)
+    expect(ended.phase).toBe('finished')
+    expect(ended.finishReason).toBe('hits')
+  })
+
+  it('keeps Heavens Arena governed by hits rather than the health bar', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka', 'heavens-arena'))
+    state = {
+      ...state,
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52, health: 1 },
+    }
+    const firstHit = advance(performAttack(state, 'player', 'light'), 0.18)
+    expect(firstHit.score.player).toBe(1)
+    expect(firstHit.opponent.health).toBe(1)
+    expect(firstHit.phase).toBe('fighting')
+  })
+
+  it('ignores points in a KO fight and waits for health to reach zero', () => {
+    let scored = beginFight(createFight('kurapika', 'hisoka', 'knockout'))
+    scored = {
+      ...scored,
+      score: { player: 9, opponent: 0 },
+      player: { ...scored.player, x: 46 },
+      opponent: { ...scored.opponent, x: 52 },
+    }
+    scored = advance(performAttack(scored, 'player', 'light'), 0.18)
+    expect(scored.score.player).toBe(10)
+    expect(scored.phase).toBe('fighting')
+
+    let finalHit = beginFight(createFight('kurapika', 'hisoka', 'knockout'))
+    finalHit = {
+      ...finalHit,
+      player: { ...finalHit.player, x: 46 },
+      opponent: { ...finalHit.opponent, x: 52, health: 1 },
+    }
+    const ended = advance(performAttack(finalHit, 'player', 'light'), 0.18)
+    expect(ended.opponent.health).toBe(0)
+    expect(ended.winner).toBe('player')
+    expect(ended.finishReason).toBe('knockout')
   })
 })

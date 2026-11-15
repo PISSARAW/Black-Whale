@@ -170,4 +170,59 @@ describe('fighting engine', () => {
     expect(koHit.player.nen.ko).toBeNull()
     expect(koHit.player.nen.ryu).toEqual({})
   })
+
+  it('turns a last-instant guard into a zone-specific Ryu parry', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka'))
+    state = {
+      ...state,
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52 },
+    }
+    state = performAttack(state, 'opponent', 'light')
+    const parried = advance(state, 0.12, { ...EMPTY_INPUT, guard: true })
+    expect(parried.impact).toMatchObject({ parried: true, damage: 0, zone: 'head' })
+    expect(parried.player.nen.ryu.head).toBeGreaterThan(parried.player.nen.ryu.torso ?? 0)
+  })
+
+  it('moves Ryu to the striking limb when attacking out of guard', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka'))
+    state = {
+      ...state,
+      player: { ...state.player, blocking: true, guardFrames: 3 },
+    }
+    const jab = performAttack(state, 'player', 'light')
+    expect(jab.player.nen.ryu.hands).toBeGreaterThan(jab.player.nen.ryu.torso ?? 0)
+    const kick = performAttack(
+      { ...state, player: { ...state.player, attack: null } },
+      'player',
+      'heavy',
+    )
+    expect(kick.player.nen.ryu.feet).toBeGreaterThan(kick.player.nen.ryu.torso ?? 0)
+  })
+
+  it('forces an exhausted aura reserve into defenceless Zetsu', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka'))
+    state = {
+      ...state,
+      player: applyAuraContext({ ...state.player, aura: 0.01 }, { ...EMPTY_INPUT, aura: true }),
+    }
+    const exhausted = advance(state, 0.5, { ...EMPTY_INPUT, aura: true })
+    expect(exhausted.player.auraExhausted).toBe(true)
+    expect(exhausted.player.nen.mode).toBe('zetsu')
+    expect(exhausted.player.aura).toBeLessThan(18)
+  })
+
+  it('ends a Heaven Arena round when a fighter reaches ten points', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka'))
+    state = {
+      ...state,
+      score: { player: 9, opponent: 4 },
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52 },
+    }
+    const ended = advance(performAttack(state, 'player', 'light'), 0.18)
+    expect(ended.score.player).toBe(10)
+    expect(ended.phase).toBe('finished')
+    expect(ended.winner).toBe('player')
+  })
 })

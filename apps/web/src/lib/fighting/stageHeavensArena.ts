@@ -149,7 +149,7 @@ export function buildHeavensArenaScenery(kit: SceneryKit): FightScenery {
   addLights(kit, root)
   return {
     root,
-    fog: { colour: 0x0c0a10, near: 9, far: 46 },
+    fog: { kind: 'linear', colour: 0x0c0a10, near: 9, far: 46 },
     cameraFar: 80,
     clipped: false,
     dispose: () => undefined,

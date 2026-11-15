@@ -5,6 +5,7 @@ import type { Polygon } from '../tour/types'
 import { buildCasinoDetails, casinoSurfacePlan } from '../tour/casinoView'
 import { buildDoorDetails } from '../tour/doorView'
 import { buildScreeningRoomDetails, screeningRoomSurfacePlan } from '../tour/screeningRoomView'
+import { COURT_BAR_RUNS, COURT_BAR_X } from '../tour/supremeCourtFurniture'
 import { buildSupremeCourtDetails, supremeCourtSurfacePlan } from '../tour/supremeCourtView'
 
 /**
@@ -35,31 +36,27 @@ const SURFACE_PLANS: ReadonlyArray<(plan: TierPlan, reveal: boolean) => TierPlan
   supremeCourtSurfacePlan,
 ]
 
+/** Half the room a fighter needs to keep off a rail. */
+const BARRIER_REACH = 0.4
+
 /**
  * Barriers the dressing adds that the blueprint does not list as solids.
  *
- * The court's bar is modelled in `tour/supremeCourtFurniture.ts` at `x = 94`,
- * in two runs either side of its gate. A duel may not be laid across it.
+ * Each is read from the module that models it, never copied: the court's bar
+ * moves here the day it moves in the visit.
  */
-const ROOM_BARRIERS: Readonly<Record<string, readonly Polygon[]>> = {
-  'tier-1-supreme-court': [
-    [
-      [93.6, 27.8],
-      [94.4, 27.8],
-      [94.4, 36.7],
-      [93.6, 36.7],
-    ],
-    [
-      [93.6, 40.3],
-      [94.4, 40.3],
-      [94.4, 49.2],
-      [93.6, 49.2],
-    ],
-  ],
+const ROOM_BARRIERS: Readonly<Record<string, () => Polygon[]>> = {
+  'tier-1-supreme-court': () =>
+    COURT_BAR_RUNS.map(([from, to]) => [
+      [COURT_BAR_X - BARRIER_REACH, from - BARRIER_REACH],
+      [COURT_BAR_X + BARRIER_REACH, from - BARRIER_REACH],
+      [COURT_BAR_X + BARRIER_REACH, to + BARRIER_REACH],
+      [COURT_BAR_X - BARRIER_REACH, to + BARRIER_REACH],
+    ]),
 }
 
 export function roomBarriers(spaceId: string): readonly Polygon[] {
-  return ROOM_BARRIERS[spaceId] ?? []
+  return ROOM_BARRIERS[spaceId]?.() ?? []
 }
 
 /** The plan with the coarse solids a detail builder redraws taken back out. */

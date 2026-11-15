@@ -9,11 +9,9 @@ export interface SceneryKit {
   geometry: <T extends Three.BufferGeometry>(made: T) => T
 }
 
-export interface SceneryFog {
-  colour: number
-  near: number
-  far: number
-}
+export type SceneryFog =
+  | { kind: 'linear'; colour: number; near: number; far: number }
+  | { kind: 'exp2'; colour: number; density: number }
 
 export interface FightScenery {
   root: Three.Group
@@ -22,6 +20,10 @@ export interface FightScenery {
   cameraFar: number
   /** Whether the stage needs material-level clipping planes switched on. */
   clipped: boolean
+  /** Whether the frame is finished by `stagePost`: lamp bloom and a vignette. */
+  bloom?: boolean
+  /** Moves what the stage keeps moving, once a frame. */
+  update?: (seconds: number) => void
   /** Releases what the kit did not register. */
   dispose: () => void
 }

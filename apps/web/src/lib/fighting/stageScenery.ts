@@ -52,7 +52,7 @@ function buildHoldScenery(kit: SceneryKit): FightScenery {
 
   return {
     root,
-    fog: { colour: 0x05090d, near: 8, far: 18 },
+    fog: { kind: 'linear', colour: 0x05090d, near: 8, far: 18 },
     cameraFar: 30,
     clipped: false,
     dispose: () => undefined,

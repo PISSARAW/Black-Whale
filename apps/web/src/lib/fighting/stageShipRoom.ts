@@ -1,7 +1,11 @@
 import type * as Three from 'three'
 import { floorOf, theShip, type Ship, type TierPlan } from '../tour/blueprint'
+import { fogDensityOf } from '../tour/atmosphere'
 import { buildTierMesh, type TierMesh } from '../tour/mesh'
+import { applySheen } from '../tour/sheen'
+import { applySurfaceDetail } from '../tour/surfaceDetail'
 import type { Space } from '../tour/types'
+import { floorSheen, roomDust, type StageEffect } from './stageAtmosphere'
 import type { FightScenery, SceneryKit } from './stageKit'
 import { findFightLane, type FightLane } from './stageLane'
 import {
@@ -19,7 +23,13 @@ import {
  * camera sees. It is the open fourth wall of a stage set.
  */
 const CUT_DEPTH = 1
-const CUT_HEIGHT = 0.02
+/**
+ * Low enough that what is left of a cut solid is thinner than a pixel: at two
+ * centimetres every chair in front of the lane left its outline on the floor.
+ */
+const CUT_HEIGHT = 0.004
+/** How much of the mirrored room the floor gives back. */
+const FLOOR_SHEEN = 0.16
 /** The bake is weighed for the visit's tone mapping; unmapped, it has to come down. */
 const EXPOSURE = 0.62
 /** The glass carries the sky at its full value, which unmapped is plain white. */
@@ -71,8 +81,19 @@ interface RoomParts {
 function roomSurfaces(parts: RoomParts): { root: Three.Group; dispose: () => void } {
   const { THREE, mesh, planes } = parts
   const clipping = { clippingPlanes: planes, clipIntersection: true }
-  const surface = new THREE.MeshBasicMaterial({ vertexColors: true, ...clipping })
-  surface.color.setScalar(EXPOSURE)
+  const surface = new THREE.MeshLambertMaterial({
+    vertexColors: true,
+    side: THREE.FrontSide,
+    ...clipping,
+  })
+  // Lambert receives the fill light below; divide it back out so enabling the
+  // visit's material hooks does not brighten the baked room twofold.
+  surface.color.setScalar(EXPOSURE / FILL_LIGHT)
+  // The walk's two procedural surface layers: a world-scale steel grain and
+  // the grazing sheen carried by the mesh. They add no invented image texture
+  // or UVs, and keep the room's audited vertex colours underneath.
+  applySurfaceDetail(surface)
+  applySheen(surface)
   const lit = new THREE.MeshBasicMaterial({ vertexColors: true, ...clipping })
   const glass = new THREE.MeshBasicMaterial({ vertexColors: true, ...clipping })
   glass.color.setScalar(GLASS_EXPOSURE)
@@ -98,7 +119,9 @@ function roomSurfaces(parts: RoomParts): { root: Three.Group; dispose: () => voi
 
   const walls = new THREE.BufferGeometry()
   walls.setAttribute('position', attribute(THREE, mesh.positions))
+  walls.setAttribute('normal', attribute(THREE, mesh.normals))
   walls.setAttribute('color', attribute(THREE, mesh.colors))
+  walls.setAttribute('aSheen', new THREE.BufferAttribute(mesh.sheens, 1))
   const fittings = new THREE.BufferGeometry()
   fittings.setAttribute('position', attribute(THREE, mesh.fittings))
   fittings.setAttribute('color', attribute(THREE, mesh.fittingColors))
@@ -139,7 +162,10 @@ function roomSurfaces(parts: RoomParts): { root: Three.Group; dispose: () => voi
 }
 
 /** A room of the visit, raised from the blueprint and turned to face the camera. */
-export function buildShipRoomScenery(kit: SceneryKit, spaceId: string): FightScenery {
+export async function buildShipRoomScenery(
+  kit: SceneryKit,
+  spaceId: string,
+): Promise<FightScenery> {
   const { THREE } = kit
   const ship = theShip()
   const space = ship.spaces.get(spaceId)
@@ -165,12 +191,23 @@ export function buildShipRoomScenery(kit: SceneryKit, spaceId: string): FightSce
   const key = new THREE.DirectionalLight(0xfff1d8, KEY_LIGHT)
   key.position.set(-4, 9, 8)
   root.add(room.root, new THREE.AmbientLight(0xffffff, FILL_LIGHT), key)
+
+  // The air and the floor: motes inside the turned room, sheen along the lane.
+  const dust = roomDust({ THREE, space, tier: plan.tier })
+  if (dust) room.root.add(dust.object)
+  const sheen = await floorSheen(THREE, FLOOR_SHEEN)
+  root.add(sheen.object)
+  const effects: StageEffect[] = dust ? [dust, sheen] : [sheen]
   return {
     root,
-    fog: { colour: 0x05090d, near: 18, far: 70 },
+    // The same density function as the visit, rather than a generic depth ramp.
+    fog: { kind: 'exp2', colour: 0x0b0e12, density: fogDensityOf(space) },
     cameraFar: 90,
     clipped: true,
+    bloom: true,
+    update: (seconds) => effects.forEach((effect) => effect.update(seconds)),
     dispose: () => {
+      effects.forEach((effect) => effect.dispose())
       disposeRoomDetails(details)
       room.dispose()
     },

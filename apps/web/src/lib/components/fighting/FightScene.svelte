@@ -88,9 +88,22 @@
         }
         renderer.localClippingEnabled = scenery.clipped
         renderer.setClearColor(scenery.fog.colour, 1)
-        scene.fog = new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
+        scene.fog =
+          scenery.fog.kind === 'exp2'
+            ? new THREE.FogExp2(scenery.fog.colour, scenery.fog.density)
+            : new THREE.Fog(scenery.fog.colour, scenery.fog.near, scenery.fog.far)
         camera.far = scenery.cameraFar
         scene.add(scenery.root)
+        let post: import('$lib/fighting/stagePost').StagePost | null = null
+        if (scenery.bloom) {
+          const { createStagePost } = await import('$lib/fighting/stagePost')
+          post = await createStagePost({ THREE, renderer, scene, camera })
+          if (disposed) {
+            post.dispose()
+            scenery.dispose()
+            return
+          }
+        }
 
         const buildFighter = (fighter: ArcadeFighter) => {
           const definition = fighterDefinition(fighter.id)
@@ -164,8 +177,10 @@
           if (!canvas) return
           const width = Math.max(1, canvas.clientWidth)
           const height = Math.max(1, canvas.clientHeight)
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
+          const ratio = Math.min(window.devicePixelRatio || 1, 1.75)
+          renderer.setPixelRatio(ratio)
           renderer.setSize(width, height, false)
+          post?.resize(width, height, ratio)
           camera.aspect = width / height
           camera.updateProjectionMatrix()
         }
@@ -259,7 +274,9 @@
             }
           }
 
-          renderer.render(scene, camera)
+          scenery.update?.(seconds)
+          if (post) post.render()
+          else renderer.render(scene, camera)
           animationFrame = requestAnimationFrame(render)
         }
 
@@ -271,6 +288,7 @@
           resize?.disconnect()
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
+          post?.dispose()
           scenery.dispose()
           renderer.dispose()
         }

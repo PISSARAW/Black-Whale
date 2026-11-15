@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { theShip } from '../tour/blueprint'
 import { pointInPolygon, structureFootprint } from '../tour/geometry'
 import { buildTierMesh } from '../tour/mesh'
+import { COURT_BAR_RUNS, COURT_BAR_X } from '../tour/supremeCourtFurniture'
 import { findFightLane, laneBackdrop } from './stageLane'
 import { roomBarriers } from './stageRoomDetails'
 import { roomPlan } from './stageShipRoom'
@@ -60,4 +61,16 @@ describe('fight stages', () => {
       expect(mesh.colors.length).toBe(mesh.positions.length)
     },
   )
+
+  it('derives the Supreme Court collision rail from the rail drawn by the visit', () => {
+    const barriers = roomBarriers('tier-1-supreme-court')
+    expect(barriers).toHaveLength(COURT_BAR_RUNS.length)
+    for (const [index, [from, to]] of COURT_BAR_RUNS.entries()) {
+      const barrier = barriers[index]
+      expect(Math.min(...barrier.map(([x]) => x))).toBeLessThan(COURT_BAR_X)
+      expect(Math.max(...barrier.map(([x]) => x))).toBeGreaterThan(COURT_BAR_X)
+      expect(Math.min(...barrier.map(([, z]) => z))).toBeLessThan(from)
+      expect(Math.max(...barrier.map(([, z]) => z))).toBeGreaterThan(to)
+    }
+  })
 })

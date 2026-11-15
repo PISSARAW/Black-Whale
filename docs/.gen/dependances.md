@@ -21,7 +21,7 @@ Nœuds : 25 · Arêtes uniques : 56
 | `lib:components` | `package:@black-whale/domain` | 9 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
 | `lib:fighting` | `lib:tour` | 24 |
-| `lib:fighting` | `package:@black-whale/nen-engine` | 3 |
+| `lib:fighting` | `package:@black-whale/nen-engine` | 4 |
 | `lib:hunt` | `lib:arena` | 3 |
 | `lib:hunt` | `lib:combat` | 1 |
 | `lib:hunt` | `lib:nen` | 1 |
@@ -36,11 +36,11 @@ Nœuds : 25 · Arêtes uniques : 56
 | `lib:nen` | `package:@black-whale/nen-engine` | 12 |
 | `lib:reconstruction` | `package:@black-whale/canon-engine` | 1 |
 | `lib:reconstruction` | `package:@black-whale/database` | 1 |
-| `lib:server` | `package:@black-whale/ability-modules` | 2 |
+| `lib:server` | `package:@black-whale/ability-modules` | 3 |
 | `lib:server` | `package:@black-whale/canon-engine` | 7 |
 | `lib:server` | `package:@black-whale/database` | 1 |
-| `lib:server` | `package:@black-whale/domain` | 2 |
-| `lib:server` | `package:@black-whale/nen-engine` | 1 |
+| `lib:server` | `package:@black-whale/domain` | 3 |
+| `lib:server` | `package:@black-whale/nen-engine` | 2 |
 | `lib:server` | `package:@black-whale/simulation-engine` | 2 |
 | `lib:strategy` | `package:@black-whale/ability-modules` | 1 |
 | `lib:strategy` | `package:@black-whale/canon-engine` | 12 |
@@ -48,9 +48,9 @@ Nœuds : 25 · Arêtes uniques : 56
 | `lib:tour` | `lib:components` | 2 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 13 |
 | `lib:tour` | `package:@black-whale/domain` | 1 |
-| `lib:tour` | `package:@black-whale/nen-engine` | 31 |
+| `lib:tour` | `package:@black-whale/nen-engine` | 32 |
 | `lib:utils` | `lib:state` | 1 |
-| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 63 |
+| `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 66 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/canon-engine` | 3 |
 | `package:@black-whale/ability-sdk` | `package:@black-whale/nen-engine` | 6 |

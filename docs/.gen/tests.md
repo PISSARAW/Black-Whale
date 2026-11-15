@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 501
+Fichiers : 508
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -173,7 +173,7 @@ Fichiers : 501
 ## `apps/web/src/lib/combat/combat.test.ts`
 
 - Nen perception > lets Gyo reveal a Ryu distribution concealed with In
-- qualitative exchanges > resolves qualitative impacts and maps them to health damage
+- qualitative exchanges > resolves impacts without health or damage fields
 
 ## `apps/web/src/lib/combat/effects.test.ts`
 
@@ -208,6 +208,10 @@ Fichiers : 501
 
 - anchors > gives every reconstructed room a place of its own to stand
 
+## `apps/web/src/lib/fighting/combatGrammar.test.ts`
+
+- complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
+
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
 - duel rules > rejects Hatsu effects with no aura or while stunned
@@ -228,13 +232,21 @@ Fichiers : 501
 
 - fighter facing presentation > faces right with a positive near-profile angle
 
+## `apps/web/src/lib/fighting/formats.test.ts`
+
+- 2D fight formats > offers distinct hit, health and hybrid victory rules
+
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
-- fighter Hatsu registry > forces Judgment Chain targets into Zetsu
+- fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
 
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
 - In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
+
+## `apps/web/src/lib/fighting/movesets.test.ts`
+
+- wave one movesets > gives ten fighters the complete requested move structure
 
 ## `apps/web/src/lib/fighting/projectiles.test.ts`
 
@@ -242,7 +254,7 @@ Fichiers : 501
 
 ## `apps/web/src/lib/fighting/roster.test.ts`
 
-- fighting roster models > uses likenesses already declared for the shared character rig
+- fighting roster models > uses catalogued identities and declared likenesses when available
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 
@@ -251,6 +263,10 @@ Fichiers : 501
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
 - fight stages > offers the original hold, Heavens Arena and rooms of the visit
+
+## `apps/web/src/lib/fighting/techniqueContracts.test.ts`
+
+- canonical technique contracts > keeps canon separate from competitive tuning
 
 ## `apps/web/src/lib/hunt/arena.test.ts`
 
@@ -924,13 +940,18 @@ Fichiers : 501
 
 - Reconstruction V3 SimulationStore adapter > creates a real rule-compatible branch at the fork
 
+## `apps/web/src/lib/server/siteSearch.test.ts`
+
+- site-wide spoiler-safe search > indexes the supported content types and every public mode
+- intent parsing and bounded caching > allows only search filters, never generated answers or URLs
+
 ## `apps/web/src/lib/server/spoilerWorld.test.ts`
 
 - applySpoilerFilters > keeps only revealed characters
 
 ## `apps/web/src/lib/server/tourSearch.test.ts`
 
-- ollamaConfig > is absent unless both the address and the model are set
+- ollamaConfig > reads private authentication and bounds the request deadline
 - parseKeywords > reads the keywords and nothing else
 - interpreterQuestion > confines the reply to the vocabulary
 - createInterpreter > is off without a model and never asks
@@ -1955,7 +1976,7 @@ Fichiers : 501
 
 ## `apps/web/src/routes/abilities/[slug]/page.server.test.ts`
 
-- ability detail publication boundary > serves a source-backed record with related entities
+- ability detail publication boundary > withholds undated prose, aliases and ownership when opened from capped search
 
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
@@ -1972,6 +1993,10 @@ Fichiers : 501
 ## `apps/web/src/routes/llms.txt/server.test.ts`
 
 - llms.txt > is a short, cached Markdown guide to the canonical indexes
+
+## `apps/web/src/routes/search/server.test.ts`
+
+- global search boundary > takes the cap from the HttpOnly cookie, ignoring body and query claims
 
 ## `apps/web/src/routes/ship/shipDelta.test.ts`
 

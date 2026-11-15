@@ -155,3 +155,8 @@ The `Restore drill` GitHub workflow runs the same scripts every Monday against a
 ## 6. Existing development databases
 
 `packages/database/prisma/migrations` is the only migration history. It is a squashed baseline generated from the canonical Prisma schema, intended for a first production installation. Do not point the production Compose file at an old development database without taking a dump and planning a one-time migration.
+
+## 7. Private inference
+
+See [Tour inference and site-wide search over Tailscale](tour-ai.md) for
+gateway installation, credentials, deployment, validation and rollback.

@@ -1,12 +1,12 @@
 import type * as Three from 'three'
+import { CONCERT_DREAM_LAYER, ConcertDreamView } from './ConcertDreamView'
+import { disposeBanquetDetails } from './banquetDetailBuilder'
 import { floorOf, type Ship } from './blueprint'
-import type { Vec2 } from './types'
-import { MELODY_CONCERT, type ConcertPerformance } from './melodyConcert'
 import { buildConcertLandscape } from './concertLandscape'
 import { ConcertLandscapeWalk, type ConcertLandscapeSpec } from './concertLandscapeWalk'
-import { ConcertDreamView, CONCERT_DREAM_LAYER } from './ConcertDreamView'
-import { disposeBanquetDetails } from './banquetDetailBuilder'
 import { concertReferencePosition } from './concertReference'
+import { MELODY_CONCERT, type ConcertPerformance } from './melodyConcert'
+import type { Vec2 } from './types'
 
 interface ConcertContext {
   tierId: string
@@ -57,12 +57,12 @@ export class ConcertStageView {
   }
 
   update(performance: ConcertPerformance, context: ConcertContext): void {
-    const wanted =
-      !!this.spec && performance.playing && context.tierId === 'tier-1' && !context.reveal
+    const inView = context.tierId === 'tier-1' && !context.reveal
+    const wanted = !!this.spec && performance.playing && inView
     if (wanted && !this.root.children.length) this.build()
     const seconds = Math.min(0.1, Math.max(0, context.delta ?? 1 / 60))
     this.blend = Math.max(0, Math.min(1, this.blend + seconds * (wanted ? 0.9 : -1.35)))
-    this.root.visible = this.blend > 0 && context.tierId === 'tier-1' && !context.reveal
+    this.root.visible = this.blend > 0 && inView
     this.fadeLandscape(this.blend)
     if (!this.root.visible) {
       this.dream.restore()
@@ -79,24 +79,24 @@ export class ConcertStageView {
     const referenceRequest = performance.referenceRequest ?? 0
     const recenter =
       performance.presentation === 'manga' && referenceRequest !== this.lastReferenceRequest
-    if (
-      !this.walk ||
-      recenter ||
-      this.bodyAt?.[0] !== frame.at[0] ||
-      this.bodyAt?.[1] !== frame.at[1]
-    ) {
+    if (this.needsWalk(recenter, frame.at)) {
       const start =
         performance.presentation === 'manga' ? concertReferencePosition(this.spec) : frame.at
       this.walk = new ConcertLandscapeWalk(this.spec, start)
       this.bodyAt = [...frame.at]
       this.lastReferenceRequest = referenceRequest
     }
-    this.walk.move(frame.velocity, frame.delta)
+    this.walk!.move(frame.velocity, frame.delta)
     return frame.velocity
   }
 
+  private needsWalk(recenter: boolean, at: Vec2): boolean {
+    return !this.walk || recenter || this.bodyAt?.[0] !== at[0] || this.bodyAt?.[1] !== at[1]
+  }
+
   render(frame: Parameters<ConcertDreamView['apply']>[0], performance: ConcertPerformance): void {
-    if (this.active && this.walk) this.dream.apply(frame, this.walk, performance, this.blend)
+    if (this.active && this.walk)
+      this.dream.apply(frame, this.walk, { performance: performance, blend: this.blend })
   }
 
   dispose(): void {

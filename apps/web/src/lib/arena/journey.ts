@@ -3,10 +3,7 @@ import { strikeTarget } from './controls'
 import { STRIKE_RANGE } from '../combat/resolve'
 
 export type ArenaJourneyControl =
-  | 'desktop-strike'
-  | 'mobile-strike'
-  | 'desktop-guard'
-  | 'mobile-guard'
+  'desktop-strike' | 'mobile-strike' | 'desktop-guard' | 'mobile-guard'
 
 type ArenaJourneyAction = Extract<CombatAction, { type: 'GUARD' | 'STRIKE' }>
 

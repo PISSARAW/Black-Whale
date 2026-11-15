@@ -73,6 +73,31 @@ export function residueApparitions({
   objects = [],
   awakened = true,
 }: ResidueInput): Apparition[] {
+  function appendAuraSources(found: Apparition[]) {
+    for (const source of [
+      ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' })),
+      ...objects,
+    ]) {
+      if (!awakened) continue
+      const space = spaceFor(ship, source.locationId)
+      const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
+      if (!space || !tier || space.tierId !== tierId) continue
+      const middle = centroid(space)
+      const offset = hashOffset(source.anchor ?? source.id)
+      found.push({
+        id: `aura-source:${source.id}`,
+        kind: 'residue',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: [middle[0] + offset[0], middle[1] + offset[1]],
+        y: floorOf(space, tier) + 0.9,
+        size: source.kind === 'trace' ? 0.42 : 0.32,
+        colour: RESIDUE_COLOUR,
+        stage: 0,
+        hidden: source.visibility === 'gyo',
+      })
+    }
+  }
   const found: Apparition[] = []
   for (const [key, list] of Object.entries(vestiges)) {
     const space = spaceFor(ship, key)
@@ -97,28 +122,6 @@ export function residueApparitions({
       })
     })
   }
-  for (const source of [
-    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' })),
-    ...objects,
-  ]) {
-    if (!awakened) continue
-    const space = spaceFor(ship, source.locationId)
-    const tier = space ? ship.tiers.find((candidate) => candidate.id === space.tierId) : null
-    if (!space || !tier || space.tierId !== tierId) continue
-    const middle = centroid(space)
-    const offset = hashOffset(source.anchor ?? source.id)
-    found.push({
-      id: `aura-source:${source.id}`,
-      kind: 'residue',
-      spaceId: space.id,
-      tierId: space.tierId,
-      at: [middle[0] + offset[0], middle[1] + offset[1]],
-      y: floorOf(space, tier) + 0.9,
-      size: source.kind === 'trace' ? 0.42 : 0.32,
-      colour: RESIDUE_COLOUR,
-      stage: 0,
-      hidden: source.visibility === 'gyo',
-    })
-  }
+  appendAuraSources(found)
   return found
 }

@@ -58,10 +58,7 @@ function landmarkMountains(THREE: typeof Three, spec: ConcertLandscapeSpec): Thr
     for (const [point, height] of profile.entries()) {
       const progress = point / (profile.length - 1)
       const peakLean = Math.sin(progress * Math.PI) * layout.lean
-      shape.lineTo(
-        x + (progress - 0.5) * layout.width + peakLean,
-        baseY + height * layout.height,
-      )
+      shape.lineTo(x + (progress - 0.5) * layout.width + peakLean, baseY + height * layout.height)
     }
     shape.lineTo(x + layout.width / 2, baseY)
     const geometry = new THREE.ShapeGeometry(shape)
@@ -117,7 +114,11 @@ function skyRays(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.LineSeg
 function melodyGlow(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Group {
   const root = new THREE.Group()
   root.name = 'concert-melody-heart-glow'
-  for (const [radius, opacity] of [[0.2, 0.16], [0.125, 0.38], [0.065, 0.92]] as const) {
+  for (const [radius, opacity] of [
+    [0.2, 0.16],
+    [0.125, 0.38],
+    [0.065, 0.92],
+  ] as const) {
     const disc = new THREE.Mesh(
       new THREE.CircleGeometry(radius, 32),
       new THREE.MeshBasicMaterial({
@@ -131,11 +132,7 @@ function melodyGlow(THREE: typeof Three, spec: ConcertLandscapeSpec): Three.Grou
     disc.position.z = radius * -0.012
     root.add(disc)
   }
-  root.position.set(
-    spec.origin[0],
-    spec.floor + spec.stageRise + 0.82,
-    spec.origin[1] - 0.28,
-  )
+  root.position.set(spec.origin[0], spec.floor + spec.stageRise + 0.82, spec.origin[1] - 0.28)
   return root
 }
 

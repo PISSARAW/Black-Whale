@@ -1,8 +1,6 @@
-/* eslint-disable max-lines -- Contagion's action grammar is kept beside its single state machine. */
 import {
   abilityGrant,
   attributeCounter,
-  buildManifest,
   canUseNen,
   condition,
   controlLink,
@@ -21,6 +19,8 @@ import {
   shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
+import { contagionManifest, isEligibleInfectionGame } from './presentation.js'
+export { CONTAGION_LIMITS } from './presentation.js'
 
 import {
   INFECTION_STEPS,
@@ -34,15 +34,13 @@ import {
   takeTheDeal,
   worksAtTheTable,
   type GameEnding,
-  type QuestionCard,
   type InfectionStep,
+  type QuestionCard,
 } from './game.js'
 import {
   COHORT_ID,
   GAME_DISCRIMINATOR,
   GAME_REVEALED_AT,
-  KILL_VALUES,
-  MEMBER_ZERO_LEVEL,
   NETWORK_CAPACITY,
   UNIQUE_ABILITY_LEVEL,
   answerParam,
@@ -52,19 +50,6 @@ import {
   moveTheGame,
   seededRandom,
 } from './limits.js'
-
-function isEligibleInfectionGame(
-  game: ReturnType<typeof dealTheGame> | undefined,
-  effectIsLive: boolean,
-): boolean {
-  if (!game) return false
-  return [
-    effectIsLive,
-    !game.proxied,
-    game.kissed,
-    game.verdict === 'infected' || game.verdict === 'forced',
-  ].every(Boolean)
-}
 
 /**
  * Contagion (Et tu, Juliet) — Morena Prudo
@@ -498,30 +483,5 @@ export const contagion = defineAbility({
 
   ui: { componentKey: 'ContagionDashboard' },
 
-  interactionManifest: buildManifest('contagion', {
-    // Infection is a sequence, not a click: game, kiss, witnessed murder.
-    inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER'],
-    overlays: ['CONTROL_LINK', 'RANGE'],
-    entryActions: ['open-network', 'infect'],
-    requiredState: ['isConscious', 'canUseNen'],
-    perspectiveTransition: {
-      canChangeBody: false,
-      canChangeConsciousness: false,
-      canFollowAura: true,
-    },
-    customComponent: 'ContagionDashboard',
-  }),
+  interactionManifest: contagionManifest,
 })
-
-export const CONTAGION_LIMITS = {
-  cohortId: COHORT_ID,
-  capacity: NETWORK_CAPACITY,
-  uniqueAbilityLevel: UNIQUE_ABILITY_LEVEL,
-  memberZeroLevel: MEMBER_ZERO_LEVEL,
-  infectionSteps: INFECTION_STEPS,
-  killValues: KILL_VALUES,
-  /** Where a running negotiation is stored, for anything reading the branch. */
-  gameDiscriminator: GAME_DISCRIMINATOR,
-  gameRevealedAtChapter: GAME_REVEALED_AT,
-}

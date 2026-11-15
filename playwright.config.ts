@@ -19,6 +19,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin'
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: '**/*.production.spec.ts',
   // 30s was under the cost of the thing being tested. The suite runs against
   // the dev server, which transforms modules on demand, and a cold load of the
   // heavy pages measures 13–19s on its own — so a test that then had to click

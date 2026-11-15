@@ -141,10 +141,9 @@ export function contactWith(post: Post, contact: Contact): ContactReach {
   const sense = contact.sensedBy[id]
   const sees = !contact.visitorHidden || sense !== undefined
   const aimed = contact.aimedAt === id
-  const inRoom = contact.visitorCasting && contact.visitorIn === post.spaceId
-  const pressure = contact.visitorPressure !== 'none' && contact.visitorIn === post.spaceId
   const swept = contact.sweptBy.includes(id)
-  const felt = sense === 'aura' || swept || (sees && (aimed || inRoom || pressure))
+  const directed = aimed || roomPressure(post, contact)
+  const felt = sense === 'aura' || swept || (sees && directed)
   return { felt, looking: felt || sense === 'body', menaced: felt && contact.visitorMenacing }
 }
 
@@ -165,4 +164,11 @@ export interface ContactReach {
   looking: boolean
   /** Felt, and the aura felt is On: a threat rather than a technique. */
   menaced: boolean
+}
+
+function roomPressure(post: Post, contact: Contact): boolean {
+  return (
+    (contact.visitorCasting || contact.visitorPressure !== 'none') &&
+    contact.visitorIn === post.spaceId
+  )
 }

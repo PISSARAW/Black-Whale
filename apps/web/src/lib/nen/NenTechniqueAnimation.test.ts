@@ -12,9 +12,9 @@ describe('NenDex technique animations', () => {
       })
 
       expect(meshes, entry.id).toBeGreaterThan(0)
-      updateTechniqueAnimation(rig, 0.45, 1_600, true)
+      updateTechniqueAnimation(rig, 0.45, { time: 1_600, active: true })
       expect(rig.visible, entry.id).toBe(true)
-      updateTechniqueAnimation(rig, 1, 3_600, false)
+      updateTechniqueAnimation(rig, 1, { time: 3_600, active: false })
       expect(rig.visible, entry.id).toBe(false)
     }
   })

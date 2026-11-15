@@ -168,13 +168,10 @@ function sealedOf(character: DossierCharacter, cap: number | null): DossierSeale
  */
 export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
   const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
-  const awakened = character.nen?.awakenedFromChapterId
-    ? chapterOf(character.nen.awakenedFromChapterId)
-    : null
-  const nenVisible = options.cap === null || awakened === null || awakened <= options.cap
+  const nenVisible = nenVisibleAt(character, options.cap)
   return {
     characterId: character.id,
-    role: character.shipLocation?.role ?? '',
+    role: dossierRole(character),
     faction: (character.factionId && options.factions.get(character.factionId)) || null,
     factionId: character.factionId ?? null,
     category: nenVisible ? (character.nen?.typeLabel ?? null) : null,
@@ -187,4 +184,15 @@ export function dossierFor(character: DossierCharacter, options: DossierOptions)
     withheld,
     sealed: sealedOf(character, options.cap),
   }
+}
+
+function nenVisibleAt(character: DossierCharacter, cap: number | null) {
+  const awakened = character.nen?.awakenedFromChapterId
+    ? chapterOf(character.nen.awakenedFromChapterId)
+    : null
+  return cap === null || awakened === null || awakened <= cap
+}
+
+function dossierRole(character: DossierCharacter): string {
+  return character.shipLocation?.role ?? ''
 }

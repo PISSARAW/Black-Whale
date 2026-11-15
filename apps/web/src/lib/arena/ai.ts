@@ -142,8 +142,7 @@ function rememberObservedStrike(state: CombatState): CombatState {
       hypothesis: {
         preferredZone: observations > 0 ? ranked[0][0] : null,
         confidence: observations > 0 ? ranked[0][1] / observations : 0,
-        concealedAttacks:
-          state.opponentMemory.hypothesis.concealedAttacks + Number(concealed),
+        concealedAttacks: state.opponentMemory.hypothesis.concealedAttacks + Number(concealed),
         knownHatsuIds: visibleHatsu
           ? [...new Set([...state.opponentMemory.hypothesis.knownHatsuIds, visibleHatsu])]
           : state.opponentMemory.hypothesis.knownHatsuIds,

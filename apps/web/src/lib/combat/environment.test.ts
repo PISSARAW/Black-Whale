@@ -6,13 +6,26 @@ describe('reactive Arena environment', () => {
     let state = initialCombatState({
       playerAt: [0, 0],
       opponentAt: [2, 0],
-      terrain: { id: 'casino', footprint: [[-5, -5], [5, -5], [5, 5], [-5, 5]], walls: [] },
+      terrain: {
+        id: 'casino',
+        footprint: [
+          [-5, -5],
+          [5, -5],
+          [5, 5],
+          [-5, 5],
+        ],
+        walls: [],
+      },
       context: 'CLANDESTINE',
     })
     for (let cast = 0; cast < 3; cast += 1) {
       state = { ...state, player: { ...state.player, cooldown: 0 } }
       state = combatReducer(state, {
-        type: 'HATSU', side: 'player', effect: 'enhance', zone: 'arms', cost: 0,
+        type: 'HATSU',
+        side: 'player',
+        effect: 'enhance',
+        zone: 'arms',
+        cost: 0,
       })
     }
     expect(state.environment).toMatchObject({ noise: 9, witnesses: 3, securityAlert: 2 })

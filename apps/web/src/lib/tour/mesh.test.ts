@@ -16,8 +16,7 @@ import {
   structureFootprint,
   toClockwise,
 } from './geometry'
-import { lamplightOf, lampsOf, fittingLampsOf } from './light'
-import { VISITOR_RADIUS } from './navigation'
+import { fittingLampsOf, lamplightOf, lampsOf } from './light'
 import {
   HORIZON,
   PATCH,
@@ -33,8 +32,9 @@ import {
   type MeshGroup,
   type TierMesh,
 } from './mesh'
-import { REFERENCE_HOUR, skyOf } from './sky'
+import { VISITOR_RADIUS } from './navigation'
 import { openingHeights } from './openingHeights'
+import { REFERENCE_HOUR, skyOf } from './sky'
 import type { Provenance, Structure, Vec2 } from './types'
 
 const ship = buildShip()
@@ -728,14 +728,18 @@ describe('the light baked into the deck', () => {
     expect(thin, `${thin.length} rooms have a floor the lamps never reach`).toEqual([])
   })
 
-  it('lights two rooms the plans drew alike alike', () => {
+  it('lights matching projection rooms alike while keeping the LED programme brighter', () => {
     // The cineplex's eight screening rooms: 7 m by 20 m each, one category, one
     // provenance, drawn from one panel. Under the ship's grid they were lit by
     // where they stood — screens 3 and 6 straddled no cell centre and took the
     // single fallback lamp while the other six took a grid — and a visitor
     // walking the row could see it with nothing about the ship explaining it.
     const floors = floorsOfShip()
-    const row = [...floors.entries()].filter(([id]) => /^tier-3-cineplex-screen-\d+$/.test(id))
+    // Screen 8 has its own, brighter LED programme in the premium reconstruction.
+    const row = [...floors.entries()].filter(([id]) => /^tier-3-cineplex-screen-[1-7]$/.test(id))
+    const screen = (number: number) => ship.spaces.get(`tier-3-cineplex-screen-${number}`)!
+    const tier = ship.tiers.find(({ id }) => id === screen(1).tierId)!
+    expect(lamplightOf(screen(8), tier).power).toBeGreaterThan(lamplightOf(screen(1), tier).power)
     expect(row.length).toBeGreaterThan(6)
 
     // Read as the shape of each floor's own distribution and not as its level:

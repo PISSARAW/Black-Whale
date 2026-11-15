@@ -1,0 +1,187 @@
+@media (max-width: 1100px) {
+  .archive .archive-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .archive .catalogue-tools {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) auto;
+    align-items: end;
+    gap: 1rem;
+  }
+
+  .archive .filters {
+    margin-top: 0;
+  }
+
+  .archive .entry-list {
+    max-height: none;
+    grid-auto-columns: minmax(13rem, 26vw);
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-bottom: 1px solid var(--line-default);
+    scroll-snap-type: x proximity;
+  }
+
+  .archive .entry {
+    border-right: 1px solid var(--line-subtle);
+    scroll-snap-align: start;
+  }
+
+  .archive .specimen-panel {
+    height: clamp(34rem, calc(100dvh - 16rem), 40rem);
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+  }
+}
+@media (max-width: 760px) {
+  .archive {
+    padding-top: 2rem;
+  }
+
+  .archive .archive-header {
+    align-items: flex-start;
+  }
+
+  .archive .archive-status {
+    display: none;
+  }
+
+  .archive .catalogue-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .archive .filters {
+    margin-top: 0.25rem;
+  }
+
+  .archive .entry-list {
+    grid-auto-columns: minmax(12rem, 72vw);
+  }
+
+  .archive .specimen-panel {
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .archive .viewer {
+    aspect-ratio: 4 / 3;
+    min-height: 23rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--line-default);
+  }
+
+  .archive .dossier {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .archive .viewer-topline span:first-child {
+    max-width: 70%;
+  }
+
+  .archive .dossier {
+    padding: 1.25rem;
+  }
+
+  .archive .technique-card,
+  .archive .action-row {
+    grid-template-columns: 1fr;
+  }
+
+  .archive .technique-card button {
+    width: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .archive {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .archive .archive-header {
+    padding-bottom: 1.5rem;
+  }
+
+  .archive .title-block h1 {
+    font-size: clamp(2.75rem, 18vw, 4rem);
+  }
+
+  .archive .title-block > p:last-child {
+    margin-top: 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .archive .archive-grid {
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .archive .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  .archive .filters button {
+    flex: 0 0 auto;
+  }
+
+  .archive .entry-list {
+    grid-auto-columns: minmax(11.5rem, 82vw);
+  }
+
+  .archive .entry {
+    min-height: 4.75rem;
+  }
+
+  .archive .viewer {
+    aspect-ratio: 1 / 1;
+    min-height: 20rem;
+  }
+
+  .archive .viewer-topline {
+    top: 0.85rem;
+    right: 0.85rem;
+    left: 0.85rem;
+    font-size: 0.6rem;
+  }
+
+  .archive .interaction-hint {
+    bottom: 0.9rem;
+    font-size: 0.6rem;
+  }
+
+  .archive .dossier-heading {
+    padding-bottom: 1.1rem;
+  }
+
+  .archive .dossier h2 {
+    max-width: 12ch;
+    font-size: clamp(1.8rem, 12vw, 2.45rem);
+  }
+
+  .archive .aura-sample {
+    transform: scale(0.8);
+    transform-origin: top right;
+  }
+
+  .archive .description {
+    margin: 1.15rem 0;
+  }
+
+  .archive .toast {
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archive .aura-sample i,
+  .archive .cry-button:hover .sound-bars i,
+  .archive .technique-flash {
+    animation: none;
+  }
+}

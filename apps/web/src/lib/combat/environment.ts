@@ -20,8 +20,7 @@ export function advanceEnvironment(state: CombatState, dt: number): CombatState 
   const timer = state.environment.interventionIn
   if (timer === null || state.environment.intervened) return state
   const interventionIn = Math.max(0, timer - dt)
-  if (interventionIn > 0)
-    return { ...state, environment: { ...state.environment, interventionIn } }
+  if (interventionIn > 0) return { ...state, environment: { ...state.environment, interventionIn } }
   return {
     ...state,
     outcome:

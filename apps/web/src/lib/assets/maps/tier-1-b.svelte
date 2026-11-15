@@ -59,7 +59,7 @@
       at: [635.7, 385.0],
       turned: false,
       through: true,
-      inferred: false,
+      inferred: true,
     },
     {
       id: 'tier-1-b-starboard-corridor',

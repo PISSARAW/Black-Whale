@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  initialFactionAIMemory,
-  planFactionAIIntent,
-  rememberAIObservations,
-} from './aiIntent'
+import { initialFactionAIMemory, planFactionAIIntent, rememberAIObservations } from './aiIntent'
 
 const incompleteObjective = {
   id: 'intel',

@@ -2,12 +2,31 @@
   import MangaIcon from '$lib/components/icons/MangaIcon.svelte'
   import { goto } from '$app/navigation'
   import { tick } from 'svelte'
-  import { link, t } from '$lib/i18n'
+  import { link, locale, t } from '$lib/i18n'
+  import { page } from '$app/stores'
+  import { SiteSearchState } from '$lib/search/SiteSearchState.svelte'
+  import SiteSearchResults from './SiteSearchResults.svelte'
   import { PUBLIC_FEATURES } from '$lib/config/features'
 
   let { open = $bindable(false) }: { open?: boolean } = $props()
   let query = $state('')
   let input = $state<HTMLInputElement>()
+  const search = new SiteSearchState()
+  const cap = $derived($page.data.spoilerFilter?.limit ?? null)
+  const response = $derived(search.responseFor(query, $locale, cap))
+
+  $effect(() => {
+    const scope = `${$locale}:${cap}`
+    if (!open || (search.scope && search.scope !== scope)) search.clear()
+  })
+
+  $effect(() => {
+    if (open) void tick().then(() => input?.focus())
+  })
+
+  const submitSearch = () => {
+    if (!search.pending) void search.run(query, $locale, cap)
+  }
 
   let destinations = $derived([
     {
@@ -82,6 +101,7 @@
   }
 
   function close() {
+    search.clear()
     open = false
     query = ''
   }
@@ -101,8 +121,21 @@
     }
   }
 
+  function activateInput() {
+    if (!query.trim() && results[0]) return navigate(results[0].href)
+    const selected = response?.results[search.cursor]
+    if (selected) navigate(selected.href)
+    else submitSearch()
+  }
+
   function handleInputKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && results[0]) navigate(results[0].href)
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      search.move(event.key === 'ArrowDown' ? 1 : -1, response?.results.length ?? 0)
+    }
+    if (event.key !== 'Enter') return
+    event.preventDefault()
+    activateInput()
   }
 
   function handleBackdropClick(event: MouseEvent) {
@@ -129,6 +162,8 @@
           bind:this={input}
           bind:value={query}
           onkeydown={handleInputKeydown}
+          oninput={() => search.clear()}
+          maxlength={160}
           placeholder={$t.palette.placeholder}
           autocomplete="off"
         />
@@ -136,6 +171,16 @@
       </div>
 
       <div class="command-results" aria-live="polite">
+        {#if query.trim()}
+          <SiteSearchResults
+            {response}
+            pending={search.pending}
+            error={search.error}
+            cursor={search.cursor}
+            onSearch={submitSearch}
+            onPick={navigate}
+          />
+        {/if}
         {#if results.length}
           {#each results as item, index (item.href)}
             <button type="button" class:featured={index === 0} onclick={() => navigate(item.href)}>
@@ -144,8 +189,6 @@
               <i aria-hidden="true"><MangaIcon name="arrowUpRight" /></i>
             </button>
           {/each}
-        {:else}
-          <div class="command-empty">{$t.palette.empty(query)}</div>
         {/if}
       </div>
 
@@ -260,11 +303,6 @@
   i {
     color: var(--accent-gold);
     font-style: normal;
-  }
-  .command-empty {
-    padding: 3rem 1rem;
-    color: var(--text-muted);
-    text-align: center;
   }
   footer {
     display: flex;

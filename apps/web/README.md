@@ -31,3 +31,28 @@ decisions: []
 ## Ajouter quelque chose ici
 
 Consulter [09 la facade web](../../docs/carte/09-la-facade-web.md).
+
+## Recherche globale
+
+La palette du bandeau (ou ⌘K hors de la visite) recherche les personnages,
+pouvoirs, événements, pièces, factions et pages. Entrée lance la recherche ;
+les flèches sélectionnent un résultat, puis Entrée l’ouvre. La visite conserve
+son raccourci de recherche de pièces ; le bandeau y ouvre la recherche globale.
+
+`POST /search` lit le cookie de spoilers sur le serveur. Le corps de la requête
+ne peut pas élargir le chapitre. Le modèle ne reçoit que la question et un schéma
+de critères, jamais le catalogue. Les résultats et leurs liens sont construits
+uniquement depuis les documents visibles. Aucun résultat n’est mis en cache ;
+seule l’interprétation sans faits est mémorisée dix minutes. La réponse est
+`private, no-store` avec `Vary: Cookie`.
+
+Sous un cap réel, les descriptions, alias et affiliations non datés ne servent
+pas au classement et ne quittent pas le serveur. Les pouvoirs indatables et les
+factions sans date sont exclus, comme les noms issus de corrections d’identité
+non datées ; les événements et pièces attestées sont bornés
+par leurs chapitres. La fiche d’un pouvoir masque aussi ses données non datées.
+Si le modèle est indisponible, une recherche classique reste disponible.
+
+Tests : `apps/web/src/lib/server/siteSearch.test.ts`,
+`apps/web/src/routes/search/server.test.ts`,
+`apps/web/src/lib/search/SiteSearchState.test.ts` et `tests/site-search.production.spec.ts`.

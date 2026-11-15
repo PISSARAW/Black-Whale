@@ -85,8 +85,7 @@ export function pressureCost(nen: NenTechniqueState, pressure: AuraPressure): nu
 export function breathe(
   reserve: number,
   nen: NenTechniqueState,
-  seconds = 1,
-  pressure: AuraPressure = 'none',
+  { seconds = 1, pressure = 'none' }: { seconds?: number; pressure?: AuraPressure } = {},
 ): number {
   return Math.min(
     RESERVE_MAX,

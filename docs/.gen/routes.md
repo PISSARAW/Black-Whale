@@ -33,7 +33,7 @@
 | `investigation/[caseId]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `knowledge/[character]` | `+page.server.ts`, `+page.svelte` |
 | `llms.txt` | `+server.ts`, `server.test.ts` |
-| `nen-archive` | `+page.svelte` |
+| `nen-archive` | `+page.svelte`, `archive-details.css`, `archive-layout.css`, `archive-responsive.css` |
 | `perspectives` | `+page.server.ts`, `+page.svelte` |
 | `perspectives/[character]` | `+page.server.ts`, `+page.svelte` |
 | `reconstruction` | `+page.server.ts`, `+page.svelte` |
@@ -43,6 +43,7 @@
 | `reconstruction/v3/run` | `+server.ts` |
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
+| `search` | `+server.ts`, `server.test.ts` |
 | `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
 | `simulations` | `+page.server.ts`, `+page.svelte` |
 | `sitemap.xml` | `+server.ts`, `server.test.ts` |

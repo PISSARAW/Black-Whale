@@ -220,19 +220,21 @@ function identityOf(entityId: string, indexes: ReturnType<typeof indexesOf>): st
 function describe(
   character: RosterCharacter,
   presence: RosterPresence,
-  indexes: ReturnType<typeof indexesOf>,
-  chapterNumber?: number | null,
+  {
+    indexes,
+    chapterNumber,
+  }: { indexes: ReturnType<typeof indexesOf>; chapterNumber?: number | null },
 ): CastMember {
   const locations = indexes.under.get(presence.locationId ?? '') ?? []
   const outsideDoorOf = outsideDoorFor(character, presence, locations)
+  const nen = nenAt(character, chapterNumber)
   return {
     characterId: character.id,
     name: character.canonicalName,
     locations,
-    role: character.shipLocation?.role ?? '',
-    since: presence.fromEvent?.chapterId ?? null,
-    nen: nenAt(character, chapterNumber),
-    factionId: character.factionId ?? null,
+    ...presenceIdentity(character, presence),
+    nen,
+
     hatsu: indexes.repertoires.get(character.id) ?? [],
     beast: beastOf(character),
     ...(outsideDoorOf ? { outsideDoorOf } : {}),
@@ -275,7 +277,9 @@ function memberFrom(
   if (!PLACEABLE.has(presence.precision) || !presence.locationId) return null
   const characterId = identityOf(presence.entityId, indexes)
   const character = characterId ? indexes.catalogue.get(characterId) : undefined
-  return character ? describe(character, presence, indexes, chapterNumber) : null
+  return character
+    ? describe(character, presence, { indexes: indexes, chapterNumber: chapterNumber })
+    : null
 }
 
 /**
@@ -311,4 +315,12 @@ export function rosterFrom(input: RosterInput): {
   }
 
   return { members, beasts }
+}
+
+function presenceIdentity(character: RosterCharacter, presence: RosterPresence) {
+  return {
+    role: character.shipLocation?.role ?? '',
+    since: presence.fromEvent?.chapterId ?? null,
+    factionId: character.factionId ?? null,
+  }
 }

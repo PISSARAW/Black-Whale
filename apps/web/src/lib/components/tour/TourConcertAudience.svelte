@@ -138,21 +138,41 @@
     pointer-events: none;
     animation: audience-cut 10s both;
   }
-  canvas { display: block; width: 100%; height: 100%; }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   .labels {
     position: absolute;
     inset: 0;
     display: grid;
     grid-template-columns: repeat(11, 1fr);
   }
-  .labels span { border-right: 2px solid #16120f; }
-  .labels span:last-child { border-right: 0; }
+  .labels span {
+    border-right: 2px solid #16120f;
+  }
+  .labels span:last-child {
+    border-right: 0;
+  }
   @keyframes audience-cut {
-    0% { opacity: 0; transform: translate(-50%, 12px); }
-    12%, 82% { opacity: 1; transform: translate(-50%, 0); }
-    100% { opacity: 0; transform: translate(-50%, -8px); }
+    0% {
+      opacity: 0;
+      transform: translate(-50%, 12px);
+    }
+    12%,
+    82% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -8px);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .reaction-strip { animation: none; }
+    .reaction-strip {
+      animation: none;
+    }
   }
 </style>

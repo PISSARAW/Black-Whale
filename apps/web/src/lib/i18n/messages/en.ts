@@ -3441,10 +3441,30 @@ export const en = {
 
   palette: {
     dialogLabel: 'Quick navigation',
-    searchLabel: 'Search site destinations',
-    placeholder: 'Where do you want to go?',
+    searchLabel: 'Search the entire site',
+    placeholder: 'A name, a place, or a question…',
+    site: {
+      title: 'Search the entire site',
+      submit: 'Search the entire site',
+      pending: 'Searching…',
+      policy: 'Results respect your chapter limit. Press Enter to search, then open a result.',
+      error: 'Search is temporarily unavailable. Please try again.',
+      count: (count: number) => `${count} results · up to 20 shown`,
+      empty: 'No results within your chapter limit.',
+      interpreted: 'Your question was interpreted to search the catalogue.',
+      fallback:
+        'Showing classic search results; question interpretation is temporarily unavailable.',
+      kinds: {
+        character: 'Character',
+        ability: 'Ability',
+        event: 'Event',
+        place: 'Place',
+        faction: 'Faction',
+        page: 'Page',
+      },
+    },
     empty: (query: string) => `No destination matches “${query}”.`,
-    enterHint: 'Enter to open first result',
+    enterHint: 'Enter to search, then open a result',
     shortcutHint: '⌘K anywhere',
     groups: {
       primary: 'Primary',
@@ -4646,6 +4666,8 @@ export const en = {
     modified: (date: string) => `Last reviewed ${date}`,
     ability: {
       archive: 'Ability archive',
+      capped:
+        'Catalogue details without a chapter date are hidden while your chapter limit is active.',
       owner: 'Owner',
       users: 'Known users',
       category: 'Nen category',

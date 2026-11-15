@@ -1,32 +1,13 @@
-import { untrack } from 'svelte'
-import { get } from 'svelte/store'
-import {
-  transitionNen,
-  type NenTechniqueAction,
-  type NenTechniqueState,
-  type NenTransition,
-} from '@black-whale/nen-engine'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import { loadTourNen, saveTourNen } from '$lib/nen/persistence'
 import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
-import type { Ship } from '$lib/tour/blueprint'
-import {
-  arriveInTour,
-  EMPTY_WORLD,
-  selfInflictTourInjury,
-  type TourInjurySeverity,
-  type TourReport,
-  type TourWorld,
-} from '$lib/tour/hatsu'
-import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
-import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
-import { canUseTourHatsu } from '$lib/tour/hatsuMode'
+import { loadTourNen, saveTourNen } from '$lib/nen/persistence'
+import type { AuraPressure } from '$lib/tour/auraReserve'
 import {
   breathe,
   exhaustionActions,
   refusedByReserve,
-  reserveAvailability,
   RESERVE_MAX,
+  reserveAvailability,
 } from '$lib/tour/auraReserve'
 import {
   awakeningAvailability,
@@ -35,10 +16,29 @@ import {
   refusedBeforeAwakening,
   saveAwakened,
 } from '$lib/tour/awakening'
-import type { Vec2 } from '$lib/tour/types'
+import type { Ship } from '$lib/tour/blueprint'
+import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
+import {
+  arriveInTour,
+  EMPTY_WORLD,
+  selfInflictTourInjury,
+  type TourInjurySeverity,
+  type TourReport,
+  type TourWorld,
+} from '$lib/tour/hatsu'
+import { canUseTourHatsu } from '$lib/tour/hatsuMode'
 import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nenFeedback'
-import type { AuraPressure } from '$lib/tour/auraReserve'
 import type { NenRefusalCode } from '$lib/tour/nenRefusal'
+import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
+import type { Vec2 } from '$lib/tour/types'
+import {
+  transitionNen,
+  type NenTechniqueAction,
+  type NenTechniqueState,
+  type NenTransition,
+} from '@black-whale/nen-engine'
+import { untrack } from 'svelte'
+import { get } from 'svelte/store'
 
 /** A Tour-scale unit per beat; the manga leaves the beast's real depletion ratio unknown. */
 const LAPLACE_STORED_AURA_PER_SECOND = 1
@@ -253,24 +253,14 @@ export class TourHatsuSession {
       if (before > 0 && this.reserve === 0) this.endFuture('battery')
       return
     }
-    this.reserve = breathe(this.reserve, this.nen, 1, pressure)
+    this.reserve = breathe(this.reserve, this.nen, { seconds: 1, pressure: pressure })
     if (this.reserve > 0 || before === 0) return
     this.staggeredUntil = Date.now() + 1_500
     this.note({ code: 'EXHAUSTED' })
     for (const action of exhaustionActions(this.nen)) this.useNen(action)
   }
 
-  useNen = (action: NenTechniqueAction): NenTransition => {
-    const refusal: NenRefusalCode | null = refusedBeforeAwakening(this.awakened, action)
-      ? 'NODES_SHUT'
-      : refusedByReserve(this.reserve, this.nen, action)
-        ? 'RESERVE_TOO_LOW'
-        : null
-    if (refusal) {
-      this.note({ code: 'ACTION_REFUSED', action: action.type, reason: refusal })
-      return { state: this.nen, accepted: false }
-    }
-    const result = transitionNen(this.nen, action)
+  private recordTransition(action: NenTechniqueAction, result: NenTransition) {
     if (result.accepted) {
       this.nen = result.state
       saveTourNen(this.nen)
@@ -285,6 +275,20 @@ export class TourHatsuSession {
         reason: result.reason as NenRefusalCode,
       })
     }
+  }
+
+  useNen = (action: NenTechniqueAction): NenTransition => {
+    const refusal: NenRefusalCode | null = refusedBeforeAwakening(this.awakened, action)
+      ? 'NODES_SHUT'
+      : refusedByReserve(this.reserve, this.nen, action)
+        ? 'RESERVE_TOO_LOW'
+        : null
+    if (refusal) {
+      this.note({ code: 'ACTION_REFUSED', action: action.type, reason: refusal })
+      return { state: this.nen, accepted: false }
+    }
+    const result = transitionNen(this.nen, action)
+    this.recordTransition(action, result)
     if (!this.awakened && awakensWith(action)) {
       this.awakened = true
       saveAwakened()

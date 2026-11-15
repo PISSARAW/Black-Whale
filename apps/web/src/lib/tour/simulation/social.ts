@@ -24,23 +24,11 @@ export function resolveSocialAction(
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     const witnessed = Boolean(action.witnessIds?.length)
-    const delta = REPUTATION_DELTA[action.kind]
-    draft.reputation[action.factionId] = clampReputation(
-      (draft.reputation[action.factionId] ?? 0) + (delta < 0 && !witnessed ? Math.ceil(delta / 3) : delta),
-    )
-    if (delta > 0) {
-      for (const rivalId of action.rivalFactionIds ?? [])
-        draft.reputation[rivalId] = clampReputation((draft.reputation[rivalId] ?? 0) - Math.ceil(delta / 2))
-    }
+    updateReputation(draft, action, witnessed)
     for (const witnessId of action.witnessIds ?? []) {
       if (!draft.witnesses.includes(witnessId)) draft.witnesses.push(witnessId)
     }
-    if (action.permissionId) {
-      if (delta > 0 && !draft.permissions.includes(action.permissionId))
-        draft.permissions.push(action.permissionId)
-      if (delta < 0 && witnessed)
-        draft.permissions = draft.permissions.filter((id) => id !== action.permissionId)
-    }
+    updatePermissions(draft, action, witnessed)
     if (witnessed && (action.kind === 'TRESPASS' || action.kind === 'ASSAULT'))
       draft.incidents.push(`${action.kind.toLowerCase()}:${action.factionId}`)
   })
@@ -57,4 +45,28 @@ export function mayEnterRestrictedSpace(
 
 function clampReputation(value: number): number {
   return Math.max(-100, Math.min(100, value))
+}
+
+function updateReputation(draft: TourSimulationV1, action: SocialAction, witnessed: boolean) {
+  const delta = REPUTATION_DELTA[action.kind]
+  draft.reputation[action.factionId] = clampReputation(
+    (draft.reputation[action.factionId] ?? 0) +
+      (delta < 0 && !witnessed ? Math.ceil(delta / 3) : delta),
+  )
+  if (delta > 0) {
+    for (const rivalId of action.rivalFactionIds ?? [])
+      draft.reputation[rivalId] = clampReputation(
+        (draft.reputation[rivalId] ?? 0) - Math.ceil(delta / 2),
+      )
+  }
+}
+
+function updatePermissions(draft: TourSimulationV1, action: SocialAction, witnessed: boolean) {
+  const delta = REPUTATION_DELTA[action.kind]
+  if (action.permissionId) {
+    if (delta > 0 && !draft.permissions.includes(action.permissionId))
+      draft.permissions.push(action.permissionId)
+    if (delta < 0 && witnessed)
+      draft.permissions = draft.permissions.filter((id) => id !== action.permissionId)
+  }
 }

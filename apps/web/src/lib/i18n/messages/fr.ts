@@ -3242,10 +3242,31 @@ export const fr: Messages = {
 
   palette: {
     dialogLabel: 'Navigation rapide',
-    searchLabel: 'Rechercher une destination du site',
-    placeholder: 'Où voulez-vous aller ?',
+    searchLabel: 'Rechercher dans tout le site',
+    placeholder: 'Un nom, un lieu ou une question…',
+    site: {
+      title: 'Rechercher dans tout le site',
+      submit: 'Rechercher dans tout le site',
+      pending: 'Recherche en cours…',
+      policy:
+        'Les résultats respectent votre chapitre. Entrée pour chercher, puis ouvrir un résultat.',
+      error: 'La recherche est temporairement indisponible. Réessayez dans un instant.',
+      count: (count) => `${count} résultats · 20 affichés au maximum`,
+      empty: 'Aucun résultat dans la limite de votre chapitre.',
+      interpreted: 'Votre question a été interprétée pour chercher dans le catalogue.',
+      fallback:
+        'Résultats de recherche classique : l’interprétation de la question est temporairement indisponible.',
+      kinds: {
+        character: 'Personnage',
+        ability: 'Pouvoir',
+        event: 'Événement',
+        place: 'Lieu',
+        faction: 'Faction',
+        page: 'Page',
+      },
+    },
     empty: (query) => `Aucune destination ne correspond à « ${query} ».`,
-    enterHint: 'Entrée pour ouvrir le premier résultat',
+    enterHint: 'Entrée pour chercher, puis ouvrir un résultat',
     shortcutHint: '⌘K partout',
     groups: {
       primary: 'Principal',
@@ -4427,6 +4448,8 @@ export const fr: Messages = {
     modified: (date: string) => `Dernière vérification le ${date}`,
     ability: {
       archive: 'Archive des pouvoirs',
+      capped:
+        'Les informations du catalogue sans date de chapitre sont masquées tant que votre limite de spoilers est active.',
       owner: 'Propriétaire',
       users: 'Utilisateurs connus',
       category: 'Catégorie de Nen',

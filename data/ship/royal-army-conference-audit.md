@@ -10,17 +10,17 @@ Sources : [chapitre 380, édition officielle VIZ](https://www.viz.com/shonenjump
 
 ## Ce que montrent les cases et corrections
 
-| Élément | Ancien modèle | Correction d'après les pages examinées |
-| --- | --- | --- |
-| Table du comité | U sombre fermé du côté de l'orateur | Plateau clair, U ouvert vers Mizaistom, traverse fermée du côté du public, tablier à traits verticaux |
-| Sièges | Fauteuils ergonomiques, appuie-tête et roulettes | Chaises sobres à cadre rectangulaire, dossier partiellement ouvert et quatre pieds |
-| Public | Absent du plan | Rangées derrière le comité avec allée centrale |
-| Écran | Interface bleue, télémétrie, silhouette du navire et points radar | Surface blanche encadrée |
-| Petit tableau | Tableau de cartes tactiques sur le mur latéral | Petit panneau clair dans la zone avant gauche, sans carte lisible ; implantation et profils cachés reconstitués |
-| Sol | Moquette sombre et bordure en laiton | Quadrillage de dalles claires |
-| Pupitre | Médaillon, écran de contrôle, lampe et doubles microphones | Petit pupitre en caisson avec tablette et rangement ouverts du côté de l'orateur |
-| Estrade | Volume visuel sans support de marche | Plateforme basse inscrite dans le blueprint et utilisée par les collisions ; pupitre et Mizaistom à sa hauteur |
-| Murs et plafond | Armoiries, horloges, rack, écrans auxiliaires, caméras, projecteur laser | Parois simples à grands panneaux, grille basse entrevue à droite et plafond uni reconstitué |
+| Élément         | Ancien modèle                                                            | Correction d'après les pages examinées                                                                          |
+| --------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Table du comité | U sombre fermé du côté de l'orateur                                      | Plateau clair, U ouvert vers Mizaistom, traverse fermée du côté du public, tablier à traits verticaux           |
+| Sièges          | Fauteuils ergonomiques, appuie-tête et roulettes                         | Chaises sobres à cadre rectangulaire, dossier partiellement ouvert et quatre pieds                              |
+| Public          | Absent du plan                                                           | Rangées derrière le comité avec allée centrale                                                                  |
+| Écran           | Interface bleue, télémétrie, silhouette du navire et points radar        | Surface blanche encadrée                                                                                        |
+| Petit tableau   | Tableau de cartes tactiques sur le mur latéral                           | Petit panneau clair dans la zone avant gauche, sans carte lisible ; implantation et profils cachés reconstitués |
+| Sol             | Moquette sombre et bordure en laiton                                     | Quadrillage de dalles claires                                                                                   |
+| Pupitre         | Médaillon, écran de contrôle, lampe et doubles microphones               | Petit pupitre en caisson avec tablette et rangement ouverts du côté de l'orateur                                |
+| Estrade         | Volume visuel sans support de marche                                     | Plateforme basse inscrite dans le blueprint et utilisée par les collisions ; pupitre et Mizaistom à sa hauteur  |
+| Murs et plafond | Armoiries, horloges, rack, écrans auxiliaires, caméras, projecteur laser | Parois simples à grands panneaux, grille basse entrevue à droite et plafond uni reconstitué                     |
 
 Aucun microphone, dossier marqué « confidentiel », sous-main, plaque nominative, verre ni tableau tactique n'est ajouté aux tables : ces équipements ne sont pas établis par les vues examinées. Les anciens voyants et bandes lumineuses décoratives sont retirés.
 

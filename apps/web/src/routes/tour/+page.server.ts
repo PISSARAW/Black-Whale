@@ -1,41 +1,41 @@
-import { localizedLoad } from '$lib/server/localized-load'
+import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
 import { prisma } from '$lib/server/db'
+import { localizedLoad } from '$lib/server/localized-load'
+import { describeError, log } from '$lib/server/log'
 import { readSpoilerLimit, readSpoilerProfile } from '$lib/server/spoiler'
 import { timeline } from '$lib/server/timeline'
-import { selectEvent } from '@black-whale/canon-engine'
-import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
-import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
 import { BODY_KINDS } from '$lib/tour/bodyKinds'
+import type { CastMember, CastPayload } from '$lib/tour/cast'
 import {
-  dossierFor,
   contextLinesFor,
+  dossierFor,
   eventHatsuFor,
   inSlugSpace,
   rosterFrom,
   type CastDossier,
   type DossierAbility,
   type DossierCharacter,
+  type EventHatsuUse,
   type RosterAbility,
   type RosterCharacter,
-  type EventHatsuUse,
 } from '$lib/tour/cast'
-import type { CastMember, CastPayload } from '$lib/tour/cast'
-import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
-import { mangaViewById } from '$lib/tour/mangaViews'
-import { mangaEventFor } from '$lib/tour/mangaEvent'
-import characterCatalog from '../../../../../data/characters/characters.json'
-import abilityCatalog from '../../../../../data/abilities/abilities.json'
-import abilityUseCatalog from '../../../../../data/abilities/uses.json'
-import factionCatalog from '../../../../../data/factions/factions.json'
-import eventCatalog from '../../../../../data/events/events.json'
-import objectCatalog from '../../../../../data/objects/objects.json'
-import type { PageServerLoad } from './$types'
-import { log, describeError } from '$lib/server/log'
 import {
   auraObjectsThrough,
   auraTracesThrough,
   type AuraObjectRecord,
 } from '$lib/tour/cast/auraSources'
+import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
+import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
+import { mangaEventFor } from '$lib/tour/mangaEvent'
+import { mangaViewById } from '$lib/tour/mangaViews'
+import { selectEvent } from '@black-whale/canon-engine'
+import abilityCatalog from '../../../../../data/abilities/abilities.json'
+import abilityUseCatalog from '../../../../../data/abilities/uses.json'
+import characterCatalog from '../../../../../data/characters/characters.json'
+import eventCatalog from '../../../../../data/events/events.json'
+import factionCatalog from '../../../../../data/factions/factions.json'
+import objectCatalog from '../../../../../data/objects/objects.json'
+import type { PageServerLoad } from './$types'
 
 /**
  * Who is aboard while the visitor walks.
@@ -129,12 +129,11 @@ function vestigesThrough(selected: { id: string; chapter: { number: number }; se
     )
       continue
     for (const domain of event.events ?? []) {
-      const payload = domain.payload
-      if (domain.type !== 'ENVIRONMENT_ALTERED' || !payload?.locationId || !payload.vestigeType)
-        continue
-      found[payload.locationId] = [
-        ...(found[payload.locationId] ?? []),
-        { type: payload.vestigeType, metadata: payload.metadata },
+      const payload = domain.payload!
+      if (!isVestige(domain)) continue
+      found[payload.locationId!] = [
+        ...(found[payload.locationId!] ?? []),
+        { type: payload.vestigeType!, metadata: payload.metadata },
       ]
     }
   }
@@ -291,4 +290,11 @@ function empty(spoilerLimit: number | null): CastPayload {
     auraTraces: [],
     auraObjects: [],
   }
+}
+
+function isVestige(domain: CatalogDomainEvent): boolean {
+  return (
+    domain.type === 'ENVIRONMENT_ALTERED' &&
+    Boolean(domain.payload?.locationId && domain.payload.vestigeType)
+  )
 }

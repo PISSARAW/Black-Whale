@@ -37,6 +37,25 @@ export function actOnTier5Parcel(
   if (!activity || activity.status === 'RESOLVED' || activity.status === 'FAILED') return state
   let next = evolveTourSimulation(state, (draft) => {
     const current = draft.activities[TIER5_PARCEL_ACTIVITY]
+    function resolveContact() {
+      if (action === 'LEAVE_TIER') {
+        current.data.leftTier = true
+        draft.player.spaceId = 'tier-3-central-police-station'
+      }
+      if (action === 'RETURN_TO_TIER5') draft.player.spaceId = 'tier-5-warehouse'
+      if (action === 'ACCEPT_MAFIA_OFFER' && current.stage === 'CONTACT')
+        current.stage = 'MAFIA_CONTRACT'
+      if (action === 'REPORT_TO_POLICE' && current.stage === 'CONTACT') {
+        current.stage = 'POLICE_RESOLUTION'
+        current.status = 'RESOLVED'
+        draft.permissions.push('tier-3-police-contact')
+      }
+      if (action === 'RETURN_TO_OWNER' && current.stage === 'CONTACT') {
+        current.stage = 'OWNER_RESOLUTION'
+        current.status = 'RESOLVED'
+        draft.permissions.push('tier-5-medical-supply-access')
+      }
+    }
     if (action === 'HEAR_DISPUTE' && current.stage === 'UNNOTICED') {
       current.stage = 'INVESTIGATING'
       current.status = 'ACTIVE'
@@ -51,23 +70,7 @@ export function actOnTier5Parcel(
       current.data.hiddenPresence = true
       draft.player.knowledge.push('presence-behind-warehouse-wall')
     }
-    if (action === 'LEAVE_TIER') {
-      current.data.leftTier = true
-      draft.player.spaceId = 'tier-3-central-police-station'
-    }
-    if (action === 'RETURN_TO_TIER5') draft.player.spaceId = 'tier-5-warehouse'
-    if (action === 'ACCEPT_MAFIA_OFFER' && current.stage === 'CONTACT')
-      current.stage = 'MAFIA_CONTRACT'
-    if (action === 'REPORT_TO_POLICE' && current.stage === 'CONTACT') {
-      current.stage = 'POLICE_RESOLUTION'
-      current.status = 'RESOLVED'
-      draft.permissions.push('tier-3-police-contact')
-    }
-    if (action === 'RETURN_TO_OWNER' && current.stage === 'CONTACT') {
-      current.stage = 'OWNER_RESOLUTION'
-      current.status = 'RESOLVED'
-      draft.permissions.push('tier-5-medical-supply-access')
-    }
+    resolveContact()
   })
   if (action === 'ACCEPT_MAFIA_OFFER' && activity.stage === 'CONTACT')
     next = resolveSocialAction(next, {

@@ -1,10 +1,20 @@
+---
+titre: arena
+etage: 2
+couvre:
+  - apps/web/src/lib/arena/**
+depend-de: [07-les-modes]
+revu-le: 2026-11-15
+decisions: [adr-002]
+---
+
 # Arena
 
 Arena is split into three deterministic layers:
 
-- `combat/` owns exchanges, KOs, ring-outs and environment intervention.
-- `arena/match.ts` owns formats and boss setup. It may end a running combat, but never replaces a terminal combat verdict.
-- `arena/replay/` records commands plus the complete match configuration and uses the same referee as the live page.
+- `apps/web/src/lib/combat/` owns exchanges, KOs, ring-outs and environment intervention.
+- `apps/web/src/lib/arena/match.ts` owns formats and boss setup. It may end a running combat, but never replaces a terminal combat verdict.
+- `apps/web/src/lib/arena/replay/` records commands plus the complete match configuration and uses the same referee as the live page.
 
 ## Match lifecycle
 

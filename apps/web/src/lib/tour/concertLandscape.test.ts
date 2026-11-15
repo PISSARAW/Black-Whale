@@ -1,13 +1,13 @@
-import { describe, expect, it } from 'vitest'
 import * as THREE from 'three'
-import { theShip } from './blueprint'
-import { ConcertStageView } from './ConcertStageView'
-import { ConcertDreamView, CONCERT_DREAM_LAYER } from './ConcertDreamView'
-import type { SceneRuntime } from './TourRenderer'
-import { ConcertLandscapeWalk, concertLandscapeHeight } from './concertLandscapeWalk'
-import { buildConcertLandscape, MANGA_MOUNTAIN_PROFILES } from './concertLandscape'
+import { describe, expect, it } from 'vitest'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
+import { theShip } from './blueprint'
+import { CONCERT_DREAM_LAYER, ConcertDreamView } from './ConcertDreamView'
+import { buildConcertLandscape, MANGA_MOUNTAIN_PROFILES } from './concertLandscape'
+import { concertLandscapeHeight, ConcertLandscapeWalk } from './concertLandscapeWalk'
 import { CONCERT_REFERENCE, concertReferencePosition } from './concertReference'
+import { ConcertStageView } from './ConcertStageView'
+import type { SceneRuntime } from './TourRenderer'
 
 const spec = { origin: [-1, 27.25] as const, floor: 127.4, stageRise: 1.4 }
 const playing = { mode: 'melody', playing: true } as const
@@ -252,8 +252,10 @@ describe('the three-minute flowered listening landscape', () => {
     const walk = new ConcertLandscapeWalk(spec, spec.origin)
     walk.move([2, 0], 6)
     dream.apply({ camera, actors: { flute: { root: flute } }, seconds: 3, yaw: 0, runtime }, walk, {
-      mode: 'self',
-      playing: true,
+      performance: {
+        mode: 'self',
+        playing: true,
+      },
     })
     expect(flute.position.distanceTo(camera.position)).toBeLessThan(0.7)
     expect(flute.position.x).toBeGreaterThan(10)
@@ -274,10 +276,10 @@ describe('the three-minute flowered listening landscape', () => {
     listener.rotation.x = 0.1
     const walk = new ConcertLandscapeWalk(spec, spec.origin)
     const actors = { 'cast:melody': { root: melody }, 'cast:listener': { root: listener } }
-    dream.apply({ camera, actors, seconds: 1, yaw: 0 }, walk, playing, 0.4)
+    dream.apply({ camera, actors, seconds: 1, yaw: 0 }, walk, { performance: playing, blend: 0.4 })
     expect(listener.rotation.x).toBeGreaterThan(0.1)
     expect(camera.layers.test(listener.layers)).toBe(true)
-    dream.apply({ camera, actors, seconds: 2, yaw: 0 }, walk, playing, 1)
+    dream.apply({ camera, actors, seconds: 2, yaw: 0 }, walk, { performance: playing, blend: 1 })
     expect(listener.rotation.x).toBeCloseTo(0.1)
     expect(camera.layers.test(listener.layers)).toBe(false)
     dream.restore()
@@ -293,7 +295,9 @@ describe('the three-minute flowered listening landscape', () => {
     melody.add(aura)
     const walk = new ConcertLandscapeWalk(spec, concertReferencePosition(spec))
     const manga = { ...playing, presentation: 'manga' as const }
-    dream.apply({ camera, actors: { 'cast:melody': { root: melody } }, seconds: 1, yaw: 0 }, walk, manga)
+    dream.apply({ camera, actors: { 'cast:melody': { root: melody } }, seconds: 1, yaw: 0 }, walk, {
+      performance: manga,
+    })
     expect(aura.visible).toBe(false)
     dream.restore()
     expect(aura.visible).toBe(true)

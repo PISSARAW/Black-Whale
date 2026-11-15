@@ -45,8 +45,7 @@ function scheduledStop(routine: NPCRoutine, clock: number): NPCRoutineStop | nul
 export function advanceNPCRoutines(
   state: TourSimulationV1,
   routines: readonly NPCRoutine[],
-  graph: TourNavigationGraph,
-  dt: number,
+  { graph, dt }: { graph: TourNavigationGraph; dt: number },
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     draft.clock += Math.max(0, dt)
@@ -65,8 +64,7 @@ export function advanceNPCRoutines(
 export function interruptNPCRoutine(
   state: TourSimulationV1,
   actorId: string,
-  incidentId: string,
-  responseSpaceId: string,
+  { incidentId, responseSpaceId }: { incidentId: string; responseSpaceId: string },
 ): TourSimulationV1 {
   return evolveTourSimulation(state, (draft) => {
     const actor = draft.actors[actorId]

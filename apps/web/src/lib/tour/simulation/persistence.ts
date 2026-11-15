@@ -17,22 +17,7 @@ export function decodeTourSimulation(serialized: string | null): TourSimulationV
     return null
   try {
     const value = JSON.parse(serialized) as Partial<TourSimulationV1>
-    if (
-      value.version !== 1 ||
-      typeof value.id !== 'string' ||
-      (value.mode !== 'FREE_LIFE' && value.mode !== 'ALTERNATE_SIMULATION') ||
-      !Number.isInteger(value.revision) ||
-      typeof value.clock !== 'number' ||
-      !value.player ||
-      typeof value.actors !== 'object' ||
-      typeof value.reputation !== 'object' ||
-      !Array.isArray(value.permissions) ||
-      !Array.isArray(value.witnesses) ||
-      !Array.isArray(value.incidents)
-      || typeof value.activities !== 'object'
-      || typeof value.shipSystems !== 'object'
-    )
-      return null
+    if (!validSimulationHeader(value) || !validSimulationCollections(value)) return null
     return value as TourSimulationV1
   } catch {
     return null
@@ -60,4 +45,26 @@ export function migrateLegacyTourSimulation(value: {
   const state = createTourSimulation({ id: value.id ?? 'migrated-tour', spaceId: value.room })
   state.player.aura = Math.max(0, Math.min(100, value.aura ?? 100))
   return state
+}
+
+function validSimulationHeader(value: Partial<TourSimulationV1>): boolean {
+  return !(
+    value.version !== 1 ||
+    typeof value.id !== 'string' ||
+    (value.mode !== 'FREE_LIFE' && value.mode !== 'ALTERNATE_SIMULATION') ||
+    !Number.isInteger(value.revision) ||
+    typeof value.clock !== 'number' ||
+    !value.player
+  )
+}
+function validSimulationCollections(value: Partial<TourSimulationV1>): boolean {
+  return !(
+    typeof value.actors !== 'object' ||
+    typeof value.reputation !== 'object' ||
+    !Array.isArray(value.permissions) ||
+    !Array.isArray(value.witnesses) ||
+    !Array.isArray(value.incidents) ||
+    typeof value.activities !== 'object' ||
+    typeof value.shipSystems !== 'object'
+  )
 }

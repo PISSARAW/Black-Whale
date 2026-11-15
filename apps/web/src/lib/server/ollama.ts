@@ -15,6 +15,19 @@ import { describeError, log } from './log'
 export interface OllamaConfig {
   url: string
   model: string
+  token?: string
+  timeoutMs?: number
+}
+
+function privateOptions(env: Record<string, string | undefined>) {
+  const token = env.OLLAMA_TOKEN?.trim()
+  const timeoutMs = Number(env.OLLAMA_TIMEOUT_MS)
+  return {
+    ...(token ? { token } : {}),
+    ...(Number.isInteger(timeoutMs) && timeoutMs >= 1_000 && timeoutMs <= 30_000
+      ? { timeoutMs }
+      : {}),
+  }
 }
 
 /** Read from the environment; `null` when the model is not configured. */
@@ -24,7 +37,7 @@ export function ollamaConfig(
   const url = env.OLLAMA_URL?.trim().replace(/\/+$/, '')
   const model = env.OLLAMA_MODEL?.trim()
   if (!url || !model || !/^https?:\/\//.test(url)) return null
-  return { url, model }
+  return { url, model, ...privateOptions(env) }
 }
 
 export interface OllamaQuestion {
@@ -38,6 +51,27 @@ export interface OllamaQuestion {
 }
 
 type Fetcher = typeof fetch
+
+function headersFor(config: OllamaConfig): Record<string, string> {
+  return {
+    'content-type': 'application/json',
+    ...(config.token ? { authorization: `Bearer ${config.token}` } : {}),
+  }
+}
+
+function replyContent(
+  payload: { message?: { content?: unknown } },
+  details: { config: OllamaConfig; started: number; response: Response },
+): string | null {
+  const content = payload.message?.content
+  if (typeof content !== 'string') return null
+  log.info('Ollama answered', {
+    model: details.config.model,
+    elapsedMs: Date.now() - details.started,
+    inferenceId: details.response.headers.get('x-inference-id'),
+  })
+  return content
+}
 
 /**
  * Models that reason before answering are told not to: the reasoning is never
@@ -67,11 +101,12 @@ export async function askOllama(
   question: OllamaQuestion,
   fetcher: Fetcher = fetch,
 ): Promise<string | null> {
-  const signal = AbortSignal.timeout(question.timeoutMs ?? 8_000)
+  const signal = AbortSignal.timeout(question.timeoutMs ?? config.timeoutMs ?? 8_000)
+  const started = Date.now()
   const post = (think: boolean) =>
     fetcher(`${config.url}/api/chat`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: headersFor(config),
       body: requestBody(config, question, think),
       signal,
     })
@@ -87,8 +122,7 @@ export async function askOllama(
       return null
     }
     const payload = (await response.json()) as { message?: { content?: unknown } }
-    const content = payload.message?.content
-    return typeof content === 'string' ? content : null
+    return replyContent(payload, { config, started, response })
   } catch (error) {
     log.warn('Ollama did not answer', describeError(error))
     return null

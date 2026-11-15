@@ -8,22 +8,9 @@
 
   let { entries = [], french = false }: Props = $props()
 
-  const sentence = (cause: NenCause) => {
-    if (cause.code === 'ACTION_ACCEPTED')
-      return french ? `${cause.action} accepté.` : `${cause.action} accepted.`
-    if (cause.code === 'ACTION_REFUSED') {
-      const reason =
-        cause.reason === 'RESERVE_TOO_LOW'
-          ? french
-            ? 'réserve insuffisante'
-            : 'aura reserve too low'
-          : cause.reason === 'NODES_SHUT'
-            ? french
-              ? 'nœuds fermés'
-              : 'nodes closed'
-            : cause.reason
-      return french ? `${cause.action} refusé : ${reason}.` : `${cause.action} refused: ${reason}.`
-    }
+  const contactSentence = (
+    cause: Extract<NenCause, { code: 'EN_CONTACT' | 'PRESSURE_WITNESS' | 'EXHAUSTED' }>,
+  ) => {
     if (cause.code === 'EN_CONTACT')
       return french ? `Votre En a touché ${cause.name}.` : `Your En touched ${cause.name}.`
     if (cause.code === 'PRESSURE_WITNESS')
@@ -32,6 +19,17 @@
         : `${cause.name} felt your ${cause.pressure === 'on' ? 'On' : 'Ren'}.`
     if (cause.code === 'EXHAUSTED')
       return french ? 'Épuisement : retour forcé au Ten.' : 'Exhausted: forced back to Ten.'
+  }
+
+  const observationSentence = (
+    cause: Exclude<NenCause, { code: 'ACTION_ACCEPTED' | 'ACTION_REFUSED' }>,
+  ) => {
+    if (
+      cause.code === 'EN_CONTACT' ||
+      cause.code === 'PRESSURE_WITNESS' ||
+      cause.code === 'EXHAUSTED'
+    )
+      return contactSentence(cause)
     if (cause.code === 'SHU_TRACE')
       return french
         ? `Le Shu relâché sur ${cause.objectId} laisse une trace.`
@@ -43,6 +41,28 @@
     return french
       ? `Balayage de sécurité programmé dans ${cause.spaceId}.`
       : `Security sweep scheduled in ${cause.spaceId}.`
+  }
+
+  const refusalReason = (reason: Extract<NenCause, { code: 'ACTION_REFUSED' }>['reason']) => {
+    return reason === 'RESERVE_TOO_LOW'
+      ? french
+        ? 'réserve insuffisante'
+        : 'aura reserve too low'
+      : reason === 'NODES_SHUT'
+        ? french
+          ? 'nœuds fermés'
+          : 'nodes closed'
+        : reason
+  }
+
+  const sentence = (cause: NenCause) => {
+    if (cause.code === 'ACTION_ACCEPTED')
+      return french ? `${cause.action} accepté.` : `${cause.action} accepted.`
+    if (cause.code === 'ACTION_REFUSED') {
+      const reason = refusalReason(cause.reason)
+      return french ? `${cause.action} refusé : ${reason}.` : `${cause.action} refused: ${reason}.`
+    }
+    return observationSentence(cause)
   }
 </script>
 

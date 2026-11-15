@@ -1,64 +1,24 @@
 <script lang="ts">
-  import { onDestroy, onMount, untrack } from 'svelte'
   import { goto } from '$app/navigation'
-  import { page } from '$app/stores'
-  import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
-  import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
-  import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
-  import TourMelodyConcert from '$lib/components/tour/TourMelodyConcert.svelte'
-  import TourSecretCard from '$lib/components/tour/TourSecretCard.svelte'
-  import { concertWorld, type ConcertPerformance } from '$lib/tour/melodyConcert'
-  import {
-    applyMangaView,
-    initialTierForRequest,
-    watchMangaRequest,
-  } from '$lib/tour/mangaRequest.svelte'
-  import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
-  import { activeHatsu, activateHatsu, parallelFutureVisible } from '$lib/nen/hatsuState'
-  import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import { parsePathname } from '$lib/i18n'
   import { localizeHatsu } from '$lib/i18n/hatsu'
-  import { link, parsePathname, t } from '$lib/i18n'
-  import { locale } from '$lib/i18n'
-  import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
-  import { loadComfort, reducedMotion } from '$lib/tour/comfort'
   import { presentationFor, type AbilitySurfaceAdapter } from '$lib/nen/abilityPresentation'
+  import { HATSU_PROFILES, hatsuById, type HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
+  import { activateHatsu } from '$lib/nen/hatsuState'
   import {
     tourAbilitySurfaceAdapter,
     tourSupportsAbility,
     type TourAbilityCommand,
   } from '$lib/tour/abilitySurface'
   import { flashFor, type TourFlash } from '$lib/tour/apparitions'
-  import { describeSpace } from '$lib/tour/describe'
-  import { TourChromeState } from '$lib/tour/pageChrome.svelte'
-  import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
-  import { placeOf, type Naming } from '$lib/tour/search'
-  import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
-  import { playTourHatsuSound } from '$lib/tour/hatsuSound'
-  import { playTourReachSound } from '$lib/tour/reachSound'
+  import { crossingsOn, deckOf, theShip, type Crossing } from '$lib/tour/blueprint'
+  import { NO_CAST, readingIsFelt, spacesForLocation, type AddressWords } from '$lib/tour/cast'
   import { hearTheRoom } from '$lib/tour/cast/hearing'
-  import { punchRuns } from '$lib/tour/punch'
+  import { aimedPerson, personExhibit } from '$lib/tour/cast/provenance'
+  import { loadComfort } from '$lib/tour/comfort'
   import { daysLeft } from '$lib/tour/decipher'
-  import { keepTheBeat } from '$lib/tour/pageBeat.svelte'
-  import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
-  import { TourKeyboardController } from '$lib/tour/pageKeyboard'
+  import { describeSpace } from '$lib/tour/describe'
   import { examine, type Exhibit } from '$lib/tour/exhibit'
-  import { scarletWashOf, TourWorldTicker } from '$lib/tour/pageWorldTicker'
-  import {
-    TourHatsuSession,
-    type AppliedTourNenTransition,
-  } from '$lib/tour/pageHatsuSession.svelte'
-  import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
-  import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
-  import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
-  import { TourTargetView } from '$lib/tour/pageTargetView.svelte'
-  import { type CastHand } from '$lib/tour/pageCasting'
-  import { TourCastController } from '$lib/tour/pageCastController'
-  import { TourOverlayView } from '$lib/tour/pageOverlayView.svelte'
-  import {
-    crossingLabel as describeCrossing,
-    linkPrompt as describeLink,
-    type LinkWords,
-  } from '$lib/tour/pageNavigation'
   import {
     EMPTY_WORLD,
     identityOf,
@@ -69,26 +29,70 @@
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
-  import type { Provenance, Space } from '$lib/tour/types'
-  import { TourCastView } from '$lib/tour/pageCastView.svelte'
-  import { TourBodyView } from '$lib/tour/pageBodyView.svelte'
-  import { noteFor } from '$lib/tour/pageBodyReadout'
-  import { aimedPerson, personExhibit } from '$lib/tour/cast/provenance'
-  import { NO_CAST, readingIsFelt, spacesForLocation, type AddressWords } from '$lib/tour/cast'
-  import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
+  import { playTourHatsuSound } from '$lib/tour/hatsuSound'
   import { NO_HOUR } from '$lib/tour/hour'
+  import {
+    applyMangaView,
+    initialTierForRequest,
+    watchMangaRequest,
+  } from '$lib/tour/mangaRequest.svelte'
   import { mangaViewById, viewsForSpace, type MangaView } from '$lib/tour/mangaViews'
+  import { concertWorld, type ConcertPerformance } from '$lib/tour/melodyConcert'
+  import { noteEnContacts, pressureOf } from '$lib/tour/nenContacts'
+  import { keepTheBeat } from '$lib/tour/pageBeat.svelte'
+  import type { BodyReadoutWords } from '$lib/tour/pageBodyReadout'
+  import { noteFor } from '$lib/tour/pageBodyReadout'
+  import { TourBodyView } from '$lib/tour/pageBodyView.svelte'
+  import { TourCastController } from '$lib/tour/pageCastController'
+  import { type CastHand } from '$lib/tour/pageCasting'
+  import { TourCastView } from '$lib/tour/pageCastView.svelte'
+  import { TourChromeState } from '$lib/tour/pageChrome.svelte'
+  import { TourHatsuAudio } from '$lib/tour/pageHatsuAudio.svelte'
+  import {
+    TourHatsuSession,
+    type AppliedTourNenTransition,
+  } from '$lib/tour/pageHatsuSession.svelte'
+  import { TourHatsuView } from '$lib/tour/pageHatsuView.svelte'
+  import { TourKeyboardController } from '$lib/tour/pageKeyboard'
+  import {
+    crossingLabel as describeCrossing,
+    linkPrompt as describeLink,
+    type LinkWords,
+  } from '$lib/tour/pageNavigation'
+  import { TourNavigationState } from '$lib/tour/pageNavigationState.svelte'
+  import { TourOverlayView } from '$lib/tour/pageOverlayView.svelte'
+  import { localizedName, localizedSource, provenanceClass } from '$lib/tour/pagePresentation'
+  import { blindWallReasons, declaredDoorReasons } from '$lib/tour/pageTargets'
+  import { TourTargetView } from '$lib/tour/pageTargetView.svelte'
+  import { scarletWashOf, TourWorldTicker } from '$lib/tour/pageWorldTicker'
+  import { punchRuns } from '$lib/tour/punch'
+  import { playTourReachSound } from '$lib/tour/reachSound'
+  import { placeOf, type Naming } from '$lib/tour/search'
+  import { advanceDynamicEvents } from '$lib/tour/simulation/events'
+  import { tourWorldMode } from '$lib/tour/simulation/mode'
+  import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
+  import { createTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
+  import { useSystemicNen } from '$lib/tour/simulation/systemicNen'
   import {
     TSERRIEDNICH_ROUTE_ID,
     TSERRIEDNICH_ROUTE_START,
     tserriednichRouteUrl,
   } from '$lib/tour/tserriednichRoute'
+  import type { Provenance, Space } from '$lib/tour/types'
+  import { onDestroy, onMount, untrack } from 'svelte'
   import type { PageData } from './$types'
-  import { tourWorldMode } from '$lib/tour/simulation/mode'
-  import { createTourSimulation, type TourSimulationV1 } from '$lib/tour/simulation/state'
-  import { loadTourSimulation, saveTourSimulation } from '$lib/tour/simulation/persistence'
-  import { useSystemicNen } from '$lib/tour/simulation/systemicNen'
-  import { advanceDynamicEvents } from '$lib/tour/simulation/events'
+  import { page } from '$app/stores'
+  import TourPageIntro from '$lib/components/tour/TourPageIntro.svelte'
+  import TourPageDialogs from '$lib/components/tour/TourPageDialogs.svelte'
+  import TourPageStage from '$lib/components/tour/TourPageStage.svelte'
+  import TourMelodyConcert from '$lib/components/tour/TourMelodyConcert.svelte'
+  import TourSecretCard from '$lib/components/tour/TourSecretCard.svelte'
+  import TourWorkspace from '$lib/components/tour/TourWorkspace.svelte'
+  import { activeHatsu, parallelFutureVisible } from '$lib/nen/hatsuState'
+  import { link, t } from '$lib/i18n'
+  import { locale } from '$lib/i18n'
+  import { reducedMotion } from '$lib/tour/comfort'
+  import TourPostcardModal from '$lib/components/tour/TourPostcardModal.svelte'
 
   // The walk is no longer only a ship: the server hands it the cast of the
   // canon at the event under the reader's cap. See ADR-003.
@@ -363,16 +367,14 @@
   })
   function projectNen(applied: AppliedTourNenTransition) {
     const view = castView
-    const pressure = applied.nen.on ? 'on' : applied.nen.mode === 'ren' ? 'ren' : 'none'
+    const pressure = pressureOf(applied.nen)
     const rising = previousPressure === 'none' && pressure !== 'none'
     previousPressure = pressure
     const here = view.walking.filter((post) => post.spaceId === currentSpace?.id)
-    if (applied.action.type === 'EN' && applied.action.radius !== null)
-      for (const post of view.walking) {
-        const distance = Math.hypot(post.at[0] - position[0], post.at[1] - position[1])
-        if (distance <= applied.action.radius)
-          hatsuSession.note({ code: 'EN_CONTACT', name: post.member.name })
-      }
+    noteEnContacts(applied.action, view.walking, {
+      position,
+      note: (cause) => hatsuSession.note(cause),
+    })
     if (rising)
       for (const post of here)
         hatsuSession.note({

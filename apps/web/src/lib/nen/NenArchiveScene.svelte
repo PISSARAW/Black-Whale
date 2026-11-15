@@ -1,26 +1,13 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import * as THREE from 'three'
-  import { buildAnimalApparition } from '$lib/tour/apparitionAnimalView'
-  import { buildBasicApparition } from '$lib/tour/apparitionBasicView'
-  import { buildBiohazardApparition } from '$lib/tour/apparitionBiohazardView'
-  import { buildCrawlingApparition } from '$lib/tour/apparitionCrawlingView'
-  import { buildDragonApparition } from '$lib/tour/apparitionDragonView'
-  import { buildGuardianApparition } from '$lib/tour/apparitionGuardianView'
-  import { buildMangaPropApparition } from '$lib/tour/apparitionMangaPropView'
-  import { buildMechanicalApparition } from '$lib/tour/apparitionMechanicalView'
-  import { buildLsdfApparition } from '$lib/tour/apparitionLsdfView'
-  import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
-  import { buildWormPortal } from '$lib/tour/apparitionPortalView'
-  import { buildRoyalBeastApparition } from '$lib/tour/apparitionRoyalBeastView'
-  import { buildSpriteApparition } from '$lib/tour/apparitionSpriteView'
-  import { buildSupportBeastApparition } from '$lib/tour/apparitionSupportBeastView'
-  import { buildVowApparition } from '$lib/tour/apparitionVowView'
   import type { BasicApparitionContext } from '$lib/tour/apparitionBasicView'
-  import type { Apparition, ApparitionKind } from '$lib/tour/apparitions'
+  import type { Apparition } from '$lib/tour/apparitions'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
+  import { SvelteMap } from 'svelte/reactivity'
+  import * as THREE from 'three'
   import { buildTechniqueAnimation, updateTechniqueAnimation } from './NenTechniqueAnimation'
   import type { NenArchiveKind } from './archive'
+  import { attachArchiveCanvas } from './archive-canvas'
+  import { CANONICAL_MODELS } from './archive-models'
 
   export let kind: NenArchiveKind
   export let color = '#8fe1ca'
@@ -29,6 +16,7 @@
   export let label = 'Nen specimen'
   export let loadingLabel = 'Loading model…'
 
+  let canvasHost: HTMLSpanElement
   let host: HTMLButtonElement
   let mounted = false
   let activeKind: NenArchiveKind | null = null
@@ -69,405 +57,23 @@
     return value
   }
 
-  const glow = (hex: string, opacity = 0.7) => {
-    const value = new THREE.MeshBasicMaterial({
-      color: hex,
-      transparent: true,
-      opacity,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    })
-    glowMaterials.push(value)
-    return value
-  }
-
   function mesh(
     geometry: THREE.BufferGeometry,
     surface: THREE.Material,
     position: [number, number, number] = [0, 0, 0],
-    scale: [number, number, number] = [1, 1, 1],
   ) {
     const value = new THREE.Mesh(geometry, surface)
     value.position.set(...position)
-    value.scale.set(...scale)
     value.castShadow = true
     value.receiveShadow = true
     return value
-  }
-
-  type CanonicalConfig = {
-    apparitionKind: ApparitionKind
-    build: (seen: Apparition, context: BasicApparitionContext) => unknown
-    size: number
-    colour: number
-    stage: number
-    scale: number
-    position: [number, number, number]
-    rotation?: [number, number, number]
-    creature?: boolean
-  }
-
-  const CANONICAL_MODELS: Record<NenArchiveKind, CanonicalConfig> = {
-    guardian: {
-      apparitionKind: 'nasubi-guardian',
-      build: buildRoyalBeastApparition,
-      size: 0.95,
-      colour: 0xc7bcb0,
-      stage: 0,
-      scale: 0.82,
-      position: [0, -1.5, 0],
-      creature: true,
-    },
-    'skill-book': {
-      apparitionKind: 'book',
-      build: buildObjectApparition,
-      size: 1.25,
-      colour: 0x9c7ac4,
-      stage: 1,
-      scale: 1.15,
-      position: [0, 0.1, 0],
-      rotation: [Math.PI / 2.35, 0, 0],
-    },
-    'black-voice': {
-      apparitionKind: 'phone',
-      build: buildMangaPropApparition,
-      size: 1.35,
-      colour: 0x9ebaa8,
-      stage: 0,
-      scale: 1.18,
-      position: [0, -0.1, 0],
-      rotation: [0, -0.18, 0],
-    },
-    ghostwriter: {
-      apparitionKind: 'ghost',
-      build: buildObjectApparition,
-      size: 1.05,
-      colour: 0xdca4cf,
-      stage: 1,
-      scale: 0.95,
-      position: [0, 0.7, 0],
-      rotation: [0, Math.PI, 0],
-      creature: true,
-    },
-    predator: {
-      apparitionKind: 'predator-salesale',
-      build: buildSupportBeastApparition,
-      size: 1.25,
-      colour: 0xb7ada3,
-      stage: 0,
-      scale: 1.12,
-      position: [0, 0, 0],
-      creature: true,
-    },
-    'benjamin-guardian': {
-      apparitionKind: 'benjamin-guardian',
-      build: buildRoyalBeastApparition,
-      size: 0.9,
-      colour: 0xc9b8a2,
-      stage: 0,
-      scale: 0.84,
-      position: [0, -1.48, 0],
-      creature: true,
-    },
-    'halkenburg-guardian': {
-      apparitionKind: 'halkenburg-guardian',
-      build: buildRoyalBeastApparition,
-      size: 0.9,
-      colour: 0xd8d0c4,
-      stage: 0,
-      scale: 0.82,
-      position: [0, -1.48, 0],
-      creature: true,
-    },
-    'tserriednich-guardian': {
-      apparitionKind: 'chimera',
-      build: buildGuardianApparition,
-      size: 0.95,
-      colour: 0x9e6d89,
-      stage: 0,
-      scale: 0.95,
-      position: [0, -1.35, 0],
-      creature: true,
-    },
-    'tserriednich-second': {
-      apparitionKind: 'tserriednich-second',
-      build: buildRoyalBeastApparition,
-      size: 0.9,
-      colour: 0xb79f8e,
-      stage: 0,
-      scale: 0.92,
-      position: [0, -1.35, 0],
-      creature: true,
-    },
-    'camilla-guardian': {
-      apparitionKind: 'medusa',
-      build: buildGuardianApparition,
-      size: 1.05,
-      colour: 0xb7879f,
-      stage: 0,
-      scale: 0.86,
-      position: [0, -0.3, 0],
-      creature: true,
-    },
-    'tubeppa-guardian': {
-      apparitionKind: 'toad',
-      build: buildGuardianApparition,
-      size: 1.1,
-      colour: 0x8ca58f,
-      stage: 0,
-      scale: 0.9,
-      position: [0, -1.35, 0],
-      creature: true,
-    },
-    'zhang-lei-guardian': {
-      apparitionKind: 'wheel',
-      build: buildMechanicalApparition,
-      size: 1.1,
-      colour: 0xc79f4b,
-      stage: 4,
-      scale: 0.88,
-      position: [0, -0.1, 0],
-      creature: true,
-    },
-    'tyson-guardian': {
-      apparitionKind: 'tyson-guardian',
-      build: buildMechanicalApparition,
-      size: 0.95,
-      colour: 0xcf7898,
-      stage: 1,
-      scale: 1.05,
-      position: [0, 0, 0],
-      creature: true,
-    },
-    'luzurus-guardian': {
-      apparitionKind: 'centipede',
-      build: buildCrawlingApparition,
-      size: 1.05,
-      colour: 0x85704f,
-      stage: 1,
-      scale: 0.86,
-      position: [0, -1.3, 0],
-      creature: true,
-    },
-    'sale-sale-guardian': {
-      apparitionKind: 'mouths',
-      build: buildCrawlingApparition,
-      size: 1,
-      colour: 0xc99a78,
-      stage: 0,
-      scale: 0.9,
-      position: [0, -0.25, 0],
-      creature: true,
-    },
-    'momoze-guardian': {
-      apparitionKind: 'sprite',
-      build: buildSpriteApparition,
-      size: 1,
-      colour: 0xd3c9c3,
-      stage: 0,
-      scale: 0.92,
-      position: [0, -1.35, 0],
-      creature: true,
-    },
-    'marayam-guardian': {
-      apparitionKind: 'dragon',
-      build: buildDragonApparition,
-      size: 1,
-      colour: 0xb88662,
-      stage: 0,
-      scale: 0.84,
-      position: [0, -1.42, 0],
-      creature: true,
-    },
-    'cats-name': {
-      apparitionKind: 'cat',
-      build: buildAnimalApparition,
-      size: 1.05,
-      colour: 0xff8fab,
-      stage: 2,
-      scale: 0.88,
-      position: [0, -1.4, 0],
-      creature: true,
-    },
-    'stealth-dolphin': {
-      apparitionKind: 'dolphin',
-      build: buildSupportBeastApparition,
-      size: 1,
-      colour: 0x63d8ef,
-      stage: 0,
-      scale: 1,
-      position: [0, -0.15, 0],
-      creature: true,
-    },
-    'cookie-chan': {
-      apparitionKind: 'cookie',
-      build: buildSupportBeastApparition,
-      size: 0.95,
-      colour: 0xf0c7b2,
-      stage: 0,
-      scale: 0.86,
-      position: [0, -1.45, 0],
-      creature: true,
-    },
-    'blood-snakes': {
-      apparitionKind: 'blood-snake',
-      build: buildSupportBeastApparition,
-      size: 1.2,
-      colour: 0xeee9dd,
-      stage: 2,
-      scale: 1,
-      position: [0, -0.4, 0],
-      creature: true,
-    },
-    'nen-spider': {
-      apparitionKind: 'nen-spider',
-      build: buildSupportBeastApparition,
-      size: 1.25,
-      colour: 0xeee9dd,
-      stage: 0,
-      scale: 1,
-      position: [0, -0.25, 0],
-      creature: true,
-    },
-    blinky: {
-      apparitionKind: 'hoover',
-      build: buildObjectApparition,
-      size: 1.25,
-      colour: 0x9e91b7,
-      stage: 0,
-      scale: 1,
-      position: [0, -0.75, 0],
-      creature: true,
-    },
-    'dowsing-chain': {
-      apparitionKind: 'chain',
-      build: buildObjectApparition,
-      size: 1.1,
-      colour: 0xb9e9ff,
-      stage: 0,
-      scale: 1.2,
-      position: [0, 0.25, 0],
-    },
-    'judgment-chain': {
-      apparitionKind: 'vow-heart',
-      build: buildVowApparition,
-      size: 1,
-      colour: 0xa9475b,
-      stage: 1,
-      scale: 0.92,
-      position: [0, 0.1, 0],
-    },
-    'melody-flute': {
-      apparitionKind: 'flute',
-      build: buildObjectApparition,
-      size: 1.25,
-      colour: 0xd9c49a,
-      stage: 0,
-      scale: 1.1,
-      position: [0, 0, 0],
-      rotation: [0, 0, Math.PI / 3],
-    },
-    'moonlight-contract': {
-      apparitionKind: 'contract',
-      build: buildObjectApparition,
-      size: 1.65,
-      colour: 0xe8e1ca,
-      stage: 1,
-      scale: 1.05,
-      position: [0, 0.1, 0],
-    },
-    'magical-worm': {
-      apparitionKind: 'portal',
-      build: buildWormPortal,
-      size: 1.2,
-      colour: 0x82cad0,
-      stage: 0,
-      scale: 1.05,
-      position: [0, -0.05, 0],
-      rotation: [0, 0, 0],
-    },
-    'fun-fun-cloth': {
-      apparitionKind: 'cloth',
-      build: buildMangaPropApparition,
-      size: 1.25,
-      colour: 0xb28bbf,
-      stage: 0,
-      scale: 1.05,
-      position: [0, -0.2, 0],
-    },
-    'pain-packer': {
-      apparitionKind: 'pain-armour',
-      build: buildMangaPropApparition,
-      size: 0.95,
-      colour: 0x7d5a52,
-      stage: 0,
-      scale: 0.84,
-      position: [0, -1.42, 0],
-    },
-    jupiter: {
-      apparitionKind: 'jupiter',
-      build: buildMangaPropApparition,
-      size: 1.15,
-      colour: 0xd5a86d,
-      stage: 0,
-      scale: 1,
-      position: [0, 0, 0],
-    },
-    'indoor-fish': {
-      apparitionKind: 'fish',
-      build: buildObjectApparition,
-      size: 1.2,
-      colour: 0x76b8c8,
-      stage: 0,
-      scale: 1.08,
-      position: [0, -0.1, 0],
-      creature: true,
-    },
-    'secret-window': {
-      apparitionKind: 'owl',
-      build: buildBasicApparition,
-      size: 1.15,
-      colour: 0xa8b7d8,
-      stage: 0,
-      scale: 1.05,
-      position: [0, -0.2, 0],
-      creature: true,
-    },
-    'without-you': {
-      apparitionKind: 'double',
-      build: buildBasicApparition,
-      size: 1,
-      colour: 0xf6b8d1,
-      stage: 0,
-      scale: 1.1,
-      position: [0, -1.45, 0],
-    },
-    biohazard: {
-      apparitionKind: 'animal-object',
-      build: buildBiohazardApparition,
-      size: 1,
-      colour: 0xd4cec6,
-      stage: 0,
-      scale: 1,
-      position: [0, -1.2, 0],
-      creature: true,
-    },
-    'lsdf-guards': {
-      apparitionKind: 'lsdf-guard',
-      build: buildLsdfApparition,
-      size: 1,
-      colour: 0xd8d5c8,
-      stage: 5,
-      scale: 0.92,
-      position: [0, -0.15, 0],
-    },
   }
 
   function canonicalModel() {
     const config = CANONICAL_MODELS[kind]
     const root = new THREE.Group()
     root.name = `canonical-${config.apparitionKind}`
-    const cached = new Map<string, THREE.MeshBasicMaterial>()
+    const cached = new SvelteMap<string, THREE.MeshBasicMaterial>()
     const tourGlow = (colour: number, opacity: number) => {
       const key = `${colour}|${opacity}`
       const held = cached.get(key)
@@ -656,6 +262,24 @@
     event.preventDefault()
   }
 
+  function animateDetails(time: number, techniqueActive: boolean, techniqueProgress: number) {
+    for (const name of ['book-leaf-left', 'book-leaf-right']) {
+      const leaf = specimen.getObjectByName(name)
+      if (!leaf) continue
+      const rest = Number(leaf.userData.restZ ?? 0)
+      const direction = name.endsWith('left') ? -1 : 1
+      const spread = techniqueActive ? direction * (0.16 + Math.sin(time * 0.016) * 0.07) : 0
+      leaf.rotation.z += (rest + spread - leaf.rotation.z) * 0.1
+    }
+    const antenna = specimen.getObjectByName('phone-antenna')
+    if (antenna) antenna.rotation.z = techniqueActive ? Math.sin(time * 0.035) * 0.16 : 0
+
+    updateTechniqueAnimation(techniqueRig, techniqueProgress, {
+      time: time,
+      active: techniqueActive,
+    })
+  }
+
   function animate(time: number) {
     frame = requestAnimationFrame(animate)
     if (!dragging) targetRotationY += 0.0018
@@ -673,18 +297,7 @@
       const cryPulse = cryActive ? 1 + Math.sin(time * 0.045) * 0.035 : 1
       specimen.scale.setScalar(techniquePulse * cryPulse)
 
-      for (const name of ['book-leaf-left', 'book-leaf-right']) {
-        const leaf = specimen.getObjectByName(name)
-        if (!leaf) continue
-        const rest = Number(leaf.userData.restZ ?? 0)
-        const direction = name.endsWith('left') ? -1 : 1
-        const spread = techniqueActive ? direction * (0.16 + Math.sin(time * 0.016) * 0.07) : 0
-        leaf.rotation.z += (rest + spread - leaf.rotation.z) * 0.1
-      }
-      const antenna = specimen.getObjectByName('phone-antenna')
-      if (antenna) antenna.rotation.z = techniqueActive ? Math.sin(time * 0.035) * 0.16 : 0
-
-      updateTechniqueAnimation(techniqueRig, techniqueProgress, time, techniqueActive)
+      animateDetails(time, techniqueActive, techniqueProgress)
 
       materials.forEach((value) => {
         value.emissiveIntensity = techniqueActive ? 0.85 + Math.sin(time * 0.02) * 0.3 : 0.12
@@ -713,7 +326,8 @@
     reactToCry()
   }
 
-  onMount(() => {
+  function mountCanvas(node: HTMLSpanElement) {
+    canvasHost = node
     scene = new THREE.Scene()
     scene.fog = new THREE.FogExp2('#071012', 0.075)
     camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100)
@@ -731,7 +345,7 @@
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFShadowMap
     renderer.domElement.setAttribute('aria-hidden', 'true')
-    host.appendChild(renderer.domElement)
+    attachArchiveCanvas(canvasHost, renderer.domElement)
 
     scene.add(new THREE.HemisphereLight('#bce8df', '#081116', 2.1))
     const key = new THREE.SpotLight('#fff1ca', 62, 18, Math.PI / 5, 0.55, 1.3)
@@ -747,20 +361,22 @@
     activeCrySignal = crySignal
     rebuild()
     resizeObserver = new ResizeObserver(resize)
-    resizeObserver.observe(host)
+    resizeObserver.observe(canvasHost)
     resize()
     frame = requestAnimationFrame(animate)
 
-    return () => {
-      mounted = false
-      cancelAnimationFrame(frame)
-      resizeObserver?.disconnect()
-      disposeGroup(specimen)
-      disposeGroup(environment)
-      renderer.dispose()
-      renderer.domElement.remove()
+    return {
+      destroy() {
+        mounted = false
+        cancelAnimationFrame(frame)
+        resizeObserver?.disconnect()
+        disposeGroup(specimen)
+        disposeGroup(environment)
+        renderer.dispose()
+        renderer.domElement.remove()
+      },
     }
-  })
+  }
 </script>
 
 <button
@@ -774,6 +390,7 @@
   onpointercancel={pointerUp}
   onkeydown={keyboard}
 >
+  <span use:mountCanvas class="canvas-host"></span>
   {#if modelMeshCount === 0}
     <div class="model-loading" aria-hidden="true">
       <i></i>
@@ -784,6 +401,11 @@
 </button>
 
 <style>
+  .canvas-host {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
   .scene {
     position: absolute;
     inset: 0;

@@ -3,9 +3,9 @@ import { abilitiesRevealedByChapter } from './chapterGate'
 
 describe('Strategy chapter gate', () => {
   it('does not expose abilities before their canonical reveal', () => {
-    expect(
-      abilitiesRevealedByChapter(['benjamin-aura', 'cats-name', 'culdcept'], 363),
-    ).toEqual(['benjamin-aura'])
+    expect(abilitiesRevealedByChapter(['benjamin-aura', 'cats-name', 'culdcept'], 363)).toEqual([
+      'benjamin-aura',
+    ])
     expect(abilitiesRevealedByChapter(['cats-name'], 400)).toEqual(['cats-name'])
   })
 

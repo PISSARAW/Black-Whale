@@ -1,6 +1,7 @@
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { fightingStyle } from './fightStyles'
+import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
 
 export const FIGHT_FPS = 60
@@ -95,6 +96,8 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 }
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
+  const move = moveById(fighter.attack?.moveId)
+  if (move) return movesetAttackData(fighter, move)
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]
@@ -124,6 +127,19 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
       },
     },
   })
+}
+
+function movesetAttackData(
+  fighter: ArcadeFighter,
+  move: NonNullable<ReturnType<typeof moveById>>,
+): AttackFrameData {
+  const data = move.tuning
+  return {
+    ...data,
+    startup: data.startup + (fighter.attack?.concealed ? 10 : 0),
+    cancelEnd: data.startup + data.active + 6,
+    box: { left: 1.4, right: data.reach, bottom: data.bottom, top: data.top },
+  }
 }
 
 function attackReach(kind: AttackKind, reach: number, specialRange: number): number {
@@ -172,7 +188,12 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
   const crouch = fighter.crouching ? 4 : 0
   return [
     worldBox(fighter, { left: -1.7, right: 1.7, bottom: 0, top: 5.2 - crouch }),
-    worldBox(fighter, { left: -2.1, right: 2.1, bottom: 4.8 - crouch, top: 12 - crouch }),
+    worldBox(fighter, {
+      left: -2.1,
+      right: 2.1,
+      bottom: 4.8 - crouch,
+      top: 12 - crouch,
+    }),
   ]
 }
 

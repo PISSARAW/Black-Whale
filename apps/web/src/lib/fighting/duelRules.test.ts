@@ -10,6 +10,7 @@ import {
 import { EMPTY_INPUT, type FightState } from './types'
 import { resolveFightImpacts } from './combatImpact'
 import { attackData } from './frameData'
+import { moveForSlot } from './movesets'
 
 function close(): FightState {
   const state = beginFight(createFight('kurapika', 'hisoka'))
@@ -63,7 +64,12 @@ describe('duel rules', () => {
   })
   it('keeps held guard during blockstun without restarting the parry', () => {
     const state = close()
-    state.player = { ...state.player, blocking: true, blockStun: 5, guardFrames: 10 }
+    state.player = {
+      ...state.player,
+      blocking: true,
+      blockStun: 5,
+      guardFrames: 10,
+    }
     const next = tickFight(state, { ...EMPTY_INPUT, guard: true }, 1 / 60)
     expect(next.player.blocking).toBe(true)
     expect(next.player.guardFrames).toBe(11)
@@ -77,7 +83,8 @@ describe('duel rules', () => {
     state = active(state)
     state = performAttack(state, 'player', 'special')
     expect(state.player.attack?.kind).toBe('special')
-    expect(state.player.aura).toBe(60)
+    expect(state.player.attack?.moveId).toBe('kurapika:forwardSpecial')
+    expect(state.player.aura).toBe(100 - moveForSlot('kurapika', 'forwardSpecial')!.auraCost)
   })
   it('connects the three-hit route before the defender recovers', () => {
     let state = close()
@@ -117,9 +124,20 @@ describe('duel rules', () => {
     for (const variant of ['low', 'air'] as const) {
       for (const crouching of [false, true]) {
         let state = close()
-        state.opponent = { ...state.opponent, blocking: true, guardFrames: 20, crouching }
+        state.opponent = {
+          ...state.opponent,
+          blocking: true,
+          guardFrames: 20,
+          crouching,
+        }
         state = active(
-          performAuraAttack({ state, side: 'player', kind: 'light', variant, auraCharged: false }),
+          performAuraAttack({
+            state,
+            side: 'player',
+            kind: 'light',
+            variant,
+            auraCharged: false,
+          }),
         )
         expect(state.impact?.blocked).toBe(variant === 'low' ? crouching : !crouching)
       }

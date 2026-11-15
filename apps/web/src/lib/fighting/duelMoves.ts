@@ -1,4 +1,5 @@
 import type { AttackFrameData } from './frameData'
+import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant } from './types'
 
 export function selectedVariant(fighter: ArcadeFighter): AttackVariant {
@@ -13,6 +14,7 @@ export function variantData(options: {
 }): AttackFrameData {
   const { fighter, kind } = options
   const data = comboData(options)
+  if (moveById(fighter.attack?.moveId)) return data
   const variant = fighter.attack?.variant
   if (variant === 'throw')
     return {
@@ -37,13 +39,19 @@ export function variantData(options: {
       box: { ...data.box, bottom: 0, top: 4.5 },
     }
   if (variant === 'air')
-    return { ...data, targetZone: 'head', box: { ...data.box, bottom: -5, top: 5 } }
+    return {
+      ...data,
+      targetZone: 'head',
+      box: { ...data.box, bottom: -5, top: 5 },
+    }
   return data
 }
 
-export function canCancel(fighter: ArcadeFighter, kind: AttackKind): boolean {
+export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   const attack = fighter.attack
   if (!attack?.confirmedHit || attack.variant === 'throw') return false
+  const currentMove = moveById(attack.moveId)
+  if (currentMove) return Boolean(moveId && currentMove.cancelInto.includes(moveId))
   const routes: Partial<Record<AttackKind, AttackKind[]>> = {
     light: ['heavy'],
     heavy: ['special'],
@@ -64,6 +72,7 @@ function comboData(options: {
   kind: AttackKind
   data: AttackFrameData
 }): AttackFrameData {
+  if (moveById(options.fighter.attack?.moveId)) return options.data
   if (!['kurapika', 'hisoka'].includes(options.fighter.id)) return options.data
   if (options.kind === 'light') return { ...options.data, hitstun: 18 }
   if (options.kind === 'heavy') return { ...options.data, hitstun: 24 }
@@ -75,6 +84,7 @@ export function attackVariant(options: {
   kind: AttackKind
   variant?: AttackVariant
 }): AttackVariant {
+  if (options.variant) return options.variant
   if (options.kind !== 'light' && options.kind !== 'heavy') return 'standing'
-  return options.variant ?? selectedVariant(options.fighter)
+  return selectedVariant(options.fighter)
 }

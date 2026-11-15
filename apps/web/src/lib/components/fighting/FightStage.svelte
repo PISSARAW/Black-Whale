@@ -10,6 +10,7 @@
     RANGED_AURA_COST,
   } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
+  import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
   import type { AttackKind, FightInput, FightState } from '$lib/fighting/types'
 
   export let state: FightState
@@ -17,17 +18,30 @@
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
   export let onAttack: (kind: AttackKind) => void
   export let onThrow: () => void
+  export let onFinisher: () => void
   export let onControl: (key: keyof FightInput, active: boolean) => void
 
   $: playerDefinition = fighterDefinition(state.player.id)
-  $: specialLabel = language === 'fr' ? playerDefinition.specialFr : playerDefinition.specialEn
-  $: hatsuReady = canUseFightHatsu(state.player)
-  $: hatsuHint = `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
+  $: moveset = movesetFor(state.player.id)
+  $: movesetSpecials = moveset?.moves.filter((move) => move.category === 'special') ?? []
+  $: specialLabel = moveset
+    ? 'Techniques'
+    : language === 'fr'
+      ? playerDefinition.specialFr
+      : playerDefinition.specialEn
+  $: hatsuReady = moveset
+    ? movesetSpecials.some((move) => canUseMovesetMove(state, 'player', move))
+    : canUseFightHatsu(state.player)
+  $: hatsuHint = moveset
+    ? `${specialLabel} · 20–40 aura`
+    : `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
   $: ranged = projectileProfile(state.player.id)
   $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
   $: rangedReady = canUseRangedAttack(state.player)
   $: rangedHint = `${rangedLabel} · ${RANGED_AURA_COST} aura`
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
+  $: finisher = moveForSlot(state.player.id, 'finisher')
+  $: finisherAvailable = finisherReady(state, 'player')
 
   function hold(key: keyof FightInput, active: boolean) {
     onControl(key, active)
@@ -137,6 +151,18 @@
         <kbd>U</kbd>
         <span>{rangedLabel}</span>
       </button>
+      {#if moveset && finisher}
+        <button
+          type="button"
+          class="finisher-button"
+          disabled={!finisherAvailable}
+          aria-label={`${language === 'fr' ? finisher.nameFr : finisher.nameEn} · ${language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}`}
+          onclick={onFinisher}
+        >
+          <kbd>H</kbd>
+          <span>{language === 'fr' ? finisher.nameFr : finisher.nameEn}</span>
+        </button>
+      {/if}
       <button
         type="button"
         class="special-button"
@@ -249,7 +275,8 @@
     opacity: 0.35;
   }
   .special-button,
-  .ranged-button {
+  .ranged-button,
+  .finisher-button {
     width: auto !important;
     min-width: 112px;
     grid-template-columns: auto 1fr;
@@ -260,7 +287,8 @@
     box-shadow: inset 0 0 14px rgb(72 188 238 / 25%);
   }
   .special-button kbd,
-  .ranged-button kbd {
+  .ranged-button kbd,
+  .finisher-button kbd {
     display: grid;
     width: 24px;
     height: 24px;
@@ -271,7 +299,8 @@
     font: 700 0.7rem/1 var(--font-mono);
   }
   .special-button span,
-  .ranged-button span {
+  .ranged-button span,
+  .finisher-button span {
     overflow: hidden;
     max-width: 112px;
     font: 700 0.54rem/1.05 var(--font-mono);
@@ -289,6 +318,16 @@
     padding: 0 0.6rem;
     border-radius: 24px !important;
     border-color: #e7bc68 !important;
+  }
+  .finisher-button {
+    width: auto !important;
+    min-width: 104px;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem;
+    padding: 0 0.6rem;
+    border-radius: 24px !important;
+    border-color: #ef5a62 !important;
+    box-shadow: inset 0 0 14px rgb(239 90 98 / 25%);
   }
   @keyframes flash {
     from {

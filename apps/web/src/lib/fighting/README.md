@@ -31,6 +31,11 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   garde, impacts, aura, IA et verdict.
 - `frameData.ts` décrit les phases de chaque coup en frames, ses boîtes, ses stuns,
   son hitstop, son recul et sa fenêtre de buffer.
+- `movesets.ts` et les fichiers `movesetWaveOne*` donnent à la première vague
+  (Kurapika, Hisoka, Chrollo, Benjamin, Tserriednich, Feitan, Saiyu, Theta,
+  Biscuit et Phinks) quinze coups identifiés : six normales, trois command normals,
+  quatre techniques, une projection et un finisher conditionnel. Chaque fiche
+  expose aussi sa mécanique propre et au moins trois routes courtes.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
@@ -57,7 +62,8 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 
 Le joueur utilise Q/D ou les flèches pour se déplacer, Z ou flèche haute pour
 sauter, S ou flèche basse pour se baisser, Maj/I pour garder, J/K pour les coups,
-L pour le Hatsu et U pour le projectile propre au combattant. Espace est l'unique bouton Aura : maintenu seul il produit
+direction + J/K pour les command normals, direction + L pour les techniques,
+H pour le finisher et U pour le projectile propre au combattant. Espace est l'unique bouton Aura : maintenu seul il produit
 Ren, avec garde Ken, avec bas Zetsu et avec haut Gyo. Le relâcher pendant l'amorce
 d'un coup engage Ko. Ten est l'état de repos et Ryu dépend du timing de garde et
 de riposte, sans touche dédiée.
@@ -74,9 +80,10 @@ sans changer les règles, les boîtes ni les données de frame.
 - O (ou le bouton tactile O) projette à courte portée et traverse la garde.
   O pendant l’amorce adverse protège huit frames contre la projection. Une cible
   aérienne ou en hitstun/blockstun ne peut pas être projetée.
-- Sur touche confirmée uniquement : J → K → L, dans la fenêtre `cancelEnd`.
-  Aucun cancel sur garde, esquive ou coup dans le vide ; aucune boucle inverse.
-  Kurapika et Hisoka disposent du hitstun nécessaire aux trois coups.
+- Sur touche confirmée uniquement, chaque coup ne peut annuler que vers les
+  destinations inscrites dans les routes de son combattant. Aucun cancel sur
+  garde, esquive ou coup dans le vide ; la route universelle J → K → L disparaît
+  pour les personnages dotés d’un moveset complet.
 - Les Hatsu en buffer déclenchent leurs effets et paient leur coût au départ
   effectif du coup, après revalidation des ressources.
 - Les frappes simultanées sont évaluées sur le même état ; un double K.-O.

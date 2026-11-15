@@ -60,6 +60,23 @@ export type FighterPose =
 
 export type AttackKind = 'light' | 'heavy' | 'special' | 'ranged'
 export type AttackVariant = 'standing' | 'low' | 'air' | 'throw'
+export type MoveAction = 'light' | 'heavy' | 'special' | 'throw' | 'finisher'
+export type MoveSlot =
+  | 'standingLight'
+  | 'standingHeavy'
+  | 'lowLight'
+  | 'lowHeavy'
+  | 'airLight'
+  | 'airHeavy'
+  | 'forwardLight'
+  | 'forwardHeavy'
+  | 'backHeavy'
+  | 'neutralSpecial'
+  | 'forwardSpecial'
+  | 'downSpecial'
+  | 'backSpecial'
+  | 'throw'
+  | 'finisher'
 export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
@@ -105,6 +122,7 @@ export interface ArcadeFighter {
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
   attack: {
+    moveId?: string
     variant?: AttackVariant
     confirmedHit?: boolean
     kind: AttackKind
@@ -116,6 +134,7 @@ export interface ArcadeFighter {
     projectileSpawned: boolean
   } | null
   bufferedAttack: {
+    moveId?: string
     variant?: AttackVariant
     confirmedHit?: boolean
     kind: AttackKind

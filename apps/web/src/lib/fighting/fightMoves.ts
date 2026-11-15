@@ -2,6 +2,7 @@ import { variantMotion } from './variantMotion'
 import type { AnimatedHuman, HumanMotion } from '$lib/tour/humanAnimation'
 import { heavyFightMove, lightFightMove } from './normalFightMoves'
 import { fourthWaveSpecial } from './fourthWaveMoves'
+import { movesetMotion } from './movesetMotion'
 import type { ArcadeFighter, AttackKind, FighterId, FighterPose } from './types'
 
 export const FIGHT_MOVE_TIMING: Record<
@@ -320,14 +321,27 @@ export function fightMove(
 ): HumanMotion | undefined {
   const value = clamp01(progress)
   const variant = variantMotion(fighter, value)
-  if (variant) return variant
-  if (fighter.pose === 'light') return (rig) => lightFightMove(rig, fighter.id, value)
-  if (fighter.pose === 'heavy') return (rig) => heavyFightMove(rig, fighter.id, value)
-  if (fighter.pose === 'special') return (rig) => special(rig, fighter.id, value)
-  if (fighter.pose === 'ranged') return (rig) => ranged(rig, value)
-  if (fighter.pose === 'jump') return (rig) => jump(rig, value)
-  if (fighter.pose === 'hit') return (rig) => recoil(rig, value)
-  if (fighter.pose === 'ko') return (rig) => fall(rig, value)
+  const base = variant ?? baseFightMove(fighter, value)
+  const detail = movesetMotion(fighter, value)
+  if (!base) return detail
+  if (!detail) return base
+  return (rig) => {
+    base(rig)
+    detail(rig)
+  }
+}
+
+function baseFightMove(
+  fighter: Pick<ArcadeFighter, 'id' | 'pose'>,
+  progress: number,
+): HumanMotion | undefined {
+  if (fighter.pose === 'light') return (rig) => lightFightMove(rig, fighter.id, progress)
+  if (fighter.pose === 'heavy') return (rig) => heavyFightMove(rig, fighter.id, progress)
+  if (fighter.pose === 'special') return (rig) => special(rig, fighter.id, progress)
+  if (fighter.pose === 'ranged') return (rig) => ranged(rig, progress)
+  if (fighter.pose === 'jump') return (rig) => jump(rig, progress)
+  if (fighter.pose === 'hit') return (rig) => recoil(rig, progress)
+  if (fighter.pose === 'ko') return (rig) => fall(rig, progress)
   return undefined
 }
 

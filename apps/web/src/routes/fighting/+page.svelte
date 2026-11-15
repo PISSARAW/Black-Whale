@@ -4,6 +4,7 @@
   import FighterAvatar from '$lib/components/fighting/FighterAvatar.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightFormatPicker from '$lib/components/fighting/FightFormatPicker.svelte'
+  import FightMoveList from '$lib/components/fighting/FightMoveList.svelte'
   import StagePicker from '$lib/components/fighting/StagePicker.svelte'
   import { link, locale } from '$lib/i18n'
   import { breadcrumbSchema } from '$lib/seo/schema'
@@ -12,6 +13,7 @@
     createFight,
     opponentAttack,
     performAuraAttack,
+    performMove,
     performThrow,
     tickFight,
   } from '$lib/fighting/engine'
@@ -60,8 +62,8 @@
           movement: 'Q / D ou flèches : déplacement',
           jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
           attacks:
-            'J : rapide · K : puissante · U : projectile · relâcher L : Hatsu (maintenir : In)',
-          aura: 'Bas + J/K : coups bas · saut + J/K : aériens · O : projection/déprojection · combo sur touche J → K → L. Espace : Aura. Maintenir pour Ren ; combiner avec garde, bas ou haut ; relâcher pendant un coup pour Ko.',
+            'J/K : normales · direction + J/K : command normals · direction + L : techniques · U : projectile · H : finisher',
+          aura: 'Bas ou saut + J/K : variantes basses et aériennes · O : projection/déprojection. Les routes et la condition du finisher sont propres au combattant. Espace : Aura.',
         }
       : {
           eyebrow: 'NEW MODE · 2D DUEL',
@@ -80,8 +82,9 @@
           controls: 'Controls',
           movement: 'A / D or arrows: move',
           jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
-          attacks: 'J: quick · K: heavy · U: projectile · release L: Hatsu (hold: In)',
-          aura: 'Down + J/K: lows · jump + J/K: aerials · O: throw/tech · on-hit combo J → K → L. Space: Aura. Hold for Ren; combine with guard, down or up; release during a strike for Ko.',
+          attacks:
+            'J/K: normals · direction + J/K: command normals · direction + L: techniques · U: projectile · H: finisher',
+          aura: 'Down or jump + J/K: low and aerial variants · O: throw/tech. Routes and finisher conditions are fighter-specific. Space: Aura.',
         }
 
   function previewFighter(id: FighterId) {
@@ -116,8 +119,20 @@
 
   function attack(kind: AttackKind) {
     if (state && !paused) {
-      state = performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
+      state =
+        kind === 'ranged'
+          ? performAuraAttack({
+              state,
+              side: 'player',
+              kind,
+              auraCharged: input.aura,
+            })
+          : performMove({ state, side: 'player', action: kind, input })
     }
+  }
+
+  function finisher() {
+    if (state && !paused) state = performMove({ state, side: 'player', action: 'finisher', input })
   }
 
   function throwAttack() {
@@ -181,6 +196,7 @@
     if (key === 'p' && state?.phase === 'fighting') return togglePause()
     if (paused) return
     if (key === 'o') return throwAttack()
+    if (key === 'h') return finisher()
     const attackKind = attackKeys[key]
     if (attackKind) return attack(attackKind)
     if (key === 'Enter' && state?.phase === 'ready') startFight()
@@ -245,7 +261,10 @@
   description={copy.intro}
   jsonLd={breadcrumbSchema([
     { name: 'Black Whale', path: $link('/') },
-    { name: language === 'fr' ? 'Modes jouables' : 'Playable modes', path: $link('/tour/modes') },
+    {
+      name: language === 'fr' ? 'Modes jouables' : 'Playable modes',
+      path: $link('/tour/modes'),
+    },
     { name: 'Black Whale: Clash', path: $link('/fighting') },
   ])}
 />
@@ -360,6 +379,7 @@
         stageId={selectedStage}
         onAttack={attack}
         onThrow={throwAttack}
+        onFinisher={finisher}
         onControl={control}
       />
 
@@ -406,6 +426,7 @@
       <p>{copy.jump}</p>
       <p>{copy.attacks}</p>
       <p>{copy.aura}</p>
+      <FightMoveList fighterId={state.player.id} {language} />
     </aside>
   {/if}
 </main>

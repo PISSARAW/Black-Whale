@@ -139,8 +139,14 @@
         // ship again on every Ren would blank the arena for the length of it.
         const nenKey = (fighter: ArcadeFighter) => JSON.stringify(fighter.nen)
         const models = {
-          player: { model: buildFighter(state.player), nen: nenKey(state.player) },
-          opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
+          player: {
+            model: buildFighter(state.player),
+            nen: nenKey(state.player),
+          },
+          opponent: {
+            model: buildFighter(state.opponent),
+            nen: nenKey(state.opponent),
+          },
         }
         scene.add(models.player.model.root, models.opponent.model.root)
         const projectileScene = createProjectileScene({
@@ -251,7 +257,7 @@
               seconds,
               motion: fightMove(fighter, progress),
             }),
-            transitionKey: fighter.pose,
+            transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
           })
         }
 

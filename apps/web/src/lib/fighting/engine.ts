@@ -20,6 +20,8 @@ import { fighterDefinition } from './roster'
 import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
 import { finishFight, resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
+import { chooseMovesetAttack } from './movesetAi'
+import { canUseMovesetMove, moveById, moveForAction } from './movesets'
 import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
@@ -30,6 +32,7 @@ import type {
   FightState,
   FighterId,
   FighterPose,
+  MoveAction,
 } from './types'
 
 const GROUND = 0
@@ -50,8 +53,18 @@ export function createFight(
   const format = fightFormat(formatId)
   return {
     formatId,
-    player: createFighter({ id: playerId, x: 22, facing: 1, health: format.health }),
-    opponent: createFighter({ id: opponentId, x: 78, facing: -1, health: format.health }),
+    player: createFighter({
+      id: playerId,
+      x: 22,
+      facing: 1,
+      health: format.health,
+    }),
+    opponent: createFighter({
+      id: opponentId,
+      x: 78,
+      facing: -1,
+      health: format.health,
+    }),
     phase: 'ready',
     frame: 0,
     time: format.roundFrames / FIGHT_FPS,
@@ -197,7 +210,12 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
   let next = updateHatsuCharge(applyAuraContext(advanceFighter(fighter), input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
   if (playerCanJump(next, input)) {
-    return poseFighter({ ...next, velocityY: JUMP_SPEED, pose: 'jump', blocking: false })
+    return poseFighter({
+      ...next,
+      velocityY: JUMP_SPEED,
+      pose: 'jump',
+      blocking: false,
+    })
   }
   if (!canMove(next) || next.blocking) return poseFighter(next)
   const direction = Number(input.right) - Number(input.left)
@@ -267,7 +285,44 @@ function advanceFighter(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
+  if (kind !== 'ranged') return performMove({ state, side, action: kind })
   return performAuraAttack({ state, side, kind, auraCharged: false })
+}
+
+interface PerformMoveOptions {
+  state: FightState
+  side: FightSide
+  action: MoveAction
+  input?: FightInput
+}
+
+export function performMove(options: PerformMoveOptions): FightState {
+  const { state, side, action, input = EMPTY_INPUT } = options
+  const selected = moveForAction(state[side], action, input)
+  const currentMove = moveById(state[side].attack?.moveId)
+  const routedMove = currentMove?.cancelInto
+    .map((id) => moveById(id))
+    .find((candidate) => candidate?.kind === selected?.kind)
+  const move = routedMove ?? selected
+  if (!move) {
+    if (action === 'throw') return performLegacyThrow(state, side)
+    if (action === 'finisher') return state
+    return performAuraAttack({
+      state,
+      side,
+      kind: action,
+      auraCharged: input.aura,
+    })
+  }
+  if (!canUseMovesetMove(state, side, move)) return state
+  return performAuraAttack({
+    state,
+    side,
+    kind: move.kind,
+    variant: move.variant,
+    moveId: move.id,
+    auraCharged: input.aura,
+  })
 }
 
 export function performAuraAttack(options: {
@@ -276,13 +331,18 @@ export function performAuraAttack(options: {
   kind: AttackKind
   auraCharged: boolean
   variant?: AttackVariant
+  moveId?: string
 }): FightState {
   const { side, kind, auraCharged } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
-  const variant = attackVariant({ fighter: original, kind, variant: options.variant })
-  const { hatsuSource, concealed, resourceReady } = attackIntent(original, kind)
-  const starts = canStartFighterAttack(original, kind)
+  const variant = attackVariant({
+    fighter: original,
+    kind,
+    variant: options.variant,
+  })
+  const { hatsuSource, concealed, resourceReady } = attackIntent(original, kind, options.moveId)
+  const starts = canStartFighterAttack(original, kind, options.moveId)
   const buffers = resourceReady && canBufferFighterAttack(original)
   if (!starts && !buffers) return options.state
   const state =
@@ -291,7 +351,15 @@ export function performAuraAttack(options: {
   if (starts) {
     return {
       ...state,
-      [side]: startFighterAttack({ fighter, kind, variant, auraCharged, concealed, hatsuSource }),
+      [side]: startFighterAttack({
+        fighter,
+        kind,
+        variant,
+        moveId: options.moveId,
+        auraCharged,
+        concealed,
+        hatsuSource,
+      }),
     }
   }
   return buffers
@@ -299,17 +367,26 @@ export function performAuraAttack(options: {
         ...state,
         [side]: {
           ...fighter,
-          bufferedAttack: { kind, variant, auraCharged, concealed, hatsuSource },
+          bufferedAttack: {
+            kind,
+            variant,
+            moveId: options.moveId,
+            auraCharged,
+            concealed,
+            hatsuSource,
+          },
         },
       }
     : state
 }
 
-function attackIntent(fighter: ArcadeFighter, kind: AttackKind) {
+function attackIntent(fighter: ArcadeFighter, kind: AttackKind, moveId?: string) {
+  const move = moveById(moveId)
+  const usesHatsu = move ? ['special', 'finisher'].includes(move.category) : kind === 'special'
   return {
-    hatsuSource: kind === 'special' ? hatsuSourceFor(fighter) : null,
+    hatsuSource: usesHatsu ? hatsuSourceFor(fighter) : null,
     concealed: concealedHatsu(fighter, kind),
-    resourceReady: attackResourceReady(fighter, kind),
+    resourceReady: move ? fighter.aura >= move.auraCost : attackResourceReady(fighter, kind),
   }
 }
 
@@ -336,6 +413,17 @@ export function opponentAttack(state: FightState): FightState {
   const gap = Math.abs(rolled.player.x - rolled.opponent.x)
   const definition = fighterDefinition(rolled.opponent.id)
   const style = fightingStyle(rolled.opponent.id)
+  const movesetAttack = chooseMovesetAttack(rolled, chance, gap)
+  if (movesetAttack) {
+    return performAuraAttack({
+      state: rolled,
+      side: 'opponent',
+      kind: movesetAttack.kind,
+      variant: movesetAttack.variant,
+      moveId: movesetAttack.id,
+      auraCharged: false,
+    })
+  }
   const attack = chooseStyleAttack(rolled.opponent.id, {
     canSpecial: canUseFightHatsu(rolled.opponent) && gap <= definition.specialRange,
     canRanged: canUseRangedAttack(rolled.opponent) && gap > style.preferredRange[1],
@@ -399,7 +487,11 @@ function separateFighters(
   }
   const centre = (player.x + opponent.x) / 2
   return {
-    player: { ...player, x: centre - (MIN_GAP / 2) * playerFacing, facing: playerFacing },
+    player: {
+      ...player,
+      x: centre - (MIN_GAP / 2) * playerFacing,
+      facing: playerFacing,
+    },
     opponent: {
       ...opponent,
       x: centre + (MIN_GAP / 2) * playerFacing,
@@ -418,7 +510,12 @@ function finishByTime(state: FightState): FightState {
     )
   }
   if (state.player.health === state.opponent.health) {
-    return { ...state, phase: 'finished', winner: 'draw', finishReason: 'time' }
+    return {
+      ...state,
+      phase: 'finished',
+      winner: 'draw',
+      finishReason: 'time',
+    }
   }
   return finishFight(
     state,
@@ -474,6 +571,12 @@ function flushBuffered(state: FightState, side: FightSide): FightState {
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {
+  const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
+  if (move) return performMove({ state, side, action: 'throw' })
+  return performLegacyThrow(state, side)
+}
+
+function performLegacyThrow(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const marked = { ...state, [side]: { ...fighter, throwTechFrames: 8 } }
   if (fighter.y > 0) return state

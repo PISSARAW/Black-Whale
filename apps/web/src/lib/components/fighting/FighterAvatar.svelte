@@ -143,7 +143,7 @@
                   seconds,
                   motion: fightMove(fighter, progress),
                 }),
-            transitionKey: fighter.pose,
+            transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
           })
           renderer.render(scene, camera)
           if (!preview) frame = requestAnimationFrame(render)

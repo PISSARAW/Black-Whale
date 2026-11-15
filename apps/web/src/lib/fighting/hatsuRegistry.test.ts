@@ -30,9 +30,9 @@ function closeFight(
 }
 
 describe('fighter Hatsu registry', () => {
-  it('forces Judgment Chain targets into Zetsu', () => {
+  it('lets Chain Jail force only a Phantom Troupe target into Zetsu', () => {
     const struck = advance(
-      performAttack(closeFight('kurapika', 'hisoka'), 'player', 'special'),
+      performAttack(closeFight('kurapika', 'chrollo'), 'player', 'special'),
       0.5,
     )
     expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
@@ -40,8 +40,8 @@ describe('fighter Hatsu registry', () => {
   })
 
   it('lets Skill Hunter replay the last Hatsu received', () => {
-    let state = advance(performAttack(closeFight('kurapika', 'chrollo'), 'player', 'special'), 0.5)
-    expect(state.opponent.hatsuEffects.lastHatsuReceived).toBe('kurapika')
+    let state = advance(performAttack(closeFight('illumi', 'chrollo'), 'player', 'special'), 0.5)
+    expect(state.opponent.hatsuEffects.lastHatsuReceived).toBe('illumi')
     state = {
       ...state,
       player: { ...state.player, x: 42, hitStun: 90 },
@@ -49,15 +49,17 @@ describe('fighter Hatsu registry', () => {
         ...state.opponent,
         x: 54,
         aura: 100,
-        nen: createFight('chrollo', 'kurapika').player.nen,
+        nen: createFight('chrollo', 'illumi').player.nen,
         attack: null,
         hitStun: 0,
         blockStun: 0,
-        hatsuEffects: { ...state.opponent.hatsuEffects, forcedZetsuFrames: 0 },
+        knockdownFrames: 0,
+        wakeupInvulnerableFrames: 0,
+        hatsuEffects: { ...state.opponent.hatsuEffects, needleFrames: 0 },
       },
     }
     const copied = advance(performAttack(state, 'opponent', 'special'), 0.6)
-    expect(copied.player.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
+    expect(copied.player.hatsuEffects.needleFrames).toBeGreaterThan(0)
   })
 
   it('stacks Contagion and drains aura', () => {

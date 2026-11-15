@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performMove } from './engine'
 import {
+  canUseMovesetMove,
   finisherReady,
   moveForAction,
   moveForSlot,
@@ -110,6 +111,39 @@ describe('wave one movesets', () => {
     expect(kurapika.combos.every((route) => route.length <= 3)).toBe(true)
   })
 
+  it('makes Dowsing Chain Kurapika’s standard weapon', () => {
+    const kurapika = movesetFor('kurapika')!
+    const standardSlots = new Set([
+      'standingLight',
+      'standingHeavy',
+      'lowLight',
+      'lowHeavy',
+      'airLight',
+      'airHeavy',
+      'forwardLight',
+      'forwardHeavy',
+      'backHeavy',
+      'forwardSpecial',
+      'throw',
+    ])
+    const standardMoves = kurapika.moves.filter((move) => standardSlots.has(move.slot))
+    expect(standardMoves).toHaveLength(11)
+    expect(standardMoves.every((move) => move.nameEn.includes('Dowsing'))).toBe(true)
+  })
+
+  it('reserves Chain Jail for active Phantom Troupe opponents', () => {
+    const chainJail = moveForSlot('kurapika', 'neutralSpecial')!
+    const dowsingChain = moveForSlot('kurapika', 'forwardSpecial')!
+    const versus = (opponent: FighterId) => {
+      const state = beginFight(createFight('kurapika', opponent))
+      return { ...state, player: { ...state.player, aura: 100 } }
+    }
+    expect(canUseMovesetMove(versus('hisoka'), 'player', chainJail)).toBe(false)
+    expect(canUseMovesetMove(versus('hisoka'), 'player', dowsingChain)).toBe(true)
+    expect(canUseMovesetMove(versus('chrollo'), 'player', chainJail)).toBe(true)
+    expect(canUseMovesetMove(versus('illumi'), 'player', chainJail)).toBe(true)
+  })
+
   it.each(WAVE_ONE_FIGHTERS)('%s finisher is locked behind its unique condition', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
@@ -195,6 +229,7 @@ function withFinisherCondition(state: FightState): FightState {
   const opponent = state.opponent
   switch (player.id) {
     case 'kurapika':
+      return { ...state, opponent: { ...opponent, health: 35 } }
     case 'theta':
       return withOpponentEffect(state, 'forcedZetsuFrames', 60)
     case 'hisoka':

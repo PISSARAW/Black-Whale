@@ -5,7 +5,7 @@ import { FIGHTING_ROSTER } from './roster'
 import { EMPTY_INPUT, type FightSide, type FightState, type FighterId } from './types'
 
 function opponentFor(id: FighterId): FighterId {
-  return id === 'kurapika' ? 'hisoka' : 'kurapika'
+  return id === 'kurapika' ? 'chrollo' : 'kurapika'
 }
 
 function inRange(state: FightState): FightState {

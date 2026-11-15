@@ -1,6 +1,7 @@
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { moveId } from './movesetFactory'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
+import { canonicalTechniqueAllowed } from './techniqueContracts'
 import { WAVE_FOUR_MOVESETS_A } from './movesetWaveFourA'
 import { WAVE_FOUR_MOVESETS_B } from './movesetWaveFourB'
 import { ROSTER_FINAL_MOVESETS } from './movesetRosterFinal'
@@ -70,6 +71,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
   const fighter = state[side]
   if (!hasMoveResources(fighter, move)) return false
+  if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
 }
 
@@ -132,7 +134,7 @@ const opponentOf = (state: FightState, side: FightSide) =>
   state[side === 'player' ? 'opponent' : 'player']
 
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
-  kurapika: (state, side) => opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
+  kurapika: (state, side) => opponentOf(state, side).health <= 35,
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
   chrollo: (state, side) => opponentOf(state, side).hatsuEffects.sunMoonMarks > 0,
   benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,

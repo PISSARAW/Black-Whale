@@ -2,13 +2,13 @@ import { forceZetsu } from '../nen'
 import type { ArcadeFighter } from '../types'
 import { unchangedTrigger, type FighterHatsu } from './contract'
 
-const JUDGMENT_ZETSU_FRAMES = 180
+const CHAIN_JAIL_ZETSU_FRAMES = 180
 
 export const kurapikaHatsu: FighterHatsu = {
   id: 'kurapika',
   onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) => {
-    if (blocked) return state
+  onImpact: ({ state, side, defenderSide, blocked }) => {
+    if (blocked || state[side].attack?.moveId !== 'kurapika:neutralSpecial') return state
     const defender = state[defenderSide]
     return {
       ...state,
@@ -16,7 +16,7 @@ export const kurapikaHatsu: FighterHatsu = {
         ...defender,
         hatsuEffects: {
           ...defender.hatsuEffects,
-          forcedZetsuFrames: JUDGMENT_ZETSU_FRAMES,
+          forcedZetsuFrames: CHAIN_JAIL_ZETSU_FRAMES,
         },
       },
     }

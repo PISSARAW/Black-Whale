@@ -3,6 +3,8 @@ import type { FighterDefinition, FighterId } from './types'
 export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   {
     id: 'kurapika',
+    modelId: 'kurapika',
+    modelRole: 'hunter',
     name: 'Kurapika',
     titleFr: 'Le dernier Kurta',
     titleEn: 'The Last Kurta',
@@ -17,6 +19,8 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   },
   {
     id: 'hisoka',
+    modelId: 'hisoka',
+    modelRole: 'fighter',
     name: 'Hisoka',
     titleFr: 'Le magicien',
     titleEn: 'The Magician',
@@ -31,6 +35,8 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   },
   {
     id: 'chrollo',
+    modelId: 'chrollo-lucilfer',
+    modelRole: 'fighter',
     name: 'Chrollo',
     titleFr: 'Le chef de la Brigade',
     titleEn: 'Troupe Leader',
@@ -45,6 +51,8 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   },
   {
     id: 'morena',
+    modelId: 'morena-prudo',
+    modelRole: 'morena',
     name: 'Morena',
     titleFr: 'La porteuse de Contagion',
     titleEn: 'Bearer of Contagion',
@@ -59,6 +67,8 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   },
   {
     id: 'benjamin',
+    modelId: 'prince-benjamin',
+    modelRole: 'fighter',
     name: 'Benjamin',
     titleFr: 'Premier prince de Kakin',
     titleEn: 'First Prince of Kakin',
@@ -73,6 +83,8 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   },
   {
     id: 'tserriednich',
+    modelId: 'prince-tserriednich',
+    modelRole: 'fighter',
     name: 'Tserriednich',
     titleFr: 'Quatrième prince de Kakin',
     titleEn: 'Fourth Prince of Kakin',

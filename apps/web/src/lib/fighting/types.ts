@@ -23,6 +23,9 @@ export type FightPhase = 'ready' | 'fighting' | 'finished'
 
 export interface FighterDefinition {
   id: FighterId
+  /** Catalogue identity consumed by the shared TourScene character rig. */
+  modelId: string
+  modelRole: 'fighter' | 'hunter' | 'morena'
   name: string
   titleFr: string
   titleEn: string

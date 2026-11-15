@@ -164,8 +164,17 @@
   place-items: center;
   border-radius: 52% 52% 18% 18%;
   background:
-    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--fighter) 84%, white) 0 18%, transparent 19%),
-    linear-gradient(110deg, transparent 20%, color-mix(in srgb, var(--fighter) 72%, #111) 21% 79%, transparent 80%);
+    radial-gradient(
+      circle at 50% 24%,
+      color-mix(in srgb, var(--fighter) 84%, white) 0 18%,
+      transparent 19%
+    ),
+    linear-gradient(
+      110deg,
+      transparent 20%,
+      color-mix(in srgb, var(--fighter) 72%, #111) 21% 79%,
+      transparent 80%
+    );
   color: rgb(255 255 255 / 68%);
   font: 700 2.4rem/1 var(--font-display);
   text-shadow: 0 2px 12px #000;
@@ -227,6 +236,87 @@
   gap: 1.5rem;
   border: 1px solid #2b3740;
   background: #090d10;
+}
+
+.fight-mode-picker {
+  display: flex;
+  width: min(100%, 760px);
+  margin: 1rem auto;
+  border: 1px solid #31404c;
+  background: rgb(4 9 13 / 72%);
+}
+
+.fight-mode-picker button {
+  flex: 1;
+  border: 0;
+  border-right: 1px solid #31404c;
+  padding: 0.8rem 0.65rem;
+  background: transparent;
+  color: #9eacb5;
+  font: 700 0.65rem/1 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.fight-mode-picker button:last-child {
+  border-right: 0;
+}
+
+.fight-mode-picker button.selected {
+  background: #d2a63c;
+  color: #080b0e;
+}
+
+.training-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.65rem;
+  border: 1px solid #31404c;
+  padding: 0.65rem;
+  background: #080d11;
+  color: #aebbc3;
+  font: 700 0.58rem/1.2 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.training-tools strong {
+  margin-right: auto;
+  color: #f1d36d;
+}
+
+.training-tools button {
+  border: 1px solid #52616b;
+  padding: 0.48rem 0.65rem;
+  background: #111a20;
+  color: #dce7ec;
+  font: inherit;
+}
+
+.training-tools button.active {
+  border-color: #ff4d52;
+  background: #4a1418;
+}
+
+.training-tools button:disabled {
+  opacity: 0.4;
+}
+
+.training-tools i {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.5rem;
+  border: 1px solid #ff4d52;
+  vertical-align: middle;
+}
+
+.training-tools i:nth-of-type(2) {
+  border-color: #3accff;
+}
+
+.training-tools i:nth-of-type(3) {
+  border-color: #c267ff;
 }
 
 .selection-summary > div {

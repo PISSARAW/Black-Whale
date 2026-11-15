@@ -56,7 +56,18 @@ export type FighterId =
   | 'yokotani'
 
 export type FighterPose =
-  'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'ranged' | 'hit' | 'ko'
+  | 'idle'
+  | 'walk'
+  | 'jump'
+  | 'guard'
+  | 'light'
+  | 'heavy'
+  | 'special'
+  | 'ranged'
+  | 'hit'
+  | 'down'
+  | 'wakeup'
+  | 'ko'
 
 export type AttackKind = 'light' | 'heavy' | 'special' | 'ranged'
 export type AttackVariant = 'standing' | 'low' | 'air' | 'throw'
@@ -80,6 +91,7 @@ export type MoveSlot =
 export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
+export type FightMode = 'versus-ai' | 'versus-local' | 'training'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
 export type FightFinishReason = 'hits' | 'knockout' | 'technical-knockout' | 'time' | null
 
@@ -115,6 +127,12 @@ export interface ArcadeFighter {
   blockStun: number
   crouching?: boolean
   throwTechFrames?: number
+  knockdownFrames: number
+  wakeupInvulnerableFrames: number
+  reversalWindow: number
+  comboHits: number
+  comboDamage: number
+  juggleCount: number
   blocking: boolean
   guardFrames: number
   ryuWindow: number
@@ -132,6 +150,7 @@ export interface ArcadeFighter {
     concealed: boolean
     hatsuSource: FighterId | null
     projectileSpawned: boolean
+    reversal: boolean
   } | null
   bufferedAttack: {
     moveId?: string
@@ -214,6 +233,13 @@ export interface FightImpact {
   parried: boolean
   critical: boolean
   knockdown: boolean
+  counterHit: boolean
+  punish: boolean
+  antiAir: boolean
+  wallSplat: boolean
+  invulnerable: boolean
+  comboHits: number
+  damageScale: number
   points: number
   zone: FightNenZone
   concealed: boolean
@@ -254,6 +280,7 @@ export interface BungeeGumAttachment {
 
 export interface FightState {
   formatId: FightFormatId
+  mode: FightMode
   player: ArcadeFighter
   opponent: ArcadeFighter
   phase: FightPhase
@@ -264,6 +291,9 @@ export interface FightState {
   hitstop: number
   rng: number
   winner: FightSide | 'draw' | null
+  matchWinner: FightSide | null
+  roundNumber: number
+  roundsWon: Record<FightSide, number>
   finishReason: FightFinishReason
   score: Record<FightSide, number>
   knockdowns: Record<FightSide, number>

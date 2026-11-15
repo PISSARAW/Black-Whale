@@ -1,4 +1,5 @@
 import type { AttackKind, AttackVariant, FightNenZone, FighterId, MoveSlot } from './types'
+import type { TechniqueCanonContract } from './techniqueContracts'
 
 export type MoveCategory = 'normal' | 'command' | 'special' | 'throw' | 'finisher'
 
@@ -29,6 +30,7 @@ export interface FighterMove {
   nameEn: string
   input: string
   auraCost: number
+  canon: TechniqueCanonContract
   tuning: MoveTuning
   cancelInto: readonly string[]
 }

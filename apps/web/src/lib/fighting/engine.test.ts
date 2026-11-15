@@ -8,7 +8,7 @@ import {
   performThrow,
   tickFight,
 } from './engine'
-import { applyAuraContext } from './nen'
+import { applyAuraContext, nenTacticalState } from './nen'
 import { EMPTY_INPUT } from './types'
 
 function advance(state: ReturnType<typeof createFight>, seconds: number, input = EMPTY_INPUT) {
@@ -189,12 +189,19 @@ describe('fighting engine', () => {
     }
     const jab = performAttack(state, 'player', 'light')
     expect(jab.player.nen.ryu.hands).toBeGreaterThan(jab.player.nen.ryu.torso ?? 0)
+    expect(nenTacticalState(jab.player)).toMatchObject({
+      technique: 'ryu',
+      focusZone: 'hands',
+      focusShare: 0.72,
+      exposedZones: ['head', 'torso', 'feet'],
+    })
     const kick = performAttack(
       { ...state, player: { ...state.player, attack: null } },
       'player',
       'heavy',
     )
     expect(kick.player.nen.ryu.feet).toBeGreaterThan(kick.player.nen.ryu.torso ?? 0)
+    expect(nenTacticalState(kick.player).focusZone).toBe('feet')
   })
 
   it('forces an exhausted aura reserve into defenceless Zetsu', () => {

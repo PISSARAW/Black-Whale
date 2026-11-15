@@ -13,19 +13,12 @@ export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
-  let next: ArcadeFighter = {
-    ...fighter,
-    attack: { ...fighter.attack, frame },
-  }
+  let next: ArcadeFighter = { ...fighter, attack: { ...fighter.attack, frame } }
   if (!fighter.attack.impacted && frame >= data.startup + data.active) {
     next = setIn(releaseFocusedAura(next), false)
   }
   return frame >= attackTotal(data)
-    ? {
-        ...setIn(releaseFocusedAura(next), false),
-        attack: null,
-        hatsuChargeFrames: 0,
-      }
+    ? { ...setIn(releaseFocusedAura(next), false), attack: null, hatsuChargeFrames: 0 }
     : next
 }
 
@@ -41,12 +34,7 @@ export function startFighterAttack(options: {
   const { fighter, kind, auraCharged, concealed } = options
   const data = attackData(kind, {
     ...fighter,
-    attack: {
-      ...fighter.attack!,
-      kind,
-      variant: options.variant,
-      moveId: options.moveId,
-    },
+    attack: { ...fighter.attack!, kind, variant: options.variant, moveId: options.moveId },
   })
   const usesRyu = fighter.blocking || fighter.ryuWindow > 0
   const focused = usesRyu ? focusAttackRyu(fighter, kind) : fighter
@@ -71,6 +59,7 @@ export function startFighterAttack(options: {
       concealed,
       hatsuSource: kind === 'special' ? (options.hatsuSource ?? hatsuSourceFor(fighter)) : null,
       projectileSpawned: false,
+      reversal: fighter.reversalWindow > 0,
     },
     bufferedAttack: null,
   }
@@ -95,7 +84,13 @@ export function canStartFighterAttack(
 }
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
-  if (fighter.hitStun > 0 || fighter.blockStun > 0) return true
+  if (
+    fighter.hitStun > 0 ||
+    fighter.blockStun > 0 ||
+    fighter.knockdownFrames > 0 ||
+    fighter.wakeupInvulnerableFrames > 0
+  )
+    return true
   if (!fighter.attack) return false
   const remaining = attackTotal(attackData(fighter.attack.kind, fighter)) - fighter.attack.frame
   return remaining <= INPUT_BUFFER_FRAMES
@@ -109,7 +104,12 @@ function attackAuraCost(kind: AttackKind, moveId?: string): number {
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
-  return fighter.hitStun === 0 && fighter.blockStun === 0 && fighter.health > 0
+  return (
+    fighter.hitStun === 0 &&
+    fighter.blockStun === 0 &&
+    fighter.knockdownFrames === 0 &&
+    fighter.health > 0
+  )
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

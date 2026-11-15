@@ -1,4 +1,5 @@
 import type { FighterMoveset, MoveCategory, MoveTuning } from './movesetTypes'
+import { techniqueContract } from './techniqueContracts'
 import type { AttackKind, AttackVariant, FighterId, MoveSlot } from './types'
 
 export const MOVE_SLOTS: readonly MoveSlot[] = [
@@ -46,7 +47,7 @@ export function buildMoveset(spec: MovesetSpec): FighterMoveset {
   const moves = MOVE_SLOTS.map((slot, index) => {
     const template = TEMPLATES[slot]
     const [nameFr, nameEn] = splitLabel(spec.labels[index])
-    return {
+    const move = {
       id: moveId(spec.fighterId, slot),
       slot,
       ...template,
@@ -55,6 +56,7 @@ export function buildMoveset(spec: MovesetSpec): FighterMoveset {
       tuning: tune(template.tuning, spec),
       cancelInto: (routes.get(slot) ?? []).map((target) => moveId(spec.fighterId, target)),
     }
+    return { ...move, canon: techniqueContract(move) }
   })
   return {
     fighterId: spec.fighterId,
@@ -144,7 +146,7 @@ const TEMPLATES: Record<MoveSlot, MoveTemplate> = {
     'standing',
     'K',
     0,
-    tuning([9, 4, 15], 11, [19, 6, 2.6], box(9, 2, 10), ['torso', 'hands']),
+    tuning([9, 4, 15], 11, [19, 9, 2.6], box(9, 2, 10), ['torso', 'hands']),
   ),
   lowLight: template(
     'normal',
@@ -160,7 +162,7 @@ const TEMPLATES: Record<MoveSlot, MoveTemplate> = {
     'low',
     '↓ + K',
     0,
-    tuning([10, 4, 18], 9, [20, 6, 3.2], box(10, 0, 4.5), ['feet', 'feet']),
+    tuning([10, 4, 18], 9, [20, 9, 3.2], box(10, 0, 4.5), ['feet', 'feet']),
   ),
   airLight: template(
     'normal',
@@ -176,7 +178,7 @@ const TEMPLATES: Record<MoveSlot, MoveTemplate> = {
     'air',
     'air + K',
     0,
-    tuning([8, 5, 17], 12, [22, 7, 3.8], box(9, -5, 5), ['head', 'feet']),
+    tuning([8, 5, 17], 12, [22, 10, 3.8], box(9, -5, 5), ['head', 'feet']),
   ),
   forwardLight: template(
     'command',
@@ -192,7 +194,7 @@ const TEMPLATES: Record<MoveSlot, MoveTemplate> = {
     'standing',
     '→ + K',
     0,
-    tuning([14, 5, 20], 15, [24, 8, 4.2], box(12, 2, 11), ['torso', 'feet']),
+    tuning([14, 5, 20], 15, [24, 11, 4.2], box(12, 2, 11), ['torso', 'feet']),
   ),
   backHeavy: template(
     'command',
@@ -200,7 +202,7 @@ const TEMPLATES: Record<MoveSlot, MoveTemplate> = {
     'standing',
     '← + K',
     0,
-    tuning([11, 4, 16], 10, [21, 6, 3], box(8, 4, 12), ['head', 'hands']),
+    tuning([11, 4, 16], 10, [21, 9, 3], box(8, 4, 12), ['head', 'hands']),
   ),
   neutralSpecial: template(
     'special',

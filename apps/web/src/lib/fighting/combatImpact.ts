@@ -6,25 +6,22 @@ import {
   boxesOverlap,
   contactPoint,
   hurtboxes,
+  isAntiAir,
   otherSide,
 } from './frameData'
+import { consumeBaton, consumeHatsuAvoidance, hatsuAvoidsImpact, resolveHatsuImpact } from './hatsu'
+import { focusGuardRyu, isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
-  consumeBaton,
-  consumeHatsuAvoidance,
-  hatsuAvoidsImpact,
-  hatsuDamageFactor,
-  hatsuDefenceFactor,
-  resolveHatsuImpact,
-} from './hatsu'
-import {
-  focusGuardRyu,
-  isCriticalAuraStrike,
-  nenAttackFactor,
-  nenDamageFactor,
-  releaseFocusedAura,
-  setIn,
-} from './nen'
-import { fighterDefinition } from './roster'
+  atWall,
+  comboScale,
+  nextComboHits,
+  openingDamageMultiplier,
+  openingType,
+  resolvedDamage,
+  strikeDefender,
+  strikeProjectileDefender,
+  type ImpactDefence,
+} from './combatDamage'
 import { fightFormat } from './formats'
 import {
   addJudgedKnockdown,
@@ -35,7 +32,6 @@ import {
 import type { ProjectileHit } from './projectiles'
 import type {
   ArcadeFighter,
-  AttackKind,
   FightNenZone,
   FightFinishReason,
   FightSide,
@@ -44,9 +40,8 @@ import type {
 } from './types'
 
 const GROUND = 0
-const MIN_X = 7
-const MAX_X = 93
 const PARRY_WINDOW_FRAMES = 6
+const MAX_JUGGLE_HITS = 3
 export const TOWER_WIN_SCORE = 10
 
 export function resolveFightImpacts(state: FightState, projectiles: ProjectileHit[]): FightState {
@@ -71,6 +66,10 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (!collision) return state
   const data = attackData(attacker.attack.kind, attacker)
   const defence = prepareDefence(defender, data.targetZone, attacker)
+  const opening = openingType(defender, defence.blocked)
+  const antiAir = isAntiAir(attacker) && defender.y > GROUND
+  const comboHits = nextComboHits(defender, defence)
+  const damageScale = comboScale(comboHits)
   const critical = isCriticalAuraStrike(attacker)
   const damage = resolvedDamage({
     attacker,
@@ -78,11 +77,10 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     base: data.damage,
     zone: data.targetZone,
     kind: attacker.attack.kind,
+    damageScale,
+    openingMultiplier: openingDamageMultiplier(opening),
   })
   const spent = spendAttacker(attacker, defence)
-  const struck = defence.avoided
-    ? defence.fighter
-    : strikeDefender({ fighter: defence.fighter, attacker, damage, blocked: defence.blocked })
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -90,14 +88,17 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     avoided: defence.avoided,
     critical,
   })
-  const points = defence.avoided
-    ? 0
-    : scoreJudgedImpact({
-        formatId: state.formatId,
-        blocked: defence.blocked,
-        critical,
-        knockdown,
-      })
+  const wallSplat = !defence.avoided && atWall(defender, attacker, data.knockback)
+  const struck = strikeAfterDefence(defence, {
+    attacker,
+    damage,
+    knockdown,
+    antiAir,
+    wallSplat,
+    counterHit: opening.counterHit,
+    comboHits,
+  })
+  const points = impactPoints({ state, defence, critical, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   let next: FightState = {
@@ -115,6 +116,13 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       parried: defence.parried,
       critical,
       knockdown,
+      counterHit: opening.counterHit,
+      punish: opening.punish,
+      antiAir,
+      wallSplat,
+      invulnerable: defence.invulnerable,
+      comboHits,
+      damageScale,
       points,
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
@@ -130,6 +138,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       side,
       defenderSide,
       source: attacker.attack.hatsuSource,
+      moveId: attacker.attack.moveId,
       blocked: defence.blocked,
       concealed: attacker.attack.concealed,
     })
@@ -137,9 +146,33 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   return finishAfterImpact(next, side, defenderSide)
 }
 
+function strikeAfterDefence(
+  defence: ImpactDefence,
+  options: Omit<Parameters<typeof strikeDefender>[0], 'fighter' | 'blocked'>,
+): ArcadeFighter {
+  if (defence.avoided) return defence.fighter
+  return strikeDefender({ ...options, fighter: defence.fighter, blocked: defence.blocked })
+}
+
+function impactPoints(options: {
+  state: FightState
+  defence: ImpactDefence
+  critical: boolean
+  knockdown: boolean
+}): number {
+  const { state, defence, critical, knockdown } = options
+  if (defence.avoided) return 0
+  return scoreJudgedImpact({
+    formatId: state.formatId,
+    blocked: defence.blocked,
+    critical,
+    knockdown,
+  })
+}
+
 function spendAttacker(
   attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
-  defence: PreparedDefence,
+  defence: ImpactDefence,
 ): ArcadeFighter {
   const spent = setIn(
     releaseFocusedAura({
@@ -165,7 +198,7 @@ function throwMisses(
 
 function shouldResolveHatsu(
   fighter: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
-  defence: PreparedDefence,
+  defence: ImpactDefence,
 ): fighter is ArcadeFighter & {
   attack: NonNullable<ArcadeFighter['attack']> & { hatsuSource: NonNullable<FighterId> }
 } {
@@ -180,13 +213,26 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   const attacker = state[side]
   const defender = state[hit.defenderSide]
   const defence = prepareDefence(defender, hit.projectile.targetZone)
+  const opening = openingType(defender, defence.blocked)
+  const comboHits = nextComboHits(defender, defence)
+  const damageScale = comboScale(comboHits)
   const damage = resolvedDamage({
     attacker,
     defence,
     base: hit.projectile.damage,
     zone: hit.projectile.targetZone,
     kind: 'ranged',
+    damageScale,
+    openingMultiplier: opening.counterHit ? 1.1 : opening.punish ? 1.15 : 1,
   })
+  const knockdown = isJudgedKnockdown({
+    attacker,
+    knockback: hit.projectile.knockback,
+    blocked: defence.blocked,
+    avoided: defence.avoided,
+    critical: false,
+  })
+  const wallSplat = !defence.avoided && atWall(defender, attacker, hit.projectile.knockback)
   const struck = defence.avoided
     ? defence.fighter
     : strikeProjectileDefender({
@@ -195,14 +241,12 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
         projectile: hit.projectile,
         damage,
         blocked: defence.blocked,
+        knockdown,
+        antiAir: false,
+        wallSplat,
+        counterHit: opening.counterHit,
+        comboHits,
       })
-  const knockdown = isJudgedKnockdown({
-    attacker,
-    knockback: hit.projectile.knockback,
-    blocked: defence.blocked,
-    avoided: defence.avoided,
-    critical: false,
-  })
   const points = defence.avoided
     ? 0
     : scoreJudgedImpact({
@@ -229,6 +273,13 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
       parried: defence.parried,
       critical: false,
       knockdown,
+      counterHit: opening.counterHit,
+      punish: opening.punish,
+      antiAir: false,
+      wallSplat,
+      invulnerable: defence.invulnerable,
+      comboHits,
+      damageScale,
       points,
       zone: hit.projectile.targetZone,
       concealed: false,
@@ -240,26 +291,38 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   return finishAfterImpact(next, side, hit.defenderSide)
 }
 
-interface PreparedDefence {
-  fighter: ArcadeFighter
-  blocked: boolean
-  parried: boolean
-  avoided: boolean
-}
-
 function prepareDefence(
   fighter: ArcadeFighter,
   zone: FightNenZone,
   attacker?: ArcadeFighter,
-): PreparedDefence {
-  const blocked = attacker
-    ? blocksAttack(fighter, attacker)
-    : fighter.blocking && fighter.y === GROUND
+): ImpactDefence {
+  const blocked = blocksImpact(fighter, attacker)
   const parried = parryActive(fighter, blocked)
-  const avoided = hatsuAvoidsImpact(fighter)
-  if (avoided) return { fighter: consumeHatsuAvoidance(fighter), blocked, parried, avoided }
+  const invulnerable = impactInvulnerable(fighter, attacker)
+  if (invulnerable) return { fighter, blocked, parried, avoided: true, invulnerable }
+  if (hatsuAvoidsImpact(fighter)) return avoidedDefence(fighter, blocked, parried)
   const defended = parried ? focusGuardRyu(fighter, zone) : fighter
-  return { fighter: defended, blocked, parried, avoided }
+  return { fighter: defended, blocked, parried, avoided: false, invulnerable: false }
+}
+
+function blocksImpact(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
+  return attacker ? blocksAttack(fighter, attacker) : fighter.blocking && fighter.y === GROUND
+}
+
+function impactInvulnerable(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
+  if (attacker?.attack?.variant === 'throw') return false
+  if (fighter.wakeupInvulnerableFrames > 0) return true
+  return Boolean(fighter.attack?.reversal && attackPhase(fighter) === 'startup')
+}
+
+function avoidedDefence(fighter: ArcadeFighter, blocked: boolean, parried: boolean): ImpactDefence {
+  return {
+    fighter: consumeHatsuAvoidance(fighter),
+    blocked,
+    parried,
+    avoided: true,
+    invulnerable: false,
+  }
 }
 
 function attackCanResolve(
@@ -273,63 +336,11 @@ function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
+  if (defender.y > GROUND && defender.juggleCount >= MAX_JUGGLE_HITS) return null
   const hitbox = activeHitbox(attacker)
   if (!hitbox) return null
   const hurtbox = hurtboxes(defender).find((candidate) => boxesOverlap(hitbox, candidate))
   return hurtbox ? { position: contactPoint(hitbox, hurtbox) } : null
-}
-
-interface DamageOptions {
-  attacker: ArcadeFighter
-  defender: ArcadeFighter
-  base: number
-  blocked: boolean
-  zone: FightNenZone
-  kind: AttackKind
-}
-
-interface ResolvedDamageOptions extends Omit<DamageOptions, 'defender' | 'blocked'> {
-  defence: PreparedDefence
-}
-
-function resolvedDamage(options: ResolvedDamageOptions): number {
-  if (options.defence.parried || options.defence.avoided) return 0
-  return attackDamage({
-    ...options,
-    defender: options.defence.fighter,
-    blocked: options.defence.blocked,
-  })
-}
-
-function attackDamage({ attacker, defender, base, blocked, zone, kind }: DamageOptions): number {
-  if (blocked && defender.nen.ken) return 0
-  const guard = blocked ? 0.28 : 1
-  return Math.max(
-    1,
-    Math.round(
-      base *
-        fighterDefinition(attacker.id).power *
-        nenAttackFactor(attacker, kind) *
-        nenDamageFactor(defender, zone) *
-        hatsuDamageFactor(attacker) *
-        hatsuDefenceFactor(defender) *
-        guard,
-    ),
-  )
-}
-
-interface ProjectileStrikeOptions extends StrikeOptions {
-  projectile: ProjectileHit['projectile']
-}
-
-function strikeProjectileDefender(options: ProjectileStrikeOptions): ArcadeFighter {
-  const { projectile } = options
-  return struckFighter({
-    ...options,
-    knockback: projectile.knockback,
-    hitstun: projectile.hitstun,
-    blockstun: projectile.blockstun,
-  })
 }
 
 function finishAfterImpact(
@@ -337,6 +348,10 @@ function finishAfterImpact(
   attackerSide: FightSide,
   defenderSide: FightSide,
 ): FightState {
+  if (state.mode === 'training' && state[defenderSide].health <= 0) {
+    return { ...state, [defenderSide]: { ...state[defenderSide], health: 100 } }
+  }
+  if (state.mode === 'training') return state
   const durable = preserveHitFormatHealth(state, defenderSide)
   const reason = lossReason(durable, defenderSide)
   return reason ? finishFight(durable, attackerSide, reason) : durable
@@ -369,50 +384,20 @@ function preserveHitFormatHealth(state: FightState, side: FightSide): FightState
   return { ...state, [side]: { ...state[side], health: 1 } }
 }
 
-interface StrikeOptions {
-  fighter: ArcadeFighter
-  attacker: ArcadeFighter
-  damage: number
-  blocked: boolean
-}
-
-function strikeDefender(options: StrikeOptions): ArcadeFighter {
-  const data = attackData(options.attacker.attack?.kind ?? 'light', options.attacker)
-  return struckFighter({ ...options, ...data })
-}
-
-function struckFighter(
-  options: StrikeOptions & {
-    knockback: number
-    hitstun: number
-    blockstun: number
-  },
-): ArcadeFighter {
-  const { fighter, attacker, damage, blocked, knockback, hitstun, blockstun } = options
-  const direction = fighter.x > attacker.x ? 1 : -1
-  return {
-    ...fighter,
-    x: clamp(fighter.x + direction * knockback, MIN_X, MAX_X),
-    health: Math.max(0, fighter.health - damage),
-    hitStun: blocked ? 0 : hitstun,
-    blockStun: blocked ? blockstun : 0,
-    pose: blocked ? 'guard' : 'hit',
-    blocking: blocked,
-    attack: null,
-    bufferedAttack: null,
-  }
-}
-
 export function finishFight(
   state: FightState,
   winner: FightSide,
   finishReason: Exclude<FightFinishReason, null> = 'knockout',
 ): FightState {
   const loser = otherSide(winner)
+  const roundsWon = { ...state.roundsWon, [winner]: state.roundsWon[winner] + 1 }
+  const matchWinner = roundsWon[winner] >= 2 ? winner : null
   return {
     ...state,
     phase: 'finished',
     winner,
+    matchWinner,
+    roundsWon,
     finishReason,
     [loser]: {
       ...state[loser],
@@ -422,10 +407,6 @@ export function finishFight(
       bufferedAttack: null,
     },
   }
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
 }
 
 function throwImmune(fighter: ArcadeFighter): boolean {
@@ -466,7 +447,8 @@ function resolveTrade(original: FightState, first: FightState): FightState {
   const playerLost = lossReason(durable, 'player')
   const opponentLost = lossReason(durable, 'opponent')
   const finishReason = tradeFinishReason(playerLost, opponentLost)
-  if (playerLost && opponentLost) return { ...durable, phase: 'finished', winner: 'draw', finishReason }
+  if (playerLost && opponentLost)
+    return { ...durable, phase: 'finished', winner: 'draw', finishReason }
   if (opponentLost) return finishFight(durable, 'player', opponentLost)
   return playerLost ? finishFight(durable, 'opponent', playerLost) : durable
 }

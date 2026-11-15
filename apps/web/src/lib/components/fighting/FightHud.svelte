@@ -17,7 +17,11 @@
 
 <div class="hud" aria-live="polite">
   <div class="fighter-meter player-meter">
-    <div class="meter-label"><strong>{player.name}</strong><span>P1</span></div>
+    <div class="meter-label">
+      <strong>{player.name}</strong><span
+        >P1 · {'●'.repeat(state.roundsWon.player)}{'○'.repeat(2 - state.roundsWon.player)}</span
+      >
+    </div>
     <div class="health"><span style={`width:${state.player.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
@@ -60,7 +64,13 @@
     </strong>
   </div>
   <div class="fighter-meter opponent-meter">
-    <div class="meter-label"><span>CPU</span><strong>{opponent.name}</strong></div>
+    <div class="meter-label">
+      <span
+        >{state.mode === 'versus-ai' ? 'CPU' : state.mode === 'training' ? 'DUMMY' : 'P2'} · {'●'.repeat(
+          state.roundsWon.opponent,
+        )}{'○'.repeat(2 - state.roundsWon.opponent)}</span
+      ><strong>{opponent.name}</strong>
+    </div>
     <div class="health"><span style={`width:${state.opponent.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.opponent.aura}%`}></span></div>
     <div class="nen-status">

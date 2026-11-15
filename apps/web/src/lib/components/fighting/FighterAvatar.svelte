@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { fighterDefinition } from '$lib/fighting/roster'
-  import { attackProgress } from '$lib/fighting/frameData'
   import {
     createFighterFacing,
     trackFightOpponent,
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
+  import { attackProgress } from '$lib/fighting/frameData'
+  import { fighterDefinition } from '$lib/fighting/roster'
   import type { ArcadeFighter, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
+  import { onMount } from 'svelte'
 
   export let fighter: ArcadeFighter
   export let preview = false
@@ -28,6 +28,8 @@
     special: 'idle',
     ranged: 'idle',
     hit: 'idle',
+    down: 'fallen',
+    wakeup: 'idle',
     ko: 'idle',
   }
 
@@ -115,14 +117,7 @@
         }
         fit()
 
-        const render = (time: number) => {
-          if (disposed) return
-          const seconds = time / 1000
-          if (fighter.pose !== renderedPose) {
-            renderedPose = fighter.pose
-            poseStarted = seconds
-          }
-          const pose = MODEL_POSES[fighter.pose]
+        function poseProgress(seconds: number) {
           let progress = attackProgress(fighter)
           if (fighter.pose === 'jump') {
             progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
@@ -132,6 +127,18 @@
             // The match loop stops on K.O.; the fall finishes on the render clock.
             progress = Math.max(progress, Math.min(1, (seconds - poseStarted) / KO_DURATION))
           }
+          return progress
+        }
+
+        const render = (time: number) => {
+          if (disposed) return
+          const seconds = time / 1000
+          if (fighter.pose !== renderedPose) {
+            renderedPose = fighter.pose
+            poseStarted = seconds
+          }
+          const pose = MODEL_POSES[fighter.pose]
+          const progress = poseProgress(seconds)
           const bodyAngle = preview ? -0.28 : updateFighterFacing(facing, fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
           model.animate(seconds, pose, {

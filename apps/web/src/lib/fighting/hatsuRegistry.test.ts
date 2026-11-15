@@ -74,14 +74,14 @@ describe('fighter Hatsu registry', () => {
     expect(state.player.hatsuEffects.batonCharges).toBe(1)
     state = {
       ...state,
-      player: {
-        ...state.player,
-        x: 46,
-        attack: null,
-        hitStun: 0,
-        blockStun: 0,
+      player: { ...state.player, x: 46, attack: null, hitStun: 0, blockStun: 0 },
+      opponent: {
+        ...state.opponent,
+        x: 52,
+        hitStun: 90,
+        knockdownFrames: 0,
+        wakeupInvulnerableFrames: 0,
       },
-      opponent: { ...state.opponent, x: 52, hitStun: 90 },
     }
     const spent = advance(performAttack(state, 'player', 'light'), 0.2)
     expect(spent.player.hatsuEffects.batonCharges).toBe(0)
@@ -94,11 +94,7 @@ describe('fighter Hatsu registry', () => {
     expect(state.player.hatsuEffects.futureSight).toBe(1)
     state = performAttack(state, 'opponent', 'light')
     const avoided = advance(state, 0.2)
-    expect(avoided.impact).toMatchObject({
-      attacker: 'opponent',
-      avoided: true,
-      damage: 0,
-    })
+    expect(avoided.impact).toMatchObject({ attacker: 'opponent', avoided: true, damage: 0 })
     expect(avoided.player.health).toBe(100)
     expect(avoided.player.hatsuEffects.futureSight).toBe(0)
   })
@@ -181,29 +177,17 @@ describe('fighter Hatsu registry', () => {
       player: { ...state.player, x: 46 },
       opponent: { ...state.opponent, x: 52, hitStun: 0 },
     }
-    state = hatsuFor('marayam').onTrigger({
-      state,
-      side: 'player',
-      source: 'marayam',
-    })
+    state = hatsuFor('marayam').onTrigger({ state, side: 'player', source: 'marayam' })
     state = performAttack(state, 'opponent', 'light')
     const avoided = advance(state, 0.2)
-    expect(avoided.impact).toMatchObject({
-      attacker: 'opponent',
-      avoided: true,
-      damage: 0,
-    })
+    expect(avoided.impact).toMatchObject({ attacker: 'opponent', avoided: true, damage: 0 })
     expect(avoided.player.health).toBe(100)
     expect(avoided.player.hatsuEffects.isolationFrames).toBe(0)
   })
 
   it('stores missed Ripper Cyclotron rotations until Phinks connects', () => {
     const trigger = hatsuFor('phinks').onTrigger
-    let state = trigger({
-      state: closeFight('phinks', 'hisoka'),
-      side: 'player',
-      source: 'phinks',
-    })
+    let state = trigger({ state: closeFight('phinks', 'hisoka'), side: 'player', source: 'phinks' })
     state = trigger({ state, side: 'player', source: 'phinks' })
     expect(state.player.hatsuEffects.cyclotronTurns).toBe(2)
     expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1.4)
@@ -428,11 +412,7 @@ describe('fighter Hatsu registry', () => {
     })
     let coins = closeFight('zhanglei', 'hisoka')
     for (let charge = 0; charge < 3; charge += 1) {
-      coins = hatsuFor('zhanglei').onTrigger({
-        state: coins,
-        side: 'player',
-        source: 'zhanglei',
-      })
+      coins = hatsuFor('zhanglei').onTrigger({ state: coins, side: 'player', source: 'zhanglei' })
     }
     expect(hatsuDamageFactor(birds.player)).toBeGreaterThan(1)
     expect(hatsuDamageFactor(coins.player)).toBeGreaterThan(1.2)

@@ -23,10 +23,11 @@ export function resolveHatsuImpact(options: {
   side: FightSide
   defenderSide: FightSide
   source: FighterId
+  moveId?: string
   blocked: boolean
   concealed: boolean
 }): FightState {
-  const { side, defenderSide, source, blocked, concealed } = options
+  const { side, defenderSide, source, moveId, blocked, concealed } = options
   const defender = options.state[defenderSide]
   const recorded = {
     ...options.state,
@@ -40,6 +41,7 @@ export function resolveHatsuImpact(options: {
     side,
     defenderSide,
     source,
+    moveId,
     blocked,
     concealed,
   })

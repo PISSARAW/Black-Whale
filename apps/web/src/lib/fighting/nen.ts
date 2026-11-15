@@ -10,6 +10,19 @@ import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './type
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
 export const IN_CHARGE_FRAMES = 24
+export const FIGHT_NEN_ZONES = ['head', 'torso', 'hands', 'feet'] as const
+
+export type FightNenTactic = 'ten' | 'ren' | 'zetsu' | 'gyo' | 'ken' | 'ryu' | 'ko'
+
+export interface FightNenTacticalState {
+  technique: FightNenTactic
+  auraPerSecond: number
+  focusZone: FightNenZone | null
+  focusShare: number
+  distribution: Record<FightNenZone, number>
+  exposedZones: FightNenZone[]
+  exhausted: boolean
+}
 
 export function createFightingNen() {
   return createNenTechniqueState<FightNenZone>()
@@ -60,14 +73,14 @@ function commitKoOnRelease(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 export function advanceNen(fighter: ArcadeFighter, dt: number): ArcadeFighter {
-  const aura = Math.max(0, Math.min(100, fighter.aura + auraRate(fighter) * dt))
+  const aura = Math.max(0, Math.min(100, fighter.aura + auraFlowRate(fighter) * dt))
   const depleted = fighter.auraExhausted || aura === 0
   const auraExhausted = depleted && aura < EXHAUSTION_RELEASE_AURA
   const next = { ...fighter, aura, auraExhausted }
   return auraExhausted ? withAction(next, { type: 'ZETSU' }) : next
 }
 
-function auraRate(fighter: ArcadeFighter): number {
+export function auraFlowRate(fighter: ArcadeFighter): number {
   if (fighter.nen.mode === 'zetsu') return 10
   if (fighter.nen.ken) return -8
   if (fighter.nen.gyo) return -2.4
@@ -134,6 +147,40 @@ export function isCriticalAuraStrike(fighter: ArcadeFighter): boolean {
 
 export function hasRyu(fighter: ArcadeFighter): boolean {
   return Object.values(fighter.nen.ryu).some((share) => Number(share) > 0) && !fighter.nen.ko
+}
+
+/** Presentation-ready combat information: what is reinforced and what was sacrificed. */
+export function nenTacticalState(fighter: ArcadeFighter): FightNenTacticalState {
+  const distribution = Object.fromEntries(
+    FIGHT_NEN_ZONES.map((zone) => [zone, Number(fighter.nen.ryu[zone] ?? 0)]),
+  ) as Record<FightNenZone, number>
+  const [focusZone, focusShare] = FIGHT_NEN_ZONES.reduce<[FightNenZone | null, number]>(
+    (strongest, zone) =>
+      distribution[zone] > strongest[1] ? [zone, distribution[zone]] : strongest,
+    [null, 0],
+  )
+  const technique: FightNenTactic = fighter.nen.ko
+    ? 'ko'
+    : hasRyu(fighter)
+      ? 'ryu'
+      : fighter.nen.ken
+        ? 'ken'
+        : fighter.nen.gyo
+          ? 'gyo'
+          : fighter.nen.mode
+  const exposesBody = technique === 'ko' || technique === 'ryu'
+
+  return {
+    technique,
+    auraPerSecond: auraFlowRate(fighter),
+    focusZone,
+    focusShare,
+    distribution,
+    exposedZones: exposesBody
+      ? FIGHT_NEN_ZONES.filter((zone) => zone !== focusZone && distribution[zone] < 0.15)
+      : [],
+    exhausted: fighter.auraExhausted,
+  }
 }
 
 export function nenStatus(fighter: ArcadeFighter): string[] {

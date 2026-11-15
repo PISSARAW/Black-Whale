@@ -1,6 +1,6 @@
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './frameData'
-import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
+import { fightFormat } from './formats'
 import {
   advanceHatsuFrames,
   canUseFightHatsu,
@@ -8,20 +8,17 @@ import {
   hatsuSourceFor,
   triggerHatsu,
 } from './hatsu'
-import {
-  advanceFighterAttack,
-  canBufferFighterAttack,
-  canStartFighterAttack,
-  startFighterAttack,
-} from './fighterAttacks'
+import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
-import { advanceNen, applyAuraContext, createFightingNen, IN_CHARGE_FRAMES, setIn } from './nen'
+import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
 import { fighterDefinition } from './roster'
 import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
 import { finishFight, resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
-import { canUseMovesetMove, moveById, moveForAction } from './movesets'
+import { canUseMovesetMove, moveForAction, moveById } from './movesets'
+import { createFightState, nextFightRound } from './fightState'
+import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
 import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
@@ -30,143 +27,30 @@ import type {
   FightInput,
   FightSide,
   FightState,
-  FighterId,
   FighterPose,
   MoveAction,
 } from './types'
 
 const GROUND = 0
-const GRAVITY = 120
 const JUMP_SPEED = 48
 const MIN_X = 7
 const MAX_X = 93
-const MIN_GAP = 5
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
+export { createFightState as createFight, nextFightRound as nextRound }
 const IN_AURA_SURCHARGE = 12
-
-export function createFight(
-  playerId: FighterId,
-  opponentId: FighterId,
-  formatId: FightFormatId = DEFAULT_FIGHT_FORMAT,
-): FightState {
-  const format = fightFormat(formatId)
-  return {
-    formatId,
-    player: createFighter({
-      id: playerId,
-      x: 22,
-      facing: 1,
-      health: format.health,
-    }),
-    opponent: createFighter({
-      id: opponentId,
-      x: 78,
-      facing: -1,
-      health: format.health,
-    }),
-    phase: 'ready',
-    frame: 0,
-    time: format.roundFrames / FIGHT_FPS,
-    remainingFrames: format.roundFrames,
-    frameAccumulator: 0,
-    hitstop: 0,
-    rng: seedFor(playerId, opponentId),
-    winner: null,
-    finishReason: null,
-    score: { player: 0, opponent: 0 },
-    knockdowns: { player: 0, opponent: 0 },
-    bungeeGum: null,
-    projectiles: [],
-    nextProjectileId: 1,
-    impact: null,
-  }
-}
-
-function createFighter(options: {
-  id: FighterId
-  x: number
-  facing: -1 | 1
-  health: number
-}): ArcadeFighter {
-  const { id, x, facing, health } = options
-  return {
-    id,
-    x,
-    y: GROUND,
-    velocityY: 0,
-    health,
-    aura: 55,
-    nen: createFightingNen(),
-    facing,
-    pose: 'idle',
-    hitStun: 0,
-    blockStun: 0,
-    blocking: false,
-    guardFrames: 0,
-    ryuWindow: 0,
-    auraExhausted: false,
-    hatsuChargeFrames: 0,
-    hatsuEffects: {
-      forcedZetsuFrames: 0,
-      contagionFrames: 0,
-      contagionStacks: 0,
-      futureSight: 0,
-      batonCharges: 0,
-      senseSeals: 0,
-      sunMoonMarks: 0,
-      manipulatedFrames: 0,
-      transformationFrames: 0,
-      isolationFrames: 0,
-      cyclotronTurns: 0,
-      stitchedFrames: 0,
-      needleFrames: 0,
-      serpentMarks: 0,
-      cantabileFrames: 0,
-      biohazardFrames: 0,
-      restrainedFrames: 0,
-      cloneDodges: 0,
-      predatorFrames: 0,
-      bloodBoundFrames: 0,
-      entrancedFrames: 0,
-      haikuFrames: 0,
-      catCounters: 0,
-      venomFrames: 0,
-      soulExposedFrames: 0,
-      teleportDodges: 0,
-      growthFrames: 0,
-      comboFocusFrames: 0,
-      birdFrames: 0,
-      curseFrames: 0,
-      wormDodges: 0,
-      kachoGuards: 0,
-      desireFrames: 0,
-      momozeFrames: 0,
-      smokeFrames: 0,
-      coinCharges: 0,
-      gidalCurseFrames: 0,
-      contractFrames: 0,
-      secretWindowDodges: 0,
-      weaponFrames: 0,
-      synthesisFrames: 0,
-      eyeWogFrames: 0,
-      littleEyeDodges: 0,
-      silentMarks: 0,
-      sweetHomeCharges: 0,
-      doorDodges: 0,
-      lsdfGuards: 0,
-      lastHatsuReceived: null,
-    },
-    attack: null,
-    bufferedAttack: null,
-  }
-}
 
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
 
-export function tickFight(state: FightState, input: FightInput, dt: number): FightState {
+export function tickFight(
+  state: FightState,
+  input: FightInput,
+  options: number | { dt: number; opponentInput?: FightInput },
+): FightState {
+  const dt = typeof options === 'number' ? options : options.dt
+  const opponentInput = typeof options === 'number' ? undefined : options.opponentInput
   if (state.phase !== 'fighting') return state
   const remainingFrames = Math.min(state.remainingFrames, Math.ceil(state.time * FIGHT_FPS))
   let next = {
@@ -176,15 +60,17 @@ export function tickFight(state: FightState, input: FightInput, dt: number): Fig
   }
   while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
     const accumulator = next.frameAccumulator - FIXED_STEP
-    next = { ...stepFight(next, input), frameAccumulator: accumulator }
+    next = { ...stepFight(next, input, opponentInput), frameAccumulator: accumulator }
   }
   return next
 }
 
-function stepFight(state: FightState, input: FightInput): FightState {
+function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
   const player = updatePlayer(state.player, input)
-  const opponent = updateOpponent(state.opponent, player)
+  const opponent = opponentInput
+    ? updateControlledFighter(state.opponent, opponentInput)
+    : updateOpponent(state.opponent, player)
   const buffered = flushBuffered(
     flushBuffered({ ...state, player, opponent }, 'player'),
     'opponent',
@@ -194,8 +80,9 @@ function stepFight(state: FightState, input: FightInput): FightState {
   const flight = advanceProjectiles(armed, FIXED_STEP)
   const resolved = resolveFightImpacts(flight.state, flight.hits)
   if (resolved.phase === 'finished') return resolved
-  const separated = separateFighters(resolved.player, resolved.opponent)
-  const remainingFrames = Math.max(0, state.remainingFrames - 1)
+  const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
+  const remainingFrames =
+    state.mode === 'training' ? state.remainingFrames : Math.max(0, state.remainingFrames - 1)
   const next = {
     ...resolved,
     ...separated,
@@ -203,19 +90,18 @@ function stepFight(state: FightState, input: FightInput): FightState {
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return remainingFrames === 0 ? finishByTime(next) : next
+  return remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next
 }
 
 function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  let next = updateHatsuCharge(applyAuraContext(advanceFighter(fighter), input), input)
+  return updateControlledFighter(fighter, input)
+}
+
+function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  let next = updateHatsuCharge(applyAuraContext(advanceFighterPhysics(fighter), input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
   if (playerCanJump(next, input)) {
-    return poseFighter({
-      ...next,
-      velocityY: JUMP_SPEED,
-      pose: 'jump',
-      blocking: false,
-    })
+    return poseFighter({ ...next, velocityY: JUMP_SPEED, pose: 'jump', blocking: false })
   }
   if (!canMove(next) || next.blocking) return poseFighter(next)
   const direction = Number(input.right) - Number(input.left)
@@ -264,24 +150,7 @@ function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
 }
 
 function updateOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  return poseFighter(moveOpponent(advanceFighter(fighter), player))
-}
-
-function advanceFighter(fighter: ArcadeFighter): ArcadeFighter {
-  const airborne = fighter.y > GROUND || fighter.velocityY > 0
-  const velocityY = airborne ? fighter.velocityY - GRAVITY * FIXED_STEP : 0
-  const y = airborne ? Math.max(GROUND, fighter.y + velocityY * FIXED_STEP) : GROUND
-  let next = advanceFighterAttack({
-    ...fighter,
-    y,
-    velocityY: y === GROUND ? 0 : velocityY,
-    hitStun: Math.max(0, fighter.hitStun - 1),
-    blockStun: Math.max(0, fighter.blockStun - 1),
-    ryuWindow: Math.max(0, fighter.ryuWindow - 1),
-    throwTechFrames: Math.max(0, (fighter.throwTechFrames ?? 0) - 1),
-  })
-  next = advanceNen(next, FIXED_STEP)
-  return next
+  return poseFighter(moveOpponent(advanceFighterPhysics(fighter), player))
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
@@ -307,12 +176,7 @@ export function performMove(options: PerformMoveOptions): FightState {
   if (!move) {
     if (action === 'throw') return performLegacyThrow(state, side)
     if (action === 'finisher') return state
-    return performAuraAttack({
-      state,
-      side,
-      kind: action,
-      auraCharged: input.aura,
-    })
+    return performAuraAttack({ state, side, kind: action, auraCharged: input.aura })
   }
   if (!canUseMovesetMove(state, side, move)) return state
   return performAuraAttack({
@@ -336,11 +200,7 @@ export function performAuraAttack(options: {
   const { side, kind, auraCharged } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
-  const variant = attackVariant({
-    fighter: original,
-    kind,
-    variant: options.variant,
-  })
+  const variant = attackVariant({ fighter: original, kind, variant: options.variant })
   const { hatsuSource, concealed, resourceReady } = attackIntent(original, kind, options.moveId)
   const starts = canStartFighterAttack(original, kind, options.moveId)
   const buffers = resourceReady && canBufferFighterAttack(original)
@@ -473,33 +333,6 @@ function randomValue(state: FightState): [FightState, number] {
   return [{ ...state, rng }, rng / 0x100000000]
 }
 
-function separateFighters(
-  player: ArcadeFighter,
-  opponent: ArcadeFighter,
-): Pick<FightState, 'player' | 'opponent'> {
-  const playerFacing = player.x <= opponent.x ? 1 : -1
-  const gap = Math.abs(player.x - opponent.x)
-  if (gap >= MIN_GAP || player.y > 4 || opponent.y > 4) {
-    return {
-      player: { ...player, facing: playerFacing },
-      opponent: { ...opponent, facing: playerFacing === 1 ? -1 : 1 },
-    }
-  }
-  const centre = (player.x + opponent.x) / 2
-  return {
-    player: {
-      ...player,
-      x: centre - (MIN_GAP / 2) * playerFacing,
-      facing: playerFacing,
-    },
-    opponent: {
-      ...opponent,
-      x: centre + (MIN_GAP / 2) * playerFacing,
-      facing: playerFacing === 1 ? -1 : 1,
-    },
-  }
-}
-
 function finishByTime(state: FightState): FightState {
   const format = fightFormat(state.formatId)
   if (format.victory !== 'health' && state.score.player !== state.score.opponent) {
@@ -510,12 +343,7 @@ function finishByTime(state: FightState): FightState {
     )
   }
   if (state.player.health === state.opponent.health) {
-    return {
-      ...state,
-      phase: 'finished',
-      winner: 'draw',
-      finishReason: 'time',
-    }
+    return { ...state, phase: 'finished', winner: 'draw', finishReason: 'time' }
   }
   return finishFight(
     state,
@@ -526,6 +354,9 @@ function finishByTime(state: FightState): FightState {
 
 function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.health <= 0) return { ...fighter, pose: 'ko', blocking: false }
+  if (fighter.knockdownFrames > 0) return { ...fighter, pose: 'down', blocking: false }
+  if (fighter.wakeupInvulnerableFrames > 0 && !fighter.attack)
+    return { ...fighter, pose: 'wakeup', blocking: false }
   if (fighter.hitStun > 0) return { ...fighter, pose: 'hit', blocking: false }
   if (fighter.attack) return { ...fighter, pose: fighter.attack.kind, blocking: false }
   if (fighter.y > GROUND) return { ...fighter, pose: 'jump', blocking: false }
@@ -534,7 +365,12 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
-  return fighter.hitStun === 0 && fighter.blockStun === 0 && fighter.health > 0
+  return (
+    fighter.hitStun === 0 &&
+    fighter.blockStun === 0 &&
+    fighter.knockdownFrames === 0 &&
+    fighter.health > 0
+  )
 }
 
 function canMove(fighter: ArcadeFighter): boolean {
@@ -543,15 +379,12 @@ function canMove(fighter: ArcadeFighter): boolean {
 
 function canGuard(fighter: ArcadeFighter): boolean {
   return (
-    fighter.y === GROUND && fighter.hitStun === 0 && fighter.health > 0 && fighter.attack === null
+    fighter.y === GROUND &&
+    fighter.hitStun === 0 &&
+    fighter.knockdownFrames === 0 &&
+    fighter.health > 0 &&
+    fighter.attack === null
   )
-}
-
-function seedFor(playerId: FighterId, opponentId: FighterId): number {
-  const text = `${playerId}:${opponentId}`
-  let seed = 2166136261
-  for (const character of text) seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
-  return seed >>> 0
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

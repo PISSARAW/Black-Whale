@@ -98,3 +98,27 @@ sans changer les règles, les boîtes ni les données de frame.
   effectif du coup, après revalidation des ressources.
 - Les frappes simultanées sont évaluées sur le même état ; un double K.-O.
   ou une arrivée simultanée à dix points donne une égalité.
+- Les coups lourds, critiques et les projections provoquent une chute persistante.
+  La relevée offre dix frames d'invulnérabilité et une fenêtre de cinq frames pour
+  buffer un reversal ; une projection laisse quarante-huit frames d'avantage brut.
+- Un lourd debout sert d'anti-air et lance la cible. Trois impacts aériens au maximum
+  sont autorisés avant que la hurtbox cesse d'accepter un juggle.
+- Le moteur distingue counter hit (startup/active adverse) et punish (recovery),
+  applique leurs bonus de stun/dégâts, puis réduit les dégâts de 10 % par coup de
+  combo jusqu'au plancher de 40 %.
+- Les pushboxes varient entre station debout, accroupie, saut et chute. Au mur, le
+  recul est absorbé par la limite de scène et le wall contact prolonge le stun.
+- Un match se joue en deux manches gagnantes. Les PV, points et knockdowns sont
+  réinitialisés entre les manches, contrairement au score de match.
+
+## Modes locaux et entraînement
+
+- **Contre l'IA** conserve le pilotage automatique et son choix de coups.
+- **Versus local** transmet un second jeu d'inputs au même tick déterministe : P2
+  utilise les flèches, Entrée/Alt et N/M/,/./ sur le clavier.
+- **Entraînement** désactive la limite de temps et la fin par K.-O., affiche startup,
+  active, recovery, avantage sur garde, compteur de combo/juggle, hitboxes et
+  hurtboxes. Le dummy peut enregistrer puis rejouer déplacements, garde et attaques.
+- Le netcode rollback n'est pas encore présent. Le moteur fixe et les entrées P1/P2
+  séparées constituent la base de resimulation, mais le transport, la prédiction et
+  la synchronisation d'état restent une couche réseau distincte.

@@ -55,7 +55,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     damage: 12,
     hitstun: 18,
     blockstun: 12,
-    hitstop: 7,
+    hitstop: 10,
     knockback: 3,
     lunge: 0.9,
     cancelEnd: 24,
@@ -70,7 +70,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     damage: 19,
     hitstun: 26,
     blockstun: 18,
-    hitstop: 10,
+    hitstop: 12,
     knockback: 4.5,
     lunge: 1.2,
     cancelEnd: 50,
@@ -134,11 +134,17 @@ function movesetAttackData(
   move: NonNullable<ReturnType<typeof moveById>>,
 ): AttackFrameData {
   const data = move.tuning
+  const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return {
     ...data,
     startup: data.startup + (fighter.attack?.concealed ? 10 : 0),
     cancelEnd: data.startup + data.active + 6,
-    box: { left: 1.4, right: data.reach, bottom: data.bottom, top: data.top },
+    box: {
+      left: 1.4,
+      right: data.reach,
+      bottom: antiAir ? Math.min(2.4, data.bottom) : data.bottom,
+      top: antiAir ? Math.max(15, data.top) : data.top,
+    },
   }
 }
 
@@ -184,17 +190,32 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
   return worldBox(fighter, attackData(fighter.attack.kind, fighter).box)
 }
 
+export function isAntiAir(fighter: ArcadeFighter): boolean {
+  return Boolean(
+    fighter.attack?.kind === 'heavy' && (fighter.attack.variant ?? 'standing') === 'standing',
+  )
+}
+
 export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
+  if (fighter.knockdownFrames > 0) {
+    return [worldBox(fighter, { left: -3.8, right: 3.8, bottom: 0, top: 4.5 })]
+  }
   const crouch = fighter.crouching ? 4 : 0
   return [
     worldBox(fighter, { left: -1.7, right: 1.7, bottom: 0, top: 5.2 - crouch }),
-    worldBox(fighter, {
-      left: -2.1,
-      right: 2.1,
-      bottom: 4.8 - crouch,
-      top: 12 - crouch,
-    }),
+    worldBox(fighter, { left: -2.1, right: 2.1, bottom: 4.8 - crouch, top: 12 - crouch }),
   ]
+}
+
+export function pushbox(fighter: ArcadeFighter): FightBox {
+  const airborne = fighter.y > 0
+  const halfWidth = fighter.knockdownFrames > 0 ? 3.5 : fighter.crouching ? 2.35 : 2.05
+  return worldBox(fighter, {
+    left: -halfWidth,
+    right: halfWidth,
+    bottom: 0,
+    top: fighter.knockdownFrames > 0 ? 2.8 : airborne ? 8.5 : fighter.crouching ? 7.5 : 11,
+  })
 }
 
 export function boxesOverlap(first: FightBox, second: FightBox): boolean {
@@ -217,7 +238,7 @@ export function otherSide(side: FightSide): FightSide {
   return side === 'player' ? 'opponent' : 'player'
 }
 
-function worldBox(fighter: ArcadeFighter, box: FightBox): FightBox {
+export function worldBox(fighter: ArcadeFighter, box: FightBox): FightBox {
   const horizontal =
     fighter.facing === 1
       ? { left: fighter.x + box.left, right: fighter.x + box.right }

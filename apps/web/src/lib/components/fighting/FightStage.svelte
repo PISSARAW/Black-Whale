@@ -2,7 +2,11 @@
   import FightScene from './FightScene.svelte'
   import FightHud from './FightHud.svelte'
   import FightNenControls from './FightNenControls.svelte'
+  import FightTrainingOverlay from './FightTrainingOverlay.svelte'
+  import FightAudio from './FightAudio.svelte'
   import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from '$lib/fighting/hatsu'
+  import { nenTacticalState } from '$lib/fighting/nen'
+  import { isThrowTech } from '$lib/fighting/reactionMotion'
   import { fighterDefinition } from '$lib/fighting/roster'
   import {
     canUseRangedAttack,
@@ -11,7 +15,7 @@
   } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from '$lib/fighting/movesets'
-  import type { AttackKind, FightInput, FightState } from '$lib/fighting/types'
+  import type { AttackKind, FightInput, FightNenZone, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -20,20 +24,29 @@
   export let onThrow: () => void
   export let onFinisher: () => void
   export let onControl: (key: keyof FightInput, active: boolean) => void
+  export let training = false
 
   $: playerDefinition = fighterDefinition(state.player.id)
   $: moveset = movesetFor(state.player.id)
-  $: movesetSpecials = moveset?.moves.filter((move) => move.category === 'special') ?? []
+  $: neutralSpecial = moveForSlot(state.player.id, 'neutralSpecial')
   $: specialLabel = moveset
-    ? 'Techniques'
+    ? language === 'fr'
+      ? (neutralSpecial?.nameFr ?? 'Technique')
+      : (neutralSpecial?.nameEn ?? 'Technique')
     : language === 'fr'
       ? playerDefinition.specialFr
       : playerDefinition.specialEn
   $: hatsuReady = moveset
-    ? movesetSpecials.some((move) => canUseMovesetMove(state, 'player', move))
+    ? Boolean(neutralSpecial && canUseMovesetMove(state, 'player', neutralSpecial))
     : canUseFightHatsu(state.player)
   $: hatsuHint = moveset
-    ? `${specialLabel} · 20–40 aura`
+    ? hatsuReady
+      ? `${specialLabel} · ${neutralSpecial?.auraCost ?? 40} aura`
+      : state.player.id === 'kurapika' && neutralSpecial?.id === 'kurapika:neutralSpecial'
+        ? language === 'fr'
+          ? 'Chain Jail · Brigade Fantôme uniquement'
+          : 'Chain Jail · Phantom Troupe only'
+        : `${specialLabel} · indisponible`
     : `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
   $: ranged = projectileProfile(state.player.id)
   $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
@@ -42,6 +55,17 @@
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
   $: finisher = moveForSlot(state.player.id, 'finisher')
   $: finisherAvailable = finisherReady(state, 'player')
+  $: playerTactical = nenTacticalState(state.player)
+  $: throwTech = isThrowTech(state)
+
+  const focusZoneLabels: Record<'fr' | 'en', Record<FightNenZone, string>> = {
+    fr: { head: 'Tête', torso: 'Torse', hands: 'Mains', feet: 'Jambes' },
+    en: { head: 'Head', torso: 'Torso', hands: 'Hands', feet: 'Legs' },
+  }
+
+  function focusZoneLabel(zone: FightNenZone): string {
+    return focusZoneLabels[language][zone]
+  }
 
   function hold(key: keyof FightInput, active: boolean) {
     onControl(key, active)
@@ -49,6 +73,7 @@
 </script>
 
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
+  <FightAudio {state} />
   <FightHud {state} {language} />
   <FightNenControls
     fighter={state.player}
@@ -58,6 +83,33 @@
   {#key sceneKey}
     <FightScene {state} {stageId} />
   {/key}
+
+  {#if training}
+    <FightTrainingOverlay {state} {language} />
+  {/if}
+
+  {#if playerTactical.focusZone}
+    <div
+      class="nen-focus-callout"
+      class:ko={playerTactical.technique === 'ko'}
+      style={`left:clamp(6rem, ${state.player.x}%, calc(100% - 6rem));bottom:${28 + state.player.y * 0.5}%`}
+      aria-live="polite"
+    >
+      <small>
+        {playerTactical.technique.toUpperCase()} · {language === 'fr'
+          ? 'ZONE RENFORCÉE'
+          : 'REINFORCED ZONE'}
+      </small>
+      <b>
+        {focusZoneLabel(playerTactical.focusZone)} · {Math.round(playerTactical.focusShare * 100)}%
+      </b>
+      <span>
+        {language === 'fr' ? 'Exposé' : 'Exposed'} · {playerTactical.exposedZones
+          .map(focusZoneLabel)
+          .join(' · ')}
+      </span>
+    </div>
+  {/if}
 
   <div class="fighter-name" style={`left:${state.player.x}%;bottom:${4 + state.player.y * 0.62}%`}>
     {playerDefinition.name}
@@ -73,24 +125,27 @@
     {#key state.impact.sequence}
       <div class:blocked={state.impact.blocked} class="impact-flash"></div>
       <div class="damage-callout" class:from-player={state.impact.attacker === 'player'}>
-        {state.impact.avoided
-          ? language === 'fr'
-            ? 'FUTUR ÉVITÉ'
-            : 'FUTURE EVADED'
-          : state.impact.parried
+        {state.impact.invulnerable
+          ? 'INVUL'
+          : state.impact.avoided
             ? language === 'fr'
-              ? 'PARADE · RYU'
-              : 'PARRY · RYU'
-            : state.impact.blocked
-              ? state.impact.damage === 0
-                ? 'KEN'
-                : language === 'fr'
-                  ? 'GARDE'
-                  : 'BLOCK'
-              : `${state.impact.critical ? 'CRIT · ' : ''}${state.impact.knockdown ? (language === 'fr' ? 'CHUTE · ' : 'KD · ') : ''}-${state.impact.damage} · +${state.impact.points}`}
+              ? 'FUTUR ÉVITÉ'
+              : 'FUTURE EVADED'
+            : state.impact.parried
+              ? language === 'fr'
+                ? 'PARADE · RYU'
+                : 'PARRY · RYU'
+              : state.impact.blocked
+                ? state.impact.damage === 0
+                  ? 'KEN'
+                  : language === 'fr'
+                    ? 'GARDE'
+                    : 'BLOCK'
+                : `${state.impact.counterHit ? 'COUNTER · ' : state.impact.punish ? 'PUNISH · ' : ''}${state.impact.antiAir ? 'ANTI-AIR · ' : ''}${state.impact.wallSplat ? 'WALL · ' : ''}${state.impact.comboHits > 1 ? `${state.impact.comboHits} HITS · ` : ''}${state.impact.critical ? 'CRIT · ' : ''}${state.impact.knockdown ? (language === 'fr' ? 'CHUTE · ' : 'KD · ') : ''}-${state.impact.damage} · +${state.impact.points}`}
       </div>
     {/key}
   {/if}
+  {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
 
   <div class="touch-controls">
     <div class="touch-group movement-controls">
@@ -214,6 +269,53 @@
     transition:
       left 45ms linear,
       bottom 35ms linear;
+  }
+  .nen-focus-callout {
+    position: absolute;
+    z-index: 18;
+    display: grid;
+    min-width: 132px;
+    padding: 0.38rem 0.5rem;
+    border: 1px solid rgb(255 217 91 / 72%);
+    border-left-width: 4px;
+    background: rgb(7 12 15 / 88%);
+    box-shadow: 0 0 18px rgb(255 202 58 / 16%);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .nen-focus-callout::after {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(#ffdc67, transparent);
+    content: '';
+  }
+  .nen-focus-callout.ko {
+    border-color: #ff6d66;
+    background: rgb(35 7 9 / 91%);
+    box-shadow: 0 0 24px rgb(255 60 55 / 28%);
+  }
+  .nen-focus-callout small,
+  .nen-focus-callout span {
+    font: 700 0.43rem/1.2 var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .nen-focus-callout small {
+    color: #d2b958;
+  }
+  .nen-focus-callout b {
+    margin-top: 0.16rem;
+    color: #fff5b8;
+    font: 900 0.67rem/1 var(--font-display);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nen-focus-callout span {
+    margin-top: 0.2rem;
+    color: #ff918a;
   }
   .impact-flash {
     position: absolute;

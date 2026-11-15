@@ -1,6 +1,41 @@
 import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
-import type { ArcadeFighter, AttackKind, AttackVariant } from './types'
+import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
+
+type CancelMove = `${AttackVariant}:${AttackKind}`
+type CancelTable = Partial<Record<CancelMove, readonly AttackKind[]>>
+
+const UNIVERSAL_CANCELS: CancelTable = {
+  'standing:light': ['heavy'],
+  'low:light': ['heavy'],
+  'air:light': ['heavy'],
+  'standing:heavy': ['special'],
+  'low:heavy': ['special'],
+  'air:heavy': ['special'],
+}
+
+/** Character-owned exceptions. Missing entries inherit that character's universal routes. */
+export const CHARACTER_CANCELS: Partial<Record<FighterId, CancelTable>> = {
+  kurapika: {
+    'standing:light': ['heavy', 'special'],
+    'standing:heavy': ['special', 'ranged'],
+  },
+  hisoka: {
+    'standing:light': ['heavy', 'special'],
+    'air:heavy': ['special', 'ranged'],
+  },
+  chrollo: {
+    'standing:heavy': ['special', 'ranged'],
+  },
+  biscuit: {
+    'standing:light': ['heavy'],
+    'low:light': ['heavy', 'special'],
+  },
+  feitan: {
+    'air:light': ['heavy', 'special'],
+    'air:heavy': ['special'],
+  },
+}
 
 export function selectedVariant(fighter: ArcadeFighter): AttackVariant {
   if (fighter.y > 0) return 'air'
@@ -39,11 +74,14 @@ export function variantData(options: {
       box: { ...data.box, bottom: 0, top: 4.5 },
     }
   if (variant === 'air')
+    return { ...data, targetZone: 'head', box: { ...data.box, bottom: -5, top: 5 } }
+  if (kind === 'heavy') {
     return {
       ...data,
       targetZone: 'head',
-      box: { ...data.box, bottom: -5, top: 5 },
+      box: { ...data.box, bottom: 2.4, top: Math.max(15, data.box.top) },
     }
+  }
   return data
 }
 
@@ -52,11 +90,18 @@ export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
   if (!attack?.confirmedHit || attack.variant === 'throw') return false
   const currentMove = moveById(attack.moveId)
   if (currentMove) return Boolean(moveId && currentMove.cancelInto.includes(moveId))
-  const routes: Partial<Record<AttackKind, AttackKind[]>> = {
-    light: ['heavy'],
-    heavy: ['special'],
-  }
-  return Boolean(routes[attack.kind]?.includes(kind))
+  const move = `${attack.variant ?? 'standing'}:${attack.kind}` as CancelMove
+  const routes = CHARACTER_CANCELS[fighter.id]?.[move] ?? UNIVERSAL_CANCELS[move]
+  return Boolean(routes?.includes(kind))
+}
+
+export function cancelRoutes(
+  fighterId: FighterId,
+  kind: AttackKind,
+  variant: AttackVariant = 'standing',
+): readonly AttackKind[] {
+  const move = `${variant}:${kind}` as CancelMove
+  return CHARACTER_CANCELS[fighterId]?.[move] ?? UNIVERSAL_CANCELS[move] ?? []
 }
 
 export function blocksAttack(defender: ArcadeFighter, attacker: ArcadeFighter): boolean {

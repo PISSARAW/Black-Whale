@@ -7,8 +7,16 @@
     updateFighterFacing,
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
+  import {
+    impactReaction,
+    isThrowTech,
+    knockdownMotion,
+    throwTechMotion,
+    wakeupMotion,
+  } from '$lib/fighting/reactionMotion'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
+  import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -29,6 +37,8 @@
     special: 'idle',
     ranged: 'idle',
     hit: 'idle',
+    down: 'fallen',
+    wakeup: 'idle',
     ko: 'idle',
   }
 
@@ -139,14 +149,8 @@
         // ship again on every Ren would blank the arena for the length of it.
         const nenKey = (fighter: ArcadeFighter) => JSON.stringify(fighter.nen)
         const models = {
-          player: {
-            model: buildFighter(state.player),
-            nen: nenKey(state.player),
-          },
-          opponent: {
-            model: buildFighter(state.opponent),
-            nen: nenKey(state.opponent),
-          },
+          player: { model: buildFighter(state.player), nen: nenKey(state.player) },
+          opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
         }
         scene.add(models.player.model.root, models.opponent.model.root)
         const projectileScene = createProjectileScene({
@@ -157,6 +161,7 @@
           worldX,
           worldY,
         })
+        const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
           const nen = nenKey(fighter)
@@ -234,28 +239,55 @@
           model: ReturnType<typeof buildFighter>
           seconds: number
         }
+        function poseProgress(
+          fighter: ArcadeFighter,
+          { seconds, started }: { seconds: number; started: number },
+        ): number {
+          let progress = attackProgress(fighter)
+          if (fighter.pose === 'jump')
+            progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
+          if (fighter.pose === 'hit') progress = Math.min(1, Math.max(0, 1 - fighter.hitStun / 26))
+          if (fighter.pose === 'down')
+            progress = Math.min(1, Math.max(0, 1 - fighter.knockdownFrames / 42))
+          if (fighter.pose === 'wakeup')
+            progress = Math.min(1, Math.max(0, 1 - fighter.wakeupInvulnerableFrames / 18))
+          if (fighter.pose === 'ko')
+            progress = Math.min(1, (seconds - started) / (KO_DURATION * 1.35))
+          return progress
+        }
+
+        function reactionMotion(
+          fighter: ArcadeFighter,
+          progress: number,
+          side: 'player' | 'opponent',
+        ) {
+          let motion = fightMove(fighter, progress)
+          if (fighter.pose === 'hit' && state.impact?.attacker !== side)
+            motion = impactReaction(state.impact?.zone ?? 'torso', progress)
+          if (fighter.pose === 'down') motion = knockdownMotion(progress)
+          if (fighter.pose === 'wakeup') motion = wakeupMotion(progress)
+          if (isThrowTech(state)) motion = throwTechMotion(side)
+          return motion
+        }
+
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
           const held = poseStarts[side]
           if (!held || held.pose !== fighter.pose)
             poseStarts[side] = { pose: fighter.pose, at: seconds }
           const started = poseStarts[side]?.at ?? seconds
-          let progress = attackProgress(fighter)
-          if (fighter.pose === 'jump')
-            progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
-          if (fighter.pose === 'hit') progress = Math.min(1, Math.max(0, 1 - fighter.hitStun / 26))
-          if (fighter.pose === 'ko')
-            progress = Math.min(1, (seconds - started) / (KO_DURATION * 1.35))
+          const progress = poseProgress(fighter, { seconds, started })
           model.root.position.set(worldX(fighter.x), worldY(fighter.y), 0)
           const bodyAngle = updateFighterFacing(facings[side], fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
+          const motion = reactionMotion(fighter, progress, side)
           model.animate(seconds, MODEL_POSES[fighter.pose], {
             motion: trackFightOpponent({
               fighter,
               opponent,
               bodyAngle,
               seconds,
-              motion: fightMove(fighter, progress),
+              motion,
             }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
           })
@@ -273,6 +305,7 @@
             seconds,
           })
           projectileScene.sync(state.projectiles, seconds)
+          fighterEffects.sync(state, seconds)
           animateFighter({
             side: 'opponent',
             fighter: state.opponent,
@@ -322,6 +355,7 @@
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
           projectileScene.dispose()
+          fighterEffects.dispose()
           post?.dispose()
           scenery.dispose()
           renderer.dispose()

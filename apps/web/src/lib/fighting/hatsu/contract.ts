@@ -8,6 +8,7 @@ export interface HatsuTriggerContext {
 
 export interface HatsuImpactContext extends HatsuTriggerContext {
   defenderSide: FightSide
+  moveId?: string
   blocked: boolean
   concealed: boolean
 }

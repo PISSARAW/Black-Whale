@@ -55,7 +55,12 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
-  return baton * risingSun * transformed * cyclotron * cantabile * biohazard
+  const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
+  const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
+  const combo = fighter.hatsuEffects.comboFocusFrames > 0 ? 1.2 : 1
+  return (
+    baton * risingSun * transformed * cyclotron * cantabile * biohazard * haiku * growth * combo
+  )
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
@@ -63,14 +68,18 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
-  return transformed * cantabile * biohazard * predator
+  const growth = fighter.hatsuEffects.growthFrames > 0 ? 0.82 : 1
+  const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
+  return transformed * cantabile * biohazard * predator * growth * exposed
 }
 
 export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
   return (
     fighter.hatsuEffects.futureSight > 0 ||
     fighter.hatsuEffects.isolationFrames > 0 ||
-    fighter.hatsuEffects.cloneDodges > 0
+    fighter.hatsuEffects.cloneDodges > 0 ||
+    fighter.hatsuEffects.catCounters > 0 ||
+    fighter.hatsuEffects.teleportDodges > 0
   )
 }
 
@@ -98,9 +107,25 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
       hatsuEffects: { ...fighter.hatsuEffects, isolationFrames: 0 },
     }
   }
-  if (fighter.hatsuEffects.cloneDodges <= 0) return fighter
+  if (fighter.hatsuEffects.cloneDodges > 0) {
+    return {
+      ...fighter,
+      hatsuEffects: { ...fighter.hatsuEffects, cloneDodges: fighter.hatsuEffects.cloneDodges - 1 },
+    }
+  }
+  if (fighter.hatsuEffects.catCounters > 0) {
+    return {
+      ...fighter,
+      health: Math.min(100, fighter.health + 12),
+      hatsuEffects: { ...fighter.hatsuEffects, catCounters: fighter.hatsuEffects.catCounters - 1 },
+    }
+  }
+  if (fighter.hatsuEffects.teleportDodges <= 0) return fighter
   return {
     ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, cloneDodges: fighter.hatsuEffects.cloneDodges - 1 },
+    hatsuEffects: {
+      ...fighter.hatsuEffects,
+      teleportDodges: Math.max(0, fighter.hatsuEffects.teleportDodges - 1),
+    },
   }
 }

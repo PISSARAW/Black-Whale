@@ -1,5 +1,6 @@
 import type { AttackKind, FightNenZone, FighterId } from './types'
 import { SECOND_WAVE_STYLES } from './fightStylesSecondWave'
+import { THIRD_WAVE_STYLES } from './fightStylesThirdWave'
 
 export interface AttackTuning {
   startup?: number
@@ -382,6 +383,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
     },
   },
   ...SECOND_WAVE_STYLES,
+  ...THIRD_WAVE_STYLES,
 }
 
 export function fightingStyle(id: FighterId): FightingStyle {

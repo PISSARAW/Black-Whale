@@ -27,6 +27,14 @@ export type FighterId =
   | 'rihan'
   | 'zakuro'
   | 'melody'
+  | 'basho'
+  | 'camilla'
+  | 'halkenburg'
+  | 'gel'
+  | 'lynch'
+  | 'luini'
+  | 'bill'
+  | 'furykov'
 
 export type FighterPose =
   'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'ranged' | 'hit' | 'ko'
@@ -120,6 +128,13 @@ export interface FighterHatsuEffects {
   predatorFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
+  haikuFrames: number
+  catCounters: number
+  venomFrames: number
+  soulExposedFrames: number
+  teleportDodges: number
+  growthFrames: number
+  comboFocusFrames: number
   lastHatsuReceived: FighterId | null
 }
 

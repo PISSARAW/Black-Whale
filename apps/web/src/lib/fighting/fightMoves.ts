@@ -221,6 +221,44 @@ function secondWaveSpecial(rig: AnimatedHuman, options: SpecialGesture): void {
       rig.head.rotation.x += 0.2 * gather
       rig.arms.forEach((arm) => (arm.rotation.z += 0.5 * gather))
       break
+    default:
+      thirdWaveSpecial(rig, options)
+  }
+}
+
+function thirdWaveSpecial(rig: AnimatedHuman, options: SpecialGesture): void {
+  const { fighter, gather, release } = options
+  switch (fighter) {
+    case 'basho':
+      rig.arms[1].rotation.x -= 1.3 * release
+      rig.head.rotation.x += 0.2 * gather
+      break
+    case 'camilla':
+      rig.figure.rotation.y += 0.7 * gather - 1.1 * release
+      rig.arms[0].rotation.x -= 0.4 * gather
+      break
+    case 'halkenburg':
+      rig.arms[0].rotation.x -= 1.4 * gather
+      rig.arms[1].rotation.x -= 1.6 * release
+      break
+    case 'gel':
+      rig.figure.rotation.y -= 0.8 * release
+      rig.arms[1].rotation.z -= 1.2 * gather
+      break
+    case 'lynch':
+      rig.figure.rotation.x += 0.3 * gather - 0.65 * release
+      break
+    case 'luini':
+      rig.figure.rotation.y += 1.4 * gather - 1.8 * release
+      rig.arms[1].rotation.x -= 0.5 * release
+      break
+    case 'bill':
+      rig.arms.forEach((arm) => (arm.rotation.z += 0.65 * gather))
+      break
+    case 'furykov':
+      rig.figure.rotation.x -= 0.4 * release
+      rig.arms[1].rotation.x -= 1.45 * release
+      break
   }
 }
 

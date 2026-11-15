@@ -31,6 +31,14 @@ describe('fighting roster models', () => {
       'rihan',
       'zakuro-custard',
       'melody',
+      'basho',
+      'prince-camilla',
+      'prince-halkenburg',
+      'gel',
+      'lynch-fullbokko',
+      'luini',
+      'bill',
+      'furykov',
     ])
     expect(FIGHTING_ROSTER.every((fighter) => declared.has(fighter.modelId))).toBe(true)
   })

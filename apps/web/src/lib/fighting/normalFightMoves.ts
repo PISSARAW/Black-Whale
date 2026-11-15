@@ -166,7 +166,7 @@ function secondWaveLight(options: NormalMoveOptions): boolean {
       rig.figure.rotation.y -= 0.4 * extension
       break
     default:
-      return false
+      return thirdWaveLight(options)
   }
   return true
 }
@@ -200,6 +200,83 @@ function secondWaveHeavy(options: NormalMoveOptions): boolean {
       break
     case 'melody':
       rig.legs[1].rotation.x -= 0.6 * chamber + 0.8 * extension
+      break
+    default:
+      return thirdWaveHeavy(options)
+  }
+  return true
+}
+
+function thirdWaveLight(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension } = beat
+  switch (fighter) {
+    case 'basho':
+      rig.arms[1].rotation.x -= 0.9 * extension
+      rig.figure.rotation.z += 0.12 * gather
+      break
+    case 'camilla':
+      rig.figure.rotation.y += 0.5 * gather - 0.8 * extension
+      rig.arms[0].rotation.x -= 0.35 * gather
+      break
+    case 'halkenburg':
+      rig.figure.rotation.x -= 0.25 * extension
+      break
+    case 'gel':
+      rig.arms[1].rotation.z -= 0.9 * gather
+      rig.arms[1].rotation.x -= 0.5 * extension
+      break
+    case 'lynch':
+      rig.figure.rotation.x += 0.15 * gather - 0.45 * extension
+      break
+    case 'luini':
+      rig.figure.rotation.y += 1.05 * gather - 1.3 * extension
+      rig.arms[1].rotation.x -= 0.3 * extension
+      break
+    case 'bill':
+      rig.arms[0].rotation.x -= 0.55 * extension
+      break
+    case 'furykov':
+      rig.arms[1].rotation.x -= 0.75 * gather + 1.1 * extension
+      break
+    default:
+      return false
+  }
+  return true
+}
+
+function thirdWaveHeavy(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension, chamber } = beat
+  switch (fighter) {
+    case 'basho':
+      rig.figure.rotation.z += 0.25 * gather
+      rig.legs[1].rotation.x -= 0.9 * extension
+      break
+    case 'camilla':
+      rig.figure.rotation.y -= 0.75 * gather - 1.15 * extension
+      rig.arms[0].rotation.x -= 0.33 * gather
+      break
+    case 'halkenburg':
+      rig.arms[1].rotation.x -= 1.4 * gather + 0.8 * extension
+      break
+    case 'gel':
+      rig.legs[0].rotation.x -= 0.7 * chamber + 1.05 * extension
+      break
+    case 'lynch':
+      rig.arms[1].rotation.x -= 1.55 * gather + 1.2 * extension
+      break
+    case 'luini':
+      rig.figure.rotation.y += 1.2 * gather - 1.55 * extension
+      rig.arms[1].rotation.x -= 0.4 * extension
+      break
+    case 'bill':
+      rig.figure.rotation.x += 0.2 * gather - 0.5 * extension
+      rig.figure.rotation.z += 0.2 * gather
+      break
+    case 'furykov':
+      rig.figure.rotation.y -= 0.65 * gather - 1.05 * extension
+      rig.arms[0].rotation.x -= 0.5 * gather
       break
     default:
       return false

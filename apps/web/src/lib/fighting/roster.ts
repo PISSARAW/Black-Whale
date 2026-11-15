@@ -1,4 +1,5 @@
 import type { FighterDefinition, FighterId } from './types'
+import { THIRD_WAVE_ROSTER } from './rosterThirdWave'
 
 export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
   {
@@ -401,6 +402,7 @@ export const FIGHTING_ROSTER: readonly FighterDefinition[] = [
     reach: 6.8,
     specialRange: 30,
   },
+  ...THIRD_WAVE_ROSTER,
 ] as const
 
 export function fighterDefinition(id: FighterId): FighterDefinition {

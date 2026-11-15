@@ -335,4 +335,63 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.health).toBe(92)
     expect(struck.opponent.hitStun).toBe(30)
   })
+
+  it('activates the third wave’s three reinforcement Hatsu', () => {
+    for (const source of ['basho', 'bill', 'furykov'] as const) {
+      const state = hatsuFor(source).onTrigger({
+        state: closeFight(source, 'hisoka'),
+        side: 'player',
+        source,
+      })
+      expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
+    }
+  })
+
+  it('gives Camilla and Luini one defensive counter', () => {
+    for (const source of ['camilla', 'luini'] as const) {
+      const state = hatsuFor(source).onTrigger({
+        state: closeFight(source, 'hisoka'),
+        side: 'player',
+        source,
+      })
+      expect(hatsuAvoidsImpact(state.player)).toBe(true)
+      expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
+    }
+  })
+
+  it('makes Halkenburg’s collective arrow break aura and health', () => {
+    const ready = closeFight('halkenburg', 'hisoka')
+    const struck = hatsuFor('halkenburg').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'halkenburg',
+      blocked: false,
+      concealed: false,
+    })
+    expect(struck.opponent.health).toBe(80)
+    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(120)
+  })
+
+  it('lets Gel poison aura and Lynch expose the target’s soul', () => {
+    const ready = closeFight('gel', 'hisoka')
+    const poisoned = hatsuFor('gel').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'gel',
+      blocked: false,
+      concealed: false,
+    })
+    const exposed = hatsuFor('lynch').onImpact({
+      state: ready,
+      side: 'player',
+      defenderSide: 'opponent',
+      source: 'lynch',
+      blocked: false,
+      concealed: false,
+    })
+    expect(poisoned.opponent.hatsuEffects.venomFrames).toBe(180)
+    expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
+  })
 })

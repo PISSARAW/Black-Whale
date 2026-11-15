@@ -128,6 +128,14 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 11,
     size: [1, 0.75],
   }),
+  halkenburg: projectile({
+    labels: ['Flèche de Grimmel', 'Grimmel arrow'],
+    shape: 'bullet',
+    colour: '#f8fafc',
+    speed: 84,
+    damage: 12,
+    size: [1.1, 0.3],
+  }),
 }
 
 const THROWN_STONE = projectile({

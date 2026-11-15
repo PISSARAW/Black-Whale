@@ -1,0 +1,173 @@
+import type { AnimatedHuman, HumanMotion } from '$lib/tour/humanAnimation'
+import type { ArcadeFighter, AttackKind, FighterId, FighterPose } from './types'
+
+export const FIGHT_MOVE_TIMING: Record<
+  AttackKind,
+  { duration: number; impact: number; lunge: number }
+> = {
+  // These ratios mirror frameData's first active frame / total frames.
+  light: { duration: 18 / 60, impact: 5 / 18, lunge: 0.55 },
+  heavy: { duration: 34 / 60, impact: 12 / 34, lunge: 0.9 },
+  special: { duration: 50 / 60, impact: 16 / 50, lunge: 1.2 },
+}
+
+export const HIT_DURATION = 0.24
+export const KO_DURATION = 0.68
+
+const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
+const smooth = (value: number) => {
+  const x = clamp01(value)
+  return x * x * (3 - 2 * x)
+}
+
+/** Three continuous beats: preparation, contact, recovery. */
+function beats(progress: number, impact = 0.55): { windup: number; strike: number; return: number } {
+  const windupEnd = impact * 0.62
+  return {
+    windup: smooth(progress / windupEnd),
+    strike: smooth((progress - windupEnd) / (impact - windupEnd)),
+    return: smooth((progress - impact) / (1 - impact)),
+  }
+}
+
+function jab(rig: AnimatedHuman, progress: number): void {
+  const beat = beats(progress, FIGHT_MOVE_TIMING.light.impact)
+  const gather = beat.windup * (1 - beat.return)
+  const extension = beat.strike * (1 - beat.return)
+  rig.figure.rotation.y -= 0.16 * gather - 0.28 * extension
+  rig.figure.rotation.x -= 0.06 * extension
+  rig.arms[1].rotation.x -= 0.58 * gather + 0.9 * extension
+  rig.arms[1].rotation.z -= 0.18 * gather
+  rig.arms[1].children[1].rotation.x -= 1.05 * gather * (1 - beat.strike)
+  rig.arms[0].rotation.set(-0.7 * gather, 0, 0.58 * gather)
+  rig.arms[0].children[1].rotation.x -= 0.85 * gather
+}
+
+function heavyKick(rig: AnimatedHuman, progress: number): void {
+  const beat = beats(progress, FIGHT_MOVE_TIMING.heavy.impact)
+  const gather = beat.windup * (1 - beat.return)
+  const extension = beat.strike * (1 - beat.return)
+  const chamber = gather * (1 - beat.strike)
+  rig.figure.rotation.y -= 0.48 * gather - 0.82 * extension
+  rig.figure.rotation.z += 0.11 * gather - 0.24 * extension
+  rig.figure.rotation.x -= 0.14 * extension
+  rig.legs[1].rotation.x -= 0.72 * chamber + 1.24 * extension
+  rig.legs[1].rotation.z -= 0.18 * extension
+  rig.knees[1].rotation.x += 1.05 * chamber - 0.7 * extension
+  rig.knees[0].rotation.x += 0.18 * gather
+  rig.arms[0].rotation.z += 0.72 * gather
+  rig.arms[1].rotation.z -= 0.8 * gather
+}
+
+function special(rig: AnimatedHuman, fighter: FighterId, progress: number): void {
+  const beat = beats(progress, FIGHT_MOVE_TIMING.special.impact)
+  const release = beat.strike * (1 - beat.return)
+  const gather = beat.windup * (1 - beat.return)
+
+  switch (fighter) {
+    case 'kurapika':
+      rig.figure.rotation.y -= 0.35 * gather
+      rig.arms[0].rotation.set(-1.1 * gather, 0, 0.62 * gather)
+      rig.arms[0].children[1].rotation.x -= 1.25 * gather
+      rig.arms[1].rotation.set(-0.7 * gather - 0.95 * release, 0, -0.28 * gather)
+      rig.arms[1].children[1].rotation.x -= 0.95 * gather * (1 - beat.strike)
+      break
+    case 'hisoka':
+      rig.figure.rotation.y += 0.5 * gather - 0.92 * release
+      rig.figure.rotation.z -= 0.16 * gather
+      rig.arms[0].rotation.set(-0.75 * gather, 0, 1.2 * gather)
+      rig.arms[1].rotation.set(-0.5 * gather - 1.05 * release, 0, -1.05 * gather)
+      rig.arms[1].children[1].rotation.x -= 1.4 * gather * (1 - beat.strike)
+      break
+    case 'chrollo':
+      rig.head.rotation.x += 0.18 * gather
+      rig.arms[0].rotation.set(-0.86 * gather, 0, 0.42 * gather)
+      rig.arms[1].rotation.set(-0.86 * gather - 0.72 * release, 0, -0.42 * gather)
+      rig.arms[0].children[1].rotation.x -= 1.32 * gather
+      rig.arms[1].children[1].rotation.x -= 1.32 * gather * (1 - beat.strike)
+      rig.figure.rotation.y -= 0.5 * release
+      break
+    case 'morena':
+      rig.figure.rotation.x += 0.08 * gather
+      rig.head.rotation.z -= 0.18 * gather
+      rig.arms[0].rotation.set(-0.3 * gather, 0, 1.35 * gather)
+      rig.arms[1].rotation.set(-0.3 * gather, 0, -1.35 * gather)
+      rig.arms[1].rotation.x -= 1.05 * release
+      rig.knees.forEach((knee) => (knee.rotation.x += 0.24 * gather))
+      break
+    case 'benjamin':
+      rig.figure.rotation.x += 0.18 * gather - 0.48 * release
+      rig.arms[0].rotation.set(-1.75 * gather, 0, 0.28 * gather)
+      rig.arms[1].rotation.set(-1.75 * gather, 0, -0.28 * gather)
+      rig.arms.forEach((arm) => (arm.children[1].rotation.x -= 0.62 * gather))
+      rig.knees.forEach((knee) => (knee.rotation.x += 0.34 * gather))
+      break
+    case 'tserriednich':
+      rig.figure.rotation.y += 0.72 * gather - 1.12 * release
+      rig.figure.rotation.z += 0.12 * gather
+      rig.head.rotation.y -= 0.38 * gather
+      rig.arms[0].rotation.set(-1.18 * gather, 0, 0.4 * gather)
+      rig.arms[1].rotation.set(-0.42 * gather - 1.2 * release, 0, -0.8 * gather)
+      rig.arms[1].children[1].rotation.x -= 1.05 * gather * (1 - beat.strike)
+      break
+  }
+}
+
+function jump(rig: AnimatedHuman, progress: number): void {
+  const launch = smooth(progress / 0.22)
+  const land = smooth((progress - 0.72) / 0.28)
+  const tuck = Math.sin(clamp01(progress) * Math.PI)
+  rig.figure.rotation.x -= 0.1 * launch * (1 - land)
+  rig.legs.forEach((leg, index) => {
+    leg.rotation.x += (index === 0 ? 0.35 : -0.15) * tuck
+  })
+  rig.knees.forEach((knee) => (knee.rotation.x += 0.72 * tuck + 0.34 * land))
+  rig.arms.forEach((arm, index) => {
+    arm.rotation.x -= 0.7 * launch * (1 - land)
+    arm.rotation.z += (index === 0 ? 1 : -1) * 0.22 * launch
+  })
+}
+
+function recoil(rig: AnimatedHuman, progress: number): void {
+  const snap = smooth(progress / 0.28)
+  const recover = smooth((progress - 0.28) / 0.72)
+  const amount = snap * (1 - recover)
+  rig.figure.rotation.z -= 0.34 * amount
+  rig.figure.rotation.x += 0.2 * amount
+  rig.figure.position.x += 0.12 * amount
+  rig.head.rotation.x -= 0.25 * amount
+  rig.arms[0].rotation.z += 0.55 * amount
+  rig.arms[1].rotation.z -= 0.42 * amount
+}
+
+function fall(rig: AnimatedHuman, progress: number): void {
+  const drop = smooth(progress)
+  rig.figure.rotation.z += 1.42 * drop
+  rig.figure.rotation.x += 0.16 * Math.sin(drop * Math.PI)
+  rig.figure.position.y += 0.24 * drop
+  rig.figure.position.x += 0.18 * drop
+  rig.arms[0].rotation.z += 0.72 * drop
+  rig.arms[1].rotation.z -= 0.88 * drop
+  rig.knees[1].rotation.x += 0.7 * drop
+}
+
+export function fightMove(
+  fighter: Pick<ArcadeFighter, 'id' | 'pose'>,
+  progress: number,
+): HumanMotion | undefined {
+  const value = clamp01(progress)
+  if (fighter.pose === 'light') return (rig) => jab(rig, value)
+  if (fighter.pose === 'heavy') return (rig) => heavyKick(rig, value)
+  if (fighter.pose === 'special') return (rig) => special(rig, fighter.id, value)
+  if (fighter.pose === 'jump') return (rig) => jump(rig, value)
+  if (fighter.pose === 'hit') return (rig) => recoil(rig, value)
+  if (fighter.pose === 'ko') return (rig) => fall(rig, value)
+  return undefined
+}
+
+export function fightMoveDuration(pose: FighterPose): number {
+  if (pose === 'light' || pose === 'heavy' || pose === 'special') return FIGHT_MOVE_TIMING[pose].duration
+  if (pose === 'hit') return HIT_DURATION
+  if (pose === 'ko') return KO_DURATION
+  return 0
+}

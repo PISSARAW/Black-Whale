@@ -16,7 +16,7 @@ interface PosedHuman {
   knees: Group[]
 }
 
-interface AnimatedHuman {
+export interface AnimatedHuman {
   pose: HumanPose
   figure: Group
   torso: Object3D
@@ -25,6 +25,52 @@ interface AnimatedHuman {
   arms: Group[]
   legs: Group[]
   knees: Group[]
+}
+
+/** A game-specific motion layered on top of the shared body poses. */
+export type HumanMotion = (rig: AnimatedHuman) => void
+
+export interface HumanAnimationLayer {
+  motion?: HumanMotion
+  transitionKey?: string
+}
+
+interface TransformFrame {
+  positions: ReturnType<Object3D['position']['clone']>[]
+  rotations: Euler[]
+}
+
+const TRANSITION_SECONDS = 0.1
+
+function animatedParts(rig: AnimatedHuman): Object3D[] {
+  return [
+    rig.figure,
+    rig.torso,
+    rig.pelvis,
+    rig.head,
+    ...rig.arms,
+    ...rig.arms.map((arm) => arm.children[1]),
+    ...rig.legs,
+    ...rig.knees,
+  ]
+}
+
+function frameOf(parts: Object3D[]): TransformFrame {
+  return {
+    positions: parts.map((part) => part.position.clone()),
+    rotations: parts.map((part) => part.rotation.clone()),
+  }
+}
+
+function blendFrame(parts: Object3D[], from: TransformFrame, amount: number): void {
+  parts.forEach((part, index) => {
+    part.position.lerpVectors(from.positions[index], part.position, amount)
+    part.rotation.set(
+      from.rotations[index].x + (part.rotation.x - from.rotations[index].x) * amount,
+      from.rotations[index].y + (part.rotation.y - from.rotations[index].y) * amount,
+      from.rotations[index].z + (part.rotation.z - from.rotations[index].z) * amount,
+    )
+  })
 }
 
 /**
@@ -91,7 +137,9 @@ export function poseHuman(rig: PosedHuman): void {
   }
 }
 
-export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: HumanPose) => void {
+export function humanAnimation(
+  rig: AnimatedHuman,
+): (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void {
   if (rig.pose === 'flute') raiseConcertFlute(rig.figure)
   const flute = rig.figure.getObjectByName('signature-flute')
   const fluteBasePosition = flute?.position.clone()
@@ -107,8 +155,18 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
   const headBase = rig.head.rotation.clone()
   const torsoBaseY = rig.torso.position.y
   const pelvisBaseX = rig.pelvis.position.x
+  const parts = animatedParts(rig)
+  let displayedPose: string = rig.pose
+  let transitionFrom: TransformFrame | null = null
+  let transitionStarted = 0
 
-  return (seconds: number, pose = rig.pose) => {
+  return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
+    const transitionKey = layer?.transitionKey ?? pose
+    if (transitionKey !== displayedPose) {
+      transitionFrom = frameOf(parts)
+      transitionStarted = seconds
+      displayedPose = transitionKey
+    }
     rig.figure.position.copy(figureBasePosition)
     rig.figure.rotation.copy(figureBaseRotation)
     rig.arms.forEach((arm, index) => {
@@ -201,6 +259,13 @@ export function humanAnimation(rig: AnimatedHuman): (seconds: number, pose?: Hum
       rig.arms[1].rotation.z = -0.9
       rig.arms[0].children[1].rotation.x = -0.55
       rig.knees[1].rotation.x = 0.65
+    }
+
+    layer?.motion?.(rig)
+    if (transitionFrom) {
+      const amount = Math.min(1, Math.max(0, (seconds - transitionStarted) / TRANSITION_SECONDS))
+      blendFrame(parts, transitionFrom, amount)
+      if (amount === 1) transitionFrom = null
     }
   }
 }

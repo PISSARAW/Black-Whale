@@ -1,6 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { attackProgress } from '$lib/fighting/frameData'
+  import {
+    createFighterFacing,
+    trackFightOpponent,
+    updateFighterFacing,
+  } from '$lib/fighting/fighterFacing'
+  import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
   import type { ArcadeFighter, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
 
@@ -14,13 +21,13 @@
   const MODEL_POSES: Record<FighterPose, HumanPose> = {
     idle: 'idle',
     walk: 'walk',
-    jump: 'brace',
+    jump: 'idle',
     guard: 'guard',
-    light: 'attack',
-    heavy: 'attack',
-    special: 'attack',
-    hit: 'held',
-    ko: 'fallen',
+    light: 'idle',
+    heavy: 'idle',
+    special: 'idle',
+    hit: 'idle',
+    ko: 'idle',
   }
 
   $: definition = fighterDefinition(fighter.id)
@@ -29,7 +36,7 @@
     let disposed = false
     let frame = 0
     let resize: ResizeObserver | null = null
-    let teardown = () => undefined
+    let teardown: () => void = () => undefined
 
     async function mountModel() {
       try {
@@ -85,12 +92,15 @@
               role: definition.modelRole,
               identity: definition.modelId,
               pose: 'idle',
-              aura: 'ten',
+              aura: fighter.nen.mode,
+              nen: fighter.nen,
             },
           },
         })
         scene.add(model.root)
-        const animate = model.animate as (seconds: number, pose?: HumanPose) => void
+        let renderedPose: FighterPose = fighter.pose
+        let poseStarted = performance.now() / 1000
+        const facing = createFighterFacing(fighter.facing, poseStarted)
 
         const fit = () => {
           if (!canvas) return
@@ -106,9 +116,34 @@
 
         const render = (time: number) => {
           if (disposed) return
+          const seconds = time / 1000
+          if (fighter.pose !== renderedPose) {
+            renderedPose = fighter.pose
+            poseStarted = seconds
+          }
           const pose = MODEL_POSES[fighter.pose]
-          model.root.rotation.y = preview ? -0.28 : fighter.facing === 1 ? -0.62 : 0.62
-          animate(time / 1000, pose)
+          let progress = attackProgress(fighter)
+          if (fighter.pose === 'jump') {
+            progress = Math.min(1, Math.max(0, (48 - fighter.velocityY) / 96))
+          } else if (fighter.pose === 'hit') {
+            progress = Math.min(1, Math.max(0, 1 - fighter.hitStun / 26))
+          } else if (fighter.pose === 'ko') {
+            // The match loop stops on K.O.; the fall finishes on the render clock.
+            progress = Math.max(progress, Math.min(1, (seconds - poseStarted) / KO_DURATION))
+          }
+          const bodyAngle = preview ? -0.28 : updateFighterFacing(facing, fighter.facing, seconds)
+          model.root.rotation.y = bodyAngle
+          model.animate(seconds, pose, {
+            motion: preview
+              ? fightMove(fighter, progress)
+              : trackFightOpponent({
+                  fighter,
+                  bodyAngle,
+                  seconds,
+                  motion: fightMove(fighter, progress),
+                }),
+            transitionKey: fighter.pose,
+          })
           renderer.render(scene, camera)
           if (!preview) frame = requestAnimationFrame(render)
         }

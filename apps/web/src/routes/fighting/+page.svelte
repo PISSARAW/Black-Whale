@@ -11,9 +11,17 @@
     opponentAttack,
     performAttack,
     tickFight,
+    useNen,
   } from '$lib/fighting/engine'
   import { FIGHTING_ROSTER, fighterDefinition } from '$lib/fighting/roster'
-  import { EMPTY_INPUT, type AttackKind, type FightInput, type FightState, type FighterId } from '$lib/fighting/types'
+  import {
+    EMPTY_INPUT,
+    type AttackKind,
+    type FightInput,
+    type FightNenCommand,
+    type FightState,
+    type FighterId,
+  } from '$lib/fighting/types'
   import './fighting.css'
 
   let selectedPlayer: FighterId = 'kurapika'
@@ -24,47 +32,49 @@
   let language: 'fr' | 'en'
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
-  $: copy = language === 'fr'
-    ? {
-        eyebrow: 'NOUVEAU MODE · DUEL 2D',
-        title: 'Black Whale: Clash',
-        intro: 'Choisis ton combattant, maîtrise son aura et impose-toi avant la fin du chronomètre.',
-        player: 'Ton combattant',
-        opponent: 'Adversaire',
-        launch: 'Entrer dans l’arène',
-        ready: 'PRÊT ?',
-        fight: 'COMBATTRE',
-        victory: 'VICTOIRE',
-        defeat: 'DÉFAITE',
-        draw: 'ÉGALITÉ',
-        rematch: 'Revanche',
-        roster: 'Changer de combattants',
-        controls: 'Commandes',
-        movement: 'Q / D ou flèches : déplacement',
-        jump: 'Z ou ↑ : saut · S ou ↓ : garde',
-        attacks: 'J : rapide · K : puissante · L : Hatsu',
-        aura: 'Le Hatsu consomme 40 points d’aura.',
-      }
-    : {
-        eyebrow: 'NEW MODE · 2D DUEL',
-        title: 'Black Whale: Clash',
-        intro: 'Choose your fighter, master their aura and prevail before the timer runs out.',
-        player: 'Your fighter',
-        opponent: 'Opponent',
-        launch: 'Enter the arena',
-        ready: 'READY?',
-        fight: 'FIGHT',
-        victory: 'VICTORY',
-        defeat: 'DEFEAT',
-        draw: 'DRAW',
-        rematch: 'Rematch',
-        roster: 'Change fighters',
-        controls: 'Controls',
-        movement: 'A / D or arrows: move',
-        jump: 'W or ↑: jump · S or ↓: block',
-        attacks: 'J: quick · K: heavy · L: Hatsu',
-        aura: 'Hatsu consumes 40 aura points.',
-      }
+  $: copy =
+    language === 'fr'
+      ? {
+          eyebrow: 'NOUVEAU MODE · DUEL 2D',
+          title: 'Black Whale: Clash',
+          intro:
+            'Choisis ton combattant, maîtrise son aura et impose-toi avant la fin du chronomètre.',
+          player: 'Ton combattant',
+          opponent: 'Adversaire',
+          launch: 'Entrer dans l’arène',
+          ready: 'PRÊT ?',
+          fight: 'COMBATTRE',
+          victory: 'VICTOIRE',
+          defeat: 'DÉFAITE',
+          draw: 'ÉGALITÉ',
+          rematch: 'Revanche',
+          roster: 'Changer de combattants',
+          controls: 'Commandes',
+          movement: 'Q / D ou flèches : déplacement',
+          jump: 'Z ou ↑ : saut · S ou ↓ : garde',
+          attacks: 'J : rapide · K : puissante · L : Hatsu',
+          aura: '1–9 : Ten, Ren, Zetsu, Ken, Gyo, Ko, Ryu, In et En. Le Hatsu coûte 40 aura.',
+        }
+      : {
+          eyebrow: 'NEW MODE · 2D DUEL',
+          title: 'Black Whale: Clash',
+          intro: 'Choose your fighter, master their aura and prevail before the timer runs out.',
+          player: 'Your fighter',
+          opponent: 'Opponent',
+          launch: 'Enter the arena',
+          ready: 'READY?',
+          fight: 'FIGHT',
+          victory: 'VICTORY',
+          defeat: 'DEFEAT',
+          draw: 'DRAW',
+          rematch: 'Rematch',
+          roster: 'Change fighters',
+          controls: 'Controls',
+          movement: 'A / D or arrows: move',
+          jump: 'W or ↑: jump · S or ↓: block',
+          attacks: 'J: quick · K: heavy · L: Hatsu',
+          aura: '1–9: Ten, Ren, Zetsu, Ken, Gyo, Ko, Ryu, In and En. Hatsu costs 40 aura.',
+        }
 
   function previewFighter(id: FighterId) {
     return createFight(id, id).player
@@ -98,6 +108,10 @@
     if (state) state = performAttack(state, 'player', kind)
   }
 
+  function nen(command: FightNenCommand) {
+    if (state) state = useNen(state, 'player', command)
+  }
+
   function control(key: keyof FightInput, active: boolean) {
     input = { ...input, [key]: active }
   }
@@ -126,6 +140,18 @@
     l: 'special',
   }
 
+  const nenKeys: Record<string, FightNenCommand> = {
+    '1': 'ten',
+    '2': 'ren',
+    '3': 'zetsu',
+    '4': 'ken',
+    '5': 'gyo',
+    '6': 'ko',
+    '7': 'ryu',
+    '8': 'in',
+    '9': 'en',
+  }
+
   function handleKey(event: KeyboardEvent, active: boolean) {
     if (!state) return
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
@@ -138,6 +164,8 @@
     if (!active || event.repeat) return
     const attackKind = attackKeys[key]
     if (attackKind) attack(attackKind)
+    const nenCommand = nenKeys[key]
+    if (nenCommand) nen(nenCommand)
     if (key === 'Enter' && state.phase === 'ready') startFight()
   }
 
@@ -195,7 +223,10 @@
   </header>
 
   {#if !state}
-    <section class="selection-panel" aria-label={language === 'fr' ? 'Sélection des combattants' : 'Fighter selection'}>
+    <section
+      class="selection-panel"
+      aria-label={language === 'fr' ? 'Sélection des combattants' : 'Fighter selection'}
+    >
       <div class="selection-column">
         <p class="selection-label"><span>01</span>{copy.player}</p>
         <div class="roster-grid">
@@ -206,7 +237,9 @@
               aria-pressed={selectedPlayer === fighter.id}
               onclick={() => (selectedPlayer = fighter.id)}
             >
-              <span class="portrait"><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span>
+              <span class="portrait"
+                ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
+              >
               <strong>{fighter.name}</strong>
               <small>{language === 'fr' ? fighter.titleFr : fighter.titleEn}</small>
             </button>
@@ -226,7 +259,9 @@
               aria-pressed={selectedOpponent === fighter.id}
               onclick={() => setOpponent(fighter.id)}
             >
-              <span class="portrait"><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span>
+              <span class="portrait"
+                ><FighterAvatar fighter={previewFighter(fighter.id)} preview /></span
+              >
               <strong>{fighter.name}</strong>
               <small>{language === 'fr' ? fighter.specialFr : fighter.specialEn}</small>
             </button>
@@ -249,11 +284,14 @@
     </div>
   {:else}
     <div class="stage-wrap">
-      <FightStage {state} {language} onAttack={attack} onControl={control} />
+      <FightStage {state} {language} onAttack={attack} onControl={control} onNen={nen} />
 
       {#if state.phase === 'ready'}
         <div class="match-overlay ready-overlay">
-          <p>{fighterDefinition(state.player.id).name} <span>VS</span> {fighterDefinition(state.opponent.id).name}</p>
+          <p>
+            {fighterDefinition(state.player.id).name} <span>VS</span>
+            {fighterDefinition(state.opponent.id).name}
+          </p>
           <h2>{copy.ready}</h2>
           <button type="button" onclick={startFight}>{copy.fight}</button>
         </div>

@@ -23,16 +23,20 @@ describe('humanAnimation', () => {
     const animate = humanAnimation(human)
 
     animate(1, 'attack')
+    animate(1.11, 'attack')
     expect(human.arms[1].rotation.x).toBeLessThan(-1.2)
 
     animate(1, 'guard')
+    animate(1.11, 'guard')
     expect(human.arms[0].rotation.z).toBeCloseTo(0.64)
     expect(human.arms[1].rotation.z).toBeCloseTo(-0.64)
 
     animate(1, 'fallen')
+    animate(1.11, 'fallen')
     expect(human.figure.rotation.z).toBeCloseTo(1.3)
 
     animate(1, 'idle')
+    animate(1.11, 'idle')
     expect(human.figure.rotation.z).toBe(0)
     expect(human.arms[1].rotation.z).toBe(0)
   })
@@ -44,11 +48,13 @@ describe('humanAnimation', () => {
     const animate = humanAnimation(human)
 
     animate(1, 'walk')
+    animate(1.11, 'walk')
     expect(human.arms[0].rotation.z).toBeCloseTo(0)
     expect(human.arms[0].children[1]!.rotation.x).toBeCloseTo(0)
     expect(human.arms[0].rotation.x).not.toBeCloseTo(human.arms[1].rotation.x)
 
     animate(1, 'guard')
+    animate(1.11, 'guard')
     expect(human.arms[0].rotation.z).toBeCloseTo(0.64)
   })
 

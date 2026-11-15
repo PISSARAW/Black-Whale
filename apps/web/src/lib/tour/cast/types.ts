@@ -321,7 +321,6 @@ export interface Mark {
  * outside the folder had to change.
  */
 export type { TourWorld } from './world'
-export type { SpatialTeleportationState } from './spatial'
 export type { SolidHold, TourBook, TourBody, VowState } from './worldPieces'
 export { CLOSED_BOOK, EMPTY_WORLD, RESTING_BODY } from './worldPieces'
 export type { TourReport } from './report'

@@ -5,6 +5,7 @@ WORKDIR /app
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @black-whale/database generate
+RUN pnpm --filter @black-whale/web exec svelte-kit sync
 RUN pnpm turbo build --filter=@black-whale/web
 
 FROM node:20-alpine AS runner

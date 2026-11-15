@@ -1,7 +1,7 @@
 import type * as Three from 'three'
 import type { Vec2 } from './types'
 import type { TourFlash } from './apparitions'
-import { LaplaceDevilEffect, type LaplaceFrame, type LaplaceReset } from './LaplaceDevilEffect'
+import { HatsuRewindEffect, type RewindFrame } from './HatsuRewindEffect'
 import { HatsuVolleyEffect } from './HatsuVolleyEffect'
 import { HatsuWindingEffect, type WindingFrame } from './HatsuWindingEffect'
 import { HatsuJupiterEffect } from './HatsuJupiterEffect'
@@ -71,7 +71,7 @@ export class HatsuSceneEffects {
   readonly #seamGeometry: Three.BufferGeometry
   readonly #seamMaterial: Three.LineBasicMaterial
   readonly #fistMaterial: Three.MeshBasicMaterial
-  readonly #laplace: LaplaceDevilEffect
+  readonly #rewind: HatsuRewindEffect
   readonly #winding: HatsuWindingEffect
   readonly #volley: HatsuVolleyEffect
   #playing = 0
@@ -206,7 +206,7 @@ export class HatsuSceneEffects {
     this.#seam.visible = false
     this.#seam.frustumCulled = false
     this.#seam.renderOrder = 3
-    this.#laplace = new LaplaceDevilEffect(THREE, scene)
+    this.#rewind = new HatsuRewindEffect(THREE, scene)
     this.#winding = new HatsuWindingEffect(THREE, scene)
     this.#volley = new HatsuVolleyEffect(THREE, scene)
     scene.add(
@@ -242,12 +242,16 @@ export class HatsuSceneEffects {
     return true
   }
 
-  get laplaceClockOffset(): number {
-    return this.#laplace.clockOffset
+  get rewindOffset(): number {
+    return this.#rewind.offset
   }
 
-  updateLaplace(frame: LaplaceFrame): LaplaceReset | null {
-    return this.#laplace.update(frame)
+  updateRewind(frame: RewindFrame): void {
+    this.#rewind.update(frame)
+  }
+
+  startRewind(): void {
+    this.#rewind.start()
   }
 
   /** The arm still turning, worn by whoever wound it. See `HatsuWindingEffect`. */
@@ -479,7 +483,7 @@ export class HatsuSceneEffects {
     this.#arrowMaterial.dispose()
     this.#fist.traverse((part: Three.Object3D) => (part as Three.Mesh).geometry?.dispose())
     this.#fistMaterial.dispose()
-    this.#laplace.dispose()
+    this.#rewind.dispose()
     this.#winding.dispose()
     this.#volley.dispose()
   }

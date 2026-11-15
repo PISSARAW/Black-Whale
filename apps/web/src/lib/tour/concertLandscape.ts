@@ -327,27 +327,21 @@ function panoramaMountains(THREE: typeof Three, spec: ConcertLandscapeSpec): Thr
     for (let sector = 0; sector < sectors; sector++) {
       const a = (sector / sectors) * Math.PI * 2
       const b = ((sector + 1) / sectors) * Math.PI * 2
-      const middle = (a + b) / 2
-      const forwardDistance = Math.abs(
-        Math.atan2(Math.sin(middle - Math.PI / 2), Math.cos(middle - Math.PI / 2)),
-      )
-      // Preserve the deliberate white opening directly behind Melody.
-      const opening = ring === 0 ? 0.5 : 0.36
-      if (forwardDistance < opening) continue
       const point = (angle: number, atRadius: number, y: number): [number, number, number] => [
         spec.origin[0] + Math.cos(angle) * atRadius,
         y,
         spec.origin[1] + Math.sin(angle) * atRadius,
       ]
       const height = (angle: number, index: number) => {
-        const edgeDistance = Math.abs(
-          Math.atan2(Math.sin(angle - Math.PI / 2), Math.cos(angle - Math.PI / 2)),
+        const forwardDistance = Math.atan2(
+          Math.sin(angle - Math.PI / 2),
+          Math.cos(angle - Math.PI / 2),
         )
-        const shoulder = Math.min(1, Math.max(0, (edgeDistance - opening) / 0.35))
+        const opening = Math.exp(-Math.pow(forwardDistance / 0.52, 2))
         const jagged =
           Math.abs(Math.sin(index * 0.61 + ring * 1.8)) * (19 + ring * 5) +
           Math.sin(index * 1.93 + ring) * 5
-        return spec.floor + 12 + ring * 8 + jagged * (0.45 + shoulder * 0.55)
+        return spec.floor + 17 + ring * 9 + jagged * (1 - opening * 0.58)
       }
       const baseA = point(a, radius - 23, spec.floor - 6)
       const baseB = point(b, radius - 23, spec.floor - 6)

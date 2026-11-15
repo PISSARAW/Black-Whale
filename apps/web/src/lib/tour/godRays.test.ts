@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from './blueprint'
-import { SHAFT_PEAK, shaftAnchorOf, shaftAnchors, shaftStrength } from './godRays'
+import { SHAFT_PEAK, SHAFT_THRESHOLD, shaftAnchorOf, shaftAnchors, shaftStrength } from './godRays'
+import { WINDOW_GLOW } from './mesh'
 import type { Structure } from './types'
 
 const ship = theShip()
+const luminance = ([red, green, blue]: readonly [number, number, number]) =>
+  0.2126 * red + 0.7152 * green + 0.0722 * blue
 
 const pane = (over: Partial<Structure> = {}): Structure =>
   ({
@@ -68,6 +71,10 @@ describe('which decks have shafts at all', () => {
 })
 
 describe('how hard the shafts blow', () => {
+  it('keeps the actual window pane above the source threshold', () => {
+    expect(luminance(WINDOW_GLOW)).toBeGreaterThan(SHAFT_THRESHOLD)
+  })
+
   it('is at full strength with the window dead ahead', () => {
     expect(shaftStrength({ x: 0, y: 0, z: 0.5 }, SHAFT_PEAK)).toBeCloseTo(SHAFT_PEAK)
   })

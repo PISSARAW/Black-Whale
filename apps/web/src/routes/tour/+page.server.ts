@@ -1,41 +1,41 @@
-import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
-import { prisma } from '$lib/server/db'
 import { localizedLoad } from '$lib/server/localized-load'
-import { describeError, log } from '$lib/server/log'
+import { prisma } from '$lib/server/db'
 import { readSpoilerLimit, readSpoilerProfile } from '$lib/server/spoiler'
 import { timeline } from '$lib/server/timeline'
+import { selectEvent } from '@black-whale/canon-engine'
+import { HATSU_PROFILES } from '$lib/nen/hatsuRegistry'
+import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
 import { BODY_KINDS } from '$lib/tour/bodyKinds'
-import type { CastMember, CastPayload } from '$lib/tour/cast'
 import {
-  contextLinesFor,
   dossierFor,
+  contextLinesFor,
   eventHatsuFor,
   inSlugSpace,
   rosterFrom,
   type CastDossier,
   type DossierAbility,
   type DossierCharacter,
-  type EventHatsuUse,
   type RosterAbility,
   type RosterCharacter,
+  type EventHatsuUse,
 } from '$lib/tour/cast'
+import type { CastMember, CastPayload } from '$lib/tour/cast'
+import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
+import { mangaViewById } from '$lib/tour/mangaViews'
+import { mangaEventFor } from '$lib/tour/mangaEvent'
+import characterCatalog from '../../../../../data/characters/characters.json'
+import abilityCatalog from '../../../../../data/abilities/abilities.json'
+import abilityUseCatalog from '../../../../../data/abilities/uses.json'
+import factionCatalog from '../../../../../data/factions/factions.json'
+import eventCatalog from '../../../../../data/events/events.json'
+import objectCatalog from '../../../../../data/objects/objects.json'
+import type { PageServerLoad } from './$types'
+import { log, describeError } from '$lib/server/log'
 import {
   auraObjectsThrough,
   auraTracesThrough,
   type AuraObjectRecord,
 } from '$lib/tour/cast/auraSources'
-import { TOUR_HATSU_KINDS } from '$lib/tour/hatsu'
-import { NO_HOUR, shipHourOf, type ShipHour } from '$lib/tour/hour'
-import { mangaEventFor } from '$lib/tour/mangaEvent'
-import { mangaViewById } from '$lib/tour/mangaViews'
-import { selectEvent } from '@black-whale/canon-engine'
-import abilityCatalog from '../../../../../data/abilities/abilities.json'
-import abilityUseCatalog from '../../../../../data/abilities/uses.json'
-import characterCatalog from '../../../../../data/characters/characters.json'
-import eventCatalog from '../../../../../data/events/events.json'
-import factionCatalog from '../../../../../data/factions/factions.json'
-import objectCatalog from '../../../../../data/objects/objects.json'
-import type { PageServerLoad } from './$types'
 
 /**
  * Who is aboard while the visitor walks.
@@ -120,21 +120,32 @@ interface CatalogEvent {
   events?: CatalogDomainEvent[]
 }
 
+function eventIsAfter(
+  event: CatalogEvent,
+  selected: { chapter: { number: number }; sequence: number },
+): boolean {
+  if (event.chapter !== selected.chapter.number) return event.chapter > selected.chapter.number
+  return event.sequence > selected.sequence
+}
+
+function catalogVestige(domain: CatalogDomainEvent) {
+  if (domain.type !== 'ENVIRONMENT_ALTERED') return null
+  const payload = domain.payload
+  if (!payload?.locationId || !payload.vestigeType) return null
+  return {
+    locationId: payload.locationId,
+    vestige: { type: payload.vestigeType, metadata: payload.metadata },
+  }
+}
+
 function vestigesThrough(selected: { id: string; chapter: { number: number }; sequence: number }) {
   const found: Record<string, import('$lib/tour/cast/types').TourVestige[]> = {}
   for (const event of eventCatalog as CatalogEvent[]) {
-    if (
-      event.chapter > selected.chapter.number ||
-      (event.chapter === selected.chapter.number && event.sequence > selected.sequence)
-    )
-      continue
+    if (eventIsAfter(event, selected)) continue
     for (const domain of event.events ?? []) {
-      const payload = domain.payload!
-      if (!isVestige(domain)) continue
-      found[payload.locationId!] = [
-        ...(found[payload.locationId!] ?? []),
-        { type: payload.vestigeType!, metadata: payload.metadata },
-      ]
+      const entry = catalogVestige(domain)
+      if (!entry) continue
+      found[entry.locationId] = [...(found[entry.locationId] ?? []), entry.vestige]
     }
   }
   return found
@@ -147,13 +158,17 @@ function vestigesThrough(selected: { id: string; chapter: { number: number }; se
  * whose entry has vanished from the catalogue simply has no dossier: the panel
  * shows what it has, which is the same thing the fiche has always done.
  */
-function dossiersFor(members: readonly CastMember[], cap: number | null) {
+function dossiersFor(
+  members: readonly CastMember[],
+  timing: { cap: number | null; chapter: number },
+) {
   const found: Record<string, CastDossier> = {}
   for (const member of members) {
     const character = dossierCatalogue.get(member.characterId)
     if (!character) continue
     found[member.characterId] = dossierFor(character, {
-      cap,
+      cap: timing.cap,
+      chapter: timing.chapter,
       factions: factionNames,
       abilities: dossierAbilities,
     })
@@ -250,7 +265,7 @@ const aboardAt = async ({ url, cookies }: Parameters<PageServerLoad>[0]): Promis
       spoilerLimit: cap,
       members: aboard,
       beasts,
-      dossiers: dossiersFor(aboard, cap),
+      dossiers: dossiersFor(aboard, { cap, chapter: event.chapter.number }),
       dialogue: contextLinesFor(aboard, {
         id: event.id,
         chapter: event.chapter.number,
@@ -290,11 +305,4 @@ function empty(spoilerLimit: number | null): CastPayload {
     auraTraces: [],
     auraObjects: [],
   }
-}
-
-function isVestige(domain: CatalogDomainEvent): boolean {
-  return (
-    domain.type === 'ENVIRONMENT_ALTERED' &&
-    Boolean(domain.payload?.locationId && domain.payload.vestigeType)
-  )
 }

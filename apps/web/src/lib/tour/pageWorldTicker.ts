@@ -1,12 +1,6 @@
 import type { Ship } from '$lib/tour/blueprint'
 import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
-import {
-  burnSpatialAnchor,
-  spatialPortalExit,
-  wormExit,
-  type TourReport,
-  type TourWorld,
-} from '$lib/tour/hatsu'
+import { wormExit, type TourReport, type TourWorld } from '$lib/tour/hatsu'
 import {
   stepBeast,
   stepCoin,
@@ -143,16 +137,5 @@ export class TourWorldTicker {
     if (!crossing) return null
     this.apply(crossing)
     return crossing.to
-  }
-
-  crossSpatial = (spaceId: string | null, arrivedFrom: string | null) => {
-    const crossing = spatialPortalExit(this.options.read().world, spaceId, arrivedFrom)
-    if (!crossing) return null
-    this.apply(crossing, true)
-    return crossing.to
-  }
-
-  openSpatialAnchorDoor = (spaceId: string) => {
-    this.apply(burnSpatialAnchor(this.options.read().world, spaceId), true)
   }
 }

@@ -7,7 +7,7 @@ couvre:
   - apps/web/src/lib/audio/**
   - data/ship/blueprint.json
 depend-de: [04-le-nen, 11-les-donnees]
-revu-le: 2026-08-05
+revu-le: 2026-11-13
 empreinte: 56eb2f8
 decisions: [adr-003, adr-004, adr-005, adr-006]
 ---
@@ -22,6 +22,7 @@ decisions: [adr-003, adr-004, adr-005, adr-006]
 - Transformer le plan `data/ship/blueprint.json` en une représentation 3D texturée et éclairée.
 - Gérer la boucle de rendu principale, la géométrie, et le mesh via `TourRenderer`.
 - Gérer l'ambiance en injectant lumière, son, poussière et apparitions selon le contexte.
+- Faire évoluer et persister les routines, systèmes, relations et événements du monde simulé.
 
 ## Refuse
 
@@ -39,6 +40,8 @@ apps/web/src/lib/tour/blueprint.ts       ← validation et indexation
 apps/web/src/lib/tour/geometry.ts → apps/web/src/lib/tour/mesh.ts → apps/web/src/lib/tour/TourRenderer.ts
         ↓
 apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, heure, audio, apparitions
+        ↓
+apps/web/src/lib/tour/simulation/*.ts    ← monde persisté, routines PNJ, réputation, boucle Tier 5
 ```
 
 ## Frontières
@@ -46,6 +49,7 @@ apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, 
 - `apps/web/src/lib/tour/` : Reçoit les requêtes d'affichage, ne décide pas de l'état du mode. Ne lit pas directement `blueprint.json`.
 - `apps/web/src/lib/audio/` : Fournit tous les sons du site, y compris les Hatsu one-shot via `apps/web/src/lib/audio/hatsu/`.
 - `apps/web/src/lib/components/tour/` : Composants Svelte de la visite uniquement ; n'inclut aucune logique de rendu Three.js.
+- `apps/web/src/lib/tour/simulation/` : État divergent et persistant de la visite ; ne réécrit jamais les faits canoniques de `data/`.
 
 ## Invariants
 
@@ -53,3 +57,4 @@ apps/web/src/lib/tour/page*.svelte.ts    ← état de /tour, contrôle caméra, 
 - **La marche est à 2,1 m/s** : L'échelle vient de la reconstruction, pas d'un réglage de confort.
 - **Audio commun** : Les effets sont synthétisés. L'enregistrement original du concert de Melody est l'unique asset ; il passe lui aussi par le contexte et les bus Web Audio communs.
 - **Validation stricte** : `validateBlueprint` est le garde-fou contre les salles orphelines.
+- **Deux budgets explicites** : `low` garde les pièces à une porte et `high` à deux ; triangles et appels de dessin sont bornés en E2E sur desktop et mobile.

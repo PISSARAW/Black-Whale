@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { REFERENCE_HOUR, SHIP_HOURS, shipTimeOfDay, skyOf, timeOfDayOf } from './sky'
 import { SEA_GLOW, WINDOW_GLOW } from './mesh'
-
-/** The luminance threshold the shaft pass selects a pane with. See `godRays`. */
-const SHAFT_THRESHOLD = 0.9
+import { SHAFT_THRESHOLD } from './godRays'
 const luma = ([r, g, b]: readonly [number, number, number]) => 0.2126 * r + 0.7152 * g + 0.0722 * b
 
 describe('skyOf', () => {

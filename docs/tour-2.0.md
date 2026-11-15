@@ -84,6 +84,14 @@ la marche** : `MeshLambertMaterial` + couleurs cuites par sommet pour la structu
 
 Tout item des deux proposals a été jugé là-contre, et contre l'état vérifié du code.
 
+**« Sourcé » ne veut pas dire uniquement « visible dans une case ».** Un plan publié ou
+un programme fonctionnel explicite peut autoriser une reconstruction quand la donnée
+porte une provenance `plan` ou `map`, décrit sans ambiguïté ce qui est reconstitué
+(implantation, dimensions, profils ou finitions) et présente cette limite au visiteur
+dans la carte de provenance. Cette voie autorise le nécessaire fonctionnel attesté ;
+elle n'autorise pas à déduire du seul nom d'une pièce un mobilier vraisemblable, ni à
+ajouter un décor générique. Sans plan, programme explicite ou case, le volume reste vide.
+
 ### État vérifié (2026-08-03)
 
 - `TourRenderer.ts` : `EffectComposer` + `RenderPass` + `UnrealBloomPass` gaté par
@@ -122,13 +130,13 @@ provenance par objet) — on ne touche `mesh.ts` qu'une fois.
 
 ## 2. Phase 1 — Post-processing honnête _(~2 j, après 0.1)_
 
-| Item                       | Décision      | Détail                                                                                                                                                                                                                                        |
-| -------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SMAA**                   | ✅ en premier | corrige le bug d'AA du chemin haut de gamme ; passe unique après le bloom                                                                                                                                                                     |
-| **Vignette + grade léger** | ✅            | un seul `ShaderPass` combiné (pas deux passes) ; réglé **après** 0.1, sinon on étalonne un signal faux. Pas de LUT « thriller » lourde : elle écraserait la distinction chaud filament / froid fenêtres, qui est le système de preuve du tour |
-| **God rays**               | 🟡 restreints | uniquement les **deux fenêtres du navire** (pont d'observation ch. 380, salon du Roi ch. 382) — les deux seuls endroits où l'extérieur existe. Partout ailleurs : refusé (décor)                                                              |
-| **SSAO / N8AO**            | ⏸ différé     | inutile tant que les normales sont cassées (cf. `docs/tour-immersion.md`) ; le bake par sommet porte déjà l'occlusion du statique ; dépendance externe. À réévaluer après phase 0 et correction des normales                                  |
-| **DoF autofocus**          | ⛔            | première personne + flou = cinétose ; contraire à l'esprit de `comfort.ts`. Si jamais : mode visée uniquement, opt-in, débrayé par `prefers-reduced-motion`                                                                                   |
+| Item                       | Décision       | Détail                                                                                                                                                                                                                                             |
+| -------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SMAA**                   | ✅ en premier  | corrige le bug d'AA du chemin haut de gamme ; passe unique après le bloom                                                                                                                                                                          |
+| **Vignette + grade léger** | ✅             | un seul `ShaderPass` combiné (pas deux passes) ; réglé **après** 0.1, sinon on étalonne un signal faux. Pas de LUT « thriller » lourde : elle écraserait la distinction chaud filament / froid fenêtres, qui est le système de preuve du tour      |
+| **God rays**               | 🟡 restreints  | uniquement les **deux fenêtres du navire** (pont d'observation ch. 380, salon du Roi ch. 382) — les deux seuls endroits où l'extérieur existe. Partout ailleurs : refusé (décor)                                                                   |
+| **SSAO**                   | ✅ palier haut | passe locale sans dépendance externe, bornée aux jonctions proches et appliquée avant bloom. Elle relit à chaque image la profondeur du tampon courant d'`EffectComposer` ; le palier bas conserve son rendu sans profondeur. SSGI reste désactivé |
+| **DoF autofocus**          | ⛔             | première personne + flou = cinétose ; contraire à l'esprit de `comfort.ts`. Si jamais : mode visée uniquement, opt-in, débrayé par `prefers-reduced-motion`                                                                                        |
 
 ## 3. Phase 2 — La matière sans assets _(~3 j, après 0.8)_
 
@@ -209,5 +217,5 @@ livrable et visible seule.
 
 `scene.environment`/IBL (contredit la doctrine, définitif) · meubles GLTF
 placeholders (invente du canon) · textures par catégorie (décor sans source) ·
-SSAO (normales cassées, différé) · DoF (cinétose) · glassmorphism généralisé
+SSGI (lumière rebondie expérimentale) · DoF (cinétose) · glassmorphism généralisé
 (coût compositing mobile) · nouveau Raycaster et nouveaux doorJambs (existent déjà).

@@ -19,21 +19,7 @@ export type TourReport =
   | { kind: 'door-armed'; spaceId: string }
   | { kind: 'doors-paired'; spaceId: string; otherId: string }
   | { kind: 'doors-rearmed'; spaceId: string }
-  | {
-      kind: 'spatial-anchor-refused'
-      spaceId: string | null
-      reason: 'outside' | 'burned' | 'not-one-door' | 'door-open'
-      doors?: number
-    }
-  | { kind: 'spatial-anchored'; spaceId: string }
-  | {
-      kind: 'spatial-destination-refused'
-      spaceId: string | null
-      reason: 'return-to-anchor' | 'same-room' | 'unvisited'
-    }
-  | { kind: 'spatial-opened'; anchorId: string; destinationId: string }
-  | { kind: 'spatial-crossed'; fromId: string; toId: string }
-  | { kind: 'spatial-burned'; spaceId: string }
+  | { kind: 'phasing'; on: boolean }
   | { kind: 'eye-sent'; spaceId: string }
   | { kind: 'eye-recalled'; rooms: number }
   | { kind: 'eye-mode-changed'; mode: TourEyeMode }
@@ -276,11 +262,7 @@ export type TourReport =
   | { kind: 'snakes-loosed'; rooms: number }
   | { kind: 'snakes-fed'; spaceId: string }
   | { kind: 'snakes-rebound' }
-  | {
-      kind: 'worm-refused'
-      spaceId: string | null
-      reason: 'outside' | 'same-room' | 'unvisited' | 'active'
-    }
+  | { kind: 'worm-set'; spaceId: string }
   | { kind: 'worm-open'; a: string; b: string }
   | { kind: 'worm-crossed'; spaceId: string; crossings: number }
   | { kind: 'worm-spent' }
@@ -358,7 +340,6 @@ export type TourReport =
   | { kind: 'owl-recalled'; rooms: number }
   | { kind: 'foreseen'; spaceId: string }
   | { kind: 'vision-ended' }
-  | { kind: 'laplace-ended'; reason: 'range' | 'zetsu' | 'battery' }
   | { kind: 'diverged'; spaceId: string; wentTo: string }
   | { kind: 'written'; spaceId: string }
   | { kind: 'line-taken'; spaceId: string; lines: number }

@@ -44,13 +44,13 @@
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
 | `search` | `+server.ts`, `server.test.ts` |
-| `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
-| `simulations` | `+page.server.ts`, `+page.svelte` |
+| `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.test.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
+| `simulations` | `+page.server.ts`, `+page.svelte`, `morena.server.ts` |
 | `sitemap.xml` | `+server.ts`, `server.test.ts` |
 | `spoiler-limit` | `+server.ts`, `spoiler-limit.test.ts` |
 | `strategy` | `+page.server.ts`, `+page.svelte`, `strategy.css` |
 | `timeline` | `+page.server.ts`, `+page.svelte` |
-| `tour` | `+page.server.ts`, `+page.svelte` |
+| `tour` | `+page.server.ts`, `+page.svelte`, `TourPageExperience.svelte` |
 | `tour/ask` | `+server.ts` |
 | `tour/modes` | `+page.svelte` |
 | `tour/morena` | `+page.svelte` |

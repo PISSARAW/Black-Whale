@@ -35,12 +35,17 @@ describe('the ceilings', () => {
     expect(BUDGETS.low.triangles).toBeLessThan(BUDGETS.high.triangles)
   })
 
-  it('caps a frame at the deck bound `mesh.test.ts` already enforces', () => {
-    // 120 000 is MAX_DECK_TRIANGLES. `visibility.ts` names about a quarter of a
-    // deck at depth two, so a frame at this line is one where portal culling
-    // has stopped happening — a defect, not a heavy room.
-    expect(BUDGETS.low.triangles).toBe(120_000)
-    expect(BUDGETS.high.triangles).toBe(BUDGETS.low.triangles * 2)
+  it('keeps a complete low frame below the high palier', () => {
+    // MAX_DECK_TRIANGLES is 120 000. The meter also counts the hull, cast,
+    // effects and fittings, so low gets 60 000 more without inheriting high's
+    // complete-frame ceiling.
+    expect(BUDGETS.low.triangles).toBe(180_000)
+    expect(BUDGETS.high.triangles).toBe(240_000)
+  })
+
+  it('ratchets the measured cross-browser draw-call baseline', () => {
+    expect(BUDGETS.low.calls).toBe(600)
+    expect(BUDGETS.high.calls).toBe(800)
   })
 })
 

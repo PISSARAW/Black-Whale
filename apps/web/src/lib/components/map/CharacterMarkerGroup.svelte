@@ -10,6 +10,8 @@
     offsetBelowLabel = false,
   }: { group: MarkerGroup; compact?: boolean; offsetBelowLabel?: boolean } = $props()
   let open = $state(false)
+  let touchHandled = false
+  let touchReset: ReturnType<typeof setTimeout> | undefined
   let label = $derived(
     group.markers.length > 1
       ? `×${group.markers.length}`
@@ -36,6 +38,29 @@
     if (group.markers.length === 1 && group.markers[0]) show(group.markers[0])
     else open = !open
   }
+
+  function keepTouchFromPanning(event: PointerEvent) {
+    if (event.pointerType === 'touch') event.stopPropagation()
+  }
+
+  function runTouchAction(event: PointerEvent, action: () => void) {
+    if (event.pointerType !== 'touch') return
+    event.preventDefault()
+    event.stopPropagation()
+    touchHandled = true
+    action()
+    clearTimeout(touchReset)
+    touchReset = setTimeout(() => (touchHandled = false), 400)
+  }
+
+  function runClickAction(action: () => void) {
+    if (touchHandled) {
+      touchHandled = false
+      clearTimeout(touchReset)
+      return
+    }
+    action()
+  }
 </script>
 
 <div
@@ -49,7 +74,9 @@
     class="group-badge"
     aria-expanded={group.markers.length > 1 ? open : undefined}
     aria-label={$t.mapUi.presenceGroup(group.markers.length, group.markers[0]?.locationLabel || '')}
-    onclick={activate}>{label}</button
+    onpointerdown={keepTouchFromPanning}
+    onpointerup={(event) => runTouchAction(event, activate)}
+    onclick={() => runClickAction(activate)}>{label}</button
   >
   {#if open}
     <section class="group-list" aria-label={$t.mapUi.presenceList}>
@@ -58,7 +85,13 @@
         <button type="button" aria-label={$t.common.close} onclick={() => (open = false)}>×</button>
       </header>
       {#each group.markers as marker (marker.id)}
-        <button type="button" class="person" onclick={() => show(marker)}>
+        <button
+          type="button"
+          class="person"
+          onpointerdown={keepTouchFromPanning}
+          onpointerup={(event) => runTouchAction(event, () => show(marker))}
+          onclick={() => runClickAction(() => show(marker))}
+        >
           <span>{markerInitials(marker.perceivedIdentity)}</span>
           <span
             ><strong>{marker.perceivedIdentity}</strong><small>{marker.temporalLabel}</small></span
@@ -95,6 +128,7 @@
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--marker-color) 75%, white);
     font: 700 0.55rem/1 var(--font-mono);
     cursor: pointer;
+    touch-action: manipulation;
   }
   .compact .group-badge {
     min-width: 1.35rem;
@@ -149,6 +183,7 @@
     color: var(--text-secondary);
     text-align: left;
     cursor: pointer;
+    touch-action: manipulation;
   }
   .person > span:first-child {
     display: grid;

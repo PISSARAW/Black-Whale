@@ -104,7 +104,7 @@
     type="button"
     onclick={() => (open = !open)}
     aria-expanded={open}
-    class="rounded border border-[#8ecae6]/50 bg-[#050505]/90 px-2 py-1 uppercase tracking-widest text-[#8ecae6]"
+    class="min-h-11 min-w-11 rounded border border-[#8ecae6]/50 bg-[#050505]/90 px-2 py-1 uppercase tracking-widest text-[#8ecae6]"
     >Nen · {nenState.on ? 'on' : nenState.mode}</button
   >
   {#if open}
@@ -264,7 +264,8 @@
 
 <style>
   div > button {
-    min-height: 2rem;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
     border: 1px solid rgb(255 255 240 / 0.16);
     border-radius: 0.2rem;
     padding: 0.25rem;

@@ -22,7 +22,6 @@ import {
   fishBite,
   openTheBook,
   turnTheBook,
-  wormExit,
   type TourReport,
   type TourWorld,
 } from './hatsu'
@@ -223,33 +222,23 @@ describe('the double', () => {
 })
 
 describe('the tunnel', () => {
-  const paired = cast({ ...EMPTY_WORLD, trail: [elsewhere.id] }, 'portal', elsewhere.id).world
+  const paired = (() => {
+    const first = cast(EMPTY_WORLD, 'portal', furnished.id).world
+    return cast(first, 'portal', elsewhere.id).world
+  })()
 
-  it('stands a departure door and an exit hatch, paired with each other', () => {
+  it('stands one mouth at each end, and pairs them with each other', () => {
     const mouths = of(paired, 'portal')
     expect(mouths.map((mouth) => mouth.spaceId).sort()).toEqual([furnished.id, elsewhere.id].sort())
     expect(mouths[0].pair?.spaceId).toBe(mouths[1].spaceId)
     expect(mouths[1].pair?.spaceId).toBe(mouths[0].spaceId)
-    expect(new Set(mouths.map((mouth) => mouth.wormRole))).toEqual(
-      new Set(['outgoing-door', 'exit-hatch']),
-    )
   })
 
-  it('brings Kacho along, then posts her at the Return Door to open it', () => {
-    const walking = apparitionsOn(ship, paired, {
-      visitor: { at: centroid(furnished), tierId: furnished.tierId, spaceId: furnished.id },
-    }).find((seen) => seen.id.startsWith('worm-kacho:'))
-    expect(walking?.human).toMatchObject({ identity: 'prince-kacho', pose: 'walk' })
-
-    const returning = wormExit(paired, furnished.id, null)!.world
-    const kacho = apparitionsOn(ship, returning, {
-      visitor: { at: centroid(elsewhere), tierId: elsewhere.tierId, spaceId: elsewhere.id },
-    }).find((seen) => seen.id.startsWith('worm-kacho:'))
-    expect(kacho).toMatchObject({ spaceId: elsewhere.id })
-    expect(kacho?.human).toMatchObject({ identity: 'prince-kacho', pose: 'attack' })
-    expect(new Set(of(returning, 'portal').map((mouth) => mouth.wormRole))).toEqual(
-      new Set(['return-door', 'return-hatch']),
-    )
+  it('leaves a half-placed tunnel a mouth with nothing on the other side', () => {
+    const half = cast(EMPTY_WORLD, 'portal', furnished.id).world
+    const mouths = of(half, 'portal')
+    expect(mouths).toHaveLength(1)
+    expect(mouths[0].pair).toBeUndefined()
   })
 
   it('is crossed by walking into the doorway rather than into the room', () => {

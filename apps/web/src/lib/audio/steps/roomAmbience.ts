@@ -6,17 +6,25 @@ import { earLocal, type Facing } from '../ears'
 const SETTLE = 0.45
 const THROUGH_DOOR = 0.42
 const DOOR_CUTOFF = 760
+const VENT_WOBBLE_DEPTH = 85
+const VENT_WOBBLE_RATE = 0.11
+const VENT_WOBBLE_RATE_SPAN = 0.19
 
 const SILENT: RoomSoundProfile = {
   kind: 'none',
   ventilation: { level: 0, cutoff: 1800, resonance: 0.4, wobble: 0 },
   crowd: { level: 0, cutoff: 500 },
   accent: { level: 0, frequency: 80, rate: 0.2, cutoff: 800 },
+  drip: { level: 0, cutoff: 1200, rate: 0.75 },
 }
 
 interface RoomVoice {
   output: GainNode
-  ventilation: { filter: BiquadFilterNode; gain: GainNode }
+  ventilation: {
+    filter: BiquadFilterNode
+    gain: GainNode
+    wobble: { oscillator: OscillatorNode; depth: GainNode }
+  }
   crowd: { filter: BiquadFilterNode; gain: GainNode }
   accent: {
     oscillator: OscillatorNode
@@ -25,6 +33,12 @@ interface RoomVoice {
     pulse: OscillatorNode
     pulseDepth: GainNode
   }
+  drip: { source: AudioBufferSourceNode; filter: BiquadFilterNode; gain: GainNode }
+}
+
+interface RoomBeds {
+  noise: AudioBuffer
+  drips: AudioBuffer
 }
 
 export interface RoomAmbience {
@@ -57,6 +71,32 @@ function noiseBuffer(context: AudioContext): AudioBuffer {
   return buffer
 }
 
+/** A deterministic loop of decaying resonances: generated liquid, never a sample. */
+function dripBuffer(context: AudioContext): AudioBuffer {
+  const seconds = 8
+  const buffer = context.createBuffer(
+    1,
+    Math.floor(context.sampleRate * seconds),
+    context.sampleRate,
+  )
+  const channel = buffer.getChannelData(0)
+  const starts = [0.37, 1.74, 3.08, 5.29, 6.63]
+  const duration = 0.16
+  for (const start of starts) {
+    const first = Math.floor(start * context.sampleRate)
+    const count = Math.floor(duration * context.sampleRate)
+    let phase = 0
+    for (let index = 0; index < count && first + index < channel.length; index++) {
+      const age = index / context.sampleRate
+      const envelope = Math.exp(-age * 34)
+      const frequency = 1480 - age * 3200
+      phase += (Math.PI * 2 * frequency) / context.sampleRate
+      channel[first + index] += Math.sin(phase) * envelope * 0.72
+    }
+  }
+  return buffer
+}
+
 function source(context: AudioContext, buffer: AudioBuffer): AudioBufferSourceNode {
   const node = context.createBufferSource()
   node.buffer = buffer
@@ -65,7 +105,7 @@ function source(context: AudioContext, buffer: AudioBuffer): AudioBufferSourceNo
   return node
 }
 
-function voice(context: AudioContext, bed: AudioBuffer, into: AudioNode): RoomVoice {
+function voice(context: AudioContext, beds: RoomBeds, into: AudioNode): RoomVoice {
   const output = context.createGain()
   output.gain.value = 1
   output.connect(into)
@@ -73,14 +113,21 @@ function voice(context: AudioContext, bed: AudioBuffer, into: AudioNode): RoomVo
   const ventilationFilter = context.createBiquadFilter()
   ventilationFilter.type = 'bandpass'
   const ventilationGain = context.createGain()
-  source(context, bed).connect(ventilationFilter)
+  source(context, beds.noise).connect(ventilationFilter)
   ventilationFilter.connect(ventilationGain)
   ventilationGain.connect(output)
+  const ventilationWobble = context.createOscillator()
+  ventilationWobble.type = 'sine'
+  const ventilationWobbleDepth = context.createGain()
+  ventilationWobbleDepth.gain.value = 0
+  ventilationWobble.connect(ventilationWobbleDepth)
+  ventilationWobbleDepth.connect(ventilationFilter.frequency)
+  ventilationWobble.start()
 
   const crowdFilter = context.createBiquadFilter()
   crowdFilter.type = 'lowpass'
   const crowdGain = context.createGain()
-  source(context, bed).connect(crowdFilter)
+  source(context, beds.noise).connect(crowdFilter)
   crowdFilter.connect(crowdGain)
   crowdGain.connect(output)
 
@@ -103,9 +150,22 @@ function voice(context: AudioContext, bed: AudioBuffer, into: AudioNode): RoomVo
   pulseDepth.connect(accentGain.gain)
   pulse.start()
 
+  const dripSource = source(context, beds.drips)
+  const dripFilter = context.createBiquadFilter()
+  dripFilter.type = 'bandpass'
+  dripFilter.Q.value = 2.2
+  const dripGain = context.createGain()
+  dripSource.connect(dripFilter)
+  dripFilter.connect(dripGain)
+  dripGain.connect(output)
+
   return {
     output,
-    ventilation: { filter: ventilationFilter, gain: ventilationGain },
+    ventilation: {
+      filter: ventilationFilter,
+      gain: ventilationGain,
+      wobble: { oscillator: ventilationWobble, depth: ventilationWobbleDepth },
+    },
     crowd: { filter: crowdFilter, gain: crowdGain },
     accent: {
       oscillator: accentOscillator,
@@ -114,6 +174,7 @@ function voice(context: AudioContext, bed: AudioBuffer, into: AudioNode): RoomVo
       pulse,
       pulseDepth,
     },
+    drip: { source: dripSource, filter: dripFilter, gain: dripGain },
   }
 }
 
@@ -133,7 +194,7 @@ export function buildRoomAmbience(
   dry: AudioNode,
   roomSend: AudioNode,
 ): RoomAmbience {
-  const bed = noiseBuffer(context)
+  const beds = { noise: noiseBuffer(context), drips: dripBuffer(context) }
 
   const currentBus = context.createGain()
   tap(context, { from: currentBus, into: dry, level: 1 })
@@ -160,8 +221,8 @@ export function buildRoomAmbience(
 
   const ambience = {
     context,
-    current: voice(context, bed, currentBus),
-    neighbour: voice(context, bed, neighbourBus),
+    current: voice(context, beds, currentBus),
+    neighbour: voice(context, beds, neighbourBus),
     neighbourWall,
     neighbourLevel,
     neighbourPanner,
@@ -184,9 +245,16 @@ function target(param: AudioParam, value: number, transition: Transition): void 
 }
 
 function applyVoice(voice: RoomVoice, profile: RoomSoundProfile, transition: Transition): void {
+  const wobble = Math.min(1, Math.max(0, profile.ventilation.wobble))
   target(voice.ventilation.gain.gain, profile.ventilation.level, transition)
   target(voice.ventilation.filter.frequency, profile.ventilation.cutoff, transition)
   target(voice.ventilation.filter.Q, profile.ventilation.resonance, transition)
+  target(voice.ventilation.wobble.depth.gain, wobble * VENT_WOBBLE_DEPTH, transition)
+  target(
+    voice.ventilation.wobble.oscillator.frequency,
+    VENT_WOBBLE_RATE + wobble * VENT_WOBBLE_RATE_SPAN,
+    transition,
+  )
 
   target(voice.crowd.gain.gain, profile.crowd.level, transition)
   target(voice.crowd.filter.frequency, profile.crowd.cutoff, transition)
@@ -196,6 +264,10 @@ function applyVoice(voice: RoomVoice, profile: RoomSoundProfile, transition: Tra
   target(voice.accent.gain.gain, profile.accent.level, transition)
   target(voice.accent.pulse.frequency, profile.accent.rate, transition)
   target(voice.accent.pulseDepth.gain, profile.accent.level * 0.28, transition)
+
+  target(voice.drip.gain.gain, profile.drip.level, transition)
+  target(voice.drip.filter.frequency, profile.drip.cutoff, transition)
+  target(voice.drip.source.playbackRate, profile.drip.rate, transition)
 }
 
 /** Crossfades the persistent controls without rebuilding any oscillator. */

@@ -12,7 +12,6 @@ import type { Decipher, Fabrication } from '../decipher'
 import type { GumStrand } from '../gum'
 import type { ScarletEyes } from '../emperor'
 import type { SolidHold, TourBook, TourBody, VowState } from './worldPieces'
-import type { SpatialTeleportationState } from './spatial'
 
 /**
  * What Nen is currently doing to the ship.
@@ -89,8 +88,8 @@ export interface TourWorld {
   eyeFilm: { spaceId: string; seen: number }[]
   /** 0 nothing · 1 sight · 2 sight and hearing · 3 all three. */
   sealed: number
-  /** Luini's sealed-room anchor, private route, and permanently lost rooms. */
-  spatial: SpatialTeleportationState
+  /** Whether the visitor is passing through walls. */
+  phasing: boolean
   /** Rooms a paper doll is counting arrivals in. */
   watched: { spaceId: string; visits: number }[]
   /** What the flock has carried back, newest first. */
@@ -210,20 +209,8 @@ export interface TourWorld {
   double: string | null
   /** The mode the double is operating in */
   doubleMode: TourDoubleMode
-  /**
-   * Fugetsu's tunnel, with the visitor standing in for Fugetsu.
-   *
-   * The route is deliberately directional. Fugetsu owns the outward leg from
-   * `a` to `b`; after that crossing Kacho opens the return door from `b` to
-   * `a`. It is one symbiotic round trip, not a permanent pair of interchangeable
-   * portals.
-   */
-  worm: {
-    a: string
-    b: string
-    crossings: 0 | 1
-    phase: 'outgoing' | 'return'
-  } | null
+  /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
+  worm: { a: string; b: string; crossings: number } | null
   /** The rooms the snakes are loose in, and whether they have had a victim. */
   snakes: { rooms: string[]; fed: boolean } | null
   /** The room the bait was materialized in, which closes once it is taken. */
@@ -307,12 +294,8 @@ export interface TourWorld {
    * from, which is the only part of it there is anything to see.
    */
   stars: string[]
-  /** The immutable landing and the beast's fixed point of activation. */
-  foreseen: {
-    spaceId: string
-    at: Vec2
-    anchor: { spaceId: string; tierId: string; at: Vec2 }
-  } | null
+  /** Where the ten-second vision says the visitor will be. It does not update. */
+  foreseen: { spaceId: string; at: Vec2 } | null
   /** What the automatic writing has set down, newest first. */
   verses: { spaceId: string; lines: number[] }[]
   /** The three rooms of the poem, and how well they read as one. */

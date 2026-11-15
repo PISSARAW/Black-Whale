@@ -75,6 +75,25 @@ function poseOf(role: Post['costume']['role']): NonNullable<Apparition['human']>
   return 'idle'
 }
 
+/** Stable, collision-free lateral stations for everyone assigned to one door. */
+function stationsOutsideDoors(members: readonly CastMember[]): Map<string, number> {
+  const stations = new Map<string, number>()
+  const doors = new Map<string, CastMember[]>()
+  for (const member of members) {
+    if (!member.outsideDoorOf) continue
+    const group = doors.get(member.outsideDoorOf) ?? []
+    group.push(member)
+    doors.set(member.outsideDoorOf, group)
+  }
+  for (const group of doors.values()) {
+    group.sort((left, right) => left.characterId.localeCompare(right.characterId))
+    group.forEach((member, index) => {
+      stations.set(member.characterId, index - (group.length - 1) / 2)
+    })
+  }
+  return stations
+}
+
 /**
  * Where everyone stands, on one level or across the whole ship.
  *
@@ -88,7 +107,10 @@ export function distribute(
   options: { tierId?: string } = {},
 ): Post[] {
   const posts: Post[] = []
-  for (const member of drawable(members)) {
+  const shown = drawable(members)
+  const outsideStations = stationsOutsideDoors(shown)
+
+  for (const member of shown) {
     const costume = wardrobeFor(member.role)
     // No costume is a role the table has never been told about, which
     // `wardrobe.test.ts` makes a build failure. At runtime it is one body not
@@ -100,7 +122,11 @@ export function distribute(
     )
     const space = spaceAmong(candidates, member.characterId)
     if (!space) continue
-    for (const stood of standings(ship, space, { member, costume })) {
+    for (const stood of standings(ship, space, {
+      member,
+      costume,
+      outsideStation: outsideStations.get(member.characterId) ?? 0,
+    })) {
       if (options.tierId && stood.tierId !== options.tierId) continue
       posts.push(stood)
     }
@@ -121,12 +147,12 @@ export function distribute(
 function standings(
   ship: Ship,
   space: Space,
-  who: { member: CastMember; costume: Costume },
+  who: { member: CastMember; costume: Costume; outsideStation: number },
 ): Post[] {
-  const { member, costume } = who
+  const { member, costume, outsideStation } = who
   const seed = member.characterId
   if (member.outsideDoorOf) {
-    const outside = standingOutsideDoor(ship, space, seed)
+    const outside = standingOutsideDoor(ship, space, outsideStation)
     if (outside) {
       return [
         {

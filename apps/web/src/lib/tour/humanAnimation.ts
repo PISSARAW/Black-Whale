@@ -259,11 +259,14 @@ export function humanAnimation(
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
-    const transitionKey = layer?.transitionKey ?? pose
-    if (transitionKey !== displayedPose) {
+    const transitionKey = layer?.transitionKey
+    if (transitionKey && transitionKey !== displayedPose) {
       transitionFrom = frameOf(parts)
       transitionStarted = seconds
       displayedPose = transitionKey
+    } else if (!transitionKey) {
+      transitionFrom = null
+      displayedPose = pose
     }
     rig.figure.position.copy(figureBasePosition)
     rig.figure.rotation.copy(figureBaseRotation)

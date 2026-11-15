@@ -2,7 +2,7 @@ import { constraint, param } from '@black-whale/ability-sdk'
 import type { EffectBuilder } from '@black-whale/ability-sdk'
 import type { AbilityContext } from '@black-whale/nen-engine'
 
-import { summariseGame, type AnswerCard, type MorenaGame } from './game.js'
+import { INFECTION_STEPS, summariseGame, type AnswerCard, type MorenaGame } from './game.js'
 
 /**
  * The constants and helpers the ability's actions are written against: the
@@ -38,6 +38,19 @@ export const MEMBER_ZERO_LEVEL = 100
 /** Morena can hold at most twenty-two infected at a time. */
 export const NETWORK_CAPACITY = 22
 
+export function isEligibleInfectionGame(
+  game: MorenaGame | undefined,
+  effectIsLive: boolean,
+): boolean {
+  if (!game) return false
+  return [
+    effectIsLive,
+    !game.proxied,
+    game.kissed,
+    game.verdict === 'infected' || game.verdict === 'forced',
+  ].every(Boolean)
+}
+
 export function killValue(status: string | undefined): number {
   return status ? (KILL_VALUES[status] ?? KILL_VALUES['ordinary']!) : KILL_VALUES['ordinary']!
 }
@@ -58,6 +71,18 @@ export function killValue(status: string | undefined): number {
 
 /** Where a running game lives, and what it is called on the effect. */
 export const GAME_DISCRIMINATOR = 'game'
+
+export const CONTAGION_LIMITS = {
+  cohortId: COHORT_ID,
+  capacity: NETWORK_CAPACITY,
+  uniqueAbilityLevel: UNIQUE_ABILITY_LEVEL,
+  memberZeroLevel: MEMBER_ZERO_LEVEL,
+  infectionSteps: INFECTION_STEPS,
+  killValues: KILL_VALUES,
+  /** Where a running negotiation is stored, for anything reading the branch. */
+  gameDiscriminator: GAME_DISCRIMINATOR,
+  gameRevealedAtChapter: GAME_REVEALED_AT,
+}
 
 /** Reads the hand back off the effect the caller named. `null` if there is none. */
 export function gameInPlay(ctx: AbilityContext): MorenaGame | null {

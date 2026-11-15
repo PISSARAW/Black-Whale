@@ -136,14 +136,20 @@ export function sensesFromKey(key: string): Senses {
  * the visitor's In. `looking` adds a body in your sweep with nothing on it:
  * worth a Gyo, not worth a Ren.
  */
+function signalsBody(post: Post, contact: Contact, id: string): boolean {
+  return (
+    contact.aimedAt === id ||
+    (contact.visitorCasting && contact.visitorIn === post.spaceId) ||
+    (contact.visitorPressure !== 'none' && contact.visitorIn === post.spaceId)
+  )
+}
+
 export function contactWith(post: Post, contact: Contact): ContactReach {
   const id = post.member.characterId
   const sense = contact.sensedBy[id]
   const sees = !contact.visitorHidden || sense !== undefined
-  const aimed = contact.aimedAt === id
-  const swept = contact.sweptBy.includes(id)
-  const directed = aimed || roomPressure(post, contact)
-  const felt = sense === 'aura' || swept || (sees && directed)
+  const felt =
+    sense === 'aura' || contact.sweptBy.includes(id) || (sees && signalsBody(post, contact, id))
   return { felt, looking: felt || sense === 'body', menaced: felt && contact.visitorMenacing }
 }
 
@@ -164,11 +170,4 @@ export interface ContactReach {
   looking: boolean
   /** Felt, and the aura felt is On: a threat rather than a technique. */
   menaced: boolean
-}
-
-function roomPressure(post: Post, contact: Contact): boolean {
-  return (
-    (contact.visitorCasting || contact.visitorPressure !== 'none') &&
-    contact.visitorIn === post.spaceId
-  )
 }

@@ -706,6 +706,7 @@ Entrées analysées : 11
 | `AbilityUIComponent` | `packages/nen-engine/src/engine.ts:293` |
 | `ActionAvailability` | `packages/nen-engine/src/engine.ts:236` |
 | `ActionVisibility` | `packages/nen-engine/src/engine.ts:205` |
+| `ActiveNenCategory` | `packages/nen-engine/src/categories.ts:3` |
 | `ArenaContract` | `packages/nen-engine/src/arena.ts:82` |
 | `ArenaEffect` | `packages/nen-engine/src/arena.ts:18` |
 | `ArenaMechanic` | `packages/nen-engine/src/arena.ts:25` |
@@ -721,12 +722,18 @@ Entrées analysées : 11
 | `NEN_PRESENTATION` | `packages/nen-engine/src/presentation.ts:12` |
 | `NEN_TECHNIQUES` | `packages/nen-engine/src/techniques.ts:44` |
 | `NenAbilityModule` | `packages/nen-engine/src/engine.ts:334` |
+| `NenActionBlock` | `packages/nen-engine/src/categories.ts:35` |
+| `NenActionContext` | `packages/nen-engine/src/categories.ts:27` |
+| `NenActionDefinition` | `packages/nen-engine/src/categories.ts:12` |
 | `NenActionInputError` | `packages/nen-engine/src/runtime.ts:51` |
+| `NenActionModulator` | `packages/nen-engine/src/categories.ts:4` |
 | `NenActionRequest` | `packages/nen-engine/src/runtime.ts:15` |
+| `NenActionResolution` | `packages/nen-engine/src/categories.ts:44` |
 | `NenActionWheelEntry` | `packages/nen-engine/src/engine.ts:213` |
 | `NenAllowedTarget` | `packages/nen-engine/src/engine.ts:130` |
 | `NenAuraMode` | `packages/nen-engine/src/techniques.ts:5` |
 | `NenCatalogEntry` | `packages/nen-engine/src/runtime.ts:30` |
+| `NenCategoryProfile` | `packages/nen-engine/src/categories.ts:6` |
 | `NenCycleStepId` | `packages/nen-engine/src/engine.ts:180` |
 | `NenCycleStepStatus` | `packages/nen-engine/src/engine.ts:190` |
 | `NenCycleStep` | `packages/nen-engine/src/engine.ts:192` |
@@ -749,6 +756,8 @@ Entrées analysées : 11
 | `WhyCondition` | `packages/nen-engine/src/engine.ts:231` |
 | `canSeeIn` | `packages/nen-engine/src/techniques.ts:225` |
 | `canUseHatsu` | `packages/nen-engine/src/techniques.ts:224` |
+| `categoryEfficiency` | `packages/nen-engine/src/categories.ts:75` |
+| `categoryProximity` | `packages/nen-engine/src/categories.ts:66` |
 | `createNenTechniqueState` | `packages/nen-engine/src/techniques.ts:58` |
 | `detectWithEn` | `packages/nen-engine/src/techniques.ts:262` |
 | `evaluateBaseAction` | `packages/nen-engine/src/engine.ts:491` |
@@ -756,6 +765,7 @@ Entrées analysées : 11
 | `isAuraVisibleTo` | `packages/nen-engine/src/techniques.ts:226` |
 | `nenDefenceFactor` | `packages/nen-engine/src/techniques.ts:229` |
 | `parseNenActionRequest` | `packages/nen-engine/src/runtime.ts:82` |
+| `resolveNenCategoryAction` | `packages/nen-engine/src/categories.ts:157` |
 | `transitionNen` | `packages/nen-engine/src/techniques.ts:118` |
 
 ## `packages/simulation-engine/src/index.ts`

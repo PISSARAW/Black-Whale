@@ -1,10 +1,10 @@
 import type * as Three from 'three'
-import type { ConcertLandscapeWalk } from './concertLandscapeWalk'
-import { CONCERT_REFERENCE } from './concertReference'
-import { positionHeldFlute } from './heldFlute'
 import type { ConcertPerformance } from './melodyConcert'
+import type { ConcertLandscapeWalk } from './concertLandscapeWalk'
+import { positionHeldFlute } from './heldFlute'
 import { applyGrade, LENS_OFF } from './postGrade'
 import type { SceneRuntime } from './TourRenderer'
+import { CONCERT_REFERENCE } from './concertReference'
 
 export const CONCERT_DREAM_LAYER = 27
 
@@ -15,6 +15,7 @@ interface DreamFrame {
   yaw: number
   runtime?: SceneRuntime
   exposure?: number
+  blend?: number
 }
 
 /** Isolates the imagined world without changing furniture, rooms or Hatsu visibility. */
@@ -40,11 +41,8 @@ export class ConcertDreamView {
     this.background = new THREE.Color(0xe7eedf)
   }
 
-  apply(
-    frame: DreamFrame,
-    walk: ConcertLandscapeWalk,
-    { performance, blend = 1 }: { performance: ConcertPerformance; blend?: number },
-  ): void {
+  apply(frame: DreamFrame, walk: ConcertLandscapeWalk, performance: ConcertPerformance): void {
+    const blend = frame.blend ?? 1
     this.enter(frame.camera)
     this.restoreActors()
     this.restoreAudience()
@@ -54,17 +52,24 @@ export class ConcertDreamView {
       this.include(actor)
       if (performance.presentation === 'manga') this.suppressAura(actor)
     }
-    if (blend < 0.82) this.reactAudience(frame.actors, id, { blend, seconds: frame.seconds })
-    this.positionCamera(frame, walk, { performance, blend })
+    if (blend < 0.82) this.reactAudience(frame, id, blend)
+    this.positionCamera(frame, walk, performance)
     if (frame.runtime) this.optics(frame, performance)
-    this.positionPerformer(actor, frame, performance)
+    if (actor && performance.mode === 'self') {
+      positionHeldFlute(actor, frame.camera.position, {
+        yaw: frame.yaw,
+        seconds: frame.seconds,
+        playing: true,
+      })
+    }
   }
 
   private positionCamera(
     frame: DreamFrame,
     walk: ConcertLandscapeWalk,
-    { performance, blend }: { performance: ConcertPerformance; blend: number },
-  ) {
+    performance: ConcertPerformance,
+  ): void {
+    const blend = frame.blend ?? 1
     frame.camera.position.set(walk.at[0], walk.floor + 1.7, walk.at[1])
     if (performance.presentation === 'manga') {
       frame.camera.fov = CONCERT_REFERENCE.fov
@@ -78,20 +83,6 @@ export class ConcertDreamView {
     frame.camera.updateProjectionMatrix()
     this.scene.fog = blend < 0.82 ? this.previousFog : this.fog
     this.scene.background = this.blendedBackground(blend)
-  }
-
-  private positionPerformer(
-    actor: Three.Object3D | undefined,
-    frame: DreamFrame,
-    performance: ConcertPerformance,
-  ) {
-    if (actor && performance.mode === 'self') {
-      positionHeldFlute(actor, frame.camera.position, {
-        yaw: frame.yaw,
-        seconds: frame.seconds,
-        playing: true,
-      })
-    }
   }
 
   private blendedBackground(blend: number): Three.Scene['background'] {
@@ -148,11 +139,8 @@ export class ConcertDreamView {
   }
 
   /** The room holds its breath before the listeners disappear into the vision. */
-  private reactAudience(
-    actors: DreamFrame['actors'],
-    performerId: string,
-    { blend, seconds }: { blend: number; seconds: number },
-  ): void {
+  private reactAudience(frame: DreamFrame, performerId: string, blend: number): void {
+    const { actors, seconds } = frame
     const attention = Math.sin(Math.min(1, blend / 0.82) * Math.PI)
     for (const [id, item] of Object.entries(actors)) {
       if (!item || id === performerId || id === 'flute') continue

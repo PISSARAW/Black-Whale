@@ -1,8 +1,7 @@
 # La lumière tient ses classes — supprimer la pénalité `inferredLamps`
 
-**Date :** 2026-08-03 · **Statut :** Décidé, à appliquer (la correction a été écrite puis
-écrasée par une session d'implémentation concurrente sur `mesh.ts` — voir le prompt
-d'exécution en fin de note). **Corrige :** une inversion du système de classes constaté
+**Date :** 2026-08-03 · **Statut :** Appliqué et couvert par les tests de `mesh.ts` et
+`light.ts`. **Corrige :** une inversion du système de classes constaté
 dans la marche. **S'inscrit dans :** la doctrine de `docs/tour-immersion.md`
 (« la lumière est le système de classes ») et `docs/tour-2.0.md`.
 
@@ -52,7 +51,7 @@ lampes, qui appartient au pont et à la catégorie.
 des tubes morts sur le pont royal contredisent « tenue des luminaires par pont » ;
 adoucir 0.22 → ~0.7 — réglage empirique, l'inversion reste possible aux marges.
 
-## 4. Les éditions (à rejouer telles quelles)
+## 4. Les éditions appliquées
 
 Dans `apps/web/src/lib/tour/mesh.ts` :
 
@@ -97,7 +96,7 @@ c'est une affirmation voulue, pas une inversion de classe.
 
 ---
 
-## Prompt d'exécution (pour la session qui tient `mesh.ts`)
+## Trace du prompt d'exécution
 
 > Applique `docs/tour-classes-lumiere.md` : supprime `LIGHT.inferredLamps` de
 > `apps/web/src/lib/tour/mesh.ts` (constante, `this.lamps` dans `RoomLight`,

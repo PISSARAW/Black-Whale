@@ -5,7 +5,7 @@ couvre:
   - apps/web/src/lib/tour/**
   - apps/web/src/lib/components/tour/**
 depend-de: [05-la-visite]
-revu-le: 2026-08-05
+revu-le: 2026-11-13
 empreinte: 7df285c
 decisions: [adr-003, adr-005, adr-006]
 ---
@@ -17,27 +17,34 @@ decisions: [adr-003, adr-005, adr-006]
 **Entrées publiques :** `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/cast/index.ts`, `apps/web/src/lib/tour/reportSound.ts`.
 **Carte :** [05 la visite](../../../../../docs/carte/05-la-visite.md)
 
+Le plan courant compte 429 espaces sur 46 niveaux, dont 35 niveaux intérieurs.
+
 ## Découpage
 
-| Groupe      | Fichiers                                                                                                                                                                  | Responsabilité                                               |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Géométrie   | `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/geometry.ts`, `apps/web/src/lib/tour/mesh.ts`, `apps/web/src/lib/tour/types.ts`                              | Lecture, validation et mesh du plan du navire                |
-| Rendu       | `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/PortalRenderer.ts`, `apps/web/src/lib/tour/TierView.ts`, `apps/web/src/lib/tour/reporting.ts`             | Boucle Three.js, caméra, portails, étages, seuils de rapport |
-| Ambiance    | `apps/web/src/lib/tour/light.ts`, `apps/web/src/lib/tour/atmosphere.ts`, `apps/web/src/lib/tour/dust.ts`, `apps/web/src/lib/tour/sky.ts`, `apps/web/src/lib/tour/hour.ts` | Lumières, brume, ciel, heure du chapitre                     |
-| Dehors      | `apps/web/src/lib/tour/sea.ts`, `apps/web/src/lib/tour/byElevation.ts`                                                                                                    | Ligne de flottaison, dosage moteur/mer par pont              |
-| Audio       | `apps/web/src/lib/tour/reportSound.ts`, `apps/web/src/lib/tour/pageHatsuAudio.svelte.ts`                                                                                  | Sons one-shot Hatsu et boucles d'ambiance                    |
-| Casts       | `apps/web/src/lib/tour/cast/*.ts`                                                                                                                                         | Traduction des effets Hatsu en animations / sons             |
-| État page   | `apps/web/src/lib/tour/page*.svelte.ts`                                                                                                                                   | État et contrôleurs de la route /tour                        |
-| Apparitions | `apps/web/src/lib/tour/apparitions.ts`, `apps/web/src/lib/tour/apparition*View.ts`                                                                                        | Entités 3D instanciées dans la scène                         |
-| Composants  | `apps/web/src/lib/components/tour/*`                                                                                                                                      | Surface Svelte de la visite                                  |
+| Groupe      | Fichiers                                                                                                                                                                                                                                                                                 | Responsabilité                                               |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Géométrie   | `apps/web/src/lib/tour/blueprint.ts`, `apps/web/src/lib/tour/geometry.ts`, `apps/web/src/lib/tour/mesh.ts`, `apps/web/src/lib/tour/types.ts`                                                                                                                                             | Lecture, validation et mesh du plan du navire                |
+| Rendu       | `apps/web/src/lib/tour/TourRenderer.ts`, `apps/web/src/lib/tour/PortalRenderer.ts`, `apps/web/src/lib/tour/TierView.ts`, `apps/web/src/lib/tour/reporting.ts`                                                                                                                            | Boucle Three.js, caméra, portails, étages, seuils de rapport |
+| Ambiance    | `apps/web/src/lib/tour/light.ts`, `apps/web/src/lib/tour/atmosphere.ts`, `apps/web/src/lib/tour/dust.ts`, `apps/web/src/lib/tour/sky.ts`, `apps/web/src/lib/tour/hour.ts`                                                                                                                | Lumières, brume, ciel, heure du chapitre                     |
+| Dehors      | `apps/web/src/lib/tour/sea.ts`, `apps/web/src/lib/tour/byElevation.ts`                                                                                                                                                                                                                   | Ligne de flottaison, dosage moteur/mer par pont              |
+| Audio       | `apps/web/src/lib/tour/reportSound.ts`, `apps/web/src/lib/tour/pageHatsuAudio.svelte.ts`                                                                                                                                                                                                 | Sons one-shot Hatsu et boucles d'ambiance                    |
+| Casts       | `apps/web/src/lib/tour/cast/*.ts`                                                                                                                                                                                                                                                        | Présences, postes, routines et perception Nen                |
+| Simulation  | `apps/web/src/lib/tour/simulation/*.ts`                                                                                                                                                                                                                                                  | Monde persistant, routines PNJ, réputation et boucle Tier 5  |
+| Hatsu       | `apps/web/src/lib/tour/hatsu.ts`, `apps/web/src/lib/tour/hatsuArrival.ts`, `apps/web/src/lib/tour/hatsuBook.ts`, `apps/web/src/lib/tour/hatsuPlan.ts`, `apps/web/src/lib/tour/hatsuRecord.ts`, `apps/web/src/lib/tour/hatsuTraversal.ts`, `apps/web/src/lib/tour/hatsuTechniqueGuide.ts` | Effets, seuils, projection, mémoire, déplacements et aide    |
+| État page   | `apps/web/src/lib/tour/page*.svelte.ts`                                                                                                                                                                                                                                                  | État et contrôleurs de la route /tour                        |
+| Apparitions | `apps/web/src/lib/tour/apparitions.ts`, `apps/web/src/lib/tour/apparition*View.ts`                                                                                                                                                                                                       | Entités 3D instanciées dans la scène                         |
+| Composants  | `apps/web/src/lib/components/tour/*`                                                                                                                                                                                                                                                     | Surface Svelte de la visite                                  |
 
 ## Invariants
 
 - Toute salle est atteignable — `apps/web/src/lib/tour/blueprint.test.ts › aucune salle orpheline`.
 - Aucune lumière ambiante : un couloir sans luminaire reste noir — `apps/web/src/lib/tour/light.test.ts`.
-- Les sons de Hatsu sont synthétisés, jamais des fichiers audio — `apps/web/src/lib/tour/reportSound.ts`.
+- Les sons interactifs sont synthétisés. L'enregistrement original du concert de Melody est l'unique asset audio — `apps/web/src/lib/audio/ambient/melodyConcert.ts`.
 - La visite ne lit pas directement `data/ship/blueprint.json` — elle passe par `apps/web/src/lib/tour/blueprint.ts`.
+- La route rend une coque SSR légère puis charge `TourPageExperience.svelte` par `import()` ; le blueprint et la scène restent hors de son chunk initial — `scripts/tour-lazy-boundary.test.ts`.
+- Le SSAO du palier `high` lit la profondeur du tampon qu'`EffectComposer` vient réellement de rendre, jamais celle de sa cible initiale — `apps/web/src/lib/tour/ambientOcclusion.test.ts`, `tests/tour.spec.ts`.
 - La ligne de flottaison n'est pas un chiffre choisi : c'est l'élévation du pont 4, le premier que le canon ne place pas sous l'eau — `apps/web/src/lib/tour/sea.test.ts`.
+- Le palier `low` limite la visibilité à une porte et la CI joue la visite sur desktop et mobile — `apps/web/src/lib/tour/quality.ts`, `tests/tour.spec.ts`.
 
 ## Ajouter quelque chose ici
 

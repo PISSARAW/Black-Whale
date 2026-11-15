@@ -61,9 +61,6 @@
     TENTACLES,
     apparitionsOn,
     coinAt,
-    portalMouths,
-    spatialMouthAt,
-    spatialMouths,
     wormMouthAt,
     wormMouths,
     type Apparition,
@@ -111,8 +108,10 @@
     VIEW_DISTANCE,
   } from '$lib/tour/sceneOptics'
   import { SEALED_DENSITY, fogDensityOf, reverbTime, settleDensity } from '$lib/tour/atmosphere'
-  import { roomConditionOf, type RoomCondition } from '$lib/tour/roomCondition'
+  import { roomAudioBasisKey, roomAudioKey } from '$lib/tour/roomAudioKey'
+  import { RoomConditionCache } from '$lib/tour/roomCondition'
   import { heardNeighbourOf, roomSoundProfileOf } from '$lib/tour/roomSound'
+  import { liveShuTraces, shuTraceOf, type ShuTrace } from '$lib/tour/shuTrace'
   import { disturbDust, driftDust, type Dust } from '$lib/tour/dust'
   import { detailTagAt, type TourDetailTag } from '$lib/tour/detailTag'
   import { distanceToBoundary } from '$lib/tour/geometry'
@@ -161,7 +160,6 @@
   import { SceneInsets } from '$lib/tour/sceneInsets'
   import { listenToSceneInput, sceneKeyIsForElsewhere } from '$lib/tour/sceneInput'
   import { PortalRenderer } from '$lib/tour/PortalRenderer'
-  import { DOOR_OPEN_RADIUS } from '$lib/tour/doorAnimator'
   import { TierView, type BuiltTierView, type RoomDetailMode } from '$lib/tour/TierView'
   import {
     AURA_LIGHT_INTENSITY,
@@ -188,7 +186,6 @@
   import { buildVowApparition } from '$lib/tour/apparitionVowView'
   import { buildAnimalApparition } from '$lib/tour/apparitionAnimalView'
   import { HatsuSceneEffects } from '$lib/tour/HatsuSceneEffects'
-  import { outsideLaplaceField } from '$lib/tour/LaplaceDevilEffect'
   import { NenSceneAura } from '$lib/tour/NenSceneAura'
   import { auraSightOf } from '$lib/tour/auraSight'
   import { pressTen, wasRefused, type NenOutcome } from '$lib/tour/nenPress'
@@ -284,10 +281,6 @@
      * an unchanged prop is not a second cast.
      */
     flash?: (TourFlash & { seq: number }) | null
-    /** The detached ten-second dream currently being walked. */
-    futureVisionActive?: boolean
-    /** The real visitor crossed the beast's fixed 36-metre field. */
-    onLaplaceEnd?: (reason: 'range') => void
     /** Whether a technique the walk answers to is active, so aiming is live. */
     aiming?: boolean
     /**
@@ -572,10 +565,6 @@
      * when the visitor did not step into either of its ends.
      */
     onWorm?: (spaceId: string | null, arrivedFrom: string | null) => string | null
-    /** Asked when Luini enters either end of his localized spatial passage. */
-    onSpatial?: (spaceId: string | null, arrivedFrom: string | null) => string | null
-    /** The anchor's sole physical leaf has begun to open. */
-    onSpatialDoorOpen?: (spaceId: string) => void
     /**
      * What time it is aboard, at the event the walk is projecting.
      *
@@ -633,8 +622,6 @@
     concert = { mode: null, playing: false },
     nenAvailability = {},
     flash = null,
-    futureVisionActive = false,
-    onLaplaceEnd,
     aiming = false,
     selfCastable = false,
     hands = null,
@@ -667,8 +654,6 @@
     hatsuRequiresZetsu = false,
     onArrive,
     onWorm,
-    onSpatial,
-    onSpatialDoorOpen,
     onFish,
     onOwl,
     onOwlSecond,
@@ -690,7 +675,7 @@
   let hatsuVariantIndex = $state(0)
   let selectedNenZone = $state<NenBodyZone>('hands')
   let selectedEnRadius = $state(8)
-  let shuTraces = $state<Array<{ until: number; apparition: Apparition }>>([])
+  let shuTraces = $state<ShuTrace[]>([])
   let lastHatsuVariant = $state(0)
   const hatsuVariants = $derived.by(() => {
     if (tunes) return [tunes.first, tunes.second, tunes.third]
@@ -703,28 +688,9 @@
   const effectiveNen = $derived(nen ?? localNen)
   let previousShu: string[] = []
   const leaveShuTrace = (objectId: string) => {
-    const solid = solidById(ship, world, objectId)
-    const solidSpace = solid ? ship.spaces.get(solid.spaceId) : null
-    if (!solid || !solidSpace) return
-    const until = Date.now() + 10_000
-    shuTraces = [
-      ...shuTraces.filter((trace) => trace.until > Date.now()),
-      {
-        until,
-        apparition: {
-          id: `shu-trace:${objectId}:${until}`,
-          kind: 'residue',
-          spaceId: solid.spaceId,
-          tierId: solidSpace.tierId,
-          at: solid.at,
-          y: solid.base + solid.height * 0.5,
-          size: Math.max(0.25, Math.min(0.7, ...solid.size)),
-          colour: 0xb9a6ff,
-          stage: 0,
-          hidden: true,
-        },
-      },
-    ]
+    const now = Date.now()
+    const trace = shuTraceOf({ ship, world, objectId, now })
+    if (trace) shuTraces = [...liveShuTraces(shuTraces, now), trace]
   }
   $effect(() => {
     const current = effectiveNen.shu
@@ -1493,6 +1459,33 @@
         paneMaterial.visible = !sealed
       }
 
+      /**
+       * Luini's walls, which the visitor is about to walk through.
+       *
+       * Phasing was a collision test that stopped being run: from inside the
+       * visitor's own head, the ship looked exactly as it always had until they
+       * happened to lean on a bulkhead. The steel goes half-transparent instead
+       * — the hull is still drawn, still lit, still there, and it has stopped
+       * being a boundary, which is the one thing the technique says.
+       */
+      let phased = false
+
+      function syncPhasing() {
+        if (world.phasing === phased) return
+        phased = world.phasing
+        // Both surface materials, because the two rooms with a window in them
+        // are steel like the rest of the deck: a hull that goes half
+        // transparent everywhere except the observation deck would be saying
+        // the bay is a different kind of wall, which it is not.
+        for (const steel of [material, skylitMaterial]) {
+          steel.transparent = phased
+          steel.opacity = phased ? 0.42 : 1
+          steel.depthWrite = !phased
+          steel.needsUpdate = true
+        }
+        edgeMaterial.opacity = phased ? 0.7 : 0.32
+      }
+
       /** Rebuilds the deck under the visitor when Nen has changed what is in it. */
       function syncDeck() {
         const key = worldKey(currentTierId)
@@ -1525,8 +1518,8 @@
 
       function applyVisibility(standingId: string | null) {
         const eyeSpace = world.eye ? ship.spaces.get(world.eye) : null
-        const mouths = portalMouths(ship, world)
-        const key = `${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
+        const mouths = wormMouths(ship, world)
+        const key = `${quality.viewDepth}::${standingId ?? ''}::${gangwayWalk !== null}::${activeKey}::${eyeKey}::${mouths
           .map((mouth) => mouth.spaceId)
           .join(',')}`
         if (key === shownKey) return
@@ -1550,13 +1543,13 @@
               ? new Set()
               : (authoredVisibleSpaceIds ??
                   (authoredEyeHeight === null
-                    ? visibleSpaces(activePlan, standingId)
+                    ? visibleSpaces(activePlan, standingId, quality.viewDepth)
                     : new Set(activePlan.spaces.map((space) => space.id)))),
           )
         }
         if (eyeDeck && eyeSpace) {
           const eyePlan = ship.plans.get(eyeSpace.tierId)
-          if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id))
+          if (eyePlan) want(eyeDeck, visibleSpaces(eyePlan, eyeSpace.id, quality.viewDepth))
         }
         // What a mouth of the tunnel looks out on: the far room and whatever
         // can be seen from it, on whichever deck that is.
@@ -1566,7 +1559,9 @@
             portalDecks.find((built) =>
               built.rooms.some((room) => room.spaceId === mouth.spaceId),
             ) ?? null
-          if (mouthPlan && deck) want(deck, visibleSpaces(mouthPlan, mouth.spaceId))
+          if (mouthPlan && deck) {
+            want(deck, visibleSpaces(mouthPlan, mouth.spaceId, quality.viewDepth))
+          }
         }
 
         for (const { deck, ids } of wanted) {
@@ -1848,9 +1843,9 @@
         if (held) return held
         const made = new THREE.MeshBasicMaterial({
           color: colour,
-          transparent: true,
+          transparent: opacity < 1,
           opacity,
-          depthWrite: opacity > 0.9,
+          depthWrite: opacity >= 1,
           side: THREE.DoubleSide,
         })
         glowMaterials[key] = made
@@ -2111,12 +2106,12 @@
             seconds,
           }),
           ...extras,
-          ...shuTraces.filter((trace) => trace.until > Date.now()).map((trace) => trace.apparition),
+          ...liveShuTraces(shuTraces).map((trace) => trace.apparition),
         ].filter((seen) => !seen.hidden || effectiveNen.gyo)
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
           keyOf: (seen) =>
-            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.wormRole ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
+            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
           build: buildApparition,
           preserve: (held) => ({ facing: held.facing, flown: held.flown }),
           restore: (held, saved) => {
@@ -2233,7 +2228,7 @@
       let portalDeckKey = ''
 
       function syncPortalDecks() {
-        const mouths = portalMouths(ship, world)
+        const mouths = wormMouths(ship, world)
         const key = mouths.map((mouth) => `${mouth.spaceId}:${worldKey(mouth.tierId)}`).join('|')
         if (key === portalDeckKey) return
         portalDeckKey = key
@@ -3185,6 +3180,7 @@
       /** Starts whichever of the two the page has just handed over. */
       function syncFlash() {
         if (!flash || !hatsuEffects.play(flash)) return
+        if (flash.kind === 'rewind') hatsuEffects.startRewind()
         if (flash.kind === 'lash') {
           lashing = flash.tierId === currentTierId ? { at: flash.at, y: flash.y, through: 0 } : null
         }
@@ -4016,34 +4012,23 @@
       /**
        * The air the current room wants, and the densities already measured.
        *
-       * A plain record rather than a Map, like the rest of the render loop's own
-       * state: the loop reads this sixty times a second and nothing in the markup
-       * depends on it, so it must stay out of Svelte's reactivity rather than
-       * drive it. Measured once per room — the longest chord of a sixty-corner
-       * promenade is not worth walking every frame.
+       * Measured once per room — the longest chord of a sixty-corner promenade
+       * is not worth walking every frame.
        */
       let fogTarget = 0.02
       const airOf: Record<string, number | undefined> = {}
-      const conditions: Record<
-        string,
-        { occupants: number; condition: RoomCondition } | undefined
-      > = {}
-      const conditionFor = (space: Space, roomTier: TierPlan['tier']): RoomCondition => {
-        const occupants = roomOccupancy[space.id] ?? 0
-        const held = conditions[space.id]
-        if (held?.occupants === occupants) return held.condition
-        const condition = roomConditionOf({ space, tier: roomTier, namedOccupants: occupants })
-        conditions[space.id] = { occupants, condition }
-        return condition
-      }
+      const roomConditions = new RoomConditionCache()
+      const conditionFor = (space: Space, roomTier: TierPlan['tier']) =>
+        roomConditions.get(space, roomTier, roomOccupancy[space.id] ?? 0)
 
       /** The room the door pair last delivered the visitor to. */
       let arrivedFrom: string | null = null
       /** The end of Fugetsu's tunnel the visitor was last delivered to. */
       let wormFrom: string | null = null
-      let spatialFrom: string | null = null
-      let openedSpatialAnchor: string | null = null
       let lastSpaceId: string | null = null
+      let lastRoomAudioBasisKey: string | null = null
+      let lastRoomAudioKey: string | null = null
+      let lastRoomNeighbour: ReturnType<typeof heardNeighbourOf> = null
       /** How long since the fish last took something, in seconds. */
       let sinceBite = 0
       /** A couple of seconds a mouthful: an aquarium, not a wood chipper. */
@@ -4230,12 +4215,12 @@
         if (!plan) return
 
         // One clock for everything the walk animates, and it is not the wall's:
-        // Laplace Devil's dream consumes ten seconds for the visitor but none
-        // for the ship, so the scene clock returns to its activation instant.
+        // Parallel Future moves it back ten seconds, and the room does again
+        // exactly what it did — see `HatsuRewindEffect`.
         // Read before anything is placed rather than after, because the marks
         // The Sun and Moon leaves are put where their things are *now*, and a
         // thing that wanders is somewhere new every frame.
-        const clock = now / 1000 - hatsuEffects.laplaceClockOffset
+        const clock = now / 1000 - hatsuEffects.rewindOffset
         // Canon state keeps advancing, but decorative cycles do not. A fixed
         // phase preserves the information carried by every manifestation
         // without leaving birds orbiting, marks pulsing or dust swimming when
@@ -4248,6 +4233,7 @@
         syncEye()
         syncSight()
         hourView.setHour($comfort.shipHour, hour.hours)
+        syncPhasing()
         // The far deck first, so a mouth built this frame already has a room to
         // look at rather than a frame of void.
         syncPortalDecks()
@@ -4271,6 +4257,15 @@
         })
         runLash(delta)
         syncGum(visualClock)
+        hatsuEffects.updateRewind({
+          clock,
+          position: pointer,
+          yaw,
+          ground,
+          delta,
+          reducedMotion: $reducedMotion,
+        })
+
         // The fish feed on the clock rather than on a threshold: they are drawn
         // now, and a fish that swims through a coffin and leaves it standing is
         // not eating. What they take is still the pure layer's to decide.
@@ -4367,7 +4362,7 @@
         // it, and where the drift has it this instant.
         const loose = solidWalls(ship, world, {
           tierId: currentTierId,
-          seconds: now / 1000 - hatsuEffects.laplaceClockOffset,
+          seconds: now / 1000 - hatsuEffects.rewindOffset,
         })
 
         // `code` is the physical key, so W A S D covers ZQSD on an AZERTY
@@ -4522,39 +4517,6 @@
             return
           }
         }
-
-        const laplaceReset = hatsuEffects.updateLaplace({
-          clock,
-          tierId: currentTierId,
-          position: pointer,
-          yaw,
-          pitch,
-          ground,
-          delta,
-          reducedMotion: $reducedMotion,
-          visionActive: futureVisionActive,
-          abilityActive: Boolean(world.foreseen),
-        })
-        if (laplaceReset) {
-          yaw = laplaceReset.yaw
-          pitch = laplaceReset.pitch
-          ground = laplaceReset.ground
-          if (laplaceReset.tierId !== currentTierId) {
-            loadTier(laplaceReset.tierId, laplaceReset.position, laplaceReset.ground)
-            report()
-            return
-          }
-          pointer = [...laplaceReset.position]
-          report()
-        }
-
-        const laplaceAnchor = world.foreseen?.anchor
-        if (
-          laplaceAnchor &&
-          !futureVisionActive &&
-          outsideLaplaceField(laplaceAnchor, { tierId: currentTierId, at: pointer })
-        )
-          onLaplaceEnd?.('range')
 
         if (world.puppet === puppetId && world.puppet && walking) {
           if (!world.solids[world.puppet]) world.solids[world.puppet] = {}
@@ -4783,48 +4745,52 @@
         // Setting foot in a room is the event the hideout doors and the paper
         // dolls both wait on. Walking about inside one is not.
         const standingId = standing?.id ?? null
+        const auditoryPlan = activePlan ?? plan
+        const audioBasisKey = standing
+          ? roomAudioBasisKey({
+              spaceId: standing.id,
+              doorways: auditoryPlan.doorways,
+              namedOccupants: roomOccupancy,
+            })
+          : null
+        if (
+          standing &&
+          (stepped || standingId !== lastSpaceId || audioBasisKey !== lastRoomAudioBasisKey)
+        ) {
+          lastRoomNeighbour = heardNeighbourOf({
+            plan: auditoryPlan,
+            space: standing,
+            at: pointer,
+            namedOccupants: roomOccupancy,
+          })
+        } else if (!standing) lastRoomNeighbour = null
+        lastRoomAudioBasisKey = audioBasisKey
 
-        // The animated leaf and the rule share the same opening radius. Merely
-        // approaching the anchor's sole door is therefore enough to destroy
-        // the route; crossing the threshold is not required.
-        const anchorId = world.spatial.anchorId
-        if (!anchorId) openedSpatialAnchor = null
-        else if (standingId === anchorId && openedSpatialAnchor !== anchorId && activePlan) {
-          const door = activePlan.doorways.find(
-            (candidate) => candidate.a === anchorId || candidate.b === anchorId,
-          )
-          if (door) {
-            const middle: Vec2 = [
-              (door.start[0] + door.end[0]) / 2,
-              (door.start[1] + door.end[1]) / 2,
-            ]
-            if (Math.hypot(pointer[0] - middle[0], pointer[1] - middle[1]) <= DOOR_OPEN_RADIUS) {
-              openedSpatialAnchor = anchorId
-              onSpatialDoorOpen?.(anchorId)
-            }
-          }
-        }
+        const audioKey = standing
+          ? roomAudioKey({
+              spaceId: standing.id,
+              doorways: auditoryPlan.doorways,
+              namedOccupants: roomOccupancy,
+              neighbour: lastRoomNeighbour,
+            })
+          : null
+        if (standing && audioKey !== null && audioKey !== lastRoomAudioKey) {
+          lastRoomAudioKey = audioKey
+          const condition = conditionFor(standing, plan.tier)
+          // Sabine on the volume the blueprint already gives, crossfaded over the
+          // threshold: a cabin rings for half a second and the promenade for four.
+          enterRoom({
+            id: standing.id,
+            key: audioKey,
+            reverb: reverbTime(standing, plan.tier, condition.absorption),
+            wallDistance: distanceToBoundary(pointer, standing.footprint),
+            sound: roomSoundProfileOf(standing, condition),
+            neighbour: lastRoomNeighbour,
+          })
+        } else if (!standing) lastRoomAudioKey = null
 
         if (standingId !== lastSpaceId) {
           lastSpaceId = standingId
-          // Sabine on the volume the blueprint already gives, crossfaded over the
-          // threshold: a cabin rings for half a second and the promenade for four.
-          if (standing) {
-            const condition = conditionFor(standing, plan.tier)
-            enterRoom({
-              id: standing.id,
-              key: `${standing.id}:${roomOccupancy[standing.id] ?? 0}`,
-              reverb: reverbTime(standing, plan.tier, condition.absorption),
-              wallDistance: distanceToBoundary(pointer, standing.footprint),
-              sound: roomSoundProfileOf(standing, condition),
-              neighbour: heardNeighbourOf({
-                plan: activePlan ?? plan,
-                space: standing,
-                at: pointer,
-                namedOccupants: roomOccupancy,
-              }),
-            })
-          }
           // The ship is handed in because the doors may be passive: with the
           // aura up and no route prepared, every threshold is one of Voconte's
           // and comes out somewhere in the hideout that is not where you meant.
@@ -4853,21 +4819,6 @@
             // Out of the far mouth rather than at the far room's door: a tunnel
             // whose exit was across the room would be a tunnel you fall out of.
             goTo(tunnel, { at: ends.find((end) => end.spaceId === tunnel)?.at })
-            return
-          }
-        }
-
-        // Luini's aperture is local too, but unlike Magical Worm it does not
-        // wear out: the sealed anchor is the price. The far mouth remains a
-        // route back until the physical anchor door is opened.
-        const spatialMouth = spatialMouthAt(ship, world, { at: pointer, tierId: currentTierId })
-        if (!spatialMouth) spatialFrom = null
-        else if (spatialMouth !== spatialFrom) {
-          const ends = spatialMouths(ship, world)
-          const passage = onSpatial?.(spatialMouth, spatialFrom)
-          if (passage) {
-            spatialFrom = passage
-            goTo(passage, { at: ends.find((end) => end.spaceId === passage)?.at })
             return
           }
         }

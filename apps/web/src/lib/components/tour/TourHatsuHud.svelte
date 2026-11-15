@@ -11,7 +11,6 @@
   import type { Ship } from '$lib/tour/blueprint'
   import {
     TOUR_HATSU_KINDS,
-    STAMP_LIMIT,
     aimsAtSolids,
     castablePages,
     hatsuKeys,
@@ -20,20 +19,17 @@
     SMOKE_FULL,
     dialReading,
     identityOf,
-    lockedPuppets,
     solidById,
     solidNow,
-    stampedPuppets,
-    techniqueHolding,
     twoPages,
     worksOnTheBody,
     type TourReport,
     type TourWorld,
   } from '$lib/tour/hatsu'
   import { gumStretch, gumTension } from '$lib/tour/gum'
-  import { daysLeft, daysNeeded, isBuilt, isDeciphered } from '$lib/tour/decipher'
   import { HOURS_IN_A_YEAR } from '$lib/tour/emperor'
-  import { RIPPER_ANT_TURNS, ripperReach } from '$lib/tour/ripper'
+  import { RIPPER_ANT_TURNS } from '$lib/tour/ripper'
+  import { hatsuTechniqueGuide } from '$lib/tour/hatsuTechniqueGuide'
   import type { Heard } from '$lib/tour/cast/hearing'
   import TourPainPackerControls from './TourPainPackerControls.svelte'
   import type { Space, Structure } from '$lib/tour/types'
@@ -223,226 +219,19 @@
     return profile ? localizeHatsu(profile, $locale).name : kind
   }
 
-  /**
-   * Multi-step techniques keep their next action in one stable place.
-   * Reports remain the account of what just happened; this is the account of
-   * what to do next after that transient line has gone away.
-   */
-  const techniqueGuide = $derived.by(() => {
-    const controlCopy = $t.tour.hatsu.comboMaster
-    const control = touch ? controlCopy.touchControl : controlCopy.control
-    const guides = $t.tour.hatsu.guides
-    const make = (options: {
-      title: string
-      status: string
-      badge?: string | null
-      detail?: string | null
-      warning?: string | null
-      note?: string | null
-    }) => ({ badge: null, detail: null, warning: null, note: null, ...options })
-
-    if (profile.kind === 'decipher') {
-      const copy = controlCopy
-      const reading = world.decipher
-      const build = world.fabrication
-      if (!reading) {
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.chooseTarget(control),
-          note: copy.lock,
-        })
-      }
-      if (!isDeciphered(reading)) {
-        const total = daysNeeded(reading.reading)
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.deciphering(
-            personName(reading.characterId),
-            total - daysLeft(reading),
-            total,
-          ),
-          detail: standingIn === reading.spaceId ? copy.decipherRunning : copy.decipherPaused,
-          note: copy.lock,
-        })
-      }
-      if (!build) {
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.readyToBuild(control),
-          note: copy.lock,
-        })
-      }
-      if (isBuilt(build)) {
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.fabricationReady(control),
-          note: copy.lock,
-        })
-      }
-      return make({
-        title: copy.title,
-        badge: copy.clock,
-        status: copy.fabricating(build.days, build.needs),
-        detail: copy.fabricationRunning,
-        warning: copy.fabricationWarning,
-        note: copy.lock,
-      })
-    }
-
-    if (profile.kind === 'scarlet') {
-      const copy = guides.emperorTime
-      if (world.forcedZetsu > 0) {
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.zetsu(world.forcedZetsu),
-          detail: copy.zetsuDetail,
-        })
-      }
-      if (!world.scarlet) {
-        return make({
-          title: copy.title,
-          badge: copy.clock,
-          status: copy.start(control),
-          detail: copy.threshold,
-        })
-      }
-      return make({
-        title: copy.title,
-        badge: copy.clock,
-        status: copy.active(world.scarlet.hours, HOURS_IN_A_YEAR),
-        detail: copy.stop(control),
-        warning: copy.threshold,
-      })
-    }
-
-    if (profile.kind === 'windup') {
-      const copy = guides.ripper
-      if (!world.windup)
-        return make({ title: copy.title, status: copy.empty(control), warning: copy.shatter })
-      return make({
-        title: copy.title,
-        status: copy.charged(world.windup, RIPPER_ANT_TURNS, ripperReach(world.windup)),
-        detail: copy.next(control),
-        warning: copy.shatter,
-      })
-    }
-
-    if (profile.kind === 'portal') {
-      const copy = guides.worm
-      if (!world.worm)
-        return make({ title: copy.title, status: copy.first(control), warning: copy.spent })
-      return make({
-        title: copy.title,
-        status: copy.linked(roomName(world.worm.a), roomName(world.worm.b), world.worm.crossings),
-        detail: copy.cross,
-        warning: copy.spent,
-      })
-    }
-
-    if (profile.kind === 'curse') {
-      const copy = guides.curse
-      if (!world.curse) return make({ title: copy.title, status: copy.choose(control) })
-      return make({
-        title: copy.title,
-        status: copy.victim(roomName(world.curse.victim)),
-        detail: world.laidOpen ? copy.revealed(roomName(world.curse.sacrifice)) : copy.hidden,
-        warning: world.laidOpen ? copy.warning : null,
-      })
-    }
-
-    if (profile.kind === 'chain-rule') {
-      const copy = guides.chain
-      const owner = world.book.stolenFrom
-      if (!owner) return make({ title: copy.title, status: copy.steal(control) })
-      const ability = pageName(world.book.open ?? world.book.pages[0] ?? '')
-      return make({
-        title: copy.title,
-        status: copy.held(personName(owner), ability),
-        detail: copy.return(personName(owner), control),
-      })
-    }
-
-    if (profile.kind === 'ability-loan') {
-      const copy = guides.chain
-      const abilityKind = world.book.open ?? world.book.pages[0] ?? null
-      if (!abilityKind) return make({ title: copy.title, status: copy.dolphinNeedsTheft })
-      const ability = pageName(abilityKind)
-      if (!world.laidOpen) return make({ title: copy.title, status: copy.dolphinNeedsEyes })
-      if (!world.book.loan)
-        return make({ title: copy.title, status: copy.dolphinLoad(ability, control) })
-      return make({ title: copy.title, status: copy.dolphinReady(pageName(world.book.loan)) })
-    }
-
-    if (profile.kind === 'theft' || profile.kind === 'capture') {
-      const copy = guides.book
-      const exposed = aimedAt ? techniqueHolding(world, aimedAt.id) : null
-      if (profile.kind === 'theft' && world.book.open) {
-        return make({ title: copy.title, status: copy.stolen(pageName(world.book.open)) })
-      }
-      if (exposed)
-        return make({ title: copy.title, status: copy.aimed(pageName(exposed), control) })
-      if (profile.kind === 'capture' && world.book.cards.length) {
-        return make({
-          title: copy.title,
-          status: copy.card(world.book.cards.length),
-          detail: copy.target(control),
-        })
-      }
-      return make({ title: copy.title, status: copy.target(control) })
-    }
-
-    if (profile.kind === 'bookmark') {
-      const copy = guides.book
-      const pair = twoPages(world.book)
-      return pair
-        ? make({
-            title: copy.title,
-            status: copy.double(pageName(pair[0]), pageName(pair[1])),
-            detail: copy.turn,
-          })
-        : make({ title: copy.title, status: copy.target(control) })
-    }
-
-    if (profile.kind === 'snakes') {
-      const copy = guides.majority
-      if (!world.snakes) return make({ title: copy.title, status: copy.start(control) })
-      if (!world.snakes.fed) {
-        return make({
-          title: copy.title,
-          status: copy.hungry(world.snakes.rooms.length),
-          warning: copy.rebound,
-        })
-      }
-      return make({ title: copy.title, status: copy.fed })
-    }
-
-    if (profile.kind === 'command') {
-      const copy = guides.stamp
-      const stamped = stampedPuppets(world).length
-      const locked = lockedPuppets(world).length
-      if (!stamped) return make({ title: copy.title, status: copy.start(control) })
-      if (!locked) {
-        return make({
-          title: copy.title,
-          status: copy.stamped(stamped, STAMP_LIMIT),
-          detail: copy.lock(control),
-          note: copy.toggle,
-        })
-      }
-      return make({
-        title: copy.title,
-        status: copy.locked(locked, stamped, control),
-        detail: copy.toggle,
-      })
-    }
-
-    return null
-  })
+  const techniqueGuide = $derived(
+    hatsuTechniqueGuide({
+      copy: $t.tour.hatsu,
+      kind: profile.kind,
+      world,
+      touch,
+      standingIn,
+      aimedAtId: aimedAt?.id ?? null,
+      personName,
+      roomName,
+      pageName,
+    }),
+  )
 
   /** What the dial reads from where the visitor is standing, this instant. */
   const dial = $derived(dialReading(ship, world, { at, standingIn }))
@@ -486,32 +275,8 @@
         return say.doorsPaired(roomName(report.spaceId), roomName(report.otherId))
       case 'doors-rearmed':
         return say.doorsRearmed(roomName(report.spaceId))
-      case 'spatial-anchor-refused':
-        if (report.reason === 'outside') return say.spatialOutside
-        if (report.reason === 'burned')
-          return say.spatialAnchorBurned(report.spaceId ? roomName(report.spaceId) : '')
-        if (report.reason === 'not-one-door')
-          return say.spatialNeedsOneDoor(
-            report.spaceId ? roomName(report.spaceId) : '',
-            report.doors ?? 0,
-          )
-        return say.spatialDoorOpen(report.spaceId ? roomName(report.spaceId) : '')
-      case 'spatial-anchored':
-        return say.spatialAnchored(roomName(report.spaceId))
-      case 'spatial-destination-refused':
-        if (report.reason === 'return-to-anchor')
-          return say.spatialReturnToAnchor(
-            world.spatial.anchorId ? roomName(world.spatial.anchorId) : '',
-          )
-        if (report.reason === 'unvisited')
-          return say.spatialUnvisited(report.spaceId ? roomName(report.spaceId) : '')
-        return say.spatialSameRoom
-      case 'spatial-opened':
-        return say.spatialOpened(roomName(report.anchorId), roomName(report.destinationId))
-      case 'spatial-crossed':
-        return say.spatialCrossed(roomName(report.fromId), roomName(report.toId))
-      case 'spatial-burned':
-        return say.spatialBurned(roomName(report.spaceId))
+      case 'phasing':
+        return report.on ? say.phasingOn : say.phasingOff
       case 'eye-sent':
         return say.eyeSent(roomName(report.spaceId))
       case 'eye-recalled':
@@ -759,10 +524,8 @@
         return say.snakesFed(roomName(report.spaceId))
       case 'snakes-rebound':
         return say.snakesRebound
-      case 'worm-refused':
-        return report.reason === 'same-room'
-          ? say.wormRefused.sameRoom
-          : say.wormRefused[report.reason]
+      case 'worm-set':
+        return say.wormSet(roomName(report.spaceId))
       case 'worm-open':
         return say.wormOpen(roomName(report.a), roomName(report.b))
       case 'worm-crossed':
@@ -887,8 +650,6 @@
         return say.owlExpired(report.rooms)
       case 'foreseen':
         return say.foreseen(roomName(report.spaceId))
-      case 'laplace-ended':
-        return say.laplaceEnded(report.reason)
       case 'diverged':
         return say.diverged(roomName(report.spaceId), roomName(report.wentTo))
       case 'written':
@@ -1021,15 +782,7 @@
     }
     for (const id of world.emptied) rows.push({ label: held.emptied, value: roomName(id) })
     if (world.dowsing) rows.push({ label: held.dowsing, value: roomName(world.dowsing) })
-    if (world.spatial.anchorId)
-      rows.push({ label: held.spatialAnchor, value: roomName(world.spatial.anchorId) })
-    if (world.spatial.destinationId)
-      rows.push({ label: held.spatialExit, value: roomName(world.spatial.destinationId) })
-    if (world.spatial.burned.length)
-      rows.push({
-        label: held.spatialBurnedRooms,
-        value: world.spatial.burned.map(roomName).join(', '),
-      })
+    if (world.phasing) rows.push({ label: held.phasing, value: '—' })
     if (world.sealed) {
       rows.push({
         label: held.sealed,
@@ -1203,7 +956,9 @@
     if (world.worm) {
       rows.push({
         label: held.worm,
-        value: `${roomName(world.worm.phase === 'outgoing' ? world.worm.a : world.worm.b)} → ${roomName(world.worm.phase === 'outgoing' ? world.worm.b : world.worm.a)} · ${held.crossings(world.worm.crossings)}`,
+        value: world.worm.b
+          ? `${roomName(world.worm.a)} ⇄ ${roomName(world.worm.b)} · ${held.crossings(world.worm.crossings)}`
+          : `${roomName(world.worm.a)} · ${held.armed}`,
       })
     }
     if (world.snakes) {

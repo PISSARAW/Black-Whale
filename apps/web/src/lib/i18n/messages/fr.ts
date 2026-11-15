@@ -1131,6 +1131,8 @@ export const fr: Messages = {
         doorsPaired: (a, b) =>
           `${a} et ${b} ne font plus qu'un seuil · entrez par l'un, ressortez par l'autre`,
         doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
+        phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
+        phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
         spatialOutside: 'Spatial Teleportation exige une pièce autour de vous',
         spatialAnchorBurned: (room) =>
           `${room} a déjà été descellée · elle ne pourra plus jamais servir d’ancre`,
@@ -1417,6 +1419,7 @@ export const fr: Messages = {
         puppetReleased: (solid) => `L'antenne est retirée · ${solid} n'est plus contrôlé`,
         autopilotStarted:
           'Pilote automatique activé · le corps avance seul pour accomplir la tâche',
+        wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
         wormOpen: (a, b) =>
           `Vous prenez le rôle de Fugetsu · la porte d’aller relie ${a} à ${b}, Kacho vous accompagne`,
         wormCrossed: (room, crossings) =>
@@ -1681,6 +1684,7 @@ export const fr: Messages = {
         watched: 'Poupées de papier',
         emptied: 'Aspiré',
         dowsing: 'Le pendule désigne',
+        phasing: 'Traversée des murs',
         spatialAnchor: 'Ancre spatiale',
         spatialExit: 'Sortie spatiale ouverte',
         spatialBurnedRooms: 'Ancres consumées',

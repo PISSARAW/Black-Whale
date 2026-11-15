@@ -1,0 +1,8 @@
+{
+  "apps/web/src/lib/components/tour/TourHatsuHud.svelte": 1346,
+  "apps/web/src/lib/components/tour/TourScene.svelte": 5299,
+  "apps/web/src/lib/tour/apparitions.ts": 2059,
+  "apps/web/src/lib/tour/hatsu.ts": 3263,
+  "apps/web/src/lib/tour/mesh.ts": 1820,
+  "apps/web/src/routes/tour/TourPageExperience.svelte": 1251
+}

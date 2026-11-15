@@ -1,23 +1,15 @@
+import { untrack } from 'svelte'
+import { get } from 'svelte/store'
+import {
+  transitionNen,
+  type NenTechniqueAction,
+  type NenTechniqueState,
+  type NenTransition,
+} from '@black-whale/nen-engine'
 import type { HatsuInteractionKind } from '$lib/nen/hatsuRegistry'
-import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import { loadTourNen, saveTourNen } from '$lib/nen/persistence'
-import type { AuraPressure } from '$lib/tour/auraReserve'
-import {
-  breathe,
-  exhaustionActions,
-  refusedByReserve,
-  RESERVE_MAX,
-  reserveAvailability,
-} from '$lib/tour/auraReserve'
-import {
-  awakeningAvailability,
-  awakensWith,
-  loadAwakened,
-  refusedBeforeAwakening,
-  saveAwakened,
-} from '$lib/tour/awakening'
+import { activeHatsu, enterForcedZetsu, parallelFutureVisible } from '$lib/nen/hatsuState'
 import type { Ship } from '$lib/tour/blueprint'
-import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
 import {
   arriveInTour,
   EMPTY_WORLD,
@@ -26,34 +18,27 @@ import {
   type TourReport,
   type TourWorld,
 } from '$lib/tour/hatsu'
-import { canUseTourHatsu } from '$lib/tour/hatsuMode'
-import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nenFeedback'
-import type { NenRefusalCode } from '$lib/tour/nenRefusal'
 import { activateTourWorld, cycleTourMode, releaseTourWorld } from '$lib/tour/pageWorldCommands'
-import type { Vec2 } from '$lib/tour/types'
+import { bodyAfterAuraEnds } from '$lib/tour/cast/pain'
+import { canUseTourHatsu } from '$lib/tour/hatsuMode'
 import {
-  transitionNen,
-  type NenTechniqueAction,
-  type NenTechniqueState,
-  type NenTransition,
-} from '@black-whale/nen-engine'
-import { untrack } from 'svelte'
-import { get } from 'svelte/store'
-
-/** A Tour-scale unit per beat; the manga leaves the beast's real depletion ratio unknown. */
-const LAPLACE_STORED_AURA_PER_SECOND = 1
-
-/** Aura ends; route memory and permanently burnt anchors do not. */
-const rememberedEmptyWorld = (world: TourWorld): TourWorld => ({
-  ...EMPTY_WORLD,
-  body: bodyAfterAuraEnds(world.body),
-  trail: world.trail,
-  spatial: {
-    ...EMPTY_WORLD.spatial,
-    visited: world.spatial.visited,
-    burned: world.spatial.burned,
-  },
-})
+  breathe,
+  exhaustionActions,
+  refusedByReserve,
+  reserveAvailability,
+  RESERVE_MAX,
+} from '$lib/tour/auraReserve'
+import {
+  awakeningAvailability,
+  awakensWith,
+  loadAwakened,
+  refusedBeforeAwakening,
+  saveAwakened,
+} from '$lib/tour/awakening'
+import type { Vec2 } from '$lib/tour/types'
+import { appendNenCause, type NenCause, type NenCauseEntry } from '$lib/tour/nenFeedback'
+import type { AuraPressure } from '$lib/tour/auraReserve'
+import type { NenRefusalCode } from '$lib/tour/nenRefusal'
 
 interface ActivationContext {
   ship: Ship
@@ -125,7 +110,6 @@ export class TourHatsuSession {
   }
   private wasFutureVisible = false
   private futureArmed = false
-  private futureWorldSnapshot: TourWorld | null = null
   private activationKind: HatsuInteractionKind | null = null
   private unsubscribeFuture: (() => void) | null = null
 
@@ -139,12 +123,9 @@ export class TourHatsuSession {
       if (changedKind && context.activeKind === 'future' && !this.futureArmed)
         parallelFutureVisible.set(false)
       if (!context.hasAura || !this.canUse(context.activeKind)) {
-        if (context.activeKind === 'future') {
-          parallelFutureVisible.set(false)
-          this.futureWorldSnapshot = null
-        }
+        if (context.activeKind === 'future') parallelFutureVisible.set(false)
         const world = untrack(() => this.options.read().world)
-        this.options.updateWorld(rememberedEmptyWorld(world))
+        this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(world.body) })
         this.options.updateReport(null)
         return
       }
@@ -172,8 +153,6 @@ export class TourHatsuSession {
         this.futureArmed &&
         active?.id === 'parallel-future'
       ) {
-        if (this.futureWorldSnapshot) this.options.updateWorld(this.futureWorldSnapshot)
-        this.futureWorldSnapshot = null
         const report: TourReport = { kind: 'vision-ended' }
         this.options.updateReport(report)
         this.options.show(report)
@@ -186,7 +165,6 @@ export class TourHatsuSession {
   /** Starts a fresh ten-second window only after a valid Tour cast in Zetsu. */
   armFutureVision() {
     this.futureArmed = false
-    this.futureWorldSnapshot = structuredClone(this.options.read().world)
     parallelFutureVisible.set(false)
     queueMicrotask(() => {
       if (
@@ -204,21 +182,6 @@ export class TourHatsuSession {
     this.unsubscribeFuture?.()
     this.unsubscribeFuture = null
     this.futureArmed = false
-    this.futureWorldSnapshot = null
-  }
-
-  /** Ends the maintained illusion without choosing a different Nen mode. */
-  endFuture = (reason: 'range' | 'zetsu' | 'battery') => {
-    const world = this.options.read().world
-    if (!world.foreseen) return
-    const restored = this.futureWorldSnapshot ?? world
-    parallelFutureVisible.set(false)
-    this.futureArmed = false
-    this.futureWorldSnapshot = null
-    this.options.updateWorld({ ...restored, foreseen: null })
-    const report: TourReport = { kind: 'laplace-ended', reason }
-    this.options.updateReport(report)
-    this.options.show(report)
   }
 
   turn = (requested: HatsuInteractionKind) => {
@@ -247,61 +210,61 @@ export class TourHatsuSession {
   /** One second of the walk's beat: the reserve moves, and an empty body lets go. */
   breathe = (pressure: AuraPressure = 'none') => {
     const before = this.reserve
-    const context = this.options.read()
-    if (context.activeKind === 'future' && context.world.foreseen && this.nen.mode === 'zetsu') {
-      this.reserve = Math.max(0, this.reserve - LAPLACE_STORED_AURA_PER_SECOND)
-      if (before > 0 && this.reserve === 0) this.endFuture('battery')
-      return
-    }
-    this.reserve = breathe(this.reserve, this.nen, { seconds: 1, pressure: pressure })
+    this.reserve = breathe(this.reserve, this.nen, { seconds: 1, pressure })
     if (this.reserve > 0 || before === 0) return
     this.staggeredUntil = Date.now() + 1_500
     this.note({ code: 'EXHAUSTED' })
     for (const action of exhaustionActions(this.nen)) this.useNen(action)
   }
 
+  private refusalFor(action: NenTechniqueAction): NenRefusalCode | null {
+    if (refusedBeforeAwakening(this.awakened, action)) return 'NODES_SHUT'
+    if (refusedByReserve(this.reserve, this.nen, action)) return 'RESERVE_TOO_LOW'
+    return null
+  }
+
   private recordTransition(action: NenTechniqueAction, result: NenTransition) {
-    if (result.accepted) {
-      this.nen = result.state
-      saveTourNen(this.nen)
-      this.note({ code: 'ACTION_ACCEPTED', action: action.type })
-      if (action.type === 'SHU' && !action.on)
-        this.note({ code: 'SHU_TRACE', objectId: action.objectId })
-      this.options.onNenApplied?.({ action, nen: this.nen, reserve: this.reserve })
-    } else if (result.reason) {
-      this.note({
-        code: 'ACTION_REFUSED',
-        action: action.type,
-        reason: result.reason as NenRefusalCode,
-      })
+    if (!result.accepted) {
+      if (result.reason)
+        this.note({
+          code: 'ACTION_REFUSED',
+          action: action.type,
+          reason: result.reason as NenRefusalCode,
+        })
+      return
     }
+    this.nen = result.state
+    saveTourNen(this.nen)
+    this.note({ code: 'ACTION_ACCEPTED', action: action.type })
+    if (action.type === 'SHU' && !action.on)
+      this.note({ code: 'SHU_TRACE', objectId: action.objectId })
+    this.options.onNenApplied?.({ action, nen: this.nen, reserve: this.reserve })
+  }
+
+  private applyAwakening(action: NenTechniqueAction) {
+    if (this.awakened || !awakensWith(action)) return
+    this.awakened = true
+    saveAwakened()
+  }
+
+  private releaseUnavailableHatsu() {
+    const context = this.options.read()
+    if (this.canUse(context.activeKind)) return
+    if (context.activeKind === 'future') parallelFutureVisible.set(false)
+    this.options.updateWorld({ ...EMPTY_WORLD, body: bodyAfterAuraEnds(context.world.body) })
+    this.options.updateReport(null)
   }
 
   useNen = (action: NenTechniqueAction): NenTransition => {
-    const refusal: NenRefusalCode | null = refusedBeforeAwakening(this.awakened, action)
-      ? 'NODES_SHUT'
-      : refusedByReserve(this.reserve, this.nen, action)
-        ? 'RESERVE_TOO_LOW'
-        : null
+    const refusal = this.refusalFor(action)
     if (refusal) {
       this.note({ code: 'ACTION_REFUSED', action: action.type, reason: refusal })
       return { state: this.nen, accepted: false }
     }
     const result = transitionNen(this.nen, action)
     this.recordTransition(action, result)
-    if (!this.awakened && awakensWith(action)) {
-      this.awakened = true
-      saveAwakened()
-    }
-    if (!this.canUse(this.options.read().activeKind)) {
-      if (this.options.read().activeKind === 'future') {
-        parallelFutureVisible.set(false)
-        this.futureWorldSnapshot = null
-      }
-      const world = this.options.read().world
-      this.options.updateWorld(rememberedEmptyWorld(world))
-      this.options.updateReport(null)
-    }
+    this.applyAwakening(action)
+    this.releaseUnavailableHatsu()
     return result
   }
 

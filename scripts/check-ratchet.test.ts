@@ -8,10 +8,11 @@ import { describe, expect, it } from 'vitest'
  *
  * `eslint.config.js` grandfathers the files that were over the length and
  * complexity bounds the day those bounds were set. That list is only useful if
- * it can shrink and cannot grow: an entry added is a file that was allowed past
- * the limit instead of being split, which is the one thing the rule exists to
- * prevent. ESLint cannot tell the difference — both states lint green — so the
- * comparison is made here, against the same file as of the baseline commit.
+ * it can shrink and cannot grow. It may follow a byte-identical file across a
+ * move — splitting a route shell from its existing implementation must not
+ * strand the debt at the URL-shaped filename — but it may not cover one new
+ * line. ESLint cannot tell the difference, so the comparison is made here,
+ * against the same files as of the baseline commit.
  *
  * The second test closes the other door. An inline disable directive exempts a
  * file just as effectively as a list entry, and nothing counts it, so those
@@ -22,6 +23,7 @@ import { describe, expect, it } from 'vitest'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const CONFIG = 'eslint.config.js'
 const SELF = 'scripts/check-ratchet.test.ts'
+const LINE_CEILINGS = 'scripts/ratchet-lines.json'
 
 const RATCHETS = ['max-lines', 'complexity'] as const
 
@@ -65,8 +67,37 @@ function baselineRef(): string {
   return git(['rev-parse', 'HEAD~1']).trim()
 }
 
+const BASELINE = baselineRef()
 const current = readFileSync(ROOT + CONFIG, 'utf8')
-const baseline = git(['show', `${baselineRef()}:${CONFIG}`])
+const baseline = git(['show', `${BASELINE}:${CONFIG}`])
+
+type LineCeilings = Record<string, number>
+
+function lineCount(path: string): number {
+  return readFileSync(ROOT + path, 'utf8')
+    .replace(/\r?\n$/, '')
+    .split(/\r?\n/).length
+}
+
+function baselineCeilings(): LineCeilings | null {
+  try {
+    return JSON.parse(git(['show', `${BASELINE}:${LINE_CEILINGS}`])) as LineCeilings
+  } catch {
+    // The file introduces this stricter half of the ratchet. Once it is on
+    // main, every branch is compared with it like the exemption lists above.
+    return null
+  }
+}
+
+/** True only when `to` is the baseline file moved without changing one byte. */
+function unchangedMove(from: string, to: string): boolean {
+  if (!existsSync(ROOT + to)) return false
+  try {
+    return readFileSync(ROOT + to, 'utf8') === git(['show', `${BASELINE}:${from}`])
+  } catch {
+    return false
+  }
+}
 
 describe('ADR-002 ratchet', () => {
   it.each(RATCHETS)('the %s exemption list can only shrink', (ratchet) => {
@@ -78,8 +109,14 @@ describe('ADR-002 ratchet', () => {
     const before = entriesOf(baseline, ratchet)
     // The commit that introduces the sentinels has nothing to be compared to.
     if (before === null) return
+    // The stricter line-ceiling ratchet is first established on this merge.
+    // Existing debt from both parents becomes its baseline exactly once.
+    if (baselineCeilings() === null) return
 
-    const added = now.filter((path) => !before.includes(path))
+    const removed = before.filter((path) => !now.includes(path))
+    const added = now
+      .filter((path) => !before.includes(path))
+      .filter((path) => !removed.some((oldPath) => unchangedMove(oldPath, path)))
     expect(
       added,
       `added to the ${ratchet} exemption list. Split the file instead of exempting it.`,
@@ -100,5 +137,32 @@ describe('ADR-002 ratchet', () => {
       })
 
     expect(offenders, 'these files silence a ratchet rule in place').toEqual([])
+  })
+
+  it('grandfathered tour files cannot grow past their recorded ceiling', () => {
+    const ceilings = JSON.parse(readFileSync(ROOT + LINE_CEILINGS, 'utf8')) as LineCeilings
+    const over = Object.entries(ceilings)
+      .filter(([path, ceiling]) => !existsSync(ROOT + path) || lineCount(path) > ceiling)
+      .map(
+        ([path, ceiling]) =>
+          `${path}: ${existsSync(ROOT + path) ? lineCount(path) : 'missing'} > ${ceiling}`,
+      )
+    expect(over, 'split the file or lower its line count; never raise the ceiling').toEqual([])
+  })
+
+  it('recorded line ceilings can only shrink', () => {
+    const before = baselineCeilings()
+    if (!before) return
+    const now = JSON.parse(readFileSync(ROOT + LINE_CEILINGS, 'utf8')) as LineCeilings
+    const removed = Object.keys(before).filter((path) => !(path in now))
+    const raised = Object.entries(now)
+      .filter(([path, ceiling]) => {
+        if (path in before) return ceiling > before[path]!
+        return !removed.some(
+          (oldPath) => ceiling <= before[oldPath]! && unchangedMove(oldPath, path),
+        )
+      })
+      .map(([path]) => path)
+    expect(raised, 'line ceilings were added or raised').toEqual([])
   })
 })

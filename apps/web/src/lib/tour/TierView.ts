@@ -6,6 +6,7 @@ import type { Ship } from './blueprint'
 import { lampAirOf } from './lampAir'
 import { conditionedRoomSurface } from './surfaceCondition'
 import { tierAttributesOf, type TierAttributes } from './tierAttributes'
+import { bindFittingFlicker } from './fittingFlicker'
 import { buildBanquetDetails, disposeBanquetDetails } from './banquetView'
 import { buildRoyalSalonDetails, royalSalonSurfacePlan } from './royalSalonView'
 import { buildDiningHallDetails } from './diningHallView'
@@ -325,6 +326,7 @@ export class TierView {
       mesh,
       plan: detailedPlan,
       surface: this.materials.surface,
+      fitting: this.materials.fitting,
     })
     const root = new this.THREE.Group()
     const rooms: TierRoomView[] = []
@@ -405,6 +407,16 @@ export class TierView {
       reveal,
     })
 
+    const fittings = this.lit(
+      slice(shared.fitting, group.fittingStart, group.fittingCount),
+      shared.fittingColor,
+      this.materials.fitting,
+    )
+    if (shared.fittingFlicker) {
+      fittings.geometry.setAttribute('aFlicker', shared.fittingFlicker)
+      bindFittingFlicker(fittings, this.materials.fitting)
+    }
+
     return {
       spaceId: group.spaceId,
       mesh: roomMesh,
@@ -420,11 +432,7 @@ export class TierView {
         this.geometry(slice(shared.pattern, group.patternStart, group.patternCount)),
         this.materials.pattern,
       ),
-      fittings: this.lit(
-        slice(shared.fitting, group.fittingStart, group.fittingCount),
-        shared.fittingColor,
-        this.materials.fitting,
-      ),
+      fittings,
       panes: group.paneCount
         ? this.lit(
             slice(shared.pane, group.paneStart, group.paneCount),

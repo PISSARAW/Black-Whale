@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { theShip } from './blueprint'
-import { FINISH_CONDITION, finishOf, roomConditionOf } from './roomCondition'
+import { FINISH_CONDITION, finishOf, RoomConditionCache, roomConditionOf } from './roomCondition'
 import type { Finish } from './roomAppearanceTypes'
 
 const ship = theShip()
@@ -43,6 +43,15 @@ describe('room condition', () => {
     const empty = roomConditionOf(room)
     const occupied = roomConditionOf({ ...room, namedOccupants: 4 })
     expect(occupied.humanDensity).toBeGreaterThan(empty.humanDensity)
+  })
+
+  it('reuses a room condition until its named occupancy changes', () => {
+    const room = at('tier-3-residential-room-3101')
+    const cache = new RoomConditionCache()
+    const empty = cache.get(room.space, room.tier)
+
+    expect(cache.get(room.space, room.tier)).toBe(empty)
+    expect(cache.get(room.space, room.tier, 4)).not.toBe(empty)
   })
 
   it('keeps every normalized output bounded', () => {

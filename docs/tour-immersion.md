@@ -657,10 +657,10 @@ valeur — un couloir qui s'enfonce est un couloir dont on ne voit pas le bout.
   photographie. Une texture de tôle serait une affirmation sur un revêtement que rien
   ne montre. Le grain, s'il en faut, se met en bruit dans le bake — c'est dérivé, donc
   honnête.
-- **Post-traitement** (SSAO, bloom, DOF). Il faudrait `postprocessing` ou
-  `EffectComposer`, une passe plein écran par effet, et sur un mobile à 1,5× de ratio
-  c'est le seul poste qui coûterait vraiment. La courbe ACES fait déjà le tiers du
-  travail d'un bloom sur les quads émissifs.
+- **Post-traitement généralisé.** La visite a depuis adopté `EffectComposer`, mais
+  garde chaque effet derrière son palier : SSAO local et bloom au palier haut, sans
+  DoF. La profondeur doit toujours venir du tampon courant du composer ; conserver
+  celle de sa cible initiale produit une image noire sur Chrome/ANGLE.
 - **Des passagers.** Écarté par la question de départ, et à raison : deux cent mille
   silhouettes qui ne sont pas dans le manga seraient la plus grosse invention du site.
 - **Le rendu encre / trame manga.** Écarté par la direction retenue. Reste sur la

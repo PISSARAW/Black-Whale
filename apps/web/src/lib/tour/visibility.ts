@@ -20,7 +20,7 @@
 import type { TierPlan } from './blueprint'
 
 /**
- * How many openings deep the walk goes.
+ * The full-quality default for how many openings deep the walk goes.
  *
  * One would be the tightest set that is still honest about what is *adjacent*,
  * and it is not enough to be honest about what is *seen*: standing in a cabin,
@@ -31,9 +31,9 @@ import type { TierPlan } from './blueprint'
  * 3 m doorway leaves.
  *
  * It costs what it costs: on Tier 1, depth one names 3.6 rooms of 53 on
- * average and depth two names 14.3. Frustum culling takes most of that back —
- * each room is its own mesh with its own bounding sphere now, which is the
- * other half of what this buys.
+ * average and depth two names 14.3. `quality.ts` therefore gives `low` depth
+ * one and `high` this default. Frustum culling takes most of the latter back —
+ * each room is its own mesh with its own bounding sphere now.
  */
 export const VIEW_DEPTH = 2
 

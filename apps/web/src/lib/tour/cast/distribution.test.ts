@@ -139,6 +139,19 @@ describe('the distribution', () => {
     expect(post!.inside).toBeUndefined()
   })
 
+  it('gives every guard posted at one door a distinct station', () => {
+    const posts = distribute(ship, [
+      member({ characterId: 'bladge', outsideDoorOf: 'tier-1-royal-residential-sector-room-1012' }),
+      member({ characterId: 'nagmum', outsideDoorOf: 'tier-1-royal-residential-sector-room-1012' }),
+    ])
+    expect(posts).toHaveLength(2)
+    expect(posts[0]!.spaceId).toBe('tier-1-royal-residential-approach-1012')
+    expect(posts[1]!.spaceId).toBe(posts[0]!.spaceId)
+    expect(
+      Math.hypot(posts[1]!.at[0] - posts[0]!.at[0], posts[1]!.at[1] - posts[0]!.at[1]),
+    ).toBeCloseTo(0.8)
+  })
+
   it('places Beyond’s attested watch on the corridor side of his cell door', () => {
     const location = 'tier-1-vvip-prison-beyond'
     const cell = 'tier-1-vvip-prison-beyond-cell'

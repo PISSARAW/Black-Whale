@@ -71,13 +71,13 @@ Les éléments 3D sont générés via `BanquetDetailBuilder` pour s'intégrer au
 
 9. **Hall Distributeur & Salles de Projection 1 à 8 (`cineplexScreensHall.ts`, `cineplexAuditorium.ts`)** :
    - **Hall des salles (`tier-3-cineplex-screens-hall`)** : 8 portails architecturaux différenciés par le code lumineux de leur format, rideaux d'entrée en velours lourd et affichettes numériques "Now Showing".
-   - **Programme premium reconstitué** : salle 1 IMAX avec cabine 70 mm ; salle 2 Dolby Cinema et fauteuils inclinables ; salle 3 4DX avec sièges sur vérins, ventilateurs, buses et flashs ; salle 4 ScreenX avec projection latérale à 270° ; salle 5 ICE avec fauteuils inclinables et panneaux LightVibes ; salle 6 Ultra 4DX combinant parois ScreenX et effets 4DX ; salle 7 D-BOX avec bases de mouvement individuelles ; salle 8 Onyx avec écran LED segmenté et lumière ambiante adaptée.
+   - **Traitement partagé** : les huit salles conservent un auditorium générique identique. Aucun format premium, équipement 4DX, projection latérale ou écran LED n'est attribué à un numéro sans source.
    - **Gradins et fauteuils** : six rangées alignées sur les emprises du plan, paliers praticables portés jusqu'au sol, six marches d'accès, allée centrale continue, deux banques de fauteuils par rangée, dossiers placés derrière le spectateur et assises orientées vers l'écran. Les anciennes collisions pleines largeur sont remplacées dans la visite par les paliers et les deux banques, afin que le visiteur puisse rejoindre chaque niveau et approcher les places.
    - Ce programme salle par salle est une reconstruction fonctionnelle demandée pour la visite : le manga établit huit salles et montre un auditorium non identifié, mais n'attribue aucun de ces formats à un numéro.
 
 En mode visite standard, `cineplexSurfacePlan()` écarte les parallélépipèdes bruts du blueprint (comptoirs, îlot, pilier, affiche, guichets, rangées et écrans génériques) pour injecter les modèles haute fidélité, tout en conservant leur emprise dans le plan original utilisé par les collisions.
 
-L'éclairage calculé distingue désormais le hall public, densément couvert de luminaires et volontairement éclatant, des salles de projection à lumière contrôlée. La salle Onyx conserve davantage de lumière ambiante, conformément au fonctionnement d'un écran LED direct.
+L'éclairage calculé distingue le hall public, densément couvert de luminaires et volontairement éclatant, des huit salles de projection, qui partagent une même lumière contrôlée.
 
 ## Projection 2D et plan SVG (`cineplex.svelte` & `cineplexPlan.ts`)
 
@@ -87,7 +87,7 @@ Le plan local SVG (`cineplex.svelte`) a été rehaussé pour correspondre fidèl
 - Billetterie avec 3 guichets vitrés et potelets à cordons de velours.
 - Arche d'affiche "THE THING" au-dessus du passage central.
 - Rampe descendante avec doubles mains-courantes et repères LED.
-- Portails d'accès miniaturisés et annotés par format, avec légende des huit technologies.
+- Portails d'accès miniaturisés et numérotés de 1 à 8, sans attribution technologique inventée.
 - Îlot central avec repère annoté d'Hisoka et de son pop-corn.
 - Salle d'auditorium inférieure avec écran de projection, gradins et rangées de fauteuils.
 

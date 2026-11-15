@@ -217,30 +217,42 @@ function identityOf(entityId: string, indexes: ReturnType<typeof indexesOf>): st
 }
 
 /** One catalogued person, as the walk reads them. */
-function describe(
+interface DescriptionInput {
+  character: RosterCharacter
+  presence: RosterPresence
+  indexes: ReturnType<typeof indexesOf>
+  chapterNumber?: number | null
+}
+
+function identityFields(
   character: RosterCharacter,
-  presence: RosterPresence,
-  {
-    indexes,
-    chapterNumber,
-  }: { indexes: ReturnType<typeof indexesOf>; chapterNumber?: number | null },
-): CastMember {
+  indexes: ReturnType<typeof indexesOf>,
+  chapterNumber?: number | null,
+) {
+  return {
+    role: character.shipLocation?.role ?? '',
+    nen: nenAt(character, chapterNumber),
+    factionId: character.factionId ?? null,
+    hatsu: indexes.repertoires.get(character.id) ?? [],
+    beast: beastOf(character),
+  }
+}
+
+function describe({ character, presence, indexes, chapterNumber }: DescriptionInput): CastMember {
   const locations = indexes.under.get(presence.locationId ?? '') ?? []
   const outsideDoorOf = outsideDoorFor(character, presence, locations)
-  const nen = nenAt(character, chapterNumber)
+  const optionalLocation = outsideDoorOf ? { outsideDoorOf } : {}
+  const approximation = presence.precision === EXACT ? {} : { approximate: true as const }
   return {
     characterId: character.id,
     name: character.canonicalName,
     locations,
-    ...presenceIdentity(character, presence),
-    nen,
-
-    hatsu: indexes.repertoires.get(character.id) ?? [],
-    beast: beastOf(character),
-    ...(outsideDoorOf ? { outsideDoorOf } : {}),
+    since: presence.fromEvent?.chapterId ?? null,
+    ...identityFields(character, indexes, chapterNumber),
+    ...optionalLocation,
     // Carried rather than recomputed downstream: the spot inside a suite is
     // the walk's, and the card has to be able to say so.
-    ...(presence.precision === EXACT ? {} : { approximate: true }),
+    ...approximation,
   }
 }
 
@@ -277,9 +289,7 @@ function memberFrom(
   if (!PLACEABLE.has(presence.precision) || !presence.locationId) return null
   const characterId = identityOf(presence.entityId, indexes)
   const character = characterId ? indexes.catalogue.get(characterId) : undefined
-  return character
-    ? describe(character, presence, { indexes: indexes, chapterNumber: chapterNumber })
-    : null
+  return character ? describe({ character, presence, indexes, chapterNumber }) : null
 }
 
 /**
@@ -315,12 +325,4 @@ export function rosterFrom(input: RosterInput): {
   }
 
   return { members, beasts }
-}
-
-function presenceIdentity(character: RosterCharacter, presence: RosterPresence) {
-  return {
-    role: character.shipLocation?.role ?? '',
-    since: presence.fromEvent?.chapterId ?? null,
-    factionId: character.factionId ?? null,
-  }
 }

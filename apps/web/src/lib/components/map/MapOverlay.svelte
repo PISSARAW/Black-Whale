@@ -383,7 +383,11 @@
   aria-label={`${visibleCharacters.length} visible characters, ${visibleObjects.length} visible objects`}
 >
   {#if mapState.showEventChanges || mapState.playingTimeline}
-    <EventDeltaOverlay delta={nextEventDelta} {world} />
+    <EventDeltaOverlay
+      delta={nextEventDelta}
+      {world}
+      currentEventTitle={currentEvent?.title || null}
+    />
   {/if}
   {#each futureCharacters as char (char.id)}
     <CharacterMarker character={char} future={true} />
@@ -430,11 +434,21 @@
       display: none;
     }
     .tier-group-rail :global(.marker-group.offset-below-label) {
-      position: relative;
+      position: static;
       top: auto !important;
       left: auto !important;
       flex: 0 0 auto;
       transform: none !important;
+    }
+    .tier-group-rail:has(:global(.group-list)) {
+      overflow: visible;
+    }
+    .tier-group-rail :global(.group-list) {
+      right: 0;
+      bottom: calc(100% + 0.5rem);
+      left: 0;
+      width: auto;
+      transform: none;
     }
   }
 </style>

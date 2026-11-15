@@ -41,7 +41,7 @@ const SHOULDER = 0.8
 export function standingOutsideDoor(
   ship: Ship,
   room: Space,
-  seed: string,
+  station: number,
 ): { space: Space; at: Vec2; heading: number } | null {
   const plan = ship.plans.get(room.tierId)
   const doorway = plan?.doorways.find((door) => {
@@ -62,7 +62,7 @@ export function standingOutsideDoor(
   const dz = middle[1] - door[1]
   const reach = Math.hypot(dx, dz)
   if (reach < 0.01) return null
-  const abreast = ((seedOf(seed) % 5) - 2) * SHOULDER
+  const abreast = station * SHOULDER
   const at: Vec2 = [
     door[0] + (dx / reach) * INSIDE_THE_DOOR - (dz / reach) * abreast,
     door[1] + (dz / reach) * INSIDE_THE_DOOR + (dx / reach) * abreast,

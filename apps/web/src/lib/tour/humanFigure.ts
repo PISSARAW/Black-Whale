@@ -1,11 +1,6 @@
 import type { BufferGeometry, Group, Material, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
-import {
-  humanAnimation,
-  poseHuman,
-  type HumanAnimationLayer,
-  type HumanPose,
-} from './humanAnimation'
+import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
@@ -34,7 +29,7 @@ export interface HumanFigure {
   root: Group
   turns: Object3D
   lod: { near: Group; far: Group }
-  animate: (seconds: number, pose?: HumanPose, layer?: HumanAnimationLayer) => void
+  animate: ReturnType<typeof humanAnimation>
 }
 
 export const HUMAN_INSTANCE_THRESHOLD = 20
@@ -192,7 +187,9 @@ export function buildHumanFigure({
   far.visible = false
 
   const ink = glow(INK, 1)
-  const cloth = glow(profile.jacket, 0.98)
+  // Clothing is solid. At 0.98 it entered three.js's transparent sort, where a
+  // later Zetsu trace could win the draw order and erase sleeves at some angles.
+  const cloth = glow(profile.jacket, 1)
   const skin = glow(profile.skin || SKIN, 1)
   const dark = glow(BOOTS, 1)
   const hairInk = glow(profile.hair, 1)
@@ -386,8 +383,8 @@ export function buildHumanFigure({
   far.rotation.copy(figure.rotation)
   const animateHuman = humanAnimation({ pose, figure, torso, pelvis, head, arms, legs, knees })
   const animateAura = animateHumanAura(aura)
-  const animate = (seconds: number, nextPose?: HumanPose, layer?: HumanAnimationLayer) => {
-    animateHuman(seconds, nextPose, layer)
+  const animate = (seconds: number) => {
+    animateHuman(seconds)
     animateAura(seconds)
   }
   return { root, turns: figure, lod: { near: figure, far }, animate }

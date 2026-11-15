@@ -89,7 +89,10 @@
   )
 </script>
 
-<section class="rounded-lg border border-[#d94f68]/40 bg-[#0b0b0d] p-4">
+<section
+  class="rounded-lg border border-[#d94f68]/40 bg-[#0b0b0d] p-4"
+  data-testid="contagion-dashboard"
+>
   <header class="flex items-baseline justify-between gap-3">
     <h2 class="text-sm font-semibold uppercase tracking-widest text-[#d94f68]">{board.title}</h2>
     <span class="text-[10px] uppercase tracking-wider text-[#FFFFF0]/35">

@@ -35,19 +35,43 @@ interface UrlLocation {
   id?: string
 }
 
+function levelTier(tier: string) {
+  return tier.replace(/-[bc]$/, '')
+}
+
+function belongsToTier(location: UrlLocation, tier: string, locations: UrlLocation[]) {
+  const expectedTier = levelTier(tier)
+  const byId = new Map(
+    locations.flatMap((candidate) => (candidate.id ? [[candidate.id, candidate] as const] : [])),
+  )
+  const visited = new Set<string>()
+  let current: UrlLocation | undefined = location
+
+  while (current) {
+    if (current.slug === expectedTier) return true
+    if (!current.parentLocationId || visited.has(current.parentLocationId)) return false
+    visited.add(current.parentLocationId)
+    current = byId.get(current.parentLocationId)
+  }
+
+  return false
+}
+
+function validatedLocation(url: URL, tier: string | null, locations: UrlLocation[]) {
+  if (!tier) return null
+  const requested = url.searchParams.get('location')
+  const slug = resolveRegionLocationSlug(requested)
+  if (!requested || !slug) return null
+  const matched = locations.find((location) => location.slug === slug)
+  return matched && belongsToTier(matched, tier, locations) ? requested : null
+}
+
 export function readShipUrlState(url: URL, locations: UrlLocation[]): ShipUrlState {
   const requestedTier = url.searchParams.get('tier')
   const tier = SHIP_TIERS.includes(requestedTier as (typeof SHIP_TIERS)[number])
     ? requestedTier
     : null
-  const requestedLocation = url.searchParams.get('location')
-  const requestedSlug = resolveRegionLocationSlug(requestedLocation)
-  const location =
-    tier &&
-    requestedLocation &&
-    locations.some(({ slug }) => slug === requestedLocation || slug === requestedSlug)
-      ? requestedLocation
-      : null
+  const location = validatedLocation(url, tier, locations)
   const entity = url.searchParams.get('entity') as MapEntityFilter | null
   const lineage = url.searchParams.get('lineage') as BeyondLineageFilter | null
 

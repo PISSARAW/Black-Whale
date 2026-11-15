@@ -60,7 +60,8 @@ function distributeForeground(
       depth * (CONCERT_REFERENCE.distance + 5.5)
     const edge = 2.4 + (1 - depth) * 2.8
     const side = sample(index + 112000) < 0.5 ? -1 : 1
-    const x = spec.origin[0] + side * (edge + Math.pow(sample(index + 114000), 0.7) * (10.5 - edge))
+    const spread = Math.pow(sample(index + 114000), 0.7) * (10.5 - edge)
+    const x = spec.origin[0] + side * (edge + spread)
     const scale = 1.45 + (1 - depth) * 2.2 + sample(index + 116000) * 0.7
     transform.position.set(x, concertLandscapeHeight(spec, [x, z]), z)
     transform.rotation.y = sample(index + 118000) * Math.PI * 2
@@ -104,9 +105,19 @@ function wildflower(THREE: typeof Three): Three.BufferGeometry {
     'position',
     new THREE.Float32BufferAttribute(
       [
-        -0.08, 0, 0, 0.08, 0, 0, 0.08, 0.42, 0, -0.08, 0, 0, 0.08, 0.42, 0, -0.08, 0.42, 0, 0, 0,
-        -0.08, 0, 0, 0.08, 0, 0.42, 0.08, 0, 0, -0.08, 0, 0.42, 0.08, 0, 0.42, -0.08,
-      ],
+        [-0.08, 0, 0],
+        [0.08, 0, 0],
+        [0.08, 0.42, 0],
+        [-0.08, 0, 0],
+        [0.08, 0.42, 0],
+        [-0.08, 0.42, 0],
+        [0, 0, -0.08],
+        [0, 0, 0.08],
+        [0, 0.42, 0.08],
+        [0, 0, -0.08],
+        [0, 0.42, 0.08],
+        [0, 0.42, -0.08],
+      ].flat(),
       3,
     ),
   )

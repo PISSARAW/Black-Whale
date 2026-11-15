@@ -8,6 +8,11 @@ import type { Space } from './types'
 
 const CONDITION_KEY = 'tourSurfaceCondition'
 const TRAFFIC_REACH = 1.8
+const TRAFFIC_CACHE_LIMIT = 12
+
+const trafficCache = new Map<string, Uint8Array>()
+let trafficCacheHits = 0
+let trafficCacheMisses = 0
 
 export interface SurfaceConditionUniforms {
   uRoomWear: { value: number }
@@ -109,7 +114,62 @@ export function conditionUniformsOf(material: Three.Material): SurfaceConditionU
  * One normalized byte per surface vertex: zero at a wall, one in the travelled
  * middle. Built beside TierView from existing draw ranges, never in mesh.ts.
  */
+const hashStep = (hash: number, value: number): number => {
+  hash ^= value | 0
+  return Math.imul(hash, 16777619) >>> 0
+}
+
+function trafficCacheKey(mesh: TierMesh, plan: TierPlan): string {
+  let hash = 2166136261
+  for (let index = 0; index < mesh.positions.length; index++) {
+    hash = hashStep(hash, Math.round(mesh.positions[index] * 1000))
+  }
+  for (const group of mesh.groups) {
+    hash = hashStep(hash, group.start)
+    hash = hashStep(hash, group.count)
+    for (let index = 0; index < group.spaceId.length; index++) {
+      hash = hashStep(hash, group.spaceId.charCodeAt(index))
+    }
+  }
+  for (const space of plan.spaces) {
+    for (const point of space.footprint) {
+      hash = hashStep(hash, Math.round(point[0] * 1000))
+      hash = hashStep(hash, Math.round(point[1] * 1000))
+    }
+  }
+  return `${plan.tier.id}:${mesh.positions.length}:${hash.toString(36)}`
+}
+
+export interface TrafficCacheStats {
+  entries: number
+  hits: number
+  misses: number
+  bytes: number
+}
+
+export function trafficCacheStats(): TrafficCacheStats {
+  let bytes = 0
+  for (const value of trafficCache.values()) bytes += value.byteLength
+  return { entries: trafficCache.size, hits: trafficCacheHits, misses: trafficCacheMisses, bytes }
+}
+
+export function clearTrafficCache(): void {
+  trafficCache.clear()
+  trafficCacheHits = 0
+  trafficCacheMisses = 0
+}
+
 export function trafficAttribute(mesh: TierMesh, plan: TierPlan): Uint8Array {
+  const key = trafficCacheKey(mesh, plan)
+  const held = trafficCache.get(key)
+  if (held) {
+    trafficCacheHits += 1
+    // Refresh insertion order: the bounded map is a tiny LRU across deck variants.
+    trafficCache.delete(key)
+    trafficCache.set(key, held)
+    return held
+  }
+  trafficCacheMisses += 1
   const traffic = new Uint8Array(mesh.positions.length / 3)
   const byId = new Map(plan.spaces.map((space) => [space.id, space]))
   for (const group of mesh.groups) {
@@ -124,6 +184,12 @@ export function trafficAttribute(mesh: TierMesh, plan: TierPlan): Uint8Array {
       )
       traffic[vertex] = Math.round(Math.min(1, Math.max(0, distance / TRAFFIC_REACH)) * 255)
     }
+  }
+  trafficCache.set(key, traffic)
+  while (trafficCache.size > TRAFFIC_CACHE_LIMIT) {
+    const oldest = trafficCache.keys().next().value as string | undefined
+    if (oldest === undefined) break
+    trafficCache.delete(oldest)
   }
   return traffic
 }

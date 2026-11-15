@@ -1237,6 +1237,8 @@ export const en = {
         doorsPaired: (a: string, b: string) =>
           `${a} and ${b} are one threshold now · step into either and come out at the other`,
         doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
+        phasingOn: 'Walls stopped being walls · walk through the ship',
+        phasingOff: 'Back inside the geometry · the walls hold again',
         spatialOutside: 'Spatial Teleportation needs a room around you',
         spatialAnchorBurned: (room: string) =>
           `${room} was unsealed once · it can never be an anchor again`,
@@ -1537,6 +1539,7 @@ export const en = {
         puppetReleased: (solid: string) =>
           `The antenna is withdrawn · ${solid} is no longer controlled`,
         autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
+        wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
           `You take Fugetsu’s role · the Outgoing Door joins ${a} to ${b}, and Kacho accompanies you`,
         wormCrossed: (room: string, crossings: number) =>
@@ -1816,6 +1819,7 @@ export const en = {
         watched: 'Paper dolls',
         emptied: 'Swallowed',
         dowsing: 'The chain points at',
+        phasing: 'Walking through walls',
         spatialAnchor: 'Spatial anchor',
         spatialExit: 'Open spatial exit',
         spatialBurnedRooms: 'Burned anchors',

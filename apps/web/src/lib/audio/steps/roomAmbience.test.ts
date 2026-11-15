@@ -19,7 +19,13 @@ function fakeContext() {
     createGain: () => ({ connect, gain: param(0) }),
     createBiquadFilter: () => ({ connect, type: '', frequency: param(0), Q: param(0) }),
     createOscillator: () => ({ connect, start: connect, type: '', frequency: param(0) }),
-    createBufferSource: () => ({ connect, start: connect, buffer: null, loop: false }),
+    createBufferSource: () => ({
+      connect,
+      start: connect,
+      buffer: null,
+      loop: false,
+      playbackRate: param(1),
+    }),
     createBuffer: (_channels: number, length: number) => ({
       getChannelData: () => new Float32Array(length),
     }),
@@ -43,6 +49,7 @@ const profile: RoomSoundProfile = {
   ventilation: { level: 0.06, cutoff: 1700, resonance: 1.2, wobble: 0.7 },
   crowd: { level: 0.04, cutoff: 620 },
   accent: { level: 0.05, frequency: 54, rate: 0.42, cutoff: 720 },
+  drip: { level: 0.02, cutoff: 1400, rate: 0.8 },
 }
 
 describe('persistent room ambience', () => {
@@ -54,8 +61,29 @@ describe('persistent room ambience', () => {
 
     expect(ambience.current).toBe(current)
     expect(ambience.current.ventilation.gain.gain.value).toBe(profile.ventilation.level)
+    expect(ambience.current.ventilation.wobble.depth.gain.value).toBeCloseTo(59.5)
+    expect(ambience.current.ventilation.wobble.oscillator.frequency.value).toBeCloseTo(0.243)
     expect(ambience.current.crowd.gain.gain.value).toBe(profile.crowd.level)
     expect(ambience.current.accent.oscillator.frequency.value).toBe(profile.accent.frequency)
+    expect(ambience.current.drip.gain.gain.value).toBe(profile.drip.level)
+    expect(ambience.current.drip.filter.frequency.value).toBe(profile.drip.cutoff)
+    expect(ambience.current.drip.source.playbackRate.value).toBe(profile.drip.rate)
+  })
+
+  it('interpolates from a stable upper ventilation to a bounded lower-deck wobble', () => {
+    const ambience = buildRoomAmbience(fakeContext(), {} as AudioNode, {} as AudioNode)
+    const oscillator = ambience.current.ventilation.wobble.oscillator
+    const stable = {
+      ...profile,
+      ventilation: { ...profile.ventilation, wobble: 0 },
+    }
+    settleRoomAmbience(ambience, stable, null)
+    expect(ambience.current.ventilation.wobble.depth.gain.value).toBe(0)
+
+    settleRoomAmbience(ambience, profile, null)
+    expect(ambience.current.ventilation.wobble.oscillator).toBe(oscillator)
+    expect(ambience.current.ventilation.wobble.depth.gain.value).toBeGreaterThan(0)
+    expect(ambience.current.ventilation.wobble.depth.gain.value).toBeLessThanOrEqual(85)
   })
 
   it('places the filtered neighbour at its doorway and follows a turn', () => {

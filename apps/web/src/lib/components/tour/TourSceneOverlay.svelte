@@ -185,7 +185,7 @@
   <button
     type="button"
     onclick={examine.onOpen}
-    class="pointer-events-auto absolute bottom-24 right-3 rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-[11px] text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
+    class="pointer-events-auto absolute bottom-24 right-3 flex min-h-11 min-w-11 items-center justify-center rounded border border-[#FFD700]/40 bg-[#050505]/80 px-2 py-1 text-[11px] text-[#FFD700]/80 transition-colors hover:border-[#FFD700]/70 hover:text-[#FFD700]"
   >
     {#if examine.key}<kbd class="mr-1.5 font-mono text-[10px]">{examine.key}</kbd
       >{/if}{examine.label}

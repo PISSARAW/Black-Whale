@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 508
+Fichiers : 521
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -198,6 +198,10 @@ Fichiers : 508
 ## `apps/web/src/lib/components/map/markerGroups.test.ts`
 
 - map marker groups > uses safe, localized initials
+
+## `apps/web/src/lib/components/map/projection/eventDelta.test.ts`
+
+- event delta projection > projects every known tier in the overview
 
 ## `apps/web/src/lib/components/map/projection/markers.test.ts`
 
@@ -1064,7 +1068,6 @@ Fichiers : 508
 - the curse > marks the victim openly and hides the sacrifice until the ship is laid open
 - the baton > leaves a star over the room whose Hatsu it took, and nothing over a living one
 - the double > stands in the room it was left in
-- the tunnel > stands a departure door and an exit hatch, paired with each other
 - the fish > swims a shoal in the room it was loosed in, spread over the room itself
 - the paper dolls > sticks one to everything standing in the room, and throws a few more besides
 - the relay > shows the cargo only while the relay is the aura being held
@@ -1161,6 +1164,10 @@ Fichiers : 508
 - worthRouting > needs letters and a bounded length
 - parseTopic > keeps a topic out of the list
 - readTopic > accepts only a listed word
+
+## `apps/web/src/lib/tour/cast/auraPlacement.test.ts`
+
+- aura source placement > uses an authored structure as an exact three-dimensional anchor
 
 ## `apps/web/src/lib/tour/cast/auraSources.test.ts`
 
@@ -1344,7 +1351,7 @@ Fichiers : 508
 
 ## `apps/web/src/lib/tour/eiIOfficeFidelity.test.ts`
 
-- the Ei-I office cutaway > separates its plan-established volume from inferred office furniture
+- the Ei-I office cutaway > keeps the plan-established volume empty
 
 ## `apps/web/src/lib/tour/emperor.test.ts`
 
@@ -1363,6 +1370,10 @@ Fichiers : 508
 ## `apps/web/src/lib/tour/firstClassResidentialFidelity.test.ts`
 
 - the published first-class residential plan > keeps six cabins, six WC cells and only the drawn beds and storage
+
+## `apps/web/src/lib/tour/fittingFlicker.test.ts`
+
+- separate real-time fitting flicker > derives one phase/depth pair per fitting vertex and leaves most lamps steady
 
 ## `apps/web/src/lib/tour/floorPattern.test.ts`
 
@@ -1411,7 +1422,7 @@ Fichiers : 508
 
 - where the light is taken to come from > anchors on the middle of the opening in plan
 - which decks have shafts at all > finds every opening the manga draws
-- how hard the shafts blow > is at full strength with the window dead ahead
+- how hard the shafts blow > keeps the actual window pane above the source threshold
 
 ## `apps/web/src/lib/tour/gum.test.ts`
 
@@ -1468,6 +1479,10 @@ Fichiers : 508
 
 - tour Hatsu sound > gives every Hatsu carried by the tour its own voice and its result accent
 
+## `apps/web/src/lib/tour/hatsuTechniqueGuide.test.ts`
+
+- the stable Hatsu guide > stays absent for a one-step technique
+
 ## `apps/web/src/lib/tour/heillyDisposalView.test.ts`
 
 - the chapter 394 Heil-Ly disposal room > uses the supplied panel composition instead of invented laundry machines
@@ -1498,7 +1513,7 @@ Fichiers : 508
 
 ## `apps/web/src/lib/tour/humanAuraLook.test.ts`
 
-- the aura as a skin on the body > wraps a body in Ten in a thin skin and no bubble
+- the aura as a skin on the body > keeps the body opaque underneath a transparent Zetsu trace
 - a visitor whose nodes are still shut > bends the air around a raised aura without drawing any of it
 - Ko > leaves the rest of the body bare, with no skin and no bending volume
 - En > keeps the rings on the floor and raises a dome over them
@@ -1656,10 +1671,6 @@ Fichiers : 508
 
 - Nen cause log > keeps only the four latest typed causes
 
-## `apps/web/src/lib/tour/nenModels.test.ts`
-
-- the manga models > draws Luini’s portal as a violet oval aperture without Fugetsu’s door leaf
-
 ## `apps/web/src/lib/tour/nenPress.test.ts`
 
 - controlled Nen feedback > keeps arena and hunt refusals distinct from success or no verdict
@@ -1677,10 +1688,6 @@ Fichiers : 508
 
 - tour shortcuts > maps unmodified navigation keys
 
-## `apps/web/src/lib/tour/pageWorldCommands.test.ts`
-
-- releasing persistent tour memory > drops Luini’s live route but remembers visited and permanently burnt rooms
-
 ## `apps/web/src/lib/tour/pageWorldSteps.test.ts`
 
 - the reading, which counts the room rather than the person > banks a day for a day in the room the reading was opened in
@@ -1696,7 +1703,7 @@ Fichiers : 508
 
 ## `apps/web/src/lib/tour/policeDormFidelity.test.ts`
 
-- the Central Police dorm room > keeps its minimal functional programme explicitly inferred
+- the Central Police dorm room > does not invent an interior for the catalogue-only room
 
 ## `apps/web/src/lib/tour/policeStationView.test.ts`
 
@@ -1750,7 +1757,7 @@ Fichiers : 508
 
 ## `apps/web/src/lib/tour/recyclingFacilitiesFidelity.test.ts`
 
-- the recycling and sewage facilities > marks the minimal machinery in both plan volumes as inferred
+- the recycling and sewage facilities > keeps both plan volumes free of invented machinery
 
 ## `apps/web/src/lib/tour/regime.test.ts`
 
@@ -1768,6 +1775,10 @@ Fichiers : 508
 ## `apps/web/src/lib/tour/room3101View.test.ts`
 
 - Room 3101 manga fidelity > keeps panel furniture separate from inferred bathroom fixtures
+
+## `apps/web/src/lib/tour/roomAudioKey.test.ts`
+
+- room audio live-input key > is stable when the same active doors arrive in another order
 
 ## `apps/web/src/lib/tour/roomCondition.test.ts`
 
@@ -1818,6 +1829,14 @@ Fichiers : 508
 
 - applySheen > reads the eye and the normal the material already carries
 
+## `apps/web/src/lib/tour/simulation/categoryAbilities.test.ts`
+
+- Tour category abilities > offers only actions compatible with the selected target
+
+## `apps/web/src/lib/tour/simulation/categoryJourney.test.ts`
+
+- Nen category pilot journey > keeps an ordinary solution and makes affinity materially change an action
+
 ## `apps/web/src/lib/tour/simulation/dialogue.test.ts`
 
 - contextual NPC dialogue boundary > sends only the actor memory and current objective to the model
@@ -1826,9 +1845,21 @@ Fichiers : 508
 
 - dynamic Tour events > lets an incident trigger an off-screen security response later
 
+## `apps/web/src/lib/tour/simulation/executeCategoryAction.test.ts`
+
+- category action consequences > separates a witnessed fact from the persistent incident
+
 ## `apps/web/src/lib/tour/simulation/mode.test.ts`
 
 - Tour world modes > keeps the canonical reconstruction immutable
+
+## `apps/web/src/lib/tour/simulation/nenEnvironment.test.ts`
+
+- Nen-compatible Tour environment > seeds the pilot zone once with a non-Nen route
+
+## `apps/web/src/lib/tour/simulation/nenSession.test.ts`
+
+- Nen simulation mode session > creates no simulation for the canonical visit
 
 ## `apps/web/src/lib/tour/simulation/persistence.test.ts`
 
@@ -1899,11 +1930,15 @@ Fichiers : 508
 
 ## `apps/web/src/lib/tour/tier5ClinicFidelity.test.ts`
 
-- the Tier 5 medical clinic > keeps its plan-established volume separate from inferred equipment
+- the Tier 5 medical clinic > keeps the plan-established clinic free of invented equipment
 
 ## `apps/web/src/lib/tour/tier5StandardCabinsFidelity.test.ts`
 
 - the Tier 5 standard-cabin plan > keeps twelve forward cabins with one plan bed and cupboard each
+
+## `apps/web/src/lib/tour/tierQualityIntegration.test.ts`
+
+- deck condition quality integration > allocates no condition, halo or flicker buffers on low
 
 ## `apps/web/src/lib/tour/tierRoomDetails.test.ts`
 
@@ -2001,6 +2036,11 @@ Fichiers : 508
 ## `apps/web/src/routes/ship/shipDelta.test.ts`
 
 - adjacent ship event delta > reports movement, appearance, disappearance and death without stable rows
+
+## `apps/web/src/routes/ship/shipPage.server.test.ts`
+
+- the event-specific ship loader > keeps the catalog in the layout and returns only event-specific data
+- the localized ship page loader > merges inherited layout translations with translations derived from page data
 
 ## `apps/web/src/routes/ship/shipUrlState.test.ts`
 
@@ -2231,6 +2271,10 @@ Fichiers : 508
 - isActiveAt > holds from the event that opens it
 - isActiveAt with an explicit reveal limit > defaults to the target event’s own chapter
 
+## `packages/nen-engine/test/categories.spec.ts`
+
+- Nen category resolver > follows the hexagon without inventing abilities
+
 ## `packages/nen-engine/test/engine.spec.ts`
 
 - NenEngine.getActiveAbilities > derives one activation per ability still standing
@@ -2278,4 +2322,8 @@ Fichiers : 508
 ## `scripts/silhouettes.test.ts`
 
 - the Nen creature silhouettes > are the same shapes in the contracts and in the walk
+
+## `scripts/tour-lazy-boundary.test.ts`
+
+- the tour loading boundary > keeps the blueprint-bearing experience out of the route entry
 

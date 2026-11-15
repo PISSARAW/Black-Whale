@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { preloadFightStage } from '$lib/fighting/stageScenery'
   import { FIGHT_STAGES, type FightStageId } from '$lib/fighting/stages'
 
   export let selected: FightStageId
   export let language: 'fr' | 'en'
   export let onSelect: (id: FightStageId) => void
+
+  function choose(id: FightStageId) {
+    preloadFightStage(id)
+    onSelect(id)
+  }
 </script>
 
 <section
@@ -17,7 +23,7 @@
         type="button"
         class:selected={selected === stage.id}
         aria-pressed={selected === stage.id}
-        onclick={() => onSelect(stage.id)}
+        onclick={() => choose(stage.id)}
       >
         <span class="swatch" style={`--floor:${stage.swatch[0]};--light:${stage.swatch[1]}`}></span>
         <strong>{language === 'fr' ? stage.nameFr : stage.nameEn}</strong>

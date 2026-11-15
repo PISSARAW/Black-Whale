@@ -60,6 +60,16 @@ function buildHoldScenery(kit: SceneryKit): FightScenery {
 }
 
 /**
+ * Fetches a ship room's code and the blueprint ahead of the duel.
+ *
+ * Called when a stage is picked, so the wait is spent on the selection screen
+ * rather than on a black arena after the fighters are announced.
+ */
+export function preloadFightStage(stageId: FightStageId): void {
+  if (fightStage(stageId).kind === 'ship-room') void import('./stageShipRoom')
+}
+
+/**
  * Raises the scenery of one stage.
  *
  * The ship rooms are imported on demand: they bring the blueprint and the

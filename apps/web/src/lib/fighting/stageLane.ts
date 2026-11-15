@@ -26,6 +26,18 @@ const HEADROOM = 2.2
 const BACKDROP = 7
 const RAY_LIMIT = 40
 const COLUMN_CLEARANCE = 1.1
+/** What the camera frames behind the fighters, in metres either side and deep. */
+const FRAME_HALF_WIDTH = 11
+const FRAME_DEPTH = 24
+const SIGHTS_CAP = 8
+
+/** What stands in a room besides the blueprint's own solids. */
+export interface LaneObstacles {
+  /** Pillar centres, from the plan's column grid. */
+  columns?: readonly Vec2[]
+  /** Hand-modelled barriers the blueprint does not list, as plan outlines. */
+  barriers?: readonly Polygon[]
+}
 
 const DIRECTIONS: readonly Vec2[] = [
   [1, 0],
@@ -100,11 +112,29 @@ function reach(from: Vec2, towards: Vec2, footprint: Polygon): number {
   return RAY_LIMIT
 }
 
-function laneScore(lane: FightLane, footprint: Polygon): number {
+/** How many of the room's solids the camera would find behind this lane. */
+function sightsBehind(lane: FightLane, sights: readonly Vec2[]): number {
+  const [dx, dz] = lane.direction
+  const [bx, bz] = laneBackdrop(lane.direction)
+  let seen = 0
+  for (const [x, z] of sights) {
+    const along = (x - lane.centre[0]) * dx + (z - lane.centre[1]) * dz
+    const depth = (x - lane.centre[0]) * bx + (z - lane.centre[1]) * bz
+    if (Math.abs(along) < FRAME_HALF_WIDTH && depth > 1.5 && depth < FRAME_DEPTH) seen += 1
+  }
+  return Math.min(seen, SIGHTS_CAP)
+}
+
+/**
+ * A lane is worth what stands behind it first — a stage, a bench, a window —
+ * and only then how close its back wall is. A bare wall at the ideal distance
+ * loses to a furnished room seen from further off.
+ */
+function laneScore(lane: FightLane, footprint: Polygon, sights: readonly Vec2[]): number {
   const { minX, maxX, minZ, maxZ } = boundsOf(footprint)
   const middle = Math.hypot(lane.centre[0] - (minX + maxX) / 2, lane.centre[1] - (minZ + maxZ) / 2)
   const behind = reach(lane.centre, laneBackdrop(lane.direction), footprint)
-  return -Math.abs(behind - BACKDROP) - middle * 0.05
+  return sightsBehind(lane, sights) * 3 - Math.abs(behind - BACKDROP) * 0.4 - middle * 0.05
 }
 
 /** A room too small or too furnished for a clear strip still gets its long axis. */
@@ -112,6 +142,15 @@ function fallbackLane(footprint: Polygon): FightLane {
   const { minX, maxX, minZ, maxZ } = boundsOf(footprint)
   const centre: Vec2 = [(minX + maxX) / 2, (minZ + maxZ) / 2]
   return { centre, direction: maxX - minX >= maxZ - minZ ? [1, 0] : [0, 1] }
+}
+
+/** Everything a fighter cannot stand in, as plan outlines. */
+function blockersOf(structures: readonly Structure[], obstacles: LaneObstacles): Polygon[] {
+  return [
+    ...structures.filter((structure) => structure.base < HEADROOM).map(structureFootprint),
+    ...(obstacles.columns ?? []).map(columnClearance),
+    ...(obstacles.barriers ?? []),
+  ]
 }
 
 /**
@@ -124,18 +163,16 @@ function fallbackLane(footprint: Polygon): FightLane {
 export function findFightLane(
   space: Space,
   structures: readonly Structure[],
-  columns: readonly Vec2[] = [],
+  obstacles: LaneObstacles = {},
 ): FightLane {
-  const blockers = [
-    ...structures.filter((structure) => structure.base < HEADROOM).map(structureFootprint),
-    ...columns.map(columnClearance),
-  ]
+  const blockers = blockersOf(structures, obstacles)
+  const sights = structures.map((structure) => structure.at)
   let best: { lane: FightLane; score: number } | null = null
   for (const centre of gridOf(space.footprint)) {
     for (const direction of DIRECTIONS) {
       const lane = { centre, direction }
       if (!laneIsClear(lane, space.footprint, blockers)) continue
-      const score = laneScore(lane, space.footprint)
+      const score = laneScore(lane, space.footprint, sights)
       if (!best || score > best.score) best = { lane, score }
     }
   }

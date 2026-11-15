@@ -20,7 +20,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - `stages.ts` liste les terrains. La soute et la Tour Céleste sont dessinées ici
   (`stageScenery.ts`, `stageHeavensArena.ts`) ; les salles du navire sont levées depuis
   le plan de la visite (`stageShipRoom.ts`) et la bande de combat y est dérivée de
-  l'emprise et du mobilier (`stageLane.ts`). Un terrain ne change aucune règle.
+  l'emprise et du mobilier (`stageLane.ts`). Le mobilier modélisé de la visite est repris
+  tel quel (`stageRoomDetails.ts`) : une salle ajoutée que la visite habille doit y
+  inscrire son constructeur. Un terrain ne change aucune règle.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
 - Une partie dure soixante secondes et se termine par K.-O. ou décision aux points
   de vie restants.

@@ -3,6 +3,7 @@ import { theShip } from '../tour/blueprint'
 import { pointInPolygon, structureFootprint } from '../tour/geometry'
 import { buildTierMesh } from '../tour/mesh'
 import { findFightLane, laneBackdrop } from './stageLane'
+import { roomBarriers } from './stageRoomDetails'
 import { roomPlan } from './stageShipRoom'
 import { DEFAULT_FIGHT_STAGE, FIGHT_STAGES, fightStage } from './stages'
 
@@ -30,7 +31,8 @@ describe('fight stages', () => {
       const space = ship.spaces.get(spaceId)!
       const plan = roomPlan(ship, space)
       const columns = plan.columns.get(spaceId) ?? []
-      const lane = findFightLane(space, plan.structures, columns)
+      const barriers = roomBarriers(spaceId)
+      const lane = findFightLane(space, plan.structures, { columns, barriers })
       const solids = plan.structures.filter((item) => item.base < 2.2).map(structureFootprint)
       for (const along of [-5.7, -3, 0, 3, 5.7]) {
         const point: [number, number] = [
@@ -39,6 +41,7 @@ describe('fight stages', () => {
         ]
         expect(pointInPolygon(point, space.footprint)).toBe(true)
         expect(solids.some((solid) => pointInPolygon(point, solid))).toBe(false)
+        expect(barriers.some((barrier) => pointInPolygon(point, barrier))).toBe(false)
         for (const column of columns) {
           expect(Math.hypot(point[0] - column[0], point[1] - column[1])).toBeGreaterThan(1)
         }

@@ -13,6 +13,7 @@ export type FightStageId =
   | 'vip-casino'
   | 'observation-deck'
   | 'screening-room'
+  | 'supreme-court'
 
 export type FightStageKind = 'hold' | 'heavens-arena' | 'ship-room'
 
@@ -91,6 +92,16 @@ export const FIGHT_STAGES: readonly FightStageDefinition[] = [
     noteFr: 'Pont 2 · pièce de la visite',
     noteEn: 'Tier 2 · room from the visit',
     swatch: ['#231c2b', '#8f7bd0'],
+  },
+  {
+    id: 'supreme-court',
+    kind: 'ship-room',
+    spaceId: 'tier-1-supreme-court',
+    nameFr: 'Cour suprême',
+    nameEn: 'Supreme Court',
+    noteFr: 'Pont 1 · pièce de la visite',
+    noteEn: 'Tier 1 · room from the visit',
+    swatch: ['#3a2a1e', '#c9a86a'],
   },
 ]
 

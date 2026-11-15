@@ -9,6 +9,7 @@
   import { buildGuardianApparition } from '$lib/tour/apparitionGuardianView'
   import { buildMangaPropApparition } from '$lib/tour/apparitionMangaPropView'
   import { buildMechanicalApparition } from '$lib/tour/apparitionMechanicalView'
+  import { buildLsdfApparition } from '$lib/tour/apparitionLsdfView'
   import { buildObjectApparition } from '$lib/tour/apparitionObjectView'
   import { buildWormPortal } from '$lib/tour/apparitionPortalView'
   import { buildRoyalBeastApparition } from '$lib/tour/apparitionRoyalBeastView'
@@ -446,6 +447,15 @@
       scale: 1,
       position: [0, -1.2, 0],
       creature: true,
+    },
+    'lsdf-guards': {
+      apparitionKind: 'lsdf-guard',
+      build: buildLsdfApparition,
+      size: 1,
+      colour: 0xd8d5c8,
+      stage: 5,
+      scale: 0.92,
+      position: [0, -0.15, 0],
     },
   }
 

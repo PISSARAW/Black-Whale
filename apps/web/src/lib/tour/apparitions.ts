@@ -55,6 +55,8 @@ export type ApparitionKind =
   | 'jupiter'
   | 'pain-armour'
   | 'animal-object'
+  /** One of Yokotani's numbered LSDF guards, manifested inside the Heil-Ly hideout. */
+  | 'lsdf-guard'
   /** Musse's owl, perched where Secret Window attached it. */
   | 'owl'
   /** Mizaistom's card, laid on the room: blue, yellow, then red. */

@@ -36,6 +36,7 @@ export type NenArchiveKind =
   | 'secret-window'
   | 'without-you'
   | 'biohazard'
+  | 'lsdf-guards'
 
 export type NenArchiveEntry = {
   id: string
@@ -1020,6 +1021,32 @@ export const NEN_ARCHIVE_ENTRIES: NenArchiveEntry[] = [
       ['Conjuration', 'Matérialisation'],
       ['Transformation', 'Transformation'],
       ['Living object', 'Objet vivant'],
+    ],
+  }),
+  entry({
+    id: 'lsdf',
+    kind: 'lsdf-guards',
+    number: 'C-037',
+    category: 'construct',
+    color: '#d8d5c8',
+    accent: '#f0cf73',
+    sound: 'signal',
+    name: ['A Battle of Wits: LSDF', 'Bataille d’esprits : LSDF'],
+    alias: ["Yokotani's numbered legal guards", 'Gardes juridiques numérotés de Yokotani'],
+    environment: ['Heil-Ly hideout · active jurisdiction', 'Planque Heil-Ly · juridiction active'],
+    description: [
+      'Numbered guards conjured after Yokotani identifies an unlawful intruder in the Heil-Ly hideout. Their level follows the seriousness of the offense; they are invincible and expel defendants without injuring them.',
+      'Des gardes numérotés matérialisés lorsque Yokotani identifie un intrus illégitime dans la planque Heil-Ly. Leur niveau suit la gravité de l’infraction ; ils sont invincibles et expulsent les accusés sans les blesser.',
+    ],
+    technique: ['Establish jurisdiction', 'Établir la juridiction'],
+    techniqueDescription: [
+      'The offense is declared and a formation of guards rises at the matching alert level to immobilize and remove the intruder.',
+      'L’infraction est déclarée et une formation de gardes apparaît au niveau d’alerte correspondant pour immobiliser puis expulser l’intrus.',
+    ],
+    traits: [
+      ['Conjuration', 'Matérialisation'],
+      ['Invincible defense', 'Défense invincible'],
+      ['Hideout only', 'Planque uniquement'],
     ],
   }),
 ]

@@ -136,7 +136,8 @@
 
   function finishLabel(current: FightState): string {
     if (current.finishReason === 'time') return 'TIME'
-    if (current.finishReason === 'hits') return language === 'fr' ? '3 COUPS' : '3 HITS'
+    if (current.finishReason === 'hits') return '10 PTS'
+    if (current.finishReason === 'technical-knockout') return 'T.K.O.'
     return 'K.O.'
   }
 

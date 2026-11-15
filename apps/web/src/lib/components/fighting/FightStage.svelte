@@ -73,7 +73,7 @@
                 : language === 'fr'
                   ? 'GARDE'
                   : 'BLOCK'
-              : `${state.impact.critical ? 'CRIT · ' : ''}-${state.impact.damage} · +${state.impact.points}`}
+              : `${state.impact.critical ? 'CRIT · ' : ''}${state.impact.knockdown ? (language === 'fr' ? 'CHUTE · ' : 'KD · ') : ''}-${state.impact.damage} · +${state.impact.points}`}
       </div>
     {/key}
   {/if}

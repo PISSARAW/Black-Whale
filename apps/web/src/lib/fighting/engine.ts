@@ -62,6 +62,7 @@ export function createFight(
     winner: null,
     finishReason: null,
     score: { player: 0, opponent: 0 },
+    knockdowns: { player: 0, opponent: 0 },
     bungeeGum: null,
     projectiles: [],
     nextProjectileId: 1,

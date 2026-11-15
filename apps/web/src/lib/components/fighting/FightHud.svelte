@@ -42,6 +42,12 @@
           : `/${format.hitTarget}`}</span
       >
     </strong>
+    {#if format.knockdownTarget !== null}
+      <div class="knockdown-score">
+        <span>{state.knockdowns.player} KD</span>
+        <span>{state.knockdowns.opponent} KD</span>
+      </div>
+    {/if}
     <div class="timer">{Math.ceil(state.time)}</div>
     <strong>
       {format.hitTarget === null ? Math.ceil(state.opponent.health) : state.score.opponent}<span
@@ -179,6 +185,16 @@
     color: #8998a1;
     font: 600 0.45rem/1 var(--font-mono);
   }
+  .knockdown-score {
+    position: absolute;
+    top: 79px;
+    display: flex;
+    width: 86px;
+    justify-content: space-between;
+    color: #f1d36d;
+    font: 700 0.44rem/1 var(--font-mono);
+    letter-spacing: 0.04em;
+  }
   .timer {
     display: grid;
     height: 58px;
@@ -202,6 +218,10 @@
     .tower-score > strong {
       top: 49px;
       font-size: 0.75rem;
+    }
+    .knockdown-score {
+      top: 64px;
+      width: 70px;
     }
     .health {
       height: 13px;

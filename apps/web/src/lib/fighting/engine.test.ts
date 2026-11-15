@@ -5,6 +5,7 @@ import {
   opponentAttack,
   performAttack,
   performAuraAttack,
+  performThrow,
   tickFight,
 } from './engine'
 import { applyAuraContext } from './nen'
@@ -222,18 +223,35 @@ describe('fighting engine', () => {
     expect(ended.winner).toBe('player')
   })
 
-  it('ends a Heavens Arena fight on the third unblocked hit', () => {
+  it('ends a Heavens Arena fight at ten judged points', () => {
     let state = beginFight(createFight('kurapika', 'hisoka', 'heavens-arena'))
     state = {
       ...state,
-      score: { player: 2, opponent: 1 },
+      score: { player: 9, opponent: 4 },
       player: { ...state.player, x: 46 },
       opponent: { ...state.opponent, x: 52 },
     }
     const ended = advance(performAttack(state, 'player', 'light'), 0.18)
-    expect(ended.score.player).toBe(3)
+    expect(ended.score.player).toBe(10)
     expect(ended.phase).toBe('finished')
     expect(ended.finishReason).toBe('hits')
+  })
+
+  it('awards a knockdown bonus and ends on the third knockdown TKO', () => {
+    let state = beginFight(createFight('kurapika', 'hisoka', 'heavens-arena'))
+    state = {
+      ...state,
+      score: { player: 4, opponent: 2 },
+      knockdowns: { player: 2, opponent: 1 },
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52 },
+    }
+    const ended = advance(performThrow(state, 'player'), 0.2)
+    expect(ended.impact).toMatchObject({ knockdown: true, points: 2 })
+    expect(ended.score.player).toBe(6)
+    expect(ended.knockdowns.player).toBe(3)
+    expect(ended.phase).toBe('finished')
+    expect(ended.finishReason).toBe('technical-knockout')
   })
 
   it('keeps Heavens Arena governed by hits rather than the health bar', () => {

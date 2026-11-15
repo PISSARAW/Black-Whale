@@ -1,7 +1,7 @@
 import { FIGHT_FPS } from './frameData'
 
 export type FightFormatId = 'heavens-arena' | 'knockout' | 'arcade'
-export type FightVictoryRule = 'hits' | 'health' | 'hybrid'
+export type FightVictoryRule = 'points' | 'health' | 'hybrid'
 
 export interface FightFormat {
   id: FightFormatId
@@ -11,6 +11,7 @@ export interface FightFormat {
   descriptionEn: string
   victory: FightVictoryRule
   hitTarget: number | null
+  knockdownTarget: number | null
   health: number
   roundFrames: number
 }
@@ -20,12 +21,13 @@ export const FIGHT_FORMATS: readonly FightFormat[] = [
     id: 'heavens-arena',
     titleFr: 'Tour Céleste',
     titleEn: 'Heavens Arena',
-    descriptionFr: 'Le premier à placer 3 coups non bloqués remporte le combat.',
-    descriptionEn: 'The first fighter to land 3 unblocked hits wins.',
-    victory: 'hits',
-    hitTarget: 3,
+    descriptionFr: '10 points ou TKO au troisième knockdown, selon le jugement de la Tour.',
+    descriptionEn: '10 points or a third-knockdown TKO under Heavens Arena judging.',
+    victory: 'points',
+    hitTarget: 10,
+    knockdownTarget: 3,
     health: 100,
-    roundFrames: 60 * FIGHT_FPS,
+    roundFrames: 180 * FIGHT_FPS,
   },
   {
     id: 'knockout',
@@ -35,6 +37,7 @@ export const FIGHT_FORMATS: readonly FightFormat[] = [
     descriptionEn: "Reduce the opponent's 100 HP to zero before the decision.",
     victory: 'health',
     hitTarget: null,
+    knockdownTarget: null,
     health: 100,
     roundFrames: 90 * FIGHT_FPS,
   },
@@ -46,6 +49,7 @@ export const FIGHT_FORMATS: readonly FightFormat[] = [
     descriptionEn: 'Classic rule: knockout, 10 points, or a 60-second decision.',
     victory: 'hybrid',
     hitTarget: 10,
+    knockdownTarget: null,
     health: 100,
     roundFrames: 60 * FIGHT_FPS,
   },

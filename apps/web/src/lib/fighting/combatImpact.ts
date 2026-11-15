@@ -26,6 +26,12 @@ import {
 } from './nen'
 import { fighterDefinition } from './roster'
 import { fightFormat } from './formats'
+import {
+  addJudgedKnockdown,
+  isJudgedKnockdown,
+  scoreJudgedImpact,
+  tradeFinishReason,
+} from './towerJudging'
 import type { ProjectileHit } from './projectiles'
 import type {
   ArcadeFighter,
@@ -77,13 +83,29 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const struck = defence.avoided
     ? defence.fighter
     : strikeDefender({ fighter: defence.fighter, attacker, damage, blocked: defence.blocked })
-  const points = defence.avoided ? 0 : scoreForImpact(state.formatId, defence.blocked, critical)
+  const knockdown = isJudgedKnockdown({
+    attacker,
+    knockback: data.knockback,
+    blocked: defence.blocked,
+    avoided: defence.avoided,
+    critical,
+  })
+  const points = defence.avoided
+    ? 0
+    : scoreJudgedImpact({
+        formatId: state.formatId,
+        blocked: defence.blocked,
+        critical,
+        knockdown,
+      })
   const score = { ...state.score, [side]: state.score[side] + points }
+  const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   let next: FightState = {
     ...state,
     [side]: spent,
     [defenderSide]: struck,
     score,
+    knockdowns,
     impact: {
       sequence: (state.impact?.sequence ?? 0) + 1,
       attacker: side,
@@ -92,6 +114,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       blocked: defence.blocked,
       parried: defence.parried,
       critical,
+      knockdown,
       points,
       zone: data.targetZone,
       concealed: attacker.attack.concealed,
@@ -173,13 +196,29 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
         damage,
         blocked: defence.blocked,
       })
-  const points = defence.avoided ? 0 : scoreForImpact(state.formatId, defence.blocked, false)
+  const knockdown = isJudgedKnockdown({
+    attacker,
+    knockback: hit.projectile.knockback,
+    blocked: defence.blocked,
+    avoided: defence.avoided,
+    critical: false,
+  })
+  const points = defence.avoided
+    ? 0
+    : scoreJudgedImpact({
+        formatId: state.formatId,
+        blocked: defence.blocked,
+        critical: false,
+        knockdown,
+      })
   const score = { ...state.score, [side]: state.score[side] + points }
+  const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   const next = {
     ...state,
     [side]: consumeBaton(attacker),
     [hit.defenderSide]: struck,
     score,
+    knockdowns,
     hitstop: hit.projectile.hitstop,
     impact: {
       sequence: (state.impact?.sequence ?? 0) + 1,
@@ -189,6 +228,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
       blocked: defence.blocked,
       parried: defence.parried,
       critical: false,
+      knockdown,
       points,
       zone: hit.projectile.targetZone,
       concealed: false,
@@ -230,16 +270,6 @@ function attackCanResolve(
 
 function parryActive(fighter: ArcadeFighter, blocked: boolean): boolean {
   return blocked && fighter.guardFrames > 0 && fighter.guardFrames <= PARRY_WINDOW_FRAMES
-}
-
-function scoreForImpact(
-  formatId: FightState['formatId'],
-  blocked: boolean,
-  critical: boolean,
-): number {
-  if (blocked) return 0
-  if (fightFormat(formatId).victory === 'hits') return 1
-  return critical ? 2 : 1
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
@@ -314,7 +344,10 @@ function finishAfterImpact(
 
 function lossReason(state: FightState, side: FightSide): Exclude<FightFinishReason, 'time'> {
   const format = fightFormat(state.formatId)
-  if (format.victory !== 'hits' && state[side].health <= 0) return 'knockout'
+  const attackerSide = otherSide(side)
+  if (format.knockdownTarget !== null && state.knockdowns[attackerSide] >= format.knockdownTarget)
+    return 'technical-knockout'
+  if (format.victory !== 'points' && state[side].health <= 0) return 'knockout'
   if (
     format.victory !== 'health' &&
     format.hitTarget !== null &&
@@ -327,7 +360,7 @@ function lossReason(state: FightState, side: FightSide): Exclude<FightFinishReas
 function preserveHitFormatHealth(state: FightState, side: FightSide): FightState {
   const format = fightFormat(state.formatId)
   if (
-    format.victory !== 'hits' ||
+    format.victory !== 'points' ||
     format.hitTarget === null ||
     state.score[otherSide(side)] >= format.hitTarget ||
     state[side].health > 0
@@ -422,16 +455,18 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     }),
     bungeeGum: tradeAttachment(original, first, second),
     score: { player: first.score.player, opponent: second.score.opponent },
+    knockdowns: {
+      player: first.knockdowns.player,
+      opponent: second.knockdowns.opponent,
+    },
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
   const durable = preserveHitFormatHealth(preserveHitFormatHealth(traded, 'player'), 'opponent')
   const playerLost = lossReason(durable, 'player')
   const opponentLost = lossReason(durable, 'opponent')
-  const finishReason =
-    playerLost === 'knockout' || opponentLost === 'knockout' ? 'knockout' : 'hits'
-  if (playerLost && opponentLost)
-    return { ...durable, phase: 'finished', winner: 'draw', finishReason }
+  const finishReason = tradeFinishReason(playerLost, opponentLost)
+  if (playerLost && opponentLost) return { ...durable, phase: 'finished', winner: 'draw', finishReason }
   if (opponentLost) return finishFight(durable, 'player', opponentLost)
   return playerLost ? finishFight(durable, 'opponent', playerLost) : durable
 }

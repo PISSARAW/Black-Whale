@@ -19,9 +19,8 @@
         <strong>{language === 'fr' ? format.titleFr : format.titleEn}</strong>
         <small>{language === 'fr' ? format.descriptionFr : format.descriptionEn}</small>
         <b>
-          {#if format.victory === 'hits'}{language === 'fr'
-              ? '3 COUPS'
-              : '3 HITS'}{:else if format.victory === 'health'}100 {language === 'fr'
+          {#if format.victory === 'points'}10 PTS · 3 KD{:else if format.victory === 'health'}100 {language ===
+            'fr'
               ? 'PV'
               : 'HP'}{:else}10 PTS · K.O.{/if}
         </b>

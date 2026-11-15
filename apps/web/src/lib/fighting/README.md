@@ -7,10 +7,10 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
-- Le roster jouable compte vingt-cinq personnages. Feitan, Saiyu, Theta, Biscuit,
+- Le roster jouable compte trente-trois personnages. Feitan, Saiyu, Theta, Biscuit,
   Marayam, Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh,
-  Mizaistom, Leorio, Hanzo, Rihan, Zakuro et Melody rejoignent les six combattants
-  initiaux ; Chrollo dispose désormais de
+  Mizaistom, Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
+  Lynch, Luini, Bill et Furykov rejoignent les six combattants initiaux ; Chrollo dispose désormais de
   Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
@@ -41,10 +41,12 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   tel quel (`stageRoomDetails.ts`) : une salle ajoutée que la visite habille doit y
   inscrire son constructeur. Un terrain ne change aucune règle.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
-- Le type de combat est choisi avant le terrain : **Tour Céleste** se joue au
-  premier à trois coups non bloqués, **Combat K.-O.** à la vie (100 PV, décision
+- Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à
+  dix points ou au TKO après trois knockdowns, **Combat K.-O.** à la vie (100 PV, décision
   après 90 secondes), et **Arcade** conserve la règle historique à dix points ou
   K.-O. en soixante secondes. Les conditions restent indépendantes du terrain.
+- Le jugement de la Tour attribue un point pour une touche nette, deux pour une
+  touche critique et un point supplémentaire lorsqu'elle provoque un knockdown.
 
 Le joueur utilise Q/D ou les flèches pour se déplacer, Z ou flèche haute pour
 sauter, S ou flèche basse pour se baisser, Maj/I pour garder, J/K pour les coups,

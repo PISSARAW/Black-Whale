@@ -37,7 +37,7 @@ export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
-export type FightFinishReason = 'hits' | 'knockout' | 'time' | null
+export type FightFinishReason = 'hits' | 'knockout' | 'technical-knockout' | 'time' | null
 
 export interface FighterDefinition {
   id: FighterId
@@ -141,6 +141,7 @@ export interface FightImpact {
   blocked: boolean
   parried: boolean
   critical: boolean
+  knockdown: boolean
   points: number
   zone: FightNenZone
   concealed: boolean
@@ -193,6 +194,7 @@ export interface FightState {
   winner: FightSide | 'draw' | null
   finishReason: FightFinishReason
   score: Record<FightSide, number>
+  knockdowns: Record<FightSide, number>
   bungeeGum: BungeeGumAttachment | null
   projectiles: FightProjectile[]
   nextProjectileId: number

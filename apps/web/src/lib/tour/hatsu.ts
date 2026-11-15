@@ -1708,13 +1708,11 @@ const BODY_CASTS: Partial<Record<HatsuInteractionKind, BodyCast>> = {
     return { world: withBody({ eyes }), report: { kind: 'reshaped', metres: eyes ?? 1.7 } }
   },
 
-  // Cookie compresses hours of rest into a short treatment. What the walk has
-  // to be rested of is the exhaustion its own techniques wrote down: the
-  // tunnel that has been asked too often, and the aura committed to force.
+  // Cookie compresses hours of rest into a short treatment. The tunnel's phase
+  // is topology, not fatigue, so treatment leaves Kacho's open return intact.
   restoration: ({ world, body }) => ({
     world: {
       ...world,
-      worm: world.worm ? { ...world.worm, crossings: 0 } : null,
       body: { ...body, enhance: 0, dance: 0 },
     },
     report: { kind: 'rested', hours: 24 },
@@ -3136,15 +3134,48 @@ const ROOM_CASTS: Partial<Record<HatsuInteractionKind, RoomCast>> = {
     }
   },
 
-  // The tunnel works once a night. Asking it again is what exhausts it.
-  portal: ({ world, target }) => {
-    if (world.worm && !world.worm.b) {
-      const worm = { ...world.worm, b: target.id }
-      return { world: { ...world, worm }, report: { kind: 'worm-open', a: worm.a, b: worm.b } }
+  // The visitor plays Fugetsu: the departure door is under their feet and the
+  // aimed, already visited room is the hatch they wish for. Kacho accompanies
+  // the outward leg and owns the return leg; this is not a symmetric portal
+  // pair that may be installed remotely at both ends.
+  portal: ({ world, target, standingIn, at }) => {
+    if (world.worm) {
+      return {
+        world,
+        report: { kind: 'worm-refused', spaceId: target.id, reason: 'active' },
+      }
+    }
+    if (!standingIn) {
+      return {
+        world,
+        report: { kind: 'worm-refused', spaceId: null, reason: 'outside' },
+      }
+    }
+    if (target.id === standingIn) {
+      return {
+        world,
+        report: { kind: 'worm-refused', spaceId: target.id, reason: 'same-room' },
+      }
+    }
+    if (!world.trail.includes(target.id)) {
+      return {
+        world,
+        report: { kind: 'worm-refused', spaceId: target.id, reason: 'unvisited' },
+      }
+    }
+    const worm = {
+      a: standingIn,
+      b: target.id,
+      crossings: 0 as const,
+      phase: 'outgoing' as const,
     }
     return {
-      world: { ...world, worm: { a: target.id, b: '', crossings: 0 } },
-      report: { kind: 'worm-set', spaceId: target.id },
+      world: {
+        ...world,
+        worm,
+        landed: { ...world.landed, [standingIn]: at },
+      },
+      report: { kind: 'worm-open', a: worm.a, b: worm.b },
     }
   },
 
@@ -4087,9 +4118,9 @@ export function arriveInTour(world: TourWorld, ship: Ship, spaceId: string | nul
 /**
  * Where Fugetsu's tunnel puts someone who steps into one of its two ends.
  *
- * Unlike the hideout doors it wears out: the route is meant to be walked once
- * a night, and asking it again and again is what exhausts the worm. The third
- * crossing is the last, and the pair collapses behind it.
+ * The route is asymmetric. The visitor stands in for Fugetsu and may enter
+ * only the outgoing door. After emerging, Kacho opens the return door at the
+ * destination; taking that second door ends the one-night round trip.
  */
 export function wormExit(
   world: TourWorld,
@@ -4097,18 +4128,25 @@ export function wormExit(
   arrivedFrom: string | null,
 ): { to: string; world: TourWorld; report: TourReport } | null {
   const worm = world.worm
-  if (!worm?.b || !spaceId || spaceId === arrivedFrom) return null
-  const to = spaceId === worm.a ? worm.b : spaceId === worm.b ? worm.a : null
-  if (!to) return null
+  if (!worm || !spaceId || spaceId === arrivedFrom) return null
 
-  const crossings = worm.crossings + 1
-  if (crossings >= 3) {
-    return { to, world: { ...world, worm: null }, report: { kind: 'worm-spent' } }
+  if (worm.phase === 'outgoing') {
+    if (spaceId !== worm.a) return null
+    return {
+      to: worm.b,
+      world: {
+        ...world,
+        worm: { ...worm, crossings: 1, phase: 'return' },
+      },
+      report: { kind: 'worm-crossed', spaceId: worm.b, crossings: 1 },
+    }
   }
+
+  if (spaceId !== worm.b) return null
   return {
-    to,
-    world: { ...world, worm: { ...worm, crossings } },
-    report: { kind: 'worm-crossed', spaceId: to, crossings },
+    to: worm.a,
+    world: { ...world, worm: null },
+    report: { kind: 'worm-spent' },
   }
 }
 

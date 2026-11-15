@@ -336,13 +336,6 @@
       const copy = guides.worm
       if (!world.worm)
         return make({ title: copy.title, status: copy.first(control), warning: copy.spent })
-      if (!world.worm.b) {
-        return make({
-          title: copy.title,
-          status: copy.second(roomName(world.worm.a), control),
-          warning: copy.spent,
-        })
-      }
       return make({
         title: copy.title,
         status: copy.linked(roomName(world.worm.a), roomName(world.worm.b), world.worm.crossings),
@@ -766,8 +759,10 @@
         return say.snakesFed(roomName(report.spaceId))
       case 'snakes-rebound':
         return say.snakesRebound
-      case 'worm-set':
-        return say.wormSet(roomName(report.spaceId))
+      case 'worm-refused':
+        return report.reason === 'same-room'
+          ? say.wormRefused.sameRoom
+          : say.wormRefused[report.reason]
       case 'worm-open':
         return say.wormOpen(roomName(report.a), roomName(report.b))
       case 'worm-crossed':
@@ -1206,9 +1201,7 @@
     if (world.worm) {
       rows.push({
         label: held.worm,
-        value: world.worm.b
-          ? `${roomName(world.worm.a)} ⇄ ${roomName(world.worm.b)} · ${held.crossings(world.worm.crossings)}`
-          : `${roomName(world.worm.a)} · ${held.armed}`,
+        value: `${roomName(world.worm.phase === 'outgoing' ? world.worm.a : world.worm.b)} → ${roomName(world.worm.phase === 'outgoing' ? world.worm.b : world.worm.a)} · ${held.crossings(world.worm.crossings)}`,
       })
     }
     if (world.snakes) {

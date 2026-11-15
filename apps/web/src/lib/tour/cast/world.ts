@@ -210,8 +210,20 @@ export interface TourWorld {
   double: string | null
   /** The mode the double is operating in */
   doubleMode: TourDoubleMode
-  /** Fugetsu's tunnel: a pair, and how much it has been asked for. */
-  worm: { a: string; b: string; crossings: number } | null
+  /**
+   * Fugetsu's tunnel, with the visitor standing in for Fugetsu.
+   *
+   * The route is deliberately directional. Fugetsu owns the outward leg from
+   * `a` to `b`; after that crossing Kacho opens the return door from `b` to
+   * `a`. It is one symbiotic round trip, not a permanent pair of interchangeable
+   * portals.
+   */
+  worm: {
+    a: string
+    b: string
+    crossings: 0 | 1
+    phase: 'outgoing' | 'return'
+  } | null
   /** The rooms the snakes are loose in, and whether they have had a victim. */
   snakes: { rooms: string[]; fed: boolean } | null
   /** The room the bait was materialized in, which closes once it is taken. */

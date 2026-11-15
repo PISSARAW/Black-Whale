@@ -276,7 +276,11 @@ export type TourReport =
   | { kind: 'snakes-loosed'; rooms: number }
   | { kind: 'snakes-fed'; spaceId: string }
   | { kind: 'snakes-rebound' }
-  | { kind: 'worm-set'; spaceId: string }
+  | {
+      kind: 'worm-refused'
+      spaceId: string | null
+      reason: 'outside' | 'same-room' | 'unvisited' | 'active'
+    }
   | { kind: 'worm-open'; a: string; b: string }
   | { kind: 'worm-crossed'; spaceId: string; crossings: number }
   | { kind: 'worm-spent' }

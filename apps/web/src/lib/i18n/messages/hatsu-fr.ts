@@ -227,11 +227,11 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
   },
   'magical-worm': {
     name: 'Magical Worm',
-    action: 'Poser la porte de départ',
+    action: 'Ouvrir la porte d’aller',
     instruction:
-      'Faites un clic droit sur deux états de la carte pour poser la porte de départ et la porte de retour ; chaque traversée restaure l’URL, le pont et le zoom, mais l’usage répété épuise le site.',
-    rule: 'Le tunnel dimensionnel apparié ne fonctionne normalement qu’une fois par nuit ; les voyages répétés anormaux épuisent dangereusement Fugetsu.',
-    cost: 'Un trajet sûr par nuit · épuisement croissant',
+      'Depuis votre pièce actuelle, choisissez une destination déjà visitée et entrez dans la porte d’aller. Vous prenez le rôle de Fugetsu ; Kacho vous accompagne et ouvre la porte de retour après votre sortie.',
+    rule: 'Fugetsu contrôle l’aller, Kacho contrôle le retour et le tunnel dimensionnel ne fonctionne normalement qu’une fois par nuit.',
+    cost: 'Un aller-retour symbiotique par nuit · épuisement',
   },
   'cats-name': {
     name: 'Le nom du chat',

@@ -2109,7 +2109,7 @@
         apparitionView.sync(wanted, {
           idOf: (seen) => seen.id,
           keyOf: (seen) =>
-            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
+            `${seen.kind}|${seen.variant ?? ''}|${seen.carried ?? ''}|${seen.colour}|${seen.size}|${seen.hidden}|${seen.pair?.spaceId ?? ''}|${seen.wormRole ?? ''}|${seen.climb ?? ''}|${seen.face ?? ''}|${humanStateKey(seen)}|sight:${sight}`,
           build: buildApparition,
           preserve: (held) => ({ facing: held.facing, flown: held.flown }),
           restore: (held, saved) => {

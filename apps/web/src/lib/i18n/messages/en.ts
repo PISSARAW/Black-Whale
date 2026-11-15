@@ -1161,13 +1161,16 @@ export const en = {
         worm: {
           title: 'How to use Magical Worm',
           first: (control: string) =>
-            `1. Aim at a room and use ${control} to place the Start Door.`,
+            `1. From where you stand, aim at a room you already visited and use ${control} to open the Outgoing Door. You take Fugetsu’s role.`,
           second: (room: string, control: string) =>
-            `2. Start Door: ${room}. Aim at another room and use ${control} to place the Return Door.`,
+            `Outgoing Door open from ${room}. Enter it; Kacho accompanies you and will open the return. ${control} stays unavailable during the trip.`,
           linked: (a: string, b: string, crossings: number) =>
-            `${a} ⇄ ${b} · ${crossings}/3 crossings`,
-          cross: 'Enter either endpoint to come out at the other one.',
-          spent: 'The third crossing is the last: the two doors collapse behind you.',
+            crossings === 0
+              ? `${a} → ${b} · Outgoing Door open`
+              : `${b} → ${a} · Kacho is holding the Return Door open`,
+          cross:
+            'On the way out, enter the Outgoing Door. After emerging, return through the door Kacho opens.',
+          spent: 'The return closes the tunnel: the symbiotic trip is complete.',
         },
         curse: {
           title: 'How to use Sacrificial Curse',
@@ -1528,12 +1531,17 @@ export const en = {
         puppetReleased: (solid: string) =>
           `The antenna is withdrawn · ${solid} is no longer controlled`,
         autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
-        wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
-          `${a} and ${b} are a night's route, and it is meant to be walked once`,
+          `You take Fugetsu’s role · the Outgoing Door joins ${a} to ${b}, and Kacho accompanies you`,
         wormCrossed: (room: string, crossings: number) =>
-          `Out in ${room} · crossing ${crossings} of 3, and the worm is tiring`,
-        wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
+          `Out in ${room} · Kacho now opens the Return Door (${crossings}/1 outward trip)`,
+        wormSpent: 'Return complete · Kacho closes the door and Magical Worm disappears',
+        wormRefused: {
+          outside: 'Magical Worm must start inside a room of the Black Whale',
+          sameRoom: 'The destination must differ from the starting point',
+          unvisited: 'Fugetsu can only target a place already visited',
+          active: 'A Magical Worm trip is already open',
+        },
         doublePosted: (room: string) => `The double stands in ${room}, beside whoever is left`,
         doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
         doubleModeChanged: (watch: string) => `The double changes her watch · ${watch}`,
@@ -1789,7 +1797,8 @@ export const en = {
         gumTrap: 'Gum strung across',
         gumStrand: 'Gum stuck to',
         gumStretch: 'Stretch on the strand',
-        crossings: (n: number) => `${n} of 3 crossings`,
+        crossings: (n: number): string =>
+          n === 0 ? 'outward leg ready' : 'return opened by Kacho',
         solid: 'Solids held',
         wound: 'The confetti is in',
         windup: (turns: number) => `${turns} rotation${turns === 1 ? '' : 's'} wound up`,

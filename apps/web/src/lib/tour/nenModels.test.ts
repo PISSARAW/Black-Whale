@@ -58,6 +58,19 @@ function context() {
 }
 
 describe('the manga models', () => {
+  it('draws Magical Worm doors with a leaf and exit hatches without one', () => {
+    const departure = context()
+    buildWormPortal({ ...seen('portal'), portalKind: 'worm', wormRole: 'outgoing-door' }, departure)
+    expect(departure.root.getObjectByName('magical-worm-outgoing-door-leaf')).toBeDefined()
+    expect(departure.root.getObjectByName('magical-worm-exit-hatch')).toBeUndefined()
+
+    const hatch = context()
+    buildWormPortal({ ...seen('portal'), portalKind: 'worm', wormRole: 'exit-hatch' }, hatch)
+    expect(hatch.root.getObjectByName('magical-worm-exit-hatch')).toBeDefined()
+    expect(hatch.root.getObjectByName('magical-worm-outgoing-door-leaf')).toBeUndefined()
+    expect(hatch.root.getObjectByName('magical-worm-return-door-leaf')).toBeUndefined()
+  })
+
   it.each<ApparitionKind>([
     'portal',
     'fish',

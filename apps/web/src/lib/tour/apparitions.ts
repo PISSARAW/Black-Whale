@@ -224,6 +224,8 @@ export interface Apparition {
   pair?: { spaceId: string; tierId: string; at: Vec2; y: number }
   /** Fugetsu opens a door; Luini tears an oval aperture into wall or floor. */
   portalKind?: 'worm' | 'spatial'
+  /** Which directional end of Magical Worm this mouth currently represents. */
+  wormRole?: 'outgoing-door' | 'exit-hatch' | 'return-door' | 'return-hatch'
   /**
    * How far up something wound round a solid has to climb, in metres.
    *
@@ -883,6 +885,51 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
     }
   }
 
+  // Selecting Magical Worm makes the visitor Fugetsu's functional stand-in,
+  // but Kacho remains Kacho. She accompanies the outward journey, then waits
+  // beside the destination mouth with one hand raised to open the Return Door.
+  // `double` is reused only as the already faithful Kacho body model; this is
+  // not Without You's interception state and never consumes `world.double`.
+  const wormRoom = spaceOf(world.worm?.phase === 'return' ? world.worm.b : world.worm?.a)
+  if (world.worm && wormRoom) {
+    const measured = room(ship, wormRoom)
+    if (measured) {
+      const follows = world.worm.phase === 'outgoing' && Boolean(visitor)
+      const visitorSpace = visitor?.spaceId ? spaceOf(visitor.spaceId) : null
+      const space = follows && visitorSpace ? visitorSpace : wormRoom
+      const floor = room(ship, space)?.floor ?? measured.floor
+      const doorAt = landing(wormRoom)
+      const centre = centroid(wormRoom)
+      const inwardX = centre[0] - doorAt[0]
+      const inwardZ = centre[1] - doorAt[1]
+      const inwardLength = Math.hypot(inwardX, inwardZ) || 1
+      const besideDoor: Vec2 = [
+        doorAt[0] + (inwardX / inwardLength) * 0.9 - (inwardZ / inwardLength) * 0.4,
+        doorAt[1] + (inwardZ / inwardLength) * 0.9 + (inwardX / inwardLength) * 0.4,
+      ]
+      const kachoAt = pointInPolygon(besideDoor, wormRoom.footprint) ? besideDoor : centre
+      found.push({
+        id: `worm-kacho:${world.worm.a}:${world.worm.b}`,
+        kind: 'double',
+        spaceId: space.id,
+        tierId: space.tierId,
+        at: follows && visitor ? [visitor.at[0] + 1.15, visitor.at[1] + 1.15] : kachoAt,
+        y: floor,
+        size: 0.9,
+        colour: DOUBLE,
+        stage: 0,
+        hidden: false,
+        heading: follows ? undefined : Math.atan2(doorAt[0] - kachoAt[0], doorAt[1] - kachoAt[1]),
+        human: {
+          role: 'witness',
+          identity: 'prince-kacho',
+          pose: world.worm.phase === 'return' ? 'attack' : 'walk',
+          aura: 'none',
+        },
+      })
+    }
+  }
+
   // Everything standing in a room, as the aura currently leaves it: the dolls
   // stick to it and the fish eat it, so both have to see what is actually there
   // rather than what the blueprint says was.
@@ -1307,6 +1354,8 @@ export function apparitionsOn(ship: Ship, world: TourWorld, walk: Walk = {}): Ap
       colour: PORTAL,
       y: mouth.y,
       pair: other,
+      portalKind: 'worm',
+      wormRole: mouth.role,
     })
   }
 
@@ -1752,21 +1801,43 @@ export function coinAt(ship: Ship, world: TourWorld, standing: Footing): string 
 }
 
 /**
- * Where the two ends of Fugetsu's tunnel stand.
+ * Where the two directional ends of Fugetsu's tunnel stand.
  *
  * The middle of the room, at head height: a door has to be somewhere a visitor
  * can walk into, and the centre is the one point of a room the walk can always
- * name without a second value in the world. A half-placed tunnel has one end
- * and cannot be crossed, so it is listed but never paired.
+ * name without a second value in the world. One end is the active door and the
+ * other is only a hatch: the roles swap when Kacho opens the return.
  */
 export function wormMouths(
   ship: Ship,
   world: TourWorld,
-): { spaceId: string; tierId: string; at: Vec2; y: number }[] {
+): {
+  spaceId: string
+  tierId: string
+  at: Vec2
+  y: number
+  role: NonNullable<Apparition['wormRole']>
+}[] {
   const worm = world.worm
   if (!worm) return []
-  const mouths: { spaceId: string; tierId: string; at: Vec2; y: number }[] = []
-  for (const id of [worm.a, worm.b]) {
+  const mouths: {
+    spaceId: string
+    tierId: string
+    at: Vec2
+    y: number
+    role: NonNullable<Apparition['wormRole']>
+  }[] = []
+  const roles: [string, NonNullable<Apparition['wormRole']>][] =
+    worm.phase === 'outgoing'
+      ? [
+          [worm.a, 'outgoing-door'],
+          [worm.b, 'exit-hatch'],
+        ]
+      : [
+          [worm.a, 'return-hatch'],
+          [worm.b, 'return-door'],
+        ]
+  for (const [id, role] of roles) {
     const space = id ? ship.spaces.get(id) : null
     const measured = space ? room(ship, space) : null
     if (!space || !measured) continue
@@ -1779,6 +1850,7 @@ export function wormMouths(
       // different places, which is a tunnel that cannot be entered.
       at: world.landed[space.id] ?? measured.at,
       y: Math.min(measured.floor + 0.65, measured.ceiling - 0.3),
+      role,
     })
   }
   return mouths

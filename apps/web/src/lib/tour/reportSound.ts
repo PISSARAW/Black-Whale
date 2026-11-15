@@ -44,7 +44,6 @@ const STATIC_SOUND: Partial<Record<TourReport['kind'], () => void>> = {
   'owl-expired': hootAnOwl,
   carded: () => selectACard(1),
   'acquisition-failed': () => selectACard(1),
-  'worm-set': openAWormhole,
   'worm-open': openAWormhole,
   'worm-crossed': openAWormhole,
   'spatial-anchored': openAWormhole,

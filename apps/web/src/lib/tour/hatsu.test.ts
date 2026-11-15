@@ -1349,29 +1349,60 @@ describe('what waits at a threshold', () => {
 })
 
 describe("Fugetsu's tunnel", () => {
-  it('opens on the second end and collapses on the third crossing', () => {
-    const set = door(EMPTY_WORLD, 'portal', roomA.id)
-    expect(set.report).toMatchObject({ kind: 'worm-set' })
-    let world = door(set.world, 'portal', roomB.id).world
-    expect(world.worm).toMatchObject({ a: roomA.id, b: roomB.id, crossings: 0 })
+  const open = () =>
+    castInTour({ ...EMPTY_WORLD, trail: [roomB.id] }, 'portal', {
+      ship,
+      targetId: roomB.id,
+      standingIn: roomA.id,
+      at: centroid(roomA),
+    })
 
-    const first = wormExit(world, roomA.id, null)!
-    expect(first.to).toBe(roomB.id)
-    world = first.world
-    const second = wormExit(world, roomA.id, null)!
-    world = second.world
-    const third = wormExit(world, roomA.id, null)!
-    expect(third.report).toEqual({ kind: 'worm-spent' })
-    expect(third.world.worm).toBeNull()
+  it('opens the outward leg under the visitor and lets Kacho own the return', () => {
+    const opened = open()
+    expect(opened.report).toEqual({ kind: 'worm-open', a: roomA.id, b: roomB.id })
+    expect(opened.world.worm).toEqual({
+      a: roomA.id,
+      b: roomB.id,
+      crossings: 0,
+      phase: 'outgoing',
+    })
+
+    const outward = wormExit(opened.world, roomA.id, null)!
+    expect(outward.to).toBe(roomB.id)
+    expect(outward.world.worm).toMatchObject({ crossings: 1, phase: 'return' })
+    expect(wormExit(outward.world, roomA.id, null)).toBeNull()
+
+    const returned = wormExit(outward.world, roomB.id, null)!
+    expect(returned.to).toBe(roomA.id)
+    expect(returned.report).toEqual({ kind: 'worm-spent' })
+    expect(returned.world.worm).toBeNull()
   })
 
   it('does nothing for someone walking past, or just delivered', () => {
-    const world = { ...EMPTY_WORLD, worm: { a: roomA.id, b: roomB.id, crossings: 0 } }
+    const world = open().world
     expect(wormExit(world, roomA.id, roomA.id)).toBeNull()
     expect(wormExit(world, busiest.space.id, null)).toBeNull()
-    expect(
-      wormExit({ ...EMPTY_WORLD, worm: { a: roomA.id, b: '', crossings: 0 } }, roomA.id, null),
-    ).toBeNull()
+  })
+
+  it('refuses an unknown destination and a second active route', () => {
+    const unknown = castInTour(EMPTY_WORLD, 'portal', {
+      ship,
+      targetId: roomB.id,
+      standingIn: roomA.id,
+      at: centroid(roomA),
+    })
+    expect(unknown.report).toEqual({
+      kind: 'worm-refused',
+      spaceId: roomB.id,
+      reason: 'unvisited',
+    })
+    const already = castInTour(open().world, 'portal', {
+      ship,
+      targetId: roomB.id,
+      standingIn: roomA.id,
+      at: centroid(roomA),
+    })
+    expect(already.report).toMatchObject({ kind: 'worm-refused', reason: 'active' })
   })
 })
 
@@ -1727,12 +1758,16 @@ describe('the music, the chain and the deduction', () => {
   it('rests the exhaustion the walk wrote down', () => {
     let world = on(EMPTY_WORLD, 'enhance').world
     world = on(world, 'rhythm').world
-    world = { ...world, worm: { a: 'a', b: 'b', crossings: 2 } }
+    world = {
+      ...world,
+      worm: { a: 'a', b: 'b', crossings: 1, phase: 'return' },
+    }
 
     const rested = on(world, 'restoration')
     expect(rested.world.body.enhance).toBe(0)
     expect(rested.world.body.dance).toBe(0)
-    expect(rested.world.worm?.crossings).toBe(0)
+    expect(rested.world.worm?.crossings).toBe(1)
+    expect(rested.world.worm?.phase).toBe('return')
   })
 })
 

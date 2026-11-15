@@ -32,7 +32,10 @@ function buildSpatialPortal(
   return pane
 }
 
-/** The small playground door and its tunnel throat, retaining a real destination pane. */
+/**
+ * Magical Worm's directional mouths: a playground door at the controlled end
+ * and a bare, ribbed hatch at the end one may only emerge from.
+ */
 export function buildWormPortal(
   seen: Apparition,
   context: BasicApparitionContext,
@@ -56,22 +59,28 @@ export function buildWormPortal(
   const surround = new THREE.Mesh(new THREE.ShapeGeometry(frame, 20), glow(0xc8a7b1, 1))
   surround.scale.set(1.14, 1.09, 1)
   surround.position.z = -0.025
-  surround.name = 'magical-worm-doorframe'
+  const hatch = seen.wormRole === 'exit-hatch' || seen.wormRole === 'return-hatch'
+  surround.name = hatch ? 'magical-worm-exit-hatch' : 'magical-worm-doorframe'
   root.add(surround, pane)
-  const door = new THREE.Group()
-  door.name = 'magical-worm-door-leaf'
-  door.position.x = -width / 2
-  door.rotation.y = -1.15
-  const leaf = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.045), glow(0x9a778d, 1))
-  leaf.position.x = width / 2
-  door.add(leaf)
-  const handle = new THREE.Mesh(
-    new THREE.SphereGeometry(seen.size * 0.055, 12, 8),
-    glow(0xd7c39c, 1),
-  )
-  handle.position.set(width * 0.85, -height * 0.06, 0.055)
-  door.add(handle)
-  root.add(door)
+  if (!hatch) {
+    const door = new THREE.Group()
+    door.name =
+      seen.wormRole === 'return-door'
+        ? 'magical-worm-return-door-leaf'
+        : 'magical-worm-outgoing-door-leaf'
+    door.position.x = -width / 2
+    door.rotation.y = -1.15
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(width, height, 0.045), glow(0x9a778d, 1))
+    leaf.position.x = width / 2
+    door.add(leaf)
+    const handle = new THREE.Mesh(
+      new THREE.SphereGeometry(seen.size * 0.055, 12, 8),
+      glow(0xd7c39c, 1),
+    )
+    handle.position.set(width * 0.85, -height * 0.06, 0.055)
+    door.add(handle)
+    root.add(door)
+  }
   // Ribbed throat behind the hatch, kept short so it never extends
   // through an unrelated bulkhead; the destination still uses the pane.
   for (let i = 1; i <= 4; i++) {

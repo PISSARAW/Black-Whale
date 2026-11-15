@@ -1,8 +1,15 @@
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { moveId } from './movesetFactory'
 import type { FighterMove, FighterMoveset } from './movesetTypes'
+import { WAVE_FOUR_MOVESETS_A } from './movesetWaveFourA'
+import { WAVE_FOUR_MOVESETS_B } from './movesetWaveFourB'
+import { ROSTER_FINAL_MOVESETS } from './movesetRosterFinal'
 import { WAVE_ONE_MOVESETS_A } from './movesetWaveOneA'
 import { WAVE_ONE_MOVESETS_B } from './movesetWaveOneB'
+import { WAVE_THREE_MOVESETS_A } from './movesetWaveThreeA'
+import { WAVE_THREE_MOVESETS_B } from './movesetWaveThreeB'
+import { WAVE_TWO_MOVESETS_A } from './movesetWaveTwoA'
+import { WAVE_TWO_MOVESETS_B } from './movesetWaveTwoB'
 import type {
   ArcadeFighter,
   FightInput,
@@ -14,14 +21,28 @@ import type {
 } from './types'
 
 const WAVE_ONE_MOVESETS = [...WAVE_ONE_MOVESETS_A, ...WAVE_ONE_MOVESETS_B]
+const WAVE_TWO_MOVESETS = [...WAVE_TWO_MOVESETS_A, ...WAVE_TWO_MOVESETS_B]
+const WAVE_THREE_MOVESETS = [...WAVE_THREE_MOVESETS_A, ...WAVE_THREE_MOVESETS_B]
+const WAVE_FOUR_MOVESETS = [...WAVE_FOUR_MOVESETS_A, ...WAVE_FOUR_MOVESETS_B]
+const ALL_MOVESETS = [
+  ...WAVE_ONE_MOVESETS,
+  ...WAVE_TWO_MOVESETS,
+  ...WAVE_THREE_MOVESETS,
+  ...WAVE_FOUR_MOVESETS,
+  ...ROSTER_FINAL_MOVESETS,
+]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  WAVE_ONE_MOVESETS.map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
-  WAVE_ONE_MOVESETS.flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),
+  ALL_MOVESETS.flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),
 )
 
 export const WAVE_ONE_FIGHTERS = WAVE_ONE_MOVESETS.map((moveset) => moveset.fighterId)
+export const WAVE_TWO_FIGHTERS = WAVE_TWO_MOVESETS.map((moveset) => moveset.fighterId)
+export const WAVE_THREE_FIGHTERS = WAVE_THREE_MOVESETS.map((moveset) => moveset.fighterId)
+export const WAVE_FOUR_FIGHTERS = WAVE_FOUR_MOVESETS.map((moveset) => moveset.fighterId)
+export const ROSTER_FINAL_FIGHTERS = ROSTER_FINAL_MOVESETS.map((moveset) => moveset.fighterId)
 
 export function movesetFor(fighterId: FighterId): FighterMoveset | null {
   return MOVESETS.get(fighterId) ?? null
@@ -124,4 +145,39 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   },
   biscuit: (state, side) => state[side].hatsuEffects.transformationFrames > 0,
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
+  franklin: (state, side) => opponentOf(state, side).health <= 40,
+  machi: (state, side) => opponentOf(state, side).hatsuEffects.stitchedFrames > 0,
+  illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
+  kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
+  bonolenov: (state, side) => state[side].hatsuEffects.cantabileFrames > 0,
+  shizuku: (state, side) => opponentOf(state, side).health <= 50,
+  hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
+  mizaistom: (state, side) => opponentOf(state, side).hatsuEffects.restrainedFrames > 0,
+  leorio: (state, side) => state[side].health <= 45,
+  hanzo: (state, side) => state[side].hatsuEffects.cloneDodges > 0,
+  rihan: (state, side) =>
+    state[side].hatsuEffects.predatorFrames > 0 &&
+    opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
+  zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
+  melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
+  basho: (state, side) => state[side].hatsuEffects.haikuFrames > 0,
+  camilla: (state, side) => state[side].hatsuEffects.catCounters > 0 && state[side].health <= 30,
+  halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
+  gel: (state, side) => opponentOf(state, side).hatsuEffects.venomFrames > 0,
+  lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
+  luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
+  bill: (state, side) => state[side].hatsuEffects.growthFrames > 0 && state[side].health <= 50,
+  furykov: (state, side) =>
+    state[side].hatsuEffects.comboFocusFrames > 0 && state[side].comboHits >= 3,
+  cluck: (state, side) => state[side].hatsuEffects.birdFrames > 0,
+  beyond: (state, side) =>
+    opponentOf(state, side).hatsuEffects.curseFrames > 0 && state[side].health <= 40,
+  longhi: (state, side) => opponentOf(state, side).hatsuEffects.contractFrames > 0,
+  musse: (state, side) => state[side].hatsuEffects.secretWindowDodges > 0,
+  padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
+  sayird: (state, side) => state[side].hatsuEffects.littleEyeDodges > 0,
+  silentmajority: (state, side) => opponentOf(state, side).hatsuEffects.silentMarks >= 2,
+  terebellum: (state, side) => state[side].hatsuEffects.sweetHomeCharges > 0,
+  voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
+  yokotani: (state, side) => state[side].hatsuEffects.lsdfGuards > 0,
 }

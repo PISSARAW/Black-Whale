@@ -36,6 +36,16 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Biscuit et Phinks) quinze coups identifiés : six normales, trois command normals,
   quatre techniques, une projection et un finisher conditionnel. Chaque fiche
   expose aussi sa mécanique propre et au moins trois routes courtes.
+- La deuxième vague applique le même contrat à Franklin, Machi, Illumi, Kalluto,
+  Bonolenov, Shizuku, Hinrigh, Mizaistom, Leorio et Hanzo.
+- La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
+  Lynch, Luini et Bill.
+- La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
+  Silent Majority, Terebellum et Voconte. Quarante combattants disposent donc
+  désormais d’un moveset complet.
+- Yokotani clôt le roster avec sa défense judiciaire LSDF. Les quarante et un
+  combattants disposent ainsi de six cent quinze coups définis et cent vingt-trois
+  routes courtes de combo.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.

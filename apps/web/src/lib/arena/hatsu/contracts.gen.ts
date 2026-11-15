@@ -326,8 +326,8 @@ export const ARENA_CONTRACTS: ArenaContract[] = [
     effect: 'restore',
     cost: 18,
     persistent: true,
-    condition: 'touch-source-and-recipient',
-    risk: 'damage-is-not-erased',
+    condition: 'simultaneous-hand-contact-on-impact',
+    risk: 'untransferred-damage-hits-left-hand',
     mechanic: 'transfer',
   },
   {

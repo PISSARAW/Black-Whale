@@ -636,11 +636,11 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
   },
   'damage-sweet-home': {
     name: 'Damage : Sweet Home',
-    action: 'Toucher la cible protégée',
+    action: 'Absorber à droite, transférer à gauche',
     instruction:
-      'Posez d’abord la main gauche sur un destinataire ; tous les coups suivants atterrissent chez lui, et frapper le destinataire lui-même lui fait encaisser les dégâts.',
-    rule: 'Les dégâts sont redirigés entre cibles touchées plutôt qu’effacés, avec des limites plus strictes dès que des corps vivants sont en jeu.',
-    cost: 'Contact préalable avec la source et le destinataire',
+      'Au moment du coup, touchez avec la main droite l’objet ou la personne qui subit les dégâts et avec la gauche leur destinataire. Si Terebellum est directement blessé, seule la main gauche est nécessaire.',
+    rule: 'Les dégâts sont transférés, jamais effacés. Si la main droite les absorbe tandis que la gauche ne touche rien, la main gauche les subit.',
+    cost: 'Contacts simultanés au moment des dégâts',
   },
   'voconte-hideout-doors': {
     name: 'Portes de la planque',

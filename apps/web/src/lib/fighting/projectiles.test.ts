@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, opponentAttack, performAttack, tickFight } from './engine'
 import { projectileProfile, RANGED_AURA_COST } from './projectiles'
-import { EMPTY_INPUT, type FightInput, type FightState } from './types'
+import { EMPTY_INPUT, type FighterId, type FightInput, type FightState } from './types'
 
 function advance(state: FightState, seconds: number, input: FightInput = EMPTY_INPUT): FightState {
   let next = state
@@ -22,15 +22,27 @@ function rangedFight(): FightState {
 
 describe('ranged attacks', () => {
   it('gives a stone to fighters without a canonical projectile', () => {
-    expect(projectileProfile('morena')).toMatchObject({
-      labelFr: 'Pierre',
-      labelEn: 'Stone',
-      shape: 'stone',
-    })
-    expect(projectileProfile('chrollo').shape).toBe('stone')
-    expect(projectileProfile('biscuit').shape).toBe('stone')
+    const stoneThrowers: FighterId[] = [
+      'chrollo',
+      'morena',
+      'tserriednich',
+      'saiyu',
+      'biscuit',
+      'marayam',
+      'phinks',
+    ]
+    for (const fighter of stoneThrowers) {
+      expect(projectileProfile(fighter), fighter).toMatchObject({
+        labelFr: 'Pierre',
+        labelEn: 'Stone',
+        shape: 'stone',
+      })
+    }
     expect(projectileProfile('hisoka').shape).toBe('card')
     expect(projectileProfile('theta').shape).toBe('orb')
+    expect(projectileProfile('franklin').shape).toBe('bullet')
+    expect(projectileProfile('illumi').shape).toBe('bullet')
+    expect(projectileProfile('bonolenov').shape).toBe('orb')
   })
 
   it('spawns a travelling projectile before applying damage', () => {

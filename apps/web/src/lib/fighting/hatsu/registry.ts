@@ -1,12 +1,18 @@
 import type { FighterHatsu } from './contract'
 import { benjaminHatsu } from './benjamin'
+import { bonolenovHatsu } from './bonolenov'
 import { chrolloHatsu } from './chrollo'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
+import { franklinHatsu } from './franklin'
 import { hisokaHatsu } from './hisoka'
+import { illumiHatsu } from './illumi'
+import { kallutoHatsu } from './kalluto'
 import { kurapikaHatsu } from './kurapika'
 import { marayamHatsu } from './marayam'
+import { machiHatsu } from './machi'
 import { morenaHatsu } from './morena'
+import { phinksHatsu } from './phinks'
 import { saiyuHatsu } from './saiyu'
 import { thetaHatsu } from './theta'
 import { tserriednichHatsu } from './tserriednich'
@@ -24,6 +30,12 @@ const HATSU_REGISTRY: Record<FighterId, FighterHatsu> = {
   theta: thetaHatsu,
   biscuit: biscuitHatsu,
   marayam: marayamHatsu,
+  phinks: phinksHatsu,
+  franklin: franklinHatsu,
+  machi: machiHatsu,
+  illumi: illumiHatsu,
+  kalluto: kallutoHatsu,
+  bonolenov: bonolenovHatsu,
 }
 
 export function hatsuFor(id: FighterId): FighterHatsu {

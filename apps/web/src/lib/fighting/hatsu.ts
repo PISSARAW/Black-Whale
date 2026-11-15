@@ -52,11 +52,15 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
       ? 1 + ((100 - fighter.health) / 100) * 1.8
       : 1
   const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 1.35 : 1
-  return baton * risingSun * transformed
+  const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
+  const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
+  return baton * risingSun * transformed * cyclotron * cantabile
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
-  return fighter.hatsuEffects.transformationFrames > 0 ? 0.68 : 1
+  const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 0.68 : 1
+  const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
+  return transformed * cantabile
 }
 
 export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {

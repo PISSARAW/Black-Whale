@@ -1633,14 +1633,14 @@
     "alternateNames": ["Damage"],
     "category": "emitter",
     "abilityType": "damage-transfer",
-    "description": "Terebellum redirects damage received by a touched object or person into another touched target. Damage is transferred rather than erased and the exact living-target conditions remain limited.",
+    "description": "Terebellum absorbs damage from an object or person with his right hand at the moment it is inflicted and transfers it to whatever his left hand is touching. Damage dealt directly to Terebellum can be transferred with his left hand alone; if he absorbs damage with his right hand while his left hand touches nothing, his left hand takes the damage.",
     "canonStatus": "canon",
     "moduleKey": "damage-sweet-home",
-    "firstVisibleChapterId": "ch-386",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-399",
+    "modifiedAt": "2026-11-15",
     "sources": [
       {
-        "chapterId": "ch-386"
+        "chapterId": "ch-399"
       }
     ]
   },

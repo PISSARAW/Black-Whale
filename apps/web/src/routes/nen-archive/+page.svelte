@@ -110,7 +110,7 @@
     const now = ctx.currentTime + 0.015
     tone(ctx, 86, now, 0.85, 'sine', 0.055, 210)
     tone(ctx, 172, now + 0.14, 0.7, 'triangle', 0.035, 420)
-    setTimeout(() => (techniqueActive = false), 1900)
+    setTimeout(() => (techniqueActive = false), 3600)
     announce(
       copy
         ? `${archiveCopy(selected.technique, 'fr')} activée.`
@@ -672,7 +672,7 @@
       transparent 55%
     );
     pointer-events: none;
-    animation: flash 1.9s ease both;
+    animation: flash 1.5s ease both;
   }
 
   .technique-flash span {

@@ -72,6 +72,46 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 10,
     size: [0.8, 0.6],
   }),
+  franklin: projectile({
+    labels: ['Balles d’aura', 'Aura bullets'],
+    shape: 'bullet',
+    colour: '#ef4444',
+    speed: 82,
+    damage: 11,
+    size: [0.6, 0.24],
+  }),
+  machi: projectile({
+    labels: ['Fil de Nen', 'Nen thread'],
+    shape: 'chain',
+    colour: '#f472b6',
+    speed: 60,
+    damage: 8,
+    size: [1.2, 0.3],
+  }),
+  illumi: projectile({
+    labels: ['Aiguille', 'Needle'],
+    shape: 'bullet',
+    colour: '#a78bfa',
+    speed: 74,
+    damage: 9,
+    size: [0.72, 0.22],
+  }),
+  kalluto: projectile({
+    labels: ['Confetti', 'Confetti'],
+    shape: 'card',
+    colour: '#fb7185',
+    speed: 66,
+    damage: 8,
+    size: [0.7, 0.4],
+  }),
+  bonolenov: projectile({
+    labels: ['Jupiter', 'Jupiter'],
+    shape: 'orb',
+    colour: '#fbbf24',
+    speed: 42,
+    damage: 11,
+    size: [1.25, 1],
+  }),
 }
 
 const THROWN_STONE = projectile({

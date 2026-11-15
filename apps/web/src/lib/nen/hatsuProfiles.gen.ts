@@ -983,11 +983,11 @@ export const HATSU_PROFILES: HatsuProfile[] = [
     owner: 'Terebellum',
     kind: 'damage-transfer',
     instruction:
-      'Rest the left hand on a recipient first; every blow after that lands there instead, and striking the recipient itself makes it take the damage.',
-    rule: 'Damage is redirected between touched targets rather than erased, with stricter limits when living bodies are involved.',
-    cost: 'Prior contact with both source and recipient',
+      'At the moment of impact, touch the damaged object or person with the right hand and the recipient with the left. Damage dealt directly to Terebellum needs only the left hand.',
+    rule: 'Damage is transferred rather than erased. If the right hand absorbs damage while the left hand touches nothing, the left hand takes it.',
+    cost: 'Simultaneous contact at the moment of damage',
     color: '#db8b78',
-    action: 'Touch the protected target',
+    action: 'Absorb right, transfer left',
   },
   {
     id: 'voconte-hideout-doors',

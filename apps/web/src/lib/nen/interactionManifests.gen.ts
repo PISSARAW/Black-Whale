@@ -890,7 +890,7 @@ export const INTERACTION_MANIFESTS: AbilityInteractionManifest[] = [
   {
     abilityId: 'damage-sweet-home',
     entryPoints: {
-      actions: ['link'],
+      actions: ['link', 'self-transfer', 'absorb-without-left-contact'],
       requiredState: ['isConscious', 'canUseNen'],
     },
     inputMode: 'SEQUENCE',

@@ -58,6 +58,17 @@ function context() {
 }
 
 describe('the manga models', () => {
+  it('draws Luini’s portal as a violet oval aperture without Fugetsu’s door leaf', () => {
+    const ctx = context()
+    const pane = buildWormPortal(
+      { ...seen('portal'), portalKind: 'spatial', colour: 0x8a2be2 },
+      ctx,
+    )
+    expect(pane?.name).toBe('spatial-portal-aperture')
+    expect(ctx.root.getObjectByName('spatial-portal-rim')).toBeDefined()
+    expect(ctx.root.getObjectByName('magical-worm-outgoing-door-leaf')).toBeUndefined()
+  })
+
   it('draws Magical Worm doors with a leaf and exit hatches without one', () => {
     const departure = context()
     buildWormPortal({ ...seen('portal'), portalKind: 'worm', wormRole: 'outgoing-door' }, departure)

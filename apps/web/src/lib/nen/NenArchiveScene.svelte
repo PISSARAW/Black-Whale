@@ -19,6 +19,7 @@
   import type { BasicApparitionContext } from '$lib/tour/apparitionBasicView'
   import type { Apparition, ApparitionKind } from '$lib/tour/apparitions'
   import { styleNenCreature } from '$lib/tour/nenCreatureFigure'
+  import { buildTechniqueAnimation, updateTechniqueAnimation } from './NenTechniqueAnimation'
   import type { NenArchiveKind } from './archive'
 
   export let kind: NenArchiveKind
@@ -38,6 +39,7 @@
   let camera: THREE.PerspectiveCamera
   let renderer: THREE.WebGLRenderer
   let specimen: THREE.Group
+  let techniqueRig: THREE.Group | null = null
   let environment: THREE.Group
   let frame = 0
   let resizeObserver: ResizeObserver
@@ -47,12 +49,14 @@
   let targetRotationX = -0.08
   let targetRotationY = 0.5
   let techniqueUntil = 0
+  let techniqueStartedAt = 0
   let cryUntil = 0
   let modelMeshCount = 0
 
   const materials: THREE.MeshStandardMaterial[] = []
   const glowMaterials: THREE.MeshBasicMaterial[] = []
   const tourMaterials: THREE.MeshBasicMaterial[] = []
+  const TECHNIQUE_DURATION = 3600
 
   const material = (hex: string, roughness = 0.55, metalness = 0.12) => {
     const value = new THREE.MeshStandardMaterial({
@@ -544,6 +548,8 @@
     const presentation = new THREE.Group()
     presentation.name = `nendex-${config.apparitionKind}`
     presentation.add(root)
+    techniqueRig = buildTechniqueAnimation(kind, config.colour)
+    presentation.add(techniqueRig)
     return presentation
   }
   function buildEnvironment() {
@@ -600,7 +606,8 @@
   }
 
   function activateTechnique() {
-    techniqueUntil = performance.now() + 1900
+    techniqueStartedAt = performance.now()
+    techniqueUntil = techniqueStartedAt + TECHNIQUE_DURATION
   }
 
   function reactToCry() {
@@ -658,8 +665,11 @@
       specimen.position.y += (Math.sin(time * 0.0014) * 0.075 - specimen.position.y) * 0.04
 
       const techniqueActive = time < techniqueUntil
+      const techniqueProgress = techniqueActive
+        ? THREE.MathUtils.clamp((time - techniqueStartedAt) / TECHNIQUE_DURATION, 0, 1)
+        : 1
       const cryActive = time < cryUntil
-      const techniquePulse = techniqueActive ? 1 + Math.sin(time * 0.018) * 0.055 : 1
+      const techniquePulse = techniqueActive ? 1 + Math.sin(time * 0.018) * 0.025 : 1
       const cryPulse = cryActive ? 1 + Math.sin(time * 0.045) * 0.035 : 1
       specimen.scale.setScalar(techniquePulse * cryPulse)
 
@@ -673,6 +683,8 @@
       }
       const antenna = specimen.getObjectByName('phone-antenna')
       if (antenna) antenna.rotation.z = techniqueActive ? Math.sin(time * 0.035) * 0.16 : 0
+
+      updateTechniqueAnimation(techniqueRig, techniqueProgress, time, techniqueActive)
 
       materials.forEach((value) => {
         value.emissiveIntensity = techniqueActive ? 0.85 + Math.sin(time * 0.02) * 0.3 : 0.12

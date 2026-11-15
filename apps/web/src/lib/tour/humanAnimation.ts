@@ -171,6 +171,18 @@ export function humanAnimation(
   let transitionFrom: TransformFrame | null = null
   let transitionStarted = 0
 
+  const syncTransition = (seconds: number, pose: HumanPose, transitionKey?: string): void => {
+    if (!transitionKey) {
+      transitionFrom = null
+      displayedPose = pose
+      return
+    }
+    if (transitionKey === displayedPose) return
+    transitionFrom = frameOf(parts)
+    transitionStarted = seconds
+    displayedPose = transitionKey
+  }
+
   const animatePose: Record<string, (seconds: number) => void> = {
     flute: (seconds: number) => {
       const phrase = Math.sin(seconds * 1.15)
@@ -259,15 +271,7 @@ export function humanAnimation(
   }
 
   return (seconds: number, pose = rig.pose, layer?: HumanAnimationLayer) => {
-    const transitionKey = layer?.transitionKey
-    if (transitionKey && transitionKey !== displayedPose) {
-      transitionFrom = frameOf(parts)
-      transitionStarted = seconds
-      displayedPose = transitionKey
-    } else if (!transitionKey) {
-      transitionFrom = null
-      displayedPose = pose
-    }
+    syncTransition(seconds, pose, layer?.transitionKey)
     rig.figure.position.copy(figureBasePosition)
     rig.figure.rotation.copy(figureBaseRotation)
     rig.arms.forEach((arm, index) => {

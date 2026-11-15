@@ -1,3 +1,4 @@
+import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { fightingStyle } from './fightStyles'
 import type { ArcadeFighter, AttackKind, AttackPhase, FightNenZone, FightSide } from './types'
@@ -76,6 +77,21 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     auraZone: 'hands',
     box: { left: 1.5, right: 20, bottom: 3.4, top: 11.5 },
   },
+  ranged: {
+    startup: 10,
+    active: 1,
+    recovery: 17,
+    damage: 0,
+    hitstun: 0,
+    blockstun: 0,
+    hitstop: 0,
+    knockback: 0,
+    lunge: 0,
+    cancelEnd: 28,
+    targetZone: 'torso',
+    auraZone: 'hands',
+    box: { left: 0, right: 0, bottom: 0, top: 0 },
+  },
 }
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
@@ -83,29 +99,36 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]
   const nativeReach = attackReach(kind, definition.reach, definition.specialRange)
-  return {
-    ...base,
-    startup: scaledFrames(base.startup, tuning.startup),
-    active: scaledFrames(base.active, tuning.active),
-    recovery: scaledFrames(base.recovery, tuning.recovery),
-    damage: scaledValue(base.damage, tuning.damage),
-    hitstun: scaledFrames(base.hitstun, tuning.hitstun),
-    blockstun: scaledFrames(base.blockstun, tuning.blockstun),
-    knockback: scaledValue(base.knockback, tuning.knockback),
-    lunge: scaledValue(base.lunge, tuning.lunge),
-    targetZone: valueOr(tuning.targetZone, base.targetZone),
-    auraZone: valueOr(tuning.auraZone, base.auraZone),
-    box: {
-      ...base.box,
-      right: nativeReach + valueOr(tuning.reach, 0),
-      bottom: valueOr(tuning.bottom, base.box.bottom),
-      top: valueOr(tuning.top, base.box.top),
+  return variantData({
+    fighter,
+    kind,
+    data: {
+      ...base,
+      startup:
+        scaledFrames(base.startup, tuning.startup) +
+        (kind === 'special' && fighter.attack?.concealed ? 10 : 0),
+      active: scaledFrames(base.active, tuning.active),
+      recovery: scaledFrames(base.recovery, tuning.recovery),
+      damage: scaledValue(base.damage, tuning.damage),
+      hitstun: scaledFrames(base.hitstun, tuning.hitstun),
+      blockstun: scaledFrames(base.blockstun, tuning.blockstun),
+      knockback: scaledValue(base.knockback, tuning.knockback),
+      lunge: scaledValue(base.lunge, tuning.lunge),
+      targetZone: valueOr(tuning.targetZone, base.targetZone),
+      auraZone: valueOr(tuning.auraZone, base.auraZone),
+      box: {
+        ...base.box,
+        right: nativeReach + valueOr(tuning.reach, 0),
+        bottom: valueOr(tuning.bottom, base.box.bottom),
+        top: valueOr(tuning.top, base.box.top),
+      },
     },
-  }
+  })
 }
 
 function attackReach(kind: AttackKind, reach: number, specialRange: number): number {
   if (kind === 'special') return specialRange
+  if (kind === 'ranged') return 0
   return kind === 'heavy' ? reach + 2 : reach
 }
 
@@ -140,12 +163,13 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
-  if (!fighter.attack || attackPhase(fighter) !== 'active') return null
+  if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')
+    return null
   return worldBox(fighter, attackData(fighter.attack.kind, fighter).box)
 }
 
 export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
-  const crouch = fighter.blocking ? 1.2 : 0
+  const crouch = fighter.crouching ? 4 : 0
   return [
     worldBox(fighter, { left: -1.7, right: 1.7, bottom: 0, top: 5.2 - crouch }),
     worldBox(fighter, { left: -2.1, right: 2.1, bottom: 4.8 - crouch, top: 12 - crouch }),

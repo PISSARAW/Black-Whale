@@ -2,16 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { createFight } from './engine'
 import { attackData } from './frameData'
 import { chooseStyleAttack, fightingStyle, styleMovement } from './fightStyles'
-import type { FighterId } from './types'
+import { FIGHTING_ROSTER } from './roster'
 
-const fighters: FighterId[] = [
-  'kurapika',
-  'hisoka',
-  'chrollo',
-  'morena',
-  'benjamin',
-  'tserriednich',
-]
+const fighters = FIGHTING_ROSTER.map(({ id }) => id)
 
 describe('character fighting styles', () => {
   it('gives every fighter an authored and visible identity', () => {

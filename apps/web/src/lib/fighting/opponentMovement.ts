@@ -8,7 +8,7 @@ const MAX_X = 93
 
 export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
   const gap = Math.abs(player.x - fighter.x)
-  const blocking = shouldBlock(fighter, player, gap)
+  const blocking = fighter.blockStun > 0 || shouldBlock(fighter, player, gap)
   const releasedGuard = fighter.blocking && !blocking
   const next = {
     ...fighter,

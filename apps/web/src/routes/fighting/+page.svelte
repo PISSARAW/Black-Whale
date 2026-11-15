@@ -11,6 +11,7 @@
     createFight,
     opponentAttack,
     performAuraAttack,
+    performThrow,
     tickFight,
   } from '$lib/fighting/engine'
   import { fightingStyle } from '$lib/fighting/fightStyles'
@@ -31,6 +32,7 @@
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
   let aiClock = 0
+  let paused = false
   let language: 'fr' | 'en'
 
   $: language = $locale === 'fr' ? 'fr' : 'en'
@@ -54,8 +56,9 @@
           controls: 'Commandes',
           movement: 'Q / D ou flèches : déplacement',
           jump: 'Z ou ↑ : saut · S ou ↓ : bas · Maj/I : garde',
-          attacks: 'J : rapide · K : puissante · L : Hatsu',
-          aura: 'Espace : Aura. Maintenir pour Ren ; combiner avec garde, bas ou haut ; relâcher pendant un coup pour Ko.',
+          attacks:
+            'J : rapide · K : puissante · U : projectile · relâcher L : Hatsu (maintenir : In)',
+          aura: 'Bas + J/K : coups bas · saut + J/K : aériens · O : projection/déprojection · combo sur touche J → K → L. Espace : Aura. Maintenir pour Ren ; combiner avec garde, bas ou haut ; relâcher pendant un coup pour Ko.',
         }
       : {
           eyebrow: 'NEW MODE · 2D DUEL',
@@ -74,8 +77,8 @@
           controls: 'Controls',
           movement: 'A / D or arrows: move',
           jump: 'W or ↑: jump · S or ↓: down · Shift/I: guard',
-          attacks: 'J: quick · K: heavy · L: Hatsu',
-          aura: 'Space: Aura. Hold for Ren; combine with guard, down or up; release during a strike for Ko.',
+          attacks: 'J: quick · K: heavy · U: projectile · release L: Hatsu (hold: In)',
+          aura: 'Down + J/K: lows · jump + J/K: aerials · O: throw/tech · on-hit combo J → K → L. Space: Aura. Hold for Ren; combine with guard, down or up; release during a strike for Ko.',
         }
 
   function previewFighter(id: FighterId) {
@@ -90,6 +93,7 @@
     state = createFight(selectedPlayer, selectedOpponent)
     input = { ...EMPTY_INPUT }
     aiClock = 0
+    paused = false
   }
 
   function startFight() {
@@ -104,10 +108,15 @@
   function chooseAgain() {
     state = null
     input = { ...EMPTY_INPUT }
+    paused = false
   }
 
   function attack(kind: AttackKind) {
     if (state) state = performAuraAttack({ state, side: 'player', kind, auraCharged: input.aura })
+  }
+
+  function throwAttack() {
+    if (state) state = performThrow(state, 'player')
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -138,12 +147,13 @@
   const attackKeys: Record<string, AttackKind> = {
     j: 'light',
     k: 'heavy',
-    l: 'special',
+    u: 'ranged',
   }
 
   function handleKey(event: KeyboardEvent, active: boolean) {
     if (!state) return
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
+    if (handleHatsuKey(event, active, key)) return
     const movement = movementKeys[key]
     if (movement) {
       event.preventDefault()
@@ -151,9 +161,31 @@
       return
     }
     if (!active || event.repeat) return
+    handleActionKey(key)
+  }
+
+  function handleActionKey(key: string) {
+    if (key === 'p' && state?.phase === 'fighting') return togglePause()
+    if (key === 'o') return throwAttack()
     const attackKind = attackKeys[key]
-    if (attackKind) attack(attackKind)
-    if (key === 'Enter' && state.phase === 'ready') startFight()
+    if (attackKind) return attack(attackKind)
+    if (key === 'Enter' && state?.phase === 'ready') startFight()
+  }
+
+  function togglePause() {
+    paused = !paused
+    input = { ...EMPTY_INPUT }
+  }
+
+  function handleHatsuKey(event: KeyboardEvent, active: boolean, key: string): boolean {
+    if (key !== 'l') return false
+    event.preventDefault()
+    if (active && !event.repeat) control('hatsu', true)
+    if (!active) {
+      attack('special')
+      control('hatsu', false)
+    }
+    return true
   }
 
   onMount(() => {
@@ -162,10 +194,14 @@
     const keydown = (event: KeyboardEvent) => handleKey(event, true)
     const keyup = (event: KeyboardEvent) => handleKey(event, false)
     const release = () => (input = { ...EMPTY_INPUT })
+    const visibility = () => {
+      if (document.hidden && state?.phase === 'fighting') paused = true
+      release()
+    }
     const loop = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.05)
       last = now
-      if (state?.phase === 'fighting') {
+      if (state?.phase === 'fighting' && !paused) {
         state = tickFight(state, input, dt)
         aiClock += dt
         if (aiClock >= 0.34) {
@@ -178,12 +214,14 @@
     window.addEventListener('keydown', keydown)
     window.addEventListener('keyup', keyup)
     window.addEventListener('blur', release)
+    document.addEventListener('visibilitychange', visibility)
     frame = requestAnimationFrame(loop)
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('blur', release)
+      document.removeEventListener('visibilitychange', visibility)
     }
   })
 </script>
@@ -290,8 +328,25 @@
         {language}
         stageId={selectedStage}
         onAttack={attack}
+        onThrow={throwAttack}
         onControl={control}
       />
+
+      {#if state.phase === 'fighting'}
+        <button type="button" class="pause-fight" aria-pressed={paused} onclick={togglePause}>
+          {paused ? (language === 'fr' ? 'Reprendre' : 'Resume') : 'Pause'}
+        </button>
+      {/if}
+
+      {#if paused && state.phase === 'fighting'}
+        <div class="match-overlay pause-overlay">
+          <p>{language === 'fr' ? 'COMBAT EN PAUSE' : 'FIGHT PAUSED'}</p>
+          <h2>{language === 'fr' ? 'PAUSE' : 'PAUSED'}</h2>
+          <button type="button" onclick={togglePause}>
+            {language === 'fr' ? 'Reprendre' : 'Resume'}
+          </button>
+        </div>
+      {/if}
 
       {#if state.phase === 'ready'}
         <div class="match-overlay ready-overlay">

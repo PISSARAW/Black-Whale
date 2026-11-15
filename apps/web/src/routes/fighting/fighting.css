@@ -59,7 +59,9 @@
   font: 700 clamp(3rem, 8vw, 6.8rem)/0.88 var(--font-display);
   letter-spacing: -0.045em;
   text-transform: uppercase;
-  text-shadow: 5px 5px 0 #151a1e, 8px 8px 0 #9b2f36;
+  text-shadow:
+    5px 5px 0 #151a1e,
+    8px 8px 0 #9b2f36;
 }
 
 .fight-header .intro {
@@ -115,7 +117,10 @@
   color: #fff;
   text-align: left;
   cursor: pointer;
-  transition: border-color 150ms, transform 150ms, box-shadow 150ms;
+  transition:
+    border-color 150ms,
+    transform 150ms,
+    box-shadow 150ms;
 }
 
 .roster-grid button::before {
@@ -133,7 +138,9 @@
 
 .roster-grid button.selected {
   border-color: #e7bd52;
-  box-shadow: 0 0 0 2px rgb(225 179 63 / 25%), inset 0 -50px 50px rgb(177 49 60 / 18%);
+  box-shadow:
+    0 0 0 2px rgb(225 179 63 / 25%),
+    inset 0 -50px 50px rgb(177 49 60 / 18%);
 }
 
 .roster-grid button.selected::before {
@@ -249,6 +256,32 @@
   position: relative;
 }
 
+.pause-fight {
+  position: absolute;
+  z-index: 35;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgb(255 255 255 / 28%);
+  background: rgb(4 8 12 / 78%);
+  color: #dce5ea;
+  font: 600 0.6rem/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pause-fight:hover,
+.pause-fight:focus-visible {
+  border-color: #d9b650;
+  color: #fff;
+}
+
+.pause-overlay {
+  z-index: 34;
+  background: rgb(3 7 10 / 64%);
+  backdrop-filter: blur(4px);
+}
+
 .match-overlay {
   position: absolute;
   z-index: 40;
@@ -278,7 +311,9 @@
   color: #fff;
   font: 700 clamp(4rem, 12vw, 9rem)/0.85 var(--font-display);
   letter-spacing: -0.05em;
-  text-shadow: 6px 6px 0 #a42d38, 9px 9px 0 #050709;
+  text-shadow:
+    6px 6px 0 #a42d38,
+    9px 9px 0 #050709;
 }
 
 .match-overlay > div {

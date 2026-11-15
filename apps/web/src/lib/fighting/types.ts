@@ -1,16 +1,33 @@
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 
-export type FighterId = 'kurapika' | 'hisoka' | 'chrollo' | 'morena' | 'benjamin' | 'tserriednich'
+export type FighterId =
+  | 'kurapika'
+  | 'hisoka'
+  | 'chrollo'
+  | 'morena'
+  | 'benjamin'
+  | 'tserriednich'
+  | 'feitan'
+  | 'saiyu'
+  | 'theta'
+  | 'biscuit'
+  | 'marayam'
+  | 'phinks'
+  | 'franklin'
+  | 'machi'
+  | 'illumi'
+  | 'kalluto'
+  | 'bonolenov'
 
 export type FighterPose =
-  'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'hit' | 'ko'
+  'idle' | 'walk' | 'jump' | 'guard' | 'light' | 'heavy' | 'special' | 'ranged' | 'hit' | 'ko'
 
-export type AttackKind = 'light' | 'heavy' | 'special'
+export type AttackKind = 'light' | 'heavy' | 'special' | 'ranged'
+export type AttackVariant = 'standing' | 'low' | 'air' | 'throw'
 export type AttackPhase = 'startup' | 'active' | 'recovery'
 export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
-export type FightNenCommand = 'ten' | 'ren' | 'zetsu' | 'ken' | 'gyo' | 'ko' | 'ryu' | 'in' | 'en'
 
 export interface FighterDefinition {
   id: FighterId
@@ -42,17 +59,52 @@ export interface ArcadeFighter {
   pose: FighterPose
   hitStun: number
   blockStun: number
+  crouching?: boolean
+  throwTechFrames?: number
   blocking: boolean
   guardFrames: number
   ryuWindow: number
   auraExhausted: boolean
+  hatsuChargeFrames: number
+  hatsuEffects: FighterHatsuEffects
   attack: {
+    variant?: AttackVariant
+    confirmedHit?: boolean
     kind: AttackKind
     frame: number
     impacted: boolean
     auraCharged: boolean
+    concealed: boolean
+    hatsuSource: FighterId | null
+    projectileSpawned: boolean
   } | null
-  bufferedAttack: { kind: AttackKind; auraCharged: boolean } | null
+  bufferedAttack: {
+    variant?: AttackVariant
+    confirmedHit?: boolean
+    kind: AttackKind
+    auraCharged: boolean
+    concealed: boolean
+    hatsuSource: FighterId | null
+  } | null
+}
+
+export interface FighterHatsuEffects {
+  forcedZetsuFrames: number
+  contagionFrames: number
+  contagionStacks: number
+  futureSight: number
+  batonCharges: number
+  senseSeals: number
+  sunMoonMarks: number
+  manipulatedFrames: number
+  transformationFrames: number
+  isolationFrames: number
+  cyclotronTurns: number
+  stitchedFrames: number
+  needleFrames: number
+  serpentMarks: number
+  cantabileFrames: number
+  lastHatsuReceived: FighterId | null
 }
 
 export interface FightInput {
@@ -61,9 +113,8 @@ export interface FightInput {
   jump: boolean
   down: boolean
   guard: boolean
-  /** Legacy/touch alias kept while the UI migrates to the guard/aura chord. */
-  block: boolean
   aura: boolean
+  hatsu: boolean
 }
 
 export interface FightImpact {
@@ -76,7 +127,40 @@ export interface FightImpact {
   critical: boolean
   points: number
   zone: FightNenZone
+  concealed: boolean
+  avoided: boolean
+  projectileId: number | null
   position: { x: number; y: number }
+}
+
+export type ProjectileShape =
+  'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone'
+
+export interface FightProjectile {
+  id: number
+  owner: FightSide
+  fighterId: FighterId
+  x: number
+  y: number
+  velocityX: number
+  width: number
+  height: number
+  damage: number
+  hitstun: number
+  blockstun: number
+  hitstop: number
+  knockback: number
+  targetZone: FightNenZone
+  shape: ProjectileShape
+  colour: string
+  age: number
+  lifetime: number
+}
+
+export interface BungeeGumAttachment {
+  owner: FightSide
+  target: FightSide
+  hidden: boolean
 }
 
 export interface FightState {
@@ -91,6 +175,9 @@ export interface FightState {
   rng: number
   winner: FightSide | 'draw' | null
   score: Record<FightSide, number>
+  bungeeGum: BungeeGumAttachment | null
+  projectiles: FightProjectile[]
+  nextProjectileId: number
   impact: FightImpact | null
 }
 
@@ -100,6 +187,6 @@ export const EMPTY_INPUT: FightInput = {
   jump: false,
   down: false,
   guard: false,
-  block: false,
   aura: false,
+  hatsu: false,
 }

@@ -4,9 +4,13 @@
   import type { FightState } from '$lib/fighting/types'
 
   export let state: FightState
+  export let language: 'fr' | 'en'
 
   $: player = fighterDefinition(state.player.id)
   $: opponent = fighterDefinition(state.opponent.id)
+  $: visibleBungee =
+    state.bungeeGum &&
+    (state.bungeeGum.owner === 'player' || !state.bungeeGum.hidden || state.player.nen.gyo)
 </script>
 
 <div class="hud" aria-live="polite">
@@ -15,6 +19,15 @@
     <div class="health"><span style={`width:${state.player.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
+    {#if visibleBungee}
+      <div class="secret-status">
+        {state.bungeeGum?.owner === 'player'
+          ? 'Bungee Gum · attaché'
+          : language === 'fr'
+            ? 'Bungee Gum détecté'
+            : 'Bungee Gum detected'}
+      </div>
+    {/if}
   </div>
   <div class="tower-score">
     <strong>{state.score.player}<span>/10</span></strong>
@@ -26,7 +39,11 @@
     <div class="health"><span style={`width:${state.opponent.health}%`}></span></div>
     <div class="aura"><span style={`width:${state.opponent.aura}%`}></span></div>
     <div class="nen-status">
-      {state.player.nen.gyo ? auraDistribution(state.opponent) : 'aura adverse masquée'}
+      {state.player.nen.gyo
+        ? auraDistribution(state.opponent)
+        : language === 'fr'
+          ? 'aura adverse masquée'
+          : 'opponent aura hidden'}
     </div>
   </div>
 </div>
@@ -92,6 +109,14 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-shadow: 0 1px 4px #000;
+  }
+  .secret-status {
+    margin-top: 0.25rem;
+    color: #ff80dc;
+    font: 700 0.52rem/1 var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 0 0 7px #7e185f;
   }
   .opponent-meter .meter-label {
     text-align: right;

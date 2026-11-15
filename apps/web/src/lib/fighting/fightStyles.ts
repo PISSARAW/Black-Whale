@@ -48,6 +48,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
       light: { startup: 0.8, recovery: 0.9, damage: 0.9, reach: 1, targetZone: 'hands' },
       heavy: { recovery: 0.9, reach: 1.2, targetZone: 'torso' },
       special: { startup: 0.88, recovery: 1.05, reach: 1.5, targetZone: 'torso' },
+      ranged: { startup: 0.95, recovery: 1.05 },
     },
   },
   hisoka: {
@@ -66,6 +67,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
       light: { startup: 0.7, recovery: 0.82, damage: 0.85, reach: 1.6, targetZone: 'head' },
       heavy: { startup: 0.82, recovery: 0.9, lunge: 1.2, reach: 1.4, targetZone: 'head' },
       special: { startup: 0.78, damage: 0.92, reach: 2.5, knockback: 0.75 },
+      ranged: { startup: 0.72, recovery: 0.82 },
     },
   },
   chrollo: {
@@ -92,6 +94,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
         auraZone: 'hands',
       },
       special: { startup: 1.08, damage: 1.12, recovery: 1.12, reach: 2 },
+      ranged: { startup: 1.02, recovery: 0.95 },
     },
   },
   morena: {
@@ -110,6 +113,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
       light: { startup: 0.92, recovery: 0.8, damage: 0.82, reach: 0.8, targetZone: 'hands' },
       heavy: { startup: 0.88, damage: 0.9, reach: 1.7, bottom: 0.4, top: 5.8 },
       special: { startup: 1.18, active: 1.35, recovery: 0.9, damage: 0.86, reach: 4 },
+      ranged: { startup: 0.9, recovery: 0.86 },
     },
   },
   benjamin: {
@@ -138,6 +142,7 @@ const STYLES: Record<FighterId, FightingStyle> = {
         auraZone: 'hands',
       },
       special: { startup: 1.12, damage: 1.25, knockback: 1.3, targetZone: 'torso' },
+      ranged: { startup: 1.08, recovery: 1.12 },
     },
   },
   tserriednich: {
@@ -163,6 +168,102 @@ const STYLES: Record<FighterId, FightingStyle> = {
         targetZone: 'torso',
       },
       special: { startup: 0.72, recovery: 1.2, damage: 0.95, targetZone: 'head' },
+      ranged: { startup: 0.82, recovery: 1.08 },
+    },
+  },
+  feitan: {
+    id: 'feitan',
+    nameFr: 'Riposte incendiaire',
+    nameEn: 'Incendiary reprisal',
+    descriptionFr: 'Esquive à courte portée puis convertit ses blessures en puissance solaire.',
+    descriptionEn: 'Evades at close range, then turns his wounds into solar power.',
+    preferredRange: [7, 10],
+    retreatBelowHealth: 18,
+    guardRange: 14,
+    moveScale: 1.16,
+    specialChance: 0.48,
+    heavyThreshold: 0.38,
+    attacks: {
+      light: { startup: 0.68, recovery: 0.78, damage: 0.82, targetZone: 'head' },
+      heavy: { startup: 0.8, recovery: 0.9, reach: 1.3, targetZone: 'torso' },
+      special: { startup: 1.15, active: 1.4, damage: 1.05, reach: 3.6, targetZone: 'torso' },
+      ranged: { startup: 0.84, recovery: 0.9 },
+    },
+  },
+  saiyu: {
+    id: 'saiyu',
+    nameFr: 'Maîtrise du bâton',
+    nameEn: 'Staff mastery',
+    descriptionFr: 'Domine la portée avec son bâton et scelle progressivement les sens adverses.',
+    descriptionEn: 'Dominates reach with his staff and progressively seals enemy senses.',
+    preferredRange: [10, 15],
+    retreatBelowHealth: 25,
+    guardRange: 20,
+    moveScale: 1.04,
+    specialChance: 0.46,
+    heavyThreshold: 0.52,
+    attacks: {
+      light: { startup: 0.82, reach: 1.75, targetZone: 'hands' },
+      heavy: { startup: 0.94, reach: 2.25, knockback: 1.2, targetZone: 'torso' },
+      special: { startup: 0.92, active: 1.15, reach: 3.2, targetZone: 'head' },
+      ranged: { startup: 0.9, recovery: 0.92 },
+    },
+  },
+  theta: {
+    id: 'theta',
+    nameFr: 'Tir de précision',
+    nameEn: 'Precision shot',
+    descriptionFr: 'Maintient la distance et neutralise l’aura grâce à des tirs contrôlés.',
+    descriptionEn: 'Maintains distance and suppresses aura with controlled shots.',
+    preferredRange: [15, 23],
+    retreatBelowHealth: 42,
+    guardRange: 18,
+    moveScale: 1.02,
+    specialChance: 0.54,
+    heavyThreshold: 0.3,
+    attacks: {
+      light: { startup: 0.86, recovery: 0.84, targetZone: 'hands' },
+      heavy: { startup: 0.92, damage: 0.94, reach: 1.35, targetZone: 'torso' },
+      special: { startup: 0.82, recovery: 1.02, reach: 4.2, targetZone: 'torso' },
+      ranged: { startup: 0.7, recovery: 0.82 },
+    },
+  },
+  biscuit: {
+    id: 'biscuit',
+    nameFr: 'Maîtrise renforcée',
+    nameEn: 'Empowered mastery',
+    descriptionFr: 'Change de forme pour encaisser les coups et imposer une force écrasante.',
+    descriptionEn: 'Transforms to absorb blows and impose overwhelming strength.',
+    preferredRange: [5, 8],
+    retreatBelowHealth: 10,
+    guardRange: 13,
+    moveScale: 1.08,
+    specialChance: 0.4,
+    heavyThreshold: 0.62,
+    attacks: {
+      light: { startup: 0.76, recovery: 0.8, damage: 0.96, targetZone: 'torso' },
+      heavy: { startup: 0.98, damage: 1.24, knockback: 1.3, targetZone: 'torso' },
+      special: { startup: 0.72, recovery: 0.86, damage: 0.9, targetZone: 'torso' },
+      ranged: { startup: 0.9, recovery: 0.95 },
+    },
+  },
+  marayam: {
+    id: 'marayam',
+    nameFr: 'Sanctuaire gardien',
+    nameEn: 'Guardian sanctuary',
+    descriptionFr: 'Évite le contact et invoque une chambre isolée pour annuler une attaque.',
+    descriptionEn: 'Avoids contact and invokes an isolated room to nullify an attack.',
+    preferredRange: [14, 21],
+    retreatBelowHealth: 55,
+    guardRange: 24,
+    moveScale: 0.9,
+    specialChance: 0.58,
+    heavyThreshold: 0.24,
+    attacks: {
+      light: { startup: 0.96, recovery: 0.86, damage: 0.72, targetZone: 'hands' },
+      heavy: { startup: 1.08, damage: 0.86, reach: 1.2, targetZone: 'torso' },
+      special: { startup: 0.8, recovery: 1.05, damage: 0.72, reach: 3.8 },
+      ranged: { startup: 0.9, recovery: 0.9 },
     },
   },
 }
@@ -196,12 +297,14 @@ export function shouldStyleGuard(id: FighterId, situation: GuardSituation): bool
 
 interface AttackSituation {
   canSpecial: boolean
+  canRanged?: boolean
   inRange: boolean
   roll: number
 }
 
 export function chooseStyleAttack(id: FighterId, situation: AttackSituation): AttackKind | null {
   const style = fightingStyle(id)
+  if (situation.canRanged) return 'ranged'
   if (situation.canSpecial && situation.roll < style.specialChance) return 'special'
   if (!situation.inRange) return null
   return situation.roll < style.heavyThreshold ? 'heavy' : 'light'

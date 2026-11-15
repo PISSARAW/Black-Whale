@@ -26,10 +26,65 @@ function strikeBeat(progress: number, impact: number): StrikeBeat {
   }
 }
 
+interface NormalMoveOptions {
+  rig: AnimatedHuman
+  fighter: FighterId
+  beat: StrikeBeat
+}
+
+function extendedLightMove(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension } = beat
+  switch (fighter) {
+    case 'theta':
+      rig.figure.rotation.y -= 0.3 * extension
+      rig.arms[0].rotation.z += 0.5 * gather
+      rig.arms[1].rotation.x -= 0.45 * gather + 0.85 * extension
+      return true
+    case 'biscuit':
+      rig.figure.rotation.x += 0.18 * gather - 0.4 * extension
+      rig.arms[1].rotation.x -= 0.9 * gather + 1.3 * extension
+      rig.arms[0].rotation.z += 0.45 * gather
+      return true
+    case 'marayam':
+      rig.figure.rotation.y += 0.2 * gather - 0.4 * extension
+      rig.arms[0].rotation.z += 0.75 * gather
+      rig.arms[1].rotation.x -= 0.5 * extension
+      return true
+    default:
+      return false
+  }
+}
+
+function extendedHeavyMove(options: NormalMoveOptions): boolean {
+  const { rig, fighter, beat } = options
+  const { gather, extension, chamber } = beat
+  switch (fighter) {
+    case 'theta':
+      rig.figure.rotation.y -= 0.55 * extension
+      rig.legs[0].rotation.x -= 0.65 * chamber + 0.9 * extension
+      rig.arms[1].rotation.z -= 0.65 * gather
+      return true
+    case 'biscuit':
+      rig.figure.rotation.x += 0.28 * gather - 0.65 * extension
+      rig.arms.forEach((arm) => (arm.rotation.x -= 1.7 * gather + 0.7 * extension))
+      rig.knees.forEach((knee) => (knee.rotation.x += 0.35 * gather))
+      return true
+    case 'marayam':
+      rig.figure.rotation.y += 0.6 * gather - 0.9 * extension
+      rig.legs[1].rotation.x -= 0.5 * chamber + 0.75 * extension
+      rig.arms[0].rotation.z += 0.9 * gather
+      return true
+    default:
+      return false
+  }
+}
+
 /** A character-specific quick attack, authored around the first active frame. */
 export function lightFightMove(rig: AnimatedHuman, fighter: FighterId, progress: number): void {
   const beat = strikeBeat(progress, 5 / 18)
   const { gather, extension, chamber } = beat
+  if (extendedLightMove({ rig, fighter, beat })) return
   switch (fighter) {
     case 'kurapika':
       rig.figure.rotation.y -= 0.12 * gather - 0.3 * extension
@@ -73,6 +128,16 @@ export function lightFightMove(rig: AnimatedHuman, fighter: FighterId, progress:
       rig.arms[1].rotation.set(-0.44 * gather - 0.88 * extension, 0, -0.64 * gather)
       rig.arms[1].children[1].rotation.x -= 0.7 * chamber
       break
+    case 'feitan':
+      rig.figure.rotation.y -= 0.5 * extension
+      rig.arms[1].rotation.x -= 0.65 * gather + 1.15 * extension
+      rig.arms[0].rotation.z += 0.7 * gather
+      break
+    case 'saiyu':
+      rig.figure.rotation.y += 0.55 * gather - 0.8 * extension
+      rig.arms[0].rotation.z += 0.95 * gather
+      rig.arms[1].rotation.x -= 0.55 * gather + 0.9 * extension
+      break
   }
 }
 
@@ -80,6 +145,7 @@ export function lightFightMove(rig: AnimatedHuman, fighter: FighterId, progress:
 export function heavyFightMove(rig: AnimatedHuman, fighter: FighterId, progress: number): void {
   const beat = strikeBeat(progress, 12 / 34)
   const { gather, extension, chamber } = beat
+  if (extendedHeavyMove({ rig, fighter, beat })) return
   switch (fighter) {
     case 'kurapika':
       rig.figure.rotation.y -= 0.55 * gather - 0.94 * extension
@@ -129,6 +195,16 @@ export function heavyFightMove(rig: AnimatedHuman, fighter: FighterId, progress:
       rig.arms[0].rotation.z += 0.8 * gather
       rig.arms[1].rotation.set(-0.62 * gather, 0, -0.72 * gather)
       rig.head.rotation.y -= 0.32 * gather
+      break
+    case 'feitan':
+      rig.figure.rotation.y -= 0.8 * gather - 1.2 * extension
+      rig.legs[1].rotation.x -= 0.8 * chamber + 1.35 * extension
+      rig.knees[1].rotation.x += 1.1 * chamber
+      break
+    case 'saiyu':
+      rig.figure.rotation.y += 0.9 * gather - 1.35 * extension
+      rig.arms[0].rotation.set(-1.1 * gather, 0, 0.8 * gather)
+      rig.arms[1].rotation.set(-1.1 * gather - 0.8 * extension, 0, -0.8 * gather)
       break
   }
 }

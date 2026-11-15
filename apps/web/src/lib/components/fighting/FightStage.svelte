@@ -4,6 +4,11 @@
   import FightNenControls from './FightNenControls.svelte'
   import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from '$lib/fighting/hatsu'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import {
+    canUseRangedAttack,
+    projectileProfile,
+    RANGED_AURA_COST,
+  } from '$lib/fighting/projectiles'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { AttackKind, FightInput, FightState } from '$lib/fighting/types'
 
@@ -11,13 +16,18 @@
   export let language: 'fr' | 'en'
   export let stageId: FightStageId = DEFAULT_FIGHT_STAGE
   export let onAttack: (kind: AttackKind) => void
+  export let onThrow: () => void
   export let onControl: (key: keyof FightInput, active: boolean) => void
 
   $: playerDefinition = fighterDefinition(state.player.id)
   $: specialLabel = language === 'fr' ? playerDefinition.specialFr : playerDefinition.specialEn
   $: hatsuReady = canUseFightHatsu(state.player)
   $: hatsuHint = `${specialLabel} · ${FIGHT_HATSU_AURA_COST} aura`
-  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}:${JSON.stringify(state.player.nen)}:${JSON.stringify(state.opponent.nen)}`
+  $: ranged = projectileProfile(state.player.id)
+  $: rangedLabel = language === 'fr' ? ranged.labelFr : ranged.labelEn
+  $: rangedReady = canUseRangedAttack(state.player)
+  $: rangedHint = `${rangedLabel} · ${RANGED_AURA_COST} aura`
+  $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
 
   function hold(key: keyof FightInput, active: boolean) {
     onControl(key, active)
@@ -25,7 +35,7 @@
 </script>
 
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
-  <FightHud {state} />
+  <FightHud {state} {language} />
   <FightNenControls
     fighter={state.player}
     {language}
@@ -49,17 +59,21 @@
     {#key state.impact.sequence}
       <div class:blocked={state.impact.blocked} class="impact-flash"></div>
       <div class="damage-callout" class:from-player={state.impact.attacker === 'player'}>
-        {state.impact.parried
+        {state.impact.avoided
           ? language === 'fr'
-            ? 'PARADE · RYU'
-            : 'PARRY · RYU'
-          : state.impact.blocked
-            ? state.impact.damage === 0
-              ? 'KEN'
-              : language === 'fr'
-                ? 'GARDE'
-                : 'BLOCK'
-            : `${state.impact.critical ? 'CRIT · ' : ''}-${state.impact.damage} · +${state.impact.points}`}
+            ? 'FUTUR ÉVITÉ'
+            : 'FUTURE EVADED'
+          : state.impact.parried
+            ? language === 'fr'
+              ? 'PARADE · RYU'
+              : 'PARRY · RYU'
+            : state.impact.blocked
+              ? state.impact.damage === 0
+                ? 'KEN'
+                : language === 'fr'
+                  ? 'GARDE'
+                  : 'BLOCK'
+              : `${state.impact.critical ? 'CRIT · ' : ''}-${state.impact.damage} · +${state.impact.points}`}
       </div>
     {/key}
   {/if}
@@ -109,11 +123,35 @@
       <button type="button" onclick={() => onAttack('heavy')}>K</button>
       <button
         type="button"
+        onclick={onThrow}
+        aria-label={language === 'fr' ? 'Projection / déprojection' : 'Throw / tech'}>O</button
+      >
+      <button
+        type="button"
+        class="ranged-button"
+        disabled={!rangedReady}
+        aria-label={rangedHint}
+        title={rangedHint}
+        onclick={() => onAttack('ranged')}
+      >
+        <kbd>U</kbd>
+        <span>{rangedLabel}</span>
+      </button>
+      <button
+        type="button"
         class="special-button"
         disabled={!hatsuReady}
         aria-label={hatsuHint}
         title={hatsuHint}
-        onclick={() => onAttack('special')}
+        onpointerdown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId)
+          hold('hatsu', true)
+        }}
+        onpointerup={() => {
+          onAttack('special')
+          hold('hatsu', false)
+        }}
+        onpointercancel={() => hold('hatsu', false)}
       >
         <kbd>L</kbd>
         <span>{specialLabel}</span>
@@ -210,7 +248,8 @@
   .touch-group button:disabled {
     opacity: 0.35;
   }
-  .special-button {
+  .special-button,
+  .ranged-button {
     width: auto !important;
     min-width: 112px;
     grid-template-columns: auto 1fr;
@@ -220,7 +259,8 @@
     border-color: #6dd9ff !important;
     box-shadow: inset 0 0 14px rgb(72 188 238 / 25%);
   }
-  .special-button kbd {
+  .special-button kbd,
+  .ranged-button kbd {
     display: grid;
     width: 24px;
     height: 24px;
@@ -230,7 +270,8 @@
     color: #9be8ff;
     font: 700 0.7rem/1 var(--font-mono);
   }
-  .special-button span {
+  .special-button span,
+  .ranged-button span {
     overflow: hidden;
     max-width: 112px;
     font: 700 0.54rem/1.05 var(--font-mono);
@@ -239,6 +280,15 @@
     text-overflow: ellipsis;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+  .ranged-button {
+    width: auto !important;
+    min-width: 92px;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem;
+    padding: 0 0.6rem;
+    border-radius: 24px !important;
+    border-color: #e7bc68 !important;
   }
   @keyframes flash {
     from {
@@ -285,6 +335,11 @@
     .movement-controls {
       max-width: 185px;
       flex-wrap: wrap;
+    }
+    .attack-controls {
+      max-width: 220px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
     .damage-callout {
       top: 49%;

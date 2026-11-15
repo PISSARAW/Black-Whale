@@ -9,6 +9,7 @@ import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './type
 
 export const KO_COST = 20
 export const EXHAUSTION_RELEASE_AURA = 18
+export const IN_CHARGE_FRAMES = 24
 
 export function createFightingNen() {
   return createNenTechniqueState<FightNenZone>()
@@ -98,6 +99,15 @@ export function focusAttackRyu(fighter: ArcadeFighter, kind: AttackKind): Arcade
 export function releaseFocusedAura(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.nen.ko && !hasRyu(fighter)) return fighter
   return withAction(fighter, { type: 'TEN' })
+}
+
+export function setIn(fighter: ArcadeFighter, on: boolean): ArcadeFighter {
+  if (fighter.nen.mode === 'zetsu') return fighter
+  return withAction(fighter, { type: 'IN', on })
+}
+
+export function forceZetsu(fighter: ArcadeFighter): ArcadeFighter {
+  return withAction(fighter, { type: 'ZETSU' })
 }
 
 export function nenAttackFactor(fighter: ArcadeFighter, kind: AttackKind): number {

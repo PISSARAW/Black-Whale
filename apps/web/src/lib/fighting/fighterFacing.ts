@@ -74,7 +74,11 @@ export function trackFightOpponent({
   const direction = deltaX === 0 ? fighter.facing : Math.sign(deltaX)
   const targetWorldAngle = direction * (Math.PI / 2)
   const headPitch = opponent
-    ? clamp(-Math.atan2(opponent.y - fighter.y, Math.max(1, Math.abs(deltaX))), -MAX_HEAD_PITCH, MAX_HEAD_PITCH)
+    ? clamp(
+        -Math.atan2(opponent.y - fighter.y, Math.max(1, Math.abs(deltaX))),
+        -MAX_HEAD_PITCH,
+        MAX_HEAD_PITCH,
+      )
     : 0
 
   return (rig) => {

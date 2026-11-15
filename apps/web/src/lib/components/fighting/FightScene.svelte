@@ -8,6 +8,7 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
   import { fighterDefinition } from '$lib/fighting/roster'
+  import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -26,6 +27,7 @@
     light: 'idle',
     heavy: 'idle',
     special: 'idle',
+    ranged: 'idle',
     hit: 'idle',
     ko: 'idle',
   }
@@ -132,9 +134,33 @@
           })
         }
 
-        const playerModel = buildFighter(state.player)
-        const opponentModel = buildFighter(state.opponent)
-        scene.add(playerModel.root, opponentModel.root)
+        // A fighter's aura is built into its figure, so a change of Nen rebuilds
+        // that one figure. The stage is left standing: raising a room of the
+        // ship again on every Ren would blank the arena for the length of it.
+        const nenKey = (fighter: ArcadeFighter) => JSON.stringify(fighter.nen)
+        const models = {
+          player: { model: buildFighter(state.player), nen: nenKey(state.player) },
+          opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
+        }
+        scene.add(models.player.model.root, models.opponent.model.root)
+        const projectileScene = createProjectileScene({
+          THREE,
+          scene,
+          glow,
+          geometry,
+          worldX,
+          worldY,
+        })
+        const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
+          const held = models[side]
+          const nen = nenKey(fighter)
+          if (held.nen === nen) return held.model
+          scene.remove(held.model.root)
+          held.model = buildFighter(fighter)
+          held.nen = nen
+          scene.add(held.model.root)
+          return held.model
+        }
 
         const sparkGeometry = geometry(new THREE.SphereGeometry(0.045, 5, 4))
         const sparkMaterials = {
@@ -199,7 +225,7 @@
           side: 'player' | 'opponent'
           fighter: ArcadeFighter
           opponent: ArcadeFighter
-          model: typeof playerModel
+          model: ReturnType<typeof buildFighter>
           seconds: number
         }
         const animateFighter = (options: AnimateFighterOptions) => {
@@ -237,14 +263,15 @@
             side: 'player',
             fighter: state.player,
             opponent: state.opponent,
-            model: playerModel,
+            model: modelOf('player', state.player),
             seconds,
           })
+          projectileScene.sync(state.projectiles, seconds)
           animateFighter({
             side: 'opponent',
             fighter: state.opponent,
             opponent: state.player,
-            model: opponentModel,
+            model: modelOf('opponent', state.opponent),
             seconds,
           })
 
@@ -288,6 +315,7 @@
           resize?.disconnect()
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
+          projectileScene.dispose()
           post?.dispose()
           scenery.dispose()
           renderer.dispose()

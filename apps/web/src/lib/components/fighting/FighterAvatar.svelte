@@ -1,3 +1,9 @@
+<script context="module" lang="ts">
+  // Build roster snapshots sequentially so the selection screen never exceeds
+  // the browser's concurrent WebGL-context limit.
+  let previewQueue: Promise<void> = Promise.resolve()
+</script>
+
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
@@ -26,6 +32,7 @@
     light: 'idle',
     heavy: 'idle',
     special: 'idle',
+    ranged: 'idle',
     hit: 'idle',
     ko: 'idle',
   }
@@ -171,7 +178,8 @@
       }
     }
 
-    void mountModel()
+    if (preview) previewQueue = previewQueue.then(mountModel, mountModel)
+    else void mountModel()
     return () => {
       disposed = true
       teardown()

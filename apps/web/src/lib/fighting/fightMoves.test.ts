@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Group, Object3D } from 'three'
 import { FIGHT_MOVE_TIMING, fightMove } from './fightMoves'
+import { FIGHTING_ROSTER } from './roster'
 import type { AnimatedHuman } from '$lib/tour/humanAnimation'
 import type { FighterId, FighterPose } from './types'
 
@@ -43,9 +44,7 @@ describe('fight moves', () => {
 
   it('gives every fighter a distinct normal-move silhouette', () => {
     for (const pose of ['light', 'heavy'] as const) {
-      const silhouettes = (
-        ['kurapika', 'hisoka', 'chrollo', 'morena', 'benjamin', 'tserriednich'] as FighterId[]
-      ).map((id) => {
+      const silhouettes = FIGHTING_ROSTER.map(({ id }) => {
         const human = apply(id, pose, FIGHT_MOVE_TIMING[pose].impact)
         return [
           human.figure.rotation.x,
@@ -59,14 +58,12 @@ describe('fight moves', () => {
           .map((value) => value.toFixed(2))
           .join(':')
       })
-      expect(new Set(silhouettes).size).toBe(6)
+      expect(new Set(silhouettes).size).toBe(FIGHTING_ROSTER.length)
     }
   })
 
   it('gives each Hatsu a distinct silhouette', () => {
-    const silhouettes = (
-      ['kurapika', 'hisoka', 'chrollo', 'morena', 'benjamin', 'tserriednich'] as FighterId[]
-    ).map((id) => {
+    const silhouettes = FIGHTING_ROSTER.map(({ id }) => {
       const human = apply(id, 'special', 0.45)
       return [
         human.figure.rotation.x,
@@ -79,7 +76,7 @@ describe('fight moves', () => {
         .map((value) => value.toFixed(2))
         .join(':')
     })
-    expect(new Set(silhouettes).size).toBe(6)
+    expect(new Set(silhouettes).size).toBe(FIGHTING_ROSTER.length)
   })
 
   it('turns the K.O. pose into a progressive fall', () => {

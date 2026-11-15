@@ -10,11 +10,7 @@ import {
 import { applyAuraContext } from './nen'
 import { EMPTY_INPUT } from './types'
 
-function advance(
-  state: ReturnType<typeof createFight>,
-  seconds: number,
-  input = EMPTY_INPUT,
-) {
+function advance(state: ReturnType<typeof createFight>, seconds: number, input = EMPTY_INPUT) {
   let next = state
   for (let elapsed = 0; elapsed < seconds; elapsed += 0.02) {
     next = tickFight(next, input, 0.02)

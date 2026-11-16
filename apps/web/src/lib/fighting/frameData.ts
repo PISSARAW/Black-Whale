@@ -1,3 +1,4 @@
+import { chrolloUtilityMove } from './chrolloBook'
 import { hisokaUtilityMove } from './hisokaTechnique'
 import { usesRemotePunch } from './leorioAttack'
 import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
@@ -101,7 +102,9 @@ export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFram
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
-  const move = moveById(fighter.attack?.moveId)
+  const source = fighter.attack?.hatsuSource
+  const copied = fighter.id === 'chrollo' && source && source !== 'chrollo'
+  const move = moveById(copied ? `${source}:neutralSpecial` : fighter.attack?.moveId)
   if (move) return movesetAttackData(fighter, move)
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
@@ -190,6 +193,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (chrolloUtilityMove(fighter)) return null
   if (hisokaUtilityMove(fighter)) return null
   if (usesRemotePunch(fighter)) return null
   if (usesFranklinBarrage(fighter)) return null

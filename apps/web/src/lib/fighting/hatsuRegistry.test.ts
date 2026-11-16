@@ -82,7 +82,7 @@ describe('fighter Hatsu registry', () => {
     const seen = triggerHatsu(ready, 'opponent', 'illumi')
     expect(seen.player.hatsuEffects.witnessedHatsu).toBe('illumi')
 
-    const stolen = chrolloStrike(seen, 'neutralSpecial')
+    const stolen = chrolloStrike(seen, 'forwardSpecial')
     expect(stolen.player.hatsuEffects.stolenHatsu).toBe('illumi')
     expect(stolen.opponent.hatsuEffects.hatsuStolen).toBe(1)
     // The owner cannot use an ability while it is held in the book.
@@ -104,11 +104,11 @@ describe('fighter Hatsu registry', () => {
   })
 
   it('cannot steal an unseen, blocked or martial ability', () => {
-    const unseen = chrolloStrike(closeFight('chrollo', 'illumi'), 'neutralSpecial')
+    const unseen = chrolloStrike(closeFight('chrollo', 'illumi'), 'forwardSpecial')
     expect(unseen.player.hatsuEffects.stolenHatsu).toBeNull()
 
     const seen = triggerHatsu(closeFight('chrollo', 'illumi'), 'opponent', 'illumi')
-    const blocked = chrolloStrike(seen, 'neutralSpecial', true)
+    const blocked = chrolloStrike(seen, 'forwardSpecial', true)
     expect(blocked.player.hatsuEffects.stolenHatsu).toBeNull()
 
     const martial = advance(performAttack(closeFight('beyond', 'chrollo'), 'player', 'special'), 1)
@@ -116,23 +116,22 @@ describe('fighter Hatsu registry', () => {
     expect(martial.opponent.hatsuEffects.witnessedHatsu).toBeNull()
   })
 
-  it('ties Black Voice to its antenna strike and detonates Sun and Moon only as a pair', () => {
+  it('ties Black Voice to its page and requires both free-hand Sun/Moon contacts', () => {
     const ready = closeFight('chrollo', 'hisoka')
-    const controlled = chrolloStrike(ready, 'forwardSpecial')
-    expect(controlled.opponent.hatsuEffects.manipulatedFrames).toBeGreaterThan(0)
-    expect(chrolloStrike(ready, 'downSpecial').opponent.hatsuEffects.manipulatedFrames).toBe(0)
-
-    const sun = chrolloStrike(ready, 'downSpecial')
+    const voice = { ...ready, player: { ...ready.player, chrolloBook: {
+      ...ready.player.chrolloBook!, page: 1,
+    } } }
+    expect(chrolloStrike(voice, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames).toBeGreaterThan(0)
+    expect(chrolloStrike(ready, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames).toBe(0)
+    const sun = chrolloStrike(ready, 'neutralSpecial')
     expect(sun.opponent.hatsuEffects.sunMark).toBe(1)
-    expect(sun.opponent.health).toBe(ready.opponent.health)
-    expect(chrolloStrike(sun, 'downSpecial').opponent.health).toBe(ready.opponent.health)
-
-    const detonated = chrolloStrike(sun, 'backSpecial')
+    expect(chrolloStrike(sun, 'neutralSpecial').opponent.health).toBe(ready.opponent.health)
+    const closed = { ...sun, player: { ...sun.player, chrolloBook: {
+      ...sun.player.chrolloBook!, open: false, bookmark: 'sun-and-moon' as const,
+    } } }
+    const detonated = chrolloStrike(closed, 'finisher')
     expect(detonated.opponent.health).toBe(ready.opponent.health - 24)
     expect(detonated.opponent.hatsuEffects).toMatchObject({ sunMark: 0, moonMark: 0 })
-
-    const finished = chrolloStrike(chrolloStrike(ready, 'backSpecial'), 'finisher')
-    expect(finished.opponent.health).toBe(ready.opponent.health - 24)
   })
 
   it('stacks Contagion and drains aura', () => {

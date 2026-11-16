@@ -232,7 +232,7 @@ function withFinisherCondition(state: FightState): FightState {
         bungeeGum: { owner: 'player', target: 'opponent', hidden: false, retracting: false },
       }
     case 'chrollo':
-      return withOpponentEffect(state, 'sunMark', 1)
+      return { ...state, player: { ...player, chrolloBook: { ...player.chrolloBook!, open: false, bookmark: 'sun-and-moon' } } }
     case 'benjamin':
       return withPlayerEffect(state, 'batonCharges', 3)
     case 'tserriednich':

@@ -1,3 +1,4 @@
+import { chrolloAiSlots } from './chrolloAi'
 import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from './movesets'
 import type { FighterMove } from './movesetTypes'
 import type { FightState, MoveSlot } from './types'
@@ -10,8 +11,9 @@ export function chooseMovesetAttack(
   const side = 'opponent'
   const fighter = state.opponent
   if (!movesetFor(fighter.id)) return null
-  if (finisherReady(state, side) && roll > 0.72) return moveForSlot(fighter.id, 'finisher')
-  const slots = candidateSlots(roll, gap)
+  if (finisherReady(state, side) && roll > 0.72 && finisherInRange(state, gap))
+    return moveForSlot(fighter.id, 'finisher')
+  const slots = fighter.id === 'chrollo' ? chrolloAiSlots(state, roll, gap) : candidateSlots(roll, gap)
   return (
     slots
       .map((slot) => moveForSlot(fighter.id, slot))
@@ -30,4 +32,8 @@ function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
   if (roll < 0.64) return ['standingHeavy', 'forwardHeavy', 'backHeavy']
   if (roll < 0.84) return ['downSpecial', 'forwardSpecial', 'standingHeavy']
   return ['neutralSpecial', 'backSpecial', 'forwardHeavy']
+}
+
+function finisherInRange(state: FightState, gap: number): boolean {
+  return state.opponent.id !== 'chrollo' || gap <= 9
 }

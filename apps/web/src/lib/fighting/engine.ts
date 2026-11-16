@@ -11,6 +11,7 @@ import {
   steerHanzoProjection,
   wakeHanzoBody,
 } from './hanzoProjection'
+import { performChrolloBookAction } from './chrolloBookAction'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { fightFormat } from './formats'
@@ -196,7 +197,7 @@ export function performMove(options: PerformMoveOptions): FightState {
   const routedMove = currentMove?.cancelInto
     .map((id) => moveById(id))
     .find((candidate) => candidate?.kind === selected?.kind)
-  const move = routedMove ?? selected
+  const move = state[side].id === 'chrollo' ? selected : (routedMove ?? selected)
   if (!move) {
     if (action === 'throw') return performLegacyThrow(state, side)
     if (action === 'finisher') return state
@@ -217,6 +218,8 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
+  const book = performChrolloBookAction(options)
+  if (book) return book
   if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId)) return options.state
   const remote = performLeorioAction(options, performAuraAttack)
   if (remote) return remote

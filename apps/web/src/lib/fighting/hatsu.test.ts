@@ -1,3 +1,4 @@
+import { moveForSlot } from './movesets'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAttack, tickFight } from './engine'
 import { FIGHT_HATSU_AURA_COST } from './hatsu'
@@ -32,6 +33,14 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     const auraBefore = ready[side].aura
 
     const armed = performAttack(ready, side, 'special')
+
+    if (id === 'chrollo') {
+      expect(armed[side].attack?.moveId).toBe('chrollo:neutralSpecial')
+      expect(armed[side].aura).toBe(auraBefore - moveForSlot(id, 'neutralSpecial')!.auraCost)
+      const close = { ...armed, player: { ...armed.player, x: 40 }, opponent: { ...armed.opponent, x: 46 } }
+      expect(advance(close, 0.4).impact?.attacker).toBe(side)
+      return
+    }
 
     if (id === 'leorio') {
       expect(armed[side].attack?.moveId).toBe('leorio:neutralSpecial')

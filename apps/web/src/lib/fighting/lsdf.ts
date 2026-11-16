@@ -1,3 +1,4 @@
+import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { inMorenasHideout } from './fightEnvironment'
 import { finishFight } from './combatVerdict'
@@ -24,12 +25,12 @@ export function lsdfJurisdiction(state: FightState, side: FightSide): boolean {
 
 export function ownsLsdf(fighter: ArcadeFighter): boolean {
   return fighter.id === 'yokotani' ||
-    (fighter.id === 'chrollo' && fighter.hatsuEffects.stolenHatsu === 'yokotani')
+    (fighter.id === 'chrollo' && chrolloHasActivePage(fighter, 'yokotani'))
 }
 
 export function isLsdfMove(fighter: ArcadeFighter, moveId?: string): boolean {
   if (fighter.id === 'yokotani') return true
-  return ownsLsdf(fighter) && (!moveId || moveId === 'chrollo:neutralSpecial')
+  return chrolloPageForMove(fighter, moveId) === 'yokotani'
 }
 
 export function lsdfCanPersist(state: FightState, side: FightSide): boolean {

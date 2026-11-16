@@ -1,3 +1,4 @@
+import type { ChrolloBookState } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
 import type { LsdfGuard } from './lsdf'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
@@ -140,6 +141,8 @@ export interface ArcadeFighter {
   auraExhausted: boolean
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
+  /** Bandit's Secret: retained pages, one open page and one Double Face bookmark. */
+  chrolloBook?: ChrolloBookState
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */
   textureSurprise?: { surface: 'cloth' }
   /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
@@ -241,7 +244,7 @@ export interface FighterHatsuEffects {
   doorDodges: number
   /** Set once the Hatsu was activated in front of this fighter. */
   witnessedHatsu: FighterId | null
-  /** Skill Hunter's held page: the only ability Chrollo can replay. */
+  /** Last acquired page; the book itself decides which abilities can be used. */
   stolenHatsu: FighterId | null
   /** 1 while the fighter's own Hatsu sits in Chrollo's book. */
   hatsuStolen: number

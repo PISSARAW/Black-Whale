@@ -1,3 +1,5 @@
+import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
+import { tuneChrolloMoveset } from './chrolloMoveset'
 import { tuneHisokaMoveset } from './hisokaMoveset'
 import { remotePunchAvailable } from './leorioAttack'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
@@ -41,7 +43,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneFranklinMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map(tuneFranklinMoveset).map(tuneChrolloMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
   [...MOVESETS.values()].flatMap((moveset) =>
@@ -87,6 +89,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
   if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
@@ -151,10 +154,7 @@ const opponentOf = (state: FightState, side: FightSide) =>
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   kurapika: (state, side) => opponentOf(state, side).health <= 35,
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
-  chrollo: (state, side) => {
-    const marks = opponentOf(state, side).hatsuEffects
-    return marks.sunMark + marks.moonMark > 0
-  },
+  chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
   feitan: (state, side) => state[side].health <= 35,

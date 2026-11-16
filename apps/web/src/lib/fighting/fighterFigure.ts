@@ -1,3 +1,4 @@
+import { addChrolloBook } from './chrolloFigure'
 import { addFranklinHands } from './franklinHands'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -52,5 +53,6 @@ export function buildFightFigure(options: {
     shapeFranklinFigure({ THREE, glow, model })
     addFranklinHands({ THREE, glow, model })
   }
+  if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
   return model
 }

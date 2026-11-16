@@ -1,3 +1,4 @@
+import { chrolloPageForMove } from './chrolloBook'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -8,7 +9,7 @@ export type HisokaTechnique = 'attach' | 'recall' | 'rebound' | 'texture' | 'fin
 /** Skill Hunter replays the attachment, never an unrelated Hisoka move. */
 export function hisokaTechnique(fighter: ArcadeFighter, moveId?: string): HisokaTechnique | null {
   if (fighter.id === 'chrollo')
-    return fighter.hatsuEffects.stolenHatsu === 'hisoka' && moveId === 'chrollo:neutralSpecial' ? 'attach' : null
+    return chrolloPageForMove(fighter, moveId) === 'hisoka' ? 'attach' : null
   if (fighter.id !== 'hisoka') return null
   switch (moveId) {
     case undefined:

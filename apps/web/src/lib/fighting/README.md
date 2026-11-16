@@ -19,8 +19,31 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Phinks, Franklin, Machi, Illumi, Kalluto, Bonolenov, Shizuku, Hinrigh, Mizaistom,
   Leorio, Hanzo, Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel, Lynch,
   Luini, Bill, Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
-  Terebellum, Voconte et Yokotani satisfont ce contrat. Chrollo
-  dispose de Black Voice et Sun and Moon en plus de sa logique de copie via Skill Hunter.
+  Terebellum, Voconte et Yokotani satisfont ce contrat.
+- Chrollo possède un véritable état de **Bandit’s Secret** (`chrolloBook.ts`) :
+  pages conservées, page ouverte dans la main droite et un seul signet **Double Face**.
+  L’arsenal initial est celui du duel contre Hisoka : Sun and Moon et Black Voice ;
+  ce choix ne suppose pas que Black Voice soit encore disponible sur le navire.
+  **L** utilise la page ouverte, ou celle au signet si le livre est fermé ;
+  **avant + L** vole au contact un Hatsu observé et ajoute sa page ;
+  **arrière + L** ouvre la page suivante ; **bas + L** place le signet et ferme
+  le livre, rouvre un livre fermé, ou retire le signet d’une page ouverte déjà marquée.
+  **H** utilise la page au signet. Une page ouverte et une page au signet peuvent
+  être actives ensemble. Fermer le livre libère les mains.
+  Les actions de livre durent 16 frames au total, sans coût, déplacement, frappe
+  ni annulation gratuite ; elles restent impossibles sous étourdissement.
+  Changer une page coupe ses effets continus, sauf si le signet la maintient.
+  Sun and Moon garde ses marques posthumes : L pose le Soleil à gauche ;
+  H pose aussi le Soleil si le livre est ouvert, et la Lune à droite uniquement
+  si le livre est fermé. Deux contacts sur une cible représentent la rencontre
+  des marques ; charge et puissance restent réglées pour le duel.
+  Black Voice exige une antenne au contact puis ordonne un recul limité à 90 frames,
+  tant que sa page reste active. Le vol désactive le Hatsu adverse même quand sa page
+  est refermée. L’entretien est abrégé ; les manches restent sous la limite canon
+  d’une heure. Les conditions supplémentaires inconnues de Double Face ne sont pas
+  inventées. Le HUD, le livre à droite, le livre fermé à la ceinture et le ruban
+  rendent les états visibles. Livre et vols repartent à zéro à la manche suivante.
+  Les commandes fonctionnent aussi en versus local et au tactile.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
   l'aura, la transformation de Biscuit renforce attaque et défense, tandis que

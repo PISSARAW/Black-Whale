@@ -1,3 +1,5 @@
+import { chrolloKeyedMove } from './chrolloPoses'
+import { animateChrolloBook } from './chrolloFigure'
 import { animateFranklinHands } from './franklinHands'
 import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
@@ -71,6 +73,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const plan = bodyPlan(fighter, options)
   return (human) => {
     animateFranklinHands(human.figure, fighter)
+    animateChrolloBook(human.figure, fighter)
     if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)
       return
@@ -157,7 +160,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
   if (!attack || (attack.variant === 'throw' && fighter.throwTechFrames)) return null
   const variant = attack.variant ?? 'standing'
   const slot = moveById(attack.moveId)?.slot ?? KIND_SLOTS[attack.kind][variant]
-  const { timeline, authored } = keyedMove(fighter.id, slot)
+  const { timeline, authored } = characterKeyedMove(fighter, slot)
   const frames = attackData(attack.kind, fighter)
   const keyed = sampleTimeline(timeline, { frame: attack.frame, frames })
   const accent = attackMotionAccent({ fighter, frames, authored })
@@ -167,6 +170,10 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
     key: `attack:${attack.moveId ?? attack.kind}`,
     blend: attackBlend(attack.kind),
   }
+}
+
+function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
+  return chrolloKeyedMove(fighter) ?? keyedMove(fighter.id, slot)
 }
 
 function attackBlend(kind: AttackKind): number {

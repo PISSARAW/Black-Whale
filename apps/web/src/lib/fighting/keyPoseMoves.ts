@@ -1,3 +1,4 @@
+import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
 import { LEORIO_REMOTE_PUNCH } from './keyPosesLeorio'
 import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
@@ -20,6 +21,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   hisoka: { ...HISOKA_KEY_POSES, ...HISOKA_SPECIAL_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   franklin: FRANKLIN_KEY_POSES,
+  chrollo: CHROLLO_KEY_POSES,
   hanzo: HANZO_KEY_POSES,
 }
 

@@ -1,3 +1,4 @@
+import { chrolloMoveAvailable } from './chrolloBook'
 import { remotePunchAvailable } from './leorioAttack'
 import { projectionPreparing } from './hanzoProjection'
 import { canCancel } from './duelMoves'
@@ -75,6 +76,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (!remotePunchAvailable(fighter, kind, moveId)) return false
   if (projectionPreparing(fighter)) return false
   if (fighter.hanzoProjection && kind === 'ranged') return false

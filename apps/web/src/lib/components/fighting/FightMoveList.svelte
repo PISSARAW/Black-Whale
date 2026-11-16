@@ -1,5 +1,6 @@
 <script lang="ts">
   import { movesetFor, moveById } from '$lib/fighting/movesets'
+  import FightChrolloManual from './FightChrolloManual.svelte'
   import type { FighterId } from '$lib/fighting/types'
 
   export let fighterId: FighterId
@@ -12,7 +13,7 @@
         ['command', 'Command normals'],
         ['special', language === 'fr' ? 'Techniques' : 'Techniques'],
         ['throw', language === 'fr' ? 'Projection' : 'Throw'],
-        ['finisher', 'Finisher Hatsu'],
+        ['finisher', fighterId === 'chrollo' ? (language === 'fr' ? 'Page au signet' : 'Bookmarked page') : 'Finisher Hatsu'],
       ] as const)
     : []
 
@@ -28,6 +29,7 @@
       <span>{language === 'fr' ? 'MÉCANIQUE UNIQUE' : 'UNIQUE MECHANIC'}</span>
       <p>{language === 'fr' ? moveset.mechanicFr : moveset.mechanicEn}</p>
     </header>
+    {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
     <div class="move-groups">
       {#each groups as [category, title] (category)}
         {#if moveset.moves.some((move) => move.category === category)}
@@ -50,7 +52,7 @@
     </div>
     {#if moveset.moves.some((move) => move.category === 'finisher')}
     <footer>
-      <strong>{language === 'fr' ? 'Condition du finisher' : 'Finisher condition'}</strong>
+      <strong>{fighterId === 'chrollo' ? 'Double Face · H' : language === 'fr' ? 'Condition du finisher' : 'Finisher condition'}</strong>
       <span>{language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}</span>
     </footer>
     {/if}

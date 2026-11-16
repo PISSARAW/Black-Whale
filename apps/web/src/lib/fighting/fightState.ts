@@ -1,3 +1,4 @@
+import { createChrolloBook } from './chrolloBook'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
 import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
@@ -99,6 +100,7 @@ function createFighter(options: {
     juggleCount: 0,
     auraExhausted: false,
     hatsuChargeFrames: 0,
+    chrolloBook: options.id === 'chrollo' ? createChrolloBook() : undefined,
     hatsuEffects: emptyHatsuEffects(),
     attack: null,
     bufferedAttack: null,

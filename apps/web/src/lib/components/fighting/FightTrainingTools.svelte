@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightCounterplayHint from './FightCounterplayHint.svelte'
   import FightTrainingResources from './FightTrainingResources.svelte'
   import FightTrainingHistory from './FightTrainingHistory.svelte'
   import type { FightSide, FightState } from '$lib/fighting/types'
@@ -141,6 +142,7 @@
       ? 'PV et aura fixes sont des aides de laboratoire. Les prérequis, sceaux, coûts et interruptions du Nen restent vérifiés.'
       : 'Fixed HP and aura are lab aids. Nen prerequisites, seals, costs and interruptions are still checked.'}
   </p>
+  <FightCounterplayHint {state} {language} />
   <FightTrainingHistory history={lab.history} {language} />
 </section>
 

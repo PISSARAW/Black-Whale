@@ -119,6 +119,48 @@ projections, déprojections, buffers, relevée, cancels, pression aux deux coins
 punition réelle et reproductible, juggles et corps séparé. Les fenêtres et
 propriétés de combat sont des réglages arcade, pas des valeurs tirées du manga.
 
+## Styles et contre-jeu
+
+`styleMatchupsFirst.ts` et `styleMatchupsSecond.ts` donnent aux quarante
+combattants un plan de jeu et une réponse en français et en anglais. Le manuel
+les expose dans « Plan de jeu et contre-jeu ». Les conseils décrivent les règles
+implémentées : ni arme, ni partisans, ni condition de copie ne sont fournis.
+Les pouvoirs de soutien conservent leur rôle ; Cat’s Name et LSDF ne reçoivent
+aucune faiblesse ou attaque de remplacement inventée.
+
+`styleMobility.ts` règle la marche, le recul et les dashs par rôle physique :
+mobile, assaut, contrôle, distance, préparation ou soutien. Les deux camps
+contrôlés et le déplacement de l’IA utilisent cette mobilité. Le corps naturel
+de Biscuit s’engage davantage dans le recul que sa petite forme. Une identité
+d’exécution empruntée par Skill Hunter ou Dolphin ne copie pas le corps, le
+pas ou le dash. Le saut conserve son arc ; aucun dash aérien, téléportation,
+armure, invulnérabilité de backdash ou combo breaker n’est ajouté.
+
+`fightCounterplay.ts` repère seulement une manifestation accessible : projectile
+en approche, chaleur solaire, performance, corps endormi, préparation visible,
+récupération ou gomme repérée. In cache l’aura, pas un projectile matériel.
+Gyo exige la vue ; En localise le mouvement dans son rayon et exige un Nen
+disponible. Le lecteur ne consulte ni commande en attente, ni analyse privée,
+ni condition inconnue, ni branche future. Le laboratoire permet de choisir
+explicitement P1 ou P2 pour consulter ces indices de perception.
+
+`counterplayOpponent.ts` attend 10 frames observées pour un style mobile et
+14 pour les autres, puis utilise les commandes ordinaires : saut ou garde
+contre un projectile, déplacement hors de la chaleur et attente hors du cercle,
+oreilles couvertes contre une performance, approche d’un corps ou d’une
+préparation. Une menace nouvelle ou disparue réinitialise cette observation.
+Couvrir les oreilles occupe les mains ; cela ne donne ni garde ni attaque.
+Une balle trop proche peut toucher avant la réaction. Les réactions passent
+par les collisions, les limites, les entraves et les interruptions du moteur.
+Elles ne dépensent pas automatiquement de Nen et ne neutralisent aucun Hatsu.
+`styleCounterAttack.ts` privilégie des coups physiques après une ouverture vue
+et une réaction achevée ; l’admission habituelle garde le dernier mot.
+
+`counterplay.test.ts` et `styleCounterplay.test.ts` vérifient perception,
+réactions retardées, trajectoires réelles, chaleur, corps séparé, mains occupées,
+les quarante styles, les copies et les explications du manuel. Les profils,
+distances et délais sont des réglages du duel, pas des valeurs du manga.
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le

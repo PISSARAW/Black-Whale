@@ -1,3 +1,4 @@
+import { styleMobility } from './styleMobility'
 import { FIXED_STEP } from './fightClock'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter, FightInput, FighterDash, FighterMotion } from './types'
@@ -20,10 +21,7 @@ const GROUND = 0
 const MIN_X = 7
 const MAX_X = 93
 const WALK_SCALE = 28
-const BACK_WALK_RATIO = 0.8
 const JUMP_DRIFT_RATIO = 1.15
-const FORWARD_DASH = { frames: 18, peak: 96 }
-const BACK_DASH = { frames: 16, peak: 82 }
 const APEX = (JUMP_SPEED * JUMP_SPEED) / (2 * GRAVITY_RISE)
 const LANDING_SPEED = Math.sqrt(2 * GRAVITY_FALL * APEX)
 
@@ -115,7 +113,8 @@ function canDash(fighter: ArcadeFighter, dash: -1 | 0 | 1): dash is -1 | 1 {
 }
 
 function startDash(fighter: ArcadeFighter, direction: -1 | 1): FighterDash {
-  const profile = direction === fighter.facing ? FORWARD_DASH : BACK_DASH
+  const mobility = styleMobility(fighter)
+  const profile = direction === fighter.facing ? mobility.forwardDash : mobility.backDash
   return { direction, frame: 0, ...profile }
 }
 
@@ -148,13 +147,13 @@ function advancePrejump(fighter: ArcadeFighter): ArcadeFighter {
 
 function walk(fighter: ArcadeFighter, direction: -1 | 0 | 1): ArcadeFighter {
   const backward = direction !== 0 && direction !== fighter.facing
-  const speed = walkSpeed(fighter) * (backward ? BACK_WALK_RATIO : 1)
+  const speed = walkSpeed(fighter) * (backward ? styleMobility(fighter).backWalk : 1)
   const x = clamp(fighter.x + direction * speed * FIXED_STEP, MIN_X, MAX_X)
   return { ...fighter, x, pose: direction === 0 ? 'idle' : 'walk' }
 }
 
 function walkSpeed(fighter: ArcadeFighter): number {
-  return fighterDefinition(fighter.id).speed * WALK_SCALE
+  return fighterDefinition(fighter.id).speed * WALK_SCALE * styleMobility(fighter).walkScale
 }
 
 /** 0 at take-off, 0.5 at the apex, 1 on landing — drives the jump pose. */

@@ -68,7 +68,7 @@ import { chooseStyleAttack, fightingStyle } from './fightStyles'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
 import { resolveOnImpacts } from './onTechnique'
 import { fighterDefinition } from './roster'
-import { moveOpponent } from './opponentMovement'
+import { moveCounterplayOpponent } from './counterplayOpponent'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
 import { resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
@@ -273,7 +273,10 @@ function updateOpponent(
   if (winding) return winding
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   if (shouldRejoinHanzoBody(advanced)) return wakeHanzoBody(advanced)
-  return poseFighter(steerFutureAi(state, advanced) ?? moveOpponent(advanced, sleepingBody(player)))
+  return poseFighter(
+    steerFutureAi(state, advanced) ??
+      moveCounterplayOpponent({ state, fighter: advanced, target: player }),
+  )
 }
 
 function shouldRejoinHanzoBody(fighter: ArcadeFighter): boolean {

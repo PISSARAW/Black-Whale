@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 612
+Fichiers : 618
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -277,6 +277,12 @@ Fichiers : 612
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
 
+## `apps/web/src/lib/fighting/counterplay.test.ts`
+
+- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
+- ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
+- responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
 - duel rules > rejects Hatsu effects with no aura or while stunned
@@ -303,12 +309,22 @@ Fichiers : 612
 
 ## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
 
-- fighting rig > draws every fighter, with a plain guard for one that has no stance yet
+- fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
 - keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
+## `apps/web/src/lib/fighting/fightControls.test.ts`
+
+- fight keyboard configuration > keeps projections, arena commands and pause distinct for both players
+- standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
+- configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
 
 ## `apps/web/src/lib/fighting/fightMoves.test.ts`
 
 - fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightPoseClock.test.ts`
+
+- distance-driven walk cadence > keeps the same stride at 60 Hz and at 20 Hz instead of freezing the legs
 
 ## `apps/web/src/lib/fighting/fightPresentation.test.ts`
 
@@ -493,6 +509,10 @@ Fichiers : 612
 ## `apps/web/src/lib/fighting/shizuku.test.ts`
 
 - Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
+
+## `apps/web/src/lib/fighting/stageBackground.test.ts`
+
+- stage background Easter Eggs > authors two declared cameos, an original image and a keepsake for all 33 stages
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 

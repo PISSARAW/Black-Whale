@@ -1,17 +1,15 @@
+import { steerFighter } from './fighterMovement'
+import { EMPTY_INPUT } from './types'
+import { canMove as combatCanMove } from './fightActorState'
+import { seesCombatBody } from './fightCounterplay'
 import { illumiBodyFree } from './illumiState'
 import { crossGameBusy } from './crossGame'
 import { bashoWriting } from './bashoPoem'
 import { musicPacifies } from './melodyRules'
 import { healthPercent } from './health'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
-import { chainsImmobilize } from './kurapika'
-import { FIXED_STEP } from './frameData'
-import { fightingStyle, shouldStyleGuard, styleMovement } from './fightStyles'
-import { fighterDefinition } from './roster'
+import { shouldStyleGuard, styleMovement } from './fightStyles'
 import type { ArcadeFighter } from './types'
-
-const MIN_X = 7
-const MAX_X = 93
 
 function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
   if (opponentCannotGuard(fighter)) return { ...fighter, blocking: false }
@@ -22,14 +20,13 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
   const next = opponentGuardState(fighter, player, gap)
   const blocking = next.blocking
   if (!canMove(next) || blocking) return next
-  const direction = target.x < next.x ? -1 : 1
-  const motion = opponentMotion(next, gap)
-  const speed = fighterDefinition(next.id).speed * fightingStyle(next.id).moveScale * 20
-  return {
-    ...next,
-    x: clamp(next.x + direction * motion * speed * FIXED_STEP, MIN_X, MAX_X),
-    pose: motion === 0 ? 'idle' : 'walk',
-  }
+  const direction = (target.x < next.x ? -1 : 1) * opponentMotion(next, gap)
+  const input = { ...EMPTY_INPUT, left: direction < 0, right: direction > 0 }
+  // Ordinary AI spacing is a walk; only deliberate double-tap commands initiate dashes.
+  const tracked = next.motion
+    ? { ...next, motion: { ...next.motion, tapWindow: 0, tapDirection: 0 as const } }
+    : next
+  return steerFighter(tracked, { input, mobile: canMove(tracked), jumpable: false })
 }
 
 function opponentCannotGuard(fighter: ArcadeFighter): boolean {
@@ -37,22 +34,13 @@ function opponentCannotGuard(fighter: ArcadeFighter): boolean {
 }
 
 function shouldBlock(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): boolean {
+  if (!seesCombatBody(fighter)) return false
   const threatened = player.pose === 'heavy' || player.pose === 'special'
   return shouldStyleGuard(fighter.id, { gap, threatened }) && canMove(fighter) && fighter.y === 0
 }
 
 function canMove(fighter: ArcadeFighter): boolean {
-  return (
-    !chainsImmobilize(fighter) &&
-    fighter.hitStun === 0 &&
-    fighter.blockStun === 0 &&
-    fighter.health > 0 &&
-    fighter.attack === null
-  )
-}
-
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value))
+  return combatCanMove(fighter)
 }
 
 function returningToBody(fighter: ArcadeFighter): boolean {

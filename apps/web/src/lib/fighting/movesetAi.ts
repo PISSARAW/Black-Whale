@@ -1,3 +1,4 @@
+import { counterplayAttackSlots } from './styleCounterAttack'
 import { hasPlantedPaper, paperState } from './kallutoPaper'
 import { illumiAiSlots } from './illumiAi'
 import { voconteAiSlots } from './vocontePresentation'
@@ -21,7 +22,7 @@ export function chooseMovesetAttack(
     return moveForSlot(fighter.id, 'finisher')
   if (fighter.id === 'benjamin' && gap > 18) return null
   if (fighter.id === 'musse' && gap > 9) return null
-  const slots = fighterSlots(state, roll, gap)
+  const slots = attackSlots(state, roll, gap)
   return (
     slots
       .map((slot) => moveForSlot(fighter.id, slot))
@@ -40,6 +41,10 @@ function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
   if (roll < 0.64) return ['standingHeavy', 'forwardHeavy', 'backHeavy']
   if (roll < 0.84) return ['downSpecial', 'forwardSpecial', 'standingHeavy']
   return ['neutralSpecial', 'backSpecial', 'forwardHeavy']
+}
+
+function attackSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  return counterplayAttackSlots(state, gap) ?? fighterSlots(state, roll, gap)
 }
 
 function finisherInRange(state: FightState, gap: number): boolean {

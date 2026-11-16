@@ -1,3 +1,5 @@
+import { blinkyAttackData } from './blinkyAction'
+import { blinkyUtilityAttack } from './blinky'
 import { LYNCH_MOVE } from './lynchTypes'
 import { machiUtilityMove } from './machiThread'
 import { cyclotronAttackData } from './phinksCyclotron'
@@ -110,7 +112,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   fighter = dolphinActor(fighter)
-  return cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter)
+  return blinkyAttackData(cyclotronAttackData(franklinAttackData(baseAttackData(kind, fighter), fighter), fighter), fighter)
 }
 
 function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
@@ -208,6 +210,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (blinkyUtilityAttack(fighter)) return null
   if (secretWindowUtility(fighter)) return null
   fighter = dolphinActor(fighter)
   if (utilityAttack(fighter)) return null

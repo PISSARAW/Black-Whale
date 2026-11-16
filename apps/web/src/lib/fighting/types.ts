@@ -1,3 +1,4 @@
+import type { BlinkyState } from './blinky'
 import type { CrossGameState } from './crossGame'
 import type { MachiThread } from './machiThread'
 import type { PredatorState } from './predatorTypes'
@@ -128,6 +129,9 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  blinky?: BlinkyState
+  openWounds?: number
+  pluggingWounds?: boolean
   lynchQuestion?: import('./lynchTypes').LynchQuestion
   bodyAndSoulReplies?: readonly import('./lynchTypes').LynchReply[]
   predator?: PredatorState
@@ -294,6 +298,7 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  plugWounds?: boolean
   /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
   coverEars?: boolean
   en?: boolean
@@ -342,7 +347,7 @@ export interface FightImpact {
 }
 
 export type ProjectileShape =
-  'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone' | 'remote-fist'
+  'card' | 'chain' | 'page' | 'seed' | 'orb' | 'eye' | 'bullet' | 'stone' | 'needle' | 'remote-fist'
 
 export interface RemotePunchPath {
   originX: number
@@ -352,6 +357,7 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  living?: boolean
   /** Offensive Nen is committed at release; later Zetsu/Emperor Time cannot rewrite a shot. */
   nenPower?: number
   hatsuPower?: number

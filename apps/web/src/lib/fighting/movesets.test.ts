@@ -331,7 +331,7 @@ function withFinisherCondition(state: FightState): FightState {
     case 'bonolenov':
       return withPlayerEffect(state, 'cantabileFrames', 120)
     case 'shizuku':
-      return { ...state, opponent: { ...opponent, health: 50 } }
+      return { ...state, opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 } }
     case 'hinrigh':
       return withPlayerEffect(state, 'biohazardFrames', 60)
     case 'mizaistom':

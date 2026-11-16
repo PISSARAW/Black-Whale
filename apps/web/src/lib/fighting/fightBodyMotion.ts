@@ -1,3 +1,4 @@
+import { pluggingWoundsPlan } from './blinkyPose'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { crossGameBodyPlan } from './crossGamePresentation'
 import { animateMussePistol } from './mussePistol'
@@ -223,6 +224,8 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
 }
 
 function melodyBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const plugging = pluggingWoundsPlan(fighter)
+  if (plugging) return plugging
   if (fighter.coveringEars)
     return {
       key: 'cover-ears',

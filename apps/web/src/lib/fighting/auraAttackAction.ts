@@ -1,3 +1,4 @@
+import { blinkyActionAllowed } from './blinkyAction'
 import { observeComboMaster } from './comboMaster'
 import { isErigeronAction } from './billSupport'
 import { feitanMoveAvailable } from './feitanPain'
@@ -59,6 +60,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
 
 function techniqueAllowed(options: AuraAttackOptions): boolean {
   const { state, side, kind, moveId } = options
+  if (!blinkyActionAllowed(options)) return false
   if (moveId === 'gel:finisher') return false
   return kind !== 'special' || feitanMoveAvailable(state[side], moveId)
 }

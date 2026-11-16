@@ -2,6 +2,7 @@
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount } from 'svelte'
+  import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import FightBashoPoem from '$lib/components/fighting/FightBashoPoem.svelte'
   import { composeBashoPoem } from '$lib/fighting/bashoAction'
@@ -425,6 +426,9 @@
           onCall={callBody}
           onFinisher={finisher}
           onEmperor={() => queueAction((current) => toggleEmperorTime(current, 'player'))}
+          onBlinkyTarget={(side, target) => { if (state) state = designateBlinkyTarget(state, side, target) }}
+          onBlinkyCommand={(side, command) => { if (state) state = selectBlinkyCommand(state, side, command) }}
+          onOpponentControl={opponentControl}
           onControl={control}
           training={state.mode === 'training'}
         />

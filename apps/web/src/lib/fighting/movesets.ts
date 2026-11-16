@@ -1,3 +1,5 @@
+import { blinkyBloodReady } from './blinky'
+import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { canAskLynchQuestion } from './lynchRules'
 import { tuneLynchMoveset } from './lynchMoveset'
 import { crossGameCanWarn } from './crossGame'
@@ -84,6 +86,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneMelodyMoveset)
     .map(tuneLynchMoveset)
     .map(tuneThetaMoveset)
+    .map(tuneBlinkyMoveset)
     .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
@@ -134,6 +137,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (!blinkyMoveAllowed(state, side, move.id)) return false
   if (move.id === 'mizaistom:neutralSpecial') return crossGameCanWarn(state, side)
   if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
   if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
@@ -271,7 +275,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
   bonolenov: (state, side) => state[side].hatsuEffects.cantabileFrames > 0,
-  shizuku: (state, side) => opponentOf(state, side).health <= 50,
+  shizuku: blinkyBloodReady,
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: predatorReady,

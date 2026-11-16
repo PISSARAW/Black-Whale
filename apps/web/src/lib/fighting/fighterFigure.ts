@@ -1,3 +1,5 @@
+import { blinkyAvailable } from './blinky'
+import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
@@ -17,6 +19,7 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.nen,
+    fighter.id === 'shizuku' && blinkyAvailable(fighter),
     Boolean(fighter.parallelEyesClosed),
     'hanzoProjection' in fighter && Boolean(fighter.hanzoProjection),
     isBiscuitTrueForm(fighter),
@@ -87,6 +90,7 @@ function addFighterEquipment(
   if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
+  if (fighter.id === 'shizuku' && blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })
 }
 
 function observerSight(observer?: ArcadeFighter): 'gyo' | 'sight' {

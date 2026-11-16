@@ -1,3 +1,4 @@
+import { attackData } from './frameData'
 import { describe, expect, it } from 'vitest'
 import { beginFight, createFight, performAttack, tickFight } from './engine'
 import {
@@ -322,7 +323,7 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
   })
 
-  it('never lets Blinky drain a living target', () => {
+  it('never lets a Blinky contact hit drain aura or heal its user', () => {
     const ready = closeFight('shizuku', 'hisoka')
     const struck = hatsuFor('shizuku').onImpact({
       state: { ...ready, player: { ...ready.player, health: 70 } },
@@ -337,32 +338,18 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.aura).toBe(ready.opponent.aura)
   })
 
-  it('lets Blinky swallow incoming objects but never Nen constructs', () => {
+  it('lets an aimed, prepared Blinky swallow named objects but never Nen constructs', () => {
     const ready = closeFight('shizuku', 'theta')
+    const armed = performAttack(ready, 'player', 'special')
+    const fighter = { ...armed.player, attack: { ...armed.player.attack!, frame: attackData('special', armed.player).startup } }
     const shot = (id: number, x: number, matter: FightProjectile['matter']) => ({
-      ...SAMPLE_PROJECTILE,
-      id,
-      x,
-      matter,
+      ...SAMPLE_PROJECTILE, id, x, y: fighter.y + 6.1, shape: 'bullet' as const, matter,
     })
-    const armed = hatsuFor('shizuku').onTrigger({
-      state: {
-        ...ready,
-        projectiles: [
-          shot(1, ready.player.x + 6, 'object'),
-          shot(2, ready.player.x + 6, 'nen'),
-          shot(3, ready.player.x + 40, 'object'),
-        ],
-      },
-      side: 'player',
-      source: 'shizuku',
-    })
-    expect(armed.player.hatsuEffects.blinkyFrames).toBeGreaterThan(0)
-    const cleaned = hatsuFor('shizuku').onFrame(armed)
+    const cleaned = hatsuFor('shizuku').onFrame({ ...armed, player: fighter, projectiles: [
+      shot(1, fighter.x + 6, 'object'), shot(2, fighter.x + 6, 'nen'), shot(3, fighter.x + 40, 'object'),
+    ] })
     expect(cleaned.projectiles.map((projectile) => projectile.id)).toEqual([2, 3])
-    expect(cleaned.player.hatsuEffects.blinkyFrames).toBe(
-      armed.player.hatsuEffects.blinkyFrames - 1,
-    )
+    expect(cleaned.player.blinky?.lastObject?.id).toBe(1)
   })
 
   it('turns Hinrigh’s Biohazard into temporary attack and armour', () => {

@@ -1,3 +1,5 @@
+import { blinkyAiDefense } from './blinkyWounds'
+import { plugWoundsInput } from './blinky'
 import { steerCyclotron } from './phinksCyclotron'
 import { cyclotronAiAction } from './phinksAction'
 import { resolveCrossGameCommand, resolveCrossGameMovement } from './crossGameAction'
@@ -177,7 +179,7 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const advanced = advanceFighterPhysics(melodyInput(fighter, input))
+  const advanced = advanceFighterPhysics(plugWoundsInput(melodyInput(fighter, input), input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   const winding = steerCyclotron(advanced, input)
   if (winding) return winding
@@ -236,7 +238,7 @@ function updateOpponent(
   player: ArcadeFighter,
   state: FightState,
 ): ArcadeFighter {
-  const advanced = advanceFighterPhysics(fighter)
+  const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
   const winding = steerCyclotron(advanced)
   if (winding) return winding
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
@@ -432,6 +434,7 @@ function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
+    !fighter.pluggingWounds &&
     !crossGameBusy(fighter) &&
     !musicPacifies(fighter) &&
     !chainsImmobilize(fighter) &&
@@ -449,6 +452,7 @@ function canMove(fighter: ArcadeFighter): boolean {
 
 function canGuard(fighter: ArcadeFighter): boolean {
   return (
+    !fighter.pluggingWounds &&
     !crossGameBusy(fighter) &&
     !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&

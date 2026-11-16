@@ -1,3 +1,4 @@
+import { recordBlinkyWound } from './blinkyWounds'
 import { resolveLynchContact } from './lynchInterrogation'
 import { melodyRestrictsCombat } from './melodyRules'
 import { melodyParryBonus } from './melodyHearing'
@@ -151,7 +152,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
       transferred.impact!.attacker,
       otherSide(transferred.impact!.attacker),
     )
-  next = scorched
+  next = recordBlinkyWound(state, scorched, side)
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
     next = resolveHatsuImpact({

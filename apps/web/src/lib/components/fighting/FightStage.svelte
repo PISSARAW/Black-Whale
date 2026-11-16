@@ -1,4 +1,7 @@
 <script lang="ts">
+  import FightBlinkyPanel from './FightBlinkyPanel.svelte'
+  import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
+  import type { FightSide } from '$lib/fighting/types'
   import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
   import FightParallelFuture from './FightParallelFuture.svelte'
   import FightScene from './FightScene.svelte'
@@ -26,6 +29,9 @@
   export let onFinisher: () => void
   export let onEmperor: () => void = () => {}
   export let onControl: (key: keyof FightInput, active: boolean) => void
+  export let onBlinkyTarget: (side: FightSide, target: BlinkyTarget) => void = () => {}
+  export let onBlinkyCommand: (side: FightSide, command: BlinkyCommand) => void = () => {}
+  export let onOpponentControl: (key: keyof FightInput, active: boolean) => void = () => {}
   export let detailed = false
   export let showControls = false
   export let training = false
@@ -188,6 +194,8 @@
         {/if}
       </div>
     </div>{/if}
+  <FightBlinkyPanel state={visibleState} {language} onTarget={onBlinkyTarget} onCommand={onBlinkyCommand}
+    onHold={(side, key, active) => side === 'player' ? onControl(key, active) : onOpponentControl(key, active)} />
   <FightResources
     {onControl}
     {state}

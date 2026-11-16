@@ -1,3 +1,4 @@
+import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import { FEITAN_PAIN_PACKER, FEITAN_RISING_SUN } from './keyPosesFeitan'
@@ -23,6 +24,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   feitan: { neutralSpecial: FEITAN_PAIN_PACKER, finisher: FEITAN_RISING_SUN },
   kurapika: KURAPIKA_KEY_POSES,
   theta: THETA_SHOT_POSES,
+  shizuku: SHIZUKU_KEY_POSES,
   hisoka: { ...HISOKA_KEY_POSES, ...HISOKA_SPECIAL_POSES },
   leorio: { neutralSpecial: LEORIO_REMOTE_PUNCH },
   franklin: FRANKLIN_KEY_POSES,

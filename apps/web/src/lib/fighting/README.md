@@ -734,3 +734,29 @@ Les dégâts, le stun et le score viennent exclusivement du coup physique normal
 L’ancien malus de défense `soulExposedFrames` et le finisher « Confession » sont
 supprimés. Skill Hunter garde les mêmes conditions ; Dolphin termine un seul
 interrogatoire et rend ensuite la capacité, sans effacer l’information apprise.
+
+### Shizuku : Blinky ciblé et blessures ouvertes
+
+L aspire le type de matière désigné dans le panneau (balles, cartes, pierres ou lames),
+uniquement devant le tuyau et à sa hauteur ; ↓ L vise plus bas. Le vivant et les
+constructions de Nen restent exclus, même lorsque le type correspond. L’aspiration
+commence après le startup et s’arrête à l’interruption, en Zetsu, à l’épuisement,
+sous un sceau ou quand la page copiée devient indisponible. → L conserve une frappe
+physique avec Blinky. Les utilitaires n’ont aucune hitbox offensive.
+
+← L régurgite seulement le dernier objet effectivement avalé, sous une nouvelle
+identité de projectile et dans la direction du tuyau. L’objet est consommé et ses
+anciens renforts de Nen ne sont pas restitués ; les objets précédents sont perdus.
+Aspirer du sang remplace aussi cet objet mémorisé : le sang peut être rejeté sans
+projectile offensif, et l’ancien objet reste irrécupérable.
+H aspire le sang par les plaies exposées créées par des coups de Blinky non gardés,
+sans seuil de PV. Tenir Y (P1) ou 5 (P2), ou le bouton tactile, occupe les deux mains
+pour couvrir au plus deux ouvertures : ni garde ni attaque pendant cette couverture.
+Relâcher ne soigne pas les plaies. Plusieurs ouvertures peuvent rester exposées.
+Le sang ne vole aucune aura et ne soigne jamais Shizuku. La perte de sang passe par
+le verdict commun du combat, avec attribution du décès et Nen post-mortem.
+
+Les nombres de plaies par coup, leur couverture par deux mains, coûts, portées,
+durées et pertes de PV sont des adaptations explicites de duel, pas des valeurs
+énoncées dans le manga. La règle du sang vient du combat contre Pike (ch. 228) ;
+la désignation et le dernier objet relèvent des règles de Blinky à Yorknew.

@@ -6,12 +6,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'shizuku',
     mechanic: [
-      'Blinky : aspire les objets lancés contre Shizuku, jamais un être vivant ni une construction de Nen.',
-      'Blinky: swallows objects thrown at Shizuku, never a living being or a Nen construct.',
+      'L / ↓ L : aspire le type désigné devant le tuyau. ← L : rejette le dernier objet. → L : frappe. H : aspire le sang par les plaies ouvertes ; Y / 5 les bouche avec les mains. Aucun vol d’aura ni soin.',
+      'L / ↓ L: suck the designated type in front of the nozzle. ← L: eject the last object. → L: club strike. H: draw blood through open wounds; Y / 5 covers them with the hands. No aura drain or healing.',
     ],
     finisherCondition: [
-      'L’adversaire doit être à 50 PV ou moins.',
-      'The opponent must have 50 HP or less.',
+      'Plaies ouvertes non bouchées, cible devant le tuyau et à portée ; aucun seuil de PV.',
+      'Uncovered open wounds, target in front of the nozzle and in range; no HP threshold.',
     ],
     labels: [
       'Coup de Blinky|Blinky Jab',
@@ -24,11 +24,11 @@ const SPECS: readonly MovesetSpec[] = [
       'Coup de réservoir|Tank Strike',
       'Retour de manche|Handle Return',
       'Aspiration d’objets|Object Suction',
-      'Blinky Cyclone|Blinky Cyclone',
+      'Frappe de Blinky|Blinky Strike',
       'Aspiration basse|Low Vacuum',
-      'Rejet d’objets|Object Ejection',
+      'Rejet du dernier objet|Last Object Ejection',
       'Prise au manche|Handle Hold',
-      'Blinky · Grand ménage|Blinky · Deep Clean',
+      'Aspiration du sang|Blood Suction',
     ],
     speed: 0.98,
     power: 1,

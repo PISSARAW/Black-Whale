@@ -1,12 +1,13 @@
 import { paperMoveAllowed } from './kallutoPaper'
-import { beyondCurseUnavailable } from './beyondCurseAction'
 import { blinkyActionAllowed } from './blinkyAction'
-import { observeComboMaster } from './comboMaster'
+import { beyondCurseUnavailable } from './beyondCurseAction'
 import { isErigeronAction } from './billSupport'
-import { feitanMoveAvailable } from './feitanPain'
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
 import { triggerAttackHatsu } from './attackHatsuTrigger'
 import { padailleMoveAvailable } from './padailleWeapon'
+import { feitanMoveAvailable } from './feitanPain'
+import { hisokaTechniqueAllowed } from './hisokaTechnique'
+import { observeComboMaster } from './comboMaster'
 import type { AttackKind, AttackVariant, FightSide, FightState, FighterId } from './types'
 
 export interface AuraAttackOptions {
@@ -35,7 +36,9 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
   const buffers = resourceReady && canBufferFighterAttack(original)
   if (!starts && !buffers) return options.state
   const state =
-    starts && hatsuSource ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId }) : options.state
+    starts && hatsuSource
+      ? triggerAttackHatsu({ state: options.state, side, source: hatsuSource, moveId })
+      : options.state
   const fighter = state[side]
   if (starts)
     return observeComboMaster({
@@ -71,6 +74,9 @@ function techniqueAllowed(options: AuraAttackOptions): boolean {
   if (beyondCurseUnavailable({ fighter: state[side], kind, moveId })) return false
   if (!blinkyActionAllowed(options)) return false
   if (moveId === 'gel:finisher') return false
-  if (kind === 'special' && !paperMoveAllowed(state, side, moveId)) return false
-  return kind !== 'special' || (padailleMoveAvailable(state[side], moveId) && feitanMoveAvailable(state[side], moveId))
+  if (kind !== 'special') return true
+  if (!padailleMoveAvailable(state[side], moveId)) return false
+  if (!paperMoveAllowed(state, side, moveId)) return false
+  if (isErigeronAction(state[side], kind, moveId)) return false
+  return hisokaTechniqueAllowed(state, side, moveId) && feitanMoveAvailable(state[side], moveId)
 }

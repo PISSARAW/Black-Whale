@@ -1,4 +1,5 @@
 import { FIGHT_FPS } from './fightClock'
+import { DUEL_HEALTH } from './health'
 
 export type FightFormatId = 'heavens-arena' | 'knockout' | 'arcade'
 export type FightVictoryRule = 'points' | 'health' | 'hybrid'
@@ -33,25 +34,25 @@ export const FIGHT_FORMATS: readonly FightFormat[] = [
     id: 'knockout',
     titleFr: 'Combat K.-O.',
     titleEn: 'Knockout fight',
-    descriptionFr: 'Réduisez les 100 PV adverses à zéro avant la décision.',
-    descriptionEn: "Reduce the opponent's 100 HP to zero before the decision.",
+    descriptionFr: 'Épuisez les trois barres de 100 PV adverses. Décision après 120 secondes.',
+    descriptionEn: 'Deplete all three enemy 100 HP bars. Decision after 120 seconds.',
     victory: 'health',
     hitTarget: null,
     knockdownTarget: null,
-    health: 100,
-    roundFrames: 90 * FIGHT_FPS,
+    health: DUEL_HEALTH,
+    roundFrames: 120 * FIGHT_FPS,
   },
   {
     id: 'arcade',
     titleFr: 'Arcade',
     titleEn: 'Arcade',
-    descriptionFr: 'Règle historique : K.-O., 10 points ou décision à 60 secondes.',
-    descriptionEn: 'Classic rule: knockout, 10 points, or a 60-second decision.',
-    victory: 'hybrid',
-    hitTarget: 10,
+    descriptionFr: 'Trois barres de 100 PV : K.-O. ou décision après 120 secondes.',
+    descriptionEn: 'Three 100 HP bars: knockout or a decision after 120 seconds.',
+    victory: 'health',
+    hitTarget: null,
     knockdownTarget: null,
-    health: 100,
-    roundFrames: 60 * FIGHT_FPS,
+    health: DUEL_HEALTH,
+    roundFrames: 120 * FIGHT_FPS,
   },
 ]
 

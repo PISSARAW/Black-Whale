@@ -1,9 +1,8 @@
 <script lang="ts">
-  import FightBlinkyPanel from './FightBlinkyPanel.svelte'
-  import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
-  import type { FightSide } from '$lib/fighting/types'
   import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
   import FightParallelFuture from './FightParallelFuture.svelte'
+  import FightBlinkyPanel from './FightBlinkyPanel.svelte'
+  import type { BlinkyTarget, BlinkyCommand } from '$lib/fighting/blinky'
   import FightScene from './FightScene.svelte'
   import FightSaiyuSenses from './FightSaiyuSenses.svelte'
   import FightHud from './FightHud.svelte'
@@ -28,9 +27,9 @@
   export let onCall: () => void
   export let onFinisher: () => void
   export let onEmperor: () => void = () => {}
+  export let onControl: (key: keyof FightInput, active: boolean) => void
   export let onTalk: (side: FightSide) => void = () => {}
   export let onBattleAction: (side: FightSide, moveId: string) => void = () => {}
-  export let onControl: (key: keyof FightInput, active: boolean) => void
   export let onBlinkyTarget: (side: FightSide, target: BlinkyTarget) => void = () => {}
   export let onBlinkyCommand: (side: FightSide, command: BlinkyCommand) => void = () => {}
   export let onOpponentControl: (key: keyof FightInput, active: boolean) => void = () => {}
@@ -191,7 +190,13 @@
             onpointercancel={() => hold('hatsu', false)}
           >
             <kbd>L</kbd>
-            <span>{state.player.id === 'beyond' ? (language === 'fr' ? 'Physique' : 'Physical') : 'Hatsu'}</span>
+            <span
+              >{state.player.id === 'beyond'
+                ? language === 'fr'
+                  ? 'Physique'
+                  : 'Physical'
+                : 'Hatsu'}</span
+            >
           </button>
         {/if}
       </div>
@@ -208,7 +213,7 @@
     {onTalk}
     {onBattleAction}
     {onControl}
-    {state}
+    state={visibleState}
     {language}
     {detailed}
     {showControls}

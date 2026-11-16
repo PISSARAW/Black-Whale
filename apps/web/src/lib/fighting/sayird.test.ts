@@ -146,28 +146,31 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
     expect(chainAbilitySealed(held.opponent, LITTLE_EYE.id)).toBe(true)
     for (const move of movesetFor('sayird')!.moves) {
       expect(chainAbilitySealed(held.opponent, move.id)).toBe(false)
-      if (move.category !== 'finisher') expect(canUseMovesetMove(held, 'opponent', move)).toBe(true)
+      if (move.category !== 'finisher')
+        expect(canUseMovesetMove(held, 'opponent', move)).toBe(move.slot !== 'neutralSpecial')
     }
     expect(stealableChainMove(held.opponent)).toBeNull()
   })
 
-  it('retains the ability without loading a fake combat use or locking Emperor Time', () => {
+  it('can load Little Eye but preserves its missing real target and the Dolphin lock', () => {
     const held = recovered(advance(steal(duel()), 90))
     const active = toggleEmperorTime(held, 'player')
     expect(active.player.kurapika?.emperorTime).toBe(true)
-    expect(canUseMovesetMove(active, 'player', moveForSlot('kurapika', 'backSpecial')!)).toBe(false)
+    expect(canUseMovesetMove(active, 'player', moveForSlot('kurapika', 'backSpecial')!)).toBe(true)
     expect(dolphinCanUse(active, 'player')).toBe(false)
-    expect(steal(active)).toBe(active)
-    const later = advance(active, 120)
+    const loaded = steal(active)
+    expect(dolphinCanUse(loaded, 'player')).toBe(false)
+    expect(steal(loaded)).toBe(loaded)
+    const later = advance(loaded, 120)
     expect(later.player.kurapika?.held).toMatchObject({
       moveId: LITTLE_EYE.id,
-      loaded: false,
+      loaded: true,
       used: false,
     })
     expect(later.player.attack).toBeNull()
     expect(later.projectiles).toHaveLength(0)
     expect(later.opponent.health).toBe(active.opponent.health)
-    expect(toggleEmperorTime(later, 'player').player.kurapika?.emperorTime).toBe(false)
+    expect(toggleEmperorTime(later, 'player').player.kurapika?.emperorTime).toBe(true)
   })
 
   it('does not steal an already retained Hatsu or create an ability for other martial fighters', () => {

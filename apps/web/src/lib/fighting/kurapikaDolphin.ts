@@ -1,8 +1,11 @@
-import { ownsNeedlePuppet } from './illumiFrame'
+import { luiniAnchor } from './luiniSpatial'
 import { doorNetworkBusy } from './voconteDoorState'
+import { ownsNeedlePuppet } from './illumiFrame'
 import { machiThreadForOwner } from './machiThread'
-import { cyclotronBusy } from './phinksCyclotron'
+import { outsideDuelAbility } from './outsideDuelAbility'
+import { preparedActionReady, controlledEntities } from './preparationActions'
 import { hatsuFor } from './hatsu/registry'
+import { cyclotronBusy } from './phinksCyclotron'
 import { canUseMovesetMove, moveById, movesetFor } from './movesets'
 import type { StolenChainAbility } from './kurapika'
 import type { ArcadeFighter, FightSide, FightState } from './types'
@@ -28,7 +31,7 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
   const fighter = state[side]
   const held = fighter.kurapika?.held
   const move = moveById(held?.moveId)
-  if (!held?.loaded || held.used || !move) return false
+  if (!held?.loaded || held.used) return false
   // Preserve the actual technique's conditions and cost at the borrower's attained state.
   const actor: ArcadeFighter = {
     ...fighter,
@@ -36,7 +39,9 @@ export function dolphinCanUse(state: FightState, side: FightSide): boolean {
     nenOwner: fighter.nenOwner ?? fighter.id,
     stolenChainAbility: undefined,
   }
-  return canUseMovesetMove({ ...state, [side]: actor }, side, move)
+  const prepared = { ...state, [side]: actor }
+  if (outsideDuelAbility(held.moveId)) return preparedActionReady(prepared, side, held.moveId)
+  return Boolean(move && canUseMovesetMove(prepared, side, move))
 }
 
 /** Run the borrowed Hatsu's own hooks with its execution identity, then restore the body. */
@@ -48,7 +53,11 @@ export function withDolphinIdentity(
   const borrowed = (fighter: ArcadeFighter) => {
     const held = fighter.kurapika?.held
     return held?.used && (!source || held.source === source)
-      ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
+      ? {
+          ...fighter,
+          id: held.source,
+          nenOwner: fighter.nenOwner ?? fighter.id,
+        }
       : fighter
   }
   const player = borrowed(state.player)
@@ -57,8 +66,16 @@ export function withDolphinIdentity(
   const next = run({ ...state, player, opponent })
   return {
     ...next,
-    player: { ...next.player, id: state.player.id, nenOwner: state.player.nenOwner },
-    opponent: { ...next.opponent, id: state.opponent.id, nenOwner: state.opponent.nenOwner },
+    player: {
+      ...next.player,
+      id: state.player.id,
+      nenOwner: state.player.nenOwner,
+    },
+    opponent: {
+      ...next.opponent,
+      id: state.opponent.id,
+      nenOwner: state.opponent.nenOwner,
+    },
   }
 }
 
@@ -71,13 +88,17 @@ export function recordDolphinEffects(
   const held = after[side].kurapika?.held
   if (!held?.used) return after
   const keys = new Set(held.sustainedKeys)
+  if (controlledEntities(after, side).length) keys.add('prepared')
   for (const key of changedDolphinCounters(before, after)) keys.add(key)
   for (const key of dolphinEffectFlags(before, after, side)) keys.add(key)
   return {
     ...after,
     [side]: {
       ...after[side],
-      kurapika: { ...after[side].kurapika!, held: { ...held, sustainedKeys: [...keys] } },
+      kurapika: {
+        ...after[side].kurapika!,
+        held: { ...held, sustainedKeys: [...keys] },
+      },
     },
   }
 }
@@ -123,7 +144,6 @@ function changedDolphinCounters(before: FightState, after: FightState): string[]
 function dolphinEffectFlags(before: FightState, after: FightState, side: FightSide): string[] {
   const keys = new Set<string>()
   if (after.bungeeGum?.owner === side && before.bungeeGum !== after.bungeeGum) keys.add('gum')
-  if (after[side].bashoPoem) keys.add('poem')
   for (const [key, active] of Object.entries(dolphinFlags(after, side)))
     if (key !== 'gum' && active) keys.add(key)
   return [...keys]
@@ -143,17 +163,21 @@ function dolphinEffectActive(state: FightState, side: FightSide, entry: string):
 function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
   const fighter = state[side]
   return {
+    prepared: controlledEntities(state, side).length > 0,
+    'luini-anchor': Boolean(luiniAnchor(state, side)),
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
     'padaille-weapon': Boolean(fighter.padailleTool),
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
-    cyclotron: cyclotronBusy(fighter),
-    door: doorNetworkBusy(state, side),
     'secret-window': Boolean(fighter.secretWindow),
     'paper-doll': Boolean(fighter.kallutoPaper?.doll),
-    'paper-stream': state.projectiles.some((shot) => shot.owner === side && Boolean(shot.kallutoPaper)),
-    'body-and-soul': Boolean(fighter.lynchQuestion),
+    'paper-stream': state.projectiles.some(
+      (shot) => shot.owner === side && Boolean(shot.kallutoPaper),
+    ),
+    cyclotron: cyclotronBusy(fighter),
+    door: doorNetworkBusy(state, side),
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
+    'body-and-soul': Boolean(fighter.lynchQuestion),
     poem: Boolean(fighter.bashoPoem),
     gum: state.bungeeGum?.owner === side,
     projection: Boolean(fighter.hanzoProjection),

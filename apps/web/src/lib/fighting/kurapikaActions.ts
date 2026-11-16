@@ -1,8 +1,10 @@
 import { releasePadailleWeapon } from './padailleWeapon'
-import { illumiBodyFree } from './illumiState'
+import { finishBorrowedLuini } from './luiniDolphin'
 import { borrowedDoorActive } from './voconteDoorState'
+import { illumiBodyFree } from './illumiState'
 import { finishBorrowedMary } from './bloodyMaryAi'
-import { dolphinMissingBattleBody } from './battleCantabileRules'
+import { controlledEntities, releasePreparedControl } from './preparationActions'
+import { healthPercent } from './health'
 import { CYCLOTRON_PUNCH } from './phinksCyclotron'
 import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
@@ -12,7 +14,7 @@ import { resolveFightOutcome } from './fightOutcome'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
 import { moveById } from './movesets'
 import { releaseMachiThread } from './machiThread'
-import { outsideDuelAbility } from './outsideDuelAbility'
+import { dolphinMissingBattleBody } from './battleCantabileRules'
 import {
   createKurapika,
   chainsImmobilize,
@@ -199,7 +201,6 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
 
 function canUseDolphinAction(fighter: ArcadeFighter): boolean {
   return (
-    !outsideDuelAbility(fighter.kurapika!.held!.moveId) &&
     !dolphinMissingBattleBody(fighter) &&
     canAct(fighter) &&
     kurapikaNenActive(fighter) &&
@@ -209,20 +210,36 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
+  const passage = finishBorrowedLuini(options, perform)
+  if (passage) return passage
   const blood = finishBorrowedMary(options, perform)
   if (blood) return blood
   const predator = finishBorrowedPredator(state, side)
   if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  if (controlledEntities(state, side).length) return releasePreparedControl(state, side)
   if (borrowedDoorActive(state, side))
-    return withDolphinIdentity(state, (borrowed) => perform({ ...options, state: borrowed, moveId: held.moveId }), 'voconte')
+    return withDolphinIdentity(
+      state,
+      (borrowed) => perform({ ...options, state: borrowed, moveId: held.moveId }),
+      'voconte',
+    )
   if (held.source === 'phinks')
     return withDolphinIdentity(
       state,
       (borrowed) => perform({ ...options, state: borrowed, moveId: CYCLOTRON_PUNCH }),
       'phinks',
     )
+  return endBorrowedConstruct(options, perform)
+}
+
+function endBorrowedConstruct(options: AuraAttackOptions, perform: PerformAttack): FightState {
+  const { state, side } = options
+  const restored = releasePadailleWeapon(state, side)
+  if (restored) return restored
+  const fighter = state[side]
+  const held = fighter.kurapika!.held!
   if (fighter.lynchQuestion) return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
   if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
   if (fighter.hanzoProjection)
@@ -241,29 +258,40 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
   if (!dolphinCanUse(state, side)) return state
   const fighter = state[side]
   const held = fighter.kurapika!.held!
-  const move = moveById(held.moveId)!
   const prepared: FightState = {
     ...state,
     [side]: {
       ...fighter,
       id: held.source,
+      nenOwner: fighter.nenOwner ?? fighter.id,
       kurapika: {
         ...fighter.kurapika!,
         held: { ...held, used: true },
       },
     },
   }
-  const cast = perform({
-    ...options,
-    state: prepared,
-    kind: move.kind,
-    variant: move.variant,
-    moveId: move.id,
-  })
+  const cast = performBorrowedMove({ ...options, state: prepared }, held.moveId, perform)
   if (cast === prepared || (cast[side] === prepared[side] && cast.lsdf === prepared.lsdf))
     return state
-  const restored = { ...cast, [side]: { ...cast[side], id: fighter.id } }
+  const restored = {
+    ...cast,
+    [side]: { ...cast[side], id: fighter.id, nenOwner: fighter.nenOwner },
+  }
   return recordDolphinEffects(state, restored, side)
+}
+
+function performBorrowedMove(
+  options: AuraAttackOptions,
+  moveId: string,
+  perform: PerformAttack,
+): FightState {
+  const move = moveById(moveId)
+  return perform({
+    ...options,
+    kind: move?.kind ?? 'special',
+    variant: move?.variant,
+    moveId: move?.id ?? moveId,
+  })
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
@@ -282,7 +310,7 @@ function canAct(fighter: ArcadeFighter): boolean {
 export function kurapikaAiActivation(state: FightState): FightState | null {
   const fighter = state.opponent
   if (fighter.id !== 'kurapika' || fighter.kurapika?.emperorTime) return null
-  if (fighter.health >= 70 && !fighter.kurapika?.held) return null
+  if (healthPercent(fighter) >= 70 && !fighter.kurapika?.held) return null
   const activated = toggleEmperorTime(state, 'opponent')
   return activated === state ? null : activated
 }

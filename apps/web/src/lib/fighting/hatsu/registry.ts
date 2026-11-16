@@ -1,10 +1,9 @@
+import type { FighterHatsu } from './contract'
+import { beyondHatsu } from './beyond'
 import { fightResolutionPending } from '../fightOutcome'
-import { furykovHatsu } from './furykov'
 import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
-import type { FighterHatsu } from './contract'
-import { beyondHatsu } from './beyond'
 import { musseHatsu } from './musse'
 import { benjaminHatsu } from './benjamin'
 import { bashoHatsu } from './basho'
@@ -24,6 +23,7 @@ import { cluckHatsu } from './cluck'
 import { biscuitHatsu } from './biscuit'
 import { feitanHatsu } from './feitan'
 import { franklinHatsu } from './franklin'
+import { furykovHatsu } from './furykov'
 import { fugetsuHatsu } from './fugetsu'
 import { gelHatsu } from './gel'
 import { halkenburgHatsu } from './halkenburg'
@@ -56,7 +56,7 @@ import { zakuroHatsu } from './zakuro'
 import { zhangleiHatsu } from './zhanglei'
 import type { FightState, FighterId } from '../types'
 
-// Resolve hooks lazily to preserve bindings across shared combat imports.
+// Resolve hooks lazily: several Hatsu import shared combat helpers that read this registry.
 const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   kurapika: () => kurapikaHatsu,
   hisoka: () => hisokaHatsu,

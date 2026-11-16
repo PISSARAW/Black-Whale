@@ -2,7 +2,7 @@
 
 # Graphe des dépendances
 
-Nœuds : 25 · Arêtes uniques : 56
+Nœuds : 25 · Arêtes uniques : 58
 
 ## Arêtes
 
@@ -20,8 +20,10 @@ Nœuds : 25 · Arêtes uniques : 56
 | `lib:combat` | `lib:tour` | 8 |
 | `lib:components` | `package:@black-whale/domain` | 11 |
 | `lib:components` | `package:@black-whale/nen-engine` | 2 |
-| `lib:fighting` | `lib:tour` | 24 |
-| `lib:fighting` | `package:@black-whale/nen-engine` | 6 |
+| `lib:fighting` | `lib:components` | 2 |
+| `lib:fighting` | `lib:tour` | 26 |
+| `lib:fighting` | `package:@black-whale/domain` | 1 |
+| `lib:fighting` | `package:@black-whale/nen-engine` | 38 |
 | `lib:hunt` | `lib:arena` | 3 |
 | `lib:hunt` | `lib:combat` | 1 |
 | `lib:hunt` | `lib:nen` | 1 |
@@ -48,7 +50,7 @@ Nœuds : 25 · Arêtes uniques : 56
 | `lib:tour` | `lib:components` | 2 |
 | `lib:tour` | `package:@black-whale/ability-modules` | 13 |
 | `lib:tour` | `package:@black-whale/domain` | 4 |
-| `lib:tour` | `package:@black-whale/nen-engine` | 35 |
+| `lib:tour` | `package:@black-whale/nen-engine` | 36 |
 | `lib:utils` | `lib:state` | 1 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/ability-sdk` | 68 |
 | `package:@black-whale/ability-modules` | `package:@black-whale/nen-engine` | 2 |

@@ -2,24 +2,26 @@ import { beyondPhysicalPresentation } from './beyondPresentation'
 import { BEYOND_CURSE } from './beyondCurse'
 import { chrolloPageForMove } from './chrolloBook'
 import { padaillePresentation } from './padaillePresentation'
-import { illumiSpecialPresentation } from './illumiPresentation'
 import { voconteSpecialPresentation } from './vocontePresentation'
-import { biohazardPresentation } from './biohazardPresentation'
+import { illumiSpecialPresentation } from './illumiPresentation'
 import { lynchSpecialPresentation } from './lynchPresentation'
-import { cyclotronPresentation } from './phinksPresentation'
 import { crossGamePresentation } from './crossGamePresentation'
+import { preparedSpecialPresentation } from './preparationPresentation'
+import { chrolloPageName } from './chrolloPageNames'
 import { predatorSpecialPresentation } from './predatorPresentation'
 import { melodyCanPerform } from './melodyRules'
 import { bashoPresentation } from './bashoPresentation'
+import { cyclotronPresentation } from './phinksPresentation'
 import { moonlightPresentation } from './moonlightPresentation'
-import { futureSpecialPresentation } from './parallelFuturePresentation'
 import { erigeronPresentation, isErigeronAction } from './billSupport'
+import { futureSpecialPresentation } from './parallelFuturePresentation'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from './hatsu'
 import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
 import { fighterDefinition } from './roster'
 import { isLsdfMove } from './lsdf'
 import { lsdfHint } from './lsdfPresentation'
 import type { FightState } from './types'
+import { biohazardPresentation } from './biohazardPresentation'
 
 interface SpecialPresentation {
   label: string
@@ -31,21 +33,40 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
-  if (state.player.id === 'illumi') return illumiSpecialPresentation(state, language)
-  const personal = personalSpecialPresentation(state, language)
-  if (personal) return personal
+  if (state.player.id === 'hinrigh') return biohazardPresentation(state, language)
+  const prepared = preparedSpecialPresentation(state, language)
+  if (prepared) return prepared
+  const personal = PERSONAL_PRESENTATIONS[state.player.id]
+  if (personal) return personal(state, language)
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
-  if (state.player.id === 'tserriednich') return futureSpecialPresentation(state, language)
-  if (state.player.id === 'camilla') return camillaPresentation(language)
-  if (state.player.id === 'kurapika') return kurapikaPresentation(state, language)
   return commonSpecialPresentation(state, language)
 }
 
+const PERSONAL_PRESENTATIONS: Partial<
+  Record<
+    import('./types').FighterId,
+    (state: FightState, language: 'fr' | 'en') => SpecialPresentation
+  >
+> = {
+  beyond: beyondPhysicalPresentation,
+  padaille: padaillePresentation,
+  voconte: voconteSpecialPresentation,
+  illumi: illumiSpecialPresentation,
+  lynch: lynchSpecialPresentation,
+  hinrigh: biohazardPresentation,
+  phinks: cyclotronPresentation,
+  mizaistom: crossGamePresentation,
+  melody: melodyPresentation,
+  rihan: predatorSpecialPresentation,
+  basho: bashoPresentation,
+  longhi: moonlightPresentation,
+  camilla: (_state, language) => camillaPresentation(language),
+  tserriednich: futureSpecialPresentation,
+  kurapika: kurapikaPresentation,
+}
+
 function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
-  if (state.player.id === 'padaille') return padaillePresentation(state, language)
-  if (state.player.id === 'voconte') return voconteSpecialPresentation(state, language)
-  if (state.player.id === 'lynch') return lynchSpecialPresentation(state, language)
   if (state.player.id === 'mizaistom') return crossGamePresentation(state, language)
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)
@@ -56,9 +77,14 @@ function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): Sp
 }
 
 function specialLabel(state: FightState, language: 'fr' | 'en'): string {
-  if (chrolloPageForMove(state.player) === 'beyond')
-    return language === 'fr' ? BEYOND_CURSE.nameFr : BEYOND_CURSE.nameEn
+  if (state.player.id === 'chrollo')
+    return chrolloPageName(chrolloPageForMove(state.player), language)
   if (isLsdfMove(state.player)) return 'LSDF'
+  if (state.player.hanzoProjection) return language === 'fr' ? 'Réintégrer le corps' : 'Rejoin body'
+  return ordinarySpecialLabel(state, language)
+}
+
+function ordinarySpecialLabel(state: FightState, language: 'fr' | 'en'): string {
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   if (movesetFor(state.player.id))
     return (language === 'fr' ? move?.nameFr : move?.nameEn) ?? 'Technique'
@@ -80,6 +106,7 @@ function specialHint(options: {
       ? 'Secret Window · surveillance active'
       : 'Secret Window · monitoring active'
   if (isLsdfMove(state.player)) return lsdfHint(state, 'player', language)
+  if (state.player.hanzoProjection) return projectionHint(options.ready, language)
   return ordinarySpecialHint(options)
 }
 
@@ -98,6 +125,13 @@ function ordinarySpecialHint(options: {
       ? 'Chain Jail · Brigade Fantôme uniquement'
       : 'Chain Jail · Phantom Troupe only'
   return `${label} · indisponible`
+}
+
+function projectionHint(ready: boolean, language: 'fr' | 'en'): string {
+  if (ready) return language === 'fr' ? 'Réintégrer le corps · 0 aura' : 'Rejoin body · 0 aura'
+  return language === 'fr'
+    ? 'Revenir près du corps pour le réintégrer'
+    : 'Return close to the body to rejoin it'
 }
 
 function kurapikaPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
@@ -147,15 +181,4 @@ function camillaPresentation(language: 'fr' | 'en'): SpecialPresentation {
         ? 'Nen posthume : automatique après sa mort, aucun coup manuel.'
         : 'Post-mortem Nen: automatic after death, no manual attack.',
   }
-}
-
-function personalSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation | null {
-  if (state.player.id === 'beyond') return beyondPhysicalPresentation(state, language)
-  if (state.player.id === 'hinrigh') return biohazardPresentation(state, language)
-  if (state.player.id === 'phinks') return cyclotronPresentation(state, language)
-  if (state.player.id === 'basho') return bashoPresentation(state, language)
-  if (state.player.id === 'melody') return melodyPresentation(state, language)
-  if (state.player.id === 'rihan') return predatorSpecialPresentation(state, language)
-  if (state.player.id === 'longhi') return moonlightPresentation(state, language)
-  return null
 }

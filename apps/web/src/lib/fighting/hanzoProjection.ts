@@ -1,5 +1,6 @@
 import { constructionFactor } from './nenCategories'
 import { createNenTechniqueState } from '@black-whale/nen-engine'
+import { chrolloPageForMove } from './chrolloBook'
 import type { ArcadeFighter, AttackKind, FightInput, FightNenZone } from './types'
 
 export const HANZO_PROJECTION_STARTUP = 24
@@ -86,11 +87,7 @@ export function canRejoinHanzoBody(fighter: ArcadeFighter): boolean {
 /** Only Skill 4 projects; directional techniques and the choke remain martial. */
 export function isHanzoProjectionMove(fighter: ArcadeFighter, moveId?: string): boolean {
   if (fighter.id === 'hanzo') return !moveId || moveId === 'hanzo:neutralSpecial'
-  return (
-    fighter.id === 'chrollo' &&
-    fighter.hatsuEffects.stolenHatsu === 'hanzo' &&
-    moveId === 'chrollo:neutralSpecial'
-  )
+  return fighter.id === 'chrollo' && chrolloPageForMove(fighter, moveId) === 'hanzo'
 }
 
 /** Resource overrides only for projection commands; other moves keep their own rules. */

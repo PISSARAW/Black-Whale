@@ -2,7 +2,7 @@
 
 # Index des symboles publics
 
-Entrées analysées : 11
+Entrées analysées : 10
 
 ## `apps/web/src/lib/i18n/index.ts`
 
@@ -96,7 +96,7 @@ Entrées analysées : 11
 | `biscuitBodyTransformation` | `packages/ability-modules/src/biscuit/module.ts:153` |
 | `blackVoice` | `packages/ability-modules/src/chrollo-stolen/black-voice.ts:23` |
 | `blinky` | `packages/ability-modules/src/troupe/module.ts:33` |
-| `bloodyMary` | `packages/ability-modules/src/heil-ly/module.ts:122` |
+| `bloodyMary` | `packages/ability-modules/src/heil-ly/module.ts:109` |
 | `bodyAndSoul` | `packages/ability-modules/src/mafia/module.ts:142` |
 | `bohemianRhapsody` | `packages/ability-modules/src/bohemian-rhapsody/module.ts:20` |
 | `bungeeGum` | `packages/ability-modules/src/bungee-gum/module.ts:46` |
@@ -154,7 +154,7 @@ Entrées analysées : 11
 | `needsAChoice` | `packages/ability-modules/src/contagion/game.ts:804` |
 | `nenStitches` | `packages/ability-modules/src/nen-stitches/module.ts:27` |
 | `orderStamp` | `packages/ability-modules/src/chrollo-stolen/order-stamp.ts:26` |
-| `padailleWeaponTransformation` | `packages/ability-modules/src/heil-ly/module.ts:239` |
+| `padailleWeaponTransformation` | `packages/ability-modules/src/heil-ly/module.ts:226` |
 | `painPacker` | `packages/ability-modules/src/feitan/module.ts:36` |
 | `parallelFuture` | `packages/ability-modules/src/parallel-future/module.ts:30` |
 | `playTechnique` | `packages/ability-modules/src/contagion/game.ts:534` |
@@ -171,7 +171,7 @@ Entrées analysées : 11
 | `sheWillNotPlay` | `packages/ability-modules/src/contagion/game.ts:324` |
 | `silentMajority` | `packages/ability-modules/src/silent-majority/module.ts:36` |
 | `skillHunter` | `packages/ability-modules/src/skill-hunter/module.ts:36` |
-| `snakeArm` | `packages/ability-modules/src/heil-ly/module.ts:343` |
+| `snakeArm` | `packages/ability-modules/src/heil-ly/module.ts:330` |
 | `spentOn` | `packages/ability-modules/src/contagion/table.ts:239` |
 | `standByMe` | `packages/ability-modules/src/stand-by-me/module.ts:20` |
 | `stealChain` | `packages/ability-modules/src/steal-chain/module.ts:25` |
@@ -206,7 +206,6 @@ Entrées analysées : 11
 | `AbilityUseRefusal` | `packages/ability-sdk/src/uses.ts:58` |
 | `AttributeThreshold` | `packages/ability-sdk/src/conditions.ts:163` |
 | `BodyStateOptions` | `packages/ability-sdk/src/effects.ts:365` |
-| `CanonSourceRef` | `../../../Documents/GitHub.nosync/Black-Whale/packages/nen-engine/dist/engine.d.ts:157` |
 | `ConditionFn` | `packages/ability-sdk/src/conditions.ts:4` |
 | `ConditionOutcome` | `packages/ability-sdk/src/conditions.ts:17` |
 | `ConstraintOptions` | `packages/ability-sdk/src/effects.ts:141` |
@@ -429,7 +428,6 @@ Entrées analysées : 11
 | `buildCanonicalPositions` | `packages/canon-engine/src/timeline/snapshot.ts:93` |
 | `cloneValue` | `packages/canon-engine/src/world/state.ts:115` |
 | `cloneWorld` | `packages/canon-engine/src/world/state.ts:111` |
-| `compareEventOrder` | `../../../Documents/GitHub.nosync/Black-Whale/packages/domain/dist/ordering.d.ts:30` |
 | `compareStoryPosition` | `packages/canon-engine/src/world/cursor.ts:18` |
 | `createEmptyWorld` | `packages/canon-engine/src/world/state.ts:96` |
 | `createSnapshotStore` | `packages/canon-engine/src/timeline/snapshotStore.ts:40` |
@@ -438,7 +436,6 @@ Entrées analysées : 11
 | `filterTemporalRecords` | `packages/canon-engine/src/spoiler/index.ts:49` |
 | `filterVisible` | `packages/canon-engine/src/spoiler/index.ts:34` |
 | `getSpoilerFilter` | `packages/canon-engine/src/spoiler/index.ts:16` |
-| `isRevealed` | `../../../Documents/GitHub.nosync/Black-Whale/packages/domain/dist/ordering.d.ts:32` |
 | `listCanonicalEvents` | `packages/canon-engine/src/timeline/index.ts:451` |
 | `maskFutureEnds` | `packages/canon-engine/src/spoiler/index.ts:63` |
 | `projectMapScene` | `packages/canon-engine/src/world/projections.ts:83` |
@@ -520,67 +517,6 @@ Entrées analysées : 11
 | `provenance` | `packages/contracts/src/schemas.ts:40` |
 | `slug` | `packages/contracts/src/primitives.ts:18` |
 | `sourceRefSchema` | `packages/contracts/src/schemas.ts:126` |
-
-## `packages/database/src/index.ts`
-
-| Symbole | Définition |
-| ------- | ---------- |
-| `$Enums` | `packages/database/src/index.ts:155` |
-| `AcquisitionMethod` | `packages/database/src/index.ts:523` |
-| `AffiliationMembership` | `packages/database/src/index.ts:35` |
-| `AffiliationType` | `packages/database/src/index.ts:447` |
-| `AppearanceCause` | `packages/database/src/index.ts:507` |
-| `AppearanceState` | `packages/database/src/index.ts:105` |
-| `Belief` | `packages/database/src/index.ts:120` |
-| `BodyOccupancy` | `packages/database/src/index.ts:70` |
-| `BodyStateType` | `packages/database/src/index.ts:499` |
-| `BodyState` | `packages/database/src/index.ts:95` |
-| `BodyType` | `packages/database/src/index.ts:467` |
-| `Body` | `packages/database/src/index.ts:60` |
-| `Certainty` | `packages/database/src/index.ts:479` |
-| `Chapter` | `packages/database/src/index.ts:80` |
-| `CharacterAssignment` | `packages/database/src/index.ts:45` |
-| `CharacterRole` | `packages/database/src/index.ts:40` |
-| `Character` | `packages/database/src/index.ts:20` |
-| `CohortProfile` | `packages/database/src/index.ts:459` |
-| `ConsciousnessStateType` | `packages/database/src/index.ts:503` |
-| `ConsciousnessState` | `packages/database/src/index.ts:100` |
-| `ConsciousnessType` | `packages/database/src/index.ts:471` |
-| `Consciousness` | `packages/database/src/index.ts:65` |
-| `EpistemicState` | `packages/database/src/index.ts:519` |
-| `EventParticipation` | `packages/database/src/index.ts:55` |
-| `FactSubjectType` | `packages/database/src/index.ts:511` |
-| `Fact` | `packages/database/src/index.ts:110` |
-| `Faction` | `packages/database/src/index.ts:30` |
-| `InformationTransferEvent` | `packages/database/src/index.ts:125` |
-| `KnowledgeState` | `packages/database/src/index.ts:115` |
-| `LocationType` | `packages/database/src/index.ts:483` |
-| `Location` | `packages/database/src/index.ts:75` |
-| `MembershipRole` | `packages/database/src/index.ts:451` |
-| `MembershipStatus` | `packages/database/src/index.ts:455` |
-| `NarrativeEvent` | `packages/database/src/index.ts:85` |
-| `NarrativeImportance` | `packages/database/src/index.ts:443` |
-| `NenAbility` | `packages/database/src/index.ts:25` |
-| `OccupancyType` | `packages/database/src/index.ts:475` |
-| `ParticipationType` | `packages/database/src/index.ts:463` |
-| `PopulationCohort` | `packages/database/src/index.ts:50` |
-| `PresenceCertainty` | `packages/database/src/index.ts:495` |
-| `PresencePrecision` | `packages/database/src/index.ts:491` |
-| `Presence` | `packages/database/src/index.ts:90` |
-| `PrismaClient` | `packages/database/src/index.ts:3` |
-| `PrismaPromise` | `packages/database/src/index.ts:13` |
-| `Prisma` | `packages/database/src/index.ts:937` |
-| `Reliability` | `packages/database/src/index.ts:531` |
-| `Source` | `packages/database/src/index.ts:130` |
-| `SpatialEntityType` | `packages/database/src/index.ts:487` |
-| `TransmissionType` | `packages/database/src/index.ts:527` |
-| `TruthStatus` | `packages/database/src/index.ts:515` |
-| `WorldBranchKind` | `packages/database/src/index.ts:535` |
-| `WorldBranchPolicy` | `packages/database/src/index.ts:539` |
-| `WorldBranch` | `packages/database/src/index.ts:135` |
-| `WorldEffectRecord` | `packages/database/src/index.ts:150` |
-| `WorldEventRecord` | `packages/database/src/index.ts:140` |
-| `WorldProjectionSnapshot` | `packages/database/src/index.ts:145` |
 
 ## `packages/domain/src/index.ts`
 

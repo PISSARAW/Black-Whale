@@ -1,9 +1,10 @@
 import { illumiBodyFree } from './illumiState'
 import { crossGameBusy } from './crossGame'
-import { musicPacifies } from './melodyRules'
 import { bashoWriting } from './bashoPoem'
-import { chainsImmobilize } from './kurapika'
+import { musicPacifies } from './melodyRules'
+import { healthPercent } from './health'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
+import { chainsImmobilize } from './kurapika'
 import { FIXED_STEP } from './frameData'
 import { fightingStyle, shouldStyleGuard, styleMovement } from './fightStyles'
 import { fighterDefinition } from './roster'
@@ -13,8 +14,9 @@ const MIN_X = 7
 const MAX_X = 93
 
 function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  if (fighter.melodyPerformance || musicPacifies(fighter)) return { ...fighter, blocking: false }
-  if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter)) return fighter
+  if (opponentCannotGuard(fighter)) return { ...fighter, blocking: false }
+  if (crossGameBusy(fighter) || projectionPreparing(fighter) || bashoWriting(fighter))
+    return fighter
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
   const next = opponentGuardState(fighter, player, gap)
@@ -28,6 +30,10 @@ function moveFreeOpponent(fighter: ArcadeFighter, player: ArcadeFighter): Arcade
     x: clamp(next.x + direction * motion * speed * FIXED_STEP, MIN_X, MAX_X),
     pose: motion === 0 ? 'idle' : 'walk',
   }
+}
+
+function opponentCannotGuard(fighter: ArcadeFighter): boolean {
+  return !illumiBodyFree(fighter) || Boolean(fighter.melodyPerformance) || musicPacifies(fighter)
 }
 
 function shouldBlock(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): boolean {
@@ -64,10 +70,16 @@ function opponentTarget(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFi
 }
 
 function opponentMotion(fighter: ArcadeFighter, gap: number): number {
-  return returningToBody(fighter) ? 1 : styleMovement(fighter.id, { gap, health: fighter.health })
+  return returningToBody(fighter)
+    ? 1
+    : styleMovement(fighter.id, { gap, health: healthPercent(fighter) })
 }
 
-function opponentGuardState(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): ArcadeFighter {
+function opponentGuardState(
+  fighter: ArcadeFighter,
+  player: ArcadeFighter,
+  gap: number,
+): ArcadeFighter {
   const blocking = opponentBlocking(fighter, player, gap)
   const releasedGuard = fighter.blocking && !blocking
   return {
@@ -79,5 +91,7 @@ function opponentGuardState(fighter: ArcadeFighter, player: ArcadeFighter, gap: 
 }
 
 export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  return illumiBodyFree(fighter) ? moveFreeOpponent(fighter, player) : { ...fighter, blocking: false }
+  return illumiBodyFree(fighter)
+    ? moveFreeOpponent(fighter, player)
+    : { ...fighter, blocking: false }
 }

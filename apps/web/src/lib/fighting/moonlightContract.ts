@@ -1,6 +1,7 @@
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { chrolloPageForMove } from './chrolloBook'
 import { hatsuSealedByOn } from './onTechnique'
+import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
 export const MOONLIGHT_TRUCE_FRAMES = 300
@@ -31,6 +32,7 @@ const other = (side: FightSide): FightSide => (side === 'player' ? 'opponent' : 
 export function moonlightNenAvailable(fighter: ArcadeFighter): boolean {
   return (
     fighter.aura > 0 &&
+    !predatorNenLocked(fighter) &&
     !fighter.moonlightZetsu &&
     fighter.hatsuEffects.forcedZetsuFrames === 0 &&
     canUseHatsu(fighter.nen) &&

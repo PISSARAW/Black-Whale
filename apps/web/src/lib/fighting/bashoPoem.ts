@@ -2,6 +2,7 @@ import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloPageForMove, CHROLLO_SECONDARY } from './chrolloBook'
 import { chainAbilitySealed } from './kurapika'
 import { hatsuSealedByOn } from './onTechnique'
+import { predatorNenLocked } from './predatorSeal'
 import type { ArcadeFighter, FightState } from './types'
 
 export const BASHO_POEM_MOVE = 'basho:neutralSpecial'
@@ -54,6 +55,7 @@ export function bashoNenAvailable(fighter: ArcadeFighter): boolean {
     canUseHatsu(fighter.nen) &&
     fighter.hatsuEffects.forcedZetsuFrames === 0 &&
     !fighter.moonlightZetsu &&
+    !predatorNenLocked(fighter) &&
     !hatsuSealedByOn(fighter)
   )
 }
@@ -96,6 +98,7 @@ export function writingBodyAvailable(fighter: ArcadeFighter): boolean {
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
     !fighter.blocking &&
+    !fighter.melodyPerformance &&
     freeWritingMind(fighter)
   )
 }

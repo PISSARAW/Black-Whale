@@ -79,10 +79,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Needle People : aiguille spéciale implantée au crâne, puis ordre à une marionnette privée d’autonomie. Le remodelage du visage reste distinct.',
       'Needle People: implant a special skull needle, then command a puppet stripped of autonomy. Physical face alteration is separate.',
     ],
-    finisherCondition: [
-      'Aucun finisher offensif attesté.',
-      'No attested offensive finisher.',
-    ],
+    finisherCondition: ['Aucun finisher offensif attesté.', 'No attested offensive finisher.'],
     labels: [
       'Pique d’assassin|Assassin Jab',
       'Paume Zoldyck|Zoldyck Palm',

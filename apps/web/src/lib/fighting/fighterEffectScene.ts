@@ -1,15 +1,16 @@
 import { createKallutoPaperScene } from './kallutoScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
-import { createBiohazardScene } from './biohazardScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
+import { createBiohazardScene } from './biohazardScene'
 import { createCrossGameScene } from './crossGameScene'
-import { createMachiThreadScene } from './machiThreadScene'
+import { createPreparationScene } from './preparationScene'
 import { createSecretWindowScene } from './secretWindowScene'
+import { createMachiThreadScene } from './machiThreadScene'
 import { createBashoFireScene } from './bashoFireScene'
 import { createNenFieldScene } from './nenFieldScene'
 import { gyoSight, insideEn } from './nenPerception'
-import { createCamillaCatScene } from './camillaCatScene'
 import { createBenjaminEffectScene } from './benjaminEffectScene'
+import { createCamillaCatScene } from './camillaCatScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
 import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
@@ -31,6 +32,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   const paper = createKallutoPaperScene(options)
   const doors = createVoconteDoorScene(options)
   const biohazard = createBiohazardScene(options)
+  const preparedScene = createPreparationScene(options)
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
   const crossGame = createCrossGameScene(options)
@@ -56,6 +58,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     paper.sync(state, seconds)
     doors.sync(state, seconds)
     biohazard.sync(state, seconds)
+    preparedScene.sync(state, seconds)
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
     crossGame.sync(state, seconds)
@@ -75,6 +78,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       paper.dispose()
       doors.dispose()
       biohazard.dispose()
+      preparedScene.dispose()
       secretWindow.dispose()
       camilla.dispose()
       crossGame.dispose()
@@ -83,10 +87,10 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
       nenFields.dispose()
       benjamin.dispose()
       machi.dispose()
+      kurapika.dispose()
       scene.remove(gum, ...cards)
       gumGeometry.dispose()
       gumMaterial.dispose()
-      kurapika.dispose()
       cardGeometry.dispose()
       cardMaterial.dispose()
     },

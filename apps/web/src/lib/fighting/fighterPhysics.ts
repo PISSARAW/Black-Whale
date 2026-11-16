@@ -1,8 +1,8 @@
 import { holdMary, maryHeld } from './bloodyMary'
-import { crossGameRestrained, holdCrossGame } from './crossGame'
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
-import { advanceCyclotron } from './phinksCyclotron'
+import { crossGameRestrained, holdCrossGame } from './crossGame'
 import { sleepingBody } from './hanzoProjection'
+import { advanceCyclotron } from './phinksCyclotron'
 import { advanceFighterAttack } from './fighterAttacks'
 import { advanceAirborne } from './fighterMovement'
 import { boxesOverlap, FIXED_STEP, pushbox } from './frameData'
@@ -16,11 +16,13 @@ const MAX_X = 93
 export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
   fighter = advanceCyclotron(fighter)
   fighter = holdMary(holdCrossGame(fighter))
-  const vertical = crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
+  const vertical =
+    crossGameRestrained(fighter) || maryHeld(fighter) ? fighter : advanceAirborne(fighter)
   const wakeup = advanceWakeup(fighter)
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
     ...fighter,
+    preparationRecovery: Math.max(0, (fighter.preparationRecovery ?? 0) - 1),
     ...vertical,
     ...wakeup,
     ...combo,
@@ -63,14 +65,20 @@ export function separateFighterPushboxes(
   player: ArcadeFighter,
   opponent: ArcadeFighter,
 ): Pick<FightState, 'player' | 'opponent'> {
-  player = holdMary(player)
-  opponent = holdMary(opponent)
-  player = holdCrossGame(anchorFighter(player))
-  opponent = holdCrossGame(anchorFighter(opponent))
+  player = holdMary(holdCrossGame(player))
+  opponent = holdMary(holdCrossGame(opponent))
+  player = anchorFighter(player)
+  opponent = anchorFighter(opponent)
   if (player.hanzoProjection || opponent.hanzoProjection) {
     return {
-      player: { ...player, facing: player.x <= sleepingBody(opponent).x ? 1 : -1 },
-      opponent: { ...opponent, facing: opponent.x <= sleepingBody(player).x ? 1 : -1 },
+      player: {
+        ...player,
+        facing: player.x <= sleepingBody(opponent).x ? 1 : -1,
+      },
+      opponent: {
+        ...opponent,
+        facing: opponent.x <= sleepingBody(player).x ? 1 : -1,
+      },
     }
   }
   const playerFacing: -1 | 1 = player.x <= opponent.x ? 1 : -1
@@ -125,9 +133,11 @@ function pushShifts(
   opponent: ArcadeFighter,
   overlap: number,
 ): [number, number] {
-  if (positionFixed(player) && positionFixed(opponent)) return [0, 0]
-  if (positionFixed(player)) return [0, overlap]
-  if (positionFixed(opponent)) return [overlap, 0]
+  const playerFixed = positionFixed(player)
+  const opponentFixed = positionFixed(opponent)
+  if (playerFixed && opponentFixed) return [0, 0]
+  if (playerFixed) return [0, overlap]
+  if (opponentFixed) return [overlap, 0]
   const playerAtWall = player.x <= MIN_X || player.x >= MAX_X
   const opponentAtWall = opponent.x <= MIN_X || opponent.x >= MAX_X
   if (playerAtWall) return [0, overlap]

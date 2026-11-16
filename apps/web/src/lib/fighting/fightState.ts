@@ -1,12 +1,13 @@
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
-import { createBiohazardInventory } from './biohazard'
+import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
-import { carryMoonlightRound } from './moonlightContract'
+import { createBiohazardInventory } from './biohazard'
 import { createBenjaminBaton } from './benjaminBaton'
-import { createKurapika } from './kurapika'
-import { createPainPacker } from './feitanPain'
+import { carryMoonlightRound } from './moonlightContract'
 import { createChrolloBook } from './chrolloBook'
+import { createKurapika } from './kurapika'
 import { createFightEnvironment, type FightEnvironment } from './fightEnvironment'
+import { createPainPacker } from './feitanPain'
 import { FIGHT_FPS } from './fightClock'
 import { DEFAULT_FIGHT_FORMAT, fightFormat, type FightFormatId } from './formats'
 import { createFightingNen } from './nen'
@@ -27,8 +28,10 @@ export function createFightState(
     typeof options === 'string' ? options : (options.formatId ?? DEFAULT_FIGHT_FORMAT)
   const mode = typeof options === 'string' ? 'versus-ai' : (options.mode ?? 'versus-ai')
   const format = fightFormat(formatId)
+  const environment = createFightEnvironment(typeof options === 'string' ? {} : options.environment)
   return setupIllumiNeedles({
-    environment: createFightEnvironment(typeof options === 'string' ? {} : options.environment),
+    battlefield: createBattlefield(environment),
+    environment,
     formatId,
     mode,
     player: createFighter({ id: playerId, x: 22, facing: 1, health: format.health }),
@@ -60,6 +63,7 @@ export function nextFightRound(state: FightState): FightState {
   return carryMoonlightRound(
     {
       ...state,
+      battlefield: createBattlefield(state.environment),
       voconteDoors: undefined,
       parallelFuture: undefined,
       forecastSimulation: undefined,
@@ -96,6 +100,19 @@ export function nextFightRound(state: FightState): FightState {
   )
 }
 
+function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
+  return fighter.kurapika
+    ? {
+        ...fighter,
+        kurapika: {
+          ...fighter.kurapika,
+          lifespanFrames: previous.kurapika?.lifespanFrames ?? 0,
+        },
+      }
+    : fighter
+}
+
 function createFighter(options: {
   id: FighterId
   x: number
@@ -104,7 +121,7 @@ function createFighter(options: {
 }): ArcadeFighter {
   return {
     ...options,
-    equipment: options.id === 'zakuro' ? ['blood-infusion'] : [],
+    equipment: personalEquipment(options.id),
     maxHealth: options.health,
     biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
@@ -179,17 +196,4 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
     seed = Math.imul(seed ^ character.charCodeAt(0), 16777619)
   }
   return seed >>> 0
-}
-
-function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
-  return fighter.kurapika
-    ? {
-        ...fighter,
-        kurapika: {
-          ...fighter.kurapika,
-          lifespanFrames: previous.kurapika?.lifespanFrames ?? 0,
-        },
-      }
-    : fighter
 }

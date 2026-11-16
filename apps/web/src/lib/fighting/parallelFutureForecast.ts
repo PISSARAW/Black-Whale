@@ -17,6 +17,7 @@ export function forecastParallelFuture(
     if (predicted.phase === 'fighting') predicted = simulate(predicted, held)
     frames.push({
       voconteDoors: predicted.voconteDoors,
+      battlefield: predicted.battlefield,
       player: predicted.player,
       opponent: predicted.opponent,
       projectiles: predicted.projectiles,

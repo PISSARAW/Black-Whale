@@ -1,6 +1,7 @@
 import type * as Three from 'three'
 import { buildBanquetDetails, disposeBanquetDetails } from '../tour/banquetView'
 import type { TierPlan } from '../tour/blueprint'
+import { buildBurialChamberDetails, burialSurfacePlan } from '../tour/burialChamberView'
 import type { Polygon } from '../tour/types'
 import { buildCasinoDetails, casinoSurfacePlan } from '../tour/casinoView'
 import { buildDoorDetails } from '../tour/doorView'
@@ -25,12 +26,14 @@ interface DetailOptions {
 
 const DETAIL_BUILDERS: ReadonlyArray<(options: DetailOptions) => Three.Group | null> = [
   buildBanquetDetails,
+  buildBurialChamberDetails,
   buildCasinoDetails,
   buildScreeningRoomDetails,
   buildSupremeCourtDetails,
 ]
 
 const SURFACE_PLANS: ReadonlyArray<(plan: TierPlan, reveal: boolean) => TierPlan> = [
+  burialSurfacePlan,
   casinoSurfacePlan,
   screeningRoomSurfacePlan,
   supremeCourtSurfacePlan,

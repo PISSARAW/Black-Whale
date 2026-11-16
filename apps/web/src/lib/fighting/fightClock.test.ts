@@ -8,8 +8,8 @@ import { EMPTY_INPUT } from './types'
 describe('fight clock initialization', () => {
   it.each([
     ['heavens-arena', 180],
-    ['knockout', 90],
-    ['arcade', 60],
+    ['knockout', 120],
+    ['arcade', 120],
   ] as const)(
     'keeps %s at %i seconds and expires on the last frame when formats load first',
     (formatId, seconds) => {

@@ -1,12 +1,13 @@
 import { illumiBodyFree } from './illumiState'
-import { predatorNenLocked } from './predatorSeal'
+import { preparationCheck } from './preparationRequirements'
 import { scaleNenControl } from './nenHatsuEffects'
+import { predatorNenLocked } from './predatorSeal'
 import { isErigeronAction } from './billSupport'
+import { canUseHatsu } from '@black-whale/nen-engine'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
-import { canActivateLsdf } from './lsdf'
 import { isBiscuitTrueForm } from './biscuitForm'
-import { canUseHatsu } from '@black-whale/nen-engine'
+import { canActivateLsdf } from './lsdf'
 import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 export { advanceHatsuFrames, hatsuFor } from './hatsu/registry'
@@ -52,6 +53,7 @@ export function resolveDeathHatsu(
 
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
+  if (!preparationCheck(state, side, state[side].attack?.moveId).ready) return state
   if (source === 'bill') return state
   if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
   // Secret Window's private owl cannot satisfy Skill Hunter's visual witnessing condition.
@@ -78,6 +80,7 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
+  if (!preparationCheck(options.state, side, moveId).ready) return options.state
   return scaleNenControl(
     options.state,
     withDolphinIdentity(
@@ -139,8 +142,7 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
   return consumeStandardAvoidance(fighter)
 }
 
-type AvoidanceKey =
-  'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards'
+type AvoidanceKey = 'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'isolationFrames',

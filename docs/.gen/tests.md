@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 554
+Fichiers : 596
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -220,17 +220,49 @@ Fichiers : 554
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
 
+## `apps/web/src/lib/fighting/audio/melody.test.ts`
+
+- continuous flute audio > waits for preparation, sustains both performers, and silences an interrupted performance
+
 ## `apps/web/src/lib/fighting/auraColours.test.ts`
 
 - fighter aura colours > uses the colour the manga or the anime showed
+
+## `apps/web/src/lib/fighting/basho.test.ts`
+
+- Basho’s written Great Hiker poem > preserves a bookmarked copy’s composition and requires its page to remain available
+
+## `apps/web/src/lib/fighting/bashoPanel.test.ts`
+
+- Basho poem panel > shows editable three-line composition, the exact trigger and disclosed duel tuning
 
 ## `apps/web/src/lib/fighting/benjamin.test.ts`
 
 - Benjamin’s canonical loadout > inherits only from dead loyal academy graduates serving in his army
 
+## `apps/web/src/lib/fighting/beyond.test.ts`
+
+- Beyond: physical duel and a real prepared curse > keeps fourteen physical moves without any low-health super or dangling cancel
+
+## `apps/web/src/lib/fighting/bill.test.ts`
+
+- Bill’s physical combat and support-only Erigeron > keeps his ten ordinary physical moves and a single non-offensive support ability
+
+## `apps/web/src/lib/fighting/biohazardScene.test.ts`
+
+- physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
+
+## `apps/web/src/lib/fighting/bonolenov.test.ts`
+
+- Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
+
 ## `apps/web/src/lib/fighting/chrollo.test.ts`
 
 - Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
+
+## `apps/web/src/lib/fighting/cluck.test.ts`
+
+- Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
 
 ## `apps/web/src/lib/fighting/combatGrammar.test.ts`
 
@@ -285,23 +317,44 @@ Fichiers : 554
 
 ## `apps/web/src/lib/fighting/formats.test.ts`
 
-- 2D fight formats > offers distinct hit, health and hybrid victory rules
+- 2D fight formats > keeps Tour judging separate from health-based duels
 
 ## `apps/web/src/lib/fighting/franklin.test.ts`
 
 - Franklin’s Double Machine Gun > fires ten travelling Nen bullets from alternating hands for U, without duplicate emissions
 
+## `apps/web/src/lib/fighting/furykov.test.ts`
+
+- Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
+
+## `apps/web/src/lib/fighting/gel.test.ts`
+
+- Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
 ## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
 
 - fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
+
+## `apps/web/src/lib/fighting/hinrigh.test.ts`
+
+- Hinrigh’s physical Biohazard objects > starts with two real pairs; activation transforms one without a damaging attack or stat buff
 
 ## `apps/web/src/lib/fighting/hisoka.test.ts`
 
 - Hisoka’s distinct elastic techniques > loads the complete Hatsu registry
 
+## `apps/web/src/lib/fighting/illumi.test.ts`
+
+- Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
+- Illumi conditions and borrowed needles > can commit exactly forty aura and still implant the charged needle
+
 ## `apps/web/src/lib/fighting/inBungee.test.ts`
 
 - In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
+
+## `apps/web/src/lib/fighting/kalluto.test.ts`
+
+- Kalluto paper and surveillance dolls > does not plant on guard or avoidance
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 
@@ -317,6 +370,43 @@ Fichiers : 554
 - Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
 - Leorio’s attested techniques > lists only one Hatsu, generic physical blows, and no finisher
 
+## `apps/web/src/lib/fighting/longhi.test.ts`
+
+- Longhi’s voluntary Moonlight Act > offers disclosed terms without a hitbox, damage, movement, aura charge or signature on hit
+
+## `apps/web/src/lib/fighting/longhiPanel.test.ts`
+
+- Moonlight Act consent panel > discloses the terms before Chrollo offers a copied Moonlight Act
+
+## `apps/web/src/lib/fighting/luini.test.ts`
+
+- Luini — anchor, departure and unrestricted return > anchors from inside the sealed room without moving or creating any offensive/defensive effect
+- Luini — copies keep the complete passage and personal prerequisites > Skill Hunter must make its own anchor and visits; closing the page dismisses the anchor
+
+## `apps/web/src/lib/fighting/lynchPanel.test.ts`
+
+- private Body and Soul panel > offers supported questions to human interrogators without letting P1 command the AI
+
+## `apps/web/src/lib/fighting/machi.test.ts`
+
+- Machi real thread uses > sutures only the wounded caster after preparation, without an offensive hitbox
+
+## `apps/web/src/lib/fighting/machiPresentation.test.ts`
+
+- Machi thread presentation uses actual engine links > renders a thread to the attached target, hides it after release and disposes its resources
+
+## `apps/web/src/lib/fighting/melody.test.ts`
+
+- Melody’s continuous music > stops with L, even without aura, releasing the listener immediately
+
+## `apps/web/src/lib/fighting/melodyHearing.test.ts`
+
+- Melody’s bodily hearing > listens passively in Zetsu, with stolen Nen and without Gyo
+
+## `apps/web/src/lib/fighting/mizaistom.test.ts`
+
+- Mizaistom — conditional yellow card > gives a moving player time to read the warning and stop without being punished
+
 ## `apps/web/src/lib/fighting/movesets.test.ts`
 
 - wave one movesets > gives ten fighters the complete requested move structure
@@ -325,9 +415,43 @@ Fichiers : 554
 
 - Musse — handgun and Secret Window > keeps one contact Hatsu and physical normals, without an invented execution finisher
 
+## `apps/web/src/lib/fighting/nenCombat.test.ts`
+
+- Nen techniques in an actual 2D duel > En detects physical bodies in Zetsu, hidden aura and entering projectiles only inside its radius
+- Category components and Emperor Time > applies hexagon efficiencies to fists and defence, including normalized catalogue aliases
+
+## `apps/web/src/lib/fighting/nenPresentation.test.ts`
+
+- Nen perception in the rendered duel > actually hides a hostile Nen projectile until Gyo or an En contact reveals it
+
 ## `apps/web/src/lib/fighting/onTechnique.test.ts`
 
 - On (The Last Mission) > banks grudge from damage taken, never from aura
+
+## `apps/web/src/lib/fighting/padaille.test.ts`
+
+- Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
+
+## `apps/web/src/lib/fighting/parallelFuture.test.ts`
+
+- Laplace Devil in the real 2D engine > enters Zetsu with closed eyes, without attacking, guarding or granting an evade
+
+## `apps/web/src/lib/fighting/phinks.test.ts`
+
+- Phinks — right-arm rotations, then one Ripper Cyclotron punch > starts a vulnerable wind-up without a hitbox, movement, charge or immediate aura payment
+
+## `apps/web/src/lib/fighting/predator.test.ts`
+
+- Rihan — analysis, targeted predation and the 48-hour price > never grants defence or forced Zetsu just by landing a special
+
+## `apps/web/src/lib/fighting/predatorInteractions.test.ts`
+
+- Predator interactions > can be destroyed by an enemy blow without sealing Nen or hitting a body
+
+## `apps/web/src/lib/fighting/preparation.test.ts`
+
+- Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
+- Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
 
 ## `apps/web/src/lib/fighting/projectiles.test.ts`
 
@@ -340,6 +464,14 @@ Fichiers : 554
 ## `apps/web/src/lib/fighting/rosterSelection.test.ts`
 
 - fighting roster selection > places every playable fighter in exactly one labelled group
+
+## `apps/web/src/lib/fighting/sayird.test.ts`
+
+- Sayird and Little Eye outside the 2D duel > describes control, sight, hearing and real small targets in both languages
+
+## `apps/web/src/lib/fighting/shizuku.test.ts`
+
+- Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 
@@ -360,6 +492,22 @@ Fichiers : 554
 ## `apps/web/src/lib/fighting/terebellum.test.ts`
 
 - Sweet Home damage transfer > does not grant an avoidance charge on activation
+
+## `apps/web/src/lib/fighting/theta.test.ts`
+
+- Theta’s real handgun and unknown Hatsu > exposes physical pistol shots and removes the invented Nen finisher
+
+## `apps/web/src/lib/fighting/voconte.test.ts`
+
+- Voconte — Door, actual directional passage > connects existing frames after a vulnerable startup, without teleporting or attacking
+
+## `apps/web/src/lib/fighting/zakuro.test.ts`
+
+- Zakuro’s physical Bloody Mary > lets the AI finish a finite infusion without walking away or receiving health
+
+## `apps/web/src/lib/fighting/zakuroPanel.test.ts`
+
+- Bloody Mary material and capture panel > discloses the wound, own blood, finite bags, physical travel and duel resistance before commands
 
 ## `apps/web/src/lib/hunt/arena.test.ts`
 

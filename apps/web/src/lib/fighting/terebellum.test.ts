@@ -4,6 +4,7 @@ import { resolveFightImpacts } from './combatImpact'
 import { attackData, otherSide } from './frameData'
 import { hatsuAvoidsImpact, triggerHatsu } from './hatsu'
 import { sweetHomeContacts } from './sweetHomeContacts'
+import { projectHanzo } from './hanzoProjection'
 import { finisherReady } from './movesets'
 import { projectileProfile, type ProjectileHit } from './projectiles'
 import { EMPTY_INPUT, type FightSide, type FightState, type MoveSlot } from './types'
@@ -94,11 +95,11 @@ describe('Sweet Home damage transfer', () => {
       const control = resolveFightImpacts(withoutHatsu(ready, owner), [])
       const next = resolveFightImpacts(ready, [])
       const damage = control.impact!.damage
-      expect(control[owner].health).toBe(100 - damage)
+      expect(control[owner].health).toBe(control[owner].maxHealth - damage)
       expect(sweetHomeContacts(ready, owner)).toEqual({ right: null, left: attacker })
-      expect(next[owner].health).toBe(100)
+      expect(next[owner].health).toBe(next[owner].maxHealth)
       expect(next[owner].hitStun).toBe(0)
-      expect(next[attacker].health).toBe(100 - damage)
+      expect(next[attacker].health).toBe(next[attacker].maxHealth - damage)
       expect(next[attacker].hitStun).toBeGreaterThan(0)
       expect(next.impact).toMatchObject({
         damage,
@@ -118,8 +119,8 @@ describe('Sweet Home damage transfer', () => {
       const ready = activate(close(), 'player', `terebellum:${slot}`)
       const control = resolveFightImpacts(withoutHatsu(ready, 'player'), [])
       const next = resolveFightImpacts(ready, [])
-      expect(next.opponent.health).toBe(100)
-      expect(next.player.health).toBe(100 - control.impact!.damage)
+      expect(next.opponent.health).toBe(next.opponent.maxHealth)
+      expect(next.player.health).toBe(next.player.maxHealth - control.impact!.damage)
       expect(next.score).toEqual({ player: 0, opponent: 0 })
       expect(next.impact).toMatchObject({
         damage: control.impact!.damage,
@@ -138,8 +139,8 @@ describe('Sweet Home damage transfer', () => {
   it('does not absorb another person’s wound with the left hand', () => {
     const ready = activate(close(), 'player', 'terebellum:neutralSpecial')
     const next = resolveFightImpacts(ready, [])
-    expect(next.opponent.health).toBeLessThan(100)
-    expect(next.player.health).toBe(100)
+    expect(next.opponent.health).toBeLessThan(next.opponent.maxHealth)
+    expect(next.player.health).toBe(next.player.maxHealth)
     expect(next.impact?.transfer).toBeUndefined()
   })
 
@@ -148,8 +149,8 @@ describe('Sweet Home damage transfer', () => {
     (slot) => {
       const ready = activate(stance(close(), 'player', slot), 'opponent')
       const next = resolveFightImpacts(ready, [])
-      expect(next.player.health).toBe(100)
-      expect(next.opponent.health).toBeLessThan(100)
+      expect(next.player.health).toBe(next.player.maxHealth)
+      expect(next.opponent.health).toBeLessThan(next.opponent.maxHealth)
     },
   )
 
@@ -167,8 +168,8 @@ describe('Sweet Home damage transfer', () => {
       // Projectiles can reach the owner even when the opponent is beyond hand reach.
       const hit = shot(ready, 'opponent')
       const next = resolveFightImpacts(ready, [hit])
-      expect(next.player.health).toBeLessThan(100)
-      expect(next.opponent.health).toBe(100)
+      expect(next.player.health).toBeLessThan(next.player.maxHealth)
+      expect(next.opponent.health).toBe(next.opponent.maxHealth)
       expect(next.impact?.transfer).toBeUndefined()
     },
   )
@@ -184,7 +185,7 @@ describe('Sweet Home damage transfer', () => {
       if (reason === 'stun') ready.player.hitStun = 2
       if (reason === 'down') ready.player.knockdownFrames = 2
       const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
-      expect(next.player.health).toBeLessThan(100)
+      expect(next.player.health).toBeLessThan(next.player.maxHealth)
       expect(next.impact?.transfer).toBeUndefined()
     },
   )
@@ -192,11 +193,11 @@ describe('Sweet Home damage transfer', () => {
   it('rechecks the contact for each projectile instead of keeping a prepared target', () => {
     const ready = stance(close())
     const first = resolveFightImpacts(ready, [shot(ready, 'opponent')])
-    expect(first.player.health).toBe(100)
+    expect(first.player.health).toBe(first.player.maxHealth)
     expect(first.impact?.transfer).toBeDefined()
     const separated = { ...first, opponent: { ...first.opponent, x: 80 } }
     const second = resolveFightImpacts(separated, [shot(separated, 'opponent')])
-    expect(second.player.health).toBeLessThan(100)
+    expect(second.player.health).toBeLessThan(second.player.maxHealth)
     expect(second.impact?.transfer).toBeUndefined()
   })
 
@@ -204,13 +205,13 @@ describe('Sweet Home damage transfer', () => {
     const ready = stance(close(), 'player', 'downSpecial')
     const hit = shot(ready, 'player')
     const next = resolveFightImpacts(ready, [hit])
-    expect(next.opponent.health).toBe(100)
-    expect(next.player.health).toBeLessThan(100)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
+    expect(next.player.health).toBeLessThan(next.player.maxHealth)
     expect(next.impact?.transfer?.backlash).toBe(true)
     const separated = { ...ready, opponent: { ...ready.opponent, x: 80 } }
     const missed = resolveFightImpacts(separated, [shot(separated, 'player')])
-    expect(missed.player.health).toBe(100)
-    expect(missed.opponent.health).toBeLessThan(100)
+    expect(missed.player.health).toBe(missed.player.maxHealth)
+    expect(missed.opponent.health).toBeLessThan(missed.opponent.maxHealth)
     expect(missed.impact?.transfer).toBeUndefined()
   })
 
@@ -219,8 +220,8 @@ describe('Sweet Home damage transfer', () => {
     ready.opponent.nen.ken = true
     ready.opponent.hatsuEffects.isolationFrames = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
-    expect(next.player.health).toBe(100)
-    expect(next.opponent.health).toBe(100 - next.impact!.damage)
+    expect(next.player.health).toBe(next.player.maxHealth)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth - next.impact!.damage)
     expect(next.opponent.hatsuEffects.isolationFrames).toBe(1)
   })
 
@@ -228,8 +229,8 @@ describe('Sweet Home damage transfer', () => {
     const ready = stance(close())
     ready.player.hatsuEffects.isolationFrames = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
-    expect(next.player.health).toBe(100)
-    expect(next.opponent.health).toBe(100)
+    expect(next.player.health).toBe(next.player.maxHealth)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
     expect(next.impact?.transfer).toBeUndefined()
   })
 
@@ -238,18 +239,32 @@ describe('Sweet Home damage transfer', () => {
     ready.opponent.id = 'terebellum'
     const linked = stance(stance(ready), 'opponent')
     const next = resolveFightImpacts(linked, [shot(linked, 'opponent')])
-    expect(next.player.health).toBe(100)
-    expect(next.opponent.health).toBe(100 - next.impact!.damage)
+    expect(next.player.health).toBe(next.player.maxHealth)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth - next.impact!.damage)
+  })
+
+  it('still wakes Hanzo’s body when a right-hand absorption removes the wound', () => {
+    const ready = stance(close(), 'player', 'downSpecial')
+    ready.player.crouching = true
+    ready.opponent = { ...ready.opponent, id: 'hanzo' }
+    ready.opponent = { ...projectHanzo(ready.opponent), x: 80 }
+    const next = resolveFightImpacts(ready, [shot(ready, 'player')])
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
+    expect(next.opponent.hanzoProjection).toBeUndefined()
+    expect(next.opponent.x).toBe(ready.opponent.hanzoProjection!.bodyX)
+    expect(next.player.health).toBeLessThan(next.player.maxHealth)
+    expect(next.impact?.transfer?.backlash).toBe(true)
   })
 
   it('lets Chrollo replay the stolen page with the same contact requirements', () => {
     const ready = close()
     ready.player.id = 'chrollo'
     ready.player.hatsuEffects.stolenHatsu = 'terebellum'
+    ready.player.chrolloBook = { pages: ['terebellum'], page: 0, open: true, bookmark: null }
     const linked = stance(ready)
     const next = resolveFightImpacts(linked, [shot(linked, 'opponent')])
-    expect(next.player.health).toBe(100)
-    expect(next.opponent.health).toBeLessThan(100)
+    expect(next.player.health).toBe(next.player.maxHealth)
+    expect(next.opponent.health).toBeLessThan(next.opponent.maxHealth)
   })
 
   it('awards the KO to the owner when the recipient of a self-transfer dies', () => {
@@ -268,7 +283,7 @@ describe('Sweet Home damage transfer', () => {
     ready.player.health = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'player')])
     expect(next.player.health).toBe(0)
-    expect(next.opponent.health).toBe(100)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
     expect(next.winner).toBe('opponent')
   })
 
@@ -287,8 +302,8 @@ describe('Sweet Home damage transfer', () => {
     ready.mode = 'training'
     ready.opponent.health = 1
     const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
-    expect(next.opponent.health).toBe(100)
-    expect(next.player.health).toBe(100)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
+    expect(next.player.health).toBe(next.player.maxHealth)
     expect(next.phase).toBe('fighting')
   })
 
@@ -312,9 +327,9 @@ describe('Sweet Home damage transfer', () => {
         [],
       )
       const next = resolveFightImpacts(ready, [])
-      expect(next[owner].health).toBe(100)
+      expect(next[owner].health).toBe(next[owner].maxHealth)
       expect(next[enemy].health).toBe(
-        100 - selfStrike.impact!.damage - counterStrike.impact!.damage,
+        ready[enemy].health - selfStrike.impact!.damage - counterStrike.impact!.damage,
       )
       expect(next.score[owner]).toBe(selfStrike.score[owner] + counterStrike.score[owner])
       expect(next.score[enemy]).toBe(0)

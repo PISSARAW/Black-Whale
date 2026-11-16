@@ -9,13 +9,15 @@
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
+    "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
+    "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",
+    "test:luini": "svelte-kit sync && node scripts/check-luini.mjs",
     "test:voconte": "svelte-kit sync && node scripts/check-voconte.mjs",
     "test:phinks": "svelte-kit sync && node scripts/check-phinks.mjs",
-    "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",
-    "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
     "clean": "rimraf .svelte-kit build",
     "test:coverage": "vitest run --coverage",
-    "test:nen-ui": "svelte-kit sync && node scripts/check-fighting-nen.mjs"
+    "test:nen-ui": "svelte-kit sync && node scripts/check-fighting-nen.mjs",
+    "test:preparation-ui": "svelte-kit sync && node scripts/check-fighting-preparation.mjs"
   },
   "dependencies": {
     "@black-whale/ability-modules": "workspace:*",

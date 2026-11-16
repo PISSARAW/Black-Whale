@@ -243,16 +243,14 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
         sustainedKeys: [],
       },
     }
-    expect(
-      performMove({
-        state: borrowed,
-        side: 'player',
-        action: 'special',
-        input: { ...EMPTY_INPUT, left: true },
-      }),
-    ).toBe(borrowed)
-    borrowed.player.kurapika.held!.loaded = true
-    expect(dolphinCanUse(borrowed, 'player')).toBe(false)
+    const loaded = performMove({
+      state: borrowed,
+      side: 'player',
+      action: 'special',
+      input: { ...EMPTY_INPUT, left: true },
+    })
+    expect(loaded.player.kurapika!.held!.loaded).toBe(true)
+    expect(dolphinCanUse(loaded, 'player')).toBe(false)
   })
 
   it('makes the AI use ordinary attacks instead of repeatedly activating unsupported growth', () => {
@@ -270,8 +268,6 @@ describe('Bill’s physical combat and support-only Erigeron', () => {
     const presentation = fightSpecialPresentation(fight(), language)
     expect(presentation.ready).toBe(false)
     expect(presentation.label).toContain('Erigeron')
-    expect(presentation.hint).toContain(
-      language === 'fr' ? 'aucune cible de soutien' : 'no support target',
-    )
+    expect(presentation.hint).toContain(language === 'fr' ? 'Graine vivante' : 'Living seed')
   })
 })

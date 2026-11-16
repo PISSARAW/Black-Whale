@@ -36,6 +36,16 @@ function tradeHatsuEffects({ original, incoming, outgoing }: TradeFighterOptions
   return effects
 }
 
+function tradeChainState({ original, incoming, outgoing }: TradeFighterOptions) {
+  return {
+    kurapika: outgoing.kurapika !== original.kurapika ? outgoing.kurapika : incoming.kurapika,
+    chainJail: incoming.chainJail ?? outgoing.chainJail,
+    judgmentChain: incoming.judgmentChain ?? outgoing.judgmentChain,
+    drainingChain: incoming.drainingChain ?? outgoing.drainingChain,
+    stolenChainAbility: incoming.stolenChainAbility ?? outgoing.stolenChainAbility,
+  }
+}
+
 export function tradeTotals(options: {
   original: Record<FightSide, number>
   first: Record<FightSide, number>
@@ -53,14 +63,4 @@ export function tradeAttachment(original: FightState, first: FightState, second:
   const opponentChanged = second.bungeeGum !== original.bungeeGum
   if (playerChanged && opponentChanged) return null
   return playerChanged ? first.bungeeGum : second.bungeeGum
-}
-
-function tradeChainState({ original, incoming, outgoing }: TradeFighterOptions) {
-  return {
-    kurapika: outgoing.kurapika !== original.kurapika ? outgoing.kurapika : incoming.kurapika,
-    chainJail: incoming.chainJail ?? outgoing.chainJail,
-    judgmentChain: incoming.judgmentChain ?? outgoing.judgmentChain,
-    drainingChain: incoming.drainingChain ?? outgoing.drainingChain,
-    stolenChainAbility: incoming.stolenChainAbility ?? outgoing.stolenChainAbility,
-  }
 }

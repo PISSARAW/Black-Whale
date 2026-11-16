@@ -41,7 +41,7 @@ describe('On (The Last Mission)', () => {
   it('banks grudge from damage taken, never from aura', () => {
     const state = duel()
     const struck = advance(performAttack(state, 'player', 'heavy'), 0.24)
-    const lost = 100 - struck.opponent.health
+    const lost = state.opponent.health - struck.opponent.health
     expect(lost).toBeGreaterThan(0)
     expect(struck.opponent.on?.grudge).toBeCloseTo(lost * 2)
     expect(struck.player.on?.grudge ?? 0).toBe(0)
@@ -70,7 +70,7 @@ describe('On (The Last Mission)', () => {
     expect(nenAttackFactor(oath, 'heavy')).toBeGreaterThan(nenAttackFactor(ren, 'heavy'))
     let burning = oath
     for (let frame = 0; frame < 60; frame += 1) burning = advanceOn(burning)
-    expect(burning.health).toBeCloseTo(97.5)
+    expect(burning.health).toBeCloseTo(oath.health - 2.5)
     expect(burning.aura).toBe(oath.aura)
     expect(burning.on!.grudge).toBeCloseTo(71)
   })

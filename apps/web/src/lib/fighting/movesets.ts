@@ -4,56 +4,60 @@ import { tuneBeyondMoveset } from './beyondMoveset'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
 import { illumiBodyFree } from './illumiState'
-import { illumiResources } from './illumiAccess'
-import { illumiMoveReadiness } from './illumiPresentation'
-import { tuneIllumiMoveset } from './illumiMoveset'
 import { tuneVoconteMoveset } from './voconteMoveset'
 import { voconteMoveResources } from './voconteDoorAction'
+import { illumiMoveReadiness } from './illumiPresentation'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
-import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
-import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
+import { tuneIllumiMoveset } from './illumiMoveset'
+import { illumiResources } from './illumiAccess'
+import { tuneMachiMoveset } from './machiMoveset'
+import { machiBindReady } from './machiThread'
 import { tuneZakuroMoveset, zakuroMoveReady } from './bloodyMaryMoveset'
-import { blinkyBloodReady } from './blinky'
-import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
+import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
+import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
+import { preparedSource, preparedActionReady } from './preparationActions'
+import { tunePreparationMoveset } from './preparationMoveset'
+import { preparationCheck } from './preparationRequirements'
 import { canAskLynchQuestion } from './lynchRules'
 import { tuneLynchMoveset } from './lynchMoveset'
-import { crossGameCanWarn } from './crossGame'
+import { blinkyBloodReady } from './blinky'
+import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { tunePhinksMoveset } from './phinksMoveset'
 import { cyclotronMoveResources } from './phinksAction'
 import { cyclotronPunchReady } from './phinksCyclotron'
+import { crossGameCanWarn } from './crossGame'
+import { tuneGelMoveset } from './gelMoveset'
+import { sealedSenseCount } from './saiyuSenses'
 import { isPredatorMove, predatorNenAvailable, predatorReady } from './predator'
 import { predatorNenLocked } from './predatorSeal'
+import { tuneCamillaMoveset } from './camillaMoveset'
+import { tuneThetaMoveset } from './thetaMoveset'
 import { tuneMelodyMoveset } from './melodyMoveset'
 import { melodyMoveResources } from './melodyRules'
-import { tuneBashoMoveset } from './bashoMoveset'
-import { bashoCanWrite } from './bashoPoem'
-import { tuneGelMoveset } from './gelMoveset'
-import { machiBindReady } from './machiThread'
-import { tuneMachiMoveset } from './machiMoveset'
-import { tuneCamillaMoveset } from './camillaMoveset'
-import { sealedSenseCount } from './saiyuSenses'
-import { tuneThetaMoveset } from './thetaMoveset'
 import { thetaShotMove } from './thetaFirearm'
+import { isErigeronAction } from './billSupport'
 import { tuneParallelFutureMoveset } from './parallelFutureMoveset'
 import { futureMoveResources } from './parallelFutureAbility'
-import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
+import { healthPercent } from './health'
+import { tuneBashoMoveset } from './bashoMoveset'
+import { bashoCanWrite } from './bashoPoem'
 import { tuneLonghiMoveset } from './longhiMoveset'
 import { moonlightCanOffer } from './moonlightContract'
-import { isErigeronAction } from './billSupport'
-import { tuneBenjaminMoveset } from './benjaminMoveset'
-import { benjaminMoveAvailable } from './benjaminBaton'
-import { tuneKurapikaMoveset } from './kurapikaMoveset'
-import { kurapikaMoveAvailable } from './kurapika'
-import { feitanMoveAvailable } from './feitanPain'
+import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
 import { tuneChrolloMoveset } from './chrolloMoveset'
+import { tuneKurapikaMoveset } from './kurapikaMoveset'
+import { kurapikaMoveAvailable } from './kurapika'
 import { tuneHisokaMoveset } from './hisokaMoveset'
-import { remotePunchAvailable } from './leorioAttack'
 import { musseMoveAvailable } from './secretWindow'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
+import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
+import { tuneBenjaminMoveset } from './benjaminMoveset'
 import { tuneFranklinMoveset } from './franklinMoveset'
 import { franklinNenAvailable } from './franklinAttack'
+import { benjaminMoveAvailable } from './benjaminBaton'
+import { feitanMoveAvailable } from './feitanPain'
 import { isBiscuitFormMove, isBiscuitTrueForm } from './biscuitForm'
 import { hanzoMoveResources } from './hanzoProjection'
 import { canUseHatsu } from '@black-whale/nen-engine'
@@ -92,13 +96,17 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneBeyondMoveset).map(tuneIllumiMoveset).map(tuneBiohazardMoveset)
+  ALL_MOVESETS.map(tuneBeyondMoveset)
+    .map(tunePreparationMoveset)
+    .map(tuneIllumiMoveset)
+    .map(tuneBiohazardMoveset)
     .map(tuneMachiMoveset)
     .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
     .map(tuneVoconteMoveset)
     .map(tunePhinksMoveset)
     .map(tuneBenjaminMoveset)
+    .map(tuneChrolloMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneMelodyMoveset)
     .map(tuneLynchMoveset)
@@ -153,8 +161,8 @@ export function moveForAction(
       'melody',
       'basho',
       'musse',
-      'phinks',
       'mizaistom',
+      'phinks',
       'voconte',
     ].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
@@ -169,14 +177,13 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
   if (!illumiBodyFree(state[side])) return false
   const needles = illumiMoveReadiness(state, side, move)
-  return needles ?? contextualMoveAllowed(state, side, move)
-}
-
-function contextualMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (needles !== null) return needles
   const blood = zakuroMoveReady(state, side, move)
   if (blood !== null) return blood
   const battle = bonolenovMoveAllowed(state, side, move)
   if (battle !== null) return battle
+  const preparation = preparedMoveAllowed(state, side, move)
+  if (preparation !== null) return preparation
   if (!paperAndBlinkyMoveAllowed(state, side, move)) return false
   if (move.id === 'mizaistom:neutralSpecial') return crossGameCanWarn(state, side)
   if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
@@ -185,22 +192,27 @@ function contextualMoveAllowed(state: FightState, side: FightSide, move: Fighter
 }
 
 function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
-  if (beyondCurseUnavailable({ fighter: state[side], kind: move.kind, moveId: move.id })) return false
+  if (beyondCurseUnavailable({ fighter: state[side], kind: move.kind, moveId: move.id }))
+    return false
   if (move.id === 'lynch:neutralSpecial') return canAskLynchQuestion(state, side, move.id)
   const fighter = state[side]
-  if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
+  if (
+    isPredatorMove(fighter, move.id) &&
+    move.category === 'finisher' &&
+    !predatorReady(state, side)
+  )
     return false
-  if (!predatorMoveAllowed(state, side, move)) return false
+  if (!lsdfMoveAllowed(state, side, move)) return false
   if (!hasMoveResources(fighter, move)) return false
   if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
-  const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
-  if (needles !== null) return needles && fighter.aura >= move.auraCost
   const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
   if (door !== null) return door
+  const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
+  if (needles !== null) return needles && fighter.aura >= move.auraCost
   const biohazard = biohazardMoveResources(fighter, move.id)
   if (biohazard !== null) return biohazard
   return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
@@ -209,11 +221,11 @@ export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boo
 function ordinaryMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   const cyclotron = cyclotronMoveResources(fighter, move.id)
   if (cyclotron !== null && move.kind === 'special') return cyclotron
+  const melody = melodyMoveResources(fighter, move.kind, move.id)
+  if (melody !== null) return melody
   if (move.kind === 'special' && predatorNenLocked(fighter)) return false
   if (move.kind === 'special' && isPredatorMove(fighter, move.id))
     return predatorNenAvailable(fighter)
-  const melody = melodyMoveResources(fighter, move.kind, move.id)
-  if (melody !== null) return melody
   if (!musseMoveAvailable(fighter, move.id)) return false
   const future = futureMoveResources(fighter, move.id)
   if (future !== null) return future
@@ -243,8 +255,6 @@ function isHeldChainMove(fighter: ArcadeFighter, move: FighterMove): boolean {
 
 function characterMoveAvailable(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (isErigeronAction(fighter, move.kind, move.id)) return false
-  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
-    return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
   return (
     kurapikaMoveAvailable(fighter, move.id) &&
@@ -256,6 +266,7 @@ function characterMoveAvailable(fighter: ArcadeFighter, move: FighterMove): bool
 
 function hasTechniqueResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (move.category !== 'special' && move.category !== 'finisher') return true
+  if (fighter.id === 'franklin') return franklinNenAvailable(fighter)
   return canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
 }
 
@@ -331,17 +342,30 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,
-  cluck: (state, side) => opponentOf(state, side).health <= 40,
+  cluck: (state, side) => healthPercent(opponentOf(state, side)) <= 40,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
 }
 
-function predatorMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
-  if (!isPredatorMove(state[side], move.id) || move.category !== 'finisher') return true
-  return predatorReady(state, side)
+function lsdfMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  return (
+    move.kind !== 'special' || !isLsdfMove(state[side], move.id) || canActivateLsdf(state, side)
+  )
+}
+
+function preparedMoveAllowed(
+  state: FightState,
+  side: FightSide,
+  move: FighterMove,
+): boolean | null {
+  if (move.kind !== 'special') return null
+  if (preparedSource(state, side, move.id)) return preparedActionReady(state, side, move.id)
+  return preparationCheck(state, side, move.id).ready ? null : false
 }
 
 function paperAndBlinkyMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
-  return (move.kind !== 'special' || paperMoveAllowed(state, side, move.id)) &&
+  return (
+    (move.kind !== 'special' || paperMoveAllowed(state, side, move.id)) &&
     blinkyMoveAllowed(state, side, move.id)
+  )
 }

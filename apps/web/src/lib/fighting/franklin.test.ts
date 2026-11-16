@@ -84,12 +84,12 @@ describe('Franklin’s Double Machine Gun', () => {
     const active = atActive(technique(duel()))
     expect(activeHitbox(active.player)).toBeNull()
     const noBullet = resolveFightImpacts(active, [])
-    expect(noBullet.opponent.health).toBe(100)
+    expect(noBullet.opponent.health).toBe(noBullet.opponent.maxHealth)
     const flying = advance(technique(duel()), 20)
     expect(flying.nextProjectileId).toBeGreaterThan(1)
-    expect(flying.opponent.health).toBe(100)
+    expect(flying.opponent.health).toBe(flying.opponent.maxHealth)
     const struck = advance(flying, 75)
-    expect(struck.opponent.health).toBeLessThan(100)
+    expect(struck.opponent.health).toBeLessThan(struck.opponent.maxHealth)
     expect(struck.nextProjectileId).toBe(21)
     expect(struck.impact).toMatchObject({ kind: 'ranged', attacker: 'player' })
   })
@@ -126,7 +126,7 @@ describe('Franklin’s Double Machine Gun', () => {
       { ...ready, opponent: { ...ready.opponent, wakeupInvulnerableFrames: 10 } },
       [hit],
     )
-    expect(immune.opponent.health).toBe(100)
+    expect(immune.opponent.health).toBe(immune.opponent.maxHealth)
   })
 
   it.each(['neutralSpecial', 'forwardSpecial', 'downSpecial', 'backSpecial', 'finisher'] as const)(
@@ -147,7 +147,7 @@ describe('Franklin’s Double Machine Gun', () => {
 
   it('does not require a wounded opponent to use the prolonged barrage', () => {
     const ready = duel()
-    expect(ready.opponent.health).toBe(100)
+    expect(ready.opponent.health).toBe(ready.opponent.maxHealth)
     expect(finisherReady(ready, 'player')).toBe(true)
     expect(finisherReady({ ...ready, player: { ...ready.player, aura: 54 } }, 'player')).toBe(false)
   })
@@ -190,7 +190,7 @@ describe('Franklin’s Double Machine Gun', () => {
       player: {
         ...copy.player,
         aura: 100,
-        hatsuEffects: { ...copy.player.hatsuEffects, stolenHatsu: 'franklin' as const },
+        chrolloBook: { pages: ['franklin' as const], page: 0, open: true, bookmark: null },
       },
     }
     const firing = spawnRangedProjectiles(atActive(technique(copied)))
@@ -246,7 +246,7 @@ describe('Franklin’s Double Machine Gun', () => {
     const base = duel()
     const ready = { ...base, opponent: { ...base.opponent, x: 25 } }
     const struck = advance(technique(ready), 24)
-    expect(struck.opponent.health).toBeLessThan(100)
+    expect(struck.opponent.health).toBeLessThan(struck.opponent.maxHealth)
     expect(struck.impact?.kind).toBe('ranged')
   })
 })

@@ -14,6 +14,7 @@ export type FightStageId =
   | 'observation-deck'
   | 'screening-room'
   | 'supreme-court'
+  | 'princes-burial-chamber'
   | 'heilly-hideout'
 
 export type FightStageKind = 'hold' | 'heavens-arena' | 'ship-room'
@@ -103,6 +104,16 @@ export const FIGHT_STAGES: readonly FightStageDefinition[] = [
     noteFr: 'Pont 1 · pièce de la visite',
     noteEn: 'Tier 1 · room from the visit',
     swatch: ['#3a2a1e', '#c9a86a'],
+  },
+  {
+    id: 'princes-burial-chamber',
+    kind: 'ship-room',
+    spaceId: 'tier-1-princes-burial-chamber-rotunda',
+    nameFr: 'Chambre funéraire des princes',
+    nameEn: 'Princes’ burial chamber',
+    noteFr: 'Pont 1-C · quatorze cercueils et appareil rituel',
+    noteEn: 'Tier 1-C · fourteen coffins and ritual apparatus',
+    swatch: ['#24201c', '#f59e0b'],
   },
   {
     id: 'heilly-hideout',

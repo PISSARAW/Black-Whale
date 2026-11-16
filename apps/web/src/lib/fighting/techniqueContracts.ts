@@ -1,7 +1,7 @@
-import { BIOHAZARD_CANON } from './biohazardCanon'
-import { BONOLENOV_CANON } from './bonolenovCanon'
-import { BENJAMIN_CANON } from './benjaminCanon'
 import { CHROLLO_CANON } from './chrolloCanon'
+import { BONOLENOV_CANON } from './bonolenovCanon'
+import { BIOHAZARD_CANON } from './biohazardCanon'
+import { BENJAMIN_CANON } from './benjaminCanon'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import type { FighterMove } from './movesetTypes'
 import type { FightSide, FightState, FighterId, MoveSlot } from './types'
@@ -56,14 +56,6 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     narrativeEffect:
       'Accelerates living growth and can support another person’s Nen development. The current duel has no support target.',
   },
-  'biscuit:neutralSpecial': {
-    source: 'Greed Island — ch. 154, Biscuit reveals her natural body',
-    evidence: 'manga-shown',
-    conditions: ['Biscuit is in her compact form and free to act on the ground.'],
-    prohibitions: ['This reveal is not an attack or Cookie treatment and cannot be stolen.'],
-    narrativeCost: 'Reveals the appearance Biscuit prefers to hide; no aura cost or timer.',
-    narrativeEffect: 'Returns to her natural muscular body for the rest of the round.',
-  },
   'leorio:neutralSpecial': {
     source: 'Hunter × Hunter — chapter 325',
     evidence: 'manga-shown',
@@ -71,6 +63,14 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     prohibitions: ['No airborne aura ball, medical pulse, or low-health transformation.'],
     narrativeCost: 'Aura and commitment to striking the surface.',
     narrativeEffect: 'Aura travels through the surface and emerges as a fist at a distant point.',
+  },
+  'biscuit:neutralSpecial': {
+    source: 'Greed Island — ch. 154, Biscuit reveals her natural body',
+    evidence: 'manga-shown',
+    conditions: ['Biscuit is in her compact form and free to act on the ground.'],
+    prohibitions: ['This reveal is not an attack or Cookie treatment and cannot be stolen.'],
+    narrativeCost: 'Reveals the appearance Biscuit prefers to hide; no aura cost or timer.',
+    narrativeEffect: 'Returns to her natural muscular body for the rest of the round.',
   },
   'hanzo:neutralSpecial': {
     source: 'Succession Contest — chapter 372, Hanzo Skill 4',

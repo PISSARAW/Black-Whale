@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { winnerLabel, finishLabel, isDisplayInput, type DummyCommand, type DummyCommandData } from './fightingPageHelpers'
-  import { battleStageCallbacks } from './battleCallbacks'
+  import {
+    winnerLabel,
+    finishLabel,
+    isDisplayInput,
+    type DummyCommand,
+    type DummyCommandData,
+  } from './fightingPageHelpers'
   import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
   import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount } from 'svelte'
@@ -8,6 +13,7 @@
   import { designateBlinkyTarget, selectBlinkyCommand } from '$lib/fighting/blinky'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
+  import { battleStageCallbacks } from './battleCallbacks'
   import Seo from '$lib/components/Seo.svelte'
   import FightStage from '$lib/components/fighting/FightStage.svelte'
   import FightDisplaySettings from '$lib/components/fighting/FightDisplaySettings.svelte'
@@ -26,7 +32,7 @@
     tickFight,
   } from '$lib/fighting/engine'
   import { toggleEmperorTime } from '$lib/fighting/kurapikaActions'
-  import { type FightFormatId } from '$lib/fighting/formats'
+  import { DEFAULT_FIGHT_FORMAT, type FightFormatId } from '$lib/fighting/formats'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { createFightEnvironment } from '$lib/fighting/fightEnvironment'
   import {
@@ -51,7 +57,7 @@
   let selectedPlayer: FighterId = 'kurapika'
   let selectedOpponent: FighterId = 'hisoka'
   let environment = createFightEnvironment()
-  let selectedFormat: FightFormatId = 'heavens-arena'
+  let selectedFormat: FightFormatId = DEFAULT_FIGHT_FORMAT
   let selectedMode: FightMode = 'versus-ai'
   let state: FightState | null = null
   let input: FightInput = { ...EMPTY_INPUT }
@@ -109,7 +115,8 @@
   }
 
   function queueAction(action: (current: FightState) => FightState) {
-    if (state && fightAcceptsCommands(state) && !paused) pendingActions = [...pendingActions, action]
+    if (state && fightAcceptsCommands(state) && !paused)
+      pendingActions = [...pendingActions, action]
   }
 
   function attack(kind: AttackKind) {
@@ -139,7 +146,10 @@
   function flushPendingActions(current: FightState): FightState {
     const actions = pendingActions
     pendingActions = []
-    return actions.reduce((next, action) => fightAcceptsCommands(next) ? action(next) : next, current)
+    return actions.reduce(
+      (next, action) => (fightAcceptsCommands(next) ? action(next) : next),
+      current,
+    )
   }
 
   function control(key: keyof FightInput, active: boolean) {
@@ -374,11 +384,26 @@
         onPause={togglePause}
       />
       <div class="match-area">
-        <FightLynchInterrogation {state} {language} {paused}
-          onQuestion={(side, question) => queueAction((current) => askLynchQuestion({ state: current, side, question }, performAuraAttack))}
+        <FightLynchInterrogation
+          {state}
+          {language}
+          {paused}
+          onQuestion={(side, question) =>
+            queueAction((current) =>
+              askLynchQuestion({ state: current, side, question }, performAuraAttack),
+            )}
         />
-        <FightHatsuPanels {state} {language} {paused} onAction={queueAction} perform={performAuraAttack}
-          onEditing={() => { input = { ...EMPTY_INPUT }; opponentInput = { ...EMPTY_INPUT } }} />
+        <FightHatsuPanels
+          {state}
+          {language}
+          {paused}
+          onAction={queueAction}
+          perform={performAuraAttack}
+          onEditing={() => {
+            input = { ...EMPTY_INPUT }
+            opponentInput = { ...EMPTY_INPUT }
+          }}
+        />
         <FightStage
           {state}
           {language}
@@ -391,8 +416,12 @@
           onCall={callBody}
           onFinisher={finisher}
           onEmperor={() => queueAction((current) => toggleEmperorTime(current, 'player'))}
-          onBlinkyTarget={(side, target) => { if (state) state = designateBlinkyTarget(state, side, target) }}
-          onBlinkyCommand={(side, command) => { if (state) state = selectBlinkyCommand(state, side, command) }}
+          onBlinkyTarget={(side, target) => {
+            if (state) state = designateBlinkyTarget(state, side, target)
+          }}
+          onBlinkyCommand={(side, command) => {
+            if (state) state = selectBlinkyCommand(state, side, command)
+          }}
           onOpponentControl={opponentControl}
           onControl={control}
           {...battleStageCallbacks(queueAction)}

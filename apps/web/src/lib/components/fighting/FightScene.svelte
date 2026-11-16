@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
+  import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { createPredatorScene } from '$lib/fighting/predatorScene'
-  import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
-  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import {
     createHanzoProjectionScene,
     projectionCameraSpan,
@@ -139,10 +139,17 @@
           }
         }
 
-        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter, observer: fighter === state.player ? undefined : state.player })
+        const buildFighter = (fighter: ArcadeFighter) =>
+          buildFightFigure({
+            THREE,
+            glow,
+            fighter,
+            observer: fighter === state.player ? undefined : state.player,
+          })
 
         // Rebuild only the fighter whose aura or body form changes; keep the stage.
-        const nenKey = (fighter: ArcadeFighter) => fightFigureKey(fighter) + String(state.player.nen.gyo)
+        const nenKey = (fighter: ArcadeFighter) =>
+          fightFigureKey(fighter) + String(state.player.nen.gyo)
         const models = {
           player: { model: buildFighter(state.player), nen: nenKey(state.player) },
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
@@ -158,11 +165,15 @@
         })
         const projectionScene = createHanzoProjectionScene({ scene, buildFighter, worldX })
         const fighterEffects = createFighterEffectScene({ THREE, scene, worldX, worldY })
-        const feitanScene = createFeitanScene({
-          THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns,
-        })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
         const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
+        const feitanScene = createFeitanScene({
+          THREE,
+          scene,
+          worldX,
+          worldY,
+          figureOf: (side) => models[side].model.turns,
+        })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
           const nen = nenKey(fighter)
@@ -327,9 +338,9 @@
           })
           projectileScene.sync(state.projectiles, seconds, state.player)
           fighterEffects.sync(state, seconds)
-          feitanScene.sync(state, seconds)
-          lsdfScene.sync(state, seconds)
           predatorScene.sync(state, seconds)
+          lsdfScene.sync(state, seconds)
+          feitanScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
@@ -385,9 +396,9 @@
           geometries.forEach((item) => item.dispose())
           projectileScene.dispose()
           fighterEffects.dispose()
-          feitanScene.dispose()
-          lsdfScene.dispose()
           predatorScene.dispose()
+          lsdfScene.dispose()
+          feitanScene.dispose()
           projectionScene.dispose()
           post?.dispose()
           scenery.dispose()

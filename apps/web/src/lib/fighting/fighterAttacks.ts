@@ -1,9 +1,10 @@
 import { illumiBodyFree } from './illumiState'
-import { biohazardBodyFree } from './biohazard'
-import { battleCombatBusy } from './battleCantabileRules'
-import { crossGameBusy } from './crossGame'
 import { machiImmobilized } from './machiThread'
+import { battlePreparing } from './battleCantabileRules'
+import { biohazardBodyFree } from './biohazard'
+import { crossGameBusy } from './crossGame'
 import { predatorNenLocked } from './predatorSeal'
+import { melodyRestrictsCombat } from './melodyRules'
 import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
@@ -26,12 +27,19 @@ export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
-  let next: ArcadeFighter = { ...fighter, attack: { ...fighter.attack, frame } }
+  let next: ArcadeFighter = {
+    ...fighter,
+    attack: { ...fighter.attack, frame },
+  }
   if (!fighter.attack.impacted && frame >= data.startup + data.active) {
     next = setIn(releaseFocusedAura(next), false)
   }
   return frame >= attackTotal(data)
-    ? { ...setIn(releaseFocusedAura(next), false), attack: null, hatsuChargeFrames: 0 }
+    ? {
+        ...setIn(releaseFocusedAura(next), false),
+        attack: null,
+        hatsuChargeFrames: 0,
+      }
     : next
 }
 
@@ -47,7 +55,12 @@ export function startFighterAttack(options: {
   const { fighter, kind, auraCharged, concealed } = options
   const data = attackData(kind, {
     ...fighter,
-    attack: { ...fighter.attack!, kind, variant: options.variant, moveId: options.moveId },
+    attack: {
+      ...fighter.attack!,
+      kind,
+      variant: options.variant,
+      moveId: options.moveId,
+    },
   })
   const usesRyu = wantsAttackRyu(fighter)
   const focused = attackRyu(fighter, kind)
@@ -85,7 +98,11 @@ function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): F
     : null
 }
 
-export function canStartFighterAttack(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+export function canStartFighterAttack(
+  fighter: ArcadeFighter,
+  kind: AttackKind,
+  moveId?: string,
+): boolean {
   return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, moveId)
 }
 
@@ -94,10 +111,10 @@ function ordinaryCanStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (attackBodyBusy(fighter)) return false
-  if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
-  if (crossGameBusy(fighter)) return false
+  if (fighter.pluggingWounds) return false
+  if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
+  if (!biohazardBodyFree(fighter)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&
@@ -132,9 +149,8 @@ export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
 }
 
 function ordinaryCanBufferFighterAttack(fighter: ArcadeFighter): boolean {
-  if (attackBodyBusy(fighter)) return false
-  if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
-  if (crossGameBusy(fighter)) return false
+  if (fighter.pluggingWounds) return false
+  if (fighterTechniqueBusy(fighter)) return false
   if (
     fighter.hitStun > 0 ||
     fighter.blockStun > 0 ||
@@ -204,6 +220,14 @@ function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
   return wantsAttackRyu(fighter) && !focused ? focusAttackRyu(fighter, kind) : fighter
 }
 
-function attackBodyBusy(fighter: ArcadeFighter): boolean {
-  return Boolean(fighter.pluggingWounds) || !biohazardBodyFree(fighter)
+function fighterTechniqueBusy(fighter: ArcadeFighter): boolean {
+  return (
+    Boolean(fighter.preparationRecovery) ||
+    Boolean(fighter.pluggingWounds) ||
+    Boolean(fighter.cyclotronWindup) ||
+    crossGameBusy(fighter) ||
+    melodyRestrictsCombat(fighter) ||
+    battlePreparing(fighter) ||
+    !biohazardBodyFree(fighter)
+  )
 }

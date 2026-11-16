@@ -149,7 +149,7 @@ describe('Hanzo Skill 4 in fighting', () => {
   it('lets the double land physical blows from its own position', () => {
     const base = projected()
     const next = strike({ ...base, player: { ...base.player, x: 73 } }, 'player')
-    expect(next.opponent.health).toBeLessThan(100)
+    expect(next.opponent.health).toBeLessThan(next.opponent.maxHealth)
     expect(next.player.hanzoProjection?.bodyX).toBe(25)
     expect(next.impact?.attacker).toBe('player')
   })
@@ -162,10 +162,10 @@ describe('Hanzo Skill 4 in fighting', () => {
       opponent: { ...base.opponent, x: 76 },
     }
     const missed = strike(away, 'opponent')
-    expect(missed.player.health).toBe(100)
+    expect(missed.player.health).toBe(missed.player.maxHealth)
     expect(missed.player.hanzoProjection).toBeDefined()
     const struck = strike({ ...away, opponent: { ...away.opponent, x: 31 } }, 'opponent', true)
-    expect(struck.player.health).toBeLessThan(100)
+    expect(struck.player.health).toBeLessThan(struck.player.maxHealth)
     expect(struck.player.hanzoProjection).toBeUndefined()
     expect(struck.player.x).toBeLessThan(25)
     expect(struck.player.hitStun).toBeGreaterThan(0)
@@ -181,7 +181,7 @@ describe('Hanzo Skill 4 in fighting', () => {
     expect(body.hits).toHaveLength(1)
     const struck = resolveFightImpacts(body.state, body.hits)
     expect(struck.player.hanzoProjection).toBeUndefined()
-    expect(struck.player.health).toBeLessThan(100)
+    expect(struck.player.health).toBeLessThan(struck.player.maxHealth)
     expect(struck.impact).toMatchObject({ blocked: false, avoided: false })
   })
 
@@ -195,7 +195,7 @@ describe('Hanzo Skill 4 in fighting', () => {
     const next = frames(state, 1)
     expect(next.player.hanzoProjection).toBeUndefined()
     expect(next.player.x).toBeLessThan(30)
-    expect(next.player.health).toBe(100)
+    expect(next.player.health).toBe(next.player.maxHealth)
     expect(next.player.wakeupInvulnerableFrames).toBe(0)
   })
 
@@ -299,7 +299,7 @@ describe('Hanzo Skill 4 in fighting', () => {
     })
     expect(spoken.player.hanzoProjection).toBeUndefined()
     expect(spoken.player.x).toBe(25)
-    expect(spoken.player.health).toBe(100)
+    expect(spoken.player.health).toBe(spoken.player.maxHealth)
     expect(spoken.player.wakeupInvulnerableFrames).toBe(0)
   })
 

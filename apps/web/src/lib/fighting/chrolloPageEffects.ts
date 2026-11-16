@@ -1,3 +1,4 @@
+import { releaseLuiniAnchor } from './luiniSpatial'
 import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
 import { chrolloHasActivePage, type ChrolloPage } from './chrolloBook'
@@ -61,28 +62,17 @@ function clearPageEffects(options: {
   const targetSide = side === 'player' ? 'opponent' : 'player'
   let owner = clearEffects(state[side], OWN_EFFECTS[page] ?? [])
   owner = endCopiedObservation(owner, page)
+  if (page === 'padaille') owner = { ...owner, padailleTool: undefined }
   if (page === 'hanzo') owner = endCopiedProjection(owner)
-  if (page === 'feitan' && owner.hatsuEffects.painPacker) {
-    owner = {
-      ...owner,
-      hatsuEffects: {
-        ...owner.hatsuEffects,
-        painPacker: {
-          ...owner.hatsuEffects.painPacker,
-          armour: false,
-          packedDamage: 0,
-          sun: null,
-        },
-      },
-    }
-  }
+  owner = endCopiedPainPacker(owner, page)
   const cleared = {
     ...state,
     [side]: owner,
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
-  return releaseMachiPageThread(releaseIllumiPage(cleared, side, page), side, page)
+  const spatial = page === 'luini' ? releaseLuiniAnchor(cleared, side) : cleared
+  return releaseMachiPageThread(releaseIllumiPage(spatial, side, page), side, page)
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
@@ -119,4 +109,22 @@ function endCopiedProjection(fighter: CopiedFighter): CopiedFighter {
     reversalWindow: 0,
     ryuWindow: 0,
   }
+}
+
+function endCopiedPainPacker(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
+  if (page === 'feitan' && fighter.hatsuEffects.painPacker) {
+    return {
+      ...fighter,
+      hatsuEffects: {
+        ...fighter.hatsuEffects,
+        painPacker: {
+          ...fighter.hatsuEffects.painPacker,
+          armour: false,
+          packedDamage: 0,
+          sun: null,
+        },
+      },
+    }
+  }
+  return fighter
 }

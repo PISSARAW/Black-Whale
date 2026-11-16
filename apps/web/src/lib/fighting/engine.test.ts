@@ -31,10 +31,10 @@ describe('fighting engine', () => {
     let state = beginFight(createFight('benjamin', 'morena'))
     state = { ...state, player: { ...state.player, x: 46 }, opponent: { ...state.opponent, x: 52 } }
     const armed = performAttack(state, 'player', 'heavy')
-    expect(armed.opponent.health).toBe(100)
+    expect(armed.opponent.health).toBe(armed.opponent.maxHealth)
     expect(armed.impact).toBeNull()
     const struck = advance(armed, 0.24)
-    expect(struck.opponent.health).toBeLessThan(100)
+    expect(struck.opponent.health).toBeLessThan(struck.opponent.maxHealth)
     expect(struck.impact?.kind).toBe('heavy')
   })
 
@@ -59,9 +59,9 @@ describe('fighting engine', () => {
     }
     const armed = performAttack(state, 'player', 'special')
     expect(armed.player.aura).toBe(30)
-    expect(armed.opponent.health).toBe(100)
+    expect(armed.opponent.health).toBe(armed.opponent.maxHealth)
     const struck = advance(armed, 0.4)
-    expect(struck.opponent.health).toBeLessThan(100)
+    expect(struck.opponent.health).toBeLessThan(struck.opponent.maxHealth)
   })
 
   it('lets a quicker strike interrupt a heavy attack before impact', () => {
@@ -70,8 +70,8 @@ describe('fighting engine', () => {
     state = performAttack(state, 'player', 'heavy')
     state = performAttack(state, 'opponent', 'light')
     const interrupted = advance(state, 0.3)
-    expect(interrupted.player.health).toBeLessThan(100)
-    expect(interrupted.opponent.health).toBe(100)
+    expect(interrupted.player.health).toBeLessThan(interrupted.player.maxHealth)
+    expect(interrupted.opponent.health).toBe(interrupted.opponent.maxHealth)
     expect(interrupted.player.attack).toBeNull()
   })
 
@@ -88,8 +88,8 @@ describe('fighting engine', () => {
     let state = beginFight(createFight('kurapika', 'benjamin'))
     state = { ...state, player: { ...state.player, x: 47 }, opponent: { ...state.opponent, x: 53 } }
     const armed = opponentAttack(state)
-    expect(armed.player.health).toBe(100)
-    expect(advance(armed, 0.25).player.health).toBeLessThan(100)
+    expect(armed.player.health).toBe(armed.player.maxHealth)
+    expect(advance(armed, 0.25).player.health).toBeLessThan(advance(armed, 0.25).player.maxHealth)
     vi.restoreAllMocks()
   })
 
@@ -118,7 +118,7 @@ describe('fighting engine', () => {
     }
     state = advance(state, 0.02, { ...EMPTY_INPUT, aura: true, down: true })
     const denied = performAttack(state, 'player', 'special')
-    expect(denied.opponent.health).toBe(100)
+    expect(denied.opponent.health).toBe(denied.opponent.maxHealth)
     expect(
       tickFight(state, { ...EMPTY_INPUT, aura: true, down: true }, 0.05).player.aura,
     ).toBeGreaterThan(state.player.aura)
@@ -216,7 +216,7 @@ describe('fighting engine', () => {
     expect(exhausted.player.aura).toBeLessThan(18)
   })
 
-  it('keeps the historical arcade rule at ten points', () => {
+  it('continues arcade past ten points while health remains', () => {
     let state = beginFight(createFight('kurapika', 'hisoka'))
     state = {
       ...state,
@@ -226,8 +226,8 @@ describe('fighting engine', () => {
     }
     const ended = advance(performAttack(state, 'player', 'light'), 0.18)
     expect(ended.score.player).toBe(10)
-    expect(ended.phase).toBe('finished')
-    expect(ended.winner).toBe('player')
+    expect(ended.phase).toBe('fighting')
+    expect(ended.winner).toBeNull()
   })
 
   it('ends a Heavens Arena fight at ten judged points', () => {

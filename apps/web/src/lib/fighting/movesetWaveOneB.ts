@@ -1,5 +1,5 @@
-import { tuneFeitanMoveset } from './feitanMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
+import { tuneFeitanMoveset } from './feitanMoveset'
 
 const SPECS: readonly MovesetSpec[] = [
   {

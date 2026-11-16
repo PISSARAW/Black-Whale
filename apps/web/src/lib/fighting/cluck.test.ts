@@ -149,7 +149,7 @@ describe('Cluck — bird control retained by Steal Chain', () => {
     for (const move of movesetFor('cluck')!.moves) {
       expect(chainAbilitySealed(state.opponent, move.id)).toBe(false)
       if (move.category !== 'finisher')
-        expect(canUseMovesetMove(state, 'opponent', move)).toBe(true)
+        expect(canUseMovesetMove(state, 'opponent', move)).toBe(move.slot !== 'neutralSpecial')
     }
     expect(
       stealableChainMove({
@@ -160,23 +160,25 @@ describe('Cluck — bird control retained by Steal Chain', () => {
     ).toBeNull()
   })
 
-  it('retains an unavailable Hatsu without loading Dolphin, creating a flock or locking Emperor Time', () => {
+  it('can load bird control but preserves its missing real target and the Dolphin lock', () => {
     const held = recovered(advance(steal(duel()), 90))
     const active = toggleEmperorTime(held, 'player')
     expect(active.player.kurapika?.emperorTime).toBe(true)
-    expect(canUseMovesetMove(active, 'player', moveForSlot('kurapika', 'backSpecial')!)).toBe(false)
+    expect(canUseMovesetMove(active, 'player', moveForSlot('kurapika', 'backSpecial')!)).toBe(true)
     expect(dolphinCanUse(active, 'player')).toBe(false)
-    expect(steal(active)).toBe(active)
-    const later = advance(active, 120)
+    const loaded = steal(active)
+    expect(dolphinCanUse(loaded, 'player')).toBe(false)
+    expect(steal(loaded)).toBe(loaded)
+    const later = advance(loaded, 120)
     expect(later.player.kurapika?.held).toMatchObject({
       moveId: BIRD_MANIPULATION.id,
-      loaded: false,
+      loaded: true,
       used: false,
     })
     expect(later.player.attack).toBeNull()
     expect(later.projectiles).toHaveLength(0)
     expect(later.opponent.health).toBe(active.opponent.health)
-    expect(toggleEmperorTime(later, 'player').player.kurapika?.emperorTime).toBe(false)
+    expect(toggleEmperorTime(later, 'player').player.kurapika?.emperorTime).toBe(true)
   })
 
   it('returns the same ability when released or when the round resets', () => {

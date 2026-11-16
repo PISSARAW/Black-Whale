@@ -1,5 +1,6 @@
 <script lang="ts">
   import { FIGHT_FORMATS, type FightFormatId } from '$lib/fighting/formats'
+  import { HEALTH_PER_BAR } from '$lib/fighting/health'
 
   export let selected: FightFormatId
   export let language: 'fr' | 'en'
@@ -19,10 +20,8 @@
         <strong>{language === 'fr' ? format.titleFr : format.titleEn}</strong>
         <small>{language === 'fr' ? format.descriptionFr : format.descriptionEn}</small>
         <b>
-          {#if format.victory === 'points'}10 PTS · 3 KD{:else if format.victory === 'health'}100 {language ===
-            'fr'
-              ? 'PV'
-              : 'HP'}{:else}10 PTS · K.O.{/if}
+          {#if format.victory === 'points'}10 PTS · 3 KD{:else}{format.health / HEALTH_PER_BAR} × {HEALTH_PER_BAR}
+            {language === 'fr' ? 'PV' : 'HP'}{/if}
         </b>
       </button>
     {/each}

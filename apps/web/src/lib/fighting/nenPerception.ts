@@ -1,3 +1,4 @@
+import { liveEntity } from './preparationWorld'
 import { sleepingBody } from './hanzoProjection'
 import { senseDeprived } from './saiyuSenses'
 import type { ArcadeFighter, FightProjectile, FightSide, FightState } from './types'
@@ -56,6 +57,12 @@ export function enContacts(state: FightState, side: FightSide): number {
   const tether = gum ? Number(enTouchesSegment(observer, state[gum.owner], state[gum.target])) : 0
   return (
     bodies +
+    (state.battlefield?.entities ?? []).filter(
+      (entry) =>
+        liveEntity(entry) &&
+        !['destination', 'delivery'].includes(entry.kind) &&
+        insideEn(observer, entry),
+    ).length +
     tether +
     state.projectiles.filter(
       (projectile) =>

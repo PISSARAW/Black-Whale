@@ -26,6 +26,7 @@ export interface FutureCommand {
 
 export interface FutureFrame {
   voconteDoors?: FightState['voconteDoors']
+  battlefield?: FightState['battlefield']
   player: ArcadeFighter
   opponent: ArcadeFighter
   projectiles: FightState['projectiles']

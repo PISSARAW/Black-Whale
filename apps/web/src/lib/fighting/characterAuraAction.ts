@@ -1,19 +1,18 @@
-import { performIllumiAction } from './illumiAction'
 import { performVoconteDoorAction } from './voconteDoorAction'
-import { performBiohazardAction } from './biohazardAction'
+import { performIllumiAction } from './illumiAction'
 import { performMaryAction } from './bloodyMaryAction'
 import { performBattleCantabileAction } from './battleCantabileAction'
+import { performBiohazardAction } from './biohazardAction'
 import { performLynchAction } from './lynchAction'
-import { performCrossGameAction } from './crossGameAction'
 import { performMachiAction } from './machiAction'
-import { performCyclotronAction } from './phinksAction'
+import { performCrossGameAction } from './crossGameAction'
 import { performPredatorAction } from './predatorAction'
-import { performBashoAction } from './bashoAction'
-import { performMoonlightAction } from './moonlightAction'
+import { performCyclotronAction } from './phinksAction'
 import { performParallelFutureAction } from './parallelFutureAbility'
 import { performKurapikaAction } from './kurapikaActions'
 import { performChrolloBookAction } from './chrolloBookAction'
-import { hisokaTechniqueAllowed } from './hisokaTechnique'
+import { performBashoAction } from './bashoAction'
+import { performMoonlightAction } from './moonlightAction'
 import { performLeorioAction } from './leorioAttack'
 import { performBiscuitFormAction } from './biscuitFormAction'
 import { performLsdfAction } from './lsdfAction'
@@ -21,35 +20,29 @@ import { performProjectionAction } from './hanzoProjectionAction'
 import type { AuraAttackOptions } from './auraAttackAction'
 import type { FightState } from './types'
 
-/** Preserve character command ordering before the shared attack path. */
+/** Keep the existing order of character commands before the common attack path. */
 export function characterAuraAction(
   options: AuraAttackOptions,
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const attempts = [
-    () => performIllumiAction(options),
     () => performVoconteDoorAction(options),
-    () => performBiohazardAction(options),
+    () => performIllumiAction(options),
     () => performMaryAction(options),
     () => performBattleCantabileAction(options),
+    () => performBiohazardAction(options),
     () => performLynchAction(options),
-    () => performCrossGameAction(options),
     () => performMachiAction(options, perform),
+    () => performCrossGameAction(options),
     () => performPredatorAction(options),
     () => performParallelFutureAction(options),
     () => performCyclotronAction(options),
     () => performKurapikaAction(options, perform),
     () => performChrolloBookAction(options),
-    () =>
-      options.kind === 'special' &&
-      !hisokaTechniqueAllowed(options.state, options.side, options.moveId)
-        ? options.state
-        : null,
-    () => performBiscuitFormAction(options),
-    () => performLeorioAction(options, perform),
     () => performBashoAction(options),
     () => performMoonlightAction(options),
-    () => performLsdfAction(options),
+    () => performLeorioAction(options, perform),
+    () => formOrJudicialAction(options),
     () => performProjectionAction(options),
   ]
   for (const attempt of attempts) {
@@ -57,4 +50,9 @@ export function characterAuraAction(
     if (next) return next
   }
   return null
+}
+
+function formOrJudicialAction(options: AuraAttackOptions): FightState | null {
+  const form = performBiscuitFormAction(options)
+  return performLsdfAction(options) ?? form
 }

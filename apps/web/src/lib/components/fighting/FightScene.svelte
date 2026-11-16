@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { createFightCollisionScene } from '$lib/fighting/fightCollisionScene'
+  import { fightWorldX as worldX, fightWorldY as worldY } from '$lib/fighting/fightCoordinates'
   import { createFightPoseClock } from '$lib/fighting/fightPoseClock'
   import {
     backgroundParticipants,
@@ -72,8 +74,6 @@
 
   /** Per-second ease of the camera; 6 is a touch snappier than the old 0.07/frame at 60 Hz. */
   const CAMERA_RATE = 6
-  const worldX = (value: number) => (value - 50) * 0.115
-  const worldY = (value: number) => value * 0.12
 
   onMount(() => {
     let disposed = false
@@ -167,6 +167,7 @@
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },
         }
         scene.add(models.player.model.root, models.opponent.model.root)
+        const collisions = createFightCollisionScene({ THREE, scene })
         const projectileScene = createProjectileScene({
           THREE,
           scene,
@@ -392,6 +393,7 @@
             }
           }
 
+          collisions.sync(state)
           scenery.update?.(seconds)
           if (post) post.render()
           else renderer.render(scene, camera)
@@ -407,6 +409,7 @@
           materials.forEach(([, material]) => material.dispose())
           geometries.forEach((item) => item.dispose())
           Object.values(models).forEach(({ model }) => disposeMountedVisitHatsu(model.root))
+          collisions.dispose()
           projectileScene.dispose()
           fighterEffects.dispose()
           predatorScene.dispose()

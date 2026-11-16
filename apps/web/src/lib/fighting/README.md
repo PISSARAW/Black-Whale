@@ -274,9 +274,9 @@ La recette de référence porte sur Kurapika, Hisoka, Chrollo et Benjamin.
   Start pour lancer/pause ; Back pour parler ; L3/R3 pour arène et Gyo. Le Hatsu
   part au relâchement de X. Une nouvelle manette doit repasser au neutre avant
   de piloter le combat. Les manettes sans mapping standard sont signalées.
-- **Mouvements et contacts** : six attaques normales animées à la main pour chacun
+- **Mouvements et contacts** : six attaques normales et trois attaques directionnelles animées à la main pour chacun
   des quatre combattants ; la pose de contact tient pendant les frames actives.
-  Chrollo garde le livre dans sa main droite en changeant de côté. Les réactions
+  Chrollo garde le livre et Kurapika sa main de chaîne du côté anatomique droit en changeant de côté. Les réactions
   utilisent la durée réelle du stun, y compris les impacts courts et les coups
   successifs ; elles restent figées pendant le hitstop. La marche conserve sa
   cadence liée à la distance quand le rendu descend à 20 Hz.
@@ -1446,3 +1446,27 @@ est disponible aux lecteurs d’écran ; les textures et matériaux privés sont
 les mouvements réduits, le placement derrière le duel, l’absence de mutation du jeu
 et la libération des ressources. `scripts/check-fighting-stages.mjs` contrôle aussi
 ces décors dans la scène de production, sur les trois tailles d’écran habituelles.
+
+## Collisions et gestes de référence
+
+Les volumes du laboratoire sont dessinés par `fightCollisionScene.ts` dans le
+plan 3D du combat. Ils partagent la caméra, le zoom, le cadrage et les conversions
+`fightCoordinates.ts` des personnages. `fightCollisionBoxes.ts` reprend les volumes
+logiques du moteur et leur applique la même interpolation que le corps. Les volumes
+ne dépendent plus de pourcentages CSS ; leurs tailles, les portées et les règles de
+touche restent celles du moteur. Cyan/violet désignent les corps, rouge une frappe
+active, orange un projectile. Les projectiles de Nen cachés respectent Gyo/En.
+Les volumes sont réservés à l’entraînement, ignorent le brouillard et réutilisent
+leurs géométries jusqu’à la destruction de la scène.
+
+Les douze attaques directionnelles de Kurapika, Hisoka, Chrollo et Benjamin ont des
+préparations, contacts et récupérations propres. `fightHandedPose.ts` conserve
+l’anatomie de la main droite pour les chaînes et le livre lors d’un changement de
+côté. Les poses de contact restent synchronisées avec les frames actives ; les
+appuis au sol sont contrôlés pour les deux orientations.
+
+`fightCollisionScene.test.ts` vérifie les volumes, leur interpolation, la perception
+des projectiles, la projection et le nettoyage. `node apps/web/scripts/check-fighting-contact.mjs`
+contrôle la scène de production à 1440, 844, 390 et 320 px, avec un écran simulé à
+forte densité. `node apps/web/scripts/check-fighting-motion.mjs` capture les 36 gestes
+dans leurs trois phases et les deux orientations.

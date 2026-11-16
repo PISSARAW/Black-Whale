@@ -1,4 +1,4 @@
-import { chrolloHandedPose } from './chrolloHandedPose'
+import { rightHandedPose } from './fightHandedPose'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
@@ -149,8 +149,8 @@ export interface PlanContext extends ReactionContext {
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const plan = unmirroredBodyPlan(fighter, context)
-  return plan && fighter.id === 'chrollo' && fighter.facing === -1
-    ? { ...plan, pose: chrolloHandedPose(plan.pose) }
+  return plan && ['chrollo', 'kurapika'].includes(fighter.id) && fighter.facing === -1
+    ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan
 }
 

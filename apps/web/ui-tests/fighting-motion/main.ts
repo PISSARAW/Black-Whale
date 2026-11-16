@@ -13,6 +13,9 @@ const slots: MoveSlot[] = [
   'lowHeavy',
   'airLight',
   'airHeavy',
+  'forwardLight',
+  'forwardHeavy',
+  'backHeavy',
 ]
 document.body.style.cssText = 'margin:0;background:#101923;color:#e8edf7;font:16px system-ui'
 const title = document.createElement('h1')
@@ -20,7 +23,7 @@ title.style.cssText = 'margin:12px 24px;font-size:22px'
 document.body.append(title)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
 renderer.setPixelRatio(1)
-renderer.setSize(1440, 1080)
+renderer.setSize(1440, slots.length * 180)
 renderer.setScissorTest(true)
 renderer.setClearColor(0x101923)
 document.body.append(renderer.domElement)
@@ -81,8 +84,8 @@ function show(phase: 'startup' | 'active' | 'recovery' = 'active', facing: 1 | -
     })
     const col = i % 4
     const row = Math.floor(i / 4)
-    renderer.setViewport(col * 360, (5 - row) * 180, 360, 180)
-    renderer.setScissor(col * 360, (5 - row) * 180, 360, 180)
+    renderer.setViewport(col * 360, (slots.length - 1 - row) * 180, 360, 180)
+    renderer.setScissor(col * 360, (slots.length - 1 - row) * 180, 360, 180)
     camera.left = -2.4
     camera.right = 2.4
     camera.top = 1.2

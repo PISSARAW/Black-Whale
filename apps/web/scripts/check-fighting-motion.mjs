@@ -26,12 +26,12 @@ try {
     executablePath: existsSync(chrome) ? chrome : undefined,
     args: ['--enable-unsafe-swiftshader'],
   })
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1140 } })
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1680 } })
   const errors = []
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/ui-tests/fighting-motion/`)
   await page.waitForFunction(() => window.fightMotionFixture)
-  assert.equal(await page.evaluate(() => window.fightMotionFixture.count), 24)
+  assert.equal(await page.evaluate(() => window.fightMotionFixture.count), 36)
   for (const facing of [1, -1]) {
     for (const phase of ['startup', 'active', 'recovery']) {
       await page.evaluate(({ phase, facing }) => window.fightMotionFixture.show(phase, facing), {
@@ -42,7 +42,7 @@ try {
     }
   }
   assert.deepEqual(errors, [])
-  process.stdout.write(`24 attacks × 3 phases × 2 facings rendered. Review images: ${output}\n`)
+  process.stdout.write(`36 attacks × 3 phases × 2 facings rendered. Review images: ${output}\n`)
 } finally {
   await browser?.close()
   await server.close()

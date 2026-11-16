@@ -64,6 +64,9 @@ const normals: MoveSlot[] = [
   'lowHeavy',
   'airLight',
   'airHeavy',
+  'forwardLight',
+  'forwardHeavy',
+  'backHeavy',
 ]
 const fighters: FighterId[] = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
 describe.each(fighters)('%s authored contact silhouettes', (id) => {

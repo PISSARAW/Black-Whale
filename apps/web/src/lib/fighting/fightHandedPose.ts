@@ -1,7 +1,7 @@
 import type { FightPose } from './fightPose'
 
-/** Skill Hunter stays in the actual right hand when the fighter changes sides. */
-export function chrolloHandedPose(pose: FightPose): FightPose {
+/** Preserve the anatomical hand of a held prop when a lead/rear pose is mirrored. */
+export function rightHandedPose(pose: FightPose): FightPose {
   const next = { ...pose }
   for (const joint of ['Shoulder', 'Elbow', 'Wrist'] as const) {
     const lead = `lead${joint}` as const

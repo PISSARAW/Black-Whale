@@ -82,6 +82,42 @@ describe('fighting rig', () => {
     expect(mirrored.leadElbow).toEqual(first.rearElbow)
   })
 
+  it('keeps Kurapika’s chain-hand thrust on the actual right hand after a side switch', () => {
+    const right = attacking('kurapika', 'forwardLight', 0)
+    right.attack!.frame = attackData('light', right).startup
+    const first = bodyPlan(right, context)!.pose
+    const mirrored = bodyPlan({ ...right, facing: -1 }, context)!.pose
+    expect(mirrored.rearElbow).toEqual(first.leadElbow)
+    expect(mirrored.rearShoulder).toEqual(first.leadShoulder)
+  })
+
+  it.each(['kurapika', 'hisoka', 'chrollo', 'benjamin'] as const)(
+    'keeps %s grounded through the seven ground contacts in both directions',
+    (id) => {
+      for (const facing of [1, -1] as const) {
+        const model = figureOf(id)
+        const standing = poseAndMeasure(model, fighter(id, { facing }), 1)
+        let seconds = 3
+        for (const slot of [
+          'standingLight',
+          'standingHeavy',
+          'lowLight',
+          'lowHeavy',
+          'forwardLight',
+          'forwardHeavy',
+          'backHeavy',
+        ] as const) {
+          const attack = attacking(id, slot, 0)
+          attack.facing = facing
+          attack.attack!.frame = attackData(attack.attack!.kind, attack).startup
+          const height = poseAndMeasure(model, attack, seconds)
+          expect(Math.abs(height - standing), `${id} ${slot} ${facing}`).toBeLessThan(0.1)
+          seconds += 2
+        }
+      }
+    },
+  )
+
   it('draws every fighter, with a plain guard for one that has no stance yet', () => {
     const unstanced = { ...fighter('kurapika'), id: 'no-stance' as FighterId }
     expect(bodyPlan(unstanced, context)?.pose.leadElbow).toBeDefined()

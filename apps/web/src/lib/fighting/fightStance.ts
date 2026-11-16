@@ -1,4 +1,5 @@
 import { addPoses, type FightPose } from './fightPose'
+import { ROSTER_STANCES } from './fightStancesRoster'
 import type { FighterId } from './types'
 
 /**
@@ -81,7 +82,7 @@ export const AIR_POSE: FightPose = {
 }
 
 export function fightStance(id: FighterId): FightStance | null {
-  return STANCES[id] ?? null
+  return STANCES[id] ?? ROSTER_STANCES[id] ?? null
 }
 
 export function stanceAt(stance: FightStance, seconds: number): FightPose {

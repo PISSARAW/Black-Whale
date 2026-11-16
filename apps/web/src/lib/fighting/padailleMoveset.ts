@@ -85,6 +85,7 @@ export function padailleMoveset(): FighterMoveset {
         return {
           ...move,
           variant: 'standing',
+          guard: 'mid',
           auraCost: move.slot === 'backSpecial' ? 0 : 20,
           cancelInto: [],
           canon: {

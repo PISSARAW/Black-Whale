@@ -28,6 +28,7 @@ function tuneShot(move: FighterMove): FighterMove {
   return {
     ...move,
     kind: 'ranged',
+    guard: 'mid',
     auraCost: 0,
     canon: HANDGUN,
     tuning: { ...move.tuning, damage: 0, active: 1, knockback: 0, lunge: 0 },

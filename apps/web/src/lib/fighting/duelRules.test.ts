@@ -107,8 +107,10 @@ describe('duel rules', () => {
     expect(state.player.attack?.kind).toBe('special')
     expect(state.player.aura).toBeLessThan(36)
   })
-  it('does not cancel on whiff or block', () => {
-    const whiff = performAttack(close(), 'player', 'light')
+  it('does not cancel on whiff or without a declared block route', () => {
+    const state = close()
+    state.player = { ...state.player, id: 'hisoka' }
+    const whiff = performAttack(state, 'player', 'light')
     expect(performAttack(whiff, 'player', 'heavy').player.attack?.kind).toBe('light')
     whiff.opponent.blocking = true
     whiff.opponent.guardFrames = 20

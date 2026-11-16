@@ -460,11 +460,10 @@ export function performThrow(state: FightState, side: FightSide): FightState {
 
 function performLegacyThrow(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
-  const marked = { ...state, [side]: { ...fighter, throwTechFrames: 8 } }
   if (fighter.y > 0) return state
-  if (!canMove(fighter)) return marked
+  if (!canMove(fighter)) return state
   return performAuraAttack({
-    state: marked,
+    state,
     side,
     kind: 'heavy',
     variant: 'throw',

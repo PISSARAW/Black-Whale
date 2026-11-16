@@ -12,15 +12,17 @@ const CHAIN_CAST: Partial<MoveTuning> = {
 }
 type ChainTuning = Partial<Omit<FighterMove, 'tuning'>> & { tuning: Partial<MoveTuning> }
 const CHAIN_MOVES: Partial<Record<MoveSlot, ChainTuning>> = {
-  neutralSpecial: { variant: 'standing', tuning: CHAIN_CAST },
-  backSpecial: { variant: 'standing', tuning: CHAIN_CAST },
+  neutralSpecial: { variant: 'standing', guard: 'mid', tuning: CHAIN_CAST },
+  backSpecial: { variant: 'standing', guard: 'mid', tuning: CHAIN_CAST },
   downSpecial: {
     variant: 'standing',
+    guard: 'mid',
     auraCost: 20,
     tuning: { ...CHAIN_CAST, startup: 30, active: 1, hitstun: 0, blockstun: 0 },
   },
   finisher: {
     variant: 'standing',
+    guard: 'mid',
     auraCost: 35,
     nameFr: 'Judgment Chain · Reste en Zetsu',
     nameEn: 'Judgment Chain · Remain in Zetsu',

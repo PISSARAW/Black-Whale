@@ -48,6 +48,7 @@ function tuneMove(move: FighterMove): FighterMove {
         move.slot as 'neutralSpecial' | 'backSpecial'
       ] ?? 0,
     variant: 'standing',
+    guard: 'mid',
     tuning: {
       ...move.tuning,
       ...UTILITY,

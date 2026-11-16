@@ -1,3 +1,4 @@
+import { canReceiveCombatHit } from './combatTargets'
 import { interceptArenaProjectile } from './arenaSimulation'
 import { travelKallutoPaper } from './kallutoFlight'
 import { paperAvailable, paperZonePoint } from './kallutoPaper'
@@ -284,6 +285,8 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     hitstop: profile.hitstop,
     knockback: profile.knockback,
     targetZone: aim.targetZone,
+    guard: 'mid',
+    canHitDowned: false,
     shape: profile.shape,
     colour: profile.colour,
     matter: profile.matter,
@@ -350,7 +353,7 @@ function projectileCollision(
   projectile: FightProjectile,
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
-  if (!remotePunchCanHit(projectile)) return null
+  if (!remotePunchCanHit(projectile) || !canReceiveCombatHit(defender, projectile.canHitDowned)) return null
   if (projectile.kallutoPaper) {
     const point = paperZonePoint(defender, projectile.targetZone)
     if (

@@ -1,3 +1,5 @@
+import { guardForVariant, type GuardRequirement } from './combatProperties'
+import type { FighterMove } from './movesetTypes'
 import type { AttackFrameData } from './frameData'
 import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
@@ -48,7 +50,7 @@ export function variantData(options: {
   data: AttackFrameData
 }): AttackFrameData {
   const { fighter, kind } = options
-  const data = comboData(options)
+  const data = legacyVariantData(options)
   if (moveById(fighter.attack?.moveId)) return data
   const variant = fighter.attack?.variant
   if (variant === 'throw')
@@ -87,9 +89,20 @@ export function variantData(options: {
 
 export function canCancel(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   const attack = fighter.attack
-  if (!attack?.confirmedHit || attack.variant === 'throw') return false
+  if (!attack || attack.variant === 'throw') return false
   const currentMove = moveById(attack.moveId)
-  if (currentMove) return Boolean(moveId && currentMove.cancelInto.includes(moveId))
+  if (currentMove) return Boolean(moveId && confirmedRoutes(fighter, currentMove).includes(moveId))
+  return legacyCancel(fighter, kind)
+}
+
+function confirmedRoutes(fighter: ArcadeFighter, move: FighterMove): readonly string[] {
+  if (fighter.attack?.confirmedHit) return move.cancelInto
+  return fighter.attack?.confirmedBlock ? move.cancelOnBlockInto : []
+}
+
+function legacyCancel(fighter: ArcadeFighter, kind: AttackKind): boolean {
+  const attack = fighter.attack!
+  if (!attack.confirmedHit) return false
   const move = `${attack.variant ?? 'standing'}:${attack.kind}` as CancelMove
   const routes = CHARACTER_CANCELS[fighter.id]?.[move] ?? UNIVERSAL_CANCELS[move]
   return Boolean(routes?.includes(kind))
@@ -105,11 +118,18 @@ export function cancelRoutes(
 }
 
 export function blocksAttack(defender: ArcadeFighter, attacker: ArcadeFighter): boolean {
-  if (!defender.blocking || defender.y > 0) return false
-  if (attacker.attack?.variant === 'throw') return false
-  if (attacker.attack?.variant === 'low') return Boolean(defender.crouching)
-  if (attacker.attack?.variant === 'air') return !defender.crouching
-  return true
+  const move = moveById(attacker.attack?.moveId)
+  return blocksGuardRequirement(defender, move?.guard ?? guardForVariant(attacker.attack?.variant))
+}
+
+export function blocksGuardRequirement(defender: ArcadeFighter, guard: GuardRequirement): boolean {
+  if (!defender.blocking || defender.y > 0 || guard === 'throw') return false
+  if (guard === 'low') return Boolean(defender.crouching)
+  return guard !== 'overhead' || !defender.crouching
+}
+
+function legacyVariantData(options: Parameters<typeof variantData>[0]): AttackFrameData {
+  return { ...comboData(options), guard: guardForVariant(options.fighter.attack?.variant) }
 }
 
 function comboData(options: {

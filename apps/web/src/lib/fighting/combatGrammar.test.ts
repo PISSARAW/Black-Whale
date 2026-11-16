@@ -47,9 +47,12 @@ describe('complete 2D combat grammar', () => {
     let state = resolveActive(performThrow(close(), 'player'))
     expect(state.opponent.knockdownFrames).toBeGreaterThan(0)
     state = performAttack(state, 'opponent', 'heavy')
+    expect(state.opponent.bufferedAttack).toBeNull()
+    while (state.opponent.knockdownFrames > 6) state = step(state, 1)
+    state = performAttack(state, 'opponent', 'heavy')
     expect(state.opponent.bufferedAttack?.kind).toBe('heavy')
     while (state.opponent.knockdownFrames > 0) state = step(state, 1)
-    expect(state.opponent.wakeupInvulnerableFrames).toBeGreaterThan(0)
+    expect(state.opponent.wakeupInvulnerableFrames).toBe(0)
     expect(state.opponent.attack?.reversal).toBe(true)
   })
 

@@ -1,3 +1,4 @@
+import { guardForVariant } from './combatProperties'
 import type { FighterMoveset, MoveCategory, MoveTuning } from './movesetTypes'
 import { techniqueContract } from './techniqueContracts'
 import type { AttackKind, AttackVariant, FighterId, MoveSlot } from './types'
@@ -53,6 +54,10 @@ export function buildMoveset(spec: MovesetSpec): FighterMoveset {
       ...template,
       nameFr,
       nameEn,
+      guard: guardForVariant(template.variant),
+      cancelOnBlockInto: [],
+      canHitDowned: false,
+      reversalInvulnerableFrames: 0,
       tuning: tune(template.tuning, spec),
       cancelInto: (routes.get(slot) ?? []).map((target) => moveId(spec.fighterId, target)),
     }

@@ -131,6 +131,7 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  throwTechRecoveryFrames?: number
   arenaRecovery?: number
   easterEggSequence?: number
   padailleTool?: PadailleTool
@@ -233,6 +234,7 @@ export interface ArcadeFighter {
   attack: {
     moveId?: string
     variant?: AttackVariant
+    confirmedBlock?: boolean
     confirmedHit?: boolean
     kind: AttackKind
     frame: number
@@ -247,6 +249,7 @@ export interface ArcadeFighter {
     reversal: boolean
   } | null
   bufferedAttack: {
+    bufferFrames?: number
     moveId?: string
     variant?: AttackVariant
     confirmedHit?: boolean
@@ -378,6 +381,8 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  guard?: Exclude<import('./combatProperties').GuardRequirement, 'throw'>
+  canHitDowned?: boolean
   kallutoPaper?: 'plant' | 'serpent'
   /** A conjured sphere pursues its designated target within earshot. */
   jupiter?: boolean
@@ -428,6 +433,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  throwTech?: { frame: number; sequence: number }
   training?: import('./trainingTypes').TrainingState
   arena?: import('./arenaTypes').ArenaState
   voconteDoors?: import('./voconteDoorTypes').VoconteDoors

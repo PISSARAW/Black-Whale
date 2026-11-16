@@ -125,6 +125,8 @@ function struckFighter(
     wakeupInvulnerableFrames: 0,
     attack: null,
     bufferedAttack: null,
+    throwTechFrames: 0,
+    throwTechRecoveryFrames: 0,
   }
 }
 

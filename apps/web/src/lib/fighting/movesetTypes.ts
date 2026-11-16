@@ -1,3 +1,4 @@
+import type { GuardRequirement } from './combatProperties'
 import type { AttackKind, AttackVariant, FightNenZone, FighterId, MoveSlot } from './types'
 import type { TechniqueCanonContract } from './techniqueContracts'
 
@@ -32,6 +33,10 @@ export interface FighterMove {
   auraCost: number
   canon: TechniqueCanonContract
   tuning: MoveTuning
+  guard: GuardRequirement
+  cancelOnBlockInto: readonly string[]
+  canHitDowned: boolean
+  reversalInvulnerableFrames: number
   cancelInto: readonly string[]
 }
 

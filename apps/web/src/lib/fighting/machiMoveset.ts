@@ -39,6 +39,7 @@ function tuneMove(move: FighterMove): FighterMove {
       ...move,
       auraCost: 24,
       variant: 'standing',
+      guard: 'mid',
       nameFr: 'Ligature · Fil maintenu',
       nameEn: 'Bind · Held Thread',
       tuning: { ...move.tuning, ...UTILITY, reach: 9, bottom: 0, top: 12 },

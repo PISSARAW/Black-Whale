@@ -1,3 +1,4 @@
+import { declareMoveCombatRules } from './moveCombatRules'
 import { nenActionAllowed } from './nenActionRules'
 import { attackAuraCost } from './fightAttackCost'
 import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
@@ -124,6 +125,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneHisokaMoveset)
     .map(tuneFurykovMoveset)
     .map(tuneBonolenovMoveset)
+    .map(declareMoveCombatRules)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(

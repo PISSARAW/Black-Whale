@@ -1,3 +1,4 @@
+import type { GuardRequirement } from './combatProperties'
 import { paperUtilityAttack } from './kallutoPaper'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
@@ -37,6 +38,9 @@ export interface FightBox {
 }
 
 export interface AttackFrameData {
+  guard: GuardRequirement
+  canHitDowned?: boolean
+  reversalInvulnerableFrames?: number
   startup: number
   active: number
   recovery: number
@@ -54,6 +58,7 @@ export interface AttackFrameData {
 
 const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
   light: {
+    guard: 'mid',
     startup: 5,
     active: 3,
     recovery: 10,
@@ -69,6 +74,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     box: { left: 1.7, right: 7.5, bottom: 5.2, top: 10.8 },
   },
   heavy: {
+    guard: 'mid',
     startup: 12,
     active: 4,
     recovery: 18,
@@ -84,6 +90,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     box: { left: 1.4, right: 9.6, bottom: 1.2, top: 8.4 },
   },
   special: {
+    guard: 'mid',
     startup: 16,
     active: 6,
     recovery: 28,
@@ -99,6 +106,7 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
     box: { left: 1.5, right: 20, bottom: 3.4, top: 11.5 },
   },
   ranged: {
+    guard: 'mid',
     startup: 10,
     active: 1,
     recovery: 17,
@@ -173,6 +181,9 @@ function movesetAttackData(
   const antiAir = move.kind === 'heavy' && move.variant === 'standing'
   return {
     ...data,
+    guard: move.guard,
+    canHitDowned: move.canHitDowned,
+    reversalInvulnerableFrames: move.reversalInvulnerableFrames,
     startup: data.startup + (fighter.attack?.concealed ? 10 : 0),
     cancelEnd: data.startup + data.active + 6,
     box: {

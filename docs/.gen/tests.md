@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 608
+Fichiers : 612
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -268,6 +268,11 @@ Fichiers : 608
 
 - Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
 
+## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
+
+- confirmed cancels, pressure and reproducible punishment > allows the declared Kurapika light-to-heavy block cancel, without making it universal
+- downed bodies and juggle ceilings > rejects ordinary strikes and projectiles against a downed body
+
 ## `apps/web/src/lib/fighting/combatGrammar.test.ts`
 
 - complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
@@ -275,6 +280,10 @@ Fichiers : 608
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
 - duel rules > rejects Hatsu effects with no aura or while stunned
+
+## `apps/web/src/lib/fighting/easterEggRoster.test.ts`
+
+- Every playable Clash fighter has a personal series > covers exactly the selectable roster with four complete, distinct entries each
 
 ## `apps/web/src/lib/fighting/easterEggs.test.ts`
 

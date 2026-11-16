@@ -69,6 +69,7 @@ export function nextFightRound(state: FightState): FightState {
       ...state,
       battlefield: createBattlefield(state.environment),
       arena: state.environment.arenaInteractions ? createArenaState() : undefined,
+      throwTech: undefined,
       voconteDoors: undefined,
       parallelFuture: undefined,
       forecastSimulation: undefined,

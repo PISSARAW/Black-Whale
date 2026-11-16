@@ -1,3 +1,4 @@
+import { WAKEUP_INVULNERABLE_FRAMES, REVERSAL_WINDOW_FRAMES } from './throwRules'
 import { holdMary, maryHeld } from './bloodyMary'
 import { anchorFighter, fighterAnchored } from './fighterAnchors'
 import { crossGameRestrained, holdCrossGame } from './crossGame'
@@ -27,6 +28,7 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
     ...vertical,
     ...wakeup,
     ...combo,
+    throwTechRecoveryFrames: Math.max(0, (fighter.throwTechRecoveryFrames ?? 0) - 1),
     hitStun: Math.max(0, fighter.hitStun - 1),
     blockStun: Math.max(0, fighter.blockStun - 1),
     ryuWindow: Math.max(0, fighter.ryuWindow - 1),
@@ -40,7 +42,12 @@ function advanceWakeup(
 ): Pick<ArcadeFighter, 'knockdownFrames' | 'wakeupInvulnerableFrames' | 'reversalWindow'> {
   const knockdownFrames = Math.max(0, fighter.knockdownFrames - 1)
   const wokeUp = fighter.knockdownFrames > 0 && knockdownFrames === 0
-  if (wokeUp) return { knockdownFrames, wakeupInvulnerableFrames: 10, reversalWindow: 5 }
+  if (wokeUp)
+    return {
+      knockdownFrames,
+      wakeupInvulnerableFrames: WAKEUP_INVULNERABLE_FRAMES,
+      reversalWindow: REVERSAL_WINDOW_FRAMES,
+    }
   return {
     knockdownFrames,
     wakeupInvulnerableFrames: Math.max(0, fighter.wakeupInvulnerableFrames - 1),

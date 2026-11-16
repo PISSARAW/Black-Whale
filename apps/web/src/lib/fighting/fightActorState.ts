@@ -15,7 +15,7 @@ export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
 }
 
 function characterBusy(fighter: ArcadeFighter): boolean {
-  if (fighter.easterEgg) return true
+  if (fighter.easterEgg || fighter.throwTechRecoveryFrames) return true
   if (!illumiBodyFree(fighter)) return true
   return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }
@@ -49,6 +49,12 @@ export function canGuard(fighter: ArcadeFighter): boolean {
     !characterBusy(fighter) &&
     biohazardBodyFree(fighter) &&
     !melodyRestrictsCombat(fighter) &&
+    guardPostureAvailable(fighter)
+  )
+}
+
+function guardPostureAvailable(fighter: ArcadeFighter): boolean {
+  return (
     !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&
     fighter.hitStun === 0 &&

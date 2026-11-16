@@ -82,6 +82,43 @@ resets, mannequin, enregistrement et disponibilité réelle. La régression visu
 `pnpm --filter @black-whale/web test:training-ui` vérifie les composants de
 production à 1440, 390 et 320 px.
 
+## Échanges fondamentaux
+
+`combatProperties.ts` sépare le type de garde (`mid`, `low`, `overhead`, `throw`)
+de `targetZone`, qui sert aux blessures et à la répartition du Nen. Chaque coup
+déclare sa garde dans le moveset ; les projectiles possèdent leur propre propriété.
+Une balle visant les pieds n’exige donc pas automatiquement une garde basse.
+Le manuel et le laboratoire affichent la réponse défensive des attaques.
+
+`throwRules.ts` fixe les fenêtres du duel : déprojection pendant 8 frames après
+le démarrage d’une projection, récupération de 12 frames pour les deux corps,
+protection de relevée de 10 frames et fenêtre de reversal de 5 frames. Une
+projection ne saisit pas un corps en l’air, en stun, au sol ou encore protégé à la
+relevée. Deux projections lointaines ne constituent pas une déprojection. Celle-ci
+n’inflige aucun dégât et ne donne aucun point ; sa récupération reste vulnérable.
+Démarrer une attaque consomme la protection de relevée. Le marqueur de reversal
+ne fournit aucune invulnérabilité générique : celle-ci doit être déclarée pour le
+coup, et aucun coup ne reçoit ici un nouveau pouvoir de Nen.
+
+Les commandes peuvent attendre dans les six dernières frames de stun, chute ou
+récupération. Le buffer expire après six frames de simulation active ; le hitstop
+le suspend. Les conditions et les coûts sont revérifiés au départ réel du geste.
+Les cancels sur touche restent propres à chaque coup ; les cancels sur garde
+ont une liste distincte. Kurapika peut enchaîner son léger debout vers son lourd
+debout sur une garde ordinaire, sans autorisation sur parade ou à vide.
+
+`guardRecoil.ts` reporte sur l’attaquant le recul en garde que le mur empêche la
+cible de recevoir. Ce réglage de duel conserve une distance après le contact au
+coin, sans bonus de Nen. `combatTargets.ts` applique la même limite de trois
+juggles aux frappes et à chaque projectile d’une rafale. Une attaque ordinaire ne
+frappe pas une cible au sol ; un tel contact doit être explicitement autorisé.
+Le corps endormi séparé de Hanzo reste une cible physique vulnérable.
+
+`combatFundamentals.test.ts` vérifie garde et zones, les quarante movesets,
+projections, déprojections, buffers, relevée, cancels, pression aux deux coins,
+punition réelle et reproductible, juggles et corps séparé. Les fenêtres et
+propriétés de combat sont des réglages arcade, pas des valeurs tirées du manga.
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le

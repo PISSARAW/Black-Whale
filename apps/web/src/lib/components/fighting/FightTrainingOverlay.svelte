@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { GUARD_LABELS } from '$lib/fighting/combatProperties'
   import {
     activeHitbox,
     attackData,
@@ -39,6 +40,7 @@
   {#if data}
     <span>F{state.player.attack?.frame} · {attackPhase(state.player)?.toUpperCase()}</span>
     <span>S {data.startup} · A {data.active} · R {data.recovery}</span>
+    <span>{GUARD_LABELS[data.guard][language === 'fr' ? 0 : 1]}</span>
   {:else}
     <span>—</span>
   {/if}

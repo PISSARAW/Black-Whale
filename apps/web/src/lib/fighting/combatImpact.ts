@@ -1,23 +1,23 @@
+import { prepareDefence } from './combatDefence'
+import { canReceiveCombatHit } from './combatTargets'
+import { throwImmune, canTechThrow, resolveThrowTech } from './throwRules'
+import { recoilGuardedAttack } from './guardRecoil'
 import { strikeRead, projectileRead } from './combatRead'
 import { plantPaperAfterHit } from './kallutoFlight'
 import { resolveIllumiContact } from './illumiImpact'
 import { resolveLynchContact } from './lynchInterrogation'
 import { recordBlinkyWound } from './blinkyWounds'
-import { melodyRestrictsCombat } from './melodyRules'
-import { melodyParryBonus } from './melodyHearing'
 import { resolveBashoPoemImpact } from './bashoFire'
-import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
 import { isFirearmProjectile } from './nenProjectiles'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { observeComboMaster } from './comboMaster'
 import { recordDolphinEffects } from './kurapikaDolphin'
-import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
+import { sleepingBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
-import { blocksAttack } from './duelMoves'
 import {
   activeHitbox,
   attackData,
@@ -28,8 +28,8 @@ import {
   isAntiAir,
   otherSide,
 } from './frameData'
-import { consumeHatsuAvoidance, hatsuAvoidsImpact, resolveHatsuImpact } from './hatsu'
-import { focusGuardRyu, isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
+import { resolveHatsuImpact } from './hatsu'
+import { isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
   comboScale,
@@ -43,11 +43,8 @@ import {
 } from './combatDamage'
 import { addJudgedKnockdown, isJudgedKnockdown, scoreJudgedImpact } from './towerJudging'
 import type { ProjectileHit } from './projectiles'
-import type { ArcadeFighter, FightNenZone, FightSide, FightState, FighterId } from './types'
+import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
 
-const GROUND = 0
-const PARRY_WINDOW_FRAMES = 6
-const MAX_JUGGLE_HITS = 3
 export const TOWER_WIN_SCORE = 10
 
 export function resolveFightImpacts(state: FightState, projectiles: ProjectileHit[]): FightState {
@@ -56,15 +53,24 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
     projectiles.map((hit) => hit.projectile),
   )
   if (state.catsName || state.phase !== 'fighting') return state
-  const trade =
-    attackCanResolve(state.player) &&
-    attackCanResolve(state.opponent) &&
-    attackCollision(state.player, state.opponent) &&
-    attackCollision(state.opponent, state.player)
+  const trade = canTrade(state)
   let next = resolveAttack(state, 'player')
   if (trade) next = resolveTrade(state, next)
   else if (next.phase === 'fighting') next = resolveAttack(next, 'opponent')
   return resolveFightOutcome(projectiles.reduce(resolveProjectileHit, next))
+}
+
+function canTrade(state: FightState): boolean {
+  return (
+    state.player.attack?.variant !== 'throw' &&
+    state.opponent.attack?.variant !== 'throw' &&
+    attackCanResolve(state.player) &&
+    attackCanResolve(state.opponent) &&
+    Boolean(
+      attackCollision(state.player, state.opponent) &&
+      attackCollision(state.opponent, state.player),
+    )
+  )
 }
 
 function resolveAttack(state: FightState, side: FightSide): FightState {
@@ -75,10 +81,11 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   if (throwMisses(attacker, defender)) return state
   const collision = attackCollision(attacker, defender)
   if (!collision) return state
+  if (throwTechPossible(attacker, defender)) return resolveThrowTech(state, side)
   const data = attackData(attacker.attack.kind, attacker)
   const defence = prepareDefence(defender, data.targetZone, strikeRead(attacker))
   const opening = openingType(sleepingBody(defender), defence.blocked)
-  const antiAir = isAntiAir(attacker) && sleepingBody(defender).y > GROUND
+  const antiAir = launchesTarget(attacker, defender)
   const comboHits = nextComboHits(sleepingBody(defender), defence)
   const damageScale = comboScale(comboHits)
   const critical = isCriticalAuraStrike(attacker)
@@ -116,7 +123,14 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   let next: FightState = {
     ...state,
-    [side]: spent,
+    [side]: recoilGuardedAttack({
+      attacker: spent,
+      defender: defence.fighter,
+      struck,
+      knockback: data.knockback,
+      blocked: defence.blocked,
+      avoided: defence.avoided,
+    }),
     [defenderSide]: struck,
     score,
     knockdowns,
@@ -217,12 +231,21 @@ function spendAttacker(
         ...attacker.attack,
         impacted: true,
         confirmedHit: !defence.blocked && !defence.avoided,
+        confirmedBlock: defence.blocked && !defence.parried && !defence.avoided,
         auraCharged: false,
       },
     }),
     false,
   )
   return spent
+}
+
+function launchesTarget(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
+  return isAntiAir(attacker) && sleepingBody(defender).y > 0
+}
+
+function throwTechPossible(attacker: ArcadeFighter, defender: ArcadeFighter): boolean {
+  return attacker.attack?.variant === 'throw' && canTechThrow(defender)
 }
 
 function throwMisses(
@@ -246,7 +269,11 @@ function shouldResolveHatsu(
 }
 
 function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (state.phase !== 'fighting' || state[hit.defenderSide].health <= 0) return state
+  if (
+    state.phase !== 'fighting' ||
+    !canReceiveCombatHit(state[hit.defenderSide], hit.projectile.canHitDowned)
+  )
+    return state
   const captured = captureCuldceptProjectile(state, hit)
   if (captured) return captured
   const side = hit.projectile.owner
@@ -338,77 +365,15 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
   return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
 }
 
-function prepareDefence(
-  fighter: ArcadeFighter,
-  zone: FightNenZone,
-  read?: {
-    attacker?: ArcadeFighter
-    concealed: boolean
-    position: { x: number; y: number }
-  },
-): ImpactDefence {
-  const attacker = read?.attacker
-  fighter = wakeHanzoBody(fighter)
-  const blocked = blocksImpact(fighter, attacker)
-  const visible = !read?.concealed || gyoSight(fighter) || insideEn(fighter, read.position)
-  const bonus = read ? nenReadBonus(fighter, { ...fighter, ...read.position }) : 0
-  const parried = visible && parryActive(fighter, blocked, { attacker, bonus })
-  const invulnerable = impactInvulnerable(fighter, attacker)
-  if (invulnerable) return { fighter, blocked, parried, avoided: true, invulnerable }
-  if (hatsuAvoidsImpact(fighter)) return avoidedDefence(fighter, blocked, parried)
-  const defended = parried ? focusGuardRyu(fighter, zone) : fighter
-  return {
-    fighter: defended,
-    blocked,
-    parried,
-    avoided: false,
-    invulnerable: false,
-  }
-}
-
-function blocksImpact(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
-  if (melodyRestrictsCombat(fighter)) return false
-  return attacker ? blocksAttack(fighter, attacker) : fighter.blocking && fighter.y === GROUND
-}
-
-function impactInvulnerable(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
-  if (attacker?.attack?.variant === 'throw') return false
-  if (fighter.wakeupInvulnerableFrames > 0) return true
-  return Boolean(fighter.attack?.reversal && attackPhase(fighter) === 'startup')
-}
-
-function avoidedDefence(fighter: ArcadeFighter, blocked: boolean, parried: boolean): ImpactDefence {
-  return {
-    fighter: consumeHatsuAvoidance(fighter),
-    blocked,
-    parried,
-    avoided: true,
-    invulnerable: false,
-  }
-}
-
 function attackCanResolve(
   fighter: ArcadeFighter,
 ): fighter is ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> } {
   return Boolean(fighter.attack && !fighter.attack.impacted && attackPhase(fighter) === 'active')
 }
 
-function parryActive(
-  fighter: ArcadeFighter,
-  blocked: boolean,
-  read: { attacker?: ArcadeFighter; bonus: number },
-): boolean {
-  return (
-    blocked &&
-    fighter.guardFrames > 0 &&
-    fighter.guardFrames <=
-      PARRY_WINDOW_FRAMES + read.bonus + melodyParryBonus(fighter, read.attacker)
-  )
-}
-
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {
-  const body = sleepingBody(defender)
-  if (body.y > GROUND && body.juggleCount >= MAX_JUGGLE_HITS) return null
+  const data = attackData(attacker.attack?.kind ?? 'light', attacker)
+  if (!canReceiveCombatHit(defender, data.canHitDowned)) return null
   const hitbox = activeHitbox(attacker)
   if (!hitbox) return null
   const hurtbox = hurtboxes(defender).find((candidate) => boxesOverlap(hitbox, candidate))
@@ -428,17 +393,6 @@ function finishAfterImpact(
     killerSide: owner === defenderSide ? null : owner,
     cause,
   })
-}
-
-function throwImmune(fighter: ArcadeFighter): boolean {
-  if (fighter.hanzoProjection) return false
-  return (
-    fighter.y > 0 ||
-    fighter.hitStun > 0 ||
-    fighter.blockStun > 0 ||
-    (fighter.throwTechFrames ?? 0) > 0 ||
-    fighter.attack?.variant === 'throw'
-  )
 }
 
 function resolveTrade(original: FightState, first: FightState): FightState {

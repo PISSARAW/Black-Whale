@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightMoveProperties from './FightMoveProperties.svelte'
   import { movesetFor, moveById } from '$lib/fighting/movesets'
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
@@ -45,6 +46,7 @@
             {#each moveset.moves.filter((move) => move.category === category) as move (move.id)}
               <p>
                 <kbd>{move.input}</kbd><span>{language === 'fr' ? move.nameFr : move.nameEn}</span>
+                <FightMoveProperties {move} {language} />
               </p>
             {/each}
           </div>

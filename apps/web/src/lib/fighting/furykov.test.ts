@@ -137,7 +137,7 @@ describe('Furykov — Combo Master alert', () => {
 
   it('never predicts a buffered action or an attack aimed away from the owner', () => {
     const ready = open(duel())
-    const enemy = { ...ready.opponent, hitStun: 10, hatsuChargeFrames: IN_CHARGE_FRAMES }
+    const enemy = { ...ready.opponent, hitStun: 5, hatsuChargeFrames: IN_CHARGE_FRAMES }
     const queued = performMove({
       state: { ...ready, opponent: enemy },
       side: 'opponent',

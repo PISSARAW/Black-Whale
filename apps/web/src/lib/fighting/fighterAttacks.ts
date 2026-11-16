@@ -1,3 +1,5 @@
+import { advanceAttackBuffer } from './attackBuffer'
+import { THROW_TECH_FRAMES } from './throwRules'
 import { attackAuraCost } from './fightAttackCost'
 import { interruptUnavailableNen } from './nenActionRules'
 import { illumiBodyFree } from './illumiState'
@@ -26,7 +28,7 @@ const MIN_X = 7
 const MAX_X = 93
 
 export function advanceFighterAttack(fighter: ArcadeFighter): ArcadeFighter {
-  fighter = interruptUnavailableNen(fighter)
+  fighter = advanceAttackBuffer(interruptUnavailableNen(fighter))
   if (!fighter.attack) return fighter
   const data = attackData(fighter.attack.kind, fighter)
   const frame = fighter.attack.frame + 1
@@ -79,6 +81,8 @@ export function startFighterAttack(options: {
     pose: kind,
     blocking: false,
     guardFrames: 0,
+    wakeupInvulnerableFrames: 0,
+    throwTechFrames: options.variant === 'throw' ? THROW_TECH_FRAMES : fighter.throwTechFrames,
     ryuWindow: usesRyu ? 10 : fighter.ryuWindow,
     hatsuChargeFrames: 0,
     attack: {
@@ -117,7 +121,7 @@ function ordinaryCanStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (fighter.pluggingWounds) return false
+  if (fighter.pluggingWounds || fighter.throwTechRecoveryFrames) return false
   if (fighterTechniqueBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   if (!biohazardBodyFree(fighter)) return false
@@ -157,13 +161,13 @@ export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
 function ordinaryCanBufferFighterAttack(fighter: ArcadeFighter): boolean {
   if (fighter.pluggingWounds) return false
   if (fighterTechniqueBusy(fighter)) return false
-  if (
-    fighter.hitStun > 0 ||
-    fighter.blockStun > 0 ||
-    fighter.knockdownFrames > 0 ||
-    fighter.wakeupInvulnerableFrames > 0
+  const remainingStun = Math.max(
+    fighter.hitStun,
+    fighter.blockStun,
+    fighter.knockdownFrames,
+    fighter.throwTechRecoveryFrames ?? 0,
   )
-    return true
+  if (remainingStun > 0) return remainingStun <= INPUT_BUFFER_FRAMES
   if (!fighter.attack) return false
   const remaining = attackTotal(attackData(fighter.attack.kind, fighter)) - fighter.attack.frame
   return remaining <= INPUT_BUFFER_FRAMES
@@ -176,7 +180,8 @@ function canAct(fighter: ArcadeFighter): boolean {
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
     fighter.knockdownFrames === 0 &&
-    fighter.health > 0
+    fighter.health > 0 &&
+    !fighter.throwTechRecoveryFrames
   )
 }
 

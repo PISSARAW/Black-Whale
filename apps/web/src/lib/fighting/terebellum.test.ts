@@ -184,7 +184,10 @@ describe('Sweet Home damage transfer', () => {
       if (reason === 'on-seal') ready.player.on = { grudge: 0, sealFrames: 10 }
       if (reason === 'stun') ready.player.hitStun = 2
       if (reason === 'down') ready.player.knockdownFrames = 2
-      const next = resolveFightImpacts(ready, [shot(ready, 'opponent')])
+      const incoming = shot(ready, 'opponent')
+      // An explicitly grounded hit exercises the hand restriction; ordinary shots now miss downed bodies.
+      incoming.projectile.canHitDowned = reason === 'down'
+      const next = resolveFightImpacts(ready, [incoming])
       expect(next.player.health).toBeLessThan(next.player.maxHealth)
       expect(next.impact?.transfer).toBeUndefined()
     },

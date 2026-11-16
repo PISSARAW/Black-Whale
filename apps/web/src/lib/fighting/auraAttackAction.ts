@@ -1,3 +1,4 @@
+import { INPUT_BUFFER_FRAMES } from './fightClock'
 import { attackAuraCost } from './fightAttackCost'
 import { canUseMovesetMove, moveById } from './movesets'
 import { paperMoveAllowed } from './kallutoPaper'
@@ -60,7 +61,15 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
     ...state,
     [side]: {
       ...fighter,
-      bufferedAttack: { kind, variant, moveId, auraCharged, concealed, hatsuSource },
+      bufferedAttack: {
+        kind,
+        variant,
+        moveId,
+        auraCharged,
+        concealed,
+        hatsuSource,
+        bufferFrames: INPUT_BUFFER_FRAMES,
+      },
     },
   }
 }

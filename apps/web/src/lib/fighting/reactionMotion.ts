@@ -1,3 +1,4 @@
+import { THROW_TECH_RECOVERY_FRAMES } from './throwRules'
 import type { AnimatedHuman, HumanMotion } from '$lib/tour/humanAnimation'
 import type { FightNenZone, FightSide, FightState } from './types'
 
@@ -46,10 +47,7 @@ export function throwTechMotion(side: FightSide): HumanMotion {
 
 export function isThrowTech(state: FightState): boolean {
   return Boolean(
-    state.player.throwTechFrames &&
-    state.opponent.throwTechFrames &&
-    state.player.attack?.variant === 'throw' &&
-    state.opponent.attack?.variant === 'throw',
+    state.throwTech && state.frame - state.throwTech.frame < THROW_TECH_RECOVERY_FRAMES,
   )
 }
 

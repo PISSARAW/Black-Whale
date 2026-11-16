@@ -239,7 +239,6 @@ export interface FighterHatsuEffects {
   venomFrames: number
   soulExposedFrames: number
   teleportDodges: number
-  growthFrames: number
   wormDodges: number
   kachoGuards: number
   desireFrames: number

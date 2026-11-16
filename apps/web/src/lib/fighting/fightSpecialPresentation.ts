@@ -1,3 +1,4 @@
+import { erigeronPresentation, isErigeronAction } from './billSupport'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from './hatsu'
 import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
 import { fighterDefinition } from './roster'
@@ -15,12 +16,25 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
+  if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
+    return erigeronPresentation(language)
   if (state.player.id === 'kurapika') {
     const release = state.opponent.chainJail?.owner === 'player'
-    const ready = release || Boolean(movesetFor('kurapika')?.moves.some((move) => move.category === 'special' && canUseMovesetMove(state, 'player', move)))
-    return { label: language === 'fr' ? 'Chaînes' : 'Chains', ready, hint: language === 'fr'
-      ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
-      : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin' }
+    const ready =
+      release ||
+      Boolean(
+        movesetFor('kurapika')?.moves.some(
+          (move) => move.category === 'special' && canUseMovesetMove(state, 'player', move),
+        ),
+      )
+    return {
+      label: language === 'fr' ? 'Chaînes' : 'Chains',
+      ready,
+      hint:
+        language === 'fr'
+          ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
+          : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin',
+    }
   }
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)

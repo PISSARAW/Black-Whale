@@ -1,3 +1,4 @@
+import { billMoveset } from './billMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
@@ -145,42 +146,6 @@ const SPECS: readonly MovesetSpec[] = [
       ['airLight', 'airHeavy', 'neutralSpecial'],
     ],
   },
-  {
-    fighterId: 'bill',
-    mechanic: [
-      'Erigeron : sa croissance accélérée restaure le corps et renforce temporairement sa ténacité.',
-      'Erigeron: accelerated growth restores the body and temporarily reinforces his resilience.',
-    ],
-    finisherCondition: [
-      'Erigeron doit être actif et Bill à 50 PV ou moins.',
-      'Erigeron must be active while Bill has 50 HP or less.',
-    ],
-    labels: [
-      'Direct du garde|Guard Straight',
-      'Crochet tenace|Tenacious Hook',
-      'Coup aux racines|Root Strike',
-      'Fauchage du semeur|Sower Sweep',
-      'Bourgeon aérien|Aerial Bud',
-      'Talon de croissance|Growth Heel',
-      'Poussée d’Erigeron|Erigeron Rush',
-      'Percée vivace|Perennial Break',
-      'Reprise végétale|Vegetal Recovery',
-      'Erigeron|Erigeron',
-      'Croissance accélérée|Accelerated Growth',
-      'Racines de garde|Guard Roots',
-      'Floraison protectrice|Protective Bloom',
-      'Prise du jardinier|Gardener Hold',
-      'Erigeron · Seconde floraison|Erigeron · Second Bloom',
-    ],
-    speed: 0.98,
-    power: 1,
-    reach: 1.4,
-    combos: [
-      ['standingLight', 'standingHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardHeavy', 'downSpecial'],
-      ['airHeavy', 'forwardSpecial'],
-    ],
-  },
 ]
 
-export const WAVE_THREE_MOVESETS_B = SPECS.map(buildMoveset)
+export const WAVE_THREE_MOVESETS_B = [...SPECS.map(buildMoveset), billMoveset()]

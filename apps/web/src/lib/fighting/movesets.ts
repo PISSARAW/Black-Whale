@@ -1,3 +1,4 @@
+import { isErigeronAction } from './billSupport'
 import { tuneBenjaminMoveset } from './benjaminMoveset'
 import { benjaminMoveAvailable } from './benjaminBaton'
 import { tuneKurapikaMoveset } from './kurapikaMoveset'
@@ -84,7 +85,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    (fighter.id === 'leorio' || fighter.id === 'yokotani') && action === 'special'
+    ['leorio', 'yokotani', 'bill'].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -122,6 +123,7 @@ function isHeldChainMove(fighter: ArcadeFighter, move: FighterMove): boolean {
 }
 
 function characterMoveAvailable(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (isErigeronAction(fighter, move.kind, move.id)) return false
   if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
     return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
@@ -224,7 +226,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   gel: (state, side) => opponentOf(state, side).hatsuEffects.venomFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
-  bill: (state, side) => state[side].hatsuEffects.growthFrames > 0 && state[side].health <= 50,
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,

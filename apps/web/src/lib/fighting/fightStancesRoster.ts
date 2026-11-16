@@ -305,7 +305,7 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
     0.05,
     1.5,
   ),
-  // The gardener's guard: seeds cupped low in both hands, feet calm.
+  // Woble's bodyguard: quiet low hands, feet steady for a protective Ken.
   bill: stance(
     [
       LEGS_UPRIGHT,

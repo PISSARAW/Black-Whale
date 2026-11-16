@@ -1,3 +1,4 @@
+import { isErigeronAction } from './billSupport'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
 import { canActivateLsdf } from './lsdf'
@@ -11,7 +12,8 @@ import { hatsuFor } from './hatsu/registry'
 /** Shared gameplay contract for every roster Hatsu. */
 export const FIGHT_HATSU_AURA_COST = 40
 
-export function canUseFightHatsu(fighter: Pick<ArcadeFighter, 'aura' | 'nen' | 'on'>): boolean {
+export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
+  if (isErigeronAction(fighter, 'special', `${fighter.id}:neutralSpecial`)) return false
   return (
     fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
   )
@@ -44,6 +46,7 @@ export function resolveDeathHatsu(
 
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
+  if (source === 'bill') return state
   if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
   const witnessSide = side === 'player' ? 'opponent' : 'player'
   const witness = state[witnessSide]
@@ -89,10 +92,9 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
   const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
-  const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * cyclotron * cantabile * biohazard * haiku * growth * coins * completion
+  return transformed * cyclotron * cantabile * biohazard * haiku * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {
@@ -106,14 +108,11 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
-  const growth = fighter.hatsuEffects.growthFrames > 0 ? 0.82 : 1
   const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
   const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
   const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
   const completion = completionDefenceFactor(fighter)
-  return (
-    transformed * cantabile * biohazard * predator * growth * exposed * smoked * coins * completion
-  )
+  return transformed * cantabile * biohazard * predator * exposed * smoked * coins * completion
 }
 
 function completionDefenceFactor(fighter: ArcadeFighter): number {

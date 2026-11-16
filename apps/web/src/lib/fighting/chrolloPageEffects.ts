@@ -22,7 +22,6 @@ const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   rihan: ['predatorFrames'],
   basho: ['haikuFrames'],
   luini: ['teleportDodges'],
-  bill: ['growthFrames'],
   marayam: ['isolationFrames'],
   fugetsu: ['wormDodges'],
   kacho: ['kachoGuards'],

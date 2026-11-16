@@ -28,6 +28,17 @@ const PHANTOM_TROUPE = new Set<FighterId>([
 ])
 
 const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContract>> = {
+  'bill:neutralSpecial': {
+    source: 'Succession Contest — chapter 388, Erigeron',
+    evidence: 'manga-shown',
+    conditions: ['Bill brings his palms close to a living target to accelerate its growth.'],
+    prohibitions: [
+      'No attested self-healing, automatic combat boost, plant attacks or low-health finisher.',
+    ],
+    narrativeCost: 'Targeted support; Nen development remains weak on untrained individuals.',
+    narrativeEffect:
+      'Accelerates living growth and can support another person’s Nen development. The current duel has no support target.',
+  },
   'biscuit:neutralSpecial': {
     source: 'Greed Island — ch. 154, Biscuit reveals her natural body',
     evidence: 'manga-shown',

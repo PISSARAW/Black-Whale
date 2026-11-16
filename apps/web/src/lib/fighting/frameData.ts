@@ -1,3 +1,4 @@
+import { isErigeronAttack } from './billSupport'
 import { benjaminRangedData } from './benjaminWeapon'
 import { benjaminUtilityMove } from './benjaminBaton'
 import { isKurapikaUtility, dolphinActor } from './kurapika'
@@ -210,6 +211,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
   return (
+    isErigeronAttack(fighter) ||
     chrolloUtilityMove(fighter) ||
     isKurapikaUtility(fighter) ||
     hisokaUtilityMove(fighter) ||

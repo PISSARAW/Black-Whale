@@ -93,6 +93,18 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
+- Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
+  `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),
+  qui accélère la croissance d’un être vivant et peut favoriser le développement du
+  Nen d’autrui, avec un effet faible sur les personnes non entraînées. Ce n’est ni
+  un soin personnel, ni un bonus automatique d’attaque ou de défense.
+  Le duel actuel ne propose pas de cible de soutien : L, avec ou sans direction,
+  reste donc indisponible, sans dépense d’aura, frappe, annulation ou mise en buffer.
+  L’interface explique cette limite du mode ; elle n’en fait pas une restriction
+  canonique d’Erigeron. Les racines offensives/protectrices, floraisons et finisher
+  à faible santé sont retirés. Les copies de Chrollo et de Stealth Dolphin conservent
+  la même exigence de cible adaptée ; Erigeron demeure une capacité réelle et copiable.
+  `billSupport.ts` et `hatsu/bill.ts` ne lui attribuent aucun effet de combat inventé.
 - La quatrième vague ajoute Furykov, Cluck, Beyond, Longhi, Musse, Padaille, Sayird,
   Terebellum et Voconte.
 - Yokotani utilise LSDF (chapitre 399) uniquement dans la **planque Heil-Ly**

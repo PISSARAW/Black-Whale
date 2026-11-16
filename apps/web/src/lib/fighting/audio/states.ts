@@ -120,7 +120,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   possessedFrames: 'spirit',
   contagionFrames: 'contagion',
   futureSight: 'future',
-  growthFrames: 'growth',
   blinkyFrames: 'vacuum',
   biohazardFrames: 'machine',
   predatorFrames: 'predator',

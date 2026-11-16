@@ -1,3 +1,4 @@
+import { melodyCanPerform } from './melodyRules'
 import { bashoPresentation } from './bashoPresentation'
 import { moonlightPresentation } from './moonlightPresentation'
 import { futureSpecialPresentation } from './parallelFuturePresentation'
@@ -20,6 +21,7 @@ export function fightSpecialPresentation(
   language: 'fr' | 'en',
 ): SpecialPresentation {
   if (state.player.id === 'basho') return bashoPresentation(state, language)
+  if (state.player.id === 'melody') return melodyPresentation(state, language)
   if (state.player.id === 'longhi') return moonlightPresentation(state, language)
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
@@ -81,6 +83,25 @@ function kurapikaPresentation(state: FightState, language: 'fr' | 'en'): Special
       language === 'fr'
         ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
         : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin',
+  }
+}
+
+function melodyPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
+  return {
+    label: state.player.melodyPerformance
+      ? language === 'fr'
+        ? 'Arrêter la flûte'
+        : 'Stop the flute'
+      : language === 'fr'
+        ? 'Jouer de la flûte'
+        : 'Play the flute',
+    ready:
+      Boolean(state.player.melodyPerformance) ||
+      (melodyCanPerform(state.player) && state.player.aura >= 8),
+    hint:
+      language === 'fr'
+        ? 'L : jouer / arrêter · 8 aura puis 6/s · E : couvrir les oreilles'
+        : 'L: play / stop · 8 aura then 6/s · E: cover ears',
   }
 }
 

@@ -1,3 +1,4 @@
+import { musicPacifies } from './melodyRules'
 import { bashoWriting } from './bashoPoem'
 import { chainsImmobilize } from './kurapika'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
@@ -10,6 +11,7 @@ const MIN_X = 7
 const MAX_X = 93
 
 export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
+  if (fighter.melodyPerformance || musicPacifies(fighter)) return { ...fighter, blocking: false }
   if (projectionPreparing(fighter) || bashoWriting(fighter)) return fighter
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
@@ -50,6 +52,7 @@ function returningToBody(fighter: ArcadeFighter): boolean {
 }
 
 function opponentBlocking(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): boolean {
+  if (fighter.coveringEars) return false
   if (fighter.hanzoProjection) return false
   return fighter.blockStun > 0 || shouldBlock(fighter, player, gap)
 }

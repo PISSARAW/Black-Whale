@@ -1,3 +1,4 @@
+import { melodyRestrictsCombat } from './melodyRules'
 import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
@@ -84,6 +85,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (melodyRestrictsCombat(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
@@ -115,6 +117,7 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 }
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
+  if (melodyRestrictsCombat(fighter)) return false
   if (
     fighter.hitStun > 0 ||
     fighter.blockStun > 0 ||

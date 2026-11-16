@@ -7,6 +7,7 @@ import { EMPTY_INPUT, type ArcadeFighter, type FightInput, type FightState } fro
 export function planOpponentNen(state: FightState): FightState {
   const gap = Math.abs(state.player.x - state.opponent.x)
   const opponent = state.opponent
+  if (opponent.melodyPerformance) return state
   if (opponent.judgmentChain || chainsImmobilize(opponent))
     return applyOpponentAura(state, { aura: true, down: true })
   if (opponent.hanzoProjection) return state

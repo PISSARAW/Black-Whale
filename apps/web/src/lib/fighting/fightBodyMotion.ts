@@ -127,6 +127,8 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const melody = melodyBodyPlan(fighter, context)
+  if (melody) return melody
   if (fighter.hanzoProjection && !fighter.attack)
     return { pose: HANZO_FLOAT_POSE, plant: false, key: 'astral-double', blend: 0.12 }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
@@ -203,4 +205,28 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     return { ...walking, plant: true }
   }
   return plan(standing, 'stance')
+}
+
+function melodyBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  if (fighter.coveringEars)
+    return {
+      key: 'cover-ears',
+      plant: fighter.y === 0,
+      blend: 0.08,
+      pose: {
+        leadShoulder: [-2.1, 0, 0.5],
+        leadElbow: [-1.9, 0, 0],
+        rearShoulder: [-2.1, 0, -0.5],
+        rearElbow: [-1.9, 0, 0],
+      },
+    }
+  if (fighter.melodyPerformance)
+    return {
+      key: 'flute-performance',
+      plant: true,
+      blend: 0.1,
+      pose: stanceAt(fightStance('melody')!, context.seconds),
+    }
+
+  return null
 }

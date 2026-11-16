@@ -1,3 +1,4 @@
+import type { MelodyPerformance, MelodyHearing } from './melodyRules'
 import type { CatsNameSequence } from './camillaCat'
 import type { FightDeath } from './fightDeaths'
 import type { ComboMasterState } from './comboMasterTypes'
@@ -164,6 +165,11 @@ export interface ArcadeFighter {
   ryuWindow: number
   auraExhausted: boolean
   hatsuChargeFrames: number
+  coveringEars?: boolean
+  /** A borrower must supply a real flute; native Melody owns one. */
+  melodyFlute?: boolean
+  melodyPerformance?: MelodyPerformance
+  melodyHearing?: MelodyHearing
   hatsuEffects: FighterHatsuEffects
   /** Bandit's Secret: retained pages, one open page and one Double Face bookmark. */
   chrolloBook?: ChrolloBookState
@@ -273,6 +279,8 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
+  coverEars?: boolean
   en?: boolean
   shu?: boolean
   conceal?: boolean

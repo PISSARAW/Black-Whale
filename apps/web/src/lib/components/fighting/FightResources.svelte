@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
   import type { FightInput } from '$lib/fighting/types'
   import FightOutsideDuelStatus from './FightOutsideDuelStatus.svelte'
@@ -51,6 +52,7 @@
       </div>
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
+      <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}
         <FightNenControls {fighter} {language} {detailed} {showControls} {onAura} {onEmperor} {onControl} />

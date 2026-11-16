@@ -1,3 +1,4 @@
+import { createMelodyVoices } from './melody'
 import { NEN_PRESENTATION } from '@black-whale/nen-engine'
 import { sharedAudioContext } from '$lib/audio/context'
 import type { ArcadeFighter, FightSide, FightState } from '../types'
@@ -23,10 +24,7 @@ export const DEFAULT_FIGHT_AUDIO: FightAudioSettings = {
 }
 
 export interface FightAudioDirector {
-  update: (
-    state: FightState,
-    options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide },
-  ) => void
+  update: (state: FightState, options: { paused: boolean; settings: FightAudioSettings; viewer?: FightSide }) => void
   dispose: () => void
 }
 
@@ -72,11 +70,13 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
   if (!context) return null
   let mix = createFightMix(context, initial.environment.stageId)
   let stages = stageVoices(mix)
+  let melodies = createMelodyVoices(mix)
   let auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   let previous: FightState | null = null
   let active = true
   let disposed = false
   const stop = () => {
+    melodies.stop()
     stages.forEach((voice) => voice.stop())
     Object.values(auras).forEach((voices) => Object.values(voices).forEach((voice) => voice.stop()))
     mix.dispose()
@@ -85,6 +85,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     stop()
     mix = createFightMix(context, state.environment.stageId)
     stages = stageVoices(mix)
+    melodies = createMelodyVoices(mix)
     auras = { player: auraVoices(mix), opponent: auraVoices(mix) }
   }
   const update: FightAudioDirector['update'] = (state, options) => {
@@ -93,7 +94,8 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
     active = !options.paused && !options.settings.muted
     active = active && saiyuAudioEnabled(state, options.viewer)
     mix.setActive(active)
-    updateLevels(mix, { state, settings: options.settings })
+    melodies.update(state, active)
+    updateLevels(mix, { state, settings: options.settings, viewer: options.viewer })
     updateStagePressure(mix, stages, state)
     for (const side of ['player', 'opponent'] as const)
       updateAura(mix, { voices: auras[side], state, side })
@@ -115,7 +117,7 @@ export function createFightAudioDirector(initial: FightState): FightAudioDirecto
 
 function updateLevels(
   mix: FightMix,
-  options: { state: FightState; settings: FightAudioSettings },
+  options: { state: FightState; settings: FightAudioSettings; viewer?: FightSide },
 ): void {
   const { state, settings } = options
   const now = mix.context.currentTime
@@ -126,7 +128,9 @@ function updateLevels(
   mix.effects.gain.setTargetAtTime(settings.effects, now, 0.025)
   mix.ambience.gain.setTargetAtTime(settings.ambience * duck * 0.7, now, 0.09)
   mix.pressure.gain.setTargetAtTime(settings.tension * pressure * duck, now, 0.12)
-  for (const cutoff of mix.hearing) cutoff.setTargetAtTime(18000, now, 0.12)
+  const listener = state.mode === 'versus-local' ? (options.viewer ?? 'player') : 'player'
+  for (const cutoff of mix.hearing)
+    cutoff.setTargetAtTime(state[listener].coveringEars ? 420 : 18000, now, 0.12)
 }
 
 function updateStagePressure(mix: FightMix, voices: ContinuousVoice[], state: FightState): void {

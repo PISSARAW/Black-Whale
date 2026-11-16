@@ -89,4 +89,17 @@ describe('combat sound lifecycle', () => {
     director.update(state, { paused: false, settings: DEFAULT_FIGHT_AUDIO })
     expect(audio.play).not.toHaveBeenCalled()
   })
+
+  it('muffles covered ears for the selected local listener', () => {
+    const initial = beginFight(createFight('melody', 'hisoka', { mode: 'versus-local' }))
+    const state = { ...initial, opponent: { ...initial.opponent, coveringEars: true } }
+    const director = createFightAudioDirector(state)!
+    const options = { paused: false, settings: DEFAULT_FIGHT_AUDIO }
+    director.update(state, { ...options, viewer: 'opponent' })
+    const hearing = audio.createMix.mock.results[0].value.hearing
+    for (const cutoff of hearing) expect(cutoff.setTargetAtTime.mock.lastCall?.[0]).toBe(420)
+    director.update(state, { ...options, viewer: 'player' })
+    for (const cutoff of hearing) expect(cutoff.setTargetAtTime.mock.lastCall?.[0]).toBe(18000)
+    director.dispose()
+  })
 })

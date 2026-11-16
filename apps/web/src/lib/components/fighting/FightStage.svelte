@@ -121,6 +121,16 @@
           onpointerup={() => hold('guard', false)}
           onpointercancel={() => hold('guard', false)}>G</button
         >
+        <button
+          type="button"
+          aria-label={language === 'fr' ? 'Se couvrir les oreilles' : 'Cover ears'}
+          onpointerdown={(event) => {
+            event.currentTarget.setPointerCapture(event.pointerId)
+            hold('coverEars', true)
+          }}
+          onpointerup={() => hold('coverEars', false)}
+          onpointercancel={() => hold('coverEars', false)}>E</button
+        >
       </div>
       <div class="touch-group attack-controls">
         <FightHanzoCall {state} {language} {onCall} />

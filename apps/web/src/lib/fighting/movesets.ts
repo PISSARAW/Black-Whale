@@ -1,3 +1,5 @@
+import { tuneMelodyMoveset } from './melodyMoveset'
+import { melodyMoveResources } from './melodyRules'
 import { tuneBashoMoveset } from './bashoMoveset'
 import { bashoCanWrite } from './bashoPoem'
 import { tuneGelMoveset } from './gelMoveset'
@@ -66,6 +68,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneParallelFutureMoveset)
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
+    .map(tuneMelodyMoveset)
     .map(tuneThetaMoveset)
     .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
@@ -104,7 +107,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi', 'basho'].includes(fighter.id) && action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho'].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -130,8 +133,14 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const melody = melodyMoveResources(fighter, move.kind, move.id)
+  if (melody !== null) return melody
   const future = futureMoveResources(fighter, move.id)
   if (future !== null) return future
+  return remainingMoveResources(fighter, move)
+}
+
+function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
@@ -245,7 +254,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
     state[side].hatsuEffects.predatorFrames > 0 &&
     opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
-  melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,

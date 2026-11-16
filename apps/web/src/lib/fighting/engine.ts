@@ -1,3 +1,7 @@
+import { performMelodyAction } from './melodyAction'
+import { melodyInput, reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
+import { advanceMelodyHearing } from './melodyHearing'
+import { musicPacifies, melodyRestrictsCombat, MELODY_MUSIC_RANGE, soundDistance } from './melodyRules'
 import { fightStyleSpecialReady } from './fightStyleSpecial'
 import { stepPostMortemOrFuture } from './camillaFrame'
 import { advanceCatsName } from './camillaCat'
@@ -16,7 +20,6 @@ import { advanceEmperorClock, kurapikaAiActivation, resolveJudgmentDeaths } from
 import { chainsImmobilize } from './kurapika'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { recordFightInjuries } from './feitanPain'
-import { hisokaTechnique } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
 import { callHanzoBody, canCallHanzoBody, resolveHanzoBodyCalls } from './hanzoBodyCall'
 import {
@@ -101,6 +104,7 @@ export function tickFight(
     }
     next = { ...next, previousPositions }
     if (next.phase === 'finished') {
+      next = reconcileMelodySound(next)
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
   }
@@ -126,14 +130,14 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     flushBuffered(resolveHanzoBodyCalls(judged, input, opponentInput), 'player'),
     'opponent',
   )
-  const withHatsu = advanceHatsuFrames(buffered)
+  const withHatsu = advanceMelodyHearing(advanceHatsuFrames(buffered))
   if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
   const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
   const flight = advanceProjectiles(armed, FIXED_STEP)
-  const resolved = recordFightInjuries(
+  const resolved = reconcileMelodySound(recordFightInjuries(
     state,
     resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
-  )
+  ))
   if (fightResolutionPending(resolved)) return resolved
   const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
   const remainingFrames =
@@ -145,7 +149,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next
+  return reconcileMelodySound(remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next)
 }
 
 function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -153,7 +157,7 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  const advanced = advanceFighterPhysics(fighter)
+  const advanced = advanceFighterPhysics(melodyInput(fighter, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
   let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
@@ -266,6 +270,8 @@ function executeAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (!fightAcceptsCommands(options.state)) return options.state
   const original = options.state[side]
+  const music = performMelodyAction(options, performAuraAttack)
+  if (music) return music
   const character = characterAuraAction(options, performAuraAttack)
   if (character) return character
   const variant = attackVariant({ fighter: original, kind, variant: options.variant })
@@ -297,6 +303,10 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 
 export function opponentAttack(state: FightState): FightState {
   if (!fightAcceptsCommands(state)) return state
+  if (state.opponent.melodyPerformance)
+    return soundDistance(state.opponent, state.player) > MELODY_MUSIC_RANGE
+      ? stopMelodyMusic(state, 'opponent')
+      : state
   state = moonlightAiResponse(state)
   if (moonlightAiWaiting(state)) return state
   const future = parallelFutureAiAction(state)
@@ -372,6 +382,12 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.wakeupInvulnerableFrames > 0 && !fighter.attack)
     return { ...fighter, pose: 'wakeup', blocking: false }
   if (fighter.hitStun > 0) return { ...fighter, pose: 'hit', blocking: false }
+  if (musicPacifies(fighter)) return { ...fighter, pose: 'idle', blocking: false }
+  if (fighter.melodyPerformance) return { ...fighter, pose: 'special', blocking: false }
+  return activeFighterPose(fighter)
+}
+
+function activeFighterPose(fighter: ArcadeFighter): ArcadeFighter {
   if (fighter.attack) return { ...fighter, pose: fighter.attack.kind, blocking: false }
   if (fighter.y > GROUND) return { ...fighter, pose: 'jump', blocking: false }
   if (fighter.blocking || fighter.blockStun > 0) return { ...fighter, pose: 'guard' }
@@ -380,6 +396,7 @@ function poseFighter(fighter: ArcadeFighter): ArcadeFighter {
 
 function canAct(fighter: ArcadeFighter): boolean {
   return (
+    !musicPacifies(fighter) &&
     !chainsImmobilize(fighter) &&
     !projectionPreparing(fighter) &&
     fighter.hitStun === 0 &&
@@ -390,11 +407,12 @@ function canAct(fighter: ArcadeFighter): boolean {
 }
 
 function canMove(fighter: ArcadeFighter): boolean {
-  return canAct(fighter) && fighter.attack === null
+  return canAct(fighter) && fighter.attack === null && !fighter.melodyPerformance
 }
 
 function canGuard(fighter: ArcadeFighter): boolean {
   return (
+    !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&
     fighter.hitStun === 0 &&

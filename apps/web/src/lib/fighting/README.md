@@ -570,3 +570,25 @@ est descriptif : le nom officiel, la catégorie et les règles complètes resten
 inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
 ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
 les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.
+
+### Melody : musique continue et ouïe corporelle
+
+Melody utilise un seul Hatsu musical : L joue ou arrête une performance au sol,
+avec 18 frames de préparation, 8 aura au départ puis 6 aura/s. La portée de
+36 unités et ces durées sont des adaptations au duel. Aucun dégât, score,
+knockdown, hitstun physique, barrière ou finisher offensif ne vient de la flûte.
+Les auditeurs proches perdent l’initiative tant que le son les atteint. Un
+déplacement, une garde, un coup reçu, la perte de la flûte ou du Nen coupe la
+performance ; ses effets cessent aussitôt. E maintenu (P2 : C), aussi accessible
+en tactile, couvre les oreilles mais occupe les mains : pas de garde ni d’attaque.
+La garde ordinaire et Zetsu ne protègent pas de l’écoute ; le deuxième sceau
+de Saiyu la supprime. Le son synthétisé suit le canal de performance, tandis que
+le réglage muet du navigateur n’a aucun effet sur les règles de simulation.
+
+L’ouïe corporelle de Melody reste passive, même en Zetsu ou si son Hatsu est volé.
+Elle indique la direction du corps réel, un rythme cardiaque régulier ou agité et
+la préparation physique visible d’une attaque, sans lire les entrées ni les
+réserves d’aura. Après 12 frames d’écoute, une garde manuelle correcte bénéficie
+de 3 frames supplémentaires de parade : c’est un équilibrage arcade, jamais une
+esquive automatique. Les oreilles couvertes ou un sceau auditif réinitialisent
+l’écoute. Une copie du Hatsu demande une vraie flûte et ne copie pas cette ouïe.

@@ -114,6 +114,7 @@ function struckFighter(
     nen: contactNen(options.fighter, options.blocked),
     // Contact exposes the cloth disguise; it supplies no armour or evasion.
     textureSurprise: undefined,
+    melodyPerformance: undefined,
     knockdownFrames: knockdownFrames(options),
     wakeupInvulnerableFrames: 0,
     attack: null,

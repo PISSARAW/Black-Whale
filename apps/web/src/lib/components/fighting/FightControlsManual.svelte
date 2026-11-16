@@ -18,6 +18,7 @@
   <p>{jump}</p>
   <p>{attacks}</p>
   <p>{aura}</p>
+  <p>{language === 'fr' ? 'E maintenu (P2 : C) : se couvrir les oreilles, sans garde ni attaque.' : 'Hold E (P2: C): cover your ears, without guarding or attacking.'}</p>
   <p>
     {language === 'fr'
       ? 'T : interpeller le corps endormi de Hanzo à proximité pour interrompre sa projection.'

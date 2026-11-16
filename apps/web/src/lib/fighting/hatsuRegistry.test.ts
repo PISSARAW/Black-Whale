@@ -431,7 +431,7 @@ describe('fighter Hatsu registry', () => {
       }).opponent.hatsuEffects
     expect(impact('mizaistom').restrainedFrames).toBe(90)
     expect(impact('zakuro').bloodBoundFrames).toBe(100)
-    expect(impact('melody').entrancedFrames).toBe(75)
+    expect(impact('melody').entrancedFrames).toBe(0)
   })
 
   it('does not add automatic damage or stun to Leorio’s contact hits', () => {

@@ -1,3 +1,5 @@
+import { melodyRestrictsCombat } from './melodyRules'
+import { melodyParryBonus } from './melodyHearing'
 import { resolveBashoPoemImpact } from './bashoFire'
 import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
 import { isFirearmProjectile } from './nenProjectiles'
@@ -347,6 +349,7 @@ function prepareDefence(
 }
 
 function blocksImpact(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
+  if (melodyRestrictsCombat(fighter)) return false
   return attacker ? blocksAttack(fighter, attacker) : fighter.blocking && fighter.y === GROUND
 }
 
@@ -374,7 +377,7 @@ function attackCanResolve(
 
 function parryActive(fighter: ArcadeFighter, blocked: boolean, read: { attacker?: ArcadeFighter; bonus: number }): boolean {
   return blocked && fighter.guardFrames > 0 &&
-    fighter.guardFrames <= PARRY_WINDOW_FRAMES + read.bonus
+    fighter.guardFrames <= PARRY_WINDOW_FRAMES + read.bonus + melodyParryBonus(fighter, read.attacker)
 }
 
 function attackCollision(attacker: ArcadeFighter, defender: ArcadeFighter) {

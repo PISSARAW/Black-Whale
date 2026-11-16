@@ -1,3 +1,4 @@
+import { isMelodyMusicAttack } from './melodyRules'
 import { comboMasterUtilityMove } from './comboMasterAvailability'
 import { isErigeronAttack } from './billSupport'
 import { benjaminRangedData } from './benjaminWeapon'
@@ -212,6 +213,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
   return (
+    isMelodyMusicAttack(fighter) ||
     isErigeronAttack(fighter) ||
     comboMasterUtilityMove(fighter) ||
     chrolloUtilityMove(fighter) ||

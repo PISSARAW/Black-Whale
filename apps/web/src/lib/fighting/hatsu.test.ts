@@ -35,6 +35,17 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
 
     const armed = performAttack(ready, side, 'special')
 
+    if (id === 'melody') {
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].melodyPerformance).toBeDefined()
+      expect(armed[side].aura).toBe(auraBefore - moveForSlot(id, 'neutralSpecial')!.auraCost)
+      const singing = advance(armed, 0.4)
+      const listener = side === 'player' ? 'opponent' : 'player'
+      expect(singing[listener].hatsuEffects.entrancedFrames).toBe(1)
+      expect(singing.impact).toBeNull()
+      return
+    }
+
     if (id === 'furykov') {
       expect(armed[side].comboMaster).toEqual({ alert: null })
       expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)

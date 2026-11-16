@@ -358,10 +358,10 @@ describe('Category components and Emperor Time', () => {
       ...state,
       opponent: {
         ...state.opponent,
-        hatsuEffects: { ...state.opponent.hatsuEffects, needleFrames: 100 },
+        hatsuEffects: { ...state.opponent.hatsuEffects, restrainedFrames: 100 },
       },
     }
-    expect(scaleNenControl(state, controlled, 'player').opponent.hatsuEffects.needleFrames).toBe(
+    expect(scaleNenControl(state, controlled, 'player').opponent.hatsuEffects.restrainedFrames).toBe(
       120,
     )
     expect(

@@ -1,3 +1,4 @@
+import { performIllumiAction } from './illumiAction'
 import { performVoconteDoorAction } from './voconteDoorAction'
 import { performBiohazardAction } from './biohazardAction'
 import { performMaryAction } from './bloodyMaryAction'
@@ -26,6 +27,7 @@ export function characterAuraAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const attempts = [
+    () => performIllumiAction(options),
     () => performVoconteDoorAction(options),
     () => performBiohazardAction(options),
     () => performMaryAction(options),

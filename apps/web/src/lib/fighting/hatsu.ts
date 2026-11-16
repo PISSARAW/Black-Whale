@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { predatorNenLocked } from './predatorSeal'
 import { scaleNenControl } from './nenHatsuEffects'
 import { isErigeronAction } from './billSupport'
@@ -15,6 +16,7 @@ import { hatsuFor } from './hatsu/registry'
 export const FIGHT_HATSU_AURA_COST = 40
 
 export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
+  if (!illumiBodyFree(fighter)) return false
   if (predatorNenLocked(fighter)) return false
   if (isErigeronAction(fighter, 'special', `${fighter.id}:neutralSpecial`)) return false
   return (

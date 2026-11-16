@@ -1,3 +1,4 @@
+import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey, battleNeedsSkin } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
@@ -21,6 +22,8 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.nen,
+    Boolean(fighter.illumi?.disguised),
+    Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
     fighter.id === 'shizuku' && blinkyAvailable(fighter),
     Boolean(fighter.parallelEyesClosed),
@@ -59,7 +62,7 @@ export function buildFightFigure(options: {
     },
   }
   const declared = humanProfile(seen)
-  const profile = fighter.id === 'franklin' ? franklinFightProfile(declared) : declared
+  const profile = illumiFaceProfile(fighter.id === 'franklin' ? franklinFightProfile(declared) : declared, fighter)
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
   const dressed = battleNeedsSkin(fighter) ? { ...profile, shirt: profile.skin } : profile
@@ -77,6 +80,7 @@ export function buildFightFigure(options: {
   if (trueForm) shapeBiscuitTrueForm(model)
 
   addBonolenovPrologue({ THREE, glow, fighter, model })
+  addIllumiNeedles({ THREE, glow, fighter, model })
   addFighterEquipment(options, model)
   shapeFightEyes({ root: model.root, fighter, glow })
   return model

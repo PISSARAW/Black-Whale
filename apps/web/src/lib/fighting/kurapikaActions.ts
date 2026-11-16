@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { borrowedDoorActive } from './voconteDoorState'
 import { finishBorrowedMary } from './bloodyMaryAi'
 import { dolphinMissingBattleBody } from './battleCantabileRules'
@@ -265,6 +266,7 @@ function useDolphin(options: AuraAttackOptions, perform: PerformAttack): FightSt
 }
 
 function canAct(fighter: ArcadeFighter): boolean {
+  if (!illumiBodyFree(fighter)) return false
   return (
     fighter.health > 0 &&
     fighter.y === 0 &&

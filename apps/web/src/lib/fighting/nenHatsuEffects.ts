@@ -5,7 +5,6 @@ import type { FightSide, FightState, FighterHatsuEffects } from './types'
 // Only durations which are explicitly duel tuning. A canonical oath, death,
 // consent, target condition, or fixed rule (e.g. Judgment Chain) is never scaled.
 const CONTROL_DURATIONS: readonly (keyof FighterHatsuEffects)[] = [
-  'needleFrames',
   'restrainedFrames',
 ]
 

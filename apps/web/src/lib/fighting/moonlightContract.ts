@@ -66,7 +66,7 @@ function freelyActing(fighter: ArcadeFighter): boolean {
   const effects = fighter.hatsuEffects
   return (
     effects.manipulatedFrames === 0 &&
-    effects.needleFrames === 0 &&
+    !fighter.needlePuppet &&
     effects.entrancedFrames === 0 &&
     effects.possessedFrames === 0 &&
     effects.momozeFrames === 0

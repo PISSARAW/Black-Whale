@@ -1,10 +1,10 @@
 <script lang="ts">
+  import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightDoorStatus from './FightDoorStatus.svelte'
   import FightBiohazardStatus from './FightBiohazardStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightMachiStatus from './FightMachiStatus.svelte'
   import FightCyclotronStatus from './FightCyclotronStatus.svelte'
-  import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
   import FightCrossGameStatus from './FightCrossGameStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
@@ -61,7 +61,6 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
-      <FightPreparationStatus {state} {side} {language} {onControl} />
       <FightDoorStatus {state} {side} {language} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
@@ -143,10 +142,11 @@
       <FightBenjaminStatus {state} {side} {language} {detailed} />
       <FightChrolloStatus {state} {side} {language} {detailed} />
       <FightPredatorStatus {state} {side} {language} />
+      <FightIllumiStatus {state} {side} {language} />
       <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
       <FightBattleCantabile {state} {side} {language} {onTalk} {onBattleAction} />
-      {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
+      <FightOutsideDuelStatus {fighter} {language} />
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

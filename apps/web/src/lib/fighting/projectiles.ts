@@ -1,3 +1,5 @@
+import { hasIllumiNeedles } from './illumiEquipment'
+import { illumiBodyFree } from './illumiState'
 import { interceptBiohazardProjectile } from './biohazardImpact'
 import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
 import { advanceJupiter } from './jupiterFlight'
@@ -129,7 +131,7 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   illumi: projectile({
     matter: 'object',
     labels: ['Aiguille', 'Needle'],
-    shape: 'bullet',
+    shape: 'needle',
     colour: '#a78bfa',
     speed: 74,
     damage: 9,
@@ -213,6 +215,8 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'illumi' && !hasIllumiNeedles(fighter)) return false
+  if (!illumiBodyFree(fighter)) return false
   return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)
 }
 

@@ -1,3 +1,4 @@
+import { releaseIllumiPage } from './illumiFrame'
 import { releaseMachiPageThread } from './machiThread'
 import { chrolloHasActivePage, type ChrolloPage } from './chrolloBook'
 import type { ArcadeFighter, FighterHatsuEffects, FightSide, FightState } from './types'
@@ -28,7 +29,6 @@ const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
 const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   'black-voice': ['manipulatedFrames'],
   kurapika: ['forcedZetsuFrames'],
-  illumi: ['needleFrames'],
   machi: ['stitchedFrames'],
   saiyu: ['senseSeals'],
   kalluto: ['serpentMarks'],
@@ -84,7 +84,7 @@ function clearPageEffects(options: {
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
-  return releaseMachiPageThread(cleared, side, page)
+  return releaseMachiPageThread(releaseIllumiPage(cleared, side, page), side, page)
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {

@@ -1,3 +1,4 @@
+import { illumiSoundTransitions } from '../illumiAudio'
 import { battleMusicEvents } from './battleCantabile'
 import type { FightSide, FightState, FighterHatsuEffects } from '../types'
 import { fighterEvent, type FightSoundEvent } from './events'
@@ -44,6 +45,7 @@ function bodyEvents(before: FightState, after: FightState, side: FightSide): Fig
   const fighter = after[side]
   const transitions: [unknown, unknown, FightSoundEvent['kind']][] = [
     [previous.biscuitTrueForm, fighter.biscuitTrueForm, 'transform'],
+    ...illumiSoundTransitions(previous, fighter),
     [previous.hanzoProjection, fighter.hanzoProjection, 'projection'],
     [previous.hatsuEffects.painPacker?.armour, fighter.hatsuEffects.painPacker?.armour, 'armour'],
     [previous.hatsuEffects.painPacker?.sun, fighter.hatsuEffects.painPacker?.sun, 'sun'],
@@ -119,7 +121,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   senseSeals: 'gong',
   manipulatedFrames: 'needle',
   stitchedFrames: 'thread',
-  needleFrames: 'needle',
   restrainedFrames: 'verdict',
   entrancedFrames: 'flute',
   possessedFrames: 'spirit',

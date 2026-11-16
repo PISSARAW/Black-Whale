@@ -50,7 +50,7 @@ export function battleMindAvailable(fighter: ArcadeFighter): boolean {
     !musicPacifies(fighter) &&
     ![
       fighter.hatsuEffects.manipulatedFrames,
-      fighter.hatsuEffects.needleFrames,
+      Number(Boolean(fighter.needlePuppet)),
       fighter.hatsuEffects.possessedFrames,
       fighter.hatsuEffects.momozeFrames,
     ].some((value) => value > 0)

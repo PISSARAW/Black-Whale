@@ -18,6 +18,7 @@ export function tradeFighter(options: TradeFighterOptions): ArcadeFighter {
     knockdownFrames: Math.max(incoming.knockdownFrames, outgoing.knockdownFrames),
     comboDamage: incoming.comboDamage + outgoing.comboDamage - original.comboDamage,
     hatsuEffects: tradeHatsuEffects(options),
+    needlePuppet: incoming.needlePuppet ?? outgoing.needlePuppet,
     ...tradeChainState(options),
     nen: original.hanzoProjection && !incoming.hanzoProjection ? incoming.nen : outgoing.nen,
     attack: null,

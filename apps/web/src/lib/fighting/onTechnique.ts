@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { predatorNenLocked } from './predatorSeal'
 /**
  * On (怨) in the 2D duel, after the film *Hunter x Hunter: The Last Mission*.
@@ -47,6 +48,7 @@ export function onOf(fighter: Pick<ArcadeFighter, 'on'>) {
 }
 
 export function canSwearOn(fighter: ArcadeFighter): boolean {
+  if (!illumiBodyFree(fighter)) return false
   if (predatorNenLocked(fighter)) return false
   return (
     !fighter.nen.on &&

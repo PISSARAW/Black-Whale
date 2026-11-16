@@ -34,6 +34,14 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     const auraBefore = ready[side].aura
 
     const armed = performAttack(ready, side, 'special')
+    if (id === 'illumi') {
+      expect(armed[side].attack?.kind).toBe('special')
+      expect(armed[side].aura).toBe(auraBefore - 40)
+      expect(armed[side].attack?.hatsuSource).toBe('illumi')
+      expect(moveForSlot('illumi', 'neutralSpecial')?.tuning.damage).toBe(0)
+      return
+    }
+
     if (id === 'bonolenov') {
       expect(armed[side].attack).toBeNull()
       expect(armed[side].battleCantabile?.preparation?.piece).toBe('prologue')

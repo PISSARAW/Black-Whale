@@ -49,7 +49,7 @@ describe('wave one movesets', () => {
       'hanzo',
     ])
     WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh')
-      .filter((id) => !['leorio', 'mizaistom'].includes(id))
+      .filter((id) => !['leorio', 'mizaistom', 'illumi'].includes(id))
       .forEach(assertCompleteMoveset)
   })
 
@@ -173,7 +173,7 @@ describe('wave one movesets', () => {
   it.each(
     WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter((id) => id !== 'bonolenov')
       .filter((id) => id !== 'hinrigh')
-      .filter((id) => !['leorio', 'mizaistom'].includes(id) && id !== 'franklin'),
+      .filter((id) => !['leorio', 'mizaistom', 'illumi'].includes(id) && id !== 'franklin'),
   )('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
@@ -326,8 +326,6 @@ function withFinisherCondition(state: FightState): FightState {
           machiThread: { owner: 'player', kind: 'bind', x: opponent.x, y: opponent.y },
         },
       }
-    case 'illumi':
-      return withOpponentEffect(state, 'needleFrames', 60)
     case 'kalluto':
       return withOpponentEffect(state, 'serpentMarks', 2)
     case 'shizuku':

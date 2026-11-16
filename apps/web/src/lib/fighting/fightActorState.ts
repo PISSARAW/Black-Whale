@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { maryHeld } from './bloodyMary'
 import { biohazardBodyFree } from './biohazard'
 import { battlePreparing } from './battleCantabileRules'
@@ -5,7 +6,7 @@ import { crossGameBusy } from './crossGame'
 import { musicPacifies, melodyRestrictsCombat } from './melodyRules'
 import { chainsImmobilize } from './kurapika'
 import { projectionPreparing } from './hanzoProjection'
-import type { ArcadeFighter } from './types'
+import type { ArcadeFighter, FightInput } from './types'
 
 const GROUND = 0
 
@@ -50,5 +51,10 @@ function guardHandsFree(fighter: ArcadeFighter): boolean {
 }
 
 function characterBusy(fighter: ArcadeFighter): boolean {
+  if (!illumiBodyFree(fighter)) return true
   return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
+}
+
+export function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
+  return input.jump && !input.aura && canMove(fighter) && fighter.y === GROUND
 }

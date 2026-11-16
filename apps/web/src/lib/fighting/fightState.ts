@@ -1,3 +1,4 @@
+import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
 import { createBiohazardInventory } from './biohazard'
 import { preservePredatorKnowledge } from './predatorSeal'
 import { carryMoonlightRound } from './moonlightContract'
@@ -26,7 +27,7 @@ export function createFightState(
     typeof options === 'string' ? options : (options.formatId ?? DEFAULT_FIGHT_FORMAT)
   const mode = typeof options === 'string' ? 'versus-ai' : (options.mode ?? 'versus-ai')
   const format = fightFormat(formatId)
-  return {
+  return setupIllumiNeedles({
     environment: createFightEnvironment(typeof options === 'string' ? {} : options.environment),
     formatId,
     mode,
@@ -50,7 +51,7 @@ export function createFightState(
     projectiles: [],
     nextProjectileId: 1,
     impact: null,
-  }
+  })
 }
 
 export function nextFightRound(state: FightState): FightState {
@@ -154,7 +155,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     isolationFrames: 0,
     cyclotronTurns: 0,
     stitchedFrames: 0,
-    needleFrames: 0,
     serpentMarks: 0,
     restrainedFrames: 0,
     entrancedFrames: 0,
@@ -184,7 +184,7 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  fighter = preservePredatorKnowledge(fighter, previous)
+  fighter = preserveIllumiNeedles(preservePredatorKnowledge(fighter, previous), previous)
   return fighter.kurapika
     ? {
         ...fighter,

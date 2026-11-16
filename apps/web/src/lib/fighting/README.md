@@ -148,6 +148,39 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   `FightBiohazardStatus.svelte` affiche chaque objet et le temps de capture restant.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
+- Illumi sépare Needle People et le remodelage physique (`illumiState.ts`,
+  `illumiAction.ts`, `illumiFrame.ts`). **L** engage 40 aura dans une aiguille
+  spéciale et tente une implantation dans le crâne : le volume de contact doit
+  atteindre la tête réelle ; toucher seulement le torse, manquer, être bloqué,
+  paré ou esquivé ne crée aucun contrôle (`illumiImpact.ts`). Une cible déjà
+  sous contrôle absolu ne peut pas être réattribuée. Les aiguilles ordinaires
+  de U restent des armes physiques, sans manipulation automatique.
+  L’implantation porte une consigne : **Reste** par défaut ; **avant + L** prépare
+  ou ordonne **Approche**, **bas + L** **Éloigne-toi**. Répéter L sur sa marionnette
+  ordonne de rester, sans payer une nouvelle implantation. Les ordres annulent
+  les commandes personnelles de mouvement, garde, attaque et Nen ; ils n’imposent
+  aucun Zetsu, drainage d’aura, rafraîchissement de hitstun ou libération après
+  deux secondes. Une aiguille est représentée par marionnette ; le duel ne fournit
+  qu’un adversaire, sans affirmer une limite canonique d’une seule victime.
+  Needle People détruit l’autonomie de la victime : consommer l’aiguille avec
+  Predator, ou fermer une page copiée, ne guérit pas ses séquelles. Le corps reste
+  incapable d’agir librement pour la manche. Les corps et les aiguilles repartent
+  à zéro à la manche suivante ; épuisement mortel et handicap permanent hors
+  combat ne sont pas simulés. Ces consignes simples et cette limite de persistance
+  sont des adaptations de duel. L’aiguille de conditionnement de Killua et la
+  manipulation des cadavres ne sont pas confondues avec cette implantation.
+  **Arrière + L** prépare un visage remodelé pendant 30 frames pour 20 aura,
+  sans frappe, soin, esquive ni bonus défensif. Mouvement ou blessure interrompt
+  la préparation ; répéter la commande retire les aiguilles et le déguisement.
+  `illumiFigure.ts` modifie le visage et montre les aiguilles physiques ; les
+  valeurs de combat et les volumes corporels restent identiques. Le prix et
+  la préparation du déguisement sont des réglages arcade, pas des chiffres du manga.
+  Le finisher « Contrôle total » a été retiré (`illumiMoveset.ts`).
+  Skill Hunter et Stealth Dolphin exigent leurs propres aiguilles réelles ;
+  le vol ne transfère aucun équipement. Le panneau **Aiguilles physiques portées**
+  permet de préparer un stock avant le duel, indépendamment du Hatsu copié. `FightIllumiStatus.svelte` affiche la consigne,
+  l’implantation, les séquelles et la préparation du déguisement ; l’IA tente
+  l’implantation au contact puis conserve ses coups physiques.
 - Rihan étudie personnellement **un Hatsu précis** avec L (`predator.ts`).
   Seules les manifestations actives qu’il voit entrent dans son catalogue ; In
   exige Gyo, une information rapportée ou un simple indicateur de Hatsu aperçu ne

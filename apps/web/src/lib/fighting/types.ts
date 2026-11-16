@@ -1,3 +1,4 @@
+import type { IllumiState, NeedlePuppet } from './illumiState'
 import type { BlinkyState } from './blinky'
 import type { CrossGameState } from './crossGame'
 import type { MachiThread } from './machiThread'
@@ -129,7 +130,9 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
-  equipment?: ('blood-infusion' | 'book' | 'flute')[]
+  illumi?: IllumiState
+  needlePuppet?: NeedlePuppet
+  equipment?: ('blood-infusion' | 'book' | 'flute' | 'needles')[]
   bloodyMary?: import('./bloodyMary').BloodyMaryState
   maryCapture?: import('./bloodyMary').MaryCapture
   maryGraceFrames?: number
@@ -277,7 +280,6 @@ export interface FighterHatsuEffects {
   isolationFrames: number
   cyclotronTurns: number
   stitchedFrames: number
-  needleFrames: number
   serpentMarks: number
   restrainedFrames: number
   entrancedFrames: number

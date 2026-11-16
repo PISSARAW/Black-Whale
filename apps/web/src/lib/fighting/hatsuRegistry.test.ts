@@ -101,7 +101,7 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(replayed.opponent.hatsuEffects.needleFrames).toBeGreaterThan(0)
+    expect(replayed.opponent.needlePuppet).toBeUndefined()
   })
 
   it('cannot steal an unseen, blocked or martial ability', () => {
@@ -271,7 +271,7 @@ describe('fighter Hatsu registry', () => {
     expect(struck).toBe(ready)
   })
 
-  it('lets Machi and Illumi immobilize a target in distinct ways', () => {
+  it('keeps sutures and skull needles out of generic carrier hooks', () => {
     const ready = closeFight('machi', 'hisoka')
     const stitched = hatsuFor('machi').onImpact({
       state: ready,
@@ -292,8 +292,8 @@ describe('fighter Hatsu registry', () => {
     })
     expect(stitched.opponent.machiThread).toMatchObject({ owner: 'player', kind: 'bind' })
     expect(stitched.opponent.hitStun).toBe(ready.opponent.hitStun)
-    expect(needled.opponent.hatsuEffects.needleFrames).toBe(120)
-    expect(needled.opponent.aura).toBeLessThan(ready.opponent.aura)
+    expect(needled.opponent.needlePuppet).toBeUndefined()
+    expect(needled.opponent.aura).toBe(ready.opponent.aura)
   })
 
   it('converges Kalluto’s paper marks on the third strike', () => {

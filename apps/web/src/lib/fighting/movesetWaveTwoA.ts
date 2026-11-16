@@ -76,12 +76,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'illumi',
     mechanic: [
-      'Aiguilles : la manipulation draine l’aura et bloque progressivement la riposte.',
-      'Needles: manipulation drains aura and progressively locks down retaliation.',
+      'Needle People : aiguille spéciale implantée au crâne, puis ordre à une marionnette privée d’autonomie. Le remodelage du visage reste distinct.',
+      'Needle People: implant a special skull needle, then command a puppet stripped of autonomy. Physical face alteration is separate.',
     ],
     finisherCondition: [
-      'Une aiguille de manipulation doit contrôler la cible.',
-      'A manipulation needle must be controlling the target.',
+      'Aucun finisher offensif attesté.',
+      'No attested offensive finisher.',
     ],
     labels: [
       'Pique d’assassin|Assassin Jab',
@@ -94,19 +94,19 @@ const SPECS: readonly MovesetSpec[] = [
       'Paume cardiaque|Heart Palm',
       'Revers d’aiguille|Needle Backfist',
       'Needle People|Needle People',
-      'Ordre immédiat|Immediate Order',
-      'Aiguille paralysante|Paralysis Needle',
-      'Masque corporel|Body Mask',
+      'Ordre · Approche|Order · Approach',
+      'Ordre · Éloigne-toi|Order · Retreat',
+      'Visage remodelé|Altered face',
       'Prise Zoldyck|Zoldyck Hold',
-      'Contrôle total|Total Control',
+      'Sans finisher offensif|No offensive finisher',
     ],
     speed: 0.82,
     power: 1,
     reach: 1.5,
     combos: [
-      ['standingLight', 'backHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardLight', 'downSpecial'],
-      ['airLight', 'airHeavy', 'backSpecial'],
+      ['standingLight', 'backHeavy'],
+      ['lowLight', 'forwardLight'],
+      ['airLight', 'airHeavy'],
     ],
   },
   {

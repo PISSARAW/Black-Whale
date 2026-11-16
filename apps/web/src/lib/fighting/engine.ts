@@ -1,10 +1,12 @@
+import { illumiBodyFree } from './illumiState'
+import { illumiInput } from './illumiFrame'
 import { biohazardBodyFree } from './biohazard'
 import { holdMary, maryHeld } from './bloodyMary'
 import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
-import { canAct, canMove, canGuard } from './fightActorState'
+import { canAct, canMove, canGuard, playerCanJump } from './fightActorState'
 import { poseFighter } from './fightActorPose'
 import { blinkyAiDefense } from './blinkyWounds'
 import { plugWoundsInput } from './blinky'
@@ -77,7 +79,6 @@ import type {
   MoveAction,
 } from './types'
 
-const GROUND = 0
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
@@ -136,7 +137,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
-  const player = updatePlayer(state.player, input)
+  const player = updateControlledFighter(state.player, input)
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
@@ -178,14 +179,12 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   )
 }
 
-function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
-  return updateControlledFighter(fighter, input)
-}
-
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  fighter = illumiInput(fighter, input)
   const advanced = advanceFighterPhysics(
     plugWoundsInput(battleInput(melodyInput(fighter, input), input), input),
   )
+  if (advanced.needlePuppet) return advanced
   if (maryHeld(advanced)) return holdMary(applyAuraContext(advanced, input))
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   const winding = steerCyclotron(advanced, input)
@@ -236,9 +235,6 @@ function playerIsBlocking(fighter: ArcadeFighter, input: FightInput): boolean {
   return !input.aura || fighter.nen.ken
 }
 
-function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
-  return input.jump && !input.aura && canMove(fighter) && fighter.y === GROUND
-}
 
 function updateOpponent(
   fighter: ArcadeFighter,
@@ -246,6 +242,7 @@ function updateOpponent(
   state: FightState,
 ): ArcadeFighter {
   const advanced = blinkyAiDefense(state, advanceFighterPhysics(fighter))
+  if (advanced.needlePuppet) return advanced
   if (maryAiBusy(advanced)) return maryAiBody(advanced)
   if (battlePreparing(advanced)) return { ...advanced, pose: 'special', blocking: false }
   const winding = steerCyclotron(advanced)
@@ -269,6 +266,7 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (!illumiBodyFree(options.state[options.side])) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
@@ -304,6 +302,7 @@ function executeFightMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
   options = thetaFirearmOptions(options)
   return resolveMoonlightAction(

@@ -1,3 +1,4 @@
+import { illumiBodyFree } from './illumiState'
 import { biohazardBodyFree } from './biohazard'
 import { battleCombatBusy } from './battleCantabileRules'
 import { crossGameBusy } from './crossGame'
@@ -84,7 +85,11 @@ function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): F
     : null
 }
 
-export function canStartFighterAttack(
+export function canStartFighterAttack(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  return illumiBodyFree(fighter) && ordinaryCanStartFighterAttack(fighter, kind, moveId)
+}
+
+function ordinaryCanStartFighterAttack(
   fighter: ArcadeFighter,
   kind: AttackKind,
   moveId?: string,
@@ -123,6 +128,10 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 }
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
+  return illumiBodyFree(fighter) && ordinaryCanBufferFighterAttack(fighter)
+}
+
+function ordinaryCanBufferFighterAttack(fighter: ArcadeFighter): boolean {
   if (attackBodyBusy(fighter)) return false
   if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
   if (crossGameBusy(fighter)) return false

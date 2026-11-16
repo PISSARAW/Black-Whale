@@ -1,3 +1,4 @@
+import { needleAutonomy } from './illumiState'
 import { senseDeprived } from './saiyuSenses'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
@@ -24,6 +25,7 @@ export function isPredatorMove(fighter: ArcadeFighter, moveId?: string): boolean
 }
 
 export function predatorNenAvailable(fighter: ArcadeFighter): boolean {
+  if (!needleAutonomy(fighter)) return false
   return (
     ownsPredator(fighter) &&
     !predatorNenLocked(fighter) &&

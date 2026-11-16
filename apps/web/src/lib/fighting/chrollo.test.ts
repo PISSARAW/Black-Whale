@@ -27,7 +27,7 @@ function ready(): FightState {
   const base = beginFight(createFight('chrollo', 'illumi', { mode: 'training' }))
   return {
     ...base,
-    player: { ...base.player, x: 44, aura: 100 },
+    player: { ...base.player, x: 44, aura: 100, equipment: ['book', 'needles'] },
     opponent: { ...base.opponent, x: 49, aura: 100 },
   }
 }
@@ -147,7 +147,7 @@ describe('Bandit’s Secret and Double Face', () => {
     expect(hatsuSourceFor(turned.player, CHROLLO_USE)).toBe('chrollo')
     expect(hatsuSourceFor(turned.player, CHROLLO_SECONDARY)).toBe('illumi')
     const replayed = advance(action(advance(turned), CHROLLO_SECONDARY))
-    expect(replayed.opponent.hatsuEffects.needleFrames).toBeGreaterThan(0)
+    expect(replayed.opponent.needlePuppet).toMatchObject({ owner: 'player', needleEmbedded: true })
     expect(replayed.opponent.hatsuEffects.sunMark).toBe(0)
   })
   it('ends effects of a lost page immediately and preserves effects of a bookmarked page', () => {
@@ -156,13 +156,13 @@ describe('Bandit’s Secret and Double Face', () => {
       ...acquired,
       opponent: {
         ...acquired.opponent,
-        hatsuEffects: { ...acquired.opponent.hatsuEffects, needleFrames: 100 },
+        needlePuppet: { owner: 'player' as const, order: 'stay' as const, needleEmbedded: true },
       },
     }
-    expect(action(controlled, CHROLLO_TURN).opponent.hatsuEffects.needleFrames).toBe(0)
+    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({ needleEmbedded: false })
     const closed = action(controlled, CHROLLO_BOOKMARK)
     const kept = action(advance(closed), CHROLLO_TURN)
-    expect(kept.opponent.hatsuEffects.needleFrames).toBeGreaterThan(0)
+    expect(kept.opponent.needlePuppet?.needleEmbedded).toBe(true)
   })
   it('keeps the right hand occupied while open and stamps Moon only after closing', () => {
     const base = ready()

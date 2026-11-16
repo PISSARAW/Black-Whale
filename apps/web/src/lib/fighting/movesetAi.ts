@@ -1,3 +1,4 @@
+import { illumiAiSlots } from './illumiAi'
 import { voconteAiSlots } from './vocontePresentation'
 import { biohazardAiSlots } from './biohazardAi'
 import { predatorAiSlots } from './predatorAi'
@@ -46,6 +47,7 @@ function finisherInRange(state: FightState, gap: number): boolean {
 }
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  if (state.opponent.id === 'illumi') return illumiAiSlots(state, gap)
   if (state.opponent.id === 'voconte') return voconteAiSlots(state, gap)
   return ordinaryFighterSlots(state, roll, gap)
 }

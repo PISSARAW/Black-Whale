@@ -1,3 +1,4 @@
+import { resolveIllumiContact } from './illumiImpact'
 import { recordBlinkyWound } from './blinkyWounds'
 import { resolveLynchContact } from './lynchInterrogation'
 import { melodyRestrictsCombat } from './melodyRules'
@@ -89,6 +90,8 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     openingMultiplier: openingDamageMultiplier(opening),
   })
   const spent = spendAttacker(attacker, defence)
+  const needle = resolveIllumiContact({ state, side, defence, spent })
+  if (needle) return needle
   const knockdown = isJudgedKnockdown({
     attacker,
     knockback: data.knockback,
@@ -96,7 +99,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     avoided: defence.avoided,
     critical,
   })
-  const wallSplat = !defence.avoided && atWall(sleepingBody(defender), attacker, data.knockback)
+  const wallSplat = impactWallSplat({ defence, defender, attacker, knockback: data.knockback })
   const struck = strikeAfterDefence(defence, {
     attacker,
     damage,
@@ -456,4 +459,13 @@ function projectileRead(projectile: ProjectileHit['projectile']) {
     concealed: Boolean(projectile.concealed) && projectile.matter === 'nen',
     position: projectile,
   }
+}
+
+function impactWallSplat(options: {
+  defence: ImpactDefence
+  defender: ArcadeFighter
+  attacker: ArcadeFighter
+  knockback: number
+}): boolean {
+  return !options.defence.avoided && atWall(sleepingBody(options.defender), options.attacker, options.knockback)
 }

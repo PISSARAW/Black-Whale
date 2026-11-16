@@ -104,7 +104,7 @@ function freeWritingMind(fighter: ArcadeFighter): boolean {
   const effects = fighter.hatsuEffects
   return ![
     effects.manipulatedFrames,
-    effects.needleFrames,
+    Number(Boolean(fighter.needlePuppet)),
     effects.entrancedFrames,
     effects.possessedFrames,
     effects.momozeFrames,

@@ -1,3 +1,4 @@
+import { consumeControlNeedle } from './illumiFrame'
 import { maryPredatorPrey } from './bloodyMaryPredator'
 import { chrolloHasActivePage } from './chrolloBook'
 import { wakeHanzoBody } from './hanzoProjection'
@@ -113,13 +114,12 @@ export const PREDATOR_PREY: readonly PredatorPrey[] = [
     nameEn: 'Nen threads',
     key: 'stitchedFrames',
   }),
-  targetCounter({
-    id: 'needle-control',
-    source: 'illumi',
-    nameFr: 'Aiguilles de contrôle',
-    nameEn: 'Control needles',
-    key: 'needleFrames',
-  }),
+  {
+    id: 'needle-control', source: 'illumi', nameFr: 'Aiguille de Needle People', nameEn: 'Needle People needle',
+    live: (s, side) => s[other(side)].needlePuppet?.owner === side && Boolean(s[other(side)].needlePuppet?.needleEmbedded),
+    consume: (s, side) => consumeControlNeedle(s, other(side)),
+    point: (s, side) => ({ x: s[other(side)].x, y: s[other(side)].y + 11 }),
+  },
   maryPredatorPrey,
   targetCounter({
     id: 'paper-serpent',
@@ -134,7 +134,6 @@ type CounterKey =
   | 'blinkyFrames'
   | 'manipulatedFrames'
   | 'stitchedFrames'
-  | 'needleFrames'
   | 'serpentMarks'
 type CounterSpec = Pick<PredatorPrey, 'id' | 'source' | 'nameFr' | 'nameEn'> & { key: CounterKey }
 

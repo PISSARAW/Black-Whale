@@ -97,7 +97,6 @@ describe('Longhi’s voluntary Moonlight Act', () => {
     const offered = propose()
     for (const key of [
       'manipulatedFrames',
-      'needleFrames',
       'entrancedFrames',
       'possessedFrames',
     ] as const) {

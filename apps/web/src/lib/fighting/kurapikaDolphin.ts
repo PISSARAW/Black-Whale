@@ -1,3 +1,4 @@
+import { ownsNeedlePuppet } from './illumiFrame'
 import { doorNetworkBusy } from './voconteDoorState'
 import { machiThreadForOwner } from './machiThread'
 import { cyclotronBusy } from './phinksCyclotron'
@@ -144,6 +145,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   return {
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
     predator: predatorBusy(fighter),
+    'needle-puppet': ownsNeedlePuppet(state, side),
     cyclotron: cyclotronBusy(fighter),
     door: doorNetworkBusy(state, side),
     'secret-window': Boolean(fighter.secretWindow),

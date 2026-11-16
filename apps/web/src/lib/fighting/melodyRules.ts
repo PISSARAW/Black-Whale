@@ -1,3 +1,4 @@
+import { needleAutonomy } from './illumiState'
 import { senseDeprived } from './saiyuSenses'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
@@ -62,6 +63,7 @@ export function melodyNenActive(fighter: ArcadeFighter): boolean {
 }
 
 export function melodyCanPerform(fighter: ArcadeFighter): boolean {
+  if (!needleAutonomy(fighter)) return false
   return (
     melodyNenActive(fighter) &&
     hasMelodyFlute(fighter) &&

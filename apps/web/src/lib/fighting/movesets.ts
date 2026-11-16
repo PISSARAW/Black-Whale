@@ -1,3 +1,7 @@
+import { illumiBodyFree } from './illumiState'
+import { illumiResources } from './illumiAccess'
+import { illumiMoveReadiness } from './illumiPresentation'
+import { tuneIllumiMoveset } from './illumiMoveset'
 import { tuneVoconteMoveset } from './voconteMoveset'
 import { voconteMoveResources } from './voconteDoorAction'
 import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
@@ -83,7 +87,7 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneBiohazardMoveset)
+  ALL_MOVESETS.map(tuneIllumiMoveset).map(tuneBiohazardMoveset)
     .map(tuneMachiMoveset)
     .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
@@ -157,6 +161,12 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (!illumiBodyFree(state[side])) return false
+  const needles = illumiMoveReadiness(state, side, move)
+  return needles ?? contextualMoveAllowed(state, side, move)
+}
+
+function contextualMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
   const blood = zakuroMoveReady(state, side, move)
   if (blood !== null) return blood
   const battle = bonolenovMoveAllowed(state, side, move)
@@ -180,6 +190,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const needles = move.kind === 'special' ? illumiResources(fighter, move.id) : null
+  if (needles !== null) return needles && fighter.aura >= move.auraCost
   const door = move.kind === 'special' ? voconteMoveResources(fighter, move.id) : null
   if (door !== null) return door
   const biohazard = biohazardMoveResources(fighter, move.id)
@@ -304,7 +316,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   phinks: (state, side) => cyclotronPunchReady(state[side]),
   franklin: () => true,
   machi: (state, side) => machiBindReady(state, side),
-  illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
   shizuku: blinkyBloodReady,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),

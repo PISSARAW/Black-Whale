@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightIllumiEquipment from './FightIllumiEquipment.svelte'
   import { createFight } from '$lib/fighting/engine'
   import { fightingStyle } from '$lib/fighting/fightStyles'
   import type { FightFormatId } from '$lib/fighting/formats'
@@ -169,6 +170,7 @@
   </div>
 </section>
 
+  <FightIllumiEquipment {environment} {player} {opponent} {language} {onEnvironment} />
 <StagePicker {environment} {language} onSelect={onEnvironment} />
 <FightFormatPicker selected={format} {language} onSelect={onFormat} />
 

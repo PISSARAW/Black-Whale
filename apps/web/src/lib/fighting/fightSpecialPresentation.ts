@@ -1,3 +1,4 @@
+import { illumiSpecialPresentation } from './illumiPresentation'
 import { voconteSpecialPresentation } from './vocontePresentation'
 import { biohazardPresentation } from './biohazardPresentation'
 import { lynchSpecialPresentation } from './lynchPresentation'
@@ -26,6 +27,7 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
+  if (state.player.id === 'illumi') return illumiSpecialPresentation(state, language)
   const personal = personalSpecialPresentation(state, language)
   if (personal) return personal
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))

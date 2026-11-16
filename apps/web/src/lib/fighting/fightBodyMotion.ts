@@ -22,7 +22,7 @@ import {
 } from './fightRig'
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
-import { dashPose } from './fightLocomotion'
+import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
 import { keyedMove } from './keyPoseMoves'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
@@ -173,12 +173,19 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   const plan = (pose: FightPose, key: string): BodyPlan => ({ pose, plant: true, key, blend: 0.1 })
   const dash = dashPose(fighter, standing)
   if (dash) return { pose: dash.pose, plant: true, key: `dash:${dash.forward}`, blend: 0.025 }
+  const prejump = prejumpPose(fighter, standing)
+  if (prejump) return { ...prejump, plant: true }
+  const landing = landingPose(fighter, standing)
+  if (landing) return { ...landing, plant: true }
   if (fighter.crouching) {
     const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')
   }
   if (guarding) return plan(pickJoints(standing, STANCE_FRAME_JOINTS), 'guard')
   // The walk cycle moves the legs; the stance keeps the guard up over it.
-  if (fighter.pose === 'walk') return plan(pickJoints(standing, UPPER_JOINTS), 'walk')
+  if (fighter.pose === 'walk') {
+    const walking = walkPose(fighter, pickJoints(standing, UPPER_JOINTS))
+    return { ...walking, plant: true }
+  }
   return plan(standing, 'stance')
 }

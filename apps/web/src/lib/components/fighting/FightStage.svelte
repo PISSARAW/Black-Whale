@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightScene from './FightScene.svelte'
+  import FightSaiyuSenses from './FightSaiyuSenses.svelte'
   import FightHud from './FightHud.svelte'
   import FightResources from './FightResources.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
@@ -26,6 +27,7 @@
   export let showControls = false
   export let training = false
   export let paused = false
+  let sensoryViewer: 'player' | 'opponent' = 'player'
   $: moveset = movesetFor(state.player.id)
   $: special = fightSpecialPresentation(state, language)
   $: hatsuReady = special.ready
@@ -43,7 +45,7 @@
   }
 </script>
 
-<FightAudio {state} {language} {paused} />
+<FightAudio {state} {language} {paused} viewer={sensoryViewer} />
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
   <div class="fight-arena">
     <FightHud {state} {language} {detailed} />
@@ -64,6 +66,7 @@
       {/key}
     {/if}
     {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
+    <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
   </div>
   {#if showControls}<div class="touch-controls">
       <div class="touch-group movement-controls">

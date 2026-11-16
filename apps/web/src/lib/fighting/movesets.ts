@@ -1,3 +1,4 @@
+import { sealedSenseCount } from './saiyuSenses'
 import { tuneThetaMoveset } from './thetaMoveset'
 import { thetaShotMove } from './thetaFirearm'
 import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
@@ -214,7 +215,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   benjamin: (state, side) => Boolean(state[side].hatsuEffects.baton?.card),
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
-  saiyu: (state, side) => opponentOf(state, side).hatsuEffects.senseSeals >= 2,
+  saiyu: (state, side) => sealedSenseCount(opponentOf(state, side)) >= 2,
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
   franklin: () => true,

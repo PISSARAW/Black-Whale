@@ -223,6 +223,7 @@ export interface FighterHatsuEffects {
   contagionStacks: number
   futureSight: number
   baton: BenjaminBatonState | null
+  /** Independent monkey seals: sight = 1, hearing = 2, speech = 4. */
   senseSeals: number
   blinkyFrames: number
   cohortWillFrames: number

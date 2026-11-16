@@ -187,7 +187,7 @@ describe('fighter Hatsu registry', () => {
     expect(wounded).toBe(healthy)
   })
 
-  it('lets Three Monkeys seal all senses after three strikes', () => {
+  it('lets each of Three Monkeys seal its own sense without forcing Zetsu', () => {
     let state = closeFight('saiyu', 'hisoka')
     for (let strike = 0; strike < 3; strike += 1) {
       state = hatsuFor('saiyu').onImpact({
@@ -195,12 +195,13 @@ describe('fighter Hatsu registry', () => {
         side: 'player',
         defenderSide: 'opponent',
         source: 'saiyu',
+        moveId: ['saiyu:neutralSpecial', 'saiyu:forwardSpecial', 'saiyu:downSpecial'][strike],
         blocked: false,
         concealed: false,
       })
     }
-    expect(state.opponent.hatsuEffects.senseSeals).toBe(3)
-    expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
+    expect(state.opponent.hatsuEffects.senseSeals).toBe(7)
+    expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
   })
 
   it('keeps Theta’s personal Hatsu unknown without draining or sealing Nen', () => {

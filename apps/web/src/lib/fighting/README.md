@@ -300,6 +300,20 @@ sans changer les règles, les boîtes ni les données de frame.
 
 ## Mouvement et rendu
 
+- Saiyu distingue **L : Mizaru** (vue), **avant + L : Kikazaru** (ouïe) et
+  **bas + L : Iwazaru** (parole). Chaque contact non gardé retire uniquement la
+  faculté correspondante ; répéter le même singe n’en retire aucune autre.
+  Les coups de bâton et le finisher n’ajoutent aucun sceau. Aucun Zetsu ni stun
+  supplémentaire n’est imposé : perdre ses sens ne ferme pas automatiquement
+  les pores d’aura et ne bloque pas tous les Hatsu.
+  Le masque de Mizaru cache l’arène et ses informations visuelles ; Kikazaru coupe
+  le mix de combat ; Iwazaru empêche d’interpeller le corps de Hanzo. Un corps
+  privé d’ouïe n’entend pas non plus cet appel. Le versus local propose les
+  perceptions J1/J2 sur son écran partagé, avec commandes conservées.
+  Portées, blocage par la garde, finisher après deux facultés distinctes et maintien
+  des privations jusqu’à la fin de manche restent des adaptations du duel ;
+  le manga (ch. 349) n’en fixe pas les modalités complètes.
+
 - `fighterMovement.ts` porte la marche (recul à 80 %), le dash (18 frames) et le
   backdash (16 frames) au double appui sous 14 frames, le prejump de 3 frames, un saut
   à deux gravités (environ 38 frames en l'air) dont la dérive horizontale est fixée au

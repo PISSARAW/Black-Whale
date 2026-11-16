@@ -7,11 +7,12 @@
     type FightAudioDirector,
   } from '$lib/fighting/audio/director'
   import { readFightAudioSettings, saveFightAudioSettings } from '$lib/fighting/audio/settings'
-  import type { FightState } from '$lib/fighting/types'
+  import type { FightSide, FightState } from '$lib/fighting/types'
 
   export let state: FightState
   export let language: 'fr' | 'en' = 'fr'
   export let paused = false
+  export let viewer: FightSide = 'player'
 
   let director: FightAudioDirector | null = null
   let settings = { ...DEFAULT_FIGHT_AUDIO }
@@ -19,7 +20,7 @@
   let mounted = false
   let unavailable = false
 
-  $: if (mounted) director?.update(state, { paused: paused || hidden, settings })
+  $: if (mounted) director?.update(state, { paused: paused || hidden, settings, viewer })
 
   function unlock(): void {
     if (settings.muted || hidden) return
@@ -31,7 +32,7 @@
     const start = () => {
       if (!mounted || hidden || settings.muted) return
       director ??= createFightAudioDirector(state)
-      director?.update(state, { paused, settings })
+      director?.update(state, { paused, settings, viewer })
     }
     if (context.state === 'suspended')
       void context
@@ -54,7 +55,7 @@
     mounted = true
     const visibility = () => {
       hidden = document.hidden
-      director?.update(state, { paused: paused || hidden, settings })
+      director?.update(state, { paused: paused || hidden, settings, viewer })
     }
     if (sharedAudioContext()?.state === 'running') unlock()
     window.addEventListener('pointerdown', unlock, { passive: true })

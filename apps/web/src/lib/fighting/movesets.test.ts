@@ -296,7 +296,7 @@ function withFinisherCondition(state: FightState): FightState {
         },
       }
     case 'saiyu':
-      return withOpponentEffect(state, 'senseSeals', 2)
+      return withOpponentEffect(state, 'senseSeals', 3)
     case 'biscuit':
       return { ...state, player: { ...player, biscuitTrueForm: true } }
     case 'phinks':

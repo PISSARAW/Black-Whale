@@ -41,8 +41,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'saiyu',
     mechanic: [
-      'Trois Singes : chaque technique scelle un sens ; le troisième impose le Zetsu.',
-      'Three Monkeys: each technique seals a sense; the third forces Zetsu.',
+      'L : Mizaru retire la vue ; → + L : Kikazaru retire l’ouïe ; ↓ + L : Iwazaru retire la parole. Chaque singe doit toucher ; répéter le même ne retire aucun autre sens. Aucun Zetsu automatique. Portée, garde et durée jusqu’à la fin de manche sont des adaptations du duel.',
+      'L: Mizaru removes sight; → + L: Kikazaru removes hearing; ↓ + L: Iwazaru removes speech. Each monkey must hit; repeating one removes no other sense. No automatic Zetsu. Range, guard and duration until the round ends are duel adaptations.',
     ],
     finisherCondition: [
       'Au moins deux sens adverses doivent être scellés.',
@@ -58,12 +58,12 @@ const SPECS: readonly MovesetSpec[] = [
       'Pas du pèlerin|Pilgrim Step',
       'Pilier écrasant|Crushing Pillar',
       'Garde inversée|Reverse Guard',
-      'Ne rien voir|See No Evil',
-      'Ne rien entendre|Hear No Evil',
-      'Ne rien dire|Speak No Evil',
+      'Mizaru · Ne rien voir|Mizaru · See No Evil',
+      'Kikazaru · Ne rien entendre|Kikazaru · Hear No Evil',
+      'Iwazaru · Ne rien dire|Iwazaru · Speak No Evil',
       'Cercle du bâton|Staff Circle',
       'Prise du singe|Monkey Hold',
-      'Trois Singes · Silence total|Three Monkeys · Total Silence',
+      'Bâton du prêtre · Frappe finale|Priest Staff · Final Strike',
     ],
     speed: 0.96,
     power: 0.98,

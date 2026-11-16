@@ -69,7 +69,7 @@ function runRoute(id: string, options: { mirrored: boolean; corner: boolean; gap
   return { state, contacts }
 }
 
-describe('sixteen authored combat routes against guard after the first hit', () => {
+describe('all forty fighters’ combat routes against guard after the first hit', () => {
   for (const route of COMBAT_ROUTES)
     for (const mirrored of [false, true])
       for (const corner of [false, true])

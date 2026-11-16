@@ -1,5 +1,6 @@
 import { animateMelodyFlute, restoreMelodyFlute } from './melodyFigurePose'
 import { rightHandedPose } from './fightHandedPose'
+import { rosterSustainedMotion } from './rosterSustainedMotion'
 import { animateBlinky } from './blinkyFigure'
 import { animatePadailleWeapon } from './padailleFigure'
 import { easterEggBodyPlan } from './easterEggPoses'
@@ -152,7 +153,11 @@ export interface PlanContext extends ReactionContext {
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
   const plan = unmirroredBodyPlan(fighter, context)
-  return plan && ['chrollo', 'kurapika'].includes(fighter.id) && fighter.facing === -1
+  const handed =
+    ['chrollo', 'kurapika'].includes(fighter.id) ||
+    plan?.key === 'roster-writing' ||
+    plan?.key === 'roster-console'
+  return plan && handed && fighter.facing === -1
     ? { ...plan, pose: rightHandedPose(plan.pose) }
     : plan
 }
@@ -180,6 +185,8 @@ function attackingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | 
 }
 
 function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const maintained = rosterSustainedMotion(fighter, context.seconds)
+  if (maintained) return maintained
   const dance = bonolenovDancePlan(fighter, context.seconds)
   if (dance) return dance
   const crossGame = crossGameBodyPlan(fighter)

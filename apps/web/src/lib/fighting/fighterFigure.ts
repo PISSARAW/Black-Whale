@@ -8,6 +8,7 @@ import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
 import { shapeFightEyes } from './fightFigureEyes'
+import { finishFightModel } from './fighterModelFinish'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
@@ -83,14 +84,19 @@ export function buildFightFigure(options: {
     fighter.battleCantabile?.prologue
       ? { ...profile, shirt: profile.skin }
       : profile
+  const finalProfile = trueForm ? biscuitTrueFormProfile(dressed) : dressed
+  const figureGlow: HumanFigureBuild['glow'] = fighter.hanzoProjection
+    ? (colour, opacity) => glow(colour, opacity * 0.28)
+    : glow
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
     observerSight: observerSight(options.observer),
-    glow: fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
+    glow: figureGlow,
     seen,
-    profile: trueForm ? biscuitTrueFormProfile(dressed) : dressed,
+    profile: finalProfile,
   })
+  finishFightModel({ THREE, glow: figureGlow, model, profile: finalProfile })
   if (trueForm) shapeBiscuitTrueForm(model)
 
   addIllumiNeedles({ THREE, glow, fighter, model })

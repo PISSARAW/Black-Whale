@@ -186,6 +186,16 @@ const DIRECTIONS: Record<string, Partial<MangaLikeness>> = {
   coventoba: { eyes: 'heavy', cheek: 0.18, jaw: 0.12, chin: 0.175 },
   vergei: { eyes: 'heavy', jaw: 0.15, brow: 1.7, nose: 1.3 },
   musse: { eyes: 'almond', cheek: 0.145, jaw: 0.074, brow: 0.7 },
+  sayird: {
+    eyes: 'almond',
+    cheek: 0.15,
+    jaw: 0.082,
+    chin: 0.218,
+    nose: 1.1,
+    brow: 0.85,
+    mouth: 0.045,
+    hair: 'side-part',
+  },
   furykov: { eyes: 'heavy', cheek: 0.152, jaw: 0.106, chin: 0.225, nose: 1.5, hair: 'crew-flat' },
   rihan: {
     eyes: 'narrow',

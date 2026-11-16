@@ -6,7 +6,6 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove, KO_DURATION } from '$lib/fighting/fightMoves'
   import { attackProgress } from '$lib/fighting/frameData'
-  import { fighterAuraHex } from '$lib/fighting/auraColours'
   import { fighterDefinition } from '$lib/fighting/roster'
   import type { ArcadeFighter, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
@@ -45,7 +44,12 @@
     async function mountModel() {
       try {
         const THREE = await import('three')
-        const { buildHumanFigure } = await import('$lib/tour/humanFigure')
+        const [{ buildFightFigure }, { fightBodyMotion }, { disposeMountedVisitHatsu }] =
+          await Promise.all([
+            import('$lib/fighting/fighterFigure'),
+            import('$lib/fighting/fightBodyMotion'),
+            import('$lib/fighting/visitHatsuModel'),
+          ])
         if (disposed || !canvas) return
 
         const renderer = new THREE.WebGLRenderer({
@@ -78,29 +82,8 @@
           return material
         }
 
-        const model = buildHumanFigure({
-          THREE,
-          glow,
-          seen: {
-            id: `fighting:${definition.modelId}`,
-            kind: 'combatant',
-            spaceId: 'black-whale-clash',
-            tierId: 'arcade-stage',
-            at: [0, 0],
-            y: 0,
-            size: preview ? 0.9 : 1,
-            colour: fighterAuraHex(fighter.id),
-            stage: 0,
-            hidden: false,
-            human: {
-              role: definition.modelRole,
-              identity: definition.modelId,
-              pose: 'idle',
-              aura: fighter.nen.mode,
-              nen: fighter.nen,
-            },
-          },
-        })
+        const model = buildFightFigure({ THREE, glow, fighter })
+        if (preview) model.root.scale.setScalar(0.9)
         scene.add(model.root)
         let renderedPose: FighterPose = fighter.pose
         let poseStarted = performance.now() / 1000
@@ -142,16 +125,23 @@
           const progress = poseProgress(seconds)
           const bodyAngle = preview ? -0.28 : updateFighterFacing(facing, fighter.facing, seconds)
           model.root.rotation.y = bodyAngle
+          const motion = fightBodyMotion({
+            fighter,
+            seconds: preview ? 0 : seconds,
+            progress,
+            fallback: fightMove(fighter, progress),
+          })
           model.animate(seconds, pose, {
             motion: preview
-              ? fightMove(fighter, progress)
+              ? motion
               : trackFightOpponent({
                   fighter,
                   bodyAngle,
                   seconds,
-                  motion: fightMove(fighter, progress),
+                  motion,
                 }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
+            transitionSeconds: preview ? 0 : undefined,
           })
           renderer.render(scene, camera)
           if (!preview) frame = requestAnimationFrame(render)
@@ -161,6 +151,7 @@
         const release = () => {
           cancelAnimationFrame(frame)
           resize?.disconnect()
+          disposeMountedVisitHatsu(model.root)
           materials.forEach(([, material]) => material.dispose())
           renderer.dispose()
           if (preview) renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext()

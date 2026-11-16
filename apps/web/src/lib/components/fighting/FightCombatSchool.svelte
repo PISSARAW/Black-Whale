@@ -1,6 +1,7 @@
 <script lang="ts">
   import {
     COMBAT_FIGHTERS,
+    COMBAT_ROUTES,
     combatRoutesFor,
     combatRoute,
     type CombatFighter,
@@ -142,8 +143,8 @@
   <details bind:this={catalog} open={expanded}>
     <summary
       >{language === 'fr'
-        ? 'École de combat · 16 routes et défense'
-        : 'Combat school · 16 routes and defense'}</summary
+        ? `École de combat · ${COMBAT_ROUTES.length} routes et défense`
+        : `Combat school · ${COMBAT_ROUTES.length} routes and defense`}</summary
     >
     <label
       >{language === 'fr' ? 'Personnage des exercices' : 'Exercise fighter'}

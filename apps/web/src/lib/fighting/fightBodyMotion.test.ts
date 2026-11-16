@@ -224,9 +224,9 @@ describe('keyed moves for the whole roster', () => {
     }
   })
 
-  it("draws a family's gestures for moves without hand keys", () => {
+  it('uses personal choreography for the complete playable roster', () => {
     expect(keyedMove('kurapika', 'standingLight').authored).toBe(true)
-    expect(keyedMove('kurapika', 'neutralSpecial').authored).toBe(false)
+    expect(keyedMove('kurapika', 'neutralSpecial').authored).toBe(true)
     expect(keyedMove('franklin', 'neutralSpecial').timeline).not.toBe(
       keyedMove('leorio', 'neutralSpecial').timeline,
     )

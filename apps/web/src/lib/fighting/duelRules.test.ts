@@ -107,17 +107,20 @@ describe('duel rules', () => {
     expect(state.player.attack?.kind).toBe('special')
     expect(state.player.aura).toBeLessThan(36)
   })
-  it('does not cancel on whiff or without a declared block route', () => {
+  it('requires a real block for Franklin’s first pressure link and ends pressure on the heavy', () => {
     const state = beginFight(createFight('franklin', 'hisoka', { mode: 'versus-local' }))
     state.player = { ...state.player, x: 46, aura: 100 }
     state.opponent = { ...state.opponent, x: 51 }
-    expect(moveForSlot('franklin', 'standingLight')!.cancelOnBlockInto).toEqual([])
+    expect(moveForSlot('franklin', 'standingLight')!.cancelOnBlockInto).toEqual([
+      'franklin:standingHeavy',
+    ])
+    expect(moveForSlot('franklin', 'standingHeavy')!.cancelOnBlockInto).toEqual([])
     const whiff = performAttack(state, 'player', 'light')
     expect(performAttack(whiff, 'player', 'heavy').player.attack?.kind).toBe('light')
     whiff.opponent.blocking = true
     whiff.opponent.guardFrames = 20
     const blocked = active(whiff)
-    expect(performAttack(blocked, 'player', 'heavy').player.attack?.kind).toBe('light')
+    expect(performAttack(blocked, 'player', 'heavy').player.attack?.kind).toBe('heavy')
   })
   it('requires crouch guard for lows and standing guard for aerials', () => {
     for (const variant of ['low', 'air'] as const) {

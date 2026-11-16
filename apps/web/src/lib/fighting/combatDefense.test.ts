@@ -41,7 +41,7 @@ describe.each(COMBAT_FIGHTERS)('%s pressure gives the defender a turn', (fighter
     const refused = performTrainingAction({
       state,
       side: 'player',
-      action: 'special',
+      action: combatRouteAction(special),
       input: combatRouteInput(special, state.player.facing),
     })
     expect(refused.commandFeedback?.player?.outcome).toBe('refused')

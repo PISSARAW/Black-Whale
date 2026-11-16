@@ -3,6 +3,7 @@ import { SECOND_WAVE_STYLES } from './fightStylesSecondWave'
 import { THIRD_WAVE_STYLES } from './fightStylesThirdWave'
 import { FOURTH_WAVE_STYLES } from './fightStylesFourthWave'
 import { COMBAT_COMPLETION_STYLES } from './fightStylesCombatCompletion'
+import { styleMatchup } from './styleMatchups'
 
 export interface AttackTuning {
   startup?: number
@@ -217,8 +218,10 @@ const STYLES: Record<FighterId, FightingStyle> = {
     id: 'theta',
     nameFr: 'Tir de précision',
     nameEn: 'Precision shot',
-    descriptionFr: 'Garde la distance et exploite les ouvertures au pistolet ; Hatsu personnel inconnu.',
-    descriptionEn: 'Keeps her distance and exploits openings with a handgun; personal Hatsu unknown.',
+    descriptionFr:
+      'Garde la distance et exploite les ouvertures au pistolet ; Hatsu personnel inconnu.',
+    descriptionEn:
+      'Keeps her distance and exploits openings with a handgun; personal Hatsu unknown.',
     preferredRange: [15, 23],
     retreatBelowHealth: 42,
     guardRange: 18,
@@ -390,8 +393,26 @@ const STYLES: Record<FighterId, FightingStyle> = {
   ...COMBAT_COMPLETION_STYLES,
 }
 
+// Later roster waves used a shared sentence (and sometimes a raw id) in selection.
+// Their authored plans and counterplay already describe the actual implemented Hatsu.
+const DETAILED_STYLES = new Map<FighterId, FightingStyle>(
+  [SECOND_WAVE_STYLES, THIRD_WAVE_STYLES, FOURTH_WAVE_STYLES, COMBAT_COMPLETION_STYLES]
+    .flatMap((wave) => Object.values(wave))
+    .map((style) => {
+      const matchup = styleMatchup(style.id)
+      return [
+        style.id,
+        {
+          ...style,
+          descriptionFr: `${matchup.plan[0]} ${matchup.counter[0]}`,
+          descriptionEn: `${matchup.plan[1]} ${matchup.counter[1]}`,
+        },
+      ]
+    }),
+)
+
 export function fightingStyle(id: FighterId): FightingStyle {
-  return STYLES[id]
+  return DETAILED_STYLES.get(id) ?? STYLES[id]
 }
 
 interface MovementSituation {

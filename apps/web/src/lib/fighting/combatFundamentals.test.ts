@@ -267,7 +267,7 @@ describe('throws, techs and wakeup have explicit windows', () => {
 })
 
 describe('confirmed cancels, pressure and reproducible punishment', () => {
-  it('allows the declared Kurapika light-to-heavy block cancel, without making it universal', () => {
+  it('allows the personal first light-to-heavy pressure link while excluding Hatsu on guard', () => {
     const blocked = resolve(performMove({ state: guarded(), side: 'player', action: 'light' }))
     expect(blocked.player.attack).toMatchObject({ confirmedHit: false, confirmedBlock: true })
     expect(canCancel(blocked.player, 'heavy', 'kurapika:standingHeavy')).toBe(true)
@@ -277,7 +277,8 @@ describe('confirmed cancels, pressure and reproducible punishment', () => {
     const other = resolve(
       performMove({ state: guarded(duel('biscuit', 'kurapika')), side: 'player', action: 'light' }),
     )
-    expect(canCancel(other.player, 'heavy', 'biscuit:standingHeavy')).toBe(false)
+    expect(canCancel(other.player, 'heavy', 'biscuit:standingHeavy')).toBe(true)
+    expect(canCancel(other.player, 'special', 'biscuit:neutralSpecial')).toBe(false)
     expect(canCancel(blocked.player, 'special', 'kurapika:neutralSpecial')).toBe(false)
   })
   it('does not cancel a whiff, a parried contact or an expired cancel window', () => {

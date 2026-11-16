@@ -54,7 +54,10 @@ try {
   await page.waitForFunction(() => Boolean(window.combatFixture))
   const measurements = await page.evaluate(() => window.combatFixture.performanceReport())
   await writeFile(path.join(output, 'engine.json'), JSON.stringify(measurements, null, 2))
-  process.stdout.write('Sixteen routes benchmarked with and without capture; hashes match.\n')
+  const benchmarkedRoutes = new Set(measurements.combat.map((entry) => entry.route)).size
+  process.stdout.write(
+    `${benchmarkedRoutes} routes benchmarked with and without capture; hashes match.\n`,
+  )
   const fighters = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
   const scenarios = [
     { camera: 0, gap: 6, jump: 0, corner: false },

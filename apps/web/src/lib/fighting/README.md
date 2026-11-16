@@ -376,12 +376,13 @@ les animations, l’absence de mutation de la simulation et la libération 3D.
 
 ## Objectif de démo locale
 
-La recette de référence porte sur Kurapika, Hisoka, Chrollo et Benjamin.
+La recette de référence a été étendue aux quarante personnages jouables :
+[finitions, chorégraphies et apprentissage du roster](./ROSTER_QUALITY.md).
 
 - **Contrôles** : clavier P1/P2 configurable dans Commandes, sauvegarde locale,
   deux manettes standard, fusion des périphériques et relâchement des commandes
   lors d'une déconnexion, d'une perte de focus ou d'une édition des touches.
-  Les raccourcis affichés des quatre personnages suivent les touches configurées.
+  Les raccourcis affichés des quarante personnages suivent les touches configurées.
   O projette ; F3 commande l'arène pour P1. P met en pause ; F10 commande l'arène
   pour P2. Les touches avancées du Nen et des Easter Eggs restent réservées.
 - **Manettes** : stick/croix pour les directions ; boutons A/B/X/Y pour léger,
@@ -389,8 +390,8 @@ La recette de référence porte sur Kurapika, Hisoka, Chrollo et Benjamin.
   Start pour lancer/pause ; Back pour parler ; L3/R3 pour arène et Gyo. Le Hatsu
   part au relâchement de X. Une nouvelle manette doit repasser au neutre avant
   de piloter le combat. Les manettes sans mapping standard sont signalées.
-- **Mouvements et contacts** : six attaques normales et trois attaques directionnelles animées à la main pour chacun
-  des quatre combattants ; la pose de contact tient pendant les frames actives.
+- **Mouvements et contacts** : six attaques normales et trois attaques directionnelles avec une chorégraphie personnelle pour chacun
+  des quarante combattants ; la pose de contact tient pendant les frames actives.
   Chrollo garde le livre et Kurapika sa main de chaîne du côté anatomique droit en changeant de côté. Les réactions
   utilisent la durée réelle du stun, y compris les impacts courts et les coups
   successifs ; elles restent figées pendant le hitstop. La marche conserve sa

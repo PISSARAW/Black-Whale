@@ -1,10 +1,16 @@
 # Combat de référence et caméra dynamique
 
-Cette livraison travaille Kurapika, Hisoka, Chrollo et Benjamin. Les timings,
-portées et routes sont des réglages de jeu ; ils ne changent pas les conditions
-canoniques des Hatsu.
+Le combat de référence a été étendu aux quarante personnages jouables :
+[finitions et couverture du roster](./ROSTER_QUALITY.md). Les timings, portées
+et routes sont des réglages de jeu ; ils ne changent pas les conditions canoniques
+des Hatsu. Les mesures historiques ci-dessous concernent les quatre personnages
+de référence.
 
-## Seize routes jouables
+## Cent soixante routes jouables
+
+Chaque personnage possède quatre routes et un exercice de défense dans l’Académie.
+Les 144 routes ajoutées passent par les coups physiques ; les seize routes de
+référence ci-dessous conservent leurs préparations de Nen.
 
 Les directions avant / arrière sont relatives au combattant. Les touches ci-dessous
 sont celles du clavier par défaut ; l’école affiche les commandes remappées.
@@ -38,22 +44,22 @@ Le lourd bloqué ne peut pas se convertir gratuitement en Hatsu : le défenseur
 retrouve un tour de jeu. Une parade au bon timing interrompt cette pression ; un
 léger raté ne permet pas un cancel anticipé.
 
-L’école propose quatre exercices de blocage puis punition, un par personnage.
+L’école propose quarante exercices de blocage puis punition, un par personnage.
 Le mannequin commence réellement son attaque après une courte préparation.
 La réussite exige un blocage puis une touche marquée `punish` par le moteur,
-pendant la récupération adverse. L’adversaire de l’exercice de Chrollo est Benjamin :
+pendant la récupération adverse. L’adversaire des exercices de Chrollo et Franklin est Benjamin :
 le lourd d’Hisoka ne laisse pas cette même punition légère garantie.
 
 ## École et laboratoire
 
-Ouvrir « École de combat · 16 routes et défense », choisir un personnage, puis
+Ouvrir « École de combat · 160 routes et défense », choisir un personnage, puis
 « Pratiquer » ou « Démontrer ». Le compteur progresse uniquement sur les contacts
 réels de la bonne attaque, avec un compteur de combo continu. Une mauvaise suite,
 une garde ou la fin du hitstun interrompt l’essai. Les indications distinguent
 confirmation, fenêtre de cancel et saisie tardive.
 
 Les démonstrations passent par les mêmes commandes, coûts et ticks que le joueur ;
-elles ne forcent pas les touches ou la réussite. Les seize sont validées à des lots
+elles ne forcent pas les touches ou la réussite. Les 160 sont validées à des lots
 de rendu de 120, 60, 30 et 20 Hz. Elles supportent la pause et l’annulation d’une
 commande encore en file. « Terminer l’exercice » rend le laboratoire libre.
 

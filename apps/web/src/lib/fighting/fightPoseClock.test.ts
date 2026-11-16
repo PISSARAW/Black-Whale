@@ -5,6 +5,7 @@ import { createFightState } from './fightState'
 import { keyedMove } from './keyPoseMoves'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveForSlot } from './movesets'
+import { FIGHTING_ROSTER } from './roster'
 import type { FighterId, MoveSlot } from './types'
 
 const who = createFightState('kurapika', 'hisoka').player
@@ -68,7 +69,7 @@ const normals: MoveSlot[] = [
   'forwardHeavy',
   'backHeavy',
 ]
-const fighters: FighterId[] = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
+const fighters: FighterId[] = FIGHTING_ROSTER.map((fighter) => fighter.id)
 describe.each(fighters)('%s authored contact silhouettes', (id) => {
   it.each(normals)(
     'holds %s through its actual active frames and settles after recovery',

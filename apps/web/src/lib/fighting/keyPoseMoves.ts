@@ -8,6 +8,7 @@ import { SHIZUKU_KEY_POSES } from './keyPosesShizuku'
 import { THETA_SHOT_POSES } from './keyPosesTheta'
 import { PROLOGUE_SPEAR_POSE } from './bonolenovPoses'
 import { archetypeTimeline } from './fightArchetypes'
+import { rosterKeyPoses } from './rosterKeyPoses'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
@@ -21,11 +22,9 @@ import type { MoveTimeline } from './keyPoseTimeline'
 import type { FighterId, MoveSlot } from './types'
 
 /**
- * The moves drawn by the fighting rig, by fighter. Kurapika and Hisoka, the
- * reference vertical slice, have their normals keyed by hand against their own
- * stance; Hisoka's four techniques also have distinct authored gestures.
- * Other moves without authored keys are drawn from their family's
- * gestures (`fightArchetypes.ts`) against a ready guard.
+ * Existing technique clips take precedence. The forty playable fighters also
+ * have individual choreography for every remaining slot, against their own guard.
+ * The family fallback is retained only for legacy, non-playable identities.
  */
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   voconte: { neutralSpecial: DOOR_LINK_POSE },
@@ -49,21 +48,21 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
 
 export interface KeyedMove {
   timeline: MoveTimeline
-  /** Keyed by hand against the fighter's stance, rather than a family gesture. */
+  /** Personal choreography sampled against this fighter's stance. */
   authored: boolean
 }
 
 export function keyedMove(id: FighterId, slot: MoveSlot): KeyedMove {
-  const authored = KEY_POSES[id]?.[slot]
+  const authored = keyPoseTimeline(id, slot)
   if (authored) return { timeline: authored, authored: true }
   return { timeline: archetypeTimeline(id, slot), authored: false }
 }
 
-/** The hand-keyed timeline of a move, or `null` when it uses its family's gesture. */
+/** The personal timeline of a move, or null for a legacy family gesture. */
 export function keyPoseTimeline(id: FighterId, slot: MoveSlot): MoveTimeline | null {
-  return KEY_POSES[id]?.[slot] ?? null
+  return KEY_POSES[id]?.[slot] ?? rosterKeyPoses(id)[slot] ?? null
 }
 
 export function keyedSlots(id: FighterId): MoveSlot[] {
-  return Object.keys(KEY_POSES[id] ?? {}) as MoveSlot[]
+  return Object.keys({ ...rosterKeyPoses(id), ...KEY_POSES[id] }) as MoveSlot[]
 }

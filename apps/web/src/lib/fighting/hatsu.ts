@@ -31,7 +31,7 @@ export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): Fighter
 }
 
 /**
- * A direct hit killed `victimSide`. Returns the state rewritten by the victim's
+ * An attributed attack or effect killed `victimSide`. Returns the state rewritten by the victim's
  * conditional Nen, or `null` when nothing wakes and the KO stands.
  */
 export function resolveDeathHatsu(

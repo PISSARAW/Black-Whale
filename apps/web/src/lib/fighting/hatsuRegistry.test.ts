@@ -493,7 +493,7 @@ describe('fighter Hatsu registry', () => {
           'player',
           'heavy',
         ),
-        0.6,
+        2.7,
       )
     }
     const killed = killing('knockout')

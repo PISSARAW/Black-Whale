@@ -64,7 +64,7 @@ describe('wave one movesets', () => {
       'luini',
       'bill',
     ])
-    WAVE_THREE_FIGHTERS.filter((id) => id !== 'bill').forEach(assertCompleteMoveset)
+    WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla'].includes(id)).forEach(assertCompleteMoveset)
   })
 
   it('gives the fourth wave ten equally complete movesets', () => {
@@ -180,7 +180,7 @@ describe('wave one movesets', () => {
     },
   )
 
-  it.each(WAVE_THREE_FIGHTERS.filter((id) => id !== 'bill'))(
+  it.each(WAVE_THREE_FIGHTERS.filter((id) => !['bill', 'camilla'].includes(id)))(
     '%s wave-three finisher is conditionally locked',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))

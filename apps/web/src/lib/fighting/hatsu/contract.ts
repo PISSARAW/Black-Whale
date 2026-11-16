@@ -14,7 +14,7 @@ export interface HatsuImpactContext extends HatsuTriggerContext {
   concealed: boolean
 }
 
-/** A direct hit has just killed `victimSide`; the attacker on `killerSide` landed it. */
+/** An attributed death: the common verdict identifies a living killer before post-mortem Nen. */
 export interface HatsuDeathContext {
   state: FightState
   victimSide: FightSide
@@ -31,7 +31,7 @@ export interface FighterHatsu {
   martialOnly?: true
   /** Still a real Hatsu for Steal Chain, despite lacking a target in this duel. */
   stealableOutsideDuel?: OutsideDuelAbility
-  /** Conditional Nen that wakes only when its owner is killed by a direct hit. */
+  /** Conditional Nen that wakes only when its owner is killed by an attributed attack or effect. */
   onDeath?: (context: HatsuDeathContext) => FightState
 }
 

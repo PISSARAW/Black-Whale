@@ -4,6 +4,7 @@
   import FightScene from './FightScene.svelte'
   import FightSaiyuSenses from './FightSaiyuSenses.svelte'
   import FightHud from './FightHud.svelte'
+  import FightCatsName from './FightCatsName.svelte'
   import FightResources from './FightResources.svelte'
   import FightTrainingOverlay from './FightTrainingOverlay.svelte'
   import FightAudio from './FightAudio.svelte'
@@ -54,6 +55,7 @@
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
   <div class="fight-arena">
     <FightHud state={visibleState} {language} {detailed} />
+    <FightCatsName state={visibleState} {language} />
     {#key sceneKey}
       <FightScene state={visibleState} {stageId} />
     {/key}
@@ -153,6 +155,7 @@
             <span>{language === 'fr' ? 'Ultime' : 'Super'}</span>
           </button>
         {/if}
+        {#if state.player.id !== 'camilla'}
         <button
           type="button"
           class="special-button"
@@ -172,6 +175,7 @@
           <kbd>L</kbd>
           <span>Hatsu</span>
         </button>
+        {/if}
       </div>
     </div>{/if}
   <FightResources

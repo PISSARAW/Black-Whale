@@ -189,16 +189,32 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   chargement et usage restent indisponibles, sans verrouiller Emperor Time.
   Les coups de Sayird restent des adaptations martiales même quand Little Eye
   est retenu. La manche suivante rend la capacité à son propriétaire.
-- Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
-  (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
-  qui se joue à la vie : le chat tue le meurtrier et Camilla revient.
-- Sweet Home (`sweetHomeContacts.ts`, `sweetHomeImpact.ts`) vérifie les contacts
-  pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures
-  à l'adversaire touché à gauche ; →+L absorbe à droite vers son propre corps
-  touché à gauche ; ↓+L absorbe à droite sans réceptacle et blesse sa main gauche.
-  Sans contact requis, la cible initiale garde les dégâts. Chaque blessure est
-  déplacée une fois, sans nouvelle réduction ni esquive. Portée, frames et coups
-  porteurs sont des abstractions du duel ; aucun objet-réceptacle n'est inventé.
+- Camilla conserve **Cat’s Name** comme Nen posthume automatique (chapitre 373),
+  sans finisher à faible santé ni coup de chat de son vivant. U tire une balle de
+  pistolet réelle, sans coût d’aura et utilisable en Zetsu ; ses autres coups sont
+  des gestes physiques de duel. Aucun Zetsu obligatoire n’est inventé.
+  `fightDeaths.ts` enregistre l’auteur et la cause d’une mort ; `fightOutcome.ts`
+  applique un verdict commun après les coups, projectiles, transferts, chaleurs
+  et morts de Judgment Chain. Les deux frappes d’un échange simultané sont
+  entièrement évaluées avant le Nen posthume ; points, TKO et temps restent non létaux.
+  Une Camilla tuée par un adversaire vivant déclenche `camillaCat.ts` : apparition
+  (24 frames), capture (24), absorption (36), résurrection (36). Le chat géant,
+  ses pattes et sa queue lumineuse suivent ces mêmes phases ; l’énergie rejoint
+  le corps et Camilla retrouve sa réserve complète. Le meurtrier consommé reste
+  absent de la scène jusqu’à la prochaine manche. Chronomètre, inputs, projectiles
+  et autres effets sont suspendus pendant ces deux secondes. La victoire est
+  attribuée une seule fois à la fin. En entraînement, la séquence joue puis les
+  deux réserves sont rétablies sans victoire. `camillaCamera.ts` inclut le corps
+  et la queue dans le cadrage mobile ; `FightCatsName.svelte` nomme chaque phase.
+  Pour les interactions non montrées dans le manga, la mort est attribuée au
+  propriétaire de l’effet fatal : chaleur, transfert ou Judgment Chain. Un retour
+  sur soi, une mort sans auteur ou un meurtrier déjà mort ne fournissent pas de
+  vie au chat dans cette adaptation ; un double décès simultané reste une égalité.
+  Cette convention de duel n’affirme pas résoudre les limites inconnues du manga.
+  Elle évite aussi une boucle de résurrections dans un miroir Camilla/Camilla.
+  Une mort en Zetsu ou sans aura peut déclencher le Nen posthume. Le vol du Hatsu empêche son activation.
+  `camilla.test.ts` couvre ces règles ; `scripts/check-camilla-cat.mjs` capture
+  les quatre phases et le verdict sur écran large et mobile.
 - Hanzo utilise **Hanzo Skill 4** avec L : son corps reste endormi au sol, sans
   déplacement ni garde, pendant que les commandes pilotent le double. Haut/bas
   le font flotter ; il traverse l'adversaire et peut le frapper. Le corps conserve

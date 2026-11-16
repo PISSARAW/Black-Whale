@@ -1,3 +1,4 @@
+import { CAMILLA_PISTOL } from './camillaWeapon'
 import { thetaShotAim } from './thetaFirearm'
 import { benjaminBurstReady } from './benjaminWeapon'
 import { hasMoveResources, moveForSlot } from './movesets'
@@ -194,13 +195,14 @@ function projectile(options: ProjectileOptions): ProjectileProfile {
 }
 
 export function projectileProfile(id: FighterId): ProjectileProfile {
+  if (id === 'camilla') return CAMILLA_PISTOL
   return CANONICAL_PROJECTILES[id] ?? THROWN_STONE
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
-  if (fighter.id === 'benjamin' || fighter.id === 'theta') return true
+  if (['benjamin', 'theta', 'camilla'].includes(fighter.id)) return true
   if (fighter.id === 'leorio')
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
@@ -210,7 +212,7 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 
 export function rangedAuraCost(id: FighterId): number {
   if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (id === 'benjamin' || id === 'theta') return 0
+  if (['benjamin', 'theta', 'camilla'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 

@@ -1,3 +1,7 @@
+import { fightStyleSpecialReady } from './fightStyleSpecial'
+import { stepPostMortemOrFuture } from './camillaFrame'
+import { advanceCatsName } from './camillaCat'
+import { fightAcceptsCommands, fightResolutionPending } from './fightOutcome'
 import { thetaFirearmOptions } from './thetaFirearm'
 import { resolveMoonlightAction } from './moonlightAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
@@ -84,7 +88,7 @@ export function tickFight(
     const accumulator = next.frameAccumulator - FIXED_STEP
     const previousPositions = capturePositions(next)
     next = {
-      ...stepParallelFuture(
+      ...stepPostMortemOrFuture(next, () => stepParallelFuture(
         next,
         { player: input, opponent: opponentInput, ai: settings.ai ?? false },
         {
@@ -92,7 +96,7 @@ export function tickFight(
           replay: (current, command) =>
             performAuraAttack({ state: current, side: 'opponent', ...command }),
         },
-      ),
+      )),
       frameAccumulator: accumulator,
     }
     next = { ...next, previousPositions }
@@ -105,10 +109,11 @@ export function tickFight(
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
   const next = stepFight(state, controls.player, controls.opponent)
-  return controls.ai && !controls.opponent ? advanceAiCadence(next, opponentAttack) : next
+  return controls.ai && !controls.opponent && !next.catsName ? advanceAiCadence(next, opponentAttack) : next
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
+  if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
   const player = updatePlayer(state.player, input)
@@ -116,20 +121,20 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
   const judged = resolveJudgmentDeaths({ ...state, player, opponent })
-  if (judged.phase === 'finished') return judged
+  if (fightResolutionPending(judged)) return judged
   const buffered = flushBuffered(
     flushBuffered(resolveHanzoBodyCalls(judged, input, opponentInput), 'player'),
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
-  if (withHatsu.phase === 'finished') return recordFightInjuries(state, withHatsu)
+  if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
   const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
   const flight = advanceProjectiles(armed, FIXED_STEP)
   const resolved = recordFightInjuries(
     state,
     resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),
   )
-  if (resolved.phase === 'finished') return resolved
+  if (fightResolutionPending(resolved)) return resolved
   const separated = separateFighterPushboxes(resolved.player, resolved.opponent)
   const remainingFrames =
     state.mode === 'training' ? state.remainingFrames : Math.max(0, state.remainingFrames - 1)
@@ -226,6 +231,7 @@ interface PerformMoveOptions {
 
 export function performMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
+  if (state.catsName) return state
   if (!futureAcceptsMove(state, side)) return state
   const selected = moveForAction(state[side], action, input)
   const override = characterMoveOverride(
@@ -258,7 +264,7 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
-  if (options.state.phase !== 'fighting') return options.state
+  if (!fightAcceptsCommands(options.state)) return options.state
   const original = options.state[side]
   const character = characterAuraAction(options, performAuraAttack)
   if (character) return character
@@ -293,7 +299,7 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 }
 
 export function opponentAttack(state: FightState): FightState {
-  if (state.phase !== 'fighting') return state
+  if (!fightAcceptsCommands(state)) return state
   state = moonlightAiResponse(state)
   if (moonlightAiWaiting(state)) return state
   const future = parallelFutureAiAction(state)
@@ -323,7 +329,7 @@ function ordinaryOpponentAttack(state: FightState): FightState {
     })
   }
   const attack = chooseStyleAttack(rolled.opponent.id, {
-    canSpecial: canUseFightHatsu(rolled.opponent) && gap <= definition.specialRange,
+    canSpecial: fightStyleSpecialReady(rolled.opponent, gap, definition.specialRange),
     canRanged: canUseRangedAttack(rolled.opponent) && gap > style.preferredRange[1],
     inRange: gap <= definition.reach + 2,
     roll: chance,
@@ -414,6 +420,7 @@ function flushBuffered(state: FightState, side: FightSide): FightState {
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {
+  if (state.catsName) return state
   if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
   if (move) return performMove({ state, side, action: 'throw' })

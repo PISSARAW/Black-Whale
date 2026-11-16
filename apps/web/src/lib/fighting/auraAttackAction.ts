@@ -24,6 +24,7 @@ interface AttackIntent {
 export function commitAuraAttack(options: AuraAttackOptions, intent: AttackIntent): FightState {
   const { side, kind, auraCharged, variant, moveId } = options
   const original = options.state[side]
+  if (original.id === 'camilla' && kind === 'special') return options.state
   if (isErigeronAction(original, kind, moveId)) return options.state
   if (!techniqueAllowed(options)) return options.state
   const { hatsuSource, concealed, resourceReady } = intent

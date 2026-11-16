@@ -54,6 +54,12 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       return
     }
 
+    if (id === 'camilla') {
+      expect(armed).toBe(ready)
+      expect(armed[side].aura).toBe(auraBefore)
+      return
+    }
+
     if (id === 'feitan') {
       expect(armed).toBe(ready)
       const wounded = recordFightInjuries(ready, {

@@ -10,6 +10,7 @@
   import FightBenjaminStatus from './FightBenjaminStatus.svelte'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
+  import FightCamillaStatus from './FightCamillaStatus.svelte'
   import FightKurapikaStatus from './FightKurapikaStatus.svelte'
   import FightPainPacker from './FightPainPacker.svelte'
   import FightNenControls from './FightNenControls.svelte'
@@ -46,6 +47,7 @@
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
       <FightGrudge {fighter} {language} />
+      <FightCamillaStatus {fighter} {language} />
       {#if side === 'player'}
         <FightNenControls {fighter} {language} {detailed} {showControls} {onAura} {onEmperor} />
         <div class="ability-readiness">
@@ -61,6 +63,7 @@
                 ? 'indisponible'
                 : 'unavailable'}
           </span>
+          {#if fighter.id !== 'camilla'}
           <span class:ready={special.ready} title={special.hint}
             >L · {special.label} · {special.ready
               ? language === 'fr'
@@ -70,6 +73,7 @@
                 ? 'indisponible'
                 : 'unavailable'}</span
           >
+          {/if}
           {#if moveset && finisher}
             <span
               class:ready={finisherReady(state, 'player')}

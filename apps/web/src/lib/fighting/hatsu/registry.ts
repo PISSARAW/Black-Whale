@@ -1,3 +1,4 @@
+import { fightResolutionPending } from '../fightOutcome'
 import { furykovHatsu } from './furykov'
 import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
@@ -114,6 +115,7 @@ export function hatsuFor(id: FighterId): FighterHatsu {
 
 export function advanceHatsuFrames(state: FightState): FightState {
   return Object.values(HATSU_REGISTRY).reduce((next, resolve) => {
+    if (fightResolutionPending(next)) return next
     const hatsu = resolve()
     return withDolphinIdentity(next, hatsu.onFrame, hatsu.id)
   }, state)

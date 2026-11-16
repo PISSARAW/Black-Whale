@@ -2,7 +2,8 @@
   import { onMount } from 'svelte'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
-  import { lsdfFighterVisible } from '$lib/fighting/lsdfPresentation'
+  import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
+  import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import {
     createHanzoProjectionScene,
     projectionCameraSpan,
@@ -268,7 +269,7 @@
 
         const animateFighter = (options: AnimateFighterOptions) => {
           const { side, fighter, opponent, model, seconds } = options
-          model.root.visible = lsdfFighterVisible(state, side)
+          model.root.visible = fightFigureVisible(state, side)
           const held = poseStarts[side]
           if (!held || held.pose !== fighter.pose)
             poseStarts[side] = { pose: fighter.pose, at: seconds }
@@ -338,7 +339,8 @@
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
           const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
-          const framing = biscuitCameraFrame({ state, centre, gap, aspect: camera.aspect })
+          const catSpan = camillaCameraSpan({ state, centre, gap, worldX })
+          const framing = biscuitCameraFrame({ state, ...catSpan, aspect: camera.aspect })
           const ease = easeFactor(CAMERA_RATE, dt)
           camera.position.x += (framing.x - camera.position.x) * ease
           camera.position.z += (framing.z - camera.position.z) * ease

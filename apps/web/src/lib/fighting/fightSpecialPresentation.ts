@@ -22,6 +22,7 @@ export function fightSpecialPresentation(
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
   if (state.player.id === 'tserriednich') return futureSpecialPresentation(state, language)
+  if (state.player.id === 'camilla') return camillaPresentation(language)
   if (state.player.id === 'kurapika') return kurapikaPresentation(state, language)
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)
@@ -74,5 +75,16 @@ function kurapikaPresentation(state: FightState, language: 'fr' | 'en'): Special
       language === 'fr'
         ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
         : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin',
+  }
+}
+
+function camillaPresentation(language: 'fr' | 'en'): SpecialPresentation {
+  return {
+    label: 'Cat’s Name · auto',
+    ready: false,
+    hint:
+      language === 'fr'
+        ? 'Nen posthume : automatique après sa mort, aucun coup manuel.'
+        : 'Post-mortem Nen: automatic after death, no manual attack.',
   }
 }

@@ -61,6 +61,9 @@ export function nextFightRound(state: FightState): FightState {
       forecastSimulation: undefined,
       lsdf: undefined,
       expulsion: undefined,
+    deaths: undefined,
+    catsName: undefined,
+    catsNameConsumed: undefined,
       player: preserveLifespan(
         createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
         state.player,
@@ -97,6 +100,7 @@ function createFighter(options: {
 }): ArcadeFighter {
   return {
     ...options,
+    maxHealth: options.health,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,

@@ -1,3 +1,5 @@
+import type { CatsNameSequence } from './camillaCat'
+import type { FightDeath } from './fightDeaths'
 import type { ComboMasterState } from './comboMasterTypes'
 import type { ParallelFutureState } from './parallelFutureTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
@@ -355,6 +357,10 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  /** Fatal causes collected before one common verdict, including simultaneous hits. */
+  deaths?: readonly FightDeath[]
+  catsName?: CatsNameSequence
+  catsNameConsumed?: FightSide
   moonlight?: import('./moonlightContract').MoonlightState
   parallelFuture?: ParallelFutureState
   /** Prevent speculative branches from recursively opening another forecast. */

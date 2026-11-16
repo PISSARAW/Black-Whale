@@ -1,8 +1,9 @@
+import { recordFightDeath } from './fightDeaths'
+import { resolveFightOutcome } from './fightOutcome'
 import { isThetaBullet } from './thetaFirearm'
 import { observeComboMaster } from './comboMaster'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { recordDolphinEffects } from './kurapikaDolphin'
-import { finishFight } from './combatVerdict'
 export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
@@ -21,7 +22,6 @@ import {
 import {
   consumeHatsuAvoidance,
   hatsuAvoidsImpact,
-  resolveDeathHatsu,
   resolveHatsuImpact,
 } from './hatsu'
 import { focusGuardRyu, isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
@@ -36,18 +36,15 @@ import {
   strikeProjectileDefender,
   type ImpactDefence,
 } from './combatDamage'
-import { fightFormat } from './formats'
 import {
   addJudgedKnockdown,
   isJudgedKnockdown,
   scoreJudgedImpact,
-  tradeFinishReason,
 } from './towerJudging'
 import type { ProjectileHit } from './projectiles'
 import type {
   ArcadeFighter,
   FightNenZone,
-  FightFinishReason,
   FightSide,
   FightState,
   FighterId,
@@ -63,6 +60,7 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
     state,
     projectiles.map((hit) => hit.projectile),
   )
+  if (state.catsName || state.phase !== 'fighting') return state
   const trade =
     attackCanResolve(state.player) &&
     attackCanResolve(state.opponent) &&
@@ -71,7 +69,7 @@ export function resolveFightImpacts(state: FightState, projectiles: ProjectileHi
   let next = resolveAttack(state, 'player')
   if (trade) next = resolveTrade(state, next)
   else if (next.phase === 'fighting') next = resolveAttack(next, 'opponent')
-  return projectiles.reduce(resolveProjectileHit, next)
+  return resolveFightOutcome(projectiles.reduce(resolveProjectileHit, next))
 }
 
 function resolveAttack(state: FightState, side: FightSide): FightState {
@@ -239,7 +237,7 @@ function shouldResolveHatsu(
 }
 
 function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
-  if (state.phase !== 'fighting') return state
+  if (state.phase !== 'fighting' || state[hit.defenderSide].health <= 0) return state
   const captured = captureCuldceptProjectile(state, hit)
   if (captured) return captured
   const side = hit.projectile.owner
@@ -383,43 +381,16 @@ function finishAfterImpact(
   attackerSide: FightSide,
   defenderSide: FightSide,
 ): FightState {
-  if (state.mode === 'training' && state[defenderSide].health <= 0) {
-    return { ...state, [defenderSide]: { ...state[defenderSide], health: 100 } }
-  }
-  if (state.mode === 'training') return state
-  const durable = preserveHitFormatHealth(state, defenderSide)
-  const reason = lossReason(durable, defenderSide)
-  const revived = reason === 'knockout' && resolveDeathHatsu(durable, attackerSide, defenderSide)
-  if (revived) return finishFight(revived, defenderSide, 'knockout')
-  return reason ? finishFight(durable, attackerSide, reason) : durable
+  const impact = state.impact
+  const owner = impact?.transfer?.owner ?? attackerSide
+  const cause = impact?.transfer ? 'transfer' : impact?.projectileId ? 'projectile' : 'strike'
+  return recordFightDeath(state, {
+    victimSide: defenderSide,
+    killerSide: owner === defenderSide ? null : owner,
+    cause,
+  })
 }
 
-function lossReason(state: FightState, side: FightSide): Exclude<FightFinishReason, 'time'> {
-  const format = fightFormat(state.formatId)
-  const attackerSide = otherSide(side)
-  if (format.knockdownTarget !== null && state.knockdowns[attackerSide] >= format.knockdownTarget)
-    return 'technical-knockout'
-  if (format.victory !== 'points' && state[side].health <= 0) return 'knockout'
-  if (
-    format.victory !== 'health' &&
-    format.hitTarget !== null &&
-    state.score[otherSide(side)] >= format.hitTarget
-  )
-    return 'hits'
-  return null
-}
-
-function preserveHitFormatHealth(state: FightState, side: FightSide): FightState {
-  const format = fightFormat(state.formatId)
-  if (
-    format.victory !== 'points' ||
-    format.hitTarget === null ||
-    state.score[otherSide(side)] >= format.hitTarget ||
-    state[side].health > 0
-  )
-    return state
-  return { ...state, [side]: { ...state[side], health: 1 } }
-}
 
 function throwImmune(fighter: ArcadeFighter): boolean {
   if (fighter.hanzoProjection) return false
@@ -457,12 +428,5 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
-  const durable = preserveHitFormatHealth(preserveHitFormatHealth(traded, 'player'), 'opponent')
-  const playerLost = lossReason(durable, 'player')
-  const opponentLost = lossReason(durable, 'opponent')
-  const finishReason = tradeFinishReason(playerLost, opponentLost)
-  if (playerLost && opponentLost)
-    return { ...durable, phase: 'finished', winner: 'draw', finishReason }
-  if (opponentLost) return finishFight(durable, 'player', opponentLost)
-  return playerLost ? finishFight(durable, 'opponent', playerLost) : durable
+  return { ...traded, deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])] }
 }

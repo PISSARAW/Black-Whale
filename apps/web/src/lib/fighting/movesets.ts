@@ -1,3 +1,4 @@
+import { tuneCamillaMoveset } from './camillaMoveset'
 import { sealedSenseCount } from './saiyuSenses'
 import { tuneThetaMoveset } from './thetaMoveset'
 import { thetaShotMove } from './thetaFirearm'
@@ -58,7 +59,8 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneParallelFutureMoveset)
+  ALL_MOVESETS.map(tuneCamillaMoveset)
+    .map(tuneParallelFutureMoveset)
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneThetaMoveset)
@@ -239,7 +241,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
   basho: (state, side) => state[side].hatsuEffects.haikuFrames > 0,
-  camilla: (state, side) => state[side].health <= 30,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   gel: (state, side) => opponentOf(state, side).hatsuEffects.venomFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,

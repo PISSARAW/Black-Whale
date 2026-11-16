@@ -1,6 +1,7 @@
 import { canStartFighterAttack } from './fighterAttacks'
 import { rangedAuraCost } from './projectiles'
-import { finishFight } from './combatVerdict'
+import { recordFightDeath } from './fightDeaths'
+import { resolveFightOutcome } from './fightOutcome'
 import { canonicalTechniqueAllowed } from './techniqueContracts'
 import { moveById } from './movesets'
 import { outsideDuelAbility } from './outsideDuelAbility'
@@ -97,15 +98,21 @@ function canToggleEmperor(state: FightState, fighter: ArcadeFighter): boolean {
 /** A Nen condition kills by its rule, independent of score format or remaining HP. */
 export function chainRuleDeath(state: FightState, side: FightSide): FightState {
   const fighter = { ...state[side], health: 0, attack: null, bufferedAttack: null, blocking: false }
-  if (state.mode === 'training')
-    return { ...state, [side]: { ...fighter, health: 100, judgmentChain: undefined } }
-  return finishFight({ ...state, [side]: fighter }, side === 'player' ? 'opponent' : 'player')
+  return resolveFightOutcome(recordFightDeath({ ...state, [side]: fighter }, {
+    victimSide: side,
+    killerSide: state[side].judgmentChain?.owner ?? null,
+    cause: state[side].judgmentChain ? 'judgment' : 'vow',
+  }))
 }
 
 export function resolveJudgmentDeaths(state: FightState): FightState {
-  for (const side of ['player', 'opponent'] as const)
-    if (state[side].judgmentChain && state[side].health <= 0) return chainRuleDeath(state, side)
-  return state
+  let next = state
+  for (const side of ['player', 'opponent'] as const) {
+    const judgment = state[side].judgmentChain
+    if (!judgment || state[side].health > 0) continue
+    next = recordFightDeath(next, { victimSide: side, killerSide: judgment.owner, cause: 'judgment' })
+  }
+  return next === state ? state : resolveFightOutcome(next)
 }
 
 type PerformAttack = (options: AuraAttackOptions) => FightState

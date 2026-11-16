@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import FightMoonlightPanel from '$lib/components/fighting/FightMoonlightPanel.svelte'
   import { offerMoonlightContract, respondMoonlightContract } from '$lib/fighting/moonlightContract'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
@@ -108,7 +109,7 @@
   }
 
   function queueAction(action: (current: FightState) => FightState) {
-    if (state?.phase === 'fighting' && !paused) pendingActions = [...pendingActions, action]
+    if (state && fightAcceptsCommands(state) && !paused) pendingActions = [...pendingActions, action]
   }
 
   function attack(kind: AttackKind) {
@@ -138,7 +139,7 @@
   function flushPendingActions(current: FightState): FightState {
     const actions = pendingActions
     pendingActions = []
-    return actions.reduce((next, action) => action(next), current)
+    return actions.reduce((next, action) => fightAcceptsCommands(next) ? action(next) : next, current)
   }
 
   function control(key: keyof FightInput, active: boolean) {

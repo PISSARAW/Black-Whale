@@ -1,4 +1,6 @@
-import { bonolenovMoveAllowed, bonolenovResources, tuneBonolenovMoveset } from './bonolenovMoveset'
+import { tuneBonolenovMoveset } from './bonolenovMovesetTuning'
+import { tuneBiohazardMoveset, biohazardMoveResources } from './biohazardMoveset'
+import { bonolenovMoveAllowed, bonolenovResources } from './bonolenovMoveset'
 import { blinkyBloodReady } from './blinky'
 import { tuneBlinkyMoveset, blinkyMoveAllowed } from './blinkyMoveset'
 import { canAskLynchQuestion } from './lynchRules'
@@ -78,7 +80,8 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneMachiMoveset)
+  ALL_MOVESETS.map(tuneBiohazardMoveset)
+    .map(tuneMachiMoveset)
     .map(tuneCamillaMoveset)
     .map(tuneParallelFutureMoveset)
     .map(tunePhinksMoveset)
@@ -169,6 +172,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const biohazard = biohazardMoveResources(fighter, move.id)
+  if (biohazard !== null) return biohazard
   return bonolenovResources(fighter, move) ?? ordinaryMoveResources(fighter, move)
 }
 
@@ -292,7 +297,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
   shizuku: blinkyBloodReady,
-  hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: predatorReady,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,

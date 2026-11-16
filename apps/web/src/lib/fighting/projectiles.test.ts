@@ -49,7 +49,7 @@ describe('ranged attacks', () => {
     expect(projectileProfile('franklin').shape).toBe('bullet')
     expect(projectileProfile('illumi').shape).toBe('bullet')
     expect(projectileProfile('bonolenov').shape).toBe('orb')
-    expect(projectileProfile('hinrigh').shape).toBe('bullet')
+    expect(projectileProfile('hinrigh')).toMatchObject({ shape: 'needle', matter: 'object' })
     expect(projectileProfile('leorio').shape).toBe('remote-fist')
   })
 

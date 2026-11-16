@@ -98,10 +98,9 @@ export function resolveHatsuImpact(options: {
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
-  const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * biohazard * coins * completion
+  return transformed * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {
@@ -112,11 +111,10 @@ function completionDamageFactor(fighter: ArcadeFighter): number {
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 0.68 : 1
-  const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
   const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
   const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
   const completion = completionDefenceFactor(fighter)
-  return transformed * biohazard * smoked * coins * completion
+  return transformed * smoked * coins * completion
 }
 
 function completionDefenceFactor(fighter: ArcadeFighter): number {

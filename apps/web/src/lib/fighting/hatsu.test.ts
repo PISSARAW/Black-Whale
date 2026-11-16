@@ -93,6 +93,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       return
     }
 
+    if (id === 'hinrigh') {
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].aura).toBe(auraBefore - 20)
+      expect(armed[side].biohazard?.objects[0].phase).toBe('transforming')
+      return
+    }
+
     if (id === 'camilla') {
       expect(armed).toBe(ready)
       expect(armed[side].aura).toBe(auraBefore)

@@ -1,3 +1,4 @@
+import { biohazardPresentation } from './biohazardPresentation'
 import { lynchSpecialPresentation } from './lynchPresentation'
 import { cyclotronPresentation } from './phinksPresentation'
 import { crossGamePresentation } from './crossGamePresentation'
@@ -24,11 +25,8 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
-  if (state.player.id === 'phinks') return cyclotronPresentation(state, language)
-  if (state.player.id === 'basho') return bashoPresentation(state, language)
-  if (state.player.id === 'melody') return melodyPresentation(state, language)
-  if (state.player.id === 'rihan') return predatorSpecialPresentation(state, language)
-  if (state.player.id === 'longhi') return moonlightPresentation(state, language)
+  const personal = personalSpecialPresentation(state, language)
+  if (personal) return personal
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
   if (state.player.id === 'tserriednich') return futureSpecialPresentation(state, language)
@@ -136,4 +134,14 @@ function camillaPresentation(language: 'fr' | 'en'): SpecialPresentation {
         ? 'Nen posthume : automatique après sa mort, aucun coup manuel.'
         : 'Post-mortem Nen: automatic after death, no manual attack.',
   }
+}
+
+function personalSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation | null {
+  if (state.player.id === 'hinrigh') return biohazardPresentation(state, language)
+  if (state.player.id === 'phinks') return cyclotronPresentation(state, language)
+  if (state.player.id === 'basho') return bashoPresentation(state, language)
+  if (state.player.id === 'melody') return melodyPresentation(state, language)
+  if (state.player.id === 'rihan') return predatorSpecialPresentation(state, language)
+  if (state.player.id === 'longhi') return moonlightPresentation(state, language)
+  return null
 }

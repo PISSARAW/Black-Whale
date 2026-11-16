@@ -1,3 +1,4 @@
+import { BIOHAZARD_CANON } from './biohazardCanon'
 import { BONOLENOV_CANON } from './bonolenovCanon'
 import { BENJAMIN_CANON } from './benjaminCanon'
 import { CHROLLO_CANON } from './chrolloCanon'
@@ -196,6 +197,7 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
 export function techniqueContract(
   move: Pick<FighterMove, 'id' | 'category'>,
 ): TechniqueCanonContract {
+  if (BIOHAZARD_CANON[move.id]) return BIOHAZARD_CANON[move.id]
   const defined = CONTRACTS[move.id as `${FighterId}:${MoveSlot}`]
   if (BONOLENOV_CANON[move.id]) return BONOLENOV_CANON[move.id]
   if (defined) return defined

@@ -1,3 +1,4 @@
+import { biohazardBodyFree } from './biohazard'
 import { battlePreparing } from './battleCantabileRules'
 import { crossGameBusy } from './crossGame'
 import { musicPacifies, melodyRestrictsCombat } from './melodyRules'
@@ -13,6 +14,7 @@ export function canAct(fighter: ArcadeFighter): boolean {
 
 export function freeCombatBody(fighter: ArcadeFighter): boolean {
   return (
+    biohazardBodyFree(fighter) &&
     !fighter.pluggingWounds &&
     !crossGameBusy(fighter) &&
     !musicPacifies(fighter) &&
@@ -31,8 +33,7 @@ export function canMove(fighter: ArcadeFighter): boolean {
 
 export function canGuard(fighter: ArcadeFighter): boolean {
   return (
-    !battlePreparing(fighter) &&
-    !fighter.pluggingWounds &&
+    guardHandsFree(fighter) &&
     !crossGameBusy(fighter) &&
     !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&
@@ -42,4 +43,8 @@ export function canGuard(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     fighter.attack === null
   )
+}
+
+function guardHandsFree(fighter: ArcadeFighter): boolean {
+  return biohazardBodyFree(fighter) && !battlePreparing(fighter) && !fighter.pluggingWounds
 }

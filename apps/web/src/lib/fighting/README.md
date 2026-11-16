@@ -121,6 +121,31 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   automatique, onde diagnostique ou condition de faible santé n’est attribuée au manga.
   `keyPosesLeorio.ts` anime la frappe du sol et `remotePunchScene.ts` dessine le
   poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
+- Hinrigh transforme deux paires de **menottes réelles** avec Biohazard (ch. 390–391).
+  L touche une paire portée et la transforme pendant 18 frames, sans frapper.
+  Le pigeon conserve la fonction de l’objet : un contact sur une cible libre au
+  sol referme les menottes, sans dégâts, points, knockdown ou Zetsu. Garde, saut,
+  relevée invulnérable et frappe active empêchent la capture. Une frappe repousse
+  ou détruit le pigeon ; son métal renforcé arrête les balles ordinaires, tandis
+  que les projectiles de Nen et les autres attaques peuvent l’endommager.
+  Un projectile intercepté ne frappe pas aussi le corps protégé.
+  La capture dure au plus 48 frames et cesse sur blessure, puis accorde 90 frames
+  contre une nouvelle capture. Une blessure de suivi détruit la paire ; à la fin
+  du délai, elle reste ouverte au sol. Approcher à trois unités la récupère.
+  ↓+L rappelle les pigeons libres ; ouvrir et récupérer des menottes déjà fermées
+  exige le contact (quatre unités), sans transformation à distance. Un pigeon
+  expiré ou privé du Nen redevient l’objet réel et tombe. Des menottes déjà fermées
+  restent physiques même si leur propriétaire entre en Zetsu, jusqu’à la libération.
+  Le stock de deux objets, les 20 aura, la préparation, la trajectoire horizontale,
+  la résistance de 12, les cinq secondes d’autonomie et les durées de capture sont
+  des réglages de duel, pas des limites affirmées du manga. L’épuisement de l’aura
+  et le retour à l’objet sont expliqués au chapitre 398. Chaque manche rétablit le stock.
+  Chrollo et Stealth Dolphin doivent disposer de leurs propres menottes : le vol
+  du Hatsu ne copie aucun équipement. U lance un couteau réel sans coût d’aura,
+  adaptation martiale. Aucun bonus personnel, faux serpent, mur de créatures,
+  projectile de Nen ou finisher « Ménagerie » ne remplace Biohazard.
+  `biohazard*.ts` porte l’inventaire, la transformation, les collisions et la capture ;
+  `FightBiohazardStatus.svelte` affiche chaque objet et le temps de capture restant.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
 - Rihan étudie personnellement **un Hatsu précis** avec L (`predator.ts`).

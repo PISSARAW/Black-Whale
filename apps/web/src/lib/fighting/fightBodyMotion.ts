@@ -1,3 +1,4 @@
+import { biohazardBodyPlan } from './biohazardPresentation'
 import { bonolenovDancePlan } from './bonolenovPoses'
 import { pluggingWoundsPlan } from './blinkyPose'
 import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
@@ -135,6 +136,8 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const biohazard = biohazardBodyPlan(fighter)
+  if (biohazard) return biohazard
   return bonolenovDancePlan(fighter, context.seconds) ?? ordinaryBodyPlan(fighter, context)
 }
 

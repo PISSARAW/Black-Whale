@@ -1,3 +1,4 @@
+import { createBiohazardInventory } from './biohazard'
 import { preservePredatorKnowledge } from './predatorSeal'
 import { carryMoonlightRound } from './moonlightContract'
 import { createBenjaminBaton } from './benjaminBaton'
@@ -102,6 +103,7 @@ function createFighter(options: {
   return {
     ...options,
     maxHealth: options.health,
+    biohazard: options.id === 'hinrigh' ? createBiohazardInventory() : undefined,
     kurapika: options.id === 'kurapika' ? createKurapika() : undefined,
     y: 0,
     velocityY: 0,
@@ -152,7 +154,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     stitchedFrames: 0,
     needleFrames: 0,
     serpentMarks: 0,
-    biohazardFrames: 0,
     restrainedFrames: 0,
     bloodBoundFrames: 0,
     entrancedFrames: 0,

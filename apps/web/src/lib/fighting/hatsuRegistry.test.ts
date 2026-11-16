@@ -367,31 +367,15 @@ describe('fighter Hatsu registry', () => {
     expect(cleaned.player.blinky?.lastObject?.id).toBe(1)
   })
 
-  it('turns Hinrigh’s Biohazard into temporary attack and armour', () => {
-    const state = hatsuFor('hinrigh').onTrigger({
-      state: closeFight('hinrigh', 'hisoka'),
-      side: 'player',
-      source: 'hinrigh',
-    })
-    expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
-    expect(hatsuDefenceFactor(state.player)).toBeLessThan(1)
-  })
-
-  it('never stuns Hinrigh with his own Biohazard', () => {
-    const triggered = hatsuFor('hinrigh').onTrigger({
-      state: closeFight('hinrigh', 'hisoka'),
-      side: 'player',
-      source: 'hinrigh',
-    })
-    const ticked = hatsuFor('hinrigh').onFrame(triggered)
-    expect(ticked.player.hatsuEffects.biohazardFrames).toBe(89)
-    expect(ticked.player.hitStun).toBe(0)
-
-    let fight = performAttack(closeFight('hinrigh', 'hisoka'), 'player', 'special')
-    fight = advance(fight, 1.2)
-    expect(fight.player.hatsuEffects.biohazardFrames).toBeGreaterThan(0)
-    expect(fight.player.hitStun).toBe(0)
-    expect(fight.player.pose).not.toBe('hit')
+  it('keeps Biohazard free of personal attack, armour and self-stun buffs', () => {
+    const ready = closeFight('hinrigh', 'hisoka')
+    const triggered = hatsuFor('hinrigh').onTrigger({ state: ready, side: 'player', source: 'hinrigh' })
+    expect(triggered).toBe(ready)
+    expect(hatsuDamageFactor(triggered.player)).toBe(1)
+    expect(hatsuDefenceFactor(triggered.player)).toBe(1)
+    const preparing = performAttack(ready, 'player', 'special')
+    expect(preparing.player.biohazard?.objects[0].phase).toBe('transforming')
+    expect(preparing.player.hitStun).toBe(0)
   })
 
   it('leaves Hanzo’s sleeping body vulnerable during projection', () => {

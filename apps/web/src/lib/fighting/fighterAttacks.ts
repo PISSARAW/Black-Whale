@@ -1,3 +1,4 @@
+import { biohazardBodyFree } from './biohazard'
 import { battleCombatBusy } from './battleCantabileRules'
 import { crossGameBusy } from './crossGame'
 import { machiImmobilized } from './machiThread'
@@ -88,7 +89,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (fighter.pluggingWounds) return false
+  if (attackBodyBusy(fighter)) return false
   if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
   if (crossGameBusy(fighter)) return false
   if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
@@ -122,7 +123,7 @@ function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: str
 }
 
 export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
-  if (fighter.pluggingWounds) return false
+  if (attackBodyBusy(fighter)) return false
   if (fighter.cyclotronWindup || battleCombatBusy(fighter)) return false
   if (crossGameBusy(fighter)) return false
   if (
@@ -192,4 +193,8 @@ function wantsAttackRyu(fighter: ArcadeFighter): boolean {
 function attackRyu(fighter: ArcadeFighter, kind: AttackKind): ArcadeFighter {
   const focused = Object.values(fighter.nen.ryu).some((share) => Number(share) > 0)
   return wantsAttackRyu(fighter) && !focused ? focusAttackRyu(fighter, kind) : fighter
+}
+
+function attackBodyBusy(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.pluggingWounds) || !biohazardBodyFree(fighter)
 }

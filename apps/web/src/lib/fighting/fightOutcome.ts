@@ -1,4 +1,6 @@
 import { finishFight } from './combatVerdict'
+import { BIOHAZARD_GRACE } from './biohazard'
+import { releaseBiohazardWounds } from './biohazardWounds'
 import { explicitDeath, resolvePostMortemDeaths } from './fightDeaths'
 import { fightFormat } from './formats'
 import type { FightFinishReason, FightSide, FightState } from './types'
@@ -16,7 +18,7 @@ export function fightAcceptsCommands(state: FightState): boolean {
 /** The sole verdict path for damage and attributed deaths; time and expulsion are nonlethal. */
 export function resolveFightOutcome(state: FightState): FightState {
   if (fightResolutionPending(state)) return state
-  const durable = preservePointHealth(state)
+  const durable = preservePointHealth(releaseBiohazardWounds(state, BIOHAZARD_GRACE))
   const triggered = resolvePostMortemDeaths(durable)
   if (triggered.catsName) return triggered
   const cleared = { ...triggered, deaths: undefined }

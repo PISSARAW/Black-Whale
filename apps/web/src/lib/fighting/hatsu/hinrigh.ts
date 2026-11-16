@@ -1,34 +1,10 @@
-import type { ArcadeFighter } from '../types'
-import { unchangedImpact, type FighterHatsu } from './contract'
+import { advanceBiohazard } from '../biohazardFrame'
+import { unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
-const BIOHAZARD_FRAMES = 90
-
+/** Ch. 390–391: touched objects become animals and retain their physical function. */
 export const hinrighHatsu: FighterHatsu = {
   id: 'hinrigh',
-  onTrigger: ({ state, side }) => {
-    const fighter = state[side]
-    return {
-      ...state,
-      [side]: {
-        ...fighter,
-        hatsuEffects: { ...fighter.hatsuEffects, biohazardFrames: BIOHAZARD_FRAMES },
-      },
-    }
-  },
+  onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: (state) => ({
-    ...state,
-    player: tickBiohazard(state.player),
-    opponent: tickBiohazard(state.opponent),
-  }),
-}
-
-/** Biohazard is carried by Hinrigh himself: it only counts down, it never locks its caster. */
-function tickBiohazard(fighter: ArcadeFighter): ArcadeFighter {
-  const frames = fighter.hatsuEffects.biohazardFrames
-  if (frames <= 0) return fighter
-  return {
-    ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, biohazardFrames: frames - 1 },
-  }
+  onFrame: advanceBiohazard,
 }

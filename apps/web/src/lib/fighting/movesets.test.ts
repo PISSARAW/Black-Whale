@@ -171,7 +171,7 @@ describe('wave one movesets', () => {
   )
 
   it.each(
-    WAVE_TWO_FIGHTERS.filter((id) => id !== 'bonolenov')
+    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter((id) => id !== 'bonolenov')
       .filter((id) => id !== 'hinrigh')
       .filter((id) => !['leorio', 'mizaistom'].includes(id) && id !== 'franklin'),
   )('%s wave-two finisher is conditionally locked', (fighterId) => {
@@ -332,8 +332,6 @@ function withFinisherCondition(state: FightState): FightState {
       return withOpponentEffect(state, 'serpentMarks', 2)
     case 'shizuku':
       return { ...state, opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 } }
-    case 'hinrigh':
-      return withPlayerEffect(state, 'biohazardFrames', 60)
     case 'mizaistom':
       return withOpponentEffect(state, 'restrainedFrames', 60)
     case 'hanzo':

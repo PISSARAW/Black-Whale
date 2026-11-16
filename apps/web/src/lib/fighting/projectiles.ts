@@ -1,3 +1,4 @@
+import { interceptBiohazardProjectile } from './biohazardImpact'
 import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
 import { advanceJupiter } from './jupiterFlight'
 import { battleRangedAvailable } from './battleCantabileRules'
@@ -153,13 +154,8 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [12, 12],
   }),
   hinrigh: projectile({
-    matter: 'nen',
-    labels: ['Arme Biohazard', 'Biohazard weapon'],
-    shape: 'bullet',
-    colour: '#34d399',
-    speed: 64,
-    damage: 10,
-    size: [0.85, 0.32],
+    matter: 'object', labels: ['Couteau réel', 'Real knife'], shape: 'needle',
+    colour: '#d1d5db', speed: 76, damage: 10, size: [0.85, 0.22],
   }),
   leorio: projectile({
     matter: 'nen',
@@ -224,7 +220,7 @@ function standardRangedAvailable(fighter: ArcadeFighter): boolean {
   if (predatorNenLocked(fighter) && rangedAuraCost(fighter.id) > 0) return false
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
-  if (['benjamin', 'theta', 'camilla'].includes(fighter.id)) return true
+  if (['benjamin', 'theta', 'camilla', 'hinrigh'].includes(fighter.id)) return true
   if (fighter.id === 'leorio')
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
@@ -236,7 +232,7 @@ function standardRangedAvailable(fighter: ArcadeFighter): boolean {
 export function rangedAuraCost(id: FighterId): number {
   if (id === 'bonolenov') return 55
   if (id === 'kurapika' || id === 'machi') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (['benjamin', 'theta', 'camilla', 'musse'].includes(id)) return 0
+  if (['benjamin', 'theta', 'camilla', 'hinrigh', 'musse'].includes(id)) return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 
@@ -314,6 +310,9 @@ export function advanceProjectiles(
     const jupiter = held.jupiter ? advanceJupiter(state, held, step) : undefined
     if (held.jupiter && !jupiter) continue
     const projectile = jupiter ?? travelFightProjectile(held, step)
+    const intercepted = interceptBiohazardProjectile(state, { projectile, previousX: held.x })
+    state = intercepted.state
+    if (intercepted.intercepted) continue
     const defenderSide = otherSide(projectile.owner)
     const collision = projectileCollision(projectile, state[defenderSide])
     if (collision) {

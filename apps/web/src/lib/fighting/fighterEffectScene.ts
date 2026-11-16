@@ -1,3 +1,4 @@
+import { createBiohazardScene } from './biohazardScene'
 import { createCrossGameScene } from './crossGameScene'
 import { createMachiThreadScene } from './machiThreadScene'
 import { createSecretWindowScene } from './secretWindowScene'
@@ -24,6 +25,7 @@ export interface FighterEffectScene {
 
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const biohazard = createBiohazardScene(options)
   const secretWindow = createSecretWindowScene(options)
   const camilla = createCamillaCatScene(options)
   const crossGame = createCrossGameScene(options)
@@ -45,6 +47,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   scene.add(gum, ...cards)
 
   const sync = (state: FightState, seconds: number) => {
+    biohazard.sync(state, seconds)
     secretWindow.sync(state, seconds)
     camilla.sync(state, seconds)
     crossGame.sync(state, seconds)
@@ -60,6 +63,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   return {
     sync,
     dispose: () => {
+      biohazard.dispose()
       secretWindow.dispose()
       camilla.dispose()
       crossGame.dispose()

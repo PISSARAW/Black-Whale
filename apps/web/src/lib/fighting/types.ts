@@ -157,6 +157,7 @@ export interface ArcadeFighter {
   y: number
   velocityY: number
   health: number
+  maxHealth: number
   /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
   parallelEyesClosed?: boolean
   aura: number
@@ -274,7 +275,6 @@ export interface FighterHatsuEffects {
   stitchedFrames: number
   needleFrames: number
   serpentMarks: number
-  biohazardFrames: number
   restrainedFrames: number
   bloodBoundFrames: number
   entrancedFrames: number

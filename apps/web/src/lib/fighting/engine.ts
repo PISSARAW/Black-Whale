@@ -1,3 +1,4 @@
+import { biohazardBodyFree } from './biohazard'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
@@ -267,6 +268,7 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (!biohazardBodyFree(options.state[options.side])) return options.state
   if (crossGameBusy(options.state[options.side])) return options.state
   return resolveCrossGameCommand(options.state, executeFightMove(options), options.side)
 }
@@ -309,6 +311,7 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
+  if (!biohazardBodyFree(options.state[options.side])) return options.state
   const { side, kind } = options
   if (!fightAcceptsCommands(options.state)) return options.state
   const original = options.state[side]

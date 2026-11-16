@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightBiohazardStatus from './FightBiohazardStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
   import FightMachiStatus from './FightMachiStatus.svelte'
   import FightCyclotronStatus from './FightCyclotronStatus.svelte'
@@ -66,6 +67,7 @@
       <FightCrossGameStatus {fighter} {language} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
+      <FightBiohazardStatus {state} {side} {language} />
       {#if side === 'player'}
         <FightNenControls
           {fighter}

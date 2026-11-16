@@ -230,7 +230,7 @@ La présentation ne modifie aucune condition du Nen. Détails, persistance et li
 configuration confirmée, commandes exécutées par le serveur et verdict du moteur.
 Le transport vérifie les états, affiche la connexion et permet la reconnexion après
 une courte coupure. Les observations privées du Nen sont filtrées par destinataire.
-Le registre reste en mémoire d’un processus, sans prédiction ni rollback.
+Le registre reste en mémoire d’un processus ; la prédiction visuelle couvre les 40 personnages.
 Contrats, limites et vérifications : [PVP.md](./PVP.md).
 
 ## Phase 6 : apprentissage, défis et Arcade
@@ -1056,7 +1056,7 @@ sans changer les règles, les boîtes ni les données de frame.
   hurtboxes. Le dummy peut enregistrer puis rejouer déplacements, garde et attaques.
 - Le [PvP privé](./PVP.md) ajoute une couche HTTP autoritaire distincte du moteur.
   Le moteur fixe et les entrées P1/P2 séparées restent la base de resimulation ;
-  la prédiction et le rollback ne sont pas encore présents.
+  la prédiction visuelle bornée couvre les 40 personnages ; le rollback complet reste absent.
 
 ### Kurapika : chaînes et Emperor Time
 

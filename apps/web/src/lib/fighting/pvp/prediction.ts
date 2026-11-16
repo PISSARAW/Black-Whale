@@ -5,17 +5,11 @@ import { EMPTY_INPUT, type FightState } from '../types'
 import { fighterVisual, type FightVisualPrediction } from '../fightVisualPrediction'
 import { applyPvpCommand } from './commands'
 import { createPredictionHistory } from './predictionHistory'
+import { predictionEligible as eligible, sameControlledBody } from './predictionPolicy'
 import type { PvpCommand, PvpInputPacket, PvpView } from './types'
 
-const FIGHTERS = new Set(['kurapika', 'hisoka', 'chrollo', 'benjamin'])
-const SAFE_PAGES = new Set([...FIGHTERS, 'sun-and-moon', 'black-voice'])
 export const MAX_PREDICTION_FRAMES = 12
 export const PREDICTION_STALE_MS = 250
-function eligible(state: FightState) {
-  if (state.phase !== 'fighting' || state.parallelFuture || state.catsName) return false
-  if (!FIGHTERS.has(state.player.id) || !FIGHTERS.has(state.opponent.id)) return false
-  return (state.player.chrolloBook?.pages ?? []).every((page) => SAFE_PAGES.has(page))
-}
 function authoritativeReaction(state: FightState) {
   const player = state.player
   return (
@@ -55,20 +49,24 @@ export function createPvpPrediction(clock: () => number = () => performance.now(
   function step(frame: number) {
     if (!simulation) return
     for (const command of history.commands(frame, baseFrame)) {
-      if (command.kind === 'move' || command.kind === 'emperor')
-        simulation = applyPvpCommand(simulation, 'player', command)
+      simulation = applyPvpCommand(simulation, 'player', command)
+      if (!eligible(simulation)) {
+        simulation = null
+        return
+      }
     }
     simulation = tickFight(simulation, unpackReplayInput(history.input(frame, input)), {
       dt: FIXED_STEP,
       opponentInput: EMPTY_INPUT,
       ai: false,
     })
+    if (!eligible(simulation)) simulation = null
     steps++
   }
   function projection(): FightVisualPrediction | null {
     if (!authority || !simulation || !eligible(authority)) return null
     if (clock() - acceptedAt > PREDICTION_STALE_MS || authoritativeReaction(authority)) return null
-    if (!safeVisual(simulation)) return null
+    if (!safeVisual(simulation) || !sameControlledBody(authority, simulation)) return null
     const player = fighterVisual(authority.player, simulation.player)
     player.x += offset.x
     player.y = Math.max(0, player.y + offset.y)

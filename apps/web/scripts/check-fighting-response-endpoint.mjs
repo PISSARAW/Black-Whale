@@ -10,7 +10,12 @@ const replaySource = await readFile(
 const replayRuleset = replaySource.match(/REPLAY_RULESET = '([^']+)'/)?.[1]
 assert.ok(replayRuleset, 'Missing replay ruleset')
 const ruleset = process.env.RESPONSE_RULESET ?? `clash-pvp-3:${replayRuleset}`
-const fighters = ['kurapika', 'hisoka', 'chrollo', 'benjamin']
+const fighters = process.env.RESPONSE_FIGHTERS?.split(',') ?? [
+  'kurapika',
+  'hisoka',
+  'chrollo',
+  'benjamin',
+]
 async function request(options) {
   const response = await fetch(endpoint + (options.id ? '/' + options.id : ''), {
     method: options.body ? 'POST' : 'GET',

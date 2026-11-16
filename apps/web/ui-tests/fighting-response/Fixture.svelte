@@ -25,11 +25,13 @@
   let started = false
   let lastCompleted = -Infinity
   let requestBusy = false
-  let marker: { at: number; command: string; queued: unknown } | null = null
+  let marker: { at: number; command: string; queued: unknown; attempt: number } | null = null
+  let attempts: unknown[] = []
   let latency: Array<{
     command: string
     ms: number
     confirmed: boolean
+    attempt: number
     queued: unknown
     drawn: unknown
   }> = []
@@ -46,6 +48,7 @@
     if (attack) {
       latency.push({
         command: marker.command,
+        attempt: marker.attempt,
         ms: performance.now() - marker.at,
         confirmed: Boolean(authority?.player.attack),
         queued: marker.queued,
@@ -153,17 +156,38 @@
     held = { ...held, [key]: value }
   }
   export function move(action: MoveAction | 'ranged') {
-    marker = { at: performance.now(), command: action, queued: client?.predictionStats }
+    marker = {
+      at: performance.now(),
+      command: action,
+      queued: client?.predictionStats,
+      attempt: attempts.length,
+    }
+    const current = client ? get(client) : null
+    attempts.push({
+      ...marker,
+      connection: current?.connection,
+      status: current?.view?.status,
+      tick: current?.view?.tick,
+      pose: current?.state?.player.pose,
+      attack: current?.state?.player.attack?.moveId,
+      hitstop: current?.state?.hitstop,
+      hitStun: current?.state?.player.hitStun,
+      blockStun: current?.state?.player.blockStun,
+      health: current?.state?.player.health,
+      projection: Boolean(current?.state?.player.hanzoProjection),
+    })
     client!.queue({ kind: 'move', action, input: packReplayInput(held) })
   }
   export function reset() {
     latency = []
+    attempts = []
     probe.reset()
   }
   export function result() {
     return {
       ...probe.result(),
       latency,
+      attempts,
       failed,
       state: client ? get(client) : null,
       prediction: client?.predictionStats,

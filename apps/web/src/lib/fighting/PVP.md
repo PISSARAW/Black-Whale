@@ -98,17 +98,21 @@ ne renouvelle jamais la présence d’un joueur ; le polling HTTP reste le repli
 le serveur intermédiaire ne prend pas en charge le streaming.
 
 `nextSequence` confirme la réception, `appliedSequence` confirme la consommation
-par le moteur et `appliedAtTick` indique son tick. Le client ignore les révisions
+par le moteur et `appliedAtTick` indique son tick. Toutes les commandes
+sémantiques du roster sont rejouées dans le bac à sable privé ; leurs coûts et
+résultats publiés restent exclusivement ceux du serveur. Le client ignore les révisions
 anciennes et rejoue les intentions non appliquées depuis le dernier état privé
 confirmé. Aucun numéro de frame ni résultat simulé par le client n’est envoyé.
 
-Pour les duels entre Kurapika, Hisoka, Chrollo et Benjamin, une simulation locale
+Pour les duels entre les 40 personnages du roster, une simulation locale
 bornée à douze frames anticipe uniquement le corps contrôlé : déplacement,
 garde et animation de coup. Les petits écarts sont amortis ; interruption,
 nouvelle manche, dégâts ou K.-O. font immédiatement autorité. Après 250 ms sans
-état frais, l’anticipation cesse. Les états complexes de Parallel Future,
-Cat’s Name et les pages de Chrollo hors du périmètre pris en charge reviennent
-à l’affichage confirmé. Les positions publiques adverses sont extrapolées au
+état frais, l’anticipation cesse. Les séquences actives de Parallel Future et Cat’s Name reviennent à l’affichage
+confirmé. Les pages copiées de Chrollo sont prises en charge ; une activation de
+Parallel Future suspend aussi leur simulation provisoire avant de créer une prévision.
+Hanzo anticipe les déplacements d’une projection confirmée ; le changement de corps
+attend le serveur. Les positions publiques adverses sont extrapolées au
 maximum sur deux frames ; aucune action adverse cachée n’est inventée.
 
 Le HUD, le Nen, les coûts, les impacts, les projectiles et les verdicts utilisent

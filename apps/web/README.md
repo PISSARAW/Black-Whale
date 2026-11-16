@@ -32,6 +32,25 @@ decisions: []
 
 Consulter [09 la facade web](../../docs/carte/09-la-facade-web.md).
 
+## Budget JavaScript de production
+
+Le seuil Vite reste à 500 kB par chunk client. Les plugins dans
+`apps/web/build-tools/` séparent les gros JSON et le catalogue généré des pouvoirs
+en fragments stables, et les dictionnaires d’interface par langue. Les imports
+restent synchrones et les fichiers canoniques restent les sources de vérité.
+Changer une partie du catalogue invalide seulement ses fragments et leurs index.
+
+L’alias exact de `three` utilise les modules source de la version installée.
+Les utilitaires partagés restent avec les classes de base ; le moteur WebGL et
+les shaders forment deux groupes séparés sans cycle de chunks. Les exemples
+Three.js gardent leurs chemins publics. Le découpage client ne s’applique pas
+au serveur Node, qui externalise la bibliothèque.
+
+Le build produit `bundle-budget.json` et échoue si un chunk JavaScript client
+dépasse 500 000 octets. `apps/web/build-tools/bundleChunks.test.ts` compare les
+catalogues reconstruits aux données originales et vérifie les exports nommés,
+l’ordre, les caractères échappés et les propriétés spéciales des objets JSON.
+
 ## Recherche globale
 
 La palette du bandeau (ou ⌘K hors de la visite) recherche les personnages,

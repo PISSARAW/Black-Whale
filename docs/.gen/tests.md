@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 649
+Fichiers : 650
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -24,6 +24,10 @@ Fichiers : 649
 
 - login action > issues a session cookie and redirects on the right password
 - login load > sends an already-authenticated admin straight through
+
+## `apps/web/build-tools/bundleChunks.test.ts`
+
+- production bundle partitioning > rejects an oversized JavaScript chunk instead of suppressing its warning
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 

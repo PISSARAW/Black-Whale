@@ -41,7 +41,7 @@ function canKeepFiring(fighter: ArcadeFighter): boolean {
     franklinNenAvailable(fighter) &&
     fighter.hitStun === 0 &&
     fighter.blockStun === 0 &&
-    !('hanzoProjection' in fighter && fighter.hanzoProjection) &&
+    !fighter.hanzoProjection &&
     attackPhase(fighter) === 'active'
   )
 }

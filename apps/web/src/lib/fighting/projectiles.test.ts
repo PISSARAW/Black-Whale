@@ -47,7 +47,7 @@ describe('ranged attacks', () => {
     expect(projectileProfile('hisoka').shape).toBe('card')
     expect(projectileProfile('theta').shape).toBe('bullet')
     expect(projectileProfile('franklin').shape).toBe('bullet')
-    expect(projectileProfile('illumi').shape).toBe('bullet')
+    expect(projectileProfile('illumi')).toMatchObject({ shape: 'needle', matter: 'object' })
     expect(projectileProfile('bonolenov').shape).toBe('orb')
     expect(projectileProfile('hinrigh')).toMatchObject({ shape: 'needle', matter: 'object' })
     expect(projectileProfile('leorio').shape).toBe('remote-fist')
@@ -61,10 +61,10 @@ describe('ranged attacks', () => {
 
     const flying = advance(armed, 0.24)
     expect(flying.projectiles).toHaveLength(1)
-    expect(flying.opponent.health).toBe(100)
+    expect(flying.opponent.health).toBe(flying.opponent.maxHealth)
 
     const struck = advance(flying, 1)
-    expect(struck.opponent.health).toBeLessThan(100)
+    expect(struck.opponent.health).toBeLessThan(struck.opponent.maxHealth)
     expect(struck.impact).toMatchObject({ kind: 'ranged', attacker: 'player' })
   })
 
@@ -77,7 +77,7 @@ describe('ranged attacks', () => {
     }
     state = performAttack(state, 'opponent', 'ranged')
     const cleared = advance(state, 0.8, { ...EMPTY_INPUT, jump: true })
-    expect(cleared.player.health).toBe(100)
+    expect(cleared.player.health).toBe(cleared.player.maxHealth)
     expect(cleared.projectiles).toHaveLength(0)
   })
 

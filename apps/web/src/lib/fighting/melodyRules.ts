@@ -1,4 +1,5 @@
 import { needleAutonomy } from './illumiState'
+import { hasEquipment } from './preparationWorld'
 import { senseDeprived } from './saiyuSenses'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
@@ -31,8 +32,11 @@ export function soundDistance(first: ArcadeFighter, second: ArcadeFighter): numb
 }
 
 export function hasMelodyFlute(fighter: ArcadeFighter): boolean {
-  if (fighter.melodyFlute !== undefined) return fighter.melodyFlute
-  return fighter.id === 'melody' && !fighter.kurapika?.held?.used
+  return hasEquipment(fighter, 'flute')
+}
+
+function melodyHandsAvailable(fighter: ArcadeFighter): boolean {
+  return fighter.id !== 'chrollo' || !fighter.chrolloBook?.open
 }
 
 export function melodyMusicIntent(
@@ -67,6 +71,7 @@ export function melodyCanPerform(fighter: ArcadeFighter): boolean {
   return (
     melodyNenActive(fighter) &&
     hasMelodyFlute(fighter) &&
+    melodyHandsAvailable(fighter) &&
     fighter.y === 0 &&
     !fighter.hanzoProjection &&
     !fighter.coveringEars &&

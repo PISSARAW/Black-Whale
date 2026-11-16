@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { theShip } from '../tour/blueprint'
-import { pointInPolygon, structureFootprint } from '../tour/geometry'
+import { pointInPolygon, polygonsOverlap, structureFootprint } from '../tour/geometry'
+import type { Polygon } from '../tour/types'
 import { buildTierMesh } from '../tour/mesh'
 import { COURT_BAR_RUNS, COURT_BAR_X } from '../tour/supremeCourtFurniture'
 import { findFightLane, laneBackdrop } from './stageLane'
@@ -35,6 +36,18 @@ describe('fight stages', () => {
       const barriers = roomBarriers(spaceId)
       const lane = findFightLane(space, plan.structures, { columns, barriers })
       const solids = plan.structures.filter((item) => item.base < 2.2).map(structureFootprint)
+      // Check the whole strip: sampling only its centre misses a coffin
+      // clipping the edge of a diagonal passage in the burial chamber.
+      const strip: Polygon = [
+        [-6.4, -1],
+        [6.4, -1],
+        [6.4, 1],
+        [-6.4, 1],
+      ].map(([along, across]) => [
+        lane.centre[0] + lane.direction[0] * along + lane.direction[1] * across,
+        lane.centre[1] + lane.direction[1] * along - lane.direction[0] * across,
+      ])
+      expect([...solids, ...barriers].some((solid) => polygonsOverlap(strip, solid))).toBe(false)
       for (const along of [-5.7, -3, 0, 3, 5.7]) {
         const point: [number, number] = [
           lane.centre[0] + lane.direction[0] * along,

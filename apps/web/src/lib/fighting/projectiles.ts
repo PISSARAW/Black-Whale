@@ -1,16 +1,18 @@
 import { hasIllumiNeedles } from './illumiEquipment'
+import { travelKallutoPaper } from './kallutoFlight'
+import { paperAvailable, paperZonePoint } from './kallutoPaper'
 import { illumiBodyFree } from './illumiState'
+import { battleRangedAvailable } from './battleCantabileRules'
+import { advanceJupiter } from './jupiterFlight'
+import { commitProjectileNen } from './nenProjectiles'
 import { interceptBiohazardProjectile } from './biohazardImpact'
 import { travelFightProjectile, keepFightProjectile } from './projectileFlight'
-import { advanceJupiter } from './jupiterFlight'
-import { battleRangedAvailable } from './battleCantabileRules'
 import { predatorNenLocked } from './predatorSeal'
-import { commitProjectileNen } from './nenProjectiles'
 import { CAMILLA_PISTOL } from './camillaWeapon'
 import { thetaShotAim } from './thetaFirearm'
-import { benjaminBurstReady } from './benjaminWeapon'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { remotePunchCanHit, spawnRemotePunch } from './remotePunch'
+import { benjaminBurstReady } from './benjaminWeapon'
 import { franklinNenAvailable } from './franklinAttack'
 import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
@@ -156,8 +158,13 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [12, 12],
   }),
   hinrigh: projectile({
-    matter: 'object', labels: ['Couteau réel', 'Real knife'], shape: 'needle',
-    colour: '#d1d5db', speed: 76, damage: 10, size: [0.85, 0.22],
+    matter: 'object',
+    labels: ['Couteau réel', 'Real knife'],
+    shape: 'needle',
+    colour: '#d1d5db',
+    speed: 76,
+    damage: 10,
+    size: [0.85, 0.22],
   }),
   leorio: projectile({
     matter: 'nen',
@@ -215,6 +222,7 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'kalluto' && !paperAvailable(fighter)) return false
   if (fighter.id === 'illumi' && !hasIllumiNeedles(fighter)) return false
   if (!illumiBodyFree(fighter)) return false
   return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)
@@ -224,12 +232,11 @@ function standardRangedAvailable(fighter: ArcadeFighter): boolean {
   if (predatorNenLocked(fighter) && rangedAuraCost(fighter.id) > 0) return false
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
-  if (['benjamin', 'theta', 'camilla', 'hinrigh'].includes(fighter.id)) return true
-  if (fighter.id === 'leorio')
-    return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
   if (fighter.id === 'musse') return true
+  if (fighter.id === 'leorio')
+    return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   return ordinaryRangedReady(fighter)
 }
 
@@ -249,7 +256,8 @@ export function spawnRangedProjectiles(state: FightState): FightState {
 function spawnForSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (
-    ['bonolenov', 'leorio', 'franklin'].includes(fighter.id) ||
+    fighter.id === 'bonolenov' ||
+    ['bonolenov', 'leorio', 'franklin', 'kalluto'].includes(fighter.id) ||
     fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
     !benjaminBurstReady(fighter) ||
@@ -293,7 +301,10 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
         impacted: true,
       },
     },
-    projectiles: [...state.projectiles, commitProjectileNen(projectile, fighter)],
+    projectiles: [
+      ...state.projectiles,
+      { ...commitProjectileNen(projectile, fighter), hatsuPower: 1 },
+    ],
     nextProjectileId: state.nextProjectileId + 1,
   }
 }
@@ -311,10 +322,12 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const jupiter = held.jupiter ? advanceJupiter(state, held, step) : undefined
-    if (held.jupiter && !jupiter) continue
-    const projectile = jupiter ?? travelFightProjectile(held, step)
-    const intercepted = interceptBiohazardProjectile(state, { projectile, previousX: held.x })
+    const projectile = advanceProjectileMotion(state, held, step)
+    if (!projectile) continue
+    const intercepted = interceptBiohazardProjectile(state, {
+      projectile,
+      previousX: held.x,
+    })
     state = intercepted.state
     if (intercepted.intercepted) continue
     const defenderSide = otherSide(projectile.owner)
@@ -334,6 +347,14 @@ function projectileCollision(
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
   if (!remotePunchCanHit(projectile)) return null
+  if (projectile.kallutoPaper) {
+    const point = paperZonePoint(defender, projectile.targetZone)
+    if (
+      Math.abs(projectile.x - point.x) > projectile.width + 1.5 ||
+      Math.abs(projectile.y - point.y) > projectile.height + 1
+    )
+      return null
+  }
   const box: FightBox = {
     left: projectile.x - projectile.width,
     right: projectile.x + projectile.width,
@@ -349,5 +370,19 @@ function projectileCollision(
 }
 
 function ordinaryRangedReady(fighter: ArcadeFighter): boolean {
-  return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
+  return (
+    ['benjamin', 'theta', 'camilla', 'hinrigh'].includes(fighter.id) ||
+    (fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu')
+  )
+}
+
+function advanceProjectileMotion(
+  state: FightState,
+  held: FightProjectile,
+  step: number,
+): FightProjectile | null {
+  if (held.jupiter) return advanceJupiter(state, held, step) ?? null
+  return held.kallutoPaper
+    ? travelKallutoPaper(state, held, step)
+    : travelFightProjectile(held, step)
 }

@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { fightFormat } from './formats'
 import {
   beginFight,
   createFight,
@@ -25,7 +24,10 @@ import {
 
 function duel(opponent: FighterId = 'chrollo'): FightState {
   const state = beginFight(
-    createFight('kurapika', opponent, { mode: 'versus-local', formatId: 'knockout' }),
+    createFight('kurapika', opponent, {
+      mode: 'versus-local',
+      formatId: 'knockout',
+    }),
   )
   return {
     ...state,
@@ -59,7 +61,12 @@ function rested(state: FightState): FightState {
     ...state,
     hitstop: 0,
     player: { ...state.player, attack: null, aura: 100 },
-    opponent: { ...state.opponent, hitStun: 0, blockStun: 0, knockdownFrames: 0 },
+    opponent: {
+      ...state.opponent,
+      hitStun: 0,
+      blockStun: 0,
+      knockdownFrames: 0,
+    },
   }
 }
 function stolen(opponent: FighterId = 'hisoka'): FightState {
@@ -81,7 +88,11 @@ describe('Kurapika manga chains in the 2D engine', () => {
     expect(active.player.kurapika?.emperorTime).toBe(true)
     expect(active.player.aura).toBe(100)
     expect(active.player.attack).toBeNull()
-    const mirrored = { ...state, player: state.opponent, opponent: state.player }
+    const mirrored = {
+      ...state,
+      player: state.opponent,
+      opponent: state.player,
+    }
     expect(
       performMove({
         state: mirrored,
@@ -99,7 +110,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
     expect(advance(held, 60).player.kurapika?.lifespanFrames).toBe(60)
     let chunked = active
     for (let i = 0; i < 10; i++)
-      chunked = tickFight(chunked, EMPTY_INPUT, { dt: 0.1, opponentInput: EMPTY_INPUT })
+      chunked = tickFight(chunked, EMPTY_INPUT, {
+        dt: 0.1,
+        opponentInput: EMPTY_INPUT,
+      })
     expect(chunked.player.kurapika?.lifespanFrames).toBe(60)
     const off = toggleEmperorTime(advance(active, 60), 'player')
     expect(advance(off, 60).player.kurapika?.lifespanFrames).toBe(60)
@@ -111,7 +125,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
       ...active,
       player: {
         ...active.player,
-        kurapika: { ...active.player.kurapika!, continuousFrames: EMPEROR_BLACKOUT_THRESHOLD - 1 },
+        kurapika: {
+          ...active.player.kurapika!,
+          continuousFrames: EMPEROR_BLACKOUT_THRESHOLD - 1,
+        },
       },
     }
     const collapsed = advance(nearLimit, 1)
@@ -126,7 +143,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
   it('preserves spent lifespan across rounds, and resets chains and activation', () => {
     const active = advance(toggleEmperorTime(duel(), 'player'), 60)
     const next = nextRound({ ...active, phase: 'finished', winner: 'player' })
-    expect(next.player.kurapika).toEqual({ ...createKurapika(), lifespanFrames: 60 })
+    expect(next.player.kurapika).toEqual({
+      ...createKurapika(),
+      lifespanFrames: 60,
+    })
     expect(next.opponent.chainJail).toBeUndefined()
   })
 
@@ -140,7 +160,11 @@ describe('Kurapika manga chains in the 2D engine', () => {
     expect(bound.opponent.nen.mode).toBe('zetsu')
     expect(bound.opponent.x).toBe(bound.opponent.chainJail?.x)
     expect(performAttack(bound, 'opponent', 'light').opponent.attack).toBeNull()
-    const released = performMove({ state: rested(bound), side: 'player', action: 'special' })
+    const released = performMove({
+      state: rested(bound),
+      side: 'player',
+      action: 'special',
+    })
     expect(released.opponent.chainJail).toBeUndefined()
   })
 
@@ -163,7 +187,11 @@ describe('Kurapika manga chains in the 2D engine', () => {
     })
     expect(guarded.opponent.chainJail).toBeUndefined()
     const bound = advance(cast(duel(), 'neutralSpecial'), 60)
-    const released = advance(bound, 1, { ...EMPTY_INPUT, aura: true, down: true })
+    const released = advance(bound, 1, {
+      ...EMPTY_INPUT,
+      aura: true,
+      down: true,
+    })
     expect(released.opponent.chainJail).toBeUndefined()
   })
 
@@ -172,25 +200,31 @@ describe('Kurapika manga chains in the 2D engine', () => {
     state.player.health = 40
     const normal = advance(cast(state, 'downSpecial'), 60)
     expect(normal.player.health).toBe(58)
-    expect(normal.opponent.health).toBe(fightFormat(normal.formatId).health)
+    expect(normal.opponent.health).toBe(normal.opponent.maxHealth)
     expect(normal.score.player).toBe(0)
     const enhanced = advance(cast(toggleEmperorTime(state, 'player'), 'downSpecial'), 60)
     expect(enhanced.player.health).toBe(70)
     expect(activeHitbox(cast(state, 'downSpecial').player)).toBeNull()
     const full = advance(
       cast(
-        { ...state, player: { ...state.player, health: fightFormat(state.formatId).health - 2 } },
+        {
+          ...state,
+          player: { ...state.player, health: state.player.maxHealth - 2 },
+        },
         'downSpecial',
       ),
       60,
     )
-    expect(full.player.health).toBe(fightFormat(full.formatId).health)
+    expect(full.player.health).toBe(full.player.maxHealth)
   })
 
   it('does not heal an interrupted cast or revive a dead user', () => {
     const state = duel()
     const started = cast({ ...state, player: { ...state.player, health: 40 } }, 'downSpecial')
-    const interrupted = { ...started, player: { ...started.player, attack: null, hitStun: 40 } }
+    const interrupted = {
+      ...started,
+      player: { ...started.player, attack: null, hitStun: 40 },
+    }
     expect(advance(interrupted, 50).player.health).toBe(40)
     const dead = { ...state, player: { ...state.player, health: 0 } }
     expect(cast(dead, 'downSpecial')).toBe(dead)
@@ -272,8 +306,11 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const active = toggleEmperorTime(state, 'player')
     expect(finisherReady(active, 'player')).toBe(true)
     const judged = advance(cast(active, 'finisher'), 70)
-    expect(judged.opponent.judgmentChain).toEqual({ owner: 'player', rule: 'zetsu' })
-    expect(judged.opponent.health).toBe(fightFormat(judged.formatId).health)
+    expect(judged.opponent.judgmentChain).toEqual({
+      owner: 'player',
+      rule: 'zetsu',
+    })
+    expect(judged.opponent.health).toBe(judged.opponent.maxHealth)
     expect(judged.opponent.nen.mode).toBe('zetsu')
     const off = toggleEmperorTime(rested(judged), 'player')
     expect(advance(off, 30).opponent.judgmentChain).toBeDefined()
@@ -329,7 +366,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
     }
     expect(advanceHatsuFrames({ ...started, projectiles: [bullet] }).projectiles).toHaveLength(0)
     expect(
-      advanceHatsuFrames({ ...started, projectiles: [{ ...bullet, matter: 'nen' }] }).projectiles,
+      advanceHatsuFrames({
+        ...started,
+        projectiles: [{ ...bullet, matter: 'nen' }],
+      }).projectiles,
     ).toHaveLength(1)
   })
   it('seals the stolen Hatsu family while leaving a different ability usable', () => {
@@ -374,7 +414,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
 
   it('keeps a jailed target anchored even if the caster walks into its pushbox', () => {
     const bound = advance(cast(duel(), 'neutralSpecial'), 60)
-    const pressed = { ...bound, player: { ...bound.player, x: bound.opponent.x - 0.2 } }
+    const pressed = {
+      ...bound,
+      player: { ...bound.player, x: bound.opponent.x - 0.2 },
+    }
     const stable = advance(pressed, 10, { ...EMPTY_INPUT, right: true })
     expect(stable.opponent.x).toBe(stable.opponent.chainJail?.x)
   })
@@ -385,6 +428,6 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const fired = performAttack(judged, 'opponent', 'ranged')
     expect(fired.phase).toBe('fighting')
     expect(fired.opponent.attack?.kind).toBe('ranged')
-    expect(fired.opponent.health).toBe(fightFormat(fired.formatId).health)
+    expect(fired.opponent.health).toBe(fired.opponent.maxHealth)
   })
 })

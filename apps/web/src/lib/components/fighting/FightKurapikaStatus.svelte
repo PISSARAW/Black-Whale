@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { dolphinMissingBattleBody } from '$lib/fighting/battleCantabileRules'
+  import { BEYOND_CURSE } from '$lib/fighting/beyondCurse'
   import { moveById } from '$lib/fighting/movesets'
   import { outsideDuelAbility } from '$lib/fighting/outsideDuelAbility'
+  import { dolphinMissingBattleBody } from '$lib/fighting/battleCantabileRules'
   import type { FightSide, FightState } from '$lib/fighting/types'
   export let state: FightState
   export let side: FightSide
@@ -45,7 +46,7 @@
             ? 'Stealth Dolphin'
             : 'Steal Chain'}
         </div>
-        {#if outsideDuel || missingBody}
+        {#if (outsideDuel && (!state.battlefield || outsideDuel.id === BEYOND_CURSE.id)) || missingBody}
           <div>
             {missingBody
               ? language === 'fr'
@@ -55,8 +56,8 @@
                 ? outsideDuel?.reasonFr
                 : outsideDuel?.reasonEn}
             {language === 'fr'
-              ? 'Capacité conservée dans Steal Chain.'
-              : 'Ability retained in Steal Chain.'}
+              ? 'Capacité conservée ; sa préparation reste requise.'
+              : 'Ability retained; its preparation is still required.'}
           </div>
         {:else}
           <div>

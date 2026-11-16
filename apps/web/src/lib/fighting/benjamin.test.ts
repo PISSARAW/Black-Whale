@@ -103,7 +103,7 @@ describe('Benjamin’s canonical loadout', () => {
 
   it('uses Air Blow as a left-palm attack without building damage charges', () => {
     const result = advance(technique(duel(), 'neutralSpecial'), 45)
-    expect(result.opponent.health).toBeLessThan(100)
+    expect(result.opponent.health).toBeLessThan(result.opponent.maxHealth)
     expect(hatsuDamageFactor(result.player)).toBe(1)
     expect(result.player.hatsuEffects.baton?.inherited).toHaveLength(3)
     expect(finisherReady(result, 'player')).toBe(false)
@@ -114,7 +114,7 @@ describe('Benjamin’s canonical loadout', () => {
     const result = advance(technique(duel(), 'forwardSpecial'), 30)
     expect(result.player.hatsuEffects.baton?.markedTarget).toBe('opponent')
     expect(result.opponent).toMatchObject({
-      health: 100,
+      health: result.opponent.maxHealth,
       hitStun: 0,
       blockStun: 0,
       x: 48,
@@ -147,9 +147,9 @@ describe('Benjamin’s canonical loadout', () => {
 
   it('captures a Nen projectile only after charging, then releases its card once', () => {
     const charging = technique(duel(), 'downSpecial')
-    expect(incoming(charging).player.health).toBeLessThan(100)
+    expect(incoming(charging).player.health).toBeLessThan(incoming(charging).player.maxHealth)
     const held = incoming(atActive(charging))
-    expect(held.player.health).toBe(100)
+    expect(held.player.health).toBe(held.player.maxHealth)
     expect(held.player.hatsuEffects.baton?.card).toEqual(BULLET)
     expect(finisherReady(held, 'player')).toBe(true)
     const reset = { ...held, player: { ...held.player, attack: null } }
@@ -164,7 +164,7 @@ describe('Benjamin’s canonical loadout', () => {
     const state = { ...charged, projectiles: [{ ...BULLET, id: 8, x: 44 }], nextProjectileId: 9 }
     const caught = advance(state, 1)
     expect(caught.projectiles).toHaveLength(0)
-    expect(caught.player.health).toBe(100)
+    expect(caught.player.health).toBe(caught.player.maxHealth)
     expect(caught.player.hatsuEffects.baton?.card?.id).toBe(8)
     const mirrored: FightState = {
       ...state,
@@ -179,11 +179,11 @@ describe('Benjamin’s canonical loadout', () => {
     const active = atActive(technique(duel(), 'downSpecial'))
     for (const changes of [{ matter: 'object' as const }, { fighterId: 'halkenburg' as const }]) {
       const struck = incoming(active, changes)
-      expect(struck.player.health).toBeLessThan(100)
+      expect(struck.player.health).toBeLessThan(struck.player.maxHealth)
       expect(struck.player.hatsuEffects.baton?.card).toBeNull()
     }
     const held = incoming(active)
-    expect(incoming(held).player.health).toBeLessThan(100)
+    expect(incoming(held).player.health).toBeLessThan(incoming(held).player.maxHealth)
     expect(incoming(held).player.hatsuEffects.baton?.card).toEqual(BULLET)
   })
 

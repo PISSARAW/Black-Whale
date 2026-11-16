@@ -58,7 +58,7 @@ describe('Longhi’s voluntary Moonlight Act', () => {
     expect(offered.player.attack).toBeNull()
     expect(offered.player.aura).toBe(80)
     expect(offered.player.x).toBe(42)
-    expect(offered.opponent).toMatchObject({ health: ready.opponent.health, hitStun: 0 })
+    expect(offered.opponent).toMatchObject({ health: ready.opponent.maxHealth, hitStun: 0 })
     expect(offered.moonlight?.active).toBeUndefined()
     const impact = hatsuFor('longhi').onImpact({
       state: ready,
@@ -95,11 +95,7 @@ describe('Longhi’s voluntary Moonlight Act', () => {
 
   it('does not accept a signature from a manipulated or entranced recipient', () => {
     const offered = propose()
-    for (const key of [
-      'manipulatedFrames',
-      'entrancedFrames',
-      'possessedFrames',
-    ] as const) {
+    for (const key of ['manipulatedFrames', 'entrancedFrames', 'possessedFrames'] as const) {
       const controlled = {
         ...offered,
         opponent: {

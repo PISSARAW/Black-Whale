@@ -1,8 +1,8 @@
-import { createJupiterScene } from './jupiterScene'
 import { gyoSight, perceivesProjectile } from './nenPerception'
 import { isThetaBullet } from './thetaFirearm'
 import type { ArcadeFighter, FightProjectile } from './types'
 import { createRemotePunchScene } from './remotePunchScene'
+import { createJupiterScene } from './jupiterScene'
 
 export interface ProjectileSceneOptions {
   THREE: typeof import('three')

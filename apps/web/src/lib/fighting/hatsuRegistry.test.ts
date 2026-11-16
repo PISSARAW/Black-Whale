@@ -12,6 +12,7 @@ import {
 } from './hatsu'
 import { COHORT_WILL_FRAMES } from './hatsu/halkenburg'
 import { hatsuFor } from './hatsu/registry'
+import { createBattlefield } from './preparationWorld'
 import { EMPTY_INPUT, type FightProjectile, type FightState } from './types'
 
 function advance(state: FightState, seconds: number): FightState {
@@ -113,7 +114,7 @@ describe('fighter Hatsu registry', () => {
     expect(blocked.player.hatsuEffects.stolenHatsu).toBeNull()
 
     const martial = advance(performAttack(closeFight('beyond', 'chrollo'), 'player', 'special'), 1)
-    expect(martial.opponent.health).toBeLessThan(100)
+    expect(martial.opponent.health).toBeLessThan(martial.opponent.maxHealth)
     expect(martial.opponent.hatsuEffects.witnessedHatsu).toBeNull()
   })
 
@@ -241,7 +242,7 @@ describe('fighter Hatsu registry', () => {
     state = performAttack(state, 'opponent', 'light')
     const avoided = advance(state, 0.2)
     expect(avoided.impact).toMatchObject({ attacker: 'opponent', avoided: true, damage: 0 })
-    expect(avoided.player.health).toBe(100)
+    expect(avoided.player.health).toBe(avoided.player.maxHealth)
     expect(avoided.player.hatsuEffects.isolationFrames).toBe(0)
   })
 
@@ -296,21 +297,21 @@ describe('fighter Hatsu registry', () => {
     expect(needled.opponent.aura).toBe(ready.opponent.aura)
   })
 
-  it('converges Kalluto’s paper marks on the third strike', () => {
+  it('never creates explosive Kalluto marks on generic impacts', () => {
+    const state = closeFight('kalluto', 'hisoka')
     const impact = hatsuFor('kalluto').onImpact
-    let state = closeFight('kalluto', 'hisoka')
-    for (let strike = 0; strike < 3; strike += 1) {
-      state = impact({
-        state,
+    let next = state
+    for (let strike = 0; strike < 3; strike += 1)
+      next = impact({
+        state: next,
         side: 'player',
         defenderSide: 'opponent',
         source: 'kalluto',
         blocked: false,
         concealed: false,
       })
-    }
-    expect(state.opponent.health).toBe(82)
-    expect(state.opponent.hatsuEffects.serpentMarks).toBe(0)
+    expect(next).toBe(state)
+    expect(next.opponent.plantedPaper).toBeUndefined()
   })
 
   it('never substitutes generic attack or defence bonuses for Bonolenov’s danced pieces', () => {
@@ -369,7 +370,11 @@ describe('fighter Hatsu registry', () => {
 
   it('keeps Biohazard free of personal attack, armour and self-stun buffs', () => {
     const ready = closeFight('hinrigh', 'hisoka')
-    const triggered = hatsuFor('hinrigh').onTrigger({ state: ready, side: 'player', source: 'hinrigh' })
+    const triggered = hatsuFor('hinrigh').onTrigger({
+      state: ready,
+      side: 'player',
+      source: 'hinrigh',
+    })
     expect(triggered).toBe(ready)
     expect(hatsuDamageFactor(triggered.player)).toBe(1)
     expect(hatsuDefenceFactor(triggered.player)).toBe(1)
@@ -438,13 +443,14 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDamageFactor(triggered.player)).toBe(1)
   })
 
-  it('gives Luini one defensive counter', () => {
+  it('never replaces Luini’s prepared passage with automatic avoidance', () => {
     const state = hatsuFor('luini').onTrigger({
       state: closeFight('luini', 'hisoka'),
       side: 'player',
       source: 'luini',
     })
-    expect(hatsuAvoidsImpact(state.player)).toBe(true)
+    expect(hatsuAvoidsImpact(state.player)).toBe(false)
+    expect(state.player.hatsuEffects.teleportDodges).toBe(0)
     expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
   })
 
@@ -490,7 +496,14 @@ describe('fighter Hatsu registry', () => {
 
   it('fires Grimmel only once the cohort’s will is gathered', () => {
     const halkenburg = hatsuFor('halkenburg')
-    const ready = closeFight('halkenburg', 'hisoka')
+    const base = closeFight('halkenburg', 'hisoka')
+    const ready = {
+      ...base,
+      battlefield: createBattlefield({
+        ...base.environment,
+        preparation: { mode: 'scenario', resources: [], cohorts: ['player'] },
+      }),
+    }
     const shoot = (state: FightState, blocked: boolean) =>
       halkenburg.onImpact({
         state: halkenburg.onTrigger({ state, side: 'player', source: 'halkenburg' }),
@@ -501,12 +514,12 @@ describe('fighter Hatsu registry', () => {
         concealed: false,
       })
 
-    // Without the cohort's will, the special is an ordinary strike.
+    // The arrow remains unavailable until these real supporters gather their will.
     const early = shoot(ready, false)
     expect(early.opponent.hatsuEffects.possessedFrames).toBe(0)
     expect(early.player.health).toBe(ready.player.health)
 
-    let gathered = ready
+    let gathered: FightState = ready
     for (let frame = 0; frame < COHORT_WILL_FRAMES; frame += 1)
       gathered = halkenburg.onFrame(gathered)
     expect(gathered.player.hatsuEffects.cohortWillFrames).toBe(COHORT_WILL_FRAMES)
@@ -612,7 +625,6 @@ describe('fighter Hatsu registry', () => {
     expect(state).toBe(ready)
     expect(hatsuAvoidsImpact(state.player)).toBe(false)
   })
-
   it('applies the remaining curse, contract and support effects', () => {
     const ready = closeFight('gidal', 'hisoka')
     const curse = hatsuFor('gidal').onImpact({

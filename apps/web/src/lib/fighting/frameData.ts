@@ -1,23 +1,25 @@
+import { paperUtilityAttack } from './kallutoPaper'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
 import { battleUtilityAttack } from './bonolenovMoveset'
+import { LYNCH_MOVE } from './lynchTypes'
 import { blinkyAttackData } from './blinkyAction'
 import { blinkyUtilityAttack } from './blinky'
-import { LYNCH_MOVE } from './lynchTypes'
-import { machiUtilityMove } from './machiThread'
-import { cyclotronAttackData } from './phinksCyclotron'
 import { isMelodyMusicAttack } from './melodyRules'
 import { secretWindowUtility } from './secretWindow'
 import { comboMasterUtilityMove } from './comboMasterAvailability'
+import { machiUtilityMove } from './machiThread'
+import { cyclotronAttackData } from './phinksCyclotron'
 import { isErigeronAttack } from './billSupport'
+import { usesRemotePunch } from './leorioAttack'
+import { chrolloUtilityMove } from './chrolloBook'
+import { isKurapikaUtility } from './kurapika'
+import { dolphinActor } from './kurapika'
+import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
 import { benjaminRangedData } from './benjaminWeapon'
 import { benjaminUtilityMove } from './benjaminBaton'
-import { isKurapikaUtility, dolphinActor } from './kurapika'
 import { feitanUtilityMove } from './feitanPain'
-import { chrolloUtilityMove } from './chrolloBook'
 import { hisokaUtilityMove } from './hisokaTechnique'
-import { usesRemotePunch } from './leorioAttack'
-import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
 import { sleepingBody } from './hanzoProjection'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
@@ -125,37 +127,40 @@ function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameDa
   const source = fighter.attack?.hatsuSource
   const copied = fighter.id === 'chrollo' && source && source !== 'chrollo'
   const move = moveById(copied ? `${source}:neutralSpecial` : fighter.attack?.moveId)
-  if (move) return movesetAttackData(fighter, move)
+  if (move) return blinkyAttackData(movesetAttackData(fighter, move), fighter)
   const definition = fighterDefinition(fighter.id)
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]
   const nativeReach = attackReach(kind, definition.reach, definition.specialRange)
-  return benjaminRangedData(
-    variantData({
-      fighter,
-      kind,
-      data: {
-        ...base,
-        startup:
-          scaledFrames(base.startup, tuning.startup) +
-          (kind === 'special' && fighter.attack?.concealed ? 10 : 0),
-        active: scaledFrames(base.active, tuning.active),
-        recovery: scaledFrames(base.recovery, tuning.recovery),
-        damage: scaledValue(base.damage, tuning.damage),
-        hitstun: scaledFrames(base.hitstun, tuning.hitstun),
-        blockstun: scaledFrames(base.blockstun, tuning.blockstun),
-        knockback: scaledValue(base.knockback, tuning.knockback),
-        lunge: scaledValue(base.lunge, tuning.lunge),
-        targetZone: valueOr(tuning.targetZone, base.targetZone),
-        auraZone: valueOr(tuning.auraZone, base.auraZone),
-        box: {
-          ...base.box,
-          right: nativeReach + valueOr(tuning.reach, 0),
-          bottom: valueOr(tuning.bottom, base.box.bottom),
-          top: valueOr(tuning.top, base.box.top),
+  return blinkyAttackData(
+    benjaminRangedData(
+      variantData({
+        fighter,
+        kind,
+        data: {
+          ...base,
+          startup:
+            scaledFrames(base.startup, tuning.startup) +
+            (kind === 'special' && fighter.attack?.concealed ? 10 : 0),
+          active: scaledFrames(base.active, tuning.active),
+          recovery: scaledFrames(base.recovery, tuning.recovery),
+          damage: scaledValue(base.damage, tuning.damage),
+          hitstun: scaledFrames(base.hitstun, tuning.hitstun),
+          blockstun: scaledFrames(base.blockstun, tuning.blockstun),
+          knockback: scaledValue(base.knockback, tuning.knockback),
+          lunge: scaledValue(base.lunge, tuning.lunge),
+          targetZone: valueOr(tuning.targetZone, base.targetZone),
+          auraZone: valueOr(tuning.auraZone, base.auraZone),
+          box: {
+            ...base.box,
+            right: nativeReach + valueOr(tuning.reach, 0),
+            bottom: valueOr(tuning.bottom, base.box.bottom),
+            top: valueOr(tuning.top, base.box.top),
+          },
         },
-      },
-    }),
+      }),
+      fighter,
+    ),
     fighter,
   )
 }
@@ -216,6 +221,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (paperUtilityAttack(fighter)) return null
   if (blinkyUtilityAttack(fighter)) return null
   if (secretWindowUtility(fighter)) return null
   fighter = dolphinActor(fighter)
@@ -227,22 +233,26 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
   if (voconteUtilityCast(fighter)) return true
-  if (fighter.attack?.moveId === LYNCH_MOVE) return true
-  return [
-    battleUtilityAttack,
-    isMelodyMusicAttack,
-    isErigeronAttack,
-    comboMasterUtilityMove,
-    chrolloUtilityMove,
-    isKurapikaUtility,
-    hisokaUtilityMove,
-    usesFranklinBarrage,
-    benjaminUtilityMove,
-    feitanUtilityMove,
-    usesRemotePunch,
-    padailleUtilityAttack,
-    machiUtilityMove,
-  ].some((check) => check(fighter))
+  return (
+    battleUtilityAttack(fighter) ||
+    fighter.attack?.moveId === LYNCH_MOVE ||
+    [
+      padailleUtilityAttack,
+      machiUtilityMove,
+      battleUtilityAttack,
+      blinkyUtilityAttack,
+      isMelodyMusicAttack,
+      isErigeronAttack,
+      comboMasterUtilityMove,
+      chrolloUtilityMove,
+      isKurapikaUtility,
+      hisokaUtilityMove,
+      usesFranklinBarrage,
+      benjaminUtilityMove,
+      feitanUtilityMove,
+      usesRemotePunch,
+    ].some((utility) => utility(fighter))
+  )
 }
 
 export function isAntiAir(fighter: ArcadeFighter): boolean {
@@ -259,7 +269,12 @@ export function hurtboxes(fighter: ArcadeFighter): FightBox[] {
   const crouch = fighter.crouching ? 4 : 0
   return [
     worldBox(fighter, { left: -1.7, right: 1.7, bottom: 0, top: 5.2 - crouch }),
-    worldBox(fighter, { left: -2.1, right: 2.1, bottom: 4.8 - crouch, top: 12 - crouch }),
+    worldBox(fighter, {
+      left: -2.1,
+      right: 2.1,
+      bottom: 4.8 - crouch,
+      top: 12 - crouch,
+    }),
   ]
 }
 

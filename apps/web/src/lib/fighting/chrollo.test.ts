@@ -159,7 +159,9 @@ describe('Bandit’s Secret and Double Face', () => {
         needlePuppet: { owner: 'player' as const, order: 'stay' as const, needleEmbedded: true },
       },
     }
-    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({ needleEmbedded: false })
+    expect(action(controlled, CHROLLO_TURN).opponent.needlePuppet).toMatchObject({
+      needleEmbedded: false,
+    })
     const closed = action(controlled, CHROLLO_BOOKMARK)
     const kept = action(advance(closed), CHROLLO_TURN)
     expect(kept.opponent.needlePuppet?.needleEmbedded).toBe(true)
@@ -175,13 +177,13 @@ describe('Bandit’s Secret and Double Face', () => {
     }
     const left = impact(open, CHROLLO_SECONDARY)
     expect(left.opponent.hatsuEffects).toMatchObject({ sunMark: 1, moonMark: 0 })
-    expect(left.opponent.health).toBe(100)
+    expect(left.opponent.health).toBe(left.opponent.maxHealth)
     const closed = {
       ...left,
       player: { ...left.player, chrolloBook: { ...left.player.chrolloBook!, open: false } },
     }
     const right = impact(closed, CHROLLO_SECONDARY)
-    expect(right.opponent.health).toBe(76)
+    expect(right.opponent.health).toBe(right.opponent.maxHealth - 24)
     expect(right.opponent.hatsuEffects).toMatchObject({ sunMark: 0, moonMark: 0 })
   })
   it('keeps post-mortem Sun/Moon marks through page changes and Zetsu', () => {

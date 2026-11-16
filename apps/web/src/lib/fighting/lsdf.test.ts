@@ -125,7 +125,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
     expect(next.finishReason).toBe('expulsion')
     expect(next.winner).toBe('opponent')
     expect(next.player.x).toBe(0)
-    expect(next.player.health).toBe(100)
+    expect(next.player.health).toBe(next.player.maxHealth)
   })
 
   it.each(['morena-leaves', 'outside', 'nen-sealed', 'owner-dies'])(
@@ -138,7 +138,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
       if (failure === 'owner-dies') state.player.health = 0
       const next = advanceLsdf(state)
       expect(next.lsdf?.player).toBeUndefined()
-      expect(next.opponent.health).toBe(100)
+      expect(next.opponent.health).toBe(next.opponent.maxHealth)
       expect(next.phase).toBe('fighting')
     },
   )
@@ -151,7 +151,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
     const fighter = armed.opponent
     fighter.attack = { ...fighter.attack!, frame: attackData('light', fighter).startup }
     const next = resolveFightImpacts(armed, [])
-    expect(next.player.health).toBeLessThan(100)
+    expect(next.player.health).toBeLessThan(next.player.maxHealth)
     expect(next.impact?.avoided).toBe(false)
     expect(next.lsdf?.player).toEqual(state.lsdf?.player)
   })
@@ -161,7 +161,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
     const armed = performMove({ state, side: 'opponent', action: 'light' })
     const next = frames(armed, 1)
     expect(next.lsdf?.player?.level).toBe(2)
-    expect(next.opponent.health).toBe(100)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
   })
 
   it('dismisses the guards when Yokotani loses the round before the arrest', () => {
@@ -202,7 +202,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
     expect(next.phase).toBe('fighting')
     expect(next.winner).toBeNull()
     expect(next.roundsWon).toEqual({ player: 0, opponent: 0 })
-    expect(next.opponent.health).toBe(100)
+    expect(next.opponent.health).toBe(next.opponent.maxHealth)
     expect(next.opponent.x).toBe(78)
     expect(lsdfFighterVisible(next, 'opponent')).toBe(true)
     expect(next.lsdf?.player).toBeUndefined()
@@ -212,6 +212,7 @@ describe('LSDF jurisdiction and nonviolent expulsion (chapter 399)', () => {
   it('keeps jurisdiction restrictions when Skill Hunter replays LSDF', () => {
     const state = scenario()
     state.player.id = 'chrollo'
+    state.player.chrolloBook = { pages: ['yokotani'], page: 0, open: true, bookmark: null }
     state.player.hatsuEffects.stolenHatsu = 'yokotani'
     expect(summon(state).lsdf?.player).toBeDefined()
     state.environment.morenaPresent = false

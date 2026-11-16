@@ -46,7 +46,7 @@ describe('Leorio’s surface-transmitted punch', () => {
     const startup = attackData('special', armed.player).startup
     expect(frames(armed, startup - 1).projectiles).toHaveLength(0)
     const state = frames(armed, startup)
-    expect(state.opponent.health).toBe(100)
+    expect(state.opponent.health).toBe(state.opponent.maxHealth)
     expect(activeHitbox(state.player)).toBeNull()
     expect(state.projectiles).toHaveLength(1)
     expect(state.projectiles[0]).toMatchObject({
@@ -58,7 +58,7 @@ describe('Leorio’s surface-transmitted punch', () => {
     const travelling = frames(state, 5)
     expect(travelling.projectiles[0].x).toBeGreaterThan(state.projectiles[0].x)
     expect(travelling.projectiles[0].y).toBeLessThan(0)
-    expect(travelling.opponent.health).toBe(100)
+    expect(travelling.opponent.health).toBe(travelling.opponent.maxHealth)
   })
 
   it.each(['player', 'opponent'] as const)('emerges upward and hits once for %s', (side) => {
@@ -67,9 +67,9 @@ describe('Leorio’s surface-transmitted punch', () => {
     const remote = state.projectiles[0].remotePunch!
     const emerging = frames(state, remote.travelFrames - 1)
     expect(emerging.projectiles[0].x).toBe(remote.targetX)
-    expect(emerging[victim].health).toBe(100)
+    expect(emerging[victim].health).toBe(emerging[victim].maxHealth)
     const hit = frames(emerging, 4)
-    expect(hit[victim].health).toBeLessThan(100)
+    expect(hit[victim].health).toBeLessThan(hit[victim].maxHealth)
     expect(hit.projectiles[0].remotePunch?.struck).toBe(true)
     expect(hit.impact?.projectileId).toBe(state.projectiles[0].id)
     expect(frames(hit, 50)[victim].health).toBe(hit[victim].health)
@@ -81,7 +81,7 @@ describe('Leorio’s surface-transmitted punch', () => {
     const targetX = state.projectiles[0].remotePunch!.targetX
     const dodged = frames(state, 50, { ...EMPTY_INPUT, left: true })
     expect(dodged.player.x).toBeLessThan(targetX - 4)
-    expect(dodged.player.health).toBe(100)
+    expect(dodged.player.health).toBe(dodged.player.maxHealth)
     expect(dodged.impact).toBeNull()
   })
 
@@ -89,13 +89,13 @@ describe('Leorio’s surface-transmitted punch', () => {
     const state = launched('opponent')
     const beforeJump = frames(performAttack(ready('opponent'), 'opponent', 'special'), 8)
     const jumped = frames(beforeJump, 60, { ...EMPTY_INPUT, jump: true })
-    expect(jumped.player.health).toBe(100)
+    expect(jumped.player.health).toBe(jumped.player.maxHealth)
     const blocked = frames(state, 35, { ...EMPTY_INPUT, guard: true })
     expect(blocked.impact).toMatchObject({ blocked: true, parried: false })
     const beforeHit = frames(state, state.projectiles[0].remotePunch!.travelFrames)
     const parried = frames(beforeHit, 5, { ...EMPTY_INPUT, guard: true })
     expect(parried.impact).toMatchObject({ blocked: true, parried: true, damage: 0 })
-    expect(parried.player.health).toBe(100)
+    expect(parried.player.health).toBe(parried.player.maxHealth)
   })
 
   it('uses one canonical move for directional L and U, at the same aura cost', () => {
@@ -138,11 +138,11 @@ describe('Leorio’s surface-transmitted punch', () => {
     const far = { ...base, opponent: { ...base.opponent, x: 90 } }
     const armed = performAttack(far, 'player', 'special')
     const state = frames(armed, 70)
-    expect(state.opponent.health).toBe(100)
+    expect(state.opponent.health).toBe(state.opponent.maxHealth)
     expect(state.impact).toBeNull()
     const travelling = launched()
     const crossing = { ...travelling, opponent: { ...travelling.opponent, x: 39 } }
-    expect(frames(crossing, 40).opponent.health).toBe(100)
+    expect(frames(crossing, 40).opponent.health).toBe(frames(crossing, 40).opponent.maxHealth)
   })
 
   it('leaves no punch when interrupted before the floor strike or starting a new round', () => {

@@ -1,12 +1,13 @@
-import { illumiAiSlots } from './illumiAi'
+import { hasPlantedPaper, paperState } from './kallutoPaper'
 import { voconteAiSlots } from './vocontePresentation'
+import { illumiAiSlots } from './illumiAi'
+import { benjaminAiSlots } from './benjaminAi'
 import { biohazardAiSlots } from './biohazardAi'
 import { predatorAiSlots } from './predatorAi'
-import { benjaminAiSlots } from './benjaminAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from './movesets'
 import type { FighterMove } from './movesetTypes'
-import type { FightState, MoveSlot } from './types'
+import type { FightState, MoveSlot, FighterId } from './types'
 
 export function chooseMovesetAttack(
   state: FightState,
@@ -28,6 +29,35 @@ export function chooseMovesetAttack(
   )
 }
 
+function finisherInRange(state: FightState, gap: number): boolean {
+  if (state.opponent.id === 'phinks') return gap <= 12
+  return state.opponent.id !== 'chrollo' || gap <= 9
+}
+
+function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  const contextual: Partial<Record<FighterId, () => readonly MoveSlot[]>> = {
+    kalluto: () =>
+      !hasPlantedPaper(state, 'opponent', paperState(state.opponent).zone)
+        ? ['neutralSpecial', 'standingLight']
+        : !paperState(state.opponent).doll
+          ? ['backSpecial', 'forwardSpecial']
+          : ['forwardSpecial', 'standingLight'],
+    illumi: () => illumiAiSlots(state, gap),
+    voconte: () => voconteAiSlots(state, gap),
+    rihan: () => predatorAiSlots(state),
+  }
+  const chosen = contextual[state.opponent.id]
+  if (chosen) return chosen()
+  if (state.opponent.id === 'lynch') return lynchSlots(state, gap)
+  if (state.opponent.id === 'hinrigh') return biohazardAiSlots(state, roll, gap)
+  if (state.opponent.id === 'phinks') return ['standingLight', 'standingHeavy', 'forwardHeavy']
+  if (state.opponent.id === 'musse') return musseSlots(state, gap)
+  if (state.opponent.id === 'tserriednich') return futureSlots(gap)
+  if (state.opponent.id === 'benjamin') return benjaminAiSlots(state, roll, gap)
+  if (state.opponent.id === 'chrollo') return chrolloAiSlots(state, roll, gap)
+  return candidateSlots(roll, gap)
+}
+
 function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
   if (gap > 15) {
     return roll > 0.66
@@ -41,32 +71,6 @@ function candidateSlots(roll: number, gap: number): readonly MoveSlot[] {
   return ['neutralSpecial', 'backSpecial', 'forwardHeavy']
 }
 
-function finisherInRange(state: FightState, gap: number): boolean {
-  if (state.opponent.id === 'phinks') return gap <= 12
-  return state.opponent.id !== 'chrollo' || gap <= 9
-}
-
-function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
-  if (state.opponent.id === 'illumi') return illumiAiSlots(state, gap)
-  if (state.opponent.id === 'voconte') return voconteAiSlots(state, gap)
-  return ordinaryFighterSlots(state, roll, gap)
-}
-
-function ordinaryFighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
-  if (state.opponent.id === 'hinrigh') return biohazardAiSlots(state, roll, gap)
-  if (state.opponent.id === 'phinks') return ['standingLight', 'standingHeavy', 'forwardHeavy']
-  if (state.opponent.id === 'lynch') return lynchSlots(state, gap)
-  if (state.opponent.id === 'rihan') return predatorAiSlots(state)
-  if (state.opponent.id === 'musse') return musseSlots(state, gap)
-  if (state.opponent.id === 'tserriednich')
-    return gap > 10
-      ? ['forwardHeavy', 'standingHeavy']
-      : ['standingLight', 'standingHeavy', 'lowHeavy']
-  if (state.opponent.id === 'benjamin') return benjaminAiSlots(state, roll, gap)
-  if (state.opponent.id === 'chrollo') return chrolloAiSlots(state, roll, gap)
-  return candidateSlots(roll, gap)
-}
-
 function musseSlots(state: FightState, gap: number): readonly MoveSlot[] {
   return gap <= 6 && !state.opponent.secretWindow
     ? ['neutralSpecial', 'standingLight']
@@ -77,4 +81,10 @@ function lynchSlots(state: FightState, gap: number): readonly MoveSlot[] {
   return !state.opponent.lynchQuestion && gap <= 18
     ? ['neutralSpecial', 'standingLight']
     : ['standingLight', 'forwardLight', 'standingHeavy']
+}
+
+function futureSlots(gap: number): readonly MoveSlot[] {
+  return gap > 10
+    ? ['forwardHeavy', 'standingHeavy']
+    : ['standingLight', 'standingHeavy', 'lowHeavy']
 }

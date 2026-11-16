@@ -1,8 +1,8 @@
-import { dolphinMissingBattleBody } from './battleCantabileRules'
 import { fightCategoryEfficiency } from './nenCategories'
 import { canUseHatsu, transitionNen } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import { outsideDuelAbility } from './outsideDuelAbility'
+import { dolphinMissingBattleBody } from './battleCantabileRules'
 import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
 
 export interface StolenChainAbility {
@@ -82,11 +82,7 @@ function kurapikaHeldMoveAvailable(fighter: ArcadeFighter, moveId: string): bool
 
 function heldChainAvailable(fighter: ArcadeFighter): boolean {
   const chain = fighter.kurapika!
-  return (
-    chain.emperorTime &&
-    !outsideDuelAbility(chain.held!.moveId) &&
-    !dolphinMissingBattleBody(fighter)
-  )
+  return chain.emperorTime && !dolphinMissingBattleBody(fighter)
 }
 
 /** Emperor Time changes efficiency at the attained level, never mastery or aura reserves. */

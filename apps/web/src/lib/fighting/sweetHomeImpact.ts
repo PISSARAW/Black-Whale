@@ -1,5 +1,7 @@
+import { transferWoundToObject } from './preparationSweetHome'
 import { sweetHomeContacts } from './sweetHomeContacts'
 import { otherSide } from './frameData'
+import { wakeHanzoBody } from './hanzoProjection'
 import { scoreJudgedImpact } from './towerJudging'
 import type { FightImpact, FightSide, FightState } from './types'
 
@@ -15,8 +17,9 @@ export function resolveSweetHomeImpact(options: {
   const impact = after.impact
   if (!impact || impact.avoided || impact.damage <= 0) return after
   const transfer = findTransfer(before, damagedSide)
-  if (!transfer || transfer.to === damagedSide) return after
-  const recipient = after[transfer.to]
+  if (!transfer) return transferWoundToObject(before, after, damagedSide) ?? after
+  if (transfer.to === damagedSide) return after
+  const recipient = wakeHanzoBody(after[transfer.to])
   const credit = otherSide(transfer.to)
   const backlash = transfer.backlash
   const points =
@@ -31,7 +34,11 @@ export function resolveSweetHomeImpact(options: {
   return {
     ...after,
     // The source never suffers this wound; the real recipient takes the full amount.
-    [damagedSide]: before[damagedSide],
+    [damagedSide]: {
+      ...wakeHanzoBody(before[damagedSide]),
+      // Transferring a wound does not undo the physical contact that exposed a disguise.
+      textureSurprise: after[damagedSide].textureSurprise,
+    },
     [transfer.to]: {
       ...recipient,
       health: Math.max(0, recipient.health - impact.damage),

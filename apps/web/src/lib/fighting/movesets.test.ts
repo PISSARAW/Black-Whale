@@ -13,6 +13,7 @@ import {
   WAVE_TWO_FIGHTERS,
 } from './movesets'
 import { EMPTY_INPUT, type FighterId, type FightState } from './types'
+import { createBattlefield } from './preparationWorld'
 
 const opponentFor = (id: FighterId): FighterId => (id === 'hisoka' ? 'kurapika' : 'hisoka')
 
@@ -48,9 +49,9 @@ describe('wave one movesets', () => {
       'leorio',
       'hanzo',
     ])
-    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh')
-      .filter((id) => !['leorio', 'mizaistom', 'illumi'].includes(id))
-      .forEach(assertCompleteMoveset)
+    WAVE_TWO_FIGHTERS.filter(
+      (id) => !['leorio', 'mizaistom', 'hinrigh', 'illumi'].includes(id),
+    ).forEach(assertCompleteMoveset)
   })
 
   it('gives the third wave ten equally complete movesets', () => {
@@ -67,7 +68,8 @@ describe('wave one movesets', () => {
       'bill',
     ])
     WAVE_THREE_FIGHTERS.filter(
-      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch', 'zakuro'].includes(id),
+      (id) =>
+        !['bill', 'camilla', 'melody', 'gel', 'basho', 'lynch', 'zakuro', 'luini'].includes(id),
     ).forEach(assertCompleteMoveset)
   })
 
@@ -83,9 +85,9 @@ describe('wave one movesets', () => {
       'terebellum',
       'voconte',
     ])
-    WAVE_FOUR_FIGHTERS.filter((id) => id !== 'beyond').filter((id) => !['musse', 'longhi', 'voconte', 'padaille'].includes(id)).forEach(
-      assertCompleteMoveset,
-    )
+    WAVE_FOUR_FIGHTERS.filter((id) => id !== 'beyond')
+      .filter((id) => !['musse', 'longhi', 'voconte', 'padaille'].includes(id))
+      .forEach(assertCompleteMoveset)
   })
 
   it('completes the roster with Yokotani', () => {
@@ -98,7 +100,10 @@ describe('wave one movesets', () => {
 
   it('maps stance and direction to six normals, three commands and four specials', () => {
     const fighter = createFight('kurapika', 'hisoka').player
-    const input = (partial: Partial<typeof EMPTY_INPUT>) => ({ ...EMPTY_INPUT, ...partial })
+    const input = (partial: Partial<typeof EMPTY_INPUT>) => ({
+      ...EMPTY_INPUT,
+      ...partial,
+    })
     expect(moveForAction(fighter, 'light', input({}))?.slot).toBe('standingLight')
     expect(moveForAction(fighter, 'heavy', input({ down: true }))?.slot).toBe('lowHeavy')
     expect(moveForAction({ ...fighter, y: 3 }, 'light', input({}))?.slot).toBe('airLight')
@@ -164,16 +169,20 @@ describe('wave one movesets', () => {
       })
       expect(finisherReady(base, 'player')).toBe(false)
       expect(finisherReady(supplied, 'player')).toBe(true)
-      const armed = performMove({ state: supplied, side: 'player', action: 'finisher' })
+      const armed = performMove({
+        state: supplied,
+        side: 'player',
+        action: 'finisher',
+      })
       expect(armed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
       expect(armed.player.aura).toBe(100 - moveForSlot(fighterId, 'finisher')!.auraCost)
     },
   )
 
   it.each(
-    WAVE_TWO_FIGHTERS.filter((id) => id !== 'hinrigh').filter((id) => id !== 'bonolenov')
-      .filter((id) => id !== 'hinrigh')
-      .filter((id) => !['leorio', 'mizaistom', 'illumi'].includes(id) && id !== 'franklin'),
+    WAVE_TWO_FIGHTERS.filter(
+      (id) => !['leorio', 'franklin', 'hinrigh', 'mizaistom', 'bonolenov', 'illumi'].includes(id),
+    ),
   )('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
@@ -189,7 +198,8 @@ describe('wave one movesets', () => {
 
   it.each(
     WAVE_THREE_FIGHTERS.filter(
-      (id) => !['bill', 'camilla', 'gel', 'basho', 'melody', 'lynch', 'zakuro'].includes(id),
+      (id) =>
+        !['bill', 'camilla', 'melody', 'gel', 'basho', 'lynch', 'zakuro', 'luini'].includes(id),
     ),
   )('%s wave-three finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -199,28 +209,33 @@ describe('wave one movesets', () => {
     })
     expect(finisherReady(base, 'player')).toBe(false)
     expect(finisherReady(supplied, 'player')).toBe(true)
-    const executed = performMove({ state: supplied, side: 'player', action: 'finisher' })
+    const executed = performMove({
+      state: supplied,
+      side: 'player',
+      action: 'finisher',
+    })
     if (fighterId === 'rihan') {
       expect(executed.player.predator?.hunt?.preyId).toBe('bungee-gum')
       expect(executed.player.attack).toBeNull()
     } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
   })
 
-  it.each(WAVE_FOUR_FIGHTERS.filter((id) => id !== 'beyond').filter((id) => !['musse', 'longhi', 'voconte', 'padaille'].includes(id)))(
-    '%s wave-four finisher is conditionally locked',
-    (fighterId) => {
-      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-      const supplied = withFinisherCondition({
-        ...base,
-        player: { ...base.player, aura: 100 },
-      })
-      expect(finisherReady(base, 'player')).toBe(false)
-      expect(finisherReady(supplied, 'player')).toBe(true)
-      expect(
-        performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-      ).toBe(`${fighterId}:finisher`)
-    },
-  )
+  it.each(
+    WAVE_FOUR_FIGHTERS.filter((id) => id !== 'beyond').filter(
+      (id) => !['longhi', 'musse', 'voconte', 'padaille'].includes(id),
+    ),
+  )('%s wave-four finisher is conditionally locked', (fighterId) => {
+    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+    const supplied = withFinisherCondition({
+      ...base,
+      player: { ...base.player, aura: 100 },
+    })
+    expect(finisherReady(base, 'player')).toBe(false)
+    expect(finisherReady(supplied, 'player')).toBe(true)
+    expect(
+      performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
+    ).toBe(`${fighterId}:finisher`)
+  })
 
   it('does not invent a damaging finisher for Yokotani', () => {
     const state = beginFight(createFight('yokotani', 'hisoka'))
@@ -250,19 +265,31 @@ function withFinisherCondition(state: FightState): FightState {
     case 'kurapika':
       return {
         ...state,
-        player: { ...player, kurapika: { ...player.kurapika!, emperorTime: true } },
+        player: {
+          ...player,
+          kurapika: { ...player.kurapika!, emperorTime: true },
+        },
       }
     case 'hisoka':
       return {
         ...state,
-        bungeeGum: { owner: 'player', target: 'opponent', hidden: false, retracting: false },
+        bungeeGum: {
+          owner: 'player',
+          target: 'opponent',
+          hidden: false,
+          retracting: false,
+        },
       }
     case 'chrollo':
       return {
         ...state,
         player: {
           ...player,
-          chrolloBook: { ...player.chrolloBook!, open: false, bookmark: 'sun-and-moon' },
+          chrolloBook: {
+            ...player.chrolloBook!,
+            open: false,
+            bookmark: 'sun-and-moon',
+          },
         },
       }
     case 'benjamin':
@@ -307,7 +334,12 @@ function withFinisherCondition(state: FightState): FightState {
           health: 70,
           hatsuEffects: {
             ...player.hatsuEffects,
-            painPacker: { injuries: 0, packedDamage: 30, armour: true, sun: null },
+            painPacker: {
+              injuries: 0,
+              packedDamage: 30,
+              armour: true,
+              sun: null,
+            },
           },
         },
       }
@@ -327,9 +359,15 @@ function withFinisherCondition(state: FightState): FightState {
         },
       }
     case 'kalluto':
-      return withOpponentEffect(state, 'serpentMarks', 2)
+      return {
+        ...state,
+        opponent: { ...opponent, plantedPaper: [{ owner: 'player', zone: 'torso' }] },
+      }
     case 'shizuku':
-      return { ...state, opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 } }
+      return {
+        ...state,
+        opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 },
+      }
     case 'mizaistom':
       return withOpponentEffect(state, 'restrainedFrames', 60)
     case 'hanzo':
@@ -348,7 +386,12 @@ function withFinisherCondition(state: FightState): FightState {
     case 'rihan':
       return {
         ...state,
-        bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+        bungeeGum: {
+          owner: 'opponent',
+          target: 'player',
+          hidden: false,
+          retracting: false,
+        },
         player: {
           ...player,
           predator: {
@@ -357,7 +400,11 @@ function withFinisherCondition(state: FightState): FightState {
             hunt: null,
             sealFrames: 0,
             successes: 0,
-            analysis: { owner: 'opponent', preyId: 'bungee-gum', observedFrames: 180 },
+            analysis: {
+              owner: 'opponent',
+              preyId: 'bungee-gum',
+              observedFrames: 180,
+            },
           },
         },
       }
@@ -366,7 +413,18 @@ function withFinisherCondition(state: FightState): FightState {
     case 'camilla':
       return { ...state, player: { ...player, health: 30 } }
     case 'halkenburg':
-      return withOpponentEffect(state, 'possessedFrames', 60)
+      return withOpponentEffect(
+        {
+          ...state,
+          battlefield: createBattlefield({
+            ...state.environment,
+            preparation: { mode: 'scenario', resources: [], cohorts: ['player'] },
+          }),
+          player: { ...player, hatsuEffects: { ...player.hatsuEffects, cohortWillFrames: 480 } },
+        },
+        'possessedFrames',
+        60,
+      )
     case 'luini':
       return withPlayerEffect(state, 'teleportDodges', 1)
     case 'furykov':
@@ -376,7 +434,11 @@ function withFinisherCondition(state: FightState): FightState {
     case 'sayird':
       return { ...state, player: { ...player, comboHits: 2 } }
     case 'terebellum':
-      return { ...state, player: { ...player, x: 46 }, opponent: { ...opponent, x: 51 } }
+      return {
+        ...state,
+        player: { ...player, x: 46 },
+        opponent: { ...opponent, x: 51 },
+      }
     default:
       return { ...state, player, opponent }
   }

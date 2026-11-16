@@ -8,6 +8,7 @@ import {
   tickFight,
 } from './engine'
 import { activeHitbox, attackData } from './frameData'
+import { advanceBlinky } from './blinkyFrames'
 import { musseHatsu } from './hatsu/musse'
 import { hatsuDamageFactor, hatsuDefenceFactor } from './hatsu'
 import { moveForAction, moveForSlot, movesetFor, finisherReady } from './movesets'
@@ -42,13 +43,16 @@ function advance(state: FightState, frames: number, guard = false): FightState {
 function attach(state = duel()): FightState {
   return advance(performAttack(state, 'player', 'special'), 35)
 }
-function bulletHit(state: FightState): FightState {
+function firedBullet(state: FightState): FightState {
   const started = performAttack(state, 'player', 'ranged')
   const player = {
     ...started.player,
     attack: { ...started.player.attack!, frame: attackData('ranged', started.player).startup },
   }
-  const firing = spawnRangedProjectiles({ ...started, player })
+  return spawnRangedProjectiles({ ...started, player })
+}
+function bulletHit(state: FightState): FightState {
+  const firing = firedBullet(state)
   return resolveFightImpacts(firing, [
     { projectile: firing.projectiles[0], defenderSide: 'opponent', position: { x: 48, y: 6 } },
   ])
@@ -137,7 +141,7 @@ describe('Musse — handgun and Secret Window', () => {
     expect(bulletHit(parry).opponent.health).toBe(state.opponent.health)
   })
 
-  it('can be jumped over or swallowed by Blinky as an ordinary object', () => {
+  it('can be jumped over and is swallowed only by an active, aligned Blinky nozzle', () => {
     const base = duel()
     const state = { ...base, opponent: { ...base.opponent, x: 58, y: 15, velocityY: 30 } }
     expect(advance(performAttack(state, 'player', 'ranged'), 28).opponent.health).toBe(
@@ -149,12 +153,27 @@ describe('Musse — handgun and Secret Window', () => {
         ...base.opponent,
         id: 'shizuku' as const,
         x: 60,
-        hatsuEffects: { ...base.opponent.hatsuEffects, blinkyFrames: 60 },
       },
     }
-    expect(advance(performAttack(blinky, 'player', 'ranged'), 30).opponent.health).toBe(
-      base.opponent.health,
-    )
+    const started = performAttack(blinky, 'opponent', 'special')
+    const suction = {
+      ...started,
+      opponent: {
+        ...started.opponent,
+        attack: {
+          ...started.opponent.attack!,
+          frame: attackData('special', started.opponent).startup,
+        },
+      },
+    }
+    const highBullet = firedBullet(suction)
+    // The raised handgun fires above the standing nozzle's aperture.
+    expect(advanceBlinky(highBullet).projectiles).toHaveLength(1)
+    const aligned = { ...highBullet, opponent: { ...highBullet.opponent, y: 5 } }
+    const swallowed = advanceBlinky(aligned)
+    expect(swallowed.opponent.health).toBe(base.opponent.health)
+    expect(swallowed.opponent.blinky?.lastObject?.shape).toBe('bullet')
+    expect(swallowed.projectiles).toHaveLength(0)
   })
 
   it('attaches by touch without damage, stun, knockback, score or combat modifiers', () => {
@@ -181,9 +200,14 @@ describe('Musse — handgun and Secret Window', () => {
   })
 
   it('permits actual touch of a guarding target without breaking guard', () => {
-    const result = advance(performAttack(duel(), 'player', 'special'), 35, true)
+    const base = duel()
+    const result = advance(performAttack(base, 'player', 'special'), 35, true)
     expect(result.player.secretWindow).toBeDefined()
-    expect(result.opponent).toMatchObject({ blocking: true, health: 100, blockStun: 0 })
+    expect(result.opponent).toMatchObject({
+      blocking: true,
+      health: base.opponent.health,
+      blockStun: 0,
+    })
   })
 
   it('cannot attach out of reach, during wakeup grace or after interrupted startup', () => {

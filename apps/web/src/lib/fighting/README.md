@@ -4,6 +4,60 @@
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.
 
+## Préparation et ressources du combat
+
+`FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le
+combat scénarisé. Le scénario installe de vraies entités dans `FightState.battlefield` :
+petits animaux, pigeons, graines, caisses, flûtes au sol, pièces et destinations.
+Les partisans consentants de Halkenburg, déjà marqués du panache et partageant
+la volonté de l'utilisateur, constituent une prémisse explicitement sélectionnée
+pour chaque camp. Morena reste liée au scénario de la planque Heil-Ly.
+
+`preparationRequirements.ts` vérifie les conditions à l'usage du Hatsu, avec la
+source réelle d'une page de Skill Hunter ou d'une capacité de Stealth Dolphin.
+Voler ou copier ne transfère ni équipement, ni animaux, ni soutiens, ni visites,
+ni consentement. Melody arrive avec sa flûte ; un emprunteur doit en ramasser une
+et Chrollo doit libérer ses mains en fermant son livre avec le signet approprié.
+Le HUD montre les conditions manquantes et leur évolution pendant la manche.
+
+- Little Eye contrôle une souris réelle, jamais une créature de Nen. Elle suit
+  la cible et relaie une observation locale ; le contrôle résiste à l'inconscience.
+- Cluck envoie un pigeon réel à son point de livraison, sans attaque inventée.
+  Seul cet usage attesté est représenté ; ses limites complètes restent inconnues.
+- Erigeron fait germer une graine proche, sans soin personnel ni bonus offensif.
+- Halkenburg rassemble la volonté de vrais partisans disponibles ; le partisan
+  sélectionné devient indisponible pendant la possession.
+- Luini utilise L en trois phases : ancrer depuis l’intérieur d’une pièce fermée
+  à porte unique (sans déplacement), partir de cette pièce vers un lieu visité par
+  cet utilisateur, puis revenir de n’importe où dans l’arène. La pièce est une zone
+  représentée dans la même arène, pas un changement de décor ou de manche.
+  `luiniSpatial.ts` garde un ancrage personnel distinct des ressources fournies.
+  L’ancrage n’exige pas encore de destination et le retour ne dépend ni de la
+  proximité ni de la présence de la destination. Ouvrir la porte invalide
+  définitivement la pièce pour la manche, même si elle est refermée.
+  Skill Hunter ne copie ni ancrage ni historique de visite ; Dolphin reste occupé
+  pendant un passage emprunté jusqu’au retour ou à la perte de l’ancrage.
+  Le HUD FR/EN distingue les trois phases et signale la pièce perdue. L’intervalle
+  intérieur de 12 unités, sa hauteur de 16, les destinations fournies, les 20 aura
+  par opération et les 18 frames de récupération sont des conventions du duel.
+  Référence : règles énoncées au chapitre 379. `luini.test.ts` couvre ces transitions.
+- Voconte dispose de deux huisseries physiques fournies par le duel et gérées
+  par `voconteDoors.ts` : activer Door les relie, puis il faut réellement franchir
+  un seuil. Les conditions de pièce fermée et de visite de Luini ne lui sont pas
+  appliquées ; les conditions complètes de Door restent inconnues.
+- LSDF exige Morena effectivement présente, la planque et un intrus en infraction,
+  y compris après copie. Sweet Home peut transférer une blessure à une caisse
+  réelle au contact de la main gauche ; la caisse reçoit les dégâts transférés.
+
+**6** (P1), **=** (P2) ou le bouton tactile interagissent avec la ressource proche :
+ramasser une flûte, ouvrir une porte, demander le retrait d'un partisan. Les états
+sont immuables pour les prévisions de Parallel Future et reconstruits à chaque
+manche. Coûts, portées, huit secondes de charge collective, trois partisans,
+vitesses, santé des objets et durées de possession sont des réglages du jeu.
+`preparation.test.ts` couvre moteur, copies, rétentions, pertes de prérequis et
+réinitialisation ; `pnpm --filter @black-whale/web test:preparation-ui` vérifie
+le parcours et le rendu à 1100, 390 et 320 px.
+
 ## Contrat
 
 - `roster.ts` décrit les combattants disponibles et leur identité visuelle.
@@ -251,10 +305,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   qui accélère la croissance d’un être vivant et peut favoriser le développement du
   Nen d’autrui, avec un effet faible sur les personnes non entraînées. Ce n’est ni
   un soin personnel, ni un bonus automatique d’attaque ou de défense.
-  Le duel actuel ne propose pas de cible de soutien : L, avec ou sans direction,
-  reste donc indisponible, sans dépense d’aura, frappe, annulation ou mise en buffer.
-  L’interface explique cette limite du mode ; elle n’en fait pas une restriction
-  canonique d’Erigeron. Les racines offensives/protectrices, floraisons et finisher
+  Le duel sans cible conserve L indisponible. En combat scénarisé, une graine réelle
+  proche peut germer avec Erigeron ; cela ne soigne pas Bill et n’inflige aucun dégât.
+  Les racines offensives/protectrices, floraisons et finisher
   à faible santé sont retirés. Les copies de Chrollo et de Stealth Dolphin conservent
   la même exigence de cible adaptée ; Erigeron demeure une capacité réelle et copiable.
   `billSupport.ts` et `hatsu/bill.ts` ne lui attribuent aucun effet de combat inventé.
@@ -291,6 +344,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   Le moveset conserve une seule technique LSDF, sans coup d’activation ni finisher
   offensif inventé. Les coups physiques ordinaires restent des abstractions arcade.
   Le coût d’aura et les vitesses de poursuite/escorte sont des réglages de duel.
+- `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
+  Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
+  et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
 - Hisoka distingue **L** (frappe qui attache sur contact non gardé), **→ + L**
   (rappel de la cible) et **← + L** (Hisoka se propulse vers la cible ancrée).
   Rappel et rebond exigent sa propre liaison tendue, attendent la fin du startup,
@@ -304,9 +360,6 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   conditions à la commande et à l’activation ; `hisokaMoveset.ts` supprime les
   frappes des trois utilitaires. Les quatre gestes sont distincts dans
   `keyPosesHisokaSpecials.ts`. In cache réellement la liaison adverse jusqu’à Gyo.
-- `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
-  Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
-  et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
 - Furykov ouvre **Combo Master** avec L, sans frappe, déplacement ni protection.
   `comboMaster.ts` alerte immédiatement sur une attaque de Nen dissimulée déjà
   engagée contre lui ou sur une liaison cachée qui l’affecte ; aucun buffer ni
@@ -345,11 +398,12 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   `beyondCurseAction.ts` portent ces distinctions.
 - Cluck conserve son **contrôle d’oiseaux**, attesté pour la livraison de bulletins
   de vote (chapitre 320), sans restriction canonique au courrier : les conditions
-  et limites complètes restent inconnues. Aucun oiseau n’est fourni par ce duel.
+  et limites complètes restent inconnues. Le duel strict ne fournit aucun oiseau ;
+  le scénario peut fournir un pigeon réel et un point de livraison.
   `hatsu/cluck.ts` déclare une capacité réelle retenable par Steal Chain sous
   l’identité `cluck:birdManipulation`, distincte de ses coups. Sans cible adaptée,
-  aucun chargement ni usage de Stealth Dolphin n’est proposé et Emperor Time
-  reste désactivable. Le HUD nomme le pouvoir et explique l’absence d’oiseaux ;
+  l’usage de Stealth Dolphin reste bloqué, mais son chargement reste possible.
+  Le HUD nomme le pouvoir et explique l’absence d’oiseaux ;
   aucune volée, protection, information partagée ou attaque d’oiseaux n’est inventée.
   Le vol ne scelle que ce Hatsu, pas ses techniques martiales après récupération
   de l’aura drainée. Retour de capacité et nouvelle manche lèvent la rétention.
@@ -357,8 +411,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   (jusqu’à la taille d’un hamster) et transmet sa vue et son ouïe, sans agir sur
   une créature matérialisée par le Nen. Kurapika peut le retenir après drainage,
   sous l’identité `sayird:littleEye`, distincte des frappes martiales. Aucun animal
-  cible n’est fourni en duel : le HUD nomme la capacité et précise cette limite ;
-  chargement et usage restent indisponibles, sans verrouiller Emperor Time.
+  cible n’est fourni en duel strict. En scénario, un animal réel fournit une
+  observation distante ; le contrôle persiste même si l’utilisateur est inconscient.
+  Dolphin conserve l’exigence d’un animal réel au moment de l’usage.
   Les coups de Sayird restent des adaptations martiales même quand Little Eye
   est retenu. La manche suivante rend la capacité à son propriétaire.
 - Musse utilise **U** pour son pistolet ordinaire : une balle physique par pression,
@@ -419,6 +474,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
   La portée audible de 18 unités est une abstraction du duel.
+- Sweet Home (`hatsu/terebellum.ts`, `sweetHomeImpact.ts`) vérifie les contacts
+  pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures
+  à l'adversaire touché à gauche ; →+L absorbe à droite vers son propre corps
+  touché à gauche ; ↓+L absorbe à droite sans réceptacle et blesse sa main gauche.
+  Sans contact requis, la cible initiale garde les dégâts. Chaque blessure est
+  déplacée une fois, sans nouvelle réduction ni esquive. Portée, frames et coups
+  porteurs sont des abstractions du duel ; aucun objet-réceptacle n'est inventé.
 - Phinks prépare **Ripper Cyclotron** par de véritables tours du bras droit.
   L lance le moulinet ; L l’arrête sans frapper. Chaque tour complet est compté
   après 36 frames de simulation et coûte 2 aura ; ces valeurs règlent le duel,
@@ -493,17 +555,20 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   inscrire son constructeur. Le terrain ne modifie pas le barème ; LSDF exige
   toutefois la juridiction de la planque occupée par Morena.
 - `/fighting` rend la sélection et les contrôles clavier/tactiles.
-- Le HUD sépare vie, aura, temps et manches des ressources et restrictions des
-  personnages, regroupées sous l'arène. `FightHealth` utilise la réserve maximale
-  fournie par le moteur, avec un repère tous les 100 PV. Affichage donne accès aux
-  PV exacts, aux détails tactiques, à la taille du HUD (100–130 %) et aux commandes
-  tactiles automatiques. Le plein écran dépend du navigateur ; le manuel se replie.
-  `pnpm --filter @black-whale/web test:hud` vérifie le roster et les états chargés
-  de Chrollo, Kurapika et Benjamin ; voir `apps/web/ui-tests/fighting-hud/README.md`.
 - Le type de combat est choisi avant le terrain : **Tour Céleste** se joue à
-  dix points ou au TKO après trois knockdowns, **Combat K.-O.** à la vie (100 PV, décision
-  après 90 secondes), et **Arcade** conserve la règle historique à dix points ou
-  K.-O. en soixante secondes. Ces barèmes restent indépendants du terrain.
+  dix points ou au TKO après trois knockdowns. **Combat K.-O.** et **Arcade** se
+  jouent à la vie : trois barres de 100 PV, décision après 120 secondes, sans
+  victoire aux points. Ces barèmes restent indépendants du terrain.
+- `health.ts` définit les réserves de vie. Le HUD les représente par une grande
+  jauge avec un repère tous les 100 PV ; une frappe peut traverser plusieurs réserves.
+  Les PV exacts sont disponibles dans Affichage et en entraînement. Les états Nen,
+  ressources et restrictions des personnages sont regroupés sous l'arène, sans
+  masquer l'action. Affichage règle aussi la taille du HUD (100–130 %), les
+  commandes tactiles automatiques et les détails tactiques ; le plein écran est
+  disponible dans les navigateurs compatibles. Le manuel est repliable.
+  Les soins, résurrections et réinitialisations d'entraînement respectent
+  `maxHealth`. L'IA, les seuils de finishers et la musique utilisent le pourcentage
+  de la réserve totale. Chaque nouvelle manche restaure les trois barres.
 - Le jugement de la Tour attribue un point pour une touche nette, deux pour une
   touche critique et un point supplémentaire lorsqu'elle provoque un knockdown.
 
@@ -682,15 +747,25 @@ les chapitres 385 et 387 : elle tente de tirer sur Tserriednich pendant son Zets
 volontaire, elle ne lui impose pas ce Zetsu. `theta.test.ts` vérifie les tirs
 pour les deux joueurs et leur interaction avec garde, interruption et vol de Hatsu.
 
-### Gel : bras-serpent sans propriétés inventées
+Melody utilise un seul Hatsu musical : L joue ou arrête une performance au sol,
+avec 18 frames de préparation, 8 aura au départ puis 6 aura/s. La portée de
+36 unités et ces durées sont des adaptations au duel. Aucun dégât, score,
+knockdown, hitstun physique, barrière ou finisher offensif ne vient de la flûte.
+Les auditeurs proches perdent l’initiative tant que le son les atteint. Un
+déplacement, une garde, un coup reçu, la perte de la flûte ou du Nen coupe la
+performance ; ses effets cessent aussitôt. E maintenu (P2 : C), aussi accessible
+en tactile, couvre les oreilles mais occupe les mains : pas de garde ni d’attaque.
+La garde ordinaire et Zetsu ne protègent pas de l’écoute ; le deuxième sceau
+de Saiyu la supprime. Le son synthétisé suit le canal de performance, tandis que
+le réglage muet du navigateur n’a aucun effet sur les règles de simulation.
 
-Gel conserve sa transformation du bras et l’allonge de ses frappes. Les variantes
-directionnelles représentent des gestes avec le même bras ; portées, dégâts,
-timings et coûts d’aura restent des réglages du duel. Le nom « Bras-serpent »
-est descriptif : le nom officiel, la catégorie et les règles complètes restent
-inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
-ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
-les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.
+L’ouïe corporelle de Melody reste passive, même en Zetsu ou si son Hatsu est volé.
+Elle indique la direction du corps réel, un rythme cardiaque régulier ou agité et
+la préparation physique visible d’une attaque, sans lire les entrées ni les
+réserves d’aura. Après 12 frames d’écoute, une garde manuelle correcte bénéficie
+de 3 frames supplémentaires de parade : c’est un équilibrage arcade, jamais une
+esquive automatique. Les oreilles couvertes ou un sceau auditif réinitialisent
+l’écoute. Une copie du Hatsu demande une vraie flûte et ne copie pas cette ouïe.
 
 ### Nen tactique et catégories dans le duel 2D
 
@@ -704,13 +779,13 @@ et chaque contact consomme de l’aura. Une attaque très puissante peut le dép
 
 Commandes supplémentaires **à maintenir**, disponibles aussi au tactile :
 
-| Technique | P1 | P2 local | Effet et contrepartie |
-| --- | --- | --- | --- |
-| En | R | [ | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact. |
-| Shu | F | ] | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
-| In | X | \ | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact. |
-| Gyo | G | ; | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie. |
-| Ryu | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s. |
+| Technique | P1            | P2 local      | Effet et contrepartie                                                                                                                                                                                                                                      |
+| --------- | ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| En        | R             | [             | Rayon de 22 unités, détection des corps (y compris Zetsu), doubles, projectiles et fils dans le champ ; aide une parade manuelle. Drain de 9 aura/s en plus de Ren, protection corporelle dispersée ; cesse en attaquant ou sur impact.                    |
+| Shu       | F             | ]             | Enveloppe l’objet réel ou matérialisé porté, ou la pierre du lancer commun. Renforce les coups de cet outil et les objets lancés ; 4 aura/s, 20 % d’aura corporelle engagée sur l’objet. Aucun bonus aux poings nus ni aux balles ordinaires d’arme à feu. |
+| In        | X             | \             | Dissimule l’aura, les projectiles de Nen et les fils ; conserve le corps et les supports physiques visibles. 3 aura/s, préparation et surcoût sur les attaques cachées. Gyo révèle, En détecte le contact.                                                 |
+| Gyo       | G             | ;             | Révèle In et la répartition adverse ; améliore la fenêtre de parade manuelle. 2,4 aura/s, défense corporelle amincie.                                                                                                                                      |
+| Ryu       | 1 / 2 / 3 / 4 | 7 / 8 / 9 / 0 | Tête / torse / mains / jambes : 76 % sur la zone choisie, 8 % ailleurs ; les zones délaissées deviennent vulnérables. Redistribution maintenue sur une base Ren, coût de 6 aura/s.                                                                         |
 
 En ne fournit ni garde ni esquive automatiques, ni connaissance des conditions d’un
 Hatsu. Son cercle utilise les mêmes distances que les collisions. Les fils cachés
@@ -764,51 +839,6 @@ inconnus. Aucun venin, drainage d’aura, mue protectrice, entrave automatique
 ou finisher létal n’est attribué à cette capacité. Le contact applique seulement
 les dégâts et réactions ordinaires ; la garde et l’interruption continuent à fonctionner.
 
-### Melody : musique continue et ouïe corporelle
-
-Melody utilise un seul Hatsu musical : L joue ou arrête une performance au sol,
-avec 18 frames de préparation, 8 aura au départ puis 6 aura/s. La portée de
-36 unités et ces durées sont des adaptations au duel. Aucun dégât, score,
-knockdown, hitstun physique, barrière ou finisher offensif ne vient de la flûte.
-Les auditeurs proches perdent l’initiative tant que le son les atteint. Un
-déplacement, une garde, un coup reçu, la perte de la flûte ou du Nen coupe la
-performance ; ses effets cessent aussitôt. E maintenu (P2 : C), aussi accessible
-en tactile, couvre les oreilles mais occupe les mains : pas de garde ni d’attaque.
-La garde ordinaire et Zetsu ne protègent pas de l’écoute ; le deuxième sceau
-de Saiyu la supprime. Le son synthétisé suit le canal de performance, tandis que
-le réglage muet du navigateur n’a aucun effet sur les règles de simulation.
-
-L’ouïe corporelle de Melody reste passive, même en Zetsu ou si son Hatsu est volé.
-Elle indique la direction du corps réel, un rythme cardiaque régulier ou agité et
-la préparation physique visible d’une attaque, sans lire les entrées ni les
-réserves d’aura. Après 12 frames d’écoute, une garde manuelle correcte bénéficie
-de 3 frames supplémentaires de parade : c’est un équilibrage arcade, jamais une
-esquive automatique. Les oreilles couvertes ou un sceau auditif réinitialisent
-l’écoute. Une copie du Hatsu demande une vraie flûte et ne copie pas cette ouïe.
-
-### Machi : suture, pistage et ligature
-
-- L prépare une suture personnelle : 12 PV après 30 frames, plafonnés à la vie
-  maximale. Aucun impact offensif, résurrection ou membre recréé ; un coup reçu
-  avant la suture l’interrompt.
-- Avant + L et U posent au contact une aiguille et un fil de pistage, sans dégâts
-  ni immobilisation. Le HUD indique la direction et la distance de la cible.
-  U dirige ce même geste : aucun projectile de Nen détaché n’est créé.
-- Bas + L ligature la cible touchée sans garde. Un vrai lien mémorise propriétaire,
-  cible et point de contention. Tant que le fil court est maintenu, la cible reste
-  à cet endroit, peut employer son aura, mais ne peut pas frapper ni se déplacer.
-  Marcher contre son corps ne déplace pas son ancrage.
-- Un coup reçu par le porteur, la garde, un autre geste de ses mains ou une
-  distance supérieure à 16 unités font perdre la contention : seul le pistage
-  subsiste. Arrière + L lâche entièrement le fil. Perdre le Nen, le Hatsu ou la vie
-  dissipe le lien ; la manche suivante le réinitialise.
-- H exige un fil de ligature encore valide et le consomme sur touche. Les copies
-  respectent ces mêmes règles ; Stealth Dolphin attend la libération du fil.
-- Le fil visible et la boucle autour du corps correspondent au lien du moteur.
-  `stitchedFrames` n’est plus qu’un indicateur dérivé ; il n’impose aucun hitstun.
-  Le soin personnel, les coûts, frames, portées, seuil de contention et finisher
-  sont des adaptations du duel. La suture ne régénère pas de tissu manquant.
-
 ### Mizaistom : avertissement avant la contrainte
 
 `mizaistomMoveset.ts` conserve dix coups physiques ordinaires et un seul Cross Game :
@@ -841,32 +871,6 @@ ou perdre le Hatsu dissipe ses effets. Une nouvelle manche efface l’état.
 3D du carton et de la contrainte. Référence : Cross Game montré dans le manga,
 lors des préparatifs de l’expédition ; la catégorie naturelle reste inconnue.
 
-### Lynch : question, coup de poing et réponse privée
-
-`lynchAction.ts` fait de L une question parlée, sans frappe automatique. Le panneau
-propose trois questions de duel : identité réelle, état de Nen et usage de In.
-La question doit être audible à 18 unités et précéder un vrai contact du poing.
-`lynchInterrogation.ts` vérifie la conscience avant et après le coup : aucune
-réponse d’une cible morte, mise au sol, endormie en projection ou en blackout.
-Le hitstun ordinaire n’est pas une perte de conscience. Une garde qui reçoit le
-poing reste un contact ; parade, esquive, projectile, coup de pied et projection
-ne donnent aucune réponse. La portée de parole, cette convention de mise au sol,
-les questions prises en charge et les 10 aura par réponse sont des adaptations.
-
-La réponse contient seulement le fait demandé, figé au moment du contact :
-l’identité du corps réel, même déguisé, son état de Nen ou l’usage de In. Elle
-ne prédit aucune commande et ne consulte aucune vérité que la cible ignorerait.
-Les deux participants reçoivent un souvenir privé, conservé après la perte du
-Hatsu ; aucun texte de réponse ne part dans l’impact, le statut ou le son public.
-Le panneau la masque jusqu’au maintien du bouton d’écoute ; en local, il demande
-le participant qui consulte. L’écran partagé exige toujours de lire à l’abri des
-spectateurs. Les nouvelles manches effacent questions et réponses.
-
-Les dégâts, le stun et le score viennent exclusivement du coup physique normal.
-L’ancien malus de défense `soulExposedFrames` et le finisher « Confession » sont
-supprimés. Skill Hunter garde les mêmes conditions ; Dolphin termine un seul
-interrogatoire et rend ensuite la capacité, sans effacer l’information apprise.
-
 ### Shizuku : Blinky ciblé et blessures ouvertes
 
 L aspire le type de matière désigné dans le panneau (balles, cartes, pierres ou lames),
@@ -893,6 +897,55 @@ durées et pertes de PV sont des adaptations explicites de duel, pas des valeurs
 énoncées dans le manga. La règle du sang vient du combat contre Pike (ch. 228) ;
 la désignation et le dernier objet relèvent des règles de Blinky à Yorknew.
 
+### Machi : suture, pistage et ligature
+
+- L prépare une suture personnelle : 12 PV après 30 frames, plafonnés à la vie
+  maximale. Aucun impact offensif, résurrection ou membre recréé ; un coup reçu
+  avant la suture l’interrompt.
+- Avant + L et U posent au contact une aiguille et un fil de pistage, sans dégâts
+  ni immobilisation. Le HUD indique la direction et la distance de la cible.
+  U dirige ce même geste : aucun projectile de Nen détaché n’est créé.
+- Bas + L ligature la cible touchée sans garde. Un vrai lien mémorise propriétaire,
+  cible et point de contention. Tant que le fil court est maintenu, la cible reste
+  à cet endroit, peut employer son aura, mais ne peut pas frapper ni se déplacer.
+  Marcher contre son corps ne déplace pas son ancrage.
+- Un coup reçu par le porteur, la garde, un autre geste de ses mains ou une
+  distance supérieure à 16 unités font perdre la contention : seul le pistage
+  subsiste. Arrière + L lâche entièrement le fil. Perdre le Nen, le Hatsu ou la vie
+  dissipe le lien ; la manche suivante le réinitialise.
+- H exige un fil de ligature encore valide et le consomme sur touche. Les copies
+  respectent ces mêmes règles ; Stealth Dolphin attend la libération du fil.
+- Le fil visible et la boucle autour du corps correspondent au lien du moteur.
+  `stitchedFrames` n’est plus qu’un indicateur dérivé ; il n’impose aucun hitstun.
+  Le soin personnel, les coûts, frames, portées, seuil de contention et finisher
+  sont des adaptations du duel. La suture ne régénère pas de tissu manquant.
+
+### Lynch : question, coup de poing et réponse privée
+
+`lynchAction.ts` fait de L une question parlée, sans frappe automatique. Le panneau
+propose trois questions de duel : identité réelle, état de Nen et usage de In.
+La question doit être audible à 18 unités et précéder un vrai contact du poing.
+`lynchInterrogation.ts` vérifie la conscience avant et après le coup : aucune
+réponse d’une cible morte, mise au sol, endormie en projection ou en blackout.
+Le hitstun ordinaire n’est pas une perte de conscience. Une garde qui reçoit le
+poing reste un contact ; parade, esquive, projectile, coup de pied et projection
+ne donnent aucune réponse. La portée de parole, cette convention de mise au sol,
+les questions prises en charge et les 10 aura par réponse sont des adaptations.
+
+La réponse contient seulement le fait demandé, figé au moment du contact :
+l’identité du corps réel, même déguisé, son état de Nen ou l’usage de In. Elle
+ne prédit aucune commande et ne consulte aucune vérité que la cible ignorerait.
+Les deux participants reçoivent un souvenir privé, conservé après la perte du
+Hatsu ; aucun texte de réponse ne part dans l’impact, le statut ou le son public.
+Le panneau la masque jusqu’au maintien du bouton d’écoute ; en local, il demande
+le participant qui consulte. L’écran partagé exige toujours de lire à l’abri des
+spectateurs. Les nouvelles manches effacent questions et réponses.
+
+Les dégâts, le stun et le score viennent exclusivement du coup physique normal.
+L’ancien malus de défense `soulExposedFrames` et le finisher « Confession » sont
+supprimés. Skill Hunter garde les mêmes conditions ; Dolphin termine un seul
+interrogatoire et rend ensuite la capacité, sans effacer l’information apprise.
+
 ### Voconte : Door et franchissement directionnel
 
 `voconteDoors.ts` transporte les corps réels qui franchissent une huisserie active,
@@ -918,6 +971,29 @@ Skill Hunter conserve les seuils seulement avec une page active ; Stealth Dolphi
 reste occupé jusqu’à la fermeture de son réseau puis rend la capacité. Les
 prévisions de Parallel Future incluent l’état des portes. Chaque manche le
 réinitialise. `voconte.test.ts` couvre le moteur, les copies et les cadres 3D.
+
+### Kalluto — papier et écoute
+
+`kallutoPaper.ts`, `kallutoFrames.ts` et `kallutoFlight.ts` séparent la pose physique
+et la manipulation. L et U lancent des fragments dans la zone sélectionnée ; ↓ L
+vise les pieds. Seul un fragment qui touche sans garde ni esquive se plante.
+→ L et H lancent un flux de papier vers un fragment appartenant à l’utilisateur,
+dans la zone sélectionnée. Aucun compteur de coups, bonus de détonation ou seuil
+de vie : le flux passe par les collisions, la défense et les dégâts ordinaires.
+Le papier planté reste physique après interruption du Nen ; le flux perd alors
+sa poursuite. Chaque nouvelle manche repart sans papier ni poupée.
+
+← L confectionne une poupée du sujet marqué. `kallutoListening.ts` relaie les
+paroles émises par T/V ou Parler à proximité de ce sujet, indépendamment de la
+distance entre le sujet et la poupée. Aucun accès aux pensées, aux statistiques
+d’aura, aux commandes silencieuses ou au futur. Le Nen indisponible, la perte de
+la page copiée, la privation d’ouïe ou les oreilles bouchées empêchent l’écoute.
+Les copies utilisent les mêmes conditions et gardent leurs propres papiers.
+
+Les quatre zones, la phrase de dialogue « Je suis ici. », les coûts, les temps,
+les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
+des restrictions attribuées au manga. Le panneau expose les zones plantées,
+la confection de la poupée et la dernière parole réellement reçue.
 
 ### Padaille : trois outils choisis sur la main droite
 

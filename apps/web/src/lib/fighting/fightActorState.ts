@@ -10,6 +10,11 @@ import type { ArcadeFighter, FightInput } from './types'
 
 const GROUND = 0
 
+function characterBusy(fighter: ArcadeFighter): boolean {
+  if (!illumiBodyFree(fighter)) return true
+  return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
+}
+
 export function canAct(fighter: ArcadeFighter): boolean {
   return !battlePreparing(fighter) && freeCombatBody(fighter)
 }
@@ -34,8 +39,9 @@ export function canMove(fighter: ArcadeFighter): boolean {
 
 export function canGuard(fighter: ArcadeFighter): boolean {
   return (
-    guardHandsFree(fighter) &&
+    !battlePreparing(fighter) &&
     !characterBusy(fighter) &&
+    biohazardBodyFree(fighter) &&
     !melodyRestrictsCombat(fighter) &&
     !chainsImmobilize(fighter) &&
     fighter.y === GROUND &&
@@ -44,15 +50,6 @@ export function canGuard(fighter: ArcadeFighter): boolean {
     fighter.health > 0 &&
     fighter.attack === null
   )
-}
-
-function guardHandsFree(fighter: ArcadeFighter): boolean {
-  return biohazardBodyFree(fighter) && !battlePreparing(fighter)
-}
-
-function characterBusy(fighter: ArcadeFighter): boolean {
-  if (!illumiBodyFree(fighter)) return true
-  return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }
 
 export function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {

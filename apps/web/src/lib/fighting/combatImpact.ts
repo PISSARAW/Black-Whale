@@ -1,6 +1,8 @@
+import { strikeRead, projectileRead } from './combatRead'
+import { plantPaperAfterHit } from './kallutoFlight'
 import { resolveIllumiContact } from './illumiImpact'
-import { recordBlinkyWound } from './blinkyWounds'
 import { resolveLynchContact } from './lynchInterrogation'
+import { recordBlinkyWound } from './blinkyWounds'
 import { melodyRestrictsCombat } from './melodyRules'
 import { melodyParryBonus } from './melodyHearing'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -8,13 +10,13 @@ import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
 import { isFirearmProjectile } from './nenProjectiles'
 import { recordFightDeath } from './fightDeaths'
 import { resolveFightOutcome } from './fightOutcome'
-import { observeComboMaster } from './comboMaster'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
+import { observeComboMaster } from './comboMaster'
 import { recordDolphinEffects } from './kurapikaDolphin'
+import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 export { finishFight } from './combatVerdict'
 import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
 import { resolveSweetHomeImpact } from './sweetHomeImpact'
-import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { blocksAttack } from './duelMoves'
 import {
   activeHitbox,
@@ -148,7 +150,11 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     after: next,
     damagedSide: defenderSide,
   })
-  const scorched = resolveLynchContact(state, resolveBashoPoemImpact(state, transferred, side), side)
+  const scorched = resolveLynchContact(
+    state,
+    resolveBashoPoemImpact(state, transferred, side),
+    side,
+  )
   if (transferred !== next)
     return finishAfterImpact(
       scorched,
@@ -177,7 +183,11 @@ function strikeAfterDefence(
   options: Omit<Parameters<typeof strikeDefender>[0], 'fighter' | 'blocked'>,
 ): ArcadeFighter {
   if (defence.avoided) return defence.fighter
-  return strikeDefender({ ...options, fighter: defence.fighter, blocked: defence.blocked })
+  return strikeDefender({
+    ...options,
+    fighter: defence.fighter,
+    blocked: defence.blocked,
+  })
 }
 
 function impactPoints(options: {
@@ -226,7 +236,9 @@ function shouldResolveHatsu(
   fighter: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> },
   defence: ImpactDefence,
 ): fighter is ArcadeFighter & {
-  attack: NonNullable<ArcadeFighter['attack']> & { hatsuSource: NonNullable<FighterId> }
+  attack: NonNullable<ArcadeFighter['attack']> & {
+    hatsuSource: NonNullable<FighterId>
+  }
 } {
   return (
     fighter.attack.kind === 'special' && Boolean(fighter.attack.hatsuSource) && !defence.avoided
@@ -322,13 +334,18 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     after: next,
     damagedSide: hit.defenderSide,
   })
-  return finishAfterImpact(routed, routed.impact!.attacker, otherSide(routed.impact!.attacker))
+  const planted = plantPaperAfterHit(routed, hit.projectile)
+  return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
 }
 
 function prepareDefence(
   fighter: ArcadeFighter,
   zone: FightNenZone,
-  read?: { attacker?: ArcadeFighter; concealed: boolean; position: { x: number; y: number } },
+  read?: {
+    attacker?: ArcadeFighter
+    concealed: boolean
+    position: { x: number; y: number }
+  },
 ): ImpactDefence {
   const attacker = read?.attacker
   fighter = wakeHanzoBody(fighter)
@@ -340,7 +357,13 @@ function prepareDefence(
   if (invulnerable) return { fighter, blocked, parried, avoided: true, invulnerable }
   if (hatsuAvoidsImpact(fighter)) return avoidedDefence(fighter, blocked, parried)
   const defended = parried ? focusGuardRyu(fighter, zone) : fighter
-  return { fighter: defended, blocked, parried, avoided: false, invulnerable: false }
+  return {
+    fighter: defended,
+    blocked,
+    parried,
+    avoided: false,
+    invulnerable: false,
+  }
 }
 
 function blocksImpact(fighter: ArcadeFighter, attacker?: ArcadeFighter): boolean {
@@ -434,7 +457,11 @@ function resolveTrade(original: FightState, first: FightState): FightState {
       outgoing: second.opponent,
     }),
     bungeeGum: tradeAttachment(original, first, second),
-    score: tradeTotals({ original: original.score, first: first.score, second: second.score }),
+    score: tradeTotals({
+      original: original.score,
+      first: first.score,
+      second: second.score,
+    }),
     knockdowns: tradeTotals({
       original: original.knockdowns,
       first: first.knockdowns,
@@ -443,21 +470,9 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
-  return { ...traded, deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])] }
-}
-
-function strikeRead(attacker: ArcadeFighter & { attack: NonNullable<ArcadeFighter['attack']> }) {
   return {
-    attacker,
-    concealed: attacker.attack.concealed && Boolean(attacker.attack.hatsuSource),
-    position: attacker,
-  }
-}
-
-function projectileRead(projectile: ProjectileHit['projectile']) {
-  return {
-    concealed: Boolean(projectile.concealed) && projectile.matter === 'nen',
-    position: projectile,
+    ...traded,
+    deaths: [...(first.deaths ?? []), ...(second.deaths ?? [])],
   }
 }
 
@@ -467,5 +482,8 @@ function impactWallSplat(options: {
   attacker: ArcadeFighter
   knockback: number
 }): boolean {
-  return !options.defence.avoided && atWall(sleepingBody(options.defender), options.attacker, options.knockback)
+  return (
+    !options.defence.avoided &&
+    atWall(sleepingBody(options.defender), options.attacker, options.knockback)
+  )
 }

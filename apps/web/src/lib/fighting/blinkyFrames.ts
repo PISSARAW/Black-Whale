@@ -67,6 +67,7 @@ function swallow(state: FightState, side: FightSide): FightState {
   const ids = new Set(swallowed.map((shot) => shot.id))
   const lastObject = {
     ...swallowed[swallowed.length - 1],
+    kallutoPaper: undefined,
     nenPower: 1,
     hatsuPower: 1,
     shuCharged: false,

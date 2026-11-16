@@ -1,3 +1,4 @@
+import { speakPaperWords } from './kallutoListening'
 import { canSpeak, senseDeprived } from './saiyuSenses'
 import { resolveHanzoBodyCalls } from './hanzoBodyCall'
 import { battleAppearance, battleMindAvailable } from './battleCantabileRules'
@@ -24,6 +25,7 @@ function nearModel(state: FightState): boolean {
 
 /** Each local player supplies their own words. An available AI may reply to the player. */
 export function speakBattleWords(state: FightState, side: FightSide): FightState {
+  state = speakPaperWords(state, side)
   if (state.phase !== 'fighting' || state.catsName || !nearModel(state)) return state
   if (![state.player.id, state.opponent.id].includes('bonolenov') || !canExchange(state[side]))
     return state

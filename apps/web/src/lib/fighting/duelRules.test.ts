@@ -54,7 +54,7 @@ describe('duel rules', () => {
     state.opponent = { ...state.opponent, id: 'kurapika' }
     state = active(performAttack(performAttack(state, 'player', 'light'), 'opponent', 'light'))
     expect(state.player.health).toBe(state.opponent.health)
-    expect(state.player.health).toBeLessThan(100)
+    expect(state.player.health).toBeLessThan(state.player.maxHealth)
     state = close()
     state.player.health = state.opponent.health = 1
     const result = active(

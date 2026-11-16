@@ -1,5 +1,5 @@
-import { performCyclotronAction } from './phinksAction'
 import { performParallelFutureAction } from './parallelFutureAbility'
+import { performCyclotronAction } from './phinksAction'
 import { performKurapikaAction, toggleEmperorTime } from './kurapikaActions'
 import { moveById } from './movesets'
 import type { FighterMove } from './movesetTypes'
@@ -19,8 +19,9 @@ export function routedFightMove(
   fighter: ArcadeFighter,
   selected: FighterMove | null,
 ): FighterMove | null {
-  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id)) return selected
-  if (fighter.id === 'shizuku') return selected
+  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id))
+    return selected
+  if (['shizuku', 'kalluto'].includes(fighter.id)) return selected
   const current = moveById(fighter.attack?.moveId)
   return (
     current?.cancelInto
@@ -44,6 +45,24 @@ export function characterMoveOverride(
   return selectedChain ?? judgmentOverride(options, perform)
 }
 
+function nativeUtilityOverride(
+  options: MoveContext,
+  selected: FighterMove | null,
+): FightState | null {
+  const { state, side, action } = options
+  if (action !== 'special' && action !== 'finisher') return null
+  const cast = { phinks: performCyclotronAction, tserriednich: performParallelFutureAction }
+  const id = state[side].id
+  if (!(id in cast)) return null
+  return cast[id as keyof typeof cast]({
+    state,
+    side,
+    kind: 'special',
+    moveId: selected?.id,
+    auraCharged: false,
+  })
+}
+
 function selectedChainOverride(
   options: MoveContext,
   selected: FighterMove | null,
@@ -62,22 +81,4 @@ function judgmentOverride(options: MoveContext, perform: PerformAttack): FightSt
   if (!state[side].judgmentChain) return null
   if (action !== 'special' && action !== 'finisher' && !input.aura) return null
   return performKurapikaAction({ state, side, kind: 'special', auraCharged: input.aura }, perform)
-}
-
-function nativeUtilityOverride(
-  options: MoveContext,
-  selected: FighterMove | null,
-): FightState | null {
-  const { state, side, action } = options
-  if (action !== 'special' && action !== 'finisher') return null
-  const cast = { phinks: performCyclotronAction, tserriednich: performParallelFutureAction }
-  const id = state[side].id
-  if (!(id in cast)) return null
-  return cast[id as keyof typeof cast]({
-    state,
-    side,
-    kind: 'special',
-    moveId: selected?.id,
-    auraCharged: false,
-  })
 }

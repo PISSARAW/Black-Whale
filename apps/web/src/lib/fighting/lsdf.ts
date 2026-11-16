@@ -1,8 +1,10 @@
+import { morenaPresent } from './preparationRequirements'
 import { constructionFactor } from './nenCategories'
-import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { canUseHatsu } from '@black-whale/nen-engine'
+import { chrolloHasActivePage, chrolloPageForMove } from './chrolloBook'
 import { inMorenasHideout } from './fightEnvironment'
 import { finishFight } from './combatVerdict'
+import { sleepingBody, wakeHanzoBody } from './hanzoProjection'
 import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState } from './types'
 
@@ -19,14 +21,17 @@ export function lsdfJurisdiction(state: FightState, side: FightSide): boolean {
   const target = side === 'player' ? 'opponent' : 'player'
   return (
     inMorenasHideout(state.environment) &&
+    morenaPresent(state) &&
     state.environment.unlawfulIntruders[target] &&
     state[target].id !== 'morena'
   )
 }
 
 export function ownsLsdf(fighter: ArcadeFighter): boolean {
-  return fighter.id === 'yokotani' ||
+  return (
+    fighter.id === 'yokotani' ||
     (fighter.id === 'chrollo' && chrolloHasActivePage(fighter, 'yokotani'))
+  )
 }
 
 export function isLsdfMove(fighter: ArcadeFighter, moveId?: string): boolean {
@@ -87,7 +92,7 @@ function dismissGuard(state: FightState, side: FightSide): FightState {
 function advanceGuard(state: FightState, side: FightSide, guard: LsdfGuard): FightState {
   if (guard.phase === 'escorting') return escortIntruder(state, side, guard)
   const target = state[guard.target]
-  const body = target
+  const body = sleepingBody(target)
   // Further aggression after the charges are declared increases the alert level.
   const level = Math.min(5, guard.level + Number(target.attack?.frame === 1))
   const x = approach(guard.x, body.x, (0.45 + level * 0.08) * constructionFactor(state[side]))
@@ -100,7 +105,7 @@ function advanceGuard(state: FightState, side: FightSide, guard: LsdfGuard): Fig
 function escortIntruder(state: FightState, side: FightSide, guard: LsdfGuard): FightState {
   const x = approach(guard.x, guard.exitX, 0.6)
   const target: ArcadeFighter = {
-    ...state[guard.target],
+    ...wakeHanzoBody(state[guard.target]),
     x,
     y: 0,
     velocityY: 0,

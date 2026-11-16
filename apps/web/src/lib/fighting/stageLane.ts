@@ -1,4 +1,4 @@
-import { pointInPolygon, structureFootprint } from '../tour/geometry'
+import { pointInPolygon, polygonsOverlap, structureFootprint } from '../tour/geometry'
 import type { Polygon, Space, Structure, Vec2 } from '../tour/types'
 
 /**
@@ -62,11 +62,11 @@ function boundsOf(footprint: Polygon) {
   }
 }
 
-function gridOf(footprint: Polygon): Vec2[] {
+function gridOf(footprint: Polygon, spacing = GRID): Vec2[] {
   const { minX, maxX, minZ, maxZ } = boundsOf(footprint)
   const points: Vec2[] = []
-  for (let x = minX + GRID / 2; x < maxX; x += GRID) {
-    for (let z = minZ + GRID / 2; z < maxZ; z += GRID) points.push([x, z])
+  for (let x = minX + spacing / 2; x < maxX; x += spacing) {
+    for (let z = minZ + spacing / 2; z < maxZ; z += spacing) points.push([x, z])
   }
   return points
 }
@@ -87,9 +87,19 @@ function laneSamples(lane: FightLane): Vec2[] {
 }
 
 function laneIsClear(lane: FightLane, footprint: Polygon, blockers: Polygon[]): boolean {
-  return laneSamples(lane).every(
-    (point) =>
-      pointInPolygon(point, footprint) && !blockers.some((solid) => pointInPolygon(point, solid)),
+  const [dx, dz] = lane.direction
+  const strip: Polygon = [
+    [-HALF_LENGTH, -HALF_WIDTH],
+    [HALF_LENGTH, -HALF_WIDTH],
+    [HALF_LENGTH, HALF_WIDTH],
+    [-HALF_LENGTH, HALF_WIDTH],
+  ].map(([along, across]) => [
+    lane.centre[0] + dx * along + dz * across,
+    lane.centre[1] + dz * along - dx * across,
+  ])
+  return (
+    laneSamples(lane).every((point) => pointInPolygon(point, footprint)) &&
+    !blockers.some((solid) => polygonsOverlap(strip, solid))
   )
 }
 
@@ -153,6 +163,37 @@ function blockersOf(structures: readonly Structure[], obstacles: LaneObstacles):
   ]
 }
 
+function bestLane(options: {
+  footprint: Polygon
+  blockers: Polygon[]
+  sights: readonly Vec2[]
+  directions: readonly Vec2[]
+  spacing: number
+}): FightLane | null {
+  const { footprint, blockers, sights, directions, spacing } = options
+  let best: { lane: FightLane; score: number } | null = null
+  for (const centre of gridOf(footprint, spacing)) {
+    for (const direction of directions) {
+      const lane = { centre, direction }
+      if (!laneIsClear(lane, footprint, blockers)) continue
+      const score = laneScore(lane, footprint, sights)
+      if (!best || score > best.score) best = { lane, score }
+    }
+  }
+  return best?.lane ?? null
+}
+
+function furnitureDirections(structures: readonly Structure[]): Vec2[] {
+  const directions: Vec2[] = [...DIRECTIONS]
+  for (const structure of structures) {
+    const angle = (structure.rotation * Math.PI) / 180
+    const dx = Math.cos(angle)
+    const dz = -Math.sin(angle)
+    directions.push([dx, dz], [-dx, -dz])
+  }
+  return directions
+}
+
 /**
  * Picks the clear strip of a room with the best backdrop behind it.
  *
@@ -167,14 +208,15 @@ export function findFightLane(
 ): FightLane {
   const blockers = blockersOf(structures, obstacles)
   const sights = structures.map((structure) => structure.at)
-  let best: { lane: FightLane; score: number } | null = null
-  for (const centre of gridOf(space.footprint)) {
-    for (const direction of DIRECTIONS) {
-      const lane = { centre, direction }
-      if (!laneIsClear(lane, space.footprint, blockers)) continue
-      const score = laneScore(lane, space.footprint, sights)
-      if (!best || score > best.score) best = { lane, score }
-    }
-  }
-  return best?.lane ?? fallbackLane(space.footprint)
+  const room = { footprint: space.footprint, blockers, sights }
+  const coarse = bestLane({ ...room, directions: DIRECTIONS, spacing: GRID })
+  if (coarse) return coarse
+
+  // A rotunda's radial furniture can leave only narrow diagonal passages.
+  // Before falling back through its centre, search more finely along the
+  // furniture's own directions, looking at either side of each passage.
+  return (
+    bestLane({ ...room, directions: furnitureDirections(structures), spacing: GRID / 4 }) ??
+    fallbackLane(space.footprint)
+  )
 }

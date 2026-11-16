@@ -1,8 +1,8 @@
 import type { PadailleTool } from './padailleWeapon'
 import type { IllumiState, NeedlePuppet } from './illumiState'
+import type { MachiThread } from './machiThread'
 import type { BlinkyState } from './blinky'
 import type { CrossGameState } from './crossGame'
-import type { MachiThread } from './machiThread'
 import type { PredatorState } from './predatorTypes'
 import type { MelodyPerformance, MelodyHearing } from './melodyRules'
 import type { CatsNameSequence } from './camillaCat'
@@ -10,11 +10,11 @@ import type { FightDeath } from './fightDeaths'
 import type { ComboMasterState } from './comboMasterTypes'
 import type { ParallelFutureState } from './parallelFutureTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
-import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
 import type { LsdfGuard } from './lsdf'
 import type { SecretWindowState } from './secretWindow'
+import type { PainPackerState } from './feitanPain'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
 
@@ -131,21 +131,33 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  /** Cosmetic scenes; their props never enter battlefield or projectile state. */
+  easterEgg?: import('./easterEggs').EasterEggPlayback
+  easterEggDiscoveries?: number
+  easterEggSequence?: number
   padailleTool?: PadailleTool
+  kallutoPaper?: import('./kallutoPaper').KallutoPaperState
+  plantedPaper?: readonly import('./kallutoPaper').PlantedPaper[]
   illumi?: IllumiState
   needlePuppet?: NeedlePuppet
-  equipment?: ('blood-infusion' | 'book' | 'flute' | 'needles')[]
   bloodyMary?: import('./bloodyMary').BloodyMaryState
   maryCapture?: import('./bloodyMary').MaryCapture
   maryGraceFrames?: number
   battleCantabile?: import('./battleCantabileTypes').BattleCantabile
   battleUtteranceFrame?: number
+  equipment?: import('./preparationTypes').FightEquipment[]
+  preparationRecovery?: number
+  halkenburgSupporter?: string
+  lynchQuestion?: import('./lynchTypes').LynchQuestion
+  bodyAndSoulReplies?: readonly import('./lynchTypes').LynchReply[]
   blinky?: BlinkyState
   openWounds?: number
   pluggingWounds?: boolean
-  lynchQuestion?: import('./lynchTypes').LynchQuestion
-  bodyAndSoulReplies?: readonly import('./lynchTypes').LynchReply[]
   predator?: PredatorState
+  biohazard?: import('./biohazard').BiohazardInventory
+  biohazardRestraint?: import('./biohazard').BiohazardRestraint
+  biohazardGraceFrames?: number
+  /** Separate openings made by landed vacuum strikes, reset with the body each round. */
   bashoPoem?: import('./bashoPoem').BashoPoem
   bashoBurn?: import('./bashoPoem').BashoBurn
   /** Execution adapters may borrow a Hatsu identity; the aura still belongs to this user. */
@@ -165,8 +177,8 @@ export interface ArcadeFighter {
   x: number
   y: number
   velocityY: number
-  health: number
   maxHealth: number
+  health: number
   /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
   parallelEyesClosed?: boolean
   aura: number
@@ -200,12 +212,13 @@ export interface ArcadeFighter {
   machiThread?: MachiThread
   /** Musse’s contact owl: private observation, never a combat modifier. */
   secretWindow?: SecretWindowState
+  /** Actual needle/thread attached to this body; a mark alone never immobilizes. */
   /** Bandit's Secret: retained pages, one open page and one Double Face bookmark. */
   chrolloBook?: ChrolloBookState
-  /** Texture Surprise disguises an existing cloth panel, never the physical body. */
-  textureSurprise?: { surface: 'cloth' }
   /** Biscuit has revealed her natural body; persists until the next round. */
   biscuitTrueForm?: boolean
+  /** Texture Surprise disguises an existing cloth panel, never the physical body. */
+  textureSurprise?: { surface: 'cloth' }
   /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
   hanzoProjection?: {
     bodyX: number
@@ -282,7 +295,6 @@ export interface FighterHatsuEffects {
   isolationFrames: number
   cyclotronTurns: number
   stitchedFrames: number
-  serpentMarks: number
   restrainedFrames: number
   entrancedFrames: number
   teleportDodges: number
@@ -304,9 +316,11 @@ export interface FighterHatsuEffects {
 }
 
 export interface FightInput {
+  interact?: boolean
   plugWounds?: boolean
   /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
   coverEars?: boolean
+  /** Holding this occupies both hands to cover up to two separate wounds. */
   en?: boolean
   shu?: boolean
   conceal?: boolean
@@ -315,6 +329,7 @@ export interface FightInput {
   focusTorso?: boolean
   focusHands?: boolean
   focusFeet?: boolean
+  /** Occupies both hands: blocks hearing, ordinary guard and attacks. */
   /** Speech directed at a nearby sleeping body, to interrupt Hanzo Skill 4. */
   call?: boolean
   left: boolean
@@ -349,6 +364,7 @@ export interface FightImpact {
   projectileId: number | null
   position: { x: number; y: number }
   /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
+  objectTransfer?: { objectId: string; owner: FightSide; damage: number }
   transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean }
 }
 
@@ -363,9 +379,11 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
-  /** A conjured sphere pursues its designated target within earshot. */
+  kallutoPaper?: 'plant' | 'serpent'
   jupiter?: boolean
   living?: boolean
+  /** A transformed living object cannot be swallowed by Blinky. */
+  /** A conjured sphere follows its designated target inside the music's range. */
   /** Offensive Nen is committed at release; later Zetsu/Emperor Time cannot rewrite a shot. */
   nenPower?: number
   hatsuPower?: number
@@ -411,6 +429,7 @@ export interface BungeeGumAttachment {
 
 export interface FightState {
   voconteDoors?: import('./voconteDoorTypes').VoconteDoors
+  battlefield?: import('./preparationTypes').FightBattlefield
   /** Fatal causes collected before one common verdict, including simultaneous hits. */
   deaths?: readonly FightDeath[]
   catsName?: CatsNameSequence
@@ -419,8 +438,9 @@ export interface FightState {
   parallelFuture?: ParallelFutureState
   /** Prevent speculative branches from recursively opening another forecast. */
   forecastSimulation?: boolean
+  /** Fatal causes collected before one common verdict, including simultaneous hits. */
   environment: FightEnvironment
-  /** Autonomous guards, never avoidance charges on the fighter. */
+  /** Autonomous, invulnerable guards; these are never avoidance charges on a fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>
   expulsion?: { owner: FightSide; target: FightSide; sequence: number }
   formatId: FightFormatId

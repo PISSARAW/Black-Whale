@@ -39,11 +39,11 @@ export function createLsdfScene(options: LsdfSceneOptions) {
   return {
     sync(state: FightState, seconds: number) {
       const present = inMorenasHideout(state.environment)
-      if (present && !morena) {
+      if (present && !state.battlefield && !morena) {
         morena = buildMorena(options)
         scene.add(morena.root)
       }
-      if (morena) morena.root.visible = present
+      if (morena) morena.root.visible = present && !state.battlefield
       if (!present) {
         for (const model of guards.values()) model.root.visible = false
         return

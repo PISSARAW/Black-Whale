@@ -1,5 +1,4 @@
 import { forceZetsu } from '../nen'
-import { fightFormat } from '../formats'
 import { activeHitbox, attackPhase, boxesOverlap } from '../frameData'
 import { canonicalTechniqueAllowed } from '../techniqueContracts'
 import {
@@ -137,7 +136,10 @@ function healChain(state: FightState, side: FightSide): FightState {
     ...state,
     [side]: {
       ...fighter,
-      health: Math.min(fightFormat(state.formatId).health, fighter.health + 30 * kurapikaEfficiency(fighter, 'enhancer')),
+      health: Math.min(
+        fighter.maxHealth,
+        fighter.health + 30 * kurapikaEfficiency(fighter, 'enhancer'),
+      ),
       attack: { ...fighter.attack, impacted: true },
     },
   }

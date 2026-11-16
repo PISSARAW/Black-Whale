@@ -125,9 +125,10 @@ describe('Nen techniques in an actual 2D duel', () => {
 
   it('En and Gyo help a deliberately timed parry; concealed aura defeats an unread late parry', () => {
     const original = performAuraAttack({
-      state: duel('machi', 'phinks'),
+      state: duel('kurapika', 'phinks'),
       side: 'player',
       kind: 'special',
+      moveId: 'kurapika:forwardSpecial',
       auraCharged: false,
     })
     const guarded = {
@@ -361,9 +362,9 @@ describe('Category components and Emperor Time', () => {
         hatsuEffects: { ...state.opponent.hatsuEffects, restrainedFrames: 100 },
       },
     }
-    expect(scaleNenControl(state, controlled, 'player').opponent.hatsuEffects.restrainedFrames).toBe(
-      120,
-    )
+    expect(
+      scaleNenControl(state, controlled, 'player').opponent.hatsuEffects.restrainedFrames,
+    ).toBe(120)
     expect(
       scaleNenControl(state, controlled, 'player').opponent.hatsuEffects.forcedZetsuFrames,
     ).toBe(0)

@@ -1,5 +1,6 @@
 import { illumiBodyFree } from './illumiState'
 import { predatorNenLocked } from './predatorSeal'
+import { healthPercent } from './health'
 /**
  * On (怨) in the 2D duel, after the film *Hunter x Hunter: The Last Mission*.
  *
@@ -148,5 +149,5 @@ function resolveOnBlow(state: FightState, attacker: FightSide, blocked: boolean)
 
 /** The CPU swears On when hatred is ripe and its back is to the wall. */
 export function opponentWantsOn(fighter: ArcadeFighter): boolean {
-  return canSwearOn(fighter) && fighter.health <= 55
+  return canSwearOn(fighter) && healthPercent(fighter) <= 55
 }

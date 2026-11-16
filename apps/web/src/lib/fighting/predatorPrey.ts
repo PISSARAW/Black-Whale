@@ -1,5 +1,5 @@
-import { consumeControlNeedle } from './illumiFrame'
 import { maryPredatorPrey } from './bloodyMaryPredator'
+import { consumeControlNeedle } from './illumiFrame'
 import { chrolloHasActivePage } from './chrolloBook'
 import { wakeHanzoBody } from './hanzoProjection'
 import type { PredatorPreyId } from './predatorTypes'
@@ -115,26 +115,37 @@ export const PREDATOR_PREY: readonly PredatorPrey[] = [
     key: 'stitchedFrames',
   }),
   {
-    id: 'needle-control', source: 'illumi', nameFr: 'Aiguille de Needle People', nameEn: 'Needle People needle',
-    live: (s, side) => s[other(side)].needlePuppet?.owner === side && Boolean(s[other(side)].needlePuppet?.needleEmbedded),
+    id: 'needle-control',
+    source: 'illumi',
+    nameFr: 'Aiguille de Needle People',
+    nameEn: 'Needle People needle',
+    live: (s, side) =>
+      s[other(side)].needlePuppet?.owner === side &&
+      Boolean(s[other(side)].needlePuppet?.needleEmbedded),
     consume: (s, side) => consumeControlNeedle(s, other(side)),
     point: (s, side) => ({ x: s[other(side)].x, y: s[other(side)].y + 11 }),
   },
   maryPredatorPrey,
-  targetCounter({
+  {
     id: 'paper-serpent',
     source: 'kalluto',
     nameFr: 'Serpent de papier',
     nameEn: 'Paper serpent',
-    key: 'serpentMarks',
-  }),
+    live: (s, side) =>
+      s.projectiles.some((shot) => shot.owner === side && shot.kallutoPaper === 'serpent'),
+    consume: (s, side) => ({
+      ...s,
+      projectiles: s.projectiles.filter(
+        (shot) => !(shot.owner === side && shot.kallutoPaper === 'serpent'),
+      ),
+    }),
+    point: (s, side) =>
+      s.projectiles.find((shot) => shot.owner === side && shot.kallutoPaper === 'serpent') ??
+      s[side],
+  },
 ]
 
-type CounterKey =
-  | 'blinkyFrames'
-  | 'manipulatedFrames'
-  | 'stitchedFrames'
-  | 'serpentMarks'
+type CounterKey = 'blinkyFrames' | 'manipulatedFrames' | 'stitchedFrames'
 type CounterSpec = Pick<PredatorPrey, 'id' | 'source' | 'nameFr' | 'nameEn'> & { key: CounterKey }
 
 function ownCounter(spec: CounterSpec): PredatorPrey {

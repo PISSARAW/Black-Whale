@@ -1,3 +1,6 @@
+import { canUseHatsu } from '@black-whale/nen-engine'
+import { chrolloHasActivePage } from '../chrolloBook'
+import { liveEntity, readyCohort, updateEntity } from '../preparationWorld'
 import type { ArcadeFighter, FightState } from '../types'
 import type { FighterHatsu, HatsuImpactContext, HatsuTriggerContext } from './contract'
 
@@ -13,9 +16,8 @@ const SHOT_LIFE_COST = 8
  *
  * Canon: the arrow does not wound, it pierces every defence and swaps the
  * target's soul with a fin bearer who shares Halkenburg's will, at a risk to his
- * life. A duel has no cohort on stage, so its will is abstracted as a gauge that
- * fills over eight seconds (gameplay abstraction). Until it is full, his
- * specials are ordinary strikes. Once nocked, the arrow lands even through a
+ * life. The prepared scene supplies real marked, consenting supporters. Their will
+ * gathers over eight seconds (duel tuning); no arrow is available without them. Once nocked, the arrow lands even through a
  * guard and hands the body to a supporter: the target stops acting.
  */
 export const halkenburgHatsu: FighterHatsu = {
@@ -24,18 +26,23 @@ export const halkenburgHatsu: FighterHatsu = {
   onImpact: possess,
   onFrame: (state) => ({
     ...state,
-    player: tick(state.player),
-    opponent: tick(state.opponent),
+    player: tick(state, 'player'),
+    opponent: tick(state, 'opponent'),
   }),
 }
 
 function nock({ state, side }: HatsuTriggerContext): FightState {
   const archer = state[side]
-  const ready = archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
+  const supporters = readyCohort(state, side)
+  const ready = supporters.length > 0 && archer.hatsuEffects.cohortWillFrames >= COHORT_WILL_FRAMES
+  const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
+  const supporter = ready ? supporters[rng % supporters.length] : undefined
   return {
     ...state,
+    rng: ready ? rng : state.rng,
     [side]: {
       ...archer,
+      halkenburgSupporter: supporter?.id,
       health: ready ? Math.max(1, archer.health - SHOT_LIFE_COST) : archer.health,
       hatsuEffects: {
         ...archer.hatsuEffects,
@@ -49,10 +56,20 @@ function nock({ state, side }: HatsuTriggerContext): FightState {
 /** The arrow pierces every defence, so a guarded hit still lands it. */
 function possess({ state, side, defenderSide }: HatsuImpactContext): FightState {
   const archer = state[side]
-  if (!archer.hatsuEffects.arrowNocked) return state
+  const supporter = state.battlefield?.entities.find(
+    (entry) => entry.id === archer.halkenburgSupporter,
+  )
+  if (
+    !archer.hatsuEffects.arrowNocked ||
+    !supporter ||
+    !liveEntity(supporter) ||
+    !supporter.consenting
+  )
+    return state
   const target = state[defenderSide]
+  const occupied = updateEntity(state, supporter.id, { sleepingFrames: POSSESSION_FRAMES })
   return {
-    ...state,
+    ...occupied,
     [side]: { ...archer, hatsuEffects: { ...archer.hatsuEffects, arrowNocked: 0 } },
     [defenderSide]: {
       ...target,
@@ -61,9 +78,14 @@ function possess({ state, side, defenderSide }: HatsuImpactContext): FightState 
   }
 }
 
-function tick(fighter: ArcadeFighter): ArcadeFighter {
+function tick(state: FightState, side: 'player' | 'opponent'): ArcadeFighter {
+  const fighter = state[side]
   const effects = fighter.hatsuEffects
-  const gathers = fighter.id === 'halkenburg' && effects.hatsuStolen === 0
+  const gathers =
+    ownsBow(fighter) &&
+    canUseHatsu(fighter.nen) &&
+    effects.hatsuStolen === 0 &&
+    readyCohort(state, side).length > 0
   const will = gathers ? Math.min(COHORT_WILL_FRAMES, effects.cohortWillFrames + 1) : 0
   const possessed = effects.possessedFrames
   if (will === effects.cohortWillFrames && possessed <= 0) return fighter
@@ -76,4 +98,10 @@ function tick(fighter: ArcadeFighter): ArcadeFighter {
       possessedFrames: Math.max(0, possessed - 1),
     },
   }
+}
+
+function ownsBow(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'halkenburg') return true
+  if (fighter.id === 'chrollo') return chrolloHasActivePage(fighter, 'halkenburg')
+  return fighter.kurapika?.held?.loaded === true && fighter.kurapika.held.source === 'halkenburg'
 }

@@ -1,19 +1,19 @@
 import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
-import { addBonolenovPrologue, battleFigureKey, battleNeedsSkin } from './bonolenovFigure'
+import { addBonolenovPrologue, battleFigureKey } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
 import { blinkyAvailable } from './blinky'
 import { addBlinky } from './blinkyFigure'
 import { addMussePistol } from './mussePistol'
+import { shapeFightEyes } from './fightFigureEyes'
 import { gyoSight } from './nenPerception'
 import { addThetaHandgun } from './thetaFigure'
-import { shapeFightEyes } from './fightFigureEyes'
-import { addChrolloBook } from './chrolloFigure'
-import { addFranklinHands } from './franklinHands'
-import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
 import { fighterAuraHex } from './auraColours'
+import { addFranklinHands } from './franklinHands'
+import { addChrolloBook } from './chrolloFigure'
+import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { biscuitTrueFormProfile, shapeBiscuitTrueForm } from './biscuitFigure'
 import { isBiscuitTrueForm } from './biscuitForm'
 import { fighterDefinition } from './roster'
@@ -27,11 +27,14 @@ export function fightFigureKey(fighter: ArcadeFighter): string {
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
     fighter.id === 'shizuku' && blinkyAvailable(fighter),
+    Boolean(fighter.hanzoProjection),
     Boolean(fighter.parallelEyesClosed),
-    'hanzoProjection' in fighter && Boolean(fighter.hanzoProjection),
     isBiscuitTrueForm(fighter),
     Boolean(fighter.textureSurprise),
     Boolean(fighter.kurapika?.emperorTime),
+    fighter.battleCantabile?.form?.model,
+    Boolean(fighter.battleCantabile?.prologue),
+    Boolean(fighter.battleCantabile?.preparation),
   ])
 }
 
@@ -63,28 +66,36 @@ export function buildFightFigure(options: {
     },
   }
   const declared = humanProfile(seen)
-  const profile = illumiFaceProfile(fighter.id === 'franklin' ? franklinFightProfile(declared) : declared, fighter)
+  const profile = illumiFaceProfile(
+    fighter.id === 'franklin' ? franklinFightProfile(declared) : declared,
+    fighter,
+  )
   const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
-  const dressed = battleNeedsSkin(fighter) ? { ...profile, shirt: profile.skin } : profile
+  const dressed =
+    fighter.textureSurprise ||
+    fighter.battleCantabile?.preparation ||
+    fighter.battleCantabile?.prologue
+      ? { ...profile, shirt: profile.skin }
+      : profile
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
     observerSight: observerSight(options.observer),
-    glow:
-      'hanzoProjection' in fighter && fighter.hanzoProjection
-        ? (colour, opacity) => glow(colour, opacity * 0.28)
-        : glow,
+    glow: fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
     seen,
     profile: trueForm ? biscuitTrueFormProfile(dressed) : dressed,
   })
   if (trueForm) shapeBiscuitTrueForm(model)
 
-  addBonolenovPrologue({ THREE, glow, fighter, model })
   addIllumiNeedles({ THREE, glow, fighter, model })
   addFighterEquipment(options, model)
   shapeFightEyes({ root: model.root, fighter, glow })
   return model
+}
+
+function observerSight(observer?: ArcadeFighter): 'gyo' | 'sight' {
+  return observer && gyoSight(observer) ? 'gyo' : 'sight'
 }
 
 function addFighterEquipment(
@@ -92,7 +103,9 @@ function addFighterEquipment(
   model: ReturnType<typeof buildHumanFigure>,
 ): void {
   const { THREE, glow, fighter } = options
-  if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id)) addPadailleWeapon({ THREE, glow, model })
+  addBonolenovPrologue({ THREE, glow, fighter, model })
+  if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id))
+    addPadailleWeapon({ THREE, glow, model })
   if (fighter.id === 'franklin') {
     shapeFranklinFigure({ THREE, glow, model })
     addFranklinHands({ THREE, glow, model })
@@ -101,8 +114,4 @@ function addFighterEquipment(
   if (fighter.id === 'musse') addMussePistol({ THREE, glow, model })
   if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
   if (fighter.id === 'shizuku' && blinkyAvailable(fighter)) addBlinky({ THREE, glow, model })
-}
-
-function observerSight(observer?: ArcadeFighter): 'gyo' | 'sight' {
-  return observer && gyoSight(observer) ? 'gyo' : 'sight'
 }

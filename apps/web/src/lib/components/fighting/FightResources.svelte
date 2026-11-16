@@ -1,17 +1,16 @@
 <script lang="ts">
-  import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightDoorStatus from './FightDoorStatus.svelte'
-  import FightBiohazardStatus from './FightBiohazardStatus.svelte'
+  import FightIllumiStatus from './FightIllumiStatus.svelte'
   import FightBattleCantabile from './FightBattleCantabile.svelte'
-  import FightMachiStatus from './FightMachiStatus.svelte'
-  import FightCyclotronStatus from './FightCyclotronStatus.svelte'
+  import FightBiohazardStatus from './FightBiohazardStatus.svelte'
+  import FightPreparationStatus from './FightPreparationStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
+  import FightMachiStatus from './FightMachiStatus.svelte'
   import FightPadailleStatus from './FightPadailleStatus.svelte'
   import FightCrossGameStatus from './FightCrossGameStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
+  import FightCyclotronStatus from './FightCyclotronStatus.svelte'
   import type { FightInput } from '$lib/fighting/types'
-  import FightOutsideDuelStatus from './FightOutsideDuelStatus.svelte'
-  import FightComboMaster from './FightComboMaster.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { bungeeVisible } from '$lib/fighting/hisokaTechnique'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
@@ -28,6 +27,8 @@
   import FightNenControls from './FightNenControls.svelte'
   import FightLsdfStatus from './FightLsdfStatus.svelte'
   import FightPredatorStatus from './FightPredatorStatus.svelte'
+  import FightComboMaster from './FightComboMaster.svelte'
+  import FightOutsideDuelStatus from './FightOutsideDuelStatus.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -62,12 +63,13 @@
               ? 'DUMMY'
               : 'P2'} · {fighterDefinition(fighter.id).name}
       </div>
+      <FightPreparationStatus {state} {side} {language} {onControl} />
       <FightDoorStatus {state} {side} {language} />
       <FightNenReadout {state} {side} {language} {detailed} />
       <FightGrudge {fighter} {language} />
-      <FightCyclotronStatus {fighter} {language} {side} />
       <FightCrossGameStatus {fighter} {language} />
       <FightPadailleStatus {fighter} {language} />
+      <FightCyclotronStatus {fighter} {language} {side} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       <FightBiohazardStatus {state} {side} {language} />
@@ -148,7 +150,7 @@
       <FightSecretWindowStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
       <FightBattleCantabile {state} {side} {language} {onTalk} {onBattleAction} />
-      <FightOutsideDuelStatus {fighter} {language} />
+      {#if !state.battlefield}<FightOutsideDuelStatus {fighter} {language} />{/if}
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

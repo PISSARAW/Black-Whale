@@ -1,18 +1,17 @@
-import { padailleKeyedMove } from './padaillePoses'
 import { animatePadailleWeapon } from './padailleFigure'
-import { biohazardBodyPlan } from './biohazardPresentation'
+import { padailleKeyedMove } from './padaillePoses'
 import { bonolenovDancePlan } from './bonolenovPoses'
-import { pluggingWoundsPlan } from './blinkyPose'
-import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
+import { biohazardBodyPlan } from './biohazardPresentation'
 import { crossGameBodyPlan } from './crossGamePresentation'
+import { pluggingWoundsPlan } from './blinkyPose'
 import { animateMussePistol } from './mussePistol'
 import { musseKeyedMove } from './mussePoses'
+import { animateCyclotron, cyclotronBodyPlan } from './phinksMotion'
 import { benjaminKeyedMove } from './benjaminPoses'
 import { chrolloKeyedMove } from './chrolloPoses'
-import { animateChrolloBook } from './chrolloFigure'
-import { animateFranklinHands } from './franklinHands'
-import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
+import { animateFranklinHands } from './franklinHands'
+import { animateChrolloBook } from './chrolloFigure'
 import { attackMotionAccent } from './fightAttackMotion'
 import { READY_ARMS } from './fightGestures'
 import {
@@ -39,6 +38,7 @@ import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from '
 import { attackData } from './frameData'
 import { dashPose, landingPose, prejumpPose, walkPose } from './fightLocomotion'
 import { keyedMove } from './keyPoseMoves'
+import { HANZO_FLOAT_POSE } from './keyPosesHanzo'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterPose, MoveSlot } from './types'
@@ -115,7 +115,12 @@ interface PoseMemory {
 const MEMORY = new WeakMap<FightRig, PoseMemory>()
 
 function remember(rig: FightRig, drawn: { key: string; pose: FightPose; seconds: number }): void {
-  MEMORY.set(rig, { key: drawn.key, from: drawn.pose, since: drawn.seconds, last: drawn.pose })
+  MEMORY.set(rig, {
+    key: drawn.key,
+    from: drawn.pose,
+    since: drawn.seconds,
+    last: drawn.pose,
+  })
 }
 
 function blended(rig: FightRig, plan: BodyPlan, seconds: number): FightPose {
@@ -139,23 +144,49 @@ export interface PlanContext extends ReactionContext {
 }
 
 export function bodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const biohazard = biohazardBodyPlan(fighter)
-  if (biohazard) return biohazard
-  return bonolenovDancePlan(fighter, context.seconds) ?? ordinaryBodyPlan(fighter, context)
-}
-
-function ordinaryBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const cyclotron = cyclotronBodyPlan(fighter)
-  if (cyclotron) return cyclotron
-  const crossGame = crossGameBodyPlan(fighter)
-  if (crossGame) return crossGame
-  const melody = melodyBodyPlan(fighter, context)
-  if (melody) return melody
+  const special =
+    pluggingWoundsPlan(fighter) ?? biohazardBodyPlan(fighter) ?? techniqueBodyPlan(fighter, context)
+  if (special) return special
   if (fighter.hanzoProjection && !fighter.attack)
-    return { pose: HANZO_FLOAT_POSE, plant: false, key: 'astral-double', blend: 0.12 }
+    return {
+      pose: HANZO_FLOAT_POSE,
+      plant: false,
+      key: 'astral-double',
+      blend: 0.12,
+    }
   const standing = stanceAt(fightStance(fighter.id) ?? DEFAULT_STANCE, context.seconds)
   if (fighter.attack) return ATTACK_POSES.has(fighter.pose) ? attackPlan(fighter, standing) : null
   return restingPlan(fighter, standing) ?? reactionPlan(fighter, context, standing)
+}
+
+function techniqueBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
+  const dance = bonolenovDancePlan(fighter, context.seconds)
+  if (dance) return dance
+  const crossGame = crossGameBodyPlan(fighter)
+  if (crossGame) return crossGame
+  const cyclotron = cyclotronBodyPlan(fighter)
+  if (cyclotron) return cyclotron
+  if (fighter.coveringEars)
+    return {
+      key: 'cover-ears',
+      plant: fighter.y === 0,
+      blend: 0.08,
+      pose: {
+        leadShoulder: [-2.1, 0, 0.5],
+        leadElbow: [-1.9, 0, 0],
+        rearShoulder: [-2.1, 0, -0.5],
+        rearElbow: [-1.9, 0, 0],
+      },
+    }
+  if (fighter.melodyPerformance)
+    return {
+      key: 'flute-performance',
+      plant: true,
+      blend: 0.1,
+      pose: stanceAt(fightStance('melody')!, context.seconds),
+    }
+
+  return null
 }
 
 function basePose(variant: AttackVariant, standing: FightPose, authored: boolean): FightPose {
@@ -168,9 +199,24 @@ function basePose(variant: AttackVariant, standing: FightPose, authored: boolean
 }
 
 const KIND_SLOTS: Record<AttackKind, Record<AttackVariant, MoveSlot>> = {
-  light: { standing: 'standingLight', low: 'lowLight', air: 'airLight', throw: 'throw' },
-  heavy: { standing: 'standingHeavy', low: 'lowHeavy', air: 'airHeavy', throw: 'throw' },
-  special: { standing: 'neutralSpecial', low: 'downSpecial', air: 'airHeavy', throw: 'throw' },
+  light: {
+    standing: 'standingLight',
+    low: 'lowLight',
+    air: 'airLight',
+    throw: 'throw',
+  },
+  heavy: {
+    standing: 'standingHeavy',
+    low: 'lowHeavy',
+    air: 'airHeavy',
+    throw: 'throw',
+  },
+  special: {
+    standing: 'neutralSpecial',
+    low: 'downSpecial',
+    air: 'airHeavy',
+    throw: 'throw',
+  },
   ranged: {
     standing: 'neutralSpecial',
     low: 'neutralSpecial',
@@ -215,9 +261,20 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   if (!STANDING_POSES.has(fighter.pose) || fighter.y > 0) return null
   // The guard pose raises the arms itself; the stance only sets the frame.
   const guarding = fighter.pose === 'guard'
-  const plan = (pose: FightPose, key: string): BodyPlan => ({ pose, plant: true, key, blend: 0.1 })
+  const plan = (pose: FightPose, key: string): BodyPlan => ({
+    pose,
+    plant: true,
+    key,
+    blend: 0.1,
+  })
   const dash = dashPose(fighter, standing)
-  if (dash) return { pose: dash.pose, plant: true, key: `dash:${dash.forward}`, blend: 0.025 }
+  if (dash)
+    return {
+      pose: dash.pose,
+      plant: true,
+      key: `dash:${dash.forward}`,
+      blend: 0.025,
+    }
   const prejump = prejumpPose(fighter, standing)
   if (prejump) return { ...prejump, plant: true }
   const landing = landingPose(fighter, standing)
@@ -233,30 +290,4 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
     return { ...walking, plant: true }
   }
   return plan(standing, 'stance')
-}
-
-function melodyBodyPlan(fighter: ArcadeFighter, context: PlanContext): BodyPlan | null {
-  const plugging = pluggingWoundsPlan(fighter)
-  if (plugging) return plugging
-  if (fighter.coveringEars)
-    return {
-      key: 'cover-ears',
-      plant: fighter.y === 0,
-      blend: 0.08,
-      pose: {
-        leadShoulder: [-2.1, 0, 0.5],
-        leadElbow: [-1.9, 0, 0],
-        rearShoulder: [-2.1, 0, -0.5],
-        rearElbow: [-1.9, 0, 0],
-      },
-    }
-  if (fighter.melodyPerformance)
-    return {
-      key: 'flute-performance',
-      plant: true,
-      blend: 0.1,
-      pose: stanceAt(fightStance('melody')!, context.seconds),
-    }
-
-  return null
 }

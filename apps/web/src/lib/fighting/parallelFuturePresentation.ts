@@ -19,6 +19,7 @@ export function futureVisibleState(
     player: predicted.player,
     opponent: predicted.opponent,
     projectiles: predicted.projectiles,
+    battlefield: predicted.battlefield,
     impact: predicted.impact,
     previousPositions: {
       player: { x: predicted.player.x, y: predicted.player.y },

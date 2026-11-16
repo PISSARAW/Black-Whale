@@ -13,9 +13,10 @@ import type { ArcadeFighter, FightSide, FighterPose } from './types'
 const SNAP_POSES: ReadonlySet<FighterPose> = new Set(['light', 'heavy', 'special', 'ranged', 'hit'])
 const SLOW_POSES: ReadonlySet<FighterPose> = new Set(['down', 'ko', 'wakeup'])
 
-export function transitionSecondsFor(pose: FighterPose): number {
-  if (SNAP_POSES.has(pose)) return 0.016
-  if (SLOW_POSES.has(pose)) return 0.12
+export function transitionSecondsFor(fighter: ArcadeFighter): number {
+  if (fighter.attack?.kind === 'light' || fighter.attack?.kind === 'ranged') return 0.008
+  if (SNAP_POSES.has(fighter.pose)) return 0.016
+  if (SLOW_POSES.has(fighter.pose)) return 0.12
   return 0.07
 }
 

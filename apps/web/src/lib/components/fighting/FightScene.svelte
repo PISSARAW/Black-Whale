@@ -7,7 +7,9 @@
   } from '$lib/fighting/fighterFacing'
   import { fightMove } from '$lib/fighting/fightMoves'
   import { fightBodyMotion } from '$lib/fighting/fightBodyMotion'
+  import { impactPresentation } from '$lib/fighting/fightImpactPresentation'
   import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
+  import { motionOf } from '$lib/fighting/fighterMovement'
   import {
     createStrideClocks,
     easeFactor,
@@ -192,30 +194,43 @@
           mesh: import('three').Mesh
           velocity: import('three').Vector3
           born: number
+          size: number
         }> = []
         let lastImpact = state.impact?.sequence ?? 0
+        let shakeStarted = 0
         let shakeUntil = 0
+        let shakeX = 0
+        let shakeY = 0
 
         const emitImpact = (now: number) => {
           const impact = state.impact
           if (!impact || impact.sequence === lastImpact) return
           lastImpact = impact.sequence
-          shakeUntil = now + (impact.kind === 'special' ? 230 : 140)
+          const profile = impactPresentation(impact)
+          shakeStarted = now
+          shakeUntil = now + profile.shakeMs
+          shakeX = profile.shakeX
+          shakeY = profile.shakeY
           const origin = new THREE.Vector3(
             worldX(impact.position.x),
             worldY(impact.position.y),
             0.25,
           )
           const material = impact.blocked ? sparkMaterials.block : sparkMaterials.hit
-          for (let index = 0; index < 12; index += 1) {
-            const angle = (index / 12) * Math.PI * 2
+          for (let index = 0; index < profile.sparks; index += 1) {
+            const angle = (index / profile.sparks) * Math.PI * 2
             const mesh = new THREE.Mesh(sparkGeometry, material)
             mesh.position.copy(origin)
             scene.add(mesh)
             sparks.push({
               mesh,
-              velocity: new THREE.Vector3(Math.cos(angle) * 0.018, Math.sin(angle) * 0.018, 0),
+              velocity: new THREE.Vector3(
+                Math.cos(angle) * profile.sparkSpeed,
+                Math.sin(angle) * profile.sparkSpeed,
+                0,
+              ),
               born: now,
+              size: profile.sparkSize,
             })
           }
         }
@@ -279,7 +294,8 @@
           const fallback = reactionMotion(fighter, progress, side)
           const hitZone = state.impact?.attacker !== side ? state.impact?.zone : undefined
           const motion = fightBodyMotion({ fighter, seconds, fallback, progress, hitZone })
-          model.animate(seconds, MODEL_POSES[fighter.pose], {
+          const modelPose = motionOf(fighter).dash ? 'idle' : MODEL_POSES[fighter.pose]
+          model.animate(seconds, modelPose, {
             motion: trackFightOpponent({
               fighter,
               opponent,
@@ -288,7 +304,7 @@
               motion,
             }),
             transitionKey: `${fighter.pose}:${fighter.attack?.moveId ?? ''}`,
-            transitionSeconds: transitionSecondsFor(fighter.pose),
+            transitionSeconds: transitionSecondsFor(fighter),
             strideClock: strideClock(side, worldX(drawn.x), fighter.facing),
           })
         }
@@ -326,8 +342,9 @@
           camera.position.z += (targetZ - camera.position.z) * ease
           camera.position.y += (2.2 - camera.position.y) * ease
           if (now < shakeUntil) {
-            camera.position.x += Math.sin(now * 0.12) * 0.035
-            camera.position.y += Math.cos(now * 0.15) * 0.025
+            const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
+            camera.position.x += Math.sin(now * 0.15) * shakeX * fade
+            camera.position.y += Math.cos(now * 0.19) * shakeY * fade
           }
           camera.lookAt(camera.position.x, 1.18, 0)
 
@@ -336,7 +353,7 @@
             const age = now - spark.born
             spark.mesh.position.add(spark.velocity)
             spark.velocity.y -= 0.0008
-            spark.mesh.scale.setScalar(Math.max(0.01, 1 - age / 360))
+            spark.mesh.scale.setScalar(spark.size * Math.max(0.01, 1 - age / 360))
             if (age > 360) {
               scene.remove(spark.mesh)
               sparks.splice(index, 1)

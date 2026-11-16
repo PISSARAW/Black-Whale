@@ -22,6 +22,7 @@ import {
 } from './fightRig'
 import { AIR_POSE, CROUCH_POSE, fightStance, stanceAt, type FightStance } from './fightStance'
 import { attackData } from './frameData'
+import { dashPose } from './fightLocomotion'
 import { keyedMove } from './keyPoseMoves'
 import { sampleTimeline } from './keyPoseTimeline'
 import { moveById } from './movesets'
@@ -156,8 +157,12 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
     pose: addPoses(basePose(variant, standing, authored), keyed),
     plant: variant !== 'air' && fighter.y <= 0,
     key: `attack:${attack.moveId ?? attack.kind}`,
-    blend: 0.04,
+    blend: attackBlend(attack.kind),
   }
+}
+
+function attackBlend(kind: AttackKind): number {
+  return kind === 'light' || kind === 'ranged' ? 1 / 60 : 2 / 60
 }
 
 function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | null {
@@ -165,6 +170,8 @@ function restingPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nu
   // The guard pose raises the arms itself; the stance only sets the frame.
   const guarding = fighter.pose === 'guard'
   const plan = (pose: FightPose, key: string): BodyPlan => ({ pose, plant: true, key, blend: 0.1 })
+  const dash = dashPose(fighter, standing)
+  if (dash) return { pose: dash.pose, plant: true, key: `dash:${dash.forward}`, blend: 0.025 }
   if (fighter.crouching) {
     const upper = pickJoints(standing, guarding ? ['chest', 'head'] : UPPER_JOINTS)
     return plan(addPoses(upper, CROUCH_POSE), 'crouch')

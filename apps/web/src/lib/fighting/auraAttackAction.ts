@@ -1,3 +1,4 @@
+import { observeComboMaster } from './comboMaster'
 import { isErigeronAction } from './billSupport'
 import { feitanMoveAvailable } from './feitanPain'
 import { canBufferFighterAttack, canStartFighterAttack, startFighterAttack } from './fighterAttacks'
@@ -33,7 +34,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
     starts && hatsuSource ? triggerHatsu(options.state, side, hatsuSource) : options.state
   const fighter = state[side]
   if (starts)
-    return {
+    return observeComboMaster({
       ...state,
       [side]: startFighterAttack({
         fighter,
@@ -44,7 +45,7 @@ export function commitAuraAttack(options: AuraAttackOptions, intent: AttackInten
         concealed,
         hatsuSource,
       }),
-    }
+    })
   return {
     ...state,
     [side]: {

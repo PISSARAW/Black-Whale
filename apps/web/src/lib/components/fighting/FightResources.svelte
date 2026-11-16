@@ -1,4 +1,5 @@
 <script lang="ts">
+  import FightComboMaster from './FightComboMaster.svelte'
   import { fighterDefinition } from '$lib/fighting/roster'
   import { bungeeVisible } from '$lib/fighting/hisokaTechnique'
   import { fightSpecialPresentation } from '$lib/fighting/fightSpecialPresentation'
@@ -105,6 +106,7 @@
       <FightPainPacker {fighter} {language} {side} local={state.mode === 'versus-local'} />
       <FightBenjaminStatus {state} {side} {language} {detailed} />
       <FightChrolloStatus {state} {side} {language} {detailed} />
+      <FightComboMaster {state} {side} {language} />
       {#if fighter.textureSurprise}
         <div class="secret-status">
           Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

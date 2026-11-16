@@ -28,6 +28,21 @@ const PHANTOM_TROUPE = new Set<FighterId>([
 ])
 
 const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContract>> = {
+  'furykov:neutralSpecial': {
+    source: 'Combo Master — chapters 413 and 415, console and AFFECTED USERS alert',
+    evidence: 'gameplay-abstraction',
+    conditions: [
+      'Conjure the console and keep Nen usable. Only actual concealed Nen targeting its user triggers the alert.',
+    ],
+    prohibitions: [
+      'No automatic evasion, damage boost, future-action prediction or unearned identity reveal.',
+      'Deciphering and fabrication still require days; neither is available during the duel.',
+    ],
+    narrativeCost:
+      'The duel retains its 40-aura opening cost and commitment frames as arcade tuning; Gyo governs signature readability here.',
+    narrativeEffect:
+      'Warns immediately and lists only confirmed affected users represented in this duel. Unreadable signatures remain a question mark.',
+  },
   'bill:neutralSpecial': {
     source: 'Succession Contest — chapter 388, Erigeron',
     evidence: 'manga-shown',

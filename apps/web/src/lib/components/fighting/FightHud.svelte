@@ -4,6 +4,7 @@
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightSide, FightState } from '$lib/fighting/types'
   import FightHealth from './FightHealth.svelte'
+  import FightComboMaster from './FightComboMaster.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -63,6 +64,7 @@
         >
         <b>{Math.floor(fighter.aura)}<small> / 100</small></b>
       </div>
+      <FightComboMaster {state} {side} {language} compact />
     </div>
   {/each}
   <div class="tower-score" aria-label={language === 'fr' ? format.titleFr : format.titleEn}>

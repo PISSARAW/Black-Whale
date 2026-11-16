@@ -1,3 +1,4 @@
+import { observeComboMaster } from './comboMaster'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { finishFight } from './combatVerdict'
@@ -57,6 +58,10 @@ const MAX_JUGGLE_HITS = 3
 export const TOWER_WIN_SCORE = 10
 
 export function resolveFightImpacts(state: FightState, projectiles: ProjectileHit[]): FightState {
+  state = observeComboMaster(
+    state,
+    projectiles.map((hit) => hit.projectile),
+  )
   const trade =
     attackCanResolve(state.player) &&
     attackCanResolve(state.opponent) &&

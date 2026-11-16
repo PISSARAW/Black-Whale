@@ -1,3 +1,4 @@
+import { comboMasterUtilityMove } from './comboMasterAvailability'
 import { isErigeronAttack } from './billSupport'
 import { benjaminRangedData } from './benjaminWeapon'
 import { benjaminUtilityMove } from './benjaminBaton'
@@ -212,6 +213,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 function utilityAttack(fighter: ArcadeFighter): boolean {
   return (
     isErigeronAttack(fighter) ||
+    comboMasterUtilityMove(fighter) ||
     chrolloUtilityMove(fighter) ||
     isKurapikaUtility(fighter) ||
     hisokaUtilityMove(fighter) ||

@@ -1,3 +1,4 @@
+import { FURYKOV_CONSOLE_POSE } from './keyPosesFurykov'
 import { FEITAN_PAIN_PACKER, FEITAN_RISING_SUN } from './keyPosesFeitan'
 import { CHROLLO_KEY_POSES } from './keyPosesChrollo'
 import { HISOKA_SPECIAL_POSES } from './keyPosesHisokaSpecials'
@@ -25,6 +26,7 @@ const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline
   franklin: FRANKLIN_KEY_POSES,
   chrollo: CHROLLO_KEY_POSES,
   hanzo: HANZO_KEY_POSES,
+  furykov: { neutralSpecial: FURYKOV_CONSOLE_POSE },
 }
 
 export interface KeyedMove {

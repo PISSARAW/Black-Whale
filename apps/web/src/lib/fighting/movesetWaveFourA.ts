@@ -4,8 +4,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'furykov',
     mechanic: [
-      'Discipline militaire : Combo Master exige des jours de co-présence, Furykov se bat donc sans Hatsu, en soldat de l’Académie dont la précision allonge les séries.',
-      'Military discipline: Combo Master needs days of co-presence, so Furykov fights without a Hatsu, as an Academy soldier whose precision extends his sequences.',
+      'L ouvre Combo Master : sa console alerte immédiatement sur le Nen dissimulé dirigé contre lui, sans esquive ni renforcement. Une signature illisible reste « ? » ; Gyo peut la rendre lisible. Seules les personnes affectées confirmées dans ce duel sont listées. Déchiffrer et fabriquer demandent toujours des jours, hors duel. Ses autres techniques sont martiales.',
+      'L opens Combo Master: its console immediately warns of concealed Nen directed at him, without evasion or reinforcement. Unreadable signatures stay “?”; Gyo can make them readable. Only confirmed affected people in this duel are listed. Deciphering and fabrication still take days, outside the duel. His other techniques are martial.',
     ],
     finisherCondition: [
       'Une série d’au moins trois coups doit être en cours.',
@@ -21,7 +21,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Pas de lecture|Reading Step',
       'Briseur de cadence|Cadence Breaker',
       'Réponse automatique|Automatic Response',
-      'Enchaînement réglementaire|Regulation Chain',
+      'Combo Master · Console|Combo Master · Console',
       'Lecture instantanée|Instant Read',
       'Rupture basse|Low Break',
       'Garde adaptative|Adaptive Guard',

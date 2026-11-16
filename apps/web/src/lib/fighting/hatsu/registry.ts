@@ -1,3 +1,4 @@
+import { furykovHatsu } from './furykov'
 import { withDolphinIdentity } from '../kurapikaDolphin'
 import { yokotaniHatsu } from './yokotani'
 import { terebellumHatsu } from './terebellum'
@@ -85,7 +86,7 @@ const HATSU_REGISTRY: Record<FighterId, () => FighterHatsu> = {
   lynch: () => lynchHatsu,
   luini: () => luiniHatsu,
   bill: () => billHatsu,
-  furykov: () => martialOnlyHatsu('furykov'),
+  furykov: () => furykovHatsu,
   cluck: () => martialOnlyHatsu('cluck'),
   beyond: () => martialOnlyHatsu('beyond'),
   fugetsu: () => fugetsuHatsu,

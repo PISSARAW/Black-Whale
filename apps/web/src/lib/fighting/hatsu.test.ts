@@ -35,6 +35,12 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
 
     const armed = performAttack(ready, side, 'special')
 
+    if (id === 'furykov') {
+      expect(armed[side].comboMaster).toEqual({ alert: null })
+      expect(armed[side].aura).toBe(auraBefore - FIGHT_HATSU_AURA_COST)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     if (id === 'bill') {
       expect(armed).toBe(ready)
       expect(advance(armed, 0.4).impact).toBeNull()

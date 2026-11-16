@@ -21,6 +21,9 @@
 
   function loadedFighter(current: FightState, side: FightSide) {
     const fighter = current[side]
+    if (fighter.id === 'furykov') {
+      fighter.comboMaster = { alert: { incoming: true, signature: null, affected: [side] } }
+    }
     fighter.on = { grudge: 75, sealFrames: 0 }
     fighter.textureSurprise = { surface: 'cloth' }
     if (fighter.chrolloBook) {

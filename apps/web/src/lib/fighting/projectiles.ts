@@ -250,6 +250,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     shape: profile.shape,
     colour: profile.colour,
     matter: profile.matter,
+    concealed: fighter.attack.concealed,
     age: 0,
     lifetime: 120,
   }

@@ -1,3 +1,4 @@
+import type { ComboMasterState } from './comboMasterTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
 import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
@@ -119,6 +120,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  /** Conjured information console. It never modifies damage, guard, movement or evasion. */
+  comboMaster?: ComboMasterState
   kurapika?: import('./kurapika').KurapikaState
   chainJail?: { owner: FightSide; x: number; y: number }
   drainingChain?: { owner: FightSide }
@@ -328,6 +331,8 @@ export interface FightProjectile {
   lifetime: number
   /** `object` for real thrown matter; `nen` for conjured or emitted aura. */
   matter: ProjectileMatter
+  /** In conceals the aura; Combo Master may warn its target without dispelling it. */
+  concealed?: boolean
   remotePunch?: RemotePunchPath
 }
 

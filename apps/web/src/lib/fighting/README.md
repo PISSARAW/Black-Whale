@@ -138,9 +138,24 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
-- Furykov, Cluck, Beyond, Musse et Sayird jouent en **martial pur**
+- Furykov ouvre **Combo Master** avec L, sans frappe, déplacement ni protection.
+  `comboMaster.ts` alerte immédiatement sur une attaque de Nen dissimulée déjà
+  engagée contre lui ou sur une liaison cachée qui l’affecte ; aucun buffer ni
+  action future n’est lu. Les projectiles ordinaires, le Nen visible et les tirs
+  qui s’éloignent ou passent hors de sa hauteur ne déclenchent pas d’alerte.
+  `FightComboMaster.svelte` affiche « ? » si la signature est illisible : dans
+  cette adaptation, seul Gyo permet de la lire, sans dissiper In. La liste des
+  personnes affectées ne reprend que les destinataires confirmés d’un effet
+  représenté dans ce duel (actuellement Bungee Gum), jamais son auteur ni une
+  victime future ; elle ne sonde pas les personnes hors arène. Zetsu, épuisement,
+  sceau de On, vol du Hatsu ou mort dissipent la console. Une page copiée doit
+  rester active ; la manche suivante repart sans console. Déchiffrage et fabrication
+  sur plusieurs jours restent hors duel. Coût d’ouverture (40 aura), engagement
+  et règle de lisibilité par Gyo sont des adaptations ; ses autres techniques
+  restent martiales, sans bonus de dégâts ni esquive automatique.
+- Cluck, Beyond, Musse et Sayird jouent en **martial pur**
   (`martialOnlyHatsu`) : leur seul Hatsu canon exige une préparation qu'un duel
-  n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
+  n'offre pas (oiseaux messagers, sacrifice
   posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
   sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
 - Little Eye reste un Hatsu réel de Sayird : il contrôle un petit animal réel

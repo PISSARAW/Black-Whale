@@ -178,7 +178,7 @@ describe('Sayird and Little Eye outside the 2D duel', () => {
         hatsuEffects: { ...state.opponent.hatsuEffects, hatsuStolen: 1 },
       }),
     ).toBeNull()
-    for (const id of ['musse', 'biscuit', 'furykov'] as const)
+    for (const id of ['musse', 'biscuit'] as const)
       expect(stealableChainMove({ ...state.opponent, id })).toBeNull()
   })
 

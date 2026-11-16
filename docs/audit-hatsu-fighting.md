@@ -31,9 +31,10 @@ une vérification dans le manga avant d'être corrigés.
    doigts coupés de Franklin) ne sont modélisés nulle part dans l’état initial.
    _Franklin corrigé le 2026-11-16 : les dix doigts sectionnés sont représentés
    comme une restriction permanente ; le Hatsu produit des rafales de projectiles._
-4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 pour cinq des six :_ Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur (`martialOnlyHatsu`). Silent Majority est retiré du roster jouable, qui passe à 40.
+4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 :_ Cluck, Beyond, Musse et Sayird jouent en martial pur (`martialOnlyHatsu`). Furykov dispose désormais de l’alerte immédiate de Combo Master, distincte des travaux sur plusieurs jours. Silent Majority est retiré du roster jouable, qui passe à 40.
    Le README exclut « les pouvoirs qui
-   exigent une préparation incompatible avec un duel ». Or Furykov (jours de co-présence), Cluck
+   exigent une préparation incompatible avec un duel ». Le déchiffrage et la fabrication de
+   Combo Master restent donc exclus ; son alerte immédiate convient au duel. Cluck
    (oiseaux messagers), Beyond (malédiction posthume préparée), Silent Majority (dix suspects),
    Musse et Sayird (surveillance) n'ont aucun Hatsu de duel canon. Leurs effets en jeu sont
    inventés. **Décision à prendre :** les garder en martial pur, étiqueter honnêtement
@@ -104,7 +105,7 @@ une vérification dans le manga avant d'être corrigés.
 
 | Combattant      | Hatsu en jeu                       | Canon (fiche)                                                                                | Verdict  | Écart                                                                  |
 | --------------- | ---------------------------------- | -------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| Furykov         | Focus combo ×1,2 pendant 3 s       | Combo Master : **jours** de co-présence ; aucun autre Hatsu pendant                          | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
+| Furykov         | Console d’alerte informative       | Combo Master : alerte immédiate AFFECTED USERS ; déchiffrage/fabrication sur plusieurs jours | D (fait) | Corrigé le 2026-11-16 : L ouvre la console sans frappe ; alerte sur Nen réellement dissimulé dirigé contre lui, signature illisible « ? », destinataires confirmés uniquement. Aucun buff, esquive, prédiction ou déchiffrage accéléré. Coût, engagement et lisibilité par Gyo sont des adaptations au duel. |
 | Cluck           | ×1,15 dégâts pendant 3 s           | Oiseaux messagers                                                                            | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Longhi          | Entrave 2 s                        | Moonlight Act : accord **volontaire** aux termes explicites                                  | **A**    | Le consentement manque, et c'est toute la capacité.                    |
@@ -135,7 +136,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 ## Ordre de traitement proposé
 
 1. ~~Corriger le bug Hinrigh~~ — fait.
-2. **Constat 4 : traité.** Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur ;
+2. **Constat 4 : traité.** Cluck, Beyond, Musse et Sayird jouent en martial pur ; Furykov conserve l’alerte informative de Combo Master ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
 3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), Gel, Longhi, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc

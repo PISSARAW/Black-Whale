@@ -1,3 +1,4 @@
+import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
 import { isErigeronAction } from './billSupport'
 import { tuneBenjaminMoveset } from './benjaminMoveset'
 import { benjaminMoveAvailable } from './benjaminBaton'
@@ -55,6 +56,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneFranklinMoveset)
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
+    .map(tuneFurykovMoveset)
     .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
@@ -105,6 +107,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)

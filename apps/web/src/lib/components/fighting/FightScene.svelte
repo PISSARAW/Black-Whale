@@ -34,7 +34,8 @@
     defaultFightComfort,
     effectiveFightComfort,
   } from '$lib/fighting/fightComfort'
-  import { interpolatedPosition } from '$lib/fighting/fightInterpolation'
+  import { createFightPresentation } from '$lib/fighting/fightPresentationContext'
+  import { resizeFightCanvas } from '$lib/fighting/fightSceneResize'
   import { motionOf } from '$lib/fighting/fighterMovement'
   import { createStrideClocks, transitionSecondsFor } from '$lib/fighting/sceneMotion'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
@@ -44,6 +45,8 @@
   import type { ArcadeFighter, FightState, FighterPose } from '$lib/fighting/types'
   import type { HumanPose } from '$lib/tour/humanAnimation'
 
+  const presentation = createFightPresentation()
+  const interpolatedPosition = presentation.position
   export let comfort = defaultFightComfort()
   export let appearance: CareerAppearance = defaultAppearance()
   export let state: FightState
@@ -265,17 +268,7 @@
           }
         }
 
-        const fit = () => {
-          if (!canvas) return
-          const width = Math.max(1, canvas.clientWidth)
-          const height = Math.max(1, canvas.clientHeight)
-          const ratio = Math.min(window.devicePixelRatio || 1, 1.75)
-          renderer.setPixelRatio(ratio)
-          renderer.setSize(width, height, false)
-          post?.resize(width, height, ratio)
-          camera.aspect = width / height
-          camera.updateProjectionMatrix()
-        }
+        const fit = () => resizeFightCanvas({ canvas, renderer, camera, post })
         fit()
 
         const poseClock = createFightPoseClock()
@@ -293,7 +286,9 @@
           seconds: number
         }
         const animateFighter = (options: AnimateFighterOptions) => {
-          const { side, fighter, opponent, model, seconds } = options
+          const { side, model, seconds } = options
+          const fighter = presentation.fighter(state, side)
+          const opponent = presentation.fighter(state, side === 'player' ? 'opponent' : 'player')
           model.root.visible = fightFigureVisible(state, side)
           const receivedImpact = state.impact?.attacker !== side ? state.impact?.sequence : 0
           const progress = poseClock(side, fighter, { seconds, impact: receivedImpact })

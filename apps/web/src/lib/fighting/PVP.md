@@ -1,7 +1,7 @@
 # Clash : PvP privé (phase 7)
 
 La [phase 8](./CAREER.md) ajoute les saisons, le profil, la vue spectateur et des
-secrets séparés pour rejoindre ou regarder. Le protocole courant est `clash-pvp-2` ;
+secrets séparés pour rejoindre ou regarder. Le protocole `clash-pvp-3` inclut le ruleset moteur courant ;
 les descriptions de l’autorité et des conditions de combat ci-dessous restent valables.
 
 Depuis « Jouer en duel privé », `/fighting/pvp` crée une invitation pour deux
@@ -41,7 +41,7 @@ les règles, le terrain et la préparation ; les propriétés optionnelles absen
 et `undefined` ont la même représentation réseau. Les clients incompatibles ou
 qui confirment une autre empreinte ne démarrent pas le match.
 
-Chaque réponse contient un tick et une empreinte de l’état autoritaire commun,
+Chaque réponse contient une révision croissante, un tick et une empreinte de l’état autoritaire commun,
 ainsi qu’un instantané propre au destinataire et son empreinte. Le client valide
 l’identité, la structure et l’empreinte avant affichage ; une incohérence suspend
 les nouvelles commandes, puis demande un instantané frais. Ces empreintes
@@ -89,13 +89,37 @@ sont ajoutés par la phase 8.
 
 ## Latence et validation
 
-Cette première version attend le serveur et interroge au plus toutes les 50 ms
-en combat, 250 ms au salon, sans empiler les requêtes lentes. Elle ne prédit pas
-et ne fait pas de rollback. Le moteur fixe et le journal déterministe permettent
-d’étudier ces options ensuite. Les essais à 50/100/150 ms sont des délais simulés
-de requête qui vérifient la cohérence ; ils ne prouvent pas une qualité de jeu
-sur Internet. Un rollback futur devra conserver les états particuliers du Nen,
-et devra être évalué sur un réseau réel avant de remplacer ce premier transport.
+Le client lit les contrôles sur chaque frame et envoie les entrées sans attendre
+50 ms après la fin d’une requête. Une seule requête de commandes reste en vol ;
+un budget de 20 envois/s et une courte rafale de trois paquets bornent le trafic.
+Un flux SSE authentifié pousse jusqu’à 30 vues privées/s, indépendamment de
+l’aller-retour des commandes. Le jeton reste dans les en-têtes. Le flux sortant
+ne renouvelle jamais la présence d’un joueur ; le polling HTTP reste le repli si
+le serveur intermédiaire ne prend pas en charge le streaming.
+
+`nextSequence` confirme la réception, `appliedSequence` confirme la consommation
+par le moteur et `appliedAtTick` indique son tick. Le client ignore les révisions
+anciennes et rejoue les intentions non appliquées depuis le dernier état privé
+confirmé. Aucun numéro de frame ni résultat simulé par le client n’est envoyé.
+
+Pour les duels entre Kurapika, Hisoka, Chrollo et Benjamin, une simulation locale
+bornée à douze frames anticipe uniquement le corps contrôlé : déplacement,
+garde et animation de coup. Les petits écarts sont amortis ; interruption,
+nouvelle manche, dégâts ou K.-O. font immédiatement autorité. Après 250 ms sans
+état frais, l’anticipation cesse. Les états complexes de Parallel Future,
+Cat’s Name et les pages de Chrollo hors du périmètre pris en charge reviennent
+à l’affichage confirmé. Les positions publiques adverses sont extrapolées au
+maximum sur deux frames ; aucune action adverse cachée n’est inventée.
+
+Le HUD, le Nen, les coûts, les impacts, les projectiles et les verdicts utilisent
+toujours l’état serveur. Il s’agit d’une prédiction de présentation réconciliée,
+pas d’un rollback complet des deux joueurs. Les mécanismes de confidentialité
+ci-dessus s’appliquent avant toute simulation locale. Ce chantier ne modifie pas les règles
+des replays déterministes.
+
+Le [rapport de réactivité](./REACTIVITY.md) décrit les mesures en production,
+les limites du banc et les commandes de reproduction. Les délais et pertes
+applicatives simulés ne prouvent pas une qualité de jeu sur Internet.
 
 Les tests `pvp/*.test.ts`, `server/clashPvp.test.ts` et
 `server/clashPvpHttp.test.ts` couvrent validation, authentification des places,

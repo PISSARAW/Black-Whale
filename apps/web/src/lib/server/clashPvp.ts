@@ -35,6 +35,7 @@ interface Lobby {
   watchToken: string
   joinToken: string
   ranked: boolean
+  revision: number
 }
 export class ClashPvpError extends Error {
   constructor(readonly code: string) {
@@ -73,6 +74,7 @@ export class ClashPvpRegistry {
       watchToken: this.randomId(),
       joinToken: this.randomId(),
       ranked: false,
+      revision: 0,
     })
     const result = session(id, 'player', token)
     result.inviteHref += `#${this.lobbies.get(id)!.joinToken}`
@@ -101,9 +103,18 @@ export class ClashPvpRegistry {
     lobby.seats[side]!.seenAt = this.now()
     lobby.touchedAt = this.now()
     this.resume(lobby)
+    return this.snapshotView(lobby, side)
+  }
+  /** Server push never refreshes a player's presence: only incoming requests do. */
+  peek(id: string, token: string): PvpView {
+    const { lobby, side } = this.access(id, token)
+    this.advance(lobby)
+    return this.snapshotView(lobby, side)
+  }
+  private snapshotView(lobby: Lobby, side: FightSide): PvpView {
     const state = lobby.match.snapshot()
     return {
-      matchId: id,
+      matchId: lobby.id,
       side,
       setup: structuredClone(lobby.setup),
       configHash: lobby.configHash,
@@ -115,6 +126,8 @@ export class ClashPvpRegistry {
         opponent: this.connected(lobby, 'opponent'),
       },
       nextSequence: lobby.match.nextSequence(side),
+      ...lobby.match.acknowledgement(side),
+      revision: ++lobby.revision,
       tick: lobby.match.tick,
       authorityHash: fightReplayHash(state),
       ...pvpSnapshot(state, side),

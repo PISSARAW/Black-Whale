@@ -1,3 +1,4 @@
+import { openClashPvpStream } from '$lib/server/clashPvpStream'
 import { json } from '@sveltejs/kit'
 import { clashPvpRegistry } from '$lib/server/clashPvp'
 import {
@@ -10,6 +11,15 @@ import {
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = ({ params, request, getClientAddress, url }) => {
+  if (url.searchParams.has('stream') && !url.searchParams.has('watch'))
+    return (
+      clashThrottle(`stream:${getClientAddress()}`, 30) ??
+      openClashPvpStream({
+        id: params.matchId,
+        token: clashBearer(request),
+        signal: request.signal,
+      })
+    )
   const limited = clashThrottle(`poll:${getClientAddress()}`, 3000)
   if (limited) return limited
   try {

@@ -1,3 +1,4 @@
+import { addThetaHandgun } from './thetaFigure'
 import { addChrolloBook } from './chrolloFigure'
 import { addFranklinHands } from './franklinHands'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
@@ -54,14 +55,23 @@ export function buildFightFigure(options: {
   })
   if (trueForm) shapeBiscuitTrueForm(model)
 
-  if (fighter.id === 'franklin') {
-    shapeFranklinFigure({ THREE, glow, model })
-    addFranklinHands({ THREE, glow, model })
-  }
-  if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  addFighterEquipment(options, model)
   if (fighter.kurapika?.emperorTime) model.root.traverse((node) => {
     if (node.name.startsWith('face-eye') && 'material' in node)
       (node as import('three').Mesh).material = glow(0xef3340, 1)
   })
   return model
+}
+
+function addFighterEquipment(
+  options: Parameters<typeof buildFightFigure>[0],
+  model: ReturnType<typeof buildHumanFigure>,
+): void {
+  const { THREE, glow, fighter } = options
+  if (fighter.id === 'franklin') {
+    shapeFranklinFigure({ THREE, glow, model })
+    addFranklinHands({ THREE, glow, model })
+  }
+  if (fighter.id === 'chrollo') addChrolloBook({ THREE, glow, model })
+  if (fighter.id === 'theta') addThetaHandgun({ THREE, glow, model })
 }

@@ -82,7 +82,7 @@ export const ROSTER_STANCES: Partial<Record<FighterId, FightStance>> = {
     0.12,
     2.4,
   ),
-  // A Nen instructor: open lead palm toward the target, rear hand ready at the hip.
+  // Controlled guard; the rear hand holds a physical handgun, not an aura projectile.
   theta: stance(
     [
       LEGS_SOFT,

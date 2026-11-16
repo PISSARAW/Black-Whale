@@ -19,6 +19,8 @@ export interface ImpactDefence {
 }
 
 interface ResolvedDamageOptions {
+  /** Ordinary handgun rounds do not inherit the shooter’s Nen/Hatsu power. */
+  physicalProjectile?: boolean
   attacker: ArcadeFighter
   defence: ImpactDefence
   base: number
@@ -51,10 +53,10 @@ function attackDamage(
     1,
     Math.round(
       base *
-        fighterDefinition(attacker.id).power *
-        nenAttackFactor(attacker, kind) *
+        (options.physicalProjectile ? 1 : fighterDefinition(attacker.id).power) *
+        (options.physicalProjectile ? 1 : nenAttackFactor(attacker, kind)) *
         nenDamageFactor(defender, zone) *
-        hatsuDamageFactor(attacker) *
+        (options.physicalProjectile ? 1 : hatsuDamageFactor(attacker)) *
         hatsuDefenceFactor(defender) *
         guard *
         damageScale *

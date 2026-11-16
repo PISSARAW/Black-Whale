@@ -1,3 +1,4 @@
+import { thetaShotAim } from './thetaFirearm'
 import { benjaminBurstReady } from './benjaminWeapon'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { advanceRemotePunch, remotePunchCanHit, spawnRemotePunch } from './remotePunch'
@@ -80,13 +81,13 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     size: [0.9, 0.3],
   }),
   theta: projectile({
-    matter: 'nen',
-    labels: ['Projectile d’aura', 'Aura projectile'],
-    shape: 'orb',
-    colour: '#67e8f9',
-    speed: 70,
+    matter: 'object',
+    labels: ['Tir de pistolet', 'Handgun shot'],
+    shape: 'bullet',
+    colour: '#d8c7a0',
+    speed: 76,
     damage: 10,
-    size: [0.8, 0.6],
+    size: [0.55, 0.2],
   }),
   franklin: projectile({
     matter: 'nen',
@@ -199,7 +200,7 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
-  if (fighter.id === 'benjamin') return true
+  if (fighter.id === 'benjamin' || fighter.id === 'theta') return true
   if (fighter.id === 'leorio')
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
@@ -209,7 +210,7 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
 
 export function rangedAuraCost(id: FighterId): number {
   if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (id === 'benjamin') return 0
+  if (id === 'benjamin' || id === 'theta') return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 
@@ -232,12 +233,13 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     return state
   }
   const profile = projectileProfile(fighter.id)
+  const aim = fighter.id === 'theta' ? thetaShotAim(fighter) : { y: profile.y, targetZone: 'torso' as const }
   const projectile: FightProjectile = {
     id: state.nextProjectileId,
     owner: side,
     fighterId: fighter.id,
     x: fighter.x + fighter.facing * 3.4,
-    y: fighter.y + profile.y,
+    y: fighter.y + aim.y,
     velocityX: fighter.facing * profile.speed,
     width: profile.width,
     height: profile.height,
@@ -246,7 +248,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     blockstun: profile.blockstun,
     hitstop: profile.hitstop,
     knockback: profile.knockback,
-    targetZone: 'torso',
+    targetZone: aim.targetZone,
     shape: profile.shape,
     colour: profile.colour,
     matter: profile.matter,

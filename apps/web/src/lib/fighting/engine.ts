@@ -1,3 +1,4 @@
+import { thetaFirearmOptions } from './thetaFirearm'
 import { resolveMoonlightAction, performMoonlightAction } from './moonlightAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
@@ -227,6 +228,7 @@ export function performMove(options: PerformMoveOptions): FightState {
 }
 
 export function performAuraAttack(options: AuraAttackOptions): FightState {
+  options = thetaFirearmOptions(options)
   return resolveMoonlightAction(options.state, executeAuraAttack(options), options.side)
 }
 

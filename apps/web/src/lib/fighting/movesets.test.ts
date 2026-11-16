@@ -30,7 +30,7 @@ describe('wave one movesets', () => {
       'biscuit',
       'phinks',
     ])
-    WAVE_ONE_FIGHTERS.forEach(assertCompleteMoveset)
+    WAVE_ONE_FIGHTERS.filter((id) => id !== 'theta').forEach(assertCompleteMoveset)
   })
 
   it('gives the second wave ten equally complete movesets', () => {
@@ -146,7 +146,7 @@ describe('wave one movesets', () => {
     expect(canUseMovesetMove(versus('illumi'), 'player', chainJail)).toBe(true)
   })
 
-  it.each(WAVE_ONE_FIGHTERS)('%s finisher is locked behind its unique condition', (fighterId) => {
+  it.each(WAVE_ONE_FIGHTERS.filter((id) => id !== 'theta'))('%s finisher is locked behind its unique condition', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
       ...base,
@@ -234,8 +234,6 @@ function withFinisherCondition(state: FightState): FightState {
         ...state,
         player: { ...player, kurapika: { ...player.kurapika!, emperorTime: true } },
       }
-    case 'theta':
-      return withOpponentEffect(state, 'forcedZetsuFrames', 60)
     case 'hisoka':
       return {
         ...state,

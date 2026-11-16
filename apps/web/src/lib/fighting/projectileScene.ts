@@ -1,3 +1,4 @@
+import { isThetaBullet } from './thetaFirearm'
 import type { FightProjectile } from './types'
 import { createRemotePunchScene } from './remotePunchScene'
 
@@ -17,15 +18,23 @@ export interface ProjectileScene {
 
 export function createProjectileScene(options: ProjectileSceneOptions): ProjectileScene {
   const { THREE, scene } = options
+  const thetaMetals = new Map<number, import('three').MeshBasicMaterial>()
+  const handgunMetal = (colour: number) => {
+    const material = thetaMetals.get(colour) ?? new THREE.MeshBasicMaterial({ color: colour })
+    thetaMetals.set(colour, material)
+    return material
+  }
   const meshes = new Map<number, import('three').Mesh>()
   const remotePunches = createRemotePunchScene(options)
 
   const build = (projectile: FightProjectile) => {
     const colour = Number.parseInt(projectile.colour.slice(1), 16)
     const material =
-      projectile.shape === 'stone'
-        ? new THREE.MeshStandardMaterial({ color: colour, roughness: 0.94, metalness: 0 })
-        : options.glow(colour, 1)
+      isThetaBullet(projectile)
+        ? handgunMetal(colour)
+        : projectile.shape === 'stone'
+          ? new THREE.MeshStandardMaterial({ color: colour, roughness: 0.94, metalness: 0 })
+          : options.glow(colour, 1)
     const mesh = new THREE.Mesh(projectileGeometry(options, projectile), material)
     scene.add(mesh)
     meshes.set(projectile.id, mesh)
@@ -40,7 +49,7 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       const mesh = meshes.get(projectile.id) ?? build(projectile)
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
-      mesh.rotation.z = projectile.shape === 'card' ? seconds * 8 : seconds * 2
+      mesh.rotation.z = isThetaBullet(projectile) ? -Math.PI / 2 : projectile.shape === 'card' ? seconds * 8 : seconds * 2
     }
     for (const [id, mesh] of meshes) {
       if (active.has(id)) continue
@@ -53,6 +62,8 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
     sync,
     dispose: () => {
       remotePunches.dispose()
+      thetaMetals.forEach((material) => material.dispose())
+      thetaMetals.clear()
       for (const mesh of meshes.values()) scene.remove(mesh)
       meshes.clear()
     },
@@ -69,6 +80,7 @@ function projectileGeometry(
   if (projectile.shape === 'page') return geometry(new THREE.PlaneGeometry(0.4, 0.5))
   if (projectile.shape === 'seed') return geometry(new THREE.OctahedronGeometry(0.22, 0))
   if (projectile.shape === 'eye') return geometry(new THREE.TorusGeometry(0.2, 0.065, 5, 12))
+  if (isThetaBullet(projectile)) return geometry(new THREE.CapsuleGeometry(0.016, 0.08, 3, 7))
   if (projectile.shape === 'bullet') return geometry(new THREE.CapsuleGeometry(0.055, 0.3, 3, 7))
   if (projectile.shape === 'stone') {
     const stone = new THREE.DodecahedronGeometry(0.24, 0)

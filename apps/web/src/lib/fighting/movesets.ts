@@ -1,3 +1,5 @@
+import { tuneThetaMoveset } from './thetaMoveset'
+import { thetaShotMove } from './thetaFirearm'
 import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
 import { tuneLonghiMoveset } from './longhiMoveset'
 import { moonlightCanOffer } from './moonlightContract'
@@ -55,6 +57,7 @@ const ALL_MOVESETS = [
 const MOVESETS = new Map<FighterId, FighterMoveset>(
   ALL_MOVESETS.map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
+    .map(tuneThetaMoveset)
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
     .map(tuneChrolloMoveset)
@@ -118,6 +121,7 @@ export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boo
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
+  if (thetaShotMove(fighter, move.id)) return true
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources
@@ -211,10 +215,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => opponentOf(state, side).hatsuEffects.senseSeals >= 2,
-  theta: (state, side) => {
-    const opponent = opponentOf(state, side)
-    return opponent.hatsuEffects.forcedZetsuFrames > 0 || opponent.aura <= 30
-  },
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
   franklin: () => true,

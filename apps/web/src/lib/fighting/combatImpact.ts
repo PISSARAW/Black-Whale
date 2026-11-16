@@ -1,3 +1,4 @@
+import { isThetaBullet } from './thetaFirearm'
 import { observeComboMaster } from './comboMaster'
 import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { recordDolphinEffects } from './kurapikaDolphin'
@@ -252,6 +253,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     attacker,
     defence,
     base: hit.projectile.damage,
+    physicalProjectile: isThetaBullet(hit.projectile),
     zone: hit.projectile.targetZone,
     kind: 'ranged',
     damageScale,

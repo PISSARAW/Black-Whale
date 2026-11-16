@@ -41,6 +41,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       expect(advance(armed, 0.4).impact).toBeNull()
       return
     }
+    if (id === 'theta') {
+      expect(armed[side].attack?.kind).toBe('ranged')
+      expect(armed[side].attack?.hatsuSource).toBeNull()
+      expect(armed[side].aura).toBe(auraBefore)
+      return
+    }
+
     if (id === 'bill') {
       expect(armed).toBe(ready)
       expect(advance(armed, 0.4).impact).toBeNull()

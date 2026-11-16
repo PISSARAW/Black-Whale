@@ -54,8 +54,7 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   sa victoire aux points, l’entraînement ne termine pas sur un K.-O. Zetsu et le vol
   du Hatsu dissipent l’armure et le soleil. `feitanScene.ts` dessine l’habit sur le
   rig et le périmètre de chaleur dans le monde ; le HUD affiche la douleur et l’état.
-- Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le projectile de Theta neutralise
-  l'aura, le corps naturel de Biscuit renforce attaque et défense, tandis que
+- Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le corps naturel de Biscuit renforce attaque et défense, tandis que
   LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
   ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
@@ -397,3 +396,21 @@ vitesses de drainage, portées et préparations sont des réglages du duel ; la 
 unique de Judgment Chain adapte le choix de conditions au combat sans dialogue.
 Les décès conditionnels terminent la manche dans tous les formats ; l’entraînement
 rétablit les PV. `kurapika.test.ts` couvre ces transitions par le moteur réel.
+
+### Theta : pistolet réel, Hatsu inconnu
+
+Theta conserve les fondamentaux du Nen et ses coups physiques. L et U tirent
+une balle matérielle ; avant/bas/arrière + L changent la visée et le rythme.
+Ces variantes de combat ne sont pas des Hatsu supplémentaires. Les balles
+n’exigent pas d’aura et restent utilisables en Zetsu, sous épuisement ou sous
+un sceau de Nen. Elles ne drainent aucune aura, n’imposent aucun Zetsu et ne
+profitent pas d’un multiplicateur offensif de Nen ; la défense Nen adverse
+continue à s’appliquer. Le calibre et la capacité du chargeur restent indéterminés.
+
+Son Hatsu personnel et sa catégorie naturelle restent inconnus : aucune capacité
+n’est exposée au vol par Skill Hunter ou Steal Chain. « Neutralisation absolue »
+et sa condition de finisher ont été retirées. Les poses de tir et le pistolet
+remplacent la présentation de lanceuse d’orbes. Les sources de référence sont
+les chapitres 385 et 387 : elle tente de tirer sur Tserriednich pendant son Zetsu
+volontaire, elle ne lui impose pas ce Zetsu. `theta.test.ts` vérifie les tirs
+pour les deux joueurs et leur interaction avec garde, interruption et vol de Hatsu.

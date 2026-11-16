@@ -43,7 +43,6 @@ const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   gel: ['venomFrames'],
   lynch: ['soulExposedFrames'],
   morena: ['contagionFrames', 'contagionStacks'],
-  theta: ['forcedZetsuFrames'],
   halkenburg: ['possessedFrames'],
 }
 

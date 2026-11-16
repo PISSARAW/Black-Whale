@@ -1,3 +1,4 @@
+import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
 import { chrolloMoveAvailable } from './chrolloBook'
 import { kurapikaMoveAvailable } from './kurapika'
@@ -8,7 +9,7 @@ import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST, hatsuSourceFor } from './hatsu'
 import { focusAttackRyu, releaseFocusedAura, setIn } from './nen'
-import { canUseRangedAttack, RANGED_AURA_COST } from './projectiles'
+import { canUseRangedAttack, rangedAuraCost } from './projectiles'
 import { hasMoveResources, moveById } from './movesets'
 import type { ArcadeFighter, AttackKind, AttackVariant, FighterId } from './types'
 
@@ -61,17 +62,20 @@ export function startFighterAttack(options: {
       confirmedHit: false,
       frame: 0,
       impacted: false,
-      auraCharged,
+      auraCharged: auraCharged && !thetaPhysicalShot(fighter, kind),
       concealed,
-      hatsuSource:
-        kind === 'special'
-          ? (options.hatsuSource ?? hatsuSourceFor(fighter, options.moveId))
-          : null,
+      hatsuSource: attackHatsuSource(options),
       projectileSpawned: false,
       reversal: fighter.reversalWindow > 0,
     },
     bufferedAttack: null,
   }
+}
+
+function attackHatsuSource(options: Parameters<typeof startFighterAttack>[0]): FighterId | null {
+  return options.kind === 'special'
+    ? (options.hatsuSource ?? hatsuSourceFor(options.fighter, options.moveId))
+    : null
 }
 
 export function canStartFighterAttack(
@@ -93,6 +97,7 @@ function characterAttackAvailable(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
+  if (fighter.id === 'theta' && kind === 'special') return false
   if (!kurapikaMoveAvailable(fighter, moveId)) return false
   if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
   if (attackRestricted(fighter, kind, moveId)) return false
@@ -125,7 +130,7 @@ function attackAuraCost(kind: AttackKind, moveId?: string, fighterId?: FighterId
   const move = moveById(moveId)
   if (move) return move.auraCost
   if (kind === 'special') return FIGHT_HATSU_AURA_COST
-  return kind === 'ranged' && fighterId !== 'benjamin' ? RANGED_AURA_COST : 0
+  return kind === 'ranged' ? rangedAuraCost(fighterId ?? 'hisoka') : 0
 }
 
 function canAct(fighter: ArcadeFighter): boolean {

@@ -203,7 +203,7 @@ describe('fighter Hatsu registry', () => {
     expect(state.opponent.hatsuEffects.forcedZetsuFrames).toBeGreaterThan(0)
   })
 
-  it('makes Theta suppress aura with her projectile', () => {
+  it('keeps Theta’s personal Hatsu unknown without draining or sealing Nen', () => {
     const ready = closeFight('theta', 'hisoka')
     const struck = hatsuFor('theta').onImpact({
       state: ready,
@@ -213,8 +213,8 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(struck.opponent.aura).toBe(ready.opponent.aura - 18)
-    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(90)
+    expect(struck).toBe(ready)
+    expect(hatsuFor('theta').martialOnly).toBe(true)
   })
 
   it('keeps Cookie outside the duel and does not expose a stealable Biscuit Hatsu', () => {

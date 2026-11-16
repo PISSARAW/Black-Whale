@@ -1526,3 +1526,8 @@ des projectiles, la projection et le nettoyage. `node apps/web/scripts/check-fig
 contrôle la scène de production à 1440, 844, 390 et 320 px, avec un écran simulé à
 forte densité. `node apps/web/scripts/check-fighting-motion.mjs` capture les 36 gestes
 dans leurs trois phases et les deux orientations.
+
+## Replays et diagnostic de réactivité
+
+Les replays de matchs, le journal des commandes, les scénarios de référence et
+le protocole de mesure sont décrits dans [REPLAYS.md](./REPLAYS.md).

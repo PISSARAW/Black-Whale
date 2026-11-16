@@ -1,0 +1,251 @@
+{
+  "date": "2026-11-16T17:17:39.818Z",
+  "browser": "157.0.8103.78",
+  "machine": "hw.model: Mac17,3\nmachdep.cpu.brand_string: Apple M5\nhw.ncpu: 10\nhw.memsize: 17179869184",
+  "limitations": "Headless Chrome, SwiftShader software WebGL, Vite development source. Concurrent workstation activity is uncontrolled. Not a physical input-to-photon latency measurement. Render samples include the real HUD and replay panel.",
+  "engine": [
+    {
+      "id": "kurapika",
+      "recording": false,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.5,
+        "mean": 0.024611111111525034,
+        "over16ms": 0
+      },
+      "finalHash": "ee77f606"
+    },
+    {
+      "id": "kurapika",
+      "recording": true,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.20000000298023224,
+        "mean": 0.04483333333084981,
+        "over16ms": 0
+      },
+      "finalHash": "ee77f606"
+    },
+    {
+      "id": "hisoka",
+      "recording": false,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.20000000298023224,
+        "mean": 0.04116666666749451,
+        "over16ms": 0
+      },
+      "finalHash": "67971dff"
+    },
+    {
+      "id": "hisoka",
+      "recording": true,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.20000000298023224,
+        "mean": 0.041222222225947514,
+        "over16ms": 0
+      },
+      "finalHash": "67971dff"
+    },
+    {
+      "id": "chrollo",
+      "recording": false,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.8000000007450581,
+        "mean": 0.04211111111566424,
+        "over16ms": 0
+      },
+      "finalHash": "442e4fca"
+    },
+    {
+      "id": "chrollo",
+      "recording": true,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.3999999985098839,
+        "mean": 0.0425,
+        "over16ms": 0
+      },
+      "finalHash": "442e4fca"
+    },
+    {
+      "id": "benjamin",
+      "recording": false,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.3999999985098839,
+        "mean": 0.042111111109455424,
+        "over16ms": 0
+      },
+      "finalHash": "8a1dce6c"
+    },
+    {
+      "id": "benjamin",
+      "recording": true,
+      "milliseconds": {
+        "count": 1800,
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.19999999925494194,
+        "max": 0.30000000074505806,
+        "mean": 0.04216666666583883,
+        "over16ms": 0
+      },
+      "finalHash": "8a1dce6c"
+    }
+  ],
+  "rendering": [
+    {
+      "id": "kurapika",
+      "recording": false,
+      "renderMilliseconds": {
+        "count": 91,
+        "p50": 53.70000000298023,
+        "p95": 63.5,
+        "p99": 66.39999999850988,
+        "max": 66.39999999850988,
+        "mean": 54.28681318678863,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "kurapika",
+      "recording": true,
+      "renderMilliseconds": {
+        "count": 94,
+        "p50": 51.100000001490116,
+        "p95": 62,
+        "p99": 89.90000000223517,
+        "max": 89.90000000223517,
+        "mean": 52.79255319148936,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "hisoka",
+      "recording": false,
+      "renderMilliseconds": {
+        "count": 74,
+        "p50": 55.69999999925494,
+        "p95": 144.19999999925494,
+        "p99": 172.30000000074506,
+        "max": 172.30000000074506,
+        "mean": 67.45135135133121,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "hisoka",
+      "recording": true,
+      "renderMilliseconds": {
+        "count": 84,
+        "p50": 50.900000002235174,
+        "p95": 107.30000000074506,
+        "p99": 116.10000000149012,
+        "max": 116.10000000149012,
+        "mean": 58.95952380954155,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "chrollo",
+      "recording": false,
+      "renderMilliseconds": {
+        "count": 103,
+        "p50": 48,
+        "p95": 52,
+        "p99": 53.900000002235174,
+        "max": 55.80000000074506,
+        "mean": 48.32621359224748,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "chrollo",
+      "recording": true,
+      "renderMilliseconds": {
+        "count": 96,
+        "p50": 50.5,
+        "p95": 56.29999999701977,
+        "p99": 63,
+        "max": 63,
+        "mean": 51.239583333333336,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "benjamin",
+      "recording": false,
+      "renderMilliseconds": {
+        "count": 52,
+        "p50": 81.19999999925494,
+        "p95": 176.89999999850988,
+        "p99": 289.5,
+        "max": 289.5,
+        "mean": 96.04038461541327,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    },
+    {
+      "id": "benjamin",
+      "recording": true,
+      "renderMilliseconds": {
+        "count": 80,
+        "p50": 61.400000002235174,
+        "p95": 68.20000000298023,
+        "p99": 73.59999999776483,
+        "max": 73.59999999776483,
+        "mean": 61.68500000000931,
+        "over16ms": 1
+      },
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+      "viewport": [1280, 900],
+      "dpr": 1
+    }
+  ],
+  "errors": []
+}

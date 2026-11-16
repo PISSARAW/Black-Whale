@@ -96,10 +96,18 @@ export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
 
+export interface FightTickOptions {
+  dt: number
+  opponentInput?: FightInput
+  ai?: boolean
+  /** Observes completed real simulation frames; never speculative future branches. */
+  onFrame?: (before: FightState, after: FightState) => void
+}
+
 export function tickFight(
   state: FightState,
   input: FightInput,
-  options: number | { dt: number; opponentInput?: FightInput; ai?: boolean },
+  options: number | FightTickOptions,
 ): FightState {
   const settings = typeof options === 'number' ? { dt: options } : options
   const { dt, opponentInput } = settings
@@ -111,6 +119,7 @@ export function tickFight(
     frameAccumulator: state.frameAccumulator + Math.min(dt, 0.1),
   }
   while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
+    const beforeFrame = next
     const accumulator = next.frameAccumulator - FIXED_STEP
     const previousPositions = capturePositions(next)
     // A detached vision pauses simulation; its owner must still be able to open their eyes.
@@ -140,6 +149,7 @@ export function tickFight(
       next = reconcileBattleCantabile(reconcileMelodySound(next))
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
+    settings.onFrame?.(beforeFrame, next)
   }
   return advanceEasterEggs(next, false)
 }

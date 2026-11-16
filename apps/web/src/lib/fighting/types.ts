@@ -133,6 +133,9 @@ export interface FighterDefinition {
 export interface ArcadeFighter {
   throwTechRecoveryFrames?: number
   arenaRecovery?: number
+  /** Cosmetic playback is included in deterministic replay state. */
+  easterEgg?: import('./easterEggs').EasterEggPlayback
+  easterEggDiscoveries?: number
   easterEggSequence?: number
   padailleTool?: PadailleTool
   kallutoPaper?: import('./kallutoPaper').KallutoPaperState

@@ -289,6 +289,18 @@ test.describe('the walk', () => {
       )
       .not.toBeNull()
 
+    // Rest before the reload: Ren legitimately drains aura while software
+    // WebGL builds the next scene and can return to Ten through exhaustion.
+    // Zetsu gives the persistence assertion a stable, explicitly chosen mode.
+    await page.getByRole('button', { name: 'Zetsu', exact: true }).click()
+    await expect
+      .poll(() =>
+        page.evaluate(
+          (key) => JSON.parse(localStorage.getItem(key)!).player.nen.mode,
+          SIMULATION_KEY,
+        ),
+      )
+      .toBe('zetsu')
     await page.reload()
     await ready(page)
     await expect
@@ -304,6 +316,6 @@ test.describe('the walk', () => {
             : null
         }, SIMULATION_KEY),
       )
-      .toEqual({ incident: true, reputation: -10, mode: 'ren' })
+      .toEqual({ incident: true, reputation: -10, mode: 'zetsu' })
   })
 })

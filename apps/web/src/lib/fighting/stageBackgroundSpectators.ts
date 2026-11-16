@@ -2,6 +2,7 @@ import type { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial } from 't
 import { buildHumanFigure, type HumanLook } from '../tour/humanFigure'
 import { humanProfile } from '../tour/humanProfiles'
 import type { AnimatedHuman } from '../tour/humanAnimation'
+import type { CameoPlacement } from './stageBackgroundSceneTypes'
 import { sceneryBox, type SceneryKit } from './stageKit'
 import type { BackgroundSpectator, StageBackgroundContext } from './stageBackgroundTypes'
 import { backgroundParticipants } from './stageBackgroundCatalogue'
@@ -13,7 +14,7 @@ export interface BackgroundAudience {
 }
 interface AudienceOptions {
   cast: readonly BackgroundSpectator[]
-  arena: boolean
+  placements: readonly CameoPlacement[]
   context: StageBackgroundContext
 }
 
@@ -88,13 +89,9 @@ function spectatorSeat(kit: SceneryKit, container: Group): void {
     )
 }
 
-function placeSpectator(container: Group, index: number, arena: boolean): void {
-  container.scale.setScalar(arena ? 1 : 0.78)
-  container.position.set(
-    (index === 0 ? -1 : 1) * (arena ? 2.8 : 1.65),
-    arena ? 0.15 : 0.02,
-    arena ? -9.5 : -0.85,
-  )
+function placeSpectator(container: Group, placement: CameoPlacement): void {
+  container.scale.setScalar(placement.scale ?? 0.78)
+  container.position.set(...placement.at)
 }
 
 export function buildBackgroundAudience(
@@ -118,25 +115,26 @@ export function buildBackgroundAudience(
     return material
   }
   const active = backgroundParticipants(options.context.fight?.())
-  const members = options.cast.map((spectator, index) => {
+  const members = options.placements.map((placement, index) => {
+    const spectator = options.cast[placement.actor]
     const identity = active.includes(spectator.identity)
       ? `clash-passenger-${index}`
       : spectator.identity
     const seen = spectatorLook(spectator, identity)
     const profile = humanProfile(seen)
-    const pose = profile.frame === 'adult' ? spectator.pose : 'idle'
+    const pose = profile.frame === 'adult' ? (placement.pose ?? spectator.pose) : 'idle'
     seen.human!.pose = pose
     const figure = buildHumanFigure({ THREE: kit.THREE, glow, seen, profile })
     const container = new kit.THREE.Group()
     container.name = `background-spectator:${identity}`
     container.userData.identity = identity
-    placeSpectator(container, index, options.arena)
-    figure.turns.rotation.y = index === 0 ? 0.12 : -0.12
+    placeSpectator(container, placement)
+    figure.turns.rotation.y = placement.heading ?? -Math.sign(placement.at[0]) * 0.12
     container.add(figure.root)
     if (pose === 'seated') spectatorSeat(kit, container)
     if (profile.frame === 'infant') {
-      container.position.set(-1.85, 0.55, -0.65)
-      container.rotation.z = -1.05
+      figure.turns.rotation.y = 0
+      container.rotation.z = placement.tilt ?? -1.05
     }
     root.add(container)
     return { figure, container, identity, spectator, pose }

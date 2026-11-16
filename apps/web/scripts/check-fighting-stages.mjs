@@ -32,7 +32,7 @@ try {
   browser = await chromium.launch({
     headless: true,
     executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
-    args: ['--enable-unsafe-swiftshader'],
+    args: ['--enable-unsafe-swiftshader', '--no-proxy-server'],
   })
   const page = await browser.newPage({ viewport: { width: 1100, height: 1000 } })
   page.on('pageerror', (error) => {
@@ -87,7 +87,13 @@ try {
         `${stage.id} at ${width}px`,
       )
       const scene = page.locator('.fight-arena')
-      await scene.screenshot({ path: path.join(output, `${stage.id}-${width}.png`) })
+      const clip = await scene.boundingBox()
+      assert.ok(clip)
+      await page.screenshot({
+        clip,
+        timeout: 90000,
+        path: path.join(output, `${stage.id}-${width}.png`),
+      })
       // Match extremes and the largest body use the same scenery without hiding fighters.
       for (const view of views.filter((view) => view !== 'normal')) {
         const before = await page.evaluate(() => window.stagePresents)
@@ -100,7 +106,13 @@ try {
         })
         await page.waitForTimeout(650)
         assert.equal(await page.locator('.fight-scene.failed').count(), 0, `${stage.id}/${view}`)
-        await scene.screenshot({ path: path.join(output, `${stage.id}-${width}-${view}.png`) })
+        const viewClip = await scene.boundingBox()
+        assert.ok(viewClip)
+        await page.screenshot({
+          clip: viewClip,
+          timeout: 90000,
+          path: path.join(output, `${stage.id}-${width}-${view}.png`),
+        })
       }
       checks.push({ stage: stage.id, width, views })
       await writeFile(

@@ -1425,27 +1425,38 @@ vérifie les parcours des quatre personnages, la pause et le petit écran.
 
 ## Easter Eggs des fonds de stage
 
-Les 33 stages ont chacun deux spectateurs, une affiche originale et un petit objet
-animé, définis dans `stageBackgroundShip.ts` et `stageBackgroundRoyal.ts`.
-La soute accueille Phinks et Franklin ; la Tour Céleste place Biscuit et Leorio au
-premier rang ; les canots réunissent Kacho et Fugetsu ; Oito berce Woble dans son salon.
-Les caméos appartiennent à la mise en scène arcade, sans affirmer leurs positions
-canoniques dans la visite ou les archives.
+`stageBackgroundShipScenes.ts` et `stageBackgroundRoyalScenes.ts` composent les
+33 décors séparément. Chaque lieu choisit ses présences, positions et rythmes :
+aucun public ni aucune affiche n’est imposé. Les ressources graphiques et profils
+possibles restent dans `stageBackgroundShip.ts` et `stageBackgroundRoyal.ts`.
 
-`stageBackground.ts` ajoute cette couche après le calcul du couloir de combat.
-Les personnages réutilisent les profils de la visite, les illustrations sont tracées
-sur Canvas et les accessoires sont des géométries simples. Les spectateurs réagissent
-aux nouveaux impacts et à la fin du duel ; les scènes solennelles restent calmes.
-Un combattant déjà présent est remplacé par un passager anonyme dans le public.
-Aucune entité, collision, aura, ressource ou règle du moteur n’est ajoutée.
-Les mouvements réduits figent cette couche. Une description française/anglaise
-est disponible aux lecteurs d’écran ; les textures et matériaux privés sont libérés
-à la fermeture sans détruire les géométries humaines partagées.
+La soute associe une ombre au hublot, un pochoir sur une caisse et une araignée
+cachée. Au casino, un chat déambule parmi les jetons et une carte oubliée.
+Le tribunal possède une horloge, une marque au sol et des papiers qui s’envolent
+au verdict. La chambre funéraire garde quatorze veilleuses et un sceau discret.
+Le cinéplexe glisse une carte dans sa projection ; un échiquier royal perd son
+roi à la fin du duel ; Oito et Woble partagent un mobile, sans affiche ajoutée.
 
-`stageBackground.test.ts` vérifie le catalogue complet, les doublons, les réactions,
-les mouvements réduits, le placement derrière le duel, l’absence de mutation du jeu
-et la libération des ressources. `scripts/check-fighting-stages.mjs` contrôle aussi
-ces décors dans la scène de production, sur les trois tailles d’écran habituelles.
+`stageBackgroundItems.ts` assemble caméos, objets trouvés, images sur cinq supports
+et scènes animées : animaux, mécanismes, apparitions. Les objets peuvent rester
+immobiles, rouler, pivoter ou dériver ; leurs supports sont des caisses, tables
+ou garde-corps. Les animations ont des cycles propres ou répondent à un impact
+ou au verdict, uniquement dans la présentation. Les caméos sont des choix arcade
+qui n’affirment pas les positions canoniques des personnages dans la visite.
+
+Cette couche est ajoutée après le calcul du couloir de combat et ne modifie
+ni collision, ni aura, ni ressource, ni règle du duel. Un combattant présent est
+remplacé dans le public par un passager. Les mouvements réduits figent les scènes.
+Les descriptions françaises et anglaises suivent les éléments réellement choisis.
+Les ressources privées sont libérées sans détruire les géométries humaines communes.
+
+`stageBackground.test.ts` vérifie les 33 compositions distinctes, les variantes
+de public et d’images, les événements, les mouvements réduits, le placement,
+les doublons, l’absence de mutation et la libération des ressources.
+`node apps/web/scripts/check-stage-backgrounds.mjs` pilote l’horloge de la scène de
+production pour capturer apparitions, réactions aux impacts, verdict et mobile.
+`scripts/check-fighting-stages.mjs` capture l’ensemble des terrains ;
+`FIGHT_STAGES_WIDTHS=1100 FIGHT_STAGES_VIEWS=normal` permet une revue ciblée.
 
 ## Collisions et gestes de référence
 

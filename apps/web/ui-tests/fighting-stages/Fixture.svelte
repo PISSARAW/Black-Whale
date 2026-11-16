@@ -1,14 +1,16 @@
 <script lang="ts">
+  import type { FightState } from '$lib/fighting/types'
   import { tick } from 'svelte'
   import FightScene from '$lib/components/fighting/FightScene.svelte'
   import FightHud from '$lib/components/fighting/FightHud.svelte'
   import StagePicker from '$lib/components/fighting/StagePicker.svelte'
   import { createFightState } from '$lib/fighting/fightState'
   import { createFightEnvironment, type FightEnvironment } from '$lib/fighting/fightEnvironment'
+  import { STAGE_BACKGROUND_SCENES } from '$lib/fighting/stageBackgroundScenes'
   import { FIGHT_STAGES, type FightStageId } from '$lib/fighting/stages'
 
   let environment = createFightEnvironment({ stageId: 'royal-salon' })
-  let state = fresh()
+  let state: FightState = fresh()
   let language: 'fr' | 'en' = 'fr'
   function fresh() {
     return {
@@ -41,6 +43,40 @@
       player: { ...base.player, x: view === 'edges' ? 0 : 25, biscuitTrueForm: biscuit },
       opponent: { ...base.opponent, x: view === 'edges' ? 100 : 75, biscuitTrueForm: biscuit },
     }
+    await tick()
+  }
+  export function backgroundRecipe(id: FightStageId = environment.stageId) {
+    return STAGE_BACKGROUND_SCENES[id]
+  }
+  export async function backgroundSignal(kind: 'impact' | 'finish') {
+    if (kind === 'finish') state = { ...state, phase: 'finished', winner: 'player' }
+    else
+      state = {
+        ...state,
+        impact: {
+          sequence: (state.impact?.sequence ?? 0) + 1,
+          attacker: 'player',
+          kind: 'heavy',
+          damage: 1,
+          blocked: false,
+          parried: false,
+          critical: false,
+          knockdown: false,
+          counterHit: false,
+          punish: false,
+          antiAir: false,
+          wallSplat: false,
+          invulnerable: false,
+          comboHits: 1,
+          damageScale: 1,
+          points: 0,
+          zone: 'torso',
+          concealed: false,
+          avoided: false,
+          projectileId: null,
+          position: { x: 50, y: 5 },
+        },
+      }
     await tick()
   }
   export async function setLanguage(next: 'fr' | 'en') {

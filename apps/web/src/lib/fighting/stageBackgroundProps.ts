@@ -4,7 +4,7 @@ import type { StageBackgroundDefinition } from './stageBackgroundTypes'
 
 type PropKind = StageBackgroundDefinition['secret']['motif']
 type Point = readonly [number, number, number]
-interface PropKit extends SceneryKit {
+export interface BackgroundModelKit extends SceneryKit {
   root: Group
   put: (mesh: Mesh, at: Point) => Mesh
   box: (size: Point, at: Point, colour?: number) => Mesh
@@ -14,7 +14,7 @@ const GOLD = 0xd7bc75
 const PAPER = 0xeee4cd
 const INK = 0x292536
 
-function propKit(kit: SceneryKit): PropKit {
+export function backgroundModelKit(kit: SceneryKit): BackgroundModelKit {
   const root = new kit.THREE.Group()
   const put = (mesh: Mesh, at: Point) => {
     mesh.position.set(...at)
@@ -44,7 +44,7 @@ function propKit(kit: SceneryKit): PropKit {
   }
 }
 
-function boat(p: PropKit): void {
+function boat(p: BackgroundModelKit): void {
   const hull = p.put(
     new p.THREE.Mesh(p.geometry(new p.THREE.ConeGeometry(0.34, 0.22, 4)), p.glow(PAPER, 1)),
     [0, 0, 0],
@@ -58,7 +58,7 @@ function boat(p: PropKit): void {
   )
   sail.scale.z = 0.08
 }
-function spider(p: PropKit): void {
+function spider(p: BackgroundModelKit): void {
   p.ball([0.13, 0.15, 0.09], [0, 0, 0], INK)
   p.ball([0.09, 0.09, 0.07], [0, 0.19, 0], INK)
   for (const side of [-1, 1])
@@ -69,14 +69,14 @@ function spider(p: PropKit): void {
   p.ball([0.02, 0.02, 0.02], [-0.035, 0.21, 0.065], GOLD)
   p.ball([0.02, 0.02, 0.02], [0.035, 0.21, 0.065], GOLD)
 }
-function card(p: PropKit): void {
+function card(p: BackgroundModelKit): void {
   p.box([0.32, 0.46, 0.025], [0, 0, 0], PAPER)
   const diamond = p.box([0.11, 0.11, 0.028], [0, 0, 0.016], 0xb64665)
   diamond.rotation.z = Math.PI / 4
   p.box([0.035, 0.055, 0.028], [-0.11, 0.16, 0.016], INK)
   p.box([0.035, 0.055, 0.028], [0.11, -0.16, 0.016], INK)
 }
-function cat(p: PropKit): void {
+function cat(p: BackgroundModelKit): void {
   p.ball([0.18, 0.21, 0.12], [0, 0, 0], INK)
   for (const side of [-1, 1]) {
     p.put(new p.THREE.Mesh(p.geometry(new p.THREE.ConeGeometry(0.1, 0.19, 3)), p.glow(INK, 1)), [
@@ -88,7 +88,7 @@ function cat(p: PropKit): void {
   }
   p.ball([0.025, 0.02, 0.02], [0, -0.04, 0.12], 0xc8788b)
 }
-function reel(p: PropKit): void {
+function reel(p: BackgroundModelKit): void {
   p.put(
     new p.THREE.Mesh(
       p.geometry(new p.THREE.CylinderGeometry(0.24, 0.24, 0.06, 24)),
@@ -101,7 +101,7 @@ function reel(p: PropKit): void {
     p.ball([0.05, 0.05, 0.02], [Math.sin(angle) * 0.14, Math.cos(angle) * 0.14, 0.032], INK)
   }
 }
-function spring(p: PropKit): void {
+function spring(p: BackgroundModelKit): void {
   const points = Array.from({ length: 97 }, (_, i) => {
     const angle = (i / 96) * Math.PI * 12
     return new p.THREE.Vector3(
@@ -120,14 +120,14 @@ function spring(p: PropKit): void {
     [0, 0, 0],
   )
 }
-function toy(p: PropKit): void {
+function toy(p: BackgroundModelKit): void {
   p.ball([0.23, 0.12, 0.11], [0, 0, 0], 0x82bbcc)
   p.ball([0.028, 0.028, 0.02], [0.13, 0.035, 0.1], INK)
   const tail = p.box([0.17, 0.1, 0.05], [-0.23, 0.05, 0], 0x82bbcc)
   tail.rotation.z = -0.5
   p.box([0.02, 0.11, 0.02], [0.08, 0.14, 0], PAPER)
 }
-function feather(p: PropKit): void {
+function feather(p: BackgroundModelKit): void {
   p.ball([0.08, 0.27, 0.025], [0, 0.03, 0])
   p.box([0.015, 0.61, 0.02], [0, -0.05, 0.025], PAPER)
   for (let i = 0; i < 5; i++) {
@@ -135,7 +135,7 @@ function feather(p: PropKit): void {
   }
   p.root.rotation.z = -0.45
 }
-function coin(p: PropKit): void {
+function coin(p: BackgroundModelKit): void {
   p.put(
     new p.THREE.Mesh(
       p.geometry(new p.THREE.CylinderGeometry(0.22, 0.22, 0.035, 24)),
@@ -145,7 +145,7 @@ function coin(p: PropKit): void {
   ).rotation.x = Math.PI / 2
   p.box([0.065, 0.09, 0.045], [0, 0, 0.01], INK)
 }
-function cup(p: PropKit): void {
+function cup(p: BackgroundModelKit): void {
   p.put(
     new p.THREE.Mesh(
       p.geometry(new p.THREE.CylinderGeometry(0.15, 0.1, 0.21, 16)),
@@ -159,7 +159,7 @@ function cup(p: PropKit): void {
   )
   p.box([0.34, 0.025, 0.29], [0, -0.12, 0])
 }
-const BUILDERS: Record<PropKind, (p: PropKit) => void> = {
+const BUILDERS: Record<PropKind, (p: BackgroundModelKit) => void> = {
   boat,
   spider,
   card,
@@ -173,7 +173,7 @@ const BUILDERS: Record<PropKind, (p: PropKit) => void> = {
 }
 
 export function buildBackgroundProp(kit: SceneryKit, kind: PropKind): Group {
-  const p = propKit(kit)
+  const p = backgroundModelKit(kit)
   BUILDERS[kind](p)
   p.root.name = `background-secret:${kind}`
   return p.root

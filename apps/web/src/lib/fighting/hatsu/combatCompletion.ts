@@ -11,12 +11,7 @@ export const gidalHatsu: FighterHatsu = {
 
 export { longhiHatsu } from './longhi'
 
-export const padailleHatsu: FighterHatsu = {
-  id: 'padaille',
-  onTrigger: ({ state, side }) => setEffect(state, side, { key: 'weaponFrames', value: 180 }),
-  onImpact: unchangedImpact,
-  onFrame: (state) => tickState(state, 'weaponFrames'),
-}
+export { padailleHatsu } from './padaille'
 
 export const tubeppaHatsu: FighterHatsu = {
   id: 'tubeppa',
@@ -47,7 +42,7 @@ export const tysonHatsu: FighterHatsu = {
 export { voconteHatsu } from './voconte'
 
 type TimedKey =
-  'gidalCurseFrames' | 'weaponFrames' | 'synthesisFrames' | 'eyeWogFrames'
+  'gidalCurseFrames' | 'synthesisFrames' | 'eyeWogFrames'
 
 function setEffect(
   state: FightState,

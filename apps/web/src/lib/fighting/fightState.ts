@@ -166,7 +166,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     smokeFrames: 0,
     coinCharges: 0,
     gidalCurseFrames: 0,
-    weaponFrames: 0,
     synthesisFrames: 0,
     eyeWogFrames: 0,
     witnessedHatsu: null,

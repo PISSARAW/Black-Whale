@@ -900,3 +900,34 @@ Skill Hunter conserve les seuils seulement avec une page active ; Stealth Dolphi
 reste occupé jusqu’à la fermeture de son réseau puis rend la capacité. Les
 prévisions de Parallel Future incluent l’état des portes. Chaque manche le
 réinitialise. `voconte.test.ts` couvre le moteur, les copies et les cadres 3D.
+
+### Padaille : trois outils choisis sur la main droite
+
+`padailleMoveset.ts` conserve les coups physiques ordinaires et les trois formes
+montrées au chapitre 391 : **L : marteau**, **avant + L : foret**, **bas + L : hache**.
+Chaque commande transforme la main droite et engage une frappe physique de l’outil
+choisi. **Arrière + L** rétablit la main normale, sans attaque ni dépense d’aura.
+Le choix est direct et ne consulte aucun tirage aléatoire. Les quatre gestes ont
+une préparation et une récupération : aucun changement gratuit pendant un coup.
+
+`padailleWeapon.ts` mémorise l’outil au démarrage réel du coup, jamais lors de sa
+mise en buffer. Marteau, foret et hache ont des rythmes et portées distincts ; la
+garde, la distance et l’interruption continuent à compter. Le foret ne traverse
+pas automatiquement une garde et la hache ne garantit ni mutilation ni mort.
+Les coûts de 20 aura par frappe, timings, dégâts et portées sont des réglages
+arcade. L’outil reste en place jusqu’au changement, au retour à la main normale
+ou à la perte du Nen ; aucun délai canonique de trois secondes n’est inventé.
+
+`padailleFigure.ts` remplace visuellement la seule main droite par l’outil connecté
+au poignet. `padaillePoses.ts` anime ce même bras dans les deux orientations.
+Aucun bonus général ne renforce les autres coups. Faux, hache de jambe, lance,
+canon corporel, bouclier, plaque blindée, foreuse souterraine, étau organique et
+« Arme ultime · Mise à mort » sont retirés du moveset et de ses conditions.
+
+Une page copiée représente la frappe au marteau et demande la main droite libre :
+Chrollo doit conserver la page au signet et fermer son livre. Stealth Dolphin
+exécute la technique effectivement retenue, conserve l’outil pendant cet usage
+et peut rétablir la main avant de rendre la capacité. Les deux copies conservent
+les frappes physiques, sans bonus général. La manche suivante efface la forme.
+`padaille.test.ts` vérifie choix, collisions, garde, interruption, buffer, copies,
+perte du Nen et position des modèles sur le bras droit.

@@ -1,3 +1,5 @@
+import { padailleKeyedMove } from './padaillePoses'
+import { animatePadailleWeapon } from './padailleFigure'
 import { biohazardBodyPlan } from './biohazardPresentation'
 import { bonolenovDancePlan } from './bonolenovPoses'
 import { pluggingWoundsPlan } from './blinkyPose'
@@ -97,6 +99,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
     const anchor = plan.plant ? captureFootPlant(rig) : null
     const drawn = blended(rig, plan, seconds)
     applyFightPose(rig, drawn, fighter.facing)
+    animatePadailleWeapon(human.figure, fighter, seconds)
     animateCyclotron(rig, fighter)
     if (anchor) plantFeet(rig, { anchor, root: drawn.root, facing: fighter.facing })
   }
@@ -196,6 +199,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
 
 function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
   return (
+    padailleKeyedMove(fighter) ??
     musseKeyedMove(fighter) ??
     chrolloKeyedMove(fighter) ??
     benjaminKeyedMove(fighter) ??

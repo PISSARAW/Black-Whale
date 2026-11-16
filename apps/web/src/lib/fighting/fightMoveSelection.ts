@@ -19,7 +19,7 @@ export function routedFightMove(
   fighter: ArcadeFighter,
   selected: FighterMove | null,
 ): FighterMove | null {
-  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov'].includes(fighter.id)) return selected
+  if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id)) return selected
   if (fighter.id === 'shizuku') return selected
   const current = moveById(fighter.attack?.moveId)
   return (

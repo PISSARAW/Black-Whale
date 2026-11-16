@@ -144,6 +144,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
   const fighter = state[side]
   return {
     'cross-game': state[side === 'player' ? 'opponent' : 'player'].crossGame?.owner === side,
+    'padaille-weapon': Boolean(fighter.padailleTool),
     predator: predatorBusy(fighter),
     'needle-puppet': ownsNeedlePuppet(state, side),
     cyclotron: cyclotronBusy(fighter),

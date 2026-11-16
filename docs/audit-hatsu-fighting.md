@@ -115,7 +115,7 @@ une vérification dans le manga avant d'être corrigés.
 | Beyond          | Malédiction : −15 aura, ×1,2 reçus | Malédiction posthume liée à un sacrifice préparé                                             | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Longhi | Contrat volontaire, prêt à usage unique et sanction de Zetsu | Moonlight Act : termes expliqués et deux signatures volontaires (ch. 401) | D (fait) | Corrigé le 2026-11-16 : proposition, acceptation ou refus explicites ; aucune entrave sur touche ni finisher offensif. Les deux signataires subissent Zetsu en cas de violation. La trêve de cinq secondes et la sanction limitée au match sont des adaptations déclarées. |
 | Musse | Pistolet et surveillance privée | Secret Window : hibou espion | D (fait) | Pistolet physique et surveillance au contact, sans dégâts ni esquive. |
-| Padaille        | ×1,25 dégâts pendant 3 s           | Bras-outil **au hasard** : marteau, foret ou hache                                           | B        | Piste simple : tirage déterministe de l'outil, trois effets distincts. |
+| Padaille | Marteau, foret et hache de la main droite, choisis directement | Trois transformations montrées au chapitre 391 ; aucun hasard attesté | Corrigé | Bonus général, armes non attestées et finisher retirés. Coûts et frappes adaptés au duel. |
 | Sayird          | Martial ; Little Eye retenable par Steal Chain | Contrôle un petit animal réel (jusqu’au hamster), partage vue et ouïe ; exclut les créatures matérialisées par le Nen | D (fait) | Corrigé le 2026-11-16 : Little Eye distinct des coups, volable par Kurapika, sans cible ni effet inventé en duel. |
 | Silent Majority | 3 marques → 22 dégâts              | Dix suspects, quatre serpents, retour si révoqué sans victime                                | Retiré   | Retiré du roster le 2026-11-16 : aucune aptitude martiale connue.      |
 | Terebellum      | Transfert réel des blessures       | Sweet Home : **transfère** les dégâts par contact simultané                                  | D (fait) | Corrigé le 2026-11-16 : contacts de mains vérifiés pendant les frames actives ; gauche seule pour ses blessures, droite et gauche pour celles d’autrui ; sans réceptacle, l’absorption à droite blesse sa main gauche. Coups et projectiles conservent les dégâts, sans esquive gratuite. Portée et coups porteurs restent des abstractions du duel. |
@@ -146,7 +146,7 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~, ~~Hanzo~~ (faits), ~~Gel~~, ~~Longhi~~, ~~Yokotani~~ (fait).
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
-5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), ~~Basho (trois
+5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), ~~Padaille (outils choisis)~~ (fait), ~~Basho (trois
    vers)~~ (fait), ~~Leorio (poing par le sol)~~ (fait), ~~Phinks (rotations et poing droit)~~ (fait), ~~Terebellum (transfert)~~ (fait).
 6. **Les C** : remplacer chaque bonus générique par l'effet de la fiche, ou l'étiqueter
    `gameplay-abstraction` dans le contrat.

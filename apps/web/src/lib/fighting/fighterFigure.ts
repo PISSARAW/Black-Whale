@@ -1,3 +1,4 @@
+import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey, battleNeedsSkin } from './bonolenovFigure'
 import { battleAppearance } from './battleCantabileRules'
@@ -91,6 +92,7 @@ function addFighterEquipment(
   model: ReturnType<typeof buildHumanFigure>,
 ): void {
   const { THREE, glow, fighter } = options
+  if (['padaille', 'chrollo', 'kurapika'].includes(fighter.id)) addPadailleWeapon({ THREE, glow, model })
   if (fighter.id === 'franklin') {
     shapeFranklinFigure({ THREE, glow, model })
     addFranklinHands({ THREE, glow, model })

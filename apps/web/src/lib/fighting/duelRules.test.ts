@@ -44,10 +44,10 @@ describe('duel rules', () => {
   it('rejects Hatsu effects with no aura or while stunned', () => {
     const state = beginFight(createFight('padaille', 'hisoka'))
     state.player.aura = 0
-    expect(performAttack(state, 'player', 'special').player.hatsuEffects.weaponFrames).toBe(0)
+    expect(performAttack(state, 'player', 'special').player.padailleTool).toBeUndefined()
     state.player.aura = 100
     state.player.hitStun = 10
-    expect(performAttack(state, 'player', 'special').player.hatsuEffects.weaponFrames).toBe(0)
+    expect(performAttack(state, 'player', 'special').player.padailleTool).toBeUndefined()
   })
   it('trades simultaneous strikes, including a double KO', () => {
     let state = close()
@@ -101,11 +101,11 @@ describe('duel rules', () => {
     let state = beginFight(createFight('padaille', 'kurapika'))
     state.player.hitStun = 3
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
+    expect(state.player.padailleTool).toBeUndefined()
     state = step(state, 3)
-    expect(state.player.hatsuEffects.weaponFrames).toBeGreaterThan(0)
+    expect(state.player.padailleTool).toBe('hammer')
     expect(state.player.attack?.kind).toBe('special')
-    expect(state.player.aura).toBeLessThan(16)
+    expect(state.player.aura).toBeLessThan(36)
   })
   it('does not cancel on whiff or block', () => {
     const whiff = performAttack(close(), 'player', 'light')
@@ -146,10 +146,10 @@ describe('duel rules', () => {
     let state = beginFight(createFight('padaille', 'kurapika'))
     state.player.hitStun = 3
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
+    expect(state.player.padailleTool).toBeUndefined()
     state.player.aura = 0
     state = step(state, 4)
     expect(state.player.attack).toBeNull()
-    expect(state.player.hatsuEffects.weaponFrames).toBe(0)
+    expect(state.player.padailleTool).toBeUndefined()
   })
 })

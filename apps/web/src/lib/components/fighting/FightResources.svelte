@@ -6,6 +6,7 @@
   import FightMachiStatus from './FightMachiStatus.svelte'
   import FightCyclotronStatus from './FightCyclotronStatus.svelte'
   import FightMelodyStatus from './FightMelodyStatus.svelte'
+  import FightPadailleStatus from './FightPadailleStatus.svelte'
   import FightCrossGameStatus from './FightCrossGameStatus.svelte'
   import FightNenReadout from './FightNenReadout.svelte'
   import type { FightInput } from '$lib/fighting/types'
@@ -66,6 +67,7 @@
       <FightGrudge {fighter} {language} />
       <FightCyclotronStatus {fighter} {language} {side} />
       <FightCrossGameStatus {fighter} {language} />
+      <FightPadailleStatus {fighter} {language} />
       <FightMelodyStatus {state} {side} {language} />
       <FightCamillaStatus {fighter} {language} />
       <FightBiohazardStatus {state} {side} {language} />

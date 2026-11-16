@@ -83,7 +83,7 @@ describe('wave one movesets', () => {
       'terebellum',
       'voconte',
     ])
-    WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte'].includes(id)).forEach(
+    WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte', 'padaille'].includes(id)).forEach(
       assertCompleteMoveset,
     )
   })
@@ -206,7 +206,7 @@ describe('wave one movesets', () => {
     } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
   })
 
-  it.each(WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte'].includes(id)))(
+  it.each(WAVE_FOUR_FIGHTERS.filter((id) => !['musse', 'longhi', 'voconte', 'padaille'].includes(id)))(
     '%s wave-four finisher is conditionally locked',
     (fighterId) => {
       const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -375,8 +375,6 @@ function withFinisherCondition(state: FightState): FightState {
       return { ...state, opponent: { ...opponent, health: 40 } }
     case 'beyond':
       return { ...state, player: { ...player, health: 40 } }
-    case 'padaille':
-      return withPlayerEffect(state, 'weaponFrames', 60)
     case 'sayird':
       return { ...state, player: { ...player, comboHits: 2 } }
     case 'terebellum':

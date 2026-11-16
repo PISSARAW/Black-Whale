@@ -23,7 +23,6 @@ const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   fugetsu: ['wormDodges'],
   kacho: ['kachoGuards'],
   zhanglei: ['coinCharges'],
-  padaille: ['weaponFrames'],
   tubeppa: ['synthesisFrames'],
 }
 const TARGET_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
@@ -88,6 +87,7 @@ function clearPageEffects(options: {
 }
 
 function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
+  if (page === 'padaille') return { ...fighter, padailleTool: undefined }
   return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
 }
 

@@ -1,3 +1,4 @@
+import { releasePadailleWeapon } from './padailleWeapon'
 import { illumiBodyFree } from './illumiState'
 import { borrowedDoorActive } from './voconteDoorState'
 import { finishBorrowedMary } from './bloodyMaryAi'
@@ -190,7 +191,7 @@ function dolphinAction(options: AuraAttackOptions, perform: PerformAttack): Figh
       },
     }
   if (held.used) {
-    const detached = endDolphinEffect(options, perform)
+    const detached = releasePadailleWeapon(state, side) ?? endDolphinEffect(options, perform)
     return dolphinIsBusy(detached, side, held) ? detached : returnChainAbility(detached, side)
   }
   return useDolphin(options, perform)

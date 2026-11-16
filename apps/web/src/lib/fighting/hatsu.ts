@@ -106,9 +106,8 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {
-  const weapon = fighter.hatsuEffects.weaponFrames > 0 ? 1.25 : 1
   const synthesis = fighter.hatsuEffects.synthesisFrames > 0 ? 1.12 : 1
-  return weapon * synthesis
+  return synthesis
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {

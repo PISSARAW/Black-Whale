@@ -1,3 +1,4 @@
+import type { PadailleTool } from './padailleWeapon'
 import type { IllumiState, NeedlePuppet } from './illumiState'
 import type { BlinkyState } from './blinky'
 import type { CrossGameState } from './crossGame'
@@ -130,6 +131,7 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  padailleTool?: PadailleTool
   illumi?: IllumiState
   needlePuppet?: NeedlePuppet
   equipment?: ('blood-infusion' | 'book' | 'flute' | 'needles')[]
@@ -291,7 +293,6 @@ export interface FighterHatsuEffects {
   smokeFrames: number
   coinCharges: number
   gidalCurseFrames: number
-  weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
   /** Set once the Hatsu was activated in front of this fighter. */

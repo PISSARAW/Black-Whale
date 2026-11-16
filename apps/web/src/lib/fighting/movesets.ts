@@ -1,3 +1,4 @@
+import { padailleMoveAvailable } from './padailleWeapon'
 import { illumiBodyFree } from './illumiState'
 import { illumiResources } from './illumiAccess'
 import { illumiMoveReadiness } from './illumiPresentation'
@@ -214,6 +215,7 @@ function ordinaryMoveResources(fighter: ArcadeFighter, move: FighterMove): boole
 }
 
 function remainingMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (move.kind === 'special' && !padailleMoveAvailable(fighter, move.id)) return false
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
@@ -325,7 +327,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,
-  padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
 }

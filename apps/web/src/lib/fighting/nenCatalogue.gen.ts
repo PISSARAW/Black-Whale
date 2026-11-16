@@ -31,7 +31,7 @@ export const FIGHT_NEN_PROFILES: Readonly<Record<string, { affinity: NenCategory
   "melody": {"affinity":"emitter","abilities":["melody-enchanting-music"]},
   "mizaistom": {"affinity":"unknown","abilities":["cross-game"]},
   "musse": {"affinity":"unknown","abilities":["secret-window"]},
-  "padaille": {"affinity":"unknown","abilities":["padaille-weapon-transformation"]},
+  "padaille": {"affinity":"conjurer","abilities":["padaille-weapon-transformation"]},
   "phinks": {"affinity":"enhancer","abilities":["ripper-cyclotron"]},
   "rihan": {"affinity":"unknown","abilities":["rihan-predator"]},
   "saiyu": {"affinity":"unknown","abilities":["saiyu-priest-staff","saiyu-three-monkeys"]},

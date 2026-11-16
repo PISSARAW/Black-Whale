@@ -1,3 +1,4 @@
+import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
 import { battleUtilityAttack } from './bonolenovMoveset'
 import { blinkyAttackData } from './blinkyAction'
@@ -239,6 +240,7 @@ function utilityAttack(fighter: ArcadeFighter): boolean {
     benjaminUtilityMove,
     feitanUtilityMove,
     usesRemotePunch,
+    padailleUtilityAttack,
     machiUtilityMove,
   ].some((check) => check(fighter))
 }

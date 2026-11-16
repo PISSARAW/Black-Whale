@@ -47072,6 +47072,13 @@
     "canonicalName": "Padaille",
     "aliases": [],
     "description": "Mafioso ; Demolition Worker. Heil-Ly Family.",
+    "nen": {
+      "type": "conjurer",
+      "typeLabel": "Conjuration",
+      "confirmed": true,
+      "overview": "Chapter 391 identifies Padaille as a Conjurer and shows his right hand transforming into a hammer, drill and axe.",
+      "abilityIds": ["padaille-weapon-transformation"]
+    },
     "factionId": "mafia-heilly",
     "firstAppearanceChapterId": "ch-378",
     "canonStatus": "canon",
@@ -47095,10 +47102,13 @@
         "note": "Combat contre Hinrigh"
       }
     ],
-    "modifiedAt": "2026-11-13",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
         "chapterId": "ch-378"
+      },
+      {
+        "chapterId": "ch-391"
       }
     ]
   },

@@ -641,13 +641,13 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDefenceFactor(synthesis.player)).toBeLessThan(1)
   })
 
-  it('arms Padaille while Voconte gains no automatic dodge', () => {
+  it('never gives Padaille a generic damage buff or Voconte an automatic dodge', () => {
     const armed = hatsuFor('padaille').onTrigger({
       state: closeFight('padaille', 'hisoka'),
       side: 'player',
       source: 'padaille',
     })
-    expect(hatsuDamageFactor(armed.player)).toBeGreaterThan(1)
+    expect(hatsuDamageFactor(armed.player)).toBe(1)
     for (const source of ['voconte'] as const) {
       const state = hatsuFor(source).onTrigger({
         state: closeFight(source, 'hisoka'),

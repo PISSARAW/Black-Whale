@@ -75,7 +75,7 @@ export const FIGHTER_NEN_CATEGORIES: Readonly<Record<FighterId, NenCategory>> = 
   gidal: 'unknown',
   longhi: 'unknown',
   musse: 'unknown',
-  padaille: 'unknown',
+  padaille: 'conjurer',
   tubeppa: 'unknown',
   tyson: 'unknown',
   sayird: 'emitter',

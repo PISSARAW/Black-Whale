@@ -1,42 +1,7 @@
+import { padailleMoveset } from './padailleMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
-  {
-    fighterId: 'padaille',
-    mechanic: [
-      'I’m Coming to Get You : son bras droit devient une arme adaptée à chaque distance.',
-      'I’m Coming to Get You: his right arm becomes a weapon adapted to each range.',
-    ],
-    finisherCondition: [
-      'La transformation de son bras-arme doit être active.',
-      'His weapon-arm transformation must be active.',
-    ],
-    labels: [
-      'Poing-lame|Blade Fist',
-      'Marteau corporel|Body Hammer',
-      'Faux rasante|Low Scythe',
-      'Hache de jambe|Leg Axe',
-      'Lance aérienne|Aerial Spear',
-      'Masse plongeante|Diving Mace',
-      'Charge baïonnette|Bayonet Charge',
-      'Canon corporel|Body Cannon',
-      'Bouclier d’avant-bras|Forearm Shield',
-      'I’m Coming to Get You|I’m Coming to Get You',
-      'Arsenal instantané|Instant Arsenal',
-      'Foreuse souterraine|Underground Drill',
-      'Plaque blindée|Armored Plate',
-      'Étau organique|Organic Vice',
-      'Arme ultime · Mise à mort|Ultimate Weapon · Execution',
-    ],
-    speed: 0.96,
-    power: 1.12,
-    reach: 1.8,
-    combos: [
-      ['standingLight', 'standingHeavy', 'neutralSpecial'],
-      ['lowLight', 'forwardHeavy', 'downSpecial'],
-      ['airLight', 'airHeavy', 'forwardSpecial'],
-    ],
-  },
   {
     fighterId: 'sayird',
     mechanic: [
@@ -147,4 +112,4 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_FOUR_MOVESETS_B = SPECS.map(buildMoveset)
+export const WAVE_FOUR_MOVESETS_B = [padailleMoveset(), ...SPECS.map(buildMoveset)]

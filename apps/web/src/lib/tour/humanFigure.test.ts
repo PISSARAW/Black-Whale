@@ -3,6 +3,7 @@ import { MeshBasicMaterial, MeshPhysicalMaterial } from 'three'
 import * as THREE from 'three'
 import type { Apparition } from './apparitions'
 import { buildHumanFigure } from './humanFigure'
+import type { HumanAnimationLayer } from './humanAnimation'
 import type { AuraSight } from './auraSight'
 import { auraFor, CALM } from './cast/nen'
 import type { CastMember, CastNenProfile, Post } from './cast/types'
@@ -14,6 +15,38 @@ const glass = (worn: { ior: number; thickness: number; roughness: number }) =>
   new MeshPhysicalMaterial({ transmission: 1, ...worn })
 
 describe('shared human figure', () => {
+  it('forwards locomotion poses and combat motion to the articulated rig', () => {
+    const seen: Apparition & { kind: 'combatant' } = {
+      id: 'combatant-animation',
+      kind: 'combatant',
+      spaceId: 'black-whale-clash',
+      tierId: 'arcade-stage',
+      at: [0, 0],
+      y: 0,
+      size: 1,
+      colour: 0xd8b49a,
+      stage: 0,
+      hidden: false,
+      human: { role: 'fighter', pose: 'idle', aura: 'none' },
+    }
+    const human = buildHumanFigure({ THREE, glow, seen })
+    const hip = human.root.getObjectByName('hip-left')!
+    const shoulder = human.root.getObjectByName('shoulder-left')!
+
+    human.animate(0.3, 'walk')
+    expect(Math.abs(hip.rotation.x)).toBeGreaterThan(0.3)
+
+    const strike: HumanAnimationLayer = {
+      transitionKey: 'light:test',
+      motion: (rig) => {
+        rig.arms[0].rotation.x = -1.25
+      },
+    }
+    human.animate(0.5, 'idle', strike)
+    human.animate(0.61, 'idle', strike)
+    expect(shoulder.rotation.x).toBeCloseTo(-1.25)
+  })
+
   it('draws Morena as one seated silhouette at the negotiation table', () => {
     const seen: Apparition & { kind: 'avatar' } = {
       id: 'morena-dealer-human',

@@ -90,6 +90,8 @@
   import { advanceDynamicEvents } from '$lib/tour/simulation/events'
   import { pressureWitnesses, systemicNenWitnesses } from '$lib/tour/simulation/nenWitnesses'
   import { nenSimulationFor } from '$lib/tour/simulation/nenSession'
+  import { ensureNenPilotZone } from '$lib/tour/simulation/nenEnvironment'
+  import TourNenProfilePanel from '$lib/components/tour/TourNenProfilePanel.svelte'
   import type { PageData } from './$types'
 
   // The walk is no longer only a ship: the server hands it the cast of the
@@ -456,6 +458,7 @@
       spaceId: currentSpace?.id,
     })
     if (!simulation) return
+    simulation = ensureNenPilotZone(simulation)
     hatsuSession.nen = simulation.player.nen
     hatsuSession.reserve = simulation.player.aura
     previousPressure = hatsuSession.nen.on ? 'on' : hatsuSession.nen.mode === 'ren' ? 'ren' : 'none'
@@ -1211,6 +1214,15 @@
     {/snippet}
   </TourPageStage>
 </TourWorkspace>
+
+{#if simulation}
+  <TourNenProfilePanel
+    {simulation}
+    spaceId={currentSpace?.id ?? null}
+    {french}
+    onChange={(next) => (simulation = next)}
+  />
+{/if}
 
 <TourPageDialogs
   bind:dialog={chrome.planDialog}

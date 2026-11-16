@@ -59,8 +59,8 @@
     {#if ability.alternateNames?.length}
       <p class="aliases">{ability.alternateNames.join(' · ')}</p>
     {/if}
-    <p class="answer">{ability.description}</p>
-    {#if profile}
+    <p class="answer">{data.catalogueCapped ? $t.discovery.ability.capped : ability.description}</p>
+    {#if profile && !data.catalogueCapped}
       <button type="button" onclick={() => activateHatsu(profile)} data-hatsu-pass>
         {$t.discovery.ability.activate} →
       </button>

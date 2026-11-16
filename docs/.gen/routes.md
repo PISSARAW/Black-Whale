@@ -23,6 +23,16 @@
 | `compare` | `+page.server.ts`, `+page.svelte` |
 | `consciousness/[id]` | `+page.server.ts`, `+page.svelte` |
 | `events/[slug]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
+| `fighting` | `+page.server.ts`, `+page.svelte`, `battleCallbacks.ts`, `fighting.css`, `fightingControls.ts`, `fightingCopy.ts`, `fightingEvents.ts`, `fightingKeyboard.ts`, `fightingKeys.ts`, `fightingMatch.css`, `fightingPageHelpers.ts`, `fightingQueuedActions.ts` |
+| `fighting/profile` | `+page.svelte` |
+| `fighting/profile/api` | `+server.ts` |
+| `fighting/pvp` | `+page.svelte`, `PvpDuel.svelte`, `pvp.css` |
+| `fighting/pvp/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/pvp/api/matches` | `+server.ts` |
+| `fighting/pvp/api/matches/[matchId]` | `+server.ts` |
+| `fighting/pvp/watch/[matchId]` | `+page.svelte`, `+page.ts` |
+| `fighting/teams` | `+page.svelte` |
+| `fighting/tournament` | `+page.svelte` |
 | `health` | `+server.ts` |
 | `hunt` | `+page.svelte` |
 | `hunt/editor` | `+page.svelte` |
@@ -32,6 +42,7 @@
 | `investigation/[caseId]` | `+page.server.ts`, `+page.svelte`, `page.server.test.ts` |
 | `knowledge/[character]` | `+page.server.ts`, `+page.svelte` |
 | `llms.txt` | `+server.ts`, `server.test.ts` |
+| `nen-archive` | `+page.svelte`, `archive-details.css`, `archive-layout.css`, `archive-responsive.css` |
 | `perspectives` | `+page.server.ts`, `+page.svelte` |
 | `perspectives/[character]` | `+page.server.ts`, `+page.svelte` |
 | `reconstruction` | `+page.server.ts`, `+page.svelte` |
@@ -41,6 +52,7 @@
 | `reconstruction/v3/run` | `+server.ts` |
 | `relationships` | `+page.server.ts`, `+page.svelte` |
 | `robots.txt` | `+server.ts` |
+| `search` | `+server.ts`, `server.test.ts` |
 | `ship` | `+layout.server.ts`, `+page.server.ts`, `+page.svelte`, `ship.css`, `shipController.svelte.ts`, `shipData.ts`, `shipDelta.test.ts`, `shipDelta.ts`, `shipPage.server.test.ts`, `shipPage.server.ts`, `shipUrlState.test.ts`, `shipUrlState.ts` |
 | `simulations` | `+page.server.ts`, `+page.svelte`, `morena.server.ts` |
 | `sitemap.xml` | `+server.ts`, `server.test.ts` |

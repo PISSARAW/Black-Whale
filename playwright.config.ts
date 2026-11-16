@@ -10,6 +10,7 @@ process.env.BLACK_WHALE_E2E_RUN_ID = RUN_ID
 const PORT_OFFSET = Number(RUN_ID) % 1_000
 const WEB_PORT = 4_200 + PORT_OFFSET * 2
 const ADMIN_PORT = WEB_PORT + 1
+process.env.BLACK_WHALE_E2E_ADMIN_URL = `http://127.0.0.1:${ADMIN_PORT}`
 const WEB_OUTPUT = `build-e2e-${RUN_ID}`
 const SVELTE_OUTPUT = `.svelte-kit-e2e-${RUN_ID}`
 
@@ -19,6 +20,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin'
 
 export default defineConfig({
   testDir: './tests',
+  testIgnore: '**/*.production.spec.ts',
   // 30s was under the cost of the thing being tested. The suite runs against
   // the dev server, which transforms modules on demand, and a cold load of the
   // heavy pages measures 13–19s on its own — so a test that then had to click

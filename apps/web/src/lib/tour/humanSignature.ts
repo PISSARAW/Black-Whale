@@ -1,6 +1,9 @@
+import { MANGA_FACE_SIGNATURES } from './mangaFaceTraits'
+import type { Placed } from './humanSignatureGarments'
 import type { BufferGeometry, Group, Material, Object3D } from 'three'
+import { buildKakinCrown } from './humanKakinRoyal'
 import type { Attire, Signature } from './humanProfiles'
-import { buildKakinCrown, buildKakinRobe } from './humanKakinRoyal'
+import { GARMENTS, type Hang, type Piece } from './humanSignatureGarments'
 
 type Three = typeof import('three')
 type Geometry = (THREE: Three, key: string, make: () => BufferGeometry) => BufferGeometry
@@ -30,37 +33,16 @@ export interface HumanSignatureBuild {
   /** Where a piece can hang: the head, the trunk, and the right hand. */
   parts: { figure: Group; head: Group; arms: readonly Object3D[]; rightHand: Object3D }
   materials: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
-  worn: { signatures: readonly Signature[]; attire: Attire }
+  worn: { signatures: readonly Signature[]; attire: Attire; manga?: boolean }
 }
 
 /** A piece placed on one of the three mounts, in that mount's own space. */
-interface Placed {
-  key: string
-  make: () => BufferGeometry
-  material: Material
-  at: [number, number, number]
-  turn?: [number, number, number]
-  scale?: [number, number, number]
-  name?: string
-}
-
-interface Hang {
-  THREE: Three
-  head: (shape: Placed) => void
-  body: (shape: Placed) => void
-  arms: (shape: Placed) => void
-  hand: (shape: Placed) => void
-  paint: { ink: Material; skin: Material; accent: Material; cloth: Material; dark: Material }
-}
-
-type Piece = (hang: Hang) => void
-
 const PIECES: Record<Signature, Piece> = {
   'glasses-round': ({ THREE, head, paint }) => {
     for (const side of [-1, 1]) {
       head({
         key: 'sig:lens-round',
-        make: () => new THREE.TorusGeometry(0.042, 0.008, 4, 10),
+        make: () => new THREE.TorusGeometry(0.042, 0.0045, 6, 24),
         material: paint.ink,
         at: [side * 0.062, 0.018, 0.188],
       })
@@ -280,14 +262,56 @@ const PIECES: Record<Signature, Piece> = {
   },
 
   flute: ({ THREE, body, paint }) => {
-    body({
+    const flute = body({
       key: 'sig:flute',
-      make: () => new THREE.CylinderGeometry(0.014, 0.014, 0.3, 6),
-      material: paint.dark,
+      make: () => new THREE.CylinderGeometry(0.015, 0.015, 0.38, 12),
+      material: paint.accent,
       at: [0.19, 0.84, 0.1],
       turn: [0, 0, 1.35],
       name: 'signature-flute',
     })
+    const child = (shape: Placed, at: [number, number, number]) => {
+      const part = body({ ...shape, at: [0, 0, 0] })
+      flute.add(part)
+      part.position.set(...at)
+      return part
+    }
+    child(
+      {
+        key: 'sig:flute-embouchure',
+        make: () => new THREE.TorusGeometry(0.022, 0.005, 5, 12),
+        material: paint.dark,
+        at: [0, 0, 0],
+        turn: [Math.PI / 2, 0, 0],
+        name: 'signature-flute-embouchure',
+      },
+      [0, -0.135, 0],
+    )
+    for (const end of [-0.19, 0.19]) {
+      child(
+        {
+          key: 'sig:flute-joint',
+          make: () => new THREE.TorusGeometry(0.0165, 0.003, 4, 10),
+          material: paint.dark,
+          at: [0, 0, 0],
+          turn: [Math.PI / 2, 0, 0],
+        },
+        [0, end, 0],
+      )
+    }
+    for (let index = 0; index < 6; index++) {
+      child(
+        {
+          key: 'sig:flute-key',
+          make: () => new THREE.CylinderGeometry(0.014, 0.014, 0.006, 8),
+          material: paint.dark,
+          at: [0, 0, 0],
+          turn: [Math.PI / 2, 0, 0],
+          name: `signature-flute-key-${index}`,
+        },
+        [0, -0.075 + index * 0.045, 0.017],
+      )
+    }
   },
 
   /** Rings down the limbs and the trunk: the whole of what Bonolenov shows. */
@@ -366,62 +390,6 @@ const PIECES: Record<Signature, Piece> = {
  * exists to stop. They are drawn here rather than in `humanCostume.ts` for the
  * same reason the pieces are: that file is full.
  */
-const GARMENTS: Partial<Record<Attire, Piece>> = {
-  changshan: ({ THREE, body, paint }) => {
-    body({
-      key: 'attire:changshan',
-      make: () => new THREE.CylinderGeometry(0.23, 0.28, 1.13, 8),
-      material: paint.cloth,
-      at: [0, 0.615, 0],
-      name: 'attire-changshan',
-    })
-    // The standing collar is the difference between this and a dressing gown.
-    body({
-      key: 'attire:mandarin-collar',
-      make: () => new THREE.CylinderGeometry(0.13, 0.15, 0.13, 8, 1, true),
-      material: paint.cloth,
-      at: [0, 1.48, 0],
-    })
-    for (let i = 0; i < 4; i++) {
-      body({
-        key: 'attire:frog',
-        make: () => new THREE.SphereGeometry(0.016, 5, 4),
-        material: paint.accent,
-        at: [0.08, 1.32 - i * 0.11, 0.19],
-      })
-    }
-  },
-
-  kimono: ({ THREE, body, paint }) => {
-    body({
-      key: 'attire:kimono',
-      make: () => new THREE.CylinderGeometry(0.24, 0.34, 1.25, 7),
-      material: paint.cloth,
-      at: [0, 0.545, 0],
-      name: 'attire-kimono',
-    })
-    // Crossed front, left over right, and the obi that holds it shut.
-    for (const side of [-1, 1]) {
-      body({
-        key: 'attire:lapel-cross',
-        make: () => new THREE.PlaneGeometry(0.12, 0.34),
-        material: paint.dark,
-        at: [side * 0.06, 1.22, 0.183],
-        turn: [0, 0, side * 0.36],
-      })
-    }
-    body({
-      key: 'attire:obi',
-      make: () => new THREE.CylinderGeometry(0.26, 0.26, 0.16, 8),
-      material: paint.accent,
-      at: [0, 1.0, 0],
-      name: 'attire-obi',
-    })
-  },
-
-  'kakin-robe': buildKakinRobe,
-}
-
 export function addHumanSignatures({
   THREE,
   geometry,
@@ -443,6 +411,7 @@ export function addHumanSignatures({
       // would be the walk asserting a technique nobody used.
       if (name?.startsWith('signature-chain')) mesh.visible = false
       target.add(mesh)
+      return mesh
     }
 
   const hang: Hang = {
@@ -454,6 +423,9 @@ export function addHumanSignatures({
     paint: materials,
   }
 
-  GARMENTS[worn.attire]?.(hang)
-  for (const piece of worn.signatures) PIECES[piece](hang)
+  if (!worn.manga || worn.attire === 'kakin-robe') GARMENTS[worn.attire]?.(hang)
+  for (const piece of worn.signatures) {
+    if (worn.manga && (MANGA_FACE_SIGNATURES.has(piece) || piece === 'fur-collar')) continue
+    PIECES[piece](hang)
+  }
 }

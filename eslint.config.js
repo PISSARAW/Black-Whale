@@ -24,6 +24,8 @@ export default tseslint.config(
       '**/dist/**',
       '**/build/**',
       '**/.svelte-kit/**',
+      'apps/*/.svelte-kit-e2e-*/**',
+      'apps/*/build-e2e-*/**',
       '**/.turbo/**',
       '**/*.tsbuildinfo',
       'apps/*/vite.config.ts.timestamp-*.mjs',

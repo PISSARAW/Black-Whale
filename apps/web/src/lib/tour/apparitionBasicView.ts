@@ -1,3 +1,4 @@
+import { buildCrossGameCard } from './crossGameCardModel'
 import type { Group, MeshBasicMaterial, Object3D } from 'three'
 import type { Apparition } from './apparitions'
 import type { CardFace } from './morena'
@@ -100,10 +101,7 @@ function human(
 
 function card(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   for (let index = 0; index < Math.max(1, seen.stage); index++) {
-    const face = new THREE.Mesh(
-      new THREE.PlaneGeometry(seen.size, seen.size * 1.5),
-      glow([0x4d8ff0, 0xf0c94d, 0xe5484d][Math.min(2, index)], 0.9),
-    )
+    const face = buildCrossGameCard(THREE, { size: seen.size, index, glow })
     face.position.set(index * seen.size * 0.28, index * seen.size * 0.12, index * 0.01)
     face.rotation.z = (index - 1) * 0.16
     root.add(face)

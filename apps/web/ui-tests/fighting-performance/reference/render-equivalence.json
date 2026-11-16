@@ -1,0 +1,90 @@
+[
+  {
+    "fighter": "kurapika",
+    "frame": 90,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.0013576805524111387,
+    "over1": 0.000008136178401630065,
+    "over8": 0.000002829975096219153,
+    "max": 41,
+    "pass": true
+  },
+  {
+    "fighter": "kurapika",
+    "frame": 645,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.023619679646819106,
+    "over1": 0.005427892234548336,
+    "over8": 0.0000725181118406158,
+    "max": 95,
+    "pass": true
+  },
+  {
+    "fighter": "hisoka",
+    "frame": 90,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.0021688221643649534,
+    "over1": 0.000038558410685985964,
+    "over8": 0.0000035374688702739414,
+    "max": 30,
+    "pass": true
+  },
+  {
+    "fighter": "hisoka",
+    "frame": 645,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.0006817881669307976,
+    "over1": 0.00000424496264432873,
+    "over8": 7.074937740547883e-7,
+    "max": 14,
+    "pass": true
+  },
+  {
+    "fighter": "chrollo",
+    "frame": 90,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.0010298751037657536,
+    "over1": 0.000021578560108671045,
+    "over8": 0.0000017687344351369707,
+    "max": 50,
+    "pass": true
+  },
+  {
+    "fighter": "chrollo",
+    "frame": 645,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.003989321560636933,
+    "over1": 0.00008313051845143762,
+    "over8": 0.000012027394158931402,
+    "max": 41,
+    "pass": true
+  },
+  {
+    "fighter": "benjamin",
+    "frame": 90,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.006996759678514829,
+    "over1": 0.00006933438985736926,
+    "over8": 0.000024054788317862804,
+    "max": 67,
+    "pass": true
+  },
+  {
+    "fighter": "benjamin",
+    "frame": 645,
+    "width": 2524,
+    "height": 1120,
+    "meanDelta": 0.013863576333861595,
+    "over1": 0.000665044147611501,
+    "over8": 0.000028653497849218927,
+    "max": 66,
+    "pass": true
+  }
+]

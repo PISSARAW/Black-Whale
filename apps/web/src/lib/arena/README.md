@@ -4,17 +4,11 @@ etage: 2
 couvre:
   - apps/web/src/lib/arena/**
 depend-de: [07-les-modes]
-revu-le: 2026-11-13
-empreinte: 0000000
-decisions: []
+revu-le: 2026-11-15
+decisions: [adr-002]
 ---
 
-# `apps/web/src/lib/arena` — Arena
-
-**Promet :** arbitrer les duels, campagnes et replays déterministes de l’Arena.
-**Refuse :** de modifier les règles du moteur de combat ou la progression depuis un replay partagé.
-**Entrées publiques :** `apps/web/src/lib/arena/match.ts`, `apps/web/src/lib/arena/replay/`, `apps/web/src/lib/arena/bridge.ts`.
-**Carte :** [07 les modes](../../../../../docs/carte/07-les-modes.md)
+# Arena
 
 Arena is split into three deterministic layers:
 

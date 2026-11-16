@@ -1,0 +1,23 @@
+[Unit]
+Description=Black Whale tour structured inference via Tailscale
+After=network-online.target tailscale-personnel-ollama.service
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/black-whale-tour-ai/tour-ai-gateway.py
+EnvironmentFile=/etc/black-whale-tour-ai.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Restart=on-failure
+RestartSec=5
+DynamicUser=yes
+Environment=INFERENCE_MEMORY_LIMIT_GIB=4
+Environment=INFERENCE_CPU_LIMIT=2
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+MemoryMax=256M
+CPUQuota=25%
+TasksMax=32
+
+[Install]
+WantedBy=multi-user.target

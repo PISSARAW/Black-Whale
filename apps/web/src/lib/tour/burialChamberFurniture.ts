@@ -130,7 +130,7 @@ function coffinVaultedLidAndSpine(context: Context, rotY: number, isClosed: bool
       {
         at: [x, lidY, z],
         colour: COFFIN_LID,
-        rotation: [Math.PI / 2, 0, rotY],
+        rotation: [Math.PI / 2, rotY, 0],
       },
     )
 
@@ -153,7 +153,7 @@ function coffinVaultedLidAndSpine(context: Context, rotY: number, isClosed: bool
       {
         at: [lx, lidY + 0.32, lz],
         colour: 0xc8c0b4,
-        rotation: [Math.PI / 2, 0, rotY + 0.55],
+        rotation: [Math.PI / 2, rotY, 0],
       },
     )
     const [sx, sz] = offsetPoint(context, rotY, [width * 0.38 + 0.05, 0])

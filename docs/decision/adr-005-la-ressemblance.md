@@ -393,6 +393,15 @@ visage.
 
 ---
 
+### A.7 Complément Fighting partagé — 2026-11-16
+
+L’extension demandée aux autres personnages ajoute les cinq combattants encore génériques :
+`longhi` (queue-de-cheval claire, costume), `padaille` (carré court à raie centrale, haut clair),
+`terebellum` (cheveux relevés, rouflaquettes, survêtement), `voconte` (raie centrale, cernes)
+et `yokotani` (cheveux plaqués, costume gris, sourire). Les chapitres et liens de référence
+figurent dans leurs entrées du catalogue ; leurs palettes non attestées restent `chosen`.
+Les références visuelles fournies pour Leorio, Shizuku, Machi et Feitan priment pour leur tenue.
+
 ## Annexe B — pièces signatures (vocabulaire fermé)
 
 Chaque pièce est une géométrie procédurale de `humanSignature.ts` — primitives

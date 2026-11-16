@@ -233,7 +233,15 @@ describe('what the scene is handed', () => {
   /** §2.3: aura is a fact of the catalogue, never a fact of the post. */
   it('gives an aura to the declared user and none to the guard beside them', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
+      member({
+        characterId: 'kurapika',
+        role: 'Nen teacher/protector',
+        nen: {
+          techniques: [],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+        },
+      }),
       member({ characterId: 'sakata', nen: null }),
     ])
     const seen = castApparitions(ship, posts, auraReader())
@@ -245,7 +253,15 @@ describe('what the scene is handed', () => {
 
   it('raises the room to Ren when the visitor casts in it', () => {
     const posts = distribute(ship, [
-      member({ characterId: 'kurapika', role: 'Nen teacher/protector', nen: { techniques: [], awakenedFromChapter: null, conduct: { mode: 'ten', concealedWithIn: false, enRadius: null } } }),
+      member({
+        characterId: 'kurapika',
+        role: 'Nen teacher/protector',
+        nen: {
+          techniques: [],
+          awakenedFromChapter: null,
+          conduct: { mode: 'ten', concealedWithIn: false, enRadius: null },
+        },
+      }),
     ])
     const alarmed = auraReader({
       ...CALM,

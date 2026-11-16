@@ -5,6 +5,20 @@ import { createInterpreter, interpreterQuestion, parseKeywords } from './tourSea
 const reply = (keywords: string[]) => JSON.stringify({ keywords })
 
 describe('ollamaConfig', () => {
+  it('reads private authentication and bounds the request deadline', () => {
+    const env = {
+      OLLAMA_URL: 'https://inference.example.ts.net:9445',
+      OLLAMA_MODEL: 'qwen',
+      OLLAMA_TOKEN: ' token ',
+    }
+    expect(ollamaConfig({ ...env, OLLAMA_TIMEOUT_MS: '25000' })).toMatchObject({
+      token: 'token',
+      timeoutMs: 25000,
+    })
+    for (const invalid of ['0', '-1', '999999', 'abc', '1.5']) {
+      expect(ollamaConfig({ ...env, OLLAMA_TIMEOUT_MS: invalid })).not.toHaveProperty('timeoutMs')
+    }
+  })
   it('is absent unless both the address and the model are set', () => {
     expect(ollamaConfig({})).toBeNull()
     expect(ollamaConfig({ OLLAMA_URL: 'http://host:11434' })).toBeNull()
@@ -26,6 +40,27 @@ describe('askOllama', () => {
     const fetcher = vi.fn(async () => answer('{"keywords":[]}'))
     expect(await askOllama(config, question, fetcher)).toBe('{"keywords":[]}')
     expect(fetcher).toHaveBeenCalledWith('http://host:11434/api/chat', expect.anything())
+  })
+
+  it('authenticates the private gateway without putting the token in its URL or body', async () => {
+    const fetcher = vi.fn(async () => answer('{"topic":"who"}'))
+    await askOllama(
+      { ...config, token: 'private-service-token', timeoutMs: 25000 },
+      question,
+      fetcher,
+    )
+    const [url, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit]
+    expect(url).toBe('http://host:11434/api/chat')
+    expect(init.headers).toMatchObject({ authorization: 'Bearer private-service-token' })
+    expect(String(init.body)).not.toContain('private-service-token')
+    expect(JSON.parse(String(init.body))).toMatchObject({ format: question.schema })
+  })
+
+  it('keeps the native client unauthenticated unless a token was configured', async () => {
+    const fetcher = vi.fn(async () => answer('ok'))
+    await askOllama(config, question, fetcher)
+    const init = (fetcher.mock.calls[0] as unknown as [string, RequestInit])[1]
+    expect(init.headers).not.toHaveProperty('authorization')
   })
 
   it('retries once without the thinking switch when the model refuses it', async () => {

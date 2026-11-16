@@ -52,7 +52,7 @@ describe('one beat', () => {
     expect(pressureCost(state({ type: 'ZETSU' }), 'ren')).toBe(10)
     expect(pressureCost(state({ type: 'ZETSU' }), 'on')).toBe(16)
     expect(pressureCost(state({ type: 'KEN', on: true }), 'ren')).toBe(0)
-    expect(breathe(100, state({ type: 'ZETSU' }), 1, 'ren')).toBe(96)
+    expect(breathe(100, state({ type: 'ZETSU' }), { seconds: 1, pressure: 'ren' })).toBe(96)
   })
 
   it('treats Ko as weak global protection outside its concentrated zone', () => {

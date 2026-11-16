@@ -4,13 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:performance": "svelte-kit sync && node scripts/check-fighting-performance.mjs",
+    "test:training-ui": "svelte-kit sync && node scripts/check-fighting-training.mjs",
+    "test:arena-ui": "node scripts/check-arena-techniques.mjs",
     "build": "vite build",
     "dev": "vite dev --port 3000",
     "preview": "vite preview",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
+    "test:stages-ui": "svelte-kit sync && node scripts/check-fighting-stages.mjs",
+    "test:hud": "svelte-kit sync && node scripts/check-fighting-hud.mjs",
+    "test:easter-eggs": "svelte-kit sync && node scripts/check-easter-eggs.mjs",
+    "test:parallel-future": "svelte-kit sync && node scripts/check-parallel-future.mjs",
+    "test:luini": "svelte-kit sync && node scripts/check-luini.mjs",
+    "test:voconte": "svelte-kit sync && node scripts/check-voconte.mjs",
+    "test:phinks": "svelte-kit sync && node scripts/check-phinks.mjs",
     "clean": "rimraf .svelte-kit build",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:nen-ui": "svelte-kit sync && node scripts/check-fighting-nen.mjs",
+    "test:preparation-ui": "svelte-kit sync && node scripts/check-fighting-preparation.mjs"
   },
   "dependencies": {
     "@black-whale/ability-modules": "workspace:*",

@@ -236,7 +236,10 @@ export function catsName(seen: Apparition, context: BasicApparitionContext) {
       radius: 0.18,
       colour: fur,
     })
-    k.hand({ name: `hand-${side}`, at: [side * 0.72, 0.68, 0.8], scale: 1.4, colour: fur })
+    const hand = new context.THREE.Group()
+    hand.name = `hand-${side}`
+    k.hand({ name: hand.name, at: [side * 0.72, 0.68, 0.8], scale: 1.4, colour: fur, into: hand })
+    context.root.add(hand)
     k.tube({
       name: `leg-${side}`,
       points: [

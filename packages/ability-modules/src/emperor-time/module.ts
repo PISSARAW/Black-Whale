@@ -40,6 +40,15 @@ export const emperorTime = defineAbility({
     action: 'Operate at full efficiency',
   },
 
+  arena: {
+    effect: 'enhance',
+    cost: 20,
+    persistent: true,
+    condition: 'scarlet-eyes',
+    risk: 'lifespan-drain',
+    mechanic: 'full-efficiency',
+  },
+
   conditions: [canUseNen(), isConscious()],
 
   targets: [self()],

@@ -33,4 +33,16 @@ describe('persistent Tour simulation', () => {
       player: { spaceId: 'tier-5-warehouse', aura: 43 },
     })
   })
+
+  it('adds a safe Nen profile to saves created before affinities existed', () => {
+    const legacy = createTourSimulation({ id: 'old-save' })
+    Reflect.deleteProperty(legacy.player, 'nenProfile')
+
+    expect(decodeTourSimulation(JSON.stringify(legacy))?.player.nenProfile).toMatchObject({
+      version: 1,
+      naturalAffinity: 'unknown',
+      learnedAbilities: [],
+      maintainedEffects: [],
+    })
+  })
 })

@@ -202,12 +202,12 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
     cost: 'Mains jointes · rectangle d’aura chargé',
   },
   'parallel-future': {
-    name: 'Parallel Future',
-    action: 'Entrer dans le futur à dix secondes',
+    name: 'Laplace Devil',
+    action: 'Activer Laplace Devil',
     instruction:
-      'Observez pendant dix secondes les corps du chapitre suivant et cliquez les actions possibles pour laisser des rémanences prédites tout en choisissant une réalité divergente.',
-    rule: 'Tout le monde sauf Tserriednich continue de percevoir la prédiction immuable, même quand ses actes réels changent.',
-    cost: 'Zetsu complet · vision de dix secondes',
+      'Parcourez la vision détachée de dix secondes, revenez au point d’activation puis divergez de la rémanence prédite.',
+    rule: 'La Bête fixe l’illusion dans un rayon de 36 mètres ; les personnes situées dehors à l’activation ne sont pas affectées, et sortir du champ ou rompre le Zetsu met fin à l’effet.',
+    cost: 'Zetsu complet · aura stockée · vision de dix secondes',
   },
   'grimmel-the-dissonance': {
     name: 'Grimmel the Dissonance',
@@ -227,11 +227,11 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
   },
   'magical-worm': {
     name: 'Magical Worm',
-    action: 'Poser la porte de départ',
+    action: 'Ouvrir la porte d’aller',
     instruction:
-      'Faites un clic droit sur deux états de la carte pour poser la porte de départ et la porte de retour ; chaque traversée restaure l’URL, le pont et le zoom, mais l’usage répété épuise le site.',
-    rule: 'Le tunnel dimensionnel apparié ne fonctionne normalement qu’une fois par nuit ; les voyages répétés anormaux épuisent dangereusement Fugetsu.',
-    cost: 'Un trajet sûr par nuit · épuisement croissant',
+      'Depuis votre pièce actuelle, choisissez une destination déjà visitée et entrez dans la porte d’aller. Vous prenez le rôle de Fugetsu ; Kacho vous accompagne et ouvre la porte de retour après votre sortie.',
+    rule: 'Fugetsu contrôle l’aller, Kacho contrôle le retour et le tunnel dimensionnel ne fonctionne normalement qu’une fois par nuit.',
+    cost: 'Un aller-retour symbiotique par nuit · épuisement',
   },
   'cats-name': {
     name: 'Le nom du chat',
@@ -606,7 +606,7 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
     name: 'Moonlight Act',
     action: 'Choisir le premier signataire',
     instruction:
-      'Deux parties signent volontairement ; toucher l’une d’elles honore les termes et les récompense toutes deux, toucher quelqu’un d’autre est une rupture qui coûte une semaine de Zetsu.',
+      'Expliquez les termes, la durée, la récompense et la sanction, puis recueillez deux signatures volontaires. Le pacte montré récompense son respect par un usage de Moonlight Act et punit sa violation par une semaine de Zetsu.',
     rule: 'Seul un accord volontaire aux termes explicites peut être récompensé ou puni par le contrat de manipulation.',
     cost: 'Consentement mutuel · durée et sanction déclarées',
   },
@@ -636,19 +636,19 @@ export const hatsuFr: Record<HatsuId, HatsuTextOverride> = {
   },
   'damage-sweet-home': {
     name: 'Damage : Sweet Home',
-    action: 'Toucher la cible protégée',
+    action: 'Absorber à droite, transférer à gauche',
     instruction:
-      'Posez d’abord la main gauche sur un destinataire ; tous les coups suivants atterrissent chez lui, et frapper le destinataire lui-même lui fait encaisser les dégâts.',
-    rule: 'Les dégâts sont redirigés entre cibles touchées plutôt qu’effacés, avec des limites plus strictes dès que des corps vivants sont en jeu.',
-    cost: 'Contact préalable avec la source et le destinataire',
+      'Au moment du coup, touchez avec la main droite l’objet ou la personne qui subit les dégâts et avec la gauche leur destinataire. Si Terebellum est directement blessé, seule la main gauche est nécessaire.',
+    rule: 'Les dégâts sont transférés, jamais effacés. Si la main droite les absorbe tandis que la gauche ne touche rien, la main gauche les subit.',
+    cost: 'Contacts simultanés au moment des dégâts',
   },
   'voconte-hideout-doors': {
-    name: 'Portes de la planque',
-    action: 'Installer la première porte',
+    name: 'Door',
+    action: 'Relier les huisseries',
     instruction:
-      'Armez un cadre et un cadre de retour ; entrer dans l’un fait ressortir par l’autre, passer devant ne fait rien, et les constructions de Nen ne sont pas déplacées.',
-    rule: 'Les portes relient des pièces préparées dans toute la base des Heil-Ly, au lieu d’ouvrir des portails n’importe où.',
-    cost: 'Murs de planque préparés et pièces reliées',
+      'Franchissez le seuil dans son sens de déclenchement : la personne est transportée, y compris un entrant involontaire. Le seuil de retour change son orientation.',
+    rule: 'Les armes lancées et les constructions de Nen montrées ne sont pas transportées. Les conditions complètes d’installation et de sélection restent inconnues.',
+    cost: 'Huisseries préparées ; coût canonique complet inconnu',
   },
   'padaille-weapon-transformation': {
     name: 'Je viens te chercher',

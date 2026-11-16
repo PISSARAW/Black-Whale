@@ -95,30 +95,32 @@ export const nenControlText = (french: boolean): NenControlText => CONTROLS[loca
 export const nenJournalLabel = (french: boolean): string =>
   french ? 'Journal causal du Nen' : 'Nen cause log'
 
-export function nenCauseText(cause: NenCause, french: boolean): string {
-  if (cause.code === 'ACTION_ACCEPTED')
-    return french ? `${cause.action} accepté.` : `${cause.action} accepted.`
-  if (cause.code === 'ACTION_REFUSED') {
-    const reason = nenRefusalText(cause.reason, french, true)
-    return french ? `${cause.action} refusé : ${reason}.` : `${cause.action} refused: ${reason}.`
-  }
-  if (cause.code === 'EN_CONTACT')
-    return french ? `Votre En a touché ${cause.name}.` : `Your En touched ${cause.name}.`
+function frenchCauseText(cause: NenCause): string {
+  if (cause.code === 'ACTION_ACCEPTED') return `${cause.action} accepté.`
+  if (cause.code === 'ACTION_REFUSED')
+    return `${cause.action} refusé : ${nenRefusalText(cause.reason, true, true)}.`
+  if (cause.code === 'EN_CONTACT') return `Votre En a touché ${cause.name}.`
   if (cause.code === 'PRESSURE_WITNESS')
-    return french
-      ? `${cause.name} a senti votre ${cause.pressure === 'on' ? 'On' : 'Ren'}.`
-      : `${cause.name} felt your ${cause.pressure === 'on' ? 'On' : 'Ren'}.`
-  if (cause.code === 'EXHAUSTED')
-    return french ? 'Épuisement : retour forcé au Ten.' : 'Exhausted: forced back to Ten.'
-  if (cause.code === 'SHU_TRACE')
-    return french
-      ? `Le Shu relâché sur ${cause.objectId} laisse une trace.`
-      : `Released Shu on ${cause.objectId} leaves a trace.`
-  if (cause.code === 'RUMOR_SPREAD')
-    return french
-      ? `Une rumeur part de ${cause.spaceId}.`
-      : `A rumor spreads from ${cause.spaceId}.`
-  return french
-    ? `Balayage de sécurité programmé dans ${cause.spaceId}.`
-    : `Security sweep scheduled in ${cause.spaceId}.`
+    return `${cause.name} a senti votre ${cause.pressure === 'on' ? 'On' : 'Ren'}.`
+  if (cause.code === 'EXHAUSTED') return 'Épuisement : retour forcé au Ten.'
+  if (cause.code === 'SHU_TRACE') return `Le Shu relâché sur ${cause.objectId} laisse une trace.`
+  if (cause.code === 'RUMOR_SPREAD') return `Une rumeur part de ${cause.spaceId}.`
+  return `Balayage de sécurité programmé dans ${cause.spaceId}.`
+}
+
+function englishCauseText(cause: NenCause): string {
+  if (cause.code === 'ACTION_ACCEPTED') return `${cause.action} accepted.`
+  if (cause.code === 'ACTION_REFUSED')
+    return `${cause.action} refused: ${nenRefusalText(cause.reason, false, true)}.`
+  if (cause.code === 'EN_CONTACT') return `Your En touched ${cause.name}.`
+  if (cause.code === 'PRESSURE_WITNESS')
+    return `${cause.name} felt your ${cause.pressure === 'on' ? 'On' : 'Ren'}.`
+  if (cause.code === 'EXHAUSTED') return 'Exhausted: forced back to Ten.'
+  if (cause.code === 'SHU_TRACE') return `Released Shu on ${cause.objectId} leaves a trace.`
+  if (cause.code === 'RUMOR_SPREAD') return `A rumor spreads from ${cause.spaceId}.`
+  return `Security sweep scheduled in ${cause.spaceId}.`
+}
+
+export function nenCauseText(cause: NenCause, french: boolean): string {
+  return french ? frenchCauseText(cause) : englishCauseText(cause)
 }

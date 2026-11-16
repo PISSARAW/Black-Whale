@@ -1,0 +1,115 @@
+import { padailleMoveset } from './padailleMoveset'
+import { buildMoveset, type MovesetSpec } from './movesetFactory'
+
+const SPECS: readonly MovesetSpec[] = [
+  {
+    fighterId: 'sayird',
+    mechanic: [
+      'Little Eye contrôle un petit animal réel, jusqu’à la taille d’un hamster, et transmet ce qu’il voit et entend ; les créatures matérialisées par le Nen sont exclues. Le pouvoir reste hors du duel mais peut être volé par Kurapika. Les coups sont des adaptations martiales.',
+      'Little Eye controls a real small animal, up to hamster size, and relays what it sees and hears; Nen-conjured creatures are excluded. The ability stays outside the duel but Kurapika can steal it. Strikes are martial adaptations.',
+    ],
+    finisherCondition: [
+      'Une série d’au moins deux coups doit être en cours.',
+      'A sequence of at least two hits must be running.',
+    ],
+    labels: [
+      'Direct du garde|Guard Straight',
+      'Crochet de Sayird|Sayird Hook',
+      'Coup bas|Low Strike',
+      'Fauchage de contrôle|Control Sweep',
+      'Coup aérien|Aerial Strike',
+      'Piqué|Dive',
+      'Approche balisée|Marked Approach',
+      'Frappe précise|Precise Strike',
+      'Repli|Retreat',
+      'Assaut du garde|Guard Assault',
+      'Percée|Breakthrough',
+      'Coup rampant|Creeping Strike',
+      'Garde défensive|Defensive Guard',
+      'Clé de bras|Arm Lock',
+      'Angle parfait|Perfect Angle',
+    ],
+    speed: 0.86,
+    power: 0.96,
+    reach: 2.6,
+    combos: [
+      ['standingLight', 'forwardLight', 'forwardSpecial'],
+      ['lowLight', 'backHeavy', 'downSpecial'],
+      ['airLight', 'airHeavy', 'neutralSpecial'],
+    ],
+  },
+  {
+    fighterId: 'terebellum',
+    mechanic: [
+      'Sweet Home agit pendant les frames actives, à portée de main : L et ← + L transfèrent ses blessures à l’adversaire touché par la gauche ; → + L absorbe celles de l’adversaire à droite vers son propre corps à gauche ; ↓ + L absorbe à droite sans réceptacle et blesse sa main gauche. Sans contact au moment du coup, aucun transfert.',
+      'Sweet Home acts during active frames at hand range: L and ← + L transfer his wounds to the opponent touched by his left hand; → + L absorbs the opponent’s wounds with the right hand into his own body under the left; ↓ + L absorbs with the right without a recipient, wounding his left hand. No contact at impact means no transfer.',
+    ],
+    finisherCondition: [
+      'L’adversaire doit être à portée de la main gauche ; le transfert exige le contact pendant les frames actives.',
+      'The opponent must be within left-hand reach; transfer requires contact during active frames.',
+    ],
+    labels: [
+      'Direct de transfert|Transfer Straight',
+      'Crochet de retour|Return Hook',
+      'Dégât rasant|Low Damage',
+      'Fauchage répercuté|Rebound Sweep',
+      'Impact aérien|Aerial Impact',
+      'Retour plongeant|Diving Return',
+      'Avance conductrice|Conductive Advance',
+      'Surcharge corporelle|Body Overload',
+      'Renvoi défensif|Defensive Redirect',
+      'Damage: Sweet Home|Damage: Sweet Home',
+      'Absorption vers soi|Absorb into Self',
+      'Absorption sans réceptacle|Absorb without Recipient',
+      'Contact de la main gauche|Left-Hand Contact',
+      'Câblage humain|Human Wiring',
+      'Sweet Home · Retour total|Sweet Home · Total Return',
+    ],
+    speed: 0.94,
+    power: 1.04,
+    reach: 1.5,
+    combos: [
+      ['standingLight', 'standingHeavy', 'neutralSpecial'],
+      ['lowLight', 'forwardHeavy', 'downSpecial'],
+      ['airLight', 'forwardSpecial'],
+    ],
+  },
+  {
+    fighterId: 'voconte',
+    mechanic: [
+      'Door : franchir un seuil préparé dans son sens de déclenchement transporte réellement la personne.',
+      'Door: actually crossing a prepared threshold in its triggering direction transports the person.',
+    ],
+    finisherCondition: [
+      'Une porte de sortie Hideout Doors doit encore être ouverte.',
+      'A Hideout Doors escape must still be open.',
+    ],
+    labels: [
+      'Pique de la cachette|Hideout Jab',
+      'Revers de porte|Door Backfist',
+      'Trappe basse|Low Trapdoor',
+      'Fauchage du seuil|Threshold Sweep',
+      'Poing aérien|Aerial Punch',
+      'Coup plongeant|Diving Strike',
+      'Avance physique|Physical Advance',
+      'Charge hors cadre|Off-Frame Rush',
+      'Revers en recul|Retreat Backfist',
+      'Hideout Doors|Hideout Doors',
+      'Assaut de l’autre côté|Other-Side Assault',
+      'Trappe d’embuscade|Ambush Trapdoor',
+      'Couloir fermé|Sealed Hallway',
+      'Enlèvement au repaire|Hideout Abduction',
+      'Hideout Doors · Pièce condamnée|Hideout Doors · Sealed Room',
+    ],
+    speed: 0.8,
+    power: 1,
+    reach: 1.8,
+    combos: [
+      ['standingLight', 'forwardLight', 'forwardSpecial'],
+      ['lowLight', 'backHeavy', 'downSpecial'],
+      ['airLight', 'airHeavy', 'neutralSpecial'],
+    ],
+  },
+]
+
+export const WAVE_FOUR_MOVESETS_B = [padailleMoveset(), ...SPECS.map(buildMoveset)]

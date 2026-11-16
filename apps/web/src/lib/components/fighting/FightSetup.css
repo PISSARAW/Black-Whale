@@ -1,0 +1,47 @@
+.fighter-select {
+  width: min(1380px, 100%);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid #35424b;
+  background: linear-gradient(145deg, rgb(17 24 29 / 96%), rgb(5 9 12 / 98%));
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 24%);
+}
+
+.fighter-select__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 1.4rem;
+  border-bottom: 1px solid #35424b;
+  background: linear-gradient(90deg, rgb(153 42 52 / 16%), transparent 46%);
+}
+
+.fighter-select__header p,
+.fighter-select__header h2,
+.fighter-select__header span,
+.roster-group h3,
+.roster-group p {
+  margin: 0;
+}
+
+.fighter-select__header p {
+  color: #d6ae48;
+  font: 700 0.62rem/1 var(--font-mono);
+  letter-spacing: 0.16em;
+}
+
+.fighter-select__header h2 {
+  margin-top: 0.35rem;
+  color: #f5f1e8;
+  font: 700 clamp(1.5rem, 3vw, 2.35rem) / 1 var(--font-display);
+  text-transform: uppercase;
+}
+
+.fighter-select__header span,
+.roster-group p {
+  display: block;
+  margin-top: 0.35rem;
+  color: #84929b;
+  font: 500 0.66rem/1.4 var(--font-mono);
+}

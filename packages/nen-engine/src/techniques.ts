@@ -221,7 +221,8 @@ export const isAuraAtRest = (state: NenTechniqueState) =>
   state.ko === null &&
   !Object.values(state.ryu).some((share) => Number(share) > 0)
 
-export const canUseHatsu = (state: NenTechniqueState) => state.mode !== 'zetsu'
+/** On seals the user's own Nen: a body under the contract has no Hatsu to call on. */
+export const canUseHatsu = (state: NenTechniqueState) => state.mode !== 'zetsu' && !state.on
 export const canSeeIn = (state: NenTechniqueState) => state.gyo
 export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqueState) =>
   !source.in || observer.gyo
@@ -229,7 +230,21 @@ export const isAuraVisibleTo = (source: NenTechniqueState, observer: NenTechniqu
 export const nenDefenceFactor = (state: NenTechniqueState, zone?: string) => {
   if (state.mode === 'zetsu') return 0
   if (state.ko) return zone && zone === state.ko ? 1 : 0.1
-  return state.ken ? 1 : state.on ? 0.9 : state.mode === 'ren' ? 0.65 : 0.35
+  if (state.ken) return 1
+  if (state.on) return 0.9
+
+  const shares = Object.values(state.ryu).filter(
+    (share): share is number => typeof share === 'number' && Number.isFinite(share) && share > 0,
+  )
+  if (shares.length > 0) {
+    const share = zone ? Number(state.ryu[zone] ?? 0) : 0
+    // Ryu is a redistribution, not bonus armour: a guarded zone can approach
+    // Ken while every zone deliberately left empty becomes dangerously thin.
+    return Math.min(1, 0.08 + share * 1.15)
+  }
+
+  const base = state.mode === 'ren' ? 0.65 : 0.35
+  return state.gyo ? base * 0.62 : base
 }
 
 export interface EnPresence {

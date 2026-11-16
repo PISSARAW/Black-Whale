@@ -1,0 +1,358 @@
+.route-shell:has(.archive) {
+  background: var(--surface-void);
+}
+.archive {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height));
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3.5rem) var(--page-gutter) 4rem;
+  color: var(--text-primary);
+}
+.archive .archive-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--line-default);
+}
+.archive .title-block .eyebrow {
+  margin: 0 0 0.75rem;
+  color: var(--accent-gold-bright);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.archive .title-block h1 {
+  margin: 0;
+  font-size: clamp(2.8rem, 5vw, 4.4rem);
+  font-weight: 450;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.archive .title-block h1 span {
+  color: var(--accent-gold-bright);
+}
+.archive .title-block > p:last-child {
+  margin: 1rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+.archive .archive-status {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--line-default);
+  color: var(--text-secondary);
+}
+.archive .archive-status strong {
+  color: var(--accent-gold-bright);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+}
+.archive .archive-status span {
+  max-width: 8rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+.archive .archive-grid {
+  display: grid;
+  grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.archive .catalogue {
+  min-width: 0;
+}
+.archive .catalogue-tools {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--line-default);
+}
+.archive .catalogue-tools label > span,
+.archive .command-line > label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+.archive .catalogue-tools input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-deep);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+.archive .catalogue-tools input:focus {
+  border-color: var(--accent-gold);
+  outline: none;
+}
+.archive .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+.archive .filters button {
+  min-height: 34px;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.68rem;
+}
+.archive .filters button:hover,
+.archive .filters button.active {
+  border-color: var(--line-default);
+  background: var(--surface-panel);
+  color: var(--accent-gold-bright);
+}
+.archive .entry-list {
+  display: grid;
+  max-height: clamp(25rem, calc(100dvh - 26rem), 34.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--line-default) transparent;
+  scrollbar-width: thin;
+}
+.archive .entry {
+  position: relative;
+  display: grid;
+  min-height: 5.25rem;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 1rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0.65rem;
+  border: 0;
+  border-bottom: 1px solid var(--line-subtle);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.archive .entry:hover,
+.archive .entry.selected {
+  background: var(--surface-panel);
+}
+.archive .entry.selected::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--accent-gold-bright);
+  content: '';
+}
+.archive .entry-index {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.6rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+}
+.archive .entry-mark {
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  color: var(--entry-color);
+  font-size: 0.7rem;
+}
+.archive .entry-copy {
+  min-width: 0;
+}
+.archive .entry-copy strong,
+.archive .entry-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.archive .entry-copy strong {
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.archive .entry-copy small {
+  margin-top: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+.archive .entry-arrow {
+  color: var(--text-faint);
+  font-size: 0.7rem;
+}
+.archive .entry:hover .entry-arrow,
+.archive .entry.selected .entry-arrow {
+  color: var(--accent-gold-bright);
+}
+.archive .empty {
+  margin: 0;
+  padding: 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+.archive .specimen-panel {
+  display: grid;
+  height: clamp(34rem, calc(100dvh - 18.5rem), 42rem);
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.75fr);
+  overflow: hidden;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-deep);
+}
+.archive .viewer {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--line-default);
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      color-mix(in srgb, var(--specimen-color) 9%, transparent),
+      transparent 42%
+    ),
+    var(--surface-void);
+}
+.archive .viewer-grid {
+  display: none;
+}
+.archive .viewer-vignette {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 7rem 1rem rgba(0, 0, 0, 0.62);
+}
+.archive .viewer-topline,
+.archive .interaction-hint {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+}
+.archive .viewer-topline {
+  top: 1.25rem;
+  right: 1.25rem;
+  left: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+.archive .viewer-topline span:last-child {
+  color: var(--accent-gold-bright);
+  font-family: var(--font-mono);
+}
+.archive .interaction-hint {
+  bottom: 1.25rem;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.archive .interaction-hint span {
+  color: var(--accent-gold-bright);
+  font-size: 1rem;
+}
+.archive .technique-flash {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--specimen-color) 18%, transparent),
+    transparent 55%
+  );
+  pointer-events: none;
+  animation: flash 1.5s ease both;
+}
+.archive .technique-flash span {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-deep) 92%, transparent);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+}
+@keyframes flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  12%,
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+}
+.archive .dossier {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--surface-deep);
+  scrollbar-color: var(--line-default) transparent;
+  scrollbar-width: thin;
+}
+.archive .dossier-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line-default);
+}
+.archive .dossier-number {
+  margin: 0 0 0.7rem;
+  color: var(--accent-gold-bright);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+.archive .dossier h2 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(1.75rem, 2.35vw, 2.55rem);
+  font-weight: 450;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+.archive .dossier-heading p:last-child {
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.archive .aura-sample {
+  display: flex;
+  height: 2.4rem;
+  align-items: flex-end;
+  gap: 0.18rem;
+}

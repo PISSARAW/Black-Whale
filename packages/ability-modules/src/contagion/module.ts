@@ -1,7 +1,6 @@
 import {
   abilityGrant,
   attributeCounter,
-  buildManifest,
   canUseNen,
   condition,
   controlLink,
@@ -20,6 +19,8 @@ import {
   shown,
   spawnNenEntity,
 } from '@black-whale/ability-sdk'
+import { contagionManifest, isEligibleInfectionGame } from './presentation.js'
+export { CONTAGION_LIMITS } from './presentation.js'
 
 import {
   INFECTION_STEPS,
@@ -33,8 +34,8 @@ import {
   takeTheDeal,
   worksAtTheTable,
   type GameEnding,
-  type QuestionCard,
   type InfectionStep,
+  type QuestionCard,
 } from './game.js'
 import {
   COHORT_ID,
@@ -44,7 +45,6 @@ import {
   UNIQUE_ABILITY_LEVEL,
   answerParam,
   gameInPlay,
-  isEligibleInfectionGame,
   killValue,
   moveAndCatch,
   moveTheGame,
@@ -168,6 +168,8 @@ export const contagion = defineAbility({
       ],
       cost: { label: 'Une place du réseau', amount: 1, unit: 'slot sur 22' },
     },
+
+    // ── The negotiation game ──────────────────
 
     'open-game': {
       label: 'Ouvrir la partie',
@@ -481,20 +483,5 @@ export const contagion = defineAbility({
 
   ui: { componentKey: 'ContagionDashboard' },
 
-  interactionManifest: buildManifest('contagion', {
-    // Infection is a sequence, not a click: game, kiss, witnessed murder.
-    inputMode: 'SEQUENCE',
-    allowedTargets: ['CHARACTER'],
-    overlays: ['CONTROL_LINK', 'RANGE'],
-    entryActions: ['open-network', 'infect'],
-    requiredState: ['isConscious', 'canUseNen'],
-    perspectiveTransition: {
-      canChangeBody: false,
-      canChangeConsciousness: false,
-      canFollowAura: true,
-    },
-    customComponent: 'ContagionDashboard',
-  }),
+  interactionManifest: contagionManifest,
 })
-
-export { CONTAGION_LIMITS } from './limits.js'

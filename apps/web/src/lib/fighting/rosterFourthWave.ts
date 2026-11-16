@@ -1,0 +1,36 @@
+import type { FighterDefinition } from './types'
+
+export const FOURTH_WAVE_ROSTER: readonly FighterDefinition[] = [
+  {
+    id: 'cluck',
+    modelId: 'cluck',
+    modelRole: 'hunter',
+    name: 'Cluck',
+    titleFr: 'La poule du Zodiaque',
+    titleEn: 'Chicken Zodiac',
+    specialFr: 'Combat du Zodiaque',
+    specialEn: 'Zodiac combat',
+    colour: '#7c2d12',
+    accent: '#fbbf24',
+    power: 0.98,
+    speed: 1.08,
+    reach: 7.2,
+    specialRange: 30,
+  },
+  {
+    id: 'beyond',
+    modelId: 'beyond-netero',
+    modelRole: 'fighter',
+    name: 'Beyond',
+    titleFr: 'L’explorateur du Continent Sombre',
+    titleEn: 'Dark Continent Explorer',
+    specialFr: 'Malédiction sacrificielle',
+    specialEn: 'Sacrificial Curse',
+    colour: '#44403c',
+    accent: '#ef4444',
+    power: 1.16,
+    speed: 0.98,
+    reach: 8.2,
+    specialRange: 21,
+  },
+]

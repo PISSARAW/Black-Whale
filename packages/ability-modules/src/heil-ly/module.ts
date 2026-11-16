@@ -27,24 +27,24 @@ import {
 } from '@black-whale/ability-sdk'
 
 /**
- * Voconte — hideout doors
+ * Voconte — Door (directional human passage)
  *
- * A door network inside the Heil-Ly base. It recombines the topology the same
- * way Luini does, minus the sealed-room price: this is infrastructure, not an
- * escape hatch, so the doors persist and the map redraws around them.
+ * People entering a triggering threshold are transported; reverse traversal is
+ * different. Weapons and LSDF constructs did not trigger the shown passage.
+ * Full installation, selection and maintenance conditions remain unknown.
  */
 export const voconteHideoutDoors = defineAbility({
   id: 'voconte-hideout-doors',
-  name: 'Hideout Doors',
+  name: 'Door',
   owner: 'voconte',
-  category: 'conjurer',
+  category: 'emitter',
 
   site: {
     kind: 'door-network',
     instruction:
       'Arm one frame and one return frame; stepping into either comes out at the other, walking past does nothing, and Nen constructs are not moved.',
-    rule: 'The doors connect prepared rooms throughout the Heil-Ly base instead of opening unrestricted portals anywhere.',
-    cost: 'Prepared hideout walls and connected rooms',
+    rule: 'Enter the prepared threshold in its triggering direction. Full installation and selection limits are unknown; the shown weapons and Nen constructs did not travel.',
+    cost: 'Prepared frames; complete canonical cost unknown',
     color: '#7ec8b6',
     action: 'Install the first door',
   },
@@ -53,29 +53,25 @@ export const voconteHideoutDoors = defineAbility({
 
   targets: [zone()],
 
-  cost: { label: 'Deux murs préparés dans la planque Heil-Ly', amount: 2, unit: 'portes' },
+  cost: { label: 'Deux huisseries fournies par cette démonstration', amount: 2, unit: 'portes' },
 
   actions: {
     'open-door': {
-      label: 'Créer une porte',
-      evidence: shown({
-        kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — le repaire recombiné par ses portes',
-      }),
+      label: 'Relier les huisseries',
+      evidence: asserted({ kind: 'other', label: 'Installation simulée ; conditions canoniques complètes inconnues' }),
       conditions: [
         requiresParameter('fromLocationId', 'Une pièce de départ est choisie'),
         requiresParameter('locationId', 'Une pièce d’arrivée est choisie'),
       ],
-      effects: [portal({ attributes: { network: 'heil-ly-hideout', permanent: true } })],
+      effects: [portal({ attributes: { network: 'heil-ly-hideout', directional: true } })],
     },
 
     'walk-through': {
       label: 'Franchir une porte',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 et 410 — le réseau absorbe les entrants de la chambre 3101',
+        chapter: 393,
+        label: 'ch. 393–394 et 398–399 — passages directionnels de la chambre 3101',
       }),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [
@@ -83,18 +79,9 @@ export const voconteHideoutDoors = defineAbility({
       ],
     },
 
-    'open-outside-the-hideout': {
-      label: 'Ouvrir une porte hors du repaire',
-      refusal: 'Le réseau ne relie que les pièces du repaire',
-      evidence: asserted({
-        kind: 'other',
-        label: 'la capacité est décrite sur le repaire, pas au-delà',
-      }),
-    },
-
     'close-door': {
       label: 'Refermer une porte',
-      evidence: asserted({ kind: 'other', label: 'une porte créée se referme' }),
+      evidence: asserted({ kind: 'other', label: 'Fermeture simulée ; entretien canonique inconnu' }),
       conditions: [effectIsLive('effectId', 'La porte existe')],
       effects: [setEffectState({ state: 'ENDED' })],
     },
@@ -115,7 +102,7 @@ export const voconteHideoutDoors = defineAbility({
 /**
  * Bloody Mary — Zakuro Custard
  *
- * Blood she has already shed, put to work: it restrains, or it splits into
+ * Blood he has already shed, put to work: it restrains, or it splits into
  * eyed droplets that watch. The second mode is a knowledge source, so a wound
  * becomes surveillance.
  */
@@ -153,8 +140,8 @@ export const bloodyMary = defineAbility({
       label: 'Ouvrir une plaie',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — le sang versé pour servir',
+        chapter: 390,
+        label: 'ch. 390 — le sang versé pour servir',
       }),
       effects: [
         bodyState({ bodyId: (ctx) => param(ctx, 'bodyId') ?? ctx.actorId, state: 'INJURED' }),
@@ -178,8 +165,8 @@ export const bloodyMary = defineAbility({
       refusal: 'Il faut du sang versé : sans plaie, la capacité n’a rien à manipuler',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — la plaie précède toujours l’effet',
+        chapter: 390,
+        label: 'ch. 390 — la plaie précède toujours l’effet',
       }),
     },
 
@@ -187,8 +174,8 @@ export const bloodyMary = defineAbility({
       label: 'Entraver',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — le sang manipulé immobilise',
+        chapter: 390,
+        label: 'ch. 390 — le sang manipulé immobilise',
       }),
       conditions: [
         requiresTarget('Une cible est entravée'),
@@ -201,8 +188,8 @@ export const bloodyMary = defineAbility({
       label: 'Diviser en gouttes-yeux',
       evidence: shown({
         kind: 'chapter',
-        chapter: 383,
-        label: 'ch. 383 — les gouttes qui regardent',
+        chapter: 391,
+        label: 'ch. 391 — les gouttes qui regardent',
       }),
       conditions: [effectIsLive('effectId', 'Du sang est disponible')],
       effects: [
@@ -250,6 +237,15 @@ export const padailleWeaponTransformation = defineAbility({
     cost: 'Transformed limb · no say in the shape',
     color: '#c6925e',
     action: 'Swing whatever the arm became',
+  },
+
+  arena: {
+    effect: 'impact',
+    cost: 12,
+    persistent: true,
+    condition: 'transformed-limb',
+    risk: 'random-weapon-shape',
+    mechanic: 'body-weapon',
   },
 
   conditions: [canUseNen(), isConscious()],
@@ -345,6 +341,15 @@ export const snakeArm = defineAbility({
     cost: 'Maintained partial transformation',
     color: '#86c98a',
     action: 'Choose something to restrain',
+  },
+
+  arena: {
+    effect: 'bind',
+    cost: 14,
+    persistent: true,
+    condition: 'transformed-arm-contact',
+    risk: 'maintained-partial-transformation',
+    mechanic: 'serpent-restraint',
   },
 
   conditions: [canUseNen(), isConscious()],

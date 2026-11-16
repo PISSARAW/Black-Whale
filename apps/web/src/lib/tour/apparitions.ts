@@ -40,6 +40,7 @@ import type { CardFace } from './morena'
 export type ApparitionKind =
   /** A live opponent supplied by a game played inside the walk. */
   | 'combatant'
+  | 'lsdf-guard'
   | 'benjamin-guardian'
   | 'halkenburg-guardian'
   | 'nasubi-guardian'
@@ -2054,6 +2055,5 @@ export function flashFor(cast: Cast, ship: Ship, world: TourWorld): TourFlash | 
       through: report.through,
     }
   }
-
   return null
 }

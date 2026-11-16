@@ -9,6 +9,10 @@ export interface Held {
 /** A hair of lead time: scheduling in the past is what makes a click. */
 export const LEAD = 0.02
 
+function registerSource(g: Graph, source: AudioScheduledSourceNode): void {
+  g.registerSource?.(source)
+}
+
 export const startsAt = (g: Graph) => g.context.currentTime + LEAD
 
 // ── The bench ────────────────────────────────────────────────────────────
@@ -72,6 +76,7 @@ export function swept(g: Graph, at: number, o: Swept) {
   gain.gain.exponentialRampToValueAtTime(0.0001, ends)
 
   const osc = context.createOscillator()
+  registerSource(g, osc)
   osc.type = o.type
   osc.frequency.setValueAtTime(o.from, at)
   if (o.to !== undefined && o.to !== o.from) {
@@ -84,6 +89,7 @@ export function swept(g: Graph, at: number, o: Swept) {
 
   if (o.wobble) {
     const lfo = context.createOscillator()
+    registerSource(g, lfo)
     lfo.frequency.value = o.wobbleHz ?? 7
     const depth = context.createGain()
     depth.gain.value = o.wobble
@@ -128,6 +134,7 @@ export function rush(g: Graph, at: number, o: Rush) {
   const ends = at + duration + release
 
   const source = context.createBufferSource()
+  registerSource(g, source)
   source.buffer = noiseBuffer(context)
   source.loop = true
 

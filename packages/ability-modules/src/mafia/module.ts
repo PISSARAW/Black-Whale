@@ -249,8 +249,9 @@ export const bodyAndSoul = defineAbility({
 /**
  * Damage: Sweet Home — Terebellum
  *
- * Damage taken by one touched target is paid by another. Two touches, one
- * transfer — the ledger of who actually suffers is what the module records.
+ * At the instant damage is dealt, the right hand takes it from the struck
+ * target and the left hand sends it into whatever it touches. Damage dealt to
+ * Terebellum himself needs only the left-hand contact.
  */
 export const damageSweetHome = defineAbility({
   id: 'damage-sweet-home',
@@ -261,19 +262,19 @@ export const damageSweetHome = defineAbility({
   site: {
     kind: 'damage-transfer',
     instruction:
-      'Rest the left hand on a recipient first; every blow after that lands there instead, and striking the recipient itself makes it take the damage.',
-    rule: 'Damage is redirected between touched targets rather than erased, with stricter limits when living bodies are involved.',
-    cost: 'Prior contact with both source and recipient',
+      'At the moment of impact, touch the damaged object or person with the right hand and the recipient with the left. Damage dealt directly to Terebellum needs only the left hand.',
+    rule: 'Damage is transferred rather than erased. If the right hand absorbs damage while the left hand touches nothing, the left hand takes it.',
+    cost: 'Simultaneous contact at the moment of damage',
     color: '#db8b78',
-    action: 'Touch the protected target',
+    action: 'Absorb right, transfer left',
   },
 
   arena: {
     effect: 'restore',
     cost: 18,
     persistent: true,
-    condition: 'touch-source-and-recipient',
-    risk: 'damage-is-not-erased',
+    condition: 'simultaneous-hand-contact-on-impact',
+    risk: 'untransferred-damage-hits-left-hand',
     mechanic: 'transfer',
   },
 
@@ -282,30 +283,88 @@ export const damageSweetHome = defineAbility({
   targets: [person(), object()],
 
   cost: {
-    label: 'Contact préalable avec la source et le destinataire',
+    label: 'Contacts simultanés au moment des dégâts',
     amount: 2,
     unit: 'contacts',
   },
 
   actions: {
     link: {
-      label: 'Relier une source et un réceptacle',
+      label: 'Absorber à droite et transférer à gauche',
       evidence: shown({
         kind: 'chapter',
-        chapter: 386,
-        label: 'ch. 386 — la main gauche pose le report des dégâts',
+        chapter: 399,
+        label: 'ch. 399 — les deux mains transfèrent les dégâts au moment du coup',
       }),
       conditions: [
-        requiresParameter('sourceId', 'La source des dégâts est touchée'),
-        requiresParameter('sinkId', 'Le réceptacle est touché'),
+        requiresParameter(
+          'sourceId',
+          'La main droite touche l’objet ou la personne au moment où les dégâts sont infligés',
+        ),
+        requiresParameter('sinkId', 'La main gauche touche le réceptacle au même instant'),
       ],
       effects: [
         constraint({
-          rules: ['Les dégâts subis par la source sont reportés sur le réceptacle.'],
+          rules: [
+            'Les dégâts reçus par la cible de la main droite sont absorbés par Terebellum puis transférés à la cible de la main gauche.',
+            'Les deux contacts doivent exister au moment où les dégâts sont infligés.',
+          ],
           attributes: (ctx) => ({
             damageSourceId: param(ctx, 'sourceId'),
             damageSinkId: param(ctx, 'sinkId'),
-            requiresTouch: true,
+            rightHandContactRequiredOnImpact: true,
+            leftHandContactRequiredOnImpact: true,
+          }),
+        }),
+      ],
+    },
+
+    'self-transfer': {
+      label: 'Transférer une blessure reçue directement',
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 399,
+        label: 'ch. 399 — ses propres dégâts se transfèrent par la main gauche seule',
+      }),
+      conditions: [
+        requiresParameter('sinkId', 'La main gauche touche le réceptacle au moment du coup'),
+      ],
+      effects: [
+        constraint({
+          rules: [
+            'Quand Terebellum est lui-même frappé, aucun contact de la main droite n’est nécessaire.',
+            'Les dégâts reçus sont transférés à ce que touche sa main gauche.',
+          ],
+          attributes: (ctx) => ({
+            damageSourceId: 'terebellum',
+            damageSinkId: param(ctx, 'sinkId'),
+            rightHandContactRequiredOnImpact: false,
+            leftHandContactRequiredOnImpact: true,
+          }),
+        }),
+      ],
+    },
+
+    'absorb-without-left-contact': {
+      label: 'Absorber sans réceptacle à gauche',
+      evidence: shown({
+        kind: 'chapter',
+        chapter: 399,
+        label: 'ch. 399 — faute de réceptacle, la main gauche subit les dégâts',
+      }),
+      conditions: [
+        requiresParameter(
+          'sourceId',
+          'La main droite touche l’objet ou la personne au moment où les dégâts sont infligés',
+        ),
+      ],
+      effects: [
+        effect({
+          kind: 'CUSTOM',
+          discriminator: 'left-hand-backlash',
+          attributes: (ctx) => ({
+            from: param(ctx, 'sourceId'),
+            to: 'terebellum-left-hand',
           }),
         }),
       ],
@@ -313,11 +372,11 @@ export const damageSweetHome = defineAbility({
 
     'link-without-touching': {
       label: 'Relier sans contact',
-      refusal: 'Il faut avoir touché la source et le réceptacle',
+      refusal: 'Les contacts requis doivent être maintenus au moment exact des dégâts',
       evidence: shown({
         kind: 'chapter',
-        chapter: 386,
-        label: 'ch. 386 — les deux contacts précèdent le report',
+        chapter: 399,
+        label: 'ch. 399 — le transfert dépend des contacts au moment du coup',
       }),
     },
 
@@ -326,8 +385,8 @@ export const damageSweetHome = defineAbility({
       refusal: 'Les dégâts sont déplacés, jamais annulés : quelqu’un les prend',
       evidence: shown({
         kind: 'chapter',
-        chapter: 386,
-        label: 'ch. 386 — le report est un transfert, pas un soin',
+        chapter: 399,
+        label: 'ch. 399 — le report est un transfert, pas un soin',
       }),
     },
 
@@ -335,8 +394,8 @@ export const damageSweetHome = defineAbility({
       label: 'Reporter les dégâts',
       evidence: shown({
         kind: 'chapter',
-        chapter: 386,
-        label: 'ch. 386 — le coup part ailleurs que là où il a frappé',
+        chapter: 399,
+        label: 'ch. 399 — le coup part ailleurs que là où il a frappé',
       }),
       conditions: [effectIsLive('effectId', 'Un report est en place')],
       effects: [
@@ -360,7 +419,7 @@ export const damageSweetHome = defineAbility({
     inputMode: 'SEQUENCE',
     allowedTargets: ['CHARACTER', 'BODY', 'OBJECT'],
     overlays: ['CONTROL_LINK'],
-    entryActions: ['link'],
+    entryActions: ['link', 'self-transfer', 'absorb-without-left-contact'],
     requiredState: ['isConscious', 'canUseNen'],
     customComponent: 'DamageLedger',
   }),

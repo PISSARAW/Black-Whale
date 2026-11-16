@@ -1,0 +1,96 @@
+import type { FightPose } from './fightPose'
+
+/**
+ * The vocabulary idle stances are written in: a few ways to stand and a few
+ * ways to hold the arms, each a partial pose that `addPoses` sums. A fighter's
+ * stance (`fightStancesRoster.ts`) picks one of each and adds what is its own.
+ *
+ * A knee never bends much further than its hip flexes: the shin stays near
+ * upright and the body sinks over the feet. A knee bent alone throws the shin
+ * back and the figure reads as sitting (`fightStance.test.ts` holds this).
+ *
+ * Signs follow `fightPose.ts`: shoulders and hips x < 0 swing forward, elbows
+ * x < 0 bend, knees x > 0 bend; z > 0 opens the lead limb, z < 0 the rear one.
+ */
+
+/** Straight and still: a prince, a soldier at attention. */
+export const LEGS_UPRIGHT: FightPose = {
+  leadHip: [-0.08, 0, 0.04],
+  leadKnee: [0.1, 0, 0],
+  rearHip: [0.06, 0, -0.04],
+  rearKnee: [0.04, 0, 0],
+}
+
+/** Weight balanced on soft knees, lead foot forward: the default fighter. */
+export const LEGS_SOFT: FightPose = {
+  leadHip: [-0.25, 0, 0.04],
+  leadKnee: [0.3, 0, 0],
+  rearHip: [0.18, 0, -0.04],
+  rearKnee: [0.08, 0, 0],
+}
+
+/** Low and coiled, ready to spring: assassins, ninjas, beasts. */
+export const LEGS_DEEP: FightPose = {
+  body: [0.15, 0, 0],
+  leadHip: [-0.5, 0, 0.08],
+  leadKnee: [0.6, 0, 0],
+  rearHip: [0.1, 0, -0.08],
+  rearKnee: [0.45, 0, 0],
+}
+
+/** Feet planted wide: big bodies that do not need to move. */
+export const LEGS_WIDE: FightPose = {
+  leadHip: [-0.12, 0, 0.2],
+  leadKnee: [0.15, 0, 0],
+  rearHip: [0.06, 0, -0.2],
+  rearKnee: [0.1, 0, 0],
+}
+
+/** A boxer's high guard: lead fist forward, rear fist at the chin. */
+export const ARMS_GUARD: FightPose = {
+  leadShoulder: [-0.85, 0, 0.15],
+  leadElbow: [-1.7, 0, 0],
+  rearShoulder: [-0.6, 0, -0.15],
+  rearElbow: [-2, 0, 0],
+}
+
+/**
+ * Arms folded across the chest. The elbow only bends forward, so the shoulder
+ * turns about the vertical (y) to swing each forearm across the body: lead
+ * inward is y < 0, rear inward y > 0. The rear arm sits a little lower so the
+ * forearms stack instead of passing through each other.
+ */
+export const ARMS_CROSSED: FightPose = {
+  leadShoulder: [-0.35, -1, 0.08],
+  leadElbow: [-1.65, 0, 0],
+  rearShoulder: [-0.22, 1, -0.08],
+  rearElbow: [-1.55, 0, 0],
+}
+
+/**
+ * Fists on the hips, elbows out: the upper arm opens sideways (z) and the
+ * elbow folds the forearm back in by twice that (z again), which puts the hand
+ * straight under the shoulder, at the hip.
+ */
+export const ARMS_ON_HIPS: FightPose = {
+  leadShoulder: [0, 0, 0.75],
+  leadElbow: [-0.2, 0, -1.5],
+  rearShoulder: [0, 0, -0.75],
+  rearElbow: [-0.2, 0, 1.5],
+}
+
+/** Hands clasped behind the back. */
+export const ARMS_BEHIND: FightPose = {
+  leadShoulder: [0.45, 0, -0.12],
+  leadElbow: [-0.7, 0, 0],
+  rearShoulder: [0.45, 0, 0.12],
+  rearElbow: [-0.7, 0, 0],
+}
+
+/** Arms loose at the sides, a little forward. */
+export const ARMS_LOOSE: FightPose = {
+  leadShoulder: [-0.15, 0, 0.1],
+  leadElbow: [-0.3, 0, 0],
+  rearShoulder: [-0.05, 0, -0.1],
+  rearElbow: [-0.2, 0, 0],
+}

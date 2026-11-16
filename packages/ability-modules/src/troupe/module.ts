@@ -21,7 +21,7 @@ import {
   vow,
 } from '@black-whale/ability-sdk'
 
-export { battleCantabileJupiter, battleCantabilePrologue } from './battleCantabile.js'
+export { battleCantabileJupiter, battleCantabilePrologue } from './bonolenov.js'
 
 /**
  * Blinky — Shizuku Murasaki

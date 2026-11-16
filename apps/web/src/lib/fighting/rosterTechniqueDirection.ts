@@ -1,0 +1,55 @@
+import type { RosterFighterId, StrikeShape } from './rosterChoreography'
+import type { TechniqueGesture } from './rosterTechniqueGestures'
+
+export type TechniqueDirection = StrikeShape | TechniqueGesture
+type Techniques = readonly [
+  TechniqueDirection,
+  TechniqueDirection,
+  TechniqueDirection,
+  TechniqueDirection,
+  TechniqueDirection,
+]
+
+/** Neutral, forward, down, back, finisher. Removed moves never become available through this table. */
+export const ROSTER_TECHNIQUES: Record<RosterFighterId, Techniques> = {
+  kurapika: ['touch', 'slash', 'grow', 'touch', 'needle'],
+  hisoka: ['touch', 'pull', 'fan', 'offer', 'pull'],
+  chrollo: ['observe', 'touch', 'write', 'observe', 'command'],
+  benjamin: ['palm', 'palm', 'console', 'observe', 'palm'],
+  tserriednich: ['zetsu', 'observe', 'observe', 'observe', 'observe'],
+  feitan: ['transform', 'thrust', 'slash', 'backhand', 'transform'],
+  saiyu: ['command', 'thrust', 'sweep', 'command', 'command'],
+  theta: ['command', 'cross', 'lowKick', 'backhand', 'cross'],
+  biscuit: ['transform', 'cross', 'uppercut', 'palm', 'hammer'],
+  phinks: ['observe', 'cross', 'lowJab', 'backhand', 'cross'],
+  franklin: ['command', 'command', 'command', 'command', 'command'],
+  machi: ['thread', 'pull', 'thread', 'thread', 'pull'],
+  illumi: ['needle', 'command', 'command', 'transform', 'touch'],
+  kalluto: ['fan', 'fan', 'fan', 'doll', 'fan'],
+  bonolenov: ['dance', 'thrust', 'dance', 'observe', 'dance'],
+  shizuku: ['pull', 'hammer', 'pull', 'command', 'pull'],
+  hinrigh: ['touch', 'touch', 'touch', 'touch', 'touch'],
+  mizaistom: ['command', 'palm', 'lowJab', 'backhand', 'command'],
+  leorio: ['hammer', 'cross', 'lowJab', 'backhand', 'hammer'],
+  hanzo: ['zetsu', 'palm', 'sweep', 'backhand', 'pull'],
+  rihan: ['observe', 'cross', 'lowKick', 'backhand', 'command'],
+  zakuro: ['blood', 'blood', 'blood', 'pull', 'blood'],
+  melody: ['flute', 'palm', 'lowJab', 'backhand', 'flute'],
+  basho: ['write', 'cross', 'lowJab', 'backhand', 'write'],
+  camilla: ['observe', 'palm', 'lowKick', 'backhand', 'observe'],
+  halkenburg: ['bow', 'bow', 'bow', 'observe', 'bow'],
+  gel: ['snake', 'snake', 'snake', 'snake', 'snake'],
+  lynch: ['cross', 'cross', 'lowJab', 'backhand', 'cross'],
+  luini: ['door', 'cross', 'lowKick', 'backhand', 'door'],
+  bill: ['grow', 'palm', 'lowKick', 'backhand', 'grow'],
+  furykov: ['console', 'cross', 'lowKick', 'backhand', 'uppercut'],
+  cluck: ['offer', 'palm', 'lowKick', 'backhand', 'dive'],
+  beyond: ['charge', 'cross', 'lowKick', 'backhand', 'hammer'],
+  longhi: ['offer', 'cross', 'lowKick', 'backhand', 'write'],
+  musse: ['touch', 'palm', 'lowKick', 'backhand', 'observe'],
+  padaille: ['transform', 'thrust', 'slash', 'backhand', 'hammer'],
+  sayird: ['touch', 'palm', 'lowKick', 'backhand', 'cross'],
+  terebellum: ['touch', 'touch', 'touch', 'touch', 'touch'],
+  voconte: ['door', 'cross', 'lowKick', 'backhand', 'door'],
+  yokotani: ['command', 'command', 'command', 'command', 'command'],
+}

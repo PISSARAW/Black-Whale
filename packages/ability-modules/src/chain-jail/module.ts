@@ -44,6 +44,15 @@ export const chainJail = defineAbility({
     action: 'Choose a Spider',
   },
 
+  arena: {
+    effect: 'bind',
+    cost: 24,
+    persistent: true,
+    condition: 'target-is-phantom-troupe',
+    risk: 'lethal-vow-on-invalid-target',
+    mechanic: 'chain-restraint',
+  },
+
   conditions: [
     canUseNen(),
     isConscious(),

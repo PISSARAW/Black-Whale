@@ -217,28 +217,42 @@ function identityOf(entityId: string, indexes: ReturnType<typeof indexesOf>): st
 }
 
 /** One catalogued person, as the walk reads them. */
-function describe(
+interface DescriptionInput {
+  character: RosterCharacter
+  presence: RosterPresence
+  indexes: ReturnType<typeof indexesOf>
+  chapterNumber?: number | null
+}
+
+function identityFields(
   character: RosterCharacter,
-  presence: RosterPresence,
   indexes: ReturnType<typeof indexesOf>,
   chapterNumber?: number | null,
-): CastMember {
-  const locations = indexes.under.get(presence.locationId ?? '') ?? []
-  const outsideDoorOf = outsideDoorFor(character, presence, locations)
+) {
   return {
-    characterId: character.id,
-    name: character.canonicalName,
-    locations,
     role: character.shipLocation?.role ?? '',
-    since: presence.fromEvent?.chapterId ?? null,
     nen: nenAt(character, chapterNumber),
     factionId: character.factionId ?? null,
     hatsu: indexes.repertoires.get(character.id) ?? [],
     beast: beastOf(character),
-    ...(outsideDoorOf ? { outsideDoorOf } : {}),
+  }
+}
+
+function describe({ character, presence, indexes, chapterNumber }: DescriptionInput): CastMember {
+  const locations = indexes.under.get(presence.locationId ?? '') ?? []
+  const outsideDoorOf = outsideDoorFor(character, presence, locations)
+  const optionalLocation = outsideDoorOf ? { outsideDoorOf } : {}
+  const approximation = presence.precision === EXACT ? {} : { approximate: true as const }
+  return {
+    characterId: character.id,
+    name: character.canonicalName,
+    locations,
+    since: presence.fromEvent?.chapterId ?? null,
+    ...identityFields(character, indexes, chapterNumber),
+    ...optionalLocation,
     // Carried rather than recomputed downstream: the spot inside a suite is
     // the walk's, and the card has to be able to say so.
-    ...(presence.precision === EXACT ? {} : { approximate: true }),
+    ...approximation,
   }
 }
 
@@ -275,7 +289,7 @@ function memberFrom(
   if (!PLACEABLE.has(presence.precision) || !presence.locationId) return null
   const characterId = identityOf(presence.entityId, indexes)
   const character = characterId ? indexes.catalogue.get(characterId) : undefined
-  return character ? describe(character, presence, indexes, chapterNumber) : null
+  return character ? describe({ character, presence, indexes, chapterNumber }) : null
 }
 
 /**

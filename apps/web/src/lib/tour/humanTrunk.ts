@@ -1,4 +1,6 @@
 import type { BufferGeometry, Group, Material } from 'three'
+import { buildKurapikaTrunk } from './kurapikaSuit'
+import { buildMangaTrunk } from './mangaBody'
 import type { FrameShape, HumanProfile } from './humanProfiles'
 import type { Geometry, Outlined, Three } from './silentMajorityParts'
 
@@ -19,7 +21,13 @@ export interface HumanTrunkBuild {
   figure: Group
   profile: HumanProfile
   frame: FrameShape
-  materials: { cloth: Material; ink: Material; skin: Material; shirt: Material }
+  materials: {
+    cloth: Material
+    ink: Material
+    skin: Material
+    shirt: Material
+    trousers?: Material
+  }
 }
 
 export interface HumanTrunk {
@@ -90,6 +98,9 @@ function torsoGeometry(THREE: Three, profile: Profile): BufferGeometry {
 }
 
 export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
+  if (build.profile.likeness === 'kurapika') return buildKurapikaTrunk(build)
+  if (build.profile.likeness && build.profile.likeness !== 'morena-prudo')
+    return buildMangaTrunk(build)
   const { THREE, geometry, outlined, figure, profile, frame, materials } = build
   const { cloth, ink, skin, shirt } = materials
   const width = PELVIS_WIDTH[profile.build] * frame.width
@@ -113,6 +124,7 @@ export function buildHumanTrunk(build: HumanTrunkBuild): HumanTrunk {
     ink,
   })
   torso.scale.set(profile.shoulders * frame.width, 1, CHEST_DEPTH / widest)
+  torso.name = 'torso'
   torso.position.y = 1.12 * frame.neck
   figure.add(torso)
 

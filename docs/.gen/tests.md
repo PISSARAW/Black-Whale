@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 491
+Fichiers : 660
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -24,6 +24,10 @@ Fichiers : 491
 
 - login action > issues a session cookie and redirects on the right password
 - login load > sends an already-authenticated admin straight through
+
+## `apps/web/build-tools/bundleChunks.test.ts`
+
+- production bundle partitioning > rejects an oversized JavaScript chunk instead of suppressing its warning
 
 ## `apps/web/src/lib/arena/adaptation.test.ts`
 
@@ -59,11 +63,11 @@ Fichiers : 491
 
 ## `apps/web/src/lib/arena/hatsu/blackWhale.test.ts`
 
-- the 24 Black Whale Arena Hatsu > registers exactly 24 distinct, canonical profiles
+- the 32 Black Whale Arena Hatsu > registers exactly 32 distinct, canonical profiles
 
 ## `apps/web/src/lib/arena/hatsu/production.test.ts`
 
-- production treatment for 24 Black Whale Hatsu > assigns a TourSense visual and a dedicated two-tone sound to every Hatsu
+- production treatment for 32 Black Whale Hatsu > assigns a TourSense visual and a dedicated two-tone sound to every Hatsu
 
 ## `apps/web/src/lib/arena/journey.test.ts`
 
@@ -133,6 +137,10 @@ Fichiers : 491
 ## `apps/web/src/lib/audio/ambient/melodyConcert.test.ts`
 
 - the recorded Melody concert > streams through the shared graph and releases its media source when stopped
+
+## `apps/web/src/lib/audio/ambient/mixerRouting.test.ts`
+
+- mode-owned Hatsu routing > restores nested routes, including when a borrowed sound throws
 
 ## `apps/web/src/lib/audio/hatsu/signature.test.ts`
 
@@ -211,6 +219,435 @@ Fichiers : 491
 ## `apps/web/src/lib/components/map/projection/tierAnchors.test.ts`
 
 - anchors > gives every reconstructed room a place of its own to stand
+
+## `apps/web/src/lib/fighting/arenaTechnique.test.ts`
+
+- forty arena applications and real cover > covers exactly the forty playable fighters and leaves preparation optional
+
+## `apps/web/src/lib/fighting/audio/events.test.ts`
+
+- combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
+
+## `apps/web/src/lib/fighting/audio/melody.test.ts`
+
+- continuous flute audio > waits for preparation, sustains both performers, and silences an interrupted performance
+
+## `apps/web/src/lib/fighting/auraColours.test.ts`
+
+- fighter aura colours > uses the colour the manga or the anime showed
+
+## `apps/web/src/lib/fighting/basho.test.ts`
+
+- Basho’s written Great Hiker poem > preserves a bookmarked copy’s composition and requires its page to remain available
+
+## `apps/web/src/lib/fighting/bashoPanel.test.ts`
+
+- Basho poem panel > shows editable three-line composition, the exact trigger and disclosed duel tuning
+
+## `apps/web/src/lib/fighting/benjamin.test.ts`
+
+- Benjamin’s canonical loadout > inherits only from dead loyal academy graduates serving in his army
+
+## `apps/web/src/lib/fighting/beyond.test.ts`
+
+- Beyond: physical duel and a real prepared curse > keeps fourteen physical moves without any low-health super or dangling cancel
+
+## `apps/web/src/lib/fighting/bill.test.ts`
+
+- Bill’s physical combat and support-only Erigeron > keeps his ten ordinary physical moves and a single non-offensive support ability
+
+## `apps/web/src/lib/fighting/biohazardScene.test.ts`
+
+- physical Biohazard presentation > draws the object changing shape, then the flying pigeon and latched metal cuffs
+
+## `apps/web/src/lib/fighting/bonolenov.test.ts`
+
+- Bonolenov — prepared Battle Cantabile pieces > requires a conjured spear before the Prologue thrust
+
+## `apps/web/src/lib/fighting/career/career.test.ts`
+
+- persistent local Clash career > starts empty, bounds text and sanitizes names without interpreting markup
+- career observes actual referee states > never grants career progress while playing a recorded match
+
+## `apps/web/src/lib/fighting/career/tournament.test.ts`
+
+- local tournament organizer > rejects invalid entrants and results, and never mutates the previous bracket
+
+## `apps/web/src/lib/fighting/chrollo.test.ts`
+
+- Bandit’s Secret and Double Face > starts with a historical pair of pages and no bookmark
+
+## `apps/web/src/lib/fighting/clashLearning.test.ts`
+
+- foundation lessons complement the ten Nen lessons > keeps fifteen unique, bilingual practical exercises
+- short Nen challenges measure real counterplay > observes interruption on individual simulation frames inside a slower render batch
+- five-encounter Arcade progression > requires match victory before advancing and resets the next encounter’s body and conditions
+
+## `apps/web/src/lib/fighting/clashReplayAdvanced.test.ts`
+
+- bounded replay snapshots and panel deltas > keeps a valid prefix when the capture reaches its byte limit
+
+## `apps/web/src/lib/fighting/cluck.test.ts`
+
+- Cluck — bird control retained by Steal Chain > recognizes bird control separately from martial attacks and Little Eye
+
+## `apps/web/src/lib/fighting/combatFundamentals.test.ts`
+
+- confirmed cancels, pressure and reproducible punishment > allows the personal first light-to-heavy pressure link while excluding Hatsu on guard
+- downed bodies and juggle ceilings > rejects ordinary strikes and projectiles against a downed body
+
+## `apps/web/src/lib/fighting/combatGrammar.test.ts`
+
+- complete 2D combat grammar > knocks down, wakes up invulnerable, and accepts a reversal buffer
+
+## `apps/web/src/lib/fighting/commandReadability.test.ts`
+
+- own-command refusal explanations use the actual execution result > reports missing real equipment without paying aura or starting the Hatsu
+- private feedback and perceptible commitments > shows a visible sleeping body without exposing its private hearing state through a disabled button
+
+## `apps/web/src/lib/fighting/counterplay.test.ts`
+
+- counterplay uses only accessible manifestations > does not reveal an aura projectile concealed by In without Gyo or En
+- ordinary responses have a readable delay and physical consequences > waits its reaction window before choosing a mobile jump
+- responses honor each Hatsu’s actual counterconditions > approaches visible Phinks preparation without taking away completed rotations
+
+## `apps/web/src/lib/fighting/duelRules.test.ts`
+
+- duel rules > rejects Hatsu effects with no aura or while stunned
+
+## `apps/web/src/lib/fighting/easterEggRoster.test.ts`
+
+- Every playable Clash fighter has a personal series > covers exactly the selectable roster with four complete, distinct entries each
+
+## `apps/web/src/lib/fighting/easterEggs.test.ts`
+
+- Easter Egg controls and collection > simulates scenes in Parallel Future without discovering a predicted ending
+
+## `apps/web/src/lib/fighting/engine.test.ts`
+
+- fighting engine > starts a duel with the selected Black Whale fighters
+
+## `apps/web/src/lib/fighting/feitanPain.test.ts`
+
+- Feitan — Pain Packer and Rising Sun > refuses armour and sun without actual injuries, without spending aura
+
+## `apps/web/src/lib/fighting/feitanScene.test.ts`
+
+- Pain Packer presentation > attaches the outfit to the current rig and keeps the heat boundary fixed in world space
+
+## `apps/web/src/lib/fighting/fightBodyMotion.test.ts`
+
+- fighting rig > keeps the book strike on Chrollo’s actual right hand in both facings
+- keyed moves for the whole roster > gives every move of every fighter a contact pose on its first active frame
+
+## `apps/web/src/lib/fighting/fightComfortControls.test.ts`
+
+- visual comfort is presentation only > persists validated settings and tolerates corrupt, stale or inaccessible storage
+- held touch controls release and cancel predictably > keeps Hatsu held until commit and passes the held input to the attempt
+- controller protection chords use the same Nen and hand rules > does not cover wounds and ears simultaneously with the same two hands
+
+## `apps/web/src/lib/fighting/fightControls.test.ts`
+
+- fight keyboard configuration > keeps projections, arena commands and pause distinct for both players
+- standard fighting gamepads > applies stick hysteresis so drift does not cause a dash
+- configured fight input dispatch > does not emit key-up commands that were consumed by an editor or cleared on blur
+
+## `apps/web/src/lib/fighting/fightMoves.test.ts`
+
+- fight moves > extends the jab through windup, strike and recovery
+
+## `apps/web/src/lib/fighting/fightPoseClock.test.ts`
+
+- distance-driven walk cadence > keeps the same stride at 60 Hz and at 20 Hz instead of freezing the legs
+
+## `apps/web/src/lib/fighting/fightPresentation.test.ts`
+
+- fight presentation > draws forward and backward dashes as distinct authored actions
+
+## `apps/web/src/lib/fighting/fightReplay.test.ts`
+
+- deterministic full-match replays > round-trips every held gameplay input, including advanced Nen and arena actions
+
+## `apps/web/src/lib/fighting/fightReplayPanels.test.ts`
+
+- replay boundaries for panels and training > keeps the initial RNG, infinite training clock and resource setup
+
+## `apps/web/src/lib/fighting/fightReplayReview.test.ts`
+
+- deterministic replay review > bounds reconstruction work per render and cancels an older seek
+- Nen commitments during replay takeover > keeps a copied page, missing equipment, Zetsu and exact resource values
+
+## `apps/web/src/lib/fighting/fightResponseDiagnostics.test.ts`
+
+- response diagnostics observe the actual command lifecycle > keeps an arrival queued until the next real simulation tick
+
+## `apps/web/src/lib/fighting/fightStancesRoster.test.ts`
+
+- idle stances > gives every playable fighter a stance
+
+## `apps/web/src/lib/fighting/fightStyles.test.ts`
+
+- character fighting styles > gives every fighter an authored and visible identity
+
+## `apps/web/src/lib/fighting/fighterFacing.test.ts`
+
+- fighter facing presentation > faces right with a positive near-profile angle
+
+## `apps/web/src/lib/fighting/fighterMovement.test.ts`
+
+- fighter movement > walks backward slower than forward
+- render interpolation > draws a fighter between its last two simulated positions
+- AI cadence > decides every 16 to 24 simulated frames
+
+## `apps/web/src/lib/fighting/formats.test.ts`
+
+- 2D fight formats > keeps Tour judging separate from health-based duels
+
+## `apps/web/src/lib/fighting/franklin.test.ts`
+
+- Franklin’s Double Machine Gun > fires ten travelling Nen bullets from alternating hands for U, without duplicate emissions
+
+## `apps/web/src/lib/fighting/furykov.test.ts`
+
+- Furykov — Combo Master alert > opens a usable console without an activation hit, lunge or buff
+
+## `apps/web/src/lib/fighting/gel.test.ts`
+
+- Gel’s confirmed snake arm > retains four extended arm strikes, with no invented finisher or defensive ability
+
+## `apps/web/src/lib/fighting/hatsuRegistry.test.ts`
+
+- fighter Hatsu registry > lets Chain Jail force only a Phantom Troupe target into Zetsu
+
+## `apps/web/src/lib/fighting/hinrigh.test.ts`
+
+- Hinrigh’s physical Biohazard objects > starts with two real pairs; activation transforms one without a damaging attack or stat buff
+
+## `apps/web/src/lib/fighting/hisoka.test.ts`
+
+- Hisoka’s distinct elastic techniques > loads the complete Hatsu registry
+
+## `apps/web/src/lib/fighting/illumi.test.ts`
+
+- Illumi — skull needle, orders and physical disguise > never applies control or aura drain through a generic Hatsu carrier hook
+- Illumi conditions and borrowed needles > can commit exactly forty aura and still implant the charged needle
+
+## `apps/web/src/lib/fighting/inBungee.test.ts`
+
+- In and Bungee Gum > conceals a charged Hisoka Hatsu at an added aura and startup cost
+
+## `apps/web/src/lib/fighting/kalluto.test.ts`
+
+- Kalluto paper and surveillance dolls > retains callable frame hooks
+
+## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
+
+- key pose timeline > pins keys to the phase they belong to
+- fight poses > blends and sums joints, treating a missing joint as rest
+
+## `apps/web/src/lib/fighting/kurapika.test.ts`
+
+- Kurapika manga chains in the 2D engine > starts without Emperor Time and toggles with Aura + H for either player
+
+## `apps/web/src/lib/fighting/kurapikaChains.test.ts`
+
+- Kurapika shares the visitor chain models > uses hollow rectangular links and all five fully modelled ends in their original palette
+
+## `apps/web/src/lib/fighting/leorio.test.ts`
+
+- Leorio’s surface-transmitted punch > strikes the floor before emitting aura, without a contact hitbox or instant damage
+- Leorio’s attested techniques > lists only one Hatsu, generic physical blows, and no finisher
+
+## `apps/web/src/lib/fighting/longhi.test.ts`
+
+- Longhi’s voluntary Moonlight Act > offers disclosed terms without a hitbox, damage, movement, aura charge or signature on hit
+
+## `apps/web/src/lib/fighting/longhiPanel.test.ts`
+
+- Moonlight Act consent panel > discloses the terms before Chrollo offers a copied Moonlight Act
+
+## `apps/web/src/lib/fighting/luini.test.ts`
+
+- Luini — anchor, departure and unrestricted return > anchors from inside the sealed room without moving or creating any offensive/defensive effect
+- Luini — copies keep the complete passage and personal prerequisites > Skill Hunter must make its own anchor and visits; closing the page dismisses the anchor
+
+## `apps/web/src/lib/fighting/lynchPanel.test.ts`
+
+- private Body and Soul panel > offers supported questions to human interrogators without letting P1 command the AI
+
+## `apps/web/src/lib/fighting/machi.test.ts`
+
+- Machi real thread uses > sutures only the wounded caster after preparation, without an offensive hitbox
+
+## `apps/web/src/lib/fighting/machiPresentation.test.ts`
+
+- Machi thread presentation uses actual engine links > renders a thread to the attached target, hides it after release and disposes its resources
+
+## `apps/web/src/lib/fighting/melody.test.ts`
+
+- Melody’s continuous music > stops with L, even without aura, releasing the listener immediately
+
+## `apps/web/src/lib/fighting/melodyHearing.test.ts`
+
+- Melody’s bodily hearing > listens passively in Zetsu, with stolen Nen and without Gyo
+
+## `apps/web/src/lib/fighting/mizaistom.test.ts`
+
+- Mizaistom — conditional yellow card > gives a moving player time to read the warning and stop without being punished
+
+## `apps/web/src/lib/fighting/movesets.test.ts`
+
+- wave one movesets > gives ten fighters the complete requested move structure
+
+## `apps/web/src/lib/fighting/musse.test.ts`
+
+- Musse — handgun and Secret Window > keeps one contact Hatsu and physical normals, without an invented execution finisher
+
+## `apps/web/src/lib/fighting/nenCombat.test.ts`
+
+- Nen techniques in an actual 2D duel > En detects physical bodies in Zetsu, hidden aura and entering projectiles only inside its radius
+- Category components and Emperor Time > applies hexagon efficiencies to fists and defence, including normalized catalogue aliases
+
+## `apps/web/src/lib/fighting/nenPresentation.test.ts`
+
+- Nen perception in the rendered duel > actually hides a hostile Nen projectile until Gyo or an En contact reveals it
+
+## `apps/web/src/lib/fighting/onTechnique.test.ts`
+
+- On (The Last Mission) > banks grudge from damage taken, never from aura
+
+## `apps/web/src/lib/fighting/opponentHabits.test.ts`
+
+- bounded AI knowledge and adaptation > records a visible action once rather than once per render or hitstop
+
+## `apps/web/src/lib/fighting/padaille.test.ts`
+
+- Padaille — three chosen right-hand tools > uses distinct hammer, drill and axe timing/range, without changing unrelated strikes
+
+## `apps/web/src/lib/fighting/painPackerRig.test.ts`
+
+- reference Pain Packer outfit > shares its actual hood, grille, coat and gloves across the visit and Fighting
+
+## `apps/web/src/lib/fighting/parallelFuture.test.ts`
+
+- Laplace Devil in the real 2D engine > enters Zetsu with closed eyes, without attacking, guarding or granting an evade
+
+## `apps/web/src/lib/fighting/phinks.test.ts`
+
+- Phinks — right-arm rotations, then one Ripper Cyclotron punch > starts a vulnerable wind-up without a hitbox, movement, charge or immediate aura payment
+
+## `apps/web/src/lib/fighting/predator.test.ts`
+
+- Rihan — analysis, targeted predation and the 48-hour price > never grants defence or forced Zetsu just by landing a special
+
+## `apps/web/src/lib/fighting/predatorInteractions.test.ts`
+
+- Predator interactions > can be destroyed by an enemy blow without sealing Nen or hitting a body
+
+## `apps/web/src/lib/fighting/preparation.test.ts`
+
+- Combat preparation and real scenario entities > En detects the actual prepared matter, excluding destination and objective markers
+- Prepared prerequisites survive theft, copying and forecast execution identities > Skill Hunter copies Little Eye without creating an animal; an active copied page can control a supplied animal
+
+## `apps/web/src/lib/fighting/projectiles.test.ts`
+
+- ranged attacks > gives a stone to fighters without a canonical projectile
+
+## `apps/web/src/lib/fighting/pvp/client.test.ts`
+
+- private Clash client synchronization > stops on an invalid player invitation instead of trying to authenticate the spectator
+
+## `apps/web/src/lib/fighting/pvp/serverMatch.test.ts`
+
+- server-side Clash command execution > limits named battle actions to Bonolenov’s actual panel commands
+- seat-specific Nen information > preserves spoken text while remapping owners and public verdicts for P2
+
+## `apps/web/src/lib/fighting/pvp/spectator.test.ts`
+
+- read-only public spectator feed > removes private facts from both seats, hidden In and all future branches
+
+## `apps/web/src/lib/fighting/roster.test.ts`
+
+- fighting roster models > uses catalogued identities and declared likenesses when available
+
+## `apps/web/src/lib/fighting/rosterQuality.test.ts`
+
+- roster quality parity > covers exactly the forty playable fighters, with four routes and a personal movement direction each
+- sustained technique presentation > freezes writing at the simulated counter, and retains the anatomical pen hand in both directions
+
+## `apps/web/src/lib/fighting/rosterSelection.test.ts`
+
+- fighting roster selection > places every playable fighter in exactly one labelled group
+
+## `apps/web/src/lib/fighting/sayird.test.ts`
+
+- Sayird and Little Eye outside the 2D duel > describes control, sight, hearing and real small targets in both languages
+
+## `apps/web/src/lib/fighting/shizuku.test.ts`
+
+- Blinky: named matter, last object and exposed wounds > waits for startup and has no utility damage hitbox
+
+## `apps/web/src/lib/fighting/stageBackground.test.ts`
+
+- stage background Easter Eggs > keeps declared likenesses and original graphic sources available for all stages
+
+## `apps/web/src/lib/fighting/stagePost.test.ts`
+
+- scene-only multisample antialiasing > keeps scene MSAA and HDR, resolves before post, and preserves the output chain
+
+## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
+
+- 2D arena ship-room rendering > keeps the original burial model behind the widest bodies with an actual material cut
+
+## `apps/web/src/lib/fighting/stages.test.ts`
+
+- fight stages > offers the original hold, Heavens Arena and rooms of the visit
+
+## `apps/web/src/lib/fighting/teamMatch.test.ts`
+
+- local three-fighter teams > requires three distinct known characters on each side
+
+## `apps/web/src/lib/fighting/techniqueAuraColours.test.ts`
+
+- technique aura colours > gives each of Kurapika’s chains the aura the anime showed
+
+## `apps/web/src/lib/fighting/techniqueContracts.test.ts`
+
+- canonical technique contracts > keeps canon separate from competitive tuning
+
+## `apps/web/src/lib/fighting/terebellum.test.ts`
+
+- Sweet Home damage transfer > does not grant an avoidance charge on activation
+
+## `apps/web/src/lib/fighting/theta.test.ts`
+
+- Theta’s real handgun and unknown Hatsu > exposes physical pistol shots and removes the invented Nen finisher
+
+## `apps/web/src/lib/fighting/training.test.ts`
+
+- frame-based input and command history > records P1 and P2 holds and their exact duration at 60 Hz
+- dummy recording playback > keeps input-only tracks and trailing holds until the recorded end, then releases
+- lab resource aids retain Hatsu conditions > editing Feitan HP does not manufacture the injuries needed for Pain Packer
+
+## `apps/web/src/lib/fighting/trainingGuard.test.ts`
+
+- training guard trials > takes the first hit, then guards even after a dropped combo has reset its counter
+
+## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
+
+- actual contact recovery measurement > measures a real travelling projectile after its owner has recovered
+
+## `apps/web/src/lib/fighting/voconte.test.ts`
+
+- Voconte — Door, actual directional passage > connects existing frames after a vulnerable startup, without teleporting or attacking
+
+## `apps/web/src/lib/fighting/zakuro.test.ts`
+
+- Zakuro’s physical Bloody Mary > lets the AI finish a finite infusion without walking away or receiving health
+
+## `apps/web/src/lib/fighting/zakuroPanel.test.ts`
+
+- Bloody Mary material and capture panel > discloses the wound, own blood, finite bags, physical travel and duel resistance before commands
 
 ## `apps/web/src/lib/hunt/arena.test.ts`
 
@@ -670,6 +1107,10 @@ Fichiers : 491
 
 - resolveRegionLocationSlug > translates regions whose name is not a suffix of their slug
 
+## `apps/web/src/lib/nen/NenTechniqueAnimation.test.ts`
+
+- NenDex technique animations > builds and animates a visible manifestation for every archive entry
+
 ## `apps/web/src/lib/nen/abilityComponents.test.ts`
 
 - the map from a componentKey to the thing that draws it > resolves all seventy declared composed views, and nothing else
@@ -831,6 +1272,22 @@ Fichiers : 491
 - buildTimeline > orders entries by chapter then sequence
 - buildChapterTrajectory > falls back to an explicit unknown position
 
+## `apps/web/src/lib/server/clashPvp.test.ts`
+
+- authoritative private Clash lobby > allows time to review the initial lobby and starts only while both confirmed seats are connected
+
+## `apps/web/src/lib/server/clashPvpHttp.test.ts`
+
+- Clash PvP HTTP boundary > bounds streamed JSON and handles malformed requests
+
+## `apps/web/src/lib/server/clashSeasonFile.test.ts`
+
+- durable PvP seasons > restores identities, ratings and duplicate receipts after a server restart without persisting bearer tokens
+
+## `apps/web/src/lib/server/clashSeasons.test.ts`
+
+- instance PvP seasons > uses opaque credentials and exposes no token in identity or standings
+
 ## `apps/web/src/lib/server/co-presence.test.ts`
 
 - canon co-presence > finds characters shown in the same atomic scene
@@ -880,13 +1337,18 @@ Fichiers : 491
 
 - Reconstruction V3 SimulationStore adapter > creates a real rule-compatible branch at the fork
 
+## `apps/web/src/lib/server/siteSearch.test.ts`
+
+- site-wide spoiler-safe search > indexes the supported content types and every public mode
+- intent parsing and bounded caching > allows only search filters, never generated answers or URLs
+
 ## `apps/web/src/lib/server/spoilerWorld.test.ts`
 
 - applySpoilerFilters > keeps only revealed characters
 
 ## `apps/web/src/lib/server/tourSearch.test.ts`
 
-- ollamaConfig > is absent unless both the address and the model are set
+- ollamaConfig > reads private authentication and bounds the request deadline
 - parseKeywords > reads the keywords and nothing else
 - interpreterQuestion > confines the reply to the vocabulary
 - createInterpreter > is off without a model and never asks
@@ -963,6 +1425,10 @@ Fichiers : 491
 
 - strategy AI personalities > assigns a stable personality to every faction
 
+## `apps/web/src/lib/tour/LaplaceDevilEffect.test.ts`
+
+- Laplace Devil in the Tour > returns the visitor to the activation instant and removes the dream from world time
+
 ## `apps/web/src/lib/tour/StairNavigator.test.ts`
 
 - automatic stair landings > covers both ends of every non-retractable stair link
@@ -979,6 +1445,10 @@ Fichiers : 491
 ## `apps/web/src/lib/tour/ambientOcclusion.test.ts`
 
 - the occlusion pass > measures its disc in metres of ship, not in pixels
+
+## `apps/web/src/lib/tour/apparitionLsdfView.test.ts`
+
+- the LSDF manga model > builds a numbered formation with Yokotani’s uniform design
 
 ## `apps/web/src/lib/tour/apparitions.test.ts`
 
@@ -1087,6 +1557,10 @@ Fichiers : 491
 - worthRouting > needs letters and a bounded length
 - parseTopic > keeps a topic out of the list
 - readTopic > accepts only a listed word
+
+## `apps/web/src/lib/tour/cast/auraPlacement.test.ts`
+
+- aura source placement > uses an authored structure as an exact three-dimensional anchor
 
 ## `apps/web/src/lib/tour/cast/auraSources.test.ts`
 
@@ -1439,7 +1913,7 @@ Fichiers : 491
 
 ## `apps/web/src/lib/tour/humanFigure.test.ts`
 
-- shared human figure > draws Morena as one seated silhouette at the negotiation table
+- shared human figure > forwards locomotion poses and combat motion to the articulated rig
 
 ## `apps/web/src/lib/tour/humanHair.test.ts`
 
@@ -1462,6 +1936,10 @@ Fichiers : 491
 ## `apps/web/src/lib/tour/kachoView.test.ts`
 
 - Kacho’s apartment against the study, dining and kitchen panels > keeps a valid walked plan and distinguishes panel props from five reconstructed rooms
+
+## `apps/web/src/lib/tour/kurapikaLikeness.test.ts`
+
+- Kurapika likeness from the supplied manga reference > uses a dark suit and tie, with a white shirt and the declared blond bob
 
 ## `apps/web/src/lib/tour/lampAir.test.ts`
 
@@ -1748,6 +2226,14 @@ Fichiers : 491
 
 - applySheen > reads the eye and the normal the material already carries
 
+## `apps/web/src/lib/tour/simulation/categoryAbilities.test.ts`
+
+- Tour category abilities > offers only actions compatible with the selected target
+
+## `apps/web/src/lib/tour/simulation/categoryJourney.test.ts`
+
+- Nen category pilot journey > keeps an ordinary solution and makes affinity materially change an action
+
 ## `apps/web/src/lib/tour/simulation/dialogue.test.ts`
 
 - contextual NPC dialogue boundary > sends only the actor memory and current objective to the model
@@ -1756,9 +2242,25 @@ Fichiers : 491
 
 - dynamic Tour events > lets an incident trigger an off-screen security response later
 
+## `apps/web/src/lib/tour/simulation/executeCategoryAction.test.ts`
+
+- category action consequences > separates a witnessed fact from the persistent incident
+
 ## `apps/web/src/lib/tour/simulation/mode.test.ts`
 
 - Tour world modes > keeps the canonical reconstruction immutable
+
+## `apps/web/src/lib/tour/simulation/nenEnvironment.test.ts`
+
+- Nen-compatible Tour environment > seeds the pilot zone once with a non-Nen route
+
+## `apps/web/src/lib/tour/simulation/nenSession.test.ts`
+
+- Nen simulation mode session > creates no simulation for the canonical visit
+
+## `apps/web/src/lib/tour/simulation/nenWitnesses.test.ts`
+
+- hostile Nen witnesses > does not let In create visual testimony by itself
 
 ## `apps/web/src/lib/tour/simulation/persistence.test.ts`
 
@@ -1910,7 +2412,7 @@ Fichiers : 491
 
 ## `apps/web/src/routes/abilities/[slug]/page.server.test.ts`
 
-- ability detail publication boundary > serves a source-backed record with related entities
+- ability detail publication boundary > withholds undated prose, aliases and ownership when opened from capped search
 
 ## `apps/web/src/routes/abilities/page.server.test.ts`
 
@@ -1927,6 +2429,10 @@ Fichiers : 491
 ## `apps/web/src/routes/llms.txt/server.test.ts`
 
 - llms.txt > is a short, cached Markdown guide to the canonical indexes
+
+## `apps/web/src/routes/search/server.test.ts`
+
+- global search boundary > takes the cap from the HttpOnly cookie, ignoring body and query claims
 
 ## `apps/web/src/routes/ship/shipDelta.test.ts`
 
@@ -1964,6 +2470,10 @@ Fichiers : 491
 ## `packages/ability-modules/test/contagion-progression.spec.ts`
 
 - Contagion progression after Morena’s table > requires the witnessed murder and creates the local member only once
+
+## `packages/ability-modules/test/damage-sweet-home.spec.ts`
+
+- Damage: Sweet Home > uses both hands at the moment of impact for damage dealt to another target
 
 ## `packages/ability-modules/test/every-module.spec.ts`
 
@@ -2133,6 +2643,7 @@ Fichiers : 491
 - unique-ids > refuses two characters with the same id
 - references-resolve > refuses an ability whose owner is not a character
 - chapter-references-are-well-formed > accepts the explicit ch-unknown
+- nen-conduct-is-coherent > refuses snapshots written out of chronological order
 - events-are-ordered > refuses two events in the same place in the story
 - ranked-claims-cite-a-source > refuses a panel-ranked space with no source
 - structures-fit-their-space > refuses a structure that reaches through the ceiling
@@ -2161,6 +2672,10 @@ Fichiers : 491
 - isRevealed > reveals an event at or before the reader is
 - isActiveAt > holds from the event that opens it
 - isActiveAt with an explicit reveal limit > defaults to the target event’s own chapter
+
+## `packages/nen-engine/test/categories.spec.ts`
+
+- Nen category resolver > follows the hexagon without inventing abilities
 
 ## `packages/nen-engine/test/engine.spec.ts`
 

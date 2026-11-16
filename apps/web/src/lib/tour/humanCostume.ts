@@ -16,6 +16,7 @@ interface CostumeBuild {
   accent: Material
   dark: Material
   skin?: Material
+  hair?: Material
 }
 
 /**
@@ -72,7 +73,9 @@ export function addMorenaDetails(build: MorenaBuild): void {
   const { THREE, geometry, outlined, figure, head, cloth, ink, accent, seated } = build
   const skin = build.skin ?? build.accent
   const eyeWhite = new THREE.MeshBasicMaterial({ color: 0xfff8f4 })
-  const hairShade = new THREE.MeshBasicMaterial({ color: 0x9d763c })
+  const hair = build.hair ?? accent
+  const hairShade = (hair as import('three').MeshBasicMaterial).clone()
+  hairShade.color.multiplyScalar(0.65)
 
   // The reference gives her a softer, slightly wider face than the common
   // narrow profile. Keep the long jaw, but leave enough cheek for the sutured
@@ -154,7 +157,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
       'morena:hair-back',
       () => new THREE.CylinderGeometry(0.24, 0.3, 1.12, 10),
     ),
-    material: accent,
+    material: hair,
     ink,
   })
   hairBack.position.set(0, 1.02, -0.16)
@@ -167,7 +170,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
     const bang = outlined({
       THREE,
       geometry: geometry(THREE, 'morena:bang', () => new THREE.CapsuleGeometry(0.055, 0.2, 4, 8)),
-      material: accent,
+      material: hair,
       ink,
       scale: 1.02,
     })
@@ -193,7 +196,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
         'morena:hair-lock',
         () => new THREE.CapsuleGeometry(0.075, 0.64, 4, 8),
       ),
-      material: accent,
+      material: hair,
       ink,
       scale: 1.025,
     })
@@ -202,7 +205,7 @@ export function addMorenaDetails(build: MorenaBuild): void {
     figure.add(lock)
     const curl = new THREE.Mesh(
       geometry(THREE, 'morena:hair-curl', () => new THREE.TorusGeometry(0.105, 0.045, 5, 12, 3.8)),
-      accent,
+      hair,
     )
     curl.position.set(side * 0.14, 1.06, 0.145)
     curl.rotation.z = side < 0 ? -0.5 : Math.PI + 0.5

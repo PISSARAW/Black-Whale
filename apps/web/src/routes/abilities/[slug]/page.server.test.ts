@@ -17,6 +17,23 @@ async function run(slug: string, cap?: number) {
 }
 
 describe('ability detail publication boundary', () => {
+  it('withholds undated prose, aliases and ownership when opened from capped search', async () => {
+    const data = (await run('black-voice', 350)) as {
+      ability: { description: string; alternateNames: string[]; category: string }
+      owner: unknown
+      users: unknown[]
+      related: unknown[]
+      catalogueCapped: boolean
+    }
+    expect(data.catalogueCapped).toBe(true)
+    expect(data.ability.description).toBe('')
+    expect(data.ability.alternateNames).toEqual([])
+    expect(data.ability.category).toBe('unknown')
+    expect(data.owner).toBeNull()
+    expect(data.users).toEqual([])
+    expect(data.related).toEqual([])
+    expect(JSON.stringify(data)).not.toContain("Shalnark's death")
+  })
   it('serves a source-backed record with related entities', async () => {
     const data = (await run('bungee-gum')) as any
     expect(data.ability.id).toBe('bungee-gum')

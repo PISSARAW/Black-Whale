@@ -128,45 +128,68 @@
     },
     {
       "id": "prince-benjamin",
-      "body": { "build": "broad", "height": 1.12, "frame": "adult", "shoulders": 1.3 },
-      "head": { "face": "square", "hairStyle": "military", "expression": "hostile" },
+      "body": {
+        "build": "broad",
+        "height": 1.12,
+        "frame": "adult",
+        "shoulders": 1.3
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "spiked",
+        "expression": "hostile"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 348, 349, 358 ; kaki d'uniforme de l'armée royale kakine, choix éditorial stable",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette claire choisie pour le noir et blanc.",
         "skin": "0xc99473",
-        "hair": "0x1a1816",
+        "hair": "0xd5c68d",
         "attire": {
-          "jacket": "0x4a4b39",
-          "shirt": "0xdcd8c8",
-          "trousers": "0x34352a",
-          "accent": "0xc0a244"
+          "jacket": "0xd8d5cb",
+          "shirt": "0xe8e2d6",
+          "trousers": "0xd2d0c7",
+          "accent": "0x68665c"
         }
       },
-      "attire": "uniform",
+      "attire": "civilian",
       "signatures": ["mutton-chops"],
-      "verified": { "chapterIds": ["ch-348", "ch-349", "ch-358"], "status": "confirmed" },
-      "note": "Le colosse de la fratrie : le cou est dessiné plus large que le crâne, ce que le gabarit `broad` ne rend pas seul — d'où `shoulders` 1,3, l'une des deux seules épaules déclarées à bord."
+      "verified": {
+        "chapterIds": ["ch-348", "ch-349", "ch-358"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : carrure massive, visage carré sévère, sourcils épais et nez long, cheveux dressés et mèches latérales, veste claire à col montant zippé, pantalon ample et hautes bottes lacées."
     },
     {
       "id": "prince-camilla",
-      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "hime", "expression": "hostile" },
+      "body": {
+        "build": "slim",
+        "height": 0.98,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bun",
+        "expression": "hostile"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "édition couleur officielle Shueisha du tome 36 pour les cheveux blonds ; planches n&b ch. 349, 350, 358 pour la robe de cour sombre à col montant",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; couleurs de rendu choisies lorsque la planche est en noir et blanc.",
         "skin": "0xf0dfc9",
         "hair": "0xe3c67a",
         "attire": {
-          "jacket": "0x2a2436",
-          "shirt": "0xe9e4dc",
-          "trousers": "0x1d1926",
-          "accent": "0xc9b26a"
+          "jacket": "0xdcd4c6",
+          "shirt": "0xf4eee1",
+          "trousers": "0xc7b9a5",
+          "accent": "0x80706d"
         }
       },
       "attire": "gown",
       "signatures": ["tiara"],
-      "verified": { "chapterIds": ["ch-349", "ch-350", "ch-358"], "status": "partial" },
-      "note": "La moue est le visage : hautaine au repos, folle dans la colère. Ses cheveux sont blonds dans la coloration officielle ; le diadème suffit à la nommer de loin. Coiffure exacte à confirmer."
+      "verified": {
+        "chapterIds": ["ch-349", "ch-350", "ch-358"],
+        "status": "partial"
+      },
+      "note": "Référence manga fournie : coiffure blonde relevée en chignon bouclé avec longues mèches ondulées, collier et broche, robe de cour corsetée à étages de dentelle festonnée, manches travaillées et chaussures à talons. Les teintes du vêtement restent choisies pour cette planche en noir et blanc."
     },
     {
       "id": "prince-zhanglei",
@@ -191,24 +214,35 @@
     },
     {
       "id": "prince-tserriednich",
-      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 1.06,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "slicked-back",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 343, 345, 348 ; élégance sombre sans décoration, palette resserrée",
+        "source": "Référence manga fournie et tenue attribuée explicitement par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
         "skin": "0xecd9c2",
         "hair": "0x1c1a1f",
         "attire": {
-          "jacket": "0x22232b",
-          "shirt": "0xf2efe8",
-          "trousers": "0x1b1c23",
-          "accent": "0x7c1f2c"
+          "jacket": "0xa8a6a0",
+          "shirt": "0x777772",
+          "trousers": "0x1e2025",
+          "accent": "0x575852"
         }
       },
-      "attire": "suit",
+      "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-343", "ch-345", "ch-348"], "status": "confirmed" },
-      "note": "Deux ou trois mèches retombent sur le front, ce que `slicked-back` doit rendre plutôt qu'un casque lisse. Le même visage doit pouvoir porter « séduisant » et « abject » — l'écart entre les deux est le personnage, et c'est pourquoi l'expression déclarée est `neutral` : la scène la charge, pas la fiche."
+      "verified": {
+        "chapterIds": ["ch-343", "ch-345", "ch-348"],
+        "status": "confirmed"
+      },
+      "note": "Tenue demandée pour ce rendu : capuche relevée, grandes lunettes noires rondes, bas du visage couvert, haut clair ample, pantalon noir ample et sac en bandoulière. Les deux références manga ont été explicitement attribuées à Tserriednich par le mainteneur le 2026-11-16. Le visage et les cheveux déclarés restent présents sous les accessoires."
     },
     {
       "id": "prince-tubeppa",
@@ -299,24 +333,35 @@
     },
     {
       "id": "prince-halkenburg",
-      "body": { "build": "slim", "height": 1.07, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "severe" },
+      "body": {
+        "build": "slim",
+        "height": 1.07,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "severe"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 349, 358, 361 ; châtain clair choisi, costume sobre sans décorations",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
         "skin": "0xecd6bd",
         "hair": "0x9a7444",
         "attire": {
-          "jacket": "0x2c3138",
-          "shirt": "0xf1efe8",
-          "trousers": "0x232830",
-          "accent": "0x6f7f8c"
+          "jacket": "0x444b55",
+          "shirt": "0xece8df",
+          "trousers": "0x444b55",
+          "accent": "0x202128"
         }
       },
       "attire": "suit",
-      "signatures": ["glasses-thin"],
-      "verified": { "chapterIds": ["ch-349", "ch-358", "ch-361"], "status": "confirmed" },
-      "note": "Le refus du faste est son costume : pas de décorations, ce qui le distingue de Benjamin d'un seul coup d'œil. `attire: suit` prime ici sur le `ritual` que `wardrobe.ts` tire de son rôle prêcheur — §2.5."
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-349", "ch-358", "ch-361"],
+        "status": "confirmed"
+      },
+      "note": "Costume à fines rayures verticales, cheveux courts en raie latérale, chemise claire et cravate sombre, sans lunettes dans la référence manga fournie."
     },
     {
       "id": "prince-kacho",
@@ -428,42 +473,53 @@
       "body": { "build": "slim", "height": 0.97, "frame": "adult" },
       "head": { "face": "narrow", "hairStyle": "bob", "expression": "severe" },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; couvertures de volumes 34–37",
+        "basis": "chosen",
+        "source": "Référence manga fournie pour le costume noir et la cravate noire ; blond repris de l’anime 2011",
         "skin": "0xf0e0cc",
         "hair": "0xe8c860",
         "attire": {
-          "jacket": "0x232430",
+          "jacket": "0x141419",
           "shirt": "0xf2efe8",
-          "trousers": "0x232430",
-          "accent": "0xb01e2e"
+          "trousers": "0x141419",
+          "accent": "0x17171c"
         }
       },
       "attire": "suit",
       "signatures": ["chain-right-hand"],
       "verified": { "chapterIds": ["ch-343", "ch-358"], "status": "confirmed" },
-      "note": "Les yeux écarlates sont un état — EFFECT_STATE_CHANGED via Emperor Time — et pas un fait d'appearance. Ce qui est déclaré ici est le carré blond, le costume sombre et la cravate d'employé de la famille ; la chaîne n'apparaît qu'au cast."
+      "note": "Les yeux écarlates sont un état — EFFECT_STATE_CHANGED via Emperor Time — et pas un fait d'appearance. Ce qui est déclaré ici est le carré blond, le costume sombre et la cravate noire d'employé de la famille (rendu aligné sur la référence manga fournie) ; la chaîne n'apparaît qu'au cast."
     },
     {
       "id": "leorio-paradinight",
-      "body": { "build": "average", "height": 1.08, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "military", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 1.08,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "military",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; costume bleu et cravate rouge constants sur tout le matériel officiel",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur : costume bleu, cravate verte, petites lunettes et cheveux dressés.",
         "skin": "0xd8b49a",
         "hair": "0x1d1a18",
         "attire": {
-          "jacket": "0x2f3f63",
-          "shirt": "0xf1eee6",
-          "trousers": "0x24314c",
-          "accent": "0xb0333a"
+          "jacket": "0x092b4c",
+          "trousers": "0x092b4c",
+          "shirt": "0xf4f2eb",
+          "accent": "0x245456"
         }
       },
       "attire": "suit",
       "signatures": ["glasses-round", "goatee"],
-      "verified": { "chapterIds": ["ch-343", "ch-346"], "status": "confirmed" },
-      "note": "Les petites lunettes teintées rondes et le bouc naissant font le visage à eux deux ; la mallette n'est pas une pièce de l'annexe B et n'est donc pas déclarée."
+      "verified": {
+        "chapterIds": ["ch-343", "ch-346"],
+        "status": "confirmed"
+      },
+      "note": "Silhouette longiligne, costume bleu ajusté, cravate verte, lunettes rondes teintées et cheveux noirs hauts et hérissés : rendu aligné sur la référence visuelle fournie."
     },
     {
       "id": "cheadle-yorkshire",
@@ -488,24 +544,35 @@
     },
     {
       "id": "mizaistom-nana",
-      "body": { "build": "broad", "height": 1.1, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "short", "expression": "neutral" },
+      "body": {
+        "build": "broad",
+        "height": 1.1,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe"
+      },
       "colours": {
         "basis": "attested",
-        "source": "anime 2011 ; veste à motif pie noir et blanc, constante",
-        "skin": "0x8f5d45",
+        "source": "Références manga et anime fournies par le mainteneur le 2026-11-16 : tenue pie noire et blanche, peau claire, cornes et boucles d’oreilles dorées.",
+        "skin": "0xd7bda3",
         "hair": "0x141312",
         "attire": {
-          "jacket": "0x1c1c1e",
-          "shirt": "0xf2f0ea",
-          "trousers": "0x1a1a1c",
-          "accent": "0xf2f0ea"
+          "jacket": "0xeeeae0",
+          "shirt": "0xeeeae0",
+          "trousers": "0xeeeae0",
+          "accent": "0xc6ad3d"
         }
       },
-      "attire": "suit",
+      "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-340", "ch-343"], "status": "confirmed" },
-      "note": "La Vache. Le motif pie est porté par la palette — noir et blanc en jacket et accent — plutôt que par une pièce : l'annexe B ne compte aucun motif, et une texture serait la première du vaisseau."
+      "verified": {
+        "chapterIds": ["ch-340", "ch-343"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : tenue pie noire et blanche à col montant zippé, taches sur veste et pantalon, chapeau assorti à deux petites cornes dorées, marque noire autour d’un œil, boucle d’oreille dorée et barbe courte suivant la mâchoire. Cross Game est rendu comme un volume quadrillé clair par le constructeur d’effet partagé."
     },
     {
       "id": "botobai-gigante",
@@ -551,24 +618,35 @@
     },
     {
       "id": "saiyu",
-      "body": { "build": "slim", "height": 1.08, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "ponytail", "expression": "tired" },
+      "body": {
+        "build": "slim",
+        "height": 1.08,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "short",
+        "expression": "tired"
+      },
       "colours": {
-        "basis": "chosen",
-        "source": "planches n&b ch. 340, 345 ; silhouette dégingandée, palette terne",
-        "skin": "0xc99473",
-        "hair": "0x201d1f",
+        "basis": "attested",
+        "source": "Références anime fournies par le mainteneur le 2026-11-16 : cheveux blonds très courts, bandeau doré, tenue noire à ornements or et peau claire.",
+        "skin": "0xd1c6a5",
+        "hair": "0xb9b65b",
         "attire": {
-          "jacket": "0x4c4a44",
-          "shirt": "0xe4e0d4",
-          "trousers": "0x33322e",
-          "accent": "0x8f8a76"
+          "jacket": "0x262921",
+          "shirt": "0xa88753",
+          "trousers": "0x292c24",
+          "accent": "0xc89a35"
         }
       },
       "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "confirmed" },
-      "note": "Le Singe : yeux mi-clos, d'où `tired`. Le bâton et la cigarette ne sont pas des pièces de l'annexe B et ne sont pas déclarés."
+      "verified": {
+        "chapterIds": ["ch-340", "ch-345"],
+        "status": "confirmed"
+      },
+      "note": "Le Singe : cheveux blonds ras à motif de cœur, bandeau doré, grandes oreilles et hachures sur les joues ; haut noir court sans manches à emblème doré, abdomen dégagé, bracelets à volutes, pantalon bouffant arrêté au mollet, chaussures souples et queue recourbée. Références fournies par le mainteneur."
     },
     {
       "id": "saccho-kobayakawa",
@@ -593,24 +671,35 @@
     },
     {
       "id": "cluck",
-      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "swept", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.97,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "swept",
+        "expression": "severe"
+      },
       "colours": {
-        "basis": "chosen",
-        "source": "planches ch. 320, 340, 345 et palette de l'anime 2011 ; crête souple bleu sombre",
+        "basis": "attested",
+        "source": "Références manga et anime fournies par le mainteneur le 2026-11-16 : cheveux relevés bleu sombre, couronne et traîne de plumes blanches à pointes turquoise, tenue et bottes bleu noir.",
         "skin": "0xe4c3a5",
-        "hair": "0x274867",
+        "hair": "0x203e4b",
         "attire": {
-          "jacket": "0xb9884e",
-          "shirt": "0xf1ead8",
-          "trousers": "0x6b5230",
-          "accent": "0xdcb45f"
+          "jacket": "0x182a36",
+          "shirt": "0xe4eee9",
+          "trousers": "0x182a36",
+          "accent": "0x73a5a9"
         }
       },
       "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-320", "ch-340"], "status": "partial" },
-      "note": "La Poule : cheveux bleu sombre relevés en crête souple. Les oiseaux sont une ability et n'ont rien à faire dans une apparence."
+      "verified": {
+        "chapterIds": ["ch-320", "ch-340"],
+        "status": "partial"
+      },
+      "note": "La Poule : coiffure relevée, grande couronne de plumes en éventail et rubans turquoise ; boucles pendantes, ras-de-cou noir, haut à bordures de plumes, ventre dégagé, short sombre, manchettes à plumes, bottes lacées et longue traîne de plumes. Les oiseaux restent une ability distincte du costume."
     },
     {
       "id": "ginta",
@@ -635,150 +724,228 @@
     },
     {
       "id": "gel",
-      "body": { "build": "slim", "height": 1.02, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 1.02,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "long",
+        "expression": "severe"
+      },
       "colours": {
-        "basis": "chosen",
-        "source": "planches n&b ch. 340, 345 ; longiligne, cheveux lisses, palette froide",
-        "skin": "0xdfbb9b",
-        "hair": "0x2c2833",
+        "basis": "attested",
+        "source": "Références anime fournies par le mainteneur le 2026-11-16 : longs cheveux noirs, peau mate, yeux turquoise à pupille verticale, lèvres rosées et haut noir à encolure festonnée.",
+        "skin": "0xb99784",
+        "hair": "0x171b20",
         "attire": {
-          "jacket": "0x3a4450",
-          "shirt": "0xe9e6de",
-          "trousers": "0x272e37",
-          "accent": "0x7f8f7a"
+          "jacket": "0x17181e",
+          "shirt": "0x24252d",
+          "trousers": "0x17181e",
+          "accent": "0x65bcc1"
         }
       },
       "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-340", "ch-345"], "status": "partial" },
-      "note": "Le Serpent : femme longiligne aux cheveux lisses, à confirmer."
+      "verified": {
+        "chapterIds": ["ch-340", "ch-345"],
+        "status": "partial"
+      },
+      "note": "Références fournies : front dégagé, longs cheveux noirs lisses, grands yeux turquoise aux pupilles verticales et cils, lèvres rosées ; tenue noire à encolure ouverte festonnée. Son bras-serpent conserve un corps noir continu, une tête violette à marques en cœurs, un nœud rose, des crochets et une langue fourchue."
     },
     {
       "id": "beyond-netero",
-      "body": { "build": "broad", "height": 1.1, "frame": "adult", "shoulders": 1.26 },
-      "head": { "face": "square", "hairStyle": "bald-crown", "expression": "neutral" },
+      "body": {
+        "build": "broad",
+        "height": 1.1,
+        "frame": "adult",
+        "shoulders": 1.26
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "chonmage",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "Planches n&b ch. 359, page de lecture 5 : robe claire, couronne dégarnie, barbe sombre ; teintes interprétées.",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
         "skin": "0xc99473",
         "hair": "0x211f1d",
         "attire": {
-          "jacket": "0xe6e1d5",
-          "shirt": "0xe6e1d5",
-          "trousers": "0xd8d2c4",
-          "accent": "0x8e7c55"
+          "jacket": "0xaaa59c",
+          "shirt": "0xd9d4c9",
+          "trousers": "0xa5a097",
+          "accent": "0x55534f"
         }
       },
       "attire": "civilian",
       "signatures": ["beard-full"],
-      "verified": { "chapterIds": ["ch-340", "ch-345", "ch-359"], "status": "confirmed" },
-      "note": "Vieillard hors gabarit, et le sourire du père. En cellule — mais la cellule se visite, ce qui est la seule raison pour laquelle il a besoin d'une apparence."
+      "verified": {
+        "chapterIds": ["ch-340", "ch-345", "ch-359"],
+        "status": "confirmed"
+      },
+      "note": "Référence manga fournie : carrure massive, cheveux noués en haut, très longue barbe sombre, robe ample plissée laissant les avant-bras dégagés et sandales."
     },
     {
       "id": "bill",
-      "body": { "build": "average", "height": 1.03, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "short", "expression": "tired" },
+      "body": {
+        "build": "average",
+        "height": 1.03,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "wild",
+        "expression": "tired"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 358, 359 ; uniforme de garde royal, palette de la maison Woble",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 : mèches dressées en flammes, regard cerné, costume noir avec chemise claire, cravate et insigne H ; palette claire neutre choisie pour les cheveux en noir et blanc.",
         "skin": "0xd8b49a",
-        "hair": "0x36302a",
+        "hair": "0xc7c1ad",
         "attire": {
-          "jacket": "0x3f4a58",
-          "shirt": "0xe4e6e6",
-          "trousers": "0x2a333e",
-          "accent": "0xb59a4d"
+          "jacket": "0x171a21",
+          "shirt": "0xeeede7",
+          "trousers": "0x191c23",
+          "accent": "0x101218"
         }
       },
-      "attire": "uniform",
+      "attire": "suit",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-358", "ch-359"], "status": "partial" },
-      "note": "Premier compagnon de poste de Kurapika : visage long, l'air fiable et fatigué. Il doit être distinct de Kurapika à côté de lui — la scène d'acceptation du couloir du 1014 est exactement ce test. Détails à confirmer."
+      "verified": {
+        "chapterIds": ["ch-358", "ch-359"],
+        "status": "partial"
+      },
+      "note": "Références fournies : cheveux en flammes à implantation anguleuse, visage allongé, yeux mi-clos cernés de plusieurs plis, sourcils froncés et costume sombre avec chemise, cravate et insigne H. La couleur des cheveux reste un choix de palette pour une référence manga en noir et blanc."
     },
     {
       "id": "melody",
-      "body": { "build": "slim", "height": 0.72, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "bald-crown", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 0.72,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bald-crown",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 350, 359 ; tenue sombre et sobre, palette éteinte",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; costume sombre et col blanc, palette de rendu choisie.",
         "skin": "0xd6b39a",
         "hair": "0x2f2a26",
         "attire": {
-          "jacket": "0x3a3540",
-          "shirt": "0xe6e1d8",
-          "trousers": "0x2a262f",
-          "accent": "0x8e7fa0"
+          "jacket": "0x25252b",
+          "shirt": "0xeee8dc",
+          "trousers": "0x25252b",
+          "accent": "0x9eaaa8"
         }
       },
-      "attire": "civilian",
+      "attire": "suit",
       "signatures": ["flute"],
-      "verified": { "chapterIds": ["ch-350", "ch-359"], "status": "confirmed" },
-      "note": "L'apparence est la cicatrice de la Sonate, et la dessiner est un acte de tendresse ou une faute : le manga la porte avec douceur, jamais en monstre, et ce rendu doit faire pareil. `bald-crown` est le style le plus proche des deux touffes latérales ; `adult` avec une hauteur très basse plutôt que `child`, parce qu'elle n'est pas une enfant."
+      "verified": {
+        "chapterIds": ["ch-350", "ch-359"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : adulte de petite taille et silhouette ronde, grande tête au sommet dégarni, longs cheveux sur les côtés et dans le dos jusqu’aux épaules, traits doux, costume sombre à col blanc et flûte traversière. La petite stature conserve un gabarit adulte."
     },
     {
       "id": "biscuit-krueger",
-      "body": { "build": "slim", "height": 0.62, "frame": "child" },
-      "head": { "face": "round", "hairStyle": "drills", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.62,
+        "frame": "child"
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "ponytail",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; anglaises blondes et robe rose constantes sur le matériel officiel",
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette choisie pour les tenues des planches en noir et blanc.",
         "skin": "0xf3e2ce",
         "hair": "0xe6c96a",
         "attire": {
-          "jacket": "0xe8a2bc",
-          "shirt": "0xf8f2ea",
-          "trousers": "0xc9758f",
-          "accent": "0xf3d7e0"
+          "jacket": "0xbc6c90",
+          "shirt": "0xf4ebdc",
+          "trousers": "0x5c3049",
+          "accent": "0x532c42"
         }
       },
       "attire": "gown",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-350", "ch-366"], "status": "confirmed" },
-      "note": "Gabarit `child` pour la forme montrée, et rien d'autre : la vraie forme est un fait d'ability, pas d'appearance, et la déclarer ici serait spoiler par le rendu ce que le cap du lecteur tient."
+      "verified": {
+        "chapterIds": ["ch-350", "ch-366"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie pour la forme compacte : frange droite, deux longues couettes et nœuds sombres, col et manches à volants, boléro contrasté et jupe à pans ornés. La vraie forme demeure réservée à la transformation explicite ; sa tenue et ses tresses suivent la référence fournie sans changer l’apparence compacte par défaut."
     },
     {
       "id": "hanzo",
-      "body": { "build": "average", "height": 1.02, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "shaved", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 1.02,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "shaved",
+        "expression": "severe"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; tenue sombre de shinobi, constante",
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette choisie pour les tenues des planches en noir et blanc.",
         "skin": "0xd3a17c",
         "hair": "0x1a1817",
         "attire": {
           "jacket": "0x24262b",
-          "shirt": "0xdad6cc",
-          "trousers": "0x1b1d21",
-          "accent": "0x9b3c3c"
+          "shirt": "0xe8e3d8",
+          "trousers": "0x24262b",
+          "accent": "0x252329"
         }
       },
-      "attire": "combat",
+      "attire": "suit",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-350", "ch-361"], "status": "confirmed" },
-      "note": "Crâne rasé, sourcils fins, sourire commercial sur une carrure sèche : le sourire est ce qui le rend lisible, et c'est pourquoi l'expression est `neutral` plutôt que `hostile`."
+      "verified": {
+        "chapterIds": ["ch-350", "ch-361"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : crâne rasé, sourcils épais obliques, visage sec, costume noir avec chemise et cravate. La silhouette effilée correspond uniquement à la transition vers Skill 4, selon la correction du mainteneur ; le double astral stabilisé conserve le corps complet et le costume, tandis que le corps endormi reste distinct."
     },
     {
       "id": "basho",
-      "body": { "build": "broad", "height": 1.08, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "pompadour", "expression": "neutral" },
+      "body": {
+        "build": "broad",
+        "height": 1.08,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "pompadour",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "chosen",
-        "source": "planches n&b ch. 350, 362 ; veste de garde du corps, palette tiède",
+        "basis": "attested",
+        "source": "Références anime et manga fournies par le mainteneur le 2026-11-16 : cheveux châtains en banane arrondie, sourcils épais et favoris reliés à la moustache ; costume noir, chemise claire, cravate et insigne H.",
         "skin": "0xc99473",
-        "hair": "0x241f1c",
+        "hair": "0x8e653b",
         "attire": {
-          "jacket": "0x5a4a3a",
-          "shirt": "0xeae3d2",
-          "trousers": "0x372f26",
-          "accent": "0xbf8f43"
+          "jacket": "0x171b21",
+          "shirt": "0xeeece3",
+          "trousers": "0x191c22",
+          "accent": "0x11151a"
         }
       },
-      "attire": "civilian",
+      "attire": "suit",
       "signatures": ["mutton-chops", "goatee"],
-      "verified": { "chapterIds": ["ch-350", "ch-362"], "status": "confirmed" },
-      "note": "L'air du garde du corps qui écrit des senryū : la banane courte et les rouflaquettes sont le personnage entier, et il n'y a personne d'autre à bord qui porte les deux."
+      "verified": {
+        "chapterIds": ["ch-350", "ch-362"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : carrure large, banane châtain volumineuse en rouleau avec boucle centrale, gros sourcils, favoris anguleux reliés à la moustache et menton à barbe courte clairsemée. Sur le navire, costume noir avec chemise claire, cravate et insigne H."
     },
     {
       "id": "izunavi",
@@ -908,24 +1075,35 @@
     },
     {
       "id": "furykov",
-      "body": { "build": "slim", "height": 0.96, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "short", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.96,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "military",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 363, 415 ; uniforme, cheveux gris peignés",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
         "skin": "0xd8b49a",
-        "hair": "0x9a958d",
+        "hair": "0xb8b5a9",
         "attire": {
-          "jacket": "0x424a3a",
-          "shirt": "0xe2ded0",
-          "trousers": "0x2e3429",
-          "accent": "0xa89044"
+          "jacket": "0xd6d5ce",
+          "shirt": "0xe5e1d7",
+          "trousers": "0xd6d5ce",
+          "accent": "0x5d5d58"
         }
       },
-      "attire": "uniform",
-      "signatures": ["glasses-round"],
-      "verified": { "chapterIds": ["ch-363", "ch-415"], "status": "partial" },
-      "note": "L'œil qui identifie les emprunteurs. Les petites lunettes rondes sont ce qui reste quand on l'a vu une fois ; le reste est à confirmer."
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-363", "ch-415"],
+        "status": "partial"
+      },
+      "note": "Référence manga fournie : coupe claire à sommet plat, yeux creux, nez long, veste matelassée claire à col haut et fermeture centrale, pantalon clair ample et bottes noires montantes. Les lunettes génériques ont été retirées pour cette tenue."
     },
     {
       "id": "musse",
@@ -950,24 +1128,35 @@
     },
     {
       "id": "rihan",
-      "body": { "build": "average", "height": 1.02, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 1.02,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "ponytail",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 363, 372 ; uniforme, calme de préparateur",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
         "skin": "0xd3a17c",
-        "hair": "0x231f24",
+        "hair": "0x252326",
         "attire": {
-          "jacket": "0x3e463c",
-          "shirt": "0xe2ded0",
-          "trousers": "0x2b312a",
-          "accent": "0x9d8a48"
+          "jacket": "0xd8d7cf",
+          "shirt": "0xe8e4da",
+          "trousers": "0xd2d0c8",
+          "accent": "0x62635e"
         }
       },
-      "attire": "uniform",
+      "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-363", "ch-372"], "status": "confirmed" },
-      "note": "Cheveux mi-longs sombres, le calme d'un préparateur. Predator est son ability ; rien de ce que fait cette technique n'entre ici."
+      "verified": {
+        "chapterIds": ["ch-363", "ch-372"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : front haut et dégagé, cheveux sombres plaqués et longue natte dans le dos, veste claire matelassée zippée à col montant, pantalon ample et bottes hautes lacées."
     },
     {
       "id": "coventoba",
@@ -1034,234 +1223,356 @@
     },
     {
       "id": "chrollo-lucilfer",
-      "body": { "build": "slim", "height": 1.05, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 1.05,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "spiked",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; manteau sombre à col de fourrure, constant sur le matériel officiel",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; palette de rendu alignée sur cette référence.",
         "skin": "0xecd6bd",
         "hair": "0x18171b",
         "attire": {
-          "jacket": "0x1f1e24",
-          "shirt": "0xe8e4dc",
-          "trousers": "0x1a191f",
-          "accent": "0x6b6a72"
+          "jacket": "0x111318",
+          "shirt": "0x484a50",
+          "trousers": "0x181a20",
+          "accent": "0xe5e7e1"
         }
       },
       "attire": "civilian",
       "signatures": ["forehead-cross", "fur-collar", "earrings"],
-      "verified": { "chapterIds": ["ch-351", "ch-353"], "status": "confirmed" },
-      "note": "La croix inversée est un mesh plat, comme les yeux le sont déjà — §3 : zéro texture. Les cheveux sont plaqués en arrière quand il travaille et lâchés sur le front sinon ; l'apparence déclare l'état de travail, qui est celui où le vaisseau le rencontre."
+      "verified": {
+        "chapterIds": ["ch-351", "ch-353"],
+        "status": "confirmed"
+      },
+      "note": "Tenue de la référence fournie : bandeau blanc couvrant le tatouage, cheveux noirs ébouriffés, boucles d’oreilles, long manteau noir à grands croisements clairs et col haut gris. La fourrure de l’autre tenue déclarée n’est pas portée dans cette version."
     },
     {
       "id": "nobunaga-hazama",
-      "body": { "build": "broad", "height": 1.06, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "chonmage", "expression": "hostile" },
+      "body": {
+        "build": "broad",
+        "height": 1.06,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "chonmage",
+        "expression": "hostile"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 371, 377 ; kimono sombre, palette sourde",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; palette de rendu alignée sur cette référence.",
         "skin": "0xd3a17c",
         "hair": "0x1d1a18",
         "attire": {
-          "jacket": "0x36302c",
-          "shirt": "0xe0dacb",
-          "trousers": "0x262220",
-          "accent": "0x8b6f3f"
+          "jacket": "0x635875",
+          "shirt": "0x41384e",
+          "trousers": "0x635875",
+          "accent": "0xb6b8ab"
         }
       },
       "attire": "kimono",
       "signatures": ["goatee", "katana"],
-      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
-      "note": "Le seul à bord qui porte son arme en évidence, ce qui est à soi seul une reconnaissance à distance de marche. Le chonmage et le kimono sont déclarés parce qu'aucun rôle du catalogue ne les produirait."
+      "verified": {
+        "chapterIds": ["ch-371", "ch-377"],
+        "status": "confirmed"
+      },
+      "note": "Kimono violet ample à col sombre, obi gris, chignon haut, bouc, katana au côté, jambes découvertes sous le kimono avec bandelettes grises et sandales. Référence visuelle fournie par le mainteneur."
     },
     {
       "id": "feitan-portor",
-      "body": { "build": "slim", "height": 0.88, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "bob", "expression": "hostile" },
+      "body": {
+        "build": "slim",
+        "height": 0.88,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "tired"
+      },
       "colours": {
-        "basis": "chosen",
-        "source": "planches n&b ch. 371, 395 ; tenue sombre à col remonté",
+        "basis": "attested",
+        "source": "Références anime fournies par le mainteneur le 2026-11-16 : cheveux noir vert effilés, manteau bleu noir, foulard violet à bord gris hachuré et emblème de crâne aux ailes magenta ; Pain Packer bordeaux, ivoire, noir et métal.",
         "skin": "0xecd6bd",
-        "hair": "0x1a181c",
+        "hair": "0x111c1a",
         "attire": {
-          "jacket": "0x232228",
-          "shirt": "0x2b2a31",
-          "trousers": "0x1c1b20",
-          "accent": "0x6e6b74"
+          "jacket": "0x192530",
+          "trousers": "0x353b3d",
+          "shirt": "0x3b3353",
+          "accent": "0x828a9b"
         }
       },
       "attire": "combat",
       "signatures": ["umbrella"],
-      "verified": { "chapterIds": ["ch-371", "ch-395"], "status": "confirmed" },
-      "note": "La silhouette la plus compacte et la plus dangereuse du groupe : le col remonté jusqu'au nez fait presque tout le visage, et le parapluie fait le reste."
+      "verified": {
+        "chapterIds": ["ch-371", "ch-395"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : petit gabarit, mèches irrégulières en raie, yeux mi-clos, manteau sombre long plissé, bottes souples et foulard violet à bordure hachurée avec crâne blanc et ailes magenta. Pain Packer : capuche pointue bordeaux à motifs ivoire, grille dentelée, sangles noires croisées, manteau évasé ivoire à flèches bordeaux, médaillon, pendeloques dorées, manches et gants bordeaux à boucles métalliques."
     },
     {
       "id": "phinks-magcub",
-      "body": { "build": "broad", "height": 1.07, "frame": "adult" },
-      "head": { "face": "square", "hairStyle": "slicked-back", "expression": "hostile" },
+      "body": {
+        "build": "broad",
+        "height": 1.07,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "slicked-back",
+        "expression": "hostile"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; survêtement et cheveux blonds constants",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; palette de rendu alignée sur cette référence.",
         "skin": "0xd8b49a",
         "hair": "0xd8bb6a",
         "attire": {
-          "jacket": "0x3a4c63",
-          "shirt": "0xe6e9ec",
-          "trousers": "0x2a3949",
-          "accent": "0xd5dde4"
+          "jacket": "0x075044",
+          "shirt": "0xe7e9e4",
+          "trousers": "0x075044",
+          "accent": "0xbc482d"
         }
       },
       "attire": "combat",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
-      "note": "Les sourcils quasi absents sont le trait : le visage se lit par ce qui manque au-dessus des yeux, ce qu'`expression` porte en laissant les arcs presque plats."
+      "verified": {
+        "chapterIds": ["ch-371", "ch-377"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : cheveux blonds courts plaqués en arrière, sourcils très discrets, survêtement vert à empiècement blanc aux épaules et doubles bandes orange-rouge, pantalon vert et chaussures grises."
     },
     {
       "id": "machi-komacine",
-      "body": { "build": "slim", "height": 0.99, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "ponytail", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.99,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "ponytail",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; cheveux roses constants sur le matériel officiel",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur : haut croisé blanc, bordure violette, ceinture sombre et cordon jaune.",
         "skin": "0xf0dfc9",
         "hair": "0xdd8ca0",
         "attire": {
-          "jacket": "0x59264a",
-          "shirt": "0xeee6ea",
-          "trousers": "0x3c1a33",
-          "accent": "0xc06a90"
+          "jacket": "0xeeeaf1",
+          "trousers": "0x29232d",
+          "shirt": "0x84748f",
+          "accent": "0xd6c34e"
         }
       },
       "attire": "combat",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-357", "ch-371"], "status": "confirmed" },
-      "note": "Kunoichi au visage fermé : les cheveux roses relevés en arrière la nomment de loin, ce qui est la seule chose que la silhouette doit faire."
+      "verified": {
+        "chapterIds": ["ch-357", "ch-371"],
+        "status": "confirmed"
+      },
+      "note": "Cheveux roses relevés et hérissés, bandeau bleu-vert, haut croisé blanc bordé de violet, ceinture sombre nouée de jaune, short sombre, avant-bras dégagés, gants courts, guêtres mauves et chaussures claires : référence visuelle fournie."
     },
     {
       "id": "shizuku-murasaki",
-      "body": { "build": "slim", "height": 0.97, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "bob", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.97,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "round",
+        "hairStyle": "bob",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; carré noir, lunettes rondes, robe sombre constants",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur : pull noir à col roulé, jean, croix et chaussures vertes.",
         "skin": "0xf0dfc9",
         "hair": "0x1c1b1f",
         "attire": {
-          "jacket": "0x2a2830",
-          "shirt": "0xeee9e1",
-          "trousers": "0x1f1e25",
-          "accent": "0x8f8b97"
+          "jacket": "0x171a23",
+          "trousers": "0x475f72",
+          "shirt": "0x171a23",
+          "accent": "0xcab04a"
         }
       },
-      "attire": "gown",
+      "attire": "civilian",
       "signatures": ["glasses-round"],
-      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
-      "note": "La panoplie tient en trois pièces : carré, lunettes rondes, robe sage. Deme-chan est un fait d'ability et n'entre pas ici."
+      "verified": {
+        "chapterIds": ["ch-377", "ch-380"],
+        "status": "confirmed"
+      },
+      "note": "Le carré noir court et ébouriffé encadre les lunettes rondes ; pull noir à col roulé, jean bleu, pendentif en croix et chaussures vertes. La référence fournie remplace la robe longue générique du rendu précédent."
     },
     {
       "id": "franklin-bordeau",
-      "body": { "build": "broad", "height": 1.15, "frame": "adult", "shoulders": 1.28 },
-      "head": { "face": "square", "hairStyle": "short", "expression": "severe" },
+      "body": {
+        "build": "broad",
+        "height": 1.15,
+        "frame": "adult",
+        "shoulders": 1.28
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "short",
+        "expression": "severe"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 371, 377 ; colosse cousu, palette sourde",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; palette de rendu alignée sur cette référence.",
         "skin": "0xb8795d",
         "hair": "0x1c1a18",
         "attire": {
-          "jacket": "0x36393a",
-          "shirt": "0xd9d5cb",
-          "trousers": "0x25282a",
-          "accent": "0x76736a"
+          "jacket": "0xd9e0dd",
+          "shirt": "0x15385b",
+          "trousers": "0x15385b",
+          "accent": "0xb9a160"
         }
       },
       "attire": "combat",
       "signatures": ["stitches"],
-      "verified": { "chapterIds": ["ch-371", "ch-377"], "status": "confirmed" },
-      "note": "La deuxième et dernière épaule déclarée à bord, avec Benjamin. Les coutures aux commissures sont des segments d'encre : le visage de créature de Frankenstein tient à ces deux traits, et à rien d'autre."
+      "verified": {
+        "chapterIds": ["ch-371", "ch-377"],
+        "status": "confirmed"
+      },
+      "note": "Carrure très massive, mâchoire carrée cousue, lobes d’oreilles allongés, salopette bleue à poche pectorale et bretelles, veste claire ouverte à bordures sombres et grosses chaussures brunes. Référence visuelle fournie par le mainteneur."
     },
     {
       "id": "bonolenov-ndongo",
-      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "shaved", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 1.06,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "shaved",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 377, 392 ; bandages clairs sur tout le corps",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; palette de rendu alignée sur cette référence.",
         "skin": "0xe8e2d4",
         "hair": "0xe8e2d4",
         "attire": {
-          "jacket": "0xe4ddcd",
-          "shirt": "0xf0ebe0",
-          "trousers": "0xd6cfbe",
-          "accent": "0x9c8f76"
+          "jacket": "0xa7bbc8",
+          "shirt": "0x7e96a6",
+          "trousers": "0x87472e",
+          "accent": "0x741e38"
         }
       },
       "attire": "combat",
       "signatures": ["bandages-full"],
-      "verified": { "chapterIds": ["ch-377", "ch-392"], "status": "confirmed" },
-      "note": "Le boxeur bandé : silhouette de danseur poids plume sous des anneaux de bandelettes. Le crâne est déclaré `shaved` parce que ce qu'on voit de sa tête est du bandage, pas des cheveux."
+      "verified": {
+        "chapterIds": ["ch-377", "ch-392"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : corps et tête entièrement bandés de bleu-gris, ouvertures des yeux et de la bouche, short de boxe brun, gants et hautes bottes bordeaux à laçage clair. Battle Cantabile — Prologue porte séparément la coiffe et la jupe de plumes blanches, le masque rouge-or et la lance de la référence fournie."
     },
     {
       "id": "kalluto-zoldyck",
-      "body": { "build": "slim", "height": 0.68, "frame": "child" },
-      "head": { "face": "narrow", "hairStyle": "bob", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 0.68,
+        "frame": "child"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 377, 380 ; kimono sombre, carré noir",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; couleurs de rendu choisies lorsque la planche est en noir et blanc.",
         "skin": "0xf2e2ce",
         "hair": "0x1b1a1e",
         "attire": {
-          "jacket": "0x2b2933",
-          "shirt": "0xefe9df",
-          "trousers": "0x1f1d26",
-          "accent": "0x9a5f74"
+          "jacket": "0x151714",
+          "shirt": "0xa34273",
+          "trousers": "0x171815",
+          "accent": "0xe7e2cf"
         }
       },
       "attire": "kimono",
       "signatures": ["fan"],
-      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
-      "note": "Enfant androgyne : le gabarit `child` et l'éventail font la silhouette, et le carré impeccable la ferme."
+      "verified": {
+        "chapterIds": ["ch-377", "ch-380"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : enfant au carré noir brillant violet, kimono noir à larges manches pendantes et fleurs roses claires à l’ourlet, col intérieur rose, obi clair noué de cordons et sandales. L’éventail et les papiers restent liés à ses gestes et techniques."
     },
     {
       "id": "illumi",
-      "body": { "build": "slim", "height": 1.06, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "long", "expression": "neutral" },
+      "body": {
+        "build": "slim",
+        "height": 1.06,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "long",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; très longs cheveux noirs et tenue sombre, constants",
+        "basis": "chosen",
+        "source": "Référence visuelle fournie par le mainteneur le 2026-11-16 ; couleurs de rendu choisies lorsque la planche est en noir et blanc.",
         "skin": "0xf2e2ce",
         "hair": "0x141317",
         "attire": {
-          "jacket": "0x22212a",
-          "shirt": "0xe9e5dd",
-          "trousers": "0x1b1a22",
-          "accent": "0x5f5d68"
+          "jacket": "0xe2ded5",
+          "shirt": "0xe2ded5",
+          "trousers": "0xd4d0c7",
+          "accent": "0x37383a"
         }
       },
       "attire": "combat",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-377", "ch-380"], "status": "confirmed" },
-      "note": "Visage de poupée sans expression, grands yeux fixes : `neutral` est ici un fait et pas un défaut. Les épingles de Gittarackur sont un état, pas un visage."
+      "verified": {
+        "chapterIds": ["ch-377", "ch-380"],
+        "status": "confirmed"
+      },
+      "note": "Référence manga fournie : très longs cheveux noirs à raie centrale, visage sans expression, haut clair drapé sans manches avec col ouvert, bracelets, pantalon ample à motifs de flammes et sandales. Les épingles du déguisement restent un état séparé."
     },
     {
       "id": "hisoka",
-      "body": { "build": "average", "height": 1.09, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 1.09,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "neutral"
+      },
       "colours": {
-        "basis": "attested",
-        "source": "anime 2011 ; cheveux roux-magenta et tenue de bouffon constants sur le matériel officiel",
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; tenue au gilet attribuée à Hisoka, cheveux violets confirmés explicitement par le mainteneur.",
         "skin": "0xf3e3cf",
-        "hair": "0xd0503f",
+        "hair": "0x74429a",
         "attire": {
-          "jacket": "0xb0384c",
-          "shirt": "0xf2eee6",
-          "trousers": "0x8d2a3c",
-          "accent": "0xe8c24c"
+          "jacket": "0x9b9997",
+          "shirt": "0xeeeae2",
+          "trousers": "0x1e1d22",
+          "accent": "0x4e4b4c"
         }
       },
-      "attire": "combat",
+      "attire": "suit",
       "signatures": ["face-paint-star-tear"],
-      "verified": { "chapterIds": ["ch-351", "ch-353"], "status": "confirmed" },
-      "note": "À bord il avance masqué — Texture Surprise. L'appearance déclare le vrai visage, et le masque reste un fait d'événement : c'est la même séparation que pour les yeux écarlates de Kurapika, et elle vaut dans les deux sens."
+      "verified": {
+        "chapterIds": ["ch-351", "ch-353"],
+        "status": "confirmed"
+      },
+      "note": "Tenue demandée pour ce rendu à bord : cheveux rabattus en frange, visage sans maquillage visible, chemise claire, gilet cintré à épaules sombres et pantalon noir. Référence manga fournie et attribuée à Hisoka par le mainteneur. Les symboles étoile-larme restent déclarés pour les autres états du personnage. Cheveux violets selon la correction explicite du mainteneur."
     },
     {
       "id": "morena-prudo",
@@ -1286,45 +1597,67 @@
     },
     {
       "id": "hinrigh-biganduffno",
-      "body": { "build": "average", "height": 1.05, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "slicked-back", "expression": "severe" },
+      "body": {
+        "build": "average",
+        "height": 1.05,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "long",
+        "expression": "neutral"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 378, 390 ; costume de lieutenant Xi-Yu, palette sombre",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
         "skin": "0xc99473",
-        "hair": "0x201d21",
+        "hair": "0xd1c399",
         "attire": {
-          "jacket": "0x2b2c33",
-          "shirt": "0xece9e1",
-          "trousers": "0x1f2027",
-          "accent": "0x7a6a4a"
+          "jacket": "0x777578",
+          "shirt": "0xe8dfcf",
+          "trousers": "0x242329",
+          "accent": "0x252329"
         }
       },
       "attire": "suit",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-378", "ch-390"], "status": "partial" },
-      "note": "Quadragénaire anguleux : le lieutenant qui fait le vrai travail. À confirmer."
+      "verified": {
+        "chapterIds": ["ch-378", "ch-390"],
+        "status": "partial"
+      },
+      "note": "Références fournies : longs cheveux clairs ondulés jusqu’aux épaules, boucle sur le front, visage long et regard rond, veste à larges rayures verticales sombres, revers noirs et décolleté profond sans cravate, pantalon sombre."
     },
     {
       "id": "zakuro-custard",
-      "body": { "build": "slim", "height": 0.98, "frame": "adult" },
-      "head": { "face": "narrow", "hairStyle": "wild", "expression": "hostile" },
+      "body": {
+        "build": "slim",
+        "height": 0.98,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "swept",
+        "expression": "anxious"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planche n&b ch. 390 ; veste courte, palette sourde",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
         "skin": "0xdfbb9b",
-        "hair": "0x2b2622",
+        "hair": "0xc5b7a3",
         "attire": {
-          "jacket": "0x4a3f47",
-          "shirt": "0xe6e0d6",
-          "trousers": "0x312a30",
-          "accent": "0xa4536a"
+          "jacket": "0x716b7d",
+          "shirt": "0xe6dfd0",
+          "trousers": "0x484350",
+          "accent": "0xc9c0b0"
         }
       },
       "attire": "combat",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-390"], "status": "confirmed" },
-      "note": "Cheveux en bataille, canines apparentes. Les canines ne sont pas une pièce de l'annexe B ; ce qui les remplace est `hostile` et rien de plus."
+      "verified": {
+        "chapterIds": ["ch-390"],
+        "status": "confirmed"
+      },
+      "note": "Référence fournie : cheveux séparés au milieu et larges mèches relevées sur les côtés, grands yeux sombres, veste courte à col haut clair, passepoils clairs et trois boutons ronds, ceinture large claire."
     },
     {
       "id": "lynch-fullbokko",
@@ -1412,24 +1745,195 @@
     },
     {
       "id": "luini",
-      "body": { "build": "average", "height": 1.0, "frame": "adult" },
-      "head": { "face": "round", "hairStyle": "short", "expression": "neutral" },
+      "body": {
+        "build": "average",
+        "height": 1.0,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "slicked-back",
+        "expression": "severe"
+      },
       "colours": {
         "basis": "chosen",
-        "source": "planches n&b ch. 378, 392 ; tenue quelconque, palette volontairement banale",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
         "skin": "0xdfbb9b",
-        "hair": "0x2d2823",
+        "hair": "0x74716b",
         "attire": {
-          "jacket": "0x4b4f55",
-          "shirt": "0xe8e5dd",
-          "trousers": "0x33373c",
-          "accent": "0x8a8f95"
+          "jacket": "0x7c8079",
+          "shirt": "0xbcbeb3",
+          "trousers": "0x444740",
+          "accent": "0x373d38"
         }
       },
       "attire": "civilian",
       "signatures": [],
-      "verified": { "chapterIds": ["ch-378", "ch-392"], "status": "partial" },
-      "note": "Jeune homme quelconque au sourire tranquille : l'anonymat est son arme. La palette est banale exprès — c'est la seule entrée du fichier où être oubliable est le fait déclaré, et non un défaut de source. À confirmer."
+      "verified": {
+        "chapterIds": ["ch-378", "ch-392"],
+        "status": "partial"
+      },
+      "note": "Références fournies : cheveux courts plaqués en arrière, visage long et anguleux, grand nez droit, sourire montrant les dents et ligne courbe sur la joue ; veste à col montant, motif tacheté et quatre attaches horizontales, pantalon sombre et bottes hautes lacées."
+    },
+    {
+      "id": "longhi",
+      "body": {
+        "build": "slim",
+        "height": 1.02,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "ponytail",
+        "expression": "severe"
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Référence manga fournie par le mainteneur le 2026-11-16 ; palette neutre choisie pour le noir et blanc.",
+        "skin": "0xdac1a7",
+        "hair": "0xe2c998",
+        "attire": {
+          "jacket": "0x202126",
+          "shirt": "0xefebe2",
+          "trousers": "0x202126",
+          "accent": "0x17191d"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-369", "ch-401"],
+        "status": "confirmed"
+      },
+      "note": "Référence manga fournie : cheveux clairs à raie centrale tirés en queue-de-cheval, visage long aux joues creuses, costume noir ajusté, chemise claire et cravate noire."
+    },
+    {
+      "id": "padaille",
+      "body": {
+        "build": "slim",
+        "height": 1.02,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "bob",
+        "expression": "tired"
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette neutre choisie pour les planches en noir et blanc.",
+        "skin": "0xdac1a7",
+        "hair": "0xb6ad98",
+        "attire": {
+          "jacket": "0xd8d4c9",
+          "shirt": "0xbeb8aa",
+          "trousers": "0x58575a",
+          "accent": "0x8b8c87"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-391"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : visage long et anguleux, joues creuses, grand nez droit, paupières lourdes et bouche fine ; carré court clair séparé au milieu ; haut clair ample à manches longues, col rond ouvert et pantalon sobre. Les outils de sa main droite restent propres aux techniques de combat. Le lien autour de l’arme dans la troisième référence appartient à une attaque adverse, selon la correction du mainteneur ; il ne fait pas partie de son équipement."
+    },
+    {
+      "id": "terebellum",
+      "body": {
+        "build": "broad",
+        "height": 1.1,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "square",
+        "hairStyle": "wild",
+        "expression": "severe"
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
+        "skin": "0xdac1a7",
+        "hair": "0xc6b792",
+        "attire": {
+          "jacket": "0x4a4850",
+          "shirt": "0xe9e2d4",
+          "trousers": "0x4a4850",
+          "accent": "0xc1b7a7"
+        }
+      },
+      "attire": "combat",
+      "signatures": ["mutton-chops", "goatee"],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : cheveux clairs dressés en flammes, visage anguleux, rouflaquettes et bouc sombre, veste de sport zippée à liserés clairs sur les épaules et la poitrine, manches à poignets et short bordé clair."
+    },
+    {
+      "id": "voconte",
+      "body": {
+        "build": "slim",
+        "height": 1.04,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "tired"
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Planches manga ch-378, ch-393 ; repères morphologiques et tenue décrits dans Hunterpedia ; couleurs éditoriales neutres.",
+        "skin": "0xdac1a7",
+        "hair": "0x1e1b20",
+        "attire": {
+          "jacket": "0x48424b",
+          "shirt": "0xc7c0b7",
+          "trousers": "0x302c34",
+          "accent": "0x8e8076"
+        }
+      },
+      "attire": "civilian",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-378", "ch-393"],
+        "status": "confirmed"
+      },
+      "note": "Long visage, cernes, cheveux noirs à raie centrale au-dessus des oreilles, chemise, veste et pantalon. Palette choisie. https://hunterxhunter.fandom.com/wiki/Voconte"
+    },
+    {
+      "id": "yokotani",
+      "body": {
+        "build": "slim",
+        "height": 1.05,
+        "frame": "adult"
+      },
+      "head": {
+        "face": "narrow",
+        "hairStyle": "bob",
+        "expression": "neutral"
+      },
+      "colours": {
+        "basis": "chosen",
+        "source": "Références manga fournies par le mainteneur le 2026-11-16 ; palette de rendu choisie pour les planches en noir et blanc.",
+        "skin": "0xdac1a7",
+        "hair": "0x201e24",
+        "attire": {
+          "jacket": "0x777881",
+          "shirt": "0xf0eee8",
+          "trousers": "0x55565e",
+          "accent": "0x16171b"
+        }
+      },
+      "attire": "suit",
+      "signatures": [],
+      "verified": {
+        "chapterIds": ["ch-394", "ch-399"],
+        "status": "confirmed"
+      },
+      "note": "Références fournies : carré noir épais rejeté en arrière jusqu’à la nuque, yeux plissés souriants, nez long et sourire ouvert ; costume gris, chemise claire, cravate noire et livre de droit porté à la main. Les gardes numérotés autour de lui restent des entités LSDF distinctes."
     }
   ],
   "deferred": [

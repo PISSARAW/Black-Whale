@@ -1,0 +1,91 @@
+import { futureVisibleState } from '../parallelFuturePresentation'
+import { bungeeVisible } from '../hisokaTechnique'
+import { perceivesProjectile, gyoSight } from '../nenPerception'
+import { createFightingNen } from '../nen'
+import { encodeFightSnapshot } from '../fightReplaySnapshot'
+import { fightReplayHash } from '../fightReplayHash'
+import type { ArcadeFighter, FightSide, FightState } from '../types'
+
+/** Presentation only: local controls always operate P1; the referee keeps canonical seats. */
+const SIDE_FIELDS = new Set([
+  'owner',
+  'target',
+  'issuer',
+  'recipient',
+  'victimSide',
+  'killerSide',
+  'attacker',
+  'side',
+  'winner',
+  'matchWinner',
+  'speaker',
+  'questioner',
+  'affected',
+  'cohorts',
+  'recipientSide',
+  'from',
+  'to',
+  'catsNameConsumed',
+  'visitedBy',
+  'transported',
+  'sun',
+  'moon',
+])
+export function localPerspective(value: unknown, swap: boolean, field = ''): unknown {
+  if (!swap) return value
+  if (SIDE_FIELDS.has(field) && value === 'player') return 'opponent'
+  if (SIDE_FIELDS.has(field) && value === 'opponent') return 'player'
+  if (Array.isArray(value)) return value.map((entry) => localPerspective(entry, true, field))
+  if (!value || typeof value !== 'object') return value
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entry]) => [
+      key === 'player' ? 'opponent' : key === 'opponent' ? 'player' : key,
+      localPerspective(entry, true, key),
+    ]),
+  )
+}
+function redactEnemy(enemy: ArcadeFighter) {
+  enemy.bodyAndSoulReplies = undefined
+  enemy.secretWindow = undefined
+  enemy.melodyHearing = undefined
+  enemy.comboMaster = undefined
+  enemy.bufferedAttack = null
+  enemy.predator = enemy.predator ? { ...enemy.predator, known: [], analysis: null } : undefined
+  enemy.kallutoPaper = enemy.kallutoPaper ? { ...enemy.kallutoPaper, heard: undefined } : undefined
+  enemy.hatsuEffects = { ...enemy.hatsuEffects, witnessedHatsu: null }
+  if (enemy.chrolloBook)
+    enemy.chrolloBook = { ...enemy.chrolloBook, pages: [], bookmark: null, page: 0 }
+}
+export function privatePvpState(state: FightState, side: FightSide): FightState {
+  const view = structuredClone(futureVisibleState(state, side))
+  const other = side === 'player' ? 'opponent' : 'player'
+  redactEnemy(view[other])
+  hideConcealedAura(view[other], view[side])
+  view.commandFeedback = { [side]: view.commandFeedback?.[side] }
+  if (view.parallelFuture?.owner !== side) view.parallelFuture = undefined
+  for (const frame of view.parallelFuture?.frames ?? []) {
+    redactEnemy(frame[other])
+    hideConcealedAura(frame[other], frame[side])
+    frame.projectiles = frame.projectiles.filter(
+      (shot) => shot.owner === side || perceivesProjectile(frame[side], shot),
+    )
+    frame.command = null
+  }
+  if (view.parallelFuture) view.parallelFuture.controls = null
+  view.bungeeGum = bungeeVisible(state, side) ? view.bungeeGum : null
+  view.projectiles = view.projectiles.filter(
+    (shot) => shot.owner === side || perceivesProjectile(state[side], shot),
+  )
+  // No second perspective selector or opponent-private controls in the ordinary HUD.
+  const result = localPerspective(view, side === 'opponent') as FightState
+  return { ...result, mode: 'versus-ai', pvpSeat: side }
+}
+function hideConcealedAura(enemy: ArcadeFighter, observer: ArcadeFighter) {
+  if (gyoSight(observer)) return
+  if (enemy.nen.in) enemy.nen = createFightingNen()
+  if (enemy.attack?.concealed) enemy.attack = null
+}
+export function pvpSnapshot(state: FightState, side: FightSide) {
+  const visible = privatePvpState(state, side)
+  return { snapshot: encodeFightSnapshot(visible), snapshotHash: fightReplayHash(visible) }
+}

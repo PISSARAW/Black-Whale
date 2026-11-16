@@ -36,11 +36,11 @@ export const magicalWorm = defineAbility({
   site: {
     kind: 'portal',
     instruction:
-      'Right-click two map states to place Start and Return Doors; each crossing restores URL, tier and zoom but repeated use exhausts the site.',
-    rule: 'The paired dimensional tunnel normally works once per night; abnormal repeated travel dangerously drains Fugetsu.',
-    cost: 'One safe nightly route · escalating exhaustion',
+      'From your current room, choose a previously visited destination and enter the Outgoing Door. You stand in for Fugetsu; Kacho accompanies you and opens the Return Door after you emerge.',
+    rule: 'Fugetsu controls the outward leg, Kacho controls the return, and the dimensional tunnel normally works once per night.',
+    cost: 'One symbiotic round trip per night · exhaustion',
     color: '#80edc7',
-    action: 'Place the Start Door',
+    action: 'Open the Outgoing Door',
   },
 
   conditions: [canUseNen(), isConscious()],

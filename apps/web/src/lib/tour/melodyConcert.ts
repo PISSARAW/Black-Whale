@@ -10,6 +10,10 @@ export const CONCERT_ROOMS = [BANQUET_SPACE, BANQUET_SERVICE] as const
 export interface ConcertPerformance {
   mode: 'melody' | 'self' | null
   playing: boolean
+  phase?: 'bow' | 'playing' | 'release'
+  presentation?: 'free' | 'manga'
+  /** Incremented by the UI to restore the authored chapter composition. */
+  referenceRequest?: number
 }
 
 export function concertCast(
@@ -58,7 +62,7 @@ export function concertCast(
       inside: true,
       at: [performer.at[0], performer.at[1]],
       heading: performer.heading,
-      pose: performance.playing ? 'flute' : 'idle',
+      pose: performance.phase === 'bow' ? 'bow' : performance.playing ? 'flute' : 'idle',
       costume: { role: 'hunter', dress: 'suit' },
     },
   ]

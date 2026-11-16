@@ -1,0 +1,58 @@
+{
+  "base": "7209a4d4",
+  "runtimeChangedFiles": [
+    "apps/web/src/lib/fighting/fightRig.ts",
+    "apps/web/src/lib/fighting/fighterFigure.ts",
+    "apps/web/src/lib/fighting/stagePost.ts"
+  ],
+  "otherFightingSourceFilesCompared": 580,
+  "beforeOtherSourcesSha256": "08ada8fddb1901bdbfd0c7cfd1eb5073fab764aceb740e3712c20c0e2bae656c",
+  "afterOtherSourcesSha256": "08ada8fddb1901bdbfd0c7cfd1eb5073fab764aceb740e3712c20c0e2bae656c",
+  "sourceSha256": {
+    "apps/web/src/lib/fighting/fightRig.ts": {
+      "before": "9282fb0cd0e09c9877709621f6e4c8fd4554b6e16d0d8cb46ff5c45ed5ec98ba",
+      "after": "216a2d19f6f65f2b7c818c67623b0ab21fdf77d221fa94184a18393bd4b8701e"
+    },
+    "apps/web/src/lib/fighting/fighterFigure.ts": {
+      "before": "37b122aa57bc4b6a25ac73848daadd9b427510e80717d3bfa53c491aa85c2cc6",
+      "after": "4773857e5979fbf39316a840caf893fb66d04ba8780a8e6cb06204ff33fe1858"
+    },
+    "apps/web/src/lib/fighting/stagePost.ts": {
+      "before": "95161d88afe028eb87a08149cdc9ea3cdebdb81db7a0a940bc53eb034681db11",
+      "after": "f5e2642f138bbee9788f75fe281c31ac16abf1e8e6112c903ec856a00293314b"
+    }
+  },
+  "unitTests": {
+    "files": 24,
+    "tests": 615,
+    "passed": true,
+    "detail": "608 targeted gameplay, combos, defense, camera, animation and replay checks; 4 live-driver equivalence checks; 3 post-processing checks."
+  },
+  "comboRoutes": 16,
+  "comboVariants": 128,
+  "visualComparisons": 8,
+  "typecheck": {
+    "appErrors": 0,
+    "appWarnings": 4,
+    "warningLocation": "Existing infiltration/+page.svelte state-reference warnings",
+    "fixtureErrors": 0,
+    "fixtureWarnings": 0
+  },
+  "productionBuild": true,
+  "productionMatches": 4,
+  "replayRulesetUnchanged": "clash-combat-3",
+  "scope": "Committed base plus only these renderer changes. Other work-in-progress sources are represented separately and are excluded from the paired comparison.",
+  "cadence": {
+    "casesPassed": 8,
+    "afterFrames": 21601,
+    "maximumFrameP99Ms": 16.8,
+    "intervalsOver25Ms": 0,
+    "validatedReplayLoops": 16,
+    "matchedCombatHashes": 8
+  },
+  "gpuHeadroom": {
+    "targetP95Ms": 12,
+    "heavyCasesReachingTarget": 0,
+    "note": "GPU headroom remains limited; cadence passes. GPU average and p95 are retained separately."
+  }
+}

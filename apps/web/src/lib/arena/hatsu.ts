@@ -35,6 +35,14 @@ const EFFECTS: Partial<Record<HatsuInteractionKind, ArenaHatsuEffect>> = {
   needle: 'bind',
   'postmortem-curse': 'restore',
   resurrection: 'restore',
+  scarlet: 'enhance',
+  'chain-bind': 'bind',
+  melody: 'enhance',
+  shred: 'barrage',
+  'weapon-body': 'impact',
+  serpent: 'bind',
+  arrow: 'impact',
+  tribunal: 'bind',
 }
 
 export function arenaHatsuEffect(profile: HatsuProfile | null): ArenaHatsuEffect | null {

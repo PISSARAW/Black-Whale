@@ -1,3 +1,4 @@
+import { buildPainPackerModel } from './painPackerModel'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { BONE, INK, modelKit } from './nenModelPrimitives'
@@ -130,123 +131,7 @@ function jupiter(seen: Apparition, context: BasicApparitionContext) {
   return context.root
 }
 
-function armour(seen: Apparition, context: BasicApparitionContext) {
-  const k = modelKit(context, seen.size),
-    cloth = 0xd8d7cf
-  const shell = k.add({
-    geometry: new context.THREE.CylinderGeometry(
-      0.29 * seen.size,
-      0.4 * seen.size,
-      0.9 * seen.size,
-      24,
-      1,
-      true,
-    ),
-    colour: cloth,
-    at: [0, -0.6, 0],
-    name: 'pain-packer-coat',
-  })
-  shell.material = context.glow(cloth, 1).clone()
-  shell.material.side = context.THREE.DoubleSide
-  k.box({
-    name: 'high-mouth-guard',
-    at: [0, -0.2, -0.23],
-    dimensions: [0.48, 0.22, 0.08],
-    colour: cloth,
-  })
-  for (const side of [-1, 1]) {
-    k.oval({
-      name: `armour-shoulder-${side}`,
-      at: [side * 0.36, -0.3, 0],
-      radii: [0.2, 0.19, 0.24],
-      colour: cloth,
-    })
-    for (let i = 0; i < 5; i++)
-      k.tube({
-        name: `coat-seam-${side}-${i}`,
-        points: [
-          [side * 0.14, -0.3 - i * 0.14, -0.3],
-          [side * 0.31, -0.3 - i * 0.14, -0.27],
-        ],
-        radius: 0.015,
-        colour: INK,
-      })
-  }
-  // The angular black panels and the crossed ornament are visible in ch. 229.
-  for (const side of [-1, 1]) {
-    k.patch({
-      name: `hood-panel-${side}`,
-      points: [
-        [0, 0],
-        [side * 0.35, 0.28],
-        [side * 0.29, -0.15],
-      ],
-      at: [0, 0.04, 0.2],
-      colour: cloth,
-    })
-    k.patch({
-      name: `black-hood-triangle-${side}`,
-      points: [
-        [0, 0],
-        [side * 0.25, 0.17],
-        [side * 0.2, -0.04],
-      ],
-      at: [0, 0.05, 0.23],
-      colour: INK,
-    })
-    k.patch({
-      name: `coat-lightning-${side}`,
-      points: [
-        [0, 0],
-        [side * 0.08, -0.2],
-        [side * 0.025, -0.22],
-        [side * 0.16, -0.58],
-        [side * 0.05, -0.58],
-        [-side * 0.025, -0.26],
-      ],
-      at: [side * 0.19, -0.35, 0.32],
-      colour: INK,
-    })
-    const strap = k.box({
-      name: `crossed-chest-strap-${side}`,
-      at: [0, -0.3, 0.325],
-      dimensions: [0.055, 0.54, 0.025],
-      colour: INK,
-    })
-    strap.rotation.z = side * 0.78
-    k.tube({
-      name: `coat-hem-${side}`,
-      points: [
-        [0, -1.02, 0.39],
-        [side * 0.22, -1.02, 0.34],
-        [side * 0.37, -1.02, 0.14],
-      ],
-      radius: 0.035,
-      colour: INK,
-    })
-  }
-  k.box({
-    name: 'hanging-ornament-stem',
-    at: [0, -0.72, 0.4],
-    dimensions: [0.035, 0.75, 0.025],
-    colour: 0xa69a83,
-  })
-  k.box({
-    name: 'hanging-ornament-crossbar',
-    at: [0, -0.97, 0.42],
-    dimensions: [0.27, 0.035, 0.025],
-    colour: 0xa69a83,
-  })
-  k.oval({
-    name: 'ornament-medallion',
-    at: [0, -0.57, 0.42],
-    radii: [0.07, 0.07, 0.015],
-    colour: 0xa69a83,
-  })
-  return context.root
-}
-
-const BUILDERS = { phone, staff, cloth, jupiter, 'pain-armour': armour }
+const BUILDERS = { phone, staff, cloth, jupiter, 'pain-armour': buildPainPackerModel }
 export function buildMangaPropApparition(seen: Apparition, context: BasicApparitionContext) {
   return BUILDERS[seen.kind as keyof typeof BUILDERS]?.(seen, context)
 }

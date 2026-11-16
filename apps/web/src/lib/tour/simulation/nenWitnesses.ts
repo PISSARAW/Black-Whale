@@ -1,7 +1,7 @@
 import { auraFor, type Post, type Situation } from '$lib/tour/cast'
 import type { TourNenWitness } from './systemicNen'
 
-/** Whether this body can see through a visitor's In with En or active Gyo. */
+/** Whether a posted observer can see through the visitor's In with En or active Gyo. */
 export function detectsConcealedVisitor(post: Post, situation: Situation): boolean {
   const id = post.member.characterId
   return Boolean(situation.sensedBy[id] || auraFor(post, situation).nen?.gyo)

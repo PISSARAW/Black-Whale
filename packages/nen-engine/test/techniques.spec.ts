@@ -84,6 +84,22 @@ describe('standard Nen techniques', () => {
     expect(nenDefenceFactor(state)).toBe(0.1)
   })
 
+  it('reads a Ryu distribution per body zone instead of using one global defence', () => {
+    const state = transitionNen(createNenTechniqueState<Zone>(), {
+      type: 'RYU',
+      distribution: { head: 75, torso: 15, arms: 10 },
+    }).state
+    expect(nenDefenceFactor(state, 'head')).toBeGreaterThan(0.9)
+    expect(nenDefenceFactor(state, 'torso')).toBeLessThan(0.3)
+    expect(nenDefenceFactor(state, 'legs')).toBeLessThan(0.1)
+  })
+
+  it('makes Gyo trade body protection for sight', () => {
+    const ten = createNenTechniqueState<Zone>()
+    const gyo = transitionNen(ten, { type: 'GYO', on: true }).state
+    expect(nenDefenceFactor(gyo, 'torso')).toBeLessThan(nenDefenceFactor(ten, 'torso'))
+  })
+
   it('detects bodies inside En while distinguishing a Zetsu signature', () => {
     const observer = transitionNen(createNenTechniqueState(), { type: 'EN', radius: 5 }).state
     const zetsu = transitionNen(createNenTechniqueState(), { type: 'ZETSU' }).state

@@ -47,6 +47,10 @@ services:
       - '3000:3000'
     environment:
       DATABASE_URL: 'postgresql://${POSTGRES_USER:-bw_user}:${POSTGRES_PASSWORD:-bw_password}@postgres:5432/${POSTGRES_DB:-black_whale}'
+      OLLAMA_URL: ${OLLAMA_URL:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+      OLLAMA_TOKEN: ${OLLAMA_TOKEN:-}
+      OLLAMA_TIMEOUT_MS: ${OLLAMA_TIMEOUT_MS:-8000}
     depends_on:
       migrate:
         condition: service_completed_successfully

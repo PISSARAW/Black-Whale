@@ -15,12 +15,14 @@ const CHAIN_LINKS = 18
 
 function gum(seen: Apparition, { THREE, root, skin }: BasicApparitionContext) {
   const strand = new THREE.Mesh(
-    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6),
+    new THREE.CylinderGeometry(seen.size * 0.035, seen.size * 0.035, seen.size * 2, 6, 24),
     skin,
   )
+  strand.name = 'gum-strand'
   strand.rotation.z = Math.PI / 2
   root.add(strand)
   const blob = new THREE.Mesh(new THREE.SphereGeometry(seen.size * 0.16, 8, 6), skin)
+  blob.name = 'gum-anchor'
   blob.scale.set(1, 0.7, 1)
   root.add(blob)
   return root
@@ -104,6 +106,7 @@ function book(seen: Apparition, { THREE, glow, root }: BasicApparitionContext) {
   const ink = glow(seen.colour, 0.5)
   for (const side of [-1, 1]) {
     const leaf = new THREE.Group()
+    leaf.name = `book-leaf:${side}`
     leaf.rotation.z = side * 0.2
     const cover = new THREE.Mesh(new THREE.BoxGeometry(wide, 0.006, long), board)
     cover.position.set((side * wide) / 2, -0.004, 0)
@@ -177,9 +180,11 @@ function addBookmark(seen: Apparition, { THREE, glow, leaf, side }: BookmarkCont
   const long = seen.size * 1.35
   const silk = glow(BOOKMARK_RIBBON, 1)
   const along = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.16, 0.002, long * 1.05), silk)
+  along.name = 'book-ribbon'
   along.position.set(side * wide * 0.58, 0.006, 0)
   leaf.add(along)
   const tail = new THREE.Mesh(new THREE.BoxGeometry(wide * 0.16, long * 0.5, 0.002), silk)
+  tail.name = 'book-ribbon-tail'
   tail.position.set(side * wide * 0.58, -long * 0.25, -long * 0.52)
   leaf.add(tail)
 }
@@ -356,6 +361,7 @@ function contract(seen: Apparition, { THREE, glow, root }: BasicApparitionContex
   }
 
   const pen = new THREE.Group()
+  pen.name = 'moonlight-pen'
   pen.add(
     new THREE.Mesh(
       new THREE.CylinderGeometry(seen.size * 0.022, seen.size * 0.022, seen.size * 0.5, 6),

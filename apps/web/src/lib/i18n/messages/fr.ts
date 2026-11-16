@@ -60,6 +60,7 @@ export const fr: Messages = {
     characters: 'Personnages',
     knowledge: 'Savoirs',
     abilityArchive: 'Archive des pouvoirs',
+    nenArchive: 'NenDex',
     comparePerspectives: 'Comparer les points de vue',
     factionNetwork: 'Réseau des factions',
     simulations: 'Simulations',
@@ -1049,13 +1050,16 @@ export const fr: Messages = {
         worm: {
           title: 'Comment utiliser Magical Worm',
           first: (control) =>
-            `1. Visez une pièce et utilisez ${control} pour poser la porte de départ.`,
+            `1. Depuis votre position, visez une pièce déjà visitée et utilisez ${control} pour ouvrir la porte d’aller. Vous prenez le rôle de Fugetsu.`,
           second: (room, control) =>
-            `2. Porte de départ : ${room}. Visez une autre pièce et utilisez ${control} pour poser la porte de retour.`,
-          linked: (a, b, crossings) => `${a} ⇄ ${b} · ${crossings}/3 passages`,
-          cross: 'Entrez dans l’une des deux extrémités pour ressortir par l’autre.',
-          spent:
-            'Le troisième passage est le dernier : les deux portes s’effondrent derrière vous.',
+            `Porte d’aller ouverte depuis ${room}. Entrez-y ; Kacho vous accompagne et ouvrira ensuite le retour. ${control} reste indisponible pendant le trajet.`,
+          linked: (a, b, crossings) =>
+            crossings === 0
+              ? `${a} → ${b} · porte d’aller ouverte`
+              : `${b} → ${a} · Kacho tient la porte de retour ouverte`,
+          cross:
+            'À l’aller, entrez par la porte de départ. Après la sortie, revenez à la porte que Kacho ouvre.',
+          spent: 'Le retour ferme le tunnel : le trajet symbiotique est terminé.',
         },
         curse: {
           title: 'Comment utiliser la malédiction sacrificielle',
@@ -1129,6 +1133,25 @@ export const fr: Messages = {
         doorsRearmed: (room) => `L'ancienne paire est tombée · premier cadre installé dans ${room}`,
         phasingOn: 'Les murs ont cessé d’être des murs · traversez le vaisseau',
         phasingOff: 'De retour dans la géométrie · les murs tiennent à nouveau',
+        spatialOutside: 'Spatial Teleportation exige une pièce autour de vous',
+        spatialAnchorBurned: (room) =>
+          `${room} a déjà été descellée · elle ne pourra plus jamais servir d’ancre`,
+        spatialNeedsOneDoor: (room, doors) =>
+          `${room} possède ${doors} issues physiques · l’ancre en exige exactement une`,
+        spatialDoorOpen: (room) =>
+          `L’unique porte de ${room} est ouverte · fermez-la et éloignez-vous avant l’ancrage`,
+        spatialAnchored: (room) =>
+          `${room} est scellée comme ancre · choisissez une pièce déjà visitée`,
+        spatialReturnToAnchor: (room) =>
+          `La destination ne peut être changée que depuis ${room} · empruntez l’ouverture de retour`,
+        spatialSameRoom: 'Choisissez une pièce déjà visitée au-delà de l’ancre',
+        spatialUnvisited: (room) =>
+          `${room} n’a pas été visitée · aucun passage ne peut s’y ouvrir`,
+        spatialOpened: (anchor, destination) =>
+          `${anchor} s’ouvre à travers l’espace privé jusque dans ${destination}`,
+        spatialCrossed: (from, to) => `${from} → espace de transit privé → ${to}`,
+        spatialBurned: (room) =>
+          `La porte de ${room} s’est ouverte · le passage s’effondre et cette ancre est perdue à jamais`,
         eyeSent: (room) =>
           `La sphère est posée sur un hôte dans ${room} · son flux est dans le coin`,
         eyeRecalled: (rooms) =>
@@ -1230,6 +1253,12 @@ export const fr: Messages = {
         owlRecalled: (rooms) =>
           `Le hibou est rappelé · ${rooms} gardées quand même, comme toujours`,
         foreseen: (room) => `Dix secondes plus tard : ${room} · la vision ne se corrige pas`,
+        laplaceEnded: (reason: 'range' | 'zetsu' | 'battery'): string =>
+          reason === 'range'
+            ? 'Laplace Devil se brise · vous avez quitté les 36 mètres autour de la Bête'
+            : reason === 'battery'
+              ? 'Laplace Devil se brise · la réserve de la Bête est épuisée'
+              : 'Laplace Devil se brise · le Zetsu a été rompu',
         diverged: (room, went) =>
           `La prédiction dit toujours ${room} ; vous êtes allé dans ${went}`,
         written: (room) => `La plume a écrit ${room}`,
@@ -1392,10 +1421,16 @@ export const fr: Messages = {
           'Pilote automatique activé · le corps avance seul pour accomplir la tâche',
         wormSet: (room) => `Une extrémité du tunnel dans ${room} · désignez l'autre`,
         wormOpen: (a, b) =>
-          `${a} et ${b} font une route d'une nuit, et elle est faite pour être prise une fois`,
+          `Vous prenez le rôle de Fugetsu · la porte d’aller relie ${a} à ${b}, Kacho vous accompagne`,
         wormCrossed: (room, crossings) =>
-          `Ressorti dans ${room} · passage ${crossings} sur 3, et le ver s'épuise`,
-        wormSpent: "Le tunnel s'effondre · il n'était pas fait pour être demandé trois fois",
+          `Ressorti dans ${room} · Kacho ouvre maintenant la porte de retour (${crossings}/1 aller)`,
+        wormSpent: 'Retour accompli · Kacho referme la porte et Magical Worm disparaît',
+        wormRefused: {
+          outside: 'Magical Worm doit partir depuis une pièce du Black Whale',
+          sameRoom: 'La destination doit être différente du point de départ',
+          unvisited: 'Fugetsu ne peut viser qu’un lieu déjà visité',
+          active: 'Un trajet Magical Worm est déjà ouvert',
+        },
         doublePosted: (room) => `Le double se tient dans ${room}, auprès de qui reste`,
         doubleSpent: (room) => `Le double a pris le coup à votre place, et a quitté ${room}`,
         doubleModeChanged: (watch) => `Le double change de garde · ${watch}`,
@@ -1636,7 +1671,7 @@ export const fr: Messages = {
         gumTrap: 'Gomme tendue en travers de',
         gumStrand: 'Gomme collée à',
         gumStretch: 'Étirement du fil',
-        crossings: (n) => `${n} passages sur 3`,
+        crossings: (n) => (n === 0 ? 'aller à franchir' : 'retour ouvert par Kacho'),
         solid: 'Volumes retenus',
         wound: 'Le confetti est dans',
         windup: (turns) =>
@@ -1650,6 +1685,9 @@ export const fr: Messages = {
         emptied: 'Aspiré',
         dowsing: 'Le pendule désigne',
         phasing: 'Traversée des murs',
+        spatialAnchor: 'Ancre spatiale',
+        spatialExit: 'Sortie spatiale ouverte',
+        spatialBurnedRooms: 'Ancres consumées',
         sealed: 'Sens scellés',
         sealedSenses: (count) => ['', 'vue', 'vue · ouïe', 'vue · ouïe · voix'][count] ?? '',
         dispatches: 'Dépêches',
@@ -3208,10 +3246,31 @@ export const fr: Messages = {
 
   palette: {
     dialogLabel: 'Navigation rapide',
-    searchLabel: 'Rechercher une destination du site',
-    placeholder: 'Où voulez-vous aller ?',
+    searchLabel: 'Rechercher dans tout le site',
+    placeholder: 'Un nom, un lieu ou une question…',
+    site: {
+      title: 'Rechercher dans tout le site',
+      submit: 'Rechercher dans tout le site',
+      pending: 'Recherche en cours…',
+      policy:
+        'Les résultats respectent votre chapitre. Entrée pour chercher, puis ouvrir un résultat.',
+      error: 'La recherche est temporairement indisponible. Réessayez dans un instant.',
+      count: (count) => `${count} résultats · 20 affichés au maximum`,
+      empty: 'Aucun résultat dans la limite de votre chapitre.',
+      interpreted: 'Votre question a été interprétée pour chercher dans le catalogue.',
+      fallback:
+        'Résultats de recherche classique : l’interprétation de la question est temporairement indisponible.',
+      kinds: {
+        character: 'Personnage',
+        ability: 'Pouvoir',
+        event: 'Événement',
+        place: 'Lieu',
+        faction: 'Faction',
+        page: 'Page',
+      },
+    },
     empty: (query) => `Aucune destination ne correspond à « ${query} ».`,
-    enterHint: 'Entrée pour ouvrir le premier résultat',
+    enterHint: 'Entrée pour chercher, puis ouvrir un résultat',
     shortcutHint: '⌘K partout',
     groups: {
       primary: 'Principal',
@@ -3309,7 +3368,7 @@ export const fr: Messages = {
       UNKNOWN: 'Conditions non révélées par le canon',
       FORBIDDEN: 'Action refusée par le moteur',
     },
-    parallelFuture: 'FUTUR PARALLÈLE',
+    parallelFuture: 'LAPLACE DEVIL',
     ended: 'TERMINÉ',
     replayLastEvents: 'Rejouer les cinq derniers événements',
     guardianLabel: 'KACHO · NEN POST-MORTEM',
@@ -3456,7 +3515,7 @@ export const fr: Messages = {
     outsideTier: 'Hors des ponts',
     unknownPosition: 'Position inconnue',
     unknownFuturePosition: 'Position future inconnue',
-    parallelFuture: 'Futur parallèle',
+    parallelFuture: 'Laplace Devil',
     positionInChapter: (chapter) => `Position au chapitre ${chapter}`,
     futureIdentity: (name, chapter) => `${name} · Chap. ${chapter}`,
     assumedIdentity: 'Identité supposée',
@@ -4393,6 +4452,8 @@ export const fr: Messages = {
     modified: (date: string) => `Dernière vérification le ${date}`,
     ability: {
       archive: 'Archive des pouvoirs',
+      capped:
+        'Les informations du catalogue sans date de chapitre sont masquées tant que votre limite de spoilers est active.',
       owner: 'Propriétaire',
       users: 'Utilisateurs connus',
       category: 'Catégorie de Nen',

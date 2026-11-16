@@ -150,33 +150,38 @@ export function dressGalleryBenches(surface: SupremeCourtSurface): void {
   }
 }
 
+/**
+ * Where the bar stands, in plan: one line across the room, in two runs either
+ * side of the gate. Exported because the bar is modelled here and not listed in
+ * the blueprint, so anything that has to walk round it reads it from here.
+ */
+export const COURT_BAR_X = 94
+export const COURT_BAR_RUNS: ReadonlyArray<readonly [number, number]> = [
+  [28, 36.5],
+  [40.5, 49],
+]
+
 /** Wooden court bar rail separating public spectator area from well of the court */
 export function dressCourtBarRailing(into: BanquetDetailBuilder, floor: number): void {
-  const barX = 94.0
+  const barX = COURT_BAR_X
   const railY = floor + 0.95
 
-  // South railing segment (z: 28.0 to 36.5)
-  into.box([0.08, 0.08, 8.5], { at: [barX, railY, 32.25], colour: COURT_WALNUT })
-  into.box([0.08, 0.06, 8.5], { at: [barX, floor + 0.1, 32.25], colour: COURT_MAHOGANY })
-  for (let z = 28.5; z <= 36.0; z += 0.75) {
-    into.cylinder(
-      { radius: 0.02, height: 0.8 },
-      { at: [barX, floor + 0.52, z], colour: COURT_BRASS },
-    )
-  }
-
-  // North railing segment (z: 40.5 to 49.0)
-  into.box([0.08, 0.08, 8.5], { at: [barX, railY, 44.75], colour: COURT_WALNUT })
-  into.box([0.08, 0.06, 8.5], { at: [barX, floor + 0.1, 44.75], colour: COURT_MAHOGANY })
-  for (let z = 41.0; z <= 48.5; z += 0.75) {
-    into.cylinder(
-      { radius: 0.02, height: 0.8 },
-      { at: [barX, floor + 0.52, z], colour: COURT_BRASS },
-    )
+  // South run, then north run, either side of the gate.
+  for (const [from, to] of COURT_BAR_RUNS) {
+    const length = to - from
+    const middle = (from + to) / 2
+    into.box([0.08, 0.08, length], { at: [barX, railY, middle], colour: COURT_WALNUT })
+    into.box([0.08, 0.06, length], { at: [barX, floor + 0.1, middle], colour: COURT_MAHOGANY })
+    for (let z = from + 0.5; z <= to - 0.5; z += 0.75) {
+      into.cylinder(
+        { radius: 0.02, height: 0.8 },
+        { at: [barX, floor + 0.52, z], colour: COURT_BRASS },
+      )
+    }
   }
 
   // Heavy end gateposts in polished walnut
-  for (const pz of [28.0, 36.5, 40.5, 49.0]) {
+  for (const pz of COURT_BAR_RUNS.flat()) {
     into.box([0.18, 1.1, 0.18], { at: [barX, floor + 0.55, pz], colour: COURT_WALNUT })
     into.sphere([0.08, 0.08, 0.08], { at: [barX, floor + 1.15, pz], colour: COURT_GOLD })
   }

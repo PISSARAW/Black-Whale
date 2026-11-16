@@ -1,3 +1,4 @@
+import { buildBiohazardCuffs } from './biohazardCuffsModel'
 import type { Apparition } from './apparitions'
 import type { BasicApparitionContext } from './apparitionBasicView'
 import { BONE, INK, modelKit } from './nenModelPrimitives'
@@ -91,24 +92,8 @@ export function buildBiohazardApparition(seen: Apparition, context: BasicApparit
         radii: [0.025, 0.025, 0.012],
         colour: INK,
       })
-      const cuff = k.add({
-        geometry: new context.THREE.TorusGeometry(0.19 * seen.size, 0.03 * seen.size, 8, 20),
-        colour: 0xaaaeb3,
-        at: [side * 0.5, 0.09, 0],
-        name: `retained-cuff-${side}`,
-      })
-      cuff.rotation.x = Math.PI / 2
     }
-    k.tube({
-      name: 'handcuff-link',
-      points: [
-        [-0.4, 0.09, 0],
-        [0, 0.03, 0],
-        [0.4, 0.09, 0],
-      ],
-      radius: 0.025,
-      colour: 0xaaaeb3,
-    })
+    buildBiohazardCuffs(seen, context)
   }
   return context.root
 }

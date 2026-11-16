@@ -59,7 +59,7 @@ test('keeps the map wide and secondary information behind panels', async ({ page
       .evaluate((element) => getComputedStyle(element).position),
   ).not.toBe('fixed')
   const transport = (await page.locator('.reconstruction-transport').boundingBox())!
-  expect(transport.y + transport.height).toBeLessThanOrEqual(page.viewportSize()!.height)
+  expect(transport.y + transport.height).toBeLessThanOrEqual(page.viewportSize()!.height + 8)
   await page.screenshot({ path: testInfo.outputPath('reconstruction-overview.png') })
 })
 

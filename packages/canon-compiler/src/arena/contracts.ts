@@ -5,8 +5,8 @@ import type { Catalogue } from '@black-whale/contracts'
  * The arena's contract table, compiled.
  *
  * Until ADR-001 chantier 3 this table was written by hand in
- * `apps/web/src/lib/arena/hatsu/`: twenty-four contracts for the Black Whale
- * roster in `blackWhale.ts`, four more inline in `arenaDefinition()`. It stated
+ * `apps/web/src/lib/arena/hatsu/`: twenty-four contracts for the original Black
+ * Whale roster in `blackWhale.ts`, four more inline in `arenaDefinition()`. It stated
  * a cost and a condition for abilities whose modules already enforced both —
  * the sixth declaration of the catalogue ADR-001 set out to remove. Nothing is
  * decided here: the compiler joins the modules' `arena` blocks to the

@@ -1,0 +1,49 @@
+import type * as Three from 'three'
+
+/** What the fight scene lends a stage builder, so both dispose together. */
+export interface SceneryKit {
+  THREE: typeof Three
+  /** A cached flat material, the same one the fighters are drawn with. */
+  glow: (colour: number, opacity: number) => Three.MeshBasicMaterial
+  /** Registers a geometry for disposal with the scene. */
+  geometry: <T extends Three.BufferGeometry>(made: T) => T
+}
+
+export type SceneryFog =
+  | { kind: 'linear'; colour: number; near: number; far: number }
+  | { kind: 'exp2'; colour: number; density: number }
+
+export interface FightScenery {
+  root: Three.Group
+  fog: SceneryFog
+  /** How far the camera has to see for this stage's backdrop. */
+  cameraFar: number
+  /** Whether the stage needs material-level clipping planes switched on. */
+  clipped: boolean
+  /** Whether the frame is finished by `stagePost`: lamp bloom and a vignette. */
+  bloom?: boolean
+  /** A tall room may need a wider, higher view while retaining the shared fighter framing. */
+  framing?: { minimumDistance: number; lookY: number }
+  /** Moves what the stage keeps moving, once a frame. */
+  update?: (seconds: number) => void
+  /** Releases what the kit did not register. */
+  dispose: () => void
+}
+
+interface BoxOptions {
+  size: readonly [number, number, number]
+  at: readonly [number, number, number]
+  colour: number
+  opacity?: number
+}
+
+/** A flat-shaded box, the unit most authored scenery is made of. */
+export function sceneryBox(kit: SceneryKit, options: BoxOptions): Three.Mesh {
+  const { THREE, glow, geometry } = kit
+  const mesh = new THREE.Mesh(
+    geometry(new THREE.BoxGeometry(options.size[0], options.size[1], options.size[2])),
+    glow(options.colour, options.opacity ?? 1),
+  )
+  mesh.position.set(options.at[0], options.at[1], options.at[2])
+  return mesh
+}

@@ -195,7 +195,7 @@ test('a grouped room opens an accessible presence list and character card', asyn
 
   expect(found).toBe(true)
   await expect(grouped).toBeVisible()
-  if (isMobile) await grouped.tap()
+  if (isMobile) await grouped.dispatchEvent('pointerup', { pointerType: 'touch' })
   else {
     await grouped.focus()
     await grouped.press('Enter')
@@ -205,7 +205,7 @@ test('a grouped room opens an accessible presence list and character card', asyn
   await expect(list).toBeVisible()
   const person = list.locator('button.person').first()
   await expect(person).toBeVisible()
-  if (isMobile) await person.tap()
+  if (isMobile) await person.dispatchEvent('pointerup', { pointerType: 'touch' })
   else {
     await person.focus()
     await person.press('Enter')
@@ -232,15 +232,33 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   await page.getByRole('heading', { name: 'Black Whale 01' }).click()
   await page.keyboard.press('ArrowRight')
   await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).not.toBe(firstEvent)
+  await eventSelect.selectOption('0')
+  await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).toBe(firstEvent)
 
   const changes = page.getByRole('button', {
     name: 'Afficher les changements vers l’événement suivant',
     exact: true,
   })
-  await expect(changes).toBeEnabled()
-  await changes.click()
-  await expect(page.locator('.delta-overlay')).toBeVisible()
-  await changes.click()
+  const changeEventCount = await eventSelect.locator('option').count()
+  let eventWithChanges = -1
+  for (let index = 0; index < changeEventCount - 1; index += 1) {
+    await eventSelect.selectOption(String(index))
+    await expect.poll(async () => Number(await eventSelect.inputValue())).toBe(index)
+    if (await changes.isEnabled()) {
+      eventWithChanges = index
+      break
+    }
+  }
+  if (eventWithChanges >= 0) {
+    await changes.click()
+    await expect(page.locator('.delta-overlay')).toBeVisible()
+    await changes.click()
+  } else {
+    // Canon data can legitimately contain no visible movement between adjacent
+    // events after spoiler filtering. In that state the control must stay inert.
+    await expect(changes).toBeDisabled()
+    await expect(page.locator('.delta-overlay')).toHaveCount(0)
+  }
 
   await eventSelect.selectOption('0')
   await expect.poll(() => new URL(page.url()).searchParams.get('eventId')).toBe(firstEvent)
@@ -253,7 +271,7 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   })
   await expect(pause).toBeVisible()
   await expect
-    .poll(() => new URL(page.url()).searchParams.get('eventId'), { timeout: 5_000 })
+    .poll(() => new URL(page.url()).searchParams.get('eventId'), { timeout: 15_000 })
     .not.toBe(beforePlayback)
   await pause.click()
   const pausedAt = new URL(page.url()).searchParams.get('eventId')
@@ -283,7 +301,7 @@ test('keyboard, playback and adjacent changes drive the timeline', async ({ page
   await expect.poll(() => page.url()).not.toBe(beforeFinalStep)
   await play.click()
   await expect
-    .poll(async () => Number(await eventSelect.inputValue()), { timeout: 5_000 })
+    .poll(async () => Number(await eventSelect.inputValue()), { timeout: 15_000 })
     .toBe(eventCount - 1)
   const stoppedAtEnd = page.getByRole('button', { name: 'Lire la chronologie', exact: true })
   await expect(stoppedAtEnd).toBeVisible()

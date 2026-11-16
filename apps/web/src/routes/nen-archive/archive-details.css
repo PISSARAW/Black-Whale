@@ -1,0 +1,205 @@
+.archive .aura-sample i {
+  width: 0.16rem;
+  height: 35%;
+  background: var(--accent-gold);
+  animation: meter 1.2s ease-in-out infinite alternate;
+}
+.archive .aura-sample i:nth-child(2) {
+  height: 75%;
+  animation-delay: -0.8s;
+}
+.archive .aura-sample i:nth-child(3) {
+  height: 100%;
+  animation-delay: -0.35s;
+}
+.archive .aura-sample i:nth-child(4) {
+  height: 58%;
+  animation-delay: -1s;
+}
+.archive .aura-sample i:nth-child(5) {
+  height: 28%;
+  animation-delay: -0.6s;
+}
+@keyframes meter {
+  to {
+    transform: scaleY(0.45);
+    opacity: 0.45;
+  }
+}
+.archive .description {
+  margin: 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.75;
+}
+.archive .traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.75rem;
+}
+.archive .traits span {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.62rem;
+}
+.archive .technique-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.25rem;
+  padding: 1.35rem 0;
+  border-top: 1px solid var(--line-default);
+  border-bottom: 1px solid var(--line-default);
+}
+.archive .technique-card > div > span,
+.archive .cry-button small {
+  color: var(--accent-gold-bright);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.archive .technique-card h3 {
+  margin: 0.45rem 0 0.5rem;
+  font: 600 1rem/1.4 var(--font-sans);
+}
+.archive .technique-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+.archive .technique-card button {
+  align-self: center;
+  min-height: 44px;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-gold-bright);
+  cursor: pointer;
+  font-size: 0.72rem;
+}
+.archive .technique-card button span {
+  margin-right: 0.3rem;
+}
+.archive .technique-card button:hover {
+  background: var(--accent-gold);
+  color: var(--surface-void);
+}
+.archive .action-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.archive .cry-button {
+  display: flex;
+  min-width: 0;
+  min-height: 4.5rem;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+.archive .cry-button:hover {
+  border-color: var(--accent-gold);
+}
+.archive .cry-button small,
+.archive .cry-button span:last-child {
+  display: block;
+}
+.archive .cry-button span:last-child {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.archive .cry-button small {
+  margin-bottom: 0.3rem;
+  font-size: 0.54rem;
+}
+.archive .sound-bars {
+  display: flex;
+  height: 1.5rem;
+  align-items: center;
+  gap: 0.16rem;
+}
+.archive .sound-bars i {
+  width: 0.12rem;
+  height: 40%;
+  background: var(--accent-gold);
+}
+.archive .sound-bars i:nth-child(2) {
+  height: 90%;
+}
+.archive .sound-bars i:nth-child(3) {
+  height: 65%;
+}
+.archive .sound-bars i:nth-child(4) {
+  height: 30%;
+}
+.archive .cry-button:hover .sound-bars i {
+  animation: meter 0.45s ease-in-out infinite alternate;
+}
+.archive .command-line {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  background: var(--surface-void);
+}
+.archive .command-line form {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
+}
+.archive .command-line form > span {
+  color: var(--accent-gold-bright);
+}
+.archive .command-line input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+}
+.archive .command-line button {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line-default);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-gold-bright);
+  cursor: pointer;
+}
+.archive .command-line button:hover {
+  border-color: var(--accent-gold);
+}
+.archive .sr-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.archive .toast {
+  position: fixed;
+  z-index: 100;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  max-width: min(24rem, calc(100vw - 2.5rem));
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: var(--radius-sm);
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4);
+}

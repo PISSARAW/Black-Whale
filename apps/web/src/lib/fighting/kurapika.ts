@@ -1,0 +1,143 @@
+import { voluntaryNenAvailable } from './nenAccess'
+import { fightCategoryEfficiency } from './nenCategories'
+import { transitionNen } from '@black-whale/nen-engine'
+import { outsideDuelAbility } from './outsideDuelAbility'
+import { dolphinMissingBattleBody } from './battleCantabileRules'
+import type { ArcadeFighter, FightInput, FightSide, FighterId } from './types'
+
+export interface StolenChainAbility {
+  victim: FightSide
+  source: FighterId
+  moveId: string
+  loaded: boolean
+  used: boolean
+  /** Effects created by this single use must finish before Dolphin can be dismissed. */
+  sustainedKeys: string[]
+}
+
+export interface KurapikaState {
+  emperorTime: boolean
+  /** Integer simulation frames: 60 spent frames = one hour of lifespan lost. */
+  lifespanFrames: number
+  continuousFrames: number
+  blackoutFrames: number
+  held: StolenChainAbility | null
+}
+
+export const EMPEROR_BLACKOUT_THRESHOLD = 3 * 60 * 60 * 60
+export const EMPEROR_BLACKOUT_FRAMES = 9 * 60 * 60 * 60
+export const STEAL_DRAIN_PER_SECOND = 40
+export const STEAL_TETHER_RANGE = 24
+
+export function createKurapika(): KurapikaState {
+  return {
+    emperorTime: false,
+    lifespanFrames: 0,
+    continuousFrames: 0,
+    blackoutFrames: 0,
+    held: null,
+  }
+}
+
+export function kurapikaNenActive(fighter: ArcadeFighter): boolean {
+  return voluntaryNenAvailable(fighter)
+}
+
+export function chainsImmobilize(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.chainJail || (fighter.kurapika?.blackoutFrames ?? 0) > 0)
+}
+
+export function kurapikaMoveAvailable(fighter: ArcadeFighter, moveId?: string): boolean {
+  if (chainAbilitySealed(fighter, moveId)) return false
+  if (chainsImmobilize(fighter)) return false
+  if (!moveId?.startsWith('kurapika:')) return true
+  if (fighter.id !== 'kurapika') return false
+  if (!kurapikaNenActive(fighter))
+    return ![
+      'kurapika:neutralSpecial',
+      'kurapika:forwardSpecial',
+      'kurapika:downSpecial',
+      'kurapika:backSpecial',
+      'kurapika:finisher',
+    ].includes(moveId)
+  return kurapikaHeldMoveAvailable(fighter, moveId)
+}
+
+function kurapikaHeldMoveAvailable(fighter: ArcadeFighter, moveId: string): boolean {
+  if (fighter.hanzoProjection && moveId !== 'kurapika:backSpecial')
+    return !/Special$|:finisher$/.test(moveId)
+  if (moveId === 'kurapika:finisher') return Boolean(fighter.kurapika?.emperorTime)
+  if (moveId === 'kurapika:backSpecial' && fighter.kurapika?.held)
+    return heldChainAvailable(fighter)
+  return true
+}
+
+function heldChainAvailable(fighter: ArcadeFighter): boolean {
+  const chain = fighter.kurapika!
+  return chain.emperorTime && !dolphinMissingBattleBody(fighter)
+}
+
+/** Emperor Time changes efficiency at the attained level, never mastery or aura reserves. */
+export function kurapikaEfficiency(
+  fighter: ArcadeFighter,
+  category: 'enhancer' | 'emitter',
+): number {
+  return fightCategoryEfficiency(fighter, category)
+}
+
+/** Different commands can belong to the same Hatsu. */
+export function chainAbilityGroup(moveId: string): string {
+  const [source, slot] = moveId.split(':')
+  if (source === 'kurapika' || source === 'benjamin') return moveId
+  if (source === 'hisoka') return slot === 'downSpecial' ? 'texture-surprise' : 'bungee-gum'
+  if (source === 'chrollo')
+    return slot === 'neutralSpecial'
+      ? 'skill-hunter'
+      : slot === 'forwardSpecial'
+        ? 'black-voice'
+        : 'sun-and-moon'
+  return source
+}
+
+export function chainAbilitySealed(fighter: ArcadeFighter, moveId?: string): boolean {
+  const stolen = fighter.stolenChainAbility
+  if (!stolen) return false
+  const selected = moveId ?? `${fighter.id}:neutralSpecial`
+  if (outsideDuelAbility(stolen.moveId)) return selected === stolen.moveId
+  if (!/:(neutralSpecial|forwardSpecial|downSpecial|backSpecial|finisher)$/.test(selected))
+    return false
+  return chainAbilityGroup(stolen.moveId) === chainAbilityGroup(selected)
+}
+
+export function zetsuFighter(fighter: ArcadeFighter): ArcadeFighter {
+  return { ...fighter, nen: transitionNen(fighter.nen, { type: 'ZETSU' }).state }
+}
+
+/** Neutral input obeys the announced Judgment rule; deliberate aura use breaks it. */
+export function judgmentInput(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
+  if (!fighter.judgmentChain) return fighter
+  if (input.aura && !input.down)
+    return { ...fighter, health: 0, attack: null, bufferedAttack: null }
+  return zetsuFighter(fighter)
+}
+
+export function isKurapikaUtility(fighter: ArcadeFighter): boolean {
+  return fighter.attack?.moveId === 'kurapika:downSpecial'
+}
+
+export function dolphinActor(fighter: ArcadeFighter): ArcadeFighter {
+  const held = fighter.kurapika?.held
+  return held?.used && fighter.attack?.moveId === held.moveId
+    ? { ...fighter, id: held.source, nenOwner: fighter.nenOwner ?? fighter.id }
+    : fighter
+}
+
+export function restrictedChainAura(
+  fighter: ArcadeFighter,
+  input: FightInput,
+): ArcadeFighter | null {
+  if (fighter.judgmentChain) return judgmentInput(fighter, input)
+  if (chainsImmobilize(fighter) || fighter.hatsuEffects.forcedZetsuFrames > 0)
+    return zetsuFighter(fighter)
+  return null
+}

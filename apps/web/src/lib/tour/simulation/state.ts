@@ -1,5 +1,41 @@
 import type { TourWorldMode } from './mode'
 import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/nen-engine'
+import type { NenCategory } from '@black-whale/domain'
+import { createTourNenEnvironment, type TourNenEnvironment } from './nenEnvironment'
+
+export const TOUR_NEN_PROFILE_VERSION = 1 as const
+
+export type TrainableNenCategory = Exclude<NenCategory, 'unknown'>
+
+export interface TourNenProfile {
+  version: typeof TOUR_NEN_PROFILE_VERSION
+  naturalAffinity: NenCategory
+  mastery: Record<TrainableNenCategory, number>
+  learnedAbilities: string[]
+  maintainedEffects: Array<{
+    abilityId: string
+    targetId: string
+    upkeep: number
+    startedAt: number
+  }>
+}
+
+export function createTourNenProfile(affinity: NenCategory = 'unknown'): TourNenProfile {
+  return {
+    version: TOUR_NEN_PROFILE_VERSION,
+    naturalAffinity: affinity,
+    mastery: {
+      enhancer: 0,
+      emitter: 0,
+      transmuter: 0,
+      conjurer: 0,
+      manipulator: 0,
+      specialist: 0,
+    },
+    learnedAbilities: [],
+    maintainedEffects: [],
+  }
+}
 
 export interface SimulatedActorState {
   spaceId: string
@@ -20,11 +56,13 @@ export interface TourSimulationV1 {
     inventory: string[]
     knowledge: string[]
     nen: NenTechniqueState<string>
+    nenProfile: TourNenProfile
   }
   actors: Record<string, SimulatedActorState>
   reputation: Record<string, number>
   permissions: string[]
   witnesses: string[]
+  witnessKnowledge: Record<string, string[]>
   incidents: string[]
   activities: Record<
     string,
@@ -46,6 +84,7 @@ export interface TourSimulationV1 {
       fire: boolean
     }
   >
+  nenEnvironment: TourNenEnvironment
 }
 
 export function createTourSimulation(input: {
@@ -66,14 +105,17 @@ export function createTourSimulation(input: {
       inventory: [],
       knowledge: [],
       nen: createNenTechniqueState<string>(),
+      nenProfile: createTourNenProfile(),
     },
     actors: {},
     reputation: {},
     permissions: [],
     witnesses: [],
+    witnessKnowledge: {},
     incidents: [],
     activities: {},
     shipSystems: {},
+    nenEnvironment: createTourNenEnvironment(),
   }
 }
 

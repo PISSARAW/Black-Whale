@@ -447,8 +447,9 @@
   {
     "id": "parallel-future",
     "ownerId": "prince-tserriednich",
-    "name": "Parallel Future",
+    "name": "Laplace Devil",
     "alternateNames": [
+      "Parallel Future",
       "Precognition",
       "Dream",
       "予知夢",
@@ -1563,11 +1564,11 @@
     "description": "Longhi offers a voluntary contract with explicit terms, duration, rewards and penalties. Once both parties consent, Moonlight Act enforces the agreement through Manipulation.",
     "canonStatus": "canon",
     "moduleKey": "moonlight-act",
-    "firstVisibleChapterId": "ch-397",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-401",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-397"
+        "chapterId": "ch-401"
       }
     ]
   },
@@ -1599,11 +1600,14 @@
     "description": "Zakuro manipulates blood released from an open wound. It can restrain targets or divide into eyed droplets that search independently for thirty to forty minutes before returning to normal blood.",
     "canonStatus": "canon",
     "moduleKey": "bloody-mary",
-    "firstVisibleChapterId": "ch-383",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-390",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-383"
+        "chapterId": "ch-390"
+      },
+      {
+        "chapterId": "ch-391"
       }
     ]
   },
@@ -1632,32 +1636,43 @@
     "alternateNames": ["Damage"],
     "category": "emitter",
     "abilityType": "damage-transfer",
-    "description": "Terebellum redirects damage received by a touched object or person into another touched target. Damage is transferred rather than erased and the exact living-target conditions remain limited.",
+    "description": "Terebellum absorbs damage from an object or person with his right hand at the moment it is inflicted and transfers it to whatever his left hand is touching. Damage dealt directly to Terebellum can be transferred with his left hand alone; if he absorbs damage with his right hand while his left hand touches nothing, his left hand takes the damage.",
     "canonStatus": "canon",
     "moduleKey": "damage-sweet-home",
-    "firstVisibleChapterId": "ch-386",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-399",
+    "modifiedAt": "2026-11-15",
     "sources": [
       {
-        "chapterId": "ch-386"
+        "chapterId": "ch-399"
       }
     ]
   },
   {
     "id": "voconte-hideout-doors",
     "ownerId": "voconte",
-    "name": "Hideout Doors",
-    "alternateNames": ["Unofficial descriptive name"],
-    "category": "conjurer",
+    "name": "Door",
+    "alternateNames": [
+      "Hideout Doors (descriptive name)"
+    ],
+    "category": "emitter",
     "abilityType": "hideout-door-network",
-    "description": "Voconte creates doors throughout the Heil-Ly base, connecting rooms into a controlled network and letting members reroute movement through the hideout.",
+    "description": "Voconte connects directional doorframes. People actually entering a triggering threshold are transported, including unsuspecting entrants to Room 3101; the return threshold changes their facing. Thrown weapons and Yokotani’s Nen constructs were not transported. The complete installation, selection and maintenance conditions remain unknown.",
     "canonStatus": "canon",
     "moduleKey": "voconte-hideout-doors",
-    "firstVisibleChapterId": "ch-383",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-393",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-383"
+        "chapterId": "ch-393"
+      },
+      {
+        "chapterId": "ch-394"
+      },
+      {
+        "chapterId": "ch-398"
+      },
+      {
+        "chapterId": "ch-399"
       }
     ]
   },
@@ -1668,14 +1683,14 @@
     "alternateNames": ["Weapon Transformation"],
     "category": "conjurer",
     "abilityType": "body-part-weapon-transformation",
-    "description": "Padaille transforms parts of his body into weapons and tools he knows, keeping bodily control of them. Which tool answers is not his to choose: the arm becomes a hammer, a drill or an axe at random, and each does one thing to what it meets — the hammer drives it into the ground, the drill bores a hole through it, the axe cuts it in two.",
+    "description": "Padaille transforms his right hand into tools and weapons. Chapter 391 shows a hammer, a drill and an axe during his fight against Hinrigh. No random selection, guaranteed outcome or general combat bonus is established.",
     "canonStatus": "canon",
     "moduleKey": "padaille-weapon-transformation",
-    "firstVisibleChapterId": "ch-383",
-    "modifiedAt": "2026-11-13",
+    "firstVisibleChapterId": "ch-391",
+    "modifiedAt": "2026-11-16",
     "sources": [
       {
-        "chapterId": "ch-383"
+        "chapterId": "ch-391"
       }
     ]
   },

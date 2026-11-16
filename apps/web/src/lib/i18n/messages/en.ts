@@ -65,6 +65,7 @@ export const en = {
     characters: 'Characters',
     knowledge: 'Knowledge',
     abilityArchive: 'Ability Archive',
+    nenArchive: 'NenDex',
     comparePerspectives: 'Compare Perspectives',
     factionNetwork: 'Faction Network',
     simulations: 'Simulations',
@@ -1160,13 +1161,16 @@ export const en = {
         worm: {
           title: 'How to use Magical Worm',
           first: (control: string) =>
-            `1. Aim at a room and use ${control} to place the Start Door.`,
+            `1. From where you stand, aim at a room you already visited and use ${control} to open the Outgoing Door. You take Fugetsu’s role.`,
           second: (room: string, control: string) =>
-            `2. Start Door: ${room}. Aim at another room and use ${control} to place the Return Door.`,
+            `Outgoing Door open from ${room}. Enter it; Kacho accompanies you and will open the return. ${control} stays unavailable during the trip.`,
           linked: (a: string, b: string, crossings: number) =>
-            `${a} ⇄ ${b} · ${crossings}/3 crossings`,
-          cross: 'Enter either endpoint to come out at the other one.',
-          spent: 'The third crossing is the last: the two doors collapse behind you.',
+            crossings === 0
+              ? `${a} → ${b} · Outgoing Door open`
+              : `${b} → ${a} · Kacho is holding the Return Door open`,
+          cross:
+            'On the way out, enter the Outgoing Door. After emerging, return through the door Kacho opens.',
+          spent: 'The return closes the tunnel: the symbiotic trip is complete.',
         },
         curse: {
           title: 'How to use Sacrificial Curse',
@@ -1235,6 +1239,25 @@ export const en = {
         doorsRearmed: (room: string) => `The old pair is down · first frame installed in ${room}`,
         phasingOn: 'Walls stopped being walls · walk through the ship',
         phasingOff: 'Back inside the geometry · the walls hold again',
+        spatialOutside: 'Spatial Teleportation needs a room around you',
+        spatialAnchorBurned: (room: string) =>
+          `${room} was unsealed once · it can never be an anchor again`,
+        spatialNeedsOneDoor: (room: string, doors: number) =>
+          `${room} has ${doors} physical ways out · the anchor needs exactly one`,
+        spatialDoorOpen: (room: string) =>
+          `${room}'s sole door is open · close it and step away before anchoring`,
+        spatialAnchored: (room: string) =>
+          `${room} is sealed as the anchor · choose a room you have already visited`,
+        spatialReturnToAnchor: (room: string) =>
+          `The destination can only be changed from ${room} · take the return aperture`,
+        spatialSameRoom: 'Choose a previously visited room beyond the anchor',
+        spatialUnvisited: (room: string) =>
+          `${room} has not been visited · no route can open there`,
+        spatialOpened: (anchor: string, destination: string) =>
+          `${anchor} opens through the private space into ${destination}`,
+        spatialCrossed: (from: string, to: string) => `${from} → private transit space → ${to}`,
+        spatialBurned: (room: string) =>
+          `${room}'s door opened · the route collapsed and this anchor is lost forever`,
         eyeSent: (room: string) => `The sphere is on a host in ${room} · its feed is in the corner`,
         eyeRecalled: (rooms: number) =>
           `The insect is back with you · ${rooms} room${rooms === 1 ? '' : 's'} filmed`,
@@ -1342,6 +1365,12 @@ export const en = {
         owlRecalled: (rooms: number) =>
           `The owl is off · ${rooms} kept anyway, as the walk always does`,
         foreseen: (room: string) => `Ten seconds on: ${room} · the vision does not revise itself`,
+        laplaceEnded: (reason: 'range' | 'zetsu' | 'battery'): string =>
+          reason === 'range'
+            ? "Laplace Devil breaks · you left the beast's 36-metre field"
+            : reason === 'battery'
+              ? "Laplace Devil breaks · the beast's reserve is empty"
+              : 'Laplace Devil breaks · Zetsu was released',
         diverged: (room: string, went: string) =>
           `The prediction still reads ${room}; you went to ${went}`,
         written: (room: string) => `The pen has written ${room} down`,
@@ -1512,10 +1541,16 @@ export const en = {
         autopilotStarted: 'Autopilot engaged · the body moves on its own to complete the task',
         wormSet: (room: string) => `One end of the tunnel in ${room} · name the other`,
         wormOpen: (a: string, b: string) =>
-          `${a} and ${b} are a night's route, and it is meant to be walked once`,
+          `You take Fugetsu’s role · the Outgoing Door joins ${a} to ${b}, and Kacho accompanies you`,
         wormCrossed: (room: string, crossings: number) =>
-          `Out in ${room} · crossing ${crossings} of 3, and the worm is tiring`,
-        wormSpent: 'The tunnel collapses · it was never meant to be asked three times',
+          `Out in ${room} · Kacho now opens the Return Door (${crossings}/1 outward trip)`,
+        wormSpent: 'Return complete · Kacho closes the door and Magical Worm disappears',
+        wormRefused: {
+          outside: 'Magical Worm must start inside a room of the Black Whale',
+          sameRoom: 'The destination must differ from the starting point',
+          unvisited: 'Fugetsu can only target a place already visited',
+          active: 'A Magical Worm trip is already open',
+        },
         doublePosted: (room: string) => `The double stands in ${room}, beside whoever is left`,
         doubleSpent: (room: string) => `The double took it in your place, and is gone from ${room}`,
         doubleModeChanged: (watch: string) => `The double changes her watch · ${watch}`,
@@ -1771,7 +1806,8 @@ export const en = {
         gumTrap: 'Gum strung across',
         gumStrand: 'Gum stuck to',
         gumStretch: 'Stretch on the strand',
-        crossings: (n: number) => `${n} of 3 crossings`,
+        crossings: (n: number): string =>
+          n === 0 ? 'outward leg ready' : 'return opened by Kacho',
         solid: 'Solids held',
         wound: 'The confetti is in',
         windup: (turns: number) => `${turns} rotation${turns === 1 ? '' : 's'} wound up`,
@@ -1784,6 +1820,9 @@ export const en = {
         emptied: 'Swallowed',
         dowsing: 'The chain points at',
         phasing: 'Walking through walls',
+        spatialAnchor: 'Spatial anchor',
+        spatialExit: 'Open spatial exit',
+        spatialBurnedRooms: 'Burned anchors',
         sealed: 'Senses sealed',
         // Named rather than drawn: the panel used three emoji here, which said
         // "eye, ear, mouth" only to a reader whose font drew them in colour.
@@ -3406,10 +3445,30 @@ export const en = {
 
   palette: {
     dialogLabel: 'Quick navigation',
-    searchLabel: 'Search site destinations',
-    placeholder: 'Where do you want to go?',
+    searchLabel: 'Search the entire site',
+    placeholder: 'A name, a place, or a question…',
+    site: {
+      title: 'Search the entire site',
+      submit: 'Search the entire site',
+      pending: 'Searching…',
+      policy: 'Results respect your chapter limit. Press Enter to search, then open a result.',
+      error: 'Search is temporarily unavailable. Please try again.',
+      count: (count: number) => `${count} results · up to 20 shown`,
+      empty: 'No results within your chapter limit.',
+      interpreted: 'Your question was interpreted to search the catalogue.',
+      fallback:
+        'Showing classic search results; question interpretation is temporarily unavailable.',
+      kinds: {
+        character: 'Character',
+        ability: 'Ability',
+        event: 'Event',
+        place: 'Place',
+        faction: 'Faction',
+        page: 'Page',
+      },
+    },
     empty: (query: string) => `No destination matches “${query}”.`,
-    enterHint: 'Enter to open first result',
+    enterHint: 'Enter to search, then open a result',
     shortcutHint: '⌘K anywhere',
     groups: {
       primary: 'Primary',
@@ -3511,7 +3570,7 @@ export const en = {
       UNKNOWN: 'Conditions not revealed by canon',
       FORBIDDEN: 'Action refused by the engine',
     },
-    parallelFuture: 'PARALLEL FUTURE',
+    parallelFuture: 'LAPLACE DEVIL',
     ended: 'ENDED',
     replayLastEvents: 'Replay the last five events',
     guardianLabel: 'KACHO · NEN POST-MORTEM',
@@ -3661,7 +3720,7 @@ export const en = {
     outsideTier: 'Outside tier',
     unknownPosition: 'Unknown position',
     unknownFuturePosition: 'Unknown future position',
-    parallelFuture: 'Parallel future',
+    parallelFuture: 'Laplace Devil',
     positionInChapter: (chapter: number | string | undefined) => `Position in chapter ${chapter}`,
     futureIdentity: (name: string, chapter: number | string | undefined) =>
       `${name} · Ch. ${chapter}`,
@@ -4611,6 +4670,8 @@ export const en = {
     modified: (date: string) => `Last reviewed ${date}`,
     ability: {
       archive: 'Ability archive',
+      capped:
+        'Catalogue details without a chapter date are hidden while your chapter limit is active.',
       owner: 'Owner',
       users: 'Known users',
       category: 'Nen category',

@@ -2,6 +2,9 @@ import type { BufferGeometry, Group, Material, MeshBasicMaterial } from 'three'
 import type { HumanLook } from './humanFigure'
 import type { FrameShape, HumanProfile } from './humanProfiles'
 import { CANON } from './humanProportions'
+import { shapeKurapikaLimbs } from './kurapikaSuit'
+import { shapeMangaLimbs } from './mangaLimbClothes'
+import { humanHandGeometry, addSleeveCuff, addShoeDetails } from './humanExtremityDetails'
 import { prisonFootGeometry, prisonFootMaterial } from './humanPrisonProps'
 import type { Geometry, Outlined, Three } from './silentMajorityParts'
 
@@ -113,13 +116,29 @@ function buildLeg(build: HumanLimbsBuild, side: number): { leg: Group; knee: Gro
   const { THREE, geometry, outlined, seen, profile, frame, materials } = build
   const leg = new THREE.Group()
   leg.name = side < 0 ? 'hip-left' : 'hip-right'
-  const trousers = profile.trousers
-  leg.add(segment(build, { key: 'thigh', length: CANON.thigh, taper: THIGH, colour: trousers }))
+  const trousers = ['machi-komacine', 'nobunaga-hazama'].includes(profile.likeness ?? '')
+    ? profile.skin
+    : profile.trousers
+  leg.add(
+    segment(build, {
+      key: 'thigh',
+      length: CANON.thigh,
+      taper: THIGH,
+      colour: profile.likeness === 'bonolenov-ndongo' ? profile.jacket : trousers,
+    }),
+  )
   const knee = new THREE.Group()
   knee.name = side < 0 ? 'knee-left' : 'knee-right'
   knee.position.y = -CANON.thigh
   leg.add(knee)
-  knee.add(segment(build, { key: 'shin', length: SHIN_LENGTH, taper: SHIN, colour: trousers }))
+  knee.add(
+    segment(build, {
+      key: 'shin',
+      length: SHIN_LENGTH,
+      taper: SHIN,
+      colour: profile.likeness === 'bonolenov-ndongo' ? profile.jacket : trousers,
+    }),
+  )
   const shoe = outlined({
     THREE,
     geometry: prisonFootGeometry(
@@ -132,6 +151,7 @@ function buildLeg(build: HumanLimbsBuild, side: number): { leg: Group; knee: Gro
   })
   shoe.position.set(0, -CANON.shin + SHOE_HEIGHT / 2, 0.05)
   knee.add(shoe)
+  addShoeDetails(build, shoe)
   leg.scale.y = frame.limb
   leg.position.set(side * CANON.hipX, CANON.hipY * frame.neck, 0)
   return { leg, knee }
@@ -142,7 +162,7 @@ function buildHand(build: HumanLimbsBuild, side: number) {
   // Shaped in the buffer rather than by scaling the mesh: what a hand holds is
   // hung on it as a child, and a scaled hand would stretch the book with it.
   const hand = new THREE.Mesh(
-    geometry(THREE, 'hand', () => new THREE.SphereGeometry(0.058, 7, 5).scale(0.72, 1.3, 0.48)),
+    geometry(THREE, 'hand:articulated', () => humanHandGeometry(build)),
     materials.skin,
   )
   hand.name = side < 0 ? 'hand-left' : 'hand-right'
@@ -161,7 +181,12 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
   const { THREE, geometry, outlined, glow, profile, frame, materials } = build
   const arm = new THREE.Group()
   arm.name = side < 0 ? 'shoulder-left' : 'shoulder-right'
-  const sleeve = profile.jacket
+  const sleeve =
+    profile.likeness === 'illumi'
+      ? profile.skin
+      : profile.likeness === 'hisoka'
+        ? profile.shirt
+        : profile.jacket
   arm.add(
     segment(build, { key: 'upper-arm', length: CANON.upperArm, taper: UPPER_ARM, colour: sleeve }),
   )
@@ -170,9 +195,15 @@ function buildArm(build: HumanLimbsBuild, side: number): { arm: Group; elbow: Gr
   elbow.position.y = -CANON.upperArm
   arm.add(elbow)
   elbow.add(
-    segment(build, { key: 'forearm', length: FOREARM_LENGTH, taper: FOREARM, colour: sleeve }),
+    segment(build, {
+      key: 'forearm',
+      length: FOREARM_LENGTH,
+      taper: FOREARM,
+      colour: profile.likeness === 'beyond-netero' ? profile.skin : sleeve,
+    }),
   )
   elbow.add(buildHand(build, side))
+  addSleeveCuff(build, elbow)
   // The cap of the shoulder, which is what lets an arm leave the trunk rather
   // than hang beside it. Added after the elbow: the joint stays second.
   const cap = outlined({
@@ -202,5 +233,7 @@ export function buildHumanLimbs(build: HumanLimbsBuild): HumanLimbs {
     limbs.arms.push(arm)
     limbs.elbows.push(elbow)
   }
+  shapeKurapikaLimbs(build, limbs)
+  shapeMangaLimbs(build, limbs)
   return limbs
 }

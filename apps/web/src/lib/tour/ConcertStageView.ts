@@ -6,6 +6,7 @@ import { buildConcertLandscape } from './concertLandscape'
 import { ConcertLandscapeWalk, type ConcertLandscapeSpec } from './concertLandscapeWalk'
 import { ConcertDreamView, CONCERT_DREAM_LAYER } from './ConcertDreamView'
 import { disposeBanquetDetails } from './banquetDetailBuilder'
+import { concertReferencePosition } from './concertReference'
 
 interface ConcertContext {
   tierId: string
@@ -25,6 +26,7 @@ export class ConcertStageView {
   private readonly dream: ConcertDreamView
   private walk: ConcertLandscapeWalk | null = null
   private bodyAt: Vec2 | null = null
+  private lastReferenceRequest = -1
   private blend = 0
 
   constructor(
@@ -55,8 +57,7 @@ export class ConcertStageView {
   }
 
   update(performance: ConcertPerformance, context: ConcertContext): void {
-    const wanted =
-      !!this.spec && performance.playing && context.tierId === 'tier-1' && !context.reveal
+    const wanted = !!this.spec && performance.playing && this.inHall(context)
     if (wanted && !this.root.children.length) this.build()
     const seconds = Math.min(0.1, Math.max(0, context.delta ?? 1 / 60))
     this.blend = Math.max(0, Math.min(1, this.blend + seconds * (wanted ? 0.9 : -1.35)))
@@ -66,6 +67,7 @@ export class ConcertStageView {
       this.dream.restore()
       this.walk = null
       this.bodyAt = null
+      this.lastReferenceRequest = -1
     }
   }
 
@@ -73,16 +75,34 @@ export class ConcertStageView {
     const wasActive = this.active
     this.update(performance, frame)
     if (!this.active || !this.spec) return wasActive ? [0, 0] : frame.velocity
-    if (!this.walk || this.bodyAt?.[0] !== frame.at[0] || this.bodyAt?.[1] !== frame.at[1]) {
-      this.walk = new ConcertLandscapeWalk(this.spec, frame.at)
+    const referenceRequest = performance.referenceRequest ?? 0
+    if (this.shouldResetWalk(performance, frame, referenceRequest)) {
+      const start =
+        performance.presentation === 'manga' ? concertReferencePosition(this.spec) : frame.at
+      this.walk = new ConcertLandscapeWalk(this.spec, start)
       this.bodyAt = [...frame.at]
+      this.lastReferenceRequest = referenceRequest
     }
-    this.walk.move(frame.velocity, frame.delta)
+    const walk = this.walk
+    if (!walk) return frame.velocity
+    walk.move(frame.velocity, frame.delta)
     return frame.velocity
   }
 
+  private shouldResetWalk(
+    performance: ConcertPerformance,
+    frame: ConcertWalkFrame,
+    referenceRequest: number,
+  ): boolean {
+    const recenter =
+      performance.presentation === 'manga' && referenceRequest !== this.lastReferenceRequest
+    const bodyMoved = this.bodyAt?.[0] !== frame.at[0] || this.bodyAt?.[1] !== frame.at[1]
+    return !this.walk || recenter || bodyMoved
+  }
+
   render(frame: Parameters<ConcertDreamView['apply']>[0], performance: ConcertPerformance): void {
-    if (this.active && this.walk) this.dream.apply(frame, this.walk, performance, this.blend)
+    if (this.active && this.walk)
+      this.dream.apply({ ...frame, blend: this.blend }, this.walk, performance)
   }
 
   dispose(): void {
@@ -95,9 +115,19 @@ export class ConcertStageView {
         const materials = Array.isArray(points.material) ? points.material : [points.material]
         for (const material of materials) material.dispose()
       }
+      if ((object as Three.LineSegments).isLineSegments) {
+        const line = object as Three.LineSegments
+        line.geometry.dispose()
+        const materials = Array.isArray(line.material) ? line.material : [line.material]
+        for (const material of materials) material.dispose()
+      }
     })
     disposeBanquetDetails(this.root)
     this.root.clear()
+  }
+
+  private inHall(context: ConcertContext): boolean {
+    return context.tierId === 'tier-1' && !context.reveal
   }
 
   private build(): void {
@@ -107,7 +137,12 @@ export class ConcertStageView {
 
   private fadeLandscape(alpha: number): void {
     this.root.traverse((object) => {
-      if (!(object as Three.Mesh).isMesh && !(object as Three.Points).isPoints) return
+      if (
+        !(object as Three.Mesh).isMesh &&
+        !(object as Three.Points).isPoints &&
+        !(object as Three.LineSegments).isLineSegments
+      )
+        return
       const raw = (object as Three.Mesh).material as Three.Material | Three.Material[]
       const materials: Three.Material[] = Array.isArray(raw) ? raw : [raw]
       for (const material of materials) {

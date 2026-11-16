@@ -26,7 +26,7 @@ function listBetween(source: string, opening: string): string[] {
 }
 
 const contracts = listBetween(
-  readFileSync(`${ROOT}packages/contracts/src/schemas.ts`, 'utf8'),
+  readFileSync(`${ROOT}packages/contracts/src/nen-schema.ts`, 'utf8'),
   'export const NEN_CREATURE_SILHOUETTES = [',
 )
 const walk = listBetween(
@@ -34,7 +34,7 @@ const walk = listBetween(
   'export const NEN_CREATURE_KINDS = new Set<ApparitionKind>([',
 )
 const posed = listBetween(
-  readFileSync(`${ROOT}packages/contracts/src/schemas.ts`, 'utf8'),
+  readFileSync(`${ROOT}packages/contracts/src/nen-schema.ts`, 'utf8'),
   'export const POSED_SILHOUETTES = [',
 )
 

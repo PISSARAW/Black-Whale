@@ -59,14 +59,11 @@ interface ResidueInput {
   awakened?: boolean
 }
 
-export function residueApparitions({
-  ship,
-  vestiges,
-  tierId,
-  traces = [],
-  objects = [],
-  awakened = true,
-}: ResidueInput): Apparition[] {
+function vestigeApparitions(
+  ship: Ship,
+  vestiges: Readonly<Record<string, readonly TourVestige[]>>,
+  tierId: string,
+): Apparition[] {
   const found: Apparition[] = []
   for (const [key, list] of Object.entries(vestiges)) {
     const space = spaceFor(ship, key)
@@ -91,11 +88,16 @@ export function residueApparitions({
       })
     })
   }
-  for (const source of [
-    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' })),
-    ...objects,
-  ]) {
-    if (!awakened) continue
+  return found
+}
+
+function sourceApparitions(
+  ship: Ship,
+  sources: readonly (TourAuraObject | (TourAuraTrace & { visibility: 'gyo'; kind: 'trace' }))[],
+  tierId: string,
+): Apparition[] {
+  const found: Apparition[] = []
+  for (const source of sources) {
     const placement = auraSourcePlacement({ ship, source, tierId })
     if (!placement) continue
     found.push({
@@ -112,4 +114,21 @@ export function residueApparitions({
     })
   }
   return found
+}
+
+export function residueApparitions({
+  ship,
+  vestiges,
+  tierId,
+  traces = [],
+  objects = [],
+  awakened = true,
+}: ResidueInput): Apparition[] {
+  const residues = vestigeApparitions(ship, vestiges, tierId)
+  if (!awakened) return residues
+  const sources = [
+    ...traces.map((trace) => ({ ...trace, visibility: 'gyo' as const, kind: 'trace' as const })),
+    ...objects,
+  ]
+  return [...residues, ...sourceApparitions(ship, sources, tierId)]
 }

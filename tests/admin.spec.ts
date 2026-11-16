@@ -5,7 +5,7 @@ import { expect, test } from 'playwright/test'
  * `baseURL`. They check the gate end to end: unit tests already cover the
  * session token, this covers the wiring around it.
  */
-const ADMIN = 'http://127.0.0.1:4174'
+const ADMIN = process.env.BLACK_WHALE_E2E_ADMIN_URL ?? 'http://127.0.0.1:4174'
 const PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin'
 
 test.describe('smoke — back-office', () => {

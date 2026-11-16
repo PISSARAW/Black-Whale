@@ -3,7 +3,7 @@ import type { ArenaHatsuDefinition } from './contract'
 import { ARENA_CONTRACTS } from './contracts.gen'
 
 /**
- * The Black Whale roster: the twenty-four hatsu the arena mode is built around.
+ * The Black Whale roster: the thirty-two Hatsu the arena mode is built around.
  *
  * The contracts themselves are no longer here — they are declared by the
  * modules and compiled into `contracts.gen.ts`. What the roster is, though, is

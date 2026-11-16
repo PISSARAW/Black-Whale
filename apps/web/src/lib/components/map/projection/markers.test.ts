@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { Location, PerspectiveState } from '@black-whale/domain'
+import { describe, expect, it } from 'vitest'
 
 import { projectFutureMarker, projectPresenceMarker } from './markers'
 import type { MapNextChapterState, MapPresence, MapWorldState } from './types'
@@ -258,7 +258,7 @@ describe('projectFutureMarker', () => {
     const marker = projectFutureMarker(next.presences[0], next, { fallbackLocations: [] })
 
     expect(marker?.perceivedIdentity).toBe('Kurapika · Ch. 400')
-    expect(marker?.temporalLabel).toBe('Parallel future')
+    expect(marker?.temporalLabel).toBe('Laplace Devil')
   })
 
   it('omits a body the next chapter reports as destroyed', () => {

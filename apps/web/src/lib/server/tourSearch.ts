@@ -52,6 +52,7 @@ export function interpreterQuestion(
       `Give one to ${LOOSE_KEYWORDS_MAX} keywords naming the kind of room, or the person whose room it is.`,
       'Every keyword must be copied exactly from the vocabulary below.',
       'Prefer the few words most likely to appear in the name of the room wanted.',
+      'Use as few keywords as possible. Never fill the list with unrelated or speculative room names.',
       'If nothing in the vocabulary fits, reply {"keywords": []}.',
       '',
       `Vocabulary: ${vocabulary.join(', ')}`,

@@ -176,24 +176,43 @@ function sealedOf(character: DossierCharacter, cap: number | null): DossierSeale
  * archive's silence rather than as an absence of aura, because those are two
  * different claims and only the first one is ours to make.
  */
-export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
-  const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
+function nenIsVisible(character: DossierCharacter, options: DossierOptions): boolean {
   const awakened = character.nen?.awakenedFromChapterId
     ? chapterOf(character.nen.awakenedFromChapterId)
     : null
   const chapter = visibleChapter(options)
-  const nenVisible = awakened === null || chapter === null || awakened <= chapter
+  return awakened === null || chapter === null || awakened <= chapter
+}
+
+function visibleTechniques(character: DossierCharacter, options: DossierOptions) {
+  return options.abilities
+    .filter((ability) => ability.ownerId === character.id)
+    .map((ability) => ({ name: ability.name, carried: ability.carried }))
+}
+
+function visibleNen(character: DossierCharacter, options: DossierOptions) {
+  if (!nenIsVisible(character, options)) return { category: null, techniques: [] }
+  return {
+    category: character.nen?.typeLabel ?? null,
+    techniques: visibleTechniques(character, options),
+  }
+}
+
+function factionFor(character: DossierCharacter, options: DossierOptions): string | null {
+  if (!character.factionId) return null
+  return options.factions.get(character.factionId) ?? null
+}
+
+export function dossierFor(character: DossierCharacter, options: DossierOptions): CastDossier {
+  const { route, withheld } = routeOf(character.mapTrajectory ?? [], options.cap)
+  const nen = visibleNen(character, options)
   return {
     characterId: character.id,
     role: character.shipLocation?.role ?? '',
-    faction: (character.factionId && options.factions.get(character.factionId)) || null,
+    faction: factionFor(character, options),
     factionId: character.factionId ?? null,
-    category: nenVisible ? (character.nen?.typeLabel ?? null) : null,
-    techniques: nenVisible
-      ? options.abilities
-          .filter((ability) => ability.ownerId === character.id)
-          .map((ability) => ({ name: ability.name, carried: ability.carried }))
-      : [],
+    category: nen.category,
+    techniques: nen.techniques,
     route,
     withheld,
     sealed: sealedOf(character, options.cap),

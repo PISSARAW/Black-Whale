@@ -1,0 +1,34 @@
+[
+  {
+    "fighter": "kurapika",
+    "nodes": 144,
+    "legacyUpdatesPerCapture": 156,
+    "optimizedUpdatesPerCapture": 12,
+    "reductionPercent": 92.3076923076923,
+    "maxPositionError": 0
+  },
+  {
+    "fighter": "hisoka",
+    "nodes": 125,
+    "legacyUpdatesPerCapture": 137,
+    "optimizedUpdatesPerCapture": 12,
+    "reductionPercent": 91.24087591240875,
+    "maxPositionError": 0
+  },
+  {
+    "fighter": "chrollo",
+    "nodes": 186,
+    "legacyUpdatesPerCapture": 198,
+    "optimizedUpdatesPerCapture": 12,
+    "reductionPercent": 93.93939393939394,
+    "maxPositionError": 0
+  },
+  {
+    "fighter": "benjamin",
+    "nodes": 126,
+    "legacyUpdatesPerCapture": 138,
+    "optimizedUpdatesPerCapture": 12,
+    "reductionPercent": 91.30434782608697,
+    "maxPositionError": 0
+  }
+]

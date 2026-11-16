@@ -1,4 +1,4 @@
-import type { Group, Material, Mesh, MeshBasicMaterial } from 'three'
+import type { Group, Material, Mesh, MeshBasicMaterial, ShaderMaterial } from 'three'
 import { createNenTechniqueState, type NenTechniqueState } from '@black-whale/nen-engine'
 import type { BufferGeometry } from 'three'
 import { auraGlassFor, type AuraGlass } from './auraRefraction'
@@ -7,6 +7,7 @@ import type { HumanLook } from './humanFigure'
 import { buildEnDome, unitDome } from './humanAuraDome'
 import { buildRenFlames } from './humanAuraFlames'
 import { skinLevelOf, wrapInAura } from './humanAuraSkin'
+import { sharedVisitorAuraMaterial, visitorAuraGeometry } from './visitorAura'
 
 type Three = typeof import('three')
 
@@ -29,6 +30,7 @@ export interface HumanAuraBuild {
   glow: (colour: number, opacity: number) => MeshBasicMaterial
   /** Absent on `low`, where the walk does not resample the frame at all. */
   glass?: Glass
+  auraStyle?: 'human' | 'visitor'
   seen: HumanLook
   nen: NenTechniqueState<HumanZone>
   /** False when the aura is concealed with In and the observer has no Gyo. */
@@ -53,6 +55,7 @@ export interface HumanAura {
   skin: Mesh[]
   /** The volume the aura occupies, seen from outside. See `auraRefraction`. */
   auraGlass: Mesh | null
+  visitorShell: Mesh<BufferGeometry, ShaderMaterial> | null
 }
 
 const zonePositions: Record<HumanZone, [number, number, number]> = {
@@ -89,6 +92,7 @@ export function buildHumanAura({
   geometry,
   glow,
   glass,
+  auraStyle = 'human',
   seen,
   nen,
   auraVisible,
@@ -105,9 +109,31 @@ export function buildHumanAura({
   const enFields: Mesh[] = []
   let onCore: Mesh | null = null
   let auraGlass: Mesh | null = null
+  let visitorShell: HumanAura['visitorShell'] = null
   // The skin wraps the body as it stands, so it goes on before any aura mesh.
   const level = skinLevelOf(nen)
-  const skin = auraVisible && level ? wrapInAura(THREE, figure, { colour: seen.colour, level }) : []
+  const visitorTechnique =
+    auraStyle === 'visitor' && nen.mode !== 'zetsu'
+      ? nen.on
+        ? 'on'
+        : level === 'ren'
+          ? 'ren'
+          : null
+      : null
+  const skin =
+    auraVisible && level && !visitorTechnique
+      ? wrapInAura(THREE, figure, { colour: seen.colour, level })
+      : []
+  if (auraVisible && visitorTechnique) {
+    visitorShell = new THREE.Mesh(
+      geometry(THREE, 'aura:visitor', () => visitorAuraGeometry(THREE)),
+      sharedVisitorAuraMaterial(THREE, visitorTechnique),
+    )
+    visitorShell.name = `nen-visitor-${visitorTechnique}`
+    // Centre the visitor's 2.4 m envelope on the rig rather than the camera.
+    visitorShell.position.y = -0.2
+    figure.add(visitorShell)
+  }
   // Under Gyo, a declared user in Zetsu shows the trace of nodes kept shut.
   if (observerGyo && seen.human?.aura === 'zetsu')
     skin.push(...wrapInAura(THREE, figure, { colour: seen.colour, level: 'zetsu' }))
@@ -119,7 +145,7 @@ export function buildHumanAura({
   // the whole of the argument in `auraRefraction`: seen from across a room, an
   // aura displaces the corridor behind it rather than adding a halo to it.
   // Not under Ko: the rest of the body is bare, so there is no volume to bend.
-  const worn = auraFelt && !nen.ko ? auraGlassFor(nen) : null
+  const worn = auraFelt && !nen.ko && !visitorTechnique ? auraGlassFor(nen) : null
   const glassMaterial = worn && glass ? glass(worn) : null
   if (glassMaterial) {
     const shell = new THREE.Mesh(
@@ -133,7 +159,7 @@ export function buildHumanAura({
     auraGlass = shell
   }
 
-  if (auraVisible && nen.on) {
+  if (auraVisible && nen.on && !visitorTechnique) {
     const core = new THREE.Mesh(
       geometry(THREE, 'aura:on-core', () => new THREE.SphereGeometry(0.92, 22, 16)),
       glow(0x020612, 0.46),
@@ -165,7 +191,7 @@ export function buildHumanAura({
     }
   }
   // Ten, Ren and Ken follow the body; Ren's tongues rise off it. `humanAuraSkin`.
-  if (auraVisible && level === 'ren')
+  if (auraVisible && level === 'ren' && !visitorTechnique)
     renFlames.push(...buildRenFlames({ THREE, geometry, glow, colour: seen.colour, figure }))
 
   // En, Ryu and another's Gyo are the fine grain of an aura: Gyo reads them.
@@ -256,5 +282,6 @@ export function buildHumanAura({
     onCore,
     skin,
     auraGlass,
+    visitorShell,
   }
 }

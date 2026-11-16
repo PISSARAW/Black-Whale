@@ -1,5 +1,6 @@
 import type { BufferGeometry, Group, Material, Mesh } from 'three'
 import type { HairStyle } from './humanProfiles'
+import { hairLockGeometry, hairFlowGeometry } from './humanHairGeometry'
 
 type Three = typeof import('three')
 type Geometry = (THREE: Three, key: string, make: () => BufferGeometry) => BufferGeometry
@@ -130,7 +131,7 @@ const STYLES: Partial<Record<HairStyle, Style>> = {
     for (const side of [-1, 1]) {
       place({
         key: 'hair:bob-side',
-        make: () => new THREE.BoxGeometry(0.13, 0.38, 0.18),
+        make: () => hairLockGeometry(THREE),
         at: [side * 0.145, -0.04, -0.005],
         turn: [0, 0, side * -0.08],
       })
@@ -298,7 +299,7 @@ export function addHumanHair({ THREE, geometry, outlined, head, style }: HumanHa
       geometry: geometry(
         THREE,
         'hair',
-        () => new THREE.SphereGeometry(0.196, 9, 5, 0, Math.PI * 2, 0, 1.18),
+        () => new THREE.SphereGeometry(0.196, 16, 8, 0, Math.PI * 2, 0, 1.18),
       ),
       material: hairInk,
       ink,
@@ -306,6 +307,12 @@ export function addHumanHair({ THREE, geometry, outlined, head, style }: HumanHa
     })
     shell.scale.set(0.94, cap.height, 0.98)
     shell.position.y = cap.y
+    const flow = new THREE.Mesh(
+      geometry(THREE, 'hair:flow-lines', () => hairFlowGeometry(THREE)),
+      hairLineMaterial(hairInk),
+    )
+    flow.name = 'hair-flow-lines'
+    shell.add(flow)
     group.add(shell)
   }
 
@@ -319,4 +326,15 @@ export function addHumanHair({ THREE, geometry, outlined, head, style }: HumanHa
   }
 
   STYLES[style]?.({ THREE, place })
+}
+
+const hairLineMaterials = new WeakMap<Material, Material>()
+
+function hairLineMaterial(source: Material): Material {
+  const held = hairLineMaterials.get(source)
+  if (held) return held
+  const material = source.clone() as import('three').MeshBasicMaterial
+  material.color.multiplyScalar(0.64)
+  hairLineMaterials.set(source, material)
+  return material
 }

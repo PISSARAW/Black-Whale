@@ -4,12 +4,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'halkenburg',
     mechanic: [
-      'Grimmel : l’aura collective alimente une flèche qui traverse les défenses et impose le Zetsu.',
-      'Grimmel: collective aura fuels an arrow that pierces defenses and imposes Zetsu.',
+      'Grimmel : la volonté de sa cohorte se rassemble pendant le combat ; la flèche perce alors toute garde et livre le corps de la cible à un partisan, au prix de la vie de Halkenburg.',
+      'Grimmel: his cohort’s will gathers during the fight; the arrow then pierces any guard and hands the target’s body to a supporter, at the cost of Halkenburg’s life.',
     ],
     finisherCondition: [
-      'La flèche collective doit avoir placé la cible en Zetsu forcé.',
-      'The collective arrow must have forced the target into Zetsu.',
+      'Le corps de la cible doit être occupé par un partisan.',
+      'The target’s body must be occupied by a supporter.',
     ],
     labels: [
       'Direct du prince|Prince Straight',

@@ -23,6 +23,20 @@ export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): Fighter
   return hatsu.sourceFor ? hatsu.sourceFor(fighter, moveId) : fighter.id
 }
 
+/**
+ * A direct hit killed `victimSide`. Returns the state rewritten by the victim's
+ * conditional Nen, or `null` when nothing wakes and the KO stands.
+ */
+export function resolveDeathHatsu(
+  state: FightState,
+  killerSide: FightSide,
+  victimSide: FightSide,
+): FightState | null {
+  const victim = state[victimSide]
+  if (victim.hatsuEffects.hatsuStolen > 0) return null
+  return hatsuFor(victim.id).onDeath?.({ state, victimSide, killerSide }) ?? null
+}
+
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
   const witnessSide = side === 'player' ? 'opponent' : 'player'
@@ -150,13 +164,6 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
       hatsuEffects: { ...fighter.hatsuEffects, cloneDodges: fighter.hatsuEffects.cloneDodges - 1 },
     }
   }
-  if (fighter.hatsuEffects.catCounters > 0) {
-    return {
-      ...fighter,
-      health: Math.min(100, fighter.health + 12),
-      hatsuEffects: { ...fighter.hatsuEffects, catCounters: fighter.hatsuEffects.catCounters - 1 },
-    }
-  }
   return consumeStandardAvoidance(fighter)
 }
 
@@ -164,7 +171,6 @@ type AvoidanceKey =
   | 'futureSight'
   | 'isolationFrames'
   | 'cloneDodges'
-  | 'catCounters'
   | 'teleportDodges'
   | 'wormDodges'
   | 'kachoGuards'
@@ -176,7 +182,6 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'futureSight',
   'isolationFrames',
   'cloneDodges',
-  'catCounters',
   'teleportDodges',
   'wormDodges',
   'kachoGuards',
@@ -185,7 +190,15 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'lsdfGuards',
 ]
 
-const STANDARD_AVOIDANCE_KEYS = AVOIDANCE_KEYS.slice(4)
+/** Keys `consumeHatsuAvoidance` spends with their own rule; the rest lose one charge. */
+const SPECIAL_AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
+  'futureSight',
+  'isolationFrames',
+  'cloneDodges',
+]
+const STANDARD_AVOIDANCE_KEYS = AVOIDANCE_KEYS.filter(
+  (key) => !SPECIAL_AVOIDANCE_KEYS.includes(key),
+)
 
 function consumeStandardAvoidance(fighter: ArcadeFighter): ArcadeFighter {
   const key = STANDARD_AVOIDANCE_KEYS.find((candidate) => fighter.hatsuEffects[candidate] > 0)

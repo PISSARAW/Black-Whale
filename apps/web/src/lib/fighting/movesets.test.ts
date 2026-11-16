@@ -283,9 +283,9 @@ function withFinisherCondition(state: FightState): FightState {
     case 'basho':
       return withPlayerEffect(state, 'haikuFrames', 60)
     case 'camilla':
-      return withPlayerEffect({ ...state, player: { ...player, health: 30 } }, 'catCounters', 1)
+      return { ...state, player: { ...player, health: 30 } }
     case 'halkenburg':
-      return withOpponentEffect(state, 'forcedZetsuFrames', 60)
+      return withOpponentEffect(state, 'possessedFrames', 60)
     case 'gel':
       return withOpponentEffect(state, 'venomFrames', 60)
     case 'lynch':

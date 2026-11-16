@@ -9,7 +9,13 @@ import {
   isAntiAir,
   otherSide,
 } from './frameData'
-import { consumeBaton, consumeHatsuAvoidance, hatsuAvoidsImpact, resolveHatsuImpact } from './hatsu'
+import {
+  consumeBaton,
+  consumeHatsuAvoidance,
+  hatsuAvoidsImpact,
+  resolveDeathHatsu,
+  resolveHatsuImpact,
+} from './hatsu'
 import { focusGuardRyu, isCriticalAuraStrike, releaseFocusedAura, setIn } from './nen'
 import {
   atWall,
@@ -354,6 +360,8 @@ function finishAfterImpact(
   if (state.mode === 'training') return state
   const durable = preserveHitFormatHealth(state, defenderSide)
   const reason = lossReason(durable, defenderSide)
+  const revived = reason === 'knockout' && resolveDeathHatsu(durable, attackerSide, defenderSide)
+  if (revived) return finishFight(revived, defenderSide, 'knockout')
   return reason ? finishFight(durable, attackerSide, reason) : durable
 }
 

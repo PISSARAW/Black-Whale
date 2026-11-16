@@ -55,6 +55,9 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
   posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
   sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
+- Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
+  (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
+  qui se joue à la vie : le chat tue le meurtrier et Camilla revient.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
   projectiles attestés sont propres au combattant ; les autres lancent une pierre,
   sans leur inventer de technique de Nen. Les collisions sont transmises à

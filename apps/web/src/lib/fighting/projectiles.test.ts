@@ -113,5 +113,7 @@ describe('ranged attacks', () => {
     expect(projectileProfile('hisoka').matter).toBe('object')
     expect(projectileProfile('benjamin').matter).toBe('object')
     expect(projectileProfile('musse').matter).toBe('object')
+    // Grimmel's arrow is his Hatsu, not a ranged shot: he throws a stone like anyone else.
+    expect(projectileProfile('halkenburg').shape).toBe('stone')
   })
 })

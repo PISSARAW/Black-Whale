@@ -192,6 +192,9 @@ export interface FighterHatsuEffects {
   batonCharges: number
   senseSeals: number
   blinkyFrames: number
+  cohortWillFrames: number
+  arrowNocked: number
+  possessedFrames: number
   sunMark: number
   moonMark: number
   manipulatedFrames: number
@@ -209,7 +212,6 @@ export interface FighterHatsuEffects {
   bloodBoundFrames: number
   entrancedFrames: number
   haikuFrames: number
-  catCounters: number
   venomFrames: number
   soulExposedFrames: number
   teleportDodges: number

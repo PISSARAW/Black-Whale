@@ -13,6 +13,13 @@ export interface HatsuImpactContext extends HatsuTriggerContext {
   concealed: boolean
 }
 
+/** A direct hit has just killed `victimSide`; the attacker on `killerSide` landed it. */
+export interface HatsuDeathContext {
+  state: FightState
+  victimSide: FightSide
+  killerSide: FightSide
+}
+
 export interface FighterHatsu {
   id: FighterId
   onTrigger: (context: HatsuTriggerContext) => FightState
@@ -21,6 +28,8 @@ export interface FighterHatsu {
   sourceFor?: (fighter: ArcadeFighter, moveId?: string) => FighterId | null
   /** The canon Hatsu cannot act in a duel: the fighter plays on martial skill and basic Nen. */
   martialOnly?: true
+  /** Conditional Nen that wakes only when its owner is killed by a direct hit. */
+  onDeath?: (context: HatsuDeathContext) => FightState
 }
 
 export const unchangedTrigger = ({ state }: HatsuTriggerContext): FightState => state

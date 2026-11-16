@@ -9,6 +9,7 @@ import {
   resolveHatsuImpact,
   triggerHatsu,
 } from './hatsu'
+import { COHORT_WILL_FRAMES } from './hatsu/halkenburg'
 import { hatsuFor } from './hatsu/registry'
 import { EMPTY_INPUT, type FightProjectile, type FightState } from './types'
 
@@ -448,30 +449,87 @@ describe('fighter Hatsu registry', () => {
     }
   })
 
-  it('gives Camilla and Luini one defensive counter', () => {
-    for (const source of ['camilla', 'luini'] as const) {
-      const state = hatsuFor(source).onTrigger({
-        state: closeFight(source, 'hisoka'),
-        side: 'player',
-        source,
-      })
-      expect(hatsuAvoidsImpact(state.player)).toBe(true)
-      expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
-    }
+  it('gives Luini one defensive counter', () => {
+    const state = hatsuFor('luini').onTrigger({
+      state: closeFight('luini', 'hisoka'),
+      side: 'player',
+      source: 'luini',
+    })
+    expect(hatsuAvoidsImpact(state.player)).toBe(true)
+    expect(hatsuAvoidsImpact(consumeHatsuAvoidance(state.player))).toBe(false)
   })
 
-  it('makes Halkenburg’s collective arrow break aura and health', () => {
-    const ready = closeFight('halkenburg', 'hisoka')
-    const struck = hatsuFor('halkenburg').onImpact({
+  it('keeps Cat’s Name dormant until Camilla is killed', () => {
+    const ready = closeFight('camilla', 'hisoka')
+    expect(hatsuSourceFor(ready.player)).toBeNull()
+    const triggered = hatsuFor('camilla').onTrigger({
       state: ready,
       side: 'player',
-      defenderSide: 'opponent',
-      source: 'halkenburg',
-      blocked: false,
-      concealed: false,
+      source: 'camilla',
     })
-    expect(struck.opponent.health).toBe(80)
-    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(120)
+    expect(triggered).toBe(ready)
+    expect(hatsuAvoidsImpact(triggered.player)).toBe(false)
+  })
+
+  it('lets Cat’s Name revive Camilla and kill her direct killer', () => {
+    const killing = (formatId: 'knockout' | 'heavens-arena') => {
+      const state = beginFight(createFight('hisoka', 'camilla', formatId))
+      return advance(
+        performAttack(
+          {
+            ...state,
+            player: { ...state.player, x: 44 },
+            opponent: { ...state.opponent, x: 52, health: 1, hitStun: 90 },
+          },
+          'player',
+          'heavy',
+        ),
+        0.6,
+      )
+    }
+    const killed = killing('knockout')
+    expect(killed.phase).toBe('finished')
+    expect(killed.winner).toBe('opponent')
+    expect(killed.opponent.health).toBeGreaterThan(0)
+    expect(killed.player.health).toBe(0)
+
+    // Points formats never kill: no death, no cat.
+    const scored = killing('heavens-arena')
+    expect(scored.opponent.health).toBeGreaterThan(0)
+    expect(scored.winner).not.toBe('opponent')
+  })
+
+  it('fires Grimmel only once the cohort’s will is gathered', () => {
+    const halkenburg = hatsuFor('halkenburg')
+    const ready = closeFight('halkenburg', 'hisoka')
+    const shoot = (state: FightState, blocked: boolean) =>
+      halkenburg.onImpact({
+        state: halkenburg.onTrigger({ state, side: 'player', source: 'halkenburg' }),
+        side: 'player',
+        defenderSide: 'opponent',
+        source: 'halkenburg',
+        blocked,
+        concealed: false,
+      })
+
+    // Without the cohort's will, the special is an ordinary strike.
+    const early = shoot(ready, false)
+    expect(early.opponent.hatsuEffects.possessedFrames).toBe(0)
+    expect(early.player.health).toBe(ready.player.health)
+
+    let gathered = ready
+    for (let frame = 0; frame < COHORT_WILL_FRAMES; frame += 1)
+      gathered = halkenburg.onFrame(gathered)
+    expect(gathered.player.hatsuEffects.cohortWillFrames).toBe(COHORT_WILL_FRAMES)
+    expect(gathered.opponent.hatsuEffects.cohortWillFrames).toBe(0)
+
+    // The arrow pierces the guard, takes the body over, and costs Halkenburg.
+    const struck = shoot(gathered, true)
+    expect(struck.opponent.hatsuEffects.possessedFrames).toBeGreaterThan(0)
+    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
+    expect(struck.player.health).toBeLessThan(ready.player.health)
+    expect(struck.player.hatsuEffects.cohortWillFrames).toBe(0)
+    expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
   })
 
   it('lets Gel poison aura and Lynch expose the target’s soul', () => {

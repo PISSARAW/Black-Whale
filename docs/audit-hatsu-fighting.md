@@ -85,18 +85,18 @@ une vérification dans le manga avant d'être corrigés.
 
 ### Troisième vague
 
-| Combattant | Hatsu en jeu                          | Canon (fiche)                                                       | Verdict | Écart                                                                                    |
-| ---------- | ------------------------------------- | ------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------- |
-| Rihan      | Buff + Zetsu forcé 3 s sur la cible   | Predator : plus fort à chaque condition correctement déduite        | C       | Le Zetsu est inventé. Piste : se renforcer en lisant les techniques adverses déjà vues.  |
-| Zakuro     | Entrave 1,6 s                         | Bloody Mary : son propre sang, gouttes autonomes de recherche       | C       | Inventé.                                                                                 |
-| Melody     | Transe 1,25 s, **même gardée**        | Musique qui apaise les auditeurs ; exige d'entendre                 | D       | Traverser la garde est cohérent avec le son. Manque la performance continue.             |
-| Basho      | ×1,25 dégâts pendant 3 s              | Great Hiker : trois vers, puissance selon la qualité du poème       | B       | Piste forte : une saisie en trois temps dont la précision fixe la puissance.             |
-| Camilla    | Contre qui soigne 12 PV sur tout coup | Cat's Name : seulement à sa **mort**, tue le tueur direct           | **A**   | Devrait annuler un K.-O. direct et renvoyer le coup fatal, une fois.                     |
-| Halkenburg | +20 dégâts et Zetsu si non gardé      | Flèche qui perce **toute défense**, échange deux âmes               | **A**   | La flèche devrait être imparable ; le Zetsu est inventé ; les partisans requis manquent. |
-| Gel        | Venin : drain d'aura                  | Snake Arm : bras-serpent qui enserre, bloqué dès la 2ᵉ étreinte     | **A**   | Aucun venin dans la fiche. Devrait être une entrave par paliers.                         |
-| Lynch      | Stun + vulnérabilité ×1,25            | Body and Soul : question puis coup, le corps répond la vérité       | C       | Capacité d'information. Piste : révéler la prochaine action de l'adversaire.             |
-| Luini      | Une esquive par téléportation         | Entrées préparées et retour marqués                                 | B       | Il manque les points d'entrée posés à l'avance.                                          |
-| Bill       | Se soigne 10 PV et se renforce        | Erigeron : forte sur les plantes, **faible** sur un Nen-user vivant | C       | Le buff personnel est inventé.                                                           |
+| Combattant | Hatsu en jeu                          | Canon (fiche)                                                       | Verdict  | Écart                                                                                                                                                                                                                                                                                                               |
+| ---------- | ------------------------------------- | ------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rihan      | Buff + Zetsu forcé 3 s sur la cible   | Predator : plus fort à chaque condition correctement déduite        | C        | Le Zetsu est inventé. Piste : se renforcer en lisant les techniques adverses déjà vues.                                                                                                                                                                                                                             |
+| Zakuro     | Entrave 1,6 s                         | Bloody Mary : son propre sang, gouttes autonomes de recherche       | C        | Inventé.                                                                                                                                                                                                                                                                                                            |
+| Melody     | Transe 1,25 s, **même gardée**        | Musique qui apaise les auditeurs ; exige d'entendre                 | D        | Traverser la garde est cohérent avec le son. Manque la performance continue.                                                                                                                                                                                                                                        |
+| Basho      | ×1,25 dégâts pendant 3 s              | Great Hiker : trois vers, puissance selon la qualité du poème       | B        | Piste forte : une saisie en trois temps dont la précision fixe la puissance.                                                                                                                                                                                                                                        |
+| Camilla    | Contre qui soigne 12 PV sur tout coup | Cat's Name : seulement à sa **mort**, tue le tueur direct           | D (fait) | Corrigé le 2026-11-16 : Nen conditionnel, aucun effet de son vivant ; tuée par un coup direct (format à la vie), elle ressuscite et son tueur meurt. TKO, points et temps ne la réveillent pas.                                                                                                                     |
+| Halkenburg | +20 dégâts et Zetsu si non gardé      | Flèche qui perce **toute défense**, échange deux âmes               | B (fait) | Corrigé le 2026-11-16 : plus de Zetsu ; la volonté de la cohorte se charge en 8 s (abstraction), la flèche perce la garde, livre le corps à un partisan 2 s et coûte 8 PV à Halkenburg ; son tir à distance devient une pierre. Restent abstraits : la cohorte, l'armure collective, et les dégâts du coup porteur. |
+| Gel        | Venin : drain d'aura                  | Snake Arm : bras-serpent qui enserre, bloqué dès la 2ᵉ étreinte     | **A**    | Aucun venin dans la fiche. Devrait être une entrave par paliers.                                                                                                                                                                                                                                                    |
+| Lynch      | Stun + vulnérabilité ×1,25            | Body and Soul : question puis coup, le corps répond la vérité       | C        | Capacité d'information. Piste : révéler la prochaine action de l'adversaire.                                                                                                                                                                                                                                        |
+| Luini      | Une esquive par téléportation         | Entrées préparées et retour marqués                                 | B        | Il manque les points d'entrée posés à l'avance.                                                                                                                                                                                                                                                                     |
+| Bill       | Se soigne 10 PV et se renforce        | Erigeron : forte sur les plantes, **faible** sur un Nen-user vivant | C        | Le buff personnel est inventé.                                                                                                                                                                                                                                                                                      |
 
 ### Quatrième vague et Yokotani
 
@@ -125,18 +125,17 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 
 | Verdict | Audit (41 jouables) | Au 2026-11-16 (40 jouables) |
 | ------- | ------------------- | --------------------------- |
-| A       | 13                  | 7                           |
-| B       | 14                  | 15                          |
+| A       | 13                  | 5                           |
+| B       | 14                  | 16                          |
 | C       | 11                  | 8                           |
-| D       | 3                   | 10                          |
+| D       | 3                   | 11                          |
 
 ## Ordre de traitement proposé
 
 1. ~~Corriger le bug Hinrigh~~ — fait.
 2. **Constat 4 : traité.** Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur ;
    Silent Majority est retiré du roster (utilisateur anonyme, aucune aptitude martiale connue).
-3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~ (faits), Camilla,
-   Halkenburg, Hanzo, Gel, Longhi, Yokotani.
+3. **Les A à effet contraire**, du plus visible au moins visible : ~~Hisoka~~, ~~Chrollo~~, ~~Shizuku~~, ~~Camilla~~, ~~Halkenburg~~ (faits), Hanzo, Gel, Longhi, Yokotani.
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois

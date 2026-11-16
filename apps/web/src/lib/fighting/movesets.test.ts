@@ -156,21 +156,24 @@ describe('wave one movesets', () => {
     expect(finisherReady(supplied, 'player')).toBe(true)
     const armed = performMove({ state: supplied, side: 'player', action: 'finisher' })
     expect(armed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
-    expect(armed.player.aura).toBe(45)
+    expect(armed.player.aura).toBe(100 - moveForSlot(fighterId, 'finisher')!.auraCost)
   })
 
-  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio' && id !== 'franklin'))('%s wave-two finisher is conditionally locked', (fighterId) => {
-    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-    const supplied = withFinisherCondition({
-      ...base,
-      player: { ...base.player, aura: 100 },
-    })
-    expect(finisherReady(base, 'player')).toBe(false)
-    expect(finisherReady(supplied, 'player')).toBe(true)
-    expect(
-      performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-    ).toBe(`${fighterId}:finisher`)
-  })
+  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio' && id !== 'franklin'))(
+    '%s wave-two finisher is conditionally locked',
+    (fighterId) => {
+      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+      const supplied = withFinisherCondition({
+        ...base,
+        player: { ...base.player, aura: 100 },
+      })
+      expect(finisherReady(base, 'player')).toBe(false)
+      expect(finisherReady(supplied, 'player')).toBe(true)
+      expect(
+        performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
+      ).toBe(`${fighterId}:finisher`)
+    },
+  )
 
   it.each(WAVE_THREE_FIGHTERS)('%s wave-three finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
@@ -202,7 +205,8 @@ describe('wave one movesets', () => {
     const state = beginFight(createFight('yokotani', 'hisoka'))
     expect(finisherReady(state, 'player')).toBe(false)
     expect(performMove({ state, side: 'player', action: 'finisher' })).toBe(state)
-  })})
+  })
+})
 
 function assertCompleteMoveset(fighterId: FighterId): void {
   const moveset = movesetFor(fighterId)!
@@ -223,7 +227,10 @@ function withFinisherCondition(state: FightState): FightState {
   const opponent = state.opponent
   switch (player.id) {
     case 'kurapika':
-      return { ...state, player: { ...player, kurapika: { ...player.kurapika!, emperorTime: true } } }
+      return {
+        ...state,
+        player: { ...player, kurapika: { ...player.kurapika!, emperorTime: true } },
+      }
     case 'theta':
       return withOpponentEffect(state, 'forcedZetsuFrames', 60)
     case 'hisoka':
@@ -232,16 +239,61 @@ function withFinisherCondition(state: FightState): FightState {
         bungeeGum: { owner: 'player', target: 'opponent', hidden: false, retracting: false },
       }
     case 'chrollo':
-      return { ...state, player: { ...player, chrolloBook: { ...player.chrolloBook!, open: false, bookmark: 'sun-and-moon' } } }
+      return {
+        ...state,
+        player: {
+          ...player,
+          chrolloBook: { ...player.chrolloBook!, open: false, bookmark: 'sun-and-moon' },
+        },
+      }
     case 'benjamin':
-      return withPlayerEffect(state, 'batonCharges', 3)
+      return {
+        ...state,
+        player: {
+          ...player,
+          hatsuEffects: {
+            ...player.hatsuEffects,
+            baton: {
+              ...player.hatsuEffects.baton!,
+              card: {
+                id: 1,
+                owner: 'opponent',
+                fighterId: 'franklin',
+                x: 50,
+                y: 6.1,
+                velocityX: -70,
+                width: 0.6,
+                height: 0.24,
+                damage: 11,
+                hitstun: 13,
+                blockstun: 9,
+                hitstop: 5,
+                knockback: 2.2,
+                targetZone: 'torso',
+                shape: 'bullet',
+                colour: '#ffffff',
+                age: 0,
+                lifetime: 120,
+                matter: 'nen',
+              },
+            },
+          },
+        },
+      }
     case 'tserriednich':
       return withPlayerEffect(state, 'futureSight', 1)
     case 'feitan':
-      return { ...state, player: { ...player, health: 70, hatsuEffects: {
-        ...player.hatsuEffects,
-        painPacker: { injuries: 0, packedDamage: 30, armour: true, sun: null },
-      } } }
+      return {
+        ...state,
+        player: {
+          ...player,
+          health: 70,
+          hatsuEffects: {
+            ...player.hatsuEffects,
+            painPacker: { injuries: 0, packedDamage: 30, armour: true, sun: null },
+          },
+        },
+      }
     case 'saiyu':
       return withOpponentEffect(state, 'senseSeals', 2)
     case 'biscuit':

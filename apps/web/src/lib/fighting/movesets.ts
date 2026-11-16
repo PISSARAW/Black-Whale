@@ -1,3 +1,5 @@
+import { tuneBenjaminMoveset } from './benjaminMoveset'
+import { benjaminMoveAvailable } from './benjaminBaton'
 import { tuneKurapikaMoveset } from './kurapikaMoveset'
 import { kurapikaMoveAvailable } from './kurapika'
 import { feitanMoveAvailable } from './feitanPain'
@@ -47,7 +49,12 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneKurapikaMoveset).map(tuneFranklinMoveset).map(tuneChrolloMoveset).map(tuneHisokaMoveset).map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map(tuneBenjaminMoveset)
+    .map(tuneKurapikaMoveset)
+    .map(tuneFranklinMoveset)
+    .map(tuneChrolloMoveset)
+    .map(tuneHisokaMoveset)
+    .map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
   [...MOVESETS.values()].flatMap((moveset) =>
@@ -97,20 +104,38 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
-  if (!kurapikaMoveAvailable(fighter, move.id)) return false
-  if (fighter.id === 'kurapika' && move.id === 'kurapika:backSpecial' && fighter.kurapika?.held) return true
-  if (!feitanMoveAvailable(fighter, move.id)) return false
-  if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
-  if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
-  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
-    return false
+  if (!characterMoveAvailable(fighter, move)) return false
+  if (isHeldChainMove(fighter, move)) return true
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources
   if (fighter.aura < move.auraCost) return false
-  return move.category !== 'special' && move.category !== 'finisher'
-    ? true
-    : canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
+  return hasTechniqueResources(fighter, move)
+}
+
+function isHeldChainMove(fighter: ArcadeFighter, move: FighterMove): boolean {
+  return (
+    fighter.id === 'kurapika' &&
+    move.id === 'kurapika:backSpecial' &&
+    Boolean(fighter.kurapika?.held)
+  )
+}
+
+function characterMoveAvailable(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
+    return false
+  if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
+  return (
+    kurapikaMoveAvailable(fighter, move.id) &&
+    feitanMoveAvailable(fighter, move.id) &&
+    remotePunchAvailable(fighter, move.kind, move.id) &&
+    benjaminMoveAvailable(fighter, move.id)
+  )
+}
+
+function hasTechniqueResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (move.category !== 'special' && move.category !== 'finisher') return true
+  return canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
 }
 
 export function finisherReady(state: FightState, side: FightSide): boolean {
@@ -165,10 +190,11 @@ const opponentOf = (state: FightState, side: FightSide) =>
   state[side === 'player' ? 'opponent' : 'player']
 
 const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
-  kurapika: (state, side) => Boolean(state[side].kurapika?.emperorTime) && !opponentOf(state, side).judgmentChain,
+  kurapika: (state, side) =>
+    Boolean(state[side].kurapika?.emperorTime) && !opponentOf(state, side).judgmentChain,
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
-  benjamin: (state, side) => state[side].hatsuEffects.batonCharges >= 3,
+  benjamin: (state, side) => Boolean(state[side].hatsuEffects.baton?.card),
   tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => opponentOf(state, side).hatsuEffects.senseSeals >= 2,

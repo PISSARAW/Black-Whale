@@ -1,3 +1,4 @@
+import { BENJAMIN_CANON } from './benjaminCanon'
 import { CHROLLO_CANON } from './chrolloCanon'
 import { hisokaTechniqueAllowed } from './hisokaTechnique'
 import type { FighterMove } from './movesetTypes'
@@ -92,7 +93,8 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     conditions: ['Its full restorative power requires Emperor Time.'],
     prohibitions: ['It cannot impose Zetsu on an opponent.'],
     narrativeCost: 'Emperor Time consumes Kurapika’s lifespan while active.',
-    narrativeEffect: 'The thumb chain heals the user; Enhancement efficiency rises from 60% to 100% under Emperor Time. It never strikes an opponent.',
+    narrativeEffect:
+      'The thumb chain heals the user; Enhancement efficiency rises from 60% to 100% under Emperor Time. It never strikes an opponent.',
   },
   'kurapika:backSpecial': {
     source: 'Succession Contest — Steal Chain',
@@ -107,7 +109,8 @@ const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContra
     evidence: 'manga-shown',
     conditions: ['Kurapika states rules that bind the target’s heart.'],
     prohibitions: ['It is not Chain Jail and is not restricted to the Phantom Troupe.'],
-    narrativeCost: 'Requires Emperor Time to implant; the implanted rule persists when Emperor Time ends.',
+    narrativeCost:
+      'Requires Emperor Time to implant; the implanted rule persists when Emperor Time ends.',
     narrativeEffect: 'Breaking the imposed rules triggers the blade around the heart.',
   },
   ...CHROLLO_CANON,
@@ -168,6 +171,7 @@ export function techniqueContract(
 ): TechniqueCanonContract {
   const defined = CONTRACTS[move.id as `${FighterId}:${MoveSlot}`]
   if (defined) return defined
+  if (BENJAMIN_CANON[move.id]) return BENJAMIN_CANON[move.id]
   return {
     source: 'Black Whale: Clash combat interpretation',
     evidence: 'gameplay-abstraction',

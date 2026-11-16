@@ -1,7 +1,8 @@
-import { kurapikaMoveAvailable } from './kurapika'
-import { feitanMoveAvailable } from './feitanPain'
-import { chrolloMoveAvailable } from './chrolloBook'
 import { remotePunchAvailable } from './leorioAttack'
+import { chrolloMoveAvailable } from './chrolloBook'
+import { kurapikaMoveAvailable } from './kurapika'
+import { benjaminMoveAvailable } from './benjaminBaton'
+import { feitanMoveAvailable } from './feitanPain'
 import { projectionPreparing } from './hanzoProjection'
 import { canCancel } from './duelMoves'
 import { attackData, attackTotal, INPUT_BUFFER_FRAMES } from './frameData'
@@ -78,16 +79,32 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (!kurapikaMoveAvailable(fighter, moveId)) return false
-  if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
-  if (!remotePunchAvailable(fighter, kind, moveId)) return false
-  if (projectionPreparing(fighter)) return false
-  if (fighter.hanzoProjection && kind === 'ranged') return false
-  const resourceReady = attackResourcesReady(fighter, kind, moveId)
+  if (!characterAttackAvailable(fighter, kind, moveId)) return false
+  const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&
     (fighter.attack === null || cancelReady(fighter, kind, moveId)) &&
     resourceReady
+  )
+}
+
+function characterAttackAvailable(
+  fighter: ArcadeFighter,
+  kind: AttackKind,
+  moveId?: string,
+): boolean {
+  if (!kurapikaMoveAvailable(fighter, moveId)) return false
+  if (kind === 'special' && !chrolloMoveAvailable(fighter, moveId)) return false
+  if (attackRestricted(fighter, kind, moveId)) return false
+  return true
+}
+
+function attackRestricted(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
+  if (!remotePunchAvailable(fighter, kind, moveId) || projectionPreparing(fighter)) return true
+  if (fighter.hanzoProjection && kind === 'ranged') return true
+  return (
+    kind === 'special' &&
+    (!benjaminMoveAvailable(fighter, moveId) || !feitanMoveAvailable(fighter, moveId))
   )
 }
 
@@ -129,8 +146,7 @@ function cancelReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string):
   return fighter.attack.frame <= attackData(fighter.attack.kind, fighter).cancelEnd
 }
 
-function attackResourcesReady(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
-  if (kind === 'special' && !feitanMoveAvailable(fighter, moveId)) return false
+function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: string): boolean {
   const move = moveById(moveId)
   return move
     ? hasMoveResources(fighter, move)

@@ -1,3 +1,5 @@
+import { benjaminRangedData } from './benjaminWeapon'
+import { benjaminUtilityMove } from './benjaminBaton'
 import { isKurapikaUtility, dolphinActor } from './kurapika'
 import { feitanUtilityMove } from './feitanPain'
 import { chrolloUtilityMove } from './chrolloBook'
@@ -113,31 +115,34 @@ function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameDa
   const base = ATTACK_DATA[kind]
   const tuning = fightingStyle(fighter.id).attacks[kind]
   const nativeReach = attackReach(kind, definition.reach, definition.specialRange)
-  return variantData({
-    fighter,
-    kind,
-    data: {
-      ...base,
-      startup:
-        scaledFrames(base.startup, tuning.startup) +
-        (kind === 'special' && fighter.attack?.concealed ? 10 : 0),
-      active: scaledFrames(base.active, tuning.active),
-      recovery: scaledFrames(base.recovery, tuning.recovery),
-      damage: scaledValue(base.damage, tuning.damage),
-      hitstun: scaledFrames(base.hitstun, tuning.hitstun),
-      blockstun: scaledFrames(base.blockstun, tuning.blockstun),
-      knockback: scaledValue(base.knockback, tuning.knockback),
-      lunge: scaledValue(base.lunge, tuning.lunge),
-      targetZone: valueOr(tuning.targetZone, base.targetZone),
-      auraZone: valueOr(tuning.auraZone, base.auraZone),
-      box: {
-        ...base.box,
-        right: nativeReach + valueOr(tuning.reach, 0),
-        bottom: valueOr(tuning.bottom, base.box.bottom),
-        top: valueOr(tuning.top, base.box.top),
+  return benjaminRangedData(
+    variantData({
+      fighter,
+      kind,
+      data: {
+        ...base,
+        startup:
+          scaledFrames(base.startup, tuning.startup) +
+          (kind === 'special' && fighter.attack?.concealed ? 10 : 0),
+        active: scaledFrames(base.active, tuning.active),
+        recovery: scaledFrames(base.recovery, tuning.recovery),
+        damage: scaledValue(base.damage, tuning.damage),
+        hitstun: scaledFrames(base.hitstun, tuning.hitstun),
+        blockstun: scaledFrames(base.blockstun, tuning.blockstun),
+        knockback: scaledValue(base.knockback, tuning.knockback),
+        lunge: scaledValue(base.lunge, tuning.lunge),
+        targetZone: valueOr(tuning.targetZone, base.targetZone),
+        auraZone: valueOr(tuning.auraZone, base.auraZone),
+        box: {
+          ...base.box,
+          right: nativeReach + valueOr(tuning.reach, 0),
+          bottom: valueOr(tuning.bottom, base.box.bottom),
+          top: valueOr(tuning.top, base.box.top),
+        },
       },
-    },
-  })
+    }),
+    fighter,
+  )
 }
 
 function movesetAttackData(
@@ -197,15 +202,22 @@ export function attackProgress(fighter: ArcadeFighter): number {
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
   fighter = dolphinActor(fighter)
-  if (isKurapikaUtility(fighter)) return null
-  if (feitanUtilityMove(fighter)) return null
-  if (chrolloUtilityMove(fighter)) return null
-  if (hisokaUtilityMove(fighter)) return null
-  if (usesRemotePunch(fighter)) return null
-  if (usesFranklinBarrage(fighter)) return null
+  if (utilityAttack(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')
     return null
   return worldBox(fighter, attackData(fighter.attack.kind, fighter).box)
+}
+
+function utilityAttack(fighter: ArcadeFighter): boolean {
+  return (
+    chrolloUtilityMove(fighter) ||
+    isKurapikaUtility(fighter) ||
+    hisokaUtilityMove(fighter) ||
+    usesFranklinBarrage(fighter) ||
+    benjaminUtilityMove(fighter) ||
+    feitanUtilityMove(fighter) ||
+    usesRemotePunch(fighter)
+  )
 }
 
 export function isAntiAir(fighter: ArcadeFighter): boolean {

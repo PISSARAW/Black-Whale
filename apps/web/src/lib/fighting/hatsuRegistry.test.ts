@@ -118,17 +118,34 @@ describe('fighter Hatsu registry', () => {
 
   it('ties Black Voice to its page and requires both free-hand Sun/Moon contacts', () => {
     const ready = closeFight('chrollo', 'hisoka')
-    const voice = { ...ready, player: { ...ready.player, chrolloBook: {
-      ...ready.player.chrolloBook!, page: 1,
-    } } }
-    expect(chrolloStrike(voice, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames).toBeGreaterThan(0)
+    const voice = {
+      ...ready,
+      player: {
+        ...ready.player,
+        chrolloBook: {
+          ...ready.player.chrolloBook!,
+          page: 1,
+        },
+      },
+    }
+    expect(
+      chrolloStrike(voice, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames,
+    ).toBeGreaterThan(0)
     expect(chrolloStrike(ready, 'neutralSpecial').opponent.hatsuEffects.manipulatedFrames).toBe(0)
     const sun = chrolloStrike(ready, 'neutralSpecial')
     expect(sun.opponent.hatsuEffects.sunMark).toBe(1)
     expect(chrolloStrike(sun, 'neutralSpecial').opponent.health).toBe(ready.opponent.health)
-    const closed = { ...sun, player: { ...sun.player, chrolloBook: {
-      ...sun.player.chrolloBook!, open: false, bookmark: 'sun-and-moon' as const,
-    } } }
+    const closed = {
+      ...sun,
+      player: {
+        ...sun.player,
+        chrolloBook: {
+          ...sun.player.chrolloBook!,
+          open: false,
+          bookmark: 'sun-and-moon' as const,
+        },
+      },
+    }
     const detonated = chrolloStrike(closed, 'finisher')
     expect(detonated.opponent.health).toBe(ready.opponent.health - 24)
     expect(detonated.opponent.hatsuEffects).toMatchObject({ sunMark: 0, moonMark: 0 })
@@ -141,22 +158,14 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.aura).toBeLessThan(ready.opponent.aura)
   })
 
-  it('stores Benjamin Baton power for the next normal hit', () => {
-    let state = advance(performAttack(closeFight('benjamin', 'hisoka'), 'player', 'special'), 0.6)
-    expect(state.player.hatsuEffects.batonCharges).toBe(1)
-    state = {
-      ...state,
-      player: { ...state.player, x: 46, attack: null, hitStun: 0, blockStun: 0 },
-      opponent: {
-        ...state.opponent,
-        x: 52,
-        hitStun: 90,
-        knockdownFrames: 0,
-        wakeupInvulnerableFrames: 0,
-      },
-    }
-    const spent = advance(performAttack(state, 'player', 'light'), 0.2)
-    expect(spent.player.hatsuEffects.batonCharges).toBe(0)
+  it('keeps Benjamin’s inherited loadout without a damage-charge bonus', () => {
+    const state = advance(performAttack(closeFight('benjamin', 'hisoka'), 'player', 'special'), 0.6)
+    expect(state.player.hatsuEffects.baton?.inherited).toEqual([
+      'air-blow',
+      'secret-window',
+      'culdcept',
+    ])
+    expect(hatsuDamageFactor(state.player)).toBe(1)
   })
 
   it('uses Parallel Future to erase the next incoming hit', () => {
@@ -609,7 +618,11 @@ describe('fighter Hatsu registry', () => {
 
   it('cannot summon LSDF outside Morena’s occupied hideout', () => {
     const ready = closeFight('yokotani', 'hisoka')
-    const state = hatsuFor('yokotani').onTrigger({ state: ready, side: 'player', source: 'yokotani' })
+    const state = hatsuFor('yokotani').onTrigger({
+      state: ready,
+      side: 'player',
+      source: 'yokotani',
+    })
     expect(state).toBe(ready)
     expect(hatsuAvoidsImpact(state.player)).toBe(false)
   })

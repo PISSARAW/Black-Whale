@@ -1,3 +1,4 @@
+import { createBenjaminEffectScene } from './benjaminEffectScene'
 import { createKurapikaEffectScene } from './kurapikaEffectScene'
 import { bungeeVisible, hisokaUtilityMove } from './hisokaTechnique'
 import type { FightSide, FightState } from './types'
@@ -16,6 +17,7 @@ export interface FighterEffectScene {
 
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const benjamin = createBenjaminEffectScene(options)
   const kurapika = createKurapikaEffectScene(options)
   const gumMaterial = new THREE.LineBasicMaterial({
     color: 0xff55bb,
@@ -30,6 +32,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   scene.add(gum, ...cards)
 
   const sync = (state: FightState, seconds: number) => {
+    benjamin.sync(state, seconds)
     kurapika.sync(state, seconds)
     syncGum(options, { state, line: gum, material: gumMaterial })
     syncCards(options, { state, meshes: cards, seconds })
@@ -38,6 +41,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   return {
     sync,
     dispose: () => {
+      benjamin.dispose()
       scene.remove(gum, ...cards)
       gumGeometry.dispose()
       gumMaterial.dispose()
@@ -82,7 +86,9 @@ interface MeshSync {
 function syncCards(options: EffectSceneOptions, effect: MeshSync): void {
   const side = attackingSide(effect.state, 'hisoka')
   const active =
-    side && !hisokaUtilityMove(effect.state[side]) && ['heavy', 'ranged', 'special'].includes(effect.state[side].attack?.kind ?? '')
+    side &&
+    !hisokaUtilityMove(effect.state[side]) &&
+    ['heavy', 'ranged', 'special'].includes(effect.state[side].attack?.kind ?? '')
   effect.meshes.forEach((mesh) => (mesh.visible = Boolean(active)))
   if (!active || !side) return
   const fighter = effect.state[side]

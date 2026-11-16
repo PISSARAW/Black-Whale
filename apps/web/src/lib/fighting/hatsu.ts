@@ -67,13 +67,23 @@ export function resolveHatsuImpact(options: {
   concealed: boolean
 }): FightState {
   const { side, defenderSide, source, moveId, blocked, concealed } = options
-  return withDolphinIdentity(options.state, (state) => hatsuFor(source).onImpact({
-    state, side, defenderSide, source, moveId, blocked, concealed,
-  }), source)
+  return withDolphinIdentity(
+    options.state,
+    (state) =>
+      hatsuFor(source).onImpact({
+        state,
+        side,
+        defenderSide,
+        source,
+        moveId,
+        blocked,
+        concealed,
+      }),
+    source,
+  )
 }
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
-  const baton = 1 + fighter.hatsuEffects.batonCharges * 0.12
   const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
@@ -82,17 +92,7 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const growth = fighter.hatsuEffects.growthFrames > 0 ? 1.15 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return (
-    baton *
-    transformed *
-    cyclotron *
-    cantabile *
-    biohazard *
-    haiku *
-    growth *
-    coins *
-    completion
-  )
+  return transformed * cyclotron * cantabile * biohazard * haiku * growth * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {
@@ -127,14 +127,6 @@ export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
   return AVOIDANCE_KEYS.some((key) => fighter.hatsuEffects[key] > 0)
 }
 
-export function consumeBaton(fighter: ArcadeFighter): ArcadeFighter {
-  if (!fighter.hatsuEffects.batonCharges) return fighter
-  return {
-    ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, batonCharges: 0 },
-  }
-}
-
 export function consumeFutureSight(fighter: ArcadeFighter): ArcadeFighter {
   if (!fighter.hatsuEffects.futureSight) return fighter
   return {
@@ -155,12 +147,7 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 type AvoidanceKey =
-  | 'futureSight'
-  | 'isolationFrames'
-  | 'teleportDodges'
-  | 'wormDodges'
-  | 'kachoGuards'
-  | 'doorDodges'
+  'futureSight' | 'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'futureSight',

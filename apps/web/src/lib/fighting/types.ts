@@ -1,3 +1,4 @@
+import type { BenjaminBatonState } from './benjaminBaton'
 import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
@@ -214,7 +215,7 @@ export interface FighterHatsuEffects {
   contagionFrames: number
   contagionStacks: number
   futureSight: number
-  batonCharges: number
+  baton: BenjaminBatonState | null
   senseSeals: number
   blinkyFrames: number
   cohortWillFrames: number

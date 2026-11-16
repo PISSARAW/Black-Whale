@@ -1,3 +1,4 @@
+import { benjaminBurstReady } from './benjaminWeapon'
 import { hasMoveResources, moveForSlot } from './movesets'
 import { advanceRemotePunch, remotePunchCanHit, spawnRemotePunch } from './remotePunch'
 import { franklinNenAvailable } from './franklinAttack'
@@ -62,11 +63,11 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
   }),
   benjamin: projectile({
     matter: 'object',
-    labels: ['Tir d’arme lourde', 'Heavy firearm shot'],
+    labels: ['Mitraillette · Rafale', 'Machine Gun · Burst'],
     shape: 'bullet',
     colour: '#d8c7a0',
     speed: 76,
-    damage: 11,
+    damage: 5,
     size: [0.65, 0.28],
   }),
   feitan: projectile({
@@ -196,9 +197,11 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
-  if (fighter.id === 'kurapika') return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
+  if (fighter.id === 'kurapika')
+    return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
   if (fighter.id === 'benjamin') return true
-  if (fighter.id === 'leorio') return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
+  if (fighter.id === 'leorio')
+    return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
@@ -223,7 +226,7 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     fighter.id === 'franklin' ||
     fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
-    fighter.attack.projectileSpawned ||
+    !benjaminBurstReady(fighter) ||
     attackPhase(fighter) !== 'active'
   ) {
     return state
@@ -254,7 +257,12 @@ function spawnForSide(state: FightState, side: FightSide): FightState {
     ...state,
     [side]: {
       ...fighter,
-      attack: { ...fighter.attack, projectileSpawned: true, impacted: true },
+      attack: {
+        ...fighter.attack,
+        projectileSpawned: true,
+        projectilesSpawned: (fighter.attack.projectilesSpawned ?? 0) + 1,
+        impacted: true,
+      },
     },
     projectiles: [...state.projectiles, projectile],
     nextProjectileId: state.nextProjectileId + 1,

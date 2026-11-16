@@ -1,3 +1,4 @@
+import { captureCuldceptProjectile } from './benjaminCuldcept'
 import { recordDolphinEffects } from './kurapikaDolphin'
 import { finishFight } from './combatVerdict'
 export { finishFight } from './combatVerdict'
@@ -16,7 +17,6 @@ import {
   otherSide,
 } from './frameData'
 import {
-  consumeBaton,
   consumeHatsuAvoidance,
   hatsuAvoidsImpact,
   resolveDeathHatsu,
@@ -211,7 +211,7 @@ function spendAttacker(
     }),
     false,
   )
-  return attacker.attack.kind === 'special' ? spent : consumeBaton(spent)
+  return spent
 }
 
 function throwMisses(
@@ -234,6 +234,8 @@ function shouldResolveHatsu(
 
 function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState {
   if (state.phase !== 'fighting') return state
+  const captured = captureCuldceptProjectile(state, hit)
+  if (captured) return captured
   const side = hit.projectile.owner
   const attacker = state[side]
   const defender = state[hit.defenderSide]
@@ -273,19 +275,12 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
         counterHit: opening.counterHit,
         comboHits,
       })
-  const points = defence.avoided
-    ? 0
-    : scoreJudgedImpact({
-        formatId: state.formatId,
-        blocked: defence.blocked,
-        critical: false,
-        knockdown,
-      })
+  const points = impactPoints({ state, defence, critical: false, knockdown })
   const score = { ...state.score, [side]: state.score[side] + points }
   const knockdowns = addJudgedKnockdown({ state, side, knockdown })
   const next = {
     ...state,
-    [side]: consumeBaton(attacker),
+    [side]: attacker,
     [hit.defenderSide]: struck,
     score,
     knockdowns,
@@ -418,7 +413,6 @@ function preserveHitFormatHealth(state: FightState, side: FightSide): FightState
     return state
   return { ...state, [side]: { ...state[side], health: 1 } }
 }
-
 
 function throwImmune(fighter: ArcadeFighter): boolean {
   if (fighter.hanzoProjection) return false

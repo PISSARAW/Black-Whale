@@ -1,3 +1,4 @@
+import { benjaminKeyedMove } from './benjaminPoses'
 import { chrolloKeyedMove } from './chrolloPoses'
 import { animateChrolloBook } from './chrolloFigure'
 import { animateFranklinHands } from './franklinHands'
@@ -173,7 +174,7 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
 }
 
 function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
-  return chrolloKeyedMove(fighter) ?? keyedMove(fighter.id, slot)
+  return chrolloKeyedMove(fighter) ?? benjaminKeyedMove(fighter) ?? keyedMove(fighter.id, slot)
 }
 
 function attackBlend(kind: AttackKind): number {

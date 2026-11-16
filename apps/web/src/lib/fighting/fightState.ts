@@ -1,3 +1,4 @@
+import { createBenjaminBaton } from './benjaminBaton'
 import { createKurapika } from './kurapika'
 import { createPainPacker } from './feitanPain'
 import { createChrolloBook } from './chrolloBook'
@@ -56,8 +57,14 @@ export function nextFightRound(state: FightState): FightState {
     ...state,
     lsdf: undefined,
     expulsion: undefined,
-    player: preserveLifespan(createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }), state.player),
-    opponent: preserveLifespan(createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }), state.opponent),
+    player: preserveLifespan(
+      createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
+      state.player,
+    ),
+    opponent: preserveLifespan(
+      createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+      state.opponent,
+    ),
     phase: 'ready',
     frame: 0,
     time: format.roundFrames / FIGHT_FPS,
@@ -106,6 +113,7 @@ function createFighter(options: {
     chrolloBook: options.id === 'chrollo' ? createChrolloBook() : undefined,
     hatsuEffects: {
       ...emptyHatsuEffects(),
+      baton: options.id === 'benjamin' ? createBenjaminBaton() : null,
       painPacker: options.id === 'feitan' ? createPainPacker() : null,
     },
     attack: null,
@@ -120,7 +128,7 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     contagionFrames: 0,
     contagionStacks: 0,
     futureSight: 0,
-    batonCharges: 0,
+    baton: null,
     senseSeals: 0,
     blinkyFrames: 0,
     cohortWillFrames: 0,
@@ -172,7 +180,13 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
-  return fighter.kurapika ? { ...fighter, kurapika: {
-    ...fighter.kurapika, lifespanFrames: previous.kurapika?.lifespanFrames ?? 0,
-  } } : fighter
+  return fighter.kurapika
+    ? {
+        ...fighter,
+        kurapika: {
+          ...fighter.kurapika,
+          lifespanFrames: previous.kurapika?.lifespanFrames ?? 0,
+        },
+      }
+    : fighter
 }

@@ -152,6 +152,19 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
   La portée audible de 18 unités est une abstraction du duel.
+- Benjamin commence le duel après les morts de Vincent, Musse et Shikaku :
+  `benjaminBaton.ts` fixe les trois héritages et vérifie mort, loyauté, diplôme
+  militaire et appartenance à son armée. Aucun coup ne crée de charge de dégâts.
+  L = Air Blow depuis la paume gauche ; avant + L = oiseau de Secret Window
+  attaché au contact, sans dégâts ni contrôle ; bas + L = rectangle de Culdcept
+  chargé avant une fenêtre de capture ; H = rejouer la carte capturée, une fois.
+  Les mécanismes complets d'Air Blow et de Culdcept restent inconnus : leur
+  portée et la capture d'un projectile de Nen sont explicitement des adaptations
+  de duel (`benjaminCanon.ts`), sans vol automatique du Hatsu entier. Les balles
+  réelles et la flèche de Halkenburg ne sont pas capturables. U tire une rafale
+  de trois balles réelles : l'arme reste utilisable sans aura et en Zetsu, et
+  interrompre le tireur coupe la rafale. Le HUD et la scène montrent les
+  héritages, l'oiseau, le rectangle, la carte et l'arme physique.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
   projectiles attestés sont propres au combattant ; les autres lancent une pierre,
   sans leur inventer de technique de Nen. Les collisions sont transmises à

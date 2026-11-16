@@ -5,6 +5,7 @@
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
+  import FightBenjaminStatus from './FightBenjaminStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
   import FightKurapikaStatus from './FightKurapikaStatus.svelte'
   import FightPainPacker from './FightPainPacker.svelte'
@@ -29,11 +30,14 @@
     <div class="aura"><span style={`width:${state.player.aura}%`}></span></div>
     <div class="nen-status">{nenStatus(state.player).join(' · ')}</div>
     <FightGrudge fighter={state.player} {language} />
+    <FightBenjaminStatus {state} side="player" {language} />
     <FightKurapikaStatus {state} side="player" {language} />
     <FightPainPacker fighter={state.player} {language} />
     <FightChrolloStatus {state} side="player" {language} />
     {#if state.player.textureSurprise}
-      <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>
+      <div class="secret-status">
+        Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}
+      </div>
     {/if}
     {#if visibleBungee}
       <div class="secret-status">
@@ -101,11 +105,14 @@
           : 'opponent aura hidden'}
     </div>
     <FightGrudge fighter={state.opponent} {language} />
+    <FightBenjaminStatus {state} side="opponent" {language} />
     <FightKurapikaStatus {state} side="opponent" {language} />
     <FightPainPacker fighter={state.opponent} {language} />
     <FightChrolloStatus {state} side="opponent" {language} />
     {#if state.opponent.textureSurprise}
-      <div class="secret-status">Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}</div>
+      <div class="secret-status">
+        Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}
+      </div>
     {/if}
   </div>
 </div>

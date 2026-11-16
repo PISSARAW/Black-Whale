@@ -1,3 +1,4 @@
+import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
 import { franklinNenAvailable } from './franklinAttack'
 import { canUseHatsu } from '@black-whale/nen-engine'
@@ -183,7 +184,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   musse: (state, side) => opponentOf(state, side).health <= 35,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
-  terebellum: (state, side) => state[side].hatsuEffects.sweetHomeCharges > 0,
+  terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
   voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
   yokotani: (state, side) => state[side].hatsuEffects.lsdfGuards > 0,
 }

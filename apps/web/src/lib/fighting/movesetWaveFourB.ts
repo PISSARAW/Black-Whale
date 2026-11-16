@@ -76,12 +76,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'terebellum',
     mechanic: [
-      'Damage: Sweet Home : une charge détourne le prochain impact vers une cible préparée.',
-      'Damage: Sweet Home: one charge redirects the next impact toward a prepared target.',
+      'Sweet Home agit pendant les frames actives, à portée de main : L et ← + L transfèrent ses blessures à l’adversaire touché par la gauche ; → + L absorbe celles de l’adversaire à droite vers son propre corps à gauche ; ↓ + L absorbe à droite sans réceptacle et blesse sa main gauche. Sans contact au moment du coup, aucun transfert.',
+      'Sweet Home acts during active frames at hand range: L and ← + L transfer his wounds to the opponent touched by his left hand; → + L absorbs the opponent’s wounds with the right hand into his own body under the left; ↓ + L absorbs with the right without a recipient, wounding his left hand. No contact at impact means no transfer.',
     ],
     finisherCondition: [
-      'Une charge de transfert Sweet Home doit être conservée.',
-      'A Sweet Home transfer charge must be preserved.',
+      'L’adversaire doit être à portée de la main gauche ; le transfert exige le contact pendant les frames actives.',
+      'The opponent must be within left-hand reach; transfer requires contact during active frames.',
     ],
     labels: [
       'Direct de transfert|Transfer Straight',
@@ -94,9 +94,9 @@ const SPECS: readonly MovesetSpec[] = [
       'Surcharge corporelle|Body Overload',
       'Renvoi défensif|Defensive Redirect',
       'Damage: Sweet Home|Damage: Sweet Home',
-      'Transfert immédiat|Immediate Transfer',
-      'Circuit au sol|Ground Circuit',
-      'Maison refuge|Sheltering Home',
+      'Absorption vers soi|Absorb into Self',
+      'Absorption sans réceptacle|Absorb without Recipient',
+      'Contact de la main gauche|Left-Hand Contact',
       'Câblage humain|Human Wiring',
       'Sweet Home · Retour total|Sweet Home · Total Return',
     ],

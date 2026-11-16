@@ -7,6 +7,7 @@
   import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from '$lib/fighting/hatsu'
   import { nenTacticalState } from '$lib/fighting/nen'
   import { isThrowTech } from '$lib/fighting/reactionMotion'
+  import { impactCallout } from '$lib/fighting/impactCallout'
   import { fighterDefinition } from '$lib/fighting/roster'
   import {
     canUseRangedAttack,
@@ -125,23 +126,7 @@
     {#key state.impact.sequence}
       <div class:blocked={state.impact.blocked} class="impact-flash"></div>
       <div class="damage-callout" class:from-player={state.impact.attacker === 'player'}>
-        {state.impact.invulnerable
-          ? 'INVUL'
-          : state.impact.avoided
-            ? language === 'fr'
-              ? 'FUTUR ÉVITÉ'
-              : 'FUTURE EVADED'
-            : state.impact.parried
-              ? language === 'fr'
-                ? 'PARADE · RYU'
-                : 'PARRY · RYU'
-              : state.impact.blocked
-                ? state.impact.damage === 0
-                  ? 'KEN'
-                  : language === 'fr'
-                    ? 'GARDE'
-                    : 'BLOCK'
-                : `${state.impact.counterHit ? 'COUNTER · ' : state.impact.punish ? 'PUNISH · ' : ''}${state.impact.antiAir ? 'ANTI-AIR · ' : ''}${state.impact.wallSplat ? 'WALL · ' : ''}${state.impact.comboHits > 1 ? `${state.impact.comboHits} HITS · ` : ''}${state.impact.critical ? 'CRIT · ' : ''}${state.impact.knockdown ? (language === 'fr' ? 'CHUTE · ' : 'KD · ') : ''}-${state.impact.damage} · +${state.impact.points}`}
+        {impactCallout(state.impact, language)}
       </div>
     {/key}
   {/if}

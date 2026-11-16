@@ -112,7 +112,7 @@ une vérification dans le manga avant d'être corrigés.
 | Padaille        | ×1,25 dégâts pendant 3 s           | Bras-outil **au hasard** : marteau, foret ou hache                                           | B        | Piste simple : tirage déterministe de l'outil, trois effets distincts. |
 | Sayird          | Une esquive                        | Little Eye : insecte qui filme                                                               | D (fait) | Martial pur depuis le 2026-11-16 : aucun effet de Hatsu.               |
 | Silent Majority | 3 marques → 22 dégâts              | Dix suspects, quatre serpents, retour si révoqué sans victime                                | Retiré   | Retiré du roster le 2026-11-16 : aucune aptitude martiale connue.      |
-| Terebellum      | Une charge d'évitement             | Sweet Home : **transfère** les dégâts par contact simultané                                  | B        | Devrait rediriger les dégâts, pas les annuler.                         |
+| Terebellum      | Transfert réel des blessures       | Sweet Home : **transfère** les dégâts par contact simultané                                  | D (fait) | Corrigé le 2026-11-16 : contacts de mains vérifiés pendant les frames actives ; gauche seule pour ses blessures, droite et gauche pour celles d’autrui ; sans réceptacle, l’absorption à droite blesse sa main gauche. Coups et projectiles conservent les dégâts, sans esquive gratuite. Portée et coups porteurs restent des abstractions du duel. |
 | Voconte         | Une esquive par porte              | Portes reliant des salles préparées de la base Heil-Ly                                       | B        | Le README veut qu'un terrain ne change aucune règle : à arbitrer.      |
 | Yokotani        | Une garde LSDF                     | Gardiens invincibles **dans la planque de Morena**, Morena présente ; expulsent sans blesser | **A**    | Hors de la planque, LSDF ne fonctionne pas.                            |
 
@@ -128,9 +128,9 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 | Verdict | Audit (41 jouables) | Au 2026-11-16 (40 jouables) |
 | ------- | ------------------- | --------------------------- |
 | A       | 13                  | 5                           |
-| B       | 14                  | 16                          |
+| B       | 14                  | 15                          |
 | C       | 11                  | 8                           |
-| D       | 3                   | 11                          |
+| D       | 3                   | 12                          |
 
 ## Ordre de traitement proposé
 
@@ -141,6 +141,6 @@ Gidal exige le suicide de l'utilisatrice, Kacho est un double posthume.
 4. **Le socle commun** : lire `condition` et `cost` depuis les fiches `ability-modules` (bloc
    `fighting` compilé, comme `arena`), puis une table de prédicats partagée avec l'Arena 3D.
 5. **Les B**, par ordre de rendement : Mizaistom (carton jaune), Padaille (outil tiré), Basho (trois
-   vers), Leorio (poing par le sol), Phinks (seuil de quatre tours), Terebellum (transfert).
+   vers), Leorio (poing par le sol), Phinks (seuil de quatre tours), ~~Terebellum (transfert)~~ (fait).
 6. **Les C** : remplacer chaque bonus générique par l'effet de la fiche, ou l'étiqueter
    `gameplay-abstraction` dans le contrat.

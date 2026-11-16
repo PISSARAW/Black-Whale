@@ -174,7 +174,6 @@ type AvoidanceKey =
   | 'teleportDodges'
   | 'wormDodges'
   | 'kachoGuards'
-  | 'sweetHomeCharges'
   | 'doorDodges'
   | 'lsdfGuards'
 
@@ -185,7 +184,6 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
   'teleportDodges',
   'wormDodges',
   'kachoGuards',
-  'sweetHomeCharges',
   'doorDodges',
   'lsdfGuards',
 ]

@@ -309,7 +309,7 @@ function withFinisherCondition(state: FightState): FightState {
     case 'sayird':
       return { ...state, player: { ...player, comboHits: 2 } }
     case 'terebellum':
-      return withPlayerEffect(state, 'sweetHomeCharges', 1)
+      return { ...state, player: { ...player, x: 46 }, opponent: { ...opponent, x: 51 } }
     case 'voconte':
       return withPlayerEffect(state, 'doorDodges', 1)
     case 'yokotani':

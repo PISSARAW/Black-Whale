@@ -612,8 +612,8 @@ describe('fighter Hatsu registry', () => {
     expect(effect('salesale').smokeFrames).toBe(180)
   })
 
-  it('turns Damage Sweet Home and LSDF into one-hit defences', () => {
-    for (const source of ['terebellum', 'yokotani'] as const) {
+  it('turns LSDF into a one-hit defence', () => {
+    for (const source of ['yokotani'] as const) {
       const state = hatsuFor(source).onTrigger({
         state: closeFight(source, 'hisoka'),
         side: 'player',

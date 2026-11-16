@@ -76,7 +76,8 @@ interface StrikeOptions {
 
 export function strikeDefender(options: StrikeOptions): ArcadeFighter {
   const data = attackData(options.attacker.attack?.kind ?? 'light', options.attacker)
-  return struckFighter({ ...options, ...data })
+  // Frame data supplies timing/force; the resolved wound already includes defence and scaling.
+  return struckFighter({ ...data, ...options })
 }
 
 export function strikeProjectileDefender(

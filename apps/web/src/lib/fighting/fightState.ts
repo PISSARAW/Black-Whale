@@ -144,7 +144,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     weaponFrames: 0,
     synthesisFrames: 0,
     eyeWogFrames: 0,
-    sweetHomeCharges: 0,
     doorDodges: 0,
     lsdfGuards: 0,
     witnessedHatsu: null,

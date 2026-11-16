@@ -24,7 +24,7 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - Les nouveaux Hatsu ont des effets propres : Rising Sun gagne en puissance avec
   les blessures, Three Monkeys scelle les sens, le projectile de Theta neutralise
   l'aura, la transformation de Biscuit renforce attaque et défense, tandis que
-  Sweet Home et LSDF apportent des réponses défensives propres.
+  LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
   ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
 - Les corps, visages, coiffures et costumes viennent du rig partagé de la visite
@@ -58,6 +58,13 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
   (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
   qui se joue à la vie : le chat tue le meurtrier et Camilla revient.
+- Sweet Home (`sweetHomeContacts.ts`, `sweetHomeImpact.ts`) vérifie les contacts
+  pendant les frames actives, avant le recul : L/←+L/H transfèrent ses blessures
+  à l'adversaire touché à gauche ; →+L absorbe à droite vers son propre corps
+  touché à gauche ; ↓+L absorbe à droite sans réceptacle et blesse sa main gauche.
+  Sans contact requis, la cible initiale garde les dégâts. Chaque blessure est
+  déplacée une fois, sans nouvelle réduction ni esquive. Portée, frames et coups
+  porteurs sont des abstractions du duel ; aucun objet-réceptacle n'est inventé.
 - `projectiles.ts` fait apparaître, avancer et expirer les tirs. Seuls les
   projectiles attestés sont propres au combattant ; les autres lancent une pierre,
   sans leur inventer de technique de Nen. Les collisions sont transmises à

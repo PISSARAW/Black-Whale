@@ -1,3 +1,5 @@
+import { tradeAttachment, tradeFighter, tradeTotals } from './combatTrade'
+import { resolveSweetHomeImpact } from './sweetHomeImpact'
 import { blocksAttack } from './duelMoves'
 import {
   activeHitbox,
@@ -138,6 +140,17 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     },
     hitstop: data.hitstop,
   }
+  const transferred = resolveSweetHomeImpact({
+    before: state,
+    after: next,
+    damagedSide: defenderSide,
+  })
+  if (transferred !== next)
+    return finishAfterImpact(
+      transferred,
+      transferred.impact!.attacker,
+      otherSide(transferred.impact!.attacker),
+    )
   if (shouldResolveHatsu(attacker, defence)) {
     next = resolveHatsuImpact({
       state: next,
@@ -294,7 +307,12 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
       position: hit.position,
     },
   }
-  return finishAfterImpact(next, side, hit.defenderSide)
+  const routed = resolveSweetHomeImpact({
+    before: state,
+    after: next,
+    damagedSide: hit.defenderSide,
+  })
+  return finishAfterImpact(routed, routed.impact!.attacker, otherSide(routed.impact!.attacker))
 }
 
 function prepareDefence(
@@ -443,11 +461,12 @@ function resolveTrade(original: FightState, first: FightState): FightState {
       outgoing: second.opponent,
     }),
     bungeeGum: tradeAttachment(original, first, second),
-    score: { player: first.score.player, opponent: second.score.opponent },
-    knockdowns: {
-      player: first.knockdowns.player,
-      opponent: second.knockdowns.opponent,
-    },
+    score: tradeTotals({ original: original.score, first: first.score, second: second.score }),
+    knockdowns: tradeTotals({
+      original: original.knockdowns,
+      first: first.knockdowns,
+      second: second.knockdowns,
+    }),
     impact: second.impact,
     hitstop: Math.max(first.hitstop, second.hitstop),
   }
@@ -459,32 +478,4 @@ function resolveTrade(original: FightState, first: FightState): FightState {
     return { ...durable, phase: 'finished', winner: 'draw', finishReason }
   if (opponentLost) return finishFight(durable, 'player', opponentLost)
   return playerLost ? finishFight(durable, 'opponent', playerLost) : durable
-}
-
-function tradeFighter(options: {
-  original: ArcadeFighter
-  incoming: ArcadeFighter
-  outgoing: ArcadeFighter
-}): ArcadeFighter {
-  const { original, incoming, outgoing } = options
-  const hatsuEffects = { ...incoming.hatsuEffects }
-  for (const key of Object.keys(hatsuEffects) as Array<keyof typeof hatsuEffects>) {
-    if (outgoing.hatsuEffects[key] !== original.hatsuEffects[key]) {
-      Object.assign(hatsuEffects, { [key]: outgoing.hatsuEffects[key] })
-    }
-  }
-  return {
-    ...incoming,
-    hatsuEffects,
-    nen: outgoing.nen,
-    attack: null,
-    aura: Math.max(0, Math.min(100, incoming.aura + outgoing.aura - original.aura)),
-  }
-}
-
-function tradeAttachment(original: FightState, first: FightState, second: FightState) {
-  const playerChanged = first.bungeeGum !== original.bungeeGum
-  const opponentChanged = second.bungeeGum !== original.bungeeGum
-  if (playerChanged && opponentChanged) return null
-  return playerChanged ? first.bungeeGum : second.bungeeGum
 }

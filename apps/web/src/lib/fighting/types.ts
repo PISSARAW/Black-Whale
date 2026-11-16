@@ -228,7 +228,6 @@ export interface FighterHatsuEffects {
   weaponFrames: number
   synthesisFrames: number
   eyeWogFrames: number
-  sweetHomeCharges: number
   doorDodges: number
   lsdfGuards: number
   /** Set once the Hatsu was activated in front of this fighter. */
@@ -271,6 +270,8 @@ export interface FightImpact {
   avoided: boolean
   projectileId: number | null
   position: { x: number; y: number }
+  /** Sweet Home moves the wound once; it never creates an invulnerable/avoided hit. */
+  transfer?: { owner: FightSide; from: FightSide; to: FightSide; backlash: boolean }
 }
 
 export type ProjectileShape =

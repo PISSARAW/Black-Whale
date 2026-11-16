@@ -1,3 +1,4 @@
+import { terebellumHatsu } from './terebellum'
 import { martialOnlyHatsu, type FighterHatsu } from './contract'
 import { benjaminHatsu } from './benjamin'
 import { bashoHatsu } from './basho'
@@ -8,7 +9,6 @@ import {
   gidalHatsu,
   longhiHatsu,
   padailleHatsu,
-  terebellumHatsu,
   tubeppaHatsu,
   tysonHatsu,
   voconteHatsu,

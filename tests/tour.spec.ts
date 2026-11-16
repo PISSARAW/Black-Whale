@@ -43,6 +43,14 @@ async function raiseRen(page: import('playwright/test').Page) {
   await ren.click()
 }
 
+async function readyNenScene(page: import('playwright/test').Page) {
+  const canvas = await ready(page)
+  await expect(canvas).toHaveAttribute('data-engine', /three\.js/)
+  // Let the renderer publish the actual interior/visitor position while the
+  // one-second aura beat stays paused.
+  await page.clock.runFor(34)
+}
+
 test.describe('the walk', () => {
   test('boots the deck and says where the visitor is', async ({ page }) => {
     const response = await page.goto('/tour')
@@ -258,14 +266,20 @@ test.describe('the walk', () => {
   test('persists witnessed hostile Nen only in simulated royal life', async ({ page }) => {
     // This exercises three scene boots. Keep the state/persistence check off
     // the expensive high-quality path, covered by the shader test above.
-    test.setTimeout(120_000)
+    test.setTimeout(180_000)
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.clock.install({ time: new Date('2026-11-16T12:00:00Z') })
     await page.addInitScript(() => {
       localStorage.setItem('black-whale:tour-comfort', JSON.stringify({ quality: 'low' }))
     })
     await page.goto('/')
+    // This checks storage and mode boundaries, not the separately tested aura
+    // economy. Pause the simulation beat before opening the royal scene so
+    // software rendering cannot exhaust Ten/Ren between two pointer actions.
+    await page.clock.pauseAt(new Date('2026-11-16T12:01:00Z'))
     await page.evaluate(() => localStorage.clear())
     await page.goto(ROYAL_NEN_SCENE)
-    await ready(page)
+    await readyNenScene(page)
     await raiseRen(page)
     await expect
       .poll(() => page.evaluate((key) => localStorage.getItem(key), SIMULATION_KEY))
@@ -273,7 +287,7 @@ test.describe('the walk', () => {
 
     await page.evaluate(() => localStorage.clear())
     await page.goto(`${ROYAL_NEN_SCENE}&world=free`)
-    await ready(page)
+    await readyNenScene(page)
     await raiseRen(page)
 
     await expect
@@ -289,20 +303,8 @@ test.describe('the walk', () => {
       )
       .not.toBeNull()
 
-    // Rest before the reload: Ren legitimately drains aura while software
-    // WebGL builds the next scene and can return to Ten through exhaustion.
-    // Zetsu gives the persistence assertion a stable, explicitly chosen mode.
-    await page.getByRole('button', { name: 'Zetsu', exact: true }).click()
-    await expect
-      .poll(() =>
-        page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!).player.nen.mode,
-          SIMULATION_KEY,
-        ),
-      )
-      .toBe('zetsu')
     await page.reload()
-    await ready(page)
+    await readyNenScene(page)
     await expect
       .poll(() =>
         page.evaluate((key) => {
@@ -316,6 +318,6 @@ test.describe('the walk', () => {
             : null
         }, SIMULATION_KEY),
       )
-      .toEqual({ incident: true, reputation: -10, mode: 'zetsu' })
+      .toEqual({ incident: true, reputation: -10, mode: 'ren' })
   })
 })

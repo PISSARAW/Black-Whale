@@ -23,6 +23,8 @@ const panel = (page: Page) => page.getByRole('region', { name: 'Exercice du Nen'
 test('Ren is action-gated, pauses safely, retries, and returns to free training', async ({
   page,
 }) => {
+  // Launch, restart and return to training each update the rendered fight.
+  test.setTimeout(120_000)
   await lesson(page, /Ren : maintenir son aura$/)
   await expect(panel(page).getByRole('button', { name: 'Exercice suivant' })).toBeDisabled()
   await page.keyboard.press('p')

@@ -1,3 +1,5 @@
+import { tuneBashoMoveset } from './bashoMoveset'
+import { bashoCanWrite } from './bashoPoem'
 import { tuneGelMoveset } from './gelMoveset'
 import { tuneCamillaMoveset } from './camillaMoveset'
 import { sealedSenseCount } from './saiyuSenses'
@@ -68,6 +70,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
+    .map(tuneBashoMoveset)
     .map(tuneChrolloMoveset)
     .map(tuneHisokaMoveset)
     .map(tuneFurykovMoveset)
@@ -101,7 +104,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi'].includes(fighter.id) && action === 'special'
+    ['leorio', 'yokotani', 'bill', 'longhi', 'basho'].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -112,6 +115,7 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 }
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
   if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
   return ordinaryMoveAllowed(state, side, move)
 }
@@ -242,7 +246,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
     opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   melody: (state, side) => opponentOf(state, side).hatsuEffects.entrancedFrames > 0,
-  basho: (state, side) => state[side].hatsuEffects.haikuFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,

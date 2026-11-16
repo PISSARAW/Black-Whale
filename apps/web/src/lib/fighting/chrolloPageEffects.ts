@@ -19,7 +19,6 @@ const OWN_EFFECTS: Partial<Record<ChrolloPage, readonly EffectKey[]>> = {
   shizuku: ['blinkyFrames'],
   hinrigh: ['biohazardFrames'],
   rihan: ['predatorFrames'],
-  basho: ['haikuFrames'],
   luini: ['teleportDodges'],
   marayam: ['isolationFrames'],
   fugetsu: ['wormDodges'],

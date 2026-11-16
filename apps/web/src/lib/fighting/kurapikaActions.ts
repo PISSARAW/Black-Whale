@@ -193,6 +193,8 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
   const { state, side } = options
   const fighter = state[side]
   const held = fighter.kurapika!.held!
+  if (fighter.bashoPoem)
+    return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
   if (fighter.hanzoProjection)
     return withDolphinIdentity(
       state,

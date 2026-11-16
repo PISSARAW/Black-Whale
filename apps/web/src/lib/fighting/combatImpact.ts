@@ -1,3 +1,4 @@
+import { resolveBashoPoemImpact } from './bashoFire'
 import { gyoSight, insideEn, nenReadBonus } from './nenPerception'
 import { isFirearmProjectile } from './nenProjectiles'
 import { recordFightDeath } from './fightDeaths'
@@ -154,12 +155,14 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     after: next,
     damagedSide: defenderSide,
   })
+  const scorched = resolveBashoPoemImpact(state, transferred, side)
   if (transferred !== next)
     return finishAfterImpact(
-      transferred,
+      scorched,
       transferred.impact!.attacker,
       otherSide(transferred.impact!.attacker),
     )
+  next = scorched
   if (shouldResolveHatsu(attacker, defence)) {
     const beforeHatsu = next
     next = resolveHatsuImpact({

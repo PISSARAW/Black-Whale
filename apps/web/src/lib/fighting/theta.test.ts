@@ -197,7 +197,7 @@ describe('Theta’s real handgun and unknown Hatsu', () => {
       player: {
         ...state.player,
         nen: { ...state.player.nen, mode: 'ren' as const },
-        hatsuEffects: { ...state.player.hatsuEffects, haikuFrames: 300 },
+        hatsuEffects: { ...state.player.hatsuEffects },
       },
     }
     const result = advance(performAttack(boosted, 'player', 'ranged'), 82, {

@@ -92,10 +92,9 @@ export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
-  const haiku = fighter.hatsuEffects.haikuFrames > 0 ? 1.25 : 1
   const coins = 1 + fighter.hatsuEffects.coinCharges * 0.1
   const completion = completionDamageFactor(fighter)
-  return transformed * cyclotron * cantabile * biohazard * haiku * coins * completion
+  return transformed * cyclotron * cantabile * biohazard * coins * completion
 }
 
 function completionDamageFactor(fighter: ArcadeFighter): number {

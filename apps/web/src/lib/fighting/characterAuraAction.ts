@@ -1,3 +1,4 @@
+import { performBashoAction } from './bashoAction'
 import { performMoonlightAction } from './moonlightAction'
 import { performParallelFutureAction } from './parallelFutureAbility'
 import { performKurapikaAction } from './kurapikaActions'
@@ -26,6 +27,7 @@ export function characterAuraAction(
         : null,
     () => performBiscuitFormAction(options),
     () => performLeorioAction(options, perform),
+    () => performBashoAction(options),
     () => performMoonlightAction(options),
     () => performLsdfAction(options),
     () => performProjectionAction(options),

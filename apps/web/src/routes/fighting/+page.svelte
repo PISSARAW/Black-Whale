@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
+  import FightBashoPoem from '$lib/components/fighting/FightBashoPoem.svelte'
+  import { composeBashoPoem } from '$lib/fighting/bashoAction'
   import FightMoonlightPanel from '$lib/components/fighting/FightMoonlightPanel.svelte'
   import { offerMoonlightContract, respondMoonlightContract } from '$lib/fighting/moonlightContract'
   import { callHanzoBody } from '$lib/fighting/hanzoBodyCall'
@@ -398,6 +400,10 @@
         onPause={togglePause}
       />
       <div class="match-area">
+        <FightBashoPoem {state} {language} {paused}
+          onEditing={() => { input = { ...EMPTY_INPUT }; opponentInput = { ...EMPTY_INPUT } }}
+          onCompose={(side, text) => queueAction((current) => composeBashoPoem({ state: current, side, text }, performAuraAttack))}
+        />
         <FightMoonlightPanel {state} {language} {paused}
           onOffer={(side) => queueAction((current) => offerMoonlightContract({ state: current, side }))}
           onRespond={(side, accept) => queueAction((current) => respondMoonlightContract({ state: current, side, accept }))}

@@ -1,3 +1,4 @@
+import { bashoWriting } from './bashoPoem'
 import { chainsImmobilize } from './kurapika'
 import { projectionPreparing, sleepingBody } from './hanzoProjection'
 import { FIXED_STEP } from './frameData'
@@ -9,17 +10,11 @@ const MIN_X = 7
 const MAX_X = 93
 
 export function moveOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
-  if (projectionPreparing(fighter)) return fighter
+  if (projectionPreparing(fighter) || bashoWriting(fighter)) return fighter
   const target = opponentTarget(fighter, player)
   const gap = Math.abs(target.x - fighter.x)
-  const blocking = opponentBlocking(fighter, player, gap)
-  const releasedGuard = fighter.blocking && !blocking
-  const next = {
-    ...fighter,
-    blocking,
-    guardFrames: blocking ? (fighter.blocking ? fighter.guardFrames + 1 : 1) : 0,
-    ryuWindow: releasedGuard ? 10 : fighter.ryuWindow,
-  }
+  const next = opponentGuardState(fighter, player, gap)
+  const blocking = next.blocking
   if (!canMove(next) || blocking) return next
   const direction = target.x < next.x ? -1 : 1
   const motion = opponentMotion(next, gap)
@@ -65,4 +60,15 @@ function opponentTarget(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFi
 
 function opponentMotion(fighter: ArcadeFighter, gap: number): number {
   return returningToBody(fighter) ? 1 : styleMovement(fighter.id, { gap, health: fighter.health })
+}
+
+function opponentGuardState(fighter: ArcadeFighter, player: ArcadeFighter, gap: number): ArcadeFighter {
+  const blocking = opponentBlocking(fighter, player, gap)
+  const releasedGuard = fighter.blocking && !blocking
+  return {
+    ...fighter,
+    blocking,
+    guardFrames: blocking ? (fighter.blocking ? fighter.guardFrames + 1 : 1) : 0,
+    ryuWindow: releasedGuard ? 10 : fighter.ryuWindow,
+  }
 }

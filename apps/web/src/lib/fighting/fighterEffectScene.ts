@@ -1,3 +1,4 @@
+import { createBashoFireScene } from './bashoFireScene'
 import { createNenFieldScene } from './nenFieldScene'
 import { gyoSight, insideEn } from './nenPerception'
 import { createCamillaCatScene } from './camillaCatScene'
@@ -21,6 +22,7 @@ export interface FighterEffectScene {
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
   const camilla = createCamillaCatScene(options)
+  const basho = createBashoFireScene(options)
   const nenFields = createNenFieldScene(options)
   const benjamin = createBenjaminEffectScene(options)
   const kurapika = createKurapikaEffectScene(options)
@@ -38,6 +40,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
 
   const sync = (state: FightState, seconds: number) => {
     camilla.sync(state, seconds)
+    basho.sync(state, seconds)
     nenFields.sync(state)
     benjamin.sync(state, seconds)
     kurapika.sync(state, seconds)
@@ -49,6 +52,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
     sync,
     dispose: () => {
       camilla.dispose()
+      basho.dispose()
       nenFields.dispose()
       benjamin.dispose()
       scene.remove(gum, ...cards)

@@ -80,6 +80,7 @@ export function dolphinIsBusy(
 ): boolean {
   if (state[side].attack?.moveId === held.moveId) return true
   return held.sustainedKeys.some((entry) => {
+    if (entry === 'poem') return Boolean(state[side].bashoPoem)
     if (entry === 'gum') return state.bungeeGum?.owner === side
     if (entry === 'projection') return Boolean(state[side].hanzoProjection)
     if (entry === 'texture') return Boolean(state[side].textureSurprise)
@@ -120,6 +121,7 @@ function changedDolphinCounters(before: FightState, after: FightState): string[]
 function dolphinEffectFlags(before: FightState, after: FightState, side: FightSide): string[] {
   const keys = new Set<string>()
   if (after.bungeeGum?.owner === side && before.bungeeGum !== after.bungeeGum) keys.add('gum')
+  if (after[side].bashoPoem) keys.add('poem')
   if (after[side].hanzoProjection) keys.add('projection')
   if (after[side].textureSurprise) keys.add('texture')
   if (after.lsdf?.[side]) keys.add('lsdf')

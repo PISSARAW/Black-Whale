@@ -1,3 +1,4 @@
+import { bashoPresentation } from './bashoPresentation'
 import { moonlightPresentation } from './moonlightPresentation'
 import { futureSpecialPresentation } from './parallelFuturePresentation'
 import { erigeronPresentation, isErigeronAction } from './billSupport'
@@ -18,12 +19,17 @@ export function fightSpecialPresentation(
   state: FightState,
   language: 'fr' | 'en',
 ): SpecialPresentation {
+  if (state.player.id === 'basho') return bashoPresentation(state, language)
   if (state.player.id === 'longhi') return moonlightPresentation(state, language)
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
   if (state.player.id === 'tserriednich') return futureSpecialPresentation(state, language)
   if (state.player.id === 'camilla') return camillaPresentation(language)
   if (state.player.id === 'kurapika') return kurapikaPresentation(state, language)
+  return commonSpecialPresentation(state, language)
+}
+
+function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)
     ? Boolean(move && canUseMovesetMove(state, 'player', move))

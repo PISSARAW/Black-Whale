@@ -92,6 +92,23 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
+- Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
+  `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
+  composition : les textes libres non reconnus ne coûtent rien et ne créent aucun
+  pouvoir. L recopie la composition attestée ; le panneau permet de
+  la saisir et de la relire avant de l’écrire. L’écriture prend une seconde et
+  25 aura, sans frappe ni bonus général ; bouger, garder ou être frappé l’interrompt.
+  Une fois écrite, la condition ne s’applique qu’à un contact du poing : un échec,
+  une parade, un coup de pied, une projection ou un projectile n’allume aucun feu.
+  Un contact sur garde peut enflammer. `bashoFire.ts` produit une brûlure visible
+  de 90 frames, avec trois pulsations de 2 dégâts avant défense Nen ; ni paralysie,
+  bonus à tous les coups, « Encre terrestre » ou finisher inventé. Ces chiffres et
+  le maintien du poème tant que le Nen reste disponible sont des adaptations de
+  duel, sans notation littéraire automatique : la qualité compte dans le manga,
+  mais une seule composition attestée est prise en charge ici. Les nouvelles
+  manches réinitialisent papier et feu. Les copies conservent l’écriture et ses
+  conditions ; les brûlures portent l’identité du lanceur pour le verdict.
+
 - Bill conserve ses dix coups physiques ordinaires et son Ken de garde du corps.
   `billMoveset.ts` ne garde qu’un Hatsu attesté : **Erigeron · Soutien** (chapitre 388),
   qui accélère la croissance d’un être vivant et peut favoriser le développement du

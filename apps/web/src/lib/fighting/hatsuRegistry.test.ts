@@ -447,15 +447,11 @@ describe('fighter Hatsu registry', () => {
     expect(struck).toBe(ready)
   })
 
-  it('activates Basho’s reinforcement Hatsu', () => {
-    for (const source of ['basho'] as const) {
-      const state = hatsuFor(source).onTrigger({
-        state: closeFight(source, 'hisoka'),
-        side: 'player',
-        source,
-      })
-      expect(hatsuDamageFactor(state.player)).toBeGreaterThan(1)
-    }
+  it('does not turn Basho’s poem into an automatic reinforcement bonus', () => {
+    const state = closeFight('basho', 'hisoka')
+    const triggered = hatsuFor('basho').onTrigger({ state, side: 'player', source: 'basho' })
+    expect(triggered).toBe(state)
+    expect(hatsuDamageFactor(triggered.player)).toBe(1)
   })
 
   it('gives Luini one defensive counter', () => {

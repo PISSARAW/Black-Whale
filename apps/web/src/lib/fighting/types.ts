@@ -123,6 +123,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  bashoPoem?: import('./bashoPoem').BashoPoem
+  bashoBurn?: import('./bashoPoem').BashoBurn
   /** Execution adapters may borrow a Hatsu identity; the aura still belongs to this user. */
   nenOwner?: FighterId
   /** Conjured information console. It never modifies damage, guard, movement or evasion. */
@@ -249,7 +251,6 @@ export interface FighterHatsuEffects {
   predatorFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
-  haikuFrames: number
   soulExposedFrames: number
   teleportDodges: number
   wormDodges: number

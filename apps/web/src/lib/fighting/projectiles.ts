@@ -1,3 +1,4 @@
+import { predatorNenLocked } from './predatorSeal'
 import { advanceProjectileNen, commitProjectileNen } from './nenProjectiles'
 import { CAMILLA_PISTOL } from './camillaWeapon'
 import { thetaShotAim } from './thetaFirearm'
@@ -201,6 +202,7 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (predatorNenLocked(fighter) && rangedAuraCost(fighter.id) > 0) return false
   if (fighter.id === 'kurapika')
     return hasMoveResources(fighter, moveForSlot('kurapika', 'forwardSpecial')!)
   if (['benjamin', 'theta', 'camilla'].includes(fighter.id)) return true

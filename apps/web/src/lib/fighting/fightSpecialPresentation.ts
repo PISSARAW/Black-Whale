@@ -1,3 +1,4 @@
+import { predatorSpecialPresentation } from './predatorPresentation'
 import { melodyCanPerform } from './melodyRules'
 import { bashoPresentation } from './bashoPresentation'
 import { moonlightPresentation } from './moonlightPresentation'
@@ -22,6 +23,7 @@ export function fightSpecialPresentation(
 ): SpecialPresentation {
   if (state.player.id === 'basho') return bashoPresentation(state, language)
   if (state.player.id === 'melody') return melodyPresentation(state, language)
+  if (state.player.id === 'rihan') return predatorSpecialPresentation(state, language)
   if (state.player.id === 'longhi') return moonlightPresentation(state, language)
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)

@@ -1,3 +1,4 @@
+import { predatorNenLocked } from './predatorSeal'
 import { melodyRestrictsCombat } from './melodyRules'
 import { thetaPhysicalShot } from './thetaFirearm'
 import { remotePunchAvailable } from './leorioAttack'
@@ -165,7 +166,7 @@ function hasAttackResources(fighter: ArcadeFighter, kind: AttackKind, moveId?: s
 }
 
 function canChargeAura(fighter: ArcadeFighter, kind: AttackKind): boolean {
-  return fighter.nen.mode !== 'zetsu' && !thetaPhysicalShot(fighter, kind)
+  return fighter.nen.mode !== 'zetsu' && !thetaPhysicalShot(fighter, kind) && !predatorNenLocked(fighter)
 }
 
 function wantsAttackRyu(fighter: ArcadeFighter): boolean {

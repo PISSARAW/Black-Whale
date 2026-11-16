@@ -1,3 +1,5 @@
+import { isPredatorMove, predatorNenAvailable, predatorReady } from './predator'
+import { predatorNenLocked } from './predatorSeal'
 import { tuneMelodyMoveset } from './melodyMoveset'
 import { melodyMoveResources } from './melodyRules'
 import { tuneBashoMoveset } from './bashoMoveset'
@@ -127,12 +129,16 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
   const fighter = state[side]
   if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
     return false
+  if (!predatorMoveAllowed(state, side, move)) return false
   if (!hasMoveResources(fighter, move)) return false
   if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (move.kind === 'special' && predatorNenLocked(fighter)) return false
+  if (move.kind === 'special' && isPredatorMove(fighter, move.id))
+    return predatorNenAvailable(fighter)
   const melody = melodyMoveResources(fighter, move.kind, move.id)
   if (melody !== null) return melody
   const future = futureMoveResources(fighter, move.id)
@@ -250,9 +256,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   hinrigh: (state, side) => state[side].hatsuEffects.biohazardFrames > 0,
   mizaistom: (state, side) => opponentOf(state, side).hatsuEffects.restrainedFrames > 0,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
-  rihan: (state, side) =>
-    state[side].hatsuEffects.predatorFrames > 0 &&
-    opponentOf(state, side).hatsuEffects.forcedZetsuFrames > 0,
+  rihan: predatorReady,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
   lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
@@ -265,4 +269,9 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),
   voconte: (state, side) => state[side].hatsuEffects.doorDodges > 0,
+}
+
+function predatorMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (!isPredatorMove(state[side], move.id) || move.category !== 'finisher') return true
+  return predatorReady(state, side)
 }

@@ -1,3 +1,4 @@
+import { predatorNenLocked } from './predatorSeal'
 import { scaleNenControl } from './nenHatsuEffects'
 import { isErigeronAction } from './billSupport'
 import { withDolphinIdentity } from './kurapikaDolphin'
@@ -14,6 +15,7 @@ import { hatsuFor } from './hatsu/registry'
 export const FIGHT_HATSU_AURA_COST = 40
 
 export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
+  if (predatorNenLocked(fighter)) return false
   if (isErigeronAction(fighter, 'special', `${fighter.id}:neutralSpecial`)) return false
   return (
     fighter.aura >= FIGHT_HATSU_AURA_COST && canUseHatsu(fighter.nen) && !hatsuSealedByOn(fighter)
@@ -25,6 +27,7 @@ export function canUseFightHatsu(fighter: ArcadeFighter): boolean {
  * in Chrollo's book. Their techniques remain Ren-charged strikes.
  */
 export function hatsuSourceFor(fighter: ArcadeFighter, moveId?: string): FighterId | null {
+  if (predatorNenLocked(fighter)) return null
   if (chainAbilitySealed(fighter, moveId)) return null
   const hatsu = hatsuFor(fighter.id)
   if (hatsu.martialOnly || fighter.hatsuEffects.hatsuStolen > 0) return null
@@ -107,12 +110,11 @@ export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
   const transformed = isBiscuitTrueForm(fighter) ? 0.68 : 1
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
-  const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1
   const exposed = fighter.hatsuEffects.soulExposedFrames > 0 ? 1.25 : 1
   const smoked = fighter.hatsuEffects.smokeFrames > 0 ? 1.1 : 1
   const coins = Math.max(0.76, 1 - fighter.hatsuEffects.coinCharges * 0.08)
   const completion = completionDefenceFactor(fighter)
-  return transformed * cantabile * biohazard * predator * exposed * smoked * coins * completion
+  return transformed * cantabile * biohazard * exposed * smoked * coins * completion
 }
 
 function completionDefenceFactor(fighter: ArcadeFighter): number {

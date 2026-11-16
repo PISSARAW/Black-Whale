@@ -1,3 +1,4 @@
+import { finishBorrowedPredator } from './predatorDolphin'
 import { canStartFighterAttack } from './fighterAttacks'
 import { rangedAuraCost } from './projectiles'
 import { recordFightDeath } from './fightDeaths'
@@ -191,6 +192,8 @@ function canUseDolphinAction(fighter: ArcadeFighter): boolean {
 
 function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): FightState {
   const { state, side } = options
+  const predator = finishBorrowedPredator(state, side)
+  if (predator) return predator
   const fighter = state[side]
   const held = fighter.kurapika!.held!
   if (fighter.bashoPoem)

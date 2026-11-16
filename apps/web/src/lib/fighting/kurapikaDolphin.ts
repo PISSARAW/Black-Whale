@@ -79,15 +79,7 @@ export function dolphinIsBusy(
   held: StolenChainAbility,
 ): boolean {
   if (state[side].attack?.moveId === held.moveId) return true
-  return held.sustainedKeys.some((entry) => {
-    if (entry === 'poem') return Boolean(state[side].bashoPoem)
-    if (entry === 'gum') return state.bungeeGum?.owner === side
-    if (entry === 'projection') return Boolean(state[side].hanzoProjection)
-    if (entry === 'texture') return Boolean(state[side].textureSurprise)
-    if (entry === 'lsdf') return Boolean(state.lsdf?.[side])
-    const [target, key] = entry.split(':') as [FightSide, keyof ArcadeFighter['hatsuEffects']]
-    return Number(state[target].hatsuEffects[key]) > 0
-  })
+  return held.sustainedKeys.some((entry) => dolphinEffectActive(state, side, entry))
 }
 
 export function returnChainAbility(state: FightState, side: FightSide): FightState {
@@ -122,8 +114,30 @@ function dolphinEffectFlags(before: FightState, after: FightState, side: FightSi
   const keys = new Set<string>()
   if (after.bungeeGum?.owner === side && before.bungeeGum !== after.bungeeGum) keys.add('gum')
   if (after[side].bashoPoem) keys.add('poem')
-  if (after[side].hanzoProjection) keys.add('projection')
-  if (after[side].textureSurprise) keys.add('texture')
-  if (after.lsdf?.[side]) keys.add('lsdf')
+  for (const [key, active] of Object.entries(dolphinFlags(after, side)))
+    if (key !== 'gum' && active) keys.add(key)
   return [...keys]
+}
+
+function predatorBusy(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.predator?.watching || fighter.predator?.hunt)
+}
+
+function dolphinEffectActive(state: FightState, side: FightSide, entry: string): boolean {
+  const flags = dolphinFlags(state, side)
+  if (entry in flags) return flags[entry]
+  const [target, key] = entry.split(':') as [FightSide, keyof ArcadeFighter['hatsuEffects']]
+  return Number(state[target].hatsuEffects[key]) > 0
+}
+
+function dolphinFlags(state: FightState, side: FightSide): Record<string, boolean> {
+  const fighter = state[side]
+  return {
+    predator: predatorBusy(fighter),
+    poem: Boolean(fighter.bashoPoem),
+    gum: state.bungeeGum?.owner === side,
+    projection: Boolean(fighter.hanzoProjection),
+    texture: Boolean(fighter.textureSurprise),
+    lsdf: Boolean(state.lsdf?.[side]),
+  }
 }

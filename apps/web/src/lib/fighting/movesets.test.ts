@@ -190,9 +190,11 @@ describe('wave one movesets', () => {
       })
       expect(finisherReady(base, 'player')).toBe(false)
       expect(finisherReady(supplied, 'player')).toBe(true)
-      expect(
-        performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-      ).toBe(`${fighterId}:finisher`)
+      const executed = performMove({ state: supplied, side: 'player', action: 'finisher' })
+      if (fighterId === 'rihan') {
+        expect(executed.player.predator?.hunt?.preyId).toBe('bungee-gum')
+        expect(executed.player.attack).toBeNull()
+      } else expect(executed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
     },
   )
 
@@ -337,11 +339,14 @@ function withFinisherCondition(state: FightState): FightState {
         },
       }
     case 'rihan':
-      return withOpponentEffect(
-        withPlayerEffect(state, 'predatorFrames', 60),
-        'forcedZetsuFrames',
-        60,
-      )
+      return {
+        ...state,
+        bungeeGum: { owner: 'opponent', target: 'player', hidden: false, retracting: false },
+        player: { ...player, predator: {
+          watching: true, known: ['bungee-gum'], hunt: null, sealFrames: 0, successes: 0,
+          analysis: { owner: 'opponent', preyId: 'bungee-gum', observedFrames: 180 },
+        } },
+      }
     case 'zakuro':
       return withOpponentEffect(state, 'bloodBoundFrames', 60)
     case 'melody':

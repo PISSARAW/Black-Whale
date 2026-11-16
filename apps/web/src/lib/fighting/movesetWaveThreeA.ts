@@ -1,42 +1,7 @@
+import { rihanMoveset } from './rihanMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
-  {
-    fighterId: 'rihan',
-    mechanic: [
-      'Predator : l’analyse réussie neutralise le Hatsu adverse et renforce sa défense adaptative.',
-      'Predator: a successful analysis neutralizes the opposing Hatsu and reinforces his adaptive defense.',
-    ],
-    finisherCondition: [
-      'Predator doit être actif et la cible maintenue en Zetsu forcé.',
-      'Predator must be active while the target remains in forced Zetsu.',
-    ],
-    labels: [
-      'Direct analytique|Analytical Straight',
-      'Coude du garde|Guard Elbow',
-      'Sonde basse|Low Probe',
-      'Fauchage calculé|Calculated Sweep',
-      'Lecture aérienne|Aerial Read',
-      'Genou de conclusion|Concluding Knee',
-      'Avancée mesurée|Measured Advance',
-      'Briseur de schéma|Pattern Breaker',
-      'Contre d’observation|Observation Counter',
-      'Predator|Predator',
-      'Angle mort|Blind Spot',
-      'Dissection basse|Low Dissection',
-      'Adaptation défensive|Defensive Adaptation',
-      'Prise d’isolation|Isolation Hold',
-      'Predator · Adaptation totale|Predator · Total Adaptation',
-    ],
-    speed: 0.96,
-    power: 1.04,
-    reach: 1.4,
-    combos: [
-      ['standingLight', 'backHeavy', 'neutralSpecial'],
-      ['lowLight', 'standingHeavy', 'downSpecial'],
-      ['airLight', 'airHeavy', 'forwardSpecial'],
-    ],
-  },
   {
     fighterId: 'zakuro',
     mechanic: [
@@ -180,4 +145,4 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_THREE_MOVESETS_A = SPECS.map(buildMoveset)
+export const WAVE_THREE_MOVESETS_A = [rihanMoveset(), ...SPECS.map(buildMoveset)]

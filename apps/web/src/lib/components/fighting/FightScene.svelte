@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
+  import { createPredatorScene } from '$lib/fighting/predatorScene'
   import { fightFigureVisible } from '$lib/fighting/fightFigureVisibility'
   import { camillaCameraSpan } from '$lib/fighting/camillaCamera'
   import {
@@ -161,6 +162,7 @@
           THREE, scene, worldX, worldY, figureOf: (side) => models[side].model.turns,
         })
         const lsdfScene = createLsdfScene({ THREE, scene, glow, worldX })
+        const predatorScene = createPredatorScene({ THREE, scene, glow, worldX, worldY })
         const modelOf = (side: 'player' | 'opponent', fighter: ArcadeFighter) => {
           const held = models[side]
           const nen = nenKey(fighter)
@@ -327,6 +329,7 @@
           fighterEffects.sync(state, seconds)
           feitanScene.sync(state, seconds)
           lsdfScene.sync(state, seconds)
+          predatorScene.sync(state, seconds)
           projectionScene.sync(state, seconds)
           animateFighter({
             side: 'opponent',
@@ -384,6 +387,7 @@
           fighterEffects.dispose()
           feitanScene.dispose()
           lsdfScene.dispose()
+          predatorScene.dispose()
           projectionScene.dispose()
           post?.dispose()
           scenery.dispose()

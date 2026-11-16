@@ -1,3 +1,5 @@
+import { advancePredatorClock } from './predatorSeal'
+import { resolvePredatorThreats } from './predatorCombat'
 import { performMelodyAction } from './melodyAction'
 import { melodyInput, reconcileMelodySound, stopMelodyMusic } from './melodyChannel'
 import { advanceMelodyHearing } from './melodyHearing'
@@ -117,6 +119,7 @@ function simulateFightFrame(state: FightState, controls: FutureControls): FightS
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
+  state = advancePredatorClock(state)
   if (state.catsName) return advanceCatsName(state)
   state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
@@ -133,7 +136,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const withHatsu = advanceMelodyHearing(advanceHatsuFrames(buffered))
   if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
   const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
-  const flight = advanceProjectiles(armed, FIXED_STEP)
+  const flight = advanceProjectiles(resolvePredatorThreats(armed), FIXED_STEP)
   const resolved = reconcileMelodySound(recordFightInjuries(
     state,
     resolveOnImpacts(flight.state, resolveFightImpacts(flight.state, flight.hits)),

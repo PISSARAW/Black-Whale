@@ -118,7 +118,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   contagionFrames: 'contagion',
   blinkyFrames: 'vacuum',
   biohazardFrames: 'machine',
-  predatorFrames: 'predator',
   cohortWillFrames: 'arrow',
   isolationFrames: 'portal',
   eyeWogFrames: 'read',

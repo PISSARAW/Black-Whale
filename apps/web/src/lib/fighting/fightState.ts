@@ -1,3 +1,4 @@
+import { preservePredatorKnowledge } from './predatorSeal'
 import { carryMoonlightRound } from './moonlightContract'
 import { createBenjaminBaton } from './benjaminBaton'
 import { createKurapika } from './kurapika'
@@ -154,7 +155,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     cantabileFrames: 0,
     biohazardFrames: 0,
     restrainedFrames: 0,
-    predatorFrames: 0,
     bloodBoundFrames: 0,
     entrancedFrames: 0,
     soulExposedFrames: 0,
@@ -185,6 +185,7 @@ function seedFor(playerId: FighterId, opponentId: FighterId): number {
 }
 
 function preserveLifespan(fighter: ArcadeFighter, previous: ArcadeFighter): ArcadeFighter {
+  fighter = preservePredatorKnowledge(fighter, previous)
   return fighter.kurapika
     ? {
         ...fighter,

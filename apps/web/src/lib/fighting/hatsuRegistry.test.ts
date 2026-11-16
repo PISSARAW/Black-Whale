@@ -404,7 +404,7 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuAvoidsImpact(state.player)).toBe(false)
   })
 
-  it('lets Predator analyse and suppress an enemy Hatsu', () => {
+  it('never turns a Predator carrier hit into suppression or a defence buff', () => {
     const ready = closeFight('rihan', 'hisoka')
     const struck = hatsuFor('rihan').onImpact({
       state: ready,
@@ -414,8 +414,9 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(struck.player.hatsuEffects.predatorFrames).toBe(180)
-    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(180)
+    expect(struck).toBe(ready)
+    expect(struck.player.predator).toBeUndefined()
+    expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(0)
   })
 
   it('applies the second wave’s three distinct control effects', () => {

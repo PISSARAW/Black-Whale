@@ -18,6 +18,7 @@
   import FightPainPacker from './FightPainPacker.svelte'
   import FightNenControls from './FightNenControls.svelte'
   import FightLsdfStatus from './FightLsdfStatus.svelte'
+  import FightPredatorStatus from './FightPredatorStatus.svelte'
 
   export let state: FightState
   export let language: 'fr' | 'en'
@@ -117,6 +118,7 @@
       <FightPainPacker {fighter} {language} {side} local={state.mode === 'versus-local'} />
       <FightBenjaminStatus {state} {side} {language} {detailed} />
       <FightChrolloStatus {state} {side} {language} {detailed} />
+      <FightPredatorStatus {state} {side} {language} />
       <FightComboMaster {state} {side} {language} />
       <FightOutsideDuelStatus {fighter} {language} />
       {#if fighter.textureSurprise}

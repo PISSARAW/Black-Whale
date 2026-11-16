@@ -92,6 +92,29 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   poing émis qui monte puis se rétracte. La garde, la parade et l’esquive restent actives.
 - La troisième vague couvre Rihan, Zakuro, Melody, Basho, Camilla, Halkenburg, Gel,
   Lynch, Luini et Bill.
+- Rihan étudie personnellement **un Hatsu précis** avec L (`predator.ts`).
+  Seules les manifestations actives qu’il voit entrent dans son catalogue ; In
+  exige Gyo, une information rapportée ou un simple indicateur de Hatsu aperçu ne
+  suffit pas. Avant/arrière + L change de proie et recommence son analyse ; bas + L
+  l’abandonne. Après 180 frames d’observation cumulée de cette manifestation, H
+  (ou L) matérialise Predator pour 40 aura. La durée, le coût, le déplacement et
+  la dissipation du chasseur en un coup sont des adaptations de duel, sans
+  prétendre simuler toutes les déductions du manga.
+  `predatorPrey.ts` limite la prédation aux manifestations prises en charge,
+  notamment Bungee Gum, Hanzo Skill 4 et Rising Sun : elle retire uniquement la
+  manifestation étudiée, sans dégâts au corps, point, Zetsu adverse ou bonus
+  défensif. Les autres Hatsu restent utilisables. Les coups renforcés et émissions
+  simples ne constituent pas des proies ; les gardes LSDF invulnérables ne sont pas
+  automatiquement contrés. Le chasseur peut être détruit avant capture, sans
+  contrecoup de réussite. Sa silhouette abstraite (`predatorScene.ts`) ne présente
+  pas la forme créée contre Salé-salé dans le Nendex comme un modèle universel.
+  Une capture réussie prive **son utilisateur** de tout Nen pendant **48 heures
+  simulées**, soit 10 368 000 frames, hitstop compris (`predatorSeal.ts`). Le prix
+  persiste entre les manches et après fermeture du livre ou restitution de la
+  capacité copiée ; les commandes Nen, On et attaques chargées restent bloquées.
+  Le combat physique continue. Un nouveau match réinitialise ce prix, comme les
+  autres états du duel. Le HUD montre la technique ciblée, la progression et le
+  compte à rebours ; l’IA étudie avant de lancer Predator.
 - Basho écrit les trois vers du poème du chapitre 68 dans `FightBashoPoem.svelte`.
   `bashoPoem.ts` reconnaît une traduction française ou anglaise de cette seule
   composition : les textes libres non reconnus ne coûtent rien et ne créent aucun

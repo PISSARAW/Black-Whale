@@ -1,3 +1,4 @@
+import { performPredatorAction } from './predatorAction'
 import { performBashoAction } from './bashoAction'
 import { performMoonlightAction } from './moonlightAction'
 import { performParallelFutureAction } from './parallelFutureAbility'
@@ -17,6 +18,7 @@ export function characterAuraAction(
   perform: (options: AuraAttackOptions) => FightState,
 ): FightState | null {
   const attempts = [
+    () => performPredatorAction(options),
     () => performParallelFutureAction(options),
     () => performKurapikaAction(options, perform),
     () => performChrolloBookAction(options),

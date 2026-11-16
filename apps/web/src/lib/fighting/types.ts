@@ -1,3 +1,4 @@
+import type { PredatorState } from './predatorTypes'
 import type { MelodyPerformance, MelodyHearing } from './melodyRules'
 import type { CatsNameSequence } from './camillaCat'
 import type { FightDeath } from './fightDeaths'
@@ -124,6 +125,7 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  predator?: PredatorState
   bashoPoem?: import('./bashoPoem').BashoPoem
   bashoBurn?: import('./bashoPoem').BashoBurn
   /** Execution adapters may borrow a Hatsu identity; the aura still belongs to this user. */
@@ -254,7 +256,6 @@ export interface FighterHatsuEffects {
   cantabileFrames: number
   biohazardFrames: number
   restrainedFrames: number
-  predatorFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
   soulExposedFrames: number

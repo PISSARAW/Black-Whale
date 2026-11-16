@@ -1,3 +1,4 @@
+import { predatorAiSlots } from './predatorAi'
 import { benjaminAiSlots } from './benjaminAi'
 import { chrolloAiSlots } from './chrolloAi'
 import { canUseMovesetMove, finisherReady, moveForSlot, movesetFor } from './movesets'
@@ -41,6 +42,7 @@ function finisherInRange(state: FightState, gap: number): boolean {
 }
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  if (state.opponent.id === 'rihan') return predatorAiSlots(state)
   if (state.opponent.id === 'tserriednich')
     return gap > 10
       ? ['forwardHeavy', 'standingHeavy']

@@ -1,3 +1,5 @@
+import { travelKallutoPaper } from './kallutoFlight'
+import { paperAvailable, paperZonePoint } from './kallutoPaper'
 import { hasIllumiNeedles } from './illumiEquipment'
 import { illumiBodyFree } from './illumiState'
 import { interceptBiohazardProjectile } from './biohazardImpact'
@@ -143,8 +145,8 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     shape: 'card',
     colour: '#fb7185',
     speed: 66,
-    damage: 8,
-    size: [0.7, 0.4],
+    damage: 4,
+    size: [0.7, 0.6],
   }),
   bonolenov: projectile({
     matter: 'nen',
@@ -215,6 +217,7 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
 }
 
 export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'kalluto' && !paperAvailable(fighter)) return false
   if (fighter.id === 'illumi' && !hasIllumiNeedles(fighter)) return false
   if (!illumiBodyFree(fighter)) return false
   return battleRangedAvailable(fighter) ?? standardRangedAvailable(fighter)
@@ -249,7 +252,7 @@ export function spawnRangedProjectiles(state: FightState): FightState {
 function spawnForSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (
-    ['bonolenov', 'leorio', 'franklin'].includes(fighter.id) ||
+    ['bonolenov', 'leorio', 'franklin', 'kalluto'].includes(fighter.id) ||
     fighter.hanzoProjection ||
     fighter.attack?.kind !== 'ranged' ||
     !benjaminBurstReady(fighter) ||
@@ -311,9 +314,8 @@ export function advanceProjectiles(
   const hits: ProjectileHit[] = []
   const kept: FightProjectile[] = []
   for (const held of state.projectiles) {
-    const jupiter = held.jupiter ? advanceJupiter(state, held, step) : undefined
-    if (held.jupiter && !jupiter) continue
-    const projectile = jupiter ?? travelFightProjectile(held, step)
+    const projectile = advanceProjectileMotion(state, held, step)
+    if (!projectile) continue
     const intercepted = interceptBiohazardProjectile(state, { projectile, previousX: held.x })
     state = intercepted.state
     if (intercepted.intercepted) continue
@@ -334,6 +336,11 @@ function projectileCollision(
   defender: ArcadeFighter,
 ): { x: number; y: number } | null {
   if (!remotePunchCanHit(projectile)) return null
+  if (projectile.kallutoPaper) {
+    const point = paperZonePoint(defender, projectile.targetZone)
+    if (Math.abs(projectile.x - point.x) > projectile.width + 1.5 ||
+      Math.abs(projectile.y - point.y) > projectile.height + 1) return null
+  }
   const box: FightBox = {
     left: projectile.x - projectile.width,
     right: projectile.x + projectile.width,
@@ -350,4 +357,9 @@ function projectileCollision(
 
 function ordinaryRangedReady(fighter: ArcadeFighter): boolean {
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
+}
+
+function advanceProjectileMotion(state: FightState, held: FightProjectile, step: number): FightProjectile | null {
+  if (held.jupiter) return advanceJupiter(state, held, step) ?? null
+  return held.kallutoPaper ? travelKallutoPaper(state, held, step) : travelFightProjectile(held, step)
 }

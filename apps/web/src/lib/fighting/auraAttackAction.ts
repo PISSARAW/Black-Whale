@@ -1,3 +1,4 @@
+import { paperMoveAllowed } from './kallutoPaper'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { blinkyActionAllowed } from './blinkyAction'
 import { observeComboMaster } from './comboMaster'
@@ -70,5 +71,6 @@ function techniqueAllowed(options: AuraAttackOptions): boolean {
   if (beyondCurseUnavailable({ fighter: state[side], kind, moveId })) return false
   if (!blinkyActionAllowed(options)) return false
   if (moveId === 'gel:finisher') return false
+  if (kind === 'special' && !paperMoveAllowed(state, side, moveId)) return false
   return kind !== 'special' || (padailleMoveAvailable(state[side], moveId) && feitanMoveAvailable(state[side], moveId))
 }

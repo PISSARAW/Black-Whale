@@ -112,12 +112,12 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'kalluto',
     mechanic: [
-      'Morsure du serpent : trois marques de papier convergent pour une détonation.',
-      'Serpent Bite: three paper marks converge into a detonation.',
+      'Papier : L plante dans la zone choisie, ↓ L vise les pieds. → L ou H dirige un serpent de confettis vers cette zone si un papier y est planté. ← L confectionne une poupée pour écouter les paroles près de la cible marquée (T/V ou Parler). Aucun seuil de coups ni explosion. Coûts, trajectoires, zones et portée des voix : adaptation du duel.',
+      'Paper: L plants in the chosen zone; ↓ L aims at the feet. → L or H directs a confetti stream to that zone if paper is embedded there. ← L makes a doll to hear words near the marked subject (T/V or Talk). No hit threshold or explosion. Costs, trajectories, zones and voice radius adapt the duel.',
     ],
     finisherCondition: [
-      'Deux marques du serpent doivent déjà être posées.',
-      'Two Serpent marks must already be placed.',
+      'Un papier doit être planté dans la zone choisie ; le serpent reste une attaque normale, sans exécution automatique.',
+      'Paper must be embedded in the selected zone; the stream is a normal attack, never an automatic execution.',
     ],
     labels: [
       'Éventail tranchant|Cutting Fan',
@@ -129,10 +129,10 @@ const SPECS: readonly MovesetSpec[] = [
       'Pas de l’éventail|Fan Step',
       'Rafale Zoldyck|Zoldyck Gust',
       'Paravent de papier|Paper Screen',
-      'Danse de la morsure|Bite Dance',
-      'Trace du serpent|Serpent Trace',
-      'Papier rampant|Creeping Paper',
-      'Clone de confettis|Confetti Double',
+      'Planter le papier|Plant Paper',
+      'Danse de la morsure|Serpent Bite Dance',
+      'Papier aux pieds|Paper at the Feet',
+      'Poupée de papier · Écoute|Paper Doll · Listen',
       'Enveloppement de papier|Paper Wrap',
       'Morsure du serpent|Serpent Bite',
     ],

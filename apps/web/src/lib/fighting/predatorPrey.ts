@@ -121,20 +121,19 @@ export const PREDATOR_PREY: readonly PredatorPrey[] = [
     point: (s, side) => ({ x: s[other(side)].x, y: s[other(side)].y + 11 }),
   },
   maryPredatorPrey,
-  targetCounter({
-    id: 'paper-serpent',
-    source: 'kalluto',
-    nameFr: 'Serpent de papier',
-    nameEn: 'Paper serpent',
-    key: 'serpentMarks',
-  }),
+  {
+    id: 'paper-serpent', source: 'kalluto',
+    nameFr: 'Serpent de papier', nameEn: 'Paper serpent',
+    live: (s, side) => s.projectiles.some((shot) => shot.owner === side && shot.kallutoPaper === 'serpent'),
+    consume: (s, side) => ({ ...s, projectiles: s.projectiles.filter((shot) => !(shot.owner === side && shot.kallutoPaper === 'serpent')) }),
+    point: (s, side) => s.projectiles.find((shot) => shot.owner === side && shot.kallutoPaper === 'serpent') ?? s[side],
+  },
 ]
 
 type CounterKey =
   | 'blinkyFrames'
   | 'manipulatedFrames'
   | 'stitchedFrames'
-  | 'serpentMarks'
 type CounterSpec = Pick<PredatorPrey, 'id' | 'source' | 'nameFr' | 'nameEn'> & { key: CounterKey }
 
 function ownCounter(spec: CounterSpec): PredatorPrey {

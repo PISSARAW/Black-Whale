@@ -131,6 +131,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  kallutoPaper?: import('./kallutoPaper').KallutoPaperState
+  plantedPaper?: readonly import('./kallutoPaper').PlantedPaper[]
   padailleTool?: PadailleTool
   illumi?: IllumiState
   needlePuppet?: NeedlePuppet
@@ -282,7 +284,6 @@ export interface FighterHatsuEffects {
   isolationFrames: number
   cyclotronTurns: number
   stitchedFrames: number
-  serpentMarks: number
   restrainedFrames: number
   entrancedFrames: number
   teleportDodges: number
@@ -363,6 +364,7 @@ export interface RemotePunchPath {
 }
 
 export interface FightProjectile {
+  kallutoPaper?: 'plant' | 'serpent'
   /** A conjured sphere pursues its designated target within earshot. */
   jupiter?: boolean
   living?: boolean

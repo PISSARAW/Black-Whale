@@ -150,6 +150,8 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     cyclotron: cyclotronBusy(fighter),
     door: doorNetworkBusy(state, side),
     'secret-window': Boolean(fighter.secretWindow),
+    'paper-doll': Boolean(fighter.kallutoPaper?.doll),
+    'paper-stream': state.projectiles.some((shot) => shot.owner === side && Boolean(shot.kallutoPaper)),
     'body-and-soul': Boolean(fighter.lynchQuestion),
     'bloody-mary': Boolean(fighter.bloodyMary?.tendril || fighter.bloodyMary?.drops.length),
     poem: Boolean(fighter.bashoPoem),

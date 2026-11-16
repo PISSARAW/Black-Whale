@@ -327,7 +327,7 @@ function withFinisherCondition(state: FightState): FightState {
         },
       }
     case 'kalluto':
-      return withOpponentEffect(state, 'serpentMarks', 2)
+      return { ...state, opponent: { ...opponent, plantedPaper: [{ owner: 'player', zone: 'torso' }] } }
     case 'shizuku':
       return { ...state, opponent: { ...opponent, openWounds: 1, x: player.x + 12, y: 0 } }
     case 'mizaistom':

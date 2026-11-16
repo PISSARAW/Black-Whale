@@ -1,3 +1,4 @@
+import { addKallutoPaper } from './kallutoFigure'
 import { addPadailleWeapon } from './padailleFigure'
 import { illumiFaceProfile, addIllumiNeedles } from './illumiFigure'
 import { addBonolenovPrologue, battleFigureKey, battleNeedsSkin } from './bonolenovFigure'
@@ -23,6 +24,8 @@ import type { ArcadeFighter } from './types'
 export function fightFigureKey(fighter: ArcadeFighter): string {
   return JSON.stringify([
     fighter.nen,
+    fighter.plantedPaper,
+    Boolean(fighter.kallutoPaper?.doll),
     Boolean(fighter.illumi?.disguised),
     Boolean(fighter.needlePuppet?.needleEmbedded),
     ...battleFigureKey(fighter),
@@ -83,6 +86,7 @@ export function buildFightFigure(options: {
   addBonolenovPrologue({ THREE, glow, fighter, model })
   addIllumiNeedles({ THREE, glow, fighter, model })
   addFighterEquipment(options, model)
+  addKallutoPaper({ THREE, glow, fighter, model })
   shapeFightEyes({ root: model.root, fighter, glow })
   return model
 }

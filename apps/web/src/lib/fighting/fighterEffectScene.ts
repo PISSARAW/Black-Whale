@@ -1,3 +1,4 @@
+import { createKallutoPaperScene } from './kallutoScene'
 import { createVoconteDoorScene } from './voconteDoorScene'
 import { createBiohazardScene } from './biohazardScene'
 import { createBloodyMaryScene } from './bloodyMaryScene'
@@ -27,6 +28,7 @@ export interface FighterEffectScene {
 
 export function createFighterEffectScene(options: EffectSceneOptions): FighterEffectScene {
   const { THREE, scene } = options
+  const paper = createKallutoPaperScene(options)
   const doors = createVoconteDoorScene(options)
   const biohazard = createBiohazardScene(options)
   const secretWindow = createSecretWindowScene(options)
@@ -51,6 +53,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   scene.add(gum, ...cards)
 
   const sync = (state: FightState, seconds: number) => {
+    paper.sync(state, seconds)
     doors.sync(state, seconds)
     biohazard.sync(state, seconds)
     secretWindow.sync(state, seconds)
@@ -69,6 +72,7 @@ export function createFighterEffectScene(options: EffectSceneOptions): FighterEf
   return {
     sync,
     dispose: () => {
+      paper.dispose()
       doors.dispose()
       biohazard.dispose()
       secretWindow.dispose()

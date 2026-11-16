@@ -155,7 +155,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     isolationFrames: 0,
     cyclotronTurns: 0,
     stitchedFrames: 0,
-    serpentMarks: 0,
     restrainedFrames: 0,
     entrancedFrames: 0,
     teleportDodges: 0,

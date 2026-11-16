@@ -20,7 +20,7 @@ export function routedFightMove(
   selected: FighterMove | null,
 ): FighterMove | null {
   if (['chrollo', 'illumi', 'tserriednich', 'phinks', 'bonolenov', 'padaille'].includes(fighter.id)) return selected
-  if (fighter.id === 'shizuku') return selected
+  if (['shizuku', 'kalluto'].includes(fighter.id)) return selected
   const current = moveById(fighter.attack?.moveId)
   return (
     current?.cancelInto

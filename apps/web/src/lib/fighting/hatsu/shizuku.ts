@@ -6,5 +6,5 @@ export const shizukuHatsu: FighterHatsu = {
   id: 'shizuku',
   onTrigger: unchangedTrigger,
   onImpact: unchangedImpact,
-  onFrame: advanceBlinky,
+  onFrame: (state) => advanceBlinky(state),
 }

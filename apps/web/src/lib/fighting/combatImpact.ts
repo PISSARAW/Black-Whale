@@ -1,3 +1,4 @@
+import { plantPaperAfterHit } from './kallutoFlight'
 import { resolveIllumiContact } from './illumiImpact'
 import { recordBlinkyWound } from './blinkyWounds'
 import { resolveLynchContact } from './lynchInterrogation'
@@ -322,7 +323,8 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     after: next,
     damagedSide: hit.defenderSide,
   })
-  return finishAfterImpact(routed, routed.impact!.attacker, otherSide(routed.impact!.attacker))
+  const planted = plantPaperAfterHit(routed, hit.projectile)
+  return finishAfterImpact(planted, planted.impact!.attacker, otherSide(planted.impact!.attacker))
 }
 
 function prepareDefence(

@@ -949,3 +949,28 @@ et peut rétablir la main avant de rendre la capacité. Les deux copies conserve
 les frappes physiques, sans bonus général. La manche suivante efface la forme.
 `padaille.test.ts` vérifie choix, collisions, garde, interruption, buffer, copies,
 perte du Nen et position des modèles sur le bras droit.
+
+### Kalluto — papier et écoute
+
+`kallutoPaper.ts`, `kallutoFrames.ts` et `kallutoFlight.ts` séparent la pose physique
+et la manipulation. L et U lancent des fragments dans la zone sélectionnée ; ↓ L
+vise les pieds. Seul un fragment qui touche sans garde ni esquive se plante.
+→ L et H lancent un flux de papier vers un fragment appartenant à l’utilisateur,
+dans la zone sélectionnée. Aucun compteur de coups, bonus de détonation ou seuil
+de vie : le flux passe par les collisions, la défense et les dégâts ordinaires.
+Le papier planté reste physique après interruption du Nen ; le flux perd alors
+sa poursuite. Chaque nouvelle manche repart sans papier ni poupée.
+
+← L confectionne une poupée du sujet marqué. `kallutoListening.ts` relaie les
+paroles émises par T/V ou Parler à proximité de ce sujet, indépendamment de la
+distance entre le sujet et la poupée. Aucun accès aux pensées, aux statistiques
+d’aura, aux commandes silencieuses ou au futur. Le Nen indisponible, la perte de
+la page copiée, la privation d’ouïe ou les oreilles bouchées empêchent l’écoute.
+Les copies utilisent les mêmes conditions et gardent leurs propres papiers.
+
+Le panneau permet aussi de prononcer un texte libre (160 caractères dans l’interface).
+La poupée relaie exactement ce texte s’il a été émis dans son rayon audible.
+Les quatre zones, la phrase par défaut « Je suis ici. », les coûts, les temps,
+les vitesses, les dégâts et le rayon audible sont des adaptations du duel, pas
+des restrictions attribuées au manga. Le panneau expose les zones plantées,
+la confection de la poupée et la dernière parole réellement reçue.

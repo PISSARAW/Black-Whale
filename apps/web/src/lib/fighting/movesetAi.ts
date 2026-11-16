@@ -1,3 +1,4 @@
+import { hasPlantedPaper, paperState } from './kallutoPaper'
 import { illumiAiSlots } from './illumiAi'
 import { voconteAiSlots } from './vocontePresentation'
 import { biohazardAiSlots } from './biohazardAi'
@@ -47,6 +48,7 @@ function finisherInRange(state: FightState, gap: number): boolean {
 }
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
+  if (state.opponent.id === 'kalluto') return kallutoSlots(state)
   if (state.opponent.id === 'illumi') return illumiAiSlots(state, gap)
   if (state.opponent.id === 'voconte') return voconteAiSlots(state, gap)
   return ordinaryFighterSlots(state, roll, gap)
@@ -77,4 +79,10 @@ function lynchSlots(state: FightState, gap: number): readonly MoveSlot[] {
   return !state.opponent.lynchQuestion && gap <= 18
     ? ['neutralSpecial', 'standingLight']
     : ['standingLight', 'forwardLight', 'standingHeavy']
+}
+
+function kallutoSlots(state: FightState): readonly MoveSlot[] {
+  if (!hasPlantedPaper(state, 'opponent', paperState(state.opponent).zone))
+    return ['neutralSpecial', 'standingLight']
+  return !paperState(state.opponent).doll ? ['backSpecial', 'forwardSpecial'] : ['forwardSpecial', 'standingLight']
 }

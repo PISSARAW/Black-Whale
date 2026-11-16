@@ -296,21 +296,16 @@ describe('fighter Hatsu registry', () => {
     expect(needled.opponent.aura).toBe(ready.opponent.aura)
   })
 
-  it('converges Kalluto’s paper marks on the third strike', () => {
+  it('never creates explosive Kalluto marks on generic impacts', () => {
+    const state = closeFight('kalluto', 'hisoka')
     const impact = hatsuFor('kalluto').onImpact
-    let state = closeFight('kalluto', 'hisoka')
-    for (let strike = 0; strike < 3; strike += 1) {
-      state = impact({
-        state,
-        side: 'player',
-        defenderSide: 'opponent',
-        source: 'kalluto',
-        blocked: false,
-        concealed: false,
-      })
-    }
-    expect(state.opponent.health).toBe(82)
-    expect(state.opponent.hatsuEffects.serpentMarks).toBe(0)
+    let next = state
+    for (let strike = 0; strike < 3; strike += 1) next = impact({
+      state: next, side: 'player', defenderSide: 'opponent', source: 'kalluto',
+      blocked: false, concealed: false,
+    })
+    expect(next).toBe(state)
+    expect(next.opponent.plantedPaper).toBeUndefined()
   })
 
   it('never substitutes generic attack or defence bonuses for Bonolenov’s danced pieces', () => {

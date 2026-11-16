@@ -1,3 +1,5 @@
+import { paperCommandReady, paperMoveAllowed } from './kallutoPaper'
+import { tuneKallutoMoveset } from './kallutoMoveset'
 import { tuneBeyondMoveset } from './beyondMoveset'
 import { beyondCurseUnavailable } from './beyondCurseAction'
 import { padailleMoveAvailable } from './padailleWeapon'
@@ -102,6 +104,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneLynchMoveset)
     .map(tuneThetaMoveset)
     .map(tuneBlinkyMoveset)
+    .map(tuneKallutoMoveset)
     .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
     .map(tuneLonghiMoveset)
@@ -174,7 +177,7 @@ function contextualMoveAllowed(state: FightState, side: FightSide, move: Fighter
   if (blood !== null) return blood
   const battle = bonolenovMoveAllowed(state, side, move)
   if (battle !== null) return battle
-  if (!blinkyMoveAllowed(state, side, move.id)) return false
+  if (!paperAndBlinkyMoveAllowed(state, side, move)) return false
   if (move.id === 'mizaistom:neutralSpecial') return crossGameCanWarn(state, side)
   if (move.id === 'basho:neutralSpecial') return bashoCanWrite(state, side)
   if (move.id === 'longhi:neutralSpecial') return moonlightCanOffer(state, side)
@@ -321,7 +324,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   phinks: (state, side) => cyclotronPunchReady(state[side]),
   franklin: () => true,
   machi: (state, side) => machiBindReady(state, side),
-  kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,
+  kalluto: (state, side) => paperCommandReady(state, side, 'serpent'),
   shizuku: blinkyBloodReady,
   hanzo: (state, side) => Boolean(state[side].hanzoProjection),
   rihan: predatorReady,
@@ -336,4 +339,9 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
 function predatorMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
   if (!isPredatorMove(state[side], move.id) || move.category !== 'finisher') return true
   return predatorReady(state, side)
+}
+
+function paperAndBlinkyMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  return (move.kind !== 'special' || paperMoveAllowed(state, side, move.id)) &&
+    blinkyMoveAllowed(state, side, move.id)
 }

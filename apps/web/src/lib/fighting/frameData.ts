@@ -1,3 +1,4 @@
+import { paperUtilityAttack } from './kallutoPaper'
 import { padailleUtilityAttack } from './padailleWeapon'
 import { voconteUtilityCast } from './voconteDoors'
 import { battleUtilityAttack } from './bonolenovMoveset'
@@ -216,6 +217,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (paperUtilityAttack(fighter)) return null
   if (blinkyUtilityAttack(fighter)) return null
   if (secretWindowUtility(fighter)) return null
   fighter = dolphinActor(fighter)

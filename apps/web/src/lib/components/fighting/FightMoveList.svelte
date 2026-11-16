@@ -2,25 +2,20 @@
   import { movesetFor, moveById } from '$lib/fighting/movesets'
   import type { FighterId } from '$lib/fighting/types'
   import FightChrolloManual from './FightChrolloManual.svelte'
+  import { arenaTechnique } from '$lib/fighting/arenaTechnique'
 
   export let fighterId: FighterId
   export let language: 'fr' | 'en'
 
   $: moveset = movesetFor(fighterId)
+  $: arena = arenaTechnique(fighterId)
   $: groups = moveset
     ? ([
         ['normal', language === 'fr' ? 'Normales' : 'Normals'],
         ['command', 'Command normals'],
         ['special', language === 'fr' ? 'Techniques' : 'Techniques'],
         ['throw', language === 'fr' ? 'Projection' : 'Throw'],
-        [
-          'finisher',
-          fighterId === 'chrollo'
-            ? language === 'fr'
-              ? 'Page au signet'
-              : 'Bookmarked page'
-            : 'Finisher Hatsu',
-        ],
+        ['finisher', fighterId === 'chrollo' ? (language === 'fr' ? 'Page au signet' : 'Bookmarked page') : 'Finisher Hatsu'],
       ] as const)
     : []
 
@@ -37,6 +32,11 @@
       <p>{language === 'fr' ? moveset.mechanicFr : moveset.mechanicEn}</p>
     </header>
     {#if fighterId === 'chrollo'}<FightChrolloManual {language} />{/if}
+    {#if arena}
+      <h3>{language === 'fr' ? 'Action d’arène · O (P2 : P)' : 'Arena action · O (P2: P)'}</h3>
+      <p>{arena.name[language === 'fr' ? 0 : 1]} · {arena.effect[language === 'fr' ? 0 : 1]}</p>
+      <p>{arena.condition[language === 'fr' ? 0 : 1]}</p>
+    {/if}
     <div class="move-groups">
       {#each groups as [category, title] (category)}
         {#if moveset.moves.some((move) => move.category === category)}
@@ -59,13 +59,7 @@
     </div>
     {#if moveset.moves.some((move) => move.category === 'finisher')}
       <footer>
-        <strong
-          >{fighterId === 'chrollo'
-            ? 'Double Face · H'
-            : language === 'fr'
-              ? 'Condition du finisher'
-              : 'Finisher condition'}</strong
-        >
+        <strong>{fighterId === 'chrollo' ? 'Double Face · H' : language === 'fr' ? 'Condition du finisher' : 'Finisher condition'}</strong>
         <span>{language === 'fr' ? moveset.finisherConditionFr : moveset.finisherConditionEn}</span>
       </footer>
     {/if}

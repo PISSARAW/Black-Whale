@@ -1,5 +1,18 @@
 # Fighting
 
+## Capacités d’arène
+
+L’option « Arène interactive » ajoute des couverts physiques destructibles.
+**O** (P1), **P** (P2) et le bouton tactile utilisent l’application de terrain du
+personnage ; **6** et **=** poussent une caisse proche. Les 40 applications et
+leurs conditions sont détaillées dans [capacites-arene.md](../../../../../docs/capacites-arene.md).
+Les animaux, graines, pièces et partisans restent fournis par la préparation
+scénarisée. Les noms d’applications, dimensions, coûts et dégâts ajoutés sont des
+réglages du duel. `arenaTechnique.test.ts` vérifie collisions, destruction,
+interruption, stockage, marques, prévisions et réinitialisation ;
+`scripts/check-arena-techniques.mjs` vérifie clavier, tactile et rendu mobile.
+
+
 `fighting` est le mode de duel 2D du Black Whale. Il reprend les personnages et
 leurs Hatsu canoniques, mais utilise un moteur arcade autonome : aucune sauvegarde,
 campagne ou règle n'est partagée avec l'Arena 3D.

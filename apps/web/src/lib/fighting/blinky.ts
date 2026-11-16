@@ -9,6 +9,7 @@ import type { ArcadeFighter, FightInput, FightProjectile, FightSide, FightState 
 export type BlinkyTarget = 'bullet' | 'card' | 'stone' | 'needle'
 export type BlinkyCommand = 'suction' | 'eject' | 'blood'
 export interface BlinkyState {
+  lastArenaObject?: string
   target: BlinkyTarget
   command?: BlinkyCommand
   lastObject?: FightProjectile

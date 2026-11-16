@@ -43,7 +43,11 @@ export function tuneBlinkyMoveset(moveset: FighterMoveset): FighterMoveset {
 }
 export function blinkyMoveAllowed(state: FightState, side: FightSide, moveId: string): boolean {
   if (moveId === 'shizuku:backSpecial')
-    return Boolean(blinkyState(state[side]).lastObject || blinkyState(state[side]).lastWasBlood)
+    return Boolean(
+      blinkyState(state[side]).lastArenaObject ||
+      blinkyState(state[side]).lastObject ||
+      blinkyState(state[side]).lastWasBlood,
+    )
   if (moveId === 'shizuku:finisher') return blinkyBloodReady(state, side)
   return true
 }

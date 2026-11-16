@@ -23,6 +23,7 @@ export type PreparedEntityKind =
   | 'destination'
   | 'delivery'
 export interface PreparedEntity {
+  arena?: import('./arenaTypes').ArenaObject
   id: string
   kind: PreparedEntityKind
   owner: FightSide | 'neutral'

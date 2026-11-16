@@ -1,4 +1,5 @@
 import { maryPredatorPrey } from './bloodyMaryPredator'
+import { withArenaPrey } from './arenaPredator'
 import { consumeControlNeedle } from './illumiFrame'
 import { chrolloHasActivePage } from './chrolloBook'
 import { wakeHanzoBody } from './hanzoProjection'
@@ -18,7 +19,7 @@ export interface PredatorPrey {
 const other = (side: FightSide): FightSide => (side === 'player' ? 'opponent' : 'player')
 
 /** Only identifiable manifestations are prey. Ordinary blows and simple aura shots are not. */
-export const PREDATOR_PREY: readonly PredatorPrey[] = [
+const CORE_PREDATOR_PREY: readonly PredatorPrey[] = [
   {
     id: 'bungee-gum',
     source: 'hisoka',
@@ -144,6 +145,8 @@ export const PREDATOR_PREY: readonly PredatorPrey[] = [
       s[side],
   },
 ]
+
+export const PREDATOR_PREY: readonly PredatorPrey[] = CORE_PREDATOR_PREY.map(withArenaPrey)
 
 type CounterKey = 'blinkyFrames' | 'manipulatedFrames' | 'stitchedFrames'
 type CounterSpec = Pick<PredatorPrey, 'id' | 'source' | 'nameFr' | 'nameEn'> & { key: CounterKey }

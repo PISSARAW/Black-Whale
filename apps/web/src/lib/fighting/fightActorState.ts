@@ -10,13 +10,17 @@ import type { ArcadeFighter, FightInput } from './types'
 
 const GROUND = 0
 
+export function auraAttackBodyFree(fighter: ArcadeFighter): boolean {
+  return !fighter.arenaRecovery && biohazardBodyFree(fighter)
+}
+
 function characterBusy(fighter: ArcadeFighter): boolean {
   if (!illumiBodyFree(fighter)) return true
   return maryHeld(fighter) || crossGameBusy(fighter) || Boolean(fighter.pluggingWounds)
 }
 
 export function canAct(fighter: ArcadeFighter): boolean {
-  return !battlePreparing(fighter) && freeCombatBody(fighter)
+  return !fighter.arenaRecovery && !battlePreparing(fighter) && freeCombatBody(fighter)
 }
 
 export function freeCombatBody(fighter: ArcadeFighter): boolean {
@@ -39,6 +43,7 @@ export function canMove(fighter: ArcadeFighter): boolean {
 
 export function canGuard(fighter: ArcadeFighter): boolean {
   return (
+    !fighter.arenaRecovery &&
     !battlePreparing(fighter) &&
     !characterBusy(fighter) &&
     biohazardBodyFree(fighter) &&

@@ -1,5 +1,7 @@
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
 import { illumiBodyFree } from './illumiState'
+import { performArenaAction, nearestArenaObject } from './arenaActions'
+import { advanceArena, collideArenaBodies, readArenaInputs, resolveArenaStrikes } from './arenaSimulation'
 import { illumiInput } from './illumiFrame'
 import { poseFighter } from './fightActorPose'
 import { holdMary, maryHeld } from './bloodyMary'
@@ -7,7 +9,7 @@ import { maryAiAction, maryAiBusy, maryAiBody } from './bloodyMaryAi'
 import { resolveFighterSpeech } from './battleConversation'
 import { reconcileBattleCantabile } from './battleCantabileFrame'
 import { battleInput, battlePreparing } from './battleCantabileRules'
-import { canAct, canMove, canGuard, playerCanJump } from './fightActorState'
+import { canAct, canMove, canGuard, playerCanJump, auraAttackBodyFree } from './fightActorState'
 import { biohazardBodyFree } from './biohazard'
 import { performPreparedAction } from './preparationActions'
 import { advancePreparation } from './preparationSimulation'
@@ -50,7 +52,7 @@ import {
 } from './hanzoProjection'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
-import { fightFormat } from './formats'
+import { finishExpiredFight } from './fightTimeout'
 import {
   advanceHatsuFrames,
   canUseFightHatsu,
@@ -63,7 +65,7 @@ import { resolveOnImpacts } from './onTechnique'
 import { fighterDefinition } from './roster'
 import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
-import { finishFight, resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
+import { resolveFightImpacts, TOWER_WIN_SCORE } from './combatImpact'
 import { chooseMovesetAttack } from './movesetAi'
 import { canUseMovesetMove, moveForAction, moveById } from './movesets'
 import { createFightState, nextFightRound } from './fightState'
@@ -108,6 +110,10 @@ export function tickFight(
   while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
     const accumulator = next.frameAccumulator - FIXED_STEP
     const previousPositions = capturePositions(next)
+    // A detached vision pauses simulation; its owner must still be able to open their eyes.
+    next = readArenaInputs(next, { player: input, opponent: opponentInput }, (current, side) =>
+      performArenaAction(current, side, performAuraAttack),
+    )
     next = {
       ...stepPostMortemOrFuture(next, () =>
         stepParallelFuture(
@@ -145,12 +151,17 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   state = advanceEmperorClock(state)
   if (state.hitstop > 0) return { ...state, frame: state.frame + 1, hitstop: state.hitstop - 1 }
   state = advancePreparation(state, { player: input, opponent: opponentInput })
+  state = readArenaInputs(state, { player: input, opponent: opponentInput }, (current, side) =>
+    performArenaAction(current, side, performAuraAttack),
+  )
+  state = advanceArena(state)
+  if (fightResolutionPending(state)) return state
   const player = updateControlledFighter(state.player, input)
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
     : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
   const judged = resolveJudgmentDeaths(
-    resolveCrossGameMovement(state, { ...state, player, opponent }),
+    resolveCrossGameMovement(state, collideArenaBodies(state, { ...state, player, opponent })),
   )
   if (fightResolutionPending(judged)) return judged
   const buffered = flushBuffered(
@@ -159,7 +170,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   )
   const withHatsu = advanceMelodyHearing(advanceHatsuFrames(buffered))
   if (fightResolutionPending(withHatsu)) return recordFightInjuries(state, withHatsu)
-  const armed = withDolphinIdentity(withHatsu, spawnRangedProjectiles)
+  const armed = resolveArenaStrikes(withDolphinIdentity(withHatsu, spawnRangedProjectiles))
   const flight = advanceProjectiles(resolvePredatorThreats(armed), FIXED_STEP)
   const resolved = reconcileBattleCantabile(
     reconcileMelodySound(
@@ -182,7 +193,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   }
   return reconcileBattleCantabile(
     reconcileMelodySound(
-      remainingFrames === 0 && state.mode !== 'training' ? finishByTime(next) : next,
+      finishExpiredFight(next),
     ),
   )
 }
@@ -273,6 +284,7 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
+  if (options.state[options.side].arenaRecovery) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
@@ -325,7 +337,7 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
 }
 
 function executeAuraAttack(options: AuraAttackOptions): FightState {
-  if (!biohazardBodyFree(options.state[options.side])) return options.state
+  if (!auraAttackBodyFree(options.state[options.side])) return options.state
   options = thetaFirearmOptions(options)
   const { side, kind } = options
   if (!fightAcceptsCommands(options.state)) return options.state
@@ -397,6 +409,10 @@ function contextualOpponentAttack(state: FightState): FightState {
 function ordinaryOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
+  if (planned.arena && nearestArenaObject(planned, 'opponent', 14) && planned.frame % 90 === 0) {
+    const terrain = performArenaAction(planned, 'opponent', performAuraAttack)
+    if (terrain !== planned) return terrain
+  }
   const [rolled, chance] = randomValue(planned)
   const gap = Math.abs(sleepingBody(rolled.player).x - rolled.opponent.x)
   const definition = fighterDefinition(rolled.opponent.id)
@@ -434,29 +450,6 @@ function randomValue(state: FightState): [FightState, number] {
   return [{ ...state, rng }, rng / 0x100000000]
 }
 
-function finishByTime(state: FightState): FightState {
-  const format = fightFormat(state.formatId)
-  if (format.victory !== 'health' && state.score.player !== state.score.opponent) {
-    return finishFight(
-      state,
-      state.score.player > state.score.opponent ? 'player' : 'opponent',
-      'time',
-    )
-  }
-  if (state.player.health === state.opponent.health) {
-    return {
-      ...state,
-      phase: 'finished',
-      winner: 'draw',
-      finishReason: 'time',
-    }
-  }
-  return finishFight(
-    state,
-    state.player.health > state.opponent.health ? 'player' : 'opponent',
-    'time',
-  )
-}
 
 export function displayPose(fighter: ArcadeFighter): FighterPose {
   return poseFighter(fighter).pose

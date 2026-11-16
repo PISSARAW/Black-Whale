@@ -22,6 +22,7 @@ export function advanceFighterPhysics(fighter: ArcadeFighter): ArcadeFighter {
   const combo = advanceCombo(fighter, vertical.y, wakeup)
   const advanced = advanceFighterAttack({
     ...fighter,
+    arenaRecovery: Math.max(0, (fighter.arenaRecovery ?? 0) - 1),
     preparationRecovery: Math.max(0, (fighter.preparationRecovery ?? 0) - 1),
     ...vertical,
     ...wakeup,

@@ -210,6 +210,7 @@
       side === 'player' ? onControl(key, active) : onOpponentControl(key, active)}
   />
   <FightResources
+    {onOpponentControl}
     {onTalk}
     {onBattleAction}
     {onControl}

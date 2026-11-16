@@ -82,10 +82,14 @@
               >{language === 'fr' ? 'Dernière matière' : 'Last matter'} : {blinkyState(fighter)
                 .lastWasBlood
                 ? labels[language].blood
-                : blinkyState(fighter).lastObject
-                  ? (labels[language][blinkyState(fighter).lastObject!.shape as BlinkyTarget] ??
-                    blinkyState(fighter).lastObject!.shape)
-                  : '—'}</span
+                : blinkyState(fighter).lastArenaObject
+                  ? language === 'fr'
+                    ? 'Caisse'
+                    : 'Crate'
+                  : blinkyState(fighter).lastObject
+                    ? (labels[language][blinkyState(fighter).lastObject!.shape as BlinkyTarget] ??
+                      blinkyState(fighter).lastObject!.shape)
+                    : '—'}</span
             >
             <small
               >{language === 'fr'

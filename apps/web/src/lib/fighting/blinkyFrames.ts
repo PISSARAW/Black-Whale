@@ -1,3 +1,4 @@
+import { forgetArenaVacuum, ejectArenaVacuum } from './arenaVacuum'
 import { attackData, attackPhase } from './frameData'
 import { sleepingBody } from './hanzoProjection'
 import { recordFightDeath } from './fightDeaths'
@@ -64,6 +65,7 @@ function swallow(state: FightState, side: FightSide): FightState {
     )
     .sort((a, b) => Math.abs(a.x - fighter.x) - Math.abs(b.x - fighter.x) || a.id - b.id)
   if (!swallowed.length) return state
+  state = forgetArenaVacuum(state, side)
   const ids = new Set(swallowed.map((shot) => shot.id))
   const lastObject = {
     ...swallowed[swallowed.length - 1],
@@ -77,13 +79,23 @@ function swallow(state: FightState, side: FightSide): FightState {
   return {
     ...state,
     projectiles: state.projectiles.filter((shot) => !ids.has(shot.id)),
-    [side]: { ...fighter, blinky: { ...memory, lastObject, lastWasBlood: false } },
+    [side]: {
+      ...fighter,
+      blinky: { ...memory, lastObject, lastWasBlood: false, lastArenaObject: undefined },
+    },
   }
 }
 function eject(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   const memory = blinkyState(fighter)
   if (fighter.attack!.projectileSpawned) return state
+  if (memory.lastArenaObject) {
+    const next = ejectArenaVacuum(state, side)
+    return {
+      ...next,
+      [side]: { ...next[side], attack: { ...next[side].attack!, projectileSpawned: true } },
+    }
+  }
   if (memory.lastWasBlood)
     return {
       ...state,
@@ -127,11 +139,17 @@ function drawBlood(state: FightState, side: FightSide, elapsed: number): FightSt
   if (!inBlinkyNozzle(state[side], { x: body.x, y: body.y + 6.1 })) return state
   const wounds = exposedBlinkyWounds(defender)
   if (!wounds || defender.health <= 0) return state
+  state = forgetArenaVacuum(state, side)
   const next = {
     ...state,
     [side]: {
       ...state[side],
-      blinky: { ...blinkyState(state[side]), lastObject: undefined, lastWasBlood: true },
+      blinky: {
+        ...blinkyState(state[side]),
+        lastObject: undefined,
+        lastWasBlood: true,
+        lastArenaObject: undefined,
+      },
     },
     [target]: { ...defender, health: Math.max(0, defender.health - BLINKY_BLOOD_DAMAGE * wounds) },
   }

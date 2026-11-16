@@ -1,5 +1,6 @@
 <script lang="ts">
   import FightPreparationSetup from './FightPreparationSetup.svelte'
+  import FightArenaSetup from './FightArenaSetup.svelte'
   import FightIllumiEquipment from './FightIllumiEquipment.svelte'
   import { createFight } from '$lib/fighting/engine'
   import { fightingStyle } from '$lib/fighting/fightStyles'
@@ -171,6 +172,7 @@
   </div>
 </section>
 
+<FightArenaSetup {environment} {language} {onEnvironment} />
 <FightIllumiEquipment {environment} {player} {opponent} {language} {onEnvironment} />
 <StagePicker {environment} {language} onSelect={onEnvironment} />
 <FightPreparationSetup {environment} {player} {opponent} {language} onChange={onEnvironment} />

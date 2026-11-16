@@ -12,7 +12,11 @@ export function blinkyActionAllowed(options: AuraAttackOptions): boolean {
   if (!command) return true
   if (!blinkyAvailable(fighter)) return false
   if (command === 'eject')
-    return Boolean(blinkyState(fighter).lastObject || blinkyState(fighter).lastWasBlood)
+    return Boolean(
+      blinkyState(fighter).lastArenaObject ||
+      blinkyState(fighter).lastObject ||
+      blinkyState(fighter).lastWasBlood,
+    )
   return command !== 'blood' || blinkyBloodReady(options.state, options.side)
 }
 

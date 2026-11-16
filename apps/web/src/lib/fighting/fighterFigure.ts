@@ -4,12 +4,14 @@ import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
 import { buildHumanFigure, type HumanFigureBuild, type HumanLook } from '$lib/tour/humanFigure'
 import { humanProfile } from '$lib/tour/humanProfiles'
 import { fighterAuraHex } from './auraColours'
+import { biscuitTrueFormProfile, shapeBiscuitTrueForm } from './biscuitFigure'
+import { isBiscuitTrueForm } from './biscuitForm'
 import { fighterDefinition } from './roster'
 import type { ArcadeFighter } from './types'
 
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
-  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), Boolean(fighter.textureSurprise), Boolean(fighter.kurapika?.emperorTime)])
+  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), isBiscuitTrueForm(fighter), Boolean(fighter.textureSurprise), Boolean(fighter.kurapika?.emperorTime)])
 }
 
 export function buildFightFigure(options: {
@@ -40,14 +42,16 @@ export function buildFightFigure(options: {
   }
   const declared = humanProfile(seen)
   const profile = fighter.id === 'franklin' ? franklinFightProfile(declared) : declared
+  const trueForm = isBiscuitTrueForm(fighter)
   // Texture Surprise changes only a flat cloth panel's appearance.
   const dressed = fighter.textureSurprise ? { ...profile, shirt: profile.skin } : profile
   const model = buildHumanFigure({
     THREE,
     glow: 'hanzoProjection' in fighter && fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
     seen,
-    profile: dressed,
+    profile: trueForm ? biscuitTrueFormProfile(dressed) : dressed,
   })
+  if (trueForm) shapeBiscuitTrueForm(model)
 
   if (fighter.id === 'franklin') {
     shapeFranklinFigure({ THREE, glow, model })

@@ -9,6 +9,7 @@ import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
 import { franklinNenAvailable } from './franklinAttack'
+import { isBiscuitFormMove, isBiscuitTrueForm } from './biscuitForm'
 import { hanzoMoveResources } from './hanzoProjection'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
@@ -75,7 +76,10 @@ export function moveForAction(
 ): FighterMove | null {
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
-  const slot = (fighter.id === 'leorio' || fighter.id === 'yokotani') && action === 'special' ? 'neutralSpecial' : slotForAction(fighter, action, input)
+  const slot =
+    (fighter.id === 'leorio' || fighter.id === 'yokotani') && action === 'special'
+      ? 'neutralSpecial'
+      : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
 }
 
@@ -85,7 +89,8 @@ export function moveForSlot(fighterId: FighterId, slot: MoveSlot): FighterMove |
 
 export function canUseMovesetMove(state: FightState, side: FightSide, move: FighterMove): boolean {
   const fighter = state[side]
-  if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side)) return false
+  if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
+    return false
   if (!hasMoveResources(fighter, move)) return false
   if (!canonicalTechniqueAllowed(state, side, move)) return false
   return move.category !== 'finisher' || finisherCondition(state, side)
@@ -97,7 +102,9 @@ export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boo
   if (!feitanMoveAvailable(fighter, move.id)) return false
   if (move.kind === 'special' && !chrolloMoveAvailable(fighter, move.id)) return false
   if (!remotePunchAvailable(fighter, move.kind, move.id)) return false
-  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
+  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter))
+    return false
+  if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
   const projectionResources = hanzoMoveResources(fighter, move.id, move.kind)
   if (projectionResources !== null) return projectionResources
   if (fighter.aura < move.auraCost) return false
@@ -169,7 +176,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
     const opponent = opponentOf(state, side)
     return opponent.hatsuEffects.forcedZetsuFrames > 0 || opponent.aura <= 30
   },
-  biscuit: (state, side) => state[side].hatsuEffects.transformationFrames > 0,
+  biscuit: (state, side) => isBiscuitTrueForm(state[side]),
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
   franklin: () => true,
   machi: (state, side) => opponentOf(state, side).hatsuEffects.stitchedFrames > 0,

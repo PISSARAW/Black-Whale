@@ -129,7 +129,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     sunMark: 0,
     moonMark: 0,
     manipulatedFrames: 0,
-    transformationFrames: 0,
     isolationFrames: 0,
     cyclotronTurns: 0,
     stitchedFrames: 0,

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { biscuitCameraFrame } from '$lib/fighting/biscuitCamera'
   import { createLsdfScene } from '$lib/fighting/lsdfScene'
   import { lsdfFighterVisible } from '$lib/fighting/lsdfPresentation'
   import {
@@ -89,6 +90,7 @@
         scene.fog = new THREE.Fog(0x05090d, 8, 18)
         const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30)
         camera.position.set(0, 2.25, 9.2)
+        let cameraLookY = 1.18
 
         const materials: Array<[string, import('three').MeshBasicMaterial]> = []
         const geometries: import('three').BufferGeometry[] = []
@@ -324,17 +326,18 @@
           const playerX = worldX(interpolatedPosition(state, 'player').x)
           const opponentX = worldX(interpolatedPosition(state, 'opponent').x)
           const { centre, gap } = projectionCameraSpan(state, [playerX, opponentX], worldX)
-          const targetZ = state.phase === 'finished' ? 7.2 : 8.1 + gap * 0.16
+          const framing = biscuitCameraFrame({ state, centre, gap, aspect: camera.aspect })
           const ease = easeFactor(CAMERA_RATE, dt)
-          camera.position.x += (centre * 0.32 - camera.position.x) * ease
-          camera.position.z += (targetZ - camera.position.z) * ease
-          camera.position.y += (2.2 - camera.position.y) * ease
+          camera.position.x += (framing.x - camera.position.x) * ease
+          camera.position.z += (framing.z - camera.position.z) * ease
+          camera.position.y += (framing.y - camera.position.y) * ease
+          cameraLookY += (framing.lookY - cameraLookY) * ease
           if (now < shakeUntil) {
             const fade = (shakeUntil - now) / Math.max(1, shakeUntil - shakeStarted)
             camera.position.x += Math.sin(now * 0.15) * shakeX * fade
             camera.position.y += Math.cos(now * 0.19) * shakeY * fade
           }
-          camera.lookAt(camera.position.x, 1.18, 0)
+          camera.lookAt(camera.position.x, cameraLookY, 0)
 
           for (let index = sparks.length - 1; index >= 0; index -= 1) {
             const spark = sparks[index]

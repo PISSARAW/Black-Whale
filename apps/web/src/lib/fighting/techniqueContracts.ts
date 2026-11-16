@@ -27,6 +27,14 @@ const PHANTOM_TROUPE = new Set<FighterId>([
 ])
 
 const CONTRACTS: Partial<Record<`${FighterId}:${MoveSlot}`, TechniqueCanonContract>> = {
+  'biscuit:neutralSpecial': {
+    source: 'Greed Island — ch. 154, Biscuit reveals her natural body',
+    evidence: 'manga-shown',
+    conditions: ['Biscuit is in her compact form and free to act on the ground.'],
+    prohibitions: ['This reveal is not an attack or Cookie treatment and cannot be stolen.'],
+    narrativeCost: 'Reveals the appearance Biscuit prefers to hide; no aura cost or timer.',
+    narrativeEffect: 'Returns to her natural muscular body for the rest of the round.',
+  },
   'leorio:neutralSpecial': {
     source: 'Hunter × Hunter — chapter 325',
     evidence: 'manga-shown',

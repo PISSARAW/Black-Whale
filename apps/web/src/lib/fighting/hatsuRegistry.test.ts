@@ -208,14 +208,11 @@ describe('fighter Hatsu registry', () => {
     expect(struck.opponent.hatsuEffects.forcedZetsuFrames).toBe(90)
   })
 
-  it('reinforces Biscuit through Body Transformation', () => {
-    const transformed = hatsuFor('biscuit').onTrigger({
-      state: closeFight('biscuit', 'hisoka'),
-      side: 'player',
-      source: 'biscuit',
-    })
-    expect(hatsuDamageFactor(transformed.player)).toBeGreaterThan(1)
-    expect(hatsuDefenceFactor(transformed.player)).toBeLessThan(1)
+  it('keeps Cookie outside the duel and does not expose a stealable Biscuit Hatsu', () => {
+    const state = closeFight('biscuit', 'hisoka')
+    expect(hatsuFor('biscuit').martialOnly).toBe(true)
+    expect(hatsuFor('biscuit').onTrigger({ state, side: 'player', source: 'biscuit' })).toBe(state)
+    expect(hatsuSourceFor(state.player, 'biscuit:neutralSpecial')).toBeNull()
   })
 
   it('uses Room 1013 Isolation to erase the next incoming hit', () => {

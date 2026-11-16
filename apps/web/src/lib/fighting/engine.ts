@@ -7,6 +7,7 @@ import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
 import { performLeorioAction } from './leorioAttack'
 import { performLsdfAction } from './lsdfAction'
+import { performBiscuitFormAction } from './biscuitFormAction'
 import { callHanzoBody, canCallHanzoBody, resolveHanzoBodyCalls } from './hanzoBodyCall'
 import { performProjectionAction } from './hanzoProjectionAction'
 import {
@@ -231,7 +232,10 @@ export function performAuraAttack(options: AuraAttackOptions): FightState {
   if (chains) return chains
   const book = performChrolloBookAction(options)
   if (book) return book
-  if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId)) return options.state
+  if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId))
+    return options.state
+  const form = performBiscuitFormAction(options)
+  if (form) return form
   const remote = performLeorioAction(options, performAuraAttack)
   if (remote) return remote
   const utility = performUtilityHatsu(options)

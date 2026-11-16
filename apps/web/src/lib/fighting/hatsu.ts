@@ -1,6 +1,7 @@
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { chainAbilitySealed } from './kurapika'
 import { canActivateLsdf } from './lsdf'
+import { isBiscuitTrueForm } from './biscuitForm'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import type { ArcadeFighter, FightSide, FightState, FighterId } from './types'
@@ -73,7 +74,7 @@ export function resolveHatsuImpact(options: {
 
 export function hatsuDamageFactor(fighter: ArcadeFighter): number {
   const baton = 1 + fighter.hatsuEffects.batonCharges * 0.12
-  const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 1.35 : 1
+  const transformed = isBiscuitTrueForm(fighter) ? 1.35 : 1
   const cyclotron = 1 + fighter.hatsuEffects.cyclotronTurns * 0.22
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 1.3 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 1.2 : 1
@@ -101,7 +102,7 @@ function completionDamageFactor(fighter: ArcadeFighter): number {
 }
 
 export function hatsuDefenceFactor(fighter: ArcadeFighter): number {
-  const transformed = fighter.hatsuEffects.transformationFrames > 0 ? 0.68 : 1
+  const transformed = isBiscuitTrueForm(fighter) ? 0.68 : 1
   const cantabile = fighter.hatsuEffects.cantabileFrames > 0 ? 0.82 : 1
   const biohazard = fighter.hatsuEffects.biohazardFrames > 0 ? 0.86 : 1
   const predator = fighter.hatsuEffects.predatorFrames > 0 ? 0.75 : 1

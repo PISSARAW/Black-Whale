@@ -245,7 +245,7 @@ function withFinisherCondition(state: FightState): FightState {
     case 'saiyu':
       return withOpponentEffect(state, 'senseSeals', 2)
     case 'biscuit':
-      return withPlayerEffect(state, 'transformationFrames', 120)
+      return { ...state, player: { ...player, biscuitTrueForm: true } }
     case 'phinks':
       return withPlayerEffect(state, 'cyclotronTurns', 4)
     case 'franklin':

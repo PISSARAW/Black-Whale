@@ -65,13 +65,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       return
     }
 
-
     if (id === 'yokotani') {
       expect(armed).toBe(ready)
       const home: FightState = {
         ...ready,
         environment: {
-          stageId: 'heilly-hideout', morenaPresent: true,
+          stageId: 'heilly-hideout',
+          morenaPresent: true,
           unlawfulIntruders: { player: side !== 'player', opponent: side !== 'opponent' },
         },
       }
@@ -83,6 +83,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       return
     }
 
+    if (id === 'biscuit') {
+      expect(armed[side].biscuitTrueForm).toBe(true)
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].aura).toBe(auraBefore)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     if (id === 'hanzo') {
       expect(armed[side].hanzoProjection).toBeDefined()
       expect(armed[side].attack).toBeNull()

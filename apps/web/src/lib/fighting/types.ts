@@ -96,7 +96,8 @@ export type FightSide = 'player' | 'opponent'
 export type FightPhase = 'ready' | 'fighting' | 'finished'
 export type FightMode = 'versus-ai' | 'versus-local' | 'training'
 export type FightNenZone = 'head' | 'torso' | 'hands' | 'feet'
-export type FightFinishReason = 'hits' | 'knockout' | 'technical-knockout' | 'time' | 'expulsion' | null
+export type FightFinishReason =
+  'hits' | 'knockout' | 'technical-knockout' | 'time' | 'expulsion' | null
 
 export interface FighterDefinition {
   id: FighterId
@@ -151,6 +152,8 @@ export interface ArcadeFighter {
   chrolloBook?: ChrolloBookState
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */
   textureSurprise?: { surface: 'cloth' }
+  /** Biscuit has revealed her natural body; persists until the next round. */
+  biscuitTrueForm?: boolean
   /** Skill 4: the controlled double leaves a separate, vulnerable sleeping body. */
   hanzoProjection?: {
     bodyX: number
@@ -220,7 +223,6 @@ export interface FighterHatsuEffects {
   sunMark: number
   moonMark: number
   manipulatedFrames: number
-  transformationFrames: number
   isolationFrames: number
   cyclotronTurns: number
   stitchedFrames: number

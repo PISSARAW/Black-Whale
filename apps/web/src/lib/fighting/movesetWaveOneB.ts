@@ -113,8 +113,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'biscuit',
     mechanic: [
-      'Vraie forme : la transformation renforce durablement attaque et défense.',
-      'True Form: transformation durably strengthens attack and defense.',
+      'L révèle le corps naturel pour toute la manche, sans frappe ni coût d’aura. Cookie reste hors du duel.',
+      'L reveals her natural body for the whole round, without a strike or aura cost. Cookie stays outside the duel.',
     ],
     finisherCondition: ['La vraie forme doit être active.', 'True Form must be active.'],
     labels: [
@@ -128,7 +128,7 @@ const SPECS: readonly MovesetSpec[] = [
       'Épaule véritable|True Shoulder',
       'Paume de recul|Retreating Palm',
       'Vraie forme|True Form',
-      'Massage éclair|Lightning Massage',
+      'Direct du maître|Master Straight',
       'Poing de Ko|Ko Fist',
       'Ken parfait|Perfect Ken',
       'Projection Shingen|Shingen Throw',
@@ -181,4 +181,26 @@ const SPECS: readonly MovesetSpec[] = [
   },
 ]
 
-export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset)
+export const WAVE_ONE_MOVESETS_B = SPECS.map(buildMoveset).map(tuneFeitanMoveset).map((moveset) => {
+  if (moveset.fighterId !== 'biscuit') return moveset
+  return {
+    ...moveset,
+    moves: moveset.moves.map((move) =>
+      move.slot === 'neutralSpecial'
+        ? {
+            ...move,
+            auraCost: 0,
+            tuning: {
+              ...move.tuning,
+              damage: 0,
+              hitstun: 0,
+              blockstun: 0,
+              hitstop: 0,
+              knockback: 0,
+              lunge: 0,
+            },
+          }
+        : move,
+    ),
+  }
+})

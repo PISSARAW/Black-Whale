@@ -55,10 +55,19 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   du Hatsu dissipent l’armure et le soleil. `feitanScene.ts` dessine l’habit sur le
   rig et le périmètre de chaleur dans le monde ; le HUD affiche la douleur et l’état.
 - Les autres Hatsu ont des effets propres : Three Monkeys scelle les sens, le projectile de Theta neutralise
-  l'aura, la transformation de Biscuit renforce attaque et défense, tandis que
+  l'aura, le corps naturel de Biscuit renforce attaque et défense, tandis que
   LSDF apporte sa réponse défensive ; Sweet Home transfère les blessures.
 - `fightStyles.ts` donne à chacun sa distance, son tempo, ses priorités d'IA et
   ses réglages de coups ; `normalFightMoves.ts` traduit ce profil en gestuelle.
+- Biscuit commence sous sa petite apparence. **L sans direction** révèle son corps
+  naturel, adulte et massif, jusqu'à la fin de la manche : aucun délai de six
+  secondes, coût d'aura, coup d'activation ou effet copiable par Skill Hunter.
+  `biscuitFormAction.ts` porte cette action corporelle et `biscuitFigure.ts` sa
+  silhouette de combat. Les multiplicateurs de force et de résistance restent un
+  équilibrage arcade. Cookie reste hors du duel ; avant + L est un « Direct du
+  maître », sans massage offensif. La manche suivante rétablit la petite forme.
+  `biscuitCamera.ts` cadre les deux silhouettes selon la largeur de l’arène, en
+  gardant le corps naturel entre le HUD et les commandes tactiles.
 - Les corps, visages, coiffures et costumes viennent du rig partagé de la visite
   (`tour/humanFigure.ts`) et des ressemblances déclarées dans `appearance.json`.
 - `engine.ts` est le moteur pur : simulation déterministe à 60 images/s, mouvement,

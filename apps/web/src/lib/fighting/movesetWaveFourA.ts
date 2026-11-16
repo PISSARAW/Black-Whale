@@ -1,3 +1,4 @@
+import { musseMoveset } from './musseMoveset'
 import { buildMoveset, type MovesetSpec } from './movesetFactory'
 
 const SPECS: readonly MovesetSpec[] = [
@@ -142,42 +143,6 @@ const SPECS: readonly MovesetSpec[] = [
       ['airLight', 'airHeavy', 'forwardSpecial'],
     ],
   },
-  {
-    fighterId: 'musse',
-    mechanic: [
-      'Garde entraîné : Secret Window ne sert qu’à espionner ; Musse se bat en soldat discipliné qui couvre ses angles.',
-      'Trained guard: Secret Window only spies; Musse fights as a disciplined soldier who covers his angles.',
-    ],
-    finisherCondition: [
-      'L’adversaire doit être à 35 PV ou moins.',
-      'The opponent must have 35 HP or less.',
-    ],
-    labels: [
-      'Direct du garde|Guard Straight',
-      'Coup de crosse|Rifle Butt',
-      'Coup à la cheville|Ankle Strike',
-      'Fauchage de patrouille|Patrol Sweep',
-      'Coup aérien|Aerial Strike',
-      'Crosse descendante|Descending Stock',
-      'Progression surveillée|Monitored Advance',
-      'Frappe de confirmation|Confirmation Strike',
-      'Repli défensif|Defensive Retreat',
-      'Frappe de couverture|Covering Strike',
-      'Sentinelle|Sentinel',
-      'Angle couvert|Covered Angle',
-      'Esquive de patrouille|Patrol Evasion',
-      'Arrestation|Arrest',
-      'Exécution de garde|Guard Execution',
-    ],
-    speed: 0.9,
-    power: 1,
-    reach: 2.2,
-    combos: [
-      ['standingLight', 'forwardLight', 'forwardSpecial'],
-      ['lowLight', 'standingHeavy', 'downSpecial'],
-      ['airHeavy', 'neutralSpecial'],
-    ],
-  },
 ]
 
-export const WAVE_FOUR_MOVESETS_A = SPECS.map(buildMoveset)
+export const WAVE_FOUR_MOVESETS_A = [...SPECS.map(buildMoveset), musseMoveset()]

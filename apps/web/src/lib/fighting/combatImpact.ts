@@ -247,6 +247,7 @@ function resolveProjectileHit(state: FightState, hit: ProjectileHit): FightState
     attacker,
     defence,
     base: hit.projectile.damage,
+    unreinforced: hit.projectile.fighterId === 'musse' && hit.projectile.matter === 'object',
     zone: hit.projectile.targetZone,
     kind: 'ranged',
     damageScale,

@@ -76,6 +76,7 @@ export function dolphinIsBusy(
 ): boolean {
   if (state[side].attack?.moveId === held.moveId) return true
   return held.sustainedKeys.some((entry) => {
+    if (entry === 'secret-window') return Boolean(state[side].secretWindow)
     if (entry === 'gum') return state.bungeeGum?.owner === side
     if (entry === 'projection') return Boolean(state[side].hanzoProjection)
     if (entry === 'texture') return Boolean(state[side].textureSurprise)
@@ -117,6 +118,7 @@ function dolphinEffectFlags(before: FightState, after: FightState, side: FightSi
   const keys = new Set<string>()
   if (after.bungeeGum?.owner === side && before.bungeeGum !== after.bungeeGum) keys.add('gum')
   if (after[side].hanzoProjection) keys.add('projection')
+  if (after[side].secretWindow) keys.add('secret-window')
   if (after[side].textureSurprise) keys.add('texture')
   if (after.lsdf?.[side]) keys.add('lsdf')
   return [...keys]

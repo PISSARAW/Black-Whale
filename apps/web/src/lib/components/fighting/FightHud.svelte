@@ -4,6 +4,7 @@
   import { bungeeVisible } from '$lib/fighting/hisokaTechnique'
   import { auraDistribution, nenStatus } from '$lib/fighting/nen'
   import type { FightState } from '$lib/fighting/types'
+  import FightSecretWindowStatus from './FightSecretWindowStatus.svelte'
   import FightChrolloStatus from './FightChrolloStatus.svelte'
   import FightBenjaminStatus from './FightBenjaminStatus.svelte'
   import FightGrudge from './FightGrudge.svelte'
@@ -34,6 +35,7 @@
     <FightKurapikaStatus {state} side="player" {language} />
     <FightPainPacker fighter={state.player} {language} />
     <FightChrolloStatus {state} side="player" {language} />
+    <FightSecretWindowStatus {state} side="player" {language} />
     {#if state.player.textureSurprise}
       <div class="secret-status">
         Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}
@@ -109,6 +111,7 @@
     <FightKurapikaStatus {state} side="opponent" {language} />
     <FightPainPacker fighter={state.opponent} {language} />
     <FightChrolloStatus {state} side="opponent" {language} />
+    <FightSecretWindowStatus {state} side="opponent" {language} />
     {#if state.opponent.textureSurprise}
       <div class="secret-status">
         Texture Surprise · {language === 'fr' ? 'tissu masqué' : 'cloth disguised'}

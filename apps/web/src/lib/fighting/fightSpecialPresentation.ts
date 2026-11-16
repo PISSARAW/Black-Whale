@@ -17,10 +17,21 @@ export function fightSpecialPresentation(
 ): SpecialPresentation {
   if (state.player.id === 'kurapika') {
     const release = state.opponent.chainJail?.owner === 'player'
-    const ready = release || Boolean(movesetFor('kurapika')?.moves.some((move) => move.category === 'special' && canUseMovesetMove(state, 'player', move)))
-    return { label: language === 'fr' ? 'Chaînes' : 'Chains', ready, hint: language === 'fr'
-      ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
-      : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin' }
+    const ready =
+      release ||
+      Boolean(
+        movesetFor('kurapika')?.moves.some(
+          (move) => move.category === 'special' && canUseMovesetMove(state, 'player', move),
+        ),
+      )
+    return {
+      label: language === 'fr' ? 'Chaînes' : 'Chains',
+      ready,
+      hint:
+        language === 'fr'
+          ? 'L : Chain Jail (hors Brigade : mort) · → fouet · ↓ soin · ← Steal Chain / Dolphin'
+          : 'L: Chain Jail (non-Troupe: death) · → whip · ↓ heal · ← Steal Chain / Dolphin',
+    }
   }
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)
@@ -45,8 +56,22 @@ function specialHint(options: {
   ready: boolean
   label: string
 }): string {
-  const { state, language, ready, label } = options
+  const { state, language } = options
+  if (state.player.id === 'musse' && state.player.secretWindow)
+    return language === 'fr'
+      ? 'Secret Window · surveillance active'
+      : 'Secret Window · monitoring active'
   if (isLsdfMove(state.player)) return lsdfHint(state, 'player', language)
+  return ordinarySpecialHint(options)
+}
+
+function ordinarySpecialHint(options: {
+  state: FightState
+  language: 'fr' | 'en'
+  ready: boolean
+  label: string
+}): string {
+  const { state, language, ready, label } = options
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   if (!movesetFor(state.player.id)) return `${label} · ${FIGHT_HATSU_AURA_COST} aura`
   if (ready) return `${label} · ${move?.auraCost ?? 40} aura`

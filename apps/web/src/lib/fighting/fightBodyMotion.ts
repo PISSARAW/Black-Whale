@@ -1,3 +1,5 @@
+import { animateMussePistol } from './mussePistol'
+import { musseKeyedMove } from './mussePoses'
 import { benjaminKeyedMove } from './benjaminPoses'
 import { chrolloKeyedMove } from './chrolloPoses'
 import { animateChrolloBook } from './chrolloFigure'
@@ -73,6 +75,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
   const plan = bodyPlan(fighter, options)
   return (human) => {
+    animateMussePistol(human.figure, fighter)
     animateFranklinHands(human.figure, fighter)
     animateChrolloBook(human.figure, fighter)
     if (!plan && !hasFightRig(human.figure)) {
@@ -174,7 +177,12 @@ function attackPlan(fighter: ArcadeFighter, standing: FightPose): BodyPlan | nul
 }
 
 function characterKeyedMove(fighter: ArcadeFighter, slot: MoveSlot) {
-  return chrolloKeyedMove(fighter) ?? benjaminKeyedMove(fighter) ?? keyedMove(fighter.id, slot)
+  return (
+    musseKeyedMove(fighter) ??
+    chrolloKeyedMove(fighter) ??
+    benjaminKeyedMove(fighter) ??
+    keyedMove(fighter.id, slot)
+  )
 }
 
 function attackBlend(kind: AttackKind): number {

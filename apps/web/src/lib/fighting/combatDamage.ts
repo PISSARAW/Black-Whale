@@ -26,6 +26,8 @@ interface ResolvedDamageOptions {
   kind: AttackKind
   damageScale: number
   openingMultiplier: number
+  /** A conventional Musse bullet carries no invented aura reinforcement. */
+  unreinforced?: boolean
 }
 
 export function resolvedDamage(options: ResolvedDamageOptions): number {
@@ -44,17 +46,15 @@ function attackDamage(
     blocked: boolean
   },
 ): number {
-  const { attacker, defender, base, blocked, zone, kind, damageScale, openingMultiplier } = options
+  const { defender, base, blocked, zone, damageScale, openingMultiplier } = options
   if (blocked && defender.nen.ken) return 0
   const guard = blocked ? 0.28 : 1
   return Math.max(
     1,
     Math.round(
       base *
-        fighterDefinition(attacker.id).power *
-        nenAttackFactor(attacker, kind) *
+        attackerDamageFactor(options) *
         nenDamageFactor(defender, zone) *
-        hatsuDamageFactor(attacker) *
         hatsuDefenceFactor(defender) *
         guard *
         damageScale *
@@ -201,4 +201,15 @@ export function atWall(
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value))
+}
+
+function attackerDamageFactor(
+  options: Pick<ResolvedDamageOptions, 'attacker' | 'kind' | 'unreinforced'>,
+): number {
+  if (options.unreinforced) return 1
+  return (
+    fighterDefinition(options.attacker.id).power *
+    nenAttackFactor(options.attacker, options.kind) *
+    hatsuDamageFactor(options.attacker)
+  )
 }

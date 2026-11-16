@@ -61,6 +61,18 @@ const CANONICAL_PROJECTILES: Partial<Record<FighterId, ProjectileProfile>> = {
     damage: 8,
     size: [0.85, 0.45],
   }),
+  musse: {
+    ...projectile({
+      matter: 'object',
+      labels: ['Pistolet', 'Handgun'],
+      shape: 'bullet',
+      colour: '#e0d4b5',
+      speed: 84,
+      damage: 10,
+      size: [0.45, 0.2],
+    }),
+    y: 11.4,
+  },
   benjamin: projectile({
     matter: 'object',
     labels: ['Mitraillette · Rafale', 'Machine Gun · Burst'],
@@ -204,12 +216,13 @@ export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
     return hasMoveResources(fighter, moveForSlot('leorio', 'neutralSpecial')!)
   if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   if (fighter.hanzoProjection) return false
+  if (fighter.id === 'musse') return true
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }
 
 export function rangedAuraCost(id: FighterId): number {
   if (id === 'kurapika') return moveForSlot(id, 'forwardSpecial')!.auraCost
-  if (id === 'benjamin') return 0
+  if (id === 'benjamin' || id === 'musse') return 0
   return id === 'leorio' ? moveForSlot(id, 'neutralSpecial')!.auraCost : RANGED_AURA_COST
 }
 

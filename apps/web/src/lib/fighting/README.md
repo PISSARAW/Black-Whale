@@ -126,11 +126,32 @@ campagne ou règle n'est partagée avec l'Arena 3D.
 - `hatsu/registry.ts` associe chaque combattant à un contrat `FighterHatsu`. Chaque
   Hatsu vit dans son propre module et reçoit les crochets de déclenchement, d'impact
   et de frame ; le Bungee Gum ne dépend donc plus de `engine.ts`.
-- Furykov, Cluck, Beyond, Musse et Sayird jouent en **martial pur**
+- Furykov, Cluck, Beyond et Sayird jouent en **martial pur**
   (`martialOnlyHatsu`) : leur seul Hatsu canon exige une préparation qu'un duel
   n'offre pas (co-présence de plusieurs jours, oiseaux messagers, sacrifice
-  posthume, familier espion). Leurs techniques restent des coups chargés de Ren,
+  posthume, observation prolongée). Leurs techniques restent des coups chargés de Ren,
   sans effet de Hatsu ; Chrollo ne peut donc rien leur copier.
+- Musse utilise **U** pour son pistolet ordinaire : une balle physique par pression,
+  sans coût d’aura ni renforcement automatique par Ren, Ko ou un Hatsu. L’arme
+  reste utilisable en Zetsu ou si son Hatsu est volé. Le modèle tient le pistolet
+  en main droite, vise, produit un éclair au départ du tir puis le rengaine.
+  **L**, avec ou sans direction, pose **Secret Window** par contact (chapitre 373),
+  y compris sur un bras en garde, sans dégâts, stun, recul, points ou bonus défensif.
+  Hors de portée, pendant une invulnérabilité ou après interruption du geste,
+  aucun hibou n’est attaché. Une esquive effective empêche le contact.
+  Un seul hibou suffit pour la cible du duel ; il rapporte ses gestes observables,
+  sans nommer un Hatsu caché ni lire son aura, ses pensées ou son avenir.
+  Il suit le corps physique de Hanzo, jamais son double distant. Seul son utilisateur
+  voit le hibou ; la scène prend le point de vue du joueur 1 et le versus local
+  partage les deux affichages de surveillance. Le hibou disparaît à la perte du Nen
+  ou au changement de manche. Skill Hunter ne considère pas ce hibou privé comme
+  un Hatsu vu ; une copie déjà acquise conserve les contraintes du livre, et un
+  emprunt de Dolphin reste actif tant que sa surveillance perdure.
+  Le moveset retire les variantes offensives et le finisher inventés : dix gestes
+  physiques de garde et une technique de surveillance. Coût (16 aura), frames,
+  portée, interruption par Zetsu et munitions non comptées sont des réglages de duel.
+  L’écoute à travers une paroi et la restitution après observation prolongée ne
+  sont pas transformées en bonus de combat dans cette arène ouverte.
 - Camilla suit le même régime de son vivant : Cat's Name est un Nen conditionnel
   (`onDeath`). Il ne s'éveille qu'à sa mort par un coup direct, dans un format
   qui se joue à la vie : le chat tue le meurtrier et Camilla revient.

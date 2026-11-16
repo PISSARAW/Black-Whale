@@ -38,20 +38,27 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     if (id === 'feitan') {
       expect(armed).toBe(ready)
       const wounded = recordFightInjuries(ready, {
-        ...ready, [side]: { ...ready[side], health: 80 },
+        ...ready,
+        [side]: { ...ready[side], health: 80 },
       })
       const wrapped = advance(performAttack(wounded, side, 'special'), 0.4)
-      expect(wrapped[side].hatsuEffects.painPacker).toMatchObject({ armour: true, packedDamage: 20 })
+      expect(wrapped[side].hatsuEffects.painPacker).toMatchObject({
+        armour: true,
+        packedDamage: 20,
+      })
       expect(wrapped[side].health).toBe(80)
       expect(wrapped.impact).toBeNull()
       return
     }
 
-
     if (id === 'chrollo') {
       expect(armed[side].attack?.moveId).toBe('chrollo:neutralSpecial')
       expect(armed[side].aura).toBe(auraBefore - moveForSlot(id, 'neutralSpecial')!.auraCost)
-      const close = { ...armed, player: { ...armed.player, x: 40 }, opponent: { ...armed.opponent, x: 46 } }
+      const close = {
+        ...armed,
+        player: { ...armed.player, x: 40 },
+        opponent: { ...armed.opponent, x: 46 },
+      }
       expect(advance(close, 0.4).impact?.attacker).toBe(side)
       return
     }
@@ -87,6 +94,11 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
       expect(armed[side].biscuitTrueForm).toBe(true)
       expect(armed[side].attack).toBeNull()
       expect(armed[side].aura).toBe(auraBefore)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
+    if (id === 'musse') {
+      expect(armed[side].aura).toBe(auraBefore - moveForSlot('musse', 'neutralSpecial')!.auraCost)
       expect(advance(armed, 0.4).impact).toBeNull()
       return
     }

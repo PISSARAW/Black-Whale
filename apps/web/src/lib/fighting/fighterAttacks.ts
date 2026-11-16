@@ -61,7 +61,7 @@ export function startFighterAttack(options: {
       confirmedHit: false,
       frame: 0,
       impacted: false,
-      auraCharged,
+      auraCharged: auraCharged && !(fighter.id === 'musse' && kind === 'ranged'),
       concealed,
       hatsuSource:
         kind === 'special'
@@ -121,11 +121,15 @@ export function canBufferFighterAttack(fighter: ArcadeFighter): boolean {
   return remaining <= INPUT_BUFFER_FRAMES
 }
 
-function attackAuraCost(kind: AttackKind, moveId?: string, fighterId?: FighterId): number {
+function attackAuraCost(
+  kind: AttackKind,
+  moveId: string | undefined,
+  fighterId: FighterId,
+): number {
   const move = moveById(moveId)
   if (move) return move.auraCost
   if (kind === 'special') return FIGHT_HATSU_AURA_COST
-  return kind === 'ranged' && fighterId !== 'benjamin' ? RANGED_AURA_COST : 0
+  return kind === 'ranged' && !['benjamin', 'musse'].includes(fighterId) ? RANGED_AURA_COST : 0
 }
 
 function canAct(fighter: ArcadeFighter): boolean {

@@ -178,7 +178,10 @@ describe('Kurapika manga chains in the 2D engine', () => {
     expect(enhanced.player.health).toBe(70)
     expect(activeHitbox(cast(state, 'downSpecial').player)).toBeNull()
     const full = advance(
-      cast({ ...state, player: { ...state.player, health: fightFormat(state.formatId).health - 2 } }, 'downSpecial'),
+      cast(
+        { ...state, player: { ...state.player, health: fightFormat(state.formatId).health - 2 } },
+        'downSpecial',
+      ),
       60,
     )
     expect(full.player.health).toBe(fightFormat(full.formatId).health)
@@ -226,7 +229,7 @@ describe('Kurapika manga chains in the 2D engine', () => {
     const attached = advance(cast(state, 'backSpecial'), 19)
     const escaped = { ...attached, opponent: { ...attached.opponent, x: 90 } }
     expect(advance(escaped, 80).player.kurapika?.held).toBeNull()
-    const martial = advance(cast(duel('musse'), 'backSpecial'), 90)
+    const martial = advance(cast(duel('furykov'), 'backSpecial'), 90)
     expect(martial.opponent.aura).toBeLessThan(18)
     expect(martial.player.kurapika?.held).toBeNull()
   })

@@ -40,7 +40,12 @@ export function createProjectileScene(options: ProjectileSceneOptions): Projecti
       const mesh = meshes.get(projectile.id) ?? build(projectile)
       mesh.position.set(options.worldX(projectile.x), options.worldY(projectile.y), 0.32)
       mesh.rotation.x = ['orb', 'stone'].includes(projectile.shape) ? seconds * 4 : 0
-      mesh.rotation.z = projectile.shape === 'card' ? seconds * 8 : seconds * 2
+      mesh.rotation.z =
+        projectile.fighterId === 'musse'
+          ? 0
+          : projectile.shape === 'card'
+            ? seconds * 8
+            : seconds * 2
     }
     for (const [id, mesh] of meshes) {
       if (active.has(id)) continue
@@ -64,6 +69,8 @@ function projectileGeometry(
   projectile: FightProjectile,
 ): import('three').BufferGeometry {
   const { THREE, geometry } = options
+  if (projectile.fighterId === 'musse' && projectile.shape === 'bullet')
+    return geometry(new THREE.CapsuleGeometry(0.018, 0.08, 3, 7).rotateZ(Math.PI / 2))
   if (projectile.shape === 'card') return geometry(new THREE.BoxGeometry(0.28, 0.42, 0.025))
   if (projectile.shape === 'chain') return geometry(new THREE.CapsuleGeometry(0.07, 0.62, 3, 7))
   if (projectile.shape === 'page') return geometry(new THREE.PlaneGeometry(0.4, 0.5))

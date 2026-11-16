@@ -3,6 +3,7 @@ import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
 import type { FightEnvironment } from './fightEnvironment'
 import type { LsdfGuard } from './lsdf'
+import type { SecretWindowState } from './secretWindow'
 import type { NenTechniqueState } from '@black-whale/nen-engine'
 import type { FightFormatId } from './formats'
 
@@ -149,6 +150,8 @@ export interface ArcadeFighter {
   auraExhausted: boolean
   hatsuChargeFrames: number
   hatsuEffects: FighterHatsuEffects
+  /** Musse’s contact owl: private observation, never a combat modifier. */
+  secretWindow?: SecretWindowState
   /** Bandit's Secret: retained pages, one open page and one Double Face bookmark. */
   chrolloBook?: ChrolloBookState
   /** Texture Surprise disguises an existing cloth panel, never the physical body. */

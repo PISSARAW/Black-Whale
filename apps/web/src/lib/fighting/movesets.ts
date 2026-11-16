@@ -7,6 +7,7 @@ import { chrolloMoveAvailable, CHROLLO_SECONDARY } from './chrolloBook'
 import { tuneChrolloMoveset } from './chrolloMoveset'
 import { tuneHisokaMoveset } from './hisokaMoveset'
 import { remotePunchAvailable } from './leorioAttack'
+import { musseMoveAvailable } from './secretWindow'
 import { canActivateLsdf, isLsdfMove } from './lsdf'
 import { sweetHomeAvailable, sweetHomeCanTouch } from './sweetHomeContacts'
 import { tuneFranklinMoveset } from './franklinMoveset'
@@ -84,7 +85,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    (fighter.id === 'leorio' || fighter.id === 'yokotani') && action === 'special'
+    ['leorio', 'yokotani', 'musse'].includes(fighter.id) && action === 'special'
       ? 'neutralSpecial'
       : slotForAction(fighter, action, input)
   return moveset.moves.find((move) => move.slot === slot) ?? null
@@ -104,6 +105,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (!musseMoveAvailable(fighter, move.id)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
   if (isBiscuitFormMove(fighter, move.id)) return !isBiscuitTrueForm(fighter)
@@ -229,7 +231,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   cluck: (state, side) => opponentOf(state, side).health <= 40,
   beyond: (state, side) => state[side].health <= 40,
   longhi: (state, side) => opponentOf(state, side).hatsuEffects.contractFrames > 0,
-  musse: (state, side) => opponentOf(state, side).health <= 35,
   padaille: (state, side) => state[side].hatsuEffects.weaponFrames > 0,
   sayird: (state, side) => state[side].comboHits >= 2,
   terebellum: (state, side) => sweetHomeAvailable(state, side) && sweetHomeCanTouch(state, side),

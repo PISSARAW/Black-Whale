@@ -45,6 +45,8 @@ export function resolveDeathHatsu(
 /** Activating a Hatsu also shows it to the other fighter (Skill Hunter's first condition). */
 export function triggerHatsu(state: FightState, side: FightSide, source: FighterId): FightState {
   if (source === 'yokotani' && !canActivateLsdf(state, side)) return state
+  // Secret Window's private owl cannot satisfy Skill Hunter's visual witnessing condition.
+  if (source === 'musse') return hatsuFor(source).onTrigger({ state, side, source })
   const witnessSide = side === 'player' ? 'opponent' : 'player'
   const witness = state[witnessSide]
   const seen = {

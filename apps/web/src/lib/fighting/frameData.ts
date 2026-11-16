@@ -1,3 +1,4 @@
+import { secretWindowUtility } from './secretWindow'
 import { benjaminRangedData } from './benjaminWeapon'
 import { benjaminUtilityMove } from './benjaminBaton'
 import { isKurapikaUtility, dolphinActor } from './kurapika'
@@ -201,6 +202,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (secretWindowUtility(fighter)) return null
   fighter = dolphinActor(fighter)
   if (utilityAttack(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')

@@ -73,6 +73,7 @@ function clearPageEffects(options: {
   const { state, side, page } = options
   const targetSide = side === 'player' ? 'opponent' : 'player'
   let owner = clearEffects(state[side], OWN_EFFECTS[page] ?? [])
+  owner = endCopiedObservation(owner, page)
   if (page === 'hanzo') owner = endCopiedProjection(owner)
   if (page === 'feitan' && owner.hatsuEffects.painPacker) {
     owner = {
@@ -94,6 +95,10 @@ function clearPageEffects(options: {
     [targetSide]: clearEffects(state[targetSide], TARGET_EFFECTS[page] ?? []),
     bungeeGum: page === 'hisoka' && state.bungeeGum?.owner === side ? null : state.bungeeGum,
   }
+}
+
+function endCopiedObservation(fighter: CopiedFighter, page: ChrolloPage): CopiedFighter {
+  return page === 'musse' ? { ...fighter, secretWindow: undefined } : fighter
 }
 
 function clearEffects(fighter: CopiedFighter, keys: readonly EffectKey[]): CopiedFighter {

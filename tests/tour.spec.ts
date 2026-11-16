@@ -124,21 +124,15 @@ test.describe('the walk', () => {
     // The counters have to be the whole frame and not its last draw call — the
     // reason `meteredFrame` turns `info.autoReset` off. A deck that reached the
     // screen drew triangles.
-    // Parsed rather than pattern-matched: `Intl` groups thousands with a narrow
-    // no-break space, and a regex written against an ordinary one would pass on
-    // a broken "0 tri" and fail on a healthy "41 203 tri".
-    const counters = async () => {
-      const readout = (await meter.textContent()) ?? ''
-      const countBefore = (unit: string) => {
-        const raw = new RegExp(`([\\d\\s\\u202f\\u00a0]+)(?:${unit})`).exec(readout)?.[1] ?? ''
-        return Number(raw.replace(/\D/g, ''))
-      }
-      return {
-        tier: /\blow\b/.test(readout) ? ('low' as const) : ('high' as const),
-        triangles: countBefore('tri'),
-        calls: countBefore('calls|appels'),
-      }
-    }
+    // Read one atomic measurement. textContent can join adjacent flex items
+    // ("cpu 62" + "41 calls" becomes "cpu 6241 calls"), and translations
+    // change the units and thousands separators.
+    const counters = () =>
+      meter.evaluate((node) => ({
+        tier: node.dataset.tier === 'low' ? ('low' as const) : ('high' as const),
+        triangles: Number(node.dataset.triangles),
+        calls: Number(node.dataset.calls),
+      }))
 
     // The first half-second can still contain the deck's one-off upload and
     // shader compilation. A budget describes the settled walk, so wait for a

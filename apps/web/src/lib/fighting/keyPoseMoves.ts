@@ -1,3 +1,4 @@
+import { FRANKLIN_KEY_POSES } from './keyPosesFranklin'
 import { archetypeTimeline } from './fightArchetypes'
 import { HISOKA_KEY_POSES } from './keyPosesHisoka'
 import { KURAPIKA_KEY_POSES } from './keyPosesKurapika'
@@ -13,6 +14,7 @@ import type { FighterId, MoveSlot } from './types'
 const KEY_POSES: Partial<Record<FighterId, Partial<Record<MoveSlot, MoveTimeline>>>> = {
   kurapika: KURAPIKA_KEY_POSES,
   hisoka: HISOKA_KEY_POSES,
+  franklin: FRANKLIN_KEY_POSES,
 }
 
 export interface KeyedMove {

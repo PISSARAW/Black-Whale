@@ -153,6 +153,7 @@ export interface ArcadeFighter {
     concealed: boolean
     hatsuSource: FighterId | null
     projectileSpawned: boolean
+    projectilesSpawned?: number
     reversal: boolean
   } | null
   bufferedAttack: {

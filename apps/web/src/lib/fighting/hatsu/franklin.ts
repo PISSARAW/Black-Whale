@@ -1,21 +1,9 @@
-import { unchangedFrame, unchangedTrigger, type FighterHatsu } from './contract'
-
-const BARRAGE_DAMAGE = 10
+import { unchangedFrame, unchangedImpact, unchangedTrigger, type FighterHatsu } from './contract'
 
 export const franklinHatsu: FighterHatsu = {
   id: 'franklin',
   onTrigger: unchangedTrigger,
-  onImpact: ({ state, defenderSide, blocked }) => {
-    if (blocked) return state
-    const defender = state[defenderSide]
-    return {
-      ...state,
-      [defenderSide]: {
-        ...defender,
-        health: Math.max(0, defender.health - BARRAGE_DAMAGE),
-        hitStun: Math.max(defender.hitStun, 32),
-      },
-    }
-  },
+  // Every point of damage comes from a travelling bullet, never a flat impact bonus.
+  onImpact: unchangedImpact,
   onFrame: unchangedFrame,
 }

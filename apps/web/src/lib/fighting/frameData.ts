@@ -1,3 +1,4 @@
+import { franklinAttackData, usesFranklinBarrage } from './franklinAttack'
 import { variantData } from './duelMoves'
 import { fighterDefinition } from './roster'
 import { fightingStyle } from './fightStyles'
@@ -96,6 +97,10 @@ const ATTACK_DATA: Record<AttackKind, AttackFrameData> = {
 }
 
 export function attackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
+  return franklinAttackData(baseAttackData(kind, fighter), fighter)
+}
+
+function baseAttackData(kind: AttackKind, fighter: ArcadeFighter): AttackFrameData {
   const move = moveById(fighter.attack?.moveId)
   if (move) return movesetAttackData(fighter, move)
   const definition = fighterDefinition(fighter.id)
@@ -185,6 +190,7 @@ export function attackProgress(fighter: ArcadeFighter): number {
 }
 
 export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
+  if (usesFranklinBarrage(fighter)) return null
   if (!fighter.attack || fighter.attack.kind === 'ranged' || attackPhase(fighter) !== 'active')
     return null
   return worldBox(fighter, attackData(fighter.attack.kind, fighter).box)

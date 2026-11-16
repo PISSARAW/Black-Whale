@@ -1,3 +1,5 @@
+import { franklinNenAvailable } from './franklinAttack'
+import { spawnFranklinBarrage } from './franklinBarrage'
 import { attackPhase, boxesOverlap, hurtboxes, otherSide, type FightBox } from './frameData'
 import type {
   ArcadeFighter,
@@ -191,17 +193,20 @@ export function projectileProfile(id: FighterId): ProjectileProfile {
   return CANONICAL_PROJECTILES[id] ?? THROWN_STONE
 }
 
-export function canUseRangedAttack(fighter: Pick<ArcadeFighter, 'aura' | 'nen'>): boolean {
+export function canUseRangedAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.id === 'franklin' && !franklinNenAvailable(fighter)) return false
   return fighter.aura >= RANGED_AURA_COST && fighter.nen.mode !== 'zetsu'
 }
 
 export function spawnRangedProjectiles(state: FightState): FightState {
-  return spawnForSide(spawnForSide(state, 'player'), 'opponent')
+  const barrage = spawnFranklinBarrage(spawnFranklinBarrage(state, 'player'), 'opponent')
+  return spawnForSide(spawnForSide(barrage, 'player'), 'opponent')
 }
 
 function spawnForSide(state: FightState, side: FightSide): FightState {
   const fighter = state[side]
   if (
+    fighter.id === 'franklin' ||
     fighter.attack?.kind !== 'ranged' ||
     fighter.attack.projectileSpawned ||
     attackPhase(fighter) !== 'active'

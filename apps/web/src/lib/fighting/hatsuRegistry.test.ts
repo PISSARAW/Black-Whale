@@ -251,7 +251,7 @@ describe('fighter Hatsu registry', () => {
     expect(state.player.hatsuEffects.cyclotronTurns).toBe(0)
   })
 
-  it('adds Franklin’s machine-gun barrage to a confirmed hit', () => {
+  it('does not add invisible damage on top of Franklin’s travelling bullets', () => {
     const ready = closeFight('franklin', 'hisoka')
     const struck = hatsuFor('franklin').onImpact({
       state: ready,
@@ -261,7 +261,7 @@ describe('fighter Hatsu registry', () => {
       blocked: false,
       concealed: false,
     })
-    expect(struck.opponent.health).toBe(ready.opponent.health - 10)
+    expect(struck).toBe(ready)
   })
 
   it('lets Machi and Illumi immobilize a target in distinct ways', () => {

@@ -63,6 +63,16 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   sans leur inventer de technique de Nen. Les collisions sont transmises à
   `combatImpact.ts`, qui leur applique la même garde, parade, aura et décision de
   score qu'aux coups physiques.
+- Franklin tire **Double Machine Gun** avec U et L : les balles de Nen partent
+  successivement des deux mains, en parcourant les dix doigts. U produit dix
+  tirs, L vingt, et H une rafale prolongée sans seuil de PV adverse. Les variantes
+  directionnelles changent la durée ou la hauteur de tir, sans ajouter de Hatsu.
+  Les dégâts dépendent exclusivement des collisions des balles ; un impact reçu,
+  Zetsu, un vol de capacité ou un sceau de On empêchent les émissions suivantes.
+  Les doigts sectionnés, leurs chaînettes et les éclats au départ des tirs sont
+  animés sur le rig de duel. La mutilation est une restriction permanente du
+  personnage, pas une transformation à activer. Cadence, coûts et dégâts sont
+  des réglages arcade ; les gardes Nen ne sont pas universellement ignorées.
 - `FightScene.svelte` rend les deux rigs, le décor, les impacts et la caméra dans
   une seule scène WebGL. Les portraits de sélection restent des instantanés séparés.
 - `stages.ts` liste les terrains. La soute et la Tour Céleste sont dessinées ici

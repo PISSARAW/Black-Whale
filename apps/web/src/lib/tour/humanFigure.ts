@@ -4,7 +4,7 @@ import { humanAnimation, poseHuman } from './humanAnimation'
 import { legacyHumanPose as legacyPose } from './humanRestPoses'
 import { addPrisonBook } from './humanPrisonProps'
 import { addCourtGown, addMorenaDetails, addSilentMajorityCostume } from './humanCostume'
-import { frameShape, hasLikeness, humanProfile, isMorena } from './humanProfiles'
+import { frameShape, hasLikeness, humanProfile, isMorena, type HumanProfile } from './humanProfiles'
 import { buildHumanHead } from './humanHead'
 import { buildHumanLimbs } from './humanLimbs'
 import { CANON, stance } from './humanProportions'
@@ -22,6 +22,8 @@ export interface HumanFigureBuild {
   /** The refractive shell an aura wears. Absent on the `low` palier. */
   glass?: Glass
   seen: HumanLook
+  /** Explicit body variant supplied by a game; the visit keeps its catalogue profile. */
+  profile?: HumanProfile
   /** What the visitor can see of aura. Absent is plain sight. See `auraSight.ts`. */
   observerSight?: AuraSight
 }
@@ -171,12 +173,12 @@ export function buildHumanFigure({
   glow,
   glass,
   seen,
+  profile = humanProfile(seen),
   observerSight = 'sight',
 }: HumanFigureBuild): HumanFigure {
   const root = new THREE.Group()
   const figure = new THREE.Group()
   const far = new THREE.Group()
-  const profile = humanProfile(seen)
   // A child is not a small man and a baby is not a small child — ADR-005 §4-P2.
   const frame = frameShape(profile.frame)
   const { lift, stature } = stance(frame)

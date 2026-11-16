@@ -156,7 +156,7 @@ describe('wave one movesets', () => {
     expect(armed.player.aura).toBe(45)
   })
 
-  it.each(WAVE_TWO_FIGHTERS)('%s wave-two finisher is conditionally locked', (fighterId) => {
+  it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'franklin'))('%s wave-two finisher is conditionally locked', (fighterId) => {
     const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
     const supplied = withFinisherCondition({
       ...base,

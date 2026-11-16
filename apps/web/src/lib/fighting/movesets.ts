@@ -1,3 +1,5 @@
+import { tuneFranklinMoveset } from './franklinMoveset'
+import { franklinNenAvailable } from './franklinAttack'
 import { canUseHatsu } from '@black-whale/nen-engine'
 import { hatsuSealedByOn } from './onTechnique'
 import { moveId } from './movesetFactory'
@@ -34,10 +36,10 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map((moveset) => [moveset.fighterId, moveset]),
+  ALL_MOVESETS.map(tuneFranklinMoveset).map((moveset) => [moveset.fighterId, moveset]),
 )
 const MOVES = new Map(
-  ALL_MOVESETS.flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),
+  [...MOVESETS.values()].flatMap((moveset) => moveset.moves.map((move) => [move.id, move] as const)),
 )
 
 export const WAVE_ONE_FIGHTERS = WAVE_ONE_MOVESETS.map((moveset) => moveset.fighterId)
@@ -77,6 +79,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  if (fighter.id === 'franklin' && move.kind === 'special' && !franklinNenAvailable(fighter)) return false
   if (fighter.aura < move.auraCost) return false
   return move.category !== 'special' && move.category !== 'finisher'
     ? true
@@ -151,7 +154,7 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   },
   biscuit: (state, side) => state[side].hatsuEffects.transformationFrames > 0,
   phinks: (state, side) => state[side].hatsuEffects.cyclotronTurns >= 4,
-  franklin: (state, side) => opponentOf(state, side).health <= 40,
+  franklin: () => true,
   machi: (state, side) => opponentOf(state, side).hatsuEffects.stitchedFrames > 0,
   illumi: (state, side) => opponentOf(state, side).hatsuEffects.needleFrames > 0,
   kalluto: (state, side) => opponentOf(state, side).hatsuEffects.serpentMarks >= 2,

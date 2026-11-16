@@ -28,7 +28,9 @@ une vérification dans le manga avant d'être corrigés.
    `book-and-theft-conditions`, `warning-before-restraint`, `death-by-attacker`…) sont ignorées.
 3. **Coût unique.** `FIGHT_HATSU_AURA_COST = 40` pour tous. Les fiches déclarent de 6 (Ripper
    Cyclotron) à 24 (Chain Jail). Les coûts non-aura (durée de vie d'Emperor Time, serment mortel,
-   doigts coupés de Franklin) ne sont modélisés nulle part.
+   doigts coupés de Franklin) ne sont modélisés nulle part dans l’état initial.
+   _Franklin corrigé le 2026-11-16 : les dix doigts sectionnés sont représentés
+   comme une restriction permanente ; le Hatsu produit des rafales de projectiles._
 4. **La règle du roster est violée par le roster lui-même.** _Traité le 2026-11-16 pour cinq des six :_ Furykov, Cluck, Beyond, Musse et Sayird jouent en martial pur (`martialOnlyHatsu`). Silent Majority est retiré du roster jouable, qui passe à 40.
    Le README exclut « les pouvoirs qui
    exigent une préparation incompatible avec un duel ». Or Furykov (jours de co-présence), Cluck
@@ -72,7 +74,7 @@ une vérification dans le manga avant d'être corrigés.
 
 | Combattant | Hatsu en jeu                                   | Canon (fiche)                                                           | Verdict  | Écart                                                                                                                                                                                             |
 | ---------- | ---------------------------------------------- | ----------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Franklin   | +10 dégâts et stun                             | Double Machine Gun : rafale soutenue, les constructions n'arrêtent rien | D        | Correct. Pourrait percer les défenses Nen ; doigts coupés (serment) non mentionnés.                                                                                                               |
+| Franklin   | Rafales de balles de Nen depuis les dix doigts | Double Machine Gun : tirs rapides depuis les deux mains, renforcés par les doigts sectionnés | D | Corrigé le 2026-11-16 : vrais projectiles, tirs interrompus à l’impact, doigts ouverts et chaînettes. Restriction permanente documentée. Aucun bonus d’impact invisible ni seuil de PV pour la rafale prolongée. Les gardes Nen restent actives ; le manga ne justifie pas un percement universel. |
 | Machi      | Paralysie 1,5 s sur tout coup                  | Fils de Nen : suture, pistage                                           | **C**    | Paralysie inventée. Le canon donne soin (suturer ses plaies) et marquage de la cible.                                                                                                             |
 | Illumi     | −12 aura, paralysie 2 s                        | Aiguilles : contact **et** ordre, marionnette jetable                   | B        | Abstraction acceptable ; l'ordre et une limite (une aiguille par marionnette) manquent.                                                                                                           |
 | Kalluto    | 3 marques → 18 dégâts (« morsure de serpent ») | Fiche : poupées de papier de surveillance                               | C        | Le combat de Kalluto au papier est canon, mais le serpent est _à sourcer_.                                                                                                                        |

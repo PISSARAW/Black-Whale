@@ -1,3 +1,4 @@
+import { animateFranklinHands } from './franklinHands'
 import type { HumanMotion } from '$lib/tour/humanAnimation'
 import { attackMotionAccent } from './fightAttackMotion'
 import { READY_ARMS } from './fightGestures'
@@ -68,6 +69,7 @@ export function fightBodyMotion(options: BodyMotionOptions): HumanMotion {
   const { fighter, seconds, fallback } = options
   const plan = bodyPlan(fighter, options)
   return (human) => {
+    animateFranklinHands(human.figure, fighter)
     if (!plan && !hasFightRig(human.figure)) {
       fallback?.(human)
       return

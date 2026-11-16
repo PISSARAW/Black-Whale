@@ -25,8 +25,6 @@
     throwTechMotion,
     wakeupMotion,
   } from '$lib/fighting/reactionMotion'
-  import { fighterAuraHex } from '$lib/fighting/auraColours'
-  import { fighterDefinition } from '$lib/fighting/roster'
   import { createProjectileScene } from '$lib/fighting/projectileScene'
   import { createFighterEffectScene } from '$lib/fighting/fighterEffectScene'
   import { DEFAULT_FIGHT_STAGE, type FightStageId } from '$lib/fighting/stages'
@@ -68,7 +66,7 @@
     async function mountScene() {
       try {
         const THREE = await import('three')
-        const { buildHumanFigure } = await import('$lib/tour/humanFigure')
+        const { buildFightFigure, fightFigureKey } = await import('$lib/fighting/fighterFigure')
         const { buildFightScenery } = await import('$lib/fighting/stageScenery')
         if (disposed || !canvas) return
 
@@ -131,39 +129,10 @@
           }
         }
 
-        const buildFighter = (fighter: ArcadeFighter) => {
-          const definition = fighterDefinition(fighter.id)
-          return buildHumanFigure({
-            THREE,
-            glow: fighter.hanzoProjection
-              ? (colour, opacity) => glow(colour, opacity * 0.28)
-              : glow,
-            seen: {
-              id: `fighting-scene:${definition.modelId}`,
-              kind: 'combatant',
-              spaceId: 'black-whale-clash',
-              tierId: 'arcade-stage',
-              at: [0, 0],
-              y: 0,
-              size: 1,
-              colour: fighterAuraHex(fighter.id),
-              stage: 0,
-              hidden: false,
-              human: {
-                role: definition.modelRole,
-                identity: definition.modelId,
-                pose: 'idle',
-                aura: fighter.nen.mode,
-                nen: fighter.nen,
-              },
-            },
-          })
-        }
+        const buildFighter = (fighter: ArcadeFighter) => buildFightFigure({ THREE, glow, fighter })
 
-        // A fighter's aura is built into its figure, so a change of Nen rebuilds
-        // that one figure. The stage is left standing: raising a room of the
-        // ship again on every Ren would blank the arena for the length of it.
-        const nenKey = (fighter: ArcadeFighter) => JSON.stringify([fighter.nen, Boolean(fighter.hanzoProjection)])
+        // Rebuild only the fighter whose aura or body form changes; keep the stage.
+        const nenKey = fightFigureKey
         const models = {
           player: { model: buildFighter(state.player), nen: nenKey(state.player) },
           opponent: { model: buildFighter(state.opponent), nen: nenKey(state.opponent) },

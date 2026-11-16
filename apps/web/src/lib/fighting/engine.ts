@@ -1,10 +1,17 @@
+import { simulateClashFrame } from './fightFrameSimulation'
+import { performTrainingAction } from './trainingAction'
 import { attackIntent } from './fightAttackIntent'
 import { nenActionAllowed } from './nenActionRules'
 import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
 import { advanceEasterEggs } from './easterEggs'
 import { illumiBodyFree } from './illumiState'
 import { performArenaAction, nearestArenaObject } from './arenaActions'
-import { advanceArena, collideArenaBodies, readArenaInputs, resolveArenaStrikes } from './arenaSimulation'
+import {
+  advanceArena,
+  collideArenaBodies,
+  readArenaInputs,
+  resolveArenaStrikes,
+} from './arenaSimulation'
 import { illumiInput } from './illumiFrame'
 import { poseFighter } from './fightActorPose'
 import { holdMary, maryHeld } from './bloodyMary'
@@ -70,7 +77,6 @@ import { createFightState, nextFightRound } from './fightState'
 import { advanceFighterPhysics, separateFighterPushboxes } from './fighterPhysics'
 import { steerFighter } from './fighterMovement'
 import { capturePositions } from './fightInterpolation'
-import { simulateVoconteDoorFrame } from './voconteDoorFrame'
 import { EMPTY_INPUT } from './types'
 import type {
   ArcadeFighter,
@@ -81,12 +87,15 @@ import type {
   FighterPose,
   MoveAction,
 } from './types'
+
 const RYU_FOLLOW_UP_FRAMES = 10
 export { TOWER_WIN_SCORE }
 export { createFightState as createFight, nextFightRound as nextRound }
+
 export function beginFight(state: FightState): FightState {
   return state.phase === 'ready' ? { ...state, phase: 'fighting' } : state
 }
+
 export function tickFight(
   state: FightState,
   input: FightInput,
@@ -136,10 +145,12 @@ export function tickFight(
 }
 
 function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
-  return advanceEasterEggs(
-    simulateVoconteDoorFrame(state, controls, { step: stepFight, decide: opponentAttack }),
-    state.hitstop === 0,
-  )
+  return simulateClashFrame(state, controls, {
+    step: stepFight,
+    decide: opponentAttack,
+    attack: (state, action, input) =>
+      performTrainingAction({ state, side: 'opponent', action, input }),
+  })
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
@@ -188,11 +199,7 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
     remainingFrames,
     time: remainingFrames / FIGHT_FPS,
   }
-  return reconcileBattleCantabile(
-    reconcileMelodySound(
-      finishExpiredFight(next),
-    ),
-  )
+  return reconcileBattleCantabile(reconcileMelodySound(finishExpiredFight(next)))
 }
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
@@ -265,9 +272,12 @@ function updateOpponent(
   const winding = steerCyclotron(advanced)
   if (winding) return winding
   if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
-  if (advanced.hanzoProjection && canRejoinHanzoBody(advanced) && advanced.aura < 16)
-    return wakeHanzoBody(advanced)
+  if (shouldRejoinHanzoBody(advanced)) return wakeHanzoBody(advanced)
   return poseFighter(steerFutureAi(state, advanced) ?? moveOpponent(advanced, sleepingBody(player)))
+}
+
+function shouldRejoinHanzoBody(fighter: ArcadeFighter): boolean {
+  return Boolean(fighter.hanzoProjection) && canRejoinHanzoBody(fighter) && fighter.aura < 16
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
@@ -283,8 +293,8 @@ interface PerformMoveOptions {
 }
 
 export function performMove(options: PerformMoveOptions): FightState {
-  if (options.state[options.side].easterEgg) return options.state
   if (options.state[options.side].arenaRecovery) return options.state
+  if (options.state[options.side].easterEgg) return options.state
   if (!biohazardBodyFree(options.state[options.side])) return options.state
   if (!illumiBodyFree(options.state[options.side])) return options.state
   if (maryHeld(options.state[options.side])) return options.state
@@ -425,7 +435,6 @@ function randomValue(state: FightState): [FightState, number] {
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
   return [{ ...state, rng }, rng / 0x100000000]
 }
-
 
 export function displayPose(fighter: ArcadeFighter): FighterPose {
   return poseFighter(fighter).pose

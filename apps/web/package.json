@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:training-ui": "svelte-kit sync && node scripts/check-fighting-training.mjs",
     "test:arena-ui": "node scripts/check-arena-techniques.mjs",
     "build": "vite build",
     "dev": "vite dev --port 3000",

@@ -45,6 +45,43 @@ antérieure reste acquise. Le hibou privé de Secret Window ne devient pas publi
 `nenRules.test.ts` et `nenImport.test.ts` vérifient les chemins communs et les
 exceptions, en complément des suites propres aux personnages et aux copies.
 
+## Laboratoire d’entraînement
+
+Le mode entraînement conserve le moteur de combat à 60 Hz. `trainingFrame.ts`
+applique les réglages et le mannequin à chaque frame simulée ; les aides ne sont
+jamais activées en versus. `trainingAction.ts` observe les commandes tentées sans
+changer le contrat des commandes de combat refusées.
+
+- L’historique P1/P2 montre les entrées maintenues, leur durée en frames et les
+  commandes exécutées, mises en attente ou refusées. Il conserve 60 événements.
+- Les resets centre, coin gauche et coin droit reconstruisent les combattants,
+  projectiles, terrain, copies et conditions de la manche. Ils gardent les réglages
+  et l’enregistrement, arrêtent sa lecture et vident les commandes en attente.
+- Les PV et l’aura sont réglables séparément pour chaque camp. Les options de
+  valeurs fixes rétablissent ces ressources à chaque frame. Elles ne créent ni
+  équipement, ni page volée, ni blessure requise, ni charge de Hatsu ; les coûts,
+  sceaux et autres prérequis restent contrôlés par le moteur.
+- Le mannequin peut rester manuel, immobile, garder debout ou accroupi, sauter,
+  répéter une attaque ou riposter une fois après un hitstun, blockstun ou knockdown.
+  Le geste et le délai de 0 à 120 frames sont réglables.
+- L’enregistrement P2 mémorise les entrées, les directions des attaques et la
+  durée complète des touches maintenues, jusqu’à 3 600 frames. La lecture peut
+  boucler ; un reset l’arrête. Pause et avance d’une frame permettent l’inspection.
+
+`trainingMeasurement.ts` suit, après le dernier contact réel, la première frame
+où chaque camp peut démarrer un coup ordinaire sans cancel. L’avantage est la
+frame de disponibilité du défenseur moins celle de l’attaquant : positif signifie
+que l’attaquant récupère en premier. Le hitstop commun ne compte pas. La mesure
+inclut les frames actives restantes, les stuns et la relevée, y compris après un
+projectile dont le lanceur est déjà libre. Elle reste en attente tant qu’un camp
+est bloqué et n’affiche pas de nombre pour une récupération indéfinie. Un nouveau
+contact recommence la mesure ; ce n’est pas une estimation `blockstun - recovery`.
+
+`training.test.ts` et `trainingMeasurement.test.ts` couvrent moteur, ressources,
+resets, mannequin, enregistrement et disponibilité réelle. La régression visuelle
+`pnpm --filter @black-whale/web test:training-ui` vérifie les composants de
+production à 1440, 390 et 320 px.
+
 ## Préparation et ressources du combat
 
 `FightPreparationSetup.svelte` distingue le duel avec équipement personnel et le

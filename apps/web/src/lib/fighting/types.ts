@@ -428,6 +428,7 @@ export interface BungeeGumAttachment {
 }
 
 export interface FightState {
+  training?: import('./trainingTypes').TrainingState
   arena?: import('./arenaTypes').ArenaState
   voconteDoors?: import('./voconteDoorTypes').VoconteDoors
   battlefield?: import('./preparationTypes').FightBattlefield

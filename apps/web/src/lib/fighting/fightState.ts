@@ -1,4 +1,5 @@
 import { setupIllumiNeedles, preserveIllumiNeedles } from './illumiEquipment'
+import { createTrainingState } from './trainingTypes'
 import { createArenaState } from './arenaTypes'
 import { createBattlefield, personalEquipment } from './preparationWorld'
 import { preservePredatorKnowledge } from './predatorSeal'
@@ -31,6 +32,7 @@ export function createFightState(
   const format = fightFormat(formatId)
   const environment = createFightEnvironment(typeof options === 'string' ? {} : options.environment)
   return setupIllumiNeedles({
+    training: mode === 'training' ? createTrainingState(format.health) : undefined,
     arena: environment.arenaInteractions ? createArenaState() : undefined,
     battlefield: createBattlefield(environment),
     environment,

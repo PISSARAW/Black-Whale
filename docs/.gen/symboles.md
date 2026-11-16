@@ -28,13 +28,10 @@ Entrées analysées : 10
 | Symbole | Définition |
 | ------- | ---------- |
 | `ABILITY_PRESENTATION_BY_ID` | `apps/web/src/lib/nen/abilityPresentation.ts:8` |
-| `AbilityActionWheel` | `apps/web/src/lib/nen/index.ts:2` |
 | `AbilitySurfaceActionAvailability` | `apps/web/src/lib/nen/abilityPresentation.ts:38` |
 | `AbilitySurfaceAdapter` | `apps/web/src/lib/nen/abilityPresentation.ts:30` |
 | `AbilitySurfaceSnapshot` | `apps/web/src/lib/nen/abilityPresentation.ts:43` |
-| `AbilityViewHost` | `apps/web/src/lib/nen/index.ts:3` |
 | `AbilityViewModel` | `apps/web/src/lib/nen/abilityPresentation.ts:16` |
-| `NenWhyPanel` | `apps/web/src/lib/nen/index.ts:1` |
 | `liveSurfaceAdapter` | `apps/web/src/lib/nen/abilityPresentation.ts:102` |
 | `presentationFor` | `apps/web/src/lib/nen/abilityPresentation.ts:12` |
 | `previewSurfaceAdapter` | `apps/web/src/lib/nen/abilityPresentation.ts:82` |

@@ -12,7 +12,10 @@
   export let state: FightState
   export let language: 'fr' | 'en'
 
-  $: hitbox = activeHitbox(state.player)
+  $: hitboxes = [activeHitbox(state.player), activeHitbox(state.opponent)].filter(
+    (box): box is FightBox => box !== null,
+  )
+  $: measurement = state.training?.measurement
   $: boxes = [
     ...hurtboxes(state.player).map((box) => ({ box, side: 'player' as const })),
     ...hurtboxes(state.opponent).map((box) => ({ box, side: 'opponent' as const })),
@@ -36,13 +39,26 @@
   {#if data}
     <span>F{state.player.attack?.frame} · {attackPhase(state.player)?.toUpperCase()}</span>
     <span>S {data.startup} · A {data.active} · R {data.recovery}</span>
-    <span
-      >ON BLOCK {data.blockstun - data.recovery >= 0 ? '+' : ''}{data.blockstun -
-        data.recovery}</span
-    >
   {:else}
     <span>—</span>
   {/if}
+  <span
+    >{language === 'fr' ? 'AVANTAGE MESURÉ' : 'MEASURED ADVANTAGE'}
+    {#if measurement}
+      · {measurement.attacker === 'player' ? 'P1' : 'P2'} · {measurement.blocked
+        ? language === 'fr'
+          ? 'GARDE'
+          : 'BLOCK'
+        : 'HIT'}
+      {#if measurement.status === 'complete'}
+        {measurement.advantage! >= 0 ? '+' : ''}{measurement.advantage}f
+      {:else if measurement.status === 'pending'}
+        · {language === 'fr' ? 'Récupération…' : 'Recovering…'}
+      {:else}
+        · {language === 'fr' ? 'Interrompu' : 'Interrupted'}{/if}
+    {:else}
+      · —{/if}
+  </span>
   <span>COMBO {state.opponent.comboHits} · {state.opponent.comboDamage} DMG</span>
   <span>JUGGLE {state.opponent.juggleCount}/3</span>
 </div>
@@ -51,9 +67,9 @@
   <i class="debug-box hurtbox" class:opponent={item.side === 'opponent'} style={boxStyle(item.box)}
   ></i>
 {/each}
-{#if hitbox}
+{#each hitboxes as hitbox, index (index)}
   <i class="debug-box hitbox" style={boxStyle(hitbox)}></i>
-{/if}
+{/each}
 
 <style>
   .training-frame-data {

@@ -1,10 +1,8 @@
-import type { FightInput, FightState, MoveAction } from '$lib/fighting/types'
+import { easterEggKeyCommand, type EasterEggPreferences } from '$lib/fighting/easterEggPreferences'
+import type { FightSide } from '$lib/fighting/types'
+import type { EasterEggSlot } from '$lib/fighting/easterEggCatalogue'
+import type { FightInput, FightState } from '$lib/fighting/types'
 import type { fightingCopy } from './fightingCopy'
-
-export type DummyCommandData =
-  | { type: 'input'; key: keyof FightInput; active: boolean }
-  | { type: 'attack'; action: MoveAction | 'ranged' }
-export type DummyCommand = DummyCommandData & { frame: number }
 
 export function winnerLabel(current: FightState, copy: ReturnType<typeof fightingCopy>): string {
   if (current.winner === 'draw') return copy.draw
@@ -28,4 +26,27 @@ export function isDisplayInput(target: EventTarget | null): boolean {
       ),
     )
   )
+}
+
+export function canControlFight(state: FightState | null, paused: boolean): boolean {
+  return !paused || state?.mode === 'training'
+}
+
+export function handleEasterKey(
+  event: KeyboardEvent,
+  options: {
+    active: boolean
+    state: FightState
+    keys: EasterEggPreferences['keys']
+    input: FightInput
+    opponentInput: FightInput
+  },
+  play: (side: FightSide, slot: EasterEggSlot) => void,
+): boolean {
+  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key
+  const egg = easterEggKeyCommand(key, options)
+  if (!egg) return false
+  event.preventDefault()
+  if (options.active && !event.repeat) play(egg.side, egg.slot)
+  return true
 }

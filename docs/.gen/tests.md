@@ -2,7 +2,7 @@
 
 # Index des tests
 
-Fichiers : 596
+Fichiers : 608
 
 ## `apps/admin/src/hooks.server.test.ts`
 
@@ -216,6 +216,10 @@ Fichiers : 596
 
 - anchors > gives every reconstructed room a place of its own to stand
 
+## `apps/web/src/lib/fighting/arenaTechnique.test.ts`
+
+- forty arena applications and real cover > covers exactly the forty playable fighters and leaves preparation optional
+
 ## `apps/web/src/lib/fighting/audio/events.test.ts`
 
 - combat sound coverage > gives every playable fighter an authored identity and an existing sound recipe
@@ -271,6 +275,10 @@ Fichiers : 596
 ## `apps/web/src/lib/fighting/duelRules.test.ts`
 
 - duel rules > rejects Hatsu effects with no aura or while stunned
+
+## `apps/web/src/lib/fighting/easterEggs.test.ts`
+
+- Easter Egg controls and collection > simulates scenes in Parallel Future without discovering a predicted ending
 
 ## `apps/web/src/lib/fighting/engine.test.ts`
 
@@ -354,7 +362,7 @@ Fichiers : 596
 
 ## `apps/web/src/lib/fighting/kalluto.test.ts`
 
-- Kalluto paper and surveillance dolls > does not plant on guard or avoidance
+- Kalluto paper and surveillance dolls > retains callable frame hooks
 
 ## `apps/web/src/lib/fighting/keyPoseTimeline.test.ts`
 
@@ -364,6 +372,10 @@ Fichiers : 596
 ## `apps/web/src/lib/fighting/kurapika.test.ts`
 
 - Kurapika manga chains in the 2D engine > starts without Emperor Time and toggles with Aura + H for either player
+
+## `apps/web/src/lib/fighting/kurapikaChains.test.ts`
+
+- Kurapika shares the visitor chain models > uses hollow rectangular links and all five fully modelled ends in their original palette
 
 ## `apps/web/src/lib/fighting/leorio.test.ts`
 
@@ -475,7 +487,7 @@ Fichiers : 596
 
 ## `apps/web/src/lib/fighting/stageShipRoom.test.ts`
 
-- 2D arena ship-room rendering > reuses the visit atmosphere, surface texture and reflection
+- 2D arena ship-room rendering > keeps the original burial model behind the widest bodies with an actual material cut
 
 ## `apps/web/src/lib/fighting/stages.test.ts`
 
@@ -496,6 +508,16 @@ Fichiers : 596
 ## `apps/web/src/lib/fighting/theta.test.ts`
 
 - Theta’s real handgun and unknown Hatsu > exposes physical pistol shots and removes the invented Nen finisher
+
+## `apps/web/src/lib/fighting/training.test.ts`
+
+- frame-based input and command history > records P1 and P2 holds and their exact duration at 60 Hz
+- dummy recording playback > keeps input-only tracks and trailing holds until the recorded end, then releases
+- lab resource aids retain Hatsu conditions > editing Feitan HP does not manufacture the injuries needed for Pain Packer
+
+## `apps/web/src/lib/fighting/trainingMeasurement.test.ts`
+
+- actual contact recovery measurement > measures a real travelling projectile after its owner has recovered
 
 ## `apps/web/src/lib/fighting/voconte.test.ts`
 

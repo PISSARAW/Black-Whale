@@ -1,3 +1,5 @@
+import { canAskLynchQuestion } from './lynchRules'
+import { tuneLynchMoveset } from './lynchMoveset'
 import { crossGameCanWarn } from './crossGame'
 import { tunePhinksMoveset } from './phinksMoveset'
 import { cyclotronMoveResources } from './phinksAction'
@@ -80,6 +82,7 @@ const MOVESETS = new Map<FighterId, FighterMoveset>(
     .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneMelodyMoveset)
+    .map(tuneLynchMoveset)
     .map(tuneThetaMoveset)
     .map(tuneGelMoveset)
     .map(tuneFranklinMoveset)
@@ -118,7 +121,7 @@ export function moveForAction(
   const moveset = movesetFor(fighter.id)
   if (!moveset) return null
   const slot =
-    ['leorio', 'yokotani', 'bill', 'longhi', 'melody', 'basho', 'musse', 'phinks', 'mizaistom'].includes(
+    ['leorio', 'yokotani', 'bill', 'lynch', 'longhi', 'melody', 'basho', 'musse', 'phinks', 'mizaistom'].includes(
       fighter.id,
     ) && action === 'special'
       ? 'neutralSpecial'
@@ -138,6 +141,7 @@ export function canUseMovesetMove(state: FightState, side: FightSide, move: Figh
 }
 
 function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMove): boolean {
+  if (move.id === 'lynch:neutralSpecial') return canAskLynchQuestion(state, side, move.id)
   const fighter = state[side]
   if (move.kind === 'special' && isLsdfMove(fighter, move.id) && !canActivateLsdf(state, side))
     return false
@@ -273,7 +277,6 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   rihan: predatorReady,
   zakuro: (state, side) => opponentOf(state, side).hatsuEffects.bloodBoundFrames > 0,
   halkenburg: (state, side) => opponentOf(state, side).hatsuEffects.possessedFrames > 0,
-  lynch: (state, side) => opponentOf(state, side).hatsuEffects.soulExposedFrames > 0,
   luini: (state, side) => state[side].hatsuEffects.teleportDodges > 0,
   furykov: (state, side) => state[side].comboHits >= 3,
   cluck: (state, side) => opponentOf(state, side).health <= 40,

@@ -213,6 +213,8 @@ function endDolphinEffect(options: AuraAttackOptions, perform: PerformAttack): F
       (borrowed) => perform({ ...options, state: borrowed, moveId: CYCLOTRON_PUNCH }),
       'phinks',
     )
+  if (fighter.lynchQuestion)
+    return { ...state, [side]: { ...fighter, lynchQuestion: undefined } }
   if (fighter.bashoPoem) return { ...state, [side]: { ...fighter, bashoPoem: undefined } }
   if (fighter.hanzoProjection)
     return withDolphinIdentity(

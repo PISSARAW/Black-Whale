@@ -145,6 +145,7 @@ function dolphinFlags(state: FightState, side: FightSide): Record<string, boolea
     predator: predatorBusy(fighter),
     cyclotron: cyclotronBusy(fighter),
     'secret-window': Boolean(fighter.secretWindow),
+    'body-and-soul': Boolean(fighter.lynchQuestion),
     poem: Boolean(fighter.bashoPoem),
     gum: state.bungeeGum?.owner === side,
     projection: Boolean(fighter.hanzoProjection),

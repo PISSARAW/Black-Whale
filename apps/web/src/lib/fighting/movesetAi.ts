@@ -45,6 +45,7 @@ function finisherInRange(state: FightState, gap: number): boolean {
 
 function fighterSlots(state: FightState, roll: number, gap: number): readonly MoveSlot[] {
   if (state.opponent.id === 'phinks') return ['standingLight', 'standingHeavy', 'forwardHeavy']
+  if (state.opponent.id === 'lynch') return lynchSlots(state, gap)
   if (state.opponent.id === 'rihan') return predatorAiSlots(state)
   if (state.opponent.id === 'musse') return musseSlots(state, gap)
   if (state.opponent.id === 'tserriednich')
@@ -58,6 +59,12 @@ function fighterSlots(state: FightState, roll: number, gap: number): readonly Mo
 
 function musseSlots(state: FightState, gap: number): readonly MoveSlot[] {
   return gap <= 6 && !state.opponent.secretWindow
+    ? ['neutralSpecial', 'standingLight']
+    : ['standingLight', 'forwardLight', 'standingHeavy']
+}
+
+function lynchSlots(state: FightState, gap: number): readonly MoveSlot[] {
+  return !state.opponent.lynchQuestion && gap <= 18
     ? ['neutralSpecial', 'standingLight']
     : ['standingLight', 'forwardLight', 'standingHeavy']
 }

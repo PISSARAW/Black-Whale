@@ -157,7 +157,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     restrainedFrames: 0,
     bloodBoundFrames: 0,
     entrancedFrames: 0,
-    soulExposedFrames: 0,
     teleportDodges: 0,
     wormDodges: 0,
     kachoGuards: 0,

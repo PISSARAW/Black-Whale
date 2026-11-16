@@ -34,6 +34,13 @@ describe.each(FIGHTING_ROSTER)('$name Hatsu', ({ id }) => {
     const auraBefore = ready[side].aura
 
     const armed = performAttack(ready, side, 'special')
+    if (id === 'lynch') {
+      expect(armed[side].attack).toBeNull()
+      expect(armed[side].lynchQuestion?.id).toBe('identity')
+      expect(armed[side].aura).toBe(auraBefore)
+      expect(advance(armed, 0.4).impact).toBeNull()
+      return
+    }
     if (id === 'rihan') {
       expect(armed[side].predator?.watching).toBe(true)
       expect(armed[side].attack).toBeNull()

@@ -536,7 +536,7 @@ describe('fighter Hatsu registry', () => {
     expect(halkenburg.onFrame(struck).opponent.hitStun).toBeGreaterThan(0)
   })
 
-  it('keeps Gel’s arm free of added effects while Lynch exposes the target’s soul', () => {
+  it('keeps Gel’s arm and Lynch’s carrier hook free of magical vulnerability', () => {
     const ready = closeFight('gel', 'hisoka')
     const struck = hatsuFor('gel').onImpact({
       state: ready,
@@ -555,7 +555,8 @@ describe('fighter Hatsu registry', () => {
       concealed: false,
     })
     expect(struck).toBe(ready)
-    expect(hatsuDefenceFactor(exposed.opponent)).toBeGreaterThan(1)
+    expect(exposed).toBe(ready)
+    expect(hatsuDefenceFactor(exposed.opponent)).toBe(1)
   })
 
   it('turns Zhang Lei’s coins into a scaling buff', () => {

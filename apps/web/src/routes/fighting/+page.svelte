@@ -1,4 +1,6 @@
 <script lang="ts">
+  import FightLynchInterrogation from '$lib/components/fighting/FightLynchInterrogation.svelte'
+  import { askLynchQuestion } from '$lib/fighting/lynchAction'
   import { onMount } from 'svelte'
   import { fightAcceptsCommands } from '$lib/fighting/fightOutcome'
   import FightBashoPoem from '$lib/components/fighting/FightBashoPoem.svelte'
@@ -400,6 +402,9 @@
         onPause={togglePause}
       />
       <div class="match-area">
+        <FightLynchInterrogation {state} {language} {paused}
+          onQuestion={(side, question) => queueAction((current) => askLynchQuestion({ state: current, side, question }, performAuraAttack))}
+        />
         <FightBashoPoem {state} {language} {paused}
           onEditing={() => { input = { ...EMPTY_INPUT }; opponentInput = { ...EMPTY_INPUT } }}
           onCompose={(side, text) => queueAction((current) => composeBashoPoem({ state: current, side, text }, performAuraAttack))}

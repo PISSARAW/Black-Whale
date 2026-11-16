@@ -1,3 +1,4 @@
+import { lynchSpecialPresentation } from './lynchPresentation'
 import { cyclotronPresentation } from './phinksPresentation'
 import { crossGamePresentation } from './crossGamePresentation'
 import { predatorSpecialPresentation } from './predatorPresentation'
@@ -37,6 +38,7 @@ export function fightSpecialPresentation(
 }
 
 function commonSpecialPresentation(state: FightState, language: 'fr' | 'en'): SpecialPresentation {
+  if (state.player.id === 'lynch') return lynchSpecialPresentation(state, language)
   if (state.player.id === 'mizaistom') return crossGamePresentation(state, language)
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)

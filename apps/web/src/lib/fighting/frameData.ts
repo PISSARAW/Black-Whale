@@ -1,3 +1,4 @@
+import { LYNCH_MOVE } from './lynchTypes'
 import { machiUtilityMove } from './machiThread'
 import { cyclotronAttackData } from './phinksCyclotron'
 import { isMelodyMusicAttack } from './melodyRules'
@@ -216,6 +217,7 @@ export function activeHitbox(fighter: ArcadeFighter): FightBox | null {
 }
 
 function utilityAttack(fighter: ArcadeFighter): boolean {
+  if (fighter.attack?.moveId === LYNCH_MOVE) return true
   return [
     isMelodyMusicAttack,
     isErigeronAttack,

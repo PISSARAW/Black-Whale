@@ -708,3 +708,29 @@ ou perdre le Hatsu dissipe ses effets. Une nouvelle manche efface l’état.
 `mizaistom.test.ts` vérifie le moteur, les deux joueurs, l’IA, les copies et le rendu
 3D du carton et de la contrainte. Référence : Cross Game montré dans le manga,
 lors des préparatifs de l’expédition ; la catégorie naturelle reste inconnue.
+
+### Lynch : question, coup de poing et réponse privée
+
+`lynchAction.ts` fait de L une question parlée, sans frappe automatique. Le panneau
+propose trois questions de duel : identité réelle, état de Nen et usage de In.
+La question doit être audible à 18 unités et précéder un vrai contact du poing.
+`lynchInterrogation.ts` vérifie la conscience avant et après le coup : aucune
+réponse d’une cible morte, mise au sol, endormie en projection ou en blackout.
+Le hitstun ordinaire n’est pas une perte de conscience. Une garde qui reçoit le
+poing reste un contact ; parade, esquive, projectile, coup de pied et projection
+ne donnent aucune réponse. La portée de parole, cette convention de mise au sol,
+les questions prises en charge et les 10 aura par réponse sont des adaptations.
+
+La réponse contient seulement le fait demandé, figé au moment du contact :
+l’identité du corps réel, même déguisé, son état de Nen ou l’usage de In. Elle
+ne prédit aucune commande et ne consulte aucune vérité que la cible ignorerait.
+Les deux participants reçoivent un souvenir privé, conservé après la perte du
+Hatsu ; aucun texte de réponse ne part dans l’impact, le statut ou le son public.
+Le panneau la masque jusqu’au maintien du bouton d’écoute ; en local, il demande
+le participant qui consulte. L’écran partagé exige toujours de lire à l’abri des
+spectateurs. Les nouvelles manches effacent questions et réponses.
+
+Les dégâts, le stun et le score viennent exclusivement du coup physique normal.
+L’ancien malus de défense `soulExposedFrames` et le finisher « Confession » sont
+supprimés. Skill Hunter garde les mêmes conditions ; Dolphin termine un seul
+interrogatoire et rend ensuite la capacité, sans effacer l’information apprise.

@@ -10,6 +10,7 @@ export interface AuraAttackOptions {
   side: FightSide
   kind: AttackKind
   auraCharged: boolean
+  lynchQuestion?: import('./lynchTypes').LynchQuestionId
   variant?: AttackVariant
   moveId?: string
 }

@@ -1,3 +1,4 @@
+import { resolveLynchContact } from './lynchInterrogation'
 import { melodyRestrictsCombat } from './melodyRules'
 import { melodyParryBonus } from './melodyHearing'
 import { resolveBashoPoemImpact } from './bashoFire'
@@ -143,7 +144,7 @@ function resolveAttack(state: FightState, side: FightSide): FightState {
     after: next,
     damagedSide: defenderSide,
   })
-  const scorched = resolveBashoPoemImpact(state, transferred, side)
+  const scorched = resolveLynchContact(state, resolveBashoPoemImpact(state, transferred, side), side)
   if (transferred !== next)
     return finishAfterImpact(
       scorched,

@@ -127,7 +127,6 @@ const EFFECT_CUES: Partial<Record<keyof FighterHatsuEffects, string>> = {
   cohortWillFrames: 'arrow',
   isolationFrames: 'portal',
   eyeWogFrames: 'read',
-  soulExposedFrames: 'interrogate',
 }
 
 function effectEvents(before: FightState, after: FightState, side: FightSide): FightSoundEvent[] {

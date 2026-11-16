@@ -128,6 +128,8 @@ export interface FighterDefinition {
 }
 
 export interface ArcadeFighter {
+  lynchQuestion?: import('./lynchTypes').LynchQuestion
+  bodyAndSoulReplies?: readonly import('./lynchTypes').LynchReply[]
   predator?: PredatorState
   bashoPoem?: import('./bashoPoem').BashoPoem
   bashoBurn?: import('./bashoPoem').BashoBurn
@@ -271,7 +273,6 @@ export interface FighterHatsuEffects {
   restrainedFrames: number
   bloodBoundFrames: number
   entrancedFrames: number
-  soulExposedFrames: number
   teleportDodges: number
   wormDodges: number
   kachoGuards: number

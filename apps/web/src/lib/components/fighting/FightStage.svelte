@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { futureVisibleState } from '$lib/fighting/parallelFuturePresentation'
+  import FightParallelFuture from './FightParallelFuture.svelte'
   import FightScene from './FightScene.svelte'
   import FightSaiyuSenses from './FightSaiyuSenses.svelte'
   import FightHud from './FightHud.svelte'
@@ -28,6 +30,9 @@
   export let training = false
   export let paused = false
   let sensoryViewer: 'player' | 'opponent' = 'player'
+  let futureViewer: 'player' | 'opponent' = 'player'
+  let futurePreview: number | null = null
+  $: visibleState = futureVisibleState(state, futureViewer, futurePreview)
   $: moveset = movesetFor(state.player.id)
   $: special = fightSpecialPresentation(state, language)
   $: hatsuReady = special.ready
@@ -39,7 +44,7 @@
   $: sceneKey = `${stageId}:${state.player.id}:${state.opponent.id}`
   $: finisher = moveForSlot(state.player.id, 'finisher')
   $: finisherAvailable = finisherReady(state, 'player')
-  $: throwTech = isThrowTech(state)
+  $: throwTech = isThrowTech(visibleState)
   function hold(key: keyof FightInput, active: boolean) {
     onControl(key, active)
   }
@@ -48,26 +53,33 @@
 <FightAudio {state} {language} {paused} viewer={sensoryViewer} />
 <section class="fight-stage" aria-label={language === 'fr' ? 'Arène de combat' : 'Fight arena'}>
   <div class="fight-arena">
-    <FightHud {state} {language} {detailed} />
+    <FightHud state={visibleState} {language} {detailed} />
     {#key sceneKey}
-      <FightScene {state} {stageId} />
+      <FightScene state={visibleState} {stageId} />
     {/key}
 
     {#if training}
-      <FightTrainingOverlay {state} {language} />
+      <FightTrainingOverlay state={visibleState} {language} />
     {/if}
 
-    {#if state.impact}
-      {#key state.impact.sequence}
-        <div class:blocked={state.impact.blocked} class="impact-flash"></div>
-        <div class="damage-callout" class:from-player={state.impact.attacker === 'player'}>
-          {impactCallout(state.impact, language)}
+    {#if visibleState.impact}
+      {#key visibleState.impact.sequence}
+        <div class:blocked={visibleState.impact.blocked} class="impact-flash"></div>
+        <div class="damage-callout" class:from-player={visibleState.impact.attacker === 'player'}>
+          {impactCallout(visibleState.impact, language)}
         </div>
       {/key}
     {/if}
     {#if throwTech}<div class="damage-callout">THROW TECH</div>{/if}
     <FightSaiyuSenses {state} {language} bind:viewer={sensoryViewer} />
   </div>
+  <FightParallelFuture
+    {state}
+    {language}
+    bind:viewer={futureViewer}
+    bind:scrub={futurePreview}
+    onOpenEyes={() => onAttack('special')}
+  />
   {#if showControls}<div class="touch-controls">
       <div class="touch-group movement-controls">
         <button

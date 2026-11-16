@@ -202,6 +202,25 @@ campagne ou règle n'est partagée avec l'Arena 3D.
   de duel. T (joueur 1), V (joueur 2) ou le bouton tactile permettent d'interpeller
   le corps à proximité : la parole interrompt aussi la projection, sans dégâts.
   La portée audible de 18 unités est une abstraction du duel.
+- Tserriednich utilise **Laplace Devil** avec L (P2 : virgule) : il entre
+  volontairement en Zetsu et ferme les yeux. Les 30 frames de préparation sont
+  un réglage du duel ; il ne bouge ni ne garde, et une touche réelle l'interrompt.
+  Le moteur simule ensuite exactement 600 frames dans une branche isolée, avec
+  les mêmes projectiles, collisions, IA et graine aléatoire. Le joueur voit ces
+  dix secondes dans la scène et peut les inspecter avec le curseur ; le temps
+  réel, les ressources, dégâts, points et verdicts restent suspendus pendant
+  cette lecture de la vision initiale. L ou H rouvre les yeux et commence une
+  fenêtre de divergence de dix secondes. Tserriednich se déplace et agit dans
+  la réalité ; l'adversaire perçoit le déroulement prédit. Les collisions utilisent
+  toujours les corps réels : rester dans la trajectoire prévue fait subir le coup.
+  L'IA adverse vise l'image et rejoue ses commandes prédites ; Tserriednich IA peut
+  anticiper un danger mais doit physiquement s'en écarter. En versus local,
+  prévoir des décisions humaines est impossible : les commandes présentes sont
+  prolongées lors du calcul puis rejouées pendant la fenêtre, adaptation affichée
+  dans le panneau. Deux boutons de point de vue permettent de comparer les perceptions
+  sur l'écran partagé. Zetsu imposé, vol, sceau de On ou changement de page interrompent
+  la capacité ; les manches effacent la branche. Les gestes inventés de bête gardienne
+  et l'ancienne charge d'esquive sont supprimés. Référence : chapitres 385–387.
 - Benjamin commence le duel après les morts de Vincent, Musse et Shikaku :
   `benjaminBaton.ts` fixe les trois héritages et vérifie mort, loyauté, diplôme
   militaire et appartenance à son armée. Aucun coup ne crée de charge de dégâts.

@@ -83,7 +83,7 @@ export function canStartFighterAttack(
   kind: AttackKind,
   moveId?: string,
 ): boolean {
-  if (!characterAttackAvailable(fighter, kind, moveId)) return false
+  if (fighter.parallelEyesClosed || !characterAttackAvailable(fighter, kind, moveId)) return false
   const resourceReady = hasAttackResources(fighter, kind, moveId)
   return (
     canAct(fighter) &&

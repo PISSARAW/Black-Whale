@@ -1,4 +1,5 @@
 import { moonlightPresentation } from './moonlightPresentation'
+import { futureSpecialPresentation } from './parallelFuturePresentation'
 import { erigeronPresentation, isErigeronAction } from './billSupport'
 import { canUseFightHatsu, FIGHT_HATSU_AURA_COST } from './hatsu'
 import { canUseMovesetMove, moveForSlot, movesetFor } from './movesets'
@@ -20,6 +21,7 @@ export function fightSpecialPresentation(
   if (state.player.id === 'longhi') return moonlightPresentation(state, language)
   if (isErigeronAction(state.player, 'special', `${state.player.id}:neutralSpecial`))
     return erigeronPresentation(language)
+  if (state.player.id === 'tserriednich') return futureSpecialPresentation(state, language)
   if (state.player.id === 'kurapika') return kurapikaPresentation(state, language)
   const move = moveForSlot(state.player.id, 'neutralSpecial')
   const ready = movesetFor(state.player.id)

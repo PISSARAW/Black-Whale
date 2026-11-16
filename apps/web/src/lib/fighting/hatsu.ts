@@ -126,16 +126,7 @@ export function hatsuAvoidsImpact(fighter: ArcadeFighter): boolean {
   return AVOIDANCE_KEYS.some((key) => fighter.hatsuEffects[key] > 0)
 }
 
-export function consumeFutureSight(fighter: ArcadeFighter): ArcadeFighter {
-  if (!fighter.hatsuEffects.futureSight) return fighter
-  return {
-    ...fighter,
-    hatsuEffects: { ...fighter.hatsuEffects, futureSight: fighter.hatsuEffects.futureSight - 1 },
-  }
-}
-
 export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
-  if (fighter.hatsuEffects.futureSight > 0) return consumeFutureSight(fighter)
   if (fighter.hatsuEffects.isolationFrames > 0) {
     return {
       ...fighter,
@@ -146,10 +137,9 @@ export function consumeHatsuAvoidance(fighter: ArcadeFighter): ArcadeFighter {
 }
 
 type AvoidanceKey =
-  'futureSight' | 'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
+  'isolationFrames' | 'teleportDodges' | 'wormDodges' | 'kachoGuards' | 'doorDodges'
 
 const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
-  'futureSight',
   'isolationFrames',
   'teleportDodges',
   'wormDodges',
@@ -158,7 +148,7 @@ const AVOIDANCE_KEYS: readonly AvoidanceKey[] = [
 ]
 
 /** Keys `consumeHatsuAvoidance` spends with their own rule; the rest lose one charge. */
-const SPECIAL_AVOIDANCE_KEYS: readonly AvoidanceKey[] = ['futureSight', 'isolationFrames']
+const SPECIAL_AVOIDANCE_KEYS: readonly AvoidanceKey[] = ['isolationFrames']
 const STANDARD_AVOIDANCE_KEYS = AVOIDANCE_KEYS.filter(
   (key) => !SPECIAL_AVOIDANCE_KEYS.includes(key),
 )

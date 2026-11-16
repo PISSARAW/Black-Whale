@@ -1,4 +1,5 @@
 import { addThetaHandgun } from './thetaFigure'
+import { shapeFightEyes } from './fightFigureEyes'
 import { addChrolloBook } from './chrolloFigure'
 import { addFranklinHands } from './franklinHands'
 import { franklinFightProfile, shapeFranklinFigure } from './franklinFigure'
@@ -12,7 +13,14 @@ import type { ArcadeFighter } from './types'
 
 /** Geometry state only: attacks and movement animate the existing model. */
 export function fightFigureKey(fighter: ArcadeFighter): string {
-  return JSON.stringify([fighter.nen, ('hanzoProjection' in fighter && Boolean(fighter.hanzoProjection)), isBiscuitTrueForm(fighter), Boolean(fighter.textureSurprise), Boolean(fighter.kurapika?.emperorTime)])
+  return JSON.stringify([
+    fighter.nen,
+    Boolean(fighter.parallelEyesClosed),
+    'hanzoProjection' in fighter && Boolean(fighter.hanzoProjection),
+    isBiscuitTrueForm(fighter),
+    Boolean(fighter.textureSurprise),
+    Boolean(fighter.kurapika?.emperorTime),
+  ])
 }
 
 export function buildFightFigure(options: {
@@ -49,17 +57,17 @@ export function buildFightFigure(options: {
   const model = buildHumanFigure({
     THREE,
     auraStyle: 'visitor',
-    glow: 'hanzoProjection' in fighter && fighter.hanzoProjection ? (colour, opacity) => glow(colour, opacity * 0.28) : glow,
+    glow:
+      'hanzoProjection' in fighter && fighter.hanzoProjection
+        ? (colour, opacity) => glow(colour, opacity * 0.28)
+        : glow,
     seen,
     profile: trueForm ? biscuitTrueFormProfile(dressed) : dressed,
   })
   if (trueForm) shapeBiscuitTrueForm(model)
 
   addFighterEquipment(options, model)
-  if (fighter.kurapika?.emperorTime) model.root.traverse((node) => {
-    if (node.name.startsWith('face-eye') && 'material' in node)
-      (node as import('three').Mesh).material = glow(0xef3340, 1)
-  })
+  shapeFightEyes({ root: model.root, fighter, glow })
   return model
 }
 

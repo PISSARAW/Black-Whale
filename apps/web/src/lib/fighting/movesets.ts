@@ -1,6 +1,8 @@
 import { sealedSenseCount } from './saiyuSenses'
 import { tuneThetaMoveset } from './thetaMoveset'
 import { thetaShotMove } from './thetaFirearm'
+import { tuneParallelFutureMoveset } from './parallelFutureMoveset'
+import { futureMoveResources } from './parallelFutureAbility'
 import { furykovMoveAvailable, tuneFurykovMoveset } from './furykovMoveset'
 import { tuneLonghiMoveset } from './longhiMoveset'
 import { moonlightCanOffer } from './moonlightContract'
@@ -56,7 +58,8 @@ const ALL_MOVESETS = [
   ...ROSTER_FINAL_MOVESETS,
 ]
 const MOVESETS = new Map<FighterId, FighterMoveset>(
-  ALL_MOVESETS.map(tuneBenjaminMoveset)
+  ALL_MOVESETS.map(tuneParallelFutureMoveset)
+    .map(tuneBenjaminMoveset)
     .map(tuneKurapikaMoveset)
     .map(tuneThetaMoveset)
     .map(tuneFranklinMoveset)
@@ -119,6 +122,8 @@ function ordinaryMoveAllowed(state: FightState, side: FightSide, move: FighterMo
 }
 
 export function hasMoveResources(fighter: ArcadeFighter, move: FighterMove): boolean {
+  const future = futureMoveResources(fighter, move.id)
+  if (future !== null) return future
   if (!furykovMoveAvailable(fighter, move)) return false
   if (!characterMoveAvailable(fighter, move)) return false
   if (isHeldChainMove(fighter, move)) return true
@@ -213,7 +218,8 @@ const FINISHER_CONDITIONS: Partial<Record<FighterId, FinisherCondition>> = {
   hisoka: (state, side) => state.bungeeGum?.owner === side && state.bungeeGum.target !== side,
   chrollo: (state, side) => chrolloMoveAvailable(state[side], CHROLLO_SECONDARY),
   benjamin: (state, side) => Boolean(state[side].hatsuEffects.baton?.card),
-  tserriednich: (state, side) => state[side].hatsuEffects.futureSight > 0,
+  tserriednich: (state, side) =>
+    state.parallelFuture?.owner === side && state.parallelFuture.phase === 'vision',
   feitan: (state, side) => feitanMoveAvailable(state[side], 'feitan:finisher'),
   saiyu: (state, side) => sealedSenseCount(opponentOf(state, side)) >= 2,
   biscuit: (state, side) => isBiscuitTrueForm(state[side]),

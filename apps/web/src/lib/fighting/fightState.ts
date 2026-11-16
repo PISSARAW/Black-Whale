@@ -54,34 +54,39 @@ export function createFightState(
 export function nextFightRound(state: FightState): FightState {
   if (state.phase !== 'finished' || state.matchWinner) return state
   const format = fightFormat(state.formatId)
-  return carryMoonlightRound({
-    ...state,
-    lsdf: undefined,
-    expulsion: undefined,
-    player: preserveLifespan(
-      createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
-      state.player,
-    ),
-    opponent: preserveLifespan(
-      createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
-      state.opponent,
-    ),
-    phase: 'ready',
-    frame: 0,
-    time: format.roundFrames / FIGHT_FPS,
-    remainingFrames: format.roundFrames,
-    frameAccumulator: 0,
-    hitstop: 0,
-    winner: null,
-    finishReason: null,
-    roundNumber: state.roundNumber + 1,
-    score: { player: 0, opponent: 0 },
-    knockdowns: { player: 0, opponent: 0 },
-    bungeeGum: null,
-    projectiles: [],
-    nextProjectileId: 1,
-    impact: null,
-  }, state)
+  return carryMoonlightRound(
+    {
+      ...state,
+      parallelFuture: undefined,
+      forecastSimulation: undefined,
+      lsdf: undefined,
+      expulsion: undefined,
+      player: preserveLifespan(
+        createFighter({ id: state.player.id, x: 22, facing: 1, health: format.health }),
+        state.player,
+      ),
+      opponent: preserveLifespan(
+        createFighter({ id: state.opponent.id, x: 78, facing: -1, health: format.health }),
+        state.opponent,
+      ),
+      phase: 'ready',
+      frame: 0,
+      time: format.roundFrames / FIGHT_FPS,
+      remainingFrames: format.roundFrames,
+      frameAccumulator: 0,
+      hitstop: 0,
+      winner: null,
+      finishReason: null,
+      roundNumber: state.roundNumber + 1,
+      score: { player: 0, opponent: 0 },
+      knockdowns: { player: 0, opponent: 0 },
+      bungeeGum: null,
+      projectiles: [],
+      nextProjectileId: 1,
+      impact: null,
+    },
+    state,
+  )
 }
 
 function createFighter(options: {
@@ -128,7 +133,6 @@ function emptyHatsuEffects(): ArcadeFighter['hatsuEffects'] {
     forcedZetsuFrames: 0,
     contagionFrames: 0,
     contagionStacks: 0,
-    futureSight: 0,
     baton: null,
     senseSeals: 0,
     blinkyFrames: 0,

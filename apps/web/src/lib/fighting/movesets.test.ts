@@ -30,7 +30,9 @@ describe('wave one movesets', () => {
       'biscuit',
       'phinks',
     ])
-    WAVE_ONE_FIGHTERS.filter((id) => id !== 'theta').forEach(assertCompleteMoveset)
+    WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich'].includes(id)).forEach(
+      assertCompleteMoveset,
+    )
   })
 
   it('gives the second wave ten equally complete movesets', () => {
@@ -146,18 +148,21 @@ describe('wave one movesets', () => {
     expect(canUseMovesetMove(versus('illumi'), 'player', chainJail)).toBe(true)
   })
 
-  it.each(WAVE_ONE_FIGHTERS.filter((id) => id !== 'theta'))('%s finisher is locked behind its unique condition', (fighterId) => {
-    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-    const supplied = withFinisherCondition({
-      ...base,
-      player: { ...base.player, aura: 100 },
-    })
-    expect(finisherReady(base, 'player')).toBe(false)
-    expect(finisherReady(supplied, 'player')).toBe(true)
-    const armed = performMove({ state: supplied, side: 'player', action: 'finisher' })
-    expect(armed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
-    expect(armed.player.aura).toBe(100 - moveForSlot(fighterId, 'finisher')!.auraCost)
-  })
+  it.each(WAVE_ONE_FIGHTERS.filter((id) => !['theta', 'tserriednich'].includes(id)))(
+    '%s finisher is locked behind its unique condition',
+    (fighterId) => {
+      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+      const supplied = withFinisherCondition({
+        ...base,
+        player: { ...base.player, aura: 100 },
+      })
+      expect(finisherReady(base, 'player')).toBe(false)
+      expect(finisherReady(supplied, 'player')).toBe(true)
+      const armed = performMove({ state: supplied, side: 'player', action: 'finisher' })
+      expect(armed.player.attack?.moveId).toBe(`${fighterId}:finisher`)
+      expect(armed.player.aura).toBe(100 - moveForSlot(fighterId, 'finisher')!.auraCost)
+    },
+  )
 
   it.each(WAVE_TWO_FIGHTERS.filter((id) => id !== 'leorio' && id !== 'franklin'))(
     '%s wave-two finisher is conditionally locked',
@@ -191,18 +196,21 @@ describe('wave one movesets', () => {
     },
   )
 
-  it.each(WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi'))('%s wave-four finisher is conditionally locked', (fighterId) => {
-    const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
-    const supplied = withFinisherCondition({
-      ...base,
-      player: { ...base.player, aura: 100 },
-    })
-    expect(finisherReady(base, 'player')).toBe(false)
-    expect(finisherReady(supplied, 'player')).toBe(true)
-    expect(
-      performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
-    ).toBe(`${fighterId}:finisher`)
-  })
+  it.each(WAVE_FOUR_FIGHTERS.filter((id) => id !== 'longhi'))(
+    '%s wave-four finisher is conditionally locked',
+    (fighterId) => {
+      const base = beginFight(createFight(fighterId, opponentFor(fighterId)))
+      const supplied = withFinisherCondition({
+        ...base,
+        player: { ...base.player, aura: 100 },
+      })
+      expect(finisherReady(base, 'player')).toBe(false)
+      expect(finisherReady(supplied, 'player')).toBe(true)
+      expect(
+        performMove({ state: supplied, side: 'player', action: 'finisher' }).player.attack?.moveId,
+      ).toBe(`${fighterId}:finisher`)
+    },
+  )
 
   it('does not invent a damaging finisher for Yokotani', () => {
     const state = beginFight(createFight('yokotani', 'hisoka'))
@@ -281,8 +289,6 @@ function withFinisherCondition(state: FightState): FightState {
           },
         },
       }
-    case 'tserriednich':
-      return withPlayerEffect(state, 'futureSight', 1)
     case 'feitan':
       return {
         ...state,

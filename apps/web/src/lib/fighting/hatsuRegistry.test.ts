@@ -168,16 +168,20 @@ describe('fighter Hatsu registry', () => {
     expect(hatsuDamageFactor(state.player)).toBe(1)
   })
 
-  it('uses Parallel Future to erase the next incoming hit', () => {
+  it('requires vulnerable preparation instead of erasing an incoming hit', () => {
     let state = closeFight('tserriednich', 'hisoka')
-    state = { ...state, opponent: { ...state.opponent, hitStun: 0 } }
+    state = {
+      ...state,
+      player: { ...state.player, x: 46 },
+      opponent: { ...state.opponent, x: 52, hitStun: 0 },
+    }
     state = performAttack(state, 'player', 'special')
-    expect(state.player.hatsuEffects.futureSight).toBe(1)
-    state = performAttack(state, 'opponent', 'light')
-    const avoided = advance(state, 0.2)
-    expect(avoided.impact).toMatchObject({ attacker: 'opponent', avoided: true, damage: 0 })
-    expect(avoided.player.health).toBe(100)
-    expect(avoided.player.hatsuEffects.futureSight).toBe(0)
+    expect(state.player.nen.mode).toBe('zetsu')
+    expect(state.player.parallelEyesClosed).toBe(true)
+    const health = state.player.health
+    const struck = advance(performAttack(state, 'opponent', 'light'), 0.2)
+    expect(struck.player.health).toBeLessThan(health)
+    expect(struck.parallelFuture).toBeUndefined()
   })
 
   it('does not apply a missing-health multiplier to Feitan’s martial attacks', () => {

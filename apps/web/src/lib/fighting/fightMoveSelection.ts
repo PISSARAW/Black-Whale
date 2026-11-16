@@ -1,3 +1,4 @@
+import { performParallelFutureAction } from './parallelFutureAbility'
 import { performKurapikaAction, toggleEmperorTime } from './kurapikaActions'
 import { moveById } from './movesets'
 import type { FighterMove } from './movesetTypes'
@@ -17,7 +18,7 @@ export function routedFightMove(
   fighter: ArcadeFighter,
   selected: FighterMove | null,
 ): FighterMove | null {
-  if (fighter.id === 'chrollo') return selected
+  if (fighter.id === 'chrollo' || fighter.id === 'tserriednich') return selected
   const current = moveById(fighter.attack?.moveId)
   return (
     current?.cancelInto
@@ -33,6 +34,14 @@ export function characterMoveOverride(
   perform: PerformAttack,
 ): FightState | null {
   const { state, side, action, input } = options
+  if (state[side].id === 'tserriednich' && (action === 'special' || action === 'finisher'))
+    return performParallelFutureAction({
+      state,
+      side,
+      kind: 'special',
+      moveId: selected?.id,
+      auraCharged: false,
+    })
   if (state[side].id === 'kurapika' && action === 'finisher' && input.aura)
     return toggleEmperorTime(state, side)
   const selectedChain = selectedChainOverride(options, selected, perform)

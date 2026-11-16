@@ -1,18 +1,20 @@
 import { thetaFirearmOptions } from './thetaFirearm'
-import { resolveMoonlightAction, performMoonlightAction } from './moonlightAction'
+import { resolveMoonlightAction } from './moonlightAction'
 import { moonlightAiResponse, moonlightAiWaiting } from './moonlightContract'
+import { planOpponentNen } from './opponentNenPlan'
+import { stepParallelFuture, futurePerceivedTarget } from './parallelFuture'
+import { closeFutureEyes, futureAcceptsMove } from './parallelFutureAbility'
+import { parallelFutureAiAction, steerFutureAi } from './parallelFutureAi'
+import { characterAuraAction } from './characterAuraAction'
+import type { FutureControls } from './parallelFutureTypes'
 import { characterMoveOverride, routedFightMove } from './fightMoveSelection'
-import { advanceEmperorClock, kurapikaAiActivation, performKurapikaAction, resolveJudgmentDeaths } from './kurapikaActions'
+import { advanceEmperorClock, kurapikaAiActivation, resolveJudgmentDeaths } from './kurapikaActions'
 import { chainsImmobilize } from './kurapika'
 import { withDolphinIdentity } from './kurapikaDolphin'
 import { recordFightInjuries } from './feitanPain'
-import { hisokaTechnique, hisokaTechniqueAllowed } from './hisokaTechnique'
+import { hisokaTechnique } from './hisokaTechnique'
 import { commitAuraAttack, type AuraAttackOptions } from './auraAttackAction'
-import { performLeorioAction } from './leorioAttack'
-import { performLsdfAction } from './lsdfAction'
-import { performBiscuitFormAction } from './biscuitFormAction'
 import { callHanzoBody, canCallHanzoBody, resolveHanzoBodyCalls } from './hanzoBodyCall'
-import { performProjectionAction } from './hanzoProjectionAction'
 import {
   canRejoinHanzoBody,
   projectionPreparing,
@@ -20,7 +22,6 @@ import {
   steerHanzoProjection,
   wakeHanzoBody,
 } from './hanzoProjection'
-import { performChrolloBookAction } from './chrolloBookAction'
 import { attackVariant } from './duelMoves'
 import { FIGHT_FPS, FIXED_STEP } from './fightClock'
 import { fightFormat } from './formats'
@@ -32,7 +33,7 @@ import {
 } from './hatsu'
 import { chooseStyleAttack, fightingStyle } from './fightStyles'
 import { applyAuraContext, IN_CHARGE_FRAMES, setIn } from './nen'
-import { opponentWantsOn, resolveOnImpacts } from './onTechnique'
+import { resolveOnImpacts } from './onTechnique'
 import { fighterDefinition } from './roster'
 import { moveOpponent } from './opponentMovement'
 import { advanceProjectiles, canUseRangedAttack, spawnRangedProjectiles } from './projectiles'
@@ -82,14 +83,29 @@ export function tickFight(
   while (next.frameAccumulator >= FIXED_STEP && next.phase === 'fighting') {
     const accumulator = next.frameAccumulator - FIXED_STEP
     const previousPositions = capturePositions(next)
-    next = { ...stepFight(next, input, opponentInput), frameAccumulator: accumulator }
+    next = {
+      ...stepParallelFuture(
+        next,
+        { player: input, opponent: opponentInput, ai: settings.ai ?? false },
+        {
+          simulate: simulateFightFrame,
+          replay: (current, command) =>
+            performAuraAttack({ state: current, side: 'opponent', ...command }),
+        },
+      ),
+      frameAccumulator: accumulator,
+    }
     next = { ...next, previousPositions }
     if (next.phase === 'finished') {
       next = { ...next, player: wakeHanzoBody(next.player), opponent: wakeHanzoBody(next.opponent) }
     }
-    if (settings.ai && !opponentInput) next = advanceAiCadence(next, opponentAttack)
   }
   return next
+}
+
+function simulateFightFrame(state: FightState, controls: FutureControls): FightState {
+  const next = stepFight(state, controls.player, controls.opponent)
+  return controls.ai && !controls.opponent ? advanceAiCadence(next, opponentAttack) : next
 }
 
 function stepFight(state: FightState, input: FightInput, opponentInput?: FightInput): FightState {
@@ -98,14 +114,11 @@ function stepFight(state: FightState, input: FightInput, opponentInput?: FightIn
   const player = updatePlayer(state.player, input)
   const opponent = opponentInput
     ? updateControlledFighter(state.opponent, opponentInput)
-    : updateOpponent(state.opponent, player)
+    : updateOpponent(state.opponent, futurePerceivedTarget(state, 'opponent', player), state)
   const judged = resolveJudgmentDeaths({ ...state, player, opponent })
   if (judged.phase === 'finished') return judged
   const buffered = flushBuffered(
-    flushBuffered(
-      resolveHanzoBodyCalls(judged, input, opponentInput),
-      'player',
-    ),
+    flushBuffered(resolveHanzoBodyCalls(judged, input, opponentInput), 'player'),
     'opponent',
   )
   const withHatsu = advanceHatsuFrames(buffered)
@@ -136,6 +149,7 @@ function updatePlayer(fighter: ArcadeFighter, input: FightInput): ArcadeFighter 
 
 function updateControlledFighter(fighter: ArcadeFighter, input: FightInput): ArcadeFighter {
   const advanced = advanceFighterPhysics(fighter)
+  if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   if (advanced.hanzoProjection) return poseFighter(steerHanzoProjection(advanced, input))
   let next = updateHatsuCharge(applyAuraContext(advanced, input), input)
   next = updatePlayerGuard({ ...next, crouching: input.down && next.y === 0 }, input)
@@ -186,11 +200,16 @@ function playerCanJump(fighter: ArcadeFighter, input: FightInput): boolean {
   return input.jump && !input.aura && canMove(fighter) && fighter.y === GROUND
 }
 
-function updateOpponent(fighter: ArcadeFighter, player: ArcadeFighter): ArcadeFighter {
+function updateOpponent(
+  fighter: ArcadeFighter,
+  player: ArcadeFighter,
+  state: FightState,
+): ArcadeFighter {
   const advanced = advanceFighterPhysics(fighter)
+  if (advanced.parallelEyesClosed) return closeFutureEyes(advanced)
   if (advanced.hanzoProjection && canRejoinHanzoBody(advanced) && advanced.aura < 16)
     return wakeHanzoBody(advanced)
-  return poseFighter(moveOpponent(advanced, sleepingBody(player)))
+  return poseFighter(steerFutureAi(state, advanced) ?? moveOpponent(advanced, sleepingBody(player)))
 }
 
 export function performAttack(state: FightState, side: FightSide, kind: AttackKind): FightState {
@@ -207,8 +226,13 @@ interface PerformMoveOptions {
 
 export function performMove(options: PerformMoveOptions): FightState {
   const { state, side, action, input = EMPTY_INPUT } = options
+  if (!futureAcceptsMove(state, side)) return state
   const selected = moveForAction(state[side], action, input)
-  const override = characterMoveOverride({ state, side, action, input }, selected, performAuraAttack)
+  const override = characterMoveOverride(
+    { state, side, action, input },
+    selected,
+    performAuraAttack,
+  )
   if (override) return override
   const move = routedFightMove(state[side], selected)
   if (!move) {
@@ -236,18 +260,8 @@ function executeAuraAttack(options: AuraAttackOptions): FightState {
   const { side, kind } = options
   if (options.state.phase !== 'fighting') return options.state
   const original = options.state[side]
-  const chains = performKurapikaAction(options, performAuraAttack)
-  if (chains) return chains
-  const book = performChrolloBookAction(options)
-  if (book) return book
-  if (kind === 'special' && !hisokaTechniqueAllowed(options.state, side, options.moveId))
-    return options.state
-  const form = performBiscuitFormAction(options)
-  if (form) return form
-  const remote = performLeorioAction(options, performAuraAttack)
-  if (remote) return remote
-  const utility = performUtilityHatsu(options)
-  if (utility) return utility
+  const character = characterAuraAction(options, performAuraAttack)
+  if (character) return character
   const variant = attackVariant({ fighter: original, kind, variant: options.variant })
   return commitAuraAttack({ ...options, variant }, attackIntent(original, kind, options.moveId))
 }
@@ -281,14 +295,16 @@ function attackResourceReady(fighter: ArcadeFighter, kind: AttackKind): boolean 
 export function opponentAttack(state: FightState): FightState {
   if (state.phase !== 'fighting') return state
   state = moonlightAiResponse(state)
-  return moonlightAiWaiting(state) ? state : ordinaryOpponentAttack(state)
-}
-
-function ordinaryOpponentAttack(state: FightState): FightState {
-  if (state.phase !== 'fighting') return state
+  if (moonlightAiWaiting(state)) return state
+  const future = parallelFutureAiAction(state)
+  if (future) return future
   const emperor = kurapikaAiActivation(state)
   if (emperor) return emperor
   if (canCallHanzoBody(state, 'opponent')) return callHanzoBody(state, 'opponent')
+  return ordinaryOpponentAttack(state)
+}
+
+function ordinaryOpponentAttack(state: FightState): FightState {
   const planned = planOpponentNen(state)
   if (!canAct(planned.opponent)) return planned
   const [rolled, chance] = randomValue(planned)
@@ -322,37 +338,6 @@ function ordinaryOpponentAttack(state: FightState): FightState {
       })
     : rolled
 }
-
-function planOpponentNen(state: FightState): FightState {
-  const gap = Math.abs(state.player.x - state.opponent.x)
-  const opponent = state.opponent
-  if (opponent.judgmentChain || chainsImmobilize(opponent))
-    return applyOpponentAura(state, { aura: true, down: true })
-  if (opponent.hanzoProjection) return state
-  if (needsZetsu(opponent)) return applyOpponentAura(state, { aura: true, down: true })
-  if (canLeaveZetsu(opponent)) return applyOpponentAura(state, {})
-  if (opponentWantsOn(opponent)) return applyOpponentAura(state, { aura: true, hatsu: true })
-  if (needsKen(state, gap)) return applyOpponentAura(state, { aura: true, guard: true })
-  return wantsRen(opponent, gap) ? applyOpponentAura(state, { aura: true }) : state
-}
-
-function applyOpponentAura(
-  state: FightState,
-  partial: Partial<Pick<FightInput, 'aura' | 'down' | 'guard' | 'jump' | 'hatsu'>>,
-): FightState {
-  const input = { ...EMPTY_INPUT, ...partial }
-  return { ...state, opponent: applyAuraContext(state.opponent, input) }
-}
-
-const needsZetsu = (fighter: ArcadeFighter) => fighter.aura < 16 && fighter.nen.mode !== 'zetsu'
-const canLeaveZetsu = (fighter: ArcadeFighter) => fighter.nen.mode === 'zetsu' && fighter.aura > 48
-const needsKen = (state: FightState, gap: number) =>
-  gap < 18 &&
-  state.opponent.aura > 28 &&
-  !state.opponent.nen.ken &&
-  ['heavy', 'special'].includes(state.player.pose)
-const wantsRen = (fighter: ArcadeFighter, gap: number) =>
-  gap < 12 && fighter.aura > 55 && fighter.nen.mode === 'ten'
 
 function randomValue(state: FightState): [FightState, number] {
   const rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0
@@ -429,6 +414,7 @@ function flushBuffered(state: FightState, side: FightSide): FightState {
 }
 
 export function performThrow(state: FightState, side: FightSide): FightState {
+  if (!futureAcceptsMove(state, side) || state[side].parallelEyesClosed) return state
   const move = moveForAction(state[side], 'throw', EMPTY_INPUT)
   if (move) return performMove({ state, side, action: 'throw' })
   return performLegacyThrow(state, side)
@@ -446,8 +432,4 @@ function performLegacyThrow(state: FightState, side: FightSide): FightState {
     variant: 'throw',
     auraCharged: false,
   })
-}
-
-function performUtilityHatsu(options: Parameters<typeof performAuraAttack>[0]): FightState | null {
-  return performMoonlightAction(options) ?? performLsdfAction(options) ?? performProjectionAction(options)
 }

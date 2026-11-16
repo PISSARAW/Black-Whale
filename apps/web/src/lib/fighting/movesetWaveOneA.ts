@@ -148,8 +148,8 @@ const SPECS: readonly MovesetSpec[] = [
   {
     fighterId: 'tserriednich',
     mechanic: [
-      'Futur parallèle : le Zetsu prépare une esquive prédictive consommable.',
-      'Parallel Future: Zetsu prepares a consumable predictive evade.',
+      'Laplace Devil : Zetsu, yeux fermés, vision de dix secondes et divergence.',
+      'Laplace Devil: Zetsu, closed eyes, a ten-second vision and divergence.',
     ],
     finisherCondition: [
       'Une vision du futur doit être préparée.',
@@ -161,10 +161,10 @@ const SPECS: readonly MovesetSpec[] = [
       'Tir aux jambes|Leg Shot',
       'Fauchage calculé|Calculated Sweep',
       'Direct descendant|Descending Straight',
-      'Talon prédit|Predicted Heel',
-      'Pas de dix secondes|Ten-Second Step',
+      'Talon descendant|Descending Heel',
+      'Pas princier|Princely Step',
       'Angle mort|Blind Spot',
-      'Recul prophétique|Prophetic Retreat',
+      'Recul tactique|Tactical Retreat',
       'Futur parallèle|Parallel Future',
       'Lecture différée|Delayed Reading',
       'Bête en embuscade|Ambushing Beast',

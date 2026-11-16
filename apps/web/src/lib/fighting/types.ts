@@ -1,4 +1,5 @@
 import type { ComboMasterState } from './comboMasterTypes'
+import type { ParallelFutureState } from './parallelFutureTypes'
 import type { BenjaminBatonState } from './benjaminBaton'
 import type { PainPackerState } from './feitanPain'
 import type { ChrolloBookState } from './chrolloBook'
@@ -136,6 +137,8 @@ export interface ArcadeFighter {
   y: number
   velocityY: number
   health: number
+  /** Closed eyes during voluntary Zetsu preparation and the detached vision. */
+  parallelEyesClosed?: boolean
   aura: number
   nen: NenTechniqueState<FightNenZone>
   facing: -1 | 1
@@ -221,7 +224,6 @@ export interface FighterHatsuEffects {
   forcedZetsuFrames: number
   contagionFrames: number
   contagionStacks: number
-  futureSight: number
   baton: BenjaminBatonState | null
   /** Independent monkey seals: sight = 1, hearing = 2, speech = 4. */
   senseSeals: number
@@ -354,6 +356,9 @@ export interface BungeeGumAttachment {
 
 export interface FightState {
   moonlight?: import('./moonlightContract').MoonlightState
+  parallelFuture?: ParallelFutureState
+  /** Prevent speculative branches from recursively opening another forecast. */
+  forecastSimulation?: boolean
   environment: FightEnvironment
   /** Autonomous guards, never avoidance charges on the fighter. */
   lsdf?: Partial<Record<FightSide, LsdfGuard>>
